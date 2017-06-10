@@ -79,7 +79,7 @@ class ServerShell extends Shell
      * or otherwise modify the pre-command flow.
      *
      * @return void
-     * @link http://book.cakephp.org/3.0/en/console-and-shells.html#hook-methods
+     * @link https://book.cakephp.org/3.0/en/console-and-shells.html#hook-methods
      */
     public function startup()
     {

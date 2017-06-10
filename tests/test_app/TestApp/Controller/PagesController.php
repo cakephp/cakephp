@@ -28,7 +28,7 @@ use Cake\View\Exception\MissingTemplateException;
  *
  * Override this controller by placing a copy in controllers directory of an application
  *
- * @link http://book.cakephp.org/2.0/en/controllers/pages-controller.html
+ * @link https://book.cakephp.org/2.0/en/controllers/pages-controller.html
  */
 class PagesController extends AppController
 {

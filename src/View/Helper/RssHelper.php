@@ -22,7 +22,7 @@ use Cake\View\Helper;
  *
  * @property \Cake\View\Helper\UrlHelper $Url
  * @property \Cake\View\Helper\TimeHelper $Time
- * @link http://book.cakephp.org/3.0/en/views/helpers/rss.html
+ * @link https://book.cakephp.org/3.0/en/views/helpers/rss.html
  */
 class RssHelper extends Helper
 {

@@ -22,7 +22,7 @@ use Cake\View\View;
  *
  * Session reading from the view.
  *
- * @link http://book.cakephp.org/3.0/en/views/helpers/session.html
+ * @link https://book.cakephp.org/3.0/en/views/helpers/session.html
  * @deprecated 3.0.2 Use request->session() instead.
  */
 class SessionHelper extends Helper

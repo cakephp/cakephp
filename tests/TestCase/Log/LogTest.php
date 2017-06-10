@@ -1,6 +1,6 @@
 <?php
 /**
- * CakePHP(tm) <http://book.cakephp.org/3.0/en/development/testing.html>
+ * CakePHP(tm) <https://book.cakephp.org/3.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License

@@ -36,7 +36,7 @@ namespace Cake\Core;
  * Plugins can be located with App as well. Using Plugin::path('DebugKit') for example, will
  * give you the full path to the DebugKit plugin.
  *
- * @link http://book.cakephp.org/3.0/en/core-libraries/app.html
+ * @link https://book.cakephp.org/3.0/en/core-libraries/app.html
  */
 class App
 {
@@ -173,7 +173,7 @@ class App
      * @param string $type type of path
      * @param string|null $plugin name of plugin
      * @return array
-     * @link http://book.cakephp.org/3.0/en/core-libraries/app.html#finding-paths-to-namespaces
+     * @link https://book.cakephp.org/3.0/en/core-libraries/app.html#finding-paths-to-namespaces
      */
     public static function path($type, $plugin = null)
     {

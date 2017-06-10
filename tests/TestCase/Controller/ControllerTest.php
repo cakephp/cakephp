@@ -491,11 +491,11 @@ class ControllerTest extends TestCase
         $Controller = new Controller(null, new Response());
 
         $Controller->eventManager()->on('Controller.beforeRedirect', function (Event $event, $url, Response $response) {
-            $response->location('http://book.cakephp.org');
+            $response->location('https://book.cakephp.org');
         });
 
         $response = $Controller->redirect('http://cakephp.org', 301);
-        $this->assertEquals('http://book.cakephp.org', $response->header()['Location']);
+        $this->assertEquals('https://book.cakephp.org', $response->header()['Location']);
         $this->assertEquals(301, $response->statusCode());
     }
 

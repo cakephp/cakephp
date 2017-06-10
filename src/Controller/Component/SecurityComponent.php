@@ -34,7 +34,7 @@ use Cake\Utility\Security;
  * - Requiring that SSL be used.
  * - Limiting cross controller communication.
  *
- * @link http://book.cakephp.org/3.0/en/controllers/components/security.html
+ * @link https://book.cakephp.org/3.0/en/controllers/components/security.html
  */
 class SecurityComponent extends Component
 {
@@ -177,7 +177,7 @@ class SecurityComponent extends Component
      * @param \Cake\Controller\Exception\SecurityException|null $exception Additional debug info describing the cause
      * @return mixed If specified, controller blackHoleCallback's response, or no return otherwise
      * @see \Cake\Controller\Component\SecurityComponent::$blackHoleCallback
-     * @link http://book.cakephp.org/3.0/en/controllers/components/security.html#handling-blackhole-callbacks
+     * @link https://book.cakephp.org/3.0/en/controllers/components/security.html#handling-blackhole-callbacks
      * @throws \Cake\Network\Exception\BadRequestException
      */
     public function blackHole(Controller $controller, $error = '', SecurityException $exception = null)

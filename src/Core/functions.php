@@ -32,7 +32,7 @@ if (!function_exists('h')) {
      * @param string|null $charset Character set to use when escaping. Defaults to config value in `mb_internal_encoding()`
      * or 'UTF-8'.
      * @return string Wrapped text.
-     * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#h
+     * @link https://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#h
      */
     function h($text, $double = true, $charset = null)
     {
@@ -85,7 +85,7 @@ if (!function_exists('pluginSplit')) {
      * @param bool $dotAppend Set to true if you want the plugin to have a '.' appended to it.
      * @param string|null $plugin Optional default plugin to use if no plugin is found. Defaults to null.
      * @return array Array with 2 indexes. 0 => plugin name, 1 => class name.
-     * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#pluginSplit
+     * @link https://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#pluginSplit
      */
     function pluginSplit($name, $dotAppend = false, $plugin = null)
     {
@@ -135,7 +135,7 @@ if (!function_exists('pr')) {
      *
      * @param mixed $var Variable to print out.
      * @return mixed the same $var that was passed to this function
-     * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#pr
+     * @link https://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#pr
      * @see debug()
      */
     function pr($var)
@@ -164,7 +164,7 @@ if (!function_exists('pj')) {
      * @param mixed $var Variable to print out.
      * @return mixed the same $var that was passed to this function
      * @see pr()
-     * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#pj
+     * @link https://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#pj
      */
     function pj($var)
     {
@@ -190,7 +190,7 @@ if (!function_exists('env')) {
      * @param string $key Environment variable name.
      * @param string|null $default Specify a default value in case the environment variable is not defined.
      * @return string|null Environment variable setting.
-     * @link http://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#env
+     * @link https://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#env
      */
     function env($key, $default = null)
     {

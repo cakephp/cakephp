@@ -130,7 +130,7 @@ class Shell
      * Contains tasks to load and instantiate
      *
      * @var array|bool
-     * @link http://book.cakephp.org/3.0/en/console-and-shells.html#Shell::$tasks
+     * @link https://book.cakephp.org/3.0/en/console-and-shells.html#Shell::$tasks
      */
     public $tasks = [];
 
@@ -166,7 +166,7 @@ class Shell
      * Constructs this Shell instance.
      *
      * @param \Cake\Console\ConsoleIo|null $io An io instance.
-     * @link http://book.cakephp.org/3.0/en/console-and-shells.html#Shell
+     * @link https://book.cakephp.org/3.0/en/console-and-shells.html#Shell
      */
     public function __construct(ConsoleIo $io = null)
     {
@@ -211,7 +211,7 @@ class Shell
      * allows configuration of tasks prior to shell execution
      *
      * @return void
-     * @link http://book.cakephp.org/3.0/en/console-and-shells.html#Cake\Console\ConsoleOptionParser::initialize
+     * @link https://book.cakephp.org/3.0/en/console-and-shells.html#Cake\Console\ConsoleOptionParser::initialize
      */
     public function initialize()
     {
@@ -226,7 +226,7 @@ class Shell
      * or otherwise modify the pre-command flow.
      *
      * @return void
-     * @link http://book.cakephp.org/3.0/en/console-and-shells.html#Cake\Console\ConsoleOptionParser::startup
+     * @link https://book.cakephp.org/3.0/en/console-and-shells.html#Cake\Console\ConsoleOptionParser::startup
      */
     public function startup()
     {
@@ -272,7 +272,7 @@ class Shell
      *
      * @param string $task The task name to check.
      * @return bool Success
-     * @link http://book.cakephp.org/3.0/en/console-and-shells.html#shell-tasks
+     * @link https://book.cakephp.org/3.0/en/console-and-shells.html#shell-tasks
      */
     public function hasTask($task)
     {
@@ -284,7 +284,7 @@ class Shell
      *
      * @param string $name The method name to check.
      * @return bool
-     * @link http://book.cakephp.org/3.0/en/console-and-shells.html#shell-tasks
+     * @link https://book.cakephp.org/3.0/en/console-and-shells.html#shell-tasks
      */
     public function hasMethod($name)
     {
@@ -340,7 +340,7 @@ class Shell
      * ]);`
      *
      * @return int The cli command exit code. 0 is success.
-     * @link http://book.cakephp.org/3.0/en/console-and-shells.html#invoking-other-shells-from-your-shell
+     * @link https://book.cakephp.org/3.0/en/console-and-shells.html#invoking-other-shells-from-your-shell
      */
     public function dispatchShell()
     {
@@ -414,7 +414,7 @@ class Shell
      * Built-in extra parameter is :
      * - `requested` : if used, will prevent the Shell welcome message to be displayed
      * @return int|bool|null
-     * @link http://book.cakephp.org/3.0/en/console-and-shells.html#the-cakephp-console
+     * @link https://book.cakephp.org/3.0/en/console-and-shells.html#the-cakephp-console
      */
     public function runCommand($argv, $autoMethod = false, $extra = [])
     {
@@ -523,7 +523,7 @@ class Shell
      * By overriding this method you can configure the ConsoleOptionParser before returning it.
      *
      * @return \Cake\Console\ConsoleOptionParser
-     * @link http://book.cakephp.org/3.0/en/console-and-shells.html#configuring-options-and-generating-help
+     * @link https://book.cakephp.org/3.0/en/console-and-shells.html#configuring-options-and-generating-help
      */
     public function getOptionParser()
     {
@@ -574,7 +574,7 @@ class Shell
      * @param string|array|null $options Array or string of options.
      * @param string|null $default Default input value.
      * @return mixed Either the default value, or the user-provided input.
-     * @link http://book.cakephp.org/3.0/en/console-and-shells.html#Shell::in
+     * @link https://book.cakephp.org/3.0/en/console-and-shells.html#Shell::in
      */
     public function in($prompt, $options = null, $default = null)
     {
@@ -602,7 +602,7 @@ class Shell
      * @param int|array $options Array of options to use, or an integer to wrap the text to.
      * @return string Wrapped / indented text
      * @see \Cake\Utility\Text::wrap()
-     * @link http://book.cakephp.org/3.0/en/console-and-shells.html#Shell::wrapText
+     * @link https://book.cakephp.org/3.0/en/console-and-shells.html#Shell::wrapText
      */
     public function wrapText($text, $options = [])
     {
@@ -648,7 +648,7 @@ class Shell
      * @param int $newlines Number of newlines to append
      * @param int $level The message's output level, see above.
      * @return int|bool The number of bytes returned from writing to stdout.
-     * @link http://book.cakephp.org/3.0/en/console-and-shells.html#Shell::out
+     * @link https://book.cakephp.org/3.0/en/console-and-shells.html#Shell::out
      */
     public function out($message = null, $newlines = 1, $level = Shell::NORMAL)
     {
@@ -675,7 +675,7 @@ class Shell
      * @param int $newlines Number of newlines to append
      * @param int $level The message's output level, see above.
      * @return int|bool The number of bytes returned from writing to stdout.
-     * @see http://book.cakephp.org/3.0/en/console-and-shells.html#Shell::out
+     * @see https://book.cakephp.org/3.0/en/console-and-shells.html#Shell::out
      */
     public function info($message = null, $newlines = 1, $level = Shell::NORMAL)
     {
@@ -688,7 +688,7 @@ class Shell
      * @param string|array|null $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @return int|bool The number of bytes returned from writing to stderr.
-     * @see http://book.cakephp.org/3.0/en/console-and-shells.html#Shell::err
+     * @see https://book.cakephp.org/3.0/en/console-and-shells.html#Shell::err
      */
     public function warn($message = null, $newlines = 1)
     {
@@ -702,7 +702,7 @@ class Shell
      * @param int $newlines Number of newlines to append
      * @param int $level The message's output level, see above.
      * @return int|bool The number of bytes returned from writing to stdout.
-     * @see http://book.cakephp.org/3.0/en/console-and-shells.html#Shell::out
+     * @see https://book.cakephp.org/3.0/en/console-and-shells.html#Shell::out
      */
     public function success($message = null, $newlines = 1, $level = Shell::NORMAL)
     {
@@ -714,7 +714,7 @@ class Shell
      *
      * @param int $multiplier Number of times the linefeed sequence should be repeated
      * @return string
-     * @link http://book.cakephp.org/3.0/en/console-and-shells.html#Shell::nl
+     * @link https://book.cakephp.org/3.0/en/console-and-shells.html#Shell::nl
      */
     public function nl($multiplier = 1)
     {
@@ -727,7 +727,7 @@ class Shell
      * @param int $newlines Number of newlines to pre- and append
      * @param int $width Width of the line, defaults to 63
      * @return void
-     * @link http://book.cakephp.org/3.0/en/console-and-shells.html#Shell::hr
+     * @link https://book.cakephp.org/3.0/en/console-and-shells.html#Shell::hr
      */
     public function hr($newlines = 0, $width = 63)
     {
@@ -742,7 +742,7 @@ class Shell
      * @param int $exitCode The exit code for the shell task.
      * @throws \Cake\Console\Exception\StopException
      * @return void
-     * @link http://book.cakephp.org/3.0/en/console-and-shells.html#styling-output
+     * @link https://book.cakephp.org/3.0/en/console-and-shells.html#styling-output
      */
     public function abort($message, $exitCode = self::CODE_ERROR)
     {
@@ -759,7 +759,7 @@ class Shell
      * @param int $exitCode The exit code for the shell task.
      * @throws \Cake\Console\Exception\StopException
      * @return int Error code
-     * @link http://book.cakephp.org/3.0/en/console-and-shells.html#styling-output
+     * @link https://book.cakephp.org/3.0/en/console-and-shells.html#styling-output
      * @deprecated 3.2.0 Use Shell::abort() instead.
      */
     public function error($title, $message = null, $exitCode = self::CODE_ERROR)
@@ -779,7 +779,7 @@ class Shell
      * Clear the console
      *
      * @return void
-     * @link http://book.cakephp.org/3.0/en/console-and-shells.html#console-output
+     * @link https://book.cakephp.org/3.0/en/console-and-shells.html#console-output
      */
     public function clear()
     {
@@ -798,7 +798,7 @@ class Shell
      * @param string $path Where to put the file.
      * @param string $contents Content to put in the file.
      * @return bool Success
-     * @link http://book.cakephp.org/3.0/en/console-and-shells.html#creating-files
+     * @link https://book.cakephp.org/3.0/en/console-and-shells.html#creating-files
      */
     public function createFile($path, $contents)
     {
@@ -852,7 +852,7 @@ class Shell
      *
      * @param string $file Absolute file path
      * @return string short path
-     * @link http://book.cakephp.org/3.0/en/console-and-shells.html#Shell::shortPath
+     * @link https://book.cakephp.org/3.0/en/console-and-shells.html#Shell::shortPath
      */
     public function shortPath($file)
     {

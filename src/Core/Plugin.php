@@ -22,7 +22,7 @@ use DirectoryIterator;
  *
  * It also can retrieve plugin paths and load their bootstrap and routes files.
  *
- * @link http://book.cakephp.org/3.0/en/plugins.html
+ * @link https://book.cakephp.org/3.0/en/plugins.html
  */
 class Plugin
 {

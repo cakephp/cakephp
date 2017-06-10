@@ -31,7 +31,7 @@ use Cake\Utility\Security;
  * - Store non-scalar data.
  * - Use hash compatible syntax to read/write/delete values.
  *
- * @link http://book.cakephp.org/3.0/en/controllers/components/cookie.html
+ * @link https://book.cakephp.org/3.0/en/controllers/components/cookie.html
  */
 class CookieComponent extends Component
 {

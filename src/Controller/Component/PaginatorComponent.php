@@ -28,7 +28,7 @@ use Cake\Utility\Hash;
  *
  * You configure pagination when calling paginate(). See that method for more details.
  *
- * @link http://book.cakephp.org/3.0/en/controllers/components/pagination.html
+ * @link https://book.cakephp.org/3.0/en/controllers/components/pagination.html
  */
 class PaginatorComponent extends Component
 {
