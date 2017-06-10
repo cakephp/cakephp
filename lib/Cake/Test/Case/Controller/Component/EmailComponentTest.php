@@ -243,7 +243,7 @@ HEADBLOC;
 
 This is the body of the message
 
-This email was sent using the CakePHP Framework, http://cakephp.org.
+This email was sent using the CakePHP Framework, https://cakephp.org.
 TEXTBLOC;
 
 		$html = <<<HTMLBLOC
@@ -256,7 +256,7 @@ TEXTBLOC;
 
 <body>
 	<p> This is the body of the message</p><p> </p>
-	<p>This email was sent using the <a href="http://cakephp.org">CakePHP Framework</a></p>
+	<p>This email was sent using the <a href="https://cakephp.org">CakePHP Framework</a></p>
 </body>
 </html>
 HTMLBLOC;
@@ -488,7 +488,7 @@ HTMLBLOC;
 		$text = <<<TEXTBLOC
 
 Here is your value: 22091985
-This email was sent using the CakePHP Framework, http://cakephp.org.
+This email was sent using the CakePHP Framework, https://cakephp.org.
 TEXTBLOC;
 
 		$html = <<<HTMLBLOC
@@ -502,7 +502,7 @@ TEXTBLOC;
 <body>
 	<p>Here is your value: <b>22091985</b></p>
 
-	<p>This email was sent using the <a href="http://cakephp.org">CakePHP Framework</a></p>
+	<p>This email was sent using the <a href="https://cakephp.org">CakePHP Framework</a></p>
 </body>
 </html>
 HTMLBLOC;

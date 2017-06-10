@@ -1878,7 +1878,7 @@ class ValidationTest extends CakeTestCase {
  */
 	public function testUrl() {
 		$this->assertTrue(Validation::url('http://www.cakephp.org'));
-		$this->assertTrue(Validation::url('http://cakephp.org'));
+		$this->assertTrue(Validation::url('https://cakephp.org'));
 		$this->assertTrue(Validation::url('http://www.cakephp.org/somewhere#anchor'));
 		$this->assertTrue(Validation::url('http://192.168.0.1'));
 		$this->assertTrue(Validation::url('https://www.cakephp.org'));
@@ -1929,10 +1929,10 @@ class ValidationTest extends CakeTestCase {
 		$this->assertTrue(Validation::url('http://äüö.eräume.foo'));
 
 		$this->assertTrue(Validation::url('http://cakephp.org:80'));
-		$this->assertTrue(Validation::url('http://cakephp.org:443'));
-		$this->assertTrue(Validation::url('http://cakephp.org:2000'));
-		$this->assertTrue(Validation::url('http://cakephp.org:27000'));
-		$this->assertTrue(Validation::url('http://cakephp.org:65000'));
+		$this->assertTrue(Validation::url('https://cakephp.org:443'));
+		$this->assertTrue(Validation::url('https://cakephp.org:2000'));
+		$this->assertTrue(Validation::url('https://cakephp.org:27000'));
+		$this->assertTrue(Validation::url('https://cakephp.org:65000'));
 
 		$this->assertTrue(Validation::url('[2001:0db8::1428:57ab]'));
 		$this->assertTrue(Validation::url('[::1]'));

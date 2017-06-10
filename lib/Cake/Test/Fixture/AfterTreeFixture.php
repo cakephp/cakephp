@@ -4,7 +4,7 @@
  *
  * Long description for after_tree_fixture.php
  *
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt

@@ -23,7 +23,7 @@ App::uses('PaginatorHelper', 'View/Helper');
 App::uses('FormHelper', 'View/Helper');
 
 if (!defined('FULL_BASE_URL')) {
-	define('FULL_BASE_URL', 'http://cakephp.org');
+	define('FULL_BASE_URL', 'https://cakephp.org');
 }
 
 /**

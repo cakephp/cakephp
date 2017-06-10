@@ -1,6 +1,6 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
@@ -8,7 +8,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP Project
+ * @link          https://cakephp.org CakePHP Project
  * @package       Cake.Test.Case.Controller
  * @since         CakePHP(tm) v 1.2.0.5436
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
@@ -754,9 +754,9 @@ class ControllerTest extends CakeTestCase {
 		$Controller->response->expects($this->once())->method('statusCode')
 			->with($code);
 		$Controller->response->expects($this->once())->method('header')
-			->with('Location', 'http://cakephp.org');
+			->with('Location', 'https://cakephp.org');
 
-		$Controller->redirect('http://cakephp.org', (int)$code, false);
+		$Controller->redirect('https://cakephp.org', (int)$code, false);
 		$this->assertFalse($Controller->autoRender);
 	}
 
@@ -776,9 +776,9 @@ class ControllerTest extends CakeTestCase {
 			->with($code);
 
 		$Controller->response->expects($this->once())->method('header')
-			->with('Location', 'http://cakephp.org');
+			->with('Location', 'https://cakephp.org');
 
-		$Controller->redirect('http://cakephp.org', $msg, false);
+		$Controller->redirect('https://cakephp.org', $msg, false);
 		$this->assertFalse($Controller->autoRender);
 	}
 
@@ -799,9 +799,9 @@ class ControllerTest extends CakeTestCase {
 			->with(301);
 
 		$Controller->response->expects($this->once())->method('header')
-			->with('Location', 'http://cakephp.org');
+			->with('Location', 'https://cakephp.org');
 
-		$Controller->redirect('http://cakephp.org', 301, false);
+		$Controller->redirect('https://cakephp.org', 301, false);
 	}
 
 /**
@@ -823,7 +823,7 @@ class ControllerTest extends CakeTestCase {
 		$Controller->response->expects($this->once())->method('header')
 			->with('Location', 'http://book.cakephp.org');
 
-		$Controller->redirect('http://cakephp.org', 301, false);
+		$Controller->redirect('https://cakephp.org', 301, false);
 	}
 
 /**
@@ -856,7 +856,7 @@ class ControllerTest extends CakeTestCase {
 			->with(302);
 
 		$Controller->expects($this->never())->method('_stop');
-		$Controller->redirect('http://cakephp.org', 301);
+		$Controller->redirect('https://cakephp.org', 301);
 	}
 
 /**
@@ -870,11 +870,11 @@ class ControllerTest extends CakeTestCase {
 		$Controller->Components = $this->getMock('ComponentCollection', array('trigger'));
 
 		$Controller->expects($this->once())->method('beforeRedirect')
-			->with('http://cakephp.org')
+			->with('https://cakephp.org')
 			->will($this->returnValue(false));
 		$Controller->response->expects($this->never())->method('header');
 		$Controller->expects($this->never())->method('_stop');
-		$Controller->redirect('http://cakephp.org');
+		$Controller->redirect('https://cakephp.org');
 	}
 
 /**
@@ -889,7 +889,7 @@ class ControllerTest extends CakeTestCase {
 
 		$Controller->expects($this->once())
 			->method('beforeRedirect')
-			->with('http://cakephp.org', null, true)
+			->with('https://cakephp.org', null, true)
 			->will($this->returnValue(array(
 				'url' => 'http://example.org',
 				'status' => 302,
@@ -901,7 +901,7 @@ class ControllerTest extends CakeTestCase {
 			->with('Location', 'http://example.org');
 
 		$Controller->expects($this->once())->method('_stop');
-		$Controller->redirect('http://cakephp.org');
+		$Controller->redirect('https://cakephp.org');
 	}
 
 /**

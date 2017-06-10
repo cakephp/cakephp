@@ -1422,7 +1422,7 @@ class CakeEmailTest extends CakeTestCase {
 			"\r\n" .
 			"\r\n" .
 			"\r\n" .
-			"This email was sent using the CakePHP Framework, http://cakephp.org." .
+			"This email was sent using the CakePHP Framework, https://cakephp.org." .
 			"\r\n" .
 			"\r\n" .
 			"--$boundary\r\n" .
@@ -1458,7 +1458,7 @@ class CakeEmailTest extends CakeTestCase {
 		$this->CakeEmail->charset = 'ISO-2022-JP';
 		$result = $this->CakeEmail->send();
 
-		$expected = mb_convert_encoding('CakePHP Framework を使って送信したメールです。 http://cakephp.org.', 'ISO-2022-JP');
+		$expected = mb_convert_encoding('CakePHP Framework を使って送信したメールです。 https://cakephp.org.', 'ISO-2022-JP');
 		$this->assertContains($expected, $result['message']);
 		$this->assertContains('Message-ID: ', $result['headers']);
 		$this->assertContains('To: ', $result['headers']);
@@ -1773,10 +1773,10 @@ class CakeEmailTest extends CakeTestCase {
 		$this->CakeEmail->emailFormat('both');
 		$this->CakeEmail->send();
 
-		$expected = '<p>This email was sent using the <a href="http://cakephp.org">CakePHP Framework</a></p>';
+		$expected = '<p>This email was sent using the <a href="https://cakephp.org">CakePHP Framework</a></p>';
 		$this->assertContains($expected, $this->CakeEmail->message(CakeEmail::MESSAGE_HTML));
 
-		$expected = 'This email was sent using the CakePHP Framework, http://cakephp.org.';
+		$expected = 'This email was sent using the CakePHP Framework, https://cakephp.org.';
 		$this->assertContains($expected, $this->CakeEmail->message(CakeEmail::MESSAGE_TEXT));
 
 		$message = $this->CakeEmail->message();
@@ -1861,11 +1861,11 @@ class CakeEmailTest extends CakeTestCase {
 		);
 		$this->assertSame($expected, $result);
 
-		$text = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ac <a href="http://cakephp.org">turpis</a> orci, non commodo odio. Morbi nibh nisi, vehicula pellentesque accumsan amet.';
+		$text = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ac <a href="https://cakephp.org">turpis</a> orci, non commodo odio. Morbi nibh nisi, vehicula pellentesque accumsan amet.';
 		$result = $this->CakeEmail->wrap($text, CakeEmail::LINE_LENGTH_SHOULD);
 		$expected = array(
 			'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ac',
-			'<a href="http://cakephp.org">turpis</a> orci, non commodo odio. Morbi nibh',
+			'<a href="https://cakephp.org">turpis</a> orci, non commodo odio. Morbi nibh',
 			'nisi, vehicula pellentesque accumsan amet.',
 			''
 		);
@@ -2331,7 +2331,7 @@ class CakeEmailTest extends CakeTestCase {
  * @return void
  */
 	public function testWrapLongLine() {
-		$message = '<a href="http://cakephp.org">' . str_repeat('x', CakeEmail::LINE_LENGTH_MUST) . "</a>";
+		$message = '<a href="https://cakephp.org">' . str_repeat('x', CakeEmail::LINE_LENGTH_MUST) . "</a>";
 
 		$this->CakeEmail->reset();
 		$this->CakeEmail->transport('Debug');
@@ -2340,7 +2340,7 @@ class CakeEmailTest extends CakeTestCase {
 		$this->CakeEmail->subject('Wordwrap Test');
 		$this->CakeEmail->config(array('empty'));
 		$result = $this->CakeEmail->send($message);
-		$expected = "<a\r\n" . 'href="http://cakephp.org">' . str_repeat('x', CakeEmail::LINE_LENGTH_MUST - 26) . "\r\n" .
+		$expected = "<a\r\n" . 'href="https://cakephp.org">' . str_repeat('x', CakeEmail::LINE_LENGTH_MUST - 26) . "\r\n" .
 			str_repeat('x', 26) . "\r\n</a>\r\n\r\n";
 		$this->assertEquals($expected, $result['message']);
 		$this->assertLineLengths($result['message']);

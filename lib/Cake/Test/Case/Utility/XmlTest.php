@@ -1035,7 +1035,7 @@ XML;
  */
 	public function testNamespace() {
 		$xml = <<<XML
-<root xmlns:ns="http://cakephp.org">
+<root xmlns:ns="https://cakephp.org">
 	<ns:tag id="1">
 		<child>good</child>
 		<otherchild>bad</otherchild>
@@ -1056,7 +1056,7 @@ XML;
 		);
 		$this->assertEquals($expected, Xml::toArray($xmlResponse));
 
-		$xmlResponse = Xml::build('<root xmlns:ns="http://cakephp.org"><ns:tag id="1" /><tag><id>1</id></tag></root>');
+		$xmlResponse = Xml::build('<root xmlns:ns="https://cakephp.org"><ns:tag id="1" /><tag><id>1</id></tag></root>');
 		$expected = array(
 			'root' => array(
 				'ns:tag' => array(
@@ -1069,7 +1069,7 @@ XML;
 		);
 		$this->assertEquals($expected, Xml::toArray($xmlResponse));
 
-		$xmlResponse = Xml::build('<root xmlns:ns="http://cakephp.org"><ns:attr>1</ns:attr></root>');
+		$xmlResponse = Xml::build('<root xmlns:ns="https://cakephp.org"><ns:attr>1</ns:attr></root>');
 		$expected = array(
 			'root' => array(
 				'ns:attr' => '1'
@@ -1077,25 +1077,25 @@ XML;
 		);
 		$this->assertEquals($expected, Xml::toArray($xmlResponse));
 
-		$xmlResponse = Xml::build('<root><ns:attr xmlns:ns="http://cakephp.org">1</ns:attr></root>');
+		$xmlResponse = Xml::build('<root><ns:attr xmlns:ns="https://cakephp.org">1</ns:attr></root>');
 		$this->assertEquals($expected, Xml::toArray($xmlResponse));
 
 		$xml = array(
 			'root' => array(
 				'ns:attr' => array(
-					'xmlns:ns' => 'http://cakephp.org',
+					'xmlns:ns' => 'https://cakephp.org',
 					'@' => 1
 				)
 			)
 		);
-		$expected = '<' . '?xml version="1.0" encoding="UTF-8"?><root><ns:attr xmlns:ns="http://cakephp.org">1</ns:attr></root>';
+		$expected = '<' . '?xml version="1.0" encoding="UTF-8"?><root><ns:attr xmlns:ns="https://cakephp.org">1</ns:attr></root>';
 		$xmlResponse = Xml::fromArray($xml);
 		$this->assertEquals($expected, str_replace(array("\r", "\n"), '', $xmlResponse->asXML()));
 
 		$xml = array(
 			'root' => array(
 				'tag' => array(
-					'xmlns:pref' => 'http://cakephp.org',
+					'xmlns:pref' => 'https://cakephp.org',
 					'pref:item' => array(
 						'item 1',
 						'item 2'
@@ -1106,7 +1106,7 @@ XML;
 		$expected = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
-	<tag xmlns:pref="http://cakephp.org">
+	<tag xmlns:pref="https://cakephp.org">
 		<pref:item>item 1</pref:item>
 		<pref:item>item 2</pref:item>
 	</tag>
@@ -1118,29 +1118,29 @@ XML;
 		$xml = array(
 			'root' => array(
 				'tag' => array(
-					'xmlns:' => 'http://cakephp.org'
+					'xmlns:' => 'https://cakephp.org'
 				)
 			)
 		);
-		$expected = '<' . '?xml version="1.0" encoding="UTF-8"?><root><tag xmlns="http://cakephp.org"/></root>';
+		$expected = '<' . '?xml version="1.0" encoding="UTF-8"?><root><tag xmlns="https://cakephp.org"/></root>';
 		$xmlResponse = Xml::fromArray($xml);
 		$this->assertXmlStringEqualsXmlString($expected, $xmlResponse->asXML());
 
 		$xml = array(
 			'root' => array(
-				'xmlns:' => 'http://cakephp.org'
+				'xmlns:' => 'https://cakephp.org'
 			)
 		);
-		$expected = '<' . '?xml version="1.0" encoding="UTF-8"?><root xmlns="http://cakephp.org"/>';
+		$expected = '<' . '?xml version="1.0" encoding="UTF-8"?><root xmlns="https://cakephp.org"/>';
 		$xmlResponse = Xml::fromArray($xml);
 		$this->assertXmlStringEqualsXmlString($expected, $xmlResponse->asXML());
 
 		$xml = array(
 			'root' => array(
-				'xmlns:ns' => 'http://cakephp.org'
+				'xmlns:ns' => 'https://cakephp.org'
 			)
 		);
-		$expected = '<' . '?xml version="1.0" encoding="UTF-8"?><root xmlns:ns="http://cakephp.org"/>';
+		$expected = '<' . '?xml version="1.0" encoding="UTF-8"?><root xmlns:ns="https://cakephp.org"/>';
 		$xmlResponse = Xml::fromArray($xml);
 		$this->assertXmlStringEqualsXmlString($expected, $xmlResponse->asXML());
 	}

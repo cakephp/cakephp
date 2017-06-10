@@ -2,14 +2,14 @@
 ::
 :: Bake is a shell script for running CakePHP bake script
 ::
-:: CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+:: CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
 :: Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
 ::
 :: Licensed under The MIT License
 :: Redistributions of files must retain the above copyright notice.
 ::
 :: @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
-:: @link          http://cakephp.org CakePHP(tm) Project
+:: @link          https://cakephp.org CakePHP(tm) Project
 :: @package       app.Console
 :: @since         CakePHP(tm) v 2.0
 ::

@@ -2,7 +2,7 @@
 /**
  * CakeRequest Test case file.
  *
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
@@ -10,7 +10,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @package       Cake.Test.Case.Network
  * @since         CakePHP(tm) v 2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
@@ -211,11 +211,11 @@ class CakeRequestTest extends CakeTestCase {
 		$request = new CakeRequest();
 		$this->assertEquals('tasks/index/page:1/', $request->url);
 
-		$_SERVER['REQUEST_URI'] = '/some/path?url=http://cakephp.org';
+		$_SERVER['REQUEST_URI'] = '/some/path?url=https://cakephp.org';
 		$request = new CakeRequest();
 		$this->assertEquals('some/path', $request->url);
 
-		$_SERVER['REQUEST_URI'] = Configure::read('App.fullBaseUrl') . '/other/path?url=http://cakephp.org';
+		$_SERVER['REQUEST_URI'] = Configure::read('App.fullBaseUrl') . '/other/path?url=https://cakephp.org';
 		$request = new CakeRequest();
 		$this->assertEquals('other/path', $request->url);
 	}
@@ -735,9 +735,9 @@ class CakeRequestTest extends CakeTestCase {
 		$request = new CakeRequest('some/path');
 		$request->webroot = '/';
 
-		$_SERVER['HTTP_REFERER'] = 'http://cakephp.org';
+		$_SERVER['HTTP_REFERER'] = 'https://cakephp.org';
 		$result = $request->referer();
-		$this->assertSame($result, 'http://cakephp.org');
+		$this->assertSame($result, 'https://cakephp.org');
 
 		$_SERVER['HTTP_REFERER'] = '';
 		$result = $request->referer();

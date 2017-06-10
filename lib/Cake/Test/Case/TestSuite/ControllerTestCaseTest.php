@@ -4,7 +4,7 @@
  *
  * Test Case for ControllerTestCase class
  *
- * CakePHP : Rapid Development Framework (http://cakephp.org)
+ * CakePHP : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
@@ -12,7 +12,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP Project
+ * @link          https://cakephp.org CakePHP Project
  * @package       Cake.Test.Case.TestSuite
  * @since         CakePHP v 2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
@@ -294,7 +294,7 @@ class ControllerTestCaseTest extends CakeTestCase {
 		$this->Case->testAction('/tests_apps/redirect_to');
 		$results = $this->Case->headers;
 		$expected = array(
-			'Location' => 'http://cakephp.org'
+			'Location' => 'https://cakephp.org'
 		);
 		$this->assertEquals($expected, $results);
 		$this->assertSame(302, $Controller->response->statusCode());

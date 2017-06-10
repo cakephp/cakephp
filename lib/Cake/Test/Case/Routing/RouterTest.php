@@ -20,7 +20,7 @@ App::uses('Router', 'Routing');
 App::uses('CakeResponse', 'Network');
 
 if (!defined('FULL_BASE_URL')) {
-	define('FULL_BASE_URL', 'http://cakephp.org');
+	define('FULL_BASE_URL', 'https://cakephp.org');
 }
 
 /**
