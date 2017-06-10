@@ -15,6 +15,7 @@
 namespace Cake\Console;
 
 use ArrayIterator;
+use Cake\Console\Shell;
 use Countable;
 use InvalidArgumentException;
 use IteratorAggregate;
@@ -58,7 +59,7 @@ class CommandCollection implements IteratorAggregate, Countable
     {
         // Once we have a new Command class this should check
         // against that interface.
-        if (!is_subclass_of($command, 'Cake\Console\Shell')) {
+        if (!is_subclass_of($command, Shell::class)) {
             throw new InvalidArgumentException(
                 "'$name' is not a subclass of Cake\Console\Shell or a valid command."
             );
