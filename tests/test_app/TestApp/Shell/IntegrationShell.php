@@ -20,10 +20,36 @@
  */
 namespace TestApp\Shell;
 
+use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 
 class IntegrationShell extends Shell
 {
+
+    /**
+     * Option parser
+     *
+     * @return ConsoleOptionParser
+     */
+    public function getOptionParser()
+    {
+        $parser = new ConsoleOptionParser();
+        $argAndOptionParser = (new ConsoleOptionParser())
+            ->addArgument('arg', [
+                'required' => true
+            ])
+            ->addOption('opt', [
+                'short' => 'o'
+            ]);
+
+        $parser
+            ->addSubcommand('argsAndOptions', [
+                'parser' => $argAndOptionParser
+            ])
+            ->addSubcommand('bridge');
+
+        return $parser;
+    }
 
     /**
      * Bridge of Death question
@@ -47,5 +73,16 @@ class IntegrationShell extends Shell
         }
 
         $this->out('You may pass.');
+    }
+
+    /**
+     * A sub command that requires an argument and has an option
+     *
+     * @return void
+     */
+    public function argsAndOptions()
+    {
+        $this->out('arg: ' . $this->args[0]);
+        $this->out('opt: ' . $this->param('opt'));
     }
 }

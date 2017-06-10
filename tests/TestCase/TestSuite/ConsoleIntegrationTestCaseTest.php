@@ -47,6 +47,34 @@ class ConsoleIntegrationTestCaseTest extends ConsoleIntegrationTestCase
     }
 
     /**
+     * tests exec with an arg and an option
+     *
+     * @return void
+     */
+    public function testExecWithArgsAndOption()
+    {
+        $this->exec('integration args_and_options arg --opt="some string"');
+
+        $this->assertOutputContains('arg: arg');
+        $this->assertOutputContains('opt: some string');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
+    }
+
+    /**
+     * tests exec with missing required argument
+     *
+     * @return void
+     */
+    public function testExecWithMissingRequiredArg()
+    {
+        $this->exec('integration args_and_options');
+
+        $this->assertErrorContains('Missing required arguments');
+        $this->assertErrorContains('arg is required');
+        $this->assertExitCode(Shell::CODE_ERROR);
+    }
+
+    /**
      * tests exec with input
      *
      * @return void
