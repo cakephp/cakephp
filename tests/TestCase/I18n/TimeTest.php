@@ -506,6 +506,11 @@ class TimeTest extends TestCase
         $result = $time->i18nFormat(\IntlDateFormatter::FULL);
         $expected = 'Wednesday January 1 2014 12:00:00 AM GMT-01:30';
         $this->assertTimeFormat($expected, $result);
+
+        $time = new $class('2014-01-01T00:00Z');
+        $result = $time->i18nFormat(\IntlDateFormatter::FULL);
+        $expected = 'Wednesday January 1 2014 12:00:00 AM GMT';
+        $this->assertTimeFormat($expected, $result);
     }
 
     /**

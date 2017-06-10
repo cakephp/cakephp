@@ -113,6 +113,11 @@ class DateTest extends TestCase
 
         $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'es-ES');
         $this->assertContains('14 de enero de 2010', $result, 'Default locale should not be used');
+
+        $time = new $class('2014-01-01T00:00:00Z');
+        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'en-US');
+        $expected = 'Wednesday, January 1, 2014 at 12:00:00 AM GMT';
+        $this->assertEquals($expected, $result);
     }
 
     /**
