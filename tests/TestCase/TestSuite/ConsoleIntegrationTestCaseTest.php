@@ -53,7 +53,7 @@ class ConsoleIntegrationTestCaseTest extends ConsoleIntegrationTestCase
      */
     public function testExecWithInput()
     {
-        $this->exec('sample bridge', ['javascript']);
+        $this->exec('integration bridge', ['javascript']);
 
         $this->assertErrorContains('No!');
         $this->assertExitCode(Shell::CODE_ERROR);
@@ -66,7 +66,7 @@ class ConsoleIntegrationTestCaseTest extends ConsoleIntegrationTestCase
      */
     public function testExecWithMultipleInput()
     {
-        $this->exec('sample bridge', ['cake', 'blue']);
+        $this->exec('integration bridge', ['cake', 'blue']);
 
         $this->assertOutputContains('You may pass');
         $this->assertExitCode(Shell::CODE_SUCCESS);

@@ -56,28 +56,4 @@ class SampleShell extends Shell
     {
         return 99;
     }
-
-    /**
-     * Bridge of Death question
-     *
-     * @return void
-     */
-    public function bridge()
-    {
-        $name = $this->in('What is your name');
-
-        if ($name !== 'cake') {
-            $this->err('No!');
-            $this->_stop(Shell::CODE_ERROR);
-        }
-
-        $color = $this->in('What is your favorite color?');
-
-        if ($color !== 'blue') {
-            $this->err('Wrong! <blink>Aaaahh</blink>');
-            $this->_stop(Shell::CODE_ERROR);
-        }
-
-        $this->out('You may pass.');
-    }
 }
