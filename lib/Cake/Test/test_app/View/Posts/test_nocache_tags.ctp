@@ -101,7 +101,7 @@ if (!empty($filePresent)):
 <ul>
 	<li><a href="https://cakefoundation.org/"><?php echo __d('cake', 'Cake Software Foundation'); ?> </a>
 	<ul><li><?php echo __d('cake', 'Promoting development related to CakePHP'); ?></li></ul></li>
-	<li><a href="http://bakery.cakephp.org"><?php echo __d('cake', 'The Bakery'); ?> </a>
+	<li><a href="https://bakery.cakephp.org"><?php echo __d('cake', 'The Bakery'); ?> </a>
 	<ul><li><?php echo __d('cake', 'Everything CakePHP'); ?></li></ul></li>
 	<li><a href="http://astore.amazon.com/cakesoftwaref-20/"><?php echo __d('cake', 'Book Store'); ?> </a>
 	<ul><li><?php echo __d('cake', 'Recommended Software Books'); ?></li></ul></li>

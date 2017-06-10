@@ -823,16 +823,16 @@ XML;
 		$this->assertEquals('2.0', $rssAsArray['rss']['@version']);
 		$this->assertEquals(2, count($rssAsArray['rss']['channel']['item']));
 
-		$atomLink = array('@href' => 'http://bakery.cakephp.org/articles/rss', '@rel' => 'self', '@type' => 'application/rss+xml');
+		$atomLink = array('@href' => 'https://bakery.cakephp.org/articles/rss', '@rel' => 'self', '@type' => 'application/rss+xml');
 		$this->assertEquals($rssAsArray['rss']['channel']['atom:link'], $atomLink);
-		$this->assertEquals('http://bakery.cakephp.org/', $rssAsArray['rss']['channel']['link']);
+		$this->assertEquals('https://bakery.cakephp.org/', $rssAsArray['rss']['channel']['link']);
 
 		$expected = array(
 			'title' => 'Alertpay automated sales via IPN',
-			'link' => 'http://bakery.cakephp.org/articles/view/alertpay-automated-sales-via-ipn',
+			'link' => 'https://bakery.cakephp.org/articles/view/alertpay-automated-sales-via-ipn',
 			'description' => 'I\'m going to show you how I implemented a payment module via the Alertpay payment processor.',
 			'pubDate' => 'Tue, 31 Aug 2010 01:42:00 -0500',
-			'guid' => 'http://bakery.cakephp.org/articles/view/alertpay-automated-sales-via-ipn'
+			'guid' => 'https://bakery.cakephp.org/articles/view/alertpay-automated-sales-via-ipn'
 		);
 		$this->assertSame($expected, $rssAsArray['rss']['channel']['item'][1]);
 
@@ -842,22 +842,22 @@ XML;
 				'@version' => '2.0',
 				'channel' => array(
 					'atom:link' => array(
-						'@href' => 'http://bakery.cakephp.org/articles/rss',
+						'@href' => 'https://bakery.cakephp.org/articles/rss',
 						'@rel' => 'self',
 						'@type' => 'application/rss+xml'
 					),
 					'title' => 'The Bakery: ',
-					'link' => 'http://bakery.cakephp.org/',
+					'link' => 'https://bakery.cakephp.org/',
 					'description' => 'Recent  Articles at The Bakery.',
 					'pubDate' => 'Sun, 12 Sep 2010 04:18:26 -0500',
 					'item' => array(
 						array(
 							'title' => 'CakePHP 1.3.4 released',
-							'link' => 'http://bakery.cakephp.org/articles/view/cakephp-1-3-4-released'
+							'link' => 'https://bakery.cakephp.org/articles/view/cakephp-1-3-4-released'
 						),
 						array(
 							'title' => 'Wizard Component 1.2 Tutorial',
-							'link' => 'http://bakery.cakephp.org/articles/view/wizard-component-1-2-tutorial'
+							'link' => 'https://bakery.cakephp.org/articles/view/wizard-component-1-2-tutorial'
 						)
 					)
 				)
@@ -868,18 +868,18 @@ XML;
 <?xml version="1.0" encoding="UTF-8"?>
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
 <channel>
-	<atom:link href="http://bakery.cakephp.org/articles/rss" rel="self" type="application/rss+xml"/>
+	<atom:link href="https://bakery.cakephp.org/articles/rss" rel="self" type="application/rss+xml"/>
 	<title>The Bakery: </title>
-	<link>http://bakery.cakephp.org/</link>
+	<link>https://bakery.cakephp.org/</link>
 	<description>Recent  Articles at The Bakery.</description>
 	<pubDate>Sun, 12 Sep 2010 04:18:26 -0500</pubDate>
 	<item>
 		<title>CakePHP 1.3.4 released</title>
-		<link>http://bakery.cakephp.org/articles/view/cakephp-1-3-4-released</link>
+		<link>https://bakery.cakephp.org/articles/view/cakephp-1-3-4-released</link>
 	</item>
 	<item>
 		<title>Wizard Component 1.2 Tutorial</title>
-		<link>http://bakery.cakephp.org/articles/view/wizard-component-1-2-tutorial</link>
+		<link>https://bakery.cakephp.org/articles/view/wizard-component-1-2-tutorial</link>
 	</item>
 </channel>
 </rss>
