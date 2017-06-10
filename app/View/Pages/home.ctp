@@ -221,9 +221,9 @@ You can also add some CSS styles for your pages at: %s.',
 	<ul><li><?php echo __d('cake_dev', 'CakePHP Issues'); ?></li></ul></li>
 	<li><a href="https://github.com/cakephp/cakephp/wiki#roadmaps"><?php echo __d('cake_dev', 'CakePHP Roadmaps'); ?> </a>
 	<ul><li><?php echo __d('cake_dev', 'CakePHP Roadmaps'); ?></li></ul></li>
-	<li><a href="http://training.cakephp.org"><?php echo __d('cake_dev', 'Training'); ?> </a>
+	<li><a href="https://training.cakephp.org"><?php echo __d('cake_dev', 'Training'); ?> </a>
 	<ul><li><?php echo __d('cake_dev', 'Join a live session and get skilled with the framework'); ?></li></ul></li>
-	<li><a href="http://cakefest.org"><?php echo __d('cake_dev', 'CakeFest'); ?> </a>
+	<li><a href="https://cakefest.org"><?php echo __d('cake_dev', 'CakeFest'); ?> </a>
 	<ul><li><?php echo __d('cake_dev', 'Don\'t miss our annual CakePHP conference'); ?></li></ul></li>
 	<li><a href="https://cakefoundation.org"><?php echo __d('cake_dev', 'Cake Software Foundation'); ?> </a>
 	<ul><li><?php echo __d('cake_dev', 'Promoting development related to CakePHP'); ?></li></ul></li>
