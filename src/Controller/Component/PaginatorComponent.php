@@ -18,6 +18,7 @@ use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use Cake\Datasource\Exception\PageOutOfBoundsException;
 use Cake\Datasource\Paginator;
+use Cake\Datasource\PaginatorInterface;
 use Cake\Datasource\QueryInterface;
 use Cake\Network\Exception\NotFoundException;
 
@@ -59,7 +60,7 @@ class PaginatorComponent extends Component
     /**
      * Datasource paginator instance.
      *
-     * @var \Cake\Datasource\Paginator
+     * @var \Cake\Datasource\PaginatorInterface
      */
     protected $_paginator;
 
@@ -236,10 +237,10 @@ class PaginatorComponent extends Component
     /**
      * Set paginator instance.
      *
-     * @param \Cake\Datasource\Paginator $paginator Paginator instance.
+     * @param \Cake\Datasource\PaginatorInterface $paginator Paginator instance.
      * @return self
      */
-    public function setPaginator(Paginator $paginator)
+    public function setPaginator(PaginatorInterface $paginator)
     {
         $this->_paginator = $paginator;
 
@@ -249,7 +250,7 @@ class PaginatorComponent extends Component
     /**
      * Get paginator instance.
      *
-     * @return \Cake\Datasource\Paginator
+     * @return \Cake\Datasource\PaginatorInterface
      */
     public function getPaginator()
     {
@@ -282,7 +283,7 @@ class PaginatorComponent extends Component
     public function config($key = null, $value = null, $merge = true)
     {
         $return = $this->_paginator->config($key, $value, $merge);
-        if ($return instanceof Paginator) {
+        if ($return instanceof PaginatorInterface) {
             $return = $this;
         }
 
