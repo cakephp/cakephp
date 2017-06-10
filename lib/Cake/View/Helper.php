@@ -292,7 +292,7 @@ class Helper extends CakeObject {
  *    the reverse routing features of CakePHP.
  * @param bool $full If true, the full base URL will be prepended to the result
  * @return string Full translated URL with base path.
- * @link http://book.cakephp.org/2.0/en/views/helpers.html
+ * @link https://book.cakephp.org/2.0/en/views/helpers.html
  */
 	public function url($url = null, $full = false) {
 		return h(Router::url($url, $full));

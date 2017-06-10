@@ -103,7 +103,7 @@ class Security {
  *     value to $string (Security.salt). If you are using blowfish the salt
  *     must be false or a previously generated salt.
  * @return string Hash
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/security.html#Security::hash
+ * @link https://book.cakephp.org/2.0/en/core-utility-libraries/security.html#Security::hash
  */
 	public static function hash($string, $type = null, $salt = false) {
 		if (empty($type)) {

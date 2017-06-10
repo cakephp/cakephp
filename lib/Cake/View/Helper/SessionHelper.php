@@ -25,7 +25,7 @@ App::uses('CakeSession', 'Model/Datasource');
  * Session reading from the view.
  *
  * @package       Cake.View.Helper
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/session.html
+ * @link https://book.cakephp.org/2.0/en/core-libraries/helpers/session.html
  */
 class SessionHelper extends AppHelper {
 
@@ -37,7 +37,7 @@ class SessionHelper extends AppHelper {
  *
  * @param string $name the name of the session key you want to read
  * @return mixed values from the session vars
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/session.html#SessionHelper::read
+ * @link https://book.cakephp.org/2.0/en/core-libraries/helpers/session.html#SessionHelper::read
  */
 	public function read($name = null) {
 		return CakeSession::read($name);
@@ -62,7 +62,7 @@ class SessionHelper extends AppHelper {
  *
  * @param string $name Session key to check.
  * @return bool
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/session.html#SessionHelper::check
+ * @link https://book.cakephp.org/2.0/en/core-libraries/helpers/session.html#SessionHelper::check
  */
 	public function check($name) {
 		return CakeSession::check($name);
@@ -74,7 +74,7 @@ class SessionHelper extends AppHelper {
  * In your view: `$this->Session->error();`
  *
  * @return string last error
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/session.html#displaying-notifications-or-flash-messages
+ * @link https://book.cakephp.org/2.0/en/core-libraries/helpers/session.html#displaying-notifications-or-flash-messages
  */
 	public function error() {
 		return CakeSession::error();
@@ -125,7 +125,7 @@ class SessionHelper extends AppHelper {
  * @param array $attrs Additional attributes to use for the creation of this flash message.
  *    Supports the 'params', and 'element' keys that are used in the helper.
  * @return string
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/session.html#SessionHelper::flash
+ * @link https://book.cakephp.org/2.0/en/core-libraries/helpers/session.html#SessionHelper::flash
  * @deprecated 3.0.0 Since 2.7, use FlashHelper::render() instead.
  */
 	public function flash($key = 'flash', $attrs = array()) {
@@ -167,7 +167,7 @@ class SessionHelper extends AppHelper {
  * Used to check is a session is valid in a view
  *
  * @return bool
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/session.html#SessionHelper::valid
+ * @link https://book.cakephp.org/2.0/en/core-libraries/helpers/session.html#SessionHelper::valid
  */
 	public function valid() {
 		return CakeSession::valid();

@@ -23,7 +23,7 @@ App::uses('AppHelper', 'View/Helper');
  * called by View, and use the $cacheAction settings set in the controller.
  *
  * @package Cake.View.Helper
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/cache.html
+ * @link https://book.cakephp.org/2.0/en/core-libraries/helpers/cache.html
  * @deprecated This class will be removed in 3.0. You should use a separate response cache
  * like Varnish instead.
  */
@@ -108,7 +108,7 @@ class CacheHelper extends AppHelper {
  * @param string $file File to cache
  * @param string $out output to cache
  * @return string view output
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/cache.html
+ * @link https://book.cakephp.org/2.0/en/core-libraries/helpers/cache.html
  * @throws Exception If debug mode is enabled and writing to cache file fails.
  */
 	public function cache($file, $out) {

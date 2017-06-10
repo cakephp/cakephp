@@ -23,8 +23,8 @@ endif;
 <?php if (file_exists(WWW_ROOT . 'css' . DS . 'cake.generic.css')): ?>
 	<p id="url-rewriting-warning" style="background-color:#e32; color:#fff;">
 		<?php echo __d('cake_dev', 'URL rewriting is not properly configured on your server.'); ?>
-		1) <a target="_blank" href="http://book.cakephp.org/2.0/en/installation/url-rewriting.html" style="color:#fff;">Help me configure it</a>
-		2) <a target="_blank" href="http://book.cakephp.org/2.0/en/development/configuration.html#cakephp-core-configuration" style="color:#fff;">I don't / can't use URL rewriting</a>
+		1) <a target="_blank" href="https://book.cakephp.org/2.0/en/installation/url-rewriting.html" style="color:#fff;">Help me configure it</a>
+		2) <a target="_blank" href="https://book.cakephp.org/2.0/en/development/configuration.html#cakephp-core-configuration" style="color:#fff;">I don't / can't use URL rewriting</a>
 	</p>
 <?php endif; ?>
 <p>
@@ -159,7 +159,7 @@ You can also add some CSS styles for your pages at: %s.',
 	<?php
 	echo $this->Html->link(
 		sprintf('<strong>%s</strong> %s', __d('cake_dev', 'New'), __d('cake_dev', 'CakePHP 2.0 Docs')),
-		'http://book.cakephp.org/2.0/en/',
+		'https://book.cakephp.org/2.0/en/',
 		array('target' => '_blank', 'escape' => false)
 	);
 	?>
@@ -168,7 +168,7 @@ You can also add some CSS styles for your pages at: %s.',
 	<?php
 	echo $this->Html->link(
 		__d('cake_dev', 'The 15 min Blog Tutorial'),
-		'http://book.cakephp.org/2.0/en/tutorials-and-examples/blog/blog.html',
+		'https://book.cakephp.org/2.0/en/tutorials-and-examples/blog/blog.html',
 		array('target' => '_blank', 'escape' => false)
 	);
 	?>
@@ -199,7 +199,7 @@ You can also add some CSS styles for your pages at: %s.',
 <ul>
 	<li><a href="https://cakephp.org">CakePHP</a>
 	<ul><li><?php echo __d('cake_dev', 'The Rapid Development Framework'); ?></li></ul></li>
-	<li><a href="http://book.cakephp.org"><?php echo __d('cake_dev', 'CakePHP Documentation'); ?> </a>
+	<li><a href="https://book.cakephp.org"><?php echo __d('cake_dev', 'CakePHP Documentation'); ?> </a>
 	<ul><li><?php echo __d('cake_dev', 'Your Rapid Development Cookbook'); ?></li></ul></li>
 	<li><a href="http://api.cakephp.org"><?php echo __d('cake_dev', 'CakePHP API'); ?> </a>
 	<ul><li><?php echo __d('cake_dev', 'Quick API Reference'); ?></li></ul></li>

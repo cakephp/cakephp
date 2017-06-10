@@ -25,7 +25,7 @@ App::uses('CakeValidationRule', 'Model/Validator');
  * methods to dynamically add or remove validation rules
  *
  * @package       Cake.Model.Validator
- * @link          http://book.cakephp.org/2.0/en/data-validation.html
+ * @link          https://book.cakephp.org/2.0/en/data-validation.html
  */
 class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
 

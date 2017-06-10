@@ -27,8 +27,8 @@ App::uses('CakeEmail', 'Network/Email');
  * based on the standard outlined in http://www.rfc-editor.org/rfc/rfc2822.txt
  *
  * @package       Cake.Controller.Component
- * @link          http://book.cakephp.org/2.0/en/core-libraries/components/email.html
- * @link          http://book.cakephp.org/2.0/en/core-utility-libraries/email.html
+ * @link          https://book.cakephp.org/2.0/en/core-libraries/components/email.html
+ * @link          https://book.cakephp.org/2.0/en/core-utility-libraries/email.html
  * @deprecated    3.0.0 Will be removed in 3.0. Use Network/CakeEmail instead
  */
 class EmailComponent extends Component {

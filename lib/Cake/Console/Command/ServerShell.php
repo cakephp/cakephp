@@ -78,7 +78,7 @@ class ServerShell extends AppShell {
  * or otherwise modify the pre-command flow.
  *
  * @return void
- * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell::startup
+ * @link https://book.cakephp.org/2.0/en/console-and-shells.html#Shell::startup
  */
 	public function startup() {
 		if (!empty($this->params['host'])) {

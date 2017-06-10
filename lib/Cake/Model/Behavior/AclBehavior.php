@@ -28,7 +28,7 @@ App::uses('Hash', 'Utility');
  * Enables objects to easily tie into an ACL system
  *
  * @package       Cake.Model.Behavior
- * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/acl.html
+ * @link https://book.cakephp.org/2.0/en/core-libraries/behaviors/acl.html
  */
 class AclBehavior extends ModelBehavior {
 
@@ -74,7 +74,7 @@ class AclBehavior extends ModelBehavior {
  * @param string|array|Model $ref Array with 'model' and 'foreign_key', model object, or string value
  * @param string $type Only needed when Acl is set up as 'both', specify 'Aro' or 'Aco' to get the correct node
  * @return array
- * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/acl.html#node
+ * @link https://book.cakephp.org/2.0/en/core-libraries/behaviors/acl.html#node
  */
 	public function node(Model $model, $ref = null, $type = null) {
 		if (empty($type)) {

@@ -30,7 +30,7 @@ App::uses('Set', 'Utility');
  * for future use.
  *
  * @package       Cake.Core
- * @link          http://book.cakephp.org/2.0/en/development/configuration.html#configure-class
+ * @link          https://book.cakephp.org/2.0/en/development/configuration.html#configure-class
  */
 class Configure {
 
@@ -154,7 +154,7 @@ class Configure {
  * Alternatively can be an array containing key(s) and value(s).
  * @param mixed $value Value to set for var
  * @return bool True if write was successful
- * @link http://book.cakephp.org/2.0/en/development/configuration.html#Configure::write
+ * @link https://book.cakephp.org/2.0/en/development/configuration.html#Configure::write
  */
 	public static function write($config, $value = null) {
 		if (!is_array($config)) {
@@ -187,7 +187,7 @@ class Configure {
  *
  * @param string|null $var Variable to obtain. Use '.' to access array elements.
  * @return mixed value stored in configure, or null.
- * @link http://book.cakephp.org/2.0/en/development/configuration.html#Configure::read
+ * @link https://book.cakephp.org/2.0/en/development/configuration.html#Configure::read
  */
 	public static function read($var = null) {
 		if ($var === null) {
@@ -244,7 +244,7 @@ class Configure {
  *
  * @param string $var the var to be deleted
  * @return void
- * @link http://book.cakephp.org/2.0/en/development/configuration.html#Configure::delete
+ * @link https://book.cakephp.org/2.0/en/development/configuration.html#Configure::delete
  */
 	public static function delete($var) {
 		static::$_values = Hash::remove(static::$_values, $var);
@@ -319,7 +319,7 @@ class Configure {
  * @param bool $merge if config files should be merged instead of simply overridden
  * @return bool False if file not found, true if load successful.
  * @throws ConfigureException Will throw any exceptions the reader raises.
- * @link http://book.cakephp.org/2.0/en/development/configuration.html#Configure::load
+ * @link https://book.cakephp.org/2.0/en/development/configuration.html#Configure::load
  */
 	public static function load($key, $config = 'default', $merge = true) {
 		$reader = static::_getReader($config);

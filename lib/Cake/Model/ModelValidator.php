@@ -29,7 +29,7 @@ App::uses('Hash', 'Utility');
  * definition array
  *
  * @package       Cake.Model
- * @link          http://book.cakephp.org/2.0/en/data-validation.html
+ * @link          https://book.cakephp.org/2.0/en/data-validation.html
  */
 class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 

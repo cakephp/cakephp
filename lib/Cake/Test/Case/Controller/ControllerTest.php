@@ -815,13 +815,13 @@ class ControllerTest extends CakeTestCase {
 		$Controller->Components = $this->getMock('ComponentCollection', array('trigger'));
 
 		$Controller->Components->expects($this->once())->method('trigger')
-			->will($this->returnValue(array('http://book.cakephp.org')));
+			->will($this->returnValue(array('https://book.cakephp.org')));
 
 		$Controller->response->expects($this->once())->method('statusCode')
 			->with(301);
 
 		$Controller->response->expects($this->once())->method('header')
-			->with('Location', 'http://book.cakephp.org');
+			->with('Location', 'https://book.cakephp.org');
 
 		$Controller->redirect('https://cakephp.org', 301, false);
 	}

@@ -9,7 +9,7 @@
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/configuration.html#loading-configuration-files CakePHP(tm) Configuration
+ * @link          https://book.cakephp.org/2.0/en/development/configuration.html#loading-configuration-files CakePHP(tm) Configuration
  * @package       Cake.Configure
  * @since         CakePHP(tm) v 2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License

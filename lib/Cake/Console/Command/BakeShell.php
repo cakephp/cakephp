@@ -30,7 +30,7 @@ App::uses('Model', 'Model');
  * models, and views. Going further, Bake can also write Unit Tests for you.
  *
  * @package       Cake.Console.Command
- * @link          http://book.cakephp.org/2.0/en/console-and-shells/code-generation-with-bake.html
+ * @link          https://book.cakephp.org/2.0/en/console-and-shells/code-generation-with-bake.html
  */
 class BakeShell extends AppShell {
 

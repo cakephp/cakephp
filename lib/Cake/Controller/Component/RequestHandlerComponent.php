@@ -31,7 +31,7 @@ App::uses('Xml', 'Utility');
  * should respond to the different needs of a handheld computer and a desktop machine.
  *
  * @package       Cake.Controller.Component
- * @link http://book.cakephp.org/2.0/en/core-libraries/components/request-handling.html
+ * @link https://book.cakephp.org/2.0/en/core-libraries/components/request-handling.html
  */
 class RequestHandlerComponent extends Component {
 

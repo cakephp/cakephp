@@ -32,7 +32,7 @@ App::uses('Security', 'Utility');
  * - Limiting cross controller communication.
  *
  * @package       Cake.Controller.Component
- * @link http://book.cakephp.org/2.0/en/core-libraries/components/security-component.html
+ * @link https://book.cakephp.org/2.0/en/core-libraries/components/security-component.html
  */
 class SecurityComponent extends Component {
 
@@ -254,7 +254,7 @@ class SecurityComponent extends Component {
  *
  * @return void
  * @deprecated 3.0.0 Use CakeRequest::onlyAllow() instead.
- * @link http://book.cakephp.org/2.0/en/core-libraries/components/security-component.html#SecurityComponent::requirePost
+ * @link https://book.cakephp.org/2.0/en/core-libraries/components/security-component.html#SecurityComponent::requirePost
  */
 	public function requirePost() {
 		$args = func_get_args();
@@ -298,7 +298,7 @@ class SecurityComponent extends Component {
  * Sets the actions that require a request that is SSL-secured, or empty for all actions
  *
  * @return void
- * @link http://book.cakephp.org/2.0/en/core-libraries/components/security-component.html#SecurityComponent::requireSecure
+ * @link https://book.cakephp.org/2.0/en/core-libraries/components/security-component.html#SecurityComponent::requireSecure
  */
 	public function requireSecure() {
 		$args = func_get_args();
@@ -313,7 +313,7 @@ class SecurityComponent extends Component {
  * SecurityComponent::$allowedActions.
  *
  * @return void
- * @link http://book.cakephp.org/2.0/en/core-libraries/components/security-component.html#SecurityComponent::requireAuth
+ * @link https://book.cakephp.org/2.0/en/core-libraries/components/security-component.html#SecurityComponent::requireAuth
  */
 	public function requireAuth() {
 		$args = func_get_args();
@@ -328,7 +328,7 @@ class SecurityComponent extends Component {
  * @param string $error Error method
  * @return mixed If specified, controller blackHoleCallback's response, or no return otherwise
  * @see SecurityComponent::$blackHoleCallback
- * @link http://book.cakephp.org/2.0/en/core-libraries/components/security-component.html#handling-blackhole-callbacks
+ * @link https://book.cakephp.org/2.0/en/core-libraries/components/security-component.html#handling-blackhole-callbacks
  * @throws BadRequestException
  */
 	public function blackHole(Controller $controller, $error = '') {

@@ -25,7 +25,7 @@ App::uses('CakeSchema', 'Model');
  * of your database.
  *
  * @package       Cake.Console.Command
- * @link          http://book.cakephp.org/2.0/en/console-and-shells/schema-management-and-migrations.html
+ * @link          https://book.cakephp.org/2.0/en/console-and-shells/schema-management-and-migrations.html
  */
 class SchemaShell extends AppShell {
 

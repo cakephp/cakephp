@@ -25,7 +25,7 @@ App::uses('AclInterface', 'Controller/Component/Acl');
  * you specify must implement `AclInterface`
  *
  * @package       Cake.Controller.Component
- * @link http://book.cakephp.org/2.0/en/core-libraries/components/access-control-lists.html
+ * @link https://book.cakephp.org/2.0/en/core-libraries/components/access-control-lists.html
  */
 class AclComponent extends Component {
 

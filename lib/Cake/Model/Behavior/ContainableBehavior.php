@@ -26,7 +26,7 @@ App::uses('ModelBehavior', 'Model');
  * data returned.
  *
  * @package       Cake.Model.Behavior
- * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/containable.html
+ * @link https://book.cakephp.org/2.0/en/core-libraries/behaviors/containable.html
  */
 class ContainableBehavior extends ModelBehavior {
 
@@ -226,7 +226,7 @@ class ContainableBehavior extends ModelBehavior {
  *
  * @param Model $Model Model on which binding restriction is being applied
  * @return void
- * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/containable.html#using-containable
+ * @link https://book.cakephp.org/2.0/en/core-libraries/behaviors/containable.html#using-containable
  */
 	public function contain(Model $Model) {
 		$args = func_get_args();

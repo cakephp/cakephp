@@ -2,7 +2,7 @@
 /**
  * CakeBaseReporter contains common functionality to all cake test suite reporters.
  *
- * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
+ * CakePHP(tm) Tests <https://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License

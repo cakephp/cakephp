@@ -25,7 +25,7 @@ App::uses('Validation', 'Utility');
  * rules for applying such method to a field.
  *
  * @package       Cake.Model.Validator
- * @link          http://book.cakephp.org/2.0/en/data-validation.html
+ * @link          https://book.cakephp.org/2.0/en/data-validation.html
  */
 class CakeValidationRule {
 
