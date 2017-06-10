@@ -12,12 +12,10 @@
  * @since         3.5.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\ORM;
+namespace Cake\Datasource;
 
 use Cake\Core\InstanceConfigTrait;
-use Cake\Datasource\QueryInterface;
-use Cake\Datasource\RepositoryInterface;
-use Cake\ORM\Exception\PageOutOfBoundsException;
+use Cake\Datasource\Exception\PageOutOfBoundsException;
 use Cake\Utility\Hash;
 
 /**

@@ -10,7 +10,7 @@
  * @since         3.5.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\ORM\Exception;
+namespace Cake\Datasource\Exception;
 
 use Cake\Core\Exception\Exception;
 

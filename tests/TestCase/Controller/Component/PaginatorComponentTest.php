@@ -19,10 +19,10 @@ use Cake\Controller\Component\PaginatorComponent;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
+use Cake\Datasource\Paginator;
 use Cake\Http\ServerRequest;
 use Cake\Network\Exception\NotFoundException;
 use Cake\ORM\Entity;
-use Cake\ORM\Paginator;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
