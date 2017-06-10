@@ -1,14 +1,45 @@
 <?php
+/**
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
+ * @since         3.5.0
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ */
 namespace Cake\Console;
 
 use ArrayIterator;
+use Countable;
 use InvalidArgumentException;
 use IteratorAggregate;
 
-class CommandCollection implements IteratorAggregate
+/**
+ * Collection for Commands.
+ *
+ * Used by Applications to whitelist their console commands.
+ * CakePHP will use the mapped commands to construct and dispatch
+ * shell commands.
+ */
+class CommandCollection implements IteratorAggregate, Countable
 {
+    /**
+     * Command list
+     *
+     * @var array
+     */
     protected $commands = [];
 
+    /**
+     * Constructor
+     *
+     * @param array $commands The map of commands to add to the collection.
+     */
     public function __construct(array $commands = [])
     {
         foreach ($commands as $name => $command) {
@@ -16,6 +47,13 @@ class CommandCollection implements IteratorAggregate
         }
     }
 
+    /**
+     * Add a command to the collection
+     *
+     * @param string $name The name of the command you want to map.
+     * @param string|\Cake\Console\Shell $command The command to map.
+     * @return $this
+     */
     public function add($name, $command)
     {
         // Once we have a new Command class this should check
@@ -30,8 +68,17 @@ class CommandCollection implements IteratorAggregate
         return $this;
     }
 
+    /**
+     * Remove a command from the collection if it exists.
+     *
+     * @param string $name The named shell.
+     * @return $this
+     */
     public function remove($name)
     {
+        unset($this->commands[$name]);
+
+        return $this;
     }
 
     /**
@@ -57,11 +104,29 @@ class CommandCollection implements IteratorAggregate
         if (!$this->has($name)) {
             throw new InvalidArgumentException("The $name is not a known command name.");
         }
+
         return $this->commands[$name];
     }
 
+    /**
+     * Implementation of IteratorAggregate.
+     *
+     * @return \ArrayIterator
+     */
     public function getIterator()
     {
         return new ArrayIterator($this->commands);
+    }
+
+    /**
+     * Implementation of Countable.
+     *
+     * Get the number of commands in the collection.
+     *
+     * @return int
+     */
+    public function count()
+    {
+        return count($this->commands);
     }
 }
