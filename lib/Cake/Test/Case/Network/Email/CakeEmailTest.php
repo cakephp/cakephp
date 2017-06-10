@@ -2331,7 +2331,7 @@ class CakeEmailTest extends CakeTestCase {
  * @return void
  */
 	public function testWrapLongLine() {
-		$message = '<a href="https://cakephp.org">' . str_repeat('x', CakeEmail::LINE_LENGTH_MUST) . "</a>";
+		$message = '<a href="http://cakephp.org">' . str_repeat('x', CakeEmail::LINE_LENGTH_MUST) . "</a>";
 
 		$this->CakeEmail->reset();
 		$this->CakeEmail->transport('Debug');
@@ -2340,8 +2340,8 @@ class CakeEmailTest extends CakeTestCase {
 		$this->CakeEmail->subject('Wordwrap Test');
 		$this->CakeEmail->config(array('empty'));
 		$result = $this->CakeEmail->send($message);
-		$expected = "<a\r\n" . 'href="https://cakephp.org">' . str_repeat('x', CakeEmail::LINE_LENGTH_MUST - 26) . "\r\n" .
-			str_repeat('x', 27) . "\r\n</a>\r\n\r\n";
+		$expected = "<a\r\n" . 'href="http://cakephp.org">' . str_repeat('x', CakeEmail::LINE_LENGTH_MUST - 26) . "\r\n" .
+			str_repeat('x', 26) . "\r\n</a>\r\n\r\n";
 		$this->assertEquals($expected, $result['message']);
 		$this->assertLineLengths($result['message']);
 
