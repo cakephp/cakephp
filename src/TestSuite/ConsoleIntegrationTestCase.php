@@ -90,7 +90,6 @@ class ConsoleIntegrationTestCase extends TestCase
         parent::tearDown();
 
         $this->_exitCode = null;
-        $this->_io = null;
         $this->_out = null;
         $this->_err = null;
         $this->_in = null;
