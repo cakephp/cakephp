@@ -57,9 +57,9 @@ class PaginatorComponent extends Component
     ];
 
     /**
-     * ORM paginator instance.
+     * Datasource paginator instance.
      *
-     * @var \Cake\ORM\Paginator
+     * @var \Cake\Datasource\Paginator
      */
     protected $_paginator;
 
@@ -236,7 +236,7 @@ class PaginatorComponent extends Component
     /**
      * Set paginator instance.
      *
-     * @param \Cake\ORM\Paginator $paginator Paginator instance.
+     * @param \Cake\Datasource\Paginator $paginator Paginator instance.
      * @return self
      */
     public function setPaginator(Paginator $paginator)
@@ -249,7 +249,7 @@ class PaginatorComponent extends Component
     /**
      * Get paginator instance.
      *
-     * @return \Cake\ORM\Paginator
+     * @return \Cake\Datasource\Paginator
      */
     public function getPaginator()
     {
