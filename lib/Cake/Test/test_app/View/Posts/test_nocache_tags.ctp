@@ -111,7 +111,7 @@ if (!empty($filePresent)):
 	<ul><li><?php echo __d('cake', 'The Rapid Development Framework'); ?></li></ul></li>
 	<li><a href="http://manual.cakephp.org"><?php echo __d('cake', 'CakePHP Manual'); ?> </a>
 	<ul><li><?php echo __d('cake', 'Your Rapid Development Cookbook'); ?></li></ul></li>
-	<li><a href="http://api.cakephp.org"><?php echo __d('cake', 'CakePHP API'); ?> </a>
+	<li><a href="https://api.cakephp.org"><?php echo __d('cake', 'CakePHP API'); ?> </a>
 	<ul><li><?php echo __d('cake', 'Docblock Your Best Friend'); ?></li></ul></li>
 	<li><a href="http://www.cakeforge.org"><?php echo __d('cake', 'CakeForge'); ?> </a>
 	<ul><li><?php echo __d('cake', 'Open Development for CakePHP'); ?></li></ul></li>
