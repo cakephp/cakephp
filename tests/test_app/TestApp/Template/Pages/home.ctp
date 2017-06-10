@@ -13,7 +13,7 @@ endif;
 ?>
 <h2><?= sprintf('Release Notes for CakePHP %s.', Configure::version()); ?></h2>
 <p>
-    <a href="http://cakephp.org/changelogs/<?= Configure::version(); ?>">Read the changelog</a>
+    <a href="https://cakephp.org/changelogs/<?= Configure::version(); ?>">Read the changelog</a>
 </p>
 
 <?php if (file_exists(WWW_ROOT . 'css' . DS . 'cake.generic.css')): ?>
@@ -142,7 +142,7 @@ Our primary goal is to provide a structured framework that enables PHP users at 
 </p>
 
 <ul
-    <li><a href="http://cakephp.org">CakePHP</a>
+    <li><a href="https://cakephp.org">CakePHP</a>
     <ul><li>The Rapid Development Framework</li></ul></li>
     <li><a href="http://book.cakephp.org">CakePHP Documentation </a>
     <ul><li>Your Rapid Development Cookbook</li></ul></li>
