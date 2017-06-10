@@ -11,7 +11,7 @@
  * @link          https://cakephp.org CakePHP Project
  * @package       Cake.Console.Command
  * @since         CakePHP v 2.5
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('AppShell', 'Console/Command');

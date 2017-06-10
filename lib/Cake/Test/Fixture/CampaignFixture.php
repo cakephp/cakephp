@@ -14,7 +14,7 @@
  * @link          http://www.cakephp.org
  * @package       Cake.Test.Fixture
  * @since         1.2
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
 /**

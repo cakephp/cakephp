@@ -13,7 +13,7 @@
  * @link          https://cakephp.org CakePHP(tm) Project
  * @package       app.Test.Case
  * @since         CakePHP(tm) v 2.5
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
 class AllTestsTest extends CakeTestSuite {

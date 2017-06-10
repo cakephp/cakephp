@@ -13,7 +13,7 @@
  * @link          https://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.TestApp.Plugin.TestPlugin.Config
  * @since         CakePHP(tm) v 1.3
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
 $config['plugin_load'] = '/test_app/plugins/test_plugin/config/load.php';

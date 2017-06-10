@@ -13,7 +13,7 @@
  * @link          https://cakephp.org CakePHP Project
  * @package       Cake.Test.TestApp.Model
  * @since         CakePHP v 2.4
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
 /**

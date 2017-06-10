@@ -13,7 +13,7 @@
  * @link          https://cakephp.org CakePHP(tm) Project
  * @package       Cake.TestSuite
  * @since         CakePHP(tm) v 1.3
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
 define('CORE_TEST_CASES', CAKE . 'Test' . DS . 'Case');

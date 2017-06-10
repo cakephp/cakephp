@@ -13,7 +13,7 @@
  * @link          https://cakephp.org CakePHP(tm) Project
  * @package       Cake.Config
  * @since         CakePHP(tm) v 1.1.11.4062
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
 $versionFile = file(CAKE . 'VERSION.txt');

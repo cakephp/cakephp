@@ -19,7 +19,7 @@
  * @link          https://cakephp.org CakePHP(tm) Project
  * @package       Cake.Config.unicode.casefolding
  * @since         CakePHP(tm) v 1.2.0.5691
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
 /**
