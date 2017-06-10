@@ -99,7 +99,7 @@ if (!empty($filePresent)):
 <?php echo __d('cake', 'Our primary goal is to provide a structured framework that enables PHP users at all levels to rapidly develop robust web applications, without any loss to flexibility.'); ?>
 </p>
 <ul>
-	<li><a href="http://cakefoundation.org/"><?php echo __d('cake', 'Cake Software Foundation'); ?> </a>
+	<li><a href="https://cakefoundation.org/"><?php echo __d('cake', 'Cake Software Foundation'); ?> </a>
 	<ul><li><?php echo __d('cake', 'Promoting development related to CakePHP'); ?></li></ul></li>
 	<li><a href="http://bakery.cakephp.org"><?php echo __d('cake', 'The Bakery'); ?> </a>
 	<ul><li><?php echo __d('cake', 'Everything CakePHP'); ?></li></ul></li>

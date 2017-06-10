@@ -1,6 +1,6 @@
 # $Id$
 #
-# Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+# Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
 #								1785 E. Sahara Avenue, Suite 490-204
 #								Las Vegas, Nevada 89104
 #
