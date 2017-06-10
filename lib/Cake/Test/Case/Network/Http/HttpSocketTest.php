@@ -994,7 +994,7 @@ class HttpSocketTest extends CakeTestCase {
 
 		$this->Socket->config['request']['uri']['host'] = 'bakery.cakephp.org';
 		$url = $this->Socket->url();
-		$this->assertEquals('https://bakery.cakephp.org/', $url);
+		$this->assertEquals('http://bakery.cakephp.org/', $url);
 
 		$this->Socket->configUri('http://www.cakephp.org');
 		$url = $this->Socket->url('/search?q=bar');

@@ -2341,7 +2341,7 @@ class CakeEmailTest extends CakeTestCase {
 		$this->CakeEmail->config(array('empty'));
 		$result = $this->CakeEmail->send($message);
 		$expected = "<a\r\n" . 'href="https://cakephp.org">' . str_repeat('x', CakeEmail::LINE_LENGTH_MUST - 26) . "\r\n" .
-			str_repeat('x', 26) . "\r\n</a>\r\n\r\n";
+			str_repeat('x', 27) . "\r\n</a>\r\n\r\n";
 		$this->assertEquals($expected, $result['message']);
 		$this->assertLineLengths($result['message']);
 
