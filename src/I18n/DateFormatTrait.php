@@ -209,7 +209,7 @@ trait DateFormatTrait
         $key = "{$locale}.{$dateFormat}.{$timeFormat}.{$timezone}.{$calendar}.{$pattern}";
 
         if (!isset(static::$_formatters[$key])) {
-            if ($timezone === '+00:00') {
+            if ($timezone === '+00:00' || $timezone === 'Z') {
                 $timezone = 'UTC';
             } elseif ($timezone[0] === '+' || $timezone[0] === '-') {
                 $timezone = 'GMT' . $timezone;
