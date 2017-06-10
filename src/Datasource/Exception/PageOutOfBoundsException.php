@@ -29,6 +29,7 @@ class PageOutOfBoundsException extends Exception
      *
      * @param string|null $message The error message.
      * @param int $code The code of the error, is also the HTTP status code for the error.
+     * @param \Exception|null $previous The previous exception.
      */
     public function __construct($message = null, $code = 404, $previous = null)
     {
