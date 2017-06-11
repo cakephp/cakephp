@@ -40,6 +40,20 @@ class ProgressHelperTest extends TestCase
     }
 
     /**
+     * Test using the helper manually.
+     *
+     * @return void
+     */
+    public function testInit()
+    {
+        $helper = $this->helper->init([
+            'total' => 200,
+            'width' => 50
+        ]);
+        $this->assertSame($helper, $this->helper, 'init should be chainable');
+    }
+
+    /**
      * Test that a callback is required.
      *
      * @expectedException \RuntimeException
