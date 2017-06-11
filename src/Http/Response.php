@@ -2041,12 +2041,12 @@ class Response implements ResponseInterface
      *
      * ### Full URI
      * ```
-     * cors($request, 'http://www.cakephp.org');
+     * cors($request, 'https://www.cakephp.org');
      * ```
      *
      * ### URI with wildcard
      * ```
-     * cors($request, 'http://*.cakephp.org');
+     * cors($request, 'https://*.cakephp.org');
      * ```
      *
      * ### Ignoring the requested protocol
