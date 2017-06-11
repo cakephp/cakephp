@@ -387,7 +387,7 @@ class ResponseTransformerTest extends TestCase
 
         $result = ResponseTransformer::toPsr($cake);
         $this->assertEquals(
-            'bytes 10-20/15640',
+            'bytes 10-20/15641',
             $result->getHeaderLine('Content-Range'),
             'Content-Range header missing'
         );

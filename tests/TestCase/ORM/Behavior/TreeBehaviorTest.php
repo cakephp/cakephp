@@ -336,7 +336,7 @@ class TreeBehaviorTest extends TestCase
             '/lorem/ipsum.html' => '  4',
             '/what/the.html' => '   5',
             '/yeah/another-link.html' => '6',
-            'http://cakephp.org' => ' 7',
+            'https://cakephp.org' => ' 7',
             '/page/who-we-are.html' => '8'
         ];
         $this->assertEquals($expected, $result);
@@ -366,7 +366,7 @@ class TreeBehaviorTest extends TestCase
             '/lorem/ipsum.html' => '  4',
             '/what/the.html' => '   5',
             '/yeah/another-link.html' => '6',
-            'http://cakephp.org' => ' 7',
+            'https://cakephp.org' => ' 7',
             '/page/who-we-are.html' => '8'
         ];
         $this->assertEquals($expected, $result);

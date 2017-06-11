@@ -1601,7 +1601,7 @@ class EmailTest extends TestCase
             "\r\n" .
             "\r\n" .
             "\r\n" .
-            "This email was sent using the CakePHP Framework, http://cakephp.org." .
+            "This email was sent using the CakePHP Framework, https://cakephp.org." .
             "\r\n" .
             "\r\n" .
             "--$boundary\r\n" .
@@ -1636,7 +1636,7 @@ class EmailTest extends TestCase
         $this->Email->charset = 'ISO-2022-JP';
         $result = $this->Email->send();
 
-        $expected = mb_convert_encoding('CakePHP Framework を使って送信したメールです。 http://cakephp.org.', 'ISO-2022-JP');
+        $expected = mb_convert_encoding('CakePHP Framework を使って送信したメールです。 https://cakephp.org.', 'ISO-2022-JP');
         $this->assertContains($expected, $result['message']);
         $this->assertContains('Message-ID: ', $result['headers']);
         $this->assertContains('To: ', $result['headers']);
@@ -1979,7 +1979,7 @@ class EmailTest extends TestCase
         $this->Email->emailFormat('both');
         $this->Email->send();
 
-        $expected = '<p>This email was sent using the <a href="http://cakephp.org">CakePHP Framework</a></p>';
+        $expected = '<p>This email was sent using the <a href="https://cakephp.org">CakePHP Framework</a></p>';
         $this->assertContains($expected, $this->Email->message(Email::MESSAGE_HTML));
 
         $expected = 'This email was sent using the CakePHP Framework, http://cakephp.org.';
