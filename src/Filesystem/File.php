@@ -1,16 +1,16 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         0.2.9
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Filesystem;
 
@@ -26,7 +26,7 @@ class File
      * Folder object of the file
      *
      * @var \Cake\Filesystem\Folder
-     * @link http://book.cakephp.org/3.0/en/core-libraries/file-folder.html
+     * @link https://book.cakephp.org/3.0/en/core-libraries/file-folder.html
      */
     public $Folder;
 
@@ -34,7 +34,7 @@ class File
      * File name
      *
      * @var string
-     * http://book.cakephp.org/3.0/en/core-libraries/file-folder.html#Cake\Filesystem\File::$name
+     * https://book.cakephp.org/3.0/en/core-libraries/file-folder.html#Cake\Filesystem\File::$name
      */
     public $name;
 
@@ -42,7 +42,7 @@ class File
      * File info
      *
      * @var array
-     * http://book.cakephp.org/3.0/en/core-libraries/file-folder.html#Cake\Filesystem\File::$info
+     * https://book.cakephp.org/3.0/en/core-libraries/file-folder.html#Cake\Filesystem\File::$info
      */
     public $info = [];
 
@@ -50,7 +50,7 @@ class File
      * Holds the file handler resource if the file is opened
      *
      * @var resource
-     * http://book.cakephp.org/3.0/en/core-libraries/file-folder.html#Cake\Filesystem\File::$handle
+     * https://book.cakephp.org/3.0/en/core-libraries/file-folder.html#Cake\Filesystem\File::$handle
      */
     public $handle;
 
@@ -58,7 +58,7 @@ class File
      * Enable locking for file reading and writing
      *
      * @var bool
-     * http://book.cakephp.org/3.0/en/core-libraries/file-folder.html#Cake\Filesystem\File::$lock
+     * https://book.cakephp.org/3.0/en/core-libraries/file-folder.html#Cake\Filesystem\File::$lock
      */
     public $lock;
 
@@ -68,7 +68,7 @@ class File
      * Current file's absolute path
      *
      * @var mixed
-     * http://book.cakephp.org/3.0/en/core-libraries/file-folder.html#Cake\Filesystem\File::$path
+     * https://book.cakephp.org/3.0/en/core-libraries/file-folder.html#Cake\Filesystem\File::$path
      */
     public $path;
 
@@ -78,7 +78,7 @@ class File
      * @param string $path Path to file
      * @param bool $create Create file if it does not exist (if true)
      * @param int $mode Mode to apply to the folder holding the file
-     * @link http://book.cakephp.org/3.0/en/core-libraries/file-folder.html#file-api
+     * @link https://book.cakephp.org/3.0/en/core-libraries/file-folder.html#file-api
      */
     public function __construct($path, $create = false, $mode = 0755)
     {
@@ -218,7 +218,7 @@ class File
      * Write given data to this file.
      *
      * @param string $data Data to write to this File.
-     * @param string $mode Mode of writing. {@link http://php.net/fwrite See fwrite()}.
+     * @param string $mode Mode of writing. {@link https://secure.php.net/fwrite See fwrite()}.
      * @param bool $force Force the file to open
      * @return bool Success
      */
@@ -375,7 +375,7 @@ class File
      * Get md5 Checksum of file with previous check of Filesize
      *
      * @param int|bool $maxsize in MB or true to force
-     * @return string|false md5 Checksum {@link http://php.net/md5_file See md5_file()}, or false in case of an error
+     * @return string|false md5 Checksum {@link https://secure.php.net/md5_file See md5_file()}, or false in case of an error
      */
     public function md5($maxsize = 5)
     {

@@ -1,16 +1,16 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         0.10.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\I18n;
 
@@ -21,7 +21,7 @@ use NumberFormatter;
  *
  * Methods to make numbers more readable.
  *
- * @link http://book.cakephp.org/3.0/en/core-libraries/number.html
+ * @link https://book.cakephp.org/3.0/en/core-libraries/number.html
  */
 class Number
 {
@@ -65,7 +65,7 @@ class Number
      * @param int $precision The precision of the returned number.
      * @param array $options Additional options
      * @return string Formatted float.
-     * @link http://book.cakephp.org/3.0/en/core-libraries/number.html#formatting-floating-point-numbers
+     * @link https://book.cakephp.org/3.0/en/core-libraries/number.html#formatting-floating-point-numbers
      */
     public static function precision($value, $precision = 3, array $options = [])
     {
@@ -79,7 +79,7 @@ class Number
      *
      * @param int $size Size in bytes
      * @return string Human readable size
-     * @link http://book.cakephp.org/3.0/en/core-libraries/number.html#interacting-with-human-readable-values
+     * @link https://book.cakephp.org/3.0/en/core-libraries/number.html#interacting-with-human-readable-values
      */
     public static function toReadableSize($size)
     {
@@ -109,7 +109,7 @@ class Number
      * @param int $precision The precision of the returned number
      * @param array $options Options
      * @return string Percentage string
-     * @link http://book.cakephp.org/3.0/en/core-libraries/number.html#formatting-percentages
+     * @link https://book.cakephp.org/3.0/en/core-libraries/number.html#formatting-percentages
      */
     public static function toPercentage($value, $precision = 2, array $options = [])
     {

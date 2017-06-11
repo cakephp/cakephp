@@ -1,16 +1,16 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         0.2.9
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Filesystem;
 
@@ -24,7 +24,7 @@ use RecursiveIteratorIterator;
  * Folder structure browser, lists folders and files.
  * Provides an Object interface for Common directory related tasks.
  *
- * @link http://book.cakephp.org/3.0/en/core-libraries/file-folder.html#folder-api
+ * @link https://book.cakephp.org/3.0/en/core-libraries/file-folder.html#folder-api
  */
 class Folder
 {
@@ -86,7 +86,7 @@ class Folder
      * Mode to be used on create. Does nothing on windows platforms.
      *
      * @var int
-     * http://book.cakephp.org/3.0/en/core-libraries/file-folder.html#Cake\Filesystem\Folder::$mode
+     * https://book.cakephp.org/3.0/en/core-libraries/file-folder.html#Cake\Filesystem\Folder::$mode
      */
     public $mode = 0755;
 
