@@ -16,7 +16,6 @@ namespace Cake\Datasource;
 
 use Cake\Core\InstanceConfigTrait;
 use Cake\Datasource\Exception\PageOutOfBoundsException;
-use Cake\Utility\Hash;
 
 /**
  * This class is used to handle automatic model data pagination.
@@ -274,9 +273,9 @@ class Paginator implements PaginatorInterface
      */
     public function mergeOptions($params, $settings)
     {
-        $scope = Hash::get($settings, 'scope', null);
-        if ($scope) {
-            $params = Hash::get($params, $scope, []);
+        if (!empty($settings['scope'])) {
+            $scope = $settings['scope'];
+            $params = !empty($params[$scope]) ? (array)$params[$scope] : [];
         }
         $params = array_intersect_key($params, array_flip($this->config('whitelist')));
 
