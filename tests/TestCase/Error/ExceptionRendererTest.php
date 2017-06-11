@@ -580,6 +580,19 @@ class ExceptionRendererTest extends TestCase
         return [
             [
                 new MissingActionException([
+                    'controller' => 'postsController',
+                    'action' => 'index',
+                    'prefix' => '',
+                    'plugin' => '',
+                ]),
+                [
+                    '/Missing Method in PostsController/',
+                    '/<em>PostsController::index\(\)<\/em>/'
+                ],
+                404
+            ],
+            [
+                new MissingActionException([
                     'controller' => 'PostsController',
                     'action' => 'index',
                     'prefix' => '',
