@@ -45,7 +45,7 @@ trait DateFormatTrait
      * The format to use when when converting this object to json
      *
      * The format should be either the formatting constants from IntlDateFormatter as
-     * described in (http://www.php.net/manual/en/class.intldateformatter.php) or a pattern
+     * described in (https://secure.php.net/manual/en/class.intldateformatter.php) or a pattern
      * as specified in (http://www.icu-project.org/apiref/icu4c/classSimpleDateFormat.html#details)
      *
      * It is possible to provide an array of 2 constants. In this case, the first position
@@ -129,7 +129,7 @@ trait DateFormatTrait
      * possible formats accepted by this function.
      *
      * You can read about the available IntlDateFormatter constants at
-     * http://www.php.net/manual/en/class.intldateformatter.php
+     * https://secure.php.net/manual/en/class.intldateformatter.php
      *
      * If you need to display the date in a different timezone than the one being used for
      * this Time object without altering its internal state, you can pass a timezone

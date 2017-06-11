@@ -34,7 +34,7 @@ class FrozenDate extends ChronosDate implements JsonSerializable
      * and `__toString`
      *
      * The format should be either the formatting constants from IntlDateFormatter as
-     * described in (http://www.php.net/manual/en/class.intldateformatter.php) or a pattern
+     * described in (https://secure.php.net/manual/en/class.intldateformatter.php) or a pattern
      * as specified in (http://www.icu-project.org/apiref/icu4c/classSimpleDateFormat.html#details)
      *
      * It is possible to provide an array of 2 constants. In this case, the first position
@@ -59,7 +59,7 @@ class FrozenDate extends ChronosDate implements JsonSerializable
      * The format to use when formatting a time using `Cake\I18n\Date::nice()`
      *
      * The format should be either the formatting constants from IntlDateFormatter as
-     * described in (http://www.php.net/manual/en/class.intldateformatter.php) or a pattern
+     * described in (https://secure.php.net/manual/en/class.intldateformatter.php) or a pattern
      * as specified in (http://www.icu-project.org/apiref/icu4c/classSimpleDateFormat.html#details)
      *
      * It is possible to provide an array of 2 constants. In this case, the first position

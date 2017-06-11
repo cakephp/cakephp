@@ -49,7 +49,7 @@ class Digest
      * @param \Cake\Http\Client\Request $request The request object.
      * @param array $credentials Authentication credentials.
      * @return \Cake\Http\Client\Request The updated request.
-     * @see http://www.ietf.org/rfc/rfc2617.txt
+     * @see https://www.ietf.org/rfc/rfc2617.txt
      */
     public function authentication(Request $request, array $credentials)
     {

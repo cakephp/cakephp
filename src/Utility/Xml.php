@@ -282,7 +282,7 @@ class Xml
                     if ($key[0] !== '@' && $format === 'tags') {
                         if (!is_numeric($value)) {
                             // Escape special characters
-                            // http://www.w3.org/TR/REC-xml/#syntax
+                            // https://www.w3.org/TR/REC-xml/#syntax
                             // https://bugs.php.net/bug.php?id=36795
                             $child = $dom->createElement($key, '');
                             $child->appendChild(new DOMText($value));

@@ -35,7 +35,7 @@ class Text
      * Warning: This method should not be used as a random seed for any cryptographic operations.
      * Instead you should use the openssl or mcrypt extensions.
      *
-     * @see http://www.ietf.org/rfc/rfc4122.txt
+     * @see https://www.ietf.org/rfc/rfc4122.txt
      * @return string RFC 4122 UUID
      * @copyright Matt Farina MIT License https://github.com/lootils/uuid/blob/master/LICENSE
      */
@@ -1061,7 +1061,7 @@ class Text
      * @param string|null $transliteratorId Transliterator identifier. If null
      *   Text::$_defaultTransliteratorId will be used.
      * @return string
-     * @see http://php.net/manual/en/transliterator.transliterate.php
+     * @see https://secure.php.net/manual/en/transliterator.transliterate.php
      */
     public static function transliterate($string, $transliteratorId = null)
     {

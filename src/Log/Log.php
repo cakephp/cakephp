@@ -151,7 +151,7 @@ class Log
 
     /**
      * Log levels as detailed in RFC 5424
-     * http://tools.ietf.org/html/rfc5424
+     * https://tools.ietf.org/html/rfc5424
      *
      * @var array
      */

@@ -39,7 +39,7 @@ use SimpleXmlElement;
  * CakePHP Email class.
  *
  * This class is used for sending Internet Message Format based
- * on the standard outlined in http://www.rfc-editor.org/rfc/rfc2822.txt
+ * on the standard outlined in https://www.rfc-editor.org/rfc/rfc2822.txt
  *
  * ### Configuration
  *

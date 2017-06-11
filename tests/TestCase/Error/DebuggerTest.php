@@ -92,7 +92,7 @@ class DebuggerTest extends TestCase
         ini_set('docref_root', '');
         $this->assertEquals(ini_get('docref_root'), '');
         new Debugger();
-        $this->assertEquals(ini_get('docref_root'), 'http://php.net/');
+        $this->assertEquals(ini_get('docref_root'), 'https://secure.php.net/');
     }
 
     /**

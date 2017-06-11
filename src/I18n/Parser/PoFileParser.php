@@ -27,7 +27,7 @@ class PoFileParser
     /**
      * Parses portable object (PO) format.
      *
-     * From http://www.gnu.org/software/gettext/manual/gettext.html#PO-Files
+     * From https://www.gnu.org/software/gettext/manual/gettext.html#PO-Files
      * we should be able to parse files having:
      *
      * white-space

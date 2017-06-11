@@ -912,8 +912,8 @@ class Response implements ResponseInterface
      * If the status code is 304 or 204, the existing Content-Type header
      * will be cleared, as these response codes have no body.
      *
-     * @link http://tools.ietf.org/html/rfc7231#section-6
-     * @link http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
+     * @link https://tools.ietf.org/html/rfc7231#section-6
+     * @link https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
      * @param int $code The 3-digit integer result code to set.
      * @param string $reasonPhrase The reason phrase to use with the
      *     provided status code; if none is provided, implementations MAY
@@ -943,7 +943,7 @@ class Response implements ResponseInterface
      * listed in the IANA HTTP Status Code Registry) for the response's
      * status code.
      *
-     * @link http://tools.ietf.org/html/rfc7231#section-6
+     * @link https://tools.ietf.org/html/rfc7231#section-6
      * @link http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
      * @return string Reason phrase; must return an empty string if none present.
      */
@@ -2422,7 +2422,7 @@ class Response implements ResponseInterface
      * Stop execution of the current script. Wraps exit() making
      * testing easier.
      *
-     * @param int|string $status See http://php.net/exit for values
+     * @param int|string $status See https://secure.php.net/exit for values
      * @return void
      * @deprecated 3.4.0 Will be removed in 4.0.0
      */

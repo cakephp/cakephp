@@ -14,7 +14,7 @@
  *
  * Parts of this file are derived from Zend-Diactoros
  *
- * @copyright Copyright (c) 2015-2016 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2015-2016 Zend Technologies USA Inc. (https://www.zend.com/)
  * @license   https://github.com/zendframework/zend-diactoros/blob/master/LICENSE.md New BSD License
  */
 namespace Cake\Http;
@@ -272,7 +272,7 @@ class ResponseEmitter implements EmitterInterface
 
     /**
      * Parse content-range header
-     * http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.16
+     * https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.16
      *
      * @param string $header The Content-Range header to parse.
      * @return false|array [unit, first, last, length]; returns false if no

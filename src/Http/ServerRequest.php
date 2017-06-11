@@ -2055,7 +2055,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * inferred from the request's Uri. This also lets you change the request
      * target's form to an absolute-form, authority-form or asterisk-form
      *
-     * @link http://tools.ietf.org/html/rfc7230#section-2.7 (for the various
+     * @link https://tools.ietf.org/html/rfc7230#section-2.7 (for the various
      *   request-target forms allowed in request messages)
      * @param string $target The request target.
      * @return static

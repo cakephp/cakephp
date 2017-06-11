@@ -218,7 +218,7 @@ class File
      * Write given data to this file.
      *
      * @param string $data Data to write to this File.
-     * @param string $mode Mode of writing. {@link http://php.net/fwrite See fwrite()}.
+     * @param string $mode Mode of writing. {@link https://secure.php.net/fwrite See fwrite()}.
      * @param bool $force Force the file to open
      * @return bool Success
      */
@@ -375,7 +375,7 @@ class File
      * Get md5 Checksum of file with previous check of Filesize
      *
      * @param int|bool $maxsize in MB or true to force
-     * @return string|false md5 Checksum {@link http://php.net/md5_file See md5_file()}, or false in case of an error
+     * @return string|false md5 Checksum {@link https://secure.php.net/md5_file See md5_file()}, or false in case of an error
      */
     public function md5($maxsize = 5)
     {

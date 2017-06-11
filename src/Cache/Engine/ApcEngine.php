@@ -170,7 +170,7 @@ class ApcEngine extends CacheEngine
      * @param string $key Identifier for the data.
      * @param mixed $value Data to be cached.
      * @return bool True if the data was successfully cached, false on failure.
-     * @link http://php.net/manual/en/function.apc-add.php
+     * @link https://secure.php.net/manual/en/function.apc-add.php
      */
     public function add($key, $value)
     {

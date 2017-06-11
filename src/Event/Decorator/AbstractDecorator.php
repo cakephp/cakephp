@@ -49,7 +49,7 @@ abstract class AbstractDecorator
     /**
      * Invoke
      *
-     * @link http://php.net/manual/en/language.oop5.magic.php#object.invoke
+     * @link https://secure.php.net/manual/en/language.oop5.magic.php#object.invoke
      * @return mixed
      */
     public function __invoke()

@@ -33,7 +33,7 @@ use RuntimeException;
  * order will be cached.
  *
  * For more information on what is a nested set and a how it works refer to
- * http://www.sitepoint.com/hierarchical-data-database-2/
+ * https://www.sitepoint.com/hierarchical-data-database-2/
  */
 class TreeBehavior extends Behavior
 {

@@ -16,7 +16,7 @@
  * The Aura Project for PHP.
  *
  * @package Aura.Intl
- * @license http://opensource.org/licenses/bsd-license.php BSD
+ * @license https://opensource.org/licenses/bsd-license.php BSD
  */
 namespace Cake\I18n;
 

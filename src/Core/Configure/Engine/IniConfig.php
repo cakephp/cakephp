@@ -49,7 +49,7 @@ use Cake\Utility\Hash;
  * 'yes', 'no', 'on', 'off', 'null' are handled. These values will be
  * converted to their boolean equivalents.
  *
- * @see http://php.net/parse_ini_file
+ * @see https://secure.php.net/parse_ini_file
  */
 class IniConfig implements ConfigEngineInterface
 {

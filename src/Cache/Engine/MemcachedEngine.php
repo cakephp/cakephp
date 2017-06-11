@@ -276,7 +276,7 @@ class MemcachedEngine extends CacheEngine
      * @param string $key Identifier for the data
      * @param mixed $value Data to be cached
      * @return bool True if the data was successfully cached, false on failure
-     * @see http://php.net/manual/en/memcache.set.php
+     * @see https://secure.php.net/manual/en/memcache.set.php
      */
     public function write($key, $value)
     {
