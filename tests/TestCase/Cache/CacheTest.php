@@ -21,6 +21,7 @@ use Cake\Cache\Engine\NullEngine;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use PHPUnit\Framework\Error\Error;
 
 /**
@@ -93,6 +94,31 @@ class CacheTest extends TestCase
 
         Cache::drop('tests');
         Cache::drop('tests_fallback');
+        unlink($filename);
+    }
+
+    /**
+     * tests handling misconfiguration of fallback
+     *
+     * @return void
+     */
+    public function testCacheEngineFallbackToSelf()
+    {
+        $filename = tempnam(TMP, 'tmp_');
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('cannot fallback to itself');
+
+        Cache::setConfig('tests', [
+            'engine' => 'File',
+            'path' => $filename,
+            'prefix' => 'test_',
+            'fallback' => 'tests'
+        ]);
+
+        Cache::engine('tests');
+
+        Cache::drop('tests');
         unlink($filename);
     }
 

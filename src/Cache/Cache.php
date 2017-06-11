@@ -178,6 +178,13 @@ class Cache
 
                 return;
             }
+
+            if ($config['fallback'] === $name) {
+                throw new InvalidArgumentException(
+                    sprintf('"%s" cache configuration cannot fallback to itself.', $name)
+                );
+            }
+
             $fallbackEngine = clone static::engine($config['fallback']);
             $copyableConfig = ['groups' => null, 'prefix' => null];
             $fallbackEngine->init(array_intersect_key($config, $copyableConfig));
