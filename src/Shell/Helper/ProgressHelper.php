@@ -1,16 +1,16 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP Project
  * @since         3.1.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Shell\Helper;
 
@@ -19,6 +19,17 @@ use RuntimeException;
 
 /**
  * Create a progress bar using a supplied callback.
+ *
+ * ## Usage
+ *
+ * The ProgressHelper can be accessed from shells using the helper() method
+ *
+ * ```
+ * $this->helper('Progress')->output(['callback' => function ($progress) {
+ *     // Do work
+ *     $progress->increment();
+ * });
+ * ```
  */
 class ProgressHelper extends Helper
 {
@@ -86,7 +97,7 @@ class ProgressHelper extends Helper
      * - `width` The width of the progress bar. Defaults to 80.
      *
      * @param array $args The initialization data.
-     * @return void
+     * @return $this
      */
     public function init(array $args = [])
     {
@@ -94,6 +105,8 @@ class ProgressHelper extends Helper
         $this->_progress = 0;
         $this->_width = $args['width'];
         $this->_total = $args['total'];
+
+        return $this;
     }
 
     /**

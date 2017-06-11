@@ -1,14 +1,14 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @since         3.1.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Mailer;
 
@@ -53,6 +53,7 @@ class MailerTest extends TestCase
         $result = (new TestMailer())->layout('foo');
         $this->assertInstanceOf('TestApp\Mailer\TestMailer', $result);
         $this->assertEquals('foo', $result->viewBuilder()->layout());
+        $this->assertEquals('foo', $result->getLayout());
     }
 
     public function testProxies()
@@ -81,6 +82,23 @@ class MailerTest extends TestCase
             ['file' => CAKE . 'basics.php', 'mimetype' => 'text/plain']
         ]);
         $this->assertInstanceOf('TestApp\Mailer\TestMailer', $result);
+    }
+
+    /**
+     * Test that get/set methods can be proxied.
+     *
+     * @return void
+     */
+    public function testGetSetProxies()
+    {
+        $mailer = new TestMailer();
+        $result = $mailer->setLayout('custom')
+            ->setTo('test@example.com')
+            ->setCc('cc@example.com');
+        $this->assertSame($result, $mailer);
+
+        $this->assertSame(['test@example.com' => 'test@example.com'], $result->getTo());
+        $this->assertSame(['cc@example.com' => 'cc@example.com'], $result->getCc());
     }
 
     public function testSet()

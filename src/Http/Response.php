@@ -1,16 +1,16 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         2.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Http;
 
@@ -913,8 +913,8 @@ class Response implements ResponseInterface
      * If the status code is 304 or 204, the existing Content-Type header
      * will be cleared, as these response codes have no body.
      *
-     * @link http://tools.ietf.org/html/rfc7231#section-6
-     * @link http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
+     * @link https://tools.ietf.org/html/rfc7231#section-6
+     * @link https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
      * @param int $code The 3-digit integer result code to set.
      * @param string $reasonPhrase The reason phrase to use with the
      *     provided status code; if none is provided, implementations MAY
@@ -944,7 +944,7 @@ class Response implements ResponseInterface
      * listed in the IANA HTTP Status Code Registry) for the response's
      * status code.
      *
-     * @link http://tools.ietf.org/html/rfc7231#section-6
+     * @link https://tools.ietf.org/html/rfc7231#section-6
      * @link http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
      * @return string Reason phrase; must return an empty string if none present.
      */
@@ -2106,12 +2106,12 @@ class Response implements ResponseInterface
      *
      * ### Full URI
      * ```
-     * cors($request, 'http://www.cakephp.org');
+     * cors($request, 'https://www.cakephp.org');
      * ```
      *
      * ### URI with wildcard
      * ```
-     * cors($request, 'http://*.cakephp.org');
+     * cors($request, 'https://*.cakephp.org');
      * ```
      *
      * ### Ignoring the requested protocol
@@ -2487,7 +2487,7 @@ class Response implements ResponseInterface
      * Stop execution of the current script. Wraps exit() making
      * testing easier.
      *
-     * @param int|string $status See http://php.net/exit for values
+     * @param int|string $status See https://secure.php.net/exit for values
      * @return void
      * @deprecated 3.4.0 Will be removed in 4.0.0
      */
