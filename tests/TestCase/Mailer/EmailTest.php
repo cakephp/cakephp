@@ -1982,7 +1982,7 @@ class EmailTest extends TestCase
         $expected = '<p>This email was sent using the <a href="https://cakephp.org">CakePHP Framework</a></p>';
         $this->assertContains($expected, $this->Email->message(Email::MESSAGE_HTML));
 
-        $expected = 'This email was sent using the CakePHP Framework, http://cakephp.org.';
+        $expected = 'This email was sent using the CakePHP Framework, https://cakephp.org.';
         $this->assertContains($expected, $this->Email->message(Email::MESSAGE_TEXT));
 
         $message = $this->Email->message();
