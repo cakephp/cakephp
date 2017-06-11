@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       https://opensource.org/licenses/mit-license.php The MIT License
  */
 namespace TestPlugin\Model\Behavior;
 

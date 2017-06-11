@@ -9,7 +9,7 @@
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc.
  * @link          https://cakephp.org CakePHP Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace TestApp\Model\Table;
 
