@@ -2,18 +2,18 @@
 /**
  * ValidationTest file
  *
- * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) Tests <https://book.cakephp.org/2.0/en/development/testing.html>
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Utility
  * @since         CakePHP(tm) v 1.2.0.4206
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('Validation', 'Utility');
@@ -1878,7 +1878,7 @@ class ValidationTest extends CakeTestCase {
  */
 	public function testUrl() {
 		$this->assertTrue(Validation::url('http://www.cakephp.org'));
-		$this->assertTrue(Validation::url('http://cakephp.org'));
+		$this->assertTrue(Validation::url('https://cakephp.org'));
 		$this->assertTrue(Validation::url('http://www.cakephp.org/somewhere#anchor'));
 		$this->assertTrue(Validation::url('http://192.168.0.1'));
 		$this->assertTrue(Validation::url('https://www.cakephp.org'));
@@ -1929,10 +1929,10 @@ class ValidationTest extends CakeTestCase {
 		$this->assertTrue(Validation::url('http://äüö.eräume.foo'));
 
 		$this->assertTrue(Validation::url('http://cakephp.org:80'));
-		$this->assertTrue(Validation::url('http://cakephp.org:443'));
-		$this->assertTrue(Validation::url('http://cakephp.org:2000'));
-		$this->assertTrue(Validation::url('http://cakephp.org:27000'));
-		$this->assertTrue(Validation::url('http://cakephp.org:65000'));
+		$this->assertTrue(Validation::url('https://cakephp.org:443'));
+		$this->assertTrue(Validation::url('https://cakephp.org:2000'));
+		$this->assertTrue(Validation::url('https://cakephp.org:27000'));
+		$this->assertTrue(Validation::url('https://cakephp.org:65000'));
 
 		$this->assertTrue(Validation::url('[2001:0db8::1428:57ab]'));
 		$this->assertTrue(Validation::url('[::1]'));

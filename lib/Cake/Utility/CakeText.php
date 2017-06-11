@@ -2,18 +2,18 @@
 /**
  * String handling methods.
  *
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @package       Cake.Utility
  * @since         CakePHP(tm) v 1.2.0.5551
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
 /**
@@ -426,7 +426,7 @@ class CakeText {
  * @param string|array $phrase The phrase or phrases that will be searched.
  * @param array $options An array of html attributes and options.
  * @return string The highlighted text
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::highlight
+ * @link https://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::highlight
  */
 	public static function highlight($text, $phrase, $options = array()) {
 		if (empty($phrase)) {
@@ -471,7 +471,7 @@ class CakeText {
  *
  * @param string $text Text
  * @return string The text without links
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::stripLinks
+ * @link https://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::stripLinks
  */
 	public static function stripLinks($text) {
 		return preg_replace('|<a\s+[^>]+>|im', '', preg_replace('|<\/a>|im', '', $text));
@@ -533,7 +533,7 @@ class CakeText {
  * @param int $length Length of returned string, including ellipsis.
  * @param array $options An array of html attributes and options.
  * @return string Trimmed string.
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::truncate
+ * @link https://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::truncate
  */
 	public static function truncate($text, $length = 100, $options = array()) {
 		$defaults = array(
@@ -653,7 +653,7 @@ class CakeText {
  * @param int $radius The amount of characters that will be returned on each side of the founded phrase
  * @param string $ellipsis Ending that will be appended
  * @return string Modified string
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::excerpt
+ * @link https://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::excerpt
  */
 	public static function excerpt($text, $phrase, $radius = 100, $ellipsis = '...') {
 		if (empty($text) || empty($phrase)) {
@@ -695,7 +695,7 @@ class CakeText {
  * @param string $and The word used to join the last and second last items together with. Defaults to 'and'.
  * @param string $separator The separator used to join all the other items together. Defaults to ', '.
  * @return string The glued together string.
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::toList
+ * @link https://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::toList
  */
 	public static function toList($list, $and = null, $separator = ', ') {
 		if ($and === null) {

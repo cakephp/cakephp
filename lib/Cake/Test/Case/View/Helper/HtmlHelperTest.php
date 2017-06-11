@@ -2,18 +2,18 @@
 /**
  * HtmlHelperTest file
  *
- * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) Tests <https://book.cakephp.org/2.0/en/development/testing.html>
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.View.Helper
  * @since         CakePHP(tm) v 1.2.0.4206
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('Controller', 'Controller');
@@ -26,7 +26,7 @@ App::uses('Folder', 'Utility');
 App::uses('CakePlugin', 'Core');
 
 if (!defined('FULL_BASE_URL')) {
-	define('FULL_BASE_URL', 'http://cakephp.org');
+	define('FULL_BASE_URL', 'https://cakephp.org');
 }
 
 /**
@@ -444,8 +444,8 @@ class HtmlHelperTest extends CakeTestCase {
 		$result = $this->Html->image('test.gif', array('pathPrefix' => '/my/custom/path/'));
 		$this->assertTags($result, array('img' => array('src' => '/my/custom/path/test.gif', 'alt' => '')));
 
-		$result = $this->Html->image('test.gif', array('pathPrefix' => 'http://cakephp.org/assets/img/'));
-		$this->assertTags($result, array('img' => array('src' => 'http://cakephp.org/assets/img/test.gif', 'alt' => '')));
+		$result = $this->Html->image('test.gif', array('pathPrefix' => 'https://cakephp.org/assets/img/'));
+		$this->assertTags($result, array('img' => array('src' => 'https://cakephp.org/assets/img/test.gif', 'alt' => '')));
 
 		$result = $this->Html->image('test.gif', array('pathPrefix' => '//cakephp.org/assets/img/'));
 		$this->assertTags($result, array('img' => array('src' => '//cakephp.org/assets/img/test.gif', 'alt' => '')));
@@ -644,8 +644,8 @@ class HtmlHelperTest extends CakeTestCase {
 		$expected['link']['href'] = '/my/custom/path/cake.generic.css';
 		$this->assertTags($result, $expected);
 
-		$result = $this->Html->css('cake.generic', array('pathPrefix' => 'http://cakephp.org/assets/css/'));
-		$expected['link']['href'] = 'http://cakephp.org/assets/css/cake.generic.css';
+		$result = $this->Html->css('cake.generic', array('pathPrefix' => 'https://cakephp.org/assets/css/'));
+		$expected['link']['href'] = 'https://cakephp.org/assets/css/cake.generic.css';
 		$this->assertTags($result, $expected);
 
 		$previousConfig = Configure::read('App.cssBaseUrl');
@@ -1035,9 +1035,9 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Html->script('foo3', array('pathPrefix' => 'http://cakephp.org/assets/js/'));
+		$result = $this->Html->script('foo3', array('pathPrefix' => 'https://cakephp.org/assets/js/'));
 		$expected = array(
-			'script' => array('type' => 'text/javascript', 'src' => 'http://cakephp.org/assets/js/foo3.js')
+			'script' => array('type' => 'text/javascript', 'src' => 'https://cakephp.org/assets/js/foo3.js')
 		);
 		$this->assertTags($result, $expected);
 

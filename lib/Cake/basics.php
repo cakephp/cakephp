@@ -4,18 +4,18 @@
  *
  * Core functions for including other source files, loading models and so forth.
  *
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @package       Cake
  * @since         CakePHP(tm) v 0.2.9
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
 /**
@@ -39,7 +39,7 @@ if (!function_exists('config')) {
  * `config('config1', 'config2');`
  *
  * @return bool Success
- * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#config
+ * @link https://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#config
  */
 	function config() {
 		$args = func_get_args();
@@ -67,8 +67,8 @@ if (!function_exists('debug')) {
  * @param bool $showHtml If set to true, the method prints the debug data in a browser-friendly way.
  * @param bool $showFrom If set to true, the method prints from where the function was called.
  * @return void
- * @link http://book.cakephp.org/2.0/en/development/debugging.html#basic-debugging
- * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#debug
+ * @link https://book.cakephp.org/2.0/en/development/debugging.html#basic-debugging
+ * @link https://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#debug
  */
 	function debug($var, $showHtml = null, $showFrom = true) {
 		if (!Configure::read('debug')) {
@@ -161,7 +161,7 @@ if (!function_exists('sortByKey')) {
  * @param string $order Sort order asc/desc (ascending or descending).
  * @param int $type Type of sorting to perform
  * @return array|null Sorted array, or null if not an array.
- * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#sortByKey
+ * @link https://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#sortByKey
  */
 	function sortByKey(&$array, $sortBy, $order = 'asc', $type = SORT_NUMERIC) {
 		if (!is_array($array)) {
@@ -197,7 +197,7 @@ if (!function_exists('h')) {
  * @param bool $double Encode existing html entities
  * @param string $charset Character set to use when escaping. Defaults to config value in 'App.encoding' or 'UTF-8'
  * @return string Wrapped text
- * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#h
+ * @link https://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#h
  */
 	function h($text, $double = true, $charset = null) {
 		if (is_string($text)) {
@@ -245,7 +245,7 @@ if (!function_exists('pluginSplit')) {
  * @param bool $dotAppend Set to true if you want the plugin to have a '.' appended to it.
  * @param string $plugin Optional default plugin to use if no plugin is found. Defaults to null.
  * @return array Array with 2 indexes. 0 => plugin name, 1 => class name
- * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#pluginSplit
+ * @link https://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#pluginSplit
  */
 	function pluginSplit($name, $dotAppend = false, $plugin = null) {
 		if (strpos($name, '.') !== false) {
@@ -270,7 +270,7 @@ if (!function_exists('pr')) {
  *
  * @param mixed $var Variable to print out
  * @return void
- * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#pr
+ * @link https://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#pr
  * @see debug()
  */
 	function pr($var) {
@@ -290,7 +290,7 @@ if (!function_exists('am')) {
  * Accepts variable arguments. Each argument will be converted into an array and then merged.
  *
  * @return array All array parameters merged into one
- * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#am
+ * @link https://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#am
  */
 	function am() {
 		$r = array();
@@ -316,7 +316,7 @@ if (!function_exists('env')) {
  *
  * @param string $key Environment variable name.
  * @return string|bool|null Environment variable setting.
- * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#env
+ * @link https://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#env
  */
 	function env($key) {
 		if ($key === 'HTTPS') {
@@ -553,7 +553,7 @@ if (!function_exists('stripslashes_deep')) {
  *
  * @param array $values Array of values to strip slashes
  * @return mixed What is returned from calling stripslashes
- * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#stripslashes_deep
+ * @link https://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#stripslashes_deep
  */
 	function stripslashes_deep($values) {
 		if (is_array($values)) {
@@ -576,7 +576,7 @@ if (!function_exists('__')) {
  * @param string $singular Text to translate
  * @param mixed $args Array with arguments or multiple arguments in function
  * @return mixed translated string
- * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__
+ * @link https://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__
  */
 	function __($singular, $args = null) {
 		if (!$singular) {
@@ -602,7 +602,7 @@ if (!function_exists('__n')) {
  * @param int $count Count
  * @param mixed $args Array with arguments or multiple arguments in function, otherwise null.
  * @return mixed plural form of translated string
- * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__n
+ * @link https://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__n
  */
 	function __n($singular, $plural, $count, $args = null) {
 		if (!$singular) {
@@ -626,7 +626,7 @@ if (!function_exists('__d')) {
  * @param string $msg String to translate
  * @param mixed $args Array with arguments or multiple arguments in function, otherwise null.
  * @return string translated string
- * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__d
+ * @link https://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__d
  */
 	function __d($domain, $msg, $args = null) {
 		if (!$msg) {
@@ -653,7 +653,7 @@ if (!function_exists('__dn')) {
  * @param int $count Count
  * @param mixed $args Array with arguments or multiple arguments in function, otherwise null.
  * @return string plural form of translated string
- * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__dn
+ * @link https://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__dn
  */
 	function __dn($domain, $singular, $plural, $count, $args = null) {
 		if (!$singular) {
@@ -691,7 +691,7 @@ if (!function_exists('__dc')) {
  * @param int $category Category
  * @param mixed $args Array with arguments or multiple arguments in function, otherwise null.
  * @return string translated string
- * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__dc
+ * @link https://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__dc
  */
 	function __dc($domain, $msg, $category, $args = null) {
 		if (!$msg) {
@@ -733,7 +733,7 @@ if (!function_exists('__dcn')) {
  * @param int $category Category
  * @param mixed $args Array with arguments or multiple arguments in function, otherwise null.
  * @return string plural form of translated string
- * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__dcn
+ * @link https://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__dcn
  */
 	function __dcn($domain, $singular, $plural, $count, $category, $args = null) {
 		if (!$singular) {
@@ -767,7 +767,7 @@ if (!function_exists('__c')) {
  * @param int $category Category
  * @param mixed $args Array with arguments or multiple arguments in function, otherwise null.
  * @return string translated string
- * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__c
+ * @link https://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__c
  */
 	function __c($msg, $category, $args = null) {
 		if (!$msg) {
@@ -790,7 +790,7 @@ if (!function_exists('__x')) {
  * @param string $singular Text to translate
  * @param mixed $args Array with arguments or multiple arguments in function, otherwise null.
  * @return mixed translated string
- * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__
+ * @link https://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__
  */
 	function __x($context, $singular, $args = null) {
 		if (!$singular) {
@@ -817,7 +817,7 @@ if (!function_exists('__xn')) {
  * @param int $count Count
  * @param mixed $args Array with arguments or multiple arguments in function, otherwise null.
  * @return mixed plural form of translated string
- * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__n
+ * @link https://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__n
  */
 	function __xn($context, $singular, $plural, $count, $args = null) {
 		if (!$singular) {
@@ -842,7 +842,7 @@ if (!function_exists('__dx')) {
  * @param string $msg String to translate
  * @param mixed $args Array with arguments or multiple arguments in function, otherwise null.
  * @return string translated string
- * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__d
+ * @link https://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__d
  */
 	function __dx($domain, $context, $msg, $args = null) {
 		if (!$msg) {
@@ -870,7 +870,7 @@ if (!function_exists('__dxn')) {
  * @param int $count Count
  * @param mixed $args Array with arguments or multiple arguments in function, otherwise null.
  * @return string plural form of translated string
- * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__dn
+ * @link https://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__dn
  */
 	function __dxn($domain, $context, $singular, $plural, $count, $args = null) {
 		if (!$singular) {
@@ -909,7 +909,7 @@ if (!function_exists('__dxc')) {
  * @param int $category Category
  * @param mixed $args Array with arguments or multiple arguments in function, otherwise null.
  * @return string translated string
- * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__dc
+ * @link https://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__dc
  */
 	function __dxc($domain, $context, $msg, $category, $args = null) {
 		if (!$msg) {
@@ -952,7 +952,7 @@ if (!function_exists('__dxcn')) {
  * @param int $category Category
  * @param mixed $args Array with arguments or multiple arguments in function, otherwise null.
  * @return string plural form of translated string
- * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__dcn
+ * @link https://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__dcn
  */
 	function __dxcn($domain, $context, $singular, $plural, $count, $category, $args = null) {
 		if (!$singular) {
@@ -987,7 +987,7 @@ if (!function_exists('__xc')) {
  * @param int $category Category
  * @param mixed $args Array with arguments or multiple arguments in function, otherwise null.
  * @return string translated string
- * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__c
+ * @link https://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__c
  */
 	function __xc($context, $msg, $category, $args = null) {
 		if (!$msg) {
@@ -1008,7 +1008,7 @@ if (!function_exists('LogError')) {
  *
  * @param string $message Message to write to log
  * @return void
- * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#LogError
+ * @link https://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#LogError
  */
 	function LogError($message) {
 		App::uses('CakeLog', 'Log');
@@ -1026,7 +1026,7 @@ if (!function_exists('fileExistsInPath')) {
  *
  * @param string $file File to look for
  * @return string Full path to file if exists, otherwise false
- * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#fileExistsInPath
+ * @link https://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#fileExistsInPath
  */
 	function fileExistsInPath($file) {
 		$paths = explode(PATH_SEPARATOR, ini_get('include_path'));
@@ -1051,7 +1051,7 @@ if (!function_exists('convertSlash')) {
  *
  * @param string $string String to convert
  * @return string with underscore remove from start and end of string
- * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#convertSlash
+ * @link https://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#convertSlash
  */
 	function convertSlash($string) {
 		$string = trim($string, '/');

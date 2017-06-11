@@ -2,18 +2,18 @@
 /**
  * CakeResponse
  *
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @package       Cake.Network
  * @since         CakePHP(tm) v 2.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('File', 'Utility');
@@ -1260,7 +1260,7 @@ class CakeResponse {
  * This method allow multiple ways to setup the domains, see the examples
  *
  * ### Full URI
- * e.g `cors($request, 'http://www.cakephp.org');`
+ * e.g `cors($request, 'https://www.cakephp.org');`
  *
  * ### URI with wildcard
  * e.g `cors($request, 'http://*.cakephp.org');`
@@ -1272,7 +1272,7 @@ class CakeResponse {
  * e.g `cors($request, '*');`
  *
  * ### Whitelist of URIs
- * e.g `cors($request, array('http://www.cakephp.org', '*.google.com', 'https://myproject.github.io'));`
+ * e.g `cors($request, array('https://www.cakephp.org', '*.google.com', 'https://myproject.github.io'));`
  *
  * @param CakeRequest $request Request object
  * @param string|array $allowedDomains List of allowed domains, see method description for more details

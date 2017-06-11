@@ -1,17 +1,17 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @package       Cake.Controller.Component.Acl
  * @since         CakePHP(tm) v 0.10.0.1076
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('AclInterface', 'Controller/Component/Acl');
@@ -67,7 +67,7 @@ class DbAcl extends CakeObject implements AclInterface {
  * @param string $aco ACO The controlled object identifier.
  * @param string $action Action (defaults to *)
  * @return bool Success (true if ARO has access to action in ACO, false otherwise)
- * @link http://book.cakephp.org/2.0/en/core-libraries/components/access-control-lists.html#checking-permissions-the-acl-component
+ * @link https://book.cakephp.org/2.0/en/core-libraries/components/access-control-lists.html#checking-permissions-the-acl-component
  */
 	public function check($aro, $aco, $action = "*") {
 		return $this->Permission->check($aro, $aco, $action);
@@ -81,7 +81,7 @@ class DbAcl extends CakeObject implements AclInterface {
  * @param string $actions Action (defaults to *)
  * @param int $value Value to indicate access type (1 to give access, -1 to deny, 0 to inherit)
  * @return bool Success
- * @link http://book.cakephp.org/2.0/en/core-libraries/components/access-control-lists.html#assigning-permissions
+ * @link https://book.cakephp.org/2.0/en/core-libraries/components/access-control-lists.html#assigning-permissions
  */
 	public function allow($aro, $aco, $actions = "*", $value = 1) {
 		return $this->Permission->allow($aro, $aco, $actions, $value);
@@ -94,7 +94,7 @@ class DbAcl extends CakeObject implements AclInterface {
  * @param string $aco ACO The controlled object identifier.
  * @param string $action Action (defaults to *)
  * @return bool Success
- * @link http://book.cakephp.org/2.0/en/core-libraries/components/access-control-lists.html#assigning-permissions
+ * @link https://book.cakephp.org/2.0/en/core-libraries/components/access-control-lists.html#assigning-permissions
  */
 	public function deny($aro, $aco, $action = "*") {
 		return $this->allow($aro, $aco, $action, -1);

@@ -4,7 +4,7 @@
  *
  * Use it to configure core behavior of Cake.
  *
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @package       app.Config
  * @since         CakePHP(tm) v 0.2.9
  */
@@ -104,7 +104,7 @@
  * will override the automatic detection of full base URL and can be
  * useful when generating links from the CLI (e.g. sending emails)
  */
-	//Configure::write('App.fullBaseUrl', 'http://example.com');
+	//Configure::write('App.fullBaseUrl', 'https://example.com');
 
 /**
  * Web path to the public images directory under webroot.
@@ -273,7 +273,7 @@
  * 		'mask' => 0664, //[optional]
  *	));
  *
- * APC (http://pecl.php.net/package/APC)
+ * APC (https://pecl.php.net/package/APC)
  *
  * 	 Cache::config('default', array(
  *		'engine' => 'Apc', //[required]
@@ -282,7 +282,7 @@
  * 		'prefix' => Inflector::slug(APP_DIR) . '_', //[optional]  prefix every cache file with this string
  *	));
  *
- * Xcache (http://xcache.lighttpd.net/)
+ * Xcache (https://xcache.lighttpd.net/)
  *
  * 	 Cache::config('default', array(
  *		'engine' => 'Xcache', //[required]
@@ -307,7 +307,7 @@
  * 		'compress' => false, // [optional] compress data in Memcache (slower, but uses less memory)
  *	));
  *
- *  Wincache (http://php.net/wincache)
+ *  Wincache (https://secure.php.net/wincache)
  *
  * 	 Cache::config('default', array(
  *		'engine' => 'Wincache', //[required]
