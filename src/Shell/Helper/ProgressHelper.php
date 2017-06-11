@@ -19,6 +19,17 @@ use RuntimeException;
 
 /**
  * Create a progress bar using a supplied callback.
+ *
+ * ## Usage
+ *
+ * The ProgressHelper can be accessed from shells using the helper() method
+ *
+ * ```
+ * $this->helper('Progress')->output(['callback' => function ($progress) {
+ *     // Do work
+ *     $progress->increment();
+ * });
+ * ```
  */
 class ProgressHelper extends Helper
 {
@@ -86,7 +97,7 @@ class ProgressHelper extends Helper
      * - `width` The width of the progress bar. Defaults to 80.
      *
      * @param array $args The initialization data.
-     * @return void
+     * @return $this
      */
     public function init(array $args = [])
     {
@@ -94,6 +105,8 @@ class ProgressHelper extends Helper
         $this->_progress = 0;
         $this->_width = $args['width'];
         $this->_total = $args['total'];
+
+        return $this;
     }
 
     /**
