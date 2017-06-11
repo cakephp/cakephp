@@ -168,29 +168,31 @@ class CacheTest extends TestCase
         Cache::setConfig('tests', [
             'engine' => 'File',
             'path' => $filename,
-            'prefix' => 'test_',
             'fallback' => 'tests_fallback',
-            'groups' => ['integration_group']
+            'groups' => ['integration_group', 'integration_group_2']
         ]);
         Cache::setConfig('tests_fallback', [
             'engine' => 'File',
             'path' => $filename,
-            'prefix' => 'test_fallback_',
             'fallback' => 'tests_fallback_final',
+            'groups' => ['integration_group'],
         ]);
         Cache::setConfig('tests_fallback_final', [
             'engine' => 'File',
             'path' => TMP,
-            'prefix' => 'test_fallback_final_',
+            'groups' => ['integration_group_3'],
         ]);
 
-        $this->assertTrue(Cache::write('fallback', 'worked', 'tests'));
-        $this->assertSame('worked', Cache::read('fallback', 'tests'));
-        $this->assertTrue(Cache::delete('fallback', 'tests'));
+        $this->assertTrue(Cache::write('grouped', 'worked', 'tests'));
+        $this->assertTrue(Cache::write('grouped_2', 'worked', 'tests_fallback'));
+        $this->assertTrue(Cache::write('grouped_3', 'worked', 'tests_fallback_final'));
 
-        $this->assertTrue(Cache::write('fallback_grouped', 'worked', 'tests'));
         $this->assertTrue(Cache::clearGroup('integration_group', 'tests'));
-        $this->assertFalse(Cache::read('fallback_grouped', 'tests'));
+
+        $this->assertFalse(Cache::read('grouped', 'tests'));
+        $this->assertFalse(Cache::read('grouped_2', 'tests_fallback'));
+
+        $this->assertSame('worked', Cache::read('grouped_3', 'tests_fallback_final'));
 
         Cache::drop('tests');
         Cache::drop('tests_fallback');

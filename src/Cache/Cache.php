@@ -186,8 +186,11 @@ class Cache
             }
 
             $fallbackEngine = clone static::engine($config['fallback']);
-            $copyableConfig = ['groups' => null, 'prefix' => null];
-            $fallbackEngine->init(array_intersect_key($config, $copyableConfig));
+            $newConfig = $config + ['groups' => [], 'prefix' => null];
+            $fallbackEngine->setConfig('groups', $newConfig['groups'], false);
+            if ($newConfig['prefix']) {
+                $fallbackEngine->setConfig('prefix', $newConfig['prefix'], false);
+            }
             $registry->set($name, $fallbackEngine);
         }
 
