@@ -59,7 +59,7 @@ class RequestTest extends TestCase
      *
      * @dataProvider additionProvider
      */
-    public function testAdd($headers, $data, $method)
+    public function testAdd(array $headers, $data, $method)
     {
         $request = new Request('http://example.com', $method, $headers, json_encode($data));
 
@@ -68,7 +68,9 @@ class RequestTest extends TestCase
         $this->assertEquals('application/json', $request->getHeaderLine('Content-Type'));
         $this->assertEquals(json_encode($data), $request->body());
     }
-
+    /**
+     * @dataProvider additionProvider
+     */
     public function additionProvider()
     {
         $headers = [
@@ -76,6 +78,7 @@ class RequestTest extends TestCase
             'Authorization' => 'Bearer valid-token',
         ];
         $data = ['a' => 'b', 'c' => 'd'];
+
         return [
             [$headers, $data, Request::METHOD_POST],
             [$headers, $data, Request::METHOD_GET],
