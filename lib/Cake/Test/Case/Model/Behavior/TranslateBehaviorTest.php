@@ -528,6 +528,29 @@ class TranslateBehaviorTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 	}
 
+	public function testMissingTranslationLeftJoin() {
+		$this->loadFixtures('Translate', 'TranslatedItem');
+		$expected = array(
+			'TranslatedItem' => Array (
+				'id' => '1',
+				'translated_article_id' => '1',
+				'slug' => 'first_translated',
+				'locale' => 'rus',
+				'content' => '',
+				'title' => '',
+			),
+		);
+
+		$TestModel = new TranslatedItemLeftJoin();
+		$TestModel->locale = 'rus';
+		$result = $TestModel->read(null, 1);
+		$this->assertEquals($expected, $result);
+
+		$TestModel->locale = array('rus');
+		$result = $TestModel->read(null, 1);
+		$this->assertEquals($expected, $result);
+	}
+
 /**
  * testTranslatedFindList method
  *
@@ -1376,15 +1399,15 @@ class TranslateBehaviorTest extends CakeTestCase {
 		$Model->unbindTranslation();
 		$Model->bindTranslation(array('body', 'slug'), false);
 
-		$result = $Model->Behaviors->Translate->settings['TranslatedItem'];
+		$result = $Model->Behaviors->Translate->settings['TranslatedItem']['fields'];
 		$this->assertEquals(array('body', 'slug'), $result);
 
 		$Model->unbindTranslation(array('body'));
-		$result = $Model->Behaviors->Translate->settings['TranslatedItem'];
+		$result = $Model->Behaviors->Translate->settings['TranslatedItem']['fields'];
 		$this->assertNotContains('body', $result);
 
 		$Model->unbindTranslation('slug');
-		$result = $Model->Behaviors->Translate->settings['TranslatedItem'];
+		$result = $Model->Behaviors->Translate->settings['TranslatedItem']['fields'];
 		$this->assertNotContains('slug', $result);
 	}
 

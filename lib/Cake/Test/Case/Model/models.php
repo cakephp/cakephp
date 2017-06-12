@@ -3247,6 +3247,17 @@ class TranslatedItem extends CakeTestModel {
 
 }
 
+class TranslatedItemLeftJoin extends TranslatedItem {
+
+	public $actsAs = array(
+		'Translate' => array(
+			'content',
+			'title',
+			'join_type' => 'LEFT',
+		)
+	);
+}
+
 /**
  * TranslatedItem class.
  *
