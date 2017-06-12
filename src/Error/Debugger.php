@@ -1,16 +1,16 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         1.2.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Error;
 
@@ -29,7 +29,7 @@ use ReflectionProperty;
  *
  * Debugger overrides PHP's default error handling to provide stack traces and enhanced logging
  *
- * @link http://book.cakephp.org/3.0/en/development/debugging.html#namespace-Cake\Error
+ * @link https://book.cakephp.org/3.0/en/development/debugging.html#namespace-Cake\Error
  */
 class Debugger
 {
@@ -111,7 +111,7 @@ class Debugger
         $docRef = ini_get('docref_root');
 
         if (empty($docRef) && function_exists('ini_set')) {
-            ini_set('docref_root', 'http://php.net/');
+            ini_set('docref_root', 'https://secure.php.net/');
         }
         if (!defined('E_RECOVERABLE_ERROR')) {
             define('E_RECOVERABLE_ERROR', 4096);
@@ -231,7 +231,7 @@ class Debugger
      * @param int $depth The depth to output to. Defaults to 3.
      * @return void
      * @see \Cake\Error\Debugger::exportVar()
-     * @link http://book.cakephp.org/3.0/en/development/debugging.html#outputting-values
+     * @link https://book.cakephp.org/3.0/en/development/debugging.html#outputting-values
      */
     public static function dump($var, $depth = 3)
     {
@@ -267,7 +267,7 @@ class Debugger
      *
      * @param array $options Format for outputting stack trace.
      * @return mixed Formatted stack trace.
-     * @link http://book.cakephp.org/3.0/en/development/debugging.html#generating-stack-traces
+     * @link https://book.cakephp.org/3.0/en/development/debugging.html#generating-stack-traces
      */
     public static function trace(array $options = [])
     {
@@ -289,7 +289,7 @@ class Debugger
      * @param array|\Exception $backtrace Trace as array or an exception object.
      * @param array $options Format for outputting stack trace.
      * @return mixed Formatted stack trace.
-     * @link http://book.cakephp.org/3.0/en/development/debugging.html#generating-stack-traces
+     * @link https://book.cakephp.org/3.0/en/development/debugging.html#generating-stack-traces
      */
     public static function formatTrace($backtrace, $options = [])
     {
@@ -405,8 +405,8 @@ class Debugger
      * @param int $line Line number to highlight.
      * @param int $context Number of lines of context to extract above and below $line.
      * @return array Set of lines highlighted
-     * @see http://php.net/highlight_string
-     * @link http://book.cakephp.org/3.0/en/development/debugging.html#getting-an-excerpt-from-a-file
+     * @see https://secure.php.net/highlight_string
+     * @link https://book.cakephp.org/3.0/en/development/debugging.html#getting-an-excerpt-from-a-file
      */
     public static function excerpt($file, $line, $context = 2)
     {
