@@ -15,6 +15,8 @@
 namespace Cake\Test\Console;
 
 use Cake\Console\CommandCollection;
+use Cake\Core\Configure;
+use Cake\Core\Plugin;
 use Cake\Shell\I18nShell;
 use Cake\Shell\RoutesShell;
 use Cake\TestSuite\TestCase;
@@ -25,6 +27,12 @@ use stdClass;
  */
 class CommandCollectionTest extends TestCase
 {
+    public function setUp()
+    {
+        parent::setUp();
+        Configure::write('App.namespace', 'TestApp');
+    }
+
     /**
      * Test constructor with valid classnames
      *
@@ -46,7 +54,7 @@ class CommandCollectionTest extends TestCase
      *
      * @return void
      * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage 'nope' is not a subclass of Cake\Console\Shell
+     * @expectedExceptionMessage Cannot use 'stdClass' for command 'nope' it is not a subclass of Cake\Console\Shell
      */
     public function testConstructorInvalidClass()
     {
@@ -105,7 +113,7 @@ class CommandCollectionTest extends TestCase
      * Instances that are not shells should fail.
      *
      * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage 'routes' is not a subclass of Cake\Console\Shell
+     * @expectedExceptionMessage Cannot use 'stdClass' for command 'routes' it is not a subclass of Cake\Console\Shell
      */
     public function testAddInvalidInstance()
     {
@@ -118,7 +126,7 @@ class CommandCollectionTest extends TestCase
      * Class names that are not shells should fail
      *
      * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage 'routes' is not a subclass of Cake\Console\Shell
+     * @expectedExceptionMessage Cannot use 'stdClass' for command 'routes' it is not a subclass of Cake\Console\Shell
      */
     public function testInvalidShellClassName()
     {
@@ -168,5 +176,91 @@ class CommandCollectionTest extends TestCase
             $out[$key] = $value;
         }
         $this->assertEquals($in, $out);
+    }
+
+    /**
+     * test autodiscovering app shells
+     *
+     * @return void
+     */
+    public function testAutoDiscoverApp()
+    {
+        $collection = new CommandCollection();
+        $this->assertSame($collection, $collection->autoDiscover());
+
+        $this->assertTrue($collection->has('i18m'));
+        $this->assertTrue($collection->has('sample'));
+        $this->assertTrue($collection->has('testing_dispatch'));
+
+        $this->assertSame('TestApp\Shell\I18mShell', $collection->get('i18m'));
+        $this->assertSame('TestApp\Shell\SampleShell', $collection->get('sample'));
+    }
+
+    /**
+     * test autodiscovering core shells
+     *
+     * @return void
+     */
+    public function testAutoDiscoverCore()
+    {
+        $collection = new CommandCollection();
+        $collection->autoDiscover();
+
+        $this->assertTrue($collection->has('routes'));
+        $this->assertTrue($collection->has('i18n'));
+        $this->assertTrue($collection->has('orm_cache'));
+        $this->assertTrue($collection->has('server'));
+        $this->assertTrue($collection->has('cache'));
+        $this->assertFalse($collection->has('command_list'), 'Hidden commands should stay hidden');
+
+        // These have to be strings as ::class uses the local namespace.
+        $this->assertSame('Cake\Shell\RoutesShell', $collection->get('routes'));
+        $this->assertSame('Cake\Shell\I18nShell', $collection->get('i18n'));
+    }
+
+    /**
+     * test autodiscovering plugin shells
+     *
+     * @return void
+     */
+    public function testAutoDiscoverPlugin()
+    {
+        Plugin::load('TestPlugin');
+        Plugin::load('Company/TestPluginThree');
+        $collection = new CommandCollection();
+        $collection->autoDiscover();
+
+        $this->assertTrue(
+            $collection->has('example'),
+            'Used short name for unique plugin shell'
+        );
+        $this->assertFalse(
+            $collection->has('test_plugin.example'),
+            'Long names not stored for unique shells'
+        );
+        $this->assertTrue(
+            $collection->has('sample'),
+            'Has app shell'
+        );
+        $this->assertTrue(
+            $collection->has('test_plugin.sample'),
+            'Duplicate shell was given a full alias'
+        );
+        $this->assertFalse(
+            $collection->has('company/test_plugin_three.company'),
+            'Long names not stored for unique shells'
+        );
+        $this->assertTrue(
+            $collection->has('company'),
+            'Used short name for unique plugin shell'
+        );
+
+        $this->assertEquals('TestPlugin\Shell\ExampleShell', $collection->get('example'));
+        $this->assertEquals(
+            'TestApp\Shell\SampleShell',
+            $collection->get('sample'),
+            'Should prefer app shells over plugin ones'
+        );
+        $this->assertEquals('TestPlugin\Shell\SampleShell', $collection->get('test_plugin.sample'));
     }
 }
