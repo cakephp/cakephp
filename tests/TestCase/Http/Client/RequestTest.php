@@ -52,42 +52,36 @@ class RequestTest extends TestCase
         $this->assertEquals('application/json', $request->getHeaderLine('Content-Type'));
         $this->assertEquals(json_encode($data), $request->body());
     }
-
     /**
-     * test string ata, header and constructor
+     * @param array $headers The HTTP headers to set.
+     * @param array|string|null $data The request body to use.
+     * @param string $method The HTTP method to use.
      *
-     * @return void
+     * @dataProvider additionProvider
      */
-    public function testAllRequestMethods()
+    public function testAdd($headers, $data, $method)
+    {
+        $request = new Request('http://example.com', $method, $headers, json_encode($data));
+
+        $this->assertContains($request->getMethod(), $this->methods);
+        $this->assertEquals('http://example.com', $request->url());
+        $this->assertEquals('application/json', $request->getHeaderLine('Content-Type'));
+        $this->assertEquals(json_encode($data), $request->body());
+    }
+
+    public function additionProvider()
     {
         $headers = [
             'Content-Type' => 'application/json',
             'Authorization' => 'Bearer valid-token',
         ];
         $data = ['a' => 'b', 'c' => 'd'];
-        $request = new Request('http://example.com', 'POST', $headers, json_encode($data));
-        $this->assertContains($request->getMethod(), $this->methods);
-        $this->assertEquals('http://example.com', $request->url());
-        $this->assertEquals('application/json', $request->getHeaderLine('Content-Type'));
-        $this->assertEquals(json_encode($data), $request->body());
-
-        $request = new Request('http://example.com', 'GET', $headers, json_encode($data));
-        $this->assertContains($request->getMethod(), $this->methods);
-        $this->assertEquals('http://example.com', $request->url());
-        $this->assertEquals('application/json', $request->getHeaderLine('Content-Type'));
-        $this->assertEquals(json_encode($data), $request->body());
-
-        $request = new Request('http://example.com', 'PUT', $headers, json_encode($data));
-        $this->assertContains($request->getMethod(), $this->methods);
-        $this->assertEquals('http://example.com', $request->url());
-        $this->assertEquals('application/json', $request->getHeaderLine('Content-Type'));
-        $this->assertEquals(json_encode($data), $request->body());
-
-        $request = new Request('http://example.com', 'DELETE', $headers, json_encode($data));
-        $this->assertContains($request->getMethod(), $this->methods);
-        $this->assertEquals('http://example.com', $request->url());
-        $this->assertEquals('application/json', $request->getHeaderLine('Content-Type'));
-        $this->assertEquals(json_encode($data), $request->body());
+        return [
+            [$headers, $data, Request::METHOD_POST],
+            [$headers, $data, Request::METHOD_GET],
+            [$headers, $data, Request::METHOD_PUT],
+            [$headers, $data, Request::METHOD_DELETE],
+        ];
     }
 
     /**
