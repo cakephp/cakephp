@@ -341,8 +341,8 @@ class RequestTest extends TestCase
     public function testVersion()
     {
         $request = new Request();
-        $request->version('1.0');
-        $this->assertSame($request, $request, 'Should return self');
+        $result = $request->version('1.0');
+        $this->assertSame($request, $result, 'Should return self');
 
         $this->assertSame('1.0', $request->version());
     }
