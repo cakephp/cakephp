@@ -22,6 +22,12 @@ use Zend\Diactoros\Uri;
  */
 class RequestTest extends TestCase
 {
+    protected $methods = [
+        Request::METHOD_GET,
+        Request::METHOD_POST,
+        Request::METHOD_PUT,
+        Request::METHOD_DELETE,
+    ];
     /**
      * test string ata, header and constructor
      *
@@ -37,9 +43,48 @@ class RequestTest extends TestCase
         $request = new Request('http://example.com', 'POST', $headers, json_encode($data));
 
         $this->assertEquals('http://example.com', $request->url());
-        $this->assertEquals('POST', $request->getMethod());
+        $this->assertContains($request->getMethod(),'POST');
         $this->assertEquals('application/json', $request->getHeaderLine('Content-Type'));
         $this->assertEquals(json_encode($data), $request->body());
+    }
+
+    /**
+     * test string ata, header and constructor
+     *
+     * @return void
+     */
+    public function testAllRequestMethods()
+    {
+        $headers = [
+            'Content-Type' => 'application/json',
+            'Authorization' => 'Bearer valid-token',
+        ];
+        $data = ['a' => 'b', 'c' => 'd'];
+        $request = new Request('http://example.com', 'POST', $headers, json_encode($data));
+        $this->assertContains($request->getMethod(),$this->methods);
+        $this->assertEquals('http://example.com', $request->url());
+        $this->assertEquals('application/json', $request->getHeaderLine('Content-Type'));
+        $this->assertEquals(json_encode($data), $request->body());
+
+        $request = new Request('http://example.com', 'GET', $headers, json_encode($data));
+        $this->assertContains($request->getMethod(),$this->methods);
+        $this->assertEquals('http://example.com', $request->url());
+        $this->assertEquals('application/json', $request->getHeaderLine('Content-Type'));
+        $this->assertEquals(json_encode($data), $request->body());
+
+        $request = new Request('http://example.com', 'PUT', $headers, json_encode($data));
+        $this->assertContains($request->getMethod(),$this->methods);
+        $this->assertEquals('http://example.com', $request->url());
+        $this->assertEquals('application/json', $request->getHeaderLine('Content-Type'));
+        $this->assertEquals(json_encode($data), $request->body());
+
+        $request = new Request('http://example.com', 'DELETE', $headers, json_encode($data));
+        $this->assertContains($request->getMethod(),$this->methods);
+        $this->assertEquals('http://example.com', $request->url());
+        $this->assertEquals('application/json', $request->getHeaderLine('Content-Type'));
+        $this->assertEquals(json_encode($data), $request->body());
+
+
     }
 
     /**
@@ -128,7 +173,7 @@ class RequestTest extends TestCase
     }
 
     /**
-     * test method interop.
+     * test method interoperability.
      *
      * @return void
      */
@@ -136,6 +181,7 @@ class RequestTest extends TestCase
     {
         $request = new Request();
         $this->assertSame($request, $request->method(Request::METHOD_GET));
+
         $this->assertEquals(Request::METHOD_GET, $request->method());
         $this->assertEquals(Request::METHOD_GET, $request->getMethod());
 
@@ -292,14 +338,14 @@ class RequestTest extends TestCase
     public function testVersion()
     {
         $request = new Request();
-        $result = $request->version('1.0');
+        $request->version('1.0');
         $this->assertSame($request, $request, 'Should return self');
 
         $this->assertSame('1.0', $request->version());
     }
 
     /**
-     * test version interop.
+     * test version Interoperable.
      *
      * @return void
      */
