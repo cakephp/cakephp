@@ -95,7 +95,9 @@ class BaseLogTest extends TestCase
      */
     public function testLogUnicodeObjectToString()
     {
-        $stub = $this->createMock(Entity::class);
+        $stub = $this->getMockBuilder(\stdClass::class)
+            ->setMethods(['__toString'])
+            ->getMock();
         $stub->method('__toString')
             ->willReturn(implode($this->testData));
 
@@ -115,6 +117,18 @@ class BaseLogTest extends TestCase
             ->willReturn($this->testData);
 
         $logged = $this->logger->log(LogLevel::INFO, $stub);
+
+        $this->assertUnescapedUnicode($this->testData, $logged);
+    }
+
+    /**
+     * Tests the logging output of an entity with property value that contains unicode characters.
+     */
+    public function testLogUnicodeEntity()
+    {
+        $entity = new Entity(['foo' => implode($this->testData)]);
+
+        $logged = $this->logger->log(LogLevel::INFO, $entity);
 
         $this->assertUnescapedUnicode($this->testData, $logged);
     }
