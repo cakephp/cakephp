@@ -178,7 +178,7 @@ class CommandCollection implements IteratorAggregate, Countable
                         $this->add($info['fullName'], $info['class']);
                     }
                 } catch (InvalidArgumentException $e) {
-                    Log::warn("Could not add {$info['class']} via autodiscovery. " . $e->getMessage());
+                    Log::warning("Could not add {$info['class']} via autodiscovery. " . $e->getMessage());
                 }
             }
         };
