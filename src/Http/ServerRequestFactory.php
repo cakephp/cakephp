@@ -147,52 +147,54 @@ abstract class ServerRequestFactory extends BaseFactory
      */
     protected static function getBase($uri, $server)
     {
-        $base = $webroot = $baseUrl = null;
-        $config = Configure::read('App');
-        extract($config);
+        $config = (array)Configure::read('App') + [
+            'base' => null,
+            'webroot' => null,
+            'baseUrl' => null
+        ];
 
-        if ($base !== false && $base !== null) {
-            return [$base, $base . '/'];
+        if ($config['base'] !== false && $config['base'] !== null) {
+            return [$config['base'], $config['base'] . '/'];
         }
 
-        if (!$baseUrl) {
-            $base = dirname(Hash::get($server, 'PHP_SELF'));
+        if (!$config['baseUrl']) {
+            $config['base'] = dirname(Hash::get($server, 'PHP_SELF'));
             // Clean up additional / which cause following code to fail..
-            $base = preg_replace('#/+#', '/', $base);
+            $config['base'] = preg_replace('#/+#', '/', $config['base']);
 
-            $indexPos = strpos($base, '/' . $webroot . '/index.php');
+            $indexPos = strpos($config['base'], '/' . $config['webroot'] . '/index.php');
             if ($indexPos !== false) {
-                $base = substr($base, 0, $indexPos) . '/' . $webroot;
+                $config['base'] = substr($config['base'], 0, $indexPos) . '/' . $config['webroot'];
             }
-            if ($webroot === basename($base)) {
-                $base = dirname($base);
+            if ($config['webroot'] === basename($config['base'])) {
+                $config['base'] = dirname($config['base']);
             }
 
-            if ($base === DIRECTORY_SEPARATOR || $base === '.') {
-                $base = '';
+            if ($config['base'] === DIRECTORY_SEPARATOR || $config['base'] === '.') {
+                $config['base'] = '';
             }
-            $base = implode('/', array_map('rawurlencode', explode('/', $base)));
+            $config['base'] = implode('/', array_map('rawurlencode', explode('/', $config['base'])));
 
-            return [$base, $base . '/'];
+            return [$config['base'], $config['base'] . '/'];
         }
 
-        $file = '/' . basename($baseUrl);
-        $base = dirname($baseUrl);
+        $file = '/' . basename($config['baseUrl']);
+        $config['base'] = dirname($config['baseUrl']);
 
-        if ($base === DIRECTORY_SEPARATOR || $base === '.') {
-            $base = '';
+        if ($config['base'] === DIRECTORY_SEPARATOR || $config['base'] === '.') {
+            $config['base'] = '';
         }
-        $webrootDir = $base . '/';
+        $webrootDir = $config['base'] . '/';
 
         $docRoot = Hash::get($server, 'DOCUMENT_ROOT');
-        $docRootContainsWebroot = strpos($docRoot, $webroot);
+        $docRootContainsWebroot = strpos($docRoot, $config['webroot']);
 
-        if (!empty($base) || !$docRootContainsWebroot) {
-            if (strpos($webrootDir, '/' . $webroot . '/') === false) {
-                $webrootDir .= $webroot . '/';
+        if (!empty($config['base']) || !$docRootContainsWebroot) {
+            if (strpos($webrootDir, '/' . $config['webroot'] . '/') === false) {
+                $webrootDir .= $config['webroot'] . '/';
             }
         }
 
-        return [$base . $file, $webrootDir];
+        return [$config['base'] . $file, $webrootDir];
     }
 }
