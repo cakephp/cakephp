@@ -450,7 +450,7 @@ abstract class IntegrationTestCase extends TestCase
     }
 
     /**
-     * Performs an OPTION request using the current request data.
+     * Performs an OPTIONS request using the current request data.
      *
      * The response of the dispatched request will be stored as
      * a property. You can use various assert methods to check the
