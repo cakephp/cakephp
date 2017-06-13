@@ -1461,17 +1461,6 @@ class EntityTest extends TestCase
     }
 
     /**
-     * Tests the entity's __toString method with a property containing unicode characters.
-     * Unicode characters should be passed on unescaped.
-     * @return void
-     */
-    public function testToStringWithUnicode()
-    {
-        $entity = new Entity(['foo' => 'äöü']);
-        $this->assertContains($entity->get('foo'), (string)$entity);
-    }
-
-    /**
      * Tests __debugInfo
      *
      * @return void
