@@ -22,17 +22,7 @@ use Zend\Diactoros\Uri;
  */
 class RequestTest extends TestCase
 {
-     /*
-     * 4 main methods.
-     *
-     * @var array
-     */
-    protected $methods = [
-        Request::METHOD_GET,
-        Request::METHOD_POST,
-        Request::METHOD_PUT,
-        Request::METHOD_DELETE,
-    ];
+
     /**
      * test string ata, header and constructor
      *
@@ -59,11 +49,11 @@ class RequestTest extends TestCase
      *
      * @dataProvider additionProvider
      */
-    public function testAdd(array $headers, $data, $method)
+    public function testMethods(array $headers, $data, $method)
     {
         $request = new Request('http://example.com', $method, $headers, json_encode($data));
 
-        $this->assertContains($request->getMethod(), $this->methods);
+        $this->assertEquals($request->getMethod(), $method);
         $this->assertEquals('http://example.com', $request->url());
         $this->assertEquals('application/json', $request->getHeaderLine('Content-Type'));
         $this->assertEquals(json_encode($data), $request->body());
