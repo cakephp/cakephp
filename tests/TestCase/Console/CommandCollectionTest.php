@@ -234,9 +234,9 @@ class CommandCollectionTest extends TestCase
             $collection->has('example'),
             'Used short name for unique plugin shell'
         );
-        $this->assertFalse(
+        $this->assertTrue(
             $collection->has('test_plugin.example'),
-            'Long names not stored for unique shells'
+            'Long names are stored for unique shells'
         );
         $this->assertTrue(
             $collection->has('sample'),
@@ -246,16 +246,17 @@ class CommandCollectionTest extends TestCase
             $collection->has('test_plugin.sample'),
             'Duplicate shell was given a full alias'
         );
-        $this->assertFalse(
-            $collection->has('company/test_plugin_three.company'),
-            'Long names not stored for unique shells'
-        );
         $this->assertTrue(
             $collection->has('company'),
             'Used short name for unique plugin shell'
         );
+        $this->assertTrue(
+            $collection->has('company/test_plugin_three.company'),
+            'Long names are stored as well'
+        );
 
         $this->assertEquals('TestPlugin\Shell\ExampleShell', $collection->get('example'));
+        $this->assertEquals($collection->get('example'), $collection->get('test_plugin.example'));
         $this->assertEquals(
             'TestApp\Shell\SampleShell',
             $collection->get('sample'),

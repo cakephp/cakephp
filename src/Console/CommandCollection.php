@@ -158,23 +158,31 @@ class CommandCollection implements IteratorAggregate, Countable
         $shells = $scanner->scanAll();
 
         $adder = function ($shells, $key) {
-            if (!empty($shells[$key])) {
-                foreach ($shells[$key] as $info) {
-                    $name = $info['name'];
-                    // If the short name has been used, use the full name.
-                    // This allows app shells to have name preference.
-                    // and app shells to overwrite core shells.
-                    if ($this->has($name) && $name !== $info['fullName']) {
-                        $name = $info['fullName'];
+            if (empty($shells[$key])) {
+                return;
+            }
+            foreach ($shells[$key] as $info) {
+                $name = $info['name'];
+                $addLong = $name !== $info['fullName'];
+
+                // If the short name has been used, use the full name.
+                // This allows app shells to have name preference.
+                // and app shells to overwrite core shells.
+                if ($this->has($name) && $addLong) {
+                    $name = $info['fullName'];
+                }
+
+                try {
+                    $this->add($name, $info['class']);
+                    if ($addLong) {
+                        $this->add($info['fullName'], $info['class']);
                     }
-                    try {
-                        $this->add($name, $info['class']);
-                    } catch (InvalidArgumentException $e) {
-                        Log::debug("Could not add {$info['class']} via autodiscovery. " . $e->getMessage());
-                    }
+                } catch (InvalidArgumentException $e) {
+                    Log::warn("Could not add {$info['class']} via autodiscovery. " . $e->getMessage());
                 }
             }
         };
+
         $adder($shells, 'CORE');
         $adder($shells, 'app');
         foreach (array_keys($shells['plugins']) as $key) {
