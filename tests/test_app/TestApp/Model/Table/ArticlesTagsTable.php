@@ -22,7 +22,7 @@ class ArticlesTagsTable extends Table
 
     public function initialize(array $config)
     {
-        $this->belongsTo('articles');
-        $this->belongsTo('tags');
+        $this->belongsTo('Articles');
+        $this->belongsTo('Tags');
     }
 }
