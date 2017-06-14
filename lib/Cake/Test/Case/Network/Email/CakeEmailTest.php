@@ -473,8 +473,7 @@ class CakeEmailTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testFormatAddressEncodeAndEscape()
-	{
+	public function testFormatAddressEncodeAndEscape() {
 		$result = $this->CakeEmail->formatAddress(array(
 			'test@example.com' => 'Website, ascii'
 		));
