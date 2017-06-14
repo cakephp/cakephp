@@ -182,9 +182,10 @@ class Paginator implements PaginatorInterface
             $query->applyOptions($options);
         }
 
+        $cleanQuery = clone $query;
         $results = $query->all();
         $numResults = count($results);
-        $count = $numResults ? $query->count() : 0;
+        $count = $numResults ? $cleanQuery->count() : 0;
 
         $page = $options['page'];
         $limit = $options['limit'];

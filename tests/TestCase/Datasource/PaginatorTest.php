@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\Datasource;
 
 use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
+use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Exception\PageOutOfBoundsException;
 use Cake\Datasource\Paginator;
 use Cake\ORM\Entity;
@@ -30,7 +31,10 @@ class PaginatorTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = ['core.posts'];
+    public $fixtures = [
+        'core.posts', 'core.articles', 'core.articles_tags',
+        'core.authors', 'core.authors_tags', 'core.tags'
+    ];
 
     /**
      * Don't load data for fixtures for all tests
@@ -181,6 +185,32 @@ class PaginatorTest extends TestCase
         $this->Paginator->paginate($table, [], $settings);
         $pagingParams = $this->Paginator->getPagingParams();
         $this->assertEquals('popular', $pagingParams['PaginatorPosts']['finder']);
+    }
+
+    /**
+     * Test that nested eager loaders don't trigger invalid SQL errors.
+     *
+     * @return void
+     */
+    public function testPaginateNestedEagerLoader()
+    {
+        $this->loadFixtures('Articles', 'Tags', 'Authors', 'ArticlesTags', 'AuthorsTags');
+        $articles = TableRegistry::get('Articles');
+        $articles->belongsToMany('Tags');
+        $tags = TableRegistry::get('Tags');
+        $tags->belongsToMany('Authors');
+        $articles->eventManager()->on('Model.beforeFind', function ($event, $query) {
+            $query ->matching('Tags', function ($q) {
+                return $q->matching('Authors', function ($q) {
+                    return $q->where(['Authors.name' => 'larry']);
+                });
+            });
+        });
+        $results = $this->Paginator->paginate($articles);
+        $result = $results->first();
+        $this->assertInstanceOf(EntityInterface::class, $result);
+        $this->assertInstanceOf(EntityInterface::class, $result->_matchingData['Tags']);
+        $this->assertInstanceOf(EntityInterface::class, $result->_matchingData['Authors']);
     }
 
     /**
