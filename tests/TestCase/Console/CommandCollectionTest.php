@@ -186,7 +186,7 @@ class CommandCollectionTest extends TestCase
     public function testAutoDiscoverApp()
     {
         $collection = new CommandCollection();
-        $this->assertSame($collection, $collection->autoDiscover());
+        $collection->addMany($collection->autoDiscover());
 
         $this->assertTrue($collection->has('i18m'));
         $this->assertTrue($collection->has('sample'));
@@ -204,7 +204,7 @@ class CommandCollectionTest extends TestCase
     public function testAutoDiscoverCore()
     {
         $collection = new CommandCollection();
-        $collection->autoDiscover();
+        $collection->addMany($collection->autoDiscover());
 
         $this->assertTrue($collection->has('routes'));
         $this->assertTrue($collection->has('i18n'));
@@ -228,7 +228,7 @@ class CommandCollectionTest extends TestCase
         Plugin::load('TestPlugin');
         Plugin::load('Company/TestPluginThree');
         $collection = new CommandCollection();
-        $collection->autoDiscover();
+        $collection->addMany($collection->autoDiscover());
 
         $this->assertTrue(
             $collection->has('example'),

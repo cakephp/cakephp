@@ -73,6 +73,22 @@ class CommandCollection implements IteratorAggregate, Countable
     }
 
     /**
+     * Add multiple commands at once.
+     *
+     * @param array $commands A map of command names => command classes/instances.
+     * @return $this
+     * @see \Cake\Console\CommandCollection::add()
+     */
+    public function addMany(array $commands)
+    {
+        foreach ($commands as $name => $class) {
+            $this->add($name, $class);
+        }
+
+        return $this;
+    }
+
+    /**
      * Remove a command from the collection if it exists.
      *
      * @param string $name The named shell.
@@ -150,16 +166,16 @@ class CommandCollection implements IteratorAggregate, Countable
      * the full `plugin_name.shell` name will be used. Plugin shells are added
      * in the order that plugins were loaded.
      *
-     * @return $this
+     * @return array An array of command names and their classes.
      */
     public function autoDiscover()
     {
         $scanner = new CommandScanner();
         $shells = $scanner->scanAll();
 
-        $adder = function ($shells, $key) {
+        $adder = function ($out, $shells, $key) {
             if (empty($shells[$key])) {
-                return;
+                return $out;
             }
             foreach ($shells[$key] as $info) {
                 $name = $info['name'];
@@ -168,27 +184,25 @@ class CommandCollection implements IteratorAggregate, Countable
                 // If the short name has been used, use the full name.
                 // This allows app shells to have name preference.
                 // and app shells to overwrite core shells.
-                if ($this->has($name) && $addLong) {
+                if (isset($out[$name]) && $addLong) {
                     $name = $info['fullName'];
                 }
 
-                try {
-                    $this->add($name, $info['class']);
-                    if ($addLong) {
-                        $this->add($info['fullName'], $info['class']);
-                    }
-                } catch (InvalidArgumentException $e) {
-                    Log::warning("Could not add {$info['class']} via autodiscovery. " . $e->getMessage());
+                $out[$name] = $info['class'];
+                if ($addLong) {
+                    $out[$info['fullName']] = $info['class'];
                 }
             }
+
+            return $out;
         };
 
-        $adder($shells, 'CORE');
-        $adder($shells, 'app');
+        $out = $adder([], $shells, 'CORE');
+        $out = $adder($out, $shells, 'app');
         foreach (array_keys($shells['plugins']) as $key) {
-            $adder($shells['plugins'], $key);
+            $out = $adder($out, $shells['plugins'], $key);
         }
 
-        return $this;
+        return $out;
     }
 }
