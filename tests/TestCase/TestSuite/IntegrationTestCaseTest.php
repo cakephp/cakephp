@@ -40,6 +40,8 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         Configure::write('App.namespace', 'TestApp');
 
         Router::connect('/get/:controller/:action', ['_method' => 'GET'], ['routeClass' => 'InflectedRoute']);
+        Router::connect('/head/:controller/:action', ['_method' => 'HEAD'], ['routeClass' => 'InflectedRoute']);
+        Router::connect('/options/:controller/:action', ['_method' => 'OPTIONS'], ['routeClass' => 'InflectedRoute']);
         Router::connect('/:controller/:action/*', [], ['routeClass' => 'InflectedRoute']);
         DispatcherFactory::clear();
         DispatcherFactory::add('Routing');
@@ -185,6 +187,44 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         $this->_response = null;
         $this->get('/get/request_action/test_request_action');
         $this->assertEquals('This is a test', $this->_response->body());
+    }
+
+    /**
+     * Test sending head requests.
+     *
+     * @return void
+     */
+    public function testHead()
+    {
+        $this->assertNull($this->_response);
+
+        $this->head('/request_action/test_request_action');
+        $this->assertNotEmpty($this->_response);
+        $this->assertInstanceOf('Cake\Http\Response', $this->_response);
+        $this->assertResponseSuccess();
+
+        $this->_response = null;
+        $this->head('/head/request_action/test_request_action');
+        $this->assertResponseSuccess();
+    }
+
+    /**
+     * Test sending options requests.
+     *
+     * @return void
+     */
+    public function testOptions()
+    {
+        $this->assertNull($this->_response);
+
+        $this->options('/request_action/test_request_action');
+        $this->assertNotEmpty($this->_response);
+        $this->assertInstanceOf('Cake\Http\Response', $this->_response);
+        $this->assertResponseSuccess();
+
+        $this->_response = null;
+        $this->options('/options/request_action/test_request_action');
+        $this->assertResponseSuccess();
     }
 
     /**
