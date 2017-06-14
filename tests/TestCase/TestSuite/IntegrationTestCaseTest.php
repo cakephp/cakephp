@@ -778,7 +778,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     public function testAssertResponseContains()
     {
         $this->_response = new Response();
-        $this->_response = $this->_response->withStringBody('Some content');;
+        $this->_response = $this->_response->withStringBody('Some content');
 
         $this->assertResponseContains('content');
     }
