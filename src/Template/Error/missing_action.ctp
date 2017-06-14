@@ -32,13 +32,13 @@ if (isset($controller)) {
     $baseClass = $namespace . '\Controller\AppController';
     $extends = 'AppController';
     $type = 'Controller';
-    $class = $controller;
+    $class = Inflector::camelize($controller);
 }
 // Mailer MissingActionException support
 if (isset($mailer)) {
     $baseClass = 'Cake\Mailer\Mailer';
     $type = $extends = 'Mailer';
-    $class = $mailer;
+    $class = Inflector::camelize($mailer);
 }
 
 if (empty($plugin)) {
