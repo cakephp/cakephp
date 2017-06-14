@@ -1429,7 +1429,7 @@ class TableTest extends TestCase
         $table = new \TestApp\Model\Table\ArticlesTable([
             'connection' => $this->connection,
         ]);
-        $result = $table->find('all')->contain(['authors'])->first();
+        $result = $table->find('all')->contain(['Authors'])->first();
         $this->assertInstanceOf('TestApp\Model\Entity\Author', $result->author);
     }
 
@@ -1444,7 +1444,7 @@ class TableTest extends TestCase
         $table = new \TestApp\Model\Table\ArticlesTable([
             'connection' => $this->connection,
         ]);
-        $result = $table->find('all')->contain(['authors' => ['articles']])->first();
+        $result = $table->find('all')->contain(['Authors' => ['Articles']])->first();
         $this->assertCount(2, $result->author->articles);
         foreach ($result->author->articles as $article) {
             $this->assertInstanceOf('TestApp\Model\Entity\Article', $article);
@@ -1462,7 +1462,7 @@ class TableTest extends TestCase
         $table = new \TestApp\Model\Table\ArticlesTable([
             'connection' => $this->connection,
         ]);
-        $result = $table->find('all')->contain(['tags'])->first();
+        $result = $table->find('all')->contain(['Tags'])->first();
         $this->assertInstanceOf('TestApp\Model\Entity\Tag', $result->tags[0]);
         $this->assertInstanceOf(
             'TestApp\Model\Entity\ArticlesTag',
@@ -1480,7 +1480,7 @@ class TableTest extends TestCase
         $table = new \TestApp\Model\Table\ArticlesTable([
             'connection' => $this->connection,
         ]);
-        $results = $table->find('all')->contain(['tags', 'authors'])->toArray();
+        $results = $table->find('all')->contain(['Tags', 'Authors'])->toArray();
         $this->assertCount(3, $results);
         foreach ($results as $article) {
             $this->assertFalse($article->dirty('id'));

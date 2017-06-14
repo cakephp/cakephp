@@ -22,8 +22,8 @@ class TagsTable extends Table
 
     public function initialize(array $config)
     {
-        $this->belongsTo('authors');
-        $this->belongsToMany('articles');
+        $this->belongsTo('Authors');
+        $this->belongsToMany('Articles');
         $this->hasMany('ArticlesTags', ['propertyName' => 'extraInfo']);
     }
 }

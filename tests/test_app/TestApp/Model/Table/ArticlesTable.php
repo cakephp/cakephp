@@ -22,8 +22,8 @@ class ArticlesTable extends Table
 
     public function initialize(array $config)
     {
-        $this->belongsTo('authors');
-        $this->belongsToMany('tags');
+        $this->belongsTo('Authors');
+        $this->belongsToMany('Tags');
         $this->hasMany('ArticlesTags');
     }
 
