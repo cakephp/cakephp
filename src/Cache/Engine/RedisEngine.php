@@ -217,9 +217,8 @@ class RedisEngine extends CacheEngine
             return true;
         }
         $keys = $this->_Redis->getKeys($this->_config['prefix'] . '*');
-        $this->_Redis->del($keys);
 
-        return true;
+        return !in_array(false, $this->deleteMany($keys));
     }
 
     /**
