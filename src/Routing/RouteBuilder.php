@@ -16,6 +16,8 @@ namespace Cake\Routing;
 
 use BadMethodCallException;
 use Cake\Core\App;
+use Cake\Core\Exception\MissingPluginException;
+use Cake\Core\Plugin;
 use Cake\Routing\Route\Route;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
@@ -516,6 +518,37 @@ class RouteBuilder
         $this->_collection->add($route, $options);
 
         return $route;
+    }
+
+    /**
+     * Load routes from a plugin.
+     *
+     * The routes file will have a local variable named `$routes` made available which contains
+     * the current RouteBuilder instance.
+     *
+     * @param string $name The plugin name
+     * @param string $file The routes file to load. Defaults to `routes.php`
+     * @return void
+     * @throws \Cake\Core\Exception\MissingPluginException When the plugin has not been loaded.
+     * @throws \InvalidArgumentException When the plugin does not have a routes file.
+     */
+    public function loadPlugin($name, $file = 'routes.php')
+    {
+        if (!Plugin::loaded($name)) {
+            throw new MissingPluginException(['plugin' => $name]);
+        }
+
+        $path = Plugin::configPath($name) . DIRECTORY_SEPARATOR . $file;
+        if (!file_exists($path)) {
+            throw new InvalidArgumentException(sprintf(
+                'Cannot load routes for the plugin named %s. The %s file does not exist.',
+                $name,
+                $path
+            ));
+        }
+
+        $routes = $this;
+        include $path;
     }
 
     /**
