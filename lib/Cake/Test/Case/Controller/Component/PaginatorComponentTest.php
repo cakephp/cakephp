@@ -327,6 +327,12 @@ class PaginatorComponentTest extends CakeTestCase {
 		$this->assertEquals(array(1, 2, 3, 4, 5, 6), $results);
 
 		$Controller->Paginator->settings = array(
+			'order' => array('PaginatorControllerComment.id DESC')
+		);
+		$results = Hash::extract($Controller->Paginator->paginate('PaginatorControllerComment'), '{n}.PaginatorControllerComment.id');
+		$this->assertEquals(array(6, 5, 4, 3, 2, 1), $results);
+
+		$Controller->Paginator->settings = array(
 			'order' => array('PaginatorControllerPost.id' => 'ASC')
 		);
 		$results = Hash::extract($Controller->Paginator->paginate('PaginatorControllerPost'), '{n}.PaginatorControllerPost.id');
@@ -627,6 +633,17 @@ class PaginatorComponentTest extends CakeTestCase {
 		$expected = array(
 			'PaginatorControllerPost.id' => 'asc',
 			'PaginatorControllerPost.created' => 'asc'
+		);
+		$this->assertEquals($expected, $result['order']);
+
+		$Controller->PaginatorControllerPost->order = array(
+			'PaginatorControllerPost.id ASC',
+			'PaginatorControllerPost.created DESC'
+		);
+		$result = $Controller->Paginator->validateSort($Controller->PaginatorControllerPost, array());
+		$expected = array(
+			'PaginatorControllerPost.id' => 'ASC',
+			'PaginatorControllerPost.created' => 'DESC'
 		);
 		$this->assertEquals($expected, $result['order']);
 	}
