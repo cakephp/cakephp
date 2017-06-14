@@ -17,7 +17,6 @@ namespace Cake\Console;
 use ArrayIterator;
 use Cake\Console\CommandScanner;
 use Cake\Console\Shell;
-use Cake\Log\Log;
 use Countable;
 use InvalidArgumentException;
 use IteratorAggregate;
