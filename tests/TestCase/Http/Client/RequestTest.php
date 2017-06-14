@@ -22,6 +22,7 @@ use Zend\Diactoros\Uri;
  */
 class RequestTest extends TestCase
 {
+
     /**
      * test string ata, header and constructor
      *
@@ -37,9 +38,43 @@ class RequestTest extends TestCase
         $request = new Request('http://example.com', 'POST', $headers, json_encode($data));
 
         $this->assertEquals('http://example.com', $request->url());
-        $this->assertEquals('POST', $request->getMethod());
+        $this->assertContains($request->getMethod(), 'POST');
         $this->assertEquals('application/json', $request->getHeaderLine('Content-Type'));
         $this->assertEquals(json_encode($data), $request->body());
+    }
+    /**
+     * @param array $headers The HTTP headers to set.
+     * @param array|string|null $data The request body to use.
+     * @param string $method The HTTP method to use.
+     *
+     * @dataProvider additionProvider
+     */
+    public function testMethods(array $headers, $data, $method)
+    {
+        $request = new Request('http://example.com', $method, $headers, json_encode($data));
+
+        $this->assertEquals($request->getMethod(), $method);
+        $this->assertEquals('http://example.com', $request->url());
+        $this->assertEquals('application/json', $request->getHeaderLine('Content-Type'));
+        $this->assertEquals(json_encode($data), $request->body());
+    }
+    /**
+     * @dataProvider additionProvider
+     */
+    public function additionProvider()
+    {
+        $headers = [
+            'Content-Type' => 'application/json',
+            'Authorization' => 'Bearer valid-token',
+        ];
+        $data = ['a' => 'b', 'c' => 'd'];
+
+        return [
+            [$headers, $data, Request::METHOD_POST],
+            [$headers, $data, Request::METHOD_GET],
+            [$headers, $data, Request::METHOD_PUT],
+            [$headers, $data, Request::METHOD_DELETE],
+        ];
     }
 
     /**
@@ -128,7 +163,7 @@ class RequestTest extends TestCase
     }
 
     /**
-     * test method interop.
+     * test method interoperability.
      *
      * @return void
      */
@@ -136,6 +171,7 @@ class RequestTest extends TestCase
     {
         $request = new Request();
         $this->assertSame($request, $request->method(Request::METHOD_GET));
+
         $this->assertEquals(Request::METHOD_GET, $request->method());
         $this->assertEquals(Request::METHOD_GET, $request->getMethod());
 
@@ -293,13 +329,13 @@ class RequestTest extends TestCase
     {
         $request = new Request();
         $result = $request->version('1.0');
-        $this->assertSame($request, $request, 'Should return self');
+        $this->assertSame($request, $result, 'Should return self');
 
         $this->assertSame('1.0', $request->version());
     }
 
     /**
-     * test version interop.
+     * test version Interoperable.
      *
      * @return void
      */
