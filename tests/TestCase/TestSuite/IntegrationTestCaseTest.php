@@ -778,9 +778,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     public function testAssertResponseContains()
     {
         $this->_response = new Response();
-        $body = $this->_response->getBody();
-        $body->write('Some content');
-        $this->_response = $this->_response->withBody($body);
+        $this->_response = $this->_response->withStringBody('Some content');;
 
         $this->assertResponseContains('content');
     }
@@ -793,9 +791,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     public function testAssertResponseNotContains()
     {
         $this->_response = new Response();
-        $body = $this->_response->getBody();
-        $body->write('Some content');
-        $this->_response = $this->_response->withBody($body);
+        $this->_response = $this->_response->withStringBody('Some content');
 
         $this->assertResponseNotContains('contents');
     }
@@ -808,9 +804,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     public function testAssertResponseRegExp()
     {
         $this->_response = new Response();
-        $body = $this->_response->getBody();
-        $body->write('Some content');
-        $this->_response = $this->_response->withBody($body);
+        $this->_response = $this->_response->withStringBody('Some content');
 
         $this->assertResponseRegExp('/cont/');
     }
@@ -835,9 +829,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     public function testAssertResponseNotRegExp()
     {
         $this->_response = new Response();
-        $body = $this->_response->getBody();
-        $body->write('Some content');
-        $this->_response = $this->_response->withBody($body);
+        $this->_response = $this->_response->withStringBody('Some content');
 
         $this->assertResponseNotRegExp('/cant/');
     }
