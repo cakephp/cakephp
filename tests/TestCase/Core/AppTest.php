@@ -14,7 +14,6 @@
 namespace Cake\Test\TestCase\Core;
 
 use Cake\Core\App;
-use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 use TestApp\Core\TestApp;
@@ -93,7 +92,7 @@ class AppTest extends TestCase
      */
     public function testShortNameWithNestedAppNamespace()
     {
-        Configure::write('App.namespace', 'TestApp/Nested');
+        static::setAppNamespace('TestApp/Nested');
 
         $return = TestApp::shortName(
             'TestApp/Nested/Controller/PagesController',

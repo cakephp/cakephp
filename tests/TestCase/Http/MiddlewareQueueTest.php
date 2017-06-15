@@ -46,8 +46,7 @@ class MiddlewareQueueTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-
-        Configure::write('App.namespace', $this->appNamespace);
+        static::setAppNamespace($this->appNamespace);
     }
 
     /**
