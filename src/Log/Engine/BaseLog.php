@@ -94,17 +94,17 @@ abstract class BaseLog extends AbstractLogger
             return $data;
         }
 
-        $object = is_object($data);
+        $isObject = is_object($data);
 
-        if ($object && $data instanceof EntityInterface) {
+        if ($isObject && $data instanceof EntityInterface) {
             return json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
         }
 
-        if ($object && method_exists($data, '__toString')) {
+        if ($isObject && method_exists($data, '__toString')) {
             return (string)$data;
         }
 
-        if ($object && $data instanceof JsonSerializable) {
+        if ($isObject && $data instanceof JsonSerializable) {
             return json_encode($data, JSON_UNESCAPED_UNICODE);
         }
 
