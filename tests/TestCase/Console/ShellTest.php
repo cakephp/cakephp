@@ -168,7 +168,7 @@ class ShellTest extends TestCase
      */
     public function testInitialize()
     {
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
 
         Plugin::load('TestPlugin');
         $this->Shell->tasks = ['DbConfig' => ['one', 'two']];
@@ -191,7 +191,7 @@ class ShellTest extends TestCase
      */
     public function testLoadModel()
     {
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
 
         $Shell = new MergeShell();
         $this->assertInstanceOf(

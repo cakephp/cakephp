@@ -298,7 +298,7 @@ class ExceptionRendererTest extends TestCase
      */
     public function testCakeErrorHelpersNotLost()
     {
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         $exception = new SocketException('socket exception');
         $renderer = $this->_mockResponse(new \TestApp\Error\TestAppsExceptionRenderer($exception));
 

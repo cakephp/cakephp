@@ -40,7 +40,7 @@ class RequestActionTraitTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         Security::salt('not-the-default');
         DispatcherFactory::add('Routing');
         DispatcherFactory::add('ControllerFactory');

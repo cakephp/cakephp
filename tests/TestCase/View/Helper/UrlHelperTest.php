@@ -47,7 +47,7 @@ class UrlHelperTest extends TestCase
         $this->Helper = new UrlHelper($this->View);
         $this->Helper->request = new ServerRequest();
 
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         Plugin::load(['TestTheme']);
     }
 

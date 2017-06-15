@@ -48,7 +48,7 @@ class ConnectionTest extends TestCase
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
     }
 
     public function tearDown()

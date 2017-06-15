@@ -33,7 +33,7 @@ class ConsoleIoTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
 
         $this->out = $this->getMockBuilder('Cake\Console\ConsoleOutput')
             ->disableOriginalConstructor()

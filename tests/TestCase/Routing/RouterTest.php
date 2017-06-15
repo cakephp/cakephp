@@ -3185,7 +3185,7 @@ class RouterTest extends TestCase
         $this->assertEquals('/FooBar', $result);
 
         // This is needed because tests/boostrap.php sets App.namespace to 'App'
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
 
         Router::defaultRouteClass('DashedRoute');
         Router::connect('/cake/:controller', ['action' => 'cake']);

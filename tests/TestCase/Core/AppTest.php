@@ -51,7 +51,7 @@ class AppTest extends TestCase
      */
     public function testClassname($class, $type, $suffix = '', $existsInBase = false, $expected = false)
     {
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         $i = 0;
         TestApp::$existsInBaseCallback = function ($name, $namespace) use ($existsInBase, $class, $expected, &$i) {
             if ($i++ === 0) {
@@ -80,7 +80,7 @@ class AppTest extends TestCase
      */
     public function testShortName($class, $type, $suffix = '', $expected = false)
     {
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
 
         $return = TestApp::shortName($class, $type, $suffix);
         $this->assertSame($expected, $return);
@@ -102,7 +102,7 @@ class AppTest extends TestCase
         );
         $this->assertSame('Pages', $return);
 
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
     }
 
     /**

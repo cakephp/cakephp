@@ -33,7 +33,7 @@ class DispatcherFactoryTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         DispatcherFactory::clear();
     }
 

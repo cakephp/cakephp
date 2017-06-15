@@ -33,7 +33,7 @@ class CookieEncryptedUsingControllerTest extends IntegrationTestCase
     public function setUp()
     {
         parent::setUp();
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
 
         Security::salt('abcdabcdabcdabcdabcdabcdabcdabcdabcd');
         Router::connect('/:controller/:action/*', [], ['routeClass' => 'InflectedRoute']);

@@ -475,7 +475,7 @@ class SessionTest extends TestCase
      */
     public function testUsingAppLibsHandler()
     {
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         $config = [
             'defaults' => 'cake',
             'handler' => [
@@ -498,7 +498,7 @@ class SessionTest extends TestCase
      */
     public function testUsingPluginHandler()
     {
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         \Cake\Core\Plugin::load('TestPlugin');
 
         $config = [
@@ -520,7 +520,7 @@ class SessionTest extends TestCase
      */
     public function testEngineWithPreMadeInstance()
     {
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         $engine = new \TestApp\Network\Session\TestAppLibSession;
         $session = new Session(['handler' => ['engine' => $engine]]);
         $this->assertSame($engine, $session->engine());

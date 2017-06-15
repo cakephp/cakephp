@@ -80,7 +80,7 @@ class TableTest extends TestCase
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
 
         $this->usersTypeMap = new TypeMap([
             'Users.id' => 'integer',

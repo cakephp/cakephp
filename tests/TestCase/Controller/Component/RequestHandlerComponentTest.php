@@ -60,7 +60,7 @@ class RequestHandlerComponentTest extends TestCase
     {
         parent::setUp();
         $this->server = $_SERVER;
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         DispatcherFactory::add('Routing');
         DispatcherFactory::add('ControllerFactory');
         $this->_init();
@@ -584,7 +584,7 @@ class RequestHandlerComponentTest extends TestCase
      */
     public function testBeforeRedirectDisabled()
     {
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         Router::connect('/:controller/:action');
         $this->Controller->request->env('HTTP_X_REQUESTED_WITH', 'XMLHttpRequest');
 
@@ -909,7 +909,7 @@ class RequestHandlerComponentTest extends TestCase
      */
     public function testAjaxRedirectAsRequestAction()
     {
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         Router::connect('/:controller/:action');
         $event = new Event('Controller.beforeRedirect', $this->Controller);
 
@@ -940,7 +940,7 @@ class RequestHandlerComponentTest extends TestCase
      */
     public function testAjaxRedirectAsRequestActionWithQueryString()
     {
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         Router::connect('/:controller/:action');
 
         $this->RequestHandler = new RequestHandlerComponent($this->Controller->components());
@@ -981,7 +981,7 @@ class RequestHandlerComponentTest extends TestCase
      */
     public function testAjaxRedirectAsRequestActionWithCookieData()
     {
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         Router::connect('/:controller/:action');
         $event = new Event('Controller.beforeRedirect', $this->Controller);
 
@@ -1016,7 +1016,7 @@ class RequestHandlerComponentTest extends TestCase
      */
     public function testAjaxRedirectAsRequestActionStatusCode()
     {
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         Router::connect('/:controller/:action');
         $event = new Event('Controller.beforeRedirect', $this->Controller);
 
@@ -1048,7 +1048,7 @@ class RequestHandlerComponentTest extends TestCase
      */
     public function testAjaxRedirectAsRequestActionStillRenderingLayout()
     {
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         Router::connect('/:controller/:action');
         $event = new Event('Controller.beforeRedirect', $this->Controller);
 
@@ -1080,7 +1080,7 @@ class RequestHandlerComponentTest extends TestCase
      */
     public function testBeforeRedirectCallbackWithArrayUrl()
     {
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         Router::connect('/:controller/:action/*');
         $_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
         $event = new Event('Controller.beforeRender', $this->Controller);

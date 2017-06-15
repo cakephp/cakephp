@@ -45,7 +45,7 @@ class DatabaseSessionTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         $this->storage = new DatabaseSession();
     }
 

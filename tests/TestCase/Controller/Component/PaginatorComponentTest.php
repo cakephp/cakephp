@@ -69,7 +69,7 @@ class PaginatorComponentTest extends TestCase
     {
         parent::setUp();
 
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
 
         $this->request = new ServerRequest('controller_posts/index');
         $this->request->params['pass'] = [];

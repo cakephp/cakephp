@@ -40,7 +40,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
     {
         parent::setUp();
 
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         $this->logger = $this->getMockBuilder(LoggerInterface::class)->getMock();
 
         Log::reset();

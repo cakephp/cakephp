@@ -34,7 +34,7 @@ class ControllerFactoryFilterTest extends TestCase
      */
     public function testBeforeDispatch()
     {
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
 
         $filter = new ControllerFactoryFilter();
 

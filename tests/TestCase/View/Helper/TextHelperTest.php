@@ -67,7 +67,7 @@ class TextHelperTest extends TestCase
         $this->Text = new TextHelper($this->View);
 
         $this->_appNamespace = Configure::read('App.namespace');
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
     }
 
     /**

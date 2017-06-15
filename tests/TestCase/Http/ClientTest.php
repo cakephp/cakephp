@@ -402,7 +402,7 @@ class ClientTest extends TestCase
      */
     public function testAuthenticationWithMutation()
     {
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         $response = new Response();
         $mock = $this->getMockBuilder('Cake\Http\Client\Adapter\Stream')
             ->setMethods(['send'])

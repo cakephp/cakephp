@@ -33,7 +33,7 @@ class ControllerFactoryTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         $this->factory = new ControllerFactory();
         $this->response = $this->getMockBuilder('Cake\Http\Response')->getMock();
     }

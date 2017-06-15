@@ -37,7 +37,7 @@ class FlashComponentTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         $this->Controller = new Controller(new ServerRequest(['session' => new Session()]));
         $this->ComponentRegistry = new ComponentRegistry($this->Controller);
         $this->Flash = new FlashComponent($this->ComponentRegistry);

@@ -164,7 +164,7 @@ class ViewBuilderTest extends TestCase
      */
     public function testBuildAppViewPresent()
     {
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         $builder = new ViewBuilder();
         $view = $builder->build();
         $this->assertInstanceOf('TestApp\View\AppView', $view);

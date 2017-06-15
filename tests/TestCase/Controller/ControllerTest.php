@@ -245,7 +245,7 @@ class ControllerTest extends TestCase
     {
         parent::setUp();
 
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         Router::reload();
     }
 

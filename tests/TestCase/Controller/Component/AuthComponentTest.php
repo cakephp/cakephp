@@ -60,7 +60,7 @@ class AuthComponentTest extends TestCase
         parent::setUp();
 
         Security::salt('YJfIxfs2guVoUubWDYhG93b0qyJfIxfs2guwvniR2G0FgaC9mi');
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
 
         Router::scope('/', function ($routes) {
             $routes->fallbacks(InflectedRoute::class);
