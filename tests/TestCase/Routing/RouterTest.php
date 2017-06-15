@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\Routing;
 
+use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Http\MiddlewareQueue;
@@ -3084,6 +3085,74 @@ class RouterTest extends TestCase
 
             $routes->connect('/articles', ['controller' => 'Articles']);
         });
+    }
+
+    /**
+     * Test cached scope
+     *
+     * @return void
+     */
+    public function testCreateCacheScope()
+    {
+        $routePath = CACHE . 'persistent/' . 'myapp_cake_routes__path';
+        Cache::setConfig('routes', [
+            'className' => 'File',
+            'prefix' => 'myapp_cake_routes_',
+            'path' => CACHE . 'persistent/',
+        ]);
+
+        if (file_exists($routePath)) {
+            unlink($routePath);
+        }
+        $this->assertFileNotExists($routePath);
+
+        Router::scope('/path', ['param' => 'value', '_cache' => 'routes'], function ($routes) {
+            $this->assertInstanceOf('Cake\Routing\RouteBuilder', $routes);
+            $this->assertEquals('/path', $routes->path());
+            $this->assertEquals(['param' => 'value'], $routes->params());
+            $this->assertEquals('', $routes->namePrefix());
+
+            $routes->connect('/articles', ['controller' => 'Articles']);
+        });
+
+        $this->assertFileExists($routePath);
+        $serializedCollection = Cache::read('/path', 'routes');
+        $expected = [
+            'pass' => [],
+            'controller' => 'Articles',
+            'action' => 'index',
+            'param' => 'value',
+            'plugin' => null,
+            '_matchedRoute' => '/path/articles'
+        ];
+        $this->assertSame($expected, $serializedCollection->parse('/path/articles'));
+
+        return $routePath;
+    }
+
+    /**
+     * Test read cached scope
+     * @depends testCreateCacheScope
+     * @return void
+     */
+    public function testReadCacheScope($routePath = '')
+    {
+        $this->assertFileExists($routePath);
+
+        Router::scope('/path', ['param' => 'value', '_cache' => 'routes'], function ($routes) {
+            $this->fail('Cached routes should have been used');
+        });
+
+        $expected = [
+            'pass' => [],
+            'controller' => 'Articles',
+            'action' => 'index',
+            'param' => 'value',
+            'plugin' => null,
+            '_matchedRoute' => '/path/articles'
+        ];
+        $this->assertSame($expected, Router::parseRequest(new ServerRequest('/path/articles')));
+        unlink($routePath);
     }
 
     /**

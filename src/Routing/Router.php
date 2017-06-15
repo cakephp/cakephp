@@ -12,11 +12,14 @@
  * @since         0.2.9
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace Cake\Routing;
 
+use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Http\MiddlewareQueue;
 use Cake\Http\ServerRequest;
+use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
@@ -979,7 +982,39 @@ class Router
         if (is_array($params)) {
             $options = $params;
             unset($params['routeClass'], $params['extensions']);
+            $cache = (string)Hash::get($params, '_cache');
+            if (!empty($cache)) {
+                unset($params['_cache']);
+                static::$_collection = Cache::remember(
+                    $path,
+                    function () use ($path, $params, $options, $callback) {
+                        self::_buildScope($path, $params, $options, $callback);
+
+                        return static::$_collection;
+                    },
+                    $cache
+                );
+
+                return;
+            }
         }
+
+        static::_buildScope($path, $params, $options, $callback);
+    }
+
+    /**
+     * @param string $path The path prefix for the scope. This path will be prepended
+     *   to all routes connected in the scoped collection.
+     * @param array|callable $params An array of routing defaults to add to each connected route.
+     *   If you have no parameters, this argument can be a callable.
+     * @param array $options An array of routing defaults to add to each connected route after
+     *   routeClass, extensions and _cache are unset
+     * @param callable|null $callback The callback to invoke with the scoped collection.
+     * @throws \InvalidArgumentException When an invalid callable is provided.
+     * @return void
+     */
+    protected static function _buildScope($path, $params = [], $options = [], $callback = null)
+    {
         $builder = static::createRouteBuilder('/', $options);
         $builder->scope($path, $params, $callback);
     }
