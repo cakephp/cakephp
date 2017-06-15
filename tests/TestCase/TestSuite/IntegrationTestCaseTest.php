@@ -933,6 +933,5 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     {
         $this->disableErrorHandlerMiddleware();
         $this->get('/foo');
-        $this->assertResponseOk();
     }
 }
