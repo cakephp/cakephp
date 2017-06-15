@@ -31,8 +31,6 @@ class TestExceptionRenderer
      */
     public function __construct(Exception $exception)
     {
-        $this->error = $exception;
-
         throw $exception;
     }
 }
