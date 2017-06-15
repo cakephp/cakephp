@@ -1,7 +1,6 @@
 <?php
 namespace Cake\Test\TestCase;
 
-use Cake\Core\Configure;
 use Cake\Http\Response;
 use Cake\Http\ServerRequestFactory;
 use Cake\TestSuite\TestCase;

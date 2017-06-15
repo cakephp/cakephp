@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\TestSuite;
 
-use Cake\Core\Configure;
 use Cake\Event\EventManager;
 use Cake\Http\Response;
 use Cake\Routing\DispatcherFactory;

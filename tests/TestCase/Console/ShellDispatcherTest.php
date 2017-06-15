@@ -16,7 +16,6 @@ namespace Cake\Test\TestCase\Console;
 
 use Cake\Console\Shell;
 use Cake\Console\ShellDispatcher;
-use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 

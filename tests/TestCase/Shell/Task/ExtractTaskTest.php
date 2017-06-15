@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\Shell\Task;
 
-use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Filesystem\Folder;
 use Cake\TestSuite\TestCase;

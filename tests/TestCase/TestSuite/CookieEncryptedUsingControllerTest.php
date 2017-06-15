@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\Controller;
 
-use Cake\Core\Configure;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
 use Cake\TestSuite\IntegrationTestCase;

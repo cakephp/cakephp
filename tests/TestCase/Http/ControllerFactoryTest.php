@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\Http;
 
-use Cake\Core\Configure;
 use Cake\Http\ControllerFactory;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;

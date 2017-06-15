@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\ORM\Locator;
 
-use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Locator\TableLocator;

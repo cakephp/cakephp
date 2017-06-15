@@ -16,7 +16,6 @@ namespace Cake\Test\TestCase\Controller;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\CookieComponent;
 use Cake\Controller\Controller;
-use Cake\Core\Configure;
 use Cake\Event\EventManager;
 use Cake\TestSuite\TestCase;
 use TestApp\Controller\ComponentTestController;

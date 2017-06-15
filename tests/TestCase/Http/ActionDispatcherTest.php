@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\Http;
 
-use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Http\ActionDispatcher;
 use Cake\Http\Response;

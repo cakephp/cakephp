@@ -14,7 +14,6 @@
 namespace Cake\Test\TestCase\Console;
 
 use Cake\Console\HelperRegistry;
-use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 

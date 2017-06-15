@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\Network;
 
-use Cake\Core\Configure;
 use Cake\Network\Session;
 use Cake\Network\Session\CacheSession;
 use Cake\Network\Session\DatabaseSession;

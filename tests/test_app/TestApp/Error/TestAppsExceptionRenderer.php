@@ -3,7 +3,6 @@
 namespace TestApp\Error;
 
 use Cake\Controller\Controller;
-use Cake\Core\Configure;
 use Cake\Error\ExceptionRenderer;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
