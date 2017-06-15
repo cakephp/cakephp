@@ -14,11 +14,13 @@
  */
 use Cake\Core\Plugin;
 use Cake\Core\Configure;
+use Cake\Utility\Inflector;
 
 $pluginDot = empty($plugin) ? null : $plugin . '.';
 $namespace = Configure::read('App.namespace');
 $prefixNs = '';
 $prefixPath = '';
+$class = Inflector::camelize($class);
 
 if (!empty($prefix)) {
     $prefix = array_map('\Cake\Utility\Inflector::camelize', explode('/', $prefix));

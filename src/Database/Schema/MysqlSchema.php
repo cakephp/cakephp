@@ -406,7 +406,8 @@ class MysqlSchema extends BaseSchema
         }
         $addAutoIncrement = (
             [$name] == (array)$schema->primaryKey() &&
-            !$schema->hasAutoincrement()
+            !$schema->hasAutoincrement() &&
+            !isset($data['autoIncrement'])
         );
         if (in_array($data['type'], [TableSchema::TYPE_INTEGER, TableSchema::TYPE_BIGINTEGER]) &&
             ($data['autoIncrement'] === true || $addAutoIncrement)

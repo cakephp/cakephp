@@ -180,11 +180,11 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         $this->get('/request_action/test_request_action');
         $this->assertNotEmpty($this->_response);
         $this->assertInstanceOf('Cake\Http\Response', $this->_response);
-        $this->assertEquals('This is a test', $this->_response->body());
+        $this->assertEquals('This is a test', $this->_response->getBody());
 
         $this->_response = null;
         $this->get('/get/request_action/test_request_action');
-        $this->assertEquals('This is a test', $this->_response->body());
+        $this->assertEquals('This is a test', $this->_response->getBody());
     }
 
     /**
@@ -197,7 +197,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         $this->useHttpServer(true);
         $this->get('/get/request_action/test_request_action');
         $this->assertResponseOk();
-        $this->assertEquals('This is a test', $this->_response->body());
+        $this->assertEquals('This is a test', $this->_response->getBody());
     }
 
     /**
@@ -229,7 +229,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         $this->get('/request_action/test_request_action');
         $this->assertNotEmpty($this->_response);
         $this->assertInstanceOf('Cake\Http\Response', $this->_response);
-        $this->assertEquals('This is a test', $this->_response->body());
+        $this->assertEquals('This is a test', $this->_response->getBody());
         $this->assertHeader('X-Middleware', 'true');
     }
 
@@ -276,7 +276,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         $this->useHttpServer(true);
 
         $this->post('/request_action/post_pass', ['title' => 'value']);
-        $data = json_decode($this->_response->body());
+        $data = json_decode($this->_response->getBody());
         $this->assertEquals('value', $data->title);
         $this->assertHeader('X-Middleware', 'true');
     }
@@ -291,7 +291,10 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         $this->useHttpServer(true);
 
         $this->post('/request_action/input_test', '{"hello":"world"}');
-        $this->assertSame('world', $this->_response->body());
+        if ($this->_response->getBody()->isSeekable()) {
+            $this->_response->getBody()->rewind();
+        }
+        $this->assertSame('world', $this->_response->getBody()->getContents());
         $this->assertHeader('X-Middleware', 'true');
     }
 
@@ -627,34 +630,34 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     {
         $this->_response = new Response();
 
-        $this->_response->statusCode(200);
+        $this->_response = $this->_response->withStatus(200);
         $this->assertResponseOk();
 
-        $this->_response->statusCode(201);
+        $this->_response = $this->_response->withStatus(201);
         $this->assertResponseOk();
 
-        $this->_response->statusCode(204);
+        $this->_response = $this->_response->withStatus(204);
         $this->assertResponseOk();
 
-        $this->_response->statusCode(202);
+        $this->_response = $this->_response->withStatus(202);
         $this->assertResponseSuccess();
 
-        $this->_response->statusCode(302);
+        $this->_response = $this->_response->withStatus(302);
         $this->assertResponseSuccess();
 
-        $this->_response->statusCode(400);
+        $this->_response = $this->_response->withStatus(400);
         $this->assertResponseError();
 
-        $this->_response->statusCode(417);
+        $this->_response = $this->_response->withStatus(417);
         $this->assertResponseError();
 
-        $this->_response->statusCode(500);
+        $this->_response = $this->_response->withStatus(500);
         $this->assertResponseFailure();
 
-        $this->_response->statusCode(505);
+        $this->_response = $this->_response->withStatus(505);
         $this->assertResponseFailure();
 
-        $this->_response->statusCode(301);
+        $this->_response = $this->_response->withStatus(301);
         $this->assertResponseCode(301);
     }
 
@@ -666,7 +669,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     public function testAssertRedirect()
     {
         $this->_response = new Response();
-        $this->_response->header('Location', 'http://localhost/tasks/index');
+        $this->_response = $this->_response->withHeader('Location', 'http://localhost/tasks/index');
 
         $this->assertRedirect();
         $this->assertRedirect('/tasks/index');
@@ -709,7 +712,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     public function testAssertRedirectContains()
     {
         $this->_response = new Response();
-        $this->_response->header('Location', 'http://localhost/tasks/index');
+        $this->_response = $this->_response->withHeader('Location', 'http://localhost/tasks/index');
 
         $this->assertRedirectContains('/tasks/index');
     }
@@ -722,7 +725,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     public function testAssertHeader()
     {
         $this->_response = new Response();
-        $this->_response->header('Etag', 'abc123');
+        $this->_response = $this->_response->withHeader('Etag', 'abc123');
 
         $this->assertHeader('Etag', 'abc123');
     }
@@ -735,7 +738,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     public function testAssertHeaderContains()
     {
         $this->_response = new Response();
-        $this->_response->header('Etag', 'abc123');
+        $this->_response = $this->_response->withHeader('Etag', 'abc123');
 
         $this->assertHeaderContains('Etag', 'abc');
     }
@@ -775,7 +778,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     public function testAssertResponseContains()
     {
         $this->_response = new Response();
-        $this->_response->body('Some content');
+        $this->_response = $this->_response->withStringBody('Some content');
 
         $this->assertResponseContains('content');
     }
@@ -788,7 +791,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     public function testAssertResponseNotContains()
     {
         $this->_response = new Response();
-        $this->_response->body('Some content');
+        $this->_response = $this->_response->withStringBody('Some content');
 
         $this->assertResponseNotContains('contents');
     }
@@ -801,7 +804,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     public function testAssertResponseRegExp()
     {
         $this->_response = new Response();
-        $this->_response->body('Some content');
+        $this->_response = $this->_response->withStringBody('Some content');
 
         $this->assertResponseRegExp('/cont/');
     }
@@ -826,7 +829,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     public function testAssertResponseNotRegExp()
     {
         $this->_response = new Response();
-        $this->_response->body('Some content');
+        $this->_response = $this->_response->withStringBody('Some content');
 
         $this->assertResponseNotRegExp('/cant/');
     }

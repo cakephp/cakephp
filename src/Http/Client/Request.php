@@ -153,7 +153,7 @@ class Request extends Message implements RequestInterface
      * @param array $headers The headers to add.
      * @return void
      */
-    protected function addHeaders($headers)
+    protected function addHeaders(array $headers)
     {
         foreach ($headers as $key => $val) {
             $normalized = strtolower($key);
@@ -256,5 +256,5 @@ class Request extends Message implements RequestInterface
     }
 }
 
-// @deprecated Add backwards compat alias.
+// @deprecated Add backwards compact alias.
 class_alias('Cake\Http\Client\Request', 'Cake\Network\Http\Request');
