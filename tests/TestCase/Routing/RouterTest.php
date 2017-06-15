@@ -3153,6 +3153,7 @@ class RouterTest extends TestCase
         ];
         $this->assertSame($expected, Router::parseRequest(new ServerRequest('/path/articles')));
         unlink($routePath);
+        Cache::drop('routes');
     }
 
     /**
