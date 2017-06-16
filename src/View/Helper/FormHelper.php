@@ -2578,7 +2578,7 @@ class FormHelper extends Helper
             $options = $this->addClass($options, $this->_config['errorClass']);
         }
         $isDisabled = false;
-        if (isset($options['disabled'])) {
+        if (isset($options['disabled']) && !empty($options['disabled'])) {
             $isDisabled = (
                 $options['disabled'] === true ||
                 $options['disabled'] === 'disabled' ||
