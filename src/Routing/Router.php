@@ -164,6 +164,13 @@ class Router
     protected static $_defaultExtensions = [];
 
     /**
+     * Default prefix used for scope cache keys
+     *
+     * @var string
+     */
+    protected static $_cachePrefix = 'routes';
+
+    /**
      * Get or set default route class.
      *
      * @param string|null $routeClass Class name.
@@ -986,7 +993,7 @@ class Router
             if (!empty($cache)) {
                 unset($params['_cache']);
                 static::$_collection = Cache::remember(
-                    $path,
+                    static::$_cachePrefix . $path,
                     function () use ($path, $params, $options, $callback) {
                         self::_buildScope($path, $params, $options, $callback);
 

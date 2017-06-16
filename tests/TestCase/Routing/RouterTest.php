@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Routing;
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
+use Cake\Filesystem\File;
 use Cake\Http\MiddlewareQueue;
 use Cake\Http\ServerRequest;
 use Cake\Http\ServerRequestFactory;
@@ -3094,17 +3095,14 @@ class RouterTest extends TestCase
      */
     public function testCreateCacheScope()
     {
-        $routePath = CACHE . 'persistent/' . 'myapp_cake_routes__path';
+        $routePath = tempnam(CACHE . 'persistent/', 'myapp_cake_someprefix_');
+        $tmpName = substr($routePath, strlen(CACHE . 'persistent/' . 'myapp_cake_someprefix_'));
+
         Cache::setConfig('routes', [
             'className' => 'File',
-            'prefix' => 'myapp_cake_routes_',
+            'prefix' => 'myapp_cake_someprefix_' . $tmpName,
             'path' => CACHE . 'persistent/',
         ]);
-
-        if (file_exists($routePath)) {
-            unlink($routePath);
-        }
-        $this->assertFileNotExists($routePath);
 
         Router::scope('/path', ['param' => 'value', '_cache' => 'routes'], function ($routes) {
             $this->assertInstanceOf('Cake\Routing\RouteBuilder', $routes);
@@ -3116,7 +3114,7 @@ class RouterTest extends TestCase
         });
 
         $this->assertFileExists($routePath);
-        $serializedCollection = Cache::read('/path', 'routes');
+        $serializedCollection = Cache::read('routes' . '/path', 'routes');
         $expected = [
             'pass' => [],
             'controller' => 'Articles',
@@ -3125,6 +3123,7 @@ class RouterTest extends TestCase
             'plugin' => null,
             '_matchedRoute' => '/path/articles'
         ];
+        $this->assertInstanceOf('\Cake\Routing\RouteCollection', $serializedCollection);
         $this->assertSame($expected, $serializedCollection->parse('/path/articles'));
 
         return $routePath;
@@ -3152,7 +3151,8 @@ class RouterTest extends TestCase
             '_matchedRoute' => '/path/articles'
         ];
         $this->assertSame($expected, Router::parseRequest(new ServerRequest('/path/articles')));
-        unlink($routePath);
+        $file = new File($routePath);
+        $file->delete();
         Cache::drop('routes');
     }
 
