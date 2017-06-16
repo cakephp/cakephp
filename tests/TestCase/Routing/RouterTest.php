@@ -18,6 +18,7 @@ use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Filesystem\File;
+use Cake\Filesystem\Folder;
 use Cake\Http\MiddlewareQueue;
 use Cake\Http\ServerRequest;
 use Cake\Http\ServerRequestFactory;
@@ -3095,6 +3096,8 @@ class RouterTest extends TestCase
      */
     public function testCreateCacheScope()
     {
+        $folder = new Folder();
+        $folder->create(CACHE . 'persistent/');
         $routePath = tempnam(CACHE . 'persistent/', 'myapp_cake_someprefix_');
         $tmpName = substr($routePath, strlen(CACHE . 'persistent/' . 'myapp_cake_someprefix_'));
 
@@ -3151,9 +3154,36 @@ class RouterTest extends TestCase
             '_matchedRoute' => '/path/articles'
         ];
         $this->assertSame($expected, Router::parseRequest(new ServerRequest('/path/articles')));
+        Cache::drop('routes');
         $file = new File($routePath);
         $file->delete();
-        Cache::drop('routes');
+    }
+
+    /**
+     * Test cached scope in a non serialized cache engine
+     *
+     * @return void
+     */
+    public function testCacheScopeNotSerialized()
+    {
+        $routePath = tempnam(CACHE . 'persistent/', 'myapp_cake_someprefix_');
+        $tmpName = substr($routePath, strlen(CACHE . 'persistent/' . 'myapp_cake_someprefix_'));
+
+        Cache::setConfig('routes', [
+            'className' => 'File',
+            'prefix' => 'myapp_cake_someprefix_' . $tmpName,
+            'path' => CACHE . 'persistent/',
+            'serialize' => false,
+        ]);
+
+        Router::scope('/path', ['param' => 'value', '_cache' => 'routes'], function ($routes) {
+            $this->assertInstanceOf('Cake\Routing\RouteBuilder', $routes);
+            $this->assertEquals('/path', $routes->path());
+            $this->assertEquals(['param' => 'value'], $routes->params());
+            $this->assertEquals('', $routes->namePrefix());
+
+            $routes->connect('/articles', ['controller' => 'Articles']);
+        });
     }
 
     /**
