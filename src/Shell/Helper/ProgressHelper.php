@@ -125,7 +125,7 @@ class ProgressHelper extends Helper
     /**
      * Render the progress bar based on the current state.
      *
-     * @return $this;
+     * @return $this
      */
     public function draw()
     {
