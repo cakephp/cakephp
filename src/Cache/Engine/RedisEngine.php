@@ -173,9 +173,14 @@ class RedisEngine extends CacheEngine
      */
     public function increment($key, $offset = 1)
     {
+        $duration = $this->_config['duration'];
         $key = $this->_key($key);
 
-        return (int)$this->_Redis->incrBy($key, $offset);
+        $value = (int)$this->_Redis->incrBy($key, $offset);
+
+        $this->_Redis->setTimeout($key, $duration);
+
+        return $value;
     }
 
     /**
@@ -187,9 +192,14 @@ class RedisEngine extends CacheEngine
      */
     public function decrement($key, $offset = 1)
     {
+        $duration = $this->_config['duration'];
         $key = $this->_key($key);
 
-        return (int)$this->_Redis->decrBy($key, $offset);
+        $value = (int)$this->_Redis->decrBy($key, $offset);
+
+        $this->_Redis->setTimeout($key, $duration);
+
+        return $value;
     }
 
     /**
