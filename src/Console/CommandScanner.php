@@ -29,7 +29,7 @@ use Cake\Utility\Inflector;
 class CommandScanner
 {
     /**
-     * Scan the application, cakephp and plugins for shells
+     * Scan CakePHP core, the applications and plugins for shell classes
      *
      * @return array
      */
@@ -51,6 +51,7 @@ class CommandScanner
             '',
             ['command_list']
         );
+
         $plugins = [];
         foreach (Plugin::loaded() as $plugin) {
             $plugins[$plugin] = $this->scanDir(
@@ -82,16 +83,19 @@ class CommandScanner
         if (empty($contents[1])) {
             return [];
         }
+
         $shells = [];
         foreach ($contents[1] as $file) {
             if (substr($file, -4) !== '.php') {
                 continue;
             }
+
             $shell = substr($file, 0, -4);
             $name = Inflector::underscore(str_replace('Shell', '', $shell));
             if (in_array($name, $hide, true)) {
                 continue;
             }
+
             $shells[] = [
                 'file' => $path . $file,
                 'fullName' => $prefix . $name,

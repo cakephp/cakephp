@@ -66,6 +66,7 @@ class CommandCollection implements IteratorAggregate, Countable
                 "Cannot use '$class' for command '$name' it is not a subclass of Cake\Console\Shell."
             );
         }
+
         $this->commands[$name] = $command;
 
         return $this;
@@ -176,6 +177,7 @@ class CommandCollection implements IteratorAggregate, Countable
             if (empty($shells[$key])) {
                 return $out;
             }
+
             foreach ($shells[$key] as $info) {
                 $name = $info['name'];
                 $addLong = $name !== $info['fullName'];
