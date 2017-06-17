@@ -450,10 +450,6 @@ class CakeEmailTest extends CakeTestCase {
 		$expected = array('CakePHP <cake@cakephp.org>', 'Cake <php@cakephp.org>');
 		$this->assertSame($expected, $result);
 
-		$result = $this->CakeEmail->formatAddress(array('me@example.com' => 'Last, First'));
-		$expected = array('"Last, First" <me@example.com>');
-		$this->assertSame($expected, $result);
-
 		$result = $this->CakeEmail->formatAddress(array('me@example.com' => '"Last" First'));
 		$expected = array('"\"Last\" First" <me@example.com>');
 		$this->assertSame($expected, $result);
@@ -468,6 +464,32 @@ class CakeEmailTest extends CakeTestCase {
 
 		$result = $this->CakeEmail->formatAddress(array('cake@cakephp.org' => '日本語Test'));
 		$expected = array('=?UTF-8?B?5pel5pys6KqeVGVzdA==?= <cake@cakephp.org>');
+		$this->assertSame($expected, $result);
+	}
+
+/**
+ * Test that addresses are quoted correctly when they contain unicode and
+ * commas
+ *
+ * @return void
+ */
+	public function testFormatAddressEncodeAndEscape() {
+		$result = $this->CakeEmail->formatAddress(array(
+			'test@example.com' => 'Website, ascii'
+		));
+		$expected = array('"Website, ascii" <test@example.com>');
+		$this->assertSame($expected, $result);
+
+		$result = $this->CakeEmail->formatAddress(array(
+			'test@example.com' => 'Wébsite, unicode'
+		));
+		$expected = array('=?UTF-8?B?V8OpYnNpdGUsIHVuaWNvZGU=?= <test@example.com>');
+		$this->assertSame($expected, $result);
+
+		$result = $this->CakeEmail->formatAddress(array(
+			'test@example.com' => 'Website, électric'
+		));
+		$expected = array('"Website, =?UTF-8?B?w6lsZWN0cmlj?=" <test@example.com>');
 		$this->assertSame($expected, $result);
 	}
 

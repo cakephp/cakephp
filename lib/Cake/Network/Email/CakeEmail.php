@@ -830,7 +830,10 @@ class CakeEmail {
 				$return[] = $email;
 			} else {
 				$encoded = $this->_encode($alias);
-				if ($encoded === $alias && preg_match('/[^a-z0-9 ]/i', $encoded)) {
+				if (
+					$encoded === $alias && preg_match('/[^a-z0-9 ]/i', $encoded) ||
+					strpos($encoded, ',') !== false
+				) {
 					$encoded = '"' . str_replace('"', '\"', $encoded) . '"';
 				}
 				$return[] = sprintf('%s <%s>', $encoded, $email);
