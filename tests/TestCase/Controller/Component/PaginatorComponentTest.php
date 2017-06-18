@@ -19,6 +19,7 @@ use Cake\Controller\Component\PaginatorComponent;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
+use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Paginator;
 use Cake\Http\ServerRequest;
 use Cake\Network\Exception\NotFoundException;
