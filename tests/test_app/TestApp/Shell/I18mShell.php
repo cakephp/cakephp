@@ -22,7 +22,7 @@ namespace TestApp\Shell;
 
 use Cake\Console\Shell;
 
-class I18m extends Shell
+class I18mShell extends Shell
 {
 
     /**
