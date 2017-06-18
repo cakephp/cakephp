@@ -1,19 +1,20 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Routing;
 
+use Cake\Core\Plugin;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
 use Cake\Routing\Router;
@@ -38,6 +39,17 @@ class RouteBuilderTest extends TestCase
     {
         parent::setUp();
         $this->collection = new RouteCollection();
+    }
+
+    /**
+     * Teardown method
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        parent::tearDown();
+        Plugin::unload('TestPlugin');
     }
 
     /**
@@ -127,7 +139,7 @@ class RouteBuilderTest extends TestCase
         $routes = new RouteBuilder($this->collection, '/l', ['prefix' => 'api']);
 
         $route = new Route('/:controller');
-        $this->assertNull($routes->connect($route));
+        $this->assertSame($route, $routes->connect($route));
 
         $result = $this->collection->routes()[0];
         $this->assertSame($route, $result);
@@ -142,10 +154,10 @@ class RouteBuilderTest extends TestCase
     {
         $routes = new RouteBuilder($this->collection, '/l', ['prefix' => 'api']);
 
-        $this->assertNull($routes->connect('/:controller'));
-        $route = $this->collection->routes()[0];
-
+        $route = $routes->connect('/:controller');
         $this->assertInstanceOf(Route::class, $route);
+
+        $this->assertSame($route, $this->collection->routes()[0]);
         $this->assertEquals('/l/:controller', $route->template);
         $expected = ['prefix' => 'api', 'action' => 'index', 'plugin' => null];
         $this->assertEquals($expected, $route->defaults);
@@ -926,5 +938,45 @@ class RouteBuilderTest extends TestCase
         $this->assertNotEmpty($this->collection->parse('/faq/things_you_know'));
         $result = $this->collection->parse('/articles/123');
         $this->assertEquals(['123'], $result['pass']);
+    }
+
+    /**
+     * Test loading routes from a missing plugin
+     *
+     * @expectedException Cake\Core\Exception\MissingPluginException
+     * @return void
+     */
+    public function testLoadPluginBadPlugin()
+    {
+        $routes = new RouteBuilder($this->collection, '/');
+        $routes->loadPlugin('Nope');
+    }
+
+    /**
+     * Test loading routes from a missing file
+     *
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Cannot load routes for the plugin named TestPlugin.
+     * @return void
+     */
+    public function testLoadPluginBadFile()
+    {
+        Plugin::load('TestPlugin');
+        $routes = new RouteBuilder($this->collection, '/');
+        $routes->loadPlugin('TestPlugin', 'nope.php');
+    }
+
+    /**
+     * Test loading routes with success
+     *
+     * @return void
+     */
+    public function testLoadPlugin()
+    {
+        Plugin::load('TestPlugin');
+        $routes = new RouteBuilder($this->collection, '/');
+        $routes->loadPlugin('TestPlugin');
+        $this->assertCount(1, $this->collection->routes());
+        $this->assertNotEmpty($this->collection->parse('/test_plugin'));
     }
 }

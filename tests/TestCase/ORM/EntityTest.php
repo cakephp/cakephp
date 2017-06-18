@@ -1,16 +1,16 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\ORM;
 
@@ -1572,5 +1572,71 @@ class EntityTest extends TestCase
         $this->assertTrue($cloned->dirty());
         $this->assertTrue($cloned->dirty('a'));
         $this->assertTrue($cloned->dirty('b'));
+    }
+
+    /**
+     * Tests getInvalid and setInvalid
+     *
+     * @return void
+     */
+    public function testGetSetInvalid()
+    {
+        $entity = new Entity();
+        $return = $entity->setInvalid([
+            'title' => 'albert',
+            'body' => 'einstein'
+        ]);
+        $this->assertSame($entity, $return);
+        $this->assertSame([
+            'title' => 'albert',
+            'body' => 'einstein'
+        ], $entity->getInvalid());
+
+        $set = $entity->setInvalid([
+            'title' => 'nikola',
+            'body' => 'tesla'
+        ]);
+        $this->assertSame([
+            'title' => 'albert',
+            'body' => 'einstein'
+        ], $set->getInvalid());
+
+        $overwrite = $entity->setInvalid([
+            'title' => 'nikola',
+            'body' => 'tesla'
+        ], true);
+        $this->assertSame($entity, $overwrite);
+        $this->assertSame([
+            'title' => 'nikola',
+            'body' => 'tesla'
+        ], $entity->getInvalid());
+    }
+
+    /**
+     * Tests getInvalidField
+     *
+     * @return void
+     */
+    public function testGetSetInvalidField()
+    {
+        $entity = new Entity();
+        $return = $entity->setInvalidField('title', 'albert');
+        $this->assertSame($entity, $return);
+        $this->assertSame('albert', $entity->getInvalidField('title'));
+
+        $overwrite = $entity->setInvalidField('title', 'nikola');
+        $this->assertSame($entity, $overwrite);
+        $this->assertSame('nikola', $entity->getInvalidField('title'));
+    }
+
+    /**
+     * Tests getInvalidFieldNull
+     *
+     * @return void
+     */
+    public function testGetInvalidFieldNull()
+    {
+        $entity = new Entity();
+        $this->assertNull($entity->getInvalidField('foo'));
     }
 }

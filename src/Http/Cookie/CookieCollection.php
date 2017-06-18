@@ -338,7 +338,8 @@ class CookieCollection implements IteratorAggregate, Countable
                 'domain' => '',
                 'secure' => false,
                 'httponly' => false,
-                'expires' => null
+                'expires' => null,
+                'max-age' => null
             ];
             foreach ($parts as $i => $part) {
                 if (strpos($part, '=') !== false) {
@@ -358,7 +359,9 @@ class CookieCollection implements IteratorAggregate, Countable
                 }
             }
             $expires = null;
-            if ($cookie['expires']) {
+            if ($cookie['max-age'] !== null) {
+                $expires = new DateTimeImmutable('@' . (time() + $cookie['max-age']));
+            } elseif ($cookie['expires']) {
                 $expires = new DateTimeImmutable('@' . strtotime($cookie['expires']));
             }
 

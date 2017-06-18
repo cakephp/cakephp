@@ -1,22 +1,27 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.2.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Datasource;
 
 /**
  * Describes the methods that any class representing a data storage should
  * comply with.
+ *
+ * @method array getInvalid()
+ * @method mixed getInvalidField($field)
+ * @method $this setInvalid($field, $value = null, $overwrite = false)
+ * @method $this setInvalidField($field, $value = null, $overwrite = false)
  */
 interface InvalidPropertyInterface
 {
@@ -31,6 +36,7 @@ interface InvalidPropertyInterface
      * @param mixed|null $value The invalid value to be set for $field.
      * @param bool $overwrite Whether or not to overwrite pre-existing values for $field.
      * @return $this|mixed
+     * @deprecated 3.5.0 Use getInvalid()/getInvalidField() and setInvalid()/setInvalidField() instead.
      */
     public function invalid($field = null, $value = null, $overwrite = false);
 }

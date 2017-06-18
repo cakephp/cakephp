@@ -1,16 +1,16 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Routing;
 
@@ -122,7 +122,7 @@ class RouteCollection
 
         $extensions = $route->getExtensions();
         if (count($extensions) > 0) {
-            $this->extensions($extensions);
+            $this->setExtensions($extensions);
         }
     }
 
@@ -362,22 +362,46 @@ class RouteCollection
      * @param bool $merge Whether to merge with or override existing extensions.
      *   Defaults to `true`.
      * @return array The valid extensions.
+     * @deprecated 3.5.0 Use getExtensions()/setExtensions() instead.
      */
     public function extensions($extensions = null, $merge = true)
     {
-        if ($extensions === null) {
-            return $this->_extensions;
+        if ($extensions !== null) {
+            $this->setExtensions((array)$extensions, $merge);
         }
 
-        $extensions = (array)$extensions;
+        return $this->getExtensions();
+    }
+
+    /**
+     * Get the extensions that can be handled.
+     *
+     * @return array The valid extensions.
+     */
+    public function getExtensions()
+    {
+        return $this->_extensions;
+    }
+
+    /**
+     * Set the extensions that the route collection can handle.
+     *
+     * @param array $extensions The list of extensions to set.
+     * @param bool $merge Whether to merge with or override existing extensions.
+     *   Defaults to `true`.
+     * @return $this
+     */
+    public function setExtensions(array $extensions, $merge = true)
+    {
         if ($merge) {
             $extensions = array_unique(array_merge(
                 $this->_extensions,
                 $extensions
             ));
         }
+        $this->_extensions = $extensions;
 
-        return $this->_extensions = $extensions;
+        return $this;
     }
 
     /**

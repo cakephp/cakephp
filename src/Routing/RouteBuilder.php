@@ -1,21 +1,23 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Routing;
 
 use BadMethodCallException;
 use Cake\Core\App;
+use Cake\Core\Exception\MissingPluginException;
+use Cake\Core\Plugin;
 use Cake\Routing\Route\Route;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
@@ -519,6 +521,37 @@ class RouteBuilder
     }
 
     /**
+     * Load routes from a plugin.
+     *
+     * The routes file will have a local variable named `$routes` made available which contains
+     * the current RouteBuilder instance.
+     *
+     * @param string $name The plugin name
+     * @param string $file The routes file to load. Defaults to `routes.php`
+     * @return void
+     * @throws \Cake\Core\Exception\MissingPluginException When the plugin has not been loaded.
+     * @throws \InvalidArgumentException When the plugin does not have a routes file.
+     */
+    public function loadPlugin($name, $file = 'routes.php')
+    {
+        if (!Plugin::loaded($name)) {
+            throw new MissingPluginException(['plugin' => $name]);
+        }
+
+        $path = Plugin::configPath($name) . DIRECTORY_SEPARATOR . $file;
+        if (!file_exists($path)) {
+            throw new InvalidArgumentException(sprintf(
+                'Cannot load routes for the plugin named %s. The %s file does not exist.',
+                $name,
+                $path
+            ));
+        }
+
+        $routes = $this;
+        include $path;
+    }
+
+    /**
      * Connects a new Route.
      *
      * Routes are a way of connecting request URLs to objects in your application.
@@ -574,7 +607,7 @@ class RouteBuilder
      *   reverse routing lookups. If undefined a name will be generated for each
      *   connected route.
      * - `_ext` is an array of filename extensions that will be parsed out of the url if present.
-     *   See {@link \Cake\Routing\RouteCollection::extensions()}.
+     *   See {@link \Cake\Routing\RouteCollection::setExtensions()}.
      * - `_method` Only match requests with specific HTTP verbs.
      *
      * Example of using the `_method` condition:
@@ -592,7 +625,7 @@ class RouteBuilder
      *   element should match. Also contains additional parameters such as which routed parameters should be
      *   shifted into the passed arguments, supplying patterns for routing parameters and supplying the name of a
      *   custom routing class.
-     * @return void
+     * @return \Cake\Routing\Route\Route
      * @throws \InvalidArgumentException
      * @throws \BadMethodCallException
      */
@@ -615,6 +648,8 @@ class RouteBuilder
 
         $route = $this->_makeRoute($route, $defaults, $options);
         $this->_collection->add($route, $options);
+
+        return $route;
     }
 
     /**

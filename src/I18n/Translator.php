@@ -1,14 +1,14 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  *
  * This file contains sections from the Aura Project
  * @license https://github.com/auraphp/Aura.Intl/blob/3.x/LICENSE
@@ -16,7 +16,7 @@
  * The Aura Project for PHP.
  *
  * @package Aura.Intl
- * @license http://opensource.org/licenses/bsd-license.php BSD
+ * @license https://opensource.org/licenses/bsd-license.php BSD
  */
 namespace Cake\I18n;
 

@@ -1,16 +1,16 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\ORM;
 
@@ -1430,7 +1430,7 @@ class TableTest extends TestCase
         $table = new \TestApp\Model\Table\ArticlesTable([
             'connection' => $this->connection,
         ]);
-        $result = $table->find('all')->contain(['authors'])->first();
+        $result = $table->find('all')->contain(['Authors'])->first();
         $this->assertInstanceOf('TestApp\Model\Entity\Author', $result->author);
     }
 
@@ -1445,7 +1445,7 @@ class TableTest extends TestCase
         $table = new \TestApp\Model\Table\ArticlesTable([
             'connection' => $this->connection,
         ]);
-        $result = $table->find('all')->contain(['authors' => ['articles']])->first();
+        $result = $table->find('all')->contain(['Authors' => ['Articles']])->first();
         $this->assertCount(2, $result->author->articles);
         foreach ($result->author->articles as $article) {
             $this->assertInstanceOf('TestApp\Model\Entity\Article', $article);
@@ -1463,7 +1463,7 @@ class TableTest extends TestCase
         $table = new \TestApp\Model\Table\ArticlesTable([
             'connection' => $this->connection,
         ]);
-        $result = $table->find('all')->contain(['tags'])->first();
+        $result = $table->find('all')->contain(['Tags'])->first();
         $this->assertInstanceOf('TestApp\Model\Entity\Tag', $result->tags[0]);
         $this->assertInstanceOf(
             'TestApp\Model\Entity\ArticlesTag',
@@ -1481,7 +1481,7 @@ class TableTest extends TestCase
         $table = new \TestApp\Model\Table\ArticlesTable([
             'connection' => $this->connection,
         ]);
-        $results = $table->find('all')->contain(['tags', 'authors'])->toArray();
+        $results = $table->find('all')->contain(['Tags', 'Authors'])->toArray();
         $this->assertCount(3, $results);
         foreach ($results as $article) {
             $this->assertFalse($article->dirty('id'));

@@ -1,16 +1,16 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         2.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Controller\Component;
 
@@ -55,7 +55,10 @@ class PaginatorComponentTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = ['core.posts'];
+    public $fixtures = [
+        'core.posts', 'core.articles', 'core.articles_tags',
+        'core.authors', 'core.authors_tags', 'core.tags'
+    ];
 
     /**
      * Don't load data for fixtures for all tests
@@ -229,6 +232,34 @@ class PaginatorComponentTest extends TestCase
 
         $this->Paginator->paginate($table, $settings);
         $this->assertEquals('popular', $this->request->params['paging']['PaginatorPosts']['finder']);
+    }
+
+    /**
+     * Test that nested eager loaders don't trigger invalid SQL errors.
+     *
+     * @return void
+     */
+    public function testPaginateNestedEagerLoader()
+    {
+        $this->loadFixtures('Articles', 'Tags', 'Authors', 'ArticlesTags', 'AuthorsTags');
+        $articles = TableRegistry::get('Articles');
+        $articles->belongsToMany('Tags');
+        $tags = TableRegistry::get('Tags');
+        $tags->belongsToMany('Authors');
+
+        $articles->eventManager()->on('Model.beforeFind', function ($event, $query) {
+            $query ->matching('Tags', function ($q) {
+                return $q->matching('Authors', function ($q) {
+                    return $q->where(['Authors.name' => 'larry']);
+                });
+            });
+        });
+        $results = $this->Paginator->paginate($articles, []);
+
+        $result = $results->first();
+        $this->assertInstanceOf(EntityInterface::class, $result);
+        $this->assertInstanceOf(EntityInterface::class, $result->_matchingData['Tags']);
+        $this->assertInstanceOf(EntityInterface::class, $result->_matchingData['Authors']);
     }
 
     /**

@@ -1,16 +1,16 @@
 <?php
 /**
- * CakePHP :  Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP :  Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP Project
  * @since         3.1.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Shell\Helper;
 
@@ -37,6 +37,20 @@ class ProgressHelperTest extends TestCase
         $this->stub = new ConsoleOutput();
         $this->io = new ConsoleIo($this->stub);
         $this->helper = new ProgressHelper($this->io);
+    }
+
+    /**
+     * Test using the helper manually.
+     *
+     * @return void
+     */
+    public function testInit()
+    {
+        $helper = $this->helper->init([
+            'total' => 200,
+            'width' => 50
+        ]);
+        $this->assertSame($helper, $this->helper, 'init should be chainable');
     }
 
     /**
@@ -124,6 +138,32 @@ class ProgressHelperTest extends TestCase
 
         $this->helper->increment(40);
         $this->helper->draw();
+
+        $expected = [
+            '',
+            '==============>                                                              20%',
+            '',
+            '============================================>                                60%',
+            '',
+            '==========================================================================> 100%',
+        ];
+        $this->assertEquals($expected, $this->stub->messages());
+    }
+
+    /**
+     * Test using the helper chained.
+     *
+     * @return void
+     */
+    public function testIncrementAndRenderChained()
+    {
+        $this->helper->init()
+            ->increment(20)
+            ->draw()
+            ->increment(40)
+            ->draw()
+            ->increment(40)
+            ->draw();
 
         $expected = [
             '',

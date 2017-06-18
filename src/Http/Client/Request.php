@@ -1,15 +1,15 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Http\Client;
 
@@ -153,7 +153,7 @@ class Request extends Message implements RequestInterface
      * @param array $headers The headers to add.
      * @return void
      */
-    protected function addHeaders($headers)
+    protected function addHeaders(array $headers)
     {
         foreach ($headers as $key => $val) {
             $normalized = strtolower($key);
@@ -256,5 +256,5 @@ class Request extends Message implements RequestInterface
     }
 }
 
-// @deprecated Add backwards compat alias.
+// @deprecated Add backwards compact alias.
 class_alias('Cake\Http\Client\Request', 'Cake\Network\Http\Request');

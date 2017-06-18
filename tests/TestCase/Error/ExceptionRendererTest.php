@@ -1,16 +1,16 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         2.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Error;
 
@@ -550,6 +550,27 @@ class ExceptionRendererTest extends TestCase
     }
 
     /**
+     * test missingController method
+     *
+     * @return void
+     */
+    public function testMissingControllerLowerCase()
+    {
+        $exception = new MissingControllerException([
+            'class' => 'posts',
+            'prefix' => '',
+            'plugin' => '',
+        ]);
+        $ExceptionRenderer = $this->_mockResponse(new MyCustomExceptionRenderer($exception));
+
+        $result = $ExceptionRenderer->render()->body();
+
+        $this->assertEquals('missingController', $ExceptionRenderer->template);
+        $this->assertContains('Missing Controller', $result);
+        $this->assertContains('<em>PostsController</em>', $result);
+    }
+
+    /**
      * Returns an array of tests to run for the various Cake Exception classes.
      *
      * @return array
@@ -557,6 +578,19 @@ class ExceptionRendererTest extends TestCase
     public static function exceptionProvider()
     {
         return [
+            [
+                new MissingActionException([
+                    'controller' => 'postsController',
+                    'action' => 'index',
+                    'prefix' => '',
+                    'plugin' => '',
+                ]),
+                [
+                    '/Missing Method in PostsController/',
+                    '/<em>PostsController::index\(\)<\/em>/'
+                ],
+                404
+            ],
             [
                 new MissingActionException([
                     'controller' => 'PostsController',
