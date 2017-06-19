@@ -154,7 +154,7 @@ class DatabaseSessionTest extends TestCase
     {
         TableRegistry::clear();
 
-        ini_set('session.gc_maxlifetime', 0);
+        ini_set('session.gc_maxlifetime', '0');
         $storage = new DatabaseSession();
         $storage->write('foo', 'Some value');
 
