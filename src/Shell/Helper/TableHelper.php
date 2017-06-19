@@ -43,8 +43,8 @@ class TableHelper extends Helper
     {
         $widths = [];
         foreach ($rows as $line) {
-            foreach ($line as $k => $v) {
-                $columnLength = mb_strwidth($line[$k]);
+            foreach (array_values($line) as $k => $v) {
+                $columnLength = mb_strwidth($v);
                 if ($columnLength >= (isset($widths[$k]) ? $widths[$k] : 0)) {
                     $widths[$k] = $columnLength;
                 }
@@ -85,7 +85,7 @@ class TableHelper extends Helper
         }
 
         $out = '';
-        foreach ($row as $i => $column) {
+        foreach (array_values($row) as $i => $column) {
             $pad = $widths[$i] - mb_strwidth($column);
             if (!empty($options['style'])) {
                 $column = $this->_addStyle($column, $options['style']);
@@ -98,6 +98,9 @@ class TableHelper extends Helper
 
     /**
      * Output a table.
+     *
+     * Data will be output based on the order of the values
+     * in the array. The keys will not be used to align data.
      *
      * @param array $rows The data to render out.
      * @return void

@@ -4672,6 +4672,37 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * Test radio with complex options and empty disabled data.
+     *
+     * @return void
+     */
+    public function testRadioComplexDisabled()
+    {
+        $options = [
+            ['value' => 'r', 'text' => 'red'],
+            ['value' => 'b', 'text' => 'blue'],
+        ];
+        $attrs = ['disabled' => []];
+        $result = $this->Form->radio('Model.field', $options, $attrs);
+        $expected = [
+            'input' => ['type' => 'hidden', 'name' => 'Model[field]', 'value' => ''],
+            ['label' => ['for' => 'model-field-r']],
+            ['input' => ['type' => 'radio', 'name' => 'Model[field]', 'value' => 'r', 'id' => 'model-field-r']],
+            'red',
+            '/label',
+            ['label' => ['for' => 'model-field-b']],
+            ['input' => ['type' => 'radio', 'name' => 'Model[field]', 'value' => 'b', 'id' => 'model-field-b']],
+            'blue',
+            '/label',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $attrs = ['disabled' => ['r']];
+        $result = $this->Form->radio('Model.field', $options, $attrs);
+        $this->assertContains('disabled="disabled"', $result);
+    }
+
+    /**
      * testRadioDefaultValue method
      *
      * Test default value setting on radio() method.

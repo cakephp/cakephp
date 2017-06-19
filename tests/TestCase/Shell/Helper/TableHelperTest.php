@@ -58,7 +58,7 @@ class TableHelperTest extends TestCase
      *
      * @return void
      */
-    public function testDefaultOutput()
+    public function testOutputDefaultOutput()
     {
         $data = [
             ['Header 1', 'Header', 'Long Header'],
@@ -78,9 +78,39 @@ class TableHelperTest extends TestCase
     }
 
     /**
-     * Test that output works when data contains just empty strings.
+     * Test output with inconsistent keys.
+     *
+     * When outputting entities or other structured data,
+     * headers shouldn't need to have the same keys as it is
+     * annoying to use.
+     *
+     * @return void
      */
-    public function testEmptyStrings()
+    public function testOutputInconsistentKeys()
+    {
+        $data = [
+            ['Header 1', 'Header', 'Long Header'],
+            ['a' => 'short', 'b' => 'Longish thing', 'c' => 'short'],
+            ['c' => 'Longer thing', 'a' => 'short', 'b' => 'Longest Value'],
+        ];
+        $this->helper->output($data);
+        $expected = [
+            '+--------------+---------------+---------------+',
+            '| <info>Header 1</info>     | <info>Header</info>        | <info>Long Header</info>   |',
+            '+--------------+---------------+---------------+',
+            '| short        | Longish thing | short         |',
+            '| Longer thing | short         | Longest Value |',
+            '+--------------+---------------+---------------+',
+        ];
+        $this->assertEquals($expected, $this->stub->messages());
+    }
+
+    /**
+     * Test that output works when data contains just empty strings.
+     *
+     * @return void
+     */
+    public function testOutputEmptyStrings()
     {
         $data = [
             ['Header 1', 'Header', 'Empty'],
