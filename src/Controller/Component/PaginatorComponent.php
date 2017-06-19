@@ -224,6 +224,7 @@ class PaginatorComponent extends Component
             'sortDefault' => $sortDefault,
             'directionDefault' => $directionDefault,
             'scope' => $options['scope'],
+            'completeSort' => $order
         ];
 
         if (!$request->getParam('paging')) {
@@ -343,7 +344,10 @@ class PaginatorComponent extends Component
             if (!in_array($direction, ['asc', 'desc'])) {
                 $direction = 'asc';
             }
-            $options['order'] = [$options['sort'] => $direction];
+
+            // Union the sort option from URL and default sort option to allow sorting by multiple fields
+            $options['order'] = [$options['sort'] => $direction]
+                + (isset($options['order']) ? $options['order'] : []);
         }
         unset($options['sort'], $options['direction']);
 
