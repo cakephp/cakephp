@@ -102,7 +102,7 @@ class CompletionShellTest extends TestCase
         $this->Shell->runCommand(['main']);
         $output = $this->out->output;
 
-        $expected = "/This command is not intended to be called manually/";
+        $expected = '/This command is not intended to be called manually/';
         $this->assertRegExp($expected, $output);
     }
 
@@ -116,7 +116,7 @@ class CompletionShellTest extends TestCase
         $this->Shell->runCommand(['commands']);
         $output = $this->out->output;
 
-        $expected = "TestPlugin.example TestPlugin.sample TestPluginTwo.example unique welcome " .
+        $expected = 'TestPlugin.example TestPlugin.sample TestPluginTwo.example unique welcome ' .
             "cache i18n orm_cache plugin routes server i18m sample testing_dispatch\n";
         $this->assertTextEquals($expected, $output);
     }
@@ -131,7 +131,7 @@ class CompletionShellTest extends TestCase
         $this->Shell->runCommand(['options']);
         $output = $this->out->output;
 
-        $expected = "";
+        $expected = '';
         $this->assertTextEquals($expected, $output);
     }
 
@@ -144,7 +144,7 @@ class CompletionShellTest extends TestCase
     {
         $this->Shell->runCommand(['options', 'foo']);
         $output = $this->out->output;
-        $expected = "";
+        $expected = '';
         $this->assertTextEquals($expected, $output);
     }
 

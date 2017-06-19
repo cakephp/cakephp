@@ -145,7 +145,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $this->assertInstanceOf('Cake\Http\Response', $result);
         $this->assertNotSame($result, $response);
         $this->assertEquals(404, $result->getStatusCode());
-        $this->assertContains("was not found", '' . $result->getBody());
+        $this->assertContains('was not found', '' . $result->getBody());
     }
 
     /**
@@ -176,7 +176,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $result = $middleware($request, $response, $next);
         $this->assertNotSame($result, $response);
         $this->assertEquals(404, $result->getStatusCode());
-        $this->assertContains("was not found", '' . $result->getBody());
+        $this->assertContains('was not found', '' . $result->getBody());
     }
 
     /**
@@ -200,7 +200,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $result = $middleware($request, $response, $next);
         $this->assertNotSame($result, $response);
         $this->assertEquals(404, $result->getStatusCode());
-        $this->assertContains("was not found", '' . $result->getBody());
+        $this->assertContains('was not found', '' . $result->getBody());
     }
 
     /**

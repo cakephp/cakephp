@@ -139,11 +139,11 @@ class RssHelperTest extends TestCase
                 'link' => 'http://example.com'
             ],
             'cloud' => [
-                'domain' => "rpc.sys.com",
-                'port' => "80",
-                'path' => "/RPC2",
-                'registerProcedure' => "myCloud.rssPleaseNotify",
-                'protocol' => "xml-rpc"
+                'domain' => 'rpc.sys.com',
+                'port' => '80',
+                'path' => '/RPC2',
+                'registerProcedure' => 'myCloud.rssPleaseNotify',
+                'protocol' => 'xml-rpc'
             ]
         ];
         $content = 'content-here';
@@ -160,11 +160,11 @@ class RssHelperTest extends TestCase
                     '<link', 'http://example.com', '/link',
                 '/image',
                 'cloud' => [
-                    'domain' => "rpc.sys.com",
-                    'port' => "80",
-                    'path' => "/RPC2",
-                    'registerProcedure' => "myCloud.rssPleaseNotify",
-                    'protocol' => "xml-rpc"
+                    'domain' => 'rpc.sys.com',
+                    'port' => '80',
+                    'path' => '/RPC2',
+                    'registerProcedure' => 'myCloud.rssPleaseNotify',
+                    'protocol' => 'xml-rpc'
                 ],
             'content-here',
             '/channel',
@@ -207,9 +207,9 @@ class RssHelperTest extends TestCase
                 '/image',
                 'atom:link' => [
                     'xmlns:atom' => 'http://www.w3.org/2005/Atom',
-                    'href' => "http://www.example.com/rss.xml",
-                    'rel' => "self",
-                    'type' => "application/rss+xml"
+                    'href' => 'http://www.example.com/rss.xml',
+                    'rel' => 'self',
+                    'type' => 'application/rss+xml'
                 ],
             'content-here',
             '/channel',

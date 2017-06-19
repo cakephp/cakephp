@@ -1831,7 +1831,7 @@ class HtmlHelperTest extends TestCase
     {
         $tr = [
             'td content 1',
-            ['td content 2', ["width" => "100px"]],
+            ['td content 2', ['width' => '100px']],
             ['td content 3', ['width' => '100px']]
         ];
         $result = $this->Html->tableCells($tr);

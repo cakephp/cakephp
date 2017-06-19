@@ -631,7 +631,7 @@ eos;
         Debugger::setOutputMask(['password' => '[**********]']);
         $object = new SecurityThing();
         $result = Debugger::exportVar($object);
-        $expected = "object(Cake\\Test\\TestCase\\Error\\SecurityThing){password=>[**********]}";
+        $expected = 'object(Cake\\Test\\TestCase\\Error\\SecurityThing){password=>[**********]}';
         $this->assertEquals($expected, preg_replace('/\s+/', '', $result));
     }
 

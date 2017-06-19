@@ -107,7 +107,7 @@ class MysqlTest extends TestCase
         $dsn = 'mysql:host=foo;port=3440;dbname=bar;charset=a-language';
         $expected = $config;
         $expected['init'][] = "SET time_zone = 'Antarctica'";
-        $expected['init'][] = "SET NAMES a-language";
+        $expected['init'][] = 'SET NAMES a-language';
         $expected['flags'] += [
             PDO::ATTR_PERSISTENT => false,
             PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
@@ -120,7 +120,7 @@ class MysqlTest extends TestCase
         $connection->expects($this->at(0))->method('exec')->with('Execute this');
         $connection->expects($this->at(1))->method('exec')->with('this too');
         $connection->expects($this->at(2))->method('exec')->with("SET time_zone = 'Antarctica'");
-        $connection->expects($this->at(3))->method('exec')->with("SET NAMES a-language");
+        $connection->expects($this->at(3))->method('exec')->with('SET NAMES a-language');
         $connection->expects($this->exactly(4))->method('exec');
 
         $driver->expects($this->once())->method('_connect')

@@ -258,7 +258,7 @@ class TestCaseTest extends TestCase
         $stringDirty = "some\nstring\r\nwith\rdifferent\nline endings!";
         $stringClean = "some\nstring\nwith\ndifferent\nline endings!";
 
-        $this->assertContains("different", $stringDirty);
+        $this->assertContains('different', $stringDirty);
         $this->assertNotContains("different\rline", $stringDirty);
 
         $this->assertTextContains("different\rline", $stringDirty);

@@ -402,9 +402,9 @@ class RouteTest extends TestCase
         $this->assertEquals($result['_matchedRoute'], '/posts/:month/:day/:year/*');
 
         $route = new Route(
-            "/:extra/page/:slug/*",
+            '/:extra/page/:slug/*',
             ['controller' => 'pages', 'action' => 'view', 'extra' => null],
-            ["extra" => '[a-z1-9_]*', "slug" => '[a-z1-9_]+', "action" => 'view']
+            ['extra' => '[a-z1-9_]*', 'slug' => '[a-z1-9_]+', 'action' => 'view']
         );
         $result = $route->compile();
 
