@@ -96,7 +96,7 @@ class Configure
                 static::$_hasIniSet = function_exists('ini_set');
             }
             if (static::$_hasIniSet) {
-                ini_set('display_errors', $config['debug'] ? 1 : 0);
+                ini_set('display_errors', $config['debug'] ? '1' : '0');
             }
         }
 
