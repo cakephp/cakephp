@@ -923,7 +923,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     }
 
     /**
-     * undocumented function
+     * Test disabling the error handler middleware.
      *
      * @expectedException \Cake\Routing\Exception\MissingRouteException
      * @expectedExceptionMessage A route matching "/foo" could not be found.
