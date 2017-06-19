@@ -165,7 +165,7 @@ class RedisEngine extends CacheEngine
     }
 
     /**
-     * Increments the value of an integer cached key
+     * Increments the value of an integer cached key & update the expiry time
      *
      * @param string $key Identifier for the data
      * @param int $offset How much to increment
@@ -177,14 +177,13 @@ class RedisEngine extends CacheEngine
         $key = $this->_key($key);
 
         $value = (int)$this->_Redis->incrBy($key, $offset);
-
         $this->_Redis->setTimeout($key, $duration);
 
         return $value;
     }
 
     /**
-     * Decrements the value of an integer cached key
+     * Decrements the value of an integer cached key & update the expiry time
      *
      * @param string $key Identifier for the data
      * @param int $offset How much to subtract
@@ -196,7 +195,6 @@ class RedisEngine extends CacheEngine
         $key = $this->_key($key);
 
         $value = (int)$this->_Redis->decrBy($key, $offset);
-
         $this->_Redis->setTimeout($key, $duration);
 
         return $value;

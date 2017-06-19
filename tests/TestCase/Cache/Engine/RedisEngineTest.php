@@ -1,8 +1,6 @@
 <?php
 /**
- * RedisEngineTest file
- *
- * CakePHP(tm) Tests <https://book.cakephp.org/view/1196/Testing>
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
@@ -339,6 +337,26 @@ class RedisEngineTest extends TestCase
 
         $result = Cache::read('test_increment', 'redis');
         $this->assertEquals(3, $result);
+    }
+
+    /**
+     * Test that increment and decrement set ttls.
+     *
+     * @return void
+     */
+    public function testIncrementDecrementExpiring()
+    {
+        $this->_configCache(['duration' => 1]);
+        Cache::delete('test_increment', 'redis');
+        Cache::delete('test_decrement', 'redis');
+
+        $this->assertSame(1, Cache::increment('test_increment', 1, 'redis'));
+        $this->assertSame(-1, Cache::decrement('test_decrement', 1, 'redis'));
+
+        sleep(1);
+
+        $this->assertFalse(Cache::read('test_increment', 'redis'));
+        $this->assertFalse(Cache::read('test_decrement', 'redis'));
     }
 
     /**
