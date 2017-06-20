@@ -22,6 +22,7 @@ use Cake\Core\Configure;
 use Cake\Http\BaseApplication;
 use Cake\TestSuite\TestCase;
 use Cake\TestSuite\Stub\ConsoleOutput;
+use TestApp\Shell\SampleShell;
 
 /**
  * Test case for the CommandCollection
@@ -182,7 +183,7 @@ class CommandRunnerTest extends TestCase
             ->setConstructorArgs([$this->config])
             ->getMock();
 
-        $commands = new CommandCollection(['failure' => 'TestApp\Shell\SampleShell']);
+        $commands = new CommandCollection(['failure' => SampleShell::class]);
         $app->method('console')->will($this->returnValue($commands));
 
         $output = new ConsoleOutput();
@@ -204,7 +205,7 @@ class CommandRunnerTest extends TestCase
             ->setConstructorArgs([$this->config])
             ->getMock();
 
-        $commands = new CommandCollection(['failure' => 'TestApp\Shell\SampleShell']);
+        $commands = new CommandCollection(['failure' => SampleShell::class]);
         $app->method('console')->will($this->returnValue($commands));
 
         $output = new ConsoleOutput();
