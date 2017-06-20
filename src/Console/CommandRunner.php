@@ -66,15 +66,12 @@ class CommandRunner
                 "Unknown root command{$command}. Was expecting `{$this->root}`."
             );
         }
-        $io = $io ?: new ConsoleIo();
-
         // Remove the root executable segment
         array_shift($argv);
 
-        $shell = $this->getShell($io, $commands, $argv);
+        $io = $io ?: new ConsoleIo();
+        $shell = $this->getShell($io, $commands, array_shift($argv));
 
-        // Remove the command name segment
-        array_shift($argv);
         try {
             $shell->initialize();
             $result = $shell->runCommand($argv, true);
@@ -93,20 +90,22 @@ class CommandRunner
     }
 
     /**
-     * Get the shell instance for the argv list.
+     * Get the shell instance for a given command name
      *
+     * @param \Cake\Console\ConsoleIo $io The io wrapper for the created shell class.
+     * @param \Cake\Console\CommandCollection $commands The command collection to find the shell in.
+     * @param string $name The command name to find
      * @return \Cake\Console\Shell
      */
-    protected function getShell(ConsoleIo $io, CommandCollection $commands, array $argv)
+    protected function getShell(ConsoleIo $io, CommandCollection $commands, $name)
     {
-        $command = array_shift($argv);
-        if (!$commands->has($command)) {
+        if (!$commands->has($name)) {
             throw new RuntimeException(
-                "Unknown command `{$this->root} {$command}`." .
+                "Unknown command `{$this->root} {$name}`." .
                 " Run `{$this->root} --help` to get the list of valid commands."
             );
         }
-        $classOrInstance = $commands->get($command);
+        $classOrInstance = $commands->get($name);
         if (is_string($classOrInstance)) {
             return new $classOrInstance($io);
         }
