@@ -20,5 +20,8 @@ use Cake\Core\Exception\Exception;
 class MissingDispatcherFilterException extends Exception
 {
 
+    /**
+     * {@inheritDoc}
+     */
     protected $_messageTemplate = 'Dispatcher filter %s could not be found.';
 }
