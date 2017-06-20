@@ -353,7 +353,7 @@ class RedisEngineTest extends TestCase
         $this->assertSame(1, Cache::increment('test_increment', 1, 'redis'));
         $this->assertSame(-1, Cache::decrement('test_decrement', 1, 'redis'));
 
-        sleep(1);
+        sleep(2);
 
         $this->assertFalse(Cache::read('test_increment', 'redis'));
         $this->assertFalse(Cache::read('test_decrement', 'redis'));
