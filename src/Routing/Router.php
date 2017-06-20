@@ -964,8 +964,9 @@ class Router
      *
      * ### Cache
      *
-     * You can enable cache to reduce the time spent building the scoped routes.
-     * The `_cache` param will allow you to define the cache configuration to store the routes.
+     * You can enable the cache to reduce the time needed to build the scoped routes.
+     * The `_cache` param will allow you to define the cache configuration to store the
+     * scoped routes.
      * Please note serialization is required to store the `RouteCollection`.
      *
      * - `_cache` This param defines the cache configuration to be used
@@ -1012,7 +1013,7 @@ class Router
 
                 return;
             } elseif (!empty($cache) && !static::_isCacheSerialize($cache)) {
-                $msg = 'Scope Routes were NOT cached. The scope cache is enabled, but "%s" cache engine' .
+                $msg = 'Scoped routes were NOT cached. The scope cache is enabled, but "%s" cache engine' .
                     'does not allow serialization. ' .
                     'Use a valid engine, and ensure "serialize" is enabled in the cache configuration';
                 Log::warning(sprintf($msg, $cache));
