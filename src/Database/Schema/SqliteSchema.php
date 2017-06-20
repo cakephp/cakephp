@@ -177,7 +177,7 @@ class SqliteSchema extends BaseSchema
         }
 
         // Remove quotes
-        if (preg_match("/^'(.*)'$/", (string)$default, $matches)) {
+        if (preg_match("/^'(.*)'$/", $default, $matches)) {
             return str_replace("''", "'", $matches[1]);
         }
 
