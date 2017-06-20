@@ -614,7 +614,7 @@ class ExceptionRendererTest extends TestCase
             [
                 new MissingLayoutException(['file' => 'layouts/my_layout.ctp']),
                 [
-                    "/Missing Layout/",
+                    '/Missing Layout/',
                     "/layouts\/my_layout.ctp/"
                 ],
                 500

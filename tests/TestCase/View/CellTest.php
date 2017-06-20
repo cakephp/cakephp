@@ -508,8 +508,8 @@ class CellTest extends TestCase
             'path' => CACHE,
         ]);
         $cell = $this->View->cell('Articles::customTemplateViewBuilder', [], ['cache' => true]);
-        $result = $cell->render("alternate_teaser_list");
-        $result2 = $cell->render("not_the_alternate_teaser_list");
+        $result = $cell->render('alternate_teaser_list');
+        $result2 = $cell->render('not_the_alternate_teaser_list');
         $this->assertContains('This is the alternate template', $result);
         $this->assertContains('This is NOT the alternate template', $result2);
         Cache::delete('celltest');

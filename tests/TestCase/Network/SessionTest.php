@@ -408,11 +408,11 @@ class SessionTest extends TestCase
     public function testCheckKeyWithSpaces()
     {
         $session = new Session();
-        $session->write('Session Test', "test");
+        $session->write('Session Test', 'test');
         $this->assertTrue($session->check('Session Test'));
         $session->delete('Session Test');
 
-        $session->write('Session Test.Test Case', "test");
+        $session->write('Session Test.Test Case', 'test');
         $this->assertTrue($session->check('Session Test.Test Case'));
     }
 

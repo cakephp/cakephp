@@ -3474,25 +3474,25 @@ class FormHelperTest extends TestCase
 
         $expected = [
             ['div' => ['class' => 'input select']],
-            ['label' => ['for' => "contact-multiple"]],
+            ['label' => ['for' => 'contact-multiple']],
             'Multiple',
             '/label',
-            ['input' => ['type' => 'hidden', 'name' => "Contact[multiple]", 'disabled' => 'disabled', 'value' => '']],
+            ['input' => ['type' => 'hidden', 'name' => 'Contact[multiple]', 'disabled' => 'disabled', 'value' => '']],
             ['div' => ['class' => 'checkbox']],
-            ['label' => ['for' => "contact-multiple-1"]],
-            ['input' => ['type' => 'checkbox', 'name' => "Contact[multiple][]", 'value' => 1, 'disabled' => 'disabled', 'id' => "contact-multiple-1"]],
+            ['label' => ['for' => 'contact-multiple-1']],
+            ['input' => ['type' => 'checkbox', 'name' => 'Contact[multiple][]', 'value' => 1, 'disabled' => 'disabled', 'id' => 'contact-multiple-1']],
             'One',
             '/label',
             '/div',
             ['div' => ['class' => 'checkbox']],
-            ['label' => ['for' => "contact-multiple-2"]],
-            ['input' => ['type' => 'checkbox', 'name' => "Contact[multiple][]", 'value' => 2, 'disabled' => 'disabled', 'id' => "contact-multiple-2"]],
+            ['label' => ['for' => 'contact-multiple-2']],
+            ['input' => ['type' => 'checkbox', 'name' => 'Contact[multiple][]', 'value' => 2, 'disabled' => 'disabled', 'id' => 'contact-multiple-2']],
             'Two',
             '/label',
             '/div',
             ['div' => ['class' => 'checkbox']],
-            ['label' => ['for' => "contact-multiple-3"]],
-            ['input' => ['type' => 'checkbox', 'name' => "Contact[multiple][]", 'value' => 3, 'disabled' => 'disabled', 'id' => "contact-multiple-3"]],
+            ['label' => ['for' => 'contact-multiple-3']],
+            ['input' => ['type' => 'checkbox', 'name' => 'Contact[multiple][]', 'value' => 3, 'disabled' => 'disabled', 'id' => 'contact-multiple-3']],
             'Three',
             '/label',
             '/div',
@@ -3506,19 +3506,19 @@ class FormHelperTest extends TestCase
 
         $expected = [
             ['div' => ['class' => 'input select']],
-            ['label' => ['for' => "contact-multiple"]],
+            ['label' => ['for' => 'contact-multiple']],
             'Multiple',
             '/label',
-            ['input' => ['type' => 'hidden', 'name' => "Contact[multiple]", 'value' => '']],
+            ['input' => ['type' => 'hidden', 'name' => 'Contact[multiple]', 'value' => '']],
             ['div' => ['class' => 'checkbox']],
-            ['label' => ['for' => "contact-multiple-50"]],
-            ['input' => ['type' => 'checkbox', 'name' => "Contact[multiple][]", 'value' => 50, 'disabled' => 'disabled', 'id' => "contact-multiple-50"]],
+            ['label' => ['for' => 'contact-multiple-50']],
+            ['input' => ['type' => 'checkbox', 'name' => 'Contact[multiple][]', 'value' => 50, 'disabled' => 'disabled', 'id' => 'contact-multiple-50']],
             'Fifty',
             '/label',
             '/div',
             ['div' => ['class' => 'checkbox']],
-            ['label' => ['for' => "contact-multiple-50f5c0cf"]],
-            ['input' => ['type' => 'checkbox', 'name' => "Contact[multiple][]", 'value' => '50f5c0cf', 'id' => "contact-multiple-50f5c0cf"]],
+            ['label' => ['for' => 'contact-multiple-50f5c0cf']],
+            ['input' => ['type' => 'checkbox', 'name' => 'Contact[multiple][]', 'value' => '50f5c0cf', 'id' => 'contact-multiple-50f5c0cf']],
             'Stringy',
             '/label',
             '/div',
@@ -4386,7 +4386,7 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Form->error('Article.field', "<strong>Badness!</strong>");
+        $result = $this->Form->error('Article.field', '<strong>Badness!</strong>');
         $expected = [
             ['div' => ['class' => 'error-message']],
             '&lt;strong&gt;Badness!&lt;/strong&gt;',
@@ -4394,7 +4394,7 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Form->error('Article.field', "<strong>Badness!</strong>", ['escape' => false]);
+        $result = $this->Form->error('Article.field', '<strong>Badness!</strong>', ['escape' => false]);
         $expected = [
             ['div' => ['class' => 'error-message']],
             '<strong', 'Badness!', '/strong',
@@ -7087,7 +7087,7 @@ class FormHelperTest extends TestCase
     public function testTextAreaWithStupidCharacters()
     {
         $result = $this->Form->textarea('Post.content', [
-            'value' => "GREAT®",
+            'value' => 'GREAT®',
             'rows' => '15',
             'cols' => '75'
         ]);
@@ -8086,7 +8086,7 @@ class FormHelperTest extends TestCase
         ]];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Form->control("1.name");
+        $result = $this->Form->control('1.name');
         $expected = [
             'label' => ['for' => '1-name'],
             'Name',

@@ -86,7 +86,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::notBlank(0.0));
         $this->assertTrue(Validation::notBlank('0.0'));
         $this->assertFalse(Validation::notBlank("\t "));
-        $this->assertFalse(Validation::notBlank(""));
+        $this->assertFalse(Validation::notBlank(''));
     }
 
     /**
@@ -104,7 +104,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::notBlank('José'));
         $this->assertTrue(Validation::notBlank(utf8_decode('José')));
         $this->assertFalse(Validation::notBlank("\t "));
-        $this->assertFalse(Validation::notBlank(""));
+        $this->assertFalse(Validation::notBlank(''));
     }
 
     /**
@@ -1996,10 +1996,10 @@ class ValidationTest extends TestCase
      */
     public function testEqualTo()
     {
-        $this->assertTrue(Validation::equalTo("1", "1"));
-        $this->assertFalse(Validation::equalTo(1, "1"));
-        $this->assertFalse(Validation::equalTo("", null));
-        $this->assertFalse(Validation::equalTo("", false));
+        $this->assertTrue(Validation::equalTo('1', '1'));
+        $this->assertFalse(Validation::equalTo(1, '1'));
+        $this->assertFalse(Validation::equalTo('', null));
+        $this->assertFalse(Validation::equalTo('', false));
         $this->assertFalse(Validation::equalTo(0, false));
         $this->assertFalse(Validation::equalTo(null, false));
     }
@@ -2781,7 +2781,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::containsNonAlphaNumeric("\n"));
         $this->assertTrue(Validation::containsNonAlphaNumeric("\t"));
         $this->assertTrue(Validation::containsNonAlphaNumeric("\r"));
-        $this->assertTrue(Validation::containsNonAlphaNumeric(" "));
+        $this->assertTrue(Validation::containsNonAlphaNumeric(' '));
 
         $this->assertTrue(Validation::containsNonAlphaNumeric('#abcdef'));
         $this->assertTrue(Validation::containsNonAlphaNumeric('abc#def'));

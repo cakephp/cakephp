@@ -80,7 +80,7 @@ class ConsoleErrorHandlerTest extends TestCase
     public function testHandleFatalError()
     {
         ob_start();
-        $content = "<error>Fatal Error:</error> This is a fatal error in [/some/file, line 275]";
+        $content = '<error>Fatal Error:</error> This is a fatal error in [/some/file, line 275]';
         $this->stderr->expects($this->once())->method('write')
             ->with($this->stringContains($content));
 

@@ -393,7 +393,7 @@ class ShellTest extends TestCase
 
         $this->io->expects($this->at(1))
             ->method('err')
-            ->with("Searched all...");
+            ->with('Searched all...');
 
         $this->Shell->error('Foo Not Found', 'Searched all...');
         $this->assertSame($this->Shell->stopped, 1);
@@ -529,7 +529,7 @@ class ShellTest extends TestCase
         touch($file);
         $this->assertFileExists($file);
 
-        $contents = "My content";
+        $contents = 'My content';
         $result = $this->Shell->createFile($file, $contents);
         $this->assertFileExists($file);
         $this->assertTextEquals('', file_get_contents($file));
@@ -556,7 +556,7 @@ class ShellTest extends TestCase
         touch($file);
         $this->assertFileExists($file);
 
-        $contents = "My content";
+        $contents = 'My content';
         $result = $this->Shell->createFile($file, $contents);
         $this->assertFileExists($file);
         $this->assertTextEquals($contents, file_get_contents($file));
