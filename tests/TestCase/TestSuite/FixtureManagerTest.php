@@ -183,7 +183,7 @@ class FixtureManagerTest extends TestCase
     }
 
     /**
-     * Test loading app fixtures.
+     * Test loading plugin fixtures.
      *
      * @return void
      */
@@ -204,11 +204,32 @@ class FixtureManagerTest extends TestCase
     }
 
     /**
-     * Test loading app fixtures.
+     * Test loading plugin fixtures.
      *
      * @return void
      */
-    public function testFixturizeCustom()
+    public function testFixturizePluginSubdirectory()
+    {
+        Plugin::load('TestPlugin');
+
+        $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
+        $test->fixtures = ['plugin.test_plugin.blog/comments'];
+        $this->manager->fixturize($test);
+        $fixtures = $this->manager->loaded();
+        $this->assertCount(1, $fixtures);
+        $this->assertArrayHasKey('plugin.test_plugin.blog/comments', $fixtures);
+        $this->assertInstanceOf(
+            'TestPlugin\Test\Fixture\Blog\CommentsFixture',
+            $fixtures['plugin.test_plugin.blog/comments']
+        );
+    }
+
+    /**
+     * Test loading plugin fixtures from a vendor namespaced plugin
+     *
+     * @return void
+     */
+    public function testFixturizeVendorPlugin()
     {
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
         $test->fixtures = ['plugin.Company/TestPluginThree.articles'];
@@ -223,7 +244,7 @@ class FixtureManagerTest extends TestCase
     }
 
     /**
-     * Test loading app fixtures.
+     * Test loading fixtures with fully-qualified namespaces.
      *
      * @return void
      */
