@@ -15,6 +15,9 @@
 namespace Cake\Console;
 
 use Cake\Console\CommandCollection;
+use Cake\Console\ConsoleIo;
+use Cake\Console\Exception\StopException;
+use Cake\Console\Shell;
 use Cake\Http\BaseApplication;
 use RuntimeException;
 
@@ -41,10 +44,11 @@ class CommandRunner
      * Run the command contained in $argv.
      *
      * @param array $argv The arguments from the CLI environment.
+     * @param \Cake\Console\ConsoleIo $io The ConsoleIo instance. Used primarily for testing.
      * @return int The exit code of the command.
      * @throws \RuntimeException
      */
-    public function run(array $argv)
+    public function run(array $argv, ConsoleIo $io = null)
     {
         $this->app->bootstrap();
 
@@ -62,10 +66,30 @@ class CommandRunner
                 "Unknown root command{$command}. Was expecting `{$this->root}`."
             );
         }
-        // Remove the root command
+        $io = $io ?: new ConsoleIo();
+
+        // Remove the root executable segment
         array_shift($argv);
 
-        $shell = $this->getShell($commands, $argv);
+        $shell = $this->getShell($io, $commands, $argv);
+
+        // Remove the command name segment
+        array_shift($argv);
+        try {
+            $shell->initialize();
+            $result = $shell->runCommand($argv, true);
+        } catch (StopException $e) {
+            return $e->getCode();
+        }
+
+        if ($result === null || $result === true) {
+            return Shell::CODE_SUCCESS;
+        }
+        if (is_int($result)) {
+            return $result;
+        }
+
+        return Shell::CODE_ERROR;
     }
 
     /**
@@ -73,7 +97,7 @@ class CommandRunner
      *
      * @return \Cake\Console\Shell
      */
-    protected function getShell(CommandCollection $commands, array $argv)
+    protected function getShell(ConsoleIo $io, CommandCollection $commands, array $argv)
     {
         $command = array_shift($argv);
         if (!$commands->has($command)) {
@@ -82,5 +106,10 @@ class CommandRunner
                 " Run `{$this->root} --help` to get the list of valid commands."
             );
         }
+        $classOrInstance = $commands->get($command);
+        if (is_string($classOrInstance)) {
+            return new $classOrInstance($io);
+        }
+        return $classOrInstance;
     }
 }

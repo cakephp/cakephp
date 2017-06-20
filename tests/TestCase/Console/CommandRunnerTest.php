@@ -16,9 +16,12 @@ namespace Cake\Test\Console;
 
 use Cake\Console\CommandCollection;
 use Cake\Console\CommandRunner;
+use Cake\Console\ConsoleIo;
+use Cake\Console\Shell;
 use Cake\Core\Configure;
 use Cake\Http\BaseApplication;
 use Cake\TestSuite\TestCase;
+use Cake\TestSuite\Stub\ConsoleOutput;
 
 /**
  * Test case for the CommandCollection
@@ -142,5 +145,82 @@ class CommandRunnerTest extends TestCase
     public function testRunVersionShortOption()
     {
         $this->markTestIncomplete();
+    }
+
+    /**
+     * Test running a valid command
+     *
+     * @return void
+     */
+    public function testRunValidCommand()
+    {
+        $app = $this->getMockBuilder(BaseApplication::class)
+            ->setMethods(['middleware', 'bootstrap'])
+            ->setConstructorArgs([$this->config])
+            ->getMock();
+
+        $output = new ConsoleOutput();
+
+        $runner = new CommandRunner($app, 'cake');
+        $result = $runner->run(['cake', 'routes'], $this->getMockIo($output));
+        $this->assertSame(Shell::CODE_SUCCESS, $result);
+
+        $contents = implode("\n", $output->messages());
+        $this->assertContains('URI template', $contents);
+        $this->assertContains('Welcome to CakePHP', $contents);
+    }
+
+    /**
+     * Test running a valid raising an error
+     *
+     * @return void
+     */
+    public function testRunValidCommandWithAbort()
+    {
+        $app = $this->getMockBuilder(BaseApplication::class)
+            ->setMethods(['middleware', 'bootstrap', 'console'])
+            ->setConstructorArgs([$this->config])
+            ->getMock();
+
+        $commands = new CommandCollection(['failure' => 'TestApp\Shell\SampleShell']);
+        $app->method('console')->will($this->returnValue($commands));
+
+        $output = new ConsoleOutput();
+
+        $runner = new CommandRunner($app, 'cake');
+        $result = $runner->run(['cake', 'failure', 'with_abort'], $this->getMockIo($output));
+        $this->assertSame(Shell::CODE_ERROR, $result);
+    }
+
+    /**
+     * Test returning a non-zero value
+     *
+     * @return void
+     */
+    public function testRunValidCommandReturnInteger()
+    {
+        $app = $this->getMockBuilder(BaseApplication::class)
+            ->setMethods(['middleware', 'bootstrap', 'console'])
+            ->setConstructorArgs([$this->config])
+            ->getMock();
+
+        $commands = new CommandCollection(['failure' => 'TestApp\Shell\SampleShell']);
+        $app->method('console')->will($this->returnValue($commands));
+
+        $output = new ConsoleOutput();
+
+        $runner = new CommandRunner($app, 'cake');
+        $result = $runner->run(['cake', 'failure', 'returnValue'], $this->getMockIo($output));
+        $this->assertSame(99, $result);
+    }
+
+    protected function getMockIo($output)
+    {
+        $io = $this->getMockBuilder(ConsoleIo::class)
+            ->setConstructorArgs([$output, $output, null, null])
+            ->setMethods(['in'])
+            ->getMock();
+
+        return $io;
     }
 }
