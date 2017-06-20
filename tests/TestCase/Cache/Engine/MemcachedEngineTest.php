@@ -723,6 +723,26 @@ class MemcachedEngineTest extends TestCase
     }
 
     /**
+     * Test that increment and decrement set ttls.
+     *
+     * @return void
+     */
+    public function testIncrementDecrementExpiring()
+    {
+        $this->_configCache(['duration' => 1]);
+        Cache::write('test_increment', 1, 'memcached');
+        Cache::write('test_decrement', 1, 'memcached');
+
+        $this->assertSame(2, Cache::increment('test_increment', 1, 'memcached'));
+        $this->assertSame(0, Cache::decrement('test_decrement', 1, 'memcached'));
+
+        sleep(1);
+
+        $this->assertFalse(Cache::read('test_increment', 'memcached'));
+        $this->assertFalse(Cache::read('test_decrement', 'memcached'));
+    }
+
+    /**
      * test incrementing compressed keys
      *
      * @return void
