@@ -75,6 +75,20 @@ abstract class BaseApplication
     }
 
     /**
+     * Define the console commands for an application.
+     *
+     * By default all commands in CakePHP, plugins and the application will be
+     * loaded using conventions based names.
+     *
+     * @param \Cake\Console\CommandCollection $commands The CommandCollection to add commands into.
+     * @return \Cake\Console\CommandCollection The updated collection.
+     */
+    public function console($commands)
+    {
+        return $commands->addMany($commands->autoDiscover());
+    }
+
+    /**
      * Invoke the application.
      *
      * - Convert the PSR response into CakePHP equivalents.
