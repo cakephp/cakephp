@@ -33,9 +33,15 @@ class ArticlesTable extends Table
      * @param \Cake\ORM\Query $query The query
      * @return \Cake\ORM\Query
      */
-    public function findPublished($query)
+    public function findPublished($query, array $options = [])
     {
-        return $query->where(['published' => 'Y']);
+        $query = $query->where(['published' => 'Y']);
+
+        if (isset($options['title'])) {
+            $query->andWhere(['title' => $options['title']]);
+        }
+
+        return $query;
     }
 
     /**
