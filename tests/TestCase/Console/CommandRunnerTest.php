@@ -20,8 +20,8 @@ use Cake\Console\ConsoleIo;
 use Cake\Console\Shell;
 use Cake\Core\Configure;
 use Cake\Http\BaseApplication;
-use Cake\TestSuite\TestCase;
 use Cake\TestSuite\Stub\ConsoleOutput;
+use Cake\TestSuite\TestCase;
 use TestApp\Shell\SampleShell;
 
 /**

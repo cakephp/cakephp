@@ -117,6 +117,7 @@ class CommandRunner
         if (is_string($classOrInstance)) {
             return new $classOrInstance($io);
         }
+
         return $classOrInstance;
     }
 }
