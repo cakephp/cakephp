@@ -26,7 +26,15 @@ use RuntimeException;
  */
 class CommandRunner
 {
-    protected $app, $root;
+    /**
+     * @var \Cake\Http\BaseApplication
+     */
+    protected $app;
+
+    /**
+     * @var string
+     */
+    protected $root;
 
     /**
      * Constructor

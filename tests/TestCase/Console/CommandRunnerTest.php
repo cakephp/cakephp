@@ -29,6 +29,11 @@ use TestApp\Shell\SampleShell;
  */
 class CommandRunnerTest extends TestCase
 {
+    /**
+     * setup
+     *
+     * @return void
+     */
     public function setUp()
     {
         parent::setUp();
