@@ -47,7 +47,7 @@ trait CollectionTrait
      */
     public function each(callable $c)
     {
-        foreach ($this->unwrap() as $k => $v) {
+        foreach ($this->optimizeUnwrap() as $k => $v) {
             $c($v, $k);
         }
 
@@ -87,7 +87,7 @@ trait CollectionTrait
      */
     public function every(callable $c)
     {
-        foreach ($this->unwrap() as $key => $value) {
+        foreach ($this->optimizeUnwrap() as $key => $value) {
             if (!$c($value, $key)) {
                 return false;
             }
@@ -101,7 +101,7 @@ trait CollectionTrait
      */
     public function some(callable $c)
     {
-        foreach ($this->unwrap() as $key => $value) {
+        foreach ($this->optimizeUnwrap() as $key => $value) {
             if ($c($value, $key) === true) {
                 return true;
             }
@@ -115,7 +115,7 @@ trait CollectionTrait
      */
     public function contains($value)
     {
-        foreach ($this->unwrap() as $v) {
+        foreach ($this->optimizeUnwrap() as $v) {
             if ($value === $v) {
                 return true;
             }
@@ -145,7 +145,7 @@ trait CollectionTrait
         }
 
         $result = $zero;
-        foreach ($this->unwrap() as $k => $value) {
+        foreach ($this->optimizeUnwrap() as $k => $value) {
             if ($isFirst) {
                 $result = $value;
                 $isFirst = false;
@@ -205,7 +205,7 @@ trait CollectionTrait
     {
         $callback = $this->_propertyExtractor($callback);
         $group = [];
-        foreach ($this as $value) {
+        foreach ($this->optimizeUnwrap() as $value) {
             $group[$callback($value)][] = $value;
         }
 
@@ -219,7 +219,7 @@ trait CollectionTrait
     {
         $callback = $this->_propertyExtractor($callback);
         $group = [];
-        foreach ($this as $value) {
+        foreach ($this->optimizeUnwrap() as $value) {
             $group[$callback($value)] = $value;
         }
 
@@ -255,7 +255,7 @@ trait CollectionTrait
 
         $callback = $this->_propertyExtractor($matcher);
         $sum = 0;
-        foreach ($this as $k => $v) {
+        foreach ($this->optimizeUnwrap() as $k => $v) {
             $sum += $callback($v, $k);
         }
 
@@ -500,7 +500,7 @@ trait CollectionTrait
      */
     public function buffered()
     {
-        return new BufferedIterator($this);
+        return new BufferedIterator($this->unwrap());
     }
 
     /**
@@ -534,7 +534,7 @@ trait CollectionTrait
             $condition = $this->_createMatcherFilter($condition);
         }
 
-        return new StoppableIterator($this, $condition);
+        return new StoppableIterator($this->unwrap(), $condition);
     }
 
     /**
@@ -550,7 +550,7 @@ trait CollectionTrait
 
         return new Collection(
             new RecursiveIteratorIterator(
-                new UnfoldIterator($this, $transformer),
+                new UnfoldIterator($this->unwrap(), $transformer),
                 RecursiveIteratorIterator::LEAVES_ONLY
             )
         );
@@ -571,7 +571,7 @@ trait CollectionTrait
      */
     public function zip($items)
     {
-        return new ZipIterator(array_merge([$this], func_get_args()));
+        return new ZipIterator(array_merge([$this->unwrap()], func_get_args()));
     }
 
     /**
@@ -586,7 +586,7 @@ trait CollectionTrait
             $items = [$items];
         }
 
-        return new ZipIterator(array_merge([$this], $items), $callable);
+        return new ZipIterator(array_merge([$this->unwrap()], $items), $callable);
     }
 
     /**
@@ -640,7 +640,7 @@ trait CollectionTrait
      */
     public function isEmpty()
     {
-        foreach ($this->unwrap() as $el) {
+        foreach ($this as $el) {
             return false;
         }
 
@@ -655,6 +655,10 @@ trait CollectionTrait
         $iterator = $this;
         while (get_class($iterator) === 'Cake\Collection\Collection') {
             $iterator = $iterator->getInnerIterator();
+        }
+
+        if ($iterator !== $this && $iterator instanceof CollectionInterface) {
+            $iterator = $iterator->unwrap();
         }
 
         return $iterator;
@@ -746,5 +750,22 @@ trait CollectionTrait
         }
 
         return new Collection($result);
+    }
+
+     /**
+      * Unwraps this iterator and returns the simplest
+      * traversable that can be used for getting the data out
+      *
+      * @return \Traversable|array
+      */
+    protected function optimizeUnwrap()
+    {
+        $iterator = $this->unwrap();
+
+        if ($iterator instanceof ArrayIterator) {
+            $iterator = $iterator->getArrayCopy();
+        }
+
+        return $iterator;
     }
 }
