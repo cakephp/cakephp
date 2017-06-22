@@ -2877,13 +2877,16 @@ class QueryTest extends TestCase
                 ]
             ]);
 
-        $this->assertSame(2, count($resultWithArticles->first()->articles));
-        $this->assertSame(2, count($resultWithArticlesArray->first()->articles));
+        $this->assertCount(2, $resultWithArticles->first()->articles);
+        $this->assertCount(2, $resultWithArticlesArray->first()->articles);
 
-        $this->assertSame(1, count($resultWithArticlesArrayOptions->first()->articles));
-        $this->assertSame('First Article', $resultWithArticlesArrayOptions->first()->articles[0]->title);
+        $this->assertCount(1, $resultWithArticlesArrayOptions->first()->articles);
+        $this->assertSame(
+            'First Article',
+            $resultWithArticlesArrayOptions->first()->articles[0]->title
+        );
 
-        $this->assertSame(0, count($resultWithoutArticles->first()->articles));
+        $this->assertCount(0, $resultWithoutArticles->first()->articles);
     }
 
     /**
@@ -2915,7 +2918,7 @@ class QueryTest extends TestCase
                 }
             ]);
 
-        $this->assertSame(2, count($resultWithArticles->first()->articles));
+        $this->assertCount(2, $resultWithArticles->first()->articles);
     }
 
     /**
