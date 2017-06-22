@@ -163,11 +163,10 @@ class SelectLoader
             $options['fields'] = [];
         }
 
+        $query = $finder();
         if (isset($options['finder'])) {
             list($finderName, $opts) = $this->_extractFinder($options['finder']);
-            $query = $finder()->find($finderName, $opts);
-        } else {
-            $query = $finder();
+            $query = $query->find($finderName, $opts);
         }
 
         $fetchQuery = $query
