@@ -151,8 +151,9 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     {
         $request = $this->_buildRequest('/tasks/view?archived=yes', 'GET', []);
 
-        $this->assertEquals('/tasks/view', $request['url']);
-        $this->assertEquals('yes', $request['query']['archived']);
+        $this->assertSame('/tasks/view', $request['url']);
+        $this->assertSame('archived=yes', $request['environment']['QUERY_STRING']);
+        $this->assertSame('/tasks/view', $request['environment']['REQUEST_URI']);
     }
 
     /**
@@ -238,7 +239,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
      *
      * @return void
      */
-    public function testQueryStringHttpServer()
+    public function testGetQueryStringHttpServer()
     {
         $this->useHttpServer(true);
 
@@ -248,6 +249,10 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         $this->assertResponseContains('"q":"query"');
         $this->assertResponseContains('"contentType":"text\/plain"');
         $this->assertHeader('X-Middleware', 'true');
+
+        $request = $this->_controller->request;
+        $this->assertContains('/request_action/params_pass?q=query', $request->here());
+        $this->assertContains('/request_action/params_pass?q=query', $request->getRequestTarget());
     }
 
     /**
