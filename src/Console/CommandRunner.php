@@ -27,11 +27,15 @@ use RuntimeException;
 class CommandRunner
 {
     /**
+     * The application console commands are being run for.
+     *
      * @var \Cake\Http\BaseApplication
      */
     protected $app;
 
     /**
+     * The root command name. Defaults to `cake`.
+     *
      * @var string
      */
     protected $root;
