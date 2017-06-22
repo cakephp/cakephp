@@ -1012,10 +1012,10 @@ class Router
 
                 return;
             } elseif (!empty($cache) && !static::_isCacheSerialize($cache)) {
-                $msg = 'Scoped routes were NOT cached. The scope cache is enabled, but "%s" cache engine' .
+                $msg = 'Router scope "%s" was NOT cached. The scope cache is enabled, but "%s" cache engine' .
                     'does not allow serialization. ' .
                     'Use a valid engine, and ensure "serialize" is enabled in the cache configuration';
-                Log::warning(sprintf($msg, $cache));
+                Log::warning(sprintf($msg, $path, $cache));
             }
         }
 
