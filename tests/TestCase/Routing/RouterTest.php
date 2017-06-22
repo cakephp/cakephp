@@ -3178,9 +3178,9 @@ class RouterTest extends TestCase
 
         Router::scope('/path', ['param' => 'value', '_cache' => 'routes'], function ($routes) {
             $this->assertInstanceOf('Cake\Routing\RouteBuilder', $routes);
-            $this->assertEquals('/path', $routes->path());
-            $this->assertEquals(['param' => 'value'], $routes->params());
-            $this->assertEquals('', $routes->namePrefix());
+            $this->assertSame('/path', $routes->path());
+            $this->assertSame(['param' => 'value'], $routes->params());
+            $this->assertSame('', $routes->namePrefix());
 
             $routes->connect('/articles', ['controller' => 'Articles']);
         });

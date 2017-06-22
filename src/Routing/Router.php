@@ -1007,15 +1007,10 @@ class Router
             $options = $params;
             $cache = (string)Hash::get($params, '_cache');
             unset($params['routeClass'], $params['extensions'], $params['_cache']);
-            if (!empty($cache) && static::_isCacheSerialize($cache)) {
+            if ($cache) {
                 static::_rememberScope($path, $params, $options, $callback, $cache);
 
                 return;
-            } elseif (!empty($cache) && !static::_isCacheSerialize($cache)) {
-                $msg = 'Router scope "%s" was NOT cached. The scope cache is enabled, but "%s" cache engine' .
-                    'does not allow serialization. ' .
-                    'Use a valid engine, and ensure "serialize" is enabled in the cache configuration';
-                Log::warning(sprintf($msg, $path, $cache));
             }
         }
 
@@ -1037,15 +1032,42 @@ class Router
      */
     protected static function _rememberScope($path, $params, $options, $callback, $cache)
     {
-        static::$_collection = Cache::remember(
-            static::$_cachePrefix . $path,
-            function () use ($path, $params, $options, $callback) {
-                static::_buildScope($path, $params, $options, $callback);
+        if (static::_checkSerializableCache($path, $cache)) {
+            static::$_collection = Cache::remember(
+                static::$_cachePrefix . $path,
+                function () use ($path, $params, $options, $callback) {
+                    static::_buildScope($path, $params, $options, $callback);
 
-                return static::$_collection;
-            },
-            $cache
-        );
+                    return static::$_collection;
+                },
+                $cache
+            );
+
+            return;
+        }
+
+        static::_buildScope($path, $params, $options, $callback);
+    }
+
+    /**
+     * Check if the cache config is serializable, log an error message if it's not
+     *
+     * @param string $path The path prefix for the scope. This path will be prepended
+     *   to all routes connected in the scoped collection.
+     * @param string $cache The Cache configuration name to use, a $_cachePrefix will be added to the key
+     * @return bool
+     */
+    protected static function _checkSerializableCache($path, $cache)
+    {
+        $isCacheSerializable = static::_isCacheSerialize($cache);
+        if (!$isCacheSerializable) {
+            $msg = 'Router scope "%s" was NOT cached. The scope cache is enabled, but "%s" cache engine ' .
+                'does not allow serialization. ' .
+                'Use a valid engine, and ensure "serialize" is enabled in the cache configuration';
+            Log::warning(sprintf($msg, $path, $cache));
+        }
+
+        return $isCacheSerializable;
     }
 
     /**
