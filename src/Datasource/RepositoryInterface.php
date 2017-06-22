@@ -17,6 +17,8 @@ namespace Cake\Datasource;
 /**
  * Describes the methods that any class representing a data storage should
  * comply with.
+ *
+ * @method int deleteEach($conditions, $options = []);
  */
 interface RepositoryInterface
 {

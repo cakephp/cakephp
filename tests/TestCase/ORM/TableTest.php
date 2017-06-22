@@ -27,9 +27,9 @@ use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
 use Cake\I18n\Time;
-use Cake\ORM\AssociationCollection;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Association\HasMany;
+use Cake\ORM\AssociationCollection;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
@@ -964,6 +964,137 @@ class TableTest extends TestCase
         $table->deleteAll(['id >' => 4]);
     }
 
+
+    /**
+     * @return array
+     */
+    public function dataDeleteEach()
+    {
+        return [
+            [['batch' => 1]],
+            [['batch' => 100]],
+            [['atomic' => false]],
+            [['stopOnFailure' => false]],
+            [['checkRules' => false]]
+        ];
+    }
+
+    /**
+     * @dataProvider dataDeleteEach
+     * @param array $options
+     */
+    public function testDeleteEach(array $options)
+    {
+        $table = new Table(['table' => 'users', 'connection' => $this->connection]);
+
+        $beforeCount = 0;
+        $table->eventManager()->on('Model.beforeDeleteEach', function () use (&$beforeCount) {
+            $beforeCount++;
+        });
+
+        $afterCount = 0;
+        $table->eventManager()->on('Model.afterDeleteEach', function () use (&$afterCount) {
+            $afterCount++;
+        });
+
+        $result = $table->deleteEach(['username !=' => 'mariano'], $options);
+        $this->assertSame(3, $result);
+
+        if (isset($options['batch']) && $options['batch'] === 100) {
+            $this->assertSame(1, $beforeCount);
+            $this->assertSame(1, $afterCount);
+        } else {
+            $this->assertSame(3, $beforeCount);
+            $this->assertSame(3, $afterCount);
+        }
+
+        $result = $table->find('all')->toArray();
+        $this->assertCount(1, $result, 'Only one record should remain');
+        $this->assertEquals('mariano', $result[0]['username']);
+    }
+
+    /**
+     * @return array
+     */
+    public function dataDeleteEachInvalidArgument()
+    {
+        return [
+            [['limit' => 10]],
+            [['offset' => 10]],
+            [['page' => 10]]
+        ];
+    }
+
+    /**
+     * @param array $invalidParams
+     * @dataProvider dataDeleteEachInvalidArgument
+     * @expectedException \InvalidArgumentException
+     */
+    public function testDeleteEachInvalidArgument(array $invalidParams)
+    {
+        $table = new Table(['table' => 'users', 'connection' => $this->connection]);
+        $table->deleteEach(['username !=' => 'mariano'], $invalidParams);
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function testDeleteEachFinder()
+    {
+        /* @var \TestApp\Model\Table\ArticlesTable $table */
+        $table = TableRegistry::get('Articles');
+        $table->save(new Entity(['published' => 'N']));
+        $result = $table->deleteEach([1 => 1], ['finder' => 'published', 'batch' => 100]);
+        $this->assertSame(3, $result);
+        $this->assertSame(2, $table->finderCount);
+        $this->assertSame(1, $table->find()->count());
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function testDeleteEachAtomic()
+    {
+        $table = new Table(['table' => 'users', 'connection' => $this->connection]);
+
+        $table->eventManager()->on('Model.afterDeleteEachCommit', function () {
+            $this->fail('afterDeleteEachCommit should not fire inside transaction');
+        });
+
+        $this->connection->begin();
+        $result = $table->deleteEach(['username !=' => 'mariano']);
+        $this->assertSame(4, $result);
+        $this->connection->commit();
+    }
+
+    /**
+     * Tests that event can stop deleting.
+     */
+    public function testBeforeDeleteEachStopsDeleting()
+    {
+        $table = new Table(['table' => 'users', 'connection' => $this->connection,]);
+        $called = false;
+        $table->eventManager()->on('Model.beforeDeleteEach', function (Event $event) use (&$called) {
+            $event->stopPropagation();
+            $called = true;
+        });
+        $result = $table->deleteEach([1 => 1]);
+        $this->assertSame(0, $result);
+        $this->assertTrue($called);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Invalid batch size: 0
+     */
+    public function testDeleteEachZeroBatch()
+    {
+        $table = new Table(['table' => 'users', 'connection' => $this->connection,]);
+        $table->deleteEach(['username !=' => 'mariano'], ['batch' => 0]);
+    }
+
     /**
      * Tests that array options are passed to the query object using applyOptions
      *
@@ -1685,6 +1816,10 @@ class TableTest extends TestCase
                 'afterSave',
                 'beforeDelete',
                 'afterDelete',
+                'afterDeleteCommit',
+                'beforeDeleteEach',
+                'afterDeleteEach',
+                'afterDeleteEachCommit',
                 'afterRules'
             ])
             ->getMock();
@@ -1696,6 +1831,10 @@ class TableTest extends TestCase
             'Model.beforeSave' => 'beforeSave',
             'Model.afterSave' => 'afterSave',
             'Model.beforeDelete' => 'beforeDelete',
+            'Model.afterDeleteCommit' => 'afterDeleteCommit',
+            'Model.beforeDeleteEach' => 'beforeDeleteEach',
+            'Model.afterDeleteEach' => 'afterDeleteEach',
+            'Model.afterDeleteEachCommit' => 'afterDeleteEachCommit',
             'Model.afterDelete' => 'afterDelete',
             'Model.afterRules' => 'afterRules',
         ];
