@@ -752,12 +752,12 @@ trait CollectionTrait
         return new Collection($result);
     }
 
-     /**
-      * Unwraps this iterator and returns the simplest
-      * traversable that can be used for getting the data out
-      *
-      * @return \Traversable|array
-      */
+    /**
+     * Unwraps this iterator and returns the simplest
+     * traversable that can be used for getting the data out
+     *
+     * @return \Traversable|array
+     */
     protected function optimizeUnwrap()
     {
         $iterator = $this->unwrap();

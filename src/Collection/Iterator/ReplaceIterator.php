@@ -70,7 +70,6 @@ class ReplaceIterator extends Collection
         return $callback(parent::current(), $this->key(), $this->_innerIterator);
     }
 
-
     /**
      * {@inheritDoc}
      *

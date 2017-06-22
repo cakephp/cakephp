@@ -98,6 +98,7 @@ class CollectionTest extends TestCase
     public function filterProvider()
     {
         $items = [1, 2, 0, 3, false, 4, null, 5, ''];
+
         return [
             'array' => [$items],
             'iterator' => [$this->yieldItems($items)]
@@ -2225,7 +2226,7 @@ class CollectionTest extends TestCase
      * @param array $itmes the elements to be yielded
      * @return void
      */
-    function yieldItems(array $items)
+    protected function yieldItems(array $items)
     {
         foreach ($items as $k => $v) {
             yield $k => $v;
