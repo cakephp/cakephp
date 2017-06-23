@@ -531,9 +531,9 @@ class EntityTest extends TestCase
     public function testUnsetMakesClean()
     {
         $entity = new Entity(['id' => 1, 'name' => 'bar']);
-        $this->assertTrue($entity->dirty('name'));
+        $this->assertTrue($entity->isDirty('name'));
         $entity->unsetProperty('name');
-        $this->assertFalse($entity->dirty('name'), 'Removed properties are not dirty.');
+        $this->assertFalse($entity->isDirty('name'), 'Removed properties are not dirty.');
     }
 
     /**
@@ -873,14 +873,14 @@ class EntityTest extends TestCase
             'title' => 'Foo',
             'author_id' => 3
         ]);
-        $this->assertTrue($entity->dirty('id'));
-        $this->assertTrue($entity->dirty('title'));
-        $this->assertTrue($entity->dirty('author_id'));
+        $this->assertTrue($entity->isDirty('id'));
+        $this->assertTrue($entity->isDirty('title'));
+        $this->assertTrue($entity->isDirty('author_id'));
 
         $entity->clean();
-        $this->assertFalse($entity->dirty('id'));
-        $this->assertFalse($entity->dirty('title'));
-        $this->assertFalse($entity->dirty('author_id'));
+        $this->assertFalse($entity->isDirty('id'));
+        $this->assertFalse($entity->isDirty('title'));
+        $this->assertFalse($entity->isDirty('author_id'));
     }
 
     /**
@@ -1472,7 +1472,7 @@ class EntityTest extends TestCase
         $entity->accessible('id', false);
         $entity->accessible('name', true);
         $entity->virtualProperties(['baz']);
-        $entity->dirty('foo', true);
+        $entity->setDirty('foo', true);
         $entity->errors('foo', ['An error']);
         $entity->invalid('foo', 'a value');
         $entity->source('foos');

@@ -119,7 +119,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $this->assertTrue($entity->article->isNew());
         $this->assertNull($entity->article->id);
         $this->assertNull($entity->article->get('author_id'));
-        $this->assertFalse($entity->article->dirty('author_id'));
+        $this->assertFalse($entity->article->isDirty('author_id'));
         $this->assertNotEmpty($entity->article->errors('title'));
         $this->assertSame('A Title', $entity->article->invalid('title'));
     }
@@ -371,7 +371,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $this->assertSame($entity, $table->save($entity));
 
         $entity = $table->get(1);
-        $entity->dirty('name', true);
+        $entity->setDirty('name', true);
         $this->assertSame($entity, $table->save($entity));
     }
 
@@ -428,7 +428,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $this->assertSame($entity, $table->save($entity));
 
         $entity = $table->get(1);
-        $entity->dirty('author_id', true);
+        $entity->setDirty('author_id', true);
         $this->assertSame($entity, $table->save($entity));
     }
 
@@ -837,7 +837,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $entity = $table->get(1);
         $entity->title = 'Foo';
         $entity->author_id = 1000;
-        $entity->dirty('author_id', false);
+        $entity->setDirty('author_id', false);
         $this->assertSame($entity, $table->save($entity));
     }
 

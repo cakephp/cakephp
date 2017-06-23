@@ -308,7 +308,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
         // entity persists.
         if ($noFields && $bundled && !$key) {
             foreach ($this->_config['fields'] as $field) {
-                $entity->dirty($field, true);
+                $entity->setDirty($field, true);
             }
 
             return;
@@ -346,10 +346,10 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
 
         $entity->set('_i18n', array_merge($bundled, array_values($modified + $new)));
         $entity->set('_locale', $locale, ['setter' => false]);
-        $entity->dirty('_locale', false);
+        $entity->setDirty('_locale', false);
 
         foreach ($fields as $field) {
-            $entity->dirty($field, false);
+            $entity->setDirty($field, false);
         }
     }
 
@@ -602,7 +602,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     {
         $translations = (array)$entity->get('_translations');
 
-        if (empty($translations) && !$entity->dirty('_translations')) {
+        if (empty($translations) && !$entity->isDirty('_translations')) {
             return;
         }
 
@@ -614,7 +614,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
 
         foreach ($translations as $lang => $translation) {
             foreach ($fields as $field) {
-                if (!$translation->dirty($field)) {
+                if (!$translation->isDirty($field)) {
                     continue;
                 }
                 $find[] = ['locale' => $lang, 'field' => $field, 'foreign_key' => $key];

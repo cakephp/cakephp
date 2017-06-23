@@ -687,7 +687,7 @@ class BelongsToManyTest extends TestCase
 
         $assoc->replaceLinks($entity, []);
         $this->assertSame([], $entity->tags, 'Property should be empty');
-        $this->assertFalse($entity->dirty('tags'), 'Property should be cleaned');
+        $this->assertFalse($entity->isDirty('tags'), 'Property should be cleaned');
 
         $new = $articles->get(1, ['contain' => 'Tags']);
         $this->assertSame([], $entity->tags, 'Should not be data in db');
@@ -724,7 +724,7 @@ class BelongsToManyTest extends TestCase
         $result = $assoc->replaceLinks($entity, $tagData, ['associated' => false]);
         $this->assertTrue($result);
         $this->assertSame($tagData, $entity->tags, 'Tags should match replaced objects');
-        $this->assertFalse($entity->dirty('tags'), 'Should be clean');
+        $this->assertFalse($entity->isDirty('tags'), 'Should be clean');
 
         $fresh = $articles->get(1, ['contain' => 'Tags']);
         $this->assertCount(3, $fresh->tags, 'Records should be in db');
@@ -759,7 +759,7 @@ class BelongsToManyTest extends TestCase
         $result = $assoc->replaceLinks($entity, [], ['associated' => false]);
         $this->assertTrue($result);
         $this->assertSame([], $entity->tags, 'Tags should match replaced objects');
-        $this->assertFalse($entity->dirty('tags'), 'Should be clean');
+        $this->assertFalse($entity->isDirty('tags'), 'Should be clean');
 
         $fresh = $articles->get(1, ['contain' => 'Tags']);
         $this->assertCount(0, $fresh->tags, 'Association should be empty');
