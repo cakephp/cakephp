@@ -21,6 +21,21 @@ class ConsoleIntegrationTestCaseTest extends ConsoleIntegrationTestCase
     }
 
     /**
+     * tests exec when using the command runner
+     *
+     * @return void
+     */
+    public function testExecWithCommandRunner()
+    {
+        $this->enableCommandRunner();
+
+        $this->exec('routes');
+
+        $this->assertOutputContains('Welcome to CakePHP');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
+    }
+
+    /**
      * tests exec
      *
      * @return void

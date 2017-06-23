@@ -16,6 +16,7 @@ namespace Cake\TestSuite;
 use Cake\Console\CommandRunner;
 use Cake\Console\ConsoleInput;
 use Cake\Console\ConsoleIo;
+use Cake\Core\Configure;
 use Cake\TestSuite\Stub\ConsoleOutput;
 
 /**
@@ -85,7 +86,7 @@ class ConsoleIntegrationTestCase extends TestCase
                 ->will($this->returnValue($in));
         }
 
-        $args = $this->_commandStringToArgs("bin/cake $command");
+        $args = $this->_commandStringToArgs("cake $command");
 
         $io = new ConsoleIo($this->_out, $this->_err, $this->_in);
 
@@ -163,8 +164,8 @@ class ConsoleIntegrationTestCase extends TestCase
     protected function _makeRunner()
     {
         if ($this->_useCommandRunner) {
-            // not implemented yet
-            return;
+            $applicationClassName = Configure::read('App.namespace') . '\Application';
+            return new CommandRunner(new $applicationClassName([CONFIG]));
         }
 
         return new LegacyCommandRunner();
