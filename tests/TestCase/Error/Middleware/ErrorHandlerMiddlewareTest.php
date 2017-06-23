@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\Error\Middleware;
 
-use Cake\Core\Configure;
 use Cake\Error\Middleware\ErrorHandlerMiddleware;
 use Cake\Http\Response;
 use Cake\Http\ServerRequestFactory;
@@ -40,7 +39,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
     {
         parent::setUp();
 
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         $this->logger = $this->getMockBuilder(LoggerInterface::class)->getMock();
 
         Log::reset();

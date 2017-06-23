@@ -74,7 +74,7 @@ class HtmlHelperTest extends TestCase
         $this->Html->Url->request = $this->Html->request;
 
         Plugin::load(['TestTheme']);
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         Configure::write('Asset.timestamp', false);
     }
 

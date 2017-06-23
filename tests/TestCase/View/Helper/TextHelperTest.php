@@ -67,7 +67,7 @@ class TextHelperTest extends TestCase
         $this->Text = new TextHelper($this->View);
 
         $this->_appNamespace = Configure::read('App.namespace');
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
     }
 
     /**
@@ -78,7 +78,7 @@ class TextHelperTest extends TestCase
     public function tearDown()
     {
         unset($this->Text, $this->View);
-        Configure::write('App.namespace', $this->_appNamespace);
+        static::setAppNamespace($this->_appNamespace);
         parent::tearDown();
     }
 

@@ -13,7 +13,6 @@
  */
 namespace Cake\Test\TestCase\Http;
 
-use Cake\Core\Configure;
 use Cake\Http\Client;
 use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
@@ -402,7 +401,7 @@ class ClientTest extends TestCase
      */
     public function testAuthenticationWithMutation()
     {
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         $response = new Response();
         $mock = $this->getMockBuilder('Cake\Http\Client\Adapter\Stream')
             ->setMethods(['send'])

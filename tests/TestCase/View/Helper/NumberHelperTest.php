@@ -63,7 +63,7 @@ class NumberHelperTest extends TestCase
         $this->View = new View();
 
         $this->_appNamespace = Configure::read('App.namespace');
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
     }
 
     /**
@@ -74,7 +74,7 @@ class NumberHelperTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Configure::write('App.namespace', $this->_appNamespace);
+        static::setAppNamespace($this->_appNamespace);
         unset($this->View);
     }
 

@@ -17,7 +17,6 @@ namespace Cake\Test\TestCase\Cache;
 use Cake\Cache\Cache;
 use Cake\Cache\CacheRegistry;
 use Cake\Cache\Engine\FileEngine;
-use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
@@ -132,7 +131,7 @@ class CacheTest extends TestCase
      */
     public function testConfigWithLibAndPluginEngines()
     {
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         Plugin::load('TestPlugin');
 
         $config = ['engine' => 'TestAppCache', 'path' => TMP, 'prefix' => 'cake_test_'];
@@ -401,7 +400,7 @@ class CacheTest extends TestCase
      */
     public function testDrop()
     {
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
 
         $result = Cache::drop('some_config_that_does_not_exist');
         $this->assertFalse($result, 'Drop should not succeed when config is missing.');
@@ -515,7 +514,7 @@ class CacheTest extends TestCase
      */
     public function testWriteTriggerError()
     {
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         Cache::config('test_trigger', [
             'engine' => 'TestAppCache',
             'prefix' => ''

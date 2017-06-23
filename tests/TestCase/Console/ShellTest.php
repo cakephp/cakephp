@@ -17,7 +17,6 @@ namespace Cake\Test\TestCase\Console;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
-use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Filesystem\Folder;
 use Cake\TestSuite\TestCase;
@@ -168,7 +167,7 @@ class ShellTest extends TestCase
      */
     public function testInitialize()
     {
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
 
         Plugin::load('TestPlugin');
         $this->Shell->tasks = ['DbConfig' => ['one', 'two']];
@@ -191,7 +190,7 @@ class ShellTest extends TestCase
      */
     public function testLoadModel()
     {
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
 
         $Shell = new MergeShell();
         $this->assertInstanceOf(

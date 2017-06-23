@@ -144,7 +144,7 @@ class FormHelperTest extends TestCase
 
         Configure::write('Config.language', 'eng');
         Configure::write('App.base', '');
-        Configure::write('App.namespace', 'Cake\Test\TestCase\View\Helper');
+        static::setAppNamespace('Cake\Test\TestCase\View\Helper');
         $this->View = new View();
 
         $this->Form = new FormHelper($this->View);

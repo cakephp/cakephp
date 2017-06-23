@@ -42,10 +42,10 @@ class MailerAwareTraitTest extends TestCase
     public function testGetMailer()
     {
         $originalAppNamespace = Configure::read('App.namespace');
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         $stub = new Stub();
         $this->assertInstanceOf('TestApp\Mailer\TestMailer', $stub->getMailer('Test'));
-        Configure::write('App.namespace', $originalAppNamespace);
+        static::setAppNamespace($originalAppNamespace);
     }
 
     /**

@@ -16,7 +16,6 @@ namespace Cake\Test\TestCase\Shell;
 
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOutput;
-use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
@@ -48,7 +47,7 @@ class CompletionShellTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         Plugin::load(['TestPlugin', 'TestPluginTwo']);
 
         $this->out = new TestCompletionStringOutput();
@@ -74,7 +73,7 @@ class CompletionShellTest extends TestCase
     {
         parent::tearDown();
         unset($this->Shell);
-        Configure::write('App.namespace', 'App');
+        static::setAppNamespace('App');
         Plugin::unload();
     }
 

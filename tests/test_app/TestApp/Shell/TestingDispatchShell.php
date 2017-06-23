@@ -17,7 +17,7 @@
 namespace TestApp\Shell;
 
 use Cake\Console\Shell;
-use Cake\Core\Configure;
+use Cake\TestSuite\TestCase;
 
 /**
  * for testing dispatchShell functionality
@@ -38,35 +38,35 @@ class TestingDispatchShell extends Shell
     public function testTask()
     {
         $this->out('I am a test task, I dispatch another Shell');
-        Configure::write('App.namespace', 'TestApp');
+        TestCase::setAppNamespace();
         $this->dispatchShell('testing_dispatch dispatch_test_task');
     }
 
     public function testTaskDispatchArray()
     {
         $this->out('I am a test task, I dispatch another Shell');
-        Configure::write('App.namespace', 'TestApp');
+        TestCase::setAppNamespace();
         $this->dispatchShell('testing_dispatch', 'dispatch_test_task');
     }
 
     public function testTaskDispatchCommandString()
     {
         $this->out('I am a test task, I dispatch another Shell');
-        Configure::write('App.namespace', 'TestApp');
+        TestCase::setAppNamespace();
         $this->dispatchShell(['command' => 'testing_dispatch dispatch_test_task']);
     }
 
     public function testTaskDispatchCommandArray()
     {
         $this->out('I am a test task, I dispatch another Shell');
-        Configure::write('App.namespace', 'TestApp');
+        TestCase::setAppNamespace();
         $this->dispatchShell(['command' => ['testing_dispatch', 'dispatch_test_task']]);
     }
 
     public function testTaskDispatchWithParam()
     {
         $this->out('I am a test task, I dispatch another Shell');
-        Configure::write('App.namespace', 'TestApp');
+        TestCase::setAppNamespace();
         $this->dispatchShell([
             'command' => ['testing_dispatch', 'dispatch_test_task_param'],
             'extra' => [
@@ -78,7 +78,7 @@ class TestingDispatchShell extends Shell
     public function testTaskDispatchWithMultipleParams()
     {
         $this->out('I am a test task, I dispatch another Shell');
-        Configure::write('App.namespace', 'TestApp');
+        TestCase::setAppNamespace();
         $this->dispatchShell([
             'command' => 'testing_dispatch dispatch_test_task_params',
             'extra' => [
@@ -91,7 +91,7 @@ class TestingDispatchShell extends Shell
     public function testTaskDispatchWithRequestedOff()
     {
         $this->out('I am a test task, I dispatch another Shell');
-        Configure::write('App.namespace', 'TestApp');
+        TestCase::setAppNamespace();
         $this->dispatchShell([
             'command' => ['testing_dispatch', 'dispatch_test_task'],
             'extra' => [

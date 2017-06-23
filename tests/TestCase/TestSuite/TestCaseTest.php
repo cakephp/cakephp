@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\TestSuite;
 
-use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
 use Cake\Event\Event;
@@ -306,7 +305,7 @@ class TestCaseTest extends TestCase
      */
     public function testGetMockForModel()
     {
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         $Posts = $this->getMockForModel('Posts');
         $entity = new Entity([]);
 
@@ -349,7 +348,7 @@ class TestCaseTest extends TestCase
      */
     public function testGetMockForModelWithPlugin()
     {
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         Plugin::load('TestPlugin');
         $TestPluginComment = $this->getMockForModel('TestPlugin.TestPluginComments');
 
@@ -413,7 +412,7 @@ class TestCaseTest extends TestCase
      */
     public function testGetMockForModelSetTable()
     {
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
 
         $I18n = $this->getMockForModel('I18n', ['doSomething']);
         $this->assertEquals('custom_i18n_table', $I18n->table());

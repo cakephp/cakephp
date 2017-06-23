@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\ORM\Locator;
 
-use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Locator\TableLocator;
@@ -57,7 +56,7 @@ class TableLocatorTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
 
         $this->_locator = new TableLocator;
     }
