@@ -129,6 +129,13 @@ class DebuggerTest extends TestCase
         $this->assertContains('Debugger', $result[5]);
         $this->assertContains('excerpt', $result[5]);
         $this->assertContains('__FILE__', $result[5]);
+
+        $result = Debugger::excerpt(__FILE__, 1, 2);
+        $this->assertCount(3, $result);
+
+        $lastLine = count(explode("\n", file_get_contents(__FILE__)));
+        $result = Debugger::excerpt(__FILE__, $lastLine, 2);
+        $this->assertCount(3, $result);
     }
 
     /**
