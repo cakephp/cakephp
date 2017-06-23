@@ -1,9 +1,9 @@
 <?php
 namespace Cake\TestSuite;
 
-use Cake\Console\ShellDispatcher;
+use Cake\Console\ConsoleIo;
 
-class LegacyCommandRunner extends ShellDispatcher
+class LegacyCommandRunner
 {
     /**
      * @var \Cake\Console\ConsoleIo
@@ -11,33 +11,14 @@ class LegacyCommandRunner extends ShellDispatcher
     protected $_io;
 
     /**
-     * Constructor
+     * Mimics functionality of Cake\Console\CommandRunner
      *
-     * @param array $args the argv from PHP
-     * @param bool $bootstrap Should the environment be bootstrapped.
-     * @param \Cake\Console\ConsoleIo $io The ConsoleIo class to use.
-     * @return void
+     * @param array $argv Argument array
+     * @param ConsoleIo $io ConsoleIo
      */
-    public function __construct($args = [], $bootstrap = true, $io = null)
+    public function run(array $argv, ConsoleIo $io = null)
     {
-        $this->_io = $io;
-
-        parent::__construct($args, $bootstrap);
-    }
-
-    /**
-     * Injects mock and stub io components into the shell
-     *
-     * @param string $className Class name
-     * @param string $shortName Short name
-     * @return \Cake\Console\Shell
-     */
-    protected function _createShell($className, $shortName)
-    {
-        list($plugin) = pluginSplit($shortName);
-        $instance = new $className($this->_io);
-        $instance->plugin = trim($plugin, '.');
-
-        return $instance;
+        $dispatcher = new LegacyShellDispatcher($argv, true, $io);
+        return $dispatcher->dispatch();
     }
 }

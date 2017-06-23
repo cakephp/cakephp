@@ -13,6 +13,7 @@
  */
 namespace Cake\TestSuite;
 
+use Cake\Console\CommandRunner;
 use Cake\Console\ConsoleInput;
 use Cake\Console\ConsoleIo;
 use Cake\TestSuite\Stub\ConsoleOutput;
@@ -67,7 +68,14 @@ class ConsoleIntegrationTestCase extends TestCase
      */
     public function exec($command, array $input = [])
     {
-        $runner = $this->_makeRunner("bin/cake $command");
+        $runner = $this->_makeRunner();
+
+        $this->_out = new ConsoleOutput();
+        $this->_err = new ConsoleOutput();
+        $this->_in = $this->getMockBuilder(ConsoleInput::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['read'])
+            ->getMock();
 
         $i = 0;
         foreach ($input as $in) {
@@ -77,7 +85,11 @@ class ConsoleIntegrationTestCase extends TestCase
                 ->will($this->returnValue($in));
         }
 
-        $this->_exitCode = $runner->dispatch();
+        $args = $this->_commandStringToArgs("bin/cake $command");
+
+        $io = new ConsoleIo($this->_out, $this->_err, $this->_in);
+
+        $this->_exitCode = $runner->run($args, $io);
     }
 
     /**
@@ -148,25 +160,14 @@ class ConsoleIntegrationTestCase extends TestCase
      * @param string $command Command
      * @return LegacyCommandRunner
      */
-    protected function _makeRunner($command)
+    protected function _makeRunner()
     {
-        $args = $this->_commandStringToArgs($command);
-
         if ($this->_useCommandRunner) {
             // not implemented yet
             return;
         }
 
-        $this->_out = new ConsoleOutput();
-        $this->_err = new ConsoleOutput();
-        $this->_in = $this->getMockBuilder(ConsoleInput::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['read'])
-            ->getMock();
-
-        $io = new ConsoleIo($this->_out, $this->_err, $this->_in);
-
-        return new LegacyCommandRunner($args, true, $io);
+        return new LegacyCommandRunner();
     }
 
     /**
