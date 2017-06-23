@@ -2221,7 +2221,7 @@ class CollectionTest extends TestCase
     }
 
     /**
-     * Yields all the elmentes as passed
+     * Yields all the elements as passed
      *
      * @param array $itmes the elements to be yielded
      * @return void
