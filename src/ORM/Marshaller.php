@@ -589,7 +589,7 @@ class Marshaller
             if (array_key_exists($field, $properties)) {
                 $entity->set($field, $properties[$field]);
                 if ($properties[$field] instanceof EntityInterface) {
-                    $entity->isDirty($field, $properties[$field]->isDirty());
+                    $entity->setDirty($field, $properties[$field]->isDirty());
                 }
             }
         }
