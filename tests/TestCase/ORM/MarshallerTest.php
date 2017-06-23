@@ -193,7 +193,7 @@ class MarshallerTest extends TestCase
 
         $this->assertInstanceOf('Cake\ORM\Entity', $result);
         $this->assertEquals($data, $result->toArray());
-        $this->assertTrue($result->dirty(), 'Should be a dirty entity.');
+        $this->assertTrue($result->isDirty(), 'Should be a dirty entity.');
         $this->assertTrue($result->isNew(), 'Should be new');
         $this->assertEquals('Articles', $result->source());
     }
@@ -216,7 +216,7 @@ class MarshallerTest extends TestCase
         $marshall = new Marshaller($this->articles);
         $result = $marshall->one($data, []);
 
-        $this->assertFalse($result->dirty('id'));
+        $this->assertFalse($result->isDirty('id'));
         $this->assertNull($result->id);
     }
 
@@ -420,7 +420,7 @@ class MarshallerTest extends TestCase
         $result = $marshall->one($data, ['associated' => ['Users']]);
 
         $this->assertInstanceOf('Cake\ORM\Entity', $result);
-        $this->assertTrue($result->dirty(), 'Should be a dirty entity.');
+        $this->assertTrue($result->isDirty(), 'Should be a dirty entity.');
         $this->assertTrue($result->isNew(), 'Should be new');
         $this->assertFalse($result->has('Articles'), 'No prefixed field.');
         $this->assertEquals($data['title'], $result->title, 'Data from prefix should be merged.');
@@ -456,10 +456,10 @@ class MarshallerTest extends TestCase
 
         $this->assertInternalType('array', $result->comments);
         $this->assertEquals($data['comments'], $result->comments);
-        $this->assertTrue($result->dirty('comments'));
+        $this->assertTrue($result->isDirty('comments'));
 
         $this->assertInstanceOf('Cake\ORM\Entity', $result->user);
-        $this->assertTrue($result->dirty('user'));
+        $this->assertTrue($result->isDirty('user'));
         $this->assertEquals($data['user']['username'], $result->user->username);
         $this->assertEquals($data['user']['password'], $result->user->password);
     }
@@ -761,20 +761,20 @@ class MarshallerTest extends TestCase
 
         $this->assertNotEmpty($tag->articles);
         $this->assertCount(1, $tag->articles);
-        $this->assertTrue($tag->dirty('articles'), 'Updated prop should be dirty');
+        $this->assertTrue($tag->isDirty('articles'), 'Updated prop should be dirty');
         $this->assertInstanceOf('Cake\ORM\Entity', $tag->articles[0]);
         $this->assertSame('New tagged article', $tag->articles[0]->title);
         $this->assertFalse($tag->articles[0]->isNew());
 
         $this->assertNotEmpty($tag->articles[0]->user);
         $this->assertInstanceOf('Cake\ORM\Entity', $tag->articles[0]->user);
-        $this->assertTrue($tag->articles[0]->dirty('user'), 'Updated prop should be dirty');
+        $this->assertTrue($tag->articles[0]->isDirty('user'), 'Updated prop should be dirty');
         $this->assertSame('newuser', $tag->articles[0]->user->username);
         $this->assertTrue($tag->articles[0]->user->isNew());
 
         $this->assertNotEmpty($tag->articles[0]->comments);
         $this->assertCount(2, $tag->articles[0]->comments);
-        $this->assertTrue($tag->articles[0]->dirty('comments'), 'Updated prop should be dirty');
+        $this->assertTrue($tag->articles[0]->isDirty('comments'), 'Updated prop should be dirty');
         $this->assertInstanceOf('Cake\ORM\Entity', $tag->articles[0]->comments[0]);
         $this->assertTrue($tag->articles[0]->comments[0]->isNew());
         $this->assertTrue($tag->articles[0]->comments[1]->isNew());
@@ -827,7 +827,7 @@ class MarshallerTest extends TestCase
         $this->assertEquals($data['tags'][1]['id'], $result->tags[1]->id);
         $this->assertNotEmpty($result->tags[0]->_joinData);
         $this->assertNotEmpty($result->tags[1]->_joinData);
-        $this->assertTrue($result->dirty('tags'), 'Modified prop should be dirty');
+        $this->assertTrue($result->isDirty('tags'), 'Modified prop should be dirty');
         $this->assertEquals(0, $result->tags[0]->_joinData->active);
         $this->assertEquals(1, $result->tags[1]->_joinData->active);
     }
@@ -1291,7 +1291,7 @@ class MarshallerTest extends TestCase
 
         $this->assertSame($entity, $result);
         $this->assertEquals($data + ['body' => 'My Content'], $result->toArray());
-        $this->assertTrue($result->dirty(), 'Should be a dirty entity.');
+        $this->assertTrue($result->isDirty(), 'Should be a dirty entity.');
         $this->assertFalse($result->isNew(), 'Should not change the entity state');
     }
 
@@ -1350,7 +1350,7 @@ class MarshallerTest extends TestCase
         $entity->clean();
 
         $entity = $marshall->merge($entity, ['author_id' => $value]);
-        $this->assertTrue($entity->dirty('author_id'), 'Field should be dirty');
+        $this->assertTrue($entity->isDirty('author_id'), 'Field should be dirty');
         $this->assertSame(0, $entity->get('author_id'), 'Value should be zero');
     }
 
@@ -1376,7 +1376,7 @@ class MarshallerTest extends TestCase
         $entity->clean();
         $result = $marshall->merge($entity, $data, []);
 
-        $this->assertFalse($entity->dirty('body'), 'unchanged null should not be dirty');
+        $this->assertFalse($entity->isDirty('body'), 'unchanged null should not be dirty');
     }
 
     /**
@@ -1485,7 +1485,7 @@ class MarshallerTest extends TestCase
             'associated' => ['Users' => []]
         ]);
         $this->assertSame($user, $article->user);
-        $this->assertTrue($article->dirty('user'));
+        $this->assertTrue($article->isDirty('user'));
     }
 
     /**
@@ -1515,9 +1515,9 @@ class MarshallerTest extends TestCase
             'crazy' => true
         ];
         $this->assertEquals($expected, $result->toArray());
-        $this->assertFalse($entity->dirty('title'));
-        $this->assertFalse($entity->dirty('author_id'));
-        $this->assertTrue($entity->dirty('crazy'));
+        $this->assertFalse($entity->isDirty('title'));
+        $this->assertFalse($entity->isDirty('author_id'));
+        $this->assertTrue($entity->isDirty('crazy'));
     }
 
     /**
@@ -1548,8 +1548,8 @@ class MarshallerTest extends TestCase
         $marshall = new Marshaller($this->articles);
         $marshall->merge($entity, $data, ['associated' => ['Users']]);
 
-        $this->assertTrue($entity->dirty('user'), 'association should be dirty');
-        $this->assertTrue($entity->dirty('body'), 'body should be dirty');
+        $this->assertTrue($entity->isDirty('user'), 'association should be dirty');
+        $this->assertTrue($entity->isDirty('body'), 'body should be dirty');
         $this->assertEquals('My Content', $entity->body);
         $this->assertSame($user, $entity->user);
         $this->assertEquals('mark', $entity->user->username);
@@ -1584,8 +1584,8 @@ class MarshallerTest extends TestCase
         $this->assertInstanceOf('Cake\ORM\Entity', $entity->user);
         $this->assertEquals('mark', $entity->user->username);
         $this->assertEquals('not a secret', $entity->user->password);
-        $this->assertTrue($entity->dirty('user'));
-        $this->assertTrue($entity->dirty('body'));
+        $this->assertTrue($entity->isDirty('user'));
+        $this->assertTrue($entity->isDirty('body'));
         $this->assertTrue($entity->user->isNew());
     }
 
@@ -1621,7 +1621,7 @@ class MarshallerTest extends TestCase
         ]);
         $this->assertNull($article->user);
         $this->assertSame('', $article->user_id);
-        $this->assertTrue($article->dirty('user'));
+        $this->assertTrue($article->isDirty('user'));
     }
 
     /**
@@ -1663,10 +1663,10 @@ class MarshallerTest extends TestCase
         $result = $marshall->merge($entity, $data, ['associated' => ['Users', 'Comments']]);
         $this->assertSame($entity, $result);
         $this->assertSame($user, $result->user);
-        $this->assertTrue($result->dirty('user'), 'association should be dirty');
+        $this->assertTrue($result->isDirty('user'), 'association should be dirty');
         $this->assertEquals('not so secret', $entity->user->password);
 
-        $this->assertTrue($result->dirty('comments'));
+        $this->assertTrue($result->isDirty('comments'));
         $this->assertSame($comment1, $entity->comments[0]);
         $this->assertSame($comment2, $entity->comments[1]);
         $this->assertEquals('Altered comment 1', $entity->comments[0]->comment);
@@ -1732,7 +1732,7 @@ class MarshallerTest extends TestCase
         $result = $marshall->merge($entity, $data, ['associated' => ['Tags']]);
 
         $this->assertCount(3, $result->tags);
-        $this->assertTrue($result->dirty('tags'), 'Updated prop should be dirty');
+        $this->assertTrue($result->isDirty('tags'), 'Updated prop should be dirty');
         $this->assertInstanceOf('Cake\ORM\Entity', $result->tags[0]);
         $this->assertInstanceOf('Cake\ORM\Entity', $result->tags[1]);
         $this->assertInstanceOf('Cake\ORM\Entity', $result->tags[2]);
@@ -1773,7 +1773,7 @@ class MarshallerTest extends TestCase
         $result = $marshall->merge($entity, $data, ['associated' => ['Tags']]);
 
         $this->assertCount(3, $result->tags);
-        $this->assertTrue($result->dirty('tags'));
+        $this->assertTrue($result->isDirty('tags'));
     }
 
     /**
@@ -1805,7 +1805,7 @@ class MarshallerTest extends TestCase
         $result = $marshall->merge($entity, $data, ['associated' => ['Tags']]);
 
         $this->assertCount(3, $result->tags);
-        $this->assertTrue($result->dirty('tags'));
+        $this->assertTrue($result->isDirty('tags'));
         $this->assertInstanceOf('Cake\ORM\Entity', $result->tags[0]);
         $this->assertInstanceOf('Cake\ORM\Entity', $result->tags[1]);
         $this->assertInstanceOf('Cake\ORM\Entity', $result->tags[2]);
@@ -1892,7 +1892,7 @@ class MarshallerTest extends TestCase
         ];
         $result = $marshall->merge($entity, $data, ['associated' => ['Tags']]);
         $this->assertCount(0, $result->tags);
-        $this->assertTrue($result->dirty('tags'));
+        $this->assertTrue($result->isDirty('tags'));
     }
 
     /**
@@ -1924,7 +1924,7 @@ class MarshallerTest extends TestCase
             'associated' => ['Tags' => ['onlyIds' => true]]
         ]);
         $this->assertCount(0, $result->tags);
-        $this->assertTrue($result->dirty('tags'));
+        $this->assertTrue($result->isDirty('tags'));
     }
 
     /**
@@ -1956,7 +1956,7 @@ class MarshallerTest extends TestCase
         ]);
         $this->assertCount(1, $result->tags);
         $this->assertEquals('tag3', $result->tags[0]->name);
-        $this->assertTrue($result->dirty('tags'));
+        $this->assertTrue($result->isDirty('tags'));
     }
 
     /**
@@ -1983,7 +1983,7 @@ class MarshallerTest extends TestCase
         $result = $marshall->merge($entity, $data, ['associated' => 'Tags._joinData']);
 
         $articles->save($entity, ['associated' => ['Tags._joinData']]);
-        $this->assertFalse($entity->tags[0]->dirty('_joinData'));
+        $this->assertFalse($entity->tags[0]->isDirty('_joinData'));
         $this->assertEmpty($entity->tags[0]->_joinData);
     }
 
@@ -2015,10 +2015,10 @@ class MarshallerTest extends TestCase
         $marshall = new Marshaller($articles);
         $result = $marshall->merge($entity, $data, ['associated' => 'Tags._joinData']);
 
-        $this->assertTrue($entity->dirty('tags'), 'Association data changed');
-        $this->assertTrue($entity->tags[0]->dirty('_joinData'));
-        $this->assertTrue($result->tags[0]->_joinData->dirty('author_id'), 'Field not modified');
-        $this->assertTrue($result->tags[0]->_joinData->dirty('highlighted'), 'Field not modified');
+        $this->assertTrue($entity->isDirty('tags'), 'Association data changed');
+        $this->assertTrue($entity->tags[0]->isDirty('_joinData'));
+        $this->assertTrue($result->tags[0]->_joinData->isDirty('author_id'), 'Field not modified');
+        $this->assertTrue($result->tags[0]->_joinData->isDirty('highlighted'), 'Field not modified');
         $this->assertSame(99, $result->tags[0]->_joinData->author_id);
         $this->assertTrue($result->tags[0]->_joinData->highlighted);
     }
@@ -2047,7 +2047,7 @@ class MarshallerTest extends TestCase
         $marshall = new Marshaller($articles);
         $result = $marshall->merge($entity, $data, ['associated' => 'Tags']);
 
-        $this->assertTrue($entity->dirty('tags'));
+        $this->assertTrue($entity->isDirty('tags'));
         $this->assertInstanceOf('Cake\ORM\Entity', $result->tags[0]->_joinData);
         $this->assertTrue($result->tags[0]->_joinData->highlighted);
 
@@ -2062,7 +2062,7 @@ class MarshallerTest extends TestCase
         $marshall = new Marshaller($articles);
         $result = $marshall->merge($entity, $data, ['associated' => 'Tags']);
 
-        $this->assertTrue($entity->dirty('tags'), 'association data changed');
+        $this->assertTrue($entity->isDirty('tags'), 'association data changed');
         $this->assertInstanceOf('Cake\ORM\Entity', $result->tags[0]->_joinData);
         $this->assertTrue($result->tags[0]->_joinData->highlighted);
     }
@@ -2100,7 +2100,7 @@ class MarshallerTest extends TestCase
         $article = $this->articles->get(1, ['associated' => 'Tags']);
         $result = $marshall->merge($article, $data, ['associated' => ['Tags._joinData.Users']]);
 
-        $this->assertTrue($result->dirty('tags'));
+        $this->assertTrue($result->isDirty('tags'));
         $this->assertInstanceOf('Cake\ORM\Entity', $result->tags[0]);
         $this->assertInstanceOf('Cake\ORM\Entity', $result->tags[1]);
         $this->assertInstanceOf('Cake\ORM\Entity', $result->tags[0]->_joinData->user);
@@ -2170,7 +2170,7 @@ class MarshallerTest extends TestCase
 
         $this->assertEquals($data['title'], $result->title);
         $this->assertEquals('My content', $result->body);
-        $this->assertTrue($result->dirty('tags'));
+        $this->assertTrue($result->isDirty('tags'));
         $this->assertSame($tag1, $entity->tags[0]);
         $this->assertSame($tag1->_joinData, $entity->tags[0]->_joinData);
         $this->assertSame(
@@ -2182,8 +2182,8 @@ class MarshallerTest extends TestCase
             $entity->tags[1]->_joinData->toArray()
         );
         $this->assertEquals('new tag', $entity->tags[1]->tag);
-        $this->assertTrue($entity->tags[0]->dirty('_joinData'));
-        $this->assertTrue($entity->tags[1]->dirty('_joinData'));
+        $this->assertTrue($entity->tags[0]->isDirty('_joinData'));
+        $this->assertTrue($entity->tags[1]->isDirty('_joinData'));
     }
 
     /**
@@ -2250,10 +2250,10 @@ class MarshallerTest extends TestCase
 
         $this->assertEquals($data['title'], $result->title);
         $this->assertEquals('My content', $result->body);
-        $this->assertTrue($entity->dirty('tags'));
+        $this->assertTrue($entity->isDirty('tags'));
         $this->assertSame($tag1, $entity->tags[0]);
 
-        $this->assertTrue($tag1->dirty('_joinData'));
+        $this->assertTrue($tag1->isDirty('_joinData'));
         $this->assertSame($tag1->_joinData, $entity->tags[0]->_joinData);
         $this->assertEquals('Bill', $entity->tags[0]->_joinData->user->username);
         $this->assertEquals('secret', $entity->tags[0]->_joinData->user->password);
@@ -2285,7 +2285,7 @@ class MarshallerTest extends TestCase
         $result = $marshall->merge($entity, $data, ['associated' => ['Tags']]);
 
         $this->assertCount(1, $result->tags);
-        $this->assertTrue($result->dirty('tags'));
+        $this->assertTrue($result->isDirty('tags'));
         $this->assertInstanceOf('Cake\ORM\Entity', $result->tags[0]);
         $this->assertInstanceOf('Cake\ORM\Entity', $result->tags[0]->_joinData);
         $this->assertSame($original, $result->tags[0]->_joinData, 'Should be same object');
@@ -2317,8 +2317,8 @@ class MarshallerTest extends TestCase
         $this->assertEquals('Changed 1', $result[0]->comment);
         $this->assertEquals(1, $result[0]->user_id);
         $this->assertEquals('Changed 2', $result[1]->comment);
-        $this->assertTrue($result[0]->dirty('user_id'));
-        $this->assertFalse($result[1]->dirty('user_id'));
+        $this->assertTrue($result[0]->isDirty('user_id'));
+        $this->assertFalse($result[1]->isDirty('user_id'));
     }
 
     /**
@@ -2719,7 +2719,7 @@ class MarshallerTest extends TestCase
         $this->assertEquals('mark', $entity->user->username);
         $this->assertEquals('secret', $entity->user->password);
         $this->assertEquals('data', $entity->user->extra);
-        $this->assertTrue($entity->dirty('user'));
+        $this->assertTrue($entity->isDirty('user'));
     }
 
     /**
@@ -2845,8 +2845,8 @@ class MarshallerTest extends TestCase
             $entity->tags[1]->_joinData->toArray()
         );
         $this->assertEquals('new tag', $entity->tags[1]->tag);
-        $this->assertTrue($entity->tags[0]->dirty('_joinData'));
-        $this->assertTrue($entity->tags[1]->dirty('_joinData'));
+        $this->assertTrue($entity->tags[0]->isDirty('_joinData'));
+        $this->assertTrue($entity->tags[1]->isDirty('_joinData'));
     }
 
     /**
@@ -3112,7 +3112,7 @@ class MarshallerTest extends TestCase
 
         $this->assertSame($entity, $result);
         $this->assertEmpty($result->errors());
-        $this->assertTrue($result->dirty('_translations'));
+        $this->assertTrue($result->isDirty('_translations'));
 
         $translations = $result->get('_translations');
         $this->assertCount(2, $translations);
@@ -3271,7 +3271,7 @@ class MarshallerTest extends TestCase
         $this->assertInstanceOf('Cake\ORM\Entity', $entity->user);
         $this->assertEquals('mark', $entity->user->username);
         $this->assertEquals('not a secret', $entity->user->password);
-        $this->assertFalse($entity->dirty('user'));
+        $this->assertFalse($entity->isDirty('user'));
         $this->assertTrue($entity->user->isNew());
     }
 
@@ -3294,7 +3294,7 @@ class MarshallerTest extends TestCase
         $marshall = new Marshaller($articles);
         $result = $marshall->one($data);
 
-        $this->assertFalse($result->dirty('id'));
+        $this->assertFalse($result->isDirty('id'));
         $this->assertNull($result->id);
     }
 

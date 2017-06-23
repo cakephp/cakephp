@@ -1484,17 +1484,17 @@ class TableTest extends TestCase
         $results = $table->find('all')->contain(['Tags', 'Authors'])->toArray();
         $this->assertCount(3, $results);
         foreach ($results as $article) {
-            $this->assertFalse($article->dirty('id'));
-            $this->assertFalse($article->dirty('title'));
-            $this->assertFalse($article->dirty('author_id'));
-            $this->assertFalse($article->dirty('body'));
-            $this->assertFalse($article->dirty('published'));
-            $this->assertFalse($article->dirty('author'));
-            $this->assertFalse($article->author->dirty('id'));
-            $this->assertFalse($article->author->dirty('name'));
-            $this->assertFalse($article->dirty('tag'));
+            $this->assertFalse($article->isDirty('id'));
+            $this->assertFalse($article->isDirty('title'));
+            $this->assertFalse($article->isDirty('author_id'));
+            $this->assertFalse($article->isDirty('body'));
+            $this->assertFalse($article->isDirty('published'));
+            $this->assertFalse($article->isDirty('author'));
+            $this->assertFalse($article->author->isDirty('id'));
+            $this->assertFalse($article->author->isDirty('name'));
+            $this->assertFalse($article->isDirty('tag'));
             if ($article->tag) {
-                $this->assertFalse($article->tag[0]->_joinData->dirty('tag_id'));
+                $this->assertFalse($article->tag[0]->_joinData->isDirty('tag_id'));
             }
         }
     }
@@ -1821,7 +1821,7 @@ class TableTest extends TestCase
 
         $articleId = $entity->articles[0]->id;
         unset($entity->articles[0]);
-        $entity->dirty('articles', true);
+        $entity->setDirty('articles', true);
 
         $authors->save($entity, ['associated' => ['Articles']]);
 
@@ -1901,7 +1901,7 @@ class TableTest extends TestCase
 
         $articleId = $entity->articles[0]->id;
         unset($entity->articles[0]);
-        $entity->dirty('articles', true);
+        $entity->setDirty('articles', true);
 
         $authors->save($entity, ['associated' => ['Articles']]);
 
@@ -1961,7 +1961,7 @@ class TableTest extends TestCase
 
         $articleId = $entity->articles[0]->id;
         unset($entity->articles[0]);
-        $entity->dirty('articles', true);
+        $entity->setDirty('articles', true);
 
         $authors->save($entity, ['associated' => ['Articles']]);
 
@@ -2010,7 +2010,7 @@ class TableTest extends TestCase
         $this->assertTrue($articles->Comments->exists(['id' => $commentId]));
 
         unset($article->comments[0]);
-        $article->dirty('comments', true);
+        $article->setDirty('comments', true);
         $article = $articles->save($article, ['associated' => ['Comments']]);
 
         $this->assertEquals($sizeComments - 1, $articles->Comments->find('all')->where(['article_id' => $article->id])->count());
@@ -2064,7 +2064,7 @@ class TableTest extends TestCase
             'comment' => 'new comment'
         ]);
 
-        $article->dirty('comments', true);
+        $article->setDirty('comments', true);
         $article = $articles->save($article, ['associated' => ['Comments']]);
 
         $this->assertEquals($sizeComments, $articles->Comments->find('all')->where(['article_id' => $article->id])->count());
@@ -2121,7 +2121,7 @@ class TableTest extends TestCase
         $this->assertEquals(3, $Comments->target()->find()->where(['Comments.article_id' => $article->get('id')])->count());
 
         unset($article->comments[1]);
-        $article->dirty('comments', true);
+        $article->setDirty('comments', true);
 
         $article = $Articles->save($article);
         $this->assertNotEmpty($article);
@@ -2183,7 +2183,7 @@ class TableTest extends TestCase
 
         $article2 = $author->articles[1];
         unset($author->articles[1]);
-        $author->dirty('articles', true);
+        $author->setDirty('articles', true);
 
         $author = $Authors->save($author);
         $this->assertNotEmpty($author);
@@ -2344,7 +2344,7 @@ class TableTest extends TestCase
         $called = false;
         $listener = function ($e, $entity, $options) use ($data, &$called) {
             $this->assertSame($data, $entity);
-            $this->assertTrue($entity->dirty());
+            $this->assertTrue($entity->isDirty());
             $called = true;
         };
         $table->getEventManager()->on('Model.afterSave', $listener);
@@ -2352,7 +2352,7 @@ class TableTest extends TestCase
         $calledAfterCommit = false;
         $listenerAfterCommit = function ($e, $entity, $options) use ($data, &$calledAfterCommit) {
             $this->assertSame($data, $entity);
-            $this->assertTrue($entity->dirty());
+            $this->assertTrue($entity->isDirty());
             $this->assertNotSame($data->get('username'), $data->getOriginal('username'));
             $calledAfterCommit = true;
         };
@@ -2692,9 +2692,9 @@ class TableTest extends TestCase
             'updated' => new Time('2013-10-10 00:00')
         ]);
         $entity->clean();
-        $entity->dirty('username', true);
-        $entity->dirty('created', true);
-        $entity->dirty('updated', true);
+        $entity->setDirty('username', true);
+        $entity->setDirty('created', true);
+        $entity->setDirty('updated', true);
 
         $table = TableRegistry::get('users');
         $this->assertSame($entity, $table->save($entity));
@@ -2721,10 +2721,10 @@ class TableTest extends TestCase
         ]);
         $table = TableRegistry::get('users');
         $this->assertSame($entity, $table->save($entity));
-        $this->assertFalse($entity->dirty('usermane'));
-        $this->assertFalse($entity->dirty('password'));
-        $this->assertFalse($entity->dirty('created'));
-        $this->assertFalse($entity->dirty('updated'));
+        $this->assertFalse($entity->isDirty('usermane'));
+        $this->assertFalse($entity->isDirty('password'));
+        $this->assertFalse($entity->isDirty('created'));
+        $this->assertFalse($entity->isDirty('updated'));
     }
 
     /**
@@ -2769,8 +2769,8 @@ class TableTest extends TestCase
         $this->assertEquals($original->created, $row->created);
         $this->assertEquals($original->updated, $row->updated);
         $this->assertFalse($entity->isNew());
-        $this->assertFalse($entity->dirty('id'));
-        $this->assertFalse($entity->dirty('username'));
+        $this->assertFalse($entity->isDirty('id'));
+        $this->assertFalse($entity->isDirty('username'));
     }
 
     /**
@@ -3706,7 +3706,7 @@ class TableTest extends TestCase
         $this->assertFalse($entity->article->isNew());
         $this->assertEquals(4, $entity->article->id);
         $this->assertEquals(5, $entity->article->get('author_id'));
-        $this->assertFalse($entity->article->dirty('author_id'));
+        $this->assertFalse($entity->article->isDirty('author_id'));
     }
 
     /**
@@ -3846,7 +3846,7 @@ class TableTest extends TestCase
         $entity = $table->find()->contain('Tags')->first();
         // not associated to the article already.
         $entity->tags[] = $tags->get(3);
-        $entity->dirty('tags', true);
+        $entity->setDirty('tags', true);
 
         $this->assertSame($entity, $table->save($entity));
 
@@ -4396,7 +4396,7 @@ class TableTest extends TestCase
 
         $this->assertCount($sizeArticles, $authors->Articles->findAllByAuthorId($author->id));
         $this->assertCount($sizeArticles, $author->articles);
-        $this->assertFalse($author->dirty('articles'));
+        $this->assertFalse($author->isDirty('articles'));
     }
 
     /**
@@ -4448,7 +4448,7 @@ class TableTest extends TestCase
 
         $this->assertCount($sizeArticles, $authors->Articles->findAllByAuthorId($author->id));
         $this->assertCount($sizeArticles, $author->articles);
-        $this->assertFalse($author->dirty('articles'));
+        $this->assertFalse($author->isDirty('articles'));
     }
 
     /**
@@ -4503,7 +4503,7 @@ class TableTest extends TestCase
 
         $this->assertCount($sizeArticles, $authors->Articles->findAllByAuthorId($author->id));
         $this->assertCount($sizeArticles, $author->articles);
-        $this->assertFalse($author->dirty('articles'));
+        $this->assertFalse($author->isDirty('articles'));
     }
 
     /**
@@ -4551,7 +4551,7 @@ class TableTest extends TestCase
 
         $this->assertCount($sizeArticles - count($articlesToUnlink), $authors->Articles->findAllByAuthorId($author->id));
         $this->assertCount($sizeArticles - count($articlesToUnlink), $author->articles);
-        $this->assertFalse($author->dirty('articles'));
+        $this->assertFalse($author->isDirty('articles'));
     }
 
     /**
@@ -4599,7 +4599,7 @@ class TableTest extends TestCase
 
         $this->assertCount($sizeArticles - count($articlesToUnlink), $authors->Articles->findAllByAuthorId($author->id));
         $this->assertCount($sizeArticles, $author->articles);
-        $this->assertFalse($author->dirty('articles'));
+        $this->assertFalse($author->isDirty('articles'));
     }
 
     /**
@@ -4871,7 +4871,7 @@ class TableTest extends TestCase
         $table->association('tags')->unlink($article, [$article->tags[0]]);
         $this->assertCount(1, $article->tags);
         $this->assertEquals(2, $article->tags[0]->get('id'));
-        $this->assertFalse($article->dirty('tags'));
+        $this->assertFalse($article->isDirty('tags'));
     }
 
     /**
@@ -5028,7 +5028,7 @@ class TableTest extends TestCase
 
         $article = $articles->get(1);
         $article->tags = [];
-        $article->dirty('tags', true);
+        $article->setDirty('tags', true);
 
         $result = $articles->save($article, ['foo' => 'bar']);
         $this->assertNotEmpty($result);
@@ -5192,7 +5192,7 @@ class TableTest extends TestCase
 
         $author = $authors->get(1);
         $author->articles = [];
-        $author->dirty('articles', true);
+        $author->setDirty('articles', true);
 
         $result = $authors->save($author, ['foo' => 'bar']);
         $this->assertNotEmpty($result);
@@ -5228,7 +5228,7 @@ class TableTest extends TestCase
 
         $author = $authors->get(1);
         $author->articles = [];
-        $author->dirty('articles', true);
+        $author->setDirty('articles', true);
 
         $result = $articles->link($author, [$articles->target()->get(2)], ['foo' => 'bar']);
         $this->assertTrue($result);
@@ -5271,7 +5271,7 @@ class TableTest extends TestCase
 
         $author = $authors->get(1);
         $author->articles = [];
-        $author->dirty('articles', true);
+        $author->setDirty('articles', true);
 
         $articles->unlink($author, [$articles->target()->get(1)], ['foo' => 'bar']);
 
@@ -5401,7 +5401,7 @@ class TableTest extends TestCase
 
         $author = $authors->get(1);
         $author->articles = [];
-        $author->dirty('articles', true);
+        $author->setDirty('articles', true);
 
         $articles->unlink($author, [$articles->target()->get(1)], false);
         $this->assertArrayHasKey('cleanProperty', $actualOptions);
@@ -6274,14 +6274,14 @@ class TableTest extends TestCase
         $userTable->Comments
             ->getEventManager()
             ->on('Model.afterSave', function (Event $event, $entity) use (&$counter) {
-                if ($entity->dirty()) {
+                if ($entity->isDirty()) {
                     $counter++;
                 }
             });
 
         $savedUser->comments[] = $userTable->Comments->get(5);
         $this->assertCount(3, $savedUser->comments);
-        $savedUser->dirty('comments', true);
+        $savedUser->setDirty('comments', true);
         $userTable->save($savedUser);
         $this->assertEquals(1, $counter);
     }
@@ -6311,14 +6311,14 @@ class TableTest extends TestCase
         $table->Tags->junction()
             ->getEventManager()
             ->on('Model.afterSave', function (Event $event, $entity) use (&$counter) {
-                if ($entity->dirty()) {
+                if ($entity->isDirty()) {
                     $counter++;
                 }
             });
 
         $article->tags[] = $table->Tags->get(3);
         $this->assertCount(3, $article->tags);
-        $article->dirty('tags', true);
+        $article->setDirty('tags', true);
         $table->save($article);
         $this->assertEquals(1, $counter);
     }
@@ -6354,11 +6354,11 @@ class TableTest extends TestCase
         $validator = $table->getValidator()->requirePresence('body');
         $entity = $table->newEntity(['title' => 'mark']);
 
-        $entity->dirty('title', true);
+        $entity->setDirty('title', true);
         $entity->invalid('title', 'albert');
 
         $this->assertNotEmpty($entity->errors());
-        $this->assertTrue($entity->dirty());
+        $this->assertTrue($entity->isDirty());
         $this->assertEquals(['title' => 'albert'], $entity->invalid());
 
         $entity->title = 'alex';
@@ -6367,7 +6367,7 @@ class TableTest extends TestCase
         $entity->clean();
 
         $this->assertEmpty($entity->errors());
-        $this->assertFalse($entity->dirty());
+        $this->assertFalse($entity->isDirty());
         $this->assertEquals([], $entity->invalid());
         $this->assertSame($entity->getOriginal('title'), 'alex');
     }

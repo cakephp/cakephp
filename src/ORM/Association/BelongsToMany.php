@@ -841,7 +841,7 @@ class BelongsToMany extends Association
             }
 
             $e->set($jointProperty, $joint);
-            $e->dirty($jointProperty, false);
+            $e->setDirty($jointProperty, false);
         }
 
         return true;
@@ -966,7 +966,7 @@ class BelongsToMany extends Association
         }
 
         $sourceEntity->set($property, array_values($existing));
-        $sourceEntity->dirty($property, false);
+        $sourceEntity->setDirty($property, false);
 
         return true;
     }
@@ -1223,7 +1223,7 @@ class BelongsToMany extends Association
 
                 ksort($targetEntities);
                 $sourceEntity->set($property, array_values($targetEntities));
-                $sourceEntity->dirty($property, false);
+                $sourceEntity->setDirty($property, false);
 
                 return true;
             }

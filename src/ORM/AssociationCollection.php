@@ -250,7 +250,7 @@ class AssociationCollection implements IteratorAggregate
      */
     protected function _save($association, $entity, $nested, $options)
     {
-        if (!$entity->dirty($association->getProperty())) {
+        if (!$entity->isDirty($association->getProperty())) {
             return true;
         }
         if (!empty($nested)) {
