@@ -1059,7 +1059,7 @@ class Router
      */
     protected static function _checkSerializableCache($path, $cache)
     {
-        $isCacheSerializable = static::_isCacheSerialize($cache);
+        $isCacheSerializable = static::_isCacheSerializable($cache);
         if (!$isCacheSerializable) {
             $msg = 'Router scope "%s" was NOT cached. The scope cache is enabled, but "%s" cache engine ' .
                 'does not allow serialization. ' .
@@ -1095,7 +1095,7 @@ class Router
      * @param string $cache Cache configuration
      * @return bool
      */
-    protected static function _isCacheSerialize($cache)
+    protected static function _isCacheSerializable($cache)
     {
         $config = Cache::engine($cache)->getConfig();
 

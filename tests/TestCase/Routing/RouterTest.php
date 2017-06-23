@@ -3100,6 +3100,7 @@ class RouterTest extends TestCase
         $folder->create(CACHE . 'persistent/');
         $routePath = tempnam(CACHE . 'persistent/', 'myapp_cake_someprefix_');
         $tmpName = substr($routePath, strlen(CACHE . 'persistent/' . 'myapp_cake_someprefix_'));
+        $cachedScopeFile = $routePath . 'routes_path';
 
         Cache::setConfig('routes', [
             'className' => 'File',
@@ -3116,7 +3117,8 @@ class RouterTest extends TestCase
             $routes->connect('/articles', ['controller' => 'Articles']);
         });
 
-        $this->assertFileExists($routePath);
+        $this->assertFileExists($cachedScopeFile);
+        $this->assertNotEmpty(file_get_contents($cachedScopeFile));
         $serializedCollection = Cache::read('routes' . '/path', 'routes');
         $expected = [
             'pass' => [],
@@ -3129,17 +3131,19 @@ class RouterTest extends TestCase
         $this->assertInstanceOf('\Cake\Routing\RouteCollection', $serializedCollection);
         $this->assertSame($expected, $serializedCollection->parse('/path/articles'));
 
-        return $routePath;
+        return $cachedScopeFile;
     }
 
     /**
      * Test read cached scope
+     *
+     * @param string $cachedScopeFile Absolute path to the cache file generated
      * @depends testCreateCacheScope
      * @return void
      */
-    public function testReadCacheScope($routePath = '')
+    public function testReadCacheScope($cachedScopeFile = '')
     {
-        $this->assertFileExists($routePath);
+        $this->assertFileExists($cachedScopeFile);
 
         Router::scope('/path', ['param' => 'value', '_cache' => 'routes'], function ($routes) {
             $this->fail('Cached routes should have been used');
@@ -3155,7 +3159,7 @@ class RouterTest extends TestCase
         ];
         $this->assertSame($expected, Router::parseRequest(new ServerRequest('/path/articles')));
         Cache::drop('routes');
-        $file = new File($routePath);
+        $file = new File($cachedScopeFile);
         $file->delete();
     }
 
@@ -3168,6 +3172,7 @@ class RouterTest extends TestCase
     {
         $routePath = tempnam(CACHE . 'persistent/', 'myapp_cake_someprefix_');
         $tmpName = substr($routePath, strlen(CACHE . 'persistent/' . 'myapp_cake_someprefix_'));
+        $cachedScopeFile = $routePath . 'routes_path';
 
         Cache::setConfig('routes', [
             'className' => 'File',
@@ -3184,6 +3189,9 @@ class RouterTest extends TestCase
 
             $routes->connect('/articles', ['controller' => 'Articles']);
         });
+
+        $msg = 'Using scope cache with non serializable engine should not write contents to a file';
+        $this->assertFileNotExists($cachedScopeFile, $msg);
     }
 
     /**
