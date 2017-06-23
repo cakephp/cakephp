@@ -67,7 +67,7 @@ class ConsoleIntegrationTestCase extends TestCase
      */
     public function exec($command, array $input = [])
     {
-        $dispatcher = $this->_makeDispatcher("bin/cake $command");
+        $runner = $this->_makeRunner("bin/cake $command");
 
         $i = 0;
         foreach ($input as $in) {
@@ -77,7 +77,7 @@ class ConsoleIntegrationTestCase extends TestCase
                 ->will($this->returnValue($in));
         }
 
-        $this->_exitCode = $dispatcher->dispatch();
+        $this->_exitCode = $runner->dispatch();
     }
 
     /**
@@ -146,9 +146,9 @@ class ConsoleIntegrationTestCase extends TestCase
      * Builds the appropriate command dispatcher
      *
      * @param string $command Command
-     * @return LegacyShellDispatcher
+     * @return LegacyCommandRunner
      */
-    protected function _makeDispatcher($command)
+    protected function _makeRunner($command)
     {
         $args = $this->_commandStringToArgs($command);
 
@@ -166,7 +166,7 @@ class ConsoleIntegrationTestCase extends TestCase
 
         $io = new ConsoleIo($this->_out, $this->_err, $this->_in);
 
-        return new LegacyShellDispatcher($args, true, $io);
+        return new LegacyCommandRunner($args, true, $io);
     }
 
     /**

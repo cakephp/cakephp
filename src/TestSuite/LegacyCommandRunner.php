@@ -3,7 +3,7 @@ namespace Cake\TestSuite;
 
 use Cake\Console\ShellDispatcher;
 
-class LegacyShellDispatcher extends ShellDispatcher
+class LegacyCommandRunner extends ShellDispatcher
 {
     /**
      * @var \Cake\Console\ConsoleIo
