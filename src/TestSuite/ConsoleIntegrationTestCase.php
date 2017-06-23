@@ -158,13 +158,13 @@ class ConsoleIntegrationTestCase extends TestCase
     /**
      * Builds the appropriate command dispatcher
      *
-     * @param string $command Command
-     * @return LegacyCommandRunner
+     * @return CommandRunner|LegacyCommandRunner
      */
     protected function _makeRunner()
     {
         if ($this->_useCommandRunner) {
             $applicationClassName = Configure::read('App.namespace') . '\Application';
+
             return new CommandRunner(new $applicationClassName([CONFIG]));
         }
 
