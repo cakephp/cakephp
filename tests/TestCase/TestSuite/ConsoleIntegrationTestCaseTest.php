@@ -134,11 +134,12 @@ class ConsoleIntegrationTestCaseTest extends ConsoleIntegrationTestCase
      */
     public function testCommandStringToArgs()
     {
-        $result = $this->_commandStringToArgs('command --something=nothing --with-spaces="quote me on that"');
+        $result = $this->_commandStringToArgs('command --something=nothing --with-spaces="quote me on that" \'quoted \"arg\"\'');
         $expected = [
             'command',
             '--something=nothing',
-            '--with-spaces=quote me on that'
+            '--with-spaces=quote me on that',
+            'quoted "arg"',
         ];
         $this->assertSame($expected, $result);
     }

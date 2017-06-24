@@ -181,19 +181,34 @@ class ConsoleIntegrationTestCase extends TestCase
     }
 
     /**
-     * Dispatches the command string to a script that returns the argv array
-     * parsed by PHP
+     * Creates an $argv array from a command string
      *
      * @param string $command Command string
      * @return array
      */
     protected function _commandStringToArgs($command)
     {
-        $argvScript = CORE_TESTS . 'argv.php';
-        $jsonArgv = shell_exec("$argvScript $command");
-
-        $argv = json_decode($jsonArgv);
-        array_shift($argv);
+        $argv = [];
+        $arg = '';
+        $inQuote = false;
+        for($i = 0; $i <= strlen($command); $i++) {
+            $char = substr($command, $i, 1);
+            if ($char === ' ' && !$inQuote) {
+                $argv[] = $arg;
+                $arg = '';
+                continue;
+            }
+            if ($char === '"' || $char === '\'') {
+                $prevChar = substr($command, $i - 1, 1);
+                if ($prevChar === '\\') {
+                    $arg[strlen($arg) - 1] = $char;
+                }
+                $inQuote = $inQuote ? false : true;
+                continue;
+            }
+            $arg .= $char;
+        }
+        $argv[] = $arg;
 
         return $argv;
     }
