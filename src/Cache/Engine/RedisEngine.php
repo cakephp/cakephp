@@ -165,7 +165,7 @@ class RedisEngine extends CacheEngine
     }
 
     /**
-     * Increments the value of an integer cached key
+     * Increments the value of an integer cached key & update the expiry time
      *
      * @param string $key Identifier for the data
      * @param int $offset How much to increment
@@ -173,13 +173,17 @@ class RedisEngine extends CacheEngine
      */
     public function increment($key, $offset = 1)
     {
+        $duration = $this->_config['duration'];
         $key = $this->_key($key);
 
-        return (int)$this->_Redis->incrBy($key, $offset);
+        $value = (int)$this->_Redis->incrBy($key, $offset);
+        $this->_Redis->setTimeout($key, $duration);
+
+        return $value;
     }
 
     /**
-     * Decrements the value of an integer cached key
+     * Decrements the value of an integer cached key & update the expiry time
      *
      * @param string $key Identifier for the data
      * @param int $offset How much to subtract
@@ -187,9 +191,13 @@ class RedisEngine extends CacheEngine
      */
     public function decrement($key, $offset = 1)
     {
+        $duration = $this->_config['duration'];
         $key = $this->_key($key);
 
-        return (int)$this->_Redis->decrBy($key, $offset);
+        $value = (int)$this->_Redis->decrBy($key, $offset);
+        $this->_Redis->setTimeout($key, $duration);
+
+        return $value;
     }
 
     /**
@@ -217,9 +225,13 @@ class RedisEngine extends CacheEngine
             return true;
         }
         $keys = $this->_Redis->getKeys($this->_config['prefix'] . '*');
-        $this->_Redis->del($keys);
 
-        return true;
+        $result = [];
+        foreach ($keys as $key) {
+            $result[] = $this->_Redis->delete($key) > 0;
+        }
+
+        return !in_array(false, $result);
     }
 
     /**

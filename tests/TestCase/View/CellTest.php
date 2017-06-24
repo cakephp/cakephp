@@ -15,7 +15,6 @@
 namespace Cake\Test\TestCase\View;
 
 use Cake\Cache\Cache;
-use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 use Cake\View\View;
@@ -43,7 +42,7 @@ class CellTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         Plugin::load(['TestPlugin', 'TestTheme']);
         $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
@@ -508,8 +507,8 @@ class CellTest extends TestCase
             'path' => CACHE,
         ]);
         $cell = $this->View->cell('Articles::customTemplateViewBuilder', [], ['cache' => true]);
-        $result = $cell->render("alternate_teaser_list");
-        $result2 = $cell->render("not_the_alternate_teaser_list");
+        $result = $cell->render('alternate_teaser_list');
+        $result2 = $cell->render('not_the_alternate_teaser_list');
         $this->assertContains('This is the alternate template', $result);
         $this->assertContains('This is NOT the alternate template', $result2);
         Cache::delete('celltest');

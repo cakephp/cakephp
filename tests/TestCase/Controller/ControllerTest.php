@@ -245,7 +245,7 @@ class ControllerTest extends TestCase
     {
         parent::setUp();
 
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         Router::reload();
     }
 
@@ -453,14 +453,14 @@ class ControllerTest extends TestCase
     public static function statusCodeProvider()
     {
         return [
-            [300, "Multiple Choices"],
-            [301, "Moved Permanently"],
-            [302, "Found"],
-            [303, "See Other"],
-            [304, "Not Modified"],
-            [305, "Use Proxy"],
-            [307, "Temporary Redirect"],
-            [403, "Forbidden"],
+            [300, 'Multiple Choices'],
+            [301, 'Moved Permanently'],
+            [302, 'Found'],
+            [303, 'See Other'],
+            [304, 'Not Modified'],
+            [305, 'Use Proxy'],
+            [307, 'Temporary Redirect'],
+            [403, 'Forbidden'],
         ];
     }
 

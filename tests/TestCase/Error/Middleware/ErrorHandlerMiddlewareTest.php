@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\Error\Middleware;
 
-use Cake\Core\Configure;
 use Cake\Error\Middleware\ErrorHandlerMiddleware;
 use Cake\Http\Response;
 use Cake\Http\ServerRequestFactory;
@@ -40,7 +39,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
     {
         parent::setUp();
 
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         $this->logger = $this->getMockBuilder(LoggerInterface::class)->getMock();
 
         Log::reset();
@@ -145,7 +144,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $this->assertInstanceOf('Cake\Http\Response', $result);
         $this->assertNotSame($result, $response);
         $this->assertEquals(404, $result->getStatusCode());
-        $this->assertContains("was not found", '' . $result->getBody());
+        $this->assertContains('was not found', '' . $result->getBody());
     }
 
     /**
@@ -176,7 +175,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $result = $middleware($request, $response, $next);
         $this->assertNotSame($result, $response);
         $this->assertEquals(404, $result->getStatusCode());
-        $this->assertContains("was not found", '' . $result->getBody());
+        $this->assertContains('was not found', '' . $result->getBody());
     }
 
     /**
@@ -200,7 +199,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $result = $middleware($request, $response, $next);
         $this->assertNotSame($result, $response);
         $this->assertEquals(404, $result->getStatusCode());
-        $this->assertContains("was not found", '' . $result->getBody());
+        $this->assertContains('was not found', '' . $result->getBody());
     }
 
     /**

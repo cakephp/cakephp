@@ -1854,7 +1854,7 @@ class Response implements ResponseInterface
      */
     public function checkNotModified(ServerRequest $request)
     {
-        $etags = preg_split('/\s*,\s*/', $request->header('If-None-Match'), null, PREG_SPLIT_NO_EMPTY);
+        $etags = preg_split('/\s*,\s*/', (string)$request->header('If-None-Match'), 0, PREG_SPLIT_NO_EMPTY);
         $modifiedSince = $request->header('If-Modified-Since');
         if ($responseTag = $this->etag()) {
             $etagMatches = in_array('*', $etags) || in_array($responseTag, $etags);

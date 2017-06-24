@@ -2369,17 +2369,17 @@ class ServerRequestTest extends TestCase
         $request = ServerRequestFactory::fromGlobals();
         $uri = $request->getUri();
 
-        $this->assertEquals($expected['url'], $request->url, "URL is incorrect");
+        $this->assertEquals($expected['url'], $request->url, 'URL is incorrect');
         $this->assertEquals('/' . $expected['url'], $uri->getPath(), 'Uri->getPath() is incorrect');
 
-        $this->assertEquals($expected['base'], $request->base, "base is incorrect");
-        $this->assertEquals($expected['base'], $request->getAttribute('base'), "base is incorrect");
+        $this->assertEquals($expected['base'], $request->base, 'base is incorrect');
+        $this->assertEquals($expected['base'], $request->getAttribute('base'), 'base is incorrect');
 
-        $this->assertEquals($expected['webroot'], $request->webroot, "webroot error");
-        $this->assertEquals($expected['webroot'], $request->getAttribute('webroot'), "webroot is incorrect");
+        $this->assertEquals($expected['webroot'], $request->webroot, 'webroot error');
+        $this->assertEquals($expected['webroot'], $request->getAttribute('webroot'), 'webroot is incorrect');
 
         if (isset($expected['urlParams'])) {
-            $this->assertEquals($expected['urlParams'], $request->query, "GET param mismatch");
+            $this->assertEquals($expected['urlParams'], $request->query, 'GET param mismatch');
         }
     }
 

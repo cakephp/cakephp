@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\Routing\Filter;
 
-use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
@@ -34,7 +33,7 @@ class ControllerFactoryFilterTest extends TestCase
      */
     public function testBeforeDispatch()
     {
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
 
         $filter = new ControllerFactoryFilter();
 

@@ -88,7 +88,7 @@ HTML;
         ];
         $this->assertHtml($pattern, $input);
 
-        $input = "<span><strong>Text</strong></span>";
+        $input = '<span><strong>Text</strong></span>';
         $pattern = [
             '<span',
             '<strong',

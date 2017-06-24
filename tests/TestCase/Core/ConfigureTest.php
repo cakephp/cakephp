@@ -249,11 +249,11 @@ class ConfigureTest extends TestCase
      */
     public function testCheckKeyWithSpaces()
     {
-        $this->assertTrue(Configure::write('Configure Test', "test"));
+        $this->assertTrue(Configure::write('Configure Test', 'test'));
         $this->assertTrue(Configure::check('Configure Test'));
         Configure::delete('Configure Test');
 
-        $this->assertTrue(Configure::write('Configure Test.Test Case', "test"));
+        $this->assertTrue(Configure::write('Configure Test.Test Case', 'test'));
         $this->assertTrue(Configure::check('Configure Test.Test Case'));
     }
 

@@ -35,7 +35,7 @@ class MiddlewareQueueTest extends TestCase
         parent::setUp();
 
         $this->appNamespace = Configure::read('App.namespace');
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
     }
 
     /**
@@ -46,8 +46,7 @@ class MiddlewareQueueTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-
-        Configure::write('App.namespace', $this->appNamespace);
+        static::setAppNamespace($this->appNamespace);
     }
 
     public function testConstructorAddingMiddleware()

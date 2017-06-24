@@ -16,7 +16,6 @@ namespace Cake\Test\TestCase\ORM;
 
 use ArrayObject;
 use Cake\Collection\Collection;
-use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Database\Exception;
 use Cake\Database\Expression\QueryExpression;
@@ -80,7 +79,7 @@ class TableTest extends TestCase
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
 
         $this->usersTypeMap = new TypeMap([
             'Users.id' => 'integer',

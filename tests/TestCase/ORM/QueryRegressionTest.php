@@ -734,7 +734,7 @@ class QueryRegressionTest extends TestCase
         $query = $table
             ->find()
             ->select(['title', 'id'])
-            ->where("title LIKE :val")
+            ->where('title LIKE :val')
             ->group(['id', 'title'])
             ->bind(':val', '%Second%');
         $count = $query->count();
@@ -752,13 +752,13 @@ class QueryRegressionTest extends TestCase
         $table = TableRegistry::get('Articles');
         $sub = $table->find()
             ->select(['id'])
-            ->where("title LIKE :val")
+            ->where('title LIKE :val')
             ->bind(':val', 'Second %');
 
         $query = $table
             ->find()
             ->select(['title'])
-            ->where(["id NOT IN" => $sub]);
+            ->where(['id NOT IN' => $sub]);
         $result = $query->toArray();
         $this->assertCount(2, $result);
         $this->assertEquals('First Article', $result[0]->title);

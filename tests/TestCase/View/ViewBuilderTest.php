@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\View;
 
-use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 use Cake\View\ViewBuilder;
 
@@ -151,7 +150,7 @@ class ViewBuilderTest extends TestCase
      */
     public function testBuildAppViewMissing()
     {
-        Configure::write('App.namespace', 'Nope');
+        static::setAppNamespace('Nope');
         $builder = new ViewBuilder();
         $view = $builder->build();
         $this->assertInstanceOf('Cake\View\View', $view);
@@ -164,7 +163,7 @@ class ViewBuilderTest extends TestCase
      */
     public function testBuildAppViewPresent()
     {
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         $builder = new ViewBuilder();
         $view = $builder->build();
         $this->assertInstanceOf('TestApp\View\AppView', $view);

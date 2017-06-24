@@ -163,7 +163,13 @@ class SelectLoader
             $options['fields'] = [];
         }
 
-        $fetchQuery = $finder()
+        $query = $finder();
+        if (isset($options['finder'])) {
+            list($finderName, $opts) = $this->_extractFinder($options['finder']);
+            $query = $query->find($finderName, $opts);
+        }
+
+        $fetchQuery = $query
             ->select($options['fields'])
             ->where($options['conditions'])
             ->eagerLoaded(true)
@@ -191,6 +197,33 @@ class SelectLoader
         $this->_assertFieldsPresent($fetchQuery, (array)$key);
 
         return $fetchQuery;
+    }
+
+    /**
+     * Helper method to infer the requested finder and its options.
+     *
+     * Returns the inferred options from the finder $type.
+     *
+     * ### Examples:
+     *
+     * The following will call the finder 'translations' with the value of the finder as its options:
+     * $query->contain(['Comments' => ['finder' => ['translations']]]);
+     * $query->contain(['Comments' => ['finder' => ['translations' => []]]]);
+     * $query->contain(['Comments' => ['finder' => ['translations' => ['locales' => ['en_US']]]]]);
+     *
+     * @param string|array $finderData The finder name or an array having the name as key
+     * and options as value.
+     * @return array
+     */
+    protected function _extractFinder($finderData)
+    {
+        $finderData = (array)$finderData;
+
+        if (is_numeric(key($finderData))) {
+            return [current($finderData), []];
+        }
+
+        return [key($finderData), current($finderData)];
     }
 
     /**

@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\ORM;
 
-use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\ORM\BehaviorRegistry;
 use Cake\ORM\Table;
@@ -37,7 +36,7 @@ class BehaviorRegistryTest extends TestCase
         $this->Table = new Table(['table' => 'articles']);
         $this->EventManager = $this->Table->getEventManager();
         $this->Behaviors = new BehaviorRegistry($this->Table);
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
     }
 
     /**

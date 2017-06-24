@@ -504,7 +504,7 @@ class ResponseTest extends TestCase
         $response = new Response();
         $expected = [
             'Expires' => 'Mon, 26 Jul 1997 05:00:00 GMT',
-            'Last-Modified' => gmdate("D, d M Y H:i:s") . " GMT",
+            'Last-Modified' => gmdate('D, d M Y H:i:s') . ' GMT',
             'Cache-Control' => 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0',
             'Content-Type' => 'text/html; charset=UTF-8',
         ];
@@ -522,7 +522,7 @@ class ResponseTest extends TestCase
         $response = new Response();
         $expected = [
             'Expires' => ['Mon, 26 Jul 1997 05:00:00 GMT'],
-            'Last-Modified' => [gmdate("D, d M Y H:i:s") . " GMT"],
+            'Last-Modified' => [gmdate('D, d M Y H:i:s') . ' GMT'],
             'Cache-Control' => ['no-store, no-cache, must-revalidate, post-check=0, pre-check=0'],
             'Content-Type' => ['text/html; charset=UTF-8'],
         ];
@@ -544,8 +544,8 @@ class ResponseTest extends TestCase
         $time = new \DateTime('+1 day', new \DateTimeZone('UTC'));
         $response->expires('+1 day');
         $expected = [
-            'Date' => gmdate("D, j M Y G:i:s ", $since) . 'GMT',
-            'Last-Modified' => gmdate("D, j M Y H:i:s ", $since) . 'GMT',
+            'Date' => gmdate('D, j M Y G:i:s ', $since) . 'GMT',
+            'Last-Modified' => gmdate('D, j M Y H:i:s ', $since) . 'GMT',
             'Expires' => $time->format('D, j M Y H:i:s') . ' GMT',
             'Cache-Control' => 'public, max-age=' . ($time->format('U') - time()),
             'Content-Type' => 'text/html; charset=UTF-8',
@@ -557,9 +557,9 @@ class ResponseTest extends TestCase
         $since = time();
         $time = '+5 day';
         $expected = [
-            'Date' => gmdate("D, j M Y G:i:s ", $since) . 'GMT',
-            'Last-Modified' => gmdate("D, j M Y H:i:s ", $since) . 'GMT',
-            'Expires' => gmdate("D, j M Y H:i:s", strtotime($time)) . " GMT",
+            'Date' => gmdate('D, j M Y G:i:s ', $since) . 'GMT',
+            'Last-Modified' => gmdate('D, j M Y H:i:s ', $since) . 'GMT',
+            'Expires' => gmdate('D, j M Y H:i:s', strtotime($time)) . ' GMT',
             'Cache-Control' => 'public, max-age=' . (strtotime($time) - time()),
             'Content-Type' => 'text/html; charset=UTF-8',
         ];
@@ -570,9 +570,9 @@ class ResponseTest extends TestCase
         $since = time();
         $time = time();
         $expected = [
-            'Date' => gmdate("D, j M Y G:i:s ", $since) . 'GMT',
-            'Last-Modified' => gmdate("D, j M Y H:i:s ", $since) . 'GMT',
-            'Expires' => gmdate("D, j M Y H:i:s", $time) . " GMT",
+            'Date' => gmdate('D, j M Y G:i:s ', $since) . 'GMT',
+            'Last-Modified' => gmdate('D, j M Y H:i:s ', $since) . 'GMT',
+            'Expires' => gmdate('D, j M Y H:i:s', $time) . ' GMT',
             'Cache-Control' => 'public, max-age=0',
             'Content-Type' => 'text/html; charset=UTF-8',
         ];
@@ -594,9 +594,9 @@ class ResponseTest extends TestCase
         $this->assertFalse($response->hasHeader('Date'));
         $this->assertFalse($response->hasHeader('Last-Modified'));
 
-        $this->assertEquals(gmdate("D, j M Y G:i:s ", $since) . 'GMT', $new->getHeaderLine('Date'));
-        $this->assertEquals(gmdate("D, j M Y H:i:s ", $since) . 'GMT', $new->getHeaderLine('Last-Modified'));
-        $this->assertEquals(gmdate("D, j M Y H:i:s", $time) . " GMT", $new->getHeaderLine('Expires'));
+        $this->assertEquals(gmdate('D, j M Y G:i:s ', $since) . 'GMT', $new->getHeaderLine('Date'));
+        $this->assertEquals(gmdate('D, j M Y H:i:s ', $since) . 'GMT', $new->getHeaderLine('Last-Modified'));
+        $this->assertEquals(gmdate('D, j M Y H:i:s', $time) . ' GMT', $new->getHeaderLine('Expires'));
         $this->assertEquals('public, max-age=0', $new->getHeaderLine('Cache-Control'));
     }
 
@@ -610,7 +610,7 @@ class ResponseTest extends TestCase
         $this->skipIf(defined('HHVM_VERSION'), 'HHVM does not implement ob_gzhandler');
 
         $response = new Response();
-        if (ini_get("zlib.output_compression") === '1' || !extension_loaded("zlib")) {
+        if (ini_get('zlib.output_compression') === '1' || !extension_loaded('zlib')) {
             $this->assertFalse($response->compress());
             $this->markTestSkipped('Is not possible to test output compression');
         }
@@ -740,13 +740,13 @@ class ResponseTest extends TestCase
         $result = $response->outputCompressed();
         $this->assertFalse($result);
 
-        if (!extension_loaded("zlib")) {
+        if (!extension_loaded('zlib')) {
             $this->markTestSkipped('Skipping further tests for outputCompressed as zlib extension is not loaded');
         }
 
         $this->skipIf(defined('HHVM_VERSION'), 'HHVM does not implement ob_gzhandler');
 
-        if (ini_get("zlib.output_compression") !== '1') {
+        if (ini_get('zlib.output_compression') !== '1') {
             ob_start('ob_gzhandler');
         }
         $_SERVER['HTTP_ACCEPT_ENCODING'] = 'gzip';
@@ -756,7 +756,7 @@ class ResponseTest extends TestCase
         $_SERVER['HTTP_ACCEPT_ENCODING'] = '';
         $result = $response->outputCompressed();
         $this->assertFalse($result);
-        if (ini_get("zlib.output_compression") !== '1') {
+        if (ini_get('zlib.output_compression') !== '1') {
             ob_get_clean();
         }
     }
@@ -1742,7 +1742,7 @@ class ResponseTest extends TestCase
         $this->assertTrue($result !== false);
         $output = ob_get_clean();
 
-        $expected = "/* this is the test asset css file */";
+        $expected = '/* this is the test asset css file */';
         $this->assertEquals($expected, trim($output));
         $this->assertEquals($expected, trim($response->getBody()->getContents()));
     }
@@ -1780,7 +1780,7 @@ class ResponseTest extends TestCase
         $body = $new->getBody();
         $this->assertInstanceOf('Zend\Diactoros\Stream', $body);
 
-        $expected = "/* this is the test asset css file */";
+        $expected = '/* this is the test asset css file */';
         $this->assertEquals($expected, trim($body->getContents()));
         $this->assertEquals($expected, trim($new->getFile()->read()));
     }
@@ -2416,7 +2416,7 @@ class ResponseTest extends TestCase
         $result = $response->send();
         $output = ob_get_clean();
         $this->assertEquals(206, $response->statusCode());
-        $this->assertEquals("is the test asset ", $output);
+        $this->assertEquals('is the test asset ', $output);
         $this->assertNotSame(false, $result);
     }
 
@@ -2680,7 +2680,7 @@ class ResponseTest extends TestCase
         $result = $response->send();
         $output = ob_get_clean();
         $this->assertEquals(206, $response->statusCode());
-        $this->assertEquals("is the test asset ", $output);
+        $this->assertEquals('is the test asset ', $output);
         $this->assertNotSame(false, $result);
     }
 

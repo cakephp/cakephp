@@ -68,17 +68,17 @@ class MailTransportTest extends TestCase
         $encoded = '=?UTF-8?B?Rm/DuCBCw6VyIELDqXogRm/DuCBCw6VyIELDqXogRm/DuCBCw6VyIELDqXog?=';
         $encoded .= ' =?UTF-8?B?Rm/DuCBCw6VyIELDqXo=?=';
 
-        $data = "From: CakePHP Test <noreply@cakephp.org>" . PHP_EOL;
-        $data .= "Return-Path: CakePHP Return <pleasereply@cakephp.org>" . PHP_EOL;
-        $data .= "Cc: Mark Story <mark@cakephp.org>, Juan Basso <juan@cakephp.org>" . PHP_EOL;
-        $data .= "Bcc: phpnut@cakephp.org" . PHP_EOL;
-        $data .= "X-Mailer: CakePHP Email" . PHP_EOL;
-        $data .= "Date: " . $date . PHP_EOL;
-        $data .= "X-add: " . $encoded . PHP_EOL;
-        $data .= "Message-ID: <4d9946cf-0a44-4907-88fe-1d0ccbdd56cb@localhost>" . PHP_EOL;
-        $data .= "MIME-Version: 1.0" . PHP_EOL;
-        $data .= "Content-Type: text/plain; charset=UTF-8" . PHP_EOL;
-        $data .= "Content-Transfer-Encoding: 8bit";
+        $data = 'From: CakePHP Test <noreply@cakephp.org>' . PHP_EOL;
+        $data .= 'Return-Path: CakePHP Return <pleasereply@cakephp.org>' . PHP_EOL;
+        $data .= 'Cc: Mark Story <mark@cakephp.org>, Juan Basso <juan@cakephp.org>' . PHP_EOL;
+        $data .= 'Bcc: phpnut@cakephp.org' . PHP_EOL;
+        $data .= 'X-Mailer: CakePHP Email' . PHP_EOL;
+        $data .= 'Date: ' . $date . PHP_EOL;
+        $data .= 'X-add: ' . $encoded . PHP_EOL;
+        $data .= 'Message-ID: <4d9946cf-0a44-4907-88fe-1d0ccbdd56cb@localhost>' . PHP_EOL;
+        $data .= 'MIME-Version: 1.0' . PHP_EOL;
+        $data .= 'Content-Type: text/plain; charset=UTF-8' . PHP_EOL;
+        $data .= 'Content-Transfer-Encoding: 8bit';
 
         $this->MailTransport->expects($this->once())->method('_mail')
             ->with(
