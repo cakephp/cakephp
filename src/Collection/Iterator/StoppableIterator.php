@@ -106,7 +106,6 @@ class StoppableIterator extends Collection
 
         $callback = $this->_condition;
         $res = [];
-        $stop = false;
 
         foreach ($iterator as $k => $v) {
             if ($callback($v, $k, $iterator)) {
