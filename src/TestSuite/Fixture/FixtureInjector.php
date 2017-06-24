@@ -19,11 +19,6 @@ if (class_exists('PHPUnit_Runner_Version')) {
         trigger_error(sprintf('Your PHPUnit Version must be at least 5.7.0 to use CakePHP Testsuite, found %s', \PHPUnit_Runner_Version::id()), E_USER_ERROR);
     }
     class_alias('PHPUnit_Framework_Test', 'PHPUnit\Framework\Test');
-    class_alias('PHPUnit_Framework_Warning', 'PHPUnit\Framework\Warning');
-
-    if (!class_exists('PHPUnit\Framework\TestSuite')) {
-        class_alias('PHPUnit_Framework_TestSuite', 'PHPUnit\Framework\TestSuite');
-    }
 }
 
 use Cake\TestSuite\TestCase;
