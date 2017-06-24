@@ -139,7 +139,14 @@ class ConsoleIntegrationTestCaseTest extends ConsoleIntegrationTestCase
             'command',
             '--something=nothing',
             '--with-spaces=quote me on that',
-            'quoted "arg"',
+            'quoted \"arg\"',
+        ];
+        $this->assertSame($expected, $result);
+
+        $json = json_encode(['key' => '"val"', 'this' => true]);
+        $result = $this->_commandStringToArgs("   --json='$json'");
+        $expected = [
+            '--json=' . $json
         ];
         $this->assertSame($expected, $result);
     }

@@ -191,22 +191,44 @@ class ConsoleIntegrationTestCase extends TestCase
         $charCount = strlen($command);
         $argv = [];
         $arg = '';
-        $inQuote = false;
-        for ($i = 0; $i <= $charCount; $i++) {
+        $inDQuote = false;
+        $inSQuote = false;
+        for ($i = 0; $i < $charCount; $i++) {
             $char = substr($command, $i, 1);
-            if ($char === ' ' && !$inQuote) {
-                $argv[] = $arg;
+
+            // end of argument
+            if ($char === ' ' && !$inDQuote && !$inSQuote) {
+                if (strlen($arg)) {
+                    $argv[] = $arg;
+                }
                 $arg = '';
                 continue;
             }
-            if ($char === '"' || $char === '\'') {
-                $prevChar = substr($command, $i - 1, 1);
-                if ($prevChar === '\\') {
-                    $arg[strlen($arg) - 1] = $char;
-                }
-                $inQuote = $inQuote ? false : true;
+
+            // exiting single quote
+            if ($inSQuote && $char === "'") {
+                $inSQuote = false;
                 continue;
             }
+
+            // exiting double quote
+            if ($inDQuote && $char === '"') {
+                $inDQuote = false;
+                continue;
+            }
+
+            // entering double quote
+            if ($char === '"' && !$inSQuote) {
+                $inDQuote = true;
+                continue;
+            }
+
+            // entering single quote
+            if ($char === "'" && !$inDQuote) {
+                $inSQuote = true;
+                continue;
+            }
+
             $arg .= $char;
         }
         $argv[] = $arg;
