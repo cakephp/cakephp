@@ -14,6 +14,8 @@
  */
 namespace Cake\TestSuite\Fixture;
 
+loadPHPUnitAliases();
+
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
 use Cake\Database\Schema\TableSchema;
