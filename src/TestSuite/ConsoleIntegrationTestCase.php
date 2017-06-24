@@ -188,10 +188,11 @@ class ConsoleIntegrationTestCase extends TestCase
      */
     protected function _commandStringToArgs($command)
     {
+        $charCount = strlen($command);
         $argv = [];
         $arg = '';
         $inQuote = false;
-        for($i = 0; $i <= strlen($command); $i++) {
+        for ($i = 0; $i <= $charCount; $i++) {
             $char = substr($command, $i, 1);
             if ($char === ' ' && !$inQuote) {
                 $argv[] = $arg;
