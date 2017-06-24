@@ -124,35 +124,44 @@ class ConsoleIntegrationTestCase extends TestCase
      * Asserts shell exited with the expected code
      *
      * @param int $expected Expected exit code
+     * @param string $message Failure message to be appended to the generated message
      * @return void
      */
-    public function assertExitCode($expected)
+    public function assertExitCode($expected, $message = '')
     {
-        $this->assertSame($this->_exitCode, $expected);
+        $message = sprintf(
+            'Shell exited with code %d instead of the expected code %d. %s',
+            $this->_exitCode,
+            $expected,
+            $message
+        );
+        $this->assertSame($expected, $this->_exitCode, $message);
     }
 
     /**
      * Asserts `stdout` contains expected output
      *
      * @param string $expected Expected output
+     * @param string $message Failure message
      * @return void
      */
-    public function assertOutputContains($expected)
+    public function assertOutputContains($expected, $message = '')
     {
         $output = implode(PHP_EOL, $this->_out->messages());
-        $this->assertContains($expected, $output);
+        $this->assertContains($expected, $output, $message);
     }
 
     /**
      * Asserts `stderr` contains expected output
      *
      * @param string $expected Expected output
+     * @param string $message Failure message
      * @return void
      */
-    public function assertErrorContains($expected)
+    public function assertErrorContains($expected, $message = '')
     {
         $output = implode(PHP_EOL, $this->_err->messages());
-        $this->assertContains($expected, $output);
+        $this->assertContains($expected, $output, $message);
     }
 
     /**
