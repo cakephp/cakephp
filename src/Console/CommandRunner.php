@@ -19,6 +19,7 @@ use Cake\Console\ConsoleIo;
 use Cake\Console\Exception\StopException;
 use Cake\Console\Shell;
 use Cake\Http\BaseApplication;
+use Cake\Shell\VersionShell;
 use RuntimeException;
 
 /**
@@ -41,6 +42,13 @@ class CommandRunner
     protected $root;
 
     /**
+     * Alias mappings.
+     *
+     * @var array
+     */
+    protected $aliases = [];
+
+    /**
      * Constructor
      *
      * @param \Cake\Http\BaseApplication $app The application to run CLI commands for.
@@ -50,6 +58,26 @@ class CommandRunner
     {
         $this->app = $app;
         $this->root = $root;
+        $this->aliases = [
+            '--version' => 'version'
+        ];
+    }
+
+    /**
+     * Replace the alias map for a runner.
+     *
+     * Aliases allow you to define alternate names for commands
+     * in the collection. This can be useful to add top level switches
+     * like `--version` or `-h`
+     *
+     * @param array $aliases The map of aliases to replace.
+     * @return $this
+     */
+    public function setAliases(array $aliases)
+    {
+        $this->aliases = $aliases;
+
+        return $this;
     }
 
     /**
@@ -64,7 +92,10 @@ class CommandRunner
     {
         $this->app->bootstrap();
 
-        $commands = $this->app->console(new CommandCollection());
+        $commands = new CommandCollection([
+            'version' => VersionShell::class,
+        ]);
+        $commands = $this->app->console($commands);
         if (!($commands instanceof CommandCollection)) {
             $type = is_object($commands) ? get_class($commands) : gettype($commands);
             throw new RuntimeException(
@@ -111,6 +142,9 @@ class CommandRunner
      */
     protected function getShell(ConsoleIo $io, CommandCollection $commands, $name)
     {
+        if (isset($this->aliases[$name])) {
+            $name = $this->aliases[$name];
+        }
         if (!$commands->has($name)) {
             throw new RuntimeException(
                 "Unknown command `{$this->root} {$name}`." .
