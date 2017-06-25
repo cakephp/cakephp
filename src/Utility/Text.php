@@ -1000,7 +1000,7 @@ class Text
      * @param mixed $default Value to be returned when invalid size was used, for example 'Unknown type'
      * @return mixed Number of bytes as integer on success, `$default` on failure if not false
      * @throws \InvalidArgumentException On invalid Unit type.
-     * @link https://book.cakephp.org/3.0/en/core-libraries/helpers/text.html
+     * @link https://book.cakephp.org/3.0/en/core-libraries/text.html#simple-string-parsing
      */
     public static function parseFileSize($size, $default = false)
     {
