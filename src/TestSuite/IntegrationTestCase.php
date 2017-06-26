@@ -1053,8 +1053,9 @@ abstract class IntegrationTestCase extends TestCase
     /**
      * Disable the error handler middleware.
      *
-     * By using this function, exceptions are no longer caught by ErrorHandlerMiddleware
-     * and are instead re-thrown by the TestExceptionRenderer. This results in a more clearer error message.
+     * By using this function, exceptions are no longer caught by the ErrorHandlerMiddleware
+     * and are instead re-thrown by the TestExceptionRenderer. This can be helpful
+     * when trying to diagnose/debug unexpected failures in test cases.
      *
      * @return void
      */

@@ -19,24 +19,18 @@ use Exception;
 /**
  * Test Exception Renderer.
  *
- * You can use this class if you want to re-throw exceptions that else would
- * be caught by the ErrorHandlerMiddleware.
- * This is useful while debugging or writitng integration test cases.
- *
- * ```
- * use Cake\Core\Configure;
- * use Cake\TestSuite\Stub\TestExceptionRenderer;
- *
- * Configure::write('Error.exceptionRenderer', TestExceptionRenderer::class);
- * ```
+ * Use this class if you want to re-throw exceptions that would otherwise be
+ * caught by the ErrorHandlerMiddleware. This is useful while debugging or
+ * writing integration test cases.
  *
  * @see \Cake\TestSuite\IntegrationTestCase::disableErrorHandlerMiddleware()
+ * @internal
  */
 class TestExceptionRenderer
 {
 
     /**
-     * Simply rethrows the given exception
+     * Simply rethrow the given exception
      *
      * @param \Exception $exception Exception.
      * @return void
