@@ -538,7 +538,8 @@ class Session
     {
         return !ini_get('session.use_cookies')
             || isset($_COOKIE[session_name()])
-            || $this->_isCLI;
+            || $this->_isCLI
+            || (ini_get('session.use_trans_sid') && isset($_GET[session_name()]));
     }
 
     /**
