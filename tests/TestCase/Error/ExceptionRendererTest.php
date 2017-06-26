@@ -298,7 +298,7 @@ class ExceptionRendererTest extends TestCase
      */
     public function testCakeErrorHelpersNotLost()
     {
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         $exception = new SocketException('socket exception');
         $renderer = $this->_mockResponse(new \TestApp\Error\TestAppsExceptionRenderer($exception));
 
@@ -550,6 +550,27 @@ class ExceptionRendererTest extends TestCase
     }
 
     /**
+     * test missingController method
+     *
+     * @return void
+     */
+    public function testMissingControllerLowerCase()
+    {
+        $exception = new MissingControllerException([
+            'class' => 'posts',
+            'prefix' => '',
+            'plugin' => '',
+        ]);
+        $ExceptionRenderer = $this->_mockResponse(new MyCustomExceptionRenderer($exception));
+
+        $result = $ExceptionRenderer->render()->body();
+
+        $this->assertEquals('missingController', $ExceptionRenderer->template);
+        $this->assertContains('Missing Controller', $result);
+        $this->assertContains('<em>PostsController</em>', $result);
+    }
+
+    /**
      * Returns an array of tests to run for the various Cake Exception classes.
      *
      * @return array
@@ -557,6 +578,19 @@ class ExceptionRendererTest extends TestCase
     public static function exceptionProvider()
     {
         return [
+            [
+                new MissingActionException([
+                    'controller' => 'postsController',
+                    'action' => 'index',
+                    'prefix' => '',
+                    'plugin' => '',
+                ]),
+                [
+                    '/Missing Method in PostsController/',
+                    '/<em>PostsController::index\(\)<\/em>/'
+                ],
+                404
+            ],
             [
                 new MissingActionException([
                     'controller' => 'PostsController',
@@ -580,7 +614,7 @@ class ExceptionRendererTest extends TestCase
             [
                 new MissingLayoutException(['file' => 'layouts/my_layout.ctp']),
                 [
-                    "/Missing Layout/",
+                    '/Missing Layout/',
                     "/layouts\/my_layout.ctp/"
                 ],
                 500

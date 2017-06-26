@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\Routing;
 
-use Cake\Core\Configure;
 use Cake\Http\ServerRequest;
 use Cake\Routing\DispatcherFactory;
 use Cake\TestSuite\TestCase;
@@ -33,7 +32,7 @@ class DispatcherFactoryTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         DispatcherFactory::clear();
     }
 

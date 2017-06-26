@@ -131,7 +131,11 @@ class Translator implements TranslatorInterface
 
             // No or missing context, fallback to the key/first message
             if ($context === null) {
-                $message = current($message['_context']);
+                if (isset($message['_context'][''])) {
+                    $message = $message['_context'][''];
+                } else {
+                    $message = current($message['_context']);
+                }
             } elseif (!isset($message['_context'][$context])) {
                 $message = $key;
             } elseif (is_string($message['_context'][$context]) &&

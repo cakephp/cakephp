@@ -74,7 +74,7 @@ class HtmlHelperTest extends TestCase
         $this->Html->Url->request = $this->Html->request;
 
         Plugin::load(['TestTheme']);
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         Configure::write('Asset.timestamp', false);
     }
 
@@ -1831,7 +1831,7 @@ class HtmlHelperTest extends TestCase
     {
         $tr = [
             'td content 1',
-            ['td content 2', ["width" => "100px"]],
+            ['td content 2', ['width' => '100px']],
             ['td content 3', ['width' => '100px']]
         ];
         $result = $this->Html->tableCells($tr);

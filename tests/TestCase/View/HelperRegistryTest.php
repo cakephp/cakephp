@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\View;
 
-use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper;
@@ -236,7 +235,7 @@ class HelperRegistryTest extends TestCase
      */
     public function testReset()
     {
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
 
         $instance = $this->Helpers->load('EventListenerTest');
         $this->assertSame(
@@ -259,7 +258,7 @@ class HelperRegistryTest extends TestCase
      */
     public function testUnload()
     {
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
 
         $instance = $this->Helpers->load('EventListenerTest');
         $this->assertSame(

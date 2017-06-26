@@ -16,7 +16,6 @@ namespace Cake\Test\TestCase\Shell;
 
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOutput;
-use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
@@ -48,7 +47,7 @@ class CompletionShellTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         Plugin::load(['TestPlugin', 'TestPluginTwo']);
 
         $this->out = new TestCompletionStringOutput();
@@ -74,7 +73,7 @@ class CompletionShellTest extends TestCase
     {
         parent::tearDown();
         unset($this->Shell);
-        Configure::write('App.namespace', 'App');
+        static::setAppNamespace('App');
         Plugin::unload();
     }
 
@@ -102,7 +101,7 @@ class CompletionShellTest extends TestCase
         $this->Shell->runCommand(['main']);
         $output = $this->out->output;
 
-        $expected = "/This command is not intended to be called manually/";
+        $expected = '/This command is not intended to be called manually/';
         $this->assertRegExp($expected, $output);
     }
 
@@ -116,7 +115,7 @@ class CompletionShellTest extends TestCase
         $this->Shell->runCommand(['commands']);
         $output = $this->out->output;
 
-        $expected = "TestPlugin.example TestPlugin.sample TestPluginTwo.example unique welcome " .
+        $expected = 'TestPlugin.example TestPlugin.sample TestPluginTwo.example unique welcome ' .
             "cache i18n orm_cache plugin routes server i18m sample testing_dispatch\n";
         $this->assertTextEquals($expected, $output);
     }
@@ -131,7 +130,7 @@ class CompletionShellTest extends TestCase
         $this->Shell->runCommand(['options']);
         $output = $this->out->output;
 
-        $expected = "";
+        $expected = '';
         $this->assertTextEquals($expected, $output);
     }
 
@@ -144,7 +143,7 @@ class CompletionShellTest extends TestCase
     {
         $this->Shell->runCommand(['options', 'foo']);
         $output = $this->out->output;
-        $expected = "";
+        $expected = '';
         $this->assertTextEquals($expected, $output);
     }
 

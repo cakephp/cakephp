@@ -288,7 +288,7 @@ class Session
         }
 
         foreach ($options as $setting => $value) {
-            if (ini_set($setting, $value) === false) {
+            if (ini_set($setting, (string)$value) === false) {
                 throw new RuntimeException(
                     sprintf('Unable to configure the session, setting %s failed.', $setting)
                 );

@@ -151,6 +151,32 @@ class ProgressHelperTest extends TestCase
     }
 
     /**
+     * Test using the helper chained.
+     *
+     * @return void
+     */
+    public function testIncrementAndRenderChained()
+    {
+        $this->helper->init()
+            ->increment(20)
+            ->draw()
+            ->increment(40)
+            ->draw()
+            ->increment(40)
+            ->draw();
+
+        $expected = [
+            '',
+            '==============>                                                              20%',
+            '',
+            '============================================>                                60%',
+            '',
+            '==========================================================================> 100%',
+        ];
+        $this->assertEquals($expected, $this->stub->messages());
+    }
+
+    /**
      * Test negative numbers
      *
      * @return void

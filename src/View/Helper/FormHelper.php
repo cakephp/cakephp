@@ -1557,7 +1557,8 @@ class FormHelper extends Helper
      *    is checked
      * - `hiddenField` - boolean to indicate if you want the results of radio() to include
      *    a hidden input with a value of ''. This is useful for creating radio sets that are non-continuous.
-     * - `disabled` - Set to `true` or `disabled` to disable all the radio buttons.
+     * - `disabled` - Set to `true` or `disabled` to disable all the radio buttons. Use an array of
+     *   values to disable specific radio buttons.
      * - `empty` - Set to `true` to create an input with the value '' as the first option. When `true`
      *   the radio label will be 'empty'. Set this option to a string to control the label value.
      *
@@ -2577,17 +2578,7 @@ class FormHelper extends Helper
         if ($context->hasError($field)) {
             $options = $this->addClass($options, $this->_config['errorClass']);
         }
-        $isDisabled = false;
-        if (isset($options['disabled'])) {
-            $isDisabled = (
-                $options['disabled'] === true ||
-                $options['disabled'] === 'disabled' ||
-                (is_array($options['disabled']) &&
-                    !empty($options['options']) &&
-                    array_diff($options['options'], $options['disabled']) === []
-                )
-            );
-        }
+        $isDisabled = $this->_isDisabled($options);
         if ($isDisabled) {
             $options['secure'] = self::SECURE_SKIP;
         }
@@ -2599,6 +2590,42 @@ class FormHelper extends Helper
         }
 
         return $options;
+    }
+
+    /**
+     * Determine if a field is disabled.
+     *
+     * @param array $options The option set.
+     * @return bool Whether or not the field is disabled.
+     */
+    protected function _isDisabled(array $options)
+    {
+        if (!isset($options['disabled'])) {
+            return false;
+        }
+        if (is_scalar($options['disabled'])) {
+            return ($options['disabled'] === true || $options['disabled'] === 'disabled');
+        }
+        if (!isset($options['options'])) {
+            return false;
+        }
+        if (is_array($options['options'])) {
+            // Simple list options
+            $first = $options['options'][array_keys($options['options'])[0]];
+            if (is_scalar($first)) {
+                return array_diff($options['options'], $options['disabled']) === [];
+            }
+            // Complex option types
+            if (is_array($first)) {
+                $disabled = array_filter($options['options'], function ($i) use ($options) {
+                    return in_array($i['value'], $options['disabled']);
+                });
+
+                return count($disabled) > 0;
+            }
+        }
+
+        return false;
     }
 
     /**

@@ -13,7 +13,6 @@
  */
 namespace Cake\Test\TestCase\Log;
 
-use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Log\Engine\FileLog;
 use Cake\Log\Log;
@@ -44,7 +43,7 @@ class LogTest extends TestCase
      */
     public function testImportingLoggers()
     {
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         Plugin::load('TestPlugin');
 
         Log::config('libtest', [
@@ -568,7 +567,7 @@ class LogTest extends TestCase
      */
     public function testPassingScopeToEngine()
     {
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
 
         Log::reset();
 

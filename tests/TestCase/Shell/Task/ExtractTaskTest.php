@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\Shell\Task;
 
-use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Filesystem\Folder;
 use Cake\TestSuite\TestCase;
@@ -243,7 +242,7 @@ class ExtractTaskTest extends TestCase
      */
     public function testExtractExcludePlugins()
     {
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         $this->Task = $this->getMockBuilder('Cake\Shell\Task\ExtractTask')
             ->setMethods(['_isExtractingApp', 'in', 'out', 'err', 'clear', '_stop'])
             ->setConstructorArgs([$this->io])
@@ -268,7 +267,7 @@ class ExtractTaskTest extends TestCase
      */
     public function testExtractPlugin()
     {
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
 
         $this->Task = $this->getMockBuilder('Cake\Shell\Task\ExtractTask')
             ->setMethods(['_isExtractingApp', 'in', 'out', 'err', 'clear', '_stop'])
@@ -292,7 +291,7 @@ class ExtractTaskTest extends TestCase
      */
     public function testExtractVendoredPlugin()
     {
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
 
         $this->Task = $this->getMockBuilder('Cake\Shell\Task\ExtractTask')
             ->setMethods(['_isExtractingApp', 'in', 'out', 'err', 'clear', '_stop'])
@@ -316,7 +315,7 @@ class ExtractTaskTest extends TestCase
      */
     public function testExtractOverwrite()
     {
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         $this->Task->interactive = false;
 
         $this->Task->params['paths'] = TEST_APP . 'TestApp/';
@@ -340,7 +339,7 @@ class ExtractTaskTest extends TestCase
      */
     public function testExtractCore()
     {
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         $this->Task->interactive = false;
 
         $this->Task->params['paths'] = TEST_APP . 'TestApp/';

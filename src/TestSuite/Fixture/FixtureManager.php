@@ -14,6 +14,8 @@
  */
 namespace Cake\TestSuite\Fixture;
 
+loadPHPUnitAliases();
+
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
 use Cake\Database\Schema\TableSchema;
@@ -186,12 +188,18 @@ class FixtureManager
                     $baseNamespace = Configure::read('App.namespace');
                 } elseif ($type === 'plugin') {
                     list($plugin, $name) = explode('.', $pathName);
+                    // Flip vendored plugin separators
                     $path = implode('\\', explode('/', $plugin));
                     $baseNamespace = Inflector::camelize(str_replace('\\', '\ ', $path));
                     $additionalPath = null;
                 } else {
                     $baseNamespace = '';
                     $name = $fixture;
+                }
+
+                // Tweak subdirectory names, so camelize() can make the correct name
+                if (strpos($name, '/') > 0) {
+                    $name = implode('\\ ', explode('/', $name));
                 }
 
                 $name = Inflector::camelize($name);

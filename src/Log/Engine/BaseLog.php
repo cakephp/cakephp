@@ -15,6 +15,7 @@
 namespace Cake\Log\Engine;
 
 use Cake\Core\InstanceConfigTrait;
+use Cake\Datasource\EntityInterface;
 use JsonSerializable;
 use Psr\Log\AbstractLogger;
 
@@ -93,14 +94,18 @@ abstract class BaseLog extends AbstractLogger
             return $data;
         }
 
-        $object = is_object($data);
+        $isObject = is_object($data);
 
-        if ($object && method_exists($data, '__toString')) {
+        if ($isObject && $data instanceof EntityInterface) {
+            return json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        }
+
+        if ($isObject && method_exists($data, '__toString')) {
             return (string)$data;
         }
 
-        if ($object && $data instanceof JsonSerializable) {
-            return json_encode($data);
+        if ($isObject && $data instanceof JsonSerializable) {
+            return json_encode($data, JSON_UNESCAPED_UNICODE);
         }
 
         return print_r($data, true);

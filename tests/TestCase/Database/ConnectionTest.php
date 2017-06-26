@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\Database;
 
-use Cake\Core\Configure;
 use Cake\Database\Connection;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Exception\NestedTransactionRollbackException;
@@ -48,7 +47,7 @@ class ConnectionTest extends TestCase
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
     }
 
     public function tearDown()

@@ -113,17 +113,19 @@ class ProgressHelper extends Helper
      * Increment the progress bar.
      *
      * @param int $num The amount of progress to advance by.
-     * @return void
+     * @return $this
      */
     public function increment($num = 1)
     {
         $this->_progress = min(max(0, $this->_progress + $num), $this->_total);
+
+        return $this;
     }
 
     /**
      * Render the progress bar based on the current state.
      *
-     * @return void
+     * @return $this
      */
     public function draw()
     {
@@ -143,5 +145,7 @@ class ProgressHelper extends Helper
         $bar .= str_pad($percent, $numberLen, ' ', STR_PAD_LEFT);
 
         $this->_io->overwrite($bar, 0);
+
+        return $this;
     }
 }

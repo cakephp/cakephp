@@ -376,7 +376,7 @@ class CookieComponentTest extends TestCase
         $name = 'sampleCookieTest';
         $value = 'some data';
         $encryption = 'aes';
-        $prefix = "Q2FrZQ==.";
+        $prefix = 'Q2FrZQ==.';
         $key = 'justanotherencryptionkeyjustanotherencryptionkey';
 
         $this->Cookie->configKey($name, compact('key', 'encryption'));
@@ -699,11 +699,11 @@ class CookieComponentTest extends TestCase
      */
     public function testCheckKeyWithSpaces()
     {
-        $this->Cookie->write('CookieComponent Test', "test");
+        $this->Cookie->write('CookieComponent Test', 'test');
         $this->assertTrue($this->Cookie->check('CookieComponent Test'));
         $this->Cookie->delete('CookieComponent Test');
 
-        $this->Cookie->write('CookieComponent Test.Test Case', "test");
+        $this->Cookie->write('CookieComponent Test.Test Case', 'test');
         $this->assertTrue($this->Cookie->check('CookieComponent Test.Test Case'));
     }
 
@@ -789,6 +789,6 @@ class CookieComponentTest extends TestCase
             $value = $this->_implode($value);
         }
 
-        return "Q2FrZQ==." . base64_encode(Security::encrypt($value, $this->Cookie->config('key')));
+        return 'Q2FrZQ==.' . base64_encode(Security::encrypt($value, $this->Cookie->config('key')));
     }
 }

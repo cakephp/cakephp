@@ -594,6 +594,11 @@ SQL;
             ],
             [
                 'post_id',
+                ['type' => 'integer', 'length' => 20, 'null' => false, 'autoIncrement' => false],
+                '`post_id` INTEGER(20) NOT NULL'
+            ],
+            [
+                'post_id',
                 ['type' => 'biginteger', 'length' => 20, 'autoIncrement' => true],
                 '`post_id` BIGINT AUTO_INCREMENT'
             ],

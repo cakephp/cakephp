@@ -17,8 +17,8 @@ namespace Cake\Test\TestCase\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\PaginatorComponent;
 use Cake\Controller\Controller;
-use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
+use Cake\Datasource\EntityInterface;
 use Cake\Http\ServerRequest;
 use Cake\Network\Exception\NotFoundException;
 use Cake\ORM\Entity;
@@ -47,7 +47,10 @@ class PaginatorComponentTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = ['core.posts'];
+    public $fixtures = [
+        'core.posts', 'core.articles', 'core.articles_tags',
+        'core.authors', 'core.authors_tags', 'core.tags'
+    ];
 
     /**
      * Don't load data for fixtures for all tests
@@ -65,7 +68,7 @@ class PaginatorComponentTest extends TestCase
     {
         parent::setUp();
 
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
 
         $this->request = new ServerRequest('controller_posts/index');
         $this->request->params['pass'] = [];
@@ -200,6 +203,34 @@ class PaginatorComponentTest extends TestCase
 
         $this->Paginator->paginate($table, $settings);
         $this->assertEquals('popular', $this->request->params['paging']['PaginatorPosts']['finder']);
+    }
+
+    /**
+     * Test that nested eager loaders don't trigger invalid SQL errors.
+     *
+     * @return void
+     */
+    public function testPaginateNestedEagerLoader()
+    {
+        $this->loadFixtures('Articles', 'Tags', 'Authors', 'ArticlesTags', 'AuthorsTags');
+        $articles = TableRegistry::get('Articles');
+        $articles->belongsToMany('Tags');
+        $tags = TableRegistry::get('Tags');
+        $tags->belongsToMany('Authors');
+
+        $articles->eventManager()->on('Model.beforeFind', function ($event, $query) {
+            $query ->matching('Tags', function ($q) {
+                return $q->matching('Authors', function ($q) {
+                    return $q->where(['Authors.name' => 'larry']);
+                });
+            });
+        });
+        $results = $this->Paginator->paginate($articles, []);
+
+        $result = $results->first();
+        $this->assertInstanceOf(EntityInterface::class, $result);
+        $this->assertInstanceOf(EntityInterface::class, $result->_matchingData['Tags']);
+        $this->assertInstanceOf(EntityInterface::class, $result->_matchingData['Authors']);
     }
 
     /**

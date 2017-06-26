@@ -37,7 +37,7 @@ class RoutingFilterTest extends TestCase
     {
         $filter = new RoutingFilter();
 
-        $request = new ServerRequest("/testcontroller/testaction/params1/params2/params3");
+        $request = new ServerRequest('/testcontroller/testaction/params1/params2/params3');
         $request->addParams(['controller' => 'articles']);
         $event = new Event(__CLASS__, $this, compact('request'));
         $filter->beforeDispatch($event);
@@ -57,7 +57,7 @@ class RoutingFilterTest extends TestCase
         Router::connect('/:controller/:action/*');
         $filter = new RoutingFilter();
 
-        $request = new ServerRequest("/testcontroller/testaction/params1/params2/params3");
+        $request = new ServerRequest('/testcontroller/testaction/params1/params2/params3');
         $event = new Event(__CLASS__, $this, compact('request'));
         $filter->beforeDispatch($event);
 
@@ -83,7 +83,7 @@ class RoutingFilterTest extends TestCase
         });
         $filter = new RoutingFilter();
 
-        $request = new ServerRequest("/home");
+        $request = new ServerRequest('/home');
         $response = new Response();
         $event = new Event(__CLASS__, $this, compact('request', 'response'));
         $response = $filter->beforeDispatch($event);

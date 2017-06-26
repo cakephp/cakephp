@@ -187,9 +187,10 @@ class PaginatorComponent extends Component
             $query->applyOptions($options);
         }
 
+        $cleanQuery = clone $query;
         $results = $query->all();
         $numResults = count($results);
-        $count = $numResults ? $query->count() : 0;
+        $count = $numResults ? $cleanQuery->count() : 0;
 
         $defaults = $this->getDefaults($alias, $settings);
         unset($defaults[0]);

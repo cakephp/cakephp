@@ -51,7 +51,7 @@ if (!function_exists('h')) {
             } else {
                 $text = '(object)' . get_class($text);
             }
-        } elseif (is_bool($text)) {
+        } elseif (is_bool($text) || is_null($text) || is_int($text)) {
             return $text;
         }
 
@@ -199,7 +199,7 @@ if (!function_exists('env')) {
                 return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
             }
 
-            return (strpos(env('SCRIPT_URI'), 'https://') === 0);
+            return (strpos((string)env('SCRIPT_URI'), 'https://') === 0);
         }
 
         if ($key === 'SCRIPT_NAME') {

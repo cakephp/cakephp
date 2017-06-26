@@ -548,20 +548,25 @@ abstract class IntegrationTestCase extends TestCase
         $tokenUrl = $url;
 
         if ($query) {
-            $tokenUrl .= '?' . http_build_query($query);
+            $tokenUrl .= '?' . $query;
         }
 
+        parse_str($query, $queryData);
         $props = [
             'url' => $url,
             'post' => $this->_addTokens($tokenUrl, $data),
             'cookies' => $this->_cookie,
             'session' => $session,
-            'query' => $query
+            'query' => $queryData
         ];
         if (is_string($data)) {
             $props['input'] = $data;
         }
-        $env = [];
+        $env = [
+            'REQUEST_METHOD' => $method,
+            'QUERY_STRING' => $query,
+            'REQUEST_URI' => $url,
+        ];
         if (isset($this->_request['headers'])) {
             foreach ($this->_request['headers'] as $k => $v) {
                 $name = strtoupper(str_replace('-', '_', $k));
@@ -572,7 +577,6 @@ abstract class IntegrationTestCase extends TestCase
             }
             unset($this->_request['headers']);
         }
-        $env['REQUEST_METHOD'] = $method;
         $props['environment'] = $env;
         $props = Hash::merge($props, $this->_request);
 
@@ -618,11 +622,10 @@ abstract class IntegrationTestCase extends TestCase
     protected function _url($url)
     {
         $url = Router::url($url);
-        $query = [];
+        $query = '';
 
         if (strpos($url, '?') !== false) {
-            list($url, $parameters) = explode('?', $url, 2);
-            parse_str($parameters, $query);
+            list($url, $query) = explode('?', $url, 2);
         }
 
         return [$url, $query];

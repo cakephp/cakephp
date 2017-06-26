@@ -77,9 +77,9 @@ class UnloadTaskTest extends TestCase
     {
         $bootstrap = new File($this->bootstrap, false);
 
-        $this->_addPluginToBootstrap("TestPlugin");
+        $this->_addPluginToBootstrap('TestPlugin');
 
-        $this->_addPluginToBootstrap("TestPluginSecond");
+        $this->_addPluginToBootstrap('TestPluginSecond');
 
         $expected = "Plugin::load('TestPlugin', ['autoload' => true, 'bootstrap' => false, 'routes' => false]);";
         $this->assertContains($expected, $bootstrap->read());

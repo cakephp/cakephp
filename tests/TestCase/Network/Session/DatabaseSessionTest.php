@@ -16,7 +16,6 @@
  */
 namespace Cake\Test\TestCase\Network\Session;
 
-use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
 use Cake\Network\Session;
 use Cake\Network\Session\DatabaseSession;
@@ -45,7 +44,7 @@ class DatabaseSessionTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         $this->storage = new DatabaseSession();
     }
 
@@ -154,7 +153,7 @@ class DatabaseSessionTest extends TestCase
     {
         TableRegistry::clear();
 
-        ini_set('session.gc_maxlifetime', 0);
+        ini_set('session.gc_maxlifetime', '0');
         $storage = new DatabaseSession();
         $storage->write('foo', 'Some value');
 

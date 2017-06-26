@@ -2783,11 +2783,11 @@ class QueryTest extends TestCase
     }
 
     /**
-     * Test that finder options sent through via contain are sent to custom finder.
+     * Test that finder options sent through via contain are sent to custom finder for belongsTo associations.
      *
      * @return void
      */
-    public function testContainFinderCanSpecifyOptions()
+    public function testContainFinderBelongsTo()
     {
         $table = TableRegistry::get('Articles');
         $table->belongsTo(
@@ -2814,6 +2814,111 @@ class QueryTest extends TestCase
 
         $this->assertEmpty($resultWithoutAuthor->first()['author']);
         $this->assertEquals($authorId, $resultWithAuthor->first()['author']['id']);
+    }
+
+    /**
+     * Test that finder options sent through via contain are sent to custom finder for hasMany associations.
+     *
+     * @return void
+     */
+    public function testContainFinderHasMany()
+    {
+        $table = TableRegistry::get('Authors');
+        $table->hasMany(
+            'Articles',
+            ['className' => 'TestApp\Model\Table\ArticlesTable']
+        );
+
+        $newArticle = $table->newEntity([
+            'author_id' => 1,
+            'title' => 'Fourth Article',
+            'body' => 'Fourth Article Body',
+            'published' => 'N'
+        ]);
+        $table->save($newArticle);
+
+        $resultWithArticles = $table->find('all')
+            ->where(['id' => 1])
+            ->contain([
+                'Articles' => [
+                    'finder' => 'published'
+                ]
+            ]);
+
+        $resultWithArticlesArray = $table->find('all')
+            ->where(['id' => 1])
+            ->contain([
+                'Articles' => [
+                    'finder' => ['published' => []]
+                ]
+            ]);
+
+        $resultWithArticlesArrayOptions = $table->find('all')
+            ->where(['id' => 1])
+            ->contain([
+                'Articles' => [
+                    'finder' => [
+                        'published' => [
+                            'title' => 'First Article'
+                        ]
+                    ]
+                ]
+            ]);
+
+        $resultWithoutArticles = $table->find('all')
+            ->where(['id' => 1])
+            ->contain([
+                'Articles' => [
+                    'finder' => [
+                        'published' => [
+                            'title' => 'Foo'
+                        ]
+                    ]
+                ]
+            ]);
+
+        $this->assertCount(2, $resultWithArticles->first()->articles);
+        $this->assertCount(2, $resultWithArticlesArray->first()->articles);
+
+        $this->assertCount(1, $resultWithArticlesArrayOptions->first()->articles);
+        $this->assertSame(
+            'First Article',
+            $resultWithArticlesArrayOptions->first()->articles[0]->title
+        );
+
+        $this->assertCount(0, $resultWithoutArticles->first()->articles);
+    }
+
+    /**
+     * Test that using a closure for a custom finder for contain works.
+     *
+     * @return void
+     */
+    public function testContainFinderHasManyClosure()
+    {
+        $table = TableRegistry::get('Authors');
+        $table->hasMany(
+            'Articles',
+            ['className' => 'TestApp\Model\Table\ArticlesTable']
+        );
+
+        $newArticle = $table->newEntity([
+            'author_id' => 1,
+            'title' => 'Fourth Article',
+            'body' => 'Fourth Article Body',
+            'published' => 'N'
+        ]);
+        $table->save($newArticle);
+
+        $resultWithArticles = $table->find('all')
+            ->where(['id' => 1])
+            ->contain([
+                'Articles' => function ($q) {
+                    return $q->find('published');
+                }
+            ]);
+
+        $this->assertCount(2, $resultWithArticles->first()->articles);
     }
 
     /**
