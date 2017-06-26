@@ -3253,7 +3253,7 @@ class TranslatedItemLeftJoin extends TranslatedItem {
 		'Translate' => array(
 			'content',
 			'title',
-			'join_type' => 'LEFT',
+			'joinType' => 'LEFT',
 		)
 	);
 }

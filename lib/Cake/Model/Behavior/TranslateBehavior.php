@@ -61,11 +61,11 @@ class TranslateBehavior extends ModelBehavior {
  * bindTranslation() method
  *
  * By default INNER joins are used to fetch translations. In order to use
- * other join types $config should contain 'join_type' key:
+ * other join types $config should contain 'joinType' key:
  * ```
  * array(
  *     'fields' => array('field_one', 'field_two' => 'FieldAssoc', 'field_three'),
- *     'join_type' => 'LEFT',
+ *     'joinType' => 'LEFT',
  * )
  * ```
  * In a model it may be configured this way:
@@ -74,7 +74,7 @@ class TranslateBehavior extends ModelBehavior {
  *     'Translate' => array(
  *         'content',
  *         'title',
- *         'join_type' => 'LEFT',
+ *         'joinType' => 'LEFT',
  *     ),
  * );
  * ```
@@ -93,16 +93,16 @@ class TranslateBehavior extends ModelBehavior {
 			return false;
 		}
 
-		$this->settings[$Model->alias] = array(
+		$this->settings[$Model->alias] = array();
+		$this->runtime[$Model->alias] = array(
 			'fields' => array(),
-			'join_type' => 'INNER',
+			'joinType' => 'INNER',
 		);
-		$this->runtime[$Model->alias] = array('fields' => array());
-		$this->translateModel($Model);
-		if (isset($config['join_type'])) {
-			$this->settings[$Model->alias]['join_type'] = $config['join_type'];
-			unset($config['join_type']);
+		if (isset($config['joinType'])) {
+			$this->runtime[$Model->alias]['joinType'] = $config['joinType'];
+			unset($config['joinType']);
 		}
+		$this->translateModel($Model);
 		return $this->bindTranslation($Model, $config, false);
 	}
 
@@ -150,7 +150,7 @@ class TranslateBehavior extends ModelBehavior {
 		if (is_string($query['fields']) && $query['fields'] === "COUNT(*) AS {$db->name('count')}") {
 			$query['fields'] = "COUNT(DISTINCT({$db->name($Model->escapeField())})) {$db->alias}count";
 			$query['joins'][] = array(
-				'type' => $this->settings[$Model->alias]['join_type'],
+				'type' => $this->runtime[$Model->alias]['joinType'],
 				'alias' => $RuntimeModel->alias,
 				'table' => $joinTable,
 				'conditions' => array(
@@ -170,7 +170,7 @@ class TranslateBehavior extends ModelBehavior {
 		}
 
 		$fields = array_merge(
-			$this->settings[$Model->alias]['fields'],
+			$this->settings[$Model->alias],
 			$this->runtime[$Model->alias]['fields']
 		);
 		$addFields = array();
@@ -226,7 +226,7 @@ class TranslateBehavior extends ModelBehavior {
 			return $conditionFields;
 		}
 		foreach ($query['conditions'] as $col => $val) {
-			foreach ($this->settings[$Model->alias]['fields'] as $field => $assoc) {
+			foreach ($this->settings[$Model->alias] as $field => $assoc) {
 				if (is_numeric($field)) {
 					$field = $assoc;
 				}
@@ -280,7 +280,7 @@ class TranslateBehavior extends ModelBehavior {
 				$query['fields'][] = $aliasVirtual;
 			}
 			$query['joins'][] = array(
-				'type' => $this->settings[$Model->alias]['join_type'],
+				'type' => $this->runtime[$Model->alias]['joinType'],
 				'alias' => $alias,
 				'table' => $joinTable,
 				'conditions' => array(
@@ -400,7 +400,7 @@ class TranslateBehavior extends ModelBehavior {
 		if (empty($locale)) {
 			return true;
 		}
-		$fields = array_merge($this->settings[$Model->alias]['fields'], $this->runtime[$Model->alias]['fields']);
+		$fields = array_merge($this->settings[$Model->alias], $this->runtime[$Model->alias]['fields']);
 		$tempData = array();
 
 		foreach ($fields as $key => $value) {
@@ -514,7 +514,7 @@ class TranslateBehavior extends ModelBehavior {
  * @return array The fully populated data to save.
  */
 	protected function _prepareTranslations(Model $Model, $data) {
-		$fields = array_merge($this->settings[$Model->alias]['fields'], $this->runtime[$Model->alias]['fields']);
+		$fields = array_merge($this->settings[$Model->alias], $this->runtime[$Model->alias]['fields']);
 		$locales = array();
 		foreach ($data as $key => $value) {
 			if (is_array($value)) {
@@ -638,14 +638,14 @@ class TranslateBehavior extends ModelBehavior {
 				if ($reset) {
 					$this->runtime[$Model->alias]['fields'][] = $field;
 				} else {
-					$this->settings[$Model->alias]['fields'][] = $field;
+					$this->settings[$Model->alias][] = $field;
 				}
 			} else {
 				if ($reset) {
 					$this->runtime[$Model->alias]['fields'][$field] = $association;
 					$this->runtime[$Model->alias]['restoreFields'][] = $field;
 				} else {
-					$this->settings[$Model->alias]['fields'][$field] = $association;
+					$this->settings[$Model->alias][$field] = $association;
 				}
 
 				foreach (array('hasOne', 'hasMany', 'belongsTo', 'hasAndBelongsToMany') as $type) {
@@ -678,10 +678,10 @@ class TranslateBehavior extends ModelBehavior {
  * @return void
  */
 	protected function _removeField(Model $Model, $field) {
-		if (array_key_exists($field, $this->settings[$Model->alias]['fields'])) {
-			unset($this->settings[$Model->alias]['fields'][$field]);
-		} elseif (in_array($field, $this->settings[$Model->alias]['fields'])) {
-			$this->settings[$Model->alias]['fields'] = array_merge(array_diff($this->settings[$Model->alias]['fields'], array($field)));
+		if (array_key_exists($field, $this->settings[$Model->alias])) {
+			unset($this->settings[$Model->alias][$field]);
+		} elseif (in_array($field, $this->settings[$Model->alias])) {
+			$this->settings[$Model->alias] = array_merge(array_diff($this->settings[$Model->alias], array($field)));
 		}
 
 		if (array_key_exists($field, $this->runtime[$Model->alias]['fields'])) {
@@ -701,11 +701,11 @@ class TranslateBehavior extends ModelBehavior {
  * @return bool
  */
 	public function unbindTranslation(Model $Model, $fields = null) {
-		if (empty($fields) && empty($this->settings[$Model->alias]['fields'])) {
+		if (empty($fields) && empty($this->settings[$Model->alias])) {
 			return false;
 		}
 		if (empty($fields)) {
-			return $this->unbindTranslation($Model, $this->settings[$Model->alias]['fields']);
+			return $this->unbindTranslation($Model, $this->settings[$Model->alias]);
 		}
 
 		if (is_string($fields)) {

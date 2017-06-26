@@ -1399,15 +1399,15 @@ class TranslateBehaviorTest extends CakeTestCase {
 		$Model->unbindTranslation();
 		$Model->bindTranslation(array('body', 'slug'), false);
 
-		$result = $Model->Behaviors->Translate->settings['TranslatedItem']['fields'];
+		$result = $Model->Behaviors->Translate->settings['TranslatedItem'];
 		$this->assertEquals(array('body', 'slug'), $result);
 
 		$Model->unbindTranslation(array('body'));
-		$result = $Model->Behaviors->Translate->settings['TranslatedItem']['fields'];
+		$result = $Model->Behaviors->Translate->settings['TranslatedItem'];
 		$this->assertNotContains('body', $result);
 
 		$Model->unbindTranslation('slug');
-		$result = $Model->Behaviors->Translate->settings['TranslatedItem']['fields'];
+		$result = $Model->Behaviors->Translate->settings['TranslatedItem'];
 		$this->assertNotContains('slug', $result);
 	}
 
