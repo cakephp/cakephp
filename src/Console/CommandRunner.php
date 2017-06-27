@@ -64,11 +64,17 @@ class CommandRunner
     }
 
     /**
-     * Replace the alias map for a runner.
+     * Replace the entire alias map for a runner.
      *
      * Aliases allow you to define alternate names for commands
      * in the collection. This can be useful to add top level switches
      * like `--version` or `-h`
+     *
+     * ### Usage
+     *
+     * ```
+     * $runner->setAliases(['--version' => 'version']);
+     * ```
      *
      * @param array $aliases The map of aliases to replace.
      * @return $this
