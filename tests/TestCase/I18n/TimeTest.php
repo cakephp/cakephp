@@ -912,7 +912,7 @@ class TimeTest extends TestCase
      * @param string $result
      * @return void
      */
-    public function assertTimeFormat($expected, $result, $message = "")
+    public function assertTimeFormat($expected, $result, $message = '')
     {
         $expected = str_replace([',', '(', ')', ' at', ' م.', ' ه‍.ش.', ' AP', ' AH', ' SAKA', 'à '], '', $expected);
         $expected = str_replace(['  '], ' ', $expected);

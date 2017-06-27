@@ -676,4 +676,15 @@ abstract class TestCase extends BaseTestCase
 
         return $mock;
     }
+
+    /**
+     * Set the app namespace
+     *
+     * @param string $appNamespace The app namespace, defaults to "TestApp".
+     * @return void
+     */
+    public static function setAppNamespace($appNamespace = 'TestApp')
+    {
+        Configure::write('App.namespace', $appNamespace);
+    }
 }

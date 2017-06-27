@@ -43,7 +43,7 @@ class DispatcherTest extends TestCase
         Configure::write('App.baseUrl', false);
         Configure::write('App.dir', 'app');
         Configure::write('App.webroot', 'webroot');
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
 
         $this->dispatcher = new Dispatcher();
         $this->dispatcher->addFilter(new ControllerFactoryFilter());

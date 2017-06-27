@@ -421,10 +421,10 @@ class Debugger
         if (strpos($data, "\n") !== false) {
             $data = explode("\n", $data);
         }
+        $line--;
         if (!isset($data[$line])) {
             return $lines;
         }
-        $line--;
         for ($i = $line - $context; $i < $line + $context + 1; $i++) {
             if (!isset($data[$i])) {
                 continue;

@@ -157,7 +157,7 @@ class ConsoleOutputTest extends TestCase
     public function testFormattingNotEatingTags()
     {
         $this->output->expects($this->once())->method('_write')
-            ->with("<red> Something bad");
+            ->with('<red> Something bad');
 
         $this->output->write('<red> Something bad', false);
     }
@@ -190,7 +190,7 @@ class ConsoleOutputTest extends TestCase
     public function testFormattingMissingStyleName()
     {
         $this->output->expects($this->once())->method('_write')
-            ->with("<not_there>Error:</not_there> Something bad");
+            ->with('<not_there>Error:</not_there> Something bad');
 
         $this->output->write('<not_there>Error:</not_there> Something bad', false);
     }

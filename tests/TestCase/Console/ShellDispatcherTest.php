@@ -16,7 +16,6 @@ namespace Cake\Test\TestCase\Console;
 
 use Cake\Console\Shell;
 use Cake\Console\ShellDispatcher;
-use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
@@ -35,7 +34,7 @@ class ShellDispatcherTest extends TestCase
     {
         parent::setUp();
         Plugin::load('TestPlugin');
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         $this->dispatcher = $this->getMockBuilder('Cake\Console\ShellDispatcher')
             ->setMethods(['_stop'])
             ->getMock();

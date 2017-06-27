@@ -45,7 +45,7 @@ class TextTest extends TestCase
     public function testUuidGeneration()
     {
         $result = Text::uuid();
-        $pattern = "/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/";
+        $pattern = '/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/';
         $match = (bool)preg_match($pattern, $result);
         $this->assertTrue($match);
     }
@@ -59,7 +59,7 @@ class TextTest extends TestCase
     {
         $check = [];
         $count = mt_rand(10, 1000);
-        $pattern = "/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/";
+        $pattern = '/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/';
 
         for ($i = 0; $i < $count; $i++) {
             $result = Text::uuid();
@@ -175,28 +175,28 @@ class TextTest extends TestCase
         $result = Text::insert($string, ['src' => 'foo', 'extra' => 'bar'], ['clean' => 'html']);
         $this->assertEquals($expected, $result);
 
-        $result = Text::insert("this is a ? string", "test");
-        $expected = "this is a test string";
+        $result = Text::insert('this is a ? string', 'test');
+        $expected = 'this is a test string';
         $this->assertEquals($expected, $result);
 
-        $result = Text::insert("this is a ? string with a ? ? ?", ['long', 'few?', 'params', 'you know']);
-        $expected = "this is a long string with a few? params you know";
+        $result = Text::insert('this is a ? string with a ? ? ?', ['long', 'few?', 'params', 'you know']);
+        $expected = 'this is a long string with a few? params you know';
         $this->assertEquals($expected, $result);
 
         $result = Text::insert('update saved_urls set url = :url where id = :id', ['url' => 'http://www.testurl.com/param1:url/param2:id', 'id' => 1]);
-        $expected = "update saved_urls set url = http://www.testurl.com/param1:url/param2:id where id = 1";
+        $expected = 'update saved_urls set url = http://www.testurl.com/param1:url/param2:id where id = 1';
         $this->assertEquals($expected, $result);
 
         $result = Text::insert('update saved_urls set url = :url where id = :id', ['id' => 1, 'url' => 'http://www.testurl.com/param1:url/param2:id']);
-        $expected = "update saved_urls set url = http://www.testurl.com/param1:url/param2:id where id = 1";
+        $expected = 'update saved_urls set url = http://www.testurl.com/param1:url/param2:id where id = 1';
         $this->assertEquals($expected, $result);
 
         $result = Text::insert(':me cake. :subject :verb fantastic.', ['me' => 'I :verb', 'subject' => 'cake', 'verb' => 'is']);
-        $expected = "I :verb cake. cake is fantastic.";
+        $expected = 'I :verb cake. cake is fantastic.';
         $this->assertEquals($expected, $result);
 
         $result = Text::insert(':I.am: :not.yet: passing.', ['I.am' => 'We are'], ['before' => ':', 'after' => ':', 'clean' => ['replacement' => ' of course', 'method' => 'text']]);
-        $expected = "We are of course passing.";
+        $expected = 'We are of course passing.';
         $this->assertEquals($expected, $result);
 
         $result = Text::insert(
@@ -204,11 +204,11 @@ class TextTest extends TestCase
             ['I.am' => 'We are'],
             ['before' => ':', 'after' => ':', 'clean' => true]
         );
-        $expected = "We are passing.";
+        $expected = 'We are passing.';
         $this->assertEquals($expected, $result);
 
         $result = Text::insert('?-pended result', ['Pre']);
-        $expected = "Pre-pended result";
+        $expected = 'Pre-pended result';
         $this->assertEquals($expected, $result);
 
         $string = 'switching :timeout / :timeout_count';
@@ -528,7 +528,7 @@ TEXT;
     public function testWrapBlockIndentWithMultibyte()
     {
         $text = 'This is the song that never ends. 这是永远不会结束的歌曲。 This is the song that never ends.';
-        $result = Text::wrapBlock($text, ['width' => 33, 'indent' => " → ", 'indentAt' => 1]);
+        $result = Text::wrapBlock($text, ['width' => 33, 'indent' => ' → ', 'indentAt' => 1]);
         $expected = <<<TEXT
 This is the song that never ends.
  → 这是永远不会结束的歌曲。 This is the song
@@ -672,7 +672,7 @@ TEXT;
 素晴らしい、でしょ?
 HTML;
         $this->assertEquals("<IMG src=\"mypic.jpg\">このimageタグはXHTMLに準拠していない！<br>\n<hr/><b>でも次の…</b>", Text::truncate($text, 30, ['html' => true]));
-        $this->assertEquals("<IMG src=\"mypic.jpg\">このimageタグはXHTMLに準拠し…", Text::truncate($text, 30, ['html' => true, 'trimWidth' => true]));
+        $this->assertEquals('<IMG src="mypic.jpg">このimageタグはXHTMLに準拠し…', Text::truncate($text, 30, ['html' => true, 'trimWidth' => true]));
     }
 
     /**

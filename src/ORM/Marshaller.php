@@ -579,7 +579,7 @@ class Marshaller
 
             foreach ($properties as $field => $value) {
                 if ($value instanceof EntityInterface) {
-                    $entity->dirty($field, $value->dirty());
+                    $entity->setDirty($field, $value->isDirty());
                 }
             }
 
@@ -590,7 +590,7 @@ class Marshaller
             if (array_key_exists($field, $properties)) {
                 $entity->set($field, $properties[$field]);
                 if ($properties[$field] instanceof EntityInterface) {
-                    $entity->dirty($field, $properties[$field]->dirty());
+                    $entity->setDirty($field, $properties[$field]->isDirty());
                 }
             }
         }

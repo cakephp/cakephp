@@ -4,24 +4,32 @@
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- * @since         3.0.0
+ * @link          https://cakephp.org CakePHP(tm) Project
+ * @since         3.5.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Routing\Exception;
 
-use Cake\Core\Exception\Exception;
+namespace Cake\Shell;
+
+use Cake\Console\Shell;
+use Cake\Core\Configure;
 
 /**
- * Exception raised when a Dispatcher filter could not be found
+ * Print out the version of CakePHP in use.
  */
-class MissingDispatcherFilterException extends Exception
+class VersionShell extends Shell
 {
-
     /**
-     * {@inheritDoc}
+     * Print out the version of CakePHP in use.
+     *
+     * @return void
      */
-    protected $_messageTemplate = 'Dispatcher filter %s could not be found.';
+    public function main()
+    {
+        $this->out(Configure::version());
+    }
 }

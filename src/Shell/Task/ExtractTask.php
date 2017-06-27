@@ -656,7 +656,7 @@ class ExtractTask extends Shell
         if ($quote === '"') {
             $string = stripcslashes($string);
         } else {
-            $string = strtr($string, ["\\'" => "'", "\\\\" => "\\"]);
+            $string = strtr($string, ["\\'" => "'", '\\\\' => '\\']);
         }
         $string = str_replace("\r\n", "\n", $string);
 

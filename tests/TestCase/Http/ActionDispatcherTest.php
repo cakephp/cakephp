@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\Http;
 
-use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Http\ActionDispatcher;
 use Cake\Http\Response;
@@ -39,7 +38,7 @@ class ActionDispatcherTest extends TestCase
     {
         parent::setUp();
         Router::reload();
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         $this->dispatcher = new ActionDispatcher();
         $this->dispatcher->addFilter(new ControllerFactoryFilter());
     }

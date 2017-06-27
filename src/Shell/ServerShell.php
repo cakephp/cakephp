@@ -128,7 +128,7 @@ class ServerShell extends Shell
     public function main()
     {
         $command = sprintf(
-            "php -S %s:%d -t %s %s",
+            'php -S %s:%d -t %s %s',
             $this->_host,
             $this->_port,
             escapeshellarg($this->_documentRoot),

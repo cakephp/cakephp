@@ -1678,9 +1678,9 @@ class RouterTest extends TestCase
     public function testRouteSymmetry()
     {
         Router::connect(
-            "/:extra/page/:slug/*",
+            '/:extra/page/:slug/*',
             ['controller' => 'pages', 'action' => 'view', 'extra' => null],
-            ["extra" => '[a-z1-9_]*', "slug" => '[a-z1-9_]+', "action" => 'view']
+            ['extra' => '[a-z1-9_]*', 'slug' => '[a-z1-9_]+', 'action' => 'view']
         );
 
         $result = Router::parse('/some_extra/page/this_is_the_slug', 'GET');
@@ -1709,9 +1709,9 @@ class RouterTest extends TestCase
 
         Router::reload();
         Router::connect(
-            "/:extra/page/:slug/*",
+            '/:extra/page/:slug/*',
             ['controller' => 'pages', 'action' => 'view', 'extra' => null],
-            ["extra" => '[a-z1-9_]*', "slug" => '[a-z1-9_]+']
+            ['extra' => '[a-z1-9_]*', 'slug' => '[a-z1-9_]+']
         );
 
         $result = Router::url([
@@ -3252,7 +3252,7 @@ class RouterTest extends TestCase
         $this->assertEquals('/FooBar', $result);
 
         // This is needed because tests/boostrap.php sets App.namespace to 'App'
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
 
         Router::defaultRouteClass('DashedRoute');
         Router::connect('/cake/:controller', ['action' => 'cake']);

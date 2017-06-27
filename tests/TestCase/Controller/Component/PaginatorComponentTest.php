@@ -17,7 +17,6 @@ namespace Cake\Test\TestCase\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\PaginatorComponent;
 use Cake\Controller\Controller;
-use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Paginator;
@@ -77,7 +76,7 @@ class PaginatorComponentTest extends TestCase
     {
         parent::setUp();
 
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
 
         $this->request = new ServerRequest('controller_posts/index');
         $this->request->params['pass'] = [];
