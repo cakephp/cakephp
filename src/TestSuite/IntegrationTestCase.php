@@ -24,6 +24,7 @@ use Cake\Core\Configure;
 use Cake\Database\Exception as DatabaseException;
 use Cake\Network\Session;
 use Cake\Routing\Router;
+use Cake\TestSuite\Stub\TestExceptionRenderer;
 use Cake\Utility\CookieCryptTrait;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
@@ -1080,6 +1081,20 @@ abstract class IntegrationTestCase extends TestCase
         }
 
         $this->assertCookie(null, $cookie, "Cookie '{$cookie}' has been set. " . $message);
+    }
+
+    /**
+     * Disable the error handler middleware.
+     *
+     * By using this function, exceptions are no longer caught by the ErrorHandlerMiddleware
+     * and are instead re-thrown by the TestExceptionRenderer. This can be helpful
+     * when trying to diagnose/debug unexpected failures in test cases.
+     *
+     * @return void
+     */
+    public function disableErrorHandlerMiddleware()
+    {
+        Configure::write('Error.exceptionRenderer', TestExceptionRenderer::class);
     }
 
     /**

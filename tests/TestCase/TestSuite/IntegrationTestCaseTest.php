@@ -968,4 +968,17 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         $this->get('/posts/get');
         $this->assertFileResponse('foo');
     }
+
+    /**
+     * Test disabling the error handler middleware.
+     *
+     * @expectedException \Cake\Routing\Exception\MissingRouteException
+     * @expectedExceptionMessage A route matching "/foo" could not be found.
+     * @return void
+     */
+    public function testDisableErrorHandlerMiddleware()
+    {
+        $this->disableErrorHandlerMiddleware();
+        $this->get('/foo');
+    }
 }
