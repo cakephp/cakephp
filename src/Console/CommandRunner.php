@@ -19,6 +19,7 @@ use Cake\Console\ConsoleIo;
 use Cake\Console\Exception\StopException;
 use Cake\Console\Shell;
 use Cake\Http\BaseApplication;
+use Cake\Shell\HelpShell;
 use Cake\Shell\VersionShell;
 use RuntimeException;
 
@@ -59,7 +60,9 @@ class CommandRunner
         $this->app = $app;
         $this->root = $root;
         $this->aliases = [
-            '--version' => 'version'
+            '--version' => 'version',
+            '--help' => 'help',
+            '-h' => 'help',
         ];
     }
 
@@ -100,6 +103,7 @@ class CommandRunner
 
         $commands = new CommandCollection([
             'version' => VersionShell::class,
+            'help' => HelpShell::class,
         ]);
         $commands = $this->app->console($commands);
         if (!($commands instanceof CommandCollection)) {
@@ -157,11 +161,15 @@ class CommandRunner
                 " Run `{$this->root} --help` to get the list of valid commands."
             );
         }
-        $classOrInstance = $commands->get($name);
-        if (is_string($classOrInstance)) {
-            return new $classOrInstance($io);
+        $instance = $commands->get($name);
+        if (is_string($instance)) {
+            $instance = new $instance($io);
+        }
+        // TODO Should this be an interface?
+        if (method_exists($instance, 'setCommandCollection')) {
+            $instance->setCommandCollection($commands);
         }
 
-        return $classOrInstance;
+        return $instance;
     }
 }
