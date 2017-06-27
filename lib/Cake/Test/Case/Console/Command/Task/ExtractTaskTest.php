@@ -102,11 +102,11 @@ class ExtractTaskTest extends CakeTestCase {
 		$this->assertRegExp($pattern, $result);
 
 		$pattern = '/msgid "The %s is being used for caching. To change the config edit ';
-		$pattern .= 'APP\/config\/core.php "\nmsgstr ""\n/';
+		$pattern .= '%s\/core.php "\nmsgstr ""\n/';
 		$this->assertRegExp($pattern, $result);
 
 		$pattern = '/msgid "Your cache is NOT working. Please check ';
-		$pattern .= 'the settings in APP\/config\/core.php"\nmsgstr ""\n/';
+		$pattern .= 'the settings in %s\/core.php"\nmsgstr ""\n/';
 		$this->assertRegExp($pattern, $result);
 
 		$pattern = '/msgid "Your database configuration file is present."\nmsgstr ""\n/';
