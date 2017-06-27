@@ -1,4 +1,4 @@
 
 <?php echo $this->fetch('content'); ?>
 
-CakePHP Framework を使って送信したメールです。 http://cakephp.org.
+CakePHP Framework を使って送信したメールです。 https://cakephp.org.

@@ -1,17 +1,17 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @package       Cake.Utility
  * @since         CakePHP(tm) v 0.2.9
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
 /**
@@ -21,7 +21,7 @@
  * Used by CakePHP's naming conventions throughout the framework.
  *
  * @package       Cake.Utility
- * @link          http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html
+ * @link          https://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html
  */
 class Inflector {
 
@@ -366,7 +366,7 @@ class Inflector {
  *
  * @param string $word Word in singular
  * @return string Word in plural
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::pluralize
+ * @link https://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::pluralize
  */
 	public static function pluralize($word) {
 		if (isset(static::$_cache['pluralize'][$word])) {
@@ -411,7 +411,7 @@ class Inflector {
  *
  * @param string $word Word in plural
  * @return string Word in singular
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::singularize
+ * @link https://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::singularize
  */
 	public static function singularize($word) {
 		if (isset(static::$_cache['singularize'][$word])) {
@@ -464,7 +464,7 @@ class Inflector {
  *
  * @param string $lowerCaseAndUnderscoredWord Word to camelize
  * @return string Camelized word. LikeThis.
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::camelize
+ * @link https://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::camelize
  */
 	public static function camelize($lowerCaseAndUnderscoredWord) {
 		if (!($result = static::_cache(__FUNCTION__, $lowerCaseAndUnderscoredWord))) {
@@ -479,7 +479,7 @@ class Inflector {
  *
  * @param string $camelCasedWord Camel-cased word to be "underscorized"
  * @return string Underscore-syntaxed version of the $camelCasedWord
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::underscore
+ * @link https://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::underscore
  */
 	public static function underscore($camelCasedWord) {
 		if (!($result = static::_cache(__FUNCTION__, $camelCasedWord))) {
@@ -496,7 +496,7 @@ class Inflector {
  *
  * @param string $lowerCaseAndUnderscoredWord String to be made more readable
  * @return string Human-readable string
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::humanize
+ * @link https://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::humanize
  */
 	public static function humanize($lowerCaseAndUnderscoredWord) {
 		if (!($result = static::_cache(__FUNCTION__, $lowerCaseAndUnderscoredWord))) {
@@ -515,7 +515,7 @@ class Inflector {
  *
  * @param string $className Name of class to get database table name for
  * @return string Name of the database table for given class
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::tableize
+ * @link https://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::tableize
  */
 	public static function tableize($className) {
 		if (!($result = static::_cache(__FUNCTION__, $className))) {
@@ -530,7 +530,7 @@ class Inflector {
  *
  * @param string $tableName Name of database table to get class name for
  * @return string Class name
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::classify
+ * @link https://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::classify
  */
 	public static function classify($tableName) {
 		if (!($result = static::_cache(__FUNCTION__, $tableName))) {
@@ -545,7 +545,7 @@ class Inflector {
  *
  * @param string $string String to convert.
  * @return string in variable form
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::variable
+ * @link https://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::variable
  */
 	public static function variable($string) {
 		if (!($result = static::_cache(__FUNCTION__, $string))) {
@@ -564,7 +564,7 @@ class Inflector {
  * @param string $string the string you want to slug
  * @param string $replacement will replace keys in map
  * @return string
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::slug
+ * @link https://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::slug
  */
 	public static function slug($string, $replacement = '_') {
 		$quotedReplacement = preg_quote($replacement, '/');

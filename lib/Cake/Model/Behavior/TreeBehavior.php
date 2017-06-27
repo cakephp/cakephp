@@ -4,18 +4,18 @@
  *
  * Enables a model object to act as a node-based tree.
  *
- * CakePHP :  Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP :  Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP Project
  * @package       Cake.Model.Behavior
  * @since         CakePHP v 1.2.0.4487
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('ModelBehavior', 'Model');
@@ -27,7 +27,7 @@ App::uses('ModelBehavior', 'Model');
  *
  * @see http://en.wikipedia.org/wiki/Tree_traversal
  * @package       Cake.Model.Behavior
- * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/tree.html
+ * @link https://book.cakephp.org/2.0/en/core-libraries/behaviors/tree.html
  */
 class TreeBehavior extends ModelBehavior {
 
@@ -320,7 +320,7 @@ class TreeBehavior extends ModelBehavior {
  * @param int|string|bool $id The ID of the record to read or false to read all top level nodes
  * @param bool $direct whether to count direct, or all, children
  * @return int number of child nodes
- * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/tree.html#TreeBehavior::childCount
+ * @link https://book.cakephp.org/2.0/en/core-libraries/behaviors/tree.html#TreeBehavior::childCount
  */
 	public function childCount(Model $Model, $id = null, $direct = false) {
 		if (is_array($id)) {
@@ -366,7 +366,7 @@ class TreeBehavior extends ModelBehavior {
  * @param int $page Page number, for accessing paged data
  * @param int $recursive The number of levels deep to fetch associated records
  * @return array Array of child nodes
- * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/tree.html#TreeBehavior::children
+ * @link https://book.cakephp.org/2.0/en/core-libraries/behaviors/tree.html#TreeBehavior::children
  */
 	public function children(Model $Model, $id = null, $direct = false, $fields = null, $order = null, $limit = null, $page = 1, $recursive = null) {
 		$options = array();
@@ -429,7 +429,7 @@ class TreeBehavior extends ModelBehavior {
  * @param string $spacer The character or characters which will be repeated
  * @param int $recursive The number of levels deep to fetch associated records
  * @return array An associative array of records, where the id is the key, and the display field is the value
- * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/tree.html#TreeBehavior::generateTreeList
+ * @link https://book.cakephp.org/2.0/en/core-libraries/behaviors/tree.html#TreeBehavior::generateTreeList
  */
 	public function generateTreeList(Model $Model, $conditions = null, $keyPath = null, $valuePath = null, $spacer = '_', $recursive = null) {
 		$overrideRecursive = $recursive;
@@ -523,7 +523,7 @@ class TreeBehavior extends ModelBehavior {
  * @param string|array $fields Fields to get
  * @param int $recursive The number of levels deep to fetch associated records
  * @return array|bool Array of data for the parent node
- * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/tree.html#TreeBehavior::getParentNode
+ * @link https://book.cakephp.org/2.0/en/core-libraries/behaviors/tree.html#TreeBehavior::getParentNode
  */
 	public function getParentNode(Model $Model, $id = null, $fields = null, $recursive = null) {
 		$options = array();
@@ -582,7 +582,7 @@ class TreeBehavior extends ModelBehavior {
  * @param string|array|null $fields Either a single string of a field name, or an array of field names
  * @param int|null $recursive The number of levels deep to fetch associated records
  * @return array Array of nodes from top most parent to current node
- * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/tree.html#TreeBehavior::getPath
+ * @link https://book.cakephp.org/2.0/en/core-libraries/behaviors/tree.html#TreeBehavior::getPath
  */
 	public function getPath(Model $Model, $id = null, $fields = null, $recursive = null) {
 		$options = array();
@@ -643,7 +643,7 @@ class TreeBehavior extends ModelBehavior {
  * @param int|string|null $id The ID of the record to move
  * @param int|bool $number how many places to move the node or true to move to last position
  * @return bool true on success, false on failure
- * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/tree.html#TreeBehavior::moveDown
+ * @link https://book.cakephp.org/2.0/en/core-libraries/behaviors/tree.html#TreeBehavior::moveDown
  */
 	public function moveDown(Model $Model, $id = null, $number = 1) {
 		if (is_array($id)) {
@@ -697,7 +697,7 @@ class TreeBehavior extends ModelBehavior {
  * @param int|string|null $id The ID of the record to move
  * @param int|bool $number how many places to move the node, or true to move to first position
  * @return bool true on success, false on failure
- * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/tree.html#TreeBehavior::moveUp
+ * @link https://book.cakephp.org/2.0/en/core-libraries/behaviors/tree.html#TreeBehavior::moveUp
  */
 	public function moveUp(Model $Model, $id = null, $number = 1) {
 		if (is_array($id)) {
@@ -755,7 +755,7 @@ class TreeBehavior extends ModelBehavior {
  * @param string|int|null $missingParentAction 'return' to do nothing and return, 'delete' to
  * delete, or the id of the parent to set as the parent_id
  * @return bool true on success, false on failure
- * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/tree.html#TreeBehavior::recover
+ * @link https://book.cakephp.org/2.0/en/core-libraries/behaviors/tree.html#TreeBehavior::recover
  */
 	public function recover(Model $Model, $mode = 'parent', $missingParentAction = null) {
 		if (is_array($mode)) {
@@ -894,7 +894,7 @@ class TreeBehavior extends ModelBehavior {
  * @param Model $Model Model using this behavior
  * @param array $options array of options to use in reordering.
  * @return bool true on success, false on failure
- * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/tree.html#TreeBehavior::reorder
+ * @link https://book.cakephp.org/2.0/en/core-libraries/behaviors/tree.html#TreeBehavior::reorder
  */
 	public function reorder(Model $Model, $options = array()) {
 		$options += array('id' => null, 'field' => $Model->displayField, 'order' => 'ASC', 'verify' => true);
@@ -933,7 +933,7 @@ class TreeBehavior extends ModelBehavior {
  * @param int|string|null $id The ID of the record to remove
  * @param bool $delete whether to delete the node after reparenting children (if any)
  * @return bool true on success, false on failure
- * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/tree.html#TreeBehavior::removeFromTree
+ * @link https://book.cakephp.org/2.0/en/core-libraries/behaviors/tree.html#TreeBehavior::removeFromTree
  */
 	public function removeFromTree(Model $Model, $id = null, $delete = false) {
 		if (is_array($id)) {
@@ -994,7 +994,7 @@ class TreeBehavior extends ModelBehavior {
  * @param Model $Model Model using this behavior
  * @return mixed true if the tree is valid or empty, otherwise an array of (error type [index, node],
  *  [incorrect left/right index,node id], message)
- * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/tree.html#TreeBehavior::verify
+ * @link https://book.cakephp.org/2.0/en/core-libraries/behaviors/tree.html#TreeBehavior::verify
  */
 	public function verify(Model $Model) {
 		extract($this->settings[$Model->alias]);

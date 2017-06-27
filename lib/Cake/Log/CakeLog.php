@@ -4,18 +4,18 @@
  *
  * Log messages to text files.
  *
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @package       Cake.Log
  * @since         CakePHP(tm) v 0.2.9
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('LogEngineCollection', 'Log');
@@ -70,7 +70,7 @@ App::uses('LogEngineCollection', 'Log');
  * on scopes
  *
  * @package       Cake.Log
- * @link http://book.cakephp.org/2.0/en/core-libraries/logging.html#logging
+ * @link https://book.cakephp.org/2.0/en/core-libraries/logging.html#logging
  */
 class CakeLog {
 
@@ -187,7 +187,7 @@ class CakeLog {
  * @param array $config Array of configuration information for the logger
  * @return bool success of configuration.
  * @throws CakeLogException
- * @link http://book.cakephp.org/2.0/en/core-libraries/logging.html#creating-and-configuring-log-streams
+ * @link https://book.cakephp.org/2.0/en/core-libraries/logging.html#creating-and-configuring-log-streams
  */
 	public static function config($key, $config) {
 		if (!preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*/', $key)) {
@@ -403,7 +403,7 @@ class CakeLog {
  * @param string|array $scope The scope(s) a log message is being created in.
  *    See CakeLog::config() for more information on logging scopes.
  * @return bool Success
- * @link http://book.cakephp.org/2.0/en/core-libraries/logging.html#writing-to-logs
+ * @link https://book.cakephp.org/2.0/en/core-libraries/logging.html#writing-to-logs
  */
 	public static function write($type, $message, $scope = array()) {
 		if (empty(static::$_Collection)) {

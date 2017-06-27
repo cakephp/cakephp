@@ -2,18 +2,18 @@
 /**
  * App class
  *
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @package       Cake.Core
  * @since         CakePHP(tm) v 1.2.0.6001
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('Inflector', 'Utility');
@@ -59,7 +59,7 @@ App::uses('CakePlugin', 'Core');
  * You can find out which objects App knows about using App::objects('Controller') for example to find
  * which application controllers App knows about.
  *
- * @link          http://book.cakephp.org/2.0/en/core-utility-libraries/app.html
+ * @link          https://book.cakephp.org/2.0/en/core-utility-libraries/app.html
  * @package       Cake.Core
  */
 class App {
@@ -215,7 +215,7 @@ class App {
  * @param string $type type of path
  * @param string $plugin name of plugin
  * @return array
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::path
+ * @link https://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::path
  */
 	public static function path($type, $plugin = null) {
 		if (!empty(static::$legacy[$type])) {
@@ -246,7 +246,7 @@ class App {
  * use App::path()
  *
  * @return array An array of packages and their associated paths.
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::paths
+ * @link https://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::paths
  */
 	public static function paths() {
 		return static::$_packages;
@@ -273,7 +273,7 @@ class App {
  * @param bool|string $mode App::RESET will set paths, App::APPEND with append paths, App::PREPEND will prepend paths (default)
  * 	App::REGISTER will register new packages and their paths, %s in path will be replaced by APP path
  * @return void
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::build
+ * @link https://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::build
  */
 	public static function build($paths = array(), $mode = App::PREPEND) {
 		//Provides Backwards compatibility for old-style package names
@@ -360,7 +360,7 @@ class App {
  *
  * @param string $plugin CamelCased/lower_cased plugin name to find the path of.
  * @return string full path to the plugin.
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::pluginPath
+ * @link https://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::pluginPath
  * @deprecated 3.0.0 Use `CakePlugin::path()` instead.
  */
 	public static function pluginPath($plugin) {
@@ -376,7 +376,7 @@ class App {
  *
  * @param string $theme theme name to find the path of.
  * @return string full path to the theme.
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::themePath
+ * @link https://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::themePath
  */
 	public static function themePath($theme) {
 		$themeDir = 'Themed' . DS . Inflector::camelize($theme);
@@ -397,7 +397,7 @@ class App {
  *
  * @param string $type Package type.
  * @return array full path to package
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::core
+ * @link https://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::core
  */
 	public static function core($type) {
 		return array(CAKE . str_replace('/', DS, $type) . DS);
@@ -424,7 +424,7 @@ class App {
  * @param string|array $path Optional Scan only the path given. If null, paths for the chosen type will be used.
  * @param bool $cache Set to false to rescan objects of the chosen type. Defaults to true.
  * @return mixed Either false on incorrect / miss. Or an array of found objects.
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::objects
+ * @link https://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::objects
  */
 	public static function objects($type, $path = null, $cache = true) {
 		if (empty(static::$_objects) && $cache === true) {
@@ -516,7 +516,7 @@ class App {
  * @param string $className the name of the class to configure package for
  * @param string $location the package name
  * @return void
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::uses
+ * @link https://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::uses
  */
 	public static function uses($className, $location) {
 		static::$_classMap[$className] = $location;
@@ -576,7 +576,7 @@ class App {
  *
  * @param string $className name of the class to obtain the package name from
  * @return string|null Package name, or null if not declared
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::location
+ * @link https://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::location
  */
 	public static function location($className) {
 		if (!empty(static::$_classMap[$className])) {
@@ -601,7 +601,7 @@ class App {
  * @param bool $return Return the loaded file, the file must have a return
  *   statement in it to work: return $variable;
  * @return bool true if Class is already in memory or if file is found and loaded, false if not
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#including-files-with-app-import
+ * @link https://book.cakephp.org/2.0/en/core-utility-libraries/app.html#including-files-with-app-import
  */
 	public static function import($type = null, $name = null, $parent = true, $search = array(), $file = null, $return = false) {
 		$ext = null;

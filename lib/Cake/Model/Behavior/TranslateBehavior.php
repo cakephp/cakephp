@@ -1,17 +1,17 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @package       Cake.Model.Behavior
  * @since         CakePHP(tm) v 1.2.0.4525
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('ModelBehavior', 'Model');
@@ -22,7 +22,7 @@ App::uses('I18nModel', 'Model');
  * Translate behavior
  *
  * @package       Cake.Model.Behavior
- * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/translate.html
+ * @link https://book.cakephp.org/2.0/en/core-libraries/behaviors/translate.html
  */
 class TranslateBehavior extends ModelBehavior {
 
@@ -60,6 +60,25 @@ class TranslateBehavior extends ModelBehavior {
  * $config could be empty - and translations configured dynamically by
  * bindTranslation() method
  *
+ * By default INNER joins are used to fetch translations. In order to use
+ * other join types $config should contain 'joinType' key:
+ * ```
+ * array(
+ *     'fields' => array('field_one', 'field_two' => 'FieldAssoc', 'field_three'),
+ *     'joinType' => 'LEFT',
+ * )
+ * ```
+ * In a model it may be configured this way:
+ * ```
+ * public $actsAs = array(
+ *     'Translate' => array(
+ *         'content',
+ *         'title',
+ *         'joinType' => 'LEFT',
+ *     ),
+ * );
+ * ```
+ *
  * @param Model $Model Model the behavior is being attached to.
  * @param array $config Array of configuration information.
  * @return mixed
@@ -75,7 +94,14 @@ class TranslateBehavior extends ModelBehavior {
 		}
 
 		$this->settings[$Model->alias] = array();
-		$this->runtime[$Model->alias] = array('fields' => array());
+		$this->runtime[$Model->alias] = array(
+			'fields' => array(),
+			'joinType' => 'INNER',
+		);
+		if (isset($config['joinType'])) {
+			$this->runtime[$Model->alias]['joinType'] = $config['joinType'];
+			unset($config['joinType']);
+		}
 		$this->translateModel($Model);
 		return $this->bindTranslation($Model, $config, false);
 	}
@@ -124,7 +150,7 @@ class TranslateBehavior extends ModelBehavior {
 		if (is_string($query['fields']) && $query['fields'] === "COUNT(*) AS {$db->name('count')}") {
 			$query['fields'] = "COUNT(DISTINCT({$db->name($Model->escapeField())})) {$db->alias}count";
 			$query['joins'][] = array(
-				'type' => 'INNER',
+				'type' => $this->runtime[$Model->alias]['joinType'],
 				'alias' => $RuntimeModel->alias,
 				'table' => $joinTable,
 				'conditions' => array(
@@ -254,7 +280,7 @@ class TranslateBehavior extends ModelBehavior {
 				$query['fields'][] = $aliasVirtual;
 			}
 			$query['joins'][] = array(
-				'type' => 'INNER',
+				'type' => $this->runtime[$Model->alias]['joinType'],
 				'alias' => $alias,
 				'table' => $joinTable,
 				'conditions' => array(

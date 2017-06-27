@@ -4,18 +4,18 @@
  *
  * Series of tests for email component.
  *
- * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) Tests <https://book.cakephp.org/2.0/en/development/testing.html>
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Controller.Component
  * @since         CakePHP(tm) v 1.2.0.5347
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('Controller', 'Controller');
@@ -243,7 +243,7 @@ HEADBLOC;
 
 This is the body of the message
 
-This email was sent using the CakePHP Framework, http://cakephp.org.
+This email was sent using the CakePHP Framework, https://cakephp.org.
 TEXTBLOC;
 
 		$html = <<<HTMLBLOC
@@ -256,7 +256,7 @@ TEXTBLOC;
 
 <body>
 	<p> This is the body of the message</p><p> </p>
-	<p>This email was sent using the <a href="http://cakephp.org">CakePHP Framework</a></p>
+	<p>This email was sent using the <a href="https://cakephp.org">CakePHP Framework</a></p>
 </body>
 </html>
 HTMLBLOC;
@@ -488,7 +488,7 @@ HTMLBLOC;
 		$text = <<<TEXTBLOC
 
 Here is your value: 22091985
-This email was sent using the CakePHP Framework, http://cakephp.org.
+This email was sent using the CakePHP Framework, https://cakephp.org.
 TEXTBLOC;
 
 		$html = <<<HTMLBLOC
@@ -502,7 +502,7 @@ TEXTBLOC;
 <body>
 	<p>Here is your value: <b>22091985</b></p>
 
-	<p>This email was sent using the <a href="http://cakephp.org">CakePHP Framework</a></p>
+	<p>This email was sent using the <a href="https://cakephp.org">CakePHP Framework</a></p>
 </body>
 </html>
 HTMLBLOC;

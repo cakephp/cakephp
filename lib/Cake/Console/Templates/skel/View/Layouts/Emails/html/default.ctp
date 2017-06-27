@@ -1,6 +1,6 @@
 <?php
 /**
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @package       app.View.Layouts.Email.html
  * @since         CakePHP(tm) v 0.10.0.1076
  */
@@ -13,6 +13,6 @@
 <body>
 	<?php echo $this->fetch('content'); ?>
 
-	<p>This email was sent using the <a href="http://cakephp.org">CakePHP Framework</a></p>
+	<p>This email was sent using the <a href="https://cakephp.org">CakePHP Framework</a></p>
 </body>
 </html>

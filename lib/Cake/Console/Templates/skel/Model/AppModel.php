@@ -5,7 +5,7 @@
  * This file is application-wide model file. You can put all
  * application-wide model-related methods here.
  *
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @package       app.Model
  * @since         CakePHP(tm) v 0.2.9
  */

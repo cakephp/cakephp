@@ -2,18 +2,18 @@
 /**
  * Cookie Component
  *
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @package       Cake.Controller.Component
  * @since         CakePHP(tm) v 1.2.0.4213
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('Component', 'Controller');
@@ -26,7 +26,7 @@ App::uses('Hash', 'Utility');
  * Cookie handling for the controller.
  *
  * @package       Cake.Controller.Component
- * @link http://book.cakephp.org/2.0/en/core-libraries/components/cookie.html
+ * @link https://book.cakephp.org/2.0/en/core-libraries/components/cookie.html
  */
 class CookieComponent extends Component {
 
@@ -211,7 +211,7 @@ class CookieComponent extends Component {
  * @param int|string $expires Can be either the number of seconds until a cookie
  *   expires, or a strtotime compatible time offset.
  * @return void
- * @link http://book.cakephp.org/2.0/en/core-libraries/components/cookie.html#CookieComponent::write
+ * @link https://book.cakephp.org/2.0/en/core-libraries/components/cookie.html#CookieComponent::write
  */
 	public function write($key, $value = null, $encrypt = true, $expires = null) {
 		if (empty($this->_values[$this->name])) {
@@ -262,7 +262,7 @@ class CookieComponent extends Component {
  *
  * @param string $key Key of the value to be obtained. If none specified, obtain map key => values
  * @return string|null Value for specified key
- * @link http://book.cakephp.org/2.0/en/core-libraries/components/cookie.html#CookieComponent::read
+ * @link https://book.cakephp.org/2.0/en/core-libraries/components/cookie.html#CookieComponent::read
  */
 	public function read($key = null) {
 		if (empty($this->_values[$this->name]) && isset($_COOKIE[$this->name])) {
@@ -322,7 +322,7 @@ class CookieComponent extends Component {
  *
  * @param string $key Key of the value to be deleted
  * @return void
- * @link http://book.cakephp.org/2.0/en/core-libraries/components/cookie.html#CookieComponent::delete
+ * @link https://book.cakephp.org/2.0/en/core-libraries/components/cookie.html#CookieComponent::delete
  */
 	public function delete($key) {
 		if (empty($this->_values[$this->name])) {
@@ -352,7 +352,7 @@ class CookieComponent extends Component {
  * Failure to do so will result in header already sent errors.
  *
  * @return void
- * @link http://book.cakephp.org/2.0/en/core-libraries/components/cookie.html#CookieComponent::destroy
+ * @link https://book.cakephp.org/2.0/en/core-libraries/components/cookie.html#CookieComponent::destroy
  */
 	public function destroy() {
 		if (isset($_COOKIE[$this->name])) {
