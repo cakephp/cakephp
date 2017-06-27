@@ -528,6 +528,29 @@ class TranslateBehaviorTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 	}
 
+	public function testMissingTranslationLeftJoin() {
+		$this->loadFixtures('Translate', 'TranslatedItem');
+		$expected = array(
+			'TranslatedItem' => Array (
+				'id' => '1',
+				'translated_article_id' => '1',
+				'slug' => 'first_translated',
+				'locale' => 'rus',
+				'content' => '',
+				'title' => '',
+			),
+		);
+
+		$TestModel = new TranslatedItemLeftJoin();
+		$TestModel->locale = 'rus';
+		$result = $TestModel->read(null, 1);
+		$this->assertEquals($expected, $result);
+
+		$TestModel->locale = array('rus');
+		$result = $TestModel->read(null, 1);
+		$this->assertEquals($expected, $result);
+	}
+
 /**
  * testTranslatedFindList method
  *

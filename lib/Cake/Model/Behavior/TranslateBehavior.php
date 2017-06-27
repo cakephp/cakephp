@@ -60,6 +60,25 @@ class TranslateBehavior extends ModelBehavior {
  * $config could be empty - and translations configured dynamically by
  * bindTranslation() method
  *
+ * By default INNER joins are used to fetch translations. In order to use
+ * other join types $config should contain 'joinType' key:
+ * ```
+ * array(
+ *     'fields' => array('field_one', 'field_two' => 'FieldAssoc', 'field_three'),
+ *     'joinType' => 'LEFT',
+ * )
+ * ```
+ * In a model it may be configured this way:
+ * ```
+ * public $actsAs = array(
+ *     'Translate' => array(
+ *         'content',
+ *         'title',
+ *         'joinType' => 'LEFT',
+ *     ),
+ * );
+ * ```
+ *
  * @param Model $Model Model the behavior is being attached to.
  * @param array $config Array of configuration information.
  * @return mixed
@@ -75,7 +94,14 @@ class TranslateBehavior extends ModelBehavior {
 		}
 
 		$this->settings[$Model->alias] = array();
-		$this->runtime[$Model->alias] = array('fields' => array());
+		$this->runtime[$Model->alias] = array(
+			'fields' => array(),
+			'joinType' => 'INNER',
+		);
+		if (isset($config['joinType'])) {
+			$this->runtime[$Model->alias]['joinType'] = $config['joinType'];
+			unset($config['joinType']);
+		}
 		$this->translateModel($Model);
 		return $this->bindTranslation($Model, $config, false);
 	}
@@ -124,7 +150,7 @@ class TranslateBehavior extends ModelBehavior {
 		if (is_string($query['fields']) && $query['fields'] === "COUNT(*) AS {$db->name('count')}") {
 			$query['fields'] = "COUNT(DISTINCT({$db->name($Model->escapeField())})) {$db->alias}count";
 			$query['joins'][] = array(
-				'type' => 'INNER',
+				'type' => $this->runtime[$Model->alias]['joinType'],
 				'alias' => $RuntimeModel->alias,
 				'table' => $joinTable,
 				'conditions' => array(
@@ -254,7 +280,7 @@ class TranslateBehavior extends ModelBehavior {
 				$query['fields'][] = $aliasVirtual;
 			}
 			$query['joins'][] = array(
-				'type' => 'INNER',
+				'type' => $this->runtime[$Model->alias]['joinType'],
 				'alias' => $alias,
 				'table' => $joinTable,
 				'conditions' => array(
