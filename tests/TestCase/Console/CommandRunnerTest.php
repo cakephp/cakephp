@@ -138,19 +138,17 @@ class CommandRunnerTest extends TestCase
      *
      * @return void
      */
-    public function testRunVersionLongOption()
+    public function testRunVersionAlias()
     {
-        $this->markTestIncomplete();
-    }
+        $app = $this->getMockBuilder(BaseApplication::class)
+            ->setMethods(['middleware', 'bootstrap'])
+            ->setConstructorArgs([$this->config])
+            ->getMock();
 
-    /**
-     * Test using `cake -v` invokes the version command
-     *
-     * @return void
-     */
-    public function testRunVersionShortOption()
-    {
-        $this->markTestIncomplete();
+        $output = new ConsoleOutput();
+        $runner = new CommandRunner($app, 'cake');
+        $result = $runner->run(['cake', '--version'], $this->getMockIo($output));
+        $this->assertContains(Configure::version(), $output->messages()[0]);
     }
 
     /**
