@@ -128,6 +128,30 @@ class ConsoleIntegrationTestCaseTest extends ConsoleIntegrationTestCase
     }
 
     /**
+     * tests assertOutputRegExp assertion
+     *
+     * @return void
+     */
+    public function testAssertOutputRegExp()
+    {
+        $this->exec('routes');
+
+        $this->assertOutputRegExp('/^\+[\-\+]+\+$/m');
+    }
+
+    /**
+     * tests assertErrorRegExp assertion
+     *
+     * @return void
+     */
+    public function testAssertErrorRegExp()
+    {
+        $this->exec('integration args_and_options');
+
+        $this->assertErrorRegExp('/\<error\>(.+)\<\/error\>/');
+    }
+
+    /**
      * tests _commandStringToArgs
      *
      * @return void

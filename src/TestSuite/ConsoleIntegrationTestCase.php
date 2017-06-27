@@ -152,6 +152,19 @@ class ConsoleIntegrationTestCase extends TestCase
     }
 
     /**
+     * Asserts `stdout` contains expected regexp
+     *
+     * @param string $pattern Expected pattern
+     * @param string $message Failure message
+     * @return void
+     */
+    public function assertOutputRegExp($pattern, $message = '')
+    {
+        $output = implode(PHP_EOL, $this->_out->messages());
+        $this->assertRegExp($pattern, $output, $message);
+    }
+
+    /**
      * Asserts `stderr` contains expected output
      *
      * @param string $expected Expected output
@@ -162,6 +175,19 @@ class ConsoleIntegrationTestCase extends TestCase
     {
         $output = implode(PHP_EOL, $this->_err->messages());
         $this->assertContains($expected, $output, $message);
+    }
+
+    /**
+     * Asserts `stderr` contains expected regexp
+     *
+     * @param string $pattern Expected pattern
+     * @param string $message Failure message
+     * @return void
+     */
+    public function assertErrorRegExp($pattern, $message = '')
+    {
+        $output = implode(PHP_EOL, $this->_err->messages());
+        $this->assertRegExp($pattern, $output, $message);
     }
 
     /**
