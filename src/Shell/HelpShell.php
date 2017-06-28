@@ -25,6 +25,11 @@ use SimpleXmlElement;
  */
 class HelpShell extends Shell
 {
+    /**
+     * The command collection to get help on.
+     *
+     * @var \Cake\Console\CommandCollection
+     */
     protected $commands;
 
     /**
@@ -69,12 +74,12 @@ class HelpShell extends Shell
 
         if (!$this->commands) {
             $this->err('Could not print command list, no CommandCollection was set using setCommandCollection()');
+
             return;
         }
 
         if ($this->param('xml')) {
-            $this->asXml($this->commands);
-            return;
+            return $this->asXml($this->commands);
         }
         $this->asText($this->commands);
     }
