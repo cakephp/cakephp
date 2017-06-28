@@ -492,6 +492,7 @@ class RouteCollection
     {
         foreach ($middleware as $name) {
             if (!$this->hasMiddleware($name)) {
+                $message = '';
                 if ($mode === self::APPLY) {
                     $message = "Cannot apply '$name' middleware to path '$path'. It has not been registered.";
                 }
