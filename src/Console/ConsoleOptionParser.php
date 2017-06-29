@@ -135,12 +135,12 @@ class ConsoleOptionParser
     protected $_tokens = [];
 
     /**
-     * Help alias used in the HelpFormatter.
+     * Root alias used in help output
      *
      * @see \Cake\Console\HelpFormatter::setAlias()
      * @var string
      */
-    protected $_helpAlias = 'cake';
+    protected $rootName = 'cake';
 
     /**
      * Construct an OptionParser so you can define its behavior
@@ -719,6 +719,7 @@ class ConsoleOptionParser
 
     /**
      * Gets formatted help for this parser object.
+     *
      * Generates help text based on the description, options, arguments, subcommands and epilog
      * in the parser.
      *
@@ -745,7 +746,7 @@ class ConsoleOptionParser
         }
 
         $formatter = new HelpFormatter($this);
-        $formatter->setAlias($this->_helpAlias);
+        $formatter->setAlias($this->rootName);
 
         if ($format === 'text') {
             return $formatter->text($width);
@@ -760,10 +761,24 @@ class ConsoleOptionParser
      *
      * @param string $alias The alias
      * @return void
+     * @deprecated 3.5.0 Use setRootName() instead.
      */
     public function setHelpAlias($alias)
     {
-        $this->_helpAlias = $alias;
+        $this->rootName = $alias;
+    }
+
+    /**
+     * Set the root name used in the HelpFormatter
+     *
+     * @param string $name The root command name
+     * @return void
+     */
+    public function setRootName($name)
+    {
+        $this->rootName = (string)$name;
+
+        return $this;
     }
 
     /**

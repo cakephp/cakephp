@@ -771,6 +771,34 @@ TEXT;
     }
 
     /**
+     * test that help() with a custom rootName
+     *
+     * @return void
+     */
+    public function testHelpWithRootName()
+    {
+        $parser = new ConsoleOptionParser('sample', false);
+        $parser->description('A command!')
+            ->setRootName('tool')
+            ->addOption('test', ['help' => 'A test option.']);
+
+        $result = $parser->help();
+        $expected = <<<TEXT
+A command!
+
+<info>Usage:</info>
+tool sample [-h] [--test]
+
+<info>Options:</info>
+
+--help, -h  Display this help.
+--test      A test option.
+
+TEXT;
+        $this->assertTextEquals($expected, $result, 'Help is not correct.');
+    }
+
+    /**
      * test building a parser from an array.
      *
      * @return void
