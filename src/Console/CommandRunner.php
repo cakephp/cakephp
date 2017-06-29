@@ -165,7 +165,7 @@ class CommandRunner
         if (is_string($instance)) {
             $instance = new $instance($io);
         }
-        // TODO Should this be an interface?
+        // Moving to an interface/method on Shell soon.
         if (method_exists($instance, 'setCommandCollection')) {
             $instance->setCommandCollection($commands);
         }
