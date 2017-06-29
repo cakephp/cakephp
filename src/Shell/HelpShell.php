@@ -79,7 +79,9 @@ class HelpShell extends Shell
         }
 
         if ($this->param('xml')) {
-            return $this->asXml($this->commands);
+            $this->asXml($this->commands);
+
+            return;
         }
         $this->asText($this->commands);
     }
