@@ -120,7 +120,19 @@ class CommandRunnerTest extends TestCase
      */
     public function testRunHelpLongOption()
     {
-        $this->markTestIncomplete();
+        $app = $this->getMockBuilder(BaseApplication::class)
+            ->setMethods(['middleware', 'bootstrap'])
+            ->setConstructorArgs([$this->config])
+            ->getMock();
+
+        $output = new ConsoleOutput();
+        $runner = new CommandRunner($app, 'cake');
+        $result = $runner->run(['cake', '--help'], $this->getMockIo($output));
+        $this->assertSame(0, $result);
+        $messages = implode("\n", $output->messages());
+        $this->assertContains('Current Paths', $messages);
+        $this->assertContains('- i18n', $messages);
+        $this->assertContains('Available Commands', $messages);
     }
 
     /**
@@ -130,7 +142,18 @@ class CommandRunnerTest extends TestCase
      */
     public function testRunHelpShortOption()
     {
-        $this->markTestIncomplete();
+        $app = $this->getMockBuilder(BaseApplication::class)
+            ->setMethods(['middleware', 'bootstrap'])
+            ->setConstructorArgs([$this->config])
+            ->getMock();
+
+        $output = new ConsoleOutput();
+        $runner = new CommandRunner($app, 'cake');
+        $result = $runner->run(['cake', '-h'], $this->getMockIo($output));
+        $this->assertSame(0, $result);
+        $messages = implode("\n", $output->messages());
+        $this->assertContains('- i18n', $messages);
+        $this->assertContains('Available Commands', $messages);
     }
 
     /**
