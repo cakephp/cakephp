@@ -169,6 +169,7 @@ class CommandRunner
         if (method_exists($instance, 'setCommandCollection')) {
             $instance->setCommandCollection($commands);
         }
+        $instance->setRootName($this->root);
 
         return $instance;
     }

@@ -241,6 +241,30 @@ class CommandRunnerTest extends TestCase
         $this->assertSame(99, $result);
     }
 
+    /**
+     * Ensure that the root command name propagates to shell help
+     *
+     * @return void
+     */
+    public function testRunRootNamePropagates()
+    {
+        $app = $this->getMockBuilder(BaseApplication::class)
+            ->setMethods(['middleware', 'bootstrap', 'console'])
+            ->setConstructorArgs([$this->config])
+            ->getMock();
+
+        $commands = new CommandCollection(['sample' => SampleShell::class]);
+        $app->method('console')->will($this->returnValue($commands));
+
+        $output = new ConsoleOutput();
+
+        $runner = new CommandRunner($app, 'widget');
+        $runner->run(['widget', 'sample', '-h'], $this->getMockIo($output));
+        $result = implode("\n", $output->messages());
+        $this->assertContains('widget sample [-h]', $result);
+        $this->assertNotContains('cake sample [-h]', $result);
+    }
+
     protected function getMockIo($output)
     {
         $io = $this->getMockBuilder(ConsoleIo::class)
