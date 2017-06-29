@@ -741,6 +741,7 @@ class ConsoleOptionParser
                 $subparser->setDescription($command->getRawHelp());
             }
             $subparser->setCommand($this->getCommand() . ' ' . $subcommand);
+            $subparser->setRootName($this->rootName);
 
             return $subparser->help(null, $format, $width);
         }

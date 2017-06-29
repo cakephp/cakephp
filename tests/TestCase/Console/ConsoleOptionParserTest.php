@@ -747,9 +747,10 @@ TEXT;
 
         $parser = new ConsoleOptionParser('mycommand', false);
         $parser->addSubcommand('method', [
-            'help' => 'This is a subcommand',
-            'parser' => $subParser
-        ])
+                'help' => 'This is a subcommand',
+                'parser' => $subParser
+            ])
+            ->setRootName('tool')
             ->addOption('test', ['help' => 'A test option.']);
 
         $result = $parser->help('method');
@@ -757,7 +758,7 @@ TEXT;
 This is a subcommand
 
 <info>Usage:</info>
-cake mycommand method [-f] [-h] [-q] [-v]
+tool mycommand method [-f] [-h] [-q] [-v]
 
 <info>Options:</info>
 
