@@ -16,6 +16,7 @@
 namespace Cake\Shell;
 
 use Cake\Console\CommandCollection;
+use Cake\Console\CommandCollectionAwareInterface;
 use Cake\Console\ConsoleOutput;
 use Cake\Console\Shell;
 use SimpleXmlElement;
@@ -23,7 +24,7 @@ use SimpleXmlElement;
 /**
  * Print out command list
  */
-class HelpShell extends Shell
+class HelpShell extends Shell implements CommandCollectionAwareInterface
 {
     /**
      * The command collection to get help on.
@@ -45,10 +46,7 @@ class HelpShell extends Shell
     }
 
     /**
-     * Set the command collection being used.
-     *
-     * @param \Cake\Console\CommandCollection $commands The commands to use.
-     * @return void
+     * {@inheritDoc}
      */
     public function setCommandCollection(CommandCollection $commands)
     {

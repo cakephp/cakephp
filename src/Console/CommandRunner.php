@@ -15,6 +15,7 @@
 namespace Cake\Console;
 
 use Cake\Console\CommandCollection;
+use Cake\Console\CommandCollectionAwareInterface;
 use Cake\Console\ConsoleIo;
 use Cake\Console\Exception\StopException;
 use Cake\Console\Shell;
@@ -165,11 +166,10 @@ class CommandRunner
         if (is_string($instance)) {
             $instance = new $instance($io);
         }
-        // Moving to an interface/method on Shell soon.
-        if (method_exists($instance, 'setCommandCollection')) {
+        $instance->setRootName($this->root);
+        if ($instance instanceof CommandCollectionAwareInterface) {
             $instance->setCommandCollection($commands);
         }
-        $instance->setRootName($this->root);
 
         return $instance;
     }
