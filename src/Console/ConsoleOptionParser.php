@@ -773,7 +773,7 @@ class ConsoleOptionParser
      * Set the root name used in the HelpFormatter
      *
      * @param string $name The root command name
-     * @return void
+     * @return $this
      */
     public function setRootName($name)
     {
