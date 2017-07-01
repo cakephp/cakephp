@@ -140,3 +140,18 @@ if (!function_exists('dd')) {
         die(1);
     }
 }
+
+if (!function_exists('loadPHPUnitAliases')) {
+    /**
+     * Loads PHPUnit aliases
+     *
+     * This is an internal function used for backwards compatibility during
+     * fixture related tests.
+     *
+     * @return void
+     */
+    function loadPHPUnitAliases()
+    {
+        require_once dirname(__DIR__) . DS . 'tests' . DS . 'phpunit_aliases.php';
+    }
+}
