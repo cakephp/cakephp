@@ -595,11 +595,12 @@ class Marshaller
         }
 
         foreach ((array)$options['fields'] as $field) {
-            if (array_key_exists($field, $properties)) {
-                $entity->set($field, $properties[$field]);
-                if ($properties[$field] instanceof EntityInterface) {
-                    $entity->setDirty($field, $properties[$field]->isDirty());
-                }
+            if (!array_key_exists($field, $properties)) {
+                continue;
+            }
+            $entity->set($field, $properties[$field]);
+            if ($properties[$field] instanceof EntityInterface) {
+                $entity->setDirty($field, $properties[$field]->isDirty());
             }
         }
 
