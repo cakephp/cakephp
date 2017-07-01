@@ -227,8 +227,7 @@ trait EntityTrait
      */
     public function set($property, $value = null, array $options = [])
     {
-        $isString = is_string($property);
-        if ($isString && $property !== '') {
+        if (is_string($property) && $property !== '') {
             $guard = false;
             $property = [$property => $value];
         } else {
