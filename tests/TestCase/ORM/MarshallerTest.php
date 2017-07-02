@@ -367,6 +367,48 @@ class MarshallerTest extends TestCase
     }
 
     /**
+     * Test that one() correctly handles an association beforeMarshal
+     * making the association empty.
+     *
+     * @return void
+     */
+    public function testOneAssociationBeforeMarshalMutation()
+    {
+        $users = TableRegistry::get('Users');
+        $articles = TableRegistry::get('Articles');
+
+        $users->hasOne('Articles', [
+            'foreignKey' => 'author_id'
+        ]);
+        $articles->eventManager()->on('Model.beforeMarshal', function ($event, $data, $options) {
+            // Blank the association, so it doesn't become dirty.
+            unset($data['not_a_real_field']);
+        });
+
+        $data = [
+            'username' => 'Jen',
+            'article' => [
+                'not_a_real_field' => 'whatever'
+            ]
+        ];
+        $marshall = new Marshaller($users);
+        $entity = $marshall->one($data, ['associated' => ['Articles']]);
+        $this->assertTrue($entity->isDirty('username'));
+        $this->assertFalse($entity->isDirty('article'));
+
+        // Ensure consistency with merge()
+        $entity = new Entity([
+            'username' => 'Jenny',
+        ]);
+        // Make the entity think it is new.
+        $entity->accessible('*', true);
+        $entity->clean();
+        $entity = $marshall->merge($entity, $data, ['associated' => ['Articles']]);
+        $this->assertTrue($entity->isDirty('username'));
+        $this->assertFalse($entity->isDirty('article'));
+    }
+
+    /**
      * Test one() supports accessibleFields option for associations
      *
      * @return void

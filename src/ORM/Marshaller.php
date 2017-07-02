@@ -212,6 +212,14 @@ class Marshaller
             $entity->set($properties);
         }
 
+        // Don't flag clean association entities as
+        // dirty so we don't persist empty records.
+        foreach ($properties as $field => $value) {
+            if ($value instanceof EntityInterface) {
+                $entity->dirty($field, $value->dirty());
+            }
+        }
+
         $entity->setErrors($errors);
 
         return $entity;
@@ -587,11 +595,12 @@ class Marshaller
         }
 
         foreach ((array)$options['fields'] as $field) {
-            if (array_key_exists($field, $properties)) {
-                $entity->set($field, $properties[$field]);
-                if ($properties[$field] instanceof EntityInterface) {
-                    $entity->setDirty($field, $properties[$field]->isDirty());
-                }
+            if (!array_key_exists($field, $properties)) {
+                continue;
+            }
+            $entity->set($field, $properties[$field]);
+            if ($properties[$field] instanceof EntityInterface) {
+                $entity->setDirty($field, $properties[$field]->isDirty());
             }
         }
 
