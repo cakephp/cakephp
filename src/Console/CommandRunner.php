@@ -19,6 +19,7 @@ use Cake\Console\CommandCollectionAwareInterface;
 use Cake\Console\ConsoleIo;
 use Cake\Console\Exception\StopException;
 use Cake\Console\Shell;
+use Cake\Event\EventManagerTrait;
 use Cake\Http\BaseApplication;
 use Cake\Shell\HelpShell;
 use Cake\Shell\VersionShell;
@@ -29,6 +30,8 @@ use RuntimeException;
  */
 class CommandRunner
 {
+    use EventManagerTrait;
+
     /**
      * The application console commands are being run for.
      *
@@ -93,6 +96,13 @@ class CommandRunner
     /**
      * Run the command contained in $argv.
      *
+     * Use the application to do the following:
+     *
+     * - Bootstrap the application
+     * - Create the CommandCollection using the console() hook on the application.
+     * - Trigger the `Console.buildCommands` event of auto-wiring plugins.
+     * - Run the requested command.
+     *
      * @param array $argv The arguments from the CLI environment.
      * @param \Cake\Console\ConsoleIo $io The ConsoleIo instance. Used primarily for testing.
      * @return int The exit code of the command.
@@ -114,6 +124,8 @@ class CommandRunner
                 " Got '{$type}' instead."
             );
         }
+        $this->dispatchEvent('Console.buildCommands', ['commands' => $commands]);
+
         if (empty($argv) || $argv[0] !== $this->root) {
             $command = empty($argv) ? '' : " `{$argv[0]}`";
             throw new RuntimeException(

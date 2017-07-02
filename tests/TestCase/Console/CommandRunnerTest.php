@@ -30,6 +30,13 @@ use TestApp\Shell\SampleShell;
 class CommandRunnerTest extends TestCase
 {
     /**
+     * Tracking property for event triggering
+     *
+     * @var bool
+     */
+    protected $eventTriggered = false;
+
+    /**
      * setup
      *
      * @return void
@@ -263,6 +270,28 @@ class CommandRunnerTest extends TestCase
         $result = implode("\n", $output->messages());
         $this->assertContains('widget sample [-h]', $result);
         $this->assertNotContains('cake sample [-h]', $result);
+    }
+
+    /**
+     * Test that run() fires off the buildCommands event.
+     *
+     * @return void
+     */
+    public function testRunTriggersBuildCommandsEvent()
+    {
+        $app = $this->getMockBuilder(BaseApplication::class)
+            ->setMethods(['middleware', 'bootstrap'])
+            ->setConstructorArgs([$this->config])
+            ->getMock();
+
+        $output = new ConsoleOutput();
+        $runner = new CommandRunner($app, 'cake');
+        $runner->getEventManager()->on('Console.buildCommands', function ($event, $commands) {
+            $this->assertInstanceOf(CommandCollection::class, $commands);
+            $this->eventTriggered = true;
+        });
+        $result = $runner->run(['cake', '--version'], $this->getMockIo($output));
+        $this->assertTrue($this->eventTriggered, 'Should have triggered event.');
     }
 
     protected function getMockIo($output)
