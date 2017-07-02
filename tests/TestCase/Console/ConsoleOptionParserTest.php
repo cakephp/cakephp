@@ -747,9 +747,10 @@ TEXT;
 
         $parser = new ConsoleOptionParser('mycommand', false);
         $parser->addSubcommand('method', [
-            'help' => 'This is a subcommand',
-            'parser' => $subParser
-        ])
+                'help' => 'This is a subcommand',
+                'parser' => $subParser
+            ])
+            ->setRootName('tool')
             ->addOption('test', ['help' => 'A test option.']);
 
         $result = $parser->help('method');
@@ -757,7 +758,7 @@ TEXT;
 This is a subcommand
 
 <info>Usage:</info>
-cake mycommand method [-f] [-h] [-q] [-v]
+tool mycommand method [-f] [-h] [-q] [-v]
 
 <info>Options:</info>
 
@@ -765,6 +766,34 @@ cake mycommand method [-f] [-h] [-q] [-v]
 --help, -h     Display this help.
 --quiet, -q    Enable quiet output.
 --verbose, -v  Enable verbose output.
+
+TEXT;
+        $this->assertTextEquals($expected, $result, 'Help is not correct.');
+    }
+
+    /**
+     * test that help() with a custom rootName
+     *
+     * @return void
+     */
+    public function testHelpWithRootName()
+    {
+        $parser = new ConsoleOptionParser('sample', false);
+        $parser->description('A command!')
+            ->setRootName('tool')
+            ->addOption('test', ['help' => 'A test option.']);
+
+        $result = $parser->help();
+        $expected = <<<TEXT
+A command!
+
+<info>Usage:</info>
+tool sample [-h] [--test]
+
+<info>Options:</info>
+
+--help, -h  Display this help.
+--test      A test option.
 
 TEXT;
         $this->assertTextEquals($expected, $result, 'Help is not correct.');

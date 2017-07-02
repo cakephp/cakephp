@@ -163,6 +163,13 @@ class Shell
     protected $_io;
 
     /**
+     * The root command name used when generating help output.
+     *
+     * @var string
+     */
+    protected $rootName = 'cake';
+
+    /**
      * Constructs this Shell instance.
      *
      * @param \Cake\Console\ConsoleIo|null $io An io instance.
@@ -188,6 +195,19 @@ class Shell
         if (isset($this->modelClass)) {
             $this->loadModel();
         }
+    }
+
+    /**
+     * Set the root command name for help output.
+     *
+     * @param string $name The name of the root command.
+     * @return $this
+     */
+    public function setRootName($name)
+    {
+        $this->rootName = (string)$name;
+
+        return $this;
     }
 
     /**
@@ -550,8 +570,10 @@ class Shell
     public function getOptionParser()
     {
         $name = ($this->plugin ? $this->plugin . '.' : '') . $this->name;
+        $parser = new ConsoleOptionParser($name);
+        $parser->setRootName($this->rootName);
 
-        return new ConsoleOptionParser($name);
+        return $parser;
     }
 
     /**
