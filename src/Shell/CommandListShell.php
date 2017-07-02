@@ -25,6 +25,7 @@ use SimpleXmlElement;
  * Shows a list of commands available from the console.
  *
  * @property \Cake\Shell\Task\CommandTask $Command
+ * @deprecated 3.5.0 Replaced by Cake\Shell\HelpShell
  */
 class CommandListShell extends Shell
 {
@@ -145,7 +146,7 @@ class CommandListShell extends Shell
             'help' => 'Get the listing as XML.',
             'boolean' => true
         ])->addOption('version', [
-            'help' => 'Prints the currently installed version of CakePHP.',
+            'help' => 'Prints the currently installed version of CakePHP. (deprecated - use `cake --version` instead)',
             'boolean' => true
         ]);
 

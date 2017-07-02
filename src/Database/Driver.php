@@ -386,7 +386,7 @@ abstract class Driver
     public function __debugInfo()
     {
         return [
-            'connected' => $this->isConnected()
+            'connected' => $this->_connection !== null
         ];
     }
 }
