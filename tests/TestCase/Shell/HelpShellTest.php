@@ -48,16 +48,17 @@ class HelpShellTest extends TestCase
     }
 
     /**
-     * Test the command listing
+     * Test the command listing fallback when no commands are set
      *
      * @return void
      */
-    public function testMainNoCommands()
+    public function testMainNoCommandsFallback()
     {
         $shell = new HelpShell($this->io);
         $this->assertNull($shell->main());
-        $err = $this->err->messages();
-        $this->assertContains('Could not print command list', $err[0]);
+
+        $output = implode("\n", $this->out->messages());
+        $this->assertOutput($output);
     }
 
     /**
@@ -67,12 +68,24 @@ class HelpShellTest extends TestCase
      */
     public function testMain()
     {
-        $this->shell->main();
+        $this->assertNull($this->shell->main());
+
         $output = implode("\n", $this->out->messages());
+        $this->assertOutput($output);
+    }
+
+    /**
+     * Assert the help output.
+     *
+     * @param string $output The output to check.
+     * @return void
+     */
+    protected function assertOutput($output)
+    {
         $this->assertContains('- sample', $output, 'app shell');
+        $this->assertContains('- test_plugin.sample', $output, 'Long plugin name');
         $this->assertContains('- routes', $output, 'core shell');
         $this->assertContains('- test_plugin.example', $output, 'Long plugin name');
-        $this->assertContains('- example', $output, 'Short plugin name');
         $this->assertContains('To run a command', $output, 'more info present');
         $this->assertContains('To get help', $output, 'more info present');
     }

@@ -19,6 +19,8 @@ use Cake\Console\CommandCollection;
 use Cake\Console\CommandCollectionAwareInterface;
 use Cake\Console\ConsoleOutput;
 use Cake\Console\Shell;
+use Cake\Shell\Task\CommandTask;
+use Cake\Utility\Inflector;
 use SimpleXmlElement;
 
 /**
@@ -71,9 +73,7 @@ class HelpShell extends Shell implements CommandCollectionAwareInterface
         }
 
         if (!$this->commands) {
-            $this->err('Could not print command list, no CommandCollection was set using setCommandCollection()');
-
-            return;
+            $this->commands = $this->getCommands();
         }
 
         if ($this->param('xml')) {
@@ -82,6 +82,32 @@ class HelpShell extends Shell implements CommandCollectionAwareInterface
             return;
         }
         $this->asText($this->commands);
+    }
+
+    /**
+     * Get the list of commands using the CommandTask
+     *
+     * Provides backwards compatibility when an application doesn't use
+     * CommandRunner.
+     *
+     * @return array
+     */
+    protected function getCommands()
+    {
+        $task = new CommandTask($this->getIo());
+        $nested = $task->getShellList();
+        $out = [];
+        foreach ($nested as $section => $commands) {
+            $prefix = '';
+            if ($section !== 'CORE' && $section !== 'app') {
+                $prefix = Inflector::underscore($section) . '.';
+            }
+            foreach ($commands as $command) {
+                $out[$prefix . $command] = $command;
+            }
+        }
+
+        return $out;
     }
 
     /**
