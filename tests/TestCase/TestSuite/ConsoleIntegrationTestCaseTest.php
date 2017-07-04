@@ -39,7 +39,7 @@ class ConsoleIntegrationTestCaseTest extends ConsoleIntegrationTestCase
      */
     public function testExecWithCommandRunner()
     {
-        $this->enableCommandRunner();
+        $this->useCommandRunner();
 
         $this->exec('routes');
 

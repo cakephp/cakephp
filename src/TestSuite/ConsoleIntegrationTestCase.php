@@ -115,7 +115,7 @@ class ConsoleIntegrationTestCase extends TestCase
      *
      * @return void
      */
-    public function enableCommandRunner()
+    public function useCommandRunner()
     {
         $this->_useCommandRunner = true;
     }
