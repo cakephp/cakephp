@@ -14,6 +14,7 @@
  */
 namespace Cake\Http;
 
+use Cake\Core\ApplicationInterface;
 use Cake\Routing\DispatcherFactory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -25,7 +26,7 @@ use Psr\Http\Message\ServerRequestInterface;
  * and ensuring that middleware is attached. It is also invoked as the last piece
  * of middleware, and delegates request/response handling to the correct controller.
  */
-abstract class BaseApplication
+abstract class BaseApplication implements ApplicationInterface
 {
 
     /**
@@ -50,11 +51,7 @@ abstract class BaseApplication
     abstract public function middleware($middleware);
 
     /**
-     * Load all the application configuration and bootstrap logic.
-     *
-     * Override this method to add additional bootstrap logic for your application.
-     *
-     * @return void
+     * {@inheritDoc}
      */
     public function bootstrap()
     {
@@ -62,7 +59,7 @@ abstract class BaseApplication
     }
 
     /**
-     * Define the routes for an application.
+     * {@inheritDoc}
      *
      * By default this will load `config/routes.php` for ease of use and backwards compatibility.
      *
