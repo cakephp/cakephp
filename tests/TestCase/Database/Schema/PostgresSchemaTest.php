@@ -89,6 +89,32 @@ SQL;
     }
 
     /**
+     * Helper method for testing methods.
+     *
+     * @param \Cake\Datasource\ConnectionInterface $connection
+     * @return void
+     */
+    protected function _createViews($connection)
+    {
+        $this->_createTables($connection);
+
+        $connection->execute('DROP VIEW IF EXISTS view_articles');
+        $connection->execute('DROP VIEW IF EXISTS view_authors');
+
+        $table = <<<SQL
+CREATE VIEW view_authors AS 
+SELECT * schema_authors
+SQL;
+        $connection->execute($table);
+
+        $table = <<<SQL
+CREATE VIEW view_articles AS 
+SELECT * schema_articles
+SQL;
+        $connection->execute($table);
+    }
+
+        /**
      * Data provider for convert column testing
      *
      * @return array
@@ -269,10 +295,50 @@ SQL;
         $this->_createTables($connection);
 
         $schema = new SchemaCollection($connection);
+        $result = $schema->listTables('tables');
+        $this->assertInternalType('array', $result);
+        $this->assertContains('schema_articles', $result);
+        $this->assertContains('schema_authors', $result);
+        $this->assertNotContains('view_articles', $result);
+        $this->assertNotContains('view_authors', $result);
+    }
+
+    /**
+     * Test listing tables with Postgres
+     *
+     * @return void
+     */
+    public function testListViews()
+    {
+        $connection = ConnectionManager::get('test');
+        $this->_createViews($connection);
+
+        $schema = new SchemaCollection($connection);
+        $result = $schema->listTables('views');
+        $this->assertInternalType('array', $result);
+        $this->assertContains('view_articles', $result);
+        $this->assertContains('view_authors', $result);
+        $this->assertNotContains('schema_articles', $result);
+        $this->assertNotContains('schema_authors', $result);
+    }
+
+    /**
+     * Test listing tables with Postgres
+     *
+     * @return void
+     */
+    public function testListTablesAndViews()
+    {
+        $connection = ConnectionManager::get('test');
+        $this->_createTables($connection);
+
+        $schema = new SchemaCollection($connection);
         $result = $schema->listTables();
         $this->assertInternalType('array', $result);
         $this->assertContains('schema_articles', $result);
         $this->assertContains('schema_authors', $result);
+        $this->assertContains('view_articles', $result);
+        $this->assertContains('view_authors', $result);
     }
 
     /**

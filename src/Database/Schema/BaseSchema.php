@@ -129,9 +129,10 @@ abstract class BaseSchema
      *
      * @param array $config The connection configuration to use for
      *    getting tables from.
+     * @param string $type Type of objects. Possible values are: 'views', 'tables' or 'both' (default).
      * @return array An array of (sql, params) to execute.
      */
-    abstract public function listTablesSql($config);
+    abstract public function listTablesSql($config, $type = 'both');
 
     /**
      * Generate the SQL to describe a table.

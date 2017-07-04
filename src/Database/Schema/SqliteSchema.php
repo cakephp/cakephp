@@ -105,13 +105,26 @@ class SqliteSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function listTablesSql($config)
+    public function listTablesSql($config, $type = 'both')
     {
-        return [
-            'SELECT name FROM sqlite_master WHERE type="table" ' .
-            'AND name != "sqlite_sequence" ORDER BY name',
-            []
-        ];
+        $sql = 'SELECT name FROM sqlite_master WHERE name != "sqlite_sequence"';
+
+        if ($type != 'both') {
+            $sql .= ' AND type = ?';
+
+            if ($type == 'tables') {
+                $params = ['table'];
+            } else {
+                $params = ['view'];
+            }
+        } else {
+            $sql .= ' AND (type = ? OR type = ?)';
+            $params = ['table', 'view'];
+        }
+
+        $sql .= ' ORDER BY name';
+
+        return [$sql, $params];
     }
 
     /**

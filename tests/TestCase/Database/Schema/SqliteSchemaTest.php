@@ -205,13 +205,10 @@ class SqliteSchemaTest extends TestCase
 
         $schema = new SchemaCollection($connection);
         $result = $schema->listTables();
-        if (in_array('schema_articles', $result) &&
+        if (!(in_array('schema_articles', $result) &&
             in_array('schema_authors', $result)
-        ) {
-            return;
-        }
-
-        $table = <<<SQL
+        )) {
+            $table = <<<SQL
 CREATE TABLE schema_authors (
 id INTEGER PRIMARY KEY AUTOINCREMENT,
 name VARCHAR(50),
@@ -219,9 +216,9 @@ bio TEXT,
 created DATETIME
 )
 SQL;
-        $connection->execute($table);
+            $connection->execute($table);
 
-        $table = <<<SQL
+            $table = <<<SQL
 CREATE TABLE schema_articles (
 id INTEGER PRIMARY KEY AUTOINCREMENT,
 title VARCHAR(20) DEFAULT 'Let ''em eat cake',
@@ -235,10 +232,10 @@ CONSTRAINT "title_idx" UNIQUE ("title", "body")
 CONSTRAINT "author_idx" FOREIGN KEY ("author_id") REFERENCES "schema_authors" ("id") ON UPDATE CASCADE ON DELETE RESTRICT
 );
 SQL;
-        $connection->execute($table);
-        $connection->execute('CREATE INDEX "created_idx" ON "schema_articles" ("created")');
+            $connection->execute($table);
+            $connection->execute('CREATE INDEX "created_idx" ON "schema_articles" ("created")');
 
-        $sql = <<<SQL
+            $sql = <<<SQL
 CREATE TABLE schema_composite (
     "id" INTEGER NOT NULL,
     "site_id" INTEGER NOT NULL,
@@ -246,7 +243,22 @@ CREATE TABLE schema_composite (
     PRIMARY KEY("id", "site_id")
 );
 SQL;
-        $connection->execute($sql);
+            $connection->execute($sql);
+        }
+
+        if (!(in_array('view_articles', $result) &&
+            in_array('view_authors', $result)
+        )) {
+            $table = <<<SQL
+CREATE VIEW view_authors AS SELECT * FROM schema_authors
+SQL;
+            $connection->execute($table);
+
+            $table = <<<SQL
+CREATE VIEW view_articles AS SELECT * FROM schema_articles
+SQL;
+            $connection->execute($table);
+        }
     }
 
     /**
@@ -260,11 +272,53 @@ SQL;
         $this->_createTables($connection);
 
         $schema = new SchemaCollection($connection);
+        $result = $schema->listTables('tables');
+
+        $this->assertInternalType('array', $result);
+        $this->assertContains('schema_articles', $result);
+        $this->assertContains('schema_authors', $result);
+        $this->assertNotContains('view_articles', $result);
+        $this->assertNotContains('view_authors', $result);
+    }
+
+    /**
+     * Test SchemaCollection listing tables with Sqlite
+     *
+     * @return void
+     */
+    public function testListViews()
+    {
+        $connection = ConnectionManager::get('test');
+        $this->_createTables($connection);
+
+        $schema = new SchemaCollection($connection);
+        $result = $schema->listTables('views');
+
+        $this->assertInternalType('array', $result);
+        $this->assertContains('view_articles', $result);
+        $this->assertContains('view_authors', $result);
+        $this->assertNotContains('schema_articles', $result);
+        $this->assertNotContains('schema_authors', $result);
+    }
+
+    /**
+     * Test SchemaCollection listing tables with Sqlite
+     *
+     * @return void
+     */
+    public function testListViewsAndTables()
+    {
+        $connection = ConnectionManager::get('test');
+        $this->_createTables($connection);
+
+        $schema = new SchemaCollection($connection);
         $result = $schema->listTables();
 
         $this->assertInternalType('array', $result);
         $this->assertContains('schema_articles', $result);
         $this->assertContains('schema_authors', $result);
+        $this->assertContains('view_articles', $result);
+        $this->assertContains('view_authors', $result);
     }
 
     /**

@@ -263,6 +263,41 @@ SQL;
     }
 
     /**
+     * Helper method for testing methods.
+     *
+     * @param \Cake\Datasource\ConnectionInterface $connection
+     * @return void
+     */
+    protected function _createViews($connection)
+    {
+        $this->_needsConnection();
+
+        $this->_createTables($connection);
+
+        $connection->execute('DROP VIEW IF EXISTS view_articles');
+        $connection->execute('DROP VIEW IF EXISTS view_authors');
+        $connection->execute('DROP VIEW IF EXISTS view_json');
+
+        $table = <<<SQL
+            CREATE VIEW view_authors AS SELECT * FROM schema_authors;
+SQL;
+        $connection->execute($table);
+
+        $table = <<<SQL
+            CREATE VIEW view_articles AS SELECT * FROM schema_articles;
+SQL;
+        $connection->execute($table);
+
+        if ($connection->driver()->supportsNativeJson()) {
+            $table = <<<SQL
+                CREATE VIEW view_json AS SELECT * FROM schema_json;
+SQL;
+            $connection->execute($table);
+        }
+
+    }
+
+    /**
      * Integration test for SchemaCollection & MysqlDialect.
      *
      * @return void
@@ -273,11 +308,53 @@ SQL;
         $this->_createTables($connection);
 
         $schema = new SchemaCollection($connection);
+        $result = $schema->listTables('tables');
+
+        $this->assertInternalType('array', $result);
+        $this->assertContains('schema_articles', $result);
+        $this->assertContains('schema_authors', $result);
+        $this->assertNotContains('view_articles', $result);
+        $this->assertNotContains('view_authors', $result);
+    }
+
+    /**
+     * Integration test for SchemaCollection & MysqlDialect.
+     *
+     * @return void
+     */
+    public function testListViews()
+    {
+        $connection = ConnectionManager::get('test');
+        $this->_createViews($connection);
+
+        $schema = new SchemaCollection($connection);
+        $result = $schema->listTables('views');
+
+        $this->assertInternalType('array', $result);
+        $this->assertContains('view_articles', $result);
+        $this->assertContains('view_authors', $result);
+        $this->assertNotContains('schema_articles', $result);
+        $this->assertNotContains('schema_authors', $result);
+    }
+
+    /**
+     * Integration test for SchemaCollection & MysqlDialect.
+     *
+     * @return void
+     */
+    public function testListTablesAndViews()
+    {
+        $connection = ConnectionManager::get('test');
+        $this->_createViews($connection);
+
+        $schema = new SchemaCollection($connection);
         $result = $schema->listTables();
 
         $this->assertInternalType('array', $result);
         $this->assertContains('schema_articles', $result);
         $this->assertContains('schema_authors', $result);
+        $this->assertContains('view_articles', $result);
+        $this->assertContains('view_authors', $result);
     }
 
     /**
