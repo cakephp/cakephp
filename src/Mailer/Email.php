@@ -882,7 +882,7 @@ class Email implements JsonSerializable, Serializable
     protected function _setEmail($varName, $email, $name)
     {
         if (!is_array($email)) {
-            $this->_validateEmail($email);
+            $this->_validateEmail($email, $varName);
             if ($name === null) {
                 $name = $email;
             }
@@ -895,7 +895,7 @@ class Email implements JsonSerializable, Serializable
             if (is_int($key)) {
                 $key = $value;
             }
-            $this->_validateEmail($key);
+            $this->_validateEmail($key, $varName);
             $list[$key] = $value;
         }
         $this->{$varName} = $list;
@@ -907,10 +907,11 @@ class Email implements JsonSerializable, Serializable
      * Validate email address
      *
      * @param string $email Email address to validate
+     * @param string $context Which property was set
      * @return void
      * @throws \InvalidArgumentException If email address does not validate
      */
-    protected function _validateEmail($email)
+    protected function _validateEmail($email, $context)
     {
         if ($this->_emailPattern === null) {
             if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -919,7 +920,12 @@ class Email implements JsonSerializable, Serializable
         } elseif (preg_match($this->_emailPattern, $email)) {
             return;
         }
-        throw new InvalidArgumentException(sprintf('Invalid email: "%s"', $email));
+
+        $context = ltrim($context, '_');
+        if ($email == '') {
+            throw new InvalidArgumentException(sprintf('The email set for "%s" is empty.', $context));
+        }
+        throw new InvalidArgumentException(sprintf('Invalid email set for "%s". You passed "%s".', $context, $email));
     }
 
     /**
@@ -958,7 +964,7 @@ class Email implements JsonSerializable, Serializable
     protected function _addEmail($varName, $email, $name)
     {
         if (!is_array($email)) {
-            $this->_validateEmail($email);
+            $this->_validateEmail($email, $varName);
             if ($name === null) {
                 $name = $email;
             }
@@ -971,7 +977,7 @@ class Email implements JsonSerializable, Serializable
             if (is_int($key)) {
                 $key = $value;
             }
-            $this->_validateEmail($key);
+            $this->_validateEmail($key, $varName);
             $list[$key] = $value;
         }
         $this->{$varName} = array_merge($this->{$varName}, $list);

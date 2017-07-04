@@ -400,7 +400,7 @@ class EmailTest extends TestCase
      * @return void
      *
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Invalid email: "fail.@example.com"
+     * @expectedExceptionMessage Invalid email set for "to". You passed "fail.@example.com".
      */
     public function testUnsetEmailPattern()
     {
@@ -412,6 +412,20 @@ class EmailTest extends TestCase
 
         $email->to('pass@example.com');
         $email->to('fail.@example.com');
+    }
+
+    /**
+     * Tests that passing an empty string throws an InvalidArgumentException.
+     *
+     * @return void
+     *
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage The email set for "to" is empty.
+     */
+    public function testEmptyTo()
+    {
+        $email = new Email();
+        $email->setTo('');
     }
 
     /**
