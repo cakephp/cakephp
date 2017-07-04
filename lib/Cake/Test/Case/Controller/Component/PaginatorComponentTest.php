@@ -23,6 +23,8 @@ App::uses('PaginatorComponent', 'Controller/Component');
 App::uses('CakeRequest', 'Network');
 App::uses('CakeResponse', 'Network');
 
+require_once dirname(dirname(dirname(__FILE__))) . DS . 'Model' . DS . 'models.php';
+
 /**
  * PaginatorTestController class
  *
@@ -288,7 +290,8 @@ class PaginatorComponentTest extends CakeTestCase {
  *
  * @var array
  */
-	public $fixtures = array('core.post', 'core.comment', 'core.author');
+	public $fixtures = array('core.post', 'core.comment', 'core.author',
+			'core.translated_article', 'core.translate_article', 'core.user');
 
 /**
  * setup
@@ -400,6 +403,97 @@ class PaginatorComponentTest extends CakeTestCase {
 		$Controller->Paginator->paginate('PaginatorControllerPost');
 
 		$this->assertSame(2, $Controller->params['paging']['PaginatorControllerPost']['count']);
+	}
+
+	public function testPaginateNotCondition() {
+		$Controller = new PaginatorTestController($this->request);
+		$Controller->uses = array('PaginatorControllerPost', 'PaginatorControllerComment');
+		$Controller->request->params['pass'] = array('1');
+		$Controller->request->query = array();
+		$Controller->constructClasses();
+		$Controller->Paginator->settings = array(
+			'conditions' => array(
+				'NOT' => array('PaginatorAuthor.user' => 'mariano'),
+			),
+		);
+		$result = $Controller->Paginator->paginate('PaginatorControllerPost');
+		$this->assertEquals('larry', $result[0]['PaginatorAuthor']['user']);
+		$this->assertCount(1, $result);
+	}
+
+	public function testPaginateI18nConditionUser() {
+		$Request = new CakeRequest('articles/index');
+		$Controller = new PaginatorTestController($Request);
+		$Controller->uses = array('TranslatedArticle');
+		$Controller->constructClasses();
+		$Controller->TranslatedArticle->locale = 'eng';
+		$Controller->Paginator->settings = array(
+			'recursive' => 0,
+			'conditions' => array(
+				'User.user' => 'mariano',
+			),
+		);
+		$result = $Controller->Paginator->paginate('TranslatedArticle');
+		$this->assertEquals('Title (eng) #1', $result[0]['TranslatedArticle']['title']);
+		$this->assertEquals('mariano', $result[0]['User']['user']);
+		$this->assertEquals('Title (eng) #3', $result[1]['TranslatedArticle']['title']);
+		$this->assertEquals('mariano', $result[1]['User']['user']);
+		$this->assertCount(2, $result);
+	}
+
+	public function testPaginateI18nConditionTitle() {
+		$Request = new CakeRequest('articles/index');
+		$Controller = new PaginatorTestController($Request);
+		$Controller->uses = array('TranslatedArticle');
+		$Controller->constructClasses();
+		$Controller->TranslatedArticle->locale = 'eng';
+		$Controller->Paginator->settings = array(
+			'recursive' => 0,
+			'conditions' => array(
+				'I18n__title.content' => 'Title (eng) #3',
+			),
+		);
+		$result = $Controller->Paginator->paginate('TranslatedArticle');
+		$this->assertEquals('Title (eng) #3', $result[0]['TranslatedArticle']['title']);
+		$this->assertCount(1, $result);
+	}
+
+	public function testPaginateI18nConditionNotTitle() {
+		$Request = new CakeRequest('articles/index');
+		$Controller = new PaginatorTestController($Request);
+		$Controller->uses = array('TranslatedArticle');
+		$Controller->constructClasses();
+		$Controller->TranslatedArticle->locale = 'eng';
+		$Controller->Paginator->settings = array(
+			'recursive' => 0,
+			'conditions' => array(
+				'I18n__title.content !=' => '',
+			),
+		);
+		$result = $Controller->Paginator->paginate('TranslatedArticle');
+		$this->assertEquals('Title (eng) #1', $result[0]['TranslatedArticle']['title']);
+		$this->assertEquals('Title (eng) #2', $result[1]['TranslatedArticle']['title']);
+		$this->assertEquals('Title (eng) #3', $result[2]['TranslatedArticle']['title']);
+		$this->assertCount(3, $result);
+	}
+
+	public function testPaginateI18nConditionNotTitleArraySyntax() {
+		$Request = new CakeRequest('articles/index');
+		$Controller = new PaginatorTestController($Request);
+		$Controller->uses = array('TranslatedArticle');
+		$Controller->constructClasses();
+		$Controller->TranslatedArticle->locale = 'eng';
+		$Controller->Paginator->settings = array(
+			'recursive' => 0,
+			'conditions' => array(
+				'NOT' => array('I18n__title.content' => ''),
+			),
+		);
+		$result = $Controller->Paginator->paginate('TranslatedArticle');
+		$this->assertEquals('Title (eng) #1', $result[0]['TranslatedArticle']['title']);
+		$this->assertEquals('Title (eng) #2', $result[1]['TranslatedArticle']['title']);
+		$this->assertEquals('Title (eng) #3', $result[2]['TranslatedArticle']['title']);
+		$this->assertCount(3, $result);
 	}
 
 /**
