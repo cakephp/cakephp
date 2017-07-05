@@ -333,6 +333,57 @@ class ConsoleIoTest extends TestCase
     }
 
     /**
+     * Test overwriting content with shorter content
+     *
+     * @return void
+     */
+    public function testOverwriteShorterContent()
+    {
+        $number = strlen('12345');
+
+        $this->out->expects($this->at(0))
+            ->method('write')
+            ->with('12345')
+            ->will($this->returnValue($number));
+
+        // Backspaces
+        $this->out->expects($this->at(1))
+            ->method('write')
+            ->with(str_repeat("\x08", $number), 0)
+            ->will($this->returnValue($number));
+
+        $this->out->expects($this->at(2))
+            ->method('write')
+            ->with('123', 0)
+            ->will($this->returnValue(3));
+
+        // 2 spaces output to pad up to 5 bytes
+        $this->out->expects($this->at(3))
+            ->method('write')
+            ->with(str_repeat(' ', $number - 3), 0)
+            ->will($this->returnValue($number - 3));
+
+        // Backspaces
+        $this->out->expects($this->at(4))
+            ->method('write')
+            ->with(str_repeat("\x08", $number), 0)
+            ->will($this->returnValue($number));
+
+        $this->out->expects($this->at(5))
+            ->method('write')
+            ->with('12', 0)
+            ->will($this->returnValue(2));
+
+        $this->out->expects($this->at(6))
+            ->method('write')
+            ->with(str_repeat(' ', $number - 2), 0);
+
+        $this->io->out('12345');
+        $this->io->overwrite('123', 0);
+        $this->io->overwrite('12', 0);
+    }
+
+    /**
      * Tests that setLoggers works properly
      *
      * @return void
