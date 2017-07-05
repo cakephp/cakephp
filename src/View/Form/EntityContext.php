@@ -19,6 +19,7 @@ use Cake\Datasource\EntityInterface;
 use Cake\Http\ServerRequest;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
+use ArrayAccess;
 use RuntimeException;
 use Traversable;
 
@@ -259,7 +260,7 @@ class EntityContext implements ContextInterface
 
             return $this->_schemaDefault($part, $entity);
         }
-        if (is_array($entity)) {
+        if (is_array($entity) || $entity instanceof ArrayAccess) {
             $key = array_pop($parts);
 
             return isset($entity[$key]) ? $entity[$key] : null;
