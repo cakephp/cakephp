@@ -14,12 +14,12 @@
  */
 namespace Cake\View\Form;
 
+use ArrayAccess;
 use Cake\Collection\Collection;
 use Cake\Datasource\EntityInterface;
 use Cake\Http\ServerRequest;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
-use ArrayAccess;
 use RuntimeException;
 use Traversable;
 
