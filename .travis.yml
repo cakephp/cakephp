@@ -32,6 +32,7 @@ cache:
 
 matrix:
   fast_finish: true
+  
   allow_failures:
     - php: nightly
 
@@ -46,7 +47,7 @@ matrix:
       env: PHPSTAN=1 DEFAULT=0
 
 before_install:
-  - if [ $TRAVIS_PHP_VERSION != 7.0 ]; then phpenv config-rm xdebug.ini; fi
+  - if [ $TRAVIS_PHP_VERSION != 7.0 && $TRAVIS_PHP_VERSION != 'nightly' ]; then phpenv config-rm xdebug.ini; fi
 
   - if [ $DB = 'mysql' ]; then mysql -u root -e 'CREATE DATABASE cakephp_test;'; fi
   - if [ $DB = 'mysql' ]; then mysql -u root -e 'CREATE DATABASE cakephp_test2;'; fi
