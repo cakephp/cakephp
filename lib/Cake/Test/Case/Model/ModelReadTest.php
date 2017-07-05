@@ -6685,6 +6685,62 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertEquals($expected, $result);
 	}
 
+	public function testFindAllI18nConditions() {
+		$this->loadFixtures('TranslateArticle', 'TranslatedArticle', 'User');
+		$TestModel = new TranslatedArticle();
+		$TestModel->cacheQueries = false;
+		$TestModel->locale = 'eng';
+		$options = array(
+			'recursive' => 0,
+			'conditions' => array(
+				'NOT' => array('I18n__title.content' => ''),
+			),
+			'limit' => 2,
+		);
+		$result = $TestModel->find('all', $options);
+		$expected = array(
+			array(
+				'TranslatedArticle' => array(
+					'id' => '1',
+					'user_id' => '1',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:39:23',
+					'updated' => '2007-03-18 10:41:31',
+					'locale' => 'eng',
+					'title' => 'Title (eng) #1',
+					'body' => 'Body (eng) #1',
+				),
+				'User' => array(
+					'id' => '1',
+					'user' => 'mariano',
+					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+					'created' => '2007-03-17 01:16:23',
+					'updated' => '2007-03-17 01:18:31',
+				),
+			),
+			array(
+				'TranslatedArticle' => array(
+					'id' => '2',
+					'user_id' => '3',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:41:23',
+					'updated' => '2007-03-18 10:43:31',
+					'locale' => 'eng',
+					'title' => 'Title (eng) #2',
+					'body' => 'Body (eng) #2',
+				),
+				'User' => array(
+					'id' => '3',
+					'user' => 'larry',
+					'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+					'created' => '2007-03-17 01:20:23',
+					'updated' => '2007-03-17 01:22:31',
+				),
+			),
+		);
+		$this->assertEquals($expected, $result);
+	}
+
 /**
  * test find('list') method
  *
@@ -7116,6 +7172,22 @@ class ModelReadTest extends BaseModelTest {
 			'group' => array('Article.user_id'),
 		));
 		$this->assertEquals($expected, $result);
+	}
+
+	public function testFindCountI18nConditions() {
+		$this->loadFixtures('TranslateArticle', 'TranslatedArticle', 'User');
+		$TestModel = new TranslatedArticle();
+		$TestModel->cacheQueries = false;
+		$TestModel->locale = 'eng';
+		$options = array(
+			'recursive' => 0,
+			'conditions' => array(
+				'NOT' => array('I18n__title.content' => ''),
+			),
+			'limit' => 2,
+		);
+		$result = $TestModel->find('count', $options);
+		$this->assertEquals(2, $result);
 	}
 
 /**
