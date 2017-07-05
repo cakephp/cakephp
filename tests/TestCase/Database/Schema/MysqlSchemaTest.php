@@ -225,6 +225,10 @@ class MysqlSchemaTest extends TestCase
         $connection->execute('DROP TABLE IF EXISTS schema_authors');
         $connection->execute('DROP TABLE IF EXISTS schema_json');
 
+        $connection->execute('DROP VIEW IF EXISTS view_articles');
+        $connection->execute('DROP VIEW IF EXISTS view_authors');
+        $connection->execute('DROP VIEW IF EXISTS view_json');
+
         $table = <<<SQL
             CREATE TABLE schema_authors (
                 id INT(11) PRIMARY KEY AUTO_INCREMENT,
@@ -251,6 +255,9 @@ SQL;
 SQL;
         $connection->execute($table);
 
+        $connection->execute('CREATE VIEW view_articles AS SELECT * FROM schema_articles');
+        $connection->execute('CREATE VIEW view_authors AS SELECT * FROM schema_authors');
+
         if ($connection->driver()->supportsNativeJson()) {
             $table = <<<SQL
                 CREATE TABLE schema_json (
@@ -259,42 +266,9 @@ SQL;
                 )
 SQL;
             $connection->execute($table);
+
+            $connection->execute('CREATE VIEW view_json AS SELECT * FROM schema_json');
         }
-    }
-
-    /**
-     * Helper method for testing methods.
-     *
-     * @param \Cake\Datasource\ConnectionInterface $connection
-     * @return void
-     */
-    protected function _createViews($connection)
-    {
-        $this->_needsConnection();
-
-        $this->_createTables($connection);
-
-        $connection->execute('DROP VIEW IF EXISTS view_articles');
-        $connection->execute('DROP VIEW IF EXISTS view_authors');
-        $connection->execute('DROP VIEW IF EXISTS view_json');
-
-        $table = <<<SQL
-            CREATE VIEW view_authors AS SELECT * FROM schema_authors;
-SQL;
-        $connection->execute($table);
-
-        $table = <<<SQL
-            CREATE VIEW view_articles AS SELECT * FROM schema_articles;
-SQL;
-        $connection->execute($table);
-
-        if ($connection->driver()->supportsNativeJson()) {
-            $table = <<<SQL
-                CREATE VIEW view_json AS SELECT * FROM schema_json;
-SQL;
-            $connection->execute($table);
-        }
-
     }
 
     /**
@@ -325,7 +299,7 @@ SQL;
     public function testListViews()
     {
         $connection = ConnectionManager::get('test');
-        $this->_createViews($connection);
+        $this->_createTables($connection);
 
         $schema = new SchemaCollection($connection);
         $result = $schema->listTables('views');
@@ -345,7 +319,7 @@ SQL;
     public function testListTablesAndViews()
     {
         $connection = ConnectionManager::get('test');
-        $this->_createViews($connection);
+        $this->_createTables($connection);
 
         $schema = new SchemaCollection($connection);
         $result = $schema->listTables();

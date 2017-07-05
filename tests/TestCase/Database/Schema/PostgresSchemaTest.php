@@ -50,8 +50,8 @@ class PostgresSchemaTest extends TestCase
     {
         $this->_needsConnection();
 
-        $connection->execute('DROP TABLE IF EXISTS schema_articles');
-        $connection->execute('DROP TABLE IF EXISTS schema_authors');
+        $connection->execute('DROP TABLE IF EXISTS schema_articles CASCADE ');
+        $connection->execute('DROP TABLE IF EXISTS schema_authors CASCADE ');
 
         $table = <<<SQL
 CREATE TABLE schema_authors (
@@ -86,35 +86,15 @@ SQL;
         $connection->execute($table);
         $connection->execute('COMMENT ON COLUMN "schema_articles"."title" IS \'a title\'');
         $connection->execute('CREATE INDEX "author_idx" ON "schema_articles" ("author_id")');
-    }
-
-    /**
-     * Helper method for testing methods.
-     *
-     * @param \Cake\Datasource\ConnectionInterface $connection
-     * @return void
-     */
-    protected function _createViews($connection)
-    {
-        $this->_createTables($connection);
 
         $connection->execute('DROP VIEW IF EXISTS view_articles');
         $connection->execute('DROP VIEW IF EXISTS view_authors');
 
-        $table = <<<SQL
-CREATE VIEW view_authors AS 
-SELECT * schema_authors
-SQL;
-        $connection->execute($table);
-
-        $table = <<<SQL
-CREATE VIEW view_articles AS 
-SELECT * schema_articles
-SQL;
-        $connection->execute($table);
+        $connection->execute('CREATE VIEW view_articles AS SELECT * FROM schema_articles');
+        $connection->execute('CREATE VIEW view_authors AS SELECT * FROM schema_authors');
     }
 
-        /**
+    /**
      * Data provider for convert column testing
      *
      * @return array
@@ -311,7 +291,7 @@ SQL;
     public function testListViews()
     {
         $connection = ConnectionManager::get('test');
-        $this->_createViews($connection);
+        $this->_createTables($connection);
 
         $schema = new SchemaCollection($connection);
         $result = $schema->listTables('views');

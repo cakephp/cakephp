@@ -46,7 +46,9 @@ class SqlserverSchema extends BaseSchema
 
         $sql .= ' ORDER BY TABLE_NAME';
 
-        $params[] = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
+        $schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
+        array_unshift($params, $schema);
+        unset($schema);
 
         return [$sql, $params];
     }

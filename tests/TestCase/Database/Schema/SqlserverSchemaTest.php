@@ -78,6 +78,12 @@ CONSTRAINT [author_idx] FOREIGN KEY ([author_id]) REFERENCES [schema_authors] ([
 SQL;
         $connection->execute($table);
         $connection->execute('CREATE INDEX [author_idx] ON [schema_articles] ([author_id])');
+
+        $connection->execute("IF OBJECT_ID('view_articles', 'V') IS NOT NULL DROP VIEW view_articles");
+        $connection->execute("IF OBJECT_ID('view_authors', 'V') IS NOT NULL DROP VIEW view_authors");
+
+        $connection->execute("CREATE VIEW view_articles AS SELECT * FROM schema_articles");
+        $connection->execute("CREATE VIEW view_authors AS SELECT * FROM schema_authors");
     }
 
     /**
@@ -270,10 +276,52 @@ SQL;
         $this->_createTables($connection);
 
         $schema = new SchemaCollection($connection);
-        $result = $schema->listTables();
+        $result = $schema->listTables('tables');
         $this->assertInternalType('array', $result);
         $this->assertContains('schema_articles', $result);
         $this->assertContains('schema_authors', $result);
+        $this->assertNotContains('view_articles', $result);
+        $this->assertNotContains('view_authors', $result);
+    }
+
+    /**
+     * Test SchemaCollection listing tables with Sqlite
+     *
+     * @return void
+     */
+    public function testListViews()
+    {
+        $connection = ConnectionManager::get('test');
+        $this->_createTables($connection);
+
+        $schema = new SchemaCollection($connection);
+        $result = $schema->listTables('views');
+
+        $this->assertInternalType('array', $result);
+        $this->assertContains('view_articles', $result);
+        $this->assertContains('view_authors', $result);
+        $this->assertNotContains('schema_articles', $result);
+        $this->assertNotContains('schema_authors', $result);
+    }
+
+    /**
+     * Test SchemaCollection listing tables with Sqlite
+     *
+     * @return void
+     */
+    public function testListViewsAndTables()
+    {
+        $connection = ConnectionManager::get('test');
+        $this->_createTables($connection);
+
+        $schema = new SchemaCollection($connection);
+        $result = $schema->listTables();
+
+        $this->assertInternalType('array', $result);
+        $this->assertContains('schema_articles', $result);
+        $this->assertContains('schema_authors', $result);
+        $this->assertContains('view_articles', $result);
+        $this->assertContains('view_authors', $result);
     }
 
     /**

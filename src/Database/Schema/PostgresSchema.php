@@ -27,19 +27,24 @@ class PostgresSchema extends BaseSchema
      */
     public function listTablesSql($config, $type = 'both')
     {
-        $sql = 'SELECT table_name as name FROM information_schema.%s WHERE table_schema = ? ORDER BY name';
-
-        if ($type == 'views') {
-            $sql = sprintf($sql, 'views');
-        } elseif ($sql == 'tables') {
-            $sql = sprintf($sql, 'tables');
-        } else {
-            $sql = sprintf($sql, 'views') . ' UNION '. sprintf($sql, 'tables');
-        }
-
+        $sql = 'SELECT table_name as name FROM information_schema.tables WHERE table_schema = ?';
         $schema = empty($config['schema']) ? 'public' : $config['schema'];
 
-        return [$sql, [$schema]];
+        $params = [$schema];
+
+        if ($type != 'both') {
+            $sql .= ' AND table_type = ?';
+
+            if ($type == 'tables') {
+                $params[] = 'BASE TABLE';
+            } else {
+                $params[] = 'VIEW';
+            }
+        }
+
+        $sql .= ' ORDER BY name';
+
+        return [$sql, $params];
     }
 
     /**
