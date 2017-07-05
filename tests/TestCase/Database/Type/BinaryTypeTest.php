@@ -71,7 +71,7 @@ class BinaryTypeTest extends TestCase
      */
     public function testToPHPSqlserver()
     {
-        if(version_compare(phpversion(), '7.0', '>')) {
+        if (version_compare(phpversion(), '7.0', '>')) {
             $this->markTestSkipped("PHP 7 MSSQL Drivers does not return binary fields as hexadecimal.");
         }
 
