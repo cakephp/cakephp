@@ -73,6 +73,20 @@ class EventTest extends TestCase
     }
 
     /**
+     * Tests the event stopping property
+     *
+     * @return void
+     * @triggers fake.event
+     */
+    public function testStop()
+    {
+        $event = new Event('fake.event');
+        $this->assertFalse($event->isStopped());
+        $event->stop();
+        $this->assertTrue($event->isStopped());
+    }
+
+    /**
      * Tests that it is possible to get/set custom data in a event
      *
      * @return void
