@@ -46,6 +46,27 @@ class MoFileParserTest extends TestCase
     }
 
     /**
+     * Tests parsing a file with single form plurals
+     *
+     * @return void
+     */
+    public function testParse0()
+    {
+        $parser = new MoFileParser;
+        $file = APP . 'Locale' . DS . 'rule_0_mo' . DS . 'core.mo';
+        $messages = $parser->parse($file);
+        $this->assertCount(3, $messages);
+        $expected = [
+            'Plural Rule 1 (from core)' => 'Plural Rule 0 (from core translated)',
+            '%d = 1 (from core)' => '%d ends with any # (from core translated)',
+            '%d = 0 or > 1 (from core)' => [
+                '%d ends with any # (from core translated)',
+            ],
+        ];
+        $this->assertEquals($expected, $messages);
+    }
+
+    /**
      * Tests parsing a file with larger plural forms
      *
      * @return void
