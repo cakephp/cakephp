@@ -1443,4 +1443,165 @@ class TranslateBehaviorTest extends CakeTestCase {
 		$this->assertEquals('name', $results[0]['TranslateTestModel']['field']);
 	}
 
+	public function testBeforeFindAllI18nConditions() {
+		$this->loadFixtures('TranslateArticle', 'TranslatedArticle', 'User');
+		$TestModel = new TranslatedArticle();
+		$TestModel->cacheQueries = false;
+		$TestModel->locale = 'eng';
+		$expected = array(
+			'conditions' => array(
+				'NOT' => array('I18n__title.content' => ''),
+			),
+			'fields' => null,
+			'joins' => array(
+				array(
+					'type' => 'INNER',
+					'alias' => 'I18n__title',
+					'table' => (object)array(
+						'tablePrefix' => '',
+						'table' => 'article_i18n',
+						'schemaName' => 'test',
+					),
+					'conditions' => array(
+						'TranslatedArticle.id' => (object)array(
+							'type' => 'identifier',
+							'value' => 'I18n__title.foreign_key',
+						),
+						'I18n__title.model' => 'TranslatedArticle',
+						'I18n__title.field' => 'title',
+						'I18n__title.locale' => 'eng',
+					),
+				),
+				array(
+					'type' => 'INNER',
+					'alias' => 'I18n__body',
+					'table' => (object)array(
+						'tablePrefix' => '',
+						'table' => 'article_i18n',
+						'schemaName' => 'test',
+					),
+					'conditions' => array(
+						'TranslatedArticle.id' => (object)array(
+							'type' => 'identifier',
+							'value' => 'I18n__body.foreign_key',
+						),
+						'I18n__body.model' => 'TranslatedArticle',
+						'I18n__body.field' => 'body',
+						'I18n__body.locale' => 'eng',
+					),
+				),
+			),
+			'limit' => 2,
+			'offset' => null,
+			'order' => array(
+				'TranslatedArticle.id' => 'ASC',
+			),
+			'page' => 1,
+			'group' => null,
+			'callbacks' => true,
+			'recursive' => 0,
+		);
+		$query = array(
+			'conditions' => array(
+				'NOT' => array(
+					'I18n__title.content' => '',
+				),
+			),
+			'fields' => null,
+			'joins' => array(),
+			'limit' => 2,
+			'offset' => null,
+			'order' => array(
+				'TranslatedArticle.id' => 'ASC',
+			),
+			'page' => 1,
+			'group' => null,
+			'callbacks' => true,
+			'recursive' => 0,
+		);
+		$TranslateBehavior = ClassRegistry::getObject('TranslateBehavior');
+		$result = $TranslateBehavior->beforeFind($TestModel, $query);
+		$this->assertEquals($expected, $result);
+	}
+
+	public function testBeforeFindCountI18nConditions() {
+		$this->loadFixtures('TranslateArticle', 'TranslatedArticle', 'User');
+		$TestModel = new TranslatedArticle();
+		$TestModel->cacheQueries = false;
+		$TestModel->locale = 'eng';
+		$expected = array(
+			'conditions' => array(
+				'NOT' => array('I18n__title.content' => ''),
+			),
+			'fields' => 'COUNT(DISTINCT(`TranslatedArticle`.`id`)) AS count',
+			'joins' => array(
+				array(
+					'type' => 'INNER',
+					'alias' => 'I18n__title',
+					'table' => (object)array(
+						'tablePrefix' => '',
+						'table' => 'article_i18n',
+						'schemaName' => 'test',
+					),
+					'conditions' => array(
+						'TranslatedArticle.id' => (object)array(
+							'type' => 'identifier',
+							'value' => 'I18n__title.foreign_key',
+						),
+						'I18n__title.model' => 'TranslatedArticle',
+						'I18n__title.field' => 'title',
+						'I18n__title.locale' => 'eng',
+					),
+				),
+				array(
+					'type' => 'INNER',
+					'alias' => 'I18n__body',
+					'table' => (object)array(
+						'tablePrefix' => '',
+						'table' => 'article_i18n',
+						'schemaName' => 'test',
+					),
+					'conditions' => array(
+						'TranslatedArticle.id' => (object)array(
+							'type' => 'identifier',
+							'value' => 'I18n__body.foreign_key',
+						),
+						'I18n__body.model' => 'TranslatedArticle',
+						'I18n__body.field' => 'body',
+						'I18n__body.locale' => 'eng',
+					),
+				),
+			),
+			'limit' => 2,
+			'offset' => null,
+			'order' => array(
+				0 => false,
+			),
+			'page' => 1,
+			'group' => null,
+			'callbacks' => true,
+			'recursive' => 0,
+		);
+		$query= array(
+			'conditions' => array(
+				'NOT' => array(
+					'I18n__title.content' => '',
+				)
+			),
+			'fields' => 'COUNT(*) AS `count`',
+			'joins' => array(),
+			'limit' => 2,
+			'offset' => null,
+			'order' => array(
+				0 => false
+			),
+			'page' => 1,
+			'group' => null,
+			'callbacks' => true,
+			'recursive' => 0,
+		);
+		$TranslateBehavior = ClassRegistry::getObject('TranslateBehavior');
+		$result = $TranslateBehavior->beforeFind($TestModel, $query);
+		$this->assertEquals($expected, $result);
+	}
 }
