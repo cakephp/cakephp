@@ -167,8 +167,19 @@ class Event
      * Stops the event from being used anymore
      *
      * @return void
+     * @deprecated 3.4.10 use stop() instead.
      */
     public function stopPropagation()
+    {
+        $this->_stopped = true;
+    }
+
+    /**
+     * Stops the event from being used anymore
+     *
+     * @return void
+     */
+    public function stop()
     {
         $this->_stopped = true;
     }
