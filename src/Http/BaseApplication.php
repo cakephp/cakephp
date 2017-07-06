@@ -14,7 +14,8 @@
  */
 namespace Cake\Http;
 
-use Cake\Core\ApplicationInterface;
+use Cake\Core\ConsoleApplicationInterface;
+use Cake\Core\HttpApplicationInterface;
 use Cake\Routing\DispatcherFactory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -26,7 +27,7 @@ use Psr\Http\Message\ServerRequestInterface;
  * and ensuring that middleware is attached. It is also invoked as the last piece
  * of middleware, and delegates request/response handling to the correct controller.
  */
-abstract class BaseApplication implements ApplicationInterface
+abstract class BaseApplication implements ConsoleApplicationInterface, HttpApplicationInterface
 {
 
     /**
