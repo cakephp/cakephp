@@ -20,7 +20,8 @@ use Cake\Console\ConsoleIo;
 use Cake\Console\Exception\StopException;
 use Cake\Console\Shell;
 use Cake\Event\EventManagerTrait;
-use Cake\Core\ApplicationInterface;
+use Cake\Core\ConsoleApplicationInterface;
+use Cake\Core\HttpApplicationInterface;
 use Cake\Shell\HelpShell;
 use Cake\Shell\VersionShell;
 use RuntimeException;
@@ -35,7 +36,7 @@ class CommandRunner
     /**
      * The application console commands are being run for.
      *
-     * @var \Cake\Core\ApplicationInterface
+     * @var \Cake\Core\ConsoleApplicationInterface
      */
     protected $app;
 
@@ -56,10 +57,10 @@ class CommandRunner
     /**
      * Constructor
      *
-     * @param \Cake\Core\ApplicationInterface $app The application to run CLI commands for.
+     * @param \Cake\Core\ConsoleApplicationInterface $app The application to run CLI commands for.
      * @param string $root The root command name to be removed from argv.
      */
-    public function __construct(ApplicationInterface $app, $root = 'cake')
+    public function __construct(ConsoleApplicationInterface $app, $root = 'cake')
     {
         $this->app = $app;
         $this->root = $root;

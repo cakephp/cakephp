@@ -15,9 +15,9 @@ namespace Cake\Core;
 
 /**
  * An interface defining the methods that the
- * console runner/http server depend on.
+ * console runner depend on.
  */
-interface ApplicationInterface
+interface ConsoleApplicationInterface
 {
     /**
      * Load all the application configuration and bootstrap logic.
@@ -29,28 +29,10 @@ interface ApplicationInterface
     public function bootstrap();
 
     /**
-     * Define the routes for an application.
-     *
-     * Use the provided RouteBuilder to define an application's routing.
-     *
-     * @param \Cake\Routing\RouteBuilder $routes A route builder to add routes into.
-     * @return void
-     */
-    public function routes($routes);
-
-    /**
      * Define the console commands for an application.
      *
      * @param \Cake\Console\CommandCollection $commands The CommandCollection to add commands into.
      * @return \Cake\Console\CommandCollection The updated collection.
      */
     public function console($commands);
-
-    /**
-     * Define the HTTP middleware layers for an application.
-     *
-     * @param \Cake\Http\MiddlewareQueue $middleware The middleware queue to set in your App Class
-     * @return \Cake\Http\MiddlewareQueue
-     */
-    public function middleware($middleware);
 }
