@@ -339,18 +339,18 @@ class ConsoleIoTest extends TestCase
      */
     public function testOverwriteShorterContent()
     {
-        $number = strlen('12345');
+        $length = strlen('12345');
 
         $this->out->expects($this->at(0))
             ->method('write')
             ->with('12345')
-            ->will($this->returnValue($number));
+            ->will($this->returnValue($length));
 
         // Backspaces
         $this->out->expects($this->at(1))
             ->method('write')
-            ->with(str_repeat("\x08", $number), 0)
-            ->will($this->returnValue($number));
+            ->with(str_repeat("\x08", $length), 0)
+            ->will($this->returnValue($length));
 
         $this->out->expects($this->at(2))
             ->method('write')
@@ -360,14 +360,14 @@ class ConsoleIoTest extends TestCase
         // 2 spaces output to pad up to 5 bytes
         $this->out->expects($this->at(3))
             ->method('write')
-            ->with(str_repeat(' ', $number - 3), 0)
-            ->will($this->returnValue($number - 3));
+            ->with(str_repeat(' ', $length - 3), 0)
+            ->will($this->returnValue($length - 3));
 
         // Backspaces
         $this->out->expects($this->at(4))
             ->method('write')
-            ->with(str_repeat("\x08", $number), 0)
-            ->will($this->returnValue($number));
+            ->with(str_repeat("\x08", $length), 0)
+            ->will($this->returnValue($length));
 
         $this->out->expects($this->at(5))
             ->method('write')
@@ -376,7 +376,7 @@ class ConsoleIoTest extends TestCase
 
         $this->out->expects($this->at(6))
             ->method('write')
-            ->with(str_repeat(' ', $number - 2), 0);
+            ->with(str_repeat(' ', $length - 2), 0);
 
         $this->io->out('12345');
         $this->io->overwrite('123', 0);
