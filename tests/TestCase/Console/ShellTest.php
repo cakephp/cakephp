@@ -1242,7 +1242,8 @@ TEXT;
 
     /**
      * Test reading params
-     *
+     * @param $expected to expect result
+     * @param $toRead to read params
      * @dataProvider paramReadingDataProvider
      */
     public function testParamReading($toRead, $expected)
