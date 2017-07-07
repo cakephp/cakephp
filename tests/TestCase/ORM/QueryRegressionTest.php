@@ -742,6 +742,34 @@ class QueryRegressionTest extends TestCase
     }
 
     /**
+     * Test count() with inner join containments.
+     *
+     * @return void
+     */
+    public function testCountWithInnerJoinContain()
+    {
+        $this->loadFixtures('Articles', 'Authors');
+        $table = TableRegistry::get('Articles');
+        $table->belongsTo('Authors')->setJoinType('INNER');
+
+        $result = $table->save($table->newEntity([
+            'author_id' => null,
+            'title' => 'title',
+            'body' => 'body',
+            'published' => 'Y'
+        ]));
+        $this->assertNotFalse($result);
+
+        $table->eventManager()
+            ->on('Model.beforeFind', function (Event $event, $query) {
+                $query->contain(['Authors']);
+            });
+
+        $count = $table->find()->count();
+        $this->assertEquals(3, $count);
+    }
+
+    /**
      * Tests that bind in subqueries works.
      *
      * @return void

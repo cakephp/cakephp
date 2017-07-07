@@ -44,6 +44,25 @@ class TestDatabaseSession extends DatabaseSession
 }
 
 /**
+ * Overwrite Session to simulate a web session even if the test runs on CLI.
+ */
+class TestWebSession extends Session
+{
+
+    protected function _hasSession()
+    {
+        $isCLI = $this->_isCLI;
+        $this->_isCLI = false;
+
+        $result = parent::_hasSession();
+
+        $this->_isCLI = $isCLI;
+
+        return $result;
+    }
+}
+
+/**
  * SessionTest class
  */
 class SessionTest extends TestCase
@@ -121,7 +140,7 @@ class SessionTest extends TestCase
             ]
         ];
 
-        $session = Session::create($config);
+        Session::create($config);
         $this->assertEquals('', ini_get('session.use_trans_sid'), 'Ini value is incorrect');
         $this->assertEquals('example.com', ini_get('session.referer_check'), 'Ini value is incorrect');
         $this->assertEquals('test', ini_get('session.name'), 'Ini value is incorrect');
@@ -136,10 +155,10 @@ class SessionTest extends TestCase
     {
         ini_set('session.cookie_path', '/foo');
 
-        $session = new Session();
+        new Session();
         $this->assertEquals('/', ini_get('session.cookie_path'));
 
-        $session = new Session(['cookiePath' => '/base']);
+        new Session(['cookiePath' => '/base']);
         $this->assertEquals('/base', ini_get('session.cookie_path'));
     }
 
@@ -568,5 +587,85 @@ class SessionTest extends TestCase
     {
         new Session(['cookie' => 'made_up_name']);
         $this->assertEquals('made_up_name', session_name());
+    }
+
+    /**
+     * Test that a call of check() starts the session when cookies are disabled in php.ini
+     */
+    public function testCheckStartsSessionWithCookiesDisabled()
+    {
+        $_COOKIE = [];
+        $_GET = [];
+
+        $session = new TestWebSession([
+            'ini' => [
+                'session.use_cookies' => 0,
+                'session.use_trans_sid' => 0,
+            ]
+        ]);
+
+        $this->assertFalse($session->started());
+        $session->check('something');
+        $this->assertTrue($session->started());
+    }
+
+    /**
+     * Test that a call of check() starts the session when a cookie is already set
+     */
+    public function testCheckStartsSessionWithCookie()
+    {
+        $_COOKIE[session_name()] = '123abc';
+        $_GET = [];
+
+        $session = new TestWebSession([
+            'ini' => [
+                'session.use_cookies' => 1,
+                'session.use_trans_sid' => 0,
+            ]
+        ]);
+
+        $this->assertFalse($session->started());
+        $session->check('something');
+        $this->assertTrue($session->started());
+    }
+
+    /**
+     * Test that a call of check() starts the session when the session ID is passed via URL and session.use_trans_sid is enabled
+     */
+    public function testCheckStartsSessionWithSIDinURL()
+    {
+        $_COOKIE = [];
+        $_GET[session_name()] = '123abc';
+
+        $session = new TestWebSession([
+            'ini' => [
+                'session.use_cookies' => 1,
+                'session.use_trans_sid' => 1,
+            ]
+        ]);
+
+        $this->assertFalse($session->started());
+        $session->check('something');
+        $this->assertTrue($session->started());
+    }
+
+    /**
+     * Test that a call of check() does not start the session when the session ID is passed via URL and session.use_trans_sid is disabled
+     */
+    public function testCheckDoesntStartSessionWithoutTransSID()
+    {
+        $_COOKIE = [];
+        $_GET[session_name()] = '123abc';
+
+        $session = new TestWebSession([
+            'ini' => [
+                'session.use_cookies' => 1,
+                'session.use_trans_sid' => 0,
+            ]
+        ]);
+
+        $this->assertFalse($session->started());
+        $session->check('something');
+        $this->assertFalse($session->started());
     }
 }
