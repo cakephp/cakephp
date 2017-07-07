@@ -482,7 +482,7 @@ class EntityContext implements ContextInterface
      */
     protected function _getTable($parts, $rootFallback = true)
     {
-        if (count($parts) === 1) {
+        if (!is_array($parts) || count($parts) === 1) {
             return $this->_tables[$this->_rootName];
         }
 
