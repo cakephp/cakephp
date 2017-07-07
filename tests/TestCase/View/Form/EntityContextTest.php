@@ -461,7 +461,8 @@ class EntityContextTest extends TestCase
                 'name' => 'Test tag',
             ],
             'author' => new Entity([
-                'roles' => ['admin', 'publisher']
+                'roles' => ['admin', 'publisher'],
+                'aliases' => new ArrayObject(['dave', 'david']),
             ])
         ]);
         $context = new EntityContext($this->request, [
@@ -477,11 +478,12 @@ class EntityContextTest extends TestCase
         $result = $context->val('tag.name');
         $this->assertEquals($row->tag['name'], $result);
 
-        $result = $context->val('tag.nope');
-        $this->assertNull($result);
+        $result = $context->val('author.aliases.0');
+        $this->assertEquals($row->author->aliases[0], $result, 'ArrayAccess can be read');
 
-        $result = $context->val('author.roles.3');
-        $this->assertNull($result);
+        $this->assertNull($context->val('author.aliases.3'));
+        $this->assertNull($context->val('tag.nope'));
+        $this->assertNull($context->val('author.roles.3'));
     }
 
     /**
