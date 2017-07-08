@@ -122,7 +122,7 @@ class Server
     /**
      * Get the current application.
      *
-     * @return \Cake\Core\ApplicationInterface The application that will be run.
+     * @return \Cake\Core\HttpApplicationInterface The application that will be run.
      */
     public function getApp()
     {
