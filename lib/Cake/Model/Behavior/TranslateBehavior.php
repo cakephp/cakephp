@@ -245,11 +245,26 @@ class TranslateBehavior extends ModelBehavior {
  * @return array The list of translated fields that are in the conditions.
  */
 	protected function _checkConditions(Model $Model, $query) {
-		$conditionFields = array();
 		if (empty($query['conditions']) || (!empty($query['conditions']) && !is_array($query['conditions']))) {
-			return $conditionFields;
+			return array();
 		}
-		foreach ($query['conditions'] as $col => $val) {
+		return $this->_getConditionFields($Model, $query['conditions']);
+	}
+
+	/**
+	 * Extracts condition field names recursively.
+	 *
+	 * @param Model $Model The model being read.
+	 * @param array $conditions The conditions array.
+	 * @return array The list of condition fields.
+	 */
+	protected function _getConditionFields(Model $Model, $conditions) {
+		$conditionFields = array();
+		foreach ($conditions as $col => $val) {
+			if (is_array($val)) {
+				$subConditionFields = $this->_getConditionFields($Model, $val);
+				$conditionFields = array_merge($conditionFields, $subConditionFields);
+			}
 			foreach ($this->settings[$Model->alias] as $field => $assoc) {
 				if (is_numeric($field)) {
 					$field = $assoc;

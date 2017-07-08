@@ -6507,6 +6507,23 @@ class ModelReadTest extends BaseModelTest {
 			'joins' => array(
 				array(
 					'type' => 'INNER',
+					'alias' => 'TranslateArticleModel',
+					'table' => (object)array(
+						'tablePrefix' => '',
+						'table' => 'article_i18n',
+						'schemaName' => 'cakephp_test',
+					),
+					'conditions' => array(
+						'`TranslatedArticle`.`id`' => (object)array(
+							'type' => 'identifier',
+							'value' => '`TranslateArticleModel`.`foreign_key`',
+						),
+						'`TranslateArticleModel`.`model`' => 'TranslatedArticle',
+						'`TranslateArticleModel`.`locale`' => 'eng',
+					),
+				),
+				array(
+					'type' => 'INNER',
 					'alias' => 'I18n__title',
 					'table' => (object)array(
 						'tablePrefix' => '',
@@ -6521,24 +6538,6 @@ class ModelReadTest extends BaseModelTest {
 						'I18n__title.model' => 'TranslatedArticle',
 						'I18n__title.field' => 'title',
 						'I18n__title.locale' => 'eng',
-					),
-				),
-				array(
-					'type' => 'INNER',
-					'alias' => 'I18n__body',
-					'table' => (object)array(
-						'tablePrefix' => '',
-						'table' => 'article_i18n',
-						'schemaName' => 'test',
-					),
-					'conditions' => array(
-						'TranslatedArticle.id' => (object)array(
-							'type' => 'identifier',
-							'value' => 'I18n__body.foreign_key',
-						),
-						'I18n__body.model' => 'TranslatedArticle',
-						'I18n__body.field' => 'body',
-						'I18n__body.locale' => 'eng',
 					),
 				),
 			),
@@ -7325,7 +7324,7 @@ class ModelReadTest extends BaseModelTest {
 			'limit' => 2,
 		);
 		$result = $TestModel->find('count', $options);
-		$this->assertEquals(2, $result);
+		$this->assertEquals(3, $result);
 	}
 
 /**
