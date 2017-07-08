@@ -121,8 +121,8 @@ abstract class BaseAuthenticate implements EventListenerInterface
             $this->_needsPasswordRehash = $hasher->needsRehash($hashedPassword);
             $result->unsetProperty($passwordField);
         }
-        if ($password === null && in_array($passwordField, $result->getHidden())) {
-            $hidden = $result->getHidden();
+        $hidden = $result->getHidden();
+        if ($password === null && in_array($passwordField, $hidden)) {
             $key = array_search($passwordField, $hidden);
             unset($hidden[$key]);
             $result->setHidden($hidden);
