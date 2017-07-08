@@ -23,30 +23,30 @@ use Cake\TestSuite\TestCase;
 class UrlTest extends TestCase
 {
 
-	/**
-	 * testUrl
-	 *
-	 * @return void
-	 */
-	public function testUrl() {
-		$url = (new Url())
-			->setAction('index')
-			->setController('Users');
+    /**
+     * testUrl
+     *
+     * @return void
+     */
+    public function testUrl() {
+        $url = (new Url())
+            ->setAction('index')
+            ->setController('Users');
 
-		$expected = [
-			'action' => 'index',
-			'controller' => 'Users'
-		];
-		$this->assertEquals($expected, $url->toArray());
-		$this->assertEquals('/Users', ((string)($url)));
+        $expected = [
+            'action' => 'index',
+            'controller' => 'Users'
+        ];
+        $this->assertEquals($expected, $url->toArray());
+        $this->assertEquals('/Users', ((string)($url)));
 
-		$url->absolute(true);
-		$this->assertEquals('http://localhost/Users', ((string)($url)));
+        $url->absolute(true);
+        $this->assertEquals('http://localhost/Users', ((string)($url)));
 
-		$url->absolute(false);
-		$url->setQueryParams(['foo' => 'bar', 'one' => 'two']);
-		$this->assertEquals('/Users?foo=bar&one=two', ((string)($url)));
-	}
+        $url->absolute(false);
+        $url->setQueryParams(['foo' => 'bar', 'one' => 'two']);
+        $this->assertEquals('/Users?foo=bar&one=two', ((string)($url)));
+    }
 
 
 }

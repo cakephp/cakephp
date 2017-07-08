@@ -17,159 +17,160 @@ namespace Cake\Routing;
 /**
  * URL Object
  */
-class Url {
+class Url
+{
 
-	/**
-	 * Array representation of the URL
-	 *
-	 * @var array
-	 */
-	protected $url = [];
+    /**
+     * Array representation of the URL
+     *
+     * @var array
+     */
+    protected $url = [];
 
-	/**
-	 * Absolute URL
-	 *
-	 * @var bool
-	 */
-	protected $absolute;
+    /**
+     * Absolute URL
+     *
+     * @var bool
+     */
+    protected $absolute;
 
-	/**
-	 * Sets the action
-	 *
-	 * @param string
-	 * @return $this
-	 */
-	public function setAction($action)
-	{
-		$this->url['action'] = $action;
+    /**
+     * Sets the action
+     *
+     * @param string
+     * @return $this
+     */
+    public function setAction($action)
+    {
+        $this->url['action'] = $action;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * Sets the controller
-	 *
-	 * @param string $controller
-	 * @return $this
-	 */
-	public function setController($controller)
-	{
-		$this->url['controller'] = $controller;
+    /**
+     * Sets the controller
+     *
+     * @param string $controller
+     * @return $this
+     */
+    public function setController($controller)
+    {
+        $this->url['controller'] = $controller;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * Set prefix
-	 *
-	 * @param $prefix
-	 * @return $this
-	 */
-	public function setPrefix($prefix)
-	{
-		$this->url['prefix'] = $prefix;
+    /**
+     * Set prefix
+     *
+     * @param $prefix Prefix
+     * @return $this
+     */
+    public function setPrefix($prefix)
+    {
+        $this->url['prefix'] = $prefix;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * Sets the plugin
-	 *
-	 * @param string|null
-	 * @return $this
-	 */
-	public function setPlugin($plugin)
-	{
-		$this->url['plugin'] = $plugin;
+    /**
+     * Sets the plugin
+     *
+     * @param string|null
+     * @return $this
+     */
+    public function setPlugin($plugin)
+    {
+        $this->url['plugin'] = $plugin;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * Sets values to be passed in the URL
-	 *
-	 * @param string $pass
-	 * @return $this
-	 */
-	public function setPass($pass)
-	{
-		$this->url[] = $pass;
+    /**
+     * Sets values to be passed in the URL
+     *
+     * @param string $pass
+     * @return $this
+     */
+    public function setPass($pass)
+    {
+        $this->url[] = $pass;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * Sets a query param
-	 *
-	 * @param string $key $value
-	 * @param string|int|float
-	 * @return $this
-	 */
-	public function setQuery($key, $value)
-	{
-		if (!isset($this->url['?'])) {
-			$this->url['?'] = [];
-		}
-		$this->url['?'][$key] = $value;
-	}
+    /**
+     * Sets a query param
+     *
+     * @param string $key $value
+     * @param string|int|float
+     * @return $this
+     */
+    public function setQuery($key, $value)
+    {
+        if (!isset($this->url['?'])) {
+            $this->url['?'] = [];
+        }
+        $this->url['?'][$key] = $value;
+    }
 
-	/**
-	 * Sets multiple query params
-	 *
-	 * @param array $params Query params as key value list
-	 * @return $this
-	 */
-	public function setQueryParams(array $params)
-	{
-		if (!isset($this->url['?'])) {
-			$this->url['?'] = [];
-		}
+    /**
+     * Sets multiple query params
+     *
+     * @param array $params Query params as key value list
+     * @return $this
+     */
+    public function setQueryParams(array $params)
+    {
+        if (!isset($this->url['?'])) {
+            $this->url['?'] = [];
+        }
 
-		$this->url['?'] = array_merge($this->url['?'], $params);
+        $this->url['?'] = array_merge($this->url['?'], $params);
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * Absolute URL
-	 *
-	 * @param bool $absolute
-	 * @return $this
-	 */
-	public function absolute($absolute = true)
-	{
-		$this->absolute = (bool)$absolute;
+    /**
+     * Absolute URL
+     *
+     * @param bool $absolute
+     * @return $this
+     */
+    public function absolute($absolute = true)
+    {
+        $this->absolute = (bool)$absolute;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * To string
-	 *
-	 * @return string;
-	 */
-	public function toString()
-	{
-		return Router::url($this->url, $this->absolute);
-	}
+    /**
+     * To string
+     *
+     * @return string;
+     */
+    public function toString()
+    {
+        return Router::url($this->url, $this->absolute);
+    }
 
-	/**
-	 * To array
-	 *
-	 * @return array
-	 */
-	public function toArray()
-	{
-		return $this->url;
-	}
+    /**
+     * To array
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        return $this->url;
+    }
 
-	/**
-	 * To string
-	 *
-	 * @return string String URL
-	 */
-	public function __toString()
-	{
-		return $this->toString();
-	}
+    /**
+     * To string
+     *
+     * @return string String URL
+     */
+    public function __toString()
+    {
+        return $this->toString();
+    }
 }
