@@ -273,7 +273,9 @@ class Shell
     public function startup()
     {
         if (!$this->param('requested')) {
-            $this->_welcome();
+            if (!$this->args) {
+                $this->_welcome();
+            }
         }
     }
 
