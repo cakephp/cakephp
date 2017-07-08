@@ -205,6 +205,11 @@ class ConsoleIo
         if ($newlines) {
             $this->out($this->nl($newlines), 0);
         }
+
+        // Store length of content + fill so if the new content
+        // is shorter than the old content the next overwrite
+        // will work.
+        $this->_lastWritten = $newBytes + $fill;
     }
 
     /**
