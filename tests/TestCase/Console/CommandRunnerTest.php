@@ -201,7 +201,6 @@ class CommandRunnerTest extends TestCase
 
         $contents = implode("\n", $output->messages());
         $this->assertContains('URI template', $contents);
-        $this->assertContains('Welcome to CakePHP', $contents);
     }
 
     /**
