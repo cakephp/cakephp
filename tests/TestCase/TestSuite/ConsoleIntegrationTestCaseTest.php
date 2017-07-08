@@ -43,7 +43,6 @@ class ConsoleIntegrationTestCaseTest extends ConsoleIntegrationTestCase
 
         $this->exec('routes');
 
-        $this->assertOutputContains('Welcome to CakePHP');
         $this->assertExitCode(Shell::CODE_SUCCESS);
     }
 
@@ -69,7 +68,6 @@ class ConsoleIntegrationTestCaseTest extends ConsoleIntegrationTestCase
     {
         $this->exec('routes');
 
-        $this->assertOutputContains('Welcome to CakePHP');
         $this->assertExitCode(Shell::CODE_SUCCESS);
     }
 

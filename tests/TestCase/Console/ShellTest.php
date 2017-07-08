@@ -1162,11 +1162,6 @@ TEXT;
         $task->expects($this->never())
             ->method('_welcome');
 
-        // One welcome message output.
-        $io->expects($this->at(2))
-            ->method('out')
-            ->with($this->stringContains('Welcome to CakePHP'));
-
         $shell->Slice = $task;
         $shell->runCommand(['slice', 'one']);
         $this->assertTrue($task->params['requested'], 'Task is requested, no welcome.');
