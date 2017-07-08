@@ -995,6 +995,8 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @see \Cake\Database\Query::where()
      * @see \Cake\Database\Type
      * @return $this
+     * @deprecated 3.5.0 This method creates hard to predict SQL based on the current query state.
+     *   Use `Query::where()` instead as it has more predicatable and easier to understand behavior.
      */
     public function orWhere($conditions, $types = [])
     {
@@ -1210,6 +1212,8 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @param array $types associative array of type names used to bind values to query.
      * @see \Cake\Database\Query::orWhere()
      * @return $this
+     * @deprecated 3.5.0 This method creates hard to predict SQL based on the current query state.
+     *   Use `Query::having()` instead as it has more predicatable and easier to understand behavior.
      */
     public function orHaving($conditions, $types = [])
     {
