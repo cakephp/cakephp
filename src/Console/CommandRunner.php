@@ -126,11 +126,8 @@ class CommandRunner
         }
         $this->dispatchEvent('Console.buildCommands', ['commands' => $commands]);
 
-        if (empty($argv) || $argv[0] !== $this->root) {
-            $command = empty($argv) ? '' : " `{$argv[0]}`";
-            throw new RuntimeException(
-                "Unknown root command{$command}. Was expecting `{$this->root}`."
-            );
+        if (empty($argv)) {
+            throw new RuntimeException("Cannot run any commands. No arguments received.");
         }
         // Remove the root executable segment
         array_shift($argv);
