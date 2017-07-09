@@ -70,7 +70,7 @@ class CommandRunnerTest extends TestCase
      * Test that running with empty argv fails
      *
      * @expectedException \RuntimeException
-     * @expectedExceptionMessage Unknown root command. Was expecting `cake`
+     * @expectedExceptionMessage Cannot run any commands. No arguments received.
      * @return void
      */
     public function testRunMissingRootCommand()
@@ -82,24 +82,6 @@ class CommandRunnerTest extends TestCase
 
         $runner = new CommandRunner($app);
         $runner->run([]);
-    }
-
-    /**
-     * Test that running an unknown command raises an error.
-     *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Unknown root command `bad`. Was expecting `cake`
-     * @return void
-     */
-    public function testRunInvalidRootCommand()
-    {
-        $app = $this->getMockBuilder(BaseApplication::class)
-            ->setMethods(['middleware', 'bootstrap'])
-            ->setConstructorArgs([$this->config])
-            ->getMock();
-
-        $runner = new CommandRunner($app);
-        $runner->run(['bad', 'i18n']);
     }
 
     /**
