@@ -1444,6 +1444,7 @@ class TranslateBehaviorTest extends CakeTestCase {
 	}
 
 	public function testBeforeFindAllI18nConditions() {
+		$this->skipIf(!$this->db instanceof Mysql, 'This test is only compatible with Mysql.');
 		$this->loadFixtures('TranslateArticle', 'TranslatedArticle', 'User');
 		$TestModel = new TranslatedArticle();
 		$TestModel->cacheQueries = false;
@@ -1525,6 +1526,7 @@ class TranslateBehaviorTest extends CakeTestCase {
 	}
 
 	public function testBeforeFindCountI18nConditions() {
+		$this->skipIf(!$this->db instanceof Mysql, 'This test is only compatible with Mysql.');
 		$this->loadFixtures('TranslateArticle', 'TranslatedArticle', 'User');
 		$TestModel = new TranslatedArticle();
 		$TestModel->cacheQueries = false;
@@ -1581,7 +1583,7 @@ class TranslateBehaviorTest extends CakeTestCase {
 			'callbacks' => true,
 			'recursive' => 0,
 		);
-		$query= array(
+		$query = array(
 			'conditions' => array(
 				'NOT' => array(
 					'I18n__title.content' => '',

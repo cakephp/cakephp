@@ -6426,6 +6426,7 @@ class ModelReadTest extends BaseModelTest {
 	}
 
 	public function testBuildQueryAllI18nConditions() {
+		$this->skipIf(!$this->db instanceof Mysql, 'This test is only compatible with Mysql.');
 		$this->loadFixtures('TranslateArticle', 'TranslatedArticle', 'User');
 		$TestModel = new TranslatedArticle();
 		$TestModel->cacheQueries = false;
@@ -6483,7 +6484,7 @@ class ModelReadTest extends BaseModelTest {
 			'callbacks' => true,
 			'recursive' => 0,
 		);
-		$query= array(
+		$query = array(
 			'recursive' => 0,
 			'conditions' => array(
 				'NOT' => array('I18n__title.content' => ''),
@@ -6495,6 +6496,7 @@ class ModelReadTest extends BaseModelTest {
 	}
 
 	public function testBuildQueryCountI18nConditions() {
+		$this->skipIf(!$this->db instanceof Mysql, 'This test is only compatible with Mysql.');
 		$this->loadFixtures('TranslateArticle', 'TranslatedArticle', 'User');
 		$TestModel = new TranslatedArticle();
 		$TestModel->cacheQueries = false;
@@ -6551,7 +6553,7 @@ class ModelReadTest extends BaseModelTest {
 			'callbacks' => true,
 			'recursive' => 0,
 		);
-		$query= array(
+		$query = array(
 			'recursive' => 0,
 			'conditions' => array(
 				'NOT' => array('I18n__title.content' => ''),

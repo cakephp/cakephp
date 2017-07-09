@@ -251,13 +251,13 @@ class TranslateBehavior extends ModelBehavior {
 		return $this->_getConditionFields($Model, $query['conditions']);
 	}
 
-	/**
-	 * Extracts condition field names recursively.
-	 *
-	 * @param Model $Model The model being read.
-	 * @param array $conditions The conditions array.
-	 * @return array The list of condition fields.
-	 */
+/**
+ * Extracts condition field names recursively.
+ *
+ * @param Model $Model The model being read.
+ * @param array $conditions The conditions array.
+ * @return array The list of condition fields.
+ */
 	protected function _getConditionFields(Model $Model, $conditions) {
 		$conditionFields = array();
 		foreach ($conditions as $col => $val) {
