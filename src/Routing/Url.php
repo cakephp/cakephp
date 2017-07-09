@@ -37,7 +37,7 @@ class Url
     /**
      * Sets the action
      *
-     * @param string
+     * @param string Controller action name
      * @return $this
      */
     public function setAction($action)
@@ -50,7 +50,7 @@ class Url
     /**
      * Sets the controller
      *
-     * @param string $controller
+     * @param string $controller Controller class name without the controller suffix
      * @return $this
      */
     public function setController($controller)
@@ -76,7 +76,7 @@ class Url
     /**
      * Sets the plugin
      *
-     * @param string|null
+     * @param string|null Plugin name
      * @return $this
      */
     public function setPlugin($plugin)
@@ -89,7 +89,7 @@ class Url
     /**
      * Sets values to be passed in the URL
      *
-     * @param string $pass
+     * @param string $pass Args to be passed to a controller action
      * @return $this
      */
     public function setPass($pass)
@@ -102,8 +102,8 @@ class Url
     /**
      * Sets a query param
      *
-     * @param string $key $value
-     * @param string|int|float
+     * @param string $key Query param name
+     * @param string|int|float $value Value
      * @return $this
      */
     public function setQuery($key, $value)
@@ -134,7 +134,7 @@ class Url
     /**
      * Absolute URL
      *
-     * @param bool $absolute
+     * @param bool $absolute Generate an absolute URL or not
      * @return $this
      */
     public function absolute($absolute = true)

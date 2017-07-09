@@ -28,7 +28,8 @@ class UrlTest extends TestCase
      *
      * @return void
      */
-    public function testUrl() {
+    public function testUrl()
+    {
         $url = (new Url())
             ->setAction('index')
             ->setController('Users');
@@ -47,6 +48,4 @@ class UrlTest extends TestCase
         $url->setQueryParams(['foo' => 'bar', 'one' => 'two']);
         $this->assertEquals('/Users?foo=bar&one=two', ((string)($url)));
     }
-
-
 }
