@@ -37,7 +37,7 @@ class Url
     /**
      * Sets the action
      *
-     * @param string Controller action name
+     * @param string $action Controller action name
      * @return $this
      */
     public function setAction($action)
@@ -112,6 +112,8 @@ class Url
             $this->url['?'] = [];
         }
         $this->url['?'][$key] = $value;
+
+        return $this;
     }
 
     /**
