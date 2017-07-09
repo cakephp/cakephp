@@ -190,9 +190,9 @@ class Stream
         if (isset($options['timeout'])) {
             $this->_contextOptions['timeout'] = $options['timeout'];
         }
-        if (isset($options['redirect'])) {
-            $this->_contextOptions['max_redirects'] = (int)$options['redirect'];
-        }
+        // Redirects are handled in the client layer because of cookie handling issues.
+        $this->_contextOptions['max_redirects'] = 0;
+
         if (isset($options['proxy']['proxy'])) {
             $this->_contextOptions['request_fulluri'] = true;
             $this->_contextOptions['proxy'] = $options['proxy']['proxy'];
