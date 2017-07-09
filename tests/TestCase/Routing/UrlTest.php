@@ -21,7 +21,8 @@ use Cake\TestSuite\TestCase;
 /**
  * UrlTest class
  */
-class UrlTest extends TestCase {
+class UrlTest extends TestCase
+{
 
     /**
      * testUrl
