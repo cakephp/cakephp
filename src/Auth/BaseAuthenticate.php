@@ -110,15 +110,22 @@ abstract class BaseAuthenticate implements EventListenerInterface
             return false;
         }
 
+        $passwordField = $this->_config['fields']['password'];
         if ($password !== null) {
             $hasher = $this->passwordHasher();
-            $hashedPassword = $result->get($this->_config['fields']['password']);
+            $hashedPassword = $result->get($passwordField);
             if (!$hasher->check($password, $hashedPassword)) {
                 return false;
             }
 
             $this->_needsPasswordRehash = $hasher->needsRehash($hashedPassword);
-            $result->unsetProperty($this->_config['fields']['password']);
+            $result->unsetProperty($passwordField);
+        }
+        $hidden = $result->getHidden();
+        if ($password === null && in_array($passwordField, $hidden)) {
+            $key = array_search($passwordField, $hidden);
+            unset($hidden[$key]);
+            $result->setHidden($hidden);
         }
 
         return $result->toArray();
