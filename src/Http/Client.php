@@ -396,7 +396,7 @@ class Client
             $handleRedirect = $response->isRedirect() && $redirects-- > 0;
             if ($handleRedirect) {
                 $url = $request->getUri();
-                $request->cookie($this->_cookies->get($url));
+                $request = $this->_cookies->addToRequest($request, []);
 
                 $location = $response->getHeaderLine('Location');
                 $locationUrl = $this->buildUrl($location, [], [
