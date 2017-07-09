@@ -19,6 +19,7 @@ use Cake\Core\InstanceConfigTrait;
 use Cake\Http\Client\CookieCollection;
 use Cake\Http\Client\Request;
 use Cake\Utility\Hash;
+use Zend\Diactoros\Uri;
 
 /**
  * The end user interface for doing HTTP requests.
@@ -370,6 +371,43 @@ class Client
      * @return \Cake\Http\Client\Response
      */
     public function send(Request $request, $options = [])
+    {
+        $redirects = 0;
+        if (isset($options['redirect'])) {
+            $redirects = (int)$options['redirect'];
+            unset($options['redirect']);
+        }
+
+        do {
+            $response = $this->_sendRequest($request, $options);
+
+            $handleRedirect = $response->isRedirect() && $redirects-- > 0;
+            if ($handleRedirect) {
+                $url = $request->getUri();
+                $request->cookie($this->_cookies->get($url));
+
+                $location = $response->getHeaderLine('Location');
+                $locationUrl = $this->buildUrl($location, [], [
+                    'host' => $url->getHost(),
+                    'port' => $url->getPort(),
+                    'scheme' => $url->getScheme()
+                ]);
+
+                $request = $request->withUri(new Uri($locationUrl));
+            }
+        } while ($handleRedirect);
+
+        return $response;
+    }
+
+    /**
+     * Send a request without redirection.
+     *
+     * @param \Cake\Http\Client\Request $request The request to send.
+     * @param array $options Additional options to use.
+     * @return \Cake\Http\Client\Response
+     */
+    protected function _sendRequest(Request $request, $options)
     {
         $responses = $this->_adapter->send($request, $options);
         $url = $request->getUri();

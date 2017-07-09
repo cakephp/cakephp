@@ -659,4 +659,90 @@ class ClientTest extends TestCase
         ]);
         $this->assertSame($result, $response);
     }
+
+    /**
+     * test redirects
+     *
+     * @return void
+     */
+    public function testRedirects()
+    {
+        $url = 'http://cakephp.org';
+
+        $adapter = $this->getMockBuilder(Client\Adapter\Stream::class)
+            ->setMethods(['send'])
+            ->getMock();
+
+        $redirect = new Response([
+            'HTTP/1.0 301',
+            'Location: http://cakephp.org/redirect1?foo=bar',
+            'Set-Cookie: redirect1=true;path=/',
+        ]);
+        $adapter->expects($this->at(0))
+            ->method('send')
+            ->with(
+                $this->callback(function ($request) use ($url) {
+                    $this->assertInstanceOf(Request::class, $request);
+                    $this->assertEquals($url, $request->getUri());
+
+                    return true;
+                }),
+                $this->callback(function ($options) {
+                    $this->assertArrayNotHasKey('redirect', $options);
+
+                    return true;
+                })
+            )
+            ->willReturn([$redirect]);
+
+        $redirect2 = new Response([
+            'HTTP/1.0 301',
+            'Location: /redirect2#foo',
+            'Set-Cookie: redirect2=true;path=/',
+        ]);
+        $adapter->expects($this->at(1))
+            ->method('send')
+            ->with(
+                $this->callback(function ($request) use ($url) {
+                    $this->assertInstanceOf(Request::class, $request);
+                    $this->assertEquals($url . '/redirect1?foo=bar', $request->getUri());
+
+                    return true;
+                }),
+                $this->callback(function ($options) {
+                    $this->assertArrayNotHasKey('redirect', $options);
+
+                    return true;
+                })
+            )
+            ->willReturn([$redirect2]);
+
+        $response = new Response([
+            'HTTP/1.0 200'
+        ]);
+        $adapter->expects($this->at(2))
+            ->method('send')
+            ->with($this->callback(function ($request) use ($url) {
+                $this->assertInstanceOf(Request::class, $request);
+                $this->assertEquals($url . '/redirect2#foo', $request->getUri());
+
+                return true;
+            }))
+            ->willReturn([$response]);
+
+        $client = new Client([
+            'adapter' => $adapter
+        ]);
+
+        $result = $client->send(new Request($url), [
+            'redirect' => 10
+        ]);
+
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertTrue($result->isOk());
+        $cookies = $client->cookies()->get($url);
+
+        $this->assertArrayHasKey('redirect1', $cookies);
+        $this->assertArrayHasKey('redirect2', $cookies);
+    }
 }
