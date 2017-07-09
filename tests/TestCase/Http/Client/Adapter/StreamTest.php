@@ -179,7 +179,7 @@ class StreamTest extends TestCase
             'Cookie: a=b; c=do%20it',
         ];
         $this->assertEquals(implode("\r\n", $expected), $result['header']);
-        $this->assertEquals($options['redirect'], $result['max_redirects']);
+        $this->assertSame(0, $result['max_redirects']);
         $this->assertTrue($result['ignore_errors']);
     }
 
