@@ -6442,7 +6442,7 @@ class ModelReadTest extends BaseModelTest {
 					'table' => (object)array(
 						'tablePrefix' => '',
 						'table' => 'article_i18n',
-						'schemaName' => 'test',
+						'schemaName' => 'cakephp_test',
 					),
 					'conditions' => array(
 						'TranslatedArticle.id' => (object)array(
@@ -6460,7 +6460,7 @@ class ModelReadTest extends BaseModelTest {
 					'table' => (object)array(
 						'tablePrefix' => '',
 						'table' => 'article_i18n',
-						'schemaName' => 'test',
+						'schemaName' => 'cakephp_test',
 					),
 					'conditions' => array(
 						'TranslatedArticle.id' => (object)array(
@@ -6528,7 +6528,7 @@ class ModelReadTest extends BaseModelTest {
 					'table' => (object)array(
 						'tablePrefix' => '',
 						'table' => 'article_i18n',
-						'schemaName' => 'test',
+						'schemaName' => 'cakephp_test',
 					),
 					'conditions' => array(
 						'TranslatedArticle.id' => (object)array(

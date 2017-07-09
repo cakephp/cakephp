@@ -216,7 +216,7 @@ class TranslateBehavior extends ModelBehavior {
  *
  * @param Model $Model The model being worked on.
  * @param array $query The query array to append joins to.
- * @param string $addFields The fields being joined.
+ * @param array $addFields The fields being joined.
  * @return array The modified query
  */
 	protected function _addAllJoins(Model $Model, $query, $addFields) {
