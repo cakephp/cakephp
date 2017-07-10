@@ -260,7 +260,13 @@ class Article extends CakeTestModel {
  *
  * @var array
  */
-	public $hasAndBelongsToMany = array('Tag');
+	public $hasAndBelongsToMany = array(
+		'Tag' => array(
+			'order' => array(
+				'Tag.id' => 'ASC',
+			),
+		),
+	);
 
 /**
  * validate property
