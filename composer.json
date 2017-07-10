@@ -26,7 +26,8 @@
 		"cakephp/cakephp-codesniffer": "^1.0.0"
 	},
 	"config": {
-		"vendor-dir": "vendors/"
+		"vendor-dir": "vendors/",
+		"process-timeout": 0
 	},
 	"bin": [
 		"lib/Cake/Console/cake"
