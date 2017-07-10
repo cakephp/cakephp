@@ -106,6 +106,39 @@ class Url implements ArrayAccess
     }
 
     /**
+     * Sets a single custom route parameter
+     *
+     * @param string $key Key
+     * @param string|int|float $value Value
+     * @return $this
+     */
+    public function setParam($key, $value)
+    {
+        if (in_array($key, ['controller', 'action', 'plugin', 'prefix'])) {
+            throw new \InvalidArgumentException('Use the according setter method instead.');
+        }
+
+        $this->url[$key] = $value;
+
+        return $this;
+    }
+
+    /**
+     * Set custom route parameters as key value pair
+     *
+     * @param array $params Array of key value parameters
+     * @return $this
+     */
+    public function setParams(array $params)
+    {
+        foreach ($params as $key => $value) {
+            $this->setParam($key, $value);
+        }
+
+        return $this;
+    }
+
+    /**
      * Sets a query param
      *
      * @param string $key Query param name

@@ -112,4 +112,42 @@ class UrlTest extends TestCase
         $this->assertNull($url['controller']);
         $this->assertFalse(isset($url['controller']));
     }
+
+    /**
+     * testCustomRouteParams
+     *
+     * @return void
+     */
+    public function testCustomRouteParams()
+    {
+        Router::connect('/articles/view/:slug', [
+            'controller' => 'Articles',
+            'action' => 'view',
+        ]);
+
+        $url = (new Url())
+            ->setController('Articles')
+            ->setAction('view')
+            ->setParam('slug', 'my-article')
+            ->toString();
+
+        $expected = '/articles/view/my-article';
+        $this->assertEquals($expected, $url);
+
+        Router::connect('/articles/:category/:slug', [
+            'controller' => 'Articles',
+            'action' => 'category',
+        ]);
+
+        $url = (new Url())
+            ->setController('Articles')
+            ->setAction('category')
+            ->setParams([
+                'category' => 'news',
+                'slug' => 'my-article'
+            ]);
+
+        $expected = '/articles/news/my-article';
+        $this->assertEquals($expected, $url->toString());
+    }
 }
