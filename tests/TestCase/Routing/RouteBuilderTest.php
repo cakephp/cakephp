@@ -907,11 +907,11 @@ class RouteBuilderTest extends TestCase
             'route-name'
         );
         $this->assertInstanceOf(Route::class, $route, 'Should return a route');
-        $this->assertSame($method, $route->options['_method']);
+        $this->assertSame($method, $route->defaults['_method']);
         $this->assertSame('app:route-name', $route->options['_name']);
         $this->assertSame('/bookmarks/:id', $route->template);
         $this->assertEquals(
-            ['plugin' => null, 'controller' => 'Bookmarks', 'action' => 'view'],
+            ['plugin' => null, 'controller' => 'Bookmarks', 'action' => 'view', '_method' => $method],
             $route->defaults
         );
     }
