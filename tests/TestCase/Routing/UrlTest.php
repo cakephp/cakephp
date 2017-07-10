@@ -108,5 +108,8 @@ class UrlTest extends TestCase
         $this->assertNull($url['action']);
         $this->assertFalse(isset($url['action']));
         $this->assertTrue(isset($url['controller']));
+        unset($url['controller']);
+        $this->assertNull($url['controller']);
+        $this->assertFalse(isset($url['controller']));
     }
 }

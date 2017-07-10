@@ -187,7 +187,7 @@ class Url implements ArrayAccess
      *
      * @link http://php.net/manual/en/arrayaccess.offsetexists.php
      * @param mixed $offset An offset to check for.
-     * @return boolean true on success or false on failure.
+     * @return bool true on success or false on failure.
      * The return value will be casted to boolean if non-boolean was returned.
      */
     public function offsetExists($offset)
@@ -200,7 +200,6 @@ class Url implements ArrayAccess
      *
      * @link http://php.net/manual/en/arrayaccess.offsetget.php
      * @param mixed $offset The offset to retrieve.
-
      * @return mixed Can return all value types.
      */
     public function offsetGet($offset)
@@ -234,6 +233,6 @@ class Url implements ArrayAccess
      */
     public function offsetUnset($offset)
     {
-        unset($offset);
+        unset($this->url[$offset]);
     }
 }
