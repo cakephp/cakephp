@@ -14,10 +14,16 @@
  */
 namespace Cake\Routing;
 
+use ArrayAccess;
+
 /**
  * URL Object
+ *
+ * Use this object whenever you need to generate an URL for your app.
+ *
+ * This is not thought for external URLs.
  */
-class Url
+class Url implements ArrayAccess
 {
 
     /**
@@ -174,5 +180,60 @@ class Url
     public function __toString()
     {
         return $this->toString();
+    }
+
+    /**
+     * Whether a offset exists
+     *
+     * @link http://php.net/manual/en/arrayaccess.offsetexists.php
+     * @param mixed $offset An offset to check for.
+     * @return boolean true on success or false on failure.
+     * The return value will be casted to boolean if non-boolean was returned.
+     */
+    public function offsetExists($offset)
+    {
+        return isset($this->url[$offset]);
+    }
+
+    /**
+     * Offset to retrieve
+     *
+     * @link http://php.net/manual/en/arrayaccess.offsetget.php
+     * @param mixed $offset The offset to retrieve.
+
+     * @return mixed Can return all value types.
+     */
+    public function offsetGet($offset)
+    {
+        if (isset($this->url[$offset])) {
+            return $this->url[$offset];
+        }
+
+        return null;
+    }
+
+    /**
+     * Offset to set
+     *
+     * @link http://php.net/manual/en/arrayaccess.offsetset.php
+     * @param mixed $offset The offset to assign the value to.
+     * @param mixed $value The value to set.
+     * @return void
+     */
+    public function offsetSet($offset, $value)
+    {
+        $this->url[$offset] = $value;
+    }
+
+    /**
+     * Offset to unset
+     *
+     * @link http://php.net/manual/en/arrayaccess.offsetunset.php
+     * @param mixed $offset The offset to unset.
+     * @return void
+     */
+    public function offsetUnset($offset)
+    {
+        unset($offset);
     }
 }

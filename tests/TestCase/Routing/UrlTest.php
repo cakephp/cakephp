@@ -94,4 +94,19 @@ class UrlTest extends TestCase
 
         $this->assertEquals('/admin/company/three/Users/index', $url->toString());
     }
+
+    /**
+     * testArrayAccess
+     *
+     * @return void
+     */
+    public function testArrayAccess()
+    {
+        $url = (new Url());
+        $url['controller'] = 'Controller';
+
+        $this->assertNull($url['action']);
+        $this->assertFalse(isset($url['action']));
+        $this->assertTrue(isset($url['controller']));
+    }
 }
