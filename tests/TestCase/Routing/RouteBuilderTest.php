@@ -935,8 +935,8 @@ class RouteBuilderTest extends TestCase
         });
         $this->assertCount(2, $this->collection->routes());
         $this->assertEquals(['faq', 'article:update'], array_keys($this->collection->named()));
-        $this->assertNotEmpty($this->collection->parse('/faq/things_you_know'));
-        $result = $this->collection->parse('/articles/123');
+        $this->assertNotEmpty($this->collection->parse('/faq/things_you_know', 'GET'));
+        $result = $this->collection->parse('/articles/123', 'POST');
         $this->assertEquals(['123'], $result['pass']);
     }
 
@@ -977,6 +977,6 @@ class RouteBuilderTest extends TestCase
         $routes = new RouteBuilder($this->collection, '/');
         $routes->loadPlugin('TestPlugin');
         $this->assertCount(1, $this->collection->routes());
-        $this->assertNotEmpty($this->collection->parse('/test_plugin'));
+        $this->assertNotEmpty($this->collection->parse('/test_plugin', 'GET'));
     }
 }
