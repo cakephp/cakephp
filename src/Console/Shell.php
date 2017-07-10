@@ -242,12 +242,14 @@ class Shell
      */
     protected function _welcome()
     {
+        $phpInfo = explode('~', phpversion());
+        $phpVersion = (($phpInfo[0]) ? $phpInfo[0] : phpversion());
         $this->out();
         $this->out(sprintf('<info>Welcome to CakePHP %s Console</info>', 'v' . Configure::version()));
         $this->hr();
         $this->out(sprintf('App : %s', APP_DIR));
         $this->out(sprintf('Path: %s', APP));
-        $this->out(sprintf('PHP : %s', phpversion()));
+        $this->out(sprintf('PHP : %s', $phpVersion));
         $this->hr();
     }
 
