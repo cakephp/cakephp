@@ -337,7 +337,7 @@ class ConsoleIoTest extends TestCase
      *
      * @return void
      */
-    public function testOverwriteShorterContent()
+    public function testOverwriteWithShorterContent()
     {
         $length = strlen('12345');
 
@@ -381,6 +381,45 @@ class ConsoleIoTest extends TestCase
         $this->io->out('12345');
         $this->io->overwrite('123', 0);
         $this->io->overwrite('12', 0);
+    }
+
+    /**
+     * Test overwriting content with longer content
+     *
+     * @return void
+     */
+    public function testOverwriteWithLongerContent()
+    {
+        $this->out->expects($this->at(0))
+            ->method('write')
+            ->with('1')
+            ->will($this->returnValue(1));
+
+        // Backspaces
+        $this->out->expects($this->at(1))
+            ->method('write')
+            ->with(str_repeat("\x08", 1), 0)
+            ->will($this->returnValue(1));
+
+        $this->out->expects($this->at(2))
+            ->method('write')
+            ->with('123', 0)
+            ->will($this->returnValue(3));
+
+        // Backspaces
+        $this->out->expects($this->at(3))
+            ->method('write')
+            ->with(str_repeat("\x08", 3), 0)
+            ->will($this->returnValue(3));
+
+        $this->out->expects($this->at(4))
+            ->method('write')
+            ->with('12345', 0)
+            ->will($this->returnValue(5));
+
+        $this->io->out('1');
+        $this->io->overwrite('123', 0);
+        $this->io->overwrite('12345', 0);
     }
 
     /**
