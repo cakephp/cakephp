@@ -192,6 +192,81 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertEquals($expected, $result);
 	}
 
+	public function skipIfIsStrictGroupBy() {
+		$isOnlyFullGroupBy = false;
+		if($this->db instanceof Mysql) {
+			$sqlMode = $this->db->query('SELECT @@sql_mode AS sql_mode;');
+			if (strpos($sqlMode[0][0]['sql_mode'], 'ONLY_FULL_GROUP_BY') > -1) {
+				$isOnlyFullGroupBy = true;
+			}
+		}
+		$isStrictGroupBy = $isOnlyFullGroupBy ||
+			$this->db instanceof Postgres ||
+			$this->db instanceof Sqlite ||
+			$this->db instanceof Oracle ||
+			$this->db instanceof Sqlserver;
+		$message = 'Postgres, Oracle, SQLite, SQL Server and MySQL in ONLY_FULL_GROUP_BY ' .
+			'mode have strict GROUP BY and are incompatible with this test.';
+		$this->skipIf($isStrictGroupBy, $message);
+	}
+
+/**
+ * testGroupByAndOrder method
+ *
+ * This test will never pass with Postgres or Oracle as all fields in a select must be
+ * part of an aggregate function or in the GROUP BY statement.
+ *
+ * @return void
+ */
+	public function testGroupByAndOrder() {
+		$this->skipIfIsStrictGroupBy();
+		$this->loadFixtures('Project', 'Thread', 'Message');
+		$Thread = new Thread();
+		$result = $Thread->find('all', array(
+			'group' => 'Thread.project_id',
+			'order' => 'Thread.id ASC',
+		));
+		$expected = array (
+			array (
+				'Thread' => array (
+					'id' => 1,
+					'project_id' => 1,
+					'name' => 'Project 1, Thread 1',
+				),
+				'Project' => array (
+					'id' => 1,
+					'name' => 'Project 1',
+				),
+				'Message' => array (
+					array (
+						'id' => 1,
+						'thread_id' => 1,
+						'name' => 'Thread 1, Message 1',
+					),
+				),
+			),
+			array (
+				'Thread' => array (
+					'id' => 3,
+					'project_id' => 2,
+					'name' => 'Project 2, Thread 1',
+				),
+				'Project' => array (
+					'id' => 2,
+					'name' => 'Project 2',
+				),
+				'Message' => array (
+					array (
+						'id' => 3,
+						'thread_id' => 3,
+						'name' => 'Thread 3, Message 1',
+					),
+				),
+			),
+		);
+		$this->assertEquals($expected, $result);
+	}
+
 /**
  * testGroupBy method
  *
@@ -201,54 +276,11 @@ class ModelReadTest extends BaseModelTest {
  * @return void
  */
 	public function testGroupBy() {
-		$isStrictGroupBy = $this->db instanceof Postgres || $this->db instanceof Sqlite || $this->db instanceof Oracle || $this->db instanceof Sqlserver;
-		$message = 'Postgres, Oracle, SQLite and SQL Server have strict GROUP BY and are incompatible with this test.';
-
-		$this->skipIf($isStrictGroupBy, $message);
+		$this->skipIfIsStrictGroupBy();
 
 		$this->loadFixtures('Project', 'Product', 'Thread', 'Message', 'Bid');
 		$Thread = new Thread();
 		$Product = new Product();
-
-		$result = $Thread->find('all', array(
-			'group' => 'Thread.project_id',
-			'order' => 'Thread.id ASC'
-		));
-
-		$expected = array(
-			array(
-				'Thread' => array(
-					'id' => 1,
-					'project_id' => 1,
-					'name' => 'Project 1, Thread 1'
-				),
-				'Project' => array(
-					'id' => 1,
-					'name' => 'Project 1'
-				),
-				'Message' => array(
-					array(
-						'id' => 1,
-						'thread_id' => 1,
-						'name' => 'Thread 1, Message 1'
-			))),
-			array(
-				'Thread' => array(
-					'id' => 3,
-					'project_id' => 2,
-					'name' => 'Project 2, Thread 1'
-				),
-				'Project' => array(
-					'id' => 2,
-					'name' => 'Project 2'
-				),
-				'Message' => array(
-					array(
-						'id' => 3,
-						'thread_id' => 3,
-						'name' => 'Thread 3, Message 1'
-		))));
-		$this->assertEquals($expected, $result);
 
 		$rows = $Thread->find('all', array(
 			'group' => 'Thread.project_id',
@@ -8159,6 +8191,29 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertEquals($expected, $result);
 	}
 
+	public function testVirtualFieldsMysqlGroup() {
+		$this->skipIf(!($this->db instanceof Mysql), 'The rest of virtualFields test only compatible with Mysql.');
+		$this->skipIfIsStrictGroupBy();
+		$this->loadFixtures('Post');
+		$Post = ClassRegistry::init('Post');
+		$Post->create();
+		$Post->virtualFields = array(
+			'low_title' => 'lower(Post.title)',
+			'unique_test_field' => 'COUNT(Post.id)',
+		);
+		$expectation = array(
+			'Post' => array(
+				'low_title' => 'first post',
+				'unique_test_field' => 1,
+			),
+		);
+		$result = $Post->find('first', array(
+			'fields' => array_keys($Post->virtualFields),
+			'group' => array('low_title'),
+		));
+		$this->assertEquals($expectation, $result);
+	}
+
 /**
  * testVirtualFieldsMysql()
  *
@@ -8169,42 +8224,17 @@ class ModelReadTest extends BaseModelTest {
  */
 	public function testVirtualFieldsMysql() {
 		$this->skipIf(!($this->db instanceof Mysql), 'The rest of virtualFields test only compatible with Mysql.');
-
-		$this->loadFixtures('Post', 'Author');
-		$Post = ClassRegistry::init('Post');
-
-		$Post->create();
-		$Post->virtualFields = array(
-			'low_title' => 'lower(Post.title)',
-			'unique_test_field' => 'COUNT(Post.id)'
-		);
-
-		$expectation = array(
-			'Post' => array(
-				'low_title' => 'first post',
-				'unique_test_field' => 1
-			)
-		);
-
-		$result = $Post->find('first', array(
-			'fields' => array_keys($Post->virtualFields),
-			'group' => array('low_title')
-		));
-
-		$this->assertEquals($expectation, $result);
-
+		$this->loadFixtures('Author');
 		$Author = ClassRegistry::init('Author');
 		$Author->virtualFields = array(
 			'full_name' => 'CONCAT(Author.user, " ", Author.id)'
 		);
-
 		$result = $Author->find('first', array(
 			'conditions' => array('Author.user' => 'mariano'),
 			'fields' => array('Author.password', 'Author.full_name'),
 			'recursive' => -1
 		));
 		$this->assertTrue(isset($result['Author']['full_name']));
-
 		$result = $Author->find('first', array(
 			'conditions' => array('Author.user' => 'mariano'),
 			'fields' => array('Author.full_name', 'Author.password'),
