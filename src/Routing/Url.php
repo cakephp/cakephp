@@ -15,6 +15,7 @@
 namespace Cake\Routing;
 
 use ArrayAccess;
+use InvalidArgumentException;
 
 /**
  * URL Object
@@ -98,7 +99,7 @@ class Url implements ArrayAccess
      * @param string $pass Args to be passed to a controller action
      * @return $this
      */
-    public function setPass($pass)
+    public function addPass($pass)
     {
         $this->url[] = $pass;
 
@@ -115,7 +116,7 @@ class Url implements ArrayAccess
     public function setParam($key, $value)
     {
         if (in_array($key, ['controller', 'action', 'plugin', 'prefix'])) {
-            throw new \InvalidArgumentException('Use the according setter method instead.');
+            throw new InvalidArgumentException('Use the according setter method instead.');
         }
 
         $this->url[$key] = $value;
@@ -178,7 +179,7 @@ class Url implements ArrayAccess
      * @param bool $absolute Generate an absolute URL or not
      * @return $this
      */
-    public function absolute($absolute = true)
+    public function setAbsolute($absolute = true)
     {
         $this->absolute = (bool)$absolute;
 

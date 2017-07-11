@@ -42,10 +42,10 @@ class UrlTest extends TestCase
         $this->assertEquals($expected, $url->toArray());
         $this->assertEquals('/Users', ((string)($url)));
 
-        $url->absolute(true);
+        $url->setAbsolute(true);
         $this->assertEquals('http://localhost/Users', ((string)($url)));
 
-        $url->absolute(false);
+        $url->setAbsolute(false);
         $url->setQueryParams(['foo' => 'bar', 'one' => 'two']);
         $this->assertEquals('/Users?foo=bar&one=two', ((string)($url)));
     }
