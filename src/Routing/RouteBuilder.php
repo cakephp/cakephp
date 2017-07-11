@@ -508,11 +508,12 @@ class RouteBuilder
             $name = $this->_namePrefix . $name;
         }
         $options = [
-            '_method' => $method,
             '_ext' => $this->_extensions,
             'routeClass' => $this->_routeClass,
             '_name' => $name,
         ];
+
+        $target['_method'] = $method;
 
         $route = $this->_makeRoute($template, $target, $options);
         $this->_collection->add($route, $options);

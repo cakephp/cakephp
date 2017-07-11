@@ -907,11 +907,11 @@ class RouteBuilderTest extends TestCase
             'route-name'
         );
         $this->assertInstanceOf(Route::class, $route, 'Should return a route');
-        $this->assertSame($method, $route->options['_method']);
+        $this->assertSame($method, $route->defaults['_method']);
         $this->assertSame('app:route-name', $route->options['_name']);
         $this->assertSame('/bookmarks/:id', $route->template);
         $this->assertEquals(
-            ['plugin' => null, 'controller' => 'Bookmarks', 'action' => 'view'],
+            ['plugin' => null, 'controller' => 'Bookmarks', 'action' => 'view', '_method' => $method],
             $route->defaults
         );
     }
@@ -935,8 +935,8 @@ class RouteBuilderTest extends TestCase
         });
         $this->assertCount(2, $this->collection->routes());
         $this->assertEquals(['faq', 'article:update'], array_keys($this->collection->named()));
-        $this->assertNotEmpty($this->collection->parse('/faq/things_you_know'));
-        $result = $this->collection->parse('/articles/123');
+        $this->assertNotEmpty($this->collection->parse('/faq/things_you_know', 'GET'));
+        $result = $this->collection->parse('/articles/123', 'POST');
         $this->assertEquals(['123'], $result['pass']);
     }
 
@@ -977,6 +977,6 @@ class RouteBuilderTest extends TestCase
         $routes = new RouteBuilder($this->collection, '/');
         $routes->loadPlugin('TestPlugin');
         $this->assertCount(1, $this->collection->routes());
-        $this->assertNotEmpty($this->collection->parse('/test_plugin'));
+        $this->assertNotEmpty($this->collection->parse('/test_plugin', 'GET'));
     }
 }
