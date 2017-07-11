@@ -194,7 +194,7 @@ class ModelReadTest extends BaseModelTest {
 
 	public function skipIfIsStrictGroupBy() {
 		$isOnlyFullGroupBy = false;
-		if($this->db instanceof Mysql) {
+		if ($this->db instanceof Mysql) {
 			$sqlMode = $this->db->query('SELECT @@sql_mode AS sql_mode;');
 			if (strpos($sqlMode[0][0]['sql_mode'], 'ONLY_FULL_GROUP_BY') > -1) {
 				$isOnlyFullGroupBy = true;
@@ -226,19 +226,19 @@ class ModelReadTest extends BaseModelTest {
 			'group' => 'Thread.project_id',
 			'order' => 'Thread.id ASC',
 		));
-		$expected = array (
-			array (
-				'Thread' => array (
+		$expected = array(
+			array(
+				'Thread' => array(
 					'id' => 1,
 					'project_id' => 1,
 					'name' => 'Project 1, Thread 1',
 				),
-				'Project' => array (
+				'Project' => array(
 					'id' => 1,
 					'name' => 'Project 1',
 				),
-				'Message' => array (
-					array (
+				'Message' => array(
+					array(
 						'id' => 1,
 						'thread_id' => 1,
 						'name' => 'Thread 1, Message 1',
@@ -246,17 +246,17 @@ class ModelReadTest extends BaseModelTest {
 				),
 			),
 			array (
-				'Thread' => array (
+				'Thread' => array(
 					'id' => 3,
 					'project_id' => 2,
 					'name' => 'Project 2, Thread 1',
 				),
-				'Project' => array (
+				'Project' => array(
 					'id' => 2,
 					'name' => 'Project 2',
 				),
-				'Message' => array (
-					array (
+				'Message' => array(
+					array(
 						'id' => 3,
 						'thread_id' => 3,
 						'name' => 'Thread 3, Message 1',
