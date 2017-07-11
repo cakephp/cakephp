@@ -20,7 +20,6 @@ use Cake\Console\ConsoleIo;
 use Cake\Console\Exception\StopException;
 use Cake\Console\Shell;
 use Cake\Core\ConsoleApplicationInterface;
-use Cake\Core\HttpApplicationInterface;
 use Cake\Event\EventManagerTrait;
 use Cake\Shell\HelpShell;
 use Cake\Shell\VersionShell;
