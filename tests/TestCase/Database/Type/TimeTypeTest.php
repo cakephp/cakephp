@@ -220,6 +220,9 @@ class TimeTypeTest extends TestCase
      */
     public function testMarshalWithLocaleParsingDanishLocale()
     {
+        $updated = setlocale(LC_COLLATE, 'da_DK.utf8');
+        $this->skipIf($updated === false, 'Could not set locale to da_DK.utf8, skipping test.');
+
         I18n::locale('da_DK');
         $this->type->useLocaleParser();
         $expected = new Time('03:20:00');
