@@ -157,11 +157,12 @@ class DateTimeType extends Type implements TypeInterface
             if ($value === '' || $value === null || $value === false || $value === true) {
                 return null;
             }
-            if (is_numeric($value)) {
+            $isString = is_string($value);
+            if (ctype_digit($value)) {
                 $date = new $class('@' . $value);
-            } elseif (is_string($value) && $this->_useLocaleParser) {
+            } elseif ($isString && $this->_useLocaleParser) {
                 return $this->_parseValue($value);
-            } elseif (is_string($value)) {
+            } elseif ($isString) {
                 $date = new $class($value);
                 $compare = true;
             }
