@@ -263,7 +263,7 @@ class EntityContext implements ContextInterface
         if (is_array($entity) || $entity instanceof ArrayAccess) {
             $key = array_pop($parts);
 
-            return isset($entity[$key]) ? $entity[$key] : null;
+            return isset($entity[$key]) ? $entity[$key] : $options['default'];
         }
 
         return null;
