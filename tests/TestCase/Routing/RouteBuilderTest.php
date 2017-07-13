@@ -842,6 +842,42 @@ class RouteBuilderTest extends TestCase
         $routes->registerMiddleware('bad', 'strlen');
     }
 
+
+    /**
+     * Test middleware group
+     *
+     * @return void
+     */
+    public function testMiddlewareGroup()
+    {
+        $func = function () {
+        };
+        $routes = new RouteBuilder($this->collection, '/api');
+        $routes->registerMiddleware('test', $func);
+        $routes->registerMiddleware('test_two', $func);
+        $result = $routes->middlewareGroup('group', ['test', 'test_two']);
+
+
+        $this->assertSame($result, $routes);
+        $this->assertTrue($this->collection->hasMiddlewareGroup('group'));
+    }
+
+    /**
+     * Test overlap between middleware name and group name
+     *
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Cannot add middle ware group 'test' . A middleware by this name has already been registered.
+     * @return void
+     */
+    public function testMiddlewareGroupOverlap()
+    {
+        $func = function () {
+        };
+        $routes = new RouteBuilder($this->collection, '/api');
+        $routes->registerMiddleware('test', $func);
+        $result = $routes->middlewareGroup('test', ['test']);
+    }
+
     /**
      * Test applying middleware to a scope when it doesn't exist
      *

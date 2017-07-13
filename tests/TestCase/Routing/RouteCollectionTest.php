@@ -665,6 +665,26 @@ class RouteCollectionTest extends TestCase
     }
 
     /**
+     * Test adding a middleware group to the collection.
+     *
+     * @return void
+     */
+    public function testMiddlewareGroup()
+    {
+        $this->collection->registerMiddleware('closure', function () {});
+
+        $mock = $this->getMockBuilder('\stdClass')
+            ->setMethods(['__invoke'])
+            ->getMock();
+        $result = $this->collection->registerMiddleware('callable', $mock);
+        $this->collection->registerMiddleware('callable', $mock);
+
+        $routes->groupMiddleware('group', ['closure', 'callable']);
+
+        $this->assertTrue($this->collection->hasMiddlewareGroup('group'));
+    }
+
+    /**
      * Test adding middleware with a placeholder in the path.
      *
      * @return void

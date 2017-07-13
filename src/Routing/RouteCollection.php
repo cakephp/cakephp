@@ -67,6 +67,13 @@ class RouteCollection
     protected $_middleware = [];
 
     /**
+     * A map of middleware group names and the related middleware names.
+     *
+     * @var array
+     */
+    protected $_middlewareGroups = [];
+
+    /**
      * A map of paths and the list of applicable middleware.
      *
      * @var array
@@ -425,6 +432,47 @@ class RouteCollection
     }
 
     /**
+     * Add middleware to a middleware group
+     *
+     * @param string $name Name of the middleware group
+     * @param array $names Names of the middleware
+     * @return $this
+     */
+    public function middlewareGroup($name, $middlewareNames)
+    {
+        if ($this->hasMiddleware($name)) {
+            $message = "Cannot add middle ware group '$name' . A middleware by this name has already been registered.";
+            throw new RuntimeException($message);
+        }
+        if ($this->hasMiddlewareGroup($name)) {
+            $message = "Cannot add middle ware group '$name' . A middleware group by this name has already been added.";
+            throw new RuntimeException($message);
+        }
+
+        foreach ($middlewareNames as $middlewareName) {
+            if (!$this->hasMiddleware($middlewareName)) {
+                $message = "Cannot add '$middlewareName' middleware to group '$name'. It has not been registered.";
+                throw new RuntimeException($message);
+            }
+        }
+
+        $this->_middlewareGroups[$name] = $middlewareNames;
+
+        return $this;
+    }
+
+    /**
+     * Check if the named middleware group has been created.
+     *
+     * @param string $name The name of the middleware group to check.
+     * @return bool
+     */
+    public function hasMiddlewareGroup($name)
+    {
+        return array_key_exists($name, $this->_middlewareGroups);
+    }
+
+    /**
      * Check if the named middleware has been registered.
      *
      * @param string $name The name of the middleware to check.
@@ -445,9 +493,15 @@ class RouteCollection
     public function applyMiddleware($path, array $middleware)
     {
         foreach ($middleware as $name) {
-            if (!$this->hasMiddleware($name)) {
-                $message = "Cannot apply '$name' middleware to path '$path'. It has not been registered.";
-                throw new RuntimeException($message);
+            if (!$this->hasMiddleware($name) && !$this->hasMiddlewareGroup($name)) {
+                if (!$this->hasMiddleware($name)) {
+                    $message = "Cannot apply '$name' middleware to path '$path'. It has not been registered.";
+                    throw new RuntimeException($message);
+                }
+                if (!$this->hasMiddlewareGroup($name)) {
+                    $message = "Cannot apply '$name' middleware group to path '$path'. It has not been added.";
+                    throw new RuntimeException($message);
+                }
             }
         }
         // Matches route element pattern in Cake\Routing\Route
