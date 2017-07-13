@@ -408,7 +408,7 @@ class RouteCollection
      * Register a middleware with the RouteCollection.
      *
      * Once middleware has been registered, it can be applied to the current routing
-     * scope or any child scopes that share the same RoutingCollection.
+     * scope or any child scopes that share the same RouteCollection.
      *
      * @param string $name The name of the middleware. Used when applying middleware to a scope.
      * @param callable $middleware The middleware object to register.
