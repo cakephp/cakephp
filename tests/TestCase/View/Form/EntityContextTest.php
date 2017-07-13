@@ -455,11 +455,13 @@ class EntityContextTest extends TestCase
     public function testValDefaultArray()
     {
         $context = new EntityContext($this->request, [
-            'entity' => ['title' => 'foo'],
+            'entity' => new Article([
+                'prop' => ['title' => 'foo']
+            ]),
             'table' => 'Articles',
         ]);
-        $this->assertEquals('Articles.foo', $context->val('title', ['default' => 'bar']));
-        $this->assertEquals('Articles.bar', $context->val('nottitle', ['default' => 'bar']));
+        $this->assertEquals('foo', $context->val('prop.title', ['default' => 'bar']));
+        $this->assertEquals('bar', $context->val('prop.nope', ['default' => 'bar']));
     }
 
     /**
