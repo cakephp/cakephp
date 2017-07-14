@@ -44,4 +44,16 @@ if (!include $dispatcher) {
 }
 unset($dispatcher);
 
+if(function_exists('putenv')){
+    // Loop args
+    foreach ($argv as $k => $v) {
+        // Is args ENVIRONMENT in CLI, FOO_ENV=BLABLA..?
+        if(stripos($v,'_ENV=')!==false){
+            // Set add ENVIRONMENT
+            putenv($v);
+	    unset($argv[$k]);
+        }
+    }
+}
+
 return ShellDispatcher::run($argv);
