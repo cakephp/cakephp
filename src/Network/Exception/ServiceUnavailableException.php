@@ -19,16 +19,22 @@ class ServiceUnavailableException extends HttpException
 {
 
     /**
+     * {@inheritDoc}
+     */
+    protected $_defaultCode = 503;
+
+    /**
      * Constructor
      *
      * @param string|null $message If no message is given 'Service Unavailable' will be the message
      * @param int $code Status code, defaults to 503
+     * @param \Exception|null $previous The previous exception.
      */
-    public function __construct($message = null, $code = 503)
+    public function __construct($message = null, $code = null, $previous = null)
     {
         if (empty($message)) {
             $message = 'Service Unavailable';
         }
-        parent::__construct($message, $code);
+        parent::__construct($message, $code, $previous);
     }
 }
