@@ -435,7 +435,7 @@ class RouteCollection
      * Add middleware to a middleware group
      *
      * @param string $name Name of the middleware group
-     * @param array $names Names of the middleware
+     * @param array $middlewareNames Names of the middleware
      * @return $this
      */
     public function middlewareGroup($name, $middlewareNames)
@@ -494,14 +494,8 @@ class RouteCollection
     {
         foreach ($middleware as $name) {
             if (!$this->hasMiddleware($name) && !$this->hasMiddlewareGroup($name)) {
-                if (!$this->hasMiddleware($name)) {
-                    $message = "Cannot apply '$name' middleware to path '$path'. It has not been registered.";
-                    throw new RuntimeException($message);
-                }
-                if (!$this->hasMiddlewareGroup($name)) {
-                    $message = "Cannot apply '$name' middleware group to path '$path'. It has not been added.";
-                    throw new RuntimeException($message);
-                }
+                $message = "Cannot apply '$name' middleware or middleware group to path '$path'. It has not been registered.";
+                throw new RuntimeException($message);
             }
         }
         // Matches route element pattern in Cake\Routing\Route
@@ -519,30 +513,37 @@ class RouteCollection
     /**
      * Get an array of middleware that matches the provided URL.
      *
-     * All middleware lists that match the URL will be merged together from shortest
-     * path to longest path. If a middleware would be added to the set more than
-     * once because it is connected to multiple path substrings match, it will only
-     * be added once at its first occurrence.
+     * Only the middlewrae applied to the longest matching scope will be used.
      *
      * @param string $needle The URL path to find middleware for.
      * @return array
      */
     public function getMatchingMiddleware($needle)
     {
-        $matching = [];
-        foreach ($this->_middlewarePaths as $pattern => $middleware) {
+        $paths = $this->_middlewarePaths;
+        $keys = array_map('strlen', array_keys($paths));
+        array_multisort($keys, SORT_DESC, $paths);
+
+        foreach ($paths as $pattern => &$middleware) {
+            $matching = [];
+
+            foreach ($middleware as $key => $name) {
+                if ($this->hasMiddlewareGroup($name)) {
+                    unset($middleware[$key]);
+                    $middleware = array_merge($middleware, $this->_middlewareGroups[$name]);
+                }
+            }
+
             if (preg_match($pattern, $needle)) {
                 $matching = array_merge($matching, $middleware);
+                foreach ($matching as $name) {
+                    $resolved[] = $this->_middleware[$name];
+                }
+
+                return array_values($resolved);
             }
         }
 
-        $resolved = [];
-        foreach ($matching as $name) {
-            if (!isset($resolved[$name])) {
-                $resolved[$name] = $this->_middleware[$name];
-            }
-        }
-
-        return array_values($resolved);
+        return [];
     }
 }

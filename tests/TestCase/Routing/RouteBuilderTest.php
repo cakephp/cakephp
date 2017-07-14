@@ -842,7 +842,6 @@ class RouteBuilderTest extends TestCase
         $routes->registerMiddleware('bad', 'strlen');
     }
 
-
     /**
      * Test middleware group
      *
@@ -856,7 +855,6 @@ class RouteBuilderTest extends TestCase
         $routes->registerMiddleware('test', $func);
         $routes->registerMiddleware('test_two', $func);
         $result = $routes->middlewareGroup('group', ['test', 'test_two']);
-
 
         $this->assertSame($result, $routes);
         $this->assertTrue($this->collection->hasMiddlewareGroup('group'));
@@ -882,7 +880,7 @@ class RouteBuilderTest extends TestCase
      * Test applying middleware to a scope when it doesn't exist
      *
      * @expectedException \RuntimeException
-     * @expectedExceptionMessage Cannot apply 'bad' middleware to path '/api'. It has not been registered.
+     * @expectedExceptionMessage Cannot apply 'bad' middleware or middleware group to path '/api'. It has not been registered.
      * @return void
      */
     public function testApplyMiddlewareInvalidName()

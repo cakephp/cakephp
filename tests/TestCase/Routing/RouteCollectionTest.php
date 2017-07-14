@@ -671,7 +671,8 @@ class RouteCollectionTest extends TestCase
      */
     public function testMiddlewareGroup()
     {
-        $this->collection->registerMiddleware('closure', function () {});
+        $this->collection->registerMiddleware('closure', function () {
+        });
 
         $mock = $this->getMockBuilder('\stdClass')
             ->setMethods(['__invoke'])
@@ -679,9 +680,43 @@ class RouteCollectionTest extends TestCase
         $result = $this->collection->registerMiddleware('callable', $mock);
         $this->collection->registerMiddleware('callable', $mock);
 
-        $routes->groupMiddleware('group', ['closure', 'callable']);
+        $this->collection->middlewareGroup('group', ['closure', 'callable']);
 
         $this->assertTrue($this->collection->hasMiddlewareGroup('group'));
+    }
+
+    /**
+     * Test adding a middleware group with the same name twice fails.
+     *
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Cannot add middle ware group 'group' . A middleware group by this name has already been added.
+     * @return void
+     */
+    public function testMiddlewareGroupDuplicate()
+    {
+        $this->collection->registerMiddleware('closure', function () {
+        });
+
+        $mock = $this->getMockBuilder('\stdClass')
+            ->setMethods(['__invoke'])
+            ->getMock();
+        $result = $this->collection->registerMiddleware('callable', $mock);
+        $this->collection->registerMiddleware('callable', $mock);
+
+        $this->collection->middlewareGroup('group', ['closure', 'callable']);
+        $this->collection->middlewareGroup('group', ['closure', 'callable']);
+    }
+
+    /**
+     * Test adding ab unregistered middleware to a middleware group fails.
+     *
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Cannot add 'bad' middleware to group 'group'. It has not been registered.
+     * @return void
+     */
+    public function testMiddlewareGroupUnregisteredMiddleware()
+    {
+        $this->collection->middlewareGroup('group', ['bad']);
     }
 
     /**
@@ -743,8 +778,8 @@ class RouteCollectionTest extends TestCase
         $this->assertCount(0, $middleware);
 
         $middleware = $this->collection->getMatchingMiddleware('/api/v1/articles/1');
-        $this->assertCount(2, $middleware);
-        $this->assertEquals([$mock, $mockTwo], $middleware, 'Both middleware match');
+        $this->assertCount(1, $middleware);
+        $this->assertEquals([$mock], $middleware, 'Should only match the strongest scope');
 
         $middleware = $this->collection->getMatchingMiddleware('/api/v1/comments');
         $this->assertCount(1, $middleware);
@@ -806,7 +841,7 @@ class RouteCollectionTest extends TestCase
      * Test applying middleware to a scope when it doesn't exist
      *
      * @expectedException \RuntimeException
-     * @expectedExceptionMessage Cannot apply 'bad' middleware to path '/api'. It has not been registered.
+     * @expectedExceptionMessage Cannot apply 'bad' middleware or middleware group to path '/api'. It has not been registered.
      * @return void
      */
     public function testApplyMiddlewareUnregistered()
