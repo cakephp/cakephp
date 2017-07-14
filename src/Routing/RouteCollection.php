@@ -536,6 +536,8 @@ class RouteCollection
 
             if (preg_match($pattern, $needle)) {
                 $matching = array_merge($matching, $middleware);
+                $resolved = [];
+
                 foreach ($matching as $name) {
                     $resolved[] = $this->_middleware[$name];
                 }
