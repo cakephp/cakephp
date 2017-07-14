@@ -32,6 +32,20 @@ class RouteCollection
 {
 
     /**
+     * Indicates to apply a middleware to the current route scope.
+     *
+     * @var string
+     */
+    const APPLY = 'apply';
+
+    /**
+     * Indicates to remove a middleware to the current route scope.
+     *
+     * @var string
+     */
+    const REMOVE = 'remove';
+
+    /**
      * The routes connected to this collection.
      *
      * @var array
@@ -72,6 +86,13 @@ class RouteCollection
      * @var array
      */
     protected $_middlewarePaths = [];
+
+    /**
+     * A map of paths and the list of middleware that should be removed.
+     *
+     * @var string
+     */
+    protected $_ignoreMiddlewarePaths = [];
 
     /**
      * Route extensions
@@ -436,7 +457,7 @@ class RouteCollection
     }
 
     /**
-     * Apply a registered middleware(s) for the provided path
+     * Apply a registered middleware for the provided path
      *
      * @param string $path The URL path to register middleware for.
      * @param string[] $middleware The middleware names to add for the path.
@@ -444,9 +465,40 @@ class RouteCollection
      */
     public function applyMiddleware($path, array $middleware)
     {
+        return $this->_handleMiddlewareOperation($path, $middleware, self::APPLY);
+    }
+
+    /**
+     * Remove a registered middleware for the provided path
+     *
+     * @param string $path The URL path to register middleware for.
+     * @param string[] $middleware The middleware names to remove from the path.
+     * @return $this
+     */
+    public function removeMiddleware($path, array $middleware)
+    {
+        return $this->_handleMiddlewareOperation($path, $middleware, self::REMOVE);
+    }
+
+    /**
+     * Handle applying and removing middleware for the provided path
+     *
+     * @param string $path The URL path to register or remove middleware for.
+     * @param string[] $middleware $middleware The middleware names to add/remove to/from the path.
+     * @param string $mode Operation to be performed.
+     * @return $this
+     */
+    protected function _handleMiddlewareOperation($path, array $middleware, $mode)
+    {
         foreach ($middleware as $name) {
             if (!$this->hasMiddleware($name)) {
-                $message = "Cannot apply '$name' middleware to path '$path'. It has not been registered.";
+                $message = '';
+                if ($mode === self::APPLY) {
+                    $message = "Cannot apply '$name' middleware to path '$path'. It has not been registered.";
+                }
+                if ($mode === self::REMOVE) {
+                    $message = "Cannot remove '$name' middleware from path '$path'. It has not been registered.";
+                }
                 throw new RuntimeException($message);
             }
         }
@@ -454,10 +506,18 @@ class RouteCollection
         $path = '#^' . preg_quote($path, '#') . '#';
         $path = preg_replace('/\\\\:([a-z0-9-_]+(?<![-_]))/i', '[^/]+', $path);
 
-        if (!isset($this->_middlewarePaths[$path])) {
-            $this->_middlewarePaths[$path] = [];
+        if ($mode === self::APPLY) {
+            if (!isset($this->_middlewarePaths[$path])) {
+                $this->_middlewarePaths[$path] = [];
+            }
+            $this->_middlewarePaths[$path] = array_merge($this->_middlewarePaths[$path], $middleware);
         }
-        $this->_middlewarePaths[$path] = array_merge($this->_middlewarePaths[$path], $middleware);
+        if ($mode === self::REMOVE) {
+            if (!isset($this->_ignoreMiddlewarePaths[$path])) {
+                $this->_ignoreMiddlewarePaths[$path] = [];
+            }
+            $this->_ignoreMiddlewarePaths[$path] = array_merge($this->_ignoreMiddlewarePaths[$path], $middleware);
+        }
 
         return $this;
     }
@@ -476,9 +536,16 @@ class RouteCollection
     public function getMatchingMiddleware($needle)
     {
         $matching = [];
+        $remove = [];
         foreach ($this->_middlewarePaths as $pattern => $middleware) {
             if (preg_match($pattern, $needle)) {
                 $matching = array_merge($matching, $middleware);
+            }
+        }
+
+        foreach ($this->_ignoreMiddlewarePaths as $pattern => $middleware) {
+            if (preg_match($pattern, $needle)) {
+                $remove = array_merge($matching, $middleware);
             }
         }
 
@@ -486,6 +553,12 @@ class RouteCollection
         foreach ($matching as $name) {
             if (!isset($resolved[$name])) {
                 $resolved[$name] = $this->_middleware[$name];
+            }
+        }
+
+        foreach ($remove as $name) {
+            if (isset($resolved[$name])) {
+                unset($resolved[$name]);
             }
         }
 

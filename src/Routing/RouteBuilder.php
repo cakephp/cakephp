@@ -925,4 +925,20 @@ class RouteBuilder
 
         return $this;
     }
+
+    /**
+     * Remove a middleware from the current route scope.
+     *
+     * Requires middleware to be registered via `registerMiddleware()`
+     *
+     * @param string[] ...$names The names of the middleware to apply to the current scope.
+     * @return $this
+     * @see \Cake\Routing\RouteCollection::addMiddlewareToScope()
+     */
+    public function removeMiddleware(...$names)
+    {
+        $this->_collection->removeMiddleware($this->_path, $names);
+
+        return $this;
+    }
 }

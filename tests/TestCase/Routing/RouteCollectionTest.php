@@ -644,7 +644,7 @@ class RouteCollectionTest extends TestCase
     }
 
     /**
-     * Test adding middleware to the collection.
+     * Test registering middleware to the collection.
      *
      * @return void
      */
@@ -665,7 +665,7 @@ class RouteCollectionTest extends TestCase
     }
 
     /**
-     * Test adding middleware with a placeholder in the path.
+     * Test applying middleware to a collection.
      *
      * @return void
      */
@@ -682,7 +682,7 @@ class RouteCollectionTest extends TestCase
     }
 
     /**
-     * Test adding middleware with a placeholder in the path.
+     * Test get matching middleware.
      *
      * @return void
      */
@@ -695,13 +695,17 @@ class RouteCollectionTest extends TestCase
         $this->collection->registerMiddleware('callback_two', $mock);
 
         $result = $this->collection->applyMiddleware('/api', ['callable']);
+        $result = $this->collection->removeMiddleware('/api/v1/authors', ['callable']);
         $middleware = $this->collection->getMatchingMiddleware('/api/v1/articles');
+        $noMiddleware = $this->collection->getMatchingMiddleware('/api/v1/authors');
+
         $this->assertCount(1, $middleware);
         $this->assertSame($middleware[0], $mock);
+        $this->assertCount(0, $noMiddleware);
     }
 
     /**
-     * Test enabling and matching
+     * Test enabling, removing and matching
      *
      * @return void
      */
@@ -719,12 +723,20 @@ class RouteCollectionTest extends TestCase
         $this->collection->applyMiddleware('/api', ['callable']);
         $this->collection->applyMiddleware('/api/v1/articles', ['callback_two']);
 
+        $this->collection->removeMiddleware('/api/users', ['callable']);
+        $this->collection->removeMiddleware('/api/v1/authors', ['callback_two']);
+
         $middleware = $this->collection->getMatchingMiddleware('/articles');
         $this->assertCount(0, $middleware);
 
         $middleware = $this->collection->getMatchingMiddleware('/api/v1/articles/1');
         $this->assertCount(2, $middleware);
         $this->assertEquals([$mock, $mockTwo], $middleware, 'Both middleware match');
+
+        $middleware = $this->collection->getMatchingMiddleware('/api/users/1');
+        $this->assertCount(0, $middleware);
+        $middleware = $this->collection->getMatchingMiddleware('/api/v1/authors');
+        $this->assertCount(0, $middleware);
 
         $middleware = $this->collection->getMatchingMiddleware('/api/v1/comments');
         $this->assertCount(1, $middleware);
@@ -756,11 +768,11 @@ class RouteCollectionTest extends TestCase
     }
 
     /**
-     * Test adding middleware with a placeholder in the path.
+     * Test adding and removing middleware with a placeholder in the path.
      *
      * @return void
      */
-    public function testApplyMiddlewareWithPlaceholder()
+    public function testApplyRemoveMiddlewareWithPlaceholder()
     {
         $mock = $this->getMockBuilder('\stdClass')
             ->setMethods(['__invoke'])
@@ -768,6 +780,7 @@ class RouteCollectionTest extends TestCase
         $this->collection->registerMiddleware('callable', $mock);
 
         $this->collection->applyMiddleware('/api-:version/articles/:article_id/comments', ['callable']);
+        $this->collection->removeMiddleware('/api-:version/authors/:author_id/comments', ['callable']);
 
         $middleware = $this->collection->getMatchingMiddleware('/api-1/articles/comments');
         $this->assertEmpty($middleware);
@@ -780,6 +793,9 @@ class RouteCollectionTest extends TestCase
 
         $middleware = $this->collection->getMatchingMiddleware('/api-abc123/articles/abc-123/comments/99');
         $this->assertEquals([$mock], $middleware);
+
+        $middleware = $this->collection->getMatchingMiddleware('/api-abc123/author/abc-123/comments/99');
+        $this->assertCount(0, $middleware);
     }
 
     /**
@@ -796,5 +812,21 @@ class RouteCollectionTest extends TestCase
             ->getMock();
         $this->collection->registerMiddleware('callable', $mock);
         $this->collection->applyMiddleware('/api', ['callable', 'bad']);
+    }
+
+    /**
+     * Test removing middleware from a scope when it doesn't exist
+     *
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Cannot remove 'bad' middleware from path '/api'. It has not been registered.
+     * @return void
+     */
+    public function testRemoveyMiddlewareUnregistered()
+    {
+        $mock = $this->getMockBuilder('\stdClass')
+            ->setMethods(['__invoke'])
+            ->getMock();
+        $this->collection->registerMiddleware('callable', $mock);
+        $this->collection->removeMiddleware('/api', ['callable', 'bad']);
     }
 }

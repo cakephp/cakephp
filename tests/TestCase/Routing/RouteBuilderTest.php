@@ -856,6 +856,19 @@ class RouteBuilderTest extends TestCase
     }
 
     /**
+     * Test removing middleware from a scope when it doesn't exist
+     *
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Cannot remove 'bad' middleware from path '/api'. It has not been registered.
+     * @return void
+     */
+    public function testRemoveMiddlewareInvalidName()
+    {
+        $routes = new RouteBuilder($this->collection, '/api');
+        $routes->removeMiddleware('bad');
+    }
+
+    /**
      * Test applying middleware to a scope
      *
      * @return void
@@ -874,6 +887,34 @@ class RouteBuilderTest extends TestCase
             [$func, $func],
             $this->collection->getMatchingMiddleware('/api/v1/ping')
         );
+    }
+
+    /**
+     * Test removing middleware from a scope
+     *
+     * @return void
+     */
+    public function testRemoveMiddleware()
+    {
+        $func = function () {
+        };
+        $routes = new RouteBuilder($this->collection, '/api');
+        $routes->registerMiddleware('test', $func)
+            ->registerMiddleware('test2', $func);
+        $resultApply = $routes->applyMiddleware('test', 'test2');
+
+        $removeRoutes = new RouteBuilder($this->collection, '/api/v1/ping/pong');
+        $resultRemove = $removeRoutes->removeMiddleware('test', 'test2');
+
+        $this->assertSame($resultApply, $routes);
+        $this->assertEquals(
+            [$func, $func],
+            $this->collection->getMatchingMiddleware('/api/v1/ping')
+        );
+
+        $this->assertSame($resultRemove, $removeRoutes);
+        $this->assertEmpty($this->collection->getMatchingMiddleware('/api/v1/ping/pong'));
+        $this->assertSame([], $this->collection->getMatchingMiddleware('/api/v1/ping/pong'));
     }
 
     /**
