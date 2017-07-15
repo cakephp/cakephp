@@ -716,6 +716,69 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 	// @codingStandardsIgnoreEnd
 
 /**
+ * Returns a mock object for the specified class.
+ *
+ * @param string $originalClassName
+ * @param array $methods By default, all methods of the given class are replaced
+ *   with a test double that just returns NULL unless a return value is configured
+ *   using will($this->returnValue()), for instance.
+ *   When the second (optional) parameter is provided, only the methods whose names
+ *   are in the array are replaced with a configurable test double. The behavior
+ *   of the other methods is not changed. Providing NULL as the parameter means
+ *   that no methods will be replaced.
+ * @param array $arguments The third (optional) parameter may hold a parameter
+ *   array that is passed to the original class' constructor (which is not replaced
+ *   with a dummy implementation by default).
+ * @param string $mockClassName The fourth (optional) parameter can be used to
+ *   specify a class name for the generated test double class.
+ * @param boolean $callOriginalConstructor The fifth (optional) parameter can be
+ *   used to disable the call to the original class' constructor.
+ * @param boolean $callOriginalClone The sixth (optional) parameter can be used
+ *   to disable the call to the original class' clone constructor.
+ * @param boolean $callAutoload The seventh (optional) parameter can be used to
+ *   disable __autoload() during the generation of the test double class.
+ * @return object
+ * @throws InvalidArgumentException
+ * @deprecated Use `getMockBuilder()` or `createMock` in new unit tests.
+ * @see https://phpunit.de/manual/current/en/test-doubles.html
+ */
+	public function getMock($originalClassName, $methods = array(),
+			array $arguments = array(), $mockClassName = '',
+			$callOriginalConstructor = true, $callOriginalClone = true,
+			$callAutoload = true, $cloneArguments = false,
+			$callOriginalMethods = false, $proxyTarget = null) {
+		$MockBuilder = $this->getMockBuilder($originalClassName);
+		if (!empty($methods)) {
+			$MockBuilder = $MockBuilder->setMethods($methods);
+		}
+		if (!empty($arguments)) {
+			$MockBuilder = $MockBuilder->setConstructorArgs($arguments);
+		}
+		if ($mockClassName != '') {
+			$MockBuilder = $MockBuilder->setMockClassName($mockClassName);
+		}
+		if ($callOriginalConstructor !== true) {
+			$MockBuilder= $MockBuilder->disableOriginalConstructor();
+		}
+		if ($callOriginalClone !== true) {
+			$MockBuilder= $MockBuilder->disableOriginalClone();
+		}
+		if ($callAutoload !== true) {
+			$MockBuilder= $MockBuilder->disableAutoload();
+		}
+		if ($cloneArguments) {
+			throw new CakeException('$cloneArguments parameter is not supported');
+		}
+		if ($callOriginalMethods) {
+			throw new CakeException('$callOriginalMethods parameter is not supported');
+		}
+		if ($proxyTarget !== null) {
+			throw new CakeException('$proxyTarget parameter is not supported');
+		}
+		return $MockBuilder->getMock();
+	}
+
+/**
  * Mock a model, maintain fixtures and table association
  *
  * @param string $model The model to get a mock for.
