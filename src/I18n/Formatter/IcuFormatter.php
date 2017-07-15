@@ -30,10 +30,6 @@ class IcuFormatter implements FormatterInterface
      * Returns a string with all passed variables interpolated into the original
      * message. Variables are interpolated using the MessageFormatter class.
      *
-     * If an array is passed in `$message`, it will trigger the plural selection
-     * routine. Plural forms are selected depending on the locale and the `_count`
-     * key passed in `$vars`.
-     *
      * @param string $locale The locale in which the message is presented.
      * @param string|array $message The message to be translated
      * @param array $vars The list of values to interpolate in the message
@@ -41,23 +37,7 @@ class IcuFormatter implements FormatterInterface
      */
     public function format($locale, $message, array $vars)
     {
-        $isString = is_string($message);
-        if ($isString && isset($vars['_singular'])) {
-            $message = [$vars['_singular'], $message];
-            unset($vars['_singular']);
-            $isString = false;
-        }
-
-        if ($isString) {
-            return $this->_formatMessage($locale, $message, $vars);
-        }
-
-        if (!is_string($message)) {
-            $count = isset($vars['_count']) ? $vars['_count'] : 0;
-            unset($vars['_count'], $vars['_singular']);
-            $form = PluralRules::calculate($locale, $count);
-            $message = isset($message[$form]) ? $message[$form] : (string)end($message);
-        }
+        unset($vars['_singular'], $vars['_count']);
 
         return $this->_formatMessage($locale, $message, $vars);
     }
