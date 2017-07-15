@@ -441,11 +441,11 @@ class RouteCollection
     public function middlewareGroup($name, $middlewareNames)
     {
         if ($this->hasMiddleware($name)) {
-            $message = "Cannot add middle ware group '$name' . A middleware by this name has already been registered.";
+            $message = "Cannot add middleware group '$name'. A middleware by this name has already been registered.";
             throw new RuntimeException($message);
         }
         if ($this->hasMiddlewareGroup($name)) {
-            $message = "Cannot add middle ware group '$name' . A middleware group by this name has already been added.";
+            $message = "Cannot add middleware group '$name'. A middleware group by this name already exists.";
             throw new RuntimeException($message);
         }
 
@@ -513,7 +513,7 @@ class RouteCollection
     /**
      * Get an array of middleware that matches the provided URL.
      *
-     * Only the middlewrae applied to the longest matching scope will be used.
+     * Only the middleware applied to the longest matching scope will be used.
      *
      * @param string $needle The URL path to find middleware for.
      * @return array

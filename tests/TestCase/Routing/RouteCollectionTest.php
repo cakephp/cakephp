@@ -689,7 +689,7 @@ class RouteCollectionTest extends TestCase
      * Test adding a middleware group with the same name twice fails.
      *
      * @expectedException \RuntimeException
-     * @expectedExceptionMessage Cannot add middle ware group 'group' . A middleware group by this name has already been added.
+     * @expectedExceptionMessage Cannot add middleware group 'group'. A middleware group by this name already exists.
      * @return void
      */
     public function testMiddlewareGroupDuplicate()

@@ -864,7 +864,7 @@ class RouteBuilderTest extends TestCase
      * Test overlap between middleware name and group name
      *
      * @expectedException \RuntimeException
-     * @expectedExceptionMessage Cannot add middle ware group 'test' . A middleware by this name has already been registered.
+     * @expectedExceptionMessage Cannot add middleware group 'test'. A middleware by this name has already been registered.
      * @return void
      */
     public function testMiddlewareGroupOverlap()
