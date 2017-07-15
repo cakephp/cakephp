@@ -718,7 +718,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 /**
  * Returns a mock object for the specified class.
  *
- * @param string $originalClassName
+ * @param string $originalClassName The class name of the object to be mocked.
  * @param array $methods By default, all methods of the given class are replaced
  *   with a test double that just returns NULL unless a return value is configured
  *   using will($this->returnValue()), for instance.
@@ -731,18 +731,18 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  *   with a dummy implementation by default).
  * @param string $mockClassName The fourth (optional) parameter can be used to
  *   specify a class name for the generated test double class.
- * @param boolean $callOriginalConstructor The fifth (optional) parameter can be
+ * @param bool $callOriginalConstructor The fifth (optional) parameter can be
  *   used to disable the call to the original class' constructor.
- * @param boolean $callOriginalClone The sixth (optional) parameter can be used
+ * @param bool $callOriginalClone The sixth (optional) parameter can be used
  *   to disable the call to the original class' clone constructor.
- * @param boolean $callAutoload The seventh (optional) parameter can be used to
+ * @param bool $callAutoload The seventh (optional) parameter can be used to
  *   disable __autoload() during the generation of the test double class.
- * @param boolean $cloneArguments Not supported.
- * @param boolean $callOriginalMethods Not supported.
+ * @param bool $cloneArguments Not supported.
+ * @param bool $callOriginalMethods Not supported.
  * @param string $proxyTarget Not supported.
  * @return object
- * @throws InvalidArgumentException
- * @deprecated Use `getMockBuilder()` or `createMock` in new unit tests.
+ * @throws InvalidArgumentException When not supported parameters are set.
+ * @deprecated Use `getMockBuilder()` or `createMock()` in new unit tests.
  * @see https://phpunit.de/manual/current/en/test-doubles.html
  */
 	public function getMock($originalClassName, $methods = array(),
@@ -767,22 +767,22 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 			$MockBuilder = $MockBuilder->setMockClassName($mockClassName);
 		}
 		if ($callOriginalConstructor !== true) {
-			$MockBuilder= $MockBuilder->disableOriginalConstructor();
+			$MockBuilder = $MockBuilder->disableOriginalConstructor();
 		}
 		if ($callOriginalClone !== true) {
-			$MockBuilder= $MockBuilder->disableOriginalClone();
+			$MockBuilder = $MockBuilder->disableOriginalClone();
 		}
 		if ($callAutoload !== true) {
-			$MockBuilder= $MockBuilder->disableAutoload();
+			$MockBuilder = $MockBuilder->disableAutoload();
 		}
 		if ($cloneArguments) {
-			throw new CakeException('$cloneArguments parameter is not supported');
+			throw new InvalidArgumentException('$cloneArguments parameter is not supported');
 		}
 		if ($callOriginalMethods) {
-			throw new CakeException('$callOriginalMethods parameter is not supported');
+			throw new InvalidArgumentException('$callOriginalMethods parameter is not supported');
 		}
 		if ($proxyTarget !== null) {
-			throw new CakeException('$proxyTarget parameter is not supported');
+			throw new InvalidArgumentException('$proxyTarget parameter is not supported');
 		}
 		return $MockBuilder->getMock();
 	}
