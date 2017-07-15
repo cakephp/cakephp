@@ -737,6 +737,9 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  *   to disable the call to the original class' clone constructor.
  * @param boolean $callAutoload The seventh (optional) parameter can be used to
  *   disable __autoload() during the generation of the test double class.
+ * @param boolean $cloneArguments Not supported.
+ * @param boolean $callOriginalMethods Not supported.
+ * @param string $proxyTarget Not supported.
  * @return object
  * @throws InvalidArgumentException
  * @deprecated Use `getMockBuilder()` or `createMock` in new unit tests.
@@ -747,6 +750,12 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 			$callOriginalConstructor = true, $callOriginalClone = true,
 			$callAutoload = true, $cloneArguments = false,
 			$callOriginalMethods = false, $proxyTarget = null) {
+		$phpUnitVersion = PHPUnit_Runner_Version::id();
+		if ($phpUnitVersion < '5.7.0') {
+			return parent::getMock($originalClassName, $methods, $arguments,
+					$mockClassName, $callOriginalConstructor, $callOriginalClone,
+					$callAutoload, $cloneArguments, $callOriginalMethods, $proxyTarget);
+		}
 		$MockBuilder = $this->getMockBuilder($originalClassName);
 		if (!empty($methods)) {
 			$MockBuilder = $MockBuilder->setMethods($methods);
