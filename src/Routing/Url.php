@@ -140,10 +140,10 @@ class Url implements ArrayAccess
     }
 
     /**
-     * Sets a query param
+     * Sets a query parameter
      *
-     * @param string $key Query param name
-     * @param string|int|float $value Value
+     * @param string $key Query Parameter name
+     * @param string|int|float $value Parameter value
      * @return $this
      */
     public function setQuery($key, $value)
@@ -174,9 +174,9 @@ class Url implements ArrayAccess
     }
 
     /**
-     * Absolute URL
+     * Set the object to generate an absolute or relative URL
      *
-     * @param bool $absolute Generate an absolute URL or not
+     * @param bool $absolute Generate an absolute URL or not, default is true
      * @return $this
      */
     public function setAbsolute($absolute = true)
@@ -187,9 +187,9 @@ class Url implements ArrayAccess
     }
 
     /**
-     * To string
+     * Returns the URL as string
      *
-     * @return string;
+     * @return string URL as string value
      */
     public function toString()
     {
@@ -197,9 +197,9 @@ class Url implements ArrayAccess
     }
 
     /**
-     * To array
+     * Get the URL as array.
      *
-     * @return array
+     * @return array URL as array
      */
     public function toArray()
     {
@@ -217,7 +217,7 @@ class Url implements ArrayAccess
     }
 
     /**
-     * Whether a offset exists
+     * Whether an offset exists
      *
      * @link http://php.net/manual/en/arrayaccess.offsetexists.php
      * @param mixed $offset An offset to check for.
