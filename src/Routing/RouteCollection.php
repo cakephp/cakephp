@@ -444,10 +444,6 @@ class RouteCollection
             $message = "Cannot add middleware group '$name'. A middleware by this name has already been registered.";
             throw new RuntimeException($message);
         }
-        if ($this->hasMiddlewareGroup($name)) {
-            $message = "Cannot add middleware group '$name'. A middleware group by this name already exists.";
-            throw new RuntimeException($message);
-        }
 
         foreach ($middlewareNames as $middlewareName) {
             if (!$this->hasMiddleware($middlewareName)) {
@@ -524,8 +520,9 @@ class RouteCollection
     /**
      * Get an array of middleware given a list of names
      *
-     * @param array $names The names of the middleware to fetch
-     * @return array
+     * @param array $names The names of the middleware or groups to fetch
+     * @return array An array of middleware. If any of the passed names are groups,
+     *   the groups middleware will be flattened into the returned list.
      * @throws \RuntimeException when a requested middleware does not exist.
      */
     public function getMiddleware(array $names)

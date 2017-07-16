@@ -686,25 +686,21 @@ class RouteCollectionTest extends TestCase
     }
 
     /**
-     * Test adding a middleware group with the same name twice fails.
+     * Test adding a middleware group with the same name overwrites the original list
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Cannot add middleware group 'group'. A middleware group by this name already exists.
      * @return void
      */
-    public function testMiddlewareGroupDuplicate()
+    public function testMiddlewareGroupOverwrite()
     {
-        $this->collection->registerMiddleware('closure', function () {
-        });
+        $stub = function () {
+        };
+        $this->collection->registerMiddleware('closure', $stub);
+        $result = $this->collection->registerMiddleware('callable', $stub);
+        $this->collection->registerMiddleware('callable', $stub);
 
-        $mock = $this->getMockBuilder('\stdClass')
-            ->setMethods(['__invoke'])
-            ->getMock();
-        $result = $this->collection->registerMiddleware('callable', $mock);
-        $this->collection->registerMiddleware('callable', $mock);
-
+        $this->collection->middlewareGroup('group', ['callable']);
         $this->collection->middlewareGroup('group', ['closure', 'callable']);
-        $this->collection->middlewareGroup('group', ['closure', 'callable']);
+        $this->assertSame([$stub, $stub], $this->collection->getMiddleware(['group']));
     }
 
     /**
