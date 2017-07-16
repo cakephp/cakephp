@@ -210,7 +210,6 @@ class RoutingMiddlewareTest extends TestCase
      */
     public function testInvokeScopedMiddleware()
     {
-        $this->counter = 0;
         Router::scope('/api', function ($routes) {
             $routes->registerMiddleware('first', function ($req, $res, $next) {
                 $this->log[] = 'first';
@@ -222,9 +221,10 @@ class RoutingMiddlewareTest extends TestCase
 
                 return $next($req, $res);
             });
-            $routes->connect('/ping', ['controller' => 'Pings']);
             // Connect middleware in reverse to test ordering.
             $routes->applyMiddleware('second', 'first');
+
+            $routes->connect('/ping', ['controller' => 'Pings']);
         });
 
         $request = ServerRequestFactory::fromGlobals([
@@ -250,7 +250,6 @@ class RoutingMiddlewareTest extends TestCase
      */
     public function testInvokeScopedMiddlewareReturnResponse()
     {
-        $this->counter = 0;
         Router::scope('/', function ($routes) {
             $routes->registerMiddleware('first', function ($req, $res, $next) {
                 $this->log[] = 'first';
@@ -294,7 +293,6 @@ class RoutingMiddlewareTest extends TestCase
      */
     public function testInvokeScopedMiddlewareReturnResponseMainScope()
     {
-        $this->counter = 0;
         Router::scope('/', function ($routes) {
             $routes->registerMiddleware('first', function ($req, $res, $next) {
                 $this->log[] = 'first';
@@ -329,5 +327,68 @@ class RoutingMiddlewareTest extends TestCase
 
         $this->assertSame($response, $result, 'Should return result');
         $this->assertSame(['first'], $this->log);
+    }
+
+    /**
+     * Test invoking middleware & scope separation
+     *
+     * Re-opening a scope should not inherit middleware declared
+     * in the first context.
+     *
+     * @dataProvider scopedMiddlewareUrlProvider
+     * @return void
+     */
+    public function testInvokeScopedMiddlewareIsolatedScopes($url, $expected)
+    {
+        Router::scope('/', function ($routes) {
+            $routes->registerMiddleware('first', function ($req, $res, $next) {
+                $this->log[] = 'first';
+
+                return $next($req, $res);
+            });
+            $routes->registerMiddleware('second', function ($req, $res, $next) {
+                $this->log[] = 'second';
+
+                return $next($req, $res);
+            });
+
+            $routes->scope('/api', function ($routes) {
+                $routes->applyMiddleware('first');
+                $routes->connect('/ping', ['controller' => 'Pings']);
+            });
+
+            $routes->scope('/api', function ($routes) {
+                $routes->applyMiddleware('second');
+                $routes->connect('/version', ['controller' => 'Version']);
+            });
+        });
+
+        $request = ServerRequestFactory::fromGlobals([
+            'REQUEST_METHOD' => 'GET',
+            'REQUEST_URI' => $url
+        ]);
+        $response = new Response();
+        $next = function ($req, $res) {
+            $this->log[] = 'last';
+
+            return $res;
+        };
+        $middleware = new RoutingMiddleware();
+        $result = $middleware($request, $response, $next);
+        $this->assertSame($response, $result, 'Should return result');
+        $this->assertSame($expected, $this->log);
+    }
+
+    /**
+     * Provider for scope isolation test.
+     *
+     * @return array
+     */
+    public function scopedMiddlewareUrlProvider()
+    {
+        return [
+            ['/api/ping', ['first', 'last']],
+            ['/api/version', ['second', 'last']],
+        ];
     }
 }
