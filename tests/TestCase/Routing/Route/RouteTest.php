@@ -68,6 +68,17 @@ class RouteTest extends TestCase
     }
 
     /**
+     * Test set middleware in the constructor
+     *
+     * @return void
+     */
+    public function testConstructorSetMiddleware()
+    {
+        $route = new Route('/:controller/:action/*', [], ['_middleware' => ['auth', 'cookie']]);
+        $this->assertSame(['auth', 'cookie'], $route->getMiddleware());
+    }
+
+    /**
      * Test Route compiling.
      *
      * @return void
@@ -1641,5 +1652,18 @@ class RouteTest extends TestCase
         $result = $route->setPersist(['date']);
         $this->assertSame($result, $route, 'Should return this');
         $this->assertEquals(['date'], $route->options['persist']);
+    }
+
+    /**
+     * Test setting/getting middleware.
+     *
+     * @return void
+     */
+    public function testSetMiddleware()
+    {
+        $route = new Route('/reviews/:date/:id', ['controller' => 'Reviews', 'action' => 'view']);
+        $result = $route->setMiddleware(['auth', 'cookie']);
+        $this->assertSame($result, $route);
+        $this->assertSame(['auth', 'cookie'], $route->getMiddleware());
     }
 }
