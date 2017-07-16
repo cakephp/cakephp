@@ -438,7 +438,7 @@ class RouteCollection
      * @param array $middlewareNames Names of the middleware
      * @return $this
      */
-    public function middlewareGroup($name, $middlewareNames)
+    public function middlewareGroup($name, array $middlewareNames)
     {
         if ($this->hasMiddleware($name)) {
             $message = "Cannot add middleware group '$name'. A middleware by this name has already been registered.";
