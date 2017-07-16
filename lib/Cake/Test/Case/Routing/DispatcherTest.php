@@ -889,18 +889,12 @@ class DispatcherTest extends CakeTestCase {
 			'_clearBuffer',
 			'_flushBuffer'
 		));
-
-		$response->expects($this->never())
-			->method('body');
-
 		$response->expects($this->exactly(1))
 			->method('_isActive')
 			->will($this->returnValue(true));
-
 		ob_start();
 		$Dispatcher->dispatch($request, $response);
 		$result = ob_get_clean();
-
 		$this->assertEquals("/* this is the test asset css file */\n", $result);
 	}
 

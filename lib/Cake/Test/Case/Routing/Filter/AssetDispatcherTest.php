@@ -154,13 +154,10 @@ class AssetDispatcherTest extends CakeTestCase {
 
 		$response = $this->getMock('CakeResponse', array('_sendHeader', 'checkNotModified'));
 		$request = new CakeRequest('theme/test_theme/img/cake.power.gif');
-
 		$response->expects($this->once())->method('checkNotModified')
 			->with($request)
 			->will($this->returnValue(true));
-		$response->expects($this->never())->method('send');
 		$event = new CakeEvent('DispatcherTest', $this, compact('request', 'response'));
-
 		$this->assertSame($response, $filter->beforeDispatch($event));
 		$this->assertEquals($time->format('D, j M Y H:i:s') . ' GMT', $response->modified());
 	}
@@ -193,13 +190,9 @@ class AssetDispatcherTest extends CakeTestCase {
 			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
 		), App::RESET);
-
 		$response = $this->getMock('CakeResponse', array('_sendHeader'));
 		$request = new CakeRequest('theme/test_theme/../../../../../../VERSION.txt');
 		$event = new CakeEvent('Dispatcher.beforeRequest', $this, compact('request', 'response'));
-
-		$response->expects($this->never())->method('send');
-
 		$filter = new AssetDispatcher();
 		$this->assertNull($filter->beforeDispatch($event));
 		$this->assertFalse($event->isStopped());
