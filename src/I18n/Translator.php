@@ -182,9 +182,7 @@ class Translator implements TranslatorInterface
         if (!isset($message['_context'][$context])) {
             return $key;
         }
-        if (is_string($message['_context'][$context]) &&
-            strlen($message['_context'][$context]) === 0
-        ) {
+        if ($message['_context'][$context] === '') {
             return $key;
         }
 
