@@ -117,6 +117,7 @@ class RouteBuilder
      * - `routeClass` - The default route class to use when adding routes.
      * - `extensions` - The extensions to connect when adding routes.
      * - `namePrefix` - The prefix to prepend to all route names.
+     * - `middleware` - The names of the middleware routes should have applied.
      *
      * @param \Cake\Routing\RouteCollection $collection The route collection to append routes into.
      * @param string $path The path prefix the scope is for.
@@ -136,6 +137,9 @@ class RouteBuilder
         }
         if (isset($options['namePrefix'])) {
             $this->_namePrefix = $options['namePrefix'];
+        }
+        if (isset($options['middleware'])) {
+            $this->middleware = (array)$options['middleware'];
         }
     }
 
@@ -885,6 +889,7 @@ class RouteBuilder
             'routeClass' => $this->_routeClass,
             'extensions' => $this->_extensions,
             'namePrefix' => $namePrefix,
+            'middleware' => $this->middleware,
         ]);
         $callback($builder);
     }

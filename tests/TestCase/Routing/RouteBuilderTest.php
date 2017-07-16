@@ -784,9 +784,23 @@ class RouteBuilderTest extends TestCase
             $this->assertEquals('/api/v1', $routes->path());
             $this->assertEquals(['prefix' => 'api', 'version' => 1], $routes->params());
         });
+    }
 
-        $routes = new RouteBuilder($this->collection, '/api', ['prefix' => 'api']);
+    /**
+     * Test that nested scopes inherit middleware.
+     *
+     * @return void
+     */
+    public function testScopeInheritMiddleware()
+    {
+        $routes = new RouteBuilder(
+            $this->collection,
+            '/api',
+            ['prefix' => 'api'],
+            ['middleware' => ['auth']]
+        );
         $routes->scope('/v1', function ($routes) {
+            $this->assertAttributeEquals(['auth'], 'middleware', $routes, 'Should inherit middleware');
             $this->assertEquals('/api/v1', $routes->path());
             $this->assertEquals(['prefix' => 'api'], $routes->params());
         });
