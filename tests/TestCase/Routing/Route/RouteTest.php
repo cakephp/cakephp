@@ -1096,6 +1096,26 @@ class RouteTest extends TestCase
     }
 
     /**
+     * Test that middleware is returned from parse()
+     *
+     * @return void
+     */
+    public function testParseWithMiddleware()
+    {
+        $route = new Route('/:controller', ['action' => 'display', 'home']);
+        $route->setMiddleware(['auth', 'cookie']);
+        $result = $route->parse('/posts', 'GET');
+        $expected = [
+            'controller' => 'posts',
+            'action' => 'display',
+            'pass' => ['home'],
+            '_matchedRoute' => '/:controller',
+            '_middleware' => ['auth', 'cookie'],
+        ];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
      * Test that http header conditions can cause route failures.
      *
      * @return void

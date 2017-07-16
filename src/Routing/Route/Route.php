@@ -486,6 +486,9 @@ class Route
             }
         }
         $route['_matchedRoute'] = $this->template;
+        if (count($this->middleware) > 0) {
+            $route['_middleware'] = $this->middleware;
+        }
 
         return $route;
     }
