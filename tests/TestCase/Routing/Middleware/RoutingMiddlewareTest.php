@@ -246,6 +246,9 @@ class RoutingMiddlewareTest extends TestCase
     /**
      * Test control flow in scoped middleware.
      *
+     * Scoped middleware should be able to generate a response
+     * and abort lower layers.
+     *
      * @return void
      */
     public function testInvokeScopedMiddlewareReturnResponse()
@@ -283,7 +286,7 @@ class RoutingMiddlewareTest extends TestCase
         $result = $middleware($request, $response, $next);
 
         $this->assertSame($response, $result, 'Should return result');
-        $this->assertSame(['second'], $this->log);
+        $this->assertSame(['first', 'second'], $this->log);
     }
 
     /**
