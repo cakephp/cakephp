@@ -21,6 +21,7 @@ use Cake\Core\Plugin;
 use Cake\Routing\Route\Route;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
+use RuntimeException;
 
 /**
  * Provides features for building routes inside scopes.
@@ -99,6 +100,14 @@ class RouteBuilder
      * @var \Cake\Routing\RouteCollection
      */
     protected $_collection;
+
+    /**
+     * The list of middleware that routes in this builder get
+     * added during construction.
+     *
+     * @var array
+     */
+    protected $middleware = [];
 
     /**
      * Constructor
@@ -508,9 +517,10 @@ class RouteBuilder
             $name = $this->_namePrefix . $name;
         }
         $options = [
-            '_ext' => $this->_extensions,
-            'routeClass' => $this->_routeClass,
             '_name' => $name,
+            '_ext' => $this->_extensions,
+            '_middleware' => $this->middleware,
+            'routeClass' => $this->_routeClass,
         ];
 
         $target['_method'] = $method;
@@ -645,6 +655,9 @@ class RouteBuilder
         }
         if (isset($options['_name']) && $this->_namePrefix) {
             $options['_name'] = $this->_namePrefix . $options['_name'];
+        }
+        if (empty($options['_middleware'])) {
+            $options['_middleware'] = $this->middleware;
         }
 
         $route = $this->_makeRoute($route, $defaults, $options);
@@ -921,7 +934,14 @@ class RouteBuilder
      */
     public function applyMiddleware(...$names)
     {
-        $this->_collection->applyMiddleware($this->_path, $names);
+        foreach ($names as $name) {
+            if (!$this->_collection->middlewareExists($name)) {
+                $message = "Cannot apply '$name' middleware or middleware group. " .
+                    'Use registerMiddleware() to register middleware.';
+                throw new RuntimeException($message);
+            }
+        }
+        $this->middleware = array_merge($this->middleware, $names);
 
         return $this;
     }
