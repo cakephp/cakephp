@@ -431,6 +431,7 @@ class Shell extends CakeObject {
 		try {
 			list($this->params, $this->args) = $this->OptionParser->parse($argv, $command);
 		} catch (ConsoleException $e) {
+			$this->err(__d('cake_console', '<error>Error:</error> %s', $e->getMessage()));
 			$this->out($this->OptionParser->help($command));
 			return false;
 		}
