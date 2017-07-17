@@ -451,8 +451,8 @@ interface CollectionInterface extends Iterator, JsonSerializable
      *
      * ```
      * $items = [
-     *  ['invoice' => ['total' => 100],
-     *  ['invoice' => ['total' => 200]
+     *  ['invoice' => ['total' => 100]],
+     *  ['invoice' => ['total' => 200]]
      * ];
      *
      * $total = (new Collection($items))->sumOf('invoice.total');
