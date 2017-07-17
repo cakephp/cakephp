@@ -58,7 +58,7 @@ class Collection
      * TableSchema::TABLE_TYPE_VIEW, TableSchema::TABLE_TYPE_TABLE or TableSchema::TABLE_TYPE_BOTH (default).
      * @return array The list of tables in the connected database/schema.
      */
-    public function listTables($tableType = TableSchema::TABLE_TYPE_BOTH)
+    public function listTables($tableType = TableSchema::REPOSITORY_TYPE_BOTH)
     {
         list($sql, $params) = $this->_dialect->listTablesSql($this->_connection->config(), $tableType);
         $result = [];

@@ -282,21 +282,21 @@ class TableSchema
      *
      * @var string
      */
-    const TABLE_TYPE_BOTH = 'both';
+    const REPOSITORY_TYPE_BOTH = 'both';
 
     /**
      * Table type table
      *
      * @var string
      */
-    const TABLE_TYPE_TABLE = 'table';
+    const REPOSITORY_TYPE_TABLE = 'table';
 
     /**
      * Table type view
      *
      * @var string
      */
-    const TABLE_TYPE_VIEW = 'view';
+    const REPOSITORY_TYPE_VIEW = 'view';
 
     /**
      * Constructor.

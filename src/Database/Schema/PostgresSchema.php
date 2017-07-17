@@ -25,17 +25,17 @@ class PostgresSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function listTablesSql($config, $type = TableSchema::TABLE_TYPE_BOTH)
+    public function listTablesSql($config, $type = TableSchema::REPOSITORY_TYPE_BOTH)
     {
         $sql = 'SELECT table_name as name FROM information_schema.tables WHERE table_schema = ?';
         $schema = empty($config['schema']) ? 'public' : $config['schema'];
 
         $params = [$schema];
 
-        if ($type != TableSchema::TABLE_TYPE_BOTH) {
+        if ($type != TableSchema::REPOSITORY_TYPE_BOTH) {
             $sql .= ' AND table_type = ?';
 
-            if ($type == TableSchema::TABLE_TYPE_TABLE) {
+            if ($type == TableSchema::REPOSITORY_TYPE_TABLE) {
                 $params[] = 'BASE TABLE';
             } else {
                 $params[] = 'VIEW';

@@ -272,7 +272,7 @@ SQL;
         $this->_createTables($connection);
 
         $schema = new SchemaCollection($connection);
-        $result = $schema->listTables(TableSchema::TABLE_TYPE_TABLE);
+        $result = $schema->listTables(TableSchema::REPOSITORY_TYPE_TABLE);
 
         $this->assertInternalType('array', $result);
         $this->assertContains('schema_articles', $result);
@@ -292,7 +292,7 @@ SQL;
         $this->_createTables($connection);
 
         $schema = new SchemaCollection($connection);
-        $result = $schema->listTables(TableSchema::TABLE_TYPE_VIEW);
+        $result = $schema->listTables(TableSchema::REPOSITORY_TYPE_VIEW);
 
         $this->assertInternalType('array', $result);
         $this->assertContains('view_articles', $result);

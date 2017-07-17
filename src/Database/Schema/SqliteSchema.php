@@ -105,13 +105,13 @@ class SqliteSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function listTablesSql($config, $type = TableSchema::TABLE_TYPE_BOTH)
+    public function listTablesSql($config, $type = TableSchema::REPOSITORY_TYPE_BOTH)
     {
         $sql = 'SELECT name FROM sqlite_master WHERE name != "sqlite_sequence"';
-        if ($type != TableSchema::TABLE_TYPE_BOTH) {
+        if ($type != TableSchema::REPOSITORY_TYPE_BOTH) {
             $sql .= ' AND type = ?';
 
-            if ($type == TableSchema::TABLE_TYPE_TABLE) {
+            if ($type == TableSchema::REPOSITORY_TYPE_TABLE) {
                 $params = ['table'];
             } else {
                 $params = ['view'];

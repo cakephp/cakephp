@@ -45,13 +45,13 @@
         <env name="db_dsn" value="sqlite:///:memory:"/>
         -->
         <!-- Postgres
-        <env name="db_dsn" value="postgres://localhost/cake_test?timezone=UTC&amp;username=postgres&amp;password=kikouyou"/>
+        <env name="db_dsn" value="postgres://localhost/cake_test?timezone=UTC"/>
         -->
         <!-- Mysql
         <env name="db_dsn" value="mysql://localhost/cake_test?timezone=UTC"/>
         -->
-        <!-- SQL Server-->
-        <env name="db_dsn" value="sqlserver://localhost\localhost/cake_test?timezone=UTC&amp;username=root&amp;password=kikouyou"/>
-
+        <!-- SQL Server
+        <env name="db_dsn" value="sqlserver://localhost\localhost/cake_test?timezone=UTC"/>
+        -->
     </php>
 </phpunit>
