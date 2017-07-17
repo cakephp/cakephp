@@ -278,6 +278,27 @@ class TableSchema
     const ACTION_SET_DEFAULT = 'setDefault';
 
     /**
+     * Table type both
+     *
+     * @var string
+     */
+    const TABLE_TYPE_BOTH = 'both';
+
+    /**
+     * Table type table
+     *
+     * @var string
+     */
+    const TABLE_TYPE_TABLE = 'table';
+
+    /**
+     * Table type view
+     *
+     * @var string
+     */
+    const TABLE_TYPE_VIEW = 'view';
+
+    /**
      * Constructor.
      *
      * @param string $table The table name.

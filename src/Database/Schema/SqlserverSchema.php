@@ -31,16 +31,16 @@ class SqlserverSchema extends BaseSchema
             FROM INFORMATION_SCHEMA.TABLES
             WHERE TABLE_SCHEMA = ?";
 
-        if ($type != 'both') {
+        if ($type != TableSchema::TABLE_TYPE_BOTH) {
             $sql .= ' AND TABLE_TYPE = ?';
 
-            if ($type == 'tables') {
+            if ($type == TableSchema::TABLE_TYPE_TABLE) {
                 $params = ['BASE TABLE'];
             } else {
                 $params = ['VIEW'];
             }
         } else {
-            $sql .= ' AND (TABLE_TYPE = ? OR TABLE_TYPE = ?)';
+            $sql .= ' AND TABLE_TYPE IN (?, ?)';
             $params = ['BASE TABLE', 'VIEW'];
         }
 

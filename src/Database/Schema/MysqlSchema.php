@@ -25,22 +25,22 @@ class MysqlSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function listTablesSql($config, $type = 'both')
+    public function listTablesSql($config, $type = TableSchema::TABLE_TYPE_BOTH)
     {
-        $table_type = null;
+        $tableType = null;
         $sql = 'SHOW FULL TABLES FROM ' . $this->_driver->quoteIdentifier($config['database']);
 
-        if ($type != 'both') {
+        if ($type != TableSchema::TABLE_TYPE_BOTH) {
             $sql .= ' WHERE Table_type = ?';
 
-            if ($type == 'tables') {
-                $table_type = 'BASE TABLE';
+            if ($type == TableSchema::TABLE_TYPE_TABLE) {
+                $tableType = 'BASE TABLE';
             } else {
-                $table_type = 'VIEW';
+                $tableType = 'VIEW';
             }
         }
 
-        return [$sql, [$table_type]];
+        return [$sql, [$tableType]];
     }
 
     /**

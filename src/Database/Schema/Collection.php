@@ -54,13 +54,13 @@ class Collection
 
     /**
      * Get the list of tables or views available in the current connection.
-     *
-     * @param string $table_type Type of objects. Possible values are: 'views', 'tables' or 'both' (default).
+     * @param string $tableType Type of objects. Possible values are:
+     * TableSchema::TABLE_TYPE_VIEW, TableSchema::TABLE_TYPE_TABLE or TableSchema::TABLE_TYPE_BOTH (default).
      * @return array The list of tables in the connected database/schema.
      */
-    public function listTables($table_type = 'both')
+    public function listTables($tableType = TableSchema::TABLE_TYPE_BOTH)
     {
-        list($sql, $params) = $this->_dialect->listTablesSql($this->_connection->config(), $table_type);
+        list($sql, $params) = $this->_dialect->listTablesSql($this->_connection->config(), $tableType);
         $result = [];
         $statement = $this->_connection->execute($sql, $params);
         while ($row = $statement->fetch()) {

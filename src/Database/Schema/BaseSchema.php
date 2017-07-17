@@ -132,7 +132,7 @@ abstract class BaseSchema
      * @param string $type Type of objects. Possible values are: 'views', 'tables' or 'both' (default).
      * @return array An array of (sql, params) to execute.
      */
-    abstract public function listTablesSql($config, $type = 'both');
+    abstract public function listTablesSql($config, $type = TableSchema::TABLE_TYPE_BOTH);
 
     /**
      * Generate the SQL to describe a table.
