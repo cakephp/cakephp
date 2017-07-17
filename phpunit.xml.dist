@@ -51,7 +51,7 @@
         <env name="db_dsn" value="mysql://localhost/cake_test?timezone=UTC"/>
         -->
         <!-- SQL Server
-        <env name="db_dsn" value="sqlserver://localhost\localhost/cake_test?timezone=UTC"/>
+        <env name="db_dsn" value="sqlserver://localhost/cake_test?timezone=UTC"/>
         -->
     </php>
 </phpunit>
