@@ -197,7 +197,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * Hints this object to associate the correct types when casting conditions
      * for the database. This is done by extracting the field types from the schema
      * associated to the passed table object. This prevents the user from repeating
-     * himself when specifying conditions.
+     * themselves when specifying conditions.
      *
      * This method returns the same query object for chaining.
      *
