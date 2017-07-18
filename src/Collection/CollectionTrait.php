@@ -226,7 +226,7 @@ trait CollectionTrait
         if ($matcher != null) {
             $elements = $elements->extract($matcher);
         }
-        $values = $elements->toArray();
+        $values = $elements->toList();
         sort($values);
 
         if ($count % 2) {
