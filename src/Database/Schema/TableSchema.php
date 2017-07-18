@@ -278,21 +278,21 @@ class TableSchema
     const ACTION_SET_DEFAULT = 'setDefault';
 
     /**
-     * Table type both
+     * Repository type both
      *
      * @var string
      */
     const REPOSITORY_TYPE_BOTH = 'both';
 
     /**
-     * Table type table
+     * Repository type table
      *
      * @var string
      */
     const REPOSITORY_TYPE_TABLE = 'table';
 
     /**
-     * Table type view
+     * Repository type view
      *
      * @var string
      */
