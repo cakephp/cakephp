@@ -193,6 +193,54 @@ trait CollectionTrait
     /**
      * {@inheritDoc}
      */
+    public function avg($matcher = null)
+    {
+        $iterator = $this->unwrap();
+        $count = $iterator instanceof Countable ?
+            count($iterator) :
+            iterator_count($iterator);
+
+        if ($count === 0) {
+            return null;
+        }
+
+        return $this->sumOf($matcher) / $count;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function median($matcher = null)
+    {
+        $iterator = $this->unwrap();
+        $count = $iterator instanceof Countable ?
+            count($iterator) :
+            iterator_count($iterator);
+
+        if ($count === 0) {
+            return null;
+        }
+
+        $middle = (int)($count / 2);
+        $elements = $this;
+        if ($matcher != null) {
+            $elements = $elements->extract($matcher);
+        }
+        $values = $elements->toArray();
+        sort($values);
+
+        if ($count % 2) {
+            return $values[$middle];
+        }
+
+        return (new static([
+            $values[$middle - 1], $values[$middle],
+        ]))->avg();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function sortBy($callback, $dir = SORT_DESC, $type = SORT_NUMERIC)
     {
         return new SortIterator($this->unwrap(), $callback, $dir, $type);

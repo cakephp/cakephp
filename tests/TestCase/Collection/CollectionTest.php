@@ -60,6 +60,60 @@ class CollectionTest extends TestCase
     }
 
     /**
+     * Tests that it is possible to convert an array into a collection
+     *
+     * @return void
+     */
+    public function testAvg()
+    {
+        $items = [1, 2, 3];
+        $collection = new Collection($items);
+        $this->assertEquals(2, $collection->avg());
+
+        $collection = new Collection([]);
+        $this->assertNull($collection->avg());
+
+        $items = [['foo' => 1], ['foo' => 2], ['foo' => 3]];
+        $collection = new Collection($items);
+        $this->assertEquals(2, $collection->avg('foo'));
+        $items = [
+            ['invoice' => ['total' => 100]],
+            ['invoice' => ['total' => 200]]
+        ];
+
+        $this->assertEquals(150, (new Collection($items))->avg('invoice.total'));
+    }
+
+    /**
+     * Tests that it is possible to convert an array into a collection
+     *
+     * @return void
+     */
+    public function testMedian()
+    {
+        $items = [5, 2, 4];
+        $collection = new Collection($items);
+        $this->assertEquals(4, $collection->median());
+
+        $collection = new Collection([]);
+        $this->assertNull($collection->median());
+
+        $items = [1, 2, 3, 4];
+        $collection = new Collection($items);
+        $this->assertEquals(2.5, $collection->median());
+
+        $items = [
+            ['invoice' => ['total' => 400]],
+            ['invoice' => ['total' => 500]],
+            ['invoice' => ['total' => 200]],
+            ['invoice' => ['total' => 100]],
+            ['invoice' => ['total' => 333]]
+        ];
+
+        $this->assertEquals(333, (new Collection($items))->median('invoice.total'));
+    }
+
+    /**
      * Tests that it is possible to convert an iterator into a collection
      *
      * @return void
