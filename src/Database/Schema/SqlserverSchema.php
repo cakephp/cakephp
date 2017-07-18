@@ -25,7 +25,7 @@ class SqlserverSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function listTablesSql($config, $type = 'both')
+    public function listTablesSql($config, $type = TableSchema::REPOSITORY_TYPE_BOTH)
     {
         $sql = "SELECT TABLE_NAME
             FROM INFORMATION_SCHEMA.TABLES

@@ -55,7 +55,7 @@ class Collection
     /**
      * Get the list of tables or views available in the current connection.
      * @param string $tableType Type of objects. Possible values are:
-     * TableSchema::TABLE_TYPE_VIEW, TableSchema::TABLE_TYPE_TABLE or TableSchema::TABLE_TYPE_BOTH (default).
+     * TableSchema::REPOSITORY_TYPE_VIEW, TableSchema::REPOSITORY_TYPE_TABLE or TableSchema::REPOSITORY_TYPE_BOTH (default).
      * @return array The list of tables in the connected database/schema.
      */
     public function listTables($tableType = TableSchema::REPOSITORY_TYPE_BOTH)
