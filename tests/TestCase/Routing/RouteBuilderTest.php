@@ -784,9 +784,23 @@ class RouteBuilderTest extends TestCase
             $this->assertEquals('/api/v1', $routes->path());
             $this->assertEquals(['prefix' => 'api', 'version' => 1], $routes->params());
         });
+    }
 
-        $routes = new RouteBuilder($this->collection, '/api', ['prefix' => 'api']);
+    /**
+     * Test that nested scopes inherit middleware.
+     *
+     * @return void
+     */
+    public function testScopeInheritMiddleware()
+    {
+        $routes = new RouteBuilder(
+            $this->collection,
+            '/api',
+            ['prefix' => 'api'],
+            ['middleware' => ['auth']]
+        );
         $routes->scope('/v1', function ($routes) {
+            $this->assertAttributeEquals(['auth'], 'middleware', $routes, 'Should inherit middleware');
             $this->assertEquals('/api/v1', $routes->path());
             $this->assertEquals(['prefix' => 'api'], $routes->params());
         });
@@ -827,6 +841,7 @@ class RouteBuilderTest extends TestCase
 
         $this->assertSame($result, $routes);
         $this->assertTrue($this->collection->hasMiddleware('test'));
+        $this->assertTrue($this->collection->middlewareExists('test'));
     }
 
     /**
@@ -843,10 +858,45 @@ class RouteBuilderTest extends TestCase
     }
 
     /**
+     * Test middleware group
+     *
+     * @return void
+     */
+    public function testMiddlewareGroup()
+    {
+        $func = function () {
+        };
+        $routes = new RouteBuilder($this->collection, '/api');
+        $routes->registerMiddleware('test', $func);
+        $routes->registerMiddleware('test_two', $func);
+        $result = $routes->middlewareGroup('group', ['test', 'test_two']);
+
+        $this->assertSame($result, $routes);
+        $this->assertTrue($this->collection->hasMiddlewareGroup('group'));
+        $this->assertTrue($this->collection->middlewareExists('group'));
+    }
+
+    /**
+     * Test overlap between middleware name and group name
+     *
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Cannot add middleware group 'test'. A middleware by this name has already been registered.
+     * @return void
+     */
+    public function testMiddlewareGroupOverlap()
+    {
+        $func = function () {
+        };
+        $routes = new RouteBuilder($this->collection, '/api');
+        $routes->registerMiddleware('test', $func);
+        $result = $routes->middlewareGroup('test', ['test']);
+    }
+
+    /**
      * Test applying middleware to a scope when it doesn't exist
      *
      * @expectedException \RuntimeException
-     * @expectedExceptionMessage Cannot apply 'bad' middleware to path '/api'. It has not been registered.
+     * @expectedExceptionMessage Cannot apply 'bad' middleware or middleware group. Use registerMiddleware() to register middleware
      * @return void
      */
     public function testApplyMiddlewareInvalidName()
@@ -870,10 +920,42 @@ class RouteBuilderTest extends TestCase
         $result = $routes->applyMiddleware('test', 'test2');
 
         $this->assertSame($result, $routes);
-        $this->assertEquals(
-            [$func, $func],
-            $this->collection->getMatchingMiddleware('/api/v1/ping')
-        );
+    }
+
+    /**
+     * Test that applyMiddleware() merges with previous data.
+     *
+     * @return void
+     */
+    public function testApplyMiddlewareMerges()
+    {
+        $func = function () {
+        };
+        $routes = new RouteBuilder($this->collection, '/api');
+        $routes->registerMiddleware('test', $func)
+            ->registerMiddleware('test2', $func);
+        $routes->applyMiddleware('test');
+        $routes->applyMiddleware('test2');
+
+        $this->assertAttributeEquals(['test', 'test2'], 'middleware', $routes);
+    }
+
+    /**
+     * Test applying middleware results in middleware attached to the route.
+     *
+     * @return void
+     */
+    public function testApplyMiddlewareAttachToRoutes()
+    {
+        $func = function () {
+        };
+        $routes = new RouteBuilder($this->collection, '/api');
+        $routes->registerMiddleware('test', $func)
+            ->registerMiddleware('test2', $func);
+        $routes->applyMiddleware('test', 'test2');
+        $route = $routes->get('/docs', ['controller' => 'Docs']);
+
+        $this->assertSame(['test', 'test2'], $route->getMiddleware());
     }
 
     /**

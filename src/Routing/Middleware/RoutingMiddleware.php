@@ -82,15 +82,18 @@ class RoutingMiddleware
         try {
             Router::setRequestContext($request);
             $params = (array)$request->getAttribute('params', []);
+            $middleware = [];
             if (empty($params['controller'])) {
                 $parsedBody = $request->getParsedBody();
                 if (is_array($parsedBody) && isset($parsedBody['_method'])) {
                     $request = $request->withMethod($parsedBody['_method']);
                 }
-                $request = $request->withAttribute(
-                    'params',
-                    Router::parseRequest($request)
-                );
+                $params = Router::parseRequest($request);
+                if (isset($params['_middleware'])) {
+                    $middleware = $params['_middleware'];
+                    unset($params['_middleware']);
+                }
+                $request = $request->withAttribute('params', $params);
             }
         } catch (RedirectException $e) {
             return new RedirectResponse(
@@ -99,7 +102,7 @@ class RoutingMiddleware
                 $response->getHeaders()
             );
         }
-        $matching = Router::getRouteCollection()->getMatchingMiddleware($request->getUri()->getPath());
+        $matching = Router::getRouteCollection()->getMiddleware($middleware);
         if (!$matching) {
             return $next($request, $response);
         }

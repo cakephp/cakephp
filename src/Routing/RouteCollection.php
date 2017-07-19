@@ -67,6 +67,13 @@ class RouteCollection
     protected $_middleware = [];
 
     /**
+     * A map of middleware group names and the related middleware names.
+     *
+     * @var array
+     */
+    protected $_middlewareGroups = [];
+
+    /**
      * A map of paths and the list of applicable middleware.
      *
      * @var array
@@ -425,6 +432,43 @@ class RouteCollection
     }
 
     /**
+     * Add middleware to a middleware group
+     *
+     * @param string $name Name of the middleware group
+     * @param array $middlewareNames Names of the middleware
+     * @return $this
+     */
+    public function middlewareGroup($name, array $middlewareNames)
+    {
+        if ($this->hasMiddleware($name)) {
+            $message = "Cannot add middleware group '$name'. A middleware by this name has already been registered.";
+            throw new RuntimeException($message);
+        }
+
+        foreach ($middlewareNames as $middlewareName) {
+            if (!$this->hasMiddleware($middlewareName)) {
+                $message = "Cannot add '$middlewareName' middleware to group '$name'. It has not been registered.";
+                throw new RuntimeException($message);
+            }
+        }
+
+        $this->_middlewareGroups[$name] = $middlewareNames;
+
+        return $this;
+    }
+
+    /**
+     * Check if the named middleware group has been created.
+     *
+     * @param string $name The name of the middleware group to check.
+     * @return bool
+     */
+    public function hasMiddlewareGroup($name)
+    {
+        return array_key_exists($name, $this->_middlewareGroups);
+    }
+
+    /**
      * Check if the named middleware has been registered.
      *
      * @param string $name The name of the middleware to check.
@@ -433,6 +477,17 @@ class RouteCollection
     public function hasMiddleware($name)
     {
         return isset($this->_middleware[$name]);
+    }
+
+    /**
+     * Check if the named middleware or middleware group has been registered.
+     *
+     * @param string $name The name of the middleware to check.
+     * @return bool
+     */
+    public function middlewareExists($name)
+    {
+        return $this->hasMiddleware($name) || $this->hasMiddlewareGroup($name);
     }
 
     /**
@@ -445,8 +500,8 @@ class RouteCollection
     public function applyMiddleware($path, array $middleware)
     {
         foreach ($middleware as $name) {
-            if (!$this->hasMiddleware($name)) {
-                $message = "Cannot apply '$name' middleware to path '$path'. It has not been registered.";
+            if (!$this->hasMiddleware($name) && !$this->hasMiddlewareGroup($name)) {
+                $message = "Cannot apply '$name' middleware or middleware group to path '$path'. It has not been registered.";
                 throw new RuntimeException($message);
             }
         }
@@ -463,32 +518,28 @@ class RouteCollection
     }
 
     /**
-     * Get an array of middleware that matches the provided URL.
+     * Get an array of middleware given a list of names
      *
-     * All middleware lists that match the URL will be merged together from shortest
-     * path to longest path. If a middleware would be added to the set more than
-     * once because it is connected to multiple path substrings match, it will only
-     * be added once at its first occurrence.
-     *
-     * @param string $needle The URL path to find middleware for.
-     * @return array
+     * @param array $names The names of the middleware or groups to fetch
+     * @return array An array of middleware. If any of the passed names are groups,
+     *   the groups middleware will be flattened into the returned list.
+     * @throws \RuntimeException when a requested middleware does not exist.
      */
-    public function getMatchingMiddleware($needle)
+    public function getMiddleware(array $names)
     {
-        $matching = [];
-        foreach ($this->_middlewarePaths as $pattern => $middleware) {
-            if (preg_match($pattern, $needle)) {
-                $matching = array_merge($matching, $middleware);
+        $out = [];
+        foreach ($names as $name) {
+            if ($this->hasMiddlewareGroup($name)) {
+                $out = array_merge($out, $this->getMiddleware($this->_middlewareGroups[$name]));
+                continue;
             }
+            if (!$this->hasMiddleware($name)) {
+                $message = "The middleware named '$name' has not been registered. Use registerMiddleware() to define it.";
+                throw new RuntimeException($message);
+            }
+            $out[] = $this->_middleware[$name];
         }
 
-        $resolved = [];
-        foreach ($matching as $name) {
-            if (!isset($resolved[$name])) {
-                $resolved[$name] = $this->_middleware[$name];
-            }
-        }
-
-        return array_values($resolved);
+        return $out;
     }
 }

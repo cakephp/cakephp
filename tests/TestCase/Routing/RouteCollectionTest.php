@@ -665,136 +665,53 @@ class RouteCollectionTest extends TestCase
     }
 
     /**
-     * Test adding middleware with a placeholder in the path.
+     * Test adding a middleware group to the collection.
      *
      * @return void
      */
-    public function testApplyMiddlewareBasic()
+    public function testMiddlewareGroup()
     {
+        $this->collection->registerMiddleware('closure', function () {
+        });
+
         $mock = $this->getMockBuilder('\stdClass')
             ->setMethods(['__invoke'])
             ->getMock();
+        $result = $this->collection->registerMiddleware('callable', $mock);
         $this->collection->registerMiddleware('callable', $mock);
-        $this->collection->registerMiddleware('callback_two', $mock);
 
-        $result = $this->collection->applyMiddleware('/api', ['callable', 'callback_two']);
-        $this->assertSame($result, $this->collection);
+        $this->collection->middlewareGroup('group', ['closure', 'callable']);
+
+        $this->assertTrue($this->collection->hasMiddlewareGroup('group'));
     }
 
     /**
-     * Test adding middleware with a placeholder in the path.
+     * Test adding a middleware group with the same name overwrites the original list
      *
      * @return void
      */
-    public function testGetMatchingMiddlewareBasic()
+    public function testMiddlewareGroupOverwrite()
     {
-        $mock = $this->getMockBuilder('\stdClass')
-            ->setMethods(['__invoke'])
-            ->getMock();
-        $this->collection->registerMiddleware('callable', $mock);
-        $this->collection->registerMiddleware('callback_two', $mock);
+        $stub = function () {
+        };
+        $this->collection->registerMiddleware('closure', $stub);
+        $result = $this->collection->registerMiddleware('callable', $stub);
+        $this->collection->registerMiddleware('callable', $stub);
 
-        $result = $this->collection->applyMiddleware('/api', ['callable']);
-        $middleware = $this->collection->getMatchingMiddleware('/api/v1/articles');
-        $this->assertCount(1, $middleware);
-        $this->assertSame($middleware[0], $mock);
+        $this->collection->middlewareGroup('group', ['callable']);
+        $this->collection->middlewareGroup('group', ['closure', 'callable']);
+        $this->assertSame([$stub, $stub], $this->collection->getMiddleware(['group']));
     }
 
     /**
-     * Test enabling and matching
-     *
-     * @return void
-     */
-    public function testGetMatchingMiddlewareMultiplePaths()
-    {
-        $mock = $this->getMockBuilder('\stdClass')
-            ->setMethods(['__invoke'])
-            ->getMock();
-        $mockTwo = $this->getMockBuilder('\stdClass')
-            ->setMethods(['__invoke'])
-            ->getMock();
-        $this->collection->registerMiddleware('callable', $mock);
-        $this->collection->registerMiddleware('callback_two', $mockTwo);
-
-        $this->collection->applyMiddleware('/api', ['callable']);
-        $this->collection->applyMiddleware('/api/v1/articles', ['callback_two']);
-
-        $middleware = $this->collection->getMatchingMiddleware('/articles');
-        $this->assertCount(0, $middleware);
-
-        $middleware = $this->collection->getMatchingMiddleware('/api/v1/articles/1');
-        $this->assertCount(2, $middleware);
-        $this->assertEquals([$mock, $mockTwo], $middleware, 'Both middleware match');
-
-        $middleware = $this->collection->getMatchingMiddleware('/api/v1/comments');
-        $this->assertCount(1, $middleware);
-        $this->assertEquals([$mock], $middleware, 'Should not match /articles middleware');
-    }
-
-    /**
-     * Test enabling and matching
-     *
-     * @return void
-     */
-    public function testGetMatchingMiddlewareDeduplicate()
-    {
-        $mock = $this->getMockBuilder('\stdClass')
-            ->setMethods(['__invoke'])
-            ->getMock();
-        $mockTwo = $this->getMockBuilder('\stdClass')
-            ->setMethods(['__invoke'])
-            ->getMock();
-        $this->collection->registerMiddleware('callable', $mock);
-        $this->collection->registerMiddleware('callback_two', $mockTwo);
-
-        $this->collection->applyMiddleware('/api', ['callable']);
-        $this->collection->applyMiddleware('/api/v1/articles', ['callback_two', 'callable']);
-
-        $middleware = $this->collection->getMatchingMiddleware('/api/v1/articles/1');
-        $this->assertCount(2, $middleware);
-        $this->assertEquals([$mock, $mockTwo], $middleware, 'Both middleware match');
-    }
-
-    /**
-     * Test adding middleware with a placeholder in the path.
-     *
-     * @return void
-     */
-    public function testApplyMiddlewareWithPlaceholder()
-    {
-        $mock = $this->getMockBuilder('\stdClass')
-            ->setMethods(['__invoke'])
-            ->getMock();
-        $this->collection->registerMiddleware('callable', $mock);
-
-        $this->collection->applyMiddleware('/api-:version/articles/:article_id/comments', ['callable']);
-
-        $middleware = $this->collection->getMatchingMiddleware('/api-1/articles/comments');
-        $this->assertEmpty($middleware);
-
-        $middleware = $this->collection->getMatchingMiddleware('/api-1/articles/yay/comments');
-        $this->assertEquals([$mock], $middleware);
-
-        $middleware = $this->collection->getMatchingMiddleware('/api-1/articles/123/comments');
-        $this->assertEquals([$mock], $middleware);
-
-        $middleware = $this->collection->getMatchingMiddleware('/api-abc123/articles/abc-123/comments/99');
-        $this->assertEquals([$mock], $middleware);
-    }
-
-    /**
-     * Test applying middleware to a scope when it doesn't exist
+     * Test adding ab unregistered middleware to a middleware group fails.
      *
      * @expectedException \RuntimeException
-     * @expectedExceptionMessage Cannot apply 'bad' middleware to path '/api'. It has not been registered.
+     * @expectedExceptionMessage Cannot add 'bad' middleware to group 'group'. It has not been registered.
      * @return void
      */
-    public function testApplyMiddlewareUnregistered()
+    public function testMiddlewareGroupUnregisteredMiddleware()
     {
-        $mock = $this->getMockBuilder('\stdClass')
-            ->setMethods(['__invoke'])
-            ->getMock();
-        $this->collection->registerMiddleware('callable', $mock);
-        $this->collection->applyMiddleware('/api', ['callable', 'bad']);
+        $this->collection->middlewareGroup('group', ['bad']);
     }
 }

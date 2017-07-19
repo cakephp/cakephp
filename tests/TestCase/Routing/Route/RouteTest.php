@@ -68,6 +68,17 @@ class RouteTest extends TestCase
     }
 
     /**
+     * Test set middleware in the constructor
+     *
+     * @return void
+     */
+    public function testConstructorSetMiddleware()
+    {
+        $route = new Route('/:controller/:action/*', [], ['_middleware' => ['auth', 'cookie']]);
+        $this->assertSame(['auth', 'cookie'], $route->getMiddleware());
+    }
+
+    /**
      * Test Route compiling.
      *
      * @return void
@@ -1085,6 +1096,26 @@ class RouteTest extends TestCase
     }
 
     /**
+     * Test that middleware is returned from parse()
+     *
+     * @return void
+     */
+    public function testParseWithMiddleware()
+    {
+        $route = new Route('/:controller', ['action' => 'display', 'home']);
+        $route->setMiddleware(['auth', 'cookie']);
+        $result = $route->parse('/posts', 'GET');
+        $expected = [
+            'controller' => 'posts',
+            'action' => 'display',
+            'pass' => ['home'],
+            '_matchedRoute' => '/:controller',
+            '_middleware' => ['auth', 'cookie'],
+        ];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
      * Test that http header conditions can cause route failures.
      *
      * @return void
@@ -1641,5 +1672,18 @@ class RouteTest extends TestCase
         $result = $route->setPersist(['date']);
         $this->assertSame($result, $route, 'Should return this');
         $this->assertEquals(['date'], $route->options['persist']);
+    }
+
+    /**
+     * Test setting/getting middleware.
+     *
+     * @return void
+     */
+    public function testSetMiddleware()
+    {
+        $route = new Route('/reviews/:date/:id', ['controller' => 'Reviews', 'action' => 'view']);
+        $result = $route->setMiddleware(['auth', 'cookie']);
+        $this->assertSame($result, $route);
+        $this->assertSame(['auth', 'cookie'], $route->getMiddleware());
     }
 }

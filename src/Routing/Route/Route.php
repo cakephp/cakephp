@@ -88,6 +88,13 @@ class Route
     protected $_extensions = [];
 
     /**
+     * List of middleware that should be applied.
+     *
+     * @var array
+     */
+    protected $middleware = [];
+
+    /**
      * Valid HTTP methods.
      *
      * @var array
@@ -100,6 +107,7 @@ class Route
      * ### Options
      *
      * - `_ext` - Defines the extensions used for this route.
+     * - `_middleware` - Define the middleware names for this route.
      * - `pass` - Copies the listed parameters into params['pass'].
      * - `_host` - Define the host name pattern if you want this route to only match
      *   specific host names. You can use `.*` and to create wildcard subdomains/hosts
@@ -118,8 +126,10 @@ class Route
             unset($defaults['[method]']);
         }
         $this->defaults = (array)$defaults;
-        $this->options = $options + ['_ext' => []];
+        $this->options = $options + ['_ext' => [], '_middleware' => []];
         $this->setExtensions((array)$this->options['_ext']);
+        $this->setMiddleware((array)$this->options['_middleware']);
+        unset($this->options['_middleware']);
     }
 
     /**
@@ -476,6 +486,9 @@ class Route
             }
         }
         $route['_matchedRoute'] = $this->template;
+        if (count($this->middleware) > 0) {
+            $route['_middleware'] = $this->middleware;
+        }
 
         return $route;
     }
@@ -824,6 +837,30 @@ class Route
         }
 
         return $this->template;
+    }
+
+    /**
+     * Set the names of the middleware that should be applied to this route.
+     *
+     * @param array $middleware The list of middleware names to apply to this route.
+     *   Middleware names will not be checked until the route is matched.
+     * @return $this
+     */
+    public function setMiddleware(array $middleware)
+    {
+        $this->middleware = $middleware;
+
+        return $this;
+    }
+
+    /**
+     * Get the names of the middleware that should be applied to this route.
+     *
+     * @return array
+     */
+    public function getMiddleware()
+    {
+        return $this->middleware;
     }
 
     /**

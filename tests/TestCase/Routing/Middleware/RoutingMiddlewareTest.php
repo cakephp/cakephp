@@ -210,7 +210,6 @@ class RoutingMiddlewareTest extends TestCase
      */
     public function testInvokeScopedMiddleware()
     {
-        $this->counter = 0;
         Router::scope('/api', function ($routes) {
             $routes->registerMiddleware('first', function ($req, $res, $next) {
                 $this->log[] = 'first';
@@ -222,9 +221,10 @@ class RoutingMiddlewareTest extends TestCase
 
                 return $next($req, $res);
             });
-            $routes->connect('/ping', ['controller' => 'Pings']);
             // Connect middleware in reverse to test ordering.
             $routes->applyMiddleware('second', 'first');
+
+            $routes->connect('/ping', ['controller' => 'Pings']);
         });
 
         $request = ServerRequestFactory::fromGlobals([
@@ -246,12 +246,57 @@ class RoutingMiddlewareTest extends TestCase
     /**
      * Test control flow in scoped middleware.
      *
+     * Scoped middleware should be able to generate a response
+     * and abort lower layers.
+     *
      * @return void
      */
     public function testInvokeScopedMiddlewareReturnResponse()
     {
-        $this->counter = 0;
-        Router::scope('/api', function ($routes) {
+        Router::scope('/', function ($routes) {
+            $routes->registerMiddleware('first', function ($req, $res, $next) {
+                $this->log[] = 'first';
+
+                return $next($req, $res);
+            });
+            $routes->registerMiddleware('second', function ($req, $res, $next) {
+                $this->log[] = 'second';
+
+                return $res;
+            });
+
+            $routes->applyMiddleware('first');
+            $routes->connect('/', ['controller' => 'Home']);
+
+            $routes->scope('/api', function ($routes) {
+                $routes->applyMiddleware('second');
+                $routes->connect('/articles', ['controller' => 'Articles']);
+            });
+        });
+
+        $request = ServerRequestFactory::fromGlobals([
+            'REQUEST_METHOD' => 'GET',
+            'REQUEST_URI' => '/api/articles'
+        ]);
+        $response = new Response();
+        $next = function ($req, $res) {
+            $this->fail('Should not be invoked as first should be ignored.');
+        };
+        $middleware = new RoutingMiddleware();
+        $result = $middleware($request, $response, $next);
+
+        $this->assertSame($response, $result, 'Should return result');
+        $this->assertSame(['first', 'second'], $this->log);
+    }
+
+    /**
+     * Test control flow in scoped middleware.
+     *
+     * @return void
+     */
+    public function testInvokeScopedMiddlewareReturnResponseMainScope()
+    {
+        Router::scope('/', function ($routes) {
             $routes->registerMiddleware('first', function ($req, $res, $next) {
                 $this->log[] = 'first';
 
@@ -263,27 +308,90 @@ class RoutingMiddlewareTest extends TestCase
                 return $next($req, $res);
             });
 
-            $routes->applyMiddleware('second');
-            $routes->connect('/ping', ['controller' => 'Pings']);
+            $routes->applyMiddleware('first');
+            $routes->connect('/', ['controller' => 'Home']);
 
-            $routes->scope('/v1', function ($routes) {
-                $routes->applyMiddleware('first');
+            $routes->scope('/api', function ($routes) {
+                $routes->applyMiddleware('second');
                 $routes->connect('/articles', ['controller' => 'Articles']);
             });
         });
 
         $request = ServerRequestFactory::fromGlobals([
             'REQUEST_METHOD' => 'GET',
-            'REQUEST_URI' => '/api/v1/articles'
+            'REQUEST_URI' => '/'
         ]);
         $response = new Response();
         $next = function ($req, $res) {
-            $this->fail('Should not be invoked as second returns a response');
+            $this->fail('Should not be invoked as second should be ignored.');
         };
         $middleware = new RoutingMiddleware();
         $result = $middleware($request, $response, $next);
 
         $this->assertSame($response, $result, 'Should return result');
-        $this->assertSame(['second', 'first'], $this->log);
+        $this->assertSame(['first'], $this->log);
+    }
+
+    /**
+     * Test invoking middleware & scope separation
+     *
+     * Re-opening a scope should not inherit middleware declared
+     * in the first context.
+     *
+     * @dataProvider scopedMiddlewareUrlProvider
+     * @return void
+     */
+    public function testInvokeScopedMiddlewareIsolatedScopes($url, $expected)
+    {
+        Router::scope('/', function ($routes) {
+            $routes->registerMiddleware('first', function ($req, $res, $next) {
+                $this->log[] = 'first';
+
+                return $next($req, $res);
+            });
+            $routes->registerMiddleware('second', function ($req, $res, $next) {
+                $this->log[] = 'second';
+
+                return $next($req, $res);
+            });
+
+            $routes->scope('/api', function ($routes) {
+                $routes->applyMiddleware('first');
+                $routes->connect('/ping', ['controller' => 'Pings']);
+            });
+
+            $routes->scope('/api', function ($routes) {
+                $routes->applyMiddleware('second');
+                $routes->connect('/version', ['controller' => 'Version']);
+            });
+        });
+
+        $request = ServerRequestFactory::fromGlobals([
+            'REQUEST_METHOD' => 'GET',
+            'REQUEST_URI' => $url
+        ]);
+        $response = new Response();
+        $next = function ($req, $res) {
+            $this->log[] = 'last';
+
+            return $res;
+        };
+        $middleware = new RoutingMiddleware();
+        $result = $middleware($request, $response, $next);
+        $this->assertSame($response, $result, 'Should return result');
+        $this->assertSame($expected, $this->log);
+    }
+
+    /**
+     * Provider for scope isolation test.
+     *
+     * @return array
+     */
+    public function scopedMiddlewareUrlProvider()
+    {
+        return [
+            ['/api/ping', ['first', 'last']],
+            ['/api/version', ['second', 'last']],
+        ];
     }
 }
