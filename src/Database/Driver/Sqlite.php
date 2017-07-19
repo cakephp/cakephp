@@ -38,6 +38,7 @@ class Sqlite extends Driver
         'password' => null,
         'database' => ':memory:',
         'encoding' => 'utf8',
+        'mask' => 0644,
         'flags' => [],
         'init' => [],
     ];
