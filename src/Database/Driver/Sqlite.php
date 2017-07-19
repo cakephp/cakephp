@@ -60,8 +60,14 @@ class Sqlite extends Driver
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
         ];
 
+        $databaseExists = file_exists($config['database']);
+
         $dsn = "sqlite:{$config['database']}";
         $this->_connect($dsn, $config);
+
+        if (!$databaseExists) {
+            chmod($config['database'], $config['mask']);
+        }
 
         if (!empty($config['init'])) {
             foreach ((array)$config['init'] as $command) {
