@@ -202,7 +202,7 @@ trait CollectionTrait
         $result = $result
             ->reduce(function ($acc, $current) {
                 list($count, $sum) = $acc;
-                
+
                 return [$count + 1, $sum + $current];
             }, [0, 0]);
 
