@@ -67,7 +67,7 @@ class Sqlite extends Driver
         $dsn = "sqlite:{$config['database']}";
         $this->_connect($dsn, $config);
 
-        if (!$databaseExists) {
+        if (!$databaseExists && $config['database'] != ':memory:') {
             chmod($config['database'], $config['mask']);
         }
 
