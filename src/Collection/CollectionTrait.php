@@ -195,16 +195,22 @@ trait CollectionTrait
      */
     public function avg($matcher = null)
     {
-        $iterator = $this->unwrap();
-        $count = $iterator instanceof Countable ?
-            count($iterator) :
-            iterator_count($iterator);
+        $result = $this;
+        if ($matcher != null) {
+            $result = $result->extract($matcher);
+        }
+        $result = $result
+            ->reduce(function ($acc, $current) {
+                list($count, $sum) = $acc;
+                
+                return [$count + 1, $sum + $current];
+            }, [0, 0]);
 
-        if ($count === 0) {
+        if ($result[0] === 0) {
             return null;
         }
 
-        return $this->sumOf($matcher) / $count;
+        return $result[1] / $result[0];
     }
 
     /**
@@ -212,22 +218,19 @@ trait CollectionTrait
      */
     public function median($matcher = null)
     {
-        $iterator = $this->unwrap();
-        $count = $iterator instanceof Countable ?
-            count($iterator) :
-            iterator_count($iterator);
-
-        if ($count === 0) {
-            return null;
-        }
-
-        $middle = (int)($count / 2);
         $elements = $this;
         if ($matcher != null) {
             $elements = $elements->extract($matcher);
         }
         $values = $elements->toList();
         sort($values);
+        $count = count($values);
+
+        if ($count === 0) {
+            return null;
+        }
+
+        $middle = (int)($count / 2);
 
         if ($count % 2) {
             return $values[$middle];

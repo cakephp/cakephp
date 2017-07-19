@@ -60,13 +60,28 @@ class CollectionTest extends TestCase
     }
 
     /**
-     * Tests that it is possible to convert an array into a collection
+     * Provider for average tests
      *
-     * @return void
+     * @return array
      */
-    public function testAvg()
+    public function avgProvider()
     {
         $items = [1, 2, 3];
+
+        return [
+            'array' => [$items],
+            'iterator' => [$this->yieldItems($items)]
+        ];
+    }
+
+    /**
+     * ests the avg method
+     *
+     * @dataProvider avgProvider
+     * @return void
+     */
+    public function testAvg($items)
+    {
         $collection = new Collection($items);
         $this->assertEquals(2, $collection->avg());
 
@@ -76,32 +91,84 @@ class CollectionTest extends TestCase
         $items = [['foo' => 1], ['foo' => 2], ['foo' => 3]];
         $collection = new Collection($items);
         $this->assertEquals(2, $collection->avg('foo'));
-        $items = [
-            ['invoice' => ['total' => 100]],
-            ['invoice' => ['total' => 200]]
-        ];
-
-        $this->assertEquals(150, (new Collection($items))->avg('invoice.total'));
     }
 
     /**
-     * Tests that it is possible to convert an array into a collection
+     * Provider for average tests with use of a matcher
      *
+     * @return array
+     */
+    public function avgWithMatcherProvider()
+    {
+        $items = [['foo' => 1], ['foo' => 2], ['foo' => 3]];
+
+        return [
+            'array' => [$items],
+            'iterator' => [$this->yieldItems($items)]
+        ];
+    }
+
+    /**
+     * ests the avg method
+     *
+     * @dataProvider avgWithMatcherProvider
      * @return void
      */
-    public function testMedian()
+    public function testAvgWithMatcher($items)
+    {
+        $collection = new Collection($items);
+        $this->assertEquals(2, $collection->avg('foo'));
+    }
+
+    /**
+     * Provider for some median tests
+     *
+     * @return array
+     */
+    public function medianProvider()
     {
         $items = [5, 2, 4];
+
+        return [
+            'array' => [$items],
+            'iterator' => [$this->yieldItems($items)]
+        ];
+    }
+
+    /**
+     * Tests the median method
+     *
+     * @dataProvider medianProvider
+     * @return void
+     */
+    public function testMedian($items)
+    {
         $collection = new Collection($items);
         $this->assertEquals(4, $collection->median());
 
         $collection = new Collection([]);
         $this->assertNull($collection->median());
+    }
 
-        $items = [1, 2, 3, 4];
+    /**
+     * Tests the median method
+     *
+     * @dataProvider simpleProvider
+     * @return void
+     */
+    public function testMedianEven($items)
+    {
         $collection = new Collection($items);
         $this->assertEquals(2.5, $collection->median());
+    }
 
+    /**
+     * Provider for median tests with use of a matcher
+     *
+     * @return array
+     */
+    public function medianWithMatcherProvider()
+    {
         $items = [
             ['invoice' => ['total' => 400]],
             ['invoice' => ['total' => 500]],
@@ -110,6 +177,20 @@ class CollectionTest extends TestCase
             ['invoice' => ['total' => 333]]
         ];
 
+        return [
+            'array' => [$items],
+            'iterator' => [$this->yieldItems($items)]
+        ];
+    }
+
+    /**
+     * Tests the median method
+     *
+     * @dataProvider medianWithMatcherProvider
+     * @return void
+     */
+    public function testMedianWithMatcher($items)
+    {
         $this->assertEquals(333, (new Collection($items))->median('invoice.total'));
     }
 
