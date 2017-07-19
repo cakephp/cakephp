@@ -43,6 +43,7 @@ class SqliteTest extends TestCase
             'password' => null,
             'flags' => [],
             'init' => [],
+            'mask' => 420,
         ];
 
         $expected['flags'] += [
