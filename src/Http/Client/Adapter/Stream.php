@@ -16,6 +16,7 @@ namespace Cake\Http\Client\Adapter;
 use Cake\Core\Exception\Exception;
 use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
+use Cake\Network\Exception\HttpException;
 
 /**
  * Implements sending Cake\Http\Client\Request
@@ -246,7 +247,7 @@ class Stream
      *
      * @param \Cake\Http\Client\Request $request The request object.
      * @return array Array of populated Response objects
-     * @throws \Cake\Core\Exception\Exception
+     * @throws \Cake\Network\Exception\HttpException
      */
     protected function _send(Request $request)
     {
@@ -277,7 +278,7 @@ class Stream
         fclose($this->_stream);
 
         if ($timedOut) {
-            throw new Exception('Connection timed out ' . $url);
+            throw new HttpException('Connection timed out ' . $url, 504);
         }
 
         $headers = $meta['wrapper_data'];
