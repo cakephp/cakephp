@@ -310,6 +310,20 @@ class ShellTest extends TestCase
     }
 
     /**
+     * testErr method with array
+     *
+     * @return void
+     */
+    public function testErrArray()
+    {
+        $this->io->expects($this->once())
+            ->method('err')
+            ->with(['<error>Just</error>', '<error>a</error>', '<error>test</error>'], 1);
+
+        $this->Shell->err(['Just', 'a', 'test']);
+    }
+
+    /**
      * testInfo method
      *
      * @return void
