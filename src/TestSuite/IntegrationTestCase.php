@@ -916,7 +916,7 @@ abstract class IntegrationTestCase extends TestCase
      * @param bool   $ignoreCase A flag to check whether we should ignore case or not.
      * @return void
      */
-    public function assertResponseContains($content, $ignoreCase = false, $message = '')
+    public function assertResponseContains($content, $message = '', $ignoreCase = false)
     {
         if (!$this->_response) {
             $this->fail('No response set, cannot assert content. ' . $message);
