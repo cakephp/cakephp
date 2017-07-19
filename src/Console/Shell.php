@@ -672,6 +672,7 @@ class Shell
         } else {
             $message = '<error>' . $message . '</error>';
         }
+
         return $this->_io->err($message, $newlines);
     }
 
@@ -693,6 +694,7 @@ class Shell
         } else {
             $message = '<info>' . $message . '</info>';
         }
+
         return $this->out($message, $newlines, $level);
     }
 
@@ -713,6 +715,7 @@ class Shell
         } else {
             $message = '<warning>' . $message . '</warning>';
         }
+
         return $this->_io->err($message, $newlines);
     }
 
@@ -734,6 +737,7 @@ class Shell
         } else {
             $message = '<success>' . $message . '</success>';
         }
+
         return $this->out($message, $newlines, $level);
     }
 
