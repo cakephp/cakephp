@@ -30,6 +30,8 @@ class Sqlite extends Driver
     /**
      * Base configuration settings for Sqlite driver
      *
+     * - `mask` The mask used for created database
+     *
      * @var array
      */
     protected $_baseConfig = [
