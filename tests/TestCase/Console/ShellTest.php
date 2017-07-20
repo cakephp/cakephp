@@ -310,6 +310,20 @@ class ShellTest extends TestCase
     }
 
     /**
+     * testErr method with array
+     *
+     * @return void
+     */
+    public function testErrArray()
+    {
+        $this->io->expects($this->once())
+            ->method('err')
+            ->with(['<error>Just</error>', '<error>a</error>', '<error>test</error>'], 1);
+
+        $this->Shell->err(['Just', 'a', 'test']);
+    }
+
+    /**
      * testInfo method
      *
      * @return void
@@ -321,6 +335,20 @@ class ShellTest extends TestCase
             ->with('<info>Just a test</info>', 1);
 
         $this->Shell->info('Just a test');
+    }
+
+    /**
+     * testInfo method with array
+     *
+     * @return void
+     */
+    public function testInfoArray()
+    {
+        $this->io->expects($this->once())
+            ->method('out')
+            ->with(['<info>Just</info>', '<info>a</info>', '<info>test</info>'], 1);
+
+        $this->Shell->info(['Just', 'a', 'test']);
     }
 
     /**
@@ -338,6 +366,20 @@ class ShellTest extends TestCase
     }
 
     /**
+     * testWarn method with array
+     *
+     * @return void
+     */
+    public function testWarnArray()
+    {
+        $this->io->expects($this->once())
+            ->method('err')
+            ->with(['<warning>Just</warning>', '<warning>a</warning>', '<warning>test</warning>'], 1);
+
+        $this->Shell->warn(['Just', 'a', 'test']);
+    }
+
+    /**
      * testSuccess method
      *
      * @return void
@@ -349,6 +391,20 @@ class ShellTest extends TestCase
             ->with('<success>Just a test</success>', 1);
 
         $this->Shell->success('Just a test');
+    }
+
+    /**
+     * testSuccess method with array
+     *
+     * @return void
+     */
+    public function testSuccessArray()
+    {
+        $this->io->expects($this->once())
+            ->method('out')
+            ->with(['<success>Just</success>', '<success>a</success>', '<success>test</success>'], 1);
+
+        $this->Shell->success(['Just', 'a', 'test']);
     }
 
     /**
