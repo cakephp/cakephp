@@ -22,6 +22,17 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
+/**
+ * Load Composer autoload.
+ *
+ * Remove and re-prepend CakePHP's autoloader as Composer thinks it is the most important.
+ * @see http://goo.gl/kKVJO7
+ * @see http://book.cakephp.org/2.0/en/installation/advanced-installation.html#installing-cakephp-with-composer
+ */
+require ROOT . DS . 'vendors/autoload.php';
+spl_autoload_unregister(array('App', 'load'));
+spl_autoload_register(array('App', 'load'), true, true);
+
 // Setup a 'default' cache configuration for use in the application.
 Cache::config('default', array('engine' => 'File'));
 
