@@ -828,6 +828,19 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     }
 
     /**
+     * Test the content assertion with no case sensitivity.
+     *
+     * @return void
+     */
+    public function testAssertResponseContainsWithIgnoreCaseFlag()
+    {
+        $this->_response = new Response();
+        $this->_response = $this->_response->withStringBody('Some content');
+
+        $this->assertResponseContains('some', 'Failed asserting that the body contains given content', true);
+    }
+
+    /**
      * Test the negated content assertion.
      *
      * @return void
