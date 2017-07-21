@@ -18,7 +18,7 @@ use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
 use Cake\Event\EventManager;
 use Cake\ORM\Exception\MissingTableClassException;
-use Cake\ORM\TableRegistry;
+use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Routing\Router;
 use Cake\TestSuite\Constraint\EventFired;
 use Cake\TestSuite\Constraint\EventFiredWith;
@@ -31,6 +31,8 @@ use PHPUnit\Framework\TestCase as BaseTestCase;
  */
 abstract class TestCase extends BaseTestCase
 {
+
+    use LocatorAwareTrait;
 
     /**
      * The class responsible for managing the creation, loading and removing of fixtures
@@ -120,7 +122,7 @@ abstract class TestCase extends BaseTestCase
             Configure::clear();
             Configure::write($this->_configure);
         }
-        TableRegistry::clear();
+        $this->getTableLocator()->clear();
     }
 
     /**
@@ -645,6 +647,8 @@ abstract class TestCase extends BaseTestCase
      */
     public function getMockForModel($alias, array $methods = [], array $options = [])
     {
+        $locator = $this->getTableLocator();
+
         if (empty($options['className'])) {
             $class = Inflector::camelize($alias);
             $className = App::className($class, 'Model/Table', 'Table');
@@ -659,7 +663,7 @@ abstract class TestCase extends BaseTestCase
 
         list(, $baseClass) = pluginSplit($alias);
         $options += ['alias' => $baseClass, 'connection' => $connection];
-        $options += TableRegistry::config($alias);
+        $options += $locator->config($alias);
 
         $mock = $this->getMockBuilder($options['className'])
             ->setMethods($methods)
@@ -679,8 +683,8 @@ abstract class TestCase extends BaseTestCase
             $mock->setTable(Inflector::tableize($baseClass));
         }
 
-        TableRegistry::set($baseClass, $mock);
-        TableRegistry::set($alias, $mock);
+        $locator->set($baseClass, $mock);
+        $locator->set($alias, $mock);
 
         return $mock;
     }

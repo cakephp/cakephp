@@ -18,7 +18,7 @@ use Cake\Core\InstanceConfigTrait;
 use Cake\Event\EventListenerInterface;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
-use Cake\ORM\TableRegistry;
+use Cake\ORM\Locator\LocatorAwareTrait;
 
 /**
  * Base Authentication class with common methods and properties.
@@ -27,6 +27,7 @@ abstract class BaseAuthenticate implements EventListenerInterface
 {
 
     use InstanceConfigTrait;
+    use LocatorAwareTrait;
 
     /**
      * Default config for this object.
@@ -143,7 +144,7 @@ abstract class BaseAuthenticate implements EventListenerInterface
     protected function _query($username)
     {
         $config = $this->_config;
-        $table = TableRegistry::get($config['userModel']);
+        $table = $this->getTableLocator()->get($config['userModel']);
 
         $options = [
             'conditions' => [$table->aliasField($config['fields']['username']) => $username]

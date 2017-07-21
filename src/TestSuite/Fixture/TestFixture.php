@@ -22,7 +22,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\FixtureInterface;
 use Cake\Datasource\TableSchemaInterface;
 use Cake\Log\Log;
-use Cake\ORM\TableRegistry;
+use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Inflector;
 use Exception;
 
@@ -32,6 +32,8 @@ use Exception;
  */
 class TestFixture implements FixtureInterface, TableSchemaInterface, TableSchemaAwareInterface
 {
+
+    use LocatorAwareTrait;
 
     /**
      * Fixture Datasource
@@ -221,7 +223,7 @@ class TestFixture implements FixtureInterface, TableSchemaInterface, TableSchema
             if (!empty($import['table'])) {
                 throw new CakeException('You cannot define both table and model.');
             }
-            $import['table'] = TableRegistry::get($import['model'])->getTable();
+            $import['table'] = $this->getTableLocator()->get($import['model'])->getTable();
         }
 
         if (empty($import['table'])) {

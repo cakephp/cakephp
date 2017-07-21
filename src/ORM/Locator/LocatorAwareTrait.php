@@ -14,8 +14,6 @@
  */
 namespace Cake\ORM\Locator;
 
-use Cake\ORM\TableRegistry;
-
 /**
  * Contains method for setting and accessing LocatorInterface instance
  */
@@ -67,7 +65,7 @@ trait LocatorAwareTrait
     public function getTableLocator()
     {
         if (!$this->_tableLocator) {
-            $this->_tableLocator = TableRegistry::getTableLocator();
+            $this->_tableLocator = TableLocator::getInstance();
         }
 
         return $this->_tableLocator;

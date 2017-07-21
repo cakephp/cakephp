@@ -18,7 +18,7 @@ use ArrayAccess;
 use Cake\Collection\Collection;
 use Cake\Datasource\EntityInterface;
 use Cake\Http\ServerRequest;
-use Cake\ORM\TableRegistry;
+use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Inflector;
 use RuntimeException;
 use Traversable;
@@ -45,6 +45,7 @@ use Traversable;
  */
 class EntityContext implements ContextInterface
 {
+    use LocatorAwareTrait;
 
     /**
      * The request object.
@@ -144,7 +145,7 @@ class EntityContext implements ContextInterface
             }
         }
         if (is_string($table)) {
-            $table = TableRegistry::get($table);
+            $table = $this->getTableLocator()->get($table);
         }
 
         if (!is_object($table)) {

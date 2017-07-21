@@ -16,12 +16,12 @@ namespace Cake\Console;
 
 use Cake\Console\Exception\ConsoleException;
 use Cake\Console\Exception\StopException;
-use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Datasource\ModelAwareTrait;
 use Cake\Filesystem\File;
 use Cake\Log\LogTrait;
 use Cake\ORM\Locator\LocatorAwareTrait;
+use Cake\ORM\Locator\TableLocator;
 use Cake\Utility\Inflector;
 use Cake\Utility\MergeVariablesTrait;
 use Cake\Utility\Text;
@@ -185,7 +185,7 @@ class Shell
         }
         $this->_io = $io ?: new ConsoleIo();
 
-        $locator = $this->getTableLocator() ? : 'Cake\ORM\TableRegistry';
+        $locator = $this->getTableLocator() ? : TableLocator::getInstance();
         $this->modelFactory('Table', [$locator, 'get']);
         $this->Tasks = new TaskRegistry($this);
 
