@@ -20,7 +20,6 @@ use Cake\Form\Form;
 use Cake\Http\ServerRequest;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
-use Cake\ORM\TableRegistry;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
@@ -198,7 +197,7 @@ class FormHelperTest extends TestCase
     {
         parent::tearDown();
         unset($this->Form, $this->Controller, $this->View);
-        TableRegistry::clear();
+        $this->getTableLocator()->clear();
     }
 
     /**
@@ -1336,7 +1335,7 @@ class FormHelperTest extends TestCase
      */
     public function testTextFieldTypeNumberGenerationForIntegers()
     {
-        TableRegistry::get('Contacts', [
+        $this->getTableLocator()->get('Contacts', [
             'className' => __NAMESPACE__ . '\ContactsTable'
         ]);
         $this->Form->create([], ['context' => ['table' => 'Contacts']]);
@@ -1362,7 +1361,7 @@ class FormHelperTest extends TestCase
      */
     public function testFileUploadFieldTypeGenerationForBinaries()
     {
-        $table = TableRegistry::get('Contacts', [
+        $table = $this->getTableLocator()->get('Contacts', [
             'className' => __NAMESPACE__ . '\ContactsTable'
         ]);
         $table->schema(['foo' => [
@@ -2813,7 +2812,7 @@ class FormHelperTest extends TestCase
     {
         $one = new Entity();
         $two = new Entity();
-        TableRegistry::get('Contacts', [
+        $this->getTableLocator()->get('Contacts', [
             'className' => __NAMESPACE__ . '\ContactsTable'
         ]);
         $one->set('email', '');
@@ -2867,7 +2866,7 @@ class FormHelperTest extends TestCase
      */
     public function testControl()
     {
-        TableRegistry::get('ValidateUsers', [
+        $this->getTableLocator()->get('ValidateUsers', [
             'className' => __NAMESPACE__ . '\ValidateUsersTable'
         ]);
         $this->Form->create([], ['context' => ['table' => 'ValidateUsers']]);
@@ -2914,7 +2913,7 @@ class FormHelperTest extends TestCase
      */
     public function testControlCustomization()
     {
-        TableRegistry::get('Contacts', [
+        $this->getTableLocator()->get('Contacts', [
             'className' => __NAMESPACE__ . '\ContactsTable'
         ]);
         $this->Form->create([], ['context' => ['table' => 'Contacts']]);
@@ -3277,7 +3276,7 @@ class FormHelperTest extends TestCase
      */
     public function testControlZero()
     {
-        TableRegistry::get('Contacts', [
+        $this->getTableLocator()->get('Contacts', [
             'className' => __NAMESPACE__ . '\ContactsTable'
         ]);
         $this->Form->create([], ['context' => ['table' => 'Contacts']]);
@@ -3300,7 +3299,7 @@ class FormHelperTest extends TestCase
      */
     public function testControlCheckbox()
     {
-        $articles = TableRegistry::get('Articles');
+        $articles = $this->getTableLocator()->get('Articles');
         $articles->schema()->addColumn('active', ['type' => 'boolean', 'default' => null]);
         $article = $articles->newEntity();
 
@@ -3398,7 +3397,7 @@ class FormHelperTest extends TestCase
      */
     public function testControlHidden()
     {
-        TableRegistry::get('ValidateUsers', [
+        $this->getTableLocator()->get('ValidateUsers', [
             'className' => __NAMESPACE__ . '\ValidateUsersTable'
         ]);
         $this->Form->create([], ['context' => ['table' => 'ValidateUsers']]);
@@ -3898,7 +3897,7 @@ class FormHelperTest extends TestCase
      */
     public function testControlMagicSelectForTypeNumber()
     {
-        TableRegistry::get('ValidateUsers', [
+        $this->getTableLocator()->get('ValidateUsers', [
             'className' => __NAMESPACE__ . '\ValidateUsersTable'
         ]);
         $entity = new Entity(['balance' => 1]);
@@ -4379,7 +4378,7 @@ class FormHelperTest extends TestCase
         $expected = ['input' => ['type' => 'text', 'name' => 'Model[field]', 'value' => 'default value']];
         $this->assertHtml($expected, $result);
 
-        $Articles = TableRegistry::get('Articles');
+        $Articles = $this->getTableLocator()->get('Articles');
         $title = $Articles->schema()->getColumn('title');
         $Articles->schema()->addColumn(
             'title',
@@ -4714,7 +4713,7 @@ class FormHelperTest extends TestCase
      */
     public function testRadioDefaultValue()
     {
-        $Articles = TableRegistry::get('Articles');
+        $Articles = $this->getTableLocator()->get('Articles');
         $title = $Articles->schema()->getColumn('title');
         $Articles->schema()->addColumn(
             'title',
@@ -5860,7 +5859,7 @@ class FormHelperTest extends TestCase
         $expected = ['input' => ['type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1']];
         $this->assertHtml($expected, $result);
 
-        $Articles = TableRegistry::get('Articles');
+        $Articles = $this->getTableLocator()->get('Articles');
         $Articles->schema()->addColumn(
             'published',
             ['type' => 'boolean', 'null' => false, 'default' => true]
@@ -8068,7 +8067,7 @@ class FormHelperTest extends TestCase
      */
     public function testFormMagicControlLabel()
     {
-        TableRegistry::get('Contacts', [
+        $this->getTableLocator()->get('Contacts', [
             'className' => __NAMESPACE__ . '\ContactsTable'
         ]);
         $this->Form->create([], ['context' => ['table' => 'Contacts']]);
@@ -8169,7 +8168,7 @@ class FormHelperTest extends TestCase
     public function testMultiRecordForm()
     {
         $this->loadFixtures('Articles', 'Comments');
-        $articles = TableRegistry::get('Articles');
+        $articles = $this->getTableLocator()->get('Articles');
         $articles->hasMany('Comments');
 
         $comment = new Entity(['comment' => 'Value']);
@@ -8236,7 +8235,7 @@ class FormHelperTest extends TestCase
         //@codingStandardsIgnoreEnd
         $this->assertHtml($expected, $result);
 
-        TableRegistry::get('Comments')
+        $this->getTableLocator()->get('Comments')
             ->validator('default')
             ->allowEmpty('comment', false);
         $result = $this->Form->control('0.comments.1.comment');
@@ -8682,7 +8681,7 @@ class FormHelperTest extends TestCase
     public function testFormValueSourcesSingleSwitchRendering()
     {
         $this->loadFixtures('Articles');
-        $articles = TableRegistry::get('Articles');
+        $articles = $this->getTableLocator()->get('Articles');
         $article = new Article();
         $articles->patchEntity($article, ['id' => '3']);
 
@@ -8738,7 +8737,7 @@ class FormHelperTest extends TestCase
     public function testFormValueSourcesListSwitchRendering()
     {
         $this->loadFixtures('Articles');
-        $articles = TableRegistry::get('Articles');
+        $articles = $this->getTableLocator()->get('Articles');
         $article = new Article();
         $articles->patchEntity($article, ['id' => '3']);
         $this->Form->request->query['id'] = '9';
@@ -8783,7 +8782,7 @@ class FormHelperTest extends TestCase
     public function testFormValueSourcesSwitchViaOptionsRendering()
     {
         $this->loadFixtures('Articles');
-        $articles = TableRegistry::get('Articles');
+        $articles = $this->getTableLocator()->get('Articles');
         $article = new Article();
         $articles->patchEntity($article, ['id' => '3']);
         $this->Form->request->data['id'] = '4';
@@ -8838,7 +8837,7 @@ class FormHelperTest extends TestCase
     public function testFormValueSourcesSwitchViaOptionsAndSetterRendering()
     {
         $this->loadFixtures('Articles');
-        $articles = TableRegistry::get('Articles');
+        $articles = $this->getTableLocator()->get('Articles');
         $article = new Article();
         $articles->patchEntity($article, ['id' => '3']);
 
@@ -8931,7 +8930,7 @@ class FormHelperTest extends TestCase
     {
         $this->Form->request->query['category'] = 'sesame-cookies';
 
-        $articles = TableRegistry::get('Articles');
+        $articles = $this->getTableLocator()->get('Articles');
         $entity = $articles->newEntity();
         $this->Form->create($entity);
 

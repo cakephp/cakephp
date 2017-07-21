@@ -17,7 +17,6 @@ namespace Cake\Test\TestCase\Database\Schema;
 use Cake\Database\Schema\Table;
 use Cake\Database\Type;
 use Cake\Datasource\ConnectionManager;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -56,7 +55,7 @@ class TableTest extends TestCase
 
     public function tearDown()
     {
-        TableRegistry::clear();
+        $this->getTableLocator()->clear();
         Type::clear();
         Type::map($this->_map);
         parent::tearDown();
@@ -575,7 +574,7 @@ class TableTest extends TestCase
      */
     public function testConstraintForeignKey()
     {
-        $table = TableRegistry::get('ArticlesTags');
+        $table = $this->getTableLocator()->get('ArticlesTags');
         $compositeConstraint = $table->schema()->getConstraint('tag_id_fk');
         $expected = [
             'type' => 'foreign',
@@ -599,7 +598,7 @@ class TableTest extends TestCase
      */
     public function testConstraintForeignKeyTwoColumns()
     {
-        $table = TableRegistry::get('Orders');
+        $table = $this->getTableLocator()->get('Orders');
         $compositeConstraint = $table->schema()->getConstraint('product_category_fk');
         $expected = [
             'type' => 'foreign',

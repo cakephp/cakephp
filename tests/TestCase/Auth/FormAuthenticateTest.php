@@ -21,7 +21,6 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\I18n\Time;
 use Cake\ORM\Entity;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
 
@@ -52,11 +51,11 @@ class FormAuthenticateTest extends TestCase
         ]);
         $password = password_hash('password', PASSWORD_DEFAULT);
 
-        TableRegistry::clear();
-        $Users = TableRegistry::get('Users');
+        $this->getTableLocator()->clear();
+        $Users = $this->getTableLocator()->get('Users');
         $Users->updateAll(['password' => $password], []);
 
-        $AuthUsers = TableRegistry::get('AuthUsers', [
+        $AuthUsers = $this->getTableLocator()->get('AuthUsers', [
             'className' => 'TestApp\Model\Table\AuthUsersTable'
         ]);
         $AuthUsers->updateAll(['password' => $password], []);
@@ -225,7 +224,7 @@ class FormAuthenticateTest extends TestCase
      */
     public function testAuthenticateIncludesVirtualFields()
     {
-        $users = TableRegistry::get('Users');
+        $users = $this->getTableLocator()->get('Users');
         $users->entityClass('TestApp\Model\Entity\VirtualUser');
 
         $request = new ServerRequest('posts/index');
@@ -253,7 +252,7 @@ class FormAuthenticateTest extends TestCase
     {
         Plugin::load('TestPlugin');
 
-        $PluginModel = TableRegistry::get('TestPlugin.AuthUsers');
+        $PluginModel = $this->getTableLocator()->get('TestPlugin.AuthUsers');
         $user['id'] = 1;
         $user['username'] = 'gwoo';
         $user['password'] = password_hash(Security::salt() . 'cake', PASSWORD_BCRYPT);
@@ -370,7 +369,7 @@ class FormAuthenticateTest extends TestCase
         $this->assertEquals(PASSWORD_BCRYPT, $result['hashType']);
 
         $hash = password_hash('mypass', PASSWORD_BCRYPT);
-        $User = TableRegistry::get('Users');
+        $User = $this->getTableLocator()->get('Users');
         $User->updateAll(
             ['password' => $hash],
             ['username' => 'mariano']
@@ -437,7 +436,7 @@ class FormAuthenticateTest extends TestCase
             'passwordHasher' => 'Weak'
         ]);
         $password = $this->auth->passwordHasher()->hash('password');
-        TableRegistry::get('Users')->updateAll(['password' => $password], []);
+        $this->getTableLocator()->get('Users')->updateAll(['password' => $password], []);
 
         $request = new ServerRequest('posts/index');
         $request->data = [

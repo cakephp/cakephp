@@ -20,7 +20,6 @@ use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -64,17 +63,17 @@ class CounterCacheBehaviorTest extends TestCase
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
 
-        $this->user = TableRegistry::get('Users', [
+        $this->user = $this->getTableLocator()->get('Users', [
             'table' => 'counter_cache_users',
             'connection' => $this->connection
         ]);
 
-        $this->category = TableRegistry::get('Categories', [
+        $this->category = $this->getTableLocator()->get('Categories', [
             'table' => 'counter_cache_categories',
             'connection' => $this->connection
         ]);
 
-        $this->comment = TableRegistry::get('Comments', [
+        $this->comment = $this->getTableLocator()->get('Comments', [
             'alias' => 'Comment',
             'table' => 'counter_cache_comments',
             'connection' => $this->connection
@@ -103,7 +102,7 @@ class CounterCacheBehaviorTest extends TestCase
         parent::tearDown();
 
         unset($this->user, $this->post);
-        TableRegistry::clear();
+        $this->getTableLocator()->clear();
     }
 
     /**

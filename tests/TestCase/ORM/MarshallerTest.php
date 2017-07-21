@@ -20,7 +20,6 @@ use Cake\I18n\Time;
 use Cake\ORM\Entity;
 use Cake\ORM\Marshaller;
 use Cake\ORM\Table;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
 
@@ -141,17 +140,17 @@ class MarshallerTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->articles = TableRegistry::get('Articles');
+        $this->articles = $this->getTableLocator()->get('Articles');
         $this->articles->belongsTo('Users', [
             'foreignKey' => 'author_id'
         ]);
         $this->articles->hasMany('Comments');
         $this->articles->belongsToMany('Tags');
 
-        $this->comments = TableRegistry::get('Comments');
-        $this->users = TableRegistry::get('Users');
-        $this->tags = TableRegistry::get('Tags');
-        $this->articleTags = TableRegistry::get('ArticlesTags');
+        $this->comments = $this->getTableLocator()->get('Comments');
+        $this->users = $this->getTableLocator()->get('Users');
+        $this->tags = $this->getTableLocator()->get('Tags');
+        $this->articleTags = $this->getTableLocator()->get('ArticlesTags');
 
         $this->comments->belongsTo('Articles');
         $this->comments->belongsTo('Users');
@@ -171,7 +170,7 @@ class MarshallerTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        TableRegistry::clear();
+        $this->getTableLocator()->clear();
         unset($this->articles, $this->comments, $this->users, $this->tags);
     }
 
@@ -374,8 +373,8 @@ class MarshallerTest extends TestCase
      */
     public function testOneAssociationBeforeMarshalMutation()
     {
-        $users = TableRegistry::get('Users');
-        $articles = TableRegistry::get('Articles');
+        $users = $this->getTableLocator()->get('Users');
+        $articles = $this->getTableLocator()->get('Articles');
 
         $users->hasOne('Articles', [
             'foreignKey' => 'author_id'
@@ -658,7 +657,7 @@ class MarshallerTest extends TestCase
             ],
         ];
 
-        $articlesTags = TableRegistry::get('ArticlesTags');
+        $articlesTags = $this->getTableLocator()->get('ArticlesTags');
         $articlesTags->belongsTo('Users');
 
         $marshall = new Marshaller($this->articles);
@@ -706,8 +705,8 @@ class MarshallerTest extends TestCase
             ],
         ];
 
-        $articlesTags = TableRegistry::get('ArticlesTags');
-        $tags = TableRegistry::get('Tags');
+        $articlesTags = $this->getTableLocator()->get('ArticlesTags');
+        $tags = $this->getTableLocator()->get('Tags');
         $t1 = $tags->find('all')->where(['id' => 1])->first();
         $t2 = $tags->find('all')->where(['id' => 2])->first();
         $articlesTags->belongsTo('Users');
@@ -970,7 +969,7 @@ class MarshallerTest extends TestCase
             ]
         ];
 
-        $tags = TableRegistry::get('Tags');
+        $tags = $this->getTableLocator()->get('Tags');
 
         $marshaller = new Marshaller($this->articles);
         $article = $marshaller->one($data, ['associated' => ['Tags']]);
@@ -2008,8 +2007,8 @@ class MarshallerTest extends TestCase
      */
     public function testMergeBelongsToManyJoinDataScalar()
     {
-        TableRegistry::clear();
-        $articles = TableRegistry::get('Articles');
+        $this->getTableLocator()->clear();
+        $articles = $this->getTableLocator()->get('Articles');
         $articles->belongsToMany('Tags', [
             'through' => 'SpecialTags'
         ]);
@@ -2037,8 +2036,8 @@ class MarshallerTest extends TestCase
      */
     public function testMergeBelongsToManyJoinDataNotAccessible()
     {
-        TableRegistry::clear();
-        $articles = TableRegistry::get('Articles');
+        $this->getTableLocator()->clear();
+        $articles = $this->getTableLocator()->get('Articles');
         $articles->belongsToMany('Tags', [
             'through' => 'SpecialTags'
         ]);
@@ -2073,8 +2072,8 @@ class MarshallerTest extends TestCase
      */
     public function testMergeBelongsToManyHandleJoinDataConsistently()
     {
-        TableRegistry::clear();
-        $articles = TableRegistry::get('Articles');
+        $this->getTableLocator()->clear();
+        $articles = $this->getTableLocator()->get('Articles');
         $articles->belongsToMany('Tags', [
             'through' => 'SpecialTags'
         ]);
@@ -2135,7 +2134,7 @@ class MarshallerTest extends TestCase
                 ],
             ],
         ];
-        $articlesTags = TableRegistry::get('ArticlesTags');
+        $articlesTags = $this->getTableLocator()->get('ArticlesTags');
         $articlesTags->belongsTo('Users');
 
         $marshall = new Marshaller($this->articles);
@@ -2258,7 +2257,7 @@ class MarshallerTest extends TestCase
             ]
         ];
 
-        $articlesTags = TableRegistry::get('ArticlesTags');
+        $articlesTags = $this->getTableLocator()->get('ArticlesTags');
         $articlesTags->belongsTo('Users');
 
         $options = ['associated' => ['Tags._joinData.Users']];
@@ -2429,7 +2428,7 @@ class MarshallerTest extends TestCase
      */
     public function testMergeManyCompositeKey()
     {
-        $articlesTags = TableRegistry::get('ArticlesTags');
+        $articlesTags = $this->getTableLocator()->get('ArticlesTags');
 
         $entities = [
             new OpenEntity(['article_id' => 1, 'tag_id' => 2]),
@@ -2493,7 +2492,7 @@ class MarshallerTest extends TestCase
             ['id' => 1, 'comment' => 'Changed 1', 'user_id' => 1],
             ['id' => 3, 'comment' => 'New 1'],
         ];
-        $comments = TableRegistry::get('GreedyComments', [
+        $comments = $this->getTableLocator()->get('GreedyComments', [
             'className' => __NAMESPACE__ . '\\GreedyCommentsTable'
         ]);
         $marshall = new Marshaller($comments);
@@ -2798,7 +2797,7 @@ class MarshallerTest extends TestCase
             ],
         ];
 
-        $articlesTags = TableRegistry::get('ArticlesTags');
+        $articlesTags = $this->getTableLocator()->get('ArticlesTags');
         $articlesTags->belongsTo('Users');
 
         $marshall = new Marshaller($this->articles);
@@ -3329,7 +3328,7 @@ class MarshallerTest extends TestCase
             'id' => ''
         ];
 
-        $articles = TableRegistry::get('Articles');
+        $articles = $this->getTableLocator()->get('Articles');
         $articles->schema()->dropConstraint('primary');
         $articles->primaryKey('id');
 
@@ -3359,7 +3358,7 @@ class MarshallerTest extends TestCase
             ]
         ];
 
-        $tags = TableRegistry::get('Tags');
+        $tags = $this->getTableLocator()->get('Tags');
         $tags->schema()->dropConstraint('primary');
         $tags->primaryKey('id');
 

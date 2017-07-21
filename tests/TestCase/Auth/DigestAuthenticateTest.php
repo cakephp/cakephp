@@ -24,7 +24,6 @@ use Cake\Http\ServerRequest;
 use Cake\I18n\Time;
 use Cake\Network\Exception\UnauthorizedException;
 use Cake\ORM\Entity;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -65,7 +64,7 @@ class DigestAuthenticateTest extends TestCase
         ]);
 
         $password = DigestAuthenticate::password('mariano', 'cake', 'localhost');
-        $User = TableRegistry::get('Users');
+        $User = $this->getTableLocator()->get('Users');
         $User->updateAll(['password' => $password], []);
 
         $this->response = $this->getMockBuilder(Response::class)->getMock();
@@ -284,7 +283,7 @@ class DigestAuthenticateTest extends TestCase
      */
     public function testAuthenticateSuccessHiddenPasswordField()
     {
-        $User = TableRegistry::get('Users');
+        $User = $this->getTableLocator()->get('Users');
         $User->setEntityClass(ProtectedUser::class);
 
         $request = new ServerRequest([

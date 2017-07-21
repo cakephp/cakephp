@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\ORM;
 
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -41,7 +40,7 @@ class TableRegressionTest extends TestCase
     {
         parent::tearDown();
 
-        TableRegistry::clear();
+        $this->getTableLocator()->clear();
     }
 
     /**
@@ -54,7 +53,7 @@ class TableRegressionTest extends TestCase
      */
     public function testAfterSaveRollbackTransaction()
     {
-        $table = TableRegistry::get('Authors');
+        $table = $this->getTableLocator()->get('Authors');
         $table->getEventManager()->on(
             'Model.afterSave',
             function () use ($table) {

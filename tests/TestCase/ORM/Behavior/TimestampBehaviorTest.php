@@ -18,7 +18,6 @@ use Cake\Event\Event;
 use Cake\I18n\Time;
 use Cake\ORM\Behavior\TimestampBehavior;
 use Cake\ORM\Entity;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -378,7 +377,7 @@ class TimestampBehaviorTest extends TestCase
     {
         $this->loadFixtures('Users');
 
-        $table = TableRegistry::get('users');
+        $table = $this->getTableLocator()->get('users');
         $table->addBehavior('Timestamp', [
             'events' => [
                 'Model.beforeSave' => [

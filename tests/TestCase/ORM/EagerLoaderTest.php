@@ -20,7 +20,6 @@ use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\EagerLoader;
 use Cake\ORM\Query;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 
@@ -62,14 +61,14 @@ class EagerLoaderTest extends TestCase
             ]
         ];
 
-        $this->table = $table = TableRegistry::get('foo', ['schema' => $schema]);
-        $clients = TableRegistry::get('clients', ['schema' => $schema1]);
-        $orders = TableRegistry::get('orders', ['schema' => $schema2]);
-        $companies = TableRegistry::get('companies', ['schema' => $schema, 'table' => 'organizations']);
-        $orderTypes = TableRegistry::get('orderTypes', ['schema' => $schema]);
-        $stuff = TableRegistry::get('stuff', ['schema' => $schema, 'table' => 'things']);
-        $stuffTypes = TableRegistry::get('stuffTypes', ['schema' => $schema]);
-        $categories = TableRegistry::get('categories', ['schema' => $schema]);
+        $this->table = $table = $this->getTableLocator()->get('foo', ['schema' => $schema]);
+        $clients = $this->getTableLocator()->get('clients', ['schema' => $schema1]);
+        $orders = $this->getTableLocator()->get('orders', ['schema' => $schema2]);
+        $companies = $this->getTableLocator()->get('companies', ['schema' => $schema, 'table' => 'organizations']);
+        $orderTypes = $this->getTableLocator()->get('orderTypes', ['schema' => $schema]);
+        $stuff = $this->getTableLocator()->get('stuff', ['schema' => $schema, 'table' => 'things']);
+        $stuffTypes = $this->getTableLocator()->get('stuffTypes', ['schema' => $schema]);
+        $categories = $this->getTableLocator()->get('categories', ['schema' => $schema]);
 
         $table->belongsTo('clients');
         $clients->hasOne('orders');
@@ -136,7 +135,7 @@ class EagerLoaderTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        TableRegistry::clear();
+        $this->getTableLocator()->clear();
     }
 
     /**
@@ -394,7 +393,7 @@ class EagerLoaderTest extends TestCase
             }
         ]);
         $builder = $loader->contain()['clients']['queryBuilder'];
-        $table = TableRegistry::get('foo');
+        $table = $this->getTableLocator()->get('foo');
         $query = new Query($this->connection, $table);
         $query = $builder($query);
         $this->assertEquals(['a', 'b'], $query->clause('select'));
@@ -416,7 +415,7 @@ class EagerLoaderTest extends TestCase
             ]
         ];
 
-        $table = TableRegistry::get('foo');
+        $table = $this->getTableLocator()->get('foo');
         $query = new Query($this->connection, $table);
         $loader = new EagerLoader;
         $loader->contain($contains);

@@ -17,7 +17,6 @@ namespace Cake\Test\TestCase\ORM;
 use Cake\Core\Plugin;
 use Cake\ORM\Association;
 use Cake\ORM\Table;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -82,7 +81,7 @@ class AssociationTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        TableRegistry::clear();
+        $this->getTableLocator()->clear();
     }
 
     /**
@@ -186,7 +185,7 @@ class AssociationTest extends TestCase
      */
     public function testInvalidTableFetchedFromRegistry()
     {
-        TableRegistry::get('Test');
+        $this->getTableLocator()->get('Test');
 
         $config = [
             'className' => '\Cake\Test\TestCase\ORM\TestTable',
@@ -209,7 +208,7 @@ class AssociationTest extends TestCase
      */
     public function testTargetTableDescendant()
     {
-        TableRegistry::get('Test', [
+        $this->getTableLocator()->get('Test', [
             'className' => '\Cake\Test\TestCase\ORM\TestTable'
         ]);
         $className = '\Cake\ORM\Table';
@@ -367,14 +366,14 @@ class AssociationTest extends TestCase
         $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $table);
 
         $this->assertTrue(
-            TableRegistry::exists('TestPlugin.ThisAssociationName'),
+            $this->getTableLocator()->exists('TestPlugin.ThisAssociationName'),
             'The association class will use this registry key'
         );
-        $this->assertFalse(TableRegistry::exists('TestPlugin.Comments'), 'The association class will NOT use this key');
-        $this->assertFalse(TableRegistry::exists('Comments'), 'Should also not be set');
-        $this->assertFalse(TableRegistry::exists('ThisAssociationName'), 'Should also not be set');
+        $this->assertFalse($this->getTableLocator()->exists('TestPlugin.Comments'), 'The association class will NOT use this key');
+        $this->assertFalse($this->getTableLocator()->exists('Comments'), 'Should also not be set');
+        $this->assertFalse($this->getTableLocator()->exists('ThisAssociationName'), 'Should also not be set');
 
-        $plugin = TableRegistry::get('TestPlugin.ThisAssociationName');
+        $plugin = $this->getTableLocator()->get('TestPlugin.ThisAssociationName');
         $this->assertSame($table, $plugin, 'Should be an instance of TestPlugin.Comments');
         $this->assertSame('TestPlugin.ThisAssociationName', $table->registryAlias());
         $this->assertSame('comments', $table->table());

@@ -21,7 +21,6 @@ use Cake\Core\Plugin;
 use Cake\Event\Event;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
-use Cake\ORM\TableRegistry;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use TestApp\Controller\Admin\PostsController;
@@ -761,7 +760,7 @@ class ControllerTest extends TestCase
         $this->assertInstanceOf('Cake\Datasource\ResultSetInterface', $results);
         $this->assertCount(3, $results);
 
-        $results = $Controller->paginate(TableRegistry::get('Posts'));
+        $results = $Controller->paginate($this->getTableLocator()->get('Posts'));
         $this->assertInstanceOf('Cake\Datasource\ResultSetInterface', $results);
         $this->assertCount(3, $results);
 
@@ -771,7 +770,7 @@ class ControllerTest extends TestCase
         $this->assertSame($Controller->request->params['paging']['Posts']['nextPage'], false);
         $this->assertNull($Controller->request->params['paging']['Posts']['scope']);
 
-        $results = $Controller->paginate(TableRegistry::get('Posts'), ['scope' => 'posts']);
+        $results = $Controller->paginate($this->getTableLocator()->get('Posts'), ['scope' => 'posts']);
         $this->assertInstanceOf('Cake\Datasource\ResultSetInterface', $results);
         $this->assertCount(1, $results);
 

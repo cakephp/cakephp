@@ -19,7 +19,6 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Database\TypeMap;
 use Cake\ORM\Association\HasOne;
 use Cake\ORM\Entity;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -47,8 +46,8 @@ class HasOneTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->user = TableRegistry::get('Users');
-        $this->profile = TableRegistry::get('Profiles');
+        $this->user = $this->getTableLocator()->get('Users');
+        $this->profile = $this->getTableLocator()->get('Profiles');
         $this->listenerCalled = false;
     }
 
@@ -60,7 +59,7 @@ class HasOneTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        TableRegistry::clear();
+        $this->getTableLocator()->clear();
     }
 
     /**

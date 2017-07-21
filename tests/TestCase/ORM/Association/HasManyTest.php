@@ -23,7 +23,6 @@ use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Association;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Entity;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -46,7 +45,7 @@ class HasManyTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->author = TableRegistry::get('Authors', [
+        $this->author = $this->getTableLocator()->get('Authors', [
             'schema' => [
                 'id' => ['type' => 'integer'],
                 'name' => ['type' => 'string'],
@@ -91,7 +90,7 @@ class HasManyTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        TableRegistry::clear();
+        $this->getTableLocator()->clear();
     }
 
     /**
@@ -475,7 +474,7 @@ class HasManyTest extends TestCase
      */
     public function testCascadeDeleteCallbacks()
     {
-        $articles = TableRegistry::get('Articles');
+        $articles = $this->getTableLocator()->get('Articles');
         $config = [
             'dependent' => true,
             'sourceTable' => $this->author,
@@ -564,7 +563,7 @@ class HasManyTest extends TestCase
      */
     public function testValueBinderUpdateOnSubQueryStrategy()
     {
-        $Authors = TableRegistry::get('Authors');
+        $Authors = $this->getTableLocator()->get('Authors');
         $Authors->hasMany('Articles', [
             'strategy' => Association::STRATEGY_SUBQUERY
         ]);
@@ -665,7 +664,7 @@ class HasManyTest extends TestCase
      */
     public function testUnlinkSuccess()
     {
-        $articles = TableRegistry::get('Articles');
+        $articles = $this->getTableLocator()->get('Articles');
         $assoc = $this->author->hasMany('Articles', [
             'sourceTable' => $this->author,
             'targetTable' => $articles
@@ -691,7 +690,7 @@ class HasManyTest extends TestCase
      */
     public function testUnlinkWithEmptyArray()
     {
-        $articles = TableRegistry::get('Articles');
+        $articles = $this->getTableLocator()->get('Articles');
         $assoc = $this->author->hasMany('Articles', [
             'sourceTable' => $this->author,
             'targetTable' => $articles
@@ -716,7 +715,7 @@ class HasManyTest extends TestCase
      */
     public function testLinkUsesSingleTransaction()
     {
-        $articles = TableRegistry::get('Articles');
+        $articles = $this->getTableLocator()->get('Articles');
         $assoc = $this->author->hasMany('Articles', [
             'sourceTable' => $this->author,
             'targetTable' => $articles
@@ -750,7 +749,7 @@ class HasManyTest extends TestCase
      */
     public function testSaveAssociatedNotEmptyNotIterable()
     {
-        $articles = TableRegistry::get('Articles');
+        $articles = $this->getTableLocator()->get('Articles');
         $association = $articles->hasMany('Comments', [
             'saveStrategy' => HasMany::SAVE_APPEND
         ]);
@@ -786,7 +785,7 @@ class HasManyTest extends TestCase
      */
     public function testSaveAssociatedEmptySetWithAppendStrategyDoesNotAffectAssociatedRecordsOnCreate($value)
     {
-        $articles = TableRegistry::get('Articles');
+        $articles = $this->getTableLocator()->get('Articles');
         $association = $articles->hasMany('Comments', [
             'saveStrategy' => HasMany::SAVE_APPEND
         ]);
@@ -812,7 +811,7 @@ class HasManyTest extends TestCase
      */
     public function testSaveAssociatedEmptySetWithAppendStrategyDoesNotAffectAssociatedRecordsOnUpdate($value)
     {
-        $articles = TableRegistry::get('Articles');
+        $articles = $this->getTableLocator()->get('Articles');
         $association = $articles->hasMany('Comments', [
             'saveStrategy' => HasMany::SAVE_APPEND
         ]);
@@ -843,7 +842,7 @@ class HasManyTest extends TestCase
      */
     public function testSaveAssociatedEmptySetWithReplaceStrategyDoesNotAffectAssociatedRecordsOnCreate($value)
     {
-        $articles = TableRegistry::get('Articles');
+        $articles = $this->getTableLocator()->get('Articles');
         $association = $articles->hasMany('Comments', [
             'saveStrategy' => HasMany::SAVE_REPLACE
         ]);
@@ -869,7 +868,7 @@ class HasManyTest extends TestCase
      */
     public function testSaveAssociatedEmptySetWithReplaceStrategyRemovesAssociatedRecordsOnUpdate($value)
     {
-        $articles = TableRegistry::get('Articles');
+        $articles = $this->getTableLocator()->get('Articles');
         $association = $articles->hasMany('Comments', [
             'saveStrategy' => HasMany::SAVE_REPLACE
         ]);

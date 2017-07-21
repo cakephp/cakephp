@@ -20,7 +20,6 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\I18n\Time;
 use Cake\Network\Exception\UnauthorizedException;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -52,7 +51,7 @@ class BasicAuthenticateTest extends TestCase
         ]);
 
         $password = password_hash('password', PASSWORD_BCRYPT);
-        $User = TableRegistry::get('Users');
+        $User = $this->getTableLocator()->get('Users');
         $User->updateAll(['password' => $password], []);
         $this->response = $this->getMockBuilder(Response::class)->getMock();
     }
@@ -144,7 +143,7 @@ class BasicAuthenticateTest extends TestCase
      */
     public function testAuthenticateUsernameZero()
     {
-        $User = TableRegistry::get('Users');
+        $User = $this->getTableLocator()->get('Users');
         $User->updateAll(['username' => '0'], ['username' => 'mariano']);
 
         $request = new ServerRequest('posts/index');

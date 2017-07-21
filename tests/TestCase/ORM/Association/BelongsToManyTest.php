@@ -19,7 +19,6 @@ use Cake\Datasource\ConnectionManager;
 use Cake\Event\Event;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Entity;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -166,7 +165,7 @@ class BelongsToManyTest extends TestCase
         $this->assertInstanceOf($hasMany, $this->tag->association('ArticlesTags'));
 
         $this->assertSame($junction, $assoc->junction());
-        $junction2 = TableRegistry::get('Foos');
+        $junction2 = $this->getTableLocator()->get('Foos');
         $assoc->junction($junction2);
         $this->assertSame($junction2, $assoc->junction());
 
@@ -352,7 +351,7 @@ class BelongsToManyTest extends TestCase
      */
     public function testCascadeDeleteWithCallbacks()
     {
-        $articleTag = TableRegistry::get('ArticlesTags');
+        $articleTag = $this->getTableLocator()->get('ArticlesTags');
         $config = [
             'sourceTable' => $this->article,
             'targetTable' => $this->tag,
@@ -422,8 +421,8 @@ class BelongsToManyTest extends TestCase
      */
     public function testLinkSuccessSaveAppend()
     {
-        $articles = TableRegistry::get('Articles');
-        $tags = TableRegistry::get('Tags');
+        $articles = $this->getTableLocator()->get('Articles');
+        $tags = $this->getTableLocator()->get('Tags');
 
         $config = [
             'sourceTable' => $articles,
@@ -457,9 +456,9 @@ class BelongsToManyTest extends TestCase
      */
     public function testLinkSaveAppendSharedTarget()
     {
-        $articles = TableRegistry::get('Articles');
-        $tags = TableRegistry::get('Tags');
-        $articlesTags = TableRegistry::get('ArticlesTags');
+        $articles = $this->getTableLocator()->get('Articles');
+        $tags = $this->getTableLocator()->get('Tags');
+        $articlesTags = $this->getTableLocator()->get('ArticlesTags');
         $articlesTags->deleteAll('1=1');
 
         $config = [
@@ -590,9 +589,9 @@ class BelongsToManyTest extends TestCase
      */
     public function testUnlinkSuccess()
     {
-        $joint = TableRegistry::get('SpecialTags');
-        $articles = TableRegistry::get('Articles');
-        $tags = TableRegistry::get('Tags');
+        $joint = $this->getTableLocator()->get('SpecialTags');
+        $articles = $this->getTableLocator()->get('Articles');
+        $tags = $this->getTableLocator()->get('Tags');
 
         $assoc = $articles->belongsToMany('Tags', [
             'sourceTable' => $articles,
@@ -620,9 +619,9 @@ class BelongsToManyTest extends TestCase
      */
     public function testUnlinkWithoutPropertyClean()
     {
-        $joint = TableRegistry::get('SpecialTags');
-        $articles = TableRegistry::get('Articles');
-        $tags = TableRegistry::get('Tags');
+        $joint = $this->getTableLocator()->get('SpecialTags');
+        $articles = $this->getTableLocator()->get('Articles');
+        $tags = $this->getTableLocator()->get('Tags');
 
         $assoc = $articles->belongsToMany('Tags', [
             'sourceTable' => $articles,
@@ -671,9 +670,9 @@ class BelongsToManyTest extends TestCase
      */
     public function testReplaceLinksUpdateToEmptySet()
     {
-        $joint = TableRegistry::get('ArticlesTags');
-        $articles = TableRegistry::get('Articles');
-        $tags = TableRegistry::get('Tags');
+        $joint = $this->getTableLocator()->get('ArticlesTags');
+        $articles = $this->getTableLocator()->get('Articles');
+        $tags = $this->getTableLocator()->get('Tags');
 
         $assoc = $articles->belongsToMany('Tags', [
             'sourceTable' => $articles,
@@ -702,9 +701,9 @@ class BelongsToManyTest extends TestCase
      */
     public function testReplaceLinkSuccess()
     {
-        $joint = TableRegistry::get('ArticlesTags');
-        $articles = TableRegistry::get('Articles');
-        $tags = TableRegistry::get('Tags');
+        $joint = $this->getTableLocator()->get('ArticlesTags');
+        $articles = $this->getTableLocator()->get('Articles');
+        $tags = $this->getTableLocator()->get('Tags');
 
         $assoc = $articles->belongsToMany('Tags', [
             'sourceTable' => $articles,
@@ -743,9 +742,9 @@ class BelongsToManyTest extends TestCase
      */
     public function testReplaceLinkWithConditions()
     {
-        $joint = TableRegistry::get('SpecialTags');
-        $articles = TableRegistry::get('Articles');
-        $tags = TableRegistry::get('Tags');
+        $joint = $this->getTableLocator()->get('SpecialTags');
+        $articles = $this->getTableLocator()->get('Articles');
+        $tags = $this->getTableLocator()->get('Tags');
 
         $assoc = $articles->belongsToMany('Tags', [
             'sourceTable' => $articles,
@@ -775,8 +774,8 @@ class BelongsToManyTest extends TestCase
      */
     public function testReplaceLinkFailingDomainRules()
     {
-        $articles = TableRegistry::get('Articles');
-        $tags = TableRegistry::get('Tags');
+        $articles = $this->getTableLocator()->get('Articles');
+        $tags = $this->getTableLocator()->get('Tags');
         $tags->getEventManager()->on('Model.buildRules', function (Event $event, $rules) {
             $rules->add(function () {
                 return false;
@@ -786,7 +785,7 @@ class BelongsToManyTest extends TestCase
         $assoc = $articles->belongsToMany('Tags', [
             'sourceTable' => $articles,
             'targetTable' => $tags,
-            'through' => TableRegistry::get('ArticlesTags'),
+            'through' => $this->getTableLocator()->get('ArticlesTags'),
             'joinTable' => 'articles_tags',
         ]);
         $entity = $articles->get(1, ['contain' => 'Tags']);
@@ -828,7 +827,7 @@ class BelongsToManyTest extends TestCase
      */
     public function testSaveAssociatedNotEmptyNotIterable()
     {
-        $articles = TableRegistry::get('Articles');
+        $articles = $this->getTableLocator()->get('Articles');
         $assoc = $articles->belongsToMany('Tags', [
             'saveStrategy' => BelongsToMany::SAVE_APPEND,
             'joinTable' => 'articles_tags',
@@ -1082,8 +1081,8 @@ class BelongsToManyTest extends TestCase
      */
     public function testGeneratedAssociations()
     {
-        $articles = TableRegistry::get('Articles');
-        $tags = TableRegistry::get('Tags');
+        $articles = $this->getTableLocator()->get('Articles');
+        $tags = $this->getTableLocator()->get('Tags');
         $conditions = ['SpecialTags.highlighted' => true];
         $assoc = $articles->belongsToMany('Tags', [
             'sourceTable' => $articles,
@@ -1129,8 +1128,8 @@ class BelongsToManyTest extends TestCase
      */
     public function testEagerLoadingRequiresPrimaryKey()
     {
-        $table = TableRegistry::get('Articles');
-        $tags = TableRegistry::get('Tags');
+        $table = $this->getTableLocator()->get('Articles');
+        $tags = $this->getTableLocator()->get('Tags');
         $tags->schema()->dropConstraint('primary');
 
         $table->belongsToMany('Tags');
@@ -1146,7 +1145,7 @@ class BelongsToManyTest extends TestCase
      */
     public function testEagerLoadingBelongsToManyLimitedFields()
     {
-        $table = TableRegistry::get('Articles');
+        $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags');
         $result = $table
             ->find()
@@ -1167,7 +1166,7 @@ class BelongsToManyTest extends TestCase
      */
     public function testEagerLoadingBelongsToManyLimitedFieldsWithAutoFields()
     {
-        $table = TableRegistry::get('Articles');
+        $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags');
         $result = $table
             ->find()
@@ -1187,7 +1186,7 @@ class BelongsToManyTest extends TestCase
      */
     public function testAssociationProxyFindWithConditions()
     {
-        $table = TableRegistry::get('Articles');
+        $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags', [
             'foreignKey' => 'article_id',
             'associationForeignKey' => 'tag_id',
@@ -1207,7 +1206,7 @@ class BelongsToManyTest extends TestCase
      */
     public function testAssociationProxyFindWithComplexConditions()
     {
-        $table = TableRegistry::get('Articles');
+        $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags', [
             'foreignKey' => 'article_id',
             'associationForeignKey' => 'tag_id',
@@ -1231,7 +1230,7 @@ class BelongsToManyTest extends TestCase
      */
     public function testBelongsToManyAssociationWithArrayConditions()
     {
-        $table = TableRegistry::get('Articles');
+        $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags', [
             'foreignKey' => 'article_id',
             'associationForeignKey' => 'tag_id',
@@ -1253,7 +1252,7 @@ class BelongsToManyTest extends TestCase
      */
     public function testBelongsToManyAssociationWithExpressionConditions()
     {
-        $table = TableRegistry::get('Articles');
+        $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags', [
             'foreignKey' => 'article_id',
             'associationForeignKey' => 'tag_id',
@@ -1275,7 +1274,7 @@ class BelongsToManyTest extends TestCase
      */
     public function testAssociationProxyFindWithConditionsMatching()
     {
-        $table = TableRegistry::get('Articles');
+        $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags', [
             'foreignKey' => 'article_id',
             'associationForeignKey' => 'tag_id',

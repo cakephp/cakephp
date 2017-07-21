@@ -19,7 +19,6 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Database\TypeMap;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Entity;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -43,7 +42,7 @@ class BelongsToTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->company = TableRegistry::get('Companies', [
+        $this->company = $this->getTableLocator()->get('Companies', [
             'schema' => [
                 'id' => ['type' => 'integer'],
                 'company_name' => ['type' => 'string'],
@@ -52,7 +51,7 @@ class BelongsToTest extends TestCase
                 ]
             ]
         ]);
-        $this->client = TableRegistry::get('Clients', [
+        $this->client = $this->getTableLocator()->get('Clients', [
             'schema' => [
                 'id' => ['type' => 'integer'],
                 'client_name' => ['type' => 'string'],
@@ -80,7 +79,7 @@ class BelongsToTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        TableRegistry::clear();
+        $this->getTableLocator()->clear();
     }
 
     /**
@@ -133,7 +132,7 @@ class BelongsToTest extends TestCase
      */
     public function testCustomAlias()
     {
-        $table = TableRegistry::get('Articles', [
+        $table = $this->getTableLocator()->get('Articles', [
             'className' => 'TestPlugin.Articles'
         ]);
         $table->addAssociations([

@@ -20,7 +20,6 @@ use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Entity;
 use Cake\ORM\ResultSet;
 use Cake\ORM\Table;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -271,7 +270,7 @@ class ResultSetTest extends TestCase
      */
     public function testBelongsToEagerLoaderLeavesEmptyAssociation()
     {
-        $comments = TableRegistry::get('Comments');
+        $comments = $this->getTableLocator()->get('Comments');
         $comments->belongsTo('Articles');
 
         // Clear the articles table so we can trigger an empty belongsTo
@@ -299,12 +298,12 @@ class ResultSetTest extends TestCase
      */
     public function testBelongsToEagerLoaderWithAutoFieldsFalse()
     {
-        $authors = TableRegistry::get('Authors');
+        $authors = $this->getTableLocator()->get('Authors');
 
         $author = $authors->newEntity(['name' => null]);
         $authors->save($author);
 
-        $articles = TableRegistry::get('Articles');
+        $articles = $this->getTableLocator()->get('Articles');
         $articles->belongsTo('Authors');
 
         $article = $articles->newEntity([
@@ -334,7 +333,7 @@ class ResultSetTest extends TestCase
         $this->table->hasOne('Comments');
 
         // Clear the comments table so we can trigger an empty hasOne.
-        $comments = TableRegistry::get('Comments');
+        $comments = $this->getTableLocator()->get('Comments');
         $comments->deleteAll([]);
 
         $article = $this->table->get(1, ['contain' => ['Comments']]);
@@ -359,7 +358,7 @@ class ResultSetTest extends TestCase
      */
     public function testFetchMissingDefaultAlias()
     {
-        $comments = TableRegistry::get('Comments');
+        $comments = $this->getTableLocator()->get('Comments');
         $query = $comments->find()->select(['Other__field' => 'test']);
         $query->autoFields(false);
 
@@ -384,7 +383,7 @@ class ResultSetTest extends TestCase
     public function testSourceOnContainAssociations()
     {
         Plugin::load('TestPlugin');
-        $comments = TableRegistry::get('TestPlugin.Comments');
+        $comments = $this->getTableLocator()->get('TestPlugin.Comments');
         $comments->belongsTo('Authors', [
             'className' => 'TestPlugin.Authors',
             'foreignKey' => 'user_id'
@@ -408,7 +407,7 @@ class ResultSetTest extends TestCase
      */
     public function testIsEmptyDoesNotConsumeData()
     {
-        $table = TableRegistry::get('Comments');
+        $table = $this->getTableLocator()->get('Comments');
         $query = $table->find()
             ->formatResults(function ($results) {
                 return $results;

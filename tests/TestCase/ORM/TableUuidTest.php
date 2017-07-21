@@ -16,7 +16,6 @@ namespace Cake\Test\TestCase\ORM;
 
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Entity;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Text;
 
@@ -55,7 +54,7 @@ class TableUuidTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        TableRegistry::clear();
+        $this->getTableLocator()->clear();
     }
 
     /**
@@ -69,7 +68,7 @@ class TableUuidTest extends TestCase
             'name' => 'shiny new',
             'published' => true,
         ]);
-        $table = TableRegistry::get('uuiditems');
+        $table = $this->getTableLocator()->get('uuiditems');
         $this->assertSame($entity, $table->save($entity));
         $this->assertRegExp('/^[a-f0-9-]{36}$/', $entity->id, 'Should be 36 characters');
 
@@ -91,7 +90,7 @@ class TableUuidTest extends TestCase
             'name' => 'shiny and new',
             'published' => true,
         ]);
-        $table = TableRegistry::get('uuiditems');
+        $table = $this->getTableLocator()->get('uuiditems');
         $this->assertSame($entity, $table->save($entity));
         $this->assertSame($id, $entity->id);
 
@@ -115,7 +114,7 @@ class TableUuidTest extends TestCase
             'published' => true,
         ]);
 
-        $table = TableRegistry::get('uuiditems');
+        $table = $this->getTableLocator()->get('uuiditems');
         $this->assertSame($entity, $table->save($entity));
         $this->assertEquals($id, $entity->id, 'Should be 36 characters');
 
@@ -132,7 +131,7 @@ class TableUuidTest extends TestCase
     public function testDelete()
     {
         $id = '481fc6d0-b920-43e0-a40d-6d1740cf8569';
-        $table = TableRegistry::get('uuiditems');
+        $table = $this->getTableLocator()->get('uuiditems');
         $entity = $table->find('all')->where(['id' => $id])->first();
 
         $this->assertTrue($table->delete($entity));
@@ -148,7 +147,7 @@ class TableUuidTest extends TestCase
     public function testEmptyUuid()
     {
         $id = '';
-        $table = TableRegistry::get('uuiditems');
+        $table = $this->getTableLocator()->get('uuiditems');
         $entity = $table->find('all')
             ->where(['id' => $id])
             ->first();

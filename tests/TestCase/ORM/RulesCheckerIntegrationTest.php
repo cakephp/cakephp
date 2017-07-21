@@ -17,7 +17,6 @@ namespace Cake\Test\TestCase\ORM;
 use Cake\Event\Event;
 use Cake\ORM\Entity;
 use Cake\ORM\RulesChecker;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -44,7 +43,7 @@ class RulesCheckerIntegrationTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        TableRegistry::clear();
+        $this->getTableLocator()->clear();
     }
 
     /**
@@ -63,7 +62,7 @@ class RulesCheckerIntegrationTest extends TestCase
             'name' => 'Jose'
         ]);
 
-        $table = TableRegistry::get('articles');
+        $table = $this->getTableLocator()->get('articles');
         $table->belongsTo('authors');
         $table->association('authors')
             ->target()
@@ -102,7 +101,7 @@ class RulesCheckerIntegrationTest extends TestCase
             'body' => 'A body'
         ]);
 
-        $table = TableRegistry::get('authors');
+        $table = $this->getTableLocator()->get('authors');
         $table->hasOne('articles');
         $table->association('articles')
             ->target()
@@ -147,7 +146,7 @@ class RulesCheckerIntegrationTest extends TestCase
             ])
         ];
 
-        $table = TableRegistry::get('authors');
+        $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles');
         $table->association('articles')
             ->target()
@@ -196,7 +195,7 @@ class RulesCheckerIntegrationTest extends TestCase
             ])
         ];
 
-        $table = TableRegistry::get('authors');
+        $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles');
         $table->association('articles')
             ->target()
@@ -238,7 +237,7 @@ class RulesCheckerIntegrationTest extends TestCase
                 'name' => '100'
             ])
         ];
-        $table = TableRegistry::get('articles');
+        $table = $this->getTableLocator()->get('articles');
         $table->belongsToMany('tags');
         $table->association('tags')
             ->junction()
@@ -278,7 +277,7 @@ class RulesCheckerIntegrationTest extends TestCase
                 'name' => 'New one'
             ])
         ];
-        $table = TableRegistry::get('articles');
+        $table = $this->getTableLocator()->get('articles');
         $table->belongsToMany('tags');
         $table->association('tags')
             ->junction()
@@ -310,7 +309,7 @@ class RulesCheckerIntegrationTest extends TestCase
             'name' => 'larry'
         ]);
 
-        $table = TableRegistry::get('Authors');
+        $table = $this->getTableLocator()->get('Authors');
         $rules = $table->rulesChecker();
         $rules->add(
             function () {
@@ -335,7 +334,7 @@ class RulesCheckerIntegrationTest extends TestCase
             'name' => 'larry'
         ]);
 
-        $table = TableRegistry::get('Authors');
+        $table = $this->getTableLocator()->get('Authors');
         $rules = $table->rulesChecker();
         $rules->add($rules->isUnique(['name']), '_isUnique', ['errorField' => 'title']);
         $this->assertFalse($table->save($entity));
@@ -360,7 +359,7 @@ class RulesCheckerIntegrationTest extends TestCase
             'name' => 'larry'
         ]);
 
-        $table = TableRegistry::get('Authors');
+        $table = $this->getTableLocator()->get('Authors');
         $rules = $table->rulesChecker();
         $rules->add($rules->isUnique(['name']));
 
@@ -388,7 +387,7 @@ class RulesCheckerIntegrationTest extends TestCase
             'title' => 'First Article'
         ]);
 
-        $table = TableRegistry::get('Articles');
+        $table = $this->getTableLocator()->get('Articles');
         $rules = $table->rulesChecker();
         $rules->add($rules->isUnique(['title', 'author_id'], 'Nope'));
 
@@ -414,7 +413,7 @@ class RulesCheckerIntegrationTest extends TestCase
             'author_id' => null
         ]);
 
-        $table = TableRegistry::get('SpecialTags');
+        $table = $this->getTableLocator()->get('SpecialTags');
         $rules = $table->rulesChecker();
         $rules->add($rules->isUnique(['author_id'], [
             'allowMultipleNulls' => false,
@@ -446,7 +445,7 @@ class RulesCheckerIntegrationTest extends TestCase
             'author_id' => null
         ]);
 
-        $table = TableRegistry::get('SpecialTags');
+        $table = $this->getTableLocator()->get('SpecialTags');
         $rules = $table->rulesChecker();
         $rules->add($rules->isUnique(['author_id', 'article_id'], [
             'allowMultipleNulls' => false,
@@ -475,7 +474,7 @@ class RulesCheckerIntegrationTest extends TestCase
             'author_id' => null,
             'title' => 'First Article'
         ]);
-        $table = TableRegistry::get('Articles');
+        $table = $this->getTableLocator()->get('Articles');
         $rules = $table->rulesChecker();
         $rules->add($rules->isUnique(['title', 'author_id'], 'Nope'));
 
@@ -502,7 +501,7 @@ class RulesCheckerIntegrationTest extends TestCase
             'author_id' => 500
         ]);
 
-        $table = TableRegistry::get('Articles');
+        $table = $this->getTableLocator()->get('Articles');
         $table->belongsTo('Authors');
         $rules = $table->rulesChecker();
         $rules->add($rules->existsIn('author_id', 'Authors'));
@@ -523,7 +522,7 @@ class RulesCheckerIntegrationTest extends TestCase
             'author_id' => 500,
         ]);
 
-        $table = TableRegistry::get('Articles');
+        $table = $this->getTableLocator()->get('Articles');
         $table->belongsTo('Authors');
         $rules = $table->rulesChecker();
         $rules->add($rules->existsIn('author_id', 'Authors'), '_existsIn', ['errorField' => 'other']);
@@ -550,9 +549,9 @@ class RulesCheckerIntegrationTest extends TestCase
             'author_id' => 500
         ]);
 
-        $table = TableRegistry::get('Articles');
+        $table = $this->getTableLocator()->get('Articles');
         $rules = $table->rulesChecker();
-        $rules->add($rules->existsIn('author_id', TableRegistry::get('Authors'), 'Nope'));
+        $rules->add($rules->existsIn('author_id', $this->getTableLocator()->get('Authors'), 'Nope'));
 
         $this->assertFalse($table->save($entity));
         $this->assertEquals(['_existsIn' => 'Nope'], $entity->errors('author_id'));
@@ -570,7 +569,7 @@ class RulesCheckerIntegrationTest extends TestCase
             'author_id' => null
         ]);
 
-        $table = TableRegistry::get('Articles');
+        $table = $this->getTableLocator()->get('Articles');
         $table->belongsTo('Authors');
         $rules = $table->rulesChecker();
         $rules->add($rules->existsIn('author_id', 'Authors'));
@@ -592,7 +591,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $entity = new Entity([
             'name' => 'A Category',
         ]);
-        $table = TableRegistry::get('Categories');
+        $table = $this->getTableLocator()->get('Categories');
         $table->belongsTo('Categories', [
             'foreignKey' => 'parent_id',
             'bindingKey' => 'id',
@@ -614,7 +613,7 @@ class RulesCheckerIntegrationTest extends TestCase
             'title' => 'An Article',
         ]);
 
-        $table = TableRegistry::get('Articles');
+        $table = $this->getTableLocator()->get('Articles');
         $table->belongsTo('Authors', [
             'bindingKey' => 'name',
             'foreignKey' => 'title'
@@ -645,7 +644,7 @@ class RulesCheckerIntegrationTest extends TestCase
             'author_id' => 500
         ]);
 
-        $table = TableRegistry::get('Articles');
+        $table = $this->getTableLocator()->get('Articles');
         $table->belongsTo('Authors');
         $rules = $table->rulesChecker();
         $rules->add($rules->existsIn('author_id', 'NotValid'));
@@ -666,9 +665,9 @@ class RulesCheckerIntegrationTest extends TestCase
             'author_id' => 500
         ]);
 
-        $table = TableRegistry::get('Articles');
+        $table = $this->getTableLocator()->get('Articles');
         $rules = $table->rulesChecker();
-        $rules->add($rules->existsIn('author_id', TableRegistry::get('Authors'), 'Nope'));
+        $rules->add($rules->existsIn('author_id', $this->getTableLocator()->get('Authors'), 'Nope'));
 
         $this->assertSame($entity, $table->save($entity, ['checkRules' => false]));
     }
@@ -686,9 +685,9 @@ class RulesCheckerIntegrationTest extends TestCase
             'author_id' => 500
         ]);
 
-        $table = TableRegistry::get('Articles');
+        $table = $this->getTableLocator()->get('Articles');
         $rules = $table->rulesChecker();
-        $rules->add($rules->existsIn('author_id', TableRegistry::get('Authors'), 'Nope'));
+        $rules->add($rules->existsIn('author_id', $this->getTableLocator()->get('Authors'), 'Nope'));
 
         $table->getEventManager()->on(
             'Model.beforeRules',
@@ -726,9 +725,9 @@ class RulesCheckerIntegrationTest extends TestCase
             'author_id' => 500
         ]);
 
-        $table = TableRegistry::get('Articles');
+        $table = $this->getTableLocator()->get('Articles');
         $rules = $table->rulesChecker();
-        $rules->add($rules->existsIn('author_id', TableRegistry::get('Authors'), 'Nope'));
+        $rules->add($rules->existsIn('author_id', $this->getTableLocator()->get('Authors'), 'Nope'));
 
         $table->getEventManager()->on(
             'Model.afterRules',
@@ -767,9 +766,9 @@ class RulesCheckerIntegrationTest extends TestCase
             'author_id' => 500
         ]);
 
-        $table = TableRegistry::get('Articles');
+        $table = $this->getTableLocator()->get('Articles');
         $table->getEventManager()->on('Model.buildRules', function (Event $event, RulesChecker $rules) {
-            $rules->add($rules->existsIn('author_id', TableRegistry::get('Authors'), 'Nope'));
+            $rules->add($rules->existsIn('author_id', $this->getTableLocator()->get('Authors'), 'Nope'));
         });
 
         $this->assertFalse($table->save($entity));
@@ -783,7 +782,7 @@ class RulesCheckerIntegrationTest extends TestCase
      */
     public function testIsUniqueWithCleanFields()
     {
-        $table = TableRegistry::get('Articles');
+        $table = $this->getTableLocator()->get('Articles');
         $entity = $table->get(1);
         $rules = $table->rulesChecker();
         $rules->add($rules->isUnique(['title', 'author_id'], 'Nope'));
@@ -808,7 +807,7 @@ class RulesCheckerIntegrationTest extends TestCase
             'author_id' => 1
         ]);
 
-        $table = TableRegistry::get('Articles');
+        $table = $this->getTableLocator()->get('Articles');
         $table->belongsTo('Authors');
         $rules = $table->rulesChecker();
         $rules->add($rules->isUnique(['author_id']));
@@ -829,7 +828,7 @@ class RulesCheckerIntegrationTest extends TestCase
      */
     public function testExistsInWithCleanFields()
     {
-        $table = TableRegistry::get('Articles');
+        $table = $this->getTableLocator()->get('Articles');
         $table->belongsTo('Authors');
         $rules = $table->rulesChecker();
         $rules->add($rules->existsIn('author_id', 'Authors'));
@@ -854,7 +853,7 @@ class RulesCheckerIntegrationTest extends TestCase
             'author_id' => 500
         ]);
 
-        $table = TableRegistry::get('Articles');
+        $table = $this->getTableLocator()->get('Articles');
         $table->belongsTo('Authors');
         $rules = $table->rulesChecker();
         $rules->add($rules->existsIn('author_id', 'Authors'));
@@ -879,7 +878,7 @@ class RulesCheckerIntegrationTest extends TestCase
             'author_id' => 500
         ]);
 
-        $table = TableRegistry::get('Articles');
+        $table = $this->getTableLocator()->get('Articles');
         $table->belongsTo('Authors');
         $rules = $table->rulesChecker();
         $rules->add($rules->existsIn(['author_id'], 'Authors'));
@@ -901,7 +900,7 @@ class RulesCheckerIntegrationTest extends TestCase
             'site_id' => 1,
             'name' => 'New Site Article without Author',
         ]);
-        $table = TableRegistry::get('SiteArticles');
+        $table = $this->getTableLocator()->get('SiteArticles');
         $table->belongsTo('SiteAuthors');
         $rules = $table->rulesChecker();
 
@@ -924,7 +923,7 @@ class RulesCheckerIntegrationTest extends TestCase
             'site_id' => 1,
             'name' => 'New Site Article without Author',
         ]);
-        $table = TableRegistry::get('SiteArticles');
+        $table = $this->getTableLocator()->get('SiteArticles');
         $table->belongsTo('SiteAuthors');
         $rules = $table->rulesChecker();
 
@@ -947,7 +946,7 @@ class RulesCheckerIntegrationTest extends TestCase
             'site_id' => 1,
             'name' => 'New Site Article without Author',
         ]);
-        $table = TableRegistry::get('SiteArticles');
+        $table = $this->getTableLocator()->get('SiteArticles');
         $table->belongsTo('SiteAuthors');
         $rules = $table->rulesChecker();
 
@@ -968,7 +967,7 @@ class RulesCheckerIntegrationTest extends TestCase
             'site_id' => 1,
             'name' => 'New Site Article without Author',
         ]);
-        $table = TableRegistry::get('SiteArticles');
+        $table = $this->getTableLocator()->get('SiteArticles');
         $table->belongsTo('SiteAuthors');
         $rules = $table->rulesChecker();
 
@@ -993,7 +992,7 @@ class RulesCheckerIntegrationTest extends TestCase
             'site_id' => 1,
             'name' => 'New Site Article without Author',
         ]);
-        $table = TableRegistry::get('SiteArticles');
+        $table = $this->getTableLocator()->get('SiteArticles');
         $table->belongsTo('SiteAuthors');
         $rules = $table->rulesChecker();
 
@@ -1017,7 +1016,7 @@ class RulesCheckerIntegrationTest extends TestCase
             'site_id' => 1,
             'name' => 'New Site Article with Author',
         ]);
-        $table = TableRegistry::get('SiteArticles');
+        $table = $this->getTableLocator()->get('SiteArticles');
         $table->belongsTo('SiteAuthors');
         $rules = $table->rulesChecker();
 
@@ -1038,7 +1037,7 @@ class RulesCheckerIntegrationTest extends TestCase
             'site_id' => 1,
             'name' => 'New Site Article with Author',
         ]);
-        $table = TableRegistry::get('SiteArticles');
+        $table = $this->getTableLocator()->get('SiteArticles');
         $table->belongsTo('SiteAuthors');
         $rules = $table->rulesChecker();
 
@@ -1059,7 +1058,7 @@ class RulesCheckerIntegrationTest extends TestCase
             'site_id' => 1,
             'name' => 'New Site Article with Author',
         ]);
-        $table = TableRegistry::get('SiteArticles');
+        $table = $this->getTableLocator()->get('SiteArticles');
         $table->belongsTo('SiteAuthors');
         $rules = $table->rulesChecker();
 
@@ -1080,7 +1079,7 @@ class RulesCheckerIntegrationTest extends TestCase
             'site_id' => 1,
             'name' => 'New Site Article with Author',
         ]);
-        $table = TableRegistry::get('SiteArticles');
+        $table = $this->getTableLocator()->get('SiteArticles');
         $table->belongsTo('SiteAuthors');
         $rules = $table->rulesChecker();
 
@@ -1103,7 +1102,7 @@ class RulesCheckerIntegrationTest extends TestCase
             'site_id' => 1,
             'name' => 'New Site Article with Author',
         ]);
-        $table = TableRegistry::get('SiteArticles');
+        $table = $this->getTableLocator()->get('SiteArticles');
         $table->belongsTo('SiteAuthors');
         $rules = $table->rulesChecker();
 
@@ -1126,7 +1125,7 @@ class RulesCheckerIntegrationTest extends TestCase
             'site_id' => 1,
             'name' => 'New Site Article with Author',
         ]);
-        $table = TableRegistry::get('SiteArticles');
+        $table = $this->getTableLocator()->get('SiteArticles');
         $table->belongsTo('SiteAuthors');
         $rules = $table->rulesChecker();
 
@@ -1151,7 +1150,7 @@ class RulesCheckerIntegrationTest extends TestCase
             'site_id' => 99999999,
             'name' => 'New Site Article with Author',
         ]);
-        $table = TableRegistry::get('SiteArticles');
+        $table = $this->getTableLocator()->get('SiteArticles');
         $table->belongsTo('SiteAuthors');
         $rules = $table->rulesChecker();
 
@@ -1176,7 +1175,7 @@ class RulesCheckerIntegrationTest extends TestCase
             'site_id' => 99999999,
             'name' => 'New Site Article with Author',
         ]);
-        $table = TableRegistry::get('SiteArticles');
+        $table = $this->getTableLocator()->get('SiteArticles');
         $table->belongsTo('SiteAuthors');
         $rules = $table->rulesChecker();
 
@@ -1195,7 +1194,7 @@ class RulesCheckerIntegrationTest extends TestCase
      */
     public function testDeleteRules()
     {
-        $table = TableRegistry::get('Articles');
+        $table = $this->getTableLocator()->get('Articles');
         $rules = $table->rulesChecker();
         $rules->addDelete(function ($entity) {
             return false;
@@ -1217,7 +1216,7 @@ class RulesCheckerIntegrationTest extends TestCase
             'name' => 'jose'
         ]);
 
-        $table = TableRegistry::get('Authors');
+        $table = $this->getTableLocator()->get('Authors');
         $rules = $table->rulesChecker();
         $rules->add(function ($entity, $options) {
             $this->assertEquals('bar', $options['foo']);
@@ -1237,7 +1236,7 @@ class RulesCheckerIntegrationTest extends TestCase
      */
     public function testCustomOptionsPassingDelete()
     {
-        $table = TableRegistry::get('Articles');
+        $table = $this->getTableLocator()->get('Articles');
         $rules = $table->rulesChecker();
         $rules->addDelete(function ($entity, $options) {
             $this->assertEquals('bar', $options['foo']);
@@ -1262,7 +1261,7 @@ class RulesCheckerIntegrationTest extends TestCase
             'name' => 'larry'
         ]);
 
-        $table = TableRegistry::get('Authors');
+        $table = $this->getTableLocator()->get('Authors');
         $rules = $table->rulesChecker();
         $rules->add(function () {
             return 'So much nope';
@@ -1284,7 +1283,7 @@ class RulesCheckerIntegrationTest extends TestCase
             'name' => 'larry'
         ]);
 
-        $table = TableRegistry::get('Authors');
+        $table = $this->getTableLocator()->get('Authors');
         $rules = $table->rulesChecker();
         $rules->add(function () {
             return 'So much nope';
@@ -1317,7 +1316,7 @@ class RulesCheckerIntegrationTest extends TestCase
             ])
         ];
 
-        $table = TableRegistry::get('authors');
+        $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles');
         $table->association('articles')->belongsTo('authors');
         $checker = $table->association('articles')->target()->rulesChecker();
@@ -1348,7 +1347,7 @@ class RulesCheckerIntegrationTest extends TestCase
             'author_id' => 1
         ]);
 
-        $table = TableRegistry::get('Articles');
+        $table = $this->getTableLocator()->get('Articles');
         $table->belongsTo('Authors', [
             'conditions' => ['Authors.name !=' => 'mariano']
         ]);
@@ -1379,9 +1378,9 @@ class RulesCheckerIntegrationTest extends TestCase
             ])
         ];
 
-        TableRegistry::get('ArticlesTags');
+        $this->getTableLocator()->get('ArticlesTags');
 
-        $table = TableRegistry::get('articles');
+        $table = $this->getTableLocator()->get('articles');
         $table->belongsToMany('tags');
 
         $rules = $table->rulesChecker();

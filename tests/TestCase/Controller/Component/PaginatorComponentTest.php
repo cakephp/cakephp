@@ -23,7 +23,6 @@ use Cake\Datasource\Paginator;
 use Cake\Http\ServerRequest;
 use Cake\Network\Exception\NotFoundException;
 use Cake\ORM\Entity;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use stdClass;
 
@@ -98,7 +97,7 @@ class PaginatorComponentTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        TableRegistry::clear();
+        $this->getTableLocator()->clear();
     }
 
     /**
@@ -209,7 +208,7 @@ class PaginatorComponentTest extends TestCase
                 'finder' => ['author' => ['author_id' => 1]]
             ]
         ];
-        $table = TableRegistry::get('PaginatorPosts');
+        $table = $this->getTableLocator()->get('PaginatorPosts');
 
         $expected = $table
             ->find('author', [
@@ -257,9 +256,9 @@ class PaginatorComponentTest extends TestCase
     public function testPaginateNestedEagerLoader()
     {
         $this->loadFixtures('Articles', 'Tags', 'Authors', 'ArticlesTags', 'AuthorsTags');
-        $articles = TableRegistry::get('Articles');
+        $articles = $this->getTableLocator()->get('Articles');
         $articles->belongsToMany('Tags');
-        $tags = TableRegistry::get('Tags');
+        $tags = $this->getTableLocator()->get('Tags');
         $tags->belongsToMany('Authors');
 
         $articles->eventManager()->on('Model.beforeFind', function ($event, $query) {
@@ -719,7 +718,7 @@ class PaginatorComponentTest extends TestCase
         $this->loadFixtures('Posts');
         $this->request->query['page'] = 3000;
 
-        $table = TableRegistry::get('PaginatorPosts');
+        $table = $this->getTableLocator()->get('PaginatorPosts');
         try {
             $this->Paginator->paginate($table);
             $this->fail('No exception raised');
@@ -769,7 +768,7 @@ class PaginatorComponentTest extends TestCase
             'page' => '3000000000000000000000000',
         ];
 
-        $table = TableRegistry::get('PaginatorPosts');
+        $table = $this->getTableLocator()->get('PaginatorPosts');
         $this->Paginator->paginate($table);
     }
 
@@ -1069,7 +1068,7 @@ class PaginatorComponentTest extends TestCase
     public function testPaginateMaxLimit()
     {
         $this->loadFixtures('Posts');
-        $table = TableRegistry::get('PaginatorPosts');
+        $table = $this->getTableLocator()->get('PaginatorPosts');
 
         $settings = [
             'maxLimit' => 100,
@@ -1106,7 +1105,7 @@ class PaginatorComponentTest extends TestCase
             return $ids;
         };
 
-        $table = TableRegistry::get('PaginatorPosts');
+        $table = $this->getTableLocator()->get('PaginatorPosts');
         $data = ['author_id' => 3, 'title' => 'Fourth Post', 'body' => 'Article Body, unpublished', 'published' => 'N'];
         $result = $table->save(new Entity($data));
         $this->assertNotEmpty($result);
@@ -1161,7 +1160,7 @@ class PaginatorComponentTest extends TestCase
     public function testPaginateCustomFindFieldsArray()
     {
         $this->loadFixtures('Posts');
-        $table = TableRegistry::get('PaginatorPosts');
+        $table = $this->getTableLocator()->get('PaginatorPosts');
         $data = ['author_id' => 3, 'title' => 'Fourth Article', 'body' => 'Article Body, unpublished', 'published' => 'N'];
         $table->save(new Entity($data));
 
@@ -1261,7 +1260,7 @@ class PaginatorComponentTest extends TestCase
         $config = ConnectionManager::config('test');
         $this->skipIf(strpos($config['driver'], 'Sqlserver') !== false, 'Test temporarily broken in SQLServer');
         $this->loadFixtures('Posts');
-        $table = TableRegistry::get('PaginatorPosts');
+        $table = $this->getTableLocator()->get('PaginatorPosts');
         $query = $table->find()
             ->where(['PaginatorPosts.author_id BETWEEN :start AND :end'])
             ->bind(':start', 1)

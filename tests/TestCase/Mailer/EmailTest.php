@@ -19,7 +19,6 @@ use Cake\Core\Plugin;
 use Cake\Log\Log;
 use Cake\Mailer\Email;
 use Cake\Mailer\Transport\DebugTransport;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Cake\View\Exception\MissingTemplateException;
 use Exception;
@@ -2777,7 +2776,7 @@ XML;
             ->setMessageId('<uuid@server.com>')
             ->setDomain('foo.bar')
             ->setViewVars([
-                'users' => TableRegistry::get('Users')->get(1, ['fields' => ['id', 'username']]),
+                'users' => $this->getTableLocator()->get('Users')->get(1, ['fields' => ['id', 'username']]),
                 'xml' => new SimpleXmlElement($xmlstr),
                 'exception' => new Exception('test')
             ])
