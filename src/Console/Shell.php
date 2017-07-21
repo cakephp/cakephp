@@ -665,13 +665,8 @@ class Shell
      */
     public function err($message = null, $newlines = 1)
     {
-        if (is_array($message)) {
-            foreach ($message as $k => $v) {
-                $message[$k] = '<error>' . $v . '</error>';
-            }
-        } else {
-            $message = '<error>' . $message . '</error>';
-        }
+        $messageType = 'error';
+        $message = $this->wrapMessageWithType($messageType, $message);
 
         return $this->_io->err($message, $newlines);
     }
@@ -687,13 +682,8 @@ class Shell
      */
     public function info($message = null, $newlines = 1, $level = Shell::NORMAL)
     {
-        if (is_array($message)) {
-            foreach ($message as $k => $v) {
-                $message[$k] = '<info>' . $v . '</info>';
-            }
-        } else {
-            $message = '<info>' . $message . '</info>';
-        }
+        $messageType = 'info';
+        $message = $this->wrapMessageWithType($messageType, $message);
 
         return $this->out($message, $newlines, $level);
     }
@@ -708,13 +698,8 @@ class Shell
      */
     public function warn($message = null, $newlines = 1)
     {
-        if (is_array($message)) {
-            foreach ($message as $k => $v) {
-                $message[$k] = '<warning>' . $v . '</warning>';
-            }
-        } else {
-            $message = '<warning>' . $message . '</warning>';
-        }
+        $messageType = 'warning';
+        $message = $this->wrapMessageWithType($messageType, $message);
 
         return $this->_io->err($message, $newlines);
     }
@@ -730,15 +715,30 @@ class Shell
      */
     public function success($message = null, $newlines = 1, $level = Shell::NORMAL)
     {
-        if (is_array($message)) {
-            foreach ($message as $k => $v) {
-                $message[$k] = '<success>' . $v . '</success>';
-            }
-        } else {
-            $message = '<success>' . $message . '</success>';
-        }
+        $messageType = 'success';
+        $message = $this->wrapMessageWithType($messageType, $message);
 
         return $this->out($message, $newlines, $level);
+    }
+
+    /**
+     * Wraps a message with a given message type, e.g. <warning>
+     *
+     * @param string $messageType The message type, e.g. "warning".
+     * @param string|array $message The message to wrap.
+     * @return array|string The message wrapped with the given message type.
+     */
+    protected function wrapMessageWithType($messageType, $message)
+    {
+        if (is_array($message)) {
+            foreach ($message as $k => $v) {
+                $message[$k] = "<$messageType>" . $v . "</$messageType>";
+            }
+        } else {
+            $message = "<$messageType>" . $message . "</$messageType>";
+        }
+
+        return $message;
     }
 
     /**
