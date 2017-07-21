@@ -582,10 +582,14 @@ class TableLocatorTest extends TestCase
      */
     public function testSetInstance()
     {
+        $old = TableLocator::getInstance();
+
         $locator = $this->createMock(LocatorInterface::class);
         TableLocator::setInstance($locator);
 
         $this->assertSame($locator, TableLocator::getInstance());
+
+        TableLocator::setInstance($old);
     }
 
     /**
