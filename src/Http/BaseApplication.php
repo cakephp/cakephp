@@ -16,6 +16,7 @@ namespace Cake\Http;
 
 use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\HttpApplicationInterface;
+use Cake\Http\ActionDispatcher;
 use Cake\Routing\DispatcherFactory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -36,13 +37,20 @@ abstract class BaseApplication implements ConsoleApplicationInterface, HttpAppli
     protected $configDir;
 
     /**
+     * @var \Cake\Http\ActionDispatcher|null
+     */
+    protected $dispatcher;
+
+    /**
      * Constructor
      *
      * @param string $configDir The directory the bootstrap configuration is held in.
+     * @param \Cake\Http\ActionDispatcher|null $dispatcher Optional action dispatcher.
      */
-    public function __construct($configDir)
+    public function __construct($configDir, ActionDispatcher $dispatcher = null)
     {
         $this->configDir = $configDir;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -110,6 +118,10 @@ abstract class BaseApplication implements ConsoleApplicationInterface, HttpAppli
      */
     protected function getDispatcher()
     {
-        return new ActionDispatcher(null, null, DispatcherFactory::filters());
+        if ($this->dispatcher === null) {
+            $this->dispatcher = new ActionDispatcher(null, null, DispatcherFactory::filters());
+        }
+
+        return $this->dispatcher;
     }
 }
