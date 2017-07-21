@@ -297,10 +297,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Get the default connection name.
      *
      * This method is used to get the fallback connection name if an
-     * instance is created through the TableRegistry without a connection.
+     * instance is created through the TableLocator without a connection.
      *
      * @return string
-     * @see \Cake\ORM\TableRegistry::get()
+     * @see \Cake\ORM\Locator\TableLocator::get()
      */
     public static function defaultConnectionName()
     {

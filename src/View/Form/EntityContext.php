@@ -112,7 +112,7 @@ class EntityContext implements ContextInterface
      * Prepare some additional data from the context.
      *
      * If the table option was provided to the constructor and it
-     * was a string, ORM\TableRegistry will be used to get the correct table instance.
+     * was a string, TableLocator will be used to get the correct table instance.
      *
      * If an object is provided as the table option, it will be used as is.
      *
