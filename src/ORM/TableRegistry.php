@@ -15,6 +15,7 @@
 namespace Cake\ORM;
 
 use Cake\ORM\Locator\LocatorInterface;
+use Cake\ORM\Locator\TableLocator;
 
 /**
  * Provides a registry/factory for Table objects.
@@ -46,6 +47,8 @@ use Cake\ORM\Locator\LocatorInterface;
  * ```
  * $table = TableRegistry::get('Users', $config);
  * ```
+ *
+ * @deprecated 3.5.0 Use \Cake\ORM\Locator\TableLocator instead.
  */
 class TableRegistry
 {
@@ -87,11 +90,7 @@ class TableRegistry
      */
     public static function getTableLocator()
     {
-        if (!static::$_locator) {
-            static::$_locator = new static::$_defaultLocatorClass();
-        }
-
-        return static::$_locator;
+        return TableLocator::getInstance();
     }
 
     /**
@@ -102,7 +101,7 @@ class TableRegistry
      */
     public static function setTableLocator(LocatorInterface $tableLocator)
     {
-        static::$_locator = $tableLocator;
+        TableLocator::setInstance($tableLocator);
     }
 
     /**
