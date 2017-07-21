@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\I18n\Parser;
 
 use Aura\Intl\Package;
+use Cake\Cache\Cache;
 use Cake\I18n\I18n;
 use Cake\I18n\Parser\PoFileParser;
 use Cake\TestSuite\TestCase;
@@ -24,6 +25,31 @@ use Cake\TestSuite\TestCase;
  */
 class PoFileParserTest extends TestCase
 {
+    protected $locale;
+
+    /**
+     * Set Up
+     *
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        $this->locale = I18n::locale();
+    }
+
+    /**
+     * Tear down method
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        parent::tearDown();
+        I18n::clear();
+        I18n::locale($this->locale);
+        Cache::clear(false, '_cake_core_');
+    }
 
     /**
      * Tests parsing a file with plurals and message context
@@ -119,7 +145,7 @@ class PoFileParserTest extends TestCase
         $file = APP . 'Locale' . DS . 'en' . DS . 'context.po';
         $messages = $parser->parse($file);
 
-        I18n::translator('default', 'de_DE', function () use ($messages) {
+        I18n::translator('default', 'en_CA', function () use ($messages) {
             $package = new Package('default');
             $package->setMessages($messages);
 
@@ -131,10 +157,35 @@ class PoFileParserTest extends TestCase
         $this->assertSame('En resolved - context', $messages['Resolved']['_context']['Pay status']);
 
         // Confirm actual behavior
-        I18n::locale('de_DE');
+        I18n::locale('en_CA');
         $this->assertSame('En cours', __('Pending'));
         $this->assertSame('En cours - context', __x('Pay status', 'Pending'));
         $this->assertSame('En resolved', __('Resolved'));
         $this->assertSame('En resolved - context', __x('Pay status', 'Resolved'));
+    }
+
+    /**
+     * Test parsing context based messages
+     *
+     * @return void
+     */
+    public function testParseContextMessages()
+    {
+        $parser = new PoFileParser();
+        $file = APP . 'Locale' . DS . 'en' . DS . 'context.po';
+        $messages = $parser->parse($file);
+
+        I18n::translator('default', 'en_US', function () use ($messages) {
+            $package = new Package('default');
+            $package->setMessages($messages);
+
+            return $package;
+        });
+
+        // Check translated messages
+        I18n::locale('en_US');
+        $this->assertSame('Titel mit Kontext', __x('context', 'title'));
+        $this->assertSame('Titel mit anderem Kontext', __x('another_context', 'title'));
+        $this->assertSame('Titel ohne Kontext', __('title'));
     }
 }
