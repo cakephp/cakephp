@@ -102,10 +102,12 @@ class ResponseTest extends TestCase
         $encoded = json_encode($data);
 
         $response = new Response([], $encoded);
-        $result = $response->body('json_decode');
-        $this->assertEquals($data['property'], $result->property);
+
+        $this->assertEquals($encoded, $response->getBody()->getContents());
         $this->assertEquals($encoded, $response->body());
 
+        $result = $response->body('json_decode');
+        $this->assertEquals($data['property'], $result->property);
         $this->assertEquals($encoded, $response->body);
         $this->assertTrue(isset($response->body));
     }
