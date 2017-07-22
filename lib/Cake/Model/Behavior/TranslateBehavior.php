@@ -147,28 +147,45 @@ class TranslateBehavior extends ModelBehavior {
 		$this->_joinTable = $joinTable;
 		$this->_runtimeModel = $RuntimeModel;
 
-		if (is_string($query['fields']) && $query['fields'] === "COUNT(*) AS {$db->name('count')}") {
-			$query['fields'] = "COUNT(DISTINCT({$db->name($Model->escapeField())})) {$db->alias}count";
-			$query['joins'][] = array(
-				'type' => $this->runtime[$Model->alias]['joinType'],
-				'alias' => $RuntimeModel->alias,
-				'table' => $joinTable,
-				'conditions' => array(
-					$Model->escapeField() => $db->identifier($RuntimeModel->escapeField('foreign_key')),
-					$RuntimeModel->escapeField('model') => $Model->name,
-					$RuntimeModel->escapeField('locale') => $locale
-				)
-			);
-			$conditionFields = $this->_checkConditions($Model, $query);
-			foreach ($conditionFields as $field) {
-				$query = $this->_addJoin($Model, $query, $field, $field, $locale);
+		if (is_string($query['fields'])) {
+			if ($query['fields'] === "COUNT(*) AS {$db->name('count')}") {
+				$query['fields'] = "COUNT(DISTINCT({$db->name($Model->escapeField())})) {$db->alias}count";
+				$query['joins'][] = array(
+					'type' => $this->runtime[$Model->alias]['joinType'],
+					'alias' => $RuntimeModel->alias,
+					'table' => $joinTable,
+					'conditions' => array(
+						$Model->escapeField() => $db->identifier($RuntimeModel->escapeField('foreign_key')),
+						$RuntimeModel->escapeField('model') => $Model->name,
+						$RuntimeModel->escapeField('locale') => $locale
+					)
+				);
+				$conditionFields = $this->_checkConditions($Model, $query);
+				foreach ($conditionFields as $field) {
+					$query = $this->_addJoin($Model, $query, $field, $field, $locale);
+				}
+				unset($this->_joinTable, $this->_runtimeModel);
+				return $query;
+			} else {
+				$query['fields'] = CakeText::tokenize($query['fields']);
 			}
-			unset($this->_joinTable, $this->_runtimeModel);
-			return $query;
-		} elseif (is_string($query['fields'])) {
-			$query['fields'] = CakeText::tokenize($query['fields']);
 		}
+		$addFields = $this->_getFields($Model, $query);
+		$this->runtime[$Model->alias]['virtualFields'] = $Model->virtualFields;
+		$query = $this->_addAllJoins($Model, $query, $addFields);
+		$this->runtime[$Model->alias]['beforeFind'] = $addFields;
+		unset($this->_joinTable, $this->_runtimeModel);
+		return $query;
+	}
 
+/**
+ * Gets fields to be retrieved.
+ *
+ * @param Model $Model The model being worked on.
+ * @param array $query The query array to take fields from.
+ * @return array The fields.
+ */
+	protected function _getFields(Model $Model, $query) {
 		$fields = array_merge(
 			$this->settings[$Model->alias],
 			$this->runtime[$Model->alias]['fields']
@@ -191,15 +208,24 @@ class TranslateBehavior extends ModelBehavior {
 				}
 			}
 		}
+		return $addFields;
+	}
 
-		$this->runtime[$Model->alias]['virtualFields'] = $Model->virtualFields;
+/**
+ * Appends all necessary joins for translated fields.
+ *
+ * @param Model $Model The model being worked on.
+ * @param array $query The query array to append joins to.
+ * @param array $addFields The fields being joined.
+ * @return array The modified query
+ */
+	protected function _addAllJoins(Model $Model, $query, $addFields) {
+		$locale = $this->_getLocale($Model);
 		if ($addFields) {
 			foreach ($addFields as $_f => $field) {
 				$aliasField = is_numeric($_f) ? $field : $_f;
-
 				foreach (array($aliasField, $Model->alias . '.' . $aliasField) as $_field) {
 					$key = array_search($_field, (array)$query['fields']);
-
 					if ($key !== false) {
 						unset($query['fields'][$key]);
 					}
@@ -207,8 +233,6 @@ class TranslateBehavior extends ModelBehavior {
 				$query = $this->_addJoin($Model, $query, $field, $aliasField, $locale);
 			}
 		}
-		$this->runtime[$Model->alias]['beforeFind'] = $addFields;
-		unset($this->_joinTable, $this->_runtimeModel);
 		return $query;
 	}
 
@@ -221,11 +245,26 @@ class TranslateBehavior extends ModelBehavior {
  * @return array The list of translated fields that are in the conditions.
  */
 	protected function _checkConditions(Model $Model, $query) {
-		$conditionFields = array();
 		if (empty($query['conditions']) || (!empty($query['conditions']) && !is_array($query['conditions']))) {
-			return $conditionFields;
+			return array();
 		}
-		foreach ($query['conditions'] as $col => $val) {
+		return $this->_getConditionFields($Model, $query['conditions']);
+	}
+
+/**
+ * Extracts condition field names recursively.
+ *
+ * @param Model $Model The model being read.
+ * @param array $conditions The conditions array.
+ * @return array The list of condition fields.
+ */
+	protected function _getConditionFields(Model $Model, $conditions) {
+		$conditionFields = array();
+		foreach ($conditions as $col => $val) {
+			if (is_array($val)) {
+				$subConditionFields = $this->_getConditionFields($Model, $val);
+				$conditionFields = array_merge($conditionFields, $subConditionFields);
+			}
 			foreach ($this->settings[$Model->alias] as $field => $assoc) {
 				if (is_numeric($field)) {
 					$field = $assoc;

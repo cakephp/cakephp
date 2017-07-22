@@ -496,6 +496,25 @@ class PaginatorComponentTest extends CakeTestCase {
 		$this->assertCount(3, $result);
 	}
 
+	public function testPaginateI18nConditionNotTitleWithLimit() {
+		$Request = new CakeRequest('articles/index');
+		$Controller = new PaginatorTestController($Request);
+		$Controller->uses = array('TranslatedArticle');
+		$Controller->constructClasses();
+		$Controller->TranslatedArticle->locale = 'eng';
+		$Controller->Paginator->settings = array(
+			'recursive' => 0,
+			'conditions' => array(
+				'NOT' => array('I18n__title.content' => ''),
+			),
+			'limit' => 2,
+		);
+		$result = $Controller->Paginator->paginate('TranslatedArticle');
+		$this->assertEquals('Title (eng) #1', $result[0]['TranslatedArticle']['title']);
+		$this->assertEquals('Title (eng) #2', $result[1]['TranslatedArticle']['title']);
+		$this->assertCount(2, $result);
+	}
+
 /**
  * Test that non-numeric values are rejected for page, and limit
  *
