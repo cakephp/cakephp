@@ -1184,7 +1184,7 @@ class Response implements ResponseInterface
      * Sets the correct headers to instruct the client to not cache the response
      *
      * @return void
-     * @deprected 3.4.0 Use withDisabledCache() instead.
+     * @deprecated 3.4.0 Use withDisabledCache() instead.
      */
     public function disableCache()
     {
