@@ -1,6 +1,6 @@
 parameters:
     autoload_files:
-        - %rootDir%/../../../src/basics.php
+        - %rootDir%/../../../tests/bootstrap.php
     ignoreErrors:
         - '#Function wincache_ucache_[a-zA-Z0-9_]+ not found#'
         - '#Function xcache_[a-zA-Z0-9_]+ not found#'
@@ -15,6 +15,8 @@ parameters:
         - '#Access to an undefined property Cake\\Http\\Client\\Message::\$headers#'
         - '#Access to an undefined property Cake\\[a-zA-Z0-9_\\]+::\$_validViewOptions#'
         - '#Access to an undefined property Cake\\Database\\Driver::\$_connection#'
+        - '#Constant XC_TYPE_VAR not found#'
+        - '#Call to static method id\(\) on an unknown class PHPUnit_Runner_Version#'
     earlyTerminatingMethodCalls:
         Cake\Shell\Shell:
             - abort

@@ -163,6 +163,7 @@ class Response extends Message implements ResponseInterface
         }
         $stream = new Stream('php://memory', 'wb+');
         $stream->write($body);
+        $stream->rewind();
         $this->stream = $stream;
     }
 

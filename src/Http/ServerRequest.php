@@ -970,7 +970,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string $name Name of the header you want.
      * @return string|null Either null on no header being set or the value of the header.
-     * @deprecated 4.0.0 The automatic fallback to env() will be removed in 4.0.0
+     * @deprecated 4.0.0 The automatic fallback to env() will be removed in 4.0.0, see getHeader()
      */
     public function header($name)
     {

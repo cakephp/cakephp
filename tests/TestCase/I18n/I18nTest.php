@@ -281,7 +281,7 @@ class I18nTest extends TestCase
     }
 
     /**
-     * Tests the __() function on a plural key
+     * Tests the __() function on a plural key works
      *
      * @return void
      */
@@ -313,6 +313,18 @@ class I18nTest extends TestCase
     }
 
     /**
+     * Tests the __n() function on singular keys
+     *
+     * @return void
+     */
+    public function testBasicTranslatePluralFunctionSingularMessage()
+    {
+        I18n::defaultFormatter('sprintf');
+        $result = __n('No translation needed', 'not used', 1);
+        $this->assertEquals('No translation needed', $result);
+    }
+
+    /**
      * Tests the __d() function
      *
      * @return void
@@ -325,11 +337,13 @@ class I18nTest extends TestCase
                 'Cow' => 'Le moo',
                 'The {0} is tasty' => 'The {0} is delicious',
                 'Average price {0}' => 'Price Average {0}',
+                'Unknown' => '',
             ]);
 
             return $package;
         }, 'en_US');
         $this->assertEquals('Le moo', __d('custom', 'Cow'));
+        $this->assertEquals('Unknown', __d('custom', 'Unknown'));
 
         $result = __d('custom', 'The {0} is tasty', ['fruit']);
         $this->assertEquals('The fruit is delicious', $result);
@@ -355,6 +369,10 @@ class I18nTest extends TestCase
                 'Cows' => [
                     'Le Moo',
                     'Les Moos'
+                ],
+                '{0} years' => [
+                    '',
+                    ''
                 ]
             ]);
 
@@ -362,6 +380,8 @@ class I18nTest extends TestCase
         }, 'en_US');
         $this->assertEquals('Le Moo', __dn('custom', 'Cow', 'Cows', 1));
         $this->assertEquals('Les Moos', __dn('custom', 'Cow', 'Cows', 2));
+        $this->assertEquals('{0} years', __dn('custom', '{0} year', '{0} years', 1));
+        $this->assertEquals('{0} years', __dn('custom', '{0} year', '{0} years', 2));
     }
 
     /**

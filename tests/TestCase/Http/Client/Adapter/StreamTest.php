@@ -420,7 +420,7 @@ class StreamTest extends TestCase
     /**
      * Test that an exception is raised when timed out.
      *
-     * @expectedException \Cake\Core\Exception\Exception
+     * @expectedException \Cake\Network\Exception\HttpException
      * @expectedExceptionMessage Connection timed out http://dummy/?sleep
      * @return void
      */

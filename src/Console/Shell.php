@@ -702,7 +702,15 @@ class Shell
      */
     public function err($message = null, $newlines = 1)
     {
-        return $this->_io->err('<error>' . $message . '</error>', $newlines);
+        if (is_array($message)) {
+            foreach ($message as $k => $v) {
+                $message[$k] = '<error>' . $v . '</error>';
+            }
+        } else {
+            $message = '<error>' . $message . '</error>';
+        }
+
+        return $this->_io->err($message, $newlines);
     }
 
     /**
@@ -716,7 +724,15 @@ class Shell
      */
     public function info($message = null, $newlines = 1, $level = Shell::NORMAL)
     {
-        return $this->out('<info>' . $message . '</info>', $newlines, $level);
+        if (is_array($message)) {
+            foreach ($message as $k => $v) {
+                $message[$k] = '<info>' . $v . '</info>';
+            }
+        } else {
+            $message = '<info>' . $message . '</info>';
+        }
+
+        return $this->out($message, $newlines, $level);
     }
 
     /**
@@ -729,7 +745,15 @@ class Shell
      */
     public function warn($message = null, $newlines = 1)
     {
-        return $this->_io->err('<warning>' . $message . '</warning>', $newlines);
+        if (is_array($message)) {
+            foreach ($message as $k => $v) {
+                $message[$k] = '<warning>' . $v . '</warning>';
+            }
+        } else {
+            $message = '<warning>' . $message . '</warning>';
+        }
+
+        return $this->_io->err($message, $newlines);
     }
 
     /**
@@ -743,7 +767,15 @@ class Shell
      */
     public function success($message = null, $newlines = 1, $level = Shell::NORMAL)
     {
-        return $this->out('<success>' . $message . '</success>', $newlines, $level);
+        if (is_array($message)) {
+            foreach ($message as $k => $v) {
+                $message[$k] = '<success>' . $v . '</success>';
+            }
+        } else {
+            $message = '<success>' . $message . '</success>';
+        }
+
+        return $this->out($message, $newlines, $level);
     }
 
     /**
