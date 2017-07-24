@@ -473,7 +473,6 @@ class Shell
         }
 
         $this->outputUnknownCommand($command);
-//        $this->out($this->OptionParser->help($command));
 
         return false;
     }
@@ -487,7 +486,7 @@ class Shell
      */
     protected function outputUnknownCommand($command)
     {
-        $rootCommand = Inflector::underscore($this->name);
+        $rootCommand = $this->OptionParser->getCommand();
         $subcommands = array_keys((array)$this->OptionParser->subcommands());
         $bestGuess = $this->findClosestCommand($command, $subcommands);
 
