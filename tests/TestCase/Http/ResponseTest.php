@@ -144,7 +144,7 @@ class ResponseTest extends TestCase
     }
 
     /**
-     * Tests withCharset method
+     * Tests getCharset/withCharset methods
      *
      * @return void
      */
@@ -155,6 +155,7 @@ class ResponseTest extends TestCase
 
         $new = $response->withCharset('iso-8859-1');
         $this->assertNotContains('iso', $response->getHeaderLine('Content-Type'), 'Old instance not changed');
+        $this->assertSame('iso-8859-1', $new->getCharset());
 
         $this->assertEquals('text/html; charset=iso-8859-1', $new->getHeaderLine('Content-Type'));
     }
