@@ -122,7 +122,8 @@ class RouteBuilderTest extends TestCase
 
         $this->collection = new RouteCollection();
         $routes = new RouteBuilder($this->collection, '/l');
-        $routes->routeClass('TestApp\Routing\Route\DashedRoute');
+        $this->assertSame($routes, $routes->setRouteClass('TestApp\Routing\Route\DashedRoute'));
+        $this->assertSame('TestApp\Routing\Route\DashedRoute', $routes->getRouteClass());
 
         $routes->connect('/:controller', ['action' => 'index']);
         $all = $this->collection->routes();
@@ -201,6 +202,18 @@ class RouteBuilderTest extends TestCase
     }
 
     /**
+     * Test setExtensions() and getExtensions().
+     *
+     * @return void
+     */
+    public function testExtensions()
+    {
+        $routes = new RouteBuilder($this->collection, '/l');
+        $this->assertSame($routes, $routes->setExtensions(['html']));
+        $this->assertSame(['html'], $routes->getExtensions());
+    }
+
+    /**
      * Test extensions being connected to routes.
      *
      * @return void
@@ -213,13 +226,13 @@ class RouteBuilderTest extends TestCase
             [],
             ['extensions' => ['json']]
         );
-        $this->assertEquals(['json'], $routes->extensions());
+        $this->assertEquals(['json'], $routes->getExtensions());
 
         $routes->connect('/:controller');
         $route = $this->collection->routes()[0];
 
         $this->assertEquals(['json'], $route->options['_ext']);
-        $routes->extensions(['xml', 'json']);
+        $routes->setExtensions(['xml', 'json']);
 
         $routes->connect('/:controller/:action');
         $new = $this->collection->routes()[1];
@@ -240,26 +253,26 @@ class RouteBuilderTest extends TestCase
             [],
             ['extensions' => ['json']]
         );
-        $this->assertEquals(['json'], $routes->extensions());
+        $this->assertEquals(['json'], $routes->getExtensions());
 
         $routes->addExtensions(['xml']);
-        $this->assertEquals(['json', 'xml'], $routes->extensions());
+        $this->assertEquals(['json', 'xml'], $routes->getExtensions());
 
         $routes->addExtensions('csv');
-        $this->assertEquals(['json', 'xml', 'csv'], $routes->extensions());
+        $this->assertEquals(['json', 'xml', 'csv'], $routes->getExtensions());
     }
 
     /**
-     * test that extensions() accepts a string.
+     * test that setExtensions() accepts a string.
      *
      * @return void
      */
     public function testExtensionsString()
     {
         $routes = new RouteBuilder($this->collection, '/l');
-        $routes->extensions('json');
+        $routes->setExtensions('json');
 
-        $this->assertEquals(['json'], $routes->extensions());
+        $this->assertEquals(['json'], $routes->getExtensions());
     }
 
     /**
@@ -586,7 +599,7 @@ class RouteBuilderTest extends TestCase
     public function testResourcesInScope()
     {
         Router::scope('/api', ['prefix' => 'api'], function ($routes) {
-            $routes->extensions(['json']);
+            $routes->setExtensions(['json']);
             $routes->resources('Articles');
         });
         $url = Router::url([
@@ -765,7 +778,7 @@ class RouteBuilderTest extends TestCase
     public function testDefaultRouteClassFallbacks()
     {
         $routes = new RouteBuilder($this->collection, '/api', ['prefix' => 'api']);
-        $routes->routeClass('TestApp\Routing\Route\DashedRoute');
+        $routes->setRouteClass('TestApp\Routing\Route\DashedRoute');
         $routes->fallbacks();
 
         $all = $this->collection->routes();
@@ -1060,5 +1073,35 @@ class RouteBuilderTest extends TestCase
         $routes->loadPlugin('TestPlugin');
         $this->assertCount(1, $this->collection->routes());
         $this->assertNotEmpty($this->collection->parse('/test_plugin', 'GET'));
+    }
+
+    /**
+     * Test routeClass() still works.
+     *
+     * @return void
+     */
+    public function testRouteClassBackwardCompat()
+    {
+        $routes = new RouteBuilder($this->collection, '/l');
+        $this->assertNull($routes->routeClass('TestApp\Routing\Route\DashedRoute'));
+        $this->assertSame('TestApp\Routing\Route\DashedRoute', $routes->routeClass());
+        $this->assertSame('TestApp\Routing\Route\DashedRoute', $routes->getRouteClass());
+    }
+
+    /**
+     * Test extensions() still works.
+     *
+     * @return void
+     */
+    public function testExtensionsBackwardCompat()
+    {
+        $routes = new RouteBuilder($this->collection, '/l');
+        $this->assertNull($routes->extensions(['html']));
+        $this->assertSame(['html'], $routes->extensions());
+        $this->assertSame(['html'], $routes->getExtensions());
+
+        $this->assertNull($routes->extensions('json'));
+        $this->assertSame(['json'], $routes->extensions());
+        $this->assertSame(['json'], $routes->getExtensions());
     }
 }
