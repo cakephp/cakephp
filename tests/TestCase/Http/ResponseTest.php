@@ -144,7 +144,7 @@ class ResponseTest extends TestCase
     }
 
     /**
-     * Tests getCharset/withCharset methods
+     * Tests the getCharset/withCharset methods
      *
      * @return void
      */
