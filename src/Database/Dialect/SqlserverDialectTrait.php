@@ -14,6 +14,7 @@
  */
 namespace Cake\Database\Dialect;
 
+use Cake\Database\ExpressionInterface;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\UnaryExpression;
@@ -21,6 +22,7 @@ use Cake\Database\Query;
 use Cake\Database\Schema\SqlserverSchema;
 use Cake\Database\SqlDialectTrait;
 use Cake\Database\SqlserverCompiler;
+use Cake\Database\ValueBinder;
 use PDO;
 
 /**
@@ -102,7 +104,31 @@ trait SqlserverDialectTrait
     protected function _pagingSubquery($original, $limit, $offset)
     {
         $field = '_cake_paging_._cake_page_rownum_';
-        $order = $original->clause('order') ?: new OrderByExpression('(SELECT NULL)');
+
+        if ($original->clause('order')) {
+            $order = clone $original->clause('order');
+        } else {
+            $order = new OrderByExpression('(SELECT NULL)');
+        }
+
+        // SQL server does not support column aliases in OVER clauses.  But for
+        // calculated columns the alias is the only practical identifier to use
+        // when specifying the order.  So if a column alias is specified in the
+        // order clause, and the value of that alias is an expression, change
+        // the alias into what it represents by setting the clause's key to be
+        // the SQL representation of its value.  The UnaryExpression creation
+        // below will then do the right thing and use the calculation in the
+        // ROW_NUMBER() OVER clause instead of the alias.
+        $select = $original->clause('select');
+        $order->iterateParts(function ($direction, &$orderBy) use ($select) {
+            if (isset($select[$orderBy])) {
+                if ($select[$orderBy] instanceof ExpressionInterface) {
+                    $orderBy = $select[$orderBy]->sql(new ValueBinder());
+                }
+            }
+
+            return $direction;
+        });
 
         $query = clone $original;
         $query->select([
