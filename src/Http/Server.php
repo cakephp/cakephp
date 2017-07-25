@@ -77,7 +77,9 @@ class Server
             throw new RuntimeException('The application `middleware` method did not return a middleware queue.');
         }
         $this->dispatchEvent('Server.buildMiddleware', ['middleware' => $middleware]);
-        $middleware->add($this->app);
+        if (is_callable($this->app)) {
+            $middleware->add($this->app);
+        }
         $response = $this->runner->run($middleware, $request, $response);
 
         if (!($response instanceof ResponseInterface)) {

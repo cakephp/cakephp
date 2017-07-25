@@ -18,7 +18,9 @@ use Cake\Event\Event;
 use Cake\Http\CallbackStream;
 use Cake\Http\Server;
 use Cake\TestSuite\TestCase;
+use Psr\Http\Message\ResponseInterface;
 use TestApp\Http\BadResponseApplication;
+use TestApp\Http\CustomApplication;
 use TestApp\Http\InvalidMiddlewareApplication;
 use TestApp\Http\MiddlewareApplication;
 use Zend\Diactoros\Response;
@@ -153,6 +155,18 @@ class ServerTest extends TestCase
         $app = new BadResponseApplication($this->config);
         $server = new Server($app);
         $server->run();
+    }
+
+    /**
+     * Test custom implementations of HttpApplicationInterface.
+     */
+    public function testRunCustomApplication()
+    {
+        $app = new CustomApplication();
+        $server = new Server($app);
+        $response = $server->run();
+
+        $this->assertInstanceOf(ResponseInterface::class, $response);
     }
 
     /**
