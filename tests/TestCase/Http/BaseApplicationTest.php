@@ -1,8 +1,10 @@
 <?php
 namespace Cake\Test\TestCase;
 
+use Cake\Http\ActionDispatcher;
 use Cake\Http\Response;
 use Cake\Http\ServerRequestFactory;
+use Cake\Routing\DispatcherFactory;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -41,7 +43,8 @@ class BaseApplicationTest extends TestCase
         ]);
 
         $path = dirname(dirname(__DIR__));
-        $app = $this->getMockForAbstractClass('Cake\Http\BaseApplication', [$path]);
+        $dispatcher = new ActionDispatcher(null, null, DispatcherFactory::filters());
+        $app = $this->getMockForAbstractClass('Cake\Http\BaseApplication', [$path, $dispatcher]);
         $result = $app($request, $response, $next);
         $this->assertInstanceOf('Psr\Http\Message\ResponseInterface', $result);
         $this->assertEquals('Hello Jane', '' . $result->getBody());
