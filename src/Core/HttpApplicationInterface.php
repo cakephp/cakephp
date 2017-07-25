@@ -13,6 +13,9 @@
  */
 namespace Cake\Core;
 
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+
 /**
  * An interface defining the methods that the
  * http server depend on.
@@ -45,4 +48,14 @@ interface HttpApplicationInterface
      * @return \Cake\Http\MiddlewareQueue
      */
     public function middleware($middleware);
+
+    /**
+     * Invoke the application.
+     *
+     * @param \Psr\Http\Message\ServerRequestInterface $request The request
+     * @param \Psr\Http\Message\ResponseInterface $response The response
+     * @param callable $next The next middleware
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next);
 }
