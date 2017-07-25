@@ -22,7 +22,7 @@ use Cake\ORM\Association\DependentDeleteHelper;
  *
  * Included by HasOne and HasMany association classes.
  *
- * @deprected 3.5.0 Unused in CakePHP now. This class will be removed in 4.0.0
+ * @deprecated 3.5.0 Unused in CakePHP now. This class will be removed in 4.0.0
  */
 trait DependentDeleteTrait
 {

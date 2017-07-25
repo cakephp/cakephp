@@ -1153,7 +1153,7 @@ class Response implements ResponseInterface
      *
      * @param string|null $charset Character set string.
      * @return string Current charset
-     * @deprecated 3.4.0 Use withCharset() instead.
+     * @deprecated 3.5.0 Use getCharset()/withCharset() instead.
      */
     public function charset($charset = null)
     {
@@ -1163,6 +1163,16 @@ class Response implements ResponseInterface
         $this->_charset = $charset;
         $this->_setContentType();
 
+        return $this->_charset;
+    }
+
+    /**
+     * Retruns the current charset.
+     *
+     * @return string
+     */
+    public function getCharset()
+    {
         return $this->_charset;
     }
 
@@ -1185,7 +1195,7 @@ class Response implements ResponseInterface
      * Sets the correct headers to instruct the client to not cache the response
      *
      * @return void
-     * @deprected 3.4.0 Use withDisabledCache() instead.
+     * @deprecated 3.4.0 Use withDisabledCache() instead.
      */
     public function disableCache()
     {
