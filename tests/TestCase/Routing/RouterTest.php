@@ -1819,11 +1819,11 @@ class RouterTest extends TestCase
         Router::extensions(['json']);
 
         Router::scope('/', function ($routes) {
-            $routes->extensions('rss');
+            $routes->setExtensions('rss');
             $routes->connect('/', ['controller' => 'Pages', 'action' => 'index']);
 
             $routes->scope('/api', function ($routes) {
-                $routes->extensions('xml');
+                $routes->setExtensions('xml');
                 $routes->connect('/docs', ['controller' => 'ApiDocs', 'action' => 'index']);
             });
         });
@@ -1839,7 +1839,7 @@ class RouterTest extends TestCase
     public function testResourcesInScope()
     {
         Router::scope('/api', ['prefix' => 'api'], function ($routes) {
-            $routes->extensions(['json']);
+            $routes->setExtensions(['json']);
             $routes->resources('Articles');
         });
         $url = Router::url([
@@ -3107,12 +3107,12 @@ class RouterTest extends TestCase
     {
         Router::extensions(['json']);
         Router::scope('/', function ($routes) {
-            $this->assertEquals(['json'], $routes->extensions(), 'Should default to global extensions.');
-            $routes->extensions(['rss']);
+            $this->assertEquals(['json'], $routes->getExtensions(), 'Should default to global extensions.');
+            $routes->setExtensions(['rss']);
 
             $this->assertEquals(
                 ['rss'],
-                $routes->extensions(),
+                $routes->getExtensions(),
                 'Should include new extensions.'
             );
             $routes->connect('/home', []);
@@ -3121,13 +3121,13 @@ class RouterTest extends TestCase
         $this->assertEquals(['json', 'rss'], array_values(Router::extensions()));
 
         Router::scope('/api', function ($routes) {
-            $this->assertEquals(['json'], $routes->extensions(), 'Should default to global extensions.');
+            $this->assertEquals(['json'], $routes->getExtensions(), 'Should default to global extensions.');
 
-            $routes->extensions(['json', 'csv']);
+            $routes->setExtensions(['json', 'csv']);
             $routes->connect('/export', []);
 
             $routes->scope('/v1', function ($routes) {
-                $this->assertEquals(['json', 'csv'], $routes->extensions());
+                $this->assertEquals(['json', 'csv'], $routes->getExtensions());
             });
         });
 
@@ -3143,8 +3143,8 @@ class RouterTest extends TestCase
     {
         $options = ['param' => 'value', 'routeClass' => 'InflectedRoute', 'extensions' => ['json']];
         Router::scope('/path', $options, function ($routes) {
-            $this->assertSame('InflectedRoute', $routes->routeClass());
-            $this->assertSame(['json'], $routes->extensions());
+            $this->assertSame('InflectedRoute', $routes->getRouteClass());
+            $this->assertSame(['json'], $routes->getExtensions());
             $this->assertEquals('/path', $routes->path());
             $this->assertEquals(['param' => 'value'], $routes->params());
         });
@@ -3372,7 +3372,7 @@ class RouterTest extends TestCase
             'extensions' => ['json']
         ]);
         $this->assertInstanceOf(RouteBuilder::class, $builder);
-        $this->assertSame(['json'], $builder->extensions());
+        $this->assertSame(['json'], $builder->getExtensions());
     }
 
     /**

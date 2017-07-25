@@ -146,15 +146,39 @@ class RouteBuilder
     /**
      * Get or set default route class.
      *
+     * @deprecated 3.5.0 Use getRouteClass/setRouteClass instead.
      * @param string|null $routeClass Class name.
      * @return string|null
      */
     public function routeClass($routeClass = null)
     {
         if ($routeClass === null) {
-            return $this->_routeClass;
+            return $this->getRouteClass();
         }
+        $this->setRouteClass($routeClass);
+    }
+
+    /**
+     * Set default route class.
+     *
+     * @param string $routeClass Class name.
+     * @return $this
+     */
+    public function setRouteClass($routeClass)
+    {
         $this->_routeClass = $routeClass;
+
+        return $this;
+    }
+
+    /**
+     * Get default route class.
+     *
+     * @return string
+     */
+    public function getRouteClass()
+    {
+        return $this->_routeClass;
     }
 
     /**
@@ -163,15 +187,42 @@ class RouteBuilder
      * Future routes connected in through this builder will have the connected
      * extensions applied. However, setting extensions does not modify existing routes.
      *
+     * @deprecated 3.5.0 Use getExtensions/setExtensions instead.
      * @param null|string|array $extensions Either the extensions to use or null.
      * @return array|null
      */
     public function extensions($extensions = null)
     {
         if ($extensions === null) {
-            return $this->_extensions;
+            return $this->getExtensions();
         }
+        $this->setExtensions($extensions);
+    }
+
+    /**
+     * Set the extensions in this route builder's scope.
+     *
+     * Future routes connected in through this builder will have the connected
+     * extensions applied. However, setting extensions does not modify existing routes.
+     *
+     * @param string|array $extensions The extensions to set.
+     * @return $this
+     */
+    public function setExtensions($extensions)
+    {
         $this->_extensions = (array)$extensions;
+
+        return $this;
+    }
+
+    /**
+     * Get the extensions in this route builder's scope.
+     *
+     * @return array
+     */
+    public function getExtensions()
+    {
+        return $this->_extensions;
     }
 
     /**
