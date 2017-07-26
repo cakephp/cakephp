@@ -102,7 +102,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @var string
      */
-    public $name;
+    protected $name;
 
     /**
      * An array containing the names of helpers this controller uses. The array elements should
@@ -207,7 +207,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @var string
      */
-    public $plugin;
+    protected $plugin;
 
     /**
      * Holds all passed params.
@@ -333,6 +333,16 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     public function __get($name)
     {
         $deprecated = [
+            'name' => 'getName',
+            'plugin' => 'getPlugin',
+        ];
+        if (isset($deprecated[$name])) {
+            $method = $deprecated[$name];
+
+            return $this->{$method}();
+        }
+
+        $deprecated = [
             'layout' => 'getLayout',
             'view' => 'getTemplate',
             'theme' => 'getTheme',
@@ -365,6 +375,16 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     public function __set($name, $value)
     {
         $deprecated = [
+            'name' => 'setName',
+            'plugin' => 'setPlugin',
+        ];
+        if (isset($deprecated[$name])) {
+            $method = $deprecated[$name];
+            $this->{$method}($value);
+
+            return;
+        }
+        $deprecated = [
             'layout' => 'setLayout',
             'view' => 'setTemplate',
             'theme' => 'setTheme',
@@ -382,6 +402,52 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         }
 
         $this->{$name} = $value;
+    }
+
+    /**
+     * Returns the controller name.
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Sets the controller name.
+     *
+     * @param string $name Controller name.
+     * @return $this
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Returns the controller plugin name.
+     *
+     * @return string
+     */
+    public function getPlugin()
+    {
+        return $this->plugin;
+    }
+
+    /**
+     * Sets the controller plugin name.
+     *
+     * @param string $plugin Controller plugin name.
+     * @return $this
+     */
+    public function setPlugin($plugin)
+    {
+        $this->plugin = $plugin;
+
+        return $this;
     }
 
     /**

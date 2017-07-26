@@ -1086,7 +1086,35 @@ class ControllerTest extends TestCase
     }
 
     /**
-     * Tests deprecated view properties work
+     * Test name getter and setter.
+     *
+     * @return void
+     */
+    public function testName()
+    {
+        $controller = new PostsController();
+        $this->assertEquals('Posts', $controller->getName());
+
+        $this->assertSame($controller, $controller->setName('Articles'));
+        $this->assertEquals('Articles', $controller->getName());
+    }
+
+    /**
+     * Test plugin getter and setter.
+     *
+     * @return void
+     */
+    public function testPlugin()
+    {
+        $controller = new PostsController();
+        $this->assertNull($controller->getPlugin());
+
+        $this->assertSame($controller, $controller->setPlugin('Posts'));
+        $this->assertEquals('Posts', $controller->getPlugin());
+    }
+
+    /**
+     * Tests deprecated view propertiyes work
      *
      * @group deprecated
      * @param $property Deprecated property name
