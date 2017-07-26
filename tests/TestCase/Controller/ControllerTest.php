@@ -1155,6 +1155,23 @@ class ControllerTest extends TestCase
     }
 
     /**
+     * Test autoRender getter and setter.
+     *
+     * @return void
+     */
+    public function testAutoRender()
+    {
+        $controller = new PostsController();
+        $this->assertTrue($controller->isAutoRenderEnabled());
+
+        $this->assertSame($controller, $controller->enableAutoRender(false));
+        $this->assertFalse($controller->isAutoRenderEnabled());
+
+        $this->assertSame($controller, $controller->enableAutoRender());
+        $this->assertTrue($controller->isAutoRenderEnabled());
+    }
+
+    /**
      * Tests deprecated view propertiyes work
      *
      * @group deprecated

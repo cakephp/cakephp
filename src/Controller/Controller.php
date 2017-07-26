@@ -162,7 +162,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @var bool
      */
-    public $autoRender = true;
+    protected $autoRender = true;
 
     /**
      * Instance of ComponentRegistry used to create Components
@@ -337,6 +337,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         $deprecated = [
             'name' => 'getName',
             'plugin' => 'getPlugin',
+            'autoRender' => 'isAutoRenderEnabled',
         ];
         if (isset($deprecated[$name])) {
             $method = $deprecated[$name];
@@ -379,6 +380,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         $deprecated = [
             'name' => 'setName',
             'plugin' => 'setPlugin',
+            'autoRender' => 'enableAutoRender',
         ];
         if (isset($deprecated[$name])) {
             $method = $deprecated[$name];
@@ -448,6 +450,29 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     public function setPlugin($plugin)
     {
         $this->plugin = $plugin;
+
+        return $this;
+    }
+
+    /**
+     * Returns true if an action should be rendered automatically.
+     *
+     * @return bool
+     */
+    public function isAutoRenderEnabled()
+    {
+        return $this->autoRender;
+    }
+
+    /**
+     * Enable or disbale automatic action rendering.
+     *
+     * @param bool $autoRender Flag.
+     * @return $this
+     */
+    public function enableAutoRender($autoRender = true)
+    {
+        $this->autoRender = $autoRender;
 
         return $this;
     }
