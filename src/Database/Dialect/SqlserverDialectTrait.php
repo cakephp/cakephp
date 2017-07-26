@@ -106,29 +106,29 @@ trait SqlserverDialectTrait
         $field = '_cake_paging_._cake_page_rownum_';
 
         if ($original->clause('order')) {
-            $order = clone $original->clause('order');
+            // SQL server does not support column aliases in OVER clauses.  But
+            // the only practical way to specify the use of calculated columns
+            // is with their alias.  So substitute the select SQL in place of
+            // any column aliases for those entries in the order clause.
+            $select = $original->clause('select');
+            $order = new OrderByExpression();
+            $original
+                ->clause('order')
+                ->iterateParts(function ($direction, $orderBy) use ($select, $order) {
+                    $key = $orderBy;
+                    if (isset($select[$orderBy]) &&
+                        $select[$orderBy] instanceof ExpressionInterface
+                    ) {
+                        $key = $select[$orderBy]->sql(new ValueBinder());
+                    }
+                    $order->add([$key => $direction]);
+
+                    // Leave original order clause unchanged.
+                    return $orderBy;
+                });
         } else {
             $order = new OrderByExpression('(SELECT NULL)');
         }
-
-        // SQL server does not support column aliases in OVER clauses.  But for
-        // calculated columns the alias is the only practical identifier to use
-        // when specifying the order.  So if a column alias is specified in the
-        // order clause, and the value of that alias is an expression, change
-        // the alias into what it represents by setting the clause's key to be
-        // the SQL representation of its value.  The UnaryExpression creation
-        // below will then do the right thing and use the calculation in the
-        // ROW_NUMBER() OVER clause instead of the alias.
-        $select = $original->clause('select');
-        $order->iterateParts(function ($direction, &$orderBy) use ($select) {
-            if (isset($select[$orderBy])) {
-                if ($select[$orderBy] instanceof ExpressionInterface) {
-                    $orderBy = $select[$orderBy]->sql(new ValueBinder());
-                }
-            }
-
-            return $direction;
-        });
 
         $query = clone $original;
         $query->select([
