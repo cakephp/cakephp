@@ -1801,14 +1801,14 @@ class ValidatorTest extends TestCase
     }
 
     /**
-     * Tests the isScalar proxy method
+     * Tests the scalar proxy method
      *
      * @return void
      */
-    public function testIsScalar()
+    public function testScalar()
     {
         $validator = new Validator();
-        $validator->isScalar('username');
+        $validator->scalar('username');
         $this->assertEmpty($validator->errors(['username' => 'scalar']));
         $this->assertNotEmpty($validator->errors(['username' => ['array']]));
     }

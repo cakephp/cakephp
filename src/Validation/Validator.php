@@ -1607,6 +1607,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|null $message The error message when the rule fails.
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::isArray()
      * @return $this
      */
     public function isArray($field, $message = null, $when = null)
@@ -1625,13 +1626,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|null $message The error message when the rule fails.
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::isScalar()
      * @return $this
      */
-    public function isScalar($field, $message = null, $when = null)
+    public function scalar($field, $message = null, $when = null)
     {
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
-        return $this->add($field, 'isScalar', $extra + [
+        return $this->add($field, 'scalar', $extra + [
                 'rule' => 'isScalar'
             ]);
     }
