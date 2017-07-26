@@ -115,6 +115,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @var array
      * @link https://book.cakephp.org/3.0/en/controllers.html#configuring-helpers-to-load
+     *
+     * @deprecated 3.0.0 You should configure helpers in your AppView::initialize() method.
      */
     public $helpers = [];
 
@@ -182,6 +184,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @var array
      * @link https://book.cakephp.org/3.0/en/controllers/components.html
+     *
+     * @deprecated 3.0.0 You should configure components in your Controller::initialize() method.
      */
     public $components = [];
 
