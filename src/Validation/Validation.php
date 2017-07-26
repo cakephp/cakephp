@@ -1426,6 +1426,9 @@ class Validation
     /**
      * Check that the input value is a scalar.
      *
+     * This method will accept integers, floats, strings and booleans, but
+     * not accept arrays, objects, resources and nulls.
+     *
      * @param mixed $value The value to check
      * @return bool
      */
