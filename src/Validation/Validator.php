@@ -1619,6 +1619,24 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
+     * Add a validation rule to ensure that a field contains a scalar.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @return $this
+     */
+    public function isScalar($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+
+        return $this->add($field, 'isScalar', $extra + [
+                'rule' => 'isScalar'
+            ]);
+    }
+
+    /**
      * Add a validation rule to ensure a field is a 6 digits hex color value.
      *
      * @param string $field The field you want to apply the rule to.

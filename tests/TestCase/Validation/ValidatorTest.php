@@ -1789,6 +1789,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the isArray proxy method
+     *
+     * @return void
      */
     public function testIsArray()
     {
@@ -1796,6 +1798,19 @@ class ValidatorTest extends TestCase
         $validator->isArray('username');
         $this->assertEmpty($validator->errors(['username' => [1, 2, 3]]));
         $this->assertNotEmpty($validator->errors(['username' => 'is not an array']));
+    }
+
+    /**
+     * Tests the isScalar proxy method
+     *
+     * @return void
+     */
+    public function testIsScalar()
+    {
+        $validator = new Validator();
+        $validator->isScalar('username');
+        $this->assertEmpty($validator->errors(['username' => 'scalar']));
+        $this->assertNotEmpty($validator->errors(['username' => ['array']]));
     }
 
     /**

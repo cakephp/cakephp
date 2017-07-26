@@ -1424,6 +1424,17 @@ class Validation
     }
 
     /**
+     * Check that the input value is a scalar.
+     *
+     * @param mixed $value The value to check
+     * @return bool
+     */
+    public static function isScalar($value)
+    {
+        return is_scalar($value);
+    }
+
+    /**
      * Check that the input value is a 6 digits hex color.
      *
      * @param string|array $check The value to check

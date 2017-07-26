@@ -2879,6 +2879,18 @@ class ValidationTest extends TestCase
     }
 
     /**
+     * Test isScalar
+     *
+     * @return void
+     */
+    public function testIsScalar()
+    {
+        $this->assertTrue(Validation::isScalar(1));
+        $this->assertTrue(Validation::isScalar(''));
+        $this->assertFalse(Validation::isScalar([1]));
+    }
+
+    /**
      * Test isInteger
      *
      * @return void
