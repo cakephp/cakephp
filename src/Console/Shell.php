@@ -472,61 +472,9 @@ class Shell
             return $this->main(...$this->args);
         }
 
-        $this->outputUnknownCommand($command);
+        $this->out($this->OptionParser->help($command));
 
         return false;
-    }
-
-    /**
-     * Output a message in the console stating that the command can not be found and tries to guess what the user
-     * wanted to say. Output a list of available subcommands as well.
-     *
-     * @param string $command Unknown command name trying to be dispatched.
-     * @return void
-     */
-    protected function outputUnknownCommand($command)
-    {
-        $rootCommand = $this->OptionParser->getCommand();
-        $subcommands = array_keys((array)$this->OptionParser->subcommands());
-        $bestGuess = $this->findClosestCommand($command, $subcommands);
-
-        $this->err(sprintf(
-            'Unable to find the `%s %s` subcommand. See `bin/cake %s --help`.',
-            $rootCommand,
-            $command,
-            $rootCommand
-        ));
-        $this->out();
-        if ($bestGuess !== null) {
-            $this->out(sprintf('Did you mean : `%s %s` ?', $rootCommand, $bestGuess));
-            $this->out();
-        }
-        $this->out(sprintf('Available subcommands for the `%s` command are : ', $rootCommand));
-        foreach ($subcommands as $subcommand) {
-            $this->out(' - ' . $subcommand);
-        }
-    }
-
-    /**
-     * Tries to guess the command the user originally wanted using the levenshtein algorithm.
-     *
-     * @param string $command Unknown command name trying to be dispatched.
-     * @param array $subcommands List of subcommands name this shell supports.
-     * @return string|null The closest name to the command submitted by the user.
-     */
-    protected function findClosestCommand($command, $subcommands)
-    {
-        $bestGuess = null;
-        foreach ($subcommands as $subcommand) {
-            $score = levenshtein($command, $subcommand);
-
-            if (!isset($bestScore) || $score < $bestScore) {
-                $bestScore = levenshtein($command, $subcommand);
-                $bestGuess = $subcommand;
-            }
-        }
-
-        return $bestGuess;
     }
 
     /**
