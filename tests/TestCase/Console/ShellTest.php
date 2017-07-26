@@ -959,7 +959,7 @@ TEXT;
             ->getMock();
         $io = $this->getMockBuilder('Cake\Console\ConsoleIo')->getMock();
         $shell = $this->getMockBuilder('Cake\Console\Shell')
-            ->setMethods(['getOptionParser', 'roll', 'startup', 'outputUnknownCommand'])
+            ->setMethods(['getOptionParser', 'roll', 'startup'])
             ->setConstructorArgs([$io])
             ->getMock();
 
@@ -1025,7 +1025,7 @@ TEXT;
 
         $io = $this->getMockBuilder('Cake\Console\ConsoleIo')->getMock();
         $shell = $this->getMockBuilder('Cake\Console\Shell')
-            ->setMethods(['getOptionParser', 'startup', 'outputUnknownCommand'])
+            ->setMethods(['getOptionParser', 'startup'])
             ->setConstructorArgs([$io])
             ->getMock();
         $shell->expects($this->any())
@@ -1049,7 +1049,7 @@ TEXT;
     public function testRunCommandBaseClassMethod()
     {
         $shell = $this->getMockBuilder('Cake\Console\Shell')
-            ->setMethods(['startup', 'getOptionParser', 'out', 'hr', 'outputUnknownCommand'])
+            ->setMethods(['startup', 'getOptionParser', 'out', 'hr'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -1062,6 +1062,7 @@ TEXT;
         $shell->expects($this->once())->method('getOptionParser')
             ->will($this->returnValue($parser));
         $shell->expects($this->never())->method('hr');
+        $shell->expects($this->once())->method('out');
 
         $shell->runCommand(['hr']);
     }
@@ -1074,7 +1075,7 @@ TEXT;
     public function testRunCommandMissingMethod()
     {
         $shell = $this->getMockBuilder('Cake\Console\Shell')
-            ->setMethods(['startup', 'getOptionParser', 'out', 'hr', 'outputUnknownCommand'])
+            ->setMethods(['startup', 'getOptionParser', 'out', 'hr'])
             ->disableOriginalConstructor()
             ->getMock();
         $shell->io($this->getMockBuilder('Cake\Console\ConsoleIo')->getMock());
@@ -1085,6 +1086,7 @@ TEXT;
         $parser->expects($this->once())->method('help');
         $shell->expects($this->once())->method('getOptionParser')
             ->will($this->returnValue($parser));
+        $shell->expects($this->once())->method('out');
 
         $result = $shell->runCommand(['idontexist']);
         $this->assertFalse($result);
@@ -1125,7 +1127,7 @@ TEXT;
     public function testRunCommandNotCallUnexposedTask()
     {
         $shell = $this->getMockBuilder('Cake\Console\Shell')
-            ->setMethods(['startup', 'hasTask', 'out', 'outputUnknownCommand'])
+            ->setMethods(['startup', 'hasTask', 'out'])
             ->disableOriginalConstructor()
             ->getMock();
         $shell->io($this->getMockBuilder('Cake\Console\ConsoleIo')->getMock());
@@ -1141,6 +1143,7 @@ TEXT;
             ->method('hasTask')
             ->will($this->returnValue(true));
         $shell->expects($this->never())->method('startup');
+        $shell->expects($this->once())->method('out');
         $shell->RunCommand = $task;
 
         $result = $shell->runCommand(['run_command', 'one']);

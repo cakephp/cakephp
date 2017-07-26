@@ -753,7 +753,7 @@ class ConsoleOptionParser
      * wanted to say. Output a list of available subcommands as well.
      *
      * @param string $command Unknown command name trying to be dispatched.
-     * @return array
+     * @return string The message to be displayed in the console.
      */
     protected function getUnknownCommandOutput($command)
     {
