@@ -1114,6 +1114,47 @@ class ControllerTest extends TestCase
     }
 
     /**
+     * Test request getter and setter.
+     *
+     * @return void
+     */
+    public function testRequest()
+    {
+        $controller = new PostsController();
+        $this->assertInstanceOf(ServerRequest::class, $controller->getRequest());
+
+        $request = new ServerRequest([
+            'params' => [
+                'plugin' => 'Posts',
+                'pass' => [
+                    'foo',
+                    'bar'
+                ]
+            ]
+        ]);
+        $this->assertSame($controller, $controller->setRequest($request));
+        $this->assertSame($request, $controller->getRequest());
+
+        $this->assertEquals('Posts', $controller->getPlugin());
+        $this->assertEquals(['foo', 'bar'], $controller->passedArgs);
+    }
+
+    /**
+     * Test response getter and setter.
+     *
+     * @return void
+     */
+    public function testResponse()
+    {
+        $controller = new PostsController();
+        $this->assertInstanceOf(Response::class, $controller->getResponse());
+
+        $response = new Response;
+        $this->assertSame($controller, $controller->setResponse($response));
+        $this->assertSame($response, $controller->getResponse());
+    }
+
+    /**
      * Tests deprecated view propertiyes work
      *
      * @group deprecated
