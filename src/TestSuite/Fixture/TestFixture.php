@@ -426,7 +426,7 @@ class TestFixture implements FixtureInterface, TableSchemaInterface, TableSchema
         }
         $fields = array_values(array_unique($fields));
         foreach ($fields as $field) {
-            $types[$field] = $this->_schema->column($field)['type'];
+            $types[$field] = $this->_schema->getColumn($field)['type'];
         }
         $default = array_fill_keys($fields, null);
         foreach ($this->records as $record) {

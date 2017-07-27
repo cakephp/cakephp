@@ -207,9 +207,9 @@ class MysqlSchema extends BaseSchema
             $type === Table::INDEX_FULLTEXT
         );
         if ($isIndex) {
-            $existing = $schema->index($name);
+            $existing = $schema->getIndex($name);
         } else {
-            $existing = $schema->constraint($name);
+            $existing = $schema->getConstraint($name);
         }
 
         // MySQL multi column indexes come back as multiple rows.
@@ -299,7 +299,7 @@ class MysqlSchema extends BaseSchema
      */
     public function columnSql(TableSchema $schema, $name)
     {
-        $data = $schema->column($name);
+        $data = $schema->getColumn($name);
         $out = $this->_driver->quoteIdentifier($name);
         $nativeJson = $this->_driver->supportsNativeJson();
 
@@ -441,7 +441,7 @@ class MysqlSchema extends BaseSchema
      */
     public function constraintSql(TableSchema $schema, $name)
     {
-        $data = $schema->constraint($name);
+        $data = $schema->getConstraint($name);
         if ($data['type'] === Table::CONSTRAINT_PRIMARY) {
             $columns = array_map(
                 [$this->_driver, 'quoteIdentifier'],
@@ -472,7 +472,7 @@ class MysqlSchema extends BaseSchema
         $sql = [];
 
         foreach ($schema->constraints() as $name) {
-            $constraint = $schema->constraint($name);
+            $constraint = $schema->getConstraint($name);
             if ($constraint['type'] === Table::CONSTRAINT_FOREIGN) {
                 $tableName = $this->_driver->quoteIdentifier($schema->name());
                 $sql[] = sprintf($sqlPattern, $tableName, $this->constraintSql($schema, $name));
@@ -491,7 +491,7 @@ class MysqlSchema extends BaseSchema
         $sql = [];
 
         foreach ($schema->constraints() as $name) {
-            $constraint = $schema->constraint($name);
+            $constraint = $schema->getConstraint($name);
             if ($constraint['type'] === Table::CONSTRAINT_FOREIGN) {
                 $tableName = $this->_driver->quoteIdentifier($schema->name());
                 $constraintName = $this->_driver->quoteIdentifier($name);
@@ -507,7 +507,7 @@ class MysqlSchema extends BaseSchema
      */
     public function indexSql(TableSchema $schema, $name)
     {
-        $data = $schema->index($name);
+        $data = $schema->getIndex($name);
         $out = '';
         if ($data['type'] === Table::INDEX_INDEX) {
             $out = 'KEY ';

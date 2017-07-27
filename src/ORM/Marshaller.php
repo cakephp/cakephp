@@ -70,7 +70,7 @@ class Marshaller
 
         // Is a concrete column?
         foreach (array_keys($data) as $prop) {
-            $columnType = $schema->columnType($prop);
+            $columnType = $schema->getColumnType($prop);
             if ($columnType) {
                 $map[$prop] = function ($value, $entity) use ($columnType) {
                     return Type::build($columnType)->marshal($value);
@@ -216,7 +216,7 @@ class Marshaller
         // dirty so we don't persist empty records.
         foreach ($properties as $field => $value) {
             if ($value instanceof EntityInterface) {
-                $entity->dirty($field, $value->dirty());
+                $entity->setDirty($field, $value->isDirty());
             }
         }
 
@@ -547,7 +547,7 @@ class Marshaller
 
         if (isset($options['accessibleFields'])) {
             foreach ((array)$options['accessibleFields'] as $key => $value) {
-                $entity->accessible($key, $value);
+                $entity->setAccess($key, $value);
             }
         }
 
@@ -581,7 +581,7 @@ class Marshaller
             $properties[$key] = $value;
         }
 
-        $entity->errors($errors);
+        $entity->setErrors($errors);
         if (!isset($options['fields'])) {
             $entity->set($properties);
 
@@ -785,7 +785,7 @@ class Marshaller
         $extra = [];
         foreach ($original as $entity) {
             // Mark joinData as accessible so we can marshal it properly.
-            $entity->accessible('_joinData', true);
+            $entity->setAccess('_joinData', true);
 
             $joinData = $entity->get('_joinData');
             if ($joinData && $joinData instanceof EntityInterface) {

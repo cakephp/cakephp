@@ -600,7 +600,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * ```
      * protected function _initializeSchema(\Cake\Database\Schema\TableSchema $schema) {
-     *  $schema->columnType('preferences', 'json');
+     *  $schema->setColumnType('preferences', 'json');
      *  return $schema;
      * }
      * ```
@@ -626,7 +626,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         $schema = $this->getSchema();
 
-        return $schema->column($field) !== null;
+        return $schema->getColumn($field) !== null;
     }
 
     /**
@@ -700,10 +700,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $schema = $this->getSchema();
             $primary = (array)$this->getPrimaryKey();
             $this->_displayField = array_shift($primary);
-            if ($schema->column('title')) {
+            if ($schema->getColumn('title')) {
                 $this->_displayField = 'title';
             }
-            if ($schema->column('name')) {
+            if ($schema->getColumn('name')) {
                 $this->_displayField = 'name';
             }
         }
@@ -1718,7 +1718,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             '_primary' => true
         ]);
 
-        if ($entity->errors()) {
+        if ($entity->getErrors()) {
             return false;
         }
 
@@ -1737,7 +1737,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             if ($options['atomic'] || $options['_primary']) {
                 $entity->clean();
                 $entity->isNew(false);
-                $entity->source($this->getRegistryAlias());
+                $entity->setSource($this->getRegistryAlias());
             }
         }
 
@@ -1863,7 +1863,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if (!$options['atomic'] && !$options['_primary']) {
             $entity->clean();
             $entity->isNew(false);
-            $entity->source($this->getRegistryAlias());
+            $entity->setSource($this->getRegistryAlias());
         }
 
         return true;
@@ -1901,7 +1901,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if (count($primary) > 1) {
             $schema = $this->getSchema();
             foreach ($primary as $k => $v) {
-                if (!isset($data[$k]) && empty($schema->column($k)['autoIncrement'])) {
+                if (!isset($data[$k]) && empty($schema->getColumn($k)['autoIncrement'])) {
                     $msg = 'Cannot insert row, some of the primary key values are missing. ';
                     $msg .= sprintf(
                         'Got (%s), expecting (%s)',
@@ -1930,7 +1930,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             foreach ($primary as $key => $v) {
                 if (!isset($data[$key])) {
                     $id = $statement->lastInsertId($this->getTable(), $key);
-                    $type = $schema->columnType($key);
+                    $type = $schema->getColumnType($key);
                     $entity->set($key, Type::build($type)->toPHP($id, $driver));
                     break;
                 }
@@ -1959,7 +1959,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if (!$primary || count((array)$primary) > 1) {
             return null;
         }
-        $typeName = $this->getSchema()->columnType($primary[0]);
+        $typeName = $this->getSchema()->getColumnType($primary[0]);
         $type = Type::build($typeName);
 
         return $type->newId();
