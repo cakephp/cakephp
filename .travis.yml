@@ -38,7 +38,7 @@ matrix:
 
 before_script:
   - composer require "phpunit/phpunit=$PHPUNIT"
-  - echo "require_once 'vendor/autoload.php';" >> app/Config/bootstrap.php
+  - echo "require_once 'vendors/autoload.php';" >> app/Config/bootstrap.php
   - sudo locale-gen de_DE
   - sudo locale-gen es_ES
   - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test;'; fi"
