@@ -25,6 +25,7 @@ use Cake\Network\Exception\NotFoundException;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
+use stdClass;
 
 /**
  * PaginatorTestController class
@@ -119,6 +120,20 @@ class PaginatorComponentTest extends TestCase
 
         $component->setPaginator($paginator);
         $this->assertSame($paginator, $component->getPaginator());
+    }
+
+    /**
+     * Test that an exception is thrown when paginator option is invalid.
+     *
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Paginator must be an instance of Cake\Datasource\Paginator
+     * @return void
+     */
+    public function testInvalidPaginatorOption()
+    {
+        new PaginatorComponent($this->registry, [
+            'paginator' => new stdClass()
+        ]);
     }
 
     /**
