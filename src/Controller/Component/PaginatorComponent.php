@@ -18,9 +18,9 @@ use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use Cake\Datasource\Exception\PageOutOfBoundsException;
 use Cake\Datasource\Paginator;
-use Cake\Datasource\PaginatorInterface;
 use Cake\Datasource\QueryInterface;
 use Cake\Network\Exception\NotFoundException;
+use InvalidArgumentException;
 
 /**
  * This component is used to handle automatic model data pagination. The primary way to use this
@@ -60,7 +60,7 @@ class PaginatorComponent extends Component
     /**
      * Datasource paginator instance.
      *
-     * @var \Cake\Datasource\PaginatorInterface
+     * @var \Cake\Datasource\Paginator
      */
     protected $_paginator;
 
@@ -70,6 +70,9 @@ class PaginatorComponent extends Component
     public function __construct(ComponentRegistry $registry, array $config = [])
     {
         if (isset($config['paginator'])) {
+            if (!$config['paginator'] instanceof Paginator) {
+                throw new InvalidArgumentException('Paginator must be an instance of ' . Paginator::class);
+            }
             $this->_paginator = $config['paginator'];
             unset($config['paginator']);
         } else {
@@ -237,10 +240,10 @@ class PaginatorComponent extends Component
     /**
      * Set paginator instance.
      *
-     * @param \Cake\Datasource\PaginatorInterface $paginator Paginator instance.
+     * @param \Cake\Datasource\Paginator $paginator Paginator instance.
      * @return self
      */
-    public function setPaginator(PaginatorInterface $paginator)
+    public function setPaginator(Paginator $paginator)
     {
         $this->_paginator = $paginator;
 
@@ -250,7 +253,7 @@ class PaginatorComponent extends Component
     /**
      * Get paginator instance.
      *
-     * @return \Cake\Datasource\PaginatorInterface
+     * @return \Cake\Datasource\Paginator
      */
     public function getPaginator()
     {
@@ -275,6 +278,7 @@ class PaginatorComponent extends Component
     /**
      * Proxy getting/setting config options to Paginator.
      *
+     * @deprecated 3.5.0 use setConfig()/getConfig() instead.
      * @param string|array|null $key The key to get/set, or a complete array of configs.
      * @param mixed|null $value The value to set.
      * @param bool $merge Whether to recursively merge or overwrite existing config, defaults to true.
@@ -283,7 +287,7 @@ class PaginatorComponent extends Component
     public function config($key = null, $value = null, $merge = true)
     {
         $return = $this->_paginator->config($key, $value, $merge);
-        if ($return instanceof PaginatorInterface) {
+        if ($return instanceof Paginator) {
             $return = $this;
         }
 
