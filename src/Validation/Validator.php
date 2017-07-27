@@ -1607,6 +1607,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|null $message The error message when the rule fails.
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::isArray()
      * @return $this
      */
     public function isArray($field, $message = null, $when = null)
@@ -1615,6 +1616,25 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
 
         return $this->add($field, 'isArray', $extra + [
                 'rule' => 'isArray'
+            ]);
+    }
+
+    /**
+     * Add a validation rule to ensure that a field contains a scalar.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::isScalar()
+     * @return $this
+     */
+    public function scalar($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+
+        return $this->add($field, 'scalar', $extra + [
+                'rule' => 'isScalar'
             ]);
     }
 

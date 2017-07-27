@@ -2879,6 +2879,23 @@ class ValidationTest extends TestCase
     }
 
     /**
+     * Test isScalar
+     *
+     * @return void
+     */
+    public function testIsScalar()
+    {
+        $this->assertTrue(Validation::isScalar(1));
+        $this->assertTrue(Validation::isScalar(0.0));
+        $this->assertTrue(Validation::isScalar(''));
+        $this->assertTrue(Validation::isScalar(true));
+        $this->assertFalse(Validation::isScalar([1]));
+        $this->assertFalse(Validation::isScalar(new stdClass()));
+        $this->assertFalse(Validation::isScalar(STDOUT));
+        $this->assertFalse(Validation::isScalar(null));
+    }
+
+    /**
      * Test isInteger
      *
      * @return void
@@ -2997,7 +3014,7 @@ class ValidationTest extends TestCase
         };
 
         $this->assertFalse(Validation::numElements(null, '==', 0));
-        $this->assertFalse(Validation::numElements(new \stdClass(), '==', 0));
+        $this->assertFalse(Validation::numElements(new stdClass(), '==', 0));
         $this->assertFalse(Validation::numElements($callable, '==', 0));
         $this->assertFalse(Validation::numElements(false, '==', 0));
         $this->assertFalse(Validation::numElements(true, '==', 0));
