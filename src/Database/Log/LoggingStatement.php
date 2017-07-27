@@ -81,7 +81,7 @@ class LoggingStatement extends StatementDecorator
         $query->took = round((microtime(true) - $startTime) * 1000, 0);
         $query->params = $params ?: $this->_compiledParams;
         $query->query = $this->queryString;
-        $this->logger()->log($query);
+        $this->getLogger()->log($query);
     }
 
     /**
