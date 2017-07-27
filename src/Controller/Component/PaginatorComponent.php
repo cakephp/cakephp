@@ -282,7 +282,7 @@ class PaginatorComponent extends Component
      */
     public function config($key = null, $value = null, $merge = true)
     {
-        $return = $this->_paginator->config($key, $value, $merge);
+        $return = $this->_paginator->setConfig($key, $value, $merge);
         if ($return instanceof PaginatorInterface) {
             $return = $this;
         }

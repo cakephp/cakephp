@@ -278,7 +278,7 @@ class Paginator implements PaginatorInterface
             $scope = $settings['scope'];
             $params = !empty($params[$scope]) ? (array)$params[$scope] : [];
         }
-        $params = array_intersect_key($params, array_flip($this->config('whitelist')));
+        $params = array_intersect_key($params, array_flip($this->getConfig('whitelist')));
 
         return array_merge($settings, $params);
     }
