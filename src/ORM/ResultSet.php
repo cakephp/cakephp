@@ -460,7 +460,7 @@ class ResultSet implements ResultSetInterface
         }
 
         foreach (array_intersect($fields, $schema->columns()) as $col) {
-            $typeName = $schema->columnType($col);
+            $typeName = $schema->getColumnType($col);
             if (isset($typeMap[$typeName])) {
                 $types[$col] = $typeMap[$typeName];
             }

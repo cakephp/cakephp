@@ -144,7 +144,7 @@ class SqliteSchema extends BaseSchema
             'null' => !$row['notnull'],
             'default' => $this->_defaultValue($row['dflt_value']),
         ];
-        $primary = $schema->constraint('primary');
+        $primary = $schema->getConstraint('primary');
 
         if ($row['pk'] && empty($primary)) {
             $field['null'] = false;
@@ -154,12 +154,12 @@ class SqliteSchema extends BaseSchema
         // SQLite does not support autoincrement on composite keys.
         if ($row['pk'] && !empty($primary)) {
             $existingColumn = $primary['columns'][0];
-            $schema->addColumn($existingColumn, ['autoIncrement' => null] + $schema->column($existingColumn));
+            $schema->addColumn($existingColumn, ['autoIncrement' => null] + $schema->getColumn($existingColumn));
         }
 
         $schema->addColumn($row['name'], $field);
         if ($row['pk']) {
-            $constraint = (array)$schema->constraint('primary') + [
+            $constraint = (array)$schema->getConstraint('primary') + [
                 'type' => TableSchema::CONSTRAINT_PRIMARY,
                 'columns' => []
             ];
@@ -282,7 +282,7 @@ class SqliteSchema extends BaseSchema
      */
     public function columnSql(TableSchema $schema, $name)
     {
-        $data = $schema->column($name);
+        $data = $schema->getColumn($name);
         $typeMap = [
             TableSchema::TYPE_UUID => ' CHAR(36)',
             TableSchema::TYPE_TINYINTEGER => ' TINYINT',
@@ -381,10 +381,10 @@ class SqliteSchema extends BaseSchema
      */
     public function constraintSql(TableSchema $schema, $name)
     {
-        $data = $schema->constraint($name);
+        $data = $schema->getConstraint($name);
         if ($data['type'] === TableSchema::CONSTRAINT_PRIMARY &&
             count($data['columns']) === 1 &&
-            $schema->column($data['columns'][0])['type'] === TableSchema::TYPE_INTEGER
+            $schema->getColumn($data['columns'][0])['type'] === TableSchema::TYPE_INTEGER
         ) {
             return '';
         }
@@ -448,7 +448,7 @@ class SqliteSchema extends BaseSchema
      */
     public function indexSql(TableSchema $schema, $name)
     {
-        $data = $schema->index($name);
+        $data = $schema->getIndex($name);
         $columns = array_map(
             [$this->_driver, 'quoteIdentifier'],
             $data['columns']

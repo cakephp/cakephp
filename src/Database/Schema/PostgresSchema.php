@@ -250,7 +250,7 @@ class PostgresSchema extends BaseSchema
 
             return;
         }
-        $index = $schema->index($name);
+        $index = $schema->getIndex($name);
         if (!$index) {
             $index = [
                 'type' => $type,
@@ -272,7 +272,7 @@ class PostgresSchema extends BaseSchema
      */
     protected function _convertConstraint($schema, $name, $type, $row)
     {
-        $constraint = $schema->constraint($name);
+        $constraint = $schema->getConstraint($name);
         if (!$constraint) {
             $constraint = [
                 'type' => $type,
@@ -349,7 +349,7 @@ class PostgresSchema extends BaseSchema
      */
     public function columnSql(TableSchema $schema, $name)
     {
-        $data = $schema->column($name);
+        $data = $schema->getColumn($name);
         $out = $this->_driver->quoteIdentifier($name);
         $typeMap = [
             TableSchema::TYPE_TINYINTEGER => ' SMALLINT',
@@ -443,7 +443,7 @@ class PostgresSchema extends BaseSchema
         $sql = [];
 
         foreach ($schema->constraints() as $name) {
-            $constraint = $schema->constraint($name);
+            $constraint = $schema->getConstraint($name);
             if ($constraint['type'] === TableSchema::CONSTRAINT_FOREIGN) {
                 $tableName = $this->_driver->quoteIdentifier($schema->name());
                 $sql[] = sprintf($sqlPattern, $tableName, $this->constraintSql($schema, $name));
@@ -462,7 +462,7 @@ class PostgresSchema extends BaseSchema
         $sql = [];
 
         foreach ($schema->constraints() as $name) {
-            $constraint = $schema->constraint($name);
+            $constraint = $schema->getConstraint($name);
             if ($constraint['type'] === TableSchema::CONSTRAINT_FOREIGN) {
                 $tableName = $this->_driver->quoteIdentifier($schema->name());
                 $constraintName = $this->_driver->quoteIdentifier($name);
@@ -478,7 +478,7 @@ class PostgresSchema extends BaseSchema
      */
     public function indexSql(TableSchema $schema, $name)
     {
-        $data = $schema->index($name);
+        $data = $schema->getIndex($name);
         $columns = array_map(
             [$this->_driver, 'quoteIdentifier'],
             $data['columns']
@@ -497,7 +497,7 @@ class PostgresSchema extends BaseSchema
      */
     public function constraintSql(TableSchema $schema, $name)
     {
-        $data = $schema->constraint($name);
+        $data = $schema->getConstraint($name);
         $out = 'CONSTRAINT ' . $this->_driver->quoteIdentifier($name);
         if ($data['type'] === TableSchema::CONSTRAINT_PRIMARY) {
             $out = 'PRIMARY KEY';
@@ -551,7 +551,7 @@ class PostgresSchema extends BaseSchema
             $out[] = $index;
         }
         foreach ($schema->columns() as $column) {
-            $columnData = $schema->column($column);
+            $columnData = $schema->getColumn($column);
             if (isset($columnData['comment'])) {
                 $out[] = sprintf(
                     'COMMENT ON COLUMN %s.%s IS %s',

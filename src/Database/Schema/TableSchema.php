@@ -430,7 +430,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
             return $this->_columns[$column]['baseType'];
         }
 
-        $type = $this->columnType($column);
+        $type = $this->getColumnType($column);
 
         if ($type === null) {
             return null;
