@@ -236,9 +236,7 @@ trait CollectionTrait
             return $values[$middle];
         }
 
-        return (new static([
-            $values[$middle - 1], $values[$middle],
-        ]))->avg();
+        return ($values[$middle - 1] + $values[$middle]) / 2;
     }
 
     /**
