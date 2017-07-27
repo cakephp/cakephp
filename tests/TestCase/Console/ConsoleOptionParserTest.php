@@ -785,6 +785,7 @@ Unable to find the `mycommand unknown` subcommand. See `bin/cake mycommand --hel
 Did you mean : `mycommand method` ?
 
 Available subcommands for the `mycommand` command are : 
+
  - method
 TEXT;
         $this->assertTextEquals($expected, $result, 'Help is not correct.');

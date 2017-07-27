@@ -775,6 +775,7 @@ class ConsoleOptionParser
             $out[] = '';
         }
         $out[] = sprintf('Available subcommands for the `%s` command are : ', $rootCommand);
+        $out[] = '';
         foreach ($subcommands as $subcommand) {
             $out[] = ' - ' . $subcommand;
         }
@@ -796,7 +797,7 @@ class ConsoleOptionParser
             $score = levenshtein($command, $subcommand);
 
             if (!isset($bestScore) || $score < $bestScore) {
-                $bestScore = levenshtein($command, $subcommand);
+                $bestScore = $score;
                 $bestGuess = $subcommand;
             }
         }
