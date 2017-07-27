@@ -278,7 +278,7 @@ class Oauth
      */
     protected function _normalizedParams($request, $oauthValues)
     {
-        $query = parse_url($request->url(), PHP_URL_QUERY);
+        $query = parse_url($request->getUri(), PHP_URL_QUERY);
         parse_str($query, $queryArgs);
 
         $post = [];
