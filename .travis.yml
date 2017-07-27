@@ -63,7 +63,7 @@ before_script:
       'mysql' => array(
         'datasource' => 'Database/Mysql',
         'host' => '127.0.0.1',
-        'login' => 'travis'
+        'login' => 'root'
       ),
       'pgsql' => array(
         'datasource' => 'Database/Postgres',
