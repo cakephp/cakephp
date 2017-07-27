@@ -1,8 +1,8 @@
 <?php
 namespace Cake\Test\Fixture;
 
-use Cake\TestSuite\TestCase;
 use Cake\ORM\TableRegistry;
+use Cake\TestSuite\TestCase;
 use Exception;
 
 /**
