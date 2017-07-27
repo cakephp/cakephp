@@ -647,7 +647,7 @@ class EagerLoader
             return $statement;
         }
 
-        $driver = $query->getConnection()->driver();
+        $driver = $query->getConnection()->getDriver();
         list($collected, $statement) = $this->_collectKeys($external, $query, $statement);
 
         foreach ($external as $meta) {
@@ -803,7 +803,7 @@ class EagerLoader
         }
 
         if (!($statement instanceof BufferedStatement)) {
-            $statement = new BufferedStatement($statement, $query->getConnection()->driver());
+            $statement = new BufferedStatement($statement, $query->getConnection()->getDriver());
         }
 
         return [$this->_groupKeys($statement, $collectKeys), $statement];

@@ -1926,7 +1926,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $success = $entity;
             $entity->set($filteredKeys, ['guard' => false]);
             $schema = $this->getSchema();
-            $driver = $this->getConnection()->driver();
+            $driver = $this->getConnection()->getDriver();
             foreach ($primary as $key => $v) {
                 if (!isset($data[$key])) {
                     $id = $statement->lastInsertId($this->getTable(), $key);

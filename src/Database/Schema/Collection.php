@@ -49,7 +49,7 @@ class Collection
     public function __construct(Connection $connection)
     {
         $this->_connection = $connection;
-        $this->_dialect = $connection->driver()->schemaDialect();
+        $this->_dialect = $connection->getDriver()->schemaDialect();
     }
 
     /**
