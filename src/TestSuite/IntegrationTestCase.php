@@ -547,11 +547,12 @@ abstract class IntegrationTestCase extends TestCase
         list ($url, $query) = $this->_url($url);
         $tokenUrl = $url;
 
+        parse_str($query, $queryData);
+
         if ($query) {
-            $tokenUrl .= '?' . $query;
+            $tokenUrl .= '?' . http_build_query($queryData);
         }
 
-        parse_str($query, $queryData);
         $props = [
             'url' => $url,
             'post' => $this->_addTokens($tokenUrl, $data),
