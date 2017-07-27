@@ -75,7 +75,7 @@ class CollectionTest extends TestCase
     }
 
     /**
-     * ests the avg method
+     * Tests the avg method
      *
      * @dataProvider avgProvider
      * @return void
@@ -85,12 +85,20 @@ class CollectionTest extends TestCase
         $collection = new Collection($items);
         $this->assertEquals(2, $collection->avg());
 
-        $collection = new Collection([]);
-        $this->assertNull($collection->avg());
-
         $items = [['foo' => 1], ['foo' => 2], ['foo' => 3]];
         $collection = new Collection($items);
         $this->assertEquals(2, $collection->avg('foo'));
+    }
+
+    /**
+     * Tests the avg method when on an empty collection
+     *
+     * @return void
+     */
+    public function testAvgWithEmptyCollection()
+    {
+        $collection = new Collection([]);
+        $this->assertNull($collection->avg());
     }
 
     /**
@@ -145,7 +153,15 @@ class CollectionTest extends TestCase
     {
         $collection = new Collection($items);
         $this->assertEquals(4, $collection->median());
+    }
 
+    /**
+     * Tests the median method when on an empty collection
+     *
+     * @return void
+     */
+    public function testMedianWithEmptyCollection()
+    {
         $collection = new Collection([]);
         $this->assertNull($collection->median());
     }
