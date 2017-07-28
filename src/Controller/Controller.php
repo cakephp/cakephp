@@ -212,8 +212,9 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Automatically set to the name of a plugin.
      *
      * @var string
+     * @deprecated 3.5.0 Use `$this->request->getParam('plugin')` instead.
      */
-    protected $plugin;
+    public $plugin;
 
     /**
      * Holds all passed params.
@@ -252,14 +253,15 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         }
 
         $this->setRequest($request !== null ? $request : new ServerRequest());
-        $this->response = $response !== null ? $response : new Response();
+        $this->setResponse($response !== null ? $response : new Response());
 
         if ($eventManager !== null) {
             $this->setEventManager($eventManager);
         }
 
         $this->modelFactory('Table', [$this->getTableLocator(), 'get']);
-        $modelClass = ($this->plugin ? $this->plugin . '.' : '') . $this->name;
+        $plugin = $this->request->getParam('plugin');
+        $modelClass = ($plugin ? $plugin . '.' : '') . $this->name;
         $this->_setModelClass($modelClass);
 
         if ($components !== null) {
@@ -435,29 +437,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     public function setName($name)
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * Returns the controller plugin name.
-     *
-     * @return string
-     */
-    public function getPlugin()
-    {
-        return $this->plugin;
-    }
-
-    /**
-     * Sets the controller plugin name.
-     *
-     * @param string $plugin Controller plugin name.
-     * @return $this
-     */
-    public function setPlugin($plugin)
-    {
-        $this->plugin = $plugin;
 
         return $this;
     }

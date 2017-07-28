@@ -1100,20 +1100,6 @@ class ControllerTest extends TestCase
     }
 
     /**
-     * Test plugin getter and setter.
-     *
-     * @return void
-     */
-    public function testPlugin()
-    {
-        $controller = new PostsController();
-        $this->assertNull($controller->getPlugin());
-
-        $this->assertSame($controller, $controller->setPlugin('Posts'));
-        $this->assertEquals('Posts', $controller->getPlugin());
-    }
-
-    /**
      * Test request getter and setter.
      *
      * @return void
@@ -1135,7 +1121,7 @@ class ControllerTest extends TestCase
         $this->assertSame($controller, $controller->setRequest($request));
         $this->assertSame($request, $controller->getRequest());
 
-        $this->assertEquals('Posts', $controller->getPlugin());
+        $this->assertEquals('Posts', $controller->getRequest()->getParam('plugin'));
         $this->assertEquals(['foo', 'bar'], $controller->passedArgs);
     }
 
@@ -1209,7 +1195,6 @@ class ControllerTest extends TestCase
     {
         return [
             ['name', 'getName', 'setName', 'Foo'],
-            ['plugin', 'getPlugin', 'setPlugin', 'Foo'],
             ['autoRender', 'isAutoRenderEnabled', 'enableAutoRender/disableAutoRender', false],
         ];
     }
