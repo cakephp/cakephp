@@ -146,6 +146,29 @@ class CommandRunnerTest extends TestCase
     }
 
     /**
+     * Test that no command outputs the command list
+     *
+     * @return void
+     */
+    public function testRunNoCommand()
+    {
+        $app = $this->getMockBuilder(BaseApplication::class)
+            ->setMethods(['middleware', 'bootstrap'])
+            ->setConstructorArgs([$this->config])
+            ->getMock();
+
+        $output = new ConsoleOutput();
+        $runner = new CommandRunner($app);
+        $result = $runner->run(['cake'], $this->getMockIo($output));
+
+        $this->assertSame(0, $result, 'help output is success.');
+        $messages = implode("\n", $output->messages());
+        $this->assertContains('No command provided. Choose one of the available commands', $messages);
+        $this->assertContains('- i18n', $messages);
+        $this->assertContains('Available Commands', $messages);
+    }
+
+    /**
      * Test using `cake --verson` invokes the version command
      *
      * @return void
