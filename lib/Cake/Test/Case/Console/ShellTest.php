@@ -773,6 +773,32 @@ class ShellTest extends CakeTestCase {
 	}
 
 /**
+ * test unknown option causes display of error and help.
+ *
+ * @return void
+ */
+	public function testRunCommandUnknownOption() {
+		$output = $this->getMock('ConsoleOutput', array(), array(), '', false);
+		$error = $this->getMock('ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
+
+		$Parser = $this->getMock('ConsoleOptionParser', array(), array(), '', false);
+		$Parser->expects($this->once())->method('parse')
+			->with(array('--unknown'))
+			->will($this->throwException(new ConsoleException('Unknown option `unknown`')));
+		$Parser->expects($this->once())->method('help');
+
+		$Shell = $this->getMock('ShellTestShell', array('getOptionParser'), array($output, $error, $in));
+
+		$Shell->expects($this->once())->method('getOptionParser')
+			->will($this->returnValue($Parser));
+		$Shell->stderr->expects($this->once())->method('write');
+		$Shell->stdout->expects($this->once())->method('write');
+
+		$Shell->runCommand('do_something', array('do_something', '--unknown'));
+	}
+
+/**
  * test that a --help causes help to show.
  *
  * @return void

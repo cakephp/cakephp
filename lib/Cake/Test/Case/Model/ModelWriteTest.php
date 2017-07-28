@@ -1673,8 +1673,19 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertFalse(empty($result));
 		$this->assertEquals($data['Tag'], $result['Tag']);
 
-		$TestModel->unbindModel(array('belongsTo' => array('User'), 'hasMany' => array('Comment')));
-		$result = $TestModel->find('first', array('fields' => array('id', 'user_id', 'title', 'body'), 'conditions' => array('Article.id' => 2)));
+		$TestModel->unbindModel(array(
+			'belongsTo' => array('User'),
+			'hasMany' => array('Comment'),
+		));
+		$TestModel->bindModel(array(
+			'hasAndBelongsToMany' => array(
+				'Tag' => array('order' => 'Tag.id'),
+			),
+		), false);
+		$result = $TestModel->find('first', array(
+			'fields' => array('id', 'user_id', 'title', 'body'),
+			'conditions' => array('Article.id' => 2),
+		));
 		$expected = array(
 			'Article' => array(
 				'id' => '2',
@@ -1694,7 +1705,9 @@ class ModelWriteTest extends BaseModelTest {
 					'tag' => 'tag2',
 					'created' => '2007-03-18 12:24:23',
 					'updated' => '2007-03-18 12:26:31'
-		)));
+				),
+			),
+		);
 		$this->assertEquals($expected, $result);
 
 		$data = array('Article' => array('id' => '2'), 'Tag' => array('Tag' => array(2, 3)));
