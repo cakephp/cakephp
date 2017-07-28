@@ -1178,7 +1178,7 @@ class ControllerTest extends TestCase
 
         try {
             $controller->$property = $value;
-//
+
             $this->assertSame($value, $controller->$property);
             $this->assertSame($value, $controller->{$getter}());
         } finally {
