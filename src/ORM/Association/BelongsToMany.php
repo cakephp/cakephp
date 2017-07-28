@@ -253,7 +253,7 @@ class BelongsToMany extends Association
      * Sets the sort order in which target records should be returned.
      * If no arguments are passed the currently configured value is returned
      *
-     * @deprecated 3.4.0 Use setSort()/getSort() instead.
+     * @deprecated 3.5.0 Use setSort()/getSort() instead.
      * @param mixed $sort A find() compatible order clause
      * @return mixed
      */

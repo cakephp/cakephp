@@ -139,7 +139,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     /**
      * Constructor.
      *
-     * @param \Cake\Datasource\ConnectionInterface $connection The connection
+     * @param \Cake\Database\Connection $connection The connection
      * object to be used for transforming and executing this query
      */
     public function __construct($connection)
@@ -150,7 +150,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     /**
      * Sets the connection instance to be used for executing and transforming this query.
      *
-     * @param \Cake\Datasource\ConnectionInterface $connection Connection instance
+     * @param \Cake\Database\Connection $connection Connection instance
      * @return $this
      */
     public function setConnection($connection)
@@ -176,8 +176,8 @@ class Query implements ExpressionInterface, IteratorAggregate
      * When called with a null argument, it will return the current connection instance.
      *
      * @deprecated 3.4.0 Use setConnection()/getConnection() instead.
-     * @param \Cake\Datasource\ConnectionInterface|null $connection Connection instance
-     * @return $this|\Cake\Datasource\ConnectionInterface
+     * @param \Cake\Database\Connection|null $connection Connection instance
+     * @return $this|\Cake\Database\Connection
      */
     public function connection($connection = null)
     {
@@ -342,7 +342,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * ```
      *
      * By default no fields are selected, if you have an instance of `Cake\ORM\Query` and try to append
-     * fields you should also call `Cake\ORM\Query::autoFields()` to select the default fields
+     * fields you should also call `Cake\ORM\Query::enableAutoFields()` to select the default fields
      * from the table.
      *
      * @param array|\Cake\Database\ExpressionInterface|string|callable $fields fields to be added to the list.
