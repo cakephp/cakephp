@@ -857,7 +857,7 @@ class Connection implements ConnectionInterface
     {
         $query = new LoggedQuery();
         $query->query = $sql;
-        $this->logger()->log($query);
+        $this->getLogger()->log($query);
     }
 
     /**
@@ -870,7 +870,7 @@ class Connection implements ConnectionInterface
     protected function _newLogger(StatementInterface $statement)
     {
         $log = new LoggingStatement($statement, $this->getDriver());
-        $log->logger($this->logger());
+        $log->setLogger($this->getLogger());
 
         return $log;
     }

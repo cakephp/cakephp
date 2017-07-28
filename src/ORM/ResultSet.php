@@ -185,7 +185,6 @@ class ResultSet implements ResultSetInterface
         $this->_useBuffering = $query->isBufferedResultsEnabled();
         $this->_defaultAlias = $this->_defaultTable->getAlias();
         $this->_calculateColumnMap($query);
-        $this->_calculateTypeMap();
         $this->_autoFields = $query->isAutoFieldsEnabled();
 
         if ($this->_useBuffering) {

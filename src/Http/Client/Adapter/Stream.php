@@ -124,7 +124,7 @@ class Stream
         $this->_buildHeaders($request, $options);
         $this->_buildOptions($request, $options);
 
-        $url = $request->url();
+        $url = $request->getUri();
         $scheme = parse_url($url, PHP_URL_SCHEME);
         if ($scheme === 'https') {
             $this->_buildSslContext($request, $options);
@@ -222,7 +222,7 @@ class Stream
             $options['ssl_cafile'] = CORE_PATH . 'config' . DIRECTORY_SEPARATOR . 'cacert.pem';
         }
         if (!empty($options['ssl_verify_host'])) {
-            $url = $request->url();
+            $url = $request->getUri();
             $host = parse_url($url, PHP_URL_HOST);
             $this->_sslContextOptions['peer_name'] = $host;
         }
@@ -248,7 +248,7 @@ class Stream
             $deadline = time() + $this->_contextOptions['timeout'];
         }
 
-        $url = $request->url();
+        $url = $request->getUri();
         $this->_open($url);
         $content = '';
         $timedOut = false;

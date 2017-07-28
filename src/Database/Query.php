@@ -211,7 +211,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function execute()
     {
         $statement = $this->_connection->run($this);
-        $driver = $this->_connection->driver();
+        $driver = $this->_connection->getDriver();
         $typeMap = $this->getSelectTypeMap();
 
         if ($typeMap->toArray() && $this->_typeCastAttached === false) {
@@ -1982,7 +1982,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     protected function _decorateStatement($statement)
     {
         foreach ($this->_resultDecorators as $f) {
-            $statement = new CallbackStatement($statement, $this->getConnection()->driver(), $f);
+            $statement = new CallbackStatement($statement, $this->getConnection()->getDriver(), $f);
         }
 
         return $statement;
