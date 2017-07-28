@@ -33,7 +33,7 @@ use JsonSerializable;
  * @method array getError($field)
  * @method array setErrors(array $fields, $overwrite = false)
  * @method array setError($field, $errors, $overwrite = false)
- * @method $this setAccess($properties, $merge)
+ * @method $this setAccess($property, $set)
  * @method bool isAccessible($property)
  * @method $this setSource($source)
  * @method array getSource()
