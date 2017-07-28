@@ -162,6 +162,10 @@ class CommandRunner
      */
     protected function getShell(ConsoleIo $io, CommandCollection $commands, $name)
     {
+        if (!$name) {
+            $io->err('<error>No command provided. Choose one of the available commands.</error>', 2);
+            $name = 'help';
+        }
         if (isset($this->aliases[$name])) {
             $name = $this->aliases[$name];
         }
