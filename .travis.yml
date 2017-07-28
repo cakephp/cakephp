@@ -1,5 +1,8 @@
 language: php
 
+# We require precise here, as 5.3 doesn't exist on trusty.
+dist: precise
+
 php:
   - 5.3
   - 5.4
