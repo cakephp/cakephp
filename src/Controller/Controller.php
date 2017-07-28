@@ -163,6 +163,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * after action logic.
      *
      * @var bool
+     * @deprecated 3.5.0 Use enableAutoRender()/disableAutoRender() and isAutoRenderEnabled() instead.
      */
     protected $autoRender = true;
 
