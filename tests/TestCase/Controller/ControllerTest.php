@@ -1164,7 +1164,7 @@ class ControllerTest extends TestCase
         $controller = new PostsController();
         $this->assertTrue($controller->isAutoRenderEnabled());
 
-        $this->assertSame($controller, $controller->enableAutoRender(false));
+        $this->assertSame($controller, $controller->disableAutoRender());
         $this->assertFalse($controller->isAutoRenderEnabled());
 
         $this->assertSame($controller, $controller->enableAutoRender());
@@ -1172,7 +1172,50 @@ class ControllerTest extends TestCase
     }
 
     /**
-     * Tests deprecated view propertiyes work
+     * Tests deprecated controller properties work
+     *
+     * @param $property Deprecated property name
+     * @param $getter Getter name
+     * @param $setter Setter name
+     * @param mixed $value Value to be set
+     * @return void
+     * @dataProvider deprecatedControllerPropertyProvider
+     */
+    public function testDeprecatedControllerProperty($property, $getter, $setter, $value)
+    {
+        $controller = new AnotherTestController();
+        $message = false;
+
+        set_error_handler(function ($errno, $errstr) use (&$message) {
+            $message = ($errno === E_USER_DEPRECATED ? $errstr : false);
+        });
+
+        try {
+            $controller->$property = $value;
+//
+            $this->assertSame($value, $controller->$property);
+            $this->assertSame($value, $controller->{$getter}());
+        } finally {
+            restore_error_handler();
+        }
+    }
+
+    /**
+     * Data provider for testing deprecated view properties
+     *
+     * @return array
+     */
+    public function deprecatedControllerPropertyProvider()
+    {
+        return [
+            ['name', 'getName', 'setName', 'Foo'],
+            ['plugin', 'getPlugin', 'setPlugin', 'Foo'],
+            ['autoRender', 'isAutoRenderEnabled', 'enableAutoRender/disableAutoRender', false],
+        ];
+    }
+
+    /**
+     * Tests deprecated view properties work
      *
      * @group deprecated
      * @param $property Deprecated property name

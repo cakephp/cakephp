@@ -383,12 +383,16 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     {
         $deprecated = [
             'name' => 'setName',
-            'plugin' => 'setPlugin',
-            'autoRender' => 'enableAutoRender',
+            'plugin' => 'setPlugin'
         ];
         if (isset($deprecated[$name])) {
             $method = $deprecated[$name];
             $this->{$method}($value);
+
+            return;
+        }
+        if ($name === 'autoRender') {
+            $value ? $this->enableAutoRender() : $this->disableAutoRender();
 
             return;
         }
@@ -469,14 +473,25 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     }
 
     /**
-     * Enable or disbale automatic action rendering.
+     * Enable automatic action rendering.
      *
-     * @param bool $autoRender Flag.
      * @return $this
      */
-    public function enableAutoRender($autoRender = true)
+    public function enableAutoRender()
     {
-        $this->autoRender = $autoRender;
+        $this->autoRender = true;
+
+        return $this;
+    }
+
+    /**
+     * Disbale automatic action rendering.
+     *
+     * @return $this
+     */
+    public function disableAutoRender()
+    {
+        $this->autoRender = false;
 
         return $this;
     }
