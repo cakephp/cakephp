@@ -793,7 +793,7 @@ class ConsoleOptionParser
     {
         $rootCommand = $this->getCommand();
         $subcommands = array_keys((array)$this->subcommands());
-        $bestGuess = $this->findClosestCommand($command, $subcommands);
+        $bestGuess = $this->findClosestItem($command, $subcommands);
 
         $out = [];
 
@@ -819,21 +819,31 @@ class ConsoleOptionParser
     }
 
     /**
-     * Tries to guess the command the user originally wanted using the levenshtein algorithm.
+     * Tries to guess the item name the user originally wanted using the levenshtein algorithm.
      *
-     * @param string $command Unknown command name trying to be dispatched.
-     * @param array $subcommands List of subcommands name this shell supports.
-     * @return string|null The closest name to the command submitted by the user.
+     * @param string $needle Unknown item (either a subcommand name or an option for instance) trying to be used.
+     * @param array $haystack List of items available for the type $needle belongs to.
+     * @return string|null The closest name to the item submitted by the user.
      */
-    protected function findClosestCommand($command, $subcommands)
+    protected function findClosestItem($needle, $haystack)
     {
         $bestGuess = null;
-        foreach ($subcommands as $subcommand) {
-            $score = levenshtein($command, $subcommand);
+        foreach ($haystack as $item) {
+            if (preg_match('/^' . $needle . '/', $item, $matches)) {
+                return $item;
+            }
+        }
+
+        foreach ($haystack as $item) {
+            if (preg_match('/' . $needle . '/', $item, $matches)) {
+                return $item;
+            }
+
+            $score = levenshtein($needle, $item);
 
             if (!isset($bestScore) || $score < $bestScore) {
-                $bestScore = $score;
-                $bestGuess = $subcommand;
+                $bestScore = levenshtein($needle, $item);
+                $bestGuess = $item;
             }
         }
 
