@@ -800,6 +800,46 @@ TEXT;
     }
 
     /**
+     * test that getCommandError() with an unknown subcommand param shows a helpful message
+     *
+     * @return void
+     */
+    public function testHelpUnknownSubcommand()
+    {
+        $subParser = [
+            'options' => [
+                'foo' => [
+                    'short' => 'f',
+                    'help' => 'Foo.',
+                    'boolean' => true,
+                ]
+            ],
+        ];
+
+        $parser = new ConsoleOptionParser('mycommand', false);
+        $parser
+            ->addSubcommand('method', [
+                'help' => 'This is a subcommand',
+                'parser' => $subParser
+            ])
+            ->addOption('test', ['help' => 'A test option.'])
+            ->addSubcommand('unstash');
+
+        $result = $parser->getCommandError('unknown');
+        $expected = <<<TEXT
+Unable to find the `mycommand unknown` subcommand. See `bin/cake mycommand --help`.
+
+Did you mean : `mycommand unstash` ?
+
+Available subcommands for the `mycommand` command are : 
+
+ - method
+ - unstash
+TEXT;
+        $this->assertTextEquals($expected, $result, 'Help is not correct.');
+    }
+
+    /**
      * test building a parser from an array.
      *
      * @return void

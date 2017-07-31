@@ -783,6 +783,64 @@ class ConsoleOptionParser
     }
 
     /**
+     * Get the message output in the console stating that the command can not be found and tries to guess what the user
+     * wanted to say. Output a list of available subcommands as well.
+     *
+     * @param string $command Unknown command name trying to be dispatched.
+     * @return string The message to be displayed in the console.
+     */
+    public function getCommandError($command)
+    {
+        $rootCommand = $this->getCommand();
+        $subcommands = array_keys((array)$this->subcommands());
+        $bestGuess = $this->findClosestCommand($command, $subcommands);
+
+        $out = [];
+
+        $out[] = sprintf(
+            'Unable to find the `%s %s` subcommand. See `bin/%s %s --help`.',
+            $rootCommand,
+            $command,
+            $this->rootName,
+            $rootCommand
+        );
+        $out[] = '';
+        if ($bestGuess !== null) {
+            $out[] = sprintf('Did you mean : `%s %s` ?', $rootCommand, $bestGuess);
+            $out[] = '';
+        }
+        $out[] = sprintf('Available subcommands for the `%s` command are : ', $rootCommand);
+        $out[] = '';
+        foreach ($subcommands as $subcommand) {
+            $out[] = ' - ' . $subcommand;
+        }
+
+        return implode("\n", $out);
+    }
+
+    /**
+     * Tries to guess the command the user originally wanted using the levenshtein algorithm.
+     *
+     * @param string $command Unknown command name trying to be dispatched.
+     * @param array $subcommands List of subcommands name this shell supports.
+     * @return string|null The closest name to the command submitted by the user.
+     */
+    protected function findClosestCommand($command, $subcommands)
+    {
+        $bestGuess = null;
+        foreach ($subcommands as $subcommand) {
+            $score = levenshtein($command, $subcommand);
+
+            if (!isset($bestScore) || $score < $bestScore) {
+                $bestScore = $score;
+                $bestGuess = $subcommand;
+            }
+        }
+
+        return $bestGuess;
+    }
+
+    /**
      * Parse the value for a long option out of $this->_tokens. Will handle
      * options with an `=` in them.
      *

@@ -507,7 +507,7 @@ class Shell
             return $this->main(...$this->args);
         }
 
-        $this->out($this->OptionParser->help($command));
+        $this->err($this->OptionParser->getCommandError($command));
 
         return false;
     }
