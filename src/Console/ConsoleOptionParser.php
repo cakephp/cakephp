@@ -819,6 +819,35 @@ class ConsoleOptionParser
     }
 
     /**
+     * Get the message output in the console stating that the option can not be found and tries to guess what the user
+     * wanted to say. Output a list of available options as well.
+     *
+     * @param string $option Unknown option name trying to be used.
+     * @return string The message to be displayed in the console.
+     */
+    public function getOptionError($option)
+    {
+        $availableOptions = array_keys($this->_options);
+        $bestGuess = $this->findClosestItem($option, $availableOptions);
+        $out = [];
+        $out[] = sprintf('Unknown option `%s`.', $option);
+        $out[] = '';
+
+        if ($bestGuess !== null) {
+            $out[] = sprintf('Did you mean `%s` ?', $bestGuess);
+            $out[] = '';
+        }
+
+        $out[] = 'Available options are :';
+        $out[] = '';
+        foreach ($availableOptions as $availableOption) {
+            $out[] = ' - ' . $availableOption;
+        }
+
+        return implode("\n", $out);
+    }
+
+    /**
      * Tries to guess the item name the user originally wanted using the levenshtein algorithm.
      *
      * @param string $needle Unknown item (either a subcommand name or an option for instance) trying to be used.
@@ -908,7 +937,7 @@ class ConsoleOptionParser
     protected function _parseOption($name, $params)
     {
         if (!isset($this->_options[$name])) {
-            throw new ConsoleException(sprintf('Unknown option `%s`', $name));
+            throw new ConsoleException($this->getOptionError($name));
         }
         $option = $this->_options[$name];
         $isBoolean = $option->isBoolean();
