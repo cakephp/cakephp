@@ -721,6 +721,16 @@ class ConsoleOptionParser
      */
     public function help($subcommand = null, $format = 'text', $width = 72)
     {
+        if ($subcommand === null) {
+            $formatter = new HelpFormatter($this);
+
+            if ($format === 'xml') {
+                return $formatter->xml();
+            }
+
+            return $formatter->text($width);
+        }
+
         if (isset($this->_subcommands[$subcommand])) {
             $command = $this->_subcommands[$subcommand];
             $subparser = $command->parser();
@@ -735,13 +745,64 @@ class ConsoleOptionParser
             return $subparser->help(null, $format, $width);
         }
 
-        $formatter = new HelpFormatter($this);
-        if ($format === 'text') {
-            return $formatter->text($width);
+        return $this->getUnknownCommandOutput($subcommand);
+    }
+
+    /**
+     * Get the message output in the console stating that the command can not be found and tries to guess what the user
+     * wanted to say. Output a list of available subcommands as well.
+     *
+     * @param string $command Unknown command name trying to be dispatched.
+     * @return string The message to be displayed in the console.
+     */
+    protected function getUnknownCommandOutput($command)
+    {
+        $rootCommand = $this->getCommand();
+        $subcommands = array_keys((array)$this->subcommands());
+        $bestGuess = $this->findClosestCommand($command, $subcommands);
+
+        $out = [];
+
+        $out[] = sprintf(
+            'Unable to find the `%s %s` subcommand. See `bin/cake %s --help`.',
+            $rootCommand,
+            $command,
+            $rootCommand
+        );
+        $out[] = '';
+        if ($bestGuess !== null) {
+            $out[] = sprintf('Did you mean : `%s %s` ?', $rootCommand, $bestGuess);
+            $out[] = '';
         }
-        if ($format === 'xml') {
-            return $formatter->xml();
+        $out[] = sprintf('Available subcommands for the `%s` command are : ', $rootCommand);
+        $out[] = '';
+        foreach ($subcommands as $subcommand) {
+            $out[] = ' - ' . $subcommand;
         }
+
+        return implode("\n", $out);
+    }
+
+    /**
+     * Tries to guess the command the user originally wanted using the levenshtein algorithm.
+     *
+     * @param string $command Unknown command name trying to be dispatched.
+     * @param array $subcommands List of subcommands name this shell supports.
+     * @return string|null The closest name to the command submitted by the user.
+     */
+    protected function findClosestCommand($command, $subcommands)
+    {
+        $bestGuess = null;
+        foreach ($subcommands as $subcommand) {
+            $score = levenshtein($command, $subcommand);
+
+            if (!isset($bestScore) || $score < $bestScore) {
+                $bestScore = $score;
+                $bestGuess = $subcommand;
+            }
+        }
+
+        return $bestGuess;
     }
 
     /**
