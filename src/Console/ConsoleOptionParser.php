@@ -879,13 +879,13 @@ class ConsoleOptionParser
     {
         $bestGuess = null;
         foreach ($haystack as $item) {
-            if (preg_match('/^' . $needle . '/', $item, $matches)) {
+            if (preg_match('/^' . $needle . '/', $item)) {
                 return $item;
             }
         }
 
         foreach ($haystack as $item) {
-            if (preg_match('/' . $needle . '/', $item, $matches)) {
+            if (preg_match('/' . $needle . '/', $item)) {
                 return $item;
             }
 
