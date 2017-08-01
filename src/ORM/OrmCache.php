@@ -49,7 +49,7 @@ class OrmCache
      * Build metadata.
      *
      * @param string|null $name The name of the table to build cache data for.
-     * @return bool
+     * @return array Returns a list build table caches
      */
     public function build($name = null)
     {
@@ -62,14 +62,14 @@ class OrmCache
             $this->_schema->describe($table, ['forceRefresh' => true]);
         }
 
-        return true;
+        return $tables;
     }
 
     /**
      * Clear metadata.
      *
      * @param string|null $name The name of the table to clear cache data for.
-     * @return bool
+     * @return array Returns a list of cleared table caches
      */
     public function clear($name = null)
     {
@@ -84,7 +84,7 @@ class OrmCache
             Cache::delete($key, $configName);
         }
 
-        return true;
+        return $tables;
     }
 
     /**

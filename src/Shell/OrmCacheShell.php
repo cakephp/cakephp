@@ -46,7 +46,11 @@ class OrmCacheShell extends Shell
     public function build($name = null)
     {
         $cache = $this->_getOrmCache();
-        $cache->build($name);
+        $tables = $cache->build($name);
+
+        foreach ($tables as $table) {
+            $this->verbose(sprintf('Cached "%s"', $table));
+        }
 
         $this->out('<success>Cache build complete</success>');
 
@@ -62,7 +66,11 @@ class OrmCacheShell extends Shell
     public function clear($name = null)
     {
         $cache = $this->_getOrmCache();
-        $cache->clear($name);
+        $tables = $cache->clear($name);
+
+        foreach ($tables as $table) {
+            $this->verbose(sprintf('Cleared "%s"', $table));
+        }
 
         $this->out('<success>Cache clear complete</success>');
 
