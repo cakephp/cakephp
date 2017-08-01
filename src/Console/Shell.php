@@ -506,7 +506,7 @@ class Shell
             return $this->main(...$this->args);
         }
 
-        $this->err($this->OptionParser->getCommandError($command));
+        $this->err($this->OptionParser->help($command));
 
         return false;
     }
@@ -548,6 +548,8 @@ class Shell
             $this->_welcome();
         }
 
+        $subcommands = $this->OptionParser->subcommands();
+        $command = isset($subcommands[$command]) ? $command : null;
         return $this->out($this->OptionParser->help($command, $format));
     }
 

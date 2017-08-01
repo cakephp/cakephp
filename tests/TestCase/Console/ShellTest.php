@@ -954,7 +954,7 @@ TEXT;
     public function testRunCommandWithMethodNotInSubcommands()
     {
         $parser = $this->getMockBuilder('Cake\Console\ConsoleOptionParser')
-            ->setMethods(['getCommandError'])
+            ->setMethods(['help'])
             ->setConstructorArgs(['knife'])
             ->getMock();
         $io = $this->getMockBuilder('Cake\Console\ConsoleIo')->getMock();
@@ -970,7 +970,7 @@ TEXT;
             ->will($this->returnValue($parser));
 
         $parser->expects($this->once())
-            ->method('getCommandError');
+            ->method('help');
 
         $shell->expects($this->never())->method('startup');
         $shell->expects($this->never())->method('roll');
@@ -1018,7 +1018,7 @@ TEXT;
     public function testRunCommandWithMissingMethodInSubcommands()
     {
         $parser = $this->getMockBuilder('Cake\Console\ConsoleOptionParser')
-            ->setMethods(['getCommandError'])
+            ->setMethods(['help'])
             ->setConstructorArgs(['knife'])
             ->getMock();
         $parser->addSubCommand('slice');
@@ -1036,7 +1036,7 @@ TEXT;
             ->method('startup');
 
         $parser->expects($this->once())
-            ->method('getCommandError');
+            ->method('help');
 
         $shell->runCommand(['slice', 'cakes', '--verbose']);
     }
@@ -1058,7 +1058,7 @@ TEXT;
             ->disableOriginalConstructor()
             ->getMock();
 
-        $parser->expects($this->once())->method('getCommandError');
+        $parser->expects($this->once())->method('help');
         $shell->expects($this->once())->method('getOptionParser')
             ->will($this->returnValue($parser));
         $shell->expects($this->never())->method('hr');
@@ -1083,7 +1083,7 @@ TEXT;
             ->disableOriginalConstructor()
             ->getMock();
 
-        $parser->expects($this->once())->method('getCommandError');
+        $parser->expects($this->once())->method('help');
         $shell->expects($this->once())->method('getOptionParser')
             ->will($this->returnValue($parser));
         $shell->expects($this->once())->method('err');

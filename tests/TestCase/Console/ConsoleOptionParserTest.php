@@ -831,7 +831,7 @@ TEXT;
             ->addOption('test', ['help' => 'A test option.'])
             ->addSubcommand('unstash');
 
-        $result = $parser->getCommandError('unknown');
+        $result = $parser->help('unknown');
         $expected = <<<TEXT
 Unable to find the `mycommand unknown` subcommand. See `bin/cake mycommand --help`.
 

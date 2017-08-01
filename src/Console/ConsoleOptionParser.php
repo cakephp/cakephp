@@ -731,6 +731,18 @@ class ConsoleOptionParser
      */
     public function help($subcommand = null, $format = 'text', $width = 72)
     {
+        if ($subcommand === null) {
+            $formatter = new HelpFormatter($this);
+            $formatter->setAlias($this->rootName);
+
+            if ($format === 'text') {
+                return $formatter->text($width);
+            }
+            if ($format === 'xml') {
+                return $formatter->xml();
+            }
+        }
+
         if (isset($this->_subcommands[$subcommand])) {
             $command = $this->_subcommands[$subcommand];
             $subparser = $command->parser();
@@ -746,15 +758,7 @@ class ConsoleOptionParser
             return $subparser->help(null, $format, $width);
         }
 
-        $formatter = new HelpFormatter($this);
-        $formatter->setAlias($this->rootName);
-
-        if ($format === 'text') {
-            return $formatter->text($width);
-        }
-        if ($format === 'xml') {
-            return $formatter->xml();
-        }
+        return $this->getCommandError($subcommand);
     }
 
     /**
@@ -789,7 +793,7 @@ class ConsoleOptionParser
      * @param string $command Unknown command name trying to be dispatched.
      * @return string The message to be displayed in the console.
      */
-    public function getCommandError($command)
+    protected function getCommandError($command)
     {
         $rootCommand = $this->getCommand();
         $subcommands = array_keys((array)$this->subcommands());
@@ -869,7 +873,8 @@ class ConsoleOptionParser
     }
 
     /**
-     * Tries to guess the item name the user originally wanted using the levenshtein algorithm.
+     * Tries to guess the item name the user originally wanted using the some regex pattern and the levenshtein
+     * algorithm.
      *
      * @param string $needle Unknown item (either a subcommand name or an option for instance) trying to be used.
      * @param array $haystack List of items available for the type $needle belongs to.
