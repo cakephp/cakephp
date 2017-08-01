@@ -15,7 +15,7 @@
 namespace Cake\Shell;
 
 use Cake\Console\Shell;
-use Cake\Orm\OrmCache;
+use Cake\ORM\OrmCache;
 use RuntimeException;
 
 /**
