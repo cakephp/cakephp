@@ -852,7 +852,7 @@ class ConsoleOptionParser
     }
 
     /**
-     * Get the message output in the console stating that the short option can not be found. Output a list of available 
+     * Get the message output in the console stating that the short option can not be found. Output a list of available
      * short options and what option they refer to as well.
      *
      * @param string $option Unknown short option name trying to be used.
