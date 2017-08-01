@@ -799,16 +799,17 @@ class ConsoleOptionParser
         $subcommands = array_keys((array)$this->subcommands());
         $bestGuess = $this->findClosestItem($command, $subcommands);
 
-        $out = [];
+        $out = [
+            sprintf(
+                'Unable to find the `%s %s` subcommand. See `bin/%s %s --help`.',
+                $rootCommand,
+                $command,
+                $this->rootName,
+                $rootCommand
+            ),
+            ''
+        ];
 
-        $out[] = sprintf(
-            'Unable to find the `%s %s` subcommand. See `bin/%s %s --help`.',
-            $rootCommand,
-            $command,
-            $this->rootName,
-            $rootCommand
-        );
-        $out[] = '';
         if ($bestGuess !== null) {
             $out[] = sprintf('Did you mean : `%s %s` ?', $rootCommand, $bestGuess);
             $out[] = '';
@@ -833,9 +834,10 @@ class ConsoleOptionParser
     {
         $availableOptions = array_keys($this->_options);
         $bestGuess = $this->findClosestItem($option, $availableOptions);
-        $out = [];
-        $out[] = sprintf('Unknown option `%s`.', $option);
-        $out[] = '';
+        $out = [
+            sprintf('Unknown option `%s`.', $option),
+            ''
+        ];
 
         if ($bestGuess !== null) {
             $out[] = sprintf('Did you mean `%s` ?', $bestGuess);
@@ -897,7 +899,7 @@ class ConsoleOptionParser
             $score = levenshtein($needle, $item);
 
             if (!isset($bestScore) || $score < $bestScore) {
-                $bestScore = levenshtein($needle, $item);
+                $bestScore = $score;
                 $bestGuess = $item;
             }
         }

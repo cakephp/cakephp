@@ -550,6 +550,7 @@ class Shell
 
         $subcommands = $this->OptionParser->subcommands();
         $command = isset($subcommands[$command]) ? $command : null;
+
         return $this->out($this->OptionParser->help($command, $format));
     }
 
