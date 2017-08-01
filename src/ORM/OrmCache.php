@@ -12,7 +12,7 @@
  * @since         3.5.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Orm;
+namespace Cake\ORM;
 
 use Cake\Cache\Cache;
 use Cake\Datasource\ConnectionManager;

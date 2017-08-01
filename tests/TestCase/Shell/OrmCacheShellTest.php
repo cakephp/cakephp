@@ -47,7 +47,7 @@ class OrmCacheShellTest extends TestCase
         $this->cache->expects($this->any())
             ->method('init')
             ->will($this->returnValue(true));
-        Cache::config('orm_cache', $this->cache);
+        Cache::getConfig('orm_cache', $this->cache);
 
         $ds = ConnectionManager::get('test');
         $ds->cacheMetadata('orm_cache');
