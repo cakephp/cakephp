@@ -375,12 +375,16 @@ class ConsoleOptionParserTest extends TestCase
      * test parsing short options that do not exist.
      *
      * @expectedException \Cake\Console\Exception\ConsoleException
+     * @expectedExceptionMessageRegexp /Unknown short option `f`.\n\nAvailable short options are :\n\n
+     * - `n` (short for `--no-commit`)\n - `c` (short for `--clear`)/
      * @return void
      */
     public function testShortOptionThatDoesNotExist()
     {
         $parser = new ConsoleOptionParser('test', false);
-        $parser->addOption('no-commit', ['boolean' => true]);
+        $parser->addOption('no-commit', ['boolean' => true, 'short' => 'n']);
+        $parser->addOption('construct', ['boolean' => true]);
+        $parser->addOption('clear', ['boolean' => true, 'short' => 'c']);
 
         $parser->parse(['-f']);
     }

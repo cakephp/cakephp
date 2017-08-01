@@ -848,6 +848,27 @@ class ConsoleOptionParser
     }
 
     /**
+     * Get the message output in the console stating that the short option can not be found. Output a list of available 
+     * short options and what option they refer to as well.
+     *
+     * @param string $option Unknown short option name trying to be used.
+     * @return string The message to be displayed in the console.
+     */
+    protected function getShortOptionError($option)
+    {
+        $out = [sprintf('Unknown short option `%s`', $option)];
+        $out[] = '';
+        $out[] = 'Available short options are :';
+        $out[] = '';
+
+        foreach ($this->_shortOptions as $short => $long) {
+            $out[] = sprintf(' - `%s` (short for `--%s`)', $short, $long);
+        }
+
+        return implode("\n", $out);
+    }
+
+    /**
      * Tries to guess the item name the user originally wanted using the levenshtein algorithm.
      *
      * @param string $needle Unknown item (either a subcommand name or an option for instance) trying to be used.
@@ -919,7 +940,7 @@ class ConsoleOptionParser
             }
         }
         if (!isset($this->_shortOptions[$key])) {
-            throw new ConsoleException(sprintf('Unknown short option `%s`', $key));
+            throw new ConsoleException($this->getShortOptionError($key));
         }
         $name = $this->_shortOptions[$key];
 
