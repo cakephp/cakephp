@@ -825,7 +825,7 @@ class ConsoleOptionParser
      * @param string $option Unknown option name trying to be used.
      * @return string The message to be displayed in the console.
      */
-    public function getOptionError($option)
+    protected function getOptionError($option)
     {
         $availableOptions = array_keys($this->_options);
         $bestGuess = $this->findClosestItem($option, $availableOptions);

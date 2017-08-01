@@ -359,6 +359,8 @@ class ConsoleOptionParserTest extends TestCase
      * test parsing options that do not exist.
      *
      * @expectedException \Cake\Console\Exception\ConsoleException
+     * @expectedExceptionMessageRegexp /Unknown option `fail`.\n\nDid you mean `help` \?\n\nAvailable options are :\n\n
+     * - help\n - no-commit/
      * @return void
      */
     public function testOptionThatDoesNotExist()
