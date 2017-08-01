@@ -37,7 +37,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     /**
      * Connection instance to be used to execute this query.
      *
-     * @var \Cake\Datasource\ConnectionInterface
+     * @var \Cake\Database\Connection
      */
     protected $_connection;
 
@@ -139,7 +139,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     /**
      * Constructor.
      *
-     * @param \Cake\Datasource\ConnectionInterface $connection The connection
+     * @param \Cake\Database\Connection $connection The connection
      * object to be used for transforming and executing this query
      */
     public function __construct($connection)
@@ -150,7 +150,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     /**
      * Sets the connection instance to be used for executing and transforming this query.
      *
-     * @param \Cake\Datasource\ConnectionInterface $connection Connection instance
+     * @param \Cake\Database\Connection $connection Connection instance
      * @return $this
      */
     public function setConnection($connection)
@@ -164,7 +164,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     /**
      * Gets the connection instance to be used for executing and transforming this query.
      *
-     * @return \Cake\Datasource\ConnectionInterface
+     * @return \Cake\Database\Connection
      */
     public function getConnection()
     {
@@ -176,8 +176,8 @@ class Query implements ExpressionInterface, IteratorAggregate
      * When called with a null argument, it will return the current connection instance.
      *
      * @deprecated 3.4.0 Use setConnection()/getConnection() instead.
-     * @param \Cake\Datasource\ConnectionInterface|null $connection Connection instance
-     * @return $this|\Cake\Datasource\ConnectionInterface
+     * @param \Cake\Database\Connection|null $connection Connection instance
+     * @return $this|\Cake\Database\Connection
      */
     public function connection($connection = null)
     {
@@ -211,7 +211,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function execute()
     {
         $statement = $this->_connection->run($this);
-        $driver = $this->_connection->driver();
+        $driver = $this->_connection->getDriver();
         $typeMap = $this->getSelectTypeMap();
 
         if ($typeMap->toArray() && $this->_typeCastAttached === false) {
@@ -275,7 +275,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function sql(ValueBinder $generator = null)
     {
         if (!$generator) {
-            $generator = $this->valueBinder();
+            $generator = $this->getValueBinder();
             $generator->resetCount();
         }
 
@@ -342,7 +342,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * ```
      *
      * By default no fields are selected, if you have an instance of `Cake\ORM\Query` and try to append
-     * fields you should also call `Cake\ORM\Query::autoFields()` to select the default fields
+     * fields you should also call `Cake\ORM\Query::enableAutoFields()` to select the default fields
      * from the table.
      *
      * @param array|\Cake\Database\ExpressionInterface|string|callable $fields fields to be added to the list.
@@ -995,6 +995,8 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @see \Cake\Database\Query::where()
      * @see \Cake\Database\Type
      * @return $this
+     * @deprecated 3.5.0 This method creates hard to predict SQL based on the current query state.
+     *   Use `Query::where()` instead as it has more predicatable and easier to understand behavior.
      */
     public function orWhere($conditions, $types = [])
     {
@@ -1210,6 +1212,8 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @param array $types associative array of type names used to bind values to query.
      * @see \Cake\Database\Query::orWhere()
      * @return $this
+     * @deprecated 3.5.0 This method creates hard to predict SQL based on the current query state.
+     *   Use `Query::having()` instead as it has more predicatable and easier to understand behavior.
      */
     public function orHaving($conditions, $types = [])
     {
@@ -1807,9 +1811,27 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function bind($param, $value, $type = 'string')
     {
-        $this->valueBinder()->bind($param, $value, $type);
+        $this->getValueBinder()->bind($param, $value, $type);
 
         return $this;
+    }
+
+    /**
+     * Returns the currently used ValueBinder instance.
+     *
+     * A ValueBinder is responsible for generating query placeholders and temporarily
+     * associate values to those placeholders so that they can be passed correctly
+     * to the statement object.
+     *
+     * @return \Cake\Database\ValueBinder
+     */
+    public function getValueBinder()
+    {
+        if ($this->_valueBinder === null) {
+            $this->_valueBinder = new ValueBinder();
+        }
+
+        return $this->_valueBinder;
     }
 
     /**
@@ -1818,8 +1840,9 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * A ValueBinder is responsible for generating query placeholders and temporarily
      * associate values to those placeholders so that they can be passed correctly
-     * statement object.
+     * to the statement object.
      *
+     * @deprecated 3.5.0 Use getValueBinder() for the getter part instead.
      * @param \Cake\Database\ValueBinder|null $binder new instance to be set. If no value is passed the
      *   default one will be returned
      * @return $this|\Cake\Database\ValueBinder
@@ -1959,7 +1982,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     protected function _decorateStatement($statement)
     {
         foreach ($this->_resultDecorators as $f) {
-            $statement = new CallbackStatement($statement, $this->getConnection()->driver(), $f);
+            $statement = new CallbackStatement($statement, $this->getConnection()->getDriver(), $f);
         }
 
         return $statement;
@@ -2010,7 +2033,7 @@ class Query implements ExpressionInterface, IteratorAggregate
         $this->_dirty = true;
 
         if ($this->_iterator && $this->_valueBinder) {
-            $this->valueBinder()->reset();
+            $this->getValueBinder()->reset();
         }
     }
 
@@ -2071,7 +2094,7 @@ class Query implements ExpressionInterface, IteratorAggregate
                 throw new RuntimeException($errstr, $errno);
             }, E_ALL);
             $sql = $this->sql();
-            $params = $this->valueBinder()->bindings();
+            $params = $this->getValueBinder()->bindings();
         } catch (RuntimeException $e) {
             $sql = 'SQL could not be generated for this query as it is incomplete.';
             $params = [];

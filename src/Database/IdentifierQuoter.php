@@ -52,7 +52,7 @@ class IdentifierQuoter
      */
     public function quote(Query $query)
     {
-        $binder = $query->valueBinder();
+        $binder = $query->getValueBinder();
         $query->valueBinder(false);
 
         if ($query->type() === 'insert') {

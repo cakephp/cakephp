@@ -313,9 +313,33 @@ class Security
     }
 
     /**
+     * Gets the HMAC salt to be used for encryption/decryption
+     * routines.
+     *
+     * @return string The currently configured salt
+     */
+    public static function getSalt()
+    {
+        return static::$_salt;
+    }
+
+    /**
+     * Sets the HMAC salt to be used for encryption/decryption
+     * routines.
+     *
+     * @param string $salt The salt to use for encryption routines.
+     * @return void
+     */
+    public static function setSalt($salt)
+    {
+        static::$_salt = (string)$salt;
+    }
+
+    /**
      * Gets or sets the HMAC salt to be used for encryption/decryption
      * routines.
      *
+     * @deprecated 3.5.0 Use getSalt()/setSalt() instead.
      * @param string|null $salt The salt to use for encryption routines. If null returns current salt.
      * @return string The currently configured salt
      */

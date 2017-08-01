@@ -42,7 +42,7 @@ class PersistenceFailedException extends Exception
      * @param int $code The code of the error, is also the HTTP status code for the error.
      * @param \Exception|null $previous the previous exception.
      */
-    public function __construct(EntityInterface $entity, $message, $code = 500, $previous = null)
+    public function __construct(EntityInterface $entity, $message, $code = null, $previous = null)
     {
         $this->_entity = $entity;
         parent::__construct($message, $code, $previous);

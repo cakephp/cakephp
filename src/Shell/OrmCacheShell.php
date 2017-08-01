@@ -14,9 +14,9 @@
  */
 namespace Cake\Shell;
 
-use Cake\Cache\Cache;
 use Cake\Console\Shell;
-use Cake\Datasource\ConnectionManager;
+use Cake\Orm\OrmCache;
+use RuntimeException;
 
 /**
  * ORM Cache Shell.
@@ -31,6 +31,13 @@ class OrmCacheShell extends Shell
 {
 
     /**
+     * ORM Cache
+     *
+     * @var \Cake\ORM\OrmCache
+     */
+    protected $_ormCache;
+
+    /**
      * Build metadata.
      *
      * @param string|null $name The name of the table to build cache data for.
@@ -38,18 +45,9 @@ class OrmCacheShell extends Shell
      */
     public function build($name = null)
     {
-        $schema = $this->_getSchema();
-        if (!$schema) {
-            return false;
-        }
-        $tables = [$name];
-        if (empty($name)) {
-            $tables = $schema->listTables();
-        }
-        foreach ($tables as $table) {
-            $this->_io->verbose('Building metadata cache for ' . $table);
-            $schema->describe($table, ['forceRefresh' => true]);
-        }
+        $cache = $this->_getOrmCache();
+        $cache->build($name);
+
         $this->out('<success>Cache build complete</success>');
 
         return true;
@@ -63,56 +61,26 @@ class OrmCacheShell extends Shell
      */
     public function clear($name = null)
     {
-        $schema = $this->_getSchema();
-        if (!$schema) {
-            return false;
-        }
-        $tables = [$name];
-        if (empty($name)) {
-            $tables = $schema->listTables();
-        }
-        $configName = $schema->getCacheMetadata();
+        $cache = $this->_getOrmCache();
+        $cache->clear($name);
 
-        foreach ($tables as $table) {
-            $this->_io->verbose(sprintf(
-                'Clearing metadata cache from "%s" for %s',
-                $configName,
-                $table
-            ));
-            $key = $schema->cacheKey($table);
-            Cache::delete($key, $configName);
-        }
         $this->out('<success>Cache clear complete</success>');
 
         return true;
     }
 
     /**
-     * Helper method to get the schema collection.
+     * Gets the ORM Cache instance
      *
-     * @return false|\Cake\Database\Schema\Collection|\Cake\Database\Schema\CachedCollection
+     * @return \Cake\ORM\OrmCache
      */
-    protected function _getSchema()
+    protected function _getOrmCache()
     {
-        /* @var \Cake\Database\Connection $source */
-        $source = ConnectionManager::get($this->params['connection']);
-        if (!method_exists($source, 'schemaCollection')) {
-            $msg = sprintf(
-                'The "%s" connection is not compatible with orm caching, ' .
-                'as it does not implement a "schemaCollection()" method.',
-                $this->params['connection']
-            );
-            $this->abort($msg);
-
-            return false;
+        try {
+            return new OrmCache($this->params['connection']);
+        } catch (RuntimeException $e) {
+            $this->abort($e->getMessage());
         }
-        $config = $source->config();
-        if (empty($config['cacheMetadata'])) {
-            $this->_io->verbose('Metadata cache was disabled in config. Enabling to clear cache.');
-            $source->cacheMetadata(true);
-        }
-
-        return $source->getSchemaCollection();
     }
 
     /**

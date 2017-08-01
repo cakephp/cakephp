@@ -651,8 +651,36 @@ class Debugger
     }
 
     /**
+     * Get the output format for Debugger error rendering.
+     *
+     * @return string Returns the current format when getting.
+     */
+    public static function getOutputFormat()
+    {
+        return Debugger::getInstance()->_outputFormat;
+    }
+
+    /**
+     * Set the output format for Debugger error rendering.
+     *
+     * @param string $format The format you want errors to be output as.
+     * @return void
+     * @throws \InvalidArgumentException When choosing a format that doesn't exist.
+     */
+    public static function setOutputFormat($format)
+    {
+        $self = Debugger::getInstance();
+
+        if (!isset($self->_templates[$format])) {
+            throw new InvalidArgumentException('Invalid Debugger output format.');
+        }
+        $self->_outputFormat = $format;
+    }
+
+    /**
      * Get/Set the output format for Debugger error rendering.
      *
+     * @deprecated 3.5.0 Use getOutputFormat()/setOutputFormat() instead.
      * @param string|null $format The format you want errors to be output as.
      *   Leave null to get the current format.
      * @return string|null Returns null when setting. Returns the current format when getting.
@@ -928,7 +956,7 @@ TEXT;
      */
     public static function checkSecurityKeys()
     {
-        if (Security::salt() === '__SALT__') {
+        if (Security::getSalt() === '__SALT__') {
             trigger_error(sprintf('Please change the value of %s in %s to a salt value specific to your application.', '\'Security.salt\'', 'ROOT/config/app.php'), E_USER_NOTICE);
         }
     }

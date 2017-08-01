@@ -373,7 +373,7 @@ class BelongsToTest extends TestCase
         $listener = $this->getMockBuilder('stdClass')
             ->setMethods(['__invoke'])
             ->getMock();
-        $this->company->eventManager()->attach($listener, 'Model.beforeFind');
+        $this->company->getEventManager()->attach($listener, 'Model.beforeFind');
         $association = new BelongsTo('Companies', $config);
         $listener->expects($this->once())->method('__invoke')
             ->with(
@@ -401,7 +401,7 @@ class BelongsToTest extends TestCase
         $listener = $this->getMockBuilder('stdClass')
             ->setMethods(['__invoke'])
             ->getMock();
-        $this->company->eventManager()->attach($listener, 'Model.beforeFind');
+        $this->company->getEventManager()->attach($listener, 'Model.beforeFind');
         $association = new BelongsTo('Companies', $config);
         $options = new \ArrayObject(['something' => 'more']);
         $listener->expects($this->once())->method('__invoke')

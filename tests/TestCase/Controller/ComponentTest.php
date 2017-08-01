@@ -80,7 +80,7 @@ class ComponentTest extends TestCase
     {
         $mock = $this->getMockBuilder(EventManager::class)->getMock();
         $controller = new Controller();
-        $controller->eventManager($mock);
+        $controller->setEventManager($mock);
 
         $mock->expects($this->once())
             ->method('on')
@@ -242,7 +242,7 @@ class ComponentTest extends TestCase
             ->with($this->isInstanceOf(AppleComponent::class));
 
         $controller = new Controller();
-        $controller->eventManager($eventManager);
+        $controller->setEventManager($eventManager);
 
         $Collection = new ComponentRegistry($controller);
 
@@ -261,7 +261,7 @@ class ComponentTest extends TestCase
         $eventManager->expects($this->never())->method('on');
 
         $controller = new Controller();
-        $controller->eventManager($eventManager);
+        $controller->setEventManager($eventManager);
 
         $Collection = new ComponentRegistry($controller);
 

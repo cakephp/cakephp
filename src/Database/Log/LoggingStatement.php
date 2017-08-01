@@ -81,7 +81,7 @@ class LoggingStatement extends StatementDecorator
         $query->took = round((microtime(true) - $startTime) * 1000, 0);
         $query->params = $params ?: $this->_compiledParams;
         $query->query = $this->queryString;
-        $this->logger()->log($query);
+        $this->getLogger()->log($query);
     }
 
     /**
@@ -109,15 +109,37 @@ class LoggingStatement extends StatementDecorator
      * Sets the logger object instance. When called with no arguments
      * it returns the currently setup logger instance
      *
+     * @deprecated 3.5.0 Use getLogger() and setLogger() instead.
      * @param object|null $instance Logger object instance.
      * @return object|null Logger instance
      */
     public function logger($instance = null)
     {
         if ($instance === null) {
-            return $this->_logger;
+            return $this->getLogger();
         }
 
         return $this->_logger = $instance;
+    }
+
+    /**
+     * Sets a logger
+     *
+     * @param object $logger Logger object
+     * @return void
+     */
+    public function setLogger($logger)
+    {
+        $this->_logger = $logger;
+    }
+
+    /**
+     * Gets the logger object
+     *
+     * @return object logger instance
+     */
+    public function getLogger()
+    {
+        return $this->_logger;
     }
 }

@@ -99,7 +99,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     public function __construct(Table $table, array $config = [])
     {
         $config += [
-            'defaultLocale' => I18n::defaultLocale(),
+            'defaultLocale' => I18n::getDefaultLocale(),
             'referenceName' => $this->_referenceName($table)
         ];
 
@@ -118,7 +118,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      */
     public function initialize(array $config)
     {
-        $this->_translationTable = $this->tableLocator()->get($this->_config['translationTable']);
+        $this->_translationTable = $this->getTableLocator()->get($this->_config['translationTable']);
 
         $this->setupFieldAssociations(
             $this->_config['fields'],
@@ -147,7 +147,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
         $targetAlias = $this->_translationTable->getAlias();
         $alias = $this->_table->getAlias();
         $filter = $this->_config['onlyTranslated'];
-        $tableLocator = $this->tableLocator();
+        $tableLocator = $this->getTableLocator();
 
         foreach ($fields as $field) {
             $name = $alias . '_' . $field . '_translation';
@@ -328,6 +328,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
                 'model' => $model
             ])
             ->enableBufferedResults(false)
+            ->all()
             ->indexBy('field');
 
         $modified = [];
@@ -417,7 +418,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     public function locale($locale = null)
     {
         if ($locale === null) {
-            return $this->_locale ?: I18n::locale();
+            return $this->_locale ?: I18n::getLocale();
         }
 
         return $this->_locale = (string)$locale;
@@ -602,7 +603,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     {
         $translations = (array)$entity->get('_translations');
 
-        if (empty($translations) && !$entity->dirty('_translations')) {
+        if (empty($translations) && !$entity->isDirty('_translations')) {
             return;
         }
 
@@ -704,6 +705,6 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
             $query->unionAll($q);
         }
 
-        return $query->combine('num', 'id')->toArray();
+        return $query->all()->combine('num', 'id')->toArray();
     }
 }

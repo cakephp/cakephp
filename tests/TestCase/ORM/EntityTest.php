@@ -531,9 +531,9 @@ class EntityTest extends TestCase
     public function testUnsetMakesClean()
     {
         $entity = new Entity(['id' => 1, 'name' => 'bar']);
-        $this->assertTrue($entity->dirty('name'));
+        $this->assertTrue($entity->isDirty('name'));
         $entity->unsetProperty('name');
-        $this->assertFalse($entity->dirty('name'), 'Removed properties are not dirty.');
+        $this->assertFalse($entity->isDirty('name'), 'Removed properties are not dirty.');
     }
 
     /**
@@ -873,14 +873,14 @@ class EntityTest extends TestCase
             'title' => 'Foo',
             'author_id' => 3
         ]);
-        $this->assertTrue($entity->dirty('id'));
-        $this->assertTrue($entity->dirty('title'));
-        $this->assertTrue($entity->dirty('author_id'));
+        $this->assertTrue($entity->isDirty('id'));
+        $this->assertTrue($entity->isDirty('title'));
+        $this->assertTrue($entity->isDirty('author_id'));
 
         $entity->clean();
-        $this->assertFalse($entity->dirty('id'));
-        $this->assertFalse($entity->dirty('title'));
-        $this->assertFalse($entity->dirty('author_id'));
+        $this->assertFalse($entity->isDirty('id'));
+        $this->assertFalse($entity->isDirty('title'));
+        $this->assertFalse($entity->isDirty('author_id'));
     }
 
     /**
@@ -1472,7 +1472,7 @@ class EntityTest extends TestCase
         $entity->accessible('id', false);
         $entity->accessible('name', true);
         $entity->virtualProperties(['baz']);
-        $entity->dirty('foo', true);
+        $entity->setDirty('foo', true);
         $entity->errors('foo', ['An error']);
         $entity->invalid('foo', 'a value');
         $entity->source('foos');
@@ -1572,5 +1572,71 @@ class EntityTest extends TestCase
         $this->assertTrue($cloned->dirty());
         $this->assertTrue($cloned->dirty('a'));
         $this->assertTrue($cloned->dirty('b'));
+    }
+
+    /**
+     * Tests getInvalid and setInvalid
+     *
+     * @return void
+     */
+    public function testGetSetInvalid()
+    {
+        $entity = new Entity();
+        $return = $entity->setInvalid([
+            'title' => 'albert',
+            'body' => 'einstein'
+        ]);
+        $this->assertSame($entity, $return);
+        $this->assertSame([
+            'title' => 'albert',
+            'body' => 'einstein'
+        ], $entity->getInvalid());
+
+        $set = $entity->setInvalid([
+            'title' => 'nikola',
+            'body' => 'tesla'
+        ]);
+        $this->assertSame([
+            'title' => 'albert',
+            'body' => 'einstein'
+        ], $set->getInvalid());
+
+        $overwrite = $entity->setInvalid([
+            'title' => 'nikola',
+            'body' => 'tesla'
+        ], true);
+        $this->assertSame($entity, $overwrite);
+        $this->assertSame([
+            'title' => 'nikola',
+            'body' => 'tesla'
+        ], $entity->getInvalid());
+    }
+
+    /**
+     * Tests getInvalidField
+     *
+     * @return void
+     */
+    public function testGetSetInvalidField()
+    {
+        $entity = new Entity();
+        $return = $entity->setInvalidField('title', 'albert');
+        $this->assertSame($entity, $return);
+        $this->assertSame('albert', $entity->getInvalidField('title'));
+
+        $overwrite = $entity->setInvalidField('title', 'nikola');
+        $this->assertSame($entity, $overwrite);
+        $this->assertSame('nikola', $entity->getInvalidField('title'));
+    }
+
+    /**
+     * Tests getInvalidFieldNull
+     *
+     * @return void
+     */
+    public function testGetInvalidFieldNull()
+    {
+        $entity = new Entity();
+        $this->assertNull($entity->getInvalidField('foo'));
     }
 }

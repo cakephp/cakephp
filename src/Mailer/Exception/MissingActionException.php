@@ -28,8 +28,5 @@ class MissingActionException extends Exception
     /**
      * {@inheritDoc}
      */
-    public function __construct($message, $code = 404)
-    {
-        parent::__construct($message, $code);
-    }
+    protected $_defaultCode = 404;
 }

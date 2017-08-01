@@ -29,6 +29,8 @@ class DatatypesFixture extends TestFixture
         'id' => ['type' => 'biginteger'],
         'cost' => ['type' => 'decimal', 'length' => 20, 'precision' => 0, 'null' => true],
         'floaty' => ['type' => 'float', 'null' => true],
+        'small' => ['type' => 'smallinteger', 'null' => true],
+        'tiny' => ['type' => 'tinyinteger', 'null' => true],
         '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
     ];
 

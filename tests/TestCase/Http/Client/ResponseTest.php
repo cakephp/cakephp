@@ -13,7 +13,10 @@
  */
 namespace Cake\Test\TestCase\Http\Client;
 
+use Cake\Chronos\Chronos;
 use Cake\Http\Client\Response;
+use Cake\Http\Cookie\Cookie;
+use Cake\Http\Cookie\CookieCollection;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -330,6 +333,29 @@ XML;
         $this->assertArrayHasKey('test', $result);
         $this->assertArrayHasKey('session', $result);
         $this->assertArrayHasKey('expiring', $result);
+    }
+
+    /**
+     * Test accessing cookie collection
+     *
+     * @return void
+     */
+    public function testGetCookieCollection()
+    {
+        $headers = [
+            'HTTP/1.0 200 Ok',
+            'Set-Cookie: test=value',
+            'Set-Cookie: session=123abc',
+            'Set-Cookie: expiring=soon; Expires=Wed, 09-Jun-2021 10:18:14 GMT; Path=/; HttpOnly; Secure;',
+        ];
+        $response = new Response($headers, '');
+
+        $cookies = $response->getCookieCollection();
+        $this->assertInstanceOf(CookieCollection::class, $cookies);
+        $this->assertTrue($cookies->has('test'));
+        $this->assertTrue($cookies->has('session'));
+        $this->assertTrue($cookies->has('expiring'));
+        $this->assertSame('123abc', $cookies->get('session')->getValue());
     }
 
     /**

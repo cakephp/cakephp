@@ -47,7 +47,7 @@ use RuntimeException;
  * ```
  * public function beforeRender(\Cake\Event\Event $event)
  * {
- *      $this->viewBuilder()->theme('SuperHot');
+ *      $this->viewBuilder()->setTheme('SuperHot');
  * }
  * ```
  *
@@ -337,17 +337,19 @@ class View implements EventDispatcherInterface
         array $viewOptions = []
     ) {
         if (isset($viewOptions['view'])) {
-            $this->template($viewOptions['view']);
+            $this->setTemplate($viewOptions['view']);
         }
         if (isset($viewOptions['viewPath'])) {
-            $this->templatePath($viewOptions['viewPath']);
+            $this->setTemplatePath($viewOptions['viewPath']);
         }
         foreach ($this->_passedVars as $var) {
             if (isset($viewOptions[$var])) {
                 $this->{$var} = $viewOptions[$var];
             }
         }
-        $this->eventManager($eventManager);
+        if ($eventManager !== null) {
+            $this->setEventManager($eventManager);
+        }
         $this->request = $request ?: Router::getRequest(true);
         $this->response = $response ?: new Response();
         if (!$this->request) {
@@ -377,8 +379,30 @@ class View implements EventDispatcherInterface
     }
 
     /**
+     * Get path for templates files.
+     *
+     * @return string
+     */
+    public function getTemplatePath()
+    {
+        return $this->templatePath;
+    }
+
+    /**
+     * Set path for templates files.
+     *
+     * @param string $path Path for template files.
+     * @return void
+     */
+    public function setTemplatePath($path)
+    {
+        $this->templatePath = $path;
+    }
+
+    /**
      * Get/set path for templates files.
      *
+     * @deprecated 3.5.0 Use getTemplatePath()/setTemplatePath() instead.
      * @param string|null $path Path for template files. If null returns current path.
      * @return string|null
      */
@@ -392,8 +416,30 @@ class View implements EventDispatcherInterface
     }
 
     /**
+     * Get path for layout files.
+     *
+     * @return string
+     */
+    public function getLayoutPath()
+    {
+        return $this->layoutPath;
+    }
+
+    /**
+     * Set path for layout files.
+     *
+     * @param string $path Path for layout files.
+     * @return void
+     */
+    public function setLayoutPath($path)
+    {
+        $this->layoutPath = $path;
+    }
+
+    /**
      * Get/set path for layout files.
      *
+     * @deprecated 3.5.0 Use getLayoutPath()/setLayoutPath() instead.
      * @param string|null $path Path for layout files. If null returns current path.
      * @return string|null
      */
@@ -407,10 +453,35 @@ class View implements EventDispatcherInterface
     }
 
     /**
+     * Returns if CakePHP's conventional mode of applying layout files is enabled.
+     * Disabled means that layouts will not be automatically applied to rendered views.
+     *
+     * @return bool
+     */
+    public function isAutoLayoutEnabled()
+    {
+        return $this->autoLayout;
+    }
+
+    /**
+     * Turns on or off CakePHP's conventional mode of applying layout files.
+     * On by default. Setting to off means that layouts will not be
+     * automatically applied to rendered views.
+     *
+     * @param bool $enable Boolean to turn on/off.
+     * @return void
+     */
+    public function enableAutoLayout($enable = true)
+    {
+        $this->autoLayout = (bool)$enable;
+    }
+
+    /**
      * Turns on or off CakePHP's conventional mode of applying layout files.
      * On by default. Setting to off means that layouts will not be
      * automatically applied to rendered templates.
      *
+     * @deprecated 3.5.0 Use isAutoLayoutEnabled()/enableAutoLayout() instead.
      * @param bool|null $autoLayout Boolean to turn on/off. If null returns current value.
      * @return bool|null
      */
@@ -424,8 +495,30 @@ class View implements EventDispatcherInterface
     }
 
     /**
+     * Get the current view theme.
+     *
+     * @return string
+     */
+    public function getTheme()
+    {
+        return $this->theme;
+    }
+
+    /**
+     * Set the view theme to use.
+     *
+     * @param string $theme Theme name.
+     * @return void
+     */
+    public function setTheme($theme)
+    {
+        $this->theme = $theme;
+    }
+
+    /**
      * The view theme to use.
      *
+     * @deprecated 3.5.0 Use getTheme()/setTheme() instead.
      * @param string|null $theme Theme name. If null returns current theme.
      * @return string|null
      */
@@ -439,9 +532,33 @@ class View implements EventDispatcherInterface
     }
 
     /**
+     * Get the name of the template file to render. The name specified is the
+     * filename in /src/Template/<SubFolder> without the .ctp extension.
+     *
+     * @return string
+     */
+    public function getTemplate()
+    {
+        return $this->template;
+    }
+
+    /**
+     * Set the name of the template file to render. The name specified is the
+     * filename in /src/Template/<SubFolder> without the .ctp extension.
+     *
+     * @param string $name Template file name to set.
+     * @return void
+     */
+    public function setTemplate($name)
+    {
+        $this->template = $name;
+    }
+
+    /**
      * Get/set the name of the template file to render. The name specified is the
      * filename in /src/Template/<SubFolder> without the .ctp extension.
      *
+     * @deprecated 3.5.0 Use getTemplate()/setTemplate() instead.
      * @param string|null $name Template file name to set. If null returns current name.
      * @return string|null
      */
@@ -455,10 +572,36 @@ class View implements EventDispatcherInterface
     }
 
     /**
+     * Get the name of the layout file to render the template inside of.
+     * The name specified is the filename of the layout in /src/Template/Layout
+     * without the .ctp extension.
+     *
+     * @return string
+     */
+    public function getLayout()
+    {
+        return $this->layout;
+    }
+
+    /**
+     * Set the name of the layout file to render the template inside of.
+     * The name specified is the filename of the layout in /src/Template/Layout
+     * without the .ctp extension.
+     *
+     * @param string $name Layout file name to set.
+     * @return void
+     */
+    public function setLayout($name)
+    {
+        $this->layout = $name;
+    }
+
+    /**
      * Get/set the name of the layout file to render the template inside of.
      * The name specified is the filename of the layout in /src/Template/Layout
      * without the .ctp extension.
      *
+     * @deprecated 3.5.0 Use getLayout()/setLayout() instead.
      * @param string|null $name Layout file name to set. If null returns current name.
      * @return string|null
      */

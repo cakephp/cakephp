@@ -37,6 +37,7 @@ use Cake\ORM\Exception\PersistenceFailedException;
 use Cake\ORM\Exception\RolledbackTransactionException;
 use Cake\ORM\Rule\IsUnique;
 use Cake\Utility\Inflector;
+use Cake\Validation\ValidatorAwareInterface;
 use Cake\Validation\ValidatorAwareTrait;
 use InvalidArgumentException;
 use RuntimeException;
@@ -123,7 +124,7 @@ use RuntimeException;
  *
  * @see \Cake\Event\EventManager for reference on the events system.
  */
-class Table implements RepositoryInterface, EventListenerInterface, EventDispatcherInterface
+class Table implements RepositoryInterface, EventListenerInterface, EventDispatcherInterface, ValidatorAwareInterface
 {
 
     use EventDispatcherTrait;
@@ -131,18 +132,18 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     use ValidatorAwareTrait;
 
     /**
-     * Name of default validation set.
-     *
-     * @var string
-     */
-    const DEFAULT_VALIDATOR = 'default';
-
-    /**
      * The alias this object is assigned to validators as.
      *
      * @var string
      */
     const VALIDATOR_PROVIDER_NAME = 'table';
+
+    /**
+     * The name of the event dispatched when a validator has been built.
+     *
+     * @var string
+     */
+    const BUILD_VALIDATOR_EVENT = 'Model.buildValidator';
 
     /**
      * The rules class name that is used.
@@ -169,7 +170,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Connection instance
      *
-     * @var \Cake\Datasource\ConnectionInterface
+     * @var \Cake\Database\Connection
      */
     protected $_connection;
 
@@ -275,10 +276,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
         if (!empty($config['validator'])) {
             if (!is_array($config['validator'])) {
-                $this->validator(static::DEFAULT_VALIDATOR, $config['validator']);
+                $this->setValidator(static::DEFAULT_VALIDATOR, $config['validator']);
             } else {
                 foreach ($config['validator'] as $name => $validator) {
-                    $this->validator($name, $validator);
+                    $this->setValidator($name, $validator);
                 }
             }
         }
@@ -494,7 +495,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Returns the connection instance.
      *
-     * @return \Cake\Datasource\ConnectionInterface
+     * @return \Cake\Database\Connection
      */
     public function getConnection()
     {
@@ -599,7 +600,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * ```
      * protected function _initializeSchema(\Cake\Database\Schema\TableSchema $schema) {
-     *  $schema->columnType('preferences', 'json');
+     *  $schema->setColumnType('preferences', 'json');
      *  return $schema;
      * }
      * ```
@@ -625,7 +626,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         $schema = $this->getSchema();
 
-        return $schema->column($field) !== null;
+        return $schema->getColumn($field) !== null;
     }
 
     /**
@@ -699,10 +700,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $schema = $this->getSchema();
             $primary = (array)$this->getPrimaryKey();
             $this->_displayField = array_shift($primary);
-            if ($schema->column('title')) {
+            if ($schema->getColumn('title')) {
                 $this->_displayField = 'title';
             }
-            if ($schema->column('name')) {
+            if ($schema->getColumn('name')) {
                 $this->_displayField = 'name';
             }
         }
@@ -816,13 +817,15 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param string $name The name of the behavior. Can be a short class reference.
      * @param array $options The options for the behavior to use.
-     * @return void
+     * @return $this
      * @throws \RuntimeException If a behavior is being reloaded.
      * @see \Cake\ORM\Behavior
      */
     public function addBehavior($name, array $options = [])
     {
         $this->_behaviors->load($name, $options);
+
+        return $this;
     }
 
     /**
@@ -837,12 +840,14 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * ```
      *
      * @param string $name The alias that the behavior was added with.
-     * @return void
+     * @return $this
      * @see \Cake\ORM\Behavior
      */
     public function removeBehavior($name)
     {
         $this->_behaviors->unload($name);
+
+        return $this;
     }
 
     /**
@@ -908,7 +913,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * keys are used the values will be treated as association aliases.
      *
      * @param array $params Set of associations to bind (indexed by association type)
-     * @return void
+     * @return $this
      * @see \Cake\ORM\Table::belongsTo()
      * @see \Cake\ORM\Table::hasOne()
      * @see \Cake\ORM\Table::hasMany()
@@ -925,6 +930,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 $this->{$assocType}($associated, $options);
             }
         }
+
+        return $this;
     }
 
     /**
@@ -1711,11 +1718,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             '_primary' => true
         ]);
 
-        if ($entity->errors()) {
+        if ($entity->getErrors()) {
             return false;
         }
 
-        if ($entity->isNew() === false && !$entity->dirty()) {
+        if ($entity->isNew() === false && !$entity->isDirty()) {
             return $entity;
         }
 
@@ -1730,7 +1737,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             if ($options['atomic'] || $options['_primary']) {
                 $entity->clean();
                 $entity->isNew(false);
-                $entity->source($this->getRegistryAlias());
+                $entity->setSource($this->getRegistryAlias());
             }
         }
 
@@ -1856,7 +1863,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if (!$options['atomic'] && !$options['_primary']) {
             $entity->clean();
             $entity->isNew(false);
-            $entity->source($this->getRegistryAlias());
+            $entity->setSource($this->getRegistryAlias());
         }
 
         return true;
@@ -1894,7 +1901,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if (count($primary) > 1) {
             $schema = $this->getSchema();
             foreach ($primary as $k => $v) {
-                if (!isset($data[$k]) && empty($schema->column($k)['autoIncrement'])) {
+                if (!isset($data[$k]) && empty($schema->getColumn($k)['autoIncrement'])) {
                     $msg = 'Cannot insert row, some of the primary key values are missing. ';
                     $msg .= sprintf(
                         'Got (%s), expecting (%s)',
@@ -1919,11 +1926,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $success = $entity;
             $entity->set($filteredKeys, ['guard' => false]);
             $schema = $this->getSchema();
-            $driver = $this->getConnection()->driver();
+            $driver = $this->getConnection()->getDriver();
             foreach ($primary as $key => $v) {
                 if (!isset($data[$key])) {
                     $id = $statement->lastInsertId($this->getTable(), $key);
-                    $type = $schema->columnType($key);
+                    $type = $schema->getColumnType($key);
                     $entity->set($key, Type::build($type)->toPHP($id, $driver));
                     break;
                 }
@@ -1941,15 +1948,18 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * value if possible. You can override this method if you have specific requirements
      * for id generation.
      *
+     * Note: The ORM will not generate primary key values for composite primary keys.
+     * You can overwrite _newId() in your table class.
+     *
      * @param array $primary The primary key columns to get a new ID for.
-     * @return mixed Either null or the new primary key value.
+     * @return null|string|array Either null or the primary key value or a list of primary key values.
      */
     protected function _newId($primary)
     {
         if (!$primary || count((array)$primary) > 1) {
             return null;
         }
-        $typeName = $this->getSchema()->columnType($primary[0]);
+        $typeName = $this->getSchema()->getColumnType($primary[0]);
         $type = Type::build($typeName);
 
         return $type->newId();
@@ -2695,6 +2705,14 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function loadInto($entities, array $contain)
     {
         return (new LazyEagerLoader)->loadInto($entities, $contain, $this);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function validationMethodExists($method)
+    {
+        return method_exists($this, $method) || $this->behaviors()->hasMethod($method);
     }
 
     /**

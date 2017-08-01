@@ -75,7 +75,7 @@ class PaginatorHelperTest extends TestCase
         Router::connect('/:controller/:action/*');
         Router::connect('/:plugin/:controller/:action/*');
 
-        $this->locale = I18n::locale();
+        $this->locale = I18n::getLocale();
     }
 
     /**
@@ -88,7 +88,7 @@ class PaginatorHelperTest extends TestCase
         parent::tearDown();
         unset($this->View, $this->Paginator);
 
-        I18n::locale($this->locale);
+        I18n::setLocale($this->locale);
     }
 
     /**
@@ -2616,7 +2616,7 @@ class PaginatorHelperTest extends TestCase
         $result = $this->Paginator->counter($input);
         $this->assertEquals($expected, $result);
 
-        I18n::locale('de-DE');
+        I18n::setLocale('de-DE');
         $expected = 'Page 1.523 of 1.000, showing 1.230 records out of 234.567 total, ';
         $expected .= 'starting on record 4.566.001, ending on 234.567';
         $result = $this->Paginator->counter($input);
@@ -2847,5 +2847,96 @@ class PaginatorHelperTest extends TestCase
         $this->assertNull($result);
 
         $this->assertSame($expected, $this->View->fetch('meta'));
+    }
+
+    /**
+     * test the limitControl() method
+     *
+     * @return void
+     */
+    public function testLimitControl()
+    {
+        $out = $this->Paginator->limitControl([1 => 1]);
+        $expected = [
+            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/']],
+            ['div' => ['class' => 'input select']],
+            ['label' => ['for' => 'limit']],
+            'View',
+            '/label',
+            ['select' => ['name' => 'limit', 'id' => 'limit', 'onChange' => 'this.form.submit()']],
+            ['option' => ['value' => '1']],
+            '1',
+            '/option',
+            '/select',
+            '/div',
+            '/form'
+        ];
+        $this->assertHtml($expected, $out);
+
+        $out = $this->Paginator->limitControl([1 => 1, 5 => 5], null, ['class' => 'form-control']);
+        $expected = [
+            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/']],
+            ['div' => ['class' => 'input select']],
+            ['label' => ['for' => 'limit']],
+            'View',
+            '/label',
+            ['select' => ['name' => 'limit', 'id' => 'limit', 'onChange' => 'this.form.submit()', 'class' => 'form-control']],
+            ['option' => ['value' => '1']],
+            '1',
+            '/option',
+            ['option' => ['value' => '5']],
+            '5',
+            '/option',
+            '/select',
+            '/div',
+            '/form'
+        ];
+        $this->assertHtml($expected, $out);
+
+        $out = $this->Paginator->limitControl([], null, ['class' => 'form-control']);
+        $expected = [
+            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/']],
+            ['div' => ['class' => 'input select']],
+            ['label' => ['for' => 'limit']],
+            'View',
+            '/label',
+            ['select' => ['name' => 'limit', 'id' => 'limit', 'onChange' => 'this.form.submit()', 'class' => 'form-control']],
+            ['option' => ['value' => '20']],
+            '20',
+            '/option',
+            ['option' => ['value' => '50']],
+            '50',
+            '/option',
+            ['option' => ['value' => '100']],
+            '100',
+            '/option',
+            '/select',
+            '/div',
+            '/form'
+        ];
+        $this->assertHtml($expected, $out);
+
+        $out = $this->Paginator->limitControl();
+        $expected = [
+            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/']],
+            ['div' => ['class' => 'input select']],
+            ['label' => ['for' => 'limit']],
+            'View',
+            '/label',
+            ['select' => ['name' => 'limit', 'id' => 'limit', 'onChange' => 'this.form.submit()']],
+            ['option' => ['value' => '20']],
+            '20',
+            '/option',
+            ['option' => ['value' => '50']],
+            '50',
+            '/option',
+            ['option' => ['value' => '100']],
+            '100',
+            '/option',
+            '/select',
+            '/div',
+            '/form'
+        ];
+        $this->assertHtml($expected, $out);
     }
 }

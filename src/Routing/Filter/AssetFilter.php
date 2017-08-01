@@ -133,7 +133,7 @@ class AssetFilter extends DispatcherFilter
         $compressionEnabled = $response->compress();
         if ($response->type($ext) === $ext) {
             $contentType = 'application/octet-stream';
-            $agent = $request->env('HTTP_USER_AGENT');
+            $agent = $request->getEnv('HTTP_USER_AGENT');
             if (preg_match('%Opera(/| )([0-9].[0-9]{1,2})%', $agent) || preg_match('/MSIE ([0-9].[0-9]{1,2})/', $agent)) {
                 $contentType = 'application/octetstream';
             }

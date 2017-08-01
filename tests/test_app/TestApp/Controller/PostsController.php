@@ -41,7 +41,7 @@ class PostsController extends AppController
     public function beforeFilter(Event $event)
     {
         if ($this->request->param('action') !== 'securePost') {
-            $this->eventManager()->off($this->Security);
+            $this->getEventManager()->off($this->Security);
         }
     }
 

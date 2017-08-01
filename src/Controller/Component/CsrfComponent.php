@@ -35,6 +35,8 @@ use Cake\Utility\Security;
  * This component integrates with the FormHelper automatically and when
  * used together your forms will have CSRF tokens automatically added
  * when `$this->Form->create(...)` is used in a view.
+ *
+ * @deprecated 3.5.0 Use Cake\Http\Middleware\CsrfProtectionMiddleware instead.
  */
 class CsrfComponent extends Component
 {

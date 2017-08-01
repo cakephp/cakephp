@@ -50,7 +50,7 @@ class DatabaseSession implements SessionHandlerInterface
      */
     public function __construct(array $config = [])
     {
-        $tableLocator = isset($config['tableLocator']) ? $config['tableLocator'] : TableRegistry::locator();
+        $tableLocator = isset($config['tableLocator']) ? $config['tableLocator'] : TableRegistry::getTableLocator();
 
         if (empty($config['model'])) {
             $config = $tableLocator->exists('Sessions') ? [] : ['table' => 'sessions'];

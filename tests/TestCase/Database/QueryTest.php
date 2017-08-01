@@ -4360,6 +4360,18 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Test getValueBinder()
+     *
+     * @return void
+     */
+    public function testGetValueBinder()
+    {
+        $query = new Query($this->connection);
+
+        $this->assertInstanceOf('\Cake\Database\ValueBinder', $query->getValueBinder());
+    }
+
+    /**
      * Test that reading an undefined clause does not emit an error.
      *
      * @expectedException \InvalidArgumentException

@@ -19,11 +19,13 @@ use Cake\Controller\Component\PaginatorComponent;
 use Cake\Controller\Controller;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
+use Cake\Datasource\Paginator;
 use Cake\Http\ServerRequest;
 use Cake\Network\Exception\NotFoundException;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
+use stdClass;
 
 /**
  * PaginatorTestController class
@@ -37,6 +39,13 @@ class PaginatorTestController extends Controller
      * @var array
      */
     public $components = ['Paginator'];
+}
+
+/**
+ * Custom paginator
+ */
+class CustomPaginator extends Paginator
+{
 }
 
 class PaginatorComponentTest extends TestCase
@@ -73,10 +82,10 @@ class PaginatorComponentTest extends TestCase
         $this->request = new ServerRequest('controller_posts/index');
         $this->request->params['pass'] = [];
         $controller = new Controller($this->request);
-        $registry = new ComponentRegistry($controller);
-        $this->Paginator = new PaginatorComponent($registry, []);
+        $this->registry = new ComponentRegistry($controller);
+        $this->Paginator = new PaginatorComponent($this->registry, []);
 
-        $this->Post = $this->getMockBuilder('Cake\ORM\Table')
+        $this->Post = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')
             ->disableOriginalConstructor()
             ->getMock();
     }
@@ -90,6 +99,41 @@ class PaginatorComponentTest extends TestCase
     {
         parent::tearDown();
         TableRegistry::clear();
+    }
+
+    /**
+     * testPaginatorSetting
+     *
+     * @return void
+     */
+    public function testPaginatorSetting()
+    {
+        $paginator = new CustomPaginator();
+        $component = new PaginatorComponent($this->registry, [
+            'paginator' => $paginator
+        ]);
+
+        $this->assertSame($paginator, $component->getPaginator());
+
+        $component = new PaginatorComponent($this->registry, []);
+        $this->assertNotSame($paginator, $component->getPaginator());
+
+        $component->setPaginator($paginator);
+        $this->assertSame($paginator, $component->getPaginator());
+    }
+
+    /**
+     * Test that an exception is thrown when paginator option is invalid.
+     *
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Paginator must be an instance of Cake\Datasource\Paginator
+     * @return void
+     */
+    public function testInvalidPaginatorOption()
+    {
+        new PaginatorComponent($this->registry, [
+            'paginator' => new stdClass()
+        ]);
     }
 
     /**
@@ -620,7 +664,7 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortInvalidDirection()
     {
-        $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
+        $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')->getMock();
         $model->expects($this->any())
             ->method('alias')
             ->will($this->returnValue('model'));
@@ -681,7 +725,7 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortWhitelistFailure()
     {
-        $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
+        $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')->getMock();
         $model->expects($this->any())
             ->method('alias')
             ->will($this->returnValue('model'));
@@ -704,7 +748,7 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortWhitelistTrusted()
     {
-        $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
+        $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')->getMock();
         $model->expects($this->any())
             ->method('alias')
             ->will($this->returnValue('model'));
@@ -734,7 +778,7 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortWhitelistEmpty()
     {
-        $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
+        $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')->getMock();
         $model->expects($this->any())
             ->method('alias')
             ->will($this->returnValue('model'));
@@ -762,7 +806,7 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortWhitelistNotInSchema()
     {
-        $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
+        $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')->getMock();
         $model->expects($this->any())
             ->method('alias')
             ->will($this->returnValue('model'));
@@ -791,7 +835,7 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortWhitelistMultiple()
     {
-        $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
+        $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')->getMock();
         $model->expects($this->any())
             ->method('alias')
             ->will($this->returnValue('model'));
@@ -822,7 +866,7 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortMultiple()
     {
-        $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
+        $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')->getMock();
         $model->expects($this->any())
             ->method('alias')
             ->will($this->returnValue('model'));
@@ -850,7 +894,7 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortWithString()
     {
-        $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
+        $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')->getMock();
         $model->expects($this->any())
             ->method('alias')
             ->will($this->returnValue('model'));
@@ -872,7 +916,7 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortNoSort()
     {
-        $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
+        $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')->getMock();
         $model->expects($this->any())
             ->method('alias')
             ->will($this->returnValue('model'));
@@ -894,7 +938,7 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortInvalidAlias()
     {
-        $model = $this->getMockBuilder('Cake\ORM\Table')->getMock();
+        $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')->getMock();
         $model->expects($this->any())
             ->method('alias')
             ->will($this->returnValue('model'));

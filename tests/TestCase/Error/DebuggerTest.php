@@ -161,6 +161,28 @@ class DebuggerTest extends TestCase
     }
 
     /**
+     * Test that getOutputFormat/setOutputFormat works.
+     *
+     * @return void
+     */
+    public function testGetSetOutputFormat()
+    {
+        Debugger::setOutputFormat('html');
+        $this->assertEquals('html', Debugger::getOutputFormat());
+    }
+
+    /**
+     * Test that choosing a non-existent format causes an exception
+     *
+     * @expectedException \InvalidArgumentException
+     * @return void
+     */
+    public function testSetOutputAsException()
+    {
+        Debugger::setOutputFormat('Invalid junk');
+    }
+
+    /**
      * Test outputError with description encoding
      *
      * @return void

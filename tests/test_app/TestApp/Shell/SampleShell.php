@@ -46,4 +46,14 @@ class SampleShell extends Shell
     {
         $this->out('This is the example method called from TestPlugin.SampleShell');
     }
+
+    public function withAbort()
+    {
+        $this->abort('Bad things');
+    }
+
+    public function returnValue()
+    {
+        return 99;
+    }
 }

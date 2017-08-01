@@ -20,6 +20,7 @@ use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
 use Cake\Routing\Route\Route;
 use Cake\TestSuite\TestCase;
+use \stdClass;
 
 class RouteCollectionTest extends TestCase
 {
@@ -592,9 +593,10 @@ class RouteCollectionTest extends TestCase
     }
 
     /**
-     * Test basic get/set of extensions.
+     * Test combined get/set method.
      *
      * @return void
+     * @deprecated 3.5.0
      */
     public function testExtensions()
     {
@@ -608,5 +610,108 @@ class RouteCollectionTest extends TestCase
 
         $this->collection->extensions(['csv'], false);
         $this->assertEquals(['csv'], $this->collection->extensions());
+    }
+
+    /**
+     * Test basic setExtension and its getter.
+     *
+     * @return void
+     */
+    public function testSetExtensions()
+    {
+        $this->assertEquals([], $this->collection->getExtensions());
+
+        $this->collection->setExtensions(['json']);
+        $this->assertEquals(['json'], $this->collection->getExtensions());
+
+        $this->collection->setExtensions(['rss', 'xml']);
+        $this->assertEquals(['json', 'rss', 'xml'], $this->collection->getExtensions());
+
+        $this->collection->setExtensions(['csv'], false);
+        $this->assertEquals(['csv'], $this->collection->getExtensions());
+    }
+
+    /**
+     * String methods are not acceptable.
+     *
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage The 'bad' middleware is not a callable object.
+     * @return void
+     */
+    public function testRegisterMiddlewareNoCallableString()
+    {
+        $this->collection->registerMiddleware('bad', 'strlen');
+    }
+
+    /**
+     * Test adding middleware to the collection.
+     *
+     * @return void
+     */
+    public function testRegisterMiddleware()
+    {
+        $result = $this->collection->registerMiddleware('closure', function () {
+        });
+        $this->assertSame($result, $this->collection);
+
+        $mock = $this->getMockBuilder('\stdClass')
+            ->setMethods(['__invoke'])
+            ->getMock();
+        $result = $this->collection->registerMiddleware('callable', $mock);
+        $this->assertSame($result, $this->collection);
+
+        $this->assertTrue($this->collection->hasMiddleware('closure'));
+        $this->assertTrue($this->collection->hasMiddleware('callable'));
+    }
+
+    /**
+     * Test adding a middleware group to the collection.
+     *
+     * @return void
+     */
+    public function testMiddlewareGroup()
+    {
+        $this->collection->registerMiddleware('closure', function () {
+        });
+
+        $mock = $this->getMockBuilder('\stdClass')
+            ->setMethods(['__invoke'])
+            ->getMock();
+        $result = $this->collection->registerMiddleware('callable', $mock);
+        $this->collection->registerMiddleware('callable', $mock);
+
+        $this->collection->middlewareGroup('group', ['closure', 'callable']);
+
+        $this->assertTrue($this->collection->hasMiddlewareGroup('group'));
+    }
+
+    /**
+     * Test adding a middleware group with the same name overwrites the original list
+     *
+     * @return void
+     */
+    public function testMiddlewareGroupOverwrite()
+    {
+        $stub = function () {
+        };
+        $this->collection->registerMiddleware('closure', $stub);
+        $result = $this->collection->registerMiddleware('callable', $stub);
+        $this->collection->registerMiddleware('callable', $stub);
+
+        $this->collection->middlewareGroup('group', ['callable']);
+        $this->collection->middlewareGroup('group', ['closure', 'callable']);
+        $this->assertSame([$stub, $stub], $this->collection->getMiddleware(['group']));
+    }
+
+    /**
+     * Test adding ab unregistered middleware to a middleware group fails.
+     *
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Cannot add 'bad' middleware to group 'group'. It has not been registered.
+     * @return void
+     */
+    public function testMiddlewareGroupUnregisteredMiddleware()
+    {
+        $this->collection->middlewareGroup('group', ['bad']);
     }
 }

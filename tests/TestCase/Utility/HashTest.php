@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\Utility;
 
 use ArrayObject;
+use Cake\I18n\Time;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Hash;
@@ -1486,6 +1487,32 @@ class HashTest extends TestCase
 
         $data['Level1']['Level2'] = ['test1', 'test2'];
         $this->assertEquals($expected, Hash::extract($data, 'Level1.Level2bis'));
+    }
+
+    /**
+     * Tests that objects as values handled correctly.
+     *
+     * @return void
+     */
+    public function testExtractObjects()
+    {
+        $data = [
+            'root' => [
+                'array' => new ArrayObject([
+                    'foo' => 'bar',
+                ]),
+                'created' => new Time('2010-01-05'),
+            ],
+        ];
+
+        $result = Hash::extract($data, 'root.created');
+        $this->assertSame([$data['root']['created']], $result);
+
+        $result = Hash::extract($data, 'root.array');
+        $this->assertSame(['foo' => 'bar'], $result);
+
+        $result = Hash::extract($data, 'root.array.foo');
+        $this->assertSame(['bar'], $result);
     }
 
     /**

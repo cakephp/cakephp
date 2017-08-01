@@ -941,7 +941,7 @@ class ViewTest extends TestCase
         $callback = function (Event $event, $file) use (&$count) {
             $count++;
         };
-        $events = $this->View->eventManager();
+        $events = $this->View->getEventManager();
         $events->attach($callback, 'View.beforeRender');
         $events->attach($callback, 'View.afterRender');
 
@@ -1048,7 +1048,7 @@ class ViewTest extends TestCase
         $View->autoLayout = false;
         $listener = new TestViewEventListenerInterface();
 
-        $View->eventManager()->attach($listener);
+        $View->getEventManager()->attach($listener);
 
         $View->render('index');
         $this->assertEquals(View::TYPE_VIEW, $listener->beforeRenderViewType);
@@ -1155,7 +1155,7 @@ class ViewTest extends TestCase
         $View->templatePath($this->PostsController->name);
 
         $manager = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
-        $View->eventManager($manager);
+        $View->setEventManager($manager);
 
         $manager->expects($this->at(0))->method('dispatch')
             ->with(
@@ -1995,6 +1995,82 @@ TEXT;
 
         $result = $this->View->helpers();
         $this->assertSame($result, $this->View->helpers());
+    }
+
+    /**
+     * Test getTemplatePath() and setTemplatePath().
+     *
+     * @return void
+     */
+    public function testGetSetTemplatePath()
+    {
+        $this->View->setTemplatePath('foo');
+        $templatePath = $this->View->getTemplatePath();
+        $this->assertSame($templatePath, 'foo');
+    }
+
+    /**
+     * Test getLayoutPath() and setLayoutPath().
+     *
+     * @return void
+     */
+    public function testGetSetLayoutPath()
+    {
+        $this->View->setLayoutPath('foo');
+        $layoutPath = $this->View->getLayoutPath();
+        $this->assertSame($layoutPath, 'foo');
+    }
+
+    /**
+     * Test isAutoLayoutEnabled() and enableAutoLayout().
+     *
+     * @return void
+     */
+    public function testAutoLayout()
+    {
+        $this->View->enableAutoLayout(false);
+        $autoLayout = $this->View->isAutoLayoutEnabled();
+        $this->assertSame($autoLayout, false);
+
+        $this->View->enableAutoLayout();
+        $autoLayout = $this->View->isAutoLayoutEnabled();
+        $this->assertSame($autoLayout, true);
+    }
+
+    /**
+     * Test getTheme() and setTheme().
+     *
+     * @return void
+     */
+    public function testGetSetTheme()
+    {
+        $this->View->setTheme('foo');
+        $theme = $this->View->getTheme();
+        $this->assertSame($theme, 'foo');
+    }
+
+    /**
+     * Test getTemplate() and setTemplate().
+     *
+     * @return void
+     */
+    public function testGetSetTemplate()
+    {
+        $this->View->setTemplate('foo');
+        $template = $this->View->getTemplate();
+        $this->assertSame($template, 'foo');
+    }
+
+    /**
+     * Test setLayout() and getLayout().
+     *
+     * @return void
+     */
+    public function testGetSetLayout()
+    {
+        $this->View->setLayout('foo');
+        $layout = $this->View->getLayout();
+        $this->assertSame($layout, 'foo');
     }
 
     /**

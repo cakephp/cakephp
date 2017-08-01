@@ -11,6 +11,7 @@
  * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.2.12
  * @license       https://opensource.org/licenses/mit-license.php MIT License
+ * @deprecated 3.5.0 Use Cake\Database\Schema\TableSchemaAwareInterface instead.
  */
 namespace Cake\Datasource;
 

@@ -39,6 +39,8 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         static::setAppNamespace();
 
         Router::connect('/get/:controller/:action', ['_method' => 'GET'], ['routeClass' => 'InflectedRoute']);
+        Router::connect('/head/:controller/:action', ['_method' => 'HEAD'], ['routeClass' => 'InflectedRoute']);
+        Router::connect('/options/:controller/:action', ['_method' => 'OPTIONS'], ['routeClass' => 'InflectedRoute']);
         Router::connect('/:controller/:action/*', [], ['routeClass' => 'InflectedRoute']);
         DispatcherFactory::clear();
         DispatcherFactory::add('Routing');
@@ -185,6 +187,44 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         $this->_response = null;
         $this->get('/get/request_action/test_request_action');
         $this->assertEquals('This is a test', $this->_response->getBody());
+    }
+
+    /**
+     * Test sending head requests.
+     *
+     * @return void
+     */
+    public function testHead()
+    {
+        $this->assertNull($this->_response);
+
+        $this->head('/request_action/test_request_action');
+        $this->assertNotEmpty($this->_response);
+        $this->assertInstanceOf('Cake\Http\Response', $this->_response);
+        $this->assertResponseSuccess();
+
+        $this->_response = null;
+        $this->head('/head/request_action/test_request_action');
+        $this->assertResponseSuccess();
+    }
+
+    /**
+     * Test sending options requests.
+     *
+     * @return void
+     */
+    public function testOptions()
+    {
+        $this->assertNull($this->_response);
+
+        $this->options('/request_action/test_request_action');
+        $this->assertNotEmpty($this->_response);
+        $this->assertInstanceOf('Cake\Http\Response', $this->_response);
+        $this->assertResponseSuccess();
+
+        $this->_response = null;
+        $this->options('/options/request_action/test_request_action');
+        $this->assertResponseSuccess();
     }
 
     /**
@@ -806,6 +846,19 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     }
 
     /**
+     * Test the content assertion with no case sensitivity.
+     *
+     * @return void
+     */
+    public function testAssertResponseContainsWithIgnoreCaseFlag()
+    {
+        $this->_response = new Response();
+        $this->_response = $this->_response->withStringBody('Some content');
+
+        $this->assertResponseContains('some', 'Failed asserting that the body contains given content', true);
+    }
+
+    /**
      * Test the negated content assertion.
      *
      * @return void
@@ -945,5 +998,18 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     {
         $this->get('/posts/get');
         $this->assertFileResponse('foo');
+    }
+
+    /**
+     * Test disabling the error handler middleware.
+     *
+     * @expectedException \Cake\Routing\Exception\MissingRouteException
+     * @expectedExceptionMessage A route matching "/foo" could not be found.
+     * @return void
+     */
+    public function testDisableErrorHandlerMiddleware()
+    {
+        $this->disableErrorHandlerMiddleware();
+        $this->get('/foo');
     }
 }

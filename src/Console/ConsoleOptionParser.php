@@ -135,6 +135,14 @@ class ConsoleOptionParser
     protected $_tokens = [];
 
     /**
+     * Root alias used in help output
+     *
+     * @see \Cake\Console\HelpFormatter::setAlias()
+     * @var string
+     */
+    protected $rootName = 'cake';
+
+    /**
      * Construct an OptionParser so you can define its behavior
      *
      * @param string|null $command The command name this parser is for. The command name is used for generating help.
@@ -576,6 +584,7 @@ class ConsoleOptionParser
             $command = $name;
             $name = $command->name();
         } else {
+            $name = Inflector::underscore($name);
             $defaults = [
                 'name' => $name,
                 'help' => '',
@@ -664,7 +673,7 @@ class ConsoleOptionParser
      */
     public function parse($argv)
     {
-        $command = isset($argv[0]) ? $argv[0] : null;
+        $command = isset($argv[0]) ? Inflector::underscore($argv[0]) : null;
         if (isset($this->_subcommands[$command])) {
             array_shift($argv);
         }
@@ -710,6 +719,7 @@ class ConsoleOptionParser
 
     /**
      * Gets formatted help for this parser object.
+     *
      * Generates help text based on the description, options, arguments, subcommands and epilog
      * in the parser.
      *
@@ -731,17 +741,45 @@ class ConsoleOptionParser
                 $subparser->setDescription($command->getRawHelp());
             }
             $subparser->setCommand($this->getCommand() . ' ' . $subcommand);
+            $subparser->setRootName($this->rootName);
 
             return $subparser->help(null, $format, $width);
         }
 
         $formatter = new HelpFormatter($this);
+        $formatter->setAlias($this->rootName);
+
         if ($format === 'text') {
             return $formatter->text($width);
         }
         if ($format === 'xml') {
             return $formatter->xml();
         }
+    }
+
+    /**
+     * Set the alias used in the HelpFormatter
+     *
+     * @param string $alias The alias
+     * @return void
+     * @deprecated 3.5.0 Use setRootName() instead.
+     */
+    public function setHelpAlias($alias)
+    {
+        $this->rootName = $alias;
+    }
+
+    /**
+     * Set the root name used in the HelpFormatter
+     *
+     * @param string $name The root command name
+     * @return $this
+     */
+    public function setRootName($name)
+    {
+        $this->rootName = (string)$name;
+
+        return $this;
     }
 
     /**
@@ -817,7 +855,7 @@ class ConsoleOptionParser
             $value = $option->defaultValue();
         }
         if ($option->validChoice($value)) {
-            if ($option->acceptsMultiple($value)) {
+            if ($option->acceptsMultiple()) {
                 $params[$name][] = $value;
             } else {
                 $params[$name] = $value;

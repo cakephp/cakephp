@@ -68,6 +68,17 @@ class RouteTest extends TestCase
     }
 
     /**
+     * Test set middleware in the constructor
+     *
+     * @return void
+     */
+    public function testConstructorSetMiddleware()
+    {
+        $route = new Route('/:controller/:action/*', [], ['_middleware' => ['auth', 'cookie']]);
+        $this->assertSame(['auth', 'cookie'], $route->getMiddleware());
+    }
+
+    /**
      * Test Route compiling.
      *
      * @return void
@@ -1085,6 +1096,26 @@ class RouteTest extends TestCase
     }
 
     /**
+     * Test that middleware is returned from parse()
+     *
+     * @return void
+     */
+    public function testParseWithMiddleware()
+    {
+        $route = new Route('/:controller', ['action' => 'display', 'home']);
+        $route->setMiddleware(['auth', 'cookie']);
+        $result = $route->parse('/posts', 'GET');
+        $expected = [
+            'controller' => 'posts',
+            'action' => 'display',
+            'pass' => ['home'],
+            '_matchedRoute' => '/:controller',
+            '_middleware' => ['auth', 'cookie'],
+        ];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
      * Test that http header conditions can cause route failures.
      *
      * @return void
@@ -1522,5 +1553,137 @@ class RouteTest extends TestCase
             '_matchedRoute' => '/',
         ];
         $this->assertEquals($expected, $route->parse('/', 'GET'));
+    }
+
+    /**
+     * Test setting the method on a route.
+     *
+     * @return void
+     */
+    public function testSetMethods()
+    {
+        $route = new Route('/books/reviews', ['controller' => 'Reviews', 'action' => 'index']);
+        $result = $route->setMethods(['put']);
+
+        $this->assertSame($result, $route, 'Should return this');
+        $this->assertSame(['PUT'], $route->defaults['_method'], 'method is wrong');
+
+        $route->setMethods(['post', 'get', 'patch']);
+        $this->assertSame(['POST', 'GET', 'PATCH'], $route->defaults['_method']);
+    }
+
+    /**
+     * Test setting the method on a route to an invalid method
+     *
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Invalid HTTP method received. NOPE is invalid
+     * @return void
+     */
+    public function testSetMethodsInvalid()
+    {
+        $route = new Route('/books/reviews', ['controller' => 'Reviews', 'action' => 'index']);
+        $route->setMethods(['nope']);
+    }
+
+    /**
+     * Test setting patterns through the method
+     *
+     * @return void
+     */
+    public function testSetPatterns()
+    {
+        $route = new Route('/reviews/:date/:id', ['controller' => 'Reviews', 'action' => 'view']);
+        $result = $route->setPatterns([
+            'date' => '\d+\-\d+\-\d+',
+            'id' => '[a-z]+'
+        ]);
+        $this->assertSame($result, $route, 'Should return this');
+        $this->assertArrayHasKey('id', $route->options);
+        $this->assertArrayHasKey('date', $route->options);
+        $this->assertSame('[a-z]+', $route->options['id']);
+        $this->assertArrayNotHasKey('multibytePattern', $route->options);
+
+        $this->assertFalse($route->parse('/reviews/a-b-c/xyz'));
+        $this->assertNotEmpty($route->parse('/reviews/2016-05-12/xyz'));
+    }
+
+    /**
+     * Test setting patterns enables multibyte mode
+     *
+     * @return void
+     */
+    public function testSetPatternsMultibyte()
+    {
+        $route = new Route('/reviews/:accountid/:slug', ['controller' => 'Reviews', 'action' => 'view']);
+        $result = $route->setPatterns([
+            'date' => '[A-zА-я\-\ ]+',
+            'accountid' => '[a-z]+'
+        ]);
+        $this->assertArrayHasKey('multibytePattern', $route->options);
+
+        $this->assertNotEmpty($route->parse('/reviews/abcs/bla-blan-тест'));
+    }
+
+    /**
+     * Test setting host requirements
+     *
+     * @return void
+     */
+    public function testSetHost()
+    {
+        $route = new Route('/reviews', ['controller' => 'Reviews', 'action' => 'index']);
+        $result = $route->setHost('blog.example.com');
+        $this->assertSame($result, $route, 'Should return this');
+
+        $request = new ServerRequest([
+            'environment' => [
+                'HTTP_HOST' => 'a.example.com',
+                'PATH_INFO' => '/reviews'
+            ]
+        ]);
+        $this->assertFalse($route->parseRequest($request));
+
+        $uri = $request->getUri();
+        $request = $request->withUri($uri->withHost('blog.example.com'));
+        $this->assertNotEmpty($route->parseRequest($request));
+    }
+
+    /**
+     * Test setting pass parameters
+     *
+     * @return void
+     */
+    public function testSetPass()
+    {
+        $route = new Route('/reviews/:date/:id', ['controller' => 'Reviews', 'action' => 'view']);
+        $result = $route->setPass(['date', 'id']);
+        $this->assertSame($result, $route, 'Should return this');
+        $this->assertEquals(['date', 'id'], $route->options['pass']);
+    }
+
+    /**
+     * Test setting persisted parameters
+     *
+     * @return void
+     */
+    public function testSetPersist()
+    {
+        $route = new Route('/reviews/:date/:id', ['controller' => 'Reviews', 'action' => 'view']);
+        $result = $route->setPersist(['date']);
+        $this->assertSame($result, $route, 'Should return this');
+        $this->assertEquals(['date'], $route->options['persist']);
+    }
+
+    /**
+     * Test setting/getting middleware.
+     *
+     * @return void
+     */
+    public function testSetMiddleware()
+    {
+        $route = new Route('/reviews/:date/:id', ['controller' => 'Reviews', 'action' => 'view']);
+        $result = $route->setMiddleware(['auth', 'cookie']);
+        $this->assertSame($result, $route);
+        $this->assertSame(['auth', 'cookie'], $route->getMiddleware());
     }
 }

@@ -473,7 +473,7 @@ class TableTest extends TestCase
             'table' => 'users',
             'connection' => $this->connection,
         ]);
-        $table->eventManager()->on(
+        $table->getEventManager()->on(
             'Model.beforeFind',
             function (Event $event, $query, $options) {
                 $query->limit(1);
@@ -497,7 +497,7 @@ class TableTest extends TestCase
             'connection' => $this->connection,
         ]);
         $expected = ['One', 'Two', 'Three'];
-        $table->eventManager()->on(
+        $table->getEventManager()->on(
             'Model.beforeFind',
             function (Event $event, $query, $options) use ($expected) {
                 $query->setResult($expected);
@@ -821,7 +821,8 @@ class TableTest extends TestCase
         ];
 
         $table = new Table(['table' => 'dates']);
-        $table->addAssociations($params);
+        $result = $table->addAssociations($params);
+        $this->assertSame($table, $result);
 
         $associations = $table->associations();
 
@@ -1482,17 +1483,17 @@ class TableTest extends TestCase
         $results = $table->find('all')->contain(['Tags', 'Authors'])->toArray();
         $this->assertCount(3, $results);
         foreach ($results as $article) {
-            $this->assertFalse($article->dirty('id'));
-            $this->assertFalse($article->dirty('title'));
-            $this->assertFalse($article->dirty('author_id'));
-            $this->assertFalse($article->dirty('body'));
-            $this->assertFalse($article->dirty('published'));
-            $this->assertFalse($article->dirty('author'));
-            $this->assertFalse($article->author->dirty('id'));
-            $this->assertFalse($article->author->dirty('name'));
-            $this->assertFalse($article->dirty('tag'));
+            $this->assertFalse($article->isDirty('id'));
+            $this->assertFalse($article->isDirty('title'));
+            $this->assertFalse($article->isDirty('author_id'));
+            $this->assertFalse($article->isDirty('body'));
+            $this->assertFalse($article->isDirty('published'));
+            $this->assertFalse($article->isDirty('author'));
+            $this->assertFalse($article->author->isDirty('id'));
+            $this->assertFalse($article->author->isDirty('name'));
+            $this->assertFalse($article->isDirty('tag'));
             if ($article->tag) {
-                $this->assertFalse($article->tag[0]->_joinData->dirty('tag_id'));
+                $this->assertFalse($article->tag[0]->_joinData->isDirty('tag_id'));
             }
         }
     }
@@ -1549,7 +1550,8 @@ class TableTest extends TestCase
             'table' => 'articles',
             'behaviors' => $mock
         ]);
-        $table->addBehavior('Sluggable');
+        $result = $table->addBehavior('Sluggable');
+        $this->assertSame($table, $result);
     }
 
     /**
@@ -1560,8 +1562,8 @@ class TableTest extends TestCase
     public function testAddBehaviorDuplicate()
     {
         $table = new Table(['table' => 'articles']);
-        $this->assertNull($table->addBehavior('Sluggable', ['test' => 'value']));
-        $this->assertNull($table->addBehavior('Sluggable', ['test' => 'value']));
+        $this->assertSame($table, $table->addBehavior('Sluggable', ['test' => 'value']));
+        $this->assertSame($table, $table->addBehavior('Sluggable', ['test' => 'value']));
         try {
             $table->addBehavior('Sluggable', ['thing' => 'thing']);
             $this->fail('No exception raised');
@@ -1588,7 +1590,8 @@ class TableTest extends TestCase
             'table' => 'articles',
             'behaviors' => $mock
         ]);
-        $table->removeBehavior('Sluggable');
+        $result = $table->removeBehavior('Sluggable');
+        $this->assertSame($table, $result);
     }
 
     /**
@@ -1817,7 +1820,7 @@ class TableTest extends TestCase
 
         $articleId = $entity->articles[0]->id;
         unset($entity->articles[0]);
-        $entity->dirty('articles', true);
+        $entity->setDirty('articles', true);
 
         $authors->save($entity, ['associated' => ['Articles']]);
 
@@ -1897,7 +1900,7 @@ class TableTest extends TestCase
 
         $articleId = $entity->articles[0]->id;
         unset($entity->articles[0]);
-        $entity->dirty('articles', true);
+        $entity->setDirty('articles', true);
 
         $authors->save($entity, ['associated' => ['Articles']]);
 
@@ -1957,7 +1960,7 @@ class TableTest extends TestCase
 
         $articleId = $entity->articles[0]->id;
         unset($entity->articles[0]);
-        $entity->dirty('articles', true);
+        $entity->setDirty('articles', true);
 
         $authors->save($entity, ['associated' => ['Articles']]);
 
@@ -2006,7 +2009,7 @@ class TableTest extends TestCase
         $this->assertTrue($articles->Comments->exists(['id' => $commentId]));
 
         unset($article->comments[0]);
-        $article->dirty('comments', true);
+        $article->setDirty('comments', true);
         $article = $articles->save($article, ['associated' => ['Comments']]);
 
         $this->assertEquals($sizeComments - 1, $articles->Comments->find('all')->where(['article_id' => $article->id])->count());
@@ -2060,7 +2063,7 @@ class TableTest extends TestCase
             'comment' => 'new comment'
         ]);
 
-        $article->dirty('comments', true);
+        $article->setDirty('comments', true);
         $article = $articles->save($article, ['associated' => ['Comments']]);
 
         $this->assertEquals($sizeComments, $articles->Comments->find('all')->where(['article_id' => $article->id])->count());
@@ -2117,7 +2120,7 @@ class TableTest extends TestCase
         $this->assertEquals(3, $Comments->target()->find()->where(['Comments.article_id' => $article->get('id')])->count());
 
         unset($article->comments[1]);
-        $article->dirty('comments', true);
+        $article->setDirty('comments', true);
 
         $article = $Articles->save($article);
         $this->assertNotEmpty($article);
@@ -2179,7 +2182,7 @@ class TableTest extends TestCase
 
         $article2 = $author->articles[1];
         unset($author->articles[1]);
-        $author->dirty('articles', true);
+        $author->setDirty('articles', true);
 
         $author = $Authors->save($author);
         $this->assertNotEmpty($author);
@@ -2260,7 +2263,7 @@ class TableTest extends TestCase
             $this->assertSame($data, $entity);
             $entity->set('password', 'foo');
         };
-        $table->eventManager()->on('Model.beforeSave', $listener);
+        $table->getEventManager()->on('Model.beforeSave', $listener);
         $this->assertSame($data, $table->save($data));
         $this->assertEquals($data->id, self::$nextUserId);
         $row = $table->find('all')->where(['id' => self::$nextUserId])->first();
@@ -2288,8 +2291,8 @@ class TableTest extends TestCase
         $listener2 = function ($e, $entity, $options) {
             $this->assertTrue($options['crazy']);
         };
-        $table->eventManager()->on('Model.beforeSave', $listener1);
-        $table->eventManager()->on('Model.beforeSave', $listener2);
+        $table->getEventManager()->on('Model.beforeSave', $listener1);
+        $table->getEventManager()->on('Model.beforeSave', $listener2);
         $this->assertSame($data, $table->save($data));
         $this->assertEquals($data->id, self::$nextUserId);
 
@@ -2317,7 +2320,7 @@ class TableTest extends TestCase
 
             return $entity;
         };
-        $table->eventManager()->on('Model.beforeSave', $listener);
+        $table->getEventManager()->on('Model.beforeSave', $listener);
         $this->assertSame($data, $table->save($data));
         $this->assertNull($data->id);
         $row = $table->find('all')->where(['id' => self::$nextUserId])->first();
@@ -2340,19 +2343,19 @@ class TableTest extends TestCase
         $called = false;
         $listener = function ($e, $entity, $options) use ($data, &$called) {
             $this->assertSame($data, $entity);
-            $this->assertTrue($entity->dirty());
+            $this->assertTrue($entity->isDirty());
             $called = true;
         };
-        $table->eventManager()->on('Model.afterSave', $listener);
+        $table->getEventManager()->on('Model.afterSave', $listener);
 
         $calledAfterCommit = false;
         $listenerAfterCommit = function ($e, $entity, $options) use ($data, &$calledAfterCommit) {
             $this->assertSame($data, $entity);
-            $this->assertTrue($entity->dirty());
+            $this->assertTrue($entity->isDirty());
             $this->assertNotSame($data->get('username'), $data->getOriginal('username'));
             $calledAfterCommit = true;
         };
-        $table->eventManager()->on('Model.afterSaveCommit', $listenerAfterCommit);
+        $table->getEventManager()->on('Model.afterSaveCommit', $listenerAfterCommit);
 
         $this->assertSame($data, $table->save($data));
         $this->assertTrue($called);
@@ -2378,13 +2381,13 @@ class TableTest extends TestCase
             $this->assertSame($data, $entity);
             $called = true;
         };
-        $table->eventManager()->on('Model.afterSave', $listener);
+        $table->getEventManager()->on('Model.afterSave', $listener);
 
         $calledAfterCommit = false;
         $listenerAfterCommit = function ($e, $entity, $options) use ($data, &$calledAfterCommit) {
             $calledAfterCommit = true;
         };
-        $table->eventManager()->on('Model.afterSaveCommit', $listenerAfterCommit);
+        $table->getEventManager()->on('Model.afterSaveCommit', $listenerAfterCommit);
 
         $this->assertSame($data, $table->save($data, ['atomic' => false]));
         $this->assertEquals($data->id, self::$nextUserId);
@@ -2410,7 +2413,7 @@ class TableTest extends TestCase
         $listener = function ($e, $entity, $options) use (&$called) {
             $called = true;
         };
-        $table->eventManager()->on('Model.afterSaveCommit', $listener);
+        $table->getEventManager()->on('Model.afterSaveCommit', $listener);
 
         $this->connection->begin();
         $this->assertSame($data, $table->save($data));
@@ -2436,7 +2439,7 @@ class TableTest extends TestCase
         $listener = function ($e, $entity, $options) use (&$called) {
             $called = true;
         };
-        $table->eventManager()->on('Model.afterSaveCommit', $listener);
+        $table->getEventManager()->on('Model.afterSaveCommit', $listener);
 
         $this->connection->begin();
         $this->assertSame($data, $table->save($data, ['atomic' => false]));
@@ -2480,13 +2483,13 @@ class TableTest extends TestCase
         $listener = function ($e, $entity, $options) use ($data, &$called) {
             $called = true;
         };
-        $table->eventManager()->on('Model.afterSave', $listener);
+        $table->getEventManager()->on('Model.afterSave', $listener);
 
         $calledAfterCommit = false;
         $listenerAfterCommit = function ($e, $entity, $options) use ($data, &$calledAfterCommit) {
             $calledAfterCommit = true;
         };
-        $table->eventManager()->on('Model.afterSaveCommit', $listenerAfterCommit);
+        $table->getEventManager()->on('Model.afterSaveCommit', $listenerAfterCommit);
 
         $this->assertFalse($table->save($data));
         $this->assertFalse($called);
@@ -2516,13 +2519,13 @@ class TableTest extends TestCase
         $listenerForArticle = function ($e, $entity, $options) use (&$calledForArticle) {
             $calledForArticle = true;
         };
-        $table->eventManager()->on('Model.afterSaveCommit', $listenerForArticle);
+        $table->getEventManager()->on('Model.afterSaveCommit', $listenerForArticle);
 
         $calledForAuthor = false;
         $listenerForAuthor = function ($e, $entity, $options) use (&$calledForAuthor) {
             $calledForAuthor = true;
         };
-        $table->authors->eventManager()->on('Model.afterSaveCommit', $listenerForAuthor);
+        $table->authors->getEventManager()->on('Model.afterSaveCommit', $listenerForAuthor);
 
         $this->assertSame($entity, $table->save($entity));
         $this->assertFalse($entity->isNew());
@@ -2688,9 +2691,9 @@ class TableTest extends TestCase
             'updated' => new Time('2013-10-10 00:00')
         ]);
         $entity->clean();
-        $entity->dirty('username', true);
-        $entity->dirty('created', true);
-        $entity->dirty('updated', true);
+        $entity->setDirty('username', true);
+        $entity->setDirty('created', true);
+        $entity->setDirty('updated', true);
 
         $table = TableRegistry::get('users');
         $this->assertSame($entity, $table->save($entity));
@@ -2717,10 +2720,10 @@ class TableTest extends TestCase
         ]);
         $table = TableRegistry::get('users');
         $this->assertSame($entity, $table->save($entity));
-        $this->assertFalse($entity->dirty('usermane'));
-        $this->assertFalse($entity->dirty('password'));
-        $this->assertFalse($entity->dirty('created'));
-        $this->assertFalse($entity->dirty('updated'));
+        $this->assertFalse($entity->isDirty('usermane'));
+        $this->assertFalse($entity->isDirty('password'));
+        $this->assertFalse($entity->isDirty('created'));
+        $this->assertFalse($entity->isDirty('updated'));
     }
 
     /**
@@ -2765,8 +2768,8 @@ class TableTest extends TestCase
         $this->assertEquals($original->created, $row->created);
         $this->assertEquals($original->updated, $row->updated);
         $this->assertFalse($entity->isNew());
-        $this->assertFalse($entity->dirty('id'));
-        $this->assertFalse($entity->dirty('username'));
+        $this->assertFalse($entity->isDirty('id'));
+        $this->assertFalse($entity->isDirty('username'));
     }
 
     /**
@@ -2786,7 +2789,7 @@ class TableTest extends TestCase
             $this->assertFalse($entity->isNew());
             $called = true;
         };
-        $table->eventManager()->on('Model.beforeSave', $listener);
+        $table->getEventManager()->on('Model.beforeSave', $listener);
         $this->assertSame($entity, $table->save($entity));
         $this->assertTrue($called);
     }
@@ -3217,13 +3220,13 @@ class TableTest extends TestCase
             $this->assertSame($data, $entity);
             $called = true;
         };
-        $table->eventManager()->on('Model.afterDelete', $listener);
+        $table->getEventManager()->on('Model.afterDelete', $listener);
 
         $calledAfterCommit = false;
         $listenerAfterCommit = function ($e, $entity, $options) use ($data, &$calledAfterCommit) {
             $calledAfterCommit = true;
         };
-        $table->eventManager()->on('Model.afterDeleteCommit', $listenerAfterCommit);
+        $table->getEventManager()->on('Model.afterDeleteCommit', $listenerAfterCommit);
 
         $table->delete($data, ['atomic' => false]);
         $this->assertTrue($called);
@@ -3247,13 +3250,13 @@ class TableTest extends TestCase
         $listener = function ($e, $entity, $options) use (&$called) {
             $called = true;
         };
-        $table->eventManager()->on('Model.afterDeleteCommit', $listener);
+        $table->getEventManager()->on('Model.afterDeleteCommit', $listener);
 
         $called2 = false;
         $listener = function ($e, $entity, $options) use (&$called2) {
             $called2 = true;
         };
-        $table->articles->eventManager()->on('Model.afterDeleteCommit', $listener);
+        $table->articles->getEventManager()->on('Model.afterDeleteCommit', $listener);
 
         $entity = $table->get(1);
         $this->assertTrue($table->delete($entity));
@@ -3351,11 +3354,26 @@ class TableTest extends TestCase
     public function testValidatorDefault()
     {
         $table = new Table();
-        $validator = $table->validator();
+        $validator = $table->getValidator();
         $this->assertSame($table, $validator->provider('table'));
         $this->assertInstanceOf('Cake\Validation\Validator', $validator);
-        $default = $table->validator('default');
+        $default = $table->getValidator('default');
         $this->assertSame($validator, $default);
+    }
+
+    /**
+     * Tests that there exists a validator defined in a behavior.
+     *
+     * @return void
+     */
+    public function testValidatorBehavior()
+    {
+        $table = new Table();
+        $table->addBehavior('Validation');
+
+        $validator = $table->getValidator('Behavior');
+        $set = $validator->field('name');
+        $this->assertTrue(isset($set['behaviorRule']));
     }
 
     /**
@@ -3370,9 +3388,9 @@ class TableTest extends TestCase
             ->getMock();
         $table->expects($this->once())->method('validationForOtherStuff')
             ->will($this->returnArgument(0));
-        $other = $table->validator('forOtherStuff');
+        $other = $table->getValidator('forOtherStuff');
         $this->assertInstanceOf('Cake\Validation\Validator', $other);
-        $this->assertNotSame($other, $table->validator());
+        $this->assertNotSame($other, $table->getValidator());
         $this->assertSame($table, $other->provider('table'));
     }
 
@@ -3390,7 +3408,20 @@ class TableTest extends TestCase
             ->getMock();
         $table->expects($this->once())
             ->method('validationBad');
-        $table->validator('bad');
+        $table->getValidator('bad');
+    }
+
+    /**
+     * Tests that a RuntimeException is thrown if the custom validator method does not exist.
+     *
+     * @return void
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage The Cake\ORM\Table::validationMissing() validation method does not exists.
+     */
+    public function testValidatorWithMissingMethod()
+    {
+        $table = new Table();
+        $table->getValidator('missing');
     }
 
     /**
@@ -3402,9 +3433,25 @@ class TableTest extends TestCase
     {
         $table = new Table;
         $validator = new \Cake\Validation\Validator;
-        $table->validator('other', $validator);
-        $this->assertSame($validator, $table->validator('other'));
+        $table->setValidator('other', $validator);
+        $this->assertSame($validator, $table->getValidator('other'));
         $this->assertSame($table, $validator->provider('table'));
+    }
+
+    /**
+     * Tests hasValidator method.
+     *
+     * @return void
+     */
+    public function testHasValidator()
+    {
+        $table = new Table;
+        $this->assertTrue($table->hasValidator('default'));
+        $this->assertFalse($table->hasValidator('other'));
+
+        $validator = new \Cake\Validation\Validator;
+        $table->setValidator('other', $validator);
+        $this->assertTrue($table->hasValidator('other'));
     }
 
     /**
@@ -3433,7 +3480,7 @@ class TableTest extends TestCase
     public function testNewEntityAndValidation()
     {
         $table = TableRegistry::get('Articles');
-        $validator = $table->validator()->requirePresence('title');
+        $validator = $table->getValidator()->requirePresence('title');
         $entity = $table->newEntity([]);
         $errors = $entity->errors();
         $this->assertNotEmpty($errors['title']);
@@ -3658,7 +3705,7 @@ class TableTest extends TestCase
         $this->assertFalse($entity->article->isNew());
         $this->assertEquals(4, $entity->article->id);
         $this->assertEquals(5, $entity->article->get('author_id'));
-        $this->assertFalse($entity->article->dirty('author_id'));
+        $this->assertFalse($entity->article->isDirty('author_id'));
     }
 
     /**
@@ -3798,7 +3845,7 @@ class TableTest extends TestCase
         $entity = $table->find()->contain('Tags')->first();
         // not associated to the article already.
         $entity->tags[] = $tags->get(3);
-        $entity->dirty('tags', true);
+        $entity->setDirty('tags', true);
 
         $this->assertSame($entity, $table->save($entity));
 
@@ -4348,7 +4395,7 @@ class TableTest extends TestCase
 
         $this->assertCount($sizeArticles, $authors->Articles->findAllByAuthorId($author->id));
         $this->assertCount($sizeArticles, $author->articles);
-        $this->assertFalse($author->dirty('articles'));
+        $this->assertFalse($author->isDirty('articles'));
     }
 
     /**
@@ -4400,7 +4447,7 @@ class TableTest extends TestCase
 
         $this->assertCount($sizeArticles, $authors->Articles->findAllByAuthorId($author->id));
         $this->assertCount($sizeArticles, $author->articles);
-        $this->assertFalse($author->dirty('articles'));
+        $this->assertFalse($author->isDirty('articles'));
     }
 
     /**
@@ -4455,7 +4502,7 @@ class TableTest extends TestCase
 
         $this->assertCount($sizeArticles, $authors->Articles->findAllByAuthorId($author->id));
         $this->assertCount($sizeArticles, $author->articles);
-        $this->assertFalse($author->dirty('articles'));
+        $this->assertFalse($author->isDirty('articles'));
     }
 
     /**
@@ -4503,7 +4550,7 @@ class TableTest extends TestCase
 
         $this->assertCount($sizeArticles - count($articlesToUnlink), $authors->Articles->findAllByAuthorId($author->id));
         $this->assertCount($sizeArticles - count($articlesToUnlink), $author->articles);
-        $this->assertFalse($author->dirty('articles'));
+        $this->assertFalse($author->isDirty('articles'));
     }
 
     /**
@@ -4551,7 +4598,7 @@ class TableTest extends TestCase
 
         $this->assertCount($sizeArticles - count($articlesToUnlink), $authors->Articles->findAllByAuthorId($author->id));
         $this->assertCount($sizeArticles, $author->articles);
-        $this->assertFalse($author->dirty('articles'));
+        $this->assertFalse($author->isDirty('articles'));
     }
 
     /**
@@ -4823,7 +4870,7 @@ class TableTest extends TestCase
         $table->association('tags')->unlink($article, [$article->tags[0]]);
         $this->assertCount(1, $article->tags);
         $this->assertEquals(2, $article->tags[0]->get('id'));
-        $this->assertFalse($article->dirty('tags'));
+        $this->assertFalse($article->isDirty('tags'));
     }
 
     /**
@@ -4971,7 +5018,7 @@ class TableTest extends TestCase
         $tags->cascadeCallbacks(true);
 
         $actualOptions = null;
-        $tags->junction()->eventManager()->on(
+        $tags->junction()->getEventManager()->on(
             'Model.beforeDelete',
             function (Event $event, Entity $entity, ArrayObject $options) use (&$actualOptions) {
                 $actualOptions = $options->getArrayCopy();
@@ -4980,7 +5027,7 @@ class TableTest extends TestCase
 
         $article = $articles->get(1);
         $article->tags = [];
-        $article->dirty('tags', true);
+        $article->setDirty('tags', true);
 
         $result = $articles->save($article, ['foo' => 'bar']);
         $this->assertNotEmpty($result);
@@ -5006,7 +5053,7 @@ class TableTest extends TestCase
         $tags = $articles->belongsToMany('Tags');
 
         $actualOptions = null;
-        $tags->junction()->eventManager()->on(
+        $tags->junction()->getEventManager()->on(
             'Model.beforeSave',
             function (Event $event, Entity $entity, ArrayObject $options) use (&$actualOptions) {
                 $actualOptions = $options->getArrayCopy();
@@ -5043,7 +5090,7 @@ class TableTest extends TestCase
         $tags = $articles->belongsToMany('Tags');
 
         $actualOptions = null;
-        $tags->junction()->eventManager()->on(
+        $tags->junction()->getEventManager()->on(
             'Model.beforeDelete',
             function (Event $event, Entity $entity, ArrayObject $options) use (&$actualOptions) {
                 $actualOptions = $options->getArrayCopy();
@@ -5076,13 +5123,13 @@ class TableTest extends TestCase
 
         $actualSaveOptions = null;
         $actualDeleteOptions = null;
-        $tags->junction()->eventManager()->on(
+        $tags->junction()->getEventManager()->on(
             'Model.beforeSave',
             function (Event $event, Entity $entity, ArrayObject $options) use (&$actualSaveOptions) {
                 $actualSaveOptions = $options->getArrayCopy();
             }
         );
-        $tags->junction()->eventManager()->on(
+        $tags->junction()->getEventManager()->on(
             'Model.beforeDelete',
             function (Event $event, Entity $entity, ArrayObject $options) use (&$actualDeleteOptions) {
                 $actualDeleteOptions = $options->getArrayCopy();
@@ -5135,7 +5182,7 @@ class TableTest extends TestCase
         $articles->cascadeCallbacks(true);
 
         $actualOptions = null;
-        $articles->target()->eventManager()->on(
+        $articles->target()->getEventManager()->on(
             'Model.beforeDelete',
             function (Event $event, Entity $entity, ArrayObject $options) use (&$actualOptions) {
                 $actualOptions = $options->getArrayCopy();
@@ -5144,7 +5191,7 @@ class TableTest extends TestCase
 
         $author = $authors->get(1);
         $author->articles = [];
-        $author->dirty('articles', true);
+        $author->setDirty('articles', true);
 
         $result = $authors->save($author, ['foo' => 'bar']);
         $this->assertNotEmpty($result);
@@ -5171,7 +5218,7 @@ class TableTest extends TestCase
         $articles = $authors->hasMany('Articles');
 
         $actualOptions = null;
-        $articles->target()->eventManager()->on(
+        $articles->target()->getEventManager()->on(
             'Model.beforeSave',
             function (Event $event, Entity $entity, ArrayObject $options) use (&$actualOptions) {
                 $actualOptions = $options->getArrayCopy();
@@ -5180,7 +5227,7 @@ class TableTest extends TestCase
 
         $author = $authors->get(1);
         $author->articles = [];
-        $author->dirty('articles', true);
+        $author->setDirty('articles', true);
 
         $result = $articles->link($author, [$articles->target()->get(2)], ['foo' => 'bar']);
         $this->assertTrue($result);
@@ -5214,7 +5261,7 @@ class TableTest extends TestCase
         $articles->cascadeCallbacks(true);
 
         $actualOptions = null;
-        $articles->target()->eventManager()->on(
+        $articles->target()->getEventManager()->on(
             'Model.beforeDelete',
             function (Event $event, Entity $entity, ArrayObject $options) use (&$actualOptions) {
                 $actualOptions = $options->getArrayCopy();
@@ -5223,7 +5270,7 @@ class TableTest extends TestCase
 
         $author = $authors->get(1);
         $author->articles = [];
-        $author->dirty('articles', true);
+        $author->setDirty('articles', true);
 
         $articles->unlink($author, [$articles->target()->get(1)], ['foo' => 'bar']);
 
@@ -5251,13 +5298,13 @@ class TableTest extends TestCase
 
         $actualSaveOptions = null;
         $actualDeleteOptions = null;
-        $articles->target()->eventManager()->on(
+        $articles->target()->getEventManager()->on(
             'Model.beforeSave',
             function (Event $event, Entity $entity, ArrayObject $options) use (&$actualSaveOptions) {
                 $actualSaveOptions = $options->getArrayCopy();
             }
         );
-        $articles->target()->eventManager()->on(
+        $articles->target()->getEventManager()->on(
             'Model.beforeDelete',
             function (Event $event, Entity $entity, ArrayObject $options) use (&$actualDeleteOptions) {
                 $actualDeleteOptions = $options->getArrayCopy();
@@ -5312,7 +5359,7 @@ class TableTest extends TestCase
         $tags = $articles->belongsToMany('Tags');
 
         $actualOptions = null;
-        $tags->junction()->eventManager()->on(
+        $tags->junction()->getEventManager()->on(
             'Model.beforeDelete',
             function (Event $event, Entity $entity, ArrayObject $options) use (&$actualOptions) {
                 $actualOptions = $options->getArrayCopy();
@@ -5344,7 +5391,7 @@ class TableTest extends TestCase
         $articles->cascadeCallbacks(true);
 
         $actualOptions = null;
-        $articles->target()->eventManager()->on(
+        $articles->target()->getEventManager()->on(
             'Model.beforeDelete',
             function (Event $event, Entity $entity, ArrayObject $options) use (&$actualOptions) {
                 $actualOptions = $options->getArrayCopy();
@@ -5353,7 +5400,7 @@ class TableTest extends TestCase
 
         $author = $authors->get(1);
         $author->articles = [];
-        $author->dirty('articles', true);
+        $author->setDirty('articles', true);
 
         $articles->unlink($author, [$articles->target()->get(1)], false);
         $this->assertArrayHasKey('cleanProperty', $actualOptions);
@@ -5927,10 +5974,10 @@ class TableTest extends TestCase
         };
         EventManager::instance()->on('Model.buildValidator', $cb);
         $articles = TableRegistry::get('Articles');
-        $articles->validator();
+        $articles->getValidator();
         $this->assertEquals(1, $count, 'Callback should be called');
 
-        $articles->validator();
+        $articles->getValidator();
         $this->assertEquals(1, $count, 'Callback should be called only once');
     }
 
@@ -6041,10 +6088,10 @@ class TableTest extends TestCase
         $table = TableRegistry::get('articles');
         $table->belongsTo('authors');
 
-        $eventManager = $table->eventManager();
+        $eventManager = $table->getEventManager();
 
         $associationBeforeFindCount = 0;
-        $table->association('authors')->target()->eventManager()->on(
+        $table->association('authors')->target()->getEventManager()->on(
             'Model.beforeFind',
             function (Event $event, Query $query, ArrayObject $options, $primary) use (&$associationBeforeFindCount) {
                 $this->assertTrue(is_bool($primary));
@@ -6072,7 +6119,7 @@ class TableTest extends TestCase
                 $buildValidatorCount ++;
             }
         );
-        $table->validator();
+        $table->getValidator();
         $this->assertEquals(1, $buildValidatorCount);
 
         $buildRulesCount =
@@ -6224,16 +6271,16 @@ class TableTest extends TestCase
 
         $counter = 0;
         $userTable->Comments
-            ->eventManager()
+            ->getEventManager()
             ->on('Model.afterSave', function (Event $event, $entity) use (&$counter) {
-                if ($entity->dirty()) {
+                if ($entity->isDirty()) {
                     $counter++;
                 }
             });
 
         $savedUser->comments[] = $userTable->Comments->get(5);
         $this->assertCount(3, $savedUser->comments);
-        $savedUser->dirty('comments', true);
+        $savedUser->setDirty('comments', true);
         $userTable->save($savedUser);
         $this->assertEquals(1, $counter);
     }
@@ -6261,16 +6308,16 @@ class TableTest extends TestCase
 
         $counter = 0;
         $table->Tags->junction()
-            ->eventManager()
+            ->getEventManager()
             ->on('Model.afterSave', function (Event $event, $entity) use (&$counter) {
-                if ($entity->dirty()) {
+                if ($entity->isDirty()) {
                     $counter++;
                 }
             });
 
         $article->tags[] = $table->Tags->get(3);
         $this->assertCount(3, $article->tags);
-        $article->dirty('tags', true);
+        $article->setDirty('tags', true);
         $table->save($article);
         $this->assertEquals(1, $counter);
     }
@@ -6303,14 +6350,14 @@ class TableTest extends TestCase
     public function testEntityClean()
     {
         $table = TableRegistry::get('Articles');
-        $validator = $table->validator()->requirePresence('body');
+        $validator = $table->getValidator()->requirePresence('body');
         $entity = $table->newEntity(['title' => 'mark']);
 
-        $entity->dirty('title', true);
+        $entity->setDirty('title', true);
         $entity->invalid('title', 'albert');
 
         $this->assertNotEmpty($entity->errors());
-        $this->assertTrue($entity->dirty());
+        $this->assertTrue($entity->isDirty());
         $this->assertEquals(['title' => 'albert'], $entity->invalid());
 
         $entity->title = 'alex';
@@ -6319,7 +6366,7 @@ class TableTest extends TestCase
         $entity->clean();
 
         $this->assertEmpty($entity->errors());
-        $this->assertFalse($entity->dirty());
+        $this->assertFalse($entity->isDirty());
         $this->assertEquals([], $entity->invalid());
         $this->assertSame($entity->getOriginal('title'), 'alex');
     }

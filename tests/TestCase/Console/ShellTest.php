@@ -1218,11 +1218,6 @@ TEXT;
         $task->expects($this->never())
             ->method('_welcome');
 
-        // One welcome message output.
-        $io->expects($this->at(2))
-            ->method('out')
-            ->with($this->stringContains('Welcome to CakePHP'));
-
         $shell->Slice = $task;
         $shell->runCommand(['slice', 'one']);
         $this->assertTrue($task->params['requested'], 'Task is requested, no welcome.');
@@ -1382,6 +1377,28 @@ TEXT;
             ->setConstructorArgs([$io])
             ->getMock();
         $this->Shell->runCommand(['foo', '--quiet']);
+    }
+
+    /**
+     * Test getIo() and setIo() methods
+     *
+     * @return void
+     */
+    public function testGetSetIo()
+    {
+        $this->Shell->setIo($this->io);
+        $this->assertSame($this->Shell->getIo(), $this->io);
+    }
+
+    /**
+     * Test setRootName filters into the option parser help text.
+     *
+     * @return void
+     */
+    public function testSetRootNamePropagatesToHelpText()
+    {
+        $this->assertSame($this->Shell, $this->Shell->setRootName('tool'), 'is chainable');
+        $this->assertContains('tool shell_test_shell [-h]', $this->Shell->getOptionParser()->help());
     }
 
     /**

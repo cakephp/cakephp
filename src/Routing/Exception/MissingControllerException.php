@@ -29,8 +29,8 @@ class MissingControllerException extends Exception
     /**
      * {@inheritDoc}
      */
-    public function __construct($message, $code = 404)
+    public function __construct($message, $code = 404, $previous = null)
     {
-        parent::__construct($message, $code);
+        parent::__construct($message, $code, $previous);
     }
 }
