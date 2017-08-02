@@ -15,7 +15,9 @@
 namespace Cake\ORM;
 
 use Cake\Cache\Cache;
+use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
+use RuntimeException;
 
 /**
  * ORM Cache.
@@ -31,14 +33,14 @@ class OrmCache
     /**
      * Schema
      *
-     * @var \Cake\Datasource\SchemaInterface
+     * @var \Cake\Database\Schema\Collection|\Cake\Database\Schema\CachedCollection
      */
     protected $_schema;
 
     /**
      * Constructor
      *
-     * @param string $connection Connection name
+     * @param string|\Cake\Datasource\ConnectionInterface $connection Connection name to get the schema for or a connection instance
      */
     public function __construct($connection)
     {
@@ -90,17 +92,31 @@ class OrmCache
     /**
      * Helper method to get the schema collection.
      *
-     * @param string $connection Connection name to get the schema for
-     * @return false|\Cake\Database\Schema\Collection|\Cake\Database\Schema\CachedCollection
+     * @param string|\Cake\Datasource\ConnectionInterface $connection Connection name to get the schema for or a connection instance
+     * @return \Cake\Database\Schema\Collection|\Cake\Database\Schema\CachedCollection
      */
     public function getSchema($connection)
     {
-        /* @var \Cake\Database\Connection $source */
-        $source = ConnectionManager::get($connection);
+        if (is_string($connection)) {
+            /* @var \Cake\Database\Connection $source */
+            $source = ConnectionManager::get($connection);
+        } elseif (!$connection instanceof ConnectionInterface) {
+            throw new RuntimeException(sprtinf(
+                'OrmCache::getSchema() expects `%s`, `%s` given.',
+                ConnectionInterface::class,
+                is_object($connection) ? get_class($connection) : gettype($connection)
+            ));
+        }
+
+        if ($connection instanceof ConnectionInterface) {
+            $source = $connection;
+            $connection = $source->configName();
+        }
+
         if (!method_exists($source, 'schemaCollection')) {
             throw new RuntimeException(sprintf(
-                'The "%s" connection is not compatible with orm caching, ' .
-                'as it does not implement a "schemaCollection()" method.',
+                'The "%s" connection is not compatible with schema ' .
+                'caching, as it does not implement a "schemaCollection()" method.',
                 $connection
             ));
         }

@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\ORM;
 
 use Cake\Cache\Cache;
 use Cake\Cache\CacheEngine;
+use Cake\Database\Schema\CachedCollection;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\OrmCache;
 use Cake\TestSuite\TestCase;
@@ -197,5 +198,20 @@ class OrmCacheTest extends TestCase
 
         $ormCache = new OrmCache('test');
         $ormCache->clear('articles');
+    }
+
+    /**
+     * Tests getting a schema config from a connection instance
+     *
+     * @return void
+     */
+    public function testGetSchemaWithConnectionInstance()
+    {
+        $ds = ConnectionManager::get('test');
+
+        $ormCache = new OrmCache($ds);
+        $result = $ormCache->getSchema($ds);
+
+        $this->assertInstanceOf(CachedCollection::class, $result);
     }
 }
