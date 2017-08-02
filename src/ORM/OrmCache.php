@@ -17,6 +17,7 @@ namespace Cake\ORM;
 use Cake\Cache\Cache;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
+use InvalidArgumentException;
 use RuntimeException;
 
 /**
@@ -98,34 +99,28 @@ class OrmCache
     public function getSchema($connection)
     {
         if (is_string($connection)) {
-            /* @var \Cake\Database\Connection $source */
-            $source = ConnectionManager::get($connection);
+            $connection = ConnectionManager::get($connection);
         } elseif (!$connection instanceof ConnectionInterface) {
-            throw new RuntimeException(sprtinf(
-                'OrmCache::getSchema() expects `%s`, `%s` given.',
+            throw new InvalidArgumentException(sprintf(
+                'SchemaCache::getSchema() expects `%s`, `%s` given.',
                 ConnectionInterface::class,
                 is_object($connection) ? get_class($connection) : gettype($connection)
             ));
         }
 
-        if ($connection instanceof ConnectionInterface) {
-            $source = $connection;
-            $connection = $source->configName();
-        }
-
-        if (!method_exists($source, 'schemaCollection')) {
+        if (!method_exists($connection, 'schemaCollection')) {
             throw new RuntimeException(sprintf(
-                'The "%s" connection is not compatible with schema ' .
-                'caching, as it does not implement a "schemaCollection()" method.',
-                $connection
+                'The "%s" connection is not compatible with schema caching, ' .
+                'as it does not implement a "schemaCollection()" method.',
+                $connection->configName()
             ));
         }
 
-        $config = $source->config();
+        $config = $connection->config();
         if (empty($config['cacheMetadata'])) {
-            $source->cacheMetadata(true);
+            $connection->cacheMetadata(true);
         }
 
-        return $source->getSchemaCollection();
+        return $connection->getSchemaCollection();
     }
 }

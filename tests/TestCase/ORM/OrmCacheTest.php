@@ -214,4 +214,16 @@ class OrmCacheTest extends TestCase
 
         $this->assertInstanceOf(CachedCollection::class, $result);
     }
+
+    /**
+     * Test passing invalid object
+     *
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage SchemaCache::getSchema() expects `Cake\Datasource\ConnectionInterface`, `stdClass` given.
+     * @return void
+     */
+    public function testPassingInvalidObject()
+    {
+        new OrmCache(new \stdClass());
+    }
 }
