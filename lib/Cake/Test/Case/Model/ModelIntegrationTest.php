@@ -186,7 +186,7 @@ class ModelIntegrationTest extends BaseModelTest {
  */
 	public function testPkInHabtmLinkModel() {
 		//Test Nonconformant Models
-		$this->loadFixtures('Content', 'ContentAccount', 'Account', 'JoinC', 'JoinAC', 'ItemsPortfolio');
+		$this->loadFixtures('ArticlesTag', 'Content', 'ContentAccount', 'Account', 'JoinC', 'JoinAC', 'ItemsPortfolio');
 		$TestModel = new Content();
 		$this->assertEquals('iContentAccountsId', $TestModel->ContentAccount->primaryKey);
 
@@ -921,6 +921,7 @@ class ModelIntegrationTest extends BaseModelTest {
  * @return void
  */
 	public function testSchema() {
+		$this->loadFixtures('Post');
 		$Post = new Post();
 
 		$result = $Post->schema();
@@ -1297,7 +1298,7 @@ class ModelIntegrationTest extends BaseModelTest {
  * @return void
  */
 	public function testResetOfExistsOnCreate() {
-		$this->loadFixtures('Article');
+		$this->loadFixtures('Article', 'ArticlesTag', 'Attachment', 'Comment', 'Tag', 'User');
 		$Article = new Article();
 		$Article->id = 1;
 		$Article->saveField('title', 'Reset me');
@@ -1670,6 +1671,7 @@ class ModelIntegrationTest extends BaseModelTest {
  * @return void
  */
 	public function testColumnTypeFetching() {
+		$this->loadFixtures('Article', 'Tag', 'User');
 		$model = new Test();
 		$this->assertEquals('integer', $model->getColumnType('id'));
 		$this->assertEquals('text', $model->getColumnType('notes'));

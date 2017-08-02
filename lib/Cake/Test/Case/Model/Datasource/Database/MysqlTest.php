@@ -3556,6 +3556,7 @@ SQL;
  * @return void
  */
 	public function testVirtualFieldsInConditions() {
+		$this->loadFixtures('Article', 'Comment');
 		$Article = ClassRegistry::init('Article');
 		$commentsTable = $this->Dbo->fullTableName('comments', false, false);
 
@@ -3592,6 +3593,7 @@ SQL;
  * @return void
  */
 	public function testConditionsWithComplexVirtualFields() {
+		$this->loadFixtures('Article', 'Comment', 'Tag');
 		$Article = ClassRegistry::init('Article', 'Comment', 'Tag');
 		$Article->virtualFields = array(
 			'distance' => 'ACOS(SIN(20 * PI() / 180)
@@ -3639,6 +3641,7 @@ SQL;
  * @return void
  */
 	public function testReadVirtualFieldsWithNewLines() {
+		$this->loadFixtures('Article');
 		$Article = new Article();
 		$Article->recursive = 1;
 		$Article->virtualFields = array(
@@ -3701,6 +3704,7 @@ SQL;
  * @return void
  */
 	public function testExecute() {
+		$this->loadFixtures('Article');
 		$query = 'SELECT * FROM ' . $this->Dbo->fullTableName('articles') . ' WHERE 1 = 1';
 		$this->Dbo->took = null;
 		$this->Dbo->affected = null;

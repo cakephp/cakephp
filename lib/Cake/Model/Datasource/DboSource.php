@@ -3444,6 +3444,21 @@ class DboSource extends DataSource {
 	}
 
 /**
+ * Drops given tables.
+ *
+ * @param array $tables A list of tables.
+ * @return Resource or object representing the result set, or false on failure
+ */
+	public function dropTables($tables) {
+		foreach ($tables as &$table) {
+			$table = $this->fullTableName($table);
+		}
+		unset($table);
+		$statement = 'DROP TABLE IF EXISTS ' . implode(', ', $tables) . ';';
+		return $this->execute($statement);
+	}
+
+/**
  * Generate a database-native column schema string
  *
  * @param array $column An array structured like the following: array('name' => 'value', 'type' => 'value'[, options]),

@@ -73,7 +73,7 @@ abstract class BaseModelTest extends CakeTestCase {
 		'core.bidding', 'core.bidding_message', 'core.site', 'core.domain', 'core.domains_site',
 		'core.uuidnativeitem', 'core.uuidnativeportfolio', 'core.uuidnativeitems_uuidnativeportfolio',
 		'core.uuidnativeitems_uuidnativeportfolio_numericid',
-		'core.translated_article', 'core.translate_article',
+		'core.translated_article', 'core.translate_article', 'core.ad', 'core.campaign',
 	);
 
 /**

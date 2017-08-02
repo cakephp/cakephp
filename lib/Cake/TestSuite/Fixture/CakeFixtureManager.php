@@ -175,7 +175,7 @@ class CakeFixtureManager {
 	}
 
 /**
- * Runs the drop and create commands on the fixtures if necessary.
+ * Runs the drop, create and truncate commands on the fixtures if necessary.
  *
  * @param CakeTestFixture $fixture the fixture object to create
  * @param DataSource $db the datasource instance to use
@@ -191,6 +191,7 @@ class CakeFixtureManager {
 			}
 		}
 		if (!empty($fixture->created) && in_array($db->configKeyName, $fixture->created)) {
+			$fixture->truncate($db);
 			return;
 		}
 
@@ -205,6 +206,7 @@ class CakeFixtureManager {
 			$fixture->create($db);
 		} else {
 			$fixture->created[] = $db->configKeyName;
+			$fixture->truncate($db);
 		}
 	}
 
@@ -229,7 +231,6 @@ class CakeFixtureManager {
 				$db = ConnectionManager::getDataSource($fixture->useDbConfig);
 				$db->begin();
 				$this->_setupTable($fixture, $db, $test->dropTables);
-				$fixture->truncate($db);
 				$fixture->insert($db);
 				$db->commit();
 			}
@@ -237,12 +238,13 @@ class CakeFixtureManager {
 	}
 
 /**
- * Truncates the fixtures tables
+ * Truncates or drops the fixtures tables.
  *
  * @param CakeTestCase $test the test to inspect for fixture unloading
  * @return void
  */
 	public function unload(CakeTestCase $test) {
+		$dropDataSources = array();
 		$fixtures = !empty($test->fixtures) ? $test->fixtures : array();
 		foreach (array_reverse($fixtures) as $f) {
 			if (isset($this->_loaded[$f])) {
@@ -250,9 +252,20 @@ class CakeFixtureManager {
 				if (!empty($fixture->created)) {
 					foreach ($fixture->created as $ds) {
 						$db = ConnectionManager::getDataSource($ds);
-						$fixture->truncate($db);
+						if ($test->dropTables) {
+							$dropDataSources[$ds][] = $fixture->table;
+							$fixture->created = array_diff($fixture->created, array($ds));
+						} else {
+							$fixture->truncate($db);
+						}
 					}
 				}
+			}
+		}
+		if ($test->dropTables) {
+			foreach ($dropDataSources as $dataSourceName => $tables) {
+				$DataSource = ConnectionManager::getDataSource($dataSourceName);
+				$DataSource->dropTables($tables);
 			}
 		}
 	}
@@ -274,7 +287,6 @@ class CakeFixtureManager {
 				$db = ConnectionManager::getDataSource($fixture->useDbConfig);
 			}
 			$this->_setupTable($fixture, $db, $dropTables);
-			$fixture->truncate($db);
 			$fixture->insert($db);
 		} else {
 			throw new UnexpectedValueException(__d('cake_dev', 'Referenced fixture class %s not found', $name));

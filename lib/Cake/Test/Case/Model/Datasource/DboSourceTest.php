@@ -1268,6 +1268,7 @@ class DboSourceTest extends CakeTestCase {
 		if ($this->db instanceof Postgres || $this->db instanceof Sqlserver) {
 			$this->markTestSkipped('Cannot run this test with SqlServer or Postgres');
 		}
+		$this->loadFixtures('Article');
 		Cache::delete('method_cache', '_cake_core_');
 		DboSource::$methodCache = array();
 		$Article = ClassRegistry::init('Article');
@@ -1623,6 +1624,7 @@ class DboSourceTest extends CakeTestCase {
  * @return void
  */
 	public function testConditionKeysToString() {
+		$this->loadFixtures('Article');
 		$Article = ClassRegistry::init('Article');
 		$conn = $this->getMock('MockPDO', array('quote'));
 		$db = new DboTestSource();
@@ -1656,6 +1658,7 @@ class DboSourceTest extends CakeTestCase {
  * @return void
  */
 	public function testConditionKeysToStringVirtualField() {
+		$this->loadFixtures('Article');
 		$Article = ClassRegistry::init('Article');
 		$Article->virtualFields = array(
 			'extra' => 'something virtual'
