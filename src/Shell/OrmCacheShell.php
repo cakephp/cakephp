@@ -14,8 +14,6 @@
  */
 namespace Cake\Shell;
 
-use Cake\Database\SchemaCache;
-
 /**
  * ORM Cache Shell.
  *

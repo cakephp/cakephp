@@ -9,20 +9,20 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         3.0.0
+ * @since         3.5.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Shell;
 
 use Cake\Cache\Cache;
 use Cake\Datasource\ConnectionManager;
-use Cake\Shell\OrmCacheShell;
+use Cake\Shell\SchemaCacheShell;
 use Cake\TestSuite\TestCase;
 
 /**
- * OrmCacheShell test.
+ * SchemaCacheShell test.
  */
-class OrmCacheShellTest extends TestCase
+class SchemaCacheShellTest extends TestCase
 {
 
     /**
@@ -41,7 +41,7 @@ class OrmCacheShellTest extends TestCase
     {
         parent::setUp();
         $this->io = $this->getMockBuilder('Cake\Console\ConsoleIo')->getMock();
-        $this->shell = new OrmCacheShell($this->io);
+        $this->shell = new SchemaCacheShell($this->io);
 
         $this->cache = $this->getMockBuilder('Cake\Cache\CacheEngine')->getMock();
         $this->cache->expects($this->any())
