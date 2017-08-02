@@ -19,6 +19,7 @@ use Cake\Filesystem\File;
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Cookie\CookieInterface;
+use Cake\I18n\Time;
 use Cake\Log\Log;
 use Cake\Network\CorsBuilder;
 use Cake\Network\Exception\NotFoundException;
@@ -2031,6 +2032,66 @@ class Response implements ResponseInterface
                 $data['domain'],
                 $data['secure'],
                 $data['httpOnly']
+            );
+        }
+
+        $new = clone $this;
+        $new->_cookies = $new->_cookies->add($cookie);
+
+        return $new;
+    }
+
+    /**
+     * Create a new response with an expired cookie set.
+     *
+     * ### Options
+     *
+     * - `name`: The Cookie name
+     * - `value`: Value of the cookie
+     * - `expire`: Time the cookie expires in
+     * - `path`: Path the cookie applies to
+     * - `domain`: Domain the cookie is for.
+     * - `secure`: Is the cookie https?
+     * - `httpOnly`: Is the cookie available in the client?
+     *
+     * ### Examples
+     *
+     * ```
+     * // set scalar value with defaults
+     * $response = $response->withoutCookie('remember_me');
+     *
+     * // customize cookie attributes
+     * $response = $response->withoutCookie('remember_me', ['path' => '/login']);
+     *
+     * // add a cookie object
+     * $response = $response->withoutCookie(new Cookie('remember_me', 'deleted'));
+     * ```
+     *
+     * @param string|\Cake\Http\Cookie\Cookie $name The name of the cookie to expire, or a cookie object
+     * @param array $options An array of cookie options.
+     * @return static
+     */
+    public function withoutCookie($name, $options = [])
+    {
+        if ($name instanceof Cookie) {
+            $cookie = $name->withExpiry(new Time(1));
+        } else {
+            $options += [
+                'value' => '',
+                'path' => '/',
+                'domain' => '',
+                'secure' => false,
+                'httpOnly' => false
+            ];
+
+            $cookie = new Cookie(
+                $name,
+                $options['value'],
+                new Time(1),
+                $options['path'],
+                $options['domain'],
+                $options['secure'],
+                $options['httpOnly']
             );
         }
 
