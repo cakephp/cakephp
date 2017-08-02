@@ -22,17 +22,10 @@ namespace Cake\Shell;
  * can prevent thundering herd effects on the metadata cache when new
  * versions of your application are deployed, or when migrations
  * requiring updated metadata are required.
+ *
+ * @deprecated Use \Cake\Shell\SchemaCacheShell instead
  */
 class OrmCacheShell extends SchemaCacheShell
 {
 
-    /**
-     * @inheritDoc
-     */
-    public function initialize()
-    {
-        parent::initialize();
-
-        trigger_error('OrmCache shell is deprecated, use SchemaCache shell instead.', E_USER_DEPRECATED);
-    }
 }

@@ -45,7 +45,7 @@ class SchemaCacheShell extends Shell
      */
     public function build($name = null)
     {
-        $cache = $this->_getOrmCache();
+        $cache = $this->_getSchemaCache();
         $tables = $cache->build($name);
 
         foreach ($tables as $table) {
@@ -65,7 +65,7 @@ class SchemaCacheShell extends Shell
      */
     public function clear($name = null)
     {
-        $cache = $this->_getOrmCache();
+        $cache = $this->_getSchemaCache();
         $tables = $cache->clear($name);
 
         foreach ($tables as $table) {
@@ -80,9 +80,9 @@ class SchemaCacheShell extends Shell
     /**
      * Gets the Schema Cache instance
      *
-     * @return \Cake\ORM\OrmCache
+     * @return \Cake\Database\SchemaCache
      */
-    protected function _getOrmCache()
+    protected function _getSchemaCache()
     {
         try {
             return new SchemaCache($this->params['connection']);

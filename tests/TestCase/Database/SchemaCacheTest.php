@@ -16,15 +16,15 @@ namespace Cake\Test\TestCase\ORM;
 
 use Cake\Cache\Cache;
 use Cake\Cache\CacheEngine;
+use Cake\Database\SchemaCache;
 use Cake\Database\Schema\CachedCollection;
 use Cake\Datasource\ConnectionManager;
-use Cake\ORM\OrmCache;
 use Cake\TestSuite\TestCase;
 
 /**
- * OrmCache test.
+ * SchemaCache test.
  */
-class OrmCacheTest extends TestCase
+class SchemaCacheTest extends TestCase
 {
 
     /**
@@ -84,7 +84,7 @@ class OrmCacheTest extends TestCase
         $ds = ConnectionManager::get('test');
         $ds->cacheMetadata(false);
 
-        $ormCache = new OrmCache('test');
+        $ormCache = new SchemaCache('test');
         $ormCache->clear();
 
         $this->assertInstanceOf('Cake\Database\Schema\CachedCollection', $ds->schemaCollection());
@@ -100,7 +100,7 @@ class OrmCacheTest extends TestCase
         $ds = ConnectionManager::get('test');
         $ds->cacheMetadata(false);
 
-        $ormCache = new OrmCache('test');
+        $ormCache = new SchemaCache('test');
         $ormCache->build();
 
         $this->assertInstanceOf('Cake\Database\Schema\CachedCollection', $ds->schemaCollection());
@@ -117,7 +117,7 @@ class OrmCacheTest extends TestCase
             ->method('write')
             ->with('test_articles');
 
-        $ormCache = new OrmCache('test');
+        $ormCache = new SchemaCache('test');
         $ormCache->build();
     }
 
@@ -134,7 +134,7 @@ class OrmCacheTest extends TestCase
         $this->cache->expects($this->never())
             ->method('delete');
 
-        $ormCache = new OrmCache('test');
+        $ormCache = new SchemaCache('test');
         $ormCache->build('articles');
     }
 
@@ -153,7 +153,7 @@ class OrmCacheTest extends TestCase
         $this->cache->expects($this->never())
             ->method('delete');
 
-        $ormCache = new OrmCache('test');
+        $ormCache = new SchemaCache('test');
         $ormCache->build('articles');
     }
 
@@ -165,7 +165,7 @@ class OrmCacheTest extends TestCase
      */
     public function testInvalidConnection()
     {
-        new OrmCache('invalid-connection');
+        new SchemaCache('invalid-connection');
     }
 
     /**
@@ -179,7 +179,7 @@ class OrmCacheTest extends TestCase
             ->method('delete')
             ->with('test_articles');
 
-        $ormCache = new OrmCache('test');
+        $ormCache = new SchemaCache('test');
         $ormCache->clear();
     }
 
@@ -196,7 +196,7 @@ class OrmCacheTest extends TestCase
             ->method('delete')
             ->with('test_articles');
 
-        $ormCache = new OrmCache('test');
+        $ormCache = new SchemaCache('test');
         $ormCache->clear('articles');
     }
 
@@ -209,7 +209,7 @@ class OrmCacheTest extends TestCase
     {
         $ds = ConnectionManager::get('test');
 
-        $ormCache = new OrmCache($ds);
+        $ormCache = new SchemaCache($ds);
         $result = $ormCache->getSchema($ds);
 
         $this->assertInstanceOf(CachedCollection::class, $result);
@@ -224,6 +224,6 @@ class OrmCacheTest extends TestCase
      */
     public function testPassingInvalidObject()
     {
-        new OrmCache(new \stdClass());
+        new SchemaCache(new \stdClass());
     }
 }
