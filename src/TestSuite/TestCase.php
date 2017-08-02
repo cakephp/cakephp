@@ -127,6 +127,7 @@ abstract class TestCase extends BaseTestCase
      * Chooses which fixtures to load for a given test
      *
      * Each parameter is a model name that corresponds to a fixture, i.e. 'Posts', 'Authors', etc.
+     * Passing no parameters will cause all fixtures on the test case to load.
      *
      * @return void
      * @see \Cake\TestSuite\TestCase::$autoFixtures
@@ -140,6 +141,13 @@ abstract class TestCase extends BaseTestCase
         $args = func_get_args();
         foreach ($args as $class) {
             $this->fixtureManager->loadSingle($class, null, $this->dropTables);
+        }
+
+        if (empty($args)) {
+            $autoFixtures = $this->autoFixtures;
+            $this->autoFixtures = true;
+            $this->fixtureManager->load($this);
+            $this->autoFixtures = $autoFixtures;
         }
     }
 
