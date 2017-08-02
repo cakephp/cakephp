@@ -12,7 +12,7 @@
  * @since         3.5.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\ORM;
+namespace Cake\Database;
 
 use Cake\Cache\Cache;
 use Cake\Datasource\ConnectionInterface;
@@ -21,14 +21,14 @@ use InvalidArgumentException;
 use RuntimeException;
 
 /**
- * ORM Cache.
+ * Schema Cache.
  *
  * This tool is intended to be used by deployment scripts so that you
  * can prevent thundering herd effects on the metadata cache when new
  * versions of your application are deployed, or when migrations
  * requiring updated metadata are required.
  */
-class OrmCache
+class SchemaCache
 {
 
     /**

@@ -14,9 +14,7 @@
  */
 namespace Cake\Shell;
 
-use Cake\Console\Shell;
-use Cake\ORM\OrmCache;
-use RuntimeException;
+use Cake\Database\SchemaCache;
 
 /**
  * ORM Cache Shell.
@@ -27,93 +25,16 @@ use RuntimeException;
  * versions of your application are deployed, or when migrations
  * requiring updated metadata are required.
  */
-class OrmCacheShell extends Shell
+class OrmCacheShell extends SchemaCacheShell
 {
 
     /**
-     * ORM Cache
-     *
-     * @var \Cake\ORM\OrmCache
+     * @inheritDoc
      */
-    protected $_ormCache;
-
-    /**
-     * Build metadata.
-     *
-     * @param string|null $name The name of the table to build cache data for.
-     * @return bool
-     */
-    public function build($name = null)
+    public function initialize()
     {
-        $cache = $this->_getOrmCache();
-        $tables = $cache->build($name);
+        parent::initialize();
 
-        foreach ($tables as $table) {
-            $this->verbose(sprintf('Cached "%s"', $table));
-        }
-
-        $this->out('<success>Cache build complete</success>');
-
-        return true;
-    }
-
-    /**
-     * Clear metadata.
-     *
-     * @param string|null $name The name of the table to clear cache data for.
-     * @return bool
-     */
-    public function clear($name = null)
-    {
-        $cache = $this->_getOrmCache();
-        $tables = $cache->clear($name);
-
-        foreach ($tables as $table) {
-            $this->verbose(sprintf('Cleared "%s"', $table));
-        }
-
-        $this->out('<success>Cache clear complete</success>');
-
-        return true;
-    }
-
-    /**
-     * Gets the ORM Cache instance
-     *
-     * @return \Cake\ORM\OrmCache
-     */
-    protected function _getOrmCache()
-    {
-        try {
-            return new OrmCache($this->params['connection']);
-        } catch (RuntimeException $e) {
-            $this->abort($e->getMessage());
-        }
-    }
-
-    /**
-     * Get the option parser for this shell.
-     *
-     * @return \Cake\Console\ConsoleOptionParser
-     */
-    public function getOptionParser()
-    {
-        $parser = parent::getOptionParser();
-        $parser->addSubcommand('clear', [
-            'help' => 'Clear all metadata caches for the connection. If a ' .
-                'table name is provided, only that table will be removed.',
-        ])->addSubcommand('build', [
-            'help' => 'Build all metadata caches for the connection. If a ' .
-            'table name is provided, only that table will be cached.',
-        ])->addOption('connection', [
-            'help' => 'The connection to build/clear metadata cache data for.',
-            'short' => 'c',
-            'default' => 'default',
-        ])->addArgument('name', [
-            'help' => 'A specific table you want to clear/refresh cached data for.',
-            'optional' => true,
-        ]);
-
-        return $parser;
+        trigger_error('OrmCache shell is deprecated, use SchemaCache shell instead.', E_USER_DEPRECATED);
     }
 }
