@@ -8667,6 +8667,7 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	public function testPostLinkSecurityHashInline() {
+		$this->loadFixtures('Post');
 		$hash = Security::hash(
 			'/basedir/posts/delete/1' .
 			serialize(array()) .
@@ -9294,6 +9295,7 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	public function testCreateUrlImpliedController() {
+		$this->loadFixtures('Comment');
 		$restore = error_reporting(E_ALL ^ E_USER_DEPRECATED);
 		$this->Form->request['controller'] = 'posts';
 		$result = $this->Form->create('Comment', array(

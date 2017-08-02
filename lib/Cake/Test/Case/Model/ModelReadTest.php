@@ -8432,7 +8432,7 @@ class ModelReadTest extends BaseModelTest {
 	public function testVirtualFieldsMysqlGroup() {
 		$this->skipIf(!($this->db instanceof Mysql), 'The rest of virtualFields test only compatible with Mysql.');
 		$this->skipIfIsStrictGroupBy();
-		$this->loadFixtures('Post');
+		$this->loadFixtures('Author', 'Post');
 		$Post = ClassRegistry::init('Post');
 		$Post->create();
 		$Post->virtualFields = array(

@@ -5764,7 +5764,7 @@ class ModelWriteTest extends BaseModelTest {
  * @return void
  */
 	public function testSaveAssociatedBelongsTo() {
-		$this->loadFixtures('Article', 'ArticlesTag', 'Attachment', 'Comment', 'User');
+		$this->loadFixtures('Article', 'ArticlesTag', 'Attachment', 'Comment', 'Tag', 'User');
 		$model = new Comment();
 		$model->deleteAll(true);
 		$this->assertEquals(array(), $model->find('all'));
