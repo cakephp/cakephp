@@ -845,4 +845,16 @@ class I18nTest extends TestCase
         $this->assertEquals('Le moo', $translator->translate('Cow'));
         $this->assertEquals('Le bark', $translator->translate('Dog'));
     }
+
+    /**
+     * Tests the __() function on empty translations
+     *
+     * @return void
+     */
+    public function testEmptyTranslationString()
+    {
+        I18n::defaultFormatter('sprintf');
+        $result = __('No translation needed');
+        $this->assertEquals('No translation needed', $result);
+    }
 }

@@ -575,6 +575,24 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     }
 
     /**
+     * Test posting to a secured form action with a query that has a part that
+     * will be encoded by the security component
+     *
+     * @return void
+     */
+    public function testPostSecuredFormWithUnencodedQuery()
+    {
+        $this->enableSecurityToken();
+        $data = [
+            'title' => 'Some title',
+            'body' => 'Some text'
+        ];
+        $this->post('/posts/securePost?foo=/', $data);
+        $this->assertResponseOk();
+        $this->assertResponseContains('Request was accepted');
+    }
+
+    /**
      * Test posting to a secured form action action.
      *
      * @return void

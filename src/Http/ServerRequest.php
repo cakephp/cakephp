@@ -638,7 +638,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * @param string $name The property being accessed.
      * @return bool Existence
      * @deprecated 3.4.0 Accessing routing parameters through __isset will removed in 4.0.0.
-     *   Use param() instead.
+     *   Use getParam() instead.
      */
     public function __isset($name)
     {
@@ -895,7 +895,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
 
     /**
      * Add parameters to the request's parsed parameter set. This will overwrite any existing parameters.
-     * This modifies the parameters available through `$request->params`.
+     * This modifies the parameters available through `$request->getParam()`.
      *
      * @param array $params Array of parameters to merge in
      * @return $this The current object, you can chain this method.
@@ -2214,7 +2214,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * @param string $name Name of the key being written
      * @param mixed $value The value being written.
      * @return void
-     * @deprecated 3.4.0 The ArrayAccess methods will be removed in 4.0.0. Use withParam() or param() instead.
+     * @deprecated 3.4.0 The ArrayAccess methods will be removed in 4.0.0. Use withParam() instead.
      */
     public function offsetSet($name, $value)
     {
@@ -2226,7 +2226,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string $name thing to check.
      * @return bool
-     * @deprecated 3.4.0 The ArrayAccess methods will be removed in 4.0.0. Use getParam() or param() instead.
+     * @deprecated 3.4.0 The ArrayAccess methods will be removed in 4.0.0. Use getParam() instead.
      */
     public function offsetExists($name)
     {
@@ -2242,7 +2242,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string $name Name to unset.
      * @return void
-     * @deprecated 3.4.0 The ArrayAccess methods will be removed in 4.0.0. Use withParam() or param() instead.
+     * @deprecated 3.4.0 The ArrayAccess methods will be removed in 4.0.0. Use withParam() instead.
      */
     public function offsetUnset($name)
     {

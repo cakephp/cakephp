@@ -2248,6 +2248,36 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Test selecting rows using the page() method and ordering the results
+     * by a calculated column.
+     *
+     * @return void
+     */
+    public function testSelectPageWithOrder()
+    {
+        $this->loadFixtures('Comments');
+        $query = new Query($this->connection);
+        $result = $query
+            ->select([
+                'id',
+                'ids_added' => $query->newExpr()->add('(user_id + article_id)')
+            ])
+            ->from('comments')
+            ->order(['ids_added' => 'asc'])
+            ->limit(2)
+            ->page(3)
+            ->execute();
+        $this->assertCount(2, $result);
+        $this->assertEquals(
+            [
+                ['id' => '6', 'ids_added' => '4'],
+                ['id' => '2', 'ids_added' => '5']
+            ],
+            $result->fetchAll('assoc')
+        );
+    }
+
+    /**
      * Tests that Query objects can be included inside the select clause
      * and be used as a normal field, including binding any passed parameter
      *
