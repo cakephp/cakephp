@@ -23,7 +23,7 @@ namespace Cake\Shell;
  * versions of your application are deployed, or when migrations
  * requiring updated metadata are required.
  *
- * @deprecated Use \Cake\Shell\SchemaCacheShell instead
+ * @deprecated 3.5.0 Use \Cake\Shell\SchemaCacheShell instead
  */
 class OrmCacheShell extends SchemaCacheShell
 {
