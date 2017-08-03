@@ -583,6 +583,21 @@ class Sqlite extends DboSource {
 	}
 
 /**
+ * Drops given tables.
+ *
+ * @param array $tables A list of tables.
+ * @return Resource or object representing the result set, or false on failure
+ */
+	public function dropTables($tables) {
+		$result = false;
+		foreach ($tables as $table) {
+			$statement= $this->_dropTable($table);
+			$result = $this->execute($statement);
+		}
+		return $result;
+	}
+
+/**
  * Gets the schema name
  *
  * @return string The schema name
