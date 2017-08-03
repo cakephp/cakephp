@@ -2047,8 +2047,6 @@ class Response implements ResponseInterface
      * ### Options
      *
      * - `name`: The Cookie name
-     * - `value`: Value of the cookie
-     * - `expire`: Time the cookie expires in
      * - `path`: Path the cookie applies to
      * - `domain`: Domain the cookie is for.
      * - `secure`: Is the cookie https?
@@ -2058,26 +2056,25 @@ class Response implements ResponseInterface
      *
      * ```
      * // set scalar value with defaults
-     * $response = $response->withoutCookie('remember_me');
+     * $response = $response->withExpiredCookie('remember_me');
      *
      * // customize cookie attributes
-     * $response = $response->withoutCookie('remember_me', ['path' => '/login']);
+     * $response = $response->withExpiredCookie('remember_me', ['path' => '/login']);
      *
      * // add a cookie object
-     * $response = $response->withoutCookie(new Cookie('remember_me', 'deleted'));
+     * $response = $response->withExpiredCookie(new Cookie('remember_me'));
      * ```
      *
-     * @param string|\Cake\Http\Cookie\Cookie $name The name of the cookie to expire, or a cookie object
+     * @param string|\Cake\Http\Cookie\CookieInterface $name The name of the cookie to expire, or a cookie object
      * @param array $options An array of cookie options.
      * @return static
      */
-    public function withoutCookie($name, $options = [])
+    public function withExpiredCookie($name, $options = [])
     {
-        if ($name instanceof Cookie) {
-            $cookie = $name->withExpiry(new Time(1));
+        if ($name instanceof CookieInterface) {
+            $cookie = $name->withExpired();
         } else {
             $options += [
-                'value' => '',
                 'path' => '/',
                 'domain' => '',
                 'secure' => false,
@@ -2086,7 +2083,7 @@ class Response implements ResponseInterface
 
             $cookie = new Cookie(
                 $name,
-                $options['value'],
+                '',
                 new Time(1),
                 $options['path'],
                 $options['domain'],

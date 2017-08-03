@@ -510,7 +510,7 @@ class Cookie implements CookieInterface
     public function withExpired()
     {
         $new = clone $this;
-        $new->expiresAt = Chronos::parse('-1 year');
+        $new->expiresAt = Chronos::createFromTimestamp(1);
 
         return $new;
     }

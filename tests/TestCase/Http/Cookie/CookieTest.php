@@ -298,8 +298,7 @@ class CookieTest extends TestCase
         $this->assertNotSame($new, $cookie, 'Should clone');
         $this->assertNotContains('expiry', $cookie->toHeaderValue());
 
-        $now = Chronos::parse('-1 year');
-        $this->assertContains($now->format('Y'), $new->toHeaderValue());
+        $this->assertContains('01-Jan-1970', $new->toHeaderValue());
     }
 
     /**
