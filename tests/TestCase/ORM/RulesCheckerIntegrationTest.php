@@ -490,6 +490,28 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
+     * Tests the IsNotReferencedBy rule before delete
+     *
+     * @group delete
+     * @return void
+     */
+    public function testIsNotReferencedByRule()
+    {
+        $articlesTable = TableRegistry::get('Articles');
+        $articlesTable->belongsTo('Authors');
+        $authorsTable = TableRegistry::get('Authors');
+
+        $author = $authorsTable->get(1);
+        $authorWithoutArticles = $authorsTable->get(2);
+
+        $rules = $authorsTable->rulesChecker();
+        $rules->addDelete($rules->IsNotReferencedBy('Articles'));
+
+        $this->assertFalse($authorsTable->delete($author));
+        $this->assertTrue($authorsTable->delete($authorWithoutArticles));
+    }
+
+    /**
      * Tests the existsIn domain rule
      *
      * @group save

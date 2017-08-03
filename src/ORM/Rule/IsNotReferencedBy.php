@@ -9,7 +9,7 @@ use RuntimeException;
 /**
  * Checks that given entity is not referenced by any row in the given table
  */
-class DoesNotReference
+class IsNotReferencedBy
 {
     /**
      * The repository that will be checked
@@ -44,7 +44,7 @@ class DoesNotReference
 
         if (!$assoc) {
             throw new RuntimeException(sprintf(
-                "DoesNotReference rule is invalid. '%s' is not associated with '%s'.",
+                "IsNotReferencedBy rule is invalid. '%s' is not associated with '%s'.",
                 $this->_repository,
                 get_class($options['repository'])
             ));
