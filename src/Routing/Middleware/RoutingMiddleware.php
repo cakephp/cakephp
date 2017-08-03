@@ -88,7 +88,7 @@ class RoutingMiddleware
                 if (is_array($parsedBody) && isset($parsedBody['_method'])) {
                     $request = $request->withMethod($parsedBody['_method']);
                 }
-                $params = Router::parseRequest($request);
+                $params = Router::parseRequest($request) + $params;
                 if (isset($params['_middleware'])) {
                     $middleware = $params['_middleware'];
                     unset($params['_middleware']);

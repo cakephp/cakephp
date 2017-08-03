@@ -106,6 +106,31 @@ class RoutingMiddlewareTest extends TestCase
     }
 
     /**
+     * Test routing middleware does wipe off existing params keys.
+     *
+     * @return void
+     */
+    public function testPreservingExistingParams()
+    {
+        $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/articles']);
+        $request = $request->withAttribute('params', ['_csrfToken' => 'i-am-groot']);
+        $response = new Response();
+        $next = function ($req, $res) {
+            $expected = [
+                'controller' => 'Articles',
+                'action' => 'index',
+                'plugin' => null,
+                'pass' => [],
+                '_matchedRoute' => '/articles',
+                '_csrfToken' => 'i-am-groot'
+            ];
+            $this->assertEquals($expected, $req->getAttribute('params'));
+        };
+        $middleware = new RoutingMiddleware();
+        $middleware($request, $response, $next);
+    }
+
+    /**
      * Test middleware invoking hook method
      *
      * @return void
