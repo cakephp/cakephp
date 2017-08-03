@@ -3499,19 +3499,23 @@ class ModelWriteTest extends BaseModelTest {
 				'title' => 'Model Associations 101',
 				'user_id' => 1
 		))));
-		$result = $model->find('all', array('fields' => array(
-			'Comment.id', 'Comment.comment', 'Comment.article_id', 'Article.id', 'Article.title'
-		)));
+		$result = $model->find('all', array(
+			'recursive' => 1,
+			'fields' => array(
+				'Comment.id', 'Comment.comment', 'Comment.article_id', 'Article.id', 'Article.title'
+			),
+		));
 		$expected = array(array(
 			'Comment' => array(
-				'id' => '1',
-				'article_id' => '1',
+				'id' => '7',
+				'article_id' => '4',
 				'comment' => 'Article comment'
 			),
 			'Article' => array(
-				'id' => '1',
+				'id' => '4',
 				'title' => 'Model Associations 101'
-		)));
+			),
+		));
 		$this->assertEquals($expected, $result);
 	}
 
@@ -5782,19 +5786,23 @@ class ModelWriteTest extends BaseModelTest {
 				'title' => 'Model Associations 101',
 				'user_id' => 1
 		))));
-		$result = $model->find('all', array('fields' => array(
-			'Comment.id', 'Comment.comment', 'Comment.article_id', 'Article.id', 'Article.title'
-		)));
+		$result = $model->find('all', array(
+			'recursive' => 1,
+			'fields' => array(
+				'Comment.id', 'Comment.comment', 'Comment.article_id', 'Article.id', 'Article.title'
+			),
+		));
 		$expected = array(array(
 			'Comment' => array(
-				'id' => '1',
-				'article_id' => '1',
+				'id' => '7',
+				'article_id' => '4',
 				'comment' => 'Article comment'
 			),
 			'Article' => array(
-				'id' => '1',
+				'id' => '4',
 				'title' => 'Model Associations 101'
-		)));
+			),
+		));
 		$this->assertEquals($expected, $result);
 	}
 
