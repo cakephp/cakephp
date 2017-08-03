@@ -19,12 +19,12 @@ use Cake\Database\SchemaCache;
 use RuntimeException;
 
 /**
- * ORM Cache Shell.
+ * Schema Cache Shell.
  *
- * Provides a CLI interface to the ORM metadata caching features.
+ * Provides a CLI interface to the schema metadata caching features.
  * This tool is intended to be used by deployment scripts so that you
- * can prevent thundering herd effects on the metadata cache when new
- * versions of your application are deployed, or when migrations
+ * can prevent "thundering herd" effect on the metadata cache when new
+ * versions of your application is deployed, or when migrations
  * requiring updated metadata are required.
  */
 class SchemaCacheShell extends Shell
