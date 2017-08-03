@@ -3452,14 +3452,15 @@ class ModelWriteTest extends BaseModelTest {
 		)));
 		$expected = array(array(
 			'Comment' => array(
-				'id' => '1',
+				'id' => '7',
 				'comment' => 'Comment with attachment'
 			),
 			'Attachment' => array(
-				'id' => '1',
-				'comment_id' => '1',
+				'id' => '2',
+				'comment_id' => '7',
 				'attachment' => 'some_file.zip'
-		)));
+			),
+		));
 		$this->assertEquals($expected, $result);
 
 		$model->Attachment->bindModel(array('belongsTo' => array('Comment')), false);
@@ -5739,14 +5740,15 @@ class ModelWriteTest extends BaseModelTest {
 		)));
 		$expected = array(array(
 			'Comment' => array(
-				'id' => '1',
+				'id' => '7',
 				'comment' => 'Comment with attachment'
 			),
 			'Attachment' => array(
-				'id' => '1',
-				'comment_id' => '1',
+				'id' => '2',
+				'comment_id' => '7',
 				'attachment' => 'some_file.zip'
-		)));
+			),
+		));
 		$this->assertEquals($expected, $result);
 
 		$model->Attachment->bindModel(array('belongsTo' => array('Comment')), false);
