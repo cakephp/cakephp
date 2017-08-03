@@ -749,13 +749,10 @@ class ShellTest extends CakeTestCase {
 	public function testRunCommandBaseclassMethod() {
 		$Mock = $this->getMock('Shell', array('startup', 'getOptionParser', 'out'), array(), '', false);
 		$Parser = $this->getMock('ConsoleOptionParser', array(), array(), '', false);
-
 		$Parser->expects($this->once())->method('help');
 		$Mock->expects($this->once())->method('getOptionParser')
 			->will($this->returnValue($Parser));
-		$Mock->expects($this->never())->method('hr');
 		$Mock->expects($this->once())->method('out');
-
 		$Mock->runCommand('hr', array());
 	}
 
@@ -767,13 +764,10 @@ class ShellTest extends CakeTestCase {
 	public function testRunCommandMissingMethod() {
 		$Mock = $this->getMock('Shell', array('startup', 'getOptionParser', 'out'), array(), '', false);
 		$Parser = $this->getMock('ConsoleOptionParser', array(), array(), '', false);
-
 		$Parser->expects($this->once())->method('help');
-		$Mock->expects($this->never())->method('idontexist');
 		$Mock->expects($this->once())->method('getOptionParser')
 			->will($this->returnValue($Parser));
 		$Mock->expects($this->once())->method('out');
-
 		$result = $Mock->runCommand('idontexist', array());
 		$this->assertFalse($result);
 	}
@@ -1029,31 +1023,27 @@ TEXT;
 
 /**
  * Test that shell loggers do not get overridden in constructor if already configured
- * 
+ *
  * @return void
  */
 	public function testShellLoggersDoNotGetOverridden() {
 		$shell = $this->getMock(
 			"Shell", array(
 				"_loggerIsConfigured",
-				"configureStdOutLogger",
-				"configureStdErrLogger",
+				"_configureStdOutLogger",
+				"_configureStdErrLogger",
 			),
 			array(),
 			"",
 			false
 		);
-
 		$shell->expects($this->exactly(2))
 			->method("_loggerIsConfigured")
 			->will($this->returnValue(true));
-
 		$shell->expects($this->never())
 			->method("_configureStdOutLogger");
-
 		$shell->expects($this->never())
 			->method("_configureStdErrLogger");
-
 		$shell->__construct();
 	}
 }
