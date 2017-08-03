@@ -741,10 +741,15 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @deprecated Use `getMockBuilder()` or `createMock()` in new unit tests.
  * @see https://phpunit.de/manual/current/en/test-doubles.html
  */
-	protected function _buildMock($originalClassName, $methods = array(),
-			array $arguments = array(), $mockClassName = '',
-			$callOriginalConstructor = true, $callOriginalClone = true,
-			$callAutoload = true) {
+	protected function _buildMock(
+		$originalClassName,
+		$methods = array(),
+		array $arguments = array(),
+		$mockClassName = '',
+		$callOriginalConstructor = true,
+		$callOriginalClone = true,
+		$callAutoload = true
+	) {
 		$MockBuilder = $this->getMockBuilder($originalClassName);
 		if (!empty($methods)) {
 			$MockBuilder = $MockBuilder->setMethods($methods);
@@ -797,11 +802,18 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @deprecated Use `getMockBuilder()` or `createMock()` in new unit tests.
  * @see https://phpunit.de/manual/current/en/test-doubles.html
  */
-	public function getMock($originalClassName, $methods = array(),
-			array $arguments = array(), $mockClassName = '',
-			$callOriginalConstructor = true, $callOriginalClone = true,
-			$callAutoload = true, $cloneArguments = false,
-			$callOriginalMethods = false, $proxyTarget = null) {
+	public function getMock(
+		$originalClassName,
+		$methods = array(),
+		array $arguments = array(),
+		$mockClassName = '',
+		$callOriginalConstructor = true,
+		$callOriginalClone = true,
+		$callAutoload = true,
+		$cloneArguments = false,
+		$callOriginalMethods = false,
+		$proxyTarget = null
+	) {
 		$phpUnitVersion = PHPUnit_Runner_Version::id();
 		if (version_compare($phpUnitVersion, '5.7.0', '<')) {
 			return parent::getMock($originalClassName, $methods, $arguments,
@@ -817,8 +829,15 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 		if ($proxyTarget !== null) {
 			throw new InvalidArgumentException('$proxyTarget parameter is not supported');
 		}
-		return $this->_buildMock($originalClassName, $methods, $arguments,
-				$mockClassName, $callOriginalConstructor, $callOriginalClone, $callAutoload);
+		return $this->_buildMock(
+			$originalClassName,
+			$methods,
+			$arguments,
+			$mockClassName,
+			$callOriginalConstructor,
+			$callOriginalClone,
+			$callAutoload
+		);
 	}
 
 /**
