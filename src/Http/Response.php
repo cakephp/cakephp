@@ -19,7 +19,6 @@ use Cake\Filesystem\File;
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Cookie\CookieInterface;
-use Cake\I18n\Time;
 use Cake\Log\Log;
 use Cake\Network\CorsBuilder;
 use Cake\Network\Exception\NotFoundException;
@@ -2084,7 +2083,7 @@ class Response implements ResponseInterface
             $cookie = new Cookie(
                 $name,
                 '',
-                new Time(1),
+                DateTime::createFromFormat('U', 1),
                 $options['path'],
                 $options['domain'],
                 $options['secure'],
