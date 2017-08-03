@@ -591,7 +591,7 @@ class Sqlite extends DboSource {
 	public function dropTables($tables) {
 		$result = false;
 		foreach ($tables as $table) {
-			$statement= $this->_dropTable($table);
+			$statement = $this->_dropTable($table);
 			$result = $this->execute($statement);
 		}
 		return $result;
