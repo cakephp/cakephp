@@ -357,6 +357,19 @@ class CookieCollectionTest extends TestCase
     }
 
     /**
+     * Test adding no cookies
+     *
+     * @return void
+     */
+    public function testAddToRequestNoCookies()
+    {
+        $collection = new CookieCollection();
+        $request = new ClientRequest('http://example.com/api');
+        $request = $collection->addToRequest($request);
+        $this->assertFalse($request->hasHeader('Cookie'), 'No header should be set.');
+    }
+
+    /**
      * Test adding cookies from the collection to request.
      *
      * @return void
