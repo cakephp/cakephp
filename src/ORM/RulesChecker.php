@@ -16,6 +16,7 @@ namespace Cake\ORM;
 
 use Cake\Datasource\RulesChecker as BaseRulesChecker;
 use Cake\ORM\Rule\ExistsIn;
+use Cake\ORM\Rule\IsNotReferencedBy;
 use Cake\ORM\Rule\IsUnique;
 use Cake\ORM\Rule\ValidCount;
 
@@ -110,6 +111,26 @@ class RulesChecker extends BaseRulesChecker
         $errorField = is_string($field) ? $field : current($field);
 
         return $this->_addError(new ExistsIn($field, $table, $options), '_existsIn', compact('errorField', 'message'));
+    }
+
+    /**
+     * Returns a callable that can be used as a rule for checking that the entity is not
+     * referenced by any row in the specified table
+     *
+     * This is useful for enforcing foreign key integrity checks. (i.e.: ON DELETE RESTRICT)
+     *
+     * ### Example:
+     *
+     * ```
+     * $rules->add($rules->isNotReferencedBy('Articles'));
+     * ```
+     *
+     * @param string $table The table name to check for references
+     * @return callable
+     */
+    public function isNotReferencedBy($table)
+    {
+        return $this->_addError(new IsNotReferencedBy($table), '_isNotReferencedBy', compact('errorField', 'message'));
     }
 
     /**

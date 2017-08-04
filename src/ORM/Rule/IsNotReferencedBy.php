@@ -39,7 +39,9 @@ class IsNotReferencedBy
      */
     public function __invoke(EntityInterface $entity, array $options)
     {
-        /** @var $assoc Association */
+        /**
+         * @var $assoc Association
+         */
         $assoc = $options['repository']->association($this->_repository);
 
         if (!$assoc) {
