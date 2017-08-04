@@ -245,6 +245,54 @@ class Mysql extends DboSource {
 		return $tables;
 	}
 
+	
+	  
+        /**
+ * Executes given SQL statement.
+ *
+ * @param string $sql SQL statement
+ * @param array $params list of params to be bound to query
+ * @param array $prepareOptions Options to be used in the prepare statement
+ * @return mixed PDOStatement if query executes with no problem, true as the result of a successful, false on error
+ * query returning no rows, such as a CREATE statement, false otherwise
+ * @throws PDOException
+ */
+        protected function _execute($sql, $params = array(), $prepareOptions = array()) {
+            
+            try{
+                $parentResult = parent::_execute($sql, $params, $prepareOptions);
+                return $parentResult;
+            } catch (Exception $ex) {
+                $ex->fullProcessList =  $ex->innoDbStatus = array();
+              if($ex->queryString && ( $ex->queryString != 'SHOW FULL PROCESSLIST' ) && ( $ex->queryString != 'SHOW ENGINE INNODB STATUS' ) &&  (strpos($ex->getMessage(), 'SQLSTATE[HY000]: General error: 1205 Lock wait timeout exceeded; try restarting transaction') === 0)  ){
+                    $DS = clone $this;
+                    try{
+                        $showFullProcessListResult = $DS->_execute('SHOW FULL PROCESSLIST');
+                        while ($mySqlProcess = $showFullProcessListResult->fetch(PDO::FETCH_ASSOC)) {
+                             $ex->fullProcessList[] = $mySqlProcess;
+                            
+                        }
+                    } catch (Exception $showFullProcessListException) {
+                           
+                    }
+                    
+                    try{
+                        $innoDbStatusResult = $DS->_execute('SHOW ENGINE INNODB STATUS');
+                        while ($innoDbStatus = $innoDbStatusResult->fetch(PDO::FETCH_ASSOC)) {
+                             $ex->innoDbStatus[] = $innoDbStatus;
+                             CakeLog::error( print_r( $innoDbStatus , true ));
+                        }
+                    } catch (Exception $innoDbStatusException) {
+
+		    }
+                    
+                }
+                throw $ex;
+            }
+            
+        }
+	
+	
 /**
  * Builds a map of the columns contained in a result
  *
