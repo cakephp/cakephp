@@ -78,39 +78,6 @@ class SessionTest extends TestCase
     public $fixtures = ['core.cake_sessions', 'core.sessions'];
 
     /**
-     * setup before class.
-     *
-     * @return void
-     */
-    public static function setupBeforeClass()
-    {
-        // Make sure garbage collector will be called
-        static::$_gcDivisor = ini_get('session.gc_divisor');
-        ini_set('session.gc_divisor', '1');
-    }
-
-    /**
-     * teardown after class
-     *
-     * @return void
-     */
-    public static function teardownAfterClass()
-    {
-        // Revert to the default setting
-        ini_set('session.gc_divisor', static::$_gcDivisor);
-    }
-
-    /**
-     * setUp method
-     *
-     * @return void
-     */
-    public function setUp()
-    {
-        parent::setUp();
-    }
-
-    /**
      * tearDown method
      *
      * @return void
@@ -124,6 +91,7 @@ class SessionTest extends TestCase
     /**
      * test setting ini properties with Session configuration.
      *
+     * @runInSeparateProcess
      * @return void
      */
     public function testSessionConfigIniSetting()
@@ -149,6 +117,7 @@ class SessionTest extends TestCase
     /**
      * test session cookie path setting
      *
+     * @runInSeparateProcess
      * @return void
      */
     public function testCookiePath()
@@ -298,15 +267,16 @@ class SessionTest extends TestCase
     /**
      * testId method
      *
+     * @runInSeparateProcess
      * @return void
      */
     public function testId()
     {
         $session = new Session();
+        $session->start();
         $result = $session->id();
-        $expected = session_id();
         $this->assertNotEmpty($result);
-        $this->assertSame($expected, $result);
+        $this->assertSame(session_id(), $result);
 
         $session->id('MySessionId');
         $this->assertSame('MySessionId', $session->id());
@@ -489,6 +459,7 @@ class SessionTest extends TestCase
     /**
      * test using a handler from app/Model/Datasource/Session.
      *
+     * @runInSeparateProcess
      * @return void
      */
     public function testUsingAppLibsHandler()
@@ -512,6 +483,7 @@ class SessionTest extends TestCase
     /**
      * test using a handler from a plugin.
      *
+     * @runInSeparateProcess
      * @return void
      */
     public function testUsingPluginHandler()
@@ -534,6 +506,7 @@ class SessionTest extends TestCase
     /**
      * Tests that it is possible to pass an already made instance as the session engine
      *
+     * @runInSeparateProcess
      * @return void
      */
     public function testEngineWithPreMadeInstance()
@@ -564,6 +537,7 @@ class SessionTest extends TestCase
     /**
      * Test that cookieTimeout matches timeout when unspecified.
      *
+     * @runInSeparateProcess
      * @return void
      */
     public function testCookieTimeoutFallback()
@@ -581,6 +555,7 @@ class SessionTest extends TestCase
     /**
      * Tests that the cookie name can be changed with configuration
      *
+     * @runInSeparateProcess
      * @return void
      */
     public function testSessionName()
@@ -591,6 +566,8 @@ class SessionTest extends TestCase
 
     /**
      * Test that a call of check() starts the session when cookies are disabled in php.ini
+     *
+     * @runInSeparateProcess
      */
     public function testCheckStartsSessionWithCookiesDisabled()
     {
@@ -631,6 +608,8 @@ class SessionTest extends TestCase
 
     /**
      * Test that a call of check() starts the session when the session ID is passed via URL and session.use_trans_sid is enabled
+     *
+     * @runInSeparateProcess
      */
     public function testCheckStartsSessionWithSIDinURL()
     {
