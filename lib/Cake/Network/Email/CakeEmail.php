@@ -1084,7 +1084,7 @@ class CakeEmail {
 					$name = basename($fileInfo['file']);
 				}
 			}
-			if (!isset($fileInfo['mimetype']) && function_exists('mime_content_type')) {
+			if (!isset($fileInfo['mimetype']) && isset($fileInfo['file']) && function_exists('mime_content_type')) {
 				$fileInfo['mimetype'] = mime_content_type($fileInfo['file']);
 			}
 			if (!isset($fileInfo['mimetype'])) {
