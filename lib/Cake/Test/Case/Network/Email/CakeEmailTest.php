@@ -1139,7 +1139,7 @@ class CakeEmailTest extends CakeTestCase {
 		$expected .= chunk_split(base64_encode($data), 76, "\r\n");
 		$this->assertContains($expected, $result['message']);
 	}
-	
+
 /**
  * Test send() with no template and data string attachment, no mimetype
  *
@@ -1156,7 +1156,7 @@ class CakeEmailTest extends CakeTestCase {
 			'data' => $data
 		)));
 		$result = $this->CakeEmail->send('Hello');
-		
+
 		$boundary = $this->CakeEmail->getBoundary();
 		$this->assertContains('Content-Type: multipart/mixed; boundary="' . $boundary . '"', $result['headers']);
 		$expected = "--$boundary\r\n" .
