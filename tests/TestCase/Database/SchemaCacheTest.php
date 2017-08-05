@@ -84,7 +84,7 @@ class SchemaCacheTest extends TestCase
         $ds = ConnectionManager::get('test');
         $ds->cacheMetadata(false);
 
-        $ormCache = new SchemaCache('test');
+        $ormCache = new SchemaCache($ds);
         $ormCache->clear();
 
         $this->assertInstanceOf('Cake\Database\Schema\CachedCollection', $ds->schemaCollection());
@@ -100,7 +100,7 @@ class SchemaCacheTest extends TestCase
         $ds = ConnectionManager::get('test');
         $ds->cacheMetadata(false);
 
-        $ormCache = new SchemaCache('test');
+        $ormCache = new SchemaCache($ds);
         $ormCache->build();
 
         $this->assertInstanceOf('Cake\Database\Schema\CachedCollection', $ds->schemaCollection());
@@ -113,11 +113,12 @@ class SchemaCacheTest extends TestCase
      */
     public function testBuildNoArgs()
     {
+        $ds = ConnectionManager::get('test');
         $this->cache->expects($this->at(3))
             ->method('write')
             ->with('test_articles');
 
-        $ormCache = new SchemaCache('test');
+        $ormCache = new SchemaCache($ds);
         $ormCache->build();
     }
 
@@ -128,13 +129,15 @@ class SchemaCacheTest extends TestCase
      */
     public function testBuildNamedModel()
     {
+        $ds = ConnectionManager::get('test');
+
         $this->cache->expects($this->once())
             ->method('write')
             ->with('test_articles');
         $this->cache->expects($this->never())
             ->method('delete');
 
-        $ormCache = new SchemaCache('test');
+        $ormCache = new SchemaCache($ds);
         $ormCache->build('articles');
     }
 
@@ -145,6 +148,8 @@ class SchemaCacheTest extends TestCase
      */
     public function testBuildOverwritesExistingData()
     {
+        $ds = ConnectionManager::get('test');
+
         $this->cache->expects($this->once())
             ->method('write')
             ->with('test_articles');
@@ -153,19 +158,8 @@ class SchemaCacheTest extends TestCase
         $this->cache->expects($this->never())
             ->method('delete');
 
-        $ormCache = new SchemaCache('test');
+        $ormCache = new SchemaCache($ds);
         $ormCache->build('articles');
-    }
-
-    /**
-     * Test getting an instance with an invalid connection name.
-     *
-     * @expectedException \Cake\Datasource\Exception\MissingDatasourceConfigException
-     * @return void
-     */
-    public function testInvalidConnection()
-    {
-        new SchemaCache('invalid-connection');
     }
 
     /**
@@ -175,11 +169,13 @@ class SchemaCacheTest extends TestCase
      */
     public function testClearNoArgs()
     {
+        $ds = ConnectionManager::get('test');
+
         $this->cache->expects($this->at(3))
             ->method('delete')
             ->with('test_articles');
 
-        $ormCache = new SchemaCache('test');
+        $ormCache = new SchemaCache($ds);
         $ormCache->clear();
     }
 
@@ -190,13 +186,15 @@ class SchemaCacheTest extends TestCase
      */
     public function testClearNamedModel()
     {
+        $ds = ConnectionManager::get('test');
+
         $this->cache->expects($this->never())
             ->method('write');
         $this->cache->expects($this->once())
             ->method('delete')
             ->with('test_articles');
 
-        $ormCache = new SchemaCache('test');
+        $ormCache = new SchemaCache($ds);
         $ormCache->clear('articles');
     }
 
@@ -218,8 +216,8 @@ class SchemaCacheTest extends TestCase
     /**
      * Test passing invalid object
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage SchemaCache::getSchema() expects `Cake\Datasource\ConnectionInterface`, `stdClass` given.
+     * @expectedException \TypeError
+     * @expectedExceptionMessage Cake\Database\SchemaCache::getSchema() must implement interface Cake\Datasource\ConnectionInterface
      * @return void
      */
     public function testPassingInvalidObject()

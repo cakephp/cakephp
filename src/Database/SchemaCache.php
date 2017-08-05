@@ -93,21 +93,11 @@ class SchemaCache
     /**
      * Helper method to get the schema collection.
      *
-     * @param string|\Cake\Datasource\ConnectionInterface $connection Connection name to get the schema for or a connection instance
+     * @param \Cake\Datasource\ConnectionInterface $connection Connection object
      * @return \Cake\Database\Schema\Collection|\Cake\Database\Schema\CachedCollection
      */
-    public function getSchema($connection)
+    public function getSchema(ConnectionInterface $connection)
     {
-        if (is_string($connection)) {
-            $connection = ConnectionManager::get($connection);
-        } elseif (!$connection instanceof ConnectionInterface) {
-            throw new InvalidArgumentException(sprintf(
-                'SchemaCache::getSchema() expects `%s`, `%s` given.',
-                ConnectionInterface::class,
-                is_object($connection) ? get_class($connection) : gettype($connection)
-            ));
-        }
-
         if (!method_exists($connection, 'schemaCollection')) {
             throw new RuntimeException(sprintf(
                 'The "%s" connection is not compatible with schema caching, ' .

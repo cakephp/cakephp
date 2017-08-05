@@ -16,6 +16,7 @@ namespace Cake\Shell;
 
 use Cake\Console\Shell;
 use Cake\Database\SchemaCache;
+use Cake\Datasource\ConnectionManager;
 use RuntimeException;
 
 /**
@@ -29,13 +30,6 @@ use RuntimeException;
  */
 class SchemaCacheShell extends Shell
 {
-
-    /**
-     * Schema Cache
-     *
-     * @var \Cake\Database\SchemaCache
-     */
-    protected $_schemaCache;
 
     /**
      * Build metadata.
@@ -85,7 +79,8 @@ class SchemaCacheShell extends Shell
     protected function _getSchemaCache()
     {
         try {
-            return new SchemaCache($this->params['connection']);
+            $connection = ConnectionManager::get($this->params['connection']);
+            return new SchemaCache($connection);
         } catch (RuntimeException $e) {
             $this->abort($e->getMessage());
         }
