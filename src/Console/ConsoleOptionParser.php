@@ -731,6 +731,18 @@ class ConsoleOptionParser
      */
     public function help($subcommand = null, $format = 'text', $width = 72)
     {
+        if ($subcommand === null) {
+            $formatter = new HelpFormatter($this);
+            $formatter->setAlias($this->rootName);
+
+            if ($format === 'text') {
+                return $formatter->text($width);
+            }
+            if ($format === 'xml') {
+                return $formatter->xml();
+            }
+        }
+
         if (isset($this->_subcommands[$subcommand])) {
             $command = $this->_subcommands[$subcommand];
             $subparser = $command->parser();
@@ -746,15 +758,7 @@ class ConsoleOptionParser
             return $subparser->help(null, $format, $width);
         }
 
-        $formatter = new HelpFormatter($this);
-        $formatter->setAlias($this->rootName);
-
-        if ($format === 'text') {
-            return $formatter->text($width);
-        }
-        if ($format === 'xml') {
-            return $formatter->xml();
-        }
+        return $this->getCommandError($subcommand);
     }
 
     /**
@@ -780,6 +784,127 @@ class ConsoleOptionParser
         $this->rootName = (string)$name;
 
         return $this;
+    }
+
+    /**
+     * Get the message output in the console stating that the command can not be found and tries to guess what the user
+     * wanted to say. Output a list of available subcommands as well.
+     *
+     * @param string $command Unknown command name trying to be dispatched.
+     * @return string The message to be displayed in the console.
+     */
+    protected function getCommandError($command)
+    {
+        $rootCommand = $this->getCommand();
+        $subcommands = array_keys((array)$this->subcommands());
+        $bestGuess = $this->findClosestItem($command, $subcommands);
+
+        $out = [
+            sprintf(
+                'Unable to find the `%s %s` subcommand. See `bin/%s %s --help`.',
+                $rootCommand,
+                $command,
+                $this->rootName,
+                $rootCommand
+            ),
+            ''
+        ];
+
+        if ($bestGuess !== null) {
+            $out[] = sprintf('Did you mean : `%s %s` ?', $rootCommand, $bestGuess);
+            $out[] = '';
+        }
+        $out[] = sprintf('Available subcommands for the `%s` command are : ', $rootCommand);
+        $out[] = '';
+        foreach ($subcommands as $subcommand) {
+            $out[] = ' - ' . $subcommand;
+        }
+
+        return implode("\n", $out);
+    }
+
+    /**
+     * Get the message output in the console stating that the option can not be found and tries to guess what the user
+     * wanted to say. Output a list of available options as well.
+     *
+     * @param string $option Unknown option name trying to be used.
+     * @return string The message to be displayed in the console.
+     */
+    protected function getOptionError($option)
+    {
+        $availableOptions = array_keys($this->_options);
+        $bestGuess = $this->findClosestItem($option, $availableOptions);
+        $out = [
+            sprintf('Unknown option `%s`.', $option),
+            ''
+        ];
+
+        if ($bestGuess !== null) {
+            $out[] = sprintf('Did you mean `%s` ?', $bestGuess);
+            $out[] = '';
+        }
+
+        $out[] = 'Available options are :';
+        $out[] = '';
+        foreach ($availableOptions as $availableOption) {
+            $out[] = ' - ' . $availableOption;
+        }
+
+        return implode("\n", $out);
+    }
+
+    /**
+     * Get the message output in the console stating that the short option can not be found. Output a list of available
+     * short options and what option they refer to as well.
+     *
+     * @param string $option Unknown short option name trying to be used.
+     * @return string The message to be displayed in the console.
+     */
+    protected function getShortOptionError($option)
+    {
+        $out = [sprintf('Unknown short option `%s`', $option)];
+        $out[] = '';
+        $out[] = 'Available short options are :';
+        $out[] = '';
+
+        foreach ($this->_shortOptions as $short => $long) {
+            $out[] = sprintf(' - `%s` (short for `--%s`)', $short, $long);
+        }
+
+        return implode("\n", $out);
+    }
+
+    /**
+     * Tries to guess the item name the user originally wanted using the some regex pattern and the levenshtein
+     * algorithm.
+     *
+     * @param string $needle Unknown item (either a subcommand name or an option for instance) trying to be used.
+     * @param array $haystack List of items available for the type $needle belongs to.
+     * @return string|null The closest name to the item submitted by the user.
+     */
+    protected function findClosestItem($needle, $haystack)
+    {
+        $bestGuess = null;
+        foreach ($haystack as $item) {
+            if (preg_match('/^' . $needle . '/', $item)) {
+                return $item;
+            }
+        }
+
+        foreach ($haystack as $item) {
+            if (preg_match('/' . $needle . '/', $item)) {
+                return $item;
+            }
+
+            $score = levenshtein($needle, $item);
+
+            if (!isset($bestScore) || $score < $bestScore) {
+                $bestScore = $score;
+                $bestGuess = $item;
+            }
+        }
+
+        return $bestGuess;
     }
 
     /**
@@ -822,7 +947,7 @@ class ConsoleOptionParser
             }
         }
         if (!isset($this->_shortOptions[$key])) {
-            throw new ConsoleException(sprintf('Unknown short option `%s`', $key));
+            throw new ConsoleException($this->getShortOptionError($key));
         }
         $name = $this->_shortOptions[$key];
 
@@ -840,7 +965,7 @@ class ConsoleOptionParser
     protected function _parseOption($name, $params)
     {
         if (!isset($this->_options[$name])) {
-            throw new ConsoleException(sprintf('Unknown option `%s`', $name));
+            throw new ConsoleException($this->getOptionError($name));
         }
         $option = $this->_options[$name];
         $isBoolean = $option->isBoolean();

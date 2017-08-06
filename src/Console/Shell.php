@@ -459,7 +459,6 @@ class Shell
             list($this->params, $this->args) = $this->OptionParser->parse($argv);
         } catch (ConsoleException $e) {
             $this->err('Error: ' . $e->getMessage());
-            $this->out($this->OptionParser->help($command));
 
             return false;
         }
@@ -507,7 +506,7 @@ class Shell
             return $this->main(...$this->args);
         }
 
-        $this->out($this->OptionParser->help($command));
+        $this->err($this->OptionParser->help($command));
 
         return false;
     }
@@ -548,6 +547,9 @@ class Shell
         } else {
             $this->_welcome();
         }
+
+        $subcommands = $this->OptionParser->subcommands();
+        $command = isset($subcommands[$command]) ? $command : null;
 
         return $this->out($this->OptionParser->help($command, $format));
     }
