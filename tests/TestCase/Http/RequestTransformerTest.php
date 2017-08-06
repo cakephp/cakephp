@@ -266,6 +266,7 @@ class RequestTransformerTest extends TestCase
      * Test that the transformed request sets the session path
      * as expected.
      *
+     * @runInSeparateProcess
      * @return void
      */
     public function testToCakeBaseSessionPath()

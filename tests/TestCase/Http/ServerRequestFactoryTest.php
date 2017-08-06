@@ -122,6 +122,7 @@ class ServerRequestFactoryTest extends TestCase
     /**
      * Test fromGlobals includes the session
      *
+     * @runInSeparateProcess
      * @return void
      */
     public function testFromGlobalsUrlSession()
