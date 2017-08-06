@@ -3454,7 +3454,8 @@ class DboSource extends DataSource {
 			$table = $this->fullTableName($table);
 		}
 		unset($table);
-		$statement = 'DROP TABLE IF EXISTS ' . implode(', ', $tables) . ';';
+		//$statement = 'DROP TABLE IF EXISTS ' . implode(', ', $tables) . ';';
+		$statement = 'DROP TABLE ' . implode(', ', $tables) . ';';
 		return $this->execute($statement);
 	}
 
