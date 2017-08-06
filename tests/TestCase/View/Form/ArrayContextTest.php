@@ -176,10 +176,12 @@ class ArrayContextTest extends TestCase
         $context = new ArrayContext($this->request, [
             'defaults' => [
                 'title' => 'Default value',
+                'users' => ['tags' => 'common']
             ]
         ]);
 
         $this->assertEquals('Default value', $context->val('title'));
+        $this->assertEquals('common', $context->val('users.0.tags'));
         $result = $context->val('title', ['default' => 'explicit default']);
         $this->assertEquals('explicit default', $result);
     }
@@ -195,12 +197,14 @@ class ArrayContextTest extends TestCase
             'required' => [
                 'Comments' => [
                     'required' => true,
-                    'nope' => false
+                    'nope' => false,
+                    'tags' => true
                 ]
             ]
         ]);
         $this->assertTrue($context->isRequired('Comments.required'));
         $this->assertFalse($context->isRequired('Comments.nope'));
+        $this->assertTrue($context->isRequired('Comments.0.tags'));
         $this->assertFalse($context->isRequired('Articles.id'));
     }
 
@@ -226,12 +230,14 @@ class ArrayContextTest extends TestCase
             'schema' => [
                 'Comments' => [
                     'id' => ['type' => 'integer'],
+                    'tags' => ['type' => 'string'],
                     'comment' => ['length' => 255]
                 ]
             ]
         ]);
         $this->assertNull($context->type('Comments.undefined'));
         $this->assertEquals('integer', $context->type('Comments.id'));
+        $this->assertEquals('string', $context->type('Comments.0.tags'));
         $this->assertNull($context->type('Comments.comment'));
     }
 
@@ -260,10 +266,12 @@ class ArrayContextTest extends TestCase
                     'comment' => ['type' => 'string', 'length' => 255],
                     'decimal' => ['type' => 'decimal', 'precision' => 2, 'length' => 5],
                     'floaty' => ['type' => 'float', 'precision' => 2, 'length' => 5],
+                    'tags' => ['type' => 'string', 'length' => 25],
                 ]
             ]
         ]);
         $this->assertEquals([], $context->attributes('Comments.id'));
+        $this->assertEquals(['length' => 25], $context->attributes('Comments.0.tags'));
         $this->assertEquals(['length' => 255], $context->attributes('Comments.comment'));
         $this->assertEquals(['precision' => 2, 'length' => 5], $context->attributes('Comments.decimal'));
         $this->assertEquals(['precision' => 2, 'length' => 5], $context->attributes('Comments.floaty'));
