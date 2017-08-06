@@ -2481,7 +2481,7 @@ class DboSource extends DataSource {
  * @return bool
  */
 	protected function _rollbackNested() {
-		$query = 'ROLLBACK TO SAVEPOINT LEVEL ' . $this->_transactionNesting--;
+		$query = 'ROLLBACK TO SAVEPOINT LEVEL' . $this->_transactionNesting--;
 		if ($this->fullDebug) {
 			$this->took = $this->numRows = $this->affected = false;
 			$this->logQuery($query);
