@@ -897,7 +897,7 @@ class PostgresTest extends CakeTestCase {
  * @return void
  */
 	public function testVirtualFieldAsAConstant() {
-		$this->loadFixtures('Article', 'Comment');
+		$this->loadFixtures('Article', 'ArticlesTag', 'Comment', 'Tag', 'User');
 		$Article = ClassRegistry::init('Article');
 		$Article->virtualFields = array(
 			'empty' => "NULL",
@@ -949,9 +949,12 @@ class PostgresTest extends CakeTestCase {
  * @return void
  */
 	public function testUpdateAllWithNonQualifiedConditions() {
-		$this->loadFixtures('Article');
+		$this->loadFixtures('Article', 'ArticlesTag', 'Comment', 'Tag', 'User');
 		$Article = new Article();
-		$result = $Article->updateAll(array('title' => "'Awesome'"), array('title' => 'Third Article'));
+		$result = $Article->updateAll(
+			array('title' => "'Awesome'"),
+			array('title' => 'Third Article')
+		);
 		$this->assertTrue($result);
 
 		$result = $Article->find('count', array(
@@ -1082,6 +1085,7 @@ class PostgresTest extends CakeTestCase {
 	}
 
 	public function testResetSequence() {
+		$this->loadFixtures('Article');
 		$model = new Article();
 
 		$table = $this->Dbo->fullTableName($model, false);
@@ -1089,8 +1093,8 @@ class PostgresTest extends CakeTestCase {
 			'id', 'user_id', 'title', 'body', 'published',
 		);
 		$values = array(
-			array(1, 1, 'test', 'first post', false),
-			array(2, 1, 'test 2', 'second post post', false),
+			array(4, 1, 'test', 'first post', false),
+			array(5, 1, 'test 2', 'second post post', false),
 		);
 		$this->Dbo->insertMulti($table, $fields, $values);
 		$sequence = $this->Dbo->getSequence($table);
