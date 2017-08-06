@@ -203,7 +203,7 @@ class FormHelper extends Helper
     /**
      * Context factory.
      *
-     * @var \Cake\View\FormContextFactory
+     * @var \Cake\View\Form\ContextFactory
      */
     protected $_contextFactory;
 
