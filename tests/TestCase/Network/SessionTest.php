@@ -91,6 +91,7 @@ class SessionTest extends TestCase
     /**
      * test setting ini properties with Session configuration.
      *
+     * @preserveGlobalState disabled
      * @runInSeparateProcess
      * @return void
      */
@@ -117,6 +118,7 @@ class SessionTest extends TestCase
     /**
      * test session cookie path setting
      *
+     * @preserveGlobalState disabled
      * @runInSeparateProcess
      * @return void
      */
@@ -267,6 +269,7 @@ class SessionTest extends TestCase
     /**
      * testId method
      *
+     * @preserveGlobalState disabled
      * @runInSeparateProcess
      * @return void
      */
@@ -459,6 +462,7 @@ class SessionTest extends TestCase
     /**
      * test using a handler from app/Model/Datasource/Session.
      *
+     * @preserveGlobalState disabled
      * @runInSeparateProcess
      * @return void
      */
@@ -483,6 +487,7 @@ class SessionTest extends TestCase
     /**
      * test using a handler from a plugin.
      *
+     * @preserveGlobalState disabled
      * @runInSeparateProcess
      * @return void
      */
@@ -506,6 +511,7 @@ class SessionTest extends TestCase
     /**
      * Tests that it is possible to pass an already made instance as the session engine
      *
+     * @preserveGlobalState disabled
      * @runInSeparateProcess
      * @return void
      */
@@ -537,6 +543,7 @@ class SessionTest extends TestCase
     /**
      * Test that cookieTimeout matches timeout when unspecified.
      *
+     * @preserveGlobalState disabled
      * @runInSeparateProcess
      * @return void
      */
@@ -555,6 +562,7 @@ class SessionTest extends TestCase
     /**
      * Tests that the cookie name can be changed with configuration
      *
+     * @preserveGlobalState disabled
      * @runInSeparateProcess
      * @return void
      */
@@ -567,6 +575,7 @@ class SessionTest extends TestCase
     /**
      * Test that a call of check() starts the session when cookies are disabled in php.ini
      *
+     * @preserveGlobalState disabled
      * @runInSeparateProcess
      */
     public function testCheckStartsSessionWithCookiesDisabled()
@@ -609,7 +618,9 @@ class SessionTest extends TestCase
     /**
      * Test that a call of check() starts the session when the session ID is passed via URL and session.use_trans_sid is enabled
      *
+     * @preserveGlobalState disabled
      * @runInSeparateProcess
+     * @return void
      */
     public function testCheckStartsSessionWithSIDinURL()
     {
