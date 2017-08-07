@@ -2041,6 +2041,63 @@ class Response implements ResponseInterface
     }
 
     /**
+     * Create a new response with an expired cookie set.
+     *
+     * ### Options
+     *
+     * - `name`: The Cookie name
+     * - `path`: Path the cookie applies to
+     * - `domain`: Domain the cookie is for.
+     * - `secure`: Is the cookie https?
+     * - `httpOnly`: Is the cookie available in the client?
+     *
+     * ### Examples
+     *
+     * ```
+     * // set scalar value with defaults
+     * $response = $response->withExpiredCookie('remember_me');
+     *
+     * // customize cookie attributes
+     * $response = $response->withExpiredCookie('remember_me', ['path' => '/login']);
+     *
+     * // add a cookie object
+     * $response = $response->withExpiredCookie(new Cookie('remember_me'));
+     * ```
+     *
+     * @param string|\Cake\Http\Cookie\CookieInterface $name The name of the cookie to expire, or a cookie object
+     * @param array $options An array of cookie options.
+     * @return static
+     */
+    public function withExpiredCookie($name, $options = [])
+    {
+        if ($name instanceof CookieInterface) {
+            $cookie = $name->withExpired();
+        } else {
+            $options += [
+                'path' => '/',
+                'domain' => '',
+                'secure' => false,
+                'httpOnly' => false
+            ];
+
+            $cookie = new Cookie(
+                $name,
+                '',
+                DateTime::createFromFormat('U', 1),
+                $options['path'],
+                $options['domain'],
+                $options['secure'],
+                $options['httpOnly']
+            );
+        }
+
+        $new = clone $this;
+        $new->_cookies = $new->_cookies->add($cookie);
+
+        return $new;
+    }
+
+    /**
      * Read a single cookie from the response.
      *
      * This method provides read access to pending cookies. It will

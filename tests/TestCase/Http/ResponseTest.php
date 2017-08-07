@@ -1491,6 +1491,54 @@ class ResponseTest extends TestCase
         $this->assertSame($cookie, $new->getCookieCollection()->get('yay'));
     }
 
+    public function testWithExpiredCookieScalar()
+    {
+        $response = new Response();
+        $response = $response->withCookie('testing', 'abc123');
+        $this->assertEquals('abc123', $response->getCookie('testing')['value']);
+
+        $new = $response->withExpiredCookie('testing');
+
+        $this->assertNull($response->getCookie('testing')['expire']);
+        $this->assertEquals('1', $new->getCookie('testing')['expire']);
+    }
+
+    public function testWithExpiredCookieOptions()
+    {
+        $options = [
+            'name' => 'testing',
+            'value' => 'abc123',
+            'domain' => 'cakephp.org',
+            'path' => '/custompath/',
+            'secure' => true,
+            'httpOnly' => true,
+            'expire' => (string)strtotime('+14 days'),
+        ];
+
+        $response = new Response();
+        $response = $response->withCookie('testing', $options);
+        $this->assertEquals($options, $response->getCookie('testing'));
+
+        $new = $response->withExpiredCookie('testing', $options);
+
+        $this->assertEquals($options['expire'], $response->getCookie('testing')['expire']);
+        $this->assertEquals('1', $new->getCookie('testing')['expire']);
+        $this->assertEquals('', $new->getCookie('testing')['value']);
+    }
+
+    public function testWithExpiredCookieObject()
+    {
+        $response = new Response();
+        $cookie = new Cookie('yay', 'a value');
+        $response = $response->withCookie($cookie);
+        $this->assertEquals('a value', $response->getCookie('yay')['value']);
+
+        $new = $response->withExpiredCookie($cookie);
+
+        $this->assertNull($response->getCookie('yay')['expire']);
+        $this->assertEquals('1', $new->getCookie('yay')['expire']);
+    }
+
     /**
      * Test getCookies() and array data.
      *
