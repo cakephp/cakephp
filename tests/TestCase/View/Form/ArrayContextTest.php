@@ -169,6 +169,9 @@ class ArrayContextTest extends TestCase
     /**
      * Test getting default value
      *
+     * Tests includes making sure numeric elements are stripped but not keys beginning with numeric
+     * value
+     *
      * @return void
      */
     public function testValDefault()
@@ -176,12 +179,13 @@ class ArrayContextTest extends TestCase
         $context = new ArrayContext($this->request, [
             'defaults' => [
                 'title' => 'Default value',
-                'users' => ['tags' => 'common']
+                'users' => ['tags' => 'common1', '9tags' => 'common2']
             ]
         ]);
 
         $this->assertEquals('Default value', $context->val('title'));
-        $this->assertEquals('common', $context->val('users.0.tags'));
+        $this->assertEquals('common1', $context->val('users.0.tags'));
+        $this->assertEquals('common2', $context->val('users.0.9tags'));
         $result = $context->val('title', ['default' => 'explicit default']);
         $this->assertEquals('explicit default', $result);
     }

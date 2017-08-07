@@ -180,9 +180,9 @@ class ArrayContext implements ContextInterface
         // Using Hash::check here incase the default value is actually null
         if (Hash::check($this->_context['defaults'], $field)) {
             return Hash::get($this->_context['defaults'], $field);
-        } else {
-            return Hash::get($this->_context['defaults'], $this->stripNesting($field));
         }
+
+        return Hash::get($this->_context['defaults'], $this->stripNesting($field));
     }
 
     /**
@@ -290,15 +290,15 @@ class ArrayContext implements ContextInterface
     }
 
     /**
-     * Strips out any numeric nesting like users.0.age
+     * Strips out any numeric nesting
      *
-     * @param string $field A dot separated path to check errors on
+     * For example users.0.age will output as users.age
+     *
+     * @param string $field A dot separated path
      * @return string A string with stripped numeric nesting
      */
     protected function stripNesting($field)
     {
-        return implode('.', array_filter(explode('.', $field), function ($val) {
-            return !is_numeric($val);
-        }));
+        return preg_replace('/\.\d\./', '.', $field);
     }
 }
