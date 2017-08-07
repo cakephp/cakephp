@@ -2045,7 +2045,6 @@ class Response implements ResponseInterface
      *
      * ### Options
      *
-     * - `name`: The Cookie name
      * - `path`: Path the cookie applies to
      * - `domain`: Domain the cookie is for.
      * - `secure`: Is the cookie https?
