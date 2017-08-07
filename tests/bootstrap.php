@@ -131,6 +131,7 @@ Date::setTestNow(Date::now());
 MutableDate::setTestNow(MutableDate::now());
 
 ini_set('intl.default_locale', 'en_US');
+ini_set('session.gc_divisor', '1');
 
 if (class_exists('PHPUnit_Runner_Version')) {
     class_alias('PHPUnit_Framework_TestResult', 'PHPUnit\Framework\TestResult');

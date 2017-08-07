@@ -415,6 +415,7 @@ class FormHelperTest extends TestCase
             ]
         ];
         $form = new Form();
+        $custom = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();
 
         return [
             'entity' => [$entity, 'Cake\View\Form\EntityContext'],
@@ -425,6 +426,7 @@ class FormHelperTest extends TestCase
             'form' => [$form, 'Cake\View\Form\FormContext'],
             'none' => [null, 'Cake\View\Form\NullContext'],
             'false' => [false, 'Cake\View\Form\NullContext'],
+            'custom' => [$custom, get_class($custom)]
         ];
     }
 

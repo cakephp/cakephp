@@ -63,6 +63,21 @@ class DatabaseSession implements SessionHandlerInterface
     }
 
     /**
+     * Set the timeout value for sessions.
+     *
+     * Primarily used in testing.
+     *
+     * @param int $timeout The timeout duration.
+     * @return $this
+     */
+    public function setTimeout($timeout)
+    {
+        $this->_timeout = $timeout;
+
+        return $this;
+    }
+
+    /**
      * Method called on open of a database session.
      *
      * @param string $savePath The path where to store/retrieve the session.
