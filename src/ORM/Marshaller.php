@@ -463,7 +463,8 @@ class Marshaller
         $primaryKey = array_map([$target, 'aliasField'], $primaryKey);
 
         if ($multi) {
-            if (count(current($ids)) !== count($primaryKey)) {
+            $first = current($ids);
+            if (!is_array($first) || count($first) !== count($primaryKey)) {
                 return [];
             }
             $filter = new TupleComparison($primaryKey, $ids, [], 'IN');

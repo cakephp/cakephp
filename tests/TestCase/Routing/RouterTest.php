@@ -2950,6 +2950,7 @@ class RouterTest extends TestCase
     {
         $route1 = $this->getMockBuilder('Cake\Routing\Route\RedirectRoute')
             ->setConstructorArgs(['/mobile\''])
+            ->setMethods(['parse'])
             ->getMock();
         $class = '\\' . get_class($route1);
 
