@@ -185,7 +185,8 @@ class ArrayContextTest extends TestCase
 
         $this->assertEquals('Default value', $context->val('title'));
         $this->assertEquals('common1', $context->val('users.0.tags'));
-        $this->assertEquals('common2', $context->val('users.0.9tags'));
+        $this->assertEquals('common1', $context->val('users.99.tags'));
+        $this->assertEquals('common2', $context->val('users.9.9tags'));
         $result = $context->val('title', ['default' => 'explicit default']);
         $this->assertEquals('explicit default', $result);
     }

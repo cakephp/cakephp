@@ -299,6 +299,6 @@ class ArrayContext implements ContextInterface
      */
     protected function stripNesting($field)
     {
-        return preg_replace('/\.\d\./', '.', $field);
+        return preg_replace('/\.\d*\./', '.', $field);
     }
 }
