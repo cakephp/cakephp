@@ -270,7 +270,8 @@ class CakeHtmlReporter extends CakeBaseReporter {
 			if (class_exists('PHPUnit_Util_Diff')) {
 				$diffs = PHPUnit_Util_Diff::diff($expectedMsg, $actualMsg);
 			} elseif (class_exists('SebastianBergmann\Diff\Differ')) {
-				$diffs = (new SebastianBergmann\Diff\Differ())->diff($expectedMsg, $actualMsg);
+				$differ = new SebastianBergmann\Diff\Differ();
+				$diffs = $differ->diff($expectedMsg, $actualMsg);
 			}
 			
 			echo "<br />" . $this->_htmlEntities($diffs);
