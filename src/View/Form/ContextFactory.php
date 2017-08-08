@@ -31,7 +31,7 @@ class ContextFactory
      *
      * @var array
      */
-    protected $contextProviders = [];
+    protected $providers = [];
 
     /**
      * Constructor.
@@ -111,8 +111,8 @@ class ContextFactory
      */
     public function addProvider($type, callable $check)
     {
-        $this->contextProviders = [$type => ['type' => $type, 'callable' => $check]]
-            + $this->contextProviders;
+        $this->providers = [$type => ['type' => $type, 'callable' => $check]]
+            + $this->providers;
     }
 
     /**
@@ -130,7 +130,7 @@ class ContextFactory
     {
         $data += ['entity' => null];
 
-        foreach ($this->contextProviders as $provider) {
+        foreach ($this->providers as $provider) {
             $check = $provider['callable'];
             $context = $check($request, $data);
             if ($context) {
