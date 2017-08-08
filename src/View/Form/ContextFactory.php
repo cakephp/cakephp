@@ -143,7 +143,7 @@ class ContextFactory
         if (!($context instanceof ContextInterface)) {
             throw new RuntimeException(sprintf(
                 'Context providers must return object implementing %s. Got "%s" instead.',
-                'Cake\View\Form\ContextInterface',
+                ContextInterface::class,
                 is_object($context) ? get_class($context) : gettype($context)
             ));
         }
