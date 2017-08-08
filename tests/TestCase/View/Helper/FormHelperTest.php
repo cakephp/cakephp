@@ -386,7 +386,7 @@ class FormHelperTest extends TestCase
      * Test adding an invalid context class.
      *
      * @expectedException \RuntimeException
-     * @expectedExceptionMessage Context objects must implement Cake\View\Form\ContextInterface
+     * @expectedExceptionMessage Context providers must return object implementing Cake\View\Form\ContextInterface. Got "stdClass" instead.
      * @return void
      */
     public function testAddContextProviderInvalid()

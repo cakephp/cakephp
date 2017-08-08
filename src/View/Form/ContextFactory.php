@@ -141,9 +141,11 @@ class ContextFactory
             $context = new NullContext($request, $data);
         }
         if (!($context instanceof ContextInterface)) {
-            throw new RuntimeException(
-                'Context objects must implement Cake\View\Form\ContextInterface'
-            );
+            throw new RuntimeException(sprintf(
+                'Context providers must return object implementing %s. Got "%s" instead.',
+                'Cake\View\Form\ContextInterface',
+                is_object($context) ? get_class($context) : gettype($context)
+            ));
         }
 
         return $context;
