@@ -282,7 +282,7 @@ class FormHelper extends Helper
     {
         if ($instance === null) {
             if ($this->_contextFactory === null) {
-                $this->_contextFactory = new ContextFactory($contexts);
+                $this->_contextFactory = ContextFactory::createWithDefaults($contexts);
             }
 
             return $this->_contextFactory;

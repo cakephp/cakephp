@@ -38,17 +38,60 @@ class ContextFactory
      *
      * @param array $providers Array of provider callables. Each element should
      *   be of form `['type' => 'a-string', 'callable' => ..]`
-     * @param bool $addDefaults Whether default providers should be added.
      */
-    public function __construct(array $providers = [], $addDefaults = true)
+    public function __construct(array $providers = [])
     {
-        if ($addDefaults) {
-            $this->addDefaultProviders();
-        }
-
         foreach ($providers as $provider) {
-            $this->addProvider($provider['type'], $provider);
+            $this->addProvider($provider['type'], $provider['callable']);
         }
+    }
+
+    /**
+     * Create factory instance with providers "array", "form" and "orm".
+     *
+     * @param array $providers Array of provider callables. Each element should
+     *   be of form `['type' => 'a-string', 'callable' => ..]`
+     * @return Cake\View\Form\ContextFactory
+     */
+    public static function createWithDefaults(array $providers = [])
+    {
+        $providers = [
+            [
+                'type' => 'orm',
+                'callable' => function ($request, $data) {
+                    if (is_array($data['entity']) || $data['entity'] instanceof Traversable) {
+                        $pass = (new Collection($data['entity']))->first() !== null;
+                        if ($pass) {
+                            return new EntityContext($request, $data);
+                        }
+                    }
+                    if ($data['entity'] instanceof EntityInterface) {
+                        return new EntityContext($request, $data);
+                    }
+                    if (is_array($data['entity']) && empty($data['entity']['schema'])) {
+                        return new EntityContext($request, $data);
+                    }
+                }
+            ],
+            [
+                'type' => 'array',
+                'callable' => function ($request, $data) {
+                    if (is_array($data['entity']) && isset($data['entity']['schema'])) {
+                        return new ArrayContext($request, $data['entity']);
+                    }
+                }
+            ],
+            [
+                'type' => 'form',
+                'callable' => function ($request, $data) {
+                    if ($data['entity'] instanceof Form) {
+                        return new FormContext($request, $data);
+                    }
+                }
+            ],
+        ] + $providers;
+
+        return new static($providers);
     }
 
     /**
@@ -104,40 +147,5 @@ class ContextFactory
         }
 
         return $context;
-    }
-
-    /**
-     * Add the default suite of context providers.
-     *
-     * @return void
-     */
-    protected function addDefaultProviders()
-    {
-        $this->addProvider('orm', function ($request, $data) {
-            if (is_array($data['entity']) || $data['entity'] instanceof Traversable) {
-                $pass = (new Collection($data['entity']))->first() !== null;
-                if ($pass) {
-                    return new EntityContext($request, $data);
-                }
-            }
-            if ($data['entity'] instanceof EntityInterface) {
-                return new EntityContext($request, $data);
-            }
-            if (is_array($data['entity']) && empty($data['entity']['schema'])) {
-                return new EntityContext($request, $data);
-            }
-        });
-
-        $this->addProvider('form', function ($request, $data) {
-            if ($data['entity'] instanceof Form) {
-                return new FormContext($request, $data);
-            }
-        });
-
-        $this->addProvider('array', function ($request, $data) {
-            if (is_array($data['entity']) && isset($data['entity']['schema'])) {
-                return new ArrayContext($request, $data['entity']);
-            }
-        });
     }
 }
