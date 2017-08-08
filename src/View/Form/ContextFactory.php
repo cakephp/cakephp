@@ -27,7 +27,7 @@ use Traversable;
 class ContextFactory
 {
     /**
-     * Context provider methods.
+     * Context providers.
      *
      * @var array
      */
@@ -51,7 +51,7 @@ class ContextFactory
      *
      * @param array $providers Array of provider callables. Each element should
      *   be of form `['type' => 'a-string', 'callable' => ..]`
-     * @return Cake\View\Form\ContextFactory
+     * @return \Cake\View\Form\ContextFactory
      */
     public static function createWithDefaults(array $providers = [])
     {
