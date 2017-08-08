@@ -265,7 +265,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
 		echo "<div class='msg'><pre>" . $this->_htmlEntities($message->toString());
 
 		if ((is_string($actualMsg) && is_string($expectedMsg)) || (is_array($actualMsg) && is_array($expectedMsg))) {
-			
+
 			$diffs = "";
 			if (class_exists('PHPUnit_Util_Diff')) {
 				$diffs = PHPUnit_Util_Diff::diff($expectedMsg, $actualMsg);
@@ -273,7 +273,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
 				$differ = new SebastianBergmann\Diff\Differ();
 				$diffs = $differ->diff($expectedMsg, $actualMsg);
 			}
-			
+
 			echo "<br />" . $this->_htmlEntities($diffs);
 		}
 
