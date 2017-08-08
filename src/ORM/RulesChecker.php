@@ -125,12 +125,33 @@ class RulesChecker extends BaseRulesChecker
      * $rules->add($rules->isNotReferencedBy('Articles'));
      * ```
      *
-     * @param string $table The table name to check for references
+     * @param null|string|array $field The field or list of fields that are the foreign keys in $table
+     * linking to the this table's primary key
+     * @param object|string $table The table name to check for references
+     * @param string|array|null $message The error message to show in case the rule does not pass. Can
+     *   also be an array of options. When an array, the 'message' key can be used to provide a message.
      * @return callable
      */
-    public function isNotReferencedBy($table)
+    public function isNotReferencedBy($field, $table, $message = null)
     {
-        return $this->_addError(new IsNotReferencedBy($table), '_isNotReferencedBy', compact('errorField', 'message'));
+        $options = [];
+        if (is_array($message)) {
+            $options = $message + ['message' => null];
+            $message = $options['message'];
+            unset($options['message']);
+        }
+
+        if (!$message) {
+            if ($this->_useI18n) {
+                $message = __d('cake', 'This field is referenced by another entity');
+            } else {
+                $message = 'This field is referenced by another entity';
+            }
+        }
+
+        $errorField = is_string($field) ? $field : current($field);
+
+        return $this->_addError(new IsNotReferencedBy($field, $table, $options), '_isNotReferencedBy', compact('errorField', 'message'));
     }
 
     /**

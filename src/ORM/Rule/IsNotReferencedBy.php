@@ -12,19 +12,37 @@ use RuntimeException;
 class IsNotReferencedBy
 {
     /**
-     * The repository that will be checked
+     * The list of fields to check
+     *
+     * @var array
+     */
+    protected $_fields;
+
+    /**
+     * The repository where the field will be looked for
      *
      * @var array
      */
     protected $_repository;
 
     /**
+     * Options for the constructor
+     *
+     * @var array
+     */
+    protected $_options = [];
+
+    /**
      * Constructor.
      *
+     * @param null|string|array $fields The field or fields to check.
      * @param string $repository The association name for the repository which will be checked.
+     * @param array $options The additional options for this rule.
      */
-    public function __construct($repository)
+    public function __construct($fields, $repository, array $options = [])
     {
+        $this->_options = $options;
+        $this->_fields = (array)$fields;
         $this->_repository = $repository;
     }
 
@@ -39,13 +57,14 @@ class IsNotReferencedBy
      */
     public function __invoke(EntityInterface $entity, array $options)
     {
+        if (is_string($options))
         $assoc = $options['repository']->association($this->_repository);
 
         if (!$assoc) {
             throw new RuntimeException(sprintf(
                 "IsNotReferencedBy rule is invalid. '%s' is not associated with '%s'.",
-                $this->_repository,
-                get_class($options['repository'])
+                $options['repository'],
+                $this->_repository
             ));
         }
 
