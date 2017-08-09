@@ -1674,7 +1674,7 @@ class FormHelper extends AppHelper {
 				$hidden = $this->hidden($fieldName, array(
 					'form' => isset($attributes['form']) ? $attributes['form'] : null,
 					'id' => $attributes['id'] . '_',
-					'value' => '',
+					'value' => $hiddenField === true ? '' : $hiddenField,
 					'name' => $attributes['name']
 				));
 			}
