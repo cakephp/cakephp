@@ -285,6 +285,142 @@ class ConnectionManagerTest extends TestCase
     }
 
     /**
+     * Tests parsing different DSNs
+     *
+     * @return void
+     */
+    public function testParseDsnCustom()
+    {
+        $dsn = 'mysql://localhost:3306/database';
+        $expected = [
+            'className' => 'Cake\Database\Connection',
+            'driver' => 'Cake\Database\Driver\Mysql',
+            'host' => 'localhost',
+            'database' => 'database',
+            'port' => 3306,
+            'scheme' => 'mysql',
+        ];
+        $this->assertEquals($expected, ConnectionManager::parseDsn($dsn));
+
+        $dsn = 'mysql://user:password@localhost:3306/database';
+        $expected = [
+            'className' => 'Cake\Database\Connection',
+            'driver' => 'Cake\Database\Driver\Mysql',
+            'host' => 'localhost',
+            'password' => 'password',
+            'database' => 'database',
+            'port' => 3306,
+            'scheme' => 'mysql',
+            'username' => 'user',
+        ];
+        $this->assertEquals($expected, ConnectionManager::parseDsn($dsn));
+
+        $dsn = 'sqlite:///:memory:';
+        $expected = [
+            'className' => 'Cake\Database\Connection',
+            'driver' => 'Cake\Database\Driver\Sqlite',
+            'database' => ':memory:',
+            'scheme' => 'sqlite',
+        ];
+        $this->assertEquals($expected, ConnectionManager::parseDsn($dsn));
+
+        $dsn = 'sqlite:////absolute/path';
+        $expected = [
+            'className' => 'Cake\Database\Connection',
+            'driver' => 'Cake\Database\Driver\Sqlite',
+            'database' => '/absolute/path',
+            'scheme' => 'sqlite',
+        ];
+        $this->assertEquals($expected, ConnectionManager::parseDsn($dsn));
+
+        $dsn = 'sqlite:///?database=:memory:';
+        $expected = [
+            'className' => 'Cake\Database\Connection',
+            'driver' => 'Cake\Database\Driver\Sqlite',
+            'database' => ':memory:',
+            'scheme' => 'sqlite',
+        ];
+        $this->assertEquals($expected, ConnectionManager::parseDsn($dsn));
+
+        $dsn = 'sqlserver://sa:Password12!@.\SQL2012SP1/cakephp?MultipleActiveResultSets=false';
+        $expected = [
+            'className' => 'Cake\Database\Connection',
+            'driver' => 'Cake\Database\Driver\Sqlserver',
+            'host' => '.\SQL2012SP1',
+            'MultipleActiveResultSets' => false,
+            'password' => 'Password12!',
+            'database' => 'cakephp',
+            'scheme' => 'sqlserver',
+            'username' => 'sa',
+        ];
+        $this->assertEquals($expected, ConnectionManager::parseDsn($dsn));
+    }
+
+    /**
+     * Tests className/driver value setting
+     *
+     * @return void
+     */
+    public function testParseDsnClassnameDriver()
+    {
+        $dsn = 'mysql://localhost:3306/database';
+        $expected = [
+            'className' => 'Cake\Database\Connection',
+            'database' => 'database',
+            'driver' => 'Cake\Database\Driver\Mysql',
+            'host' => 'localhost',
+            'port' => 3306,
+            'scheme' => 'mysql',
+        ];
+        $this->assertEquals($expected, ConnectionManager::parseDsn($dsn));
+
+        $dsn = 'mysql://user:password@localhost:3306/database';
+        $expected = [
+            'className' => 'Cake\Database\Connection',
+            'database' => 'database',
+            'driver' => 'Cake\Database\Driver\Mysql',
+            'host' => 'localhost',
+            'password' => 'password',
+            'port' => 3306,
+            'scheme' => 'mysql',
+            'username' => 'user',
+        ];
+        $this->assertEquals($expected, ConnectionManager::parseDsn($dsn));
+
+        $dsn = 'mysql://localhost/database?className=Custom\Driver';
+        $expected = [
+            'className' => 'Cake\Database\Connection',
+            'database' => 'database',
+            'driver' => 'Custom\Driver',
+            'host' => 'localhost',
+            'scheme' => 'mysql',
+        ];
+        $this->assertEquals($expected, ConnectionManager::parseDsn($dsn));
+
+        $dsn = 'mysql://localhost:3306/database?className=Custom\Driver';
+        $expected = [
+            'className' => 'Cake\Database\Connection',
+            'database' => 'database',
+            'driver' => 'Custom\Driver',
+            'host' => 'localhost',
+            'scheme' => 'mysql',
+            'port' => 3306,
+        ];
+        $this->assertEquals($expected, ConnectionManager::parseDsn($dsn));
+
+        $dsn = 'Cake\Database\Connection://localhost:3306/database?driver=Cake\Database\Driver\Mysql';
+        $expected = [
+            'className' => 'Cake\Database\Connection',
+            'database' => 'database',
+            'driver' => 'Cake\Database\Driver\Mysql',
+            'host' => 'localhost',
+            'scheme' => 'Cake\Database\Connection',
+            'port' => 3306,
+        ];
+        $this->assertEquals($expected, ConnectionManager::parseDsn($dsn));
+    }
+
+    /**
      * Tests that directly setting an instance in a config, will not return a different
      * instance later on
      *
