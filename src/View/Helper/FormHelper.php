@@ -1586,7 +1586,7 @@ class FormHelper extends Helper
         $hidden = '';
         if ($hiddenField) {
             $hidden = $this->hidden($fieldName, [
-                'value' => '',
+                'value' => $hiddenField === true ? '' : $hiddenField,
                 'form' => isset($attributes['form']) ? $attributes['form'] : null,
                 'name' => $attributes['name'],
             ]);
