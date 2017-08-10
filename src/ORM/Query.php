@@ -1277,8 +1277,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     }
 
     /**
-     * {@inheritDoc}
-     *
      * Selects all fields in the schema with the exception of the fields you pass
      * in the $excludedFields parameter.
      *
@@ -1293,6 +1291,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         $aliasedExcluded = $this->aliasFields($excludedFields, $this->repository()->alias());
 
         $fields = array_diff($aliased, $aliasedExcluded);
-        return parent::select($fields, $overwrite);
+        return $this->select($fields, $overwrite);
     }
 }
