@@ -1284,7 +1284,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * @param bool $overwrite whether to reset fields with passed list or not
      * @return $this
      */
-    public function selectAllExcept($excludedFields = [], $overwrite = false)
+    public function selectAllExcept(array $excludedFields = [], $overwrite = false)
     {
         $allFields = $this->repository()->getSchema()->columns();
         $aliased = $this->aliasFields($allFields, $this->repository()->alias());
