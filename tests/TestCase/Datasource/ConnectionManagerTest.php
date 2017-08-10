@@ -421,6 +421,29 @@ class ConnectionManagerTest extends TestCase
     }
 
     /**
+     * Test parseDsn with special characters in the password.
+     *
+     * @return void
+     */
+    public function testParseDsnSpecialPassword()
+    {
+        $dsn = 'mysql://user:pas#][{}$%20@!@localhost:3306/database?log=1&quoteIdentifiers=1';
+        $expected = [
+            'className' => 'Cake\Database\Connection',
+            'database' => 'database',
+            'driver' => 'Cake\Database\Driver\Mysql',
+            'host' => 'localhost',
+            'password' => 'pas#][{}$%20@!',
+            'port' => 3306,
+            'scheme' => 'mysql',
+            'username' => 'user',
+            'log' => 1,
+            'quoteIdentifiers' => 1
+        ];
+        $this->assertEquals($expected, ConnectionManager::parseDsn($dsn));
+    }
+
+    /**
      * Tests that directly setting an instance in a config, will not return a different
      * instance later on
      *

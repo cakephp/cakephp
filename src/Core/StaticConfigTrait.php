@@ -249,18 +249,23 @@ trait StaticConfigTrait
             throw new InvalidArgumentException('Only strings can be passed to parseDsn');
         }
 
-        $scheme = '';
-        if (preg_match("/^([\w\\\]+)/", $dsn, $matches)) {
-            $scheme = $matches[1];
-            $dsn = preg_replace("/^([\w\\\]+)/", 'file', $dsn);
+        $pattern = '/^(?P<scheme>[\w\\\\]+):\/\/((?P<user>.*?)(:(?P<password>.*?))?@)?' .
+            '((?P<host>[.\w\\\\]+)(:(?P<port>\d+))?)?' .
+            '(?P<path>\/[^?]*)?(\?(?P<query>.*))?$/';
+        preg_match($pattern, $dsn, $parsed);
+
+        if (empty($parsed)) {
+            return false;
+        }
+        foreach ($parsed as $k => $v) {
+            if (is_int($k)) {
+                unset($parsed[$k]);
+            }
+            if ($v === '') {
+                unset($parsed[$k]);
+            }
         }
 
-        $parsed = parse_url($dsn);
-        if ($parsed === false) {
-            return $dsn;
-        }
-
-        $parsed['scheme'] = $scheme;
         $query = '';
 
         if (isset($parsed['query'])) {
