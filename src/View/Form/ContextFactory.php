@@ -107,12 +107,14 @@ class ContextFactory
      *   can be used to overwrite existing providers.
      * @param callable $check A callable that returns an object
      *   when the form context is the correct type.
-     * @return void
+     * @return $this
      */
     public function addProvider($type, callable $check)
     {
         $this->providers = [$type => ['type' => $type, 'callable' => $check]]
             + $this->providers;
+
+        return $this;
     }
 
     /**
