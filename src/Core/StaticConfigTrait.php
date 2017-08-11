@@ -237,7 +237,7 @@ trait StaticConfigTrait
      *
      * @param string $dsn The DSN string to convert to a configuration array
      * @return array The configuration array to be stored after parsing the DSN
-     * @throws \InvalidArgumentException If not passed a string
+     * @throws \InvalidArgumentException If not passed a string, or passed an invalid string
      */
     public static function parseDsn($dsn)
     {
@@ -255,7 +255,7 @@ trait StaticConfigTrait
         preg_match($pattern, $dsn, $parsed);
 
         if (empty($parsed)) {
-            return false;
+            throw new InvalidArgumentException("The DSN string '{$dsn}' could not be parsed.");
         }
         foreach ($parsed as $k => $v) {
             if (is_int($k)) {

@@ -398,6 +398,18 @@ class ConnectionManagerTest extends TestCase
     }
 
     /**
+     * Test parseDsn invalid.
+     *
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage The DSN string 'bagof:nope' could not be parsed.
+     * @return void
+     */
+    public function testParseDsnInvalid()
+    {
+        $result = ConnectionManager::parseDsn('bagof:nope');
+    }
+
+    /**
      * Tests that directly setting an instance in a config, will not return a different
      * instance later on
      *
