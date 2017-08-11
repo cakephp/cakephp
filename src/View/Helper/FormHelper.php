@@ -14,19 +14,14 @@
  */
 namespace Cake\View\Helper;
 
-use Cake\Collection\Collection;
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
-use Cake\Datasource\EntityInterface;
 use Cake\Form\Form;
 use Cake\Routing\Router;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
-use Cake\View\Form\ArrayContext;
+use Cake\View\Form\ContextFactory;
 use Cake\View\Form\ContextInterface;
-use Cake\View\Form\EntityContext;
-use Cake\View\Form\FormContext;
-use Cake\View\Form\NullContext;
 use Cake\View\Helper;
 use Cake\View\StringTemplateTrait;
 use Cake\View\View;
@@ -206,12 +201,11 @@ class FormHelper extends Helper
     protected $_context;
 
     /**
-     * Context provider methods.
+     * Context factory.
      *
-     * @var array
-     * @see \Cake\View\Helper\FormHelper::addContextProvider()
+     * @var \Cake\View\Form\ContextFactory
      */
-    protected $_contextProviders = [];
+    protected $_contextFactory;
 
     /**
      * The action attribute value of the last created form.
@@ -253,7 +247,6 @@ class FormHelper extends Helper
         parent::__construct($View, $config);
 
         $this->widgetRegistry($registry, $widgets);
-        $this->_addDefaultContextProviders();
         $this->_idPrefix = $this->getConfig('idPrefix');
     }
 
@@ -279,38 +272,24 @@ class FormHelper extends Helper
     }
 
     /**
-     * Add the default suite of context providers provided by CakePHP.
+     * Set the context factory the helper will use.
      *
-     * @return void
+     * @param \Cake\View\Form\ContextFactory|null $instance The context factory instance to set.
+     * @param array $contexts An array of context providers.
+     * @return \Cake\View\Form\ContextFactory
      */
-    protected function _addDefaultContextProviders()
+    public function contextFactory(ContextFactory $instance = null, array $contexts = [])
     {
-        $this->addContextProvider('orm', function ($request, $data) {
-            if (is_array($data['entity']) || $data['entity'] instanceof Traversable) {
-                $pass = (new Collection($data['entity']))->first() !== null;
-                if ($pass) {
-                    return new EntityContext($request, $data);
-                }
+        if ($instance === null) {
+            if ($this->_contextFactory === null) {
+                $this->_contextFactory = ContextFactory::createWithDefaults($contexts);
             }
-            if ($data['entity'] instanceof EntityInterface) {
-                return new EntityContext($request, $data);
-            }
-            if (is_array($data['entity']) && empty($data['entity']['schema'])) {
-                return new EntityContext($request, $data);
-            }
-        });
 
-        $this->addContextProvider('form', function ($request, $data) {
-            if ($data['entity'] instanceof Form) {
-                return new FormContext($request, $data);
-            }
-        });
+            return $this->_contextFactory;
+        }
+        $this->_contextFactory = $instance;
 
-        $this->addContextProvider('array', function ($request, $data) {
-            if (is_array($data['entity']) && isset($data['entity']['schema'])) {
-                return new ArrayContext($request, $data['entity']);
-            }
-        });
+        return $this->_contextFactory;
     }
 
     /**
@@ -2687,12 +2666,7 @@ class FormHelper extends Helper
      */
     public function addContextProvider($type, callable $check)
     {
-        foreach ($this->_contextProviders as $i => $provider) {
-            if ($provider['type'] === $type) {
-                unset($this->_contextProviders[$i]);
-            }
-        }
-        array_unshift($this->_contextProviders, ['type' => $type, 'callable' => $check]);
+        $this->contextFactory()->addProvider($type, $check);
     }
 
     /**
@@ -2729,23 +2703,7 @@ class FormHelper extends Helper
         }
         $data += ['entity' => null];
 
-        foreach ($this->_contextProviders as $provider) {
-            $check = $provider['callable'];
-            $context = $check($this->request, $data);
-            if ($context) {
-                break;
-            }
-        }
-        if (!isset($context)) {
-            $context = new NullContext($this->request, $data);
-        }
-        if (!($context instanceof ContextInterface)) {
-            throw new RuntimeException(
-                'Context objects must implement Cake\View\Form\ContextInterface'
-            );
-        }
-
-        return $this->_context = $context;
+        return $this->_context = $this->contextFactory()->get($this->request, $data);
     }
 
     /**
