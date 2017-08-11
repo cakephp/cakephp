@@ -250,11 +250,11 @@ trait StaticConfigTrait
         }
 
         $pattern = '/^(?P<scheme>[\w\\\\]+):\/\/((?P<user>.*?)(:(?P<password>.*?))?@)?' .
-            '((?P<host>[.\w\\\\]+)(:(?P<port>\d+))?)?' .
+            '((?P<host>[.\w-\\\\]+)(:(?P<port>\d+))?)?' .
             '(?P<path>\/[^?]*)?(\?(?P<query>.*))?$/';
         preg_match($pattern, $dsn, $parsed);
 
-        if (empty($parsed)) {
+        if (!$parsed) {
             throw new InvalidArgumentException("The DSN string '{$dsn}' could not be parsed.");
         }
         foreach ($parsed as $k => $v) {

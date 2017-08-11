@@ -281,6 +281,17 @@ class ConnectionManagerTest extends TestCase
                     'scheme' => 'mysql',
                 ]
             ],
+            'subdomain host' => [
+                'mysql://my.host-name.com:3306/database',
+                [
+                    'className' => 'Cake\Database\Connection',
+                    'driver' => 'Cake\Database\Driver\Mysql',
+                    'host' => 'my.host-name.com',
+                    'database' => 'database',
+                    'port' => 3306,
+                    'scheme' => 'mysql',
+                ]
+            ],
             'user & pass' => [
                 'mysql://root:secret@localhost:3306/database?log=1',
                 [
