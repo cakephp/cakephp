@@ -175,7 +175,7 @@ class CakeFixtureManager {
 	}
 
 /**
- * Runs the drop and create commands on the fixtures if necessary.
+ * Runs the drop, create and truncate commands on the fixtures if necessary.
  *
  * @param CakeTestFixture $fixture the fixture object to create
  * @param DataSource $db the datasource instance to use
@@ -191,6 +191,7 @@ class CakeFixtureManager {
 			}
 		}
 		if (!empty($fixture->created) && in_array($db->configKeyName, $fixture->created)) {
+			$fixture->truncate($db);
 			return;
 		}
 
@@ -205,6 +206,7 @@ class CakeFixtureManager {
 			$fixture->create($db);
 		} else {
 			$fixture->created[] = $db->configKeyName;
+			$fixture->truncate($db);
 		}
 	}
 
@@ -229,7 +231,6 @@ class CakeFixtureManager {
 				$db = ConnectionManager::getDataSource($fixture->useDbConfig);
 				$db->begin();
 				$this->_setupTable($fixture, $db, $test->dropTables);
-				$fixture->truncate($db);
 				$fixture->insert($db);
 				$db->commit();
 			}
@@ -274,7 +275,6 @@ class CakeFixtureManager {
 				$db = ConnectionManager::getDataSource($fixture->useDbConfig);
 			}
 			$this->_setupTable($fixture, $db, $dropTables);
-			$fixture->truncate($db);
 			$fixture->insert($db);
 		} else {
 			throw new UnexpectedValueException(__d('cake_dev', 'Referenced fixture class %s not found', $name));
