@@ -769,11 +769,11 @@ class EntityTest extends TestCase
     }
 
     /**
-     * Tests dirty() method on a newly created object
+     * Tests isDirty() method on a newly created object
      *
      * @return void
      */
-    public function testDirty()
+    public function testIsDirty()
     {
         $entity = new Entity([
             'id' => 1,
@@ -781,19 +781,45 @@ class EntityTest extends TestCase
             'author_id' => 3
         ]);
         $this->assertTrue($entity->dirty('id'));
-        $this->assertTrue($entity->dirty('title'));
-        $this->assertTrue($entity->dirty('author_id'));
+        $this->assertTrue($entity->isDirty('id'));
+        $this->assertTrue($entity->isDirty('title'));
+        $this->assertTrue($entity->isDirty('author_id'));
 
         $this->assertTrue($entity->dirty());
+        $this->assertTrue($entity->isDirty());
 
         $entity->dirty('id', false);
         $this->assertFalse($entity->dirty('id'));
         $this->assertTrue($entity->dirty('title'));
-        $entity->dirty('title', false);
-        $this->assertFalse($entity->dirty('title'));
-        $this->assertTrue($entity->dirty());
-        $entity->dirty('author_id', false);
-        $this->assertFalse($entity->dirty());
+
+        $entity->setDirty('title', false);
+        $this->assertFalse($entity->isDirty('title'));
+        $this->assertTrue($entity->isDirty(), 'should be dirty, one field left');
+
+        $entity->setDirty('author_id', false);
+        $this->assertFalse($entity->isDirty(), 'all fields are clean.');
+    }
+
+    /**
+     * Test setDirty().
+     *
+     * @return void
+     */
+    public function testSetDirty()
+    {
+        $entity = new Entity([
+            'id' => 1,
+            'title' => 'Foo',
+            'author_id' => 3
+        ], ['markClean' => true]);
+
+        $this->assertFalse($entity->isDirty());
+        $this->assertSame($entity, $entity->setDirty('title', true));
+        $this->assertSame($entity, $entity->setDirty('id', false));
+
+        $entity->setErrors(['title' => ['badness']]);
+        $entity->setDirty('title', true);
+        $this->assertEmpty($entity->getErrors('title'), 'Making a field dirty clears errors.');
     }
 
     /**
@@ -807,17 +833,17 @@ class EntityTest extends TestCase
             'title' => 'Foo',
         ]);
 
-        $entity->dirty('title', false);
-        $this->assertFalse($entity->dirty('title'));
+        $entity->setDirty('title', false);
+        $this->assertFalse($entity->isDirty('title'));
 
         $entity->set('title', 'Foo');
-        $this->assertTrue($entity->dirty('title'));
+        $this->assertTrue($entity->isDirty('title'));
 
         $entity->set('title', 'Foo');
-        $this->assertTrue($entity->dirty('title'));
+        $this->assertTrue($entity->isDirty('title'));
 
         $entity->set('something', 'else');
-        $this->assertTrue($entity->dirty('something'));
+        $this->assertTrue($entity->isDirty('something'));
     }
 
     /**
@@ -832,8 +858,8 @@ class EntityTest extends TestCase
             'title' => 'Foo',
             'author_id' => 3
         ]);
-        $entity->dirty('id', false);
-        $entity->dirty('title', false);
+        $entity->setDirty('id', false);
+        $entity->setDirty('title', false);
         $expected = ['author_id' => 3];
         $result = $entity->extract(['id', 'title', 'author_id'], true);
         $this->assertEquals($expected, $result);

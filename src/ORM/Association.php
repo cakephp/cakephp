@@ -419,10 +419,10 @@ abstract class Association
 
                     throw new RuntimeException(sprintf(
                         $errorMessage,
-                        get_class($this->_sourceTable),
+                        $this->_sourceTable ? get_class($this->_sourceTable) : 'null',
                         $this->getName(),
                         $this->type(),
-                        get_class($this->_targetTable),
+                        $this->_targetTable ? get_class($this->_targetTable) : 'null',
                         $className
                     ));
                 }
