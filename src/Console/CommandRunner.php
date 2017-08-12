@@ -14,11 +14,7 @@
  */
 namespace Cake\Console;
 
-use Cake\Console\CommandCollection;
-use Cake\Console\CommandCollectionAwareInterface;
-use Cake\Console\ConsoleIo;
 use Cake\Console\Exception\StopException;
-use Cake\Console\Shell;
 use Cake\Core\ConsoleApplicationInterface;
 use Cake\Event\EventManagerTrait;
 use Cake\Shell\HelpShell;
