@@ -490,7 +490,7 @@ class ConnectionTest extends TestCase
     /**
      * Tests that the destructor of Connection does not crash
      * when transaction is not closed
-     * 
+     *
      * @return void
      */
     public function testCloseConnectionWithUncommittedTransaction()
