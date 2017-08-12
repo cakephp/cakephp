@@ -25,6 +25,7 @@ use Cake\Database\Log\QueryLogger;
 use Cake\Database\Schema\CachedCollection;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Datasource\ConnectionInterface;
+use Cake\Log\Log;
 
 /**
  * Represents a connection with a database server.
@@ -127,6 +128,9 @@ class Connection implements ConnectionInterface
      */
     public function __destruct()
     {
+        if ($this->_transactionStarted) {
+            Log::warning('The connection is going to be closed but the transaction is still active.');
+        }
         unset($this->_driver);
     }
 
