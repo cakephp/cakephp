@@ -4945,6 +4945,30 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * test setting a hiddenField value
+ *
+ * @return void
+ */
+	public function testRadioHiddenFieldValue() {
+		$result = $this->Form->input('Model.1.field', array(
+				'type' => 'radio',
+				'options' => array('option A'),
+				'hiddenField' => 'N'
+			)
+		);
+		$expected = array(
+			'div' => array('class' => 'input radio'),
+			array('input' => array('type' => 'hidden', 'name' => 'data[Model][1][field]', 'value' => 'N', 'id' => 'Model1Field_')),
+			array('input' => array('type' => 'radio', 'name' => 'data[Model][1][field]', 'value' => '0', 'id' => 'Model1Field0')),
+			'label' => array('for' => 'Model1Field0'),
+			'option A',
+			'/label',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * test adding an empty option for radio buttons
  *
  * @return void

@@ -1141,6 +1141,41 @@ class CakeEmailTest extends CakeTestCase {
 	}
 
 /**
+ * Test send() with no template and data string attachment, no mimetype
+ *
+ * @return void
+ */
+	public function testSendNoTemplateWithDataStringAttachmentNoMime() {
+		$this->CakeEmail->transport('debug');
+		$this->CakeEmail->from('cake@cakephp.org');
+		$this->CakeEmail->to('cake@cakephp.org');
+		$this->CakeEmail->subject('My title');
+		$this->CakeEmail->emailFormat('text');
+		$data = file_get_contents(CAKE . 'Console/Templates/skel/webroot/img/cake.icon.png');
+		$this->CakeEmail->attachments(array('cake.icon.png' => array(
+			'data' => $data
+		)));
+		$result = $this->CakeEmail->send('Hello');
+
+		$boundary = $this->CakeEmail->getBoundary();
+		$this->assertContains('Content-Type: multipart/mixed; boundary="' . $boundary . '"', $result['headers']);
+		$expected = "--$boundary\r\n" .
+			"Content-Type: text/plain; charset=UTF-8\r\n" .
+			"Content-Transfer-Encoding: 8bit\r\n" .
+			"\r\n" .
+			"Hello" .
+			"\r\n" .
+			"\r\n" .
+			"\r\n" .
+			"--$boundary\r\n" .
+			"Content-Type: application/octet-stream\r\n" .
+			"Content-Transfer-Encoding: base64\r\n" .
+			"Content-Disposition: attachment; filename=\"cake.icon.png\"\r\n\r\n";
+		$expected .= chunk_split(base64_encode($data), 76, "\r\n");
+		$this->assertContains($expected, $result['message']);
+	}
+
+/**
  * Test send() with no template as both
  *
  * @return void
