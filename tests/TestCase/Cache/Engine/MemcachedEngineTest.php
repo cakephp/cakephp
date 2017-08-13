@@ -345,7 +345,7 @@ class MemcachedEngineTest extends TestCase
     public function testSaslAuthException()
     {
         $this->skipIf(
-            method_exists('setSaslAuthData', Memcached::class),
+            method_exists(Memcached::class, 'setSaslAuthData'),
             'Cannot test exception when sasl has been compiled in.'
         );
         $MemcachedEngine = new MemcachedEngine();

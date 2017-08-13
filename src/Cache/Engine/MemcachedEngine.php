@@ -174,7 +174,7 @@ class MemcachedEngine extends CacheEngine
 
         if ($this->_config['username'] !== null && $this->_config['password'] !== null) {
             $sasl = method_exists($this->_Memcached, 'setSaslAuthData');
-            if (!$sasl) {
+            if (!method_exists($this->_Memcached, 'setSaslAuthData')) {
                 throw new InvalidArgumentException(
                     'Memcached extension is not built with SASL support'
                 );
