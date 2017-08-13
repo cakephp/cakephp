@@ -222,6 +222,6 @@ class SchemaCacheTest extends TestCase
      */
     public function testPassingInvalidObject()
     {
-        new SchemaCache(new \stdClass());
+        new SchemaCache(new \SimpleXMLElement(''));
     }
 }

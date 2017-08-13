@@ -80,6 +80,7 @@ class SchemaCacheShell extends Shell
     {
         try {
             $connection = ConnectionManager::get($this->params['connection']);
+
             return new SchemaCache($connection);
         } catch (RuntimeException $e) {
             $this->abort($e->getMessage());
