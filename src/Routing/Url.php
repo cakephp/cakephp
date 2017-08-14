@@ -187,6 +187,58 @@ class Url implements ArrayAccess
     }
 
     /**
+     * Sets the scheme
+     *
+     * @param string $scheme Scheme
+     * @return $this
+     */
+    public function setScheme($scheme)
+    {
+        $this->url['_scheme'] = $scheme;
+
+        return $this;
+    }
+
+    /**
+     * Sets the scheme
+     *
+     * @param string $host Host string
+     * @return $this
+     */
+    public function setHost($host)
+    {
+        $this->url['_host'] = $host;
+
+        return $this;
+    }
+
+    /**
+     * Sets the scheme
+     *
+     * @param int $port Port number
+     * @return $this
+     */
+    public function setPort($port)
+    {
+        $this->url['_port'] = $port;
+
+        return $this;
+    }
+
+    /**
+     * Sets the fragment
+     *
+     * @param string $fragment Fragment string
+     * @return $this
+     */
+    public function setFragment($fragment)
+    {
+        $this->url['#'] = $fragment;
+
+        return $this;
+    }
+
+    /**
      * Returns the URL as string
      *
      * @return string URL as string value

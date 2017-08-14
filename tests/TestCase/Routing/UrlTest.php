@@ -156,4 +156,31 @@ class UrlTest extends TestCase
         $expected = '/articles/news/my-article';
         $this->assertEquals($expected, $url->toString());
     }
+
+    /**
+     * testHostSchemePortAndFragment
+     *
+     * @return void
+     */
+    public function testHostSchemePortAndFragment()
+    {
+        Router::connect('/articles/view/:slug', [
+            'controller' => 'Articles',
+            'action' => 'view',
+        ]);
+
+        $url = (new Url())
+            ->setController('Articles')
+            ->setAction('view')
+            ->setParam('slug', 'my-article')
+            ->setScheme('https')
+            ->setPort(123)
+            ->setHost('cakephp.org')
+            ->setFragment('fragment')
+            ->setAbsolute(true)
+            ->toString();
+
+        $expected = 'https://cakephp.org:123/articles/view/my-article#fragment';
+        $this->assertEquals($expected, $url);
+    }
 }
