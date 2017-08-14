@@ -183,4 +183,15 @@ class UrlTest extends TestCase
         $expected = 'https://cakephp.org:123/articles/view/my-article#fragment';
         $this->assertEquals($expected, $url);
     }
+
+    /**
+     * testInvalidPortException
+     *
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Port `999999` is outside of the specified range of 1 to 65535
+     */
+    public function testInvalidPortException()
+    {
+        (new Url())->setPort(999999);
+    }
 }

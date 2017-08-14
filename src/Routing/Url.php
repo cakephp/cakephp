@@ -220,6 +220,13 @@ class Url implements ArrayAccess
      */
     public function setPort($port)
     {
+        if ($port > 65535 || $port <= 0) {
+            throw new InvalidArgumentException(sprintf(
+                'Port `%s` is outside of the specified range of 1 to 65535',
+                $port
+            ));
+        }
+
         $this->url['_port'] = $port;
 
         return $this;
