@@ -294,7 +294,7 @@ class Connection implements ConnectionInterface
      */
     public function compileQuery(Query $query, ValueBinder $generator)
     {
-        return $this->getDriver()->compileQuery($query, $generator)[1];
+        return $this->_driver->compileQuery($query, $generator)[1];
     }
 
     /**
@@ -843,7 +843,7 @@ class Connection implements ConnectionInterface
      */
     protected function _newLogger(StatementInterface $statement)
     {
-        $log = new LoggingStatement($statement, $this->getDriver());
+        $log = new LoggingStatement($statement, $this->_driver);
         $log->logger($this->logger());
 
         return $log;

@@ -211,10 +211,10 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function execute()
     {
         $statement = $this->_connection->run($this);
-        $driver = $this->_connection->driver();
         $typeMap = $this->getSelectTypeMap();
 
         if ($typeMap->toArray() && $this->_typeCastAttached === false) {
+            $driver = $this->_connection->getDriver();
             $this->decorateResults(new FieldTypeConverter($typeMap, $driver));
             $this->_typeCastAttached = true;
         }
