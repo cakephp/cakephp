@@ -182,6 +182,7 @@ class Url implements ArrayAccess
     public function setAbsolute($absolute = true)
     {
         $this->absolute = (bool)$absolute;
+        $this->url['_full'] = $absolute;
 
         return $this;
     }

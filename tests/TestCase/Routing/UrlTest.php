@@ -17,6 +17,8 @@ namespace Cake\Test\TestCase\Routing;
 use Cake\Routing\Router;
 use Cake\Routing\Url;
 use Cake\TestSuite\TestCase;
+use Cake\View\Helper\HtmlHelper;
+use Cake\View\View;
 
 /**
  * UrlTest class
@@ -193,5 +195,39 @@ class UrlTest extends TestCase
     public function testInvalidPortException()
     {
         (new Url())->setPort(999999);
+    }
+
+    /**
+     * testRouterIntegration
+     *
+     * @return void
+     */
+    public function testRouterIntegration()
+    {
+        $url = (new Url())
+            ->setController('Articles')
+            ->setAction('view')
+            ->setAbsolute(true);
+
+        $result = Router::url($url);
+        $this->assertEquals('http://localhost/Articles/view', $result);
+    }
+
+    /**
+     * testHtmlHelperIntegration
+     *
+     * @return void
+     */
+    public function testHtmlHelperIntegration()
+    {
+        $view = new View();
+        $helper = new HtmlHelper($view);
+
+        $urlObject = (new Url())
+            ->setController('Articles')
+            ->setAction('view');
+
+        $result = $helper->link('test', $urlObject);
+        $this->assertEquals('<a href="/Articles/view">test</a>', $result);
     }
 }
