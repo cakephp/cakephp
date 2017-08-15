@@ -122,7 +122,7 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function type($conjunction = null)
     {
-        return $this->setConjunction($conjunction);
+        return $this->tieWith($conjunction);
     }
 
     /**
