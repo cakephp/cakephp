@@ -984,7 +984,7 @@ class RouteBuilder
      *
      * Requires middleware to be registered via `registerMiddleware()`
      *
-     * @param string[] ...$names The names of the middleware to apply to the current scope.
+     * @param string ...$names The names of the middleware to apply to the current scope.
      * @return $this
      * @see \Cake\Routing\RouteCollection::addMiddlewareToScope()
      */
