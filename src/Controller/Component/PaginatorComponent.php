@@ -204,7 +204,7 @@ class PaginatorComponent extends Component
 
         $order = (array)$options['order'];
         $sortDefault = $directionDefault = false;
-        if (!empty($defaults['order']) && count($defaults['order']) == 1) {
+        if (!empty($defaults['order']) && count($defaults['order']) === 1) {
             $sortDefault = key($defaults['order']);
             $directionDefault = current($defaults['order']);
         }
