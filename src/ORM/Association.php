@@ -238,7 +238,8 @@ abstract class Association
     }
 
     /**
-     * Sets the name for this association.
+     * Sets the name for this association, usually the alias
+     * assigned to the target associated table
      *
      * @param string $name Name to be assigned
      * @return $this
@@ -258,7 +259,8 @@ abstract class Association
     }
 
     /**
-     * Gets the name for this association.
+     * Gets the name for this association, usually the alias
+     * assigned to the target associated table
      *
      * @return string
      */
