@@ -153,7 +153,7 @@ class MemcachedEngine extends CacheEngine
 
         $servers = [];
         foreach ($this->_config['servers'] as $server) {
-            $servers[] = $this->_parseServerString($server);
+            $servers[] = $this->parseServerString($server);
         }
 
         if (!$this->_Memcached->addServers($servers)) {
@@ -173,10 +173,9 @@ class MemcachedEngine extends CacheEngine
         }
 
         if ($this->_config['username'] !== null && $this->_config['password'] !== null) {
-            $sasl = method_exists($this->_Memcached, 'setSaslAuthData') && ini_get('memcached.use_sasl');
-            if (!$sasl) {
+            if (!method_exists($this->_Memcached, 'setSaslAuthData')) {
                 throw new InvalidArgumentException(
-                    'Memcached extension is not build with SASL support'
+                    'Memcached extension is not built with SASL support'
                 );
             }
             $this->_Memcached->setOption(Memcached::OPT_BINARY_PROTOCOL, true);
@@ -243,7 +242,7 @@ class MemcachedEngine extends CacheEngine
      * @param string $server The server address string.
      * @return array Array containing host, port
      */
-    protected function _parseServerString($server)
+    public function parseServerString($server)
     {
         $socketTransport = 'unix://';
         if (strpos($server, $socketTransport) === 0) {
@@ -265,6 +264,29 @@ class MemcachedEngine extends CacheEngine
         }
 
         return [$host, (int)$port];
+    }
+
+    /**
+     * Backwards compatible alias of parseServerString
+     *
+     * @param string $server The server address string.
+     * @return array Array containing host, port
+     * @deprecated 3.4.13 Will be removed in 4.0.0
+     */
+    protected function _parseServerString($server)
+    {
+        return $this->parseServerString($server);
+    }
+
+    /**
+     * Read an option value from the memcached connection.
+     *
+     * @param string $name The option name to read.
+     * @return string|int|null|bool
+     */
+    public function getOption($name)
+    {
+        return $this->_Memcached->getOption($name);
     }
 
     /**

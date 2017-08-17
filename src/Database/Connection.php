@@ -121,16 +121,6 @@ class Connection implements ConnectionInterface
     }
 
     /**
-     * Destructor
-     *
-     * Disconnects the driver to release the connection.
-     */
-    public function __destruct()
-    {
-        unset($this->_driver);
-    }
-
-    /**
      * {@inheritDoc}
      */
     public function config()

@@ -103,7 +103,6 @@ class SqlserverTest extends TestCase
     {
         $this->skipIf($this->missingExtension, 'pdo_sqlsrv is not installed.');
         $config = [
-            'persistent' => false,
             'host' => 'foo',
             'username' => 'Administrator',
             'password' => 'blablabla',
@@ -121,7 +120,6 @@ class SqlserverTest extends TestCase
 
         $expected = $config;
         $expected['flags'] += [
-            PDO::ATTR_PERSISTENT => false,
             PDO::ATTR_EMULATE_PREPARES => false,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::SQLSRV_ATTR_ENCODING => 'a-language'
@@ -156,6 +154,74 @@ class SqlserverTest extends TestCase
         $driver->expects($this->any())->method('connection')
             ->will($this->returnValue($connection));
 
+        $driver->connect();
+    }
+
+    /**
+     * Test connecting to Sqlserver with persistent set to false
+     *
+     * @return void
+     */
+    public function testConnectionPersistentFalse()
+    {
+        $this->skipIf($this->missingExtension, 'pdo_sqlsrv is not installed.');
+        $config = [
+            'persistent' => false,
+            'host' => 'foo',
+            'username' => 'Administrator',
+            'password' => 'blablabla',
+            'database' => 'bar',
+            'encoding' => 'a-language',
+        ];
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
+            ->setMethods(['_connect', 'connection'])
+            ->setConstructorArgs([$config])
+            ->getMock();
+        $dsn = 'sqlsrv:Server=foo;Database=bar;MultipleActiveResultSets=false';
+
+        $expected = $config;
+        $expected['flags'] = [
+            PDO::ATTR_EMULATE_PREPARES => false,
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::SQLSRV_ATTR_ENCODING => 'a-language'
+        ];
+        $expected['attributes'] = [];
+        $expected['settings'] = [];
+        $expected['init'] = [];
+        $expected['app'] = null;
+        $expected['connectionPooling'] = null;
+        $expected['failoverPartner'] = null;
+        $expected['loginTimeout'] = null;
+        $expected['multiSubnetFailover'] = null;
+
+        $driver->expects($this->once())->method('_connect')
+            ->with($dsn, $expected);
+
+        $driver->connect();
+    }
+
+    /**
+     * Test if attempting to connect with the driver throws an exception when
+     * using an invalid config setting.
+     *
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Config setting "persistent" cannot be set to true, as the Sqlserver PDO driver does not support PDO::ATTR_PERSISTENT
+     * @return void
+     */
+    public function testConnectionPersistentTrueException()
+    {
+        $this->skipIf($this->missingExtension, 'pdo_sqlsrv is not installed.');
+        $config = [
+            'persistent' => true,
+            'host' => 'foo',
+            'username' => 'Administrator',
+            'password' => 'blablabla',
+            'database' => 'bar',
+        ];
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
+            ->setMethods(['_connect', 'connection'])
+            ->setConstructorArgs([$config])
+            ->getMock();
         $driver->connect();
     }
 
