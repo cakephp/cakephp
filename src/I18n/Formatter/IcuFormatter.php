@@ -17,7 +17,6 @@ namespace Cake\I18n\Formatter;
 use Aura\Intl\Exception\CannotFormat;
 use Aura\Intl\Exception\CannotInstantiateFormatter;
 use Aura\Intl\FormatterInterface;
-use Cake\I18n\PluralRules;
 use MessageFormatter;
 
 /**
