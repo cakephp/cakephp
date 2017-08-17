@@ -294,7 +294,7 @@ class Connection implements ConnectionInterface
      */
     public function compileQuery(Query $query, ValueBinder $generator)
     {
-        return $this->_driver->compileQuery($query, $generator)[1];
+        return $this->getDriver()->compileQuery($query, $generator)[1];
     }
 
     /**
