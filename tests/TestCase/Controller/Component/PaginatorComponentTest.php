@@ -673,7 +673,6 @@ class PaginatorComponentTest extends TestCase
             $this->Paginator->paginate($table);
             $this->fail('No exception raised');
         } catch (NotFoundException $e) {
-
             $this->assertEquals(
                 3,
                 $this->request->params['paging']['PaginatorPosts']['pageCount'],
