@@ -648,17 +648,17 @@ class PaginatorComponentTest extends TestCase
 
         $this->Paginator->paginate($table);
 
-        $this->assertEquals(
+        $this->assertSame(
             0,
             $this->request->params['paging']['PaginatorPosts']['count'],
             'Count should be 0'
         );
-        $this->assertEquals(
+        $this->assertSame(
             1,
             $this->request->params['paging']['PaginatorPosts']['page'],
             'Page number should not be 0'
         );
-        $this->assertEquals(
+        $this->assertSame(
             1,
             $this->request->params['paging']['PaginatorPosts']['pageCount'],
             'Page count number should not be 0'
