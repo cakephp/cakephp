@@ -635,6 +635,37 @@ class PaginatorComponentTest extends TestCase
     }
 
     /**
+     * Test empty pagination result.
+     *
+     * @return void
+     */
+    public function testEmptyPaginationResult()
+    {
+        $this->loadFixtures('Posts');
+
+        $table = TableRegistry::get('PaginatorPosts');
+        $table->deleteAll('1=1');
+
+        $this->Paginator->paginate($table);
+
+        $this->assertEquals(
+            0,
+            $this->request->params['paging']['PaginatorPosts']['count'],
+            'Count should be 0'
+        );
+        $this->assertEquals(
+            1,
+            $this->request->params['paging']['PaginatorPosts']['page'],
+            'Page number should not be 0'
+        );
+        $this->assertEquals(
+            1,
+            $this->request->params['paging']['PaginatorPosts']['pageCount'],
+            'Page count number should not be 0'
+        );
+    }
+
+    /**
      * Test that a really large page number gets clamped to the max page size.
      *
      * @return void
