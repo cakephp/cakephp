@@ -847,7 +847,7 @@ class Connection implements ConnectionInterface
      */
     protected function _newLogger(StatementInterface $statement)
     {
-        $log = new LoggingStatement($statement, $this->getDriver());
+        $log = new LoggingStatement($statement, $this->_driver);
         $log->logger($this->logger());
 
         return $log;

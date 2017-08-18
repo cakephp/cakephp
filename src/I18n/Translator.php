@@ -23,7 +23,6 @@ namespace Cake\I18n;
 use Aura\Intl\FormatterInterface;
 use Aura\Intl\Package;
 use Aura\Intl\TranslatorInterface;
-use Cake\I18n\PluralRules;
 
 /**
  * Provides missing message behavior for CakePHP internal message formats.
