@@ -947,7 +947,7 @@ abstract class Association
      * Conditionally adds a condition to the passed Query that will make it find
      * records where there is no match with this association.
      *
-     * @param \Cake\ORM\Query $query The query to modify
+     * @param \Cake\Datasource\QueryInterface $query The query to modify
      * @param array $options Options array containing the `negateMatch` key.
      * @return void
      */
