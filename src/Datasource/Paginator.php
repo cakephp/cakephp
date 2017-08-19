@@ -185,13 +185,13 @@ class Paginator implements PaginatorInterface
         $cleanQuery = clone $query;
         $results = $query->all();
         $numResults = count($results);
-        $count = $numResults ? $cleanQuery->count() : 0;
+        $count = $cleanQuery->count();
 
         $page = $options['page'];
         $limit = $options['limit'];
-        $pageCount = (int)ceil($count / $limit);
+        $pageCount = max((int)ceil($count / $limit), 1);
         $requestedPage = $page;
-        $page = max(min($page, $pageCount), 1);
+        $page = min($page, $pageCount);
 
         $order = (array)$options['order'];
         $sortDefault = $directionDefault = false;

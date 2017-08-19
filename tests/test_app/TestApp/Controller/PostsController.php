@@ -15,7 +15,6 @@
 namespace TestApp\Controller;
 
 use Cake\Event\Event;
-use TestApp\Controller\AppController;
 
 /**
  * PostsController class
