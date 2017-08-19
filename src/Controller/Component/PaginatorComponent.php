@@ -190,7 +190,7 @@ class PaginatorComponent extends Component
         $cleanQuery = clone $query;
         $results = $query->all();
         $numResults = count($results);
-        $count = $numResults ? $cleanQuery->count() : 0;
+        $count = $cleanQuery->count();
 
         $defaults = $this->getDefaults($alias, $settings);
         unset($defaults[0]);
