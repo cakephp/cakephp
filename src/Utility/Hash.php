@@ -365,7 +365,9 @@ class Hash
                 }
             } elseif ($op === 'remove') {
                 if ($i === $last) {
-                    unset($_list[$key]);
+                    if (!is_string($_list)) {
+                        unset($_list[$key]);
+                    }
 
                     return $data;
                 }
@@ -414,7 +416,7 @@ class Hash
             if ($match && is_array($v)) {
                 if ($conditions) {
                     if (static::_matches($v, $conditions)) {
-                        if ($nextPath) {
+                        if ($nextPath !== '') {
                             $data[$k] = static::remove($v, $nextPath);
                         } else {
                             unset($data[$k]);
@@ -426,7 +428,7 @@ class Hash
                 if (empty($data[$k])) {
                     unset($data[$k]);
                 }
-            } elseif ($match && empty($nextPath)) {
+            } elseif ($match && $nextPath === '') {
                 unset($data[$k]);
             }
         }
