@@ -964,7 +964,8 @@ class CollectionTest extends TestCase
     /**
      * Tests that issuing a count will throw an exception
      *
-     * @expectedException \LogicException
+     * @expectedException \BadMethodCallException
+     * @expectedExceptionMessage Call to undefined method Cake\Collection\Collection::count()
      * @return void
      */
     public function testCollectionCount()

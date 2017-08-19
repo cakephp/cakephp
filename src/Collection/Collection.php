@@ -15,9 +15,9 @@
 namespace Cake\Collection;
 
 use ArrayIterator;
+use BadMethodCallException;
 use InvalidArgumentException;
 use IteratorIterator;
-use LogicException;
 use Serializable;
 use Traversable;
 
@@ -75,15 +75,16 @@ class Collection extends IteratorIterator implements CollectionInterface, Serial
     /**
      * Throws an exception.
      *
-     * Issuing a count on a Collection can have many side effects, some making the
-     * Collection unusable after the count operation.
+     * Collection doesn't permit access to methods of the inner iterator.
      *
+     * @param string $name Method name.
+     * @param array $args Method arguments.
      * @return void
-     * @throws \LogicException
+     * @throws \BadMethodCallException
      */
-    public function count()
+    public function __call($name, $args)
     {
-        throw new LogicException('You cannot issue a count on a Collection.');
+        throw new BadMethodCallException(sprintf('Call to undefined method %s::%s()', get_class($this), $name));
     }
 
     /**
