@@ -37,7 +37,7 @@ class RelativeTimeFormatter
     {
         $isNow = $other === null;
         if ($isNow) {
-            $other = $date->now($date->tz);
+            $other = $date->now($date->getTimezone());
         }
         $diffInterval = $date->diff($other);
 
@@ -94,7 +94,7 @@ class RelativeTimeFormatter
     public function timeAgoInWords(DatetimeInterface $time, array $options = [])
     {
         $options = $this->_options($options, FrozenTime::class);
-        if ($options['timezone']) {
+        if ($options['timezone'] && $time instanceof ChronosInterface) {
             $time = $time->timezone($options['timezone']);
         }
 
@@ -284,7 +284,7 @@ class RelativeTimeFormatter
     public function dateAgoInWords(DatetimeInterface $date, array $options = [])
     {
         $options = $this->_options($options, FrozenDate::class);
-        if ($options['timezone']) {
+        if ($options['timezone'] && $date instanceof ChronosInterface) {
             $date = $date->timezone($options['timezone']);
         }
 
