@@ -19,6 +19,7 @@ use Cake\Cache\CacheEngine;
 use Cake\Database\SchemaCache;
 use Cake\Database\Schema\CachedCollection;
 use Cake\Datasource\ConnectionManager;
+use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -217,11 +218,35 @@ class SchemaCacheTest extends TestCase
      * Test passing invalid object
      *
      * @expectedException \TypeError
-     * @expectedExceptionMessage Cake\Database\SchemaCache::getSchema() must implement interface Cake\Datasource\ConnectionInterface
      * @return void
      */
-    public function testPassingInvalidObject()
+    public function testPassingInvalidObjectPhp7()
     {
-        new SchemaCache(new \SimpleXMLElement(''));
+        $this->skipIf(phpversion() < 7.0);
+        new SchemaCache(new Entity());
+    }
+
+    /**
+     * Test passing invalid object
+     *
+     * @return void
+     */
+    public function testPassingInvalidObjectPhp56()
+    {
+        $this->skipIf(phpversion() > 7.0);
+
+        $capture = function ($errno, $msg) {
+            restore_error_handler();
+            $this->assertEquals(E_RECOVERABLE_ERROR, $errno);
+            $this->assertContains('Argument 1 passed to Cake\Database\SchemaCache::getSchema() must implement interface Cake\Datasource\ConnectionInterface, instance of Cake\ORM\Entity given', $msg);
+        };
+        set_error_handler($capture);
+
+        try {
+            new SchemaCache(new Entity());
+            $this->fail('Exception not thrown');
+        } catch (\RuntimeException $e) {
+            $this->assertEquals('The given connection object is not compatible with schema caching, as it does not implement a "schemaCollection()" method.', $e->getMessage());
+        }
     }
 }
