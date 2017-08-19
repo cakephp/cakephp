@@ -24,6 +24,7 @@ parameters:
         - '#Call to an undefined method Cake\\Collection\\Iterator\\ZipIterator::getInnerIterator\(\)#'
         - '#Result of method Cake\\Http\\Response::send\(\) \(void\) is used#'
         - '#Method Cake\\View\\Form\\ContextInterface::val\(\) invoked with 2 parameters, 1 required#'
+        - '#Access to an undefined property Exception::\$queryString#'
     earlyTerminatingMethodCalls:
         Cake\Shell\Shell:
             - abort

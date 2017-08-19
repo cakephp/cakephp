@@ -86,7 +86,7 @@ abstract class Driver
      * If first argument is passed,
      *
      * @param null|\PDO $connection The connection object
-     * @return \Cake\Database\Connection
+     * @return \PDO
      */
     abstract public function connection($connection = null);
 
