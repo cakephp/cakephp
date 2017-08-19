@@ -197,9 +197,9 @@ class PaginatorComponent extends Component
 
         $page = $options['page'];
         $limit = $options['limit'];
-        $pageCount = (int)ceil($count / $limit);
+        $pageCount = max((int)ceil($count / $limit), 1);
         $requestedPage = $page;
-        $page = max(min($page, $pageCount), 1);
+        $page = min($page, $pageCount);
         $request = $this->_registry->getController()->request;
 
         $order = (array)$options['order'];
