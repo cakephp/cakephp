@@ -14,6 +14,7 @@
  */
 namespace Cake\Auth;
 
+use Cake\Core\Configure;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Network\Exception\UnauthorizedException;
@@ -51,6 +52,7 @@ use Cake\Network\Exception\UnauthorizedException;
  */
 class BasicAuthenticate extends BaseAuthenticate
 {
+    const ENCODING_SOURCES = 'UTF-8, ISO-8859-1';
 
     /**
      * Authenticate a user using HTTP auth. Will use the configured User model and attempt a
@@ -75,6 +77,11 @@ class BasicAuthenticate extends BaseAuthenticate
     {
         $username = $request->env('PHP_AUTH_USER');
         $pass = $request->env('PHP_AUTH_PW');
+        $encoding = Configure::read('App.encoding');
+        if ($encoding && in_array($encoding, mb_list_encodings())) {
+            $username = mb_convert_encoding($username, $encoding, static::ENCODING_SOURCES);
+            $pass = mb_convert_encoding($pass, $encoding, static::ENCODING_SOURCES);
+        }
 
         if (!is_string($username) || $username === '' || !is_string($pass) || $pass === '') {
             return false;
