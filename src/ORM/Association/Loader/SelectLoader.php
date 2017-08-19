@@ -146,7 +146,10 @@ class SelectLoader
     /**
      * Auxiliary function to construct a new Query object to return all the records
      * in the target table that are associated to those specified in $options from
-     * the source table
+     * the source table.
+     *
+     * This method will preserve the sort order defined by the association unless a sort order is explicitly set
+     * in $options, then that order replaces the association's default.
      *
      * @param array $options options accepted by eagerLoader()
      * @return \Cake\ORM\Query
@@ -183,7 +186,7 @@ class SelectLoader
         }
 
         if (!empty($options['sort'])) {
-            $fetchQuery->order($options['sort']);
+            $fetchQuery->order($options['sort'], isset($options['sortOverwrite']) ? $options['sortOverwrite'] : true);
         }
 
         if (!empty($options['contain'])) {

@@ -14,7 +14,9 @@
  */
 namespace Cake\Test\TestCase\ORM\Association;
 
+use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
 use Cake\Event\Event;
 use Cake\ORM\Association\BelongsToMany;
@@ -1178,6 +1180,24 @@ class BelongsToManyTest extends TestCase
 
         $this->assertNotEmpty($result->tags[0]->two, 'Should have computed field');
         $this->assertNotEmpty($result->tags[0]->name, 'Should have standard field');
+    }
+
+    /**
+     * Tests sort is added to find proxy.
+     *
+     * @return void
+     */
+    public function testFindWithSort()
+    {
+        $table = TableRegistry::get('Articles');
+        $assoc = $table->belongsToMany('Tags');
+        $this->assertNull($assoc->sort());
+        $this->assertNull($assoc->find()->clause('order'));
+
+        $assoc->sort(['id' => 'DESC']);
+        $this->assertEquals(['id' => 'DESC'], $assoc->sort());
+        $this->assertInstanceOf(OrderByExpression::class, $assoc->find()->clause('order'));
+        $this->assertEquals('ORDER BY id DESC', $assoc->find()->clause('order')->sql(new ValueBinder));
     }
 
     /**

@@ -39,7 +39,7 @@ class HasMany extends Association
     /**
      * Order in which target records should be returned
      *
-     * @var mixed
+     * @var array|\Cake\Database\ExpressionInterface|string
      */
     protected $_sort;
 
@@ -568,7 +568,7 @@ class HasMany extends Association
     /**
      * Sets the sort order in which target records should be returned.
      *
-     * @param mixed $sort A find() compatible order clause
+     * @param array|\Cake\Database\ExpressionInterface|string $sort A find() compatible order clause
      * @return $this
      */
     public function setSort($sort)
@@ -581,7 +581,7 @@ class HasMany extends Association
     /**
      * Gets the sort order in which target records should be returned.
      *
-     * @return mixed
+     * @return array|\Cake\Database\ExpressionInterface|string
      */
     public function getSort()
     {
@@ -593,7 +593,7 @@ class HasMany extends Association
      * If no arguments are passed the currently configured value is returned
      *
      * @deprecated 3.4.0 Use setSort()/getSort() instead.
-     * @param mixed $sort A find() compatible order clause
+     * @param array|\Cake\Database\ExpressionInterface|string $sort A find() compatible order clause
      * @return mixed
      */
     public function sort($sort = null)
@@ -616,6 +616,27 @@ class HasMany extends Association
         }
 
         return $row;
+    }
+
+    /**
+     * Proxies the finding operation to the target table's find method
+     * and modifies the query accordingly based of this association
+     * configuration
+     *
+     * @param string|array|null $type the type of query to perform, if an array is passed,
+     *   it will be interpreted as the `$options` parameter
+     * @param array $options The options to for the find
+     * @see \Cake\ORM\Table::find()
+     * @return \Cake\ORM\Query
+     */
+    public function find($type = null, array $options = [])
+    {
+        $query = parent::find($type, $options);
+        if ($query->clause('order') === null) {
+            $query->order($this->getSort());
+        }
+
+        return $query;
     }
 
     /**
@@ -650,6 +671,7 @@ class HasMany extends Association
             'strategy' => $this->getStrategy(),
             'associationType' => $this->type(),
             'sort' => $this->getSort(),
+            'sortOverwrite' => true,
             'finder' => [$this, 'find']
         ]);
 

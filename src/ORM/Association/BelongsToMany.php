@@ -152,7 +152,7 @@ class BelongsToMany extends Association
     /**
      * Order in which target records should be returned
      *
-     * @var mixed
+     * @var array|\Cake\Database\ExpressionInterface|string
      */
     protected $_sort;
 
@@ -230,8 +230,8 @@ class BelongsToMany extends Association
      * Sets the sort order in which target records should be returned.
      * If no arguments are passed the currently configured value is returned
      *
-     * @param mixed $sort A find() compatible order clause
-     * @return mixed
+     * @param array|\Cake\Database\ExpressionInterface|string $sort A find() compatible order clause
+     * @return array|\Cake\Database\ExpressionInterface|string
      */
     public function sort($sort = null)
     {
@@ -540,6 +540,7 @@ class BelongsToMany extends Association
             'strategy' => $this->getStrategy(),
             'associationType' => $this->type(),
             'sort' => $this->sort(),
+            'sortOverwrite' => true,
             'junctionAssociationName' => $name,
             'junctionProperty' => $this->_junctionProperty,
             'junctionAssoc' => $this->getTarget()->association($name),
@@ -1066,6 +1067,7 @@ class BelongsToMany extends Association
         $query = $this->getTarget()
             ->find($type, $options + $opts)
             ->where($this->targetConditions())
+            ->order($this->sort())
             ->addDefaultTypes($this->getTarget());
 
         if (!$this->junctionConditions()) {
