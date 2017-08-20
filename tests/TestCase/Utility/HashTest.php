@@ -2127,6 +2127,43 @@ class HashTest extends TestCase
         $this->assertEquals($expected, $result);
         $result = Hash::remove($array, '{n}.{n}.part');
         $this->assertEquals($expected, $result);
+
+        $array = [
+            'foo' => 'string',
+        ];
+        $expected = $array;
+        $result = Hash::remove($array, 'foo.bar');
+        $this->assertEquals($expected, $result);
+
+        $array = [
+            'foo' => 'string',
+            'bar' => [
+                0 => 'a',
+                1 => 'b',
+            ],
+        ];
+        $expected = [
+            'foo' => 'string',
+            'bar' => [
+                1 => 'b',
+            ],
+        ];
+        $result = Hash::remove($array, '{s}.0');
+        $this->assertEquals($expected, $result);
+
+        $array = [
+            'foo' => [
+                0 => 'a',
+                1 => 'b',
+            ],
+        ];
+        $expected = [
+            'foo' => [
+                1 => 'b',
+            ],
+        ];
+        $result = Hash::remove($array, 'foo[1=b].0');
+        $this->assertEquals($expected, $result);
     }
 
     /**
