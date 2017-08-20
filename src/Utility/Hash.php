@@ -365,7 +365,7 @@ class Hash
                 }
             } elseif ($op === 'remove') {
                 if ($i === $last) {
-                    if (!is_string($_list)) {
+                    if (is_array($_list)) {
                         unset($_list[$key]);
                     }
 
