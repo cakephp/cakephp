@@ -22,6 +22,7 @@ parameters:
         - '#Access to an undefined property Psr\\Http\\Message\\UriInterface::\$webroot#'
         - '#Access to an undefined property Psr\\Http\\Message\\UriInterface::\$base#'
         - '#Call to an undefined method Cake\\Collection\\Iterator\\ZipIterator::getInnerIterator\(\)#'
+        - '#Call to an undefined method Cake\\ORM\\ResultSet::getInnerIterator\(\)#'
         - '#Result of method Cake\\Http\\Response::send\(\) \(void\) is used#'
         - '#Method Cake\\View\\Form\\ContextInterface::val\(\) invoked with 2 parameters, 1 required#'
         - '#Access to an undefined property Exception::\$queryString#'
