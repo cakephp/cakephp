@@ -947,7 +947,7 @@ abstract class Association
      * Conditionally adds a condition to the passed Query that will make it find
      * records where there is no match with this association.
      *
-     * @param \Cake\ORM\Query $query The query to modify
+     * @param \Cake\Datasource\QueryInterface $query The query to modify
      * @param array $options Options array containing the `negateMatch` key.
      * @return void
      */
@@ -956,7 +956,7 @@ abstract class Association
         $target = $this->_targetTable;
         if (!empty($options['negateMatch'])) {
             $primaryKey = $query->aliasFields((array)$target->getPrimaryKey(), $this->_name);
-            $query->andWhere(function ($exp) use ($primaryKey) {
+            $query->where(function ($exp) use ($primaryKey) {
                 array_map([$exp, 'isNull'], $primaryKey);
 
                 return $exp;
