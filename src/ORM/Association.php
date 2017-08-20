@@ -956,7 +956,7 @@ abstract class Association
         $target = $this->_targetTable;
         if (!empty($options['negateMatch'])) {
             $primaryKey = $query->aliasFields((array)$target->getPrimaryKey(), $this->_name);
-            $query->andWhere(function ($exp) use ($primaryKey) {
+            $query->where(function ($exp) use ($primaryKey) {
                 array_map([$exp, 'isNull'], $primaryKey);
 
                 return $exp;
