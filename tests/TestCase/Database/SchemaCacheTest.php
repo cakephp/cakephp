@@ -214,39 +214,4 @@ class SchemaCacheTest extends TestCase
         $this->assertInstanceOf(CachedCollection::class, $result);
     }
 
-    /**
-     * Test passing invalid object
-     *
-     * @expectedException \TypeError
-     * @return void
-     */
-    public function testPassingInvalidObjectPhp7()
-    {
-        $this->skipIf(phpversion() < 7.0);
-        new SchemaCache(new Entity());
-    }
-
-    /**
-     * Test passing invalid object
-     *
-     * @return void
-     */
-    public function testPassingInvalidObjectPhp56()
-    {
-        $this->skipIf(phpversion() > 7.0);
-
-        $capture = function ($errno, $msg) {
-            restore_error_handler();
-            $this->assertEquals(E_RECOVERABLE_ERROR, $errno);
-            $this->assertContains('Argument 1 passed to Cake\Database\SchemaCache::getSchema() must implement interface Cake\Datasource\ConnectionInterface, instance of Cake\ORM\Entity given', $msg);
-        };
-        set_error_handler($capture);
-
-        try {
-            new SchemaCache(new Entity());
-            $this->fail('Exception not thrown');
-        } catch (\RuntimeException $e) {
-            $this->assertEquals('The given connection object is not compatible with schema caching, as it does not implement a "schemaCollection()" method.', $e->getMessage());
-        }
-    }
 }
