@@ -110,7 +110,7 @@ class CacheSession implements SessionHandlerInterface
     /**
      * Method called on the destruction of a cache session.
      *
-     * @param string|int $id ID that uniquely identifies session in cache
+     * @param string|int $id ID that uniquely identifies session in cache.
      * @return bool Always true.
      */
     public function destroy($id)
