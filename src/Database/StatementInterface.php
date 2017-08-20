@@ -17,6 +17,8 @@ namespace Cake\Database;
 /**
  * Represents a database statement. Concrete implementations
  * can either use PDOStatement or a native driver
+ *
+ * @property string $queryString
  */
 interface StatementInterface
 {

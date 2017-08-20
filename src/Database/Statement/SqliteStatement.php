@@ -48,9 +48,7 @@ class SqliteStatement extends StatementDecorator
      */
     public function rowCount()
     {
-        if ($this->_statement instanceof BufferedStatement
-            && preg_match('/^(?:DELETE|UPDATE|INSERT)/i', $this->_statement->queryString)
-        ) {
+        if (preg_match('/^(?:DELETE|UPDATE|INSERT)/i', $this->_statement->queryString)) {
             $changes = $this->_driver->prepare('SELECT CHANGES()');
             $changes->execute();
             $count = $changes->fetch()[0];
