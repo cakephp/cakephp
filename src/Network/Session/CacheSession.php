@@ -77,8 +77,8 @@ class CacheSession implements SessionHandlerInterface
     /**
      * Method used to read from a cache session.
      *
-     * @param string $id The key of the value to read
-     * @return string The value of the key or empty if it does not exist
+     * @param string|int $id ID that uniquely identifies session in cache.
+     * @return string Session data or empty string if it does not exist.
      */
     public function read($id)
     {
@@ -94,8 +94,8 @@ class CacheSession implements SessionHandlerInterface
     /**
      * Helper function called on write for cache sessions.
      *
-     * @param int $id ID that uniquely identifies session in database
-     * @param mixed $data The value of the data to be saved.
+     * @param string|int $id ID that uniquely identifies session in cache.
+     * @param mixed $data The data to be saved.
      * @return bool True for successful write, false otherwise.
      */
     public function write($id, $data)
@@ -110,7 +110,7 @@ class CacheSession implements SessionHandlerInterface
     /**
      * Method called on the destruction of a cache session.
      *
-     * @param int $id ID that uniquely identifies session in cache
+     * @param string|int $id ID that uniquely identifies session in cache.
      * @return bool Always true.
      */
     public function destroy($id)
