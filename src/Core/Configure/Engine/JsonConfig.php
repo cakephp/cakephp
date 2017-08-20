@@ -21,6 +21,20 @@ use Cake\Core\Exception\Exception;
 /**
  * JSON engine allows Configure to load configuration values from
  * files containing JSON strings.
+ *
+ * An example JSON file would look like::
+ *
+ * ```
+ * {
+ *     "debug": false,
+ *     "App": {
+ *         "namespace": "MyApp"
+ *     },
+ *     "Security": {
+ *         "salt": "its-secret"
+ *     }
+ * }
+ * ```
  */
 class JsonConfig implements ConfigEngineInterface
 {

@@ -22,12 +22,12 @@ class PageOutOfBoundsException extends Exception
     /**
      * {@inheritDoc}
      */
-    protected $_messageTemplate = 'Page number "%s" could not be found.';
+    protected $_messageTemplate = 'Page number %s could not be found.';
 
     /**
      * Constructor
      *
-     * @param string|null $message The error message.
+     * @param array|null $message Paging info.
      * @param int $code The code of the error, is also the HTTP status code for the error.
      * @param \Exception|null $previous The previous exception.
      */

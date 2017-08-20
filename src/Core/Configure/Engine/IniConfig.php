@@ -42,7 +42,7 @@ use Cake\Utility\Hash;
  *
  * `Configure::read('section.key');
  *
- * You can combine `.` separated values with sections to create more deeply
+ * You can also use `.` separated values in section names to create more deeply
  * nested structures.
  *
  * IniConfig also manipulates how the special ini values of

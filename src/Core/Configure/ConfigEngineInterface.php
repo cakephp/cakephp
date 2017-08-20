@@ -21,7 +21,9 @@ interface ConfigEngineInterface
 {
 
     /**
-     * Read method is used for reading configuration information from sources.
+     * Read a configuration file/storage key
+     *
+     * This method is used for reading configuration information from sources.
      * These sources can either be static resources like files, or dynamic ones like
      * a database, or other datasource.
      *
@@ -31,7 +33,7 @@ interface ConfigEngineInterface
     public function read($key);
 
     /**
-     * Dumps the configure data into source.
+     * Dumps the configure data into the storage key/file of the given `$key`.
      *
      * @param string $key The identifier to write to.
      * @param array $data The data to dump.

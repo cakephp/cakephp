@@ -185,17 +185,17 @@ class Paginator implements PaginatorInterface
         $cleanQuery = clone $query;
         $results = $query->all();
         $numResults = count($results);
-        $count = $numResults ? $cleanQuery->count() : 0;
+        $count = $cleanQuery->count();
 
         $page = $options['page'];
         $limit = $options['limit'];
-        $pageCount = (int)ceil($count / $limit);
+        $pageCount = max((int)ceil($count / $limit), 1);
         $requestedPage = $page;
-        $page = max(min($page, $pageCount), 1);
+        $page = min($page, $pageCount);
 
         $order = (array)$options['order'];
         $sortDefault = $directionDefault = false;
-        if (!empty($defaults['order']) && count($defaults['order']) == 1) {
+        if (!empty($defaults['order']) && count($defaults['order']) === 1) {
             $sortDefault = key($defaults['order']);
             $directionDefault = current($defaults['order']);
         }
@@ -220,7 +220,10 @@ class Paginator implements PaginatorInterface
         $this->_pagingParams = [$alias => $paging];
 
         if ($requestedPage > $page) {
-            throw new PageOutOfBoundsException([$requestedPage]);
+            throw new PageOutOfBoundsException([
+                'requestedPage' => $requestedPage,
+                'pagingParams' => $this->_pagingParams
+            ]);
         }
 
         return $results;

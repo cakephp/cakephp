@@ -235,8 +235,13 @@ class QueryCompiler
             }
 
             $joins .= sprintf(' %s JOIN %s %s', $join['type'], $join['table'], $join['alias']);
-            if (isset($join['conditions']) && count($join['conditions'])) {
-                $joins .= sprintf(' ON %s', $join['conditions']->sql($generator));
+
+            $condition = '';
+            if (isset($join['conditions']) && $join['conditions'] instanceof ExpressionInterface) {
+                $condition = $join['conditions']->sql($generator);
+            }
+            if (strlen($condition)) {
+                $joins .= " ON {$condition}";
             } else {
                 $joins .= ' ON 1 = 1';
             }

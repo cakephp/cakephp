@@ -643,12 +643,18 @@ class PaginatorTest extends TestCase
         try {
             $this->Paginator->paginate($table, $params);
             $this->fail('No exception raised');
-        } catch (PageOutOfBoundsException $e) {
-            $pagingParams = $this->Paginator->getPagingParams();
+        } catch (PageOutOfBoundsException $exception) {
             $this->assertEquals(
-                1,
-                $pagingParams['PaginatorPosts']['page'],
-                'Page number should not be 0'
+                'Page number 3000 could not be found.',
+                $exception->getMessage()
+            );
+
+            $this->assertSame(
+                [
+                    'requestedPage' => 3000,
+                    'pagingParams' => $this->Paginator->getPagingParams()
+                ],
+                $exception->getAttributes()
             );
         }
     }

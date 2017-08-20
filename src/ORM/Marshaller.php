@@ -159,7 +159,7 @@ class Marshaller
      *
      * @param array $data The data to hydrate.
      * @param array $options List of options
-     * @return \Cake\ORM\Entity
+     * @return \Cake\Datasource\EntityInterface
      * @see \Cake\ORM\Table::newEntity()
      * @see \Cake\ORM\Entity::$_accessible
      */
@@ -169,7 +169,7 @@ class Marshaller
 
         $primaryKey = (array)$this->_table->getPrimaryKey();
         $entityClass = $this->_table->getEntityClass();
-        /* @var \Cake\ORM\Entity $entity */
+        /* @var \Cake\Datasource\EntityInterface $entity */
         $entity = new $entityClass();
         $entity->setSource($this->_table->getRegistryAlias());
 
@@ -472,7 +472,8 @@ class Marshaller
         $primaryKey = array_map([$target, 'aliasField'], $primaryKey);
 
         if ($multi) {
-            if (count(current($ids)) !== count($primaryKey)) {
+            $first = current($ids);
+            if (!is_array($first) || count($first) !== count($primaryKey)) {
                 return [];
             }
             $filter = new TupleComparison($primaryKey, $ids, [], 'IN');

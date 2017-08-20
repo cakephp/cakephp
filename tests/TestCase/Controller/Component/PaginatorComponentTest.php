@@ -679,6 +679,37 @@ class PaginatorComponentTest extends TestCase
     }
 
     /**
+     * Test empty pagination result.
+     *
+     * @return void
+     */
+    public function testEmptyPaginationResult()
+    {
+        $this->loadFixtures('Posts');
+
+        $table = TableRegistry::get('PaginatorPosts');
+        $table->deleteAll('1=1');
+
+        $this->Paginator->paginate($table);
+
+        $this->assertSame(
+            0,
+            $this->request->params['paging']['PaginatorPosts']['count'],
+            'Count should be 0'
+        );
+        $this->assertSame(
+            1,
+            $this->request->params['paging']['PaginatorPosts']['page'],
+            'Page number should not be 0'
+        );
+        $this->assertSame(
+            1,
+            $this->request->params['paging']['PaginatorPosts']['pageCount'],
+            'Page count number should not be 0'
+        );
+    }
+
+    /**
      * Test that a really large page number gets clamped to the max page size.
      *
      * @return void
@@ -697,6 +728,30 @@ class PaginatorComponentTest extends TestCase
                 1,
                 $this->request->params['paging']['PaginatorPosts']['page'],
                 'Page number should not be 0'
+            );
+        }
+    }
+
+    /**
+     * Test that a out of bounds request still knows about the page size
+     *
+     * @return void
+     */
+    public function testOutOfRangePageNumberStillProvidesPageCount()
+    {
+        $this->loadFixtures('Posts');
+        $this->request->query['limit'] = 1;
+        $this->request->query['page'] = 4;
+
+        $table = TableRegistry::get('PaginatorPosts');
+        try {
+            $this->Paginator->paginate($table);
+            $this->fail('No exception raised');
+        } catch (NotFoundException $e) {
+            $this->assertEquals(
+                3,
+                $this->request->params['paging']['PaginatorPosts']['pageCount'],
+                'Page count number should not be 0'
             );
         }
     }
@@ -1260,7 +1315,7 @@ class PaginatorComponentTest extends TestCase
      * Helper method for making mocks.
      *
      * @param array $methods
-     * @return \Cake\ORM\Table
+     * @return \Cake\ORM\Table|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function _getMockPosts($methods = [])
     {
@@ -1284,7 +1339,9 @@ class PaginatorComponentTest extends TestCase
     /**
      * Helper method for mocking queries.
      *
-     * @return \Cake\ORM\Query
+     * @param string|null $table
+     *
+     * @return \Cake\ORM\Query|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function _getMockFindQuery($table = null)
     {

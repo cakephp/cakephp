@@ -752,7 +752,7 @@ trait EntityTrait
         if ($isDirty === false) {
             unset($this->_dirty[$property]);
 
-            return false;
+            return $this;
         }
 
         $this->_dirty[$property] = true;
@@ -1182,7 +1182,7 @@ trait EntityTrait
      * Stores whether or not a property value can be changed or set in this entity.
      * The special property `*` can also be marked as accessible or protected, meaning
      * that any other property specified before will take its value. For example
-     * `$entity->accessible('*', true)` means that any property not specified already
+     * `$entity->setAccess('*', true)` means that any property not specified already
      * will be accessible by default.
      *
      * You can also call this method with an array of properties, in which case they

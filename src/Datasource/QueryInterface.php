@@ -18,7 +18,6 @@ namespace Cake\Datasource;
 /**
  * The basis for every query object
  *
- * @package Cake\Datasource
  */
 interface QueryInterface
 {

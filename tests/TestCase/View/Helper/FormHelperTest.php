@@ -4738,6 +4738,24 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * Test setting a hiddenField value on radio buttons.
+     *
+     * @return void
+     */
+    public function testRadioHiddenFieldValue()
+    {
+        $result = $this->Form->radio('title', ['option A'], ['hiddenField' => 'N']);
+        $expected = [
+            ['input' => ['type' => 'hidden', 'name' => 'title', 'value' => 'N']],
+            'label' => ['for' => 'title-0'],
+            ['input' => ['type' => 'radio', 'name' => 'title', 'value' => '0', 'id' => 'title-0']],
+            'option A',
+            '/label',
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * testControlRadio method
      *
      * Test that input works with radio types.
