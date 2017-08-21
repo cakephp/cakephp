@@ -10,7 +10,6 @@ parameters:
         - '#Access to undefined constant Memcached::DYNAMIC_CLIENT_MODE#'
         - '#Access to undefined constant PDO::SQLSRV_ATTR_ENCODING#'
         - '#Access to undefined constant PDO::SQLSRV_ENCODING_BINARY#'
-        - '#Access to an undefined property Cake\\Database\\Driver::\$_connection#'
         - '#Constant XC_TYPE_VAR not found#'
         - '#Class PHPUnit_Runner_Version not found and could not be autoloaded#'
         - '#Call to an undefined method Cake\\Auth\\Storage\\StorageInterface::getConfig\(\)#'
