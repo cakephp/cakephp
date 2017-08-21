@@ -249,9 +249,9 @@ trait StaticConfigTrait
             throw new InvalidArgumentException('Only strings can be passed to parseDsn');
         }
 
-        $pattern = '/^(?P<scheme>[\w\\\\]+):\/\/((?P<user>.*?)(:(?P<password>.*?))?@)?' .
-            '((?P<host>[.\w-\\\\]+)(:(?P<port>\d+))?)?' .
-            '(?P<path>\/[^?]*)?(\?(?P<query>.*))?$/';
+        $pattern = '/^(?P<scheme>[\w\\\\]+):\/\/((?P<username>.*?)(:(?P<password>.*?))?@)?' .
+            '((?P<host>[^?#\/:@]+)(:(?P<port>\d+))?)?' .
+            '(?P<path>\/[^?#]*)?(\?(?P<query>[^#]*))?(#(?P<fragment>.*))?$/';
         preg_match($pattern, $dsn, $parsed);
 
         if (!$parsed) {
@@ -285,15 +285,6 @@ trait StaticConfigTrait
             }
         }
 
-        if (isset($parsed['user'])) {
-            $parsed['username'] = $parsed['user'];
-        }
-
-        if (isset($parsed['pass'])) {
-            $parsed['password'] = $parsed['pass'];
-        }
-
-        unset($parsed['pass'], $parsed['user']);
         $parsed = $queryArgs + $parsed;
 
         if (empty($parsed['className'])) {

@@ -196,7 +196,7 @@ class StaticConfigTraitTest extends TestCase
         ];
         $this->assertEquals($expected, TestEmailStaticConfig::parseDsn($dsn));
 
-        $dsn = 'mail://user:secret@localhost:25?timeout=30&client=null&tls=null';
+        $dsn = 'mail://user:secret@localhost:25?timeout=30&client=null&tls=null#fragment';
         $expected = [
             'className' => 'Cake\Mailer\Transport\MailTransport',
             'client' => null,
@@ -207,6 +207,7 @@ class StaticConfigTraitTest extends TestCase
             'timeout' => '30',
             'tls' => null,
             'username' => 'user',
+            'fragment' => 'fragment',
         ];
         $this->assertEquals($expected, TestEmailStaticConfig::parseDsn($dsn));
 
