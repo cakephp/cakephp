@@ -346,6 +346,18 @@ class ConnectionManagerTest extends TestCase
                     'username' => 'sa',
                 ]
             ],
+            'sqllocaldb' => [
+                'sqlserver://username:password@(localdb)\.\DeptSharedLocalDB/database',
+                [
+                    'className' => 'Cake\Database\Connection',
+                    'driver' => 'Cake\Database\Driver\Sqlserver',
+                    'host' => '(localdb)\.\DeptSharedLocalDB',
+                    'password' => 'password',
+                    'database' => 'database',
+                    'scheme' => 'sqlserver',
+                    'username' => 'username',
+                ]
+            ],
             'classname query arg' => [
                 'mysql://localhost/database?className=Custom\Driver',
                 [
