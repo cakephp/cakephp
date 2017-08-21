@@ -971,7 +971,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function belongsTo($associated, array $options = [])
     {
-        $options += ['sourceTable' => $this];
+        $options += [
+            'sourceTable' => $this,
+            'tableLocator' => $this->getTableLocator()
+        ];
         $association = new BelongsTo($associated, $options);
 
         return $this->_associations->add($association->getName(), $association);
@@ -1015,7 +1018,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function hasOne($associated, array $options = [])
     {
-        $options += ['sourceTable' => $this];
+        $options += [
+            'sourceTable' => $this,
+            'tableLocator' => $this->getTableLocator()
+        ];
         $association = new HasOne($associated, $options);
 
         return $this->_associations->add($association->getName(), $association);
@@ -1065,7 +1071,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function hasMany($associated, array $options = [])
     {
-        $options += ['sourceTable' => $this];
+        $options += [
+            'sourceTable' => $this,
+            'tableLocator' => $this->getTableLocator()
+        ];
         $association = new HasMany($associated, $options);
 
         return $this->_associations->add($association->getName(), $association);
@@ -1117,7 +1126,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function belongsToMany($associated, array $options = [])
     {
-        $options += ['sourceTable' => $this];
+        $options += [
+            'sourceTable' => $this,
+            'tableLocator' => $this->getTableLocator()
+        ];
         $association = new BelongsToMany($associated, $options);
 
         return $this->_associations->add($association->getName(), $association);
