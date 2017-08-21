@@ -30,6 +30,7 @@ use Cake\ORM\AssociationCollection;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Entity;
+use Cake\ORM\Locator\LocatorInterface;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\SaveOptionsBuilder;
@@ -207,6 +208,18 @@ class TableTest extends TestCase
         $this->assertNull($table->connection());
         $table->connection($this->connection);
         $this->assertSame($this->connection, $table->connection());
+    }
+
+    /**
+     * Tests tableLocator option
+     *
+     * @return void
+     */
+    public function testTableLocator()
+    {
+        $locator = $this->createMock(LocatorInterface::class);
+        $table = new Table(['tableLocator' => $locator]);
+        $this->assertSame($locator, $table->getTableLocator());
     }
 
     /**
