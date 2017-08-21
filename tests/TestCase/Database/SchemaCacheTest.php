@@ -213,5 +213,4 @@ class SchemaCacheTest extends TestCase
 
         $this->assertInstanceOf(CachedCollection::class, $result);
     }
-
 }
