@@ -134,30 +134,14 @@ class SessionHelper extends AppHelper {
 		if (CakeSession::check('Message.' . $key)) {
 			$flash = CakeSession::read('Message.' . $key);
 			CakeSession::delete('Message.' . $key);
-			$message = $flash['message'];
-			unset($flash['message']);
 
-			if (!empty($attrs)) {
-				$flash = array_merge($flash, $attrs);
-			}
-
-			if ($flash['element'] === 'default') {
-				$class = 'message';
-				if (!empty($flash['params']['class'])) {
-					$class = $flash['params']['class'];
+			$out = '';
+			foreach ($flash as $flashArray) {
+				if (!empty($attrs)) {
+					$flashArray = array_merge($flashArray, $attrs);
 				}
-				$out = '<div id="' . $key . 'Message" class="' . $class . '">' . $message . '</div>';
-			} elseif (!$flash['element']) {
-				$out = $message;
-			} else {
-				$options = array();
-				if (isset($flash['params']['plugin'])) {
-					$options['plugin'] = $flash['params']['plugin'];
-				}
-				$tmpVars = $flash['params'];
-				$tmpVars['message'] = $message;
-				$tmpVars['key'] = $key;
-				$out = $this->_View->element($flash['element'], $tmpVars, $options);
+				$flashArray['key'] = $key;
+				$out .= $this->_render($flashArray);
 			}
 		}
 		return $out;
@@ -173,4 +157,34 @@ class SessionHelper extends AppHelper {
 		return CakeSession::valid();
 	}
 
+/**
+ * Renders a flash message
+ *
+ * @param array $flash Flash message array
+ * @return string
+ */
+	protected function _render($flash) {
+		$message = $flash['message'];
+		unset($flash['message']);
+
+		if ($flash['element'] === 'default') {
+			$class = 'message';
+			if (!empty($flash['params']['class'])) {
+				$class = $flash['params']['class'];
+			}
+			$out = '<div id="' . $flash['key'] . 'Message" class="' . $class . '">' . $message . '</div>';
+		} elseif (!$flash['element']) {
+			$out = $message;
+		} else {
+			$options = array();
+			if (isset($flash['params']['plugin'])) {
+				$options['plugin'] = $flash['params']['plugin'];
+			}
+			$tmpVars = $flash['params'];
+			$tmpVars['message'] = $message;
+			$tmpVars['key'] = $flash['key'];
+			$out = $this->_View->element($flash['element'], $tmpVars, $options);
+		}
+		return $out;
+	}
 }
