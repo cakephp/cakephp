@@ -335,7 +335,7 @@ trait CollectionTrait
      */
     public function take($size = 1, $from = 0)
     {
-        return new Collection(new LimitIterator($this->unwrap(), $from, $size));
+        return new Collection(new LimitIterator($this, $from, $size));
     }
 
     /**
@@ -343,7 +343,7 @@ trait CollectionTrait
      */
     public function skip($howMany)
     {
-        return new Collection(new LimitIterator($this->unwrap(), $howMany));
+        return new Collection(new LimitIterator($this, $howMany));
     }
 
     /**
@@ -367,7 +367,8 @@ trait CollectionTrait
      */
     public function first()
     {
-        foreach ($this->take(1) as $result) {
+        $iterator = new LimitIterator($this, 0, 1);
+        foreach ($iterator as $result) {
             return $result;
         }
     }
@@ -377,18 +378,25 @@ trait CollectionTrait
      */
     public function last()
     {
-        $iterator = $this->unwrap();
-        $count = $iterator instanceof Countable ?
-            count($iterator) :
-            iterator_count($iterator);
-
-        if ($count === 0) {
-            return null;
+        $iterator = $this->optimizeUnwrap();
+        if (is_array($iterator)) {
+            return array_pop($iterator);
         }
 
-        foreach ($this->take(1, $count - 1) as $last) {
-            return $last;
+        if ($iterator instanceof Countable) {
+            $count = count($iterator);
+            if ($count === 0) {
+                return null;
+            }
+            $iterator = new LimitIterator($iterator, $count - 1, 1);
         }
+
+        $result = null;
+        foreach ($iterator as $result) {
+            // No-op
+        }
+
+        return $result;
     }
 
     /**
@@ -716,7 +724,7 @@ trait CollectionTrait
     /**
      * Backwards compatible wrapper for unwrap()
      *
-     * @return \Iterator
+     * @return \Traversable
      * @deprecated
      */
     // @codingStandardsIgnoreLine
