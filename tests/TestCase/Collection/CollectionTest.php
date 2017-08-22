@@ -914,6 +914,29 @@ class CollectionTest extends TestCase
     }
 
     /**
+     * Tests the sample() method with a traversable non-iterator
+     *
+     * @return void
+     */
+    public function testSampleWithTraversableNonIterator()
+    {
+        $collection = new Collection($this->datePeriod('2017-01-01', '2017-01-07'));
+        $result = $collection->sample(3)->toList();
+        $list = [
+            '2017-01-01',
+            '2017-01-02',
+            '2017-01-03',
+            '2017-01-04',
+            '2017-01-05',
+            '2017-01-06',
+        ];
+        $this->assertCount(3, $result);
+        foreach ($result as $date) {
+            $this->assertContains($date->format('Y-m-d'), $list);
+        }
+    }
+
+    /**
      * Test toArray method
      *
      * @return void
@@ -1001,6 +1024,23 @@ class CollectionTest extends TestCase
 
         $taken = $collection->take(2, 2);
         $this->assertEquals([2 => 3, 3 => 4], $taken->toArray());
+    }
+
+    /**
+     * Tests the take() method with a traversable non-iterator
+     *
+     * @return void
+     */
+    public function testTakeWithTraversableNonIterator()
+    {
+        $collection = new Collection($this->datePeriod('2017-01-01', '2017-01-07'));
+        $result = $collection->take(3, 1)->toList();
+        $expected = [
+            new \DateTime('2017-01-02'),
+            new \DateTime('2017-01-03'),
+            new \DateTime('2017-01-04'),
+        ];
+        $this->assertEquals($expected, $result);
     }
 
     /**
@@ -1913,6 +1953,36 @@ class CollectionTest extends TestCase
     }
 
     /**
+     * Tests the skip() method with a traversable non-iterator
+     *
+     * @return void
+     */
+    public function testSkipWithTraversableNonIterator()
+    {
+        $collection = new Collection($this->datePeriod('2017-01-01', '2017-01-07'));
+        $result = $collection->skip(3)->toList();
+        $expected = [
+            new \DateTime('2017-01-04'),
+            new \DateTime('2017-01-05'),
+            new \DateTime('2017-01-06'),
+        ];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Tests the first() method with a traversable non-iterator
+     *
+     * @return void
+     */
+    public function testFirstWithTraversableNonIterator()
+    {
+        $collection = new Collection($this->datePeriod('2017-01-01', '2017-01-07'));
+        $date = $collection->first();
+        $this->assertInstanceOf('DateTime', $date);
+        $this->assertEquals('2017-01-01', $date->format('Y-m-d'));
+    }
+
+    /**
      * Tests the last() method
      *
      * @return void
@@ -1933,10 +2003,57 @@ class CollectionTest extends TestCase
      *
      * @return void
      */
-    public function testLAstWithEmptyCollection()
+    public function testLastWithEmptyCollection()
     {
         $collection = new Collection([]);
         $this->assertNull($collection->last());
+    }
+
+    /**
+     * Tests the last() method with a countable object
+     *
+     * @return void
+     */
+    public function testLastWithCountable()
+    {
+        $collection = new Collection(new ArrayObject([1, 2, 3]));
+        $this->assertEquals(3, $collection->last());
+    }
+
+    /**
+     * Tests the last() method with an empty countable object
+     *
+     * @return void
+     */
+    public function testLastWithEmptyCountable()
+    {
+        $collection = new Collection(new ArrayObject([]));
+        $this->assertNull($collection->last());
+    }
+
+    /**
+     * Tests the last() method with a non-rewindable iterator
+     *
+     * @return void
+     */
+    public function testLastWithNonRewindableIterator()
+    {
+        $iterator = new NoRewindIterator(new ArrayIterator([1, 2, 3]));
+        $collection = new Collection($iterator);
+        $this->assertEquals(3, $collection->last());
+    }
+
+    /**
+     * Tests the last() method with a traversable non-iterator
+     *
+     * @return void
+     */
+    public function testLastWithTraversableNonIterator()
+    {
+        $collection = new Collection($this->datePeriod('2017-01-01', '2017-01-07'));
+        $date = $collection->last();
+        $this->assertInstanceOf('DateTime', $date);
+        $this->assertEquals('2017-01-06', $date->format('Y-m-d'));
     }
 
     /**
@@ -2382,5 +2499,17 @@ class CollectionTest extends TestCase
         foreach ($items as $k => $v) {
             yield $k => $v;
         }
+    }
+
+    /**
+     * Create a DatePeriod object.
+     *
+     * @param string $start Start date
+     * @param string $end End date
+     * @return \DatePeriod
+     */
+    protected function datePeriod($start, $end)
+    {
+        return new \DatePeriod(new \DateTime($start), new \DateInterval('P1D'), new \DateTime($end));
     }
 }
