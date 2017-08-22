@@ -248,3 +248,16 @@ if (!function_exists('env')) {
     }
 
 }
+
+if (!function_exists('deprecationWarning')) {
+    /**
+     * Helper method for outputting deprecation warnings
+     *
+     * @param string $message The message to output as a deprecation warning.
+     * @return void
+     */
+    function deprecationWarning($message)
+    {
+        trigger_error($message, E_USER_DEPRECATED);
+    }
+}

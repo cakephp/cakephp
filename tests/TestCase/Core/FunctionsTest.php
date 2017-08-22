@@ -42,4 +42,13 @@ class FunctionsTest extends TestCase
         $this->assertEquals('0', env('ZERO'));
         $this->assertEquals('0', env('ZERO', '1'));
     }
+
+    /**
+     * @expectedException PHPUnit\Framework\Error\Deprecated
+     * @expectedExceptionMessage This is going away
+     */
+    public function testDeprecationWarning()
+    {
+        deprecationWarning('This is going away');
+    }
 }
