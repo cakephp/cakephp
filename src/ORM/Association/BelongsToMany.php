@@ -510,7 +510,7 @@ class BelongsToMany extends Association
         $subquery = $this->_appendJunctionJoin($subquery, $conditions);
 
         $query
-            ->where(function ($exp) use ($subquery, $conds) {
+            ->andWhere(function ($exp) use ($subquery, $conds) {
                 $identifiers = [];
                 foreach (array_keys($conds) as $field) {
                     $identifiers = new IdentifierExpression($field);
