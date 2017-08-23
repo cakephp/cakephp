@@ -237,7 +237,7 @@ trait StaticConfigTrait
      *
      * @param string $dsn The DSN string to convert to a configuration array
      * @return array The configuration array to be stored after parsing the DSN
-     * @throws \InvalidArgumentException If not passed a string
+     * @throws \InvalidArgumentException If not passed a string, or passed an invalid string
      */
     public static function parseDsn($dsn)
     {
@@ -249,15 +249,50 @@ trait StaticConfigTrait
             throw new InvalidArgumentException('Only strings can be passed to parseDsn');
         }
 
-        $scheme = '';
-        if (preg_match("/^([\w\\\]+)/", $dsn, $matches)) {
-            $scheme = $matches[1];
-            $dsn = preg_replace("/^([\w\\\]+)/", 'file', $dsn);
+        $scheme = $noScheme = '';
+        if (preg_match('{^(?<scheme>[\w\\\]+)(:(//)?)(?P<noScheme>(.*))}', $dsn, $matches)) {
+            $scheme = $matches['scheme'];
+            $noScheme = $matches['noScheme'];
         }
 
-        $parsed = parse_url($dsn);
+        $parsed = parse_url('file://' . $noScheme);
         if ($parsed === false) {
-            return $dsn;
+            // Failed to parse.
+            // Try to encode the userinfo if the DSN string contains '@' marks.
+            for ($p = 0; ($p = strpos($noScheme, '@', $p)) !== false; ++$p) {
+                $user = substr($noScheme, 0, $p);
+                $rest = substr($noScheme, $p + 1);
+
+                $withoutUser = parse_url('file://' . $rest);
+                if ($withoutUser === false) {
+                    continue;
+                }
+
+                $user = implode(':', explode('%3A', urlencode($user), 2));
+                $withUser = parse_url('file://' . $user . '@' . $rest);
+                if (!isset($withUser['user'])) {
+                    continue;
+                }
+
+                // Ensure other url components match the result of without the userinfo.
+                $check = $withUser;
+                unset($check['user'], $check['pass']);
+                if ($check !== $withoutUser) {
+                    continue;
+                }
+
+                $withUser['user'] = urldecode($withUser['user']);
+                if (isset($withUser['pass'])) {
+                    $withUser['pass'] = urldecode($withUser['pass']);
+                }
+
+                $parsed = $withUser;
+                break;
+            }
+
+            if (!$parsed) {
+                throw new InvalidArgumentException("The DSN string '{$dsn}' could not be parsed.");
+            }
         }
 
         $parsed['scheme'] = $scheme;
