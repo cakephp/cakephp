@@ -49,6 +49,7 @@ class FunctionsTest extends TestCase
      */
     public function testDeprecationWarning()
     {
+        error_reporting(E_ALL);
         deprecationWarning('This is going away');
     }
 }
