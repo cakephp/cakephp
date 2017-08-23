@@ -249,23 +249,53 @@ trait StaticConfigTrait
             throw new InvalidArgumentException('Only strings can be passed to parseDsn');
         }
 
-        $pattern = '/^(?P<scheme>[\w\\\\]+):\/\/((?P<username>.*?)(:(?P<password>.*?))?@)?' .
-            '((?P<host>[^?#\/:@]+)(:(?P<port>\d+))?)?' .
-            '(?P<path>\/[^?#]*)?(\?(?P<query>[^#]*))?(#(?P<fragment>.*))?$/';
-        preg_match($pattern, $dsn, $parsed);
-
-        if (!$parsed) {
-            throw new InvalidArgumentException("The DSN string '{$dsn}' could not be parsed.");
-        }
-        foreach ($parsed as $k => $v) {
-            if (is_int($k)) {
-                unset($parsed[$k]);
-            }
-            if ($v === '') {
-                unset($parsed[$k]);
-            }
+        $scheme = $noScheme = '';
+        if (preg_match('{^(?<scheme>[\w\\\]+)(:(//)?)(?P<noScheme>(.*))}', $dsn, $matches)) {
+            $scheme = $matches['scheme'];
+            $noScheme = $matches['noScheme'];
         }
 
+        $parsed = parse_url('file://' . $noScheme);
+        if ($parsed === false) {
+            // Failed to parse.
+            // Try to encode the userinfo if the DSN string contains '@' marks.
+            for ($p = 0; ($p = strpos($noScheme, '@', $p)) !== false; ++$p) { // @codingStandardsIgnoreLine
+                $user = substr($noScheme, 0, $p);
+                $rest = substr($noScheme, $p + 1);
+
+                $withoutUser = parse_url('file://' . $rest);
+                if ($withoutUser === false) {
+                    continue;
+                }
+
+                $user = implode(':', explode('%3A', urlencode($user), 2));
+                $withUser = parse_url('file://' . $user . '@' . $rest);
+                if (!isset($withUser['user'])) {
+                    continue;
+                }
+
+                // Ensure other url components match the result of without the userinfo.
+                $check = $withUser;
+                unset($check['user'], $check['pass']);
+                if ($check !== $withoutUser) {
+                    continue;
+                }
+
+                $withUser['user'] = urldecode($withUser['user']);
+                if (isset($withUser['pass'])) {
+                    $withUser['pass'] = urldecode($withUser['pass']);
+                }
+
+                $parsed = $withUser;
+                break;
+            }
+
+            if (!$parsed) {
+                throw new InvalidArgumentException("The DSN string '{$dsn}' could not be parsed.");
+            }
+        }
+
+        $parsed['scheme'] = $scheme;
         $query = '';
 
         if (isset($parsed['query'])) {
@@ -285,6 +315,15 @@ trait StaticConfigTrait
             }
         }
 
+        if (isset($parsed['user'])) {
+            $parsed['username'] = $parsed['user'];
+        }
+
+        if (isset($parsed['pass'])) {
+            $parsed['password'] = $parsed['pass'];
+        }
+
+        unset($parsed['pass'], $parsed['user']);
         $parsed = $queryArgs + $parsed;
 
         if (empty($parsed['className'])) {
