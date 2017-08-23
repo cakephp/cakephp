@@ -9,20 +9,23 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         3.0.0
+ * @since         3.5.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Shell;
+namespace Cake\Test\TestCase\ORM;
 
 use Cake\Cache\Cache;
+use Cake\Cache\CacheEngine;
+use Cake\Database\SchemaCache;
+use Cake\Database\Schema\CachedCollection;
 use Cake\Datasource\ConnectionManager;
-use Cake\Shell\OrmCacheShell;
+use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 
 /**
- * OrmCacheShell test.
+ * SchemaCache test.
  */
-class OrmCacheShellTest extends TestCase
+class SchemaCacheTest extends TestCase
 {
 
     /**
@@ -33,6 +36,13 @@ class OrmCacheShellTest extends TestCase
     public $fixtures = ['core.articles', 'core.tags'];
 
     /**
+     * Cache Engine Mock
+     *
+     * @var \Cake\Cache\CacheEngine
+     */
+    public $cache;
+
+    /**
      * setup method
      *
      * @return void
@@ -40,14 +50,12 @@ class OrmCacheShellTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->io = $this->getMockBuilder('Cake\Console\ConsoleIo')->getMock();
-        $this->shell = new OrmCacheShell($this->io);
 
-        $this->cache = $this->getMockBuilder('Cake\Cache\CacheEngine')->getMock();
+        $this->cache = $this->getMockBuilder(CacheEngine::class)->getMock();
         $this->cache->expects($this->any())
             ->method('init')
             ->will($this->returnValue(true));
-        Cache::config('orm_cache', $this->cache);
+        Cache::setConfig('orm_cache', $this->cache);
 
         $ds = ConnectionManager::get('test');
         $ds->cacheMetadata('orm_cache');
@@ -77,8 +85,9 @@ class OrmCacheShellTest extends TestCase
         $ds = ConnectionManager::get('test');
         $ds->cacheMetadata(false);
 
-        $this->shell->params['connection'] = 'test';
-        $this->shell->clear();
+        $ormCache = new SchemaCache($ds);
+        $ormCache->clear();
+
         $this->assertInstanceOf('Cake\Database\Schema\CachedCollection', $ds->schemaCollection());
     }
 
@@ -92,8 +101,9 @@ class OrmCacheShellTest extends TestCase
         $ds = ConnectionManager::get('test');
         $ds->cacheMetadata(false);
 
-        $this->shell->params['connection'] = 'test';
-        $this->shell->build();
+        $ormCache = new SchemaCache($ds);
+        $ormCache->build();
+
         $this->assertInstanceOf('Cake\Database\Schema\CachedCollection', $ds->schemaCollection());
     }
 
@@ -104,12 +114,13 @@ class OrmCacheShellTest extends TestCase
      */
     public function testBuildNoArgs()
     {
+        $ds = ConnectionManager::get('test');
         $this->cache->expects($this->at(3))
             ->method('write')
             ->with('test_articles');
 
-        $this->shell->params['connection'] = 'test';
-        $this->shell->build();
+        $ormCache = new SchemaCache($ds);
+        $ormCache->build();
     }
 
     /**
@@ -119,14 +130,16 @@ class OrmCacheShellTest extends TestCase
      */
     public function testBuildNamedModel()
     {
+        $ds = ConnectionManager::get('test');
+
         $this->cache->expects($this->once())
             ->method('write')
             ->with('test_articles');
         $this->cache->expects($this->never())
             ->method('delete');
 
-        $this->shell->params['connection'] = 'test';
-        $this->shell->build('articles');
+        $ormCache = new SchemaCache($ds);
+        $ormCache->build('articles');
     }
 
     /**
@@ -136,6 +149,8 @@ class OrmCacheShellTest extends TestCase
      */
     public function testBuildOverwritesExistingData()
     {
+        $ds = ConnectionManager::get('test');
+
         $this->cache->expects($this->once())
             ->method('write')
             ->with('test_articles');
@@ -144,32 +159,8 @@ class OrmCacheShellTest extends TestCase
         $this->cache->expects($this->never())
             ->method('delete');
 
-        $this->shell->params['connection'] = 'test';
-        $this->shell->build('articles');
-    }
-
-    /**
-     * Test build() with a non-existing connection name.
-     *
-     * @expectedException \Cake\Datasource\Exception\MissingDatasourceConfigException
-     * @return void
-     */
-    public function testBuildInvalidConnection()
-    {
-        $this->shell->params['connection'] = 'derpy-derp';
-        $this->shell->build('articles');
-    }
-
-    /**
-     * Test clear() with an invalid connection name.
-     *
-     * @expectedException \Cake\Datasource\Exception\MissingDatasourceConfigException
-     * @return void
-     */
-    public function testClearInvalidConnection()
-    {
-        $this->shell->params['connection'] = 'derpy-derp';
-        $this->shell->clear('articles');
+        $ormCache = new SchemaCache($ds);
+        $ormCache->build('articles');
     }
 
     /**
@@ -179,12 +170,14 @@ class OrmCacheShellTest extends TestCase
      */
     public function testClearNoArgs()
     {
+        $ds = ConnectionManager::get('test');
+
         $this->cache->expects($this->at(3))
             ->method('delete')
             ->with('test_articles');
 
-        $this->shell->params['connection'] = 'test';
-        $this->shell->clear();
+        $ormCache = new SchemaCache($ds);
+        $ormCache->clear();
     }
 
     /**
@@ -194,13 +187,30 @@ class OrmCacheShellTest extends TestCase
      */
     public function testClearNamedModel()
     {
+        $ds = ConnectionManager::get('test');
+
         $this->cache->expects($this->never())
             ->method('write');
         $this->cache->expects($this->once())
             ->method('delete')
             ->with('test_articles');
 
-        $this->shell->params['connection'] = 'test';
-        $this->shell->clear('articles');
+        $ormCache = new SchemaCache($ds);
+        $ormCache->clear('articles');
+    }
+
+    /**
+     * Tests getting a schema config from a connection instance
+     *
+     * @return void
+     */
+    public function testGetSchemaWithConnectionInstance()
+    {
+        $ds = ConnectionManager::get('test');
+
+        $ormCache = new SchemaCache($ds);
+        $result = $ormCache->getSchema($ds);
+
+        $this->assertInstanceOf(CachedCollection::class, $result);
     }
 }
