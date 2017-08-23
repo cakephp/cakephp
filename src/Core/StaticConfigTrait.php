@@ -259,7 +259,7 @@ trait StaticConfigTrait
         if ($parsed === false) {
             // Failed to parse.
             // Try to encode the userinfo if the DSN string contains '@' marks.
-            for ($p = 0; ($p = strpos($noScheme, '@', $p)) !== false; ++$p) {
+            for ($p = 0; ($p = strpos($noScheme, '@', $p)) !== false; ++$p) { // @codingStandardsIgnoreLine
                 $user = substr($noScheme, 0, $p);
                 $rest = substr($noScheme, $p + 1);
 
