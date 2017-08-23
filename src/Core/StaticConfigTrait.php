@@ -237,7 +237,7 @@ trait StaticConfigTrait
      *
      * @param string $dsn The DSN string to convert to a configuration array
      * @return array The configuration array to be stored after parsing the DSN
-     * @throws \InvalidArgumentException If not passed a string, or passed an invalid string
+     * @throws \InvalidArgumentException If not passed a string
      */
     public static function parseDsn($dsn)
     {
@@ -249,23 +249,18 @@ trait StaticConfigTrait
             throw new InvalidArgumentException('Only strings can be passed to parseDsn');
         }
 
-        $pattern = '/^(?P<scheme>[\w\\\\]+):\/\/((?P<username>.*?)(:(?P<password>.*?))?@)?' .
-            '((?P<host>[^?#\/:@]+)(:(?P<port>\d+))?)?' .
-            '(?P<path>\/[^?#]*)?(\?(?P<query>[^#]*))?(#(?P<fragment>.*))?$/';
-        preg_match($pattern, $dsn, $parsed);
-
-        if (!$parsed) {
-            throw new InvalidArgumentException("The DSN string '{$dsn}' could not be parsed.");
-        }
-        foreach ($parsed as $k => $v) {
-            if (is_int($k)) {
-                unset($parsed[$k]);
-            }
-            if ($v === '') {
-                unset($parsed[$k]);
-            }
+        $scheme = '';
+        if (preg_match("/^([\w\\\]+)/", $dsn, $matches)) {
+            $scheme = $matches[1];
+            $dsn = preg_replace("/^([\w\\\]+)/", 'file', $dsn);
         }
 
+        $parsed = parse_url($dsn);
+        if ($parsed === false) {
+            return $dsn;
+        }
+
+        $parsed['scheme'] = $scheme;
         $query = '';
 
         if (isset($parsed['query'])) {
@@ -285,6 +280,15 @@ trait StaticConfigTrait
             }
         }
 
+        if (isset($parsed['user'])) {
+            $parsed['username'] = $parsed['user'];
+        }
+
+        if (isset($parsed['pass'])) {
+            $parsed['password'] = $parsed['pass'];
+        }
+
+        unset($parsed['pass'], $parsed['user']);
         $parsed = $queryArgs + $parsed;
 
         if (empty($parsed['className'])) {
