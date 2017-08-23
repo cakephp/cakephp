@@ -188,8 +188,8 @@ trait EntityTrait
      *
      * ```
      * $entity->set(['name' => 'andrew', 'id' => 1]);
-     * echo $entity->name // prints andrew
-     * echo $entity->id // prints 1
+     * echo $entity->get('name') // prints andrew
+     * echo $entity->get('id') // prints 1
      * ```
      *
      * Some times it is handy to bypass setter functions in this entity when assigning
