@@ -22,6 +22,12 @@ use Cake\Database\Schema\TableSchema;
  */
 class MysqlSchema extends BaseSchema
 {
+    /**
+     * The driver instance being used.
+     *
+     * @var \Cake\Database\Driver\Mysql
+     */
+    protected $_driver;
 
     /**
      * {@inheritDoc}

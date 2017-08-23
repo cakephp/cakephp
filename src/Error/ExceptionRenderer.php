@@ -170,7 +170,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
         $message = $this->_message($exception, $code);
         $url = $this->controller->request->getRequestTarget();
 
-        if (method_exists($exception, 'responseHeader')) {
+        if ($exception instanceof CakeException) {
             $this->controller->response->header($exception->responseHeader());
         }
         $this->controller->response->statusCode($code);
