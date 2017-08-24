@@ -150,7 +150,8 @@ class PoFileParserTest extends TestCase
             $package->setMessages($messages);
 
             return $package;
-        },'en_CA');
+        }, 'en_CA');
+
         $this->assertSame('En cours', $messages['Pending']['_context']['']);
         $this->assertSame('En cours - context', $messages['Pending']['_context']['Pay status']);
         $this->assertSame('En resolved', $messages['Resolved']['_context']['']);
