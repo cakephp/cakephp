@@ -107,6 +107,9 @@ abstract class BaseAuthenticate implements EventListenerInterface
         $result = $this->_query($username)->first();
 
         if (empty($result)) {
+            $hasher = $this->passwordHasher();
+            $hasher->hash((string)$password);
+
             return false;
         }
 
