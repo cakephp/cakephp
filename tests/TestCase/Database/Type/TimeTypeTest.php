@@ -49,7 +49,7 @@ class TimeTypeTest extends TestCase
         parent::setUp();
         $this->type = new TimeType();
         $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
-        $this->locale = I18n::locale();
+        $this->locale = I18n::getLocale();
     }
 
     /**
@@ -60,7 +60,7 @@ class TimeTypeTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        I18n::locale($this->locale);
+        I18n::setLocale($this->locale);
     }
 
     /**
@@ -223,7 +223,7 @@ class TimeTypeTest extends TestCase
         $updated = setlocale(LC_COLLATE, 'da_DK.utf8');
         $this->skipIf($updated === false, 'Could not set locale to da_DK.utf8, skipping test.');
 
-        I18n::locale('da_DK');
+        I18n::setLocale('da_DK');
         $this->type->useLocaleParser();
         $expected = new Time('03:20:00');
         $result = $this->type->marshal('03.20');

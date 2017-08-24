@@ -37,7 +37,7 @@ class EventTest extends TestCase
     public function testName()
     {
         $event = new Event('fake.event');
-        $this->assertEquals('fake.event', $event->name());
+        $this->assertEquals('fake.event', $event->getName());
         $this->assertEquals('fake.event', $event->getName());
     }
 
@@ -51,11 +51,11 @@ class EventTest extends TestCase
     public function testSubject()
     {
         $event = new Event('fake.event', $this);
-        $this->assertSame($this, $event->subject());
+        $this->assertSame($this, $event->getSubject());
         $this->assertSame($this, $event->getSubject());
 
         $event = new Event('fake.event');
-        $this->assertNull($event->subject());
+        $this->assertNull($event->getSubject());
     }
 
     /**
@@ -81,7 +81,7 @@ class EventTest extends TestCase
     public function testEventData()
     {
         $event = new Event('fake.event', $this, ['some' => 'data']);
-        $this->assertEquals(['some' => 'data'], $event->data());
+        $this->assertEquals(['some' => 'data'], $event->getData());
         $this->assertEquals(['some' => 'data'], $event->getData());
 
         $this->assertEquals('data', $event->getData('some'));
@@ -98,7 +98,7 @@ class EventTest extends TestCase
     {
         $data = new ArrayObject(['some' => 'data']);
         $event = new Event('fake.event', $this, $data);
-        $this->assertEquals(['some' => 'data'], $event->data());
+        $this->assertEquals(['some' => 'data'], $event->getData());
         $this->assertEquals(['some' => 'data'], $event->getData());
 
         $this->assertEquals('data', $event->getData('some'));
@@ -114,7 +114,7 @@ class EventTest extends TestCase
     public function testEventDirectPropertyAccess()
     {
         $event = new Event('fake.event', $this);
-        $this->assertEquals($this, $event->subject());
-        $this->assertEquals('fake.event', $event->name());
+        $this->assertEquals($this, $event->getSubject());
+        $this->assertEquals('fake.event', $event->getName());
     }
 }

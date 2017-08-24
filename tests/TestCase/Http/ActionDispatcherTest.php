@@ -142,7 +142,7 @@ class ActionDispatcherTest extends TestCase
         $filter->expects($this->once())
             ->method('afterDispatch')
             ->will($this->returnCallback(function (Event $event) {
-                $event->data('response')->body('Filter body');
+                $event->getData('response')->body('Filter body');
             }));
 
         $req = new ServerRequest([

@@ -421,7 +421,7 @@ class EventManagerTest extends TestCase
             ->method('listenerFunction')
             ->with($event);
         $manager->dispatch($event);
-        $this->assertEquals('something special', $event->result());
+        $this->assertEquals('something special', $event->getResult());
         $this->assertEquals('something special', $event->result);
     }
 
@@ -696,7 +696,7 @@ class EventManagerTest extends TestCase
         $manager = new EventManager();
         $event = new Event('my_event', $manager);
         $manager->dispatch($event);
-        $this->assertEquals('ok', $event->data('callback'));
+        $this->assertEquals('ok', $event->getData('callback'));
     }
 
     /**

@@ -38,7 +38,7 @@ class ConditionDecoratorTest extends TestCase
 
         $decorator = new ConditionDecorator($callable, [
             'if' => function (Event $event) {
-                return $event->data('canTrigger');
+                return $event->getData('canTrigger');
             }
         ]);
 
@@ -63,7 +63,7 @@ class ConditionDecoratorTest extends TestCase
     public function testCascadingEvents()
     {
         $callable = function (Event $event) {
-            $event->setData('counter', $event->data('counter') + 1);
+            $event->setData('counter', $event->getData('counter') + 1);
 
             return $event;
         };
@@ -75,7 +75,7 @@ class ConditionDecoratorTest extends TestCase
         ]);
 
         $listener2 = function (Event $event) {
-            $event->setData('counter', $event->data('counter') + 1);
+            $event->setData('counter', $event->getData('counter') + 1);
 
             return $event;
         };
