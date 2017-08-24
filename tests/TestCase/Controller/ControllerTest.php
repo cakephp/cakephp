@@ -403,7 +403,6 @@ class ControllerTest extends TestCase
         $this->assertRegExp('/this is the test element/', (string)$result);
     }
 
-
     /**
      * test view rendering changing response
      *
