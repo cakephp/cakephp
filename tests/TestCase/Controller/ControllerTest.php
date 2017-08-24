@@ -403,6 +403,26 @@ class ControllerTest extends TestCase
         $this->assertRegExp('/this is the test element/', (string)$result);
     }
 
+
+    /**
+     * test view rendering changing response
+     *
+     * @return void
+     */
+    public function testRenderViewChangesResponse()
+    {
+        $request = new ServerRequest('controller_posts/index');
+        $request->params['action'] = 'header';
+
+        $controller = new Controller($request, new Response());
+        $controller->viewBuilder()->templatePath('Posts');
+
+        $result = $controller->render('header');
+        $this->assertContains('header template', (string)$result);
+        $this->assertTrue($controller->response->hasHeader('X-view-template'));
+        $this->assertSame('yes', $controller->response->getHeaderLine('X-view-template'));
+    }
+
     /**
      * test that a component beforeRender can change the controller view class.
      *
