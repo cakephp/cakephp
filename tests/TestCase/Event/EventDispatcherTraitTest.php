@@ -98,8 +98,8 @@ class EventDispatcherTraitTest extends TestCase
         $event = $this->subject->dispatchEvent('some.event', ['foo' => 'bar']);
 
         $this->assertInstanceOf('Cake\Event\Event', $event);
-        $this->assertSame($this->subject, $event->subject());
-        $this->assertEquals('some.event', $event->name());
-        $this->assertEquals(['foo' => 'bar'], $event->data());
+        $this->assertSame($this->subject, $event->getSubject());
+        $this->assertEquals('some.event', $event->getName());
+        $this->assertEquals(['foo' => 'bar'], $event->getData());
     }
 }

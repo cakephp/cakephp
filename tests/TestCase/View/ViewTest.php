@@ -251,7 +251,7 @@ class TestViewEventListenerInterface implements EventListenerInterface
      */
     public function beforeRender(Event $event)
     {
-        $this->beforeRenderViewType = $event->subject()->getCurrentType();
+        $this->beforeRenderViewType = $event->getSubject()->getCurrentType();
     }
 
     /**
@@ -262,7 +262,7 @@ class TestViewEventListenerInterface implements EventListenerInterface
      */
     public function afterRender(Event $event)
     {
-        $this->afterRenderViewType = $event->subject()->getCurrentType();
+        $this->afterRenderViewType = $event->getSubject()->getCurrentType();
     }
 }
 

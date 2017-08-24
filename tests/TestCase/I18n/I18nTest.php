@@ -70,7 +70,7 @@ class I18nTest extends TestCase
         $translator = I18n::getTranslator();
         $this->assertInstanceOf('Aura\Intl\TranslatorInterface', $translator);
         $this->assertEquals('%d is 1 (po translated)', $translator->translate('%d = 1'));
-        $this->assertSame($translator, I18n::translator(), 'backwards compat works');
+        $this->assertSame($translator, I18n::getTranslator(), 'backwards compat works');
     }
 
     /**

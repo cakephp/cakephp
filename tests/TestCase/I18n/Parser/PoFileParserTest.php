@@ -35,7 +35,7 @@ class PoFileParserTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->locale = I18n::locale();
+        $this->locale = I18n::getLocale();
     }
 
     /**
@@ -47,7 +47,7 @@ class PoFileParserTest extends TestCase
     {
         parent::tearDown();
         I18n::clear();
-        I18n::locale($this->locale);
+        I18n::setLocale($this->locale);
         Cache::clear(false, '_cake_core_');
     }
 
@@ -145,19 +145,20 @@ class PoFileParserTest extends TestCase
         $file = APP . 'Locale' . DS . 'en' . DS . 'context.po';
         $messages = $parser->parse($file);
 
-        I18n::translator('default', 'en_CA', function () use ($messages) {
+        I18n::setTranslator('default', function () use ($messages) {
             $package = new Package('default');
             $package->setMessages($messages);
 
             return $package;
-        });
+        }, 'en_CA');
+
         $this->assertSame('En cours', $messages['Pending']['_context']['']);
         $this->assertSame('En cours - context', $messages['Pending']['_context']['Pay status']);
         $this->assertSame('En resolved', $messages['Resolved']['_context']['']);
         $this->assertSame('En resolved - context', $messages['Resolved']['_context']['Pay status']);
 
         // Confirm actual behavior
-        I18n::locale('en_CA');
+        I18n::setLocale('en_CA');
         $this->assertSame('En cours', __('Pending'));
         $this->assertSame('En cours - context', __x('Pay status', 'Pending'));
         $this->assertSame('En resolved', __('Resolved'));
@@ -175,15 +176,15 @@ class PoFileParserTest extends TestCase
         $file = APP . 'Locale' . DS . 'en' . DS . 'context.po';
         $messages = $parser->parse($file);
 
-        I18n::translator('default', 'en_US', function () use ($messages) {
+        I18n::setTranslator('default', function () use ($messages) {
             $package = new Package('default');
             $package->setMessages($messages);
 
             return $package;
-        });
+        }, 'en_US');
 
         // Check translated messages
-        I18n::locale('en_US');
+        I18n::setLocale('en_US');
         $this->assertSame('Titel mit Kontext', __x('context', 'title'));
         $this->assertSame('Titel mit anderem Kontext', __x('another_context', 'title'));
         $this->assertSame('Titel ohne Kontext', __('title'));

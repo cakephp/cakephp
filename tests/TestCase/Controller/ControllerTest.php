@@ -206,7 +206,7 @@ class TestComponent extends Component
      */
     public function beforeRender(Event $event)
     {
-        $controller = $event->subject();
+        $controller = $event->getSubject();
         if ($this->viewclass) {
             $controller->viewClass = $this->viewclass;
         }
@@ -413,7 +413,7 @@ class ControllerTest extends TestCase
         $Controller = new Controller(new ServerRequest, new Response());
 
         $Controller->getEventManager()->on('Controller.beforeRender', function (Event $event) {
-            $controller = $event->subject();
+            $controller = $event->getSubject();
             $controller->viewClass = 'Json';
         });
 
@@ -1056,7 +1056,7 @@ class ControllerTest extends TestCase
 
         $controller->getEventManager()->on('Controller.beforeRender', function (Event $event) {
             /* @var Controller $controller */
-            $controller = $event->subject();
+            $controller = $event->getSubject();
 
             $controller->set('testVariable', 'test');
         });

@@ -809,7 +809,7 @@ class ExceptionRendererTest extends TestCase
             'Controller.beforeRender',
             function (Event $event) {
                 $this->called = true;
-                $event->subject()->viewBuilder()->setLayoutPath('boom');
+                $event->getSubject()->viewBuilder()->setLayoutPath('boom');
             }
         );
         $ExceptionRenderer->controller->request = new ServerRequest;
@@ -928,7 +928,7 @@ class ExceptionRendererTest extends TestCase
     {
         $fired = [];
         $listener = function (Event $event) use (&$fired) {
-            $fired[] = $event->name();
+            $fired[] = $event->getName();
         };
         $events = EventManager::instance();
         $events->attach($listener, 'Controller.shutdown');
@@ -973,7 +973,7 @@ class ExceptionRendererTest extends TestCase
     {
         $fired = [];
         $listener = function (Event $event) use (&$fired) {
-            $fired[] = $event->name();
+            $fired[] = $event->getName();
         };
         $events = EventManager::instance();
         $events->attach($listener, 'Controller.shutdown');
