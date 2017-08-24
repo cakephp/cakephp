@@ -622,9 +622,9 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
 
         $this->View = $this->createView();
         $contents = $this->View->render($view, $layout);
-        $this->response = $this->View->response;
+        $this->response = $this->View->response->withStringBody($contents);
 
-        return $this->response->withStringBody($contents);
+        return $this->response;
     }
 
     /**
