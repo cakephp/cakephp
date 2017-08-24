@@ -550,7 +550,8 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     public function clientIp()
     {
         if ($this->trustProxy && $this->getEnv('HTTP_X_FORWARDED_FOR')) {
-            $ipaddr = preg_replace('/(?:,.*)/', '', $this->getEnv('HTTP_X_FORWARDED_FOR'));
+            $addresses = explode(',', $this->getEnv('HTTP_X_FORWARDED_FOR'));
+            $ipaddr = end($addresses);
         } elseif ($this->trustProxy && $this->getEnv('HTTP_CLIENT_IP')) {
             $ipaddr = $this->getEnv('HTTP_CLIENT_IP');
         } else {
