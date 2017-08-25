@@ -688,13 +688,13 @@ class ServerRequestTest extends TestCase
     public function testClientIp()
     {
         $request = new ServerRequest(['environment' => [
-            'HTTP_X_FORWARDED_FOR' => '192.168.1.5, 10.0.1.1, proxy.com',
+            'HTTP_X_FORWARDED_FOR' => '192.168.1.5, 10.0.1.1, proxy.com, real.ip',
             'HTTP_CLIENT_IP' => '192.168.1.2',
             'REMOTE_ADDR' => '192.168.1.3'
         ]]);
 
         $request->trustProxy = true;
-        $this->assertEquals('192.168.1.5', $request->clientIp());
+        $this->assertEquals('real.ip', $request->clientIp());
 
         $request->env('HTTP_X_FORWARDED_FOR', '');
         $this->assertEquals('192.168.1.2', $request->clientIp());
