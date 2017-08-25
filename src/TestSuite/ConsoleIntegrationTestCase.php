@@ -191,6 +191,18 @@ class ConsoleIntegrationTestCase extends TestCase
     }
 
     /**
+     * Asserts that `stderr` is empty
+     *
+     * @param string $message The message to output when the assertion fails.
+     * @return void
+     */
+    public function assertErrorEmpty($message = 'stderr was not empty')
+    {
+        $output = implode(PHP_EOL, $this->_err->messages());
+        $this->assertSame('', $output, $message);
+    }
+
+    /**
      * Builds the appropriate command dispatcher
      *
      * @return CommandRunner|LegacyCommandRunner
