@@ -314,9 +314,9 @@ class SecurityComponent extends Component
     {
         $token = $this->_validToken($controller);
         $hashParts = $this->_hashParts($controller);
-        $check = Security::hash(implode('', $hashParts), 'sha1');
+        $check = hash_hmac('sha1', implode('', $hashParts), Security::getSalt());
 
-        if ($token === $check) {
+        if (hash_equals($check, $token)) {
             return true;
         }
 
@@ -378,8 +378,7 @@ class SecurityComponent extends Component
         return [
             $controller->request->here(),
             serialize($fieldList),
-            $unlocked,
-            Security::getSalt()
+            $unlocked
         ];
     }
 
