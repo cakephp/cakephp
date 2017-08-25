@@ -306,6 +306,31 @@ class ConnectionManagerTest extends TestCase
                     'log' => '1'
                 ]
             ],
+            'no password' => [
+                'mysql://user@localhost:3306/database',
+                [
+                    'className' => 'Cake\Database\Connection',
+                    'driver' => 'Cake\Database\Driver\Mysql',
+                    'host' => 'localhost',
+                    'database' => 'database',
+                    'port' => 3306,
+                    'scheme' => 'mysql',
+                    'username' => 'user',
+                ]
+            ],
+            'empty password' => [
+                'mysql://user:@localhost:3306/database',
+                [
+                    'className' => 'Cake\Database\Connection',
+                    'driver' => 'Cake\Database\Driver\Mysql',
+                    'host' => 'localhost',
+                    'database' => 'database',
+                    'port' => 3306,
+                    'scheme' => 'mysql',
+                    'username' => 'user',
+                    'password' => '',
+                ]
+            ],
             'sqlite memory' => [
                 'sqlite:///:memory:',
                 [
@@ -391,13 +416,13 @@ class ConnectionManagerTest extends TestCase
                 ]
             ],
             'complex password' => [
-                'mysql://user:pas#][{}$%20@!@localhost:3306/database?log=1&quoteIdentifiers=1',
+                'mysql://user:/?#][{}$%20@!@localhost:3306/database?log=1&quoteIdentifiers=1',
                 [
                     'className' => 'Cake\Database\Connection',
                     'database' => 'database',
                     'driver' => 'Cake\Database\Driver\Mysql',
                     'host' => 'localhost',
-                    'password' => 'pas#][{}$%20@!',
+                    'password' => '/?#][{}$%20@!',
                     'port' => 3306,
                     'scheme' => 'mysql',
                     'username' => 'user',
