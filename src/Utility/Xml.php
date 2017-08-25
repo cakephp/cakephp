@@ -107,7 +107,7 @@ class Xml
             'return' => 'simplexml',
             'loadEntities' => false,
             'readFile' => true,
-            'parseHuge' => true,
+            'parseHuge' => false,
         ];
         $options += $defaults;
 
