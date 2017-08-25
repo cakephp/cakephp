@@ -540,15 +540,15 @@ class Response implements ResponseInterface
      */
     protected function _setCookies()
     {
-        foreach ($this->_cookies as $name => $c) {
+        foreach ($this->_cookies as $cookie) {
             setcookie(
-                $name,
-                $c['value'],
-                $c['expire'],
-                $c['path'],
-                $c['domain'],
-                $c['secure'],
-                $c['httpOnly']
+                $cookie->getName(),
+                $cookie->getValue(),
+                $cookie->getExpiresTimestamp(),
+                $cookie->getPath(),
+                $cookie->getDomain(),
+                $cookie->isSecure(),
+                $cookie->isHttpOnly()
             );
         }
     }
