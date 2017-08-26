@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\Core;
 
+use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -44,12 +45,40 @@ class FunctionsTest extends TestCase
     }
 
     /**
+     * Test error messages coming out when debug is on
+     *
      * @expectedException PHPUnit\Framework\Error\Deprecated
-     * @expectedExceptionMessage This is going away
+     * @expectedExceptionMessage This is going away - [internal], line: ??
      */
-    public function testDeprecationWarning()
+    public function testDeprecationWarningDebugEnabled()
     {
+        Configure::write('debug', true);
+        error_reporting(E_ALL);
+        deprecationWarning('This is going away', 1);
+    }
+
+    /**
+     * Test error messages coming out when debug is on
+     *
+     * @expectedException PHPUnit\Framework\Error\Deprecated
+     * @expectedExceptionMessageRegExp /This is going away - (.*?)\/TestCase.php, line\: \d+/
+     */
+    public function testDeprecationWarningDebugEnabledDefaultFrame()
+    {
+        Configure::write('debug', true);
         error_reporting(E_ALL);
         deprecationWarning('This is going away');
+    }
+
+    /**
+     * Test no error when debug is off.
+     *
+     * @return void
+     */
+    public function testDeprecationWarningDebugDisabled()
+    {
+        Configure::write('debug', false);
+        error_reporting(E_ALL);
+        $this->assertNull(deprecationWarning('This is going away'));
     }
 }
