@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\Shell;
 
+use Cake\Console\Shell;
 use Cake\Routing\Router;
 use Cake\Shell\RoutesShell;
 use Cake\TestSuite\ConsoleIntegrationTestCase;
@@ -49,22 +50,6 @@ class RoutesShellTest extends ConsoleIntegrationTestCase
     }
 
     /**
-     * Check that a row of cells exists in the output.
-     *
-     * @param array $row The row of cells to check
-     * @return void
-     */
-    protected function assertOutputContainsRow(array $row)
-    {
-        $row = array_map(function ($cell) {
-            return preg_quote($cell, '/');
-        }, $row);
-        $cells = implode('\s+\|\s+', $row);
-        $pattern = '/' . $cells . '/';
-        $this->assertOutputRegexp($pattern);
-    }
-
-    /**
      * Test checking an non-existing route.
      *
      * @return void
@@ -72,6 +57,7 @@ class RoutesShellTest extends ConsoleIntegrationTestCase
     public function testMain()
     {
         $this->exec('routes');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
         $this->assertOutputContainsRow([
             '<info>Route name</info>',
             '<info>URI template</info>',
@@ -102,6 +88,7 @@ class RoutesShellTest extends ConsoleIntegrationTestCase
     public function testCheck()
     {
         $this->exec('routes check /articles/check');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
         $this->assertOutputContainsRow([
             '<info>Route name</info>',
             '<info>URI template</info>',
@@ -122,6 +109,7 @@ class RoutesShellTest extends ConsoleIntegrationTestCase
     public function testCheckWithNamedRoute()
     {
         $this->exec('routes check /tests/index');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
         $this->assertOutputContainsRow([
             '<info>Route name</info>',
             '<info>URI template</info>',
@@ -142,6 +130,7 @@ class RoutesShellTest extends ConsoleIntegrationTestCase
     public function testCheckNotFound()
     {
         $this->exec('routes check /nope');
+        $this->assertExitCode(Shell::CODE_ERROR);
         $this->assertErrorContains('did not match');
     }
 
@@ -153,6 +142,7 @@ class RoutesShellTest extends ConsoleIntegrationTestCase
     public function testGenerateNoPassArgs()
     {
         $this->exec('routes generate controller:Articles action:index');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
         $this->assertOutputContains('> /articles/index');
         $this->assertErrorEmpty();
     }
@@ -165,6 +155,7 @@ class RoutesShellTest extends ConsoleIntegrationTestCase
     public function testGeneratePassedArguments()
     {
         $this->exec('routes generate controller:Articles action:view 2 3');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
         $this->assertOutputContains('> /articles/view/2/3');
         $this->assertErrorEmpty();
     }
@@ -177,6 +168,7 @@ class RoutesShellTest extends ConsoleIntegrationTestCase
     public function testGenerateBoolParams()
     {
         $this->exec('routes generate controller:Articles action:index _ssl:true _host:example.com');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
         $this->assertOutputContains('> https://example.com/articles/index');
     }
 
@@ -188,6 +180,7 @@ class RoutesShellTest extends ConsoleIntegrationTestCase
     public function testGenerateMissing()
     {
         $this->exec('routes generate controller:Derp');
+        $this->assertExitCode(Shell::CODE_ERROR);
         $this->assertErrorContains('do not match');
     }
 }
