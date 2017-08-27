@@ -116,6 +116,22 @@ class FormTest extends TestCase
     }
 
     /**
+     * Test setErrors()
+     *
+     * @return void
+     */
+    public function testSetErrors()
+    {
+        $form = new Form();
+        $expected = [
+           'field_name' => ['rule_name' => 'message']
+        ];
+
+        $form->setErrors($expected);
+        $this->assertSame($expected, $form->errors());
+    }
+
+    /**
      * Test _execute is skipped on validation failure.
      *
      * @return void
