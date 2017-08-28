@@ -21,6 +21,13 @@ interface ValidatorAwareInterface
 {
 
     /**
+     * The name of the event dispatched when a validator has been built.
+     *
+     * @var string
+     */
+    const BUILD_VALIDATOR_EVENT = 'Model.buildValidator';
+
+    /**
      * Name of default validation set.
      *
      * @var string
