@@ -25,6 +25,15 @@ class CspMiddlewareTest extends TestCase
 {
 
     /**
+     * @inheritDoc
+     */
+    public function setUp() {
+        parent::setUp();
+
+        $this->skipIf(version_compare(PHP_VERSION, '7.0.0', 'lt'));
+    }
+
+    /**
      * testInvoke
      *
      * @return void
