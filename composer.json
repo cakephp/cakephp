@@ -38,11 +38,13 @@
     },
     "suggest": {
         "ext-openssl": "To use Security::encrypt() or have secure CSRF token generation.",
-        "lib-ICU": "The intl PHP library, to use Text::transliterate() or Text::slug()"
+        "lib-ICU": "The intl PHP library, to use Text::transliterate() or Text::slug()",
+        "paragonie/csp-builder": "CSP builder, to use the CSP Middleware"
     },
     "require-dev": {
         "phpunit/phpunit": "^5.7|^6.0",
-        "cakephp/cakephp-codesniffer": "^3.0"
+        "cakephp/cakephp-codesniffer": "^3.0",
+        "paragonie/csp-builder": "^2.1"
     },
     "autoload": {
         "psr-4": {
