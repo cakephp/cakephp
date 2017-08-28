@@ -857,4 +857,17 @@ class I18nTest extends TestCase
         $result = __('No translation needed');
         $this->assertEquals('No translation needed', $result);
     }
+
+    /**
+     * Tests that a plurals from a domain get translated correctly
+     *
+     * @return void
+     */
+    public function testPluralTranslationsFromDomain()
+    {
+        I18n::locale('de');
+        $this->assertEquals('Standorte', __dn('wa', 'Location', 'Locations', 0));
+        $this->assertEquals('Standort', __dn('wa', 'Location', 'Locations', 1));
+        $this->assertEquals('Standorte', __dn('wa', 'Location', 'Locations', 2));
+    }
 }
