@@ -260,7 +260,7 @@ if (!function_exists('deprecationWarning')) {
      */
     function deprecationWarning($message, $stackFrame = 2)
     {
-        if (!Configure::read('debug')) {
+        if (!(error_reporting() & E_USER_DEPRECATED)) {
             return;
         }
         $trace = debug_backtrace();
