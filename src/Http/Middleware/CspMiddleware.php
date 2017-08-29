@@ -29,7 +29,7 @@ class CspMiddleware
     /**
      * CSP Builder
      *
-     * @var \ParagonIE\CSPBuilder\
+     * @var \ParagonIE\CSPBuilder\|array|null $csp CSP Builder or config array
      */
     protected $csp;
 
