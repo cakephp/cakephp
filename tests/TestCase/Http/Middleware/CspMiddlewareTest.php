@@ -29,7 +29,8 @@ class CspMiddlewareTest extends TestCase
     /**
      * @inheritDoc
      */
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
 
         $this->skipIf(version_compare(PHP_VERSION, '7.0.0', 'lt'));
@@ -44,7 +45,7 @@ class CspMiddlewareTest extends TestCase
     {
         $request = new ServerRequest();
         $response = new Response();
-        $callable = function($request, $response) {
+        $callable = function ($request, $response) {
             return $response;
         };
 
@@ -78,7 +79,7 @@ class CspMiddlewareTest extends TestCase
     {
         $request = new ServerRequest();
         $response = new Response();
-        $callable = function($request, $response) {
+        $callable = function ($request, $response) {
             return $response;
         };
 

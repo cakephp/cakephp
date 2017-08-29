@@ -36,7 +36,7 @@ class CspMiddleware
     /**
      * Constructor
      *
-     * @param null|\ParagonIE\CSPBuilder\
+     * @param null|\ParagonIE\CSPBuilder\ $csp CSP object or config array
      */
     public function __construct($csp = null)
     {
