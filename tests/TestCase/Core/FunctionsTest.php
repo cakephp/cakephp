@@ -44,7 +44,7 @@ class FunctionsTest extends TestCase
     }
 
     /**
-     * Test error messages coming out when debug is on
+     * Test error messages coming out when debug is on, manually setting the stack frame
      *
      * @expectedException PHPUnit\Framework\Error\Deprecated
      * @expectedExceptionMessage This is going away - [internal], line: ??
@@ -56,7 +56,7 @@ class FunctionsTest extends TestCase
     }
 
     /**
-     * Test error messages coming out when debug is on
+     * Test error messages coming out when debug is on, not setting the stack frame manually
      *
      * @expectedException PHPUnit\Framework\Error\Deprecated
      * @expectedExceptionMessageRegExp /This is going away - (.*?)\/TestCase.php, line\: \d+/

@@ -263,6 +263,7 @@ if (!function_exists('deprecationWarning')) {
         if (!(error_reporting() & E_USER_DEPRECATED)) {
             return;
         }
+
         $trace = debug_backtrace();
         if (isset($trace[$stackFrame])) {
             $frame = $trace[$stackFrame];
