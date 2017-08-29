@@ -14,6 +14,7 @@
  */
 namespace Cake\Http\Middleware;
 
+use Cake\Http\Middleware\CspMiddleware;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
