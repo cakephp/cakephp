@@ -12,12 +12,13 @@
  * @since         3.6.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Http\Middleware;
+namespace Cake\Test\TestCase\Http\Middleware;
 
 use Cake\Http\Middleware\CspMiddleware;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
+use ParagonIE\CSPBuilder\CSPBuilder;
 
 /**
  * Content Security Policy Middleware Test
@@ -39,7 +40,8 @@ class CspMiddlewareTest extends TestCase
      *
      * @return void
      */
-    public function testInvoke() {
+    public function testInvoke()
+    {
         $request = new ServerRequest();
         $response = new Response();
         $callable = function($request, $response) {
@@ -56,6 +58,43 @@ class CspMiddlewareTest extends TestCase
                 'unsafe-eval' => false
             ]
         ]);
+
+        $response = $middleware($request, $response, $callable);
+        $headers = $response->getHeaders();
+        $expected = [
+            'script-src \'self\' https://www.google-analytics.com; '
+        ];
+
+        $this->assertNotEmpty($headers['Content-Security-Policy']);
+        $this->assertEquals($expected, $headers['Content-Security-Policy']);
+    }
+
+    /**
+     * testPassingACSPBuilderInstance
+     *
+     * @return void
+     */
+    public function testPassingACSPBuilderInstance()
+    {
+        $request = new ServerRequest();
+        $response = new Response();
+        $callable = function($request, $response) {
+            return $response;
+        };
+
+        $config = [
+            'script-src' => [
+                'allow' => [
+                    'https://www.google-analytics.com'
+                ],
+                'self' => true,
+                'unsafe-inline' => false,
+                'unsafe-eval' => false
+            ]
+        ];
+
+        $cspBuilder = new CSPBuilder($config);
+        $middleware = new CspMiddleware($cspBuilder);
 
         $response = $middleware($request, $response, $callable);
         $headers = $response->getHeaders();
