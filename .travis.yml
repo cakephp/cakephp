@@ -70,6 +70,8 @@ before_install:
 before_script:
   - composer install --prefer-dist --no-interaction
 
+  - if [[ $TRAVIS_PHP_VERSION = 7.* ]]; then composer require --dev paragonie/csp-builder:"^2.1"; fi
+
 script:
   - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION = 7.0 ]]; then export CODECOVERAGE=1; vendor/bin/phpunit --coverage-clover=clover.xml; fi
   - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION != 7.0 ]]; then vendor/bin/phpunit; fi
