@@ -59,7 +59,7 @@ class FunctionsTest extends TestCase
      * Test error messages coming out when debug is on, not setting the stack frame manually
      *
      * @expectedException PHPUnit\Framework\Error\Deprecated
-     * @expectedExceptionMessageRegExp /This is going away - (.*?)\/TestCase.php, line\: \d+/
+     * @expectedExceptionMessageRegExp /This is going away - (.*?)[\/\\]TestCase.php, line\: \d+/
      */
     public function testDeprecationWarningEnabledDefaultFrame()
     {
