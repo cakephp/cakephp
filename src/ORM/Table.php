@@ -139,6 +139,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     const VALIDATOR_PROVIDER_NAME = 'table';
 
     /**
+     * The name of the event dispatched when a validator has been built.
+     *
+     * @var string
+     */
+    const BUILD_VALIDATOR_EVENT = 'Model.buildValidator';
+
+    /**
      * The rules class name that is used.
      *
      * @var string

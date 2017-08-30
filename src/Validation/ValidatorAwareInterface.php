@@ -25,7 +25,7 @@ interface ValidatorAwareInterface
      *
      * @var string
      */
-    const BUILD_VALIDATOR_EVENT = 'Model.buildValidator';
+    const BUILD_VALIDATOR_EVENT = 'Event.buildValidator';
 
     /**
      * Name of default validation set.
@@ -33,6 +33,13 @@ interface ValidatorAwareInterface
      * @var string
      */
     const DEFAULT_VALIDATOR = 'default';
+
+    /**
+     * The alias this object is assigned to validators as.
+     *
+     * @var string
+     */
+    const VALIDATOR_PROVIDER_NAME = 'collection';
 
     /**
      * Returns the validation rules tagged with $name.
