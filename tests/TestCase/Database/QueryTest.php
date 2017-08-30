@@ -2481,7 +2481,9 @@ class QueryTest extends TestCase
     public function testUnion()
     {
         $this->loadFixtures('Authors', 'Articles', 'Comments');
-        $union = (new Query($this->connection))->select(['id', 'title'])->from(['a' => 'articles']);
+        $union = (new Query($this->connection))->select(['id', 'title'])
+            ->from(['a' => 'articles'])
+            ->order(['id' => 'desc']);
         $query = new Query($this->connection);
         $result = $query->select(['id', 'comment'])
             ->from(['c' => 'comments'])
