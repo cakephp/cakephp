@@ -247,16 +247,13 @@ class SessionComponentTest extends CakeTestCase {
 		$this->assertNull($Session->read('Message.flash'));
 
 		$Session->setFlash('This is a test message');
-		$this->assertEquals(array('message' => 'This is a test message', 'element' => 'default', 'params' => array()), $Session->read('Message.flash'));
+		$this->assertEquals(array('message' => 'This is a test message', 'element' => 'default', 'params' => array()), $Session->read('Message.flash.0'));
 
 		$Session->setFlash('This is a test message', 'test', array('name' => 'Joel Moss'));
-		$this->assertEquals(array('message' => 'This is a test message', 'element' => 'test', 'params' => array('name' => 'Joel Moss')), $Session->read('Message.flash'));
+		$this->assertEquals(array('message' => 'This is a test message', 'element' => 'test', 'params' => array('name' => 'Joel Moss')), $Session->read('Message.flash.1'));
 
 		$Session->setFlash('This is a test message', 'default', array(), 'myFlash');
-		$this->assertEquals(array('message' => 'This is a test message', 'element' => 'default', 'params' => array()), $Session->read('Message.myFlash'));
-
-		$Session->setFlash('This is a test message', 'non_existing_layout');
-		$this->assertEquals(array('message' => 'This is a test message', 'element' => 'default', 'params' => array()), $Session->read('Message.myFlash'));
+		$this->assertEquals(array('message' => 'This is a test message', 'element' => 'default', 'params' => array()), $Session->read('Message.myFlash.0'));
 
 		$Session->delete('Message');
 	}

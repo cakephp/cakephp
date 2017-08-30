@@ -136,7 +136,13 @@ class SessionComponent extends Component {
  * @deprecated 3.0.0 Since 2.7, use the FlashComponent instead.
  */
 	public function setFlash($message, $element = 'default', $params = array(), $key = 'flash') {
-		CakeSession::write('Message.' . $key, compact('message', 'element', 'params'));
+		$messages = (array)CakeSession::read('Message.' . $key);
+		$messages[] = [
+			'message' => $message,
+			'element' => $element,
+			'params' => $params,
+		];
+		CakeSession::write('Message.' . $key, $messages);
 	}
 
 /**
