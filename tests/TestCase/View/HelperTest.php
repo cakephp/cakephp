@@ -195,15 +195,15 @@ class HelperTest extends TestCase
     public function testAddClassArray()
     {
         $Helper = new TestHelper($this->View);
-        $input = array('class' => [
+        $input = ['class' => [
             'element1',
             'element2',
-        ]);
-        $expected = array('class' => [
+        ]];
+        $expected = ['class' => [
             'element1',
             'element2',
             'element3'
-        ]);
+        ]];
 
         $this->assertEquals(
             $Helper->addClass($input, 'element3'),
@@ -218,8 +218,8 @@ class HelperTest extends TestCase
     {
         $Helper = new TestHelper($this->View);
 
-        $input = array('class' => 'element1 element2');
-        $expected = array('class' => 'element1 element2 element3');
+        $input = ['class' => 'element1 element2'];
+        $expected = ['class' => 'element1 element2 element3'];
 
         $this->assertEquals(
             $Helper->addClass($input, 'element3'),
@@ -234,8 +234,8 @@ class HelperTest extends TestCase
     {
         $Helper = new TestHelper($this->View);
 
-        $input = array();
-        $expected = array('class' => 'element3');
+        $input = [];
+        $expected = ['class' => 'element3'];
 
         $this->assertEquals(
             $Helper->addClass($input, 'element3'),
@@ -251,8 +251,8 @@ class HelperTest extends TestCase
     {
         $Helper = new TestHelper($this->View);
 
-        $input = array();
-        $expected = array('class' => '');
+        $input = [];
+        $expected = ['class' => ''];
 
         $this->assertEquals(
             $Helper->addClass($input, null),
