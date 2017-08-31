@@ -316,8 +316,8 @@ class CookieComponent extends Component
             'expire' => $expires->format('U'),
             'path' => $config['path'],
             'domain' => $config['domain'],
-            'secure' => $config['secure'],
-            'httpOnly' => $config['httpOnly']
+            'secure' => (bool)$config['secure'],
+            'httpOnly' => (bool)$config['httpOnly']
         ]);
     }
 
