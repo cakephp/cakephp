@@ -137,11 +137,11 @@ class SessionComponent extends Component {
  */
 	public function setFlash($message, $element = 'default', $params = array(), $key = 'flash') {
 		$messages = (array)CakeSession::read('Message.' . $key);
-		$messages[] = [
+		$messages[] = array(
 			'message' => $message,
 			'element' => $element,
 			'params' => $params,
-		];
+		);
 		CakeSession::write('Message.' . $key, $messages);
 	}
 
