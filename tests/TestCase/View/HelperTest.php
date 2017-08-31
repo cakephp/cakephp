@@ -241,7 +241,6 @@ class HelperTest extends TestCase
             $Helper->addClass($input, 'element3'),
             $expected
         );
-
     }
 
     /**
