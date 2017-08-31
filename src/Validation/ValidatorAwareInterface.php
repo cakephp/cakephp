@@ -25,7 +25,7 @@ interface ValidatorAwareInterface
      *
      * @var string
      */
-    const BUILD_VALIDATOR_EVENT = 'Event.buildValidator';
+    const BUILD_VALIDATOR_EVENT = 'Validation.buildValidator';
 
     /**
      * Name of default validation set.
