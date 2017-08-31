@@ -442,6 +442,7 @@ class CookieCollectionTest extends TestCase
         $this->assertCount(3, $cookies);
         $this->assertTrue($cookies->has('http'));
         $this->assertTrue($cookies->has('expires'));
+        $this->assertFalse($cookies->has('version'));
         $this->assertTrue($cookies->has('expired'), 'Expired cookies should be present');
     }
 
