@@ -340,6 +340,27 @@ class RedisEngineTest extends TestCase
     }
 
     /**
+     * Test that increment() and decrement() can live forever.
+     *
+     * @return void
+     */
+    public function testIncrementDecrementForvever()
+    {
+        $this->_configCache(['duration' => 0]);
+        Cache::delete('test_increment', 'redis');
+        Cache::delete('test_decrement', 'redis');
+
+        $result = Cache::increment('test_increment', 1, 'redis');
+        $this->assertEquals(1, $result);
+
+        $result = Cache::decrement('test_decrement', 1, 'redis');
+        $this->assertEquals(-1, $result);
+
+        $this->assertEquals(1, Cache::read('test_increment', 'redis'));
+        $this->assertEquals(-1, Cache::read('test_decrement', 'redis'));
+    }
+
+    /**
      * Test that increment and decrement set ttls.
      *
      * @return void
