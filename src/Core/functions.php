@@ -248,3 +248,35 @@ if (!function_exists('env')) {
     }
 
 }
+
+if (!function_exists('deprecationWarning')) {
+    /**
+     * Helper method for outputting deprecation warnings
+     *
+     * @param string $message The message to output as a deprecation warning.
+     * @param int $stackFrame The stack frame to include in the error. Defaults to 2
+     *   as that should point to application/plugin code.
+     * @return void
+     */
+    function deprecationWarning($message, $stackFrame = 2)
+    {
+        if (!(error_reporting() & E_USER_DEPRECATED)) {
+            return;
+        }
+
+        $trace = debug_backtrace();
+        if (isset($trace[$stackFrame])) {
+            $frame = $trace[$stackFrame];
+            $frame += ['file' => '[internal]', 'line' => '??'];
+
+            $message = sprintf(
+                '%s - %s, line: %s',
+                $message,
+                $frame['file'],
+                $frame['line']
+            );
+        }
+
+        trigger_error($message, E_USER_DEPRECATED);
+    }
+}

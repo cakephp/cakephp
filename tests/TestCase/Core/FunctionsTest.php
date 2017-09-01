@@ -42,4 +42,39 @@ class FunctionsTest extends TestCase
         $this->assertEquals('0', env('ZERO'));
         $this->assertEquals('0', env('ZERO', '1'));
     }
+
+    /**
+     * Test error messages coming out when debug is on, manually setting the stack frame
+     *
+     * @expectedException PHPUnit\Framework\Error\Deprecated
+     * @expectedExceptionMessage This is going away - [internal], line: ??
+     */
+    public function testDeprecationWarningEnabled()
+    {
+        error_reporting(E_ALL);
+        deprecationWarning('This is going away', 1);
+    }
+
+    /**
+     * Test error messages coming out when debug is on, not setting the stack frame manually
+     *
+     * @expectedException PHPUnit\Framework\Error\Deprecated
+     * @expectedExceptionMessageRegExp /This is going away - (.*?)[\/\\]TestCase.php, line\: \d+/
+     */
+    public function testDeprecationWarningEnabledDefaultFrame()
+    {
+        error_reporting(E_ALL);
+        deprecationWarning('This is going away');
+    }
+
+    /**
+     * Test no error when debug is off.
+     *
+     * @return void
+     */
+    public function testDeprecationWarningLevelDisabled()
+    {
+        error_reporting(E_ALL ^ E_USER_DEPRECATED);
+        $this->assertNull(deprecationWarning('This is going away'));
+    }
 }
