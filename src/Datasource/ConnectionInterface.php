@@ -20,6 +20,13 @@ namespace Cake\Datasource;
  *
  * @method object getLogger() Get the current logger instance
  * @method $this setLogger($logger) Set the current logger.
+ * @method bool supportsDynamicConstraints()
+ * @method \Cake\Database\Schema\Collection schemaCollection()
+ * @method \Cake\Database\Query newQuery()
+ * @method \Cake\Database\StatementInterface prepare($sql)
+ * @method \Cake\Database\StatementInterface execute($query, $params = [], array $types = [])
+ * @method string quote($value, $type = null)
+ * @method string|int lastInsertId($table = null, $column = null)
  */
 interface ConnectionInterface
 {

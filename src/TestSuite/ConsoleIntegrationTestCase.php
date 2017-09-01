@@ -139,6 +139,18 @@ class ConsoleIntegrationTestCase extends TestCase
     }
 
     /**
+     * Asserts that `stdout` is empty
+     *
+     * @param string $message The message to output when the assertion fails.
+     * @return void
+     */
+    public function assertOutputEmpty($message = 'stdout was not empty')
+    {
+        $output = implode(PHP_EOL, $this->_out->messages());
+        $this->assertSame('', $output, $message);
+    }
+
+    /**
      * Asserts `stdout` contains expected output
      *
      * @param string $expected Expected output
@@ -165,6 +177,23 @@ class ConsoleIntegrationTestCase extends TestCase
     }
 
     /**
+     * Check that a row of cells exists in the output.
+     *
+     * @param array $row Row of cells to ensure exist in the output.
+     * @param string $message Failure message.
+     * @return void
+     */
+    protected function assertOutputContainsRow(array $row, $message = '')
+    {
+        $row = array_map(function ($cell) {
+            return preg_quote($cell, '/');
+        }, $row);
+        $cells = implode('\s+\|\s+', $row);
+        $pattern = '/' . $cells . '/';
+        $this->assertOutputRegexp($pattern);
+    }
+
+    /**
      * Asserts `stderr` contains expected output
      *
      * @param string $expected Expected output
@@ -188,6 +217,18 @@ class ConsoleIntegrationTestCase extends TestCase
     {
         $output = implode(PHP_EOL, $this->_err->messages());
         $this->assertRegExp($pattern, $output, $message);
+    }
+
+    /**
+     * Asserts that `stderr` is empty
+     *
+     * @param string $message The message to output when the assertion fails.
+     * @return void
+     */
+    public function assertErrorEmpty($message = 'stderr was not empty')
+    {
+        $output = implode(PHP_EOL, $this->_err->messages());
+        $this->assertSame('', $output, $message);
     }
 
     /**

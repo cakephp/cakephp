@@ -232,4 +232,40 @@ class AssetMiddlewareTest extends TestCase
         $res = $middleware($request, $response, $next);
         $this->assertEmpty($res->getBody()->getContents());
     }
+
+    /**
+     * Test that hidden filenames result in a 404
+     *
+     * @return void
+     */
+    public function test404OnHiddenFile()
+    {
+        $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/test_plugin/.hiddenfile']);
+        $response = new Response();
+        $next = function ($req, $res) {
+            return $res;
+        };
+
+        $middleware = new AssetMiddleware();
+        $res = $middleware($request, $response, $next);
+        $this->assertEmpty($res->getBody()->getContents());
+    }
+
+    /**
+     * Test that hidden filenames result in a 404
+     *
+     * @return void
+     */
+    public function test404OnHiddenFolder()
+    {
+        $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/test_plugin/.hiddenfolder/some.js']);
+        $response = new Response();
+        $next = function ($req, $res) {
+            return $res;
+        };
+
+        $middleware = new AssetMiddleware();
+        $res = $middleware($request, $response, $next);
+        $this->assertEmpty($res->getBody()->getContents());
+    }
 }

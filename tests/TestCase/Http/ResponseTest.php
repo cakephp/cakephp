@@ -339,29 +339,34 @@ class ResponseTest extends TestCase
     public function testSend()
     {
         $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods(['_sendHeader', '_sendContent', '_setCookies'])
+            ->setMethods(['_sendHeader', '_sendContent'])
             ->getMock();
         $response->header([
             'Content-Language' => 'es',
             'WWW-Authenticate' => 'Negotiate',
             'Access-Control-Allow-Origin' => ['domain1', 'domain2'],
         ]);
+        $response->cookie(['name' => 'thing', 'value' => 'value']);
         $response->body('the response body');
+
         $response->expects($this->once())->method('_sendContent')->with('the response body');
-        $response->expects($this->at(0))->method('_setCookies');
-        $response->expects($this->at(1))
+        $response->expects($this->at(0))
             ->method('_sendHeader')->with('HTTP/1.1 200 OK');
-        $response->expects($this->at(2))
+        $response->expects($this->at(1))
             ->method('_sendHeader')->with('Content-Type', 'text/html; charset=UTF-8');
-        $response->expects($this->at(3))
+        $response->expects($this->at(2))
             ->method('_sendHeader')->with('Content-Language', 'es');
-        $response->expects($this->at(4))
+        $response->expects($this->at(3))
             ->method('_sendHeader')->with('WWW-Authenticate', 'Negotiate');
-        $response->expects($this->at(5))
+        $response->expects($this->at(4))
             ->method('_sendHeader')->with('Access-Control-Allow-Origin', 'domain1');
-        $response->expects($this->at(6))
+        $response->expects($this->at(5))
             ->method('_sendHeader')->with('Access-Control-Allow-Origin', 'domain2');
         $response->send();
+
+        $this->assertCount(1, $GLOBALS['mockedCookies']);
+        $this->assertSame('value', $GLOBALS['mockedCookies'][0]['value']);
+        $this->assertSame('thing', $GLOBALS['mockedCookies'][0]['name']);
     }
 
     /**

@@ -515,7 +515,7 @@ DIGEST;
         $secret = $secret ?: Configure::read('Security.salt');
         $time = $time ?: microtime(true);
         $expiryTime = $time + $expires;
-        $signatureValue = md5($expiryTime . ':' . $secret);
+        $signatureValue = hash_hmac('sha1', $expiryTime . ':' . $secret, $secret);
         $nonceValue = $expiryTime . ':' . $signatureValue;
 
         return base64_encode($nonceValue);

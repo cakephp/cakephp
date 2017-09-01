@@ -102,8 +102,8 @@ class DatabaseSession implements SessionHandlerInterface
     /**
      * Method used to read from a database session.
      *
-     * @param int|string $id The key of the value to read
-     * @return string The value of the key or empty if it does not exist
+     * @param string|int $id ID that uniquely identifies session in database.
+     * @return string Session data or empty string if it does not exist.
      */
     public function read($id)
     {
@@ -134,8 +134,8 @@ class DatabaseSession implements SessionHandlerInterface
     /**
      * Helper function called on write for database sessions.
      *
-     * @param int $id ID that uniquely identifies session in database
-     * @param mixed $data The value of the data to be saved.
+     * @param string|int $id ID that uniquely identifies session in database.
+     * @param mixed $data The data to be saved.
      * @return bool True for successful write, false otherwise.
      */
     public function write($id, $data)
@@ -154,7 +154,7 @@ class DatabaseSession implements SessionHandlerInterface
     /**
      * Method called on the destruction of a database session.
      *
-     * @param int $id ID that uniquely identifies session in database
+     * @param string|int $id ID that uniquely identifies session in database.
      * @return bool True for successful delete, false otherwise.
      */
     public function destroy($id)

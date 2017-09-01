@@ -885,7 +885,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Get the associations collection for this table.
      *
-     * @return \Cake\ORM\AssociationCollection The collection of association objects.
+     * @return \Cake\ORM\AssociationCollection|\Cake\ORM\Association[] The collection of association objects.
      */
     public function associations()
     {
@@ -2490,6 +2490,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * You can use the `Model.beforeMarshal` event to modify request data
      * before it is converted into entities.
+     *
+     * When patching scalar values (null/booleans/string/integer/float), if the property
+     * presently has an identical value, the setter will not be called, and the
+     * property will not be marked as dirty. This is an optimization to prevent unnecessary field
+     * updates when persisting entities.
      */
     public function patchEntity(EntityInterface $entity, array $data, array $options = [])
     {

@@ -813,7 +813,7 @@ class EagerLoader
      * Helper function used to iterate a statement and extract the columns
      * defined in $collectKeys
      *
-     * @param \Cake\Database\StatementInterface $statement The statement to read from.
+     * @param \Cake\Database\Statement\BufferedStatement $statement The statement to read from.
      * @param array $collectKeys The keys to collect
      * @return array
      */

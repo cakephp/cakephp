@@ -174,14 +174,14 @@ class View implements EventDispatcherInterface
      * Sub-directory for this template file. This is often used for extension based routing.
      * Eg. With an `xml` extension, $subDir would be `xml/`
      *
-     * @var string
+     * @var string|null
      */
     public $subDir;
 
     /**
      * The view theme to use.
      *
-     * @var string
+     * @var string|null
      */
     public $theme;
 
@@ -392,11 +392,13 @@ class View implements EventDispatcherInterface
      * Set path for templates files.
      *
      * @param string $path Path for template files.
-     * @return void
+     * @return $this
      */
     public function setTemplatePath($path)
     {
         $this->templatePath = $path;
+
+        return $this;
     }
 
     /**
@@ -429,11 +431,13 @@ class View implements EventDispatcherInterface
      * Set path for layout files.
      *
      * @param string $path Path for layout files.
-     * @return void
+     * @return $this
      */
     public function setLayoutPath($path)
     {
         $this->layoutPath = $path;
+
+        return $this;
     }
 
     /**
@@ -469,11 +473,13 @@ class View implements EventDispatcherInterface
      * automatically applied to rendered views.
      *
      * @param bool $enable Boolean to turn on/off.
-     * @return void
+     * @return $this
      */
     public function enableAutoLayout($enable = true)
     {
         $this->autoLayout = (bool)$enable;
+
+        return $this;
     }
 
     /**
@@ -497,7 +503,7 @@ class View implements EventDispatcherInterface
     /**
      * Get the current view theme.
      *
-     * @return string
+     * @return string|null
      */
     public function getTheme()
     {
@@ -507,12 +513,14 @@ class View implements EventDispatcherInterface
     /**
      * Set the view theme to use.
      *
-     * @param string $theme Theme name.
-     * @return void
+     * @param string|null $theme Theme name.
+     * @return $this
      */
     public function setTheme($theme)
     {
         $this->theme = $theme;
+
+        return $this;
     }
 
     /**
@@ -547,11 +555,13 @@ class View implements EventDispatcherInterface
      * filename in /src/Template/<SubFolder> without the .ctp extension.
      *
      * @param string $name Template file name to set.
-     * @return void
+     * @return $this
      */
     public function setTemplate($name)
     {
         $this->template = $name;
+
+        return $this;
     }
 
     /**
@@ -589,11 +599,13 @@ class View implements EventDispatcherInterface
      * without the .ctp extension.
      *
      * @param string $name Layout file name to set.
-     * @return void
+     * @return $this
      */
     public function setLayout($name)
     {
         $this->layout = $name;
+
+        return $this;
     }
 
     /**
@@ -862,12 +874,14 @@ class View implements EventDispatcherInterface
      * ```
      *
      * @param string $name The name of the block to capture for.
-     * @return void
+     * @return $this
      * @see \Cake\View\ViewBlock::start()
      */
     public function start($name)
     {
         $this->Blocks->start($name);
+
+        return $this;
     }
 
     /**
@@ -878,12 +892,14 @@ class View implements EventDispatcherInterface
      * @param string $name Name of the block
      * @param mixed $value The content for the block. Value will be type cast
      *   to string.
-     * @return void
+     * @return $this
      * @see \Cake\View\ViewBlock::concat()
      */
     public function append($name, $value = null)
     {
         $this->Blocks->concat($name, $value);
+
+        return $this;
     }
 
     /**
@@ -894,12 +910,14 @@ class View implements EventDispatcherInterface
      * @param string $name Name of the block
      * @param mixed $value The content for the block. Value will be type cast
      *   to string.
-     * @return void
+     * @return $this
      * @see \Cake\View\ViewBlock::concat()
      */
     public function prepend($name, $value)
     {
         $this->Blocks->concat($name, $value, ViewBlock::PREPEND);
+
+        return $this;
     }
 
     /**
@@ -909,12 +927,14 @@ class View implements EventDispatcherInterface
      * @param string $name Name of the block
      * @param mixed $value The content for the block. Value will be type cast
      *   to string.
-     * @return void
+     * @return $this
      * @see \Cake\View\ViewBlock::set()
      */
     public function assign($name, $value)
     {
         $this->Blocks->set($name, $value);
+
+        return $this;
     }
 
     /**
@@ -922,12 +942,14 @@ class View implements EventDispatcherInterface
      * existing content.
      *
      * @param string $name Name of the block
-     * @return void
+     * @return $this
      * @see \Cake\View\ViewBlock::set()
      */
     public function reset($name)
     {
         $this->assign($name, '');
+
+        return $this;
     }
 
     /**
@@ -947,12 +969,14 @@ class View implements EventDispatcherInterface
     /**
      * End a capturing block. The compliment to View::start()
      *
-     * @return void
+     * @return $this
      * @see \Cake\View\ViewBlock::end()
      */
     public function end()
     {
         $this->Blocks->end();
+
+        return $this;
     }
 
     /**
@@ -972,7 +996,7 @@ class View implements EventDispatcherInterface
      * parent view and populate blocks in the parent template.
      *
      * @param string $name The template or element to 'extend' the current one with.
-     * @return void
+     * @return $this
      * @throws \LogicException when you extend a template with itself or make extend loops.
      * @throws \LogicException when you extend an element which doesn't exist
      */
@@ -1009,6 +1033,8 @@ class View implements EventDispatcherInterface
             throw new LogicException('You cannot have views extend in a loop.');
         }
         $this->_parents[$this->_current] = $parent;
+
+        return $this;
     }
 
     /**
@@ -1093,7 +1119,7 @@ class View implements EventDispatcherInterface
     /**
      * Interact with the HelperRegistry to load all the helpers.
      *
-     * @return void
+     * @return $this
      */
     public function loadHelpers()
     {
@@ -1102,6 +1128,8 @@ class View implements EventDispatcherInterface
         foreach ($helpers as $properties) {
             $this->loadHelper($properties['class'], $properties['config']);
         }
+
+        return $this;
     }
 
     /**

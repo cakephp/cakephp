@@ -122,14 +122,15 @@ class ActionDispatcher
         }
 
         if (!$response && $controller->autoRender) {
-            $response = $controller->render();
-        } elseif (!$response) {
-            $response = $controller->response;
+            $controller->render();
         }
 
         $result = $controller->shutdownProcess();
         if ($result instanceof Response) {
             return $result;
+        }
+        if (!$response) {
+            $response = $controller->response;
         }
 
         return $response;

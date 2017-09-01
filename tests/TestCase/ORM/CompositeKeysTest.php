@@ -14,6 +14,8 @@
  */
 namespace Cake\Test\TestCase\ORM;
 
+use Cake\Database\Driver\Sqlite;
+use Cake\Database\Driver\Sqlserver;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Entity;
 use Cake\ORM\Marshaller;
@@ -21,6 +23,7 @@ use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
+use PDO;
 
 /**
  * Test entity for mass assignment.
@@ -741,6 +744,49 @@ class CompositeKeyTest extends TestCase
     }
 
     /**
+     * Tests notMatching() with a belongsToMany association
+     *
+     * @return void
+     */
+    public function testNotMatchingBelongsToMany()
+    {
+        $driver = $this->connection->driver();
+
+        if ($driver instanceof Sqlserver) {
+            $this->markTestSkipped('Sqlserver does not support the requirements of this test.');
+        } elseif ($driver instanceof Sqlite) {
+            $serverVersion = $driver->connection()->getAttribute(PDO::ATTR_SERVER_VERSION);
+            if (version_compare($serverVersion, '3.15.0', '<')) {
+                $this->markTestSkipped("Sqlite ($serverVersion) does not support the requirements of this test.");
+            }
+        }
+
+        $articles = TableRegistry::get('SiteArticles');
+        $articles->belongsToMany('SiteTags', [
+            'through' => 'SiteArticlesTags',
+            'foreignKey' => ['article_id', 'site_id'],
+            'targetForeignKey' => ['tag_id', 'site_id']
+        ]);
+
+        $results = $articles->find()
+            ->hydrate(false)
+            ->notMatching('SiteTags')
+            ->toArray();
+
+        $expected = [
+            [
+                'id' => 3,
+                'author_id' => 1,
+                'site_id' => 2,
+                'title' => 'Third Article',
+                'body' => 'Third Article Body',
+            ],
+        ];
+
+        $this->assertEquals($expected, $results);
+    }
+
+    /**
      * Helper method to skip tests when connection is SQLite.
      *
      * @return void
@@ -748,7 +794,7 @@ class CompositeKeyTest extends TestCase
     public function skipIfSqlite()
     {
         $this->skipIf(
-            $this->connection->driver() instanceof \Cake\Database\Driver\Sqlite,
+            $this->connection->driver() instanceof Sqlite,
             'SQLite does not support the requirements of this test.'
         );
     }

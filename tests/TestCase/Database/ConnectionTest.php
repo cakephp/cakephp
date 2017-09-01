@@ -20,6 +20,7 @@ use Cake\Database\Exception\NestedTransactionRollbackException;
 use Cake\Database\Log\LoggingStatement;
 use Cake\Database\Log\QueryLogger;
 use Cake\Datasource\ConnectionManager;
+use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use ReflectionMethod;
 
@@ -54,6 +55,7 @@ class ConnectionTest extends TestCase
 
     public function tearDown()
     {
+        Log::reset();
         $this->connection->useSavePoints(false);
         unset($this->connection);
         parent::tearDown();
@@ -487,6 +489,30 @@ class ConnectionTest extends TestCase
         $this->connection->commit();
         $result = $this->connection->execute('SELECT * FROM things');
         $this->assertCount(1, $result);
+    }
+
+    /**
+     * Tests that the destructor of Connection generates a warning log
+     * when transaction is not closed
+     *
+     * @return void
+     */
+    public function testDestructorWithUncommittedTransaction()
+    {
+        $driver = $this->getMockFormDriver();
+        $connection = new Connection(['driver' => $driver]);
+        $connection->begin();
+        $this->assertTrue($connection->inTransaction());
+
+        $logger = $this->createMock('Psr\Log\AbstractLogger');
+        $logger->expects($this->once())
+            ->method('log')
+            ->with('warning', $this->stringContains('The connection is going to be closed'));
+
+        Log::setConfig('error', $logger);
+
+        // Destroy the connection
+        unset($connection);
     }
 
     /**

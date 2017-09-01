@@ -264,6 +264,15 @@ class StringTemplateTest extends TestCase
             ' data-hero="&lt;batman&gt;"',
             $result
         );
+
+        $evilKey = "><script>alert(1)</script>";
+        $attrs = [$evilKey => 'some value'];
+
+        $result = $this->template->formatAttributes($attrs);
+        $this->assertEquals(
+            ' &gt;&lt;script&gt;alert(1)&lt;/script&gt;="some value"',
+            $result
+        );
     }
 
     /**

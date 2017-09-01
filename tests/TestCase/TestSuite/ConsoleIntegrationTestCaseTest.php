@@ -80,6 +80,7 @@ class ConsoleIntegrationTestCaseTest extends ConsoleIntegrationTestCase
     {
         $this->exec('integration args_and_options arg --opt="some string"');
 
+        $this->assertErrorEmpty();
         $this->assertOutputContains('arg: arg');
         $this->assertOutputContains('opt: some string');
         $this->assertExitCode(Shell::CODE_SUCCESS);
@@ -94,6 +95,7 @@ class ConsoleIntegrationTestCaseTest extends ConsoleIntegrationTestCase
     {
         $this->exec('integration args_and_options');
 
+        $this->assertOutputEmpty();
         $this->assertErrorContains('Missing required arguments');
         $this->assertErrorContains('arg is required');
         $this->assertExitCode(Shell::CODE_ERROR);

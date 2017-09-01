@@ -37,6 +37,8 @@ use JsonSerializable;
  * @method bool isAccessible($property)
  * @method $this setSource($source)
  * @method array getSource()
+ * @method array extractOriginal(array $properties)
+ * @method array extractOriginalChanged(array $properties)
  *
  * @property mixed $id Alias for commonly used primary key.
  */

@@ -249,19 +249,52 @@ trait StaticConfigTrait
             throw new InvalidArgumentException('Only strings can be passed to parseDsn');
         }
 
-        $pattern = '/^(?P<scheme>[\w\\\\]+):\/\/((?P<user>.*?)(:(?P<password>.*?))?@)?' .
-            '((?P<host>[.\w-\\\\]+)(:(?P<port>\d+))?)?' .
-            '(?P<path>\/[^?]*)?(\?(?P<query>.*))?$/';
+        $pattern = <<<'REGEXP'
+{
+    ^
+    (?P<_scheme>
+        (?P<scheme>[\w\\\\]+)://
+    )
+    (?P<_username>
+        (?P<username>.*?)
+        (?P<_password>
+            :(?P<password>.*?)
+        )?
+        @
+    )?
+    (?P<_host>
+        (?P<host>[^?#/:@]+)
+        (?P<_port>
+            :(?P<port>\d+)
+        )?
+    )?
+    (?P<_path>
+        (?P<path>/[^?#]*)
+    )?
+    (?P<_query>
+        \?(?P<query>[^#]*)
+    )?
+    (?P<_fragment>
+        \#(?P<fragment>.*)
+    )?
+    $
+}x
+REGEXP;
+
         preg_match($pattern, $dsn, $parsed);
 
         if (!$parsed) {
             throw new InvalidArgumentException("The DSN string '{$dsn}' could not be parsed.");
         }
+
+        $exists = [];
         foreach ($parsed as $k => $v) {
             if (is_int($k)) {
                 unset($parsed[$k]);
-            }
-            if ($v === '') {
+            } elseif (strpos($k, '_') === 0) {
+                $exists[substr($k, 1)] = ($v !== '');
+                unset($parsed[$k]);
+            } elseif ($v === '' && !$exists[$k]) {
                 unset($parsed[$k]);
             }
         }
@@ -285,15 +318,6 @@ trait StaticConfigTrait
             }
         }
 
-        if (isset($parsed['user'])) {
-            $parsed['username'] = $parsed['user'];
-        }
-
-        if (isset($parsed['pass'])) {
-            $parsed['password'] = $parsed['pass'];
-        }
-
-        unset($parsed['pass'], $parsed['user']);
         $parsed = $queryArgs + $parsed;
 
         if (empty($parsed['className'])) {

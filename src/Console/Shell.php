@@ -32,6 +32,8 @@ use ReflectionMethod;
  * Base class for command-line utilities for automating programmer chores.
  *
  * Is the equivalent of Cake\Controller\Controller on the command line.
+ *
+ * @method int main()
  */
 class Shell
 {

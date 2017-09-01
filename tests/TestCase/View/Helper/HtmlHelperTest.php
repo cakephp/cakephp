@@ -347,6 +347,11 @@ class HtmlHelperTest extends TestCase
         $result = $this->Html->image('cid:cakephp_logo');
         $expected = ['img' => ['src' => 'cid:cakephp_logo', 'alt' => '']];
         $this->assertHtml($expected, $result);
+
+        $result = $this->Html->image('x:"><script>alert(1)</script>');
+        $expected = ['img' => ['src' => 'x:&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;', 'alt' => '']];
+
+        $this->assertHtml($expected, $result);
     }
 
     /**
@@ -560,6 +565,10 @@ class HtmlHelperTest extends TestCase
 
         $result = $this->Html->css('screen.css?with=param&other=param');
         $expected['link']['href'] = 'css/screen.css?with=param&amp;other=param';
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Html->css('x:"><script>alert(1)</script>');
+        $expected['link']['href'] = 'x:&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;';
         $this->assertHtml($expected, $result);
 
         $result = $this->Html->css('http://whatever.com/screen.css?1234');
@@ -901,6 +910,12 @@ class HtmlHelperTest extends TestCase
         $result = $this->Html->script('test.json.js?foo=bar&other=test');
         $expected = [
             'script' => ['src' => 'js/test.json.js?foo=bar&amp;other=test']
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Html->script('x:"><script>alert(1)</script>');
+        $expected = [
+            'script' => ['src' => 'x:&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;']
         ];
         $this->assertHtml($expected, $result);
 
@@ -1716,6 +1731,24 @@ class HtmlHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
+        $result = $this->Html->meta('icon', 'x:"><script>alert(1)</script>');
+        $url = 'x:&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;';
+        $expected = [
+            'link' => [
+                'href' => $url,
+                'type' => 'image/x-icon',
+                'rel' => 'icon'
+            ],
+            [
+                'link' => [
+                    'href' => $url,
+                    'type' => 'image/x-icon',
+                    'rel' => 'shortcut icon'
+                ]
+            ]
+        ];
+        $this->assertHtml($expected, $result);
+
         $this->Html->request->webroot = '/testing/';
         $result = $this->Html->meta('icon');
         $expected = [
@@ -1956,6 +1989,12 @@ class HtmlHelperTest extends TestCase
         $result = $this->Html->div('class-name', '<text>', ['escape' => true]);
         $expected = ['div' => ['class' => 'class-name'], '&lt;text&gt;', '/div'];
         $this->assertHtml($expected, $result);
+
+        $evilKey = "><script>alert(1)</script>";
+        $options = [$evilKey => 'some value'];
+        $result = $this->Html->div('class-name', '', $options);
+        $expected = '<div &gt;&lt;script&gt;alert(1)&lt;/script&gt;="some value" class="class-name"></div>';
+        $this->assertEquals($expected, $result);
     }
 
     /**
