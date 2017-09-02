@@ -188,4 +188,65 @@ class HelperTest extends TestCase
         $result = $Helper->__debugInfo();
         $this->assertEquals($expected, $result);
     }
+
+    /**
+     * Test addClass() with 'class' => array
+     *
+     * @return void
+     */
+    public function testAddClassArray()
+    {
+        $helper = new TestHelper($this->View);
+        $input = ['class' => ['element1', 'element2']];
+        $expected = ['class' => [
+            'element1',
+            'element2',
+            'element3'
+        ]];
+
+        $this->assertEquals($expected, $helper->addClass($input, 'element3'));
+    }
+
+    /**
+     * Test addClass() with 'class' => string
+     *
+     * @return void
+     */
+    public function testAddClassString()
+    {
+        $helper = new TestHelper($this->View);
+
+        $input = ['class' => 'element1 element2'];
+        $expected = ['class' => 'element1 element2 element3'];
+
+        $this->assertEquals($expected, $helper->addClass($input, 'element3'));
+    }
+
+    /**
+     * Test addClass() with no class element
+     *
+     * @return void
+     */
+    public function testAddClassEmpty()
+    {
+        $helper = new TestHelper($this->View);
+
+        $input = [];
+        $expected = ['class' => 'element3'];
+
+        $this->assertEquals($expected, $helper->addClass($input, 'element3'));
+    }
+
+    /**
+     * Test addClass() with adding null class
+     */
+    public function testAddClassNull()
+    {
+        $helper = new TestHelper($this->View);
+
+        $input = [];
+        $expected = ['class' => ''];
+
+        $this->assertEquals($expected, $helper->addClass($input, null));
+    }
 }
