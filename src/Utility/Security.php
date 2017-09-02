@@ -17,6 +17,7 @@ namespace Cake\Utility;
 use Cake\Utility\Crypto\Mcrypt;
 use Cake\Utility\Crypto\OpenSsl;
 use InvalidArgumentException;
+use RuntimeException;
 
 /**
  * Security Library contains utility methods related to security
@@ -102,27 +103,25 @@ class Security
         if (function_exists('random_bytes')) {
             return random_bytes($length);
         }
-        if (function_exists('openssl_random_pseudo_bytes')) {
-            $bytes = openssl_random_pseudo_bytes($length, $strongSource);
-            if (!$strongSource) {
-                trigger_error(
-                    'openssl was unable to use a strong source of entropy. ' .
-                    'Consider updating your system libraries, or ensuring ' .
-                    'you have more available entropy.',
-                    E_USER_WARNING
-                );
-            }
-
-            return $bytes;
+        if (!function_exists('openssl_random_pseudo_bytes')) {
+            throw new RuntimeException(
+                'You do not have a safe source of random data available. ' .
+                'Install either the openssl extension, or paragonie/random_compat. ' .
+                'Or use Security::insecureRandomBytes() alternatively.'
+            );
         }
-        trigger_error(
-            'You do not have a safe source of random data available. ' .
-            'Install either the openssl extension, or paragonie/random_compat. ' .
-            'Falling back to an insecure random source.',
-            E_USER_WARNING
-        );
 
-        return static::insecureRandomBytes($length);
+        $bytes = openssl_random_pseudo_bytes($length, $strongSource);
+        if (!$strongSource) {
+            trigger_error(
+                'openssl was unable to use a strong source of entropy. ' .
+                'Consider updating your system libraries, or ensuring ' .
+                'you have more available entropy.',
+                E_USER_WARNING
+            );
+        }
+
+        return $bytes;
     }
 
     /**
