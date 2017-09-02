@@ -310,6 +310,14 @@ class HtmlHelperTest extends TestCase
         $result = $this->Html->link('say hello to 0123465-798', 'sms:0123465-798?body=hello "cakephp"');
         $expected = ['a' => ['href' => 'sms:0123465-798?body=hello &quot;cakephp&quot;'], 'say hello to 0123465-798', '/a'];
         $this->assertHtml($expected, $result);
+
+        $result = $this->Html->link('Home', '/', ['fullBase' => true]);
+        $expected = ['a' => ['href' => 'http://localhost/'], 'Home', '/a'];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Html->link('Home', '/', ['fullBase' => false]);
+        $expected = ['a' => ['href' => '/'], 'Home', '/a'];
+        $this->assertHtml($expected, $result);
     }
 
     /**
