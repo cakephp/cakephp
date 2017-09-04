@@ -2101,6 +2101,7 @@ class Email implements JsonSerializable, Serializable
         return is_array($key) ? implode(';', $key) : (string) $key;
     }
 
+    
     /**
      * Static method to fast create an instance of \Cake\Mailer\Email
      *
