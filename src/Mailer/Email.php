@@ -2089,7 +2089,8 @@ class Email implements JsonSerializable, Serializable
             $config['scope']
         );
     }
-
+    
+    
     /**
      * Converts an array to string
      * @param null $key
