@@ -2060,7 +2060,7 @@ class Email implements JsonSerializable, Serializable
 
         return $contents;
     }
-    
+
     
     /**
      * Log the email message delivery.
@@ -2085,19 +2085,19 @@ class Email implements JsonSerializable, Serializable
         }
         Log::write(
             $config['level'],
-            PHP_EOL . $this->_isKeyArray($contents['headers']) . PHP_EOL . PHP_EOL . $this->_isKeyArray($contents['message']),
+            PHP_EOL . $this->flatten($contents['headers']) . PHP_EOL . PHP_EOL . $this->flatten($contents['message']),
             $config['scope']
         );
     }
-    
-    
+
     /**
+     * Converts an array to string
      * @param null $key
-     * @return null|string
+     * @return string
      */
-    private function _isKeyArray($key = null)
+    protected function flatten($key = null)
     {
-        return is_array($key) ? implode(';', $key) : $key;
+        return is_array($key) ? implode(';', $key) : (string) $key;
     }
 
     /**
