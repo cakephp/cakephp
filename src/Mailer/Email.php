@@ -2092,11 +2092,11 @@ class Email implements JsonSerializable, Serializable
     
     
     /**
-     * Converts $array to string if array given
-     * @param null $key
+     * Converts array to string
+     * @param array $array
      * @return string
      */
-    protected function flatten($array = null)
+    protected function flatten($array = [])
     {
         return is_array($array) ? implode(';', $array) : (string)$array;
     }
