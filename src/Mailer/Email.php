@@ -2089,19 +2089,18 @@ class Email implements JsonSerializable, Serializable
             $config['scope']
         );
     }
-    
-    
+
     /**
      * Converts given value to string
-     * @param $value
+     *
+     * @param string|array $value
      * @return string
      */
     protected function flatten($value)
     {
-        return is_array($value) ? implode(';', $value) : (string)$value;
+        return is_array($value) ? implode(';', $value) : $value;
     }
 
-    
     /**
      * Static method to fast create an instance of \Cake\Mailer\Email
      *
