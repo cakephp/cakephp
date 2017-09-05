@@ -29,14 +29,14 @@ class CspMiddleware
     /**
      * CSP Builder
      *
-     * @var \ParagonIE\CSPBuilder\|array|null $csp CSP Builder or config array
+     * @var \ParagonIE\CSPBuilder|array|null $csp CSP Builder or config array
      */
     protected $csp;
 
     /**
      * Constructor
      *
-     * @param null|\ParagonIE\CSPBuilder\ $csp CSP object or config array
+     * @param null|\ParagonIE\CSPBuilder $csp CSP object or config array
      */
     public function __construct($csp = null)
     {
