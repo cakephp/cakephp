@@ -2061,7 +2061,6 @@ class Email implements JsonSerializable, Serializable
         return $contents;
     }
 
-    
     /**
      * Log the email message delivery.
      *
