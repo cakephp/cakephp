@@ -55,7 +55,8 @@ trait SecureFieldTokenTrait
         $hashParts = [
             $url,
             serialize($fields),
-            $unlocked
+            $unlocked,
+            session_id(),
         ];
         $fields = hash_hmac('sha1', implode('', $hashParts), Security::getSalt());
 

@@ -378,7 +378,8 @@ class SecurityComponent extends Component
         return [
             $controller->request->here(),
             serialize($fieldList),
-            $unlocked
+            $unlocked,
+            session_id(),
         ];
     }
 
