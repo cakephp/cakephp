@@ -792,7 +792,7 @@ class Debugger
             $file = $files[1];
         }
         if ($file) {
-            $code = static::excerpt($file['file'], $file['line'] - 1, 1);
+            $code = static::excerpt($file['file'], $file['line'], 1);
         }
         $trace = static::trace(['start' => $data['start'], 'depth' => '20']);
         $insertOpts = ['before' => '{:', 'after' => '}'];
