@@ -87,7 +87,7 @@ interface QueryInterface
      * ]);
      * ```
      *
-     * Is equivalent to:
+     * Note: 2.x-style finder are deprecated in 3.6 and will be removed in 4.0. Use the query builder instead:
      *
      * ```
      *  $query
