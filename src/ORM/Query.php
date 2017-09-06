@@ -726,7 +726,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * ]);
      * ```
      *
-     * Is equivalent to:
+     * Note: 2.x-style finder are deprecated in 3.6 and will be removed in 4.0. Use the query builder instead:
      *
      * ```
      * $query
@@ -750,13 +750,22 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
             'page' => 'page',
         ];
 
+        $possiblyDeprecated2xKeys = [];
+
         ksort($options);
         foreach ($options as $option => $values) {
             if (isset($valid[$option], $values)) {
+                $possiblyDeprecated2xKeys[] = $option;
                 $this->{$valid[$option]}($values);
             } else {
                 $this->_options[$option] = $values;
             }
+        }
+
+        if ($possiblyDeprecated2xKeys !== []) {
+            deprecationWarning(
+                '2.x-style finder options will be removed in 4.0, but you supplied following 2.x-style finder options: '
+                    . join(',', $possiblyDeprecated2xKeys));
         }
 
         return $this;
