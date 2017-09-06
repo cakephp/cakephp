@@ -1175,7 +1175,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function find($type = 'all', $options = [])
     {
-        $deprecated2xKeys = [
+        $deprecatedKeys = [
             'fields',
             'conditions',
             'join',
@@ -1188,16 +1188,16 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             'page',
         ];
 
-        $possiblyDeprecated2xKeys = [];
-        foreach ($deprecated2xKeys as $key) {
+        $deprecatedKeyWarns = [];
+        foreach ($deprecatedKeys as $key) {
             if (array_key_exists($key, $options)) {
-                $possiblyDeprecated2xKeys[] = $option;
+                $deprecatedKeyWarns[] = $key;
             }
         }
-        if ($possiblyDeprecated2xKeys !== []) {
+        if ($deprecatedKeyWarns !== []) {
             deprecationWarning(
                 '2.x-style finder options will be removed in 4.0, but you supplied following 2.x-style finder options: '
-                    . join(',', $possiblyDeprecated2xKeys), 3);
+                    . join(',', $deprecatedKeyWarns), 3);
         }
 
         $query = $this->query();
