@@ -14,17 +14,14 @@
  */
 namespace Cake\Test\TestCase\Shell;
 
-use Cake\Console\CommandCollection;
-use Cake\Console\ConsoleIo;
+use Cake\Console\Shell;
 use Cake\Core\Plugin;
-use Cake\Shell\HelpShell;
-use Cake\TestSuite\Stub\ConsoleOutput;
-use Cake\TestSuite\TestCase;
+use Cake\TestSuite\ConsoleIntegrationTestCase;
 
 /**
  * HelpShell test.
  */
-class HelpShellTest extends TestCase
+class HelpShellTest extends ConsoleIntegrationTestCase
 {
     /**
      * setup method
@@ -35,16 +32,8 @@ class HelpShellTest extends TestCase
     {
         parent::setUp();
         $this->setAppNamespace();
+        $this->useCommandRunner(true);
         Plugin::load('TestPlugin');
-
-        $this->out = new ConsoleOutput();
-        $this->err = new ConsoleOutput();
-        $this->io = new ConsoleIo($this->out, $this->err);
-        $this->shell = new HelpShell($this->io);
-
-        $commands = new CommandCollection();
-        $commands->addMany($commands->autoDiscover());
-        $this->shell->setCommandCollection($commands);
     }
 
     /**
@@ -54,11 +43,9 @@ class HelpShellTest extends TestCase
      */
     public function testMainNoCommandsFallback()
     {
-        $shell = new HelpShell($this->io);
-        $this->assertNull($shell->main());
-
-        $output = implode("\n", $this->out->messages());
-        $this->assertOutput($output);
+        $this->exec('help');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertCommandList();
     }
 
     /**
@@ -68,10 +55,9 @@ class HelpShellTest extends TestCase
      */
     public function testMain()
     {
-        $this->assertNull($this->shell->main());
-
-        $output = implode("\n", $this->out->messages());
-        $this->assertOutput($output);
+        $this->exec('help');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertCommandList();
     }
 
     /**
@@ -80,14 +66,14 @@ class HelpShellTest extends TestCase
      * @param string $output The output to check.
      * @return void
      */
-    protected function assertOutput($output)
+    protected function assertCommandList()
     {
-        $this->assertContains('- sample', $output, 'app shell');
-        $this->assertContains('- test_plugin.sample', $output, 'Long plugin name');
-        $this->assertContains('- routes', $output, 'core shell');
-        $this->assertContains('- test_plugin.example', $output, 'Long plugin name');
-        $this->assertContains('To run a command', $output, 'more info present');
-        $this->assertContains('To get help', $output, 'more info present');
+        $this->assertOutputContains('- sample', 'app shell');
+        $this->assertOutputContains('- test_plugin.sample', 'Long plugin name');
+        $this->assertOutputContains('- routes', 'core shell');
+        $this->assertOutputContains('- test_plugin.example', 'Long plugin name');
+        $this->assertOutputContains('To run a command', 'more info present');
+        $this->assertOutputContains('To get help', 'more info present');
     }
 
     /**
@@ -97,19 +83,17 @@ class HelpShellTest extends TestCase
      */
     public function testMainAsXml()
     {
-        $this->shell->params['xml'] = true;
-        $this->shell->main();
-        $output = implode("\n", $this->out->messages());
-
-        $this->assertContains('<shells>', $output);
+        $this->exec('help --xml');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertOutputContains('<shells>');
 
         $find = '<shell name="sample" call_as="sample" provider="TestApp\Shell\SampleShell" help="sample -h"';
-        $this->assertContains($find, $output);
+        $this->assertOutputContains($find);
 
         $find = '<shell name="orm_cache" call_as="orm_cache" provider="Cake\Shell\OrmCacheShell" help="orm_cache -h"';
-        $this->assertContains($find, $output);
+        $this->assertOutputContains($find);
 
         $find = '<shell name="test_plugin.sample" call_as="test_plugin.sample" provider="TestPlugin\Shell\SampleShell" help="test_plugin.sample -h"';
-        $this->assertContains($find, $output);
+        $this->assertOutputContains($find);
     }
 }
