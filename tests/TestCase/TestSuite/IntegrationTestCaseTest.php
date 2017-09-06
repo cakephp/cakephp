@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\TestSuite;
 
+use Cake\Core\Configure;
 use Cake\Event\EventManager;
 use Cake\Http\Response;
 use Cake\Routing\DispatcherFactory;
@@ -187,6 +188,24 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         $this->_response = null;
         $this->get('/get/request_action/test_request_action');
         $this->assertEquals('This is a test', $this->_response->getBody());
+    }
+
+    /**
+     * Test sending get request and using default `test_app/config/routes.php`.
+     *
+     * @return void
+     */
+    public function testGetUsingApplicationWithDefaultRoutes()
+    {
+        // first clean routes to have Router::$initailized === false
+        Router::reload();
+
+        $this->useHttpServer(true);
+        $this->configApplication(Configure::read('App.namespace') . '\ApplicationWithDefaultRoutes', null);
+
+        $this->get('/some_alias');
+        $this->assertResponseOk();
+        $this->assertEquals('5', $this->_getBodyAsString());
     }
 
     /**
