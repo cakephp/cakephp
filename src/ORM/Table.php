@@ -1175,6 +1175,31 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function find($type = 'all', $options = [])
     {
+        $deprecated2xKeys = [
+            'fields',
+            'conditions',
+            'join',
+            'order',
+            'limit',
+            'offset',
+            'group',
+            'having',
+            'contain',
+            'page',
+        ];
+
+        $possiblyDeprecated2xKeys = [];
+        foreach ($deprecated2xKeys as $key) {
+            if (array_key_exists($key, $options)) {
+                $possiblyDeprecated2xKeys[] = $option;
+            }
+        }
+        if ($possiblyDeprecated2xKeys !== []) {
+            deprecationWarning(
+                '2.x-style finder options will be removed in 4.0, but you supplied following 2.x-style finder options: '
+                    . join(',', $possiblyDeprecated2xKeys), 3);
+        }
+
         $query = $this->query();
         $query->select();
 
