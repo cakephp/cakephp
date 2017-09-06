@@ -1197,7 +1197,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if ($deprecatedKeyWarns !== []) {
             deprecationWarning(
                 '2.x-style finder options will be removed in 4.0, but you supplied following 2.x-style finder options: '
-                    . join(',', $deprecatedKeyWarns), 3);
+                . join(',', $deprecatedKeyWarns)
+            , 3);
         }
 
         $query = $this->query();
