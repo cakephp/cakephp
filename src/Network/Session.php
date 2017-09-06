@@ -455,7 +455,7 @@ class Session
      */
     public function id($id = null)
     {
-        if ($id !== null) {
+        if ($id !== null && ($this->_isCLI || !headers_sent())) {
             session_id($id);
         }
 
