@@ -20,6 +20,7 @@ use Cake\Http\Client\CookieCollection;
 use Cake\Http\Client\Request;
 use Cake\Http\Cookie\CookieInterface;
 use Cake\Utility\Hash;
+use InvalidArgumentException;
 use Zend\Diactoros\Uri;
 
 /**
@@ -192,6 +193,9 @@ class Client
      */
     public function addCookie(CookieInterface $cookie)
     {
+        if (!$cookie->getDomain() || !$cookie->getPath()) {
+            throw new InvalidArgumentException('Cookie must have a domain and a path set.');
+        }
         $this->_cookies = $this->_cookies->add($cookie);
 
         return $this;

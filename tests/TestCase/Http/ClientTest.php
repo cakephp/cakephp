@@ -644,7 +644,43 @@ class ClientTest extends TestCase
     public function testAddCookie()
     {
         $client = new Client();
-        $cookie = new Cookie('foo');
+        $cookie = new Cookie('foo', '', null, '/', 'example.com');
+
+        $this->assertFalse($client->cookies()->has('foo'));
+
+        $client->addCookie($cookie);
+        $this->assertTrue($client->cookies()->has('foo'));
+    }
+
+    /**
+     * Test addCookie() method without a domain.
+     *
+     * @return void
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Cookie must have a domain and a path set.
+     */
+    public function testAddCookieWithoutDomain()
+    {
+        $client = new Client();
+        $cookie = new Cookie('foo', '', null, '/', '');
+
+        $this->assertFalse($client->cookies()->has('foo'));
+
+        $client->addCookie($cookie);
+        $this->assertTrue($client->cookies()->has('foo'));
+    }
+
+    /**
+     * Test addCookie() method without a path.
+     *
+     * @return void
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Cookie must have a domain and a path set.
+     */
+    public function testAddCookieWithoutPath()
+    {
+        $client = new Client();
+        $cookie = new Cookie('foo', '', null, '', 'example.com');
 
         $this->assertFalse($client->cookies()->has('foo'));
 
