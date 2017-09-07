@@ -807,13 +807,22 @@ trait EntityTrait
      * Check if property exists in entity even if it is null
      *
      * @param string $property The field to check for existence.
+     * @param bool $alsoCheckForVirtual Check virtual property too?
      * @return bool
      */
-    public function propertyExists($property)
+    public function propertyExists($property, $alsoCheckForVirtual = false)
     {
         $hasProperty = ($this->has($property) || $this->isDirty($property));
-        if (!$hasProperty && array_key_exists($property, $this->_properties)) {
-            return true;
+        if (!$hasProperty) {
+            if (array_key_exists($property, $this->_properties)) {
+                return true;
+            }
+            if ($alsoCheckForVirtual) {
+                $method = static::_accessor($property, 'get');
+                if ($method) {
+                    return true;
+                }
+            }
         }
 
         return $hasProperty;
