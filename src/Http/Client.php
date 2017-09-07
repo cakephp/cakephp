@@ -448,15 +448,20 @@ class Client
             $url .= $q;
             $url .= is_string($query) ? $query : http_build_query($query);
         }
-        if (preg_match('#^https?://#', $url)) {
-            return $url;
-        }
         $defaults = [
             'host' => null,
             'port' => null,
             'scheme' => 'http',
         ];
         $options += $defaults;
+
+        if (preg_match('#^//#', $url)) {
+            $url = $options['scheme'] . ':' . $url;
+        }
+        if (preg_match('#^https?://#', $url)) {
+            return $url;
+        }
+
         $defaultPorts = [
             'http' => 80,
             'https' => 443
