@@ -810,7 +810,7 @@ trait EntityTrait
      */
     public function propertyExists($property)
     {
-        $hasProperty = ($this->has($property) OR $this->isDirty($property));
+        $hasProperty = ($this->has($property) || $this->isDirty($property));
         if (!$hasProperty && array_key_exists($property, $this->_properties)) {
             return true;
         }
