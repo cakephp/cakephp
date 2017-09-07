@@ -785,6 +785,38 @@ trait EntityTrait
     {
         return array_keys($this->_dirty);
     }
+    
+    /**
+     * return value if property exists otherwise throw Exception
+     *
+     * @param string $property
+     * @return mixed
+     */
+    public function getOrFail($property)
+    {
+        $value = $this->get($property);
+        if (!$this->propertyExists($property) && $value === null) {
+            throw new \BadMethodCallException('Property "' . $property . '" not found.');
+        }
+
+        return $value;
+    }
+
+    /**
+     * Check if property exists in entity even if it is null
+     *
+     * @param string $property
+     * @return bool
+     */
+    public function propertyExists($property)
+    {
+        $hasProperty = ($this->has($property) OR $this->isDirty($property));
+        if (!$hasProperty && array_key_exists($property, $this->_properties)) {
+            return true;
+        }
+
+        return $hasProperty;
+    }
 
     /**
      * Sets the entire entity as clean, which means that it will appear as
