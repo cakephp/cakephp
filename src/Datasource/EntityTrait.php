@@ -805,7 +805,7 @@ trait EntityTrait
     /**
      * Check if property exists in entity even if it is null
      *
-     * @param string $property the field to check for existence
+     * @param string $property The field to check for existence.
      * @return bool
      */
     public function propertyExists($property)
