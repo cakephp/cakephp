@@ -796,7 +796,7 @@ trait EntityTrait
     {
         $value = $this->get($property);
         if (!$this->propertyExists($property) && $value === null) {
-            throw new \BadMethodCallException('Property "' . $property . '" not found.');
+            throw new \UnexpectedValueException('Property "' . $property . '" not found.');
         }
 
         return $value;
