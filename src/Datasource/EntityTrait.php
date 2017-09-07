@@ -804,26 +804,23 @@ trait EntityTrait
     }
 
     /**
-     * Check if real or virtual property exists in entity even if it is null
+     * Check if real or virtual property for existence
      *
      * @param string $property The field to check for existence.
      * @return bool
      */
     public function propertyExists($property)
     {
-        $hasProperty = ($this->has($property) || $this->isDirty($property));
-        if (!$hasProperty) {
-            if (array_key_exists($property, $this->_properties)) {
-                return true;
-            }
-
-            $method = static::_accessor($property, 'get');
-            if ($method) {
-                return true;
-            }
+        if (array_key_exists($property, $this->_properties)) {
+            return true;
         }
 
-        return $hasProperty;
+        $method = static::_accessor($property, 'get');
+        if ($method) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
