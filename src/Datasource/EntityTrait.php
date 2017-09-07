@@ -793,7 +793,7 @@ trait EntityTrait
      * @return mixed
      * @throws \InvalidArgumentException if the property name doesn't exist
      */
-    public function getOrFail($property)
+    public function &getOrFail($property)
     {
         $value = $this->get($property);
         if (!$this->propertyExists($property) && $value === null) {
