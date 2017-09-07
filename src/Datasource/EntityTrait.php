@@ -785,11 +785,11 @@ trait EntityTrait
     {
         return array_keys($this->_dirty);
     }
-    
+
     /**
      * return value if property exists otherwise throw Exception
      *
-     * @param string $property
+     * @param string $property the field to get value for
      * @return mixed
      */
     public function getOrFail($property)
@@ -805,7 +805,7 @@ trait EntityTrait
     /**
      * Check if property exists in entity even if it is null
      *
-     * @param string $property
+     * @param string $property the field to check for existence
      * @return bool
      */
     public function propertyExists($property)
