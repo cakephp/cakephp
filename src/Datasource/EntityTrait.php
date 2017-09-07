@@ -791,12 +791,13 @@ trait EntityTrait
      *
      * @param string $property The field to get value for.
      * @return mixed
+     * @throws \InvalidArgumentException if the property name doesn't exist
      */
     public function getOrFail($property)
     {
         $value = $this->get($property);
         if (!$this->propertyExists($property) && $value === null) {
-            throw new \UnexpectedValueException('Property "' . $property . '" not found.');
+            throw new \InvalidArgumentException('Property "' . $property . '" not found.');
         }
 
         return $value;
