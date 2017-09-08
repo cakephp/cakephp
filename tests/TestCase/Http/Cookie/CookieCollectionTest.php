@@ -336,24 +336,29 @@ class CookieCollectionTest extends TestCase
     {
         $collection = new CookieCollection();
         $collection = $collection
+            ->add(new Cookie('default', '1', null, '/', 'example.com'))
             ->add(new Cookie('api', 'A', null, '/api', 'example.com'))
             ->add(new Cookie('blog', 'b', null, '/blog', 'blog.example.com'))
             ->add(new Cookie('expired', 'ex', new DateTime('-2 seconds'), '/', 'example.com'));
         $request = new ClientRequest('http://example.com/api');
         $request = $collection->addToRequest($request);
-        $this->assertSame('api=A', $request->getHeaderLine('Cookie'));
+        $this->assertSame('default=1; api=A', $request->getHeaderLine('Cookie'));
 
         $request = new ClientRequest('http://example.com/');
         $request = $collection->addToRequest($request);
-        $this->assertSame('', $request->getHeaderLine(''));
+        $this->assertSame('default=1', $request->getHeaderLine('Cookie'));
+
+        $request = new ClientRequest('http://example.com');
+        $request = $collection->addToRequest($request);
+        $this->assertSame('default=1', $request->getHeaderLine('Cookie'));
 
         $request = new ClientRequest('http://example.com/blog');
         $request = $collection->addToRequest($request);
-        $this->assertSame('', $request->getHeaderLine('Cookie'), 'domain matching should apply');
+        $this->assertSame('default=1', $request->getHeaderLine('Cookie'), 'domain matching should apply');
 
         $request = new ClientRequest('http://foo.blog.example.com/blog');
         $request = $collection->addToRequest($request);
-        $this->assertSame('blog=b', $request->getHeaderLine('Cookie'));
+        $this->assertSame('default=1; blog=b', $request->getHeaderLine('Cookie'));
     }
 
     /**
