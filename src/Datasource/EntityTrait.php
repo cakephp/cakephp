@@ -796,7 +796,7 @@ trait EntityTrait
     public function &getOrFail($property)
     {
         $value = $this->get($property);
-        if (!$this->propertyExists($property) && $value === null) {
+        if ($value === null && !$this->propertyExists($property)) {
             throw new \InvalidArgumentException('Property "' . $property . '" not found.');
         }
 
