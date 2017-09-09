@@ -816,11 +816,8 @@ trait EntityTrait
         }
 
         $method = static::_accessor($property, 'get');
-        if ($method) {
-            return true;
-        }
-
-        return false;
+        
+        return (bool)$method;
     }
 
     /**
