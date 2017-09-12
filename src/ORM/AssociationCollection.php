@@ -57,6 +57,30 @@ class AssociationCollection implements IteratorAggregate
     }
 
     /**
+     * Creates and adds the Association object to this collection.
+     *
+     * @param string $className The name of association class.
+     * @param string $associated The alias for the target table.
+     * @param array $options List of options to configure the association definition.
+     * @return \Cake\ORM\Association
+     * @throws InvalidArgumentException
+     */
+    public function load($className, $associated, array $options = [])
+    {
+        $options += [
+            'tableLocator' => $this->getTableLocator()
+        ];
+
+        $association = new $className($associated, $options);
+        if (!$association instanceof Association) {
+            $message = sprintf('The association must extend `%s` class, `%s` given.', Association::class, get_class($association));
+            throw new InvalidArgumentException($message);
+        }
+
+        return $this->add($association->getName(), $association);
+    }
+
+    /**
      * Fetch an attached association by name.
      *
      * @param string $alias The association alias to get.

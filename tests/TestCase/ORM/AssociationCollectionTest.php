@@ -18,6 +18,7 @@ use Cake\ORM\AssociationCollection;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Entity;
+use Cake\ORM\Locator\LocatorInterface;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -68,6 +69,47 @@ class AssociationCollectionTest extends TestCase
         $this->assertFalse($this->associations->has('Users'));
         $this->assertNull($this->associations->get('users'));
         $this->assertNull($this->associations->get('Users'));
+    }
+
+    /**
+     * Test the load method.
+     *
+     * @return void
+     */
+    public function testLoad()
+    {
+        $this->associations->load(BelongsTo::class, 'Users');
+        $this->assertTrue($this->associations->has('Users'));
+        $this->assertInstanceOf(BelongsTo::class, $this->associations->get('Users'));
+        $this->assertSame($this->associations->getTableLocator(), $this->associations->get('Users')->getTableLocator());
+    }
+
+    /**
+     * Test the load method with custom locator.
+     *
+     * @return void
+     */
+    public function testLoadCustomLocator()
+    {
+        $locator = $this->createMock(LocatorInterface::class);
+        $this->associations->load(BelongsTo::class, 'Users', [
+            'tableLocator' => $locator
+        ]);
+        $this->assertTrue($this->associations->has('Users'));
+        $this->assertInstanceOf(BelongsTo::class, $this->associations->get('Users'));
+        $this->assertSame($locator, $this->associations->get('Users')->getTableLocator());
+    }
+
+    /**
+     * Test load invalid class.
+     *
+     * @return void
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage The association must extend `Cake\ORM\Association` class, `stdClass` given.
+     */
+    public function testLoadInvalid()
+    {
+        $this->associations->load('stdClass', 'Users');
     }
 
     /**
