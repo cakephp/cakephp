@@ -530,7 +530,6 @@ class TableTest extends TestCase
         $this->assertEquals($options, $table->getOptions());
     }
 
-
     /**
      * Test the options method.
      *
@@ -539,6 +538,7 @@ class TableTest extends TestCase
      */
     public function testOptionsDeprecated()
     {
+        $errorLevel = error_reporting(E_ALL & ~E_USER_DEPRECATED);
         $table = new Table('articles');
         $options = [
             'engine' => 'InnoDB'
@@ -546,6 +546,7 @@ class TableTest extends TestCase
         $return = $table->options($options);
         $this->assertInstanceOf('Cake\Database\Schema\Table', $return);
         $this->assertEquals($options, $table->options());
+        error_reporting($errorLevel);
     }
 
     /**

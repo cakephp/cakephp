@@ -421,9 +421,9 @@ SQL;
                 'delete' => 'restrict',
             ]
         ];
-        $this->assertEquals($expected['primary'], $result->constraint('primary'));
-        $this->assertEquals($expected['length_idx'], $result->constraint('length_idx'));
-        $this->assertEquals($expected['schema_articles_ibfk_1'], $result->constraint('schema_articles_ibfk_1'));
+        $this->assertEquals($expected['primary'], $result->getConstraint('primary'));
+        $this->assertEquals($expected['length_idx'], $result->getConstraint('length_idx'));
+        $this->assertEquals($expected['schema_articles_ibfk_1'], $result->getConstraint('schema_articles_ibfk_1'));
 
         $this->assertCount(1, $result->indexes());
         $expected = [
@@ -431,7 +431,7 @@ SQL;
             'columns' => ['author_id'],
             'length' => []
         ];
-        $this->assertEquals($expected, $result->index('author_idx'));
+        $this->assertEquals($expected, $result->getIndex('author_idx'));
     }
 
     /**
@@ -446,8 +446,8 @@ SQL;
 
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_articles');
-        $this->assertArrayHasKey('engine', $result->options());
-        $this->assertArrayHasKey('collation', $result->options());
+        $this->assertArrayHasKey('engine', $result->getOptions());
+        $this->assertArrayHasKey('collation', $result->getOptions());
     }
 
     public function testDescribeNonPrimaryAutoIncrement()
@@ -1293,7 +1293,7 @@ SQL;
         ];
         $this->assertEquals(
             $expected,
-            $result->column('data'),
+            $result->getColumn('data'),
             'Field definition does not match for data'
         );
     }
