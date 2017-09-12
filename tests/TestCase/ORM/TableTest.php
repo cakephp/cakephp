@@ -30,6 +30,8 @@ use Cake\ORM\AssociationCollection;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Entity;
+use Cake\ORM\Locator\LocatorInterface;
+use Cake\ORM\Locator\TableLocator;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\SaveOptionsBuilder;
@@ -207,6 +209,18 @@ class TableTest extends TestCase
         $this->assertNull($table->connection());
         $table->connection($this->connection);
         $this->assertSame($this->connection, $table->connection());
+    }
+
+    /**
+     * Tests tableLocator option
+     *
+     * @return void
+     */
+    public function testTableLocator()
+    {
+        $locator = $this->createMock(LocatorInterface::class);
+        $table = new Table(['tableLocator' => $locator]);
+        $this->assertSame($locator, $table->getTableLocator());
     }
 
     /**
@@ -517,8 +531,9 @@ class TableTest extends TestCase
      */
     public function testBelongsTo()
     {
+        $locator = $this->createMock(LocatorInterface::class);
         $options = ['foreignKey' => 'fake_id', 'conditions' => ['a' => 'b']];
-        $table = new Table(['table' => 'dates']);
+        $table = new Table(['table' => 'dates', 'tableLocator' => $locator]);
         $belongsTo = $table->belongsTo('user', $options);
         $this->assertInstanceOf('Cake\ORM\Association\BelongsTo', $belongsTo);
         $this->assertSame($belongsTo, $table->association('user'));
@@ -526,6 +541,7 @@ class TableTest extends TestCase
         $this->assertEquals('fake_id', $belongsTo->foreignKey());
         $this->assertEquals(['a' => 'b'], $belongsTo->conditions());
         $this->assertSame($table, $belongsTo->source());
+        $this->assertSame($locator, $belongsTo->getTableLocator());
     }
 
     /**
@@ -535,8 +551,9 @@ class TableTest extends TestCase
      */
     public function testHasOne()
     {
+        $locator = $this->createMock(LocatorInterface::class);
         $options = ['foreignKey' => 'user_id', 'conditions' => ['b' => 'c']];
-        $table = new Table(['table' => 'users']);
+        $table = new Table(['table' => 'users', 'tableLocator' => $locator]);
         $hasOne = $table->hasOne('profile', $options);
         $this->assertInstanceOf('Cake\ORM\Association\HasOne', $hasOne);
         $this->assertSame($hasOne, $table->association('profile'));
@@ -544,6 +561,7 @@ class TableTest extends TestCase
         $this->assertEquals('user_id', $hasOne->foreignKey());
         $this->assertEquals(['b' => 'c'], $hasOne->conditions());
         $this->assertSame($table, $hasOne->source());
+        $this->assertSame($locator, $hasOne->getTableLocator());
     }
 
     /**
@@ -662,12 +680,13 @@ class TableTest extends TestCase
      */
     public function testHasMany()
     {
+        $locator = $this->createMock(LocatorInterface::class);
         $options = [
             'foreignKey' => 'author_id',
             'conditions' => ['b' => 'c'],
             'sort' => ['foo' => 'asc']
         ];
-        $table = new Table(['table' => 'authors']);
+        $table = new Table(['table' => 'authors', 'tableLocator' => $locator]);
         $hasMany = $table->hasMany('article', $options);
         $this->assertInstanceOf('Cake\ORM\Association\HasMany', $hasMany);
         $this->assertSame($hasMany, $table->association('article'));
@@ -676,6 +695,7 @@ class TableTest extends TestCase
         $this->assertEquals(['b' => 'c'], $hasMany->conditions());
         $this->assertEquals(['foo' => 'asc'], $hasMany->sort());
         $this->assertSame($table, $hasMany->source());
+        $this->assertSame($locator, $hasMany->getTableLocator());
     }
 
     /**
@@ -779,13 +799,18 @@ class TableTest extends TestCase
      */
     public function testBelongsToMany()
     {
+        $locator = new TableLocator();
         $options = [
             'foreignKey' => 'thing_id',
             'joinTable' => 'things_tags',
             'conditions' => ['b' => 'c'],
             'sort' => ['foo' => 'asc']
         ];
-        $table = new Table(['table' => 'authors', 'connection' => $this->connection]);
+        $table = new Table([
+            'table' => 'authors',
+            'connection' => $this->connection,
+            'tableLocator' => $locator
+        ]);
         $belongsToMany = $table->belongsToMany('tag', $options);
         $this->assertInstanceOf('Cake\ORM\Association\BelongsToMany', $belongsToMany);
         $this->assertSame($belongsToMany, $table->association('tag'));
@@ -795,6 +820,7 @@ class TableTest extends TestCase
         $this->assertEquals(['foo' => 'asc'], $belongsToMany->sort());
         $this->assertSame($table, $belongsToMany->source());
         $this->assertSame('things_tags', $belongsToMany->junction()->table());
+        $this->assertSame($locator, $belongsToMany->getTableLocator());
     }
 
     /**

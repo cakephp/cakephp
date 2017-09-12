@@ -211,6 +211,9 @@ class TableLocator implements LocatorInterface
             }
             $options['connection'] = ConnectionManager::get($connectionName);
         }
+        if (empty($options['tableLocator'])) {
+            $options['tableLocator'] = $this;
+        }
 
         $options['registryAlias'] = $alias;
         $this->_instances[$alias] = $this->_create($options);

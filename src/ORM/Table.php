@@ -35,6 +35,7 @@ use Cake\ORM\Association\HasOne;
 use Cake\ORM\Exception\MissingEntityException;
 use Cake\ORM\Exception\PersistenceFailedException;
 use Cake\ORM\Exception\RolledbackTransactionException;
+use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Rule\IsUnique;
 use Cake\Utility\Inflector;
 use Cake\Validation\ValidatorAwareInterface;
@@ -128,6 +129,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 {
 
     use EventDispatcherTrait;
+    use LocatorAwareTrait;
     use RulesAwareTrait;
     use ValidatorAwareTrait;
 
@@ -282,6 +284,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                     $this->setValidator($name, $validator);
                 }
             }
+        }
+        if (!empty($config['tableLocator'])) {
+            $this->setTableLocator($config['tableLocator']);
         }
         $this->_eventManager = $eventManager ?: new EventManager();
         $this->_behaviors = $behaviors ?: new BehaviorRegistry();
@@ -966,7 +971,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function belongsTo($associated, array $options = [])
     {
-        $options += ['sourceTable' => $this];
+        $options += [
+            'sourceTable' => $this,
+            'tableLocator' => $this->getTableLocator()
+        ];
         $association = new BelongsTo($associated, $options);
 
         return $this->_associations->add($association->getName(), $association);
@@ -1010,7 +1018,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function hasOne($associated, array $options = [])
     {
-        $options += ['sourceTable' => $this];
+        $options += [
+            'sourceTable' => $this,
+            'tableLocator' => $this->getTableLocator()
+        ];
         $association = new HasOne($associated, $options);
 
         return $this->_associations->add($association->getName(), $association);
@@ -1060,7 +1071,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function hasMany($associated, array $options = [])
     {
-        $options += ['sourceTable' => $this];
+        $options += [
+            'sourceTable' => $this,
+            'tableLocator' => $this->getTableLocator()
+        ];
         $association = new HasMany($associated, $options);
 
         return $this->_associations->add($association->getName(), $association);
@@ -1112,7 +1126,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function belongsToMany($associated, array $options = [])
     {
-        $options += ['sourceTable' => $this];
+        $options += [
+            'sourceTable' => $this,
+            'tableLocator' => $this->getTableLocator()
+        ];
         $association = new BelongsToMany($associated, $options);
 
         return $this->_associations->add($association->getName(), $association);
