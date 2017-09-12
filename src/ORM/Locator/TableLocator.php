@@ -16,6 +16,7 @@ namespace Cake\ORM\Locator;
 
 use Cake\Core\App;
 use Cake\Datasource\ConnectionManager;
+use Cake\ORM\AssociationCollection;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 use RuntimeException;
@@ -210,6 +211,11 @@ class TableLocator implements LocatorInterface
                 $connectionName = $className::defaultConnectionName();
             }
             $options['connection'] = ConnectionManager::get($connectionName);
+        }
+        if (empty($options['associations'])) {
+            $associations = new AssociationCollection();
+            $associations->setTableLocator($this);
+            $options['associations'] = $associations;
         }
 
         $options['registryAlias'] = $alias;

@@ -16,6 +16,7 @@ namespace Cake\ORM;
 
 use ArrayIterator;
 use Cake\Datasource\EntityInterface;
+use Cake\ORM\Locator\LocatorAwareTrait;
 use InvalidArgumentException;
 use IteratorAggregate;
 
@@ -29,6 +30,7 @@ class AssociationCollection implements IteratorAggregate
 {
 
     use AssociationsNormalizerTrait;
+    use LocatorAwareTrait;
 
     /**
      * Stored associations
