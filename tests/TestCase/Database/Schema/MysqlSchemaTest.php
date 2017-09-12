@@ -378,7 +378,7 @@ SQL;
         foreach ($expected as $field => $definition) {
             $this->assertEquals(
                 $definition,
-                $result->column($field),
+                $result->getColumn($field),
                 'Field definition does not match for ' . $field
             );
         }
@@ -468,11 +468,11 @@ SQL;
         $table = $schema->describe('odd_primary_key');
         $connection->execute('DROP TABLE odd_primary_key');
 
-        $column = $table->column('id');
+        $column = $table->getColumn('id');
         $this->assertNull($column['autoIncrement'], 'should not autoincrement');
         $this->assertTrue($column['unsigned'], 'should be unsigned');
 
-        $column = $table->column('other_field');
+        $column = $table->getColumn('other_field');
         $this->assertTrue($column['autoIncrement'], 'should not autoincrement');
         $this->assertFalse($column['unsigned'], 'should not be unsigned');
 
@@ -1057,7 +1057,7 @@ SQL;
                 'type' => 'primary',
                 'columns' => ['id']
             ])
-            ->options([
+            ->setOptions([
                 'engine' => 'InnoDB',
                 'charset' => 'utf8',
                 'collate' => 'utf8_general_ci',
@@ -1110,7 +1110,7 @@ SQL;
                 'type' => 'primary',
                 'columns' => ['id']
             ])
-            ->options([
+            ->setOptions([
                 'engine' => 'InnoDB',
                 'charset' => 'utf8',
                 'collate' => 'utf8_general_ci',

@@ -371,7 +371,7 @@ SQL;
         $this->assertInstanceOf('Cake\Database\Schema\Table', $result);
         $this->assertEquals(['id'], $result->primaryKey());
         foreach ($expected as $field => $definition) {
-            $this->assertEquals($definition, $result->column($field));
+            $this->assertEquals($definition, $result->getColumn($field));
         }
     }
 
@@ -391,8 +391,8 @@ SQL;
         $result = $schema->describe('schema_composite');
 
         $this->assertEquals(['id', 'site_id'], $result->primaryKey());
-        $this->assertNull($result->column('site_id')['autoIncrement'], 'site_id should not be autoincrement');
-        $this->assertNull($result->column('id')['autoIncrement'], 'id should not be autoincrement');
+        $this->assertNull($result->getColumn('site_id')['autoIncrement'], 'site_id should not be autoincrement');
+        $this->assertNull($result->getColumn('id')['autoIncrement'], 'id should not be autoincrement');
     }
 
     /**
@@ -429,14 +429,14 @@ SQL;
             ]
         ];
         $this->assertCount(3, $result->constraints());
-        $this->assertEquals($expected['primary'], $result->constraint('primary'));
+        $this->assertEquals($expected['primary'], $result->getConstraint('primary'));
         $this->assertEquals(
             $expected['sqlite_autoindex_schema_articles_1'],
-            $result->constraint('sqlite_autoindex_schema_articles_1')
+            $result->getConstraint('sqlite_autoindex_schema_articles_1')
         );
         $this->assertEquals(
             $expected['author_id_fk'],
-            $result->constraint('author_id_fk')
+            $result->getConstraint('author_id_fk')
         );
 
         $this->assertCount(1, $result->indexes());
@@ -445,7 +445,7 @@ SQL;
             'columns' => ['created'],
             'length' => []
         ];
-        $this->assertEquals($expected, $result->index('created_idx'));
+        $this->assertEquals($expected, $result->getIndex('created_idx'));
     }
 
     /**

@@ -689,7 +689,7 @@ class EntityContextTest extends TestCase
     public function testValSchemaDefault()
     {
         $table = TableRegistry::get('Articles');
-        $column = $table->schema()->column('title');
+        $column = $table->schema()->getColumn('title');
         $table->schema()->addColumn('title', ['default' => 'default title'] + $column);
         $row = $table->newEntity();
 

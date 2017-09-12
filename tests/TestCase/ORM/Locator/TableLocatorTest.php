@@ -412,7 +412,7 @@ class TableLocatorTest extends TestCase
         $this->assertEquals('users', $table->alias());
         $this->assertSame($connection, $table->connection());
         $this->assertEquals(array_keys($schema), $table->schema()->columns());
-        $this->assertEquals($schema['id']['type'], $table->schema()->column('id')['type']);
+        $this->assertEquals($schema['id']['type'], $table->schema()->getColumnType('id'));
 
         $this->_locator->clear();
         $this->assertEmpty($this->_locator->config());
@@ -424,7 +424,7 @@ class TableLocatorTest extends TestCase
         $this->assertEquals('users', $table->alias());
         $this->assertSame($connection, $table->connection());
         $this->assertEquals(array_keys($schema), $table->schema()->columns());
-        $this->assertEquals($schema['id']['type'], $table->schema()->column('id')['type']);
+        $this->assertEquals($schema['id']['type'], $table->schema()->getColumnType('id'));
     }
 
     /**
