@@ -213,8 +213,7 @@ class TableLocator implements LocatorInterface
             $options['connection'] = ConnectionManager::get($connectionName);
         }
         if (empty($options['associations'])) {
-            $associations = new AssociationCollection();
-            $associations->setTableLocator($this);
+            $associations = new AssociationCollection($this);
             $options['associations'] = $associations;
         }
 
