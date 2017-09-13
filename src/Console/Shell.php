@@ -508,6 +508,7 @@ class Shell
             return $this->main(...$this->args);
         }
 
+        $this->err('No subcommand provided. Choose one of the available subcommands.', 2);
         $this->out($this->OptionParser->help($command));
 
         return false;
