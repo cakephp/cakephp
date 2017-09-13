@@ -139,12 +139,24 @@ class ClientTest extends TestCase
             ],
             [
                 'http://example.com/test.html',
+                '//test.html',
+                [],
+                [
+                    'scheme' => 'http',
+                    'host' => 'example.com',
+                    'protocolRelative' => false
+                ],
+                'url with a double slash',
+            ],
+            [
+                'http://example.com/test.html',
                 '//example.com/test.html',
                 [],
                 [
-                    'scheme' => 'http'
+                    'scheme' => 'http',
+                    'protocolRelative' => true
                 ],
-                'url without a scheme',
+                'protocol relative url',
             ],
         ];
     }

@@ -402,7 +402,8 @@ class Client
                 $locationUrl = $this->buildUrl($location, [], [
                     'host' => $url->getHost(),
                     'port' => $url->getPort(),
-                    'scheme' => $url->getScheme()
+                    'scheme' => $url->getScheme(),
+                    'protocolRelative' => true
                 ]);
 
                 $request = $request->withUri(new Uri($locationUrl));
@@ -452,10 +453,11 @@ class Client
             'host' => null,
             'port' => null,
             'scheme' => 'http',
+            'protocolRelative' => false
         ];
         $options += $defaults;
 
-        if (preg_match('#^//#', $url)) {
+        if ($options['protocolRelative'] && preg_match('#^//#', $url)) {
             $url = $options['scheme'] . ':' . $url;
         }
         if (preg_match('#^https?://#', $url)) {
