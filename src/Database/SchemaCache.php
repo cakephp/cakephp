@@ -15,7 +15,7 @@
 namespace Cake\Database;
 
 use Cake\Cache\Cache;
-use Cake\Datasource\ConnectionInterface;
+use Cake\Database\Connection;
 use Cake\Datasource\ConnectionManager;
 use InvalidArgumentException;
 use RuntimeException;
@@ -93,10 +93,10 @@ class SchemaCache
     /**
      * Helper method to get the schema collection.
      *
-     * @param \Cake\Datasource\ConnectionInterface $connection Connection object
+     * @param \Cake\Database\Connection $connection Connection object
      * @return \Cake\Database\Schema\Collection|\Cake\Database\Schema\CachedCollection
      */
-    public function getSchema(ConnectionInterface $connection)
+    public function getSchema(Connection $connection)
     {
         if (!method_exists($connection, 'schemaCollection')) {
             throw new RuntimeException('The given connection object is not compatible with schema caching, as it does not implement a "schemaCollection()" method.');
