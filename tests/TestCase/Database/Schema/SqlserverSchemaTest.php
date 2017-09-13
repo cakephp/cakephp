@@ -408,7 +408,7 @@ SQL;
         ];
         $this->assertEquals(['id'], $result->primaryKey());
         foreach ($expected as $field => $definition) {
-            $this->assertEquals($definition, $result->column($field), 'Failed to match field ' . $field);
+            $this->assertEquals($definition, $result->getColumn($field), 'Failed to match field ' . $field);
         }
     }
 
@@ -435,8 +435,8 @@ SQL;
         $connection->execute('DROP TABLE schema_composite');
 
         $this->assertEquals(['id', 'site_id'], $result->primaryKey());
-        $this->assertNull($result->column('site_id')['autoIncrement'], 'site_id should not be autoincrement');
-        $this->assertTrue($result->column('id')['autoIncrement'], 'id should be autoincrement');
+        $this->assertNull($result->getColumn('site_id')['autoIncrement'], 'site_id should not be autoincrement');
+        $this->assertTrue($result->getColumn('id')['autoIncrement'], 'id should be autoincrement');
     }
 
     /**
@@ -489,9 +489,9 @@ SQL;
                 'delete' => 'cascade',
             ]
         ];
-        $this->assertEquals($expected['primary'], $result->constraint('primary'));
-        $this->assertEquals($expected['content_idx'], $result->constraint('content_idx'));
-        $this->assertEquals($expected['author_idx'], $result->constraint('author_idx'));
+        $this->assertEquals($expected['primary'], $result->getConstraint('primary'));
+        $this->assertEquals($expected['content_idx'], $result->getConstraint('content_idx'));
+        $this->assertEquals($expected['author_idx'], $result->getConstraint('author_idx'));
 
         $this->assertCount(1, $result->indexes());
         $expected = [
@@ -499,7 +499,7 @@ SQL;
             'columns' => ['author_id'],
             'length' => []
         ];
-        $this->assertEquals($expected, $result->index('author_idx'));
+        $this->assertEquals($expected, $result->getIndex('author_idx'));
     }
 
     /**

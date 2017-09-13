@@ -378,7 +378,7 @@ SQL;
         foreach ($expected as $field => $definition) {
             $this->assertEquals(
                 $definition,
-                $result->column($field),
+                $result->getColumn($field),
                 'Field definition does not match for ' . $field
             );
         }
@@ -421,9 +421,9 @@ SQL;
                 'delete' => 'restrict',
             ]
         ];
-        $this->assertEquals($expected['primary'], $result->constraint('primary'));
-        $this->assertEquals($expected['length_idx'], $result->constraint('length_idx'));
-        $this->assertEquals($expected['schema_articles_ibfk_1'], $result->constraint('schema_articles_ibfk_1'));
+        $this->assertEquals($expected['primary'], $result->getConstraint('primary'));
+        $this->assertEquals($expected['length_idx'], $result->getConstraint('length_idx'));
+        $this->assertEquals($expected['schema_articles_ibfk_1'], $result->getConstraint('schema_articles_ibfk_1'));
 
         $this->assertCount(1, $result->indexes());
         $expected = [
@@ -431,7 +431,7 @@ SQL;
             'columns' => ['author_id'],
             'length' => []
         ];
-        $this->assertEquals($expected, $result->index('author_idx'));
+        $this->assertEquals($expected, $result->getIndex('author_idx'));
     }
 
     /**
@@ -446,8 +446,8 @@ SQL;
 
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_articles');
-        $this->assertArrayHasKey('engine', $result->options());
-        $this->assertArrayHasKey('collation', $result->options());
+        $this->assertArrayHasKey('engine', $result->getOptions());
+        $this->assertArrayHasKey('collation', $result->getOptions());
     }
 
     public function testDescribeNonPrimaryAutoIncrement()
@@ -468,11 +468,11 @@ SQL;
         $table = $schema->describe('odd_primary_key');
         $connection->execute('DROP TABLE odd_primary_key');
 
-        $column = $table->column('id');
+        $column = $table->getColumn('id');
         $this->assertNull($column['autoIncrement'], 'should not autoincrement');
         $this->assertTrue($column['unsigned'], 'should be unsigned');
 
-        $column = $table->column('other_field');
+        $column = $table->getColumn('other_field');
         $this->assertTrue($column['autoIncrement'], 'should not autoincrement');
         $this->assertFalse($column['unsigned'], 'should not be unsigned');
 
@@ -1057,7 +1057,7 @@ SQL;
                 'type' => 'primary',
                 'columns' => ['id']
             ])
-            ->options([
+            ->setOptions([
                 'engine' => 'InnoDB',
                 'charset' => 'utf8',
                 'collate' => 'utf8_general_ci',
@@ -1110,7 +1110,7 @@ SQL;
                 'type' => 'primary',
                 'columns' => ['id']
             ])
-            ->options([
+            ->setOptions([
                 'engine' => 'InnoDB',
                 'charset' => 'utf8',
                 'collate' => 'utf8_general_ci',
@@ -1293,7 +1293,7 @@ SQL;
         ];
         $this->assertEquals(
             $expected,
-            $result->column('data'),
+            $result->getColumn('data'),
             'Field definition does not match for data'
         );
     }

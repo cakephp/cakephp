@@ -136,7 +136,7 @@ class TableTest extends TestCase
 
         $this->assertSame($table, $result);
         $this->assertEquals([], $table->columns());
-        $this->assertNull($table->column('title'));
+        $this->assertNull($table->getColumn('title'));
         $this->assertSame([], $table->typeMap());
     }
 
@@ -175,16 +175,16 @@ class TableTest extends TestCase
             'length' => 25,
             'null' => false
         ]);
-        $this->assertEquals('string', $table->columnType('title'));
-        $this->assertNull($table->columnType('not there'));
+        $this->assertEquals('string', $table->getColumnType('title'));
+        $this->assertNull($table->getColumnType('not there'));
     }
 
     /**
-     * Test columnType setter method
+     * Test setColumnType setter method
      *
      * @return void
      */
-    public function testColumnTypeSet()
+    public function testSetColumnType()
     {
         $table = new Table('articles');
         $table->addColumn('title', [
@@ -192,9 +192,9 @@ class TableTest extends TestCase
             'length' => 25,
             'null' => false
         ]);
-        $this->assertEquals('string', $table->columnType('title'));
-        $table->columnType('title', 'json');
-        $this->assertEquals('json', $table->columnType('title'));
+        $this->assertEquals('string', $table->getColumnType('title'));
+        $table->setColumnType('title', 'json');
+        $this->assertEquals('json', $table->getColumnType('title'));
     }
 
     /**
@@ -211,7 +211,7 @@ class TableTest extends TestCase
             'length' => 25,
             'null' => false
         ]);
-        $this->assertEquals('json', $table->columnType('title'));
+        $this->assertEquals('json', $table->getColumnType('title'));
         $this->assertEquals('text', $table->baseColumnType('title'));
     }
 
@@ -228,7 +228,7 @@ class TableTest extends TestCase
             'type' => 'foo',
             'null' => false
         ]);
-        $this->assertEquals('foo', $table->columnType('thing'));
+        $this->assertEquals('foo', $table->getColumnType('thing'));
         $this->assertEquals('integer', $table->baseColumnType('thing'));
     }
 
@@ -243,7 +243,7 @@ class TableTest extends TestCase
         $table->addColumn('title', [
             'type' => 'string'
         ]);
-        $result = $table->column('title');
+        $result = $table->getColumn('title');
         $expected = [
             'type' => 'string',
             'length' => null,
@@ -259,7 +259,7 @@ class TableTest extends TestCase
         $table->addColumn('author_id', [
             'type' => 'integer'
         ]);
-        $result = $table->column('author_id');
+        $result = $table->getColumn('author_id');
         $expected = [
             'type' => 'integer',
             'length' => null,
@@ -275,7 +275,7 @@ class TableTest extends TestCase
         $table->addColumn('amount', [
             'type' => 'decimal'
         ]);
-        $result = $table->column('amount');
+        $result = $table->getColumn('amount');
         $expected = [
             'type' => 'decimal',
             'length' => null,
@@ -525,9 +525,28 @@ class TableTest extends TestCase
         $options = [
             'engine' => 'InnoDB'
         ];
+        $return = $table->setOptions($options);
+        $this->assertInstanceOf('Cake\Database\Schema\Table', $return);
+        $this->assertEquals($options, $table->getOptions());
+    }
+
+    /**
+     * Test the options method.
+     *
+     * @group deprecated
+     * @return void
+     */
+    public function testOptionsDeprecated()
+    {
+        $errorLevel = error_reporting(E_ALL & ~E_USER_DEPRECATED);
+        $table = new Table('articles');
+        $options = [
+            'engine' => 'InnoDB'
+        ];
         $return = $table->options($options);
         $this->assertInstanceOf('Cake\Database\Schema\Table', $return);
         $this->assertEquals($options, $table->options());
+        error_reporting($errorLevel);
     }
 
     /**
@@ -557,7 +576,7 @@ class TableTest extends TestCase
     public function testConstraintForeignKey()
     {
         $table = TableRegistry::get('ArticlesTags');
-        $compositeConstraint = $table->schema()->constraint('tag_id_fk');
+        $compositeConstraint = $table->schema()->getConstraint('tag_id_fk');
         $expected = [
             'type' => 'foreign',
             'columns' => ['tag_id'],
@@ -581,7 +600,7 @@ class TableTest extends TestCase
     public function testConstraintForeignKeyTwoColumns()
     {
         $table = TableRegistry::get('Orders');
-        $compositeConstraint = $table->schema()->constraint('product_category_fk');
+        $compositeConstraint = $table->schema()->getConstraint('product_category_fk');
         $expected = [
             'type' => 'foreign',
             'columns' => [

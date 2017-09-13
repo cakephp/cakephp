@@ -405,7 +405,7 @@ SQL;
         ];
         $this->assertEquals(['id'], $result->primaryKey());
         foreach ($expected as $field => $definition) {
-            $this->assertEquals($definition, $result->column($field));
+            $this->assertEquals($definition, $result->getColumn($field));
         }
     }
 
@@ -432,8 +432,8 @@ SQL;
         $connection->execute('DROP TABLE schema_composite');
 
         $this->assertEquals(['id', 'site_id'], $result->primaryKey());
-        $this->assertTrue($result->column('id')['autoIncrement'], 'id should be autoincrement');
-        $this->assertNull($result->column('site_id')['autoIncrement'], 'site_id should not be autoincrement');
+        $this->assertTrue($result->getColumn('id')['autoIncrement'], 'id should be autoincrement');
+        $this->assertNull($result->getColumn('site_id')['autoIncrement'], 'site_id should not be autoincrement');
     }
 
     /**
@@ -498,7 +498,7 @@ SQL;
         ];
         $this->assertEquals(['id'], $result->primaryKey());
         foreach ($expected as $field => $definition) {
-            $this->assertEquals($definition, $result->column($field), "Mismatch in $field column");
+            $this->assertEquals($definition, $result->getColumn($field), "Mismatch in $field column");
         }
     }
 
@@ -528,8 +528,8 @@ SQL;
             ]
         ];
         $this->assertCount(2, $result->constraints());
-        $this->assertEquals($expected['primary'], $result->constraint('primary'));
-        $this->assertEquals($expected['unique_position'], $result->constraint('unique_position'));
+        $this->assertEquals($expected['primary'], $result->getConstraint('primary'));
+        $this->assertEquals($expected['unique_position'], $result->getConstraint('unique_position'));
     }
 
     /**
@@ -578,9 +578,9 @@ SQL;
                 'delete' => 'restrict',
             ]
         ];
-        $this->assertEquals($expected['primary'], $result->constraint('primary'));
-        $this->assertEquals($expected['content_idx'], $result->constraint('content_idx'));
-        $this->assertEquals($expected['author_idx'], $result->constraint('author_idx'));
+        $this->assertEquals($expected['primary'], $result->getConstraint('primary'));
+        $this->assertEquals($expected['content_idx'], $result->getConstraint('content_idx'));
+        $this->assertEquals($expected['author_idx'], $result->getConstraint('author_idx'));
 
         $this->assertCount(1, $result->indexes());
         $expected = [
@@ -588,7 +588,7 @@ SQL;
             'columns' => ['author_id'],
             'length' => []
         ];
-        $this->assertEquals($expected, $result->index('author_idx'));
+        $this->assertEquals($expected, $result->getIndex('author_idx'));
     }
 
     /**
@@ -631,7 +631,7 @@ SQL;
             'columns' => ['group_id', 'grade'],
             'length' => []
         ];
-        $this->assertEquals($expected, $result->index('schema_index_nulls'));
+        $this->assertEquals($expected, $result->getIndex('schema_index_nulls'));
         $connection->execute('DROP TABLE schema_index');
     }
 

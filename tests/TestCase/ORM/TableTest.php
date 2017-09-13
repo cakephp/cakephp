@@ -346,12 +346,12 @@ class TableTest extends TestCase
             ->method('_initializeSchema')
             ->with($schema)
             ->will($this->returnCallback(function ($schema) {
-                $schema->columnType('username', 'integer');
+                $schema->setColumnType('username', 'integer');
 
                 return $schema;
             }));
         $result = $table->schema();
-        $schema->columnType('username', 'integer');
+        $schema->setColumnType('username', 'integer');
         $this->assertEquals($schema, $result);
         $this->assertEquals($schema, $table->schema(), '_initializeSchema should be called once');
     }

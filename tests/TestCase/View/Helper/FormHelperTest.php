@@ -4379,7 +4379,7 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $Articles = TableRegistry::get('Articles');
-        $title = $Articles->schema()->column('title');
+        $title = $Articles->schema()->getColumn('title');
         $Articles->schema()->addColumn(
             'title',
             ['default' => 'default title'] + $title
@@ -4714,7 +4714,7 @@ class FormHelperTest extends TestCase
     public function testRadioDefaultValue()
     {
         $Articles = TableRegistry::get('Articles');
-        $title = $Articles->schema()->column('title');
+        $title = $Articles->schema()->getColumn('title');
         $Articles->schema()->addColumn(
             'title',
             ['default' => '1'] + $title
