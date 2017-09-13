@@ -23,6 +23,7 @@ use Cake\Core\ConsoleApplicationInterface;
 use Cake\Event\EventManagerTrait;
 use Cake\Shell\HelpShell;
 use Cake\Shell\VersionShell;
+use Cake\Utility\Inflector;
 use RuntimeException;
 
 /**
@@ -168,6 +169,9 @@ class CommandRunner
         }
         if (isset($this->aliases[$name])) {
             $name = $this->aliases[$name];
+        }
+        if (!$commands->has($name)) {
+            $name = Inflector::underscore($name);
         }
         if (!$commands->has($name)) {
             throw new RuntimeException(
