@@ -33,7 +33,7 @@ use ReflectionMethod;
  *
  * Is the equivalent of Cake\Controller\Controller on the command line.
  *
- * @method int main()
+ * @method int|bool main()
  */
 class Shell
 {
