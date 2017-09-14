@@ -137,6 +137,27 @@ class ClientTest extends TestCase
                 [],
                 'query string data with some already on the url.'
             ],
+            [
+                'http://example.com/test.html',
+                '//test.html',
+                [],
+                [
+                    'scheme' => 'http',
+                    'host' => 'example.com',
+                    'protocolRelative' => false
+                ],
+                'url with a double slash',
+            ],
+            [
+                'http://example.com/test.html',
+                '//example.com/test.html',
+                [],
+                [
+                    'scheme' => 'http',
+                    'protocolRelative' => true
+                ],
+                'protocol relative url',
+            ],
         ];
     }
 
