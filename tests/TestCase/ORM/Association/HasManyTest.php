@@ -461,7 +461,7 @@ class HasManyTest extends TestCase
             ->method('deleteAll')
             ->with([
                 'Articles.is_active' => true,
-                'author_id' => 1
+                'Articles.author_id' => 1
             ]);
 
         $entity = new Entity(['id' => 1, 'name' => 'PHP']);
