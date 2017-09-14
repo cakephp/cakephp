@@ -380,9 +380,10 @@ class FileEngine extends CacheEngine
         }
         $dir = $this->_config['path'] . $groups;
 
-        if (!is_dir($dir)) {
-            mkdir($dir, 0775, true);
-        }
+        // @codingStandardsIgnoreStart
+        @mkdir($dir, 0775, true);
+        // @codingStandardsIgnoreEnd
+
         $path = new SplFileInfo($dir . $key);
 
         if (!$createKey && !$path->isFile()) {
