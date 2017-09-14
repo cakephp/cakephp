@@ -48,7 +48,7 @@ class RoutingMiddleware
     }
 
     /**
-     * Trigger the application's routes() hook if the application exists.
+     * Trigger the application's routes() hook if the application exists and Router isn't initialized.
      *
      * If the middleware is created without an Application, routes will be
      * loaded via the automatic route loading that pre-dates the routes() hook.
@@ -57,7 +57,7 @@ class RoutingMiddleware
      */
     protected function loadRoutes()
     {
-        if ($this->app) {
+        if ($this->app && !Router::$initialized) {
             $builder = Router::createRouteBuilder('/');
             $this->app->routes($builder);
             // Prevent routes from being loaded again

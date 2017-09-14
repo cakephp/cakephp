@@ -14,16 +14,15 @@
  */
 namespace Cake\Test\TestCase\Shell;
 
-use Cake\Console\ConsoleIo;
+use Cake\Console\Shell;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\TestSuite\Stub\ConsoleOutput;
-use Cake\TestSuite\TestCase;
+use Cake\TestSuite\ConsoleIntegrationTestCase;
 
 /**
  * CommandListShellTest
  */
-class CommandListShellTest extends TestCase
+class CommandListShellTest extends ConsoleIntegrationTestCase
 {
 
     /**
@@ -35,19 +34,6 @@ class CommandListShellTest extends TestCase
     {
         parent::setUp();
         Plugin::load(['TestPlugin', 'TestPluginTwo']);
-
-        $this->out = new ConsoleOutput();
-        $io = new ConsoleIo($this->out);
-
-        $this->Shell = $this->getMockBuilder('Cake\Shell\CommandListShell')
-            ->setMethods(['in', 'err', '_stop', 'clear'])
-            ->setConstructorArgs([$io])
-            ->getMock();
-
-        $this->Shell->Command = $this->getMockBuilder('Cake\Shell\Task\CommandTask')
-            ->setMethods(['in', '_stop', 'err', 'clear'])
-            ->setConstructorArgs([$io])
-            ->getMock();
     }
 
     /**
@@ -58,7 +44,6 @@ class CommandListShellTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        unset($this->Shell);
         Plugin::unload();
     }
 
@@ -69,21 +54,21 @@ class CommandListShellTest extends TestCase
      */
     public function testMain()
     {
-        $this->Shell->main();
-        $output = $this->out->messages();
-        $output = implode("\n", $output);
+        $this->exec('command_list');
 
         $expected = "/\[.*TestPlugin.*\] example/";
-        $this->assertRegExp($expected, $output);
+        $this->assertOutputRegExp($expected);
 
         $expected = "/\[.*TestPluginTwo.*\] example, unique, welcome/";
-        $this->assertRegExp($expected, $output);
+        $this->assertOutputRegExp($expected);
 
         $expected = "/\[.*CORE.*\] cache, help, i18n, orm_cache, plugin, routes, schema_cache, server/";
-        $this->assertRegExp($expected, $output);
+        $this->assertOutputRegExp($expected);
 
         $expected = "/\[.*app.*\] i18m, integration, sample/";
-        $this->assertRegExp($expected, $output);
+        $this->assertOutputRegExp($expected);
+        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertErrorEmpty();
     }
 
     /**
@@ -95,16 +80,16 @@ class CommandListShellTest extends TestCase
     public function testMainAppPriority()
     {
         rename(APP . 'Shell' . DS . 'I18mShell.php', APP . 'Shell' . DS . 'I18nShell.php');
-        $this->Shell->main();
-        $output = $this->out->messages();
-        $output = implode("\n", $output);
+        $this->exec('command_list');
         rename(APP . 'Shell' . DS . 'I18nShell.php', APP . 'Shell' . DS . 'I18mShell.php');
 
         $expected = "/\[.*CORE.*\] cache, help, orm_cache, plugin, routes, schema_cache, server/";
-        $this->assertRegExp($expected, $output);
+        $this->assertOutputRegExp($expected);
 
         $expected = "/\[.*app.*\] i18n, integration, sample/";
-        $this->assertRegExp($expected, $output);
+        $this->assertOutputRegExp($expected);
+        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertErrorEmpty();
     }
 
     /**
@@ -114,20 +99,18 @@ class CommandListShellTest extends TestCase
      */
     public function testMainXml()
     {
-        $this->Shell->params['xml'] = true;
-        $this->Shell->main();
-
-        $output = $this->out->messages();
-        $output = implode("\n", $output);
+        $this->exec('command_list --xml');
 
         $find = '<shell name="sample" call_as="sample" provider="app" help="sample -h"';
-        $this->assertContains($find, $output);
+        $this->assertOutputContains($find);
 
         $find = '<shell name="orm_cache" call_as="orm_cache" provider="CORE" help="orm_cache -h"';
-        $this->assertContains($find, $output);
+        $this->assertOutputContains($find);
 
         $find = '<shell name="welcome" call_as="TestPluginTwo.welcome" provider="TestPluginTwo" help="TestPluginTwo.welcome -h"';
-        $this->assertContains($find, $output);
+        $this->assertOutputContains($find);
+        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertErrorEmpty();
     }
 
     /**
@@ -137,12 +120,10 @@ class CommandListShellTest extends TestCase
      */
     public function testMainVersion()
     {
-        $this->Shell->params['version'] = true;
-        $this->Shell->main();
-        $output = $this->out->messages();
-        $output = implode("\n", $output);
-
+        $this->exec('command_list --version');
         $expected = Configure::version();
-        $this->assertEquals($expected, $output);
+        $this->assertOutputContains($expected);
+        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertErrorEmpty();
     }
 }

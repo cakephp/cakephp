@@ -207,6 +207,31 @@ class DebuggerTest extends TestCase
     }
 
     /**
+     * Tests that the correct line is being highlighted.
+     *
+     * @return void
+     */
+    public function testOutputErrorLineHighlight()
+    {
+        Debugger::outputAs('js');
+
+        ob_start();
+        $debugger = Debugger::getInstance();
+        $data = [
+            'level' => E_NOTICE,
+            'code' => E_NOTICE,
+            'file' => __FILE__,
+            'line' => __LINE__,
+            'description' => 'Error description',
+            'start' => 1
+        ];
+        $debugger->outputError($data);
+        $result = ob_get_clean();
+
+        $this->assertRegExp('#^\<span class\="code\-highlight"\>.*outputError.*\</span\>$#m', $result);
+    }
+
+    /**
      * Tests that changes in output formats using Debugger::output() change the templates used.
      *
      * @return void

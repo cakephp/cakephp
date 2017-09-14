@@ -209,6 +209,29 @@ class CommandRunnerTest extends TestCase
     }
 
     /**
+     * Test running a valid command and that backwards compatible
+     * inflection is hooked up.
+     *
+     * @return void
+     */
+    public function testRunValidCommandInflection()
+    {
+        $app = $this->getMockBuilder(BaseApplication::class)
+            ->setMethods(['middleware', 'bootstrap'])
+            ->setConstructorArgs([$this->config])
+            ->getMock();
+
+        $output = new ConsoleOutput();
+
+        $runner = new CommandRunner($app, 'cake');
+        $result = $runner->run(['cake', 'OrmCache', 'build'], $this->getMockIo($output));
+        $this->assertSame(Shell::CODE_SUCCESS, $result);
+
+        $contents = implode("\n", $output->messages());
+        $this->assertContains('Cache', $contents);
+    }
+
+    /**
      * Test running a valid raising an error
      *
      * @return void
