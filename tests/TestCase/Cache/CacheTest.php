@@ -179,7 +179,7 @@ class CacheTest extends TestCase
         ]);
         Cache::setConfig('tests_fallback_final', [
             'engine' => 'File',
-            'path' => TMP,
+            'path' => TMP . 'cake_test' . DS,
             'groups' => ['integration_group_3'],
         ]);
 
