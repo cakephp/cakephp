@@ -178,7 +178,6 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
-     * tearDown method
      *
      * Resets environment state.
      *
@@ -438,7 +437,7 @@ class SecurityComponentTest extends TestCase
         $event = new Event('Controller.startup', $this->Controller);
         $this->Security->startup($event);
 
-        $fields = 'b9b68375cbfc0476f175561c07b5e04d8908f3af%3AModel.valid';
+        $fields = '4697b45f7f430ff3ab73018c20f315eecb0ba5a6%3AModel.valid';
         $unlocked = '';
         $debug = '';
 
@@ -619,7 +618,7 @@ class SecurityComponentTest extends TestCase
         $event = new Event('Controller.startup', $this->Controller);
         $this->Security->startup($event);
 
-        $fields = 'c0e09f0b7329e2e5873a7caaa687679e7ceec58b%3A';
+        $fields = 'f95b472a63f1d883b9eaacaf8a8e36e325e3fe82%3A';
         $unlocked = '';
         $debug = 'not used';
 
@@ -644,7 +643,7 @@ class SecurityComponentTest extends TestCase
         $event = new Event('Controller.startup', $this->Controller);
         $this->Security->startup($event);
 
-        $fields = 'c0e09f0b7329e2e5873a7caaa687679e7ceec58b%3A';
+        $fields = 'f95b472a63f1d883b9eaacaf8a8e36e325e3fe82%3A';
         $unlocked = '';
         $debug = urlencode(json_encode([
             'some-action',
@@ -677,7 +676,7 @@ class SecurityComponentTest extends TestCase
         $event = new Event('Controller.startup', $this->Controller);
         $this->Security->startup($event);
 
-        $fields = 'b1af0affe0a36eb80f212082fd58fcda1e9e9451%3A';
+        $fields = '11f87a5962db9ac26405e460cd3063bb6ff76cf8%3A';
         $unlocked = '';
         $debug = urlencode(json_encode([
             'some-action',
@@ -703,7 +702,7 @@ class SecurityComponentTest extends TestCase
         $event = new Event('Controller.startup', $this->Controller);
         $this->Security->startup($event);
 
-        $fields = '1463016f332f870ae1446a3e499ec39fa51647b1%3A';
+        $fields = 'a2a942f587deb20e90241c51b59d901d8a7f796b%3A';
         $unlocked = '';
         $debug = 'not used';
 
@@ -727,7 +726,7 @@ class SecurityComponentTest extends TestCase
         $event = new Event('Controller.startup', $this->Controller);
         $this->Security->startup($event);
 
-        $fields = '1af7c2889ad58b14038d1552c6127a918bb5bcb7%3A';
+        $fields = 'de2ca3670dd06c29558dd98482c8739e86da2c7c%3A';
         $unlocked = '';
         $debug = 'not used';
 
@@ -753,7 +752,7 @@ class SecurityComponentTest extends TestCase
         $event = new Event('Controller.startup', $this->Controller);
         $this->Security->startup($event);
 
-        $fields = '4dda4baf4525f1593217aaa4f71fb83fbb947f52%3AAddresses.0.id%7CAddresses.1.id';
+        $fields = 'b00b7e5c2e3bf8bc474fb7cfde6f9c2aa06ab9bc%3AAddresses.0.id%7CAddresses.1.id';
         $unlocked = '';
         $debug = 'not used';
 
@@ -787,7 +786,7 @@ class SecurityComponentTest extends TestCase
         $event = new Event('Controller.startup', $this->Controller);
         $this->Security->startup($event);
 
-        $fields = 'c8d0d4939f3d84e0cccc2387ca39c722922eef2d%3A';
+        $fields = '28dd05f0af314050784b18b3366857e8e8c78e73%3A';
         $unlocked = '';
         $debug = 'not used';
 
@@ -812,7 +811,7 @@ class SecurityComponentTest extends TestCase
         $result = $this->validatePost();
         $this->assertTrue($result);
 
-        $fields = '176eb445b102cf7f85e38a7fc56f7e050143b664%3A';
+        $fields = '1e4c9269b64756e9b141d364497c5f037b428a37%3A';
         $this->Controller->request->data = [
             'User.password' => 'bar', 'User.name' => 'foo', 'User.is_valid' => '1',
             'Tag' => ['Tag' => [1]],
@@ -835,7 +834,7 @@ class SecurityComponentTest extends TestCase
     {
         $event = new Event('Controller.startup', $this->Controller);
         $this->Security->startup($event);
-        $fields = 'b9b68375cbfc0476f175561c07b5e04d8908f3af%3AModel.valid';
+        $fields = '4697b45f7f430ff3ab73018c20f315eecb0ba5a6%3AModel.valid';
         $unlocked = '';
         $debug = 'not used';
 
@@ -847,7 +846,7 @@ class SecurityComponentTest extends TestCase
         $result = $this->validatePost();
         $this->assertTrue($result);
 
-        $fields = 'e3704fbe647a57f5a99876335cb81ff424f46dc3%3A';
+        $fields = '3f368401f9a8610bcace7746039651066cdcdc38%3A';
 
         $this->Controller->request->data = [
             'Model' => ['username' => '', 'password' => '', 'valid' => '0'],
@@ -879,7 +878,7 @@ class SecurityComponentTest extends TestCase
     {
         $event = new Event('Controller.startup', $this->Controller);
         $this->Security->startup($event);
-        $fields = 'cbe3dc7c09e1ba2412316d1a1eff70d7f3791e1b%3AModel.hidden%7CModel.other_hidden';
+        $fields = '96e61bded2b62b0c420116a0eb06a3b3acddb8f1%3AModel.hidden%7CModel.other_hidden';
         $unlocked = '';
         $debug = 'not used';
 
@@ -905,7 +904,7 @@ class SecurityComponentTest extends TestCase
         $event = new Event('Controller.startup', $this->Controller);
         $this->Security->config('disabledFields', ['Model.username', 'Model.password']);
         $this->Security->startup($event);
-        $fields = 'aab7b67fccb5a8fec8e5bc7f4585568e45cdecd1%3AModel.hidden';
+        $fields = '0313460e1136e1227044399fe10a6edc0cbca279%3AModel.hidden';
         $unlocked = '';
         $debug = 'not used';
 
@@ -935,7 +934,7 @@ class SecurityComponentTest extends TestCase
         $unlocked = 'Model.username';
         $fields = ['Model.hidden', 'Model.password'];
         $fields = urlencode(
-            hash_hmac('sha1', '/articles/index' . serialize($fields) . $unlocked, Security::salt())
+            hash_hmac('sha1', '/articles/index' . serialize($fields) . $unlocked . 'cli', Security::salt())
         );
         $debug = 'not used';
 
@@ -1084,7 +1083,7 @@ class SecurityComponentTest extends TestCase
     {
         $event = new Event('Controller.startup', $this->Controller);
         $this->Security->startup($event);
-        $fields = '1292df5b24f8c646cd93751bb9fb69d7972e69d0%3AModel.valid%7CModel2.valid%7CModel3.valid';
+        $fields = '642b7a6db3b848fab88952b86ea36c572f93df40%3AModel.valid%7CModel2.valid%7CModel3.valid';
         $unlocked = '';
         $debug = 'not used';
 
@@ -1108,7 +1107,7 @@ class SecurityComponentTest extends TestCase
     {
         $event = new Event('Controller.startup', $this->Controller);
         $this->Security->startup($event);
-        $fields = '203a106a01f120823baaab668112e30c4616e3a7%3AModel.0.hidden%7CModel.0.valid';
+        $fields = '792324c8a374772ad82acfb28f0e77e70f8ed3af%3AModel.0.hidden%7CModel.0.valid';
         $fields .= '%7CModel.1.hidden%7CModel.1.valid';
         $unlocked = '';
         $debug = 'not used';
@@ -1141,7 +1140,7 @@ class SecurityComponentTest extends TestCase
     {
         $event = new Event('Controller.startup', $this->Controller);
         $this->Security->startup($event);
-        $fields = '2f086ffee2237435a13a88f38b91b0868c86ae40%3AAddress.0.id%7CAddress.0.primary%7C';
+        $fields = '7f4bff67558e25ebeea44c84ea4befa8d50b080c%3AAddress.0.id%7CAddress.0.primary%7C';
         $fields .= 'Address.1.id%7CAddress.1.primary';
         $unlocked = '';
         $debug = 'not used';
@@ -1191,7 +1190,7 @@ class SecurityComponentTest extends TestCase
         $unlocked = '';
         $hashFields = ['TaxonomyData'];
         $fields = urlencode(
-            hash_hmac('sha1', '/articles/index' . serialize($hashFields) . $unlocked, Security::salt())
+            hash_hmac('sha1', '/articles/index' . serialize($hashFields) . $unlocked . 'cli', Security::salt())
         );
         $debug = 'not used';
 
@@ -1284,7 +1283,7 @@ class SecurityComponentTest extends TestCase
         $event = new Event('Controller.startup', $this->Controller);
 
         $this->Security->startup($event);
-        $fields = '882b9a1226dd9fe8a2c8eed541dd3d059ba27d12%3An%3A0%3A%7B%7D';
+        $fields = '4eaf5c6b93d5140c24171d5fdce16ed5b904f288%3An%3A0%3A%7B%7D';
         $unlocked = '';
         $debug = urlencode(json_encode([
             '/articles/index',
@@ -1323,7 +1322,7 @@ class SecurityComponentTest extends TestCase
     {
         $event = new Event('Controller.startup', $this->Controller);
         $this->Security->startup($event);
-        $fields = '14dc53654a1bfe184e921f0cb09a082003da1401%3An%3A0%3A%7B%7D';
+        $fields = 'a709dfdee0a0cce52c4c964a1b8a56159bb081b4%3An%3A0%3A%7B%7D';
         $unlocked = '';
         $debug = urlencode(json_encode([
             '/articles/index',
@@ -1372,7 +1371,7 @@ class SecurityComponentTest extends TestCase
         $event = new Event('Controller.startup', $this->Controller);
         $this->Security->startup($event);
 
-        $fields = '1af7c2889ad58b14038d1552c6127a918bb5bcb7%3A';
+        $fields = 'de2ca3670dd06c29558dd98482c8739e86da2c7c%3A';
         $unlocked = '';
         $debug = urlencode(json_encode([
             'another-url',
