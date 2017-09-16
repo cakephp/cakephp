@@ -141,6 +141,7 @@ class FormHelperTest extends TestCase
     public function setUp()
     {
         parent::setUp();
+        session_id('');
 
         Configure::write('Config.language', 'eng');
         Configure::write('App.base', '');
