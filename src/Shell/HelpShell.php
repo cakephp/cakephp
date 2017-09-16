@@ -73,15 +73,19 @@ class HelpShell extends Shell implements CommandCollectionAwareInterface
         }
 
         if (!$this->commands) {
-            $this->commands = $this->getCommands();
+            $this->commands = new CommandCollection($this->getCommands());
         }
 
+        $commands = $this->commands->getIterator();
+        $commands->ksort();
+        $commands = new CommandCollection((array)$commands);
+
         if ($this->param('xml')) {
-            $this->asXml($this->commands);
+            $this->asXml($commands);
 
             return;
         }
-        $this->asText($this->commands);
+        $this->asText($commands);
     }
 
     /**
