@@ -490,22 +490,22 @@ class EntityTest extends TestCase
     public function testHas()
     {
         $entity = new Entity(['id' => 1, 'name' => 'Juan', 'foo' => null]);
-        $this->assertTrue($entity->hasProperty('id'));
-        $this->assertTrue($entity->hasProperty('name'));
-        $this->assertFalse($entity->hasProperty('foo'));
-        $this->assertFalse($entity->hasProperty('last_name'));
+        $this->assertTrue($entity->has('id'));
+        $this->assertTrue($entity->has('name'));
+        $this->assertFalse($entity->has('foo'));
+        $this->assertFalse($entity->has('last_name'));
 
-        $this->assertTrue($entity->hasProperty(['id']));
-        $this->assertTrue($entity->hasProperty(['id', 'name']));
-        $this->assertFalse($entity->hasProperty(['id', 'foo']));
-        $this->assertFalse($entity->hasProperty(['id', 'nope']));
+        $this->assertTrue($entity->has(['id']));
+        $this->assertTrue($entity->has(['id', 'name']));
+        $this->assertFalse($entity->has(['id', 'foo']));
+        $this->assertFalse($entity->has(['id', 'nope']));
 
         $entity = $this->getMockBuilder('\Cake\ORM\Entity')
             ->setMethods(['_getThings'])
             ->getMock();
         $entity->expects($this->once())->method('_getThings')
             ->will($this->returnValue(0));
-        $this->assertTrue($entity->hasProperty('things'));
+        $this->assertTrue($entity->has('things'));
     }
 
     /**

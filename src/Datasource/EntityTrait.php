@@ -344,44 +344,6 @@ trait EntityTrait
      *
      * ```
      * $entity = new Entity(['id' => 1, 'name' => null]);
-     * $entity->hasProperty('id'); // true
-     * $entity->hasProperty('name'); // false
-     * $entity->hasProperty('last_name'); // false
-     * ```
-     *
-     * You can check multiple properties by passing an array:
-     *
-     * ```
-     * $entity->hasProperty(['name', 'last_name']);
-     * ```
-     *
-     * All properties must not be null to get a truthy result.
-     *
-     * When checking multiple properties. All properties must not be null
-     * in order for true to be returned.
-     *
-     * @param string|array $property The property or properties to check.
-     * @return bool
-     */
-    public function hasProperty($property)
-    {
-        foreach ((array)$property as $prop) {
-            if ($this->get($prop) === null) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Returns whether this entity contains a property named $property
-     * that contains a non-null value.
-     *
-     * ### Example:
-     *
-     * ```
-     * $entity = new Entity(['id' => 1, 'name' => null]);
      * $entity->has('id'); // true
      * $entity->has('name'); // false
      * $entity->has('last_name'); // false
@@ -403,20 +365,26 @@ trait EntityTrait
      */
     public function has($property)
     {
-        return $this->hasProperty($property);
+        foreach ((array)$property as $prop) {
+            if ($this->get($prop) === null) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
      * Checks that a property is empty
      *
-     * This is not working like the built in empty() of php. The method will
+     * This is not working like the PHP `empty()` function. The method will
      * return true for:
      *
-     * - '' (empty string)
-     * - null
-     * - []
+     * - `''` (empty string)
+     * - `null`
+     * - `[]`
      *
-     * but false on any other case.
+     * and false in all other cases.
      *
      * @param string $property The property to check.
      * @return bool
@@ -439,13 +407,13 @@ trait EntityTrait
      *
      * This method will return true for
      *
-     * - 'foo' (non empty string)
-     * - ['foo', 'bar']
-     * - Object
-     * - Integer, even 0 (Zero)
-     * - Float
+     * - Non-empty strings
+     * - Non-empty arrays
+     * - Any object
+     * - Integer, even `0`
+     * - Float, even 0.0
      *
-     * false on any other case
+     * and false in all other cases.
      *
      * @param string $property The property to check.
      * @return bool
