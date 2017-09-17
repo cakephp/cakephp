@@ -1665,4 +1665,68 @@ class EntityTest extends TestCase
         $entity = new Entity();
         $this->assertNull($entity->getInvalidField('foo'));
     }
+
+    /**
+     * Test the isEmpty() check
+     *
+     * @return void
+     */
+    public function testIsEmpty()
+    {
+        $entity = new Entity([
+            'array' => ['foo' => 'bar'],
+            'emptyArray' => [],
+            'object' => new \stdClass(),
+            'string' => 'string',
+            'emptyString' => '',
+            'intZero' => 0,
+            'intNotZero' => 1,
+            'floatZero' => 0.0,
+            'floatNonZero' => 1.5,
+            'null' => null
+        ]);
+
+        $this->assertFalse($entity->isEmpty('array'));
+        $this->assertTrue($entity->isEmpty('emptyArray'));
+        $this->assertFalse($entity->isEmpty('object'));
+        $this->assertFalse($entity->isEmpty('string'));
+        $this->assertTrue($entity->isEmpty('emptyString'));
+        $this->assertFalse($entity->isEmpty('intZero'));
+        $this->assertFalse($entity->isEmpty('intNotZero'));
+        $this->assertFalse($entity->isEmpty('floatZero'));
+        $this->assertFalse($entity->isEmpty('floatNonZero'));
+        $this->assertTrue($entity->isEmpty('null'));
+    }
+
+    /**
+     * Test hasValue()
+     *
+     * @return void
+     */
+    public function testHasValue()
+    {
+        $entity = new Entity([
+            'array' => ['foo' => 'bar'],
+            'emptyArray' => [],
+            'object' => new \stdClass(),
+            'string' => 'string',
+            'emptyString' => '',
+            'intZero' => 0,
+            'intNotZero' => 1,
+            'floatZero' => 0.0,
+            'floatNonZero' => 1.5,
+            'null' => null
+        ]);
+
+        $this->assertTrue($entity->hasValue('array'));
+        $this->assertFalse($entity->hasValue('emptyArray'));
+        $this->assertTrue($entity->hasValue('object'));
+        $this->assertTrue($entity->hasValue('string'));
+        $this->assertFalse($entity->hasValue('emptyString'));
+        $this->assertTrue($entity->hasValue('intZero'));
+        $this->assertTrue($entity->hasValue('intNotZero'));
+        $this->assertTrue($entity->hasValue('floatZero'));
+        $this->assertTrue($entity->hasValue('floatNonZero'));
+        $this->assertFalse($entity->hasValue('null'));
+    }
 }

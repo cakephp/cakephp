@@ -374,6 +374,55 @@ trait EntityTrait
     }
 
     /**
+     * Checks that a property is empty
+     *
+     * This is not working like the PHP `empty()` function. The method will
+     * return true for:
+     *
+     * - `''` (empty string)
+     * - `null`
+     * - `[]`
+     *
+     * and false in all other cases.
+     *
+     * @param string $property The property to check.
+     * @return bool
+     */
+    public function isEmpty($property)
+    {
+        $value = $this->get($property);
+        if ($value === null
+            || (is_array($value) && empty($value)
+            || (is_string($value) && empty($value)))
+        ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks tha a property has a value.
+     *
+     * This method will return true for
+     *
+     * - Non-empty strings
+     * - Non-empty arrays
+     * - Any object
+     * - Integer, even `0`
+     * - Float, even 0.0
+     *
+     * and false in all other cases.
+     *
+     * @param string $property The property to check.
+     * @return bool
+     */
+    public function hasValue($property)
+    {
+        return !$this->isEmpty($property);
+    }
+
+    /**
      * Removes a property or list of properties from this entity
      *
      * ### Examples:
