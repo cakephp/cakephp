@@ -1719,6 +1719,7 @@ class ModelValidationTest extends BaseModelTest {
  * @return void
  */
 	public function testValidateMany() {
+		$this->loadFixtures('Article');
 		$TestModel = new Article();
 		$TestModel->validate = array('title' => 'notBlank');
 		$data = array(
@@ -2015,6 +2016,7 @@ class ModelValidationTest extends BaseModelTest {
  * @return void
  */
 	public function testValidateCallbacks() {
+		$this->loadFixtures('Article');
 		$TestModel = $this->getMock('Article', array('beforeValidate', 'afterValidate'));
 		$TestModel->expects($this->once())->method('beforeValidate');
 		$TestModel->expects($this->once())->method('afterValidate');

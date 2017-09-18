@@ -5284,7 +5284,7 @@ class ModelReadTest extends BaseModelTest {
  * @return void
  */
 	public function testCallbackDisabling() {
-		$this->loadFixtures('Author');
+		$this->loadFixtures('Author', 'Post');
 		$TestModel = new ModifiedAuthor();
 
 		$result = Hash::extract($TestModel->find('all'), '{n}.Author.user');
@@ -5404,7 +5404,7 @@ class ModelReadTest extends BaseModelTest {
  * @return void
  */
 	public function testCallbackSourceChange() {
-		$this->loadFixtures('Post');
+		$this->loadFixtures('Author', 'Post');
 		$TestModel = new Post();
 		$this->assertEquals(3, count($TestModel->find('all')));
 	}
@@ -5685,7 +5685,7 @@ class ModelReadTest extends BaseModelTest {
  * @return void
  */
 	public function testHabtmFinderQuery() {
-		$this->loadFixtures('Article', 'Tag', 'ArticlesTag');
+		$this->loadFixtures('Article', 'Tag', 'ArticlesTag', 'Comment', 'User');
 		$Article = new Article();
 
 		$sql = $this->db->buildStatement(
@@ -6945,7 +6945,7 @@ class ModelReadTest extends BaseModelTest {
  * @return void
  */
 	public function testFindList() {
-		$this->loadFixtures('Article', 'Apple', 'Post', 'Author', 'User', 'Comment');
+		$this->loadFixtures('Article', 'ArticlesTag', 'Apple', 'Post', 'Author', 'Tag', 'User', 'Comment');
 
 		$TestModel = new Article();
 		$TestModel->displayField = 'title';
@@ -7394,7 +7394,7 @@ class ModelReadTest extends BaseModelTest {
  * @return void
  */
 	public function testFindFirstNoIdUsed() {
-		$this->loadFixtures('Project');
+		$this->loadFixtures('Project', 'Thread');
 
 		$Project = new Project();
 		$Project->id = 3;
@@ -8260,7 +8260,7 @@ class ModelReadTest extends BaseModelTest {
  * @return void
  */
 	public function testFindQueryTypeInCallbacks() {
-		$this->loadFixtures('Comment');
+		$this->loadFixtures('Article', 'Comment');
 		$Comment = new AgainModifiedComment();
 		$comments = $Comment->find('all');
 		$this->assertEquals('all', $comments[0]['Comment']['querytype']);
@@ -8432,7 +8432,7 @@ class ModelReadTest extends BaseModelTest {
 	public function testVirtualFieldsMysqlGroup() {
 		$this->skipIf(!($this->db instanceof Mysql), 'The rest of virtualFields test only compatible with Mysql.');
 		$this->skipIfIsStrictGroupBy();
-		$this->loadFixtures('Post');
+		$this->loadFixtures('Author', 'Post');
 		$Post = ClassRegistry::init('Post');
 		$Post->create();
 		$Post->virtualFields = array(
@@ -8576,7 +8576,7 @@ class ModelReadTest extends BaseModelTest {
  * @return void
  */
 	public function testfindCustom() {
-		$this->loadFixtures('Article');
+		$this->loadFixtures('Article', 'User');
 		$Article = new CustomArticle();
 		$data = array('user_id' => 3, 'title' => 'Fourth Article', 'body' => 'Article Body, unpublished', 'published' => 'N');
 		$Article->create($data);
@@ -8850,6 +8850,7 @@ class ModelReadTest extends BaseModelTest {
  * @return void
  */
 	public function testQueryRespectsCacheQueriesAsSecondArgument() {
+		$this->loadFixtures('User');
 		$model = new User();
 		$model->save(array('user' => 'Chuck'));
 		$userTableName = $this->db->fullTableName('users');
@@ -8877,6 +8878,7 @@ class ModelReadTest extends BaseModelTest {
  * @return void
  */
 	public function testQueryRespectsCacheQueriesAsThirdArgument() {
+		$this->loadFixtures('User');
 		$model = new User();
 		$model->save(array('user' => 'Chuck'));
 		$userTableName = $this->db->fullTableName('users');
@@ -8903,6 +8905,7 @@ class ModelReadTest extends BaseModelTest {
  * @return void
  */
 	public function testQueryTakesModelCacheQueriesValueAsDefaultForOneArgument() {
+		$this->loadFixtures('User');
 		$model = new User();
 		$model->save(array('user' => 'Chuck'));
 		$userTableName = $this->db->fullTableName('users');
@@ -8928,6 +8931,7 @@ class ModelReadTest extends BaseModelTest {
  * @return void
  */
 	public function testQueryTakesModelCacheQueriesValueAsDefaultForTwoArguments() {
+		$this->loadFixtures('User');
 		$model = new User();
 		$model->save(array('user' => 'Chuck'));
 		$userTableName = $this->db->fullTableName('users');

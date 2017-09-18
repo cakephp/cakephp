@@ -2468,7 +2468,7 @@ class ModelWriteTest extends BaseModelTest {
  * @return void
  */
 	public function testCreationOfEmptyRecord() {
-		$this->loadFixtures('Author');
+		$this->loadFixtures('Author', 'Post');
 		$TestModel = new Author();
 		$this->assertEquals(4, $TestModel->find('count'));
 
@@ -2487,6 +2487,7 @@ class ModelWriteTest extends BaseModelTest {
  * @return void
  */
 	public function testCreateWithPKFiltering() {
+		$this->loadFixtures('Article');
 		$TestModel = new Article();
 		$data = array(
 			'id' => 5,
@@ -2925,7 +2926,7 @@ class ModelWriteTest extends BaseModelTest {
  * @return void
  */
 	public function testUpdateSavingBlankValues() {
-		$this->loadFixtures('Article');
+		$this->loadFixtures('Article', 'ArticlesTag', 'Comment', 'Tag', 'User');
 		$Article = new Article();
 		$Article->validate = array();
 		$Article->create();
@@ -2946,7 +2947,7 @@ class ModelWriteTest extends BaseModelTest {
  * @return void
  */
 	public function testUpdateMultiple() {
-		$this->loadFixtures('Comment', 'Article', 'User', 'CategoryThread');
+		$this->loadFixtures('Comment', 'Article', 'Attachment', 'User', 'CategoryThread');
 		$TestModel = new Comment();
 		$result = Hash::extract($TestModel->find('all'), '{n}.Comment.user_id');
 		$expected = array('2', '4', '1', '1', '1', '2');
@@ -3428,6 +3429,7 @@ class ModelWriteTest extends BaseModelTest {
  * @return void
  */
 	public function testSaveAllHasOne() {
+		$this->loadFixtures('Article', 'Attachment', 'Comment', 'User');
 		$model = new Comment();
 		$model->deleteAll(true);
 		$this->assertEquals(array(), $model->find('all'));
@@ -3450,14 +3452,15 @@ class ModelWriteTest extends BaseModelTest {
 		)));
 		$expected = array(array(
 			'Comment' => array(
-				'id' => '1',
+				'id' => '7',
 				'comment' => 'Comment with attachment'
 			),
 			'Attachment' => array(
-				'id' => '1',
-				'comment_id' => '1',
+				'id' => '2',
+				'comment_id' => '7',
 				'attachment' => 'some_file.zip'
-		)));
+			),
+		));
 		$this->assertEquals($expected, $result);
 
 		$model->Attachment->bindModel(array('belongsTo' => array('Comment')), false);
@@ -3479,6 +3482,7 @@ class ModelWriteTest extends BaseModelTest {
  * @return void
  */
 	public function testSaveAllBelongsTo() {
+		$this->loadFixtures('Article', 'ArticlesTag', 'Attachment', 'Comment', 'Tag', 'User');
 		$model = new Comment();
 		$model->deleteAll(true);
 		$this->assertEquals(array(), $model->find('all'));
@@ -3496,19 +3500,23 @@ class ModelWriteTest extends BaseModelTest {
 				'title' => 'Model Associations 101',
 				'user_id' => 1
 		))));
-		$result = $model->find('all', array('fields' => array(
-			'Comment.id', 'Comment.comment', 'Comment.article_id', 'Article.id', 'Article.title'
-		)));
+		$result = $model->find('all', array(
+			'recursive' => 1,
+			'fields' => array(
+				'Comment.id', 'Comment.comment', 'Comment.article_id', 'Article.id', 'Article.title'
+			),
+		));
 		$expected = array(array(
 			'Comment' => array(
-				'id' => '1',
-				'article_id' => '1',
+				'id' => '7',
+				'article_id' => '4',
 				'comment' => 'Article comment'
 			),
 			'Article' => array(
-				'id' => '1',
+				'id' => '4',
 				'title' => 'Model Associations 101'
-		)));
+			),
+		));
 		$this->assertEquals($expected, $result);
 	}
 
@@ -3518,6 +3526,7 @@ class ModelWriteTest extends BaseModelTest {
  * @return void
  */
 	public function testSaveAllHasOneValidation() {
+		$this->loadFixtures('Article', 'Attachment', 'Comment', 'User');
 		$model = new Comment();
 		$model->deleteAll(true);
 		$this->assertEquals(array(), $model->find('all'));
@@ -5116,7 +5125,7 @@ class ModelWriteTest extends BaseModelTest {
  * @return void
  */
 	public function testSaveAllValidationOnly() {
-		$this->loadFixtures('Comment', 'Attachment');
+		$this->loadFixtures('Article', 'Comment', 'Attachment');
 		$TestModel = new Comment();
 		$TestModel->Attachment->validate = array('attachment' => 'notBlank');
 
@@ -5558,7 +5567,7 @@ class ModelWriteTest extends BaseModelTest {
  * @return void
  */
 	public function testSaveMany() {
-		$this->loadFixtures('Post');
+		$this->loadFixtures('Author', 'Post');
 		$TestModel = new Post();
 		$TestModel->deleteAll(true);
 		$this->assertEquals(array(), $TestModel->find('all'));
@@ -5617,7 +5626,7 @@ class ModelWriteTest extends BaseModelTest {
  * @return void
  */
 	public function testSaveManyValidateFalse() {
-		$this->loadFixtures('Post');
+		$this->loadFixtures('Author', 'Post');
 		$TestModel = new Post();
 		$TestModel->deleteAll(true);
 		$data = array(
@@ -5708,6 +5717,7 @@ class ModelWriteTest extends BaseModelTest {
  * @return void
  */
 	public function testSaveAssociatedHasOne() {
+		$this->loadFixtures('Article', 'Attachment', 'Comment', 'User');
 		$model = new Comment();
 		$model->deleteAll(true);
 		$this->assertEquals(array(), $model->find('all'));
@@ -5730,14 +5740,15 @@ class ModelWriteTest extends BaseModelTest {
 		)));
 		$expected = array(array(
 			'Comment' => array(
-				'id' => '1',
+				'id' => '7',
 				'comment' => 'Comment with attachment'
 			),
 			'Attachment' => array(
-				'id' => '1',
-				'comment_id' => '1',
+				'id' => '2',
+				'comment_id' => '7',
 				'attachment' => 'some_file.zip'
-		)));
+			),
+		));
 		$this->assertEquals($expected, $result);
 
 		$model->Attachment->bindModel(array('belongsTo' => array('Comment')), false);
@@ -5759,6 +5770,7 @@ class ModelWriteTest extends BaseModelTest {
  * @return void
  */
 	public function testSaveAssociatedBelongsTo() {
+		$this->loadFixtures('Article', 'ArticlesTag', 'Attachment', 'Comment', 'Tag', 'User');
 		$model = new Comment();
 		$model->deleteAll(true);
 		$this->assertEquals(array(), $model->find('all'));
@@ -5776,19 +5788,23 @@ class ModelWriteTest extends BaseModelTest {
 				'title' => 'Model Associations 101',
 				'user_id' => 1
 		))));
-		$result = $model->find('all', array('fields' => array(
-			'Comment.id', 'Comment.comment', 'Comment.article_id', 'Article.id', 'Article.title'
-		)));
+		$result = $model->find('all', array(
+			'recursive' => 1,
+			'fields' => array(
+				'Comment.id', 'Comment.comment', 'Comment.article_id', 'Article.id', 'Article.title'
+			),
+		));
 		$expected = array(array(
 			'Comment' => array(
-				'id' => '1',
-				'article_id' => '1',
+				'id' => '7',
+				'article_id' => '4',
 				'comment' => 'Article comment'
 			),
 			'Article' => array(
-				'id' => '1',
+				'id' => '4',
 				'title' => 'Model Associations 101'
-		)));
+			),
+		));
 		$this->assertEquals($expected, $result);
 	}
 
@@ -5798,6 +5814,7 @@ class ModelWriteTest extends BaseModelTest {
  * @return void
  */
 	public function testSaveAssociatedHasOneValidation() {
+		$this->loadFixtures('Article', 'Attachment', 'Comment', 'User');
 		$model = new Comment();
 		$model->deleteAll(true);
 		$this->assertEquals(array(), $model->find('all'));
@@ -5840,7 +5857,7 @@ class ModelWriteTest extends BaseModelTest {
  * @return void
  */
 	public function testSaveAssociatedAtomic() {
-		$this->loadFixtures('Article', 'User');
+		$this->loadFixtures('Article', 'Comment', 'User');
 		$TestModel = new Article();
 
 		$result = $TestModel->saveAssociated(array(
@@ -6619,6 +6636,7 @@ class ModelWriteTest extends BaseModelTest {
  * @return void
  */
 	public function testValidateMany() {
+		$this->loadFixtures('Article');
 		$TestModel = new Article();
 		$TestModel->validate = array('title' => 'notBlank');
 		$data = array(
@@ -6652,7 +6670,7 @@ class ModelWriteTest extends BaseModelTest {
  * @return void
  */
 	public function testSaveAssociatedValidateFirst() {
-		$this->loadFixtures('Article', 'Comment', 'Attachment');
+		$this->loadFixtures('Article', 'ArticlesTag', 'Comment', 'Attachment', 'Tag', 'User');
 		$model = new Article();
 		$model->deleteAll(true);
 
@@ -6730,6 +6748,7 @@ class ModelWriteTest extends BaseModelTest {
  * @return void
  */
 	public function testSaveManyValidateFirstAtomicFalse() {
+		$this->loadFixtures('Something');
 		$Something = new Something();
 		$invalidData = array(
 			array(
@@ -7184,6 +7203,7 @@ class ModelWriteTest extends BaseModelTest {
  * @return void
  */
 	public function testWriteFloatAsGerman() {
+		$this->loadFixtures('DataTest');
 		$restore = setlocale(LC_NUMERIC, 0);
 
 		$this->skipIf(setlocale(LC_NUMERIC, 'de_DE') === false, "The German locale isn't available.");
@@ -7616,7 +7636,7 @@ class ModelWriteTest extends BaseModelTest {
  * @return void
  */
 	public function testSaveAllDeepHasManyBelongsTo() {
-		$this->loadFixtures('Article', 'Comment', 'User');
+		$this->loadFixtures('Article', 'Attachment', 'Comment', 'User');
 		$TestModel = new Article();
 		$TestModel->belongsTo = $TestModel->hasAndBelongsToMany = array();
 

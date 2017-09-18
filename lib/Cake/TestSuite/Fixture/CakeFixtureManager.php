@@ -238,22 +238,33 @@ class CakeFixtureManager {
 	}
 
 /**
- * Truncates the fixtures tables
+ * Truncates or drops the fixtures tables.
  *
  * @param CakeTestCase $test the test to inspect for fixture unloading
  * @return void
  */
 	public function unload(CakeTestCase $test) {
+		$dropDataSources = array();
 		$fixtures = !empty($test->fixtures) ? $test->fixtures : array();
 		foreach (array_reverse($fixtures) as $f) {
-			if (isset($this->_loaded[$f])) {
-				$fixture = $this->_loaded[$f];
-				if (!empty($fixture->created)) {
-					foreach ($fixture->created as $ds) {
-						$db = ConnectionManager::getDataSource($ds);
-						$fixture->truncate($db);
-					}
+			if (!isset($this->_loaded[$f]) || empty($this->_loaded[$f]->created)) {
+				continue;
+			}
+			$fixture = $this->_loaded[$f];
+			foreach ($fixture->created as $ds) {
+				$db = ConnectionManager::getDataSource($ds);
+				if ($test->dropTables) {
+					$dropDataSources[$ds][] = $fixture->table;
+					$fixture->created = array_diff($fixture->created, array($ds));
+				} else {
+					$fixture->truncate($db);
 				}
+			}
+		}
+		if ($test->dropTables) {
+			foreach ($dropDataSources as $dataSourceName => $tables) {
+				$DataSource = ConnectionManager::getDataSource($dataSourceName);
+				$DataSource->dropTables($tables);
 			}
 		}
 	}
