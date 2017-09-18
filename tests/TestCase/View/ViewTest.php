@@ -512,8 +512,11 @@ class ViewTest extends TestCase
         $paths = $View->paths('TestPlugin');
         $pluginPath = Plugin::path('TestPlugin');
         $themePath = Plugin::path('TestTheme');
+
         $expected = [
+            TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Plugin' . DS . 'TestTheme' . DS . 'Plugin' . DS . 'TestPlugin' . DS,
             $themePath . 'src' . DS . 'Template' . DS . 'Plugin' . DS . 'TestPlugin' . DS,
+            TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Plugin' . DS . 'TestTheme' . DS,
             $themePath . 'src' . DS . 'Template' . DS,
             TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Plugin' . DS . 'TestPlugin' . DS,
             $pluginPath . 'src' . DS . 'Template' . DS,
@@ -545,8 +548,11 @@ class ViewTest extends TestCase
         $paths = $View->paths('TestPlugin');
         $pluginPath = Plugin::path('TestPlugin');
         $themePath = Plugin::path('TestTheme');
+
         $expected = [
+            TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Plugin' . DS . 'TestTheme' . DS . 'Plugin' . DS . 'TestPlugin' . DS,
             $themePath . 'src' . DS . 'Template' . DS . 'Plugin' . DS . 'TestPlugin' . DS,
+            TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Plugin' . DS . 'TestTheme' . DS,
             $themePath . 'src' . DS . 'Template' . DS,
             TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Plugin' . DS . 'TestPlugin' . DS,
             $pluginPath . 'src' . DS . 'Template' . DS . 'Plugin' . DS . 'TestPlugin' . DS,
