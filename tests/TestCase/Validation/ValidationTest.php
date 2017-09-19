@@ -2138,6 +2138,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::url('https://cakephp.org'));
         $this->assertTrue(Validation::url('https://www.cakephp.org/somewhere#anchor'));
         $this->assertTrue(Validation::url('https://192.168.0.1'));
+        $this->assertTrue(Validation::url('https://example.com/kibana/app/kibana#/dashboard/4422c500-8e1b?_g=()'));
         $this->assertTrue(Validation::url('ftps://www.cakephp.org/pub/cake'));
         $this->assertTrue(Validation::url('ftps://cakephp.org/pub/cake'));
         $this->assertTrue(Validation::url('ftps://192.168.0.1/pub/cake'));
