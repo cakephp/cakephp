@@ -317,6 +317,82 @@ class Validation
     }
 
     /**
+     * Validates if two fields match with each other.
+     *
+     * If both fields have exactly the same value, this method will return `true`.
+     *
+     * You may set option `'fieldsExpected'` to `false` to pass the rule if either of
+     * the given fields miss in the context. Defaults to `true`.
+     *
+     * You may set option `'typeSafe'` to `false`, to omit type checking when matching. Defaults to `true`.
+     *
+     * @param string $fieldOne The first field to compare against the second field.
+     * @param string $fieldTwo The second field to compare against the first field.
+     * @param array $options Optional options for the check. If set to [] will default to ['fieldsExpected' => true, 'typeSafe' => true].
+     * @param array $context The validation context.
+     * @return bool Success.
+     */
+    public static function fieldsMatching($fieldOne, $fieldTwo, array $options, $context)
+    {
+        $options += [
+            'fieldsExpected' => true,
+            'typeSafe' => true,
+        ];
+
+        if (!isset($context['data'][$fieldOne]) || !isset($context['data'][$fieldTwo])) {
+            if ($options['fieldsExpected']) {
+                return false;
+            }
+
+            return true;
+        }
+
+        if ($options['typeSafe']) {
+            return $context['data'][$fieldOne] === $context['data'][$fieldTwo];
+        }
+
+        return $context['data'][$fieldOne] == $context['data'][$fieldTwo];
+    }
+
+    /**
+     * Validates if two fields do not match each other.
+     *
+     * If both fields have exactly the same value, this method will return `false`.
+     *
+     * You may set option `'fieldsExpected'` to `false` to pass the rule if either of
+     * the given fields miss in the context. Defaults to `true`.
+     *
+     * You may set option `'typeSafe'` to `false`, to omit type checking when matching. Defaults to `false`.
+     *
+     * @param string $fieldOne The first field to compare against the second field.
+     * @param string $fieldTwo The second field to compare against the first field.
+     * @param array $options Optional options for the check. If set to [] will default to ['fieldsExpected' => true, 'typeSafe' => false].
+     * @param array $context The validation context.
+     * @return bool Success.
+     */
+    public static function fieldsNotMatching($fieldOne, $fieldTwo, array $options, $context)
+    {
+        $options += [
+            'fieldsExpected' => true,
+            'typeSafe' => false,
+        ];
+
+        if (!isset($context['data'][$fieldOne]) || !isset($context['data'][$fieldTwo])) {
+            if ($options['fieldsExpected']) {
+                return false;
+            }
+
+            return true;
+        }
+
+        if ($options['typeSafe']) {
+            return $context['data'][$fieldOne] !== $context['data'][$fieldTwo];
+        }
+
+        return $context['data'][$fieldOne] != $context['data'][$fieldTwo];
+    }
+
+    /**
      * Checks if a string contains one or more non-alphanumeric characters.
      *
      * Returns true if string contains at least the specified number of non-alphanumeric characters
