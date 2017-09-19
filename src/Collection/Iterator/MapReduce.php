@@ -174,8 +174,8 @@ class MapReduce implements IteratorAggregate
     protected function _execute()
     {
         $mapper = $this->_mapper;
-        foreach ($this->_data as $key => $value) {
-            $mapper($value, $key, $this);
+        foreach ($this->_data as $key => $val) {
+            $mapper($val, $key, $this);
         }
         $this->_data = null;
 
