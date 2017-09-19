@@ -185,10 +185,7 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * Create a cookie with an updated name
-     *
-     * @param string $name Name of the cookie
-     * @return static
+     * {@inheritDoc}
      */
     public function withName($name)
     {
@@ -200,11 +197,7 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * Get the id for a cookie
-     *
-     * Cookies are unique across name, domain, path tuples.
-     *
-     * @return string
+     * {@inheritDoc}
      */
     public function getId()
     {
@@ -214,9 +207,7 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * Gets the cookie name
-     *
-     * @return string
+     * {@inheritDoc}
      */
     public function getName()
     {
@@ -245,9 +236,7 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * Gets the cookie value
-     *
-     * @return string|array
+     * {@inheritDoc}
      */
     public function getValue()
     {
@@ -255,10 +244,7 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * Create a cookie with an updated value.
-     *
-     * @param string|array $value Value of the cookie to set
-     * @return static
+     * {@inheritDoc}
      */
     public function withValue($value)
     {
@@ -281,10 +267,7 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * Create a new cookie with an updated path
-     *
-     * @param string $path Sets the path
-     * @return static
+     * {@inheritDoc}
      */
     public function withPath($path)
     {
@@ -296,9 +279,7 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * Get the path attribute.
-     *
-     * @return string
+     * {@inheritDoc}
      */
     public function getPath()
     {
@@ -306,10 +287,7 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * Create a cookie with an updated domain
-     *
-     * @param string $domain Domain to set
-     * @return static
+     * {@inheritDoc}
      */
     public function withDomain($domain)
     {
@@ -321,9 +299,7 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * Get the domain attribute.
-     *
-     * @return string
+     * {@inheritDoc}
      */
     public function getDomain()
     {
@@ -348,9 +324,7 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * Check if the cookie is secure
-     *
-     * @return bool
+     * {@inheritDoc}
      */
     public function isSecure()
     {
@@ -358,10 +332,7 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * Create a cookie with Secure updated
-     *
-     * @param bool $secure Secure attribute value
-     * @return static
+     * {@inheritDoc}
      */
     public function withSecure($secure)
     {
@@ -373,10 +344,7 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * Create a cookie with HTTP Only updated
-     *
-     * @param bool $httpOnly HTTP Only
-     * @return static
+     * {@inheritDoc}
      */
     public function withHttpOnly($httpOnly)
     {
@@ -405,9 +373,7 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * Check if the cookie is HTTP only
-     *
-     * @return bool
+     * {@inheritDoc}
      */
     public function isHttpOnly()
     {
@@ -415,10 +381,7 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * Create a cookie with an updated expiration date
-     *
-     * @param \DateTime|\DateTimeImmutable $dateTime Date time object
-     * @return static
+     * {@inheritDoc}
      */
     public function withExpiry($dateTime)
     {
@@ -429,9 +392,7 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * Get the current expiry time
-     *
-     * @return \DateTime|\DateTimeImmutable|null Timestamp of expiry or null
+     * {@inheritDoc}
      */
     public function getExpiry()
     {
@@ -439,12 +400,7 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * Get the timestamp from the expiration time
-     *
-     * Timestamps are strings as large timestamps can overflow MAX_INT
-     * in 32bit systems.
-     *
-     * @return string|null The expiry time as a string timestamp.
+     * {@inheritDoc}
      */
     public function getExpiresTimestamp()
     {
@@ -456,9 +412,7 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * Builds the expiration value part of the header string
-     *
-     * @return string
+     * {@inheritDoc}
      */
     public function getFormattedExpires()
     {
@@ -470,12 +424,7 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * Check if a cookie is expired when compared to $time
-     *
-     * Cookies without an expiration date always return false.
-     *
-     * @param \DateTime|\DateTimeImmutable $time The time to test against. Defaults to 'now' in UTC.
-     * @return bool
+     * {@inheritDoc}
      */
     public function isExpired($time = null)
     {
@@ -488,9 +437,7 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * Create a new cookie that will virtually never expire.
-     *
-     * @return static
+     * {@inheritDoc}
      */
     public function withNeverExpire()
     {
@@ -501,11 +448,7 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * Create a new cookie that will expire/delete the cookie from the browser.
-     *
-     * This is done by setting the expiration time to 1 year ago
-     *
-     * @return static
+     * {@inheritDoc}
      */
     public function withExpired()
     {
