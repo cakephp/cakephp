@@ -189,7 +189,7 @@ class Plugin
         $vendorFile = dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'cakephp-plugins.php';
         if (!file_exists($vendorFile)) {
             $vendorFile = dirname(dirname(dirname(dirname(__DIR__)))) . DIRECTORY_SEPARATOR . 'cakephp-plugins.php';
-            if (strpos($vendorFile, ROOT) !== 0 || !file_exists($vendorFile)) {
+            if (!file_exists($vendorFile)) {
                 Configure::write(['plugins' => []]);
 
                 return;
