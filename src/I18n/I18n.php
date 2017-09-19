@@ -289,6 +289,7 @@ class I18n
      */
     public static function setLocale($locale)
     {
+        static::getDefaultLocale();
         Locale::setDefault($locale);
         if (isset(static::$_collection)) {
             static::translators()->setLocale($locale);
