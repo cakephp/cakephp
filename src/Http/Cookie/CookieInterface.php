@@ -49,6 +49,15 @@ interface CookieInterface
     public function getValue();
 
     /**
+     * Gets the cookie value as a string.
+     *
+     * This will collapse any complex data in the cookie with json_encode()
+     *
+     * @return string
+     */
+    public function getStringValue();
+
+    /**
      * Create a cookie with an updated value.
      *
      * @param string|array $value Value of the cookie to set

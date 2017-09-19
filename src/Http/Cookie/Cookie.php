@@ -246,6 +246,18 @@ class Cookie implements CookieInterface
     /**
      * {@inheritDoc}
      */
+    public function getStringValue()
+    {
+        if ($this->isExpanded) {
+            return $this->_flatten($this->value);
+        }
+
+        return $this->value;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function withValue($value)
     {
         $new = clone $this;
