@@ -59,13 +59,14 @@ class I18nTest extends TestCase
         Plugin::unload();
         Cache::clear(false, '_cake_core_');
     }
-    
+
     /**
      * Tests that the default locale is set correctly
      *
      * @return void
      */
-    public function testDefaultLocale() {
+    public function testDefaultLocale()
+    {
         $newLocale = 'de_DE';
         I18n::setLocale($newLocale);
         $this->assertEquals($newLocale, I18n::getLocale());
