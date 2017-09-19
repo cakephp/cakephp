@@ -2146,7 +2146,7 @@ class Response implements ResponseInterface
     {
         return [
             'name' => $cookie->getName(),
-            'value' => $cookie->getValue(),
+            'value' => $cookie->getStringValue(),
             'path' => $cookie->getPath(),
             'domain' => $cookie->getDomain(),
             'secure' => $cookie->isSecure(),

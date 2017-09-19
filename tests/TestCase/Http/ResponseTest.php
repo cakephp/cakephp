@@ -1578,6 +1578,33 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * Test getCookies() and array data.
+     *
+     * @return void
+     */
+    public function testGetCookiesArrayValue()
+    {
+        $response = new Response();
+        $cookie = (new Cookie('urmc'))
+            ->withValue(['user_id' => 1, 'token' => 'abc123'])
+            ->withHttpOnly(true);
+
+        $new = $response->withCookie($cookie);
+        $expected = [
+            'urmc' => [
+                'name' => 'urmc',
+                'value' => '{"user_id":1,"token":"abc123"}',
+                'expire' => null,
+                'path' => '',
+                'domain' => '',
+                'secure' => false,
+                'httpOnly' => true
+            ],
+        ];
+        $this->assertEquals($expected, $new->getCookies());
+    }
+
+    /**
      * Test getCookieCollection() as array data
      *
      * @return void
