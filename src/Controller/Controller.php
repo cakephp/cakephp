@@ -320,9 +320,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     public function loadComponent($name, array $config = [])
     {
         list(, $prop) = pluginSplit($name);
-        $this->{$prop} = $this->components()->load($name, $config);
 
-        return $this->{$prop};
+        return $this->{$prop} = $this->components()->load($name, $config);
     }
 
     /**
@@ -689,7 +688,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @param \Cake\ORM\Table|string|\Cake\ORM\Query|null $object Table to paginate
      * (e.g: Table instance, 'TableName' or a Query object)
      * @param array $settings The settings/configuration used for pagination.
-     * @return \Cake\ORM\ResultSet Query results
+     * @return \Cake\ORM\ResultSet|\Cake\Datasource\ResultSetInterface Query results
      * @link https://book.cakephp.org/3.0/en/controllers.html#paginating-a-model
      * @throws \RuntimeException When no compatible table object can be found.
      */

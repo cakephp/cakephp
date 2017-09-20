@@ -556,6 +556,7 @@ abstract class IntegrationTestCase extends TestCase
         if (empty($class) || !class_exists($class)) {
             $class = 'Cake\Error\ExceptionRenderer';
         }
+        /* @var \Cake\Error\ExceptionRenderer $instance */
         $instance = new $class($exception);
         $this->_response = $instance->render();
     }

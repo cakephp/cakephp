@@ -635,7 +635,7 @@ class ConsoleOptionParser
     /**
      * Gets the arguments defined in the parser.
      *
-     * @return array Array of argument descriptions
+     * @return \Cake\Console\ConsoleInputArgument[]
      */
     public function arguments()
     {
@@ -645,7 +645,7 @@ class ConsoleOptionParser
     /**
      * Get the defined options in the parser.
      *
-     * @return array
+     * @return \Cake\Console\ConsoleInputOption[]
      */
     public function options()
     {
@@ -655,7 +655,7 @@ class ConsoleOptionParser
     /**
      * Get the array of defined subcommands
      *
-     * @return array
+     * @return \Cake\Console\ConsoleInputSubcommand[]
      */
     public function subcommands()
     {
