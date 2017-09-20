@@ -2115,4 +2115,10 @@ TEXT;
         $this->assertEquals('mypath', $View->templatePath());
         $this->assertEquals('mypath', $View->templatePath);
     }
+
+    public function testToString()
+    {
+        $result = "{$this->View}";
+        $this->assertSame('', $result);
+    }
 }
