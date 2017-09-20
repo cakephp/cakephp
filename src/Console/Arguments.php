@@ -62,7 +62,7 @@ class Arguments
      * @param int $index The argument index to access.
      * @return string|null The argument value or null
      */
-    public function getArgument($index)
+    public function getArgumentAt($index)
     {
         if (isset($this->args[$index])) {
             return $this->args[$index];
@@ -77,7 +77,7 @@ class Arguments
      * @param int $index The argument index to check.
      * @return bool
      */
-    public function hasArgument($index)
+    public function hasArgumentAt($index)
     {
         return isset($this->args[$index]);
     }
