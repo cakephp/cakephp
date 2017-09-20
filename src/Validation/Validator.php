@@ -1776,7 +1776,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|null $message The error message when the rule fails.
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
-     * @return bool
+     * @return $this
      */
     public function regex($field, $regex, $message = null, $when = null)
     {

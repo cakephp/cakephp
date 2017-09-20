@@ -19,6 +19,7 @@ use Cake\Cache\Cache;
 use Cake\Core\Plugin;
 use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
+use Locale;
 
 /**
  * I18nTest class
@@ -41,7 +42,7 @@ class I18nTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->locale = I18n::getLocale();
+        $this->locale = Locale::getDefault() ?: I18n::DEFAULT_LOCALE;
     }
 
     /**
@@ -57,6 +58,19 @@ class I18nTest extends TestCase
         I18n::setLocale($this->locale);
         Plugin::unload();
         Cache::clear(false, '_cake_core_');
+    }
+
+    /**
+     * Tests that the default locale is set correctly
+     *
+     * @return void
+     */
+    public function testDefaultLocale()
+    {
+        $newLocale = 'de_DE';
+        I18n::setLocale($newLocale);
+        $this->assertEquals($newLocale, I18n::getLocale());
+        $this->assertEquals($this->locale, I18n::getDefaultLocale());
     }
 
     /**

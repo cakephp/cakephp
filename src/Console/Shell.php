@@ -33,7 +33,7 @@ use ReflectionMethod;
  *
  * Is the equivalent of Cake\Controller\Controller on the command line.
  *
- * @method int|bool main()
+ * @method int|bool|null main(...$args)
  */
 class Shell
 {
@@ -509,7 +509,7 @@ class Shell
         }
 
         $this->err('No subcommand provided. Choose one of the available subcommands.', 2);
-        $this->out($this->OptionParser->help($command));
+        $this->_io->err($this->OptionParser->help($command));
 
         return false;
     }
