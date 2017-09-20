@@ -23,21 +23,21 @@ class Arguments
     /**
      * Positional arguments.
      *
-     * @var array
+     * @var string[]
      */
     protected $args;
 
     /**
      * Named options
      *
-     * @var array
+     * @var string[]
      */
     protected $options;
 
     /**
      * Constructor
      *
-     * @param array $args Positional arguments
+     * @param string[] $args Positional arguments
      * @param array $options Named arguments
      */
     public function __construct(array $args, array $options)

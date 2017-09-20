@@ -40,13 +40,13 @@ class ArgumentsTest extends TestCase
      *
      * @return void
      */
-    public function testGetArgument()
+    public function testGetArgumentAt()
     {
         $values = ['big', 'brown', 'bear'];
         $args = new Arguments($values, []);
-        $this->assertSame($values[0], $args->getArgument(0));
-        $this->assertSame($values[1], $args->getArgument(1));
-        $this->assertNull($args->getArgument(3));
+        $this->assertSame($values[0], $args->getArgumentAt(0));
+        $this->assertSame($values[1], $args->getArgumentAt(1));
+        $this->assertNull($args->getArgumentAt(3));
     }
 
     /**
@@ -54,12 +54,12 @@ class ArgumentsTest extends TestCase
      *
      * @return void
      */
-    public function testHasArgument()
+    public function testHasArgumentAt()
     {
         $values = ['big', 'brown', 'bear'];
         $args = new Arguments($values, []);
-        $this->assertTrue($args->hasArgument(0));
-        $this->assertTrue($args->hasArgument(1));
-        $this->assertFalse($args->hasArgument(3));
+        $this->assertTrue($args->hasArgumentAt(0));
+        $this->assertTrue($args->hasArgumentAt(1));
+        $this->assertFalse($args->hasArgumentAt(3));
     }
 }
