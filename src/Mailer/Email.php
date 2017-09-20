@@ -445,6 +445,8 @@ class Email implements JsonSerializable, Serializable
      */
     public function sender($email = null, $name = null)
     {
+        deprecationWarning('Email::sender() is deprecated. Use Email::setSender() or Email::getSender() instead.');
+
         if ($email === null) {
             return $this->getSender();
         }
@@ -488,6 +490,8 @@ class Email implements JsonSerializable, Serializable
      */
     public function replyTo($email = null, $name = null)
     {
+        deprecationWarning('Email::replyTo() is deprecated. Use Email::setReplyTo() or Email::getReplyTo() instead.');
+
         if ($email === null) {
             return $this->getReplyTo();
         }
@@ -531,6 +535,8 @@ class Email implements JsonSerializable, Serializable
      */
     public function readReceipt($email = null, $name = null)
     {
+        deprecationWarning('Email::readReceipt() is deprecated. Use Email::setReadReceipt() or Email::getReadReceipt() instead.');
+
         if ($email === null) {
             return $this->getReadReceipt();
         }
@@ -615,6 +621,8 @@ class Email implements JsonSerializable, Serializable
      */
     public function to($email = null, $name = null)
     {
+        deprecationWarning('Email::to() is deprecated. Use Email::setTo() or Email::getTo() instead.');
+
         if ($email === null) {
             return $this->getTo();
         }
@@ -669,6 +677,8 @@ class Email implements JsonSerializable, Serializable
      */
     public function cc($email = null, $name = null)
     {
+        deprecationWarning('Email::cc() is deprecated. Use Email::setCc() or Email::getCc() instead.');
+
         if ($email === null) {
             return $this->getCc();
         }
@@ -723,6 +733,8 @@ class Email implements JsonSerializable, Serializable
      */
     public function bcc($email = null, $name = null)
     {
+        deprecationWarning('Email::bcc() is deprecated. Use Email::setBcc() or Email::getBcc() instead.');
+
         if ($email === null) {
             return $this->getBcc();
         }
@@ -778,6 +790,8 @@ class Email implements JsonSerializable, Serializable
      */
     public function charset($charset = null)
     {
+        deprecationWarning('Email::charset() is deprecated. Use Email::setCharset() or Email::getCharset() instead.');
+
         if ($charset === null) {
             return $this->getCharset();
         }
@@ -818,6 +832,8 @@ class Email implements JsonSerializable, Serializable
      */
     public function headerCharset($charset = null)
     {
+        deprecationWarning('Email::headerCharset() is deprecated. Use Email::setHeaderCharset() or Email::getHeaderCharset() instead.');
+
         if ($charset === null) {
             return $this->getHeaderCharset();
         }
@@ -862,6 +878,8 @@ class Email implements JsonSerializable, Serializable
      */
     public function emailPattern($regex = false)
     {
+        deprecationWarning('Email::emailPattern() is deprecated. Use Email::setEmailPattern() or Email::getEmailPattern() instead.');
+
         if ($regex === false) {
             return $this->getEmailPattern();
         }
@@ -1017,6 +1035,8 @@ class Email implements JsonSerializable, Serializable
      */
     public function subject($subject = null)
     {
+        deprecationWarning('Email::subject() is deprecated. Use Email::setSubject() or Email::getSubject() instead.');
+
         if ($subject === null) {
             return $this->getSubject();
         }
@@ -1237,6 +1257,8 @@ class Email implements JsonSerializable, Serializable
      */
     public function template($template = false, $layout = false)
     {
+        deprecationWarning('Email::template() is deprecated. Use Email::setTemplate() or Email::getTemplate() and Email::setLayout() or Email::getLayout() instead.');
+
         if ($template === false) {
             return [
                 'template' => $this->getTemplate(),
@@ -1283,6 +1305,8 @@ class Email implements JsonSerializable, Serializable
      */
     public function viewRender($viewClass = null)
     {
+        deprecationWarning('Email::viewRender() is deprecated. Use Email::setViewRenderer() or Email::getViewRenderer() instead.');
+
         if ($viewClass === null) {
             return $this->getViewRenderer();
         }
@@ -1323,6 +1347,8 @@ class Email implements JsonSerializable, Serializable
      */
     public function viewVars($viewVars = null)
     {
+        deprecationWarning('Email::viewVars() is deprecated. Use Email::setViewVars() or Email::getViewVars() instead.');
+
         if ($viewVars === null) {
             return $this->getViewVars();
         }
@@ -1362,6 +1388,8 @@ class Email implements JsonSerializable, Serializable
      */
     public function theme($theme = null)
     {
+        deprecationWarning('Email::theme() is deprecated. Use Email::setTheme() or Email::getTheme() instead.');
+
         if ($theme === null) {
             return $this->getTheme();
         }
@@ -1401,6 +1429,8 @@ class Email implements JsonSerializable, Serializable
      */
     public function helpers($helpers = null)
     {
+        deprecationWarning('Email::helpers() is deprecated. Use Email::setHelpers() or Email::getHelpers() instead.');
+
         if ($helpers === null) {
             return $this->getHelpers();
         }
@@ -1445,6 +1475,8 @@ class Email implements JsonSerializable, Serializable
      */
     public function emailFormat($format = null)
     {
+        deprecationWarning('Email::emailFormat() is deprecated. Use Email::setEmailFormat() or Email::getEmailFormat() instead.');
+
         if ($format === null) {
             return $this->getEmailFormat();
         }
@@ -1509,6 +1541,8 @@ class Email implements JsonSerializable, Serializable
      */
     public function transport($name = null)
     {
+        deprecationWarning('Email::transport() is deprecated. Use Email::setTransport() or Email::getTransport() instead.');
+
         if ($name === null) {
             return $this->getTransport();
         }
@@ -1605,6 +1639,8 @@ class Email implements JsonSerializable, Serializable
      */
     public function messageId($message = null)
     {
+        deprecationWarning('Email::messageId() is deprecated. Use Email::setMessageId() or Email::getMessageId() instead.');
+
         if ($message === null) {
             return $this->getMessageId();
         }
@@ -1646,6 +1682,8 @@ class Email implements JsonSerializable, Serializable
      */
     public function domain($domain = null)
     {
+        deprecationWarning('Email::domain() is deprecated. Use Email::setDomain() or Email::getDomain() instead.');
+
         if ($domain === null) {
             return $this->getDomain();
         }
@@ -1661,19 +1699,19 @@ class Email implements JsonSerializable, Serializable
      * Attach a single file:
      *
      * ```
-     * $email->attachments('path/to/file');
+     * $email->setAttachments('path/to/file');
      * ```
      *
      * Attach a file with a different filename:
      *
      * ```
-     * $email->attachments(['custom_name.txt' => 'path/to/file.txt']);
+     * $email->setAttachments(['custom_name.txt' => 'path/to/file.txt']);
      * ```
      *
      * Attach a file and specify additional properties:
      *
      * ```
-     * $email->attachments(['custom_name.png' => [
+     * $email->setAttachments(['custom_name.png' => [
      *      'file' => 'path/to/file',
      *      'mimetype' => 'image/png',
      *      'contentId' => 'abc123',
@@ -1685,7 +1723,7 @@ class Email implements JsonSerializable, Serializable
      * Attach a file from string and specify additional properties:
      *
      * ```
-     * $email->attachments(['custom_name.png' => [
+     * $email->setAttachments(['custom_name.png' => [
      *      'data' => file_get_contents('path/to/file'),
      *      'mimetype' => 'image/png'
      *    ]
@@ -1758,19 +1796,19 @@ class Email implements JsonSerializable, Serializable
      * Attach a single file:
      *
      * ```
-     * $email->attachments('path/to/file');
+     * $email->setAttachments('path/to/file');
      * ```
      *
      * Attach a file with a different filename:
      *
      * ```
-     * $email->attachments(['custom_name.txt' => 'path/to/file.txt']);
+     * $email->setAttachments(['custom_name.txt' => 'path/to/file.txt']);
      * ```
      *
      * Attach a file and specify additional properties:
      *
      * ```
-     * $email->attachments(['custom_name.png' => [
+     * $email->setAttachments(['custom_name.png' => [
      *      'file' => 'path/to/file',
      *      'mimetype' => 'image/png',
      *      'contentId' => 'abc123',
@@ -1782,7 +1820,7 @@ class Email implements JsonSerializable, Serializable
      * Attach a file from string and specify additional properties:
      *
      * ```
-     * $email->attachments(['custom_name.png' => [
+     * $email->setAttachments(['custom_name.png' => [
      *      'data' => file_get_contents('path/to/file'),
      *      'mimetype' => 'image/png'
      *    ]
@@ -1802,6 +1840,8 @@ class Email implements JsonSerializable, Serializable
      */
     public function attachments($attachments = null)
     {
+        deprecationWarning('Email::attachments() is deprecated. Use Email::setAttachments() or Email::getAttachments() instead.');
+
         if ($attachments === null) {
             return $this->getAttachments();
         }
@@ -1950,6 +1990,8 @@ class Email implements JsonSerializable, Serializable
      */
     public static function configTransport($key, $config = null)
     {
+        deprecationWarning('Email::configTransport() is deprecated. Use Email::setConfigTransport() or Email::getConfigTransport() instead.');
+
         if ($config === null && is_string($key)) {
             return static::getConfigTransport($key);
         }
@@ -2020,6 +2062,8 @@ class Email implements JsonSerializable, Serializable
      */
     public function profile($config = null)
     {
+        deprecationWarning('Email::profile() is deprecated. Use Email::setProfile() or Email::getProfile() instead.');
+
         if ($config === null) {
             return $this->getProfile();
         }
@@ -2156,7 +2200,7 @@ class Email implements JsonSerializable, Serializable
         ];
         foreach ($simpleMethods as $method) {
             if (isset($config[$method])) {
-                $this->$method($config[$method]);
+                $this->{'set' . ucfirst($method)}($config[$method]);
             }
         }
 
@@ -2172,7 +2216,7 @@ class Email implements JsonSerializable, Serializable
         ];
         foreach ($viewBuilderMethods as $method) {
             if (array_key_exists($method, $config)) {
-                $this->viewBuilder()->$method($config[$method]);
+                $this->viewBuilder()->{'set' . ucfirst($method)}($config[$method]);
             }
         }
 

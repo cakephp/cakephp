@@ -305,10 +305,10 @@ class SmtpTransportTest extends TestCase
     public function testRcpt()
     {
         $email = new Email();
-        $email->from('noreply@cakephp.org', 'CakePHP Test');
-        $email->to('cake@cakephp.org', 'CakePHP');
-        $email->bcc('phpnut@cakephp.org');
-        $email->cc(['mark@cakephp.org' => 'Mark Story', 'juan@cakephp.org' => 'Juan Basso']);
+        $email->setFrom('noreply@cakephp.org', 'CakePHP Test');
+        $email->setTo('cake@cakephp.org', 'CakePHP');
+        $email->setBcc('phpnut@cakephp.org');
+        $email->setCc(['mark@cakephp.org' => 'Mark Story', 'juan@cakephp.org' => 'Juan Basso']);
 
         $this->socket->expects($this->at(0))->method('write')->with("MAIL FROM:<noreply@cakephp.org>\r\n");
         $this->socket->expects($this->at(1))->method('read')->will($this->returnValue("250 OK\r\n"));
@@ -333,7 +333,7 @@ class SmtpTransportTest extends TestCase
     {
         $email = new Email();
         $email->from('noreply@cakephp.org', 'CakePHP Test');
-        $email->to('cake@cakephp.org', 'CakePHP');
+        $email->setTo('cake@cakephp.org', 'CakePHP');
         $email->returnPath('pleasereply@cakephp.org', 'CakePHP Return');
 
         $this->socket->expects($this->at(0))->method('write')->with("MAIL FROM:<pleasereply@cakephp.org>\r\n");
@@ -354,13 +354,13 @@ class SmtpTransportTest extends TestCase
         $email = $this->getMockBuilder('Cake\Mailer\Email')
             ->setMethods(['message'])
             ->getMock();
-        $email->from('noreply@cakephp.org', 'CakePHP Test');
-        $email->returnPath('pleasereply@cakephp.org', 'CakePHP Return');
-        $email->to('cake@cakephp.org', 'CakePHP');
-        $email->cc(['mark@cakephp.org' => 'Mark Story', 'juan@cakephp.org' => 'Juan Basso']);
-        $email->bcc('phpnut@cakephp.org');
-        $email->messageID('<4d9946cf-0a44-4907-88fe-1d0ccbdd56cb@localhost>');
-        $email->subject('Testing SMTP');
+        $email->setFrom('noreply@cakephp.org', 'CakePHP Test');
+        $email->setReturnPath('pleasereply@cakephp.org', 'CakePHP Return');
+        $email->setTo('cake@cakephp.org', 'CakePHP');
+        $email->setCc(['mark@cakephp.org' => 'Mark Story', 'juan@cakephp.org' => 'Juan Basso']);
+        $email->setBcc('phpnut@cakephp.org');
+        $email->setMessageId('<4d9946cf-0a44-4907-88fe-1d0ccbdd56cb@localhost>');
+        $email->setSubject('Testing SMTP');
         $date = date(DATE_RFC2822);
         $email->setHeaders(['Date' => $date]);
         $email->expects($this->once())
@@ -477,7 +477,7 @@ class SmtpTransportTest extends TestCase
     {
         $email = new Email();
         $email->from('noreply@cakephp.org', 'CakePHP Test');
-        $email->to('cake@cakephp.org', 'CakePHP');
+        $email->setTo('cake@cakephp.org', 'CakePHP');
 
         $this->socket->expects($this->at(0))->method('write')->with("MAIL FROM:<noreply@cakephp.org>\r\n");
         $this->socket->expects($this->at(1))->method('read')->will($this->returnValue("250 OK\r\n"));
@@ -602,7 +602,7 @@ class SmtpTransportTest extends TestCase
             ->setMethods(['message'])
             ->getMock();
         $email->from('noreply@cakephp.org', 'CakePHP Test');
-        $email->to('cake@cakephp.org', 'CakePHP');
+        $email->setTo('cake@cakephp.org', 'CakePHP');
         $email->expects($this->exactly(2))->method('message')->will($this->returnValue(['First Line']));
 
         $callback = function ($arg) {
@@ -655,7 +655,7 @@ class SmtpTransportTest extends TestCase
             ->setMethods(['message'])
             ->getMock();
         $email->from('noreply@cakephp.org', 'CakePHP Test');
-        $email->to('cake@cakephp.org', 'CakePHP');
+        $email->setTo('cake@cakephp.org', 'CakePHP');
         $email->expects($this->once())->method('message')->will($this->returnValue(['First Line']));
 
         $this->socket->expects($this->at(0))->method('connect')->will($this->returnValue(true));

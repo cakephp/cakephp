@@ -46,12 +46,12 @@ class DebugTransportTest extends TestCase
         $email = $this->getMockBuilder('Cake\Mailer\Email')
             ->setMethods(['message'])
             ->getMock();
-        $email->from('noreply@cakephp.org', 'CakePHP Test');
-        $email->to('cake@cakephp.org', 'CakePHP');
-        $email->cc(['mark@cakephp.org' => 'Mark Story', 'juan@cakephp.org' => 'Juan Basso']);
-        $email->bcc('phpnut@cakephp.org');
-        $email->messageID('<4d9946cf-0a44-4907-88fe-1d0ccbdd56cb@localhost>');
-        $email->subject('Testing Message');
+        $email->setFrom('noreply@cakephp.org', 'CakePHP Test');
+        $email->setTo('cake@cakephp.org', 'CakePHP');
+        $email->setCc(['mark@cakephp.org' => 'Mark Story', 'juan@cakephp.org' => 'Juan Basso']);
+        $email->setBcc('phpnut@cakephp.org');
+        $email->setMessageId('<4d9946cf-0a44-4907-88fe-1d0ccbdd56cb@localhost>');
+        $email->setSubject('Testing Message');
         $date = date(DATE_RFC2822);
         $email->setHeaders(['Date' => $date]);
         $email->expects($this->once())->method('message')->will($this->returnValue(['First Line', 'Second Line', '.Third Line', '']));
