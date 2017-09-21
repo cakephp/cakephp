@@ -74,6 +74,6 @@ class DefaultPasswordHasher extends AbstractPasswordHasher
      */
     public function needsRehash($password)
     {
-        return password_needs_rehash($password, $this->_config['hashType']);
+        return password_needs_rehash($password, $this->_config['hashType'], $this->_config['hashOptions']);
     }
 }

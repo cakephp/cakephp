@@ -100,9 +100,9 @@ class SecurityComponent extends Component
     public function startup(Event $event)
     {
         $controller = $event->getSubject();
-        $this->session = $controller->request->session();
+        $this->session = $controller->request->getSession();
         $this->_action = $controller->request->getParam('action');
-        $hasData = (bool)$controller->request->getData();
+        $hasData = ($controller->request->getData() || $controller->request->is(['put', 'post', 'delete', 'patch']));
         try {
             $this->_secureRequired($controller);
             $this->_authRequired($controller);
@@ -312,9 +312,6 @@ class SecurityComponent extends Component
      */
     protected function _validatePost(Controller $controller)
     {
-        if (!$controller->request->getData()) {
-            return true;
-        }
         $token = $this->_validToken($controller);
         $hashParts = $this->_hashParts($controller);
         $check = Security::hash(implode('', $hashParts), 'sha1');
@@ -382,7 +379,7 @@ class SecurityComponent extends Component
             $controller->request->here(),
             serialize($fieldList),
             $unlocked,
-            Security::salt()
+            Security::getSalt()
         ];
     }
 

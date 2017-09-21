@@ -252,9 +252,9 @@ class AuthComponent extends Component
     public function initialize(array $config)
     {
         $controller = $this->_registry->getController();
-        $this->eventManager($controller->eventManager());
+        $this->setEventManager($controller->getEventManager());
         $this->response =& $controller->response;
-        $this->session = $controller->request->session();
+        $this->session = $controller->request->getSession();
     }
 
     /**
@@ -866,7 +866,7 @@ class AuthComponent extends Component
             }
             $config = array_merge($global, (array)$config);
             $this->_authenticateObjects[$alias] = new $className($this->_registry, $config);
-            $this->eventManager()->on($this->_authenticateObjects[$alias]);
+            $this->getEventManager()->on($this->_authenticateObjects[$alias]);
         }
 
         return $this->_authenticateObjects;

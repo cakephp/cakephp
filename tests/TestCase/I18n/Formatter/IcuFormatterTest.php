@@ -51,26 +51,6 @@ class IcuFormatterTest extends TestCase
     }
 
     /**
-     * Tests that plural forms can be selected using the PO file format plural forms
-     *
-     * @return void
-     */
-    public function testFormatPlural()
-    {
-        $formatter = new IcuFormatter();
-        $messages = [
-            '{0} is 0',
-            '{0} is 1',
-            '{0} is 2',
-            '{0} is 3',
-            '{0} > 11'
-        ];
-        $this->assertEquals('1 is 1', $formatter->format('ar', $messages, ['_count' => 1, 1]));
-        $this->assertEquals('2 is 2', $formatter->format('ar', $messages, ['_count' => 2, 2]));
-        $this->assertEquals('20 > 11', $formatter->format('ar', $messages, ['_count' => 20, 20]));
-    }
-
-    /**
      * Tests that plurals can instead be selected using ICU's native selector
      *
      * @return void
@@ -129,21 +109,5 @@ class IcuFormatterTest extends TestCase
 
         $formatter = new IcuFormatter();
         $formatter->format('en_US', '{crazy format', ['some', 'vars']);
-    }
-
-    /**
-     * Tests that it is possible to provide a singular fallback when passing a string message.
-     * This is useful for getting quick feedback on the code during development instead of
-     * having to provide all plural forms even for the default language
-     *
-     * @return void
-     */
-    public function testSingularFallback()
-    {
-        $formatter = new IcuFormatter();
-        $singular = 'one thing';
-        $plural = 'many things';
-        $this->assertEquals($singular, $formatter->format('en_US', $plural, ['_count' => 1, '_singular' => $singular]));
-        $this->assertEquals($plural, $formatter->format('en_US', $plural, ['_count' => 2, '_singular' => $singular]));
     }
 }

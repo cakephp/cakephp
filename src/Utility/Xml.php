@@ -107,7 +107,7 @@ class Xml
             'return' => 'simplexml',
             'loadEntities' => false,
             'readFile' => true,
-            'parseHuge' => true,
+            'parseHuge' => false,
         ];
         $options += $defaults;
 
@@ -328,8 +328,20 @@ class Xml
      */
     protected static function _createChild($data)
     {
-        $value = $dom = $key = $format = $node = null;
-        extract($data);
+        $data += [
+            'dom' => null,
+            'node' => null,
+            'key' => null,
+            'value' => null,
+            'format' => null,
+        ];
+
+        $value = $data['value'];
+        $dom = $data['dom'];
+        $key = $data['key'];
+        $format = $data['format'];
+        $node = $data['node'];
+
         $childNS = $childValue = null;
         if (is_object($value) && method_exists($value, 'toArray') && is_callable([$value, 'toArray'])) {
             $value = call_user_func([$value, 'toArray']);

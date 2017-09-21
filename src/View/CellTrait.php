@@ -93,7 +93,7 @@ trait CellTrait
     protected function _createCell($className, $action, $plugin, $options)
     {
         /* @var \Cake\View\Cell $instance */
-        $instance = new $className($this->request, $this->response, $this->eventManager(), $options);
+        $instance = new $className($this->request, $this->response, $this->getEventManager(), $options);
         $instance->template = Inflector::underscore($action);
 
         $builder = $instance->viewBuilder();

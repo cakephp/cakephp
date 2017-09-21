@@ -1789,6 +1789,8 @@ class ValidatorTest extends TestCase
 
     /**
      * Tests the isArray proxy method
+     *
+     * @return void
      */
     public function testIsArray()
     {
@@ -1796,6 +1798,19 @@ class ValidatorTest extends TestCase
         $validator->isArray('username');
         $this->assertEmpty($validator->errors(['username' => [1, 2, 3]]));
         $this->assertNotEmpty($validator->errors(['username' => 'is not an array']));
+    }
+
+    /**
+     * Tests the scalar proxy method
+     *
+     * @return void
+     */
+    public function testScalar()
+    {
+        $validator = new Validator();
+        $validator->scalar('username');
+        $this->assertEmpty($validator->errors(['username' => 'scalar']));
+        $this->assertNotEmpty($validator->errors(['username' => ['array']]));
     }
 
     /**
@@ -1879,6 +1894,19 @@ class ValidatorTest extends TestCase
     }
 
     /**
+     * Tests the regex proxy method
+     *
+     * @return void
+     */
+    public function testRegex()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'regex', '/(?<!\\S)\\d++(?!\\S)/', ['/(?<!\\S)\\d++(?!\\S)/'], 'custom');
+        $this->assertEmpty($validator->errors(['username' => '123']));
+        $this->assertNotEmpty($validator->errors(['username' => 'Foo']));
+    }
+
+    /**
      * Tests that a rule in the Validator class exists and was configured as expected.
      *
      * @param Validator $validator
@@ -1913,5 +1941,37 @@ class ValidatorTest extends TestCase
         $rule = $validator->field('username')->rule($method);
         $this->assertEquals('the message', $rule->get('message'), 'Error messages are not the same');
         $this->assertEquals('create', $rule->get('on'), 'On clause is wrong');
+    }
+
+    /**
+     * Testing adding DefaultProvider
+     *
+     * @return void
+     */
+    public function testAddingDefaultProvider()
+    {
+        $validator = new Validator();
+        $this->assertEmpty($validator->providers(), 'Providers should be empty');
+
+        Validator::addDefaultProvider('test-provider', 'MyNameSpace\Validation\MyProvider');
+        $validator = new Validator();
+        $this->assertEquals($validator->providers(), ['test-provider'], 'Default provider `test-provider` is missing');
+    }
+
+    /**
+     * Testing getting DefaultProvider(s)
+     *
+     * @return void
+     */
+    public function testGetDefaultProvider()
+    {
+        Validator::addDefaultProvider('test-provider', 'MyNameSpace\Validation\MyProvider');
+        $this->assertEquals(Validator::getDefaultProvider('test-provider'), 'MyNameSpace\Validation\MyProvider', 'Default provider `test-provider` is missing');
+
+        $this->assertNull(Validator::getDefaultProvider('invalid-provider'), 'Default provider (`invalid-provider`) should be missing');
+        $this->assertNull(Validator::getDefaultProvider(null), 'Default provider (null) should be missing');
+
+        Validator::addDefaultProvider('test-provider2', 'MyNameSpace\Validation\MySecondProvider');
+        $this->assertEquals(Validator::getDefaultProviders(), ['test-provider', 'test-provider2'], 'Default providers incorrect');
     }
 }

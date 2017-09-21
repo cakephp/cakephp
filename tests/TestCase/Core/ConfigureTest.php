@@ -117,6 +117,14 @@ class ConfigureTest extends TestCase
 
         $result = Configure::read('something_I_just_made_up_now');
         $this->assertEquals(null, $result, 'Missing key should return null.');
+
+        $default = 'default';
+        $result = Configure::read('something_I_just_made_up_now', $default);
+        $this->assertEquals($default, $result);
+
+        $default = ['default'];
+        $result = Configure::read('something_I_just_made_up_now', $default);
+        $this->assertEquals($default, $result);
     }
 
     /**

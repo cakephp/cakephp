@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\Utility;
 
 use ArrayObject;
+use Cake\I18n\Time;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Hash;
@@ -1489,6 +1490,32 @@ class HashTest extends TestCase
     }
 
     /**
+     * Tests that objects as values handled correctly.
+     *
+     * @return void
+     */
+    public function testExtractObjects()
+    {
+        $data = [
+            'root' => [
+                'array' => new ArrayObject([
+                    'foo' => 'bar',
+                ]),
+                'created' => new Time('2010-01-05'),
+            ],
+        ];
+
+        $result = Hash::extract($data, 'root.created');
+        $this->assertSame([$data['root']['created']], $result);
+
+        $result = Hash::extract($data, 'root.array');
+        $this->assertSame(['foo' => 'bar'], $result);
+
+        $result = Hash::extract($data, 'root.array.foo');
+        $this->assertSame(['bar'], $result);
+    }
+
+    /**
      * testSort method
      *
      * @return void
@@ -2099,6 +2126,43 @@ class HashTest extends TestCase
         $result = Hash::remove($array, '{n}.part');
         $this->assertEquals($expected, $result);
         $result = Hash::remove($array, '{n}.{n}.part');
+        $this->assertEquals($expected, $result);
+
+        $array = [
+            'foo' => 'string',
+        ];
+        $expected = $array;
+        $result = Hash::remove($array, 'foo.bar');
+        $this->assertEquals($expected, $result);
+
+        $array = [
+            'foo' => 'string',
+            'bar' => [
+                0 => 'a',
+                1 => 'b',
+            ],
+        ];
+        $expected = [
+            'foo' => 'string',
+            'bar' => [
+                1 => 'b',
+            ],
+        ];
+        $result = Hash::remove($array, '{s}.0');
+        $this->assertEquals($expected, $result);
+
+        $array = [
+            'foo' => [
+                0 => 'a',
+                1 => 'b',
+            ],
+        ];
+        $expected = [
+            'foo' => [
+                1 => 'b',
+            ],
+        ];
+        $result = Hash::remove($array, 'foo[1=b].0');
         $this->assertEquals($expected, $result);
     }
 

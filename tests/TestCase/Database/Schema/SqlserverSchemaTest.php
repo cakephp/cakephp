@@ -116,11 +116,32 @@ SQL;
                 ['type' => 'time', 'length' => null]
             ],
             [
+                'TINYINT',
+                null,
+                2,
+                null,
+                ['type' => 'tinyinteger', 'length' => 2]
+            ],
+            [
+                'TINYINT',
+                null,
+                null,
+                null,
+                ['type' => 'tinyinteger', 'length' => 3]
+            ],
+            [
                 'SMALLINT',
                 null,
-                4,
+                3,
                 null,
-                ['type' => 'integer', 'length' => 4]
+                ['type' => 'smallinteger', 'length' => 3]
+            ],
+            [
+                'SMALLINT',
+                null,
+                null,
+                null,
+                ['type' => 'smallinteger', 'length' => 5]
             ],
             [
                 'INTEGER',
@@ -386,13 +407,12 @@ SQL;
                 'comment' => null,
             ],
             'views' => [
-                'type' => 'integer',
+                'type' => 'smallinteger',
                 'null' => true,
                 'default' => 0,
                 'length' => 5,
                 'precision' => null,
                 'unsigned' => null,
-                'autoIncrement' => null,
                 'comment' => null,
             ],
             'created' => [
@@ -601,6 +621,16 @@ SQL;
                 '[body] NVARCHAR(MAX) COLLATE Japanese_Unicode_CI_AI NOT NULL'
             ],
             // Integers
+            [
+                'post_id',
+                ['type' => 'smallinteger', 'length' => 11],
+                '[post_id] SMALLINT'
+            ],
+            [
+                'post_id',
+                ['type' => 'tinyinteger', 'length' => 11],
+                '[post_id] TINYINT'
+            ],
             [
                 'post_id',
                 ['type' => 'integer', 'length' => 11],
@@ -813,7 +843,7 @@ SQL;
         $connection = $this->getMockBuilder('Cake\Database\Connection')
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('driver')
+        $connection->expects($this->any())->method('getDriver')
             ->will($this->returnValue($driver));
 
         $table = (new TableSchema('posts'))
@@ -864,7 +894,7 @@ SQL;
         $connection = $this->getMockBuilder('Cake\Database\Connection')
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('driver')
+        $connection->expects($this->any())->method('getDriver')
             ->will($this->returnValue($driver));
 
         $table = (new TableSchema('posts'))
@@ -915,7 +945,7 @@ SQL;
         $connection = $this->getMockBuilder('Cake\Database\Connection')
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('driver')
+        $connection->expects($this->any())->method('getDriver')
             ->will($this->returnValue($driver));
 
         $table = (new TableSchema('schema_articles'))->addColumn('id', [
@@ -977,7 +1007,7 @@ SQL;
         $connection = $this->getMockBuilder('Cake\Database\Connection')
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('driver')
+        $connection->expects($this->any())->method('getDriver')
             ->will($this->returnValue($driver));
 
         $table = new TableSchema('schema_articles');
@@ -997,7 +1027,7 @@ SQL;
         $connection = $this->getMockBuilder('Cake\Database\Connection')
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('driver')
+        $connection->expects($this->any())->method('getDriver')
             ->will($this->returnValue($driver));
 
         $table = new TableSchema('schema_articles');

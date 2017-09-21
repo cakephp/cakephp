@@ -333,6 +333,96 @@ class ConsoleIoTest extends TestCase
     }
 
     /**
+     * Test overwriting content with shorter content
+     *
+     * @return void
+     */
+    public function testOverwriteWithShorterContent()
+    {
+        $length = strlen('12345');
+
+        $this->out->expects($this->at(0))
+            ->method('write')
+            ->with('12345')
+            ->will($this->returnValue($length));
+
+        // Backspaces
+        $this->out->expects($this->at(1))
+            ->method('write')
+            ->with(str_repeat("\x08", $length), 0)
+            ->will($this->returnValue($length));
+
+        $this->out->expects($this->at(2))
+            ->method('write')
+            ->with('123', 0)
+            ->will($this->returnValue(3));
+
+        // 2 spaces output to pad up to 5 bytes
+        $this->out->expects($this->at(3))
+            ->method('write')
+            ->with(str_repeat(' ', $length - 3), 0)
+            ->will($this->returnValue($length - 3));
+
+        // Backspaces
+        $this->out->expects($this->at(4))
+            ->method('write')
+            ->with(str_repeat("\x08", $length), 0)
+            ->will($this->returnValue($length));
+
+        $this->out->expects($this->at(5))
+            ->method('write')
+            ->with('12', 0)
+            ->will($this->returnValue(2));
+
+        $this->out->expects($this->at(6))
+            ->method('write')
+            ->with(str_repeat(' ', $length - 2), 0);
+
+        $this->io->out('12345');
+        $this->io->overwrite('123', 0);
+        $this->io->overwrite('12', 0);
+    }
+
+    /**
+     * Test overwriting content with longer content
+     *
+     * @return void
+     */
+    public function testOverwriteWithLongerContent()
+    {
+        $this->out->expects($this->at(0))
+            ->method('write')
+            ->with('1')
+            ->will($this->returnValue(1));
+
+        // Backspaces
+        $this->out->expects($this->at(1))
+            ->method('write')
+            ->with(str_repeat("\x08", 1), 0)
+            ->will($this->returnValue(1));
+
+        $this->out->expects($this->at(2))
+            ->method('write')
+            ->with('123', 0)
+            ->will($this->returnValue(3));
+
+        // Backspaces
+        $this->out->expects($this->at(3))
+            ->method('write')
+            ->with(str_repeat("\x08", 3), 0)
+            ->will($this->returnValue(3));
+
+        $this->out->expects($this->at(4))
+            ->method('write')
+            ->with('12345', 0)
+            ->will($this->returnValue(5));
+
+        $this->io->out('1');
+        $this->io->overwrite('123', 0);
+        $this->io->overwrite('12345', 0);
+    }
+
+    /**
      * Tests that setLoggers works properly
      *
      * @return void

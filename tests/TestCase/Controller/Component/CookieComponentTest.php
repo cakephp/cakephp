@@ -106,6 +106,25 @@ class CookieComponentTest extends TestCase
     }
 
     /**
+     * Test backwards compatibility with settings that use type juggling.
+     *
+     * @return void
+     */
+    public function testSettingsCompatibility()
+    {
+        $this->Cookie->config([
+            'expires' => '+10 seconds',
+            'path' => '/',
+            'domain' => '',
+            'secure' => 0,
+            'key' => 'somerandomhaskeysomerandomhaskey',
+            'encryption' => 0,
+        ]);
+        $this->Cookie->write('key', 'value');
+        $this->assertSame('value', $this->Cookie->read('key'));
+    }
+
+    /**
      * sets up some default cookie data.
      *
      * @return void

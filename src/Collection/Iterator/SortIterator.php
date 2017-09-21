@@ -59,11 +59,10 @@ class SortIterator extends Collection
      */
     public function __construct($items, $callback, $dir = SORT_DESC, $type = SORT_NUMERIC)
     {
-        if (is_array($items)) {
-            $items = new Collection($items);
+        if (!is_array($items)) {
+            $items = iterator_to_array((new Collection($items))->unwrap(), false);
         }
 
-        $items = iterator_to_array($items, false);
         $callback = $this->_propertyExtractor($callback);
         $results = [];
         foreach ($items as $key => $value) {
@@ -80,5 +79,15 @@ class SortIterator extends Collection
             $results[$key] = $items[$key];
         }
         parent::__construct($results);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return \Iterator
+     */
+    public function unwrap()
+    {
+        return $this->getInnerIterator();
     }
 }

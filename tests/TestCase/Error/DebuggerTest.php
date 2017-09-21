@@ -161,6 +161,28 @@ class DebuggerTest extends TestCase
     }
 
     /**
+     * Test that getOutputFormat/setOutputFormat works.
+     *
+     * @return void
+     */
+    public function testGetSetOutputFormat()
+    {
+        Debugger::setOutputFormat('html');
+        $this->assertEquals('html', Debugger::getOutputFormat());
+    }
+
+    /**
+     * Test that choosing a non-existent format causes an exception
+     *
+     * @expectedException \InvalidArgumentException
+     * @return void
+     */
+    public function testSetOutputAsException()
+    {
+        Debugger::setOutputFormat('Invalid junk');
+    }
+
+    /**
      * Test outputError with description encoding
      *
      * @return void
@@ -182,6 +204,31 @@ class DebuggerTest extends TestCase
         $result = ob_get_clean();
         $this->assertContains('&lt;script&gt;', $result);
         $this->assertNotContains('<script>', $result);
+    }
+
+    /**
+     * Tests that the correct line is being highlighted.
+     *
+     * @return void
+     */
+    public function testOutputErrorLineHighlight()
+    {
+        Debugger::outputAs('js');
+
+        ob_start();
+        $debugger = Debugger::getInstance();
+        $data = [
+            'level' => E_NOTICE,
+            'code' => E_NOTICE,
+            'file' => __FILE__,
+            'line' => __LINE__,
+            'description' => 'Error description',
+            'start' => 1
+        ];
+        $debugger->outputError($data);
+        $result = ob_get_clean();
+
+        $this->assertRegExp('#^\<span class\="code\-highlight"\>.*outputError.*\</span\>$#m', $result);
     }
 
     /**

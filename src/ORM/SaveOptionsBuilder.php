@@ -149,7 +149,7 @@ class SaveOptionsBuilder extends ArrayObject
      */
     public function validate($validate)
     {
-        $this->_table->validator($validate);
+        $this->_table->getValidator($validate);
         $this->_options['validate'] = $validate;
 
         return $this;

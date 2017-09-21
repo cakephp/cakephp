@@ -16,6 +16,9 @@ namespace Cake\Http;
 
 use Cake\Core\Configure;
 use Cake\Filesystem\File;
+use Cake\Http\Cookie\Cookie;
+use Cake\Http\Cookie\CookieCollection;
+use Cake\Http\Cookie\CookieInterface;
 use Cake\Log\Log;
 use Cake\Network\CorsBuilder;
 use Cake\Network\Exception\NotFoundException;
@@ -28,10 +31,7 @@ use Zend\Diactoros\MessageTrait;
 use Zend\Diactoros\Stream;
 
 /**
- * Cake Response is responsible for managing the response text, status and headers of a HTTP response.
- *
- * By default controllers will use this class to render their response. If you are going to use
- * a custom response class it should subclass this object in order to ensure compatibility.
+ * Responses contain the response text, status and headers of a HTTP response.
  */
 class Response implements ResponseInterface
 {
@@ -392,11 +392,11 @@ class Response implements ResponseInterface
     protected $_cacheDirectives = [];
 
     /**
-     * Holds cookies to be sent to the client
+     * Collection of cookies to send to the client
      *
-     * @var array
+     * @var \Cake\Http\Cookie\CookieCollection
      */
-    protected $_cookies = [];
+    protected $_cookies = null;
 
     /**
      * Reason Phrase
@@ -462,6 +462,7 @@ class Response implements ResponseInterface
             $this->_contentType = $this->resolveType($options['type']);
         }
         $this->_setContentType();
+        $this->_cookies = new CookieCollection();
     }
 
     /**
@@ -539,15 +540,15 @@ class Response implements ResponseInterface
      */
     protected function _setCookies()
     {
-        foreach ($this->_cookies as $name => $c) {
+        foreach ($this->_cookies as $cookie) {
             setcookie(
-                $name,
-                $c['value'],
-                $c['expire'],
-                $c['path'],
-                $c['domain'],
-                $c['secure'],
-                $c['httpOnly']
+                $cookie->getName(),
+                $cookie->getValue(),
+                $cookie->getExpiresTimestamp(),
+                $cookie->getPath(),
+                $cookie->getDomain(),
+                $cookie->isSecure(),
+                $cookie->isHttpOnly()
             );
         }
     }
@@ -1152,7 +1153,7 @@ class Response implements ResponseInterface
      *
      * @param string|null $charset Character set string.
      * @return string Current charset
-     * @deprecated 3.4.0 Use withCharset() instead.
+     * @deprecated 3.5.0 Use getCharset()/withCharset() instead.
      */
     public function charset($charset = null)
     {
@@ -1162,6 +1163,16 @@ class Response implements ResponseInterface
         $this->_charset = $charset;
         $this->_setContentType();
 
+        return $this->_charset;
+    }
+
+    /**
+     * Retruns the current charset.
+     *
+     * @return string
+     */
+    public function getCharset()
+    {
         return $this->_charset;
     }
 
@@ -1184,7 +1195,7 @@ class Response implements ResponseInterface
      * Sets the correct headers to instruct the client to not cache the response
      *
      * @return void
-     * @deprected 3.4.0 Use withDisabledCache() instead.
+     * @deprecated 3.4.0 Use withDisabledCache() instead.
      */
     public function disableCache()
     {
@@ -1930,18 +1941,20 @@ class Response implements ResponseInterface
     public function cookie($options = null)
     {
         if ($options === null) {
-            return $this->_cookies;
+            return $this->getCookies();
         }
 
         if (is_string($options)) {
-            if (!isset($this->_cookies[$options])) {
+            if (!$this->_cookies->has($options)) {
                 return null;
             }
 
-            return $this->_cookies[$options];
+            $cookie = $this->_cookies->get($options);
+
+            return $this->convertCookieToArray($cookie);
         }
 
-        $defaults = [
+        $options += [
             'name' => 'CakeCookie[default]',
             'value' => '',
             'expire' => 0,
@@ -1950,9 +1963,17 @@ class Response implements ResponseInterface
             'secure' => false,
             'httpOnly' => false
         ];
-        $options += $defaults;
-
-        $this->_cookies[$options['name']] = $options;
+        $expires = $options['expire'] ? new DateTime('@' . $options['expire']) : null;
+        $cookie = new Cookie(
+            $options['name'],
+            $options['value'],
+            $expires,
+            $options['path'],
+            $options['domain'],
+            $options['secure'],
+            $options['httpOnly']
+        );
+        $this->_cookies = $this->_cookies->add($cookie);
     }
 
     /**
@@ -1976,30 +1997,101 @@ class Response implements ResponseInterface
      *
      * // customize cookie attributes
      * $response = $response->withCookie('remember_me', ['path' => '/login']);
+     *
+     * // add a cookie object
+     * $response = $response->withCookie(new Cookie('remember_me', 1));
      * ```
      *
-     * @param string $name The name of the cookie to set.
+     * @param string|\Cake\Http\Cookie\Cookie $name The name of the cookie to set, or a cookie object
      * @param array|string $data Either a string value, or an array of cookie options.
      * @return static
      */
     public function withCookie($name, $data = '')
     {
-        if (!is_array($data)) {
-            $data = ['value' => $data];
+        if ($name instanceof Cookie) {
+            $cookie = $name;
+        } else {
+            if (!is_array($data)) {
+                $data = ['value' => $data];
+            }
+            $data += [
+                'value' => '',
+                'expire' => 0,
+                'path' => '/',
+                'domain' => '',
+                'secure' => false,
+                'httpOnly' => false
+            ];
+            $expires = $data['expire'] ? new DateTime('@' . $data['expire']) : null;
+            $cookie = new Cookie(
+                $name,
+                $data['value'],
+                $expires,
+                $data['path'],
+                $data['domain'],
+                $data['secure'],
+                $data['httpOnly']
+            );
         }
-        $defaults = [
-            'value' => '',
-            'expire' => 0,
-            'path' => '/',
-            'domain' => '',
-            'secure' => false,
-            'httpOnly' => false
-        ];
-        $data += $defaults;
-        $data['name'] = $name;
 
         $new = clone $this;
-        $new->_cookies[$name] = $data;
+        $new->_cookies = $new->_cookies->add($cookie);
+
+        return $new;
+    }
+
+    /**
+     * Create a new response with an expired cookie set.
+     *
+     * ### Options
+     *
+     * - `path`: Path the cookie applies to
+     * - `domain`: Domain the cookie is for.
+     * - `secure`: Is the cookie https?
+     * - `httpOnly`: Is the cookie available in the client?
+     *
+     * ### Examples
+     *
+     * ```
+     * // set scalar value with defaults
+     * $response = $response->withExpiredCookie('remember_me');
+     *
+     * // customize cookie attributes
+     * $response = $response->withExpiredCookie('remember_me', ['path' => '/login']);
+     *
+     * // add a cookie object
+     * $response = $response->withExpiredCookie(new Cookie('remember_me'));
+     * ```
+     *
+     * @param string|\Cake\Http\Cookie\CookieInterface $name The name of the cookie to expire, or a cookie object
+     * @param array $options An array of cookie options.
+     * @return static
+     */
+    public function withExpiredCookie($name, $options = [])
+    {
+        if ($name instanceof CookieInterface) {
+            $cookie = $name->withExpired();
+        } else {
+            $options += [
+                'path' => '/',
+                'domain' => '',
+                'secure' => false,
+                'httpOnly' => false
+            ];
+
+            $cookie = new Cookie(
+                $name,
+                '',
+                DateTime::createFromFormat('U', 1),
+                $options['path'],
+                $options['domain'],
+                $options['secure'],
+                $options['httpOnly']
+            );
+        }
+
+        $new = clone $this;
+        $new->_cookies = $new->_cookies->add($cookie);
 
         return $new;
     }
@@ -2015,11 +2107,13 @@ class Response implements ResponseInterface
      */
     public function getCookie($name)
     {
-        if (isset($this->_cookies[$name])) {
-            return $this->_cookies[$name];
+        if (!$this->_cookies->has($name)) {
+            return null;
         }
 
-        return null;
+        $cookie = $this->_cookies->get($name);
+
+        return $this->convertCookieToArray($cookie);
     }
 
     /**
@@ -2030,6 +2124,43 @@ class Response implements ResponseInterface
      * @return array
      */
     public function getCookies()
+    {
+        $out = [];
+        foreach ($this->_cookies as $cookie) {
+            $out[$cookie->getName()] = $this->convertCookieToArray($cookie);
+        }
+
+        return $out;
+    }
+
+    /**
+     * Convert the cookie into an array of its properties.
+     *
+     * This method is compatible with the historical behavior of Cake\Http\Response,
+     * where `httponly` is `httpOnly` and `expires` is `expire`
+     *
+     * @param \Cake\Http\Cookie\CookieInterface $cookie Cookie object.
+     * @return array
+     */
+    protected function convertCookieToArray(CookieInterface $cookie)
+    {
+        return [
+            'name' => $cookie->getName(),
+            'value' => $cookie->getStringValue(),
+            'path' => $cookie->getPath(),
+            'domain' => $cookie->getDomain(),
+            'secure' => $cookie->isSecure(),
+            'httpOnly' => $cookie->isHttpOnly(),
+            'expire' => $cookie->getExpiresTimestamp()
+        ];
+    }
+
+    /**
+     * Get the CookieCollection from the response
+     *
+     * @return \Cake\Http\Cookie\CookieCollection
+     */
+    public function getCookieCollection()
     {
         return $this->_cookies;
     }

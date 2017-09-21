@@ -18,7 +18,10 @@ use Cake\Core\Exception\Exception;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Http\Client\CookieCollection;
 use Cake\Http\Client\Request;
+use Cake\Http\Cookie\CookieInterface;
 use Cake\Utility\Hash;
+use InvalidArgumentException;
+use Zend\Diactoros\Uri;
 
 /**
  * The end user interface for doing HTTP requests.
@@ -45,8 +48,8 @@ use Cake\Utility\Hash;
  * Client will maintain cookies from the responses done with
  * a client instance. These cookies will be automatically added
  * to future requests to matching hosts. Cookies will respect the
- * `Expires`, `Path` and `Domain` attributes. You can get the list of
- * currently stored cookies using the cookies() method.
+ * `Expires`, `Path` and `Domain` attributes. You can get the client's
+ * CookieCollection using cookies()
  *
  * You can use the 'cookieJar' constructor option to provide a custom
  * cookie jar instance you've restored from cache/disk. By default
@@ -175,13 +178,27 @@ class Client
     /**
      * Get the cookies stored in the Client.
      *
-     * Returns an array of cookie data arrays.
-     *
      * @return \Cake\Http\Client\CookieCollection
      */
     public function cookies()
     {
         return $this->_cookies;
+    }
+
+    /**
+     * Adds a cookie to the Client collection.
+     *
+     * @param \Cake\Http\Cookie\CookieInterface $cookie Cookie object.
+     * @return $this
+     */
+    public function addCookie(CookieInterface $cookie)
+    {
+        if (!$cookie->getDomain() || !$cookie->getPath()) {
+            throw new InvalidArgumentException('Cookie must have a domain and a path set.');
+        }
+        $this->_cookies = $this->_cookies->add($cookie);
+
+        return $this;
     }
 
     /**
@@ -371,10 +388,48 @@ class Client
      */
     public function send(Request $request, $options = [])
     {
+        $redirects = 0;
+        if (isset($options['redirect'])) {
+            $redirects = (int)$options['redirect'];
+            unset($options['redirect']);
+        }
+
+        do {
+            $response = $this->_sendRequest($request, $options);
+
+            $handleRedirect = $response->isRedirect() && $redirects-- > 0;
+            if ($handleRedirect) {
+                $url = $request->getUri();
+                $request = $this->_cookies->addToRequest($request, []);
+
+                $location = $response->getHeaderLine('Location');
+                $locationUrl = $this->buildUrl($location, [], [
+                    'host' => $url->getHost(),
+                    'port' => $url->getPort(),
+                    'scheme' => $url->getScheme(),
+                    'protocolRelative' => true
+                ]);
+
+                $request = $request->withUri(new Uri($locationUrl));
+            }
+        } while ($handleRedirect);
+
+        return $response;
+    }
+
+    /**
+     * Send a request without redirection.
+     *
+     * @param \Cake\Http\Client\Request $request The request to send.
+     * @param array $options Additional options to use.
+     * @return \Cake\Http\Client\Response
+     */
+    protected function _sendRequest(Request $request, $options)
+    {
         $responses = $this->_adapter->send($request, $options);
         $url = $request->getUri();
         foreach ($responses as $response) {
-            $this->_cookies->store($response, $url);
+            $this->_cookies = $this->_cookies->addFromResponse($response, $request);
         }
 
         return array_pop($responses);
@@ -398,15 +453,21 @@ class Client
             $url .= $q;
             $url .= is_string($query) ? $query : http_build_query($query);
         }
-        if (preg_match('#^https?://#', $url)) {
-            return $url;
-        }
         $defaults = [
             'host' => null,
             'port' => null,
             'scheme' => 'http',
+            'protocolRelative' => false
         ];
         $options += $defaults;
+
+        if ($options['protocolRelative'] && preg_match('#^//#', $url)) {
+            $url = $options['scheme'] . ':' . $url;
+        }
+        if (preg_match('#^https?://#', $url)) {
+            return $url;
+        }
+
         $defaultPorts = [
             'http' => 80,
             'https' => 443
@@ -440,10 +501,8 @@ class Client
         }
 
         $request = new Request($url, $method, $headers, $data);
-        $request->cookie($this->_cookies->get($url));
-        if (isset($options['cookies'])) {
-            $request->cookie($options['cookies']);
-        }
+        $cookies = isset($options['cookies']) ? $options['cookies'] : [];
+        $request = $this->_cookies->addToRequest($request, $cookies);
         if (isset($options['auth'])) {
             $request = $this->_addAuthentication($request, $options);
         }

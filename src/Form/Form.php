@@ -159,6 +159,28 @@ class Form
     }
 
     /**
+     * Set the errors in the form.
+     *
+     * ```
+     * $errors = [
+     *      'field_name' => ['rule_name' => 'message']
+     * ];
+     *
+     * $form->setErrors($errors);
+     * ```
+     *
+     * @since 3.5.1
+     * @param array $errors Errors list.
+     * @return $this
+     */
+    public function setErrors(array $errors)
+    {
+        $this->_errors = $errors;
+
+        return $this;
+    }
+
+    /**
      * Execute the form if it is valid.
      *
      * First validates the form, then calls the `_execute()` hook method.

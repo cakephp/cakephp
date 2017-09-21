@@ -198,6 +198,9 @@ class UrlHelperTest extends TestCase
         $result = $this->Helper->assetUrl('foo.jpg?one=two&three=four');
         $this->assertEquals('foo.jpg?one=two&amp;three=four', $result);
 
+        $result = $this->Helper->assetUrl('x:"><script>alert(1)</script>');
+        $this->assertEquals('x:&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;', $result);
+
         $result = $this->Helper->assetUrl('dir/big+tall/image', ['ext' => '.jpg']);
         $this->assertEquals('dir/big%2Btall/image.jpg', $result);
     }

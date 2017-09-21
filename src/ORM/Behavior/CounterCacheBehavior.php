@@ -132,7 +132,7 @@ class CounterCacheBehavior extends Behavior
                 if (!is_callable($config) &&
                     isset($config['ignoreDirty']) &&
                     $config['ignoreDirty'] === true &&
-                    $entity->$entityAlias->dirty($field)
+                    $entity->$entityAlias->isDirty($field)
                 ) {
                     $this->_ignoreDirty[$registryAlias][$field] = true;
                 }

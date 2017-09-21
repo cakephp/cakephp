@@ -17,6 +17,16 @@ namespace Cake\Datasource;
 /**
  * This interface defines the methods you can depend on in
  * a connection.
+ *
+ * @method object getLogger() Get the current logger instance
+ * @method $this setLogger($logger) Set the current logger.
+ * @method bool supportsDynamicConstraints()
+ * @method \Cake\Database\Schema\Collection schemaCollection()
+ * @method \Cake\Database\Query newQuery()
+ * @method \Cake\Database\StatementInterface prepare($sql)
+ * @method \Cake\Database\StatementInterface execute($query, $params = [], array $types = [])
+ * @method string quote($value, $type = null)
+ * @method string|int lastInsertId($table = null, $column = null)
  */
 interface ConnectionInterface
 {
@@ -77,6 +87,7 @@ interface ConnectionInterface
      *
      * @param object|null $instance logger object instance
      * @return object logger instance
+     * @deprecated 3.5.0 Will be replaced by getLogger()/setLogger()
      */
     public function logger($instance = null);
 }

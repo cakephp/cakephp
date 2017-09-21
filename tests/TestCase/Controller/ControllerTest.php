@@ -404,6 +404,25 @@ class ControllerTest extends TestCase
     }
 
     /**
+     * test view rendering changing response
+     *
+     * @return void
+     */
+    public function testRenderViewChangesResponse()
+    {
+        $request = new ServerRequest('controller_posts/index');
+        $request->params['action'] = 'header';
+
+        $controller = new Controller($request, new Response());
+        $controller->viewBuilder()->templatePath('Posts');
+
+        $result = $controller->render('header');
+        $this->assertContains('header template', (string)$result);
+        $this->assertTrue($controller->response->hasHeader('X-view-template'));
+        $this->assertSame('yes', $controller->response->getHeaderLine('X-view-template'));
+    }
+
+    /**
      * test that a component beforeRender can change the controller view class.
      *
      * @return void
@@ -412,7 +431,7 @@ class ControllerTest extends TestCase
     {
         $Controller = new Controller(new ServerRequest, new Response());
 
-        $Controller->eventManager()->on('Controller.beforeRender', function (Event $event) {
+        $Controller->getEventManager()->on('Controller.beforeRender', function (Event $event) {
             $controller = $event->subject();
             $controller->viewClass = 'Json';
         });
@@ -437,7 +456,7 @@ class ControllerTest extends TestCase
     {
         $Controller = new Controller(new ServerRequest, new Response());
 
-        $Controller->eventManager()->on('Controller.beforeRender', function (Event $event) {
+        $Controller->getEventManager()->on('Controller.beforeRender', function (Event $event) {
             return false;
         });
 
@@ -490,7 +509,7 @@ class ControllerTest extends TestCase
     {
         $Controller = new Controller(null, new Response());
 
-        $Controller->eventManager()->on('Controller.beforeRedirect', function (Event $event, $url, Response $response) {
+        $Controller->getEventManager()->on('Controller.beforeRedirect', function (Event $event, $url, Response $response) {
             $response->location('https://book.cakephp.org');
         });
 
@@ -511,7 +530,7 @@ class ControllerTest extends TestCase
             ->getMock();
         $Controller = new Controller(null, $Response);
 
-        $Controller->eventManager()->on('Controller.beforeRedirect', function (Event $event, $url, Response $response) {
+        $Controller->getEventManager()->on('Controller.beforeRedirect', function (Event $event, $url, Response $response) {
             $response->statusCode(302);
         });
 
@@ -529,7 +548,7 @@ class ControllerTest extends TestCase
         $Controller = new Controller(null, $Response);
 
         $newResponse = new Response;
-        $Controller->eventManager()->on('Controller.beforeRedirect', function (Event $event, $url, Response $response) use ($newResponse) {
+        $Controller->getEventManager()->on('Controller.beforeRedirect', function (Event $event, $url, Response $response) use ($newResponse) {
             return $newResponse;
         });
 
@@ -908,7 +927,7 @@ class ControllerTest extends TestCase
         ]);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $Controller = new \TestApp\Controller\Admin\PostsController($request, $response);
-        $Controller->eventManager()->on('Controller.beforeRender', function (Event $e) {
+        $Controller->getEventManager()->on('Controller.beforeRender', function (Event $e) {
             return $e->subject()->response;
         });
         $Controller->render();
@@ -919,7 +938,7 @@ class ControllerTest extends TestCase
         ]);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $Controller = new \TestApp\Controller\Admin\PostsController($request, $response);
-        $Controller->eventManager()->on('Controller.beforeRender', function (Event $e) {
+        $Controller->getEventManager()->on('Controller.beforeRender', function (Event $e) {
             return $e->subject()->response;
         });
         $Controller->render();
@@ -930,7 +949,7 @@ class ControllerTest extends TestCase
             'prefix' => false
         ]);
         $Controller = new \TestApp\Controller\PagesController($request, $response);
-        $Controller->eventManager()->on('Controller.beforeRender', function (Event $e) {
+        $Controller->getEventManager()->on('Controller.beforeRender', function (Event $e) {
             return $e->subject()->response;
         });
         $Controller->render();
@@ -1054,7 +1073,7 @@ class ControllerTest extends TestCase
     {
         $controller = new PostsController();
 
-        $controller->eventManager()->on('Controller.beforeRender', function (Event $event) {
+        $controller->getEventManager()->on('Controller.beforeRender', function (Event $event) {
             /* @var Controller $controller */
             $controller = $event->subject();
 

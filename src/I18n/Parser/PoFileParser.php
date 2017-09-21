@@ -142,9 +142,9 @@ class PoFileParser
 
         $translation = stripcslashes($translation);
 
-        if ($context !== null) {
+        if ($context !== null && !isset($messages[$singular]['_context'][$context])) {
             $messages[$singular]['_context'][$context] = $translation;
-        } else {
+        } elseif (!isset($messages[$singular]['_context'][''])) {
             $messages[$singular]['_context'][''] = $translation;
         }
 

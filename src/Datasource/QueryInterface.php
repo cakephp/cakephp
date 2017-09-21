@@ -18,7 +18,7 @@ namespace Cake\Datasource;
 /**
  * The basis for every query object
  *
- * @package Cake\Datasource
+ * @method $this andWhere($conditions, $types = [])
  */
 interface QueryInterface
 {

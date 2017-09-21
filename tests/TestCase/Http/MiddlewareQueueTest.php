@@ -49,6 +49,15 @@ class MiddlewareQueueTest extends TestCase
         static::setAppNamespace($this->appNamespace);
     }
 
+    public function testConstructorAddingMiddleware()
+    {
+        $cb = function () {
+        };
+        $queue = new MiddlewareQueue([$cb]);
+        $this->assertCount(1, $queue);
+        $this->assertSame($cb, $queue->get(0));
+    }
+
     /**
      * Test get()
      *

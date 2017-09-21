@@ -15,6 +15,8 @@ namespace Cake\TestSuite\Fixture;
 
 use Cake\Core\Exception\Exception as CakeException;
 use Cake\Database\Schema\TableSchema;
+use Cake\Database\Schema\TableSchemaAwareInterface;
+use Cake\Database\Schema\TableSchemaInterface as DatabaseTableSchemaInterface;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\FixtureInterface;
@@ -28,7 +30,7 @@ use Exception;
  * Cake TestFixture is responsible for building and destroying tables to be used
  * during testing.
  */
-class TestFixture implements FixtureInterface, TableSchemaInterface
+class TestFixture implements FixtureInterface, TableSchemaInterface, TableSchemaAwareInterface
 {
 
     /**
@@ -264,16 +266,15 @@ class TestFixture implements FixtureInterface, TableSchemaInterface
      *
      * @param \Cake\Database\Schema\TableSchema|null $schema The table to set.
      * @return \Cake\Database\Schema\TableSchema|null
+     * @deprecated 3.5.0 Use getTableSchema/setTableSchema instead.
      */
     public function schema(TableSchema $schema = null)
     {
         if ($schema) {
-            $this->_schema = $schema;
-
-            return null;
+            $this->setTableSchema($schema);
         }
 
-        return $this->_schema;
+        return $this->getTableSchema();
     }
 
     /**
@@ -425,7 +426,7 @@ class TestFixture implements FixtureInterface, TableSchemaInterface
         }
         $fields = array_values(array_unique($fields));
         foreach ($fields as $field) {
-            $types[$field] = $this->_schema->column($field)['type'];
+            $types[$field] = $this->_schema->getColumn($field)['type'];
         }
         $default = array_fill_keys($fields, null);
         foreach ($this->records as $record) {
@@ -446,5 +447,23 @@ class TestFixture implements FixtureInterface, TableSchemaInterface
         }
 
         return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getTableSchema()
+    {
+        return $this->_schema;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setTableSchema(DatabaseTableSchemaInterface $schema)
+    {
+        $this->_schema = $schema;
+
+        return $this;
     }
 }

@@ -24,6 +24,7 @@ use Cake\Core\Configure;
 use Cake\Database\Exception as DatabaseException;
 use Cake\Network\Session;
 use Cake\Routing\Router;
+use Cake\TestSuite\Stub\TestExceptionRenderer;
 use Cake\Utility\CookieCryptTrait;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
@@ -333,7 +334,7 @@ abstract class IntegrationTestCase extends TestCase
             return $this->_cookieEncryptionKey;
         }
 
-        return Security::salt();
+        return Security::getSalt();
     }
 
     /**
@@ -435,6 +436,36 @@ abstract class IntegrationTestCase extends TestCase
     }
 
     /**
+     * Performs a HEAD request using the current request data.
+     *
+     * The response of the dispatched request will be stored as
+     * a property. You can use various assert methods to check the
+     * response.
+     *
+     * @param string|array $url The URL to request.
+     * @return void
+     */
+    public function head($url)
+    {
+        $this->_sendRequest($url, 'HEAD');
+    }
+
+    /**
+     * Performs an OPTIONS request using the current request data.
+     *
+     * The response of the dispatched request will be stored as
+     * a property. You can use various assert methods to check the
+     * response.
+     *
+     * @param string|array $url The URL to request.
+     * @return void
+     */
+    public function options($url)
+    {
+        $this->_sendRequest($url, 'OPTIONS');
+    }
+
+    /**
      * Creates and send the request into a Dispatcher instance.
      *
      * Receives and stores the response for future inspection.
@@ -495,7 +526,7 @@ abstract class IntegrationTestCase extends TestCase
             $controller = $event->getSubject();
         }
         $this->_controller = $controller;
-        $events = $controller->eventManager();
+        $events = $controller->getEventManager();
         $events->on('View.beforeRender', function ($event, $viewFile) use ($controller) {
             if (!$this->_viewName) {
                 $this->_viewName = $viewFile;
@@ -547,11 +578,12 @@ abstract class IntegrationTestCase extends TestCase
         list ($url, $query) = $this->_url($url);
         $tokenUrl = $url;
 
+        parse_str($query, $queryData);
+
         if ($query) {
-            $tokenUrl .= '?' . $query;
+            $tokenUrl .= '?' . http_build_query($queryData);
         }
 
-        parse_str($query, $queryData);
         $props = [
             'url' => $url,
             'post' => $this->_addTokens($tokenUrl, $data),
@@ -882,14 +914,15 @@ abstract class IntegrationTestCase extends TestCase
      *
      * @param string $content The content to check for.
      * @param string $message The failure message that will be appended to the generated message.
+     * @param bool   $ignoreCase A flag to check whether we should ignore case or not.
      * @return void
      */
-    public function assertResponseContains($content, $message = '')
+    public function assertResponseContains($content, $message = '', $ignoreCase = false)
     {
         if (!$this->_response) {
             $this->fail('No response set, cannot assert content. ' . $message);
         }
-        $this->assertContains($content, $this->_getBodyAsString(), $message);
+        $this->assertContains($content, $this->_getBodyAsString(), $message, $ignoreCase);
     }
 
     /**
@@ -1050,6 +1083,20 @@ abstract class IntegrationTestCase extends TestCase
         }
 
         $this->assertCookie(null, $cookie, "Cookie '{$cookie}' has been set. " . $message);
+    }
+
+    /**
+     * Disable the error handler middleware.
+     *
+     * By using this function, exceptions are no longer caught by the ErrorHandlerMiddleware
+     * and are instead re-thrown by the TestExceptionRenderer. This can be helpful
+     * when trying to diagnose/debug unexpected failures in test cases.
+     *
+     * @return void
+     */
+    public function disableErrorHandlerMiddleware()
+    {
+        Configure::write('Error.exceptionRenderer', TestExceptionRenderer::class);
     }
 
     /**

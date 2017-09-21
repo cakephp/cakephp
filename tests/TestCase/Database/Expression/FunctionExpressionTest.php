@@ -95,4 +95,17 @@ class FunctionExpressionTest extends TestCase
         $f = new FunctionExpression('MyFunction', ['a_field' => 'literal', 32 => 'literal']);
         $this->assertEquals('MyFunction(a_field, 32)', $f->sql($binder));
     }
+
+    /**
+     * Tests setReturnType() and getReturnType()
+     *
+     * @return void
+     */
+    public function testGetSetReturnType()
+    {
+        $f = new FunctionExpression('MyFunction');
+        $f = $f->setReturnType('foo');
+        $this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $f);
+        $this->assertSame('foo', $f->getReturnType());
+    }
 }

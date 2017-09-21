@@ -144,7 +144,7 @@ class UrlHelper extends Helper
             return $this->build($path, !empty($options['fullBase']));
         }
         if (strpos($path, '://') !== false || preg_match('/^[a-z]+:/i', $path)) {
-            return $path;
+            return ltrim($this->build($path), '/');
         }
         if (!array_key_exists('plugin', $options) || $options['plugin'] !== false) {
             list($plugin, $path) = $this->_View->pluginSplit($path, false);

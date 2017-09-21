@@ -23,8 +23,17 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\I18n\Time;
 use Cake\Network\Exception\UnauthorizedException;
+use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
+
+/**
+ * Entity for testing with hidden fields.
+ */
+class ProtectedUser extends Entity
+{
+    protected $_hidden = ['password'];
+}
 
 /**
  * Test case for DigestAuthentication
@@ -269,6 +278,42 @@ class DigestAuthenticateTest extends TestCase
     }
 
     /**
+     * test authenticate success even when digest 'password' is a hidden field.
+     *
+     * @return void
+     */
+    public function testAuthenticateSuccessHiddenPasswordField()
+    {
+        $User = TableRegistry::get('Users');
+        $User->setEntityClass(ProtectedUser::class);
+
+        $request = new ServerRequest([
+            'url' => 'posts/index',
+            'environment' => ['REQUEST_METHOD' => 'GET']
+        ]);
+        $request->addParams(['pass' => []]);
+
+        $data = [
+            'uri' => '/dir/index.html',
+            'nonce' => $this->generateNonce(),
+            'nc' => 1,
+            'cnonce' => '123',
+            'qop' => 'auth',
+        ];
+        $data['response'] = $this->auth->generateResponseHash($data, '09faa9931501bf30f0d4253fa7763022', 'GET');
+        $request->env('PHP_AUTH_DIGEST', $this->digestHeader($data));
+
+        $result = $this->auth->authenticate($request, $this->response);
+        $expected = [
+            'id' => 1,
+            'username' => 'mariano',
+            'created' => new Time('2007-03-17 01:16:23'),
+            'updated' => new Time('2007-03-17 01:18:31')
+        ];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
      * test authenticate success
      *
      * @return void
@@ -470,7 +515,7 @@ DIGEST;
         $secret = $secret ?: Configure::read('Security.salt');
         $time = $time ?: microtime(true);
         $expiryTime = $time + $expires;
-        $signatureValue = md5($expiryTime . ':' . $secret);
+        $signatureValue = hash_hmac('sha1', $expiryTime . ':' . $secret, $secret);
         $nonceValue = $expiryTime . ':' . $signatureValue;
 
         return base64_encode($nonceValue);

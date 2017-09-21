@@ -69,7 +69,23 @@ class MysqlSchemaTest extends TestCase
             ],
             [
                 'TINYINT(2)',
-                ['type' => 'integer', 'length' => 2, 'unsigned' => false]
+                ['type' => 'tinyinteger', 'length' => 2, 'unsigned' => false]
+            ],
+            [
+                'TINYINT(3)',
+                ['type' => 'tinyinteger', 'length' => 3, 'unsigned' => false]
+            ],
+            [
+                'TINYINT(3) UNSIGNED',
+                ['type' => 'tinyinteger', 'length' => 3, 'unsigned' => true]
+            ],
+            [
+                'SMALLINT(4)',
+                ['type' => 'smallinteger', 'length' => 4, 'unsigned' => false]
+            ],
+            [
+                'SMALLINT(4) UNSIGNED',
+                ['type' => 'smallinteger', 'length' => 4, 'unsigned' => true]
             ],
             [
                 'INTEGER(11)',
@@ -620,6 +636,26 @@ SQL;
             // Integers
             [
                 'post_id',
+                ['type' => 'tinyinteger', 'length' => 2],
+                '`post_id` TINYINT(2)'
+            ],
+            [
+                'post_id',
+                ['type' => 'tinyinteger', 'length' => 2, 'unsigned' => true],
+                '`post_id` TINYINT(2) UNSIGNED'
+            ],
+            [
+                'post_id',
+                ['type' => 'smallinteger', 'length' => 4],
+                '`post_id` SMALLINT(4)'
+            ],
+            [
+                'post_id',
+                ['type' => 'smallinteger', 'length' => 4, 'unsigned' => true],
+                '`post_id` SMALLINT(4) UNSIGNED'
+            ],
+            [
+                'post_id',
                 ['type' => 'integer', 'length' => 11],
                 '`post_id` INTEGER(11)'
             ],
@@ -899,7 +935,7 @@ SQL;
         $connection = $this->getMockBuilder('Cake\Database\Connection')
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('driver')
+        $connection->expects($this->any())->method('getDriver')
             ->will($this->returnValue($driver));
 
         $table = (new TableSchema('posts'))
@@ -950,7 +986,7 @@ SQL;
         $connection = $this->getMockBuilder('Cake\Database\Connection')
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('driver')
+        $connection->expects($this->any())->method('getDriver')
             ->will($this->returnValue($driver));
 
         $table = (new TableSchema('posts'))
@@ -1036,7 +1072,7 @@ SQL;
         $connection = $this->getMockBuilder('Cake\Database\Connection')
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('driver')
+        $connection->expects($this->any())->method('getDriver')
             ->will($this->returnValue($driver));
 
         $driver->connection()
@@ -1106,7 +1142,7 @@ SQL;
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())
-            ->method('driver')
+            ->method('getDriver')
             ->will($this->returnValue($driver));
 
         $driver->connection()
@@ -1154,7 +1190,7 @@ SQL;
         $connection = $this->getMockBuilder('Cake\Database\Connection')
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('driver')
+        $connection->expects($this->any())->method('getDriver')
             ->will($this->returnValue($driver));
         $table = (new TableSchema('schema_articles'))->addColumn('id', [
             'type' => 'integer',
@@ -1176,7 +1212,7 @@ SQL;
         $connection = $this->getMockBuilder('Cake\Database\Connection')
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('driver')
+        $connection->expects($this->any())->method('getDriver')
             ->will($this->returnValue($driver));
 
         $table = (new TableSchema('articles_tags'))
@@ -1242,7 +1278,7 @@ SQL;
         $connection = $this->getMockBuilder('Cake\Database\Connection')
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('driver')
+        $connection->expects($this->any())->method('getDriver')
             ->will($this->returnValue($driver));
 
         $table = new TableSchema('articles');
@@ -1262,7 +1298,7 @@ SQL;
         $connection = $this->getMockBuilder('Cake\Database\Connection')
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('driver')
+        $connection->expects($this->any())->method('getDriver')
             ->will($this->returnValue($driver));
 
         $table = new TableSchema('articles');

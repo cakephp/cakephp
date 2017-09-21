@@ -13,3 +13,17 @@ msgstr "En resolved - context"
 
 msgid "Resolved"
 msgstr "En resolved"
+
+#: No context
+msgid "title"
+msgstr "Titel ohne Kontext"
+
+#: Has context
+msgctxt "context"
+msgid "title"
+msgstr "Titel mit Kontext"
+
+#: Another context
+msgctxt "another_context"
+msgid "title"
+msgstr "Titel mit anderem Kontext"

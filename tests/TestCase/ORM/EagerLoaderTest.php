@@ -22,6 +22,7 @@ use Cake\ORM\EagerLoader;
 use Cake\ORM\Query;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 
 /**
  * Tests EagerLoader
@@ -329,6 +330,48 @@ class EagerLoaderTest extends TestCase
             'clients.orders.stuff' => ['fields' => ['a']],
             'clients' => ['queryBuilder' => $builder]
         ]);
+        $this->assertEquals($expected, $loader->contain());
+    }
+
+    /**
+     * Tests using the same signature as matching with contain
+     *
+     * @return void
+     */
+    public function testContainSecondSignature()
+    {
+        $builder = function ($query) {
+        };
+        $loader = new EagerLoader;
+        $loader->contain('clients', $builder);
+
+        $expected = [
+            'clients' => [
+                'queryBuilder' => $builder
+            ]
+        ];
+        $this->assertEquals($expected, $loader->contain());
+    }
+
+    /**
+     * Tests passing an array of associations with a query builder
+     *
+     * @return void
+     */
+    public function testContainSecondSignatureInvalid()
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        $builder = function ($query) {
+        };
+        $loader = new EagerLoader;
+        $loader->contain(['clients'], $builder);
+
+        $expected = [
+            'clients' => [
+                'queryBuilder' => $builder
+            ]
+        ];
         $this->assertEquals($expected, $loader->contain());
     }
 

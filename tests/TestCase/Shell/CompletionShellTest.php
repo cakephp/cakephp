@@ -116,7 +116,7 @@ class CompletionShellTest extends TestCase
         $output = $this->out->output;
 
         $expected = 'TestPlugin.example TestPlugin.sample TestPluginTwo.example unique welcome ' .
-            "cache i18n orm_cache plugin routes server i18m sample testing_dispatch\n";
+            "cache help i18n orm_cache plugin routes server version i18m integration sample testing_dispatch\n";
         $this->assertTextEquals($expected, $output);
     }
 
@@ -199,7 +199,7 @@ class CompletionShellTest extends TestCase
         $this->Shell->runCommand(['subcommands', 'app.sample']);
         $output = $this->out->output;
 
-        $expected = "derp load sample\n";
+        $expected = "derp load returnValue sample withAbort\n";
         $this->assertTextEquals($expected, $output);
     }
 
@@ -257,7 +257,7 @@ class CompletionShellTest extends TestCase
         $this->Shell->runCommand(['subcommands', 'sample']);
         $output = $this->out->output;
 
-        $expected = "derp load sample\n";
+        $expected = "derp load returnValue sample withAbort\n";
         $this->assertTextEquals($expected, $output);
     }
 

@@ -108,22 +108,46 @@ class Cache
 
     /**
      * Returns the Cache Registry instance used for creating and using cache adapters.
-     * Also allows for injecting of a new registry instance.
      *
-     * @param \Cake\Core\ObjectRegistry|null $registry Injectable registry object.
      * @return \Cake\Core\ObjectRegistry
      */
-    public static function registry(ObjectRegistry $registry = null)
+    public static function getRegistry()
     {
-        if ($registry) {
-            static::$_registry = $registry;
-        }
-
         if (!static::$_registry) {
             static::$_registry = new CacheRegistry();
         }
 
         return static::$_registry;
+    }
+
+    /**
+     * Sets the Cache Registry instance used for creating and using cache adapters.
+     *
+     * Also allows for injecting of a new registry instance.
+     *
+     * @param \Cake\Core\ObjectRegistry $registry Injectable registry object.
+     * @return void
+     */
+    public static function setRegistry(ObjectRegistry $registry)
+    {
+        static::$_registry = $registry;
+    }
+
+    /**
+     * Returns the Cache Registry instance used for creating and using cache adapters.
+     * Also allows for injecting of a new registry instance.
+     *
+     * @param \Cake\Core\ObjectRegistry|null $registry Injectable registry object.
+     * @return \Cake\Core\ObjectRegistry
+     * @deprecated Deprecated since 3.5. Use getRegistry() and setRegistry() instead.
+     */
+    public static function registry(ObjectRegistry $registry = null)
+    {
+        if ($registry) {
+            static::setRegistry($registry);
+        }
+
+        return static::getRegistry();
     }
 
     /**
@@ -135,7 +159,7 @@ class Cache
      */
     protected static function _buildEngine($name)
     {
-        $registry = static::registry();
+        $registry = static::getRegistry();
 
         if (empty(static::$_config[$name]['className'])) {
             throw new InvalidArgumentException(
@@ -144,7 +168,31 @@ class Cache
         }
 
         $config = static::$_config[$name];
-        $registry->load($name, $config);
+
+        try {
+            $registry->load($name, $config);
+        } catch (RuntimeException $e) {
+            if (!array_key_exists('fallback', $config)) {
+                $registry->set($name, new NullEngine());
+                trigger_error($e->getMessage(), E_USER_WARNING);
+
+                return;
+            }
+
+            if ($config['fallback'] === $name) {
+                throw new InvalidArgumentException(
+                    sprintf('"%s" cache configuration cannot fallback to itself.', $name)
+                );
+            }
+
+            $fallbackEngine = clone static::engine($config['fallback']);
+            $newConfig = $config + ['groups' => [], 'prefix' => null];
+            $fallbackEngine->setConfig('groups', $newConfig['groups'], false);
+            if ($newConfig['prefix']) {
+                $fallbackEngine->setConfig('prefix', $newConfig['prefix'], false);
+            }
+            $registry->set($name, $fallbackEngine);
+        }
 
         if ($config['className'] instanceof CacheEngine) {
             $config = $config['className']->getConfig();
@@ -174,7 +222,7 @@ class Cache
             return new NullEngine();
         }
 
-        $registry = static::registry();
+        $registry = static::getRegistry();
 
         if (isset($registry->{$config})) {
             return $registry->{$config};

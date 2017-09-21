@@ -20,6 +20,7 @@ use Cake\Database\Expression\TupleComparison;
 use Cake\Database\Type;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\InvalidPropertyInterface;
+use Cake\ORM\Association\BelongsToMany;
 use RuntimeException;
 
 /**
@@ -69,7 +70,7 @@ class Marshaller
 
         // Is a concrete column?
         foreach (array_keys($data) as $prop) {
-            $columnType = $schema->columnType($prop);
+            $columnType = $schema->getColumnType($prop);
             if ($columnType) {
                 $map[$prop] = function ($value, $entity) use ($columnType) {
                     return Type::build($columnType)->marshal($value);
@@ -185,7 +186,7 @@ class Marshaller
         foreach ($data as $key => $value) {
             if (!empty($errors[$key])) {
                 if ($entity instanceof InvalidPropertyInterface) {
-                    $entity->invalid($key, $value);
+                    $entity->setInvalidField($key, $value);
                 }
                 continue;
             }
@@ -211,6 +212,14 @@ class Marshaller
             $entity->set($properties);
         }
 
+        // Don't flag clean association entities as
+        // dirty so we don't persist empty records.
+        foreach ($properties as $field => $value) {
+            if ($value instanceof EntityInterface) {
+                $entity->setDirty($field, $value->isDirty());
+            }
+        }
+
         $entity->setErrors($errors);
 
         return $entity;
@@ -231,10 +240,10 @@ class Marshaller
             return [];
         }
         if ($options['validate'] === true) {
-            $options['validate'] = $this->_table->validator('default');
+            $options['validate'] = $this->_table->getValidator();
         }
         if (is_string($options['validate'])) {
-            $options['validate'] = $this->_table->validator($options['validate']);
+            $options['validate'] = $this->_table->getValidator($options['validate']);
         }
         if (!is_object($options['validate'])) {
             throw new RuntimeException(
@@ -352,7 +361,7 @@ class Marshaller
      * Builds the related entities and handles the special casing
      * for junction table entities.
      *
-     * @param \Cake\ORM\Association $assoc The association to marshal.
+     * @param \Cake\ORM\BelongsToMany $assoc The association to marshal.
      * @param array $data The data to convert into entities.
      * @param array $options List of options.
      * @return array An array of built entities.
@@ -360,7 +369,7 @@ class Marshaller
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
      */
-    protected function _belongsToMany(Association $assoc, array $data, $options = [])
+    protected function _belongsToMany(BelongsToMany $assoc, array $data, $options = [])
     {
         $associated = isset($options['associated']) ? $options['associated'] : [];
         $forceNew = isset($options['forceNew']) ? $options['forceNew'] : false;
@@ -463,7 +472,8 @@ class Marshaller
         $primaryKey = array_map([$target, 'aliasField'], $primaryKey);
 
         if ($multi) {
-            if (count(current($ids)) !== count($primaryKey)) {
+            $first = current($ids);
+            if (!is_array($first) || count($first) !== count($primaryKey)) {
                 return [];
             }
             $filter = new TupleComparison($primaryKey, $ids, [], 'IN');
@@ -538,7 +548,7 @@ class Marshaller
 
         if (isset($options['accessibleFields'])) {
             foreach ((array)$options['accessibleFields'] as $key => $value) {
-                $entity->accessible($key, $value);
+                $entity->setAccess($key, $value);
             }
         }
 
@@ -549,7 +559,7 @@ class Marshaller
         foreach ($data as $key => $value) {
             if (!empty($errors[$key])) {
                 if ($entity instanceof InvalidPropertyInterface) {
-                    $entity->invalid($key, $value);
+                    $entity->setInvalidField($key, $value);
                 }
                 continue;
             }
@@ -572,13 +582,13 @@ class Marshaller
             $properties[$key] = $value;
         }
 
-        $entity->errors($errors);
+        $entity->setErrors($errors);
         if (!isset($options['fields'])) {
             $entity->set($properties);
 
             foreach ($properties as $field => $value) {
                 if ($value instanceof EntityInterface) {
-                    $entity->dirty($field, $value->dirty());
+                    $entity->setDirty($field, $value->isDirty());
                 }
             }
 
@@ -586,11 +596,12 @@ class Marshaller
         }
 
         foreach ((array)$options['fields'] as $field) {
-            if (array_key_exists($field, $properties)) {
-                $entity->set($field, $properties[$field]);
-                if ($properties[$field] instanceof EntityInterface) {
-                    $entity->dirty($field, $properties[$field]->dirty());
-                }
+            if (!array_key_exists($field, $properties)) {
+                continue;
+            }
+            $entity->set($field, $properties[$field]);
+            if ($properties[$field] instanceof EntityInterface) {
+                $entity->setDirty($field, $properties[$field]->isDirty());
             }
         }
 
@@ -764,7 +775,7 @@ class Marshaller
      * Merge the special _joinData property into the entity set.
      *
      * @param \Cake\Datasource\EntityInterface $original The original entity
-     * @param \Cake\ORM\Association $assoc The association to marshall
+     * @param \Cake\ORM\Association\BelongsToMany $assoc The association to marshall
      * @param array $value The data to hydrate
      * @param array $options List of options.
      * @return array An array of entities
@@ -775,7 +786,7 @@ class Marshaller
         $extra = [];
         foreach ($original as $entity) {
             // Mark joinData as accessible so we can marshal it properly.
-            $entity->accessible('_joinData', true);
+            $entity->setAccess('_joinData', true);
 
             $joinData = $entity->get('_joinData');
             if ($joinData && $joinData instanceof EntityInterface) {

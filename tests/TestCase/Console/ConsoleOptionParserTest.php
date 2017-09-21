@@ -359,6 +359,8 @@ class ConsoleOptionParserTest extends TestCase
      * test parsing options that do not exist.
      *
      * @expectedException \Cake\Console\Exception\ConsoleException
+     * @expectedExceptionMessageRegexp /Unknown option `fail`.\n\nDid you mean `help` \?\n\nAvailable options are :\n\n
+     * - help\n - no-commit/
      * @return void
      */
     public function testOptionThatDoesNotExist()
@@ -373,12 +375,16 @@ class ConsoleOptionParserTest extends TestCase
      * test parsing short options that do not exist.
      *
      * @expectedException \Cake\Console\Exception\ConsoleException
+     * @expectedExceptionMessageRegexp /Unknown short option `f`.\n\nAvailable short options are :\n\n
+     * - `n` (short for `--no-commit`)\n - `c` (short for `--clear`)/
      * @return void
      */
     public function testShortOptionThatDoesNotExist()
     {
         $parser = new ConsoleOptionParser('test', false);
-        $parser->addOption('no-commit', ['boolean' => true]);
+        $parser->addOption('no-commit', ['boolean' => true, 'short' => 'n']);
+        $parser->addOption('construct', ['boolean' => true]);
+        $parser->addOption('clear', ['boolean' => true, 'short' => 'c']);
 
         $parser->parse(['-f']);
     }
@@ -592,6 +598,22 @@ class ConsoleOptionParserTest extends TestCase
     }
 
     /**
+     * Tests setting a subcommand up for a Shell method `initMyDb`.
+     *
+     * @return void
+     */
+    public function testSubcommandCamelBacked()
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $result = $parser->addSubcommand('initMyDb', [
+            'help' => 'Initialize the database'
+        ]);
+
+        $subcommands = array_keys($result->subcommands());
+        $this->assertEquals(['init_my_db'], $subcommands, 'Adding a subcommand does not work with camel backed method names.');
+    }
+
+    /**
      * Test addSubcommand inherits options as no
      * parser is created.
      *
@@ -731,9 +753,10 @@ TEXT;
 
         $parser = new ConsoleOptionParser('mycommand', false);
         $parser->addSubcommand('method', [
-            'help' => 'This is a subcommand',
-            'parser' => $subParser
-        ])
+                'help' => 'This is a subcommand',
+                'parser' => $subParser
+            ])
+            ->setRootName('tool')
             ->addOption('test', ['help' => 'A test option.']);
 
         $result = $parser->help('method');
@@ -741,7 +764,7 @@ TEXT;
 This is a subcommand
 
 <info>Usage:</info>
-cake mycommand method [-f] [-h] [-q] [-v]
+tool mycommand method [-f] [-h] [-q] [-v]
 
 <info>Options:</info>
 
@@ -750,6 +773,74 @@ cake mycommand method [-f] [-h] [-q] [-v]
 --quiet, -q    Enable quiet output.
 --verbose, -v  Enable verbose output.
 
+TEXT;
+        $this->assertTextEquals($expected, $result, 'Help is not correct.');
+    }
+
+    /**
+     * test that help() with a custom rootName
+     *
+     * @return void
+     */
+    public function testHelpWithRootName()
+    {
+        $parser = new ConsoleOptionParser('sample', false);
+        $parser->description('A command!')
+            ->setRootName('tool')
+            ->addOption('test', ['help' => 'A test option.']);
+
+        $result = $parser->help();
+        $expected = <<<TEXT
+A command!
+
+<info>Usage:</info>
+tool sample [-h] [--test]
+
+<info>Options:</info>
+
+--help, -h  Display this help.
+--test      A test option.
+
+TEXT;
+        $this->assertTextEquals($expected, $result, 'Help is not correct.');
+    }
+
+    /**
+     * test that getCommandError() with an unknown subcommand param shows a helpful message
+     *
+     * @return void
+     */
+    public function testHelpUnknownSubcommand()
+    {
+        $subParser = [
+            'options' => [
+                'foo' => [
+                    'short' => 'f',
+                    'help' => 'Foo.',
+                    'boolean' => true,
+                ]
+            ],
+        ];
+
+        $parser = new ConsoleOptionParser('mycommand', false);
+        $parser
+            ->addSubcommand('method', [
+                'help' => 'This is a subcommand',
+                'parser' => $subParser
+            ])
+            ->addOption('test', ['help' => 'A test option.'])
+            ->addSubcommand('unstash');
+
+        $result = $parser->help('unknown');
+        $expected = <<<TEXT
+Unable to find the `mycommand unknown` subcommand. See `bin/cake mycommand --help`.
+
+Did you mean : `mycommand unstash` ?
+
+Available subcommands for the `mycommand` command are : 
+
+ - method
+ - unstash
 TEXT;
         $this->assertTextEquals($expected, $result, 'Help is not correct.');
     }

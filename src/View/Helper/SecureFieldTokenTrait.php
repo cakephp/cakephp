@@ -56,7 +56,7 @@ trait SecureFieldTokenTrait
             $url,
             serialize($fields),
             $unlocked,
-            Security::salt()
+            Security::getSalt()
         ];
         $fields = Security::hash(implode('', $hashParts), 'sha1');
 

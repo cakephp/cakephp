@@ -14,9 +14,9 @@
  */
 namespace Cake\Database\Schema;
 
+use Cake\Database\Connection;
 use Cake\Database\Exception;
 use Cake\Database\Type;
-use Cake\Datasource\ConnectionInterface;
 
 /**
  * Represents a single table in a database schema.
@@ -29,7 +29,7 @@ use Cake\Datasource\ConnectionInterface;
  * Schema\Collection objects. They can also be converted into SQL using the
  * createSql(), dropSql() and truncateSql() methods.
  */
-class TableSchema
+class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
 {
 
     /**
@@ -141,6 +141,12 @@ class TableSchema
         ],
         'text' => [
             'collate' => null,
+        ],
+        'tinyinteger' => [
+            'unsigned' => null,
+        ],
+        'smallinteger' => [
+            'unsigned' => null,
         ],
         'integer' => [
             'unsigned' => null,
@@ -313,9 +319,7 @@ class TableSchema
     }
 
     /**
-     * Get the name of the table.
-     *
-     * @return string
+     * {@inheritDoc}
      */
     public function name()
     {
@@ -323,32 +327,7 @@ class TableSchema
     }
 
     /**
-     * Add a column to the table.
-     *
-     * ### Attributes
-     *
-     * Columns can have several attributes:
-     *
-     * - `type` The type of the column. This should be
-     *   one of CakePHP's abstract types.
-     * - `length` The length of the column.
-     * - `precision` The number of decimal places to store
-     *   for float and decimal types.
-     * - `default` The default value of the column.
-     * - `null` Whether or not the column can hold nulls.
-     * - `fixed` Whether or not the column is a fixed length column.
-     *   This is only present/valid with string columns.
-     * - `unsigned` Whether or not the column is an unsigned column.
-     *   This is only present/valid for integer, decimal, float columns.
-     *
-     * In addition to the above keys, the following keys are
-     * implemented in some database dialects, but not all:
-     *
-     * - `comment` The comment for the column.
-     *
-     * @param string $name The name of the column
-     * @param array $attrs The attributes for the column.
-     * @return $this
+     * {@inheritDoc}
      */
     public function addColumn($name, $attrs)
     {
@@ -367,12 +346,7 @@ class TableSchema
     }
 
     /**
-     * Remove a column from the table schema.
-     *
-     * If the column is not defined in the table, no error will be raised.
-     *
-     * @param string $name The name of the column
-     * @return $this
+     * {@inheritDoc}
      */
     public function removeColumn($name)
     {
@@ -382,9 +356,7 @@ class TableSchema
     }
 
     /**
-     * Get the column names in the table.
-     *
-     * @return array
+     * {@inheritDoc}
      */
     public function columns()
     {
@@ -396,8 +368,17 @@ class TableSchema
      *
      * @param string $name The column name.
      * @return array|null Column data or null.
+     * @deprecated 3.5.0 Use getColumn() instead.
      */
     public function column($name)
+    {
+        return $this->getColumn($name);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getColumn($name)
     {
         if (!isset($this->_columns[$name])) {
             return null;
@@ -415,27 +396,54 @@ class TableSchema
      * @param string $name The column to get the type of.
      * @param string|null $type The type to set the column to.
      * @return string|null Either the column type or null.
+     * @deprecated 3.5.0 Use setColumnType()/getColumnType() instead.
      */
     public function columnType($name, $type = null)
     {
+        if ($type !== null) {
+            $this->setColumnType($name, $type);
+        }
+
+        return $this->getColumnType($name);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getColumnType($name)
+    {
         if (!isset($this->_columns[$name])) {
             return null;
-        }
-        if ($type !== null) {
-            $this->_columns[$name]['type'] = $type;
-            $this->_typeMap[$name] = $type;
         }
 
         return $this->_columns[$name]['type'];
     }
 
     /**
-     * Returns the base type name for the provided column.
-     * This represent the database type a more complex class is
-     * based upon.
-     *
-     * @param string $column The column name to get the base type from
-     * @return string|null The base type name
+     * {@inheritDoc}
+     */
+    public function setColumnType($name, $type)
+    {
+        if (!isset($this->_columns[$name])) {
+            return $this;
+        }
+
+        $this->_columns[$name]['type'] = $type;
+        $this->_typeMap[$name] = $type;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function hasColumn($name)
+    {
+        return isset($this->_columns[$name]);
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function baseColumnType($column)
     {
@@ -443,7 +451,7 @@ class TableSchema
             return $this->_columns[$column]['baseType'];
         }
 
-        $type = $this->columnType($column);
+        $type = $this->getColumnType($column);
 
         if ($type === null) {
             return null;
@@ -457,10 +465,7 @@ class TableSchema
     }
 
     /**
-     * Returns an array where the keys are the column names in the schema
-     * and the values the database type they have.
-     *
-     * @return array
+     * {@inheritDoc}
      */
     public function typeMap()
     {
@@ -468,12 +473,7 @@ class TableSchema
     }
 
     /**
-     * Check whether or not a field is nullable
-     *
-     * Missing columns are nullable.
-     *
-     * @param string $name The column to get the type of.
-     * @return bool Whether or not the field is nullable.
+     * {@inheritDoc}
      */
     public function isNullable($name)
     {
@@ -485,9 +485,7 @@ class TableSchema
     }
 
     /**
-     * Get a hash of columns and their default values.
-     *
-     * @return array
+     * {@inheritDoc}
      */
     public function defaultValues()
     {
@@ -506,19 +504,7 @@ class TableSchema
     }
 
     /**
-     * Add an index.
-     *
-     * Used to add indexes, and full text indexes in platforms that support
-     * them.
-     *
-     * ### Attributes
-     *
-     * - `type` The type of index being added.
-     * - `columns` The columns in the index.
-     *
-     * @param string $name The name of the index.
-     * @param array $attrs The attributes for the index.
-     * @return $this
+     * {@inheritDoc}
      * @throws \Cake\Database\Exception
      */
     public function addIndex($name, $attrs)
@@ -555,9 +541,7 @@ class TableSchema
     }
 
     /**
-     * Get the names of all the indexes in the table.
-     *
-     * @return array
+     * {@inheritDoc}
      */
     public function indexes()
     {
@@ -569,8 +553,17 @@ class TableSchema
      *
      * @param string $name The name of the index.
      * @return array|null Array of index data, or null
+     * @deprecated 3.5.0 Use getIndex() instead.
      */
     public function index($name)
+    {
+        return $this->getIndex($name);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getIndex($name)
     {
         if (!isset($this->_indexes[$name])) {
             return null;
@@ -580,10 +573,7 @@ class TableSchema
     }
 
     /**
-     * Get the column(s) used for the primary key.
-     *
-     * @return array Column name(s) for the primary key. An
-     *   empty list will be returned when the table has no primary key.
+     * {@inheritDoc}
      */
     public function primaryKey()
     {
@@ -597,24 +587,7 @@ class TableSchema
     }
 
     /**
-     * Add a constraint.
-     *
-     * Used to add constraints to a table. For example primary keys, unique
-     * keys and foreign keys.
-     *
-     * ### Attributes
-     *
-     * - `type` The type of constraint being added.
-     * - `columns` The columns in the index.
-     * - `references` The table, column a foreign key references.
-     * - `update` The behavior on update. Options are 'restrict', 'setNull', 'cascade', 'noAction'.
-     * - `delete` The behavior on delete. Options are 'restrict', 'setNull', 'cascade', 'noAction'.
-     *
-     * The default for 'update' & 'delete' is 'cascade'.
-     *
-     * @param string $name The name of the constraint.
-     * @param array $attrs The attributes for the constraint.
-     * @return $this
+     * {@inheritDoc}
      * @throws \Cake\Database\Exception
      */
     public function addConstraint($name, $attrs)
@@ -671,16 +644,15 @@ class TableSchema
     }
 
     /**
-     * Remove a constraint.
-     *
-     * @param string $name Name of the constraint to remove
-     * @return void
+     * {@inheritDoc}
      */
     public function dropConstraint($name)
     {
         if (isset($this->_constraints[$name])) {
             unset($this->_constraints[$name]);
         }
+
+        return $this;
     }
 
     /**
@@ -722,9 +694,7 @@ class TableSchema
     }
 
     /**
-     * Get the names of all the constraints in the table.
-     *
-     * @return array
+     * {@inheritDoc}
      */
     public function constraints()
     {
@@ -736,8 +706,17 @@ class TableSchema
      *
      * @param string $name The name of the constraint.
      * @return array|null Array of constraint data, or null
+     * @deprecated 3.5.0 Use getConstraint() instead.
      */
     public function constraint($name)
+    {
+        return $this->getConstraint($name);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getConstraint($name)
     {
         if (!isset($this->_constraints[$name])) {
             return null;
@@ -747,13 +726,7 @@ class TableSchema
     }
 
     /**
-     * Sets the options for a table.
-     *
-     * Table options allow you to set platform specific table level options.
-     * For example the engine type in MySQL.
-     *
-     * @param array $options The options to set, or null to read options.
-     * @return $this
+     * {@inheritDoc}
      */
     public function setOptions($options)
     {
@@ -763,12 +736,7 @@ class TableSchema
     }
 
     /**
-     * Gets the options for a table.
-     *
-     * Table options allow you to set platform specific table level options.
-     * For example the engine type in MySQL.
-     *
-     * @return array An array of options.
+     * {@inheritDoc}
      */
     public function getOptions()
     {
@@ -795,10 +763,7 @@ class TableSchema
     }
 
     /**
-     * Sets whether the table is temporary in the database.
-     *
-     * @param bool $temporary Whether or not the table is to be temporary.
-     * @return $this
+     * {@inheritDoc}
      */
     public function setTemporary($temporary)
     {
@@ -808,9 +773,7 @@ class TableSchema
     }
 
     /**
-     * Gets whether the table is temporary in the database.
-     *
-     * @return bool The current temporary setting.
+     * {@inheritDoc}
      */
     public function isTemporary()
     {
@@ -834,18 +797,11 @@ class TableSchema
     }
 
     /**
-     * Generate the SQL to create the Table.
-     *
-     * Uses the connection to access the schema dialect
-     * to generate platform specific SQL.
-     *
-     * @param \Cake\Datasource\ConnectionInterface $connection The connection to generate SQL for
-     * @return array List of SQL statements to create the table and the
-     *    required indexes.
+     * {@inheritDoc}
      */
-    public function createSql(ConnectionInterface $connection)
+    public function createSql(Connection $connection)
     {
-        $dialect = $connection->driver()->schemaDialect();
+        $dialect = $connection->getDriver()->schemaDialect();
         $columns = $constraints = $indexes = [];
         foreach (array_keys($this->_columns) as $name) {
             $columns[] = $dialect->columnSql($this, $name);
@@ -861,56 +817,41 @@ class TableSchema
     }
 
     /**
-     * Generate the SQL to drop a table.
-     *
-     * Uses the connection to access the schema dialect to generate platform
-     * specific SQL.
-     *
-     * @param \Cake\Datasource\ConnectionInterface $connection The connection to generate SQL for.
-     * @return array SQL to drop a table.
+     * {@inheritDoc}
      */
-    public function dropSql(ConnectionInterface $connection)
+    public function dropSql(Connection $connection)
     {
-        $dialect = $connection->driver()->schemaDialect();
+        $dialect = $connection->getDriver()->schemaDialect();
 
         return $dialect->dropTableSql($this);
     }
 
     /**
-     * Generate the SQL statements to truncate a table
-     *
-     * @param \Cake\Datasource\ConnectionInterface $connection The connection to generate SQL for.
-     * @return array SQL to truncate a table.
+     * {@inheritDoc}
      */
-    public function truncateSql(ConnectionInterface $connection)
+    public function truncateSql(Connection $connection)
     {
-        $dialect = $connection->driver()->schemaDialect();
+        $dialect = $connection->getDriver()->schemaDialect();
 
         return $dialect->truncateTableSql($this);
     }
 
     /**
-     * Generate the SQL statements to add the constraints to the table
-     *
-     * @param \Cake\Datasource\ConnectionInterface $connection The connection to generate SQL for.
-     * @return array SQL to drop a table.
+     * {@inheritDoc}
      */
-    public function addConstraintSql(ConnectionInterface $connection)
+    public function addConstraintSql(Connection $connection)
     {
-        $dialect = $connection->driver()->schemaDialect();
+        $dialect = $connection->getDriver()->schemaDialect();
 
         return $dialect->addConstraintSql($this);
     }
 
     /**
-     * Generate the SQL statements to drop the constraints to the table
-     *
-     * @param \Cake\Datasource\ConnectionInterface $connection The connection to generate SQL for.
-     * @return array SQL to drop a table.
+     * {@inheritDoc}
      */
-    public function dropConstraintSql(ConnectionInterface $connection)
+    public function dropConstraintSql(Connection $connection)
     {
-        $dialect = $connection->driver()->schemaDialect();
+        $dialect = $connection->getDriver()->schemaDialect();
 
         return $dialect->dropConstraintSql($this);
     }

@@ -142,6 +142,26 @@ class ModelAwareTraitTest extends TestCase
     }
 
     /**
+     * test getModelType() and setModelType()
+     *
+     * @return void
+     */
+    public function testGetSetModelType()
+    {
+        $stub = new Stub();
+        $stub->setProps('Articles');
+
+        FactoryLocator::add('Test', function ($name) {
+            $mock = new \StdClass();
+            $mock->name = $name;
+
+            return $mock;
+        });
+        $stub->setModelType('Test');
+        $this->assertSame('Test', $stub->getModelType());
+    }
+
+    /**
      * test MissingModelException being thrown
      *
      * @return void

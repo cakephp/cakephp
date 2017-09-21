@@ -386,7 +386,7 @@ class FormHelperTest extends TestCase
      * Test adding an invalid context class.
      *
      * @expectedException \RuntimeException
-     * @expectedExceptionMessage Context objects must implement Cake\View\Form\ContextInterface
+     * @expectedExceptionMessage Context providers must return object implementing Cake\View\Form\ContextInterface. Got "stdClass" instead.
      * @return void
      */
     public function testAddContextProviderInvalid()
@@ -415,6 +415,7 @@ class FormHelperTest extends TestCase
             ]
         ];
         $form = new Form();
+        $custom = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();
 
         return [
             'entity' => [$entity, 'Cake\View\Form\EntityContext'],
@@ -425,6 +426,7 @@ class FormHelperTest extends TestCase
             'form' => [$form, 'Cake\View\Form\FormContext'],
             'none' => [null, 'Cake\View\Form\NullContext'],
             'false' => [false, 'Cake\View\Form\NullContext'],
+            'custom' => [$custom, get_class($custom)]
         ];
     }
 
@@ -1230,6 +1232,50 @@ class FormHelperTest extends TestCase
             '/div'
         ];
         $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * Tests correct generation of number fields for smallint
+     *
+     * @return void
+     */
+    public function testTextFieldGenerationForSmallint()
+    {
+        $this->article['schema'] = [
+            'foo' => [
+                'type' => 'smallinteger',
+                'null' => false,
+                'default' => null,
+                'length' => 10
+            ]
+        ];
+
+        $this->Form->create($this->article);
+        $result = $this->Form->control('foo');
+        $this->assertContains('class="input number"', $result);
+        $this->assertContains('type="number"', $result);
+    }
+
+    /**
+     * Tests correct generation of number fields for tinyint
+     *
+     * @return void
+     */
+    public function testTextFieldGenerationForTinyint()
+    {
+        $this->article['schema'] = [
+            'foo' => [
+                'type' => 'tinyinteger',
+                'null' => false,
+                'default' => null,
+                'length' => 10
+            ]
+        ];
+
+        $this->Form->create($this->article);
+        $result = $this->Form->control('foo');
+        $this->assertContains('class="input number"', $result);
+        $this->assertContains('type="number"', $result);
     }
 
     /**
@@ -4686,6 +4732,24 @@ class FormHelperTest extends TestCase
             ['label' => ['for' => 'title-1']],
             ['input' => ['type' => 'radio', 'name' => 'title', 'value' => '1', 'id' => 'title-1', 'checked' => 'checked']],
             'option B',
+            '/label',
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * Test setting a hiddenField value on radio buttons.
+     *
+     * @return void
+     */
+    public function testRadioHiddenFieldValue()
+    {
+        $result = $this->Form->radio('title', ['option A'], ['hiddenField' => 'N']);
+        $expected = [
+            ['input' => ['type' => 'hidden', 'name' => 'title', 'value' => 'N']],
+            'label' => ['for' => 'title-0'],
+            ['input' => ['type' => 'radio', 'name' => 'title', 'value' => '0', 'id' => 'title-0']],
+            'option A',
             '/label',
         ];
         $this->assertHtml($expected, $result);

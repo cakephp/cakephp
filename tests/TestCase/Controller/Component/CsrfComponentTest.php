@@ -89,7 +89,7 @@ class CsrfComponentTest extends TestCase
      *
      * HEAD and GET do not populate $_POST or request->data.
      *
-     * @return void
+     * @return array
      */
     public static function safeHttpMethodProvider()
     {
@@ -127,7 +127,7 @@ class CsrfComponentTest extends TestCase
     /**
      * Data provider for HTTP methods that can contain request bodies.
      *
-     * @return void
+     * @return array
      */
     public static function httpMethodProvider()
     {

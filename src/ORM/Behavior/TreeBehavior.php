@@ -100,7 +100,7 @@ class TreeBehavior extends Behavior
         $config = $this->getConfig();
         $parent = $entity->get($config['parent']);
         $primaryKey = $this->_getPrimaryKey();
-        $dirty = $entity->dirty($config['parent']);
+        $dirty = $entity->isDirty($config['parent']);
         $level = $config['level'];
 
         if ($parent && $entity->get($primaryKey) == $parent) {
@@ -585,7 +585,7 @@ class TreeBehavior extends Behavior
         $this->_table->updateAll($node->extract($fields), [$primary => $node->get($primary)]);
 
         foreach ($fields as $field) {
-            $node->dirty($field, false);
+            $node->setDirty($field, false);
         }
 
         return $node;
@@ -675,8 +675,8 @@ class TreeBehavior extends Behavior
         $node->set($left, $targetLeft);
         $node->set($right, $targetLeft + ($nodeRight - $nodeLeft));
 
-        $node->dirty($left, false);
-        $node->dirty($right, false);
+        $node->setDirty($left, false);
+        $node->setDirty($right, false);
 
         return $node;
     }
@@ -765,8 +765,8 @@ class TreeBehavior extends Behavior
         $node->set($left, $targetRight - ($nodeRight - $nodeLeft));
         $node->set($right, $targetRight);
 
-        $node->dirty($left, false);
-        $node->dirty($right, false);
+        $node->setDirty($left, false);
+        $node->setDirty($right, false);
 
         return $node;
     }
@@ -960,7 +960,7 @@ class TreeBehavior extends Behavior
         $entity->set($fresh->extract($fields), ['guard' => false]);
 
         foreach ($fields as $field) {
-            $entity->dirty($field, false);
+            $entity->setDirty($field, false);
         }
     }
 

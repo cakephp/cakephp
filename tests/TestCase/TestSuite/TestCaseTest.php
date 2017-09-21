@@ -22,6 +22,7 @@ use Cake\Event\EventManager;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
+use Cake\TestSuite\Fixture\FixtureManager;
 use Cake\TestSuite\TestCase;
 use Cake\Test\Fixture\FixturizedTestCase;
 
@@ -136,6 +137,26 @@ class TestCaseTest extends TestCase
         $result = $test->run();
 
         $this->assertEquals(0, $result->errorCount());
+    }
+
+    /**
+     * tests loadFixtures loads all fixtures on the test
+     *
+     * @return void
+     */
+    public function testLoadAllFixtures()
+    {
+        $test = new FixturizedTestCase('testLoadAllFixtures');
+        $test->autoFixtures = false;
+        $manager = new FixtureManager();
+        $manager->fixturize($test);
+        $test->fixtureManager = $manager;
+
+        $result = $test->run();
+
+        $this->assertEquals(0, $result->errorCount());
+        $this->assertCount(1, $result->passed());
+        $this->assertFalse($test->autoFixtures);
     }
 
     /**

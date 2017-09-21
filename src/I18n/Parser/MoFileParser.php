@@ -119,7 +119,7 @@ class MoFileParser
             fseek($stream, $offset);
             $translated = fread($stream, $length);
 
-            if (strpos($translated, "\000") !== false) {
+            if ($pluralId !== null || strpos($translated, "\000") !== false) {
                 $translated = explode("\000", $translated);
                 $plurals = $pluralId !== null ? array_map('stripcslashes', $translated) : null;
                 $translated = $translated[0];

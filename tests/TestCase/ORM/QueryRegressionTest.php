@@ -435,7 +435,7 @@ class QueryRegressionTest extends TestCase
         $articles = TableRegistry::get('Articles');
         $articles->belongsTo('Authors');
 
-        $articles->eventManager()->on('Model.beforeFind', function (Event $event, $query) {
+        $articles->getEventManager()->on('Model.beforeFind', function (Event $event, $query) {
             return $query->contain('Authors');
         });
 
@@ -739,6 +739,34 @@ class QueryRegressionTest extends TestCase
             ->bind(':val', '%Second%');
         $count = $query->count();
         $this->assertEquals(1, $count);
+    }
+
+    /**
+     * Test count() with inner join containments.
+     *
+     * @return void
+     */
+    public function testCountWithInnerJoinContain()
+    {
+        $this->loadFixtures('Articles', 'Authors');
+        $table = TableRegistry::get('Articles');
+        $table->belongsTo('Authors')->setJoinType('INNER');
+
+        $result = $table->save($table->newEntity([
+            'author_id' => null,
+            'title' => 'title',
+            'body' => 'body',
+            'published' => 'Y'
+        ]));
+        $this->assertNotFalse($result);
+
+        $table->eventManager()
+            ->on('Model.beforeFind', function (Event $event, $query) {
+                $query->contain(['Authors']);
+            });
+
+        $count = $table->find()->count();
+        $this->assertEquals(3, $count);
     }
 
     /**
@@ -1680,7 +1708,7 @@ class QueryRegressionTest extends TestCase
         $articles->hasMany('articlesTags');
         $tags = $articles->association('articlesTags')->target()->belongsTo('tags');
 
-        $tags->target()->eventManager()->on('Model.beforeFind', function ($e, $query) {
+        $tags->target()->getEventManager()->on('Model.beforeFind', function ($e, $query) {
             return $query->formatResults(function ($results) {
                 return $results->map(function (\Cake\ORM\Entity $tag) {
                     $tag->name .= ' - visited';

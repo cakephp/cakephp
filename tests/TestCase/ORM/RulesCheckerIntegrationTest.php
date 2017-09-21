@@ -119,7 +119,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $this->assertTrue($entity->article->isNew());
         $this->assertNull($entity->article->id);
         $this->assertNull($entity->article->get('author_id'));
-        $this->assertFalse($entity->article->dirty('author_id'));
+        $this->assertFalse($entity->article->isDirty('author_id'));
         $this->assertNotEmpty($entity->article->errors('title'));
         $this->assertSame('A Title', $entity->article->invalid('title'));
     }
@@ -371,7 +371,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $this->assertSame($entity, $table->save($entity));
 
         $entity = $table->get(1);
-        $entity->dirty('name', true);
+        $entity->setDirty('name', true);
         $this->assertSame($entity, $table->save($entity));
     }
 
@@ -428,7 +428,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $this->assertSame($entity, $table->save($entity));
 
         $entity = $table->get(1);
-        $entity->dirty('author_id', true);
+        $entity->setDirty('author_id', true);
         $this->assertSame($entity, $table->save($entity));
     }
 
@@ -690,7 +690,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules = $table->rulesChecker();
         $rules->add($rules->existsIn('author_id', TableRegistry::get('Authors'), 'Nope'));
 
-        $table->eventManager()->on(
+        $table->getEventManager()->on(
             'Model.beforeRules',
             function (Event $event, Entity $entity, \ArrayObject $options, $operation) {
                 $this->assertEquals(
@@ -730,7 +730,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules = $table->rulesChecker();
         $rules->add($rules->existsIn('author_id', TableRegistry::get('Authors'), 'Nope'));
 
-        $table->eventManager()->on(
+        $table->getEventManager()->on(
             'Model.afterRules',
             function (Event $event, Entity $entity, \ArrayObject $options, $result, $operation) {
                 $this->assertEquals(
@@ -768,7 +768,7 @@ class RulesCheckerIntegrationTest extends TestCase
         ]);
 
         $table = TableRegistry::get('Articles');
-        $table->eventManager()->on('Model.buildRules', function (Event $event, RulesChecker $rules) {
+        $table->getEventManager()->on('Model.buildRules', function (Event $event, RulesChecker $rules) {
             $rules->add($rules->existsIn('author_id', TableRegistry::get('Authors'), 'Nope'));
         });
 
@@ -813,7 +813,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules = $table->rulesChecker();
         $rules->add($rules->isUnique(['author_id']));
 
-        $table->Authors->eventManager()->on('Model.beforeFind', function (Event $event, $query) {
+        $table->Authors->getEventManager()->on('Model.beforeFind', function (Event $event, $query) {
             $query->leftJoin(['a2' => 'authors']);
         });
 
@@ -837,7 +837,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $entity = $table->get(1);
         $entity->title = 'Foo';
         $entity->author_id = 1000;
-        $entity->dirty('author_id', false);
+        $entity->setDirty('author_id', false);
         $this->assertSame($entity, $table->save($entity));
     }
 
@@ -859,7 +859,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules = $table->rulesChecker();
         $rules->add($rules->existsIn('author_id', 'Authors'));
 
-        $table->Authors->eventManager()->on('Model.beforeFind', function (Event $event, $query) {
+        $table->Authors->getEventManager()->on('Model.beforeFind', function (Event $event, $query) {
             $query->leftJoin(['a2' => 'authors']);
         });
 

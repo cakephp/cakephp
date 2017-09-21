@@ -55,10 +55,10 @@ class FloatTypeTest extends TestCase
         parent::setUp();
         $this->type = Type::build('float');
         $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
-        $this->localeString = I18n::locale();
+        $this->localeString = I18n::getLocale();
         $this->numberClass = FloatType::$numberClass;
 
-        I18n::locale($this->localeString);
+        I18n::setLocale($this->localeString);
     }
 
     /**
@@ -69,7 +69,7 @@ class FloatTypeTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        I18n::locale($this->localeString);
+        I18n::setLocale($this->localeString);
         FloatType::$numberClass = $this->numberClass;
     }
 
@@ -151,19 +151,19 @@ class FloatTypeTest extends TestCase
      */
     public function testMarshalWithLocaleParsing()
     {
-        I18n::locale('de_DE');
+        I18n::setLocale('de_DE');
         $this->type->useLocaleParser();
         $expected = 1234.53;
         $result = $this->type->marshal('1.234,53');
         $this->assertEquals($expected, $result);
 
-        I18n::locale('en_US');
+        I18n::setLocale('en_US');
         $this->type->useLocaleParser();
         $expected = 1234;
         $result = $this->type->marshal('1,234');
         $this->assertEquals($expected, $result);
 
-        I18n::locale('pt_BR');
+        I18n::setLocale('pt_BR');
         $this->type->useLocaleParser();
         $expected = 5987123.231;
         $result = $this->type->marshal('5.987.123,231');

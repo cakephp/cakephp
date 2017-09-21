@@ -53,6 +53,13 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     protected $_providers = [];
 
     /**
+     * An associative array of objects or classes used as a default provider list
+     *
+     * @var array
+     */
+    protected static $_defaultProviders = [];
+
+    /**
      * Contains the validation messages associated with checking the presence
      * for each corresponding field.
      *
@@ -82,6 +89,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     public function __construct()
     {
         $this->_useI18n = function_exists('__d');
+        $this->_providers = self::$_defaultProviders;
     }
 
     /**
@@ -208,6 +216,43 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         $this->_providers[$name] = new RulesProvider();
 
         return $this->_providers[$name];
+    }
+
+    /**
+     * Returns the default provider stored under that name if it exists.
+     *
+     * @param string $name The name under which the provider should be retrieved.
+     * @return object|string|null
+     */
+    public static function getDefaultProvider($name)
+    {
+        if (!isset(self::$_defaultProviders[$name])) {
+            return null;
+        }
+
+        return self::$_defaultProviders[$name];
+    }
+
+    /**
+     * Associates an object to a name so it can be used as a default provider.
+     *
+     * @param string $name The name under which the provider should be set.
+     * @param object|string $object Provider object or class name.
+     * @return void
+     */
+    public static function addDefaultProvider($name, $object)
+    {
+        self::$_defaultProviders[$name] = $object;
+    }
+
+    /**
+     * Get the list of default providers.
+     *
+     * @return array
+     */
+    public static function getDefaultProviders()
+    {
+        return array_keys(self::$_defaultProviders);
     }
 
     /**
@@ -1562,6 +1607,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|null $message The error message when the rule fails.
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::isArray()
      * @return $this
      */
     public function isArray($field, $message = null, $when = null)
@@ -1574,13 +1620,32 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
+     * Add a validation rule to ensure that a field contains a scalar.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::isScalar()
+     * @return $this
+     */
+    public function scalar($field, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+
+        return $this->add($field, 'scalar', $extra + [
+                'rule' => 'isScalar'
+            ]);
+    }
+
+    /**
      * Add a validation rule to ensure a field is a 6 digits hex color value.
      *
      * @param string $field The field you want to apply the rule to.
      * @param string|null $message The error message when the rule fails.
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
-     * @see \Cake\Validation\Validation::color()
+     * @see \Cake\Validation\Validation::hexColor()
      * @return $this
      */
     public function hexColor($field, $message = null, $when = null)
@@ -1701,6 +1766,25 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         $context = compact('data', 'newRecord', 'field', 'providers');
 
         return !$this->_checkPresence($this->field($field), $context);
+    }
+
+    /**
+     * Returns whether or not a field matches against a regular expression.
+     *
+     * @param string $field Field name.
+     * @param string $regex Regular expression.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @return $this
+     */
+    public function regex($field, $regex, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+
+        return $this->add($field, 'regex', $extra + [
+            'rule' => ['custom', $regex]
+        ]);
     }
 
     /**
