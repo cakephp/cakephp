@@ -48,7 +48,7 @@ use Cake\ORM\Locator\TableLocator;
  * $table = TableRegistry::get('Users', $config);
  * ```
  *
- * @deprecated 3.5.0 Use \Cake\ORM\Locator\TableLocator instead.
+ * @deprecated 3.6.0 Use \Cake\ORM\Locator\TableLocator instead.
  */
 class TableRegistry
 {
