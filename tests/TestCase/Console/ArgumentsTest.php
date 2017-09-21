@@ -12,7 +12,6 @@
  * @since         3.6.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-
 namespace Cake\Test\TestSuite\Console;
 
 use Cake\Console\Arguments;
@@ -31,7 +30,7 @@ class ArgumentsTest extends TestCase
     public function testGetArguments()
     {
         $values = ['big', 'brown', 'bear'];
-        $args = new Arguments($values, []);
+        $args = new Arguments($values, [], []);
         $this->assertSame($values, $args->getArguments());
     }
 
@@ -43,7 +42,7 @@ class ArgumentsTest extends TestCase
     public function testGetArgumentAt()
     {
         $values = ['big', 'brown', 'bear'];
-        $args = new Arguments($values, []);
+        $args = new Arguments($values, [], []);
         $this->assertSame($values[0], $args->getArgumentAt(0));
         $this->assertSame($values[1], $args->getArgumentAt(1));
         $this->assertNull($args->getArgumentAt(3));
@@ -57,9 +56,43 @@ class ArgumentsTest extends TestCase
     public function testHasArgumentAt()
     {
         $values = ['big', 'brown', 'bear'];
-        $args = new Arguments($values, []);
+        $args = new Arguments($values, [], []);
         $this->assertTrue($args->hasArgumentAt(0));
         $this->assertTrue($args->hasArgumentAt(1));
         $this->assertFalse($args->hasArgumentAt(3));
+        $this->assertFalse($args->hasArgumentAt(-1));
+    }
+
+    /**
+     * check arguments by name
+     *
+     * @return void
+     */
+    public function testHasArgument()
+    {
+        $values = ['big', 'brown', 'bear'];
+        $names = ['size' => 0, 'color' => 1, 'species' => 2, 'odd' => 3];
+        $args = new Arguments($values, [], $names);
+        $this->assertTrue($args->hasArgument('size'));
+        $this->assertTrue($args->hasArgument('color'));
+        $this->assertFalse($args->hasArgument('hair'));
+        $this->assertFalse($args->hasArgument('Hair'), 'casing matters');
+        $this->assertFalse($args->hasArgument('odd'));
+    }
+
+    /**
+     * get arguments by name
+     *
+     * @return void
+     */
+    public function testGetArgument()
+    {
+        $values = ['big', 'brown', 'bear'];
+        $names = ['size' => 0, 'color' => 1, 'species' => 2, 'odd' => 3];
+        $args = new Arguments($values, [], $names);
+        $this->assertSame($values[0], $args->getArgument('size'));
+        $this->assertSame($values[1], $args->getArgument('color'));
+        $this->assertNull($args->getArgument('Color'));
+        $this->assertNull($args->getArgument('hair'));
     }
 }

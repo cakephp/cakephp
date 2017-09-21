@@ -21,6 +21,13 @@ namespace Cake\Console;
 class Arguments
 {
     /**
+     * Positional argument name map
+     *
+     * @var array
+     */
+    protected $argNames;
+
+    /**
      * Positional arguments.
      *
      * @var string[]
@@ -39,11 +46,13 @@ class Arguments
      *
      * @param string[] $args Positional arguments
      * @param array $options Named arguments
+     * @param array $argNames Map of argument names and their indexes.
      */
-    public function __construct(array $args, array $options)
+    public function __construct(array $args, array $options, array $argNames)
     {
         $this->args = $args;
         $this->options = $options;
+        $this->argNames = $argNames;
     }
 
     /**
@@ -64,7 +73,7 @@ class Arguments
      */
     public function getArgumentAt($index)
     {
-        if (isset($this->args[$index])) {
+        if ($this->hasArgumentAt($index)) {
             return $this->args[$index];
         }
 
@@ -80,5 +89,37 @@ class Arguments
     public function hasArgumentAt($index)
     {
         return isset($this->args[$index]);
+    }
+
+    /**
+     * Check if a positional argument exists by name
+     *
+     * @param string $name The argument name to check.
+     * @return bool
+     */
+    public function hasArgument($name)
+    {
+        if (!isset($this->argNames[$name])) {
+            return false;
+        }
+        $index = $this->argNames[$name];
+
+        return isset($this->args[$index]);
+    }
+
+    /**
+     * Check if a positional argument exists by name
+     *
+     * @param string $name The argument name to check.
+     * @return string|null
+     */
+    public function getArgument($name)
+    {
+        if (!isset($this->argNames[$name])) {
+            return null;
+        }
+        $index = $this->argNames[$name];
+
+        return $this->args[$index];
     }
 }
