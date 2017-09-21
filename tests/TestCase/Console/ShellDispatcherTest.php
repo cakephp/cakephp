@@ -191,7 +191,9 @@ class ShellDispatcherTest extends TestCase
         $dispatcher = $this->getMockBuilder('Cake\Console\ShellDispatcher')
             ->setMethods(['findShell'])
             ->getMock();
-        $Shell = $this->getMockBuilder('Cake\Console\Shell')->getMock();
+        $Shell = $this->getMockBuilder('Cake\Console\Shell')
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $Shell->expects($this->exactly(2))->method('initialize');
         $Shell->expects($this->at(0))->method('runCommand')
@@ -225,7 +227,9 @@ class ShellDispatcherTest extends TestCase
         $dispatcher = $this->getMockBuilder('Cake\Console\ShellDispatcher')
             ->setMethods(['findShell'])
             ->getMock();
-        $Shell = $this->getMockBuilder('Cake\Console\Shell')->getMock();
+        $Shell = $this->getMockBuilder('Cake\Console\Shell')
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $Shell->expects($this->once())->method('initialize');
         $Shell->expects($this->once())->method('runCommand')
@@ -254,7 +258,9 @@ class ShellDispatcherTest extends TestCase
         $dispatcher = $this->getMockBuilder('Cake\Console\ShellDispatcher')
             ->setMethods(['findShell'])
             ->getMock();
-        $Shell = $this->getMockBuilder('Cake\Console\Shell')->getMock();
+        $Shell = $this->getMockBuilder('Cake\Console\Shell')
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $Shell->expects($this->once())->method('initialize');
         $Shell->expects($this->once())->method('runCommand')
@@ -281,7 +287,9 @@ class ShellDispatcherTest extends TestCase
         $dispatcher = $this->getMockBuilder('Cake\Console\ShellDispatcher')
             ->setMethods(['findShell'])
             ->getMock();
-        $Shell = $this->getMockBuilder('Cake\Console\Shell')->getMock();
+        $Shell = $this->getMockBuilder('Cake\Console\Shell')
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $Shell->expects($this->once())->method('initialize');
         $Shell->expects($this->once())->method('runCommand')
@@ -308,7 +316,9 @@ class ShellDispatcherTest extends TestCase
         $dispatcher = $this->getMockBuilder('Cake\Console\ShellDispatcher')
             ->setMethods(['_shellExists', '_createShell'])
             ->getMock();
-        $Shell = $this->getMockBuilder('Cake\Console\Shell')->getMock();
+        $Shell = $this->getMockBuilder('Cake\Console\Shell')
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $dispatcher->expects($this->at(1))
             ->method('_shellExists')
@@ -335,7 +345,9 @@ class ShellDispatcherTest extends TestCase
         $dispatcher = $this->getMockBuilder('Cake\Console\ShellDispatcher')
             ->setMethods(['_shellExists', '_createShell'])
             ->getMock();
-        $Shell = $this->getMockBuilder('Cake\Console\Shell')->getMock();
+        $Shell = $this->getMockBuilder('Cake\Console\Shell')
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $dispatcher->expects($this->at(1))
             ->method('_shellExists')
@@ -362,7 +374,9 @@ class ShellDispatcherTest extends TestCase
         $dispatcher = $this->getMockBuilder('Cake\Console\ShellDispatcher')
             ->setMethods(['_shellExists', '_createShell'])
             ->getMock();
-        $Shell = $this->getMockBuilder('Cake\Console\Shell')->getMock();
+        $Shell = $this->getMockBuilder('Cake\Console\Shell')
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $dispatcher->expects($this->at(1))
             ->method('_shellExists')
