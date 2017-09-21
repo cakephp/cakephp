@@ -798,7 +798,7 @@ class RouteBuilder
      *
      * - `status` Sets the HTTP status (default 301)
      * - `persist` Passes the params to the redirected route, if it can. This is useful with greedy routes,
-     *   routes that end in `*` are greedy. As you can remap URLs and not loose any passed args.
+     *   routes that end in `*` are greedy. As you can remap URLs and not lose any passed args.
      *
      * @param string $route A string describing the template of the route
      * @param array|string $url A URL to redirect to. Can be a string or a Cake array-based URL
@@ -809,7 +809,9 @@ class RouteBuilder
      */
     public function redirect($route, $url, array $options = [])
     {
-        $options['routeClass'] = 'Cake\Routing\Route\RedirectRoute';
+        if (!isset($options['routeClass'])) {
+            $options['routeClass'] = 'Cake\Routing\Route\RedirectRoute';
+        }
         if (is_string($url)) {
             $url = ['redirect' => $url];
         }
