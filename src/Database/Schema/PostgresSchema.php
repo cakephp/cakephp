@@ -32,10 +32,10 @@ class PostgresSchema extends BaseSchema
 
         $params = [$schema];
 
-        if ($type != TableSchema::REPOSITORY_TYPE_BOTH) {
+        if ($type !== TableSchema::REPOSITORY_TYPE_BOTH) {
             $sql .= ' AND table_type = ?';
 
-            if ($type == TableSchema::REPOSITORY_TYPE_TABLE) {
+            if ($type === TableSchema::REPOSITORY_TYPE_TABLE) {
                 $params[] = 'BASE TABLE';
             } else {
                 $params[] = 'VIEW';

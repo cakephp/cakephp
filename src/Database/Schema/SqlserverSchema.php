@@ -31,7 +31,7 @@ class SqlserverSchema extends BaseSchema
             FROM INFORMATION_SCHEMA.TABLES
             WHERE TABLE_SCHEMA = ?";
 
-        if ($type != TableSchema::REPOSITORY_TYPE_BOTH) {
+        if ($type !== TableSchema::REPOSITORY_TYPE_BOTH) {
             $sql .= ' AND TABLE_TYPE = ?';
 
             if ($type == TableSchema::REPOSITORY_TYPE_TABLE) {
