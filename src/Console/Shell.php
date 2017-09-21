@@ -185,7 +185,7 @@ class Shell
         }
         $this->_io = $io ?: new ConsoleIo();
 
-        $this->modelFactory('Table', [$this->getTableLocator(), 'get']);
+        $this->modelFactory('Table', [$this->getTableLocator() ?: new TableLocator(), 'get']);
         $this->Tasks = new TaskRegistry($this);
 
         $this->_mergeVars(
