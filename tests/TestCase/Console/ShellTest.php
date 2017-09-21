@@ -141,7 +141,7 @@ class ShellTest extends TestCase
         $this->io = $this->getMockBuilder('Cake\Console\ConsoleIo')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->Shell = new ShellTestShell($this->io);
+        $this->Shell = new ShellTestShell($this->io, $this->getTableLocator());
 
         if (is_dir(TMP . 'shell_test')) {
             $Folder = new Folder(TMP . 'shell_test');
@@ -158,6 +158,22 @@ class ShellTest extends TestCase
     {
         $this->assertEquals('ShellTestShell', $this->Shell->name);
         $this->assertInstanceOf('Cake\Console\ConsoleIo', $this->Shell->io());
+        $this->assertInstanceOf('Cake\ORM\Locator\LocatorInterface', $this->Shell->getTableLocator());
+        $this->assertSame($this->io, $this->Shell->io());
+        $this->assertSame($this->getTableLocator(), $this->Shell->getTableLocator());
+    }
+
+    /**
+     * testConstruct method without args
+     *
+     * @return void
+     */
+    public function testConstructWithoutArgs()
+    {
+        $shell = new Shell();
+
+        $this->assertInstanceOf('Cake\Console\ConsoleIo', $shell->io());
+        $this->assertInstanceOf('Cake\ORM\Locator\LocatorInterface', $shell->getTableLocator());
     }
 
     /**
