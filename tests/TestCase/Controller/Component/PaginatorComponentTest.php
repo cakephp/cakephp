@@ -686,7 +686,7 @@ class PaginatorComponentTest extends TestCase
     {
         $this->loadFixtures('Posts');
 
-        $table = TableRegistry::get('PaginatorPosts');
+        $table = $this->getTableLocator()->get('PaginatorPosts');
         $table->deleteAll('1=1');
 
         $this->Paginator->paginate($table);
@@ -742,7 +742,7 @@ class PaginatorComponentTest extends TestCase
         $this->request->query['limit'] = 1;
         $this->request->query['page'] = 4;
 
-        $table = TableRegistry::get('PaginatorPosts');
+        $table = $this->getTableLocator()->get('PaginatorPosts');
         try {
             $this->Paginator->paginate($table);
             $this->fail('No exception raised');
