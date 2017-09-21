@@ -1601,6 +1601,78 @@ class EntityTest extends TestCase
     }
 
     /**
+     * Tests the getOrFail method
+     *
+     * @return void
+     */
+    public function testGetOrFail()
+    {
+        $entity = new Entity(
+            ['a' => 1, 'b' => 2]
+        );
+        $this->assertSame(1, $entity->getOrFail('a'));
+
+        $entity = new Entity(
+            ['a' => 1, 'b' => 2, 'c' => null]
+        );
+        $this->assertNull($entity->getOrFail('c'));
+    }
+
+    /**
+     * Tests the getOrFail method
+     *
+     * @expectedException \InvalidArgumentException
+     * @return void
+     */
+    public function testGetOrFailInvalid()
+    {
+        $entity = new Entity(
+            ['a' => 1, 'b' => 2]
+        );
+
+        $entity->getOrFail('c');
+    }
+
+    /**
+     * Tests the getOrFail method
+     *
+     * @expectedException \InvalidArgumentException
+     * @return void
+     */
+    public function testGetOrFailNull()
+    {
+        $entity = new Entity(
+            ['a' => 1, 'b' => 2]
+        );
+
+        $entity->getOrFail(null);
+    }
+
+    /**
+     * Tests the propertyExists method
+     *
+     * @return void
+     */
+    public function testPropertyExists()
+    {
+        $entity = new Entity(
+            ['a' => 1, 'b' => 2, 'c' => null]
+        );
+
+        $this->assertTrue($entity->propertyExists('a'));
+        $this->assertTrue($entity->propertyExists('b'));
+        $this->assertTrue($entity->propertyExists('c'));
+        $this->assertFalse($entity->propertyExists('d'));
+
+        $entity = $this->getMockBuilder('\Cake\ORM\Entity')
+            ->setMethods(['_getName'])
+            ->getMock();
+
+        $this->assertTrue($entity->propertyExists('name'));
+        $this->assertFalse($entity->propertyExists('a'));
+    }
+
+    /**
      * Tests getInvalid and setInvalid
      *
      * @return void

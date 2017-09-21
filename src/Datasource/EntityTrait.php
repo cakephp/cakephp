@@ -787,6 +787,40 @@ trait EntityTrait
     }
 
     /**
+     * return value if property exists otherwise throw Exception
+     *
+     * @param string $property The field to get value for.
+     * @return mixed
+     * @throws \InvalidArgumentException if the property name doesn't exist
+     */
+    public function &getOrFail($property)
+    {
+        $value = $this->get($property);
+        if ($value === null && !$this->propertyExists($property)) {
+            throw new InvalidArgumentException('Property "' . $property . '" not found.');
+        }
+
+        return $value;
+    }
+
+    /**
+     * Check if real or virtual property for existence
+     *
+     * @param string $property The field to check for existence.
+     * @return bool
+     */
+    public function propertyExists($property)
+    {
+        if (array_key_exists($property, $this->_properties)) {
+            return true;
+        }
+
+        $method = static::_accessor($property, 'get');
+        
+        return (bool)$method;
+    }
+
+    /**
      * Sets the entire entity as clean, which means that it will appear as
      * no properties being modified or added at all. This is an useful call
      * for an initial object hydration
