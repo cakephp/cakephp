@@ -12,8 +12,6 @@ parameters:
         - '#Access to undefined constant PDO::SQLSRV_ENCODING_BINARY#'
         - '#Constant XC_TYPE_VAR not found#'
         - '#Class PHPUnit_Runner_Version not found and could not be autoloaded#'
-        - '#Call to an undefined method Cake\\Auth\\Storage\\StorageInterface::getConfig\(\)#'
-        - '#Call to an undefined method Cake\\Auth\\Storage\\StorageInterface::setConfig\(\)#'
         - '#Call to an undefined method Psr\\Http\\Message\\ResponseInterface::getCookies\(\)#'
         - '#Access to an undefined property Psr\\Http\\Message\\UriInterface::\$webroot#'
         - '#Access to an undefined property Psr\\Http\\Message\\UriInterface::\$base#'
