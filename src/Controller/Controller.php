@@ -127,7 +127,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @var \Cake\Http\ServerRequest
      * @link https://book.cakephp.org/3.0/en/controllers/request-response.html#request
-     * @deprecated 3.5.0 Use getRequest()/setRequest instead.
+     * @deprecated 3.6.0 The property will become protected in 4.0.0. Use getRequest()/setRequest instead.
      */
     public $request;
 
@@ -136,7 +136,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @var \Cake\Http\Response
      * @link https://book.cakephp.org/3.0/en/controllers/request-response.html#response
-     * @deprecated 3.5.0 Use getResponse()/setResponse instead.
+     * @deprecated 3.6.0 The property will become protected in 4.0.0. Use getResponse()/setResponse instead.
      */
     public $response;
 
@@ -163,7 +163,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * after action logic.
      *
      * @var bool
-     * @deprecated 3.5.0 Use enableAutoRender()/disableAutoRender() and isAutoRenderEnabled() instead.
+     * @deprecated 3.6.0 Use enableAutoRender()/disableAutoRender() and isAutoRenderEnabled() instead.
      */
     protected $autoRender = true;
 
@@ -213,7 +213,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Automatically set to the name of a plugin.
      *
      * @var string
-     * @deprecated 3.5.0 Use `$this->request->getParam('plugin')` instead.
+     * @deprecated 3.6.0 Use `$this->request->getParam('plugin')` instead.
      */
     public $plugin;
 
@@ -423,6 +423,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Returns the controller name.
      *
      * @return string
+     * @since 3.6.0
      */
     public function getName()
     {
@@ -434,6 +435,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @param string $name Controller name.
      * @return $this
+     * @since 3.6.0
      */
     public function setName($name)
     {
@@ -446,6 +448,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Returns true if an action should be rendered automatically.
      *
      * @return bool
+     * @since 3.6.0
      */
     public function isAutoRenderEnabled()
     {
@@ -456,6 +459,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Enable automatic action rendering.
      *
      * @return $this
+     * @since 3.6.0
      */
     public function enableAutoRender()
     {
@@ -468,6 +472,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Disbale automatic action rendering.
      *
      * @return $this
+     * @since 3.6.0
      */
     public function disableAutoRender()
     {
@@ -480,6 +485,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Gets the request instance.
      *
      * @return \Cake\Http\ServerRequest
+     * @since 3.6.0
      */
     public function getRequest()
     {
@@ -515,6 +521,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Gets the response instance.
      *
      * @return \Cake\Http\Response
+     * @since 3.6.0
      */
     public function getResponse()
     {
@@ -526,6 +533,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @param \Cake\Http\Response $response Response instance.
      * @return $this
+     * @since 3.6.0
      */
     public function setResponse(Response $response)
     {
