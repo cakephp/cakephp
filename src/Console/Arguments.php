@@ -46,7 +46,8 @@ class Arguments
      *
      * @param string[] $args Positional arguments
      * @param array $options Named arguments
-     * @param array $argNames Map of argument names and their indexes.
+     * @param string[] $argNames List of argument names. Order is expected to be
+     *  the same as $args.
      */
     public function __construct(array $args, array $options, array $argNames)
     {
@@ -99,12 +100,12 @@ class Arguments
      */
     public function hasArgument($name)
     {
-        if (!isset($this->argNames[$name])) {
+        $offset = array_search($name, $this->argNames, true);
+        if ($offset === false) {
             return false;
         }
-        $index = $this->argNames[$name];
 
-        return isset($this->args[$index]);
+        return isset($this->args[$offset]);
     }
 
     /**
@@ -115,11 +116,11 @@ class Arguments
      */
     public function getArgument($name)
     {
-        if (!isset($this->argNames[$name])) {
+        $offset = array_search($name, $this->argNames, true);
+        if ($offset === false) {
             return null;
         }
-        $index = $this->argNames[$name];
 
-        return $this->args[$index];
+        return $this->args[$offset];
     }
 }

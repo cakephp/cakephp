@@ -71,7 +71,7 @@ class ArgumentsTest extends TestCase
     public function testHasArgument()
     {
         $values = ['big', 'brown', 'bear'];
-        $names = ['size' => 0, 'color' => 1, 'species' => 2, 'odd' => 3];
+        $names = ['size', 'color', 'species', 'odd'];
         $args = new Arguments($values, [], $names);
         $this->assertTrue($args->hasArgument('size'));
         $this->assertTrue($args->hasArgument('color'));
@@ -88,7 +88,7 @@ class ArgumentsTest extends TestCase
     public function testGetArgument()
     {
         $values = ['big', 'brown', 'bear'];
-        $names = ['size' => 0, 'color' => 1, 'species' => 2, 'odd' => 3];
+        $names = ['size', 'color', 'species', 'odd'];
         $args = new Arguments($values, [], $names);
         $this->assertSame($values[0], $args->getArgument('size'));
         $this->assertSame($values[1], $args->getArgument('color'));
