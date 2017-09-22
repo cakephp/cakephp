@@ -276,7 +276,7 @@ class CakeEmailTest extends CakeTestCase {
 		$this->assertSame($expected, $this->CakeEmail->to());
 
 		$this->CakeEmail->to('cake@cake_php.org', 'CakePHPUnderscore');
-		$expected = array('cake@cake_php.org', 'CakePHPUnderscore');
+		$expected = array('cake@cake_php.org' => 'CakePHPUnderscore');
 		$this->assertSame($expected, $this->CakeEmail->to());
 
 		$list = array(
