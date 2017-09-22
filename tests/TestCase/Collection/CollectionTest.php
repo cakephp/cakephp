@@ -1112,11 +1112,6 @@ class CollectionTest extends TestCase
         $collection = new Collection(['a' => 1, 'b' => 2]);
         $combined = $collection->append(['c' => 3, 'a' => 4]);
         $this->assertEquals(['a' => 4, 'b' => 2, 'c' => 3], $combined->toArray());
-
-        $collection = new Collection([1, 2]);
-        $collection = $collection->append([3, 4]);
-        $combined = $collection->append([5, 6]);
-        $this->assertEquals([1, 2, 3, 4, 5, 6], $combined->toList());
     }
 
     /**
