@@ -114,8 +114,22 @@ class AssociationCollection implements IteratorAggregate
      * @param string|array $class The type of associations you want.
      *   For example 'BelongsTo' or array like ['BelongsTo', 'HasOne']
      * @return array An array of Association objects.
+     * @deprecated 3.5.3 Use getByType() instead.
      */
     public function type($class)
+    {
+        return $this->getByType($class);
+    }
+
+    /**
+     * Get an array of associations matching a specific type.
+     *
+     * @param string|array $class The type of associations you want.
+     *   For example 'BelongsTo' or array like ['BelongsTo', 'HasOne']
+     * @return array An array of Association objects.
+     * @since 3.5.3
+     */
+    public function getByType($class)
     {
         $class = array_map('strtolower', (array)$class);
 
