@@ -348,6 +348,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         ];
         if (isset($deprecated[$name])) {
             $method = $deprecated[$name];
+            deprecationWarning(sprintf('Controller::$%s is deprecated. Use $this->%s() instead.', $name, $method));
 
             return $this->{$method}();
         }
@@ -390,6 +391,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         ];
         if (isset($deprecated[$name])) {
             $method = $deprecated[$name];
+            deprecationWarning(sprintf('Controller::$%s is deprecated. Use $this->%s() instead.', $name, $method));
             $this->{$method}($value);
 
             return;
