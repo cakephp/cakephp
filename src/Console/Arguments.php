@@ -123,4 +123,40 @@ class Arguments
 
         return $this->args[$offset];
     }
+
+    /**
+     * Get an array of all the options
+     *
+     * @return array
+     */
+    public function getOptions()
+    {
+        return $this->options;
+    }
+
+    /**
+     * Get an option's value or null
+     *
+     * @param string $name The name of the option to check.
+     * @return string|int|bool|null The option value or null.
+     */
+    public function getOption($name)
+    {
+        if (isset($this->options[$name])) {
+            return $this->options[$name];
+        }
+
+        return null;
+    }
+
+    /**
+     * Check if an option is defined and not null.
+     *
+     * @param string $name The name of the option to check.
+     * @return bool
+     */
+    public function hasOption($name)
+    {
+        return isset($this->options[$name]);
+    }
 }
