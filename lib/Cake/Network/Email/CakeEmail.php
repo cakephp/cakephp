@@ -70,7 +70,7 @@ class CakeEmail {
  *
  * @var string
  */
-	const EMAIL_PATTERN = '/^((?:[\p{L}0-9.!#$%&\'*+\/=?^_`{|}~-]+)*@[\p{L}0-9-.]+)$/ui';
+	const EMAIL_PATTERN = '/^((?:[\p{L}0-9.!#$%&\'*+\/=?^_`{|}~-]+)*@[\p{L}0-9-_.]+)$/ui';
 
 /**
  * Recipient of the email
