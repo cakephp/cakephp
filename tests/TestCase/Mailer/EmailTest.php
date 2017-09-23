@@ -274,6 +274,19 @@ class EmailTest extends TestCase
     }
 
     /**
+     * test to address with _ in domain name
+     *
+     * @return void
+     */
+    public function testToUnderscoreDomain()
+    {
+        $result = $this->Email->to('cake@cake_php.org');
+        $expected = ['cake@cake_php.org' => 'cake@cake_php.org'];
+        $this->assertSame($expected, $this->Email->to());
+        $this->assertSame($this->Email, $result);
+    }
+
+    /**
      * Data provider function for testBuildInvalidData
      *
      * @return array
@@ -2829,7 +2842,7 @@ XML;
                     'mimetype' => 'image/png'
                 ]
             ],
-            '_emailPattern' => '/^((?:[\p{L}0-9.!#$%&\'*+\/=?^_`{|}~-]+)*@[\p{L}0-9-.]+)$/ui'
+            '_emailPattern' => '/^((?:[\p{L}0-9.!#$%&\'*+\/=?^_`{|}~-]+)*@[\p{L}0-9-._]+)$/ui'
         ];
         $this->assertEquals($expected, $result);
 
