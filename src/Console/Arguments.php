@@ -23,7 +23,7 @@ class Arguments
     /**
      * Positional argument name map
      *
-     * @var array
+     * @var string[]
      */
     protected $argNames;
 
@@ -37,7 +37,7 @@ class Arguments
     /**
      * Named options
      *
-     * @var string[]
+     * @var array
      */
     protected $options;
 
@@ -59,7 +59,7 @@ class Arguments
     /**
      * Get all positional arguments.
      *
-     * @return array
+     * @return string[]
      */
     public function getArguments()
     {
