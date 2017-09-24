@@ -1488,6 +1488,12 @@ class View implements EventDispatcherInterface
      */
     protected function _elementCache($name, $data, $options)
     {
+        if (isset($options['cache']['key'], $options['cache']['config'])) {
+            $cache = $options['cache'];
+            $cache['key'] = 'element_' . $cache['key'];
+            return $cache;
+        }
+        
         $plugin = null;
         list($plugin, $name) = $this->pluginSplit($name);
 
