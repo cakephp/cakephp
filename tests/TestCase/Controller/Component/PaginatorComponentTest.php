@@ -934,6 +934,7 @@ class PaginatorComponentTest extends TestCase
             ]
         ];
         $result = $this->Paginator->validateSort($model, $options);
+
         $expected = [
             'model.author_id' => 'asc',
             'model.title' => 'asc'

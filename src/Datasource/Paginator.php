@@ -215,6 +215,7 @@ class Paginator implements PaginatorInterface
             'sortDefault' => $sortDefault,
             'directionDefault' => $directionDefault,
             'scope' => $options['scope'],
+            'completeSort' => $order,
         ];
 
         $this->_pagingParams = [$alias => $paging];
@@ -323,7 +324,7 @@ class Paginator implements PaginatorInterface
      * the model friendly order key.
      *
      * You can use the whitelist parameter to control which columns/fields are
-     * available for sorting. This helps prevent users from ordering large
+     * available for sorting via URL parameters. This helps prevent users from ordering large
      * result sets on un-indexed values.
      *
      * If you need to sort on associated columns or synthetic properties you
@@ -332,6 +333,9 @@ class Paginator implements PaginatorInterface
      * Any columns listed in the sort whitelist will be implicitly trusted.
      * You can use this to sort on synthetic columns, or columns added in custom
      * find operations that may not exist in the schema.
+     *
+     * The default order options provided to paginate() will be merged with the user's
+     * requested sorting field/direction.
      *
      * @param \Cake\Datasource\RepositoryInterface $object Repository object.
      * @param array $options The pagination options being used for this request.
@@ -348,7 +352,8 @@ class Paginator implements PaginatorInterface
             if (!in_array($direction, ['asc', 'desc'])) {
                 $direction = 'asc';
             }
-            $options['order'] = [$options['sort'] => $direction];
+            $order = (isset($options['order']) && is_array($options['order'])) ? $options['order'] : [];
+            $options['order'] = [$options['sort'] => $direction] + $order;
         }
         unset($options['sort'], $options['direction']);
 
@@ -369,7 +374,6 @@ class Paginator implements PaginatorInterface
                 return $options;
             }
         }
-
         $options['order'] = $this->_prefix($object, $options['order'], $inWhitelist);
 
         return $options;
