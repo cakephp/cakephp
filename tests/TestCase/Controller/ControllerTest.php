@@ -237,6 +237,12 @@ class ControllerTest extends TestCase
     ];
 
     /**
+     * error level property
+     *
+     */
+    private static $error_level;
+
+    /**
      * reset environment.
      *
      * @return void
@@ -258,6 +264,27 @@ class ControllerTest extends TestCase
     {
         parent::tearDown();
         Plugin::unload();
+        error_reporting(self::$error_level);
+    }
+
+    /**
+     * setUpBeforeClass
+     *
+     * @return void
+     */
+    public static function setUpBeforeClass()
+    {
+        self::$error_level = error_reporting();
+    }
+
+    /**
+     * tearDownAfterClass
+     *
+     * @return void
+     */
+    public static function tearDownAfterClass()
+    {
+        error_reporting(self::$error_level);
     }
 
     /**
@@ -1098,12 +1125,10 @@ class ControllerTest extends TestCase
     public function testDeprecatedViewProperty($property, $getter, $setter, $value)
     {
             $controller = new AnotherTestController();
-            $error_level = error_reporting();
             error_reporting(E_ALL ^ E_USER_DEPRECATED);
             $controller->$property = $value;
             $this->assertSame($value, $controller->$property);
             $this->assertSame($value, $controller->viewBuilder()->{$getter}());
-            error_reporting($error_level);
     }
 
     /**
@@ -1120,11 +1145,9 @@ class ControllerTest extends TestCase
      */
     public function testDeprecatedViewPropertySetterMessage($property, $getter, $setter, $value)
     {
-            $error_level = error_reporting();
             error_reporting(E_ALL);
             $controller = new AnotherTestController();
             $controller->$property = $value;
-            error_reporting($error_level);
     }
 
     /**
@@ -1141,12 +1164,10 @@ class ControllerTest extends TestCase
      */
     public function testDeprecatedViewPropertyGetterMessage($property, $getter, $setter, $value)
     {
-            $error_level = error_reporting();
             error_reporting(E_ALL);
             $controller = new AnotherTestController();
             $controller->viewBuilder()->{$setter}($value);
             $result = $controller->$property;
-            error_reporting($error_level);
     }
 
     /**
