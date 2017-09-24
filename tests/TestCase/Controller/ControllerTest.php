@@ -274,6 +274,7 @@ class ControllerTest extends TestCase
      */
     public static function setUpBeforeClass()
     {
+        parent::setUpBeforeClass();
         self::$error_level = error_reporting();
     }
 
@@ -284,6 +285,7 @@ class ControllerTest extends TestCase
      */
     public static function tearDownAfterClass()
     {
+        parent::tearDownAfterClass();
         error_reporting(self::$error_level);
     }
 
