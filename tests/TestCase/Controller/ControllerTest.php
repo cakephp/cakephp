@@ -1115,7 +1115,7 @@ class ControllerTest extends TestCase
      * @param mixed $value Value to be set
      * @return void
      * @expectedException PHPUnit\Framework\Error\Deprecated
-     * @expectedExceptionMessageRegExp /Controller::\$\w+ is deprecated(.*)/
+     * @expectedExceptionMessageRegExp /^Controller::\$\w+ is deprecated(.*)/
      * @dataProvider deprecatedViewPropertyProvider
      */
     public function testDeprecatedViewPropertySetterMessage($property, $getter, $setter, $value)
@@ -1136,7 +1136,7 @@ class ControllerTest extends TestCase
      * @param mixed $value Value to be set
      * @return void
      * @expectedException PHPUnit\Framework\Error\Deprecated
-     * @expectedExceptionMessageRegExp /Controller::\$\w+ is deprecated(.*)/
+     * @expectedExceptionMessageRegExp /^Controller::\$\w+ is deprecated(.*)/
      * @dataProvider deprecatedViewPropertyProvider
      */
     public function testDeprecatedViewPropertyGetterMessage($property, $getter, $setter, $value)
