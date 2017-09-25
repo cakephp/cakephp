@@ -95,4 +95,62 @@ class ArgumentsTest extends TestCase
         $this->assertNull($args->getArgument('Color'));
         $this->assertNull($args->getArgument('hair'));
     }
+
+    /**
+     * test getOptions()
+     *
+     * @return void
+     */
+    public function testGetOptions()
+    {
+        $options = [
+            'verbose' => true,
+            'off' => false,
+            'empty' => ''
+        ];
+        $args = new Arguments([], $options, []);
+        $this->assertSame($options, $args->getOptions());
+    }
+
+    /**
+     * test hasOption()
+     *
+     * @return void
+     */
+    public function testHasOption()
+    {
+        $options = [
+            'verbose' => true,
+            'off' => false,
+            'zero' => 0,
+            'empty' => ''
+        ];
+        $args = new Arguments([], $options, []);
+        $this->assertTrue($args->hasOption('verbose'));
+        $this->assertTrue($args->hasOption('off'));
+        $this->assertTrue($args->hasOption('empty'));
+        $this->assertTrue($args->hasOption('zero'));
+        $this->assertFalse($args->hasOption('undef'));
+    }
+
+    /**
+     * test getOption()
+     *
+     * @return void
+     */
+    public function testGetOption()
+    {
+        $options = [
+            'verbose' => true,
+            'off' => false,
+            'zero' => 0,
+            'empty' => ''
+        ];
+        $args = new Arguments([], $options, []);
+        $this->assertTrue($args->getOption('verbose'));
+        $this->assertFalse($args->getOption('off'));
+        $this->assertSame('', $args->getOption('empty'));
+        $this->assertSame(0, $args->getOption('zero'));
+        $this->assertNull($args->getOption('undef'));
+    }
 }
