@@ -227,7 +227,7 @@ class CounterCacheBehavior extends Behavior
                 continue;
             }
 
-            if (!is_string($config) && is_callable($config)) {
+            if (is_callable($config)) {
                 $count = $config($event, $entity, $this->_table, false);
             } else {
                 $count = $this->_getCount($config, $countConditions);
@@ -236,7 +236,7 @@ class CounterCacheBehavior extends Behavior
             $assoc->getTarget()->updateAll([$field => $count], $updateConditions);
 
             if (isset($updateOriginalConditions)) {
-                if (!is_string($config) && is_callable($config)) {
+                if (is_callable($config)) {
                     $count = $config($event, $entity, $this->_table, true);
                 } else {
                     $count = $this->_getCount($config, $countOriginalConditions);
