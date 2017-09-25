@@ -19,6 +19,7 @@ use Cake\Database\Expression\OrderClauseExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\ValuesExpression;
 use Cake\Database\Statement\CallbackStatement;
+use Cake\Datasource\QueryInterface;
 use InvalidArgumentException;
 use IteratorAggregate;
 use RuntimeException;
@@ -613,7 +614,7 @@ class Query implements ExpressionInterface, IteratorAggregate
                 $t['conditions'] = $this->newExpr()->add($t['conditions'], $types);
             }
             $alias = is_string($alias) ? $alias : null;
-            $joins[$alias ?: $i++] = $t + ['type' => 'INNER', 'alias' => $alias];
+            $joins[$alias ?: $i++] = $t + ['type' => QueryInterface::JOIN_TYPE_INNER, 'alias' => $alias];
         }
 
         if ($overwrite) {
@@ -683,7 +684,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function leftJoin($table, $conditions = [], $types = [])
     {
-        return $this->join($this->_makeJoin($table, $conditions, 'LEFT'), $types);
+        return $this->join($this->_makeJoin($table, $conditions, QueryInterface::JOIN_TYPE_LEFT), $types);
     }
 
     /**
@@ -703,7 +704,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function rightJoin($table, $conditions = [], $types = [])
     {
-        return $this->join($this->_makeJoin($table, $conditions, 'RIGHT'), $types);
+        return $this->join($this->_makeJoin($table, $conditions, QueryInterface::JOIN_TYPE_RIGHT), $types);
     }
 
     /**
@@ -723,7 +724,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function innerJoin($table, $conditions = [], $types = [])
     {
-        return $this->join($this->_makeJoin($table, $conditions, 'INNER'), $types);
+        return $this->join($this->_makeJoin($table, $conditions, QueryInterface::JOIN_TYPE_INNER), $types);
     }
 
     /**

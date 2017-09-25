@@ -16,6 +16,7 @@ namespace Cake\ORM;
 
 use Cake\Database\Statement\BufferedStatement;
 use Cake\Database\Statement\CallbackStatement;
+use Cake\Datasource\QueryInterface;
 use Closure;
 use InvalidArgumentException;
 
@@ -238,7 +239,7 @@ class EagerLoader
         }
 
         if (!isset($options['joinType'])) {
-            $options['joinType'] = 'INNER';
+            $options['joinType'] = QueryInterface::JOIN_TYPE_INNER;
         }
 
         $assocs = explode('.', $assoc);

@@ -17,6 +17,7 @@ namespace Cake\ORM\Behavior;
 use ArrayObject;
 use Cake\Collection\Collection;
 use Cake\Datasource\EntityInterface;
+use Cake\Datasource\QueryInterface;
 use Cake\Event\Event;
 use Cake\I18n\I18n;
 use Cake\ORM\Behavior;
@@ -173,7 +174,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
             $this->_table->hasOne($name, [
                 'targetTable' => $fieldTable,
                 'foreignKey' => 'foreign_key',
-                'joinType' => $filter ? 'INNER' : 'LEFT',
+                'joinType' => $filter ? QueryInterface::JOIN_TYPE_INNER : QueryInterface::JOIN_TYPE_LEFT,
                 'conditions' => $conditions,
                 'propertyName' => $field . '_translation'
             ]);
@@ -246,7 +247,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
             );
 
             if ($changeFilter) {
-                $filter = $options['filterByCurrentLocale'] ? 'INNER' : 'LEFT';
+                $filter = $options['filterByCurrentLocale'] ? QueryInterface::JOIN_TYPE_INNER : QueryInterface::JOIN_TYPE_LEFT;
                 $contain[$name]['joinType'] = $filter;
             }
         }
