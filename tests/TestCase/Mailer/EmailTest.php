@@ -293,11 +293,41 @@ class EmailTest extends TestCase
      */
     public function testToDoubleQuotedLocalPart()
     {
-        $result = $this->Email->to('"cake@p h p"@cake_php.org');
-        $expected = ['"cake@p h p"@cake_php.org' => '"cake@p h p"@cake_php.org'];
+        $list = [
+            '"cake@php"@cake_php.org' => '"cake@php"',
+            '"cake php"@cake_php.org' => '"cake php"'
+        ];
+        $this->Email->to($list);
+        $expected = [
+            '"cake@php"@cake_php.org' => '"cake@php"',
+            '"cake php"@cake_php.org' => '"cake php"'
+        ];
         $this->assertSame($expected, $this->Email->to());
-        $this->assertSame($this->Email, $result);
     }
+
+    /**
+     * test to address with IPV4 and IPV6 in domain - RFC5321
+     *
+     * @return void
+     */
+    public function testToLiteralIpv4Ipv6Domain()
+    {
+        $list = [
+            'cakephp@[8.8.8.8]',
+            'cakephp@[2001:0DB8:0:CD30:123:4567:89AB:CDEF]',
+            'cakephp@[2001:DB8::8:800:200C:417A]',
+            'cakephp@[::13.1.68.3]'
+        ];
+        $this->Email->to($list);
+        $expected = [
+            'cakephp@[8.8.8.8]',
+            'cakephp@[2001:0DB8:0:CD30:123:4567:89AB:CDEF]',
+            'cakephp@[2001:DB8::8:800:200C:417A]',
+            'cakephp@[::13.1.68.3]'
+        ];
+        $this->assertSame($expected, $this->Email->to());
+    }
+    
     /**
      * Data provider function for testBuildInvalidData
      *
@@ -2854,7 +2884,7 @@ XML;
                     'mimetype' => 'image/png'
                 ]
             ],
-            '_emailPattern' => '/^(((?:[\p{L}0-9.!#$%&\'*+\/=?^_`{|}~-]+)*|(".*"))@([\p{L}0-9-_.]+|\[[0-9A-F:]+\]))$/ui'
+            '_emailPattern' => '/^(((?:[\p{L}0-9.!#$%&\'*+\/=?^_`{|}~-]+)*|(".*"))@([\p{L}0-9-_.]+|\[(([0-9A-F:]+)|([0-9]{1,3}.){3}.([0-9]{1,3}))\]))$/ui'
         ];
         $this->assertEquals($expected, $result);
 
