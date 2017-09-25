@@ -19,6 +19,7 @@ namespace Cake\Datasource;
  * The basis for every query object
  *
  * @method $this andWhere($conditions, $types = [])
+ * @method $this select($fields = [], $overwrite = false)
  */
 interface QueryInterface
 {
