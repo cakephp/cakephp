@@ -327,7 +327,7 @@ class EmailTest extends TestCase
         ];
         $this->assertSame($expected, $this->Email->to());
     }
-    
+
     /**
      * Data provider function for testBuildInvalidData
      *
