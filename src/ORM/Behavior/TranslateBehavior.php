@@ -549,7 +549,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
 
             $row['_locale'] = $locale;
             if ($hydrated) {
-                /** @var \Cake\Datasource\EntityInterface $row */
+                /* @var \Cake\Datasource\EntityInterface $row */
                 $row->clean();
             }
 
