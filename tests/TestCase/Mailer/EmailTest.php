@@ -287,6 +287,18 @@ class EmailTest extends TestCase
     }
 
     /**
+     * test to address with double-quote in local-part - RFC3696
+     *
+     * @return void
+     */
+    public function testToDoubleQuotedLocalPart()
+    {
+        $result = $this->Email->to('"cake@p h p"@cake_php.org');
+        $expected = ['"cake@p h p"@cake_php.org' => '"cake@p h p"@cake_php.org'];
+        $this->assertSame($expected, $this->Email->to());
+        $this->assertSame($this->Email, $result);
+    }
+    /**
      * Data provider function for testBuildInvalidData
      *
      * @return array
@@ -2842,7 +2854,7 @@ XML;
                     'mimetype' => 'image/png'
                 ]
             ],
-            '_emailPattern' => '/^((?:[\p{L}0-9.!#$%&\'*+\/=?^_`{|}~-]+)*@[\p{L}0-9-._]+)$/ui'
+            '_emailPattern' => '/^(((?:[\p{L}0-9.!#$%&\'*+\/=?^_`{|}~-]+)*|(".*"))@([\p{L}0-9-_.]+|\[[0-9A-F:]+\]))$/ui'
         ];
         $this->assertEquals($expected, $result);
 
