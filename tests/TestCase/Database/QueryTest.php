@@ -2217,8 +2217,7 @@ class QueryTest extends TestCase
     {
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
-        $result = $query->from('comments')
-                        ->page(0);
+        $result = $query->from('comments')->page(0);
     }
 
     /**

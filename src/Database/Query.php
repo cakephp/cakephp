@@ -1264,8 +1264,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function page($num, $limit = null)
     {
         if ($num < 1) {
-            $msg = 'Pages should start at 1.';
-            throw new InvalidArgumentException($msg);
+            throw new InvalidArgumentException('Pages should start at 1.');
         }
         if ($limit !== null) {
             $this->limit($limit);
