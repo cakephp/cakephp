@@ -1259,9 +1259,14 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @param int|null $limit The number of rows you want in the page. If null
      *  the current limit clause will be used.
      * @return $this
+     * @throws \InvalidArgumentException If page number < 1.
      */
     public function page($num, $limit = null)
     {
+        if ($num < 1) {
+            $msg = 'Pages should start at 1.';
+            throw new InvalidArgumentException($msg);
+        }
         if ($limit !== null) {
             $this->limit($limit);
         }

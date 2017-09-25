@@ -2207,6 +2207,21 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Test Pages number.
+     *
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Pages should start at 1.
+     * @return void
+     */
+    public function testPageShouldStartAtOne()
+    {
+        $this->loadFixtures('Comments');
+        $query = new Query($this->connection);
+        $result = $query->from('comments')
+                        ->page(0);
+    }
+
+    /**
      * Test selecting rows using the page() method.
      *
      * @return void
