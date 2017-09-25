@@ -1253,7 +1253,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * in the record set you want as results. If empty the limit will default to
      * the existing limit clause, and if that too is empty, then `25` will be used.
      *
-     * Pages should start at 1.
+     * Pages must start at 1.
      *
      * @param int $num The page number you want.
      * @param int|null $limit The number of rows you want in the page. If null
@@ -1264,7 +1264,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function page($num, $limit = null)
     {
         if ($num < 1) {
-            throw new InvalidArgumentException('Pages should start at 1.');
+            throw new InvalidArgumentException('Pages must start at 1.');
         }
         if ($limit !== null) {
             $this->limit($limit);

@@ -2210,7 +2210,7 @@ class QueryTest extends TestCase
      * Test Pages number.
      *
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Pages should start at 1.
+     * @expectedExceptionMessage Pages must start at 1.
      * @return void
      */
     public function testPageShouldStartAtOne()
