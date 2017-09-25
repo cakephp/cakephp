@@ -109,6 +109,7 @@ use ReflectionMethod;
  *
  * @see \Cake\ORM\Table::addBehavior()
  * @see \Cake\Event\EventManager
+ * @mixin \Cake\Core\InstanceConfigTrait
  */
 class Behavior implements EventListenerInterface
 {

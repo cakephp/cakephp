@@ -1191,6 +1191,7 @@ abstract class Association
                 $extracted = new ResultSetDecorator($callable($extracted));
             }
 
+            /* @var \Cake\Collection\CollectionInterface $results */
             return $results->insert($property, $extracted);
         }, Query::PREPEND);
     }
