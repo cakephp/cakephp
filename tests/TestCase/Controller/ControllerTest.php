@@ -240,7 +240,7 @@ class ControllerTest extends TestCase
      * error level property
      *
      */
-    private static $error_level;
+    private static $errorLevel;
 
     /**
      * reset environment.
@@ -264,7 +264,7 @@ class ControllerTest extends TestCase
     {
         parent::tearDown();
         Plugin::unload();
-        error_reporting(self::$error_level);
+        error_reporting(self::$errorLevel);
     }
 
     /**
@@ -275,7 +275,7 @@ class ControllerTest extends TestCase
     public static function setUpBeforeClass()
     {
         parent::setUpBeforeClass();
-        self::$error_level = error_reporting();
+        self::$errorLevel = error_reporting();
     }
 
     /**
@@ -286,7 +286,7 @@ class ControllerTest extends TestCase
     public static function tearDownAfterClass()
     {
         parent::tearDownAfterClass();
-        error_reporting(self::$error_level);
+        error_reporting(self::$errorLevel);
     }
 
     /**
@@ -1115,7 +1115,7 @@ class ControllerTest extends TestCase
     }
 
     /**
-     * Tests deprecated view propertiyes work
+     * Tests deprecated view properties work
      *
      * @param $property Deprecated property name
      * @param $getter Getter name
@@ -1134,7 +1134,7 @@ class ControllerTest extends TestCase
     }
 
     /**
-     * Tests deprecated view propertiyes message
+     * Tests deprecated view properties message
      *
      * @param $property Deprecated property name
      * @param $getter Getter name
@@ -1153,7 +1153,7 @@ class ControllerTest extends TestCase
     }
 
     /**
-     * Tests deprecated view propertiyes message
+     * Tests deprecated view properties message
      *
      * @param $property Deprecated property name
      * @param $getter Getter name
