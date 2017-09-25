@@ -573,7 +573,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     {
         $result = $this->getEagerLoader()
             ->setMatching($assoc, $builder, [
-                'joinType' => 'LEFT',
+                'joinType' => QueryInterface::JOIN_TYPE_LEFT,
                 'fields' => false
             ])
             ->getMatching();
@@ -622,7 +622,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     {
         $result = $this->getEagerLoader()
             ->setMatching($assoc, $builder, [
-                'joinType' => 'INNER',
+                'joinType' => QueryInterface::JOIN_TYPE_INNER,
                 'fields' => false
             ])
             ->getMatching();
@@ -686,7 +686,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     {
         $result = $this->getEagerLoader()
             ->setMatching($assoc, $builder, [
-                'joinType' => 'LEFT',
+                'joinType' => QueryInterface::JOIN_TYPE_LEFT,
                 'fields' => false,
                 'negateMatch' => true
             ])

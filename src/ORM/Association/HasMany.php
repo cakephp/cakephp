@@ -19,6 +19,7 @@ use Cake\Collection\Collection;
 use Cake\Database\Expression\FieldInterface;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\EntityInterface;
+use Cake\Datasource\QueryInterface;
 use Cake\ORM\Association;
 use Cake\ORM\Association\DependentDeleteHelper;
 use Cake\ORM\Association\Loader\SelectLoader;
@@ -47,7 +48,7 @@ class HasMany extends Association
      *
      * @var string
      */
-    protected $_joinType = 'INNER';
+    protected $_joinType = QueryInterface::JOIN_TYPE_INNER;
 
     /**
      * The strategy name to be used to fetch associated records.
