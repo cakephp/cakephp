@@ -1406,7 +1406,7 @@ class ViewTest extends TestCase
      */
     public function testGetViewFileNameSubdirWithPluginAndViewPath()
     {
-        $this->PostsController->plugin = 'TestPlugin';
+        $this->PostsController->setPlugin('TestPlugin');
         $this->PostsController->setName('Posts');
         $View = $this->PostsController->createView('Cake\Test\TestCase\View\TestView');
         $View->setTemplatePath('Element');
@@ -1972,7 +1972,7 @@ TEXT;
     public function testMemoryLeakInPaths()
     {
         $this->skipIf(env('CODECOVERAGE') == 1, 'Running coverage this causes this tests to fail sometimes.');
-        $this->ThemeController->plugin = null;
+        $this->ThemeController->setPlugin(null);
         $this->ThemeController->setName('Posts');
 
         $View = $this->ThemeController->createView();

@@ -338,8 +338,8 @@ class ExceptionRenderer implements ExceptionRendererInterface
             return $this->_outputMessage('error500');
         } catch (MissingPluginException $e) {
             $attributes = $e->getAttributes();
-            if (isset($attributes['plugin']) && $attributes['plugin'] === $this->controller->plugin) {
-                $this->controller->plugin = null;
+            if (isset($attributes['plugin']) && $attributes['plugin'] === $this->controller->getPlugin()) {
+                $this->controller->setPlugin(null);
             }
 
             return $this->_outputMessageSafe('error500');

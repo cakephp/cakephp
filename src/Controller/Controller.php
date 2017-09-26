@@ -449,7 +449,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     /**
      * Returns the plugin name.
      *
-     * @return string
+     * @return string|null
      * @since 3.6.0
      */
     public function getPlugin()

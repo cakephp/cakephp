@@ -322,7 +322,7 @@ class ControllerTest extends TestCase
         Plugin::load('TestPlugin');
 
         $Controller = new TestPluginController();
-        $Controller->plugin = 'TestPlugin';
+        $Controller->setPlugin('TestPlugin');
 
         $this->assertFalse(isset($Controller->TestPluginComments));
 
