@@ -43,8 +43,10 @@ class Command
      */
     public function __construct()
     {
-        $locator = $this->getTableLocator() ? : 'Cake\ORM\TableRegistry';
-        $this->modelFactory('Table', [$locator, 'get']);
+        $locator = $this->getTableLocator();
+        $this->modelFactory('Table', function($alias){
+            return $this->getTableLocator()->get($alias);
+        });
     }
 
     /**
