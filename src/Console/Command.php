@@ -43,8 +43,7 @@ class Command
      */
     public function __construct()
     {
-        $locator = $this->getTableLocator();
-        $this->modelFactory('Table', function($alias){
+        $this->modelFactory('Table', function ($alias) {
             return $this->getTableLocator()->get($alias);
         });
     }
