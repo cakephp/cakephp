@@ -18,7 +18,7 @@ use Cake\Console\Command;
 use Cake\ORM\Locator\TableLocator;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
-
+use TestApp\Command\ExampleCommand;
 
 /**
  * Test case for Console\Command
@@ -47,5 +47,16 @@ class CommandTest extends TestCase
         $command = new Command();
         $command->loadModel('Comments');
         $this->assertInstanceOf(Table::class, $command->Comments);
+    }
+
+    /**
+     * Test name inflection
+     *
+     * @return void
+     */
+    public function testNameInflection()
+    {
+        $command = new ExampleCommand();
+        $this->assertSame('Example', $command->getName());
     }
 }

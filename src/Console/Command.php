@@ -28,6 +28,13 @@ class Command
     use ModelAwareTrait;
 
     /**
+     * The name of this command. Inflected from the class name.
+     *
+     * @var string
+     */
+    protected $name;
+
+    /**
      * Constructor
      *
      * By default CakePHP will construct command objects when
@@ -37,6 +44,21 @@ class Command
     {
         $locator = $this->getTableLocator() ? : 'Cake\ORM\TableRegistry';
         $this->modelFactory('Table', [$locator, 'get']);
+
+        if (!$this->name) {
+            list(, $class) = namespaceSplit(get_class($this));
+            $this->name = str_replace('Command', '', $class);
+        }
+    }
+
+    /**
+     * Get the command name.
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
     }
 
     /**
