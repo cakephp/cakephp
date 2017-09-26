@@ -347,7 +347,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         ];
         if (isset($deprecated[$name])) {
             $method = $deprecated[$name];
-//            deprecationWarning(sprintf('Controller::$%s is deprecated. Use $this->%s instead.', $name, $deprecated[$name]['method']));
+            deprecationWarning(sprintf('Controller::$%s is deprecated. Use $this->%s instead.', $name, $method));
 
             return $this->{$method}();
         }
@@ -390,14 +390,14 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         ];
         if (isset($deprecated[$name])) {
             $method = $deprecated[$name];
-//            deprecationWarning(sprintf('Controller::$%s is deprecated. Use $this->%s() instead.', $name, $method));
+            deprecationWarning(sprintf('Controller::$%s is deprecated. Use $this->%s() instead.', $name, $method));
             $this->{$method}($value);
 
             return;
         }
         if ($name === 'autoRender') {
             $value ? $this->enableAutoRender() : $this->disableAutoRender();
-//            deprecationWarning(sprintf('Controller::$%s is deprecated. Use $this->enableAutoRender/disableAutoRender() instead.', $name));
+            deprecationWarning(sprintf('Controller::$%s is deprecated. Use $this->enableAutoRender/disableAutoRender() instead.', $name));
 
             return;
         }
