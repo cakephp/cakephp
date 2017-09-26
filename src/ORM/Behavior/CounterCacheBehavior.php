@@ -18,6 +18,7 @@ use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\ORM\Association;
 use Cake\ORM\Behavior;
+use RuntimeException;
 
 /**
  * CounterCache behavior
@@ -202,6 +203,7 @@ class CounterCacheBehavior extends Behavior
      * @param \Cake\ORM\Association $assoc The association object
      * @param array $settings The settings for for counter cache for this association
      * @return void
+     * @throws \RuntimeException If invalid callable is passed.
      */
     protected function _processAssociation(Event $event, EntityInterface $entity, Association $assoc, array $settings)
     {
@@ -227,7 +229,10 @@ class CounterCacheBehavior extends Behavior
                 continue;
             }
 
-            if (!is_string($config) && is_callable($config)) {
+            if (is_callable($config)) {
+                if (is_string($config)) {
+                    throw new RuntimeException('You must not use a string as callable.');
+                }
                 $count = $config($event, $entity, $this->_table, false);
             } else {
                 $count = $this->_getCount($config, $countConditions);
@@ -236,7 +241,10 @@ class CounterCacheBehavior extends Behavior
             $assoc->getTarget()->updateAll([$field => $count], $updateConditions);
 
             if (isset($updateOriginalConditions)) {
-                if (!is_string($config) && is_callable($config)) {
+                if (is_callable($config)) {
+                    if (is_string($config)) {
+                        throw new RuntimeException('You must not use a string as callable.');
+                    }
                     $count = $config($event, $entity, $this->_table, true);
                 } else {
                     $count = $this->_getCount($config, $countOriginalConditions);

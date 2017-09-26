@@ -215,8 +215,10 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
 
         $conditions = function ($field, $locale, $query, $select) {
             return function ($q) use ($field, $locale, $query, $select) {
+                /* @var \Cake\Datasource\QueryInterface $q */
                 $q->where([$q->repository()->aliasField('locale') => $locale]);
 
+                /* @var \Cake\ORM\Query $query */
                 if ($query->isAutoFieldsEnabled() ||
                     in_array($field, $select, true) ||
                     in_array($this->_table->aliasField($field), $select, true)
@@ -382,12 +384,13 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
 
         return [
             '_translations' => function ($value, $entity) use ($marshaller, $options) {
+                /* @var \Cake\Datasource\EntityInterface $entity */
                 $translations = $entity->get('_translations');
                 foreach ($this->_config['fields'] as $field) {
                     $options['validate'] = $this->_config['validator'];
                     $errors = [];
                     if (!is_array($value)) {
-                        return;
+                        return null;
                     }
                     foreach ($value as $language => $fields) {
                         if (!isset($translations[$language])) {
@@ -478,12 +481,13 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
         $targetAlias = $this->_translationTable->getAlias();
 
         return $query
-            ->contain([$targetAlias => function ($q) use ($locales, $targetAlias) {
+            ->contain([$targetAlias => function ($query) use ($locales, $targetAlias) {
                 if ($locales) {
-                    $q->where(["$targetAlias.locale IN" => $locales]);
+                    /* @var \Cake\Datasource\QueryInterface $query */
+                    $query->where(["$targetAlias.locale IN" => $locales]);
                 }
 
-                return $q;
+                return $query;
             }])
             ->formatResults([$this, 'groupTranslations'], $query::PREPEND);
     }
@@ -546,6 +550,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
 
             $row['_locale'] = $locale;
             if ($hydrated) {
+                /* @var \Cake\Datasource\EntityInterface $row */
                 $row->clean();
             }
 

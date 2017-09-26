@@ -27,6 +27,8 @@ use Exception;
  *
  * Traps exceptions and converts them into HTML or content-type appropriate
  * error pages using the CakePHP ExceptionRenderer.
+ *
+ * @mixin \Cake\Core\InstanceConfigTrait
  */
 class ErrorHandlerMiddleware
 {
