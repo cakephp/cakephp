@@ -213,9 +213,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Automatically set to the name of a plugin.
      *
      * @var string
-     * @deprecated 3.6.0 Use `$this->request->getParam('plugin')` instead.
      */
-    public $plugin;
+    protected $plugin;
 
     /**
      * Holds all passed params.
@@ -348,7 +347,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         ];
         if (isset($deprecated[$name])) {
             $method = $deprecated[$name];
-            deprecationWarning(sprintf('Controller::$%s is deprecated. Use $this->%s() instead.', $name, $method));
+//            deprecationWarning(sprintf('Controller::$%s is deprecated. Use $this->%s instead.', $name, $deprecated[$name]['method']));
 
             return $this->{$method}();
         }
@@ -391,13 +390,14 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         ];
         if (isset($deprecated[$name])) {
             $method = $deprecated[$name];
-            deprecationWarning(sprintf('Controller::$%s is deprecated. Use $this->%s() instead.', $name, $method));
+//            deprecationWarning(sprintf('Controller::$%s is deprecated. Use $this->%s() instead.', $name, $method));
             $this->{$method}($value);
 
             return;
         }
         if ($name === 'autoRender') {
             $value ? $this->enableAutoRender() : $this->disableAutoRender();
+//            deprecationWarning(sprintf('Controller::$%s is deprecated. Use $this->enableAutoRender/disableAutoRender() instead.', $name));
 
             return;
         }
@@ -442,6 +442,31 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     public function setName($name)
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Returns the plugin name.
+     *
+     * @return string
+     * @since 3.6.0
+     */
+    public function getPlugin()
+    {
+        return $this->plugin;
+    }
+
+    /**
+     * Sets the plugin name.
+     *
+     * @param string $name Plugin name.
+     * @return $this
+     * @since 3.6.0
+     */
+    public function setPlugin($name)
+    {
+        $this->plugin = $name;
 
         return $this;
     }
@@ -500,9 +525,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * which must also be updated here. The properties that get set are:
      *
      * - $this->request - To the $request parameter
-     * - $this->plugin - To the $request->params['plugin']
      * - $this->passedArgs - Same as $request->params['pass]
-     * - View::$plugin - $this->plugin
      *
      * @param \Cake\Http\ServerRequest $request Request instance.
      * @return $this

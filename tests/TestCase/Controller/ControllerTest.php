@@ -1100,6 +1100,20 @@ class ControllerTest extends TestCase
     }
 
     /**
+     * Test plugin getter and setter.
+     *
+     * @return void
+     */
+    public function testPlugin()
+    {
+        $controller = new PostsController();
+        $this->assertEquals('', $controller->getPlugin());
+
+        $this->assertSame($controller, $controller->setPlugin('Articles'));
+        $this->assertEquals('Articles', $controller->getPlugin());
+    }
+
+    /**
      * Test request getter and setter.
      *
      * @return void
@@ -1156,48 +1170,48 @@ class ControllerTest extends TestCase
         $this->assertSame($controller, $controller->enableAutoRender());
         $this->assertTrue($controller->isAutoRenderEnabled());
     }
-
-    /**
-     * Tests deprecated controller properties work
-     *
-     * @param $property Deprecated property name
-     * @param $getter Getter name
-     * @param $setter Setter name
-     * @param mixed $value Value to be set
-     * @return void
-     * @dataProvider deprecatedControllerPropertyProvider
-     */
-    public function testDeprecatedControllerProperty($property, $getter, $setter, $value)
-    {
-        $controller = new AnotherTestController();
-        $message = false;
-
-        set_error_handler(function ($errno, $errstr) use (&$message) {
-            $message = ($errno === E_USER_DEPRECATED ? $errstr : false);
-        });
-
-        try {
-            $controller->$property = $value;
-
-            $this->assertSame($value, $controller->$property);
-            $this->assertSame($value, $controller->{$getter}());
-        } finally {
-            restore_error_handler();
-        }
-    }
-
-    /**
-     * Data provider for testing deprecated view properties
-     *
-     * @return array
-     */
-    public function deprecatedControllerPropertyProvider()
-    {
-        return [
-            ['name', 'getName', 'setName', 'Foo'],
-            ['autoRender', 'isAutoRenderEnabled', 'enableAutoRender/disableAutoRender', false],
-        ];
-    }
+//
+//    /**
+//     * Tests deprecated controller properties work
+//     *
+//     * @param $property Deprecated property name
+//     * @param $getter Getter name
+//     * @param $setter Setter name
+//     * @param mixed $value Value to be set
+//     * @return void
+//     * @dataProvider deprecatedControllerPropertyProvider
+//     */
+//    public function testDeprecatedControllerProperty($property, $getter, $setter, $value)
+//    {
+//        $controller = new AnotherTestController();
+//        $message = false;
+//
+//        set_error_handler(function ($errno, $errstr) use (&$message) {
+//            $message = ($errno === E_USER_DEPRECATED ? $errstr : false);
+//        });
+//
+//        try {
+//            $controller->$property = $value;
+//
+//            $this->assertSame($value, $controller->$property);
+//            $this->assertSame($value, $controller->{$getter}());
+//        } finally {
+//            restore_error_handler();
+//        }
+//    }
+//
+//    /**
+//     * Data provider for testing deprecated view properties
+//     *
+//     * @return array
+//     */
+//    public function deprecatedControllerPropertyProvider()
+//    {
+//        return [
+//            ['name', 'getName', 'setName', 'Foo'],
+//            ['autoRender', 'isAutoRenderEnabled', 'enableAutoRender/disableAutoRender', false],
+//        ];
+//    }
 
     /**
      * Tests deprecated view properties work
