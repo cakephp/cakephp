@@ -195,7 +195,7 @@ class Configure
      * out of configure into the various other classes in CakePHP.
      *
      * @param string $var The key to read and remove.
-     * @return array|null
+     * @return array|string|null
      */
     public static function consume($var)
     {
