@@ -15,7 +15,6 @@
 namespace Cake\ORM;
 
 use Cake\ORM\Locator\LocatorInterface;
-use Cake\ORM\Locator\TableLocator;
 
 /**
  * Provides a registry/factory for Table objects.
@@ -47,8 +46,6 @@ use Cake\ORM\Locator\TableLocator;
  * ```
  * $table = TableRegistry::get('Users', $config);
  * ```
- *
- * @deprecated 3.6.0 Use \Cake\ORM\Locator\TableLocator instead.
  */
 class TableRegistry
 {
@@ -90,7 +87,11 @@ class TableRegistry
      */
     public static function getTableLocator()
     {
-        return TableLocator::getInstance();
+        if (!static::$_locator) {
+            static::$_locator = new static::$_defaultLocatorClass();
+        }
+
+        return static::$_locator;
     }
 
     /**
@@ -101,7 +102,7 @@ class TableRegistry
      */
     public static function setTableLocator(LocatorInterface $tableLocator)
     {
-        TableLocator::setInstance($tableLocator);
+        static::$_locator = $tableLocator;
     }
 
     /**
@@ -111,6 +112,7 @@ class TableRegistry
      * @param string|null $alias Name of the alias
      * @param array|null $options list of options for the alias
      * @return array The config data.
+     * @deprecated 3.6.0 Use \Cake\ORM\Locator\TableLocator::config() instead.
      */
     public static function config($alias = null, $options = null)
     {
@@ -125,6 +127,7 @@ class TableRegistry
      * @param string $alias The alias name you want to get.
      * @param array $options The options you want to build the table with.
      * @return \Cake\ORM\Table
+     * @deprecated 3.6.0 Use \Cake\ORM\Locator\TableLocator::get() instead.
      */
     public static function get($alias, array $options = [])
     {
@@ -136,6 +139,7 @@ class TableRegistry
      *
      * @param string $alias The alias to check for.
      * @return bool
+     * @deprecated 3.6.0 Use \Cake\ORM\Locator\TableLocator::exists() instead.
      */
     public static function exists($alias)
     {
@@ -148,6 +152,7 @@ class TableRegistry
      * @param string $alias The alias to set.
      * @param \Cake\ORM\Table $object The table to set.
      * @return \Cake\ORM\Table
+     * @deprecated 3.6.0 Use \Cake\ORM\Locator\TableLocator::set() instead.
      */
     public static function set($alias, Table $object)
     {
@@ -159,6 +164,7 @@ class TableRegistry
      *
      * @param string $alias The alias to remove.
      * @return void
+     * @deprecated 3.6.0 Use \Cake\ORM\Locator\TableLocator::remove() instead.
      */
     public static function remove($alias)
     {
@@ -169,6 +175,7 @@ class TableRegistry
      * Clears the registry of configuration and instances.
      *
      * @return void
+     * @deprecated 3.6.0 Use \Cake\ORM\Locator\TableLocator::clear() instead.
      */
     public static function clear()
     {

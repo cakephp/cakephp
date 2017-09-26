@@ -16,7 +16,6 @@ namespace Cake\Test\TestCase\ORM\Locator;
 
 use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
-use Cake\ORM\Locator\LocatorInterface;
 use Cake\ORM\Locator\TableLocator;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
@@ -573,32 +572,5 @@ class TableLocatorTest extends TestCase
         $plugin3 = $this->_locator->get('TestPluginTwo.Comments');
 
         $this->assertSame($plugin, $plugin3, 'Should be the same TestPluginTwo.Comments object');
-    }
-
-    /**
-     * Test testSetInstance() method.
-     *
-     * @return void
-     */
-    public function testSetInstance()
-    {
-        $old = TableLocator::getInstance();
-
-        $locator = $this->createMock(LocatorInterface::class);
-        TableLocator::setInstance($locator);
-
-        $this->assertSame($locator, TableLocator::getInstance());
-
-        TableLocator::setInstance($old);
-    }
-
-    /**
-     * Test testSetInstance() method.
-     *
-     * @return void
-     */
-    public function testGetInstance()
-    {
-        $this->assertInstanceOf(LocatorInterface::class, TableLocator::getInstance());
     }
 }

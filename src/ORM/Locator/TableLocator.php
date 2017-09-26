@@ -56,13 +56,6 @@ class TableLocator implements LocatorInterface
     protected $_options = [];
 
     /**
-     * LocatorInterface implementation instance.
-     *
-     * @var \Cake\ORM\Locator\LocatorInterface
-     */
-    protected static $_instance;
-
-    /**
      * Stores a list of options to be used when instantiating an object
      * with a matching alias.
      *
@@ -305,30 +298,5 @@ class TableLocator implements LocatorInterface
             $this->_config[$alias],
             $this->_fallbacked[$alias]
         );
-    }
-
-    /**
-     * Returns a singleton instance of LocatorInterface implementation.
-     *
-     * @return \Cake\ORM\Locator\LocatorInterface
-     */
-    public static function getInstance()
-    {
-        if (!static::$_instance) {
-            static::$_instance = new static();
-        }
-
-        return static::$_instance;
-    }
-
-    /**
-     * Sets singleton instance of LocatorInterface implementation.
-     *
-     * @param \Cake\ORM\Locator\LocatorInterface|null $tableLocator Instance of a locator to use.
-     * @return void
-     */
-    public static function setInstance(LocatorInterface $tableLocator)
-    {
-        static::$_instance = $tableLocator;
     }
 }
