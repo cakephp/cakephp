@@ -17,6 +17,7 @@ namespace Cake\Console;
 use Cake\Datasource\ModelAwareTrait;
 use Cake\Log\LogTrait;
 use Cake\ORM\Locator\LocatorAwareTrait;
+use RuntimeException;
 
 /**
  * Base class for console commands.
@@ -44,11 +45,21 @@ class Command
     {
         $locator = $this->getTableLocator() ? : 'Cake\ORM\TableRegistry';
         $this->modelFactory('Table', [$locator, 'get']);
+    }
 
-        if (!$this->name) {
-            list(, $class) = namespaceSplit(get_class($this));
-            $this->name = str_replace('Command', '', $class);
-        }
+    /**
+     * Set the name this command uses in the collection.
+     *
+     * Generally invoked by the CommandCollection when the command is added.
+     *
+     * @param string $name The name the command uses in the collection.
+     * @return $this;
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
     }
 
     /**
@@ -59,6 +70,40 @@ class Command
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Get the option parser.
+     *
+     * You can override buildOptionParser() to define your options & arguments.
+     *
+     * @return \Cake\Console\ConsoleOptionParser
+     * @throws \RuntimeException When the parser is invalid
+     */
+    public function getOptionParser()
+    {
+        $parser = new ConsoleOptionParser($this->name);
+        $parser = $this->buildOptionParser($parser);
+        if (!($parser instanceof ConsoleOptionParser)) {
+            throw new RuntimeException(sprintf(
+                "Invalid option parser returned from buildOptionParser(). Expected %s, got %s",
+                ConsoleOptionParser::class,
+                get_class($parser)
+            ));
+        }
+
+        return $parser;
+    }
+
+    /**
+     * Hook method for defining this command's option parser.
+     *
+     * @param \Cake\Console\ConsoleOptionParser $parser The parser to be defined
+     * @return \Cake\Console\ConsoleOptionParser The built parser.
+     */
+    protected function buildOptionParser(ConsoleOptionParser $parser)
+    {
+        return $parser;
     }
 
     /**

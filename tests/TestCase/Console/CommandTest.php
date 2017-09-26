@@ -15,10 +15,10 @@
 namespace Cake\Test\TestCase\Console;
 
 use Cake\Console\Command;
+use Cake\Console\ConsoleOptionParser;
 use Cake\ORM\Locator\TableLocator;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
-use TestApp\Command\ExampleCommand;
 
 /**
  * Test case for Console\Command
@@ -50,13 +50,45 @@ class CommandTest extends TestCase
     }
 
     /**
-     * Test name inflection
+     * Test name
      *
      * @return void
      */
-    public function testNameInflection()
+    public function testSetName()
     {
-        $command = new ExampleCommand();
-        $this->assertSame('Example', $command->getName());
+        $command = new Command();
+        $this->assertSame($command, $command->setName('routes show'));
+        $this->assertSame('routes show', $command->getName());
+    }
+
+    /**
+     * Test option parser fetching
+     *
+     * @return void
+     */
+    public function testGetOptionParser()
+    {
+        $command = new Command();
+        $command->setName('cake routes show');
+        $parser = $command->getOptionParser();
+        $this->assertInstanceOf(ConsoleOptionParser::class, $parser);
+        $this->assertSame('cake routes show', $parser->getCommand());
+    }
+
+    /**
+     * Test option parser fetching
+     *
+     * @expectedException RuntimeException
+     * @return void
+     */
+    public function testGetOptionParserInvalid()
+    {
+        $command = $this->getMockBuilder(Command::class)
+            ->setMethods(['buildOptionParser'])
+            ->getMock();
+        $command->expects($this->once())
+            ->method('buildOptionParser')
+            ->will($this->returnValue(null));
+        $command->getOptionParser();
     }
 }
