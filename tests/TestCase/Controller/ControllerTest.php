@@ -1117,6 +1117,7 @@ class ControllerTest extends TestCase
     /**
      * Tests deprecated view properties work
      *
+     * @group deprecated
      * @param $property Deprecated property name
      * @param $getter Getter name
      * @param $setter Setter name
@@ -1126,16 +1127,17 @@ class ControllerTest extends TestCase
      */
     public function testDeprecatedViewProperty($property, $getter, $setter, $value)
     {
-            $controller = new AnotherTestController();
-            error_reporting(E_ALL ^ E_USER_DEPRECATED);
-            $controller->$property = $value;
-            $this->assertSame($value, $controller->$property);
-            $this->assertSame($value, $controller->viewBuilder()->{$getter}());
+        $controller = new AnotherTestController();
+        error_reporting(E_ALL ^ E_USER_DEPRECATED);
+        $controller->$property = $value;
+        $this->assertSame($value, $controller->$property);
+        $this->assertSame($value, $controller->viewBuilder()->{$getter}());
     }
 
     /**
      * Tests deprecated view properties message
      *
+     * @group deprecated
      * @param $property Deprecated property name
      * @param $getter Getter name
      * @param $setter Setter name
@@ -1147,9 +1149,9 @@ class ControllerTest extends TestCase
      */
     public function testDeprecatedViewPropertySetterMessage($property, $getter, $setter, $value)
     {
-            error_reporting(E_ALL);
-            $controller = new AnotherTestController();
-            $controller->$property = $value;
+        error_reporting(E_ALL);
+        $controller = new AnotherTestController();
+        $controller->$property = $value;
     }
 
     /**
