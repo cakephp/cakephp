@@ -74,8 +74,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      */
     public function __call($name, $params)
     {
-        $name = substr($name, 0, -8);
-        $name = ucfirst($name);
+        $name = substr($name, 3);
 
         return $this->get($name);
     }
