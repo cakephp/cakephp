@@ -67,6 +67,20 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
     }
 
     /**
+     * Get loaded behavior instance.
+     *
+     * @param string $name Name of behavior.
+     * @return \Cake\ORM\Behavior|object|null
+     */
+    public function __call($name, $params)
+    {
+        $name = substr($name, 0, -8);
+        $name = ucfirst($name);
+
+        return $this->get($name);
+    }
+
+    /**
      * Attaches a table instance to this registry.
      *
      * @param \Cake\ORM\Table $table The table this registry is attached to.

@@ -216,19 +216,6 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
     }
 
     /**
-     * Get loaded object instance.
-     *
-     * @param string $name Name of object.
-     * @return object|null Object instance if loaded else null.
-     */
-    public function __call($name, $params)
-    {
-        $name = ucfirst($name);
-
-        return $this->get($name);
-    }
-
-    /**
      * Provide public read access to the loaded objects
      *
      * @param string $name Name of property to read
