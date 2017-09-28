@@ -813,6 +813,7 @@ class CacheTest extends TestCase
     /**
      * test registry method
      *
+     * @group deprecated
      * @return void
      */
     public function testRegistry()
@@ -823,6 +824,7 @@ class CacheTest extends TestCase
     /**
      * test registry method setting
      *
+     * @group deprecated
      * @return void
      */
     public function testRegistrySet()

@@ -143,6 +143,7 @@ class Cache
      */
     public static function registry(ObjectRegistry $registry = null)
     {
+        deprecationWarning('Use Cache::getRegistry() and Cache::setRegistry() instead.');
         if ($registry) {
             static::setRegistry($registry);
         }
