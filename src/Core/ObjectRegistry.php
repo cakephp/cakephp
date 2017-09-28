@@ -220,6 +220,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      *
      * @param string $name Name of property to read
      * @return mixed
+     * @deprecated 3.6.0 Use method access instead.
      */
     public function __get($name)
     {
