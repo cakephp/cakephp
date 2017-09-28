@@ -97,7 +97,7 @@ abstract class TestCase extends BaseTestCase
     {
         $errorLevel = error_reporting();
         error_reporting(E_ALL ^ E_USER_DEPRECATED);
-            $callable();
+        $callable();
         error_reporting($errorLevel);
     }
 
