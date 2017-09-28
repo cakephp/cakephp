@@ -15,6 +15,7 @@
 namespace Cake\Routing;
 
 use Cake\Core\Configure;
+use Cake\Http\MiddlewareQueue;
 use Cake\Http\ServerRequest;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
@@ -280,6 +281,8 @@ class Router
      * - 'actions' - Override the method names used for connecting actions.
      * - 'map' - Additional resource routes that should be connected. If you define 'only' and 'map',
      *   make sure that your mapped methods are also in the 'only' list.
+     * - 'path' - Change the path so it doesn't match the resource name. E.g ArticlesController
+     *   is available at `/posts`
      *
      * @param string|array $controller A controller name or array of controller names (i.e. "Posts" or "ListItems")
      * @param array $options Options to use when generating REST routes
@@ -416,34 +419,19 @@ class Router
     /**
      * Store the request context for a given request.
      *
-     * @param \Cake\Http\ServerRequest|\Psr\Http\Message\ServerRequestInterface $request The request instance.
+     * @param \Psr\Http\Message\ServerRequestInterface $request The request instance.
      * @return void
      * @throws InvalidArgumentException When parameter is an incorrect type.
      */
-    public static function setRequestContext($request)
+    public static function setRequestContext(ServerRequestInterface $request)
     {
-        if ($request instanceof ServerRequest) {
-            static::$_requestContext = [
-                '_base' => $request->base,
-                '_port' => $request->port(),
-                '_scheme' => $request->scheme(),
-                '_host' => $request->host()
-            ];
-
-            return;
-        }
-        if ($request instanceof ServerRequestInterface) {
-            $uri = $request->getUri();
-            static::$_requestContext = [
-                '_base' => $request->getAttribute('base'),
-                '_port' => $uri->getPort(),
-                '_scheme' => $uri->getScheme(),
-                '_host' => $uri->getHost(),
-            ];
-
-            return;
-        }
-        throw new InvalidArgumentException('Unknown request type received.');
+        $uri = $request->getUri();
+        static::$_requestContext = [
+            '_base' => $request->getAttribute('base'),
+            '_port' => $uri->getPort(),
+            '_scheme' => $uri->getScheme(),
+            '_host' => $uri->getHost(),
+        ];
     }
 
     /**
@@ -724,7 +712,7 @@ class Router
     }
 
     /**
-     * Reverses a parsed parameter array into a string.
+     * Reverses a parsed parameter array into an array.
      *
      * Works similarly to Router::url(), but since parsed URL's contain additional
      * 'pass' as well as 'url.url' keys. Those keys need to be specially
@@ -735,11 +723,9 @@ class Router
      *
      * @param \Cake\Http\ServerRequest|array $params The params array or
      *     Cake\Http\ServerRequest object that needs to be reversed.
-     * @param bool $full Set to true to include the full URL including the
-     *     protocol when reversing the URL.
-     * @return string The string that is the reversed result of the array
+     * @return array The URL array ready to be used for redirect or HTML link.
      */
-    public static function reverse($params, $full = false)
+    public static function reverseToArray($params)
     {
         $url = [];
         if ($params instanceof ServerRequest) {
@@ -767,6 +753,29 @@ class Router
         if (!empty($url)) {
             $params['?'] = $url;
         }
+
+        return $params;
+    }
+
+    /**
+     * Reverses a parsed parameter array into a string.
+     *
+     * Works similarly to Router::url(), but since parsed URL's contain additional
+     * 'pass' as well as 'url.url' keys. Those keys need to be specially
+     * handled in order to reverse a params array into a string URL.
+     *
+     * This will strip out 'autoRender', 'bare', 'requested', and 'return' param names as those
+     * are used for CakePHP internals and should not normally be part of an output URL.
+     *
+     * @param \Cake\Http\ServerRequest|array $params The params array or
+     *     Cake\Network\Request object that needs to be reversed.
+     * @param bool $full Set to true to include the full URL including the
+     *     protocol when reversing the URL.
+     * @return string The string that is the reversed result of the array
+     */
+    public static function reverse($params, $full = false)
+    {
+        $params = static::reverseToArray($params);
 
         return static::url($params, $full);
     }
@@ -835,7 +844,7 @@ class Router
                 static::_loadRoutes();
             }
 
-            return array_unique(array_merge(static::$_defaultExtensions, $collection->extensions()));
+            return array_unique(array_merge(static::$_defaultExtensions, $collection->getExtensions()));
         }
         $extensions = (array)$extensions;
         if ($merge) {
@@ -902,6 +911,27 @@ class Router
     }
 
     /**
+     * Create a RouteBuilder for the provided path.
+     *
+     * @param string $path The path to set the builder to.
+     * @param array $options The options for the builder
+     * @return \Cake\Routing\RouteBuilder
+     */
+    public static function createRouteBuilder($path, array $options = [])
+    {
+        $defaults = [
+            'routeClass' => static::defaultRouteClass(),
+            'extensions' => static::$_defaultExtensions,
+        ];
+        $options += $defaults;
+
+        return new RouteBuilder(static::$_collection, $path, [], [
+            'routeClass' => $options['routeClass'],
+            'extensions' => $options['extensions'],
+        ]);
+    }
+
+    /**
      * Create a routing scope.
      *
      * Routing scopes allow you to keep your routes DRY and avoid repeating
@@ -945,18 +975,12 @@ class Router
      */
     public static function scope($path, $params = [], $callback = null)
     {
-        $options = [
-            'routeClass' => static::defaultRouteClass(),
-            'extensions' => static::$_defaultExtensions,
-        ];
+        $options = [];
         if (is_array($params)) {
-            $options = $params + $options;
+            $options = $params;
             unset($params['routeClass'], $params['extensions']);
         }
-        $builder = new RouteBuilder(static::$_collection, '/', [], [
-            'routeClass' => $options['routeClass'],
-            'extensions' => $options['extensions'],
-        ]);
+        $builder = static::createRouteBuilder('/', $options);
         $builder->scope($path, $params, $callback);
     }
 
@@ -1051,8 +1075,19 @@ class Router
     }
 
     /**
+     * Get the RouteCollection inside the Router
+     *
+     * @return \Cake\Routing\RouteCollection
+     */
+    public static function getRouteCollection()
+    {
+        return static::$_collection;
+    }
+
+    /**
      * Loads route configuration
      *
+     * @deprecated 3.5.0 Routes will be loaded via the Application::routes() hook in 4.0.0
      * @return void
      */
     protected static function _loadRoutes()

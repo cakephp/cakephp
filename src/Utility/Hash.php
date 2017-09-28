@@ -110,8 +110,8 @@ class Hash
      *
      * - `1.User.name` Get the name of the user at index 1.
      * - `{n}.User.name` Get the name of every user in the set of users.
-     * - `{n}.User[id]` Get the name of every user with an id key.
-     * - `{n}.User[id>=2]` Get the name of every user with an id key greater than or equal to 2.
+     * - `{n}.User[id].name` Get the name of every user with an id key.
+     * - `{n}.User[id>=2].name` Get the name of every user with an id key greater than or equal to 2.
      * - `{n}.User[username=/^paul/]` Get User elements with username matching `^paul`.
      * - `{n}.User[id=1].name` Get the Users name with id matching `1`.
      *
@@ -135,7 +135,12 @@ class Hash
 
         // Simple paths.
         if (!preg_match('/[{\[]/', $path)) {
-            return (array)static::get($data, $path);
+            $data = static::get($data, $path);
+            if ($data !== null && !(is_array($data) || $data instanceof ArrayAccess)) {
+                return [$data];
+            }
+
+            return $data !== null ? (array)$data : [];
         }
 
         if (strpos($path, '[') === false) {
@@ -345,11 +350,6 @@ class Hash
         $count = count($path);
         $last = $count - 1;
         foreach ($path as $i => $key) {
-            if ((is_numeric($key) && (int)$key > 0 || $key === '0') &&
-                strpos($key, '0') !== 0
-            ) {
-                $key = (int)$key;
-            }
             if ($op === 'insert') {
                 if ($i === $last) {
                     $_list[$key] = $values;
@@ -365,7 +365,9 @@ class Hash
                 }
             } elseif ($op === 'remove') {
                 if ($i === $last) {
-                    unset($_list[$key]);
+                    if (is_array($_list)) {
+                        unset($_list[$key]);
+                    }
 
                     return $data;
                 }
@@ -414,7 +416,7 @@ class Hash
             if ($match && is_array($v)) {
                 if ($conditions) {
                     if (static::_matches($v, $conditions)) {
-                        if ($nextPath) {
+                        if ($nextPath !== '') {
                             $data[$k] = static::remove($v, $nextPath);
                         } else {
                             unset($data[$k]);
@@ -426,7 +428,7 @@ class Hash
                 if (empty($data[$k])) {
                     unset($data[$k]);
                 }
-            } elseif ($match && empty($nextPath)) {
+            } elseif ($match && $nextPath === '') {
                 unset($data[$k]);
             }
         }

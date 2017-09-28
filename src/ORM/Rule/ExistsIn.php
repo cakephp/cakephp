@@ -35,7 +35,7 @@ class ExistsIn
     /**
      * The repository where the field will be looked for
      *
-     * @var array
+     * @var \Cake\Datasource\RepositoryInterface|\Cake\ORM\Association
      */
     protected $_repository;
 
@@ -56,6 +56,8 @@ class ExistsIn
      * @param object|string $repository The repository where the field will be looked for,
      * or the association name for the repository.
      * @param array $options The options that modify the rules behavior.
+     *     Options 'allowNullableNulls' will make the rule pass if given foreign keys are set to `null`.
+     *     Notice: allowNullableNulls cannot pass by database columns set to `NOT NULL`.
      */
     public function __construct($fields, $repository, array $options = [])
     {
@@ -117,7 +119,7 @@ class ExistsIn
         if ($this->_options['allowNullableNulls']) {
             $schema = $source->getSchema();
             foreach ($this->_fields as $i => $field) {
-                if ($schema->column($field) && $schema->isNullable($field) && $entity->get($field) === null) {
+                if ($schema->getColumn($field) && $schema->isNullable($field) && $entity->get($field) === null) {
                     unset($bindingKey[$i], $this->_fields[$i]);
                 }
             }
@@ -147,7 +149,7 @@ class ExistsIn
         $nulls = 0;
         $schema = $source->getSchema();
         foreach ($this->_fields as $field) {
-            if ($schema->column($field) && $schema->isNullable($field) && $entity->get($field) === null) {
+            if ($schema->getColumn($field) && $schema->isNullable($field) && $entity->get($field) === null) {
                 $nulls++;
             }
         }

@@ -15,7 +15,6 @@
 namespace Cake\Test\TestCase\Http;
 
 use Cake\Http\ControllerFactory;
-use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 
@@ -261,5 +260,24 @@ class ControllerFactoryTest extends TestCase
             ]
         ]);
         $this->factory->create($request, $this->response);
+    }
+
+    /**
+     * Test building controller name when passing no controller name
+     *
+     * @return void
+     */
+    public function testGetControllerClassNoControllerName()
+    {
+        $request = new ServerRequest([
+            'url' => 'test_plugin_three/ovens/index',
+            'params' => [
+                'plugin' => 'Company/TestPluginThree',
+                'controller' => 'Ovens',
+                'action' => 'index',
+            ]
+        ]);
+        $result = $this->factory->getControllerClass($request);
+        $this->assertSame('Company\TestPluginThree\Controller\OvensController', $result);
     }
 }

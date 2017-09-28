@@ -42,4 +42,17 @@ class Application extends BaseApplication
 
         return $middleware;
     }
+
+    /**
+     * Routes hook, used for testing with RoutingMiddleware.
+     *
+     * @param \Cake\Routing\RouteBuilder $routes
+     * @return void
+     */
+    public function routes($routes)
+    {
+        $routes->scope('/app', function ($routes) {
+            $routes->connect('/articles', ['controller' => 'Articles']);
+        });
+    }
 }

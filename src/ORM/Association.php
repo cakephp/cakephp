@@ -19,6 +19,7 @@ use Cake\Core\App;
 use Cake\Core\ConventionsTrait;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Datasource\EntityInterface;
+use Cake\Datasource\QueryInterface;
 use Cake\Datasource\ResultSetDecorator;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Inflector;
@@ -158,7 +159,7 @@ abstract class Association
      *
      * @var string
      */
-    protected $_joinType = 'LEFT';
+    protected $_joinType = QueryInterface::JOIN_TYPE_LEFT;
 
     /**
      * The property name that should be filled with data from the target table
@@ -238,7 +239,8 @@ abstract class Association
     }
 
     /**
-     * Sets the name for this association.
+     * Sets the name for this association, usually the alias
+     * assigned to the target associated table
      *
      * @param string $name Name to be assigned
      * @return $this
@@ -258,7 +260,8 @@ abstract class Association
     }
 
     /**
-     * Gets the name for this association.
+     * Gets the name for this association, usually the alias
+     * assigned to the target associated table
      *
      * @return string
      */
@@ -401,7 +404,7 @@ abstract class Association
                 $registryAlias = $this->_name;
             }
 
-            $tableLocator = $this->tableLocator();
+            $tableLocator = $this->getTableLocator();
 
             $config = [];
             $exists = $tableLocator->exists($registryAlias);
@@ -419,10 +422,10 @@ abstract class Association
 
                     throw new RuntimeException(sprintf(
                         $errorMessage,
-                        get_class($this->_sourceTable),
+                        $this->_sourceTable ? get_class($this->_sourceTable) : 'null',
                         $this->getName(),
                         $this->type(),
-                        get_class($this->_targetTable),
+                        $this->_targetTable ? get_class($this->_targetTable) : 'null',
                         $className
                     ));
                 }
@@ -1189,6 +1192,7 @@ abstract class Association
                 $extracted = new ResultSetDecorator($callable($extracted));
             }
 
+            /* @var \Cake\Collection\CollectionInterface $results */
             return $results->insert($property, $extracted);
         }, Query::PREPEND);
     }

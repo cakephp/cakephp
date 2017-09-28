@@ -237,7 +237,7 @@ trait StaticConfigTrait
      *
      * @param string $dsn The DSN string to convert to a configuration array
      * @return array The configuration array to be stored after parsing the DSN
-     * @throws \InvalidArgumentException If not passed a string
+     * @throws \InvalidArgumentException If not passed a string, or passed an invalid string
      */
     public static function parseDsn($dsn)
     {
@@ -249,18 +249,56 @@ trait StaticConfigTrait
             throw new InvalidArgumentException('Only strings can be passed to parseDsn');
         }
 
-        $scheme = '';
-        if (preg_match("/^([\w\\\]+)/", $dsn, $matches)) {
-            $scheme = $matches[1];
-            $dsn = preg_replace("/^([\w\\\]+)/", 'file', $dsn);
+        $pattern = <<<'REGEXP'
+{
+    ^
+    (?P<_scheme>
+        (?P<scheme>[\w\\\\]+)://
+    )
+    (?P<_username>
+        (?P<username>.*?)
+        (?P<_password>
+            :(?P<password>.*?)
+        )?
+        @
+    )?
+    (?P<_host>
+        (?P<host>[^?#/:@]+)
+        (?P<_port>
+            :(?P<port>\d+)
+        )?
+    )?
+    (?P<_path>
+        (?P<path>/[^?#]*)
+    )?
+    (?P<_query>
+        \?(?P<query>[^#]*)
+    )?
+    (?P<_fragment>
+        \#(?P<fragment>.*)
+    )?
+    $
+}x
+REGEXP;
+
+        preg_match($pattern, $dsn, $parsed);
+
+        if (!$parsed) {
+            throw new InvalidArgumentException("The DSN string '{$dsn}' could not be parsed.");
         }
 
-        $parsed = parse_url($dsn);
-        if ($parsed === false) {
-            return $dsn;
+        $exists = [];
+        foreach ($parsed as $k => $v) {
+            if (is_int($k)) {
+                unset($parsed[$k]);
+            } elseif (strpos($k, '_') === 0) {
+                $exists[substr($k, 1)] = ($v !== '');
+                unset($parsed[$k]);
+            } elseif ($v === '' && !$exists[$k]) {
+                unset($parsed[$k]);
+            }
         }
 
-        $parsed['scheme'] = $scheme;
         $query = '';
 
         if (isset($parsed['query'])) {
@@ -280,15 +318,6 @@ trait StaticConfigTrait
             }
         }
 
-        if (isset($parsed['user'])) {
-            $parsed['username'] = $parsed['user'];
-        }
-
-        if (isset($parsed['pass'])) {
-            $parsed['password'] = $parsed['pass'];
-        }
-
-        unset($parsed['pass'], $parsed['user']);
         $parsed = $queryArgs + $parsed;
 
         if (empty($parsed['className'])) {

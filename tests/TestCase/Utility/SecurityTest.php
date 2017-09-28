@@ -293,6 +293,17 @@ class SecurityTest extends TestCase
     }
 
     /**
+     * Tests that the salt can be set and retrieved
+     *
+     * @return void
+     */
+    public function testGetSetSalt()
+    {
+        Security::setSalt('foobarbaz');
+        $this->assertEquals('foobarbaz', Security::getSalt());
+    }
+
+    /**
      * Test the randomBytes method.
      *
      * @return void

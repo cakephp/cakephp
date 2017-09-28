@@ -380,9 +380,10 @@ class FileEngine extends CacheEngine
         }
         $dir = $this->_config['path'] . $groups;
 
-        if (!is_dir($dir)) {
-            mkdir($dir, 0775, true);
-        }
+        // @codingStandardsIgnoreStart
+        @mkdir($dir, 0775, true);
+        // @codingStandardsIgnoreEnd
+
         $path = new SplFileInfo($dir . $key);
 
         if (!$createKey && !$path->isFile()) {
@@ -420,21 +421,23 @@ class FileEngine extends CacheEngine
     {
         $dir = new SplFileInfo($this->_config['path']);
         $path = $dir->getPathname();
+        $success = true;
         if (!is_dir($path)) {
-            mkdir($path, 0775, true);
+            //@codingStandardsIgnoreStart
+            $success = @mkdir($path, 0775, true);
+            //@codingStandardsIgnoreEnd
         }
 
-        if ($this->_init && !($dir->isDir() && $dir->isWritable())) {
+        $isWritableDir = ($dir->isDir() && $dir->isWritable());
+        if (!$success || ($this->_init && !$isWritableDir)) {
             $this->_init = false;
             trigger_error(sprintf(
                 '%s is not writable',
                 $this->_config['path']
             ), E_USER_WARNING);
-
-            return false;
         }
 
-        return true;
+        return $success;
     }
 
     /**

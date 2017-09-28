@@ -15,6 +15,8 @@
 namespace Cake\Test\TestCase\Http;
 
 use Cake\Core\Configure;
+use Cake\Http\Cookie\Cookie;
+use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\ServerRequest;
 use Cake\Http\ServerRequestFactory;
 use Cake\Network\Exception\MethodNotAllowedException;
@@ -686,13 +688,13 @@ class ServerRequestTest extends TestCase
     public function testClientIp()
     {
         $request = new ServerRequest(['environment' => [
-            'HTTP_X_FORWARDED_FOR' => '192.168.1.5, 10.0.1.1, proxy.com',
+            'HTTP_X_FORWARDED_FOR' => '192.168.1.5, 10.0.1.1, proxy.com, real.ip',
             'HTTP_CLIENT_IP' => '192.168.1.2',
             'REMOTE_ADDR' => '192.168.1.3'
         ]]);
 
         $request->trustProxy = true;
-        $this->assertEquals('192.168.1.5', $request->clientIp());
+        $this->assertEquals('real.ip', $request->clientIp());
 
         $request->env('HTTP_X_FORWARDED_FOR', '');
         $this->assertEquals('192.168.1.2', $request->clientIp());
@@ -3081,6 +3083,45 @@ XML;
     }
 
     /**
+     * Test getting a cookie collection from a request.
+     *
+     * @return void
+     */
+    public function testGetCookieCollection()
+    {
+        $cookies = [
+            'remember_me' => '1',
+            'color' => 'blue'
+        ];
+        $request = new ServerRequest(['cookies' => $cookies]);
+
+        $cookies = $request->getCookieCollection();
+        $this->assertInstanceOf(CookieCollection::class, $cookies);
+        $this->assertCount(2, $cookies);
+        $this->assertSame('1', $cookies->get('remember_me')->getValue());
+        $this->assertSame('blue', $cookies->get('color')->getValue());
+    }
+
+    /**
+     * Test replacing cookies from a collection
+     *
+     * @return void
+     */
+    public function testWithCookieCollection()
+    {
+        $cookies = new CookieCollection([new Cookie('remember_me', 1), new Cookie('color', 'red')]);
+        $request = new ServerRequest(['cookies' => ['bad' => 'goaway']]);
+        $new = $request->withCookieCollection($cookies);
+        $this->assertNotSame($new, $request, 'Should clone');
+
+        $this->assertSame(['bad' => 'goaway'], $request->getCookieParams());
+        $this->assertSame(['remember_me' => 1, 'color' => 'red'], $new->getCookieParams());
+        $cookies = $new->getCookieCollection();
+        $this->assertCount(2, $cookies);
+        $this->assertSame('red', $cookies->get('color')->getValue());
+    }
+
+    /**
      * TestAllowMethod
      *
      * @return void
@@ -3135,6 +3176,21 @@ XML;
 
         $request = ServerRequestFactory::fromGlobals();
         $this->assertEquals($session, $request->session());
+    }
+
+    /**
+     * Tests getting the session from the request
+     *
+     * @return void
+     */
+    public function testGetSession()
+    {
+        $session = new Session;
+        $request = new ServerRequest(['session' => $session]);
+        $this->assertSame($session, $request->getSession());
+
+        $request = ServerRequestFactory::fromGlobals();
+        $this->assertEquals($session, $request->getSession());
     }
 
     /**
@@ -3476,6 +3532,40 @@ XML;
             'should be unchanged.'
         );
         $this->assertEquals('/articles/view/3', $new->getRequestTarget(), 'reflects method call');
+    }
+
+    /**
+     * Test withEnv()
+     *
+     * @return void
+     */
+    public function testWithEnv()
+    {
+        $request = new ServerRequest();
+
+        $newRequest = $request->withEnv('HTTP_HOST', 'cakephp.org');
+        $this->assertNotSame($request, $newRequest);
+        $this->assertSame('cakephp.org', $newRequest->getEnv('HTTP_HOST'));
+    }
+
+    /**
+     * Test getEnv()
+     *
+     * @return void
+     */
+    public function testGetEnv()
+    {
+        $request = new ServerRequest();
+
+        //Test default null
+        $this->assertNull($request->getEnv('Foo'));
+
+        //Test default set
+        $this->assertSame('Bar', $request->getEnv('Foo', 'Bar'));
+
+        //Test env() fallback
+        $_SERVER['TEST'] = 'ing';
+        $this->assertSame('ing', $request->getEnv('test'));
     }
 
     /**

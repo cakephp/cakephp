@@ -103,17 +103,26 @@ trait InstanceConfigTrait
      * $this->getConfig('some.nested.key');
      * ```
      *
+     * Reading with default value:
+     *
+     * ```
+     * $this->getConfig('some-key', 'default-value');
+     * ```
+     *
      * @param string|null $key The key to get or null for the whole config.
+     * @param mixed $default The return value when the key does not exist.
      * @return mixed Config value being read.
      */
-    public function getConfig($key = null)
+    public function getConfig($key = null, $default = null)
     {
         if (!$this->_configInitialized) {
             $this->_config = $this->_defaultConfig;
             $this->_configInitialized = true;
         }
 
-        return $this->_configRead($key);
+        $return = $this->_configRead($key);
+
+        return $return === null ? $default : $return;
     }
 
     /**

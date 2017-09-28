@@ -19,16 +19,22 @@ class UnavailableForLegalReasonsException extends HttpException
 {
 
     /**
+     * {@inheritDoc}
+     */
+    protected $_defaultCode = 451;
+
+    /**
      * Constructor
      *
      * @param string|null $message If no message is given 'Unavailable For Legal Reasons' will be the message
      * @param int $code Status code, defaults to 451
+     * @param \Exception|null $previous The previous exception.
      */
-    public function __construct($message = null, $code = 451)
+    public function __construct($message = null, $code = null, $previous = null)
     {
         if (empty($message)) {
             $message = 'Unavailable For Legal Reasons';
         }
-        parent::__construct($message, $code);
+        parent::__construct($message, $code, $previous);
     }
 }

@@ -22,6 +22,8 @@ use Cake\ORM\TableRegistry;
 
 /**
  * Base Authentication class with common methods and properties.
+ *
+ * @mixin \Cake\Core\InstanceConfigTrait
  */
 abstract class BaseAuthenticate implements EventListenerInterface
 {
@@ -107,6 +109,9 @@ abstract class BaseAuthenticate implements EventListenerInterface
         $result = $this->_query($username)->first();
 
         if (empty($result)) {
+            $hasher = $this->passwordHasher();
+            $hasher->hash((string)$password);
+
             return false;
         }
 

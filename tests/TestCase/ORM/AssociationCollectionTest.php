@@ -142,7 +142,7 @@ class AssociationCollectionTest extends TestCase
     }
 
     /**
-     *  Data provider for AssociationCollection::type
+     *  Data provider for AssociationCollection::getByType
      */
     public function associationCollectionType()
     {
@@ -154,13 +154,13 @@ class AssociationCollectionTest extends TestCase
     }
 
     /**
-     * Test getting association names by type.
+     * Test getting association names by getByType.
      *
      * @param string $belongsToStr
      * @param string $belongsToManyStr
      * @dataProvider associationCollectionType
      */
-    public function testType($belongsToStr, $belongsToManyStr)
+    public function testGetByType($belongsToStr, $belongsToManyStr)
     {
         $belongsTo = new BelongsTo('');
         $this->associations->add('Users', $belongsTo);
@@ -168,9 +168,9 @@ class AssociationCollectionTest extends TestCase
         $belongsToMany = new BelongsToMany('');
         $this->associations->add('Tags', $belongsToMany);
 
-        $this->assertSame([$belongsTo], $this->associations->type($belongsToStr));
-        $this->assertSame([$belongsToMany], $this->associations->type($belongsToManyStr));
-        $this->assertSame([$belongsTo, $belongsToMany], $this->associations->type([$belongsToStr, $belongsToManyStr]));
+        $this->assertSame([$belongsTo], $this->associations->getByType($belongsToStr));
+        $this->assertSame([$belongsToMany], $this->associations->getByType($belongsToManyStr));
+        $this->assertSame([$belongsTo, $belongsToMany], $this->associations->getByType([$belongsToStr, $belongsToManyStr]));
     }
 
     /**
@@ -181,7 +181,7 @@ class AssociationCollectionTest extends TestCase
     public function hasTypeReturnsEmptyArray()
     {
         foreach (['HasMany', 'hasMany', 'FooBar', 'DoesNotExist'] as $value) {
-            $this->assertSame([], $this->associations->type($value));
+            $this->assertSame([], $this->associations->getByType($value));
         }
     }
 

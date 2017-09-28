@@ -16,6 +16,8 @@ namespace Cake\Test\TestCase\Http;
 use Cake\Http\Client;
 use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
+use Cake\Http\Cookie\Cookie;
+use Cake\Http\Cookie\CookieCollection;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -135,6 +137,27 @@ class ClientTest extends TestCase
                 [],
                 'query string data with some already on the url.'
             ],
+            [
+                'http://example.com/test.html',
+                '//test.html',
+                [],
+                [
+                    'scheme' => 'http',
+                    'host' => 'example.com',
+                    'protocolRelative' => false
+                ],
+                'url with a double slash',
+            ],
+            [
+                'http://example.com/test.html',
+                '//example.com/test.html',
+                [],
+                [
+                    'scheme' => 'http',
+                    'protocolRelative' => true
+                ],
+                'protocol relative url',
+            ],
         ];
     }
 
@@ -176,7 +199,7 @@ class ClientTest extends TestCase
                 $this->assertInstanceOf('Cake\Http\Client\Request', $request);
                 $this->assertEquals(Request::METHOD_GET, $request->getMethod());
                 $this->assertEquals('http://cakephp.org/test.html', $request->getUri() . '');
-                $this->assertEquals($cookies, $request->cookies());
+                $this->assertEquals('split=value', $request->getHeaderLine('Cookie'));
                 $this->assertEquals($headers['Content-Type'], $request->getHeaderLine('content-type'));
                 $this->assertEquals($headers['Connection'], $request->getHeaderLine('connection'));
 
@@ -596,7 +619,6 @@ class ClientTest extends TestCase
         $adapter = $this->getMockBuilder('Cake\Http\Client\Adapter\Stream')
             ->setMethods(['send'])
             ->getMock();
-        $cookieJar = $this->getMockBuilder('Cake\Http\Client\CookieCollection')->getMock();
 
         $headers = [
             'HTTP/1.0 200 Ok',
@@ -604,16 +626,6 @@ class ClientTest extends TestCase
             'Set-Cookie: expiring=now; Expires=Wed, 09-Jun-1999 10:18:14 GMT'
         ];
         $response = new Response($headers, '');
-
-        $cookieJar->expects($this->at(0))
-            ->method('get')
-            ->with('http://cakephp.org/projects')
-            ->will($this->returnValue([]));
-
-        $cookieJar->expects($this->at(1))
-            ->method('store')
-            ->with($response);
-
         $adapter->expects($this->at(0))
             ->method('send')
             ->will($this->returnValue([$response]));
@@ -621,10 +633,80 @@ class ClientTest extends TestCase
         $http = new Client([
             'host' => 'cakephp.org',
             'adapter' => $adapter,
-            'cookieJar' => $cookieJar
         ]);
 
         $http->get('/projects');
+        $cookies = $http->cookies();
+        $this->assertCount(1, $cookies);
+        $this->assertTrue($cookies->has('first'));
+        $this->assertFalse($cookies->has('expiring'));
+    }
+
+    /**
+     * Test cookieJar config option.
+     *
+     * @return void
+     */
+    public function testCookieJar()
+    {
+        $jar = new CookieCollection();
+        $http = new Client([
+            'cookieJar' => $jar
+        ]);
+
+        $this->assertSame($jar, $http->cookies());
+    }
+
+    /**
+     * Test addCookie() method.
+     *
+     * @return void
+     */
+    public function testAddCookie()
+    {
+        $client = new Client();
+        $cookie = new Cookie('foo', '', null, '/', 'example.com');
+
+        $this->assertFalse($client->cookies()->has('foo'));
+
+        $client->addCookie($cookie);
+        $this->assertTrue($client->cookies()->has('foo'));
+    }
+
+    /**
+     * Test addCookie() method without a domain.
+     *
+     * @return void
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Cookie must have a domain and a path set.
+     */
+    public function testAddCookieWithoutDomain()
+    {
+        $client = new Client();
+        $cookie = new Cookie('foo', '', null, '/', '');
+
+        $this->assertFalse($client->cookies()->has('foo'));
+
+        $client->addCookie($cookie);
+        $this->assertTrue($client->cookies()->has('foo'));
+    }
+
+    /**
+     * Test addCookie() method without a path.
+     *
+     * @return void
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Cookie must have a domain and a path set.
+     */
+    public function testAddCookieWithoutPath()
+    {
+        $client = new Client();
+        $cookie = new Cookie('foo', '', null, '', 'example.com');
+
+        $this->assertFalse($client->cookies()->has('foo'));
+
+        $client->addCookie($cookie);
+        $this->assertTrue($client->cookies()->has('foo'));
     }
 
     /**

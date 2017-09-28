@@ -1590,13 +1590,13 @@ class ValidationTest extends TestCase
      */
     public function testLocalizedTime()
     {
-        $locale = I18N::locale();
+        $locale = I18N::getLocale();
 
         $this->assertFalse(Validation::localizedTime('', 'date'));
         $this->assertFalse(Validation::localizedTime('invalid', 'date'));
 
         // English (US)
-        I18N::locale('en_US');
+        I18N::setLocale('en_US');
         $this->assertTrue(Validation::localizedTime('12/31/2006', 'date'));
         $this->assertTrue(Validation::localizedTime('6.40pm', 'time'));
         $this->assertTrue(Validation::localizedTime('12/31/2006 6.40pm', 'datetime'));
@@ -1606,7 +1606,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::localizedTime('18:40', 'time')); // non-US format
 
         // German
-        I18N::locale('de_DE');
+        I18N::setLocale('de_DE');
         $this->assertTrue(Validation::localizedTime('31.12.2006', 'date'));
         $this->assertTrue(Validation::localizedTime('31. Dezember 2006', 'date'));
         $this->assertTrue(Validation::localizedTime('18:40', 'time'));
@@ -1614,12 +1614,12 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::localizedTime('December 31, 2006', 'date')); // non-German format
 
         // Russian
-        I18N::locale('ru_RU');
+        I18N::setLocale('ru_RU');
         $this->assertTrue(Validation::localizedTime('31 декабря 2006', 'date'));
 
         $this->assertFalse(Validation::localizedTime('December 31, 2006', 'date')); // non-Russian format
 
-        I18N::locale($locale);
+        I18N::setLocale($locale);
     }
 
     /**
@@ -2138,6 +2138,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::url('https://cakephp.org'));
         $this->assertTrue(Validation::url('https://www.cakephp.org/somewhere#anchor'));
         $this->assertTrue(Validation::url('https://192.168.0.1'));
+        $this->assertTrue(Validation::url('https://example.com/kibana/app/kibana#/dashboard/4422c500-8e1b?_g=()'));
         $this->assertTrue(Validation::url('ftps://www.cakephp.org/pub/cake'));
         $this->assertTrue(Validation::url('ftps://cakephp.org/pub/cake'));
         $this->assertTrue(Validation::url('ftps://192.168.0.1/pub/cake'));
@@ -2879,6 +2880,23 @@ class ValidationTest extends TestCase
     }
 
     /**
+     * Test isScalar
+     *
+     * @return void
+     */
+    public function testIsScalar()
+    {
+        $this->assertTrue(Validation::isScalar(1));
+        $this->assertTrue(Validation::isScalar(0.0));
+        $this->assertTrue(Validation::isScalar(''));
+        $this->assertTrue(Validation::isScalar(true));
+        $this->assertFalse(Validation::isScalar([1]));
+        $this->assertFalse(Validation::isScalar(new stdClass()));
+        $this->assertFalse(Validation::isScalar(STDOUT));
+        $this->assertFalse(Validation::isScalar(null));
+    }
+
+    /**
      * Test isInteger
      *
      * @return void
@@ -2997,7 +3015,7 @@ class ValidationTest extends TestCase
         };
 
         $this->assertFalse(Validation::numElements(null, '==', 0));
-        $this->assertFalse(Validation::numElements(new \stdClass(), '==', 0));
+        $this->assertFalse(Validation::numElements(new stdClass(), '==', 0));
         $this->assertFalse(Validation::numElements($callable, '==', 0));
         $this->assertFalse(Validation::numElements(false, '==', 0));
         $this->assertFalse(Validation::numElements(true, '==', 0));

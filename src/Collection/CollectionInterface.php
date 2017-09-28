@@ -286,6 +286,63 @@ interface CollectionInterface extends Iterator, JsonSerializable
     public function min($callback, $type = SORT_NUMERIC);
 
     /**
+     * Returns the average of all the values extracted with $matcher
+     * or of this collection.
+     *
+     * ### Example:
+     *
+     * ```
+     * $items = [
+     *  ['invoice' => ['total' => 100]],
+     *  ['invoice' => ['total' => 200]]
+     * ];
+     *
+     * $total = (new Collection($items))->avg('invoice.total');
+     *
+     * // Total: 150
+     *
+     * $total = (new Collection([1, 2, 3]))->avg();
+     * // Total: 2
+     * ```
+     *
+     * @param string|callable|null $matcher The property name to sum or a function
+     * If no value is passed, an identity function will be used.
+     * that will return the value of the property to sum.
+     * @return float|int|null
+     */
+    public function avg($matcher = null);
+
+    /**
+     * Returns the median of all the values extracted with $matcher
+     * or of this collection.
+     *
+     * ### Example:
+     *
+     * ```
+     * $items = [
+     *  ['invoice' => ['total' => 400]],
+     *  ['invoice' => ['total' => 500]]
+     *  ['invoice' => ['total' => 100]]
+     *  ['invoice' => ['total' => 333]]
+     *  ['invoice' => ['total' => 200]]
+     * ];
+     *
+     * $total = (new Collection($items))->median('invoice.total');
+     *
+     * // Total: 333
+     *
+     * $total = (new Collection([1, 2, 3, 4]))->median();
+     * // Total: 2.5
+     * ```
+     *
+     * @param string|callable|null $matcher The property name to sum or a function
+     * If no value is passed, an identity function will be used.
+     * that will return the value of the property to sum.
+     * @return float|int|null
+     */
+    public function median($matcher = null);
+
+    /**
      * Returns a sorted iterator out of the elements in this collection,
      * ranked in ascending order by the results of running each value through a
      * callback. $callback can also be a string representing the column or property
@@ -962,7 +1019,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * losing any possible transformations. This is used mainly to remove empty
      * IteratorIterator wrappers that can only slowdown the iteration process.
      *
-     * @return \Iterator
+     * @return \Traversable
      */
     public function unwrap();
 

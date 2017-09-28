@@ -1,6 +1,7 @@
 <?php
 namespace Cake\Test\Fixture;
 
+use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Exception;
 
@@ -14,7 +15,7 @@ class FixturizedTestCase extends TestCase
      * Fixtures to use in this test
      * @var array
      */
-    public $fixtures = ['core.categories'];
+    public $fixtures = ['core.categories', 'core.articles'];
 
     /**
      * test that the shared fixture is correctly set
@@ -34,6 +35,20 @@ class FixturizedTestCase extends TestCase
     public function testFixtureLoadOnDemand()
     {
         $this->loadFixtures('Categories');
+    }
+
+    /**
+     * test that calling loadFixtures without args loads all fixtures
+     *
+     * @return void
+     */
+    public function testLoadAllFixtures()
+    {
+        $this->loadFixtures();
+        $article = TableRegistry::get('Articles')->get(1);
+        $this->assertSame(1, $article->id);
+        $category = TableRegistry::get('Categories')->get(1);
+        $this->assertSame(1, $category->id);
     }
 
     /**

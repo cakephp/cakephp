@@ -17,6 +17,7 @@ namespace Cake\ORM\Behavior;
 use ArrayObject;
 use Cake\Collection\Collection;
 use Cake\Datasource\EntityInterface;
+use Cake\Datasource\QueryInterface;
 use Cake\Event\Event;
 use Cake\I18n\I18n;
 use Cake\ORM\Behavior;
@@ -99,7 +100,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     public function __construct(Table $table, array $config = [])
     {
         $config += [
-            'defaultLocale' => I18n::defaultLocale(),
+            'defaultLocale' => I18n::getDefaultLocale(),
             'referenceName' => $this->_referenceName($table)
         ];
 
@@ -118,7 +119,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      */
     public function initialize(array $config)
     {
-        $this->_translationTable = $this->tableLocator()->get($this->_config['translationTable']);
+        $this->_translationTable = $this->getTableLocator()->get($this->_config['translationTable']);
 
         $this->setupFieldAssociations(
             $this->_config['fields'],
@@ -147,7 +148,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
         $targetAlias = $this->_translationTable->getAlias();
         $alias = $this->_table->getAlias();
         $filter = $this->_config['onlyTranslated'];
-        $tableLocator = $this->tableLocator();
+        $tableLocator = $this->getTableLocator();
 
         foreach ($fields as $field) {
             $name = $alias . '_' . $field . '_translation';
@@ -173,7 +174,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
             $this->_table->hasOne($name, [
                 'targetTable' => $fieldTable,
                 'foreignKey' => 'foreign_key',
-                'joinType' => $filter ? 'INNER' : 'LEFT',
+                'joinType' => $filter ? QueryInterface::JOIN_TYPE_INNER : QueryInterface::JOIN_TYPE_LEFT,
                 'conditions' => $conditions,
                 'propertyName' => $field . '_translation'
             ]);
@@ -214,8 +215,10 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
 
         $conditions = function ($field, $locale, $query, $select) {
             return function ($q) use ($field, $locale, $query, $select) {
+                /* @var \Cake\Datasource\QueryInterface $q */
                 $q->where([$q->repository()->aliasField('locale') => $locale]);
 
+                /* @var \Cake\ORM\Query $query */
                 if ($query->isAutoFieldsEnabled() ||
                     in_array($field, $select, true) ||
                     in_array($this->_table->aliasField($field), $select, true)
@@ -246,7 +249,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
             );
 
             if ($changeFilter) {
-                $filter = $options['filterByCurrentLocale'] ? 'INNER' : 'LEFT';
+                $filter = $options['filterByCurrentLocale'] ? QueryInterface::JOIN_TYPE_INNER : QueryInterface::JOIN_TYPE_LEFT;
                 $contain[$name]['joinType'] = $filter;
             }
         }
@@ -328,6 +331,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
                 'model' => $model
             ])
             ->enableBufferedResults(false)
+            ->all()
             ->indexBy('field');
 
         $modified = [];
@@ -380,12 +384,13 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
 
         return [
             '_translations' => function ($value, $entity) use ($marshaller, $options) {
+                /* @var \Cake\Datasource\EntityInterface $entity */
                 $translations = $entity->get('_translations');
                 foreach ($this->_config['fields'] as $field) {
                     $options['validate'] = $this->_config['validator'];
                     $errors = [];
                     if (!is_array($value)) {
-                        return;
+                        return null;
                     }
                     foreach ($value as $language => $fields) {
                         if (!isset($translations[$language])) {
@@ -417,7 +422,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     public function locale($locale = null)
     {
         if ($locale === null) {
-            return $this->_locale ?: I18n::locale();
+            return $this->_locale ?: I18n::getLocale();
         }
 
         return $this->_locale = (string)$locale;
@@ -476,12 +481,13 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
         $targetAlias = $this->_translationTable->getAlias();
 
         return $query
-            ->contain([$targetAlias => function ($q) use ($locales, $targetAlias) {
+            ->contain([$targetAlias => function ($query) use ($locales, $targetAlias) {
                 if ($locales) {
-                    $q->where(["$targetAlias.locale IN" => $locales]);
+                    /* @var \Cake\Datasource\QueryInterface $query */
+                    $query->where(["$targetAlias.locale IN" => $locales]);
                 }
 
-                return $q;
+                return $query;
             }])
             ->formatResults([$this, 'groupTranslations'], $query::PREPEND);
     }
@@ -544,6 +550,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
 
             $row['_locale'] = $locale;
             if ($hydrated) {
+                /* @var \Cake\Datasource\EntityInterface $row */
                 $row->clean();
             }
 
@@ -602,7 +609,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     {
         $translations = (array)$entity->get('_translations');
 
-        if (empty($translations) && !$entity->dirty('_translations')) {
+        if (empty($translations) && !$entity->isDirty('_translations')) {
             return;
         }
 
@@ -704,6 +711,6 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
             $query->unionAll($q);
         }
 
-        return $query->combine('num', 'id')->toArray();
+        return $query->all()->combine('num', 'id')->toArray();
     }
 }

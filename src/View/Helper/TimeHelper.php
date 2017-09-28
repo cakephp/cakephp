@@ -248,7 +248,7 @@ class TimeHelper extends Helper
      *   - `class` - The class name to use, defaults to `time-ago-in-words`.
      *   - `title` - Defaults to the $dateTime input.
      *
-     * @param int|string|\DateTime $dateTime UNIX timestamp, strtotime() valid string or DateTime object
+     * @param int|string|\DateTime|\Cake\Chronos\ChronosInterface $dateTime UNIX timestamp, strtotime() valid string or DateTime object
      * @param array $options Default format if timestamp is used in $dateString
      * @return string Relative time string.
      * @see \Cake\I18n\Time::timeAgoInWords()

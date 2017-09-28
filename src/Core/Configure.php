@@ -114,16 +114,17 @@ class Configure
      * ```
      *
      * @param string|null $var Variable to obtain. Use '.' to access array elements.
+     * @param mixed $default The return value when the configure does not exist
      * @return mixed Value stored in configure, or null.
      * @link https://book.cakephp.org/3.0/en/development/configuration.html#reading-configuration-data
      */
-    public static function read($var = null)
+    public static function read($var = null, $default = null)
     {
         if ($var === null) {
             return static::$_values;
         }
 
-        return Hash::get(static::$_values, $var);
+        return Hash::get(static::$_values, $var, $default);
     }
 
     /**
@@ -194,7 +195,7 @@ class Configure
      * out of configure into the various other classes in CakePHP.
      *
      * @param string $var The key to read and remove.
-     * @return array|null
+     * @return array|string|null
      */
     public static function consume($var)
     {

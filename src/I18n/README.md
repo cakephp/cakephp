@@ -20,7 +20,7 @@ should you wish to create them manually instead of using the conventions this li
 ```php
 use Cake\I18n\I18n;
 
-I18n::locale('en_US');
+I18n::setLocale('en_US');
 ```
 
 ### Setting path to folder containing po files.
@@ -66,7 +66,7 @@ I18n::translator('animals', 'fr_FR', function () {
     return $package;
 });
 
-I18n::locale('fr_FR');
+I18n::getLocale('fr_FR');
 __d('animals', 'Dog'); // Returns "Chien"
 ```
 

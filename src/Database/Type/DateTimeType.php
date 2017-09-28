@@ -53,9 +53,12 @@ class DateTimeType extends Type implements TypeInterface
     /**
      * String format to use for DateTime parsing
      *
-     * @var string
+     * @var string|array
      */
-    protected $_format = 'Y-m-d H:i:s';
+    protected $_format = [
+        'Y-m-d H:i:s',
+        'Y-m-d\TH:i:sP',
+    ];
 
     /**
      * Whether dates should be parsed using a locale aware parser
@@ -114,7 +117,9 @@ class DateTimeType extends Type implements TypeInterface
             $value = new $class('@' . $value);
         }
 
-        return $value->format($this->_format);
+        $format = (array)$this->_format;
+
+        return $value->format(array_shift($format));
     }
 
     /**
@@ -166,7 +171,7 @@ class DateTimeType extends Type implements TypeInterface
                 $date = new $class($value);
                 $compare = true;
             }
-            if ($compare && $date && $date->format($this->_format) !== $value) {
+            if ($compare && $date && !$this->_compare($date, $value)) {
                 return $value;
             }
             if ($date) {
@@ -204,6 +209,22 @@ class DateTimeType extends Type implements TypeInterface
         $tz = isset($value['timezone']) ? $value['timezone'] : null;
 
         return new $class($format, $tz);
+    }
+
+    /**
+     * @param \Cake\I18n\Time|\DateTime $date DateTime object
+     * @param mixed $value Request data
+     * @return bool
+     */
+    protected function _compare($date, $value)
+    {
+        foreach ((array)$this->_format as $format) {
+            if ($date->format($format) === $value) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

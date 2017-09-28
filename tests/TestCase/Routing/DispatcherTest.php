@@ -160,7 +160,9 @@ class DispatcherTest extends TestCase
                 'pass' => ['extract'],
             ]
         ]);
-        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
+        $response = $this->getMockBuilder('Cake\Http\Response')
+            ->setMethods(['send'])
+            ->getMock();
         $response->expects($this->once())
             ->method('send');
 

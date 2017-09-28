@@ -88,6 +88,10 @@ class AssetMiddleware
             return $next($request, $response);
         }
 
+        if (strpos($url, '/.') !== false) {
+            return $next($request, $response);
+        }
+
         $assetFile = $this->_getAssetFile($url);
         if ($assetFile === null || !file_exists($assetFile)) {
             return $next($request, $response);

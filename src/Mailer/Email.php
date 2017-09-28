@@ -87,7 +87,7 @@ class Email implements JsonSerializable, Serializable
      *
      * @var string
      */
-    const EMAIL_PATTERN = '/^((?:[\p{L}0-9.!#$%&\'*+\/=?^_`{|}~-]+)*@[\p{L}0-9-.]+)$/ui';
+    const EMAIL_PATTERN = '/^((?:[\p{L}0-9.!#$%&\'*+\/=?^_`{|}~-]+)*@[\p{L}0-9-._]+)$/ui';
 
     /**
      * Recipient of the email
@@ -2612,8 +2612,8 @@ class Email implements JsonSerializable, Serializable
 
         $View = $this->createView();
 
-        list($templatePlugin) = pluginSplit($View->template());
-        list($layoutPlugin) = pluginSplit($View->layout());
+        list($templatePlugin) = pluginSplit($View->getTemplate());
+        list($layoutPlugin) = pluginSplit($View->getLayout());
         if ($templatePlugin) {
             $View->plugin = $templatePlugin;
         } elseif ($layoutPlugin) {
@@ -2626,8 +2626,8 @@ class Email implements JsonSerializable, Serializable
 
         foreach ($types as $type) {
             $View->hasRendered = false;
-            $View->templatePath('Email' . DIRECTORY_SEPARATOR . $type);
-            $View->layoutPath('Email' . DIRECTORY_SEPARATOR . $type);
+            $View->setTemplatePath('Email' . DIRECTORY_SEPARATOR . $type);
+            $View->setLayoutPath('Email' . DIRECTORY_SEPARATOR . $type);
 
             $render = $View->render();
             $render = str_replace(["\r\n", "\r"], "\n", $render);

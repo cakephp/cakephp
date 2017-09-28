@@ -60,7 +60,7 @@ class Validation
     /**
      * Backwards compatibility wrapper for Validation::notBlank().
      *
-     * @param string|array $check Value to check.
+     * @param string $check Value to check.
      * @return bool Success.
      * @deprecated 3.0.2 Use Validation::notBlank() instead.
      * @see \Cake\Validation\Validation::notBlank()
@@ -77,10 +77,7 @@ class Validation
      *
      * Returns true if string contains something other than whitespace
      *
-     * $check can be passed as an array:
-     * ['check' => 'valueToCheck'];
-     *
-     * @param string|array $check Value to check
+     * @param string $check Value to check
      * @return bool Success
      */
     public static function notBlank($check)
@@ -97,10 +94,7 @@ class Validation
      *
      * Returns true if string contains only integer or letters
      *
-     * $check can be passed as an array:
-     * ['check' => 'valueToCheck'];
-     *
-     * @param string|array $check Value to check
+     * @param string $check Value to check
      * @return bool Success
      */
     public static function alphaNumeric($check)
@@ -136,7 +130,7 @@ class Validation
      * Returns true if field is left blank -OR- only whitespace characters are present in its value
      * Whitespace characters include Space, Tab, Carriage Return, Newline
      *
-     * @param string|array $check Value to check
+     * @param string $check Value to check
      * @return bool Success
      * @deprecated 3.0.2
      */
@@ -151,7 +145,7 @@ class Validation
      * Validation of credit card numbers.
      * Returns true if $check is in the proper credit card format.
      *
-     * @param string|array $check credit card number to validate
+     * @param string $check credit card number to validate
      * @param string|array $type 'all' may be passed as a string, defaults to fast which checks format of most major credit cards
      *    if an array is used only the values of the array are checked.
      *    Example: ['amex', 'bankcard', 'maestro']
@@ -345,8 +339,7 @@ class Validation
     /**
      * Used when a custom regular expression is needed.
      *
-     * @param string|array $check When used as a string, $regex must also be a valid regular expression.
-     *    As and array: ['check' => value, 'regex' => 'valid regular expression']
+     * @param string $check The value to check.
      * @param string|null $regex If $check is passed as a string, $regex must also be set to valid regular expression
      * @return bool Success
      */
@@ -906,7 +899,7 @@ class Validation
      *   with an optional port number
      * - an optional valid path
      * - an optional query string (get parameters)
-     * - an optional fragment (anchor tag)
+     * - an optional fragment (anchor tag) as defined in RFC 3986
      *
      * @param string $check Value to check
      * @param bool $strict Require URL to be prefixed by a valid scheme (one of http(s)/ftp(s)/file/news/gopher)
@@ -915,12 +908,16 @@ class Validation
     public static function url($check, $strict = false)
     {
         static::_populateIp();
-        $validChars = '([' . preg_quote('!"$&\'()*+,-.@_:;=~[]') . '\/0-9\p{L}\p{N}]|(%[0-9a-f]{2}))';
+        $alpha = '0-9\p{L}\p{N}';
+        $hex = '(%[0-9a-f]{2})';
+        $subDelimiters = preg_quote('/!"$&\'()*+,-.@_:;=~[]', '/');
+        $path = '([' . $subDelimiters . $alpha . ']|' . $hex . ')';
+        $fragmentAndQuery = '([\?' . $subDelimiters . $alpha . ']|' . $hex . ')';
         $regex = '/^(?:(?:https?|ftps?|sftp|file|news|gopher):\/\/)' . (!empty($strict) ? '' : '?') .
             '(?:' . static::$_pattern['IPv4'] . '|\[' . static::$_pattern['IPv6'] . '\]|' . static::$_pattern['hostname'] . ')(?::[1-9][0-9]{0,4})?' .
-            '(?:\/?|\/' . $validChars . '*)?' .
-            '(?:\?' . $validChars . '*)?' .
-            '(?:#' . $validChars . '*)?$/iu';
+            '(?:\/' . $path . '*)?' .
+            '(?:\?' . $fragmentAndQuery . '*)?' .
+            '(?:#' . $fragmentAndQuery . '*)?$/iu';
 
         return static::_check($check, $regex);
     }
@@ -1428,6 +1425,20 @@ class Validation
     public static function isArray($value)
     {
         return is_array($value);
+    }
+
+    /**
+     * Check that the input value is a scalar.
+     *
+     * This method will accept integers, floats, strings and booleans, but
+     * not accept arrays, objects, resources and nulls.
+     *
+     * @param mixed $value The value to check
+     * @return bool
+     */
+    public static function isScalar($value)
+    {
+        return is_scalar($value);
     }
 
     /**
