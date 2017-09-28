@@ -182,6 +182,21 @@ class DecimalTypeTest extends TestCase
     }
 
     /**
+     * test marshall() number in the danish locale which uses . for thousands separator.
+     *
+     * @return void
+     */
+    public function testMarshallWithLocaleParsingDanish()
+    {
+        I18n::setLocale('da_DK');
+
+        $this->type->useLocaleParser();
+        $expected = 47500.0;
+        $result = $this->type->marshal('47.500');
+        $this->assertSame($expected, $result);
+    }
+
+    /**
      * Test that exceptions are raised on invalid parsers.
      *
      * @expectedException \RuntimeException
