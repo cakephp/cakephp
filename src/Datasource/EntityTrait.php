@@ -151,7 +151,7 @@ trait EntityTrait
      * Returns whether this entity contains a property named $property
      * regardless of if it is empty.
      *
-     * @param string $property The property to check.
+     * @param string|array $property The property to check.
      * @return bool
      * @see \Cake\ORM\Entity::has()
      */
