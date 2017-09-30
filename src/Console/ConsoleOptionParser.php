@@ -643,6 +643,21 @@ class ConsoleOptionParser
     }
 
     /**
+     * Get the list of argument names.
+     *
+     * @return string[]
+     */
+    public function argumentNames()
+    {
+        $out = [];
+        foreach ($this->_args as $arg) {
+            $out[] = $arg->name();
+        }
+
+        return $out;
+    }
+
+    /**
      * Get the defined options in the parser.
      *
      * @return array
