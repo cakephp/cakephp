@@ -14,10 +14,12 @@
  */
 namespace Cake\Console;
 
+use Cake\Console\Exception\ConsoleException;
 use Cake\Datasource\ModelAwareTrait;
 use Cake\Log\LogTrait;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use RuntimeException;
+use InvalidArgumentException;
 
 /**
  * Base class for console commands.
@@ -29,11 +31,25 @@ class Command
     use ModelAwareTrait;
 
     /**
-     * The name of this command. Inflected from the class name.
+     * Default error code
+     *
+     * @var int
+     */
+    const CODE_ERROR = 1;
+
+    /**
+     * Default success code
+     *
+     * @var int
+     */
+    const CODE_SUCCESS = 0;
+
+    /**
+     * The name of this command.
      *
      * @var string
      */
-    protected $name;
+    protected $name = 'cake unknown';
 
     /**
      * Constructor
@@ -52,12 +68,20 @@ class Command
      * Set the name this command uses in the collection.
      *
      * Generally invoked by the CommandCollection when the command is added.
+     * Required to have at least one space in the name so that the root
+     * command can be calculated.
      *
      * @param string $name The name the command uses in the collection.
      * @return $this;
+     * @throws \InvalidArgumentException
      */
     public function setName($name)
     {
+        if (strpos($name, ' ') === false) {
+            throw new InvalidArgumentException(
+                "The name '{$name}' is missing a space. Names should look like `cake routes`"
+            );
+        }
         $this->name = $name;
 
         return $this;
@@ -83,7 +107,10 @@ class Command
      */
     public function getOptionParser()
     {
-        $parser = new ConsoleOptionParser($this->name);
+        list($root, $name) = explode(' ', $this->name, 2);
+        $parser = new ConsoleOptionParser($name);
+        $parser->setRootName($root);
+
         $parser = $this->buildOptionParser($parser);
         if (!($parser instanceof ConsoleOptionParser)) {
             throw new RuntimeException(sprintf(
@@ -124,20 +151,77 @@ class Command
      * Run the command.
      *
      * @param array $argv
+     * @return int|null Exit code or null for success.
      */
     public function run(array $argv, ConsoleIo $io)
     {
-        // Initialize command
-        // Parse argv.
-        // If invalid, or help was requested show help
-        // execute the command
-        $args = new Arguments([], [], []);
+        $this->initialize();
+
+        $parser = $this->getOptionParser();
+        try {
+            list($options, $arguments) = $parser->parse($argv);
+            $args = new Arguments(
+                $arguments,
+                $options,
+                $parser->argumentNames()
+            );
+        } catch (ConsoleException $e) {
+            $io->err('Error: ' . $e->getMessage());
+
+            return static::CODE_ERROR;
+        }
+        $this->setOutputLevel($args, $io);
+
+        if ($args->getOption('help')) {
+            return $this->displayHelp($parser, $args, $io);
+        }
         return $this->execute($args, $io);
+    }
+
+    /**
+     * Output help content
+     *
+     * @param \Cake\Console\ConsoleOptionParser $parser The option parser.
+     * @param \Cake\Console\Arguments $args The command arguments.
+     * @param \Cake\Console\ConsoleIo $io The console io
+     * @return void
+     */
+    protected function displayHelp(ConsoleOptionParser $parser, Arguments $args, ConsoleIo $io)
+    {
+        $format = 'text';
+        if ($args->getArgumentAt(0) === 'xml') {
+            $format = 'xml';
+            $io->setOutputAs(ConsoleOutput::RAW);
+        }
+
+        return $io->out($parser->help(null, $format));
+    }
+
+    /**
+     * Set the output level based on the Arguments.
+     *
+     * @param \Cake\Console\Arguments $args The command arguments.
+     * @param \Cake\Console\ConsoleIo $io The console io
+     * @return void
+     */
+    protected function setOutputLevel(Arguments $args, ConsoleIo $io)
+    {
+        $io->setLoggers(ConsoleIo::NORMAL);
+        if ($args->getOption('quiet')) {
+            $io->level(ConsoleIo::QUIET);
+            $io->setLoggers(ConsoleIo::QUIET);
+        }
+        if ($args->getOption('verbose')) {
+            $io->level(ConsoleIo::VERBOSE);
+            $io->setLoggers(ConsoleIo::VERBOSE);
+        }
     }
 
     /**
      * Implement this method with your command's logic.
      *
+     * @param \Cake\Console\Arguments $args The command arguments.
+     * @param \Cake\Console\ConsoleIo $io The console io
      * @return null|int The exit code or null for success
      */
     public function execute(Arguments $args, ConsoleIo $io)

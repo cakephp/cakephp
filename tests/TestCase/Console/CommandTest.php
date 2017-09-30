@@ -15,10 +15,13 @@
 namespace Cake\Test\TestCase\Console;
 
 use Cake\Console\Command;
+use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\ORM\Locator\TableLocator;
 use Cake\ORM\Table;
+use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
+use TestApp\Command\ExampleCommand;
 
 /**
  * Test case for Console\Command
@@ -62,6 +65,19 @@ class CommandTest extends TestCase
     }
 
     /**
+     * Test invalid name
+     *
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage The name 'routes_show' is missing a space. Names should look like `cake routes`
+     * @return void
+     */
+    public function testSetNameInvalid()
+    {
+        $command = new Command();
+        $command->setName('routes_show');
+    }
+
+    /**
      * Test option parser fetching
      *
      * @return void
@@ -72,7 +88,7 @@ class CommandTest extends TestCase
         $command->setName('cake routes show');
         $parser = $command->getOptionParser();
         $this->assertInstanceOf(ConsoleOptionParser::class, $parser);
-        $this->assertSame('cake routes show', $parser->getCommand());
+        $this->assertSame('routes show', $parser->getCommand());
     }
 
     /**
@@ -90,5 +106,124 @@ class CommandTest extends TestCase
             ->method('buildOptionParser')
             ->will($this->returnValue(null));
         $command->getOptionParser();
+    }
+
+    /**
+     * Test that initialize is called.
+     *
+     * @return void
+     */
+    public function testRunCallsInitialize()
+    {
+        $command = $this->getMockBuilder(Command::class)
+            ->setMethods(['initialize'])
+            ->getMock();
+        $command->setName('cake example');
+        $command->expects($this->once())->method('initialize');
+        $command->run([], $this->getMockIo(new ConsoleOutput()));
+    }
+
+    /**
+     * Test run() outputs help
+     *
+     * @return void
+     */
+    public function testRunOutputHelp()
+    {
+        $command = new Command();
+        $command->setName('cake example');
+        $output = new ConsoleOutput();
+
+        $this->assertNull($command->run(['-h'], $this->getMockIo($output)));
+        $messages = implode("\n", $output->messages());
+        $this->assertNotContains('Example', $messages);
+        $this->assertContains('cake example [-h]', $messages);
+    }
+
+    /**
+     * Test run() outputs help
+     *
+     * @return void
+     */
+    public function testRunOutputHelpLongOption()
+    {
+        $command = new Command();
+        $command->setName('cake example');
+        $output = new ConsoleOutput();
+
+        $this->assertNull($command->run(['--help'], $this->getMockIo($output)));
+        $messages = implode("\n", $output->messages());
+        $this->assertNotContains('Example', $messages);
+        $this->assertContains('cake example [-h]', $messages);
+    }
+
+    /**
+     * Test run() sets output level
+     *
+     * @return void
+     */
+    public function testRunVerboseOption()
+    {
+        $command = new ExampleCommand();
+        $command->setName('cake example');
+        $output = new ConsoleOutput();
+
+        $this->assertNull($command->run(['--verbose'], $this->getMockIo($output)));
+        $messages = implode("\n", $output->messages());
+        $this->assertContains('Verbose!', $messages);
+        $this->assertContains('Example Command!', $messages);
+        $this->assertContains('Quiet!', $messages);
+        $this->assertNotContains('cake example [-h]', $messages);
+    }
+
+    /**
+     * Test run() sets output level
+     *
+     * @return void
+     */
+    public function testRunQuietOption()
+    {
+        $command = new ExampleCommand();
+        $command->setName('cake example');
+        $output = new ConsoleOutput();
+
+        $this->assertNull($command->run(['--quiet'], $this->getMockIo($output)));
+        $messages = implode("\n", $output->messages());
+        $this->assertContains('Quiet!', $messages);
+        $this->assertNotContains('Verbose!', $messages);
+        $this->assertNotContains('Example Command!', $messages);
+    }
+
+    /**
+     * Test run() sets option parser failure
+     *
+     * @return void
+     */
+    public function testRunOptionParserFailure()
+    {
+        $command = $this->getMockBuilder(Command::class)
+            ->setMethods(['getOptionParser'])
+            ->getMock();
+        $parser = new ConsoleOptionParser('cake example');
+        $parser->addArgument('name', ['required' => true]);
+
+        $command->method('getOptionParser')->will($this->returnValue($parser));
+
+        $output = new ConsoleOutput();
+        $result = $command->run([], $this->getMockIo($output));
+        $this->assertSame(Command::CODE_ERROR, $result);
+
+        $messages = implode("\n", $output->messages());
+        $this->assertContains('Error: Missing required arguments. name is required', $messages);
+    }
+
+    protected function getMockIo($output)
+    {
+        $io = $this->getMockBuilder(ConsoleIo::class)
+            ->setConstructorArgs([$output, $output, null, null])
+            ->setMethods(['in'])
+            ->getMock();
+
+        return $io;
     }
 }

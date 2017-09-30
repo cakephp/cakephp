@@ -298,6 +298,25 @@ class CommandRunnerTest extends TestCase
     }
 
     /**
+     * Test running a command class' help
+     *
+     * @return void
+     */
+    public function testRunValidCommandClassHelp()
+    {
+        $app = $this->makeAppWithCommands(['ex' => ExampleCommand::class]);
+        $output = new ConsoleOutput();
+
+        $runner = new CommandRunner($app, 'cake');
+        $result = $runner->run(['cake', 'ex', '-h'], $this->getMockIo($output));
+        $this->assertSame(Shell::CODE_SUCCESS, $result);
+
+        $messages = implode("\n", $output->messages());
+        $this->assertContains("\ncake ex [-h]", $messages);
+        $this->assertNotContains('Example Command!', $messages);
+    }
+
+    /**
      * Test that run() fires off the buildCommands event.
      *
      * @return void

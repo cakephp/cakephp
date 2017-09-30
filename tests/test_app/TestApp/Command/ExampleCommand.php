@@ -9,6 +9,8 @@ class ExampleCommand extends Command
 {
     public function execute(Arguments $args, ConsoleIo $io)
     {
+        $io->quiet('Quiet!');
         $io->out('Example Command!');
+        $io->verbose('Verbose!');
     }
 }
