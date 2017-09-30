@@ -22,6 +22,7 @@ use Cake\Core\Configure;
 use Cake\Http\BaseApplication;
 use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
+use TestApp\Command\ExampleCommand;
 use TestApp\Shell\SampleShell;
 
 /**
@@ -238,14 +239,7 @@ class CommandRunnerTest extends TestCase
      */
     public function testRunValidCommandWithAbort()
     {
-        $app = $this->getMockBuilder(BaseApplication::class)
-            ->setMethods(['middleware', 'bootstrap', 'console'])
-            ->setConstructorArgs([$this->config])
-            ->getMock();
-
-        $commands = new CommandCollection(['failure' => SampleShell::class]);
-        $app->method('console')->will($this->returnValue($commands));
-
+        $app = $this->makeAppWithCommands(['failure' => SampleShell::class]);
         $output = new ConsoleOutput();
 
         $runner = new CommandRunner($app, 'cake');
@@ -260,14 +254,7 @@ class CommandRunnerTest extends TestCase
      */
     public function testRunValidCommandReturnInteger()
     {
-        $app = $this->getMockBuilder(BaseApplication::class)
-            ->setMethods(['middleware', 'bootstrap', 'console'])
-            ->setConstructorArgs([$this->config])
-            ->getMock();
-
-        $commands = new CommandCollection(['failure' => SampleShell::class]);
-        $app->method('console')->will($this->returnValue($commands));
-
+        $app = $this->makeAppWithCommands(['failure' => SampleShell::class]);
         $output = new ConsoleOutput();
 
         $runner = new CommandRunner($app, 'cake');
@@ -282,14 +269,7 @@ class CommandRunnerTest extends TestCase
      */
     public function testRunRootNamePropagates()
     {
-        $app = $this->getMockBuilder(BaseApplication::class)
-            ->setMethods(['middleware', 'bootstrap', 'console'])
-            ->setConstructorArgs([$this->config])
-            ->getMock();
-
-        $commands = new CommandCollection(['sample' => SampleShell::class]);
-        $app->method('console')->will($this->returnValue($commands));
-
+        $app = $this->makeAppWithCommands(['sample' => SampleShell::class]);
         $output = new ConsoleOutput();
 
         $runner = new CommandRunner($app, 'widget');
@@ -297,6 +277,24 @@ class CommandRunnerTest extends TestCase
         $result = implode("\n", $output->messages());
         $this->assertContains('widget sample [-h]', $result);
         $this->assertNotContains('cake sample [-h]', $result);
+    }
+
+    /**
+     * Test running a valid command
+     *
+     * @return void
+     */
+    public function testRunValidCommandClass()
+    {
+        $app = $this->makeAppWithCommands(['ex' => ExampleCommand::class]);
+        $output = new ConsoleOutput();
+
+        $runner = new CommandRunner($app, 'cake');
+        $result = $runner->run(['cake', 'ex'], $this->getMockIo($output));
+        $this->assertSame(Shell::CODE_SUCCESS, $result);
+
+        $messages = implode("\n", $output->messages());
+        $this->assertContains('Example Command!', $messages);
     }
 
     /**
@@ -319,6 +317,18 @@ class CommandRunnerTest extends TestCase
         });
         $result = $runner->run(['cake', '--version'], $this->getMockIo($output));
         $this->assertTrue($this->eventTriggered, 'Should have triggered event.');
+    }
+
+    protected function makeAppWithCommands($commands)
+    {
+        $app = $this->getMockBuilder(BaseApplication::class)
+            ->setMethods(['middleware', 'bootstrap', 'console'])
+            ->setConstructorArgs([$this->config])
+            ->getMock();
+        $collection = new CommandCollection($commands);
+        $app->method('console')->will($this->returnValue($collection));
+
+        return $app;
     }
 
     protected function getMockIo($output)

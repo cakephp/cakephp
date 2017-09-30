@@ -119,4 +119,28 @@ class Command
     public function initialize()
     {
     }
+
+    /**
+     * Run the command.
+     *
+     * @param array $argv
+     */
+    public function run(array $argv, ConsoleIo $io)
+    {
+        // Initialize command
+        // Parse argv.
+        // If invalid, or help was requested show help
+        // execute the command
+        $args = new Arguments([], [], []);
+        return $this->execute($args, $io);
+    }
+
+    /**
+     * Implement this method with your command's logic.
+     *
+     * @return null|int The exit code or null for success
+     */
+    public function execute(Arguments $args, ConsoleIo $io)
+    {
+    }
 }

@@ -134,13 +134,14 @@ class CommandRunner
         array_shift($argv);
 
         $io = $io ?: new ConsoleIo();
-        $shell = $this->getShell($io, $commands, array_shift($argv));
+        $name = $this->resolveName($commands, $io, array_shift($argv));
 
-        try {
-            $shell->initialize();
-            $result = $shell->runCommand($argv, true);
-        } catch (StopException $e) {
-            return $e->getCode();
+        $shell = $this->getShell($io, $commands, $name);
+        if ($shell instanceof Shell) {
+            $result = $this->runShell($shell, $argv);
+        }
+        if ($shell instanceof Command) {
+            $result = $shell->run($argv, $io);
         }
 
         if ($result === null || $result === true) {
@@ -159,9 +160,38 @@ class CommandRunner
      * @param \Cake\Console\ConsoleIo $io The IO wrapper for the created shell class.
      * @param \Cake\Console\CommandCollection $commands The command collection to find the shell in.
      * @param string $name The command name to find
-     * @return \Cake\Console\Shell
+     * @return \Cake\Console\Shell|\Cake\Console\Command
      */
     protected function getShell(ConsoleIo $io, CommandCollection $commands, $name)
+    {
+        $instance = $commands->get($name);
+        if (is_string($instance)) {
+            $instance = $this->createShell($instance, $io);
+        }
+        if (method_exists($instance, 'setRootName')) {
+            $instance->setRootName($this->root);
+        }
+        if (method_exists($instance, 'setName')) {
+            $instance->setName("{$this->root} {$name}");
+        }
+        if ($instance instanceof CommandCollectionAwareInterface) {
+            $instance->setCommandCollection($commands);
+        }
+
+        return $instance;
+    }
+
+    /**
+     * Resolve the command name into a name that exists in the collection.
+     *
+     * Apply backwards compatibile inflections and aliases.
+     *
+     * @param \Cake\Console\CommandCollection $commands The command collection to check.
+     * @param \Cake\Console\ConsoleIo $io ConsoleIo object for errors.
+     * @param string $name The name from the CLI args.
+     * @return string The resolved name.
+     */
+    protected function resolveName($commands, $io, $name)
     {
         if (!$name) {
             $io->err('<error>No command provided. Choose one of the available commands.</error>', 2);
@@ -179,27 +209,42 @@ class CommandRunner
                 " Run `{$this->root} --help` to get the list of valid commands."
             );
         }
-        $instance = $commands->get($name);
-        if (is_string($instance)) {
-            $instance = $this->createShell($instance, $io);
-        }
-        $instance->setRootName($this->root);
-        if ($instance instanceof CommandCollectionAwareInterface) {
-            $instance->setCommandCollection($commands);
-        }
 
-        return $instance;
+        return $name;
+    }
+
+    /**
+     * Execute a Shell class.
+     *
+     * @param \Cake\Console\Shell $shell The shell to run.
+     * @param array $argv The CLI arguments to invoke.
+     * @return int Exit code
+     */
+    protected function runShell(Shell $shell, array $argv)
+    {
+        try {
+            $shell->initialize();
+            return $shell->runCommand($argv, true);
+        } catch (StopException $e) {
+            return $e->getCode();
+        }
     }
 
     /**
      * The wrapper for creating shell instances.
      *
      * @param string $className Shell class name.
+     * @param string $name The name of the command.
      * @param \Cake\Console\ConsoleIo $io The IO wrapper for the created shell class.
      * @return \Cake\Console\Shell
      */
     protected function createShell($className, ConsoleIo $io)
     {
-        return new $className($io);
+        if (is_subclass_of($className, Shell::class)) {
+            return new $className($io);
+        }
+
+        // Command class
+        return new $className();
     }
 }
