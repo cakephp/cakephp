@@ -18,8 +18,8 @@ use Cake\Console\Exception\ConsoleException;
 use Cake\Datasource\ModelAwareTrait;
 use Cake\Log\LogTrait;
 use Cake\ORM\Locator\LocatorAwareTrait;
-use RuntimeException;
 use InvalidArgumentException;
+use RuntimeException;
 
 /**
  * Base class for console commands.
@@ -150,7 +150,8 @@ class Command
     /**
      * Run the command.
      *
-     * @param array $argv
+     * @param array $argv Arguments from the CLI environment.
+     * @param \Cake\Console\ConsoleIo $io The console io
      * @return int|null Exit code or null for success.
      */
     public function run(array $argv, ConsoleIo $io)
@@ -175,6 +176,7 @@ class Command
         if ($args->getOption('help')) {
             return $this->displayHelp($parser, $args, $io);
         }
+
         return $this->execute($args, $io);
     }
 
@@ -194,7 +196,7 @@ class Command
             $io->setOutputAs(ConsoleOutput::RAW);
         }
 
-        return $io->out($parser->help(null, $format));
+        $io->out($parser->help(null, $format));
     }
 
     /**
@@ -226,5 +228,6 @@ class Command
      */
     public function execute(Arguments $args, ConsoleIo $io)
     {
+        return null;
     }
 }

@@ -224,6 +224,7 @@ class CommandRunner
     {
         try {
             $shell->initialize();
+
             return $shell->runCommand($argv, true);
         } catch (StopException $e) {
             return $e->getCode();
@@ -234,7 +235,6 @@ class CommandRunner
      * The wrapper for creating shell instances.
      *
      * @param string $className Shell class name.
-     * @param string $name The name of the command.
      * @param \Cake\Console\ConsoleIo $io The IO wrapper for the created shell class.
      * @return \Cake\Console\Shell
      */
