@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\Console;
 
+use Cake\Console\Command;
 use Cake\Console\CommandCollection;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
@@ -21,6 +22,7 @@ use Cake\Shell\I18nShell;
 use Cake\Shell\RoutesShell;
 use Cake\TestSuite\TestCase;
 use stdClass;
+use TestApp\Command\ExampleCommand;
 
 /**
  * Test case for the CommandCollection
@@ -75,6 +77,19 @@ class CommandCollectionTest extends TestCase
         $this->assertSame($collection, $collection->add('routes', RoutesShell::class));
         $this->assertTrue($collection->has('routes'));
         $this->assertSame(RoutesShell::class, $collection->get('routes'));
+    }
+
+    /**
+     * test adding a command instance.
+     *
+     * @return void
+     */
+    public function testAddCommand()
+    {
+        $collection = new CommandCollection();
+        $this->assertSame($collection, $collection->add('ex', ExampleCommand::class));
+        $this->assertTrue($collection->has('ex'));
+        $this->assertSame(ExampleCommand::class, $collection->get('ex'));
     }
 
     /**
