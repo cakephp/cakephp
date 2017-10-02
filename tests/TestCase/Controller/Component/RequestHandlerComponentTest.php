@@ -1112,7 +1112,6 @@ class RequestHandlerComponentTest extends TestCase
     {
         $restore = error_reporting(E_ALL & ~E_USER_DEPRECATED);
         $this->RequestHandler->addInputType('csv', ['I am not callable']);
-        error_reporting($restore);
     }
 
     /**
