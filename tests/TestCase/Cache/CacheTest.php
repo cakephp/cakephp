@@ -823,7 +823,9 @@ class CacheTest extends TestCase
      */
     public function testRegistry()
     {
-        $this->assertInstanceOf(CacheRegistry::class, Cache::registry());
+        $this->deprecated(function () {
+            $this->assertInstanceOf(CacheRegistry::class, Cache::registry());
+        });
     }
 
     /**
@@ -835,9 +837,10 @@ class CacheTest extends TestCase
     public function testRegistrySet()
     {
         $registry = new CacheRegistry();
-        Cache::registry($registry);
-
-        $this->assertSame($registry, Cache::registry());
+        $this->deprecated(function () use ($registry) {
+            Cache::registry($registry);
+            $this->assertSame($registry, Cache::registry());
+        });
     }
 
     /**
