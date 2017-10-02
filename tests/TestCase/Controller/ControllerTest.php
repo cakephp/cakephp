@@ -237,12 +237,6 @@ class ControllerTest extends TestCase
     ];
 
     /**
-     * error level property
-     *
-     */
-    private static $errorLevel;
-
-    /**
      * reset environment.
      *
      * @return void
@@ -264,29 +258,6 @@ class ControllerTest extends TestCase
     {
         parent::tearDown();
         Plugin::unload();
-        error_reporting(self::$errorLevel);
-    }
-
-    /**
-     * setUpBeforeClass
-     *
-     * @return void
-     */
-    public static function setUpBeforeClass()
-    {
-        parent::setUpBeforeClass();
-        self::$errorLevel = error_reporting();
-    }
-
-    /**
-     * tearDownAfterClass
-     *
-     * @return void
-     */
-    public static function tearDownAfterClass()
-    {
-        parent::tearDownAfterClass();
-        error_reporting(self::$errorLevel);
     }
 
     /**
@@ -1128,9 +1099,10 @@ class ControllerTest extends TestCase
     public function testDeprecatedViewProperty($property, $getter, $setter, $value)
     {
         $controller = new AnotherTestController();
-        error_reporting(E_ALL ^ E_USER_DEPRECATED);
-        $controller->$property = $value;
-        $this->assertSame($value, $controller->$property);
+        $this->deprecated(function () use ($controller, $property, $value) {
+            $controller->$property = $value;
+            $this->assertSame($value, $controller->$property);
+        });
         $this->assertSame($value, $controller->viewBuilder()->{$getter}());
     }
 
