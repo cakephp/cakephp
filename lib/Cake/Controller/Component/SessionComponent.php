@@ -153,7 +153,7 @@ class SessionComponent extends Component {
  * @return void
  */
 	public function renew() {
-		return CakeSession::renew();
+		CakeSession::renew();
 	}
 
 /**
@@ -176,7 +176,7 @@ class SessionComponent extends Component {
  * @link https://book.cakephp.org/2.0/en/core-libraries/components/sessions.html#SessionComponent::destroy
  */
 	public function destroy() {
-		return CakeSession::destroy();
+		CakeSession::destroy();
 	}
 
 /**
