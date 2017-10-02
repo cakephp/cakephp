@@ -498,7 +498,7 @@ class Validation
      * @param string|int|null $format any format accepted by IntlDateFormatter
      * @return bool Success
      * @throws \InvalidArgumentException when unsupported $type given
-     * @see \Cake\I18N\Time::parseDate(), \Cake\I18N\Time::parseTime(), \Cake\I18N\Time::parseDateTime()
+     * @see \Cake\I18n\Time::parseDate(), \Cake\I18n\Time::parseTime(), \Cake\I18n\Time::parseDateTime()
      */
     public static function localizedTime($check, $type = 'datetime', $format = null)
     {
