@@ -415,7 +415,7 @@ class Shell extends CakeObject {
  * @param string $command The command name to run on this shell. If this argument is empty,
  *   and the shell has a `main()` method, that will be called instead.
  * @param array $argv Array of arguments to run the shell with. This array should be missing the shell name.
- * @return void
+ * @return int|bool
  * @link https://book.cakephp.org/2.0/en/console-and-shells.html#Shell::runCommand
  */
 	public function runCommand($command, $argv) {
@@ -469,7 +469,7 @@ class Shell extends CakeObject {
  * Display the help in the correct format
  *
  * @param string $command The command to get help for.
- * @return void
+ * @return int|bool
  */
 	protected function _displayHelp($command) {
 		$format = 'text';
@@ -571,7 +571,7 @@ class Shell extends CakeObject {
  * @param string $prompt Prompt text.
  * @param string|array $options Array or string of options.
  * @param string $default Default input value.
- * @return Either the default value, or the user-provided input.
+ * @return string|int the default value, or the user-provided input.
  */
 	protected function _getInput($prompt, $options, $default) {
 		if (!is_array($options)) {
@@ -726,7 +726,7 @@ class Shell extends CakeObject {
  *
  * @param string $title Title of the error
  * @param string $message An optional error message
- * @return void
+ * @return int
  * @link https://book.cakephp.org/2.0/en/console-and-shells.html#Shell::error
  */
 	public function error($title, $message = null) {

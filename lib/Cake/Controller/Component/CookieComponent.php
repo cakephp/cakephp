@@ -494,7 +494,7 @@ class CookieComponent extends Component {
  * Decrypts $value using public $type method in Security class
  *
  * @param array $values Values to decrypt
- * @return string decrypted string
+ * @return array decrypted string
  */
 	protected function _decrypt($values) {
 		$decrypted = array();
@@ -516,7 +516,7 @@ class CookieComponent extends Component {
  * Decodes and decrypts a single value.
  *
  * @param string $value The value to decode & decrypt.
- * @return string Decoded value.
+ * @return string|array Decoded value.
  */
 	protected function _decode($value) {
 		$prefix = 'Q2FrZQ==.';
@@ -552,7 +552,7 @@ class CookieComponent extends Component {
  * Maintains reading backwards compatibility with 1.x CookieComponent::_implode().
  *
  * @param string $string A string containing JSON encoded data, or a bare string.
- * @return array Map of key and values
+ * @return string|array Map of key and values
  */
 	protected function _explode($string) {
 		$first = substr($string, 0, 1);

@@ -166,7 +166,8 @@ class CakeEventManager {
  */
 	public function detach($callable, $eventKey = null) {
 		if ($callable instanceof CakeEventListener) {
-			return $this->_detachSubscriber($callable, $eventKey);
+			$this->_detachSubscriber($callable, $eventKey);
+			return ;
 		}
 		if (empty($eventKey)) {
 			foreach (array_keys($this->_listeners) as $eventKey) {

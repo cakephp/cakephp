@@ -581,10 +581,10 @@ class File {
  */
 	public function clearStatCache($all = false) {
 		if ($all === false && version_compare(PHP_VERSION, '5.3.0') >= 0) {
-			return clearstatcache(true, $this->path);
+			clearstatcache(true, $this->path);
 		}
 
-		return clearstatcache();
+		clearstatcache();
 	}
 
 /**

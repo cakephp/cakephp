@@ -323,7 +323,7 @@ class Folder {
  * Returns true if given $path is a registered stream wrapper.
  *
  * @param string $path Path to check
- * @return boo true If path is registered stream wrapper.
+ * @return bool true If path is registered stream wrapper.
  */
 	public static function isRegisteredStreamWrapper($path) {
 		if (preg_match('/^[A-Z]+(?=:\/\/)/i', $path, $matches) &&

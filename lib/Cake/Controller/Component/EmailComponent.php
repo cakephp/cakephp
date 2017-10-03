@@ -282,7 +282,7 @@ class EmailComponent extends Component {
  *  If you are rendering a template this variable will be sent to the templates as `$content`
  * @param string $template Template to use when sending email
  * @param string $layout Layout to use to enclose email body
- * @return bool Success
+ * @return array Success
  */
 	public function send($content = null, $template = null, $layout = null) {
 		$lib = new CakeEmail();
