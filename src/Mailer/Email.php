@@ -2084,9 +2084,20 @@ class Email implements JsonSerializable, Serializable
         }
         Log::write(
             $config['level'],
-            PHP_EOL . $contents['headers'] . PHP_EOL . PHP_EOL . $contents['message'],
+            PHP_EOL . $this->flatten($contents['headers']) . PHP_EOL . PHP_EOL . $this->flatten($contents['message']),
             $config['scope']
         );
+    }
+
+    /**
+     * Converts given value to string
+     *
+     * @param string|array $value The value to convert
+     * @return string
+     */
+    protected function flatten($value)
+    {
+        return is_array($value) ? implode(';', $value) : (string)$value;
     }
 
     /**
