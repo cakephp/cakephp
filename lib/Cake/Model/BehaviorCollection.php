@@ -204,7 +204,7 @@ class BehaviorCollection extends ObjectCollection implements CakeEventListener {
  * @deprecated 3.0.0 Will be removed in 3.0. Use unload instead.
  */
 	public function detach($name) {
-		$this->unload($name);
+		return $this->unload($name);
 	}
 
 /**

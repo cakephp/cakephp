@@ -88,7 +88,7 @@ class ConsoleErrorHandler {
 		}
 
 		if ($log === LOG_ERR) {
-			$this->_stop(1);
+			return $this->_stop(1);
 		}
 	}
 
