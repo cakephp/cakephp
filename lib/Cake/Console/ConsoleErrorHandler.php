@@ -60,7 +60,7 @@ class ConsoleErrorHandler {
 		));
 		$code = $exception->getCode();
 		$code = ($code && is_int($code)) ? $code : 1;
-		$this->_stop($code);
+		return $this->_stop($code);
 	}
 
 /**
