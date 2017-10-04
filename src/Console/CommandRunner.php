@@ -136,6 +136,7 @@ class CommandRunner
         $io = $io ?: new ConsoleIo();
         $name = $this->resolveName($commands, $io, array_shift($argv));
 
+        $result = Shell::CODE_ERROR;
         $shell = $this->getShell($io, $commands, $name);
         if ($shell instanceof Shell) {
             $result = $this->runShell($shell, $argv);
@@ -236,7 +237,7 @@ class CommandRunner
      *
      * @param string $className Shell class name.
      * @param \Cake\Console\ConsoleIo $io The IO wrapper for the created shell class.
-     * @return \Cake\Console\Shell
+     * @return \Cake\Console\Shell|\Cake\Console\Command
      */
     protected function createShell($className, ConsoleIo $io)
     {

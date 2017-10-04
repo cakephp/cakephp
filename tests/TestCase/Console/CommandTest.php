@@ -134,7 +134,10 @@ class CommandTest extends TestCase
         $command->setName('cake example');
         $output = new ConsoleOutput();
 
-        $this->assertNull($command->run(['-h'], $this->getMockIo($output)));
+        $this->assertSame(
+            Command::CODE_SUCCESS,
+            $command->run(['-h'], $this->getMockIo($output))
+        );
         $messages = implode("\n", $output->messages());
         $this->assertNotContains('Example', $messages);
         $this->assertContains('cake example [-h]', $messages);
@@ -151,7 +154,10 @@ class CommandTest extends TestCase
         $command->setName('cake example');
         $output = new ConsoleOutput();
 
-        $this->assertNull($command->run(['--help'], $this->getMockIo($output)));
+        $this->assertSame(
+            Command::CODE_SUCCESS,
+            $command->run(['--help'], $this->getMockIo($output))
+        );
         $messages = implode("\n", $output->messages());
         $this->assertNotContains('Example', $messages);
         $this->assertContains('cake example [-h]', $messages);

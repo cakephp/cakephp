@@ -174,7 +174,9 @@ class Command
         $this->setOutputLevel($args, $io);
 
         if ($args->getOption('help')) {
-            return $this->displayHelp($parser, $args, $io);
+            $this->displayHelp($parser, $args, $io);
+
+            return static::CODE_SUCCESS;
         }
 
         return $this->execute($args, $io);
