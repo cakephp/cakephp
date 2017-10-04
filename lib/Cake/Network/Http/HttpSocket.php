@@ -760,7 +760,7 @@ class HttpSocket extends CakeSocket {
  *
  * @param string|array $uri URI to parse
  * @param bool|array $base If true use default URI config, otherwise indexed array to set 'scheme', 'host', 'port', etc.
- * @return array Parsed URI
+ * @return array|bool Parsed URI
  */
 	protected function _parseUri($uri = null, $base = array()) {
 		$uriBase = array(

@@ -111,7 +111,7 @@ class CakeEvent {
 /**
  * Stops the event from being used anymore
  *
- * @return void
+ * @return bool
  */
 	public function stopPropagation() {
 		return $this->_stopped = true;

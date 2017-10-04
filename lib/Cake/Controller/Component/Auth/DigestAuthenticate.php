@@ -136,7 +136,7 @@ class DigestAuthenticate extends BasicAuthenticate {
 /**
  * Gets the digest headers from the request/environment.
  *
- * @return array Array of digest information.
+ * @return array|bool|null Array of digest information.
  */
 	protected function _getDigest() {
 		$digest = env('PHP_AUTH_DIGEST');
