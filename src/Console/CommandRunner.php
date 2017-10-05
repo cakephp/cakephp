@@ -169,10 +169,10 @@ class CommandRunner
         if (is_string($instance)) {
             $instance = $this->createShell($instance, $io);
         }
-        if (method_exists($instance, 'setRootName')) {
+        if ($instance instanceof Shell) {
             $instance->setRootName($this->root);
         }
-        if (method_exists($instance, 'setName')) {
+        if ($instance instanceof Command) {
             $instance->setName("{$this->root} {$name}");
         }
         if ($instance instanceof CommandCollectionAwareInterface) {
