@@ -1810,8 +1810,8 @@ HTML;
                 'cl-ean-me'
             ],
             [
-                'cl#ean(me.jpg', ['preserve' => '.'],
-                'cl-ean-me.jpg'
+                'cl#e|an(me.jpg', ['preserve' => '.'],
+                'cl-e-an-me.jpg'
             ],
         ];
     }
