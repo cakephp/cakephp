@@ -316,7 +316,7 @@ class Validation
     /**
      * Compare one field to another.
      *
-     * Return true if the comparison match the expected result.
+     * Return true if the comparison matches the expected result.
      *
      * @param mixed $check The value to find in $field.
      * @param string $field The field to check $check against. This field must be present in $context.
