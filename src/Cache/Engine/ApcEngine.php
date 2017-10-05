@@ -66,9 +66,8 @@ class ApcEngine extends CacheEngine
         if ($duration) {
             $expires = time() + $duration;
         }
-        apcu_store($key . '_expires', $expires, $duration);
 
-        return apcu_store($key, $value, $duration);
+        return apcu_store($key . '_expires', $expires, $duration) === true && apcu_store($key, $value, $duration) === true;
     }
 
     /**
@@ -149,13 +148,13 @@ class ApcEngine extends CacheEngine
                 '/^' . preg_quote($this->_config['prefix'], '/') . '/',
                 APC_ITER_NONE
             );
-            apcu_delete($iterator);
 
-            return true;
+            return apcu_delete($iterator) === true;
         }
-        $cache = apcu_cache_info();
+        $cache = apcu_cache_info();// Shouldn't this throw an exception if false?
         foreach ($cache['cache_list'] as $key) {
             if (strpos($key['info'], $this->_config['prefix']) === 0) {
+                // Shouldn't this throw an exception execption if false?
                 apcu_delete($key['info']);
             }
         }
@@ -181,9 +180,8 @@ class ApcEngine extends CacheEngine
         if ($duration) {
             $expires = time() + $duration;
         }
-        apcu_add($key . '_expires', $expires, $duration);
 
-        return apcu_add($key, $value, $duration);
+        return apcu_add($key, $value, $duration) === true && apcu_add($key . '_expires', $expires, $duration);
     }
 
     /**
@@ -201,11 +199,11 @@ class ApcEngine extends CacheEngine
             }
         }
 
-        $groups = apcu_fetch($this->_compiledGroupNames);
+        $groups = apcu_fetch($this->_compiledGroupNames); // Shouldn't this throw an exception if false?
         if (count($groups) !== count($this->_config['groups'])) {
             foreach ($this->_compiledGroupNames as $group) {
                 if (!isset($groups[$group])) {
-                    apcu_store($group, 1);
+                    apcu_store($group, 1); // Shouldn't this throw an exception if false?
                     $groups[$group] = 1;
                 }
             }
