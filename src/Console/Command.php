@@ -77,7 +77,7 @@ class Command
      */
     public function setName($name)
     {
-        if (strpos($name, ' ') === false) {
+        if (strpos($name, ' ') < 1) {
             throw new InvalidArgumentException(
                 "The name '{$name}' is missing a space. Names should look like `cake routes`"
             );

@@ -78,6 +78,18 @@ class CommandTest extends TestCase
     }
 
     /**
+     * Test invalid name
+     *
+     * @expectedException InvalidArgumentException
+     * @return void
+     */
+    public function testSetNameInvalidLeadingSpace()
+    {
+        $command = new Command();
+        $command->setName(' routes_show');
+    }
+
+    /**
      * Test option parser fetching
      *
      * @return void
