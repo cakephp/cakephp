@@ -411,7 +411,7 @@ class Sqlserver extends DboSource {
 				$rt = ' TOP';
 			}
 			$rt .= sprintf(' %u', $limit);
-			if (is_int($offset) && $offset > 0) {
+			if ((is_int($offset) || ctype_digit($offset)) && $offset > 0) {
 				$rt = sprintf(' OFFSET %u ROWS FETCH FIRST %u ROWS ONLY', $offset, $limit);
 			}
 			return $rt;
