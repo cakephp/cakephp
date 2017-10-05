@@ -306,14 +306,34 @@ class Validation
      * @param string $field The field to check $check against. This field must be present in $context.
      * @param array $context The validation context.
      * @return bool
+     * @deprecated 3.6.0 Use compareFields() instead.
      */
     public static function compareWith($check, $field, $context)
+    {
+        return self::compareFields($check, $field, true, $context);
+    }
+
+    /**
+     * Compare one field to another.
+     *
+     * Return true if the comparison match the expected result.
+     *
+     * @param mixed $check The value to find in $field.
+     * @param string $field The field to check $check against. This field must be present in $context.
+     * @param bool $result The expected result of field comparison.
+     * @param array $context The validation context.
+     * @return bool
+     * @since 3.6.0
+     */
+    public static function compareFields($check, $field, $result, $context)
     {
         if (!isset($context['data'][$field])) {
             return false;
         }
 
-        return $context['data'][$field] === $check;
+        $comparison = $context['data'][$field] === $check;
+
+        return $comparison === $result;
     }
 
     /**

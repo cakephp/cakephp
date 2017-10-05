@@ -2741,28 +2741,53 @@ class ValidationTest extends TestCase
     }
 
     /**
-     * Test the compareWith method.
+     * Test the compareFields method with true result.
      *
      * @return void
      */
-    public function testCompareWith()
+    public function testCompareFieldsTrue()
     {
         $context = [
             'data' => [
                 'other' => 'a value'
             ]
         ];
-        $this->assertTrue(Validation::compareWith('a value', 'other', $context));
+        $this->assertTrue(Validation::compareFields('a value', 'other', true, $context));
 
         $context = [
             'data' => [
                 'other' => 'different'
             ]
         ];
-        $this->assertFalse(Validation::compareWith('a value', 'other', $context));
+        $this->assertFalse(Validation::compareFields('a value', 'other', true, $context));
 
         $context = [];
-        $this->assertFalse(Validation::compareWith('a value', 'other', $context));
+        $this->assertFalse(Validation::compareFields('a value', 'other', true, $context));
+    }
+
+    /**
+     * Test the compareFields method with false result.
+     *
+     * @return void
+     */
+    public function testCompareFieldsFalse()
+    {
+        $context = [
+            'data' => [
+                'other' => 'different'
+            ]
+        ];
+        $this->assertTrue(Validation::compareFields('a value', 'other', false, $context));
+
+        $context = [
+            'data' => [
+                'other' => 'a value'
+            ]
+        ];
+        $this->assertFalse(Validation::compareFields('a value', 'other', false, $context));
+
+        $context = [];
+        $this->assertFalse(Validation::compareFields('a value', 'other', false, $context));
     }
 
     /**
