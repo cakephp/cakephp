@@ -91,8 +91,8 @@ class Hash {
  *
  * - `1.User.name` Get the name of the user at index 1.
  * - `{n}.User.name` Get the name of every user in the set of users.
- * - `{n}.User[id]` Get the name of every user with an id key.
- * - `{n}.User[id>=2]` Get the name of every user with an id key greater than or equal to 2.
+ * - `{n}.User[id].name` Get the name of every user with an id key.
+ * - `{n}.User[id>=2].name` Get the name of every user with an id key greater than or equal to 2.
  * - `{n}.User[username=/^paul/]` Get User elements with username matching `^paul`.
  *
  * @param array $data The data to extract from.
@@ -149,6 +149,7 @@ class Hash {
 		}
 		return $context[$_key];
 	}
+
 /**
  * Split token conditions
  *
@@ -454,7 +455,7 @@ class Hash {
  * The `$format` string can use any format options that `vsprintf()` and `sprintf()` do.
  *
  * @param array $data Source array from which to extract the data
- * @param string $paths An array containing one or more Hash::extract()-style key paths
+ * @param array $paths An array containing one or more Hash::extract()-style key paths
  * @param string $format Format string into which values will be inserted, see sprintf()
  * @return array An array of strings extracted from `$path` and formatted with `$format`
  * @link https://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::format
@@ -729,7 +730,7 @@ class Hash {
  * Counts the dimensions of an array.
  * Only considers the dimension of the first element in the array.
  *
- * If you have an un-even or heterogenous array, consider using Hash::maxDimensions()
+ * If you have an un-even or heterogeneous array, consider using Hash::maxDimensions()
  * to get the dimensions of the array.
  *
  * @param array $data Array to count dimensions on
@@ -809,11 +810,15 @@ class Hash {
  * You can easily count the results of an extract using apply().
  * For example to count the comments on an Article:
  *
- * `$count = Hash::apply($data, 'Article.Comment.{n}', 'count');`
+ * ```
+ * $count = Hash::apply($data, 'Article.Comment.{n}', 'count');
+ * ```
  *
  * You could also use a function like `array_sum` to sum the results.
  *
- * `$total = Hash::apply($data, '{n}.Item.price', 'array_sum');`
+ * ```
+ * $total = Hash::apply($data, '{n}.Item.price', 'array_sum');
+ * ```
  *
  * @param array $data The data to reduce.
  * @param string $path The path to extract from $data.
@@ -833,7 +838,7 @@ class Hash {
  * - `asc` Sort ascending.
  * - `desc` Sort descending.
  *
- * ## Sort types
+ * ### Sort types
  *
  * - `regular` For regular sorting (don't change types)
  * - `numeric` Compare values numerically
