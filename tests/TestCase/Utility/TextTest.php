@@ -1804,7 +1804,15 @@ HTML;
             [
                 'clean!_me.tar.gz', ['preserve' => '.'],
                 'clean-me.tar.gz'
-            ]
+            ],
+            [
+                'cl#ean(me', [],
+                'cl-ean-me'
+            ],
+            [
+                'cl#e|an(me.jpg', ['preserve' => '.'],
+                'cl-e-an-me.jpg'
+            ],
         ];
     }
 

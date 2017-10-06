@@ -172,13 +172,13 @@ class Validation
         }
         $cards = [
             'all' => [
-                'amex' => '/^3[4|7]\\d{13}$/',
+                'amex' => '/^3[47]\\d{13}$/',
                 'bankcard' => '/^56(10\\d\\d|022[1-5])\\d{10}$/',
                 'diners' => '/^(?:3(0[0-5]|[68]\\d)\\d{11})|(?:5[1-5]\\d{14})$/',
                 'disc' => '/^(?:6011|650\\d)\\d{12}$/',
                 'electron' => '/^(?:417500|4917\\d{2}|4913\\d{2})\\d{10}$/',
                 'enroute' => '/^2(?:014|149)\\d{11}$/',
-                'jcb' => '/^(3\\d{4}|2100|1800)\\d{11}$/',
+                'jcb' => '/^(35\\d{3}|2131|1800)\\d{11}$/',
                 'maestro' => '/^(?:5020|6\\d{3})\\d{12}$/',
                 'mc' => '/^(5[1-5]\\d{14})|(2(?:22[1-9]|2[3-9][0-9]|[3-6][0-9]{2}|7[0-1][0-9]|720)\\d{12})$/',
                 'solo' => '/^(6334[5-9][0-9]|6767[0-9]{2})\\d{10}(\\d{2,3})?$/',
@@ -498,7 +498,7 @@ class Validation
      * @param string|int|null $format any format accepted by IntlDateFormatter
      * @return bool Success
      * @throws \InvalidArgumentException when unsupported $type given
-     * @see \Cake\I18N\Time::parseDate(), \Cake\I18N\Time::parseTime(), \Cake\I18N\Time::parseDateTime()
+     * @see \Cake\I18n\Time::parseDate(), \Cake\I18n\Time::parseTime(), \Cake\I18n\Time::parseDateTime()
      */
     public static function localizedTime($check, $type = 'datetime', $format = null)
     {
@@ -899,7 +899,7 @@ class Validation
      *   with an optional port number
      * - an optional valid path
      * - an optional query string (get parameters)
-     * - an optional fragment (anchor tag)
+     * - an optional fragment (anchor tag) as defined in RFC 3986
      *
      * @param string $check Value to check
      * @param bool $strict Require URL to be prefixed by a valid scheme (one of http(s)/ftp(s)/file/news/gopher)
@@ -908,12 +908,16 @@ class Validation
     public static function url($check, $strict = false)
     {
         static::_populateIp();
-        $validChars = '([' . preg_quote('!"$&\'()*+,-.@_:;=~[]') . '\/0-9\p{L}\p{N}]|(%[0-9a-f]{2}))';
+        $alpha = '0-9\p{L}\p{N}';
+        $hex = '(%[0-9a-f]{2})';
+        $subDelimiters = preg_quote('/!"$&\'()*+,-.@_:;=~[]', '/');
+        $path = '([' . $subDelimiters . $alpha . ']|' . $hex . ')';
+        $fragmentAndQuery = '([\?' . $subDelimiters . $alpha . ']|' . $hex . ')';
         $regex = '/^(?:(?:https?|ftps?|sftp|file|news|gopher):\/\/)' . (!empty($strict) ? '' : '?') .
             '(?:' . static::$_pattern['IPv4'] . '|\[' . static::$_pattern['IPv6'] . '\]|' . static::$_pattern['hostname'] . ')(?::[1-9][0-9]{0,4})?' .
-            '(?:\/?|\/' . $validChars . '*)?' .
-            '(?:\?' . $validChars . '*)?' .
-            '(?:#' . $validChars . '*)?$/iu';
+            '(?:\/' . $path . '*)?' .
+            '(?:\?' . $fragmentAndQuery . '*)?' .
+            '(?:#' . $fragmentAndQuery . '*)?$/iu';
 
         return static::_check($check, $regex);
     }

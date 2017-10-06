@@ -266,47 +266,47 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::cc('214981579370225', ['enroute']));
         $this->assertTrue(Validation::cc('201447595859877', ['enroute']));
         // JCB 15 digit
-        $this->assertTrue(Validation::cc('210034762247893', ['jcb']));
+        $this->assertTrue(Validation::cc('213134762247898', ['jcb']));
         $this->assertTrue(Validation::cc('180078671678892', ['jcb']));
         $this->assertTrue(Validation::cc('180010559353736', ['jcb']));
-        $this->assertTrue(Validation::cc('210095474464258', ['jcb']));
-        $this->assertTrue(Validation::cc('210006675562188', ['jcb']));
-        $this->assertTrue(Validation::cc('210063299662662', ['jcb']));
+        $this->assertTrue(Validation::cc('213195474464253', ['jcb']));
+        $this->assertTrue(Validation::cc('213106675562183', ['jcb']));
+        $this->assertTrue(Validation::cc('213163299662667', ['jcb']));
         $this->assertTrue(Validation::cc('180032506857825', ['jcb']));
-        $this->assertTrue(Validation::cc('210057919192738', ['jcb']));
+        $this->assertTrue(Validation::cc('213157919192733', ['jcb']));
         $this->assertTrue(Validation::cc('180031358949367', ['jcb']));
         $this->assertTrue(Validation::cc('180033802147846', ['jcb']));
         // JCB 16 digit
-        $this->assertTrue(Validation::cc('3096806857839939', ['jcb']));
-        $this->assertTrue(Validation::cc('3158699503187091', ['jcb']));
-        $this->assertTrue(Validation::cc('3112549607186579', ['jcb']));
-        $this->assertTrue(Validation::cc('3112332922425604', ['jcb']));
-        $this->assertTrue(Validation::cc('3112001541159239', ['jcb']));
-        $this->assertTrue(Validation::cc('3112162495317841', ['jcb']));
-        $this->assertTrue(Validation::cc('3337562627732768', ['jcb']));
-        $this->assertTrue(Validation::cc('3337107161330775', ['jcb']));
+        $this->assertTrue(Validation::cc('3586806857839936', ['jcb']));
+        $this->assertTrue(Validation::cc('3558699503187097', ['jcb']));
+        $this->assertTrue(Validation::cc('3529549607186576', ['jcb']));
+        $this->assertTrue(Validation::cc('3529332922425601', ['jcb']));
+        $this->assertTrue(Validation::cc('3529001541159236', ['jcb']));
+        $this->assertTrue(Validation::cc('3529162495317848', ['jcb']));
+        $this->assertTrue(Validation::cc('3537562627732766', ['jcb']));
+        $this->assertTrue(Validation::cc('3537107161330773', ['jcb']));
         $this->assertTrue(Validation::cc('3528053736003621', ['jcb']));
         $this->assertTrue(Validation::cc('3528915255020360', ['jcb']));
-        $this->assertTrue(Validation::cc('3096786059660921', ['jcb']));
+        $this->assertTrue(Validation::cc('3546786059660927', ['jcb']));
         $this->assertTrue(Validation::cc('3528264799292320', ['jcb']));
-        $this->assertTrue(Validation::cc('3096469164130136', ['jcb']));
-        $this->assertTrue(Validation::cc('3112127443822853', ['jcb']));
-        $this->assertTrue(Validation::cc('3096849995802328', ['jcb']));
+        $this->assertTrue(Validation::cc('3536469164130134', ['jcb']));
+        $this->assertTrue(Validation::cc('3529127443822850', ['jcb']));
+        $this->assertTrue(Validation::cc('3596849995802323', ['jcb']));
         $this->assertTrue(Validation::cc('3528090735127407', ['jcb']));
-        $this->assertTrue(Validation::cc('3112101006819234', ['jcb']));
-        $this->assertTrue(Validation::cc('3337444428040784', ['jcb']));
-        $this->assertTrue(Validation::cc('3088043154151061', ['jcb']));
-        $this->assertTrue(Validation::cc('3088295969414866', ['jcb']));
-        $this->assertTrue(Validation::cc('3158748843158575', ['jcb']));
-        $this->assertTrue(Validation::cc('3158709206148538', ['jcb']));
-        $this->assertTrue(Validation::cc('3158365159575324', ['jcb']));
-        $this->assertTrue(Validation::cc('3158671691305165', ['jcb']));
+        $this->assertTrue(Validation::cc('3529101006819231', ['jcb']));
+        $this->assertTrue(Validation::cc('3537444428040782', ['jcb']));
+        $this->assertTrue(Validation::cc('3588043154151066', ['jcb']));
+        $this->assertTrue(Validation::cc('3588295969414861', ['jcb']));
+        $this->assertTrue(Validation::cc('3558748843158571', ['jcb']));
+        $this->assertTrue(Validation::cc('3558709206148534', ['jcb']));
+        $this->assertTrue(Validation::cc('3558365159575320', ['jcb']));
+        $this->assertTrue(Validation::cc('3558671691305161', ['jcb']));
         $this->assertTrue(Validation::cc('3528523028771093', ['jcb']));
-        $this->assertTrue(Validation::cc('3096057126267870', ['jcb']));
-        $this->assertTrue(Validation::cc('3158514047166834', ['jcb']));
+        $this->assertTrue(Validation::cc('3576057126267879', ['jcb']));
+        $this->assertTrue(Validation::cc('3558514047166830', ['jcb']));
         $this->assertTrue(Validation::cc('3528274546125962', ['jcb']));
         $this->assertTrue(Validation::cc('3528890967705733', ['jcb']));
-        $this->assertTrue(Validation::cc('3337198811307545', ['jcb']));
+        $this->assertTrue(Validation::cc('3537198811307543', ['jcb']));
         // Maestro (debit card)
         $this->assertTrue(Validation::cc('5020147409985219', ['maestro']));
         $this->assertTrue(Validation::cc('5020931809905616', ['maestro']));
@@ -646,9 +646,9 @@ class ValidationTest extends TestCase
         // enRoute
         $this->assertTrue(Validation::luhn('201496944158937'));
         // JCB 15 digit
-        $this->assertTrue(Validation::luhn('210034762247893'));
+        $this->assertTrue(Validation::luhn('213134762247898'));
         // JCB 16 digit
-        $this->assertTrue(Validation::luhn('3096806857839939'));
+        $this->assertTrue(Validation::luhn('3586806857839936'));
         // Maestro (debit card)
         $this->assertTrue(Validation::luhn('5020147409985219'));
         // Mastercard
@@ -753,9 +753,9 @@ class ValidationTest extends TestCase
         // enRoute
         $this->assertTrue(Validation::cc('201496944158937', 'all'));
         // JCB 15 digit
-        $this->assertTrue(Validation::cc('210034762247893', 'all'));
+        $this->assertTrue(Validation::cc('213134762247898', 'all'));
         // JCB 16 digit
-        $this->assertTrue(Validation::cc('3096806857839939', 'all'));
+        $this->assertTrue(Validation::cc('3586806857839936', 'all'));
         // Maestro (debit card)
         $this->assertTrue(Validation::cc('5020147409985219', 'all'));
         // Mastercard
@@ -804,9 +804,9 @@ class ValidationTest extends TestCase
         // enRoute
         $this->assertTrue(Validation::cc('201496944158937', 'all', true));
         // JCB 15 digit
-        $this->assertTrue(Validation::cc('210034762247893', 'all', true));
+        $this->assertTrue(Validation::cc('213134762247898', 'all', true));
         // JCB 16 digit
-        $this->assertTrue(Validation::cc('3096806857839939', 'all', true));
+        $this->assertTrue(Validation::cc('3586806857839936', 'all', true));
         // Maestro (debit card)
         $this->assertTrue(Validation::cc('5020147409985219', 'all', true));
         // Mastercard
@@ -2138,6 +2138,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::url('https://cakephp.org'));
         $this->assertTrue(Validation::url('https://www.cakephp.org/somewhere#anchor'));
         $this->assertTrue(Validation::url('https://192.168.0.1'));
+        $this->assertTrue(Validation::url('https://example.com/kibana/app/kibana#/dashboard/4422c500-8e1b?_g=()'));
         $this->assertTrue(Validation::url('ftps://www.cakephp.org/pub/cake'));
         $this->assertTrue(Validation::url('ftps://cakephp.org/pub/cake'));
         $this->assertTrue(Validation::url('ftps://192.168.0.1/pub/cake'));

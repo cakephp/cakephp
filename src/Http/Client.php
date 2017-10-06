@@ -91,6 +91,7 @@ use Zend\Diactoros\Uri;
  * specify which authentication strategy you want to use.
  * CakePHP comes with built-in support for basic authentication.
  *
+ * @mixin \Cake\Core\InstanceConfigTrait
  */
 class Client
 {
