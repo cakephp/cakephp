@@ -16,6 +16,7 @@ namespace Cake\Cache\Engine;
 
 use APCUIterator;
 use Cake\Cache\CacheEngine;
+use RuntimeException;
 
 /**
  * APC storage engine for cache
@@ -67,7 +68,8 @@ class ApcEngine extends CacheEngine
             $expires = time() + $duration;
         }
 
-        return apcu_store($key . '_expires', $expires, $duration) === true && apcu_store($key, $value, $duration) === true;
+        return apcu_store($key . '_expires', $expires, $duration) === true
+            && apcu_store($key, $value, $duration) === true;
     }
 
     /**
@@ -137,6 +139,8 @@ class ApcEngine extends CacheEngine
      * @param bool $check If true, nothing will be cleared, as entries are removed
      *    from APC as they expired. This flag is really only used by FileEngine.
      * @return bool True Returns true.
+     * @throws RuntimeException If cache info cannot be retrieved from APCu cache.
+     * @throws RuntimeException If cache a stored key could not be removed from APCu cache. 
      */
     public function clear($check)
     {
@@ -151,11 +155,16 @@ class ApcEngine extends CacheEngine
 
             return apcu_delete($iterator) === true;
         }
-        $cache = apcu_cache_info();// Shouldn't this throw an exception if false?
+        $cache = apcu_cache_info();
+        if ($cache === false) {
+            throw new RuntimeException('Could not retrieve cache info from APCu cache.');
+        } 
         foreach ($cache['cache_list'] as $key) {
             if (strpos($key['info'], $this->_config['prefix']) === 0) {
-                // Shouldn't this throw an exception execption if false?
-                apcu_delete($key['info']);
+                if (apcu_delete($key['info']) === false) {
+                    throw new RuntimeException(
+                        sprintf('Failed to remove stored key "%s" from APCu cache.', $key['info']));
+                }
             }
         }
 
@@ -181,7 +190,8 @@ class ApcEngine extends CacheEngine
             $expires = time() + $duration;
         }
 
-        return apcu_add($key, $value, $duration) === true && apcu_add($key . '_expires', $expires, $duration);
+        return apcu_add($key, $value, $duration) === true
+            && apcu_add($key . '_expires', $expires, $duration) === true;
     }
 
     /**
@@ -190,6 +200,8 @@ class ApcEngine extends CacheEngine
      * the group accordingly.
      *
      * @return array
+     * @throws RuntimeException If key or keyy cannot be fetched from APCu cache.
+     * @throws RuntimeExcetpion If a key cannot be stored to APCu cache.
      */
     public function groups()
     {
@@ -199,12 +211,23 @@ class ApcEngine extends CacheEngine
             }
         }
 
-        $groups = apcu_fetch($this->_compiledGroupNames); // Shouldn't this throw an exception if false?
+        $groups = apcu_fetch($this->_compiledGroupNames);
+        if ($groups === false) {
+            throw new RuntimeException(sprintf(
+                'Failed to fetch %s "%s" from APCu cache.',
+                count($this->_compiledGroupNames) === 1 ? 'key' : 'keys'
+                join(',' $this->_compiledGroupNames)
+            ));
+        }
         if (count($groups) !== count($this->_config['groups'])) {
             foreach ($this->_compiledGroupNames as $group) {
                 if (!isset($groups[$group])) {
-                    apcu_store($group, 1); // Shouldn't this throw an exception if false?
-                    $groups[$group] = 1;
+                    $value = 1;
+                    if (apcu_store($group, $value) === false) {
+                        throw new RuntimeException(
+                            sprintf('Failed to store key "%s" with value "%s" into APCu cache.', $group, $value));
+                    }
+                    $groups[$group] = $value;
                 }
             }
             ksort($groups);
