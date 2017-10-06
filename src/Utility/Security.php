@@ -51,7 +51,7 @@ class Security
      * Create a hash from string using given method.
      *
      * @param string $string String to hash
-     * @param string|null $type Hashing algo to use (i.e. sha1, sha256 etc.).
+     * @param string|null $algorithm Hashing algo to use (i.e. sha1, sha256 etc.).
      *   Can be any valid algo included in list returned by hash_algos().
      *   If no value is passed the type specified by `Security::$hashType` is used.
      * @param mixed $salt If true, automatically prepends the application's salt
@@ -59,19 +59,19 @@ class Security
      * @return string Hash
      * @link https://book.cakephp.org/3.0/en/core-libraries/security.html#hashing-data
      */
-    public static function hash($string, $type = null, $salt = false)
+    public static function hash($string, $algorithm = null, $salt = false)
     {
-        if (empty($type)) {
-            $type = static::$hashType;
+        if (empty($algorithm)) {
+            $algorithm = static::$hashType;
         }
-        $type = strtolower($type);
+        $algorithm = strtolower($algorithm);
 
-        $hashAlgos = hash_algos();
-        if (!in_array($type, $hashAlgos)) {
+        $availableAlgorithms = hash_algos();
+        if (!in_array($algorithm, $availableAlgorithms)) {
             throw new RuntimeException(sprintf(
                 'The hash type `%s` was not found. Available algorithms are: %s',
-                $type,
-                implode(', ', $hashAlgos)
+                $algorithm,
+                implode(', ', $availableAlgorithms)
             ));
         }
 
@@ -82,7 +82,7 @@ class Security
             $string = $salt . $string;
         }
 
-        return hash($type, $string);
+        return hash($algorithm, $string);
     }
 
     /**
