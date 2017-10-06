@@ -306,7 +306,6 @@ class Validation
      * @param string $field The field to check $check against. This field must be present in $context.
      * @param array $context The validation context.
      * @return bool
-     * @deprecated 3.6.0 Use compareFields() instead.
      */
     public static function compareWith($check, $field, $context)
     {
