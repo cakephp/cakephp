@@ -467,6 +467,10 @@ class ConsoleOptionParserTest extends TestCase
         $this->assertEquals('name', $result[1]->name());
         $this->assertEquals('bag', $result[2]->name());
         $this->assertSame([0, 1, 2], array_keys($result));
+        $this->assertEquals(
+            ['other', 'name', 'bag'],
+            $parser->argumentNames()
+        );
     }
 
     /**
