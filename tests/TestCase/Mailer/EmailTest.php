@@ -280,7 +280,7 @@ class EmailTest extends TestCase
      */
     public function testToUnderscoreDomain()
     {
-        $result = $this->Email->to('cake@cake_php.org');
+        $result = $this->Email->setTo('cake@cake_php.org');
         $expected = ['cake@cake_php.org' => 'cake@cake_php.org'];
         $this->assertSame($expected, $this->Email->to());
         $this->assertSame($this->Email, $result);
