@@ -220,7 +220,7 @@ class ApcEngine extends CacheEngine
      *
      * @return array
      * @throws RuntimeException If key or keyy cannot be fetched from APCu cache.
-     * @throws RuntimeExcetpion If a key cannot be stored to APCu cache.
+     * @throws RuntimeException If a key cannot be stored to APCu cache.
      * @link https://secure.php.net/manual/en/function.apcu-fetch.php
      * @link https://secure.php.net/manual/en/function.apcu-store.php
      */
