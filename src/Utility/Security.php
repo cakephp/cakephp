@@ -66,6 +66,15 @@ class Security
         }
         $type = strtolower($type);
 
+        $hashAlgos = hash_algos();
+        if (!in_array($type, $hashAlgos)) {
+            throw new RuntimeException(sprintf(
+                'The hash type `%s` was not found. Available algorithms are: %s',
+                $type,
+                implode(', ', $hashAlgos)
+            ));
+        }
+
         if ($salt) {
             if (!is_string($salt)) {
                 $salt = static::$_salt;
