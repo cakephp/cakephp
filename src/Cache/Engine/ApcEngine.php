@@ -19,7 +19,7 @@ use Cake\Cache\CacheEngine;
 use RuntimeException;
 
 /**
- * APC storage engine for cache
+ * APCu storage engine for cache
  */
 class ApcEngine extends CacheEngine
 {
@@ -57,6 +57,7 @@ class ApcEngine extends CacheEngine
      * @param string $key Identifier for the data
      * @param mixed $value Data to be cached
      * @return bool True if the data was successfully cached, false on failure
+     * @link https://secure.php.net/manual/en/function.apcu-store.php
      */
     public function write($key, $value)
     {
@@ -78,18 +79,29 @@ class ApcEngine extends CacheEngine
      * @param string $key Identifier for the data
      * @return mixed The cached data, or false if the data doesn't exist,
      *   has expired, or if there was an error fetching it
+     * @throws RuntimeException If stored key could not be fetched from APCu cache.
+     * @link https://secure.php.net/manual/en/function.apcu-fetch.php
      */
     public function read($key)
     {
         $key = $this->_key($key);
 
         $time = time();
-        $cachetime = (int)apcu_fetch($key . '_expires');
+        $success = false;
+        $cachetime = (int)apcu_fetch($key . '_expires', $success);
+        if ($success === false) {
+            throw new RuntimeException(sprintf('Failed to fetch key "%s" from APCu cache.', $key . '_expires'));
+        }
         if ($cachetime !== 0 && ($cachetime < $time || ($time + $this->_config['duration']) < $cachetime)) {
             return false;
         }
 
-        return apcu_fetch($key);
+        $success = false;
+        $value = apcu_fetch($key, $success);
+        if ($success === false) {
+            throw new RuntimeException(sprintf('Failed to fetch key "%s" from APCu cache.', $key));
+        }
+        return $value;
     }
 
     /**
@@ -98,6 +110,7 @@ class ApcEngine extends CacheEngine
      * @param string $key Identifier for the data
      * @param int $offset How much to increment
      * @return bool|int New incremented value, false otherwise
+     * @link https://secure.php.net/manual/en/function.apcu-inc.php
      */
     public function increment($key, $offset = 1)
     {
@@ -112,6 +125,7 @@ class ApcEngine extends CacheEngine
      * @param string $key Identifier for the data
      * @param int $offset How much to subtract
      * @return bool|int New decremented value, false otherwise
+     * @link https://secure.php.net/manual/en/function.apcu-dec.php
      */
     public function decrement($key, $offset = 1)
     {
@@ -125,6 +139,7 @@ class ApcEngine extends CacheEngine
      *
      * @param string $key Identifier for the data
      * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
+     * @link https://secure.php.net/manual/en/function.apcu-delete.php
      */
     public function delete($key)
     {
@@ -140,7 +155,9 @@ class ApcEngine extends CacheEngine
      *    from APC as they expired. This flag is really only used by FileEngine.
      * @return bool True Returns true.
      * @throws RuntimeException If cache info cannot be retrieved from APCu cache.
-     * @throws RuntimeException If cache a stored key could not be removed from APCu cache.
+     * @throws RuntimeException If a stored key could not be removed from APCu cache.
+     * @link https://secure.php.net/manual/en/function.apcu-cache-info.php
+     * @link https://secure.php.net/manual/en/function.apcu-delete.php
      */
     public function clear($check)
     {
@@ -179,7 +196,7 @@ class ApcEngine extends CacheEngine
      * @param string $key Identifier for the data.
      * @param mixed $value Data to be cached.
      * @return bool True if the data was successfully cached, false on failure.
-     * @link https://secure.php.net/manual/en/function.apc-add.php
+     * @link https://secure.php.net/manual/en/function.apcu-add.php
      */
     public function add($key, $value)
     {
@@ -203,6 +220,8 @@ class ApcEngine extends CacheEngine
      * @return array
      * @throws RuntimeException If key or keyy cannot be fetched from APCu cache.
      * @throws RuntimeExcetpion If a key cannot be stored to APCu cache.
+     * @link https://secure.php.net/manual/en/function.apcu-fetch.php
+     * @link https://secure.php.net/manual/en/function.apcu-store.php
      */
     public function groups()
     {
@@ -212,8 +231,9 @@ class ApcEngine extends CacheEngine
             }
         }
 
-        $groups = apcu_fetch($this->_compiledGroupNames);
-        if ($groups === false) {
+        $success = false;
+        $groups = apcu_fetch($this->_compiledGroupNames, $success);
+        if ($success === false) {
             throw new RuntimeException(sprintf(
                 'Failed to fetch %s "%s" from APCu cache.',
                 count($this->_compiledGroupNames) === 1 ? 'key' : 'keys'
@@ -250,6 +270,7 @@ class ApcEngine extends CacheEngine
      *
      * @param string $group The group to clear.
      * @return bool success
+     * @link https://secure.php.net/manual/en/function.apcu-inc.php
      */
     public function clearGroup($group)
     {
