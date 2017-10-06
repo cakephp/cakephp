@@ -101,6 +101,7 @@ class ApcEngine extends CacheEngine
         if ($success === false) {
             throw new RuntimeException(sprintf('Failed to fetch key "%s" from APCu cache.', $key));
         }
+
         return $value;
     }
 
