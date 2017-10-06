@@ -16,7 +16,7 @@ namespace Cake\Console;
 
 use Cake\Console\Exception\ConsoleException;
 use Cake\Console\Exception\StopException;
-use Cake\Core\Configure;
+use Cake\Core\App;
 use Cake\Core\Plugin;
 use Cake\Datasource\ModelAwareTrait;
 use Cake\Filesystem\File;
@@ -27,6 +27,7 @@ use Cake\Utility\MergeVariablesTrait;
 use Cake\Utility\Text;
 use ReflectionException;
 use ReflectionMethod;
+use RuntimeException;
 
 /**
  * Base class for command-line utilities for automating programmer chores.
@@ -197,6 +198,8 @@ class Shell
         if (isset($this->modelClass)) {
             $this->loadModel();
         }
+
+        $this->loadTasks();
     }
 
     /**
@@ -300,6 +303,16 @@ class Shell
         }
         $this->_taskMap = $this->Tasks->normalizeArray((array)$this->tasks);
         $this->taskNames = array_merge($this->taskNames, array_keys($this->_taskMap));
+
+        foreach ($this->_taskMap as $taskName => $task) {
+            $class = App::className($task['class'], 'Shell/Task', 'Task');
+            if (!class_exists($class)) {
+                throw new RuntimeException(sprintf(
+                    'Task `%s` not found. Maybe you made a typo or a plugin is missing or not loaded?',
+                    $taskName
+                ));
+            }
+        }
 
         return true;
     }
