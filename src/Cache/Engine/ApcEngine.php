@@ -140,7 +140,7 @@ class ApcEngine extends CacheEngine
      *    from APC as they expired. This flag is really only used by FileEngine.
      * @return bool True Returns true.
      * @throws RuntimeException If cache info cannot be retrieved from APCu cache.
-     * @throws RuntimeException If cache a stored key could not be removed from APCu cache. 
+     * @throws RuntimeException If cache a stored key could not be removed from APCu cache.
      */
     public function clear($check)
     {
@@ -163,7 +163,8 @@ class ApcEngine extends CacheEngine
             if (strpos($key['info'], $this->_config['prefix']) === 0) {
                 if (apcu_delete($key['info']) === false) {
                     throw new RuntimeException(
-                        sprintf('Failed to remove stored key "%s" from APCu cache.', $key['info']));
+                        sprintf('Failed to remove stored key "%s" from APCu cache.', $key['info'])
+                    );
                 }
             }
         }
@@ -225,7 +226,8 @@ class ApcEngine extends CacheEngine
                     $value = 1;
                     if (apcu_store($group, $value) === false) {
                         throw new RuntimeException(
-                            sprintf('Failed to store key "%s" with value "%s" into APCu cache.', $group, $value));
+                            sprintf('Failed to store key "%s" with value "%s" into APCu cache.', $group, $value)
+                        );
                     }
                     $groups[$group] = $value;
                 }
