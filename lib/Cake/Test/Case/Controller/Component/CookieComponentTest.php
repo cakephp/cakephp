@@ -430,6 +430,24 @@ class CookieComponentTest extends CakeTestCase {
 	}
 
 /**
+ * Test that replacing scalar with array works.
+ *
+ * @return void
+ */
+	public function testReplaceScalarWithArray() {
+		$this->Cookie->write('foo', 1);
+		$this->Cookie->write('foo.bar', 2);
+
+		$data = $this->Cookie->read();
+		$expected = array(
+			'foo' => array(
+				'bar' => 2
+			)
+		);
+		$this->assertEquals($expected, $data);
+	}
+
+/**
  * testReadingCookieValue
  *
  * @return void
