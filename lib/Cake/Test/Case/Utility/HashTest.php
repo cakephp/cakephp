@@ -1356,7 +1356,7 @@ class HashTest extends CakeTestCase {
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = Hash::sort($items, '{n}.Item.image', 'asc', array('type' => 'natural', 'ignoreCase' => true));
+		$result = Hash::sort($items, '{n}.Item.image', 'asc', array('type' => 'NATURAL', 'ignoreCase' => true));
 		$expected = array(
 			array('Item' => array('image' => 'img1.jpg')),
 			array('Item' => array('image' => 'img2.jpg')),
@@ -1530,6 +1530,58 @@ class HashTest extends CakeTestCase {
 	}
 
 /**
+ * Test sorting on a nested key that is sometimes undefined.
+ *
+ * @return void
+ */
+	public function testSortSparse() {
+		$data = array(
+			array(
+				'id' => 1,
+				'title' => 'element 1',
+				'extra' => 1,
+			),
+			array(
+				'id' => 2,
+				'title' => 'element 2',
+				'extra' => 2,
+			),
+			array(
+				'id' => 3,
+				'title' => 'element 3',
+			),
+			array(
+				'id' => 4,
+				'title' => 'element 4',
+				'extra' => 4,
+			)
+		);
+		$result = Hash::sort($data, '{n}.extra', 'desc', 'natural');
+		$expected = array(
+			array(
+				'id' => 4,
+				'title' => 'element 4',
+				'extra' => 4,
+			),
+			array(
+				'id' => 2,
+				'title' => 'element 2',
+				'extra' => 2,
+			),
+			array(
+				'id' => 1,
+				'title' => 'element 1',
+				'extra' => 1,
+			),
+			array(
+				'id' => 3,
+				'title' => 'element 3',
+			),
+		);
+		$this->assertSame($expected, $result);
+	}
+
+/**
  * Test insert()
  *
  * @return void
@@ -1591,6 +1643,17 @@ class HashTest extends CakeTestCase {
 			1 => array('Item' => array('id' => 2, 'title' => 'second', 'test' => 2)),
 			2 => array('Item' => array('id' => 3, 'title' => 'third')),
 			3 => array('Item' => array('id' => 4, 'title' => 'fourth', 'test' => 2)),
+			4 => array('Item' => array('id' => 5, 'title' => 'fifth')),
+		);
+		$this->assertEquals($expected, $result);
+
+		$data[3]['testable'] = true;
+		$result = Hash::insert($data, '{n}[testable].Item[id=/\b2|\b4/].test', 2);
+		$expected = array(
+			0 => array('Item' => array('id' => 1, 'title' => 'first')),
+			1 => array('Item' => array('id' => 2, 'title' => 'second')),
+			2 => array('Item' => array('id' => 3, 'title' => 'third')),
+			3 => array('Item' => array('id' => 4, 'title' => 'fourth', 'test' => 2), 'testable' => true),
 			4 => array('Item' => array('id' => 5, 'title' => 'fifth')),
 		);
 		$this->assertEquals($expected, $result);
@@ -1686,6 +1749,43 @@ class HashTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 		$result = Hash::remove($array, '{n}.{n}.part');
 		$this->assertEquals($expected, $result);
+
+		$array = array(
+			'foo' => 'string',
+		);
+		$expected = $array;
+		$result = Hash::remove($array, 'foo.bar');
+		$this->assertEquals($expected, $result);
+
+		$array = array(
+			'foo' => 'string',
+			'bar' => array(
+				0 => 'a',
+				1 => 'b',
+			),
+		);
+		$expected = array(
+			'foo' => 'string',
+			'bar' => array(
+				1 => 'b',
+			),
+		);
+		$result = Hash::remove($array, '{s}.0');
+		$this->assertEquals($expected, $result);
+
+		$array = array(
+			'foo' => array(
+				0 => 'a',
+				1 => 'b',
+			),
+		);
+		$expected = array(
+			'foo' => array(
+				1 => 'b',
+			),
+		);
+		$result = Hash::remove($array, 'foo[1=b].0');
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -1718,6 +1818,17 @@ class HashTest extends CakeTestCase {
 		$expected = array(
 			0 => array('Item' => array('id' => 1, 'title' => 'first')),
 			2 => array('Item' => array('id' => 3, 'title' => 'third')),
+			4 => array('Item' => array('id' => 5, 'title' => 'fifth')),
+		);
+		$this->assertEquals($expected, $result);
+
+		$data[3]['testable'] = true;
+		$result = Hash::remove($data, '{n}[testable].Item[id=/\b2|\b4/].title');
+		$expected = array(
+			0 => array('Item' => array('id' => 1, 'title' => 'first')),
+			1 => array('Item' => array('id' => 2, 'title' => 'second')),
+			2 => array('Item' => array('id' => 3, 'title' => 'third')),
+			3 => array('Item' => array('id' => 4), 'testable' => true),
 			4 => array('Item' => array('id' => 5, 'title' => 'fifth')),
 		);
 		$this->assertEquals($expected, $result);

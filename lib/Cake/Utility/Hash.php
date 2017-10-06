@@ -91,8 +91,8 @@ class Hash {
  *
  * - `1.User.name` Get the name of the user at index 1.
  * - `{n}.User.name` Get the name of every user in the set of users.
- * - `{n}.User[id]` Get the name of every user with an id key.
- * - `{n}.User[id>=2]` Get the name of every user with an id key greater than or equal to 2.
+ * - `{n}.User[id].name` Get the name of every user with an id key.
+ * - `{n}.User[id>=2].name` Get the name of every user with an id key greater than or equal to 2.
  * - `{n}.User[username=/^paul/]` Get User elements with username matching `^paul`.
  *
  * @param array $data The data to extract from.
@@ -149,6 +149,7 @@ class Hash {
 		}
 		return $context[$_key];
 	}
+
 /**
  * Split token conditions
  *
@@ -274,12 +275,10 @@ class Hash {
 
 		foreach ($data as $k => $v) {
 			if (static::_matchToken($k, $token)) {
-				if ($conditions && static::_matches($v, $conditions)) {
-					$data[$k] = array_merge($v, $values);
-					continue;
-				}
-				if (!$conditions) {
-					$data[$k] = static::insert($v, $nextPath, $values);
+				if (!$conditions || static::_matches($v, $conditions)) {
+					$data[$k] = $nextPath
+						? static::insert($v, $nextPath, $values)
+						: array_merge($v, (array)$values);
 				}
 			}
 		}
@@ -301,9 +300,6 @@ class Hash {
 		$count = count($path);
 		$last = $count - 1;
 		foreach ($path as $i => $key) {
-			if ((is_numeric($key) && intval($key) > 0 || $key === '0') && strpos($key, '0') !== 0) {
-				$key = (int)$key;
-			}
 			if ($op === 'insert') {
 				if ($i === $last) {
 					$_list[$key] = $values;
@@ -318,7 +314,9 @@ class Hash {
 				}
 			} elseif ($op === 'remove') {
 				if ($i === $last) {
-					unset($_list[$key]);
+					if (is_array($_list)) {
+						unset($_list[$key]);
+					}
 					return $data;
 				}
 				if (!isset($_list[$key])) {
@@ -358,15 +356,21 @@ class Hash {
 		foreach ($data as $k => $v) {
 			$match = static::_matchToken($k, $token);
 			if ($match && is_array($v)) {
-				if ($conditions && static::_matches($v, $conditions)) {
-					unset($data[$k]);
-					continue;
+				if ($conditions) {
+					if (static::_matches($v, $conditions)) {
+						if ($nextPath !== '') {
+							$data[$k] = static::remove($v, $nextPath);
+						} else {
+							unset($data[$k]);
+						}
+					}
+				} else {
+					$data[$k] = static::remove($v, $nextPath);
 				}
-				$data[$k] = static::remove($v, $nextPath);
 				if (empty($data[$k])) {
 					unset($data[$k]);
 				}
-			} elseif ($match && empty($nextPath)) {
+			} elseif ($match && $nextPath === '') {
 				unset($data[$k]);
 			}
 		}
@@ -454,7 +458,7 @@ class Hash {
  * The `$format` string can use any format options that `vsprintf()` and `sprintf()` do.
  *
  * @param array $data Source array from which to extract the data
- * @param string $paths An array containing one or more Hash::extract()-style key paths
+ * @param array $paths An array containing one or more Hash::extract()-style key paths
  * @param string $format Format string into which values will be inserted, see sprintf()
  * @return array An array of strings extracted from `$path` and formatted with `$format`
  * @link https://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::format
@@ -729,7 +733,7 @@ class Hash {
  * Counts the dimensions of an array.
  * Only considers the dimension of the first element in the array.
  *
- * If you have an un-even or heterogenous array, consider using Hash::maxDimensions()
+ * If you have an un-even or heterogeneous array, consider using Hash::maxDimensions()
  * to get the dimensions of the array.
  *
  * @param array $data Array to count dimensions on
@@ -809,11 +813,15 @@ class Hash {
  * You can easily count the results of an extract using apply().
  * For example to count the comments on an Article:
  *
- * `$count = Hash::apply($data, 'Article.Comment.{n}', 'count');`
+ * ```
+ * $count = Hash::apply($data, 'Article.Comment.{n}', 'count');
+ * ```
  *
  * You could also use a function like `array_sum` to sum the results.
  *
- * `$total = Hash::apply($data, '{n}.Item.price', 'array_sum');`
+ * ```
+ * $total = Hash::apply($data, '{n}.Item.price', 'array_sum');
+ * ```
  *
  * @param array $data The data to reduce.
  * @param string $path The path to extract from $data.
@@ -833,7 +841,7 @@ class Hash {
  * - `asc` Sort ascending.
  * - `desc` Sort descending.
  *
- * ## Sort types
+ * ### Sort types
  *
  * - `regular` For regular sorting (don't change types)
  * - `numeric` Compare values numerically
@@ -868,12 +876,18 @@ class Hash {
 			$data = array_values($data);
 		}
 		$sortValues = static::extract($data, $path);
-		$sortCount = count($sortValues);
 		$dataCount = count($data);
 
 		// Make sortValues match the data length, as some keys could be missing
 		// the sorted value path.
-		if ($sortCount < $dataCount) {
+		$missingData = count($sortValues) < $dataCount;
+		if ($missingData && $numeric) {
+			// Get the path without the leading '{n}.'
+			$itemPath = substr($path, 4);
+			foreach ($data as $key => $value) {
+				$sortValues[$key] = static::get($value, $itemPath);
+			}
+		} elseif ($missingData) {
 			$sortValues = array_pad($sortValues, $dataCount, null);
 		}
 		$result = static::_squash($sortValues);
@@ -888,9 +902,8 @@ class Hash {
 			$type += array('ignoreCase' => false, 'type' => 'regular');
 			$ignoreCase = $type['ignoreCase'];
 			$type = $type['type'];
-		} else {
-			$type = strtolower($type);
 		}
+		$type = strtolower($type);
 
 		if ($type === 'natural' && version_compare(PHP_VERSION, '5.4.0', '<')) {
 			$type = 'regular';
