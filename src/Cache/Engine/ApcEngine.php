@@ -158,7 +158,7 @@ class ApcEngine extends CacheEngine
         $cache = apcu_cache_info();
         if ($cache === false) {
             throw new RuntimeException('Could not retrieve cache info from APCu cache.');
-        } 
+        }
         foreach ($cache['cache_list'] as $key) {
             if (strpos($key['info'], $this->_config['prefix']) === 0) {
                 if (apcu_delete($key['info']) === false) {
