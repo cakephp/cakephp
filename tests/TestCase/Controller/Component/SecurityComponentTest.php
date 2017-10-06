@@ -156,6 +156,7 @@ class SecurityComponentTest extends TestCase
     public function setUp()
     {
         parent::setUp();
+        session_id('cli');
 
         $this->server = $_SERVER;
         $session = new Session();
