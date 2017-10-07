@@ -139,7 +139,7 @@ class CakeSession {
  *
  * @var bool
  */
-    protected static $_isCLI = false;
+	protected static $_isCLI = false;
 
 /**
  * Pseudo constructor.
@@ -605,10 +605,10 @@ class CakeSession {
  */
 	protected static function _hasSession() {
 		return static::started()
-            || !ini_get('session.use_cookies')
-            || isset($_COOKIE[static::_cookieName()])
-            || static::$_isCLI
-            || (ini_get('session.use_trans_sid') && isset($_GET[session_name()]));
+			|| !ini_get('session.use_cookies')
+			|| isset($_COOKIE[static::_cookieName()])
+			|| static::$_isCLI
+			|| (ini_get('session.use_trans_sid') && isset($_GET[session_name()]));
 	}
 
 /**
