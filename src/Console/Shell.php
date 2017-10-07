@@ -198,8 +198,6 @@ class Shell
         if (isset($this->modelClass)) {
             $this->loadModel();
         }
-
-        $this->loadTasks();
     }
 
     /**
@@ -304,6 +302,19 @@ class Shell
         $this->_taskMap = $this->Tasks->normalizeArray((array)$this->tasks);
         $this->taskNames = array_merge($this->taskNames, array_keys($this->_taskMap));
 
+        $this->_validateTasks();
+
+        return true;
+    }
+
+    /**
+     * Checks that the tasks in the task map are actually available
+     *
+     * @throws \RuntimeException
+     * @return void
+     */
+    protected function _validateTasks()
+    {
         foreach ($this->_taskMap as $taskName => $task) {
             $class = App::className($task['class'], 'Shell/Task', 'Task');
             if (!class_exists($class)) {
@@ -313,8 +324,6 @@ class Shell
                 ));
             }
         }
-
-        return true;
     }
 
     /**
