@@ -909,7 +909,7 @@ class Validation
     {
         static::_populateIp();
 
-        $emoji = '\x{1F300}-\x{1F6FF}';
+        $emoji = '\x{1F190}-\x{1F9EF}';
         $alpha = '0-9(\p{L}\p{N}' . $emoji;
         $hex = '(%[0-9a-f]{2})';
         $subDelimiters = preg_quote('/!"$&\'()*+,-.@_:;=~[]', '/');
