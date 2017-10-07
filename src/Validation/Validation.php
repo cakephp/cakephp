@@ -904,6 +904,7 @@ class Validation
      * @param string $check Value to check
      * @param bool $strict Require URL to be prefixed by a valid scheme (one of http(s)/ftp(s)/file/news/gopher)
      * @return bool Success
+     * @link https://tools.ietf.org/html/rfc3986
      */
     public static function url($check, $strict = false)
     {
