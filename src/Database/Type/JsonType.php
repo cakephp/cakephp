@@ -15,6 +15,7 @@
 namespace Cake\Database\Type;
 
 use Cake\Database\Driver;
+use Cake\Database\Driver\Postgres;
 use Cake\Database\Type;
 use Cake\Database\TypeInterface;
 use InvalidArgumentException;
@@ -63,7 +64,12 @@ class JsonType extends Type implements TypeInterface
             throw new InvalidArgumentException('Cannot convert a resource value to JSON');
         }
 
-        return json_encode($value);
+        $options = 0;
+        if ($driver instanceof Postgres) {
+            $options = JSON_UNESCAPED_UNICODE;
+        }
+
+        return json_encode($value, $options);
     }
 
     /**
