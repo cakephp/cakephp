@@ -908,7 +908,9 @@ class Validation
     public static function url($check, $strict = false)
     {
         static::_populateIp();
-        $alpha = '0-9\p{L}\p{N}';
+
+        $emoji = '\x{1F300}-\x{1F6FF}';
+        $alpha = '0-9(\p{L}\p{N}' . $emoji;
         $hex = '(%[0-9a-f]{2})';
         $subDelimiters = preg_quote('/!"$&\'()*+,-.@_:;=~[]', '/');
         $path = '([' . $subDelimiters . $alpha . ']|' . $hex . ')';
