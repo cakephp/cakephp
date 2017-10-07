@@ -215,7 +215,7 @@ abstract class Cell
             try {
                 return $this->View->render($template);
             } catch (MissingTemplateException $e) {
-                throw new MissingCellViewException(['file' => $template, 'name' => $name]);
+                throw new MissingCellViewException(['file' => $template, 'name' => $name], null, $e);
             }
         };
 

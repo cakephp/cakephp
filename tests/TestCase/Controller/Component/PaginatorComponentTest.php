@@ -19,6 +19,7 @@ use Cake\Controller\Component\PaginatorComponent;
 use Cake\Controller\Controller;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
+use Cake\Datasource\Exception\PageOutOfBoundsException;
 use Cake\Datasource\Paginator;
 use Cake\Http\ServerRequest;
 use Cake\Network\Exception\NotFoundException;
@@ -720,16 +721,21 @@ class PaginatorComponentTest extends TestCase
         $this->request->query['page'] = 3000;
 
         $table = TableRegistry::get('PaginatorPosts');
+
+        $e = null;
         try {
             $this->Paginator->paginate($table);
-            $this->fail('No exception raised');
         } catch (NotFoundException $e) {
-            $this->assertEquals(
-                1,
-                $this->request->params['paging']['PaginatorPosts']['page'],
-                'Page number should not be 0'
-            );
         }
+
+        $this->assertEquals(
+            1,
+            $this->request->params['paging']['PaginatorPosts']['page'],
+            'Page number should not be 0'
+        );
+
+        $this->assertNotNull($e);
+        $this->assertInstanceOf(PageOutOfBoundsException::class, $e->getPrevious());
     }
 
     /**
@@ -744,16 +750,21 @@ class PaginatorComponentTest extends TestCase
         $this->request->query['page'] = 4;
 
         $table = TableRegistry::get('PaginatorPosts');
+
+        $e = null;
         try {
             $this->Paginator->paginate($table);
-            $this->fail('No exception raised');
         } catch (NotFoundException $e) {
-            $this->assertEquals(
-                3,
-                $this->request->params['paging']['PaginatorPosts']['pageCount'],
-                'Page count number should not be 0'
-            );
         }
+
+        $this->assertEquals(
+            3,
+            $this->request->params['paging']['PaginatorPosts']['pageCount'],
+            'Page count number should not be 0'
+        );
+
+        $this->assertNotNull($e);
+        $this->assertInstanceOf(PageOutOfBoundsException::class, $e->getPrevious());
     }
 
     /**

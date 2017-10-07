@@ -277,7 +277,6 @@ class SocketTest extends TestCase
     /**
      * testEnableCryptoSocketExceptionNoTls
      *
-     * @expectedException \Cake\Network\Exception\SocketException
      * @return void
      */
     public function testEnableCryptoSocketExceptionNoTls()
@@ -287,7 +286,15 @@ class SocketTest extends TestCase
         // testing exception on no ssl socket server for ssl and tls methods
         $this->Socket = new Socket($configNoSslOrTls);
         $this->Socket->connect();
-        $this->Socket->enableCrypto('tls', 'client');
+
+        $e = null;
+        try {
+            $this->Socket->enableCrypto('tls', 'client');
+        } catch (SocketException $e) {
+        }
+
+        $this->assertNotNull($e);
+        $this->assertInstanceOf('Exception', $e->getPrevious());
     }
 
     /**
