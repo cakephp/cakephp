@@ -2181,7 +2181,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::url('http://www.electrohome.ro/images/239537750-284232-215_300[1].jpg'));
         $this->assertTrue(Validation::url('http://www.eräume.foo'));
         $this->assertTrue(Validation::url('http://äüö.eräume.foo'));
-        $this->assertTrue(Validation::url('http://www.domain.com/👹'), 'utf8Extended path failed');
+        $this->assertTrue(Validation::url('http://www.domain.com/👹/🧀'), 'utf8Extended path failed');
 
         $this->assertTrue(Validation::url('http://cakephp.org:80'));
         $this->assertTrue(Validation::url('http://cakephp.org:443'));
