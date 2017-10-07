@@ -181,9 +181,7 @@ class Cache
             }
 
             if ($config['fallback'] === $name) {
-                throw new InvalidArgumentException(
-                    sprintf('"%s" cache configuration cannot fallback to itself.', $name)
-                );
+                throw new InvalidArgumentException(sprintf('"%s" cache configuration cannot fallback to itself.', $name), null, $e);
             }
 
             $fallbackEngine = clone static::engine($config['fallback']);

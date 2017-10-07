@@ -224,7 +224,7 @@ class Connection implements ConnectionInterface
         try {
             return $this->_driver->connect();
         } catch (\Exception $e) {
-            throw new MissingConnectionException(['reason' => $e->getMessage()]);
+            throw new MissingConnectionException(['reason' => $e->getMessage()], null, $e);
         }
     }
 

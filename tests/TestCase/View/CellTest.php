@@ -17,6 +17,8 @@ namespace Cake\Test\TestCase\View;
 use Cake\Cache\Cache;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
+use Cake\View\Exception\MissingCellViewException;
+use Cake\View\Exception\MissingTemplateException;
 use Cake\View\View;
 use TestApp\Controller\CellTraitTestController;
 use TestApp\View\CustomJsonView;
@@ -192,13 +194,21 @@ class CellTest extends TestCase
     /**
      * Tests manual render() invocation with error
      *
-     * @expectedException \Cake\View\Exception\MissingCellViewException
      * @return void
      */
     public function testCellManualRenderError()
     {
         $cell = $this->View->cell('Articles');
-        $cell->render('derp');
+
+        $e = null;
+        try {
+            $cell->render('derp');
+        } catch (MissingCellViewException $e) {
+        }
+
+        $this->assertNotNull($e);
+        $this->assertEquals('Cell view file "derp" is missing.', $e->getMessage());
+        $this->assertInstanceOf(MissingTemplateException::class, $e->getPrevious());
     }
 
     /**

@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\Database;
 
 use Cake\Database\Connection;
 use Cake\Database\Driver\Mysql;
+use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Exception\NestedTransactionRollbackException;
 use Cake\Database\Log\LoggingStatement;
 use Cake\Database\Log\QueryLogger;
@@ -161,7 +162,6 @@ class ConnectionTest extends TestCase
     /**
      * Tests that connecting with invalid credentials or database name throws an exception
      *
-     * @expectedException \Cake\Database\Exception\MissingConnectionException
      * @return void
      */
     public function testWrongCredentials()
@@ -169,7 +169,16 @@ class ConnectionTest extends TestCase
         $config = ConnectionManager::getConfig('test');
         $this->skipIf(isset($config['url']), 'Datasource has dsn, skipping.');
         $connection = new Connection(['database' => '/dev/nonexistent'] + ConnectionManager::getConfig('test'));
-        $connection->connect();
+
+        $e = null;
+        try {
+            $connection->connect();
+        } catch (MissingConnectionException $e) {
+        }
+
+        $this->assertNotNull($e);
+        $this->assertStringStartsWith('Connection to database could not be established:', $e->getMessage());
+        $this->assertInstanceOf('PDOException', $e->getPrevious());
     }
 
     /**
