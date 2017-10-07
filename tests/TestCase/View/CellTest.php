@@ -17,9 +17,9 @@ namespace Cake\Test\TestCase\View;
 use Cake\Cache\Cache;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
-use Cake\View\View;
 use Cake\View\Exception\MissingCellViewException;
 use Cake\View\Exception\MissingTemplateException;
+use Cake\View\View;
 use TestApp\Controller\CellTraitTestController;
 use TestApp\View\CustomJsonView;
 
