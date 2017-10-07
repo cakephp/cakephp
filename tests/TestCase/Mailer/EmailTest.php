@@ -282,7 +282,7 @@ class EmailTest extends TestCase
     {
         $result = $this->Email->setTo('cake@cake_php.org');
         $expected = ['cake@cake_php.org' => 'cake@cake_php.org'];
-        $this->assertSame($expected, $this->Email->to());
+        $this->assertSame($expected, $this->Email->getTo());
         $this->assertSame($this->Email, $result);
     }
 
