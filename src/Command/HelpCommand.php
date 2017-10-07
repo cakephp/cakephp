@@ -50,7 +50,7 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
      *
      * @param \Cake\Console\Arguments $args The command arguments.
      * @param \Cake\Console\ConsoleIo $io The console io
-     * @return int|null
+     * @return int
      */
     public function execute(Arguments $args, ConsoleIo $io)
     {
@@ -75,9 +75,11 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
         if ($args->getOption('xml')) {
             $this->asXml($io, $commands);
 
-            return;
+            return static::CODE_SUCCESS;
         }
         $this->asText($io, $commands);
+
+        return static::CODE_SUCCESS;
     }
 
     /**

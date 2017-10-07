@@ -75,6 +75,7 @@ class CommandTask extends Shell
     protected function _findShells($shellList, $path, $key, $skip)
     {
         $shells = $this->_scanDir($path);
+
         return $this->_appendShells($key, $shells, $shellList, $skip);
     }
 
