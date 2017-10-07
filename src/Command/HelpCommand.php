@@ -9,16 +9,18 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         3.5.0
+ * @since         3.6.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Command;
 
-namespace Cake\Shell;
-
+use Cake\Console\Arguments;
+use Cake\Console\Command;
 use Cake\Console\CommandCollection;
 use Cake\Console\CommandCollectionAwareInterface;
+use Cake\Console\ConsoleIo;
+use Cake\Console\ConsoleOptionParser;
 use Cake\Console\ConsoleOutput;
-use Cake\Console\Shell;
 use Cake\Shell\Task\CommandTask;
 use Cake\Utility\Inflector;
 use SimpleXmlElement;
@@ -26,7 +28,7 @@ use SimpleXmlElement;
 /**
  * Print out command list
  */
-class HelpShell extends Shell implements CommandCollectionAwareInterface
+class HelpCommand extends Command implements CommandCollectionAwareInterface
 {
     /**
      * The command collection to get help on.
@@ -34,18 +36,6 @@ class HelpShell extends Shell implements CommandCollectionAwareInterface
      * @var \Cake\Console\CommandCollection
      */
     protected $commands;
-
-    /**
-     * startup
-     *
-     * @return void
-     */
-    public function startup()
-    {
-        if (!$this->param('xml')) {
-            parent::startup();
-        }
-    }
 
     /**
      * {@inheritDoc}
@@ -58,34 +48,36 @@ class HelpShell extends Shell implements CommandCollectionAwareInterface
     /**
      * Main function Prints out the list of shells.
      *
-     * @return void
+     * @param \Cake\Console\Arguments $args The command arguments.
+     * @param \Cake\Console\ConsoleIo $io The console io
+     * @return int|null
      */
-    public function main()
+    public function execute(Arguments $args, ConsoleIo $io)
     {
-        if (!$this->param('xml')) {
-            $this->out('<info>Current Paths:</info>', 2);
-            $this->out('* app:  ' . APP_DIR);
-            $this->out('* root: ' . rtrim(ROOT, DIRECTORY_SEPARATOR));
-            $this->out('* core: ' . rtrim(CORE_PATH, DIRECTORY_SEPARATOR));
-            $this->out('');
+        if (!$args->getOption('xml')) {
+            $io->out('<info>Current Paths:</info>', 2);
+            $io->out('* app:  ' . APP_DIR);
+            $io->out('* root: ' . rtrim(ROOT, DIRECTORY_SEPARATOR));
+            $io->out('* core: ' . rtrim(CORE_PATH, DIRECTORY_SEPARATOR));
+            $io->out('');
 
-            $this->out('<info>Available Commands:</info>', 2);
+            $io->out('<info>Available Commands:</info>', 2);
         }
 
         if (!$this->commands) {
-            $this->commands = new CommandCollection($this->getCommands());
+            $this->commands = new CommandCollection($this->getCommands($io));
         }
 
         $commands = $this->commands->getIterator();
         $commands->ksort();
         $commands = new CommandCollection((array)$commands);
 
-        if ($this->param('xml')) {
-            $this->asXml($commands);
+        if ($args->getOption('xml')) {
+            $this->asXml($io, $commands);
 
             return;
         }
-        $this->asText($commands);
+        $this->asText($io, $commands);
     }
 
     /**
@@ -94,11 +86,12 @@ class HelpShell extends Shell implements CommandCollectionAwareInterface
      * Provides backwards compatibility when an application doesn't use
      * CommandRunner.
      *
+     * @param \Cake\Console\ConsoleIo $io The console io
      * @return array
      */
-    protected function getCommands()
+    protected function getCommands($io)
     {
-        $task = new CommandTask($this->getIo());
+        $task = new CommandTask($io);
         $nested = $task->getShellList();
         $out = [];
         foreach ($nested as $section => $commands) {
@@ -117,27 +110,29 @@ class HelpShell extends Shell implements CommandCollectionAwareInterface
     /**
      * Output text.
      *
+     * @param \Cake\Console\ConsoleIo $io The console io
      * @param \Cake\Console\CommandCollection $commands The command collection to output.
      * @return void
      */
-    protected function asText($commands)
+    protected function asText($io, $commands)
     {
         foreach ($commands as $name => $class) {
-            $this->out('- ' . $name);
+            $io->out('- ' . $name);
         }
-        $this->out('');
+        $io->out('');
 
-        $this->out('To run a command, type <info>`cake shell_name [args|options]`</info>');
-        $this->out('To get help on a specific command, type <info>`cake shell_name --help`</info>', 2);
+        $io->out('To run a command, type <info>`cake shell_name [args|options]`</info>');
+        $io->out('To get help on a specific command, type <info>`cake shell_name --help`</info>', 2);
     }
 
     /**
      * Output as XML
      *
+     * @param \Cake\Console\ConsoleIo $io The console io
      * @param \Cake\Console\CommandCollection $commands The command collection to output
      * @return void
      */
-    protected function asXml($commands)
+    protected function asXml($io, $commands)
     {
         $shells = new SimpleXmlElement('<shells></shells>');
         foreach ($commands as $name => $class) {
@@ -147,19 +142,18 @@ class HelpShell extends Shell implements CommandCollectionAwareInterface
             $shell->addAttribute('provider', $class);
             $shell->addAttribute('help', $name . ' -h');
         }
-        $this->_io->setOutputAs(ConsoleOutput::RAW);
-        $this->out($shells->saveXML());
+        $io->setOutputAs(ConsoleOutput::RAW);
+        $io->out($shells->saveXML());
     }
 
     /**
      * Gets the option parser instance and configures it.
      *
+     * @param \Cake\Console\ConsoleOptionParser $parser The parser to build
      * @return \Cake\Console\ConsoleOptionParser
      */
-    public function getOptionParser()
+    protected function buildOptionParser(ConsoleOptionParser $parser)
     {
-        $parser = parent::getOptionParser();
-
         $parser->setDescription(
             'Get the list of available shells for this application.'
         )->addOption('xml', [

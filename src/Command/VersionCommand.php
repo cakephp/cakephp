@@ -9,27 +9,30 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         3.5.0
+ * @since         3.6.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Command;
 
-namespace Cake\Shell;
-
-use Cake\Console\Shell;
+use Cake\Console\Arguments;
+use Cake\Console\ConsoleIo;
+use Cake\Console\Command;
 use Cake\Core\Configure;
 
 /**
  * Print out the version of CakePHP in use.
  */
-class VersionShell extends Shell
+class VersionCommand extends Command
 {
     /**
      * Print out the version of CakePHP in use.
      *
-     * @return void
+     * @param \Cake\Console\Arguments $args The command arguments.
+     * @param \Cake\Console\ConsoleIo $io The console io
+     * @return int|null
      */
-    public function main()
+    public function execute(Arguments $args, ConsoleIo $io)
     {
-        $this->out(Configure::version());
+        $io->out(Configure::version());
     }
 }

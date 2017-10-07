@@ -12,7 +12,7 @@
  * @since         3.5.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Shell;
+namespace Cake\Test\TestCase\Command;
 
 use Cake\Console\Shell;
 use Cake\Core\Plugin;
