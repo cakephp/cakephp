@@ -22,7 +22,7 @@ use Cake\Core\Configure;
 use Cake\Http\BaseApplication;
 use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
-use TestApp\Command\ExampleCommand;
+use TestApp\Command\DemoCommand;
 use TestApp\Shell\SampleShell;
 
 /**
@@ -286,7 +286,7 @@ class CommandRunnerTest extends TestCase
      */
     public function testRunValidCommandClass()
     {
-        $app = $this->makeAppWithCommands(['ex' => ExampleCommand::class]);
+        $app = $this->makeAppWithCommands(['ex' => DemoCommand::class]);
         $output = new ConsoleOutput();
 
         $runner = new CommandRunner($app, 'cake');
@@ -294,7 +294,7 @@ class CommandRunnerTest extends TestCase
         $this->assertSame(Shell::CODE_SUCCESS, $result);
 
         $messages = implode("\n", $output->messages());
-        $this->assertContains('Example Command!', $messages);
+        $this->assertContains('Demo Command!', $messages);
     }
 
     /**
@@ -304,7 +304,7 @@ class CommandRunnerTest extends TestCase
      */
     public function testRunValidCommandClassHelp()
     {
-        $app = $this->makeAppWithCommands(['ex' => ExampleCommand::class]);
+        $app = $this->makeAppWithCommands(['ex' => DemoCommand::class]);
         $output = new ConsoleOutput();
 
         $runner = new CommandRunner($app, 'cake');
@@ -313,7 +313,7 @@ class CommandRunnerTest extends TestCase
 
         $messages = implode("\n", $output->messages());
         $this->assertContains("\ncake ex [-h]", $messages);
-        $this->assertNotContains('Example Command!', $messages);
+        $this->assertNotContains('Demo Command!', $messages);
     }
 
     /**
