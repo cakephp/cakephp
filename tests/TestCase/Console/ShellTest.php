@@ -28,7 +28,7 @@ use TestApp\Shell\TestingDispatchShell;
 class MergeShell extends Shell
 {
 
-    public $tasks = ['DbConfig', 'Fixture'];
+    public $tasks = ['Command', 'Extract'];
 
     public $modelClass = 'Articles';
 }
@@ -170,7 +170,7 @@ class ShellTest extends TestCase
         static::setAppNamespace();
 
         Plugin::load('TestPlugin');
-        $this->Shell->tasks = ['DbConfig' => ['one', 'two']];
+        $this->Shell->tasks = ['Extract' => ['one', 'two']];
         $this->Shell->plugin = 'TestPlugin';
         $this->Shell->modelClass = 'TestPlugin.TestPluginComments';
         $this->Shell->initialize();
@@ -704,15 +704,28 @@ class ShellTest extends TestCase
      */
     public function testHasTask()
     {
-        $this->Shell->tasks = ['Extract', 'DbConfig'];
+        $this->Shell->tasks = ['Extract', 'Assets'];
         $this->Shell->loadTasks();
 
         $this->assertTrue($this->Shell->hasTask('extract'));
         $this->assertTrue($this->Shell->hasTask('Extract'));
         $this->assertFalse($this->Shell->hasTask('random'));
 
-        $this->assertTrue($this->Shell->hasTask('db_config'));
-        $this->assertTrue($this->Shell->hasTask('DbConfig'));
+        $this->assertTrue($this->Shell->hasTask('assets'));
+        $this->assertTrue($this->Shell->hasTask('Assets'));
+    }
+
+    /**
+     * test task loading exception
+     *
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Task `DoesNotExist` not found. Maybe you made a typo or a plugin is missing or not loaded?
+     * @return void
+     */
+    public function testMissingTaskException()
+    {
+        $this->Shell->tasks = ['DoesNotExist'];
+        $this->Shell->loadTasks();
     }
 
     /**
