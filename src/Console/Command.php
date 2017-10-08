@@ -240,6 +240,7 @@ class Command
      *
      * @param int $code The exit code to use.
      * @throws \Cake\Console\Exception\ConsoleException
+     * @return void
      */
     public function abort($code = self::CODE_ERROR)
     {
