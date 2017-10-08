@@ -63,16 +63,14 @@ class EntityRouteTest extends TestCase
      */
     public function testInvalidEntityValueException()
     {
-        $route = $route = new EntityRoute('/',
-            [
-                '_name' => 'articlesView',
-                '_entity' => 'Something else',
-            ]
-        );
+        $route = $route = new EntityRoute('/', [
+            '_name' => 'articlesView',
+            '_entity' => 'Something else'
+        ]);
 
         $route->match([
             '_entity' => 'something-else',
-            '_name' => 'articlesView',
+            '_name' => 'articlesView'
         ]);
     }
 }
