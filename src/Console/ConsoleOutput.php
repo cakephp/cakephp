@@ -95,7 +95,7 @@ class ConsoleOutput
      */
     protected static $_foregroundColors = [
         'black' => 30,
-        'red' => 91,
+        'red' => 31,
         'green' => 32,
         'yellow' => 33,
         'blue' => 34,
