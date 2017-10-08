@@ -576,7 +576,7 @@ EXPECTED;
     public function testEventManagerReset1()
     {
         $eventManager = EventManager::instance();
-        $this->assertInstanceOf('Cake\Event\EventManager', $eventManager);
+        $this->assertInstanceOf(EventManager::class, $eventManager);
 
         return $eventManager;
     }
@@ -589,7 +589,19 @@ EXPECTED;
      */
     public function testEventManagerReset2($prevEventManager)
     {
-        $this->assertInstanceOf('Cake\Event\EventManager', $prevEventManager);
+        $this->assertInstanceOf(EventManager::class, $prevEventManager);
         $this->assertNotSame($prevEventManager, EventManager::instance());
+    }
+
+    /**
+     * testing getVarType()
+     *
+     * @return void
+     */
+    public function testGetVarType()
+    {
+        $this->assertEquals('stdClass', getVarType(new \stdClass()));
+        $this->assertEquals('array', getVarType([]));
+        $this->assertEquals('string', getVarType(''));
     }
 }

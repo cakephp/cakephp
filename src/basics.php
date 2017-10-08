@@ -156,14 +156,14 @@ if (!function_exists('loadPHPUnitAliases')) {
     }
 }
 
-if (!function_exists('get_var_type')) {
+if (!function_exists('getVarType')) {
     /**
      * Returns the objects class or var type of it's not an object
      *
      * @param mixed $var Variable to check
      * @return string Returns the class name or variable type
      */
-    function get_var_type($var)
+    function getVarType($var)
     {
         return is_object($var) ? get_class($var) : gettype($var);
     }

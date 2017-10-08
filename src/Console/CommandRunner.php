@@ -119,7 +119,7 @@ class CommandRunner
         ]);
         $commands = $this->app->console($commands);
         if (!($commands instanceof CommandCollection)) {
-            $type = get_var_type($commands);
+            $type = getVarType($commands);
             throw new RuntimeException(
                 "The application's `console` method did not return a CommandCollection." .
                 " Got '{$type}' instead."
