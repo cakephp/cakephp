@@ -60,7 +60,8 @@ class EntityRouteTest extends TestCase
      *
      * @return void
      */
-    public function testMatchingArray() {
+    public function testMatchingArray()
+    {
         $entity = [
             'category_id' => 2,
             'slug' => 'article-slug'
