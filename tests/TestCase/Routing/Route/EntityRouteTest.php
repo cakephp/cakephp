@@ -28,12 +28,43 @@ class EntityRouteTest extends TestCase
      *
      * @return void
      */
-    public function testMatchBasic()
+    public function testMatchEntityObject()
     {
         $entity = new Article([
             'category_id' => 2,
             'slug' => 'article-slug'
         ]);
+
+        $route = $route = new EntityRoute(
+            '/articles/:category_id/:slug',
+            [
+                '_name' => 'articlesView',
+                '_entity' => $entity,
+                'controller' => 'articles',
+                'action' => 'view'
+            ]
+        );
+
+        $result = $route->match([
+            '_entity' => $entity,
+            '_name' => 'articlesView',
+            'controller' => 'articles',
+            'action' => 'view'
+        ]);
+
+        $this->assertEquals('/articles/2/article-slug', $result);
+    }
+
+    /**
+     * test that routes match their pattern.
+     *
+     * @return void
+     */
+    public function testMatchingArray() {
+        $entity = [
+            'category_id' => 2,
+            'slug' => 'article-slug'
+        ];
 
         $route = $route = new EntityRoute(
             '/articles/:category_id/:slug',

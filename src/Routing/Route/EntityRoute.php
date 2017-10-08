@@ -14,11 +14,16 @@
  */
 namespace Cake\Routing\Route;
 
+use ArrayAccess;
 use Cake\Datasource\EntityInterface;
 use RuntimeException;
 
 /**
  * Matches entities to routes
+ *
+ * This route will match by entity and map its fields to the URL pattern by
+ * comparing the field names with the template vars. This makes it easy and
+ * convenient to change routes globally.
  */
 class EntityRoute extends Route
 {
@@ -57,7 +62,7 @@ class EntityRoute extends Route
      */
     protected function _checkEntity($entity)
     {
-        if (!$entity instanceof EntityInterface) {
+        if (!$entity instanceof ArrayAccess && !is_array($entity)) {
             throw new RuntimeException(sprintf(
                 'Route `%s` expects the URL option `_entity` to be `%s`, but `%s` passed.',
                 $this->template,
