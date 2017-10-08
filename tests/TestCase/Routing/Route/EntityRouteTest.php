@@ -54,4 +54,25 @@ class EntityRouteTest extends TestCase
 
         $this->assertEquals('/articles/2/article-slug', $result);
     }
+
+    /**
+     * Test invalid entity option value
+     *
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Route `/` expects the URL option `_entity` to be `Cake\Datasource\EntityInterface`, but `string` passed.
+     */
+    public function testInvalidEntityValueException()
+    {
+        $route = $route = new EntityRoute('/',
+            [
+                '_name' => 'articlesView',
+                '_entity' => 'Something else',
+            ]
+        );
+
+        $route->match([
+            '_entity' => 'something-else',
+            '_name' => 'articlesView',
+        ]);
+    }
 }
