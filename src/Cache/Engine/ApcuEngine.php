@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         1.2.0
+ * @since         3.5.4
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Cache\Engine;
@@ -18,9 +18,9 @@ use APCUIterator;
 use Cake\Cache\CacheEngine;
 
 /**
- * APC storage engine for cache
+ * APCu storage engine for cache
  */
-class ApcEngine extends CacheEngine
+class ApcuEngine extends CacheEngine
 {
 
     /**
@@ -44,7 +44,6 @@ class ApcEngine extends CacheEngine
         if (!extension_loaded('apcu')) {
             return false;
         }
-
         parent::init($config);
 
         return true;
@@ -56,6 +55,7 @@ class ApcEngine extends CacheEngine
      * @param string $key Identifier for the data
      * @param mixed $value Data to be cached
      * @return bool True if the data was successfully cached, false on failure
+     * @link https://secure.php.net/manual/en/function.apcu-store.php
      */
     public function write($key, $value)
     {
@@ -66,9 +66,9 @@ class ApcEngine extends CacheEngine
         if ($duration) {
             $expires = time() + $duration;
         }
-        apcu_store($key . '_expires', $expires, $duration);
 
-        return apcu_store($key, $value, $duration);
+        return apcu_store($key . '_expires', $expires, $duration) === true
+            && apcu_store($key, $value, $duration) === true;
     }
 
     /**
@@ -77,18 +77,29 @@ class ApcEngine extends CacheEngine
      * @param string $key Identifier for the data
      * @return mixed The cached data, or false if the data doesn't exist,
      *   has expired, or if there was an error fetching it
+     * @link https://secure.php.net/manual/en/function.apcu-fetch.php
      */
     public function read($key)
     {
         $key = $this->_key($key);
 
         $time = time();
-        $cachetime = (int)apcu_fetch($key . '_expires');
+        $success = false;
+        $cachetime = (int)apcu_fetch($key . '_expires', $success);
+        if ($success === false) {
+            $this->warn(sprintf('Failed to fetch key "%s" from APCu cache.', $key . '_expires'));
+        }
         if ($cachetime !== 0 && ($cachetime < $time || ($time + $this->_config['duration']) < $cachetime)) {
             return false;
         }
 
-        return apcu_fetch($key);
+        $success = false;
+        $value = apcu_fetch($key, $success);
+        if ($success === false) {
+            $this->warn(sprintf('Failed to fetch key "%s" from APCu cache.', $key));
+        }
+
+        return $value;
     }
 
     /**
@@ -97,6 +108,7 @@ class ApcEngine extends CacheEngine
      * @param string $key Identifier for the data
      * @param int $offset How much to increment
      * @return bool|int New incremented value, false otherwise
+     * @link https://secure.php.net/manual/en/function.apcu-inc.php
      */
     public function increment($key, $offset = 1)
     {
@@ -111,6 +123,7 @@ class ApcEngine extends CacheEngine
      * @param string $key Identifier for the data
      * @param int $offset How much to subtract
      * @return bool|int New decremented value, false otherwise
+     * @link https://secure.php.net/manual/en/function.apcu-dec.php
      */
     public function decrement($key, $offset = 1)
     {
@@ -124,6 +137,7 @@ class ApcEngine extends CacheEngine
      *
      * @param string $key Identifier for the data
      * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
+     * @link https://secure.php.net/manual/en/function.apcu-delete.php
      */
     public function delete($key)
     {
@@ -138,6 +152,8 @@ class ApcEngine extends CacheEngine
      * @param bool $check If true, nothing will be cleared, as entries are removed
      *    from APC as they expired. This flag is really only used by FileEngine.
      * @return bool True Returns true.
+     * @link https://secure.php.net/manual/en/function.apcu-cache-info.php
+     * @link https://secure.php.net/manual/en/function.apcu-delete.php
      */
     public function clear($check)
     {
@@ -149,14 +165,25 @@ class ApcEngine extends CacheEngine
                 '/^' . preg_quote($this->_config['prefix'], '/') . '/',
                 APC_ITER_NONE
             );
-            apcu_delete($iterator);
+            if (apcu_delete($iterator) === false) {
+                $this->warn(
+                    sprintf('Failed to remove stored key "%s" from APCu cache.', $key['info'])
+                );
+            }
 
             return true;
         }
         $cache = apcu_cache_info();
+        if ($cache === false) {
+            $this->warn('Could not retrieve cache info from APCu cache.');
+        }
         foreach ($cache['cache_list'] as $key) {
             if (strpos($key['info'], $this->_config['prefix']) === 0) {
-                apcu_delete($key['info']);
+                if (apcu_delete($key['info']) === false) {
+                    $this->warn(
+                        sprintf('Failed to remove stored key "%s" from APCu cache.', $key['info'])
+                    );
+                }
             }
         }
 
@@ -170,7 +197,7 @@ class ApcEngine extends CacheEngine
      * @param string $key Identifier for the data.
      * @param mixed $value Data to be cached.
      * @return bool True if the data was successfully cached, false on failure.
-     * @link https://secure.php.net/manual/en/function.apc-add.php
+     * @link https://secure.php.net/manual/en/function.apcu-add.php
      */
     public function add($key, $value)
     {
@@ -181,9 +208,9 @@ class ApcEngine extends CacheEngine
         if ($duration) {
             $expires = time() + $duration;
         }
-        apcu_add($key . '_expires', $expires, $duration);
 
-        return apcu_add($key, $value, $duration);
+        return apcu_add($key, $value, $duration) === true
+            && apcu_add($key . '_expires', $expires, $duration) === true;
     }
 
     /**
@@ -192,6 +219,8 @@ class ApcEngine extends CacheEngine
      * the group accordingly.
      *
      * @return array
+     * @link https://secure.php.net/manual/en/function.apcu-fetch.php
+     * @link https://secure.php.net/manual/en/function.apcu-store.php
      */
     public function groups()
     {
@@ -201,12 +230,25 @@ class ApcEngine extends CacheEngine
             }
         }
 
-        $groups = apcu_fetch($this->_compiledGroupNames);
+        $success = false;
+        $groups = apcu_fetch($this->_compiledGroupNames, $success);
+        if ($success === false) {
+            $this->warn(sprintf(
+                'Failed to fetch %s "%s" from APCu cache.',
+                count($this->_compiledGroupNames) === 1 ? 'key' : 'keys',
+                join(',', $this->_compiledGroupNames)
+            ));
+        }
         if (count($groups) !== count($this->_config['groups'])) {
             foreach ($this->_compiledGroupNames as $group) {
                 if (!isset($groups[$group])) {
-                    apcu_store($group, 1);
-                    $groups[$group] = 1;
+                    $value = 1;
+                    if (apcu_store($group, $value) === false) {
+                        $this->warn(
+                            sprintf('Failed to store key "%s" with value "%s" into APCu cache.', $group, $value)
+                        );
+                    }
+                    $groups[$group] = $value;
                 }
             }
             ksort($groups);
@@ -227,6 +269,7 @@ class ApcEngine extends CacheEngine
      *
      * @param string $group The group to clear.
      * @return bool success
+     * @link https://secure.php.net/manual/en/function.apcu-inc.php
      */
     public function clearGroup($group)
     {
