@@ -113,11 +113,10 @@ class Command
 
         $parser = $this->buildOptionParser($parser);
         if (!($parser instanceof ConsoleOptionParser)) {
-            $actualType = is_object($parser) ? get_class($parser) : gettype($parser);
             throw new RuntimeException(sprintf(
                 "Invalid option parser returned from buildOptionParser(). Expected %s, got %s",
                 ConsoleOptionParser::class,
-                $actualType
+                get_var_type($parser)
             ));
         }
 

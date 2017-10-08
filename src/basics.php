@@ -155,3 +155,16 @@ if (!function_exists('loadPHPUnitAliases')) {
         require_once dirname(__DIR__) . DS . 'tests' . DS . 'phpunit_aliases.php';
     }
 }
+
+if (!function_exists('get_var_type')) {
+    /**
+     * Returns the objects class or var type of it's not an object
+     *
+     * @param mixed $var Variable to check
+     * @return string Returns the class name or variable type
+     */
+    function get_var_type($var)
+    {
+        return is_object($var) ? get_class($var) : gettype($var);
+    }
+}
