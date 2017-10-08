@@ -141,7 +141,6 @@ class FormHelperTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        session_id('');
 
         Configure::write('Config.language', 'eng');
         Configure::write('App.base', '');
@@ -1133,8 +1132,11 @@ class FormHelperTest extends TestCase
     {
         $this->Form->request->params['_Token'] = 'foo';
 
-        $result = $this->Form->secure(['anything']);
-        $this->assertRegExp('/b9731869b9915e3dee6250db1a1fad464371fb94/', $result);
+        $fields = ['anything'];
+        $result = $this->Form->secure($fields);
+
+        $hash = hash_hmac('sha1', serialize($fields) . session_id(), Security::salt());
+        $this->assertContains($hash, $result);
     }
 
     /**
@@ -1165,7 +1167,7 @@ class FormHelperTest extends TestCase
         $this->Form->request->params['_Token'] = 'testKey';
         $result = $this->Form->secure($fields);
 
-        $hash = hash_hmac('sha1', serialize($fields), Security::salt());
+        $hash = hash_hmac('sha1', serialize($fields) . session_id(), Security::salt());
         $hash .= ':' . 'Model.valid';
         $hash = urlencode($hash);
         $tokenDebug = urlencode(json_encode([
@@ -1213,7 +1215,7 @@ class FormHelperTest extends TestCase
         $this->Form->request->params['_Token'] = 'testKey';
         $result = $this->Form->secure($fields);
 
-        $hash = hash_hmac('sha1', serialize($fields), Security::salt());
+        $hash = hash_hmac('sha1', serialize($fields) . session_id(), Security::salt());
         $hash .= ':' . 'Model.valid';
         $hash = urlencode($hash);
         $expected = [
@@ -1406,9 +1408,8 @@ class FormHelperTest extends TestCase
         ];
         $result = $this->Form->secure($fields);
 
-        $hash = '51e3b55a6edd82020b3f29c9ae200e14bbeb7ee5%3AModel.0.hidden%7CModel.0.valid';
-        $hash = '16e544e04f6d3007231e3e23f8f73427a53272d4%3AModel.0.hidden%7CModel.0.valid';
-        $hash .= '%7CModel.1.hidden%7CModel.1.valid';
+        $hash = '8670192c3f040bf58680479060b4755b7a5c3596' .
+            '%3AModel.0.hidden%7CModel.0.valid%7CModel.1.hidden%7CModel.1.valid';
         $tokenDebug = urlencode(json_encode([
             '',
             $fields,
@@ -1608,7 +1609,7 @@ class FormHelperTest extends TestCase
         $this->Form->control('Addresses.1.primary', ['type' => 'checkbox']);
 
         $result = $this->Form->secure($this->Form->fields);
-        $hash = '587942c6810603a6d5a07a394316dda455580227%3AAddresses.0.id%7CAddresses.1.id';
+        $hash = 'a4fe49bde94894a01375e7aa2873ea8114a96471%3AAddresses.0.id%7CAddresses.1.id';
         $tokenDebug = urlencode(json_encode([
             '/articles/add',
             [
@@ -1705,7 +1706,7 @@ class FormHelperTest extends TestCase
         $this->Form->text('Addresses.1.phone');
 
         $result = $this->Form->secure($this->Form->fields);
-        $hash = '8db4b5f1a912dfafd9c264964df7aa598ea322c0%3AAddresses.0.id%7CAddresses.1.id';
+        $hash = '43c4db25e4162c5e4edd9dea51f5f9d9d92215ec%3AAddresses.0.id%7CAddresses.1.id';
         $tokenDebug = urlencode(json_encode([
                 '/articles/add',
                 [
@@ -1783,7 +1784,7 @@ class FormHelperTest extends TestCase
 
         $result = $this->Form->secure($expected, ['data-foo' => 'bar']);
 
-        $hash = 'cdc8fa2dd2aa2804c12cd17279c39747f1c57354%3AAddresses.id';
+        $hash = 'f98315a7d5515e5ae32e35f7d680207c085fae69%3AAddresses.id';
         $tokenDebug = urlencode(json_encode([
                 '/articles/add',
                 [
@@ -1857,7 +1858,7 @@ class FormHelperTest extends TestCase
         $this->assertEquals($expected, $result);
         $result = $this->Form->secure($expected, ['data-foo' => 'bar', 'debugSecurity' => true]);
 
-        $hash = 'cdc8fa2dd2aa2804c12cd17279c39747f1c57354%3AAddresses.id';
+        $hash = 'f98315a7d5515e5ae32e35f7d680207c085fae69%3AAddresses.id';
         $tokenDebug = urlencode(json_encode([
             '/articles/add',
             [
@@ -1932,7 +1933,7 @@ class FormHelperTest extends TestCase
         Configure::write('debug', false);
         $result = $this->Form->secure($expected, ['data-foo' => 'bar', 'debugSecurity' => true]);
 
-        $hash = 'cdc8fa2dd2aa2804c12cd17279c39747f1c57354%3AAddresses.id';
+        $hash = 'f98315a7d5515e5ae32e35f7d680207c085fae69%3AAddresses.id';
         $expected = [
             'div' => ['style' => 'display:none;'],
             ['input' => [
@@ -1985,8 +1986,7 @@ class FormHelperTest extends TestCase
         $this->assertEquals($expected, $result);
 
         $result = $this->Form->secure($expected, ['data-foo' => 'bar', 'debugSecurity' => false]);
-
-        $hash = 'cdc8fa2dd2aa2804c12cd17279c39747f1c57354%3AAddresses.id';
+        $hash = 'f98315a7d5515e5ae32e35f7d680207c085fae69%3AAddresses.id';
 
         $expected = [
             'div' => ['style' => 'display:none;'],
@@ -2480,7 +2480,7 @@ class FormHelperTest extends TestCase
     {
         $this->Form->request->params['_Token'] = ['key' => 'testKey'];
 
-        $expected = '8312b8faa7e74c6f36e05c8d188eda58b39fab20%3A';
+        $expected = '2548654895b160d724042ed269a2a863fd9d66ee%3A';
         $this->Form->create($this->article, [
             'url' => ['controller' => 'articles', 'action' => 'view', 1, '?' => ['page' => 1]]
         ]);
@@ -2511,7 +2511,7 @@ class FormHelperTest extends TestCase
     {
         $this->Form->request->params['_Token'] = ['key' => 'testKey'];
 
-        $expected = '93acdc2336947d62cf057a17275264c1fecc2443%3A';
+        $expected = '0a913f45b887b4d9cc2650ef1edc50183896959c%3A';
         $this->Form->create($this->article, [
             'url' => [
                 'controller' => 'articles',
@@ -5578,8 +5578,8 @@ class FormHelperTest extends TestCase
         $this->assertEquals(['Model.multi_field'], $this->Form->fields);
 
         $result = $this->Form->secure($this->Form->fields);
-        $key = '3cecbba5b65c8792d963b0498c67741466e61d47%3A';
-        $this->assertRegExp('/"' . $key . '"/', $result);
+        $key = '8af36fb34e6f2ef8ba0eb473bb4365ec232f3fe5%3A';
+        $this->assertContains('"' . $key . '"', $result);
     }
 
     /**
@@ -7613,7 +7613,7 @@ class FormHelperTest extends TestCase
      */
     public function testPostLinkSecurityHash()
     {
-        $hash = hash_hmac('sha1', '/posts/delete/1' . serialize(['id' => '1']), Security::getSalt());
+        $hash = hash_hmac('sha1', '/posts/delete/1' . serialize(['id' => '1']) . session_id(), Security::getSalt());
         $hash .= '%3Aid';
         $this->Form->request->params['_Token']['key'] = 'test';
 
@@ -7666,7 +7666,7 @@ class FormHelperTest extends TestCase
      */
     public function testPostLinkSecurityHashBlockMode()
     {
-        $hash = hash_hmac('sha1', '/posts/delete/1' . serialize([]), Security::getSalt());
+        $hash = hash_hmac('sha1', '/posts/delete/1' . serialize([]) . session_id(), Security::getSalt());
         $hash .= '%3A';
         $this->Form->request->params['_Token']['key'] = 'test';
 
@@ -7690,7 +7690,7 @@ class FormHelperTest extends TestCase
     public function testPostLinkSecurityHashNoDebugMode()
     {
         Configure::write('debug', false);
-        $hash = hash_hmac('sha1', '/posts/delete/1' . serialize(['id' => '1']), Security::getSalt());
+        $hash = hash_hmac('sha1', '/posts/delete/1' . serialize(['id' => '1']) . session_id(), Security::getSalt());
         $hash .= '%3Aid';
         $this->Form->request->params['_Token']['key'] = 'test';
 
