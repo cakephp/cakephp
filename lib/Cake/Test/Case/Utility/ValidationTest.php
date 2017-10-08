@@ -329,14 +329,14 @@ class ValidationTest extends CakeTestCase {
 		$this->assertTrue(Validation::cc('214981579370225', array('enroute')));
 		$this->assertTrue(Validation::cc('201447595859877', array('enroute')));
 		//JCB 15 digit
-		$this->assertTrue(Validation::cc('210034762247893', array('jcb')));
+		$this->assertTrue(Validation::cc('213134762247898', array('jcb')));
 		$this->assertTrue(Validation::cc('180078671678892', array('jcb')));
 		$this->assertTrue(Validation::cc('180010559353736', array('jcb')));
-		$this->assertTrue(Validation::cc('210095474464258', array('jcb')));
-		$this->assertTrue(Validation::cc('210006675562188', array('jcb')));
-		$this->assertTrue(Validation::cc('210063299662662', array('jcb')));
+		$this->assertTrue(Validation::cc('213195474464253', array('jcb')));
+		$this->assertTrue(Validation::cc('213106675562183', array('jcb')));
+		$this->assertTrue(Validation::cc('213163299662667', array('jcb')));
 		$this->assertTrue(Validation::cc('180032506857825', array('jcb')));
-		$this->assertTrue(Validation::cc('210057919192738', array('jcb')));
+		$this->assertTrue(Validation::cc('213157919192733', array('jcb')));
 		$this->assertTrue(Validation::cc('180031358949367', array('jcb')));
 		$this->assertTrue(Validation::cc('180033802147846', array('jcb')));
 		//JCB 16 digit
@@ -706,7 +706,7 @@ class ValidationTest extends CakeTestCase {
 		//enRoute
 		$this->assertTrue(Validation::luhn('201496944158937', true));
 		//JCB 15 digit
-		$this->assertTrue(Validation::luhn('210034762247893', true));
+		$this->assertTrue(Validation::luhn('213134762247898', true));
 		//JCB 16 digit
 		$this->assertTrue(Validation::luhn('3096806857839939', true));
 		//Maestro (debit card)
@@ -811,7 +811,7 @@ class ValidationTest extends CakeTestCase {
 		//enRoute
 		$this->assertTrue(Validation::cc('201496944158937', 'all'));
 		//JCB 15 digit
-		$this->assertTrue(Validation::cc('210034762247893', 'all'));
+		$this->assertTrue(Validation::cc('213134762247898', 'all'));
 		//JCB 16 digit
 		$this->assertTrue(Validation::cc('3096806857839939', 'all'));
 		//Maestro (debit card)
@@ -861,7 +861,7 @@ class ValidationTest extends CakeTestCase {
 		//enRoute
 		$this->assertTrue(Validation::cc('201496944158937', 'all', true));
 		//JCB 15 digit
-		$this->assertTrue(Validation::cc('210034762247893', 'all', true));
+		$this->assertTrue(Validation::cc('213134762247898', 'all', true));
 		//JCB 16 digit
 		$this->assertTrue(Validation::cc('3096806857839939', 'all', true));
 		//Maestro (debit card)
