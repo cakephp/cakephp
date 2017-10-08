@@ -46,7 +46,11 @@ class SqlserverSchema extends BaseSchema
             AC.column_id AS [column_id],
             AC.name AS [name],
             TY.name AS [type],
-            AC.max_length AS [char_length],
+            IIF (
+                TY.name = \'nchar\' OR TY.name =  \'nvarchar\' OR TY.name = \'ntext\',
+                AC.max_length / 2,
+                AC.max_length
+            ) AS [char_length],
             AC.precision AS [precision],
             AC.scale AS [scale],
             AC.is_identity AS [autoincrement],
