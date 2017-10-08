@@ -40,7 +40,7 @@ class EntityRoute extends Route
             $entity = $url['_entity'];
             preg_match_all('@:(\w+)@', $this->template, $matches);
 
-            foreach($matches[1] as $field) {
+            foreach ($matches[1] as $field) {
                 $url[$field] = $entity[$field];
             }
         }
@@ -52,7 +52,7 @@ class EntityRoute extends Route
      * Checks that we really deal with an entity object
      *
      * @throws \RuntimeException
-     * @param mixed $entity
+     * @param mixed $entity Entity value from the URL options
      * @return void
      */
     protected function _checkEntity($entity)
