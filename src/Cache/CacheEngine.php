@@ -276,4 +276,30 @@ abstract class CacheEngine
 
         return $this->_config['prefix'] . $key;
     }
+
+    /**
+     * Cache Engines may trigger warnings if they encounter failures during operation,
+     * if option warningOnFailures is set to true.
+     *
+     * @param string $message The warning message.
+     * @return void
+     */
+    protected function warn($message)
+    {
+        if ($this->config('disableWarningsOnFailures') !== true) {
+            $stackFrame = 2;
+            $trace = debug_backtrace();
+            if (isset($trace[$stackFrame])) {
+                $frame = $trace[$stackFrame];
+                $frame += ['file' => '[internal]', 'line' => '??'];
+                $message = sprintf(
+                    '%s - %s, line: %s',
+                    $message,
+                    $frame['file'],
+                    $frame['line']
+                );
+            }
+            trigger_error($message, E_USER_WARNING);
+        }
+    }
 }
