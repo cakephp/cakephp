@@ -15,6 +15,7 @@
 namespace Cake\Console;
 
 use Cake\Console\Exception\ConsoleException;
+use Cake\Console\Exception\StopException;
 use Cake\Datasource\ModelAwareTrait;
 use Cake\Log\LogTrait;
 use Cake\ORM\Locator\LocatorAwareTrait;
@@ -232,5 +233,16 @@ class Command
     public function execute(Arguments $args, ConsoleIo $io)
     {
         return null;
+    }
+
+    /**
+     * Halt the the current process with a StopException.
+     *
+     * @param int $code The exit code to use.
+     * @throws \Cake\Console\Exception\ConsoleException
+     */
+    public function abort($code = self::CODE_ERROR)
+    {
+        throw new StopException('Command aborted', $code);
     }
 }
