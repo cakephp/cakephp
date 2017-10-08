@@ -91,7 +91,7 @@ class EntityRouteTest extends TestCase
      * Test invalid entity option value
      *
      * @expectedException \RuntimeException
-     * @expectedExceptionMessage Route `/` expects the URL option `_entity` to be `Cake\Datasource\EntityInterface`, but `string` passed.
+     * @expectedExceptionMessage Route `/` expects the URL option `_entity` to be an array or object implementing \ArrayAccess, but `string` passed.
      */
     public function testInvalidEntityValueException()
     {
