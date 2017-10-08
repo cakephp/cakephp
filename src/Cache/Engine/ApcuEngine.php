@@ -44,9 +44,8 @@ class ApcuEngine extends CacheEngine
         if (!extension_loaded('apcu')) {
             return false;
         }
-        parent::init($config);
 
-        return true;
+        return parent::init($config);
     }
 
     /**
