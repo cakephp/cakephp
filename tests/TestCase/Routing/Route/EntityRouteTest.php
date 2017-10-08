@@ -63,7 +63,7 @@ class EntityRouteTest extends TestCase
      */
     public function testInvalidEntityValueException()
     {
-        $route = $route = new EntityRoute('/', [
+        $route = new EntityRoute('/', [
             '_name' => 'articlesView',
             '_entity' => 'Something else'
         ]);
