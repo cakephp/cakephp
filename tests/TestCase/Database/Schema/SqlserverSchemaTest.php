@@ -408,7 +408,7 @@ SQL;
         ];
         $this->assertEquals(['id'], $result->primaryKey());
         foreach ($expected as $field => $definition) {
-            $this->assertEquals($definition, $result->column($field), 'Failed to match field ' . $field);
+            $this->assertSame($definition, $result->column($field), 'Failed to match field ' . $field);
         }
     }
 
