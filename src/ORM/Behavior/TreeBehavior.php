@@ -224,12 +224,16 @@ class TreeBehavior extends Behavior
         $diff = $right - $left + 1;
 
         if ($diff > 2) {
-            $this->_table->deleteAll(function ($exp) use ($config, $left, $right) {
-                /* @var \Cake\Database\Expression\QueryExpression $exp */
-                return $exp
-                    ->gte($config['leftField'], $left + 1)
-                    ->lte($config['leftField'], $right - 1);
-            });
+            /* @var \Cake\Database\Expression\QueryExpression $expression */
+            $expression = $this->_scope($this->_table->find())
+                ->where(function ($exp) use ($config, $left, $right) {
+                    return $exp
+                        ->gte($config['leftField'], $left + 1)
+                        ->lte($config['leftField'], $right - 1);
+                })
+                ->clause('where');
+
+            $this->_table->deleteAll($expression);
         }
 
         $this->_sync($diff, '-', "> {$right}");
