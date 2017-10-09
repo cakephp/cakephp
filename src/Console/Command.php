@@ -239,7 +239,7 @@ class Command
      * Halt the the current process with a StopException.
      *
      * @param int $code The exit code to use.
-     * @throws \Cake\Console\Exception\ConsoleException
+     * @throws \Cake\Console\Exception\StopException
      * @return void
      */
     public function abort($code = self::CODE_ERROR)
