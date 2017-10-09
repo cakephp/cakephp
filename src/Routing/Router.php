@@ -15,10 +15,8 @@
 namespace Cake\Routing;
 
 use Cake\Core\Configure;
-use Cake\Http\MiddlewareQueue;
 use Cake\Http\ServerRequest;
 use Cake\Utility\Inflector;
-use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**

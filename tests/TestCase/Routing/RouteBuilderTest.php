@@ -22,7 +22,6 @@ use Cake\Routing\Route\InflectedRoute;
 use Cake\Routing\Route\RedirectRoute;
 use Cake\Routing\Route\Route;
 use Cake\TestSuite\TestCase;
-use stdClass;
 
 /**
  * RouteBuilder test case

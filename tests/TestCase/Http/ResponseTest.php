@@ -16,7 +16,6 @@ namespace Cake\Test\TestCase\Http;
 
 include_once CORE_TEST_CASES . DS . 'Http' . DS . 'server_mocks.php';
 
-use Cake\Chronos\Chronos;
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Response;
