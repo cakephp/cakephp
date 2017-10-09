@@ -411,7 +411,6 @@ SQL;
             $column = $result->column($field);
             $this->assertEquals($definition, $column, 'Failed to match field ' . $field);
             $this->assertSame($definition['length'], $column['length']);
-            $this->assertSame($definition['scale'], $column['scale']);
             $this->assertSame($definition['precision'], $column['precision']);
         }
     }
