@@ -146,7 +146,7 @@ class ContextFactory
             throw new RuntimeException(sprintf(
                 'Context providers must return object implementing %s. Got "%s" instead.',
                 ContextInterface::class,
-                getVarType($context)
+                getTypeName($context)
             ));
         }
 

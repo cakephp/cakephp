@@ -183,7 +183,7 @@ class CookieCollection implements IteratorAggregate, Countable
                     sprintf(
                         'Expected `%s[]` as $cookies but instead got `%s` at index %d',
                         static::class,
-                        getVarType($cookie),
+                        getTypeName($cookie),
                         $index
                     )
                 );

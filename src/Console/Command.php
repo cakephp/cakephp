@@ -116,7 +116,7 @@ class Command
             throw new RuntimeException(sprintf(
                 "Invalid option parser returned from buildOptionParser(). Expected %s, got %s",
                 ConsoleOptionParser::class,
-                getVarType($parser)
+                getTypeName($parser)
             ));
         }
 

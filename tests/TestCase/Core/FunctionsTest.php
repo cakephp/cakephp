@@ -79,14 +79,14 @@ class FunctionsTest extends TestCase
     }
 
     /**
-     * testing getVarType()
+     * testing getTypeName()
      *
      * @return void
      */
-    public function testGetVarType()
+    public function testgetTypeName()
     {
-        $this->assertEquals('stdClass', getVarType(new \stdClass()));
-        $this->assertEquals('array', getVarType([]));
-        $this->assertEquals('string', getVarType(''));
+        $this->assertEquals('stdClass', getTypeName(new \stdClass()));
+        $this->assertEquals('array', getTypeName([]));
+        $this->assertEquals('string', getTypeName(''));
     }
 }
