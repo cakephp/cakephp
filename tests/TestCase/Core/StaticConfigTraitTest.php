@@ -30,7 +30,8 @@ class TestCacheStaticConfig
      * @var array
      */
     protected static $_dsnClassMap = [
-        'apc' => 'Cake\Cache\Engine\ApcEngine',
+        'apc' => 'Cake\Cache\Engine\ApcuEngine', // @deprecated in 3.6. Use apcu instead.
+        'apcu' => 'Cake\Cache\Engine\ApcuEngine',
         'file' => 'Cake\Cache\Engine\FileEngine',
         'memcached' => 'Cake\Cache\Engine\MemcachedEngine',
         'null' => 'Cake\Cache\Engine\NullEngine',
