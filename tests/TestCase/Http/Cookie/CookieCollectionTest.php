@@ -13,7 +13,6 @@
 namespace Cake\Test\TestCase\Http\Cookie;
 
 use Cake\Http\Client\Request as ClientRequest;
-use Cake\Http\Client\Response as ClientResponse;
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Response;

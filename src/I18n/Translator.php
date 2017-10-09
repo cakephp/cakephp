@@ -12,8 +12,6 @@
  */
 namespace Cake\I18n;
 
-use Aura\Intl\FormatterInterface;
-use Aura\Intl\Package;
 use Aura\Intl\Translator as BaseTranslator;
 
 /**

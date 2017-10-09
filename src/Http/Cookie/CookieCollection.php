@@ -14,7 +14,6 @@
 namespace Cake\Http\Cookie;
 
 use ArrayIterator;
-use Cake\Http\Client\Response as ClientResponse;
 use Countable;
 use DateTimeImmutable;
 use DateTimeZone;
