@@ -218,9 +218,11 @@ class UrlHelper extends Helper
             if (Plugin::loaded($plugin)) {
                 unset($segments[0]);
                 $pluginPath = Plugin::path($plugin) . 'webroot' . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $segments);
-                //@codingStandardsIgnoreStart
-                return $path . '?' . @filemtime($pluginPath);
-                //@codingStandardsIgnoreEnd
+                if (file_exists($pluginPath)) {
+                    //@codingStandardsIgnoreStart
+                    return $path . '?' . @filemtime($pluginPath);
+                    //@codingStandardsIgnoreEnd4
+                }
             }
         }
 
