@@ -78,7 +78,6 @@ class FunctionsTest extends TestCase
         $this->assertNull(deprecationWarning('This is going away'));
     }
 
-
     /**
      * testing getVarType()
      *
