@@ -10,7 +10,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         1.2.0
+ * @since         3.5.4
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Cache\Engine;
@@ -19,9 +19,9 @@ use Cake\Cache\Cache;
 use Cake\TestSuite\TestCase;
 
 /**
- * ApcEngineTest class
+ * ApcuEngineTest class
  */
-class ApcEngineTest extends TestCase
+class ApcuEngineTest extends TestCase
 {
 
     /**
@@ -35,7 +35,7 @@ class ApcEngineTest extends TestCase
         $this->skipIf(!function_exists('apcu_store'), 'APCu is not installed or configured properly.');
 
         if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg')) {
-            $this->skipIf(!ini_get('apc.enable_cli'), 'APC is not enabled for the CLI.');
+            $this->skipIf(!ini_get('apc.enable_cli'), 'APCu is not enabled for the CLI.');
         }
 
         Cache::enable();
@@ -50,8 +50,8 @@ class ApcEngineTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Cache::drop('apc');
-        Cache::drop('apc_groups');
+        Cache::drop('apcu');
+        Cache::drop('apcu_groups');
     }
 
     /**
@@ -63,11 +63,11 @@ class ApcEngineTest extends TestCase
     protected function _configCache($config = [])
     {
         $defaults = [
-            'className' => 'Apc',
+            'className' => 'Apcu',
             'prefix' => 'cake_',
         ];
-        Cache::drop('apc');
-        Cache::config('apc', array_merge($defaults, $config));
+        Cache::drop('apcu');
+        Cache::config('apcu', array_merge($defaults, $config));
     }
 
     /**
@@ -79,19 +79,19 @@ class ApcEngineTest extends TestCase
     {
         $this->_configCache(['duration' => 1]);
 
-        $result = Cache::read('test', 'apc');
+        $result = Cache::read('test', 'apcu');
         $expecting = '';
         $this->assertEquals($expecting, $result);
 
         $data = 'this is a test of the emergency broadcasting system';
-        $result = Cache::write('test', $data, 'apc');
+        $result = Cache::write('test', $data, 'apcu');
         $this->assertTrue($result);
 
-        $result = Cache::read('test', 'apc');
+        $result = Cache::read('test', 'apcu');
         $expecting = $data;
         $this->assertEquals($expecting, $result);
 
-        Cache::delete('test', 'apc');
+        Cache::delete('test', 'apcu');
     }
 
     /**
@@ -101,12 +101,12 @@ class ApcEngineTest extends TestCase
      */
     public function testReadWriteDurationZero()
     {
-        Cache::drop('apc');
-        Cache::config('apc', ['engine' => 'Apc', 'duration' => 0, 'prefix' => 'cake_']);
-        Cache::write('zero', 'Should save', 'apc');
+        Cache::drop('apcu');
+        Cache::config('apcu', ['engine' => 'Apcu', 'duration' => 0, 'prefix' => 'cake_']);
+        Cache::write('zero', 'Should save', 'apcu');
         sleep(1);
 
-        $result = Cache::read('zero', 'apc');
+        $result = Cache::read('zero', 'apcu');
         $this->assertEquals('Should save', $result);
     }
 
@@ -119,15 +119,15 @@ class ApcEngineTest extends TestCase
     {
         $this->_configCache(['duration' => 1]);
 
-        $result = Cache::read('test', 'apc');
+        $result = Cache::read('test', 'apcu');
         $this->assertFalse($result);
 
         $data = 'this is a test of the emergency broadcasting system';
-        $result = Cache::write('other_test', $data, 'apc');
+        $result = Cache::write('other_test', $data, 'apcu');
         $this->assertTrue($result);
 
         sleep(2);
-        $result = Cache::read('other_test', 'apc');
+        $result = Cache::read('other_test', 'apcu');
         $this->assertFalse($result);
     }
 
@@ -139,10 +139,10 @@ class ApcEngineTest extends TestCase
     public function testDeleteCache()
     {
         $data = 'this is a test of the emergency broadcasting system';
-        $result = Cache::write('delete_test', $data, 'apc');
+        $result = Cache::write('delete_test', $data, 'apcu');
         $this->assertTrue($result);
 
-        $result = Cache::delete('delete_test', 'apc');
+        $result = Cache::delete('delete_test', 'apcu');
         $this->assertTrue($result);
     }
 
@@ -153,19 +153,19 @@ class ApcEngineTest extends TestCase
      */
     public function testDecrement()
     {
-        $result = Cache::write('test_decrement', 5, 'apc');
+        $result = Cache::write('test_decrement', 5, 'apcu');
         $this->assertTrue($result);
 
-        $result = Cache::decrement('test_decrement', 1, 'apc');
+        $result = Cache::decrement('test_decrement', 1, 'apcu');
         $this->assertEquals(4, $result);
 
-        $result = Cache::read('test_decrement', 'apc');
+        $result = Cache::read('test_decrement', 'apcu');
         $this->assertEquals(4, $result);
 
-        $result = Cache::decrement('test_decrement', 2, 'apc');
+        $result = Cache::decrement('test_decrement', 2, 'apcu');
         $this->assertEquals(2, $result);
 
-        $result = Cache::read('test_decrement', 'apc');
+        $result = Cache::read('test_decrement', 'apcu');
         $this->assertEquals(2, $result);
     }
 
@@ -176,19 +176,19 @@ class ApcEngineTest extends TestCase
      */
     public function testIncrement()
     {
-        $result = Cache::write('test_increment', 5, 'apc');
+        $result = Cache::write('test_increment', 5, 'apcu');
         $this->assertTrue($result);
 
-        $result = Cache::increment('test_increment', 1, 'apc');
+        $result = Cache::increment('test_increment', 1, 'apcu');
         $this->assertEquals(6, $result);
 
-        $result = Cache::read('test_increment', 'apc');
+        $result = Cache::read('test_increment', 'apcu');
         $this->assertEquals(6, $result);
 
-        $result = Cache::increment('test_increment', 2, 'apc');
+        $result = Cache::increment('test_increment', 2, 'apcu');
         $this->assertEquals(8, $result);
 
-        $result = Cache::read('test_increment', 'apc');
+        $result = Cache::read('test_increment', 'apcu');
         $this->assertEquals(8, $result);
     }
 
@@ -200,11 +200,11 @@ class ApcEngineTest extends TestCase
     public function testClear()
     {
         apcu_store('not_cake', 'survive');
-        Cache::write('some_value', 'value', 'apc');
+        Cache::write('some_value', 'value', 'apcu');
 
-        $result = Cache::clear(false, 'apc');
+        $result = Cache::clear(false, 'apcu');
         $this->assertTrue($result);
-        $this->assertFalse(Cache::read('some_value', 'apc'));
+        $this->assertFalse(Cache::read('some_value', 'apcu'));
         $this->assertEquals('survive', apcu_fetch('not_cake'));
         apcu_delete('not_cake');
     }
@@ -218,24 +218,24 @@ class ApcEngineTest extends TestCase
      */
     public function testGroupsReadWrite()
     {
-        Cache::config('apc_groups', [
-            'engine' => 'Apc',
+        Cache::config('apcu_groups', [
+            'engine' => 'Apcu',
             'duration' => 0,
             'groups' => ['group_a', 'group_b'],
             'prefix' => 'test_'
         ]);
-        $this->assertTrue(Cache::write('test_groups', 'value', 'apc_groups'));
-        $this->assertEquals('value', Cache::read('test_groups', 'apc_groups'));
+        $this->assertTrue(Cache::write('test_groups', 'value', 'apcu_groups'));
+        $this->assertEquals('value', Cache::read('test_groups', 'apcu_groups'));
 
         apcu_inc('test_group_a');
-        $this->assertFalse(Cache::read('test_groups', 'apc_groups'));
-        $this->assertTrue(Cache::write('test_groups', 'value2', 'apc_groups'));
-        $this->assertEquals('value2', Cache::read('test_groups', 'apc_groups'));
+        $this->assertFalse(Cache::read('test_groups', 'apcu_groups'));
+        $this->assertTrue(Cache::write('test_groups', 'value2', 'apcu_groups'));
+        $this->assertEquals('value2', Cache::read('test_groups', 'apcu_groups'));
 
         apcu_inc('test_group_b');
-        $this->assertFalse(Cache::read('test_groups', 'apc_groups'));
-        $this->assertTrue(Cache::write('test_groups', 'value3', 'apc_groups'));
-        $this->assertEquals('value3', Cache::read('test_groups', 'apc_groups'));
+        $this->assertFalse(Cache::read('test_groups', 'apcu_groups'));
+        $this->assertTrue(Cache::write('test_groups', 'value3', 'apcu_groups'));
+        $this->assertEquals('value3', Cache::read('test_groups', 'apcu_groups'));
     }
 
     /**
@@ -245,17 +245,17 @@ class ApcEngineTest extends TestCase
      */
     public function testGroupDelete()
     {
-        Cache::config('apc_groups', [
-            'engine' => 'Apc',
+        Cache::config('apcu_groups', [
+            'engine' => 'Apcu',
             'duration' => 0,
             'groups' => ['group_a', 'group_b'],
             'prefix' => 'test_'
         ]);
-        $this->assertTrue(Cache::write('test_groups', 'value', 'apc_groups'));
-        $this->assertEquals('value', Cache::read('test_groups', 'apc_groups'));
-        $this->assertTrue(Cache::delete('test_groups', 'apc_groups'));
+        $this->assertTrue(Cache::write('test_groups', 'value', 'apcu_groups'));
+        $this->assertEquals('value', Cache::read('test_groups', 'apcu_groups'));
+        $this->assertTrue(Cache::delete('test_groups', 'apcu_groups'));
 
-        $this->assertFalse(Cache::read('test_groups', 'apc_groups'));
+        $this->assertFalse(Cache::read('test_groups', 'apcu_groups'));
     }
 
     /**
@@ -265,20 +265,20 @@ class ApcEngineTest extends TestCase
      */
     public function testGroupClear()
     {
-        Cache::config('apc_groups', [
-            'engine' => 'Apc',
+        Cache::config('apcu_groups', [
+            'engine' => 'Apcu',
             'duration' => 0,
             'groups' => ['group_a', 'group_b'],
             'prefix' => 'test_'
         ]);
 
-        $this->assertTrue(Cache::write('test_groups', 'value', 'apc_groups'));
-        $this->assertTrue(Cache::clearGroup('group_a', 'apc_groups'));
-        $this->assertFalse(Cache::read('test_groups', 'apc_groups'));
+        $this->assertTrue(Cache::write('test_groups', 'value', 'apcu_groups'));
+        $this->assertTrue(Cache::clearGroup('group_a', 'apcu_groups'));
+        $this->assertFalse(Cache::read('test_groups', 'apcu_groups'));
 
-        $this->assertTrue(Cache::write('test_groups', 'value2', 'apc_groups'));
-        $this->assertTrue(Cache::clearGroup('group_b', 'apc_groups'));
-        $this->assertFalse(Cache::read('test_groups', 'apc_groups'));
+        $this->assertTrue(Cache::write('test_groups', 'value2', 'apcu_groups'));
+        $this->assertTrue(Cache::clearGroup('group_b', 'apcu_groups'));
+        $this->assertFalse(Cache::read('test_groups', 'apcu_groups'));
     }
 
     /**
@@ -288,16 +288,16 @@ class ApcEngineTest extends TestCase
      */
     public function testAdd()
     {
-        Cache::delete('test_add_key', 'apc');
+        Cache::delete('test_add_key', 'apcu');
 
-        $result = Cache::add('test_add_key', 'test data', 'apc');
+        $result = Cache::add('test_add_key', 'test data', 'apcu');
         $this->assertTrue($result);
 
         $expected = 'test data';
-        $result = Cache::read('test_add_key', 'apc');
+        $result = Cache::read('test_add_key', 'apcu');
         $this->assertEquals($expected, $result);
 
-        $result = Cache::add('test_add_key', 'test data 2', 'apc');
+        $result = Cache::add('test_add_key', 'test data 2', 'apcu');
         $this->assertFalse($result);
     }
 }
