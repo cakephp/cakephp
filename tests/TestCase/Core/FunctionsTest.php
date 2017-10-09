@@ -77,4 +77,17 @@ class FunctionsTest extends TestCase
         error_reporting(E_ALL ^ E_USER_DEPRECATED);
         $this->assertNull(deprecationWarning('This is going away'));
     }
+
+
+    /**
+     * testing getVarType()
+     *
+     * @return void
+     */
+    public function testGetVarType()
+    {
+        $this->assertEquals('stdClass', getVarType(new \stdClass()));
+        $this->assertEquals('array', getVarType([]));
+        $this->assertEquals('string', getVarType(''));
+    }
 }

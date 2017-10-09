@@ -593,15 +593,4 @@ EXPECTED;
         $this->assertNotSame($prevEventManager, EventManager::instance());
     }
 
-    /**
-     * testing getVarType()
-     *
-     * @return void
-     */
-    public function testGetVarType()
-    {
-        $this->assertEquals('stdClass', getVarType(new \stdClass()));
-        $this->assertEquals('array', getVarType([]));
-        $this->assertEquals('string', getVarType(''));
-    }
 }
