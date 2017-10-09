@@ -235,6 +235,32 @@ class CommandTest extends TestCase
         $this->assertContains('Error: Missing required arguments. name is required', $messages);
     }
 
+    /**
+     * Test abort()
+     *
+     * @expectedException \Cake\Console\Exception\StopException
+     * @expectedExceptionCode 1
+     * @return void
+     */
+    public function testAbort()
+    {
+        $command = new Command();
+        $command->abort();
+    }
+
+    /**
+     * Test abort()
+     *
+     * @expectedException \Cake\Console\Exception\StopException
+     * @expectedExceptionCode 99
+     * @return void
+     */
+    public function testAbortCustomCode()
+    {
+        $command = new Command();
+        $command->abort(99);
+    }
+
     protected function getMockIo($output)
     {
         $io = $this->getMockBuilder(ConsoleIo::class)
