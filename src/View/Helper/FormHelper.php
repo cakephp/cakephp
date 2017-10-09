@@ -16,7 +16,6 @@ namespace Cake\View\Helper;
 
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
-use Cake\Form\Form;
 use Cake\Routing\Router;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;

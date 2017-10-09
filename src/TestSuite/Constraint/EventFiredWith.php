@@ -9,7 +9,6 @@ if (class_exists('PHPUnit_Runner_Version') && !class_exists('PHPUnit\Framework\A
 }
 
 use Cake\Event\Event;
-use Cake\Event\EventManager;
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Constraint\Constraint;
 

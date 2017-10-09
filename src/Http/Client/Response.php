@@ -13,7 +13,6 @@
  */
 namespace Cake\Http\Client;
 
-use Cake\Http\Cookie\Cookie;
 // This alias is necessary to avoid class name conflicts
 // with the deprecated class in this namespace.
 use Cake\Http\Cookie\CookieCollection as CookiesCollection;

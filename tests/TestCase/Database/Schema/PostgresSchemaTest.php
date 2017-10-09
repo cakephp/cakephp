@@ -17,7 +17,6 @@ namespace Cake\Test\TestCase\Database\Schema;
 use Cake\Database\Driver\Postgres;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\PostgresSchema;
-use Cake\Database\Schema\Table;
 use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
