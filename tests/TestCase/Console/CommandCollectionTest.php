@@ -22,7 +22,7 @@ use Cake\Shell\I18nShell;
 use Cake\Shell\RoutesShell;
 use Cake\TestSuite\TestCase;
 use stdClass;
-use TestApp\Command\ExampleCommand;
+use TestApp\Command\DemoCommand;
 
 /**
  * Test case for the CommandCollection
@@ -87,9 +87,9 @@ class CommandCollectionTest extends TestCase
     public function testAddCommand()
     {
         $collection = new CommandCollection();
-        $this->assertSame($collection, $collection->add('ex', ExampleCommand::class));
+        $this->assertSame($collection, $collection->add('ex', DemoCommand::class));
         $this->assertTrue($collection->has('ex'));
-        $this->assertSame(ExampleCommand::class, $collection->get('ex'));
+        $this->assertSame(DemoCommand::class, $collection->get('ex'));
     }
 
     /**

@@ -14,6 +14,8 @@
  */
 namespace Cake\Console;
 
+use Cake\Command\HelpCommand;
+use Cake\Command\VersionCommand;
 use Cake\Console\CommandCollection;
 use Cake\Console\CommandCollectionAwareInterface;
 use Cake\Console\ConsoleIo;
@@ -21,8 +23,6 @@ use Cake\Console\Exception\StopException;
 use Cake\Console\Shell;
 use Cake\Core\ConsoleApplicationInterface;
 use Cake\Event\EventManagerTrait;
-use Cake\Shell\HelpShell;
-use Cake\Shell\VersionShell;
 use Cake\Utility\Inflector;
 use RuntimeException;
 
@@ -114,8 +114,8 @@ class CommandRunner
         $this->app->bootstrap();
 
         $commands = new CommandCollection([
-            'version' => VersionShell::class,
-            'help' => HelpShell::class,
+            'version' => VersionCommand::class,
+            'help' => HelpCommand::class,
         ]);
         $commands = $this->app->console($commands);
         if (!($commands instanceof CommandCollection)) {

@@ -21,7 +21,7 @@ use Cake\ORM\Locator\TableLocator;
 use Cake\ORM\Table;
 use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
-use TestApp\Command\ExampleCommand;
+use TestApp\Command\DemoCommand;
 
 /**
  * Test case for Console\Command
@@ -143,7 +143,7 @@ class CommandTest extends TestCase
     public function testRunOutputHelp()
     {
         $command = new Command();
-        $command->setName('cake example');
+        $command->setName('cake demo');
         $output = new ConsoleOutput();
 
         $this->assertSame(
@@ -151,8 +151,8 @@ class CommandTest extends TestCase
             $command->run(['-h'], $this->getMockIo($output))
         );
         $messages = implode("\n", $output->messages());
-        $this->assertNotContains('Example', $messages);
-        $this->assertContains('cake example [-h]', $messages);
+        $this->assertNotContains('Demo', $messages);
+        $this->assertContains('cake demo [-h]', $messages);
     }
 
     /**
@@ -163,7 +163,7 @@ class CommandTest extends TestCase
     public function testRunOutputHelpLongOption()
     {
         $command = new Command();
-        $command->setName('cake example');
+        $command->setName('cake demo');
         $output = new ConsoleOutput();
 
         $this->assertSame(
@@ -171,8 +171,8 @@ class CommandTest extends TestCase
             $command->run(['--help'], $this->getMockIo($output))
         );
         $messages = implode("\n", $output->messages());
-        $this->assertNotContains('Example', $messages);
-        $this->assertContains('cake example [-h]', $messages);
+        $this->assertNotContains('Demo', $messages);
+        $this->assertContains('cake demo [-h]', $messages);
     }
 
     /**
@@ -182,16 +182,16 @@ class CommandTest extends TestCase
      */
     public function testRunVerboseOption()
     {
-        $command = new ExampleCommand();
-        $command->setName('cake example');
+        $command = new DemoCommand();
+        $command->setName('cake demo');
         $output = new ConsoleOutput();
 
         $this->assertNull($command->run(['--verbose'], $this->getMockIo($output)));
         $messages = implode("\n", $output->messages());
         $this->assertContains('Verbose!', $messages);
-        $this->assertContains('Example Command!', $messages);
+        $this->assertContains('Demo Command!', $messages);
         $this->assertContains('Quiet!', $messages);
-        $this->assertNotContains('cake example [-h]', $messages);
+        $this->assertNotContains('cake demo [-h]', $messages);
     }
 
     /**
@@ -201,15 +201,15 @@ class CommandTest extends TestCase
      */
     public function testRunQuietOption()
     {
-        $command = new ExampleCommand();
-        $command->setName('cake example');
+        $command = new DemoCommand();
+        $command->setName('cake demo');
         $output = new ConsoleOutput();
 
         $this->assertNull($command->run(['--quiet'], $this->getMockIo($output)));
         $messages = implode("\n", $output->messages());
         $this->assertContains('Quiet!', $messages);
         $this->assertNotContains('Verbose!', $messages);
-        $this->assertNotContains('Example Command!', $messages);
+        $this->assertNotContains('Demo Command!', $messages);
     }
 
     /**
