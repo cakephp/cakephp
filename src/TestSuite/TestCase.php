@@ -95,10 +95,13 @@ abstract class TestCase extends BaseTestCase
      */
     public function deprecated($callable)
     {
-        $errorLevel = error_reporting();
-        error_reporting(E_ALL ^ E_USER_DEPRECATED);
-        $callable();
-        error_reporting($errorLevel);
+        try {
+            $errorLevel = error_reporting();
+            error_reporting(E_ALL ^ E_USER_DEPRECATED);
+            $callable();
+        } finally {
+            error_reporting($errorLevel);
+        }
     }
 
     /**
