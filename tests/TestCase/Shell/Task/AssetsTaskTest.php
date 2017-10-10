@@ -216,21 +216,23 @@ class AssetsTaskTest extends TestCase
 
         $this->Task->copy();
 
+        $pluginPath = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'webroot';
+
         $path = WWW_ROOT . 'test_plugin';
         $dir = new \SplFileInfo($path);
         $this->assertTrue($dir->isDir());
         $this->assertFileExists($path . DS . 'root.js');
 
-        unlink($path . DS . 'root.js');
+        file_put_contents($path . DS . 'root.js', 'updated');
 
         $this->Task->copy();
 
-        $this->assertFileNotExists($path . DS . 'root.js');
+        $this->assertFileNotEquals($path . DS . 'root.js', $pluginPath . DS . 'root.js');
 
         $this->Task->params['overwrite'] = true;
         $this->Task->copy();
 
-        $this->assertFileExists($path . DS . 'root.js');
+        $this->assertFileEquals($path . DS . 'root.js', $pluginPath . DS . 'root.js');
 
         $folder = new Folder($path);
         $folder->delete();
