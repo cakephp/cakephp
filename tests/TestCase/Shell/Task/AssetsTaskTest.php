@@ -204,4 +204,35 @@ class AssetsTaskTest extends TestCase
         $folder = new Folder(WWW_ROOT . 'company');
         $folder->delete();
     }
+
+    /**
+     * testCopyOverwrite
+     *
+     * @return void
+     */
+    public function testCopyOverwrite()
+    {
+        Plugin::load('TestPlugin');
+
+        $this->Task->copy();
+
+        $path = WWW_ROOT . 'test_plugin';
+        $dir = new \SplFileInfo($path);
+        $this->assertTrue($dir->isDir());
+        $this->assertFileExists($path . DS . 'root.js');
+
+        unlink($path . DS . 'root.js');
+
+        $this->Task->copy();
+
+        $this->assertFileNotExists($path . DS . 'root.js');
+
+        $this->Task->params['overwrite'] = true;
+        $this->Task->copy();
+
+        $this->assertFileExists($path . DS . 'root.js');
+
+        $folder = new Folder($path);
+        $folder->delete();
+    }
 }
