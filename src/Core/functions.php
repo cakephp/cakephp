@@ -281,7 +281,7 @@ if (!function_exists('deprecationWarning')) {
     }
 }
 
-if (!function_exists('getVarType')) {
+if (!function_exists('getTypeName')) {
     /**
      * Returns the objects class or var type of it's not an object
      *
