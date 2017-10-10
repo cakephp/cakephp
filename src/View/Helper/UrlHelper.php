@@ -210,7 +210,7 @@ class UrlHelper extends Helper
             $webrootPath = WWW_ROOT . str_replace('/', DIRECTORY_SEPARATOR, $filepath);
             if (file_exists($webrootPath)) {
                 //@codingStandardsIgnoreStart
-                return $path . '?' . @filemtime($webrootPath);
+                return $path . '?' . filemtime($webrootPath);
                 //@codingStandardsIgnoreEnd
             }
             $segments = explode('/', ltrim($filepath, '/'));
@@ -218,9 +218,11 @@ class UrlHelper extends Helper
             if (Plugin::loaded($plugin)) {
                 unset($segments[0]);
                 $pluginPath = Plugin::path($plugin) . 'webroot' . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $segments);
-                //@codingStandardsIgnoreStart
-                return $path . '?' . @filemtime($pluginPath);
-                //@codingStandardsIgnoreEnd
+                if (file_exists($pluginPath)) {
+                    //@codingStandardsIgnoreStart
+                    return $path . '?' . filemtime($pluginPath);
+                    //@codingStandardsIgnoreEnd4
+                }
             }
         }
 
