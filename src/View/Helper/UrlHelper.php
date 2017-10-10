@@ -209,9 +209,7 @@ class UrlHelper extends Helper
             );
             $webrootPath = WWW_ROOT . str_replace('/', DIRECTORY_SEPARATOR, $filepath);
             if (file_exists($webrootPath)) {
-                //@codingStandardsIgnoreStart
                 return $path . '?' . filemtime($webrootPath);
-                //@codingStandardsIgnoreEnd
             }
             $segments = explode('/', ltrim($filepath, '/'));
             $plugin = Inflector::camelize($segments[0]);
@@ -219,9 +217,7 @@ class UrlHelper extends Helper
                 unset($segments[0]);
                 $pluginPath = Plugin::path($plugin) . 'webroot' . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $segments);
                 if (file_exists($pluginPath)) {
-                    //@codingStandardsIgnoreStart
                     return $path . '?' . filemtime($pluginPath);
-                    //@codingStandardsIgnoreEnd4
                 }
             }
         }
