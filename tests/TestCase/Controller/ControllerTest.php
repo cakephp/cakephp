@@ -1121,9 +1121,10 @@ class ControllerTest extends TestCase
      */
     public function testDeprecatedViewPropertySetterMessage($property, $getter, $setter, $value)
     {
-        error_reporting(E_ALL);
         $controller = new AnotherTestController();
-        $controller->$property = $value;
+        $this->withErrorReporting(E_ALL, function () use ($controller, $property, $value) {
+            $controller->$property = $value;
+        });
     }
 
     /**
@@ -1140,10 +1141,11 @@ class ControllerTest extends TestCase
      */
     public function testDeprecatedViewPropertyGetterMessage($property, $getter, $setter, $value)
     {
-            error_reporting(E_ALL);
-            $controller = new AnotherTestController();
-            $controller->viewBuilder()->{$setter}($value);
+        $controller = new AnotherTestController();
+        $controller->viewBuilder()->{$setter}($value);
+        $this->withErrorReporting(E_ALL, function () use ($controller, $property) {
             $result = $controller->$property;
+        });
     }
 
     /**
