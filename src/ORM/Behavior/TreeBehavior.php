@@ -222,19 +222,18 @@ class TreeBehavior extends Behavior
         $left = $entity->get($config['left']);
         $right = $entity->get($config['right']);
         $diff = $right - $left + 1;
-        $primaryKey = $this->_getPrimaryKey();
 
         if ($diff > 2) {
-            /* @var \Cake\Database\Expression\QueryExpression $expression */
-            $finder = $this->_scope($this->_table->find())
-                ->select([$primaryKey], true)
+            $query = $this->_scope($this->_table->query())
+                ->delete()
                 ->where(function ($exp) use ($config, $left, $right) {
+                    /* @var \Cake\Database\Expression\QueryExpression $exp */
                     return $exp
                         ->gte($config['leftField'], $left + 1)
                         ->lte($config['leftField'], $right - 1);
                 });
-
-            $this->_table->deleteAll([$primaryKey . ' IN' => $finder]);
+            $statement = $query->execute();
+            $statement->closeCursor();
         }
 
         $this->_sync($diff, '-', "> {$right}");
