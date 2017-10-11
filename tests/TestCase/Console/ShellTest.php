@@ -303,8 +303,8 @@ class ShellTest extends TestCase
     public function testErr()
     {
         $this->io->expects($this->once())
-            ->method('err')
-            ->with('<error>Just a test</error>', 1);
+            ->method('error')
+            ->with('Just a test', 1);
 
         $this->Shell->err('Just a test');
     }
@@ -317,8 +317,8 @@ class ShellTest extends TestCase
     public function testErrArray()
     {
         $this->io->expects($this->once())
-            ->method('err')
-            ->with(['<error>Just</error>', '<error>a</error>', '<error>test</error>'], 1);
+            ->method('error')
+            ->with(['Just', 'a', 'test'], 1);
 
         $this->Shell->err(['Just', 'a', 'test']);
     }
@@ -331,8 +331,8 @@ class ShellTest extends TestCase
     public function testInfo()
     {
         $this->io->expects($this->once())
-            ->method('out')
-            ->with('<info>Just a test</info>', 1);
+            ->method('info')
+            ->with('Just a test', 1);
 
         $this->Shell->info('Just a test');
     }
@@ -345,8 +345,8 @@ class ShellTest extends TestCase
     public function testInfoArray()
     {
         $this->io->expects($this->once())
-            ->method('out')
-            ->with(['<info>Just</info>', '<info>a</info>', '<info>test</info>'], 1);
+            ->method('info')
+            ->with(['Just', 'a', 'test'], 1);
 
         $this->Shell->info(['Just', 'a', 'test']);
     }
@@ -359,8 +359,8 @@ class ShellTest extends TestCase
     public function testWarn()
     {
         $this->io->expects($this->once())
-            ->method('err')
-            ->with('<warning>Just a test</warning>', 1);
+            ->method('warning')
+            ->with('Just a test', 1);
 
         $this->Shell->warn('Just a test');
     }
@@ -373,8 +373,8 @@ class ShellTest extends TestCase
     public function testWarnArray()
     {
         $this->io->expects($this->once())
-            ->method('err')
-            ->with(['<warning>Just</warning>', '<warning>a</warning>', '<warning>test</warning>'], 1);
+            ->method('warning')
+            ->with(['Just', 'a', 'test'], 1);
 
         $this->Shell->warn(['Just', 'a', 'test']);
     }
@@ -387,8 +387,8 @@ class ShellTest extends TestCase
     public function testSuccess()
     {
         $this->io->expects($this->once())
-            ->method('out')
-            ->with('<success>Just a test</success>', 1);
+            ->method('success')
+            ->with('Just a test', 1);
 
         $this->Shell->success('Just a test');
     }
@@ -401,8 +401,8 @@ class ShellTest extends TestCase
     public function testSuccessArray()
     {
         $this->io->expects($this->once())
-            ->method('out')
-            ->with(['<success>Just</success>', '<success>a</success>', '<success>test</success>'], 1);
+            ->method('success')
+            ->with(['Just', 'a', 'test'], 1);
 
         $this->Shell->success(['Just', 'a', 'test']);
     }
@@ -1271,8 +1271,8 @@ TEXT;
         $shell->expects($this->never())->method('main');
 
         $io->expects($this->once())
-            ->method('err')
-            ->with('<error>Error: Missing required arguments. filename is required.</error>');
+            ->method('error')
+            ->with('Error: Missing required arguments. filename is required.');
         $result = $shell->runCommand([]);
         $this->assertFalse($result, 'Shell should fail');
     }
