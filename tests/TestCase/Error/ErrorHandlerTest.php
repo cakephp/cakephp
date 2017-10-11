@@ -71,6 +71,12 @@ class ErrorHandlerTest extends TestCase
     protected $_restoreError = false;
 
     /**
+     * error level property
+     *
+     */
+    private static $errorLevel;
+
+    /**
      * setup create a request object to get out of router later.
      *
      * @return void
@@ -108,6 +114,18 @@ class ErrorHandlerTest extends TestCase
             restore_error_handler();
             restore_exception_handler();
         }
+        error_reporting(self::$errorLevel);
+    }
+
+    /**
+     * setUpBeforeClass
+     *
+     * @return void
+     */
+    public static function setUpBeforeClass()
+    {
+        parent::setUpBeforeClass();
+        self::$errorLevel = error_reporting();
     }
 
     /**

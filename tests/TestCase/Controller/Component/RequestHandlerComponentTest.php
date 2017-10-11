@@ -1105,14 +1105,15 @@ class RequestHandlerComponentTest extends TestCase
     /**
      * testAddInputTypeException method
      *
+     * @group deprecated
      * @expectedException \Cake\Core\Exception\Exception
      * @return void
      */
     public function testAddInputTypeException()
     {
-        $restore = error_reporting(E_ALL & ~E_USER_DEPRECATED);
-        $this->RequestHandler->addInputType('csv', ['I am not callable']);
-        error_reporting($restore);
+        $this->deprecated(function () {
+            $this->RequestHandler->addInputType('csv', ['I am not callable']);
+        });
     }
 
     /**
