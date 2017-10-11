@@ -592,5 +592,4 @@ EXPECTED;
         $this->assertInstanceOf(EventManager::class, $prevEventManager);
         $this->assertNotSame($prevEventManager, EventManager::instance());
     }
-
 }
