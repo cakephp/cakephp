@@ -175,6 +175,92 @@ class ConsoleIo
     }
 
     /**
+     * Convenience method for out() that wraps message between <info /> tag
+     *
+     * @param string|array|null $message A string or an array of strings to output
+     * @param int $newlines Number of newlines to append
+     * @param int $level The message's output level, see above.
+     * @return int|bool The number of bytes returned from writing to stdout.
+     * @see https://book.cakephp.org/3.0/en/console-and-shells.html#Shell::out
+     */
+    public function info($message = null, $newlines = 1, $level = Shell::NORMAL)
+    {
+        $messageType = 'info';
+        $message = $this->wrapMessageWithType($messageType, $message);
+
+        return $this->out($message, $newlines, $level);
+    }
+
+    /**
+     * Convenience method for err() that wraps message between <warning /> tag
+     *
+     * @param string|array|null $message A string or an array of strings to output
+     * @param int $newlines Number of newlines to append
+     * @return int|bool The number of bytes returned from writing to stderr.
+     * @see https://book.cakephp.org/3.0/en/console-and-shells.html#Shell::err
+     */
+    public function warning($message = null, $newlines = 1)
+    {
+        $messageType = 'warning';
+        $message = $this->wrapMessageWithType($messageType, $message);
+
+        return $this->err($message, $newlines);
+    }
+
+    /**
+     * Convenience method for err() that wraps message between <error /> tag
+     *
+     * @param string|array|null $message A string or an array of strings to output
+     * @param int $newlines Number of newlines to append
+     * @return int|bool The number of bytes returned from writing to stderr.
+     * @see https://book.cakephp.org/3.0/en/console-and-shells.html#Shell::err
+     */
+    public function error($message = null, $newlines = 1)
+    {
+        $messageType = 'error';
+        $message = $this->wrapMessageWithType($messageType, $message);
+
+        return $this->err($message, $newlines);
+    }
+
+    /**
+     * Convenience method for out() that wraps message between <success /> tag
+     *
+     * @param string|array|null $message A string or an array of strings to output
+     * @param int $newlines Number of newlines to append
+     * @param int $level The message's output level, see above.
+     * @return int|bool The number of bytes returned from writing to stdout.
+     * @see https://book.cakephp.org/3.0/en/console-and-shells.html#Shell::out
+     */
+    public function success($message = null, $newlines = 1, $level = Shell::NORMAL)
+    {
+        $messageType = 'success';
+        $message = $this->wrapMessageWithType($messageType, $message);
+
+        return $this->out($message, $newlines, $level);
+    }
+
+    /**
+     * Wraps a message with a given message type, e.g. <warning>
+     *
+     * @param string $messageType The message type, e.g. "warning".
+     * @param string|array $message The message to wrap.
+     * @return array|string The message wrapped with the given message type.
+     */
+    protected function wrapMessageWithType($messageType, $message)
+    {
+        if (is_array($message)) {
+            foreach ($message as $k => $v) {
+                $message[$k] = "<{$messageType}>{$v}</{$messageType}>";
+            }
+        } else {
+            $message = "<{$messageType}>{$message}</{$messageType}>";
+        }
+
+        return $message;
+    }
+
+    /**
      * Overwrite some already output text.
      *
      * Useful for building progress bars, or when you want to replace

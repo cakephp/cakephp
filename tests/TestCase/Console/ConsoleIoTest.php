@@ -497,4 +497,64 @@ class ConsoleIoTest extends TestCase
         $this->assertInstanceOf('Cake\Console\Helper', $helper);
         $helper->output(['well', 'ish']);
     }
+
+    /**
+     * Provider for output helpers
+     *
+     * @return array
+     */
+    public function outHelperProvider()
+    {
+        return [['info'], ['success']];
+    }
+
+    /**
+     * Provider for err helpers
+     *
+     * @return array
+     */
+    public function errHelperProvider()
+    {
+        return [['warning'], ['error']];
+    }
+
+    /**
+     * test out helper methods
+     *
+     * @dataProvider outHelperProvider
+     * @return void
+     */
+    public function testOutHelpers($method)
+    {
+        $this->out->expects($this->at(0))
+            ->method('write')
+            ->with("<{$method}>Just a test</{$method}>", 1);
+
+        $this->out->expects($this->at(1))
+            ->method('write')
+            ->with(["<{$method}>Just</{$method}>", "<{$method}>a test</{$method}>"], 1);
+
+        $this->io->{$method}('Just a test');
+        $this->io->{$method}(['Just', 'a test']);
+    }
+
+    /**
+     * test err helper methods
+     *
+     * @dataProvider errHelperProvider
+     * @return void
+     */
+    public function testErrHelpers($method)
+    {
+        $this->err->expects($this->at(0))
+            ->method('write')
+            ->with("<{$method}>Just a test</{$method}>", 1);
+
+        $this->err->expects($this->at(1))
+            ->method('write')
+            ->with(["<{$method}>Just</{$method}>", "<{$method}>a test</{$method}>"], 1);
+
+        $this->io->{$method}('Just a test');
+        $this->io->{$method}(['Just', 'a test']);
+    }
 }
