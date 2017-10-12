@@ -1203,6 +1203,43 @@ class TreeBehaviorTest extends TestCase
     }
 
     /**
+     * Tests deleting a subtree in a scoped tree
+     *
+     * @return void
+     */
+    public function testDeleteSubTreeScopedTree()
+    {
+        $table = TableRegistry::get('MenuLinkTrees');
+        $table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
+        $entity = $table->get(3);
+        $this->assertTrue($table->delete($entity));
+
+        $expected = [
+            ' 1: 4 -  1:Link 1',
+            '_ 2: 3 -  2:Link 2',
+            ' 5: 8 -  6:Link 6',
+            '_ 6: 7 -  7:Link 7',
+            ' 9:10 -  8:Link 8',
+        ];
+        $this->assertMpttValues($expected, $table);
+
+        $table->behaviors()->get('Tree')->config('scope', ['menu' => 'categories']);
+        $expected = [
+            ' 1:10 -  9:electronics',
+            '_ 2: 9 - 10:televisions',
+            '__ 3: 4 - 11:tube',
+            '__ 5: 8 - 12:lcd',
+            '___ 6: 7 - 13:plasma',
+            '11:20 - 14:portable',
+            '_12:15 - 15:mp3',
+            '__13:14 - 16:flash',
+            '_16:17 - 17:cd',
+            '_18:19 - 18:radios',
+        ];
+        $this->assertMpttValues($expected, $table);
+    }
+
+    /**
      * Test deleting a root node
      *
      * @return void
