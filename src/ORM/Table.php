@@ -967,9 +967,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function belongsTo($associated, array $options = [])
     {
         $options += ['sourceTable' => $this];
-        $association = new BelongsTo($associated, $options);
 
-        return $this->_associations->add($association->getName(), $association);
+        return $this->_associations->load(BelongsTo::class, $associated, $options);
     }
 
     /**
@@ -1011,9 +1010,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function hasOne($associated, array $options = [])
     {
         $options += ['sourceTable' => $this];
-        $association = new HasOne($associated, $options);
 
-        return $this->_associations->add($association->getName(), $association);
+        return $this->_associations->load(HasOne::class, $associated, $options);
     }
 
     /**
@@ -1061,9 +1059,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function hasMany($associated, array $options = [])
     {
         $options += ['sourceTable' => $this];
-        $association = new HasMany($associated, $options);
 
-        return $this->_associations->add($association->getName(), $association);
+        return $this->_associations->load(HasMany::class, $associated, $options);
     }
 
     /**
@@ -1113,9 +1110,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function belongsToMany($associated, array $options = [])
     {
         $options += ['sourceTable' => $this];
-        $association = new BelongsToMany($associated, $options);
 
-        return $this->_associations->add($association->getName(), $association);
+        return $this->_associations->load(BelongsToMany::class, $associated, $options);
     }
 
     /**
@@ -1289,6 +1285,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         );
 
         return $query->formatResults(function ($results) use ($options) {
+            /* @var \Cake\Collection\CollectionInterface $results */
             return $results->combine(
                 $options['keyField'],
                 $options['valueField'],
@@ -1338,6 +1335,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $options = $this->_setFieldMatchers($options, ['keyField', 'parentField']);
 
         return $query->formatResults(function ($results) use ($options) {
+            /* @var \Cake\Collection\CollectionInterface $results */
             return $results->nest($options['keyField'], $options['parentField'], $options['nestingKey']);
         });
     }

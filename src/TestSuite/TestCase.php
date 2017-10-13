@@ -90,6 +90,41 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
+     * Helper method for tests that needs to use error_reporting()
+     *
+     * @param int $errorLevel value of error_reporting() that needs to use
+     * @param callable $callable callable function that will receive asserts
+     * @return void
+     */
+    public function withErrorReporting($errorLevel, $callable)
+    {
+        try {
+            $default = error_reporting();
+            error_reporting($errorLevel);
+            $callable();
+        } finally {
+            error_reporting($default);
+        }
+    }
+
+    /**
+     * Helper method for check deprecation methods
+     *
+     * @param callable $callable callable function that will receive asserts
+     * @return void
+     */
+    public function deprecated($callable)
+    {
+        try {
+            $errorLevel = error_reporting();
+            error_reporting(E_ALL ^ E_USER_DEPRECATED);
+            $callable();
+        } finally {
+            error_reporting($errorLevel);
+        }
+    }
+
+    /**
      * Setup the test case, backup the static object values so they can be restored.
      * Specifically backs up the contents of Configure and paths in App if they have
      * not already been backed up.

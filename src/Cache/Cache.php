@@ -143,6 +143,7 @@ class Cache
      */
     public static function registry(ObjectRegistry $registry = null)
     {
+        deprecationWarning('Use Cache::getRegistry() and Cache::setRegistry() instead.');
         if ($registry) {
             static::setRegistry($registry);
         }
@@ -180,9 +181,7 @@ class Cache
             }
 
             if ($config['fallback'] === $name) {
-                throw new InvalidArgumentException(
-                    sprintf('"%s" cache configuration cannot fallback to itself.', $name)
-                );
+                throw new InvalidArgumentException(sprintf('"%s" cache configuration cannot fallback to itself.', $name), null, $e);
             }
 
             $fallbackEngine = clone static::engine($config['fallback']);

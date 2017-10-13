@@ -106,9 +106,6 @@ class CacheTest extends TestCase
     {
         $filename = tempnam(TMP, 'tmp_');
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('cannot fallback to itself');
-
         Cache::setConfig('tests', [
             'engine' => 'File',
             'path' => $filename,
@@ -116,10 +113,18 @@ class CacheTest extends TestCase
             'fallback' => 'tests'
         ]);
 
-        Cache::engine('tests');
+        $e = null;
+        try {
+            Cache::engine('tests');
+        } catch (InvalidArgumentException $e) {
+        }
 
         Cache::drop('tests');
         unlink($filename);
+
+        $this->assertNotNull($e);
+        $this->assertStringEndsWith('cannot fallback to itself.', $e->getMessage());
+        $this->assertInstanceOf('RunTimeException', $e->getPrevious());
     }
 
     /**
@@ -813,24 +818,29 @@ class CacheTest extends TestCase
     /**
      * test registry method
      *
+     * @group deprecated
      * @return void
      */
     public function testRegistry()
     {
-        $this->assertInstanceOf(CacheRegistry::class, Cache::registry());
+        $this->deprecated(function () {
+            $this->assertInstanceOf(CacheRegistry::class, Cache::registry());
+        });
     }
 
     /**
      * test registry method setting
      *
+     * @group deprecated
      * @return void
      */
     public function testRegistrySet()
     {
         $registry = new CacheRegistry();
-        Cache::registry($registry);
-
-        $this->assertSame($registry, Cache::registry());
+        $this->deprecated(function () use ($registry) {
+            Cache::registry($registry);
+            $this->assertSame($registry, Cache::registry());
+        });
     }
 
     /**

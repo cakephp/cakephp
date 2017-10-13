@@ -15,8 +15,6 @@
 namespace Cake\Console;
 
 use ArrayIterator;
-use Cake\Console\CommandScanner;
-use Cake\Console\Shell;
 use Countable;
 use InvalidArgumentException;
 use IteratorAggregate;
@@ -53,17 +51,17 @@ class CommandCollection implements IteratorAggregate, Countable
      * Add a command to the collection
      *
      * @param string $name The name of the command you want to map.
-     * @param string|\Cake\Console\Shell $command The command to map.
+     * @param string|\Cake\Console\Shell|\Cake\Console\Command $command The command to map.
      * @return $this
      */
     public function add($name, $command)
     {
         // Once we have a new Command class this should check
         // against that interface.
-        if (!is_subclass_of($command, Shell::class)) {
+        if (!is_subclass_of($command, Shell::class) && !is_subclass_of($command, Command::class)) {
             $class = is_string($command) ? $command : get_class($command);
             throw new InvalidArgumentException(
-                "Cannot use '$class' for command '$name' it is not a subclass of Cake\Console\Shell."
+                "Cannot use '$class' for command '$name' it is not a subclass of Cake\Console\Shell or Cake\Console\Command."
             );
         }
 

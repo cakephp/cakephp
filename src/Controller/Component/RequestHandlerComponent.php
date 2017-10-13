@@ -189,6 +189,7 @@ class RequestHandlerComponent extends Component
      */
     public function startup(Event $event)
     {
+        /* @var \Cake\Controller\Controller $controller */
         $controller = $event->getSubject();
         $request = $controller->request;
         $response = $controller->response;

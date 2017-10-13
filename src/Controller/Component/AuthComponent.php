@@ -877,7 +877,7 @@ class AuthComponent extends Component
      *
      * @param \Cake\Auth\Storage\StorageInterface|null $storage Sets provided
      *   object as storage or if null returns configured storage object.
-     * @return \Cake\Auth\Storage\StorageInterface|null
+     * @return \Cake\Auth\Storage\StorageInterface|\Cake\Core\InstanceConfigTrait|null
      */
     public function storage(StorageInterface $storage = null)
     {

@@ -1085,8 +1085,9 @@ class ControllerTest extends TestCase
     }
 
     /**
-     * Tests deprecated view propertiyes work
+     * Tests deprecated view properties work
      *
+     * @group deprecated
      * @param $property Deprecated property name
      * @param $getter Getter name
      * @param $setter Setter name
@@ -1097,23 +1098,53 @@ class ControllerTest extends TestCase
     public function testDeprecatedViewProperty($property, $getter, $setter, $value)
     {
         $controller = new AnotherTestController();
-        $message = false;
-
-        set_error_handler(function ($errno, $errstr) use (&$message) {
-            $message = ($errno === E_USER_DEPRECATED ? $errstr : false);
-        });
-
-        try {
+        $this->deprecated(function () use ($controller, $property, $value) {
             $controller->$property = $value;
-            $this->assertSame(sprintf('Controller::$%s is deprecated. Use $this->viewBuilder()->%s() instead.', $property, $setter), $message);
-
             $this->assertSame($value, $controller->$property);
-            $this->assertSame(sprintf('Controller::$%s is deprecated. Use $this->viewBuilder()->%s() instead.', $property, $getter), $message);
+        });
+        $this->assertSame($value, $controller->viewBuilder()->{$getter}());
+    }
 
-            $this->assertSame($value, $controller->viewBuilder()->{$getter}());
-        } finally {
-            restore_error_handler();
-        }
+    /**
+     * Tests deprecated view properties message
+     *
+     * @group deprecated
+     * @param $property Deprecated property name
+     * @param $getter Getter name
+     * @param $setter Setter name
+     * @param mixed $value Value to be set
+     * @return void
+     * @expectedException PHPUnit\Framework\Error\Deprecated
+     * @expectedExceptionMessageRegExp /^Controller::\$\w+ is deprecated(.*)/
+     * @dataProvider deprecatedViewPropertyProvider
+     */
+    public function testDeprecatedViewPropertySetterMessage($property, $getter, $setter, $value)
+    {
+        $controller = new AnotherTestController();
+        $this->withErrorReporting(E_ALL, function () use ($controller, $property, $value) {
+            $controller->$property = $value;
+        });
+    }
+
+    /**
+     * Tests deprecated view properties message
+     *
+     * @param $property Deprecated property name
+     * @param $getter Getter name
+     * @param $setter Setter name
+     * @param mixed $value Value to be set
+     * @return void
+     * @expectedException PHPUnit\Framework\Error\Deprecated
+     * @expectedExceptionMessageRegExp /^Controller::\$\w+ is deprecated(.*)/
+     * @dataProvider deprecatedViewPropertyProvider
+     */
+    public function testDeprecatedViewPropertyGetterMessage($property, $getter, $setter, $value)
+    {
+        $controller = new AnotherTestController();
+        $controller->viewBuilder()->{$setter}($value);
+        $this->withErrorReporting(E_ALL, function () use ($controller, $property) {
+            $result = $controller->$property;
+        });
     }
 
     /**

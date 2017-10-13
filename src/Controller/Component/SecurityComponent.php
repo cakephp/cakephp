@@ -99,6 +99,7 @@ class SecurityComponent extends Component
      */
     public function startup(Event $event)
     {
+        /* @var \Cake\Controller\Controller $controller */
         $controller = $event->getSubject();
         $this->session = $controller->request->getSession();
         $this->_action = $controller->request->getParam('action');
@@ -510,12 +511,12 @@ class SecurityComponent extends Component
             'Missing field \'%s\' in POST data'
         );
         $expectedUnlockedFields = Hash::get($expectedParts, 2);
-        $dataUnlockedFields = Hash::get($hashParts, 2) ?: [];
+        $dataUnlockedFields = Hash::get($hashParts, 2) ?: null;
         if ($dataUnlockedFields) {
             $dataUnlockedFields = explode('|', $dataUnlockedFields);
         }
         $unlockFieldsMessages = $this->_debugCheckFields(
-            $dataUnlockedFields,
+            (array)$dataUnlockedFields,
             $expectedUnlockedFields,
             'Unexpected unlocked field \'%s\' in POST data',
             null,

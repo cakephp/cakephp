@@ -25,14 +25,7 @@ class PageOutOfBoundsException extends Exception
     protected $_messageTemplate = 'Page number %s could not be found.';
 
     /**
-     * Constructor
-     *
-     * @param array|null $message Paging info.
-     * @param int $code The code of the error, is also the HTTP status code for the error.
-     * @param \Exception|null $previous The previous exception.
+     * {@inheritDoc}
      */
-    public function __construct($message = null, $code = 404, $previous = null)
-    {
-        parent::__construct($message, $code, $previous = null);
-    }
+    protected $_defaultCode = 404;
 }

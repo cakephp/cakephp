@@ -266,14 +266,14 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::cc('214981579370225', ['enroute']));
         $this->assertTrue(Validation::cc('201447595859877', ['enroute']));
         // JCB 15 digit
-        $this->assertTrue(Validation::cc('210034762247893', ['jcb']));
+        $this->assertTrue(Validation::cc('213134762247898', ['jcb']));
         $this->assertTrue(Validation::cc('180078671678892', ['jcb']));
         $this->assertTrue(Validation::cc('180010559353736', ['jcb']));
-        $this->assertTrue(Validation::cc('210095474464258', ['jcb']));
-        $this->assertTrue(Validation::cc('210006675562188', ['jcb']));
-        $this->assertTrue(Validation::cc('210063299662662', ['jcb']));
+        $this->assertTrue(Validation::cc('213195474464253', ['jcb']));
+        $this->assertTrue(Validation::cc('213106675562183', ['jcb']));
+        $this->assertTrue(Validation::cc('213163299662667', ['jcb']));
         $this->assertTrue(Validation::cc('180032506857825', ['jcb']));
-        $this->assertTrue(Validation::cc('210057919192738', ['jcb']));
+        $this->assertTrue(Validation::cc('213157919192733', ['jcb']));
         $this->assertTrue(Validation::cc('180031358949367', ['jcb']));
         $this->assertTrue(Validation::cc('180033802147846', ['jcb']));
         // JCB 16 digit
@@ -646,7 +646,7 @@ class ValidationTest extends TestCase
         // enRoute
         $this->assertTrue(Validation::luhn('201496944158937'));
         // JCB 15 digit
-        $this->assertTrue(Validation::luhn('210034762247893'));
+        $this->assertTrue(Validation::luhn('213134762247898'));
         // JCB 16 digit
         $this->assertTrue(Validation::luhn('3096806857839939'));
         // Maestro (debit card)
@@ -753,7 +753,7 @@ class ValidationTest extends TestCase
         // enRoute
         $this->assertTrue(Validation::cc('201496944158937', 'all'));
         // JCB 15 digit
-        $this->assertTrue(Validation::cc('210034762247893', 'all'));
+        $this->assertTrue(Validation::cc('213134762247898', 'all'));
         // JCB 16 digit
         $this->assertTrue(Validation::cc('3096806857839939', 'all'));
         // Maestro (debit card)
@@ -804,7 +804,7 @@ class ValidationTest extends TestCase
         // enRoute
         $this->assertTrue(Validation::cc('201496944158937', 'all', true));
         // JCB 15 digit
-        $this->assertTrue(Validation::cc('210034762247893', 'all', true));
+        $this->assertTrue(Validation::cc('213134762247898', 'all', true));
         // JCB 16 digit
         $this->assertTrue(Validation::cc('3096806857839939', 'all', true));
         // Maestro (debit card)
@@ -2138,6 +2138,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::url('https://cakephp.org'));
         $this->assertTrue(Validation::url('https://www.cakephp.org/somewhere#anchor'));
         $this->assertTrue(Validation::url('https://192.168.0.1'));
+        $this->assertTrue(Validation::url('https://example.com/kibana/app/kibana#/dashboard/4422c500-8e1b?_g=()'));
         $this->assertTrue(Validation::url('ftps://www.cakephp.org/pub/cake'));
         $this->assertTrue(Validation::url('ftps://cakephp.org/pub/cake'));
         $this->assertTrue(Validation::url('ftps://192.168.0.1/pub/cake'));
@@ -2740,28 +2741,53 @@ class ValidationTest extends TestCase
     }
 
     /**
-     * Test the compareWith method.
+     * Test the compareFields method with true result.
      *
      * @return void
      */
-    public function testCompareWith()
+    public function testCompareFieldsTrue()
     {
         $context = [
             'data' => [
                 'other' => 'a value'
             ]
         ];
-        $this->assertTrue(Validation::compareWith('a value', 'other', $context));
+        $this->assertTrue(Validation::compareFields('a value', 'other', true, $context));
 
         $context = [
             'data' => [
                 'other' => 'different'
             ]
         ];
-        $this->assertFalse(Validation::compareWith('a value', 'other', $context));
+        $this->assertFalse(Validation::compareFields('a value', 'other', true, $context));
 
         $context = [];
-        $this->assertFalse(Validation::compareWith('a value', 'other', $context));
+        $this->assertFalse(Validation::compareFields('a value', 'other', true, $context));
+    }
+
+    /**
+     * Test the compareFields method with false result.
+     *
+     * @return void
+     */
+    public function testCompareFieldsFalse()
+    {
+        $context = [
+            'data' => [
+                'other' => 'different'
+            ]
+        ];
+        $this->assertTrue(Validation::compareFields('a value', 'other', false, $context));
+
+        $context = [
+            'data' => [
+                'other' => 'a value'
+            ]
+        ];
+        $this->assertFalse(Validation::compareFields('a value', 'other', false, $context));
+
+        $context = [];
+        $this->assertFalse(Validation::compareFields('a value', 'other', false, $context));
     }
 
     /**

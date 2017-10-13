@@ -556,6 +556,7 @@ abstract class IntegrationTestCase extends TestCase
         if (empty($class) || !class_exists($class)) {
             $class = 'Cake\Error\ExceptionRenderer';
         }
+        /* @var \Cake\Error\ExceptionRenderer $instance */
         $instance = new $class($exception);
         $this->_response = $instance->render();
     }
@@ -761,7 +762,7 @@ abstract class IntegrationTestCase extends TestCase
         $status = $this->_response->getStatusCode();
 
         if ($this->_exception && ($status < $min || $status > $max)) {
-            $this->fail($this->_exception);
+            $this->fail($this->_exception->getMessage());
         }
 
         $this->assertGreaterThanOrEqual($min, $status, $message);

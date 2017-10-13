@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestSuite;
 
+use Cake\Core\Exception\Exception as CakeException;
 use Cake\Core\Plugin;
 use Cake\Database\Schema\Table;
 use Cake\Datasource\ConnectionManager;
@@ -21,6 +22,7 @@ use Cake\Log\Log;
 use Cake\TestSuite\Fixture\FixtureManager;
 use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
+use PDOException;
 
 /**
  * Fixture manager test case.
@@ -385,5 +387,106 @@ class FixtureManagerTest extends TestCase
         $this->assertEquals($expectedConstraint, $schema->getConstraint('tag_id_fk'));
         $this->assertCount(4, $results);
         $this->manager->unload($test);
+    }
+
+    /**
+     * Test exception on load
+     *
+     * @return void
+     */
+    public function testExceptionOnLoad()
+    {
+        $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
+        $test->fixtures = ['core.products'];
+
+        $manager = $this->getMockBuilder(FixtureManager::class)
+            ->setMethods(['_runOperation'])
+            ->getMock();
+        $manager->expects($this->any())
+            ->method('_runOperation')
+            ->will($this->returnCallback(function () {
+                throw new PDOException('message');
+            }));
+
+        $manager->fixturize($test);
+
+        $e = null;
+        try {
+            $manager->load($test);
+        } catch (CakeException $e) {
+        }
+
+        $this->assertNotNull($e);
+        $this->assertRegExp('/^Unable to insert fixtures for "Mock_TestCase_\w+" test case. message$/D', $e->getMessage());
+        $this->assertInstanceOf('PDOException', $e->getPrevious());
+    }
+
+    /**
+     * Test exception on load fixture
+     *
+     * @dataProvider loadErrorMessageProvider
+     * @return void
+     */
+    public function testExceptionOnLoadFixture($method, $expectedMessage)
+    {
+        $fixture = $this->getMockBuilder('Cake\Test\Fixture\ProductsFixture')
+            ->setMethods([$method])
+            ->getMock();
+        $fixture->expects($this->once())
+            ->method($method)
+            ->will($this->returnCallback(function () {
+                throw new PDOException('message');
+            }));
+
+        $fixtures = [
+            'core.products' => $fixture,
+        ];
+
+        $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
+        $test->fixtures = array_keys($fixtures);
+
+        $manager = $this->getMockBuilder(FixtureManager::class)
+            ->setMethods(['_fixtureConnections'])
+            ->getMock();
+        $manager->expects($this->any())
+            ->method('_fixtureConnections')
+            ->will($this->returnValue([
+                'test' => $fixtures,
+            ]));
+        $manager->fixturize($test);
+        $manager->loadSingle('Products');
+
+        $e = null;
+        try {
+            $manager->load($test);
+        } catch (CakeException $e) {
+        }
+
+        $this->assertNotNull($e);
+        $this->assertRegExp($expectedMessage, $e->getMessage());
+        $this->assertInstanceOf('PDOException', $e->getPrevious());
+    }
+
+    /**
+     * Data provider for testExceptionOnLoadFixture
+     *
+     * @return array
+     */
+    public function loadErrorMessageProvider()
+    {
+        return [
+            [
+                'createConstraints',
+                '/^Unable to create constraints for fixture "Mock_ProductsFixture_\w+" in "Mock_TestCase_\w+" test case: \nmessage$/D',
+            ],
+            [
+                'dropConstraints',
+                '/^Unable to drop constraints for fixture "Mock_ProductsFixture_\w+" in "Mock_TestCase_\w+" test case: \nmessage$/D',
+            ],
+            [
+                'insert',
+                '/^Unable to insert fixture "Mock_ProductsFixture_\w+" in "Mock_TestCase_\w+" test case: \nmessage$/D',
+            ],
+        ];
     }
 }

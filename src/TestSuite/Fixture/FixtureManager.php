@@ -303,7 +303,7 @@ class FixtureManager
                                 get_class($test),
                                 $e->getMessage()
                             );
-                            throw new Exception($msg);
+                            throw new Exception($msg, null, $e);
                         }
                     }
                 }
@@ -326,7 +326,7 @@ class FixtureManager
                             get_class($test),
                             $e->getMessage()
                         );
-                        throw new Exception($msg);
+                        throw new Exception($msg, null, $e);
                     }
                 }
             };
@@ -344,7 +344,7 @@ class FixtureManager
                             get_class($test),
                             $e->getMessage()
                         );
-                        throw new Exception($msg);
+                        throw new Exception($msg, null, $e);
                     }
                 }
             };
@@ -355,7 +355,7 @@ class FixtureManager
                 get_class($test),
                 $e->getMessage()
             );
-            throw new Exception($msg);
+            throw new Exception($msg, null, $e);
         }
     }
 

@@ -18,6 +18,8 @@ use Cake\ORM\AssociationCollection;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Entity;
+use Cake\ORM\Locator\LocatorInterface;
+use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -39,6 +41,20 @@ class AssociationCollectionTest extends TestCase
     {
         parent::setUp();
         $this->associations = new AssociationCollection();
+    }
+
+    /**
+     * Test the constructor.
+     *
+     * @return void
+     */
+    public function testConstructor()
+    {
+        $this->assertSame(TableRegistry::getTableLocator(), $this->associations->getTableLocator());
+
+        $tableLocator = $this->createMock(LocatorInterface::class);
+        $associations = new AssociationCollection($tableLocator);
+        $this->assertSame($tableLocator, $associations->getTableLocator());
     }
 
     /**
@@ -68,6 +84,47 @@ class AssociationCollectionTest extends TestCase
         $this->assertFalse($this->associations->has('Users'));
         $this->assertNull($this->associations->get('users'));
         $this->assertNull($this->associations->get('Users'));
+    }
+
+    /**
+     * Test the load method.
+     *
+     * @return void
+     */
+    public function testLoad()
+    {
+        $this->associations->load(BelongsTo::class, 'Users');
+        $this->assertTrue($this->associations->has('Users'));
+        $this->assertInstanceOf(BelongsTo::class, $this->associations->get('Users'));
+        $this->assertSame($this->associations->getTableLocator(), $this->associations->get('Users')->getTableLocator());
+    }
+
+    /**
+     * Test the load method with custom locator.
+     *
+     * @return void
+     */
+    public function testLoadCustomLocator()
+    {
+        $locator = $this->createMock(LocatorInterface::class);
+        $this->associations->load(BelongsTo::class, 'Users', [
+            'tableLocator' => $locator
+        ]);
+        $this->assertTrue($this->associations->has('Users'));
+        $this->assertInstanceOf(BelongsTo::class, $this->associations->get('Users'));
+        $this->assertSame($locator, $this->associations->get('Users')->getTableLocator());
+    }
+
+    /**
+     * Test load invalid class.
+     *
+     * @return void
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage The association must extend `Cake\ORM\Association` class, `stdClass` given.
+     */
+    public function testLoadInvalid()
+    {
+        $this->associations->load('stdClass', 'Users');
     }
 
     /**
@@ -142,7 +199,7 @@ class AssociationCollectionTest extends TestCase
     }
 
     /**
-     *  Data provider for AssociationCollection::type
+     *  Data provider for AssociationCollection::getByType
      */
     public function associationCollectionType()
     {
@@ -154,13 +211,13 @@ class AssociationCollectionTest extends TestCase
     }
 
     /**
-     * Test getting association names by type.
+     * Test getting association names by getByType.
      *
      * @param string $belongsToStr
      * @param string $belongsToManyStr
      * @dataProvider associationCollectionType
      */
-    public function testType($belongsToStr, $belongsToManyStr)
+    public function testGetByType($belongsToStr, $belongsToManyStr)
     {
         $belongsTo = new BelongsTo('');
         $this->associations->add('Users', $belongsTo);
@@ -168,9 +225,9 @@ class AssociationCollectionTest extends TestCase
         $belongsToMany = new BelongsToMany('');
         $this->associations->add('Tags', $belongsToMany);
 
-        $this->assertSame([$belongsTo], $this->associations->type($belongsToStr));
-        $this->assertSame([$belongsToMany], $this->associations->type($belongsToManyStr));
-        $this->assertSame([$belongsTo, $belongsToMany], $this->associations->type([$belongsToStr, $belongsToManyStr]));
+        $this->assertSame([$belongsTo], $this->associations->getByType($belongsToStr));
+        $this->assertSame([$belongsToMany], $this->associations->getByType($belongsToManyStr));
+        $this->assertSame([$belongsTo, $belongsToMany], $this->associations->getByType([$belongsToStr, $belongsToManyStr]));
     }
 
     /**
@@ -181,7 +238,7 @@ class AssociationCollectionTest extends TestCase
     public function hasTypeReturnsEmptyArray()
     {
         foreach (['HasMany', 'hasMany', 'FooBar', 'DoesNotExist'] as $value) {
-            $this->assertSame([], $this->associations->type($value));
+            $this->assertSame([], $this->associations->getByType($value));
         }
     }
 

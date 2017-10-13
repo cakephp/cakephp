@@ -23,7 +23,7 @@ use Cake\TestSuite\Stub\ConsoleOutput;
  * A test case class intended to make integration tests of cake console commands
  * easier.
  */
-class ConsoleIntegrationTestCase extends TestCase
+abstract class ConsoleIntegrationTestCase extends TestCase
 {
     /**
      * Whether or not to use the CommandRunner

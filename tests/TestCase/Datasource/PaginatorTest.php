@@ -682,11 +682,7 @@ class PaginatorTest extends TestCase
      */
     public function testValidateSortWhitelistFailure()
     {
-        $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')->getMock();
-        $model->expects($this->any())
-            ->method('alias')
-            ->will($this->returnValue('model'));
-        $model->expects($this->any())->method('hasField')->will($this->returnValue(true));
+        $model = $this->mockAliasHasFieldModel();
 
         $options = [
             'sort' => 'body',
@@ -705,13 +701,7 @@ class PaginatorTest extends TestCase
      */
     public function testValidateSortWhitelistTrusted()
     {
-        $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')->getMock();
-        $model->expects($this->any())
-            ->method('alias')
-            ->will($this->returnValue('model'));
-        $model->expects($this->once())
-            ->method('hasField')
-            ->will($this->returnValue(true));
+        $model = $this->mockAliasHasFieldModel();
 
         $options = [
             'sort' => 'body',
@@ -735,12 +725,7 @@ class PaginatorTest extends TestCase
      */
     public function testValidateSortWhitelistEmpty()
     {
-        $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')->getMock();
-        $model->expects($this->any())
-            ->method('alias')
-            ->will($this->returnValue('model'));
-        $model->expects($this->any())->method('hasField')
-            ->will($this->returnValue(true));
+        $model = $this->mockAliasHasFieldModel();
 
         $options = [
             'order' => [
@@ -792,13 +777,7 @@ class PaginatorTest extends TestCase
      */
     public function testValidateSortWhitelistMultiple()
     {
-        $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')->getMock();
-        $model->expects($this->any())
-            ->method('alias')
-            ->will($this->returnValue('model'));
-        $model->expects($this->once())
-            ->method('hasField')
-            ->will($this->returnValue(true));
+        $model = $this->mockAliasHasFieldModel();
 
         $options = [
             'order' => [
@@ -816,6 +795,19 @@ class PaginatorTest extends TestCase
         $this->assertEquals($expected, $result['order']);
     }
 
+    protected function mockAliasHasFieldModel()
+    {
+        $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')->getMock();
+        $model->expects($this->any())
+            ->method('alias')
+            ->will($this->returnValue('model'));
+        $model->expects($this->any())
+            ->method('hasField')
+            ->will($this->returnValue(true));
+
+        return $model;
+    }
+
     /**
      * test that multiple sort works.
      *
@@ -823,11 +815,7 @@ class PaginatorTest extends TestCase
      */
     public function testValidateSortMultiple()
     {
-        $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')->getMock();
-        $model->expects($this->any())
-            ->method('alias')
-            ->will($this->returnValue('model'));
-        $model->expects($this->any())->method('hasField')->will($this->returnValue(true));
+        $model = $this->mockAliasHasFieldModel();
 
         $options = [
             'order' => [
@@ -845,17 +833,56 @@ class PaginatorTest extends TestCase
     }
 
     /**
+     * test that multiple sort adds in query data.
+     *
+     * @return void
+     */
+    public function testValidateSortMultipleWithQuery()
+    {
+        $model = $this->mockAliasHasFieldModel();
+
+        $options = [
+            'sort' => 'created',
+            'direction' => 'desc',
+            'order' => [
+                'author_id' => 'asc',
+                'title' => 'asc'
+            ]
+        ];
+        $result = $this->Paginator->validateSort($model, $options);
+
+        $expected = [
+            'model.created' => 'desc',
+            'model.author_id' => 'asc',
+            'model.title' => 'asc'
+        ];
+        $this->assertEquals($expected, $result['order']);
+
+        $options = [
+            'sort' => 'title',
+            'direction' => 'desc',
+            'order' => [
+                'author_id' => 'asc',
+                'title' => 'asc'
+            ]
+        ];
+        $result = $this->Paginator->validateSort($model, $options);
+
+        $expected = [
+            'model.title' => 'desc',
+            'model.author_id' => 'asc',
+        ];
+        $this->assertEquals($expected, $result['order']);
+    }
+
+    /**
      * Tests that order strings can used by Paginator
      *
      * @return void
      */
     public function testValidateSortWithString()
     {
-        $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')->getMock();
-        $model->expects($this->any())
-            ->method('alias')
-            ->will($this->returnValue('model'));
-        $model->expects($this->any())->method('hasField')->will($this->returnValue(true));
+        $model = $this->mockAliasHasFieldModel();
 
         $options = [
             'order' => 'model.author_id DESC'
@@ -873,12 +900,7 @@ class PaginatorTest extends TestCase
      */
     public function testValidateSortNoSort()
     {
-        $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')->getMock();
-        $model->expects($this->any())
-            ->method('alias')
-            ->will($this->returnValue('model'));
-        $model->expects($this->any())->method('hasField')
-            ->will($this->returnValue(true));
+        $model = $this->mockAliasHasFieldModel();
 
         $options = [
             'direction' => 'asc',
@@ -895,11 +917,7 @@ class PaginatorTest extends TestCase
      */
     public function testValidateSortInvalidAlias()
     {
-        $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')->getMock();
-        $model->expects($this->any())
-            ->method('alias')
-            ->will($this->returnValue('model'));
-        $model->expects($this->any())->method('hasField')->will($this->returnValue(true));
+        $model = $this->mockAliasHasFieldModel();
 
         $options = ['sort' => 'Derp.id'];
         $result = $this->Paginator->validateSort($model, $options);

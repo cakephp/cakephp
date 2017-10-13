@@ -327,6 +327,21 @@ class RouteBuilderTest extends TestCase
     }
 
     /**
+     * Test using a custom route class for redirect routes.
+     *
+     * @return void
+     */
+    public function testRedirectWithCustomRouteClass()
+    {
+        $routes = new RouteBuilder($this->collection, '/');
+
+        $routes->redirect('/old', '/forums', ['status' => 301, 'routeClass' => 'InflectedRoute']);
+        $route = $this->collection->routes()[0];
+
+        $this->assertInstanceOf(InflectedRoute::class, $route);
+    }
+
+    /**
      * Test creating sub-scopes with prefix()
      *
      * @return void
