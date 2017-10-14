@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         3.0.0
+ * @since         3.6.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Database\Type;
@@ -92,13 +92,13 @@ class BinaryUuidTypeTest extends TestCase
      */
     public function testToDatabase()
     {
-        $value = 'some data';
-        $result = $this->type->toDatabase($value, $this->driver);
-        $this->assertEquals($value, $result);
-
         $fh = fopen(__FILE__, 'r');
         $result = $this->type->toDatabase($fh, $this->driver);
         $this->assertSame($fh, $result);
+
+        $value = Text::uuid();
+        $result = $this->type->toDatabase($value, $this->driver);
+        $this->assertSame(str_replace('-', '', $value), unpack('H*', $result)[1]);
     }
 
     /**
