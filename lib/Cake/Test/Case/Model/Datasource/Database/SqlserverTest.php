@@ -397,6 +397,13 @@ class SqlserverTest extends CakeTestCase {
 		));
 		$result = $this->db->getLastQuery();
 		$this->assertRegExp('/^SELECT DISTINCT TOP 5/', $result);
+
+		$this->db->read($this->model, array(
+			'fields' => array('DISTINCT SqlserverTestModel.city', 'SqlserverTestModel.country'),
+			'limit' => '5'
+		));
+		$result = $this->db->getLastQuery();
+		$this->assertRegExp('/^SELECT DISTINCT TOP 5/', $result);
 	}
 
 /**
