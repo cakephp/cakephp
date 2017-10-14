@@ -38,7 +38,7 @@ use RuntimeException;
  * ]);
  * ```
  *
- * This would configure an APC cache engine to the 'shared' alias. You could then read and write
+ * This would configure an APCu cache engine to the 'shared' alias. You could then read and write
  * to that cache alias by using it for the `$config` parameter in the various Cache methods.
  *
  * In general all Cache operations are supported by all cache engines.
@@ -52,7 +52,7 @@ use RuntimeException;
  * - `ApcuEngine` - Uses the APCu object cache, one of the fastest caching engines.
  * - `MemcacheEngine` - Uses the PECL::Memcache extension and Memcached for storage.
  *    Fast reads/writes, and benefits from memcache being distributed.
- * - `XcacheEngine` - Uses the Xcache extension, an alternative to APC.
+ * - `XcacheEngine` - Uses the Xcache extension, an alternative to APCu.
  * - `WincacheEngine` - Uses Windows Cache Extension for PHP. Supports wincache 1.1.0 and higher.
  *    This engine is recommended to people deploying on windows with IIS.
  * - `RedisEngine` - Uses redis and php-redis extension to store cache data.
