@@ -362,6 +362,21 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     }
 
     /**
+     * Test that the PSR7 requests receive encoded data.
+     *
+     * @return void
+     */
+    public function testInputDataSecurityToken()
+    {
+        $this->useHttpServer(true);
+        $this->enableSecurityToken();
+
+        $this->post('/request_action/input_test', '{"hello":"world"}');
+        $this->assertSame('world', '' . $this->_response->getBody());
+        $this->assertHeader('X-Middleware', 'true');
+    }
+
+    /**
      * Test that the PSR7 requests get cookies
      *
      * @return void
