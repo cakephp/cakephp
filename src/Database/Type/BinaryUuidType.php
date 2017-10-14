@@ -64,6 +64,9 @@ class BinaryUuidType extends Type implements TypeInterface
      */
     public function toDatabase($value, Driver $driver)
     {
+        if (is_string($value)) {
+            return $this->convertStringToBinaryUuid($value);
+        }
         return $value;
     }
 
