@@ -665,6 +665,11 @@ SQL;
                 '"id" UUID NOT NULL'
             ],
             [
+                'id',
+                ['type' => 'binaryuuid', 'length' => null, 'null' => false],
+                '"id" UUID NOT NULL'
+            ],
+            [
                 'role',
                 ['type' => 'string', 'length' => 10, 'null' => false, 'default' => 'admin'],
                 '"role" VARCHAR(10) NOT NULL DEFAULT \'admin\''
