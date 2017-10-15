@@ -171,22 +171,11 @@ class MysqlTest extends TestCase
      */
     public function testUtf8mb4()
     {
-        $dropStm = <<<EOD
-DROP TABLE IF EXISTS `test_utf8mb4`;
-EOD;
-        $createStm = <<<EOD
-CREATE TABLE `test_utf8mb4` (
-  `field` TEXT CHARACTER SET utf8mb4 NOT NULL
-) ENGINE=INNODB;
-EOD;
-        $insertStmFailure = <<<EOD
-SET NAMES utf8;
-INSERT INTO test_utf8mb4 SET field = '😃';
-EOD;
-        $insertStmSuccess = <<<EOD
-SET NAMES utf8mb4;
-INSERT INTO test_utf8mb4 SET field = '😃';
-EOD;
+        $dropStm = "DROP TABLE IF EXISTS `test_utf8mb4`;";
+        $createStm = "CREATE TABLE `test_utf8mb4` (`field` TEXT CHARACTER SET utf8mb4 NOT NULL) ENGINE=INNODB;";
+        $insertStmFailure = "SET NAMES utf8; INSERT INTO test_utf8mb4 SET field = '😃';";
+        $insertStmSuccess = "SET NAMES utf8mb4; INSERT INTO test_utf8mb4 SET field = '😃';";
+
         $connection = ConnectionManager::get('test');
         $result = $connection->execute($dropStm);
         $result = $connection->execute($createStm);
