@@ -120,6 +120,10 @@ class MysqlSchemaTest extends TestCase
                 ['type' => 'uuid', 'length' => null]
             ],
             [
+                'BINARY(16)',
+                ['type' => 'binaryuuid', 'length' => null]
+            ],
+            [
                 'TEXT',
                 ['type' => 'text', 'length' => null]
             ],
@@ -529,6 +533,11 @@ SQL;
                 'id',
                 ['type' => 'uuid'],
                 '`id` CHAR(36)'
+            ],
+            [
+                'id',
+                ['type' => 'binaryuuid'],
+                '`id` BINARY(16)'
             ],
             [
                 'title',
