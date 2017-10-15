@@ -181,11 +181,11 @@ CREATE TABLE `test_utf8mb4` (
 EOD;
         $insertStmFailure = <<<EOD
 SET NAMES utf8;
-INSERT INTO utf8mb4test SET field = '😃';
+INSERT INTO test_utf8mb4 SET field = '😃';
 EOD;
         $insertStmSuccess = <<<EOD
 SET NAMES utf8mb4;
-INSERT INTO utf8mb4test SET field = '😃';
+INSERT INTO test_utf8mb4 SET field = '😃';
 EOD;
         $connection = ConnectionManager::get('test');
         $result = $connection->execute($dropStm);
