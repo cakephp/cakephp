@@ -67,6 +67,7 @@ class BinaryUuidType extends Type implements TypeInterface
         if (is_string($value)) {
             return $this->convertStringToBinaryUuid($value);
         }
+
         return $value;
     }
 
