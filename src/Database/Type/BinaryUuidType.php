@@ -73,11 +73,11 @@ class BinaryUuidType extends Type implements TypeInterface
     /**
      * Generate a new binary UUID
      *
-     * @return mixed A new primary key value.
+     * @return string A new primary key value.
      */
     public function newId()
     {
-        return $this->convertStringToBinaryUuid(Text::uuid());
+        return Text::uuid();
     }
 
     /**
