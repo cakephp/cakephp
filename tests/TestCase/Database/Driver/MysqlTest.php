@@ -163,4 +163,37 @@ class MysqlTest extends TestCase
         $this->assertFalse($driver->commitTransaction());
         $this->assertTrue($driver->isConnected());
     }
+
+    /**
+     * Test for utf8mb4
+     *
+     * @return void
+     */
+    public function testUtf8mb4()
+    {
+        $dropStm = <<<EOD
+DROP TABLE IF EXISTS `test_utf8mb4`;
+EOD;
+        $createStm = <<<EOD
+CREATE TABLE `test_utf8mb4` (
+  `field` TEXT CHARACTER SET utf8mb4 NOT NULL
+) ENGINE=INNODB;
+EOD;
+        $insertStmFailure = <<<EOD
+SET NAMES utf8;
+INSERT INTO utf8mb4test SET field = '😃';
+EOD;
+        $insertStmSuccess = <<<EOD
+SET NAMES utf8mb4;
+INSERT INTO utf8mb4test SET field = '😃';
+EOD;
+        $connection = ConnectionManager::get('test');
+        $result = $connection->execute($dropStm);
+        $result = $connection->execute($createStm);
+        // TEST A: Expect Failure / Exception
+        $result = $connection->execute($insertStmFailure);
+        // TEST B: Expect Success
+        $result = $connection->execute($insertStmSuccess);
+        $result = $connection->execute($dropStm);
+    }
 }
