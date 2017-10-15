@@ -130,6 +130,10 @@ class SqlserverSchema extends BaseSchema
             return ['type' => TableSchema::TYPE_TEXT, 'length' => null];
         }
 
+        if ($col === 'binary' && $length === 16) {
+            return ['type' => TableSchema::TYPE_BINARY_UUID, 'length' => null];
+        }
+
         if ($col === 'image' || strpos($col, 'binary')) {
             return ['type' => TableSchema::TYPE_BINARY, 'length' => null];
         }
@@ -335,6 +339,7 @@ class SqlserverSchema extends BaseSchema
             TableSchema::TYPE_SMALLINTEGER => ' SMALLINT',
             TableSchema::TYPE_INTEGER => ' INTEGER',
             TableSchema::TYPE_BIGINTEGER => ' BIGINT',
+            TableSchema::TYPE_BINARY_UUID => ' BINARY(16)',
             TableSchema::TYPE_BOOLEAN => ' BIT',
             TableSchema::TYPE_FLOAT => ' FLOAT',
             TableSchema::TYPE_DECIMAL => ' DECIMAL',
