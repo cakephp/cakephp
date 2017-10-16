@@ -226,8 +226,6 @@ class MysqlTest extends TestCase
         $this->assertTrue($result);
     }
 
-
-
     /**
      * Test for utf8mb4 Success - Using default encoding
      *
