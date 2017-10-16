@@ -89,6 +89,9 @@ class MailTransportTest extends TestCase
                 '-f'
             );
 
-        $this->MailTransport->send($email);
+        $result = $this->MailTransport->send($email);
+
+        $this->assertContains('Subject: ', $result['headers']);
+        $this->assertContains('To: ', $result['headers']);
     }
 }
