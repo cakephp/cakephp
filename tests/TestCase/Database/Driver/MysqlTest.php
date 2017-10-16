@@ -183,7 +183,7 @@ class MysqlTest extends TestCase
             'host' => 'localhost',
             'username' => 'root',
             'password' => '',
-            'database' => 'cake',
+            'database' => 'cakephp_test',
             'port' => '3306',
             // Try to insert utf8 4-byte symbol through utf8 3-byte connection character set
             'encoding' => 'utf8',
@@ -212,7 +212,7 @@ class MysqlTest extends TestCase
             'host' => 'localhost',
             'username' => 'root',
             'password' => '',
-            'database' => 'cake',
+            'database' => 'cakephp_test',
             'port' => '3306',
             // Try to insert utf8 4-byte symbol through utf8 4-byte connection character set
             'encoding' => 'utf8mb4',
