@@ -168,7 +168,7 @@ class MysqlTest extends TestCase
      * Test for utf8mb4 Failure #1
      *
      * @expectedException \PDOException
-     * @expectedExceptionMessage SQLSTATE[22007]: SQLSTATE[HY000]: General error: 1366 Incorrect string value: '\xF0\x9F\x98\x83
+     * @expectedExceptionMessage SQLSTATE[HY000]: General error: 1366 Incorrect string value: '\xF0\x9F\x98\x83
      * @return void
      */
     public function testUtf8mb4FailureOnConnectionMode()
