@@ -261,22 +261,7 @@ class CookieComponent extends Component {
 		if ($key === null) {
 			return $this->_values[$this->name];
 		}
-
-		if (strpos($key, '.') !== false) {
-			$names = explode('.', $key, 2);
-			$key = $names[0];
-		}
-		if (!isset($this->_values[$this->name][$key])) {
-			return null;
-		}
-
-		if (!empty($names[1])) {
-			if (is_array($this->_values[$this->name][$key])) {
-				return Hash::get($this->_values[$this->name][$key], $names[1]);
-			}
-			return null;
-		}
-		return $this->_values[$this->name][$key];
+		return Hash::get($this->_values[$this->name], $key);
 	}
 
 /**

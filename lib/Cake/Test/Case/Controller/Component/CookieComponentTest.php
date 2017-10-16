@@ -715,6 +715,20 @@ class CookieComponentTest extends CakeTestCase {
 	}
 
 /**
+ * Test reading empty key
+ *
+ * @return void
+ */
+	public function testReadEmptyKey() {
+		$_COOKIE['CakeTestCookie'] = array(
+			'0' => '{"name":"value"}',
+			'foo' => array('bar'),
+		);
+		$this->assertEquals('value', $this->Cookie->read('0.name'));
+		$this->assertEquals('bar', $this->Cookie->read('foo.0'));
+	}
+
+/**
  * test that no error is issued for non array data.
  *
  * @return void
