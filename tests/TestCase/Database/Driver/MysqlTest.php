@@ -173,7 +173,7 @@ class MysqlTest extends TestCase
      */
     public function testUtf8mb4Failure()
     {
-        $modeStm = "SET SESSION sql_mode = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';";
+        $sqlMode = 'SET SESSION sql_mode = "STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION";';
         $dropStm = "DROP TABLE IF EXISTS `test_utf8mb4`;";
         $createStm = "CREATE TABLE `test_utf8mb4` (`field` TEXT CHARACTER SET utf8mb4 NOT NULL) ENGINE=INNODB;";
         $insertStm = "INSERT INTO test_utf8mb4 SET field = '😃';";
@@ -188,9 +188,10 @@ class MysqlTest extends TestCase
             'port' => '3306',
             // Try to insert utf8 4-byte symbol through utf8 3-byte connection character set
             'encoding' => 'utf8',
+            'init' => [$sqlMode],
         ]);
 
-        $result = $connection->prepare($modeStm . $dropStm . $createStm)->execute()
+        $result = $connection->prepare($dropStm . $createStm)->execute()
             && $connection->prepare($insertStm)->execute();
         // Cleanup
         $connection->prepare($dropStm)->execute();
@@ -203,7 +204,7 @@ class MysqlTest extends TestCase
      */
     public function testUtf8mb4Success()
     {
-        $modeStm = "SET SESSION sql_mode = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';";
+        $sqlMode = 'SET SESSION sql_mode = "STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION";';
         $dropStm = "DROP TABLE IF EXISTS `test_utf8mb4`;";
         $createStm = "CREATE TABLE `test_utf8mb4` (`field` TEXT CHARACTER SET utf8mb4 NOT NULL) ENGINE=INNODB;";
         $insertStm = "INSERT INTO test_utf8mb4 SET field = '😃';";
@@ -218,9 +219,10 @@ class MysqlTest extends TestCase
             'port' => '3306',
             // Try to insert utf8 4-byte symbol through utf8 4-byte connection character set
             'encoding' => 'utf8mb4',
+            'init' => [$sqlMode],
         ]);
 
-        $result = $connection->prepare($modeStm . $dropStm . $createStm)->execute()
+        $result = $connection->prepare($dropStm . $createStm)->execute()
             && $connection->prepare($insertStm)->execute();
         // Cleanup
         $connection->prepare($dropStm)->execute();
@@ -235,7 +237,7 @@ class MysqlTest extends TestCase
      */
     public function testUtf8mb4SuccessViaDefaultEncoding()
     {
-        $modeStm = "SET SESSION sql_mode = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';";
+        $sqlMode = 'SET SESSION sql_mode = "STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION";';
         $dropStm = "DROP TABLE IF EXISTS `test_utf8mb4`;";
         $createStm = "CREATE TABLE `test_utf8mb4` (`field` TEXT CHARACTER SET utf8mb4 NOT NULL) ENGINE=INNODB;";
         $insertStm = "INSERT INTO test_utf8mb4 SET field = '😃';";
@@ -250,9 +252,10 @@ class MysqlTest extends TestCase
             'port' => '3306',
             // Try to insert utf8 4-byte symbol through default connection encoding
             //'encoding' => 'utf8mb4',
+            'init' => [$sqlMode],
         ]);
 
-        $result = $connection->prepare($modeStm . $dropStm . $createStm)->execute()
+        $result = $connection->prepare($dropStm . $createStm)->execute()
             && $connection->prepare($insertStm)->execute();
         // Cleanup
         $connection->prepare($dropStm)->execute();
