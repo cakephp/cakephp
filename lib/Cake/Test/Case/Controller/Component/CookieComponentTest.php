@@ -808,6 +808,89 @@ class CookieComponentTest extends CakeTestCase {
 	}
 
 /**
+ * Test deleting deep child elements sends correct cookies.
+ *
+ * @return void
+ */
+	public function testDeleteDeepChildren() {
+		$_COOKIE = array(
+			'CakeTestCookie' => array(
+				'foo' => $this->_encrypt(array(
+					'bar' => array(
+						'baz' => 'value',
+					),
+				)),
+			),
+		);
+
+		$this->Cookie->delete('foo.bar.baz');
+
+		$cookies = $this->Controller->response->cookie();
+		$expected = array(
+			'CakeTestCookie[foo]' => array(
+				'name' => 'CakeTestCookie[foo]',
+				'value' => '{"bar":[]}',
+				'path' => '/',
+				'domain' => '',
+				'secure' => false,
+				'httpOnly' => false
+			),
+		);
+
+		$expires = Hash::combine($cookies, '{*}.name', '{*}.expire');
+		$cookies = Hash::remove($cookies, '{*}.expire');
+		$this->assertEquals($expected, $cookies);
+
+		$this->assertWithinMargin($expires['CakeTestCookie[foo]'], time() + 10, 2);
+	}
+
+/**
+ * Test destroy works.
+ *
+ * @return void
+ */
+	public function testDestroy() {
+		$_COOKIE = array(
+			'CakeTestCookie' => array(
+				'foo' => $this->_encrypt(array(
+					'bar' => array(
+						'baz' => 'value',
+					),
+				)),
+				'other' => 'value',
+			),
+		);
+
+		$this->Cookie->destroy();
+
+		$cookies = $this->Controller->response->cookie();
+		$expected = array(
+			'CakeTestCookie[foo]' => array(
+				'name' => 'CakeTestCookie[foo]',
+				'value' => '',
+				'path' => '/',
+				'domain' => '',
+				'secure' => false,
+				'httpOnly' => false
+			),
+			'CakeTestCookie[other]' => array(
+				'name' => 'CakeTestCookie[other]',
+				'value' => '',
+				'path' => '/',
+				'domain' => '',
+				'secure' => false,
+				'httpOnly' => false
+			),
+		);
+
+		$expires = Hash::combine($cookies, '{*}.name', '{*}.expire');
+		$cookies = Hash::remove($cookies, '{*}.expire');
+		$this->assertEquals($expected, $cookies);
+		$this->assertWithinMargin($expires['CakeTestCookie[foo]'], time() - 42000, 2);
+		$this->assertWithinMargin($expires['CakeTestCookie[other]'], time() - 42000, 2);
+	}
+
+/**
  * Helper method for generating old style encoded cookie values.
  *
  * @return string.
