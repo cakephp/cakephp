@@ -165,13 +165,13 @@ class MysqlTest extends TestCase
     }
 
     /**
-     * Test for utf8mb4 Success
+     * Test for utf8mb4 Failure #1
      *
      * @expectedException \PDOException
-     * @expectedExceptionMessage SQLSTATE[22007]: Invalid datetime format: 1366 Incorrect string value: '\xF0\x9F\x98\x83' for column 'field' at row 1
+     * @expectedExceptionMessage SQLSTATE[22007]: SQLSTATE[HY000]: General error: 1366 Incorrect string value: '\xF0\x9F\x98\x83
      * @return void
      */
-    public function testUtf8mb4Failure()
+    public function testUtf8mb4FailureOnConnectionMode()
     {
         $sqlMode = 'SET SESSION sql_mode = "STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION";';
         $dropStm = "DROP TABLE IF EXISTS `test_utf8mb4`;";
@@ -193,6 +193,41 @@ class MysqlTest extends TestCase
 
         $result = $connection->prepare($dropStm . $createStm)->execute()
             && $connection->prepare($insertStm)->execute();
+        // Cleanup
+        $connection->prepare($dropStm)->execute();
+    }
+
+    /**
+     * Test for utf8mb4 Failure #2
+     *
+     * @expectedException \PDOException
+     * @expectedExceptionMessage SQLSTATE[HY000]: General error: 1267 Illegal mix of collations (utf8mb4_general_ci,IMPLICIT) and (utf8_general_ci,COERCIBLE) for operation '='
+     * @return void
+     */
+    public function testUtf8mb4FailureOnConnectionModeNotSufficientForColumnMode()
+    {
+        $sqlMode = 'SET SESSION sql_mode = "";';
+        $dropStm = "DROP TABLE IF EXISTS `test_utf8mb4`;";
+        $createStm = "CREATE TABLE `test_utf8mb4` (`field` TEXT CHARACTER SET utf8mb4 NOT NULL) ENGINE=INNODB;";
+        $insertStm = "INSERT INTO test_utf8mb4 SET field = '😃';";
+        $selectStm = "SELECT COUNT(*) as count FROM test_utf8mb4 WHERE field = '😃';";
+
+        $connection = new \Cake\Database\Connection([
+            'driver' => '\Cake\Database\Driver\Mysql',
+            'persistent' => true,
+            'host' => 'localhost',
+            'username' => 'root',
+            'password' => '',
+            'database' => 'cakephp_test',
+            'port' => '3306',
+            // Try to insert/select utf8 4-byte symbol through utf8 3-byte connection character set
+            'encoding' => 'utf8',
+            'init' => [$sqlMode],
+        ]);
+
+        $connection->prepare($dropStm . $createStm)->execute()
+            && $connection->prepare($insertStm)->execute() // Inserts ????
+            && $connection->prepare($selectStm)->execute(); // Throws Exception
         // Cleanup
         $connection->prepare($dropStm)->execute();
     }
