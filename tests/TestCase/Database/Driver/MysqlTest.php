@@ -185,11 +185,11 @@ class MysqlTest extends TestCase
             'password' => '',
             'database' => 'cake',
             'port' => '3306',
+            // Try to insert utf8 4-byte symbol through utf8 3-byte connection character set
+            'encoding' => 'utf8',
         ]);
 
-        // Try to insert utf8 4-byte symbol through utf8 3-byte connection character set
-        $result = $connection->prepare('SET NAMES utf8')->execute()
-            && $connection->prepare($dropStm . $createStm)->execute()
+        $result = $connection->prepare($dropStm . $createStm)->execute()
             && $connection->prepare($insertStm)->execute();
         // Cleanup
         $connection->prepare($dropStm)->execute();
@@ -214,11 +214,11 @@ class MysqlTest extends TestCase
             'password' => '',
             'database' => 'cake',
             'port' => '3306',
+            // Try to insert utf8 4-byte symbol through utf8 4-byte connection character set
+            'encoding' => 'utf8mb4',
         ]);
 
-        // Try to insert utf8 4-byte symbol through utf8 4-byte connection character set
-        $result = $connection->prepare('SET NAMES utf8mb4')->execute()
-            && $connection->prepare($dropStm . $createStm)->execute()
+        $result = $connection->prepare($dropStm . $createStm)->execute()
             && $connection->prepare($insertStm)->execute();
         // Cleanup
         $connection->prepare($dropStm)->execute();
