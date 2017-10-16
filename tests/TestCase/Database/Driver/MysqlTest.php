@@ -225,4 +225,36 @@ class MysqlTest extends TestCase
 
         $this->assertTrue($result);
     }
+
+
+
+    /**
+     * Test for utf8mb4 Success - Using default encoding
+     *
+     * @return void
+     */
+    public function testUtf8mb4SuccessViaDefaultEncoding()
+    {
+        $dropStm = "DROP TABLE IF EXISTS `test_utf8mb4`;";
+        $createStm = "CREATE TABLE `test_utf8mb4` (`field` TEXT CHARACTER SET utf8mb4 NOT NULL) ENGINE=INNODB;";
+        $insertStm = "INSERT INTO test_utf8mb4 SET field = '😃';";
+
+        $connection = new \Cake\Database\Connection([
+            'driver' => '\Cake\Database\Driver\Mysql',
+            'persistent' => true,
+            'host' => 'localhost',
+            'username' => 'root',
+            'password' => '',
+            'database' => 'cakephp_test',
+            'port' => '3306',
+            // Try to insert utf8 4-byte symbol through utf8 4-byte connection character set, using default encoding
+        ]);
+
+        $result = $connection->prepare($dropStm . $createStm)->execute()
+            && $connection->prepare($insertStm)->execute();
+        // Cleanup
+        $connection->prepare($dropStm)->execute();
+
+        $this->assertTrue($result);
+    }
 }
