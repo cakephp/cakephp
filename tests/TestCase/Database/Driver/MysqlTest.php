@@ -165,24 +165,64 @@ class MysqlTest extends TestCase
     }
 
     /**
-     * Test for utf8mb4
+     * Test for utf8mb4 Success
      *
+     * @expectedException \PDOException
+     * @expectedExceptionMessage SQLSTATE[HY000]: General error: 1366 '\xF0\x9F\x98\x83' FOR COLUMN 'field' AT ROW 1
      * @return void
      */
-    public function testUtf8mb4()
+    public function testUtf8mb4Failure()
     {
         $dropStm = "DROP TABLE IF EXISTS `test_utf8mb4`;";
         $createStm = "CREATE TABLE `test_utf8mb4` (`field` TEXT CHARACTER SET utf8mb4 NOT NULL) ENGINE=INNODB;";
-        $insertStmFailure = "SET NAMES utf8; INSERT INTO test_utf8mb4 SET field = '😃';";
-        $insertStmSuccess = "SET NAMES utf8mb4; INSERT INTO test_utf8mb4 SET field = '😃';";
+        $insertStm = "INSERT INTO test_utf8mb4 SET field = '😃';";
 
-        $connection = ConnectionManager::get('test');
-        $result = $connection->execute($dropStm);
-        $result = $connection->execute($createStm);
-        // TEST A: Expect Failure / Exception
-        $result = $connection->execute($insertStmFailure);
-        // TEST B: Expect Success
-        $result = $connection->execute($insertStmSuccess);
-        $result = $connection->execute($dropStm);
+        $connection = new \Cake\Database\Connection([
+            'driver' => '\Cake\Database\Driver\Mysql',
+            'persistent' => true,
+            'host' => 'localhost',
+            'username' => 'root',
+            'password' => '',
+            'database' => 'cake',
+            'port' => '3306',
+        ]);
+
+        // Try to insert utf8 4-byte symbol through utf8 3-byte connection character set
+        $result = $connection->prepare('SET NAMES utf8')->execute()
+            && $connection->prepare($dropStm . $createStm)->execute()
+            && $connection->prepare($insertStm)->execute();
+        // Cleanup
+        $connection->prepare($dropStm)->execute();
+    }
+
+    /**
+     * Test for utf8mb4 Success
+     *
+     * @return void
+     */
+    public function testUtf8mb4Success()
+    {
+        $dropStm = "DROP TABLE IF EXISTS `test_utf8mb4`;";
+        $createStm = "CREATE TABLE `test_utf8mb4` (`field` TEXT CHARACTER SET utf8mb4 NOT NULL) ENGINE=INNODB;";
+        $insertStm = "INSERT INTO test_utf8mb4 SET field = '😃';";
+
+        $connection = new \Cake\Database\Connection([
+            'driver' => '\Cake\Database\Driver\Mysql',
+            'persistent' => true,
+            'host' => 'localhost',
+            'username' => 'root',
+            'password' => '',
+            'database' => 'cake',
+            'port' => '3306',
+        ]);
+
+        // Try to insert utf8 4-byte symbol through utf8 4-byte connection character set
+        $result = $connection->prepare('SET NAMES utf8mb4')->execute()
+            && $connection->prepare($dropStm . $createStm)->execute()
+            && $connection->prepare($insertStm)->execute();
+        // Cleanup
+        $connection->prepare($dropStm)->execute();
+
+        $this->assertTrue($result);
     }
 }
