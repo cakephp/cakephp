@@ -247,7 +247,8 @@ class MysqlTest extends TestCase
             'password' => '',
             'database' => 'cakephp_test',
             'port' => '3306',
-            // Try to insert utf8 4-byte symbol through utf8 4-byte connection character set, using default encoding
+            // Try to insert utf8 4-byte symbol through default connection encoding
+            //'encoding' => 'utf8mb4',
         ]);
 
         $result = $connection->prepare($dropStm . $createStm)->execute()
