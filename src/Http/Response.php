@@ -1069,7 +1069,7 @@ class Response implements ResponseInterface
     }
 
     /**
-     * Retruns the current content type.
+     * Returns the current content type.
      *
      * @return string
      */
@@ -1177,7 +1177,7 @@ class Response implements ResponseInterface
     }
 
     /**
-     * Retruns the current charset.
+     * Returns the current charset.
      *
      * @return string
      */
