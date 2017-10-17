@@ -39,17 +39,12 @@ class EntityRouteTest extends TestCase
             '/articles/:category_id/:slug',
             [
                 '_name' => 'articlesView',
-                '_entity' => $entity,
-                'controller' => 'articles',
-                'action' => 'view'
             ]
         );
 
         $result = $route->match([
             '_entity' => $entity,
-            '_name' => 'articlesView',
-            'controller' => 'articles',
-            'action' => 'view'
+            '_name' => 'articlesView'
         ]);
 
         $this->assertEquals('/articles/2/article-slug', $result);
@@ -71,18 +66,14 @@ class EntityRouteTest extends TestCase
             '/articles/:category_id/:slug',
             [
                 '_name' => 'articlesView',
-                '_entity' => $entity,
-                'controller' => 'articles',
-                'action' => 'view'
+                '_entity' => $entity
             ]
         );
 
         $result = $route->match([
             '_entity' => $entity,
-            '_name' => 'articlesView',
-            'controller' => 'articles',
-            'action' => 'view'
-        ]);
+            '_name' => 'articlesView'
+       ]);
 
         $this->assertEquals('/articles/2/article-slug', $result);
     }
@@ -96,13 +87,11 @@ class EntityRouteTest extends TestCase
     public function testInvalidEntityValueException()
     {
         $route = new EntityRoute('/', [
-            '_name' => 'articlesView',
             '_entity' => 'Something else'
         ]);
 
         $route->match([
             '_entity' => 'something-else',
-            '_name' => 'articlesView'
         ]);
     }
 }
