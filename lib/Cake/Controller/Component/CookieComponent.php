@@ -261,22 +261,7 @@ class CookieComponent extends Component {
 		if ($key === null) {
 			return $this->_values[$this->name];
 		}
-
-		if (strpos($key, '.') !== false) {
-			$names = explode('.', $key, 2);
-			$key = $names[0];
-		}
-		if (!isset($this->_values[$this->name][$key])) {
-			return null;
-		}
-
-		if (!empty($names[1])) {
-			if (is_array($this->_values[$this->name][$key])) {
-				return Hash::get($this->_values[$this->name][$key], $names[1]);
-			}
-			return null;
-		}
-		return $this->_values[$this->name][$key];
+		return Hash::get($this->_values[$this->name], $key);
 	}
 
 /**
@@ -316,20 +301,16 @@ class CookieComponent extends Component {
 			$this->read();
 		}
 		if (strpos($key, '.') === false) {
-			if (isset($this->_values[$this->name][$key]) && is_array($this->_values[$this->name][$key])) {
-				foreach ($this->_values[$this->name][$key] as $idx => $val) {
-					$this->_delete("[$key][$idx]");
-				}
-			}
-			$this->_delete("[$key]");
 			unset($this->_values[$this->name][$key]);
-			return;
+			$this->_delete('[' . $key . ']');
+		} else {
+			$this->_values[$this->name] = Hash::remove((array)$this->_values[$this->name], $key);
+			list($key) = explode('.', $key, 2);
+			if (isset($this->_values[$this->name][$key])) {
+				$value = $this->_values[$this->name][$key];
+				$this->_write('[' . $key . ']', $value);
+			}
 		}
-		$names = explode('.', $key, 2);
-		if (isset($this->_values[$this->name][$names[0]]) && is_array($this->_values[$this->name][$names[0]])) {
-			$this->_values[$this->name][$names[0]] = Hash::remove($this->_values[$this->name][$names[0]], $names[1]);
-		}
-		$this->_delete('[' . implode('][', $names) . ']');
 	}
 
 /**
@@ -347,14 +328,7 @@ class CookieComponent extends Component {
 		}
 
 		foreach ($this->_values[$this->name] as $name => $value) {
-			if (is_array($value)) {
-				foreach ($value as $key => $val) {
-					unset($this->_values[$this->name][$name][$key]);
-					$this->_delete("[$name][$key]");
-				}
-			}
-			unset($this->_values[$this->name][$name]);
-			$this->_delete("[$name]");
+			$this->delete($name);
 		}
 	}
 
