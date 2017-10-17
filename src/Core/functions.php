@@ -251,12 +251,12 @@ if (!function_exists('env')) {
 
 if (!function_exists('throwWarning')) {
     /**
-     * Throws a warning.
+     * Triggers an E_USER_WARNING.
      *
      * @param string $message The warning message.
      * @return void
      */
-    function throwWarning($message)
+    function triggerWarning($message)
     {
         $stackFrame = 2;
         $trace = debug_backtrace();
