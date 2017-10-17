@@ -214,6 +214,19 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * Tests the getType method
+     *
+     * @return void
+     */
+    public function testGetType()
+    {
+        $response = new Response();
+        $this->assertEquals('text/html', $response->getType());
+        $response->type('pdf');
+        $this->assertEquals('application/pdf', $response->getType());
+    }
+
+    /**
      * Tests the withType method
      *
      * @return void
