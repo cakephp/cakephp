@@ -1041,7 +1041,8 @@ class Response implements ResponseInterface
      * ```
      *
      * @param string|null $contentType Content type key.
-     * @return mixed Current content type or false if supplied an invalid content type
+     * @return mixed Current content type or false if supplied an invalid content type.
+     * @deprecated 3.5.5 Use getType() or withType() instead.
      */
     public function type($contentType = null)
     {
