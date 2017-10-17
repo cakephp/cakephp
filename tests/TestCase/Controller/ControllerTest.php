@@ -497,7 +497,7 @@ class ControllerTest extends TestCase
         $this->assertSame($response, $Controller->response);
         $this->assertEquals($code, $response->getStatusCode());
         $this->assertEquals('http://cakephp.org', $response->getHeaderLine('Location'));
-        $this->assertFalse($Controller->autoRender);
+        $this->assertFalse($Controller->isAutoRenderEnabled());
     }
 
     /**
@@ -1185,9 +1185,10 @@ class ControllerTest extends TestCase
     public function testDeprecatedControllerProperty($property, $getter, $setter, $value)
     {
         $controller = new AnotherTestController();
-        error_reporting(E_ALL ^ E_USER_DEPRECATED);
-        $controller->$property = $value;
-        $this->assertSame($value, $controller->$property);
+        $this->deprecated(function () use ($controller, $property, $value) {
+            $controller->$property = $value;
+            $this->assertSame($value, $controller->$property);
+        });
         $this->assertSame($value, $controller->{$getter}());
     }
 
@@ -1206,9 +1207,10 @@ class ControllerTest extends TestCase
      */
     public function testDeprecatedControllerPropertySetterMessage($property, $getter, $setter, $value)
     {
-        error_reporting(E_ALL);
         $controller = new AnotherTestController();
-        $controller->$property = $value;
+        $this->withErrorReporting(E_ALL, function () use ($controller, $property, $value) {
+            $controller->$property = $value;
+        });
     }
 
     /**
@@ -1225,10 +1227,11 @@ class ControllerTest extends TestCase
      */
     public function testDeprecatedControllerPropertyGetterMessage($property, $getter, $setter, $value)
     {
-            error_reporting(E_ALL);
-            $controller = new AnotherTestController();
-            $controller->{$setter}($value);
-            $result = $controller->$property;
+        $controller = new AnotherTestController();
+        $controller->{$setter}($value);
+        $this->withErrorReporting(E_ALL, function () use ($controller, $property) {
+            $controller->$property;
+        });
     }
 
     /**
