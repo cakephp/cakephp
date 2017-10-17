@@ -36,30 +36,46 @@ class CommandScanner
     public function scanAll()
     {
         $shellList = [];
-
         $appNamespace = Configure::read('App.namespace');
-        $shellList['app'] = $this->scanDir(
-            App::path('Shell')[0],
-            $appNamespace . '\Shell\\',
-            '',
-            ['app']
-        );
 
-        $shellList['CORE'] = $this->scanDir(
+        $coreShells = $this->scanDir(
             dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Shell' . DIRECTORY_SEPARATOR,
             'Cake\Shell\\',
             '',
             ['command_list']
         );
+        $coreCommands = $this->scanDir(
+            dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Command' . DIRECTORY_SEPARATOR,
+            'Cake\Command\\',
+            '',
+            ['command_list']
+        );
+        $shellList['CORE'] = array_merge($coreShells, $coreCommands);
+
+        $appShells = $this->scanDir(
+            App::path('Shell')[0],
+            $appNamespace . '\Shell\\',
+            '',
+            ['app']
+        );
+        $appCommands = $this->scanDir(
+            App::path('Command')[0],
+            $appNamespace . '\Command\\',
+            '',
+            ['app']
+        );
+        $shellList['app'] = array_merge($appShells, $appCommands);
 
         $plugins = [];
         foreach (Plugin::loaded() as $plugin) {
-            $plugins[$plugin] = $this->scanDir(
-                Plugin::classPath($plugin) . 'Shell',
-                str_replace('/', '\\', $plugin) . '\Shell\\',
-                Inflector::underscore($plugin) . '.',
-                []
-            );
+            $path = Plugin::classPath($plugin);
+            $namespace = str_replace('/', '\\', $plugin);
+            $prefix = Inflector::underscore($plugin) . '.';
+
+            $commands = $this->scanDir($path . 'Command', $namespace . '\Command\\', $prefix, []);
+            $shells = $this->scanDir($path . 'Shell', $namespace . '\Shell\\', $prefix, []);
+
+            $plugins[$plugin] = array_merge($shells, $commands);
         }
         $shellList['plugins'] = $plugins;
 
@@ -84,14 +100,18 @@ class CommandScanner
             return [];
         }
 
+        $classPattern = '/(Shell|Command)$/';
         $shells = [];
         foreach ($contents[1] as $file) {
             if (substr($file, -4) !== '.php') {
                 continue;
             }
-
             $shell = substr($file, 0, -4);
-            $name = Inflector::underscore(str_replace('Shell', '', $shell));
+            if (!preg_match($classPattern, $shell)) {
+                continue;
+            }
+
+            $name = Inflector::underscore(preg_replace($classPattern, '', $shell));
             if (in_array($name, $hide, true)) {
                 continue;
             }
