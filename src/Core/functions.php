@@ -249,14 +249,14 @@ if (!function_exists('env')) {
 
 }
 
-if (!function_exists('warning')) {
+if (!function_exists('throwWarning')) {
     /**
      * Throws a warning.
      *
      * @param string $message The warning message.
      * @return void
      */
-    function warning($message)
+    function throwWarning($message)
     {
         $stackFrame = 2;
         $trace = debug_backtrace();

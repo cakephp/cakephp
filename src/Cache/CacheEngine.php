@@ -293,6 +293,6 @@ abstract class CacheEngine
             return;
         }
 
-        warning($message);
+        throwWarning($message);
     }
 }
