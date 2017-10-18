@@ -587,14 +587,17 @@ abstract class IntegrationTestCase extends TestCase
 
         $props = [
             'url' => $url,
-            'post' => $this->_addTokens($tokenUrl, $data),
-            'cookies' => $this->_cookie,
             'session' => $session,
             'query' => $queryData
         ];
         if (is_string($data)) {
             $props['input'] = $data;
         }
+        if (!isset($props['input'])) {
+            $props['post'] = $this->_addTokens($tokenUrl, $data);
+        }
+        $props['cookies'] = $this->_cookie;
+
         $env = [
             'REQUEST_METHOD' => $method,
             'QUERY_STRING' => $query,
