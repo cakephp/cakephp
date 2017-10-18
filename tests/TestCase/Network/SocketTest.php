@@ -398,7 +398,6 @@ class SocketTest extends TestCase
      */
     public function testEnableCryptoExceptionDisableTwice()
     {
-        // testing on tls server
         $this->_connectSocketToSslTls();
         $this->Socket->enableCrypto('tls', 'client', false);
     }
@@ -408,9 +407,21 @@ class SocketTest extends TestCase
      *
      * @return void
      */
+    public function testEnableCryptoEnableTls12()
+    {
+        $this->_connectSocketToSslTls();
+        $this->assertFalse($this->Socket->encrypted);
+        $this->Socket->enableCrypto('tlsv12', 'client', true);
+        $this->assertTrue($this->Socket->encrypted);
+    }
+
+    /**
+     * testEnableCryptoEnableStatus
+     *
+     * @return void
+     */
     public function testEnableCryptoEnableStatus()
     {
-        // testing on tls server
         $this->_connectSocketToSslTls();
         $this->assertFalse($this->Socket->encrypted);
         $this->Socket->enableCrypto('tls', 'client', true);
