@@ -35,9 +35,22 @@ class CommandScanner
      */
     public function scanAll()
     {
-        $shellList = [];
-        $appNamespace = Configure::read('App.namespace');
+        $shellList = [
+            'CORE' => $this->scanCore(),
+            'app' => $this->scanApp(),
+            'plugins' => $this->scanPlugins()
+        ];
 
+        return $shellList;
+    }
+
+    /**
+     * Scan CakePHP internals for shells & commands.
+     *
+     * @return array A list of command metadata.
+     */
+    protected function scanCore()
+    {
         $coreShells = $this->scanDir(
             dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Shell' . DIRECTORY_SEPARATOR,
             'Cake\Shell\\',
@@ -50,8 +63,18 @@ class CommandScanner
             '',
             ['command_list']
         );
-        $shellList['CORE'] = array_merge($coreShells, $coreCommands);
 
+        return array_merge($coreShells, $coreCommands);
+    }
+
+    /**
+     * Scan the application for shells & commands.
+     *
+     * @return array A list of command metadata.
+     */
+    protected function scanApp()
+    {
+        $appNamespace = Configure::read('App.namespace');
         $appShells = $this->scanDir(
             App::path('Shell')[0],
             $appNamespace . '\Shell\\',
@@ -64,8 +87,17 @@ class CommandScanner
             '',
             ['app']
         );
-        $shellList['app'] = array_merge($appShells, $appCommands);
 
+        return array_merge($appShells, $appCommands);
+    }
+
+    /**
+     * Scan the plugins for shells & commands.
+     *
+     * @return array A list of command metadata.
+     */
+    protected function scanPlugins()
+    {
         $plugins = [];
         foreach (Plugin::loaded() as $plugin) {
             $path = Plugin::classPath($plugin);
@@ -77,9 +109,8 @@ class CommandScanner
 
             $plugins[$plugin] = array_merge($shells, $commands);
         }
-        $shellList['plugins'] = $plugins;
 
-        return $shellList;
+        return $plugins;
     }
 
     /**
