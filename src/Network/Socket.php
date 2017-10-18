@@ -83,18 +83,25 @@ class Socket
     /**
      * Contains all the encryption methods available
      *
+     * SSLv2 and SSLv3 are deprecated, and should not be used as they
+     * have several published vulnerablilities.
+     *
      * @var array
      */
     protected $_encryptMethods = [
         // @codingStandardsIgnoreStart
+        // @deprecated Will be removed in 4.0.0
         'sslv2_client' => STREAM_CRYPTO_METHOD_SSLv2_CLIENT,
+        // @deprecated Will be removed in 4.0.0
         'sslv3_client' => STREAM_CRYPTO_METHOD_SSLv3_CLIENT,
         'sslv23_client' => STREAM_CRYPTO_METHOD_SSLv23_CLIENT,
         'tls_client' => STREAM_CRYPTO_METHOD_TLS_CLIENT,
         'tlsv10_client' => STREAM_CRYPTO_METHOD_TLSv1_0_CLIENT,
         'tlsv11_client' => STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT,
         'tlsv12_client' => STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT,
+        // @deprecated Will be removed in 4.0.0
         'sslv2_server' => STREAM_CRYPTO_METHOD_SSLv2_SERVER,
+        // @deprecated Will be removed in 4.0.0
         'sslv3_server' => STREAM_CRYPTO_METHOD_SSLv3_SERVER,
         'sslv23_server' => STREAM_CRYPTO_METHOD_SSLv23_SERVER,
         'tls_server' => STREAM_CRYPTO_METHOD_TLS_SERVER,
