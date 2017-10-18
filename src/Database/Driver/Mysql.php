@@ -39,7 +39,7 @@ class Mysql extends Driver
         'database' => 'cake',
         'port' => '3306',
         'flags' => [],
-        'encoding' => 'utf8',
+        'encoding' => 'utf8mb4',
         'timezone' => null,
         'init' => [],
     ];
