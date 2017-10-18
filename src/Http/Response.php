@@ -1136,6 +1136,33 @@ class Response implements ResponseInterface
     }
 
     /**
+     * Get a new instance with an updated mime types.
+     *
+     * ### Storing content type definitions
+     *
+     * ```
+     * type(['keynote' => 'application/keynote', 'bat' => 'application/bat']);
+     * ```
+     *
+     * ### Replacing a content type definition
+     *
+     * ```
+     * type(['jpg' => 'text/plain']);
+     *
+     * @param array $mimeTypes list of $mimeTypes to insert into  current mime type list
+     * @return static
+     */
+    public function withMimeType(array $mimeTypes)
+    {
+        $new = clone $this;
+        foreach ($mimeTypes as $type => $definition) {
+            $new->_mimeTypes[$type] = $definition;
+        }
+
+        return $new;
+    }
+
+    /**
      * Maps a content-type back to an alias
      *
      * e.g `mapType('application/pdf'); // returns 'pdf'`
