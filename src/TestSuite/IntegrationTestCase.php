@@ -702,9 +702,12 @@ abstract class IntegrationTestCase extends TestCase
      *
      * @return void
      */
-    public function assertResponseOk()
+    public function assertResponseOk($message)
     {
-        $this->_assertStatus(200, 204, 'Status code is not between 200 and 204');
+        if (empty($message)) {
+            $message = 'Status code is not between 200 and 204';
+        }
+        $this->_assertStatus(200, 204, $message);
     }
 
     /**
@@ -712,9 +715,12 @@ abstract class IntegrationTestCase extends TestCase
      *
      * @return void
      */
-    public function assertResponseSuccess()
+    public function assertResponseSuccess($message)
     {
-        $this->_assertStatus(200, 308, 'Status code is not between 200 and 308');
+        if (empty($message)) {
+            $message = 'Status code is not between 200 and 308';
+        }
+        $this->_assertStatus(200, 308, $message);
     }
 
     /**
@@ -722,9 +728,12 @@ abstract class IntegrationTestCase extends TestCase
      *
      * @return void
      */
-    public function assertResponseError()
+    public function assertResponseError($message)
     {
-        $this->_assertStatus(400, 429, 'Status code is not between 400 and 429');
+        if (empty($message)) {
+            $message = 'Status code is not between 400 and 429';
+        }
+        $this->_assertStatus(400, 429, $message);
     }
 
     /**
@@ -732,9 +741,12 @@ abstract class IntegrationTestCase extends TestCase
      *
      * @return void
      */
-    public function assertResponseFailure()
+    public function assertResponseFailure($message)
     {
-        $this->_assertStatus(500, 505, 'Status code is not between 500 and 505');
+        if (empty($message)) {
+            $message = 'Status code is not between 500 and 505';
+        }
+        $this->_assertStatus(500, 505, $message);
     }
 
     /**
@@ -743,10 +755,15 @@ abstract class IntegrationTestCase extends TestCase
      * @param int $code Status code to assert.
      * @return void
      */
-    public function assertResponseCode($code)
+    public function assertResponseCode($code, $message)
     {
         $actual = $this->_response->getStatusCode();
-        $this->_assertStatus($code, $code, 'Status code is not ' . $code . ' but ' . $actual);
+        
+        if (empty($message)) {
+            $message = 'Status code is not ' . $code . ' but ' . $actual;
+        }
+        
+        $this->_assertStatus($code, $code, $message);
     }
 
     /**
