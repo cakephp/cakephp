@@ -130,7 +130,7 @@ class SqlserverSchema extends BaseSchema
             return ['type' => TableSchema::TYPE_TEXT, 'length' => null];
         }
 
-        if ($col === 'binary' && $length === 16) {
+        if ($col === 'binary' && (int)$length === 16) {
             return ['type' => TableSchema::TYPE_BINARY_UUID, 'length' => null];
         }
 
