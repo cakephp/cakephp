@@ -702,7 +702,7 @@ abstract class IntegrationTestCase extends TestCase
      *
      * @return void
      */
-    public function assertResponseOk($message)
+    public function assertResponseOk($message = null)
     {
         if (empty($message)) {
             $message = 'Status code is not between 200 and 204';
@@ -715,7 +715,7 @@ abstract class IntegrationTestCase extends TestCase
      *
      * @return void
      */
-    public function assertResponseSuccess($message)
+    public function assertResponseSuccess($message = null)
     {
         if (empty($message)) {
             $message = 'Status code is not between 200 and 308';
@@ -728,7 +728,7 @@ abstract class IntegrationTestCase extends TestCase
      *
      * @return void
      */
-    public function assertResponseError($message)
+    public function assertResponseError($message = null)
     {
         if (empty($message)) {
             $message = 'Status code is not between 400 and 429';
@@ -741,7 +741,7 @@ abstract class IntegrationTestCase extends TestCase
      *
      * @return void
      */
-    public function assertResponseFailure($message)
+    public function assertResponseFailure($message = null)
     {
         if (empty($message)) {
             $message = 'Status code is not between 500 and 505';
@@ -755,7 +755,7 @@ abstract class IntegrationTestCase extends TestCase
      * @param int $code Status code to assert.
      * @return void
      */
-    public function assertResponseCode($code, $message)
+    public function assertResponseCode($code, $message = null)
     {
         $actual = $this->_response->getStatusCode();
         
