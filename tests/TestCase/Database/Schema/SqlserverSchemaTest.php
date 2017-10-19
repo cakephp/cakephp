@@ -222,13 +222,6 @@ SQL;
                 ['type' => 'uuid']
             ],
             [
-                'BINARY',
-                16,
-                null,
-                null,
-                ['type' => 'binaryuuid', 'length' => null]
-            ],
-            [
                 'TEXT',
                 null,
                 null,
@@ -541,7 +534,7 @@ SQL;
             [
                 'id',
                 ['type' => 'binaryuuid', 'null' => false],
-                '[id] BINARY(16) NOT NULL'
+                '[id] UNIQUEIDENTIFIER NOT NULL'
             ],
             [
                 'role',
