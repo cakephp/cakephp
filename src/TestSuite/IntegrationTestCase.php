@@ -700,6 +700,7 @@ abstract class IntegrationTestCase extends TestCase
     /**
      * Asserts that the response status code is in the 2xx range.
      *
+     * @param string $message Custom message for failure.
      * @return void
      */
     public function assertResponseOk($message = null)
@@ -713,6 +714,7 @@ abstract class IntegrationTestCase extends TestCase
     /**
      * Asserts that the response status code is in the 2xx/3xx range.
      *
+     * @param string $message Custom message for failure.
      * @return void
      */
     public function assertResponseSuccess($message = null)
@@ -726,6 +728,7 @@ abstract class IntegrationTestCase extends TestCase
     /**
      * Asserts that the response status code is in the 4xx range.
      *
+     * @param string $message Custom message for failure.
      * @return void
      */
     public function assertResponseError($message = null)
@@ -739,6 +742,7 @@ abstract class IntegrationTestCase extends TestCase
     /**
      * Asserts that the response status code is in the 5xx range.
      *
+     * @param string $message Custom message for failure.
      * @return void
      */
     public function assertResponseFailure($message = null)
@@ -753,6 +757,7 @@ abstract class IntegrationTestCase extends TestCase
      * Asserts a specific response status code.
      *
      * @param int $code Status code to assert.
+     * @param string $message Custom message for failure.
      * @return void
      */
     public function assertResponseCode($code, $message = null)
