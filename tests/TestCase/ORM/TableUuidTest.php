@@ -146,13 +146,12 @@ class TableUuidTest extends TestCase
      */
     public function testDelete($tableName)
     {
-        $id = '481fc6d0-b920-43e0-a40d-6d1740cf8569';
         $table = TableRegistry::get($tableName);
-        $entity = $table->find('all')->where(['id' => $id])->first();
+        $entity = $table->find('all')->firstOrFail();
 
         $this->assertTrue($table->delete($entity));
-        $query = $table->find('all')->where(['id' => $id]);
-        $this->assertCount(0, $query->execute(), 'No rows left');
+        $query = $table->find('all')->where(['id' => $entity->id]);
+        $this->assertEmpty($query->first(), 'No row left');
     }
 
     /**
