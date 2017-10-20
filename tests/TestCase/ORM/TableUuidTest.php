@@ -144,6 +144,21 @@ class TableUuidTest extends TestCase
      * @dataProvider uuidTableProvider
      * @return void
      */
+    public function testGetById($tableName)
+    {
+        $table = TableRegistry::get($tableName);
+        $entity = $table->find('all')->firstOrFail();
+
+        $result = $table->get($entity->id);
+        $this->assertSame($result->id, $entity->id);
+    }
+
+    /**
+     * Test delete with string pk.
+     *
+     * @dataProvider uuidTableProvider
+     * @return void
+     */
     public function testDelete($tableName)
     {
         $table = TableRegistry::get($tableName);
