@@ -38,6 +38,13 @@ class JsonType extends Type implements TypeInterface
     protected $_name;
 
     /**
+     * json_encode callback.
+     *
+     * @var string|null
+     */
+    protected $_encodeCallback = null;
+
+    /**
      * Constructor.
      *
      * (This method is declared here again so that the inheritance from
@@ -61,6 +68,9 @@ class JsonType extends Type implements TypeInterface
     {
         if (is_resource($value)) {
             throw new InvalidArgumentException('Cannot convert a resource value to JSON');
+        }
+        if ($this->_encodeCallback !== null && is_callable($this->_encodeCallback)) {
+            return $this->_encodeCallback($value);
         }
 
         return json_encode($value);
@@ -99,5 +109,18 @@ class JsonType extends Type implements TypeInterface
     public function marshal($value)
     {
         return $value;
+    }
+
+    /**
+     * set custom json_encode.
+     *
+     * @param mixed $callback The callback to use as json_encode().
+     * @return $this
+     */
+    public function encode($callback)
+    {
+        $this->_encodeCallback = $callback;
+
+        return $this;
     }
 }
