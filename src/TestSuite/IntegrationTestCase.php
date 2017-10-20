@@ -763,11 +763,11 @@ abstract class IntegrationTestCase extends TestCase
     public function assertResponseCode($code, $message = null)
     {
         $actual = $this->_response->getStatusCode();
-        
+
         if (empty($message)) {
             $message = 'Status code is not ' . $code . ' but ' . $actual;
         }
-        
+
         $this->_assertStatus($code, $code, $message);
     }
 
