@@ -249,7 +249,7 @@ if (!function_exists('env')) {
 
 }
 
-if (!function_exists('throwWarning')) {
+if (!function_exists('triggerWarning')) {
     /**
      * Triggers an E_USER_WARNING.
      *
