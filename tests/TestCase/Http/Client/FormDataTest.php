@@ -169,7 +169,7 @@ class FormDataTest extends TestCase
         $contents = file_get_contents($file);
 
         $data = new FormData();
-        $data->add('upload', fopen($file, 'r'));
+        $data->addFile('upload', fopen($file, 'r'));
         $boundary = $data->boundary();
         $result = (string)$data;
 
