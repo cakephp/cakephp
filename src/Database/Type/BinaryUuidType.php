@@ -86,7 +86,7 @@ class BinaryUuidType extends Type implements TypeInterface
      *
      * @param null|string|resource $value The value to convert.
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
-     * @return resource|null
+     * @return resource|string|null
      * @throws \Cake\Core\Exception\Exception
      */
     public function toPHP($value, Driver $driver)
