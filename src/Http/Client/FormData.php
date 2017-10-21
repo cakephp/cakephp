@@ -169,7 +169,7 @@ class FormData implements Countable
         if ($filename) {
             $part->filename($filename);
         }
-
+        $this->add($part);
         return $part;
     }
 
