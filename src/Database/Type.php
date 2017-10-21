@@ -37,6 +37,7 @@ class Type implements TypeInterface
         'integer' => 'Cake\Database\Type\IntegerType',
         'biginteger' => 'Cake\Database\Type\IntegerType',
         'binary' => 'Cake\Database\Type\BinaryType',
+        'binaryuuid' => 'Cake\Database\Type\BinaryUuidType',
         'boolean' => 'Cake\Database\Type\BoolType',
         'date' => 'Cake\Database\Type\DateType',
         'datetime' => 'Cake\Database\Type\DateTimeType',

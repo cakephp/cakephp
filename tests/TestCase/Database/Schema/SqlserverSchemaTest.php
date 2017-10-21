@@ -532,6 +532,11 @@ SQL;
                 '[id] UNIQUEIDENTIFIER NOT NULL'
             ],
             [
+                'id',
+                ['type' => 'binaryuuid', 'null' => false],
+                '[id] UNIQUEIDENTIFIER NOT NULL'
+            ],
+            [
                 'role',
                 ['type' => 'string', 'length' => 10, 'null' => false, 'default' => 'admin'],
                 "[role] NVARCHAR(10) NOT NULL DEFAULT 'admin'"

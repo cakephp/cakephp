@@ -99,6 +99,9 @@ class SqliteSchema extends BaseSchema
             return ['type' => TableSchema::TYPE_STRING, 'length' => $length];
         }
 
+        if ($col === 'binary' && $length === 16) {
+            return ['type' => TableSchema::TYPE_BINARY_UUID, 'length' => null];
+        }
         if (in_array($col, ['blob', 'clob'])) {
             return ['type' => TableSchema::TYPE_BINARY, 'length' => null];
         }
@@ -284,6 +287,7 @@ class SqliteSchema extends BaseSchema
     {
         $data = $schema->getColumn($name);
         $typeMap = [
+            TableSchema::TYPE_BINARY_UUID => ' BINARY(16)',
             TableSchema::TYPE_UUID => ' CHAR(36)',
             TableSchema::TYPE_TINYINTEGER => ' TINYINT',
             TableSchema::TYPE_SMALLINTEGER => ' SMALLINT',
