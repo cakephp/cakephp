@@ -14,8 +14,11 @@
  */
 namespace Cake\Console;
 
+use Cake\Console\Exception\StopException;
 use Cake\Log\Engine\ConsoleLog;
 use Cake\Log\Log;
+use RuntimeException;
+use SplFileObject;
 
 /**
  * A wrapper around the various IO operations shell tasks need to do.
@@ -90,6 +93,13 @@ class ConsoleIo
      * @var int
      */
     protected $_lastWritten = 0;
+
+    /**
+     * Whether or not files should be overwritten
+     *
+     * @var bool
+     */
+    protected $forceOverwrite = false;
 
     /**
      * Constructor
@@ -507,5 +517,75 @@ class ConsoleIo
         $name = ucfirst($name);
 
         return $this->_helpers->load($name, $settings);
+    }
+
+    /**
+     * Create a file at the given path.
+     *
+     * This method will prompt the user if a file will be overwritten.
+     * Setting `forceOverwrite` to true will suppress this behavior
+     * and always overwrite the file.
+     *
+     * If the user replies `a` subsequent `forceOverwrite` parameters will
+     * be coerced to true and all files will be overwritten.
+     *
+     * @param string $path The path to create the file at.
+     * @param string $contents The contents to put into the file.
+     * @param bool $forceOverwrite Whether or not the file should be overwritten.
+     *   If true, no question will be asked about whether or not to overwrite existing files.
+     * @return bool Success.
+     * @throws \Cake\Console\Exception\StopException When `q` is given as an answer
+     *   to whether or not a file should be overwritten.
+     */
+    public function createFile($path, $contents, $forceOverwrite = false)
+    {
+        $path = str_replace(
+            DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR,
+            DIRECTORY_SEPARATOR,
+            $path
+        );
+
+        $this->out();
+        $forceOverwrite = $forceOverwrite || $this->forceOverwrite;
+
+        if (file_exists($path) && $forceOverwrite === false) {
+            $this->warning("File `{$path}` exists");
+            $key = $this->askChoice('Do you want to overwrite?', ['y', 'n', 'a', 'q'], 'n');
+            $key = strtolower($key);
+
+            if ($key === 'q') {
+                $this->error('Quitting.', 2);
+                throw new StopException('Not creating file. Quitting.');
+            }
+            if ($key === 'a') {
+                $this->forceOverwrite = true;
+                $key = 'y';
+            }
+            if ($key !== 'y') {
+                $this->out("Skip `{$path}`", 2);
+
+                return false;
+            }
+        } else {
+            $this->out("Creating file {$path}");
+        }
+
+        try {
+            $file = new SplFileObject($path, 'w');
+        } catch (RuntimeException $e) {
+            $this->error("Could not write to `{$path}`. Permission denied.", 2);
+
+            return false;
+        }
+
+        $file->rewind();
+        if ($file->fwrite($contents) > 0) {
+            $this->out("<success>Wrote</success> `{$path}`");
+
+            return true;
+        }
+        $this->error("Could not write to `{$path}`.", 2);
+
+        return false;
     }
 }
