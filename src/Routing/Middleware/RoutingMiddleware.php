@@ -56,11 +56,9 @@ class RoutingMiddleware
      */
     protected function loadRoutes()
     {
-        if ($this->app && !Router::$initialized) {
+        if ($this->app) {
             $builder = Router::createRouteBuilder('/');
             $this->app->routes($builder);
-            // Prevent routes from being loaded again
-            Router::$initialized = true;
         }
     }
 
