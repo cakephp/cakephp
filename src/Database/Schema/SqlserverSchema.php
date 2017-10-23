@@ -46,11 +46,7 @@ class SqlserverSchema extends BaseSchema
             AC.column_id AS [column_id],
             AC.name AS [name],
             TY.name AS [type],
-            IIF (
-                TY.name = \'nchar\' OR TY.name =  \'nvarchar\' OR TY.name = \'ntext\',
-                AC.max_length / 2,
-                AC.max_length
-            ) AS [char_length],
+            AC.max_length AS [char_length],
             AC.precision AS [precision],
             AC.scale AS [scale],
             AC.is_identity AS [autoincrement],
@@ -117,7 +113,11 @@ class SqlserverSchema extends BaseSchema
         if ($col === 'real' || $col === 'float') {
             return ['type' => TableSchema::TYPE_FLOAT, 'length' => null];
         }
-
+        // SqlServer schema reflection returns double length for unicode
+        // columns because internally it uses UTF16/UCS2
+        if ($col === 'nvarchar' || $col === 'nchar' || $col === 'ntext') {
+            $length = $length / 2;
+        }
         if (strpos($col, 'varchar') !== false && $length < 0) {
             return ['type' => TableSchema::TYPE_TEXT, 'length' => null];
         }
