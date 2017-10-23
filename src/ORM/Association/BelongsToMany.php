@@ -586,9 +586,16 @@ class BelongsToMany extends Association
      */
     public function cascadeDelete(EntityInterface $entity, array $options = [])
     {
-        if (!$this->getDependent()) {
+        $dependent = $association->getDependent();
+
+        if (is_callable($dependent)) {
+            $dependent = (bool)$dependent($entity);
+        }
+
+        if ($dependent === false) {
             return true;
         }
+
         $foreignKey = (array)$this->getForeignKey();
         $bindingKey = (array)$this->getBindingKey();
         $conditions = [];
