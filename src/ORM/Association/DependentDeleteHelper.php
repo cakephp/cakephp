@@ -37,9 +37,16 @@ class DependentDeleteHelper
      */
     public function cascadeDelete(Association $association, EntityInterface $entity, array $options = [])
     {
-        if (!$association->getDependent()) {
+        $dependent = $association->getDependent();
+
+        if (is_callable($dependent)) {
+            $dependent = (bool)$dependent($entity);
+        }
+
+        if ($dependent === false) {
             return true;
         }
+
         $table = $association->getTarget();
         $foreignKey = array_map([$association, 'aliasField'], (array)$association->getForeignKey());
         $bindingKey = (array)$association->getBindingKey();

@@ -346,6 +346,74 @@ class BelongsToManyTest extends TestCase
     }
 
     /**
+     * Test cascading deletes with callback that returns true.
+     *
+     * @return void
+     */
+    public function testCascadeDeleteWithEntityCallback()
+    {
+        $articleTag = $this->getMockBuilder('Cake\ORM\Table')
+            ->setMethods(['deleteAll'])
+            ->getMock();
+        $config = [
+            'sourceTable' => $this->article,
+            'targetTable' => $this->tag,
+            'sort' => ['id' => 'ASC'],
+            'dependent' => function ($tag) {
+                return true;
+            },
+        ];
+        $association = new BelongsToMany('Tags', $config);
+        $association->junction($articleTag);
+        $this->article
+            ->association($articleTag->alias())
+            ->conditions(['click_count' => 3]);
+
+        $articleTag->expects($this->once())
+            ->method('deleteAll')
+            ->with([
+                'click_count' => 3,
+                'article_id' => 1
+            ]);
+
+        $entity = new Entity(['id' => 1, 'name' => 'PHP']);
+        $association->cascadeDelete($entity);
+    }
+
+    /**
+     * Test cascading deletes with dependent as callback that returns false.
+     *
+     * @return void
+     */
+    public function testCascadeDeleteDependentWithEntityCallbackFalse()
+    {
+        $articleTag = $this->getMockBuilder('Cake\ORM\Table')
+            ->setMethods(['delete', 'deleteAll'])
+            ->getMock();
+        $config = [
+            'sourceTable' => $this->article,
+            'targetTable' => $this->tag,
+            'dependent' => function ($tag) {
+                return false;
+            },
+            'sort' => ['id' => 'ASC'],
+        ];
+        $association = new BelongsToMany('Tags', $config);
+        $association->junction($articleTag);
+        $this->article
+            ->association($articleTag->alias())
+            ->conditions(['click_count' => 3]);
+
+        $articleTag->expects($this->never())
+            ->method('deleteAll');
+        $articleTag->expects($this->never())
+            ->method('delete');
+
+        $entity = new Entity(['id' => 1, 'name' => 'PHP']);
+        $association->cascadeDelete($entity);
+    }
+
+    /**
      * Test cascading deletes with callbacks.
      *
      * @return void
