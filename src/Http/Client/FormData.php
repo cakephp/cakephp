@@ -100,14 +100,14 @@ class FormData implements Countable
         if (is_array($value)) {
             $this->addRecursive($name, $value);
         } elseif (is_resource($value)) {
-            $this->_parts[] = $this->addFile($name, $value);
+            $this->addFile($name, $value);
         } elseif (is_string($value) && strlen($value) && $value[0] === '@') {
             trigger_error(
                 'Using the @ syntax for file uploads is not safe and is deprecated. ' .
                 'Instead you should use file handles.',
                 E_USER_DEPRECATED
             );
-            $this->_parts[] = $this->addFile($name, $value);
+            $this->addFile($name, $value);
         } elseif ($name instanceof FormDataPart && $value === null) {
             $this->_hasComplexPart = true;
             $this->_parts[] = $name;
@@ -169,6 +169,7 @@ class FormData implements Countable
         if ($filename) {
             $part->filename($filename);
         }
+        $this->add($part);
 
         return $part;
     }
