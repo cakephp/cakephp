@@ -198,7 +198,8 @@ SQL;
                 50,
                 null,
                 null,
-                ['type' => 'string', 'length' => 50]
+                // Sqlserver returns double lenghts for unicode columns
+                ['type' => 'string', 'length' => 25]
             ],
             [
                 'CHAR',
@@ -212,7 +213,8 @@ SQL;
                 10,
                 null,
                 null,
-                ['type' => 'string', 'fixed' => true, 'length' => 10]
+                // SQLServer returns double length for unicode columns.
+                ['type' => 'string', 'fixed' => true, 'length' => 5]
             ],
             [
                 'UNIQUEIDENTIFIER',
