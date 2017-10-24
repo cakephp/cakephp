@@ -19,6 +19,8 @@ use Cake\Database\Query;
 use Cake\Database\StatementInterface;
 use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
+use Cake\ORM\Table;
+use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -401,6 +403,37 @@ class QueryTest extends TestCase
             $result->fetch('assoc')
         );
         $result->closeCursor();
+    }
+
+    public function testSelfRightJoin()
+    {
+        $this->skipIf(
+            $this->connection->driver() instanceof \Cake\Database\Driver\Sqlite,
+            'SQLite does not support RIGHT joins'
+        );
+        $this->loadFixtures('Comments');
+        $query = new Query($this->connection);
+        $comments = TableRegistry::get('Comments', [
+            'alias' => 'Comments',
+            'table' => 'comments',
+            'connection' => $this->connection
+        ]);
+
+        $latest = $query->select([
+                'u_id' => 'Comments.user_id',
+                'latest' => $query->func()->max('Comments.created')
+            ])->from(['Comments' => 'comments'])
+            ->group('Comments.user_id');
+
+        $actual = $comments->find()->rightJoin(
+            ['latest' => $latest],
+            [
+                'Comments.user_id' => 'latest.u_id',
+                'Comments.created' => 'latest.latest'
+            ]
+        );
+        $expected = [2,5,6];
+        $this->assertEquals($expected, $actual->extract('id')->toArray());
     }
 
     /**
