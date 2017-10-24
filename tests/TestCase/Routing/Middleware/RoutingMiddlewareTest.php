@@ -152,7 +152,8 @@ class RoutingMiddlewareTest extends TestCase
             ];
             $this->assertEquals($expected, $req->getAttribute('params'));
             $this->assertTrue(Router::$initialized, 'Router state should indicate routes loaded');
-            $this->assertCount(1, Router::routes());
+            $this->assertNotEmpty(Router::routes());
+            $this->assertEquals('/app/articles', Router::routes()[0]->template);
         };
         $app = new Application(CONFIG);
         $middleware = new RoutingMiddleware($app);
