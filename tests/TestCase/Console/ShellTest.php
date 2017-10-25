@@ -168,7 +168,7 @@ class ShellTest extends TestCase
      */
     public function testIo()
     {
-        $this->deprecated(function() {
+        $this->deprecated(function () {
             $this->assertInstanceOf(ConsoleIo::class, $this->Shell->io());
 
             $io = $this->getMockBuilder(ConsoleIo::class)
@@ -470,7 +470,7 @@ class ShellTest extends TestCase
             ->method('err')
             ->with('Searched all...');
 
-        $this->deprecated(function() {
+        $this->deprecated(function () {
             $this->Shell->error('Foo Not Found', 'Searched all...');
             $this->assertSame($this->Shell->stopped, 1);
         });

@@ -229,7 +229,7 @@ class ConsoleOutputTest extends TestCase
      */
     public function testOutputAsPlain()
     {
-        $this->deprecated(function() {
+        $this->deprecated(function () {
             $this->output->outputAs(ConsoleOutput::PLAIN);
             $this->assertSame(ConsoleOutput::PLAIN, $this->output->outputAs());
             $this->output->expects($this->once())->method('_write')

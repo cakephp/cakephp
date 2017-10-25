@@ -34,7 +34,7 @@ class ConsoleOptionParserTest extends TestCase
      */
     public function testDescriptionDeprecated()
     {
-        $this->deprecated(function() {
+        $this->deprecated(function () {
             $parser = new ConsoleOptionParser('test', false);
             $result = $parser->description('A test');
 
@@ -68,7 +68,7 @@ class ConsoleOptionParserTest extends TestCase
      */
     public function testEplilogDeprecated()
     {
-        $this->deprecated(function() {
+        $this->deprecated(function () {
             $parser = new ConsoleOptionParser('test', false);
             $result = $parser->epilog('A test');
 

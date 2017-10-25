@@ -731,6 +731,7 @@ trait CollectionTrait
     public function _unwrap()
     {
         deprecationWarning('CollectionTrait::_unwrap() is deprecated. Use CollectionTrait::unwrap() instead.');
+
         return $this->unwrap();
     }
 

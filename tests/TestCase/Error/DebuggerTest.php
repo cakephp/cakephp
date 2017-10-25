@@ -146,7 +146,7 @@ class DebuggerTest extends TestCase
      */
     public function testOutputAs()
     {
-        $this->deprecated(function() {
+        $this->deprecated(function () {
             Debugger::outputAs('html');
             $this->assertEquals('html', Debugger::outputAs());
         });
@@ -173,7 +173,7 @@ class DebuggerTest extends TestCase
      */
     public function testOutputAsException()
     {
-        $this->deprecated(function() {
+        $this->deprecated(function () {
             Debugger::outputAs('Invalid junk');
         });
     }
