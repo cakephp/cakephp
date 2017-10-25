@@ -663,6 +663,48 @@ class TableTest extends TestCase
     }
 
     /**
+     * Tests the toArray() method.
+     *
+     * @return void
+     */
+    public function testToArray()
+    {
+        $table = new Table('articles');
+        $result = $table->toArray();
+        $expected = [
+            'columns' => [],
+            'indexes' => [],
+            'constraints' => [],
+            'options' => [],
+            'typeMap' => [],
+            'temporary' => false,
+        ];
+        $this->assertSame($expected, $result);
+    }
+
+    /**
+     * Tests the __debugInfo() method.
+     *
+     * @return void
+     */
+    public function testDebugInfo()
+    {
+        $table = new Table('articles');
+        $table->setTemporary(true);
+
+        $result = $table->__debugInfo();
+        $expected = [
+            'columns' => [],
+            'indexes' => [],
+            'constraints' => [],
+            'options' => [],
+            'typeMap' => [],
+            'temporary' => true,
+        ];
+        $this->assertSame($expected, $result);
+    }
+
+    /**
      * Assertion for comparing a regex pattern against a query having its identifiers
      * quoted. It accepts queries quoted with the characters `<` and `>`. If the third
      * parameter is set to true, it will alter the pattern to both accept quoted and
