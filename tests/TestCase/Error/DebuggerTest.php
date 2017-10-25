@@ -155,7 +155,6 @@ class DebuggerTest extends TestCase
     /**
      * Test that setOutputFormat works.
      *
-     * @group deprecated
      * @return void
      */
     public function testSetOutputFormat()
