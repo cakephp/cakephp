@@ -372,6 +372,7 @@ class ConsoleIo
      */
     public function outputAs($mode)
     {
+        deprecationWarning('ConsoleIo::outputAs() is deprecated. Use ConsoleIo::setOutputAs() instead.');
         $this->_out->setOutputAs($mode);
     }
 

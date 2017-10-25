@@ -34,7 +34,7 @@ class HelpFormatterTest extends TestCase
     public function testWidthFormatting()
     {
         $parser = new ConsoleOptionParser('test', false);
-        $parser->description('This is fifteen This is fifteen This is fifteen')
+        $parser->setDescription('This is fifteen This is fifteen This is fifteen')
             ->addOption('four', ['help' => 'this is help text this is help text'])
             ->addArgument('four', ['help' => 'this is help text this is help text'])
             ->addSubcommand('four', ['help' => 'this is help text this is help text']);
@@ -115,8 +115,8 @@ txt;
     public function testHelpDescriptionAndEpilog()
     {
         $parser = new ConsoleOptionParser('mycommand', false);
-        $parser->description('Description text')
-            ->epilog('epilog text')
+        $parser->setDescription('Description text')
+            ->setEpilog('epilog text')
             ->addOption('test', ['help' => 'A test option.'])
             ->addArgument('model', ['help' => 'The model to make.', 'required' => true]);
 
@@ -384,8 +384,8 @@ xml;
     public function testXmlHelpDescriptionAndEpilog()
     {
         $parser = new ConsoleOptionParser('mycommand', false);
-        $parser->description('Description text')
-            ->epilog('epilog text')
+        $parser->setDescription('Description text')
+            ->setEpilog('epilog text')
             ->addOption('test', ['help' => 'A test option.'])
             ->addArgument('model', ['help' => 'The model to make.', 'required' => true]);
 

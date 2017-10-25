@@ -310,6 +310,10 @@ class ConsoleOptionParser
      */
     public function command($text = null)
     {
+        deprecationWarning(
+            'ConsoleOptionParser::command() is deprecated. ' .
+            'Use ConsoleOptionParser::setCommand()/getCommand() instead.'
+        );
         if ($text !== null) {
             return $this->setCommand($text);
         }
@@ -354,6 +358,10 @@ class ConsoleOptionParser
      */
     public function description($text = null)
     {
+        deprecationWarning(
+            'ConsoleOptionParser::description() is deprecated. ' .
+            'Use ConsoleOptionParser::setDescription()/getDescription() instead.'
+        );
         if ($text !== null) {
             return $this->setDescription($text);
         }
@@ -400,6 +408,10 @@ class ConsoleOptionParser
      */
     public function epilog($text = null)
     {
+        deprecationWarning(
+            'ConsoleOptionParser::epliog() is deprecated. ' .
+            'Use ConsoleOptionParser::setEpilog()/getEpilog() instead.'
+        );
         if ($text !== null) {
             return $this->setEpilog($text);
         }
@@ -785,6 +797,10 @@ class ConsoleOptionParser
      */
     public function setHelpAlias($alias)
     {
+        deprecationWarning(
+            'ConsoleOptionParser::setHelpAlias() is deprecated. ' .
+            'Use ConsoleOptionParser::setRootName() instead.'
+        );
         $this->rootName = $alias;
     }
 

@@ -339,6 +339,10 @@ class ConsoleOutput
      */
     public function outputAs($type = null)
     {
+        deprecationWarning(
+            'ConsoleOutput::outputAs() is deprecated. ' .
+            'Use ConsoleOutput::setOutputAs()/getOutputAs() instead.'
+        );
         if ($type === null) {
             return $this->_outputAs;
         }
