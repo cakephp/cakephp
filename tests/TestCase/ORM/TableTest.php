@@ -511,6 +511,30 @@ class TableTest extends TestCase
     }
 
     /**
+     * Test that the association() method supports the dot syntax.
+     *
+     * @return void
+     */
+    public function testAssociationDotSyntax()
+    {
+        $groups = TableRegistry::get('Groups');
+        $members = TableRegistry::get('Members');
+        $groupsMembers = TableRegistry::get('GroupsMembers');
+
+        $groups->belongsToMany('Members');
+        $groups->hasMany('GroupsMembers');
+        $groupsMembers->belongsTo('Members');
+        $members->belongsToMany('Groups');
+
+        $association = $groups->association('GroupsMembers.Members.Groups');
+        $this->assertInstanceOf('Cake\ORM\Association\BelongsToMany', $association);
+        $this->assertSame(
+            $groups->association('GroupsMembers')->association('Members')->association('Groups'),
+            $association
+        );
+    }
+
+    /**
      * Tests that belongsTo() creates and configures correctly the association
      *
      * @return void
