@@ -478,7 +478,7 @@ class Validation {
 			if (function_exists('checkdnsrr') && checkdnsrr($regs[1], 'MX')) {
 				return true;
 			}
-			return is_array(gethostbynamel($regs[1]));
+			return is_array(gethostbynamel($regs[1] . '.'));
 		}
 		return false;
 	}
