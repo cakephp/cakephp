@@ -91,6 +91,13 @@ abstract class BaseAuthenticate implements EventListenerInterface
     {
         $this->_registry = $registry;
         $this->setConfig($config);
+
+        if ($this->getConfig('scope') || $this->getConfig('contain')) {
+            deprecationWarning(
+                'The `scope` and `contain` options for Authentication are deprecated. ' .
+                'Use the `finder` option instead to define additional conditions.'
+            );
+        }
     }
 
     /**
