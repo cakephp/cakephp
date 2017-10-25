@@ -872,14 +872,27 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
-     * Returns an association object configured for the specified alias if any
+     * Returns an association object configured for the specified alias if any.
+     *
+     * The name argument also supports dot syntax to access deeper associations.
+     *
+     * ```
+     * $users = $this->association('Articles.Comments.Users');
+     * ```
      *
      * @param string $name the alias used for the association.
      * @return \Cake\ORM\Association|null Either the association or null.
      */
     public function association($name)
     {
-        return $this->_associations->get($name);
+        list($name, $next) = array_pad(explode('.', $name, 2), 2, null);
+        $result = $this->_associations->get($name);
+
+        if ($result !== null && $next !== null) {
+            $result = $result->getTarget()->association($next);
+        }
+
+        return $result;
     }
 
     /**
