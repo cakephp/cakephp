@@ -269,13 +269,13 @@ class UrlHelperTest extends TestCase
         $this->assertRegExp('#/test_plugin/css/test_plugin_asset.css\?[0-9]+$#', $result, 'Missing timestamp plugin');
 
         $result = $this->Helper->assetTimestamp('/test_plugin/css/i_dont_exist.css');
-        $this->assertRegExp('#/test_plugin/css/i_dont_exist.css\?$#', $result, 'No error on missing file');
+        $this->assertRegExp('#/test_plugin/css/i_dont_exist.css$#', $result, 'No error on missing file');
 
         $result = $this->Helper->assetTimestamp('/test_theme/js/theme.js');
         $this->assertRegExp('#/test_theme/js/theme.js\?[0-9]+$#', $result, 'Missing timestamp theme');
 
         $result = $this->Helper->assetTimestamp('/test_theme/js/non_existant.js');
-        $this->assertRegExp('#/test_theme/js/non_existant.js\?$#', $result, 'No error on missing file');
+        $this->assertRegExp('#/test_theme/js/non_existant.js$#', $result, 'No error on missing file');
     }
 
     /**

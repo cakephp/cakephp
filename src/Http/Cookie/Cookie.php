@@ -18,7 +18,6 @@ use Cake\Utility\Hash;
 use DateTimeImmutable;
 use DateTimezone;
 use InvalidArgumentException;
-use RuntimeException;
 
 /**
  * Cookie object to build a cookie and turn it into a header value

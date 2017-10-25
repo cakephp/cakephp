@@ -81,6 +81,10 @@ class SqlserverSchema extends BaseSchema
     protected function _convertColumn($col, $length = null, $precision = null, $scale = null)
     {
         $col = strtolower($col);
+        $length = (int)$length;
+        $precision = (int)$precision;
+        $scale = (int)$scale;
+
         if (in_array($col, ['date', 'time'])) {
             return ['type' => $col, 'length' => null];
         }
@@ -113,7 +117,11 @@ class SqlserverSchema extends BaseSchema
         if ($col === 'real' || $col === 'float') {
             return ['type' => TableSchema::TYPE_FLOAT, 'length' => null];
         }
-
+        // SqlServer schema reflection returns double length for unicode
+        // columns because internally it uses UTF16/UCS2
+        if ($col === 'nvarchar' || $col === 'nchar' || $col === 'ntext') {
+            $length = $length / 2;
+        }
         if (strpos($col, 'varchar') !== false && $length < 0) {
             return ['type' => TableSchema::TYPE_TEXT, 'length' => null];
         }

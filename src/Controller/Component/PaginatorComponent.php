@@ -18,7 +18,6 @@ use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use Cake\Datasource\Exception\PageOutOfBoundsException;
 use Cake\Datasource\Paginator;
-use Cake\Datasource\QueryInterface;
 use Cake\Network\Exception\NotFoundException;
 use InvalidArgumentException;
 
