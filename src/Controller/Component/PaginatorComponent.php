@@ -286,6 +286,7 @@ class PaginatorComponent extends Component
      */
     public function config($key = null, $value = null, $merge = true)
     {
+        deprecationWarning('PaginatorComponent::config() is deprecated. Use getConfig()/setConfig() instead.');
         $return = $this->_paginator->config($key, $value, $merge);
         if ($return instanceof Paginator) {
             $return = $this;
