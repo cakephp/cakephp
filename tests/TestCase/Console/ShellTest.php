@@ -157,7 +157,26 @@ class ShellTest extends TestCase
     public function testConstruct()
     {
         $this->assertEquals('ShellTestShell', $this->Shell->name);
-        $this->assertInstanceOf('Cake\Console\ConsoleIo', $this->Shell->io());
+        $this->assertInstanceOf(ConsoleIo::class, $this->Shell->getIo());
+    }
+
+    /**
+     * test io method
+     *
+     * @group deprecated
+     * @return void
+     */
+    public function testIo()
+    {
+        $this->deprecated(function () {
+            $this->assertInstanceOf(ConsoleIo::class, $this->Shell->io());
+
+            $io = $this->getMockBuilder(ConsoleIo::class)
+                ->disableOriginalConstructor()
+                ->getMock();
+            $this->assertSame($io, $this->Shell->io($io));
+            $this->assertSame($io, $this->Shell->io());
+        });
     }
 
     /**
@@ -438,6 +457,7 @@ class ShellTest extends TestCase
     /**
      * testError
      *
+     * @group deprecated
      * @return void
      */
     public function testError()
@@ -450,8 +470,10 @@ class ShellTest extends TestCase
             ->method('err')
             ->with('Searched all...');
 
-        $this->Shell->error('Foo Not Found', 'Searched all...');
-        $this->assertSame($this->Shell->stopped, 1);
+        $this->deprecated(function () {
+            $this->Shell->error('Foo Not Found', 'Searched all...');
+            $this->assertSame($this->Shell->stopped, 1);
+        });
     }
 
     /**
@@ -1065,7 +1087,7 @@ TEXT;
             ->setMethods(['startup', 'getOptionParser', 'hr'])
             ->disableOriginalConstructor()
             ->getMock();
-        $shell->io(
+        $shell->setIo(
             $this->getMockBuilder('Cake\Console\ConsoleIo')
             ->setMethods(['err'])
             ->getMock()
@@ -1094,7 +1116,7 @@ TEXT;
             ->setMethods(['startup', 'getOptionParser', 'hr'])
             ->disableOriginalConstructor()
             ->getMock();
-        $shell->io(
+        $shell->setIo(
             $this->getMockBuilder('Cake\Console\ConsoleIo')
             ->setMethods(['err'])
             ->getMock()
@@ -1131,7 +1153,7 @@ TEXT;
             ->setMethods(['getOptionParser', 'out', 'startup', '_welcome'])
             ->disableOriginalConstructor()
             ->getMock();
-        $shell->io($this->getMockBuilder('Cake\Console\ConsoleIo')->getMock());
+        $shell->setIo($this->getMockBuilder('Cake\Console\ConsoleIo')->getMock());
         $shell->expects($this->once())->method('getOptionParser')
             ->will($this->returnValue($parser));
         $shell->expects($this->once())->method('out');
@@ -1150,7 +1172,7 @@ TEXT;
             ->setMethods(['startup', 'hasTask'])
             ->disableOriginalConstructor()
             ->getMock();
-        $shell->io(
+        $shell->setIo(
             $this->getMockBuilder('Cake\Console\ConsoleIo')
             ->setMethods(['err'])
             ->getMock()
@@ -1189,12 +1211,12 @@ TEXT;
             ->setMethods(['hasTask', 'startup', 'getOptionParser'])
             ->disableOriginalConstructor()
             ->getMock();
-        $shell->io($io);
+        $shell->setIo($io);
         $task = $this->getMockBuilder('Cake\Console\Shell')
             ->setMethods(['main', 'runCommand'])
             ->disableOriginalConstructor()
             ->getMock();
-        $task->io($io);
+        $task->setIo($io);
         $task->expects($this->once())
             ->method('runCommand')
             ->with(['one'], false, ['requested' => true]);
@@ -1373,7 +1395,7 @@ TEXT;
         $this->Shell->plugin = 'plugin';
         $parser = $this->Shell->getOptionParser();
 
-        $this->assertEquals('plugin.test', $parser->command());
+        $this->assertEquals('plugin.test', $parser->getCommand());
     }
 
     /**
