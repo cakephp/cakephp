@@ -22,7 +22,11 @@ namespace TestApp\Controller;
 
 class TestsAppsController extends AppController
 {
-    public $components = ['RequestHandler'];
+    public $components = [
+        'RequestHandler' => [
+           'enableBeforeRedirect' => false
+        ]
+    ];
 
     public function index()
     {
