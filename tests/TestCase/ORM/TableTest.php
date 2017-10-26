@@ -511,7 +511,7 @@ class TableTest extends TestCase
     }
 
     /**
-     * Test that the association() method supports the dot syntax.
+     * Test that the getAssociation() method supports the dot syntax.
      *
      * @return void
      */
@@ -526,10 +526,10 @@ class TableTest extends TestCase
         $groupsMembers->belongsTo('Members');
         $members->belongsToMany('Groups');
 
-        $association = $groups->association('GroupsMembers.Members.Groups');
-        $this->assertInstanceOf('Cake\ORM\Association\BelongsToMany', $association);
+        $association = $groups->getAssociation('GroupsMembers.Members.Groups');
+        $this->assertInstanceOf(BelongsToMany::class, $association);
         $this->assertSame(
-            $groups->association('GroupsMembers')->association('Members')->association('Groups'),
+            $groups->getAssociation('GroupsMembers')->getAssociation('Members')->getAssociation('Groups'),
             $association
         );
     }
