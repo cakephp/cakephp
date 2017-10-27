@@ -68,10 +68,15 @@ class HelpShellTest extends ConsoleIntegrationTestCase
      */
     protected function assertCommandList()
     {
+        $this->assertOutputContains('- widget', 'plugin command');
+        $this->assertOutputNotContains(
+            '- test_plugin.widget',
+            'only short alias for plugin command.'
+        );
         $this->assertOutputContains('- sample', 'app shell');
         $this->assertOutputContains('- test_plugin.sample', 'Long plugin name');
         $this->assertOutputContains('- routes', 'core shell');
-        $this->assertOutputContains('- test_plugin.example', 'Long plugin name');
+        $this->assertOutputContains('- example', 'short plugin name');
         $this->assertOutputContains('To run a command', 'more info present');
         $this->assertOutputContains('To get help', 'more info present');
     }
