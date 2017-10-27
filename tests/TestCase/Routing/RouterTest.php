@@ -14,8 +14,11 @@
  */
 namespace Cake\Test\TestCase\Routing;
 
+use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
+use Cake\Filesystem\File;
+use Cake\Filesystem\Folder;
 use Cake\Http\MiddlewareQueue;
 use Cake\Http\ServerRequest;
 use Cake\Http\ServerRequestFactory;
@@ -3085,6 +3088,111 @@ class RouterTest extends TestCase
 
             $routes->connect('/articles', ['controller' => 'Articles']);
         });
+    }
+
+    /**
+     * Test cached scope
+     *
+     * @return void
+     */
+    public function testCreateCacheScope()
+    {
+        $folder = new Folder();
+        $folder->create(CACHE . 'persistent/');
+        $routePath = tempnam(CACHE . 'persistent/', 'myapp_cake_someprefix_');
+        $tmpName = substr($routePath, strlen(CACHE . 'persistent/' . 'myapp_cake_someprefix_'));
+        $cachedScopeFile = $routePath . 'routes_path';
+
+        Cache::setConfig('routes', [
+            'className' => 'File',
+            'prefix' => 'myapp_cake_someprefix_' . $tmpName,
+            'path' => CACHE . 'persistent/',
+        ]);
+
+        Router::scope('/path', ['param' => 'value', '_cache' => 'routes'], function ($routes) {
+            $this->assertInstanceOf('Cake\Routing\RouteBuilder', $routes);
+            $this->assertEquals('/path', $routes->path());
+            $this->assertEquals(['param' => 'value'], $routes->params());
+            $this->assertEquals('', $routes->namePrefix());
+
+            $routes->connect('/articles', ['controller' => 'Articles']);
+        });
+
+        $this->assertFileExists($cachedScopeFile);
+        $this->assertNotEmpty(file_get_contents($cachedScopeFile));
+        $serializedCollection = Cache::read('routes' . '/path', 'routes');
+        $expected = [
+            'pass' => [],
+            'controller' => 'Articles',
+            'action' => 'index',
+            'param' => 'value',
+            'plugin' => null,
+            '_matchedRoute' => '/path/articles'
+        ];
+        $this->assertInstanceOf('\Cake\Routing\RouteCollection', $serializedCollection);
+        $this->assertSame($expected, $serializedCollection->parse('/path/articles'));
+
+        return $cachedScopeFile;
+    }
+
+    /**
+     * Test read cached scope
+     *
+     * @param string $cachedScopeFile Absolute path to the cache file generated
+     * @depends testCreateCacheScope
+     * @return void
+     */
+    public function testReadCacheScope($cachedScopeFile = '')
+    {
+        $this->assertFileExists($cachedScopeFile);
+
+        Router::scope('/path', ['param' => 'value', '_cache' => 'routes'], function ($routes) {
+            $this->fail('Cached routes should have been used');
+        });
+
+        $expected = [
+            'pass' => [],
+            'controller' => 'Articles',
+            'action' => 'index',
+            'param' => 'value',
+            'plugin' => null,
+            '_matchedRoute' => '/path/articles'
+        ];
+        $this->assertSame($expected, Router::parseRequest(new ServerRequest('/path/articles')));
+        Cache::drop('routes');
+        $file = new File($cachedScopeFile);
+        $file->delete();
+    }
+
+    /**
+     * Test cached scope in a non serialized cache engine
+     *
+     * @return void
+     */
+    public function testCacheScopeNotSerialized()
+    {
+        $routePath = tempnam(CACHE . 'persistent/', 'myapp_cake_someprefix_');
+        $tmpName = substr($routePath, strlen(CACHE . 'persistent/' . 'myapp_cake_someprefix_'));
+        $cachedScopeFile = $routePath . 'routes_path';
+
+        Cache::setConfig('routes', [
+            'className' => 'File',
+            'prefix' => 'myapp_cake_someprefix_' . $tmpName,
+            'path' => CACHE . 'persistent/',
+            'serialize' => false,
+        ]);
+
+        Router::scope('/path', ['param' => 'value', '_cache' => 'routes'], function ($routes) {
+            $this->assertInstanceOf('Cake\Routing\RouteBuilder', $routes);
+            $this->assertSame('/path', $routes->path());
+            $this->assertSame(['param' => 'value'], $routes->params());
+            $this->assertSame('', $routes->namePrefix());
+
+            $routes->connect('/articles', ['controller' => 'Articles']);
+        });
+
+        $msg = 'Using scope cache with non serializable engine should not write contents to a file';
+        $this->assertFileNotExists($cachedScopeFile, $msg);
     }
 
     /**

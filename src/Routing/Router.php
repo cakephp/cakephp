@@ -14,9 +14,12 @@
  */
 namespace Cake\Routing;
 
+use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Http\MiddlewareQueue;
 use Cake\Http\ServerRequest;
+use Cake\Log\Log;
+use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
@@ -159,6 +162,13 @@ class Router
      * @var array
      */
     protected static $_defaultExtensions = [];
+
+    /**
+     * Default prefix used for scope cache keys
+     *
+     * @var string
+     */
+    protected static $_cachePrefix = 'routes';
 
     /**
      * Get or set default route class.
@@ -951,6 +961,15 @@ class Router
      * - `extensions` The extensions to enable in this scope. Defaults to the globally
      *   enabled extensions set with `Router::extensions()`
      *
+     * ### Cache
+     *
+     * You can enable the cache to reduce the time needed to build the scoped routes.
+     * The `_cache` param will allow you to define the cache configuration to store the
+     * scoped routes.
+     * Please note serialization is required to store the `RouteCollection`.
+     *
+     * - `_cache` This param defines the cache configuration to be used
+     *
      * ### Example
      *
      * ```
@@ -965,6 +984,14 @@ class Router
      * You can use `Router::plugin()` and `Router::prefix()` as shortcuts to creating
      * specific kinds of scopes.
      *
+     * ```
+     * Router::scope('/blog', ['plugin' => 'Blog', '_cache' => 'default'], function ($routes) {
+     *    $routes->connect('/', ['controller' => 'Articles']);
+     * });
+     * ```
+     *
+     * The above will do the same and use the `default` cache configuration to store the routes.
+     *
      * @param string $path The path prefix for the scope. This path will be prepended
      *   to all routes connected in the scoped collection.
      * @param array|callable $params An array of routing defaults to add to each connected route.
@@ -978,10 +1005,101 @@ class Router
         $options = [];
         if (is_array($params)) {
             $options = $params;
-            unset($params['routeClass'], $params['extensions']);
+            $cache = (string)Hash::get($params, '_cache');
+            unset($params['routeClass'], $params['extensions'], $params['_cache']);
+            if ($cache) {
+                static::_rememberScope($path, $params, $options, $callback, $cache);
+
+                return;
+            }
         }
+
+        static::_buildScope($path, $params, $options, $callback);
+    }
+
+    /**
+     * Remember the RouteCollection using the $cache configuration, or build it if not present in the cache
+     *
+     * @param string $path The path prefix for the scope. This path will be prepended
+     *   to all routes connected in the scoped collection.
+     * @param array|callable $params An array of routing defaults to add to each connected route.
+     *   If you have no parameters, this argument can be a callable.
+     * @param array $options An array of routing defaults to add to each connected route after
+     *   routeClass, extensions and _cache are unset
+     * @param callable|null $callback The callback to invoke with the scoped collection.
+     * @param string $cache The Cache configuration name to use, a $_cachePrefix will be added to the key
+     * @return void
+     */
+    protected static function _rememberScope($path, $params, $options, $callback, $cache)
+    {
+        if (static::_checkSerializableCache($path, $cache)) {
+            static::$_collection = Cache::remember(
+                static::$_cachePrefix . $path,
+                function () use ($path, $params, $options, $callback) {
+                    static::_buildScope($path, $params, $options, $callback);
+
+                    return static::$_collection;
+                },
+                $cache
+            );
+
+            return;
+        }
+
+        static::_buildScope($path, $params, $options, $callback);
+    }
+
+    /**
+     * Check if the cache config is serializable, log an error message if it's not
+     *
+     * @param string $path The path prefix for the scope. This path will be prepended
+     *   to all routes connected in the scoped collection.
+     * @param string $cache The Cache configuration name to use, a $_cachePrefix will be added to the key
+     * @return bool
+     */
+    protected static function _checkSerializableCache($path, $cache)
+    {
+        $isCacheSerializable = static::_isCacheSerializable($cache);
+        if (!$isCacheSerializable) {
+            $msg = 'Router scope "%s" was NOT cached. The scope cache is enabled, but "%s" cache engine ' .
+                'does not allow serialization. ' .
+                'Use a valid engine, and ensure "serialize" is enabled in the cache configuration';
+            Log::warning(sprintf($msg, $path, $cache));
+        }
+
+        return $isCacheSerializable;
+    }
+
+    /**
+     * Build the scope using the RouteBuilder
+     *
+     * @param string $path The path prefix for the scope. This path will be prepended
+     *   to all routes connected in the scoped collection.
+     * @param array|callable $params An array of routing defaults to add to each connected route.
+     *   If you have no parameters, this argument can be a callable.
+     * @param array $options An array of routing defaults to add to each connected route after
+     *   routeClass, extensions and _cache are unset
+     * @param callable|null $callback The callback to invoke with the scoped collection.
+     * @throws \InvalidArgumentException When an invalid callable is provided.
+     * @return void
+     */
+    protected static function _buildScope($path, $params = [], $options = [], $callback = null)
+    {
         $builder = static::createRouteBuilder('/', $options);
         $builder->scope($path, $params, $callback);
+    }
+
+    /**
+     * Require the cache engine is serializable
+     *
+     * @param string $cache Cache configuration
+     * @return bool
+     */
+    protected static function _isCacheSerializable($cache)
+    {
+        $config = Cache::engine($cache)->getConfig();
+
+        return isset($config['serialize']) && $config['serialize'] === true;
     }
 
     /**
