@@ -150,7 +150,7 @@ class MysqlTest extends TestCase
         $connection = ConnectionManager::get('test');
         $connection->disconnect();
 
-        $driver = $connection->driver();
+        $driver = $connection->getDriver();
         $this->assertFalse($driver->rollbackTransaction());
         $this->assertTrue($driver->isConnected());
     }
@@ -158,7 +158,7 @@ class MysqlTest extends TestCase
     public function testCommitTransactionAutoConnect()
     {
         $connection = ConnectionManager::get('test');
-        $driver = $connection->driver();
+        $driver = $connection->getDriver();
 
         $this->assertFalse($driver->commitTransaction());
         $this->assertTrue($driver->isConnected());
