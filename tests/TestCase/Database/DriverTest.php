@@ -61,12 +61,12 @@ class DriverTest extends TestCase
         $arg = ['quoteIdentifiers' => true];
         $driver = $this->getMockForAbstractClass(Driver::class, [$arg]);
 
-        $this->assertTrue($driver->autoQuoting());
+        $this->assertTrue($driver->isAutoQuotingEnabled());
 
         $arg = ['username' => 'GummyBear'];
         $driver = $this->getMockForAbstractClass(Driver::class, [$arg]);
 
-        $this->assertFalse($driver->autoQuoting());
+        $this->assertFalse($driver->isAutoQuotingEnabled());
     }
 
     /**
@@ -169,19 +169,25 @@ class DriverTest extends TestCase
      */
     public function testAutoQuoting()
     {
-        $this->assertFalse($this->driver->autoQuoting());
+        $this->assertFalse($this->driver->isAutoQuotingEnabled());
 
-        $this->driver->autoQuoting(true);
-        $this->assertTrue($this->driver->autoQuoting());
+        $this->assertSame($this->driver, $this->driver->enableAutoQuoting(true));
+        $this->assertTrue($this->driver->isAutoQuotingEnabled());
 
-        $this->assertTrue($this->driver->autoQuoting(true));
-        $this->assertFalse($this->driver->autoQuoting(false));
+        $this->driver->enableAutoQuoting(false);
+        $this->assertFalse($this->driver->isAutoQuotingEnabled());
 
-        $this->assertTrue($this->driver->autoQuoting('string'));
-        $this->assertFalse($this->driver->autoQuoting('0'));
+        $this->driver->enableAutoQuoting('string');
+        $this->assertTrue($this->driver->isAutoQuotingEnabled());
 
-        $this->assertTrue($this->driver->autoQuoting(1));
-        $this->assertFalse($this->driver->autoQuoting(0));
+        $this->driver->enableAutoQuoting('0');
+        $this->assertFalse($this->driver->isAutoQuotingEnabled());
+
+        $this->driver->enableAutoQuoting(1);
+        $this->assertTrue($this->driver->isAutoQuotingEnabled());
+
+        $this->driver->enableAutoQuoting(0);
+        $this->assertFalse($this->driver->isAutoQuotingEnabled());
     }
 
     /**

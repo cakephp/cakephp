@@ -223,6 +223,7 @@ class Type implements TypeInterface
      */
     protected function _basicTypeCast($value)
     {
+        deprecationWarning('Type::_basicTypeCast() is deprecated.');
         if ($value === null) {
             return null;
         }
@@ -259,6 +260,7 @@ class Type implements TypeInterface
      */
     public static function boolval($value)
     {
+        deprecationWarning('Type::boolval() is deprecated.');
         if (is_string($value) && !is_numeric($value)) {
             return strtolower($value) === 'true';
         }
@@ -277,6 +279,7 @@ class Type implements TypeInterface
      */
     public static function strval($value)
     {
+        deprecationWarning('Type::strval() is deprecated.');
         if (is_array($value)) {
             $value = '';
         }

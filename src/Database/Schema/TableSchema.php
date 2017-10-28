@@ -778,6 +778,10 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      */
     public function temporary($temporary = null)
     {
+        deprecationWarning(
+            'TableSchema::temporary() is deprecated. ' .
+            'Use TableSchema::setTemporary()/getTemporary() instead.'
+        );
         if ($temporary !== null) {
             return $this->setTemporary($temporary);
         }

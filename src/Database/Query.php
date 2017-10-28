@@ -182,6 +182,10 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function connection($connection = null)
     {
+        deprecationWarning(
+            'Query::connection() is deprecated. ' .
+            'Use Query::setConnection()/getConnection() instead.'
+        );
         if ($connection !== null) {
             return $this->setConnection($connection);
         }
@@ -1003,6 +1007,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function orWhere($conditions, $types = [])
     {
+        deprecationWarning('Query::orWhere() is deprecated. Use Query::where() instead.');
         $this->_conjugate('where', $conditions, 'OR', $types);
 
         return $this;
@@ -1242,6 +1247,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function orHaving($conditions, $types = [])
     {
+        deprecationWarning('Query::orHaving() is deprecated. Use Query::having() instead.');
         $this->_conjugate('having', $conditions, 'OR', $types);
 
         return $this;
@@ -1866,6 +1872,23 @@ class Query implements ExpressionInterface, IteratorAggregate
     }
 
     /**
+     * Overwrite the current value binder
+     *
+     * A ValueBinder is responsible for generating query placeholders and temporarily
+     * associate values to those placeholders so that they can be passed correctly
+     * to the statement object.
+     *
+     * @param \Cake\Database\ValueBinder|bool $binder The binder or false to disable binding.
+     * @return $this
+     */
+    public function setValueBinder($binder)
+    {
+        $this->_valueBinder = $binder;
+
+        return $this;
+    }
+
+    /**
      * Returns the currently used ValueBinder instance. If a value is passed,
      * it will be set as the new instance to be used.
      *
@@ -1873,13 +1896,14 @@ class Query implements ExpressionInterface, IteratorAggregate
      * associate values to those placeholders so that they can be passed correctly
      * to the statement object.
      *
-     * @deprecated 3.5.0 Use getValueBinder() for the getter part instead.
+     * @deprecated 3.5.0 Use setValueBinder()/getValueBinder() instead.
      * @param \Cake\Database\ValueBinder|null $binder new instance to be set. If no value is passed the
      *   default one will be returned
      * @return $this|\Cake\Database\ValueBinder
      */
     public function valueBinder($binder = null)
     {
+        deprecationWarning('Query::valueBinder() is deprecated. Use Query::getValueBinder()/setValueBinder() instead.');
         if ($binder === null) {
             if ($this->_valueBinder === null) {
                 $this->_valueBinder = new ValueBinder();
@@ -1949,6 +1973,10 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function bufferResults($enable = null)
     {
+        deprecationWarning(
+            'Query::bufferResults() is deprecated. ' .
+            'Use Query::enableBufferedResults()/isBufferedResultsEnabled() instead.'
+        );
         if ($enable !== null) {
             return $this->enableBufferedResults($enable);
         }
@@ -1996,6 +2024,10 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function selectTypeMap(TypeMap $typeMap = null)
     {
+        deprecationWarning(
+            'Query::selectTypeMap() is deprecated. ' .
+            'Use Query::setSelectTypeMap()/getSelectTypeMap() instead.'
+        );
         if ($typeMap !== null) {
             return $this->setSelectTypeMap($typeMap);
         }

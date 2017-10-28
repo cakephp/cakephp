@@ -88,7 +88,7 @@ class SchemaCacheTest extends TestCase
         $ormCache = new SchemaCache($ds);
         $ormCache->clear();
 
-        $this->assertInstanceOf('Cake\Database\Schema\CachedCollection', $ds->schemaCollection());
+        $this->assertInstanceOf(CachedCollection::class, $ds->getSchemaCollection());
     }
 
     /**
@@ -104,7 +104,7 @@ class SchemaCacheTest extends TestCase
         $ormCache = new SchemaCache($ds);
         $ormCache->build();
 
-        $this->assertInstanceOf('Cake\Database\Schema\CachedCollection', $ds->schemaCollection());
+        $this->assertInstanceOf(CachedCollection::class, $ds->getSchemaCollection());
     }
 
     /**

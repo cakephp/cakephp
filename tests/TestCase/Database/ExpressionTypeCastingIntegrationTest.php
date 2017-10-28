@@ -79,7 +79,7 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
-        $this->skipIf($this->connection->driver() instanceof Sqlserver, 'This tests uses functions specific to other drivers');
+        $this->skipIf($this->connection->getDriver() instanceof Sqlserver, 'This tests uses functions specific to other drivers');
         Type::map('ordered_uuid', OrderedUuidType::class);
     }
 
@@ -109,9 +109,9 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
             ->select('id')
             ->from('ordered_uuid_items')
             ->order('id')
-            ->defaultTypes(['id' => 'ordered_uuid']);
+            ->setDefaultTypes(['id' => 'ordered_uuid']);
 
-        $query->selectTypeMap($query->typeMap());
+        $query->setSelectTypeMap($query->getTypeMap());
         $results = $query->execute()->fetchAll('assoc');
 
         $this->assertEquals(new UuidValue('419a8da0482b7756b21f27da40cf8569'), $results[0]['id']);

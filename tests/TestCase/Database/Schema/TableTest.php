@@ -673,12 +673,30 @@ class TableTest extends TestCase
      */
     public function testTemporary()
     {
+        $this->deprecated(function () {
+            $table = new Table('articles');
+            $this->assertFalse($table->temporary());
+            $this->assertSame($table, $table->temporary(true));
+            $this->assertTrue($table->temporary());
+            $table->temporary(false);
+            $this->assertFalse($table->temporary());
+        });
+    }
+
+    /**
+     * Tests the setTemporary() & isTemporary() method
+     *
+     * @return void
+     */
+    public function testSetTemporary()
+    {
         $table = new Table('articles');
-        $this->assertFalse($table->temporary());
-        $this->assertSame($table, $table->temporary(true));
-        $this->assertTrue($table->temporary());
-        $table->temporary(false);
-        $this->assertFalse($table->temporary());
+        $this->assertFalse($table->isTemporary());
+        $this->assertSame($table, $table->setTemporary(true));
+        $this->assertTrue($table->isTemporary());
+
+        $table->setTemporary(false);
+        $this->assertFalse($table->isTemporary());
     }
 
     /**
