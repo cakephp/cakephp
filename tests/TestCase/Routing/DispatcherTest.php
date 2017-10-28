@@ -13,7 +13,6 @@
  */
 namespace Cake\Test\TestCase\Routing;
 
-use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Http\Response;

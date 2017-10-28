@@ -16,7 +16,6 @@ namespace Cake\Test\TestCase\Http;
 
 include_once CORE_TEST_CASES . DS . 'Http' . DS . 'server_mocks.php';
 
-use Cake\Chronos\Chronos;
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Response;
@@ -212,6 +211,28 @@ class ResponseTest extends TestCase
         $this->assertEquals('application/bat', $response->type('bat'));
 
         $this->assertFalse($response->type('wackytype'));
+    }
+
+    /**
+     * Tests the getType method
+     *
+     * @return void
+     */
+    public function testGetType()
+    {
+        $response = new Response();
+        $this->assertEquals('text/html', $response->getType());
+        $response->type('pdf');
+        $this->assertEquals('application/pdf', $response->getType());
+
+        $this->assertEquals(
+            'custom/stuff',
+            $response->withType('custom/stuff')->getType()
+        );
+        $this->assertEquals(
+            'application/json',
+            $response->withType('json')->getType()
+        );
     }
 
     /**

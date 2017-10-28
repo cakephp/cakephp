@@ -1041,19 +1041,20 @@ class Response implements ResponseInterface
      * ```
      *
      * @param string|null $contentType Content type key.
-     * @return mixed Current content type or false if supplied an invalid content type
+     * @return mixed Current content type or false if supplied an invalid content type.
+     * @deprecated 3.5.5 Use getType() or withType() instead.
      */
     public function type($contentType = null)
     {
         if ($contentType === null) {
-            return $this->_contentType;
+            return $this->getType();
         }
         if (is_array($contentType)) {
             foreach ($contentType as $type => $definition) {
                 $this->_mimeTypes[$type] = $definition;
             }
 
-            return $this->_contentType;
+            return $this->getType();
         }
         if (isset($this->_mimeTypes[$contentType])) {
             $contentType = $this->_mimeTypes[$contentType];
@@ -1066,6 +1067,16 @@ class Response implements ResponseInterface
         $this->_setContentType();
 
         return $contentType;
+    }
+
+    /**
+     * Returns the current content type.
+     *
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->_contentType;
     }
 
     /**
@@ -1167,7 +1178,7 @@ class Response implements ResponseInterface
     }
 
     /**
-     * Retruns the current charset.
+     * Returns the current charset.
      *
      * @return string
      */

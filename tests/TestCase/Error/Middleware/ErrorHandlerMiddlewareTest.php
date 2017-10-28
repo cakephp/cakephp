@@ -21,7 +21,6 @@ use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use LogicException;
 use Psr\Log\LoggerInterface;
-use Zend\Diactoros\Request;
 
 /**
  * Test for ErrorHandlerMiddleware
