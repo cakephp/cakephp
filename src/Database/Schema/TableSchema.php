@@ -840,9 +840,10 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      *
      * @return array
      */
-    public function toArray()
+    public function __debugInfo()
     {
         return [
+            'table' => $this->_table,
             'columns' => $this->_columns,
             'indexes' => $this->_indexes,
             'constraints' => $this->_constraints,
@@ -850,16 +851,6 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
             'typeMap' => $this->_typeMap,
             'temporary' => $this->_temporary,
         ];
-    }
-
-    /**
-     * Returns an array of the table schema.
-     *
-     * @return array
-     */
-    public function __debugInfo()
-    {
-        return $this->toArray();
     }
 }
 
