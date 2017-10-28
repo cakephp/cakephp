@@ -38,6 +38,7 @@ class Router
      * Have routes been loaded
      *
      * @var bool
+     * @deprecated 3.5.0 Routes will be loaded via the Application::routes() hook in 4.0.0
      */
     public static $initialized = false;
 

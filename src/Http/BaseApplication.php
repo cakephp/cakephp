@@ -17,6 +17,7 @@ namespace Cake\Http;
 use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\HttpApplicationInterface;
 use Cake\Routing\DispatcherFactory;
+use Cake\Routing\Router;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -69,7 +70,11 @@ abstract class BaseApplication implements ConsoleApplicationInterface, HttpAppli
      */
     public function routes($routes)
     {
-        require $this->configDir . '/routes.php';
+        if (!Router::$initialized) {
+            require $this->configDir . '/routes.php';
+            // Prevent routes from being loaded again
+            Router::$initialized = true;
+        }
     }
 
     /**
