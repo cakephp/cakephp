@@ -1007,7 +1007,6 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function orWhere($conditions, $types = [])
     {
-        deprecationWarning('Query::orWhere() is deprecated. Use Query::where() instead.');
         $this->_conjugate('where', $conditions, 'OR', $types);
 
         return $this;
