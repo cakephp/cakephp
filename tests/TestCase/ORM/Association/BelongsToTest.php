@@ -186,7 +186,7 @@ class BelongsToTest extends TestCase
 
         $this->assertEquals(
             'integer',
-            $query->typeMap()->type('Companies__id'),
+            $query->getTypeMap()->type('Companies__id'),
             'Associations should map types.'
         );
     }

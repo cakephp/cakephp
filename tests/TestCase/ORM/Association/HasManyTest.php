@@ -80,7 +80,7 @@ class HasManyTest extends TestCase
             'Articles__title' => 'string',
             'Articles__author_id' => 'integer',
         ]);
-        $this->autoQuote = $connection->driver()->autoQuoting();
+        $this->autoQuote = $connection->getDriver()->isAutoQuotingEnabled();
     }
 
     /**
@@ -297,7 +297,7 @@ class HasManyTest extends TestCase
                 'Articles.id !=' => 3,
                 'Articles.author_id IN' => $keys
             ],
-            $query->typeMap()
+            $query->getTypeMap()
         );
         $this->assertWhereClause($expected, $query);
 
@@ -369,7 +369,7 @@ class HasManyTest extends TestCase
                 'type' => 'INNER',
                 'alias' => null,
                 'table' => 'comments',
-                'conditions' => new QueryExpression([], $query->typeMap()),
+                'conditions' => new QueryExpression([], $query->getTypeMap()),
             ]
         ];
         $this->assertJoin($expected, $query);
@@ -379,7 +379,7 @@ class HasManyTest extends TestCase
                 'Articles.author_id IN' => $keys,
                 'comments.id' => 1,
             ],
-            $query->typeMap()
+            $query->getTypeMap()
         );
         $this->assertWhereClause($expected, $query);
     }
@@ -617,7 +617,7 @@ class HasManyTest extends TestCase
     protected function assertWhereClause($expected, $query)
     {
         if ($this->autoQuote) {
-            $quoter = new IdentifierQuoter($query->connection()->driver());
+            $quoter = new IdentifierQuoter($query->getConnection()->getDriver());
             $expected->traverse([$quoter, 'quoteExpression']);
         }
         $this->assertEquals($expected, $query->clause('where'));
@@ -633,7 +633,7 @@ class HasManyTest extends TestCase
     protected function assertOrderClause($expected, $query)
     {
         if ($this->autoQuote) {
-            $quoter = new IdentifierQuoter($query->connection()->driver());
+            $quoter = new IdentifierQuoter($query->getConnection()->getDriver());
             $quoter->quoteExpression($expected);
         }
         $this->assertEquals($expected, $query->clause('order'));

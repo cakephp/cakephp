@@ -750,7 +750,7 @@ class CompositeKeyTest extends TestCase
      */
     public function testNotMatchingBelongsToMany()
     {
-        $driver = $this->connection->driver();
+        $driver = $this->connection->getDriver();
 
         if ($driver instanceof Sqlserver) {
             $this->markTestSkipped('Sqlserver does not support the requirements of this test.');
@@ -794,7 +794,7 @@ class CompositeKeyTest extends TestCase
     public function skipIfSqlite()
     {
         $this->skipIf(
-            $this->connection->driver() instanceof Sqlite,
+            $this->connection->getDriver() instanceof Sqlite,
             'SQLite does not support the requirements of this test.'
         );
     }

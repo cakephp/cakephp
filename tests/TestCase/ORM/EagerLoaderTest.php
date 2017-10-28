@@ -164,7 +164,7 @@ class EagerLoaderTest extends TestCase
             ->setConstructorArgs([$this->connection, $this->table])
             ->getMock();
 
-        $query->typeMap($this->clientsTypeMap);
+        $query->setTypeMap($this->clientsTypeMap);
 
         $query->expects($this->at(0))->method('join')
             ->with(['clients' => [
@@ -172,7 +172,7 @@ class EagerLoaderTest extends TestCase
                 'type' => 'LEFT',
                 'conditions' => new QueryExpression([
                     ['clients.id' => new IdentifierExpression('foo.client_id')],
-                ], new TypeMap($this->clientsTypeMap->defaults()))
+                ], new TypeMap($this->clientsTypeMap->getDefaults()))
             ]])
             ->will($this->returnValue($query));
 
@@ -568,9 +568,9 @@ class EagerLoaderTest extends TestCase
      */
     protected function _quoteArray($elements)
     {
-        if ($this->connection->driver()->autoQuoting()) {
+        if ($this->connection->getDriver()->isAutoQuotingEnabled()) {
             $quoter = function ($e) {
-                return $this->connection->driver()->quoteIdentifier($e);
+                return $this->connection->getDriver()->quoteIdentifier($e);
             };
 
             return array_combine(
