@@ -98,57 +98,63 @@ class EventManagerTest extends TestCase
     /**
      * Tests the attach() method for a single event key in multiple queues
      *
+     * @group deprecated
      * @return void
      */
     public function testAttachListeners()
     {
-        $manager = new EventManager();
-        $manager->attach('fakeFunction', 'fake.event');
-        $expected = [
-            ['callable' => 'fakeFunction']
-        ];
-        $this->assertEquals($expected, $manager->listeners('fake.event'));
+        $this->deprecated(function () {
+            $manager = new EventManager();
+            $manager->attach('fakeFunction', 'fake.event');
+            $expected = [
+                ['callable' => 'fakeFunction']
+            ];
+            $this->assertEquals($expected, $manager->listeners('fake.event'));
 
-        $manager->attach('fakeFunction2', 'fake.event');
-        $expected[] = ['callable' => 'fakeFunction2'];
-        $this->assertEquals($expected, $manager->listeners('fake.event'));
+            $manager->attach('fakeFunction2', 'fake.event');
+            $expected[] = ['callable' => 'fakeFunction2'];
+            $this->assertEquals($expected, $manager->listeners('fake.event'));
 
-        $manager->attach('inQ5', 'fake.event', ['priority' => 5]);
-        $manager->attach('inQ1', 'fake.event', ['priority' => 1]);
-        $manager->attach('otherInQ5', 'fake.event', ['priority' => 5]);
+            $manager->attach('inQ5', 'fake.event', ['priority' => 5]);
+            $manager->attach('inQ1', 'fake.event', ['priority' => 1]);
+            $manager->attach('otherInQ5', 'fake.event', ['priority' => 5]);
 
-        $expected = array_merge(
-            [
-                ['callable' => 'inQ1'],
-                ['callable' => 'inQ5'],
-                ['callable' => 'otherInQ5']
-            ],
-            $expected
-        );
-        $this->assertEquals($expected, $manager->listeners('fake.event'));
+            $expected = array_merge(
+                [
+                    ['callable' => 'inQ1'],
+                    ['callable' => 'inQ5'],
+                    ['callable' => 'otherInQ5']
+                ],
+                $expected
+            );
+            $this->assertEquals($expected, $manager->listeners('fake.event'));
+        });
     }
 
     /**
      * Tests the attach() method for multiple event key in multiple queues
      *
+     * @group deprecated
      * @return void
      */
     public function testAttachMultipleEventKeys()
     {
-        $manager = new EventManager();
-        $manager->attach('fakeFunction', 'fake.event');
-        $manager->attach('fakeFunction2', 'another.event');
-        $manager->attach('fakeFunction3', 'another.event', ['priority' => 1]);
-        $expected = [
-            ['callable' => 'fakeFunction']
-        ];
-        $this->assertEquals($expected, $manager->listeners('fake.event'));
+        $this->deprecated(function () {
+            $manager = new EventManager();
+            $manager->attach('fakeFunction', 'fake.event');
+            $manager->attach('fakeFunction2', 'another.event');
+            $manager->attach('fakeFunction3', 'another.event', ['priority' => 1]);
+            $expected = [
+                ['callable' => 'fakeFunction']
+            ];
+            $this->assertEquals($expected, $manager->listeners('fake.event'));
 
-        $expected = [
-            ['callable' => 'fakeFunction3'],
-            ['callable' => 'fakeFunction2']
-        ];
-        $this->assertEquals($expected, $manager->listeners('another.event'));
+            $expected = [
+                ['callable' => 'fakeFunction3'],
+                ['callable' => 'fakeFunction2']
+            ];
+            $this->assertEquals($expected, $manager->listeners('another.event'));
+        });
     }
 
     /**
@@ -159,10 +165,10 @@ class EventManagerTest extends TestCase
     public function testMatchingListeners()
     {
         $manager = new EventManager();
-        $manager->attach('fakeFunction1', 'fake.event');
-        $manager->attach('fakeFunction2', 'real.event');
-        $manager->attach('fakeFunction3', 'test.event');
-        $manager->attach('fakeFunction4', 'event.test');
+        $manager->on('fake.event', 'fakeFunction1');
+        $manager->on('real.event', 'fakeFunction2');
+        $manager->on('test.event', 'fakeFunction3');
+        $manager->on('event.test', 'fakeFunction4');
 
         $this->assertArrayHasKey('fake.event', $manager->matchingListeners('fake.event'));
         $this->assertArrayHasKey('real.event', $manager->matchingListeners('real.event'));
@@ -316,46 +322,52 @@ class EventManagerTest extends TestCase
     /**
      * Tests detaching an event from a event key queue
      *
+     * @group deprecated
      * @return void
      */
     public function testDetach()
     {
-        $manager = new EventManager();
-        $manager->attach(['AClass', 'aMethod'], 'fake.event');
-        $manager->attach(['AClass', 'anotherMethod'], 'another.event');
-        $manager->attach('fakeFunction', 'another.event', ['priority' => 1]);
+        $this->deprecated(function () {
+            $manager = new EventManager();
+            $manager->attach(['AClass', 'aMethod'], 'fake.event');
+            $manager->attach(['AClass', 'anotherMethod'], 'another.event');
+            $manager->attach('fakeFunction', 'another.event', ['priority' => 1]);
 
-        $manager->detach(['AClass', 'aMethod'], 'fake.event');
-        $this->assertEquals([], $manager->listeners('fake.event'));
+            $manager->detach(['AClass', 'aMethod'], 'fake.event');
+            $this->assertEquals([], $manager->listeners('fake.event'));
 
-        $manager->detach(['AClass', 'anotherMethod'], 'another.event');
-        $expected = [
-            ['callable' => 'fakeFunction']
-        ];
-        $this->assertEquals($expected, $manager->listeners('another.event'));
+            $manager->detach(['AClass', 'anotherMethod'], 'another.event');
+            $expected = [
+                ['callable' => 'fakeFunction']
+            ];
+            $this->assertEquals($expected, $manager->listeners('another.event'));
 
-        $manager->detach('fakeFunction', 'another.event');
-        $this->assertEquals([], $manager->listeners('another.event'));
+            $manager->detach('fakeFunction', 'another.event');
+            $this->assertEquals([], $manager->listeners('another.event'));
+        });
     }
 
     /**
      * Tests detaching an event from all event queues
      *
+     * @group deprecated
      * @return void
      */
     public function testDetachFromAll()
     {
-        $manager = new EventManager();
-        $manager->attach(['AClass', 'aMethod'], 'fake.event');
-        $manager->attach(['AClass', 'aMethod'], 'another.event');
-        $manager->attach('fakeFunction', 'another.event', ['priority' => 1]);
+        $this->deprecated(function () {
+            $manager = new EventManager();
+            $manager->attach(['AClass', 'aMethod'], 'fake.event');
+            $manager->attach(['AClass', 'aMethod'], 'another.event');
+            $manager->attach('fakeFunction', 'another.event', ['priority' => 1]);
 
-        $manager->detach(['AClass', 'aMethod']);
-        $expected = [
-            ['callable' => 'fakeFunction']
-        ];
-        $this->assertEquals($expected, $manager->listeners('another.event'));
-        $this->assertEquals([], $manager->listeners('fake.event'));
+            $manager->detach(['AClass', 'aMethod']);
+            $expected = [
+                ['callable' => 'fakeFunction']
+            ];
+            $this->assertEquals($expected, $manager->listeners('another.event'));
+            $this->assertEquals([], $manager->listeners('fake.event'));
+        });
     }
 
     /**
@@ -371,8 +383,8 @@ class EventManagerTest extends TestCase
             ->getMock();
         $anotherListener = $this->getMockBuilder(__NAMESPACE__ . '\EventTestListener')
             ->getMock();
-        $manager->attach([$listener, 'listenerFunction'], 'fake.event');
-        $manager->attach([$anotherListener, 'listenerFunction'], 'fake.event');
+        $manager->on('fake.event', [$listener, 'listenerFunction']);
+        $manager->on('fake.event', [$anotherListener, 'listenerFunction']);
         $event = new Event('fake.event');
 
         $listener->expects($this->once())->method('listenerFunction')->with($event);
@@ -389,7 +401,7 @@ class EventManagerTest extends TestCase
     {
         $manager = new EventManager();
         $listener = new EventTestListener;
-        $manager->attach([$listener, 'listenerFunction'], 'fake.event');
+        $manager->on('fake.event', [$listener, 'listenerFunction']);
         $event = 'fake.event';
         $manager->dispatch($event);
 
@@ -410,8 +422,8 @@ class EventManagerTest extends TestCase
             ->getMock();
         $anotherListener = $this->getMockBuilder(__NAMESPACE__ . '\EventTestListener')
             ->getMock();
-        $manager->attach([$listener, 'listenerFunction'], 'fake.event');
-        $manager->attach([$anotherListener, 'listenerFunction'], 'fake.event');
+        $manager->on('fake.event', [$listener, 'listenerFunction']);
+        $manager->on('fake.event', [$anotherListener, 'listenerFunction']);
         $event = new Event('fake.event');
 
         $listener->expects($this->at(0))->method('listenerFunction')
@@ -438,8 +450,8 @@ class EventManagerTest extends TestCase
             ->getMock();
         $anotherListener = $this->getMockBuilder(__NAMESPACE__ . '\EventTestListener')
             ->getMock();
-        $manager->attach([$listener, 'listenerFunction'], 'fake.event');
-        $manager->attach([$anotherListener, 'listenerFunction'], 'fake.event');
+        $manager->on('fake.event', [$listener, 'listenerFunction']);
+        $manager->on('fake.event', [$anotherListener, 'listenerFunction']);
         $event = new Event('fake.event');
 
         $listener->expects($this->at(0))->method('listenerFunction')
@@ -461,8 +473,8 @@ class EventManagerTest extends TestCase
     {
         $manager = new EventManager();
         $listener = new EventTestListener;
-        $manager->attach([$listener, 'listenerFunction'], 'fake.event');
-        $manager->attach([$listener, 'secondListenerFunction'], 'fake.event', ['priority' => 5]);
+        $manager->on('fake.event', [$listener, 'listenerFunction']);
+        $manager->on('fake.event', ['priority' => 5], [$listener, 'secondListenerFunction']);
         $event = new Event('fake.event');
         $manager->dispatch($event);
 
@@ -477,13 +489,13 @@ class EventManagerTest extends TestCase
      * @triggers fake.event
      * @triggers another.event $this, array(some => data)
      */
-    public function testAttachSubscriber()
+    public function testOnSubscriber()
     {
         $manager = new EventManager();
         $listener = $this->getMockBuilder(__NAMESPACE__ . '\CustomTestEventListenerInterface')
             ->setMethods(['secondListenerFunction'])
             ->getMock();
-        $manager->attach($listener);
+        $manager->on($listener);
 
         $event = new Event('fake.event');
         $manager->dispatch($event);
@@ -504,13 +516,13 @@ class EventManagerTest extends TestCase
      * @return void
      * @triggers multiple.handlers
      */
-    public function testAttachSubscriberMultiple()
+    public function testOnSubscriberMultiple()
     {
         $manager = new EventManager();
         $listener = $this->getMockBuilder(__NAMESPACE__ . '\CustomTestEventListenerInterface')
             ->setMethods(['listenerFunction', 'thirdListenerFunction'])
             ->getMock();
-        $manager->attach($listener);
+        $manager->on($listener);
         $event = new Event('multiple.handlers');
         $listener->expects($this->once())
             ->method('listenerFunction')
@@ -532,7 +544,7 @@ class EventManagerTest extends TestCase
         $listener = $this->getMockBuilder(__NAMESPACE__ . '\CustomTestEventListenerInterface')
             ->setMethods(['secondListenerFunction'])
             ->getMock();
-        $manager->attach($listener);
+        $manager->on($listener);
         $expected = [
             ['callable' => [$listener, 'secondListenerFunction']]
         ];
@@ -541,7 +553,7 @@ class EventManagerTest extends TestCase
             ['callable' => [$listener, 'listenerFunction']]
         ];
         $this->assertEquals($expected, $manager->listeners('fake.event'));
-        $manager->detach($listener);
+        $manager->off($listener);
         $this->assertEquals([], $manager->listeners('fake.event'));
         $this->assertEquals([], $manager->listeners('another.event'));
     }
@@ -598,9 +610,9 @@ class EventManagerTest extends TestCase
                 ->with('fake.event')
                 ->will($this->returnValue([]));
 
-        $manager->attach([$listener, 'listenerFunction'], 'fake.event');
-        $manager->attach([$listener, 'stopListener'], 'fake.event', ['priority' => 8]);
-        $manager->attach([$listener, 'secondListenerFunction'], 'fake.event', ['priority' => 5]);
+        $manager->on('fake.event', [$listener, 'listenerFunction']);
+        $manager->on('fake.event', ['priority' => 8], [$listener, 'stopListener']);
+        $manager->on('fake.event', ['priority' => 5], [$listener, 'secondListenerFunction']);
         $event = new Event('fake.event');
         $manager->dispatch($event);
 
@@ -632,8 +644,8 @@ class EventManagerTest extends TestCase
                     ]]
                 ));
 
-        $manager->attach([$listener, 'listenerFunction'], 'fake.event');
-        $manager->attach([$listener, 'thirdListenerFunction'], 'fake.event', ['priority' => 15]);
+        $manager->on('fake.event', [$listener, 'listenerFunction']);
+        $manager->on('fake.event', ['priority' => 15], [$listener, 'thirdListenerFunction']);
 
         $manager->dispatch($event);
 
@@ -665,7 +677,7 @@ class EventManagerTest extends TestCase
                     ]]
                 ));
 
-        $manager->attach([$listener, 'secondListenerFunction'], 'fake.event');
+        $manager->on('fake.event', [$listener, 'secondListenerFunction']);
 
         $manager->dispatch($event);
 

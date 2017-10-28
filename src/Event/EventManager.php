@@ -114,6 +114,7 @@ class EventManager
      */
     public function attach($callable, $eventKey = null, array $options = [])
     {
+        deprecationWarning('EventManager::attach() is deprecated. Use EventManager::on() instead.');
         if ($eventKey === null) {
             $this->on($callable);
 
@@ -249,6 +250,7 @@ class EventManager
      */
     public function detach($callable, $eventKey = null)
     {
+        deprecationWarning('EventManager::detach() is deprecated. Use EventManager::off() instead.');
         if ($eventKey === null) {
             $this->off($callable);
 
