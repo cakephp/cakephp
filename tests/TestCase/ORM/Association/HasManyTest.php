@@ -595,7 +595,7 @@ class HasManyTest extends TestCase
     protected function assertJoin($expected, $query)
     {
         if ($this->autoQuote) {
-            $driver = $query->connection()->driver();
+            $driver = $query->getConnection()->getDriver();
             $quoter = new IdentifierQuoter($driver);
             foreach ($expected as &$join) {
                 $join['table'] = $driver->quoteIdentifier($join['table']);
@@ -649,7 +649,7 @@ class HasManyTest extends TestCase
     protected function assertSelectClause($expected, $query)
     {
         if ($this->autoQuote) {
-            $connection = $query->connection();
+            $connection = $query->getConnection();
             foreach ($expected as $key => $value) {
                 $expected[$connection->quoteIdentifier($key)] = $connection->quoteIdentifier($value);
                 unset($expected[$key]);
