@@ -117,7 +117,7 @@ trait ViewVarsTrait
             $this->viewVars,
             isset($this->request) ? $this->request : null,
             isset($this->response) ? $this->response : null,
-            $this instanceof EventDispatcherInterface ? $this->eventManager() : null
+            $this instanceof EventDispatcherInterface ? $this->getEventManager() : null
         );
     }
 

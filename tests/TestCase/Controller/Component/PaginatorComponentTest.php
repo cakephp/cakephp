@@ -263,7 +263,7 @@ class PaginatorComponentTest extends TestCase
         $tags = TableRegistry::get('Tags');
         $tags->belongsToMany('Authors');
 
-        $articles->eventManager()->on('Model.beforeFind', function ($event, $query) {
+        $articles->getEventManager()->on('Model.beforeFind', function ($event, $query) {
             $query ->matching('Tags', function ($q) {
                 return $q->matching('Authors', function ($q) {
                     return $q->where(['Authors.name' => 'larry']);

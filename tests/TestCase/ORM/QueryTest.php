@@ -2569,14 +2569,14 @@ class QueryTest extends TestCase
         }]);
         $this->assertFalse($query->eagerLoaded());
 
-        $table->getEventManager()->attach(function ($e, $q, $o, $primary) {
+        $table->getEventManager()->on('Model.beforeFind', function ($e, $q, $o, $primary) {
             $this->assertTrue($primary);
-        }, 'Model.beforeFind');
+        });
 
         TableRegistry::get('articles')
-            ->getEventManager()->attach(function ($e, $q, $o, $primary) {
+            ->getEventManager()->on('Model.beforeFind', function ($e, $q, $o, $primary) {
                 $this->assertFalse($primary);
-            }, 'Model.beforeFind');
+            });
         $query->all();
     }
 
@@ -2597,14 +2597,14 @@ class QueryTest extends TestCase
         }]);
         $this->assertFalse($query->isEagerLoaded());
 
-        $table->getEventManager()->attach(function ($e, $q, $o, $primary) {
+        $table->getEventManager()->on('Model.beforeFind', function ($e, $q, $o, $primary) {
             $this->assertTrue($primary);
-        }, 'Model.beforeFind');
+        });
 
         TableRegistry::get('articles')
-            ->getEventManager()->attach(function ($e, $q, $o, $primary) {
+            ->getEventManager()->on('Model.beforeFind', function ($e, $q, $o, $primary) {
                 $this->assertFalse($primary);
-            }, 'Model.beforeFind');
+            });
         $query->all();
     }
 

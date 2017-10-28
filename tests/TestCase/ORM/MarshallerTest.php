@@ -380,7 +380,7 @@ class MarshallerTest extends TestCase
         $users->hasOne('Articles', [
             'foreignKey' => 'author_id'
         ]);
-        $articles->eventManager()->on('Model.beforeMarshal', function ($event, $data, $options) {
+        $articles->getEventManager()->on('Model.beforeMarshal', function ($event, $data, $options) {
             // Blank the association, so it doesn't become dirty.
             unset($data['not_a_real_field']);
         });
@@ -1805,11 +1805,11 @@ class MarshallerTest extends TestCase
         $entity->clean();
 
         // Adding a forced join to have another table with the same column names
-        $this->articles->Tags->getEventManager()->attach(function ($e, $query) {
+        $this->articles->Tags->getEventManager()->on('Model.beforeFind', function ($e, $query) {
             $left = new IdentifierExpression('Tags.id');
             $right = new IdentifierExpression('a.id');
             $query->leftJoin(['a' => 'tags'], $query->newExpr()->eq($left, $right));
-        }, 'Model.beforeFind');
+        });
 
         $marshall = new Marshaller($this->articles);
         $result = $marshall->merge($entity, $data, ['associated' => ['Tags']]);
