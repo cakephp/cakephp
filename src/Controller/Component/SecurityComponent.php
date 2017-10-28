@@ -166,6 +166,7 @@ class SecurityComponent extends Component
      */
     public function requireAuth($actions)
     {
+        deprecationWarning('SecurityComponent::requireAuth() will be removed in 4.0.0.');
         $this->_requireMethod('Auth', (array)$actions);
     }
 
@@ -263,6 +264,7 @@ class SecurityComponent extends Component
             !empty($this->_config['requireAuth']) &&
             $request->getData()
         ) {
+            deprecationWarning('SecurityComponent::requireAuth() will be removed in 4.0.0.');
             $requireAuth = $this->_config['requireAuth'];
 
             if (in_array($request->getParam('action'), $requireAuth) || $requireAuth == ['*']) {

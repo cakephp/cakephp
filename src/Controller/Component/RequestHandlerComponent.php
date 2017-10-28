@@ -258,6 +258,11 @@ class RequestHandlerComponent extends Component
         if (!$this->getConfig('enableBeforeRedirect')) {
             return null;
         }
+        deprecationWarning(
+            'RequestHandlerComponent::beforeRedirect() is deprecated. ' .
+            'This functionality will be removed in 4.0.0. Set the `enableBeforeRedirect` ' .
+            'option to `false` to disable this warning.'
+        );
         $request = $this->request;
         if (!$request->is('ajax')) {
             return null;
@@ -712,9 +717,8 @@ class RequestHandlerComponent extends Component
      */
     public function addInputType($type, $handler)
     {
-        trigger_error(
-            'RequestHandlerComponent::addInputType() is deprecated. Use setConfig("inputTypeMap", ...) instead.',
-            E_USER_DEPRECATED
+        deprecationWarning(
+            'RequestHandlerComponent::addInputType() is deprecated. Use setConfig("inputTypeMap", ...) instead.'
         );
         if (!is_array($handler) || !isset($handler[0]) || !is_callable($handler[0])) {
             throw new Exception('You must give a handler callback.');
@@ -732,9 +736,8 @@ class RequestHandlerComponent extends Component
      */
     public function viewClassMap($type = null, $viewClass = null)
     {
-        trigger_error(
-            'RequestHandlerComponent::viewClassMap() is deprecated. Use setConfig("viewClassMap", ...) instead.',
-            E_USER_DEPRECATED
+        deprecationWarning(
+            'RequestHandlerComponent::viewClassMap() is deprecated. Use setConfig("viewClassMap", ...) instead.'
         );
         if (!$viewClass && is_string($type)) {
             return $this->getConfig('viewClassMap.' . $type);

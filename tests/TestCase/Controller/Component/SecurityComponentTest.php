@@ -355,73 +355,79 @@ class SecurityComponentTest extends TestCase
     /**
      * testRequireAuthFail method
      *
+     * @group deprecated
      * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testRequireAuthFail()
     {
-        $event = new Event('Controller.startup', $this->Controller);
-        $_SERVER['REQUEST_METHOD'] = 'AUTH';
-        $this->Controller->request['action'] = 'posted';
-        $this->Controller->request->data = ['username' => 'willy', 'password' => 'somePass'];
-        $this->Security->requireAuth(['posted']);
-        $this->Security->startup($event);
-        $this->assertTrue($this->Controller->failed);
+        $this->deprecated(function () {
+            $event = new Event('Controller.startup', $this->Controller);
+            $_SERVER['REQUEST_METHOD'] = 'AUTH';
+            $this->Controller->request['action'] = 'posted';
+            $this->Controller->request->data = ['username' => 'willy', 'password' => 'somePass'];
+            $this->Security->requireAuth(['posted']);
+            $this->Security->startup($event);
+            $this->assertTrue($this->Controller->failed);
 
-        $this->Security->session->write('_Token', ['allowedControllers' => []]);
-        $this->Controller->request->data = ['username' => 'willy', 'password' => 'somePass'];
-        $this->Controller->request['action'] = 'posted';
-        $this->Security->requireAuth('posted');
-        $this->Security->startup($event);
-        $this->assertTrue($this->Controller->failed);
+            $this->Security->session->write('_Token', ['allowedControllers' => []]);
+            $this->Controller->request->data = ['username' => 'willy', 'password' => 'somePass'];
+            $this->Controller->request['action'] = 'posted';
+            $this->Security->requireAuth('posted');
+            $this->Security->startup($event);
+            $this->assertTrue($this->Controller->failed);
 
-        $this->Security->session->write('_Token', [
-            'allowedControllers' => ['SecurityTest'], 'allowedActions' => ['posted2']
-        ]);
-        $this->Controller->request->data = ['username' => 'willy', 'password' => 'somePass'];
-        $this->Controller->request['action'] = 'posted';
-        $this->Security->requireAuth('posted');
-        $this->Security->startup($event);
-        $this->assertTrue($this->Controller->failed);
+            $this->Security->session->write('_Token', [
+                'allowedControllers' => ['SecurityTest'], 'allowedActions' => ['posted2']
+            ]);
+            $this->Controller->request->data = ['username' => 'willy', 'password' => 'somePass'];
+            $this->Controller->request['action'] = 'posted';
+            $this->Security->requireAuth('posted');
+            $this->Security->startup($event);
+            $this->assertTrue($this->Controller->failed);
+        });
     }
 
     /**
      * testRequireAuthSucceed method
      *
+     * @group deprecated
      * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testRequireAuthSucceed()
     {
-        $_SERVER['REQUEST_METHOD'] = 'AUTH';
-        $this->Controller->Security->config('validatePost', false);
+        $this->deprecated(function () {
+            $_SERVER['REQUEST_METHOD'] = 'AUTH';
+            $this->Controller->Security->config('validatePost', false);
 
-        $event = new Event('Controller.startup', $this->Controller);
-        $this->Controller->request->addParams([
-            'action' => 'posted'
-        ]);
-        $this->Security->requireAuth('posted');
-        $this->Security->startup($event);
-        $this->assertFalse($this->Controller->failed);
+            $event = new Event('Controller.startup', $this->Controller);
+            $this->Controller->request->addParams([
+                'action' => 'posted'
+            ]);
+            $this->Security->requireAuth('posted');
+            $this->Security->startup($event);
+            $this->assertFalse($this->Controller->failed);
 
-        $this->Controller->Security->session->write('_Token', [
-            'allowedControllers' => ['SecurityTest'],
-            'allowedActions' => ['posted'],
-        ]);
-        $this->Controller->request->addParams([
-            'controller' => 'SecurityTest',
-            'action' => 'posted'
-        ]);
+            $this->Controller->Security->session->write('_Token', [
+                'allowedControllers' => ['SecurityTest'],
+                'allowedActions' => ['posted'],
+            ]);
+            $this->Controller->request->addParams([
+                'controller' => 'SecurityTest',
+                'action' => 'posted'
+            ]);
 
-        $this->Controller->request->data = [
-            'username' => 'willy',
-            'password' => 'somePass',
-            '_Token' => ''
-        ];
-        $this->Controller->action = 'posted';
-        $this->Controller->Security->requireAuth('posted');
-        $this->Controller->Security->startup($event);
-        $this->assertFalse($this->Controller->failed);
+            $this->Controller->request->data = [
+                'username' => 'willy',
+                'password' => 'somePass',
+                '_Token' => ''
+            ];
+            $this->Controller->action = 'posted';
+            $this->Controller->Security->requireAuth('posted');
+            $this->Controller->Security->startup($event);
+            $this->assertFalse($this->Controller->failed);
+        });
     }
 
     /**
@@ -1635,6 +1641,7 @@ class SecurityComponentTest extends TestCase
      *
      * Auth required throws exception token not found.
      *
+     * @group deprecated
      * @return void
      * @expectedException \Cake\Controller\Exception\AuthSecurityException
      * @expectedExceptionMessage '_Token' was not found in request data.
@@ -1642,10 +1649,12 @@ class SecurityComponentTest extends TestCase
      */
     public function testAuthRequiredThrowsExceptionTokenNotFoundPost()
     {
-        $this->Security->config('requireAuth', ['protected']);
-        $this->Controller->request->params['action'] = 'protected';
-        $this->Controller->request->data = 'notEmpty';
-        $this->Security->authRequired($this->Controller);
+        $this->deprecated(function () {
+            $this->Security->config('requireAuth', ['protected']);
+            $this->Controller->request->params['action'] = 'protected';
+            $this->Controller->request->data = 'notEmpty';
+            $this->Security->authRequired($this->Controller);
+        });
     }
 
     /**
@@ -1653,6 +1662,7 @@ class SecurityComponentTest extends TestCase
      *
      * Auth required throws exception token not found in Session.
      *
+     * @group deprecated
      * @return void
      * @expectedException \Cake\Controller\Exception\AuthSecurityException
      * @expectedExceptionMessage '_Token' was not found in session.
@@ -1660,10 +1670,12 @@ class SecurityComponentTest extends TestCase
      */
     public function testAuthRequiredThrowsExceptionTokenNotFoundSession()
     {
-        $this->Security->config('requireAuth', ['protected']);
-        $this->Controller->request->params['action'] = 'protected';
-        $this->Controller->request->data = ['_Token' => 'not empty'];
-        $this->Security->authRequired($this->Controller);
+        $this->deprecated(function () {
+            $this->Security->config('requireAuth', ['protected']);
+            $this->Controller->request->params['action'] = 'protected';
+            $this->Controller->request->data = ['_Token' => 'not empty'];
+            $this->Security->authRequired($this->Controller);
+        });
     }
 
     /**
@@ -1671,6 +1683,7 @@ class SecurityComponentTest extends TestCase
      *
      * Auth required throws exception controller not allowed.
      *
+     * @group deprecated
      * @return void
      * @expectedException \Cake\Controller\Exception\AuthSecurityException
      * @expectedExceptionMessage Controller 'NotAllowed' was not found in allowed controllers: 'Allowed, AnotherAllowed'.
@@ -1678,14 +1691,16 @@ class SecurityComponentTest extends TestCase
      */
     public function testAuthRequiredThrowsExceptionControllerNotAllowed()
     {
-        $this->Security->config('requireAuth', ['protected']);
-        $this->Controller->request->params['controller'] = 'NotAllowed';
-        $this->Controller->request->params['action'] = 'protected';
-        $this->Controller->request->data = ['_Token' => 'not empty'];
-        $this->Controller->request->session()->write('_Token', [
-            'allowedControllers' => ['Allowed', 'AnotherAllowed']
-        ]);
-        $this->Security->authRequired($this->Controller);
+        $this->deprecated(function () {
+            $this->Security->config('requireAuth', ['protected']);
+            $this->Controller->request->params['controller'] = 'NotAllowed';
+            $this->Controller->request->params['action'] = 'protected';
+            $this->Controller->request->data = ['_Token' => 'not empty'];
+            $this->Controller->request->session()->write('_Token', [
+                'allowedControllers' => ['Allowed', 'AnotherAllowed']
+            ]);
+            $this->Security->authRequired($this->Controller);
+        });
     }
 
     /**
@@ -1700,14 +1715,16 @@ class SecurityComponentTest extends TestCase
      */
     public function testAuthRequiredThrowsExceptionActionNotAllowed()
     {
-        $this->Security->config('requireAuth', ['protected']);
-        $this->Controller->request->params['controller'] = 'NotAllowed';
-        $this->Controller->request->params['action'] = 'protected';
-        $this->Controller->request->data = ['_Token' => 'not empty'];
-        $this->Controller->request->session()->write('_Token', [
-            'allowedActions' => ['index', 'view']
-        ]);
-        $this->Security->authRequired($this->Controller);
+        $this->deprecated(function () {
+            $this->Security->config('requireAuth', ['protected']);
+            $this->Controller->request->params['controller'] = 'NotAllowed';
+            $this->Controller->request->params['action'] = 'protected';
+            $this->Controller->request->data = ['_Token' => 'not empty'];
+            $this->Controller->request->session()->write('_Token', [
+                'allowedActions' => ['index', 'view']
+            ]);
+            $this->Security->authRequired($this->Controller);
+        });
     }
 
     /**
@@ -1720,14 +1737,16 @@ class SecurityComponentTest extends TestCase
      */
     public function testAuthRequired()
     {
-        $this->Security->config('requireAuth', ['protected']);
-        $this->Controller->request->params['controller'] = 'Allowed';
-        $this->Controller->request->params['action'] = 'protected';
-        $this->Controller->request->data = ['_Token' => 'not empty'];
-        $this->Controller->request->session()->write('_Token', [
-            'allowedActions' => ['protected'],
-            'allowedControllers' => ['Allowed'],
-        ]);
-        $this->assertTrue($this->Security->authRequired($this->Controller));
+        $this->deprecated(function () {
+            $this->Security->config('requireAuth', ['protected']);
+            $this->Controller->request->params['controller'] = 'Allowed';
+            $this->Controller->request->params['action'] = 'protected';
+            $this->Controller->request->data = ['_Token' => 'not empty'];
+            $this->Controller->request->session()->write('_Token', [
+                'allowedActions' => ['protected'],
+                'allowedControllers' => ['Allowed'],
+            ]);
+            $this->assertTrue($this->Security->authRequired($this->Controller));
+        });
     }
 }

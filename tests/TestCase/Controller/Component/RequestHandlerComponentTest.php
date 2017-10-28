@@ -597,35 +597,41 @@ class RequestHandlerComponentTest extends TestCase
     /**
      * testNonAjaxRedirect method
      *
+     * @group deprecated
      * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testNonAjaxRedirect()
     {
-        $event = new Event('Controller.startup', $this->Controller);
-        $this->RequestHandler->initialize([]);
-        $this->RequestHandler->startup($event);
-        $this->assertNull($this->RequestHandler->beforeRedirect($event, '/', $this->Controller->response));
+        $this->deprecated(function () {
+            $event = new Event('Controller.startup', $this->Controller);
+            $this->RequestHandler->initialize([]);
+            $this->RequestHandler->startup($event);
+            $this->assertNull($this->RequestHandler->beforeRedirect($event, '/', $this->Controller->response));
+        });
     }
 
     /**
      * test that redirects with ajax and no URL don't do anything.
      *
+     * @group deprecated
      * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testAjaxRedirectWithNoUrl()
     {
-        $_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
-        $event = new Event('Controller.startup', $this->Controller);
-        $this->Controller->response = $this->getMockBuilder('Cake\Http\Response')->getMock();
+        $this->deprecated(function () {
+            $_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+            $event = new Event('Controller.startup', $this->Controller);
+            $this->Controller->response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
-        $this->Controller->response->expects($this->never())
-            ->method('body');
+            $this->Controller->response->expects($this->never())
+                ->method('body');
 
-        $this->RequestHandler->initialize([]);
-        $this->RequestHandler->startup($event);
-        $this->assertNull($this->RequestHandler->beforeRedirect($event, null, $this->Controller->response));
+            $this->RequestHandler->initialize([]);
+            $this->RequestHandler->startup($event);
+            $this->assertNull($this->RequestHandler->beforeRedirect($event, null, $this->Controller->response));
+        });
     }
 
     /**
@@ -903,170 +909,185 @@ class RequestHandlerComponentTest extends TestCase
     /**
      * test that AJAX requests involving redirects trigger requestAction instead.
      *
+     * @group deprecated
      * @return void
      * @triggers Controller.beforeRedirect $this->Controller
      */
     public function testAjaxRedirectAsRequestAction()
     {
-        static::setAppNamespace();
-        Router::connect('/:controller/:action');
-        $event = new Event('Controller.beforeRedirect', $this->Controller);
+        $this->deprecated(function () {
+            static::setAppNamespace();
+            Router::connect('/:controller/:action');
+            $event = new Event('Controller.beforeRedirect', $this->Controller);
 
-        $this->RequestHandler = new RequestHandlerComponent($this->Controller->components());
-        $this->Controller->request = $this->getMockBuilder('Cake\Http\ServerRequest')
-            ->setMethods(['is'])
-            ->getMock();
-        $this->Controller->response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods(['_sendHeader', 'stop'])
-            ->getMock();
-        $this->Controller->request->expects($this->any())
-            ->method('is')
-            ->will($this->returnValue(true));
+            $this->RequestHandler = new RequestHandlerComponent($this->Controller->components());
+            $this->Controller->request = $this->getMockBuilder('Cake\Http\ServerRequest')
+                ->setMethods(['is'])
+                ->getMock();
+            $this->Controller->response = $this->getMockBuilder('Cake\Http\Response')
+                ->setMethods(['_sendHeader', 'stop'])
+                ->getMock();
+            $this->Controller->request->expects($this->any())
+                ->method('is')
+                ->will($this->returnValue(true));
 
-        $response = $this->RequestHandler->beforeRedirect(
-            $event,
-            ['controller' => 'RequestHandlerTest', 'action' => 'destination'],
-            $this->Controller->response
-        );
-        $this->assertRegExp('/posts index/', $response->body(), 'RequestAction redirect failed.');
+            $response = $this->RequestHandler->beforeRedirect(
+                $event,
+                ['controller' => 'RequestHandlerTest', 'action' => 'destination'],
+                $this->Controller->response
+            );
+            $this->assertRegExp('/posts index/', $response->body(), 'RequestAction redirect failed.');
+        });
     }
 
     /**
      * Test that AJAX requests involving redirects handle querystrings
      *
+     * @group deprecated
      * @return void
      * @triggers Controller.beforeRedirect $this->Controller
      */
     public function testAjaxRedirectAsRequestActionWithQueryString()
     {
-        static::setAppNamespace();
-        Router::connect('/:controller/:action');
+        $this->deprecated(function () {
+            static::setAppNamespace();
+            Router::connect('/:controller/:action');
 
-        $this->RequestHandler = new RequestHandlerComponent($this->Controller->components());
-        $this->Controller->request = $this->getMockBuilder('Cake\Http\ServerRequest')
-            ->setMethods(['is'])
-            ->getMock();
-        $this->Controller->response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods(['_sendHeader', 'stop'])
-            ->getMock();
-        $this->Controller->request->expects($this->any())
-            ->method('is')
-            ->with('ajax')
-            ->will($this->returnValue(true));
-        $event = new Event('Controller.beforeRedirect', $this->Controller);
+            $this->RequestHandler = new RequestHandlerComponent($this->Controller->components());
+            $this->Controller->request = $this->getMockBuilder('Cake\Http\ServerRequest')
+                ->setMethods(['is'])
+                ->getMock();
+            $this->Controller->response = $this->getMockBuilder('Cake\Http\Response')
+                ->setMethods(['_sendHeader', 'stop'])
+                ->getMock();
+            $this->Controller->request->expects($this->any())
+                ->method('is')
+                ->with('ajax')
+                ->will($this->returnValue(true));
+            $event = new Event('Controller.beforeRedirect', $this->Controller);
 
-        $response = $this->RequestHandler->beforeRedirect(
-            $event,
-            '/request_action/params_pass?a=b&x=y?ish',
-            $this->Controller->response
-        );
-        $data = json_decode($response, true);
-        $this->assertEquals('/request_action/params_pass', $data['here']);
+            $response = $this->RequestHandler->beforeRedirect(
+                $event,
+                '/request_action/params_pass?a=b&x=y?ish',
+                $this->Controller->response
+            );
+            $data = json_decode($response, true);
+            $this->assertEquals('/request_action/params_pass', $data['here']);
 
-        $response = $this->RequestHandler->beforeRedirect(
-            $event,
-            '/request_action/query_pass?a=b&x=y?ish',
-            $this->Controller->response
-        );
-        $data = json_decode($response, true);
-        $this->assertEquals('y?ish', $data['x']);
+            $response = $this->RequestHandler->beforeRedirect(
+                $event,
+                '/request_action/query_pass?a=b&x=y?ish',
+                $this->Controller->response
+            );
+            $data = json_decode($response, true);
+            $this->assertEquals('y?ish', $data['x']);
+        });
     }
 
     /**
      * Test that AJAX requests involving redirects handle cookie data
      *
+     * @group deprecated
      * @return void
      * @triggers Controller.beforeRedirect $this->Controller
      */
     public function testAjaxRedirectAsRequestActionWithCookieData()
     {
-        static::setAppNamespace();
-        Router::connect('/:controller/:action');
-        $event = new Event('Controller.beforeRedirect', $this->Controller);
+        $this->deprecated(function () {
+            static::setAppNamespace();
+            Router::connect('/:controller/:action');
+            $event = new Event('Controller.beforeRedirect', $this->Controller);
 
-        $this->RequestHandler = new RequestHandlerComponent($this->Controller->components());
-        $this->Controller->request = $this->getMockBuilder('Cake\Http\ServerRequest')
-            ->setMethods(['is'])
-            ->getMock();
-        $this->Controller->response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods(['_sendHeader', 'stop'])
-            ->getMock();
-        $this->Controller->request->expects($this->any())->method('is')->will($this->returnValue(true));
+            $this->RequestHandler = new RequestHandlerComponent($this->Controller->components());
+            $this->Controller->request = $this->getMockBuilder('Cake\Http\ServerRequest')
+                ->setMethods(['is'])
+                ->getMock();
+            $this->Controller->response = $this->getMockBuilder('Cake\Http\Response')
+                ->setMethods(['_sendHeader', 'stop'])
+                ->getMock();
+            $this->Controller->request->expects($this->any())->method('is')->will($this->returnValue(true));
 
-        $cookies = [
-            'foo' => 'bar'
-        ];
-        $this->Controller->request->cookies = $cookies;
+            $cookies = [
+                'foo' => 'bar'
+            ];
+            $this->Controller->request->cookies = $cookies;
 
-        $response = $this->RequestHandler->beforeRedirect(
-            $event,
-            '/request_action/cookie_pass',
-            $this->Controller->response
-        );
-        $data = json_decode($response, true);
-        $this->assertEquals($cookies, $data);
+            $response = $this->RequestHandler->beforeRedirect(
+                $event,
+                '/request_action/cookie_pass',
+                $this->Controller->response
+            );
+            $data = json_decode($response, true);
+            $this->assertEquals($cookies, $data);
+        });
     }
 
     /**
      * Tests that AJAX requests involving redirects don't let the status code bleed through.
      *
+     * @group deprecated
      * @return void
      * @triggers Controller.beforeRedirect $this->Controller
      */
     public function testAjaxRedirectAsRequestActionStatusCode()
     {
-        static::setAppNamespace();
-        Router::connect('/:controller/:action');
-        $event = new Event('Controller.beforeRedirect', $this->Controller);
+        $this->deprecated(function () {
+            static::setAppNamespace();
+            Router::connect('/:controller/:action');
+            $event = new Event('Controller.beforeRedirect', $this->Controller);
 
-        $this->RequestHandler = new RequestHandlerComponent($this->Controller->components());
-        $this->Controller->request = $this->getMockBuilder('Cake\Http\ServerRequest')
-            ->setMethods(['is'])
-            ->getMock();
-        $this->Controller->response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods(['_sendHeader', 'stop'])
-            ->getMock();
-        $this->Controller->response->statusCode(302);
-        $this->Controller->request->expects($this->any())->method('is')->will($this->returnValue(true));
+            $this->RequestHandler = new RequestHandlerComponent($this->Controller->components());
+            $this->Controller->request = $this->getMockBuilder('Cake\Http\ServerRequest')
+                ->setMethods(['is'])
+                ->getMock();
+            $this->Controller->response = $this->getMockBuilder('Cake\Http\Response')
+                ->setMethods(['_sendHeader', 'stop'])
+                ->getMock();
+            $this->Controller->response->statusCode(302);
+            $this->Controller->request->expects($this->any())->method('is')->will($this->returnValue(true));
 
-        $response = $this->RequestHandler->beforeRedirect(
-            $event,
-            ['controller' => 'RequestHandlerTest', 'action' => 'destination'],
-            $this->Controller->response
-        );
-        $this->assertRegExp('/posts index/', $response->body(), 'RequestAction redirect failed.');
-        $this->assertSame(200, $response->statusCode());
+            $response = $this->RequestHandler->beforeRedirect(
+                $event,
+                ['controller' => 'RequestHandlerTest', 'action' => 'destination'],
+                $this->Controller->response
+            );
+            $this->assertRegExp('/posts index/', $response->body(), 'RequestAction redirect failed.');
+            $this->assertSame(200, $response->statusCode());
+        });
     }
 
     /**
      * test that ajax requests involving redirects don't force no layout
      * this would cause the ajax layout to not be rendered.
      *
+     * @group deprecated
      * @return void
      * @triggers Controller.beforeRedirect $this->Controller
      */
     public function testAjaxRedirectAsRequestActionStillRenderingLayout()
     {
-        static::setAppNamespace();
-        Router::connect('/:controller/:action');
-        $event = new Event('Controller.beforeRedirect', $this->Controller);
+        $this->deprecated(function () {
+            static::setAppNamespace();
+            Router::connect('/:controller/:action');
+            $event = new Event('Controller.beforeRedirect', $this->Controller);
 
-        $this->RequestHandler = new RequestHandlerComponent($this->Controller->components());
-        $this->Controller->request = $this->getMockBuilder('Cake\Http\ServerRequest')
-            ->setMethods(['is'])
-            ->getMock();
-        $this->Controller->response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods(['_sendHeader', 'stop'])
-            ->getMock();
-        $this->Controller->request->expects($this->any())->method('is')->will($this->returnValue(true));
+            $this->RequestHandler = new RequestHandlerComponent($this->Controller->components());
+            $this->Controller->request = $this->getMockBuilder('Cake\Http\ServerRequest')
+                ->setMethods(['is'])
+                ->getMock();
+            $this->Controller->response = $this->getMockBuilder('Cake\Http\Response')
+                ->setMethods(['_sendHeader', 'stop'])
+                ->getMock();
+            $this->Controller->request->expects($this->any())->method('is')->will($this->returnValue(true));
 
-        $response = $this->RequestHandler->beforeRedirect(
-            $event,
-            ['controller' => 'RequestHandlerTest', 'action' => 'ajax2_layout'],
-            $this->Controller->response
-        );
-        $this->assertRegExp('/posts index/', $response->body(), 'RequestAction redirect failed.');
-        $this->assertRegExp('/Ajax!/', $response->body(), 'Layout was not rendered.');
+            $response = $this->RequestHandler->beforeRedirect(
+                $event,
+                ['controller' => 'RequestHandlerTest', 'action' => 'ajax2_layout'],
+                $this->Controller->response
+            );
+            $this->assertRegExp('/posts index/', $response->body(), 'RequestAction redirect failed.');
+            $this->assertRegExp('/Ajax!/', $response->body(), 'Layout was not rendered.');
+        });
     }
 
     /**
@@ -1074,32 +1095,35 @@ class RequestHandlerComponentTest extends TestCase
      * array URLs into their correct string ones, and adds base => false so
      * the correct URLs are generated.
      *
+     * @group deprecated
      * @return void
      * @triggers Controller.beforeRender $this->Controller
      */
     public function testBeforeRedirectCallbackWithArrayUrl()
     {
-        static::setAppNamespace();
-        Router::connect('/:controller/:action/*');
-        $_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
-        $event = new Event('Controller.beforeRender', $this->Controller);
+        $this->deprecated(function () {
+            static::setAppNamespace();
+            Router::connect('/:controller/:action/*');
+            $_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+            $event = new Event('Controller.beforeRender', $this->Controller);
 
-        Router::setRequestInfo([
-            ['plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => []],
-            ['base' => '', 'here' => '/accounts/', 'webroot' => '/']
-        ]);
+            Router::setRequestInfo([
+                ['plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => []],
+                ['base' => '', 'here' => '/accounts/', 'webroot' => '/']
+            ]);
 
-        $RequestHandler = new RequestHandlerComponent($this->Controller->components());
-        $this->Controller->request = new ServerRequest('posts/index');
+            $RequestHandler = new RequestHandlerComponent($this->Controller->components());
+            $this->Controller->request = new ServerRequest('posts/index');
 
-        ob_start();
-        $RequestHandler->beforeRedirect(
-            $event,
-            ['controller' => 'RequestHandlerTest', 'action' => 'param_method', 'first', 'second'],
-            $this->Controller->response
-        );
-        $result = ob_get_clean();
-        $this->assertEquals('one: first two: second', $result);
+            ob_start();
+            $RequestHandler->beforeRedirect(
+                $event,
+                ['controller' => 'RequestHandlerTest', 'action' => 'param_method', 'first', 'second'],
+                $this->Controller->response
+            );
+            $result = ob_get_clean();
+            $this->assertEquals('one: first two: second', $result);
+        });
     }
 
     /**

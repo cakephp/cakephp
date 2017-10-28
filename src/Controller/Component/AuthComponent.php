@@ -255,6 +255,14 @@ class AuthComponent extends Component
         $this->setEventManager($controller->getEventManager());
         $this->response =& $controller->response;
         $this->session = $controller->request->getSession();
+
+        if ($this->getConfig('ajaxLogin')) {
+            deprecationWarning(
+                'The `ajaxLogin` option is deprecated. Your client-side ' .
+                'code should instead check for 403 status code and show ' .
+                'appropriate login form.'
+            );
+        }
     }
 
     /**
