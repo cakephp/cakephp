@@ -8237,7 +8237,7 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         TableRegistry::get('Comments')
-            ->validator('default')
+            ->getValidator('default')
             ->allowEmpty('comment', false);
         $result = $this->Form->control('0.comments.1.comment');
         //@codingStandardsIgnoreStart

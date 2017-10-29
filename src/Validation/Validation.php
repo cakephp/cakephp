@@ -67,7 +67,10 @@ class Validation
      */
     public static function notEmpty($check)
     {
-        trigger_error('Validation::notEmpty() is deprecated. Use Validation::notBlank() instead.', E_USER_DEPRECATED);
+        deprecationWarning(
+            'Validation::notEmpty() is deprecated. ' .
+            'Use Validation::notBlank() instead.'
+        );
 
         return static::notBlank($check);
     }
@@ -132,11 +135,13 @@ class Validation
      *
      * @param string $check Value to check
      * @return bool Success
-     * @deprecated 3.0.2
+     * @deprecated 3.0.2 Validation::blank() is deprecated.
      */
     public static function blank($check)
     {
-        trigger_error('Validation::blank() is deprecated.', E_USER_DEPRECATED);
+        deprecationWarning(
+            'Validation::blank() is deprecated.'
+        );
 
         return !static::_check($check, '/[^\\s]/');
     }
@@ -976,9 +981,9 @@ class Validation
      */
     public static function userDefined($check, $object, $method, $args = null)
     {
-        trigger_error(
-            'Validation::userDefined() is deprecated. Just set a callable for `rule` key when adding validators instead.',
-            E_USER_DEPRECATED
+        deprecationWarning(
+            'Validation::userDefined() is deprecated. ' .
+            'You can just set a callable for `rule` key when adding validators.'
         );
 
         return $object->$method($check, $args);
