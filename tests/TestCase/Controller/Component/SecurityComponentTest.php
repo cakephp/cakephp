@@ -174,7 +174,7 @@ class SecurityComponentTest extends TestCase
         $this->Controller->Security->config('blackHoleCallback', 'fail');
         $this->Security = $this->Controller->Security;
         $this->Security->session = $session;
-        Security::salt('foo!');
+        Security::setSalt('foo!');
     }
 
     /**
@@ -940,7 +940,7 @@ class SecurityComponentTest extends TestCase
         $unlocked = 'Model.username';
         $fields = ['Model.hidden', 'Model.password'];
         $fields = urlencode(
-            hash_hmac('sha1', '/articles/index' . serialize($fields) . $unlocked . 'cli', Security::salt())
+            hash_hmac('sha1', '/articles/index' . serialize($fields) . $unlocked . 'cli', Security::getSalt())
         );
         $debug = 'not used';
 
@@ -970,7 +970,7 @@ class SecurityComponentTest extends TestCase
         $event = new Event('Controller.startup', $this->Controller);
         $this->Security->startup($event);
         $fields = ['Model.hidden', 'Model.password', 'Model.username'];
-        $fields = urlencode(Security::hash(serialize($fields) . Security::salt()));
+        $fields = urlencode(Security::hash(serialize($fields) . Security::getSalt()));
 
         $this->Controller->request->data = [
             'Model' => [
@@ -998,7 +998,7 @@ class SecurityComponentTest extends TestCase
         $event = new Event('Controller.startup', $this->Controller);
         $this->Security->startup($event);
         $fields = ['Model.hidden', 'Model.password', 'Model.username'];
-        $fields = urlencode(Security::hash(serialize($fields) . Security::salt()));
+        $fields = urlencode(Security::hash(serialize($fields) . Security::getSalt()));
         $unlocked = '';
 
         $this->Controller->request->data = [
@@ -1027,7 +1027,7 @@ class SecurityComponentTest extends TestCase
         $event = new Event('Controller.startup', $this->Controller);
         $this->Security->startup($event);
         $fields = ['Model.hidden', 'Model.password', 'Model.username'];
-        $fields = urlencode(Security::hash(serialize($fields) . Security::salt()));
+        $fields = urlencode(Security::hash(serialize($fields) . Security::getSalt()));
         $unlocked = '';
 
         $this->Controller->request->data = [
@@ -1056,7 +1056,7 @@ class SecurityComponentTest extends TestCase
         $this->Security->startup($event);
         $unlocked = 'Model.username';
         $fields = ['Model.hidden', 'Model.password'];
-        $fields = urlencode(Security::hash(serialize($fields) . $unlocked . Security::salt()));
+        $fields = urlencode(Security::hash(serialize($fields) . $unlocked . Security::getSalt()));
         $debug = urlencode(json_encode([
             '/articles/index',
             ['Model.hidden', 'Model.password'],
@@ -1196,7 +1196,7 @@ class SecurityComponentTest extends TestCase
         $unlocked = '';
         $hashFields = ['TaxonomyData'];
         $fields = urlencode(
-            hash_hmac('sha1', '/articles/index' . serialize($hashFields) . $unlocked . 'cli', Security::salt())
+            hash_hmac('sha1', '/articles/index' . serialize($hashFields) . $unlocked . 'cli', Security::getSalt())
         );
         $debug = 'not used';
 
@@ -1474,7 +1474,7 @@ class SecurityComponentTest extends TestCase
         $this->Security->startup($event);
         $unlocked = 'Model.username';
         $fields = ['Model.hidden', 'Model.password'];
-        $fields = urlencode(Security::hash(serialize($fields) . $unlocked . Security::salt()));
+        $fields = urlencode(Security::hash(serialize($fields) . $unlocked . Security::getSalt()));
         $debug = urlencode(json_encode([
             '/articles/index',
             ['Model.hidden', 'Model.password'],
@@ -1556,7 +1556,7 @@ class SecurityComponentTest extends TestCase
             $fields,
             []
         ]));
-        $fields = urlencode(Security::hash(serialize($fields) . $unlocked . Security::salt()));
+        $fields = urlencode(Security::hash(serialize($fields) . $unlocked . Security::getSalt()));
         $fields .= urlencode(':Model.hidden|Model.id');
         $this->Controller->request->data = [
             'Model' => [
@@ -1589,7 +1589,7 @@ class SecurityComponentTest extends TestCase
             $fields,
             []
         ]));
-        $fields = urlencode(Security::hash(serialize($fields) . $unlocked . Security::salt()));
+        $fields = urlencode(Security::hash(serialize($fields) . $unlocked . Security::getSalt()));
         $fields .= urlencode(':Model.hidden|Model.id');
         $this->Controller->request->data = [
             'Model' => [
@@ -1622,7 +1622,7 @@ class SecurityComponentTest extends TestCase
             $fields,
             []
         ]));
-        $fields = urlencode(Security::hash(serialize($fields) . $unlocked . Security::salt()));
+        $fields = urlencode(Security::hash(serialize($fields) . $unlocked . Security::getSalt()));
         $fields .= urlencode(':Model.hidden|Model.id');
         $this->Controller->request->data = [
             'Model' => [

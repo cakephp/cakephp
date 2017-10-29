@@ -41,7 +41,7 @@ class RequestActionTraitTest extends TestCase
     {
         parent::setUp();
         static::setAppNamespace();
-        Security::salt('not-the-default');
+        Security::setSalt('not-the-default');
         DispatcherFactory::add('Routing');
         DispatcherFactory::add('ControllerFactory');
         $this->object = $this->getObjectForTrait('Cake\Routing\RequestActionTrait');

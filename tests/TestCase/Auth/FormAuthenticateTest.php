@@ -256,7 +256,7 @@ class FormAuthenticateTest extends TestCase
         $PluginModel = TableRegistry::get('TestPlugin.AuthUsers');
         $user['id'] = 1;
         $user['username'] = 'gwoo';
-        $user['password'] = password_hash(Security::salt() . 'cake', PASSWORD_BCRYPT);
+        $user['password'] = password_hash(Security::getSalt() . 'cake', PASSWORD_BCRYPT);
         $PluginModel->save(new Entity($user));
 
         $this->auth->config('userModel', 'TestPlugin.AuthUsers');

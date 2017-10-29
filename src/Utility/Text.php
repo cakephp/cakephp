@@ -521,6 +521,7 @@ class Text
      */
     public static function stripLinks($text)
     {
+        deprecationWarning('This method will be removed in 4.0.0.');
         do {
             $text = preg_replace('#</?a([/\s][^>]*)?(>|$)#i', '', $text, -1, $count);
         } while ($count);

@@ -301,8 +301,8 @@ class SecurityTest extends TestCase
      */
     public function testSalt()
     {
-        Security::salt('foobarbaz');
-        $this->assertEquals('foobarbaz', Security::salt());
+        Security::setSalt('foobarbaz');
+        $this->assertEquals('foobarbaz', Security::getSalt());
     }
 
     /**
