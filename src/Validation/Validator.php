@@ -271,6 +271,10 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function provider($name, $object = null)
     {
+        deprecationWarning(
+            'Validator::provider() is deprecated. ' .
+            'Use Validator::setProvider()/getProvider() instead.'
+        );
         if ($object !== null) {
             return $this->setProvider($name, $object);
         }

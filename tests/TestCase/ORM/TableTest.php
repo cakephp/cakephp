@@ -3355,7 +3355,7 @@ class TableTest extends TestCase
     {
         $table = new Table();
         $validator = $table->getValidator();
-        $this->assertSame($table, $validator->provider('table'));
+        $this->assertSame($table, $validator->getProvider('table'));
         $this->assertInstanceOf('Cake\Validation\Validator', $validator);
         $default = $table->getValidator('default');
         $this->assertSame($validator, $default);
@@ -3391,7 +3391,7 @@ class TableTest extends TestCase
         $other = $table->getValidator('forOtherStuff');
         $this->assertInstanceOf('Cake\Validation\Validator', $other);
         $this->assertNotSame($other, $table->getValidator());
-        $this->assertSame($table, $other->provider('table'));
+        $this->assertSame($table, $other->getProvider('table'));
     }
 
     /**
@@ -3435,7 +3435,7 @@ class TableTest extends TestCase
         $validator = new \Cake\Validation\Validator;
         $table->setValidator('other', $validator);
         $this->assertSame($validator, $table->getValidator('other'));
-        $this->assertSame($table, $validator->provider('table'));
+        $this->assertSame($table, $validator->getProvider('table'));
     }
 
     /**
@@ -5991,7 +5991,7 @@ class TableTest extends TestCase
         $table = TableRegistry::get('Users');
         $validator = new Validator;
         $validator->add('username', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
-        $validator->provider('table', $table);
+        $validator->setProvider('table', $table);
 
         $data = ['username' => ['larry', 'notthere']];
         $this->assertNotEmpty($validator->errors($data));
@@ -6031,7 +6031,7 @@ class TableTest extends TestCase
             'rule' => ['validateUnique', ['derp' => 'erp', 'scope' => 'id']],
             'provider' => 'table'
         ]);
-        $validator->provider('table', $table);
+        $validator->setProvider('table', $table);
         $data = ['username' => 'larry', 'id' => 3];
         $this->assertNotEmpty($validator->errors($data));
 
@@ -6071,7 +6071,7 @@ class TableTest extends TestCase
             'provider' => 'table',
             'message' => 'Must be unique.',
         ]);
-        $validator->provider('table', $table);
+        $validator->setProvider('table', $table);
 
         $data = ['site_id' => 1, 'author_id' => null, 'title' => 'Null dupe'];
         $expected = ['site_id' => ['unique' => 'Must be unique.']];

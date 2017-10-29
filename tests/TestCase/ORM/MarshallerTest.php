@@ -2903,7 +2903,7 @@ class MarshallerTest extends TestCase
             'body' => 'hey'
         ];
 
-        $this->articles->validator()->requirePresence('thing');
+        $this->articles->getValidator()->requirePresence('thing');
         $marshall = new Marshaller($this->articles);
         $entity = $marshall->one($data);
         $this->assertNotEmpty($entity->errors('thing'));
@@ -2944,12 +2944,12 @@ class MarshallerTest extends TestCase
             ]
         ];
         $validator = (new Validator)->add('body', 'numeric', ['rule' => 'numeric']);
-        $this->articles->validator('custom', $validator);
+        $this->articles->setValidator('custom', $validator);
 
         $validator2 = (new Validator)->requirePresence('thing');
-        $this->articles->Users->validator('customThing', $validator2);
+        $this->articles->Users->setValidator('customThing', $validator2);
 
-        $this->articles->Comments->validator('default', $validator2);
+        $this->articles->Comments->setValidator('default', $validator2);
 
         $entity = (new Marshaller($this->articles))->one($data, [
             'validate' => 'custom',
@@ -2985,8 +2985,8 @@ class MarshallerTest extends TestCase
             ],
         ];
         $validator = (new Validator)->requirePresence('thing');
-        $this->articles->validator('default', $validator);
-        $this->articles->Users->validator('default', $validator);
+        $this->articles->setValidator('default', $validator);
+        $this->articles->Users->setValidator('default', $validator);
 
         $entity = (new Marshaller($this->articles))->one($data, [
             'validate' => false,
@@ -3014,7 +3014,7 @@ class MarshallerTest extends TestCase
             'body' => 'hey'
         ];
 
-        $validator = clone $this->articles->validator();
+        $validator = clone $this->articles->getValidator();
         $validator->requirePresence('thing');
         $marshall = new Marshaller($this->articles);
         $entity = $marshall->one($data, ['validate' => $validator]);
@@ -3064,7 +3064,7 @@ class MarshallerTest extends TestCase
         $entity->isNew(false);
         $entity->clean();
 
-        $this->articles->validator()
+        $this->articles->getValidator()
             ->requirePresence('thing', 'update')
             ->requirePresence('id', 'update')
             ->add('author_id', 'numeric', ['rule' => 'numeric'])
@@ -3078,7 +3078,7 @@ class MarshallerTest extends TestCase
         $this->assertNotEmpty($result->errors('thing'));
         $this->assertEmpty($result->errors('id'));
 
-        $this->articles->validator()->requirePresence('thing', 'create');
+        $this->articles->getValidator()->requirePresence('thing', 'create');
         $result = $marshall->merge($entity, $data, []);
 
         $this->assertEmpty($result->errors('thing'));
@@ -3106,7 +3106,7 @@ class MarshallerTest extends TestCase
         $entity->isNew(true);
         $entity->clean();
 
-        $this->articles->validator()
+        $this->articles->getValidator()
             ->requirePresence('thing', 'update')
             ->add('author_id', 'numeric', ['rule' => 'numeric', 'on' => 'update']);
 
