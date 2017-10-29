@@ -132,6 +132,25 @@ class EventManagerTest extends TestCase
     }
 
     /**
+     * Test attach() with a listener interface.
+     *
+     * @group deprecated
+     * @return void
+     */
+    public function testAttachListener()
+    {
+        $this->deprecated(function () {
+            $manager = new EventManager();
+            $listener = new CustomTestEventListenerInterface();
+            $manager->on($listener);
+            $expected = [
+                ['callable' => [$listener, 'listenerFunction']],
+            ];
+            $this->assertEquals($expected, $manager->listeners('fake.event'));
+        });
+    }
+
+    /**
      * Tests the attach() method for multiple event key in multiple queues
      *
      * @group deprecated
@@ -254,6 +273,19 @@ class EventManagerTest extends TestCase
             ['callable' => [$listener, 'listenerFunction']],
         ];
         $this->assertEquals($expected, $manager->listeners('fake.event'));
+    }
+
+    /**
+     * Test the on() with invalid arguments
+     *
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Invalid arguments for EventManager::on(). Expected 1, 2 or 3 arguments.
+     * @return void
+     */
+    public function testOnInvalidArgument()
+    {
+        $manager = new EventManager();
+        $manager->on();
     }
 
     /**
@@ -881,6 +913,34 @@ class EventManagerTest extends TestCase
                 '_isGlobal' => false,
                 '_eventList' => null,
                 '_trackEvents' => false,
+                '_generalManager' => '(object) EventManager',
+            ],
+            $eventManager->__debugInfo()
+        );
+    }
+
+    /**
+     * test debugInfo with an event list.
+     *
+     * @return void
+     */
+    public function testDebubInfoEventList()
+    {
+        $eventList = new EventList();
+        $eventManager = new EventManager();
+        $eventManager->setEventList($eventList);
+        $eventManager->on('example', function () {
+        });
+        $eventManager->dispatch('example');
+
+        $this->assertSame(
+            [
+                '_listeners' => [
+                    'example' => '1 listener(s)',
+                ],
+                '_isGlobal' => false,
+                '_eventList' => $eventList,
+                '_trackEvents' => true,
                 '_generalManager' => '(object) EventManager',
             ],
             $eventManager->__debugInfo()

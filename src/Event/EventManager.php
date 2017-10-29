@@ -189,7 +189,10 @@ class EventManager
 
             return $this;
         }
-        throw new InvalidArgumentException('Invalid arguments for EventManager::on().');
+        throw new InvalidArgumentException(
+            'Invalid arguments for EventManager::on(). ' .
+            "Expected 1, 2 or 3 arguments. Got {$argCount} arguments."
+        );
     }
 
     /**
