@@ -752,7 +752,7 @@ class Inflector
     {
         deprecationWarning(
             'Inflector::slug() is deprecated. ' .
-            'Use Text::getSalt()/setSalt() instead.'
+            'Use Text::slug() instead.'
         );
         $quotedReplacement = preg_quote($replacement, '/');
 
