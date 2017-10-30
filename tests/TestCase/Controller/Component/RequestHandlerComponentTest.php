@@ -741,7 +741,7 @@ class RequestHandlerComponentTest extends TestCase
     public function testRenderAsCalledTwice()
     {
         $this->Controller->getEventManager()->on('Controller.beforeRender', function (\Cake\Event\Event $e) {
-            return $e->subject()->response;
+            return $e->getSubject()->response;
         });
         $this->Controller->render();
 

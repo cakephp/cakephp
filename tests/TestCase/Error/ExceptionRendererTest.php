@@ -931,8 +931,8 @@ class ExceptionRendererTest extends TestCase
             $fired[] = $event->getName();
         };
         $events = EventManager::instance();
-        $events->attach($listener, 'Controller.shutdown');
-        $events->attach($listener, 'Dispatcher.afterDispatch');
+        $events->on('Controller.shutdown', $listener);
+        $events->on('Dispatcher.afterDispatch', $listener);
 
         $exception = new Exception('Terrible');
         $renderer = new ExceptionRenderer($exception);
@@ -976,8 +976,8 @@ class ExceptionRendererTest extends TestCase
             $fired[] = $event->getName();
         };
         $events = EventManager::instance();
-        $events->attach($listener, 'Controller.shutdown');
-        $events->attach($listener, 'Dispatcher.afterDispatch');
+        $events->on('Controller.shutdown', $listener);
+        $events->on('Dispatcher.afterDispatch', $listener);
 
         $exception = new MissingWidgetThingException('Widget not found');
         $renderer = $this->_mockResponse(new MyCustomExceptionRenderer($exception));

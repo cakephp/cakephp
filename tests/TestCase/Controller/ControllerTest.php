@@ -928,7 +928,7 @@ class ControllerTest extends TestCase
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $Controller = new \TestApp\Controller\Admin\PostsController($request, $response);
         $Controller->getEventManager()->on('Controller.beforeRender', function (Event $e) {
-            return $e->subject()->response;
+            return $e->getSubject()->response;
         });
         $Controller->render();
         $this->assertEquals('Admin' . DS . 'Posts', $Controller->viewBuilder()->templatePath());
@@ -939,7 +939,7 @@ class ControllerTest extends TestCase
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $Controller = new \TestApp\Controller\Admin\PostsController($request, $response);
         $Controller->getEventManager()->on('Controller.beforeRender', function (Event $e) {
-            return $e->subject()->response;
+            return $e->getSubject()->response;
         });
         $Controller->render();
         $this->assertEquals('Admin' . DS . 'Super' . DS . 'Posts', $Controller->viewBuilder()->templatePath());
@@ -950,7 +950,7 @@ class ControllerTest extends TestCase
         ]);
         $Controller = new \TestApp\Controller\PagesController($request, $response);
         $Controller->getEventManager()->on('Controller.beforeRender', function (Event $e) {
-            return $e->subject()->response;
+            return $e->getSubject()->response;
         });
         $Controller->render();
         $this->assertEquals('Pages', $Controller->viewBuilder()->templatePath());

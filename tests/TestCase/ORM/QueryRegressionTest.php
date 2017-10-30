@@ -760,7 +760,7 @@ class QueryRegressionTest extends TestCase
         ]));
         $this->assertNotFalse($result);
 
-        $table->eventManager()
+        $table->getEventManager()
             ->on('Model.beforeFind', function (Event $event, $query) {
                 $query->contain(['Authors']);
             });
