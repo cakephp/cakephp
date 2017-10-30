@@ -130,6 +130,7 @@ class QueryExpression implements ExpressionInterface, Countable
             'QueryExpression::type() is deprecated. ' .
             'Use QueryExpression::setConjunction()/getConjunction() instead.'
         );
+
         return $this->tieWith($conjunction);
     }
 
