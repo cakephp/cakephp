@@ -183,7 +183,7 @@ class FormHelperTest extends TestCase
             ]
         ];
 
-        Security::salt('foo!');
+        Security::setSalt('foo!');
         Router::connect('/:controller', ['action' => 'index']);
         Router::connect('/:controller/:action/*');
     }
@@ -1135,7 +1135,7 @@ class FormHelperTest extends TestCase
         $fields = ['anything'];
         $result = $this->Form->secure($fields);
 
-        $hash = hash_hmac('sha1', serialize($fields) . session_id(), Security::salt());
+        $hash = hash_hmac('sha1', serialize($fields) . session_id(), Security::getSalt());
         $this->assertContains($hash, $result);
     }
 
@@ -1167,7 +1167,7 @@ class FormHelperTest extends TestCase
         $this->Form->request->params['_Token'] = 'testKey';
         $result = $this->Form->secure($fields);
 
-        $hash = hash_hmac('sha1', serialize($fields) . session_id(), Security::salt());
+        $hash = hash_hmac('sha1', serialize($fields) . session_id(), Security::getSalt());
         $hash .= ':' . 'Model.valid';
         $hash = urlencode($hash);
         $tokenDebug = urlencode(json_encode([
@@ -1215,7 +1215,7 @@ class FormHelperTest extends TestCase
         $this->Form->request->params['_Token'] = 'testKey';
         $result = $this->Form->secure($fields);
 
-        $hash = hash_hmac('sha1', serialize($fields) . session_id(), Security::salt());
+        $hash = hash_hmac('sha1', serialize($fields) . session_id(), Security::getSalt());
         $hash .= ':' . 'Model.valid';
         $hash = urlencode($hash);
         $expected = [

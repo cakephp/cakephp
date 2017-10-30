@@ -165,7 +165,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
      */
     public function testCookieEncrypted()
     {
-        Security::salt('abcdabcdabcdabcdabcdabcdabcdabcdabcd');
+        Security::setSalt('abcdabcdabcdabcdabcdabcdabcdabcdabcd');
         $this->cookieEncrypted('KeyOfCookie', 'Encrypted with aes by default');
         $request = $this->_buildRequest('/tasks/view', 'GET', []);
         $this->assertStringStartsWith('Q2FrZQ==.', $request['cookies']['KeyOfCookie']);

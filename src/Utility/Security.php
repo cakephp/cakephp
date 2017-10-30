@@ -353,6 +353,10 @@ class Security
      */
     public static function salt($salt = null)
     {
+        deprecationWarning(
+            'Security::salt() is deprecated. ' .
+            'Use Security::getSalt()/setSalt() instead.'
+        );
         if ($salt === null) {
             return static::$_salt;
         }
