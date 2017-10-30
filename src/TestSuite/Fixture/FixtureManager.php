@@ -251,8 +251,7 @@ class FixtureManager
         $table = $fixture->sourceName();
         $exists = in_array($table, $sources);
 
-        $hasSchema = $fixture instanceof TableSchemaInterface && $fixture->schema() instanceof TableSchema
-            || $fixture instanceof TableSchemaAwareInterface && $fixture->getTableSchema() instanceof TableSchema;
+        $hasSchema = $fixture instanceof TableSchemaInterface && $fixture->getTableSchema() instanceof TableSchema;
 
         if (($drop && $exists) || ($exists && !$isFixtureSetup && $hasSchema)) {
             $fixture->drop($db);
