@@ -271,7 +271,7 @@ SQL;
 SQL;
         $connection->execute($table);
 
-        if ($connection->driver()->supportsNativeJson()) {
+        if ($connection->getDriver()->supportsNativeJson()) {
             $table = <<<SQL
                 CREATE TABLE schema_json (
                     id INT(11) PRIMARY KEY AUTO_INCREMENT,
@@ -1154,7 +1154,7 @@ SQL;
             'type' => 'integer',
             'null' => false
         ]);
-        $table->temporary(true);
+        $table->setTemporary(true);
         $sql = $table->createSql($connection);
         $this->assertContains('CREATE TEMPORARY TABLE', $sql[0]);
     }
@@ -1287,7 +1287,7 @@ SQL;
     {
         $connection = ConnectionManager::get('test');
         $this->_createTables($connection);
-        $this->skipIf(!$connection->driver()->supportsNativeJson(), 'Does not support native json');
+        $this->skipIf(!$connection->getDriver()->supportsNativeJson(), 'Does not support native json');
 
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_json');

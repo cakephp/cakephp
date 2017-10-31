@@ -310,7 +310,7 @@ class TableTest extends TestCase
      */
     public function testSchema()
     {
-        $schema = $this->connection->schemaCollection()->describe('users');
+        $schema = $this->connection->getSchemaCollection()->describe('users');
         $table = new Table([
             'table' => 'users',
             'connection' => $this->connection,
@@ -337,7 +337,7 @@ class TableTest extends TestCase
      */
     public function testSchemaInitialize()
     {
-        $schema = $this->connection->schemaCollection()->describe('users');
+        $schema = $this->connection->getSchemaCollection()->describe('users');
         $table = $this->getMockBuilder('Cake\ORM\Table')
             ->setMethods(['_initializeSchema'])
             ->setConstructorArgs([['table' => 'users', 'connection' => $this->connection]])
@@ -2568,7 +2568,7 @@ class TableTest extends TestCase
             ->setMethods(['begin', 'commit', 'inTransaction'])
             ->setConstructorArgs([$config])
             ->getMock();
-        $connection->driver($this->connection->driver());
+        $connection->setDriver($this->connection->getDriver());
 
         $table = $this->getMockBuilder('\Cake\ORM\Table')
             ->setMethods(['getConnection'])
@@ -2601,7 +2601,7 @@ class TableTest extends TestCase
             ->setMethods(['begin', 'rollback'])
             ->setConstructorArgs([ConnectionManager::config('test')])
             ->getMock();
-        $connection->driver(ConnectionManager::get('test')->driver());
+        $connection->setDriver(ConnectionManager::get('test')->getDriver());
         $table = $this->getMockBuilder('\Cake\ORM\Table')
             ->setMethods(['query', 'getConnection'])
             ->setConstructorArgs([['table' => 'users']])
@@ -2641,7 +2641,7 @@ class TableTest extends TestCase
             ->setMethods(['begin', 'rollback'])
             ->setConstructorArgs([ConnectionManager::config('test')])
             ->getMock();
-        $connection->driver(ConnectionManager::get('test')->driver());
+        $connection->setDriver(ConnectionManager::get('test')->getDriver());
         $table = $this->getMockBuilder('\Cake\ORM\Table')
             ->setMethods(['query', 'getConnection', 'exists'])
             ->setConstructorArgs([['table' => 'users']])
@@ -3635,7 +3635,7 @@ class TableTest extends TestCase
         $this->assertInstanceOf('Cake\ORM\Query', $result);
         $this->assertNull($result->clause('limit'));
         $expected = new QueryExpression();
-        $expected->typeMap()->defaults($this->usersTypeMap->toArray());
+        $expected->getTypeMap()->setDefaults($this->usersTypeMap->toArray());
         $expected->add(
             ['or' => ['Users.author_id' => 1, 'Users.published' => 'Y']]
         );
@@ -6554,7 +6554,7 @@ class TableTest extends TestCase
     public function skipIfSqlServer()
     {
         $this->skipIf(
-            $this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver,
+            $this->connection->getDriver() instanceof \Cake\Database\Driver\Sqlserver,
             'SQLServer does not support the requirements of this test.'
         );
     }

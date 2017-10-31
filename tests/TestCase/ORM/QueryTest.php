@@ -1177,7 +1177,7 @@ class QueryTest extends TestCase
         $query->select(['id']);
 
         $first = $query->hydrate(false)
-            ->bufferResults(false)->first();
+            ->enableBufferedResults(false)->first();
 
         $this->assertEquals(['id' => 1], $first);
     }
@@ -1712,7 +1712,7 @@ class QueryTest extends TestCase
      */
     public function testUpdateWithTableExpression()
     {
-        $this->skipIf(!$this->connection->driver() instanceof \Cake\Database\Driver\Mysql);
+        $this->skipIf(!$this->connection->getDriver() instanceof \Cake\Database\Driver\Mysql);
         $table = TableRegistry::get('articles');
 
         $query = $table->query();
@@ -1745,7 +1745,7 @@ class QueryTest extends TestCase
 
         $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
         //PDO_SQLSRV returns -1 for successful inserts when using INSERT ... OUTPUT
-        if (!$this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver) {
+        if (!$this->connection->getDriver() instanceof \Cake\Database\Driver\Sqlserver) {
             $this->assertEquals(2, $result->rowCount());
         } else {
             $this->assertEquals(-1, $result->rowCount());
@@ -2495,7 +2495,7 @@ class QueryTest extends TestCase
         $table->hasMany('articles');
         $query = $table->find()
             ->where(['id > ' => 1])
-            ->bufferResults(false)
+            ->enableBufferedResults(false)
             ->hydrate(false)
             ->matching('articles')
             ->applyOptions(['foo' => 'bar'])
@@ -2509,7 +2509,7 @@ class QueryTest extends TestCase
         $expected = [
             '(help)' => 'This is a Query object, to get the results execute or iterate it.',
             'sql' => $query->sql(),
-            'params' => $query->valueBinder()->bindings(),
+            'params' => $query->getValueBinder()->bindings(),
             'defaultTypes' => [
                 'authors__id' => 'integer',
                 'authors.id' => 'integer',
@@ -2832,7 +2832,7 @@ class QueryTest extends TestCase
             ->bind(':end', 2);
         $copy = $query->cleanCopy();
 
-        $this->assertNotEmpty($copy->valueBinder()->bindings());
+        $this->assertNotEmpty($copy->getValueBinder()->bindings());
     }
 
     /**

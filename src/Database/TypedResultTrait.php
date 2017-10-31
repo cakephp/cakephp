@@ -60,6 +60,10 @@ trait TypedResultTrait
      */
     public function returnType($type = null)
     {
+        deprecationWarning(
+            'TypedResultTrait::returnType() is deprecated. ' .
+            'Use TypedResultTrait::setReturnType()/getReturnType() instead.'
+        );
         if ($type !== null) {
             $this->_returnType = $type;
 

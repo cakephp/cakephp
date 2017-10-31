@@ -286,7 +286,7 @@ class FixtureManager
 
         try {
             $createTables = function ($db, $fixtures) use ($test) {
-                $tables = $db->schemaCollection()->listTables();
+                $tables = $db->getSchemaCollection()->listTables();
                 $configName = $db->configName();
                 if (!isset($this->_insertionMap[$configName])) {
                     $this->_insertionMap[$configName] = [];
@@ -455,7 +455,7 @@ class FixtureManager
         }
 
         if (!$this->isFixtureSetup($db->configName(), $fixture)) {
-            $sources = $db->schemaCollection()->listTables();
+            $sources = $db->getSchemaCollection()->listTables();
             $this->_setupTable($fixture, $db, $sources, $dropTables);
         }
 

@@ -79,7 +79,7 @@ class SchemaCacheShellTest extends TestCase
 
         $this->shell->params['connection'] = 'test';
         $this->shell->clear();
-        $this->assertInstanceOf('Cake\Database\Schema\CachedCollection', $ds->schemaCollection());
+        $this->assertInstanceOf('Cake\Database\Schema\CachedCollection', $ds->getSchemaCollection());
     }
 
     /**
@@ -94,7 +94,7 @@ class SchemaCacheShellTest extends TestCase
 
         $this->shell->params['connection'] = 'test';
         $this->shell->build();
-        $this->assertInstanceOf('Cake\Database\Schema\CachedCollection', $ds->schemaCollection());
+        $this->assertInstanceOf('Cake\Database\Schema\CachedCollection', $ds->getSchemaCollection());
     }
 
     /**

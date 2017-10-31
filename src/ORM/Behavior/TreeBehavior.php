@@ -353,7 +353,7 @@ class TreeBehavior extends Behavior
             function ($exp) use ($config) {
                 /* @var \Cake\Database\Expression\QueryExpression $exp */
                 $leftInverse = clone $exp;
-                $leftInverse->type('*')->add('-1');
+                $leftInverse->setConjunction('*')->add('-1');
                 $rightInverse = clone $leftInverse;
 
                 return $exp
