@@ -20,7 +20,7 @@ use Cake\Database\Schema\TableSchema;
 /**
  * Defines the interface for getting the schema.
  *
- * @method \Cake\Database\Schema\TableSchema getTableSchema()
+ * @method \Cake\Database\Schema\TableSchema|null getTableSchema()
  */
 interface TableSchemaInterface
 {

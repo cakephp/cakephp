@@ -21,7 +21,6 @@ use Cake\Core\Exception\Exception;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\Schema\TableSchemaAwareInterface;
 use Cake\Datasource\ConnectionManager;
-use Cake\Datasource\TableSchemaInterface;
 use Cake\Utility\Inflector;
 use PDOException;
 use UnexpectedValueException;
@@ -251,7 +250,7 @@ class FixtureManager
         $table = $fixture->sourceName();
         $exists = in_array($table, $sources);
 
-        $hasSchema = $fixture instanceof TableSchemaInterface && $fixture->getTableSchema() instanceof TableSchema;
+        $hasSchema = $fixture instanceof TableSchemaAwareInterface && $fixture->getTableSchema() instanceof TableSchema;
 
         if (($drop && $exists) || ($exists && !$isFixtureSetup && $hasSchema)) {
             $fixture->drop($db);
