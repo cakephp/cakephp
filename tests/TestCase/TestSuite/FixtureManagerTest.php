@@ -146,7 +146,7 @@ class FixtureManagerTest extends TestCase
         $this->manager->load($test);
 
         $table = TableRegistry::get('ArticlesTags');
-        $schema = $table->schema();
+        $schema = $table->getSchema();
         $expectedConstraint = [
             'type' => 'foreign',
             'columns' => [
@@ -165,7 +165,7 @@ class FixtureManagerTest extends TestCase
 
         $this->manager->load($test);
         $table = TableRegistry::get('ArticlesTags');
-        $schema = $table->schema();
+        $schema = $table->getSchema();
         $expectedConstraint = [
             'type' => 'foreign',
             'columns' => [
@@ -346,7 +346,7 @@ class FixtureManagerTest extends TestCase
 
         $table = TableRegistry::get('ArticlesTags');
         $results = $table->find('all')->toArray();
-        $schema = $table->schema();
+        $schema = $table->getSchema();
         $expectedConstraint = [
             'type' => 'foreign',
             'columns' => [
@@ -371,7 +371,7 @@ class FixtureManagerTest extends TestCase
 
         $table = TableRegistry::get('ArticlesTags');
         $results = $table->find('all')->toArray();
-        $schema = $table->schema();
+        $schema = $table->getSchema();
         $expectedConstraint = [
             'type' => 'foreign',
             'columns' => [

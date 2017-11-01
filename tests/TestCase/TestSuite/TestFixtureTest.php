@@ -189,7 +189,7 @@ class TestFixtureTest extends TestCase
         $Fixture->init();
         $this->assertEquals('articles', $Fixture->table);
 
-        $schema = $Fixture->schema();
+        $schema = $Fixture->getTableSchema();
         $this->assertInstanceOf('Cake\Database\Schema\Table', $schema);
 
         $fields = $Fixture->fields;
@@ -225,7 +225,7 @@ class TestFixtureTest extends TestCase
             'body',
             'published',
         ];
-        $this->assertEquals($expected, $fixture->schema()->columns());
+        $this->assertEquals($expected, $fixture->getTableSchema()->columns());
     }
 
     /**
@@ -250,7 +250,7 @@ class TestFixtureTest extends TestCase
             'body',
             'published',
         ];
-        $this->assertEquals($expected, $fixture->schema()->columns());
+        $this->assertEquals($expected, $fixture->getTableSchema()->columns());
     }
 
     /**
@@ -288,7 +288,7 @@ class TestFixtureTest extends TestCase
 
         $fixture = new LettersFixture();
         $fixture->init();
-        $this->assertEquals(['id', 'letter'], $fixture->schema()->columns());
+        $this->assertEquals(['id', 'letter'], $fixture->getTableSchema()->columns());
 
         $db = $this->getMockBuilder('Cake\Database\Connection')
             ->setMethods(['prepare', 'execute'])
@@ -324,7 +324,7 @@ class TestFixtureTest extends TestCase
             ->method('createSql')
             ->with($db)
             ->will($this->returnValue(['sql', 'sql']));
-        $fixture->schema($table);
+        $fixture->setTableSchema($table);
 
         $statement = $this->getMockBuilder('\PDOStatement')
             ->setMethods(['execute', 'closeCursor'])
@@ -356,7 +356,7 @@ class TestFixtureTest extends TestCase
             ->method('createSql')
             ->with($db)
             ->will($this->throwException(new Exception('oh noes')));
-        $fixture->schema($table);
+        $fixture->setTableSchema($table);
 
         $fixture->create($db);
     }
@@ -552,7 +552,7 @@ class TestFixtureTest extends TestCase
             ->method('dropSql')
             ->with($db)
             ->will($this->returnValue(['sql']));
-        $fixture->schema($table);
+        $fixture->setTableSchema($table);
 
         $this->assertTrue($fixture->drop($db));
     }
@@ -584,7 +584,7 @@ class TestFixtureTest extends TestCase
             ->method('truncateSql')
             ->with($db)
             ->will($this->returnValue(['sql']));
-        $fixture->schema($table);
+        $fixture->setTableSchema($table);
 
         $this->assertTrue($fixture->truncate($db));
     }

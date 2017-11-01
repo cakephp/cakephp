@@ -363,10 +363,7 @@ abstract class TestCase extends BaseTestCase
      */
     public function assertTags($string, $expected, $fullDebug = false)
     {
-        trigger_error(
-            'assertTags() is deprecated, use assertHtml() instead.',
-            E_USER_DEPRECATED
-        );
+        deprecationWarning('TestCase::assertTags() is deprecated. Use TestCase::assertHtml() instead.');
         $this->assertHtml($expected, $string, $fullDebug);
     }
 

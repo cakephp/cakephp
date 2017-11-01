@@ -270,6 +270,10 @@ class TestFixture implements FixtureInterface, TableSchemaInterface, TableSchema
      */
     public function schema(TableSchema $schema = null)
     {
+        deprecationWarning(
+            'TestFixture::schema() is deprecated. ' .
+            'Use TestFixture::setTableSchema()/getTableSchema() instead.'
+        );
         if ($schema) {
             $this->setTableSchema($schema);
         }
