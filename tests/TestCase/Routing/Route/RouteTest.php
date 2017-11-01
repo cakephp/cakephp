@@ -1204,29 +1204,32 @@ class RouteTest extends TestCase
     /**
      * Check [method] compatibility.
      *
+     * @group deprecated
      * @return void
      */
     public function testMethodCompatibility()
     {
-        $_SERVER['REQUEST_METHOD'] = 'POST';
-        $route = new Route('/sample', [
-            'controller' => 'Articles',
-            'action' => 'index',
-            '[method]' => 'POST',
-        ]);
-        $url = [
-            'controller' => 'Articles',
-            'action' => 'index',
-            '_method' => 'POST',
-        ];
-        $this->assertEquals('/sample', $route->match($url));
+        $this->deprecated(function () {
+            $_SERVER['REQUEST_METHOD'] = 'POST';
+            $route = new Route('/sample', [
+                'controller' => 'Articles',
+                'action' => 'index',
+                '[method]' => 'POST',
+            ]);
+            $url = [
+                'controller' => 'Articles',
+                'action' => 'index',
+                '_method' => 'POST',
+            ];
+            $this->assertEquals('/sample', $route->match($url));
 
-        $url = [
-            'controller' => 'Articles',
-            'action' => 'index',
-            '[method]' => 'POST',
-        ];
-        $this->assertEquals('/sample', $route->match($url));
+            $url = [
+                'controller' => 'Articles',
+                'action' => 'index',
+                '[method]' => 'POST',
+            ];
+            $this->assertEquals('/sample', $route->match($url));
+        });
     }
 
     /**
