@@ -81,7 +81,7 @@ class RequestHandlerComponentTest extends TestCase
         $this->request = $request;
 
         Router::scope('/', function ($routes) {
-            $routes->extensions('json');
+            $routes->setExtensions('json');
             $routes->fallbacks('InflectedRoute');
         });
     }
