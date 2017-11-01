@@ -448,11 +448,22 @@ class TimeHelperTest extends TestCase
         $this->assertTrue($this->Time->wasWithinLast('1 year', '-60 minutes -30 seconds'));
         $this->assertTrue($this->Time->wasWithinLast('3 years', '-2 months'));
         $this->assertTrue($this->Time->wasWithinLast('5 months', '-4 months'));
+    }
 
-        $this->assertTrue($this->Time->wasWithinLast('5 ', '-3 days'));
-        $this->assertTrue($this->Time->wasWithinLast('1   ', '-1 hour'));
-        $this->assertTrue($this->Time->wasWithinLast('1   ', '-1 minute'));
-        $this->assertTrue($this->Time->wasWithinLast('1   ', '-23 hours -59 minutes -59 seconds'));
+    /**
+     * test deprecated usage of wasWithinLast()
+     *
+     * @group deprecated
+     * @return void
+     */
+    public function testWasWithinLastNumericString()
+    {
+        $this->deprecated(function () {
+            $this->assertTrue($this->Time->wasWithinLast('5 ', '-3 days'));
+            $this->assertTrue($this->Time->wasWithinLast('1   ', '-1 hour'));
+            $this->assertTrue($this->Time->wasWithinLast('1   ', '-1 minute'));
+            $this->assertTrue($this->Time->wasWithinLast('1   ', '-23 hours -59 minutes -59 seconds'));
+        });
     }
 
     /**
