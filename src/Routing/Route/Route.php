@@ -120,8 +120,8 @@ class Route
     public function __construct($template, $defaults = [], array $options = [])
     {
         $this->template = $template;
-        // @deprecated The `[method]` format should be removed in 4.0.0
         if (isset($defaults['[method]'])) {
+            deprecationWarning('The `[method]` option is deprecated. Use `_method` instead.');
             $defaults['_method'] = $defaults['[method]'];
             unset($defaults['[method]']);
         }
@@ -141,6 +141,10 @@ class Route
      */
     public function extensions($extensions = null)
     {
+        deprecationWarning(
+            'Route::extensions() is deprecated. ' .
+            'Use Route::setExtensions()/getExtensions() instead.'
+        );
         if ($extensions === null) {
             return $this->_extensions;
         }
@@ -736,6 +740,7 @@ class Route
         }
         // @deprecated The `[method]` support should be removed in 4.0.0
         if (isset($url['[method]'])) {
+            deprecationWarning('The `[method]` key is deprecated. Use `_method` instead.');
             $url['_method'] = $url['[method]'];
         }
         if (empty($url['_method'])) {

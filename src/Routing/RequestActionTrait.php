@@ -101,6 +101,10 @@ trait RequestActionTrait
      */
     public function requestAction($url, array $extra = [])
     {
+        deprecationWarning(
+            'RequestActionTrait::requestAction() is deprecated. ' .
+            'You should refactor to use View Cells or Components instead.'
+        );
         if (empty($url)) {
             return false;
         }

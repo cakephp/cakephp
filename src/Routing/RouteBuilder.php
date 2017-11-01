@@ -152,6 +152,10 @@ class RouteBuilder
      */
     public function routeClass($routeClass = null)
     {
+        deprecationWarning(
+            'RouteBuilder::routeClass() is deprecated. ' .
+            'Use RouteBuilder::setRouteClass()/getRouteClass() instead.'
+        );
         if ($routeClass === null) {
             return $this->getRouteClass();
         }
@@ -193,6 +197,10 @@ class RouteBuilder
      */
     public function extensions($extensions = null)
     {
+        deprecationWarning(
+            'RouteBuilder::extensions() is deprecated. ' .
+            'Use RouteBuilder::setExtensions()/getExtensions() instead.'
+        );
         if ($extensions === null) {
             return $this->getExtensions();
         }
