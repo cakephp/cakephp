@@ -410,6 +410,11 @@ class View implements EventDispatcherInterface
      */
     public function templatePath($path = null)
     {
+        deprecationWarning(
+            'View::templatePath() is deprecated. ' .
+            'Use getTemplatePath()/setTemplatePath() instead.'
+        );
+
         if ($path === null) {
             return $this->templatePath;
         }
@@ -449,6 +454,11 @@ class View implements EventDispatcherInterface
      */
     public function layoutPath($path = null)
     {
+        deprecationWarning(
+            'View::layoutPath() is deprecated. ' .
+            'Use getLayoutPath()/setLayoutPath() instead.'
+        );
+
         if ($path === null) {
             return $this->layoutPath;
         }
@@ -493,6 +503,11 @@ class View implements EventDispatcherInterface
      */
     public function autoLayout($autoLayout = null)
     {
+        deprecationWarning(
+            'View::autoLayout() is deprecated. ' .
+            'Use isAutoLayoutEnabled()/enableAutoLayout() instead.'
+        );
+
         if ($autoLayout === null) {
             return $this->autoLayout;
         }
@@ -532,6 +547,11 @@ class View implements EventDispatcherInterface
      */
     public function theme($theme = null)
     {
+        deprecationWarning(
+            'View::theme() is deprecated. ' .
+            'Use getTheme()/setTheme() instead.'
+        );
+
         if ($theme === null) {
             return $this->theme;
         }
@@ -574,6 +594,11 @@ class View implements EventDispatcherInterface
      */
     public function template($name = null)
     {
+        deprecationWarning(
+            'View::template() is deprecated. ' .
+            'Use getTemplate()/setTemplate() instead.'
+        );
+
         if ($name === null) {
             return $this->template;
         }
@@ -619,6 +644,11 @@ class View implements EventDispatcherInterface
      */
     public function layout($name = null)
     {
+        deprecationWarning(
+            'View::layout() is deprecated. ' .
+            'Use getLayout()/setLayout() instead.'
+        );
+
         if ($name === null) {
             return $this->layout;
         }
