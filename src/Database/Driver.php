@@ -336,6 +336,10 @@ abstract class Driver
      */
     public function autoQuoting($enable = null)
     {
+        deprecationWarning(
+            'Driver::autoQuoting() is deprecated. ' .
+            'Use Driver::enableAutoQuoting()/isAutoQuotingEnabled() instead.'
+        );
         if ($enable !== null) {
             $this->enableAutoQuoting($enable);
         }

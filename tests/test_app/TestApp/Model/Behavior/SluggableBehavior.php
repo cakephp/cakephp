@@ -21,7 +21,7 @@ namespace TestApp\Model\Behavior;
 use Cake\Event\Event;
 use Cake\ORM\Behavior;
 use Cake\ORM\Query;
-use Cake\Utility\Inflector;
+use Cake\Utility\Text;
 
 class SluggableBehavior extends Behavior
 {
@@ -42,6 +42,6 @@ class SluggableBehavior extends Behavior
 
     public function slugify($value)
     {
-        return Inflector::slug($value);
+        return Text::slug($value);
     }
 }

@@ -55,7 +55,7 @@ class TranslateBehaviorTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        I18n::setLocale(I18n::defaultLocale());
+        I18n::setLocale(I18n::getDefaultLocale());
         TableRegistry::clear();
     }
 
@@ -1623,7 +1623,7 @@ class TranslateBehaviorTest extends TestCase
             'validator' => 'custom'
         ]);
         $validator = (new Validator)->add('title', 'notBlank', ['rule' => 'notBlank']);
-        $table->validator('custom', $validator);
+        $table->setValidator('custom', $validator);
         $translate = $table->behaviors()->get('Translate');
 
         $entity = $table->newEntity();
@@ -1706,7 +1706,7 @@ class TranslateBehaviorTest extends TestCase
             'validator' => 'custom'
         ]);
         $validator = (new Validator)->add('title', 'notBlank', ['rule' => 'notBlank']);
-        $table->validator('custom', $validator);
+        $table->setValidator('custom', $validator);
         $translate = $table->behaviors()->get('Translate');
 
         $entity = $table->newEntity();

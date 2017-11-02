@@ -88,6 +88,24 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
+     * Helper method for tests that needs to use error_reporting()
+     *
+     * @param int $errorLevel value of error_reporting() that needs to use
+     * @param callable $callable callable function that will receive asserts
+     * @return void
+     */
+    public function withErrorReporting($errorLevel, $callable)
+    {
+        try {
+            $default = error_reporting();
+            error_reporting($errorLevel);
+            $callable();
+        } finally {
+            error_reporting($default);
+        }
+    }
+
+    /**
      * Helper method for check deprecation methods
      *
      * @param callable $callable callable function that will receive asserts
@@ -95,10 +113,13 @@ abstract class TestCase extends BaseTestCase
      */
     public function deprecated($callable)
     {
-        $errorLevel = error_reporting();
-        error_reporting(E_ALL ^ E_USER_DEPRECATED);
-        $callable();
-        error_reporting($errorLevel);
+        try {
+            $errorLevel = error_reporting();
+            error_reporting(E_ALL ^ E_USER_DEPRECATED);
+            $callable();
+        } finally {
+            error_reporting($errorLevel);
+        }
     }
 
     /**
@@ -342,10 +363,7 @@ abstract class TestCase extends BaseTestCase
      */
     public function assertTags($string, $expected, $fullDebug = false)
     {
-        trigger_error(
-            'assertTags() is deprecated, use assertHtml() instead.',
-            E_USER_DEPRECATED
-        );
+        deprecationWarning('TestCase::assertTags() is deprecated. Use TestCase::assertHtml() instead.');
         $this->assertHtml($expected, $string, $fullDebug);
     }
 

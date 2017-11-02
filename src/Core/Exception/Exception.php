@@ -60,7 +60,7 @@ class Exception extends RuntimeException
      * @param int|null $code The code of the error, is also the HTTP status code for the error.
      * @param \Exception|null $previous the previous exception.
      */
-    public function __construct($message, $code = null, $previous = null)
+    public function __construct($message = '', $code = null, $previous = null)
     {
         if ($code === null) {
             $code = $this->_defaultCode;

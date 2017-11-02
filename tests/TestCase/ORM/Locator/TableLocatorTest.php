@@ -441,7 +441,7 @@ class TableLocatorTest extends TestCase
         $this->_locator->config('users', ['validator' => $validator]);
         $table = $this->_locator->get('users');
 
-        $this->assertSame($table->validator('default'), $validator);
+        $this->assertSame($table->getValidator('default'), $validator);
     }
 
     /**
@@ -464,9 +464,9 @@ class TableLocatorTest extends TestCase
         ]);
         $table = $this->_locator->get('users');
 
-        $this->assertSame($table->validator('default'), $validator1);
-        $this->assertSame($table->validator('secondary'), $validator2);
-        $this->assertSame($table->validator('tertiary'), $validator3);
+        $this->assertSame($table->getValidator('default'), $validator1);
+        $this->assertSame($table->getValidator('secondary'), $validator2);
+        $this->assertSame($table->getValidator('tertiary'), $validator3);
     }
 
     /**

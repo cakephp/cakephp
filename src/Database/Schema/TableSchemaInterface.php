@@ -30,6 +30,13 @@ interface TableSchemaInterface extends SchemaInterface
     const TYPE_BINARY = 'binary';
 
     /**
+     * Binary UUID column type
+     *
+     * @var string
+     */
+    const TYPE_BINARY_UUID = 'binaryuuid';
+
+    /**
      * Date column type
      *
      * @var string

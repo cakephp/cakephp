@@ -20,7 +20,6 @@ use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
 use Cake\Routing\Route\Route;
 use Cake\TestSuite\TestCase;
-use \stdClass;
 
 class RouteCollectionTest extends TestCase
 {

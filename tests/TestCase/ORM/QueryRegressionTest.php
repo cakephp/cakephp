@@ -667,7 +667,7 @@ class QueryRegressionTest extends TestCase
         $tags = TableRegistry::get('Tags');
 
         $this->skipIf(
-            $tags->connection()->driver() instanceof \Cake\Database\Driver\Sqlserver,
+            $tags->connection()->getDriver() instanceof \Cake\Database\Driver\Sqlserver,
             'SQL server is temporarily weird in this test, will investigate later'
         );
         $tags = TableRegistry::get('Tags');
@@ -760,7 +760,7 @@ class QueryRegressionTest extends TestCase
         ]));
         $this->assertNotFalse($result);
 
-        $table->eventManager()
+        $table->getEventManager()
             ->on('Model.beforeFind', function (Event $event, $query) {
                 $query->contain(['Authors']);
             });
@@ -1169,13 +1169,13 @@ class QueryRegressionTest extends TestCase
         $ratio = $table->find()
             ->select(function ($query) use ($table) {
                 $allCommentsCount = $table->find()->select($query->func()->count('*'));
-                $countToFloat = $query->newExpr([$query->func()->count('*'), '1.0'])->type('*');
+                $countToFloat = $query->newExpr([$query->func()->count('*'), '1.0'])->setConjunction('*');
 
                 return [
                     'ratio' => $query
                         ->newExpr($countToFloat)
                         ->add($allCommentsCount)
-                        ->type('/')
+                        ->setConjunction('/')
                 ];
             })
             ->where(['user_id' => 1])

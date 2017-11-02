@@ -108,6 +108,10 @@ class TypeMap
      */
     public function defaults(array $defaults = null)
     {
+        deprecationWarning(
+            'TypeMap::defaults() is deprecated. ' .
+            'Use TypeMap::setDefaults()/getDefaults() instead.'
+        );
         if ($defaults !== null) {
             return $this->setDefaults($defaults);
         }
@@ -180,6 +184,10 @@ class TypeMap
      */
     public function types(array $types = null)
     {
+        deprecationWarning(
+            'TypeMap::types() is deprecated. ' .
+            'Use TypeMap::setTypes()/getTypes() instead.'
+        );
         if ($types !== null) {
             return $this->setTypes($types);
         }

@@ -14,7 +14,6 @@
 
 namespace Cake\Test\TestCase\Event;
 
-use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventManager;
 use Cake\TestSuite\TestCase;
 
@@ -53,15 +52,17 @@ class EventDispatcherTraitTest extends TestCase
     /**
      * testEventManager
      *
+     * @group deprecated
      * @return void
      */
     public function testEventManager()
     {
-        $eventManager = new EventManager();
+        $this->deprecated(function () {
+            $eventManager = new EventManager();
+            $this->subject->eventManager($eventManager);
 
-        $this->subject->eventManager($eventManager);
-
-        $this->assertSame($eventManager, $this->subject->eventManager());
+            $this->assertSame($eventManager, $this->subject->eventManager());
+        });
     }
 
     /**

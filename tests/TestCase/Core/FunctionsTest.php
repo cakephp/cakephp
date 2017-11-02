@@ -47,24 +47,26 @@ class FunctionsTest extends TestCase
      * Test error messages coming out when debug is on, manually setting the stack frame
      *
      * @expectedException PHPUnit\Framework\Error\Deprecated
-     * @expectedExceptionMessage This is going away - [internal], line: ??
+     * @expectedExceptionMessageRegExp /This is going away - (.*?)[\/\\]TestCase.php, line\: \d+/
      */
     public function testDeprecationWarningEnabled()
     {
-        error_reporting(E_ALL);
-        deprecationWarning('This is going away', 1);
+        $this->withErrorReporting(E_ALL, function () {
+            deprecationWarning('This is going away', 1);
+        });
     }
 
     /**
      * Test error messages coming out when debug is on, not setting the stack frame manually
      *
      * @expectedException PHPUnit\Framework\Error\Deprecated
-     * @expectedExceptionMessageRegExp /This is going away - (.*?)[\/\\]TestCase.php, line\: \d+/
+     * @expectedExceptionMessageRegExp /This is going away - (.*?)[\/\\]FunctionsTest.php, line\: \d+/
      */
     public function testDeprecationWarningEnabledDefaultFrame()
     {
-        error_reporting(E_ALL);
-        deprecationWarning('This is going away');
+        $this->withErrorReporting(E_ALL, function () {
+            deprecationWarning('This is going away');
+        });
     }
 
     /**
@@ -74,7 +76,20 @@ class FunctionsTest extends TestCase
      */
     public function testDeprecationWarningLevelDisabled()
     {
-        error_reporting(E_ALL ^ E_USER_DEPRECATED);
-        $this->assertNull(deprecationWarning('This is going away'));
+        $this->withErrorReporting(E_ALL ^ E_USER_DEPRECATED, function () {
+            $this->assertNull(deprecationWarning('This is going away'));
+        });
+    }
+
+    /**
+     * testing getTypeName()
+     *
+     * @return void
+     */
+    public function testgetTypeName()
+    {
+        $this->assertEquals('stdClass', getTypeName(new \stdClass()));
+        $this->assertEquals('array', getTypeName([]));
+        $this->assertEquals('string', getTypeName(''));
     }
 }

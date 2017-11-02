@@ -410,6 +410,7 @@ class Folder
      */
     public function inCakePath($path = '')
     {
+        deprecationWarning('Folder::inCakePath() is deprecated. Use Folder::inPath() instead.');
         $dir = substr(Folder::slashTerm(ROOT), 0, -1);
         $newdir = $dir . $path;
 

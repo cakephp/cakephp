@@ -778,6 +778,10 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      */
     public function temporary($temporary = null)
     {
+        deprecationWarning(
+            'TableSchema::temporary() is deprecated. ' .
+            'Use TableSchema::setTemporary()/getTemporary() instead.'
+        );
         if ($temporary !== null) {
             return $this->setTemporary($temporary);
         }
@@ -843,6 +847,24 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
         $dialect = $connection->getDriver()->schemaDialect();
 
         return $dialect->dropConstraintSql($this);
+    }
+
+    /**
+     * Returns an array of the table schema.
+     *
+     * @return array
+     */
+    public function __debugInfo()
+    {
+        return [
+            'table' => $this->_table,
+            'columns' => $this->_columns,
+            'indexes' => $this->_indexes,
+            'constraints' => $this->_constraints,
+            'options' => $this->_options,
+            'typeMap' => $this->_typeMap,
+            'temporary' => $this->_temporary,
+        ];
     }
 }
 

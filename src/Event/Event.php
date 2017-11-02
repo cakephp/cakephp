@@ -92,6 +92,11 @@ class Event
      */
     public function __get($attribute)
     {
+        $method = 'get' . ucfirst($attribute);
+        deprecationWarning(
+            "Event::${$attribute} is deprecated. " .
+            "Use Event::{$method}() instead."
+        );
         if ($attribute === 'name' || $attribute === 'subject') {
             return $this->{$attribute}();
         }
@@ -113,6 +118,11 @@ class Event
      */
     public function __set($attribute, $value)
     {
+        $method = 'set' . ucfirst($attribute);
+        deprecationWarning(
+            "Event::${$attribute} is deprecated. " .
+            "Use Event::{$method}() instead."
+        );
         if ($attribute === 'data') {
             $this->_data = (array)$value;
         }
@@ -129,6 +139,8 @@ class Event
      */
     public function name()
     {
+        deprecationWarning('Event::name() is deprecated. Use Event::getName() instead.');
+
         return $this->_name;
     }
 
@@ -150,6 +162,8 @@ class Event
      */
     public function subject()
     {
+        deprecationWarning('Event::subject() is deprecated. Use Event::getSubject() instead.');
+
         return $this->_subject;
     }
 
@@ -191,6 +205,8 @@ class Event
      */
     public function result()
     {
+        deprecationWarning('Event::result() is deprecated. Use Event::getResult() instead.');
+
         return $this->result;
     }
 

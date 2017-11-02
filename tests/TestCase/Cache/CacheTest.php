@@ -18,7 +18,6 @@ use Cake\Cache\Cache;
 use Cake\Cache\CacheRegistry;
 use Cake\Cache\Engine\FileEngine;
 use Cake\Cache\Engine\NullEngine;
-use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
@@ -823,7 +822,9 @@ class CacheTest extends TestCase
      */
     public function testRegistry()
     {
-        $this->assertInstanceOf(CacheRegistry::class, Cache::registry());
+        $this->deprecated(function () {
+            $this->assertInstanceOf(CacheRegistry::class, Cache::registry());
+        });
     }
 
     /**
@@ -835,9 +836,10 @@ class CacheTest extends TestCase
     public function testRegistrySet()
     {
         $registry = new CacheRegistry();
-        Cache::registry($registry);
-
-        $this->assertSame($registry, Cache::registry());
+        $this->deprecated(function () use ($registry) {
+            Cache::registry($registry);
+            $this->assertSame($registry, Cache::registry());
+        });
     }
 
     /**

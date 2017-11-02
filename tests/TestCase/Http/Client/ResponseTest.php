@@ -13,9 +13,7 @@
  */
 namespace Cake\Test\TestCase\Http\Client;
 
-use Cake\Chronos\Chronos;
 use Cake\Http\Client\Response;
-use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\TestSuite\TestCase;
 

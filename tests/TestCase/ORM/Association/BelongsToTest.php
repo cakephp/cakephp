@@ -186,7 +186,7 @@ class BelongsToTest extends TestCase
 
         $this->assertEquals(
             'integer',
-            $query->typeMap()->type('Companies__id'),
+            $query->getTypeMap()->type('Companies__id'),
             'Associations should map types.'
         );
     }
@@ -373,7 +373,7 @@ class BelongsToTest extends TestCase
         $listener = $this->getMockBuilder('stdClass')
             ->setMethods(['__invoke'])
             ->getMock();
-        $this->company->getEventManager()->attach($listener, 'Model.beforeFind');
+        $this->company->getEventManager()->on('Model.beforeFind', $listener);
         $association = new BelongsTo('Companies', $config);
         $listener->expects($this->once())->method('__invoke')
             ->with(
@@ -401,7 +401,7 @@ class BelongsToTest extends TestCase
         $listener = $this->getMockBuilder('stdClass')
             ->setMethods(['__invoke'])
             ->getMock();
-        $this->company->getEventManager()->attach($listener, 'Model.beforeFind');
+        $this->company->getEventManager()->on('Model.beforeFind', $listener);
         $association = new BelongsTo('Companies', $config);
         $options = new \ArrayObject(['something' => 'more']);
         $listener->expects($this->once())->method('__invoke')

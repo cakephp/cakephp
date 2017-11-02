@@ -67,7 +67,10 @@ class Validation
      */
     public static function notEmpty($check)
     {
-        trigger_error('Validation::notEmpty() is deprecated. Use Validation::notBlank() instead.', E_USER_DEPRECATED);
+        deprecationWarning(
+            'Validation::notEmpty() is deprecated. ' .
+            'Use Validation::notBlank() instead.'
+        );
 
         return static::notBlank($check);
     }
@@ -132,11 +135,13 @@ class Validation
      *
      * @param string $check Value to check
      * @return bool Success
-     * @deprecated 3.0.2
+     * @deprecated 3.0.2 Validation::blank() is deprecated.
      */
     public static function blank($check)
     {
-        trigger_error('Validation::blank() is deprecated.', E_USER_DEPRECATED);
+        deprecationWarning(
+            'Validation::blank() is deprecated.'
+        );
 
         return !static::_check($check, '/[^\\s]/');
     }
@@ -178,7 +183,7 @@ class Validation
                 'disc' => '/^(?:6011|650\\d)\\d{12}$/',
                 'electron' => '/^(?:417500|4917\\d{2}|4913\\d{2})\\d{10}$/',
                 'enroute' => '/^2(?:014|149)\\d{11}$/',
-                'jcb' => '/^(35\\d{3}|2131|1800)\\d{11}$/',
+                'jcb' => '/^(3\\d{4}|2131|1800)\\d{11}$/',
                 'maestro' => '/^(?:5020|6\\d{3})\\d{12}$/',
                 'mc' => '/^(5[1-5]\\d{14})|(2(?:22[1-9]|2[3-9][0-9]|[3-6][0-9]{2}|7[0-1][0-9]|720)\\d{12})$/',
                 'solo' => '/^(6334[5-9][0-9]|6767[0-9]{2})\\d{10}(\\d{2,3})?$/',
@@ -309,11 +314,30 @@ class Validation
      */
     public static function compareWith($check, $field, $context)
     {
+        return self::compareFields($check, $field, true, $context);
+    }
+
+    /**
+     * Compare one field to another.
+     *
+     * Return true if the comparison matches the expected result.
+     *
+     * @param mixed $check The value to find in $field.
+     * @param string $field The field to check $check against. This field must be present in $context.
+     * @param bool $result The expected result of field comparison.
+     * @param array $context The validation context.
+     * @return bool
+     * @since 3.6.0
+     */
+    public static function compareFields($check, $field, $result, $context)
+    {
         if (!isset($context['data'][$field])) {
             return false;
         }
 
-        return $context['data'][$field] === $check;
+        $comparison = $context['data'][$field] === $check;
+
+        return $comparison === $result;
     }
 
     /**
@@ -656,7 +680,7 @@ class Validation
                 return true;
             }
 
-            return is_array(gethostbynamel($regs[1]));
+            return is_array(gethostbynamel($regs[1] . '.'));
         }
 
         return false;
@@ -904,11 +928,14 @@ class Validation
      * @param string $check Value to check
      * @param bool $strict Require URL to be prefixed by a valid scheme (one of http(s)/ftp(s)/file/news/gopher)
      * @return bool Success
+     * @link https://tools.ietf.org/html/rfc3986
      */
     public static function url($check, $strict = false)
     {
         static::_populateIp();
-        $alpha = '0-9\p{L}\p{N}';
+
+        $emoji = '\x{1F190}-\x{1F9EF}';
+        $alpha = '0-9\p{L}\p{N}' . $emoji;
         $hex = '(%[0-9a-f]{2})';
         $subDelimiters = preg_quote('/!"$&\'()*+,-.@_:;=~[]', '/');
         $path = '([' . $subDelimiters . $alpha . ']|' . $hex . ')';
@@ -954,9 +981,9 @@ class Validation
      */
     public static function userDefined($check, $object, $method, $args = null)
     {
-        trigger_error(
-            'Validation::userDefined() is deprecated. Just set a callable for `rule` key when adding validators instead.',
-            E_USER_DEPRECATED
+        deprecationWarning(
+            'Validation::userDefined() is deprecated. ' .
+            'You can just set a callable for `rule` key when adding validators.'
         );
 
         return $object->$method($check, $args);

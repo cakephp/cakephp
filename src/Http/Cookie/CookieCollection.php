@@ -14,7 +14,6 @@
 namespace Cake\Http\Cookie;
 
 use ArrayIterator;
-use Cake\Http\Client\Response as ClientResponse;
 use Countable;
 use DateTimeImmutable;
 use DateTimeZone;
@@ -183,7 +182,7 @@ class CookieCollection implements IteratorAggregate, Countable
                     sprintf(
                         'Expected `%s[]` as $cookies but instead got `%s` at index %d',
                         static::class,
-                        is_object($cookie) ? get_class($cookie) : gettype($cookie),
+                        getTypeName($cookie),
                         $index
                     )
                 );

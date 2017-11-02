@@ -263,7 +263,7 @@ class PaginatorComponentTest extends TestCase
         $tags = TableRegistry::get('Tags');
         $tags->belongsToMany('Authors');
 
-        $articles->eventManager()->on('Model.beforeFind', function ($event, $query) {
+        $articles->getEventManager()->on('Model.beforeFind', function ($event, $query) {
             $query ->matching('Tags', function ($q) {
                 return $q->matching('Authors', function ($q) {
                     return $q->where(['Authors.name' => 'larry']);
@@ -533,7 +533,7 @@ class PaginatorComponentTest extends TestCase
             'limit' => 20,
             'maxLimit' => 100,
         ];
-        $this->Paginator->config('whitelist', ['fields']);
+        $this->Paginator->setConfig('whitelist', ['fields']);
         $result = $this->Paginator->mergeOptions('Post', $settings);
         $expected = [
             'page' => 10, 'limit' => 10, 'maxLimit' => 100, 'fields' => ['bad.stuff'], 'whitelist' => ['limit', 'sort', 'page', 'direction', 'fields']

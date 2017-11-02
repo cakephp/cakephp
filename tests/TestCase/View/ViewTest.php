@@ -942,8 +942,8 @@ class ViewTest extends TestCase
             $count++;
         };
         $events = $this->View->getEventManager();
-        $events->attach($callback, 'View.beforeRender');
-        $events->attach($callback, 'View.afterRender');
+        $events->on('View.beforeRender', $callback);
+        $events->on('View.afterRender', $callback);
 
         $this->View->element('test_element', [], ['callbacks' => true]);
         $this->assertEquals(2, $count);
@@ -1048,7 +1048,7 @@ class ViewTest extends TestCase
         $View->autoLayout = false;
         $listener = new TestViewEventListenerInterface();
 
-        $View->getEventManager()->attach($listener);
+        $View->getEventManager()->on($listener);
 
         $View->render('index');
         $this->assertEquals(View::TYPE_VIEW, $listener->beforeRenderViewType);

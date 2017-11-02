@@ -49,7 +49,7 @@ class AssetsTask extends Shell
      */
     public function copy($name = null)
     {
-        $this->_process($this->_list($name), true);
+        $this->_process($this->_list($name), true, $this->param('overwrite'));
     }
 
     /**
@@ -112,9 +112,10 @@ class AssetsTask extends Shell
      *
      * @param array $plugins List of plugins to process
      * @param bool $copy Force copy mode. Default false.
+     * @param bool $overwrite Overwrite existing files.
      * @return void
      */
-    protected function _process($plugins, $copy = false)
+    protected function _process($plugins, $copy = false, $overwrite = false)
     {
         foreach ($plugins as $plugin => $config) {
             $this->out();
@@ -128,7 +129,7 @@ class AssetsTask extends Shell
                 continue;
             }
 
-            if (file_exists($config['destDir'] . $config['link'])) {
+            if (file_exists($config['destDir'] . $config['link']) && !$overwrite) {
                 $this->out(
                     $config['destDir'] . $config['link'] . ' already exists',
                     1,
@@ -241,6 +242,9 @@ class AssetsTask extends Shell
         ])->addArgument('name', [
             'help' => 'A specific plugin you want to symlink assets for.',
             'optional' => true,
+        ])->addOption('overwrite', [
+            'help' => 'Overwrite existing files.',
+            'boolean' => true
         ]);
 
         return $parser;

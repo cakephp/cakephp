@@ -165,7 +165,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
      */
     public function testCookieEncrypted()
     {
-        Security::salt('abcdabcdabcdabcdabcdabcdabcdabcdabcd');
+        Security::setSalt('abcdabcdabcdabcdabcdabcdabcdabcdabcd');
         $this->cookieEncrypted('KeyOfCookie', 'Encrypted with aes by default');
         $request = $this->_buildRequest('/tasks/view', 'GET', []);
         $this->assertStringStartsWith('Q2FrZQ==.', $request['cookies']['KeyOfCookie']);
@@ -358,6 +358,21 @@ class IntegrationTestCaseTest extends IntegrationTestCase
             $this->_response->getBody()->rewind();
         }
         $this->assertSame('world', $this->_response->getBody()->getContents());
+        $this->assertHeader('X-Middleware', 'true');
+    }
+
+    /**
+     * Test that the PSR7 requests receive encoded data.
+     *
+     * @return void
+     */
+    public function testInputDataSecurityToken()
+    {
+        $this->useHttpServer(true);
+        $this->enableSecurityToken();
+
+        $this->post('/request_action/input_test', '{"hello":"world"}');
+        $this->assertSame('world', '' . $this->_response->getBody());
         $this->assertHeader('X-Middleware', 'true');
     }
 

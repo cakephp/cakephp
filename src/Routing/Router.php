@@ -15,10 +15,8 @@
 namespace Cake\Routing;
 
 use Cake\Core\Configure;
-use Cake\Http\MiddlewareQueue;
 use Cake\Http\ServerRequest;
 use Cake\Utility\Inflector;
-use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -40,6 +38,7 @@ class Router
      * Have routes been loaded
      *
      * @var bool
+     * @deprecated 3.5.0 Routes will be loaded via the Application::routes() hook in 4.0.0
      */
     public static $initialized = false;
 

@@ -243,6 +243,10 @@ class Shell
      */
     public function io(ConsoleIo $io = null)
     {
+        deprecationWarning(
+            'Shell::io() is deprecated. ' .
+            'Use Shell::setIo()/getIo() instead.'
+        );
         if ($io !== null) {
             $this->_io = $io;
         }
@@ -729,10 +733,7 @@ class Shell
      */
     public function err($message = null, $newlines = 1)
     {
-        $messageType = 'error';
-        $message = $this->wrapMessageWithType($messageType, $message);
-
-        return $this->_io->err($message, $newlines);
+        return $this->_io->error($message, $newlines);
     }
 
     /**
@@ -746,10 +747,7 @@ class Shell
      */
     public function info($message = null, $newlines = 1, $level = Shell::NORMAL)
     {
-        $messageType = 'info';
-        $message = $this->wrapMessageWithType($messageType, $message);
-
-        return $this->out($message, $newlines, $level);
+        return $this->_io->info($message, $newlines, $level);
     }
 
     /**
@@ -762,10 +760,7 @@ class Shell
      */
     public function warn($message = null, $newlines = 1)
     {
-        $messageType = 'warning';
-        $message = $this->wrapMessageWithType($messageType, $message);
-
-        return $this->_io->err($message, $newlines);
+        return $this->_io->warning($message, $newlines);
     }
 
     /**
@@ -779,10 +774,7 @@ class Shell
      */
     public function success($message = null, $newlines = 1, $level = Shell::NORMAL)
     {
-        $messageType = 'success';
-        $message = $this->wrapMessageWithType($messageType, $message);
-
-        return $this->out($message, $newlines, $level);
+        return $this->_io->success($message, $newlines, $level);
     }
 
     /**
@@ -791,9 +783,14 @@ class Shell
      * @param string $messageType The message type, e.g. "warning".
      * @param string|array $message The message to wrap.
      * @return array|string The message wrapped with the given message type.
+     * @deprecated 3.6.0 Will be removed in 4.0.0 as it is no longer in use.
      */
     protected function wrapMessageWithType($messageType, $message)
     {
+        deprecationWarning(
+            'Shell::wrapMessageWithType() is deprecated. ' .
+            'Use output methods on ConsoleIo instead.'
+        );
         if (is_array($message)) {
             foreach ($message as $k => $v) {
                 $message[$k] = "<$messageType>" . $v . "</$messageType>";
@@ -860,6 +857,7 @@ class Shell
      */
     public function error($title, $message = null, $exitCode = self::CODE_ERROR)
     {
+        deprecationWarning('Shell::error() is deprecated. `Use Shell::abort() instead.');
         $this->_io->err(sprintf('<error>Error:</error> %s', $title));
 
         if (!empty($message)) {

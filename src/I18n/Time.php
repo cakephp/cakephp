@@ -334,6 +334,10 @@ class Time extends MutableDateTime implements JsonSerializable
     {
         $tmp = trim($timeInterval);
         if (is_numeric($tmp)) {
+            deprecationWarning(
+                'Passing int/numeric string into Time::wasWithinLast() is deprecated. ' .
+                'Pass strings including interval eg. "6 days"'
+            );
             $timeInterval = $tmp . ' days';
         }
 
@@ -355,6 +359,10 @@ class Time extends MutableDateTime implements JsonSerializable
     {
         $tmp = trim($timeInterval);
         if (is_numeric($tmp)) {
+            deprecationWarning(
+                'Passing int/numeric string into Time::isWithinNext() is deprecated. ' .
+                'Pass strings including interval eg. "6 days"'
+            );
             $timeInterval = $tmp . ' days';
         }
 

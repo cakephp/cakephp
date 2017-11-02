@@ -8,7 +8,6 @@ if (class_exists('PHPUnit_Runner_Version') && !class_exists('PHPUnit\Framework\A
     class_alias('PHPUnit_Framework_AssertionFailedError', 'PHPUnit\Framework\AssertionFailedError');
 }
 
-use Cake\Event\EventManager;
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Constraint\Constraint;
 

@@ -84,6 +84,10 @@ class SqliteSchemaTest extends TestCase
                 ['type' => 'uuid', 'length' => null]
             ],
             [
+                'BINARY(16)',
+                ['type' => 'binaryuuid', 'length' => null]
+            ],
+            [
                 'BLOB',
                 ['type' => 'binary', 'length' => null]
             ],
@@ -486,6 +490,11 @@ SQL;
                 'id',
                 ['type' => 'uuid'],
                 '"id" CHAR(36)'
+            ],
+            [
+                'id',
+                ['type' => 'binaryuuid'],
+                '"id" BINARY(16)'
             ],
             // Text
             [
@@ -907,7 +916,7 @@ SQL;
             'type' => 'integer',
             'null' => false
         ]);
-        $table->temporary(true);
+        $table->setTemporary(true);
         $sql = $table->createSql($connection);
         $this->assertContains('CREATE TEMPORARY TABLE', $sql[0]);
     }

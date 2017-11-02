@@ -23,7 +23,7 @@ use Cake\TestSuite\Stub\ConsoleOutput;
  * A test case class intended to make integration tests of cake console commands
  * easier.
  */
-class ConsoleIntegrationTestCase extends TestCase
+abstract class ConsoleIntegrationTestCase extends TestCase
 {
     /**
      * Whether or not to use the CommandRunner
@@ -161,6 +161,18 @@ class ConsoleIntegrationTestCase extends TestCase
     {
         $output = implode(PHP_EOL, $this->_out->messages());
         $this->assertContains($expected, $output, $message);
+    }
+    /**
+     * Asserts `stdout` does not contain expected output
+     *
+     * @param string $expected Expected output
+     * @param string $message Failure message
+     * @return void
+     */
+    public function assertOutputNotContains($expected, $message = '')
+    {
+        $output = implode(PHP_EOL, $this->_out->messages());
+        $this->assertNotContains($expected, $output, $message);
     }
 
     /**

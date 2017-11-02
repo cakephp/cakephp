@@ -22,7 +22,7 @@ use Cake\Shell\I18nShell;
 use Cake\Shell\RoutesShell;
 use Cake\TestSuite\TestCase;
 use stdClass;
-use TestApp\Command\ExampleCommand;
+use TestApp\Command\DemoCommand;
 
 /**
  * Test case for the CommandCollection
@@ -87,9 +87,9 @@ class CommandCollectionTest extends TestCase
     public function testAddCommand()
     {
         $collection = new CommandCollection();
-        $this->assertSame($collection, $collection->add('ex', ExampleCommand::class));
+        $this->assertSame($collection, $collection->add('ex', DemoCommand::class));
         $this->assertTrue($collection->has('ex'));
-        $this->assertSame(ExampleCommand::class, $collection->get('ex'));
+        $this->assertSame(DemoCommand::class, $collection->get('ex'));
     }
 
     /**
@@ -203,10 +203,12 @@ class CommandCollectionTest extends TestCase
         $collection = new CommandCollection();
         $collection->addMany($collection->autoDiscover());
 
+        $this->assertTrue($collection->has('demo'));
         $this->assertTrue($collection->has('i18m'));
         $this->assertTrue($collection->has('sample'));
         $this->assertTrue($collection->has('testing_dispatch'));
 
+        $this->assertSame('TestApp\Command\DemoCommand', $collection->get('demo'));
         $this->assertSame('TestApp\Shell\I18mShell', $collection->get('i18m'));
         $this->assertSame('TestApp\Shell\SampleShell', $collection->get('sample'));
     }
@@ -221,6 +223,7 @@ class CommandCollectionTest extends TestCase
         $collection = new CommandCollection();
         $collection->addMany($collection->autoDiscover());
 
+        $this->assertTrue($collection->has('version'));
         $this->assertTrue($collection->has('routes'));
         $this->assertTrue($collection->has('i18n'));
         $this->assertTrue($collection->has('orm_cache'));
@@ -231,6 +234,7 @@ class CommandCollectionTest extends TestCase
         // These have to be strings as ::class uses the local namespace.
         $this->assertSame('Cake\Shell\RoutesShell', $collection->get('routes'));
         $this->assertSame('Cake\Shell\I18nShell', $collection->get('i18n'));
+        $this->assertSame('Cake\Command\VersionCommand', $collection->get('version'));
     }
 
     /**

@@ -237,12 +237,6 @@ class ControllerTest extends TestCase
     ];
 
     /**
-     * error level property
-     *
-     */
-    private static $errorLevel;
-
-    /**
      * reset environment.
      *
      * @return void
@@ -264,29 +258,6 @@ class ControllerTest extends TestCase
     {
         parent::tearDown();
         Plugin::unload();
-        error_reporting(self::$errorLevel);
-    }
-
-    /**
-     * setUpBeforeClass
-     *
-     * @return void
-     */
-    public static function setUpBeforeClass()
-    {
-        parent::setUpBeforeClass();
-        self::$errorLevel = error_reporting();
-    }
-
-    /**
-     * tearDownAfterClass
-     *
-     * @return void
-     */
-    public static function tearDownAfterClass()
-    {
-        parent::tearDownAfterClass();
-        error_reporting(self::$errorLevel);
     }
 
     /**
@@ -957,7 +928,7 @@ class ControllerTest extends TestCase
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $Controller = new \TestApp\Controller\Admin\PostsController($request, $response);
         $Controller->getEventManager()->on('Controller.beforeRender', function (Event $e) {
-            return $e->subject()->response;
+            return $e->getSubject()->response;
         });
         $Controller->render();
         $this->assertEquals('Admin' . DS . 'Posts', $Controller->viewBuilder()->templatePath());
@@ -968,7 +939,7 @@ class ControllerTest extends TestCase
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $Controller = new \TestApp\Controller\Admin\PostsController($request, $response);
         $Controller->getEventManager()->on('Controller.beforeRender', function (Event $e) {
-            return $e->subject()->response;
+            return $e->getSubject()->response;
         });
         $Controller->render();
         $this->assertEquals('Admin' . DS . 'Super' . DS . 'Posts', $Controller->viewBuilder()->templatePath());
@@ -979,7 +950,7 @@ class ControllerTest extends TestCase
         ]);
         $Controller = new \TestApp\Controller\PagesController($request, $response);
         $Controller->getEventManager()->on('Controller.beforeRender', function (Event $e) {
-            return $e->subject()->response;
+            return $e->getSubject()->response;
         });
         $Controller->render();
         $this->assertEquals('Pages', $Controller->viewBuilder()->templatePath());
@@ -1128,9 +1099,10 @@ class ControllerTest extends TestCase
     public function testDeprecatedViewProperty($property, $getter, $setter, $value)
     {
         $controller = new AnotherTestController();
-        error_reporting(E_ALL ^ E_USER_DEPRECATED);
-        $controller->$property = $value;
-        $this->assertSame($value, $controller->$property);
+        $this->deprecated(function () use ($controller, $property, $value) {
+            $controller->$property = $value;
+            $this->assertSame($value, $controller->$property);
+        });
         $this->assertSame($value, $controller->viewBuilder()->{$getter}());
     }
 
@@ -1149,9 +1121,10 @@ class ControllerTest extends TestCase
      */
     public function testDeprecatedViewPropertySetterMessage($property, $getter, $setter, $value)
     {
-        error_reporting(E_ALL);
         $controller = new AnotherTestController();
-        $controller->$property = $value;
+        $this->withErrorReporting(E_ALL, function () use ($controller, $property, $value) {
+            $controller->$property = $value;
+        });
     }
 
     /**
@@ -1168,10 +1141,11 @@ class ControllerTest extends TestCase
      */
     public function testDeprecatedViewPropertyGetterMessage($property, $getter, $setter, $value)
     {
-            error_reporting(E_ALL);
-            $controller = new AnotherTestController();
-            $controller->viewBuilder()->{$setter}($value);
+        $controller = new AnotherTestController();
+        $controller->viewBuilder()->{$setter}($value);
+        $this->withErrorReporting(E_ALL, function () use ($controller, $property) {
             $result = $controller->$property;
+        });
     }
 
     /**

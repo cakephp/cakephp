@@ -15,9 +15,7 @@
 namespace Cake\Test\TestCase\Shell;
 
 use Cake\Cache\Cache;
-use Cake\Console\Exception\StopException;
 use Cake\Console\Shell;
-use Cake\Shell\CacheShell;
 use Cake\TestSuite\ConsoleIntegrationTestCase;
 
 /**

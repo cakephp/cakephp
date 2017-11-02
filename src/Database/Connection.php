@@ -206,6 +206,7 @@ class Connection implements ConnectionInterface
      */
     public function driver($driver = null, $config = [])
     {
+        deprecationWarning('Connection::driver() is deprecated. Use Connection::setDriver()/getDriver() instead.');
         if ($driver !== null) {
             $this->setDriver($driver, $config);
         }
@@ -380,6 +381,10 @@ class Connection implements ConnectionInterface
      */
     public function schemaCollection(SchemaCollection $collection = null)
     {
+        deprecationWarning(
+            'Connection::schemaCollection() is deprecated. ' .
+            'Use Connection::setSchemaCollection()/getSchemaCollection() instead.'
+        );
         if ($collection !== null) {
             $this->setSchemaCollection($collection);
         }
@@ -591,6 +596,10 @@ class Connection implements ConnectionInterface
      */
     public function useSavePoints($enable = null)
     {
+        deprecationWarning(
+            'Connection::useSavePoints() is deprecated. ' .
+            'Use Connection::enableSavePoints()/isSavePointsEnabled() instead.'
+        );
         if ($enable !== null) {
             $this->enableSavePoints($enable);
         }
@@ -816,6 +825,10 @@ class Connection implements ConnectionInterface
      */
     public function logger($instance = null)
     {
+        deprecationWarning(
+            'Connection::logger() is deprecated. ' .
+            'Use Connection::setLogger()/getLogger() instead.'
+        );
         if ($instance === null) {
             return $this->getLogger();
         }
