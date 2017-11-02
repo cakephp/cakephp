@@ -62,7 +62,7 @@ class EntityRouteTest extends TestCase
             'slug' => 'article-slug'
         ];
 
-        $route = $route = new EntityRoute(
+        $route = new EntityRoute(
             '/articles/:category_id/:slug',
             [
                 '_name' => 'articlesView',
