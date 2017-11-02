@@ -1097,7 +1097,7 @@ class RouteBuilderTest extends TestCase
      */
     public function testRouteClassBackwardCompat()
     {
-        $this->deprecated(function() {
+        $this->deprecated(function () {
             $routes = new RouteBuilder($this->collection, '/l');
             $this->assertNull($routes->routeClass('TestApp\Routing\Route\DashedRoute'));
             $this->assertSame('TestApp\Routing\Route\DashedRoute', $routes->routeClass());
