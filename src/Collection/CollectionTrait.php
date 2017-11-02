@@ -512,7 +512,7 @@ trait CollectionTrait
     public function toArray($preserveKeys = true)
     {
         $iterator = $this->unwrap();
-        if (get_class($iterator) === ArrayIterator::class) {
+        if ($iterator instanceof ArrayIterator) {
             $items = $iterator->getArrayCopy();
 
             return $preserveKeys ? $items : array_values($items);
