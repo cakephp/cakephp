@@ -73,7 +73,7 @@ class EntityRouteTest extends TestCase
         $result = $route->match([
             '_entity' => $entity,
             '_name' => 'articlesView'
-       ]);
+        ]);
 
         $this->assertEquals('/articles/2/article-slug', $result);
     }

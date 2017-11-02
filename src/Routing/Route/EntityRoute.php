@@ -65,7 +65,7 @@ class EntityRoute extends Route
             throw new RuntimeException(sprintf(
                 'Route `%s` expects the URL option `_entity` to be an array or object implementing \ArrayAccess, but `%s` passed.',
                 $this->template,
-                is_object($entity) ? get_class($entity) : gettype($entity)
+                getTypeName($entity)
             ));
         }
     }
