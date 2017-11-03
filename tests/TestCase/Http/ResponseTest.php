@@ -3137,6 +3137,7 @@ class ResponseTest extends TestCase
     public function testDebugInfo()
     {
         $response = new Response();
+        $response = $response->withStringBody('Foo');
         $result = $response->__debugInfo();
 
         $expected = [
@@ -3149,7 +3150,7 @@ class ResponseTest extends TestCase
             'fileRange' => [],
             'cookies' => new CookieCollection(),
             'cacheDirectives' => [],
-            'body' => ''
+            'body' => 'Foo'
         ];
         $this->assertEquals($expected, $result);
     }
