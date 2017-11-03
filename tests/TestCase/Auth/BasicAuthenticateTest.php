@@ -68,8 +68,8 @@ class BasicAuthenticateTest extends TestCase
             'userModel' => 'AuthUser',
             'fields' => ['username' => 'user', 'password' => 'password']
         ]);
-        $this->assertEquals('AuthUser', $object->config('userModel'));
-        $this->assertEquals(['username' => 'user', 'password' => 'password'], $object->config('fields'));
+        $this->assertEquals('AuthUser', $object->getConfig('userModel'));
+        $this->assertEquals(['username' => 'user', 'password' => 'password'], $object->getConfig('fields'));
     }
 
     /**
@@ -220,7 +220,7 @@ class BasicAuthenticateTest extends TestCase
      */
     public function testAuthenticateFailReChallenge()
     {
-        $this->auth->config('scope.username', 'nate');
+        $this->auth->setConfig('scope.username', 'nate');
         $request = new ServerRequest([
             'url' => 'posts/index',
             'environment' => [
