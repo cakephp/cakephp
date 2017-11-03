@@ -953,6 +953,7 @@ class FormHelper extends Helper
             'FormHelper::allInputs() is deprecated. ' .
             'Use FormHelper::allControlls() instead.'
         );
+
         return $this->allControls($fields, $options);
     }
 
@@ -1015,6 +1016,7 @@ class FormHelper extends Helper
             'FormHelper::inputs() is deprecated. ' .
             'Use FormHelper::controls() instead.'
         );
+
         return $this->controls($fields, $options);
     }
 
@@ -1197,6 +1199,7 @@ class FormHelper extends Helper
             'FormHelper::input() is deprecated. ' .
             'Use FormHelper::control() instead.'
         );
+
         return $this->control($fieldName, $options);
     }
 
