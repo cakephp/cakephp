@@ -14,8 +14,8 @@
  */
 namespace Cake\Test\TestCase\Database;
 
-use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\ExpressionInterface;
+use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Query;
 use Cake\Database\StatementInterface;
 use Cake\Database\TypeMap;
