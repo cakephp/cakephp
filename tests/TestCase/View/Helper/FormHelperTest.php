@@ -643,7 +643,7 @@ class FormHelperTest extends TestCase
      */
     public function testSubmitTemplateVars()
     {
-        $this->Form->templates([
+        $this->Form->setTemplates([
             'inputSubmit' => '<input custom="{{forinput}}" type="{{type}}"{{attrs}}/>',
             'submitContainer' => '<div class="submit">{{content}}{{forcontainer}}</div>'
         ]);
@@ -4284,7 +4284,7 @@ class FormHelperTest extends TestCase
      */
     public function testLabelContainControl()
     {
-        $this->Form->templates([
+        $this->Form->setTemplates([
             'label' => '<label{{attrs}}>{{input}}{{text}}</label>',
         ]);
         $result = $this->Form->label('Person.accept_terms', 'Accept', [
@@ -4858,7 +4858,7 @@ class FormHelperTest extends TestCase
      */
     public function testRadioControlInsideLabel()
     {
-        $this->Form->templates([
+        $this->Form->setTemplates([
             'label' => '<label{{attrs}}>{{input}}{{text}}</label>',
             'radioWrapper' => '{{label}}'
         ]);
@@ -8020,7 +8020,7 @@ class FormHelperTest extends TestCase
     public function testForMagicControlNonExistingNorValidated()
     {
         $this->Form->create($this->article);
-        $this->Form->templates(['inputContainer' => '{{content}}']);
+        $this->Form->setTemplates(['inputContainer' => '{{content}}']);
         $result = $this->Form->control('non_existing_nor_validated');
         $expected = [
             'label' => ['for' => 'non-existing-nor-validated'],
@@ -8072,7 +8072,7 @@ class FormHelperTest extends TestCase
             'className' => __NAMESPACE__ . '\ContactsTable'
         ]);
         $this->Form->create([], ['context' => ['table' => 'Contacts']]);
-        $this->Form->templates(['inputContainer' => '{{content}}']);
+        $this->Form->setTemplates(['inputContainer' => '{{content}}']);
 
         $result = $this->Form->control('Contacts.name', ['label' => 'My label']);
         $expected = [
@@ -8303,7 +8303,7 @@ class FormHelperTest extends TestCase
     public function testHtml5ControlWithControl()
     {
         $this->Form->create();
-        $this->Form->templates(['inputContainer' => '{{content}}']);
+        $this->Form->setTemplates(['inputContainer' => '{{content}}']);
         $result = $this->Form->control('website', [
             'type' => 'url',
             'val' => 'http://domain.tld',
@@ -8390,7 +8390,7 @@ class FormHelperTest extends TestCase
      */
     public function testControlsNotNested()
     {
-        $this->Form->templates([
+        $this->Form->setTemplates([
             'nestingLabel' => '{{hidden}}{{input}}<label{{attrs}}>{{text}}</label>',
             'formGroup' => '{{input}}{{label}}',
         ]);
@@ -8468,7 +8468,7 @@ class FormHelperTest extends TestCase
      */
     public function testControlContainerTemplates()
     {
-        $this->Form->templates([
+        $this->Form->setTemplates([
             'checkboxContainer' => '<div class="check">{{content}}</div>',
             'radioContainer' => '<div class="rad">{{content}}</div>',
             'radioContainerError' => '<div class="rad err">{{content}}</div>',
@@ -8521,7 +8521,7 @@ class FormHelperTest extends TestCase
      */
     public function testFormGroupTemplates()
     {
-        $this->Form->templates([
+        $this->Form->setTemplates([
             'radioFormGroup' => '<div class="radio">{{label}}{{input}}</div>',
         ]);
 
@@ -8543,7 +8543,7 @@ class FormHelperTest extends TestCase
      */
     public function testResetTemplates()
     {
-        $this->Form->templates(['input' => '<input/>']);
+        $this->Form->setTemplates(['input' => '<input/>']);
         $this->assertEquals('<input/>', $this->Form->templater()->get('input'));
 
         $this->Form->resetTemplates();
@@ -8949,24 +8949,27 @@ class FormHelperTest extends TestCase
      *
      * Test the `nestedInput` parameter
      *
+     * @group deprecated
      * @return void
      */
     public function testNestedLabelInput()
     {
-        $result = $this->Form->input('foo', ['nestedInput' => true]);
-        $expected = [
-            'div' => ['class' => 'input text'],
-            'label' => ['for' => 'foo'],
-            ['input' => [
-                'type' => 'text',
-                'name' => 'foo',
-                'id' => 'foo'
-            ]],
-            'Foo',
-            '/label',
-            '/div'
-        ];
-        $this->assertHtml($expected, $result);
+        $this->deprecated(function () {
+            $result = $this->Form->input('foo', ['nestedInput' => true]);
+            $expected = [
+                'div' => ['class' => 'input text'],
+                'label' => ['for' => 'foo'],
+                ['input' => [
+                    'type' => 'text',
+                    'name' => 'foo',
+                    'id' => 'foo'
+                ]],
+                'Foo',
+                '/label',
+                '/div'
+            ];
+            $this->assertHtml($expected, $result);
+        });
     }
 
     /**
@@ -8976,9 +8979,9 @@ class FormHelperTest extends TestCase
      *
      * @return void
      */
-    public function testInputLabelManipulationDisableLabels()
+    public function testControlLabelManipulationDisableLabels()
     {
-        $result = $this->Form->input('test', [
+        $result = $this->Form->control('test', [
             'type' => 'radio',
             'options' => ['A', 'B'],
             'labelOptions' => false
@@ -8995,7 +8998,7 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Form->input('checkbox1', [
+        $result = $this->Form->control('checkbox1', [
             'label' => 'My checkboxes',
             'multiple' => 'checkbox',
             'type' => 'select',
@@ -9032,9 +9035,9 @@ class FormHelperTest extends TestCase
      *
      * @return void
      */
-    public function testInputLabelManipulationRadios()
+    public function testControlLabelManipulationRadios()
     {
-        $result = $this->Form->input('test', [
+        $result = $this->Form->control('test', [
             'type' => 'radio',
             'options' => ['A', 'B'],
             'labelOptions' => ['class' => 'custom-class']
@@ -9057,7 +9060,7 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Form->input('test', [
+        $result = $this->Form->control('test', [
             'type' => 'radio',
             'options' => ['A', 'B'],
             'value' => 1,
@@ -9081,7 +9084,7 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Form->input('test', [
+        $result = $this->Form->control('test', [
             'type' => 'radio',
             'options' => ['A', 'B'],
             'value' => 1,
@@ -9142,9 +9145,9 @@ class FormHelperTest extends TestCase
      *
      * @return void
      */
-    public function testInputLabelManipulationCheckboxes()
+    public function testControlLabelManipulationCheckboxes()
     {
-        $result = $this->Form->input('checkbox1', [
+        $result = $this->Form->control('checkbox1', [
             'label' => 'My checkboxes',
             'multiple' => 'checkbox',
             'type' => 'select',
@@ -9194,7 +9197,7 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Form->input('checkbox1', [
+        $result = $this->Form->control('checkbox1', [
             'label' => 'My checkboxes',
             'multiple' => 'checkbox',
             'type' => 'select',

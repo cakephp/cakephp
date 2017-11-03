@@ -332,7 +332,7 @@ class JsonViewTest extends TestCase
         $Controller->set('user', $data);
         $Controller->viewBuilder()->setClassName('Json');
         $View = $Controller->createView();
-        $View->viewPath = $Controller->name;
+        $View->setTemplatePath($Controller->name);
         $output = $View->render('index');
 
         $expected = json_encode(['user' => 'fake', 'list' => ['item1', 'item2'], 'paging' => null]);

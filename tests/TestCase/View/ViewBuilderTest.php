@@ -129,10 +129,10 @@ class ViewBuilderTest extends TestCase
             $events
         );
         $this->assertInstanceOf('Cake\View\AjaxView', $view);
-        $this->assertEquals('edit', $view->view);
-        $this->assertEquals('default', $view->layout);
-        $this->assertEquals('Articles/', $view->viewPath);
-        $this->assertEquals('Admin/', $view->layoutPath);
+        $this->assertEquals('edit', $view->getTemplate());
+        $this->assertEquals('default', $view->getLayout());
+        $this->assertEquals('Articles/', $view->getTemplatePath());
+        $this->assertEquals('Admin/', $view->getLayoutPath());
         $this->assertEquals('TestPlugin', $view->plugin);
         $this->assertEquals('TestTheme', $view->theme);
         $this->assertSame($request, $view->request);

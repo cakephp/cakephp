@@ -98,7 +98,7 @@ class PaginatorHelperTest extends TestCase
      */
     public function testTemplates()
     {
-        $result = $this->Paginator->templates([
+        $result = $this->Paginator->setTemplates([
             'test' => 'val'
         ]);
         $this->assertSame(
@@ -107,11 +107,11 @@ class PaginatorHelperTest extends TestCase
             'Setting should return the same object'
         );
 
-        $result = $this->Paginator->templates();
+        $result = $this->Paginator->getTemplates();
         $this->assertArrayHasKey('test', $result);
         $this->assertEquals('val', $result['test']);
 
-        $this->assertEquals('val', $this->Paginator->templates('test'));
+        $this->assertEquals('val', $this->Paginator->getTemplates('test'));
     }
 
     /**

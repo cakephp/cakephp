@@ -1107,9 +1107,11 @@ class View implements EventDispatcherInterface
     public function __get($name)
     {
         if ($name === 'view') {
+            deprecationWarning('The `view` property is deprecated. Use View::getTemplate() instead.');
             return $this->template;
         }
         if ($name === 'viewPath') {
+            deprecationWarning('The `viewPath` property is deprecated. Use View::getTemplatePath() instead.');
             return $this->templatePath;
         }
 
@@ -1133,11 +1135,13 @@ class View implements EventDispatcherInterface
     public function __set($name, $value)
     {
         if ($name === 'view') {
+            deprecationWarning('The `view` property is deprecated. Use View::setTemplate() instead.');
             $this->template = $value;
 
             return;
         }
         if ($name === 'viewPath') {
+            deprecationWarning('The `viewPath` property is deprecated. Use View::setTemplatePath() instead.');
             $this->templatePath = $value;
 
             return;
