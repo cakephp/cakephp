@@ -240,6 +240,23 @@ class RouteTest extends TestCase
     /**
      * Expects extensions to be set
      *
+     * @group deprecated
+     * @return void
+     */
+    public function testExtensions()
+    {
+        $this->deprecated(function () {
+            $route = new RouteProtected('/:controller/:action/*', []);
+            $this->assertEquals([], $route->extensions());
+            $route->extensions(['xml']);
+
+            $this->assertEquals(['xml'], $route->extensions());
+        });
+    }
+
+    /**
+     * Expects extensions to be set
+     *
      * @return void
      */
     public function testSetExtensions()
@@ -1204,29 +1221,32 @@ class RouteTest extends TestCase
     /**
      * Check [method] compatibility.
      *
+     * @group deprecated
      * @return void
      */
     public function testMethodCompatibility()
     {
-        $_SERVER['REQUEST_METHOD'] = 'POST';
-        $route = new Route('/sample', [
-            'controller' => 'Articles',
-            'action' => 'index',
-            '[method]' => 'POST',
-        ]);
-        $url = [
-            'controller' => 'Articles',
-            'action' => 'index',
-            '_method' => 'POST',
-        ];
-        $this->assertEquals('/sample', $route->match($url));
+        $this->deprecated(function () {
+            $_SERVER['REQUEST_METHOD'] = 'POST';
+            $route = new Route('/sample', [
+                'controller' => 'Articles',
+                'action' => 'index',
+                '[method]' => 'POST',
+            ]);
+            $url = [
+                'controller' => 'Articles',
+                'action' => 'index',
+                '_method' => 'POST',
+            ];
+            $this->assertEquals('/sample', $route->match($url));
 
-        $url = [
-            'controller' => 'Articles',
-            'action' => 'index',
-            '[method]' => 'POST',
-        ];
-        $this->assertEquals('/sample', $route->match($url));
+            $url = [
+                'controller' => 'Articles',
+                'action' => 'index',
+                '[method]' => 'POST',
+            ];
+            $this->assertEquals('/sample', $route->match($url));
+        });
     }
 
     /**

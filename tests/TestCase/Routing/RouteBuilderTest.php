@@ -1092,30 +1092,36 @@ class RouteBuilderTest extends TestCase
     /**
      * Test routeClass() still works.
      *
+     * @group deprecated
      * @return void
      */
     public function testRouteClassBackwardCompat()
     {
-        $routes = new RouteBuilder($this->collection, '/l');
-        $this->assertNull($routes->routeClass('TestApp\Routing\Route\DashedRoute'));
-        $this->assertSame('TestApp\Routing\Route\DashedRoute', $routes->routeClass());
-        $this->assertSame('TestApp\Routing\Route\DashedRoute', $routes->getRouteClass());
+        $this->deprecated(function () {
+            $routes = new RouteBuilder($this->collection, '/l');
+            $this->assertNull($routes->routeClass('TestApp\Routing\Route\DashedRoute'));
+            $this->assertSame('TestApp\Routing\Route\DashedRoute', $routes->routeClass());
+            $this->assertSame('TestApp\Routing\Route\DashedRoute', $routes->getRouteClass());
+        });
     }
 
     /**
      * Test extensions() still works.
      *
+     * @group deprecated
      * @return void
      */
     public function testExtensionsBackwardCompat()
     {
-        $routes = new RouteBuilder($this->collection, '/l');
-        $this->assertNull($routes->extensions(['html']));
-        $this->assertSame(['html'], $routes->extensions());
-        $this->assertSame(['html'], $routes->getExtensions());
+        $this->deprecated(function () {
+            $routes = new RouteBuilder($this->collection, '/l');
+            $this->assertNull($routes->extensions(['html']));
+            $this->assertSame(['html'], $routes->extensions());
+            $this->assertSame(['html'], $routes->getExtensions());
 
-        $this->assertNull($routes->extensions('json'));
-        $this->assertSame(['json'], $routes->extensions());
-        $this->assertSame(['json'], $routes->getExtensions());
+            $this->assertNull($routes->extensions('json'));
+            $this->assertSame(['json'], $routes->extensions());
+            $this->assertSame(['json'], $routes->getExtensions());
+        });
     }
 }

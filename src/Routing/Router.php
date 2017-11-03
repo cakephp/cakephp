@@ -225,6 +225,10 @@ class Router
      */
     public static function redirect($route, $url, $options = [])
     {
+        deprecationWarning(
+            'Router::redirect() is deprecated. ' .
+            'Use Router::scope() and RouteBuilder::redirect() instead.'
+        );
         if (is_string($url)) {
             $url = ['redirect' => $url];
         }
@@ -291,6 +295,10 @@ class Router
      */
     public static function mapResources($controller, $options = [])
     {
+        deprecationWarning(
+            'Router::mapResources() is deprecated. ' .
+            'Use Router::scope() and RouteBuilder::resources() instead.'
+        );
         foreach ((array)$controller as $name) {
             list($plugin, $name) = pluginSplit($name);
 
@@ -344,6 +352,10 @@ class Router
      */
     public static function parse($url, $method = '')
     {
+        deprecationWarning(
+            'Router::parse() is deprecated. ' .
+            'Use Router::parseRequest() instead. This will require adopting the Http\Server library.'
+        );
         if (!static::$initialized) {
             static::_loadRoutes();
         }
@@ -872,6 +884,10 @@ class Router
      */
     public static function parseNamedParams(ServerRequest $request, array $options = [])
     {
+        deprecationWarning(
+            'Router::parseNamedParams() is deprecated. ' .
+            '2.x backwards compatible named parameter support will be removed in 4.0'
+        );
         $options += ['separator' => ':'];
         if (empty($request->params['pass'])) {
             $request->params['named'] = [];

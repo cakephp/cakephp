@@ -48,7 +48,9 @@ class RoutingMiddlewareTest extends TestCase
      */
     public function testRedirectResponse()
     {
-        Router::redirect('/testpath', '/pages');
+        Router::scope('/', function ($routes) {
+            $routes->redirect('/testpath', '/pages');
+        });
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/testpath']);
         $request = $request->withAttribute('base', '/subdir');
 
@@ -69,7 +71,9 @@ class RoutingMiddlewareTest extends TestCase
      */
     public function testRedirectResponseWithHeaders()
     {
-        Router::redirect('/testpath', '/pages');
+        Router::scope('/', function ($routes) {
+            $routes->redirect('/testpath', '/pages');
+        });
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/testpath']);
         $response = new Response('php://memory', 200, ['X-testing' => 'Yes']);
         $next = function ($req, $res) {

@@ -22,6 +22,7 @@ use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
 
 /**
+ * @group deprecated
  */
 class RequestActionTraitTest extends TestCase
 {
@@ -47,6 +48,9 @@ class RequestActionTraitTest extends TestCase
         $this->object = $this->getObjectForTrait('Cake\Routing\RequestActionTrait');
         Router::connect('/request_action/:action/*', ['controller' => 'RequestAction']);
         Router::connect('/tests_apps/:action/*', ['controller' => 'TestsApps']);
+
+        $this->errorLevel = error_reporting();
+        error_reporting(E_ALL ^ E_USER_DEPRECATED);
     }
 
     /**
@@ -59,6 +63,8 @@ class RequestActionTraitTest extends TestCase
         parent::tearDown();
         DispatcherFactory::clear();
         Router::reload();
+
+        error_reporting($this->errorLevel);
     }
 
     /**
