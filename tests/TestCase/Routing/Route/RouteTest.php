@@ -240,6 +240,23 @@ class RouteTest extends TestCase
     /**
      * Expects extensions to be set
      *
+     * @group deprecated
+     * @return void
+     */
+    public function testExtensions()
+    {
+        $this->deprecated(function () {
+            $route = new RouteProtected('/:controller/:action/*', []);
+            $this->assertEquals([], $route->extensions());
+            $route->extensions(['xml']);
+
+            $this->assertEquals(['xml'], $route->extensions());
+        });
+    }
+
+    /**
+     * Expects extensions to be set
+     *
      * @return void
      */
     public function testSetExtensions()
