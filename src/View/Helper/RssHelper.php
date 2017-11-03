@@ -14,6 +14,8 @@
  */
 namespace Cake\View\Helper;
 
+deprecationWarning('RssHelper is deprecated and will be removed in 4.0.0');
+
 use Cake\Utility\Xml;
 use Cake\View\Helper;
 

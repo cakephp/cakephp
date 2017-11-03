@@ -14,6 +14,11 @@
  */
 namespace Cake\View\Helper;
 
+deprecationWarning(
+    'SessionHelper is deprecated and will be removed in 4.0.0. ' .
+    'Use request->session() instead.'
+);
+
 use Cake\View\Helper;
 use Cake\View\View;
 

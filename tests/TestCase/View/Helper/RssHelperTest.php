@@ -41,8 +41,14 @@ class RssHelperTest extends TestCase
     public function setUp()
     {
         parent::setUp();
+
+        $errorLevel = error_reporting();
+        error_reporting(E_ALL ^ E_USER_DEPRECATED);
+
         $this->View = new View();
         $this->Rss = new RssHelper($this->View);
+
+        error_reporting($errorLevel);
     }
 
     /**
