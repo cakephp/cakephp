@@ -880,6 +880,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function association($name)
     {
+        deprecationWarning('Use Table::getAssociation() instead.');
+
         return $this->getAssociation($name);
     }
 
