@@ -38,17 +38,17 @@ class ClientTest extends TestCase
             'host' => 'example.org',
         ];
         $http = new Client($config);
-        $result = $http->config();
+        $result = $http->getConfig();
         foreach ($config as $key => $val) {
             $this->assertEquals($val, $result[$key]);
         }
 
-        $result = $http->config([
+        $result = $http->setConfig([
             'auth' => ['username' => 'mark', 'password' => 'secret']
         ]);
         $this->assertSame($result, $http);
 
-        $result = $http->config();
+        $result = $http->getConfig();
         $expected = [
             'scheme' => 'http',
             'host' => 'example.org',

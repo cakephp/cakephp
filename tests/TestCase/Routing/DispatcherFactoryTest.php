@@ -82,8 +82,8 @@ class DispatcherFactoryTest extends TestCase
         $config = ['config' => 'value', 'priority' => 999];
         $result = DispatcherFactory::add('Routing', $config);
         $this->assertInstanceOf('Cake\Routing\Filter\RoutingFilter', $result);
-        $this->assertEquals($config['config'], $result->config('config'));
-        $this->assertEquals($config['priority'], $result->config('priority'));
+        $this->assertEquals($config['config'], $result->getConfig('config'));
+        $this->assertEquals($config['priority'], $result->getConfig('priority'));
     }
 
     /**

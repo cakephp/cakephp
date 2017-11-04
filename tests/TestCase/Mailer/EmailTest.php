@@ -1015,8 +1015,8 @@ class EmailTest extends TestCase
             'to' => 'mark@example.com',
             'from' => 'noreply@example.com',
         ];
-        Email::config('test', $settings);
-        $this->assertEquals($settings, Email::config('test'), 'Should be the same.');
+        Email::setConfig('test', $settings);
+        $this->assertEquals($settings, Email::getConfig('test'), 'Should be the same.');
 
         $email = new Email('test');
         $this->assertContains($settings['to'], $email->getTo());
@@ -1034,8 +1034,8 @@ class EmailTest extends TestCase
             'to' => 'mark@example.com',
             'from' => 'noreply@example.com',
         ];
-        Email::config('test', $settings);
-        Email::config('test', $settings);
+        Email::setConfig('test', $settings);
+        Email::setConfig('test', $settings);
     }
 
     /**
@@ -1064,7 +1064,7 @@ class EmailTest extends TestCase
     {
         $config = ['test' => 'ok', 'test2' => true];
         Configure::write('Email.default', $config);
-        Email::config(Configure::consume('Email'));
+        Email::setConfig(Configure::consume('Email'));
         $Email = new Email();
         $this->assertSame($Email->getProfile(), $config);
         Configure::delete('Email');
@@ -1098,7 +1098,7 @@ class EmailTest extends TestCase
             'theme' => 'TestTheme',
             'helpers' => ['Html', 'Form'],
         ];
-        Email::config('test', $config);
+        Email::setConfig('test', $config);
         $this->Email->setProfile('test');
 
         $result = $this->Email->getTo();
@@ -1509,7 +1509,7 @@ class EmailTest extends TestCase
                 )
             );
 
-        Log::config('email', $log);
+        Log::setConfig('email', $log);
 
         $this->Email->setTransport('debug');
         $this->Email->setTo('me@cakephp.org');
@@ -1543,7 +1543,7 @@ class EmailTest extends TestCase
                 )
             );
 
-        Log::config('email', $log);
+        Log::setConfig('email', $log);
 
         $this->Email->setTransport('debug');
         $this->Email->setTo('me@cakephp.org');
@@ -1588,7 +1588,7 @@ class EmailTest extends TestCase
         $this->Email->setFrom('cake@cakephp.org');
         $this->Email->setTo(['you@cakephp.org' => 'You']);
         $this->Email->setSubject('My title');
-        $this->Email->config(['empty']);
+        $this->Email->setConfig(['empty']);
         $this->Email->setTemplate('default');
         $this->Email->setLayout(null);
         $result = $this->Email->send('message body.');
@@ -2223,7 +2223,7 @@ class EmailTest extends TestCase
             'subject' => 'Test mail subject',
             'transport' => 'debug',
         ];
-        Email::config('test', $configs);
+        Email::setConfig('test', $configs);
 
         $this->Email = new Email('test');
 
@@ -2738,7 +2738,7 @@ HTML;
         $mock = $this->getMockBuilder('\Cake\Mailer\AbstractTransport')->getMock();
         $config = ['from' => 'tester@example.org', 'transport' => 'default'];
 
-        Email::config('default', $config);
+        Email::setConfig('default', $config);
         Email::setConfigTransport('default', $mock);
 
         $em = new Email('default');
