@@ -14,10 +14,9 @@
  */
 namespace Cake\View\Helper;
 
-deprecationWarning('RssHelper is deprecated and will be removed in 4.0.0');
-
 use Cake\Utility\Xml;
 use Cake\View\Helper;
+use Cake\View\View;
 
 /**
  * RSS Helper class for easy output RSS structures.
@@ -92,6 +91,15 @@ class RssHelper extends Helper
      * @var string
      */
     public $version = '2.0';
+
+    /**
+     * {@inheritDoc}
+     */
+    public function __construct(View $view, array $settings = [])
+    {
+        deprecationWarning('RssHelper is deprecated and will be removed in 4.0.0');
+        parent::__construct($view, $settings);
+    }
 
     /**
      * Returns an RSS document wrapped in `<rss />` tags
