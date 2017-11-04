@@ -477,7 +477,7 @@ class PaginatorTest extends TestCase
             'limit' => 20,
             'maxLimit' => 100,
         ];
-        $this->Paginator->config('whitelist', ['fields']);
+        $this->Paginator->setConfig('whitelist', ['fields']);
         $defaults = $this->Paginator->getDefaults('Post', $settings);
         $result = $this->Paginator->mergeOptions($params, $defaults);
         $expected = [
@@ -1181,7 +1181,7 @@ class PaginatorTest extends TestCase
      */
     public function testPaginateQueryWithBindValue()
     {
-        $config = ConnectionManager::config('test');
+        $config = ConnectionManager::getConfig('test');
         $this->skipIf(strpos($config['driver'], 'Sqlserver') !== false, 'Test temporarily broken in SQLServer');
         $this->loadFixtures('Posts');
         $table = TableRegistry::get('PaginatorPosts');

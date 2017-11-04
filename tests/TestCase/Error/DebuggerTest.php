@@ -490,7 +490,7 @@ TEXT;
         $mock = $this->getMockBuilder('Cake\Log\Engine\BaseLog')
             ->setMethods(['log'])
             ->getMock();
-        Log::config('test', ['engine' => $mock]);
+        Log::setConfig('test', ['engine' => $mock]);
 
         $mock->expects($this->at(0))
             ->method('log')
@@ -524,7 +524,7 @@ TEXT;
         $mock = $this->getMockBuilder('Cake\Log\Engine\BaseLog')
             ->setMethods(['log'])
             ->getMock();
-        Log::config('test', ['engine' => $mock]);
+        Log::setConfig('test', ['engine' => $mock]);
 
         $mock->expects($this->at(0))
             ->method('log')
