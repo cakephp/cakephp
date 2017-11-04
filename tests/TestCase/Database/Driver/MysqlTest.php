@@ -32,7 +32,7 @@ class MysqlTest extends TestCase
     public function setup()
     {
         parent::setUp();
-        $config = ConnectionManager::config('test');
+        $config = ConnectionManager::getConfig('test');
         $this->skipIf(strpos($config['driver'], 'Mysql') === false, 'Not using Mysql for test config');
     }
 

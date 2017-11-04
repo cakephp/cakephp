@@ -189,7 +189,7 @@ class BelongsToManyTest extends TestCase
                 ->setMethods(['setDriver'])
                 ->setConstructorArgs(['name' => 'other_source'])
                 ->getMock();
-        ConnectionManager::config('other_source', $mock);
+        ConnectionManager::setConfig('other_source', $mock);
         $this->article->connection(ConnectionManager::get('other_source'));
 
         $assoc = new BelongsToMany('Test', [

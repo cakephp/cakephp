@@ -667,7 +667,7 @@ class TreeBehaviorTest extends TestCase
             ->order('lft')
             ->toArray();
         $table->updateAll(['lft' => null, 'rght' => null, 'depth' => null], []);
-        $table->behaviors()->Tree->config('level', 'depth');
+        $table->behaviors()->Tree->setConfig('level', 'depth');
         $table->recover();
 
         $expected = [
@@ -1223,7 +1223,7 @@ class TreeBehaviorTest extends TestCase
         ];
         $this->assertMpttValues($expected, $table);
 
-        $table->behaviors()->get('Tree')->config('scope', ['menu' => 'categories']);
+        $table->behaviors()->get('Tree')->setConfig('scope', ['menu' => 'categories']);
         $expected = [
             ' 1:10 -  9:electronics',
             '_ 2: 9 - 10:televisions',
@@ -1418,7 +1418,7 @@ class TreeBehaviorTest extends TestCase
      */
     public function testSetLevelNewNode()
     {
-        $this->table->behaviors()->Tree->config('level', 'depth');
+        $this->table->behaviors()->Tree->setConfig('level', 'depth');
 
         $entity = new Entity(['parent_id' => null, 'name' => 'Depth 0']);
         $this->table->save($entity);
@@ -1443,7 +1443,7 @@ class TreeBehaviorTest extends TestCase
      */
     public function testSetLevelExistingNode()
     {
-        $this->table->behaviors()->Tree->config('level', 'depth');
+        $this->table->behaviors()->Tree->setConfig('level', 'depth');
 
         // Leaf node
         $entity = $this->table->get(4);

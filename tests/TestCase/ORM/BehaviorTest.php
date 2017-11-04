@@ -193,7 +193,7 @@ class BehaviorTest extends TestCase
         $table = $this->getMockBuilder('Cake\ORM\Table')->getMock();
         $config = ['key' => 'value'];
         $behavior = new TestBehavior($table, $config);
-        $this->assertEquals($config, $behavior->config());
+        $this->assertEquals($config, $behavior->getConfig());
     }
 
     /**

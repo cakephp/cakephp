@@ -178,7 +178,7 @@ class TimeHelperTest extends TestCase
      */
     public function testNiceOutputTimezone()
     {
-        $this->Time->config('outputTimezone', 'America/Vancouver');
+        $this->Time->setConfig('outputTimezone', 'America/Vancouver');
         $time = '2014-04-20 20:00';
         $this->assertTimeFormat('Apr 20, 2014, 1:00 PM', $this->Time->nice($time));
     }
@@ -211,7 +211,7 @@ class TimeHelperTest extends TestCase
      */
     public function testToAtomOutputTimezone()
     {
-        $this->Time->config('outputTimezone', 'America/Vancouver');
+        $this->Time->setConfig('outputTimezone', 'America/Vancouver');
         $dateTime = new Time;
         $vancouver = clone $dateTime;
         $vancouver->timezone('America/Vancouver');
@@ -245,7 +245,7 @@ class TimeHelperTest extends TestCase
      */
     public function testToRssOutputTimezone()
     {
-        $this->Time->config('outputTimezone', 'America/Vancouver');
+        $this->Time->setConfig('outputTimezone', 'America/Vancouver');
         $dateTime = new Time;
         $vancouver = clone $dateTime;
         $vancouver->timezone('America/Vancouver');
@@ -548,7 +548,7 @@ class TimeHelperTest extends TestCase
      */
     public function testFormatOutputTimezone()
     {
-        $this->Time->config('outputTimezone', 'America/Vancouver');
+        $this->Time->setConfig('outputTimezone', 'America/Vancouver');
 
         $time = strtotime('Thu Jan 14 8:59:28 2010 UTC');
         $result = $this->Time->format($time);
@@ -568,7 +568,7 @@ class TimeHelperTest extends TestCase
      */
     public function testI18nFormatOutputTimezone()
     {
-        $this->Time->config('outputTimezone', 'America/Vancouver');
+        $this->Time->setConfig('outputTimezone', 'America/Vancouver');
 
         $time = strtotime('Thu Jan 14 8:59:28 2010 UTC');
         $result = $this->Time->i18nFormat($time, \IntlDateFormatter::SHORT);
