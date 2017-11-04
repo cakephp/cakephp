@@ -416,7 +416,7 @@ class ConfigureTest extends TestCase
     public function testStoreAndRestore()
     {
         Cache::enable();
-        Cache::config('configure', [
+        Cache::setConfig('configure', [
             'className' => 'File',
             'path' => TMP . 'tests'
         ]);
@@ -442,7 +442,7 @@ class ConfigureTest extends TestCase
     public function testStoreAndRestoreWithData()
     {
         Cache::enable();
-        Cache::config('configure', [
+        Cache::setConfig('configure', [
             'className' => 'File',
             'path' => TMP . 'tests'
         ]);
