@@ -90,7 +90,7 @@ class Stream
      *
      * @param array $headers The list of headers from the request(s)
      * @param string $content The response content.
-     * @return array The list of responses from the request(s)
+     * @return \Cake\Http\Client\Response[] The list of responses from the request(s)
      */
     public function createResponses($headers, $content)
     {
@@ -105,7 +105,7 @@ class Stream
             $end = isset($indexes[$i + 1]) ? $indexes[$i + 1] - $start : null;
             $headerSlice = array_slice($headers, $start, $end);
             $body = $i == $last ? $content : '';
-            $responses[] = new Response($headerSlice, $body);
+            $responses[] = $this->_buildResponse($headerSlice, $body);
         }
 
         return $responses;
@@ -279,6 +279,19 @@ class Stream
         }
 
         return $this->createResponses($headers, $content);
+    }
+
+    /**
+     * Build a response object
+     *
+     * @param array $headers Unparsed headers.
+     * @param string $body The response body.
+     *
+     * @return \Cake\Http\Client\Response
+     */
+    protected function _buildResponse($headers, $body)
+    {
+        return new Response($headers, $body);
     }
 
     /**
