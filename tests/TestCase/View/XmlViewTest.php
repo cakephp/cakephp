@@ -298,7 +298,7 @@ class XmlViewTest extends TestCase
         $Controller->set('users', $data);
         $Controller->viewClass = 'Xml';
         $View = $Controller->createView();
-        $View->viewPath = 'Posts';
+        $View->setTemplatePath('Posts');
         $output = $View->render('index');
 
         $expected = [

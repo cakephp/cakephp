@@ -949,6 +949,11 @@ class FormHelper extends Helper
      */
     public function allInputs(array $fields = [], array $options = [])
     {
+        deprecationWarning(
+            'FormHelper::allInputs() is deprecated. ' .
+            'Use FormHelper::allControlls() instead.'
+        );
+
         return $this->allControls($fields, $options);
     }
 
@@ -1007,6 +1012,11 @@ class FormHelper extends Helper
      */
     public function inputs(array $fields, array $options = [])
     {
+        deprecationWarning(
+            'FormHelper::inputs() is deprecated. ' .
+            'Use FormHelper::controls() instead.'
+        );
+
         return $this->controls($fields, $options);
     }
 
@@ -1185,6 +1195,11 @@ class FormHelper extends Helper
      */
     public function input($fieldName, array $options = [])
     {
+        deprecationWarning(
+            'FormHelper::input() is deprecated. ' .
+            'Use FormHelper::control() instead.'
+        );
+
         return $this->control($fieldName, $options);
     }
 
