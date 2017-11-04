@@ -14,6 +14,7 @@
  */
 namespace Cake\Database;
 
+use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\OrderClauseExpression;
 use Cake\Database\Expression\QueryExpression;
@@ -1459,6 +1460,27 @@ class Query implements ExpressionInterface, IteratorAggregate
         $this->_parts['insert'][0] = $table;
 
         return $this;
+    }
+
+    /**
+     * Creates an expression that refers to an identifier. Identifiers are used to refer to field names and allow
+     * the SQL compiler to apply quotes or escape the identifier.
+     *
+     * The value is used as is, and you might be required to use aliases or include the table reference in
+     * the identifier. Do not use this method to inject SQL methods or logical statements.
+     *
+     * ### Example
+     *
+     * ```
+     * $query->newExp()->lte('count', $query->identifier('total'));
+     * ```
+     *
+     * @param string $identifier The identifier for an expression
+     * @return \Cake\Database\ExpressionInterface
+     */
+    public function identifier($identifier)
+    {
+        return new IdentifierExpression($identifier);
     }
 
     /**
