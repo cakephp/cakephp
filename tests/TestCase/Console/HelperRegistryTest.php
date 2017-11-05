@@ -73,7 +73,7 @@ class HelperRegistryTest extends TestCase
     public function testLoadWithConfig()
     {
         $result = $this->helpers->load('Simple', ['key' => 'value']);
-        $this->assertEquals('value', $result->config('key'));
+        $this->assertEquals('value', $result->getConfig('key'));
     }
 
     /**
