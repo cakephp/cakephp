@@ -368,7 +368,7 @@ REGEXP;
     public static function dsnClassMap(array $map = null)
     {
         deprecationWarning(
-            'StaticConfigTrait::setDsnClassMap() is deprecated. ' .
+            get_called_class() . '::setDsnClassMap() is deprecated. ' .
             'Use setDsnClassMap()/getDsnClassMap() instead.'
         );
 
