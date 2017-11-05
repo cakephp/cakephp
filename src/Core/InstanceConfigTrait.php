@@ -176,7 +176,7 @@ trait InstanceConfigTrait
     public function config($key = null, $value = null, $merge = true)
     {
         deprecationWarning(
-            'InstanceConfigTrait::config() is deprecated. ' .
+            get_called_class() . '::config() is deprecated. ' .
             'Use setConfig()/getConfig() instead.'
         );
 

@@ -164,7 +164,7 @@ trait StaticConfigTrait
     public static function config($key, $config = null)
     {
         deprecationWarning(
-            'StaticConfigTrait::config() is deprecated. ' .
+            get_called_class() . '::config() is deprecated. ' .
             'Use setConfig()/getConfig() instead.'
         );
 
