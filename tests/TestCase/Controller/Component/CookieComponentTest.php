@@ -50,7 +50,7 @@ class CookieComponentTest extends TestCase
         $this->Cookie = $controller->Cookie;
         $this->request = $controller->request;
 
-        $this->Cookie->config([
+        $this->Cookie->setConfig([
             'expires' => '+10 seconds',
             'path' => '/',
             'domain' => '',
@@ -112,7 +112,7 @@ class CookieComponentTest extends TestCase
      */
     public function testSettingsCompatibility()
     {
-        $this->Cookie->config([
+        $this->Cookie->setConfig([
             'expires' => '+10 seconds',
             'path' => '/',
             'domain' => '',
@@ -154,8 +154,8 @@ class CookieComponentTest extends TestCase
             'path' => '/'
         ];
         $Cookie = new CookieComponent(new ComponentRegistry(), $settings);
-        $this->assertEquals($Cookie->config('time'), $settings['time']);
-        $this->assertEquals($Cookie->config('path'), $settings['path']);
+        $this->assertEquals($Cookie->getConfig('time'), $settings['time']);
+        $this->assertEquals($Cookie->getConfig('path'), $settings['path']);
     }
 
     /**
@@ -170,7 +170,7 @@ class CookieComponentTest extends TestCase
         $this->request->cookies = [
             'Test' => $this->_encrypt('value'),
         ];
-        $this->Cookie->config('encryption', 'derp');
+        $this->Cookie->setConfig('encryption', 'derp');
         $this->Cookie->read('Test');
     }
 
@@ -250,7 +250,7 @@ class CookieComponentTest extends TestCase
      */
     public function testWriteInvalidCipher()
     {
-        $this->Cookie->config('encryption', 'derp');
+        $this->Cookie->setConfig('encryption', 'derp');
         $this->Cookie->write('Test', 'nope');
     }
 
@@ -275,7 +275,7 @@ class CookieComponentTest extends TestCase
      */
     public function testWriteWithFalseyValue()
     {
-        $this->Cookie->config([
+        $this->Cookie->setConfig([
             'encryption' => 'aes',
             'key' => 'qSI232qs*&sXOw!adre@34SAv!@*(XSL#$%)asGb$@11~_+!@#HKis~#^',
         ]);
@@ -339,7 +339,7 @@ class CookieComponentTest extends TestCase
      */
     public function testWriteHttpOnly()
     {
-        $this->Cookie->config([
+        $this->Cookie->setConfig([
             'httpOnly' => true,
             'secure' => false
         ]);
@@ -431,7 +431,7 @@ class CookieComponentTest extends TestCase
      */
     public function testDeleteHttpOnly()
     {
-        $this->Cookie->config([
+        $this->Cookie->setConfig([
             'httpOnly' => true,
             'secure' => false
         ]);
@@ -808,6 +808,6 @@ class CookieComponentTest extends TestCase
             $value = $this->_implode($value);
         }
 
-        return 'Q2FrZQ==.' . base64_encode(Security::encrypt($value, $this->Cookie->config('key')));
+        return 'Q2FrZQ==.' . base64_encode(Security::encrypt($value, $this->Cookie->getConfig('key')));
     }
 }
