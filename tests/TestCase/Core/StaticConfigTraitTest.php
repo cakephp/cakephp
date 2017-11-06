@@ -247,7 +247,7 @@ class StaticConfigTraitTest extends TestCase
      */
     public function testCanUpdateClassMap()
     {
-        $this->deprecated(function() {
+        $this->deprecated(function () {
             $expected = [
                 'console' => 'Cake\Log\Engine\ConsoleLog',
                 'file' => 'Cake\Log\Engine\FileLog',
@@ -283,7 +283,7 @@ class StaticConfigTraitTest extends TestCase
      */
     public function testConfigBC()
     {
-        $this->deprecated(function() {
+        $this->deprecated(function () {
             $result = TestLogStaticConfig::config(404);
             $this->assertNull($result);
         });

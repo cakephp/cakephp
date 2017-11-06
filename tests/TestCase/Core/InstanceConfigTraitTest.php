@@ -103,7 +103,7 @@ class InstanceConfigTraitTest extends TestCase
      */
     public function testDefaultsAreSet()
     {
-        $this->deprecated(function() {
+        $this->deprecated(function () {
             $this->assertSame(
                 [
                     'some' => 'string',
