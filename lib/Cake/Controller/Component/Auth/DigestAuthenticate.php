@@ -44,7 +44,7 @@ App::uses('BasicAuthenticate', 'Controller/Component/Auth');
  * Due to the Digest authentication specification, digest auth requires a special password value. You
  * can generate this password using `DigestAuthenticate::password()`
  *
- * `$digestPass = DigestAuthenticate::password($username, $passwordm env('SERVER_NAME'));`
+ * `$digestPass = DigestAuthenticate::password($username, $password, env('SERVER_NAME'));`
  *
  * Its recommended that you store this digest auth only password separate from password hashes used for other
  * login methods. For example `User.digest_pass` could be used for a digest password, while `User.password` would
