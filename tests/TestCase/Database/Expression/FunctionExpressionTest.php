@@ -79,7 +79,7 @@ class FunctionExpressionTest extends TestCase
         $binder = new ValueBinder;
         $f = new FunctionExpression('MyFunction', ['foo', 'bar']);
         $g = new FunctionExpression('Wrapper', ['bar' => 'literal', $f]);
-        $this->assertEquals('Wrapper(bar, (MyFunction(:param0, :param1)))', $g->sql($binder));
+        $this->assertEquals('Wrapper(bar, MyFunction(:param0, :param1))', $g->sql($binder));
     }
 
     /**
