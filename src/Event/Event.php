@@ -94,7 +94,7 @@ class Event
     {
         $method = 'get' . ucfirst($attribute);
         deprecationWarning(
-            "Event::${$attribute} is deprecated. " .
+            "Event::\${$attribute} is deprecated. " .
             "Use Event::{$method}() instead."
         );
         if ($attribute === 'name' || $attribute === 'subject') {
@@ -120,7 +120,7 @@ class Event
     {
         $method = 'set' . ucfirst($attribute);
         deprecationWarning(
-            "Event::${$attribute} is deprecated. " .
+            "Event::\${$attribute} is deprecated. " .
             "Use Event::{$method}() instead."
         );
         if ($attribute === 'data') {
