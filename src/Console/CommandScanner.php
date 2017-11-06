@@ -147,11 +147,16 @@ class CommandScanner
                 continue;
             }
 
+            $class = $namespace . $shell;
+            if (!is_subclass_of($class, Shell::class) && !is_subclass_of($class, Command::class)) {
+                continue;
+            }
+
             $shells[] = [
                 'file' => $path . $file,
                 'fullName' => $prefix . $name,
                 'name' => $name,
-                'class' => $namespace . $shell
+                'class' => $class
             ];
         }
 
