@@ -872,19 +872,6 @@ class RouteBuilderTest extends TestCase
     }
 
     /**
-     * Test registering invalid middleware
-     *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage The 'bad' middleware is not a callable object.
-     * @return void
-     */
-    public function testRegisterMiddlewareString()
-    {
-        $routes = new RouteBuilder($this->collection, '/api');
-        $routes->registerMiddleware('bad', 'strlen');
-    }
-
-    /**
      * Test middleware group
      *
      * @return void

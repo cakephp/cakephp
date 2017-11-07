@@ -631,18 +631,6 @@ class RouteCollectionTest extends TestCase
     }
 
     /**
-     * String methods are not acceptable.
-     *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage The 'bad' middleware is not a callable object.
-     * @return void
-     */
-    public function testRegisterMiddlewareNoCallableString()
-    {
-        $this->collection->registerMiddleware('bad', 'strlen');
-    }
-
-    /**
      * Test adding middleware to the collection.
      *
      * @return void
@@ -661,6 +649,8 @@ class RouteCollectionTest extends TestCase
 
         $this->assertTrue($this->collection->hasMiddleware('closure'));
         $this->assertTrue($this->collection->hasMiddleware('callable'));
+
+        $this->collection->registerMiddleware('class', 'Dumb');
     }
 
     /**
