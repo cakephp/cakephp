@@ -69,7 +69,7 @@ class ApcuEngineTest extends TestCase
             'warnOnWriteFailures' => true,
         ];
         Cache::drop('apcu');
-        Cache::config('apcu', array_merge($defaults, $config));
+        Cache::setConfig('apcu', array_merge($defaults, $config));
     }
 
     /**
@@ -104,7 +104,7 @@ class ApcuEngineTest extends TestCase
     public function testReadWriteDurationZero()
     {
         Cache::drop('apcu');
-        Cache::config('apcu', ['engine' => 'Apcu', 'duration' => 0, 'prefix' => 'cake_']);
+        Cache::setConfig('apcu', ['engine' => 'Apcu', 'duration' => 0, 'prefix' => 'cake_']);
         Cache::write('zero', 'Should save', 'apcu');
         sleep(1);
 
@@ -220,7 +220,7 @@ class ApcuEngineTest extends TestCase
      */
     public function testGroupsReadWrite()
     {
-        Cache::config('apcu_groups', [
+        Cache::setConfig('apcu_groups', [
             'engine' => 'Apcu',
             'duration' => 0,
             'groups' => ['group_a', 'group_b'],
@@ -248,7 +248,7 @@ class ApcuEngineTest extends TestCase
      */
     public function testGroupDelete()
     {
-        Cache::config('apcu_groups', [
+        Cache::setConfig('apcu_groups', [
             'engine' => 'Apcu',
             'duration' => 0,
             'groups' => ['group_a', 'group_b'],
@@ -269,7 +269,7 @@ class ApcuEngineTest extends TestCase
      */
     public function testGroupClear()
     {
-        Cache::config('apcu_groups', [
+        Cache::setConfig('apcu_groups', [
             'engine' => 'Apcu',
             'duration' => 0,
             'groups' => ['group_a', 'group_b'],
