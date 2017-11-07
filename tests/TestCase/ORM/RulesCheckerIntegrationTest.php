@@ -65,12 +65,12 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $table = TableRegistry::get('articles');
         $table->belongsTo('authors');
-        $table->association('authors')
+        $table->getAssociation('authors')
             ->target()
             ->rulesChecker()
             ->add(
                 function (Entity $author, array $options) use ($table) {
-                    $this->assertSame($options['repository'], $table->association('authors')->target());
+                    $this->assertSame($options['repository'], $table->getAssociation('authors')->target());
 
                     return false;
                 },
@@ -104,7 +104,7 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $table = TableRegistry::get('authors');
         $table->hasOne('articles');
-        $table->association('articles')
+        $table->getAssociation('articles')
             ->target()
             ->rulesChecker()
             ->add(
@@ -149,7 +149,7 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $table = TableRegistry::get('authors');
         $table->hasMany('articles');
-        $table->association('articles')
+        $table->getAssociation('articles')
             ->target()
             ->rulesChecker()
             ->add(
@@ -198,7 +198,7 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $table = TableRegistry::get('authors');
         $table->hasMany('articles');
-        $table->association('articles')
+        $table->getAssociation('articles')
             ->target()
             ->rulesChecker()
             ->add(
@@ -240,7 +240,7 @@ class RulesCheckerIntegrationTest extends TestCase
         ];
         $table = TableRegistry::get('articles');
         $table->belongsToMany('tags');
-        $table->association('tags')
+        $table->getAssociation('tags')
             ->junction()
             ->rulesChecker()
             ->add(function (Entity $entity) {
@@ -280,7 +280,7 @@ class RulesCheckerIntegrationTest extends TestCase
         ];
         $table = TableRegistry::get('articles');
         $table->belongsToMany('tags');
-        $table->association('tags')
+        $table->getAssociation('tags')
             ->junction()
             ->rulesChecker()
             ->add(function (Entity $entity) {
@@ -1319,8 +1319,8 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $table = TableRegistry::get('authors');
         $table->hasMany('articles');
-        $table->association('articles')->belongsTo('authors');
-        $checker = $table->association('articles')->target()->rulesChecker();
+        $table->getAssociation('articles')->belongsTo('authors');
+        $checker = $table->getAssociation('articles')->target()->rulesChecker();
         $checker->add(function ($entity, $options) use ($checker) {
             $rule = $checker->existsIn('author_id', 'authors');
             $id = $entity->author_id;

@@ -58,8 +58,8 @@ class AssociationProxyTest extends TestCase
         $this->assertTrue(isset($articles->authors));
         $this->assertTrue(isset($articles->comments));
         $this->assertFalse(isset($articles->posts));
-        $this->assertSame($articles->association('authors'), $articles->authors);
-        $this->assertSame($articles->association('comments'), $articles->comments);
+        $this->assertSame($articles->getAssociation('authors'), $articles->authors);
+        $this->assertSame($articles->getAssociation('comments'), $articles->comments);
     }
 
     /**
@@ -133,7 +133,7 @@ class AssociationProxyTest extends TestCase
         $articles->belongsTo('authors');
         $authors->hasMany('comments');
         $this->assertTrue(isset($articles->authors->comments));
-        $this->assertSame($authors->association('comments'), $articles->authors->comments);
+        $this->assertSame($authors->getAssociation('comments'), $articles->authors->comments);
     }
 
     /**

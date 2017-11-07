@@ -80,7 +80,7 @@ class ExistsIn
     public function __invoke(EntityInterface $entity, array $options)
     {
         if (is_string($this->_repository)) {
-            $repository = $options['repository']->association($this->_repository);
+            $repository = $options['repository']->getAssociation($this->_repository);
             if (!$repository) {
                 throw new RuntimeException(sprintf(
                     "ExistsIn rule for '%s' is invalid. '%s' is not associated with '%s'.",

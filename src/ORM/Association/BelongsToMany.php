@@ -346,14 +346,14 @@ class BelongsToMany extends Association
         $junctionAlias = $junction->getAlias();
         $sAlias = $source->getAlias();
 
-        if (!$target->association($junctionAlias)) {
+        if (!$target->getAssociation($junctionAlias)) {
             $target->hasMany($junctionAlias, [
                 'targetTable' => $junction,
                 'foreignKey' => $this->getTargetForeignKey(),
                 'strategy' => $this->_strategy,
             ]);
         }
-        if (!$target->association($sAlias)) {
+        if (!$target->getAssociation($sAlias)) {
             $target->belongsToMany($sAlias, [
                 'sourceTable' => $target,
                 'targetTable' => $source,
@@ -383,7 +383,7 @@ class BelongsToMany extends Association
     protected function _generateSourceAssociations($junction, $source)
     {
         $junctionAlias = $junction->getAlias();
-        if (!$source->association($junctionAlias)) {
+        if (!$source->getAssociation($junctionAlias)) {
             $source->hasMany($junctionAlias, [
                 'targetTable' => $junction,
                 'foreignKey' => $this->getForeignKey(),
@@ -413,13 +413,13 @@ class BelongsToMany extends Association
         $tAlias = $target->getAlias();
         $sAlias = $source->getAlias();
 
-        if (!$junction->association($tAlias)) {
+        if (!$junction->getAssociation($tAlias)) {
             $junction->belongsTo($tAlias, [
                 'foreignKey' => $this->getTargetForeignKey(),
                 'targetTable' => $target
             ]);
         }
-        if (!$junction->association($sAlias)) {
+        if (!$junction->getAssociation($sAlias)) {
             $junction->belongsTo($sAlias, [
                 'foreignKey' => $this->getForeignKey(),
                 'targetTable' => $source
@@ -453,7 +453,7 @@ class BelongsToMany extends Association
         }
 
         $junction = $this->junction();
-        $belongsTo = $junction->association($this->getSource()->getAlias());
+        $belongsTo = $junction->getAssociation($this->getSource()->getAlias());
         $cond = $belongsTo->_joinCondition(['foreignKey' => $belongsTo->getForeignKey()]);
         $cond += $this->junctionConditions();
 
@@ -463,7 +463,7 @@ class BelongsToMany extends Association
         }
 
         // Attach the junction table as well we need it to populate _joinData.
-        $assoc = $this->_targetTable->association($junction->getAlias());
+        $assoc = $this->_targetTable->getAssociation($junction->getAlias());
         $newOptions = array_intersect_key($options, ['joinType' => 1, 'fields' => 1]);
         $newOptions += [
             'conditions' => $cond,
@@ -492,7 +492,7 @@ class BelongsToMany extends Association
             $options['conditions'] = [];
         }
         $junction = $this->junction();
-        $belongsTo = $junction->association($this->getSource()->getAlias());
+        $belongsTo = $junction->getAssociation($this->getSource()->getAlias());
         $conds = $belongsTo->_joinCondition(['foreignKey' => $belongsTo->getForeignKey()]);
 
         $subquery = $this->find()
@@ -504,7 +504,7 @@ class BelongsToMany extends Association
             $subquery = $options['queryBuilder']($subquery);
         }
 
-        $assoc = $junction->association($this->getTarget()->getAlias());
+        $assoc = $junction->getAssociation($this->getTarget()->getAlias());
         $conditions = $assoc->_joinCondition([
             'foreignKey' => $this->getTargetForeignKey()
         ]);
@@ -567,7 +567,7 @@ class BelongsToMany extends Association
             'sort' => $this->getSort(),
             'junctionAssociationName' => $name,
             'junctionProperty' => $this->_junctionProperty,
-            'junctionAssoc' => $this->getTarget()->association($name),
+            'junctionAssoc' => $this->getTarget()->getAssociation($name),
             'junctionConditions' => $this->junctionConditions(),
             'finder' => function () {
                 return $this->_appendJunctionJoin($this->find(), []);
@@ -598,7 +598,7 @@ class BelongsToMany extends Association
         }
 
         $table = $this->junction();
-        $hasMany = $this->getSource()->association($table->getAlias());
+        $hasMany = $this->getSource()->getAssociation($table->getAlias());
         if ($this->_cascadeCallbacks) {
             foreach ($hasMany->find('all')->where($conditions)->all()->toList() as $related) {
                 $table->delete($related, $options);
@@ -806,7 +806,7 @@ class BelongsToMany extends Association
         $target = $this->getTarget();
         $junction = $this->junction();
         $entityClass = $junction->getEntityClass();
-        $belongsTo = $junction->association($target->getAlias());
+        $belongsTo = $junction->getAssociation($target->getAlias());
         $foreignKey = (array)$this->getForeignKey();
         $assocForeignKey = (array)$belongsTo->getForeignKey();
         $targetPrimaryKey = (array)$target->getPrimaryKey();
@@ -863,7 +863,7 @@ class BelongsToMany extends Association
      *
      * ```
      * $newTags = $tags->find('relevant')->toArray();
-     * $articles->association('tags')->link($article, $newTags);
+     * $articles->getAssociation('tags')->link($article, $newTags);
      * ```
      *
      * `$article->get('tags')` will contain all tags in `$newTags` after liking
@@ -913,7 +913,7 @@ class BelongsToMany extends Association
      * ```
      * $article->tags = [$tag1, $tag2, $tag3, $tag4];
      * $tags = [$tag1, $tag2, $tag3];
-     * $articles->association('tags')->unlink($article, $tags);
+     * $articles->getAssociation('tags')->unlink($article, $tags);
      * ```
      *
      * `$article->get('tags')` will contain only `[$tag4]` after deleting in the database
@@ -1097,7 +1097,7 @@ class BelongsToMany extends Association
             return $query;
         }
 
-        $belongsTo = $this->junction()->association($this->getTarget()->getAlias());
+        $belongsTo = $this->junction()->getAssociation($this->getTarget()->getAlias());
         $conditions = $belongsTo->_joinCondition([
             'foreignKey' => $this->getTargetForeignKey()
         ]);
@@ -1125,7 +1125,7 @@ class BelongsToMany extends Association
             ]
         ];
 
-        $assoc = $this->getTarget()->association($name);
+        $assoc = $this->getTarget()->getAssociation($name);
         $query
             ->addDefaultTypes($assoc->getTarget())
             ->join($matching + $joins, [], true);
@@ -1168,7 +1168,7 @@ class BelongsToMany extends Association
      * $article->tags = [$tag1, $tag2, $tag3, $tag4];
      * $articles->save($article);
      * $tags = [$tag1, $tag3];
-     * $articles->association('tags')->replaceLinks($article, $tags);
+     * $articles->getAssociation('tags')->replaceLinks($article, $tags);
      * ```
      *
      * `$article->get('tags')` will contain only `[$tag1, $tag3]` at the end
@@ -1195,7 +1195,7 @@ class BelongsToMany extends Association
         return $this->junction()->getConnection()->transactional(
             function () use ($sourceEntity, $targetEntities, $primaryValue, $options) {
                 $foreignKey = array_map([$this->_junctionTable, 'aliasField'], (array)$this->getForeignKey());
-                $hasMany = $this->getSource()->association($this->_junctionTable->getAlias());
+                $hasMany = $this->getSource()->getAssociation($this->_junctionTable->getAlias());
                 $existing = $hasMany->find('all')
                     ->where(array_combine($foreignKey, $primaryValue));
 
@@ -1247,7 +1247,7 @@ class BelongsToMany extends Association
     {
         $junction = $this->junction();
         $target = $this->getTarget();
-        $belongsTo = $junction->association($target->getAlias());
+        $belongsTo = $junction->getAssociation($target->getAlias());
         $foreignKey = (array)$this->getForeignKey();
         $assocForeignKey = (array)$belongsTo->getForeignKey();
 
@@ -1367,8 +1367,8 @@ class BelongsToMany extends Association
             return $result;
         }
 
-        $belongsTo = $junction->association($target->getAlias());
-        $hasMany = $source->association($junction->getAlias());
+        $belongsTo = $junction->getAssociation($target->getAlias());
+        $hasMany = $source->getAssociation($junction->getAlias());
         $foreignKey = (array)$this->getForeignKey();
         $assocForeignKey = (array)$belongsTo->getForeignKey();
         $sourceKey = $sourceEntity->extract((array)$source->getPrimaryKey());
@@ -1398,7 +1398,7 @@ class BelongsToMany extends Association
     {
         if (!$this->_junctionAssociationName) {
             $this->_junctionAssociationName = $this->getTarget()
-                ->association($this->junction()->getAlias())
+                ->getAssociation($this->junction()->getAlias())
                 ->getName();
         }
 
