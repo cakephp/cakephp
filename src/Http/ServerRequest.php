@@ -229,6 +229,11 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public static function createFromGlobals()
     {
+        deprecationWarning(
+            'ServerRequest::createFromGlobals() is deprecated. ' .
+            'Use `Cake\Http\ServerRequestFactory` instead.'
+        );
+
         return ServerRequestFactory::fromGlobals();
     }
 
@@ -535,6 +540,11 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function session(Session $session = null)
     {
+        deprecationWarning(
+            'ServerRequest::session() is deprecated. ' .
+            'Use getSession() instead. The setter part will be removed.'
+        );
+
         if ($session === null) {
             return $this->session;
         }
@@ -625,6 +635,11 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function __get($name)
     {
+        deprecationWarning(
+            'Accessing routing parameters through __get will removed in 4.0.0. ' .
+            'Use getParam() instead.'
+        );
+
         if (isset($this->params[$name])) {
             return $this->params[$name];
         }
@@ -643,6 +658,11 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function __isset($name)
     {
+        deprecationWarning(
+            'Accessing routing parameters through __isset will removed in 4.0.0. ' .
+            'Use getParam() instead.'
+        );
+
         return isset($this->params[$name]);
     }
 
@@ -935,6 +955,11 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function here($base = true)
     {
+        deprecationWarning(
+            'This method will be removed in 4.0.0. ' .
+            'This method will be removed in 4.0.0. You should use getRequestTarget() instead.'
+        );
+
         $url = $this->here;
         if (!empty($this->query)) {
             $url .= '?' . http_build_query($this->query, null, '&');
@@ -975,6 +1000,11 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function header($name)
     {
+        deprecationWarning(
+            'ServerRequest::header() is deprecated. ' .
+            'The automatic fallback to env() will be removed in 4.0.0, see getHeader()'
+        );
+
         $name = $this->normalizeHeaderName($name);
 
         return $this->getEnv($name);
@@ -1128,6 +1158,11 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function method()
     {
+        deprecationWarning(
+            'ServerRequest::method() is deprecated. ' .
+            'This method will be removed in 4.0.0. Use getMethod() instead.'
+        );
+
         return $this->getEnv('REQUEST_METHOD');
     }
 
@@ -1424,6 +1459,11 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function query($name = null)
     {
+        deprecationWarning(
+            'ServerRequest::query() is deprecated. ' .
+            'Use getQuery() or the PSR-7 getQueryParams() and withQueryParams() methods instead.'
+        );
+
         if ($name === null) {
             return $this->query;
         }
@@ -1485,6 +1525,11 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function data($name = null, ...$args)
     {
+        deprecationWarning(
+            'ServerRequest::data() is deprecated. ' .
+            'Use withData() and getData() or getParsedBody() instead.'
+        );
+
         if (count($args) === 1) {
             $this->data = Hash::insert($this->data, $name, $args[0]);
 
@@ -1543,6 +1588,11 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function param($name, ...$args)
     {
+        deprecationWarning(
+            'ServerRequest::param() is deprecated. ' .
+            'Use getParam() and withParam() instead.'
+        );
+
         if (count($args) === 1) {
             $this->params = Hash::insert($this->params, $name, $args[0]);
 
@@ -1598,6 +1648,11 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function cookie($key)
     {
+        deprecationWarning(
+            'ServerRequest::cookie() is deprecated. ' .
+            'Use getCookie() instead.'
+        );
+
         if (isset($this->cookies[$key])) {
             return $this->cookies[$key];
         }
@@ -1805,6 +1860,11 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function env($key, $value = null, $default = null)
     {
+        deprecationWarning(
+            'ServerRequest::env() is deprecated. ' .
+            'Use getEnv()/withEnv() instead.'
+        );
+
         if ($value !== null) {
             $this->_environment[$key] = $value;
             $this->clearDetectorCache();
@@ -1878,6 +1938,11 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function setInput($input)
     {
+        deprecationWarning(
+            'This method will be removed in 4.0.0.' .
+            'Use withBody() instead.'
+        );
+
         $stream = new Stream('php://memory', 'rw');
         $stream->write($input);
         $stream->rewind();
@@ -2196,6 +2261,11 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function offsetGet($name)
     {
+        deprecationWarning(
+            'The ArrayAccess methods will be removed in 4.0.0.' .
+            'Use getParam(), getData() and getQuery() instead.'
+        );
+
         if (isset($this->params[$name])) {
             return $this->params[$name];
         }
@@ -2219,6 +2289,11 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function offsetSet($name, $value)
     {
+        deprecationWarning(
+            'The ArrayAccess methods will be removed in 4.0.0.' .
+            'Use withParam() instead.'
+        );
+
         $this->params[$name] = $value;
     }
 
@@ -2231,6 +2306,11 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function offsetExists($name)
     {
+        deprecationWarning(
+            'The ArrayAccess methods will be removed in 4.0.0.' .
+            'Use getParam() instead.'
+        );
+
         if ($name === 'url' || $name === 'data') {
             return true;
         }
@@ -2247,6 +2327,11 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function offsetUnset($name)
     {
+        deprecationWarning(
+            'The ArrayAccess methods will be removed in 4.0.0.' .
+            'Use withParam() instead.'
+        );
+
         unset($this->params[$name]);
     }
 }

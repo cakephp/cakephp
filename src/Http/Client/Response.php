@@ -270,6 +270,11 @@ class Response extends Message implements ResponseInterface
      */
     public function statusCode()
     {
+        deprecationWarning(
+            'Response::statusCode() is deprecated. ' .
+            'Use Response::getStatusCode() instead.'
+        );
+
         return $this->code;
     }
 
@@ -317,6 +322,11 @@ class Response extends Message implements ResponseInterface
      */
     public function encoding()
     {
+        deprecationWarning(
+            'Response::encoding() is deprecated. ' .
+            'Use Response::getEncoding() instead.'
+        );
+
         return $this->getEncoding();
     }
 
@@ -352,6 +362,11 @@ class Response extends Message implements ResponseInterface
      */
     public function header($name = null)
     {
+        deprecationWarning(
+            'Response::header() is deprecated. ' .
+            'Use Response::getHeader() and getHeaderLine() instead.'
+        );
+
         if ($name === null) {
             return $this->_getHeaders();
         }
@@ -379,6 +394,11 @@ class Response extends Message implements ResponseInterface
      */
     public function cookie($name = null, $all = false)
     {
+        deprecationWarning(
+            'Response::cookie() is deprecated. ' .
+            'Use Response::getCookie(), getCookieData() or getCookies() instead.'
+        );
+
         if ($name === null) {
             return $this->getCookies();
         }
@@ -509,6 +529,11 @@ class Response extends Message implements ResponseInterface
      */
     public function version()
     {
+        deprecationWarning(
+            'Response::version() is deprecated. ' .
+            'Use Response::getProtocolVersion() instead.'
+        );
+
         return $this->protocol;
     }
 

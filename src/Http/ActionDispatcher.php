@@ -149,6 +149,11 @@ class ActionDispatcher
      */
     public function addFilter(EventListenerInterface $filter)
     {
+        deprecationWarning(
+            'ActionDispatcher::addFilter() is deprecated. ' .
+            'This is only available for backwards compatibility with DispatchFilters'
+        );
+
         $this->filters[] = $filter;
         $this->getEventManager()->on($filter);
     }
