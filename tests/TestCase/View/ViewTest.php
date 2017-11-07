@@ -651,6 +651,31 @@ class ViewTest extends TestCase
     }
 
     /**
+     * Test getViewFileName doesn't re-apply existing subdirectories
+     *
+     * @return void
+     */
+    public function testGetViewFileNameSubDir()
+    {
+        $viewOptions = [
+            'plugin' => null,
+            'name' => 'Posts',
+            'viewPath' => 'Posts/json',
+            'layoutPath' => 'json',
+        ];
+        $view = new TestView(null, null, null, $viewOptions);
+
+        $expected = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Posts' . DS . 'json' . DS . 'index.ctp';
+        $result = $view->getViewFileName('index');
+        $this->assertPathEquals($expected, $result);
+
+        $view->subDir = 'json';
+        $result = $view->getViewFileName('index');
+        $expected = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Posts' . DS . 'json' . DS . 'index.ctp';
+        $this->assertPathEquals($expected, $result);
+    }
+
+    /**
      * Test getting layout filenames
      *
      * @return void

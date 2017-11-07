@@ -1243,11 +1243,15 @@ class View implements EventDispatcherInterface
     {
         $templatePath = $subDir = '';
 
-        if ($this->subDir !== null) {
-            $subDir = $this->subDir . DIRECTORY_SEPARATOR;
-        }
         if ($this->templatePath) {
             $templatePath = $this->templatePath . DIRECTORY_SEPARATOR;
+        }
+        if (strlen($this->subDir)) {
+            $subDir = $this->subDir . DIRECTORY_SEPARATOR;
+            // Check if templatePath already terminates with subDir
+            if (strrpos($templatePath, $subDir) == strlen($templatePath) - strlen($subDir)) {
+                $subDir = '';
+            }
         }
 
         if ($name === null) {
