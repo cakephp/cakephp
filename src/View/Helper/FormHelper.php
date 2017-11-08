@@ -402,7 +402,7 @@ class FormHelper extends Helper
         unset($options['templates']);
 
         if ($options['action'] === false || $options['url'] === false) {
-            $url = $this->request->here(false);
+            $url = $this->request->getRequestTarget();
             $action = null;
         } else {
             $url = $this->_formUrl($context, $options);
@@ -481,7 +481,7 @@ class FormHelper extends Helper
     protected function _formUrl($context, $options)
     {
         if ($options['action'] === null && $options['url'] === null) {
-            return $this->request->here(false);
+            return $this->request->getRequestTarget();
         }
 
         if (is_string($options['url']) ||
@@ -2855,14 +2855,23 @@ class FormHelper extends Helper
      */
     public function getSourceValue($fieldname, $options = [])
     {
+        $valueMap = [
+            'data' => 'getData',
+            'query' => 'getQuery'
+        ];
         foreach ($this->getValueSources() as $valuesSource) {
             if ($valuesSource === 'context') {
                 $val = $this->_getContext()->val($fieldname, $options);
                 if ($val !== null) {
                     return $val;
                 }
-            } elseif ($this->request->{$valuesSource}($fieldname) !== null) {
-                return $this->request->{$valuesSource}($fieldname);
+            }
+            if (isset($valueMap[$valuesSource])) {
+                $method = $valueMap[$valuesSource];
+                $value = $this->request->{$method}($fieldname);
+                if ($value !== null) {
+                    return $value;
+                }
             }
         }
 

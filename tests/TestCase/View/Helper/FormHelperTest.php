@@ -719,8 +719,9 @@ class FormHelperTest extends TestCase
     {
         $encoding = strtolower(Configure::read('App.encoding'));
 
-        $this->Form->request->here = '/articles/edit/1';
-        $this->Form->request->params['action'] = 'edit';
+        $this->Form->request = $this->Form->request
+            ->withRequestTarget('/articles/edit/1')
+            ->withParam('action', 'edit');
 
         $this->article['defaults']['id'] = 1;
 
@@ -747,9 +748,9 @@ class FormHelperTest extends TestCase
     {
         $encoding = strtolower(Configure::read('App.encoding'));
 
-        $this->Form->request->params['action'] = 'delete';
-        $this->Form->request->here = '/articles/delete/10';
-        $this->Form->request->base = '';
+        $this->Form->request = $this->Form->request
+            ->withRequestTarget('/articles/delete/10')
+            ->withParam('action', 'delete');
         $result = $this->Form->create($this->article);
         $expected = [
             'form' => [
@@ -8741,7 +8742,7 @@ class FormHelperTest extends TestCase
         $articles = TableRegistry::get('Articles');
         $article = new Article();
         $articles->patchEntity($article, ['id' => '3']);
-        $this->Form->request->query['id'] = '9';
+        $this->Form->request = $this->Form->request->withQueryParams(['id' => '9']);
 
         $this->Form->create($article);
         $this->Form->setValueSources(['context', 'query']);
@@ -8765,8 +8766,9 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Form->request->data['id'] = '8';
-        $this->Form->request->query['id'] = '9';
+        $this->Form->request = $this->Form->request
+            ->withData('id', '8')
+            ->withQueryParams(['id' => '9']);
         $this->Form->setValueSources(['data', 'query', 'context']);
         $result = $this->Form->control('id');
         $expected = [
@@ -8929,7 +8931,7 @@ class FormHelperTest extends TestCase
      */
     public function testSourcesValueDoesntExistPassThrough()
     {
-        $this->Form->request->query['category'] = 'sesame-cookies';
+        $this->Form->request = $this->Form->request->withQueryParams(['category' => 'sesame-cookies']);
 
         $articles = TableRegistry::get('Articles');
         $entity = $articles->newEntity();
