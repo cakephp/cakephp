@@ -319,25 +319,22 @@ class RequestHandlerComponentTest extends TestCase
     }
 
     /**
-     * testViewClassMap method
+     * testViewClassMap
      *
      * @return void
      */
     public function testViewClassMap()
     {
-        $restore = error_reporting(E_ALL & ~E_USER_DEPRECATED);
-
-        $this->RequestHandler->config(['viewClassMap' => ['json' => 'CustomJson']]);
-        $this->RequestHandler->initialize([]);
-        $result = $this->RequestHandler->viewClassMap();
+        $this->RequestHandler->setConfig(['viewClassMap' => ['json' => 'CustomJson']]);
+        $result = $this->RequestHandler->getConfig('viewClassMap');
         $expected = [
             'json' => 'CustomJson',
             'xml' => 'Xml',
             'ajax' => 'Ajax'
         ];
         $this->assertEquals($expected, $result);
-
-        $result = $this->RequestHandler->viewClassMap('xls', 'Excel.Excel');
+        $this->RequestHandler->setConfig(['viewClassMap' => ['xls' => 'Excel.Excel']]);
+        $result = $this->RequestHandler->getConfig('viewClassMap');
         $expected = [
             'json' => 'CustomJson',
             'xml' => 'Xml',
@@ -347,8 +344,55 @@ class RequestHandlerComponentTest extends TestCase
         $this->assertEquals($expected, $result);
 
         $this->RequestHandler->renderAs($this->Controller, 'json');
-        $this->assertEquals('TestApp\View\CustomJsonView', $this->Controller->viewClass);
-        error_reporting($restore);
+        $this->assertEquals('TestApp\View\CustomJsonView', $this->Controller->viewBuilder()->getClassName());
+    }
+
+    /**
+     * test addInputType method
+     *
+     * @group deprecated
+     * @return void
+     */
+    public function testDeprecatedAddInputType()
+    {
+        $this->deprecated(function () {
+            $this->RequestHandler->addInputType('csv', ['str_getcsv']);
+            $result = $this->RequestHandler->getConfig('inputTypeMap');
+            $this->assertArrayHasKey('csv', $result);
+        });
+    }
+
+    /**
+     * testViewClassMap method
+     *
+     * @group deprecated
+     * @return void
+     */
+    public function testViewClassMapMethod()
+    {
+        $this->deprecated(function () {
+            $this->RequestHandler->setConfig(['viewClassMap' => ['json' => 'CustomJson']]);
+            $this->RequestHandler->initialize([]);
+            $result = $this->RequestHandler->viewClassMap();
+            $expected = [
+                'json' => 'CustomJson',
+                'xml' => 'Xml',
+                'ajax' => 'Ajax'
+            ];
+            $this->assertEquals($expected, $result);
+
+            $result = $this->RequestHandler->viewClassMap('xls', 'Excel.Excel');
+            $expected = [
+                'json' => 'CustomJson',
+                'xml' => 'Xml',
+                'ajax' => 'Ajax',
+                'xls' => 'Excel.Excel'
+            ];
+            $this->assertEquals($expected, $result);
+
+            $this->RequestHandler->renderAs($this->Controller, 'json');
+            $this->assertEquals('TestApp\View\CustomJsonView', $this->Controller->viewClass);
+        });
     }
 
     /**
@@ -559,11 +603,10 @@ class RequestHandlerComponentTest extends TestCase
      */
     public function testStartupCustomTypeProcess()
     {
-        $restore = error_reporting(E_ALL & ~E_USER_DEPRECATED);
         $this->Controller->request = new ServerRequest([
             'input' => '"A","csv","string"'
         ]);
-        $this->RequestHandler->addInputType('csv', ['str_getcsv']);
+        $this->RequestHandler->setConfig('inputTypeMap.csv', ['str_getcsv']);
         $this->Controller->request->env('REQUEST_METHOD', 'POST');
         $this->Controller->request->env('CONTENT_TYPE', 'text/csv');
         $event = new Event('Controller.startup', $this->Controller);
@@ -572,7 +615,6 @@ class RequestHandlerComponentTest extends TestCase
             'A', 'csv', 'string'
         ];
         $this->assertEquals($expected, $this->Controller->request->data);
-        error_reporting($restore);
     }
 
     /**
