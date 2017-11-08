@@ -446,7 +446,7 @@ class PaginatorHelperTest extends TestCase
         ]);
 
         $this->Paginator->options(['model' => 'Articles']);
-        $this->Paginator->request['paging'] = [
+        $this->Paginator->request = $this->Paginator->request->withParam('paging', [
             'Articles' => [
                 'current' => 9,
                 'count' => 62,
@@ -469,7 +469,7 @@ class PaginatorHelperTest extends TestCase
                 'page' => 1,
                 'scope' => 'tags',
             ]
-        ];
+        ]);
 
         $result = $this->Paginator->sort('title', 'Title', ['model' => 'Articles']);
         $expected = [

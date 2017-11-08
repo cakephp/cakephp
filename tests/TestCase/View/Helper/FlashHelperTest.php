@@ -143,7 +143,7 @@ class FlashHelperTest extends TestCase
     public function testFlashThrowsException()
     {
         $this->expectException(\UnexpectedValueException::class);
-        $this->View->request->session()->write('Flash.foo', 'bar');
+        $this->View->request->getSession()->write('Flash.foo', 'bar');
         $this->Flash->render('foo');
     }
 
@@ -217,7 +217,7 @@ class FlashHelperTest extends TestCase
             ['div' => ['id' => 'classy-message']], 'Recorded', '/div'
         ];
         $this->assertHtml($expected, $result);
-        $this->assertNull($this->View->request->session()->read('Flash.stack'));
+        $this->assertNull($this->View->request->getSession()->read('Flash.stack'));
     }
 
     /**
