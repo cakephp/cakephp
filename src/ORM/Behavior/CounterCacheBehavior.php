@@ -122,7 +122,7 @@ class CounterCacheBehavior extends Behavior
         }
 
         foreach ($this->_config as $assoc => $settings) {
-            $assoc = $this->_table->association($assoc);
+            $assoc = $this->_table->getAssociation($assoc);
             foreach ($settings as $field => $config) {
                 if (is_int($field)) {
                     continue;
@@ -191,7 +191,7 @@ class CounterCacheBehavior extends Behavior
     protected function _processAssociations(Event $event, EntityInterface $entity)
     {
         foreach ($this->_config as $assoc => $settings) {
-            $assoc = $this->_table->association($assoc);
+            $assoc = $this->_table->getAssociation($assoc);
             $this->_processAssociation($event, $entity, $assoc, $settings);
         }
     }

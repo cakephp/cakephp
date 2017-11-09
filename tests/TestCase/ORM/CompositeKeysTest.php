@@ -212,7 +212,7 @@ class CompositeKeyTest extends TestCase
             ->toArray();
         $expected[0]['articles'] = [];
         $this->assertEquals($expected, $results);
-        $this->assertEquals($table->association('SiteArticles')->strategy(), $strategy);
+        $this->assertEquals($table->getAssociation('SiteArticles')->strategy(), $strategy);
     }
 
     /**
@@ -301,7 +301,7 @@ class CompositeKeyTest extends TestCase
             ],
         ];
         $this->assertEquals($expected, $results);
-        $this->assertEquals($articles->association('SiteTags')->strategy(), $strategy);
+        $this->assertEquals($articles->getAssociation('SiteTags')->strategy(), $strategy);
     }
 
     /**
@@ -481,7 +481,7 @@ class CompositeKeyTest extends TestCase
         $entity = $table->get([3, 2]);
         $result = $table->delete($entity);
 
-        $query = $table->association('SiteArticles')->find('all', [
+        $query = $table->getAssociation('SiteArticles')->find('all', [
             'conditions' => [
                 'author_id' => $entity->id,
                 'site_id' => $entity->site_id

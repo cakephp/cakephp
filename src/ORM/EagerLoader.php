@@ -508,7 +508,7 @@ class EagerLoader
     protected function _normalizeContain(Table $parent, $alias, $options, $paths)
     {
         $defaults = $this->_containOptions;
-        $instance = $parent->association($alias);
+        $instance = $parent->getAssociation($alias);
         if (!$instance) {
             throw new InvalidArgumentException(
                 sprintf('%s is not associated with %s', $parent->getAlias(), $alias)

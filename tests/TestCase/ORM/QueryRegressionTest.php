@@ -1704,9 +1704,9 @@ class QueryRegressionTest extends TestCase
         $this->loadFixtures('Authors', 'Articles', 'Tags', 'ArticlesTags');
         $table = TableRegistry::get('authors');
         $table->hasMany('articles');
-        $articles = $table->association('articles')->target();
+        $articles = $table->getAssociation('articles')->target();
         $articles->hasMany('articlesTags');
-        $tags = $articles->association('articlesTags')->target()->belongsTo('tags');
+        $tags = $articles->getAssociation('articlesTags')->target()->belongsTo('tags');
 
         $tags->target()->getEventManager()->on('Model.beforeFind', function ($e, $query) {
             return $query->formatResults(function ($results) {

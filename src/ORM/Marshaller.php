@@ -88,7 +88,7 @@ class Marshaller
                 $key = $nested;
                 $nested = [];
             }
-            $assoc = $this->_table->association($key);
+            $assoc = $this->_table->getAssociation($key);
             // If the key is not a special field like _ids or _joinData
             // it is a missing association that we should error on.
             if (!$assoc) {

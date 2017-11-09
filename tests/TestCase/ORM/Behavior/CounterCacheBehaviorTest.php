@@ -440,7 +440,7 @@ class CounterCacheBehaviorTest extends TestCase
             'bindingKey' => ['category_id', 'user_id'],
             'foreignKey' => ['category_id', 'user_id']
         ]);
-        $this->post->association('UserCategoryPosts')->target($this->userCategoryPosts);
+        $this->post->getAssociation('UserCategoryPosts')->target($this->userCategoryPosts);
         $this->post->addBehavior('CounterCache', [
             'UserCategoryPosts' => ['post_count']
         ]);

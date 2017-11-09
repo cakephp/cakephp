@@ -511,6 +511,30 @@ class TableTest extends TestCase
     }
 
     /**
+     * Test that the getAssociation() method supports the dot syntax.
+     *
+     * @return void
+     */
+    public function testAssociationDotSyntax()
+    {
+        $groups = TableRegistry::get('Groups');
+        $members = TableRegistry::get('Members');
+        $groupsMembers = TableRegistry::get('GroupsMembers');
+
+        $groups->belongsToMany('Members');
+        $groups->hasMany('GroupsMembers');
+        $groupsMembers->belongsTo('Members');
+        $members->belongsToMany('Groups');
+
+        $association = $groups->getAssociation('GroupsMembers.Members.Groups');
+        $this->assertInstanceOf(BelongsToMany::class, $association);
+        $this->assertSame(
+            $groups->getAssociation('GroupsMembers')->getAssociation('Members')->getAssociation('Groups'),
+            $association
+        );
+    }
+
+    /**
      * Tests that belongsTo() creates and configures correctly the association
      *
      * @return void
@@ -521,7 +545,7 @@ class TableTest extends TestCase
         $table = new Table(['table' => 'dates']);
         $belongsTo = $table->belongsTo('user', $options);
         $this->assertInstanceOf('Cake\ORM\Association\BelongsTo', $belongsTo);
-        $this->assertSame($belongsTo, $table->association('user'));
+        $this->assertSame($belongsTo, $table->getAssociation('user'));
         $this->assertEquals('user', $belongsTo->name());
         $this->assertEquals('fake_id', $belongsTo->foreignKey());
         $this->assertEquals(['a' => 'b'], $belongsTo->conditions());
@@ -539,7 +563,7 @@ class TableTest extends TestCase
         $table = new Table(['table' => 'users']);
         $hasOne = $table->hasOne('profile', $options);
         $this->assertInstanceOf('Cake\ORM\Association\HasOne', $hasOne);
-        $this->assertSame($hasOne, $table->association('profile'));
+        $this->assertSame($hasOne, $table->getAssociation('profile'));
         $this->assertEquals('profile', $hasOne->name());
         $this->assertEquals('user_id', $hasOne->foreignKey());
         $this->assertEquals(['b' => 'c'], $hasOne->conditions());
@@ -670,7 +694,7 @@ class TableTest extends TestCase
         $table = new Table(['table' => 'authors']);
         $hasMany = $table->hasMany('article', $options);
         $this->assertInstanceOf('Cake\ORM\Association\HasMany', $hasMany);
-        $this->assertSame($hasMany, $table->association('article'));
+        $this->assertSame($hasMany, $table->getAssociation('article'));
         $this->assertEquals('article', $hasMany->name());
         $this->assertEquals('author_id', $hasMany->foreignKey());
         $this->assertEquals(['b' => 'c'], $hasMany->conditions());
@@ -788,7 +812,7 @@ class TableTest extends TestCase
         $table = new Table(['table' => 'authors', 'connection' => $this->connection]);
         $belongsToMany = $table->belongsToMany('tag', $options);
         $this->assertInstanceOf('Cake\ORM\Association\BelongsToMany', $belongsToMany);
-        $this->assertSame($belongsToMany, $table->association('tag'));
+        $this->assertSame($belongsToMany, $table->getAssociation('tag'));
         $this->assertEquals('tag', $belongsToMany->name());
         $this->assertEquals('thing_id', $belongsToMany->foreignKey());
         $this->assertEquals(['b' => 'c'], $belongsToMany->conditions());
@@ -1924,7 +1948,7 @@ class TableTest extends TestCase
             ]
         );
         $authors->hasMany('Articles', ['saveStrategy' => 'append']);
-        $this->assertEquals('append', $authors->association('articles')->saveStrategy());
+        $this->assertEquals('append', $authors->getAssociation('articles')->saveStrategy());
     }
 
     /**
@@ -3022,7 +3046,7 @@ class TableTest extends TestCase
         $entity = $table->get(1);
         $result = $table->delete($entity);
 
-        $articles = $table->association('articles')->target();
+        $articles = $table->getAssociation('articles')->target();
         $query = $articles->find('all', [
             'conditions' => [
                 'author_id' => $entity->id
@@ -3067,7 +3091,7 @@ class TableTest extends TestCase
         $entity = $query->first();
         $result = $table->delete($entity);
 
-        $articles = $table->association('articles')->target();
+        $articles = $table->getAssociation('articles')->target();
         $query = $articles->find('all')->where(['author_id' => $entity->id]);
         $this->assertCount(2, $query->execute(), 'Should find rows.');
     }
@@ -3088,7 +3112,7 @@ class TableTest extends TestCase
         $entity = $query->first();
         $table->delete($entity);
 
-        $junction = $table->association('tags')->junction();
+        $junction = $table->getAssociation('tags')->junction();
         $query = $junction->find('all')->where(['article_id' => 1]);
         $this->assertNull($query->all()->first(), 'Should not find any rows.');
     }
@@ -4347,7 +4371,7 @@ class TableTest extends TestCase
         $tags[] = $newTag;
 
         $tagsTable->save($newTag);
-        $table->association('tags')->link($article, $tags);
+        $table->getAssociation('tags')->link($article, $tags);
 
         $this->assertEquals($article->tags, $tags);
         foreach ($tags as $tag) {
@@ -4867,7 +4891,7 @@ class TableTest extends TestCase
             ->where(['id' => 1])
             ->contain(['tags'])->first();
 
-        $table->association('tags')->unlink($article, [$article->tags[0]]);
+        $table->getAssociation('tags')->unlink($article, [$article->tags[0]]);
         $this->assertCount(1, $article->tags);
         $this->assertEquals(2, $article->tags[0]->get('id'));
         $this->assertFalse($article->isDirty('tags'));
@@ -4889,7 +4913,7 @@ class TableTest extends TestCase
         $tags[] = new \TestApp\Model\Entity\Tag(['id' => 1], $options);
         $tags[] = new \TestApp\Model\Entity\Tag(['id' => 2], $options);
 
-        $table->association('tags')->unlink($article, $tags);
+        $table->getAssociation('tags')->unlink($article, $tags);
         $left = $table->find('all')->where(['id' => 1])->contain(['tags'])->first();
         $this->assertEmpty($left->tags);
     }
@@ -4916,7 +4940,7 @@ class TableTest extends TestCase
             'tag_id' => 2
         ], $options);
 
-        $table->association('tags')->unlink($article, $tags);
+        $table->getAssociation('tags')->unlink($article, $tags);
         $left = $table->find('all')->where(['id' => 1])->contain(['tags'])->first();
         $this->assertEmpty($left->tags);
     }
@@ -4938,7 +4962,7 @@ class TableTest extends TestCase
         $tags[] = new \TestApp\Model\Entity\Tag(['id' => 3], $options);
         $tags[] = new \TestApp\Model\Entity\Tag(['name' => 'foo']);
 
-        $table->association('tags')->replaceLinks($article, $tags);
+        $table->getAssociation('tags')->replaceLinks($article, $tags);
         $this->assertEquals(2, $article->tags[0]->id);
         $this->assertEquals(3, $article->tags[1]->id);
         $this->assertEquals(4, $article->tags[2]->id);
@@ -4966,7 +4990,7 @@ class TableTest extends TestCase
         $article = new Entity(['id' => 1], $options);
         $tags = [];
 
-        $table->association('tags')->replaceLinks($article, $tags);
+        $table->getAssociation('tags')->replaceLinks($article, $tags);
         $this->assertSame($tags, $article->tags);
         $article = $table->find('all')->where(['id' => 1])->contain(['tags'])->first();
         $this->assertEmpty($article->tags);
@@ -4995,7 +5019,7 @@ class TableTest extends TestCase
         ], $options);
         $tags[] = new \TestApp\Model\Entity\Tag(['id' => 3], $options);
 
-        $table->association('tags')->replaceLinks($article, $tags);
+        $table->getAssociation('tags')->replaceLinks($article, $tags);
         $this->assertSame($tags, $article->tags);
         $article = $table->find('all')->where(['id' => 1])->contain(['tags'])->first();
         $this->assertCount(2, $article->tags);
@@ -6091,7 +6115,7 @@ class TableTest extends TestCase
         $eventManager = $table->getEventManager();
 
         $associationBeforeFindCount = 0;
-        $table->association('authors')->target()->getEventManager()->on(
+        $table->getAssociation('authors')->target()->getEventManager()->on(
             'Model.beforeFind',
             function (Event $event, Query $query, ArrayObject $options, $primary) use (&$associationBeforeFindCount) {
                 $this->assertTrue(is_bool($primary));

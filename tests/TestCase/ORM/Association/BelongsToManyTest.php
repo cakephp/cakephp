@@ -150,20 +150,20 @@ class BelongsToManyTest extends TestCase
         $this->assertInstanceOf('Cake\ORM\Table', $junction);
         $this->assertEquals('ArticlesTags', $junction->alias());
         $this->assertEquals('articles_tags', $junction->table());
-        $this->assertSame($this->article, $junction->association('Articles')->target());
-        $this->assertSame($this->tag, $junction->association('Tags')->target());
+        $this->assertSame($this->article, $junction->getAssociation('Articles')->target());
+        $this->assertSame($this->tag, $junction->getAssociation('Tags')->target());
 
         $belongsTo = '\Cake\ORM\Association\BelongsTo';
-        $this->assertInstanceOf($belongsTo, $junction->association('Articles'));
-        $this->assertInstanceOf($belongsTo, $junction->association('Tags'));
+        $this->assertInstanceOf($belongsTo, $junction->getAssociation('Articles'));
+        $this->assertInstanceOf($belongsTo, $junction->getAssociation('Tags'));
 
-        $this->assertSame($junction, $this->tag->association('ArticlesTags')->target());
-        $this->assertSame($this->article, $this->tag->association('Articles')->target());
+        $this->assertSame($junction, $this->tag->getAssociation('ArticlesTags')->target());
+        $this->assertSame($this->article, $this->tag->getAssociation('Articles')->target());
 
         $hasMany = '\Cake\ORM\Association\HasMany';
         $belongsToMany = '\Cake\ORM\Association\BelongsToMany';
-        $this->assertInstanceOf($belongsToMany, $this->tag->association('Articles'));
-        $this->assertInstanceOf($hasMany, $this->tag->association('ArticlesTags'));
+        $this->assertInstanceOf($belongsToMany, $this->tag->getAssociation('Articles'));
+        $this->assertInstanceOf($hasMany, $this->tag->getAssociation('ArticlesTags'));
 
         $this->assertSame($junction, $assoc->junction());
         $junction2 = TableRegistry::get('Foos');
@@ -173,9 +173,9 @@ class BelongsToManyTest extends TestCase
         $assoc->junction('ArticlesTags');
         $this->assertSame($junction, $assoc->junction());
 
-        $this->assertSame($assoc->strategy(), $this->tag->association('Articles')->strategy());
-        $this->assertSame($assoc->strategy(), $this->tag->association('ArticlesTags')->strategy());
-        $this->assertSame($assoc->strategy(), $this->article->association('ArticlesTags')->strategy());
+        $this->assertSame($assoc->strategy(), $this->tag->getAssociation('Articles')->strategy());
+        $this->assertSame($assoc->strategy(), $this->tag->getAssociation('ArticlesTags')->strategy());
+        $this->assertSame($assoc->strategy(), $this->article->getAssociation('ArticlesTags')->strategy());
     }
 
     /**
@@ -218,13 +218,13 @@ class BelongsToManyTest extends TestCase
             'foreignKey' => 'tag',
             'targetForeignKey' => 'article'
         ]);
-        $junction = $this->article->association('Tags')->junction();
-        $this->assertEquals('article', $junction->association('Articles')->foreignKey());
-        $this->assertEquals('article', $this->article->association('ArticlesTags')->foreignKey());
+        $junction = $this->article->getAssociation('Tags')->junction();
+        $this->assertEquals('article', $junction->getAssociation('Articles')->foreignKey());
+        $this->assertEquals('article', $this->article->getAssociation('ArticlesTags')->foreignKey());
 
-        $junction = $this->tag->association('Articles')->junction();
-        $this->assertEquals('tag', $junction->association('Tags')->foreignKey());
-        $this->assertEquals('tag', $this->tag->association('ArticlesTags')->foreignKey());
+        $junction = $this->tag->getAssociation('Articles')->junction();
+        $this->assertEquals('tag', $junction->getAssociation('Tags')->foreignKey());
+        $this->assertEquals('tag', $this->tag->getAssociation('ArticlesTags')->foreignKey());
     }
 
     /**
@@ -300,7 +300,7 @@ class BelongsToManyTest extends TestCase
         $association = new BelongsToMany('Tags', $config);
         $association->junction($articleTag);
         $this->article
-            ->association($articleTag->alias())
+            ->getAssociation($articleTag->alias())
             ->conditions(['click_count' => 3]);
 
         $articleTag->expects($this->once())
@@ -333,7 +333,7 @@ class BelongsToManyTest extends TestCase
         $association = new BelongsToMany('Tags', $config);
         $association->junction($articleTag);
         $this->article
-            ->association($articleTag->alias())
+            ->getAssociation($articleTag->alias())
             ->conditions(['click_count' => 3]);
 
         $articleTag->expects($this->never())
@@ -360,7 +360,7 @@ class BelongsToManyTest extends TestCase
         ];
         $association = new BelongsToMany('Tag', $config);
         $association->junction($articleTag);
-        $this->article->association($articleTag->alias());
+        $this->article->getAssociation($articleTag->alias());
 
         $counter = $this->getMockBuilder('StdClass')
             ->setMethods(['__invoke'])
@@ -1037,10 +1037,10 @@ class BelongsToManyTest extends TestCase
             'targetForeignKey' => 'Tag'
         ]);
         $junction = $assoc->junction();
-        $this->assertEquals('Art', $junction->association('Articles')->foreignKey());
-        $this->assertEquals('Tag', $junction->association('Tags')->foreignKey());
+        $this->assertEquals('Art', $junction->getAssociation('Articles')->foreignKey());
+        $this->assertEquals('Tag', $junction->getAssociation('Tags')->foreignKey());
 
-        $inverseRelation = $this->tag->association('Articles');
+        $inverseRelation = $this->tag->getAssociation('Articles');
         $this->assertEquals('Tag', $inverseRelation->foreignKey());
         $this->assertEquals('Art', $inverseRelation->targetForeignKey());
     }
@@ -1096,25 +1096,25 @@ class BelongsToManyTest extends TestCase
         // Generate associations
         $assoc->junction();
 
-        $tagAssoc = $articles->association('Tags');
+        $tagAssoc = $articles->getAssociation('Tags');
         $this->assertNotEmpty($tagAssoc, 'btm should exist');
         $this->assertEquals($conditions, $tagAssoc->conditions());
         $this->assertEquals('target_foreign_key', $tagAssoc->targetForeignKey());
         $this->assertEquals('foreign_key', $tagAssoc->foreignKey());
 
-        $jointAssoc = $articles->association('SpecialTags');
+        $jointAssoc = $articles->getAssociation('SpecialTags');
         $this->assertNotEmpty($jointAssoc, 'has many to junction should exist');
         $this->assertInstanceOf('Cake\ORM\Association\HasMany', $jointAssoc);
         $this->assertEquals('foreign_key', $jointAssoc->foreignKey());
 
-        $articleAssoc = $tags->association('Articles');
+        $articleAssoc = $tags->getAssociation('Articles');
         $this->assertNotEmpty($articleAssoc, 'reverse btm should exist');
         $this->assertInstanceOf('Cake\ORM\Association\BelongsToMany', $articleAssoc);
         $this->assertEquals($conditions, $articleAssoc->conditions());
         $this->assertEquals('foreign_key', $articleAssoc->targetForeignKey(), 'keys should swap');
         $this->assertEquals('target_foreign_key', $articleAssoc->foreignKey(), 'keys should swap');
 
-        $jointAssoc = $tags->association('SpecialTags');
+        $jointAssoc = $tags->getAssociation('SpecialTags');
         $this->assertNotEmpty($jointAssoc, 'has many to junction should exist');
         $this->assertInstanceOf('Cake\ORM\Association\HasMany', $jointAssoc);
         $this->assertEquals('target_foreign_key', $jointAssoc->foreignKey());
