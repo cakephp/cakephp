@@ -126,7 +126,7 @@ class DigestAuthenticateTest extends TestCase
             'cnonce' => '0a4f113b'
         ];
         $data['response'] = $this->auth->generateResponseHash($data, '09faa9931501bf30f0d4253fa7763022', 'GET');
-        $request->env('PHP_AUTH_DIGEST', $this->digestHeader($data));
+        $request = $request->withEnv('PHP_AUTH_DIGEST', $this->digestHeader($data));
 
         $this->auth->unauthenticated($request, $this->response);
     }
@@ -151,10 +151,10 @@ class DigestAuthenticateTest extends TestCase
 
         $this->assertNotEmpty($e);
 
-        $header = $e->responseHeader()[0];
+        $header = $e->responseHeader();
         $this->assertRegexp(
-            '/^WWW\-Authenticate: Digest realm="localhost",qop="auth",nonce="[a-zA-Z0-9=]+",opaque="123abc"$/',
-            $e->responseHeader()[0]
+            '/^Digest realm="localhost",qop="auth",nonce="[a-zA-Z0-9=]+",opaque="123abc"$/',
+            $header['WWW-Authenticate']
         );
     }
 
@@ -178,7 +178,7 @@ class DigestAuthenticateTest extends TestCase
             'qop' => 'auth',
         ];
         $data['response'] = $this->auth->generateResponseHash($data, '09faa9931501bf30f0d4253fa7763022', 'GET');
-        $request->env('PHP_AUTH_DIGEST', $this->digestHeader($data));
+        $request = $request->withEnv('PHP_AUTH_DIGEST', $this->digestHeader($data));
 
         try {
             $this->auth->unauthenticated($request, $this->response);
@@ -186,7 +186,7 @@ class DigestAuthenticateTest extends TestCase
         }
         $this->assertNotEmpty($e);
 
-        $header = $e->responseHeader()[0];
+        $header = $e->responseHeader()['WWW-Authenticate'];
         $this->assertContains('stale=true', $header);
     }
 
@@ -211,7 +211,7 @@ class DigestAuthenticateTest extends TestCase
             'qop' => 'auth',
         ];
         $data['response'] = $this->auth->generateResponseHash($data, '09faa9931501bf30f0d4253fa7763022', 'GET');
-        $request->env('PHP_AUTH_DIGEST', $this->digestHeader($data));
+        $request = $request->withEnv('PHP_AUTH_DIGEST', $this->digestHeader($data));
         $result = $this->auth->authenticate($request, $this->response);
         $this->assertFalse($result, 'Stale nonce should fail');
     }
@@ -239,7 +239,7 @@ class DigestAuthenticateTest extends TestCase
             'qop' => 'auth',
         ];
         $data['response'] = $this->auth->generateResponseHash($data, '09faa9931501bf30f0d4253fa7763022', 'GET');
-        $request->env('PHP_AUTH_DIGEST', $this->digestHeader($data));
+        $request = $request->withEnv('PHP_AUTH_DIGEST', $this->digestHeader($data));
         $result = $this->auth->authenticate($request, $this->response);
         $this->assertFalse($result, 'Empty nonce should fail');
     }
@@ -265,7 +265,7 @@ class DigestAuthenticateTest extends TestCase
             'qop' => 'auth',
         ];
         $data['response'] = $this->auth->generateResponseHash($data, '09faa9931501bf30f0d4253fa7763022', 'GET');
-        $request->env('PHP_AUTH_DIGEST', $this->digestHeader($data));
+        $request = $request->withEnv('PHP_AUTH_DIGEST', $this->digestHeader($data));
 
         $result = $this->auth->authenticate($request, $this->response);
         $expected = [
@@ -301,7 +301,7 @@ class DigestAuthenticateTest extends TestCase
             'qop' => 'auth',
         ];
         $data['response'] = $this->auth->generateResponseHash($data, '09faa9931501bf30f0d4253fa7763022', 'GET');
-        $request->env('PHP_AUTH_DIGEST', $this->digestHeader($data));
+        $request = $request->withEnv('PHP_AUTH_DIGEST', $this->digestHeader($data));
 
         $result = $this->auth->authenticate($request, $this->response);
         $expected = [
@@ -336,7 +336,7 @@ class DigestAuthenticateTest extends TestCase
             'qop' => 'auth',
         ];
         $data['response'] = $this->auth->generateResponseHash($data, '09faa9931501bf30f0d4253fa7763022', 'GET');
-        $request->env('PHP_AUTH_DIGEST', $this->digestHeader($data));
+        $request = $request->withEnv('PHP_AUTH_DIGEST', $this->digestHeader($data));
 
         $result = $this->auth->authenticate($request, $this->response);
         $expected = [
@@ -373,7 +373,7 @@ class DigestAuthenticateTest extends TestCase
             'qop' => 'auth',
         ];
         $data['response'] = $this->auth->generateResponseHash($data, '09faa9931501bf30f0d4253fa7763022', 'GET');
-        $request->env('PHP_AUTH_DIGEST', $this->digestHeader($data));
+        $request = $request->withEnv('PHP_AUTH_DIGEST', $this->digestHeader($data));
         $this->auth->unauthenticated($request, $this->response);
     }
 
@@ -393,8 +393,8 @@ class DigestAuthenticateTest extends TestCase
         $result = $this->auth->loginHeaders($request);
 
         $this->assertRegexp(
-            '/^WWW\-Authenticate: Digest realm="localhost",qop="auth",nonce="[a-zA-Z0-9=]+",opaque="[a-f0-9]+"$/',
-            $result
+            '/^Digest realm="localhost",qop="auth",nonce="[a-zA-Z0-9=]+",opaque="[a-f0-9]+"$/',
+            $result['WWW-Authenticate']
         );
     }
 

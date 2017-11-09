@@ -181,7 +181,7 @@ class BasicAuthenticateTest extends TestCase
 
         $this->assertNotEmpty($e);
 
-        $expected = ['WWW-Authenticate: Basic realm="localhost"'];
+        $expected = ['WWW-Authenticate' => 'Basic realm="localhost"'];
         $this->assertEquals($expected, $e->responseHeader());
     }
 

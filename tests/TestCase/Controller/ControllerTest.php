@@ -510,7 +510,7 @@ class ControllerTest extends TestCase
         $Controller = new Controller(null, new Response());
 
         $Controller->getEventManager()->on('Controller.beforeRedirect', function (Event $event, $url, Response $response) {
-            $response->location('https://book.cakephp.org');
+            $response = $response->withLocation('https://book.cakephp.org');
         });
 
         $response = $Controller->redirect('http://cakephp.org', 301);
@@ -531,13 +531,13 @@ class ControllerTest extends TestCase
         $Controller = new Controller(null, $Response);
 
         $Controller->getEventManager()->on('Controller.beforeRedirect', function (Event $event, $url, Response $response) {
-            $response->statusCode(302);
+            $response = $response->withStatus(302);
         });
 
         $response = $Controller->redirect('http://cakephp.org', 301);
 
-        $this->assertEquals('http://cakephp.org', $response->header()['Location']);
-        $this->assertEquals(302, $response->statusCode());
+        $this->assertEquals('http://cakephp.org', $response->getHeaderLine('Location'));
+        $this->assertEquals(302, $response->getStatusCode());
     }
 
     public function testRedirectBeforeRedirectListenerReturnResponse()
