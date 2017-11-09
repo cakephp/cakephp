@@ -83,7 +83,7 @@ class Digest
         $response = $this->_client->get(
             $request->getUri(),
             [],
-            ['auth' => ['type' => 'basic']]
+            ['auth' => ['type' => null]]
         );
 
         if (!$response->getHeader('WWW-Authenticate')) {
