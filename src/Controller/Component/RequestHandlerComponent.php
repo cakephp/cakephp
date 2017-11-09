@@ -331,14 +331,17 @@ class RequestHandlerComponent extends Component
         if ($this->ext && $isRecognized) {
             $this->renderAs($controller, $this->ext);
         } else {
-            $controller->response = $response->withCharset(Configure::read('App.encoding'));
+            $response = $response->withCharset(Configure::read('App.encoding'));
         }
 
         if ($this->_config['checkHttpCache'] &&
             $response->checkNotModified($request)
         ) {
+            $controller->response = $response;
+
             return false;
         }
+        $controller->response = $response;
     }
 
     /**
@@ -675,7 +678,7 @@ class RequestHandlerComponent extends Component
     {
         $response = $this->getController()->response;
 
-        return $response->mapType($response->type());
+        return $response->mapType($response->getType());
     }
 
     /**

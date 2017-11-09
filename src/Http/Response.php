@@ -1685,7 +1685,7 @@ class Response implements ResponseInterface
             'Last-Modified'
         ];
         foreach ($remove as $header) {
-            unset($this->headers[$header]);
+            $this->_clearHeader($header);
         }
     }
 
@@ -1991,7 +1991,7 @@ class Response implements ResponseInterface
 
         $modifiedSince = $request->getHeaderLine('If-Modified-Since');
         if ($modifiedSince && $this->hasHeader('Last-Modified')) {
-            $timeMatches = strtotime($this->getHeaderLine('Last-Modifed')) === strtotime($modifiedSince);
+            $timeMatches = strtotime($this->getHeaderLine('Last-Modified')) === strtotime($modifiedSince);
         }
         $checks = compact('etagMatches', 'timeMatches');
         if (empty($checks)) {
