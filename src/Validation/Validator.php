@@ -16,6 +16,7 @@ namespace Cake\Validation;
 
 use ArrayAccess;
 use ArrayIterator;
+use Cake\Utility\Hash;
 use Countable;
 use InvalidArgumentException;
 use IteratorAggregate;
@@ -103,6 +104,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     public function errors(array $data, $newRecord = true)
     {
         $errors = [];
+
+        $data = Hash::flatten($data);
 
         $requiredMessage = 'This field is required';
         $emptyMessage = 'This field cannot be left empty';

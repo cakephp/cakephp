@@ -580,8 +580,21 @@ class EntityContext implements ContextInterface
         $parts = explode('.', $field);
         $entity = $this->entity($parts);
 
+        if (is_array($entity)) {
+            $entity = $this->entity(array_shift($parts));
+            $fieldName = $field;
+        }
+        else {
+            $fieldName = array_pop($parts);
+        }
+
         if ($entity instanceof EntityInterface) {
-            return $entity->errors(array_pop($parts));
+            return $entity->errors($fieldName);
+        }
+
+        if (is_array($entity)) {
+            $entity = $this->entity(array_shift($parts));
+            return $entity->errors($field);
         }
 
         return [];
