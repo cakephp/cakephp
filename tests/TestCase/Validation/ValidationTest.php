@@ -2907,9 +2907,13 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::isInteger(-10));
         $this->assertTrue(Validation::isInteger(0));
         $this->assertTrue(Validation::isInteger(10));
+        $this->assertTrue(Validation::isInteger(012));
+        $this->assertTrue(Validation::isInteger(-012));
         $this->assertTrue(Validation::isInteger('-10'));
         $this->assertTrue(Validation::isInteger('0'));
         $this->assertTrue(Validation::isInteger('10'));
+        $this->assertTrue(Validation::isInteger('012'));
+        $this->assertTrue(Validation::isInteger('-012'));
 
         $this->assertFalse(Validation::isInteger('2.5'));
         $this->assertFalse(Validation::isInteger([]));
