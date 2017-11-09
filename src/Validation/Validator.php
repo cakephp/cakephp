@@ -16,6 +16,7 @@ namespace Cake\Validation;
 
 use ArrayAccess;
 use ArrayIterator;
+use Cake\Utility\Hash;
 use Countable;
 use InvalidArgumentException;
 use IteratorAggregate;
