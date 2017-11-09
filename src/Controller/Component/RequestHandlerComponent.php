@@ -331,7 +331,7 @@ class RequestHandlerComponent extends Component
         if ($this->ext && $isRecognized) {
             $this->renderAs($controller, $this->ext);
         } else {
-            $response->charset(Configure::read('App.encoding'));
+            $controller->response = $response->withCharset(Configure::read('App.encoding'));
         }
 
         if ($this->_config['checkHttpCache'] &&
@@ -652,14 +652,15 @@ class RequestHandlerComponent extends Component
             return false;
         }
         if (!$request->getParam('requested')) {
-            $response->type($cType);
+            $response = $response->withType($cType);
         }
         if (!empty($options['charset'])) {
-            $response->charset($options['charset']);
+            $response = $response->withCharset($options['charset']);
         }
         if (!empty($options['attachment'])) {
-            $response->download($options['attachment']);
+            $response = $response->withDownload($options['attachment']);
         }
+        $controller->response = $response;
 
         return true;
     }

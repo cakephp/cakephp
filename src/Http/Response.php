@@ -484,9 +484,7 @@ class Response implements ResponseInterface
      */
     public function send()
     {
-        deprecationWarning(
-            'Will be removed in 4.0.0'
-        );
+        deprecationWarning('Response::send() will be removed in 4.0.0');
 
         if ($this->hasHeader('Location') && $this->_status === 200) {
             $this->statusCode(302);
@@ -1625,7 +1623,7 @@ class Response implements ResponseInterface
     {
         deprecationWarning(
             'Response::modified() is deprecated. ' .
-            'Use withModified() instead.'
+            'Use withModified() or getHeaderLine("Last-Modified") instead.'
         );
 
         if ($time !== null) {
@@ -1668,12 +1666,14 @@ class Response implements ResponseInterface
      * setting the status code to "304 Not Modified" and removing all
      * conflicting headers
      *
+     * *Warning* This method mutates the response in-place and should be avoided.
+     *
      * @return void
      */
     public function notModified()
     {
-        $this->statusCode(304);
-        $this->body('');
+        $this->_status = 304;
+        $this->_createStream();
 
         $remove = [
             'Allow',
@@ -1790,7 +1790,7 @@ class Response implements ResponseInterface
     {
         deprecationWarning(
             'Response::etag() is deprecated. ' .
-            'Use withEtag() instead.'
+            'Use withEtag() or getHeaderLine("Etag") instead.'
         );
 
         if ($hash !== null) {
@@ -1976,18 +1976,22 @@ class Response implements ResponseInterface
      * the Last-Modified etag response header before calling this method. Otherwise
      * a comparison will not be possible.
      *
+     * *Warning* This method mutates the response in-place and should be avoided.
+     *
      * @param \Cake\Http\ServerRequest $request Request object
      * @return bool Whether the response was marked as not modified or not.
      */
     public function checkNotModified(ServerRequest $request)
     {
-        $etags = preg_split('/\s*,\s*/', (string)$request->header('If-None-Match'), 0, PREG_SPLIT_NO_EMPTY);
-        $modifiedSince = $request->header('If-Modified-Since');
-        if ($responseTag = $this->etag()) {
+        $etags = preg_split('/\s*,\s*/', (string)$request->getHeaderLine('If-None-Match'), 0, PREG_SPLIT_NO_EMPTY);
+        $responseTag = $this->getHeaderLine('Etag');
+        if ($responseTag) {
             $etagMatches = in_array('*', $etags) || in_array($responseTag, $etags);
         }
-        if ($modifiedSince) {
-            $timeMatches = strtotime($this->modified()) === strtotime($modifiedSince);
+
+        $modifiedSince = $request->getHeaderLine('If-Modified-Since');
+        if ($modifiedSince && $this->hasHeader('Last-Modified')) {
+            $timeMatches = strtotime($this->getHeaderLine('Last-Modifed')) === strtotime($modifiedSince);
         }
         $checks = compact('etagMatches', 'timeMatches');
         if (empty($checks)) {
