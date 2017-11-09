@@ -1469,7 +1469,7 @@ class ServerRequestTest extends TestCase
         $this->assertEquals(1337, $request->getHeaderLine('Content-length'), 'old request is unchanged');
         $this->assertEquals('', $new->getHeaderLine('Content-length'), 'new request is correct');
 
-        $this->deprecated(function () use($new) {
+        $this->deprecated(function () use ($new) {
             $this->assertNull($new->header('Content-Length'));
         });
     }

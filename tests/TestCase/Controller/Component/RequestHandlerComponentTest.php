@@ -17,8 +17,8 @@ namespace Cake\Test\TestCase\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\RequestHandlerComponent;
 use Cake\Event\Event;
-use Cake\Http\ServerRequest;
 use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
@@ -1240,7 +1240,7 @@ class RequestHandlerComponentTest extends TestCase
     public function testCheckNotModifiedByEtagAndTime()
     {
         $this->Controller->request = $this->request
-            ->withHeader('If-None-Match',  'W/"something", "other"')
+            ->withHeader('If-None-Match', 'W/"something", "other"')
             ->withHeader('If-Modified-Since', '2012-01-01 00:00:00');
 
         $response = new Response();
