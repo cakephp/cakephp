@@ -18,6 +18,7 @@ use Cake\Routing\Middleware\RoutingMiddleware;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use TestApp\Application;
+use TestApp\Middleware\DumbMiddleware;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
 
@@ -247,8 +248,10 @@ class RoutingMiddlewareTest extends TestCase
 
                 return $next($req, $res);
             });
+            $routes->registerMiddleware('dumb', DumbMiddleware::class);
+
             // Connect middleware in reverse to test ordering.
-            $routes->applyMiddleware('second', 'first');
+            $routes->applyMiddleware('second', 'first', 'dumb');
 
             $routes->connect('/ping', ['controller' => 'Pings']);
         });

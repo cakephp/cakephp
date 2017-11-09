@@ -418,14 +418,11 @@ class RouteCollection
      * scope or any child scopes that share the same RouteCollection.
      *
      * @param string $name The name of the middleware. Used when applying middleware to a scope.
-     * @param callable $middleware The middleware object to register.
+     * @param callable|string $middleware The middleware callable or class name to register.
      * @return $this
      */
-    public function registerMiddleware($name, callable $middleware)
+    public function registerMiddleware($name, $middleware)
     {
-        if (is_string($middleware)) {
-            throw new RuntimeException("The '$name' middleware is not a callable object.");
-        }
         $this->_middleware[$name] = $middleware;
 
         return $this;

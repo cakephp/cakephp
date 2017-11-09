@@ -17,7 +17,7 @@ namespace TestApp\Middleware;
 /**
  * Testing stub for middleware tests.
  */
-class DumbMiddleWare
+class DumbMiddleware
 {
     public function __invoke($request, $response, $next)
     {
