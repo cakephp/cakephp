@@ -700,16 +700,16 @@ class ServerRequestTest extends TestCase
         $request->trustProxy = true;
         $this->assertEquals('real.ip', $request->clientIp());
 
-        $request->env('HTTP_X_FORWARDED_FOR', '');
+        $request = $request->withEnv('HTTP_X_FORWARDED_FOR', '');
         $this->assertEquals('192.168.1.2', $request->clientIp());
 
         $request->trustProxy = false;
         $this->assertEquals('192.168.1.3', $request->clientIp());
 
-        $request->env('HTTP_X_FORWARDED_FOR', '');
+        $request = $request->withEnv('HTTP_X_FORWARDED_FOR', '');
         $this->assertEquals('192.168.1.3', $request->clientIp());
 
-        $request->env('HTTP_CLIENT_IP', '');
+        $request = $request->withEnv('HTTP_CLIENT_IP', '');
         $this->assertEquals('192.168.1.3', $request->clientIp());
     }
 
@@ -723,27 +723,27 @@ class ServerRequestTest extends TestCase
         $request = new ServerRequest();
         $request->webroot = '/';
 
-        $request->env('HTTP_REFERER', 'http://cakephp.org');
+        $request = $request->withEnv('HTTP_REFERER', 'http://cakephp.org');
         $result = $request->referer();
         $this->assertSame('http://cakephp.org', $result);
 
-        $request->env('HTTP_REFERER', '');
+        $request = $request->withEnv('HTTP_REFERER', '');
         $result = $request->referer();
         $this->assertSame('/', $result);
 
-        $request->env('HTTP_REFERER', Configure::read('App.fullBaseUrl') . '/some/path');
+        $request = $request->withEnv('HTTP_REFERER', Configure::read('App.fullBaseUrl') . '/some/path');
         $result = $request->referer(true);
         $this->assertSame('/some/path', $result);
 
-        $request->env('HTTP_REFERER', Configure::read('App.fullBaseUrl') . '/0');
+        $request = $request->withEnv('HTTP_REFERER', Configure::read('App.fullBaseUrl') . '/0');
         $result = $request->referer(true);
         $this->assertSame('/0', $result);
 
-        $request->env('HTTP_REFERER', Configure::read('App.fullBaseUrl') . '/');
+        $request = $request->withEnv('HTTP_REFERER', Configure::read('App.fullBaseUrl') . '/');
         $result = $request->referer(true);
         $this->assertSame('/', $result);
 
-        $request->env('HTTP_REFERER', Configure::read('App.fullBaseUrl') . '/some/path');
+        $request = $request->withEnv('HTTP_REFERER', Configure::read('App.fullBaseUrl') . '/some/path');
         $result = $request->referer(false);
         $this->assertSame(Configure::read('App.fullBaseUrl') . '/some/path', $result);
     }
@@ -762,7 +762,7 @@ class ServerRequestTest extends TestCase
         $request->base = '/waves';
         $request->here = '/waves/users/login';
 
-        $request->env('HTTP_REFERER', Configure::read('App.fullBaseUrl') . '/waves/waves/add');
+        $request = $request->withEnv('HTTP_REFERER', Configure::read('App.fullBaseUrl') . '/waves/waves/add');
 
         $result = $request->referer(true);
         $this->assertSame('/waves/add', $result);
@@ -1437,7 +1437,10 @@ class ServerRequestTest extends TestCase
 
         $this->assertEquals('a, b', $request->getHeaderLine('Double'), 'old request is unchanged');
         $this->assertEquals('a, b, c', $new->getHeaderLine('Double'), 'new request is correct');
-        $this->assertEquals(['a', 'b', 'c'], $new->header('Double'));
+
+        $this->deprecated(function () use ($new) {
+            $this->assertEquals(['a', 'b', 'c'], $new->header('Double'));
+        });
 
         $new = $request->withAddedHeader('Content-Length', 777);
         $this->assertEquals([1337, 777], $new->getHeader('Content-Length'), 'scalar values are appended');
@@ -1465,7 +1468,10 @@ class ServerRequestTest extends TestCase
 
         $this->assertEquals(1337, $request->getHeaderLine('Content-length'), 'old request is unchanged');
         $this->assertEquals('', $new->getHeaderLine('Content-length'), 'new request is correct');
-        $this->assertNull($new->header('Content-Length'));
+
+        $this->deprecated(function () use($new) {
+            $this->assertNull($new->header('Content-Length'));
+        });
     }
 
     /**
@@ -2407,15 +2413,17 @@ class ServerRequestTest extends TestCase
      */
     public function testQuery()
     {
-        $array = [
-            'query' => ['foo' => 'bar', 'zero' => '0']
-        ];
-        $request = new ServerRequest($array);
+        $this->deprecated(function () {
+            $array = [
+                'query' => ['foo' => 'bar', 'zero' => '0']
+            ];
+            $request = new ServerRequest($array);
 
-        $this->assertSame('bar', $request->query('foo'));
-        $this->assertSame('0', $request->query('zero'));
-        $this->assertNull($request->query('imaginary'));
-        $this->assertSame($array['query'], $request->query());
+            $this->assertSame('bar', $request->query('foo'));
+            $this->assertSame('0', $request->query('zero'));
+            $this->assertNull($request->query('imaginary'));
+            $this->assertSame($array['query'], $request->query());
+        });
     }
 
     /**
@@ -2551,13 +2559,19 @@ class ServerRequestTest extends TestCase
             ]
         ];
         $request = new ServerRequest(compact('post'));
-        $this->assertEquals($post['Model'], $request->data('Model'));
+        $this->deprecated(function () use ($post, $request) {
+            $this->assertEquals($post['Model'], $request->data('Model'));
+        });
         $this->assertEquals($post['Model'], $request->getData('Model'));
 
-        $this->assertEquals($post, $request->data());
+        $this->deprecated(function () use ($post, $request) {
+            $this->assertEquals($post, $request->data());
+        });
         $this->assertEquals($post, $request->getData());
 
-        $this->assertNull($request->data('Model.imaginary'));
+        $this->deprecated(function () use ($request) {
+            $this->assertNull($request->data('Model.imaginary'));
+        });
         $this->assertNull($request->getData('Model.imaginary'));
 
         $this->assertSame('value', $request->getData('Model.field', 'default'));
@@ -2584,20 +2598,22 @@ class ServerRequestTest extends TestCase
      */
     public function testDataWriting()
     {
-        $_POST['data'] = [
-            'Model' => [
-                'field' => 'value'
-            ]
-        ];
-        $request = new ServerRequest();
-        $result = $request->data('Model.new_value', 'new value');
-        $this->assertSame($result, $request, 'Return was not $this');
+        $this->deprecated(function () {
+            $_POST['data'] = [
+                'Model' => [
+                    'field' => 'value'
+                ]
+            ];
+            $request = new ServerRequest();
+            $result = $request->data('Model.new_value', 'new value');
+            $this->assertSame($result, $request, 'Return was not $this');
 
-        $this->assertEquals('new value', $request->data['Model']['new_value']);
+            $this->assertEquals('new value', $request->data['Model']['new_value']);
 
-        $request->data('Post.title', 'New post')->data('Comment.1.author', 'Mark');
-        $this->assertEquals('New post', $request->data['Post']['title']);
-        $this->assertEquals('Mark', $request->data['Comment']['1']['author']);
+            $request->data('Post.title', 'New post')->data('Comment.1.author', 'Mark');
+            $this->assertEquals('New post', $request->data['Post']['title']);
+            $this->assertEquals('Mark', $request->data['Comment']['1']['author']);
+        });
     }
 
     /**
@@ -2642,7 +2658,9 @@ class ServerRequestTest extends TestCase
             'truthy' => 1,
             'zero' => '0',
         ]);
-        $this->assertSame($expected, $request->param($toRead));
+        $this->deprecated(function () use ($expected, $request, $toRead) {
+            $this->assertSame($expected, $request->param($toRead));
+        });
         $this->assertSame($expected, $request->getParam($toRead));
     }
 

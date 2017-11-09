@@ -635,10 +635,11 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function __get($name)
     {
-        deprecationWarning(
-            'Accessing routing parameters through __get will removed in 4.0.0. ' .
-            'Use getParam() instead.'
-        );
+        deprecationWarning(sprintf(
+            'Accessing routing parameters through `%s` will removed in 4.0.0. ' .
+            'Use `getParam()` instead.',
+            $name
+        ));
 
         if (isset($this->params[$name])) {
             return $this->params[$name];
