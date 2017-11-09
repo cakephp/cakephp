@@ -584,6 +584,11 @@ class EntityContext implements ContextInterface
             return $entity->errors(array_pop($parts));
         }
 
+        if (is_array($entity)) {
+            $entity = $this->entity(array_shift($parts));
+            return $entity->errors($field);
+        }
+
         return [];
     }
 }

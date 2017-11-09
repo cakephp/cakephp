@@ -104,6 +104,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     {
         $errors = [];
 
+        $data = Hash::flatten($data);
+
         $requiredMessage = 'This field is required';
         $emptyMessage = 'This field cannot be left empty';
 
