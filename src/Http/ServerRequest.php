@@ -1968,6 +1968,23 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     }
 
     /**
+     * Update the request removing a data element.
+     *
+     * Returns an updated request object. This method returns
+     * a *new* request object and does not mutate the request in-place.
+     *
+     * @param string $name The dot separated path to remove.
+     * @return static
+     */
+    public function withoutData($name)
+    {
+        $copy = clone $this;
+        $copy->data = Hash::remove($copy->data, $name);
+
+        return $copy;
+    }
+
+    /**
      * Update the request with a new routing parameter
      *
      * Returns an updated request object. This method returns

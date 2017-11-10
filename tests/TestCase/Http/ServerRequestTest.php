@@ -3392,6 +3392,28 @@ XML;
     }
 
     /**
+     * Test removing data from a request
+     *
+     * @return void
+     */
+    public function testWithoutData()
+    {
+        $request = new ServerRequest([
+            'post' => [
+                'Model' => [
+                    'id' => 1,
+                    'field' => 'value'
+                ]
+            ]
+        ]);
+        $updated = $request->withoutData('Model.field');
+        $this->assertNotSame($updated, $request);
+        $this->assertSame('value', $request->getData('Model.field'), 'Original request should not change.');
+        $this->assertNull($updated->getData('Model.field'), 'data removed from updated request');
+        $this->assertFalse(isset($updated->getData()['Model']['field']), 'data removed from updated request');
+    }
+
+    /**
      * Test updating POST data when keys don't exist
      *
      * @return void
