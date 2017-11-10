@@ -66,10 +66,10 @@ class ServerRequestTest extends TestCase
     {
         $request = new ServerRequest();
         $request->addDetector('controller', function ($request, $name) {
-            return $request->param('controller') === $name;
+            return $request->getParam('controller') === $name;
         });
 
-        $request = $request->withQueryParams(['controller' => 'cake']);
+        $request = $request->withParam('controller', 'cake');
         $this->assertTrue($request->is('controller', 'cake'));
         $this->assertFalse($request->is('controller', 'nonExistingController'));
         $this->assertTrue($request->isController('cake'));
@@ -238,18 +238,20 @@ class ServerRequestTest extends TestCase
      */
     public function testAddPaths()
     {
-        $request = new ServerRequest();
-        $request->webroot = '/some/path/going/here/';
-        $result = $request->addPaths([
-            'random' => '/something', 'webroot' => '/', 'here' => '/', 'base' => '/base_dir'
-        ]);
+        $this->deprecated(function () {
+            $request = new ServerRequest();
+            $request->webroot = '/some/path/going/here/';
+            $result = $request->addPaths([
+                'random' => '/something', 'webroot' => '/', 'here' => '/', 'base' => '/base_dir'
+            ]);
 
-        $this->assertSame($result, $request, 'Method did not return itself. %s');
+            $this->assertSame($result, $request, 'Method did not return itself. %s');
 
-        $this->assertEquals('/', $request->webroot);
-        $this->assertEquals('/base_dir', $request->base);
-        $this->assertEquals('/', $request->here);
-        $this->assertFalse(isset($request->random));
+            $this->assertEquals('/', $request->webroot);
+            $this->assertEquals('/base_dir', $request->base);
+            $this->assertEquals('/', $request->here);
+            $this->assertFalse(isset($request->random));
+        });
     }
 
     /**
@@ -1201,49 +1203,49 @@ class ServerRequestTest extends TestCase
         $this->assertTrue($request->is('closure'));
 
         ServerRequest::addDetector('get', function ($request) {
-            return $request->env('REQUEST_METHOD') === 'GET';
+            return $request->getEnv('REQUEST_METHOD') === 'GET';
         });
-        $request->env('REQUEST_METHOD', 'GET');
+        $request = $request->withEnv('REQUEST_METHOD', 'GET');
         $this->assertTrue($request->is('get'));
 
         ServerRequest::addDetector('compare', ['env' => 'TEST_VAR', 'value' => 'something']);
 
-        $request->env('TEST_VAR', 'something');
+        $request = $request->withEnv('TEST_VAR', 'something');
         $this->assertTrue($request->is('compare'), 'Value match failed.');
 
-        $request->env('TEST_VAR', 'wrong');
+        $request = $request->withEnv('TEST_VAR', 'wrong');
         $this->assertFalse($request->is('compare'), 'Value mis-match failed.');
 
         ServerRequest::addDetector('compareCamelCase', ['env' => 'TEST_VAR', 'value' => 'foo']);
 
-        $request->env('TEST_VAR', 'foo');
+        $request = $request->withEnv('TEST_VAR', 'foo');
         $this->assertTrue($request->is('compareCamelCase'), 'Value match failed.');
         $this->assertTrue($request->is('comparecamelcase'), 'detectors should be case insensitive');
         $this->assertTrue($request->is('COMPARECAMELCASE'), 'detectors should be case insensitive');
 
-        $request->env('TEST_VAR', 'not foo');
+        $request = $request->withEnv('TEST_VAR', 'not foo');
         $this->assertFalse($request->is('compareCamelCase'), 'Value match failed.');
         $this->assertFalse($request->is('comparecamelcase'), 'detectors should be case insensitive');
         $this->assertFalse($request->is('COMPARECAMELCASE'), 'detectors should be case insensitive');
 
         ServerRequest::addDetector('banana', ['env' => 'TEST_VAR', 'pattern' => '/^ban.*$/']);
-        $request->env('TEST_VAR', 'banana');
+        $request = $request->withEnv('TEST_VAR', 'banana');
         $this->assertTrue($request->isBanana());
 
-        $request->env('TEST_VAR', 'wrong value');
+        $request = $request->withEnv('TEST_VAR', 'wrong value');
         $this->assertFalse($request->isBanana());
 
         ServerRequest::addDetector('mobile', ['env' => 'HTTP_USER_AGENT', 'options' => ['Imagination']]);
-        $request->env('HTTP_USER_AGENT', 'Imagination land');
+        $request = $request->withEnv('HTTP_USER_AGENT', 'Imagination land');
         $this->assertTrue($request->isMobile());
 
         ServerRequest::addDetector('index', ['param' => 'action', 'value' => 'index']);
 
-        $request->params['action'] = 'index';
+        $request = $request->withParam('action', 'index');
         $request->clearDetectorCache();
         $this->assertTrue($request->isIndex());
 
-        $request->params['action'] = 'add';
+        $request = $request->withParam('action', 'add');
         $request->clearDetectorCache();
         $this->assertFalse($request->isIndex());
 
@@ -1253,11 +1255,11 @@ class ServerRequestTest extends TestCase
         $this->assertTrue($request->isCallMe());
 
         ServerRequest::addDetector('extension', ['param' => '_ext', 'options' => ['pdf', 'png', 'txt']]);
-        $request->params['_ext'] = 'pdf';
+        $request = $request->withParam('_ext', 'pdf');
         $request->clearDetectorCache();
         $this->assertTrue($request->is('extension'));
 
-        $request->params['_ext'] = 'exe';
+        $request = $request->withParam('_ext', 'exe');
         $request->clearDetectorCache();
         $this->assertFalse($request->isExtension());
     }
@@ -2532,18 +2534,44 @@ class ServerRequestTest extends TestCase
      */
     public function testReadingParams()
     {
-        $request = new ServerRequest();
-        $request->addParams([
-            'controller' => 'posts',
-            'admin' => true,
-            'truthy' => 1,
-            'zero' => '0',
+        $request = new ServerRequest([
+            'params' => [
+                'controller' => 'posts',
+                'admin' => true,
+                'truthy' => 1,
+                'zero' => '0',
+            ]
         ]);
-        $this->assertFalse($request->param('not_set'));
-        $this->assertTrue($request->param('admin'));
-        $this->assertSame(1, $request->param('truthy'));
-        $this->assertSame('posts', $request->param('controller'));
-        $this->assertSame('0', $request->param('zero'));
+        $this->assertFalse($request->getParam('not_set'));
+        $this->assertTrue($request->getParam('admin'));
+        $this->assertSame(1, $request->getParam('truthy'));
+        $this->assertSame('posts', $request->getParam('controller'));
+        $this->assertSame('0', $request->getParam('zero'));
+    }
+
+    /**
+     * Test using param()
+     *
+     * @group deprecated
+     * @return void
+     */
+    public function testReadingParamsOld()
+    {
+        $this->deprecated(function () {
+            $request = new ServerRequest([
+                'params' => [
+                    'controller' => 'posts',
+                    'admin' => true,
+                    'truthy' => 1,
+                    'zero' => '0',
+                ]
+            ]);
+            $this->assertFalse($request->param('not_set'));
+            $this->assertTrue($request->param('admin'));
+            $this->assertSame(1, $request->param('truthy'));
+            $this->assertSame('posts', $request->param('controller'));
+            $this->assertSame('0', $request->param('zero'));
+        });
     }
 
     /**
@@ -2625,17 +2653,17 @@ class ServerRequestTest extends TestCase
     {
         $request = new ServerRequest();
 
-        $request->data('Post.null', null);
-        $this->assertNull($request->data['Post']['null']);
+        $request = $request->withData('Post.null', null);
+        $this->assertNull($request->getData('Post.null'));
 
-        $request->data('Post.false', false);
-        $this->assertFalse($request->data['Post']['false']);
+        $request = $request->withData('Post.false', false);
+        $this->assertFalse($request->getData('Post.false'));
 
-        $request->data('Post.zero', 0);
-        $this->assertSame(0, $request->data['Post']['zero']);
+        $request = $request->withData('Post.zero', 0);
+        $this->assertSame(0, $request->getData('Post.zero'));
 
-        $request->data('Post.empty', '');
-        $this->assertSame('', $request->data['Post']['empty']);
+        $request = $request->withData('Post.empty', '');
+        $this->assertSame('', $request->getData('Post.empty'));
     }
 
     /**
@@ -2734,9 +2762,7 @@ class ServerRequestTest extends TestCase
     public function testParamWriting()
     {
         $request = new ServerRequest('/');
-        $request->addParams([
-            'action' => 'index',
-        ]);
+        $request = $request->withParam('action', 'index');
 
         $this->assertInstanceOf(
             'Cake\Http\ServerRequest',
@@ -2744,20 +2770,20 @@ class ServerRequestTest extends TestCase
             'Method has not returned $this'
         );
 
-        $request->param('Post.null', null);
-        $this->assertNull($request->getQueryParams()['Post']['null']);
+        $request = $request->withParam('Post.null', null);
+        $this->assertFalse($request->getParam('Post.null'), 'default value should be used.');
 
-        $request->param('Post.false', false);
-        $this->assertFalse($request->getQueryParams()['Post']['false']);
+        $request = $request->withParam('Post.false', false);
+        $this->assertFalse($request->getParam('Post.false'));
 
-        $request->param('Post.zero', 0);
-        $this->assertSame(0, $request->getQueryParams()['Post']['zero']);
+        $request = $request->withParam('Post.zero', 0);
+        $this->assertSame(0, $request->getParam('Post.zero'));
 
-        $request->param('Post.empty', '');
-        $this->assertSame('', $request->getQueryParams()['Post']['empty']);
+        $request = $request->withParam('Post.empty', '');
+        $this->assertSame('', $request->getParam('Post.empty'));
 
         $this->assertSame('index', $request->getParam('action'));
-        $request->param('action', 'edit');
+        $request = $request->withParam('action', 'edit');
         $this->assertSame('edit', $request->getParam('action'));
     }
 
