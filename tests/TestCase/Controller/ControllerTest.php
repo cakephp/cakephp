@@ -443,7 +443,7 @@ class ControllerTest extends TestCase
         $debug = Configure::read('debug');
         Configure::write('debug', false);
         $result = $Controller->render('index');
-        $this->assertEquals('{"test":"value"}', $result->body());
+        $this->assertEquals('{"test":"value"}', (string)$result->getBody());
         Configure::write('debug', $debug);
     }
 
@@ -495,8 +495,8 @@ class ControllerTest extends TestCase
 
         $response = $Controller->redirect('http://cakephp.org', (int)$code);
         $this->assertSame($response, $Controller->response);
-        $this->assertEquals($code, $response->statusCode());
-        $this->assertEquals('http://cakephp.org', $response->header()['Location']);
+        $this->assertEquals($code, $response->getStatusCode());
+        $this->assertEquals('http://cakephp.org', $response->getHeaderLine('Location'));
         $this->assertFalse($Controller->autoRender);
     }
 
@@ -510,12 +510,13 @@ class ControllerTest extends TestCase
         $Controller = new Controller(null, new Response());
 
         $Controller->getEventManager()->on('Controller.beforeRedirect', function (Event $event, $url, Response $response) {
-            $response = $response->withLocation('https://book.cakephp.org');
+            $controller = $event->getSubject();
+            $controller->response = $response->withLocation('https://book.cakephp.org');
         });
 
         $response = $Controller->redirect('http://cakephp.org', 301);
-        $this->assertEquals('https://book.cakephp.org', $response->header()['Location']);
-        $this->assertEquals(301, $response->statusCode());
+        $this->assertEquals('https://book.cakephp.org', $response->getHeaderLine('Location'));
+        $this->assertEquals(301, $response->getStatusCode());
     }
 
     /**
@@ -525,13 +526,12 @@ class ControllerTest extends TestCase
      */
     public function testRedirectBeforeRedirectModifyingStatusCode()
     {
-        $Response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods(['stop'])
-            ->getMock();
-        $Controller = new Controller(null, $Response);
+        $response = new Response();
+        $Controller = new Controller(null, $response);
 
         $Controller->getEventManager()->on('Controller.beforeRedirect', function (Event $event, $url, Response $response) {
-            $response = $response->withStatus(302);
+            $controller = $event->getSubject();
+            $controller->response = $response->withStatus(302);
         });
 
         $response = $Controller->redirect('http://cakephp.org', 301);
