@@ -919,11 +919,7 @@ class Response implements ResponseInterface
         if (!isset($this->_statusCodes[$code])) {
             throw new InvalidArgumentException('Unknown status code');
         }
-        if (isset($this->_statusCodes[$code])) {
-            $this->_reasonPhrase = $this->_statusCodes[$code];
-        }
-        $this->_status = $code;
-        $this->_setContentType();
+        $this->_setStatus($code);
 
         return $code;
     }
@@ -967,14 +963,26 @@ class Response implements ResponseInterface
     public function withStatus($code, $reasonPhrase = '')
     {
         $new = clone $this;
-        $new->_status = $code;
-        if (empty($reasonPhrase) && isset($new->_statusCodes[$code])) {
-            $reasonPhrase = $new->_statusCodes[$code];
-        }
-        $new->_reasonPhrase = $reasonPhrase;
-        $new->_setContentType();
+        $new->_setStatus($code, $reasonPhrase);
 
         return $new;
+    }
+
+    /**
+     * Modifier for response status
+     *
+     * @param int $code The code to set.
+     * @param string $reasonPhrase The response reason phrase.
+     * @return void
+     */
+    protected function _setStatus($code, $reasonPhrase = '')
+    {
+        $this->_status = $code;
+        if (empty($reasonPhrase) && isset($this->_statusCodes[$code])) {
+            $reasonPhrase = $this->_statusCodes[$code];
+        }
+        $this->_reasonPhrase = $reasonPhrase;
+        $this->_setContentType();
     }
 
     /**
@@ -2578,20 +2586,15 @@ class Response implements ResponseInterface
         }
 
         if ($start > $end || $end > $lastByte || $start > $lastByte) {
-            $this->statusCode(416);
-            $this->header([
-                'Content-Range' => 'bytes 0-' . $lastByte . '/' . $fileSize
-            ]);
+            $this->_setStatus(416);
+            $this->_setHeader('Content-Range', 'bytes 0-' . $lastByte . '/' . $fileSize);
 
             return;
         }
 
-        $this->header([
-            'Content-Length' => $end - $start + 1,
-            'Content-Range' => 'bytes ' . $start . '-' . $end . '/' . $fileSize
-        ]);
-
-        $this->statusCode(206);
+        $this->_setHeader('Content-Length', $end - $start + 1);
+        $this->_setHeader('Content-Range', 'bytes ' . $start . '-' . $end . '/' . $fileSize);
+        $this->_setStatus(206);
         $this->_fileRange = [$start, $end];
     }
 

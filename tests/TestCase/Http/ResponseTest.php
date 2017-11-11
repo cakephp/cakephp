@@ -2696,143 +2696,145 @@ class ResponseTest extends TestCase
     /**
      * testFileRangeOffsetsNoDownload method
      *
+     * @group deprecated
      * @dataProvider rangeProvider
      * @return void
      */
     public function testFileRangeOffsetsNoDownload($range, $length, $offsetResponse)
     {
-        $_SERVER['HTTP_RANGE'] = $range;
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods([
-                'header',
-                'type',
-                '_sendHeader',
-                '_isActive',
-            ])
-            ->getMock();
+        $this->deprecated(function () use ($range, $length, $offsetResponse) {
+            $_SERVER['HTTP_RANGE'] = $range;
+            $response = $this->getMockBuilder('Cake\Http\Response')
+                ->setMethods([
+                    'header',
+                    'type',
+                    '_sendHeader',
+                    '_isActive',
+                ])
+                ->getMock();
 
-        $response->expects($this->at(1))
-            ->method('header')
-            ->with('Accept-Ranges', 'bytes');
+            $response->expects($this->at(1))
+                ->method('header')
+                ->with('Accept-Ranges', 'bytes');
 
-        $response->expects($this->at(2))
-            ->method('header')
-            ->with([
-                'Content-Length' => $length,
-                'Content-Range' => $offsetResponse,
-            ]);
+            $response->expects($this->at(2))
+                ->method('header')
+                ->with([
+                    'Content-Length' => $length,
+                    'Content-Range' => $offsetResponse,
+                ]);
 
-        $response->expects($this->any())
-            ->method('_isActive')
-            ->will($this->returnValue(true));
+            $response->expects($this->any())
+                ->method('_isActive')
+                ->will($this->returnValue(true));
 
-        $response->file(
-            TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
-            ['download' => false]
-        );
+            $response->file(
+                TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
+                ['download' => false]
+            );
 
-        ob_start();
-        $result = $response->send();
-        ob_get_clean();
+            ob_start();
+            $result = $response->send();
+            ob_get_clean();
+        });
     }
 
     /**
      * testFileRangeNoDownload method
      *
+     * @group deprecated
      * @return void
      */
     public function testFileRangeNoDownload()
     {
-        $_SERVER['HTTP_RANGE'] = 'bytes=8-25';
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods([
-                'header',
-                'type',
-                '_sendHeader',
-                '_isActive',
-            ])
-            ->getMock();
+        $this->deprecated(function () {
+            $_SERVER['HTTP_RANGE'] = 'bytes=8-25';
+            $response = $this->getMockBuilder('Cake\Http\Response')
+                ->setMethods([
+                    'header',
+                    'type',
+                    '_sendHeader',
+                    '_isActive',
+                ])
+                ->getMock();
 
-        $response->expects($this->exactly(1))
-            ->method('type')
-            ->with('css')
-            ->will($this->returnArgument(0));
+            $response->expects($this->exactly(1))
+                ->method('type')
+                ->with('css')
+                ->will($this->returnArgument(0));
 
-        $response->expects($this->at(1))
-            ->method('header')
-            ->with('Accept-Ranges', 'bytes');
+            $response->expects($this->at(1))
+                ->method('header')
+                ->with('Accept-Ranges', 'bytes');
 
-        $response->expects($this->at(2))
-            ->method('header')
-            ->with([
-                'Content-Length' => 18,
-                'Content-Range' => 'bytes 8-25/38',
-            ]);
+            $response->expects($this->at(2))
+                ->method('header')
+                ->with([
+                    'Content-Length' => 18,
+                    'Content-Range' => 'bytes 8-25/38',
+                ]);
 
-        $response->expects($this->any())
-            ->method('_isActive')
-            ->will($this->returnValue(true));
+            $response->expects($this->any())
+                ->method('_isActive')
+                ->will($this->returnValue(true));
 
-        $response->file(
-            TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
-            ['download' => false]
-        );
+            $response->file(
+                TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
+                ['download' => false]
+            );
 
-        ob_start();
-        $result = $response->send();
-        $output = ob_get_clean();
-        $this->assertEquals(206, $response->statusCode());
-        $this->assertEquals('is the test asset ', $output);
-        $this->assertNotSame(false, $result);
+            ob_start();
+            $result = $response->send();
+            $output = ob_get_clean();
+            $this->assertEquals(206, $response->statusCode());
+            $this->assertEquals('is the test asset ', $output);
+            $this->assertNotSame(false, $result);
+        });
     }
 
     /**
      * testFileRangeInvalidNoDownload method
      *
+     * @group deprecated
      * @return void
      */
     public function testFileRangeInvalidNoDownload()
     {
-        $_SERVER['HTTP_RANGE'] = 'bytes=30-2';
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods([
-                'header',
-                'type',
-                '_sendHeader',
-                '_isActive',
-            ])
-            ->getMock();
+        $this->deprecated(function () {
+            $_SERVER['HTTP_RANGE'] = 'bytes=30-2';
+            $response = $this->getMockBuilder('Cake\Http\Response')
+                ->setMethods([
+                    '_sendHeader',
+                ])
+                ->getMock();
 
-        $response->expects($this->at(1))
-            ->method('header')
-            ->with('Accept-Ranges', 'bytes');
+            $response->file(
+                TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
+                ['download' => false]
+            );
 
-        $response->expects($this->at(2))
-            ->method('header')
-            ->with([
-                'Content-Range' => 'bytes 0-37/38',
-            ]);
-
-        $response->file(
-            TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
-            ['download' => false]
-        );
-
-        $this->assertEquals(416, $response->statusCode());
-        $result = $response->send();
+            $this->assertEquals(416, $response->statusCode());
+            $this->assertEquals('bytes', $response->getHeaderLine('Accept-Ranges'));
+            $this->assertEquals('text/css', $response->getType());
+            $this->assertEquals('bytes 0-37/38', $response->getHeaderLine('Content-Range'));
+            $result = $response->send();
+        });
     }
 
     /**
      * Test the location method.
      *
+     * @group deprecated
      * @return void
      */
     public function testLocation()
     {
-        $response = new Response();
-        $this->assertNull($response->location(), 'No header should be set.');
-        $this->assertNull($response->location('http://example.org'), 'Setting a location should return null');
-        $this->assertEquals('http://example.org', $response->location(), 'Reading a location should return the value.');
+        $this->deprecated(function () {
+            $response = new Response();
+            $this->assertNull($response->location(), 'No header should be set.');
+            $this->assertNull($response->location('http://example.org'), 'Setting a location should return null');
+            $this->assertEquals('http://example.org', $response->location(), 'Reading a location should return the value.');
+        });
     }
 
     /**
