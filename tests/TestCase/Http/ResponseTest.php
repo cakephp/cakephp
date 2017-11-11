@@ -414,11 +414,13 @@ class ResponseTest extends TestCase
      */
     public function testSendChangingContentType($original, $expected)
     {
-        $response = new Response();
-        $response->type($original);
-        $response->body('the response body');
+        $this->deprecated(function () use ($original, $expected) {
+            $response = new Response();
+            $response->type($original);
+            $response->body('the response body');
 
-        $this->assertEquals($expected, $response->getHeaderLine('Content-Type'));
+            $this->assertEquals($expected, $response->getHeaderLine('Content-Type'));
+        });
     }
 
     /**
@@ -1663,24 +1665,23 @@ class ResponseTest extends TestCase
      */
     public function testCors($request, $origin, $domains, $methods, $headers, $expectedOrigin, $expectedMethods = false, $expectedHeaders = false)
     {
-        $request->env('HTTP_ORIGIN', $origin);
+        $request = $request->withEnv('HTTP_ORIGIN', $origin);
         $response = new Response();
 
         $result = $response->cors($request, $domains, $methods, $headers);
         $this->assertInstanceOf('Cake\Network\CorsBuilder', $result);
 
-        $headers = $response->header();
         if ($expectedOrigin) {
-            $this->assertArrayHasKey('Access-Control-Allow-Origin', $headers);
-            $this->assertEquals($expectedOrigin, $headers['Access-Control-Allow-Origin']);
+            $this->assertTrue($response->hasHeader('Access-Control-Allow-Origin'));
+            $this->assertEquals($expectedOrigin, $response->getHeaderLine('Access-Control-Allow-Origin'));
         }
         if ($expectedMethods) {
-            $this->assertArrayHasKey('Access-Control-Allow-Methods', $headers);
-            $this->assertEquals($expectedMethods, $headers['Access-Control-Allow-Methods']);
+            $this->assertTrue($response->hasHeader('Access-Control-Allow-Methods'));
+            $this->assertEquals($expectedMethods, $response->getHeaderLine('Access-Control-Allow-Methods'));
         }
         if ($expectedHeaders) {
-            $this->assertArrayHasKey('Access-Control-Allow-Headers', $headers);
-            $this->assertEquals($expectedHeaders, $headers['Access-Control-Allow-Headers']);
+            $this->assertTrue($response->hasHeader('Access-Control-Allow-Headers'));
+            $this->assertEquals($expectedHeaders, $response->getHeaderLine('Access-Control-Allow-Headers'));
         }
         unset($_SERVER['HTTP_ORIGIN']);
     }
@@ -1739,13 +1740,16 @@ class ResponseTest extends TestCase
     /**
      * testFileNotFound
      *
+     * @group deprecated
      * @return void
      */
     public function testFileNotFound()
     {
         $this->expectException(\Cake\Network\Exception\NotFoundException::class);
-        $response = new Response();
-        $response->file('/some/missing/folder/file.jpg');
+        $this->deprecated(function () {
+            $response = new Response();
+            $response->file('/some/missing/folder/file.jpg');
+        });
     }
 
     /**
@@ -1778,17 +1782,20 @@ class ResponseTest extends TestCase
     /**
      * test invalid file paths.
      *
+     * @group deprecated
      * @dataProvider invalidFileProvider
      * @return void
      */
     public function testFileInvalidPath($path, $expectedMessage)
     {
-        $response = new Response();
-        try {
-            $response->file($path);
-        } catch (NotFoundException $e) {
-            $this->assertContains($expectedMessage, $e->getMessage());
-        }
+        $this->deprecated(function () use ($path, $expectedMessage) {
+            $response = new Response();
+            try {
+                $response->file($path);
+            } catch (NotFoundException $e) {
+                $this->assertContains($expectedMessage, $e->getMessage());
+            }
+        });
     }
 
     /**
@@ -1810,43 +1817,33 @@ class ResponseTest extends TestCase
     /**
      * testFile method
      *
+     * @group deprecated
      * @return void
      */
     public function testFile()
     {
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods([
-                'header',
-                'type',
-                '_sendHeader',
-                '_setContentType',
-                '_isActive',
-            ])
-            ->getMock();
+        $this->deprecated(function () {
+            $response = $this->getMockBuilder('Cake\Http\Response')
+                ->setMethods(['_sendHeader', '_isActive'])
+                ->getMock();
 
-        $response->expects($this->exactly(1))
-            ->method('type')
-            ->with('css')
-            ->will($this->returnArgument(0));
+            $response->expects($this->exactly(1))
+                ->method('_isActive')
+                ->will($this->returnValue(true));
 
-        $response->expects($this->at(1))
-            ->method('header')
-            ->with('Accept-Ranges', 'bytes');
+            $response->file(TEST_APP . 'vendor/css/test_asset.css');
 
-        $response->expects($this->exactly(1))
-            ->method('_isActive')
-            ->will($this->returnValue(true));
+            ob_start();
+            $result = $response->send();
+            $this->assertTrue($result !== false);
+            $output = ob_get_clean();
 
-        $response->file(TEST_APP . 'vendor/css/test_asset.css');
-
-        ob_start();
-        $result = $response->send();
-        $this->assertTrue($result !== false);
-        $output = ob_get_clean();
-
-        $expected = '/* this is the test asset css file */';
-        $this->assertEquals($expected, trim($output));
-        $this->assertEquals($expected, trim($response->getBody()->getContents()));
+            $expected = '/* this is the test asset css file */';
+            $this->assertEquals($expected, trim($output));
+            $this->assertEquals($expected, trim($response->getBody()->getContents()));
+            $this->assertEquals('text/css', $response->getType());
+            $this->assertEquals('bytes', $response->getHeaderLine('Accept-Ranges'));
+        });
     }
 
     /**
@@ -1890,109 +1887,77 @@ class ResponseTest extends TestCase
     /**
      * testFileWithDownloadAndName
      *
+     * @group deprecated
      * @return void
      */
     public function testFileWithDownloadAndName()
     {
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods([
-                'header',
-                'type',
-                'download',
-                '_sendHeader',
-                '_setContentType',
-                '_isActive',
-            ])
-            ->getMock();
+        $this->deprecated(function () {
+            $response = $this->getMockBuilder('Cake\Http\Response')
+                ->setMethods(['download', '_sendHeader', '_isActive'])
+                ->getMock();
 
-        $response->expects($this->exactly(1))
-            ->method('type')
-            ->with('css')
-            ->will($this->returnArgument(0));
+            $response->expects($this->once())
+                ->method('download')
+                ->with('something_special.css');
 
-        $response->expects($this->once())
-            ->method('download')
-            ->with('something_special.css');
+            $response->expects($this->exactly(1))
+                ->method('_isActive')
+                ->will($this->returnValue(true));
 
-        $response->expects($this->at(2))
-            ->method('header')
-            ->with('Content-Transfer-Encoding', 'binary');
+            $response->file(
+                TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
+                [
+                    'name' => 'something_special.css',
+                    'download' => true,
+                ]
+            );
 
-        $response->expects($this->at(3))
-            ->method('header')
-            ->with('Accept-Ranges', 'bytes');
-
-        $response->expects($this->exactly(1))
-            ->method('_isActive')
-            ->will($this->returnValue(true));
-
-        $response->file(
-            TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
-            [
-                'name' => 'something_special.css',
-                'download' => true,
-            ]
-        );
-
-        ob_start();
-        $result = $response->send();
-        $output = ob_get_clean();
-        $this->assertEquals("/* this is the test asset css file */\n", $output);
-        $this->assertNotSame(false, $result);
+            ob_start();
+            $result = $response->send();
+            $output = ob_get_clean();
+            $this->assertEquals("/* this is the test asset css file */\n", $output);
+            $this->assertNotSame(false, $result);
+            $this->assertEquals('text/css', $response->getType());
+            $this->assertEquals('bytes', $response->getHeaderLine('Accept-Ranges'));
+            $this->assertEquals('binary', $response->getHeaderLine('Content-Transfer-Encoding'));
+        });
     }
 
     /**
      * testFileWithUnknownFileTypeGeneric method
      *
+     * @group deprecated
      * @return void
      */
     public function testFileWithUnknownFileTypeGeneric()
     {
-        $currentUserAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null;
-        $_SERVER['HTTP_USER_AGENT'] = 'Some generic browser';
+        $this->deprecated(function () {
+            $_SERVER['HTTP_USER_AGENT'] = 'Some generic browser';
 
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods([
-                'header',
-                'type',
-                'download',
-                '_sendHeader',
-                '_setContentType',
-                '_isActive',
-            ])
-            ->getMock();
+            $response = $this->getMockBuilder('Cake\Http\Response')
+                ->setMethods(['download', '_sendHeader', '_isActive'])
+                ->getMock();
 
-        $response->expects($this->exactly(1))
-            ->method('type')
-            ->with('ini')
-            ->will($this->returnValue(false));
+            $response->expects($this->once())
+                ->method('download')
+                ->with('no_section.ini');
 
-        $response->expects($this->once())
-            ->method('download')
-            ->with('no_section.ini');
+            $response->expects($this->exactly(1))
+                ->method('_isActive')
+                ->will($this->returnValue(true));
 
-        $response->expects($this->at(2))
-            ->method('header')
-            ->with('Content-Transfer-Encoding', 'binary');
+            $response->file(CONFIG . 'no_section.ini');
 
-        $response->expects($this->at(3))
-            ->method('header')
-            ->with('Accept-Ranges', 'bytes');
-
-        $response->expects($this->exactly(1))
-            ->method('_isActive')
-            ->will($this->returnValue(true));
-
-        $response->file(CONFIG . 'no_section.ini');
-
-        ob_start();
-        $result = $response->send();
-        $output = ob_get_clean();
-        $this->assertEquals("some_key = some_value\nbool_key = 1\n", $output);
-        $this->assertNotSame(false, $result);
-        if ($currentUserAgent !== null) {
-            $_SERVER['HTTP_USER_AGENT'] = $currentUserAgent;
-        }
+            ob_start();
+            $result = $response->send();
+            $output = ob_get_clean();
+            $this->assertEquals("some_key = some_value\nbool_key = 1\n", $output);
+            $this->assertNotSame(false, $result);
+            $this->assertEquals('text/html', $response->getType());
+            $this->assertEquals('bytes', $response->getHeaderLine('Accept-Ranges'));
+            $this->assertEquals('binary', $response->getHeaderLine('Content-Transfer-Encoding'));
+        });
     }
 
     /**
@@ -2018,60 +1983,37 @@ class ResponseTest extends TestCase
     /**
      * testFileWithUnknownFileTypeOpera method
      *
+     * @group deprecated
      * @return void
      */
     public function testFileWithUnknownFileTypeOpera()
     {
-        $currentUserAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null;
-        $_SERVER['HTTP_USER_AGENT'] = 'Opera/9.80 (Windows NT 6.0; U; en) Presto/2.8.99 Version/11.10';
+        $this->deprecated(function () {
+            $_SERVER['HTTP_USER_AGENT'] = 'Opera/9.80 (Windows NT 6.0; U; en) Presto/2.8.99 Version/11.10';
 
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods([
-                'header',
-                'type',
-                'download',
-                '_sendHeader',
-                '_setContentType',
-                '_isActive',
-            ])
-            ->getMock();
+            $response = $this->getMockBuilder('Cake\Http\Response')
+                ->setMethods(['download', '_sendHeader', '_isActive'])
+                ->getMock();
 
-        $response->expects($this->at(0))
-            ->method('type')
-            ->with('ini')
-            ->will($this->returnValue(false));
+            $response->expects($this->once())
+                ->method('download')
+                ->with('no_section.ini');
 
-        $response->expects($this->at(1))
-            ->method('type')
-            ->with('application/octet-stream')
-            ->will($this->returnValue(false));
+            $response->expects($this->exactly(1))
+                ->method('_isActive')
+                ->will($this->returnValue(true));
 
-        $response->expects($this->once())
-            ->method('download')
-            ->with('no_section.ini');
+            $response->file(CONFIG . 'no_section.ini');
 
-        $response->expects($this->at(3))
-            ->method('header')
-            ->with('Content-Transfer-Encoding', 'binary');
-
-        $response->expects($this->at(4))
-            ->method('header')
-            ->with('Accept-Ranges', 'bytes');
-
-        $response->expects($this->exactly(1))
-            ->method('_isActive')
-            ->will($this->returnValue(true));
-
-        $response->file(CONFIG . 'no_section.ini');
-
-        ob_start();
-        $result = $response->send();
-        $output = ob_get_clean();
-        $this->assertEquals("some_key = some_value\nbool_key = 1\n", $output);
-        $this->assertNotSame(false, $result);
-        if ($currentUserAgent !== null) {
-            $_SERVER['HTTP_USER_AGENT'] = $currentUserAgent;
-        }
+            ob_start();
+            $result = $response->send();
+            $output = ob_get_clean();
+            $this->assertEquals("some_key = some_value\nbool_key = 1\n", $output);
+            $this->assertNotSame(false, $result);
+            $this->assertEquals('application/octet-stream', $response->getType());
+            $this->assertEquals('bytes', $response->getHeaderLine('Accept-Ranges'));
+            $this->assertEquals('binary', $response->getHeaderLine('Content-Transfer-Encoding'));
+        });
     }
 
     /**
@@ -2081,7 +2023,6 @@ class ResponseTest extends TestCase
      */
     public function testWithFileUnknownFileTypeOpera()
     {
-        $currentUserAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null;
         $_SERVER['HTTP_USER_AGENT'] = 'Opera/9.80 (Windows NT 6.0; U; en) Presto/2.8.99 Version/11.10';
         $response = new Response();
 
@@ -2091,69 +2032,44 @@ class ResponseTest extends TestCase
             'attachment; filename="no_section.ini"',
             $new->getHeaderLine('Content-Disposition')
         );
-
-        $_SERVER['HTTP_USER_AGENT'] = $currentUserAgent;
     }
 
     /**
      * testFileWithUnknownFileTypeIE method
      *
+     * @group deprecated
      * @return void
      */
     public function testFileWithUnknownFileTypeIE()
     {
-        $currentUserAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null;
-        $_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 5.2; Trident/4.0; Media Center PC 4.0; SLCC1; .NET CLR 3.0.04320)';
+        $this->deprecated(function () {
+            $_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 5.2; Trident/4.0; Media Center PC 4.0; SLCC1; .NET CLR 3.0.04320)';
 
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods([
-                'header',
-                'type',
-                'download',
-                '_sendHeader',
-                '_setContentType',
-                '_isActive',
-            ])
-            ->getMock();
+            $response = $this->getMockBuilder('Cake\Http\Response')
+                ->setMethods(['download', '_isActive', '_sendHeade'])
+                ->getMock();
 
-        $response->expects($this->at(0))
-            ->method('type')
-            ->with('ini')
-            ->will($this->returnValue(false));
+            $response->expects($this->once())
+                ->method('download')
+                ->with('config.ini');
 
-        $response->expects($this->at(1))
-            ->method('type')
-            ->with('application/force-download')
-            ->will($this->returnValue(false));
+            $response->expects($this->exactly(1))
+                ->method('_isActive')
+                ->will($this->returnValue(true));
 
-        $response->expects($this->once())
-            ->method('download')
-            ->with('config.ini');
+            $response->file(CONFIG . 'no_section.ini', [
+                'name' => 'config.ini'
+            ]);
 
-        $response->expects($this->at(3))
-            ->method('header')
-            ->with('Content-Transfer-Encoding', 'binary');
-
-        $response->expects($this->at(4))
-            ->method('header')
-            ->with('Accept-Ranges', 'bytes');
-
-        $response->expects($this->exactly(1))
-            ->method('_isActive')
-            ->will($this->returnValue(true));
-
-        $response->file(CONFIG . 'no_section.ini', [
-            'name' => 'config.ini'
-        ]);
-
-        ob_start();
-        $result = $response->send();
-        $output = ob_get_clean();
-        $this->assertEquals("some_key = some_value\nbool_key = 1\n", $output);
-        $this->assertNotSame(false, $result);
-        if ($currentUserAgent !== null) {
-            $_SERVER['HTTP_USER_AGENT'] = $currentUserAgent;
-        }
+            ob_start();
+            $result = $response->send();
+            $output = ob_get_clean();
+            $this->assertEquals("some_key = some_value\nbool_key = 1\n", $output);
+            $this->assertNotSame(false, $result);
+            $this->assertEquals('application/force-download', $response->getType());
+            $this->assertEquals('bytes', $response->getHeaderLine('Accept-Ranges'));
+            $this->assertEquals('binary', $response->getHeaderLine('Content-Transfer-Encoding'));
+        });
     }
 
     /**
@@ -2163,56 +2079,37 @@ class ResponseTest extends TestCase
      */
     public function testWithFileUnknownFileTypeOldIe()
     {
-        $currentUserAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null;
         $_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 5.2; Trident/4.0; Media Center PC 4.0; SLCC1; .NET CLR 3.0.04320)';
         $response = new Response();
 
         $new = $response->withFile(CONFIG . 'no_section.ini');
         $this->assertEquals('application/force-download', $new->getHeaderLine('Content-Type'));
-
-        $_SERVER['HTTP_USER_AGENT'] = $currentUserAgent;
     }
 
     /**
      * testFileWithUnknownFileNoDownload method
      *
+     * @group deprecated
      * @return void
      */
     public function testFileWithUnknownFileNoDownload()
     {
-        $currentUserAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null;
-        $_SERVER['HTTP_USER_AGENT'] = 'Some generic browser';
+        $this->deprecated(function () {
+            $_SERVER['HTTP_USER_AGENT'] = 'Some generic browser';
 
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods([
-                'header',
-                'type',
-                'download',
-                '_sendHeader',
-                '_setContentType',
-                '_isActive',
-            ])
-            ->getMock();
+            $response = $this->getMockBuilder('Cake\Http\Response')
+                ->setMethods(['download'])
+                ->getMock();
 
-        $response->expects($this->exactly(1))
-            ->method('type')
-            ->with('ini')
-            ->will($this->returnValue(false));
+            $response->expects($this->never())
+                ->method('download');
 
-        $response->expects($this->at(1))
-            ->method('header')
-            ->with('Accept-Ranges', 'bytes');
-
-        $response->expects($this->never())
-            ->method('download');
-
-        $response->file(CONFIG . 'no_section.ini', [
-            'download' => false
-        ]);
-
-        if ($currentUserAgent !== null) {
-            $_SERVER['HTTP_USER_AGENT'] = $currentUserAgent;
-        }
+            $response->file(CONFIG . 'no_section.ini', [
+                'download' => false
+            ]);
+            $this->assertEquals('bytes', $response->getHeaderLine('Accept-Ranges'));
+            $this->assertEquals('text/html', $response->getType());
+        });
     }
 
     /**
@@ -2286,31 +2183,16 @@ class ResponseTest extends TestCase
     /**
      * Test downloading files with UPPERCASE extensions.
      *
+     * @group deprecated
      * @return void
      */
     public function testFileUpperExtension()
     {
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods([
-                'header',
-                'type',
-                'download',
-                '_sendHeader',
-                '_setContentType',
-                '_isActive',
-            ])
-            ->getMock();
-
-        $response->expects($this->any())
-            ->method('type')
-            ->with('jpg')
-            ->will($this->returnArgument(0));
-
-        $response->expects($this->at(0))
-            ->method('_isActive')
-            ->will($this->returnValue(true));
-
-        $response->file(TEST_APP . 'vendor/img/test_2.JPG');
+        $this->deprecated(function () {
+            $response = new Response();
+            $response->file(TEST_APP . 'vendor/img/test_2.JPG');
+            $this->assertSame('image/jpeg', $response->getType());
+        });
     }
 
     /**
@@ -2323,36 +2205,6 @@ class ResponseTest extends TestCase
         $response = new Response();
         $new = $response->withFile(TEST_APP . 'vendor/img/test_2.JPG');
         $this->assertEquals('image/jpeg', $new->getHeaderLine('Content-Type'));
-    }
-
-    /**
-     * Test downloading files with extension not explicitly set.
-     *
-     * @return void
-     */
-    public function testFileExtensionNotSet()
-    {
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods([
-                'header',
-                'type',
-                'download',
-                '_sendHeader',
-                '_setContentType',
-                '_isActive',
-            ])
-            ->getMock();
-
-        $response->expects($this->any())
-            ->method('type')
-            ->with('jpg')
-            ->will($this->returnArgument(0));
-
-        $response->expects($this->at(0))
-            ->method('_isActive')
-            ->will($this->returnValue(true));
-
-        $response->file(TEST_APP . 'vendor/img/test_2.JPG');
     }
 
     /**
@@ -2390,53 +2242,42 @@ class ResponseTest extends TestCase
     /**
      * Test the various range offset types.
      *
+     * @group deprecated
      * @dataProvider rangeProvider
      * @return void
      */
     public function testFileRangeOffsets($range, $length, $offsetResponse)
     {
-        $_SERVER['HTTP_RANGE'] = $range;
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods([
-                'header',
-                'type',
-                '_sendHeader',
-                '_setContentType',
-                '_isActive',
-            ])
-            ->getMock();
+        $this->deprecated(function () use ($range, $length, $offsetResponse) {
+            $_SERVER['HTTP_RANGE'] = $range;
+            $response = $this->getMockBuilder('Cake\Http\Response')
+                ->setMethods([
+                    '_sendHeader',
+                    '_isActive',
+                ])
+                ->getMock();
 
-        $response->expects($this->at(1))
-            ->method('header')
-            ->with('Content-Disposition', 'attachment; filename="test_asset.css"');
+            $response->expects($this->any())
+                ->method('_isActive')
+                ->will($this->returnValue(true));
 
-        $response->expects($this->at(2))
-            ->method('header')
-            ->with('Content-Transfer-Encoding', 'binary');
+            $response->file(
+                TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
+                ['download' => true]
+            );
 
-        $response->expects($this->at(3))
-            ->method('header')
-            ->with('Accept-Ranges', 'bytes');
-
-        $response->expects($this->at(4))
-            ->method('header')
-            ->with([
-                'Content-Length' => $length,
-                'Content-Range' => $offsetResponse,
-            ]);
-
-        $response->expects($this->any())
-            ->method('_isActive')
-            ->will($this->returnValue(true));
-
-        $response->file(
-            TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
-            ['download' => true]
-        );
-
-        ob_start();
-        $result = $response->send();
-        ob_get_clean();
+            ob_start();
+            $result = $response->send();
+            ob_get_clean();
+            $this->assertEquals(
+                'attachment; filename="test_asset.css"',
+                $response->getHeaderLine('Content-Disposition')
+            );
+            $this->assertEquals('binary', $response->getHeaderLine('Content-Transfer-Encoding'));
+            $this->assertEquals('bytes', $response->getHeaderLine('Accept-Ranges'));
+            $this->assertEquals($length, $response->getHeaderLine('Content-Length'));
+            $this->assertEquals($offsetResponse, $response->getHeaderLine('Content-Range'));
+        });
     }
 
     /**
@@ -2466,60 +2307,45 @@ class ResponseTest extends TestCase
     /**
      * Test fetching ranges from a file.
      *
+     * @group deprecated
      * @return void
      */
     public function testFileRange()
     {
-        $_SERVER['HTTP_RANGE'] = 'bytes=8-25';
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods([
-                'header',
-                'type',
-                '_sendHeader',
-                '_setContentType',
-                '_isActive',
-            ])
-            ->getMock();
+        $this->deprecated(function () {
+            $_SERVER['HTTP_RANGE'] = 'bytes=8-25';
+            $response = $this->getMockBuilder('Cake\Http\Response')
+                ->setMethods([
+                    '_sendHeader',
+                    '_isActive',
+                ])
+                ->getMock();
 
-        $response->expects($this->exactly(1))
-            ->method('type')
-            ->with('css')
-            ->will($this->returnArgument(0));
+            $response->expects($this->any())
+                ->method('_isActive')
+                ->will($this->returnValue(true));
 
-        $response->expects($this->at(1))
-            ->method('header')
-            ->with('Content-Disposition', 'attachment; filename="test_asset.css"');
+            $response->file(
+                TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
+                ['download' => true]
+            );
 
-        $response->expects($this->at(2))
-            ->method('header')
-            ->with('Content-Transfer-Encoding', 'binary');
+            ob_start();
+            $result = $response->send();
+            $output = ob_get_clean();
+            $this->assertEquals('is the test asset ', $output);
+            $this->assertNotSame(false, $result);
 
-        $response->expects($this->at(3))
-            ->method('header')
-            ->with('Accept-Ranges', 'bytes');
-
-        $response->expects($this->at(4))
-            ->method('header')
-            ->with([
-                'Content-Length' => 18,
-                'Content-Range' => 'bytes 8-25/38',
-            ]);
-
-        $response->expects($this->any())
-            ->method('_isActive')
-            ->will($this->returnValue(true));
-
-        $response->file(
-            TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
-            ['download' => true]
-        );
-
-        ob_start();
-        $result = $response->send();
-        $output = ob_get_clean();
-        $this->assertEquals(206, $response->statusCode());
-        $this->assertEquals('is the test asset ', $output);
-        $this->assertNotSame(false, $result);
+            $this->assertEquals(
+                'attachment; filename="test_asset.css"',
+                $response->getHeaderLine('Content-Disposition')
+            );
+            $this->assertEquals('binary', $response->getHeaderLine('Content-Transfer-Encoding'));
+            $this->assertEquals('bytes', $response->getHeaderLine('Accept-Ranges'));
+            $this->assertEquals('18', $response->getHeaderLine('Content-Length'));
+            $this->assertEquals('bytes 8-25/38', $response->getHeaderLine('Content-Range'));
+            $this->assertEquals(206, $response->getStatusCode());
+        });
     }
 
     /**
@@ -2570,33 +2396,36 @@ class ResponseTest extends TestCase
     /**
      * Test invalid file ranges.
      *
+     * @group deprecated
      * @dataProvider invalidFileRangeProvider
      * @return void
      */
     public function testFileRangeInvalid($range)
     {
-        $_SERVER['HTTP_RANGE'] = $range;
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods([
-                '_sendHeader',
-                '_isActive',
-            ])
-            ->getMock();
+        $this->deprecated(function () use ($range) {
+            $_SERVER['HTTP_RANGE'] = $range;
+            $response = $this->getMockBuilder('Cake\Http\Response')
+                ->setMethods([
+                    '_sendHeader',
+                    '_isActive',
+                ])
+                ->getMock();
 
-        $response->file(
-            TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
-            ['download' => true]
-        );
+            $response->file(
+                TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
+                ['download' => true]
+            );
 
-        $expected = [
-            'Content-Type' => 'text/css; charset=UTF-8',
-            'Content-Disposition' => 'attachment; filename="test_asset.css"',
-            'Content-Transfer-Encoding' => 'binary',
-            'Accept-Ranges' => 'bytes',
-            'Content-Range' => 'bytes 0-37/38',
-            'Content-Length' => 38,
-        ];
-        $this->assertEquals($expected, $response->header());
+            $this->assertEquals('text/css', $response->getType());
+            $this->assertEquals(
+                'attachment; filename="test_asset.css"',
+                $response->getHeaderLine('Content-Disposition')
+            );
+            $this->assertEquals('binary', $response->getHeaderLine('Content-Transfer-Encoding'));
+            $this->assertEquals('bytes', $response->getHeaderLine('Accept-Ranges'));
+            $this->assertEquals('38', $response->getHeaderLine('Content-Length'));
+            $this->assertEquals('bytes 0-37/38', $response->getHeaderLine('Content-Range'));
+        });
     }
 
     /**
@@ -2628,45 +2457,34 @@ class ResponseTest extends TestCase
     /**
      * Test reversed file ranges.
      *
+     * @group deprecated
      * @return void
      */
     public function testFileRangeReversed()
     {
-        $_SERVER['HTTP_RANGE'] = 'bytes=30-2';
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods([
-                'header',
-                'type',
-                '_sendHeader',
-                '_isActive',
-            ])
-            ->getMock();
+        $this->deprecated(function () {
+            $_SERVER['HTTP_RANGE'] = 'bytes=30-2';
+            $response = $this->getMockBuilder('Cake\Http\Response')
+                ->setMethods([
+                    '_sendHeader',
+                    '_isActive',
+                ])
+                ->getMock();
 
-        $response->expects($this->at(1))
-            ->method('header')
-            ->with('Content-Disposition', 'attachment; filename="test_asset.css"');
+            $response->file(
+                TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
+                ['download' => true]
+            );
 
-        $response->expects($this->at(2))
-            ->method('header')
-            ->with('Content-Transfer-Encoding', 'binary');
-
-        $response->expects($this->at(3))
-            ->method('header')
-            ->with('Accept-Ranges', 'bytes');
-
-        $response->expects($this->at(4))
-            ->method('header')
-            ->with([
-                'Content-Range' => 'bytes 0-37/38',
-            ]);
-
-        $response->file(
-            TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
-            ['download' => true]
-        );
-
-        $this->assertEquals(416, $response->statusCode());
-        $result = $response->send();
+            $this->assertEquals(416, $response->getStatusCode());
+            $this->assertEquals('bytes', $response->getHeaderLine('Accept-Ranges'));
+            $this->assertEquals(
+                'attachment; filename="test_asset.css"',
+                $response->getHeaderLine('Content-Disposition')
+            );
+            $this->assertEquals('binary', $response->getHeaderLine('Content-Transfer-Encoding'));
+            $this->assertEquals('bytes 0-37/38', $response->getHeaderLine('Content-Range'));
+        });
     }
 
     /**
@@ -2706,23 +2524,10 @@ class ResponseTest extends TestCase
             $_SERVER['HTTP_RANGE'] = $range;
             $response = $this->getMockBuilder('Cake\Http\Response')
                 ->setMethods([
-                    'header',
-                    'type',
                     '_sendHeader',
                     '_isActive',
                 ])
                 ->getMock();
-
-            $response->expects($this->at(1))
-                ->method('header')
-                ->with('Accept-Ranges', 'bytes');
-
-            $response->expects($this->at(2))
-                ->method('header')
-                ->with([
-                    'Content-Length' => $length,
-                    'Content-Range' => $offsetResponse,
-                ]);
 
             $response->expects($this->any())
                 ->method('_isActive')
@@ -2736,6 +2541,9 @@ class ResponseTest extends TestCase
             ob_start();
             $result = $response->send();
             ob_get_clean();
+            $this->assertEquals('bytes', $response->getHeaderLine('Accept-Ranges'));
+            $this->assertEquals($length, $response->getHeaderLine('Content-Length'));
+            $this->assertEquals($offsetResponse, $response->getHeaderLine('Content-Range'));
         });
     }
 
@@ -2751,28 +2559,10 @@ class ResponseTest extends TestCase
             $_SERVER['HTTP_RANGE'] = 'bytes=8-25';
             $response = $this->getMockBuilder('Cake\Http\Response')
                 ->setMethods([
-                    'header',
-                    'type',
                     '_sendHeader',
                     '_isActive',
                 ])
                 ->getMock();
-
-            $response->expects($this->exactly(1))
-                ->method('type')
-                ->with('css')
-                ->will($this->returnArgument(0));
-
-            $response->expects($this->at(1))
-                ->method('header')
-                ->with('Accept-Ranges', 'bytes');
-
-            $response->expects($this->at(2))
-                ->method('header')
-                ->with([
-                    'Content-Length' => 18,
-                    'Content-Range' => 'bytes 8-25/38',
-                ]);
 
             $response->expects($this->any())
                 ->method('_isActive')
@@ -2786,7 +2576,11 @@ class ResponseTest extends TestCase
             ob_start();
             $result = $response->send();
             $output = ob_get_clean();
-            $this->assertEquals(206, $response->statusCode());
+            $this->assertEquals('bytes', $response->getHeaderLine('Accept-Ranges'));
+            $this->assertEquals('18', $response->getHeaderLine('Content-Length'));
+            $this->assertEquals('bytes 8-25/38', $response->getHeaderLine('Content-Range'));
+            $this->assertEquals('text/css', $response->getType());
+            $this->assertEquals(206, $response->getStatusCode());
             $this->assertEquals('is the test asset ', $output);
             $this->assertNotSame(false, $result);
         });

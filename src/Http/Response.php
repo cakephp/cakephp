@@ -2341,7 +2341,7 @@ class Response implements ResponseInterface
      */
     public function cors(ServerRequest $request, $allowedDomains = [], $allowedMethods = [], $allowedHeaders = [])
     {
-        $origin = $request->header('Origin');
+        $origin = $request->getHeaderLine('Origin');
         $ssl = $request->is('ssl');
         $builder = new CorsBuilder($this, $origin, $ssl);
         if (!$origin) {
