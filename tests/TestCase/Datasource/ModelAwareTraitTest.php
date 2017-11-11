@@ -165,11 +165,11 @@ class ModelAwareTraitTest extends TestCase
      * test MissingModelException being thrown
      *
      * @return void
-     * @expectedException \Cake\Datasource\Exception\MissingModelException
-     * @expectedExceptionMessage Model class "Magic" of type "Test" could not be found.
      */
     public function testMissingModelException()
     {
+        $this->expectException(\Cake\Datasource\Exception\MissingModelException::class);
+        $this->expectExceptionMessage('Model class "Magic" of type "Test" could not be found.');
         $stub = new Stub();
 
         FactoryLocator::add('Test', function ($name) {

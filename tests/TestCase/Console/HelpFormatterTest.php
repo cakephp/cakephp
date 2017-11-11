@@ -311,12 +311,12 @@ xml;
     /**
      * Tests that setting a none string help alias triggers an exception
      *
-     * @expectedException \Cake\Console\Exception\ConsoleException
-     * @expectedExceptionMessage Alias must be of type string.
      * @return void
      */
     public function testWithNoneStringHelpAlias()
     {
+        $this->expectException(\Cake\Console\Exception\ConsoleException::class);
+        $this->expectExceptionMessage('Alias must be of type string.');
         $parser = new ConsoleOptionParser('mycommand', false);
         $formatter = new HelpFormatter($parser);
         $formatter->setAlias(['foo']);

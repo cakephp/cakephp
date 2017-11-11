@@ -27,11 +27,11 @@ class TranslatorFactoryTest extends TestCase
     /**
      * Test that errors are emitted when stale cache files are found.
      *
-     * @expectedException RuntimeException
-     * @expectedExceptionMessage Translator fallback class
      */
     public function testNewInstanceErrorOnFallback()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Translator fallback class');
         $formatter = $this->getMockBuilder('Aura\Intl\FormatterInterface')->getMock();
         $package = $this->getMockBuilder(Package::class)->getMock();
         $fallback = new AuraTranslator('en_CA', $package, $formatter, null);

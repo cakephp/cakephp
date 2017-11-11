@@ -662,11 +662,11 @@ class PaginatorTest extends TestCase
     /**
      * Test that a really REALLY large page number gets clamped to the max page size.
      *
-     * @expectedException \Cake\Datasource\Exception\PageOutOfBoundsException
      * @return void
      */
     public function testOutOfVeryBigPageNumberGetsClamped()
     {
+        $this->expectException(\Cake\Datasource\Exception\PageOutOfBoundsException::class);
         $this->loadFixtures('Posts');
         $params = [
             'page' => '3000000000000000000000000',

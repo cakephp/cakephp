@@ -217,12 +217,12 @@ class ActionDispatcherTest extends TestCase
     /**
      * test invalid response from dispatch process.
      *
-     * @expectedException \LogicException
-     * @expectedExceptionMessage Controller actions can only return Cake\Http\Response or null
      * @return void
      */
     public function testDispatchInvalidResponse()
     {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Controller actions can only return Cake\Http\Response or null');
         $req = new ServerRequest([
             'url' => '/cakes',
             'params' => [
@@ -281,12 +281,12 @@ class ActionDispatcherTest extends TestCase
     /**
      * testMissingController method
      *
-     * @expectedException \Cake\Routing\Exception\MissingControllerException
-     * @expectedExceptionMessage Controller class SomeController could not be found.
      * @return void
      */
     public function testMissingController()
     {
+        $this->expectException(\Cake\Routing\Exception\MissingControllerException::class);
+        $this->expectExceptionMessage('Controller class SomeController could not be found.');
         $request = new ServerRequest([
             'url' => 'some_controller/home',
             'params' => [
@@ -301,12 +301,12 @@ class ActionDispatcherTest extends TestCase
     /**
      * testMissingControllerInterface method
      *
-     * @expectedException \Cake\Routing\Exception\MissingControllerException
-     * @expectedExceptionMessage Controller class Interface could not be found.
      * @return void
      */
     public function testMissingControllerInterface()
     {
+        $this->expectException(\Cake\Routing\Exception\MissingControllerException::class);
+        $this->expectExceptionMessage('Controller class Interface could not be found.');
         $request = new ServerRequest([
             'url' => 'interface/index',
             'params' => [
@@ -321,12 +321,12 @@ class ActionDispatcherTest extends TestCase
     /**
      * testMissingControllerInterface method
      *
-     * @expectedException \Cake\Routing\Exception\MissingControllerException
-     * @expectedExceptionMessage Controller class Abstract could not be found.
      * @return void
      */
     public function testMissingControllerAbstract()
     {
+        $this->expectException(\Cake\Routing\Exception\MissingControllerException::class);
+        $this->expectExceptionMessage('Controller class Abstract could not be found.');
         $request = new ServerRequest([
             'url' => 'abstract/index',
             'params' => [
@@ -344,12 +344,12 @@ class ActionDispatcherTest extends TestCase
      * In case-insensitive file systems, lowercase controller names will kind of work.
      * This causes annoying deployment issues for lots of folks.
      *
-     * @expectedException \Cake\Routing\Exception\MissingControllerException
-     * @expectedExceptionMessage Controller class somepages could not be found.
      * @return void
      */
     public function testMissingControllerLowercase()
     {
+        $this->expectException(\Cake\Routing\Exception\MissingControllerException::class);
+        $this->expectExceptionMessage('Controller class somepages could not be found.');
         $request = new ServerRequest([
             'url' => 'pages/home',
             'params' => [

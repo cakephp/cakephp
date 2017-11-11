@@ -43,23 +43,23 @@ class CookieTest extends TestCase
      * Test invalid cookie name
      *
      * @dataProvider invalidNameProvider
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage contains invalid characters.
      */
     public function testValidateNameInvalidChars($name)
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('contains invalid characters.');
         new Cookie($name, 'value');
     }
 
     /**
      * Test empty cookie name
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The cookie name cannot be empty.
      * @return void
      */
     public function testValidateNameEmptyName()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The cookie name cannot be empty.');
         new Cookie('', '');
     }
 
@@ -138,11 +138,11 @@ class CookieTest extends TestCase
      * Test setting domain in cookies
      *
      * @return void
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The provided arg must be of type `string` but `integer` given
      */
     public function testWithDomainInvalidConstructor()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The provided arg must be of type `string` but `integer` given');
         new Cookie('cakephp', 'rocks', null, '', 1234);
     }
 
@@ -150,11 +150,11 @@ class CookieTest extends TestCase
      * Test setting domain in cookies
      *
      * @return void
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The provided arg must be of type `string` but `array` given
      */
     public function testWithDomainInvalid()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The provided arg must be of type `string` but `array` given');
         $cookie = new Cookie('cakephp', 'rocks');
         $cookie->withDomain(['oops']);
     }
@@ -177,11 +177,11 @@ class CookieTest extends TestCase
      * Test setting path in cookies
      *
      * @return void
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The provided arg must be of type `string` but `array` given
      */
     public function testWithPathInvalid()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The provided arg must be of type `string` but `array` given');
         $cookie = new Cookie('cakephp', 'rocks');
         $cookie->withPath(['oops']);
     }
@@ -190,11 +190,11 @@ class CookieTest extends TestCase
      * Test setting path in cookies
      *
      * @return void
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The provided arg must be of type `string` but `integer` given
      */
     public function testWithPathInvalidConstructor()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The provided arg must be of type `string` but `integer` given');
         new Cookie('cakephp', 'rocks', null, 123);
     }
 
@@ -216,11 +216,11 @@ class CookieTest extends TestCase
      * Test setting httponly in cookies
      *
      * @return void
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The provided arg must be of type `bool` but `string` given
      */
     public function testWithHttpOnlyInvalidConstructor()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The provided arg must be of type `bool` but `string` given');
         new Cookie('cakephp', 'cakephp-rocks', null, '', '', false, 'invalid');
     }
 
@@ -228,11 +228,11 @@ class CookieTest extends TestCase
      * Test setting httponly in cookies
      *
      * @return void
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The provided arg must be of type `bool` but `string` given
      */
     public function testWithHttpOnlyInvalid()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The provided arg must be of type `bool` but `string` given');
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
         $cookie->withHttpOnly('no');
     }
@@ -255,11 +255,11 @@ class CookieTest extends TestCase
      * Test setting secure in cookies
      *
      * @return void
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The provided arg must be of type `bool` but `string` given
      */
     public function testWithSecureInvalidConstructor()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The provided arg must be of type `bool` but `string` given');
         new Cookie('cakephp', 'cakephp-rocks', null, '', '', 'invalid');
     }
 
@@ -267,11 +267,11 @@ class CookieTest extends TestCase
      * Test setting secure in cookies
      *
      * @return void
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The provided arg must be of type `bool` but `string` given
      */
     public function testWithSecureInvalid()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The provided arg must be of type `bool` but `string` given');
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
         $cookie->withSecure('no');
     }

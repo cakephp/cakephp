@@ -317,12 +317,12 @@ class InstanceConfigTraitTest extends TestCase
     /**
      * testSetClobber
      *
-     * @expectedException \Exception
-     * @expectedExceptionMessage Cannot set a.nested.value
      * @return void
      */
     public function testSetClobber()
     {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Cannot set a.nested.value');
         $this->object->config(['a.nested.value' => 'not possible'], null, false);
         $result = $this->object->config();
     }
@@ -463,12 +463,12 @@ class InstanceConfigTraitTest extends TestCase
     /**
      * testReadOnlyConfig
      *
-     * @expectedException \Exception
-     * @expectedExceptionMessage This Instance is readonly
      * @return void
      */
     public function testReadOnlyConfig()
     {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('This Instance is readonly');
         $object = new ReadOnlyTestInstanceConfig();
 
         $this->assertSame(
@@ -574,12 +574,12 @@ class InstanceConfigTraitTest extends TestCase
     /**
      * testDeleteClobber
      *
-     * @expectedException \Exception
-     * @expectedExceptionMessage Cannot unset a.nested.value.whoops
      * @return void
      */
     public function testDeleteClobber()
     {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Cannot unset a.nested.value.whoops');
         $this->object->config('a.nested.value.whoops', null);
     }
 }

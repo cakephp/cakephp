@@ -73,11 +73,11 @@ class JsonTypeTest extends TestCase
     /**
      * Tests that passing an invalid value will throw an exception
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testToDatabaseInvalid()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $value = fopen(__FILE__, 'r');
         $this->type->toDatabase($value, $this->driver);
     }

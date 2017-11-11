@@ -100,11 +100,11 @@ class TypeTest extends TestCase
     /**
      * Tests trying to build an unknown type throws exception
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testBuildUnknownType()
     {
+        $this->expectException(\InvalidArgumentException::class);
         Type::build('foo');
     }
 

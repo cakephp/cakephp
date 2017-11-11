@@ -183,11 +183,11 @@ class RequestTest extends TestCase
     /**
      * test invalid method.
      *
-     * @expectedException \Cake\Core\Exception\Exception
      * @return void
      */
     public function testMethodInvalid()
     {
+        $this->expectException(\Cake\Core\Exception\Exception::class);
         $request = new Request();
         $request->method('set on fire');
     }

@@ -70,11 +70,11 @@ class LogTest extends TestCase
     /**
      * test all the errors from failed logger imports
      *
-     * @expectedException \RuntimeException
      * @return void
      */
     public function testImportingLoggerFailure()
     {
+        $this->expectException(\RuntimeException::class);
         Log::config('fail', []);
         Log::engine('fail');
     }
@@ -94,11 +94,11 @@ class LogTest extends TestCase
     /**
      * test that loggers have to implement the correct interface.
      *
-     * @expectedException \RuntimeException
      * @return void
      */
     public function testNotImplementingInterface()
     {
+        $this->expectException(\RuntimeException::class);
         Log::config('fail', ['engine' => '\stdClass']);
         Log::engine('fail');
     }
@@ -127,11 +127,11 @@ class LogTest extends TestCase
     /**
      * test invalid level
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testInvalidLevel()
     {
+        $this->expectException(\InvalidArgumentException::class);
         Log::config('myengine', ['engine' => 'File']);
         Log::write('invalid', 'This will not be logged');
     }
@@ -188,11 +188,11 @@ class LogTest extends TestCase
      * Test that config() throws an exception when adding an
      * adapter with the wrong type.
      *
-     * @expectedException \RuntimeException
      * @return void
      */
     public function testConfigInjectErrorOnWrongType()
     {
+        $this->expectException(\RuntimeException::class);
         Log::config('test', new \StdClass);
         Log::info('testing');
     }
@@ -201,11 +201,11 @@ class LogTest extends TestCase
      * Test that setConfig() throws an exception when adding an
      * adapter with the wrong type.
      *
-     * @expectedException \RuntimeException
      * @return void
      */
     public function testSetConfigInjectErrorOnWrongType()
     {
+        $this->expectException(\RuntimeException::class);
         Log::setConfig('test', new \StdClass);
         Log::info('testing');
     }
@@ -232,11 +232,11 @@ class LogTest extends TestCase
     /**
      * Ensure you cannot reconfigure a log adapter.
      *
-     * @expectedException \BadMethodCallException
      * @return void
      */
     public function testConfigErrorOnReconfigure()
     {
+        $this->expectException(\BadMethodCallException::class);
         Log::config('tests', ['engine' => 'File', 'path' => TMP]);
         Log::config('tests', ['engine' => 'Apc']);
     }

@@ -530,12 +530,12 @@ class SessionTest extends TestCase
     /**
      * Tests instantiating a missing engine
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The class "Derp" does not exist and cannot be used as a session engine
      * @return void
      */
     public function testBadEngine()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The class "Derp" does not exist and cannot be used as a session engine');
         $session = new Session();
         $session->engine('Derp');
     }

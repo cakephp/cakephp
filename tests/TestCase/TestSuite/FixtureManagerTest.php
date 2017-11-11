@@ -265,11 +265,11 @@ class FixtureManagerTest extends TestCase
     /**
      * Test that unknown types are handled gracefully.
      *
-     * @expectedException \UnexpectedValueException
-     * @expectedExceptionMessage Referenced fixture class "Test\Fixture\Derp.derpFixture" not found. Fixture "derp.derp" was referenced
      */
     public function testFixturizeInvalidType()
     {
+        $this->expectException(\UnexpectedValueException::class);
+        $this->expectExceptionMessage('Referenced fixture class "Test\Fixture\Derp.derpFixture" not found. Fixture "derp.derp" was referenced');
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
         $test->fixtures = ['derp.derp'];
         $this->manager->fixturize($test);

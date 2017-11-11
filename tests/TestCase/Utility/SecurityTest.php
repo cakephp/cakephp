@@ -99,11 +99,11 @@ class SecurityTest extends TestCase
     /**
      * testRijndaelInvalidOperation method
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testRijndaelInvalidOperation()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $txt = 'The quick brown fox jumped over the lazy dog.';
         $key = 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi';
         Security::rijndael($txt, $key, 'foo');
@@ -112,11 +112,11 @@ class SecurityTest extends TestCase
     /**
      * testRijndaelInvalidKey method
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testRijndaelInvalidKey()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $txt = 'The quick brown fox jumped over the lazy dog.';
         $key = 'too small';
         Security::rijndael($txt, $key, 'encrypt');
@@ -188,12 +188,12 @@ class SecurityTest extends TestCase
     /**
      * Test that short keys cause errors
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Invalid key for encrypt(), key must be at least 256 bits (32 bytes) long.
      * @return void
      */
     public function testEncryptInvalidKey()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid key for encrypt(), key must be at least 256 bits (32 bytes) long.');
         $txt = 'The quick brown fox jumped over the lazy dog.';
         $key = 'this is too short';
         Security::encrypt($txt, $key);
@@ -227,12 +227,12 @@ class SecurityTest extends TestCase
     /**
      * Test that short keys cause errors
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Invalid key for decrypt(), key must be at least 256 bits (32 bytes) long.
      * @return void
      */
     public function testDecryptInvalidKey()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid key for decrypt(), key must be at least 256 bits (32 bytes) long.');
         $txt = 'The quick brown fox jumped over the lazy dog.';
         $key = 'this is too short';
         Security::decrypt($txt, $key);
@@ -241,12 +241,12 @@ class SecurityTest extends TestCase
     /**
      * Test that empty data cause errors
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The data to decrypt cannot be empty.
      * @return void
      */
     public function testDecryptInvalidData()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The data to decrypt cannot be empty.');
         $txt = '';
         $key = 'This is a key that is long enough to be ok.';
         Security::decrypt($txt, $key);

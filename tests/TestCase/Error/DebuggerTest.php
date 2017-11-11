@@ -152,11 +152,11 @@ class DebuggerTest extends TestCase
     /**
      * Test that choosing a non-existent format causes an exception
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testOutputAsException()
     {
+        $this->expectException(\InvalidArgumentException::class);
         Debugger::outputAs('Invalid junk');
     }
 
@@ -174,11 +174,11 @@ class DebuggerTest extends TestCase
     /**
      * Test that choosing a non-existent format causes an exception
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testSetOutputAsException()
     {
+        $this->expectException(\InvalidArgumentException::class);
         Debugger::setOutputFormat('Invalid junk');
     }
 

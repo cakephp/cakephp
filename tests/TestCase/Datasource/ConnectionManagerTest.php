@@ -109,10 +109,10 @@ class ConnectionManagerTest extends TestCase
     /**
      * Test invalid classes cause exceptions
      *
-     * @expectedException \Cake\Datasource\Exception\MissingDatasourceException
      */
     public function testConfigInvalidOptions()
     {
+        $this->expectException(\Cake\Datasource\Exception\MissingDatasourceException::class);
         ConnectionManager::config('test_variant', [
             'className' => 'Herp\Derp'
         ]);
@@ -122,12 +122,12 @@ class ConnectionManagerTest extends TestCase
     /**
      * Test for errors on duplicate config.
      *
-     * @expectedException \BadMethodCallException
-     * @expectedExceptionMessage Cannot reconfigure existing key "test_variant"
      * @return void
      */
     public function testConfigDuplicateConfig()
     {
+        $this->expectException(\BadMethodCallException::class);
+        $this->expectExceptionMessage('Cannot reconfigure existing key "test_variant"');
         $settings = [
             'className' => __NAMESPACE__ . '\FakeConnection',
             'database' => ':memory:',
@@ -139,12 +139,12 @@ class ConnectionManagerTest extends TestCase
     /**
      * Test get() failing on missing config.
      *
-     * @expectedException \Cake\Core\Exception\Exception
-     * @expectedExceptionMessage The datasource configuration "test_variant" was not found.
      * @return void
      */
     public function testGetFailOnMissingConfig()
     {
+        $this->expectException(\Cake\Core\Exception\Exception::class);
+        $this->expectExceptionMessage('The datasource configuration "test_variant" was not found.');
         ConnectionManager::get('test_variant');
     }
 
@@ -167,12 +167,12 @@ class ConnectionManagerTest extends TestCase
     /**
      * Test loading connections without aliases
      *
-     * @expectedException \Cake\Core\Exception\Exception
-     * @expectedExceptionMessage The datasource configuration "other_name" was not found.
      * @return void
      */
     public function testGetNoAlias()
     {
+        $this->expectException(\Cake\Core\Exception\Exception::class);
+        $this->expectExceptionMessage('The datasource configuration "other_name" was not found.');
         $config = ConnectionManager::config('test');
         $this->skipIf(empty($config), 'No test config, skipping');
 
@@ -253,11 +253,11 @@ class ConnectionManagerTest extends TestCase
     /**
      * Test alias() raises an error when aliasing an undefined connection.
      *
-     * @expectedException \Cake\Datasource\Exception\MissingDatasourceConfigException
      * @return void
      */
     public function testAliasError()
     {
+        $this->expectException(\Cake\Datasource\Exception\MissingDatasourceConfigException::class);
         $this->assertNotContains('test_kaboom', ConnectionManager::configured());
         ConnectionManager::alias('test_kaboom', 'other_name');
     }
@@ -448,12 +448,12 @@ class ConnectionManagerTest extends TestCase
     /**
      * Test parseDsn invalid.
      *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage The DSN string 'bagof:nope' could not be parsed.
      * @return void
      */
     public function testParseDsnInvalid()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The DSN string \'bagof:nope\' could not be parsed.');
         $result = ConnectionManager::parseDsn('bagof:nope');
     }
 

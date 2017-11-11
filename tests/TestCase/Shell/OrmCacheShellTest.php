@@ -151,11 +151,11 @@ class OrmCacheShellTest extends TestCase
     /**
      * Test build() with a non-existing connection name.
      *
-     * @expectedException \Cake\Datasource\Exception\MissingDatasourceConfigException
      * @return void
      */
     public function testBuildInvalidConnection()
     {
+        $this->expectException(\Cake\Datasource\Exception\MissingDatasourceConfigException::class);
         $this->shell->params['connection'] = 'derpy-derp';
         $this->shell->build('articles');
     }
@@ -163,11 +163,11 @@ class OrmCacheShellTest extends TestCase
     /**
      * Test clear() with an invalid connection name.
      *
-     * @expectedException \Cake\Datasource\Exception\MissingDatasourceConfigException
      * @return void
      */
     public function testClearInvalidConnection()
     {
+        $this->expectException(\Cake\Datasource\Exception\MissingDatasourceConfigException::class);
         $this->shell->params['connection'] = 'derpy-derp';
         $this->shell->clear('articles');
     }

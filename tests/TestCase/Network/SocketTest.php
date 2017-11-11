@@ -121,11 +121,11 @@ class SocketTest extends TestCase
      * testInvalidConnection method
      *
      * @dataProvider invalidConnections
-     * @expectedException \Cake\Network\Exception\SocketException
      * @return void
      */
     public function testInvalidConnection($data)
     {
+        $this->expectException(\Cake\Network\Exception\SocketException::class);
         $this->Socket->config($data);
         $this->Socket->connect();
     }
@@ -260,11 +260,11 @@ class SocketTest extends TestCase
     /**
      * testEncrypt
      *
-     * @expectedException \Cake\Network\Exception\SocketException
      * @return void
      */
     public function testEnableCryptoSocketExceptionNoSsl()
     {
+        $this->expectException(\Cake\Network\Exception\SocketException::class);
         $this->skipIf(!extension_loaded('openssl'), 'OpenSSL is not enabled cannot test SSL.');
         $configNoSslOrTls = ['host' => 'localhost', 'port' => 80, 'timeout' => 0.1];
 
@@ -277,11 +277,11 @@ class SocketTest extends TestCase
     /**
      * testEnableCryptoSocketExceptionNoTls
      *
-     * @expectedException \Cake\Network\Exception\SocketException
      * @return void
      */
     public function testEnableCryptoSocketExceptionNoTls()
     {
+        $this->expectException(\Cake\Network\Exception\SocketException::class);
         $configNoSslOrTls = ['host' => 'localhost', 'port' => 80, 'timeout' => 0.1];
 
         // testing exception on no ssl socket server for ssl and tls methods
@@ -329,11 +329,11 @@ class SocketTest extends TestCase
     /**
      * testEnableCryptoBadMode
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testEnableCryptoBadMode()
     {
+        $this->expectException(\InvalidArgumentException::class);
         // testing wrong encryption mode
         $this->_connectSocketToSslTls();
         $this->Socket->enableCrypto('doesntExistMode', 'server');
@@ -355,11 +355,11 @@ class SocketTest extends TestCase
     /**
      * testEnableCryptoExceptionEnableTwice
      *
-     * @expectedException \Cake\Network\Exception\SocketException
      * @return void
      */
     public function testEnableCryptoExceptionEnableTwice()
     {
+        $this->expectException(\Cake\Network\Exception\SocketException::class);
         // testing on tls server
         $this->_connectSocketToSslTls();
         $this->Socket->enableCrypto('tls', 'client');
@@ -369,11 +369,11 @@ class SocketTest extends TestCase
     /**
      * testEnableCryptoExceptionDisableTwice
      *
-     * @expectedException \Cake\Network\Exception\SocketException
      * @return void
      */
     public function testEnableCryptoExceptionDisableTwice()
     {
+        $this->expectException(\Cake\Network\Exception\SocketException::class);
         $this->_connectSocketToSslTls();
         $this->Socket->enableCrypto('tls', 'client', false);
     }

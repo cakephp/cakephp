@@ -255,12 +255,12 @@ class BelongsToTest extends TestCase
      * Tests that using belongsto with a table having a multi column primary
      * key will work if the foreign key is passed
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Cannot match provided foreignKey for "Companies", got "(company_id)" but expected foreign key for "(id, tenant_id)"
      * @return void
      */
     public function testAttachToMultiPrimaryKeyMismatch()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Cannot match provided foreignKey for "Companies", got "(company_id)" but expected foreign key for "(id, tenant_id)"');
         $this->company->primaryKey(['id', 'tenant_id']);
         $query = $this->client->query();
         $config = [

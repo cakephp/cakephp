@@ -50,10 +50,10 @@ class TestCaseTest extends TestCase
     /**
      * tests trying to assertEventFired without configuring an event list
      *
-     * @expectedException \PHPUnit\Framework\AssertionFailedError
      */
     public function testEventFiredMisconfiguredEventList()
     {
+        $this->expectException(\PHPUnit\Framework\AssertionFailedError::class);
         $manager = EventManager::instance();
         $this->assertEventFired('my.event', $manager);
     }
@@ -61,10 +61,10 @@ class TestCaseTest extends TestCase
     /**
      * tests trying to assertEventFired without configuring an event list
      *
-     * @expectedException \PHPUnit\Framework\AssertionFailedError
      */
     public function testEventFiredWithMisconfiguredEventList()
     {
+        $this->expectException(\PHPUnit\Framework\AssertionFailedError::class);
         $manager = EventManager::instance();
         $this->assertEventFiredWith('my.event', 'some', 'data', $manager);
     }

@@ -75,12 +75,12 @@ class QueryCacherTest extends TestCase
     /**
      * Test fetching with a function to generate the key but the function is poop.
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Cache key functions must return a string. Got false.
      * @return void
      */
     public function testFetchFunctionKeyNoString()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Cache key functions must return a string. Got false.');
         $this->_mockRead('my_key', 'A winner');
         $query = $this->getMockBuilder('stdClass')->getMock();
 

@@ -756,12 +756,12 @@ class QueryTest extends TestCase
      * Tests that passing an empty array type to any where condition will not
      * result in a SQL error, but an internal exception
      *
-     * @expectedException \Cake\Database\Exception
-     * @expectedExceptionMessage Impossible to generate condition with empty list of values for field
      * @return void
      */
     public function testSelectWhereArrayTypeEmpty()
     {
+        $this->expectException(\Cake\Database\Exception::class);
+        $this->expectExceptionMessage('Impossible to generate condition with empty list of values for field');
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
         $result = $query
@@ -773,12 +773,12 @@ class QueryTest extends TestCase
 
     /**
      * Tests exception message for impossible condition when using an expression
-     * @expectedException \Cake\Database\Exception
-     * @expectedExceptionMessage with empty list of values for field (SELECT 1)
      * @return void
      */
     public function testSelectWhereArrayTypeEmptyWithExpression()
     {
+        $this->expectException(\Cake\Database\Exception::class);
+        $this->expectExceptionMessage('with empty list of values for field (SELECT 1)');
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
         $result = $query
@@ -2706,12 +2706,12 @@ class QueryTest extends TestCase
      * from the conditions.
      *
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Aliases are being removed from conditions for UPDATE/DELETE queries, this can break references to joined tables.
      * @return void
      */
     public function testDeleteRemovingAliasesCanBreakJoins()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Aliases are being removed from conditions for UPDATE/DELETE queries, this can break references to joined tables.');
         $query = new Query($this->connection);
 
         $query
@@ -2765,12 +2765,12 @@ class QueryTest extends TestCase
      * Test update with type checking
      * by passing an array as table arg
      *
-     * @expectedException \InvalidArgumentException
      *
      * @return void
      */
     public function testUpdateArgTypeChecking()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $query = new Query($this->connection);
         $query->update(['Articles']);
     }
@@ -2965,12 +2965,12 @@ class QueryTest extends TestCase
      * warning about possible incompatibilities with aliases being removed
      * from the conditions.
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Aliases are being removed from conditions for UPDATE/DELETE queries, this can break references to joined tables.
      * @return void
      */
     public function testUpdateRemovingAliasesCanBreakJoins()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Aliases are being removed from conditions for UPDATE/DELETE queries, this can break references to joined tables.');
         $query = new Query($this->connection);
 
         $query
@@ -2985,11 +2985,11 @@ class QueryTest extends TestCase
     /**
      * You cannot call values() before insert() it causes all sorts of pain.
      *
-     * @expectedException \Cake\Database\Exception
      * @return void
      */
     public function testInsertValuesBeforeInsertFailure()
     {
+        $this->expectException(\Cake\Database\Exception::class);
         $query = new Query($this->connection);
         $query->select('*')->values([
             'id' => 1,
@@ -3001,12 +3001,12 @@ class QueryTest extends TestCase
     /**
      * Inserting nothing should not generate an error.
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage At least 1 column is required to perform an insert.
      * @return void
      */
     public function testInsertNothing()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('At least 1 column is required to perform an insert.');
         $query = new Query($this->connection);
         $query->insert([]);
     }
@@ -3247,10 +3247,10 @@ class QueryTest extends TestCase
     /**
      * Test that an exception is raised when mixing query + array types.
      *
-     * @expectedException \Cake\Database\Exception
      */
     public function testInsertFailureMixingTypesArrayFirst()
     {
+        $this->expectException(\Cake\Database\Exception::class);
         $this->loadFixtures('Articles');
         $query = new Query($this->connection);
         $query->insert(['name'])
@@ -3262,10 +3262,10 @@ class QueryTest extends TestCase
     /**
      * Test that an exception is raised when mixing query + array types.
      *
-     * @expectedException \Cake\Database\Exception
      */
     public function testInsertFailureMixingTypesQueryFirst()
     {
+        $this->expectException(\Cake\Database\Exception::class);
         $this->loadFixtures('Articles');
         $query = new Query($this->connection);
         $query->insert(['name'])
@@ -4374,12 +4374,12 @@ class QueryTest extends TestCase
     /**
      * Test that reading an undefined clause does not emit an error.
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The 'nope' clause is not defined. Valid clauses are: delete, update
      * @return void
      */
     public function testClauseUndefined()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The \'nope\' clause is not defined. Valid clauses are: delete, update');
         $query = new Query($this->connection);
         $this->assertEmpty($query->clause('where'));
         $query->clause('nope');

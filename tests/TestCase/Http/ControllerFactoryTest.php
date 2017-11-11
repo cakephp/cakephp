@@ -178,12 +178,12 @@ class ControllerFactoryTest extends TestCase
     }
 
     /**
-     * @expectedException \Cake\Routing\Exception\MissingControllerException
-     * @expectedExceptionMessage Controller class Abstract could not be found.
      * @return void
      */
     public function testAbstractClassFailure()
     {
+        $this->expectException(\Cake\Routing\Exception\MissingControllerException::class);
+        $this->expectExceptionMessage('Controller class Abstract could not be found.');
         $request = new ServerRequest([
             'url' => 'abstract/index',
             'params' => [
@@ -195,12 +195,12 @@ class ControllerFactoryTest extends TestCase
     }
 
     /**
-     * @expectedException \Cake\Routing\Exception\MissingControllerException
-     * @expectedExceptionMessage Controller class Interface could not be found.
      * @return void
      */
     public function testInterfaceFailure()
     {
+        $this->expectException(\Cake\Routing\Exception\MissingControllerException::class);
+        $this->expectExceptionMessage('Controller class Interface could not be found.');
         $request = new ServerRequest([
             'url' => 'interface/index',
             'params' => [
@@ -212,12 +212,12 @@ class ControllerFactoryTest extends TestCase
     }
 
     /**
-     * @expectedException \Cake\Routing\Exception\MissingControllerException
-     * @expectedExceptionMessage Controller class Invisible could not be found.
      * @return void
      */
     public function testMissingClassFailure()
     {
+        $this->expectException(\Cake\Routing\Exception\MissingControllerException::class);
+        $this->expectExceptionMessage('Controller class Invisible could not be found.');
         $request = new ServerRequest([
             'url' => 'interface/index',
             'params' => [
@@ -229,12 +229,12 @@ class ControllerFactoryTest extends TestCase
     }
 
     /**
-     * @expectedException \Cake\Routing\Exception\MissingControllerException
-     * @expectedExceptionMessage Controller class Admin/Posts could not be found.
      * @return void
      */
     public function testSlashedControllerFailure()
     {
+        $this->expectException(\Cake\Routing\Exception\MissingControllerException::class);
+        $this->expectExceptionMessage('Controller class Admin/Posts could not be found.');
         $request = new ServerRequest([
             'url' => 'admin/posts/index',
             'params' => [
@@ -246,12 +246,12 @@ class ControllerFactoryTest extends TestCase
     }
 
     /**
-     * @expectedException \Cake\Routing\Exception\MissingControllerException
-     * @expectedExceptionMessage Controller class TestApp\Controller\CakesController could not be found.
      * @return void
      */
     public function testAbsoluteReferenceFailure()
     {
+        $this->expectException(\Cake\Routing\Exception\MissingControllerException::class);
+        $this->expectExceptionMessage('Controller class TestApp\Controller\CakesController could not be found.');
         $request = new ServerRequest([
             'url' => 'interface/index',
             'params' => [

@@ -235,11 +235,11 @@ class AuthComponentTest extends TestCase
     /**
      * testIsAuthorizedMissingFile function
      *
-     * @expectedException \Cake\Core\Exception\Exception
      * @return void
      */
     public function testIsAuthorizedMissingFile()
     {
+        $this->expectException(\Cake\Core\Exception\Exception::class);
         $this->Controller->Auth->config('authorize', 'Missing');
         $this->Controller->Auth->isAuthorized(['User' => ['id' => 1]]);
     }
@@ -356,11 +356,11 @@ class AuthComponentTest extends TestCase
     /**
      * testLoadAuthenticateNoFile function
      *
-     * @expectedException \Cake\Core\Exception\Exception
      * @return void
      */
     public function testLoadAuthenticateNoFile()
     {
+        $this->expectException(\Cake\Core\Exception\Exception::class);
         $this->Controller->Auth->config('authenticate', 'Missing');
         $this->Controller->Auth->identify($this->Controller->request, $this->Controller->response);
     }
@@ -957,12 +957,12 @@ class AuthComponentTest extends TestCase
     /**
      * Throw ForbiddenException if config `unauthorizedRedirect` is set to false
      *
-     * @expectedException \Cake\Network\Exception\ForbiddenException
      * @return void
      * @triggers Controller.startup $Controller
      */
     public function testForbiddenException()
     {
+        $this->expectException(\Cake\Network\Exception\ForbiddenException::class);
         $url = '/party/on';
         $this->Auth->request = $request = new ServerRequest($url);
         $this->Auth->request->addParams(Router::parse($url));
@@ -1540,13 +1540,13 @@ class AuthComponentTest extends TestCase
     /**
      * testStatelessAuthNoRedirect method
      *
-     * @expectedException \Cake\Network\Exception\UnauthorizedException
-     * @expectedExceptionCode 401
      * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testStatelessAuthNoRedirect()
     {
+        $this->expectException(\Cake\Network\Exception\UnauthorizedException::class);
+        $this->expectExceptionCode(401);
         $event = new Event('Controller.startup', $this->Controller);
         $_SESSION = [];
 
