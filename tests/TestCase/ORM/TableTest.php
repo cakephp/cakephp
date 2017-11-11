@@ -2586,7 +2586,7 @@ class TableTest extends TestCase
      */
     public function testAtomicSave()
     {
-        $config = ConnectionManager::config('test');
+        $config = ConnectionManager::getConfig('test');
 
         $connection = $this->getMockBuilder('\Cake\Database\Connection')
             ->setMethods(['begin', 'commit', 'inTransaction'])
@@ -2623,7 +2623,7 @@ class TableTest extends TestCase
     {
         $connection = $this->getMockBuilder('\Cake\Database\Connection')
             ->setMethods(['begin', 'rollback'])
-            ->setConstructorArgs([ConnectionManager::config('test')])
+            ->setConstructorArgs([ConnectionManager::getConfig('test')])
             ->getMock();
         $connection->setDriver(ConnectionManager::get('test')->getDriver());
         $table = $this->getMockBuilder('\Cake\ORM\Table')
@@ -2663,7 +2663,7 @@ class TableTest extends TestCase
     {
         $connection = $this->getMockBuilder('\Cake\Database\Connection')
             ->setMethods(['begin', 'rollback'])
-            ->setConstructorArgs([ConnectionManager::config('test')])
+            ->setConstructorArgs([ConnectionManager::getConfig('test')])
             ->getMock();
         $connection->setDriver(ConnectionManager::get('test')->getDriver());
         $table = $this->getMockBuilder('\Cake\ORM\Table')

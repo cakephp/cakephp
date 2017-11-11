@@ -95,7 +95,7 @@ class ErrorHandlerTest extends TestCase
         $this->_logger = $this->getMockBuilder('Psr\Log\LoggerInterface')->getMock();
 
         Log::reset();
-        Log::config('error_test', [
+        Log::setConfig('error_test', [
             'engine' => $this->_logger
         ]);
     }

@@ -171,7 +171,7 @@ class SecurityComponentTest extends TestCase
 
         $this->Controller = new SecurityTestController($request);
         $this->Controller->Security = $this->Controller->TestSecurity;
-        $this->Controller->Security->config('blackHoleCallback', 'fail');
+        $this->Controller->Security->setConfig('blackHoleCallback', 'fail');
         $this->Security = $this->Controller->Security;
         $this->Security->session = $session;
         Security::setSalt('foo!');
@@ -228,7 +228,7 @@ class SecurityComponentTest extends TestCase
         $Controller = new \TestApp\Controller\SomePagesController($request);
         $event = new Event('Controller.startup', $Controller);
         $Security = new SecurityComponent($Controller->components());
-        $Security->config('blackHoleCallback', '_fail');
+        $Security->setConfig('blackHoleCallback', '_fail');
         $Security->startup($event);
         $Security->blackHole($Controller, 'csrf');
     }
@@ -399,7 +399,7 @@ class SecurityComponentTest extends TestCase
     {
         $this->deprecated(function () {
             $_SERVER['REQUEST_METHOD'] = 'AUTH';
-            $this->Controller->Security->config('validatePost', false);
+            $this->Controller->Security->setConfig('validatePost', false);
 
             $event = new Event('Controller.startup', $this->Controller);
             $this->Controller->request->addParams([
@@ -908,7 +908,7 @@ class SecurityComponentTest extends TestCase
     public function testValidatePostWithDisabledFields()
     {
         $event = new Event('Controller.startup', $this->Controller);
-        $this->Security->config('disabledFields', ['Model.username', 'Model.password']);
+        $this->Security->setConfig('disabledFields', ['Model.username', 'Model.password']);
         $this->Security->startup($event);
         $fields = '0313460e1136e1227044399fe10a6edc0cbca279%3AModel.hidden';
         $unlocked = '';
@@ -1305,7 +1305,7 @@ class SecurityComponentTest extends TestCase
         $this->assertFalse($result);
 
         $this->Security->startup($event);
-        $this->Security->config('disabledFields', ['MyModel.name']);
+        $this->Security->setConfig('disabledFields', ['MyModel.name']);
 
         $this->Controller->request->data = [
             'MyModel' => ['name' => 'some data'],
@@ -1510,7 +1510,7 @@ class SecurityComponentTest extends TestCase
      */
     public function testBlackholeThrowsException()
     {
-        $this->Security->config('blackHoleCallback', '');
+        $this->Security->setConfig('blackHoleCallback', '');
         $this->Security->blackHole($this->Controller, 'auth', new SecurityException('error description'));
     }
 
@@ -1523,7 +1523,7 @@ class SecurityComponentTest extends TestCase
      */
     public function testBlackholeThrowsBadRequest()
     {
-        $this->Security->config('blackHoleCallback', '');
+        $this->Security->setConfig('blackHoleCallback', '');
         $message = '';
 
         Configure::write('debug', false);
@@ -1650,7 +1650,7 @@ class SecurityComponentTest extends TestCase
     public function testAuthRequiredThrowsExceptionTokenNotFoundPost()
     {
         $this->deprecated(function () {
-            $this->Security->config('requireAuth', ['protected']);
+            $this->Security->setConfig('requireAuth', ['protected']);
             $this->Controller->request->params['action'] = 'protected';
             $this->Controller->request->data = 'notEmpty';
             $this->Security->authRequired($this->Controller);
@@ -1671,7 +1671,7 @@ class SecurityComponentTest extends TestCase
     public function testAuthRequiredThrowsExceptionTokenNotFoundSession()
     {
         $this->deprecated(function () {
-            $this->Security->config('requireAuth', ['protected']);
+            $this->Security->setConfig('requireAuth', ['protected']);
             $this->Controller->request->params['action'] = 'protected';
             $this->Controller->request->data = ['_Token' => 'not empty'];
             $this->Security->authRequired($this->Controller);
@@ -1692,7 +1692,7 @@ class SecurityComponentTest extends TestCase
     public function testAuthRequiredThrowsExceptionControllerNotAllowed()
     {
         $this->deprecated(function () {
-            $this->Security->config('requireAuth', ['protected']);
+            $this->Security->setConfig('requireAuth', ['protected']);
             $this->Controller->request->params['controller'] = 'NotAllowed';
             $this->Controller->request->params['action'] = 'protected';
             $this->Controller->request->data = ['_Token' => 'not empty'];
@@ -1716,7 +1716,7 @@ class SecurityComponentTest extends TestCase
     public function testAuthRequiredThrowsExceptionActionNotAllowed()
     {
         $this->deprecated(function () {
-            $this->Security->config('requireAuth', ['protected']);
+            $this->Security->setConfig('requireAuth', ['protected']);
             $this->Controller->request->params['controller'] = 'NotAllowed';
             $this->Controller->request->params['action'] = 'protected';
             $this->Controller->request->data = ['_Token' => 'not empty'];
@@ -1738,7 +1738,7 @@ class SecurityComponentTest extends TestCase
     public function testAuthRequired()
     {
         $this->deprecated(function () {
-            $this->Security->config('requireAuth', ['protected']);
+            $this->Security->setConfig('requireAuth', ['protected']);
             $this->Controller->request->params['controller'] = 'Allowed';
             $this->Controller->request->params['action'] = 'protected';
             $this->Controller->request->data = ['_Token' => 'not empty'];

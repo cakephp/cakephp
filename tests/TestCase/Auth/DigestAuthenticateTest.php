@@ -83,10 +83,10 @@ class DigestAuthenticateTest extends TestCase
             'fields' => ['username' => 'user', 'password' => 'pass'],
             'nonce' => 123456
         ]);
-        $this->assertEquals('AuthUser', $object->config('userModel'));
-        $this->assertEquals(['username' => 'user', 'password' => 'pass'], $object->config('fields'));
-        $this->assertEquals(123456, $object->config('nonce'));
-        $this->assertEquals(env('SERVER_NAME'), $object->config('realm'));
+        $this->assertEquals('AuthUser', $object->getConfig('userModel'));
+        $this->assertEquals(['username' => 'user', 'password' => 'pass'], $object->getConfig('fields'));
+        $this->assertEquals(123456, $object->getConfig('nonce'));
+        $this->assertEquals(env('SERVER_NAME'), $object->getConfig('realm'));
     }
 
     /**
@@ -357,7 +357,7 @@ class DigestAuthenticateTest extends TestCase
      */
     public function testAuthenticateFailReChallenge()
     {
-        $this->auth->config('scope.username', 'nate');
+        $this->auth->setConfig('scope.username', 'nate');
         $request = new ServerRequest([
             'url' => 'posts/index',
             'environment' => ['REQUEST_METHOD' => 'GET']

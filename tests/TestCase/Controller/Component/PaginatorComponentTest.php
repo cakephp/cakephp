@@ -1270,7 +1270,7 @@ class PaginatorComponentTest extends TestCase
      */
     public function testPaginateQueryWithBindValue()
     {
-        $config = ConnectionManager::config('test');
+        $config = ConnectionManager::getConfig('test');
         $this->skipIf(strpos($config['driver'], 'Sqlserver') !== false, 'Test temporarily broken in SQLServer');
         $this->loadFixtures('Posts');
         $table = TableRegistry::get('PaginatorPosts');

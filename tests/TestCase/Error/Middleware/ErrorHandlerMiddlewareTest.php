@@ -42,7 +42,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $this->logger = $this->getMockBuilder(LoggerInterface::class)->getMock();
 
         Log::reset();
-        Log::config('error_test', [
+        Log::setConfig('error_test', [
             'engine' => $this->logger
         ]);
     }

@@ -35,7 +35,7 @@ class MailTransportTest extends TestCase
         $this->MailTransport = $this->getMockBuilder('Cake\Mailer\Transport\MailTransport')
             ->setMethods(['_mail'])
             ->getMock();
-        $this->MailTransport->config(['additionalParameters' => '-f']);
+        $this->MailTransport->setConfig(['additionalParameters' => '-f']);
     }
 
     /**

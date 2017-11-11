@@ -482,7 +482,7 @@ class ConsoleIoTest extends TestCase
 
         $this->assertNotEmpty(Log::engine('stderr'));
         $engine = Log::engine('stdout');
-        $this->assertEquals(['notice', 'info', 'debug'], $engine->config('levels'));
+        $this->assertEquals(['notice', 'info', 'debug'], $engine->getConfig('levels'));
     }
 
     /**

@@ -35,7 +35,7 @@ class PostgresSchemaTest extends TestCase
      */
     protected function _needsConnection()
     {
-        $config = ConnectionManager::config('test');
+        $config = ConnectionManager::getConfig('test');
         $this->skipIf(strpos($config['driver'], 'Postgres') === false, 'Not using Postgres for test config');
     }
 

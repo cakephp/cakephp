@@ -36,7 +36,7 @@ class CacheSessionTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        Cache::config(['session_test' => ['engine' => 'File']]);
+        Cache::setConfig(['session_test' => ['engine' => 'File']]);
         $this->storage = new CacheSession(['config' => 'session_test']);
     }
 

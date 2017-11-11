@@ -77,7 +77,7 @@ class FixtureManagerTest extends TestCase
 
         $this->manager->setDebug(true);
         $buffer = new ConsoleOutput();
-        Log::config('testQueryLogger', [
+        Log::setConfig('testQueryLogger', [
             'className' => 'Console',
             'stream' => $buffer
         ]);
@@ -109,7 +109,7 @@ class FixtureManagerTest extends TestCase
 
         $this->manager->setDebug(true);
         $buffer = new ConsoleOutput();
-        Log::config('testQueryLogger', [
+        Log::setConfig('testQueryLogger', [
             'className' => 'Console',
             'stream' => $buffer
         ]);
@@ -314,8 +314,8 @@ class FixtureManagerTest extends TestCase
             ->method('execute')
             ->will($this->returnValue($statement));
 
-        ConnectionManager::config('other', $other);
-        ConnectionManager::config('test_other', $testOther);
+        ConnectionManager::setConfig('other', $other);
+        ConnectionManager::setConfig('test_other', $testOther);
 
         // Connect the alias making test_other an alias of other.
         ConnectionManager::alias('test_other', 'other');

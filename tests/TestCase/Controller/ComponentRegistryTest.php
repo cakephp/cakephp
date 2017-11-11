@@ -84,7 +84,7 @@ class ComponentRegistryTest extends TestCase
         $result = $this->Components->load('Cookie', ['className' => __NAMESPACE__ . '\CookieAliasComponent', 'somesetting' => true]);
         $this->assertInstanceOf(__NAMESPACE__ . '\CookieAliasComponent', $result);
         $this->assertInstanceOf(__NAMESPACE__ . '\CookieAliasComponent', $this->Components->Cookie);
-        $this->assertTrue($this->Components->Cookie->config('somesetting'));
+        $this->assertTrue($this->Components->Cookie->getConfig('somesetting'));
 
         $result = $this->Components->loaded();
         $this->assertEquals(['Cookie'], $result, 'loaded() results are wrong.');

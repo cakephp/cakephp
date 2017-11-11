@@ -989,7 +989,7 @@ class ViewTest extends TestCase
     public function testElementCache()
     {
         Cache::drop('test_view');
-        Cache::config('test_view', [
+        Cache::setConfig('test_view', [
             'engine' => 'File',
             'duration' => '+1 day',
             'path' => CACHE . 'views/',
@@ -1074,7 +1074,7 @@ class ViewTest extends TestCase
         $View->loadHelper('Html', ['foo' => 'bar']);
         $this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $View->Html);
 
-        $config = $View->Html->config();
+        $config = $View->Html->getConfig();
         $this->assertEquals('bar', $config['foo']);
     }
 
@@ -1112,10 +1112,10 @@ class ViewTest extends TestCase
         $this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $View->Html, 'Object type is wrong.');
         $this->assertInstanceOf('Cake\View\Helper\FormHelper', $View->Form, 'Object type is wrong.');
 
-        $config = $View->Html->config();
+        $config = $View->Html->getConfig();
         $this->assertEquals('bar', $config['foo']);
 
-        $config = $View->Form->config();
+        $config = $View->Form->getConfig();
         $this->assertEquals('baz', $config['foo']);
     }
 
@@ -1141,7 +1141,7 @@ class ViewTest extends TestCase
     public function testInitialize()
     {
         $View = new TestView();
-        $config = $View->Html->config();
+        $config = $View->Html->getConfig();
         $this->assertEquals('myval', $config['mykey']);
     }
 

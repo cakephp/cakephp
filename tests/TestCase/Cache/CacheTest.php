@@ -411,6 +411,28 @@ class CacheTest extends TestCase
     /**
      * Test reading configuration.
      *
+     * @group deprecated
+     * @return void
+     */
+    public function testConfigReadCompat()
+    {
+        $this->deprecated(function () {
+            $config = [
+                'engine' => 'File',
+                'path' => TMP,
+                'prefix' => 'cake_'
+            ];
+            Cache::config('tests', $config);
+            $expected = $config;
+            $expected['className'] = $config['engine'];
+            unset($expected['engine']);
+            $this->assertEquals($expected, Cache::config('tests'));
+        });
+    }
+
+    /**
+     * Test reading configuration.
+     *
      * @return void
      */
     public function testConfigRead()
@@ -424,7 +446,7 @@ class CacheTest extends TestCase
         $expected = $config;
         $expected['className'] = $config['engine'];
         unset($expected['engine']);
-        $this->assertEquals($expected, Cache::config('tests'));
+        $this->assertEquals($expected, Cache::getConfig('tests'));
     }
 
     /**
@@ -453,7 +475,7 @@ class CacheTest extends TestCase
     public function testGroupConfigs()
     {
         Cache::drop('test');
-        Cache::config('latest', [
+        Cache::setConfig('latest', [
             'duration' => 300,
             'engine' => 'File',
             'groups' => ['posts', 'comments'],
@@ -470,7 +492,7 @@ class CacheTest extends TestCase
         $result = Cache::groupConfigs('posts');
         $this->assertEquals(['posts' => ['latest']], $result);
 
-        Cache::config('page', [
+        Cache::setConfig('page', [
             'duration' => 86400,
             'engine' => 'File',
             'groups' => ['posts', 'archive'],
@@ -706,7 +728,7 @@ class CacheTest extends TestCase
         Cache::clear(false, 'test_cache_disable_1');
 
         Cache::disable();
-        Cache::config('test_cache_disable_2', [
+        Cache::setConfig('test_cache_disable_2', [
             'engine' => 'File',
             'path' => TMP . 'tests'
         ]);
@@ -734,11 +756,11 @@ class CacheTest extends TestCase
      */
     public function testClearAll()
     {
-        Cache::config('configTest', [
+        Cache::setConfig('configTest', [
             'engine' => 'File',
             'path' => TMP . 'tests'
         ]);
-        Cache::config('anotherConfigTest', [
+        Cache::setConfig('anotherConfigTest', [
             'engine' => 'File',
             'path' => TMP . 'tests'
         ]);

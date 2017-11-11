@@ -37,7 +37,7 @@ class QueryCacherTest extends TestCase
             ->method('init')
             ->will($this->returnValue(true));
 
-        Cache::config('queryCache', $this->engine);
+        Cache::setConfig('queryCache', $this->engine);
         Cache::enable();
     }
 

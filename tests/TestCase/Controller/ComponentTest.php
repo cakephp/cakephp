@@ -187,7 +187,7 @@ class ComponentTest extends TestCase
     {
         $Component = new ConfiguredComponent(new ComponentRegistry(), ['chicken' => 'soup']);
         $this->assertEquals(['chicken' => 'soup'], $Component->configCopy);
-        $this->assertEquals(['chicken' => 'soup'], $Component->config());
+        $this->assertEquals(['chicken' => 'soup'], $Component->getConfig());
     }
 
     /**
@@ -226,7 +226,7 @@ class ComponentTest extends TestCase
         $Component = new ConfiguredComponent(new ComponentRegistry(), [], ['Configured' => ['foo' => 'bar']]);
         $this->assertInstanceOf(ConfiguredComponent::class, $Component->Configured, 'class is wrong');
         $this->assertNotSame($Component, $Component->Configured, 'Component instance was reused');
-        $this->assertEquals(['foo' => 'bar', 'enabled' => false], $Component->Configured->config());
+        $this->assertEquals(['foo' => 'bar', 'enabled' => false], $Component->Configured->getConfig());
     }
 
     /**
