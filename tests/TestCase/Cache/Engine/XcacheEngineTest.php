@@ -75,7 +75,7 @@ class XcacheEngineTest extends TestCase
      */
     public function testConfig()
     {
-        $config = Cache::engine('xcache')->config();
+        $config = Cache::engine('xcache')->getConfig();
         $expecting = [
             'prefix' => 'cake_',
             'duration' => 3600,
