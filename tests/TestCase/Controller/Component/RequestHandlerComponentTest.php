@@ -378,7 +378,7 @@ class RequestHandlerComponentTest extends TestCase
                 'json' => 'CustomJson',
                 'xml' => 'Xml',
                 'ajax' => 'Ajax'
-    ];
+            ];
             $this->assertEquals($expected, $result);
 
             $result = $this->RequestHandler->viewClassMap('xls', 'Excel.Excel');
