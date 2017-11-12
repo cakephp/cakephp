@@ -103,12 +103,12 @@ class DebuggerTest extends TestCase
     public function testExcerpt()
     {
         $result = Debugger::excerpt(__FILE__, __LINE__ - 1, 2);
-        $this->assertTrue(is_array($result));
+        $this->assertInternalType('array', $result);
         $this->assertCount(5, $result);
         $this->assertRegExp('/function(.+)testExcerpt/', $result[1]);
 
         $result = Debugger::excerpt(__FILE__, 2, 2);
-        $this->assertTrue(is_array($result));
+        $this->assertInternalType('array', $result);
         $this->assertCount(4, $result);
 
         $this->skipIf(defined('HHVM_VERSION'), 'HHVM does not highlight php code');

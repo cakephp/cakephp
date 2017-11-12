@@ -134,7 +134,7 @@ class ResponseTest extends TestCase
 
         $data = json_encode([]);
         $response = new Response([], $data);
-        $this->assertTrue(is_array($response->json));
+        $this->assertInternalType('array', $response->json);
 
         $data = json_encode(null);
         $response = new Response([], $data);

@@ -111,7 +111,7 @@ class ConfigureTest extends TestCase
         $this->assertTrue($result >= 0);
 
         $result = Configure::read();
-        $this->assertTrue(is_array($result));
+        $this->assertInternalType('array', $result);
         $this->assertTrue(isset($result['debug']));
         $this->assertTrue(isset($result['level1']));
 
