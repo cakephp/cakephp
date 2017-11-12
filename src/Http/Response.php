@@ -446,7 +446,7 @@ class Response implements ResponseInterface
             $this->_createStream();
         }
         if (isset($options['body'])) {
-            $this->body($options['body']);
+            $this->stream->write($options['body']);
         }
         if (isset($options['statusCodes'])) {
             $this->httpCodes($options['statusCodes']);

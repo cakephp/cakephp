@@ -193,25 +193,28 @@ class ResponseTest extends TestCase
     /**
      * Tests the type method
      *
+     * @group deprecated
      * @return void
      */
     public function testType()
     {
-        $response = new Response();
-        $this->assertEquals('text/html', $response->type());
-        $response->type('pdf');
-        $this->assertEquals('application/pdf', $response->type());
-        $this->assertEquals('application/crazy-mime', $response->type('application/crazy-mime'));
-        $this->assertEquals('application/json', $response->type('json'));
-        $this->assertEquals('text/vnd.wap.wml', $response->type('wap'));
-        $this->assertEquals('application/vnd.wap.xhtml+xml', $response->type('xhtml-mobile'));
-        $this->assertEquals('text/csv', $response->type('csv'));
+        $this->deprecated(function () {
+            $response = new Response();
+            $this->assertEquals('text/html', $response->type());
+            $response->type('pdf');
+            $this->assertEquals('application/pdf', $response->type());
+            $this->assertEquals('application/crazy-mime', $response->type('application/crazy-mime'));
+            $this->assertEquals('application/json', $response->type('json'));
+            $this->assertEquals('text/vnd.wap.wml', $response->type('wap'));
+            $this->assertEquals('application/vnd.wap.xhtml+xml', $response->type('xhtml-mobile'));
+            $this->assertEquals('text/csv', $response->type('csv'));
 
-        $response->type(['keynote' => 'application/keynote', 'bat' => 'application/bat']);
-        $this->assertEquals('application/keynote', $response->type('keynote'));
-        $this->assertEquals('application/bat', $response->type('bat'));
+            $response->type(['keynote' => 'application/keynote', 'bat' => 'application/bat']);
+            $this->assertEquals('application/keynote', $response->type('keynote'));
+            $this->assertEquals('application/bat', $response->type('bat'));
 
-        $this->assertFalse($response->type('wackytype'));
+            $this->assertFalse($response->type('wackytype'));
+        });
     }
 
     /**
@@ -1235,13 +1238,14 @@ class ResponseTest extends TestCase
      */
     public function testCheckNotModifiedByEtagStar()
     {
-        $_SERVER['HTTP_IF_NONE_MATCH'] = '*';
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods(['notModified'])
-            ->getMock();
-        $response->etag('something');
-        $response->expects($this->once())->method('notModified');
-        $response->checkNotModified(new ServerRequest);
+        $request = new ServerRequest();
+        $request = $request->withHeader('If-None-Match', '*');
+
+        $response = new Response();
+        $response = $response->withEtag('something')
+            ->withHeader('Content-Length', 99);
+        $this->assertTrue($response->checkNotModified($request));
+        $this->assertFalse($response->hasHeader('Content-Type'), 'etags match, should be unmodified');
     }
 
     /**
@@ -1251,13 +1255,14 @@ class ResponseTest extends TestCase
      */
     public function testCheckNotModifiedByEtagExact()
     {
-        $_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something", "other"';
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods(['notModified'])
-            ->getMock();
-        $response->etag('something', true);
-        $response->expects($this->once())->method('notModified');
-        $this->assertTrue($response->checkNotModified(new ServerRequest));
+        $request = new ServerRequest();
+        $request = $request->withHeader('If-None-Match', 'W/"something", "other"');
+
+        $response = new Response();
+        $response = $response->withEtag('something', true)
+            ->withHeader('Content-Length', 99);
+        $this->assertTrue($response->checkNotModified($request));
+        $this->assertFalse($response->hasHeader('Content-Type'), 'etags match, should be unmodified');
     }
 
     /**
@@ -1267,15 +1272,16 @@ class ResponseTest extends TestCase
      */
     public function testCheckNotModifiedByEtagAndTime()
     {
-        $_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something", "other"';
-        $_SERVER['HTTP_IF_MODIFIED_SINCE'] = '2012-01-01 00:00:00';
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods(['notModified'])
-            ->getMock();
-        $response->etag('something', true);
-        $response->modified('2012-01-01 00:00:00');
-        $response->expects($this->once())->method('notModified');
-        $this->assertTrue($response->checkNotModified(new ServerRequest));
+        $request = new ServerRequest();
+        $request = $request->withHeader('If-Modified-Since', '2012-01-01 00:00:00')
+            ->withHeader('If-None-Match', 'W/"something", "other"');
+
+        $response = new Response();
+        $response = $response->withModified('2012-01-01 00:00:00')
+            ->withEtag('something', true)
+            ->withHeader('Content-Length', 99);
+        $this->assertTrue($response->checkNotModified($request));
+        $this->assertFalse($response->hasHeader('Content-Length'), 'etags match, should be unmodified');
     }
 
     /**
@@ -1285,15 +1291,16 @@ class ResponseTest extends TestCase
      */
     public function testCheckNotModifiedByEtagAndTimeMismatch()
     {
-        $_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something", "other"';
-        $_SERVER['HTTP_IF_MODIFIED_SINCE'] = '2012-01-01 00:00:00';
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods(['notModified'])
-            ->getMock();
-        $response->etag('something', true);
-        $response->modified('2012-01-01 00:00:01');
-        $response->expects($this->never())->method('notModified');
-        $this->assertFalse($response->checkNotModified(new ServerRequest));
+        $request = new ServerRequest();
+        $request = $request->withHeader('If-Modified-Since', '2012-01-01 00:00:00')
+            ->withHeader('If-None-Match', 'W/"something", "other"');
+
+        $response = new Response();
+        $response = $response->withModified('2012-01-01 00:00:01')
+            ->withEtag('something', true)
+            ->withHeader('Content-Length', 99);
+        $this->assertFalse($response->checkNotModified($request));
+        $this->assertTrue($response->hasHeader('Content-Length'), 'timestamp in response is newer');
     }
 
     /**
@@ -1303,15 +1310,16 @@ class ResponseTest extends TestCase
      */
     public function testCheckNotModifiedByEtagMismatch()
     {
-        $_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something-else", "other"';
-        $_SERVER['HTTP_IF_MODIFIED_SINCE'] = '2012-01-01 00:00:00';
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods(['notModified'])
-            ->getMock();
-        $response->etag('something', true);
-        $response->modified('2012-01-01 00:00:00');
-        $response->expects($this->never())->method('notModified');
-        $this->assertFalse($response->checkNotModified(new ServerRequest));
+        $request = new ServerRequest();
+        $request = $request->withHeader('If-Modified-Since', '2012-01-01 00:00:00')
+            ->withHeader('If-None-Match', 'W/"something-else", "other"');
+
+        $response = new Response();
+        $response = $response->withModified('2012-01-01 00:00:00')
+            ->withEtag('something', true)
+            ->withHeader('Content-Length', 99);
+        $this->assertFalse($response->checkNotModified($request));
+        $this->assertTrue($response->hasHeader('Content-Length'), 'etags do not match');
     }
 
     /**
@@ -1321,13 +1329,14 @@ class ResponseTest extends TestCase
      */
     public function testCheckNotModifiedByTime()
     {
-        $_SERVER['HTTP_IF_MODIFIED_SINCE'] = '2012-01-01 00:00:00';
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods(['notModified'])
-            ->getMock();
-        $response->modified('2012-01-01 00:00:00');
-        $response->expects($this->once())->method('notModified');
-        $this->assertTrue($response->checkNotModified(new ServerRequest));
+        $request = new ServerRequest();
+        $request = $request->withHeader('If-Modified-Since', '2012-01-01 00:00:00');
+
+        $response = new Response();
+        $response = $response->withModified('2012-01-01 00:00:00')
+            ->withHeader('Content-Length', 99);
+        $this->assertTrue($response->checkNotModified($request));
+        $this->assertFalse($response->hasHeader('Content-Length'), 'modified time matches');
     }
 
     /**
@@ -1337,49 +1346,31 @@ class ResponseTest extends TestCase
      */
     public function testCheckNotModifiedNoHints()
     {
-        $_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something", "other"';
-        $_SERVER['HTTP_IF_MODIFIED_SINCE'] = '2012-01-01 00:00:00';
+        $request = new ServerRequest();
+        $request = $request->withHeader('If-None-Match', 'W/"something", "other"')
+            ->withHeader('If-Modified-Since', '2012-01-01 00:00:00');
         $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['notModified'])
             ->getMock();
         $response->expects($this->never())->method('notModified');
-        $this->assertFalse($response->checkNotModified(new ServerRequest));
+        $this->assertFalse($response->checkNotModified($request));
     }
 
     /**
      * Test cookie setting
      *
+     * @group deprecated
      * @return void
      */
     public function testCookieSettings()
     {
-        $response = new Response();
-        $cookie = [
-            'name' => 'CakeTestCookie[Testing]'
-        ];
-        $response->cookie($cookie);
-        $expected = [
-            'name' => 'CakeTestCookie[Testing]',
-            'value' => '',
-            'expire' => 0,
-            'path' => '/',
-            'domain' => '',
-            'secure' => false,
-            'httpOnly' => false
-        ];
-        $result = $response->cookie('CakeTestCookie[Testing]');
-        $this->assertEquals($expected, $result);
-
-        $cookie = [
-            'name' => 'CakeTestCookie[Testing2]',
-            'value' => '[a,b,c]',
-            'expire' => 1000,
-            'path' => '/test',
-            'secure' => true
-        ];
-        $response->cookie($cookie);
-        $expected = [
-            'CakeTestCookie[Testing]' => [
+        $this->deprecated(function () {
+            $response = new Response();
+            $cookie = [
+                'name' => 'CakeTestCookie[Testing]'
+            ];
+            $response->cookie($cookie);
+            $expected = [
                 'name' => 'CakeTestCookie[Testing]',
                 'value' => '',
                 'expire' => 0,
@@ -1387,47 +1378,69 @@ class ResponseTest extends TestCase
                 'domain' => '',
                 'secure' => false,
                 'httpOnly' => false
-            ],
-            'CakeTestCookie[Testing2]' => [
+            ];
+            $result = $response->cookie('CakeTestCookie[Testing]');
+            $this->assertEquals($expected, $result);
+
+            $cookie = [
                 'name' => 'CakeTestCookie[Testing2]',
                 'value' => '[a,b,c]',
                 'expire' => 1000,
                 'path' => '/test',
-                'domain' => '',
-                'secure' => true,
-                'httpOnly' => false
-            ]
-        ];
+                'secure' => true
+            ];
+            $response->cookie($cookie);
+            $expected = [
+                'CakeTestCookie[Testing]' => [
+                    'name' => 'CakeTestCookie[Testing]',
+                    'value' => '',
+                    'expire' => 0,
+                    'path' => '/',
+                    'domain' => '',
+                    'secure' => false,
+                    'httpOnly' => false
+                ],
+                'CakeTestCookie[Testing2]' => [
+                    'name' => 'CakeTestCookie[Testing2]',
+                    'value' => '[a,b,c]',
+                    'expire' => 1000,
+                    'path' => '/test',
+                    'domain' => '',
+                    'secure' => true,
+                    'httpOnly' => false
+                ]
+            ];
 
-        $result = $response->cookie();
-        $this->assertEquals($expected, $result);
+            $result = $response->cookie();
+            $this->assertEquals($expected, $result);
 
-        $cookie = $expected['CakeTestCookie[Testing]'];
-        $cookie['value'] = 'test';
-        $response->cookie($cookie);
-        $expected = [
-            'CakeTestCookie[Testing]' => [
-                'name' => 'CakeTestCookie[Testing]',
-                'value' => 'test',
-                'expire' => 0,
-                'path' => '/',
-                'domain' => '',
-                'secure' => false,
-                'httpOnly' => false
-            ],
-            'CakeTestCookie[Testing2]' => [
-                'name' => 'CakeTestCookie[Testing2]',
-                'value' => '[a,b,c]',
-                'expire' => 1000,
-                'path' => '/test',
-                'domain' => '',
-                'secure' => true,
-                'httpOnly' => false
-            ]
-        ];
+            $cookie = $expected['CakeTestCookie[Testing]'];
+            $cookie['value'] = 'test';
+            $response->cookie($cookie);
+            $expected = [
+                'CakeTestCookie[Testing]' => [
+                    'name' => 'CakeTestCookie[Testing]',
+                    'value' => 'test',
+                    'expire' => 0,
+                    'path' => '/',
+                    'domain' => '',
+                    'secure' => false,
+                    'httpOnly' => false
+                ],
+                'CakeTestCookie[Testing2]' => [
+                    'name' => 'CakeTestCookie[Testing2]',
+                    'value' => '[a,b,c]',
+                    'expire' => 1000,
+                    'path' => '/test',
+                    'domain' => '',
+                    'secure' => true,
+                    'httpOnly' => false
+                ]
+            ];
 
-        $result = $response->cookie();
-        $this->assertEquals($expected, $result);
+            $result = $response->cookie();
+            $this->assertEquals($expected, $result);
+        });
     }
 
     /**
@@ -2153,50 +2166,53 @@ class ResponseTest extends TestCase
     /**
      * test getFile method
      *
+     * @group deprecated
      * @return void
      */
     public function testGetFile()
     {
-        $response = new Response();
-        $this->assertNull($response->getFile(), 'No file to get');
+        $this->deprecated(function () {
+            $response = new Response();
+            $this->assertNull($response->getFile(), 'No file to get');
 
-        $response->file(TEST_APP . 'vendor/css/test_asset.css');
-        $file = $response->getFile();
-        $this->assertInstanceOf('Cake\Filesystem\File', $file, 'Should get a file');
-        $this->assertPathEquals(TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css', $file->path);
+            $response->file(TEST_APP . 'vendor/css/test_asset.css');
+            $file = $response->getFile();
+            $this->assertInstanceOf('Cake\Filesystem\File', $file, 'Should get a file');
+            $this->assertPathEquals(TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css', $file->path);
+        });
     }
 
     /**
      * testConnectionAbortedOnBuffering method
      *
+     * @group deprecated
      * @return void
      */
     public function testConnectionAbortedOnBuffering()
     {
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods([
-                'header',
-                'type',
-                'download',
-                '_sendHeader',
-                '_setContentType',
-                '_isActive',
-            ])
-            ->getMock();
+        $this->deprecated(function () {
+            $response = $this->getMockBuilder('Cake\Http\Response')
+                ->setMethods([
+                    'download',
+                    '_sendHeader',
+                    '_isActive',
+                ])
+                ->getMock();
 
-        $response->expects($this->any())
-            ->method('type')
-            ->with('css')
-            ->will($this->returnArgument(0));
+            $response->expects($this->at(0))
+                ->method('_isActive')
+                ->will($this->returnValue(false));
 
-        $response->expects($this->at(0))
-            ->method('_isActive')
-            ->will($this->returnValue(false));
+            $response->file(TEST_APP . 'vendor/css/test_asset.css');
 
-        $response->file(TEST_APP . 'vendor/css/test_asset.css');
+            ob_start();
+            $result = $response->send();
+            ob_end_clean();
 
-        $result = $response->send();
-        $this->assertNull($result);
+            $this->assertNull($result);
+            $this->assertEquals('text/css', $response->getType());
+            $this->assertFalse($response->hasHeader('Content-Range'));
+        });
     }
 
     /**
