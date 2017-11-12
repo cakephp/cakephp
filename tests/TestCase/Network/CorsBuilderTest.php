@@ -168,9 +168,8 @@ class CorsBuilderTest extends TestCase
      */
     protected function assertHeader($expected, Response $response, $header)
     {
-        $headers = $response->header();
-        $this->assertArrayHasKey($header, $headers, 'Header key not found.');
-        $this->assertEquals($expected, $headers[$header], 'Header value not found.');
+        $this->assertTrue($response->hasHeader($header), 'Header key not found.');
+        $this->assertEquals($expected, $response->getHeaderLine($header), 'Header value not found.');
     }
 
     /**
@@ -181,7 +180,6 @@ class CorsBuilderTest extends TestCase
      */
     protected function assertNoHeader(Response $response, $header)
     {
-        $headers = $response->header();
-        $this->assertArrayNotHasKey($header, $headers, 'Header key was found.');
+        $this->assertFalse($response->hasHeader($header), 'Header key was found.');
     }
 }

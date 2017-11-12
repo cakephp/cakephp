@@ -20,6 +20,7 @@ use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
+use Cake\Network\CorsBuilder;
 use Cake\Network\Exception\NotFoundException;
 use Cake\TestSuite\TestCase;
 use Zend\Diactoros\Stream;
@@ -1650,8 +1651,25 @@ class ResponseTest extends TestCase
     }
 
     /**
-     * Test CORS
+     * Test that cors() returns a builder.
      *
+     * @return void
+     */
+    public function testCors()
+    {
+        $request = new ServerRequest([
+            'environment' => ['HTTP_ORIGIN' => 'http://example.com']
+        ]);
+        $response = new Response();
+        $builder = $response->cors($request);
+        $this->assertInstanceOf(CorsBuilder::class, $builder);
+        $this->assertSame($response, $builder->build(), 'Empty builder returns same object');
+    }
+
+    /**
+     * Test CORS with additional parameters
+     *
+     * @group deprecated
      * @dataProvider corsData
      * @param Request $request
      * @param string $origin
@@ -1663,27 +1681,28 @@ class ResponseTest extends TestCase
      * @param string|bool $expectedHeaders
      * @return void
      */
-    public function testCors($request, $origin, $domains, $methods, $headers, $expectedOrigin, $expectedMethods = false, $expectedHeaders = false)
+    public function testCorsParameters($request, $origin, $domains, $methods, $headers, $expectedOrigin, $expectedMethods = false, $expectedHeaders = false)
     {
-        $request = $request->withEnv('HTTP_ORIGIN', $origin);
-        $response = new Response();
+        $this->deprecated(function () use ($request, $origin, $domains, $methods, $headers, $expectedOrigin, $expectedMethods, $expectedHeaders) {
+            $request = $request->withEnv('HTTP_ORIGIN', $origin);
+            $response = new Response();
 
-        $result = $response->cors($request, $domains, $methods, $headers);
-        $this->assertInstanceOf('Cake\Network\CorsBuilder', $result);
+            $result = $response->cors($request, $domains, $methods, $headers);
+            $this->assertInstanceOf('Cake\Network\CorsBuilder', $result);
 
-        if ($expectedOrigin) {
-            $this->assertTrue($response->hasHeader('Access-Control-Allow-Origin'));
-            $this->assertEquals($expectedOrigin, $response->getHeaderLine('Access-Control-Allow-Origin'));
-        }
-        if ($expectedMethods) {
-            $this->assertTrue($response->hasHeader('Access-Control-Allow-Methods'));
-            $this->assertEquals($expectedMethods, $response->getHeaderLine('Access-Control-Allow-Methods'));
-        }
-        if ($expectedHeaders) {
-            $this->assertTrue($response->hasHeader('Access-Control-Allow-Headers'));
-            $this->assertEquals($expectedHeaders, $response->getHeaderLine('Access-Control-Allow-Headers'));
-        }
-        unset($_SERVER['HTTP_ORIGIN']);
+            if ($expectedOrigin) {
+                $this->assertTrue($response->hasHeader('Access-Control-Allow-Origin'));
+                $this->assertEquals($expectedOrigin, $response->getHeaderLine('Access-Control-Allow-Origin'));
+            }
+            if ($expectedMethods) {
+                $this->assertTrue($response->hasHeader('Access-Control-Allow-Methods'));
+                $this->assertEquals($expectedMethods, $response->getHeaderLine('Access-Control-Allow-Methods'));
+            }
+            if ($expectedHeaders) {
+                $this->assertTrue($response->hasHeader('Access-Control-Allow-Headers'));
+                $this->assertEquals($expectedHeaders, $response->getHeaderLine('Access-Control-Allow-Headers'));
+            }
+        });
     }
 
     /**

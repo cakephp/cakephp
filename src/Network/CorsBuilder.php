@@ -14,7 +14,7 @@
  */
 namespace Cake\Network;
 
-use Cake\Http\Response as HttpResponse;
+use Psr\Http\Message\MessageInterface;
 
 /**
  * A builder object that assists in defining Cross Origin Request related
@@ -34,7 +34,7 @@ class CorsBuilder
     /**
      * The response object this builder is attached to.
      *
-     * @var \Cake\Http\Response
+     * @var \Psr\Http\Message\MessageInterface
      */
     protected $_response;
 
@@ -62,11 +62,11 @@ class CorsBuilder
     /**
      * Constructor.
      *
-     * @param \Cake\Http\Response $response The response object to add headers onto.
+     * @param \Psr\Http\Message\MessageInterface $response The response object to add headers onto.
      * @param string $origin The request's Origin header.
      * @param bool $isSsl Whether or not the request was over SSL.
      */
-    public function __construct(HttpResponse $response, $origin, $isSsl = false)
+    public function __construct(MessageInterface $response, $origin, $isSsl = false)
     {
         $this->_origin = $origin;
         $this->_isSsl = $isSsl;
@@ -79,18 +79,22 @@ class CorsBuilder
      * If the builder has no Origin, or if there are no allowed domains,
      * or if the allowed domains do not match the Origin header no headers will be applied.
      *
-     * @return \Cake\Http\Response
+     * @return \Psr\Http\Message\MessageInterface A new instance of the response with new headers.
      */
     public function build()
     {
+        $response = $this->_response;
         if (empty($this->_origin)) {
-            return $this->_response;
-        }
-        if (isset($this->_headers['Access-Control-Allow-Origin'])) {
-            $this->_response->header($this->_headers);
+            return $response;
         }
 
-        return $this->_response;
+        if (isset($this->_headers['Access-Control-Allow-Origin'])) {
+            foreach ($this->_headers as $key => $value) {
+                $response = $response->withHeader($key, $value);
+            }
+        }
+
+        return $response;
     }
 
     /**

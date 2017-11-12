@@ -2350,11 +2350,25 @@ class Response implements ResponseInterface
         if (empty($allowedDomains) && empty($allowedMethods) && empty($allowedHeaders)) {
             return $builder;
         }
+        deprecationWarning(
+            'The $allowedDomains, $allowedMethods, and $allowedHeaders parameters of Response::cors() ' .
+            'are deprecated. Instead you should use the builder methods on the return of cors().'
+        );
 
-        $builder->allowOrigin($allowedDomains)
+        $updated = $builder->allowOrigin($allowedDomains)
             ->allowMethods((array)$allowedMethods)
             ->allowHeaders((array)$allowedHeaders)
             ->build();
+
+        // If $updated is a new instance, mutate this object in-place
+        // to retain existing behavior.
+        if ($updated !== $this) {
+            foreach ($updated->getHeaders() as $name => $values) {
+                if (!$this->hasHeader($name)) {
+                    $this->_setHeader($name, $values[0]);
+                }
+            }
+        }
 
         return $builder;
     }
