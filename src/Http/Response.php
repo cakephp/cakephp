@@ -452,7 +452,7 @@ class Response implements ResponseInterface
             $this->httpCodes($options['statusCodes']);
         }
         if (isset($options['status'])) {
-            $this->statusCode($options['status']);
+            $this->_setStatus($options['status']);
         }
         if (!isset($options['charset'])) {
             $options['charset'] = Configure::read('App.encoding');
@@ -1037,7 +1037,7 @@ class Response implements ResponseInterface
      */
     public function httpCodes($code = null)
     {
-        deprecationWarning('Will be removed in 4.0.0');
+        deprecationWarning('Response::httpCodes(). Will be removed in 4.0.0');
 
         if (empty($code)) {
             return $this->_statusCodes;
@@ -1680,8 +1680,8 @@ class Response implements ResponseInterface
      */
     public function notModified()
     {
-        $this->_status = 304;
         $this->_createStream();
+        $this->_setStatus(304);
 
         $remove = [
             'Allow',

@@ -67,11 +67,11 @@ class ResponseTest extends TestCase
     public function testConstruct()
     {
         $response = new Response();
-        $this->assertNull($response->body());
-        $this->assertEquals('UTF-8', $response->charset());
-        $this->assertEquals('text/html', $response->type());
+        $this->assertSame('', (string)$response->getBody());
+        $this->assertEquals('UTF-8', $response->getCharset());
+        $this->assertEquals('text/html', $response->getType());
         $this->assertEquals('text/html; charset=UTF-8', $response->getHeaderLine('Content-Type'));
-        $this->assertEquals(200, $response->statusCode());
+        $this->assertEquals(200, $response->getStatusCode());
 
         $options = [
             'body' => 'This is the body',
@@ -80,67 +80,84 @@ class ResponseTest extends TestCase
             'status' => '203'
         ];
         $response = new Response($options);
-        $this->assertEquals('This is the body', $response->body());
-        $this->assertEquals('my-custom-charset', $response->charset());
-        $this->assertEquals('audio/mpeg', $response->type());
+        $this->assertEquals('This is the body', (string)$response->getBody());
+        $this->assertEquals('my-custom-charset', $response->getCharset());
+        $this->assertEquals('audio/mpeg', $response->getType());
         $this->assertEquals('audio/mpeg', $response->getHeaderLine('Content-Type'));
-        $this->assertEquals(203, $response->statusCode());
+        $this->assertEquals(203, $response->getStatusCode());
+    }
 
-        $options = [
-            'body' => 'This is the body',
-            'charset' => 'ISO-8859-1',
-            'type' => 'txt',
-            'status' => '422',
-            'statusCodes' => [
-                422 => 'Unprocessable Entity'
-            ]
-        ];
-        $response = new Response($options);
-        $this->assertEquals($options['body'], $response->body());
-        $this->assertEquals($options['charset'], $response->charset());
-        $this->assertEquals($response->getMimeType($options['type']), $response->type());
-        $this->assertEquals($options['status'], $response->statusCode());
-        $this->assertEquals('text/plain; charset=ISO-8859-1', $response->getHeaderLine('Content-Type'));
+    /**
+     * Test statusCodes constructor argument.
+     *
+     * @group deprecated
+     * @return void
+     */
+    public function testConstructCustomCodes()
+    {
+        $this->deprecated(function () {
+            $options = [
+                'body' => 'This is the body',
+                'charset' => 'ISO-8859-1',
+                'type' => 'txt',
+                'status' => '422',
+                'statusCodes' => [
+                    422 => 'Unprocessable Entity'
+                ]
+            ];
+            $response = new Response($options);
+            $this->assertEquals($options['body'], (string)$response->getBody());
+            $this->assertEquals($options['charset'], $response->getCharset());
+            $this->assertEquals($response->getMimeType($options['type']), $response->getType());
+            $this->assertEquals($options['status'], $response->getStatusCode());
+            $this->assertEquals('text/plain; charset=ISO-8859-1', $response->getHeaderLine('Content-Type'));
+        });
     }
 
     /**
      * Tests the body method
      *
+     * @group deprecated
      * @return void
      */
     public function testBody()
     {
-        $response = new Response();
-        $this->assertNull($response->body());
-        $response->body('Response body');
-        $this->assertEquals('Response body', $response->body());
-        $this->assertEquals('Changed Body', $response->body('Changed Body'));
+        $this->deprecated(function () {
+            $response = new Response();
+            $this->assertNull($response->body());
+            $response->body('Response body');
+            $this->assertEquals('Response body', $response->body());
+            $this->assertEquals('Changed Body', $response->body('Changed Body'));
 
-        $response = new Response();
-        $response->body(0);
-        $this->assertEquals(0, $response->body());
+            $response = new Response();
+            $response->body(0);
+            $this->assertEquals(0, $response->body());
 
-        $response = new Response();
-        $response->body('0');
-        $this->assertEquals('0', $response->body());
+            $response = new Response();
+            $response->body('0');
+            $this->assertEquals('0', $response->body());
 
-        $response = new Response();
-        $response->body(null);
-        $this->assertEquals(null, $response->body());
+            $response = new Response();
+            $response->body(null);
+            $this->assertEquals(null, $response->body());
+        });
     }
 
     /**
      * Tests the charset method
      *
+     * @group deprecated
      * @return void
      */
     public function testCharset()
     {
-        $response = new Response();
-        $this->assertEquals('UTF-8', $response->charset());
-        $response->charset('iso-8859-1');
-        $this->assertEquals('iso-8859-1', $response->charset());
-        $this->assertEquals('UTF-16', $response->charset('UTF-16'));
+        $this->deprecated(function () {
+            $response = new Response();
+            $this->assertEquals('UTF-8', $response->charset());
+            $response->charset('iso-8859-1');
+            $this->assertEquals('iso-8859-1', $response->charset());
+            $this->assertEquals('UTF-16', $response->charset('UTF-16'));
+        });
     }
 
     /**
@@ -163,31 +180,37 @@ class ResponseTest extends TestCase
     /**
      * Tests the statusCode method
      *
+     * @group deprecated
      * @return void
      */
     public function testStatusCode()
     {
-        $response = new Response();
-        $this->assertEquals(200, $response->statusCode());
+        $this->deprecated(function () {
+            $response = new Response();
+            $this->assertEquals(200, $response->statusCode());
 
-        $response->statusCode(404);
-        $this->assertEquals(404, $response->getStatusCode(), 'Sets shared state.');
-        $this->assertEquals(404, $response->statusCode());
-        $this->assertEquals('Not Found', $response->getReasonPhrase());
+            $response->statusCode(404);
+            $this->assertEquals(404, $response->getStatusCode(), 'Sets shared state.');
+            $this->assertEquals(404, $response->statusCode());
+            $this->assertEquals('Not Found', $response->getReasonPhrase());
 
-        $this->assertEquals(500, $response->statusCode(500));
+            $this->assertEquals(500, $response->statusCode(500));
+        });
     }
 
     /**
      * Test invalid status codes
      *
+     * @group deprecated
      * @return void
      */
     public function testStatusCodeInvalid()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $response = new Response();
-        $response->statusCode(1001);
+        $this->deprecated(function () {
+            $response = new Response();
+            $response->statusCode(1001);
+        });
     }
 
     /**
@@ -226,9 +249,11 @@ class ResponseTest extends TestCase
     {
         $response = new Response();
         $this->assertEquals('text/html', $response->getType());
-        $response->type('pdf');
-        $this->assertEquals('application/pdf', $response->getType());
 
+        $this->assertEquals(
+            'application/pdf',
+            $response->withType('pdf')->getType()
+        );
         $this->assertEquals(
             'custom/stuff',
             $response->withType('custom/stuff')->getType()
@@ -304,94 +329,100 @@ class ResponseTest extends TestCase
     /**
      * Tests the header method
      *
+     * @group deprecated
      * @return void
      */
     public function testHeader()
     {
-        $response = new Response();
-        $headers = [
-            'Content-Type' => 'text/html; charset=UTF-8',
-        ];
-        $this->assertEquals($headers, $response->header());
+        $this->deprecated(function () {
+            $response = new Response();
+            $headers = [
+                'Content-Type' => 'text/html; charset=UTF-8',
+            ];
+            $this->assertEquals($headers, $response->header());
 
-        $response->header('Location', 'http://example.com');
-        $headers += ['Location' => 'http://example.com'];
-        $this->assertEquals($headers, $response->header());
+            $response->header('Location', 'http://example.com');
+            $headers += ['Location' => 'http://example.com'];
+            $this->assertEquals($headers, $response->header());
 
-        // Headers with the same name are overwritten
-        $response->header('Location', 'http://example2.com');
-        $headers = [
-            'Content-Type' => 'text/html; charset=UTF-8',
-            'Location' => 'http://example2.com'
-        ];
-        $this->assertEquals($headers, $response->header());
+            // Headers with the same name are overwritten
+            $response->header('Location', 'http://example2.com');
+            $headers = [
+                'Content-Type' => 'text/html; charset=UTF-8',
+                'Location' => 'http://example2.com'
+            ];
+            $this->assertEquals($headers, $response->header());
 
-        $response->header(['WWW-Authenticate' => 'Negotiate']);
-        $headers += ['WWW-Authenticate' => 'Negotiate'];
-        $this->assertEquals($headers, $response->header());
+            $response->header(['WWW-Authenticate' => 'Negotiate']);
+            $headers += ['WWW-Authenticate' => 'Negotiate'];
+            $this->assertEquals($headers, $response->header());
 
-        $response->header(['WWW-Authenticate' => 'Not-Negotiate']);
-        $headers['WWW-Authenticate'] = 'Not-Negotiate';
-        $this->assertEquals($headers, $response->header());
+            $response->header(['WWW-Authenticate' => 'Not-Negotiate']);
+            $headers['WWW-Authenticate'] = 'Not-Negotiate';
+            $this->assertEquals($headers, $response->header());
 
-        $response->header(['Age' => 12, 'Allow' => 'GET, HEAD']);
-        $headers += ['Age' => 12, 'Allow' => 'GET, HEAD'];
-        $this->assertEquals($headers, $response->header());
+            $response->header(['Age' => 12, 'Allow' => 'GET, HEAD']);
+            $headers += ['Age' => 12, 'Allow' => 'GET, HEAD'];
+            $this->assertEquals($headers, $response->header());
 
-        // String headers are allowed
-        $response->header('Content-Language: da');
-        $headers += ['Content-Language' => 'da'];
-        $this->assertEquals($headers, $response->header());
+            // String headers are allowed
+            $response->header('Content-Language: da');
+            $headers += ['Content-Language' => 'da'];
+            $this->assertEquals($headers, $response->header());
 
-        $response->header('Content-Language: da');
-        $headers += ['Content-Language' => 'da'];
-        $this->assertEquals($headers, $response->header());
+            $response->header('Content-Language: da');
+            $headers += ['Content-Language' => 'da'];
+            $this->assertEquals($headers, $response->header());
 
-        $response->header(['Content-Encoding: gzip', 'Vary: *', 'Pragma' => 'no-cache']);
-        $headers += ['Content-Encoding' => 'gzip', 'Vary' => '*', 'Pragma' => 'no-cache'];
-        $this->assertEquals($headers, $response->header());
+            $response->header(['Content-Encoding: gzip', 'Vary: *', 'Pragma' => 'no-cache']);
+            $headers += ['Content-Encoding' => 'gzip', 'Vary' => '*', 'Pragma' => 'no-cache'];
+            $this->assertEquals($headers, $response->header());
 
-        $response->header('Access-Control-Allow-Origin', ['domain1', 'domain2']);
-        $headers += ['Access-Control-Allow-Origin' => ['domain1', 'domain2']];
-        $this->assertEquals($headers, $response->header());
+            $response->header('Access-Control-Allow-Origin', ['domain1', 'domain2']);
+            $headers += ['Access-Control-Allow-Origin' => ['domain1', 'domain2']];
+            $this->assertEquals($headers, $response->header());
+        });
     }
 
     /**
      * Tests the send method
      *
+     * @group deprecated
      * @return void
      */
     public function testSend()
     {
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods(['_sendHeader', '_sendContent'])
-            ->getMock();
-        $response->header([
-            'Content-Language' => 'es',
-            'WWW-Authenticate' => 'Negotiate',
-            'Access-Control-Allow-Origin' => ['domain1', 'domain2'],
-        ]);
-        $response->cookie(['name' => 'thing', 'value' => 'value']);
-        $response->body('the response body');
+        $this->deprecated(function () {
+            $response = $this->getMockBuilder('Cake\Http\Response')
+                ->setMethods(['_sendHeader', '_sendContent'])
+                ->getMock();
+            $response->header([
+                'Content-Language' => 'es',
+                'WWW-Authenticate' => 'Negotiate',
+                'Access-Control-Allow-Origin' => ['domain1', 'domain2'],
+            ]);
+            $response->cookie(['name' => 'thing', 'value' => 'value']);
+            $response->body('the response body');
 
-        $response->expects($this->once())->method('_sendContent')->with('the response body');
-        $response->expects($this->at(0))
-            ->method('_sendHeader')->with('HTTP/1.1 200 OK');
-        $response->expects($this->at(1))
-            ->method('_sendHeader')->with('Content-Type', 'text/html; charset=UTF-8');
-        $response->expects($this->at(2))
-            ->method('_sendHeader')->with('Content-Language', 'es');
-        $response->expects($this->at(3))
-            ->method('_sendHeader')->with('WWW-Authenticate', 'Negotiate');
-        $response->expects($this->at(4))
-            ->method('_sendHeader')->with('Access-Control-Allow-Origin', 'domain1');
-        $response->expects($this->at(5))
-            ->method('_sendHeader')->with('Access-Control-Allow-Origin', 'domain2');
-        $response->send();
+            $response->expects($this->once())->method('_sendContent')->with('the response body');
+            $response->expects($this->at(0))
+                ->method('_sendHeader')->with('HTTP/1.1 200 OK');
+            $response->expects($this->at(1))
+                ->method('_sendHeader')->with('Content-Type', 'text/html; charset=UTF-8');
+            $response->expects($this->at(2))
+                ->method('_sendHeader')->with('Content-Language', 'es');
+            $response->expects($this->at(3))
+                ->method('_sendHeader')->with('WWW-Authenticate', 'Negotiate');
+            $response->expects($this->at(4))
+                ->method('_sendHeader')->with('Access-Control-Allow-Origin', 'domain1');
+            $response->expects($this->at(5))
+                ->method('_sendHeader')->with('Access-Control-Allow-Origin', 'domain2');
+            $response->send();
 
-        $this->assertCount(1, $GLOBALS['mockedCookies']);
-        $this->assertSame('value', $GLOBALS['mockedCookies'][0]['value']);
-        $this->assertSame('thing', $GLOBALS['mockedCookies'][0]['name']);
+            $this->assertCount(1, $GLOBALS['mockedCookies']);
+            $this->assertSame('value', $GLOBALS['mockedCookies'][0]['value']);
+            $this->assertSame('thing', $GLOBALS['mockedCookies'][0]['name']);
+        });
     }
 
     /**
@@ -413,6 +444,7 @@ class ResponseTest extends TestCase
     /**
      * Tests the send method and changing the content type
      *
+     * @group deprecated
      * @dataProvider charsetTypeProvider
      * @return void
      */
@@ -430,26 +462,60 @@ class ResponseTest extends TestCase
     /**
      * Tests the send method and changing the content type to JS without adding the charset
      *
+     * @group deprecated
      * @return void
      */
     public function testCharsetSetContentTypeWithoutCharset()
     {
-        $response = new Response();
-        $response->type('js');
-        $response->charset('');
-        $this->assertEquals('application/javascript', $response->getHeaderLine('Content-Type'));
+        $this->deprecated(function () {
+            $response = new Response();
+            $response->type('js');
+            $response->charset('');
+            $this->assertEquals('application/javascript', $response->getHeaderLine('Content-Type'));
+        });
     }
 
     /**
      * Tests the send method and changing the content type
      *
+     * @group deprecated
      * @return void
      */
     public function testLocationSetsStatus()
     {
-        $response = new Response();
-        $response->location('http://www.example.com');
-        $this->assertEquals(302, $response->getStatusCode());
+        $this->deprecated(function () {
+            $response = new Response();
+            $response->location('http://www.example.com');
+            $this->assertEquals(302, $response->getStatusCode());
+        });
+    }
+
+    /**
+     * Test that setting certain status codes clears the status code.
+     *
+     * @group deprecated
+     * @return void
+     */
+    public function testStatusClearsContentType()
+    {
+        $this->deprecated(function () {
+            $response = new Response();
+            $response->statusCode(204);
+            $response->statusCode(304);
+            $this->assertFalse($response->hasHeader('Content-Type'));
+            $this->assertSame(304, $response->getStatusCode());
+
+            $response = new Response();
+            $response->type('pdf');
+            $response->statusCode(204);
+            $this->assertFalse($response->hasHeader('Content-Type'));
+            $this->assertSame(204, $response->getStatusCode());
+
+            $response = new Response();
+            $response->statusCode(204);
+            $response->type('pdf');
+            $this->assertFalse($response->hasHeader('Content-Type'));
+        });
     }
 
     /**
@@ -457,20 +523,8 @@ class ResponseTest extends TestCase
      *
      * @return void
      */
-    public function testStatusClearsContentType()
+    public function testWithStatusClearsContentType()
     {
-        $response = new Response();
-        $response->statusCode(204);
-        $response->statusCode(304);
-        $this->assertFalse($response->hasHeader('Content-Type'));
-        $this->assertSame(304, $response->getStatusCode());
-
-        $response = new Response();
-        $response->type('pdf');
-        $response->statusCode(204);
-        $this->assertFalse($response->hasHeader('Content-Type'));
-        $this->assertSame(204, $response->getStatusCode());
-
         $response = new Response();
         $new = $response->withType('pdf')
             ->withStatus(204);
@@ -481,68 +535,72 @@ class ResponseTest extends TestCase
         $new = $response->withStatus(304)
             ->withType('pdf');
         $this->assertFalse($new->hasHeader('Content-Type'));
-
-        $response = new Response();
-        $response->statusCode(204);
-        $response->type('pdf');
-        $this->assertFalse($response->hasHeader('Content-Type'));
     }
 
     /**
      * Tests the send method and changing the content type
      *
+     * @group deprecated
      * @return void
      */
     public function testSendWithCallableBody()
     {
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods(['_sendHeader'])
-            ->getMock();
-        $response->body(function () {
-            echo 'the response body';
-        });
+        $this->deprecated(function () {
+            $response = $this->getMockBuilder('Cake\Http\Response')
+                ->setMethods(['_sendHeader'])
+                ->getMock();
+            $response->body(function () {
+                echo 'the response body';
+            });
 
-        ob_start();
-        $response->send();
-        $this->assertEquals('the response body', ob_get_clean());
+            ob_start();
+            $response->send();
+            $this->assertEquals('the response body', ob_get_clean());
+        });
     }
 
     /**
      * Tests that the returned a string from a body callable is also sent
      * as the response body
      *
+     * @group deprecated
      * @return void
      */
     public function testSendWithCallableBodyWithReturn()
     {
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods(['_sendHeader'])
-            ->getMock();
-        $response->body(function () {
-            return 'the response body';
-        });
+        $this->deprecated(function () {
+            $response = $this->getMockBuilder('Cake\Http\Response')
+                ->setMethods(['_sendHeader'])
+                ->getMock();
+            $response->body(function () {
+                return 'the response body';
+            });
 
-        ob_start();
-        $response->send();
-        $this->assertEquals('the response body', ob_get_clean());
+            ob_start();
+            $response->send();
+            $this->assertEquals('the response body', ob_get_clean());
+        });
     }
 
     /**
      * Tests the disableCache method
      *
+     * @group deprecated
      * @return void
      */
     public function testDisableCache()
     {
-        $response = new Response();
-        $expected = [
-            'Expires' => 'Mon, 26 Jul 1997 05:00:00 GMT',
-            'Last-Modified' => gmdate('D, d M Y H:i:s') . ' GMT',
-            'Cache-Control' => 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0',
-            'Content-Type' => 'text/html; charset=UTF-8',
-        ];
-        $response->disableCache();
-        $this->assertEquals($expected, $response->header());
+        $this->deprecated(function () {
+            $response = new Response();
+            $expected = [
+                'Expires' => 'Mon, 26 Jul 1997 05:00:00 GMT',
+                'Last-Modified' => gmdate('D, d M Y H:i:s') . ' GMT',
+                'Cache-Control' => 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0',
+                'Content-Type' => 'text/html; charset=UTF-8',
+            ];
+            $response->disableCache();
+            $this->assertEquals($expected, $response->header());
+        });
     }
 
     /**
@@ -568,49 +626,52 @@ class ResponseTest extends TestCase
     /**
      * Tests the cache method
      *
+     * @group deprecated
      * @return void
      */
     public function testCache()
     {
-        $response = new Response();
-        $since = time();
-        $time = new \DateTime('+1 day', new \DateTimeZone('UTC'));
-        $response->expires('+1 day');
-        $expected = [
-            'Date' => gmdate('D, j M Y G:i:s ', $since) . 'GMT',
-            'Last-Modified' => gmdate('D, j M Y H:i:s ', $since) . 'GMT',
-            'Expires' => $time->format('D, j M Y H:i:s') . ' GMT',
-            'Cache-Control' => 'public, max-age=' . ($time->format('U') - time()),
-            'Content-Type' => 'text/html; charset=UTF-8',
-        ];
-        $response->cache($since);
-        $this->assertEquals($expected, $response->header());
+        $this->deprecated(function () {
+            $response = new Response();
+            $since = time();
+            $time = new \DateTime('+1 day', new \DateTimeZone('UTC'));
+            $response->expires('+1 day');
+            $expected = [
+                'Date' => gmdate('D, j M Y G:i:s ', $since) . 'GMT',
+                'Last-Modified' => gmdate('D, j M Y H:i:s ', $since) . 'GMT',
+                'Expires' => $time->format('D, j M Y H:i:s') . ' GMT',
+                'Cache-Control' => 'public, max-age=' . ($time->format('U') - time()),
+                'Content-Type' => 'text/html; charset=UTF-8',
+            ];
+            $response->cache($since);
+            $this->assertEquals($expected, $response->header());
 
-        $response = new Response();
-        $since = time();
-        $time = '+5 day';
-        $expected = [
-            'Date' => gmdate('D, j M Y G:i:s ', $since) . 'GMT',
-            'Last-Modified' => gmdate('D, j M Y H:i:s ', $since) . 'GMT',
-            'Expires' => gmdate('D, j M Y H:i:s', strtotime($time)) . ' GMT',
-            'Cache-Control' => 'public, max-age=' . (strtotime($time) - time()),
-            'Content-Type' => 'text/html; charset=UTF-8',
-        ];
-        $response->cache($since, $time);
-        $this->assertEquals($expected, $response->header());
+            $response = new Response();
+            $since = time();
+            $time = '+5 day';
+            $expected = [
+                'Date' => gmdate('D, j M Y G:i:s ', $since) . 'GMT',
+                'Last-Modified' => gmdate('D, j M Y H:i:s ', $since) . 'GMT',
+                'Expires' => gmdate('D, j M Y H:i:s', strtotime($time)) . ' GMT',
+                'Cache-Control' => 'public, max-age=' . (strtotime($time) - time()),
+                'Content-Type' => 'text/html; charset=UTF-8',
+            ];
+            $response->cache($since, $time);
+            $this->assertEquals($expected, $response->header());
 
-        $response = new Response();
-        $since = time();
-        $time = time();
-        $expected = [
-            'Date' => gmdate('D, j M Y G:i:s ', $since) . 'GMT',
-            'Last-Modified' => gmdate('D, j M Y H:i:s ', $since) . 'GMT',
-            'Expires' => gmdate('D, j M Y H:i:s', $time) . ' GMT',
-            'Cache-Control' => 'public, max-age=0',
-            'Content-Type' => 'text/html; charset=UTF-8',
-        ];
-        $response->cache($since, $time);
-        $this->assertEquals($expected, $response->header());
+            $response = new Response();
+            $since = time();
+            $time = time();
+            $expected = [
+                'Date' => gmdate('D, j M Y G:i:s ', $since) . 'GMT',
+                'Last-Modified' => gmdate('D, j M Y H:i:s ', $since) . 'GMT',
+                'Expires' => gmdate('D, j M Y H:i:s', $time) . ' GMT',
+                'Cache-Control' => 'public, max-age=0',
+                'Content-Type' => 'text/html; charset=UTF-8',
+            ];
+            $response->cache($since, $time);
+            $this->assertEquals($expected, $response->header());
+        });
     }
 
     /**
@@ -663,64 +724,70 @@ class ResponseTest extends TestCase
     /**
      * Tests the httpCodes method
      *
+     * @group deprecated
      * @return void
      */
     public function testHttpCodes()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $response = new Response();
-        $result = $response->httpCodes();
-        $this->assertCount(65, $result);
+        $this->deprecated(function () {
+            $response = new Response();
+            $result = $response->httpCodes();
+            $this->assertCount(65, $result);
 
-        $result = $response->httpCodes(100);
-        $expected = [100 => 'Continue'];
-        $this->assertEquals($expected, $result);
+            $result = $response->httpCodes(100);
+            $expected = [100 => 'Continue'];
+            $this->assertEquals($expected, $result);
 
-        $codes = [
-            381 => 'Unicorn Moved',
-            555 => 'Unexpected Minotaur'
-        ];
+            $codes = [
+                381 => 'Unicorn Moved',
+                555 => 'Unexpected Minotaur'
+            ];
 
-        $result = $response->httpCodes($codes);
-        $this->assertTrue($result);
-        $this->assertCount(67, $response->httpCodes());
+            $result = $response->httpCodes($codes);
+            $this->assertTrue($result);
+            $this->assertCount(67, $response->httpCodes());
 
-        $result = $response->httpCodes(381);
-        $expected = [381 => 'Unicorn Moved'];
-        $this->assertEquals($expected, $result);
+            $result = $response->httpCodes(381);
+            $expected = [381 => 'Unicorn Moved'];
+            $this->assertEquals($expected, $result);
 
-        $codes = [404 => 'Sorry Bro'];
-        $result = $response->httpCodes($codes);
-        $this->assertTrue($result);
-        $this->assertCount(67, $response->httpCodes());
+            $codes = [404 => 'Sorry Bro'];
+            $result = $response->httpCodes($codes);
+            $this->assertTrue($result);
+            $this->assertCount(67, $response->httpCodes());
 
-        $result = $response->httpCodes(404);
-        $expected = [404 => 'Sorry Bro'];
-        $this->assertEquals($expected, $result);
+            $result = $response->httpCodes(404);
+            $expected = [404 => 'Sorry Bro'];
+            $this->assertEquals($expected, $result);
 
-        //Throws exception
-        $response->httpCodes([
-            0 => 'Nothing Here',
-            -1 => 'Reverse Infinity',
-            12345 => 'Universal Password',
-            'Hello' => 'World'
-        ]);
+            //Throws exception
+            $response->httpCodes([
+                0 => 'Nothing Here',
+                -1 => 'Reverse Infinity',
+                12345 => 'Universal Password',
+                'Hello' => 'World'
+            ]);
+        });
     }
 
     /**
      * Tests the download method
      *
+     * @group deprecated
      * @return void
      */
     public function testDownload()
     {
-        $response = new Response();
-        $expected = [
-            'Content-Type' => 'text/html; charset=UTF-8',
-            'Content-Disposition' => 'attachment; filename="myfile.mp3"'
-        ];
-        $response->download('myfile.mp3');
-        $this->assertEquals($expected, $response->header());
+        $this->deprecated(function () {
+            $response = new Response();
+            $expected = [
+                'Content-Type' => 'text/html; charset=UTF-8',
+                'Content-Disposition' => 'attachment; filename="myfile.mp3"'
+            ];
+            $response->download('myfile.mp3');
+            $this->assertEquals($expected, $response->header());
+        });
     }
 
     /**
@@ -797,31 +864,37 @@ class ResponseTest extends TestCase
     /**
      * Tests getting/setting the protocol
      *
+     * @group deprecated
      * @return void
      */
     public function testProtocol()
     {
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods(['_sendHeader', '_sendContent'])
-            ->getMock();
-        $response->protocol('HTTP/1.0');
-        $this->assertEquals('HTTP/1.0', $response->protocol());
-        $response->expects($this->at(0))
-            ->method('_sendHeader')->with('HTTP/1.0 200 OK');
-        $response->send();
+        $this->deprecated(function () {
+            $response = $this->getMockBuilder('Cake\Http\Response')
+                ->setMethods(['_sendHeader', '_sendContent'])
+                ->getMock();
+            $response->protocol('HTTP/1.0');
+            $this->assertEquals('HTTP/1.0', $response->protocol());
+            $response->expects($this->at(0))
+                ->method('_sendHeader')->with('HTTP/1.0 200 OK');
+            $response->send();
+        });
     }
 
     /**
      * Tests getting/setting the Content-Length
      *
+     * @group deprecated
      * @return void
      */
     public function testLength()
     {
-        $response = new Response();
-        $response->length(100);
-        $this->assertEquals(100, $response->length());
-        $this->assertEquals('100', $response->getHeaderLine('Content-Length'));
+        $this->deprecated(function () {
+            $response = new Response();
+            $response->length(100);
+            $this->assertEquals(100, $response->length());
+            $this->assertEquals('100', $response->getHeaderLine('Content-Length'));
+        });
     }
 
     /**
@@ -838,35 +911,37 @@ class ResponseTest extends TestCase
         $this->assertFalse($response->hasHeader('Content-Length'), 'Old instance not modified');
 
         $this->assertSame('100', $new->getHeaderLine('Content-Length'));
-        $this->assertSame('100', $new->length(), 'new method is compat with old.');
     }
 
     /**
      * Tests setting the expiration date
      *
+     * @group deprecated
      * @return void
      */
     public function testExpires()
     {
-        $format = 'D, j M Y H:i:s';
-        $response = new Response();
-        $now = new \DateTime('now', new \DateTimeZone('America/Los_Angeles'));
-        $response->expires($now);
-        $now->setTimeZone(new \DateTimeZone('UTC'));
-        $this->assertEquals($now->format($format) . ' GMT', $response->expires());
-        $this->assertEquals($now->format($format) . ' GMT', $response->getHeaderLine('Expires'));
+        $this->deprecated(function () {
+            $format = 'D, j M Y H:i:s';
+            $response = new Response();
+            $now = new \DateTime('now', new \DateTimeZone('America/Los_Angeles'));
+            $response->expires($now);
+            $now->setTimeZone(new \DateTimeZone('UTC'));
+            $this->assertEquals($now->format($format) . ' GMT', $response->expires());
+            $this->assertEquals($now->format($format) . ' GMT', $response->getHeaderLine('Expires'));
 
-        $now = time();
-        $response = new Response();
-        $response->expires($now);
-        $this->assertEquals(gmdate($format) . ' GMT', $response->expires());
-        $this->assertEquals(gmdate($format) . ' GMT', $response->getHeaderLine('Expires'));
+            $now = time();
+            $response = new Response();
+            $response->expires($now);
+            $this->assertEquals(gmdate($format) . ' GMT', $response->expires());
+            $this->assertEquals(gmdate($format) . ' GMT', $response->getHeaderLine('Expires'));
 
-        $response = new Response();
-        $time = new \DateTime('+1 day', new \DateTimeZone('UTC'));
-        $response->expires('+1 day');
-        $this->assertEquals($time->format($format) . ' GMT', $response->expires());
-        $this->assertEquals($time->format($format) . ' GMT', $response->getHeaderLine('Expires'));
+            $response = new Response();
+            $time = new \DateTime('+1 day', new \DateTimeZone('UTC'));
+            $response->expires('+1 day');
+            $this->assertEquals($time->format($format) . ' GMT', $response->expires());
+            $this->assertEquals($time->format($format) . ' GMT', $response->getHeaderLine('Expires'));
+        });
     }
 
     /**
@@ -898,29 +973,32 @@ class ResponseTest extends TestCase
     /**
      * Tests setting the modification date
      *
+     * @group deprecated
      * @return void
      */
     public function testModified()
     {
-        $format = 'D, j M Y H:i:s';
-        $response = new Response();
-        $now = new \DateTime('now', new \DateTimeZone('America/Los_Angeles'));
-        $response->modified($now);
-        $now->setTimeZone(new \DateTimeZone('UTC'));
-        $this->assertEquals($now->format($format) . ' GMT', $response->modified());
-        $this->assertEquals($now->format($format) . ' GMT', $response->getHeaderLine('Last-Modified'));
+        $this->deprecated(function () {
+            $format = 'D, j M Y H:i:s';
+            $response = new Response();
+            $now = new \DateTime('now', new \DateTimeZone('America/Los_Angeles'));
+            $response->modified($now);
+            $now->setTimeZone(new \DateTimeZone('UTC'));
+            $this->assertEquals($now->format($format) . ' GMT', $response->modified());
+            $this->assertEquals($now->format($format) . ' GMT', $response->getHeaderLine('Last-Modified'));
 
-        $response = new Response();
-        $now = time();
-        $response->modified($now);
-        $this->assertEquals(gmdate($format) . ' GMT', $response->modified());
-        $this->assertEquals(gmdate($format) . ' GMT', $response->getHeaderLine('Last-Modified'));
+            $response = new Response();
+            $now = time();
+            $response->modified($now);
+            $this->assertEquals(gmdate($format) . ' GMT', $response->modified());
+            $this->assertEquals(gmdate($format) . ' GMT', $response->getHeaderLine('Last-Modified'));
 
-        $response = new Response();
-        $time = new \DateTime('+1 day', new \DateTimeZone('UTC'));
-        $response->modified('+1 day');
-        $this->assertEquals($time->format($format) . ' GMT', $response->modified());
-        $this->assertEquals($time->format($format) . ' GMT', $response->getHeaderLine('Last-Modified'));
+            $response = new Response();
+            $time = new \DateTime('+1 day', new \DateTimeZone('UTC'));
+            $response->modified('+1 day');
+            $this->assertEquals($time->format($format) . ' GMT', $response->modified());
+            $this->assertEquals($time->format($format) . ' GMT', $response->getHeaderLine('Last-Modified'));
+        });
     }
 
     /**
@@ -1073,24 +1151,27 @@ class ResponseTest extends TestCase
     /**
      * Tests setting of must-revalidate Cache-Control directive
      *
+     * @group deprecated
      * @return void
      */
     public function testMustRevalidate()
     {
-        $response = new Response();
-        $this->assertFalse($response->mustRevalidate());
+        $this->deprecated(function () {
+            $response = new Response();
+            $this->assertFalse($response->mustRevalidate());
 
-        $response->mustRevalidate(true);
-        $this->assertTrue($response->mustRevalidate());
-        $this->assertEquals('must-revalidate', $response->getHeaderLine('Cache-Control'));
+            $response->mustRevalidate(true);
+            $this->assertTrue($response->mustRevalidate());
+            $this->assertEquals('must-revalidate', $response->getHeaderLine('Cache-Control'));
 
-        $response->mustRevalidate(false);
-        $this->assertFalse($response->mustRevalidate());
+            $response->mustRevalidate(false);
+            $this->assertFalse($response->mustRevalidate());
 
-        $response = new Response();
-        $response->sharedMaxAge(3600);
-        $response->mustRevalidate(true);
-        $this->assertEquals('s-maxage=3600, must-revalidate', $response->getHeaderLine('Cache-Control'));
+            $response = new Response();
+            $response->sharedMaxAge(3600);
+            $response->mustRevalidate(true);
+            $this->assertEquals('s-maxage=3600, must-revalidate', $response->getHeaderLine('Cache-Control'));
+        });
     }
 
     /**
@@ -1114,18 +1195,21 @@ class ResponseTest extends TestCase
     /**
      * Tests getting/setting the Vary header
      *
+     * @group deprecated
      * @return void
      */
     public function testVary()
     {
-        $response = new Response();
-        $response->vary('Accept-encoding');
-        $this->assertEquals('Accept-encoding', $response->getHeaderLine('vary'));
+        $this->deprecated(function () {
+            $response = new Response();
+            $response->vary('Accept-encoding');
+            $this->assertEquals('Accept-encoding', $response->getHeaderLine('vary'));
 
-        $response = new Response();
-        $response->vary(['Accept-language', 'Accept-encoding']);
-        $this->assertEquals(['Accept-language', 'Accept-encoding'], $response->vary());
-        $this->assertEquals('Accept-language, Accept-encoding', $response->getHeaderLine('vary'));
+            $response = new Response();
+            $response->vary(['Accept-language', 'Accept-encoding']);
+            $this->assertEquals(['Accept-language', 'Accept-encoding'], $response->vary());
+            $this->assertEquals('Accept-language, Accept-encoding', $response->getHeaderLine('vary'));
+        });
     }
 
     /**
@@ -1149,19 +1233,22 @@ class ResponseTest extends TestCase
     /**
      * Tests getting/setting the Etag header
      *
+     * @group deprecated
      * @return void
      */
     public function testEtag()
     {
-        $response = new Response();
-        $response->etag('something');
-        $this->assertEquals('"something"', $response->etag());
-        $this->assertEquals('"something"', $response->getHeaderLine('Etag'));
+        $this->deprecated(function () {
+            $response = new Response();
+            $response->etag('something');
+            $this->assertEquals('"something"', $response->etag());
+            $this->assertEquals('"something"', $response->getHeaderLine('Etag'));
 
-        $response = new Response();
-        $response->etag('something', true);
-        $this->assertEquals('W/"something"', $response->etag());
-        $this->assertEquals('W/"something"', $response->getHeaderLine('Etag'));
+            $response = new Response();
+            $response->etag('something', true);
+            $this->assertEquals('W/"something"', $response->etag());
+            $this->assertEquals('W/"something"', $response->getHeaderLine('Etag'));
+        });
     }
 
     /**
@@ -1188,18 +1275,18 @@ class ResponseTest extends TestCase
      */
     public function testNotModified()
     {
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods(['_sendHeader', '_sendContent'])
-            ->getMock();
-        $response->body('something');
-        $response->statusCode(200);
-        $response->length(100);
-        $response->modified('now');
+        $response = new Response();
+        $response = $response->withStringBody('something')
+            ->withStatus(200)
+            ->withLength(100)
+            ->withModified('now');
+
         $response->notModified();
 
-        $this->assertEmpty($response->header());
-        $this->assertEmpty($response->body());
-        $this->assertEquals(304, $response->statusCode());
+        $this->assertFalse($response->hasHeader('Content-Length'));
+        $this->assertFalse($response->hasHeader('Modified'));
+        $this->assertEmpty((string)$response->getBody());
+        $this->assertEquals(304, $response->getStatusCode());
     }
 
     /**
@@ -2631,12 +2718,7 @@ class ResponseTest extends TestCase
     {
         $this->deprecated(function () {
             $_SERVER['HTTP_RANGE'] = 'bytes=30-2';
-            $response = $this->getMockBuilder('Cake\Http\Response')
-                ->setMethods([
-                    '_sendHeader',
-                ])
-                ->getMock();
-
+            $response = new Response();
             $response->file(
                 TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
                 ['download' => false]
@@ -2646,7 +2728,6 @@ class ResponseTest extends TestCase
             $this->assertEquals('bytes', $response->getHeaderLine('Accept-Ranges'));
             $this->assertEquals('text/css', $response->getType());
             $this->assertEquals('bytes 0-37/38', $response->getHeaderLine('Content-Range'));
-            $result = $response->send();
         });
     }
 
