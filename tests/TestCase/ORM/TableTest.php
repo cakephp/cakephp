@@ -6094,7 +6094,7 @@ class TableTest extends TestCase
         $table->association('authors')->target()->getEventManager()->on(
             'Model.beforeFind',
             function (Event $event, Query $query, ArrayObject $options, $primary) use (&$associationBeforeFindCount) {
-                $this->assertTrue(is_bool($primary));
+                $this->assertInternalType('bool', $primary);
                 $associationBeforeFindCount ++;
             }
         );
@@ -6103,7 +6103,7 @@ class TableTest extends TestCase
         $eventManager->on(
             'Model.beforeFind',
             function (Event $event, Query $query, ArrayObject $options, $primary) use (&$beforeFindCount) {
-                $this->assertTrue(is_bool($primary));
+                $this->assertInternalType('bool', $primary);
                 $beforeFindCount ++;
             }
         );
@@ -6115,7 +6115,7 @@ class TableTest extends TestCase
         $eventManager->on(
             'Model.buildValidator',
             $callback = function (Event $event, Validator $validator, $name) use (&$buildValidatorCount) {
-                $this->assertTrue(is_string($name));
+                $this->assertInternalType('string', $name);
                 $buildValidatorCount ++;
             }
         );
@@ -6136,15 +6136,15 @@ class TableTest extends TestCase
         $eventManager->on(
             'Model.beforeRules',
             function (Event $event, Entity $entity, ArrayObject $options, $operation) use (&$beforeRulesCount) {
-                $this->assertTrue(is_string($operation));
+                $this->assertInternalType('string', $operation);
                 $beforeRulesCount ++;
             }
         );
         $eventManager->on(
             'Model.afterRules',
             function (Event $event, Entity $entity, ArrayObject $options, $result, $operation) use (&$afterRulesCount) {
-                $this->assertTrue(is_bool($result));
-                $this->assertTrue(is_string($operation));
+                $this->assertInternalType('bool', $result);
+                $this->assertInternalType('string', $operation);
                 $afterRulesCount ++;
             }
         );

@@ -297,7 +297,7 @@ class StreamTest extends TestCase
         foreach ($expected as $k => $v) {
             $this->assertEquals($v, $result[$k]);
         }
-        $this->assertTrue(is_readable($result['cafile']));
+        $this->assertIsReadable($result['cafile']);
     }
 
     /**
@@ -333,7 +333,7 @@ class StreamTest extends TestCase
         foreach ($expected as $k => $v) {
             $this->assertEquals($v, $result[$k]);
         }
-        $this->assertTrue(is_readable($result['cafile']));
+        $this->assertIsReadable($result['cafile']);
     }
 
     /**

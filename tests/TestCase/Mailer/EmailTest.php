@@ -1890,7 +1890,7 @@ class EmailTest extends TestCase
 
         $message = $this->Email->message();
         $boundary = $this->Email->getBoundary();
-        $this->assertFalse(empty($boundary));
+        $this->assertNotEmpty($boundary);
         $this->assertContains('--' . $boundary, $message);
         $this->assertContains('--' . $boundary . '--', $message);
 
@@ -1899,7 +1899,7 @@ class EmailTest extends TestCase
 
         $message = $this->Email->message();
         $boundary = $this->Email->getBoundary();
-        $this->assertFalse(empty($boundary));
+        $this->assertNotEmpty($boundary);
         $this->assertContains('--' . $boundary, $message);
         $this->assertContains('--' . $boundary . '--', $message);
         $this->assertContains('--alt-' . $boundary, $message);

@@ -1139,7 +1139,7 @@ class ServerRequestTest extends TestCase
 
         $this->assertTrue(isset($request->controller));
         $this->assertFalse(isset($request->notthere));
-        $this->assertFalse(empty($request->controller));
+        $this->assertNotEmpty($request->controller);
     }
 
     /**
