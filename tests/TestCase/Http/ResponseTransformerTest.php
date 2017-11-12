@@ -22,6 +22,8 @@ use Zend\Diactoros\Stream;
 
 /**
  * Test case for the response transformer.
+ *
+ * @group deprecated
  */
 class ResponseTransformerTest extends TestCase
 {
@@ -33,6 +35,13 @@ class ResponseTransformerTest extends TestCase
     protected $server;
 
     /**
+     * Old error level
+     *
+     * @var int
+     */
+    protected $errorLevel;
+
+    /**
      * setup
      *
      * @return void
@@ -41,6 +50,7 @@ class ResponseTransformerTest extends TestCase
     {
         parent::setUp();
         $this->server = $_SERVER;
+        $this->errorLevel = error_reporting(E_ALL ^ E_USER_DEPRECATED);
     }
 
     /**
@@ -52,6 +62,8 @@ class ResponseTransformerTest extends TestCase
     {
         parent::tearDown();
         $_SERVER = $this->server;
+        error_reporting($this->errorLevel);
+        unset($this->errorLevel);
     }
 
     /**
