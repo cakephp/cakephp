@@ -208,8 +208,8 @@ class Request extends Message implements RequestInterface
     public function cookie($name, $value = null)
     {
         deprecationWarning(
-            'Request::header() is deprecated. ' .
-            'No longer used. CookieCollections now add `Cookie` header to the ' .
+            'Request::cookie() is deprecated. ' .
+            'The Client internals now add the required `Cookie` header to the ' .
             'request before sending. Use Cake\Http\Cookie\CookieCollection::addToRequest() ' .
             'to make adding cookies to a request easier.'
         );
@@ -272,7 +272,7 @@ class Request extends Message implements RequestInterface
         if (is_array($body)) {
             $formData = new FormData();
             $formData->addMany($body);
-            $this->header('Content-Type', $formData->contentType());
+            $this->addHeaders(['Content-Type' => $formData->contentType()]);
             $body = (string)$formData;
         }
         $stream = new Stream('php://memory', 'rw');
