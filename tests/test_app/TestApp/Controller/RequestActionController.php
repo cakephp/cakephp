@@ -141,6 +141,7 @@ class RequestActionController extends AppController
         if ($this->request->getParam('0')) {
             $content = 'return found';
         }
+
         return $this->response->withStringBody($content);
     }
 
