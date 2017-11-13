@@ -79,12 +79,12 @@ class CsrfProtectionMiddlewareTest extends TestCase
         $response = new Response();
 
         $closure = function ($request, $response) {
-            $cookie = $response->cookie('csrfToken');
+            $cookie = $response->getCookie('csrfToken');
             $this->assertNotEmpty($cookie, 'Should set a token.');
             $this->assertRegExp('/^[a-f0-9]+$/', $cookie['value'], 'Should look like a hash.');
             $this->assertEquals(0, $cookie['expire'], 'session duration.');
             $this->assertEquals('/dir/', $cookie['path'], 'session path.');
-            $this->assertEquals($cookie['value'], $request->params['_csrfToken']);
+            $this->assertEquals($cookie['value'], $request->getParam('_csrfToken'));
         };
 
         $middleware = new CsrfProtectionMiddleware();
@@ -266,8 +266,8 @@ class CsrfProtectionMiddlewareTest extends TestCase
         $response = new Response();
 
         $closure = function ($request, $response) {
-            $this->assertEmpty($response->cookie('csrfToken'));
-            $cookie = $response->cookie('token');
+            $this->assertEmpty($response->getCookie('csrfToken'));
+            $cookie = $response->getCookie('token');
             $this->assertNotEmpty($cookie, 'Should set a token.');
             $this->assertRegExp('/^[a-f0-9]+$/', $cookie['value'], 'Should look like a hash.');
             $this->assertWithinRange((new Time('+1 hour'))->format('U'), $cookie['expire'], 1, 'session duration.');

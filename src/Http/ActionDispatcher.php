@@ -91,7 +91,7 @@ class ActionDispatcher
         }
 
         $response = $this->_invoke($controller);
-        if (isset($request->params['return'])) {
+        if ($request->getParam('return')) {
             return $response;
         }
 
