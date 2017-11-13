@@ -124,11 +124,11 @@ class DecimalTypeTest extends TestCase
     /**
      * Arrays are invalid.
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testToDatabaseInvalid()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->type->toDatabase(['3', '4'], $this->driver);
     }
 
@@ -199,11 +199,11 @@ class DecimalTypeTest extends TestCase
     /**
      * Test that exceptions are raised on invalid parsers.
      *
-     * @expectedException \RuntimeException
      * @return void
      */
     public function testUseLocaleParsingInvalid()
     {
+        $this->expectException(\RuntimeException::class);
         DecimalType::$numberClass = 'stdClass';
         $this->type->useLocaleParser();
     }

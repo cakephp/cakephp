@@ -1231,11 +1231,11 @@ class RouterTest extends TestCase
     /**
      * Test that using invalid names causes exceptions.
      *
-     * @expectedException \Cake\Routing\Exception\MissingRouteException
      * @return void
      */
     public function testNamedRouteException()
     {
+        $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
         Router::connect(
             '/users/:name',
             ['controller' => 'users', 'action' => 'view'],
@@ -1247,11 +1247,11 @@ class RouterTest extends TestCase
     /**
      * Test that using duplicate names causes exceptions.
      *
-     * @expectedException \Cake\Routing\Exception\DuplicateNamedRouteException
      * @return void
      */
     public function testDuplicateNamedRouteException()
     {
+        $this->expectException(\Cake\Routing\Exception\DuplicateNamedRouteException::class);
         Router::connect(
             '/users/:name',
             ['controller' => 'users', 'action' => 'view'],
@@ -1761,10 +1761,10 @@ class RouterTest extends TestCase
     /**
      * Test exceptions when parsing fails.
      *
-     * @expectedException \Cake\Routing\Exception\MissingRouteException
      */
     public function testParseError()
     {
+        $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
         Router::connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
         Router::parseRequest($this->makeRequest('/nope', 'GET'));
     }
@@ -2351,11 +2351,11 @@ class RouterTest extends TestCase
     /**
      * test that patterns work for :action
      *
-     * @expectedException \Cake\Routing\Exception\MissingRouteException
      * @return void
      */
     public function testParsingWithPatternOnAction()
     {
+        $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
         Router::connect(
             '/blog/:action/*',
             ['controller' => 'blog_posts'],
@@ -2378,11 +2378,11 @@ class RouterTest extends TestCase
     /**
      * Test url() works with patterns on :action
      *
-     * @expectedException \Cake\Routing\Exception\MissingRouteException
      * @return void
      */
     public function testUrlPatternOnAction()
     {
+        $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
         Router::connect(
             '/blog/:action/*',
             ['controller' => 'blog_posts'],
@@ -2582,11 +2582,11 @@ class RouterTest extends TestCase
      * testRegexRouteMatching error
      *
      * @group deprecated
-     * @expectedException \Cake\Routing\Exception\MissingRouteException
      * @return void
      */
     public function testRegexRouteMatchingError()
     {
+        $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
         $this->deprecated(function () {
             Router::connect('/:locale/:controller/:action/*', [], ['locale' => 'dan|eng']);
             Router::parse('/badness/test/test_action', 'GET');
@@ -2596,11 +2596,11 @@ class RouterTest extends TestCase
     /**
      * testRegexRouteMatching method
      *
-     * @expectedException \Cake\Routing\Exception\MissingRouteException
      * @return void
      */
     public function testRegexRouteMatchUrl()
     {
+        $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
         Router::connect('/:locale/:controller/:action/*', [], ['locale' => 'dan|eng']);
 
         $request = new ServerRequest();
@@ -2671,11 +2671,11 @@ class RouterTest extends TestCase
     /**
      * test that route classes must extend \Cake\Routing\Route\Route
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testCustomRouteException()
     {
+        $this->expectException(\InvalidArgumentException::class);
         Router::connect('/:controller', [], ['routeClass' => 'Object']);
     }
 
@@ -3125,11 +3125,11 @@ class RouterTest extends TestCase
     /**
      * Test the scope() method
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testScopeError()
     {
+        $this->expectException(\InvalidArgumentException::class);
         Router::scope('/path', 'derpy');
     }
 

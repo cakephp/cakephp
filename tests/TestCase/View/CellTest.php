@@ -307,11 +307,11 @@ class CellTest extends TestCase
     /**
      * Tests that using an non-existent cell throws an exception.
      *
-     * @expectedException \Cake\View\Exception\MissingCellException
      * @return void
      */
     public function testNonExistentCell()
     {
+        $this->expectException(\Cake\View\Exception\MissingCellException::class);
         $cell = $this->View->cell('TestPlugin.Void::echoThis', ['arg1' => 'v1']);
         $cell = $this->View->cell('Void::echoThis', ['arg1' => 'v1', 'arg2' => 'v2']);
     }
@@ -319,12 +319,12 @@ class CellTest extends TestCase
     /**
      * Tests missing method errors
      *
-     * @expectedException \BadMethodCallException
-     * @expectedExceptionMessage Class TestApp\View\Cell\ArticlesCell does not have a "nope" method.
      * @return void
      */
     public function testCellMissingMethod()
     {
+        $this->expectException(\BadMethodCallException::class);
+        $this->expectExceptionMessage('Class TestApp\View\Cell\ArticlesCell does not have a "nope" method.');
         $cell = $this->View->cell('Articles::nope');
         $cell->render();
     }

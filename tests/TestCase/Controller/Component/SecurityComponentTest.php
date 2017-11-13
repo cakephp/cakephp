@@ -211,12 +211,12 @@ class SecurityComponentTest extends TestCase
      * Test that requests are still blackholed when controller has incorrect
      * visibility keyword in the blackhole callback.
      *
-     * @expectedException \Cake\Network\Exception\BadRequestException
      * @return void
      * @triggers Controller.startup $Controller, $this->Controller
      */
     public function testBlackholeWithBrokenCallback()
     {
+        $this->expectException(\Cake\Network\Exception\BadRequestException::class);
         $request = new ServerRequest([
             'url' => 'posts/index',
             'session' => $this->Security->session
@@ -1504,12 +1504,12 @@ class SecurityComponentTest extends TestCase
      *
      * Test blackhole will now throw passed exception if debug enabled.
      *
-     * @expectedException \Cake\Controller\Exception\SecurityException
-     * @expectedExceptionMessage error description
      * @return void
      */
     public function testBlackholeThrowsException()
     {
+        $this->expectException(\Cake\Controller\Exception\SecurityException::class);
+        $this->expectExceptionMessage('error description');
         $this->Security->setConfig('blackHoleCallback', '');
         $this->Security->blackHole($this->Controller, 'auth', new SecurityException('error description'));
     }
@@ -1643,12 +1643,12 @@ class SecurityComponentTest extends TestCase
      *
      * @group deprecated
      * @return void
-     * @expectedException \Cake\Controller\Exception\AuthSecurityException
-     * @expectedExceptionMessage '_Token' was not found in request data.
      * @triggers Controller.startup $this->Controller
      */
     public function testAuthRequiredThrowsExceptionTokenNotFoundPost()
     {
+        $this->expectException(\Cake\Controller\Exception\AuthSecurityException::class);
+        $this->expectExceptionMessage('\'_Token\' was not found in request data.');
         $this->deprecated(function () {
             $this->Security->setConfig('requireAuth', ['protected']);
             $this->Controller->request->params['action'] = 'protected';
@@ -1664,12 +1664,12 @@ class SecurityComponentTest extends TestCase
      *
      * @group deprecated
      * @return void
-     * @expectedException \Cake\Controller\Exception\AuthSecurityException
-     * @expectedExceptionMessage '_Token' was not found in session.
      * @triggers Controller.startup $this->Controller
      */
     public function testAuthRequiredThrowsExceptionTokenNotFoundSession()
     {
+        $this->expectException(\Cake\Controller\Exception\AuthSecurityException::class);
+        $this->expectExceptionMessage('\'_Token\' was not found in session.');
         $this->deprecated(function () {
             $this->Security->setConfig('requireAuth', ['protected']);
             $this->Controller->request->params['action'] = 'protected';
@@ -1685,12 +1685,12 @@ class SecurityComponentTest extends TestCase
      *
      * @group deprecated
      * @return void
-     * @expectedException \Cake\Controller\Exception\AuthSecurityException
-     * @expectedExceptionMessage Controller 'NotAllowed' was not found in allowed controllers: 'Allowed, AnotherAllowed'.
      * @triggers Controller.startup $this->Controller
      */
     public function testAuthRequiredThrowsExceptionControllerNotAllowed()
     {
+        $this->expectException(\Cake\Controller\Exception\AuthSecurityException::class);
+        $this->expectExceptionMessage('Controller \'NotAllowed\' was not found in allowed controllers: \'Allowed, AnotherAllowed\'.');
         $this->deprecated(function () {
             $this->Security->setConfig('requireAuth', ['protected']);
             $this->Controller->request->params['controller'] = 'NotAllowed';
@@ -1709,12 +1709,12 @@ class SecurityComponentTest extends TestCase
      * Auth required throws exception controller not allowed.
      *
      * @return void
-     * @expectedException \Cake\Controller\Exception\AuthSecurityException
-     * @expectedExceptionMessage Action 'NotAllowed::protected' was not found in allowed actions: 'index, view'.
      * @triggers Controller.startup $this->Controller
      */
     public function testAuthRequiredThrowsExceptionActionNotAllowed()
     {
+        $this->expectException(\Cake\Controller\Exception\AuthSecurityException::class);
+        $this->expectExceptionMessage('Action \'NotAllowed::protected\' was not found in allowed actions: \'index, view\'.');
         $this->deprecated(function () {
             $this->Security->setConfig('requireAuth', ['protected']);
             $this->Controller->request->params['controller'] = 'NotAllowed';

@@ -97,12 +97,12 @@ class ValidationRuleTest extends TestCase
     /**
      * Make sure errors are triggered when validation is missing.
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Unable to call method "totallyMissing" in "default" provider for field "test"
      * @return void
      */
     public function testCustomMethodMissingError()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unable to call method "totallyMissing" in "default" provider for field "test"');
         $def = ['rule' => ['totallyMissing']];
         $data = 'some data';
         $providers = ['default' => $this];

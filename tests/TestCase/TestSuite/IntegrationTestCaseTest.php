@@ -262,12 +262,12 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     /**
      * Test customizing the app class.
      *
-     * @expectedException \LogicException
-     * @expectedExceptionMessage Cannot load "TestApp\MissingApp" for use in integration
      * @return void
      */
     public function testConfigApplication()
     {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Cannot load "TestApp\MissingApp" for use in integration');
         DispatcherFactory::clear();
         $this->useHttpServer(true);
         $this->configApplication('TestApp\MissingApp', []);
@@ -518,12 +518,12 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     /**
      * Tests the failure message for assertCookieNotSet
      *
-     * @expectedException \PHPUnit\Framework\AssertionFailedError
-     * @expectedExceptionMessage Cookie 'remember_me' has been set
      * @return void
      */
     public function testCookieNotSetFailure()
     {
+        $this->expectException(\PHPUnit\Framework\AssertionFailedError::class);
+        $this->expectExceptionMessage('Cookie \'remember_me\' has been set');
         $this->post('/posts/index');
         $this->assertCookieNotSet('remember_me');
     }
@@ -532,12 +532,12 @@ class IntegrationTestCaseTest extends IntegrationTestCase
      * Tests the failure message for assertCookieNotSet when no
      * response whas generated
      *
-     * @expectedException \PHPUnit\Framework\AssertionFailedError
-     * @expectedExceptionMessage No response set, cannot assert cookies.
      * @return void
      */
     public function testCookieNotSetFailureNoResponse()
     {
+        $this->expectException(\PHPUnit\Framework\AssertionFailedError::class);
+        $this->expectExceptionMessage('No response set, cannot assert cookies.');
         $this->assertCookieNotSet('remember_me');
     }
 
@@ -669,11 +669,11 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     /**
      * Test that exceptions being thrown are handled correctly.
      *
-     * @expectedException \PHPUnit\Framework\AssertionFailedError
      * @return void
      */
     public function testWithUnexpectedException()
     {
+        $this->expectException(\PHPUnit\Framework\AssertionFailedError::class);
         $this->get('/tests_apps/throw_exception');
         $this->assertResponseCode(501);
     }
@@ -921,12 +921,12 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     /**
      * Test the content regexp assertion failing
      *
-     * @expectedException \PHPUnit\Framework\AssertionFailedError
-     * @expectedExceptionMessage No response set
      * @return void
      */
     public function testAssertResponseRegExpNoResponse()
     {
+        $this->expectException(\PHPUnit\Framework\AssertionFailedError::class);
+        $this->expectExceptionMessage('No response set');
         $this->assertResponseRegExp('/cont/');
     }
 
@@ -946,12 +946,12 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     /**
      * Test negated content regexp assertion failing
      *
-     * @expectedException \PHPUnit\Framework\AssertionFailedError
-     * @expectedExceptionMessage No response set
      * @return void
      */
     public function testAssertResponseNotRegExpNoResponse()
     {
+        $this->expectException(\PHPUnit\Framework\AssertionFailedError::class);
+        $this->expectExceptionMessage('No response set');
         $this->assertResponseNotRegExp('/cont/');
     }
 
@@ -1012,24 +1012,24 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     /**
      * Test that assertFile requires a response
      *
-     * @expectedException \PHPUnit\Framework\AssertionFailedError
-     * @expectedExceptionMessage No response set, cannot assert file
      * @return void
      */
     public function testAssertFileNoResponse()
     {
+        $this->expectException(\PHPUnit\Framework\AssertionFailedError::class);
+        $this->expectExceptionMessage('No response set, cannot assert file');
         $this->assertFileResponse('foo');
     }
 
     /**
      * Test that assertFile requires a file
      *
-     * @expectedException \PHPUnit\Framework\AssertionFailedError
-     * @expectedExceptionMessage No file was sent in this response
      * @return void
      */
     public function testAssertFileNoFile()
     {
+        $this->expectException(\PHPUnit\Framework\AssertionFailedError::class);
+        $this->expectExceptionMessage('No file was sent in this response');
         $this->get('/posts/get');
         $this->assertFileResponse('foo');
     }
@@ -1037,12 +1037,12 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     /**
      * Test disabling the error handler middleware.
      *
-     * @expectedException \Cake\Routing\Exception\MissingRouteException
-     * @expectedExceptionMessage A route matching "/foo" could not be found.
      * @return void
      */
     public function testDisableErrorHandlerMiddleware()
     {
+        $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
+        $this->expectExceptionMessage('A route matching "/foo" could not be found.');
         $this->disableErrorHandlerMiddleware();
         $this->get('/foo');
     }

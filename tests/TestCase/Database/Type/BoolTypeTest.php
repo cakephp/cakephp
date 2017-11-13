@@ -64,22 +64,22 @@ class BoolTypeTest extends TestCase
     /**
      * Test converting an array to boolean results in an exception
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testToDatabaseInvalid()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->type->toDatabase([1, 2], $this->driver);
     }
 
     /**
      * Tests that passing an invalid value will throw an exception
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testToDatabaseInvalidArray()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->type->toDatabase([1, 2, 3], $this->driver);
     }
 

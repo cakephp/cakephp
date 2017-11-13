@@ -316,11 +316,11 @@ class FormHelperTest extends TestCase
     /**
      * Test registering an invalid widget class.
      *
-     * @expectedException \RuntimeException
      * @return void
      */
     public function testAddWidgetInvalid()
     {
+        $this->expectException(\RuntimeException::class);
         $mock = new \StdClass();
         $this->Form->addWidget('test', $mock);
         $this->Form->widget('test');
@@ -385,12 +385,12 @@ class FormHelperTest extends TestCase
     /**
      * Test adding an invalid context class.
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Context providers must return object implementing Cake\View\Form\ContextInterface. Got "stdClass" instead.
      * @return void
      */
     public function testAddContextProviderInvalid()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Context providers must return object implementing Cake\View\Form\ContextInterface. Got "stdClass" instead.');
         $context = 'My data';
         $this->Form->addContextProvider('test', function ($request, $data) use ($context) {
             return new \StdClass();
@@ -3931,12 +3931,12 @@ class FormHelperTest extends TestCase
      *
      * Test invalid 'input' type option to control() function.
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Invalid type 'input' used for field 'text'
      * @return void
      */
     public function testInvalidControlTypeOption()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Invalid type \'input\' used for field \'text\'');
         $this->Form->control('text', ['type' => 'input']);
     }
 
@@ -8320,11 +8320,11 @@ class FormHelperTest extends TestCase
      *
      * Test errors when field name is missing.
      *
-     * @expectedException \Cake\Core\Exception\Exception
      * @return void
      */
     public function testHtml5ControlException()
     {
+        $this->expectException(\Cake\Core\Exception\Exception::class);
         $this->Form->email();
     }
 

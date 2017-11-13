@@ -298,33 +298,33 @@ class CacheTest extends TestCase
     /**
      * Test write from a config that is undefined.
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testWriteNonExistingConfig()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->assertFalse(Cache::write('key', 'value', 'totally fake'));
     }
 
     /**
      * Test write from a config that is undefined.
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testIncrementNonExistingConfig()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->assertFalse(Cache::increment('key', 1, 'totally fake'));
     }
 
     /**
      * Test write from a config that is undefined.
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testDecrementNonExistingConfig()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->assertFalse(Cache::decrement('key', 1, 'totally fake'));
     }
 
@@ -369,11 +369,11 @@ class CacheTest extends TestCase
     /**
      * testConfigInvalidEngine method
      *
-     * @expectedException \BadMethodCallException
      * @return void
      */
     public function testConfigInvalidEngine()
     {
+        $this->expectException(\BadMethodCallException::class);
         $config = ['engine' => 'Imaginary'];
         Cache::setConfig('test', $config);
         Cache::engine('test');
@@ -382,11 +382,11 @@ class CacheTest extends TestCase
     /**
      * test that trying to configure classes that don't extend CacheEngine fail.
      *
-     * @expectedException \BadMethodCallException
      * @return void
      */
     public function testConfigInvalidObject()
     {
+        $this->expectException(\BadMethodCallException::class);
         $this->getMockBuilder(\StdClass::class)
             ->setMockClassName('RubbishEngine')
             ->getMock();
@@ -399,11 +399,11 @@ class CacheTest extends TestCase
     /**
      * Ensure you cannot reconfigure a cache adapter.
      *
-     * @expectedException \BadMethodCallException
      * @return void
      */
     public function testConfigErrorOnReconfigure()
     {
+        $this->expectException(\BadMethodCallException::class);
         Cache::setConfig('tests', ['engine' => 'File', 'path' => TMP]);
         Cache::setConfig('tests', ['engine' => 'Apc']);
     }
@@ -545,10 +545,10 @@ class CacheTest extends TestCase
 
     /**
      * testGroupConfigsThrowsException method
-     * @expectedException \InvalidArgumentException
      */
     public function testGroupConfigsThrowsException()
     {
+        $this->expectException(\InvalidArgumentException::class);
         Cache::groupConfigs('bogus');
     }
 
@@ -616,12 +616,12 @@ class CacheTest extends TestCase
     /**
      * testWriteEmptyValues method
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage An empty value is not valid as a cache key
      * @return void
      */
     public function testWriteEmptyKey()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('An empty value is not valid as a cache key');
         $this->_configCache();
         Cache::write(null, 'not null', 'tests');
     }
@@ -683,11 +683,11 @@ class CacheTest extends TestCase
     /**
      * Test that failed writes cause errors to be triggered.
      *
-     * @expectedException \PHPUnit\Framework\Error\Error
      * @return void
      */
     public function testWriteTriggerError()
     {
+        $this->expectException(\PHPUnit\Framework\Error\Error::class);
         static::setAppNamespace();
         Cache::setConfig('test_trigger', [
             'engine' => 'TestAppCache',

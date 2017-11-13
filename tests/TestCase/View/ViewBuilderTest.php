@@ -172,12 +172,12 @@ class ViewBuilderTest extends TestCase
     /**
      * test missing view class
      *
-     * @expectedException \Cake\View\Exception\MissingViewException
-     * @expectedExceptionMessage View class "Foo" is missing.
      * @return void
      */
     public function testBuildMissingViewClass()
     {
+        $this->expectException(\Cake\View\Exception\MissingViewException::class);
+        $this->expectExceptionMessage('View class "Foo" is missing.');
         $builder = new ViewBuilder();
         $builder->setClassName('Foo');
         $builder->build();

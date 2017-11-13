@@ -417,13 +417,13 @@ class BehaviorTest extends TestCase
     /**
      * testVerifyImplementedFindersInvalid
      *
-     * @expectedException \Cake\Core\Exception\Exception
-     * @expectedExceptionMessage The method findNotDefined is not callable on class Cake\Test\TestCase\ORM\Test2Behavior
      *
      * @return void
      */
     public function testVerifyImplementedFindersInvalid()
     {
+        $this->expectException(\Cake\Core\Exception\Exception::class);
+        $this->expectExceptionMessage('The method findNotDefined is not callable on class Cake\Test\TestCase\ORM\Test2Behavior');
         $table = $this->getMockBuilder('Cake\ORM\Table')->getMock();
         $behavior = new Test2Behavior($table, [
             'implementedFinders' => [
@@ -456,13 +456,13 @@ class BehaviorTest extends TestCase
     /**
      * testVerifyImplementedMethodsInvalid
      *
-     * @expectedException \Cake\Core\Exception\Exception
-     * @expectedExceptionMessage The method iDoNotExist is not callable on class Cake\Test\TestCase\ORM\Test2Behavior
      *
      * @return void
      */
     public function testVerifyImplementedMethodsInvalid()
     {
+        $this->expectException(\Cake\Core\Exception\Exception::class);
+        $this->expectExceptionMessage('The method iDoNotExist is not callable on class Cake\Test\TestCase\ORM\Test2Behavior');
         $table = $this->getMockBuilder('Cake\ORM\Table')->getMock();
         $behavior = new Test2Behavior($table, [
             'implementedMethods' => [

@@ -157,11 +157,11 @@ class EntityContextTest extends TestCase
     /**
      * Test an invalid table scope throws an error.
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Unable to find table class for current entity
      */
     public function testInvalidTable()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Unable to find table class for current entity');
         $row = new \stdClass();
         $context = new EntityContext($this->request, [
             'entity' => $row,
@@ -171,11 +171,11 @@ class EntityContextTest extends TestCase
     /**
      * Tests that passing a plain entity will give an error as it cannot be matched
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Unable to find table class for current entity
      */
     public function testDefaultEntityError()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Unable to find table class for current entity');
         $context = new EntityContext($this->request, [
             'entity' => new Entity,
         ]);

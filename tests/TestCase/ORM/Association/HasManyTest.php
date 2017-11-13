@@ -167,12 +167,12 @@ class HasManyTest extends TestCase
     /**
      * Tests that HasMany can't use the join strategy
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Invalid strategy "join" was provided
      * @return void
      */
     public function testStrategyFailure()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid strategy "join" was provided');
         $assoc = new HasMany('Test');
         $assoc->strategy(HasMany::STRATEGY_JOIN);
     }
@@ -310,12 +310,12 @@ class HasManyTest extends TestCase
      * Test that failing to add the foreignKey to the list of fields will throw an
      * exception
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage You are required to select the "Articles.author_id"
      * @return void
      */
     public function testEagerLoaderFieldsException()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('You are required to select the "Articles.author_id"');
         $config = [
             'sourceTable' => $this->author,
             'targetTable' => $this->article,
@@ -744,12 +744,12 @@ class HasManyTest extends TestCase
     /**
      * Test that saveAssociated() fails on non-empty, non-iterable value
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Could not save comments, it cannot be traversed
      * @return void
      */
     public function testSaveAssociatedNotEmptyNotIterable()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Could not save comments, it cannot be traversed');
         $articles = TableRegistry::get('Articles');
         $association = $articles->hasMany('Comments', [
             'saveStrategy' => HasMany::SAVE_APPEND

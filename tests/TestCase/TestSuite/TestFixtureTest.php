@@ -257,12 +257,12 @@ class TestFixtureTest extends TestCase
      * test schema reflection without $import or $fields and without the table existing
      * it will throw an exception
      *
-     * @expectedException \Cake\Core\Exception\Exception
-     * @expectedExceptionMessage Cannot describe schema for table `letters` for fixture `Cake\Test\TestCase\TestSuite\LettersFixture` : the table does not exist.
      * @return void
      */
     public function testInitNoImportNoFieldsException()
     {
+        $this->expectException(\Cake\Core\Exception\Exception::class);
+        $this->expectExceptionMessage('Cannot describe schema for table `letters` for fixture `Cake\Test\TestCase\TestSuite\LettersFixture` : the table does not exist.');
         $fixture = new LettersFixture();
         $fixture->init();
     }
@@ -340,11 +340,11 @@ class TestFixtureTest extends TestCase
     /**
      * test create method, trigger error
      *
-     * @expectedException \PHPUnit\Framework\Error\Error
      * @return void
      */
     public function testCreateError()
     {
+        $this->expectException(\PHPUnit\Framework\Error\Error::class);
         $fixture = new ArticlesFixture();
         $db = $this->getMockBuilder('Cake\Database\Connection')
             ->disableOriginalConstructor()

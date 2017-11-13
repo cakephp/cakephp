@@ -81,11 +81,11 @@ class ErrorHandlerMiddlewareTest extends TestCase
     /**
      * Test an invalid rendering class.
      *
-     * @expectedException \Exception
-     * @expectedExceptionMessage The 'TotallyInvalid' renderer class could not be found
      */
     public function testInvalidRenderer()
     {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('The \'TotallyInvalid\' renderer class could not be found');
         $request = ServerRequestFactory::fromGlobals();
         $response = new Response();
 

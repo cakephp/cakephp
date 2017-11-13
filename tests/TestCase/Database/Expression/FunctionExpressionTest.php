@@ -14,6 +14,7 @@
 namespace Cake\Test\TestCase\Database\Expression;
 
 use Cake\Database\Expression\FunctionExpression;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
 
@@ -78,7 +79,21 @@ class FunctionExpressionTest extends TestCase
         $binder = new ValueBinder;
         $f = new FunctionExpression('MyFunction', ['foo', 'bar']);
         $g = new FunctionExpression('Wrapper', ['bar' => 'literal', $f]);
-        $this->assertEquals('Wrapper(bar, (MyFunction(:param0, :param1)))', $g->sql($binder));
+        $this->assertEquals('Wrapper(bar, MyFunction(:param0, :param1))', $g->sql($binder));
+    }
+
+    /**
+     * Tests to avoid regression, prevents double parenthesis
+     * In particular nesting with QueryExpression
+     *
+     * @return void
+     */
+    public function testFunctionNestingQueryExpression()
+    {
+        $binder = new ValueBinder;
+        $q = new QueryExpression('a');
+        $f = new FunctionExpression('MyFunction', [$q]);
+        $this->assertEquals('MyFunction(a)', $f->sql($binder));
     }
 
     /**

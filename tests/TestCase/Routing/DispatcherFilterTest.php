@@ -67,12 +67,12 @@ class DispatcherFilterTest extends TestCase
     /**
      * Test constructor error invalid when
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage "when" conditions must be a callable.
      * @return void
      */
     public function testConstructorInvalidWhen()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('"when" conditions must be a callable.');
         new DispatcherFilter(['when' => 'nope']);
     }
 

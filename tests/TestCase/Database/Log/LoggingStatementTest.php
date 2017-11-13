@@ -118,12 +118,12 @@ class LoggingStatementTest extends TestCase
     /**
      * Tests that queries are logged despite database errors
      *
-     * @expectedException \LogicException
-     * @expectedExceptionMessage This is bad
      * @return void
      */
     public function testExecuteWithError()
     {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('This is bad');
         $exception = new \LogicException('This is bad');
         $inner = $this->getMockBuilder('PDOStatement')->getMock();
         $inner->expects($this->once())->method('execute')

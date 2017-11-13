@@ -806,12 +806,12 @@ class ControllerTest extends TestCase
     /**
      * testMissingAction method
      *
-     * @expectedException \Cake\Controller\Exception\MissingActionException
-     * @expectedExceptionMessage Action TestController::missing() could not be found, or is not accessible.
      * @return void
      */
     public function testInvokeActionMissingAction()
     {
+        $this->expectException(\Cake\Controller\Exception\MissingActionException::class);
+        $this->expectExceptionMessage('Action TestController::missing() could not be found, or is not accessible.');
         $url = new ServerRequest('test/missing');
         $url->addParams(['controller' => 'Test', 'action' => 'missing']);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
@@ -823,12 +823,12 @@ class ControllerTest extends TestCase
     /**
      * test invoking private methods.
      *
-     * @expectedException \Cake\Controller\Exception\MissingActionException
-     * @expectedExceptionMessage Action TestController::private_m() could not be found, or is not accessible.
      * @return void
      */
     public function testInvokeActionPrivate()
     {
+        $this->expectException(\Cake\Controller\Exception\MissingActionException::class);
+        $this->expectExceptionMessage('Action TestController::private_m() could not be found, or is not accessible.');
         $url = new ServerRequest('test/private_m/');
         $url->addParams(['controller' => 'Test', 'action' => 'private_m']);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
@@ -840,12 +840,12 @@ class ControllerTest extends TestCase
     /**
      * test invoking protected methods.
      *
-     * @expectedException \Cake\Controller\Exception\MissingActionException
-     * @expectedExceptionMessage Action TestController::protected_m() could not be found, or is not accessible.
      * @return void
      */
     public function testInvokeActionProtected()
     {
+        $this->expectException(\Cake\Controller\Exception\MissingActionException::class);
+        $this->expectExceptionMessage('Action TestController::protected_m() could not be found, or is not accessible.');
         $url = new ServerRequest('test/protected_m/');
         $url->addParams(['controller' => 'Test', 'action' => 'protected_m']);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
@@ -857,12 +857,12 @@ class ControllerTest extends TestCase
     /**
      * test invoking controller methods.
      *
-     * @expectedException \Cake\Controller\Exception\MissingActionException
-     * @expectedExceptionMessage Action TestController::redirect() could not be found, or is not accessible.
      * @return void
      */
     public function testInvokeActionBaseMethods()
     {
+        $this->expectException(\Cake\Controller\Exception\MissingActionException::class);
+        $this->expectExceptionMessage('Action TestController::redirect() could not be found, or is not accessible.');
         $url = new ServerRequest('test/redirect/');
         $url->addParams(['controller' => 'Test', 'action' => 'redirect']);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();

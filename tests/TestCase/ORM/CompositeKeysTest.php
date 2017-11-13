@@ -110,12 +110,12 @@ class CompositeKeyTest extends TestCase
      * Test that you cannot save rows with composite keys if some columns are missing.
      *
      * @group save
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Cannot insert row, some of the primary key values are missing
      * @return void
      */
     public function testSaveNewErrorCompositeKeyNoIncrement()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Cannot insert row, some of the primary key values are missing');
         $articles = TableRegistry::get('SiteArticles');
         $article = $articles->newEntity(['site_id' => 1, 'author_id' => 1, 'title' => 'testing']);
         $articles->save($article);
@@ -432,12 +432,12 @@ class CompositeKeyTest extends TestCase
      * if the entity has composite primary key
      *
      * @group save
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Cannot insert row, some of the primary key values are missing. Got (5, ), expecting (id, site_id)
      * @return void
      */
     public function testSaveNewEntityMissingKey()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Cannot insert row, some of the primary key values are missing. Got (5, ), expecting (id, site_id)');
         $entity = new Entity([
             'id' => 5,
             'title' => 'Fifth Article',

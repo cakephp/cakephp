@@ -1618,11 +1618,11 @@ HTML;
     /**
      * testparseFileSizeException
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testparseFileSizeException()
     {
+        $this->expectException(\InvalidArgumentException::class);
         Text::parseFileSize('bogus', false);
     }
 

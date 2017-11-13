@@ -1595,12 +1595,12 @@ class RouteTest extends TestCase
     /**
      * Test setting the method on a route to an invalid method
      *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Invalid HTTP method received. NOPE is invalid
      * @return void
      */
     public function testSetMethodsInvalid()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid HTTP method received. NOPE is invalid');
         $route = new Route('/books/reviews', ['controller' => 'Reviews', 'action' => 'index']);
         $route->setMethods(['nope']);
     }

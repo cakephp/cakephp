@@ -152,12 +152,12 @@ class MemcachedEngineTest extends TestCase
     /**
      * test accepts only valid serializer engine
      *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage invalid_serializer is not a valid serializer engine for Memcached
      * @return  void
      */
     public function testInvalidSerializerSetting()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('invalid_serializer is not a valid serializer engine for Memcached');
         $Memcached = new MemcachedEngine();
         $config = [
             'className' => 'Memcached',
@@ -338,12 +338,12 @@ class MemcachedEngineTest extends TestCase
      * test using authentication without memcached installed with SASL support
      * throw an exception
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Memcached extension is not build with SASL support
      * @return void
      */
     public function testSaslAuthException()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Memcached extension is not build with SASL support');
         $this->skipIf(
             method_exists(Memcached::class, 'setSaslAuthData'),
             'Cannot test exception when sasl has been compiled in.'

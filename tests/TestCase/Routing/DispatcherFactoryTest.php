@@ -64,11 +64,11 @@ class DispatcherFactoryTest extends TestCase
     /**
      * Test add filter missing
      *
-     * @expectedException \Cake\Routing\Exception\MissingDispatcherFilterException
      * @return void
      */
     public function testAddFilterMissing()
     {
+        $this->expectException(\Cake\Routing\Exception\MissingDispatcherFilterException::class);
         DispatcherFactory::add('NopeSauce');
     }
 

@@ -411,11 +411,11 @@ class ViewTest extends TestCase
      * Test that plugin files with absolute file paths are scoped
      * to the plugin and do now allow any file path.
      *
-     * @expectedException \Cake\View\Exception\MissingTemplateException
      * @return void
      */
     public function testPluginGetTemplateAbsoluteFail()
     {
+        $this->expectException(\Cake\View\Exception\MissingTemplateException::class);
         $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
@@ -632,11 +632,11 @@ class ViewTest extends TestCase
     /**
      * Test that getViewFileName() protects against malicious directory traversal.
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testGetViewFileNameDirectoryTraversal()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $viewOptions = [
             'plugin' => null,
             'name' => 'Pages',
@@ -648,6 +648,31 @@ class ViewTest extends TestCase
         $view = new TestView(null, null, null, $viewOptions);
         $view->ext('.php');
         $view->getViewFileName('../../../../bootstrap');
+    }
+
+    /**
+     * Test getViewFileName doesn't re-apply existing subdirectories
+     *
+     * @return void
+     */
+    public function testGetViewFileNameSubDir()
+    {
+        $viewOptions = [
+            'plugin' => null,
+            'name' => 'Posts',
+            'viewPath' => 'Posts/json',
+            'layoutPath' => 'json',
+        ];
+        $view = new TestView(null, null, null, $viewOptions);
+
+        $expected = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Posts' . DS . 'json' . DS . 'index.ctp';
+        $result = $view->getViewFileName('index');
+        $this->assertPathEquals($expected, $result);
+
+        $view->subDir = 'json';
+        $result = $view->getViewFileName('index');
+        $expected = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Posts' . DS . 'json' . DS . 'index.ctp';
+        $this->assertPathEquals($expected, $result);
     }
 
     /**
@@ -752,11 +777,11 @@ class ViewTest extends TestCase
     /**
      * Test that getLayoutFileName() protects against malicious directory traversal.
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testGetLayoutFileNameDirectoryTraversal()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $viewOptions = [
             'plugin' => null,
             'name' => 'Pages',
@@ -773,11 +798,11 @@ class ViewTest extends TestCase
     /**
      * Test for missing views
      *
-     * @expectedException \Cake\View\Exception\MissingTemplateException
      * @return void
      */
     public function testMissingTemplate()
     {
+        $this->expectException(\Cake\View\Exception\MissingTemplateException::class);
         $viewOptions = ['plugin' => null,
             'name' => 'Pages',
             'viewPath' => 'Pages'
@@ -792,11 +817,11 @@ class ViewTest extends TestCase
     /**
      * Test for missing layouts
      *
-     * @expectedException \Cake\View\Exception\MissingLayoutException
      * @return void
      */
     public function testMissingLayout()
     {
+        $this->expectException(\Cake\View\Exception\MissingLayoutException::class);
         $viewOptions = ['plugin' => null,
             'name' => 'Pages',
             'viewPath' => 'Pages',
@@ -1603,11 +1628,11 @@ class ViewTest extends TestCase
      * This should produce a "Object of class TestObjectWithoutToString could not be converted to string" error
      * which gets thrown as a \PHPUnit\Framework\Error\Error Exception by PHPUnit.
      *
-     * @expectedException \PHPUnit\Framework\Error\Error
      * @return void
      */
     public function testBlockSetObjectWithoutToString()
     {
+        $this->expectException(\PHPUnit\Framework\Error\Error::class);
         $objectWithToString = new TestObjectWithoutToString();
         $this->View->assign('testWithObjectWithoutToString', $objectWithToString);
     }
@@ -1660,11 +1685,11 @@ class ViewTest extends TestCase
      * This should produce a "Object of class TestObjectWithoutToString could not be converted to string" error
      * which gets thrown as a \PHPUnit\Framework\Error\Error     Exception by PHPUnit.
      *
-     * @expectedException \PHPUnit\Framework\Error\Error
      * @return void
      */
     public function testBlockAppendObjectWithoutToString()
     {
+        $this->expectException(\PHPUnit\Framework\Error\Error::class);
         $object = new TestObjectWithoutToString();
         $this->View->assign('testBlock', 'Block ');
         $this->View->append('testBlock', $object);
@@ -1693,11 +1718,11 @@ class ViewTest extends TestCase
      * This should produce a "Object of class TestObjectWithoutToString could not be converted to string" error
      * which gets thrown as a \PHPUnit\Framework\Error\Error Exception by PHPUnit.
      *
-     * @expectedException \PHPUnit\Framework\Error\Error
      * @return void
      */
     public function testBlockPrependObjectWithoutToString()
     {
+        $this->expectException(\PHPUnit\Framework\Error\Error::class);
         $object = new TestObjectWithoutToString();
         $this->View->assign('test', 'Block ');
         $this->View->prepend('test', $object);

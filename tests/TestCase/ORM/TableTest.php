@@ -900,10 +900,10 @@ class TableTest extends TestCase
     /**
      * Test that exceptions from the Query bubble up.
      *
-     * @expectedException \Cake\Database\Exception
      */
     public function testUpdateAllFailure()
     {
+        $this->expectException(\Cake\Database\Exception::class);
         $table = $this->getMockBuilder('Cake\ORM\Table')
             ->setMethods(['query'])
             ->setConstructorArgs([['table' => 'users', 'connection' => $this->connection]])
@@ -965,10 +965,10 @@ class TableTest extends TestCase
     /**
      * Test that exceptions from the Query bubble up.
      *
-     * @expectedException \Cake\Database\Exception
      */
     public function testDeleteAllFailure()
     {
+        $this->expectException(\Cake\Database\Exception::class);
         $table = $this->getMockBuilder('Cake\ORM\Table')
             ->setMethods(['query'])
             ->setConstructorArgs([['table' => 'users', 'connection' => $this->connection]])
@@ -1407,12 +1407,12 @@ class TableTest extends TestCase
      * Tests that using a simple string for entityClass will throw an exception
      * when the class does not exist in the namespace
      *
-     * @expectedException \Cake\ORM\Exception\MissingEntityException
-     * @expectedExceptionMessage Entity class FooUser could not be found.
      * @return void
      */
     public function testTableClassNonExisting()
     {
+        $this->expectException(\Cake\ORM\Exception\MissingEntityException::class);
+        $this->expectExceptionMessage('Entity class FooUser could not be found.');
         $table = new Table;
         $this->assertFalse($table->entityClass('FooUser'));
     }
@@ -1633,10 +1633,10 @@ class TableTest extends TestCase
     /**
      * Ensure exceptions are raised on missing behaviors.
      *
-     * @expectedException \Cake\ORM\Exception\MissingBehaviorException
      */
     public function testAddBehaviorMissing()
     {
+        $this->expectException(\Cake\ORM\Exception\MissingBehaviorException::class);
         $table = TableRegistry::get('article');
         $this->assertNull($table->addBehavior('NopeNotThere'));
     }
@@ -2562,12 +2562,12 @@ class TableTest extends TestCase
      * Test that you cannot save rows without a primary key.
      *
      * @group save
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Cannot insert row in "users" table, it has no primary key
      * @return void
      */
     public function testSaveNewErrorOnNoPrimaryKey()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Cannot insert row in "users" table, it has no primary key');
         $entity = new Entity(['username' => 'superuser']);
         $table = TableRegistry::get('users', [
             'schema' => [
@@ -2616,11 +2616,11 @@ class TableTest extends TestCase
      * Tests that save will rollback the transaction in the case of an exception
      *
      * @group save
-     * @expectedException \PDOException
      * @return void
      */
     public function testAtomicSaveRollback()
     {
+        $this->expectException(\PDOException::class);
         $connection = $this->getMockBuilder('\Cake\Database\Connection')
             ->setMethods(['begin', 'rollback'])
             ->setConstructorArgs([ConnectionManager::getConfig('test')])
@@ -2924,11 +2924,11 @@ class TableTest extends TestCase
      * Tests that failing to pass a primary key to save will result in exception
      *
      * @group save
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testUpdateNoPrimaryButOtherKeys()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $table = $this->getMockBuilder('\Cake\ORM\Table')
             ->setMethods(['query'])
             ->setConstructorArgs([['table' => 'users', 'connection' => $this->connection]])
@@ -3422,11 +3422,11 @@ class TableTest extends TestCase
      * Tests that a RuntimeException is thrown if the custom validator does not return an Validator instance
      *
      * @return void
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage The Cake\ORM\Table::validationBad() validation method must return an instance of Cake\Validation\Validator.
      */
     public function testValidationWithBadDefiner()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('The Cake\ORM\Table::validationBad() validation method must return an instance of Cake\Validation\Validator.');
         $table = $this->getMockBuilder('\Cake\ORM\Table')
             ->setMethods(['validationBad'])
             ->getMock();
@@ -3439,11 +3439,11 @@ class TableTest extends TestCase
      * Tests that a RuntimeException is thrown if the custom validator method does not exist.
      *
      * @return void
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage The Cake\ORM\Table::validationMissing() validation method does not exists.
      */
     public function testValidatorWithMissingMethod()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('The Cake\ORM\Table::validationMissing() validation method does not exists.');
         $table = new Table();
         $table->getValidator('missing');
     }
@@ -3532,12 +3532,12 @@ class TableTest extends TestCase
     /**
      * Test magic findByXX errors on missing arguments.
      *
-     * @expectedException \BadMethodCallException
-     * @expectedExceptionMessage Not enough arguments for magic finder. Got 0 required 1
      * @return void
      */
     public function testMagicFindError()
     {
+        $this->expectException(\BadMethodCallException::class);
+        $this->expectExceptionMessage('Not enough arguments for magic finder. Got 0 required 1');
         $table = TableRegistry::get('Users');
 
         $table->findByUsername();
@@ -3546,12 +3546,12 @@ class TableTest extends TestCase
     /**
      * Test magic findByXX errors on missing arguments.
      *
-     * @expectedException \BadMethodCallException
-     * @expectedExceptionMessage Not enough arguments for magic finder. Got 1 required 2
      * @return void
      */
     public function testMagicFindErrorMissingField()
     {
+        $this->expectException(\BadMethodCallException::class);
+        $this->expectExceptionMessage('Not enough arguments for magic finder. Got 1 required 2');
         $table = TableRegistry::get('Users');
 
         $table->findByUsernameAndId('garrett');
@@ -3560,12 +3560,12 @@ class TableTest extends TestCase
     /**
      * Test magic findByXX errors when there is a mix of or & and.
      *
-     * @expectedException \BadMethodCallException
-     * @expectedExceptionMessage Cannot mix "and" & "or" in a magic finder. Use find() instead.
      * @return void
      */
     public function testMagicFindErrorMixOfOperators()
     {
+        $this->expectException(\BadMethodCallException::class);
+        $this->expectExceptionMessage('Cannot mix "and" & "or" in a magic finder. Use find() instead.');
         $table = TableRegistry::get('Users');
 
         $table->findByUsernameAndIdOrPassword('garrett', 1, 'sekret');
@@ -5624,12 +5624,12 @@ class TableTest extends TestCase
     /**
      * Tests that get() will throw an exception if the record was not found
      *
-     * @expectedException \Cake\Datasource\Exception\RecordNotFoundException
-     * @expectedExceptionMessage Record not found in table "articles"
      * @return void
      */
     public function testGetNotFoundException()
     {
+        $this->expectException(\Cake\Datasource\Exception\RecordNotFoundException::class);
+        $this->expectExceptionMessage('Record not found in table "articles"');
         $table = new Table([
             'name' => 'Articles',
             'connection' => $this->connection,
@@ -5641,12 +5641,12 @@ class TableTest extends TestCase
     /**
      * Test that an exception is raised when there are not enough keys.
      *
-     * @expectedException \Cake\Datasource\Exception\InvalidPrimaryKeyException
-     * @expectedExceptionMessage Record not found in table "articles" with primary key [NULL]
      * @return void
      */
     public function testGetExceptionOnNoData()
     {
+        $this->expectException(\Cake\Datasource\Exception\InvalidPrimaryKeyException::class);
+        $this->expectExceptionMessage('Record not found in table "articles" with primary key [NULL]');
         $table = new Table([
             'name' => 'Articles',
             'connection' => $this->connection,
@@ -5658,12 +5658,12 @@ class TableTest extends TestCase
     /**
      * Test that an exception is raised when there are too many keys.
      *
-     * @expectedException \Cake\Datasource\Exception\InvalidPrimaryKeyException
-     * @expectedExceptionMessage Record not found in table "articles" with primary key [1, 'two']
      * @return void
      */
     public function testGetExceptionOnTooMuchData()
     {
+        $this->expectException(\Cake\Datasource\Exception\InvalidPrimaryKeyException::class);
+        $this->expectExceptionMessage('Record not found in table "articles" with primary key [1, \'two\']');
         $table = new Table([
             'name' => 'Articles',
             'connection' => $this->connection,
@@ -6118,7 +6118,7 @@ class TableTest extends TestCase
         $table->getAssociation('authors')->target()->getEventManager()->on(
             'Model.beforeFind',
             function (Event $event, Query $query, ArrayObject $options, $primary) use (&$associationBeforeFindCount) {
-                $this->assertTrue(is_bool($primary));
+                $this->assertInternalType('bool', $primary);
                 $associationBeforeFindCount ++;
             }
         );
@@ -6127,7 +6127,7 @@ class TableTest extends TestCase
         $eventManager->on(
             'Model.beforeFind',
             function (Event $event, Query $query, ArrayObject $options, $primary) use (&$beforeFindCount) {
-                $this->assertTrue(is_bool($primary));
+                $this->assertInternalType('bool', $primary);
                 $beforeFindCount ++;
             }
         );
@@ -6139,7 +6139,7 @@ class TableTest extends TestCase
         $eventManager->on(
             'Model.buildValidator',
             $callback = function (Event $event, Validator $validator, $name) use (&$buildValidatorCount) {
-                $this->assertTrue(is_string($name));
+                $this->assertInternalType('string', $name);
                 $buildValidatorCount ++;
             }
         );
@@ -6160,15 +6160,15 @@ class TableTest extends TestCase
         $eventManager->on(
             'Model.beforeRules',
             function (Event $event, Entity $entity, ArrayObject $options, $operation) use (&$beforeRulesCount) {
-                $this->assertTrue(is_string($operation));
+                $this->assertInternalType('string', $operation);
                 $beforeRulesCount ++;
             }
         );
         $eventManager->on(
             'Model.afterRules',
             function (Event $event, Entity $entity, ArrayObject $options, $result, $operation) use (&$afterRulesCount) {
-                $this->assertTrue(is_bool($result));
-                $this->assertTrue(is_string($operation));
+                $this->assertInternalType('bool', $result);
+                $this->assertInternalType('string', $operation);
                 $afterRulesCount ++;
             }
         );
@@ -6487,11 +6487,11 @@ class TableTest extends TestCase
      * Tests that saveOrFail triggers an exception on not successful save
      *
      * @return void
-     * @expectedException \Cake\ORM\Exception\PersistenceFailedException
-     * @expectedExceptionMessage Entity save failure.
      */
     public function testSaveOrFail()
     {
+        $this->expectException(\Cake\ORM\Exception\PersistenceFailedException::class);
+        $this->expectExceptionMessage('Entity save failure.');
         $entity = new Entity([
             'foo' => 'bar'
         ]);
@@ -6526,11 +6526,11 @@ class TableTest extends TestCase
      * Tests that deleteOrFail triggers an exception on not successful delete
      *
      * @return void
-     * @expectedException \Cake\ORM\Exception\PersistenceFailedException
-     * @expectedExceptionMessage Entity delete failure.
      */
     public function testDeleteOrFail()
     {
+        $this->expectException(\Cake\ORM\Exception\PersistenceFailedException::class);
+        $this->expectExceptionMessage('Entity delete failure.');
         $entity = new Entity([
             'id' => 999
         ]);

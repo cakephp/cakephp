@@ -55,11 +55,11 @@ class CommandCollectionTest extends TestCase
      * Constructor with invalid class names should blow up
      *
      * @return void
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Cannot use 'stdClass' for command 'nope' it is not a subclass of Cake\Console\Shell
      */
     public function testConstructorInvalidClass()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cannot use \'stdClass\' for command \'nope\' it is not a subclass of Cake\Console\Shell');
         new CommandCollection([
             'i18n' => I18nShell::class,
             'nope' => stdClass::class
@@ -127,11 +127,11 @@ class CommandCollectionTest extends TestCase
     /**
      * Instances that are not shells should fail.
      *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Cannot use 'stdClass' for command 'routes' it is not a subclass of Cake\Console\Shell
      */
     public function testAddInvalidInstance()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cannot use \'stdClass\' for command \'routes\' it is not a subclass of Cake\Console\Shell');
         $collection = new CommandCollection();
         $shell = new stdClass();
         $collection->add('routes', $shell);
@@ -140,11 +140,11 @@ class CommandCollectionTest extends TestCase
     /**
      * Class names that are not shells should fail
      *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Cannot use 'stdClass' for command 'routes' it is not a subclass of Cake\Console\Shell
      */
     public function testInvalidShellClassName()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cannot use \'stdClass\' for command \'routes\' it is not a subclass of Cake\Console\Shell');
         $collection = new CommandCollection();
         $collection->add('routes', stdClass::class);
     }

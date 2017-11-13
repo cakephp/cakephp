@@ -60,10 +60,10 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
 -----END RSA PRIVATE KEY-----';
 
     /**
-     * @expectedException \Cake\Core\Exception\Exception
      */
     public function testExceptionUnknownSigningMethod()
     {
+        $this->expectException(\Cake\Core\Exception\Exception::class);
         $auth = new Oauth();
         $creds = [
             'consumerSecret' => 'it is secret',

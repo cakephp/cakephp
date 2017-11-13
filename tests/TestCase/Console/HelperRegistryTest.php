@@ -79,11 +79,11 @@ class HelperRegistryTest extends TestCase
     /**
      * test missing helper exception
      *
-     * @expectedException \Cake\Console\Exception\MissingHelperException
      * @return void
      */
     public function testLoadMissingHelper()
     {
+        $this->expectException(\Cake\Console\Exception\MissingHelperException::class);
         $this->helpers->load('ThisTaskShouldAlwaysBeMissing');
     }
 

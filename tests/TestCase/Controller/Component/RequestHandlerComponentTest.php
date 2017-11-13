@@ -532,8 +532,8 @@ class RequestHandlerComponentTest extends TestCase
         $_SERVER['CONTENT_TYPE'] = 'application/xml';
         $this->Controller->request = new ServerRequest();
         $this->RequestHandler->beforeRender($event);
-        $this->assertTrue(is_array($this->Controller->request->data));
-        $this->assertFalse(is_object($this->Controller->request->data));
+        $this->assertInternalType('array', $this->Controller->request->data);
+        $this->assertNotInternalType('object', $this->Controller->request->data);
     }
 
     /**
@@ -549,8 +549,8 @@ class RequestHandlerComponentTest extends TestCase
         $_SERVER['CONTENT_TYPE'] = 'application/xml; charset=UTF-8';
         $this->Controller->request = new ServerRequest();
         $this->RequestHandler->startup($event);
-        $this->assertTrue(is_array($this->Controller->request->data));
-        $this->assertFalse(is_object($this->Controller->request->data));
+        $this->assertInternalType('array', $this->Controller->request->data);
+        $this->assertNotInternalType('object', $this->Controller->request->data);
     }
 
     /**
@@ -1172,11 +1172,11 @@ class RequestHandlerComponentTest extends TestCase
      * testAddInputTypeException method
      *
      * @group deprecated
-     * @expectedException \Cake\Core\Exception\Exception
      * @return void
      */
     public function testAddInputTypeException()
     {
+        $this->expectException(\Cake\Core\Exception\Exception::class);
         $this->deprecated(function () {
             $this->RequestHandler->addInputType('csv', ['I am not callable']);
         });

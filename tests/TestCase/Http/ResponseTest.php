@@ -180,11 +180,11 @@ class ResponseTest extends TestCase
     /**
      * Test invalid status codes
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testStatusCodeInvalid()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $response = new Response();
         $response->statusCode(1001);
     }
@@ -287,12 +287,12 @@ class ResponseTest extends TestCase
     /**
      * Test that an invalid type raises an exception
      *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage "beans" is an invalid content type
      * @return void
      */
     public function testWithTypeInvalidType()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('"beans" is an invalid content type');
         $response = new Response();
         $response->withType('beans');
     }
@@ -657,11 +657,11 @@ class ResponseTest extends TestCase
     /**
      * Tests the httpCodes method
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testHttpCodes()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $response = new Response();
         $result = $response->httpCodes();
         $this->assertCount(65, $result);
@@ -1739,11 +1739,11 @@ class ResponseTest extends TestCase
     /**
      * testFileNotFound
      *
-     * @expectedException \Cake\Network\Exception\NotFoundException
      * @return void
      */
     public function testFileNotFound()
     {
+        $this->expectException(\Cake\Network\Exception\NotFoundException::class);
         $response = new Response();
         $response->file('/some/missing/folder/file.jpg');
     }
@@ -1751,11 +1751,11 @@ class ResponseTest extends TestCase
     /**
      * test withFile() not found
      *
-     * @expectedException \Cake\Network\Exception\NotFoundException
      * @return void
      */
     public function testWithFileNotFound()
     {
+        $this->expectException(\Cake\Network\Exception\NotFoundException::class);
         $response = new Response();
         $response->withFile('/some/missing/folder/file.jpg');
     }
@@ -2981,12 +2981,12 @@ class ResponseTest extends TestCase
      * This should produce an "Array to string conversion" error
      * which gets thrown as a \PHPUnit\Framework\Error\Error Exception by PHPUnit.
      *
-     * @expectedException \PHPUnit\Framework\Error\Error
-     * @expectedExceptionMessage Array to string conversion
      * @return void
      */
     public function testWithStringBodyArray()
     {
+        $this->expectException(\PHPUnit\Framework\Error\Error::class);
+        $this->expectExceptionMessage('Array to string conversion');
         $response = new Response();
         $newResponse = $response->withStringBody(['foo' => 'bar']);
         $body = $newResponse->getBody();
@@ -3137,6 +3137,7 @@ class ResponseTest extends TestCase
     public function testDebugInfo()
     {
         $response = new Response();
+        $response = $response->withStringBody('Foo');
         $result = $response->__debugInfo();
 
         $expected = [
@@ -3149,7 +3150,7 @@ class ResponseTest extends TestCase
             'fileRange' => [],
             'cookies' => new CookieCollection(),
             'cacheDirectives' => [],
-            'body' => ''
+            'body' => 'Foo'
         ];
         $this->assertEquals($expected, $result);
     }

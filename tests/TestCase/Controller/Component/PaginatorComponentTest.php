@@ -126,12 +126,12 @@ class PaginatorComponentTest extends TestCase
     /**
      * Test that an exception is thrown when paginator option is invalid.
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Paginator must be an instance of Cake\Datasource\Paginator
      * @return void
      */
     public function testInvalidPaginatorOption()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Paginator must be an instance of Cake\Datasource\Paginator');
         new PaginatorComponent($this->registry, [
             'paginator' => new stdClass()
         ]);
@@ -770,11 +770,11 @@ class PaginatorComponentTest extends TestCase
     /**
      * Test that a really REALLY large page number gets clamped to the max page size.
      *
-     * @expectedException \Cake\Network\Exception\NotFoundException
      * @return void
      */
     public function testOutOfVeryBigPageNumberGetsClamped()
     {
+        $this->expectException(\Cake\Network\Exception\NotFoundException::class);
         $this->loadFixtures('Posts');
         $this->request->query = [
             'page' => '3000000000000000000000000',

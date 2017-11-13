@@ -92,48 +92,48 @@ class ConnectionTest extends TestCase
     /**
      * Tests creating a connection using no driver throws an exception
      *
-     * @expectedException \Cake\Database\Exception\MissingDriverException
-     * @expectedExceptionMessage Database driver  could not be found.
      * @return void
      */
     public function testNoDriver()
     {
+        $this->expectException(\Cake\Database\Exception\MissingDriverException::class);
+        $this->expectExceptionMessage('Database driver  could not be found.');
         $connection = new Connection([]);
     }
 
     /**
      * Tests creating a connection using an invalid driver throws an exception
      *
-     * @expectedException \Cake\Database\Exception\MissingDriverException
-     * @expectedExceptionMessage Database driver  could not be found.
      * @return void
      */
     public function testEmptyDriver()
     {
+        $this->expectException(\Cake\Database\Exception\MissingDriverException::class);
+        $this->expectExceptionMessage('Database driver  could not be found.');
         $connection = new Connection(['driver' => false]);
     }
 
     /**
      * Tests creating a connection using an invalid driver throws an exception
      *
-     * @expectedException \Cake\Database\Exception\MissingDriverException
-     * @expectedExceptionMessage Database driver \Foo\InvalidDriver could not be found.
      * @return void
      */
     public function testMissingDriver()
     {
+        $this->expectException(\Cake\Database\Exception\MissingDriverException::class);
+        $this->expectExceptionMessage('Database driver \Foo\InvalidDriver could not be found.');
         $connection = new Connection(['driver' => '\Foo\InvalidDriver']);
     }
 
     /**
      * Tests trying to use a disabled driver throws an exception
      *
-     * @expectedException \Cake\Database\Exception\MissingExtensionException
-     * @expectedExceptionMessage Database driver DriverMock cannot be used due to a missing PHP extension or unmet dependency
      * @return void
      */
     public function testDisabledDriver()
     {
+        $this->expectException(\Cake\Database\Exception\MissingExtensionException::class);
+        $this->expectExceptionMessage('Database driver DriverMock cannot be used due to a missing PHP extension or unmet dependency');
         $mock = $this->getMockBuilder(Mysql::class)
             ->setMethods(['enabled'])
             ->setMockClassName('DriverMock')
@@ -246,11 +246,11 @@ class ConnectionTest extends TestCase
     /**
      * Tests that passing a unknown value to a query throws an exception
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testExecuteWithMissingType()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $sql = 'SELECT ?';
         $statement = $this->connection->execute($sql, [new \DateTime('2012-01-01')], ['bar']);
     }
@@ -1012,12 +1012,12 @@ class ConnectionTest extends TestCase
      * Tests that the transactional method will rollback the transaction
      * and throw the same exception if the callback raises one
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      * @throws \InvalidArgumentException
      */
     public function testTransactionalWithException()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $driver = $this->getMockFormDriver();
         $connection = $this->getMockBuilder(Connection::class)
             ->setMethods(['connect', 'commit', 'begin', 'rollback'])

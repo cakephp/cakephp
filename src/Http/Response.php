@@ -2589,7 +2589,7 @@ class Response implements ResponseInterface
             'fileRange' => $this->_fileRange,
             'cookies' => $this->_cookies,
             'cacheDirectives' => $this->_cacheDirectives,
-            'body' => $this->getBody()->getContents(),
+            'body' => (string)$this->getBody(),
         ];
     }
 }
