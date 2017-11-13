@@ -35,11 +35,11 @@ class FactoryLocatorTest extends TestCase
      * Test get non existing factory
      *
      * @return void
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Unknown repository type "Test". Make sure you register a type before trying to use it.
      */
     public function testGetNonExisting()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unknown repository type "Test". Make sure you register a type before trying to use it.');
         FactoryLocator::get('Test');
     }
 
@@ -64,11 +64,11 @@ class FactoryLocatorTest extends TestCase
      * test drop()
      *
      * @return void
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Unknown repository type "Test". Make sure you register a type before trying to use it.
      */
     public function testDrop()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unknown repository type "Test". Make sure you register a type before trying to use it.');
         FactoryLocator::drop('Test');
 
         FactoryLocator::get('Test');
@@ -148,11 +148,11 @@ class FactoryLocatorTest extends TestCase
      * test MissingModelException being thrown
      *
      * @return void
-     * @expectedException \Cake\Datasource\Exception\MissingModelException
-     * @expectedExceptionMessage Model class "Magic" of type "Test" could not be found.
      */
     public function testMissingModelException()
     {
+        $this->expectException(\Cake\Datasource\Exception\MissingModelException::class);
+        $this->expectExceptionMessage('Model class "Magic" of type "Test" could not be found.');
         $stub = new Stub();
 
         FactoryLocator::add('Test', function ($name) {

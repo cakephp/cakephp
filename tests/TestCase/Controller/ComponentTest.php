@@ -112,12 +112,12 @@ class ComponentTest extends TestCase
     /**
      * Test a duplicate component being loaded more than once with same and differing configurations.
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage The "Banana" alias has already been loaded with the following config:
      * @return void
      */
     public function testDuplicateComponentInitialize()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('The "Banana" alias has already been loaded with the following config:');
         $Collection = new ComponentRegistry();
         $Collection->load('Banana', ['property' => ['closure' => function () {
         }]]);
@@ -206,12 +206,12 @@ class ComponentTest extends TestCase
     /**
      * Lazy load a component that does not exist.
      *
-     * @expectedException \Cake\Controller\Exception\MissingComponentException
-     * @expectedExceptionMessage Component class YouHaveNoBananasComponent could not be found.
      * @return void
      */
     public function testLazyLoadingDoesNotExists()
     {
+        $this->expectException(\Cake\Controller\Exception\MissingComponentException::class);
+        $this->expectExceptionMessage('Component class YouHaveNoBananasComponent could not be found.');
         $Component = new ConfiguredComponent(new ComponentRegistry(), [], ['YouHaveNoBananas']);
         $bananas = $Component->YouHaveNoBananas;
     }

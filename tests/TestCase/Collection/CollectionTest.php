@@ -975,23 +975,23 @@ class CollectionTest extends TestCase
     /**
      * Tests that only arrays and Traversables are allowed in the constructor
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Only an array or \Traversable is allowed for Collection
      * @return void
      */
     public function testInvalidConstructorArgument()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Only an array or \Traversable is allowed for Collection');
         new Collection('Derp');
     }
 
     /**
      * Tests that issuing a count will throw an exception
      *
-     * @expectedException \LogicException
      * @return void
      */
     public function testCollectionCount()
     {
+        $this->expectException(\LogicException::class);
         $data = [1, 2, 3, 4];
         $collection = new Collection($data);
         $collection->count();
@@ -2429,11 +2429,11 @@ class CollectionTest extends TestCase
     /**
      * Tests that an exception is thrown if the cartesian product is called with multidimensional arrays
      *
-     * @expectedException \LogicException
      * @return void
      */
     public function testCartesianProductMultidimensionalArray()
     {
+        $this->expectException(\LogicException::class);
         $collection = new Collection([
             [
                 'names' => [
@@ -2473,11 +2473,11 @@ class CollectionTest extends TestCase
     /**
      * Tests that provided arrays do not have even length
      *
-     * @expectedException \LogicException
      * @return void
      */
     public function testTransposeUnEvenLengthShouldThrowException()
     {
+        $this->expectException(\LogicException::class);
         $collection = new Collection([
             ['Products', '2012', '2013', '2014'],
             ['Product A', '200', '100', '50'],

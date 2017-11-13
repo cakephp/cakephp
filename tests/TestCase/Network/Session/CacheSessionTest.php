@@ -101,12 +101,12 @@ class CacheSessionTest extends TestCase
     /**
      * Tests that a cache config is required
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The cache configuration name to use is required
      * @return void
      */
     public function testMissingConfig()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The cache configuration name to use is required');
         new CacheSession(['foo' => 'bar']);
     }
 }

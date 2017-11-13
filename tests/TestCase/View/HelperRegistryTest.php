@@ -109,11 +109,11 @@ class HelperRegistryTest extends TestCase
     /**
      * test lazy loading of helpers
      *
-     * @expectedException \Cake\View\Exception\MissingHelperException
      * @return void
      */
     public function testLazyLoadException()
     {
+        $this->expectException(\Cake\View\Exception\MissingHelperException::class);
         $this->Helpers->NotAHelper;
     }
 
@@ -180,11 +180,11 @@ class HelperRegistryTest extends TestCase
     /**
      * test missinghelper exception
      *
-     * @expectedException \Cake\View\Exception\MissingHelperException
      * @return void
      */
     public function testLoadMissingHelper()
     {
+        $this->expectException(\Cake\View\Exception\MissingHelperException::class);
         $this->Helpers->load('ThisHelperShouldAlwaysBeMissing');
     }
 
@@ -275,12 +275,12 @@ class HelperRegistryTest extends TestCase
     /**
      * Test that unloading a none existing helper triggers an error.
      *
-     * @expectedException \Cake\View\Exception\MissingHelperException
-     * @expectedExceptionMessage Helper class FooHelper could not be found.
      * @return void
      */
     public function testUnloadUnknown()
     {
+        $this->expectException(\Cake\View\Exception\MissingHelperException::class);
+        $this->expectExceptionMessage('Helper class FooHelper could not be found.');
         $this->Helpers->unload('Foo');
     }
 
@@ -329,12 +329,12 @@ class HelperRegistryTest extends TestCase
     /**
      * Loading a helper with different config, should throw an exception
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage The "Html" alias has already been loaded with the following
      * @return void
      */
     public function testLoadMultipleTimesDifferentConfigured()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('The "Html" alias has already been loaded with the following');
         $this->Helpers->load('Html');
         $this->Helpers->load('Html', ['same' => 'stuff']);
     }
@@ -342,12 +342,12 @@ class HelperRegistryTest extends TestCase
     /**
      * Loading a helper with different config, should throw an exception
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage The "Html" alias has already been loaded with the following
      * @return void
      */
     public function testLoadMultipleTimesDifferentConfigValues()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('The "Html" alias has already been loaded with the following');
         $this->Helpers->load('Html', ['key' => 'value']);
         $this->Helpers->load('Html', ['key' => 'new value']);
     }

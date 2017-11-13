@@ -221,11 +221,11 @@ class ValidatorTest extends TestCase
     /**
      * Tests the requirePresence failure case
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testRequirePresenceAsArrayFailure()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $validator = new Validator();
         $validator->requirePresence(['title' => 'derp', 'created' => false]);
     }
@@ -621,11 +621,11 @@ class ValidatorTest extends TestCase
     /**
      * Tests the allowEmpty failure case
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testAllowEmptyAsArrayFailure()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $validator = new Validator();
         $validator->allowEmpty(['title' => 'derp', 'created' => false]);
     }
@@ -700,11 +700,11 @@ class ValidatorTest extends TestCase
     /**
      * Tests the notEmpty failure case
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testNotEmptyAsArrayFailure()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $validator = new Validator();
         $validator->notEmpty(['title' => 'derp', 'created' => false]);
     }
@@ -1323,11 +1323,11 @@ class ValidatorTest extends TestCase
     /**
      * Tests the lengthBetween proxy method
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testLengthBetweenFailure()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $validator = new Validator();
         $validator->lengthBetween('username', [7]);
     }
@@ -1631,11 +1631,11 @@ class ValidatorTest extends TestCase
     /**
      * Tests the range failure case
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testRangeFailure()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $validator = new Validator();
         $validator->range('username', [1]);
     }

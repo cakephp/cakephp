@@ -41,12 +41,12 @@ class DriverTest extends TestCase
      * Test if building the object throws an exception if we're not passing
      * required config data.
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Please pass "username" instead of "login" for connecting to the database
      * @return void
      */
     public function testConstructorException()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Please pass "username" instead of "login" for connecting to the database');
         $arg = ['login' => 'Bear'];
         $this->getMockForAbstractClass(Driver::class, [$arg]);
     }

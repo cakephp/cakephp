@@ -411,23 +411,23 @@ class HashTest extends TestCase
     /**
      * Test get() for invalid $data type
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Invalid data type, must be an array or \ArrayAccess instance.
      * @return void
      */
     public function testGetInvalidData()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid data type, must be an array or \ArrayAccess instance.');
         Hash::get('string', 'path');
     }
 
     /**
      * Test get() with an invalid path
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testGetInvalidPath()
     {
+        $this->expectException(\InvalidArgumentException::class);
         Hash::get(['one' => 'two'], true);
     }
 
@@ -938,12 +938,12 @@ class HashTest extends TestCase
     /**
      * Test passing invalid argument type
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Invalid data type, must be an array or \ArrayAccess instance.
      * @return void
      */
     public function testExtractInvalidArgument()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid data type, must be an array or \ArrayAccess instance.');
         Hash::extract('foo', '');
     }
 
@@ -2281,11 +2281,11 @@ class HashTest extends TestCase
     /**
      * test combine() giving errors on key/value length mismatches.
      *
-     * @expectedException \RuntimeException
      * @return void
      */
     public function testCombineErrorMissingValue()
     {
+        $this->expectException(\RuntimeException::class);
         $data = [
             ['User' => ['id' => 1, 'name' => 'mark']],
             ['User' => ['name' => 'jose']],
@@ -2296,11 +2296,11 @@ class HashTest extends TestCase
     /**
      * test combine() giving errors on key/value length mismatches.
      *
-     * @expectedException \RuntimeException
      * @return void
      */
     public function testCombineErrorMissingKey()
     {
+        $this->expectException(\RuntimeException::class);
         $data = [
             ['User' => ['id' => 1, 'name' => 'mark']],
             ['User' => ['id' => 2]],
@@ -2981,11 +2981,11 @@ class HashTest extends TestCase
     /**
      * Tests that nest() throws an InvalidArgumentException when providing an invalid input.
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testNestInvalid()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $input = [
             [
                 'ParentCategory' => [

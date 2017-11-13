@@ -397,11 +397,11 @@ class TableTest extends TestCase
      * are added for fields that do not exist.
      *
      * @dataProvider addConstraintErrorProvider
-     * @expectedException \Cake\Database\Exception
      * @return void
      */
     public function testAddConstraintError($props)
     {
+        $this->expectException(\Cake\Database\Exception::class);
         $table = new Table('articles');
         $table->addColumn('author_id', 'integer');
         $table->addConstraint('author_idx', $props);
@@ -451,11 +451,11 @@ class TableTest extends TestCase
      * are added for fields that do not exist.
      *
      * @dataProvider addIndexErrorProvider
-     * @expectedException \Cake\Database\Exception
      * @return void
      */
     public function testAddIndexError($props)
     {
+        $this->expectException(\Cake\Database\Exception::class);
         $table = new Table('articles');
         $table->addColumn('author_id', 'integer');
         $table->addIndex('author_idx', $props);
@@ -637,11 +637,11 @@ class TableTest extends TestCase
      * Add a foreign key constraint with bad data
      *
      * @dataProvider badForeignKeyProvider
-     * @expectedException \Cake\Database\Exception
      * @return void
      */
     public function testAddConstraintForeignKeyBadData($data)
     {
+        $this->expectException(\Cake\Database\Exception::class);
         $table = new Table('articles');
         $table->addColumn('author_id', 'integer')
             ->addConstraint('author_id_idx', $data);

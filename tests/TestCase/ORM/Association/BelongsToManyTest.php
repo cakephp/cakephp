@@ -124,12 +124,12 @@ class BelongsToManyTest extends TestCase
     /**
      * Tests that BelongsToMany can't use the join strategy
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Invalid strategy "join" was provided
      * @return void
      */
     public function testStrategyFailure()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid strategy "join" was provided');
         $assoc = new BelongsToMany('Test');
         $assoc->strategy(BelongsToMany::STRATEGY_JOIN);
     }
@@ -273,12 +273,12 @@ class BelongsToManyTest extends TestCase
     /**
      * Tests that passing an invalid strategy will throw an exception
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Invalid save strategy "depsert"
      * @return void
      */
     public function testSaveStrategyInvalid()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid save strategy "depsert"');
         $assoc = new BelongsToMany('Test', ['saveStrategy' => 'depsert']);
     }
 
@@ -378,12 +378,12 @@ class BelongsToManyTest extends TestCase
     /**
      * Test linking entities having a non persisted source entity
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Source entity needs to be persisted before links can be created or removed
      * @return void
      */
     public function testLinkWithNotPersistedSource()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Source entity needs to be persisted before links can be created or removed');
         $config = [
             'sourceTable' => $this->article,
             'targetTable' => $this->tag,
@@ -398,12 +398,12 @@ class BelongsToManyTest extends TestCase
     /**
      * Test liking entities having a non persisted target entity
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Cannot link entities that have not been persisted yet
      * @return void
      */
     public function testLinkWithNotPersistedTarget()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cannot link entities that have not been persisted yet');
         $config = [
             'sourceTable' => $this->article,
             'targetTable' => $this->tag,
@@ -546,12 +546,12 @@ class BelongsToManyTest extends TestCase
     /**
      * Test liking entities having a non persisted source entity
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Source entity needs to be persisted before links can be created or removed
      * @return void
      */
     public function testUnlinkWithNotPersistedSource()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Source entity needs to be persisted before links can be created or removed');
         $config = [
             'sourceTable' => $this->article,
             'targetTable' => $this->tag,
@@ -566,12 +566,12 @@ class BelongsToManyTest extends TestCase
     /**
      * Test liking entities having a non persisted target entity
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Cannot link entities that have not been persisted
      * @return void
      */
     public function testUnlinkWithNotPersistedTarget()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cannot link entities that have not been persisted');
         $config = [
             'sourceTable' => $this->article,
             'targetTable' => $this->tag,
@@ -647,12 +647,12 @@ class BelongsToManyTest extends TestCase
      * Tests that replaceLink requires the sourceEntity to have primaryKey values
      * for the source entity
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Could not find primary key value for source entity
      * @return void
      */
     public function testReplaceWithMissingPrimaryKey()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Could not find primary key value for source entity');
         $config = [
             'sourceTable' => $this->article,
             'targetTable' => $this->tag,
@@ -822,12 +822,12 @@ class BelongsToManyTest extends TestCase
     /**
      * Test that saveAssociated() fails on non-empty, non-iterable value
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Could not save tags, it cannot be traversed
      * @return void
      */
     public function testSaveAssociatedNotEmptyNotIterable()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Could not save tags, it cannot be traversed');
         $articles = TableRegistry::get('Articles');
         $assoc = $articles->belongsToMany('Tags', [
             'saveStrategy' => BelongsToMany::SAVE_APPEND,
@@ -1123,12 +1123,12 @@ class BelongsToManyTest extends TestCase
     /**
      * Tests that eager loading requires association keys
      *
-     * @expectedException RuntimeException
-     * @expectedExceptionMessage The "tags" table does not define a primary key
      * @return void
      */
     public function testEagerLoadingRequiresPrimaryKey()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('The "tags" table does not define a primary key');
         $table = TableRegistry::get('Articles');
         $tags = TableRegistry::get('Tags');
         $tags->schema()->dropConstraint('primary');

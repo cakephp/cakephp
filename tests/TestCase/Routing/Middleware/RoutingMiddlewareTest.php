@@ -181,10 +181,10 @@ class RoutingMiddlewareTest extends TestCase
     /**
      * Test missing routes not being caught.
      *
-     * @expectedException \Cake\Routing\Exception\MissingRouteException
      */
     public function testMissingRouteNotCaught()
     {
+        $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/missing']);
         $response = new Response();
         $next = function ($req, $res) {

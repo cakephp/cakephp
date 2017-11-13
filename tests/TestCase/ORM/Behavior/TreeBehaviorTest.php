@@ -237,11 +237,11 @@ class TreeBehaviorTest extends TestCase
     /**
      * Tests that find('children') will throw an exception if the node was not found
      *
-     * @expectedException \Cake\Datasource\Exception\RecordNotFoundException
      * @return void
      */
     public function testFindChildrenException()
     {
+        $this->expectException(\Cake\Datasource\Exception\RecordNotFoundException::class);
         $table = TableRegistry::get('MenuLinkTrees');
         $table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
         $query = $table->find('children', ['for' => 500]);
@@ -897,12 +897,12 @@ class TreeBehaviorTest extends TestCase
     /**
      * Tests making a node its own parent as an existing entity
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Cannot set a node's parent as itself
      * @return void
      */
     public function testReParentSelf()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Cannot set a node\'s parent as itself');
         $entity = $this->table->get(1);
         $entity->parent_id = $entity->id;
         $this->table->save($entity);
@@ -911,12 +911,12 @@ class TreeBehaviorTest extends TestCase
     /**
      * Tests making a node its own parent as a new entity.
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Cannot set a node's parent as itself
      * @return void
      */
     public function testReParentSelfNewEntity()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Cannot set a node\'s parent as itself');
         $entity = $this->table->newEntity(['name' => 'root']);
         $entity->id = 1;
         $entity->parent_id = $entity->id;
@@ -1142,12 +1142,12 @@ class TreeBehaviorTest extends TestCase
     /**
      * Tests that trying to create a cycle throws an exception
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Cannot use node "5" as parent for entity "2"
      * @return void
      */
     public function testReparentCycle()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Cannot use node "5" as parent for entity "2"');
         $table = $this->table;
         $entity = $table->get(2);
         $entity->parent_id = 5;

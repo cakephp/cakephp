@@ -420,12 +420,12 @@ class StreamTest extends TestCase
     /**
      * Test that an exception is raised when timed out.
      *
-     * @expectedException \Cake\Network\Exception\HttpException
-     * @expectedExceptionMessage Connection timed out http://dummy/?sleep
      * @return void
      */
     public function testMissDeadline()
     {
+        $this->expectException(\Cake\Network\Exception\HttpException::class);
+        $this->expectExceptionMessage('Connection timed out http://dummy/?sleep');
         $request = new Request();
         $request->url('http://dummy/?sleep');
         $options = [
