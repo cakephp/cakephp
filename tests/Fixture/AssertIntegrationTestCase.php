@@ -18,7 +18,7 @@ class AssertIntegrationTestCase extends IntegrationTestCase
     public function testBadAssertNoRedirect()
     {
         $this->_response = new Response();
-        $this->_response->header('Location', 'http://localhost/tasks/index');
+        $this->_response = $this->_response->withLocation('http://localhost/tasks/index');
 
         $this->assertNoRedirect();
     }
