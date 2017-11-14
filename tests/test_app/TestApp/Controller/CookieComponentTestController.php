@@ -40,7 +40,7 @@ class CookieComponentTestController extends Controller
         if (isset($key)) {
             $this->Cookie->setConfig('key', $key);
         }
-        $this->set('ValueFromRequest', $this->request->cookie('NameOfCookie'));
+        $this->set('ValueFromRequest', $this->request->getCookie('NameOfCookie'));
         $this->set('ValueFromCookieComponent', $this->Cookie->read('NameOfCookie'));
     }
 
@@ -52,7 +52,6 @@ class CookieComponentTestController extends Controller
      */
     public function set_cookie($key = null)
     {
-        $this->autoRender = false;
         if (isset($key)) {
             $this->Cookie->setConfig('key', $key);
         }
