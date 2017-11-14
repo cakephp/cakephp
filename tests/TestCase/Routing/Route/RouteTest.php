@@ -1166,8 +1166,6 @@ class RouteTest extends TestCase
         ]);
         $this->assertFalse($route->parse('/sample', 'GET'));
 
-        // Test for deprecated behavior
-        $_SERVER['REQUEST_METHOD'] = 'POST';
         $expected = [
             'controller' => 'posts',
             'action' => 'index',
@@ -1175,7 +1173,36 @@ class RouteTest extends TestCase
             '_method' => ['PUT', 'POST'],
             '_matchedRoute' => '/sample'
         ];
-        $this->assertEquals($expected, $route->parse('/sample'));
+        $this->assertEquals($expected, $route->parse('/sample', 'POST'));
+    }
+
+    /**
+     * Test deprecated globals reading for method matching
+     *
+     * @group deprecated
+     * @return void
+     */
+    public function testParseWithMultipleHttpMethodDeprecated()
+    {
+        $this->deprecated(function () {
+            $_SERVER['REQUEST_METHOD'] = 'GET';
+            $route = new Route('/sample', [
+                'controller' => 'posts',
+                'action' => 'index',
+                '_method' => ['PUT', 'POST']
+            ]);
+            $this->assertFalse($route->parse('/sample'));
+
+            $_SERVER['REQUEST_METHOD'] = 'POST';
+            $expected = [
+                'controller' => 'posts',
+                'action' => 'index',
+                'pass' => [],
+                '_method' => ['PUT', 'POST'],
+                '_matchedRoute' => '/sample'
+            ];
+            $this->assertEquals($expected, $route->parse('/sample'));
+        });
     }
 
     /**
