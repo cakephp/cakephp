@@ -1291,7 +1291,7 @@ class RouterTest extends TestCase
         $calledCount = 0;
         Router::addUrlFilter(function ($url, $request) use (&$calledCount) {
             $calledCount++;
-            $url['lang'] = $request->lang;
+            $url['lang'] = $request->getParam('lang');
 
             return $url;
         });
@@ -2849,27 +2849,36 @@ class RouterTest extends TestCase
     /**
      * test that setRequestInfo can accept arrays and turn that into a Request object.
      *
+     * @group deprecated
      * @return void
      */
     public function testSetRequestInfoLegacy()
     {
-        Router::setRequestInfo([
-            [
-                'plugin' => null, 'controller' => 'images', 'action' => 'index',
-                'url' => ['url' => 'protected/images/index']
-            ],
-            [
-                'base' => '',
-                'here' => '/protected/images/index',
-                'webroot' => '/',
-            ]
-        ]);
-        $result = Router::getRequest();
-        $this->assertEquals('images', $result->controller);
-        $this->assertEquals('index', $result->action);
-        $this->assertEquals('', $result->base);
-        $this->assertEquals('/protected/images/index', $result->here);
-        $this->assertEquals('/', $result->webroot);
+        $this->deprecated(function () {
+            Router::setRequestInfo([
+                [
+                    'plugin' => null, 'controller' => 'images', 'action' => 'index',
+                    'url' => ['url' => 'protected/images/index']
+                ],
+                [
+                    'base' => '',
+                    'here' => '/protected/images/index',
+                    'webroot' => '/',
+                ]
+            ]);
+            $result = Router::getRequest();
+            $this->assertEquals('images', $result->getParam('controller'));
+            $this->assertEquals('index', $result->getParam('action'));
+
+            $this->assertEquals('', $result->getAttribute('base'));
+            $this->assertEquals('', $result->base);
+
+            $this->assertEquals('/protected/images/index', $result->getRequestTarget());
+            $this->assertEquals('/protected/images/index', $result->here);
+
+            $this->assertEquals('/', $result->getAttribute('webroot'));
+            $this->assertEquals('/', $result->webroot);
+        });
     }
 
     /**
