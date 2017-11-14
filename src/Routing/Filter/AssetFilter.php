@@ -82,7 +82,7 @@ class AssetFilter extends DispatcherFilter
         $response = $event->getData('response');
         $event->stopPropagation();
 
-        $response->modified(filemtime($assetFile));
+        $response = $response->withModified(filemtime($assetFile));
         if ($response->checkNotModified($request)) {
             return $response;
         }
@@ -131,19 +131,19 @@ class AssetFilter extends DispatcherFilter
     protected function _deliverAsset(ServerRequest $request, Response $response, $assetFile, $ext)
     {
         $compressionEnabled = $response->compress();
-        if ($response->type($ext) === $ext) {
+        if ($response->getType($ext) === $ext) {
             $contentType = 'application/octet-stream';
             $agent = $request->getEnv('HTTP_USER_AGENT');
             if (preg_match('%Opera(/| )([0-9].[0-9]{1,2})%', $agent) || preg_match('/MSIE ([0-9].[0-9]{1,2})/', $agent)) {
                 $contentType = 'application/octetstream';
             }
-            $response->type($contentType);
+            $response = $response->withType($contentType);
         }
         if (!$compressionEnabled) {
-            $response->header('Content-Length', filesize($assetFile));
+            $response = $response->withHeader('Content-Length', filesize($assetFile));
         }
-        $response->cache(filemtime($assetFile), $this->_cacheTime);
-        $response->file($assetFile);
+        $response = $response->withCache(filemtime($assetFile), $this->_cacheTime)
+            ->withFile($assetFile);
 
         return $response;
     }
