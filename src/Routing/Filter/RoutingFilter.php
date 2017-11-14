@@ -64,8 +64,8 @@ class RoutingFilter extends DispatcherFilter
             $event->stopPropagation();
             /* @var \Cake\Http\Response $response */
             $response = $event->getData('response');
-            $response->statusCode($e->getCode());
-            $response->header('Location', $e->getMessage());
+            $response = $response->withStatus($e->getCode())
+                ->withLocation($e->getMessage());
 
             return $response;
         }
