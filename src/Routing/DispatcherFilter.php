@@ -164,7 +164,7 @@ class DispatcherFilter implements EventListenerInterface
         if (!empty($this->_config['for'])) {
             $len = strlen('preg:');
             $for = $this->_config['for'];
-            $url = $request->here(false);
+            $url = $request->getRequestTarget();
             if (substr($for, 0, $len) === 'preg:') {
                 $pass = (bool)preg_match(substr($for, $len), $url);
             } else {
