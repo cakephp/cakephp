@@ -43,6 +43,7 @@ class RequestActionTraitTest extends TestCase
         parent::setUp();
         static::setAppNamespace();
         Security::setSalt('not-the-default');
+        DispatcherFactory::clear();
         DispatcherFactory::add('Routing');
         DispatcherFactory::add('ControllerFactory');
         $this->object = $this->getObjectForTrait('Cake\Routing\RequestActionTrait');
@@ -243,7 +244,7 @@ class RequestActionTraitTest extends TestCase
     {
         $result = $this->object->requestAction('/request_action/params_pass');
         $result = json_decode($result, true);
-        $this->assertEquals('request_action/params_pass', $result['url']);
+        $this->assertEquals('/request_action/params_pass', $result['url']);
         $this->assertEquals('RequestAction', $result['params']['controller']);
         $this->assertEquals('params_pass', $result['params']['action']);
         $this->assertNull($result['params']['plugin']);
