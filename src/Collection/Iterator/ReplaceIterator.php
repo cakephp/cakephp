@@ -86,7 +86,7 @@ class ReplaceIterator extends Collection
             $iterator = $iterator->unwrap();
         }
 
-        if (!$iterator instanceof ArrayIterator) {
+        if (get_class($iterator) !== ArrayIterator::class) {
             return $this;
         }
 
