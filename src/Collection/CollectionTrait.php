@@ -819,7 +819,7 @@ trait CollectionTrait
     {
         $iterator = $this->unwrap();
 
-        if (get_class($iterator) === ArrayIterator::class && $iterator instanceof ArrayIterator) {
+        if (get_class($iterator) === ArrayIterator::class) {
             $iterator = $iterator->getArrayCopy();
         }
 
