@@ -358,7 +358,10 @@ class HtmlHelperTest extends TestCase
 
         $result = $this->Html->image('x:"><script>alert(1)</script>');
         $expected = ['img' => ['src' => 'x:&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;', 'alt' => '']];
+        $this->assertHtml($expected, $result);
 
+        $result = $this->Html->image('//google.com/"><script>alert(1)</script>');
+        $expected = ['img' => ['src' => '//google.com/&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;', 'alt' => '']];
         $this->assertHtml($expected, $result);
     }
 
