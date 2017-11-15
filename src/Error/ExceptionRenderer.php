@@ -200,8 +200,8 @@ class ExceptionRenderer implements ExceptionRendererInterface
         if ($unwrapped instanceof CakeException && $isDebug) {
             $this->controller->set($unwrapped->getAttributes());
         }
-
         $this->controller->response = $response;
+
         return $this->_outputMessage($template);
     }
 

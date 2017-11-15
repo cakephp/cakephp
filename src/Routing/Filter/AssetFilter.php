@@ -131,7 +131,7 @@ class AssetFilter extends DispatcherFilter
     protected function _deliverAsset(ServerRequest $request, Response $response, $assetFile, $ext)
     {
         $compressionEnabled = $response->compress();
-        if ($response->getType($ext) === $ext) {
+        if ($response->getType() === $ext) {
             $contentType = 'application/octet-stream';
             $agent = $request->getEnv('HTTP_USER_AGENT');
             if (preg_match('%Opera(/| )([0-9].[0-9]{1,2})%', $agent) || preg_match('/MSIE ([0-9].[0-9]{1,2})/', $agent)) {
