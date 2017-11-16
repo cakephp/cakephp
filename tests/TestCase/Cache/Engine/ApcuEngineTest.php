@@ -23,6 +23,34 @@ use Cake\TestSuite\TestCase;
  */
 class ApcuEngineTest extends TestCase
 {
+    /**
+     * useRequestTime original value
+     *
+     * @var bool
+     */
+    static protected $useRequestTime = null;
+
+    /**
+     * Ensure use_request_time is turned off
+     *
+     * If use_request_time is on, all cache entries are inserted with the same
+     * timestamp and ttl comparisons within the same request are effectively
+     * meaningless
+     */
+    public static function setUpBeforeClass()
+    {
+        static::$useRequestTime = ini_get('apc.use_request_time');
+        ini_set('apc.use_request_time', 0);
+    }
+
+    /**
+     * Reset apc.user_request_time to original value
+     *
+     */
+    public static function teardownAfterClass()
+    {
+        ini_set('apc.use_request_time', static::$useRequestTime);
+    }
 
     /**
      * setUp method
