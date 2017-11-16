@@ -538,18 +538,18 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     {
         $this->autoRender = false;
 
-        $response = $this->response;
         if ($status) {
-            $response = $response->withStatus($status);
+            $this->response = $this->response->withStatus($status);
         }
 
-        $event = $this->dispatchEvent('Controller.beforeRedirect', [$url, $response]);
+        $event = $this->dispatchEvent('Controller.beforeRedirect', [$url, $this->response]);
         if ($event->getResult() instanceof Response) {
             return $this->response = $event->getResult();
         }
         if ($event->isStopped()) {
             return null;
         }
+        $response = $this->response;
 
         if (!$response->getHeaderLine('Location')) {
             $response = $response->withLocation(Router::url($url, true));

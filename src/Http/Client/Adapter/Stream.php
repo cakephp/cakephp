@@ -184,8 +184,8 @@ class Stream
      */
     protected function _buildOptions(Request $request, $options)
     {
-        $this->_contextOptions['method'] = $request->method();
-        $this->_contextOptions['protocol_version'] = $request->version();
+        $this->_contextOptions['method'] = $request->getMethod();
+        $this->_contextOptions['protocol_version'] = $request->getProtocolVersion();
         $this->_contextOptions['ignore_errors'] = true;
 
         if (isset($options['timeout'])) {

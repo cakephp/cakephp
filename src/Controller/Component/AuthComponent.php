@@ -1023,7 +1023,7 @@ class AuthComponent extends Component
      */
     protected function _getUrlToRedirectBackTo()
     {
-        $urlToRedirectBackTo = $this->request->here(false);
+        $urlToRedirectBackTo = $this->request->getRequestTarget();
         if (!$this->request->is('get')) {
             $urlToRedirectBackTo = $this->request->referer(true);
         }

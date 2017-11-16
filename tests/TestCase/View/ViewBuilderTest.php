@@ -14,6 +14,8 @@
  */
 namespace Cake\Test\TestCase\View;
 
+use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Cake\View\ViewBuilder;
 
@@ -108,8 +110,8 @@ class ViewBuilderTest extends TestCase
      */
     public function testBuildComplete()
     {
-        $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
-        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
+        $request = new ServerRequest();
+        $response = new Response();
         $events = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
 
         $builder = new ViewBuilder();
@@ -136,7 +138,7 @@ class ViewBuilderTest extends TestCase
         $this->assertEquals('TestPlugin', $view->plugin);
         $this->assertEquals('TestTheme', $view->theme);
         $this->assertSame($request, $view->request);
-        $this->assertSame($response, $view->response);
+        $this->assertInstanceOf(Response::class, $view->response);
         $this->assertSame($events, $view->getEventManager());
         $this->assertSame(['one' => 'value'], $view->viewVars);
         $this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $view->Html);

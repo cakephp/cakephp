@@ -36,10 +36,7 @@ class CookieEncryptedUsingControllerTest extends IntegrationTestCase
 
         Security::setSalt('abcdabcdabcdabcdabcdabcdabcdabcdabcd');
         Router::connect('/:controller/:action/*', [], ['routeClass' => 'InflectedRoute']);
-        DispatcherFactory::clear();
-        DispatcherFactory::add('Routing');
-        DispatcherFactory::add('ControllerFactory');
-        $this->useHttpServer(false);
+        $this->useHttpServer(true);
     }
 
     /**

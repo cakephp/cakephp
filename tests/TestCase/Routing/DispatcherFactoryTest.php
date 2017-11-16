@@ -23,6 +23,7 @@ use Cake\TestSuite\TestCase;
  */
 class DispatcherFactoryTest extends TestCase
 {
+    protected $errorLevel;
 
     /**
      * setup function
@@ -34,6 +35,18 @@ class DispatcherFactoryTest extends TestCase
         parent::setUp();
         static::setAppNamespace();
         DispatcherFactory::clear();
+        $this->errorLevel = error_reporting(E_ALL ^ E_USER_DEPRECATED);
+    }
+
+    /**
+     * teardown function
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        parent::tearDown();
+        error_reporting($this->errorLevel);
     }
 
     /**

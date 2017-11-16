@@ -379,7 +379,7 @@ class SecurityComponent extends Component
         $unlocked = $this->_sortedUnlocked($controller->request->getData());
 
         return [
-            $controller->request->here(),
+            $controller->request->getRequestTarget(),
             serialize($fieldList),
             $unlocked,
             session_id(),

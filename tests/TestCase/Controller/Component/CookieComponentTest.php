@@ -324,7 +324,7 @@ class CookieComponentTest extends TestCase
             'domain' => '',
             'secure' => false,
             'httpOnly' => false];
-        $result = $this->Controller->response->cookie('Testing');
+        $result = $this->Controller->response->getCookie('Testing');
 
         $this->assertEquals($future->format('U'), $result['expire'], '', 3);
         unset($result['expire']);
@@ -352,7 +352,7 @@ class CookieComponentTest extends TestCase
             'domain' => '',
             'secure' => false,
             'httpOnly' => true];
-        $result = $this->Controller->response->cookie('Testing');
+        $result = $this->Controller->response->getCookie('Testing');
         $this->assertEquals($expected, $result);
     }
 
@@ -377,11 +377,11 @@ class CookieComponentTest extends TestCase
             'secure' => false,
             'httpOnly' => false
         ];
-        $result = $this->Controller->response->cookie('Open');
+        $result = $this->Controller->response->getCookie('Open');
         unset($result['expire']);
         $this->assertEquals($expected, $result);
 
-        $result = $this->Controller->response->cookie('Closed');
+        $result = $this->Controller->response->getCookie('Closed');
         $this->assertContains('Q2FrZQ==.', $result['value']);
     }
 
@@ -401,7 +401,7 @@ class CookieComponentTest extends TestCase
         $this->Cookie->configKey($name, compact('key', 'encryption'));
         $this->Cookie->write($name, $value);
 
-        $cookie = $this->Controller->response->cookie($name);
+        $cookie = $this->Controller->response->getCookie($name);
 
         $this->assertEquals($value, Security::decrypt(base64_decode(substr($cookie['value'], strlen($prefix))), $key));
     }
@@ -444,7 +444,7 @@ class CookieComponentTest extends TestCase
             'domain' => '',
             'secure' => false,
             'httpOnly' => true];
-        $result = $this->Controller->response->cookie('Testing');
+        $result = $this->Controller->response->getCookie('Testing');
         $this->assertEquals($expected, $result);
     }
 
@@ -464,7 +464,7 @@ class CookieComponentTest extends TestCase
             'secure' => false,
             'httpOnly' => false
         ];
-        $result = $this->Controller->response->cookie('Testing');
+        $result = $this->Controller->response->getCookie('Testing');
 
         $time = new Time('now');
         $this->assertWithinRange($time->format('U') + 10, $result['expire'], 1);
@@ -489,7 +489,7 @@ class CookieComponentTest extends TestCase
             'secure' => false,
             'httpOnly' => false
         ];
-        $result = $this->Controller->response->cookie('User');
+        $result = $this->Controller->response->getCookie('User');
         unset($result['expire']);
 
         $this->assertEquals($expected, $result);
@@ -504,7 +504,7 @@ class CookieComponentTest extends TestCase
             'secure' => false,
             'httpOnly' => false
         ];
-        $result = $this->Controller->response->cookie('User');
+        $result = $this->Controller->response->getCookie('User');
         unset($result['expire']);
 
         $this->assertEquals($expected, $result);
@@ -753,7 +753,7 @@ class CookieComponentTest extends TestCase
         $this->assertNull($this->Cookie->read('User.email'));
         $this->assertNull($this->Cookie->read('User.name'));
 
-        $result = $this->Controller->response->cookie('User');
+        $result = $this->Controller->response->getCookie('User');
         $this->assertEquals('', $result['value']);
         $this->assertLessThan(time(), $result['expire']);
     }

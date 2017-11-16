@@ -395,12 +395,18 @@ class Router
      *
      * @param \Cake\Http\ServerRequest|array $request Parameters and path information or a Cake\Http\ServerRequest object.
      * @return void
+     * @deprecatd 3.6.0 Support for arrays will be removed in 4.0.0
      */
     public static function setRequestInfo($request)
     {
         if ($request instanceof ServerRequest) {
             static::pushRequest($request);
         } else {
+            deprecationWarning(
+                'Passing an array into Router::setRequestInfo() is deprecated. ' .
+                'Pass an instance of ServerRequest instead.'
+            );
+
             $requestData = $request;
             $requestData += [[], []];
             $requestData[0] += [
@@ -408,8 +414,12 @@ class Router
                 'action' => false,
                 'plugin' => null
             ];
-            $request = new ServerRequest();
-            $request->addParams($requestData[0])->addPaths($requestData[1]);
+            $request = new ServerRequest([
+                'params' => $requestData[0],
+                'url' => isset($requestData[1]['here']) ? $requestData[1]['here'] : '/',
+                'base' => isset($requestData[1]['base']) ? $requestData[1]['base'] : '',
+                'webroot' => isset($requestData[1]['webroot']) ? $requestData[1]['webroot'] : '/',
+            ]);
             static::pushRequest($request);
         }
     }

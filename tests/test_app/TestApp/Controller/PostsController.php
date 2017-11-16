@@ -41,7 +41,7 @@ class PostsController extends AppController
      */
     public function beforeFilter(Event $event)
     {
-        if ($this->request->param('action') !== 'securePost') {
+        if ($this->request->getParam('action') !== 'securePost') {
             $this->getEventManager()->off($this->Security);
         }
     }
@@ -55,10 +55,7 @@ class PostsController extends AppController
     public function index($layout = 'default')
     {
         $this->Flash->error('An error message');
-        $this->response->cookie([
-            'name' => 'remember_me',
-            'value' => 1
-        ]);
+        $this->response = $this->response->withCookie('remember_me', 1);
         $this->set('test', 'value');
         $this->viewBuilder()->setLayout($layout);
     }
@@ -92,15 +89,11 @@ class PostsController extends AppController
      */
     public function securePost()
     {
-        $this->response->body('Request was accepted');
-
-        return $this->response;
+        return $this->response->withStringBody('Request was accepted');
     }
 
     public function file()
     {
-        $this->response->file(__FILE__);
-
-        return $this->response;
+        return $this->response->withFile(__FILE__);
     }
 }

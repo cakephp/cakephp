@@ -147,10 +147,15 @@ class PaginatorHelperTest extends TestCase
      */
     public function testSortLinks()
     {
-        Router::setRequestInfo([
-            ['plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => [], 'url' => ['url' => 'accounts/']],
-            ['base' => '', 'here' => '/accounts/', 'webroot' => '/']
+        $request = new ServerRequest([
+            'url' => '/accounts/',
+            'params' => [
+                'plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => []
+            ],
+            'base' => '',
+            'webroot' => '/'
         ]);
+        Router::setRequestInfo($request);
 
         $this->Paginator->options(['url' => ['param']]);
         $this->Paginator->request->params['paging'] = [
@@ -307,10 +312,16 @@ class PaginatorHelperTest extends TestCase
      */
     public function testSortLinkWithVirtualField()
     {
-        Router::setRequestInfo([
-            ['plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => [], 'form' => [], 'url' => ['url' => 'accounts/']],
-            ['base' => '', 'here' => '/accounts/', 'webroot' => '/']
+        $request = new ServerRequest([
+            'url' => '/accounts/',
+            'params' => [
+                'plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => []
+            ],
+            'base' => '',
+            'webroot' => '/'
         ]);
+        Router::setRequestInfo($request);
+
         $this->Paginator->request->params['paging']['Article']['sort'] = 'full_name';
         $this->Paginator->request->params['paging']['Article']['direction'] = 'asc';
 
@@ -356,11 +367,16 @@ class PaginatorHelperTest extends TestCase
      */
     public function testSortLinksUsingDirectionOption()
     {
-        Router::setRequestInfo([
-            ['plugin' => null, 'controller' => 'accounts', 'action' => 'index',
-                'url' => ['url' => 'accounts/', 'mod_rewrite' => 'true']],
-            ['base' => '/', 'here' => '/accounts/', 'webroot' => '/']
+        $request = new ServerRequest([
+            'url' => '/accounts/',
+            'params' => [
+                'plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => []
+            ],
+            'base' => '',
+            'webroot' => '/'
         ]);
+        Router::setRequestInfo($request);
+
         $this->Paginator->options(['url' => ['param']]);
 
         $result = $this->Paginator->sort('title', 'TestTitle', ['direction' => 'desc']);
@@ -387,10 +403,15 @@ class PaginatorHelperTest extends TestCase
      */
     public function testSortLinksUsingDotNotation()
     {
-        Router::setRequestInfo([
-            ['plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => []],
-            ['base' => '', 'here' => '/accounts/', 'webroot' => '/']
+        $request = new ServerRequest([
+            'url' => '/accounts/',
+            'params' => [
+                'plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => []
+            ],
+            'base' => '',
+            'webroot' => '/'
         ]);
+        Router::setRequestInfo($request);
 
         $this->Paginator->request->params['paging']['Article']['sort'] = 'Article.title';
         $this->Paginator->request->params['paging']['Article']['direction'] = 'desc';
@@ -440,13 +461,18 @@ class PaginatorHelperTest extends TestCase
      */
     public function testSortLinksMultiplePagination()
     {
-        Router::setRequestInfo([
-            ['plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => [], 'url' => ['url' => 'accounts/']],
-            ['base' => '', 'here' => '/accounts/', 'webroot' => '/']
+        $request = new ServerRequest([
+            'url' => '/accounts/',
+            'params' => [
+                'plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => []
+            ],
+            'base' => '',
+            'webroot' => '/'
         ]);
+        Router::setRequestInfo($request);
 
         $this->Paginator->options(['model' => 'Articles']);
-        $this->Paginator->request['paging'] = [
+        $this->Paginator->request = $this->Paginator->request->withParam('paging', [
             'Articles' => [
                 'current' => 9,
                 'count' => 62,
@@ -469,7 +495,7 @@ class PaginatorHelperTest extends TestCase
                 'page' => 1,
                 'scope' => 'tags',
             ]
-        ];
+        ]);
 
         $result = $this->Paginator->sort('title', 'Title', ['model' => 'Articles']);
         $expected = [
@@ -641,10 +667,17 @@ class PaginatorHelperTest extends TestCase
         Configure::write('Routing.prefixes', ['admin']);
         Router::reload();
         Router::connect('/admin/:controller/:action/*', ['prefix' => 'admin']);
-        Router::setRequestInfo([
-            ['controller' => 'users', 'plugin' => null, 'action' => 'index', 'prefix' => 'admin'],
-            ['base' => '', 'here' => '/admin/users', 'webroot' => '/']
+
+        $request = new ServerRequest([
+            'url' => '/admin/users',
+            'params' => [
+                'plugin' => null, 'controller' => 'users', 'action' => 'index', 'prefix' => 'admin'
+            ],
+            'base' => '',
+            'webroot' => '/'
         ]);
+        Router::setRequestInfo($request);
+
         $this->Paginator->request->params['paging']['Article']['page'] = 1;
         $result = $this->Paginator->next('Next');
         $expected = [
@@ -682,10 +715,16 @@ class PaginatorHelperTest extends TestCase
      */
     public function testDefaultSortAndNoSort()
     {
-        Router::setRequestInfo([
-            ['plugin' => null, 'controller' => 'articles', 'action' => 'index'],
-            ['base' => '/', 'here' => '/articles/', 'webroot' => '/']
+        $request = new ServerRequest([
+            'url' => '/articles/',
+            'params' => [
+                'plugin' => null, 'controller' => 'articles', 'action' => 'index'
+            ],
+            'base' => '',
+            'webroot' => '/'
         ]);
+        Router::setRequestInfo($request);
+
         $this->Paginator->request->params['paging'] = [
             'Article' => [
                 'page' => 1, 'current' => 3, 'count' => 13,
@@ -765,10 +804,15 @@ class PaginatorHelperTest extends TestCase
         Router::connect('/members/:controller/:action/*', ['prefix' => 'members']);
         Router::connect('/:controller/:action/*');
 
-        Router::setRequestInfo([
-            ['controller' => 'posts', 'action' => 'index', 'plugin' => null],
-            ['base' => '', 'here' => 'posts/index', 'webroot' => '/']
+        $request = new ServerRequest([
+            'url' => '/posts/index/',
+            'params' => [
+                'plugin' => null, 'controller' => 'posts', 'action' => 'index', 'pass' => []
+            ],
+            'base' => '',
+            'webroot' => '/'
         ]);
+        Router::setRequestInfo($request);
 
         $this->Paginator->request->params['paging']['Article']['page'] = 2;
         $this->Paginator->request->params['paging']['Article']['prevPage'] = true;
@@ -824,10 +868,15 @@ class PaginatorHelperTest extends TestCase
      */
     public function testGenerateUrlMultiplePagination()
     {
-        Router::setRequestInfo([
-            ['controller' => 'posts', 'action' => 'index', 'plugin' => null],
-            ['base' => '', 'here' => 'posts/index', 'webroot' => '/']
+        $request = new ServerRequest([
+            'url' => '/posts/index/',
+            'params' => [
+                'plugin' => null, 'controller' => 'posts', 'action' => 'index', 'pass' => []
+            ],
+            'base' => '',
+            'webroot' => '/'
         ]);
+        Router::setRequestInfo($request);
 
         $this->Paginator->request->params['paging']['Article']['scope'] = 'article';
         $this->Paginator->request->params['paging']['Article']['page'] = 3;
@@ -878,10 +927,14 @@ class PaginatorHelperTest extends TestCase
      */
     public function testGenerateUrlMultiplePaginationQueryStringData()
     {
-        Router::setRequestInfo([
-            ['controller' => 'posts', 'action' => 'index', 'plugin' => null],
-            ['base' => '', 'here' => 'posts/index', 'webroot' => '/']
+        $request = new ServerRequest([
+            'url' => '/posts/index/',
+            'params' => [
+                'plugin' => null, 'controller' => 'posts', 'action' => 'index'
+            ]
         ]);
+        Router::setRequestInfo($request);
+
         $this->View->request->params['paging']['Article']['scope'] = 'article';
         $this->View->request->params['paging']['Article']['page'] = 3;
         $this->View->request->params['paging']['Article']['prevPage'] = true;
@@ -955,10 +1008,14 @@ class PaginatorHelperTest extends TestCase
      */
     public function testPassedArgsMergingWithUrlOptions()
     {
-        Router::setRequestInfo([
-            ['plugin' => null, 'controller' => 'articles', 'action' => 'index', 'pass' => ['2']],
-            ['base' => '/', 'here' => '/articles/', 'webroot' => '/']
+        $request = new ServerRequest([
+            'url' => '/articles/',
+            'params' => [
+                'plugin' => null, 'controller' => 'articles', 'action' => 'index', 'pass' => []
+            ],
         ]);
+        Router::setRequestInfo($request);
+
         $this->Paginator->request->params['paging'] = [
             'Article' => [
                 'page' => 1, 'current' => 3, 'count' => 13,
@@ -1010,10 +1067,14 @@ class PaginatorHelperTest extends TestCase
      */
     public function testDefaultSortRemovedFromUrl()
     {
-        Router::setRequestInfo([
-            ['plugin' => null, 'controller' => 'articles', 'action' => 'index'],
-            ['base' => '/', 'here' => '/articles/', 'webroot' => '/']
+        $request = new ServerRequest([
+            'url' => '/articles/',
+            'params' => [
+                'plugin' => null, 'controller' => 'articles', 'action' => 'index'
+            ]
         ]);
+        Router::setRequestInfo($request);
+
         $this->Paginator->request->params['paging'] = [
             'Article' => [
                 'page' => 1, 'current' => 3, 'count' => 13,
@@ -2167,14 +2228,10 @@ class PaginatorHelperTest extends TestCase
             ]
         ];
 
-        $request = new ServerRequest();
-        $request->addParams([
-            'controller' => 'clients', 'action' => 'index', 'plugin' => null
+        $request = new ServerRequest([
+            'params' => ['controller' => 'clients', 'action' => 'index', 'plugin' => null],
+            'url' => '/clients/index?page=2'
         ]);
-        $request->base = '';
-        $request->here = '/clients/index?page=2';
-        $request->webroot = '/';
-
         Router::setRequestInfo($request);
 
         $result = $this->Paginator->numbers();
@@ -2650,10 +2707,13 @@ class PaginatorHelperTest extends TestCase
      */
     public function testNextLinkUsingDotNotation()
     {
-        Router::setRequestInfo([
-            ['plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => []],
-            ['base' => '', 'here' => '/accounts/', 'webroot' => '/']
+        $request = new ServerRequest([
+            'url' => '/accounts/',
+            'params' => [
+                'plugin' => null, 'controller' => 'accounts', 'action' => 'index'
+            ]
         ]);
+        Router::setRequestInfo($request);
 
         $this->Paginator->request->params['paging']['Article']['sort'] = 'Article.title';
         $this->Paginator->request->params['paging']['Article']['direction'] = 'asc';

@@ -86,20 +86,24 @@ class CsrfComponent extends Component
 
         $cookieData = $request->getCookie($cookieName);
         if ($cookieData) {
-            $request->params['_csrfToken'] = $cookieData;
+            $request = $request->withParam('_csrfToken', $cookieData);
         }
 
         if ($request->is('requested')) {
+            $controller->request = $request;
+
             return;
         }
 
         if ($request->is('get') && $cookieData === null) {
-            $this->_setCookie($request, $response);
+            list($request, $response) = $this->_setCookie($request, $response);
+            $controller->response = $response;
         }
         if ($request->is(['put', 'post', 'delete', 'patch']) || $request->getData()) {
             $this->_validateToken($request);
-            unset($request->data[$this->_config['field']]);
+            $request = $request->withoutData($this->_config['field']);
         }
+        $controller->request = $request;
     }
 
     /**
@@ -122,22 +126,23 @@ class CsrfComponent extends Component
      *
      * @param \Cake\Http\ServerRequest $request The request object.
      * @param \Cake\Http\Response $response The response object.
-     * @return void
+     * @return array An array of the modified request, response.
      */
     protected function _setCookie(ServerRequest $request, Response $response)
     {
         $expiry = new Time($this->_config['expiry']);
         $value = hash('sha512', Security::randomBytes(16), false);
 
-        $request->params['_csrfToken'] = $value;
-        $response->cookie([
-            'name' => $this->_config['cookieName'],
+        $request = $request->withParam('_csrfToken', $value);
+        $response = $response->withCookie($this->_config['cookieName'], [
             'value' => $value,
             'expire' => $expiry->format('U'),
             'path' => $request->getAttribute('webroot'),
             'secure' => $this->_config['secure'],
             'httpOnly' => $this->_config['httpOnly'],
         ]);
+
+        return [$request, $response];
     }
 
     /**

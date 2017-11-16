@@ -639,6 +639,32 @@ class RouteBuilderTest extends TestCase
     /**
      * Test resource parsing.
      *
+     * @group deprecated
+     * @return void
+     */
+    public function testResourcesParsingReadGlobals()
+    {
+        $this->deprecated(function () {
+            $routes = new RouteBuilder($this->collection, '/');
+            $routes->resources('Articles');
+
+            $_SERVER['REQUEST_METHOD'] = 'GET';
+            $result = $this->collection->parse('/articles');
+            $this->assertEquals('Articles', $result['controller']);
+            $this->assertEquals('index', $result['action']);
+            $this->assertEquals([], $result['pass']);
+
+            $_SERVER['REQUEST_METHOD'] = 'POST';
+            $result = $this->collection->parse('/articles');
+            $this->assertEquals('Articles', $result['controller']);
+            $this->assertEquals('add', $result['action']);
+            $this->assertEquals([], $result['pass']);
+        });
+    }
+
+    /**
+     * Test resource parsing.
+     *
      * @return void
      */
     public function testResourcesParsing()
@@ -646,31 +672,27 @@ class RouteBuilderTest extends TestCase
         $routes = new RouteBuilder($this->collection, '/');
         $routes->resources('Articles');
 
-        $_SERVER['REQUEST_METHOD'] = 'GET';
-        $result = $this->collection->parse('/articles');
+        $result = $this->collection->parse('/articles', 'GET');
         $this->assertEquals('Articles', $result['controller']);
         $this->assertEquals('index', $result['action']);
         $this->assertEquals([], $result['pass']);
 
-        $result = $this->collection->parse('/articles/1');
+        $result = $this->collection->parse('/articles/1', 'GET');
         $this->assertEquals('Articles', $result['controller']);
         $this->assertEquals('view', $result['action']);
         $this->assertEquals([1], $result['pass']);
 
-        $_SERVER['REQUEST_METHOD'] = 'POST';
-        $result = $this->collection->parse('/articles');
+        $result = $this->collection->parse('/articles', 'POST');
         $this->assertEquals('Articles', $result['controller']);
         $this->assertEquals('add', $result['action']);
         $this->assertEquals([], $result['pass']);
 
-        $_SERVER['REQUEST_METHOD'] = 'PUT';
-        $result = $this->collection->parse('/articles/1');
+        $result = $this->collection->parse('/articles/1', 'PUT');
         $this->assertEquals('Articles', $result['controller']);
         $this->assertEquals('edit', $result['action']);
         $this->assertEquals([1], $result['pass']);
 
-        $_SERVER['REQUEST_METHOD'] = 'DELETE';
-        $result = $this->collection->parse('/articles/1');
+        $result = $this->collection->parse('/articles/1', 'DELETE');
         $this->assertEquals('Articles', $result['controller']);
         $this->assertEquals('delete', $result['action']);
         $this->assertEquals([1], $result['pass']);
