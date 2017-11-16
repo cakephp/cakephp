@@ -160,6 +160,10 @@ class AssociationCollection implements IteratorAggregate
      */
     public function type($class)
     {
+        deprecationWarning(
+            'AssociationCollection::type() is deprecated. ' .
+            'Use getByType() instead.'
+        );
         return $this->getByType($class);
     }
 
