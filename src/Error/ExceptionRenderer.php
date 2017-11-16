@@ -21,7 +21,7 @@ use Cake\Core\Exception\Exception as CakeException;
 use Cake\Core\Exception\MissingPluginException;
 use Cake\Event\Event;
 use Cake\Http\Response;
-use Cake\Http\ServerRequest;
+use Cake\Http\ServerRequestFactory;
 use Cake\Network\Exception\HttpException;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
@@ -115,7 +115,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
     protected function _getController()
     {
         if (!$request = Router::getRequest(true)) {
-            $request = ServerRequest::createFromGlobals();
+            $request = ServerRequestFactory::fromGlobals();
         }
         $response = new Response();
         $controller = null;
