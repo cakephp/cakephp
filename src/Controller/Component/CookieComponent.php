@@ -15,7 +15,7 @@
 namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
-use Cake\Http\ServerRequest;
+use Cake\Http\ServerRequestFactory;
 use Cake\I18n\Time;
 use Cake\Utility\CookieCryptTrait;
 use Cake\Utility\Hash;
@@ -124,7 +124,7 @@ class CookieComponent extends Component
         $controller = $this->_registry->getController();
 
         if ($controller === null) {
-            $this->request = ServerRequest::createFromGlobals();
+            $this->request = ServerRequestFactory::fromGlobals();
         }
 
         if (empty($this->_config['path'])) {
