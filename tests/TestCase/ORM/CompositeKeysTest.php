@@ -212,7 +212,7 @@ class CompositeKeyTest extends TestCase
             ->toArray();
         $expected[0]['articles'] = [];
         $this->assertEquals($expected, $results);
-        $this->assertEquals($table->getAssociation('SiteArticles')->strategy(), $strategy);
+        $this->assertEquals($table->getAssociation('SiteArticles')->getStrategy(), $strategy);
     }
 
     /**
@@ -301,7 +301,7 @@ class CompositeKeyTest extends TestCase
             ],
         ];
         $this->assertEquals($expected, $results);
-        $this->assertEquals($articles->getAssociation('SiteTags')->strategy(), $strategy);
+        $this->assertEquals($articles->getAssociation('SiteTags')->getStrategy(), $strategy);
     }
 
     /**

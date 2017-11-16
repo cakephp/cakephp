@@ -273,7 +273,7 @@ class QueryTest extends TestCase
             ->toArray();
         $expected[0]['articles'] = [];
         $this->assertEquals($expected, $results);
-        $this->assertEquals($table->getAssociation('articles')->strategy(), $strategy);
+        $this->assertEquals($table->getAssociation('articles')->getStrategy(), $strategy);
     }
 
     /**
@@ -657,7 +657,7 @@ class QueryTest extends TestCase
             ],
         ];
         $this->assertEquals($expected, $results);
-        $this->assertEquals($table->getAssociation('Tags')->strategy(), $strategy);
+        $this->assertEquals($table->getAssociation('Tags')->getStrategy(), $strategy);
     }
 
     /**
@@ -2323,7 +2323,7 @@ class QueryTest extends TestCase
     {
         $table = TableRegistry::get('ArticlesTags');
         $table->belongsTo('Articles');
-        $table->getAssociation('Articles')->target()->belongsTo('Authors');
+        $table->getAssociation('Articles')->getTarget()->belongsTo('Authors');
 
         $builder = function ($q) {
             return $q
@@ -2371,9 +2371,9 @@ class QueryTest extends TestCase
     {
         $table = TableRegistry::get('authors');
         $table->hasMany('articles');
-        $articles = $table->getAssociation('articles')->target();
+        $articles = $table->getAssociation('articles')->getTarget();
         $articles->hasMany('articlesTags');
-        $articles->getAssociation('articlesTags')->target()->belongsTo('tags');
+        $articles->getAssociation('articlesTags')->getTarget()->belongsTo('tags');
 
         $query = $table->find()->contain(['articles.articlesTags.tags' => function ($q) {
             return $q->formatResults(function ($results) {
@@ -2447,7 +2447,7 @@ class QueryTest extends TestCase
     {
         $table = TableRegistry::get('ArticlesTags');
         $table->belongsTo('Articles');
-        $table->getAssociation('Articles')->target()->belongsTo('Authors');
+        $table->getAssociation('Articles')->getTarget()->belongsTo('Authors');
 
         $query = $table->find()
             ->order(['Articles.id' => 'ASC'])
@@ -2469,9 +2469,9 @@ class QueryTest extends TestCase
     {
         $table = TableRegistry::get('authors');
         $table->hasMany('articles');
-        $articles = $table->getAssociation('articles')->target();
+        $articles = $table->getAssociation('articles')->getTarget();
         $articles->hasMany('articlesTags');
-        $articles->getAssociation('articlesTags')->target()->belongsTo('tags');
+        $articles->getAssociation('articlesTags')->getTarget()->belongsTo('tags');
 
         $query = $table->find()->matching('articles.articlesTags', function ($q) {
             return $q->matching('tags', function ($q) {

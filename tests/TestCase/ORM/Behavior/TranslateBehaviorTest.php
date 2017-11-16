@@ -96,10 +96,10 @@ class TranslateBehaviorTest extends TestCase
         $items = $table->associations();
         $i18n = $items->getByProperty('_i18n');
 
-        $this->assertEquals('\TestApp\Model\Table\I18nTable', $i18n->name());
-        $this->assertInstanceOf('TestApp\Model\Table\I18nTable', $i18n->target());
-        $this->assertEquals('test_custom_i18n_datasource', $i18n->target()->connection()->configName());
-        $this->assertEquals('custom_i18n_table', $i18n->target()->table());
+        $this->assertEquals('\TestApp\Model\Table\I18nTable', $i18n->getName());
+        $this->assertInstanceOf('TestApp\Model\Table\I18nTable', $i18n->getTarget());
+        $this->assertEquals('test_custom_i18n_datasource', $i18n->getTarget()->connection()->configName());
+        $this->assertEquals('custom_i18n_table', $i18n->getTarget()->getTable());
     }
 
     /**
@@ -119,7 +119,7 @@ class TranslateBehaviorTest extends TestCase
         $items = $table->associations();
         $i18n = $items->getByProperty('_i18n');
 
-        $this->assertEquals('select', $i18n->strategy());
+        $this->assertEquals('select', $i18n->getStrategy());
     }
 
     /**
@@ -297,7 +297,7 @@ class TranslateBehaviorTest extends TestCase
      *
      * @return void
      */
-    public function testFindSingleLocaleWithConditions()
+    public function testFindSingleLocaleWithgetConditions()
     {
         $table = TableRegistry::get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
@@ -569,7 +569,7 @@ class TranslateBehaviorTest extends TestCase
         $table = TableRegistry::get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
         $table->hasMany('Comments');
-        $comments = $table->hasMany('Comments')->target();
+        $comments = $table->hasMany('Comments')->getTarget();
         $comments->addBehavior('Translate', ['fields' => ['comment']]);
 
         $table->locale('eng');
@@ -599,7 +599,7 @@ class TranslateBehaviorTest extends TestCase
         $table = TableRegistry::get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
         $table->hasMany('Comments');
-        $comments = $table->hasMany('Comments')->target();
+        $comments = $table->hasMany('Comments')->getTarget();
         $comments->addBehavior('Translate', ['fields' => ['comment']]);
 
         $results = $table->find('translations')->contain([
@@ -640,7 +640,7 @@ class TranslateBehaviorTest extends TestCase
         $table = TableRegistry::get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
         $table->hasMany('Comments');
-        $comments = $table->hasMany('Comments')->target();
+        $comments = $table->hasMany('Comments')->getTarget();
         $comments->addBehavior('Translate', ['fields' => ['comment']]);
 
         $table->locale('cze');
@@ -692,7 +692,7 @@ class TranslateBehaviorTest extends TestCase
     {
         $table = TableRegistry::get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
-        $authors = $table->belongsTo('Authors')->target();
+        $authors = $table->belongsTo('Authors')->getTarget();
         $authors->addBehavior('Translate', ['fields' => ['name']]);
 
         $table->locale('eng');
@@ -1169,7 +1169,7 @@ class TranslateBehaviorTest extends TestCase
         $this->assertNotEmpty($association, 'Translation association not found');
 
         $found = false;
-        foreach ($association->conditions() as $key => $value) {
+        foreach ($association->getConditions() as $key => $value) {
             if (strpos($key, 'comment_translation.model') !== false) {
                 $found = true;
                 $this->assertEquals('Comments', $value);
@@ -1199,7 +1199,7 @@ class TranslateBehaviorTest extends TestCase
         $this->assertNotEmpty($association, 'Translation association not found');
 
         $found = false;
-        foreach ($association->conditions() as $key => $value) {
+        foreach ($association->getConditions() as $key => $value) {
             if (strpos($key, 'body_translation.model') !== false) {
                 $found = true;
                 $this->assertEquals('Posts', $value);
