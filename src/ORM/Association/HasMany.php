@@ -141,6 +141,10 @@ class HasMany extends Association
      */
     public function saveStrategy($strategy = null)
     {
+        deprecationWarning(
+            'HasMany::saveStrategy() is deprecated. ' .
+            'Use setSaveStrategy()/getSaveStrategy() instead.'
+        );
         if ($strategy !== null) {
             $this->setSaveStrategy($strategy);
         }
@@ -630,6 +634,10 @@ class HasMany extends Association
      */
     public function sort($sort = null)
     {
+        deprecationWarning(
+            'HasMany::sort() is deprecated. ' .
+            'Use setSort()/getSort() instead.'
+        );
         if ($sort !== null) {
             $this->setSort($sort);
         }
