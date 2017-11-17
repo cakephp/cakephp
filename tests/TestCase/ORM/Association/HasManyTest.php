@@ -923,4 +923,18 @@ class HasManyTest extends TestCase
         ]);
         $this->assertEmpty($entity->get('comments'));
     }
+
+    /**
+     * Tests that providing an invalid strategy throws an exception
+     *
+     * @return void
+     */
+    public function testInvalidStrategy()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $articles = TableRegistry::get('Articles');
+
+        $association = $articles->hasMany('Comments');
+        $association->setStrategy('anotherThing');
+    }
 }
