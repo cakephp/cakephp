@@ -534,6 +534,22 @@ class AssociationTest extends TestCase
     }
 
     /**
+     * Tests dependent method
+     *
+     * @group deprecated
+     * @return void
+     */
+    public function testDependent()
+    {
+        $this->deprecated(function () {
+            $this->assertTrue($this->association->dependent());
+            $this->association->dependent(false);
+            $this->assertFalse($this->association->dependent());
+        });
+    }
+
+
+    /**
      * Tests property method
      *
      * @group deprecated
@@ -605,9 +621,28 @@ class AssociationTest extends TestCase
     /**
      * Tests strategy method
      *
+     * @group deprecated
      * @return void
      */
     public function testStrategy()
+    {
+        $this->deprecated(function () {
+            $this->assertEquals('join', $this->association->strategy());
+
+            $this->association->strategy('select');
+            $this->assertEquals('select', $this->association->strategy());
+
+            $this->association->strategy('subquery');
+            $this->assertEquals('subquery', $this->association->strategy());
+        });
+    }
+
+    /**
+     * Tests strategy method
+     *
+     * @return void
+     */
+    public function testSetStrategy()
     {
         $this->assertEquals('join', $this->association->getStrategy());
 
