@@ -159,7 +159,7 @@ class UrlHelper extends Helper
             $path .= $options['ext'];
         }
         if (preg_match('|^([a-z0-9]+:)?//|', $path)) {
-            return $path;
+            return $this->build($path);
         }
         if (isset($plugin)) {
             $path = Inflector::underscore($plugin) . '/' . $path;
