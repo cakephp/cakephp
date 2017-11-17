@@ -164,6 +164,7 @@ class AssociationCollection implements IteratorAggregate
             'AssociationCollection::type() is deprecated. ' .
             'Use getByType() instead.'
         );
+
         return $this->getByType($class);
     }
 
