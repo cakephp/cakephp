@@ -939,7 +939,7 @@ class ViewTest extends TestCase
     public function testElementNonExistent()
     {
         $this->expectException(\Cake\View\Exception\MissingElementException::class);
-        $this->expectExceptionMessageRegExp('#^Element file \"Element[\\|/]non_existent_element\.ctp\" is missing\.$#');
+        $this->expectExceptionMessageRegExp('#^Element file "Element[\\\\/]non_existent_element\.ctp" is missing\.$#');
 
         $this->View->element('non_existent_element');
     }
@@ -952,7 +952,7 @@ class ViewTest extends TestCase
     public function testElementInexistentPluginElement()
     {
         $this->expectException(\Cake\View\Exception\MissingElementException::class);
-        $this->expectExceptionMessageRegExp('#^Element file "test_plugin\.Element[\\|/]plugin_element\.ctp\" is missing\.$#');
+        $this->expectExceptionMessageRegExp('#^Element file "test_plugin\.Element[\\\\/]plugin_element\.ctp" is missing\.$#');
 
         $this->View->element('test_plugin.plugin_element');
     }
