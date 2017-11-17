@@ -59,29 +59,9 @@ class ApcuEngine extends CacheEngine
     public function write($key, $value)
     {
         $key = $this->_key($key);
-
-        $expires = 0;
         $duration = $this->_config['duration'];
-        if ($duration) {
-            $expires = time() + $duration;
-        }
 
-        $values = [
-            $key . '_expires' => $expires,
-            $key => $value,
-        ];
-
-        $errors = apcu_store($values, null, $duration);
-
-        if ($errors !== []) {
-            $this->warning(
-                sprintf('Failed to store %s into APCu cache.', json_encode($errors))
-            );
-
-            return false;
-        }
-
-        return true;
+        return apcu_store($key, $value, $duration);
     }
 
     /**
@@ -95,13 +75,6 @@ class ApcuEngine extends CacheEngine
     public function read($key)
     {
         $key = $this->_key($key);
-
-        $time = time();
-        $success = false;
-        $cachetime = (int)apcu_fetch($key . '_expires', $success);
-        if ($success && $cachetime !== 0 && ($cachetime < $time || ($time + $this->_config['duration']) < $cachetime)) {
-            return false;
-        }
 
         return apcu_fetch($key);
     }
@@ -196,15 +169,9 @@ class ApcuEngine extends CacheEngine
     public function add($key, $value)
     {
         $key = $this->_key($key);
-
-        $expires = 0;
         $duration = $this->_config['duration'];
-        if ($duration) {
-            $expires = time() + $duration;
-        }
 
-        return apcu_add($key, $value, $duration) === true
-            && apcu_add($key . '_expires', $expires, $duration) === true;
+        return apcu_add($key, $value, $duration);
     }
 
     /**
