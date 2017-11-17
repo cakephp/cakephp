@@ -929,12 +929,43 @@ class HasManyTest extends TestCase
      *
      * @return void
      */
-    public function testInvalidStrategy()
+    public function testInvalidSaveStrategy()
     {
         $this->expectException(\InvalidArgumentException::class);
         $articles = TableRegistry::get('Articles');
 
         $association = $articles->hasMany('Comments');
-        $association->setStrategy('anotherThing');
+        $association->setSaveStrategy('anotherThing');
+    }
+
+    /**
+     * Tests saveStrategy
+     *
+     * @return void
+     */
+    public function testSetSaveStrategy()
+    {
+        $articles = TableRegistry::get('Articles');
+
+        $association = $articles->hasMany('Comments');
+        $this->assertSame($association, $association->setSaveStrategy(HasMany::SAVE_REPLACE));
+        $this->assertSame(HasMany::SAVE_REPLACE, $association->getSaveStrategy());
+    }
+
+    /**
+     * Tests saveStrategy
+     *
+     * @group deprecated
+     * @return void
+     */
+    public function testSaveStrategy()
+    {
+        $this->deprecated(function () {
+            $articles = TableRegistry::get('Articles');
+
+            $association = $articles->hasMany('Comments');
+            $this->assertSame(HasMany::SAVE_REPLACE, $association->saveStrategy(HasMany::SAVE_REPLACE));
+            $this->assertSame(HasMany::SAVE_REPLACE, $association->saveStrategy());
+        });
     }
 }
