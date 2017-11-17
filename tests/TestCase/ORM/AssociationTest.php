@@ -548,7 +548,6 @@ class AssociationTest extends TestCase
         });
     }
 
-
     /**
      * Tests property method
      *
