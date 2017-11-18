@@ -934,24 +934,26 @@ class ViewTest extends TestCase
     /**
      * Test loading non-existent view element
      *
-     * @expectedException \Cake\View\Exception\MissingElementException
-     * @expectedExceptionMessageRegExp $Element file \"Element[\\|/]non_existent_element\.ctp\" is missing$
      * @return void
      */
     public function testElementNonExistent()
     {
+        $this->expectException(\Cake\View\Exception\MissingElementException::class);
+        $this->expectExceptionMessageRegExp('#^Element file "Element[\\\\/]non_existent_element\.ctp" is missing\.$#');
+
         $this->View->element('non_existent_element');
     }
 
     /**
      * Test loading non-existent plugin view element
      *
-     * @expectedException \Cake\View\Exception\MissingElementException
-     * @expectedExceptionMessageRegExp $Element file "test_plugin\.Element[\\|/]plugin_element\.ctp\" is missing$
      * @return void
      */
     public function testElementInexistentPluginElement()
     {
+        $this->expectException(\Cake\View\Exception\MissingElementException::class);
+        $this->expectExceptionMessageRegExp('#^Element file "test_plugin\.Element[\\\\/]plugin_element\.ctp" is missing\.$#');
+
         $this->View->element('test_plugin.plugin_element');
     }
 
