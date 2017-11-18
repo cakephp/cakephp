@@ -560,6 +560,35 @@ class EagerLoaderTest extends TestCase
     }
 
     /**
+     * Test for autoFields()
+     *
+     * @group deprecated
+     * @return void
+     */
+    public function testAutoFields()
+    {
+        $this->deprecated(function () {
+            $loader = new EagerLoader();
+            $this->assertTrue($loader->autoFields());
+            $this->assertFalse($loader->autoFields(false));
+            $this->assertFalse($loader->autoFields());
+        });
+    }
+
+    /**
+     * Test for enableAutoFields()
+     *
+     * @return void
+     */
+    public function testEnableAutoFields()
+    {
+        $loader = new EagerLoader();
+        $this->assertTrue($loader->isAutoFieldsEnabled());
+        $this->assertSame($loader, $loader->enableAutoFields(false));
+        $this->assertFalse($loader->isAutoFieldsEnabled());
+    }
+
+    /**
      * Helper function sued to quoted both keys and values in an array in case
      * the test suite is running with auto quoting enabled
      *
