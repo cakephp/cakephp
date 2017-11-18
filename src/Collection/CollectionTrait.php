@@ -821,7 +821,7 @@ trait CollectionTrait
     {
         $iterator = $this->unwrap();
 
-        if ($iterator instanceof ArrayIterator) {
+        if (get_class($iterator) === ArrayIterator::class) {
             $iterator = $iterator->getArrayCopy();
         }
 
