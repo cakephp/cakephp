@@ -89,6 +89,7 @@ class Collection extends IteratorIterator implements CollectionInterface, Serial
     {
         if (!method_exists(ArrayIterator::class, $name)) {
             $inner = $this->getInnerIterator();
+
             return call_user_func_array([$inner, $name], $args);
         }
         throw new BadMethodCallException(sprintf('Call to undefined method %s::%s()', get_class($this), $name));
