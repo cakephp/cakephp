@@ -2547,7 +2547,7 @@ class CollectionTest extends TestCase
         $this->assertTrue(method_exists($iterator, 'checkValues'));
         $this->assertTrue($iterator->checkValues());
 
-        //We need to perform at least two collection operation to trigger the issue.
+        // We need to perform at least two collection operation to trigger the issue.
         $newIterator = $iterator
             ->filter(function ($item) {
                 return $item < 5;
@@ -2556,7 +2556,6 @@ class CollectionTest extends TestCase
                 return $item > 2;
             });
 
-        $this->assertTrue(method_exists($newIterator, 'checkValues'), 'Our method has gone missing!');
         $this->assertTrue($newIterator->checkValues());
         $this->assertCount(3, $newIterator->toArray());
     }
