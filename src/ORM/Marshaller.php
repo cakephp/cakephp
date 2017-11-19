@@ -338,7 +338,7 @@ class Marshaller
      *
      * @param array $data The data to hydrate.
      * @param array $options List of options
-     * @return array An array of hydrated records.
+     * @return \Cake\Datasource\EntityInterface[] An array of hydrated records.
      * @see \Cake\ORM\Table::newEntities()
      * @see \Cake\ORM\Entity::$_accessible
      */
@@ -361,7 +361,7 @@ class Marshaller
      * Builds the related entities and handles the special casing
      * for junction table entities.
      *
-     * @param \Cake\ORM\BelongsToMany $assoc The association to marshal.
+     * @param \Cake\ORM\Association\BelongsToMany $assoc The association to marshal.
      * @param array $data The data to convert into entities.
      * @param array $options List of options.
      * @return array An array of built entities.
