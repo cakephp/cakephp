@@ -446,13 +446,13 @@ class Response implements ResponseInterface
             $this->_createStream();
         }
         if (isset($options['body'])) {
-            $this->body($options['body']);
+            $this->stream->write($options['body']);
         }
         if (isset($options['statusCodes'])) {
             $this->httpCodes($options['statusCodes']);
         }
         if (isset($options['status'])) {
-            $this->statusCode($options['status']);
+            $this->_setStatus($options['status']);
         }
         if (!isset($options['charset'])) {
             $options['charset'] = Configure::read('App.encoding');
@@ -484,6 +484,8 @@ class Response implements ResponseInterface
      */
     public function send()
     {
+        deprecationWarning('Response::send() will be removed in 4.0.0');
+
         if ($this->hasHeader('Location') && $this->_status === 200) {
             $this->statusCode(302);
         }
@@ -511,6 +513,10 @@ class Response implements ResponseInterface
      */
     public function sendHeaders()
     {
+        deprecationWarning(
+            'Will be removed in 4.0.0'
+        );
+
         $file = $line = null;
         if (headers_sent($file, $line)) {
             Log::warning("Headers already sent in {$file}:{$line}");
@@ -540,6 +546,10 @@ class Response implements ResponseInterface
      */
     protected function _setCookies()
     {
+        deprecationWarning(
+            'Will be removed in 4.0.0'
+        );
+
         foreach ($this->_cookies as $cookie) {
             setcookie(
                 $cookie->getName(),
@@ -592,6 +602,10 @@ class Response implements ResponseInterface
      */
     protected function _setContent()
     {
+        deprecationWarning(
+            'Will be removed in 4.0.0'
+        );
+
         if (in_array($this->_status, [304, 204])) {
             $this->body('');
         }
@@ -607,6 +621,10 @@ class Response implements ResponseInterface
      */
     protected function _sendHeader($name, $value = null)
     {
+        deprecationWarning(
+            'Will be removed in 4.0.0'
+        );
+
         if ($value === null) {
             header($name);
         } else {
@@ -627,6 +645,10 @@ class Response implements ResponseInterface
      */
     protected function _sendContent($content)
     {
+        deprecationWarning(
+            'Will be removed in 4.0.0'
+        );
+
         if (!is_string($content) && is_callable($content)) {
             $content = $content();
         }
@@ -678,6 +700,11 @@ class Response implements ResponseInterface
      */
     public function header($header = null, $value = null)
     {
+        deprecationWarning(
+            'Response::header() is deprecated. ' .
+            'Use `withHeader()`, `getHeaderLine()` and `getHeaders()` instead.'
+        );
+
         if ($header === null) {
             return $this->getSimpleHeaders();
         }
@@ -739,6 +766,11 @@ class Response implements ResponseInterface
      */
     public function location($url = null)
     {
+        deprecationWarning(
+            'Response::location() is deprecated. ' .
+            'Mutable responses are deprecated. Use `withLocation()` and `getHeaderLine()` instead.'
+        );
+
         if ($url === null) {
             $result = $this->getHeaderLine('Location');
             if (!$result) {
@@ -814,6 +846,11 @@ class Response implements ResponseInterface
      */
     public function body($content = null)
     {
+        deprecationWarning(
+            'Response::body() is deprecated. ' .
+            'Mutable response methods are deprecated. Use `withBody()` and `getBody()` instead.'
+        );
+
         if ($content === null) {
             if ($this->stream->isSeekable()) {
                 $this->stream->rewind();
@@ -871,17 +908,18 @@ class Response implements ResponseInterface
      */
     public function statusCode($code = null)
     {
+        deprecationWarning(
+            'Response::statusCode() is deprecated. ' .
+            'Use `getStatusCode()` and `withStatus()` instead.'
+        );
+
         if ($code === null) {
             return $this->_status;
         }
         if (!isset($this->_statusCodes[$code])) {
             throw new InvalidArgumentException('Unknown status code');
         }
-        if (isset($this->_statusCodes[$code])) {
-            $this->_reasonPhrase = $this->_statusCodes[$code];
-        }
-        $this->_status = $code;
-        $this->_setContentType();
+        $this->_setStatus($code);
 
         return $code;
     }
@@ -925,14 +963,26 @@ class Response implements ResponseInterface
     public function withStatus($code, $reasonPhrase = '')
     {
         $new = clone $this;
-        $new->_status = $code;
-        if (empty($reasonPhrase) && isset($new->_statusCodes[$code])) {
-            $reasonPhrase = $new->_statusCodes[$code];
-        }
-        $new->_reasonPhrase = $reasonPhrase;
-        $new->_setContentType();
+        $new->_setStatus($code, $reasonPhrase);
 
         return $new;
+    }
+
+    /**
+     * Modifier for response status
+     *
+     * @param int $code The code to set.
+     * @param string $reasonPhrase The response reason phrase.
+     * @return void
+     */
+    protected function _setStatus($code, $reasonPhrase = '')
+    {
+        $this->_status = $code;
+        if (empty($reasonPhrase) && isset($this->_statusCodes[$code])) {
+            $reasonPhrase = $this->_statusCodes[$code];
+        }
+        $this->_reasonPhrase = $reasonPhrase;
+        $this->_setContentType();
     }
 
     /**
@@ -987,6 +1037,8 @@ class Response implements ResponseInterface
      */
     public function httpCodes($code = null)
     {
+        deprecationWarning('Response::httpCodes(). Will be removed in 4.0.0');
+
         if (empty($code)) {
             return $this->_statusCodes;
         }
@@ -1041,19 +1093,25 @@ class Response implements ResponseInterface
      * ```
      *
      * @param string|null $contentType Content type key.
-     * @return mixed Current content type or false if supplied an invalid content type
+     * @return mixed Current content type or false if supplied an invalid content type.
+     * @deprecated 3.5.5 Use getType() or withType() instead.
      */
     public function type($contentType = null)
     {
+        deprecationWarning(
+            'Response::type() is deprecated. ' .
+            'Use getType() or withType() instead.'
+        );
+
         if ($contentType === null) {
-            return $this->_contentType;
+            return $this->getType();
         }
         if (is_array($contentType)) {
             foreach ($contentType as $type => $definition) {
                 $this->_mimeTypes[$type] = $definition;
             }
 
-            return $this->_contentType;
+            return $this->getType();
         }
         if (isset($this->_mimeTypes[$contentType])) {
             $contentType = $this->_mimeTypes[$contentType];
@@ -1066,6 +1124,16 @@ class Response implements ResponseInterface
         $this->_setContentType();
 
         return $contentType;
+    }
+
+    /**
+     * Returns the current content type.
+     *
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->_contentType;
     }
 
     /**
@@ -1157,6 +1225,11 @@ class Response implements ResponseInterface
      */
     public function charset($charset = null)
     {
+        deprecationWarning(
+            'Response::charset() is deprecated. ' .
+            'Use getCharset()/withCharset() instead.'
+        );
+
         if ($charset === null) {
             return $this->_charset;
         }
@@ -1167,7 +1240,7 @@ class Response implements ResponseInterface
     }
 
     /**
-     * Retruns the current charset.
+     * Returns the current charset.
      *
      * @return string
      */
@@ -1199,6 +1272,11 @@ class Response implements ResponseInterface
      */
     public function disableCache()
     {
+        deprecationWarning(
+            'Response::disableCache() is deprecated. ' .
+            'Use withDisabledCache() instead.'
+        );
+
         $this->_setHeader('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT');
         $this->_setHeader('Last-Modified', gmdate('D, d M Y H:i:s') . ' GMT');
         $this->_setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
@@ -1226,6 +1304,11 @@ class Response implements ResponseInterface
      */
     public function cache($since, $time = '+1 day')
     {
+        deprecationWarning(
+            'Response::cache() is deprecated. ' .
+            'Use withCache() instead.'
+        );
+
         if (!is_int($time)) {
             $time = strtotime($time);
         }
@@ -1416,6 +1499,11 @@ class Response implements ResponseInterface
      */
     public function mustRevalidate($enable = null)
     {
+        deprecationWarning(
+            'Response::mustRevalidate() is deprecated. ' .
+            'Use withMustRevalidate() instead.'
+        );
+
         if ($enable !== null) {
             if ($enable) {
                 $this->_cacheDirectives['must-revalidate'] = true;
@@ -1485,6 +1573,11 @@ class Response implements ResponseInterface
      */
     public function expires($time = null)
     {
+        deprecationWarning(
+            'Response::expires() is deprecated. ' .
+            'Use withExpires() instead.'
+        );
+
         if ($time !== null) {
             $date = $this->_getUTCDate($time);
             $this->_setHeader('Expires', $date->format('D, j M Y H:i:s') . ' GMT');
@@ -1536,6 +1629,11 @@ class Response implements ResponseInterface
      */
     public function modified($time = null)
     {
+        deprecationWarning(
+            'Response::modified() is deprecated. ' .
+            'Use withModified() or getHeaderLine("Last-Modified") instead.'
+        );
+
         if ($time !== null) {
             $date = $this->_getUTCDate($time);
             $this->_setHeader('Last-Modified', $date->format('D, j M Y H:i:s') . ' GMT');
@@ -1576,12 +1674,14 @@ class Response implements ResponseInterface
      * setting the status code to "304 Not Modified" and removing all
      * conflicting headers
      *
+     * *Warning* This method mutates the response in-place and should be avoided.
+     *
      * @return void
      */
     public function notModified()
     {
-        $this->statusCode(304);
-        $this->body('');
+        $this->_createStream();
+        $this->_setStatus(304);
 
         $remove = [
             'Allow',
@@ -1593,7 +1693,7 @@ class Response implements ResponseInterface
             'Last-Modified'
         ];
         foreach ($remove as $header) {
-            unset($this->headers[$header]);
+            $this->_clearHeader($header);
         }
     }
 
@@ -1639,6 +1739,11 @@ class Response implements ResponseInterface
      */
     public function vary($cacheVariances = null)
     {
+        deprecationWarning(
+            'Response::vary() is deprecated. ' .
+            'Use withVary() instead.'
+        );
+
         if ($cacheVariances !== null) {
             $cacheVariances = (array)$cacheVariances;
             $this->_setHeader('Vary', implode(', ', $cacheVariances));
@@ -1691,6 +1796,11 @@ class Response implements ResponseInterface
      */
     public function etag($hash = null, $weak = false)
     {
+        deprecationWarning(
+            'Response::etag() is deprecated. ' .
+            'Use withEtag() or getHeaderLine("Etag") instead.'
+        );
+
         if ($hash !== null) {
             $this->_setHeader('Etag', sprintf('%s"%s"', $weak ? 'W/' : null, $hash));
         }
@@ -1786,6 +1896,11 @@ class Response implements ResponseInterface
      */
     public function download($filename)
     {
+        deprecationWarning(
+            'Response::download() is deprecated. ' .
+            'Use withDownload() instead.'
+        );
+
         $this->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
     }
 
@@ -1810,6 +1925,11 @@ class Response implements ResponseInterface
      */
     public function protocol($protocol = null)
     {
+        deprecationWarning(
+            'Response::protocol() is deprecated. ' .
+            'Use getProtocolVersion() instead.'
+        );
+
         if ($protocol !== null) {
             $this->_protocol = $protocol;
         }
@@ -1827,6 +1947,11 @@ class Response implements ResponseInterface
      */
     public function length($bytes = null)
     {
+        deprecationWarning(
+            'Response::length() is deprecated. ' .
+            'Use withLength() instead.'
+        );
+
         if ($bytes !== null) {
             $this->_setHeader('Content-Length', $bytes);
         }
@@ -1859,18 +1984,22 @@ class Response implements ResponseInterface
      * the Last-Modified etag response header before calling this method. Otherwise
      * a comparison will not be possible.
      *
+     * *Warning* This method mutates the response in-place and should be avoided.
+     *
      * @param \Cake\Http\ServerRequest $request Request object
      * @return bool Whether the response was marked as not modified or not.
      */
     public function checkNotModified(ServerRequest $request)
     {
-        $etags = preg_split('/\s*,\s*/', (string)$request->header('If-None-Match'), 0, PREG_SPLIT_NO_EMPTY);
-        $modifiedSince = $request->header('If-Modified-Since');
-        if ($responseTag = $this->etag()) {
+        $etags = preg_split('/\s*,\s*/', (string)$request->getHeaderLine('If-None-Match'), 0, PREG_SPLIT_NO_EMPTY);
+        $responseTag = $this->getHeaderLine('Etag');
+        if ($responseTag) {
             $etagMatches = in_array('*', $etags) || in_array($responseTag, $etags);
         }
-        if ($modifiedSince) {
-            $timeMatches = strtotime($this->modified()) === strtotime($modifiedSince);
+
+        $modifiedSince = $request->getHeaderLine('If-Modified-Since');
+        if ($modifiedSince && $this->hasHeader('Last-Modified')) {
+            $timeMatches = strtotime($this->getHeaderLine('Last-Modified')) === strtotime($modifiedSince);
         }
         $checks = compact('etagMatches', 'timeMatches');
         if (empty($checks)) {
@@ -1940,6 +2069,11 @@ class Response implements ResponseInterface
      */
     public function cookie($options = null)
     {
+        deprecationWarning(
+            'Response::cookie() is deprecated. ' .
+            'Use getCookie(), getCookies() and withCookie() instead.'
+        );
+
         if ($options === null) {
             return $this->getCookies();
         }
@@ -2207,7 +2341,7 @@ class Response implements ResponseInterface
      */
     public function cors(ServerRequest $request, $allowedDomains = [], $allowedMethods = [], $allowedHeaders = [])
     {
-        $origin = $request->header('Origin');
+        $origin = $request->getHeaderLine('Origin');
         $ssl = $request->is('ssl');
         $builder = new CorsBuilder($this, $origin, $ssl);
         if (!$origin) {
@@ -2216,11 +2350,25 @@ class Response implements ResponseInterface
         if (empty($allowedDomains) && empty($allowedMethods) && empty($allowedHeaders)) {
             return $builder;
         }
+        deprecationWarning(
+            'The $allowedDomains, $allowedMethods, and $allowedHeaders parameters of Response::cors() ' .
+            'are deprecated. Instead you should use the builder methods on the return of cors().'
+        );
 
-        $builder->allowOrigin($allowedDomains)
+        $updated = $builder->allowOrigin($allowedDomains)
             ->allowMethods((array)$allowedMethods)
             ->allowHeaders((array)$allowedHeaders)
             ->build();
+
+        // If $updated is a new instance, mutate this object in-place
+        // to retain existing behavior.
+        if ($updated !== $this) {
+            foreach ($updated->getHeaders() as $name => $values) {
+                if (!$this->hasHeader($name)) {
+                    $this->_setHeader($name, $values[0]);
+                }
+            }
+        }
 
         return $builder;
     }
@@ -2245,6 +2393,11 @@ class Response implements ResponseInterface
      */
     public function file($path, array $options = [])
     {
+        deprecationWarning(
+            'Response::file() is deprecated. ' .
+            'Use withFile() instead.'
+        );
+
         $file = $this->validateFile($path);
         $options += [
             'name' => null,
@@ -2447,20 +2600,15 @@ class Response implements ResponseInterface
         }
 
         if ($start > $end || $end > $lastByte || $start > $lastByte) {
-            $this->statusCode(416);
-            $this->header([
-                'Content-Range' => 'bytes 0-' . $lastByte . '/' . $fileSize
-            ]);
+            $this->_setStatus(416);
+            $this->_setHeader('Content-Range', 'bytes 0-' . $lastByte . '/' . $fileSize);
 
             return;
         }
 
-        $this->header([
-            'Content-Length' => $end - $start + 1,
-            'Content-Range' => 'bytes ' . $start . '-' . $end . '/' . $fileSize
-        ]);
-
-        $this->statusCode(206);
+        $this->_setHeader('Content-Length', $end - $start + 1);
+        $this->_setHeader('Content-Range', 'bytes ' . $start . '-' . $end . '/' . $fileSize);
+        $this->_setStatus(206);
         $this->_fileRange = [$start, $end];
     }
 
@@ -2474,6 +2622,8 @@ class Response implements ResponseInterface
      */
     protected function _sendFile($file, $range)
     {
+        deprecationWarning('Will be removed in 4.0.0');
+
         ob_implicit_flush(true);
 
         $file->open('rb');
@@ -2517,6 +2667,8 @@ class Response implements ResponseInterface
      */
     protected function _isActive()
     {
+        deprecationWarning('Will be removed in 4.0.0');
+
         return connection_status() === CONNECTION_NORMAL && !connection_aborted();
     }
 
@@ -2528,6 +2680,10 @@ class Response implements ResponseInterface
      */
     protected function _clearBuffer()
     {
+        deprecationWarning(
+            'This function is not needed anymore and will be removed.'
+        );
+
         //@codingStandardsIgnoreStart
         return @ob_end_clean();
         //@codingStandardsIgnoreEnd
@@ -2541,6 +2697,10 @@ class Response implements ResponseInterface
      */
     protected function _flushBuffer()
     {
+        deprecationWarning(
+            'This function is not needed anymore and will be removed.'
+        );
+
         //@codingStandardsIgnoreStart
         @flush();
         if (ob_get_level()) {
@@ -2559,6 +2719,8 @@ class Response implements ResponseInterface
      */
     public function stop($status = 0)
     {
+        deprecationWarning('Will be removed in 4.0.0');
+
         exit($status);
     }
 
@@ -2578,7 +2740,7 @@ class Response implements ResponseInterface
             'fileRange' => $this->_fileRange,
             'cookies' => $this->_cookies,
             'cacheDirectives' => $this->_cacheDirectives,
-            'body' => $this->getBody()->getContents(),
+            'body' => (string)$this->getBody(),
         ];
     }
 }

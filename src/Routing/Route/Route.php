@@ -15,6 +15,7 @@
 namespace Cake\Routing\Route;
 
 use Cake\Http\ServerRequest;
+use Cake\Http\ServerRequestFactory;
 use Cake\Routing\Router;
 use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
@@ -120,8 +121,8 @@ class Route
     public function __construct($template, $defaults = [], array $options = [])
     {
         $this->template = $template;
-        // @deprecated The `[method]` format should be removed in 4.0.0
         if (isset($defaults['[method]'])) {
+            deprecationWarning('The `[method]` option is deprecated. Use `_method` instead.');
             $defaults['_method'] = $defaults['[method]'];
             unset($defaults['[method]']);
         }
@@ -141,6 +142,10 @@ class Route
      */
     public function extensions($extensions = null)
     {
+        deprecationWarning(
+            'Route::extensions() is deprecated. ' .
+            'Use Route::setExtensions()/getExtensions() instead.'
+        );
         if ($extensions === null) {
             return $this->_extensions;
         }
@@ -433,8 +438,12 @@ class Route
 
         if (isset($this->defaults['_method'])) {
             if (empty($method)) {
+                deprecationWarning(
+                    'Extracting the request method from global state when parsing routes is deprecated. ' .
+                    'Instead adopt Route::parseRequest() which extracts the method from the passed request.'
+                );
                 // Deprecated reading the global state is deprecated and will be removed in 4.x
-                $request = Router::getRequest(true) ?: ServerRequest::createFromGlobals();
+                $request = Router::getRequest(true) ?: ServerRequestFactory::fromGlobals();
                 $method = $request->getMethod();
             }
             if (!in_array($method, (array)$this->defaults['_method'], true)) {
@@ -736,6 +745,7 @@ class Route
         }
         // @deprecated The `[method]` support should be removed in 4.0.0
         if (isset($url['[method]'])) {
+            deprecationWarning('The `[method]` key is deprecated. Use `_method` instead.');
             $url['_method'] = $url['[method]'];
         }
         if (empty($url['_method'])) {

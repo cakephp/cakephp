@@ -60,7 +60,7 @@ class Exception extends RuntimeException
      * @param int|null $code The code of the error, is also the HTTP status code for the error.
      * @param \Exception|null $previous the previous exception.
      */
-    public function __construct($message, $code = null, $previous = null)
+    public function __construct($message = '', $code = null, $previous = null)
     {
         if ($code === null) {
             $code = $this->_defaultCode;
@@ -86,11 +86,11 @@ class Exception extends RuntimeException
     /**
      * Get/set the response header to be used
      *
-     * See also Cake\Http\Response::header()
+     * See also Cake\Http\Response::withHeader()
      *
      * @param string|array|null $header An array of header strings or a single header string
      *  - an associative array of "header name" => "header value"
-     *  - an array of string headers is also accepted
+     *  - an array of string headers is also accepted (deprecated)
      * @param string|null $value The header value.
      * @return array
      */
@@ -100,6 +100,13 @@ class Exception extends RuntimeException
             return $this->_responseHeaders;
         }
         if (is_array($header)) {
+            if (isset($header[0])) {
+                deprecationWarning(
+                    'Passing a list string headers to Exception::responseHeader() is deprecated. ' .
+                    'Use an associative array instead.'
+                );
+            }
+
             return $this->_responseHeaders = $header;
         }
         $this->_responseHeaders = [$header => $value];

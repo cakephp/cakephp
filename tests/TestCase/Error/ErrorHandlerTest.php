@@ -16,7 +16,6 @@ namespace Cake\Test\TestCase\Error;
 
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Error;
 use Cake\Error\ErrorHandler;
 use Cake\Error\PHP7ErrorException;
 use Cake\Http\ServerRequest;
@@ -86,9 +85,12 @@ class ErrorHandlerTest extends TestCase
         parent::setUp();
         Router::reload();
 
-        $request = new ServerRequest();
+        $request = new ServerRequest([
+            'environment' => [
+                'HTTP_REFERER' => '/referer'
+            ]
+        ]);
         $request->base = '';
-        $request->env('HTTP_REFERER', '/referer');
 
         Router::setRequestInfo($request);
         Configure::write('debug', true);
@@ -96,7 +98,7 @@ class ErrorHandlerTest extends TestCase
         $this->_logger = $this->getMockBuilder('Psr\Log\LoggerInterface')->getMock();
 
         Log::reset();
-        Log::config('error_test', [
+        Log::setConfig('error_test', [
             'engine' => $this->_logger
         ]);
     }
@@ -260,7 +262,7 @@ class ErrorHandlerTest extends TestCase
         $errorHandler = new TestErrorHandler();
 
         $errorHandler->handleException($error);
-        $this->assertContains('Kaboom!', $errorHandler->response->body(), 'message missing.');
+        $this->assertContains('Kaboom!', (string)$errorHandler->response->getBody(), 'message missing.');
     }
 
     /**
@@ -292,7 +294,7 @@ class ErrorHandlerTest extends TestCase
             ));
 
         $errorHandler->handleException($error);
-        $this->assertContains('Kaboom!', $errorHandler->response->body(), 'message missing.');
+        $this->assertContains('Kaboom!', (string)$errorHandler->response->getBody(), 'message missing.');
 
         $errorHandler = new TestErrorHandler([
             'log' => true,
@@ -365,10 +367,10 @@ class ErrorHandlerTest extends TestCase
         ]);
 
         $errorHandler->handleException($notFound);
-        $this->assertContains('Kaboom!', $errorHandler->response->body(), 'message missing.');
+        $this->assertContains('Kaboom!', (string)$errorHandler->response->getBody(), 'message missing.');
 
         $errorHandler->handleException($forbidden);
-        $this->assertContains('Fooled you!', $errorHandler->response->body(), 'message missing.');
+        $this->assertContains('Fooled you!', (string)$errorHandler->response->getBody(), 'message missing.');
     }
 
     /**
@@ -404,14 +406,14 @@ class ErrorHandlerTest extends TestCase
         Configure::write('debug', true);
 
         $errorHandler->handleFatalError(E_ERROR, 'Something wrong', __FILE__, $line);
-        $result = $errorHandler->response->body();
+        $result = (string)$errorHandler->response->getBody();
         $this->assertContains('Something wrong', $result, 'message missing.');
         $this->assertContains(__FILE__, $result, 'filename missing.');
         $this->assertContains((string)$line, $result, 'line missing.');
 
         Configure::write('debug', false);
         $errorHandler->handleFatalError(E_ERROR, 'Something wrong', __FILE__, $line);
-        $result = $errorHandler->response->body();
+        $result = (string)$errorHandler->response->getBody();
         $this->assertNotContains('Something wrong', $result, 'message must not appear.');
         $this->assertNotContains(__FILE__, $result, 'filename must not appear.');
         $this->assertContains('An Internal Error Has Occurred.', $result);
@@ -451,7 +453,7 @@ class ErrorHandlerTest extends TestCase
         $errorHandler = new TestErrorHandler();
 
         $errorHandler->handleException($error);
-        $this->assertContains('Unexpected variable foo', $errorHandler->response->body(), 'message missing.');
+        $this->assertContains('Unexpected variable foo', (string)$errorHandler->response->getBody(), 'message missing.');
     }
 
     /**

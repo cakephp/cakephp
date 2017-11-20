@@ -73,17 +73,17 @@ class HelperRegistryTest extends TestCase
     public function testLoadWithConfig()
     {
         $result = $this->helpers->load('Simple', ['key' => 'value']);
-        $this->assertEquals('value', $result->config('key'));
+        $this->assertEquals('value', $result->getConfig('key'));
     }
 
     /**
      * test missing helper exception
      *
-     * @expectedException \Cake\Console\Exception\MissingHelperException
      * @return void
      */
     public function testLoadMissingHelper()
     {
+        $this->expectException(\Cake\Console\Exception\MissingHelperException::class);
         $this->helpers->load('ThisTaskShouldAlwaysBeMissing');
     }
 

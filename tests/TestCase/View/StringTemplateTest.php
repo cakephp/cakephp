@@ -158,12 +158,12 @@ class StringTemplateTest extends TestCase
     /**
      * Test formatting a missing template.
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Cannot find template named 'missing'
      * @return void
      */
     public function testFormatMissingTemplate()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Cannot find template named \'missing\'');
         $templates = [
             'text' => '{{text}}',
         ];
@@ -200,11 +200,11 @@ class StringTemplateTest extends TestCase
     /**
      * Test that loading non-existing templates causes errors.
      *
-     * @expectedException \Cake\Core\Exception\Exception
-     * @expectedExceptionMessage Could not load configuration file
      */
     public function testLoadErrorNoFile()
     {
+        $this->expectException(\Cake\Core\Exception\Exception::class);
+        $this->expectExceptionMessage('Could not load configuration file');
         $this->template->load('no_such_file');
     }
 

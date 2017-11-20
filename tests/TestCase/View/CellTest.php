@@ -307,11 +307,11 @@ class CellTest extends TestCase
     /**
      * Tests that using an non-existent cell throws an exception.
      *
-     * @expectedException \Cake\View\Exception\MissingCellException
      * @return void
      */
     public function testNonExistentCell()
     {
+        $this->expectException(\Cake\View\Exception\MissingCellException::class);
         $cell = $this->View->cell('TestPlugin.Void::echoThis', ['arg1' => 'v1']);
         $cell = $this->View->cell('Void::echoThis', ['arg1' => 'v1', 'arg2' => 'v2']);
     }
@@ -319,12 +319,12 @@ class CellTest extends TestCase
     /**
      * Tests missing method errors
      *
-     * @expectedException \BadMethodCallException
-     * @expectedExceptionMessage Class TestApp\View\Cell\ArticlesCell does not have a "nope" method.
      * @return void
      */
     public function testCellMissingMethod()
     {
+        $this->expectException(\BadMethodCallException::class);
+        $this->expectExceptionMessage('Class TestApp\View\Cell\ArticlesCell does not have a "nope" method.');
         $cell = $this->View->cell('Articles::nope');
         $cell->render();
     }
@@ -403,7 +403,7 @@ class CellTest extends TestCase
         $mock->expects($this->once())
             ->method('write')
             ->with('cell_test_app_view_cell_articles_cell_display_default', "dummy\n");
-        Cache::config('default', $mock);
+        Cache::setConfig('default', $mock);
 
         $cell = $this->View->cell('Articles', [], ['cache' => true]);
         $result = $cell->render();
@@ -425,7 +425,7 @@ class CellTest extends TestCase
             ->will($this->returnValue("dummy\n"));
         $mock->expects($this->never())
             ->method('write');
-        Cache::config('default', $mock);
+        Cache::setConfig('default', $mock);
 
         $cell = $this->View->cell('Articles', [], ['cache' => true]);
         $result = $cell->render();
@@ -448,7 +448,7 @@ class CellTest extends TestCase
         $mock->expects($this->once())
             ->method('write')
             ->with('my_key', "dummy\n");
-        Cache::config('cell', $mock);
+        Cache::setConfig('cell', $mock);
 
         $cell = $this->View->cell('Articles', [], [
             'cache' => ['key' => 'my_key', 'config' => 'cell']
@@ -473,7 +473,7 @@ class CellTest extends TestCase
         $mock->expects($this->once())
             ->method('write')
             ->with('cell_test_app_view_cell_articles_cell_customTemplate_default', "<h1>This is the alternate template</h1>\n");
-        Cache::config('default', $mock);
+        Cache::setConfig('default', $mock);
 
         $cell = $this->View->cell('Articles::customTemplate', [], ['cache' => true]);
         $result = $cell->render();
@@ -490,7 +490,7 @@ class CellTest extends TestCase
      */
     public function testCachedRenderSimpleCustomTemplateViewBuilder()
     {
-        Cache::config('default', [
+        Cache::setConfig('default', [
             'className' => 'File',
             'path' => CACHE,
         ]);
@@ -512,7 +512,7 @@ class CellTest extends TestCase
      */
     public function testACachedViewCellReRendersWhenGivenADifferentTemplate()
     {
-        Cache::config('default', [
+        Cache::setConfig('default', [
             'className' => 'File',
             'path' => CACHE,
         ]);

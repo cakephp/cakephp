@@ -103,12 +103,12 @@ class TableLocatorTest extends TestCase
     /**
      * Test calling config() on existing instances throws an error.
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage You cannot configure "Users", it has already been constructed.
      * @return void
      */
     public function testConfigOnDefinedInstance()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('You cannot configure "Users", it has already been constructed.');
         $users = $this->_locator->get('Users');
         $this->_locator->config('Users', ['table' => 'my_users']);
     }
@@ -252,12 +252,12 @@ class TableLocatorTest extends TestCase
     /**
      * Test get with config throws an exception if the alias exists already.
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage You cannot configure "Users", it already exists in the registry.
      * @return void
      */
     public function testGetExistingWithConfigData()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('You cannot configure "Users", it already exists in the registry.');
         $users = $this->_locator->get('Users');
         $this->_locator->get('Users', ['table' => 'my_users']);
     }
@@ -441,7 +441,7 @@ class TableLocatorTest extends TestCase
         $this->_locator->config('users', ['validator' => $validator]);
         $table = $this->_locator->get('users');
 
-        $this->assertSame($table->validator('default'), $validator);
+        $this->assertSame($table->getValidator('default'), $validator);
     }
 
     /**
@@ -464,9 +464,9 @@ class TableLocatorTest extends TestCase
         ]);
         $table = $this->_locator->get('users');
 
-        $this->assertSame($table->validator('default'), $validator1);
-        $this->assertSame($table->validator('secondary'), $validator2);
-        $this->assertSame($table->validator('tertiary'), $validator3);
+        $this->assertSame($table->getValidator('default'), $validator1);
+        $this->assertSame($table->getValidator('secondary'), $validator2);
+        $this->assertSame($table->getValidator('tertiary'), $validator3);
     }
 
     /**

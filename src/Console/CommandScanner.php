@@ -35,35 +35,82 @@ class CommandScanner
      */
     public function scanAll()
     {
-        $shellList = [];
+        $shellList = [
+            'CORE' => $this->scanCore(),
+            'app' => $this->scanApp(),
+            'plugins' => $this->scanPlugins()
+        ];
 
-        $appNamespace = Configure::read('App.namespace');
-        $shellList['app'] = $this->scanDir(
-            App::path('Shell')[0],
-            $appNamespace . '\Shell\\',
-            '',
-            ['app']
-        );
+        return $shellList;
+    }
 
-        $shellList['CORE'] = $this->scanDir(
+    /**
+     * Scan CakePHP internals for shells & commands.
+     *
+     * @return array A list of command metadata.
+     */
+    protected function scanCore()
+    {
+        $coreShells = $this->scanDir(
             dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Shell' . DIRECTORY_SEPARATOR,
             'Cake\Shell\\',
             '',
             ['command_list']
         );
+        $coreCommands = $this->scanDir(
+            dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Command' . DIRECTORY_SEPARATOR,
+            'Cake\Command\\',
+            '',
+            ['command_list']
+        );
 
+        return array_merge($coreShells, $coreCommands);
+    }
+
+    /**
+     * Scan the application for shells & commands.
+     *
+     * @return array A list of command metadata.
+     */
+    protected function scanApp()
+    {
+        $appNamespace = Configure::read('App.namespace');
+        $appShells = $this->scanDir(
+            App::path('Shell')[0],
+            $appNamespace . '\Shell\\',
+            '',
+            ['app']
+        );
+        $appCommands = $this->scanDir(
+            App::path('Command')[0],
+            $appNamespace . '\Command\\',
+            '',
+            ['app']
+        );
+
+        return array_merge($appShells, $appCommands);
+    }
+
+    /**
+     * Scan the plugins for shells & commands.
+     *
+     * @return array A list of command metadata.
+     */
+    protected function scanPlugins()
+    {
         $plugins = [];
         foreach (Plugin::loaded() as $plugin) {
-            $plugins[$plugin] = $this->scanDir(
-                Plugin::classPath($plugin) . 'Shell',
-                str_replace('/', '\\', $plugin) . '\Shell\\',
-                Inflector::underscore($plugin) . '.',
-                []
-            );
-        }
-        $shellList['plugins'] = $plugins;
+            $path = Plugin::classPath($plugin);
+            $namespace = str_replace('/', '\\', $plugin);
+            $prefix = Inflector::underscore($plugin) . '.';
 
-        return $shellList;
+            $commands = $this->scanDir($path . 'Command', $namespace . '\Command\\', $prefix, []);
+            $shells = $this->scanDir($path . 'Shell', $namespace . '\Shell\\', $prefix, []);
+
+            $plugins[$plugin] = array_merge($shells, $commands);
+        }
+
+        return $plugins;
     }
 
     /**
@@ -84,15 +131,24 @@ class CommandScanner
             return [];
         }
 
+        $classPattern = '/(Shell|Command)$/';
         $shells = [];
         foreach ($contents[1] as $file) {
             if (substr($file, -4) !== '.php') {
                 continue;
             }
-
             $shell = substr($file, 0, -4);
-            $name = Inflector::underscore(str_replace('Shell', '', $shell));
+            if (!preg_match($classPattern, $shell)) {
+                continue;
+            }
+
+            $name = Inflector::underscore(preg_replace($classPattern, '', $shell));
             if (in_array($name, $hide, true)) {
+                continue;
+            }
+
+            $class = $namespace . $shell;
+            if (!is_subclass_of($class, Shell::class) && !is_subclass_of($class, Command::class)) {
                 continue;
             }
 
@@ -100,7 +156,7 @@ class CommandScanner
                 'file' => $path . $file,
                 'fullName' => $prefix . $name,
                 'name' => $name,
-                'class' => $namespace . $shell
+                'class' => $class
             ];
         }
 

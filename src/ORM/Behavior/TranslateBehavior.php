@@ -696,7 +696,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      */
     protected function _findExistingTranslations($ruleSet)
     {
-        $association = $this->_table->association($this->_translationTable->getAlias());
+        $association = $this->_table->getAssociation($this->_translationTable->getAlias());
 
         $query = $association->find()
             ->select(['id', 'num' => 0])

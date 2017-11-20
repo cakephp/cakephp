@@ -163,7 +163,7 @@ class EagerLoaderTest extends TestCase
             ->setConstructorArgs([$this->connection, $this->table])
             ->getMock();
 
-        $query->typeMap($this->clientsTypeMap);
+        $query->setTypeMap($this->clientsTypeMap);
 
         $query->expects($this->at(0))->method('join')
             ->with(['clients' => [
@@ -171,7 +171,7 @@ class EagerLoaderTest extends TestCase
                 'type' => 'LEFT',
                 'conditions' => new QueryExpression([
                     ['clients.id' => new IdentifierExpression('foo.client_id')],
-                ], new TypeMap($this->clientsTypeMap->defaults()))
+                ], new TypeMap($this->clientsTypeMap->getDefaults()))
             ]])
             ->will($this->returnValue($query));
 
@@ -550,12 +550,41 @@ class EagerLoaderTest extends TestCase
 
         $loader = new EagerLoader();
         $loader->contain($contains);
-        $loader->matching('clients.addresses');
+        $loader->setMatching('clients.addresses');
 
         $this->assertNull($loader->clearContain());
         $result = $loader->normalized($this->table);
         $this->assertEquals([], $result);
-        $this->assertArrayHasKey('clients', $loader->matching());
+        $this->assertArrayHasKey('clients', $loader->getMatching());
+    }
+
+    /**
+     * Test for autoFields()
+     *
+     * @group deprecated
+     * @return void
+     */
+    public function testAutoFields()
+    {
+        $this->deprecated(function () {
+            $loader = new EagerLoader();
+            $this->assertTrue($loader->autoFields());
+            $this->assertFalse($loader->autoFields(false));
+            $this->assertFalse($loader->autoFields());
+        });
+    }
+
+    /**
+     * Test for enableAutoFields()
+     *
+     * @return void
+     */
+    public function testEnableAutoFields()
+    {
+        $loader = new EagerLoader();
+        $this->assertTrue($loader->isAutoFieldsEnabled());
+        $this->assertSame($loader, $loader->enableAutoFields(false));
+        $this->assertFalse($loader->isAutoFieldsEnabled());
     }
 
     /**
@@ -567,9 +596,9 @@ class EagerLoaderTest extends TestCase
      */
     protected function _quoteArray($elements)
     {
-        if ($this->connection->driver()->autoQuoting()) {
+        if ($this->connection->getDriver()->isAutoQuotingEnabled()) {
             $quoter = function ($e) {
-                return $this->connection->driver()->quoteIdentifier($e);
+                return $this->connection->getDriver()->quoteIdentifier($e);
             };
 
             return array_combine(
@@ -584,6 +613,26 @@ class EagerLoaderTest extends TestCase
     /**
      * Asserts that matching('something') and setMatching('something') return consistent type.
      *
+     * @group deprecated
+     * @return void
+     */
+    public function testMatchingReturnType()
+    {
+        $this->deprecated(function () {
+            $loader = new EagerLoader();
+            $result = $loader->setMatching('clients');
+            $this->assertInstanceOf(EagerLoader::class, $result);
+            $this->assertArrayHasKey('clients', $loader->getMatching());
+
+            $result = $loader->matching('customers');
+            $this->assertArrayHasKey('customers', $result);
+            $this->assertArrayHasKey('customers', $loader->getMatching());
+        });
+    }
+
+    /**
+     * Asserts that matching('something') and setMatching('something') return consistent type.
+     *
      * @return void
      */
     public function testSetMatchingReturnType()
@@ -592,9 +641,5 @@ class EagerLoaderTest extends TestCase
         $result = $loader->setMatching('clients');
         $this->assertInstanceOf(EagerLoader::class, $result);
         $this->assertArrayHasKey('clients', $loader->getMatching());
-
-        $result = $loader->matching('customers');
-        $this->assertArrayHasKey('customers', $result);
-        $this->assertArrayHasKey('customers', $loader->getMatching());
     }
 }

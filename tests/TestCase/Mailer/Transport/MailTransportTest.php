@@ -35,7 +35,7 @@ class MailTransportTest extends TestCase
         $this->MailTransport = $this->getMockBuilder('Cake\Mailer\Transport\MailTransport')
             ->setMethods(['_mail'])
             ->getMock();
-        $this->MailTransport->config(['additionalParameters' => '-f']);
+        $this->MailTransport->setConfig(['additionalParameters' => '-f']);
     }
 
     /**
@@ -89,6 +89,9 @@ class MailTransportTest extends TestCase
                 '-f'
             );
 
-        $this->MailTransport->send($email);
+        $result = $this->MailTransport->send($email);
+
+        $this->assertContains('Subject: ', $result['headers']);
+        $this->assertContains('To: ', $result['headers']);
     }
 }

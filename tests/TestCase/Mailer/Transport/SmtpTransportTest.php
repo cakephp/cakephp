@@ -81,7 +81,7 @@ class SmtpTransportTest extends TestCase
 
         $this->SmtpTransport = new SmtpTestTransport();
         $this->SmtpTransport->setSocket($this->socket);
-        $this->SmtpTransport->config(['client' => 'localhost']);
+        $this->SmtpTransport->setConfig(['client' => 'localhost']);
     }
 
     /**
@@ -109,7 +109,7 @@ class SmtpTransportTest extends TestCase
      */
     public function testConnectEhloTls()
     {
-        $this->SmtpTransport->config(['tls' => true]);
+        $this->SmtpTransport->setConfig(['tls' => true]);
         $this->socket->expects($this->any())->method('connect')->will($this->returnValue(true));
         $this->socket->expects($this->at(1))->method('read')->will($this->returnValue("220 Welcome message\r\n"));
         $this->socket->expects($this->at(2))->method('write')->with("EHLO localhost\r\n");
@@ -129,7 +129,7 @@ class SmtpTransportTest extends TestCase
      */
     public function testConnectEhloTlsOnNonTlsServer()
     {
-        $this->SmtpTransport->config(['tls' => true]);
+        $this->SmtpTransport->setConfig(['tls' => true]);
         $this->socket->expects($this->any())->method('connect')->will($this->returnValue(true));
         $this->socket->expects($this->at(1))->method('read')->will($this->returnValue("220 Welcome message\r\n"));
         $this->socket->expects($this->at(2))->method('write')->with("EHLO localhost\r\n");
@@ -153,13 +153,13 @@ class SmtpTransportTest extends TestCase
     /**
      * testConnectEhloNoTlsOnRequiredTlsServer method
      *
-     * @expectedException \Cake\Network\Exception\SocketException
-     * @expectedExceptionMessage SMTP authentication method not allowed, check if SMTP server requires TLS.
      * @return void
      */
     public function testConnectEhloNoTlsOnRequiredTlsServer()
     {
-        $this->SmtpTransport->config(['tls' => false, 'username' => 'user', 'password' => 'pass']);
+        $this->expectException(\Cake\Network\Exception\SocketException::class);
+        $this->expectExceptionMessage('SMTP authentication method not allowed, check if SMTP server requires TLS.');
+        $this->SmtpTransport->setConfig(['tls' => false, 'username' => 'user', 'password' => 'pass']);
         $this->socket->expects($this->any())->method('connect')->will($this->returnValue(true));
         $this->socket->expects($this->at(1))->method('read')->will($this->returnValue("220 Welcome message\r\n"));
         $this->socket->expects($this->at(2))->method('write')->with("EHLO localhost\r\n");
@@ -225,55 +225,55 @@ class SmtpTransportTest extends TestCase
         $this->socket->expects($this->at(3))->method('read')->will($this->returnValue("334 Pass\r\n"));
         $this->socket->expects($this->at(4))->method('write')->with("c3Rvcnk=\r\n");
         $this->socket->expects($this->at(5))->method('read')->will($this->returnValue("235 OK\r\n"));
-        $this->SmtpTransport->config(['username' => 'mark', 'password' => 'story']);
+        $this->SmtpTransport->setConfig(['username' => 'mark', 'password' => 'story']);
         $this->SmtpTransport->auth();
     }
 
     /**
      * testAuthNotRecognized method
      *
-     * @expectedException \Cake\Network\Exception\SocketException
-     * @expectedExceptionMessage AUTH command not recognized or not implemented, SMTP server may not require authentication.
      * @return void
      */
     public function testAuthNotRecognized()
     {
+        $this->expectException(\Cake\Network\Exception\SocketException::class);
+        $this->expectExceptionMessage('AUTH command not recognized or not implemented, SMTP server may not require authentication.');
         $this->socket->expects($this->at(0))->method('write')->with("AUTH LOGIN\r\n");
         $this->socket->expects($this->at(1))->method('read')
             ->will($this->returnValue("500 5.3.3 Unrecognized command\r\n"));
-        $this->SmtpTransport->config(['username' => 'mark', 'password' => 'story']);
+        $this->SmtpTransport->setConfig(['username' => 'mark', 'password' => 'story']);
         $this->SmtpTransport->auth();
     }
 
     /**
      * testAuthNotImplemented method
      *
-     * @expectedException \Cake\Network\Exception\SocketException
-     * @expectedExceptionMessage AUTH command not recognized or not implemented, SMTP server may not require authentication.
      * @return void
      */
     public function testAuthNotImplemented()
     {
+        $this->expectException(\Cake\Network\Exception\SocketException::class);
+        $this->expectExceptionMessage('AUTH command not recognized or not implemented, SMTP server may not require authentication.');
         $this->socket->expects($this->at(0))->method('write')->with("AUTH LOGIN\r\n");
         $this->socket->expects($this->at(1))->method('read')
             ->will($this->returnValue("502 5.3.3 Command not implemented\r\n"));
-        $this->SmtpTransport->config(['username' => 'mark', 'password' => 'story']);
+        $this->SmtpTransport->setConfig(['username' => 'mark', 'password' => 'story']);
         $this->SmtpTransport->auth();
     }
 
     /**
      * testAuthBadSequence method
      *
-     * @expectedException \Cake\Network\Exception\SocketException
-     * @expectedExceptionMessage SMTP Error: 503 5.5.1 Already authenticated
      * @return void
      */
     public function testAuthBadSequence()
     {
+        $this->expectException(\Cake\Network\Exception\SocketException::class);
+        $this->expectExceptionMessage('SMTP Error: 503 5.5.1 Already authenticated');
         $this->socket->expects($this->at(0))->method('write')->with("AUTH LOGIN\r\n");
         $this->socket->expects($this->at(1))
             ->method('read')->will($this->returnValue("503 5.5.1 Already authenticated\r\n"));
-        $this->SmtpTransport->config(['username' => 'mark', 'password' => 'story']);
+        $this->SmtpTransport->setConfig(['username' => 'mark', 'password' => 'story']);
         $this->SmtpTransport->auth();
     }
 
@@ -289,7 +289,7 @@ class SmtpTransportTest extends TestCase
         $this->socket->expects($this->at(2))->method('write')->with("bWFyaw==\r\n");
         $this->socket->expects($this->at(3))->method('read')
             ->will($this->returnValue("535 5.7.8 Authentication failed\r\n"));
-        $this->SmtpTransport->config(['username' => 'mark', 'password' => 'story']);
+        $this->SmtpTransport->setConfig(['username' => 'mark', 'password' => 'story']);
 
         $e = null;
         try {
@@ -316,7 +316,7 @@ class SmtpTransportTest extends TestCase
         $this->socket->expects($this->at(3))->method('read')->will($this->returnValue("334 Pass\r\n"));
         $this->socket->expects($this->at(4))->method('write')->with("c3Rvcnk=\r\n");
         $this->socket->expects($this->at(5))->method('read')->will($this->returnValue("535 5.7.8 Authentication failed\r\n"));
-        $this->SmtpTransport->config(['username' => 'mark', 'password' => 'story']);
+        $this->SmtpTransport->setConfig(['username' => 'mark', 'password' => 'story']);
 
         $e = null;
         try {
@@ -444,16 +444,16 @@ class SmtpTransportTest extends TestCase
      */
     public function testEmptyConfigArray()
     {
-        $this->SmtpTransport->config([
+        $this->SmtpTransport->setConfig([
             'client' => 'myhost.com',
             'port' => 666
         ]);
-        $expected = $this->SmtpTransport->config();
+        $expected = $this->SmtpTransport->getConfig();
 
         $this->assertEquals(666, $expected['port']);
 
-        $this->SmtpTransport->config([]);
-        $result = $this->SmtpTransport->config();
+        $this->SmtpTransport->setConfig([]);
+        $result = $this->SmtpTransport->getConfig();
         $this->assertEquals($expected, $result);
     }
 
@@ -629,7 +629,7 @@ class SmtpTransportTest extends TestCase
      */
     public function testKeepAlive()
     {
-        $this->SmtpTransport->config(['keepAlive' => true]);
+        $this->SmtpTransport->setConfig(['keepAlive' => true]);
 
         $email = $this->getMockBuilder('Cake\Mailer\Email')
             ->setMethods(['message'])

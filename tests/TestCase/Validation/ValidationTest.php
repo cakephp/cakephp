@@ -2181,6 +2181,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::url('http://www.electrohome.ro/images/239537750-284232-215_300[1].jpg'));
         $this->assertTrue(Validation::url('http://www.eräume.foo'));
         $this->assertTrue(Validation::url('http://äüö.eräume.foo'));
+        $this->assertTrue(Validation::url('http://www.domain.com/👹/🧀'), 'utf8Extended path failed');
 
         $this->assertTrue(Validation::url('http://cakephp.org:80'));
         $this->assertTrue(Validation::url('http://cakephp.org:443'));
@@ -2535,11 +2536,11 @@ class ValidationTest extends TestCase
     /**
      * testMimeTypeFalse method
      *
-     * @expectedException \RuntimeException
      * @return void
      */
     public function testMimeTypeFalse()
     {
+        $this->expectException(\RuntimeException::class);
         $image = CORE_TESTS . 'invalid-file.png';
         $File = new File($image, false);
         $this->skipIf($File->mime(), 'mimeType can be determined, no Exception will be thrown');
@@ -2931,9 +2932,13 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::isInteger(-10));
         $this->assertTrue(Validation::isInteger(0));
         $this->assertTrue(Validation::isInteger(10));
+        $this->assertTrue(Validation::isInteger(012));
+        $this->assertTrue(Validation::isInteger(-012));
         $this->assertTrue(Validation::isInteger('-10'));
         $this->assertTrue(Validation::isInteger('0'));
         $this->assertTrue(Validation::isInteger('10'));
+        $this->assertTrue(Validation::isInteger('012'));
+        $this->assertTrue(Validation::isInteger('-012'));
 
         $this->assertFalse(Validation::isInteger('2.5'));
         $this->assertFalse(Validation::isInteger([]));
@@ -3049,11 +3054,11 @@ class ValidationTest extends TestCase
     /**
      * Test ImageSize InvalidArgumentException
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testImageSizeInvalidArgumentException()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->assertTrue(Validation::imageSize([], []));
     }
 

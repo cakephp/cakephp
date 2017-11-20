@@ -61,17 +61,9 @@ class WincacheEngine extends CacheEngine
     public function write($key, $value)
     {
         $key = $this->_key($key);
-
         $duration = $this->_config['duration'];
-        $expires = time() + $duration;
 
-        $data = [
-            $key . '_expires' => $expires,
-            $key => $value
-        ];
-        $result = wincache_ucache_set($data, null, $duration);
-
-        return empty($result);
+        return wincache_ucache_set($key, $value, $duration);
     }
 
     /**
@@ -84,12 +76,6 @@ class WincacheEngine extends CacheEngine
     public function read($key)
     {
         $key = $this->_key($key);
-
-        $time = time();
-        $cachetime = (int)wincache_ucache_get($key . '_expires');
-        if ($cachetime < $time || ($time + $this->_config['duration']) < $cachetime) {
-            return false;
-        }
 
         return wincache_ucache_get($key);
     }

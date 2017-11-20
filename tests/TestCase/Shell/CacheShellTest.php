@@ -15,9 +15,7 @@
 namespace Cake\Test\TestCase\Shell;
 
 use Cake\Cache\Cache;
-use Cake\Console\Exception\StopException;
 use Cake\Console\Shell;
-use Cake\Shell\CacheShell;
 use Cake\TestSuite\ConsoleIntegrationTestCase;
 
 /**
@@ -34,7 +32,7 @@ class CacheShellTest extends ConsoleIntegrationTestCase
     public function setUp()
     {
         parent::setUp();
-        Cache::config('test', ['engine' => 'File', 'path' => CACHE]);
+        Cache::setConfig('test', ['engine' => 'File', 'path' => CACHE]);
     }
 
     /**

@@ -64,12 +64,12 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $table = $this->getTableLocator()->get('articles');
         $table->belongsTo('authors');
-        $table->association('authors')
-            ->target()
+        $table->getAssociation('authors')
+            ->getTarget()
             ->rulesChecker()
             ->add(
                 function (Entity $author, array $options) use ($table) {
-                    $this->assertSame($options['repository'], $table->association('authors')->target());
+                    $this->assertSame($options['repository'], $table->getAssociation('authors')->getTarget());
 
                     return false;
                 },
@@ -103,8 +103,8 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $table = $this->getTableLocator()->get('authors');
         $table->hasOne('articles');
-        $table->association('articles')
-            ->target()
+        $table->getAssociation('articles')
+            ->getTarget()
             ->rulesChecker()
             ->add(
                 function (Entity $entity) {
@@ -148,8 +148,8 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles');
-        $table->association('articles')
-            ->target()
+        $table->getAssociation('articles')
+            ->getTarget()
             ->rulesChecker()
             ->add(
                 function (Entity $entity, $options) use ($table) {
@@ -197,8 +197,8 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles');
-        $table->association('articles')
-            ->target()
+        $table->getAssociation('articles')
+            ->getTarget()
             ->rulesChecker()
             ->add(
                 function (Entity $article) {
@@ -239,7 +239,7 @@ class RulesCheckerIntegrationTest extends TestCase
         ];
         $table = $this->getTableLocator()->get('articles');
         $table->belongsToMany('tags');
-        $table->association('tags')
+        $table->getAssociation('tags')
             ->junction()
             ->rulesChecker()
             ->add(function (Entity $entity) {
@@ -279,7 +279,7 @@ class RulesCheckerIntegrationTest extends TestCase
         ];
         $table = $this->getTableLocator()->get('articles');
         $table->belongsToMany('tags');
-        $table->association('tags')
+        $table->getAssociation('tags')
             ->junction()
             ->rulesChecker()
             ->add(function (Entity $entity) {
@@ -633,12 +633,12 @@ class RulesCheckerIntegrationTest extends TestCase
      * Tests existsIn with invalid associations
      *
      * @group save
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage ExistsIn rule for 'author_id' is invalid. 'NotValid' is not associated with 'Cake\ORM\Table'.
      * @return void
      */
     public function testExistsInInvalidAssociation()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('ExistsIn rule for \'author_id\' is invalid. \'NotValid\' is not associated with \'Cake\ORM\Table\'.');
         $entity = new Entity([
             'title' => 'An Article',
             'author_id' => 500
@@ -1318,8 +1318,8 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles');
-        $table->association('articles')->belongsTo('authors');
-        $checker = $table->association('articles')->target()->rulesChecker();
+        $table->getAssociation('articles')->belongsTo('authors');
+        $checker = $table->getAssociation('articles')->getTarget()->rulesChecker();
         $checker->add(function ($entity, $options) use ($checker) {
             $rule = $checker->existsIn('author_id', 'authors');
             $id = $entity->author_id;

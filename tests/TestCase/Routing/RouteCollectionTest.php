@@ -20,7 +20,6 @@ use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
 use Cake\Routing\Route\Route;
 use Cake\TestSuite\TestCase;
-use \stdClass;
 
 class RouteCollectionTest extends TestCase
 {
@@ -39,11 +38,11 @@ class RouteCollectionTest extends TestCase
     /**
      * Test parse() throws an error on unknown routes.
      *
-     * @expectedException \Cake\Routing\Exception\MissingRouteException
-     * @expectedExceptionMessage A route matching "/" could not be found
      */
     public function testParseMissingRoute()
     {
+        $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
+        $this->expectExceptionMessage('A route matching "/" could not be found');
         $routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
         $routes->connect('/', ['controller' => 'Articles']);
         $routes->connect('/:id', ['controller' => 'Articles', 'action' => 'view']);
@@ -55,11 +54,11 @@ class RouteCollectionTest extends TestCase
     /**
      * Test parse() throws an error on known routes called with unknown methods.
      *
-     * @expectedException \Cake\Routing\Exception\MissingRouteException
-     * @expectedExceptionMessage A "POST" route matching "/b" could not be found
      */
     public function testParseMissingRouteMethod()
     {
+        $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
+        $this->expectExceptionMessage('A "POST" route matching "/b" could not be found');
         $routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
         $routes->connect('/', ['controller' => 'Articles', '_method' => ['GET']]);
 
@@ -185,11 +184,11 @@ class RouteCollectionTest extends TestCase
     /**
      * Test parseRequest() throws an error on unknown routes.
      *
-     * @expectedException \Cake\Routing\Exception\MissingRouteException
-     * @expectedExceptionMessage A route matching "/" could not be found
      */
     public function testParseRequestMissingRoute()
     {
+        $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
+        $this->expectExceptionMessage('A route matching "/" could not be found');
         $routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
         $routes->connect('/', ['controller' => 'Articles']);
         $routes->connect('/:id', ['controller' => 'Articles', 'action' => 'view']);
@@ -270,11 +269,11 @@ class RouteCollectionTest extends TestCase
      * Test parseRequest() checks host conditions
      *
      * @dataProvider hostProvider
-     * @expectedException \Cake\Routing\Exception\MissingRouteException
-     * @expectedExceptionMessage A route matching "/fallback" could not be found
      */
     public function testParseRequestCheckHostConditionFail($host)
     {
+        $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
+        $this->expectExceptionMessage('A route matching "/fallback" could not be found');
         $routes = new RouteBuilder($this->collection, '/');
         $routes->connect(
             '/fallback',
@@ -383,11 +382,11 @@ class RouteCollectionTest extends TestCase
     /**
      * Test match() throws an error on unknown routes.
      *
-     * @expectedException \Cake\Routing\Exception\MissingRouteException
-     * @expectedExceptionMessage A route matching "array (
      */
     public function testMatchError()
     {
+        $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
+        $this->expectExceptionMessage('A route matching "array (');
         $context = [
             '_base' => '/',
             '_scheme' => 'http',
@@ -451,11 +450,11 @@ class RouteCollectionTest extends TestCase
     /**
      * Test match() throws an error on named routes that fail to match
      *
-     * @expectedException \Cake\Routing\Exception\MissingRouteException
-     * @expectedExceptionMessage A named route was found for "fail", but matching failed
      */
     public function testMatchNamedError()
     {
+        $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
+        $this->expectExceptionMessage('A named route was found for "fail", but matching failed');
         $context = [
             '_base' => '/',
             '_scheme' => 'http',
@@ -470,11 +469,11 @@ class RouteCollectionTest extends TestCase
     /**
      * Test matching routes with names and failing
      *
-     * @expectedException \Cake\Routing\Exception\MissingRouteException
      * @return void
      */
     public function testMatchNamedMissingError()
     {
+        $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
         $context = [
             '_base' => '/',
             '_scheme' => 'http',
@@ -580,12 +579,12 @@ class RouteCollectionTest extends TestCase
     /**
      * Test the add() with some _name.
      *
-     * @expectedException \Cake\Routing\Exception\DuplicateNamedRouteException
      *
      * @return void
      */
     public function testAddingDuplicateNamedRoutes()
     {
+        $this->expectException(\Cake\Routing\Exception\DuplicateNamedRouteException::class);
         $one = new Route('/pages/*', ['controller' => 'Pages', 'action' => 'display']);
         $two = new Route('/', ['controller' => 'Dashboards', 'action' => 'display']);
         $this->collection->add($one, ['_name' => 'test']);
@@ -595,21 +594,23 @@ class RouteCollectionTest extends TestCase
     /**
      * Test combined get/set method.
      *
+     * @group deprecated
      * @return void
-     * @deprecated 3.5.0
      */
     public function testExtensions()
     {
-        $this->assertEquals([], $this->collection->extensions());
+        $this->deprecated(function () {
+            $this->assertEquals([], $this->collection->extensions());
 
-        $this->collection->extensions('json');
-        $this->assertEquals(['json'], $this->collection->extensions());
+            $this->collection->extensions('json');
+            $this->assertEquals(['json'], $this->collection->extensions());
 
-        $this->collection->extensions(['rss', 'xml']);
-        $this->assertEquals(['json', 'rss', 'xml'], $this->collection->extensions());
+            $this->collection->extensions(['rss', 'xml']);
+            $this->assertEquals(['json', 'rss', 'xml'], $this->collection->extensions());
 
-        $this->collection->extensions(['csv'], false);
-        $this->assertEquals(['csv'], $this->collection->extensions());
+            $this->collection->extensions(['csv'], false);
+            $this->assertEquals(['csv'], $this->collection->extensions());
+        });
     }
 
     /**
@@ -632,18 +633,6 @@ class RouteCollectionTest extends TestCase
     }
 
     /**
-     * String methods are not acceptable.
-     *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage The 'bad' middleware is not a callable object.
-     * @return void
-     */
-    public function testRegisterMiddlewareNoCallableString()
-    {
-        $this->collection->registerMiddleware('bad', 'strlen');
-    }
-
-    /**
      * Test adding middleware to the collection.
      *
      * @return void
@@ -662,6 +651,8 @@ class RouteCollectionTest extends TestCase
 
         $this->assertTrue($this->collection->hasMiddleware('closure'));
         $this->assertTrue($this->collection->hasMiddleware('callable'));
+
+        $this->collection->registerMiddleware('class', 'Dumb');
     }
 
     /**
@@ -706,12 +697,12 @@ class RouteCollectionTest extends TestCase
     /**
      * Test adding ab unregistered middleware to a middleware group fails.
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Cannot add 'bad' middleware to group 'group'. It has not been registered.
      * @return void
      */
     public function testMiddlewareGroupUnregisteredMiddleware()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Cannot add \'bad\' middleware to group \'group\'. It has not been registered.');
         $this->collection->middlewareGroup('group', ['bad']);
     }
 }

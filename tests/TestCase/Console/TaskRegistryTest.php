@@ -67,11 +67,11 @@ class TaskRegistryTest extends TestCase
     /**
      * test missingtask exception
      *
-     * @expectedException \Cake\Console\Exception\MissingTaskException
      * @return void
      */
     public function testLoadMissingTask()
     {
+        $this->expectException(\Cake\Console\Exception\MissingTaskException::class);
         $this->Tasks->load('ThisTaskShouldAlwaysBeMissing');
     }
 

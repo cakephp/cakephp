@@ -204,12 +204,12 @@ class SqlserverTest extends TestCase
      * Test if attempting to connect with the driver throws an exception when
      * using an invalid config setting.
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Config setting "persistent" cannot be set to true, as the Sqlserver PDO driver does not support PDO::ATTR_PERSISTENT
      * @return void
      */
     public function testConnectionPersistentTrueException()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Config setting "persistent" cannot be set to true, as the Sqlserver PDO driver does not support PDO::ATTR_PERSISTENT');
         $this->skipIf($this->missingExtension, 'pdo_sqlsrv is not installed.');
         $config = [
             'persistent' => true,

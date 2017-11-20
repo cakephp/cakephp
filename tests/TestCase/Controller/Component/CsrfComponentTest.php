@@ -75,13 +75,13 @@ class CsrfComponentTest extends TestCase
         $event = new Event('Controller.startup', $controller);
         $this->component->startup($event);
 
-        $cookie = $controller->response->cookie('csrfToken');
+        $cookie = $controller->response->getCookie('csrfToken');
         $this->assertNotEmpty($cookie, 'Should set a token.');
         $this->assertRegExp('/^[a-f0-9]+$/', $cookie['value'], 'Should look like a hash.');
         $this->assertEquals(0, $cookie['expire'], 'session duration.');
         $this->assertEquals('/dir/', $cookie['path'], 'session path.');
 
-        $this->assertEquals($cookie['value'], $controller->request->params['_csrfToken']);
+        $this->assertEquals($cookie['value'], $controller->request->getParam('_csrfToken'));
     }
 
     /**
@@ -167,12 +167,12 @@ class CsrfComponentTest extends TestCase
      * Test that the X-CSRF-Token works with the various http methods.
      *
      * @dataProvider httpMethodProvider
-     * @expectedException \Cake\Network\Exception\InvalidCsrfTokenException
      * @return void
      * @triggers Controller.startup $controller
      */
     public function testInvalidTokenInHeader($method)
     {
+        $this->expectException(\Cake\Network\Exception\InvalidCsrfTokenException::class);
         $controller = $this->getMockBuilder('Cake\Controller\Controller')
             ->setMethods(['redirect'])
             ->getMock();
@@ -221,11 +221,11 @@ class CsrfComponentTest extends TestCase
      * Test that request data works with the various http methods.
      *
      * @dataProvider httpMethodProvider
-     * @expectedException \Cake\Network\Exception\InvalidCsrfTokenException
      * @return void
      */
     public function testInvalidTokenRequestData($method)
     {
+        $this->expectException(\Cake\Network\Exception\InvalidCsrfTokenException::class);
         $controller = $this->getMockBuilder('Cake\Controller\Controller')
             ->setMethods(['redirect'])
             ->getMock();
@@ -245,11 +245,11 @@ class CsrfComponentTest extends TestCase
     /**
      * Test that missing post field fails
      *
-     * @expectedException \Cake\Network\Exception\InvalidCsrfTokenException
      * @return void
      */
     public function testInvalidTokenRequestDataMissing()
     {
+        $this->expectException(\Cake\Network\Exception\InvalidCsrfTokenException::class);
         $controller = $this->getMockBuilder('Cake\Controller\Controller')
             ->setMethods(['redirect'])
             ->getMock();
@@ -270,11 +270,11 @@ class CsrfComponentTest extends TestCase
      * Test that missing header and cookie fails
      *
      * @dataProvider httpMethodProvider
-     * @expectedException \Cake\Network\Exception\InvalidCsrfTokenException
      * @return void
      */
     public function testInvalidTokenMissingCookie($method)
     {
+        $this->expectException(\Cake\Network\Exception\InvalidCsrfTokenException::class);
         $controller = $this->getMockBuilder('Cake\Controller\Controller')
             ->setMethods(['redirect'])
             ->getMock();
@@ -343,8 +343,8 @@ class CsrfComponentTest extends TestCase
         $event = new Event('Controller.startup', $controller);
         $component->startup($event);
 
-        $this->assertEmpty($controller->response->cookie('csrfToken'));
-        $cookie = $controller->response->cookie('token');
+        $this->assertEmpty($controller->response->getCookie('csrfToken'));
+        $cookie = $controller->response->getCookie('token');
         $this->assertNotEmpty($cookie, 'Should set a token.');
         $this->assertRegExp('/^[a-f0-9]+$/', $cookie['value'], 'Should look like a hash.');
         $this->assertWithinRange((new Time('+1 hour'))->format('U'), $cookie['expire'], 1, 'session duration.');

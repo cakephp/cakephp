@@ -92,11 +92,11 @@ class IntegerTypeTest extends TestCase
     /**
      * Tests that passing an invalid value will throw an exception
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testToDatabaseInvalid()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->type->toDatabase(['3', '4'], $this->driver);
     }
 

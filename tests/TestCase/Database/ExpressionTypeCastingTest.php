@@ -158,7 +158,7 @@ class ExpressionTypeCastingTest extends TestCase
         $function = new FunctionExpression('DATE', ['2016-01'], ['test']);
         $binder = new ValueBinder;
         $sql = $function->sql($binder);
-        $this->assertEquals('DATE((CONCAT(:param0, :param1)))', $sql);
+        $this->assertEquals('DATE(CONCAT(:param0, :param1))', $sql);
         $this->assertEquals('2016-01', $binder->bindings()[':param0']['value']);
 
         $expressions = [];

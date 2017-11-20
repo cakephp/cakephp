@@ -133,7 +133,7 @@ class AssetsTaskTest extends TestCase
             ->setConstructorArgs([$this->io])
             ->getMock();
 
-        $this->assertTrue(is_dir(WWW_ROOT . 'test_theme'));
+        $this->assertDirectoryExists(WWW_ROOT . 'test_theme');
 
         $shell->expects($this->never())->method('_createSymlink');
         $shell->expects($this->never())->method('_copyDirectory');

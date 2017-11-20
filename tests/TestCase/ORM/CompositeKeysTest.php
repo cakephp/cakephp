@@ -109,12 +109,12 @@ class CompositeKeyTest extends TestCase
      * Test that you cannot save rows with composite keys if some columns are missing.
      *
      * @group save
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Cannot insert row, some of the primary key values are missing
      * @return void
      */
     public function testSaveNewErrorCompositeKeyNoIncrement()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Cannot insert row, some of the primary key values are missing');
         $articles = $this->getTableLocator()->get('SiteArticles');
         $article = $articles->newEntity(['site_id' => 1, 'author_id' => 1, 'title' => 'testing']);
         $articles->save($article);
@@ -211,7 +211,7 @@ class CompositeKeyTest extends TestCase
             ->toArray();
         $expected[0]['articles'] = [];
         $this->assertEquals($expected, $results);
-        $this->assertEquals($table->association('SiteArticles')->strategy(), $strategy);
+        $this->assertEquals($table->getAssociation('SiteArticles')->getStrategy(), $strategy);
     }
 
     /**
@@ -300,7 +300,7 @@ class CompositeKeyTest extends TestCase
             ],
         ];
         $this->assertEquals($expected, $results);
-        $this->assertEquals($articles->association('SiteTags')->strategy(), $strategy);
+        $this->assertEquals($articles->getAssociation('SiteTags')->getStrategy(), $strategy);
     }
 
     /**
@@ -431,12 +431,12 @@ class CompositeKeyTest extends TestCase
      * if the entity has composite primary key
      *
      * @group save
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Cannot insert row, some of the primary key values are missing. Got (5, ), expecting (id, site_id)
      * @return void
      */
     public function testSaveNewEntityMissingKey()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Cannot insert row, some of the primary key values are missing. Got (5, ), expecting (id, site_id)');
         $entity = new Entity([
             'id' => 5,
             'title' => 'Fifth Article',
@@ -480,7 +480,7 @@ class CompositeKeyTest extends TestCase
         $entity = $table->get([3, 2]);
         $result = $table->delete($entity);
 
-        $query = $table->association('SiteArticles')->find('all', [
+        $query = $table->getAssociation('SiteArticles')->find('all', [
             'conditions' => [
                 'author_id' => $entity->id,
                 'site_id' => $entity->site_id
@@ -749,7 +749,7 @@ class CompositeKeyTest extends TestCase
      */
     public function testNotMatchingBelongsToMany()
     {
-        $driver = $this->connection->driver();
+        $driver = $this->connection->getDriver();
 
         if ($driver instanceof Sqlserver) {
             $this->markTestSkipped('Sqlserver does not support the requirements of this test.');
@@ -793,7 +793,7 @@ class CompositeKeyTest extends TestCase
     public function skipIfSqlite()
     {
         $this->skipIf(
-            $this->connection->driver() instanceof Sqlite,
+            $this->connection->getDriver() instanceof Sqlite,
             'SQLite does not support the requirements of this test.'
         );
     }

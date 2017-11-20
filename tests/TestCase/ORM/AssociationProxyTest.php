@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\ORM;
 
-use Cake\ORM\Association;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -57,19 +56,19 @@ class AssociationProxyTest extends TestCase
         $this->assertTrue(isset($articles->authors));
         $this->assertTrue(isset($articles->comments));
         $this->assertFalse(isset($articles->posts));
-        $this->assertSame($articles->association('authors'), $articles->authors);
-        $this->assertSame($articles->association('comments'), $articles->comments);
+        $this->assertSame($articles->getAssociation('authors'), $articles->authors);
+        $this->assertSame($articles->getAssociation('comments'), $articles->comments);
     }
 
     /**
      * Tests that getting a bad property throws exception
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Table "Cake\ORM\Table" is not associated with "posts"
      * @return void
      */
     public function testGetBadAssociation()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Table "Cake\ORM\Table" is not associated with "posts"');
         $articles = $this->getTableLocator()->get('articles');
         $articles->posts;
     }
@@ -132,7 +131,7 @@ class AssociationProxyTest extends TestCase
         $articles->belongsTo('authors');
         $authors->hasMany('comments');
         $this->assertTrue(isset($articles->authors->comments));
-        $this->assertSame($authors->association('comments'), $articles->authors->comments);
+        $this->assertSame($authors->getAssociation('comments'), $articles->authors->comments);
     }
 
     /**

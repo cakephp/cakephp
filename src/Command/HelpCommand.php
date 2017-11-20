@@ -21,7 +21,6 @@ use Cake\Console\CommandCollectionAwareInterface;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\ConsoleOutput;
-use Cake\Shell\Task\CommandTask;
 use Cake\Utility\Inflector;
 use SimpleXmlElement;
 
@@ -64,13 +63,8 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
             $io->out('<info>Available Commands:</info>', 2);
         }
 
-        if (!$this->commands) {
-            $this->commands = new CommandCollection($this->getCommands($io));
-        }
-
         $commands = $this->commands->getIterator();
         $commands->ksort();
-        $commands = new CommandCollection((array)$commands);
 
         if ($args->getOption('xml')) {
             $this->asXml($io, $commands);
@@ -83,43 +77,37 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
     }
 
     /**
-     * Get the list of commands using the CommandTask
-     *
-     * Provides backwards compatibility when an application doesn't use
-     * CommandRunner.
-     *
-     * @param \Cake\Console\ConsoleIo $io The console io
-     * @return array
-     */
-    protected function getCommands($io)
-    {
-        $task = new CommandTask($io);
-        $nested = $task->getShellList();
-        $out = [];
-        foreach ($nested as $section => $commands) {
-            $prefix = '';
-            if ($section !== 'CORE' && $section !== 'app') {
-                $prefix = Inflector::underscore($section) . '.';
-            }
-            foreach ($commands as $command) {
-                $out[$prefix . $command] = $command;
-            }
-        }
-
-        return $out;
-    }
-
-    /**
      * Output text.
      *
      * @param \Cake\Console\ConsoleIo $io The console io
-     * @param \Cake\Console\CommandCollection $commands The command collection to output.
+     * @param \ArrayIterator $commands The command collection to output.
      * @return void
      */
     protected function asText($io, $commands)
     {
+        $invert = [];
         foreach ($commands as $name => $class) {
-            $io->out('- ' . $name);
+            if (!isset($invert[$class])) {
+                $invert[$class] = [];
+            }
+            $invert[$class][] = $name;
+        }
+
+        foreach ($commands as $name => $class) {
+            if (count($invert[$class]) == 1) {
+                $io->out('- ' . $name);
+            }
+
+            if (count($invert[$class]) > 1) {
+                // Sort by length so we can get the shortest name.
+                usort($invert[$class], function ($a, $b) {
+                    return strlen($a) - strlen($b);
+                });
+                $io->out('- ' . array_shift($invert[$class]));
+
+                // Empty the list to prevent duplicates
+                $invert[$class] = [];
+            }
         }
         $io->out('');
 
@@ -131,7 +119,7 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
      * Output as XML
      *
      * @param \Cake\Console\ConsoleIo $io The console io
-     * @param \Cake\Console\CommandCollection $commands The command collection to output
+     * @param \ArrayIterator $commands The command collection to output
      * @return void
      */
     protected function asXml($io, $commands)

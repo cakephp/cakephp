@@ -159,7 +159,7 @@ class AssociationCollectionTest extends TestCase
         $belongsTo = new BelongsTo('Users', [
             'sourceTable' => $table
         ]);
-        $this->assertEquals('user', $belongsTo->property());
+        $this->assertEquals('user', $belongsTo->getProperty());
         $this->associations->add('Users', $belongsTo);
         $this->assertNull($this->associations->get('user'));
 
@@ -425,11 +425,11 @@ class AssociationCollectionTest extends TestCase
     /**
      * Test exceptional case.
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Cannot save Profiles, it is not associated to Users
      */
     public function testErrorOnUnknownAlias()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cannot save Profiles, it is not associated to Users');
         $table = $this->getMockBuilder('Cake\ORM\Table')
             ->setMethods(['save'])
             ->setConstructorArgs([['alias' => 'Users']])

@@ -48,11 +48,11 @@ class TableRegressionTest extends TestCase
      * in the afterSave callback
      *
      * @see https://github.com/cakephp/cakephp/issues/9079
-     * @expectedException \Cake\ORM\Exception\RolledbackTransactionException
      * @return void
      */
     public function testAfterSaveRollbackTransaction()
     {
+        $this->expectException(\Cake\ORM\Exception\RolledbackTransactionException::class);
         $table = $this->getTableLocator()->get('Authors');
         $table->getEventManager()->on(
             'Model.afterSave',

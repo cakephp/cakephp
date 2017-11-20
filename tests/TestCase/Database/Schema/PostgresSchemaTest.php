@@ -17,7 +17,6 @@ namespace Cake\Test\TestCase\Database\Schema;
 use Cake\Database\Driver\Postgres;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\PostgresSchema;
-use Cake\Database\Schema\Table;
 use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
@@ -36,7 +35,7 @@ class PostgresSchemaTest extends TestCase
      */
     protected function _needsConnection()
     {
-        $config = ConnectionManager::config('test');
+        $config = ConnectionManager::getConfig('test');
         $this->skipIf(strpos($config['driver'], 'Postgres') === false, 'Not using Postgres for test config');
     }
 
@@ -665,6 +664,11 @@ SQL;
                 '"id" UUID NOT NULL'
             ],
             [
+                'id',
+                ['type' => 'binaryuuid', 'length' => null, 'null' => false],
+                '"id" UUID NOT NULL'
+            ],
+            [
                 'role',
                 ['type' => 'string', 'length' => 10, 'null' => false, 'default' => 'admin'],
                 '"role" VARCHAR(10) NOT NULL DEFAULT \'admin\''
@@ -1127,7 +1131,7 @@ SQL;
             'type' => 'integer',
             'null' => false
         ]);
-        $table->temporary(true);
+        $table->setTemporary(true);
         $sql = $table->createSql($connection);
         $this->assertContains('CREATE TEMPORARY TABLE', $sql[0]);
     }

@@ -68,7 +68,7 @@ class ValidatorTest extends TestCase
     public function testAddNestedSingleProviders()
     {
         $validator = new Validator();
-        $validator->provider('test', $this);
+        $validator->setProvider('test', $this);
 
         $inner = new Validator();
         $inner->add('username', 'not-blank', ['rule' => function () use ($inner, $validator) {
@@ -105,7 +105,7 @@ class ValidatorTest extends TestCase
     public function testAddNestedManyProviders()
     {
         $validator = new Validator();
-        $validator->provider('test', $this);
+        $validator->setProvider('test', $this);
 
         $inner = new Validator();
         $inner->add('comment', 'not-blank', ['rule' => function () use ($inner, $validator) {
@@ -221,11 +221,11 @@ class ValidatorTest extends TestCase
     /**
      * Tests the requirePresence failure case
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testRequirePresenceAsArrayFailure()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $validator = new Validator();
         $validator->requirePresence(['title' => 'derp', 'created' => false]);
     }
@@ -621,11 +621,11 @@ class ValidatorTest extends TestCase
     /**
      * Tests the allowEmpty failure case
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testAllowEmptyAsArrayFailure()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $validator = new Validator();
         $validator->allowEmpty(['title' => 'derp', 'created' => false]);
     }
@@ -700,11 +700,11 @@ class ValidatorTest extends TestCase
     /**
      * Tests the notEmpty failure case
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testNotEmptyAsArrayFailure()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $validator = new Validator();
         $validator->notEmpty(['title' => 'derp', 'created' => false]);
     }
@@ -926,15 +926,15 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $object = new \stdClass;
-        $this->assertSame($validator, $validator->provider('foo', $object));
-        $this->assertSame($object, $validator->provider('foo'));
-        $this->assertNull($validator->provider('bar'));
+        $this->assertSame($validator, $validator->setProvider('foo', $object));
+        $this->assertSame($object, $validator->getProvider('foo'));
+        $this->assertNull($validator->getProvider('bar'));
 
         $another = new \stdClass;
-        $this->assertSame($validator, $validator->provider('bar', $another));
-        $this->assertSame($another, $validator->provider('bar'));
+        $this->assertSame($validator, $validator->setProvider('bar', $another));
+        $this->assertSame($another, $validator->getProvider('bar'));
 
-        $this->assertEquals(new \Cake\Validation\RulesProvider, $validator->provider('default'));
+        $this->assertEquals(new \Cake\Validation\RulesProvider, $validator->getProvider('default'));
     }
 
     /**
@@ -997,7 +997,7 @@ class ValidatorTest extends TestCase
                 return "That ain't cool, yo";
             }));
 
-        $validator->provider('thing', $thing);
+        $validator->setProvider('thing', $thing);
         $errors = $validator->errors(['email' => '!', 'title' => 'bar']);
         $expected = [
             'email' => ['alpha' => 'The provided value is invalid'],
@@ -1044,7 +1044,7 @@ class ValidatorTest extends TestCase
 
                 return "That ain't cool, yo";
             }));
-        $validator->provider('thing', $thing);
+        $validator->setProvider('thing', $thing);
         $errors = $validator->errors(['email' => '!', 'title' => 'bar']);
         $expected = [
             'title' => ['cool' => "That ain't cool, yo"]
@@ -1220,8 +1220,8 @@ class ValidatorTest extends TestCase
     public function testDebugInfo()
     {
         $validator = new Validator();
-        $validator->provider('test', $this);
-        $validator->add('title', 'not-empty', ['rule' => 'notEmpty']);
+        $validator->setProvider('test', $this);
+        $validator->add('title', 'not-empty', ['rule' => 'notBlank']);
         $validator->requirePresence('body');
         $validator->allowEmpty('published');
 
@@ -1323,11 +1323,11 @@ class ValidatorTest extends TestCase
     /**
      * Tests the lengthBetween proxy method
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testLengthBetweenFailure()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $validator = new Validator();
         $validator->lengthBetween('username', [7]);
     }
@@ -1643,11 +1643,11 @@ class ValidatorTest extends TestCase
     /**
      * Tests the range failure case
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testRangeFailure()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $validator = new Validator();
         $validator->range('username', [1]);
     }

@@ -94,11 +94,11 @@ class ConditionDecoratorTest extends TestCase
     /**
      * testCallableRuntimeException
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Cake\Event\Decorator\ConditionDecorator the `if` condition is not a callable!
      */
     public function testCallableRuntimeException()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Cake\Event\Decorator\ConditionDecorator the `if` condition is not a callable!');
         $callable = function (Event $event) {
             return 'success';
         };

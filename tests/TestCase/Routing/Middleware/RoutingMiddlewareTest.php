@@ -18,6 +18,7 @@ use Cake\Routing\Middleware\RoutingMiddleware;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use TestApp\Application;
+use TestApp\Middleware\DumbMiddleware;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
 
@@ -48,7 +49,9 @@ class RoutingMiddlewareTest extends TestCase
      */
     public function testRedirectResponse()
     {
-        Router::redirect('/testpath', '/pages');
+        Router::scope('/', function ($routes) {
+            $routes->redirect('/testpath', '/pages');
+        });
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/testpath']);
         $request = $request->withAttribute('base', '/subdir');
 
@@ -69,7 +72,9 @@ class RoutingMiddlewareTest extends TestCase
      */
     public function testRedirectResponseWithHeaders()
     {
-        Router::redirect('/testpath', '/pages');
+        Router::scope('/', function ($routes) {
+            $routes->redirect('/testpath', '/pages');
+        });
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/testpath']);
         $response = new Response('php://memory', 200, ['X-testing' => 'Yes']);
         $next = function ($req, $res) {
@@ -152,7 +157,8 @@ class RoutingMiddlewareTest extends TestCase
             ];
             $this->assertEquals($expected, $req->getAttribute('params'));
             $this->assertTrue(Router::$initialized, 'Router state should indicate routes loaded');
-            $this->assertCount(1, Router::routes());
+            $this->assertNotEmpty(Router::routes());
+            $this->assertEquals('/app/articles', Router::routes()[0]->template);
         };
         $app = new Application(CONFIG);
         $middleware = new RoutingMiddleware($app);
@@ -179,10 +185,10 @@ class RoutingMiddlewareTest extends TestCase
     /**
      * Test missing routes not being caught.
      *
-     * @expectedException \Cake\Routing\Exception\MissingRouteException
      */
     public function testMissingRouteNotCaught()
     {
+        $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/missing']);
         $response = new Response();
         $next = function ($req, $res) {
@@ -246,8 +252,10 @@ class RoutingMiddlewareTest extends TestCase
 
                 return $next($req, $res);
             });
+            $routes->registerMiddleware('dumb', DumbMiddleware::class);
+
             // Connect middleware in reverse to test ordering.
-            $routes->applyMiddleware('second', 'first');
+            $routes->applyMiddleware('second', 'first', 'dumb');
 
             $routes->connect('/ping', ['controller' => 'Pings']);
         });

@@ -25,11 +25,13 @@ use RuntimeException;
  * the implementing class wants to build and customize a variety
  * of validator instances.
  *
- * This trait expects that classes including it define two constants:
+ * This trait expects that classes including it define three constants:
  *
  * - `DEFAULT_VALIDATOR` - The default validator name.
  * - `VALIDATOR_PROVIDER_NAME ` - The provider name the including class is assigned
  *   in validators.
+ * - `BUILD_VALIDATOR_EVENT` - The name of the event to be triggred when validators
+ *   are built.
  *
  * If the including class also implements events the `Model.buildValidator` event
  * will be triggered when validators are created.
@@ -81,7 +83,7 @@ trait ValidatorAwareTrait
      *  ->add('email', 'valid-email', ['rule' => 'email'])
      *  ->add('password', 'valid', ['rule' => 'notBlank'])
      *  ->allowEmpty('bio');
-     * $table->validator('forSubscription', $validator);
+     * $table->setValidator('forSubscription', $validator);
      * ```
      *
      * You can implement the method in `validationDefault` in your Table subclass
@@ -97,6 +99,10 @@ trait ValidatorAwareTrait
      */
     public function validator($name = null, Validator $validator = null)
     {
+        deprecationWarning(
+            'ValidatorAwareTrait::validator() is deprecated. ' .
+            'Use ValidatorAwareTrait::getValidator()/setValidator() instead.'
+        );
         if ($validator !== null) {
             $name = $name ?: self::DEFAULT_VALIDATOR;
             $this->setValidator($name, $validator);
@@ -171,7 +177,8 @@ trait ValidatorAwareTrait
         $validator = new $this->_validatorClass;
         $validator = $this->$method($validator);
         if ($this instanceof EventDispatcherInterface) {
-            $this->dispatchEvent(self::BUILD_VALIDATOR_EVENT, compact('validator', 'name'));
+            $event = defined(self::class . '::BUILD_VALIDATOR_EVENT') ? self::BUILD_VALIDATOR_EVENT : 'Model.buildValidator';
+            $this->dispatchEvent($event, compact('validator', 'name'));
         }
 
         if (!$validator instanceof Validator) {

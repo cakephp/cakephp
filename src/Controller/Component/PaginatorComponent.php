@@ -18,7 +18,6 @@ use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use Cake\Datasource\Exception\PageOutOfBoundsException;
 use Cake\Datasource\Paginator;
-use Cake\Datasource\QueryInterface;
 use Cake\Network\Exception\NotFoundException;
 use InvalidArgumentException;
 
@@ -286,6 +285,7 @@ class PaginatorComponent extends Component
      */
     public function config($key = null, $value = null, $merge = true)
     {
+        deprecationWarning('PaginatorComponent::config() is deprecated. Use getConfig()/setConfig() instead.');
         $return = $this->_paginator->config($key, $value, $merge);
         if ($return instanceof Paginator) {
             $return = $this;

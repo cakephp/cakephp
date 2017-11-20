@@ -125,12 +125,12 @@ class PaginatorComponentTest extends TestCase
     /**
      * Test that an exception is thrown when paginator option is invalid.
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Paginator must be an instance of Cake\Datasource\Paginator
      * @return void
      */
     public function testInvalidPaginatorOption()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Paginator must be an instance of Cake\Datasource\Paginator');
         new PaginatorComponent($this->registry, [
             'paginator' => new stdClass()
         ]);
@@ -262,7 +262,7 @@ class PaginatorComponentTest extends TestCase
         $tags = $this->getTableLocator()->get('Tags');
         $tags->belongsToMany('Authors');
 
-        $articles->eventManager()->on('Model.beforeFind', function ($event, $query) {
+        $articles->getEventManager()->on('Model.beforeFind', function ($event, $query) {
             $query ->matching('Tags', function ($q) {
                 return $q->matching('Authors', function ($q) {
                     return $q->where(['Authors.name' => 'larry']);
@@ -532,7 +532,7 @@ class PaginatorComponentTest extends TestCase
             'limit' => 20,
             'maxLimit' => 100,
         ];
-        $this->Paginator->config('whitelist', ['fields']);
+        $this->Paginator->setConfig('whitelist', ['fields']);
         $result = $this->Paginator->mergeOptions('Post', $settings);
         $expected = [
             'page' => 10, 'limit' => 10, 'maxLimit' => 100, 'fields' => ['bad.stuff'], 'whitelist' => ['limit', 'sort', 'page', 'direction', 'fields']
@@ -769,11 +769,11 @@ class PaginatorComponentTest extends TestCase
     /**
      * Test that a really REALLY large page number gets clamped to the max page size.
      *
-     * @expectedException \Cake\Network\Exception\NotFoundException
      * @return void
      */
     public function testOutOfVeryBigPageNumberGetsClamped()
     {
+        $this->expectException(\Cake\Network\Exception\NotFoundException::class);
         $this->loadFixtures('Posts');
         $this->request->query = [
             'page' => '3000000000000000000000000',
@@ -1269,7 +1269,7 @@ class PaginatorComponentTest extends TestCase
      */
     public function testPaginateQueryWithBindValue()
     {
-        $config = ConnectionManager::config('test');
+        $config = ConnectionManager::getConfig('test');
         $this->skipIf(strpos($config['driver'], 'Sqlserver') !== false, 'Test temporarily broken in SQLServer');
         $this->loadFixtures('Posts');
         $table = $this->getTableLocator()->get('PaginatorPosts');

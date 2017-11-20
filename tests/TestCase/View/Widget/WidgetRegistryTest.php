@@ -128,12 +128,12 @@ class WidgetRegistryTestCase extends TestCase
     /**
      * Test adding an instance of an invalid type.
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Widget objects must implement Cake\View\Widget\WidgetInterface
      * @return void
      */
     public function testAddInvalidType()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Widget objects must implement Cake\View\Widget\WidgetInterface');
         $inputs = new WidgetRegistry($this->templates, $this->view);
         $inputs->add([
             'text' => new \StdClass()
@@ -177,12 +177,12 @@ class WidgetRegistryTestCase extends TestCase
     /**
      * Test getting errors
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Unknown widget "foo"
      * @return void
      */
     public function testGetNoFallbackError()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Unknown widget "foo"');
         $inputs = new WidgetRegistry($this->templates, $this->view);
         $inputs->clear();
         $inputs->get('foo');
@@ -208,12 +208,12 @@ class WidgetRegistryTestCase extends TestCase
     /**
      * Test getting resolve dependency missing class
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Unable to locate widget class "TestApp\View\DerpWidget"
      * @return void
      */
     public function testGetResolveDependencyMissingClass()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Unable to locate widget class "TestApp\View\DerpWidget"');
         $inputs = new WidgetRegistry($this->templates, $this->view);
         $inputs->add(['test' => ['TestApp\View\DerpWidget']]);
         $inputs->get('test');
@@ -222,12 +222,12 @@ class WidgetRegistryTestCase extends TestCase
     /**
      * Test getting resolve dependency missing dependency
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Unknown widget "label"
      * @return void
      */
     public function testGetResolveDependencyMissingDependency()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Unknown widget "label"');
         $inputs = new WidgetRegistry($this->templates, $this->view);
         $inputs->clear();
         $inputs->add(['multicheckbox' => ['Cake\View\Widget\MultiCheckboxWidget', 'label']]);

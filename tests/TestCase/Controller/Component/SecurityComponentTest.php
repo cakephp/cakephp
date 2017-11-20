@@ -159,22 +159,18 @@ class SecurityComponentTest extends TestCase
 
         $this->server = $_SERVER;
         $session = new Session();
-        $request = $this->getMockBuilder('Cake\Http\ServerRequest')
-            ->setMethods(['here'])
-            ->setConstructorArgs(['posts/index'])
-            ->getMock();
-        $request->addParams(['controller' => 'posts', 'action' => 'index']);
-        $request->session($session);
-        $request->expects($this->any())
-            ->method('here')
-            ->will($this->returnValue('/articles/index'));
+        $request = new ServerRequest([
+            'url' => '/articles/index',
+            'session' => $session,
+            'params' => ['controller' => 'articles', 'action' => 'index']
+        ]);
 
         $this->Controller = new SecurityTestController($request);
         $this->Controller->Security = $this->Controller->TestSecurity;
-        $this->Controller->Security->config('blackHoleCallback', 'fail');
+        $this->Controller->Security->setConfig('blackHoleCallback', 'fail');
         $this->Security = $this->Controller->Security;
         $this->Security->session = $session;
-        Security::salt('foo!');
+        Security::setSalt('foo!');
     }
 
     /**
@@ -211,12 +207,12 @@ class SecurityComponentTest extends TestCase
      * Test that requests are still blackholed when controller has incorrect
      * visibility keyword in the blackhole callback.
      *
-     * @expectedException \Cake\Network\Exception\BadRequestException
      * @return void
      * @triggers Controller.startup $Controller, $this->Controller
      */
     public function testBlackholeWithBrokenCallback()
     {
+        $this->expectException(\Cake\Network\Exception\BadRequestException::class);
         $request = new ServerRequest([
             'url' => 'posts/index',
             'session' => $this->Security->session
@@ -228,7 +224,7 @@ class SecurityComponentTest extends TestCase
         $Controller = new \TestApp\Controller\SomePagesController($request);
         $event = new Event('Controller.startup', $Controller);
         $Security = new SecurityComponent($Controller->components());
-        $Security->config('blackHoleCallback', '_fail');
+        $Security->setConfig('blackHoleCallback', '_fail');
         $Security->startup($event);
         $Security->blackHole($Controller, 'csrf');
     }
@@ -292,9 +288,11 @@ class SecurityComponentTest extends TestCase
      */
     public function testRequireSecureFail()
     {
-        $_SERVER['HTTPS'] = 'off';
-        $_SERVER['REQUEST_METHOD'] = 'POST';
-        $this->Controller->request['action'] = 'posted';
+        $this->Controller->request = $this->Controller->request
+            ->withParam('action', 'posted')
+            ->withEnv('HTTPS', 'off')
+            ->withEnv('REQUEST_METHOD', 'POST');
+
         $event = new Event('Controller.startup', $this->Controller);
         $this->Controller->Security->requireSecure(['posted']);
         $this->Controller->Security->startup($event);
@@ -309,9 +307,10 @@ class SecurityComponentTest extends TestCase
      */
     public function testRequireSecureSucceed()
     {
-        $_SERVER['HTTPS'] = 'on';
-        $_SERVER['REQUEST_METHOD'] = 'Secure';
-        $this->Controller->request['action'] = 'posted';
+        $this->Controller->request = $this->Controller->request
+            ->withParam('action', 'posted')
+            ->withEnv('HTTPS', 'on')
+            ->withEnv('REQUEST_METHOD', 'Secure');
         $event = new Event('Controller.startup', $this->Controller);
         $this->Controller->Security->requireSecure('posted');
         $this->Controller->Security->startup($event);
@@ -326,9 +325,10 @@ class SecurityComponentTest extends TestCase
      */
     public function testRequireSecureEmptyFail()
     {
-        $_SERVER['HTTPS'] = 'off';
-        $_SERVER['REQUEST_METHOD'] = 'POST';
-        $this->Controller->request['action'] = 'posted';
+        $this->Controller->request = $this->Controller->request
+            ->withParam('action', 'posted')
+            ->withEnv('HTTPS', 'off')
+            ->withEnv('REQUEST_METHOD', 'POST');
         $event = new Event('Controller.startup', $this->Controller);
         $this->Controller->Security->requireSecure();
         $this->Controller->Security->startup($event);
@@ -343,9 +343,10 @@ class SecurityComponentTest extends TestCase
      */
     public function testRequireSecureEmptySucceed()
     {
-        $_SERVER['HTTPS'] = 'on';
-        $_SERVER['REQUEST_METHOD'] = 'Secure';
-        $this->Controller->request['action'] = 'posted';
+        $this->Controller->request = $this->Controller->request
+            ->withParam('action', 'posted')
+            ->withEnv('HTTPS', 'on')
+            ->withEnv('REQUEST_METHOD', 'Secure');
         $event = new Event('Controller.startup', $this->Controller);
         $this->Controller->Security->requireSecure();
         $this->Controller->Security->startup($event);
@@ -355,73 +356,77 @@ class SecurityComponentTest extends TestCase
     /**
      * testRequireAuthFail method
      *
+     * @group deprecated
      * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testRequireAuthFail()
     {
-        $event = new Event('Controller.startup', $this->Controller);
-        $_SERVER['REQUEST_METHOD'] = 'AUTH';
-        $this->Controller->request['action'] = 'posted';
-        $this->Controller->request->data = ['username' => 'willy', 'password' => 'somePass'];
-        $this->Security->requireAuth(['posted']);
-        $this->Security->startup($event);
-        $this->assertTrue($this->Controller->failed);
+        $this->deprecated(function () {
+            $event = new Event('Controller.startup', $this->Controller);
+            $this->Controller->request = $this->Controller->request
+                ->withParam('action', 'posted')
+                ->withData('username', 'willy')
+                ->withData('password', 'somePass')
+                ->withEnv('REQUEST_METHOD', 'AUTH');
+            $this->Security->requireAuth(['posted']);
+            $this->Security->startup($event);
+            $this->assertTrue($this->Controller->failed);
 
-        $this->Security->session->write('_Token', ['allowedControllers' => []]);
-        $this->Controller->request->data = ['username' => 'willy', 'password' => 'somePass'];
-        $this->Controller->request['action'] = 'posted';
-        $this->Security->requireAuth('posted');
-        $this->Security->startup($event);
-        $this->assertTrue($this->Controller->failed);
+            $this->Controller->request->getSession()->write('_Token', ['allowedControllers' => []]);
+            $this->Security->requireAuth('posted');
+            $this->Security->startup($event);
+            $this->assertTrue($this->Controller->failed);
 
-        $this->Security->session->write('_Token', [
-            'allowedControllers' => ['SecurityTest'], 'allowedActions' => ['posted2']
-        ]);
-        $this->Controller->request->data = ['username' => 'willy', 'password' => 'somePass'];
-        $this->Controller->request['action'] = 'posted';
-        $this->Security->requireAuth('posted');
-        $this->Security->startup($event);
-        $this->assertTrue($this->Controller->failed);
+            $this->Controller->request->getSession()->write('_Token', [
+                'allowedControllers' => ['SecurityTest'], 'allowedActions' => ['posted2']
+            ]);
+            $this->Security->requireAuth('posted');
+            $this->Security->startup($event);
+            $this->assertTrue($this->Controller->failed);
+        });
     }
 
     /**
      * testRequireAuthSucceed method
      *
+     * @group deprecated
      * @return void
      * @triggers Controller.startup $this->Controller
      */
     public function testRequireAuthSucceed()
     {
-        $_SERVER['REQUEST_METHOD'] = 'AUTH';
-        $this->Controller->Security->config('validatePost', false);
+        $this->deprecated(function () {
+            $_SERVER['REQUEST_METHOD'] = 'AUTH';
+            $this->Controller->Security->setConfig('validatePost', false);
 
-        $event = new Event('Controller.startup', $this->Controller);
-        $this->Controller->request->addParams([
-            'action' => 'posted'
-        ]);
-        $this->Security->requireAuth('posted');
-        $this->Security->startup($event);
-        $this->assertFalse($this->Controller->failed);
+            $event = new Event('Controller.startup', $this->Controller);
+            $this->Controller->request->addParams([
+                'action' => 'posted'
+            ]);
+            $this->Security->requireAuth('posted');
+            $this->Security->startup($event);
+            $this->assertFalse($this->Controller->failed);
 
-        $this->Controller->Security->session->write('_Token', [
-            'allowedControllers' => ['SecurityTest'],
-            'allowedActions' => ['posted'],
-        ]);
-        $this->Controller->request->addParams([
-            'controller' => 'SecurityTest',
-            'action' => 'posted'
-        ]);
+            $this->Controller->Security->session->write('_Token', [
+                'allowedControllers' => ['SecurityTest'],
+                'allowedActions' => ['posted'],
+            ]);
+            $this->Controller->request->addParams([
+                'controller' => 'SecurityTest',
+                'action' => 'posted'
+            ]);
 
-        $this->Controller->request->data = [
-            'username' => 'willy',
-            'password' => 'somePass',
-            '_Token' => ''
-        ];
-        $this->Controller->action = 'posted';
-        $this->Controller->Security->requireAuth('posted');
-        $this->Controller->Security->startup($event);
-        $this->assertFalse($this->Controller->failed);
+            $this->Controller->request->data = [
+                'username' => 'willy',
+                'password' => 'somePass',
+                '_Token' => ''
+            ];
+            $this->Controller->action = 'posted';
+            $this->Controller->Security->requireAuth('posted');
+            $this->Controller->Security->startup($event);
+            $this->assertFalse($this->Controller->failed);
+        });
     }
 
     /**
@@ -470,11 +475,11 @@ class SecurityComponentTest extends TestCase
             []
         ]));
 
-        $this->Controller->request->env('REQUEST_METHOD', 'GET');
-        $this->Controller->request->data = [
-            'Model' => ['username' => 'nate', 'password' => 'foo', 'valid' => '0'],
-            '_Token' => compact('fields', 'unlocked', 'debug')
-        ];
+        $this->Controller->request = $this->Controller->request
+            ->withEnv('REQUEST_METHOD', 'GET')
+            ->withData('Model', ['username' => 'nate', 'password' => 'foo', 'valid' => '0'])
+            ->withData('_Token', compact('fields', 'unlocked', 'debug'));
+
         $this->Security->startup($event);
         $this->assertTrue($this->Controller->failed);
     }
@@ -902,7 +907,7 @@ class SecurityComponentTest extends TestCase
     public function testValidatePostWithDisabledFields()
     {
         $event = new Event('Controller.startup', $this->Controller);
-        $this->Security->config('disabledFields', ['Model.username', 'Model.password']);
+        $this->Security->setConfig('disabledFields', ['Model.username', 'Model.password']);
         $this->Security->startup($event);
         $fields = '0313460e1136e1227044399fe10a6edc0cbca279%3AModel.hidden';
         $unlocked = '';
@@ -934,7 +939,7 @@ class SecurityComponentTest extends TestCase
         $unlocked = 'Model.username';
         $fields = ['Model.hidden', 'Model.password'];
         $fields = urlencode(
-            hash_hmac('sha1', '/articles/index' . serialize($fields) . $unlocked . 'cli', Security::salt())
+            hash_hmac('sha1', '/articles/index' . serialize($fields) . $unlocked . 'cli', Security::getSalt())
         );
         $debug = 'not used';
 
@@ -964,7 +969,7 @@ class SecurityComponentTest extends TestCase
         $event = new Event('Controller.startup', $this->Controller);
         $this->Security->startup($event);
         $fields = ['Model.hidden', 'Model.password', 'Model.username'];
-        $fields = urlencode(Security::hash(serialize($fields) . Security::salt()));
+        $fields = urlencode(Security::hash(serialize($fields) . Security::getSalt()));
 
         $this->Controller->request->data = [
             'Model' => [
@@ -992,7 +997,7 @@ class SecurityComponentTest extends TestCase
         $event = new Event('Controller.startup', $this->Controller);
         $this->Security->startup($event);
         $fields = ['Model.hidden', 'Model.password', 'Model.username'];
-        $fields = urlencode(Security::hash(serialize($fields) . Security::salt()));
+        $fields = urlencode(Security::hash(serialize($fields) . Security::getSalt()));
         $unlocked = '';
 
         $this->Controller->request->data = [
@@ -1021,7 +1026,7 @@ class SecurityComponentTest extends TestCase
         $event = new Event('Controller.startup', $this->Controller);
         $this->Security->startup($event);
         $fields = ['Model.hidden', 'Model.password', 'Model.username'];
-        $fields = urlencode(Security::hash(serialize($fields) . Security::salt()));
+        $fields = urlencode(Security::hash(serialize($fields) . Security::getSalt()));
         $unlocked = '';
 
         $this->Controller->request->data = [
@@ -1050,7 +1055,7 @@ class SecurityComponentTest extends TestCase
         $this->Security->startup($event);
         $unlocked = 'Model.username';
         $fields = ['Model.hidden', 'Model.password'];
-        $fields = urlencode(Security::hash(serialize($fields) . $unlocked . Security::salt()));
+        $fields = urlencode(Security::hash(serialize($fields) . $unlocked . Security::getSalt()));
         $debug = urlencode(json_encode([
             '/articles/index',
             ['Model.hidden', 'Model.password'],
@@ -1190,7 +1195,7 @@ class SecurityComponentTest extends TestCase
         $unlocked = '';
         $hashFields = ['TaxonomyData'];
         $fields = urlencode(
-            hash_hmac('sha1', '/articles/index' . serialize($hashFields) . $unlocked . 'cli', Security::salt())
+            hash_hmac('sha1', '/articles/index' . serialize($hashFields) . $unlocked . 'cli', Security::getSalt())
         );
         $debug = 'not used';
 
@@ -1299,7 +1304,7 @@ class SecurityComponentTest extends TestCase
         $this->assertFalse($result);
 
         $this->Security->startup($event);
-        $this->Security->config('disabledFields', ['MyModel.name']);
+        $this->Security->setConfig('disabledFields', ['MyModel.name']);
 
         $this->Controller->request->data = [
             'MyModel' => ['name' => 'some data'],
@@ -1379,26 +1384,24 @@ class SecurityComponentTest extends TestCase
             []
         ]));
 
-        $this->Controller->request->data = [
-            'Model' => ['username' => '', 'password' => ''],
-            '_Token' => compact('fields', 'unlocked', 'debug')
-        ];
+        $this->Controller->request = $this->Controller->request
+            ->withData('Model', ['username' => '', 'password' => ''])
+            ->withData('_Token', compact('fields', 'unlocked', 'debug'));
         $this->assertTrue($this->validatePost());
 
-        $request = $this->getMockBuilder('Cake\Http\ServerRequest')
-            ->setMethods(['here'])
-            ->getMock();
-        $request->expects($this->at(0))
-            ->method('here')
-            ->will($this->returnValue('/posts/index?page=1'));
-        $request->expects($this->at(1))
-            ->method('here')
-            ->will($this->returnValue('/posts/edit/1'));
-        $request->data = $this->Controller->request->data;
-        $this->Controller->request = $request;
+        $this->Controller->request = $this->Controller->request
+            ->withRequestTarget('/posts/index?page=1');
+        $this->assertFalse($this->validatePost(
+            'SecurityException',
+            'URL mismatch in POST data (expected \'another-url\' but found \'/posts/index?page=1\')'
+        ));
 
-        $this->assertFalse($this->validatePost('SecurityException', 'URL mismatch in POST data (expected \'another-url\' but found \'/posts/index?page=1\')'));
-        $this->assertFalse($this->validatePost('SecurityException', 'URL mismatch in POST data (expected \'another-url\' but found \'/posts/edit/1\')'));
+        $this->Controller->request = $this->Controller->request
+            ->withRequestTarget('/posts/edit/1');
+        $this->assertFalse($this->validatePost(
+            'SecurityException',
+            'URL mismatch in POST data (expected \'another-url\' but found \'/posts/edit/1\')'
+        ));
     }
 
     /**
@@ -1468,7 +1471,7 @@ class SecurityComponentTest extends TestCase
         $this->Security->startup($event);
         $unlocked = 'Model.username';
         $fields = ['Model.hidden', 'Model.password'];
-        $fields = urlencode(Security::hash(serialize($fields) . $unlocked . Security::salt()));
+        $fields = urlencode(Security::hash(serialize($fields) . $unlocked . Security::getSalt()));
         $debug = urlencode(json_encode([
             '/articles/index',
             ['Model.hidden', 'Model.password'],
@@ -1498,13 +1501,13 @@ class SecurityComponentTest extends TestCase
      *
      * Test blackhole will now throw passed exception if debug enabled.
      *
-     * @expectedException \Cake\Controller\Exception\SecurityException
-     * @expectedExceptionMessage error description
      * @return void
      */
     public function testBlackholeThrowsException()
     {
-        $this->Security->config('blackHoleCallback', '');
+        $this->expectException(\Cake\Controller\Exception\SecurityException::class);
+        $this->expectExceptionMessage('error description');
+        $this->Security->setConfig('blackHoleCallback', '');
         $this->Security->blackHole($this->Controller, 'auth', new SecurityException('error description'));
     }
 
@@ -1517,7 +1520,7 @@ class SecurityComponentTest extends TestCase
      */
     public function testBlackholeThrowsBadRequest()
     {
-        $this->Security->config('blackHoleCallback', '');
+        $this->Security->setConfig('blackHoleCallback', '');
         $message = '';
 
         Configure::write('debug', false);
@@ -1550,7 +1553,7 @@ class SecurityComponentTest extends TestCase
             $fields,
             []
         ]));
-        $fields = urlencode(Security::hash(serialize($fields) . $unlocked . Security::salt()));
+        $fields = urlencode(Security::hash(serialize($fields) . $unlocked . Security::getSalt()));
         $fields .= urlencode(':Model.hidden|Model.id');
         $this->Controller->request->data = [
             'Model' => [
@@ -1583,17 +1586,17 @@ class SecurityComponentTest extends TestCase
             $fields,
             []
         ]));
-        $fields = urlencode(Security::hash(serialize($fields) . $unlocked . Security::salt()));
+        $fields = urlencode(Security::hash(serialize($fields) . $unlocked . Security::getSalt()));
         $fields .= urlencode(':Model.hidden|Model.id');
-        $this->Controller->request->data = [
-            'Model' => [
-                'hidden' => ['some-key' => 'some-value'],
-                'id' => '1',
-            ],
-            '_Token' => compact('fields', 'unlocked', 'debug')
-        ];
+        $this->Controller->request = $this->Controller->request->withData('Model', [
+            'hidden' => ['some-key' => 'some-value'],
+            'id' => '1',
+        ])->withData('_Token', compact('fields', 'unlocked', 'debug'));
 
-        $result = $this->validatePost('SecurityException', 'Unexpected field \'Model.hidden.some-key\' in POST data, Missing field \'Model.hidden\' in POST data');
+        $result = $this->validatePost(
+            'SecurityException',
+            'Unexpected field \'Model.hidden.some-key\' in POST data, Missing field \'Model.hidden\' in POST data'
+        );
         $this->assertFalse($result);
     }
 
@@ -1616,7 +1619,7 @@ class SecurityComponentTest extends TestCase
             $fields,
             []
         ]));
-        $fields = urlencode(Security::hash(serialize($fields) . $unlocked . Security::salt()));
+        $fields = urlencode(Security::hash(serialize($fields) . $unlocked . Security::getSalt()));
         $fields .= urlencode(':Model.hidden|Model.id');
         $this->Controller->request->data = [
             'Model' => [
@@ -1635,17 +1638,20 @@ class SecurityComponentTest extends TestCase
      *
      * Auth required throws exception token not found.
      *
+     * @group deprecated
      * @return void
-     * @expectedException \Cake\Controller\Exception\AuthSecurityException
-     * @expectedExceptionMessage '_Token' was not found in request data.
      * @triggers Controller.startup $this->Controller
      */
     public function testAuthRequiredThrowsExceptionTokenNotFoundPost()
     {
-        $this->Security->config('requireAuth', ['protected']);
-        $this->Controller->request->params['action'] = 'protected';
-        $this->Controller->request->data = 'notEmpty';
-        $this->Security->authRequired($this->Controller);
+        $this->expectException(\Cake\Controller\Exception\AuthSecurityException::class);
+        $this->expectExceptionMessage('\'_Token\' was not found in request data.');
+        $this->deprecated(function () {
+            $this->Security->setConfig('requireAuth', ['protected']);
+            $this->Controller->request->params['action'] = 'protected';
+            $this->Controller->request->data = 'notEmpty';
+            $this->Security->authRequired($this->Controller);
+        });
     }
 
     /**
@@ -1653,17 +1659,20 @@ class SecurityComponentTest extends TestCase
      *
      * Auth required throws exception token not found in Session.
      *
+     * @group deprecated
      * @return void
-     * @expectedException \Cake\Controller\Exception\AuthSecurityException
-     * @expectedExceptionMessage '_Token' was not found in session.
      * @triggers Controller.startup $this->Controller
      */
     public function testAuthRequiredThrowsExceptionTokenNotFoundSession()
     {
-        $this->Security->config('requireAuth', ['protected']);
-        $this->Controller->request->params['action'] = 'protected';
-        $this->Controller->request->data = ['_Token' => 'not empty'];
-        $this->Security->authRequired($this->Controller);
+        $this->expectException(\Cake\Controller\Exception\AuthSecurityException::class);
+        $this->expectExceptionMessage('\'_Token\' was not found in session.');
+        $this->deprecated(function () {
+            $this->Security->setConfig('requireAuth', ['protected']);
+            $this->Controller->request->params['action'] = 'protected';
+            $this->Controller->request->data = ['_Token' => 'not empty'];
+            $this->Security->authRequired($this->Controller);
+        });
     }
 
     /**
@@ -1671,21 +1680,24 @@ class SecurityComponentTest extends TestCase
      *
      * Auth required throws exception controller not allowed.
      *
+     * @group deprecated
      * @return void
-     * @expectedException \Cake\Controller\Exception\AuthSecurityException
-     * @expectedExceptionMessage Controller 'NotAllowed' was not found in allowed controllers: 'Allowed, AnotherAllowed'.
      * @triggers Controller.startup $this->Controller
      */
     public function testAuthRequiredThrowsExceptionControllerNotAllowed()
     {
-        $this->Security->config('requireAuth', ['protected']);
-        $this->Controller->request->params['controller'] = 'NotAllowed';
-        $this->Controller->request->params['action'] = 'protected';
-        $this->Controller->request->data = ['_Token' => 'not empty'];
-        $this->Controller->request->session()->write('_Token', [
-            'allowedControllers' => ['Allowed', 'AnotherAllowed']
-        ]);
-        $this->Security->authRequired($this->Controller);
+        $this->expectException(\Cake\Controller\Exception\AuthSecurityException::class);
+        $this->expectExceptionMessage('Controller \'NotAllowed\' was not found in allowed controllers: \'Allowed, AnotherAllowed\'.');
+        $this->deprecated(function () {
+            $this->Security->setConfig('requireAuth', ['protected']);
+            $this->Controller->request->params['controller'] = 'NotAllowed';
+            $this->Controller->request->params['action'] = 'protected';
+            $this->Controller->request->data = ['_Token' => 'not empty'];
+            $this->Controller->request->session()->write('_Token', [
+                'allowedControllers' => ['Allowed', 'AnotherAllowed']
+            ]);
+            $this->Security->authRequired($this->Controller);
+        });
     }
 
     /**
@@ -1694,20 +1706,22 @@ class SecurityComponentTest extends TestCase
      * Auth required throws exception controller not allowed.
      *
      * @return void
-     * @expectedException \Cake\Controller\Exception\AuthSecurityException
-     * @expectedExceptionMessage Action 'NotAllowed::protected' was not found in allowed actions: 'index, view'.
      * @triggers Controller.startup $this->Controller
      */
     public function testAuthRequiredThrowsExceptionActionNotAllowed()
     {
-        $this->Security->config('requireAuth', ['protected']);
-        $this->Controller->request->params['controller'] = 'NotAllowed';
-        $this->Controller->request->params['action'] = 'protected';
-        $this->Controller->request->data = ['_Token' => 'not empty'];
-        $this->Controller->request->session()->write('_Token', [
-            'allowedActions' => ['index', 'view']
-        ]);
-        $this->Security->authRequired($this->Controller);
+        $this->expectException(\Cake\Controller\Exception\AuthSecurityException::class);
+        $this->expectExceptionMessage('Action \'NotAllowed::protected\' was not found in allowed actions: \'index, view\'.');
+        $this->deprecated(function () {
+            $this->Security->setConfig('requireAuth', ['protected']);
+            $this->Controller->request->params['controller'] = 'NotAllowed';
+            $this->Controller->request->params['action'] = 'protected';
+            $this->Controller->request->data = ['_Token' => 'not empty'];
+            $this->Controller->request->session()->write('_Token', [
+                'allowedActions' => ['index', 'view']
+            ]);
+            $this->Security->authRequired($this->Controller);
+        });
     }
 
     /**
@@ -1720,14 +1734,16 @@ class SecurityComponentTest extends TestCase
      */
     public function testAuthRequired()
     {
-        $this->Security->config('requireAuth', ['protected']);
-        $this->Controller->request->params['controller'] = 'Allowed';
-        $this->Controller->request->params['action'] = 'protected';
-        $this->Controller->request->data = ['_Token' => 'not empty'];
-        $this->Controller->request->session()->write('_Token', [
-            'allowedActions' => ['protected'],
-            'allowedControllers' => ['Allowed'],
-        ]);
-        $this->assertTrue($this->Security->authRequired($this->Controller));
+        $this->deprecated(function () {
+            $this->Security->setConfig('requireAuth', ['protected']);
+            $this->Controller->request->params['controller'] = 'Allowed';
+            $this->Controller->request->params['action'] = 'protected';
+            $this->Controller->request->data = ['_Token' => 'not empty'];
+            $this->Controller->request->session()->write('_Token', [
+                'allowedActions' => ['protected'],
+                'allowedControllers' => ['Allowed'],
+            ]);
+            $this->assertTrue($this->Security->authRequired($this->Controller));
+        });
     }
 }

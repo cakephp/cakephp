@@ -113,7 +113,7 @@ class FlashComponentTest extends TestCase
     {
         $this->assertNull($this->Session->read('Flash.flash'));
 
-        $this->Flash->config('duplicate', false);
+        $this->Flash->setConfig('duplicate', false);
         $this->Flash->set('This test message should appear once only');
         $this->Flash->set('This test message should appear once only');
         $result = $this->Session->read('Flash.flash');

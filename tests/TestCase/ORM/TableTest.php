@@ -27,8 +27,10 @@ use Cake\Event\Event;
 use Cake\Event\EventManager;
 use Cake\I18n\Time;
 use Cake\ORM\AssociationCollection;
+use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Association\HasMany;
+use Cake\ORM\Association\HasOne;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
@@ -309,7 +311,7 @@ class TableTest extends TestCase
      */
     public function testSchema()
     {
-        $schema = $this->connection->schemaCollection()->describe('users');
+        $schema = $this->connection->getSchemaCollection()->describe('users');
         $table = new Table([
             'table' => 'users',
             'connection' => $this->connection,
@@ -336,7 +338,7 @@ class TableTest extends TestCase
      */
     public function testSchemaInitialize()
     {
-        $schema = $this->connection->schemaCollection()->describe('users');
+        $schema = $this->connection->getSchemaCollection()->describe('users');
         $table = $this->getMockBuilder('Cake\ORM\Table')
             ->setMethods(['_initializeSchema'])
             ->setConstructorArgs([['table' => 'users', 'connection' => $this->connection]])
@@ -510,6 +512,30 @@ class TableTest extends TestCase
     }
 
     /**
+     * Test that the getAssociation() method supports the dot syntax.
+     *
+     * @return void
+     */
+    public function testAssociationDotSyntax()
+    {
+        $groups = $this->getTableLocator()->get('Groups');
+        $members = $this->getTableLocator()->get('Members');
+        $groupsMembers = $this->getTableLocator()->get('GroupsMembers');
+
+        $groups->belongsToMany('Members');
+        $groups->hasMany('GroupsMembers');
+        $groupsMembers->belongsTo('Members');
+        $members->belongsToMany('Groups');
+
+        $association = $groups->getAssociation('GroupsMembers.Members.Groups');
+        $this->assertInstanceOf(BelongsToMany::class, $association);
+        $this->assertSame(
+            $groups->getAssociation('GroupsMembers')->getAssociation('Members')->getAssociation('Groups'),
+            $association
+        );
+    }
+
+    /**
      * Tests that belongsTo() creates and configures correctly the association
      *
      * @return void
@@ -519,12 +545,12 @@ class TableTest extends TestCase
         $options = ['foreignKey' => 'fake_id', 'conditions' => ['a' => 'b']];
         $table = new Table(['table' => 'dates']);
         $belongsTo = $table->belongsTo('user', $options);
-        $this->assertInstanceOf('Cake\ORM\Association\BelongsTo', $belongsTo);
-        $this->assertSame($belongsTo, $table->association('user'));
-        $this->assertEquals('user', $belongsTo->name());
-        $this->assertEquals('fake_id', $belongsTo->foreignKey());
-        $this->assertEquals(['a' => 'b'], $belongsTo->conditions());
-        $this->assertSame($table, $belongsTo->source());
+        $this->assertInstanceOf(BelongsTo::class, $belongsTo);
+        $this->assertSame($belongsTo, $table->getAssociation('user'));
+        $this->assertEquals('user', $belongsTo->getName());
+        $this->assertEquals('fake_id', $belongsTo->getForeignKey());
+        $this->assertEquals(['a' => 'b'], $belongsTo->getConditions());
+        $this->assertSame($table, $belongsTo->getSource());
     }
 
     /**
@@ -537,12 +563,12 @@ class TableTest extends TestCase
         $options = ['foreignKey' => 'user_id', 'conditions' => ['b' => 'c']];
         $table = new Table(['table' => 'users']);
         $hasOne = $table->hasOne('profile', $options);
-        $this->assertInstanceOf('Cake\ORM\Association\HasOne', $hasOne);
-        $this->assertSame($hasOne, $table->association('profile'));
-        $this->assertEquals('profile', $hasOne->name());
-        $this->assertEquals('user_id', $hasOne->foreignKey());
-        $this->assertEquals(['b' => 'c'], $hasOne->conditions());
-        $this->assertSame($table, $hasOne->source());
+        $this->assertInstanceOf(HasOne::class, $hasOne);
+        $this->assertSame($hasOne, $table->getAssociation('profile'));
+        $this->assertEquals('profile', $hasOne->getName());
+        $this->assertEquals('user_id', $hasOne->getForeignKey());
+        $this->assertEquals(['b' => 'c'], $hasOne->getConditions());
+        $this->assertSame($table, $hasOne->getSource());
     }
 
     /**
@@ -556,23 +582,23 @@ class TableTest extends TestCase
         $table = new Table(['table' => 'users']);
 
         $hasOne = $table->hasOne('Comments', $options);
-        $this->assertInstanceOf('Cake\ORM\Association\HasOne', $hasOne);
-        $this->assertSame('Comments', $hasOne->name());
+        $this->assertInstanceOf(HasOne::class, $hasOne);
+        $this->assertSame('Comments', $hasOne->getName());
 
-        $hasOneTable = $hasOne->target();
-        $this->assertSame('Comments', $hasOne->alias());
-        $this->assertSame('TestPlugin.Comments', $hasOne->registryAlias());
+        $hasOneTable = $hasOne->getTarget();
+        $this->assertSame('Comments', $hasOne->getAlias());
+        $this->assertSame('TestPlugin.Comments', $hasOne->getRegistryAlias());
 
         $options = ['className' => 'TestPlugin.Comments'];
         $table = new Table(['table' => 'users']);
 
         $hasOne = $table->hasOne('TestPlugin.Comments', $options);
-        $this->assertInstanceOf('Cake\ORM\Association\HasOne', $hasOne);
-        $this->assertSame('Comments', $hasOne->name());
+        $this->assertInstanceOf(HasOne::class, $hasOne);
+        $this->assertSame('Comments', $hasOne->getName());
 
-        $hasOneTable = $hasOne->target();
-        $this->assertSame('Comments', $hasOne->alias());
-        $this->assertSame('TestPlugin.Comments', $hasOne->registryAlias());
+        $hasOneTable = $hasOne->getTarget();
+        $this->assertSame('Comments', $hasOne->getAlias());
+        $this->assertSame('TestPlugin.Comments', $hasOne->getRegistryAlias());
     }
 
     /**
@@ -594,9 +620,9 @@ class TableTest extends TestCase
         $options = ['className' => 'TestPlugin.Comments'];
         $Categories->hasMany('Comments', $options);
 
-        $this->assertInstanceOf('Cake\ORM\Table', $Users->Comments->target());
-        $this->assertInstanceOf('Cake\ORM\Table', $Articles->Comments->target());
-        $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $Categories->Comments->target());
+        $this->assertInstanceOf('Cake\ORM\Table', $Users->Comments->getTarget());
+        $this->assertInstanceOf('Cake\ORM\Table', $Articles->Comments->getTarget());
+        $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $Categories->Comments->getTarget());
     }
 
     /**
@@ -611,14 +637,14 @@ class TableTest extends TestCase
         $Categories->hasMany('Children', ['foreignKey' => 'parent_id'] + $options);
         $Categories->belongsTo('Parent', $options);
 
-        $this->assertSame('categories', $Categories->Children->target()->table());
-        $this->assertSame('categories', $Categories->Parent->target()->table());
+        $this->assertSame('categories', $Categories->Children->getTarget()->getTable());
+        $this->assertSame('categories', $Categories->Parent->getTarget()->getTable());
 
-        $this->assertSame('Children', $Categories->Children->alias());
-        $this->assertSame('Children', $Categories->Children->target()->alias());
+        $this->assertSame('Children', $Categories->Children->getAlias());
+        $this->assertSame('Children', $Categories->Children->getTarget()->getAlias());
 
-        $this->assertSame('Parent', $Categories->Parent->alias());
-        $this->assertSame('Parent', $Categories->Parent->target()->alias());
+        $this->assertSame('Parent', $Categories->Parent->getAlias());
+        $this->assertSame('Parent', $Categories->Parent->getTarget()->getAlias());
 
         $expected = [
             'id' => 2,
@@ -668,13 +694,13 @@ class TableTest extends TestCase
         ];
         $table = new Table(['table' => 'authors']);
         $hasMany = $table->hasMany('article', $options);
-        $this->assertInstanceOf('Cake\ORM\Association\HasMany', $hasMany);
-        $this->assertSame($hasMany, $table->association('article'));
-        $this->assertEquals('article', $hasMany->name());
-        $this->assertEquals('author_id', $hasMany->foreignKey());
-        $this->assertEquals(['b' => 'c'], $hasMany->conditions());
-        $this->assertEquals(['foo' => 'asc'], $hasMany->sort());
-        $this->assertSame($table, $hasMany->source());
+        $this->assertInstanceOf(HasMany::class, $hasMany);
+        $this->assertSame($hasMany, $table->getAssociation('article'));
+        $this->assertEquals('article', $hasMany->getName());
+        $this->assertEquals('author_id', $hasMany->getForeignKey());
+        $this->assertEquals(['b' => 'c'], $hasMany->getConditions());
+        $this->assertEquals(['foo' => 'asc'], $hasMany->getSort());
+        $this->assertSame($table, $hasMany->getSource());
     }
 
     /**
@@ -749,7 +775,7 @@ class TableTest extends TestCase
         $table = new Table(['table' => 'authors']);
 
         $table->hasMany('TestPlugin.Comments');
-        $comments = $table->Comments->target();
+        $comments = $table->Comments->getTarget();
         $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $comments);
     }
 
@@ -767,7 +793,7 @@ class TableTest extends TestCase
         $table = new Table(['table' => 'authors']);
 
         $table->hasMany('Comments', ['className' => 'TestPlugin.Comments']);
-        $comments = $table->Comments->target();
+        $comments = $table->Comments->getTarget();
         $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $comments);
     }
 
@@ -786,14 +812,14 @@ class TableTest extends TestCase
         ];
         $table = new Table(['table' => 'authors', 'connection' => $this->connection]);
         $belongsToMany = $table->belongsToMany('tag', $options);
-        $this->assertInstanceOf('Cake\ORM\Association\BelongsToMany', $belongsToMany);
-        $this->assertSame($belongsToMany, $table->association('tag'));
-        $this->assertEquals('tag', $belongsToMany->name());
-        $this->assertEquals('thing_id', $belongsToMany->foreignKey());
-        $this->assertEquals(['b' => 'c'], $belongsToMany->conditions());
-        $this->assertEquals(['foo' => 'asc'], $belongsToMany->sort());
-        $this->assertSame($table, $belongsToMany->source());
-        $this->assertSame('things_tags', $belongsToMany->junction()->table());
+        $this->assertInstanceOf(BelongsToMany::class, $belongsToMany);
+        $this->assertSame($belongsToMany, $table->getAssociation('tag'));
+        $this->assertEquals('tag', $belongsToMany->getName());
+        $this->assertEquals('thing_id', $belongsToMany->getForeignKey());
+        $this->assertEquals(['b' => 'c'], $belongsToMany->getConditions());
+        $this->assertEquals(['foo' => 'asc'], $belongsToMany->getSort());
+        $this->assertSame($table, $belongsToMany->getSource());
+        $this->assertSame('things_tags', $belongsToMany->junction()->getTable());
     }
 
     /**
@@ -827,24 +853,24 @@ class TableTest extends TestCase
 
         $belongsTo = $associations->get('users');
         $this->assertInstanceOf('Cake\ORM\Association\BelongsTo', $belongsTo);
-        $this->assertEquals('users', $belongsTo->name());
-        $this->assertEquals('fake_id', $belongsTo->foreignKey());
-        $this->assertEquals(['a' => 'b'], $belongsTo->conditions());
-        $this->assertSame($table, $belongsTo->source());
+        $this->assertEquals('users', $belongsTo->getName());
+        $this->assertEquals('fake_id', $belongsTo->getForeignKey());
+        $this->assertEquals(['a' => 'b'], $belongsTo->getConditions());
+        $this->assertSame($table, $belongsTo->getSource());
 
         $hasOne = $associations->get('profiles');
-        $this->assertInstanceOf('Cake\ORM\Association\HasOne', $hasOne);
-        $this->assertEquals('profiles', $hasOne->name());
+        $this->assertInstanceOf(HasOne::class, $hasOne);
+        $this->assertEquals('profiles', $hasOne->getName());
 
         $hasMany = $associations->get('authors');
-        $this->assertInstanceOf('Cake\ORM\Association\hasMany', $hasMany);
-        $this->assertEquals('authors', $hasMany->name());
+        $this->assertInstanceOf(HasMany::class, $hasMany);
+        $this->assertEquals('authors', $hasMany->getName());
 
         $belongsToMany = $associations->get('tags');
-        $this->assertInstanceOf('Cake\ORM\Association\BelongsToMany', $belongsToMany);
-        $this->assertEquals('tags', $belongsToMany->name());
-        $this->assertSame('things_tags', $belongsToMany->junction()->table());
-        $this->assertSame(['Tags.starred' => true], $belongsToMany->conditions());
+        $this->assertInstanceOf(BelongsToMany::class, $belongsToMany);
+        $this->assertEquals('tags', $belongsToMany->getName());
+        $this->assertSame('things_tags', $belongsToMany->junction()->getTable());
+        $this->assertSame(['Tags.starred' => true], $belongsToMany->getConditions());
     }
 
     /**
@@ -875,10 +901,10 @@ class TableTest extends TestCase
     /**
      * Test that exceptions from the Query bubble up.
      *
-     * @expectedException \Cake\Database\Exception
      */
     public function testUpdateAllFailure()
     {
+        $this->expectException(\Cake\Database\Exception::class);
         $table = $this->getMockBuilder('Cake\ORM\Table')
             ->setMethods(['query'])
             ->setConstructorArgs([['table' => 'users', 'connection' => $this->connection]])
@@ -940,10 +966,10 @@ class TableTest extends TestCase
     /**
      * Test that exceptions from the Query bubble up.
      *
-     * @expectedException \Cake\Database\Exception
      */
     public function testDeleteAllFailure()
     {
+        $this->expectException(\Cake\Database\Exception::class);
         $table = $this->getMockBuilder('Cake\ORM\Table')
             ->setMethods(['query'])
             ->setConstructorArgs([['table' => 'users', 'connection' => $this->connection]])
@@ -1382,12 +1408,12 @@ class TableTest extends TestCase
      * Tests that using a simple string for entityClass will throw an exception
      * when the class does not exist in the namespace
      *
-     * @expectedException \Cake\ORM\Exception\MissingEntityException
-     * @expectedExceptionMessage Entity class FooUser could not be found.
      * @return void
      */
     public function testTableClassNonExisting()
     {
+        $this->expectException(\Cake\ORM\Exception\MissingEntityException::class);
+        $this->expectExceptionMessage('Entity class FooUser could not be found.');
         $table = new Table;
         $this->assertFalse($table->entityClass('FooUser'));
     }
@@ -1608,10 +1634,10 @@ class TableTest extends TestCase
     /**
      * Ensure exceptions are raised on missing behaviors.
      *
-     * @expectedException \Cake\ORM\Exception\MissingBehaviorException
      */
     public function testAddBehaviorMissing()
     {
+        $this->expectException(\Cake\ORM\Exception\MissingBehaviorException::class);
         $table = $this->getTableLocator()->get('article');
         $this->assertNull($table->addBehavior('NopeNotThere'));
     }
@@ -1923,7 +1949,7 @@ class TableTest extends TestCase
             ]
         );
         $authors->hasMany('Articles', ['saveStrategy' => 'append']);
-        $this->assertEquals('append', $authors->association('articles')->saveStrategy());
+        $this->assertEquals('append', $authors->getAssociation('articles')->getSaveStrategy());
     }
 
     /**
@@ -2107,16 +2133,16 @@ class TableTest extends TestCase
         $article = $Articles->save($article);
         $this->assertNotEmpty($article);
 
-        $comment3 = $Comments->target()->newEntity([
+        $comment3 = $Comments->getTarget()->newEntity([
             'article_id' => $article->get('id'),
             'user_id' => 1,
             'comment' => 'Third comment',
             'published' => 'N'
         ]);
-        $comment3 = $Comments->target()->save($comment3);
+        $comment3 = $Comments->getTarget()->save($comment3);
         $this->assertNotEmpty($comment3);
 
-        $this->assertEquals(3, $Comments->target()->find()->where(['Comments.article_id' => $article->get('id')])->count());
+        $this->assertEquals(3, $Comments->getTarget()->find()->where(['Comments.article_id' => $article->get('id')])->count());
 
         unset($article->comments[1]);
         $article->setDirty('comments', true);
@@ -2128,7 +2154,7 @@ class TableTest extends TestCase
         // it is expected that only one of the three linked comments are
         // actually being deleted, as only one of them matches the
         // association condition.
-        $this->assertEquals(2, $Comments->target()->find()->where(['Comments.article_id' => $article->get('id')])->count());
+        $this->assertEquals(2, $Comments->getTarget()->find()->where(['Comments.article_id' => $article->get('id')])->count());
     }
 
     /**
@@ -2168,16 +2194,16 @@ class TableTest extends TestCase
         $author = $Authors->save($author);
         $this->assertNotEmpty($author);
 
-        $article3 = $Articles->target()->newEntity([
+        $article3 = $Articles->getTarget()->newEntity([
             'author_id' => $author->get('id'),
             'title' => 'Third article',
             'body' => 'Third article',
             'published' => 'N'
         ]);
-        $article3 = $Articles->target()->save($article3);
+        $article3 = $Articles->getTarget()->save($article3);
         $this->assertNotEmpty($article3);
 
-        $this->assertEquals(3, $Articles->target()->find()->where(['Articles.author_id' => $author->get('id')])->count());
+        $this->assertEquals(3, $Articles->getTarget()->find()->where(['Articles.author_id' => $author->get('id')])->count());
 
         $article2 = $author->articles[1];
         unset($author->articles[1]);
@@ -2190,7 +2216,7 @@ class TableTest extends TestCase
         // it is expected that only one of the three linked articles are
         // actually being unlinked (nulled), as only one of them matches the
         // association condition.
-        $this->assertEquals(2, $Articles->target()->find()->where(['Articles.author_id' => $author->get('id')])->count());
+        $this->assertEquals(2, $Articles->getTarget()->find()->where(['Articles.author_id' => $author->get('id')])->count());
         $this->assertNull($Articles->get($article2->get('id'))->get('author_id'));
         $this->assertEquals($author->get('id'), $Articles->get($article3->get('id'))->get('author_id'));
     }
@@ -2537,12 +2563,12 @@ class TableTest extends TestCase
      * Test that you cannot save rows without a primary key.
      *
      * @group save
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Cannot insert row in "users" table, it has no primary key
      * @return void
      */
     public function testSaveNewErrorOnNoPrimaryKey()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Cannot insert row in "users" table, it has no primary key');
         $entity = new Entity(['username' => 'superuser']);
         $table = $this->getTableLocator()->get('users', [
             'schema' => [
@@ -2561,13 +2587,13 @@ class TableTest extends TestCase
      */
     public function testAtomicSave()
     {
-        $config = ConnectionManager::config('test');
+        $config = ConnectionManager::getConfig('test');
 
         $connection = $this->getMockBuilder('\Cake\Database\Connection')
             ->setMethods(['begin', 'commit', 'inTransaction'])
             ->setConstructorArgs([$config])
             ->getMock();
-        $connection->driver($this->connection->driver());
+        $connection->setDriver($this->connection->getDriver());
 
         $table = $this->getMockBuilder('\Cake\ORM\Table')
             ->setMethods(['getConnection'])
@@ -2591,16 +2617,16 @@ class TableTest extends TestCase
      * Tests that save will rollback the transaction in the case of an exception
      *
      * @group save
-     * @expectedException \PDOException
      * @return void
      */
     public function testAtomicSaveRollback()
     {
+        $this->expectException(\PDOException::class);
         $connection = $this->getMockBuilder('\Cake\Database\Connection')
             ->setMethods(['begin', 'rollback'])
-            ->setConstructorArgs([ConnectionManager::config('test')])
+            ->setConstructorArgs([ConnectionManager::getConfig('test')])
             ->getMock();
-        $connection->driver(ConnectionManager::get('test')->driver());
+        $connection->setDriver(ConnectionManager::get('test')->getDriver());
         $table = $this->getMockBuilder('\Cake\ORM\Table')
             ->setMethods(['query', 'getConnection'])
             ->setConstructorArgs([['table' => 'users']])
@@ -2638,9 +2664,9 @@ class TableTest extends TestCase
     {
         $connection = $this->getMockBuilder('\Cake\Database\Connection')
             ->setMethods(['begin', 'rollback'])
-            ->setConstructorArgs([ConnectionManager::config('test')])
+            ->setConstructorArgs([ConnectionManager::getConfig('test')])
             ->getMock();
-        $connection->driver(ConnectionManager::get('test')->driver());
+        $connection->setDriver(ConnectionManager::get('test')->getDriver());
         $table = $this->getMockBuilder('\Cake\ORM\Table')
             ->setMethods(['query', 'getConnection', 'exists'])
             ->setConstructorArgs([['table' => 'users']])
@@ -2899,11 +2925,11 @@ class TableTest extends TestCase
      * Tests that failing to pass a primary key to save will result in exception
      *
      * @group save
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testUpdateNoPrimaryButOtherKeys()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $table = $this->getMockBuilder('\Cake\ORM\Table')
             ->setMethods(['query'])
             ->setConstructorArgs([['table' => 'users', 'connection' => $this->connection]])
@@ -3021,7 +3047,7 @@ class TableTest extends TestCase
         $entity = $table->get(1);
         $result = $table->delete($entity);
 
-        $articles = $table->association('articles')->target();
+        $articles = $table->getAssociation('articles')->getTarget();
         $query = $articles->find('all', [
             'conditions' => [
                 'author_id' => $entity->id
@@ -3066,7 +3092,7 @@ class TableTest extends TestCase
         $entity = $query->first();
         $result = $table->delete($entity);
 
-        $articles = $table->association('articles')->target();
+        $articles = $table->getAssociation('articles')->getTarget();
         $query = $articles->find('all')->where(['author_id' => $entity->id]);
         $this->assertCount(2, $query->execute(), 'Should find rows.');
     }
@@ -3087,7 +3113,7 @@ class TableTest extends TestCase
         $entity = $query->first();
         $table->delete($entity);
 
-        $junction = $table->association('tags')->junction();
+        $junction = $table->getAssociation('tags')->junction();
         $query = $junction->find('all')->where(['article_id' => 1]);
         $this->assertNull($query->all()->first(), 'Should not find any rows.');
     }
@@ -3354,7 +3380,7 @@ class TableTest extends TestCase
     {
         $table = new Table();
         $validator = $table->getValidator();
-        $this->assertSame($table, $validator->provider('table'));
+        $this->assertSame($table, $validator->getProvider('table'));
         $this->assertInstanceOf('Cake\Validation\Validator', $validator);
         $default = $table->getValidator('default');
         $this->assertSame($validator, $default);
@@ -3390,18 +3416,18 @@ class TableTest extends TestCase
         $other = $table->getValidator('forOtherStuff');
         $this->assertInstanceOf('Cake\Validation\Validator', $other);
         $this->assertNotSame($other, $table->getValidator());
-        $this->assertSame($table, $other->provider('table'));
+        $this->assertSame($table, $other->getProvider('table'));
     }
 
     /**
      * Tests that a RuntimeException is thrown if the custom validator does not return an Validator instance
      *
      * @return void
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage The Cake\ORM\Table::validationBad() validation method must return an instance of Cake\Validation\Validator.
      */
     public function testValidationWithBadDefiner()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('The Cake\ORM\Table::validationBad() validation method must return an instance of Cake\Validation\Validator.');
         $table = $this->getMockBuilder('\Cake\ORM\Table')
             ->setMethods(['validationBad'])
             ->getMock();
@@ -3414,11 +3440,11 @@ class TableTest extends TestCase
      * Tests that a RuntimeException is thrown if the custom validator method does not exist.
      *
      * @return void
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage The Cake\ORM\Table::validationMissing() validation method does not exists.
      */
     public function testValidatorWithMissingMethod()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('The Cake\ORM\Table::validationMissing() validation method does not exists.');
         $table = new Table();
         $table->getValidator('missing');
     }
@@ -3434,7 +3460,7 @@ class TableTest extends TestCase
         $validator = new \Cake\Validation\Validator;
         $table->setValidator('other', $validator);
         $this->assertSame($validator, $table->getValidator('other'));
-        $this->assertSame($table, $validator->provider('table'));
+        $this->assertSame($table, $validator->getProvider('table'));
     }
 
     /**
@@ -3507,12 +3533,12 @@ class TableTest extends TestCase
     /**
      * Test magic findByXX errors on missing arguments.
      *
-     * @expectedException \BadMethodCallException
-     * @expectedExceptionMessage Not enough arguments for magic finder. Got 0 required 1
      * @return void
      */
     public function testMagicFindError()
     {
+        $this->expectException(\BadMethodCallException::class);
+        $this->expectExceptionMessage('Not enough arguments for magic finder. Got 0 required 1');
         $table = $this->getTableLocator()->get('Users');
 
         $table->findByUsername();
@@ -3521,12 +3547,12 @@ class TableTest extends TestCase
     /**
      * Test magic findByXX errors on missing arguments.
      *
-     * @expectedException \BadMethodCallException
-     * @expectedExceptionMessage Not enough arguments for magic finder. Got 1 required 2
      * @return void
      */
     public function testMagicFindErrorMissingField()
     {
+        $this->expectException(\BadMethodCallException::class);
+        $this->expectExceptionMessage('Not enough arguments for magic finder. Got 1 required 2');
         $table = $this->getTableLocator()->get('Users');
 
         $table->findByUsernameAndId('garrett');
@@ -3535,12 +3561,12 @@ class TableTest extends TestCase
     /**
      * Test magic findByXX errors when there is a mix of or & and.
      *
-     * @expectedException \BadMethodCallException
-     * @expectedExceptionMessage Cannot mix "and" & "or" in a magic finder. Use find() instead.
      * @return void
      */
     public function testMagicFindErrorMixOfOperators()
     {
+        $this->expectException(\BadMethodCallException::class);
+        $this->expectExceptionMessage('Cannot mix "and" & "or" in a magic finder. Use find() instead.');
         $table = $this->getTableLocator()->get('Users');
 
         $table->findByUsernameAndIdOrPassword('garrett', 1, 'sekret');
@@ -3634,7 +3660,7 @@ class TableTest extends TestCase
         $this->assertInstanceOf('Cake\ORM\Query', $result);
         $this->assertNull($result->clause('limit'));
         $expected = new QueryExpression();
-        $expected->typeMap()->defaults($this->usersTypeMap->toArray());
+        $expected->getTypeMap()->setDefaults($this->usersTypeMap->toArray());
         $expected->add(
             ['or' => ['Users.author_id' => 1, 'Users.published' => 'Y']]
         );
@@ -4346,7 +4372,7 @@ class TableTest extends TestCase
         $tags[] = $newTag;
 
         $tagsTable->save($newTag);
-        $table->association('tags')->link($article, $tags);
+        $table->getAssociation('tags')->link($article, $tags);
 
         $this->assertEquals($article->tags, $tags);
         foreach ($tags as $tag) {
@@ -4662,7 +4688,7 @@ class TableTest extends TestCase
             'table' => 'authors',
             'associations' => $associations
         ]);
-        $authors->Articles->source($authors);
+        $authors->Articles->setSource($authors);
 
         $author = $authors->newEntity(['name' => 'mylux']);
         $author = $authors->save($author);
@@ -4866,7 +4892,7 @@ class TableTest extends TestCase
             ->where(['id' => 1])
             ->contain(['tags'])->first();
 
-        $table->association('tags')->unlink($article, [$article->tags[0]]);
+        $table->getAssociation('tags')->unlink($article, [$article->tags[0]]);
         $this->assertCount(1, $article->tags);
         $this->assertEquals(2, $article->tags[0]->get('id'));
         $this->assertFalse($article->isDirty('tags'));
@@ -4888,7 +4914,7 @@ class TableTest extends TestCase
         $tags[] = new \TestApp\Model\Entity\Tag(['id' => 1], $options);
         $tags[] = new \TestApp\Model\Entity\Tag(['id' => 2], $options);
 
-        $table->association('tags')->unlink($article, $tags);
+        $table->getAssociation('tags')->unlink($article, $tags);
         $left = $table->find('all')->where(['id' => 1])->contain(['tags'])->first();
         $this->assertEmpty($left->tags);
     }
@@ -4915,7 +4941,7 @@ class TableTest extends TestCase
             'tag_id' => 2
         ], $options);
 
-        $table->association('tags')->unlink($article, $tags);
+        $table->getAssociation('tags')->unlink($article, $tags);
         $left = $table->find('all')->where(['id' => 1])->contain(['tags'])->first();
         $this->assertEmpty($left->tags);
     }
@@ -4937,7 +4963,7 @@ class TableTest extends TestCase
         $tags[] = new \TestApp\Model\Entity\Tag(['id' => 3], $options);
         $tags[] = new \TestApp\Model\Entity\Tag(['name' => 'foo']);
 
-        $table->association('tags')->replaceLinks($article, $tags);
+        $table->getAssociation('tags')->replaceLinks($article, $tags);
         $this->assertEquals(2, $article->tags[0]->id);
         $this->assertEquals(3, $article->tags[1]->id);
         $this->assertEquals(4, $article->tags[2]->id);
@@ -4965,7 +4991,7 @@ class TableTest extends TestCase
         $article = new Entity(['id' => 1], $options);
         $tags = [];
 
-        $table->association('tags')->replaceLinks($article, $tags);
+        $table->getAssociation('tags')->replaceLinks($article, $tags);
         $this->assertSame($tags, $article->tags);
         $article = $table->find('all')->where(['id' => 1])->contain(['tags'])->first();
         $this->assertEmpty($article->tags);
@@ -4994,7 +5020,7 @@ class TableTest extends TestCase
         ], $options);
         $tags[] = new \TestApp\Model\Entity\Tag(['id' => 3], $options);
 
-        $table->association('tags')->replaceLinks($article, $tags);
+        $table->getAssociation('tags')->replaceLinks($article, $tags);
         $this->assertSame($tags, $article->tags);
         $article = $table->find('all')->where(['id' => 1])->contain(['tags'])->first();
         $this->assertCount(2, $article->tags);
@@ -5012,9 +5038,9 @@ class TableTest extends TestCase
         $articles = $this->getTableLocator()->get('Articles');
 
         $tags = $articles->belongsToMany('Tags');
-        $tags->saveStrategy(BelongsToMany::SAVE_REPLACE);
-        $tags->dependent(true);
-        $tags->cascadeCallbacks(true);
+        $tags->setSaveStrategy(BelongsToMany::SAVE_REPLACE)
+            ->setDependent(true)
+            ->setCascadeCallbacks(true);
 
         $actualOptions = null;
         $tags->junction()->getEventManager()->on(
@@ -5061,7 +5087,7 @@ class TableTest extends TestCase
 
         $article = $articles->get(1);
 
-        $result = $tags->link($article, [$tags->target()->get(2)], ['foo' => 'bar']);
+        $result = $tags->link($article, [$tags->getTarget()->get(2)], ['foo' => 'bar']);
         $this->assertTrue($result);
 
         $expected = [
@@ -5098,7 +5124,7 @@ class TableTest extends TestCase
 
         $article = $articles->get(1);
 
-        $tags->unlink($article, [$tags->target()->get(2)], ['foo' => 'bar']);
+        $tags->unlink($article, [$tags->getTarget()->get(2)], ['foo' => 'bar']);
 
         $expected = [
             '_primary' => true,
@@ -5140,8 +5166,8 @@ class TableTest extends TestCase
         $result = $tags->replaceLinks(
             $article,
             [
-                $tags->target()->newEntity(['name' => 'new']),
-                $tags->target()->get(2)
+                $tags->getTarget()->newEntity(['name' => 'new']),
+                $tags->getTarget()->get(2)
             ],
             ['foo' => 'bar']
         );
@@ -5176,12 +5202,12 @@ class TableTest extends TestCase
         $authors = $this->getTableLocator()->get('Authors');
 
         $articles = $authors->hasMany('Articles');
-        $articles->saveStrategy(HasMany::SAVE_REPLACE);
-        $articles->dependent(true);
-        $articles->cascadeCallbacks(true);
+        $articles->setSaveStrategy(HasMany::SAVE_REPLACE)
+            ->setDependent(true)
+            ->setCascadeCallbacks(true);
 
         $actualOptions = null;
-        $articles->target()->getEventManager()->on(
+        $articles->getTarget()->getEventManager()->on(
             'Model.beforeDelete',
             function (Event $event, Entity $entity, ArrayObject $options) use (&$actualOptions) {
                 $actualOptions = $options->getArrayCopy();
@@ -5217,7 +5243,7 @@ class TableTest extends TestCase
         $articles = $authors->hasMany('Articles');
 
         $actualOptions = null;
-        $articles->target()->getEventManager()->on(
+        $articles->getTarget()->getEventManager()->on(
             'Model.beforeSave',
             function (Event $event, Entity $entity, ArrayObject $options) use (&$actualOptions) {
                 $actualOptions = $options->getArrayCopy();
@@ -5228,7 +5254,7 @@ class TableTest extends TestCase
         $author->articles = [];
         $author->setDirty('articles', true);
 
-        $result = $articles->link($author, [$articles->target()->get(2)], ['foo' => 'bar']);
+        $result = $articles->link($author, [$articles->getTarget()->get(2)], ['foo' => 'bar']);
         $this->assertTrue($result);
 
         $expected = [
@@ -5256,11 +5282,11 @@ class TableTest extends TestCase
     {
         $authors = $this->getTableLocator()->get('Authors');
         $articles = $authors->hasMany('Articles');
-        $articles->dependent(true);
-        $articles->cascadeCallbacks(true);
+        $articles->setDependent(true);
+        $articles->setCascadeCallbacks(true);
 
         $actualOptions = null;
-        $articles->target()->getEventManager()->on(
+        $articles->getTarget()->getEventManager()->on(
             'Model.beforeDelete',
             function (Event $event, Entity $entity, ArrayObject $options) use (&$actualOptions) {
                 $actualOptions = $options->getArrayCopy();
@@ -5271,7 +5297,7 @@ class TableTest extends TestCase
         $author->articles = [];
         $author->setDirty('articles', true);
 
-        $articles->unlink($author, [$articles->target()->get(1)], ['foo' => 'bar']);
+        $articles->unlink($author, [$articles->getTarget()->get(1)], ['foo' => 'bar']);
 
         $expected = [
             '_primary' => true,
@@ -5292,18 +5318,18 @@ class TableTest extends TestCase
     {
         $authors = $this->getTableLocator()->get('Authors');
         $articles = $authors->hasMany('Articles');
-        $articles->dependent(true);
-        $articles->cascadeCallbacks(true);
+        $articles->setDependent(true);
+        $articles->setCascadeCallbacks(true);
 
         $actualSaveOptions = null;
         $actualDeleteOptions = null;
-        $articles->target()->getEventManager()->on(
+        $articles->getTarget()->getEventManager()->on(
             'Model.beforeSave',
             function (Event $event, Entity $entity, ArrayObject $options) use (&$actualSaveOptions) {
                 $actualSaveOptions = $options->getArrayCopy();
             }
         );
-        $articles->target()->getEventManager()->on(
+        $articles->getTarget()->getEventManager()->on(
             'Model.beforeDelete',
             function (Event $event, Entity $entity, ArrayObject $options) use (&$actualDeleteOptions) {
                 $actualDeleteOptions = $options->getArrayCopy();
@@ -5315,8 +5341,8 @@ class TableTest extends TestCase
         $result = $articles->replace(
             $author,
             [
-                $articles->target()->newEntity(['title' => 'new', 'body' => 'new']),
-                $articles->target()->get(1)
+                $articles->getTarget()->newEntity(['title' => 'new', 'body' => 'new']),
+                $articles->getTarget()->get(1)
             ],
             ['foo' => 'bar']
         );
@@ -5367,12 +5393,12 @@ class TableTest extends TestCase
 
         $article = $articles->get(1);
 
-        $tags->unlink($article, [$tags->target()->get(1)], false);
+        $tags->unlink($article, [$tags->getTarget()->get(1)], false);
         $this->assertArrayHasKey('cleanProperty', $actualOptions);
         $this->assertFalse($actualOptions['cleanProperty']);
 
         $actualOptions = null;
-        $tags->unlink($article, [$tags->target()->get(2)]);
+        $tags->unlink($article, [$tags->getTarget()->get(2)]);
         $this->assertArrayHasKey('cleanProperty', $actualOptions);
         $this->assertTrue($actualOptions['cleanProperty']);
     }
@@ -5386,11 +5412,11 @@ class TableTest extends TestCase
     {
         $authors = $this->getTableLocator()->get('Authors');
         $articles = $authors->hasMany('Articles');
-        $articles->dependent(true);
-        $articles->cascadeCallbacks(true);
+        $articles->setDependent(true);
+        $articles->setCascadeCallbacks(true);
 
         $actualOptions = null;
-        $articles->target()->getEventManager()->on(
+        $articles->getTarget()->getEventManager()->on(
             'Model.beforeDelete',
             function (Event $event, Entity $entity, ArrayObject $options) use (&$actualOptions) {
                 $actualOptions = $options->getArrayCopy();
@@ -5401,12 +5427,12 @@ class TableTest extends TestCase
         $author->articles = [];
         $author->setDirty('articles', true);
 
-        $articles->unlink($author, [$articles->target()->get(1)], false);
+        $articles->unlink($author, [$articles->getTarget()->get(1)], false);
         $this->assertArrayHasKey('cleanProperty', $actualOptions);
         $this->assertFalse($actualOptions['cleanProperty']);
 
         $actualOptions = null;
-        $articles->unlink($author, [$articles->target()->get(3)]);
+        $articles->unlink($author, [$articles->getTarget()->get(3)]);
         $this->assertArrayHasKey('cleanProperty', $actualOptions);
         $this->assertTrue($actualOptions['cleanProperty']);
     }
@@ -5599,12 +5625,12 @@ class TableTest extends TestCase
     /**
      * Tests that get() will throw an exception if the record was not found
      *
-     * @expectedException \Cake\Datasource\Exception\RecordNotFoundException
-     * @expectedExceptionMessage Record not found in table "articles"
      * @return void
      */
     public function testGetNotFoundException()
     {
+        $this->expectException(\Cake\Datasource\Exception\RecordNotFoundException::class);
+        $this->expectExceptionMessage('Record not found in table "articles"');
         $table = new Table([
             'name' => 'Articles',
             'connection' => $this->connection,
@@ -5616,12 +5642,12 @@ class TableTest extends TestCase
     /**
      * Test that an exception is raised when there are not enough keys.
      *
-     * @expectedException \Cake\Datasource\Exception\InvalidPrimaryKeyException
-     * @expectedExceptionMessage Record not found in table "articles" with primary key [NULL]
      * @return void
      */
     public function testGetExceptionOnNoData()
     {
+        $this->expectException(\Cake\Datasource\Exception\InvalidPrimaryKeyException::class);
+        $this->expectExceptionMessage('Record not found in table "articles" with primary key [NULL]');
         $table = new Table([
             'name' => 'Articles',
             'connection' => $this->connection,
@@ -5633,12 +5659,12 @@ class TableTest extends TestCase
     /**
      * Test that an exception is raised when there are too many keys.
      *
-     * @expectedException \Cake\Datasource\Exception\InvalidPrimaryKeyException
-     * @expectedExceptionMessage Record not found in table "articles" with primary key [1, 'two']
      * @return void
      */
     public function testGetExceptionOnTooMuchData()
     {
+        $this->expectException(\Cake\Datasource\Exception\InvalidPrimaryKeyException::class);
+        $this->expectExceptionMessage('Record not found in table "articles" with primary key [1, \'two\']');
         $table = new Table([
             'name' => 'Articles',
             'connection' => $this->connection,
@@ -5990,7 +6016,7 @@ class TableTest extends TestCase
         $table = $this->getTableLocator()->get('Users');
         $validator = new Validator;
         $validator->add('username', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
-        $validator->provider('table', $table);
+        $validator->setProvider('table', $table);
 
         $data = ['username' => ['larry', 'notthere']];
         $this->assertNotEmpty($validator->errors($data));
@@ -6030,7 +6056,7 @@ class TableTest extends TestCase
             'rule' => ['validateUnique', ['derp' => 'erp', 'scope' => 'id']],
             'provider' => 'table'
         ]);
-        $validator->provider('table', $table);
+        $validator->setProvider('table', $table);
         $data = ['username' => 'larry', 'id' => 3];
         $this->assertNotEmpty($validator->errors($data));
 
@@ -6070,7 +6096,7 @@ class TableTest extends TestCase
             'provider' => 'table',
             'message' => 'Must be unique.',
         ]);
-        $validator->provider('table', $table);
+        $validator->setProvider('table', $table);
 
         $data = ['site_id' => 1, 'author_id' => null, 'title' => 'Null dupe'];
         $expected = ['site_id' => ['unique' => 'Must be unique.']];
@@ -6090,10 +6116,10 @@ class TableTest extends TestCase
         $eventManager = $table->getEventManager();
 
         $associationBeforeFindCount = 0;
-        $table->association('authors')->target()->getEventManager()->on(
+        $table->getAssociation('authors')->getTarget()->getEventManager()->on(
             'Model.beforeFind',
             function (Event $event, Query $query, ArrayObject $options, $primary) use (&$associationBeforeFindCount) {
-                $this->assertTrue(is_bool($primary));
+                $this->assertInternalType('bool', $primary);
                 $associationBeforeFindCount ++;
             }
         );
@@ -6102,7 +6128,7 @@ class TableTest extends TestCase
         $eventManager->on(
             'Model.beforeFind',
             function (Event $event, Query $query, ArrayObject $options, $primary) use (&$beforeFindCount) {
-                $this->assertTrue(is_bool($primary));
+                $this->assertInternalType('bool', $primary);
                 $beforeFindCount ++;
             }
         );
@@ -6114,7 +6140,7 @@ class TableTest extends TestCase
         $eventManager->on(
             'Model.buildValidator',
             $callback = function (Event $event, Validator $validator, $name) use (&$buildValidatorCount) {
-                $this->assertTrue(is_string($name));
+                $this->assertInternalType('string', $name);
                 $buildValidatorCount ++;
             }
         );
@@ -6135,15 +6161,15 @@ class TableTest extends TestCase
         $eventManager->on(
             'Model.beforeRules',
             function (Event $event, Entity $entity, ArrayObject $options, $operation) use (&$beforeRulesCount) {
-                $this->assertTrue(is_string($operation));
+                $this->assertInternalType('string', $operation);
                 $beforeRulesCount ++;
             }
         );
         $eventManager->on(
             'Model.afterRules',
             function (Event $event, Entity $entity, ArrayObject $options, $result, $operation) use (&$afterRulesCount) {
-                $this->assertTrue(is_bool($result));
-                $this->assertTrue(is_string($operation));
+                $this->assertInternalType('bool', $result);
+                $this->assertInternalType('string', $operation);
                 $afterRulesCount ++;
             }
         );
@@ -6462,11 +6488,11 @@ class TableTest extends TestCase
      * Tests that saveOrFail triggers an exception on not successful save
      *
      * @return void
-     * @expectedException \Cake\ORM\Exception\PersistenceFailedException
-     * @expectedExceptionMessage Entity save failure.
      */
     public function testSaveOrFail()
     {
+        $this->expectException(\Cake\ORM\Exception\PersistenceFailedException::class);
+        $this->expectExceptionMessage('Entity save failure.');
         $entity = new Entity([
             'foo' => 'bar'
         ]);
@@ -6501,11 +6527,11 @@ class TableTest extends TestCase
      * Tests that deleteOrFail triggers an exception on not successful delete
      *
      * @return void
-     * @expectedException \Cake\ORM\Exception\PersistenceFailedException
-     * @expectedExceptionMessage Entity delete failure.
      */
     public function testDeleteOrFail()
     {
+        $this->expectException(\Cake\ORM\Exception\PersistenceFailedException::class);
+        $this->expectExceptionMessage('Entity delete failure.');
         $entity = new Entity([
             'id' => 999
         ]);
@@ -6553,7 +6579,7 @@ class TableTest extends TestCase
     public function skipIfSqlServer()
     {
         $this->skipIf(
-            $this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver,
+            $this->connection->getDriver() instanceof \Cake\Database\Driver\Sqlserver,
             'SQLServer does not support the requirements of this test.'
         );
     }

@@ -35,7 +35,7 @@ class SqliteSchemaTest extends TestCase
      */
     protected function _needsConnection()
     {
-        $config = ConnectionManager::config('test');
+        $config = ConnectionManager::getConfig('test');
         $this->skipIf(strpos($config['driver'], 'Sqlite') === false, 'Not using Sqlite for test config');
     }
 
@@ -82,6 +82,10 @@ class SqliteSchemaTest extends TestCase
             [
                 'CHAR(36)',
                 ['type' => 'uuid', 'length' => null]
+            ],
+            [
+                'BINARY(16)',
+                ['type' => 'binaryuuid', 'length' => null]
             ],
             [
                 'BLOB',
@@ -486,6 +490,11 @@ SQL;
                 'id',
                 ['type' => 'uuid'],
                 '"id" CHAR(36)'
+            ],
+            [
+                'id',
+                ['type' => 'binaryuuid'],
+                '"id" BINARY(16)'
             ],
             // Text
             [
@@ -907,7 +916,7 @@ SQL;
             'type' => 'integer',
             'null' => false
         ]);
-        $table->temporary(true);
+        $table->setTemporary(true);
         $sql = $table->createSql($connection);
         $this->assertContains('CREATE TEMPORARY TABLE', $sql[0]);
     }

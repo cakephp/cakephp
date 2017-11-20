@@ -292,12 +292,12 @@ class MiddlewareQueueTest extends TestCase
     /**
      * Test insertBefore an invalid classname
      *
-     * @expectedException \LogicException
-     * @expectedExceptionMessage No middleware matching 'InvalidClassName' could be found.
      * @return void
      */
     public function testInsertBeforeInvalid()
     {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('No middleware matching \'InvalidClassName\' could be found.');
         $one = function () {
         };
         $two = new SampleMiddleware();

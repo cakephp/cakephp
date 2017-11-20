@@ -16,7 +16,6 @@ namespace Cake\View\Helper;
 
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
-use Cake\Form\Form;
 use Cake\Routing\Router;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
@@ -403,7 +402,7 @@ class FormHelper extends Helper
         unset($options['templates']);
 
         if ($options['action'] === false || $options['url'] === false) {
-            $url = $this->request->here(false);
+            $url = $this->request->getRequestTarget();
             $action = null;
         } else {
             $url = $this->_formUrl($context, $options);
@@ -482,7 +481,7 @@ class FormHelper extends Helper
     protected function _formUrl($context, $options)
     {
         if ($options['action'] === null && $options['url'] === null) {
-            return $this->request->here(false);
+            return $this->request->getRequestTarget();
         }
 
         if (is_string($options['url']) ||
@@ -950,6 +949,11 @@ class FormHelper extends Helper
      */
     public function allInputs(array $fields = [], array $options = [])
     {
+        deprecationWarning(
+            'FormHelper::allInputs() is deprecated. ' .
+            'Use FormHelper::allControlls() instead.'
+        );
+
         return $this->allControls($fields, $options);
     }
 
@@ -1008,6 +1012,11 @@ class FormHelper extends Helper
      */
     public function inputs(array $fields, array $options = [])
     {
+        deprecationWarning(
+            'FormHelper::inputs() is deprecated. ' .
+            'Use FormHelper::controls() instead.'
+        );
+
         return $this->controls($fields, $options);
     }
 
@@ -1186,6 +1195,11 @@ class FormHelper extends Helper
      */
     public function input($fieldName, array $options = [])
     {
+        deprecationWarning(
+            'FormHelper::input() is deprecated. ' .
+            'Use FormHelper::control() instead.'
+        );
+
         return $this->control($fieldName, $options);
     }
 
@@ -2841,14 +2855,23 @@ class FormHelper extends Helper
      */
     public function getSourceValue($fieldname, $options = [])
     {
+        $valueMap = [
+            'data' => 'getData',
+            'query' => 'getQuery'
+        ];
         foreach ($this->getValueSources() as $valuesSource) {
             if ($valuesSource === 'context') {
                 $val = $this->_getContext()->val($fieldname, $options);
                 if ($val !== null) {
                     return $val;
                 }
-            } elseif ($this->request->{$valuesSource}($fieldname) !== null) {
-                return $this->request->{$valuesSource}($fieldname);
+            }
+            if (isset($valueMap[$valuesSource])) {
+                $method = $valueMap[$valuesSource];
+                $value = $this->request->{$method}($fieldname);
+                if ($value !== null) {
+                    return $value;
+                }
             }
         }
 

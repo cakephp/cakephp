@@ -35,7 +35,7 @@ class MysqlSchemaTest extends TestCase
      */
     protected function _needsConnection()
     {
-        $config = ConnectionManager::config('test');
+        $config = ConnectionManager::getConfig('test');
         $this->skipIf(strpos($config['driver'], 'Mysql') === false, 'Not using Mysql for test config');
     }
 
@@ -118,6 +118,10 @@ class MysqlSchemaTest extends TestCase
             [
                 'CHAR(36)',
                 ['type' => 'uuid', 'length' => null]
+            ],
+            [
+                'BINARY(16)',
+                ['type' => 'binaryuuid', 'length' => null]
             ],
             [
                 'TEXT',
@@ -267,7 +271,7 @@ SQL;
 SQL;
         $connection->execute($table);
 
-        if ($connection->driver()->supportsNativeJson()) {
+        if ($connection->getDriver()->supportsNativeJson()) {
             $table = <<<SQL
                 CREATE TABLE schema_json (
                     id INT(11) PRIMARY KEY AUTO_INCREMENT,
@@ -529,6 +533,11 @@ SQL;
                 'id',
                 ['type' => 'uuid'],
                 '`id` CHAR(36)'
+            ],
+            [
+                'id',
+                ['type' => 'binaryuuid'],
+                '`id` BINARY(16)'
             ],
             [
                 'title',
@@ -1145,7 +1154,7 @@ SQL;
             'type' => 'integer',
             'null' => false
         ]);
-        $table->temporary(true);
+        $table->setTemporary(true);
         $sql = $table->createSql($connection);
         $this->assertContains('CREATE TEMPORARY TABLE', $sql[0]);
     }
@@ -1278,7 +1287,7 @@ SQL;
     {
         $connection = ConnectionManager::get('test');
         $this->_createTables($connection);
-        $this->skipIf(!$connection->driver()->supportsNativeJson(), 'Does not support native json');
+        $this->skipIf(!$connection->getDriver()->supportsNativeJson(), 'Does not support native json');
 
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_json');

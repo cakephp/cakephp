@@ -725,11 +725,13 @@ trait CollectionTrait
      * Backwards compatible wrapper for unwrap()
      *
      * @return \Traversable
-     * @deprecated
+     * @deprecated 3.0.10 Will be removed in 4.0.0
      */
     // @codingStandardsIgnoreLine
     public function _unwrap()
     {
+        deprecationWarning('CollectionTrait::_unwrap() is deprecated. Use CollectionTrait::unwrap() instead.');
+
         return $this->unwrap();
     }
 
@@ -819,7 +821,7 @@ trait CollectionTrait
     {
         $iterator = $this->unwrap();
 
-        if ($iterator instanceof ArrayIterator) {
+        if (get_class($iterator) === ArrayIterator::class) {
             $iterator = $iterator->getArrayCopy();
         }
 

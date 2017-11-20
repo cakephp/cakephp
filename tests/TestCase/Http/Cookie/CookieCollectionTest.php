@@ -13,7 +13,6 @@
 namespace Cake\Test\TestCase\Http\Cookie;
 
 use Cake\Http\Client\Request as ClientRequest;
-use Cake\Http\Client\Response as ClientResponse;
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Response;
@@ -180,12 +179,12 @@ class CookieCollectionTest extends TestCase
      * Test that the constructor takes only an array of objects implementing
      * the CookieInterface
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Expected `Cake\Http\Cookie\CookieCollection[]` as $cookies but instead got `array` at index 1
      * @return void
      */
     public function testConstructorWithInvalidCookieObjects()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Expected `Cake\Http\Cookie\CookieCollection[]` as $cookies but instead got `array` at index 1');
         $array = [
             new Cookie('one', 'one'),
             []

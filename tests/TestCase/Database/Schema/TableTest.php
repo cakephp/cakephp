@@ -396,11 +396,11 @@ class TableTest extends TestCase
      * are added for fields that do not exist.
      *
      * @dataProvider addConstraintErrorProvider
-     * @expectedException \Cake\Database\Exception
      * @return void
      */
     public function testAddConstraintError($props)
     {
+        $this->expectException(\Cake\Database\Exception::class);
         $table = new Table('articles');
         $table->addColumn('author_id', 'integer');
         $table->addConstraint('author_idx', $props);
@@ -450,11 +450,11 @@ class TableTest extends TestCase
      * are added for fields that do not exist.
      *
      * @dataProvider addIndexErrorProvider
-     * @expectedException \Cake\Database\Exception
      * @return void
      */
     public function testAddIndexError($props)
     {
+        $this->expectException(\Cake\Database\Exception::class);
         $table = new Table('articles');
         $table->addColumn('author_id', 'integer');
         $table->addIndex('author_idx', $props);
@@ -514,7 +514,7 @@ class TableTest extends TestCase
     }
 
     /**
-     * Test the options method.
+     * Test the setOptions/getOptions methods.
      *
      * @return void
      */
@@ -537,15 +537,15 @@ class TableTest extends TestCase
      */
     public function testOptionsDeprecated()
     {
-        $errorLevel = error_reporting(E_ALL & ~E_USER_DEPRECATED);
         $table = new Table('articles');
         $options = [
             'engine' => 'InnoDB'
         ];
-        $return = $table->options($options);
-        $this->assertInstanceOf('Cake\Database\Schema\Table', $return);
-        $this->assertEquals($options, $table->options());
-        error_reporting($errorLevel);
+        $this->deprecated(function () use ($table, $options) {
+            $return = $table->options($options);
+            $this->assertInstanceOf('Cake\Database\Schema\Table', $return);
+            $this->assertEquals($options, $table->options());
+        });
     }
 
     /**
@@ -655,11 +655,11 @@ class TableTest extends TestCase
      * Add a foreign key constraint with bad data
      *
      * @dataProvider badForeignKeyProvider
-     * @expectedException \Cake\Database\Exception
      * @return void
      */
     public function testAddConstraintForeignKeyBadData($data)
     {
+        $this->expectException(\Cake\Database\Exception::class);
         $table = new Table('articles');
         $table->addColumn('author_id', 'integer')
             ->addConstraint('author_id_idx', $data);
@@ -672,12 +672,30 @@ class TableTest extends TestCase
      */
     public function testTemporary()
     {
+        $this->deprecated(function () {
+            $table = new Table('articles');
+            $this->assertFalse($table->temporary());
+            $this->assertSame($table, $table->temporary(true));
+            $this->assertTrue($table->temporary());
+            $table->temporary(false);
+            $this->assertFalse($table->temporary());
+        });
+    }
+
+    /**
+     * Tests the setTemporary() & isTemporary() method
+     *
+     * @return void
+     */
+    public function testSetTemporary()
+    {
         $table = new Table('articles');
-        $this->assertFalse($table->temporary());
-        $this->assertSame($table, $table->temporary(true));
-        $this->assertTrue($table->temporary());
-        $table->temporary(false);
-        $this->assertFalse($table->temporary());
+        $this->assertFalse($table->isTemporary());
+        $this->assertSame($table, $table->setTemporary(true));
+        $this->assertTrue($table->isTemporary());
+
+        $table->setTemporary(false);
+        $this->assertFalse($table->isTemporary());
     }
 
     /**

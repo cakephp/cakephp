@@ -34,7 +34,7 @@ class HelpFormatterTest extends TestCase
     public function testWidthFormatting()
     {
         $parser = new ConsoleOptionParser('test', false);
-        $parser->description('This is fifteen This is fifteen This is fifteen')
+        $parser->setDescription('This is fifteen This is fifteen This is fifteen')
             ->addOption('four', ['help' => 'this is help text this is help text'])
             ->addArgument('four', ['help' => 'this is help text this is help text'])
             ->addSubcommand('four', ['help' => 'this is help text this is help text']);
@@ -115,8 +115,8 @@ txt;
     public function testHelpDescriptionAndEpilog()
     {
         $parser = new ConsoleOptionParser('mycommand', false);
-        $parser->description('Description text')
-            ->epilog('epilog text')
+        $parser->setDescription('Description text')
+            ->setEpilog('epilog text')
             ->addOption('test', ['help' => 'A test option.'])
             ->addArgument('model', ['help' => 'The model to make.', 'required' => true]);
 
@@ -311,12 +311,12 @@ xml;
     /**
      * Tests that setting a none string help alias triggers an exception
      *
-     * @expectedException \Cake\Console\Exception\ConsoleException
-     * @expectedExceptionMessage Alias must be of type string.
      * @return void
      */
     public function testWithNoneStringHelpAlias()
     {
+        $this->expectException(\Cake\Console\Exception\ConsoleException::class);
+        $this->expectExceptionMessage('Alias must be of type string.');
         $parser = new ConsoleOptionParser('mycommand', false);
         $formatter = new HelpFormatter($parser);
         $formatter->setAlias(['foo']);
@@ -384,8 +384,8 @@ xml;
     public function testXmlHelpDescriptionAndEpilog()
     {
         $parser = new ConsoleOptionParser('mycommand', false);
-        $parser->description('Description text')
-            ->epilog('epilog text')
+        $parser->setDescription('Description text')
+            ->setEpilog('epilog text')
             ->addOption('test', ['help' => 'A test option.'])
             ->addArgument('model', ['help' => 'The model to make.', 'required' => true]);
 

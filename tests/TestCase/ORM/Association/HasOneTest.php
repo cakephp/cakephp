@@ -65,16 +65,34 @@ class HasOneTest extends TestCase
     /**
      * Tests that foreignKey() returns the correct configured value
      *
+     * @group deprecated
      * @return void
      */
     public function testForeignKey()
     {
+        $this->deprecated(function () {
+            $assoc = new HasOne('Profiles', [
+                'sourceTable' => $this->user
+            ]);
+            $this->assertEquals('user_id', $assoc->foreignKey());
+            $this->assertEquals('another_key', $assoc->foreignKey('another_key'));
+            $this->assertEquals('another_key', $assoc->foreignKey());
+        });
+    }
+
+    /**
+     * Tests that setForeignKey() returns the correct configured value
+     *
+     * @return void
+     */
+    public function testSetForeignKey()
+    {
         $assoc = new HasOne('Profiles', [
             'sourceTable' => $this->user
         ]);
-        $this->assertEquals('user_id', $assoc->foreignKey());
-        $this->assertEquals('another_key', $assoc->foreignKey('another_key'));
-        $this->assertEquals('another_key', $assoc->foreignKey());
+        $this->assertEquals('user_id', $assoc->getForeignKey());
+        $this->assertEquals($assoc, $assoc->setForeignKey('another_key'));
+        $this->assertEquals('another_key', $assoc->getForeignKey());
     }
 
     /**
@@ -190,12 +208,12 @@ class HasOneTest extends TestCase
      * Tests that using hasOne with a table having a multi column primary
      * key will work if the foreign key is passed
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Cannot match provided foreignKey for "Profiles", got "(user_id)" but expected foreign key for "(id, site_id)"
      * @return void
      */
     public function testAttachToMultiPrimaryKeyMismatch()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Cannot match provided foreignKey for "Profiles", got "(user_id)" but expected foreign key for "(id, site_id)"');
         $query = $this->getMockBuilder('\Cake\ORM\Query')
             ->setMethods(['join', 'select'])
             ->setConstructorArgs([null, null])
@@ -249,7 +267,7 @@ class HasOneTest extends TestCase
     {
         $config = ['propertyName' => 'thing_placeholder'];
         $association = new hasOne('Thing', $config);
-        $this->assertEquals('thing_placeholder', $association->property());
+        $this->assertEquals('thing_placeholder', $association->getProperty());
     }
 
     /**
@@ -264,7 +282,7 @@ class HasOneTest extends TestCase
             'targetTable' => $this->profile,
         ];
         $association = new HasOne('Contacts.Profiles', $config);
-        $this->assertEquals('profile', $association->property());
+        $this->assertEquals('profile', $association->getProperty());
     }
 
     /**

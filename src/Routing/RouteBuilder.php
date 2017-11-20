@@ -152,6 +152,10 @@ class RouteBuilder
      */
     public function routeClass($routeClass = null)
     {
+        deprecationWarning(
+            'RouteBuilder::routeClass() is deprecated. ' .
+            'Use RouteBuilder::setRouteClass()/getRouteClass() instead.'
+        );
         if ($routeClass === null) {
             return $this->getRouteClass();
         }
@@ -193,6 +197,10 @@ class RouteBuilder
      */
     public function extensions($extensions = null)
     {
+        deprecationWarning(
+            'RouteBuilder::extensions() is deprecated. ' .
+            'Use RouteBuilder::setExtensions()/getExtensions() instead.'
+        );
         if ($extensions === null) {
             return $this->getExtensions();
         }
@@ -970,7 +978,7 @@ class RouteBuilder
      * scope or any child scopes that share the same RouteCollection.
      *
      * @param string $name The name of the middleware. Used when applying middleware to a scope.
-     * @param callable $middleware The middleware object to register.
+     * @param callable|string $middleware The middleware callable or class name to register.
      * @return $this
      * @see \Cake\Routing\RouteCollection
      */

@@ -38,17 +38,17 @@ class ClientTest extends TestCase
             'host' => 'example.org',
         ];
         $http = new Client($config);
-        $result = $http->config();
+        $result = $http->getConfig();
         foreach ($config as $key => $val) {
             $this->assertEquals($val, $result[$key]);
         }
 
-        $result = $http->config([
+        $result = $http->setConfig([
             'auth' => ['username' => 'mark', 'password' => 'secret']
         ]);
         $this->assertSame($result, $http);
 
-        $result = $http->config();
+        $result = $http->getConfig();
         $expected = [
             'scheme' => 'http',
             'host' => 'example.org',
@@ -358,11 +358,11 @@ class ClientTest extends TestCase
     /**
      * Test invalid authentication types throw exceptions.
      *
-     * @expectedException \Cake\Core\Exception\Exception
      * @return void
      */
     public function testInvalidAuthenticationType()
     {
+        $this->expectException(\Cake\Core\Exception\Exception::class);
         $mock = $this->getMockBuilder('Cake\Http\Client\Adapter\Stream')
             ->setMethods(['send'])
             ->getMock();
@@ -420,40 +420,43 @@ class ClientTest extends TestCase
     /**
      * Test authentication adapter that mutates request.
      *
+     * @group deprecated
      * @return void
      */
     public function testAuthenticationWithMutation()
     {
-        static::setAppNamespace();
-        $response = new Response();
-        $mock = $this->getMockBuilder('Cake\Http\Client\Adapter\Stream')
-            ->setMethods(['send'])
-            ->getMock();
-        $headers = [
-            'Authorization' => 'Bearer abc123',
-            'Proxy-Authorization' => 'Bearer abc123',
-        ];
-        $mock->expects($this->once())
-            ->method('send')
-            ->with($this->callback(function ($request) use ($headers) {
-                $this->assertEquals(Request::METHOD_GET, $request->getMethod());
-                $this->assertEquals('http://cakephp.org/', '' . $request->getUri());
-                $this->assertEquals($headers['Authorization'], $request->getHeaderLine('Authorization'));
-                $this->assertEquals($headers['Proxy-Authorization'], $request->getHeaderLine('Proxy-Authorization'));
+        $this->deprecated(function () {
+            static::setAppNamespace();
+            $response = new Response();
+            $mock = $this->getMockBuilder('Cake\Http\Client\Adapter\Stream')
+                ->setMethods(['send'])
+                ->getMock();
+            $headers = [
+                'Authorization' => 'Bearer abc123',
+                'Proxy-Authorization' => 'Bearer abc123',
+            ];
+            $mock->expects($this->once())
+                ->method('send')
+                ->with($this->callback(function ($request) use ($headers) {
+                    $this->assertEquals(Request::METHOD_GET, $request->getMethod());
+                    $this->assertEquals('http://cakephp.org/', '' . $request->getUri());
+                    $this->assertEquals($headers['Authorization'], $request->getHeaderLine('Authorization'));
+                    $this->assertEquals($headers['Proxy-Authorization'], $request->getHeaderLine('Proxy-Authorization'));
 
-                return true;
-            }))
-            ->will($this->returnValue([$response]));
+                    return true;
+                }))
+                ->will($this->returnValue([$response]));
 
-        $http = new Client([
-            'host' => 'cakephp.org',
-            'adapter' => $mock
-        ]);
-        $result = $http->get('/', [], [
-            'auth' => ['type' => 'TestApp\Http\CompatAuth'],
-            'proxy' => ['type' => 'TestApp\Http\CompatAuth'],
-        ]);
-        $this->assertSame($result, $response);
+            $http = new Client([
+                'host' => 'cakephp.org',
+                'adapter' => $mock
+            ]);
+            $result = $http->get('/', [], [
+                'auth' => ['type' => 'TestApp\Http\CompatAuth'],
+                'proxy' => ['type' => 'TestApp\Http\CompatAuth'],
+            ]);
+            $this->assertSame($result, $response);
+        });
     }
 
     /**
@@ -591,11 +594,11 @@ class ClientTest extends TestCase
     /**
      * Test that exceptions are raised on invalid types.
      *
-     * @expectedException \Cake\Core\Exception\Exception
      * @return void
      */
     public function testExceptionOnUnknownType()
     {
+        $this->expectException(\Cake\Core\Exception\Exception::class);
         $mock = $this->getMockBuilder('Cake\Http\Client\Adapter\Stream')
             ->setMethods(['send'])
             ->getMock();
@@ -677,11 +680,11 @@ class ClientTest extends TestCase
      * Test addCookie() method without a domain.
      *
      * @return void
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Cookie must have a domain and a path set.
      */
     public function testAddCookieWithoutDomain()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cookie must have a domain and a path set.');
         $client = new Client();
         $cookie = new Cookie('foo', '', null, '/', '');
 
@@ -695,11 +698,11 @@ class ClientTest extends TestCase
      * Test addCookie() method without a path.
      *
      * @return void
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Cookie must have a domain and a path set.
      */
     public function testAddCookieWithoutPath()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cookie must have a domain and a path set.');
         $client = new Client();
         $cookie = new Cookie('foo', '', null, '', 'example.com');
 
@@ -822,9 +825,9 @@ class ClientTest extends TestCase
 
         $this->assertInstanceOf(Response::class, $result);
         $this->assertTrue($result->isOk());
-        $cookies = $client->cookies()->get($url);
+        $cookies = $client->cookies();
 
-        $this->assertArrayHasKey('redirect1', $cookies);
-        $this->assertArrayHasKey('redirect2', $cookies);
+        $this->assertTrue($cookies->has('redirect1'));
+        $this->assertTrue($cookies->has('redirect2'));
     }
 }

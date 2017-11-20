@@ -129,11 +129,11 @@ class XmlTest extends TestCase
     /**
      * Test that the readFile option disables local file parsing.
      *
-     * @expectedException \Cake\Utility\Exception\XmlException
      * @return void
      */
     public function testBuildFromFileWhenDisabled()
     {
+        $this->expectException(\Cake\Utility\Exception\XmlException::class);
         $xml = CORE_TESTS . 'Fixture/sample.xml';
         $obj = Xml::build($xml, ['readFile' => false]);
     }
@@ -198,22 +198,22 @@ class XmlTest extends TestCase
      * testBuildInvalidData
      *
      * @dataProvider invalidDataProvider
-     * @expectedException \RuntimeException
      * @return void
      */
     public function testBuildInvalidData($value)
     {
+        $this->expectException(\RuntimeException::class);
         Xml::build($value);
     }
 
     /**
      * Test that building SimpleXmlElement with invalid XML causes the right exception.
      *
-     * @expectedException \Cake\Utility\Exception\XmlException
      * @return void
      */
     public function testBuildInvalidDataSimpleXml()
     {
+        $this->expectException(\Cake\Utility\Exception\XmlException::class);
         $input = '<derp';
         Xml::build($input, ['return' => 'simplexml']);
     }
@@ -591,11 +591,11 @@ XML;
      * testFromArrayFail method
      *
      * @dataProvider invalidArrayDataProvider
-     * @expectedException \Exception
      * @return void
      */
     public function testFromArrayFail($value)
     {
+        $this->expectException(\Exception::class);
         Xml::fromArray($value);
     }
 
@@ -1168,11 +1168,11 @@ XML;
      * testToArrayFail method
      *
      * @dataProvider invalidToArrayDataProvider
-     * @expectedException \Cake\Utility\Exception\XmlException
      * @return void
      */
     public function testToArrayFail($value)
     {
+        $this->expectException(\Cake\Utility\Exception\XmlException::class);
         Xml::toArray($value);
     }
 

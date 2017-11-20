@@ -37,6 +37,7 @@ class Type implements TypeInterface
         'integer' => 'Cake\Database\Type\IntegerType',
         'biginteger' => 'Cake\Database\Type\IntegerType',
         'binary' => 'Cake\Database\Type\BinaryType',
+        'binaryuuid' => 'Cake\Database\Type\BinaryUuidType',
         'boolean' => 'Cake\Database\Type\BoolType',
         'date' => 'Cake\Database\Type\DateType',
         'datetime' => 'Cake\Database\Type\DateTimeType',
@@ -222,6 +223,7 @@ class Type implements TypeInterface
      */
     protected function _basicTypeCast($value)
     {
+        deprecationWarning('Type::_basicTypeCast() is deprecated.');
         if ($value === null) {
             return null;
         }
@@ -258,6 +260,7 @@ class Type implements TypeInterface
      */
     public static function boolval($value)
     {
+        deprecationWarning('Type::boolval() is deprecated.');
         if (is_string($value) && !is_numeric($value)) {
             return strtolower($value) === 'true';
         }
@@ -276,6 +279,7 @@ class Type implements TypeInterface
      */
     public static function strval($value)
     {
+        deprecationWarning('Type::strval() is deprecated.');
         if (is_array($value)) {
             $value = '';
         }

@@ -159,7 +159,7 @@ class UrlHelper extends Helper
             $path .= $options['ext'];
         }
         if (preg_match('|^([a-z0-9]+:)?//|', $path)) {
-            return $path;
+            return $this->build($path);
         }
         if (isset($plugin)) {
             $path = Inflector::underscore($plugin) . '/' . $path;
@@ -209,18 +209,16 @@ class UrlHelper extends Helper
             );
             $webrootPath = WWW_ROOT . str_replace('/', DIRECTORY_SEPARATOR, $filepath);
             if (file_exists($webrootPath)) {
-                //@codingStandardsIgnoreStart
-                return $path . '?' . @filemtime($webrootPath);
-                //@codingStandardsIgnoreEnd
+                return $path . '?' . filemtime($webrootPath);
             }
             $segments = explode('/', ltrim($filepath, '/'));
             $plugin = Inflector::camelize($segments[0]);
             if (Plugin::loaded($plugin)) {
                 unset($segments[0]);
                 $pluginPath = Plugin::path($plugin) . 'webroot' . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $segments);
-                //@codingStandardsIgnoreStart
-                return $path . '?' . @filemtime($pluginPath);
-                //@codingStandardsIgnoreEnd
+                if (file_exists($pluginPath)) {
+                    return $path . '?' . filemtime($pluginPath);
+                }
             }
         }
 

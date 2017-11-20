@@ -79,12 +79,12 @@ class CsrfProtectionMiddlewareTest extends TestCase
         $response = new Response();
 
         $closure = function ($request, $response) {
-            $cookie = $response->cookie('csrfToken');
+            $cookie = $response->getCookie('csrfToken');
             $this->assertNotEmpty($cookie, 'Should set a token.');
             $this->assertRegExp('/^[a-f0-9]+$/', $cookie['value'], 'Should look like a hash.');
             $this->assertEquals(0, $cookie['expire'], 'session duration.');
             $this->assertEquals('/dir/', $cookie['path'], 'session path.');
-            $this->assertEquals($cookie['value'], $request->params['_csrfToken']);
+            $this->assertEquals($cookie['value'], $request->getParam('_csrfToken'));
         };
 
         $middleware = new CsrfProtectionMiddleware();
@@ -142,11 +142,11 @@ class CsrfProtectionMiddlewareTest extends TestCase
      * Test that the X-CSRF-Token works with the various http methods.
      *
      * @dataProvider httpMethodProvider
-     * @expectedException \Cake\Network\Exception\InvalidCsrfTokenException
      * @return void
      */
     public function testInvalidTokenInHeader($method)
     {
+        $this->expectException(\Cake\Network\Exception\InvalidCsrfTokenException::class);
         $request = new ServerRequest([
             'environment' => [
                 'REQUEST_METHOD' => $method,
@@ -191,11 +191,11 @@ class CsrfProtectionMiddlewareTest extends TestCase
      * Test that request data works with the various http methods.
      *
      * @dataProvider httpMethodProvider
-     * @expectedException \Cake\Network\Exception\InvalidCsrfTokenException
      * @return void
      */
     public function testInvalidTokenRequestData($method)
     {
+        $this->expectException(\Cake\Network\Exception\InvalidCsrfTokenException::class);
         $request = new ServerRequest([
             'environment' => [
                 'REQUEST_METHOD' => $method,
@@ -212,11 +212,11 @@ class CsrfProtectionMiddlewareTest extends TestCase
     /**
      * Test that missing post field fails
      *
-     * @expectedException \Cake\Network\Exception\InvalidCsrfTokenException
      * @return void
      */
     public function testInvalidTokenRequestDataMissing()
     {
+        $this->expectException(\Cake\Network\Exception\InvalidCsrfTokenException::class);
         $request = new ServerRequest([
             'environment' => [
                 'REQUEST_METHOD' => 'POST',
@@ -234,11 +234,11 @@ class CsrfProtectionMiddlewareTest extends TestCase
      * Test that missing header and cookie fails
      *
      * @dataProvider httpMethodProvider
-     * @expectedException \Cake\Network\Exception\InvalidCsrfTokenException
      * @return void
      */
     public function testInvalidTokenMissingCookie($method)
     {
+        $this->expectException(\Cake\Network\Exception\InvalidCsrfTokenException::class);
         $request = new ServerRequest([
             'environment' => [
                 'REQUEST_METHOD' => $method
@@ -266,8 +266,8 @@ class CsrfProtectionMiddlewareTest extends TestCase
         $response = new Response();
 
         $closure = function ($request, $response) {
-            $this->assertEmpty($response->cookie('csrfToken'));
-            $cookie = $response->cookie('token');
+            $this->assertEmpty($response->getCookie('csrfToken'));
+            $cookie = $response->getCookie('token');
             $this->assertNotEmpty($cookie, 'Should set a token.');
             $this->assertRegExp('/^[a-f0-9]+$/', $cookie['value'], 'Should look like a hash.');
             $this->assertWithinRange((new Time('+1 hour'))->format('U'), $cookie['expire'], 1, 'session duration.');

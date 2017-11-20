@@ -161,11 +161,11 @@ class QueryRegressionTest extends TestCase
     /**
      * Tests that eagerloading belongsToMany with find list fails with a helpful message.
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testEagerLoadingBelongsToManyList()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->loadFixtures('Articles', 'Tags', 'ArticlesTags');
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags', [
@@ -227,11 +227,11 @@ class QueryRegressionTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsTo('Authors');
         $table->hasOne('Things', ['propertyName' => 'articles_tag']);
-        $table->Authors->target()->hasOne('Stuff', [
+        $table->Authors->getTarget()->hasOne('Stuff', [
             'foreignKey' => 'id',
             'propertyName' => 'favorite_tag'
         ]);
-        $table->Things->target()->belongsTo('Stuff', [
+        $table->Things->getTarget()->belongsTo('Stuff', [
             'foreignKey' => 'tag_id',
             'propertyName' => 'foo'
         ]);
@@ -666,7 +666,7 @@ class QueryRegressionTest extends TestCase
         $tags = $this->getTableLocator()->get('Tags');
 
         $this->skipIf(
-            $tags->connection()->driver() instanceof \Cake\Database\Driver\Sqlserver,
+            $tags->connection()->getDriver() instanceof \Cake\Database\Driver\Sqlserver,
             'SQL server is temporarily weird in this test, will investigate later'
         );
         $tags = $this->getTableLocator()->get('Tags');
@@ -759,7 +759,7 @@ class QueryRegressionTest extends TestCase
         ]));
         $this->assertNotFalse($result);
 
-        $table->eventManager()
+        $table->getEventManager()
             ->on('Model.beforeFind', function (Event $event, $query) {
                 $query->contain(['Authors']);
             });
@@ -996,11 +996,11 @@ class QueryRegressionTest extends TestCase
      * Tests that trying to contain an inexistent association
      * throws an exception and not a fatal error.
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testQueryNotFatalError()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->loadFixtures('Comments');
         $comments = $this->getTableLocator()->get('Comments');
         $comments->find()->contain('Deprs')->all();
@@ -1168,13 +1168,13 @@ class QueryRegressionTest extends TestCase
         $ratio = $table->find()
             ->select(function ($query) use ($table) {
                 $allCommentsCount = $table->find()->select($query->func()->count('*'));
-                $countToFloat = $query->newExpr([$query->func()->count('*'), '1.0'])->type('*');
+                $countToFloat = $query->newExpr([$query->func()->count('*'), '1.0'])->setConjunction('*');
 
                 return [
                     'ratio' => $query
                         ->newExpr($countToFloat)
                         ->add($allCommentsCount)
-                        ->type('/')
+                        ->setConjunction('/')
                 ];
             })
             ->where(['user_id' => 1])
@@ -1703,11 +1703,11 @@ class QueryRegressionTest extends TestCase
         $this->loadFixtures('Authors', 'Articles', 'Tags', 'ArticlesTags');
         $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles');
-        $articles = $table->association('articles')->target();
+        $articles = $table->getAssociation('articles')->getTarget();
         $articles->hasMany('articlesTags');
-        $tags = $articles->association('articlesTags')->target()->belongsTo('tags');
+        $tags = $articles->getAssociation('articlesTags')->getTarget()->belongsTo('tags');
 
-        $tags->target()->getEventManager()->on('Model.beforeFind', function ($e, $query) {
+        $tags->getTarget()->getEventManager()->on('Model.beforeFind', function ($e, $query) {
             return $query->formatResults(function ($results) {
                 return $results->map(function (\Cake\ORM\Entity $tag) {
                     $tag->name .= ' - visited';

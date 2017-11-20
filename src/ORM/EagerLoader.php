@@ -208,6 +208,10 @@ class EagerLoader
      */
     public function autoFields($enable = null)
     {
+        deprecationWarning(
+            'EagerLoader::autoFields() is deprecated. ' .
+            'Use enableAutoFields()/isAutoFieldsEnabled() instead.'
+        );
         if ($enable !== null) {
             $this->enableAutoFields($enable);
         }
@@ -295,6 +299,10 @@ class EagerLoader
      */
     public function matching($assoc = null, callable $builder = null, $options = [])
     {
+        deprecationWarning(
+            'EagerLoader::matching() is deprecated. ' .
+            'Use setMatch()/getMatching() instead.'
+        );
         if ($assoc !== null) {
             $this->setMatching($assoc, $builder, $options);
         }
@@ -508,7 +516,7 @@ class EagerLoader
     protected function _normalizeContain(Table $parent, $alias, $options, $paths)
     {
         $defaults = $this->_containOptions;
-        $instance = $parent->association($alias);
+        $instance = $parent->getAssociation($alias);
         if (!$instance) {
             throw new InvalidArgumentException(
                 sprintf('%s is not associated with %s', $parent->getAlias(), $alias)

@@ -67,8 +67,8 @@ class BasicAuthenticateTest extends TestCase
             'userModel' => 'AuthUser',
             'fields' => ['username' => 'user', 'password' => 'password']
         ]);
-        $this->assertEquals('AuthUser', $object->config('userModel'));
-        $this->assertEquals(['username' => 'user', 'password' => 'password'], $object->config('fields'));
+        $this->assertEquals('AuthUser', $object->getConfig('userModel'));
+        $this->assertEquals(['username' => 'user', 'password' => 'password'], $object->getConfig('fields'));
     }
 
     /**
@@ -180,7 +180,7 @@ class BasicAuthenticateTest extends TestCase
 
         $this->assertNotEmpty($e);
 
-        $expected = ['WWW-Authenticate: Basic realm="localhost"'];
+        $expected = ['WWW-Authenticate' => 'Basic realm="localhost"'];
         $this->assertEquals($expected, $e->responseHeader());
     }
 
@@ -213,13 +213,13 @@ class BasicAuthenticateTest extends TestCase
     /**
      * test scope failure.
      *
-     * @expectedException \Cake\Network\Exception\UnauthorizedException
-     * @expectedExceptionCode 401
      * @return void
      */
     public function testAuthenticateFailReChallenge()
     {
-        $this->auth->config('scope.username', 'nate');
+        $this->expectException(\Cake\Network\Exception\UnauthorizedException::class);
+        $this->expectExceptionCode(401);
+        $this->auth->setConfig('scope.username', 'nate');
         $request = new ServerRequest([
             'url' => 'posts/index',
             'environment' => [

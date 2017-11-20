@@ -58,7 +58,7 @@ class MemcachedEngineTest extends TestCase
             'duration' => 3600
         ];
         Cache::drop('memcached');
-        Cache::config('memcached', array_merge($defaults, $config));
+        Cache::setConfig('memcached', array_merge($defaults, $config));
     }
 
     /**
@@ -85,7 +85,7 @@ class MemcachedEngineTest extends TestCase
      */
     public function testConfig()
     {
-        $config = Cache::engine('memcached')->config();
+        $config = Cache::engine('memcached')->getConfig();
         unset($config['path']);
         $expecting = [
             'prefix' => 'cake_',
@@ -152,12 +152,12 @@ class MemcachedEngineTest extends TestCase
     /**
      * test accepts only valid serializer engine
      *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage invalid_serializer is not a valid serializer engine for Memcached
      * @return  void
      */
     public function testInvalidSerializerSetting()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('invalid_serializer is not a valid serializer engine for Memcached');
         $Memcached = new MemcachedEngine();
         $config = [
             'className' => 'Memcached',
@@ -338,12 +338,12 @@ class MemcachedEngineTest extends TestCase
      * test using authentication without memcached installed with SASL support
      * throw an exception
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Memcached extension is not build with SASL support
      * @return void
      */
     public function testSaslAuthException()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Memcached extension is not build with SASL support');
         $this->skipIf(
             method_exists(Memcached::class, 'setSaslAuthData'),
             'Cannot test exception when sasl has been compiled in.'
@@ -386,7 +386,7 @@ class MemcachedEngineTest extends TestCase
         $Memcached = new MemcachedEngine();
         $Memcached->init(['engine' => 'Memcached', 'servers' => $servers]);
 
-        $config = $Memcached->config();
+        $config = $Memcached->getConfig();
         $this->assertEquals($config['servers'], $servers);
         Cache::drop('dual_server');
     }
@@ -648,7 +648,7 @@ class MemcachedEngineTest extends TestCase
      */
     public function testDecrementCompressedKeys()
     {
-        Cache::config('compressed_memcached', [
+        Cache::setConfig('compressed_memcached', [
             'engine' => 'Memcached',
             'duration' => '+2 seconds',
             'servers' => ['127.0.0.1:11211'],
@@ -725,7 +725,7 @@ class MemcachedEngineTest extends TestCase
      */
     public function testIncrementCompressedKeys()
     {
-        Cache::config('compressed_memcached', [
+        Cache::setConfig('compressed_memcached', [
             'engine' => 'Memcached',
             'duration' => '+2 seconds',
             'servers' => ['127.0.0.1:11211'],
@@ -757,12 +757,12 @@ class MemcachedEngineTest extends TestCase
      */
     public function testConfigurationConflict()
     {
-        Cache::config('long_memcached', [
+        Cache::setConfig('long_memcached', [
             'engine' => 'Memcached',
             'duration' => '+3 seconds',
             'servers' => ['127.0.0.1:11211'],
         ]);
-        Cache::config('short_memcached', [
+        Cache::setConfig('short_memcached', [
             'engine' => 'Memcached',
             'duration' => '+2 seconds',
             'servers' => ['127.0.0.1:11211'],
@@ -792,7 +792,7 @@ class MemcachedEngineTest extends TestCase
      */
     public function testClear()
     {
-        Cache::config('memcached2', [
+        Cache::setConfig('memcached2', [
             'engine' => 'Memcached',
             'prefix' => 'cake2_',
             'duration' => 3600
@@ -836,13 +836,13 @@ class MemcachedEngineTest extends TestCase
      */
     public function testGroupReadWrite()
     {
-        Cache::config('memcached_groups', [
+        Cache::setConfig('memcached_groups', [
             'engine' => 'Memcached',
             'duration' => 3600,
             'groups' => ['group_a', 'group_b'],
             'prefix' => 'test_'
         ]);
-        Cache::config('memcached_helper', [
+        Cache::setConfig('memcached_helper', [
             'engine' => 'Memcached',
             'duration' => 3600,
             'prefix' => 'test_'
@@ -868,7 +868,7 @@ class MemcachedEngineTest extends TestCase
      */
     public function testGroupDelete()
     {
-        Cache::config('memcached_groups', [
+        Cache::setConfig('memcached_groups', [
             'engine' => 'Memcached',
             'duration' => 3600,
             'groups' => ['group_a', 'group_b']
@@ -887,7 +887,7 @@ class MemcachedEngineTest extends TestCase
      */
     public function testGroupClear()
     {
-        Cache::config('memcached_groups', [
+        Cache::setConfig('memcached_groups', [
             'engine' => 'Memcached',
             'duration' => 3600,
             'groups' => ['group_a', 'group_b']

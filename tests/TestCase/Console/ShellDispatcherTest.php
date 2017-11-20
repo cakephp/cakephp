@@ -54,22 +54,22 @@ class ShellDispatcherTest extends TestCase
     /**
      * Test error on missing shell
      *
-     * @expectedException \Cake\Console\Exception\MissingShellException
      * @return void
      */
     public function testFindShellMissing()
     {
+        $this->expectException(\Cake\Console\Exception\MissingShellException::class);
         $this->dispatcher->findShell('nope');
     }
 
     /**
      * Test error on missing plugin shell
      *
-     * @expectedException \Cake\Console\Exception\MissingShellException
      * @return void
      */
     public function testFindShellMissingPlugin()
     {
+        $this->expectException(\Cake\Console\Exception\MissingShellException::class);
         $this->dispatcher->findShell('test_plugin.nope');
     }
 

@@ -522,7 +522,7 @@ class EntityContext implements ContextInterface
                 return false;
             }
 
-            $table = $assoc->target();
+            $table = $assoc->getTarget();
         }
 
         return $this->_tables[$path] = $table;

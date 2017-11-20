@@ -104,6 +104,10 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
      */
     public function name($name = null)
     {
+        deprecationWarning(
+            'FunctionExpression::name() is deprecated. ' .
+            'Use FunctionExpression::setName()/getName() instead.'
+        );
         if ($name !== null) {
             return $this->setName($name);
         }
@@ -168,7 +172,7 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
         $parts = [];
         foreach ($this->_conditions as $condition) {
             if ($condition instanceof ExpressionInterface) {
-                $condition = sprintf('(%s)', $condition->sql($generator));
+                $condition = sprintf('%s', $condition->sql($generator));
             } elseif (is_array($condition)) {
                 $p = $generator->placeholder('param');
                 $generator->bind($p, $condition['value'], $condition['type']);

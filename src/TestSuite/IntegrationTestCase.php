@@ -532,7 +532,7 @@ abstract class IntegrationTestCase extends TestCase
                 $this->_viewName = $viewFile;
             }
             if ($this->_retainFlashMessages) {
-                $this->_flashMessages = $controller->request->session()->read('Flash');
+                $this->_flashMessages = $controller->request->getSession()->read('Flash');
             }
         });
         $events->on('View.beforeLayout', function ($event, $viewFile) {
@@ -579,22 +579,24 @@ abstract class IntegrationTestCase extends TestCase
         list ($url, $query) = $this->_url($url);
         $tokenUrl = $url;
 
-        parse_str($query, $queryData);
-
         if ($query) {
-            $tokenUrl .= '?' . http_build_query($queryData);
+            $tokenUrl .= '?' . $query;
         }
 
+        parse_str($query, $queryData);
         $props = [
             'url' => $url,
-            'post' => $this->_addTokens($tokenUrl, $data),
-            'cookies' => $this->_cookie,
             'session' => $session,
             'query' => $queryData
         ];
         if (is_string($data)) {
             $props['input'] = $data;
         }
+        if (!isset($props['input'])) {
+            $props['post'] = $this->_addTokens($tokenUrl, $data);
+        }
+        $props['cookies'] = $this->_cookie;
+
         $env = [
             'REQUEST_METHOD' => $method,
             'QUERY_STRING' => $query,
@@ -697,53 +699,75 @@ abstract class IntegrationTestCase extends TestCase
     /**
      * Asserts that the response status code is in the 2xx range.
      *
+     * @param string $message Custom message for failure.
      * @return void
      */
-    public function assertResponseOk()
+    public function assertResponseOk($message = null)
     {
-        $this->_assertStatus(200, 204, 'Status code is not between 200 and 204');
+        if (empty($message)) {
+            $message = 'Status code is not between 200 and 204';
+        }
+        $this->_assertStatus(200, 204, $message);
     }
 
     /**
      * Asserts that the response status code is in the 2xx/3xx range.
      *
+     * @param string $message Custom message for failure.
      * @return void
      */
-    public function assertResponseSuccess()
+    public function assertResponseSuccess($message = null)
     {
-        $this->_assertStatus(200, 308, 'Status code is not between 200 and 308');
+        if (empty($message)) {
+            $message = 'Status code is not between 200 and 308';
+        }
+        $this->_assertStatus(200, 308, $message);
     }
 
     /**
      * Asserts that the response status code is in the 4xx range.
      *
+     * @param string $message Custom message for failure.
      * @return void
      */
-    public function assertResponseError()
+    public function assertResponseError($message = null)
     {
-        $this->_assertStatus(400, 429, 'Status code is not between 400 and 429');
+        if (empty($message)) {
+            $message = 'Status code is not between 400 and 429';
+        }
+        $this->_assertStatus(400, 429, $message);
     }
 
     /**
      * Asserts that the response status code is in the 5xx range.
      *
+     * @param string $message Custom message for failure.
      * @return void
      */
-    public function assertResponseFailure()
+    public function assertResponseFailure($message = null)
     {
-        $this->_assertStatus(500, 505, 'Status code is not between 500 and 505');
+        if (empty($message)) {
+            $message = 'Status code is not between 500 and 505';
+        }
+        $this->_assertStatus(500, 505, $message);
     }
 
     /**
      * Asserts a specific response status code.
      *
      * @param int $code Status code to assert.
+     * @param string $message Custom message for failure.
      * @return void
      */
-    public function assertResponseCode($code)
+    public function assertResponseCode($code, $message = null)
     {
         $actual = $this->_response->getStatusCode();
-        $this->_assertStatus($code, $code, 'Status code is not ' . $code . ' but ' . $actual);
+
+        if (empty($message)) {
+            $message = 'Status code is not ' . $code . ' but ' . $actual;
+        }
+
+        $this->_assertStatus($code, $code, $message);
     }
 
     /**
@@ -891,7 +915,7 @@ abstract class IntegrationTestCase extends TestCase
         if ($alias !== false) {
             $type = $alias;
         }
-        $result = $this->_response->type();
+        $result = $this->_response->getType();
         $this->assertEquals($type, $result, $message);
     }
 
@@ -1062,7 +1086,7 @@ abstract class IntegrationTestCase extends TestCase
         if (!$this->_response) {
             $this->fail('Not response set, cannot assert cookies.');
         }
-        $result = $this->_response->cookie($name);
+        $result = $this->_response->getCookie($name);
         $this->assertEquals(
             $expected,
             $result['value'],
@@ -1121,7 +1145,7 @@ abstract class IntegrationTestCase extends TestCase
         if (!$this->_response) {
             $this->fail('No response set, cannot assert cookies.');
         }
-        $result = $this->_response->cookie($name);
+        $result = $this->_response->getCookie($name);
         $this->_cookieEncryptionKey = $key;
         $result['value'] = $this->_decrypt($result['value'], $encrypt);
         $this->assertEquals($expected, $result['value'], 'Cookie data differs. ' . $message);

@@ -18,7 +18,6 @@ use Cake\Cache\Cache;
 use Cake\Cache\CacheRegistry;
 use Cake\Cache\Engine\FileEngine;
 use Cake\Cache\Engine\NullEngine;
-use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
@@ -299,33 +298,33 @@ class CacheTest extends TestCase
     /**
      * Test write from a config that is undefined.
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testWriteNonExistingConfig()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->assertFalse(Cache::write('key', 'value', 'totally fake'));
     }
 
     /**
      * Test write from a config that is undefined.
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testIncrementNonExistingConfig()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->assertFalse(Cache::increment('key', 1, 'totally fake'));
     }
 
     /**
      * Test write from a config that is undefined.
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testDecrementNonExistingConfig()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->assertFalse(Cache::decrement('key', 1, 'totally fake'));
     }
 
@@ -370,11 +369,11 @@ class CacheTest extends TestCase
     /**
      * testConfigInvalidEngine method
      *
-     * @expectedException \BadMethodCallException
      * @return void
      */
     public function testConfigInvalidEngine()
     {
+        $this->expectException(\BadMethodCallException::class);
         $config = ['engine' => 'Imaginary'];
         Cache::setConfig('test', $config);
         Cache::engine('test');
@@ -383,11 +382,11 @@ class CacheTest extends TestCase
     /**
      * test that trying to configure classes that don't extend CacheEngine fail.
      *
-     * @expectedException \BadMethodCallException
      * @return void
      */
     public function testConfigInvalidObject()
     {
+        $this->expectException(\BadMethodCallException::class);
         $this->getMockBuilder(\StdClass::class)
             ->setMockClassName('RubbishEngine')
             ->getMock();
@@ -400,13 +399,35 @@ class CacheTest extends TestCase
     /**
      * Ensure you cannot reconfigure a cache adapter.
      *
-     * @expectedException \BadMethodCallException
      * @return void
      */
     public function testConfigErrorOnReconfigure()
     {
+        $this->expectException(\BadMethodCallException::class);
         Cache::setConfig('tests', ['engine' => 'File', 'path' => TMP]);
         Cache::setConfig('tests', ['engine' => 'Apc']);
+    }
+
+    /**
+     * Test reading configuration.
+     *
+     * @group deprecated
+     * @return void
+     */
+    public function testConfigReadCompat()
+    {
+        $this->deprecated(function () {
+            $config = [
+                'engine' => 'File',
+                'path' => TMP,
+                'prefix' => 'cake_'
+            ];
+            Cache::config('tests', $config);
+            $expected = $config;
+            $expected['className'] = $config['engine'];
+            unset($expected['engine']);
+            $this->assertEquals($expected, Cache::config('tests'));
+        });
     }
 
     /**
@@ -425,7 +446,7 @@ class CacheTest extends TestCase
         $expected = $config;
         $expected['className'] = $config['engine'];
         unset($expected['engine']);
-        $this->assertEquals($expected, Cache::config('tests'));
+        $this->assertEquals($expected, Cache::getConfig('tests'));
     }
 
     /**
@@ -454,7 +475,7 @@ class CacheTest extends TestCase
     public function testGroupConfigs()
     {
         Cache::drop('test');
-        Cache::config('latest', [
+        Cache::setConfig('latest', [
             'duration' => 300,
             'engine' => 'File',
             'groups' => ['posts', 'comments'],
@@ -471,7 +492,7 @@ class CacheTest extends TestCase
         $result = Cache::groupConfigs('posts');
         $this->assertEquals(['posts' => ['latest']], $result);
 
-        Cache::config('page', [
+        Cache::setConfig('page', [
             'duration' => 86400,
             'engine' => 'File',
             'groups' => ['posts', 'archive'],
@@ -524,10 +545,10 @@ class CacheTest extends TestCase
 
     /**
      * testGroupConfigsThrowsException method
-     * @expectedException \InvalidArgumentException
      */
     public function testGroupConfigsThrowsException()
     {
+        $this->expectException(\InvalidArgumentException::class);
         Cache::groupConfigs('bogus');
     }
 
@@ -595,12 +616,12 @@ class CacheTest extends TestCase
     /**
      * testWriteEmptyValues method
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage An empty value is not valid as a cache key
      * @return void
      */
     public function testWriteEmptyKey()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('An empty value is not valid as a cache key');
         $this->_configCache();
         Cache::write(null, 'not null', 'tests');
     }
@@ -662,11 +683,11 @@ class CacheTest extends TestCase
     /**
      * Test that failed writes cause errors to be triggered.
      *
-     * @expectedException \PHPUnit\Framework\Error\Error
      * @return void
      */
     public function testWriteTriggerError()
     {
+        $this->expectException(\PHPUnit\Framework\Error\Error::class);
         static::setAppNamespace();
         Cache::setConfig('test_trigger', [
             'engine' => 'TestAppCache',
@@ -707,7 +728,7 @@ class CacheTest extends TestCase
         Cache::clear(false, 'test_cache_disable_1');
 
         Cache::disable();
-        Cache::config('test_cache_disable_2', [
+        Cache::setConfig('test_cache_disable_2', [
             'engine' => 'File',
             'path' => TMP . 'tests'
         ]);
@@ -735,11 +756,11 @@ class CacheTest extends TestCase
      */
     public function testClearAll()
     {
-        Cache::config('configTest', [
+        Cache::setConfig('configTest', [
             'engine' => 'File',
             'path' => TMP . 'tests'
         ]);
-        Cache::config('anotherConfigTest', [
+        Cache::setConfig('anotherConfigTest', [
             'engine' => 'File',
             'path' => TMP . 'tests'
         ]);

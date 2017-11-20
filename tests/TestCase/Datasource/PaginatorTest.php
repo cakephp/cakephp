@@ -198,7 +198,7 @@ class PaginatorTest extends TestCase
         $articles->belongsToMany('Tags');
         $tags = $this->getTableLocator()->get('Tags');
         $tags->belongsToMany('Authors');
-        $articles->eventManager()->on('Model.beforeFind', function ($event, $query) {
+        $articles->getEventManager()->on('Model.beforeFind', function ($event, $query) {
             $query ->matching('Tags', function ($q) {
                 return $q->matching('Authors', function ($q) {
                     return $q->where(['Authors.name' => 'larry']);
@@ -476,7 +476,7 @@ class PaginatorTest extends TestCase
             'limit' => 20,
             'maxLimit' => 100,
         ];
-        $this->Paginator->config('whitelist', ['fields']);
+        $this->Paginator->setConfig('whitelist', ['fields']);
         $defaults = $this->Paginator->getDefaults('Post', $settings);
         $result = $this->Paginator->mergeOptions($params, $defaults);
         $expected = [
@@ -661,11 +661,11 @@ class PaginatorTest extends TestCase
     /**
      * Test that a really REALLY large page number gets clamped to the max page size.
      *
-     * @expectedException \Cake\Datasource\Exception\PageOutOfBoundsException
      * @return void
      */
     public function testOutOfVeryBigPageNumberGetsClamped()
     {
+        $this->expectException(\Cake\Datasource\Exception\PageOutOfBoundsException::class);
         $this->loadFixtures('Posts');
         $params = [
             'page' => '3000000000000000000000000',
@@ -1180,7 +1180,7 @@ class PaginatorTest extends TestCase
      */
     public function testPaginateQueryWithBindValue()
     {
-        $config = ConnectionManager::config('test');
+        $config = ConnectionManager::getConfig('test');
         $this->skipIf(strpos($config['driver'], 'Sqlserver') !== false, 'Test temporarily broken in SQLServer');
         $this->loadFixtures('Posts');
         $table = $this->getTableLocator()->get('PaginatorPosts');

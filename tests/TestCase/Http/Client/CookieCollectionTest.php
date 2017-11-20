@@ -13,14 +13,14 @@
  */
 namespace Cake\Test\TestCase\Http\Client;
 
-use Cake\Chronos\Chronos;
 use Cake\Http\Client\CookieCollection;
 use Cake\Http\Client\Response;
-use Cake\Http\Cookie\Cookie;
 use Cake\TestSuite\TestCase;
 
 /**
  * HTTP cookies test.
+ *
+ * @group deprecated
  */
 class CookieCollectionTest extends TestCase
 {
@@ -33,7 +33,9 @@ class CookieCollectionTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->cookies = new CookieCollection();
+        $this->deprecated(function () {
+            $this->cookies = new CookieCollection();
+        });
     }
 
     /**

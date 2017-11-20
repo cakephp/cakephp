@@ -21,7 +21,6 @@ use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use LogicException;
 use Psr\Log\LoggerInterface;
-use Zend\Diactoros\Request;
 
 /**
  * Test for ErrorHandlerMiddleware
@@ -43,7 +42,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $this->logger = $this->getMockBuilder(LoggerInterface::class)->getMock();
 
         Log::reset();
-        Log::config('error_test', [
+        Log::setConfig('error_test', [
             'engine' => $this->logger
         ]);
     }
@@ -82,11 +81,11 @@ class ErrorHandlerMiddlewareTest extends TestCase
     /**
      * Test an invalid rendering class.
      *
-     * @expectedException \Exception
-     * @expectedExceptionMessage The 'TotallyInvalid' renderer class could not be found
      */
     public function testInvalidRenderer()
     {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('The \'TotallyInvalid\' renderer class could not be found');
         $request = ServerRequestFactory::fromGlobals();
         $response = new Response();
 

@@ -156,11 +156,11 @@ class EntityContextTest extends TestCase
     /**
      * Test an invalid table scope throws an error.
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Unable to find table class for current entity
      */
     public function testInvalidTable()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Unable to find table class for current entity');
         $row = new \stdClass();
         $context = new EntityContext($this->request, [
             'entity' => $row,
@@ -170,11 +170,11 @@ class EntityContextTest extends TestCase
     /**
      * Tests that passing a plain entity will give an error as it cannot be matched
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Unable to find table class for current entity
      */
     public function testDefaultEntityError()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Unable to find table class for current entity');
         $context = new EntityContext($this->request, [
             'entity' => new Entity,
         ]);
@@ -718,11 +718,11 @@ class EntityContextTest extends TestCase
             'type' => 'boolean'
         ]);
 
-        $validator = $articles->validator();
+        $validator = $articles->getValidator();
         $validator->add('comments_on', 'is_bool', [
             'rule' => 'boolean'
         ]);
-        $articles->validator('default', $validator);
+        $articles->setValidator('default', $validator);
 
         $this->assertFalse($context->isRequired('title'));
     }
@@ -760,7 +760,7 @@ class EntityContextTest extends TestCase
         $this->_setupTables();
 
         $comments = $this->getTableLocator()->get('Comments');
-        $validator = $comments->validator();
+        $validator = $comments->getValidator();
         $validator->add('user_id', 'number', [
             'rule' => 'numeric',
         ]);
@@ -795,7 +795,7 @@ class EntityContextTest extends TestCase
 
         $comments = $this->getTableLocator()->get('Comments');
         $comments->schema()->addColumn('starred', 'boolean');
-        $comments->validator()->add('starred', 'valid', ['rule' => 'boolean']);
+        $comments->getValidator()->add('starred', 'valid', ['rule' => 'boolean']);
 
         $row = new Article([
             'title' => 'My title',
@@ -826,11 +826,11 @@ class EntityContextTest extends TestCase
         $users = $this->getTableLocator()->get('Users');
         $articles = $this->getTableLocator()->get('Articles');
 
-        $validator = $articles->validator();
+        $validator = $articles->getValidator();
         $validator->notEmpty('title', 'nope', function ($context) {
             return $context['providers']['entity']->isRequired();
         });
-        $articles->validator('default', $validator);
+        $articles->setValidator('default', $validator);
 
         $row = new Entity([
             'username' => 'mark'
@@ -854,7 +854,7 @@ class EntityContextTest extends TestCase
         $this->_setupTables();
 
         $comments = $this->getTableLocator()->get('Comments');
-        $validator = $comments->validator();
+        $validator = $comments->getValidator();
         $validator->allowEmpty('comment', function ($context) {
             return $context['providers']['entity']->isNew();
         });
@@ -1289,24 +1289,24 @@ class EntityContextTest extends TestCase
         ->add('body', 'maxlength', [
             'rule' => ['maxlength', 1000]
         ])->allowEmpty('body');
-        $articles->validator('create', $validator);
+        $articles->setValidator('create', $validator);
 
         $validator = new Validator();
         $validator->add('username', 'length', [
             'rule' => ['minlength', 10]
         ]);
-        $users->validator('custom', $validator);
+        $users->setValidator('custom', $validator);
 
         $validator = new Validator();
         $validator->add('comment', 'length', [
             'rule' => ['minlength', 10]
         ]);
-        $comments->validator('custom', $validator);
+        $comments->setValidator('custom', $validator);
 
         $validator = new Validator();
         $validator->requirePresence('article_id', 'create');
         $validator->requirePresence('tag_id', 'create');
-        $articlesTags->validator('default', $validator);
+        $articlesTags->setValidator('default', $validator);
     }
 
     /**
@@ -1341,7 +1341,7 @@ class EntityContextTest extends TestCase
         ]);
         $context->isRequired('title');
         $articles = $this->getTableLocator()->get('Articles');
-        $this->assertSame($row, $articles->validator()->provider('entity'));
+        $this->assertSame($row, $articles->getValidator()->getProvider('entity'));
 
         $row = new Article([
             'title' => 'First post',
@@ -1359,14 +1359,14 @@ class EntityContextTest extends TestCase
             'table' => 'Articles',
         ]);
 
-        $validator = $articles->validator();
+        $validator = $articles->getValidator();
         $context->isRequired('user.articles.0.title');
-        $this->assertSame($row->user->articles[0], $validator->provider('entity'));
+        $this->assertSame($row->user->articles[0], $validator->getProvider('entity'));
 
         $context->isRequired('user.articles.1.title');
-        $this->assertSame($row->user->articles[1], $validator->provider('entity'));
+        $this->assertSame($row->user->articles[1], $validator->getProvider('entity'));
 
         $context->isRequired('title');
-        $this->assertSame($row, $validator->provider('entity'));
+        $this->assertSame($row, $validator->getProvider('entity'));
     }
 }

@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\Shell;
 
 use Cake\Cache\Cache;
+use Cake\Console\Exception\StopException;
 use Cake\Datasource\ConnectionManager;
 use Cake\Shell\SchemaCacheShell;
 use Cake\TestSuite\TestCase;
@@ -79,7 +80,7 @@ class SchemaCacheShellTest extends TestCase
 
         $this->shell->params['connection'] = 'test';
         $this->shell->clear();
-        $this->assertInstanceOf('Cake\Database\Schema\CachedCollection', $ds->schemaCollection());
+        $this->assertInstanceOf('Cake\Database\Schema\CachedCollection', $ds->getSchemaCollection());
     }
 
     /**
@@ -94,7 +95,7 @@ class SchemaCacheShellTest extends TestCase
 
         $this->shell->params['connection'] = 'test';
         $this->shell->build();
-        $this->assertInstanceOf('Cake\Database\Schema\CachedCollection', $ds->schemaCollection());
+        $this->assertInstanceOf('Cake\Database\Schema\CachedCollection', $ds->getSchemaCollection());
     }
 
     /**
@@ -151,11 +152,11 @@ class SchemaCacheShellTest extends TestCase
     /**
      * Test build() with a non-existing connection name.
      *
-     * @expectedException \Cake\Console\Exception\StopException
      * @return void
      */
     public function testBuildInvalidConnection()
     {
+        $this->expectException(StopException::class);
         $this->shell->params['connection'] = 'derpy-derp';
         $this->shell->build('articles');
     }
@@ -163,11 +164,11 @@ class SchemaCacheShellTest extends TestCase
     /**
      * Test clear() with an invalid connection name.
      *
-     * @expectedException \Cake\Console\Exception\StopException
      * @return void
      */
     public function testClearInvalidConnection()
     {
+        $this->expectException(StopException::class);
         $this->shell->params['connection'] = 'derpy-derp';
         $this->shell->clear('articles');
     }

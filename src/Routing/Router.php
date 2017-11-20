@@ -15,10 +15,8 @@
 namespace Cake\Routing;
 
 use Cake\Core\Configure;
-use Cake\Http\MiddlewareQueue;
 use Cake\Http\ServerRequest;
 use Cake\Utility\Inflector;
-use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -40,6 +38,7 @@ class Router
      * Have routes been loaded
      *
      * @var bool
+     * @deprecated 3.5.0 Routes will be loaded via the Application::routes() hook in 4.0.0
      */
     public static $initialized = false;
 
@@ -226,6 +225,10 @@ class Router
      */
     public static function redirect($route, $url, $options = [])
     {
+        deprecationWarning(
+            'Router::redirect() is deprecated. ' .
+            'Use Router::scope() and RouteBuilder::redirect() instead.'
+        );
         if (is_string($url)) {
             $url = ['redirect' => $url];
         }
@@ -292,6 +295,10 @@ class Router
      */
     public static function mapResources($controller, $options = [])
     {
+        deprecationWarning(
+            'Router::mapResources() is deprecated. ' .
+            'Use Router::scope() and RouteBuilder::resources() instead.'
+        );
         foreach ((array)$controller as $name) {
             list($plugin, $name) = pluginSplit($name);
 
@@ -345,6 +352,10 @@ class Router
      */
     public static function parse($url, $method = '')
     {
+        deprecationWarning(
+            'Router::parse() is deprecated. ' .
+            'Use Router::parseRequest() instead. This will require adopting the Http\Server library.'
+        );
         if (!static::$initialized) {
             static::_loadRoutes();
         }
@@ -384,12 +395,18 @@ class Router
      *
      * @param \Cake\Http\ServerRequest|array $request Parameters and path information or a Cake\Http\ServerRequest object.
      * @return void
+     * @deprecatd 3.6.0 Support for arrays will be removed in 4.0.0
      */
     public static function setRequestInfo($request)
     {
         if ($request instanceof ServerRequest) {
             static::pushRequest($request);
         } else {
+            deprecationWarning(
+                'Passing an array into Router::setRequestInfo() is deprecated. ' .
+                'Pass an instance of ServerRequest instead.'
+            );
+
             $requestData = $request;
             $requestData += [[], []];
             $requestData[0] += [
@@ -397,8 +414,12 @@ class Router
                 'action' => false,
                 'plugin' => null
             ];
-            $request = new ServerRequest();
-            $request->addParams($requestData[0])->addPaths($requestData[1]);
+            $request = new ServerRequest([
+                'params' => $requestData[0],
+                'url' => isset($requestData[1]['here']) ? $requestData[1]['here'] : '/',
+                'base' => isset($requestData[1]['base']) ? $requestData[1]['base'] : '',
+                'webroot' => isset($requestData[1]['webroot']) ? $requestData[1]['webroot'] : '/',
+            ]);
             static::pushRequest($request);
         }
     }
@@ -873,6 +894,10 @@ class Router
      */
     public static function parseNamedParams(ServerRequest $request, array $options = [])
     {
+        deprecationWarning(
+            'Router::parseNamedParams() is deprecated. ' .
+            '2.x backwards compatible named parameter support will be removed in 4.0'
+        );
         $options += ['separator' => ':'];
         if (empty($request->params['pass'])) {
             $request->params['named'] = [];

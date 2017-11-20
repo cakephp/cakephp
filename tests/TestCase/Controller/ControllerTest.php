@@ -442,7 +442,7 @@ class ControllerTest extends TestCase
         $debug = Configure::read('debug');
         Configure::write('debug', false);
         $result = $Controller->render('index');
-        $this->assertEquals('{"test":"value"}', $result->body());
+        $this->assertEquals('{"test":"value"}', (string)$result->getBody());
         Configure::write('debug', $debug);
     }
 
@@ -494,8 +494,8 @@ class ControllerTest extends TestCase
 
         $response = $Controller->redirect('http://cakephp.org', (int)$code);
         $this->assertSame($response, $Controller->response);
-        $this->assertEquals($code, $response->statusCode());
-        $this->assertEquals('http://cakephp.org', $response->header()['Location']);
+        $this->assertEquals($code, $response->getStatusCode());
+        $this->assertEquals('http://cakephp.org', $response->getHeaderLine('Location'));
         $this->assertFalse($Controller->autoRender);
     }
 
@@ -509,12 +509,13 @@ class ControllerTest extends TestCase
         $Controller = new Controller(null, new Response());
 
         $Controller->getEventManager()->on('Controller.beforeRedirect', function (Event $event, $url, Response $response) {
-            $response->location('https://book.cakephp.org');
+            $controller = $event->getSubject();
+            $controller->response = $response->withLocation('https://book.cakephp.org');
         });
 
         $response = $Controller->redirect('http://cakephp.org', 301);
-        $this->assertEquals('https://book.cakephp.org', $response->header()['Location']);
-        $this->assertEquals(301, $response->statusCode());
+        $this->assertEquals('https://book.cakephp.org', $response->getHeaderLine('Location'));
+        $this->assertEquals(301, $response->getStatusCode());
     }
 
     /**
@@ -524,19 +525,18 @@ class ControllerTest extends TestCase
      */
     public function testRedirectBeforeRedirectModifyingStatusCode()
     {
-        $Response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods(['stop'])
-            ->getMock();
-        $Controller = new Controller(null, $Response);
+        $response = new Response();
+        $Controller = new Controller(null, $response);
 
         $Controller->getEventManager()->on('Controller.beforeRedirect', function (Event $event, $url, Response $response) {
-            $response->statusCode(302);
+            $controller = $event->getSubject();
+            $controller->response = $response->withStatus(302);
         });
 
         $response = $Controller->redirect('http://cakephp.org', 301);
 
-        $this->assertEquals('http://cakephp.org', $response->header()['Location']);
-        $this->assertEquals(302, $response->statusCode());
+        $this->assertEquals('http://cakephp.org', $response->getHeaderLine('Location'));
+        $this->assertEquals(302, $response->getStatusCode());
     }
 
     public function testRedirectBeforeRedirectListenerReturnResponse()
@@ -805,12 +805,12 @@ class ControllerTest extends TestCase
     /**
      * testMissingAction method
      *
-     * @expectedException \Cake\Controller\Exception\MissingActionException
-     * @expectedExceptionMessage Action TestController::missing() could not be found, or is not accessible.
      * @return void
      */
     public function testInvokeActionMissingAction()
     {
+        $this->expectException(\Cake\Controller\Exception\MissingActionException::class);
+        $this->expectExceptionMessage('Action TestController::missing() could not be found, or is not accessible.');
         $url = new ServerRequest('test/missing');
         $url->addParams(['controller' => 'Test', 'action' => 'missing']);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
@@ -822,12 +822,12 @@ class ControllerTest extends TestCase
     /**
      * test invoking private methods.
      *
-     * @expectedException \Cake\Controller\Exception\MissingActionException
-     * @expectedExceptionMessage Action TestController::private_m() could not be found, or is not accessible.
      * @return void
      */
     public function testInvokeActionPrivate()
     {
+        $this->expectException(\Cake\Controller\Exception\MissingActionException::class);
+        $this->expectExceptionMessage('Action TestController::private_m() could not be found, or is not accessible.');
         $url = new ServerRequest('test/private_m/');
         $url->addParams(['controller' => 'Test', 'action' => 'private_m']);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
@@ -839,12 +839,12 @@ class ControllerTest extends TestCase
     /**
      * test invoking protected methods.
      *
-     * @expectedException \Cake\Controller\Exception\MissingActionException
-     * @expectedExceptionMessage Action TestController::protected_m() could not be found, or is not accessible.
      * @return void
      */
     public function testInvokeActionProtected()
     {
+        $this->expectException(\Cake\Controller\Exception\MissingActionException::class);
+        $this->expectExceptionMessage('Action TestController::protected_m() could not be found, or is not accessible.');
         $url = new ServerRequest('test/protected_m/');
         $url->addParams(['controller' => 'Test', 'action' => 'protected_m']);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
@@ -856,12 +856,12 @@ class ControllerTest extends TestCase
     /**
      * test invoking controller methods.
      *
-     * @expectedException \Cake\Controller\Exception\MissingActionException
-     * @expectedExceptionMessage Action TestController::redirect() could not be found, or is not accessible.
      * @return void
      */
     public function testInvokeActionBaseMethods()
     {
+        $this->expectException(\Cake\Controller\Exception\MissingActionException::class);
+        $this->expectExceptionMessage('Action TestController::redirect() could not be found, or is not accessible.');
         $url = new ServerRequest('test/redirect/');
         $url->addParams(['controller' => 'Test', 'action' => 'redirect']);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
@@ -927,7 +927,7 @@ class ControllerTest extends TestCase
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $Controller = new \TestApp\Controller\Admin\PostsController($request, $response);
         $Controller->getEventManager()->on('Controller.beforeRender', function (Event $e) {
-            return $e->subject()->response;
+            return $e->getSubject()->response;
         });
         $Controller->render();
         $this->assertEquals('Admin' . DS . 'Posts', $Controller->viewBuilder()->templatePath());
@@ -938,7 +938,7 @@ class ControllerTest extends TestCase
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $Controller = new \TestApp\Controller\Admin\PostsController($request, $response);
         $Controller->getEventManager()->on('Controller.beforeRender', function (Event $e) {
-            return $e->subject()->response;
+            return $e->getSubject()->response;
         });
         $Controller->render();
         $this->assertEquals('Admin' . DS . 'Super' . DS . 'Posts', $Controller->viewBuilder()->templatePath());
@@ -949,7 +949,7 @@ class ControllerTest extends TestCase
         ]);
         $Controller = new \TestApp\Controller\PagesController($request, $response);
         $Controller->getEventManager()->on('Controller.beforeRender', function (Event $e) {
-            return $e->subject()->response;
+            return $e->getSubject()->response;
         });
         $Controller->render();
         $this->assertEquals('Pages', $Controller->viewBuilder()->templatePath());

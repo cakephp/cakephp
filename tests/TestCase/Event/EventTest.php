@@ -38,7 +38,6 @@ class EventTest extends TestCase
     {
         $event = new Event('fake.event');
         $this->assertEquals('fake.event', $event->getName());
-        $this->assertEquals('fake.event', $event->getName());
     }
 
     /**
@@ -51,7 +50,6 @@ class EventTest extends TestCase
     public function testSubject()
     {
         $event = new Event('fake.event', $this);
-        $this->assertSame($this, $event->getSubject());
         $this->assertSame($this, $event->getSubject());
 
         $event = new Event('fake.event');
@@ -82,7 +80,6 @@ class EventTest extends TestCase
     {
         $event = new Event('fake.event', $this, ['some' => 'data']);
         $this->assertEquals(['some' => 'data'], $event->getData());
-        $this->assertEquals(['some' => 'data'], $event->getData());
 
         $this->assertEquals('data', $event->getData('some'));
         $this->assertNull($event->getData('undef'));
@@ -98,7 +95,6 @@ class EventTest extends TestCase
     {
         $data = new ArrayObject(['some' => 'data']);
         $event = new Event('fake.event', $this, $data);
-        $this->assertEquals(['some' => 'data'], $event->getData());
         $this->assertEquals(['some' => 'data'], $event->getData());
 
         $this->assertEquals('data', $event->getData('some'));

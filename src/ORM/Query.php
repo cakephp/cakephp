@@ -433,7 +433,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     protected function _addAssociationsToTypeMap($table, $typeMap, $associations)
     {
         foreach ($associations as $name => $nested) {
-            $association = $table->association($name);
+            $association = $table->getAssociation($name);
             if (!$association) {
                 continue;
             }

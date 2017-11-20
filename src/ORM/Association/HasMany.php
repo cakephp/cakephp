@@ -141,6 +141,10 @@ class HasMany extends Association
      */
     public function saveStrategy($strategy = null)
     {
+        deprecationWarning(
+            'HasMany::saveStrategy() is deprecated. ' .
+            'Use setSaveStrategy()/getSaveStrategy() instead.'
+        );
         if ($strategy !== null) {
             $this->setSaveStrategy($strategy);
         }
@@ -424,7 +428,7 @@ class HasMany extends Association
      * $author->articles = [$article1, $article2, $article3, $article4];
      * $authors->save($author);
      * $articles = [$article1, $article3];
-     * $authors->association('articles')->replace($author, $articles);
+     * $authors->getAssociation('articles')->replace($author, $articles);
      * ```
      *
      * `$author->get('articles')` will contain only `[$article1, $article3]` at the end
@@ -630,6 +634,10 @@ class HasMany extends Association
      */
     public function sort($sort = null)
     {
+        deprecationWarning(
+            'HasMany::sort() is deprecated. ' .
+            'Use setSort()/getSort() instead.'
+        );
         if ($sort !== null) {
             $this->setSort($sort);
         }

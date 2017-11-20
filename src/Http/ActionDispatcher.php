@@ -91,7 +91,7 @@ class ActionDispatcher
         }
 
         $response = $this->_invoke($controller);
-        if (isset($request->params['return'])) {
+        if ($request->getParam('return')) {
             return $response;
         }
 
@@ -149,6 +149,11 @@ class ActionDispatcher
      */
     public function addFilter(EventListenerInterface $filter)
     {
+        deprecationWarning(
+            'ActionDispatcher::addFilter() is deprecated. ' .
+            'This is only available for backwards compatibility with DispatchFilters'
+        );
+
         $this->filters[] = $filter;
         $this->getEventManager()->on($filter);
     }

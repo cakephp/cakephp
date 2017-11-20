@@ -272,7 +272,7 @@ class QueryTest extends TestCase
             ->toArray();
         $expected[0]['articles'] = [];
         $this->assertEquals($expected, $results);
-        $this->assertEquals($table->association('articles')->strategy(), $strategy);
+        $this->assertEquals($table->getAssociation('articles')->getStrategy(), $strategy);
     }
 
     /**
@@ -656,7 +656,7 @@ class QueryTest extends TestCase
             ],
         ];
         $this->assertEquals($expected, $results);
-        $this->assertEquals($table->association('Tags')->strategy(), $strategy);
+        $this->assertEquals($table->getAssociation('Tags')->getStrategy(), $strategy);
     }
 
     /**
@@ -1176,7 +1176,7 @@ class QueryTest extends TestCase
         $query->select(['id']);
 
         $first = $query->hydrate(false)
-            ->bufferResults(false)->first();
+            ->enableBufferedResults(false)->first();
 
         $this->assertEquals(['id' => 1], $first);
     }
@@ -1711,7 +1711,7 @@ class QueryTest extends TestCase
      */
     public function testUpdateWithTableExpression()
     {
-        $this->skipIf(!$this->connection->driver() instanceof \Cake\Database\Driver\Mysql);
+        $this->skipIf(!$this->connection->getDriver() instanceof \Cake\Database\Driver\Mysql);
         $table = $this->getTableLocator()->get('articles');
 
         $query = $table->query();
@@ -1744,7 +1744,7 @@ class QueryTest extends TestCase
 
         $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
         //PDO_SQLSRV returns -1 for successful inserts when using INSERT ... OUTPUT
-        if (!$this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver) {
+        if (!$this->connection->getDriver() instanceof \Cake\Database\Driver\Sqlserver) {
             $this->assertEquals(2, $result->rowCount());
         } else {
             $this->assertEquals(-1, $result->rowCount());
@@ -1864,23 +1864,23 @@ class QueryTest extends TestCase
      * Tests that calling an non-existent method in query throws an
      * exception
      *
-     * @expectedException \BadMethodCallException
-     * @expectedExceptionMessage Unknown method "derpFilter"
      * @return void
      */
     public function testCollectionProxyBadMethod()
     {
+        $this->expectException(\BadMethodCallException::class);
+        $this->expectExceptionMessage('Unknown method "derpFilter"');
         $this->getTableLocator()->get('articles')->find('all')->derpFilter();
     }
 
     /**
      * cache() should fail on non select queries.
      *
-     * @expectedException \RuntimeException
      * @return void
      */
     public function testCacheErrorOnNonSelect()
     {
+        $this->expectException(\RuntimeException::class);
         $table = $this->getTableLocator()->get('articles', ['table' => 'articles']);
         $query = new Query($this->connection, $table);
         $query->insert(['test']);
@@ -2047,11 +2047,11 @@ class QueryTest extends TestCase
      * Integration test to ensure that filtering associations with the queryBuilder
      * option works.
      *
-     * @expectedException \RuntimeException
      * @return void
      */
     public function testContainWithQueryBuilderHasManyError()
     {
+        $this->expectException(\RuntimeException::class);
         $table = $this->getTableLocator()->get('Authors');
         $table->hasMany('Articles');
         $query = new Query($this->connection, $table);
@@ -2322,7 +2322,7 @@ class QueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('ArticlesTags');
         $table->belongsTo('Articles');
-        $table->association('Articles')->target()->belongsTo('Authors');
+        $table->getAssociation('Articles')->getTarget()->belongsTo('Authors');
 
         $builder = function ($q) {
             return $q
@@ -2370,9 +2370,9 @@ class QueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles');
-        $articles = $table->association('articles')->target();
+        $articles = $table->getAssociation('articles')->getTarget();
         $articles->hasMany('articlesTags');
-        $articles->association('articlesTags')->target()->belongsTo('tags');
+        $articles->getAssociation('articlesTags')->getTarget()->belongsTo('tags');
 
         $query = $table->find()->contain(['articles.articlesTags.tags' => function ($q) {
             return $q->formatResults(function ($results) {
@@ -2446,7 +2446,7 @@ class QueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('ArticlesTags');
         $table->belongsTo('Articles');
-        $table->association('Articles')->target()->belongsTo('Authors');
+        $table->getAssociation('Articles')->getTarget()->belongsTo('Authors');
 
         $query = $table->find()
             ->order(['Articles.id' => 'ASC'])
@@ -2468,9 +2468,9 @@ class QueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles');
-        $articles = $table->association('articles')->target();
+        $articles = $table->getAssociation('articles')->getTarget();
         $articles->hasMany('articlesTags');
-        $articles->association('articlesTags')->target()->belongsTo('tags');
+        $articles->getAssociation('articlesTags')->getTarget()->belongsTo('tags');
 
         $query = $table->find()->matching('articles.articlesTags', function ($q) {
             return $q->matching('tags', function ($q) {
@@ -2494,7 +2494,7 @@ class QueryTest extends TestCase
         $table->hasMany('articles');
         $query = $table->find()
             ->where(['id > ' => 1])
-            ->bufferResults(false)
+            ->enableBufferedResults(false)
             ->hydrate(false)
             ->matching('articles')
             ->applyOptions(['foo' => 'bar'])
@@ -2508,7 +2508,7 @@ class QueryTest extends TestCase
         $expected = [
             '(help)' => 'This is a Query object, to get the results execute or iterate it.',
             'sql' => $query->sql(),
-            'params' => $query->valueBinder()->bindings(),
+            'params' => $query->getValueBinder()->bindings(),
             'defaultTypes' => [
                 'authors__id' => 'integer',
                 'authors.id' => 'integer',
@@ -2568,14 +2568,14 @@ class QueryTest extends TestCase
         }]);
         $this->assertFalse($query->eagerLoaded());
 
-        $table->getEventManager()->attach(function ($e, $q, $o, $primary) {
+        $table->getEventManager()->on('Model.beforeFind', function ($e, $q, $o, $primary) {
             $this->assertTrue($primary);
-        }, 'Model.beforeFind');
+        });
 
         $this->getTableLocator()->get('articles')
-            ->getEventManager()->attach(function ($e, $q, $o, $primary) {
+            ->getEventManager()->on('Model.beforeFind', function ($e, $q, $o, $primary) {
                 $this->assertFalse($primary);
-            }, 'Model.beforeFind');
+            });
         $query->all();
     }
 
@@ -2596,14 +2596,14 @@ class QueryTest extends TestCase
         }]);
         $this->assertFalse($query->isEagerLoaded());
 
-        $table->getEventManager()->attach(function ($e, $q, $o, $primary) {
+        $table->getEventManager()->on('Model.beforeFind', function ($e, $q, $o, $primary) {
             $this->assertTrue($primary);
-        }, 'Model.beforeFind');
+        });
 
         $this->getTableLocator()->get('articles')
-            ->getEventManager()->attach(function ($e, $q, $o, $primary) {
+            ->getEventManager()->on('Model.beforeFind', function ($e, $q, $o, $primary) {
                 $this->assertFalse($primary);
-            }, 'Model.beforeFind');
+            });
         $query->all();
     }
 
@@ -2831,7 +2831,7 @@ class QueryTest extends TestCase
             ->bind(':end', 2);
         $copy = $query->cleanCopy();
 
-        $this->assertNotEmpty($copy->valueBinder()->bindings());
+        $this->assertNotEmpty($copy->getValueBinder()->bindings());
     }
 
     /**

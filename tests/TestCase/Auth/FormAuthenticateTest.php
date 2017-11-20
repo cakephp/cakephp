@@ -74,8 +74,8 @@ class FormAuthenticateTest extends TestCase
             'userModel' => 'AuthUsers',
             'fields' => ['username' => 'user', 'password' => 'password']
         ]);
-        $this->assertEquals('AuthUsers', $object->config('userModel'));
-        $this->assertEquals(['username' => 'user', 'password' => 'password'], $object->config('fields'));
+        $this->assertEquals('AuthUsers', $object->getConfig('userModel'));
+        $this->assertEquals(['username' => 'user', 'password' => 'password'], $object->getConfig('fields'));
     }
 
     /**
@@ -255,10 +255,10 @@ class FormAuthenticateTest extends TestCase
         $PluginModel = $this->getTableLocator()->get('TestPlugin.AuthUsers');
         $user['id'] = 1;
         $user['username'] = 'gwoo';
-        $user['password'] = password_hash(Security::salt() . 'cake', PASSWORD_BCRYPT);
+        $user['password'] = password_hash(Security::getSalt() . 'cake', PASSWORD_BCRYPT);
         $PluginModel->save(new Entity($user));
 
-        $this->auth->config('userModel', 'TestPlugin.AuthUsers');
+        $this->auth->setConfig('userModel', 'TestPlugin.AuthUsers');
 
         $request = new ServerRequest('posts/index');
         $request->data = [
@@ -290,7 +290,7 @@ class FormAuthenticateTest extends TestCase
             'password' => 'password'
         ];
 
-        $this->auth->config([
+        $this->auth->setConfig([
             'userModel' => 'AuthUsers',
             'finder' => 'auth'
         ]);
@@ -302,7 +302,7 @@ class FormAuthenticateTest extends TestCase
         ];
         $this->assertEquals($expected, $result, 'Result should not contain "created" and "modified" fields');
 
-        $this->auth->config([
+        $this->auth->setConfig([
             'finder' => ['auth' => ['return_created' => true]]
         ]);
 
@@ -328,7 +328,7 @@ class FormAuthenticateTest extends TestCase
             'password' => 'password'
         ];
 
-        $this->auth->config([
+        $this->auth->setConfig([
             'userModel' => 'AuthUsers',
             'finder' => 'username'
         ]);
@@ -340,7 +340,7 @@ class FormAuthenticateTest extends TestCase
         ];
         $this->assertEquals($expected, $result);
 
-        $this->auth->config([
+        $this->auth->setConfig([
             'finder' => ['username' => ['username' => 'nate']]
         ]);
 
@@ -359,13 +359,13 @@ class FormAuthenticateTest extends TestCase
      */
     public function testPasswordHasherSettings()
     {
-        $this->auth->config('passwordHasher', [
+        $this->auth->setConfig('passwordHasher', [
             'className' => 'Default',
             'hashType' => PASSWORD_BCRYPT
         ]);
 
         $passwordHasher = $this->auth->passwordHasher();
-        $result = $passwordHasher->config();
+        $result = $passwordHasher->getConfig();
         $this->assertEquals(PASSWORD_BCRYPT, $result['hashType']);
 
         $hash = password_hash('mypass', PASSWORD_BCRYPT);
@@ -394,7 +394,7 @@ class FormAuthenticateTest extends TestCase
             'fields' => ['username' => 'username', 'password' => 'password'],
             'userModel' => 'Users'
         ]);
-        $this->auth->config('passwordHasher', [
+        $this->auth->setConfig('passwordHasher', [
             'className' => 'Default'
         ]);
         $this->assertEquals($expected, $this->auth->authenticate($request, $this->response));

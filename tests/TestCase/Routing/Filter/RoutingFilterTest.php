@@ -37,13 +37,15 @@ class RoutingFilterTest extends TestCase
     {
         $filter = new RoutingFilter();
 
-        $request = new ServerRequest('/testcontroller/testaction/params1/params2/params3');
-        $request->addParams(['controller' => 'articles']);
+        $request = new ServerRequest([
+            'url' => '/testcontroller/testaction/params1/params2/params3',
+            'params' => ['controller' => 'articles']
+        ]);
         $event = new Event(__CLASS__, $this, compact('request'));
         $filter->beforeDispatch($event);
 
-        $this->assertSame($request->params['controller'], 'articles');
-        $this->assertEmpty($request->params['action']);
+        $this->assertSame($request->getParam('controller'), 'articles');
+        $this->assertEmpty($request->getParam('action'));
     }
 
     /**
@@ -61,12 +63,11 @@ class RoutingFilterTest extends TestCase
         $event = new Event(__CLASS__, $this, compact('request'));
         $filter->beforeDispatch($event);
 
-        $this->assertSame($request->params['controller'], 'testcontroller');
-        $this->assertSame($request->params['action'], 'testaction');
-        $this->assertSame($request->params['pass'][0], 'params1');
-        $this->assertSame($request->params['pass'][1], 'params2');
-        $this->assertSame($request->params['pass'][2], 'params3');
-        $this->assertFalse(!empty($request['form']));
+        $this->assertSame($request->getParam('controller'), 'testcontroller');
+        $this->assertSame($request->getParam('action'), 'testaction');
+        $this->assertSame($request->getParam('pass.0'), 'params1');
+        $this->assertSame($request->getParam('pass.1'), 'params2');
+        $this->assertSame($request->getParam('pass.2'), 'params3');
     }
 
     /**
@@ -88,8 +89,8 @@ class RoutingFilterTest extends TestCase
         $event = new Event(__CLASS__, $this, compact('request', 'response'));
         $response = $filter->beforeDispatch($event);
         $this->assertInstanceOf('Cake\Http\Response', $response);
-        $this->assertSame('http://localhost/articles', $response->header()['Location']);
-        $this->assertSame(301, $response->statusCode());
+        $this->assertSame('http://localhost/articles', $response->getHeaderLine('Location'));
+        $this->assertSame(301, $response->getStatusCode());
         $this->assertTrue($event->isStopped());
     }
 
@@ -114,20 +115,19 @@ class RoutingFilterTest extends TestCase
         $event = new Event(__CLASS__, $this, compact('request'));
         $filter->beforeDispatch($event);
 
-        $this->assertRegExp('/posts/', $request['controller']);
-        $this->assertRegExp('/home/', $request['action']);
-        $this->assertTrue(isset($request['url']['sleep']));
-        $this->assertTrue(isset($request['url']['coffee']));
+        $this->assertRegExp('/posts/', $request->getParam('controller'));
+        $this->assertRegExp('/home/', $request->getParam('action'));
+        $this->assertSame('sissies', $request->getQuery('sleep'));
+        $this->assertSame('life', $request->getQuery('coffee'));
 
         $request = new ServerRequest('/?coffee=life&sleep=sissy');
-
         $event = new Event(__CLASS__, $this, compact('request'));
         $filter->beforeDispatch($event);
 
-        $this->assertRegExp('/pages/', $request['controller']);
-        $this->assertRegExp('/display/', $request['action']);
-        $this->assertTrue(isset($request['url']['sleep']));
-        $this->assertTrue(isset($request['url']['coffee']));
-        $this->assertEquals('life', $request['url']['coffee']);
+        $this->assertRegExp('/pages/', $request->getParam('controller'));
+        $this->assertRegExp('/display/', $request->getParam('action'));
+        $this->assertSame('sissy', $request->getQuery('sleep'));
+        $this->assertSame('life', $request->getQuery('coffee'));
+        $this->assertEquals('life', $request->getQuery('coffee'));
     }
 }

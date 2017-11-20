@@ -76,7 +76,7 @@ class FixtureManagerTest extends TestCase
 
         $this->manager->setDebug(true);
         $buffer = new ConsoleOutput();
-        Log::config('testQueryLogger', [
+        Log::setConfig('testQueryLogger', [
             'className' => 'Console',
             'stream' => $buffer
         ]);
@@ -108,7 +108,7 @@ class FixtureManagerTest extends TestCase
 
         $this->manager->setDebug(true);
         $buffer = new ConsoleOutput();
-        Log::config('testQueryLogger', [
+        Log::setConfig('testQueryLogger', [
             'className' => 'Console',
             'stream' => $buffer
         ]);
@@ -145,7 +145,7 @@ class FixtureManagerTest extends TestCase
         $this->manager->load($test);
 
         $table = $this->getTableLocator()->get('ArticlesTags');
-        $schema = $table->schema();
+        $schema = $table->getSchema();
         $expectedConstraint = [
             'type' => 'foreign',
             'columns' => [
@@ -164,7 +164,7 @@ class FixtureManagerTest extends TestCase
 
         $this->manager->load($test);
         $table = $this->getTableLocator()->get('ArticlesTags');
-        $schema = $table->schema();
+        $schema = $table->getSchema();
         $expectedConstraint = [
             'type' => 'foreign',
             'columns' => [
@@ -266,11 +266,11 @@ class FixtureManagerTest extends TestCase
     /**
      * Test that unknown types are handled gracefully.
      *
-     * @expectedException \UnexpectedValueException
-     * @expectedExceptionMessage Referenced fixture class "Test\Fixture\Derp.derpFixture" not found. Fixture "derp.derp" was referenced
      */
     public function testFixturizeInvalidType()
     {
+        $this->expectException(\UnexpectedValueException::class);
+        $this->expectExceptionMessage('Referenced fixture class "Test\Fixture\Derp.derpFixture" not found. Fixture "derp.derp" was referenced');
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
         $test->fixtures = ['derp.derp'];
         $this->manager->fixturize($test);
@@ -313,8 +313,8 @@ class FixtureManagerTest extends TestCase
             ->method('execute')
             ->will($this->returnValue($statement));
 
-        ConnectionManager::config('other', $other);
-        ConnectionManager::config('test_other', $testOther);
+        ConnectionManager::setConfig('other', $other);
+        ConnectionManager::setConfig('test_other', $testOther);
 
         // Connect the alias making test_other an alias of other.
         ConnectionManager::alias('test_other', 'other');
@@ -345,7 +345,7 @@ class FixtureManagerTest extends TestCase
 
         $table = $this->getTableLocator()->get('ArticlesTags');
         $results = $table->find('all')->toArray();
-        $schema = $table->schema();
+        $schema = $table->getSchema();
         $expectedConstraint = [
             'type' => 'foreign',
             'columns' => [
@@ -370,7 +370,7 @@ class FixtureManagerTest extends TestCase
 
         $table = $this->getTableLocator()->get('ArticlesTags');
         $results = $table->find('all')->toArray();
-        $schema = $table->schema();
+        $schema = $table->getSchema();
         $expectedConstraint = [
             'type' => 'foreign',
             'columns' => [

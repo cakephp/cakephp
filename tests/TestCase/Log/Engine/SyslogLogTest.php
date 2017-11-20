@@ -38,7 +38,7 @@ class SyslogLogTest extends TestCase
         $log = $this->getMockBuilder('Cake\Log\Engine\SyslogLog')
             ->setMethods(['_open', '_write'])
             ->getMock();
-        $log->config([
+        $log->setConfig([
             'prefix' => 'thing',
             'flag' => LOG_NDELAY,
             'facility' => LOG_MAIL,

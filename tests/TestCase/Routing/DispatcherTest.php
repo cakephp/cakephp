@@ -13,7 +13,6 @@
  */
 namespace Cake\Test\TestCase\Routing;
 
-use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Http\Response;
@@ -25,9 +24,12 @@ use Cake\TestSuite\TestCase;
 
 /**
  * DispatcherTest class
+ *
+ * @group deprecated
  */
 class DispatcherTest extends TestCase
 {
+    protected $errorLevel;
 
     /**
      * setUp method
@@ -39,6 +41,7 @@ class DispatcherTest extends TestCase
         parent::setUp();
         $_GET = [];
 
+        $this->errorLevel = error_reporting(E_ALL ^ E_USER_DEPRECATED);
         Configure::write('App.base', false);
         Configure::write('App.baseUrl', false);
         Configure::write('App.dir', 'app');
@@ -56,6 +59,7 @@ class DispatcherTest extends TestCase
      */
     public function tearDown()
     {
+        error_reporting($this->errorLevel);
         parent::tearDown();
         Plugin::unload();
     }
@@ -63,12 +67,12 @@ class DispatcherTest extends TestCase
     /**
      * testMissingController method
      *
-     * @expectedException \Cake\Routing\Exception\MissingControllerException
-     * @expectedExceptionMessage Controller class SomeController could not be found.
      * @return void
      */
     public function testMissingController()
     {
+        $this->expectException(\Cake\Routing\Exception\MissingControllerException::class);
+        $this->expectExceptionMessage('Controller class SomeController could not be found.');
         $request = new ServerRequest([
             'url' => 'some_controller/home',
             'params' => [
@@ -83,12 +87,12 @@ class DispatcherTest extends TestCase
     /**
      * testMissingControllerInterface method
      *
-     * @expectedException \Cake\Routing\Exception\MissingControllerException
-     * @expectedExceptionMessage Controller class Interface could not be found.
      * @return void
      */
     public function testMissingControllerInterface()
     {
+        $this->expectException(\Cake\Routing\Exception\MissingControllerException::class);
+        $this->expectExceptionMessage('Controller class Interface could not be found.');
         $request = new ServerRequest([
             'url' => 'interface/index',
             'params' => [
@@ -104,12 +108,12 @@ class DispatcherTest extends TestCase
     /**
      * testMissingControllerInterface method
      *
-     * @expectedException \Cake\Routing\Exception\MissingControllerException
-     * @expectedExceptionMessage Controller class Abstract could not be found.
      * @return void
      */
     public function testMissingControllerAbstract()
     {
+        $this->expectException(\Cake\Routing\Exception\MissingControllerException::class);
+        $this->expectExceptionMessage('Controller class Abstract could not be found.');
         $request = new ServerRequest([
             'url' => 'abstract/index',
             'params' => [
@@ -127,12 +131,12 @@ class DispatcherTest extends TestCase
      * In case-insensitive file systems, lowercase controller names will kind of work.
      * This causes annoying deployment issues for lots of folks.
      *
-     * @expectedException \Cake\Routing\Exception\MissingControllerException
-     * @expectedExceptionMessage Controller class somepages could not be found.
      * @return void
      */
     public function testMissingControllerLowercase()
     {
+        $this->expectException(\Cake\Routing\Exception\MissingControllerException::class);
+        $this->expectExceptionMessage('Controller class somepages could not be found.');
         $request = new ServerRequest([
             'url' => 'pages/home',
             'params' => [
@@ -199,12 +203,12 @@ class DispatcherTest extends TestCase
     /**
      * test forbidden controller names.
      *
-     * @expectedException \Cake\Routing\Exception\MissingControllerException
-     * @expectedExceptionMessage Controller class TestPlugin.Tests could not be found.
      * @return void
      */
     public function testDispatchBadPluginName()
     {
+        $this->expectException(\Cake\Routing\Exception\MissingControllerException::class);
+        $this->expectExceptionMessage('Controller class TestPlugin.Tests could not be found.');
         Plugin::load('TestPlugin');
 
         $request = new ServerRequest([
@@ -224,12 +228,12 @@ class DispatcherTest extends TestCase
     /**
      * test forbidden controller names.
      *
-     * @expectedException \Cake\Routing\Exception\MissingControllerException
-     * @expectedExceptionMessage Controller class TestApp\Controller\PostsController could not be found.
      * @return void
      */
     public function testDispatchBadName()
     {
+        $this->expectException(\Cake\Routing\Exception\MissingControllerException::class);
+        $this->expectExceptionMessage('Controller class TestApp\Controller\PostsController could not be found.');
         $request = new ServerRequest([
             'url' => 'TestApp%5CController%5CPostsController/index',
             'params' => [
