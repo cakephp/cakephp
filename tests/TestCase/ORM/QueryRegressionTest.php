@@ -1542,7 +1542,7 @@ class QueryRegressionTest extends TestCase
                 return $q->where(['Authors.id' => 2]);
             })
             ->distinct()
-            ->hydrate(false)
+            ->enableHydration(false)
             ->toArray();
 
         $this->assertEquals([['name' => 'nate', 'tag' => 'tag1']], $results);
@@ -1590,7 +1590,7 @@ class QueryRegressionTest extends TestCase
         ]);
         $query = $table->find()
             ->select(['score' => 100])
-            ->autoFields(true)
+            ->enableAutoFields(true)
             ->contain(['Comments'])
             ->limit(5)
             ->order(['score' => 'desc']);

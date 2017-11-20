@@ -39,6 +39,10 @@ trait LocatorAwareTrait
      */
     public function tableLocator(LocatorInterface $tableLocator = null)
     {
+        deprecationWarning(
+            get_called_class() . '::tableLocator() is deprecated. ' .
+            'Use getTableLocator()/setTableLocator() instead.'
+        );
         if ($tableLocator !== null) {
             $this->setTableLocator($tableLocator);
         }

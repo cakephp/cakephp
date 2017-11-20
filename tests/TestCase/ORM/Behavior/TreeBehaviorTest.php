@@ -1027,7 +1027,7 @@ class TreeBehaviorTest extends TestCase
         $this->assertEquals(17, $entity->lft);
         $this->assertEquals(18, $entity->rght);
 
-        $result = $table->find()->order('lft')->hydrate(false);
+        $result = $table->find()->order('lft')->enableHydration(false);
 
         $expected = [
             ' 1:20 -  1:electronics',
@@ -1288,7 +1288,7 @@ class TreeBehaviorTest extends TestCase
         $this->assertEquals(21, $entity->lft);
         $this->assertEquals(22, $entity->rght);
         $this->assertEquals(null, $entity->parent_id);
-        $result = $table->find()->order('lft')->hydrate(false);
+        $result = $table->find()->order('lft')->enableHydration(false);
         $expected = [
             ' 1:18 -  1:electronics',
             '_ 2: 9 -  2:televisions',
@@ -1316,11 +1316,11 @@ class TreeBehaviorTest extends TestCase
         $table = $this->table;
         $entity = $table->get(6);
         $this->assertSame($entity, $table->removeFromTree($entity));
-        $result = $table->find('threaded')->order('lft')->hydrate(false)->toArray();
+        $result = $table->find('threaded')->order('lft')->enableHydration(false)->toArray();
         $this->assertEquals(21, $entity->lft);
         $this->assertEquals(22, $entity->rght);
         $this->assertEquals(null, $entity->parent_id);
-        $result = $table->find()->order('lft')->hydrate(false);
+        $result = $table->find()->order('lft')->enableHydration(false);
         $expected = [
             ' 1:18 -  1:electronics',
             '_ 2: 9 -  2:televisions',
@@ -1347,7 +1347,7 @@ class TreeBehaviorTest extends TestCase
         $table = $this->table;
         $entity = $table->get(1);
         $this->assertSame($entity, $table->removeFromTree($entity));
-        $result = $table->find('threaded')->order('lft')->hydrate(false)->toArray();
+        $result = $table->find('threaded')->order('lft')->enableHydration(false)->toArray();
         $this->assertEquals(21, $entity->lft);
         $this->assertEquals(22, $entity->rght);
         $this->assertEquals(null, $entity->parent_id);

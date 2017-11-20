@@ -432,6 +432,7 @@ class ResultSet implements ResultSetInterface
      */
     protected function _calculateTypeMap()
     {
+        deprecationWarning('ResultSet::_calculateTypeMap() is deprecated, and will be removed in 4.0.0.');
     }
 
     /**
@@ -606,6 +607,8 @@ class ResultSet implements ResultSetInterface
      */
     protected function _castValues($alias, $values)
     {
+        deprecationWarning('ResultSet::_castValues() is deprecated, and will be removed in 4.0.0.');
+
         return $values;
     }
 

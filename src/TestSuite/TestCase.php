@@ -691,7 +691,7 @@ abstract class TestCase extends BaseTestCase
 
         list(, $baseClass) = pluginSplit($alias);
         $options += ['alias' => $baseClass, 'connection' => $connection];
-        $options += TableRegistry::config($alias);
+        $options += TableRegistry::getConfig($alias);
 
         $mock = $this->getMockBuilder($options['className'])
             ->setMethods($methods)

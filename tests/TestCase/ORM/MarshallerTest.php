@@ -343,6 +343,7 @@ class MarshallerTest extends TestCase
         $this->assertTrue($result->not_in_schema);
     }
 
+
     /**
      * Test one() with an invalid association
      *
@@ -1481,26 +1482,12 @@ class MarshallerTest extends TestCase
     }
 
     /**
-     * Runs the tests with the deprecated key and the new key.
-     *
-     * @return array
-     */
-    public function fieldListKeyProvider()
-    {
-        return [
-            ['fieldList'],
-            ['fields']
-        ];
-    }
-
-    /**
      * Test merge when fields contains an association.
      *
      * @param $fields
      * @return void
-     * @dataProvider fieldListKeyProvider
      */
-    public function testMergeWithSingleAssociationAndFields($fields)
+    public function testMergeWithSingleAssociationAndFields()
     {
         $user = new Entity([
            'username' => 'user',
@@ -1523,7 +1510,7 @@ class MarshallerTest extends TestCase
 
         $marshall = new Marshaller($this->articles);
         $marshall->merge($article, $data, [
-            $fields => ['title', 'user'],
+            'fields' => ['title', 'user'],
             'associated' => ['Users' => []]
         ]);
         $this->assertSame($user, $article->user);
@@ -1717,7 +1704,7 @@ class MarshallerTest extends TestCase
         $thirdComment = $this->articles->Comments
             ->find()
             ->where(['id' => 3])
-            ->hydrate(false)
+            ->enableHydration(false)
             ->first();
 
         $this->assertEquals(
@@ -1728,7 +1715,7 @@ class MarshallerTest extends TestCase
         $forthComment = $this->articles->Comments
             ->find()
             ->where(['id' => 4])
-            ->hydrate(false)
+            ->enableHydration(false)
             ->first();
 
         $this->assertEquals(
@@ -2533,11 +2520,32 @@ class MarshallerTest extends TestCase
     /**
      * Tests that it is possible to pass a fields option to the marshaller
      *
-     * @param string $fields
+     * @group deprecated
      * @return void
-     * @dataProvider fieldListKeyProvider
      */
-    public function testOneWithFields($fields)
+    public function testOneWithFieldList()
+    {
+        $this->deprecated(function () {
+            $data = [
+                'title' => 'My title',
+                'body' => 'My content',
+                'author_id' => null
+            ];
+            $marshall = new Marshaller($this->articles);
+            $result = $marshall->one($data, ['fieldList' => ['title', 'author_id']]);
+
+            $this->assertInstanceOf('Cake\ORM\Entity', $result);
+            unset($data['body']);
+            $this->assertEquals($data, $result->toArray());
+        });
+    }
+
+    /**
+     * Tests that it is possible to pass a fields option to the marshaller
+     *
+     * @return void
+     */
+    public function testOneWithFields()
     {
         $data = [
             'title' => 'My title',
@@ -2545,7 +2553,7 @@ class MarshallerTest extends TestCase
             'author_id' => null
         ];
         $marshall = new Marshaller($this->articles);
-        $result = $marshall->one($data, [$fields => ['title', 'author_id']]);
+        $result = $marshall->one($data, ['fields' => ['title', 'author_id']]);
 
         $this->assertInstanceOf('Cake\ORM\Entity', $result);
         unset($data['body']);
@@ -2598,11 +2606,46 @@ class MarshallerTest extends TestCase
     /**
      * Tests that it is possible to pass a fields option to the merge method
      *
-     * @param string $fields
+     * @group deprecated
      * @return void
-     * @dataProvider fieldListKeyProvider
      */
-    public function testMergeWithFields($fields)
+    public function testMergeWithFieldList()
+    {
+        $this->deprecated(function () {
+            $data = [
+                'title' => 'My title',
+                'body' => null,
+                'author_id' => 1
+            ];
+            $marshall = new Marshaller($this->articles);
+            $entity = new Entity([
+                'title' => 'Foo',
+                'body' => 'My content',
+                'author_id' => 2
+            ]);
+            $entity->accessible('*', false);
+            $entity->isNew(false);
+            $entity->clean();
+            $result = $marshall->merge($entity, $data, ['fieldList' => ['title', 'body']]);
+
+            $expected = [
+                'title' => 'My title',
+                'body' => null,
+                'author_id' => 2
+            ];
+
+            $this->assertSame($entity, $result);
+            $this->assertEquals($expected, $result->toArray());
+            $this->assertFalse($entity->accessible('*'));
+        });
+    }
+
+    /**
+     * Tests that it is possible to pass a fields option to the merge method
+     *
+     * @return void
+     */
+    public function testMergeWithFields()
     {
         $data = [
             'title' => 'My title',
@@ -2618,7 +2661,7 @@ class MarshallerTest extends TestCase
         $entity->accessible('*', false);
         $entity->isNew(false);
         $entity->clean();
-        $result = $marshall->merge($entity, $data, [$fields => ['title', 'body']]);
+        $result = $marshall->merge($entity, $data, ['fields' => ['title', 'body']]);
 
         $expected = [
             'title' => 'My title',
@@ -2634,18 +2677,16 @@ class MarshallerTest extends TestCase
     /**
      * Test that many() also receives a fields option
      *
-     * @param string $fields
      * @return void
-     * @dataProvider fieldListKeyProvider
      */
-    public function testManyFields($fields)
+    public function testManyFields()
     {
         $data = [
             ['comment' => 'First post', 'user_id' => 2, 'foo' => 'bar'],
             ['comment' => 'Second post', 'user_id' => 2, 'foo' => 'bar'],
         ];
         $marshall = new Marshaller($this->comments);
-        $result = $marshall->many($data, [$fields => ['comment', 'user_id']]);
+        $result = $marshall->many($data, ['fields' => ['comment', 'user_id']]);
 
         $this->assertCount(2, $result);
         unset($data[0]['foo'], $data[1]['foo']);
@@ -2656,11 +2697,9 @@ class MarshallerTest extends TestCase
     /**
      * Test that many() also receives a fields option
      *
-     * @param string $fields
      * @return void
-     * @dataProvider fieldListKeyProvider
      */
-    public function testMergeManyFields($fields)
+    public function testMergeManyFields()
     {
         $entities = [
             new OpenEntity(['id' => 1, 'comment' => 'First post', 'user_id' => 2]),
@@ -2674,7 +2713,7 @@ class MarshallerTest extends TestCase
             ['id' => 1, 'comment' => 'Changed 1', 'user_id' => 20]
         ];
         $marshall = new Marshaller($this->comments);
-        $result = $marshall->mergeMany($entities, $data, [$fields => ['id', 'comment']]);
+        $result = $marshall->mergeMany($entities, $data, ['fields' => ['id', 'comment']]);
 
         $this->assertSame($entities[0], $result[0]);
         $this->assertSame($entities[1], $result[1]);
@@ -2689,11 +2728,9 @@ class MarshallerTest extends TestCase
     /**
      * test marshalling association data while passing a fields
      *
-     * @param string $fields
      * @return void
-     * @dataProvider fieldListKeyProvider
      */
-    public function testAssociationsFields($fields)
+    public function testAssociationsFields()
     {
         $data = [
             'title' => 'My title',
@@ -2707,9 +2744,9 @@ class MarshallerTest extends TestCase
         ];
         $marshall = new Marshaller($this->articles);
         $result = $marshall->one($data, [
-            $fields => ['title', 'body', 'user'],
+            'fields' => ['title', 'body', 'user'],
             'associated' => [
-                'Users' => [$fields => ['username', 'foo']]
+                'Users' => ['fields' => ['username', 'foo']]
             ]
         ]);
 
@@ -2725,11 +2762,9 @@ class MarshallerTest extends TestCase
     /**
      * Tests merging associated data with a fields
      *
-     * @param string $fields
      * @return void
-     * @dataProvider fieldListKeyProvider
      */
-    public function testMergeAssociationWithfields($fields)
+    public function testMergeAssociationWithfields()
     {
         $user = new Entity([
             'username' => 'mark',
@@ -2752,8 +2787,8 @@ class MarshallerTest extends TestCase
         ];
         $marshall = new Marshaller($this->articles);
         $marshall->merge($entity, $data, [
-            $fields => ['something'],
-            'associated' => ['Users' => [$fields => ['extra']]]
+            'fields' => ['something'],
+            'associated' => ['Users' => ['fields' => ['extra']]]
         ]);
         $this->assertNull($entity->body);
         $this->assertEquals('else', $entity->something);
@@ -2768,11 +2803,9 @@ class MarshallerTest extends TestCase
      * Test marshalling nested associations on the _joinData structure
      * while having a fields
      *
-     * @param string $fields
      * @return void
-     * @dataProvider fieldListKeyProvider
      */
-    public function testJoinDataWhiteList($fields)
+    public function testJoinDataWhiteList()
     {
         $data = [
             'title' => 'My title',
@@ -2804,7 +2837,7 @@ class MarshallerTest extends TestCase
         $marshall = new Marshaller($this->articles);
         $result = $marshall->one($data, [
             'associated' => [
-                'Tags._joinData' => [$fields => ['active', 'user']],
+                'Tags._joinData' => ['fields' => ['active', 'user']],
                 'Tags._joinData.Users'
             ]
         ]);
@@ -2829,11 +2862,9 @@ class MarshallerTest extends TestCase
      * Test merging the _joinData entity for belongstomany associations
      * while passing a whitelist
      *
-     * @param string $fields
      * @return void
-     * @dataProvider fieldListKeyProvider
      */
-    public function testMergeJoinDataWithFields($fields)
+    public function testMergeJoinDataWithFields()
     {
         $data = [
             'title' => 'My title',
@@ -2872,7 +2903,7 @@ class MarshallerTest extends TestCase
 
         $tag1 = $entity->tags[0];
         $result = $marshall->merge($entity, $data, [
-            'associated' => ['Tags._joinData' => [$fields => ['foo']]]
+            'associated' => ['Tags._joinData' => ['fields' => ['foo']]]
         ]);
         $this->assertEquals($data['title'], $result->title);
         $this->assertEquals('My content', $result->body);

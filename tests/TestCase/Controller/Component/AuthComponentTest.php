@@ -202,7 +202,7 @@ class AuthComponentTest extends TestCase
     {
         $event = new Event('Controller.startup', $this->Controller);
         $Users = TableRegistry::get('Users');
-        $user = $Users->find('all')->hydrate(false)->first();
+        $user = $Users->find('all')->enableHydration(false)->first();
         $this->Controller->Auth->storage()->write($user);
         $this->Controller->Auth->setConfig('userModel', 'Users');
         $this->Controller->Auth->setConfig('authorize', false);

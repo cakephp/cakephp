@@ -73,6 +73,10 @@ class TableRegistry
      */
     public static function locator(LocatorInterface $locator = null)
     {
+        deprecationWarning(
+            'TableRegistry::locator() is deprecated. ' .
+            'Use setTableLocator()/getTableLocator() instead.'
+        );
         if ($locator) {
             static::setTableLocator($locator);
         }

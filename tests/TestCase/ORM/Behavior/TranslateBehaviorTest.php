@@ -190,7 +190,7 @@ class TranslateBehaviorTest extends TestCase
         $results = $table->find()
             ->select(['id', 'title', 'body'])
             ->contain(['Comments' => ['fields' => ['article_id', 'comment']]])
-            ->hydrate(false)
+            ->enableHydration(false)
             ->toArray();
 
         $expected = [
@@ -236,7 +236,7 @@ class TranslateBehaviorTest extends TestCase
                     'sort' => ['Comments.id' => 'ASC']
                 ]
             ])
-            ->hydrate(false)
+            ->enableHydration(false)
             ->toArray();
 
         $expected = [

@@ -69,16 +69,19 @@ class TableRegistryTest extends TestCase
     /**
      * Test locator() method.
      *
+     * @group deprecated
      * @return void
      */
     public function testLocator()
     {
-        $this->assertInstanceOf('Cake\ORM\Locator\LocatorInterface', TableRegistry::locator());
+        $this->deprecated(function () {
+            $this->assertInstanceOf('Cake\ORM\Locator\LocatorInterface', TableRegistry::locator());
 
-        $locator = $this->getMockBuilder('Cake\ORM\Locator\LocatorInterface')->getMock();
-        TableRegistry::locator($locator);
+            $locator = $this->getMockBuilder('Cake\ORM\Locator\LocatorInterface')->getMock();
+            TableRegistry::locator($locator);
 
-        $this->assertSame($locator, TableRegistry::locator());
+            $this->assertSame($locator, TableRegistry::locator());
+        });
     }
 
     /**
