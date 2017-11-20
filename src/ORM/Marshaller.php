@@ -106,6 +106,7 @@ class Marshaller
             }
             if (isset($options['isMerge'])) {
                 $callback = function ($value, $entity) use ($assoc, $nested) {
+                    /* @var \Cake\Datasource\EntityInterface $entity */
                     $options = $nested + ['associated' => [], 'association' => $assoc];
 
                     return $this->_mergeAssociation($entity->get($assoc->getProperty()), $assoc, $value, $options);
@@ -364,7 +365,7 @@ class Marshaller
      * @param \Cake\ORM\Association\BelongsToMany $assoc The association to marshal.
      * @param array $data The data to convert into entities.
      * @param array $options List of options.
-     * @return array An array of built entities.
+     * @return \Cake\Datasource\EntityInterface[] An array of built entities.
      * @throws \BadMethodCallException
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
@@ -408,6 +409,7 @@ class Marshaller
         if (!empty($conditions)) {
             $query = $target->find();
             $query->andWhere(function ($exp) use ($conditions) {
+                /* @var \Cake\Database\Expression\QueryExpression $exp */
                 return $exp->or_($conditions);
             });
 
@@ -458,7 +460,7 @@ class Marshaller
      *
      * @param \Cake\ORM\Association $assoc The association class for the belongsToMany association.
      * @param array $ids The list of ids to load.
-     * @return array An array of entities.
+     * @return \Cake\Datasource\EntityInterface[] An array of entities.
      */
     protected function _loadAssociatedByIds($assoc, $ids)
     {
@@ -489,7 +491,7 @@ class Marshaller
      *
      * @param \Cake\ORM\Association $assoc The association class for the belongsToMany association.
      * @param array $ids The list of ids to load.
-     * @return array An array of entities.
+     * @return \Cake\Datasource\EntityInterface[] An array of entities.
      * @deprecated Use _loadAssociatedByIds()
      */
     protected function _loadBelongsToMany($assoc, $ids)
@@ -633,11 +635,11 @@ class Marshaller
      *   the accessible fields list in the entity will be used.
      * - accessibleFields: A list of fields to allow or deny in entity accessible fields.
      *
-     * @param array|\Traversable $entities the entities that will get the
+     * @param \Cake\Datasource\EntityInterface[]|\Traversable $entities the entities that will get the
      *   data merged in
      * @param array $data list of arrays to be merged into the entities
      * @param array $options List of options.
-     * @return array
+     * @return \Cake\Datasource\EntityInterface[]
      * @see \Cake\ORM\Entity::$_accessible
      */
     public function mergeMany($entities, array $data, array $options = [])
@@ -684,6 +686,7 @@ class Marshaller
                 return count(array_filter($keys, 'strlen')) === count($primary);
             })
             ->reduce(function ($query, $keys) use ($primary) {
+                /* @var \Cake\ORM\Query $query */
                 $fields = array_map([$this->_table, 'aliasField'], $primary);
 
                 return $query->orWhere($query->newExpr()->and_(array_combine($fields, $keys)));
@@ -748,7 +751,7 @@ class Marshaller
      * @param \Cake\ORM\Association $assoc The association to marshall
      * @param array $value The data to hydrate
      * @param array $options List of options.
-     * @return array
+     * @return \Cake\Datasource\EntityInterface[]
      */
     protected function _mergeBelongsToMany($original, $assoc, $value, $options)
     {
@@ -778,7 +781,7 @@ class Marshaller
      * @param \Cake\ORM\Association\BelongsToMany $assoc The association to marshall
      * @param array $value The data to hydrate
      * @param array $options List of options.
-     * @return array An array of entities
+     * @return \Cake\Datasource\EntityInterface[] An array of entities
      */
     protected function _mergeJoinData($original, $assoc, $value, $options)
     {
