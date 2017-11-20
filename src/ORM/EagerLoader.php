@@ -208,6 +208,10 @@ class EagerLoader
      */
     public function autoFields($enable = null)
     {
+        deprecationWarning(
+            'EagerLoader::autoFields() is deprecated. ' .
+            'Use enableAutoFields()/isAutoFieldsEnabled() instead.'
+        );
         if ($enable !== null) {
             $this->enableAutoFields($enable);
         }
@@ -295,6 +299,10 @@ class EagerLoader
      */
     public function matching($assoc = null, callable $builder = null, $options = [])
     {
+        deprecationWarning(
+            'EagerLoader::matching() is deprecated. ' .
+            'Use setMatch()/getMatching() instead.'
+        );
         if ($assoc !== null) {
             $this->setMatching($assoc, $builder, $options);
         }

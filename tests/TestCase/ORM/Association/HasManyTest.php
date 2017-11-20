@@ -99,14 +99,32 @@ class HasManyTest extends TestCase
      *
      * @return void
      */
-    public function testForeignKey()
+    public function testSetForeignKey()
     {
         $assoc = new HasMany('Articles', [
             'sourceTable' => $this->author
         ]);
-        $this->assertEquals('author_id', $assoc->foreignKey());
-        $this->assertEquals('another_key', $assoc->foreignKey('another_key'));
-        $this->assertEquals('another_key', $assoc->foreignKey());
+        $this->assertEquals('author_id', $assoc->getForeignKey());
+        $this->assertSame($assoc, $assoc->setForeignKey('another_key'));
+        $this->assertEquals('another_key', $assoc->getForeignKey());
+    }
+
+    /**
+     * Tests that foreignKey() returns the correct configured value
+     *
+     * @group deprecated
+     * @return void
+     */
+    public function testForeignKey()
+    {
+        $this->deprecated(function () {
+            $assoc = new HasMany('Articles', [
+                'sourceTable' => $this->author
+            ]);
+            $this->assertEquals('author_id', $assoc->foreignKey());
+            $this->assertEquals('another_key', $assoc->foreignKey('another_key'));
+            $this->assertEquals('another_key', $assoc->foreignKey());
+        });
     }
 
     /**
@@ -120,7 +138,7 @@ class HasManyTest extends TestCase
         $assoc = new HasMany('Articles', [
             'sourceTable' => $this->author
         ]);
-        $this->assertEquals('author_id', $assoc->foreignKey());
+        $this->assertEquals('author_id', $assoc->getForeignKey());
     }
 
     /**
@@ -137,14 +155,30 @@ class HasManyTest extends TestCase
     /**
      * Tests sort() method
      *
+     * @group deprecated
      * @return void
      */
     public function testSort()
     {
+        $this->deprecated(function () {
+            $assoc = new HasMany('Test');
+            $this->assertNull($assoc->sort());
+            $assoc->sort(['id' => 'ASC']);
+            $this->assertEquals(['id' => 'ASC'], $assoc->sort());
+        });
+    }
+
+    /**
+     * Tests setSort() method
+     *
+     * @return void
+     */
+    public function testSetSort()
+    {
         $assoc = new HasMany('Test');
-        $this->assertNull($assoc->sort());
-        $assoc->sort(['id' => 'ASC']);
-        $this->assertEquals(['id' => 'ASC'], $assoc->sort());
+        $this->assertNull($assoc->getSort());
+        $assoc->setSort(['id' => 'ASC']);
+        $this->assertEquals(['id' => 'ASC'], $assoc->getSort());
     }
 
     /**
@@ -157,10 +191,10 @@ class HasManyTest extends TestCase
         $assoc = new HasMany('Test');
         $this->assertTrue($assoc->requiresKeys());
 
-        $assoc->strategy(HasMany::STRATEGY_SUBQUERY);
+        $assoc->setStrategy(HasMany::STRATEGY_SUBQUERY);
         $this->assertFalse($assoc->requiresKeys());
 
-        $assoc->strategy(HasMany::STRATEGY_SELECT);
+        $assoc->setStrategy(HasMany::STRATEGY_SELECT);
         $this->assertTrue($assoc->requiresKeys());
     }
 
@@ -174,7 +208,7 @@ class HasManyTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid strategy "join" was provided');
         $assoc = new HasMany('Test');
-        $assoc->strategy(HasMany::STRATEGY_JOIN);
+        $assoc->setStrategy(HasMany::STRATEGY_JOIN);
     }
 
     /**
@@ -271,7 +305,7 @@ class HasManyTest extends TestCase
         $association = new HasMany('Articles', $config);
         $keys = [1, 2, 3, 4];
         $query = $this->article->query();
-        $query->addDefaultTypes($this->article->Comments->source());
+        $query->addDefaultTypes($this->article->Comments->getSource());
 
         $this->article->method('find')
             ->with('all')
@@ -536,7 +570,7 @@ class HasManyTest extends TestCase
     {
         $config = ['propertyName' => 'thing_placeholder'];
         $association = new hasMany('Thing', $config);
-        $this->assertEquals('thing_placeholder', $association->property());
+        $this->assertEquals('thing_placeholder', $association->getProperty());
     }
 
     /**
@@ -554,7 +588,7 @@ class HasManyTest extends TestCase
             'targetTable' => $mock,
         ];
         $association = new HasMany('Contacts.Addresses', $config);
-        $this->assertEquals('addresses', $association->property());
+        $this->assertEquals('addresses', $association->getProperty());
     }
 
     /**
@@ -888,5 +922,50 @@ class HasManyTest extends TestCase
             'contain' => ['Comments']
         ]);
         $this->assertEmpty($entity->get('comments'));
+    }
+
+    /**
+     * Tests that providing an invalid strategy throws an exception
+     *
+     * @return void
+     */
+    public function testInvalidSaveStrategy()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $articles = TableRegistry::get('Articles');
+
+        $association = $articles->hasMany('Comments');
+        $association->setSaveStrategy('anotherThing');
+    }
+
+    /**
+     * Tests saveStrategy
+     *
+     * @return void
+     */
+    public function testSetSaveStrategy()
+    {
+        $articles = TableRegistry::get('Articles');
+
+        $association = $articles->hasMany('Comments');
+        $this->assertSame($association, $association->setSaveStrategy(HasMany::SAVE_REPLACE));
+        $this->assertSame(HasMany::SAVE_REPLACE, $association->getSaveStrategy());
+    }
+
+    /**
+     * Tests saveStrategy
+     *
+     * @group deprecated
+     * @return void
+     */
+    public function testSaveStrategy()
+    {
+        $this->deprecated(function () {
+            $articles = TableRegistry::get('Articles');
+
+            $association = $articles->hasMany('Comments');
+            $this->assertSame(HasMany::SAVE_REPLACE, $association->saveStrategy(HasMany::SAVE_REPLACE));
+            $this->assertSame(HasMany::SAVE_REPLACE, $association->saveStrategy());
+        });
     }
 }

@@ -228,11 +228,11 @@ class QueryRegressionTest extends TestCase
         $table = TableRegistry::get('Articles');
         $table->belongsTo('Authors');
         $table->hasOne('Things', ['propertyName' => 'articles_tag']);
-        $table->Authors->target()->hasOne('Stuff', [
+        $table->Authors->getTarget()->hasOne('Stuff', [
             'foreignKey' => 'id',
             'propertyName' => 'favorite_tag'
         ]);
-        $table->Things->target()->belongsTo('Stuff', [
+        $table->Things->getTarget()->belongsTo('Stuff', [
             'foreignKey' => 'tag_id',
             'propertyName' => 'foo'
         ]);
@@ -1704,11 +1704,11 @@ class QueryRegressionTest extends TestCase
         $this->loadFixtures('Authors', 'Articles', 'Tags', 'ArticlesTags');
         $table = TableRegistry::get('authors');
         $table->hasMany('articles');
-        $articles = $table->getAssociation('articles')->target();
+        $articles = $table->getAssociation('articles')->getTarget();
         $articles->hasMany('articlesTags');
-        $tags = $articles->getAssociation('articlesTags')->target()->belongsTo('tags');
+        $tags = $articles->getAssociation('articlesTags')->getTarget()->belongsTo('tags');
 
-        $tags->target()->getEventManager()->on('Model.beforeFind', function ($e, $query) {
+        $tags->getTarget()->getEventManager()->on('Model.beforeFind', function ($e, $query) {
             return $query->formatResults(function ($results) {
                 return $results->map(function (\Cake\ORM\Entity $tag) {
                     $tag->name .= ' - visited';

@@ -66,11 +66,11 @@ class RulesCheckerIntegrationTest extends TestCase
         $table = TableRegistry::get('articles');
         $table->belongsTo('authors');
         $table->getAssociation('authors')
-            ->target()
+            ->getTarget()
             ->rulesChecker()
             ->add(
                 function (Entity $author, array $options) use ($table) {
-                    $this->assertSame($options['repository'], $table->getAssociation('authors')->target());
+                    $this->assertSame($options['repository'], $table->getAssociation('authors')->getTarget());
 
                     return false;
                 },
@@ -105,7 +105,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $table = TableRegistry::get('authors');
         $table->hasOne('articles');
         $table->getAssociation('articles')
-            ->target()
+            ->getTarget()
             ->rulesChecker()
             ->add(
                 function (Entity $entity) {
@@ -150,7 +150,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $table = TableRegistry::get('authors');
         $table->hasMany('articles');
         $table->getAssociation('articles')
-            ->target()
+            ->getTarget()
             ->rulesChecker()
             ->add(
                 function (Entity $entity, $options) use ($table) {
@@ -199,7 +199,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $table = TableRegistry::get('authors');
         $table->hasMany('articles');
         $table->getAssociation('articles')
-            ->target()
+            ->getTarget()
             ->rulesChecker()
             ->add(
                 function (Entity $article) {
@@ -1320,7 +1320,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $table = TableRegistry::get('authors');
         $table->hasMany('articles');
         $table->getAssociation('articles')->belongsTo('authors');
-        $checker = $table->getAssociation('articles')->target()->rulesChecker();
+        $checker = $table->getAssociation('articles')->getTarget()->rulesChecker();
         $checker->add(function ($entity, $options) use ($checker) {
             $rule = $checker->existsIn('author_id', 'authors');
             $id = $entity->author_id;

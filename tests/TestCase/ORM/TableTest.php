@@ -27,8 +27,10 @@ use Cake\Event\Event;
 use Cake\Event\EventManager;
 use Cake\I18n\Time;
 use Cake\ORM\AssociationCollection;
+use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Association\HasMany;
+use Cake\ORM\Association\HasOne;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
@@ -544,12 +546,12 @@ class TableTest extends TestCase
         $options = ['foreignKey' => 'fake_id', 'conditions' => ['a' => 'b']];
         $table = new Table(['table' => 'dates']);
         $belongsTo = $table->belongsTo('user', $options);
-        $this->assertInstanceOf('Cake\ORM\Association\BelongsTo', $belongsTo);
+        $this->assertInstanceOf(BelongsTo::class, $belongsTo);
         $this->assertSame($belongsTo, $table->getAssociation('user'));
-        $this->assertEquals('user', $belongsTo->name());
-        $this->assertEquals('fake_id', $belongsTo->foreignKey());
-        $this->assertEquals(['a' => 'b'], $belongsTo->conditions());
-        $this->assertSame($table, $belongsTo->source());
+        $this->assertEquals('user', $belongsTo->getName());
+        $this->assertEquals('fake_id', $belongsTo->getForeignKey());
+        $this->assertEquals(['a' => 'b'], $belongsTo->getConditions());
+        $this->assertSame($table, $belongsTo->getSource());
     }
 
     /**
@@ -562,12 +564,12 @@ class TableTest extends TestCase
         $options = ['foreignKey' => 'user_id', 'conditions' => ['b' => 'c']];
         $table = new Table(['table' => 'users']);
         $hasOne = $table->hasOne('profile', $options);
-        $this->assertInstanceOf('Cake\ORM\Association\HasOne', $hasOne);
+        $this->assertInstanceOf(HasOne::class, $hasOne);
         $this->assertSame($hasOne, $table->getAssociation('profile'));
-        $this->assertEquals('profile', $hasOne->name());
-        $this->assertEquals('user_id', $hasOne->foreignKey());
-        $this->assertEquals(['b' => 'c'], $hasOne->conditions());
-        $this->assertSame($table, $hasOne->source());
+        $this->assertEquals('profile', $hasOne->getName());
+        $this->assertEquals('user_id', $hasOne->getForeignKey());
+        $this->assertEquals(['b' => 'c'], $hasOne->getConditions());
+        $this->assertSame($table, $hasOne->getSource());
     }
 
     /**
@@ -581,23 +583,23 @@ class TableTest extends TestCase
         $table = new Table(['table' => 'users']);
 
         $hasOne = $table->hasOne('Comments', $options);
-        $this->assertInstanceOf('Cake\ORM\Association\HasOne', $hasOne);
-        $this->assertSame('Comments', $hasOne->name());
+        $this->assertInstanceOf(HasOne::class, $hasOne);
+        $this->assertSame('Comments', $hasOne->getName());
 
-        $hasOneTable = $hasOne->target();
-        $this->assertSame('Comments', $hasOne->alias());
-        $this->assertSame('TestPlugin.Comments', $hasOne->registryAlias());
+        $hasOneTable = $hasOne->getTarget();
+        $this->assertSame('Comments', $hasOne->getAlias());
+        $this->assertSame('TestPlugin.Comments', $hasOne->getRegistryAlias());
 
         $options = ['className' => 'TestPlugin.Comments'];
         $table = new Table(['table' => 'users']);
 
         $hasOne = $table->hasOne('TestPlugin.Comments', $options);
-        $this->assertInstanceOf('Cake\ORM\Association\HasOne', $hasOne);
-        $this->assertSame('Comments', $hasOne->name());
+        $this->assertInstanceOf(HasOne::class, $hasOne);
+        $this->assertSame('Comments', $hasOne->getName());
 
-        $hasOneTable = $hasOne->target();
-        $this->assertSame('Comments', $hasOne->alias());
-        $this->assertSame('TestPlugin.Comments', $hasOne->registryAlias());
+        $hasOneTable = $hasOne->getTarget();
+        $this->assertSame('Comments', $hasOne->getAlias());
+        $this->assertSame('TestPlugin.Comments', $hasOne->getRegistryAlias());
     }
 
     /**
@@ -619,9 +621,9 @@ class TableTest extends TestCase
         $options = ['className' => 'TestPlugin.Comments'];
         $Categories->hasMany('Comments', $options);
 
-        $this->assertInstanceOf('Cake\ORM\Table', $Users->Comments->target());
-        $this->assertInstanceOf('Cake\ORM\Table', $Articles->Comments->target());
-        $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $Categories->Comments->target());
+        $this->assertInstanceOf('Cake\ORM\Table', $Users->Comments->getTarget());
+        $this->assertInstanceOf('Cake\ORM\Table', $Articles->Comments->getTarget());
+        $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $Categories->Comments->getTarget());
     }
 
     /**
@@ -636,14 +638,14 @@ class TableTest extends TestCase
         $Categories->hasMany('Children', ['foreignKey' => 'parent_id'] + $options);
         $Categories->belongsTo('Parent', $options);
 
-        $this->assertSame('categories', $Categories->Children->target()->table());
-        $this->assertSame('categories', $Categories->Parent->target()->table());
+        $this->assertSame('categories', $Categories->Children->getTarget()->getTable());
+        $this->assertSame('categories', $Categories->Parent->getTarget()->getTable());
 
-        $this->assertSame('Children', $Categories->Children->alias());
-        $this->assertSame('Children', $Categories->Children->target()->alias());
+        $this->assertSame('Children', $Categories->Children->getAlias());
+        $this->assertSame('Children', $Categories->Children->getTarget()->getAlias());
 
-        $this->assertSame('Parent', $Categories->Parent->alias());
-        $this->assertSame('Parent', $Categories->Parent->target()->alias());
+        $this->assertSame('Parent', $Categories->Parent->getAlias());
+        $this->assertSame('Parent', $Categories->Parent->getTarget()->getAlias());
 
         $expected = [
             'id' => 2,
@@ -693,13 +695,13 @@ class TableTest extends TestCase
         ];
         $table = new Table(['table' => 'authors']);
         $hasMany = $table->hasMany('article', $options);
-        $this->assertInstanceOf('Cake\ORM\Association\HasMany', $hasMany);
+        $this->assertInstanceOf(HasMany::class, $hasMany);
         $this->assertSame($hasMany, $table->getAssociation('article'));
-        $this->assertEquals('article', $hasMany->name());
-        $this->assertEquals('author_id', $hasMany->foreignKey());
-        $this->assertEquals(['b' => 'c'], $hasMany->conditions());
-        $this->assertEquals(['foo' => 'asc'], $hasMany->sort());
-        $this->assertSame($table, $hasMany->source());
+        $this->assertEquals('article', $hasMany->getName());
+        $this->assertEquals('author_id', $hasMany->getForeignKey());
+        $this->assertEquals(['b' => 'c'], $hasMany->getConditions());
+        $this->assertEquals(['foo' => 'asc'], $hasMany->getSort());
+        $this->assertSame($table, $hasMany->getSource());
     }
 
     /**
@@ -774,7 +776,7 @@ class TableTest extends TestCase
         $table = new Table(['table' => 'authors']);
 
         $table->hasMany('TestPlugin.Comments');
-        $comments = $table->Comments->target();
+        $comments = $table->Comments->getTarget();
         $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $comments);
     }
 
@@ -792,7 +794,7 @@ class TableTest extends TestCase
         $table = new Table(['table' => 'authors']);
 
         $table->hasMany('Comments', ['className' => 'TestPlugin.Comments']);
-        $comments = $table->Comments->target();
+        $comments = $table->Comments->getTarget();
         $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $comments);
     }
 
@@ -811,14 +813,14 @@ class TableTest extends TestCase
         ];
         $table = new Table(['table' => 'authors', 'connection' => $this->connection]);
         $belongsToMany = $table->belongsToMany('tag', $options);
-        $this->assertInstanceOf('Cake\ORM\Association\BelongsToMany', $belongsToMany);
+        $this->assertInstanceOf(BelongsToMany::class, $belongsToMany);
         $this->assertSame($belongsToMany, $table->getAssociation('tag'));
-        $this->assertEquals('tag', $belongsToMany->name());
-        $this->assertEquals('thing_id', $belongsToMany->foreignKey());
-        $this->assertEquals(['b' => 'c'], $belongsToMany->conditions());
-        $this->assertEquals(['foo' => 'asc'], $belongsToMany->sort());
-        $this->assertSame($table, $belongsToMany->source());
-        $this->assertSame('things_tags', $belongsToMany->junction()->table());
+        $this->assertEquals('tag', $belongsToMany->getName());
+        $this->assertEquals('thing_id', $belongsToMany->getForeignKey());
+        $this->assertEquals(['b' => 'c'], $belongsToMany->getConditions());
+        $this->assertEquals(['foo' => 'asc'], $belongsToMany->getSort());
+        $this->assertSame($table, $belongsToMany->getSource());
+        $this->assertSame('things_tags', $belongsToMany->junction()->getTable());
     }
 
     /**
@@ -852,24 +854,24 @@ class TableTest extends TestCase
 
         $belongsTo = $associations->get('users');
         $this->assertInstanceOf('Cake\ORM\Association\BelongsTo', $belongsTo);
-        $this->assertEquals('users', $belongsTo->name());
-        $this->assertEquals('fake_id', $belongsTo->foreignKey());
-        $this->assertEquals(['a' => 'b'], $belongsTo->conditions());
-        $this->assertSame($table, $belongsTo->source());
+        $this->assertEquals('users', $belongsTo->getName());
+        $this->assertEquals('fake_id', $belongsTo->getForeignKey());
+        $this->assertEquals(['a' => 'b'], $belongsTo->getConditions());
+        $this->assertSame($table, $belongsTo->getSource());
 
         $hasOne = $associations->get('profiles');
-        $this->assertInstanceOf('Cake\ORM\Association\HasOne', $hasOne);
-        $this->assertEquals('profiles', $hasOne->name());
+        $this->assertInstanceOf(HasOne::class, $hasOne);
+        $this->assertEquals('profiles', $hasOne->getName());
 
         $hasMany = $associations->get('authors');
-        $this->assertInstanceOf('Cake\ORM\Association\hasMany', $hasMany);
-        $this->assertEquals('authors', $hasMany->name());
+        $this->assertInstanceOf(HasMany::class, $hasMany);
+        $this->assertEquals('authors', $hasMany->getName());
 
         $belongsToMany = $associations->get('tags');
-        $this->assertInstanceOf('Cake\ORM\Association\BelongsToMany', $belongsToMany);
-        $this->assertEquals('tags', $belongsToMany->name());
-        $this->assertSame('things_tags', $belongsToMany->junction()->table());
-        $this->assertSame(['Tags.starred' => true], $belongsToMany->conditions());
+        $this->assertInstanceOf(BelongsToMany::class, $belongsToMany);
+        $this->assertEquals('tags', $belongsToMany->getName());
+        $this->assertSame('things_tags', $belongsToMany->junction()->getTable());
+        $this->assertSame(['Tags.starred' => true], $belongsToMany->getConditions());
     }
 
     /**
@@ -1948,7 +1950,7 @@ class TableTest extends TestCase
             ]
         );
         $authors->hasMany('Articles', ['saveStrategy' => 'append']);
-        $this->assertEquals('append', $authors->getAssociation('articles')->saveStrategy());
+        $this->assertEquals('append', $authors->getAssociation('articles')->getSaveStrategy());
     }
 
     /**
@@ -2132,16 +2134,16 @@ class TableTest extends TestCase
         $article = $Articles->save($article);
         $this->assertNotEmpty($article);
 
-        $comment3 = $Comments->target()->newEntity([
+        $comment3 = $Comments->getTarget()->newEntity([
             'article_id' => $article->get('id'),
             'user_id' => 1,
             'comment' => 'Third comment',
             'published' => 'N'
         ]);
-        $comment3 = $Comments->target()->save($comment3);
+        $comment3 = $Comments->getTarget()->save($comment3);
         $this->assertNotEmpty($comment3);
 
-        $this->assertEquals(3, $Comments->target()->find()->where(['Comments.article_id' => $article->get('id')])->count());
+        $this->assertEquals(3, $Comments->getTarget()->find()->where(['Comments.article_id' => $article->get('id')])->count());
 
         unset($article->comments[1]);
         $article->setDirty('comments', true);
@@ -2153,7 +2155,7 @@ class TableTest extends TestCase
         // it is expected that only one of the three linked comments are
         // actually being deleted, as only one of them matches the
         // association condition.
-        $this->assertEquals(2, $Comments->target()->find()->where(['Comments.article_id' => $article->get('id')])->count());
+        $this->assertEquals(2, $Comments->getTarget()->find()->where(['Comments.article_id' => $article->get('id')])->count());
     }
 
     /**
@@ -2193,16 +2195,16 @@ class TableTest extends TestCase
         $author = $Authors->save($author);
         $this->assertNotEmpty($author);
 
-        $article3 = $Articles->target()->newEntity([
+        $article3 = $Articles->getTarget()->newEntity([
             'author_id' => $author->get('id'),
             'title' => 'Third article',
             'body' => 'Third article',
             'published' => 'N'
         ]);
-        $article3 = $Articles->target()->save($article3);
+        $article3 = $Articles->getTarget()->save($article3);
         $this->assertNotEmpty($article3);
 
-        $this->assertEquals(3, $Articles->target()->find()->where(['Articles.author_id' => $author->get('id')])->count());
+        $this->assertEquals(3, $Articles->getTarget()->find()->where(['Articles.author_id' => $author->get('id')])->count());
 
         $article2 = $author->articles[1];
         unset($author->articles[1]);
@@ -2215,7 +2217,7 @@ class TableTest extends TestCase
         // it is expected that only one of the three linked articles are
         // actually being unlinked (nulled), as only one of them matches the
         // association condition.
-        $this->assertEquals(2, $Articles->target()->find()->where(['Articles.author_id' => $author->get('id')])->count());
+        $this->assertEquals(2, $Articles->getTarget()->find()->where(['Articles.author_id' => $author->get('id')])->count());
         $this->assertNull($Articles->get($article2->get('id'))->get('author_id'));
         $this->assertEquals($author->get('id'), $Articles->get($article3->get('id'))->get('author_id'));
     }
@@ -3046,7 +3048,7 @@ class TableTest extends TestCase
         $entity = $table->get(1);
         $result = $table->delete($entity);
 
-        $articles = $table->getAssociation('articles')->target();
+        $articles = $table->getAssociation('articles')->getTarget();
         $query = $articles->find('all', [
             'conditions' => [
                 'author_id' => $entity->id
@@ -3091,7 +3093,7 @@ class TableTest extends TestCase
         $entity = $query->first();
         $result = $table->delete($entity);
 
-        $articles = $table->getAssociation('articles')->target();
+        $articles = $table->getAssociation('articles')->getTarget();
         $query = $articles->find('all')->where(['author_id' => $entity->id]);
         $this->assertCount(2, $query->execute(), 'Should find rows.');
     }
@@ -4687,7 +4689,7 @@ class TableTest extends TestCase
             'table' => 'authors',
             'associations' => $associations
         ]);
-        $authors->Articles->source($authors);
+        $authors->Articles->setSource($authors);
 
         $author = $authors->newEntity(['name' => 'mylux']);
         $author = $authors->save($author);
@@ -5037,9 +5039,9 @@ class TableTest extends TestCase
         $articles = TableRegistry::get('Articles');
 
         $tags = $articles->belongsToMany('Tags');
-        $tags->saveStrategy(BelongsToMany::SAVE_REPLACE);
-        $tags->dependent(true);
-        $tags->cascadeCallbacks(true);
+        $tags->setSaveStrategy(BelongsToMany::SAVE_REPLACE)
+            ->setDependent(true)
+            ->setCascadeCallbacks(true);
 
         $actualOptions = null;
         $tags->junction()->getEventManager()->on(
@@ -5086,7 +5088,7 @@ class TableTest extends TestCase
 
         $article = $articles->get(1);
 
-        $result = $tags->link($article, [$tags->target()->get(2)], ['foo' => 'bar']);
+        $result = $tags->link($article, [$tags->getTarget()->get(2)], ['foo' => 'bar']);
         $this->assertTrue($result);
 
         $expected = [
@@ -5123,7 +5125,7 @@ class TableTest extends TestCase
 
         $article = $articles->get(1);
 
-        $tags->unlink($article, [$tags->target()->get(2)], ['foo' => 'bar']);
+        $tags->unlink($article, [$tags->getTarget()->get(2)], ['foo' => 'bar']);
 
         $expected = [
             '_primary' => true,
@@ -5165,8 +5167,8 @@ class TableTest extends TestCase
         $result = $tags->replaceLinks(
             $article,
             [
-                $tags->target()->newEntity(['name' => 'new']),
-                $tags->target()->get(2)
+                $tags->getTarget()->newEntity(['name' => 'new']),
+                $tags->getTarget()->get(2)
             ],
             ['foo' => 'bar']
         );
@@ -5201,12 +5203,12 @@ class TableTest extends TestCase
         $authors = TableRegistry::get('Authors');
 
         $articles = $authors->hasMany('Articles');
-        $articles->saveStrategy(HasMany::SAVE_REPLACE);
-        $articles->dependent(true);
-        $articles->cascadeCallbacks(true);
+        $articles->setSaveStrategy(HasMany::SAVE_REPLACE)
+            ->setDependent(true)
+            ->setCascadeCallbacks(true);
 
         $actualOptions = null;
-        $articles->target()->getEventManager()->on(
+        $articles->getTarget()->getEventManager()->on(
             'Model.beforeDelete',
             function (Event $event, Entity $entity, ArrayObject $options) use (&$actualOptions) {
                 $actualOptions = $options->getArrayCopy();
@@ -5242,7 +5244,7 @@ class TableTest extends TestCase
         $articles = $authors->hasMany('Articles');
 
         $actualOptions = null;
-        $articles->target()->getEventManager()->on(
+        $articles->getTarget()->getEventManager()->on(
             'Model.beforeSave',
             function (Event $event, Entity $entity, ArrayObject $options) use (&$actualOptions) {
                 $actualOptions = $options->getArrayCopy();
@@ -5253,7 +5255,7 @@ class TableTest extends TestCase
         $author->articles = [];
         $author->setDirty('articles', true);
 
-        $result = $articles->link($author, [$articles->target()->get(2)], ['foo' => 'bar']);
+        $result = $articles->link($author, [$articles->getTarget()->get(2)], ['foo' => 'bar']);
         $this->assertTrue($result);
 
         $expected = [
@@ -5281,11 +5283,11 @@ class TableTest extends TestCase
     {
         $authors = TableRegistry::get('Authors');
         $articles = $authors->hasMany('Articles');
-        $articles->dependent(true);
-        $articles->cascadeCallbacks(true);
+        $articles->setDependent(true);
+        $articles->setCascadeCallbacks(true);
 
         $actualOptions = null;
-        $articles->target()->getEventManager()->on(
+        $articles->getTarget()->getEventManager()->on(
             'Model.beforeDelete',
             function (Event $event, Entity $entity, ArrayObject $options) use (&$actualOptions) {
                 $actualOptions = $options->getArrayCopy();
@@ -5296,7 +5298,7 @@ class TableTest extends TestCase
         $author->articles = [];
         $author->setDirty('articles', true);
 
-        $articles->unlink($author, [$articles->target()->get(1)], ['foo' => 'bar']);
+        $articles->unlink($author, [$articles->getTarget()->get(1)], ['foo' => 'bar']);
 
         $expected = [
             '_primary' => true,
@@ -5317,18 +5319,18 @@ class TableTest extends TestCase
     {
         $authors = TableRegistry::get('Authors');
         $articles = $authors->hasMany('Articles');
-        $articles->dependent(true);
-        $articles->cascadeCallbacks(true);
+        $articles->setDependent(true);
+        $articles->setCascadeCallbacks(true);
 
         $actualSaveOptions = null;
         $actualDeleteOptions = null;
-        $articles->target()->getEventManager()->on(
+        $articles->getTarget()->getEventManager()->on(
             'Model.beforeSave',
             function (Event $event, Entity $entity, ArrayObject $options) use (&$actualSaveOptions) {
                 $actualSaveOptions = $options->getArrayCopy();
             }
         );
-        $articles->target()->getEventManager()->on(
+        $articles->getTarget()->getEventManager()->on(
             'Model.beforeDelete',
             function (Event $event, Entity $entity, ArrayObject $options) use (&$actualDeleteOptions) {
                 $actualDeleteOptions = $options->getArrayCopy();
@@ -5340,8 +5342,8 @@ class TableTest extends TestCase
         $result = $articles->replace(
             $author,
             [
-                $articles->target()->newEntity(['title' => 'new', 'body' => 'new']),
-                $articles->target()->get(1)
+                $articles->getTarget()->newEntity(['title' => 'new', 'body' => 'new']),
+                $articles->getTarget()->get(1)
             ],
             ['foo' => 'bar']
         );
@@ -5392,12 +5394,12 @@ class TableTest extends TestCase
 
         $article = $articles->get(1);
 
-        $tags->unlink($article, [$tags->target()->get(1)], false);
+        $tags->unlink($article, [$tags->getTarget()->get(1)], false);
         $this->assertArrayHasKey('cleanProperty', $actualOptions);
         $this->assertFalse($actualOptions['cleanProperty']);
 
         $actualOptions = null;
-        $tags->unlink($article, [$tags->target()->get(2)]);
+        $tags->unlink($article, [$tags->getTarget()->get(2)]);
         $this->assertArrayHasKey('cleanProperty', $actualOptions);
         $this->assertTrue($actualOptions['cleanProperty']);
     }
@@ -5411,11 +5413,11 @@ class TableTest extends TestCase
     {
         $authors = TableRegistry::get('Authors');
         $articles = $authors->hasMany('Articles');
-        $articles->dependent(true);
-        $articles->cascadeCallbacks(true);
+        $articles->setDependent(true);
+        $articles->setCascadeCallbacks(true);
 
         $actualOptions = null;
-        $articles->target()->getEventManager()->on(
+        $articles->getTarget()->getEventManager()->on(
             'Model.beforeDelete',
             function (Event $event, Entity $entity, ArrayObject $options) use (&$actualOptions) {
                 $actualOptions = $options->getArrayCopy();
@@ -5426,12 +5428,12 @@ class TableTest extends TestCase
         $author->articles = [];
         $author->setDirty('articles', true);
 
-        $articles->unlink($author, [$articles->target()->get(1)], false);
+        $articles->unlink($author, [$articles->getTarget()->get(1)], false);
         $this->assertArrayHasKey('cleanProperty', $actualOptions);
         $this->assertFalse($actualOptions['cleanProperty']);
 
         $actualOptions = null;
-        $articles->unlink($author, [$articles->target()->get(3)]);
+        $articles->unlink($author, [$articles->getTarget()->get(3)]);
         $this->assertArrayHasKey('cleanProperty', $actualOptions);
         $this->assertTrue($actualOptions['cleanProperty']);
     }
@@ -6115,7 +6117,7 @@ class TableTest extends TestCase
         $eventManager = $table->getEventManager();
 
         $associationBeforeFindCount = 0;
-        $table->getAssociation('authors')->target()->getEventManager()->on(
+        $table->getAssociation('authors')->getTarget()->getEventManager()->on(
             'Model.beforeFind',
             function (Event $event, Query $query, ArrayObject $options, $primary) use (&$associationBeforeFindCount) {
                 $this->assertInternalType('bool', $primary);

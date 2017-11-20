@@ -194,6 +194,10 @@ class BelongsToMany extends Association
      */
     public function targetForeignKey($key = null)
     {
+        deprecationWarning(
+            'BelongToMany::targetForeignKey() is deprecated. ' .
+            'Use setTargetForeignKey()/getTargetForeignKey() instead.'
+        );
         if ($key !== null) {
             $this->setTargetForeignKey($key);
         }
@@ -260,6 +264,10 @@ class BelongsToMany extends Association
      */
     public function sort($sort = null)
     {
+        deprecationWarning(
+            'BelongToMany::sort() is deprecated. ' .
+            'Use setSort()/getSort() instead.'
+        );
         if ($sort !== null) {
             $this->setSort($sort);
         }
@@ -664,6 +672,10 @@ class BelongsToMany extends Association
      */
     public function saveStrategy($strategy = null)
     {
+        deprecationWarning(
+            'BelongsToMany::saveStrategy() is deprecated. ' .
+            'Use setSaveStrategy()/getSaveStrategy() instead.'
+        );
         if ($strategy !== null) {
             $this->setSaveStrategy($strategy);
         }
