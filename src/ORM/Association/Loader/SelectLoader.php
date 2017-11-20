@@ -163,6 +163,7 @@ class SelectLoader
             $options['fields'] = [];
         }
 
+        /* @var \Cake\ORM\Query $query */
         $query = $finder();
         if (isset($options['finder'])) {
             list($finderName, $opts) = $this->_extractFinder($options['finder']);
@@ -275,7 +276,7 @@ class SelectLoader
      * filtering needs to be done using a subquery.
      *
      * @param \Cake\ORM\Query $query Target table's query
-     * @param string $key the fields that should be used for filtering
+     * @param string|array $key the fields that should be used for filtering
      * @param \Cake\ORM\Query $subquery The Subquery to use for filtering
      * @return \Cake\ORM\Query
      */
@@ -312,8 +313,8 @@ class SelectLoader
      * target table query given a filter key and some filtering values.
      *
      * @param \Cake\ORM\Query $query Target table's query
-     * @param string|array $key the fields that should be used for filtering
-     * @param mixed $filter the value that should be used to match for $key
+     * @param string|array $key The fields that should be used for filtering
+     * @param mixed $filter The value that should be used to match for $key
      * @return \Cake\ORM\Query
      */
     protected function _addFilteringCondition($query, $key, $filter)
