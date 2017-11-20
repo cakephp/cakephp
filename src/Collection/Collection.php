@@ -82,7 +82,7 @@ class Collection extends IteratorIterator implements CollectionInterface, Serial
      *
      * @param string $name Method name.
      * @param array $args Method arguments.
-     * @return void
+     * @return mixed
      * @throws \BadMethodCallException
      */
     public function __call($name, $args)
