@@ -290,7 +290,7 @@ class Marshaller
      * @param \Cake\ORM\Association $assoc The association to marshall
      * @param array $value The data to hydrate
      * @param array $options List of options.
-     * @return mixed
+     * @return \Cake\Datasource\EntityInterface|\Cake\Datasource\EntityInterface[]|null
      */
     protected function _marshalAssociation($assoc, $value, $options)
     {
@@ -715,11 +715,11 @@ class Marshaller
     /**
      * Creates a new sub-marshaller and merges the associated data.
      *
-     * @param \Cake\Datasource\EntityInterface $original The original entity
+     * @param \Cake\Datasource\EntityInterface|\Cake\Datasource\EntityInterface[] $original The original entity
      * @param \Cake\ORM\Association $assoc The association to merge
      * @param array $value The data to hydrate
      * @param array $options List of options.
-     * @return mixed
+     * @return \Cake\Datasource\EntityInterface|\Cake\Datasource\EntityInterface[]|null
      */
     protected function _mergeAssociation($original, $assoc, $value, $options)
     {
