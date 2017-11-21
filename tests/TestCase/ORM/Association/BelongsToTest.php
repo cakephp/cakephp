@@ -125,8 +125,8 @@ class BelongsToTest extends TestCase
      */
     public function testForeignKeyIgnoreDatabaseName()
     {
-        $this->company->table('schema.companies');
-        $this->client->table('schema.clients');
+        $this->company->setTable('schema.companies');
+        $this->client->setTable('schema.clients');
         $assoc = new BelongsTo('Companies', [
             'sourceTable' => $this->client,
             'targetTable' => $this->company,
@@ -237,7 +237,7 @@ class BelongsToTest extends TestCase
      */
     public function testAttachToMultiPrimaryKey()
     {
-        $this->company->primaryKey(['id', 'tenant_id']);
+        $this->company->setPrimaryKey(['id', 'tenant_id']);
         $config = [
             'foreignKey' => ['company_id', 'company_tenant_id'],
             'sourceTable' => $this->client,
@@ -280,7 +280,7 @@ class BelongsToTest extends TestCase
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Cannot match provided foreignKey for "Companies", got "(company_id)" but expected foreign key for "(id, tenant_id)"');
-        $this->company->primaryKey(['id', 'tenant_id']);
+        $this->company->setPrimaryKey(['id', 'tenant_id']);
         $query = $this->client->query();
         $config = [
             'foreignKey' => 'company_id',

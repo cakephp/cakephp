@@ -60,7 +60,7 @@ class HasManyTest extends TestCase
             ->setMethods(['find', 'deleteAll', 'delete'])
             ->setConstructorArgs([['alias' => 'Articles', 'table' => 'articles', 'connection' => $connection]])
             ->getMock();
-        $this->article->schema([
+        $this->article->setSchema([
             'id' => ['type' => 'integer'],
             'title' => ['type' => 'string'],
             'author_id' => ['type' => 'integer'],
@@ -134,7 +134,7 @@ class HasManyTest extends TestCase
      */
     public function testForeignKeyIgnoreDatabaseName()
     {
-        $this->author->table('schema.authors');
+        $this->author->setTable('schema.authors');
         $assoc = new HasMany('Articles', [
             'sourceTable' => $this->author
         ]);
@@ -432,7 +432,7 @@ class HasManyTest extends TestCase
             'foreignKey' => ['author_id', 'site_id']
         ];
 
-        $this->author->primaryKey(['id', 'site_id']);
+        $this->author->setPrimaryKey(['id', 'site_id']);
         $association = new HasMany('Articles', $config);
         $keys = [[1, 10], [2, 20], [3, 30], [4, 40]];
         $query = $this->getMockBuilder('Cake\ORM\Query')
@@ -763,7 +763,10 @@ class HasManyTest extends TestCase
 
         // Ensure that after each model is saved, we are still within a transaction.
         $listenerAfterSave = function ($e, $entity, $options) use ($articles) {
-            $this->assertTrue($articles->connection()->inTransaction(), 'Multiple transactions used to save associated models.');
+            $this->assertTrue(
+                $articles->getConnection()->inTransaction(),
+                'Multiple transactions used to save associated models.'
+            );
         };
         $articles->getEventManager()->on('Model.afterSave', $listenerAfterSave);
 
