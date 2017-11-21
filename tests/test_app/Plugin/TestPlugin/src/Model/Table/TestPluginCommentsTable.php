@@ -24,6 +24,6 @@ class TestPluginCommentsTable extends Table
 
     public function initialize(array $config)
     {
-        $this->table('test_plugin_comments');
+        $this->setTable('test_plugin_comments');
     }
 }
