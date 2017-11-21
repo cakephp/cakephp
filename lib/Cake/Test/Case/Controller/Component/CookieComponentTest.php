@@ -430,6 +430,24 @@ class CookieComponentTest extends CakeTestCase {
 	}
 
 /**
+ * Test that replacing scalar with array works.
+ *
+ * @return void
+ */
+	public function testReplaceScalarWithArray() {
+		$this->Cookie->write('foo', 1);
+		$this->Cookie->write('foo.bar', 2);
+
+		$data = $this->Cookie->read();
+		$expected = array(
+			'foo' => array(
+				'bar' => 2
+			)
+		);
+		$this->assertEquals($expected, $data);
+	}
+
+/**
  * testReadingCookieValue
  *
  * @return void
@@ -697,6 +715,20 @@ class CookieComponentTest extends CakeTestCase {
 	}
 
 /**
+ * Test reading empty key
+ *
+ * @return void
+ */
+	public function testReadEmptyKey() {
+		$_COOKIE['CakeTestCookie'] = array(
+			'0' => '{"name":"value"}',
+			'foo' => array('bar'),
+		);
+		$this->assertEquals('value', $this->Cookie->read('0.name'));
+		$this->assertEquals('bar', $this->Cookie->read('foo.0'));
+	}
+
+/**
  * test that no error is issued for non array data.
  *
  * @return void
@@ -787,6 +819,89 @@ class CookieComponentTest extends CakeTestCase {
 	public function testDeleteChildrenNotExist() {
 		$this->assertNull($this->Cookie->delete('NotFound'));
 		$this->assertNull($this->Cookie->delete('Not.Found'));
+	}
+
+/**
+ * Test deleting deep child elements sends correct cookies.
+ *
+ * @return void
+ */
+	public function testDeleteDeepChildren() {
+		$_COOKIE = array(
+			'CakeTestCookie' => array(
+				'foo' => $this->_encrypt(array(
+					'bar' => array(
+						'baz' => 'value',
+					),
+				)),
+			),
+		);
+
+		$this->Cookie->delete('foo.bar.baz');
+
+		$cookies = $this->Controller->response->cookie();
+		$expected = array(
+			'CakeTestCookie[foo]' => array(
+				'name' => 'CakeTestCookie[foo]',
+				'value' => '{"bar":[]}',
+				'path' => '/',
+				'domain' => '',
+				'secure' => false,
+				'httpOnly' => false
+			),
+		);
+
+		$expires = Hash::combine($cookies, '{*}.name', '{*}.expire');
+		$cookies = Hash::remove($cookies, '{*}.expire');
+		$this->assertEquals($expected, $cookies);
+
+		$this->assertWithinMargin($expires['CakeTestCookie[foo]'], time() + 10, 2);
+	}
+
+/**
+ * Test destroy works.
+ *
+ * @return void
+ */
+	public function testDestroy() {
+		$_COOKIE = array(
+			'CakeTestCookie' => array(
+				'foo' => $this->_encrypt(array(
+					'bar' => array(
+						'baz' => 'value',
+					),
+				)),
+				'other' => 'value',
+			),
+		);
+
+		$this->Cookie->destroy();
+
+		$cookies = $this->Controller->response->cookie();
+		$expected = array(
+			'CakeTestCookie[foo]' => array(
+				'name' => 'CakeTestCookie[foo]',
+				'value' => '',
+				'path' => '/',
+				'domain' => '',
+				'secure' => false,
+				'httpOnly' => false
+			),
+			'CakeTestCookie[other]' => array(
+				'name' => 'CakeTestCookie[other]',
+				'value' => '',
+				'path' => '/',
+				'domain' => '',
+				'secure' => false,
+				'httpOnly' => false
+			),
+		);
+
+		$expires = Hash::combine($cookies, '{*}.name', '{*}.expire');
+		$cookies = Hash::remove($cookies, '{*}.expire');
+		$this->assertEquals($expected, $cookies);
+		$this->assertWithinMargin($expires['CakeTestCookie[foo]'], time() - 42000, 2);
+		$this->assertWithinMargin($expires['CakeTestCookie[other]'], time() - 42000, 2);
 	}
 
 /**

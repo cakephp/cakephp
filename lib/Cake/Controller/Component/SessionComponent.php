@@ -136,7 +136,13 @@ class SessionComponent extends Component {
  * @deprecated 3.0.0 Since 2.7, use the FlashComponent instead.
  */
 	public function setFlash($message, $element = 'default', $params = array(), $key = 'flash') {
-		CakeSession::write('Message.' . $key, compact('message', 'element', 'params'));
+		$messages = (array)CakeSession::read('Message.' . $key);
+		$messages[] = array(
+			'message' => $message,
+			'element' => $element,
+			'params' => $params,
+		);
+		CakeSession::write('Message.' . $key, $messages);
 	}
 
 /**
@@ -147,7 +153,7 @@ class SessionComponent extends Component {
  * @return void
  */
 	public function renew() {
-		return CakeSession::renew();
+		CakeSession::renew();
 	}
 
 /**
@@ -170,7 +176,7 @@ class SessionComponent extends Component {
  * @link https://book.cakephp.org/2.0/en/core-libraries/components/sessions.html#SessionComponent::destroy
  */
 	public function destroy() {
-		return CakeSession::destroy();
+		CakeSession::destroy();
 	}
 
 /**

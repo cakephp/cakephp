@@ -234,7 +234,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
  * actually run validation rules over data, not just return the messages.
  *
  * @param string $options An optional array of custom options to be made available in the beforeValidate callback
- * @return array Array of invalid fields
+ * @return array|bool Array of invalid fields
  * @triggers Model.afterValidate $model
  * @see ModelValidator::validates()
  */

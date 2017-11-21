@@ -432,7 +432,7 @@ class TranslateBehavior extends ModelBehavior {
  * is disabled.
  *
  * @param Model $Model Model using this behavior.
- * @return void
+ * @return bool true.
  */
 	protected function _setRuntimeData(Model $Model) {
 		$locale = $this->_getLocale($Model);
@@ -465,7 +465,7 @@ class TranslateBehavior extends ModelBehavior {
  * This solves issues with saveAssociated and validate = first.
  *
  * @param Model $Model Model using this behavior.
- * @return void
+ * @return bool true.
  */
 	public function afterValidate(Model $Model) {
 		$Model->data[$Model->alias] = array_merge(
@@ -481,7 +481,7 @@ class TranslateBehavior extends ModelBehavior {
  * @param Model $Model Model the callback is called on
  * @param bool $created Whether or not the save created a record.
  * @param array $options Options passed from Model::save().
- * @return void
+ * @return bool true.
  */
 	public function afterSave(Model $Model, $created, $options = array()) {
 		if (!isset($this->runtime[$Model->alias]['beforeValidate']) && !isset($this->runtime[$Model->alias]['beforeSave'])) {

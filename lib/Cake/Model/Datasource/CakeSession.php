@@ -135,6 +135,13 @@ class CakeSession {
 	protected static $_cookieName = null;
 
 /**
+ * Whether this session is running under a CLI environment
+ *
+ * @var bool
+ */
+	protected static $_isCLI = false;
+
+/**
  * Pseudo constructor.
  *
  * @param string|null $base The base path for the Session
@@ -155,6 +162,7 @@ class CakeSession {
 		}
 
 		static::$_initialized = true;
+		static::$_isCLI = (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg');
 	}
 
 /**
@@ -596,14 +604,18 @@ class CakeSession {
  * @return bool
  */
 	protected static function _hasSession() {
-		return static::started() || isset($_COOKIE[static::_cookieName()]) || (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg');
+		return static::started()
+			|| !ini_get('session.use_cookies')
+			|| isset($_COOKIE[static::_cookieName()])
+			|| static::$_isCLI
+			|| (ini_get('session.use_trans_sid') && isset($_GET[session_name()]));
 	}
 
 /**
  * Find the handler class and make sure it implements the correct interface.
  *
  * @param string $handler Handler name.
- * @return void
+ * @return CakeSessionHandlerInterface
  * @throws CakeSessionException
  */
 	protected static function _getHandler($handler) {

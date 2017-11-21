@@ -72,7 +72,6 @@ class Sqlserver extends DboSource {
  * @var array
  */
 	protected $_baseConfig = array(
-		'persistent' => true,
 		'host' => 'localhost\SQLEXPRESS',
 		'login' => '',
 		'password' => '',
@@ -118,15 +117,24 @@ class Sqlserver extends DboSource {
 /**
  * Connects to the database using options in the given configuration array.
  *
+ * Please note that the PDO::ATTR_PERSISTENT attribute is not supported by
+ * the SQL Server PHP PDO drivers.  As a result you cannot use the
+ * persistent config option when connecting to a SQL Server  (for more
+ * information see: https://github.com/Microsoft/msphpsql/issues/65).
+ *
  * @return bool True if the database could be connected, else false
+ * @throws InvalidArgumentException if an unsupported setting is in the database config
  * @throws MissingConnectionException
  */
 	public function connect() {
 		$config = $this->config;
 		$this->connected = false;
 
+		if (isset($config['persistent']) && $config['persistent']) {
+			throw new InvalidArgumentException('Config setting "persistent" cannot be set to true, as the Sqlserver PDO driver does not support PDO::ATTR_PERSISTENT');
+		}
+
 		$flags = $config['flags'] + array(
-			PDO::ATTR_PERSISTENT => $config['persistent'],
 			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
 		);
 
@@ -403,7 +411,7 @@ class Sqlserver extends DboSource {
 				$rt = ' TOP';
 			}
 			$rt .= sprintf(' %u', $limit);
-			if (is_int($offset) && $offset > 0) {
+			if ((is_int($offset) || ctype_digit($offset)) && $offset > 0) {
 				$rt = sprintf(' OFFSET %u ROWS FETCH FIRST %u ROWS ONLY', $offset, $limit);
 			}
 			return $rt;

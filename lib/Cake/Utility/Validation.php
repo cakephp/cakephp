@@ -175,7 +175,7 @@ class Validation {
 				'disc'		=> '/^(?:6011|650\\d)\\d{12}$/',
 				'electron'	=> '/^(?:417500|4917\\d{2}|4913\\d{2})\\d{10}$/',
 				'enroute'	=> '/^2(?:014|149)\\d{11}$/',
-				'jcb'		=> '/^(3\\d{4}|2100|1800)\\d{11}$/',
+				'jcb'		=> '/^(3\\d{4}|2131|1800)\\d{11}$/',
 				'maestro'	=> '/^(?:5020|6\\d{3})\\d{12}$/',
 				'mc'		=> '/^(5[1-5]\\d{14})|(2(?:22[1-9]|2[3-9][0-9]|[3-6][0-9]{2}|7[0-1][0-9]|720)\\d{12})$/',
 				'solo'		=> '/^(6334[5-9][0-9]|6767[0-9]{2})\\d{10}(\\d{2,3})?$/',
@@ -478,7 +478,7 @@ class Validation {
 			if (function_exists('checkdnsrr') && checkdnsrr($regs[1], 'MX')) {
 				return true;
 			}
-			return is_array(gethostbynamel($regs[1]));
+			return is_array(gethostbynamel($regs[1] . '.'));
 		}
 		return false;
 	}

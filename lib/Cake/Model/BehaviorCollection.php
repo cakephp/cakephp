@@ -73,7 +73,7 @@ class BehaviorCollection extends ObjectCollection implements CakeEventListener {
  *
  * @param string $behavior Behavior name.
  * @param array $config Configuration options.
- * @return void
+ * @return bool true.
  * @deprecated 3.0.0 Will be removed in 3.0. Replaced with load().
  */
 	public function attach($behavior, $config = array()) {
@@ -97,7 +97,7 @@ class BehaviorCollection extends ObjectCollection implements CakeEventListener {
  *
  * @param string $behavior CamelCased name of the behavior to load
  * @param array $config Behavior configuration parameters
- * @return bool True on success, false on failure
+ * @return bool True on success.
  * @throws MissingBehaviorException when a behavior could not be found.
  */
 	public function load($behavior, $config = array()) {

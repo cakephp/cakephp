@@ -229,27 +229,14 @@ class CookieComponent extends Component {
 		}
 
 		foreach ($key as $name => $value) {
-			$names = array($name);
 			if (strpos($name, '.') !== false) {
-				$names = explode('.', $name, 2);
-			}
-			$firstName = $names[0];
-			$isMultiValue = (is_array($value) || count($names) > 1);
-
-			if (!isset($this->_values[$this->name][$firstName]) && $isMultiValue) {
-				$this->_values[$this->name][$firstName] = array();
-			}
-
-			if (count($names) > 1) {
-				$this->_values[$this->name][$firstName] = Hash::insert(
-					$this->_values[$this->name][$firstName],
-					$names[1],
-					$value
-				);
+				$this->_values[$this->name] = Hash::insert($this->_values[$this->name], $name, $value);
+				list($name) = explode('.', $name, 2);
+				$value = $this->_values[$this->name][$name];
 			} else {
-				$this->_values[$this->name][$firstName] = $value;
+				$this->_values[$this->name][$name] = $value;
 			}
-			$this->_write('[' . $firstName . ']', $this->_values[$this->name][$firstName]);
+			$this->_write('[' . $name . ']', $value);
 		}
 		$this->_encrypted = true;
 	}
@@ -274,22 +261,7 @@ class CookieComponent extends Component {
 		if ($key === null) {
 			return $this->_values[$this->name];
 		}
-
-		if (strpos($key, '.') !== false) {
-			$names = explode('.', $key, 2);
-			$key = $names[0];
-		}
-		if (!isset($this->_values[$this->name][$key])) {
-			return null;
-		}
-
-		if (!empty($names[1])) {
-			if (is_array($this->_values[$this->name][$key])) {
-				return Hash::get($this->_values[$this->name][$key], $names[1]);
-			}
-			return null;
-		}
-		return $this->_values[$this->name][$key];
+		return Hash::get($this->_values[$this->name], $key);
 	}
 
 /**
@@ -329,20 +301,16 @@ class CookieComponent extends Component {
 			$this->read();
 		}
 		if (strpos($key, '.') === false) {
-			if (isset($this->_values[$this->name][$key]) && is_array($this->_values[$this->name][$key])) {
-				foreach ($this->_values[$this->name][$key] as $idx => $val) {
-					$this->_delete("[$key][$idx]");
-				}
-			}
-			$this->_delete("[$key]");
 			unset($this->_values[$this->name][$key]);
-			return;
+			$this->_delete('[' . $key . ']');
+		} else {
+			$this->_values[$this->name] = Hash::remove((array)$this->_values[$this->name], $key);
+			list($key) = explode('.', $key, 2);
+			if (isset($this->_values[$this->name][$key])) {
+				$value = $this->_values[$this->name][$key];
+				$this->_write('[' . $key . ']', $value);
+			}
 		}
-		$names = explode('.', $key, 2);
-		if (isset($this->_values[$this->name][$names[0]]) && is_array($this->_values[$this->name][$names[0]])) {
-			$this->_values[$this->name][$names[0]] = Hash::remove($this->_values[$this->name][$names[0]], $names[1]);
-		}
-		$this->_delete('[' . implode('][', $names) . ']');
 	}
 
 /**
@@ -360,14 +328,7 @@ class CookieComponent extends Component {
 		}
 
 		foreach ($this->_values[$this->name] as $name => $value) {
-			if (is_array($value)) {
-				foreach ($value as $key => $val) {
-					unset($this->_values[$this->name][$name][$key]);
-					$this->_delete("[$name][$key]");
-				}
-			}
-			unset($this->_values[$this->name][$name]);
-			$this->_delete("[$name]");
+			$this->delete($name);
 		}
 	}
 
@@ -494,7 +455,7 @@ class CookieComponent extends Component {
  * Decrypts $value using public $type method in Security class
  *
  * @param array $values Values to decrypt
- * @return string decrypted string
+ * @return array decrypted string
  */
 	protected function _decrypt($values) {
 		$decrypted = array();
@@ -516,7 +477,7 @@ class CookieComponent extends Component {
  * Decodes and decrypts a single value.
  *
  * @param string $value The value to decode & decrypt.
- * @return string Decoded value.
+ * @return string|array Decoded value.
  */
 	protected function _decode($value) {
 		$prefix = 'Q2FrZQ==.';
@@ -552,7 +513,7 @@ class CookieComponent extends Component {
  * Maintains reading backwards compatibility with 1.x CookieComponent::_implode().
  *
  * @param string $string A string containing JSON encoded data, or a bare string.
- * @return array Map of key and values
+ * @return string|array Map of key and values
  */
 	protected function _explode($string) {
 		$first = substr($string, 0, 1);

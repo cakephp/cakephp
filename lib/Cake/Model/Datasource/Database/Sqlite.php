@@ -212,7 +212,7 @@ class Sqlite extends DboSource {
  * @param array $fields The fields to update.
  * @param array $values The values to set columns to.
  * @param mixed $conditions array of conditions to use.
- * @return array
+ * @return bool
  */
 	public function update(Model $model, $fields = array(), $values = null, $conditions = null) {
 		if (empty($values) && !empty($fields)) {
