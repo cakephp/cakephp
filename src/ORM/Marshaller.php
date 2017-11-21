@@ -500,6 +500,7 @@ class Marshaller
         deprecationWarning(
             'Marshaller::_loadBelongsToMany() is deprecated. Use _loadAssociatedByIds() instead.'
         );
+
         return $this->_loadAssociatedByIds($assoc, $ids);
     }
 

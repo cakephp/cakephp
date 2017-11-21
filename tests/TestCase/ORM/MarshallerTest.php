@@ -343,7 +343,6 @@ class MarshallerTest extends TestCase
         $this->assertTrue($result->not_in_schema);
     }
 
-
     /**
      * Test one() with an invalid association
      *
