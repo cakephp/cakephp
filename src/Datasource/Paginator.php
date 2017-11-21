@@ -166,7 +166,7 @@ class Paginator implements PaginatorInterface
             $object = $query->repository();
         }
 
-        $alias = $object->alias();
+        $alias = $object->getAlias();
         $defaults = $this->getDefaults($alias, $settings);
         $options = $this->mergeOptions($params, $defaults);
         $options = $this->validateSort($object, $options);
@@ -389,7 +389,7 @@ class Paginator implements PaginatorInterface
      */
     protected function _prefix(RepositoryInterface $object, $order, $whitelisted = false)
     {
-        $tableAlias = $object->alias();
+        $tableAlias = $object->getAlias();
         $tableOrder = [];
         foreach ($order as $key => $value) {
             if (is_numeric($key)) {
