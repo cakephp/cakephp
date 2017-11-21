@@ -37,7 +37,7 @@ trait DateFormatTrait
     /**
      * In-memory cache of date formatters
      *
-     * @var IntlDateFormatter[]
+     * @var \IntlDateFormatter[]
      */
     protected static $_formatters = [];
 

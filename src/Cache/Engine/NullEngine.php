@@ -37,7 +37,6 @@ class NullEngine extends CacheEngine
      */
     public function gc($expires = null)
     {
-        return false;
     }
 
     /**
