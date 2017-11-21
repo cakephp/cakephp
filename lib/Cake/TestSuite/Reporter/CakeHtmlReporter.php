@@ -38,6 +38,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
 		$this->paintDocumentStart();
 		$this->paintTestMenu();
 		echo "<ul class='tests'>\n";
+		ob_end_flush();
 	}
 
 /**
