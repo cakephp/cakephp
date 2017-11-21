@@ -1059,7 +1059,7 @@ abstract class Association
      * @param mixed $conditions Conditions to be used, accepts anything Query::where()
      * can take.
      * @see \Cake\ORM\Table::updateAll()
-     * @return bool Success Returns true if one or more rows are affected.
+     * @return int Count Returns the affected rows.
      */
     public function updateAll($fields, $conditions)
     {

@@ -35,28 +35,28 @@ class ConsoleIntegrationTestCase extends TestCase
     /**
      * Last exit code
      *
-     * @var int
+     * @var int|null
      */
     protected $_exitCode;
 
     /**
      * Console output stub
      *
-     * @var ConsoleOutput
+     * @var \Cake\Console\ConsoleOutput|\PHPUnit_Framework_MockObject_MockObject|null
      */
     protected $_out;
 
     /**
      * Console error output stub
      *
-     * @var ConsoleOutput
+     * @var \Cake\Console\ConsoleOutput|\PHPUnit_Framework_MockObject_MockObject|null
      */
     protected $_err;
 
     /**
      * Console input mock
      *
-     * @var ConsoleInput
+     * @var \Cake\Console\ConsoleInput|\PHPUnit_Framework_MockObject_MockObject|null
      */
     protected $_in;
 
@@ -190,7 +190,7 @@ class ConsoleIntegrationTestCase extends TestCase
         }, $row);
         $cells = implode('\s+\|\s+', $row);
         $pattern = '/' . $cells . '/';
-        $this->assertOutputRegexp($pattern);
+        $this->assertOutputRegExp($pattern);
     }
 
     /**

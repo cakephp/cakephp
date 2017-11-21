@@ -365,7 +365,7 @@ class Response implements ResponseInterface
     /**
      * File object for file to be read out as response
      *
-     * @var \Cake\Filesystem\File
+     * @var \Cake\Filesystem\File|null
      */
     protected $_file;
 
@@ -493,7 +493,8 @@ class Response implements ResponseInterface
 
         if ($this->_file) {
             $this->_sendFile($this->_file, $this->_fileRange);
-            $this->_file = $this->_fileRange = null;
+            $this->_file = null;
+            $this->_fileRange = [];
         } else {
             $this->_sendContent($this->body());
         }
@@ -809,7 +810,7 @@ class Response implements ResponseInterface
      * if $content is null the current buffer is returned
      *
      * @param string|callable|null $content the string or callable message to be sent
-     * @return string Current message buffer if $content param is passed as null
+     * @return string|null Current message buffer if $content param is passed as null
      * @deprecated 3.4.0 Mutable response methods are deprecated. Use `withBody()` and `getBody()` instead.
      */
     public function body($content = null)
@@ -1833,7 +1834,7 @@ class Response implements ResponseInterface
      * If called with no arguments returns the last Content-Length set
      *
      * @param int|null $bytes Number of bytes
-     * @return int|null
+     * @return string|null
      * @deprecated 3.4.0 Use withLength() to set length instead.
      */
     public function length($bytes = null)

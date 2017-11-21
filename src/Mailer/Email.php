@@ -1830,7 +1830,7 @@ class Email implements JsonSerializable, Serializable
      * Get generated message (used by transport classes)
      *
      * @param string|null $type Use MESSAGE_* constants or null to return the full message as array
-     * @return string|array String if have type, array if type is null
+     * @return string|array String if type is given, array if type is null
      */
     public function message($type = null)
     {
@@ -2218,7 +2218,7 @@ class Email implements JsonSerializable, Serializable
         $this->_headers = [];
         $this->_textMessage = '';
         $this->_htmlMessage = '';
-        $this->_message = '';
+        $this->_message = [];
         $this->_emailFormat = 'text';
         $this->_transport = null;
         $this->_priority = null;
