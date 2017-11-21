@@ -71,9 +71,9 @@ class DatabaseSessionTest extends TestCase
 
         $session = TableRegistry::get('Sessions');
         $this->assertInstanceOf('Cake\ORM\Table', $session);
-        $this->assertEquals('Sessions', $session->alias());
-        $this->assertEquals(ConnectionManager::get('test'), $session->connection());
-        $this->assertEquals('sessions', $session->table());
+        $this->assertEquals('Sessions', $session->getAlias());
+        $this->assertEquals(ConnectionManager::get('test'), $session->getConnection());
+        $this->assertEquals('sessions', $session->getTable());
     }
 
     /**

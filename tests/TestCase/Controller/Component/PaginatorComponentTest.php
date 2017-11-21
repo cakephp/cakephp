@@ -86,9 +86,7 @@ class PaginatorComponentTest extends TestCase
         $this->registry = new ComponentRegistry($controller);
         $this->Paginator = new PaginatorComponent($this->registry, []);
 
-        $this->Post = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->Post = $this->getMockRepository();
     }
 
     /**
@@ -145,7 +143,7 @@ class PaginatorComponentTest extends TestCase
     public function testPageParamCasting()
     {
         $this->Post->expects($this->any())
-            ->method('alias')
+            ->method('getAlias')
             ->will($this->returnValue('Posts'));
 
         $query = $this->_getMockFindQuery();
@@ -665,9 +663,9 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortInvalidDirection()
     {
-        $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')->getMock();
+        $model = $this->getMockRepository();
         $model->expects($this->any())
-            ->method('alias')
+            ->method('getAlias')
             ->will($this->returnValue('model'));
         $model->expects($this->any())
             ->method('hasField')
@@ -791,9 +789,9 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortWhitelistFailure()
     {
-        $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')->getMock();
+        $model = $this->getMockRepository();
         $model->expects($this->any())
-            ->method('alias')
+            ->method('getAlias')
             ->will($this->returnValue('model'));
         $model->expects($this->any())->method('hasField')->will($this->returnValue(true));
 
@@ -814,9 +812,9 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortWhitelistTrusted()
     {
-        $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')->getMock();
+        $model = $this->getMockRepository();
         $model->expects($this->any())
-            ->method('alias')
+            ->method('getAlias')
             ->will($this->returnValue('model'));
         $model->expects($this->once())
             ->method('hasField')
@@ -844,9 +842,9 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortWhitelistEmpty()
     {
-        $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')->getMock();
+        $model = $this->getMockRepository();
         $model->expects($this->any())
-            ->method('alias')
+            ->method('getAlias')
             ->will($this->returnValue('model'));
         $model->expects($this->any())->method('hasField')
             ->will($this->returnValue(true));
@@ -872,9 +870,9 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortWhitelistNotInSchema()
     {
-        $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')->getMock();
+        $model = $this->getMockRepository();
         $model->expects($this->any())
-            ->method('alias')
+            ->method('getAlias')
             ->will($this->returnValue('model'));
         $model->expects($this->once())->method('hasField')
             ->will($this->returnValue(false));
@@ -901,9 +899,9 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortWhitelistMultiple()
     {
-        $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')->getMock();
+        $model = $this->getMockRepository();
         $model->expects($this->any())
-            ->method('alias')
+            ->method('getAlias')
             ->will($this->returnValue('model'));
         $model->expects($this->once())
             ->method('hasField')
@@ -932,9 +930,9 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortMultiple()
     {
-        $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')->getMock();
+        $model = $this->getMockRepository();
         $model->expects($this->any())
-            ->method('alias')
+            ->method('getAlias')
             ->will($this->returnValue('model'));
         $model->expects($this->any())->method('hasField')->will($this->returnValue(true));
 
@@ -961,9 +959,9 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortWithString()
     {
-        $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')->getMock();
+        $model = $this->getMockRepository();
         $model->expects($this->any())
-            ->method('alias')
+            ->method('getAlias')
             ->will($this->returnValue('model'));
         $model->expects($this->any())->method('hasField')->will($this->returnValue(true));
 
@@ -983,9 +981,9 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortNoSort()
     {
-        $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')->getMock();
+        $model = $this->getMockRepository();
         $model->expects($this->any())
-            ->method('alias')
+            ->method('getAlias')
             ->will($this->returnValue('model'));
         $model->expects($this->any())->method('hasField')
             ->will($this->returnValue(true));
@@ -1005,9 +1003,9 @@ class PaginatorComponentTest extends TestCase
      */
     public function testValidateSortInvalidAlias()
     {
-        $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')->getMock();
+        $model = $this->getMockRepository();
         $model->expects($this->any())
-            ->method('alias')
+            ->method('getAlias')
             ->will($this->returnValue('model'));
         $model->expects($this->any())->method('hasField')->will($this->returnValue(true));
 
@@ -1381,4 +1379,17 @@ class PaginatorComponentTest extends TestCase
 
         return $query;
     }
+
+    protected function getMockRepository()
+    {
+        $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')
+            ->setMethods([
+                'getAlias', 'hasField', 'alias', 'find', 'get', 'query', 'updateAll', 'deleteAll',
+                'exists', 'save', 'delete', 'newEntity', 'newEntities', 'patchEntity', 'patchEntities'
+            ])
+            ->getMock();
+
+        return $model;
+    }
+
 }
