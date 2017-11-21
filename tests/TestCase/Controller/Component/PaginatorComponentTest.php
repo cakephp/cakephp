@@ -1391,5 +1391,4 @@ class PaginatorComponentTest extends TestCase
 
         return $model;
     }
-
 }
