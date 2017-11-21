@@ -20,6 +20,7 @@ parameters:
         - '#Result of method Cake\\Http\\Response::send\(\) \(void\) is used#'
         - '#Method Cake\\View\\Form\\ContextInterface::val\(\) invoked with 2 parameters, 1 required#'
         - '#Access to an undefined property Exception::\$queryString#'
+        - '#Access to an undefined property PHPUnit\\Framework\\Test::\$fixtureManager#'
         - '#Method Redis::#'
         - '#Call to an undefined method Traversable::getArrayCopy().#'
     earlyTerminatingMethodCalls:

@@ -1834,7 +1834,7 @@ class Response implements ResponseInterface
      * If called with no arguments returns the last Content-Length set
      *
      * @param int|null $bytes Number of bytes
-     * @return int|null
+     * @return string|null
      * @deprecated 3.4.0 Use withLength() to set length instead.
      */
     public function length($bytes = null)
@@ -1844,7 +1844,7 @@ class Response implements ResponseInterface
         }
 
         if ($this->hasHeader('Content-Length')) {
-            return (int)$this->getHeaderLine('Content-Length');
+            return $this->getHeaderLine('Content-Length');
         }
 
         return null;
