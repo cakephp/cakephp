@@ -25,7 +25,8 @@
         "source": "https://github.com/cakephp/utility"
     },
     "require": {
-        "php": ">=5.6.0"
+        "php": ">=5.6.0",
+        "cakephp/core": "^3.6.0"
     },
     "suggest": {
         "ext-intl": "To use Text::transliterate() or Text::slug()",
