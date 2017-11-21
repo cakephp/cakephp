@@ -71,8 +71,8 @@ class GreedyCommentsTable extends Table
      */
     public function initialize(array $config)
     {
-        $this->table('comments');
-        $this->alias('Comments');
+        $this->setTable('comments');
+        $this->setAlias('Comments');
     }
 
     /**
@@ -156,11 +156,11 @@ class MarshallerTest extends TestCase
         $this->comments->belongsTo('Articles');
         $this->comments->belongsTo('Users');
 
-        $this->articles->entityClass(__NAMESPACE__ . '\OpenEntity');
-        $this->comments->entityClass(__NAMESPACE__ . '\OpenEntity');
-        $this->users->entityClass(__NAMESPACE__ . '\OpenEntity');
-        $this->tags->entityClass(__NAMESPACE__ . '\OpenEntity');
-        $this->articleTags->entityClass(__NAMESPACE__ . '\OpenEntity');
+        $this->articles->setEntityClass(__NAMESPACE__ . '\OpenEntity');
+        $this->comments->setEntityClass(__NAMESPACE__ . '\OpenEntity');
+        $this->users->setEntityClass(__NAMESPACE__ . '\OpenEntity');
+        $this->tags->setEntityClass(__NAMESPACE__ . '\OpenEntity');
+        $this->articleTags->setEntityClass(__NAMESPACE__ . '\OpenEntity');
     }
 
     /**
@@ -283,7 +283,7 @@ class MarshallerTest extends TestCase
             'author_id' => 'derp',
             'created' => 'fale'
         ];
-        $this->articles->entityClass(__NAMESPACE__ . '\OpenEntity');
+        $this->articles->setEntityClass(__NAMESPACE__ . '\OpenEntity');
         $marshall = new Marshaller($this->articles);
         $result = $marshall->one($data, []);
 
@@ -305,7 +305,7 @@ class MarshallerTest extends TestCase
             'author_id' => 1,
             'not_in_schema' => true
         ];
-        $this->articles->entityClass(__NAMESPACE__ . '\ProtectedArticle');
+        $this->articles->setEntityClass(__NAMESPACE__ . '\ProtectedArticle');
         $marshall = new Marshaller($this->articles);
         $result = $marshall->one($data, []);
 
@@ -327,7 +327,7 @@ class MarshallerTest extends TestCase
             'author_id' => 1,
             'not_in_schema' => true
         ];
-        $this->articles->entityClass(__NAMESPACE__ . '\ProtectedArticle');
+        $this->articles->setEntityClass(__NAMESPACE__ . '\ProtectedArticle');
 
         $marshall = new Marshaller($this->articles);
 
@@ -423,8 +423,8 @@ class MarshallerTest extends TestCase
                 'username' => 'mark',
             ]
         ];
-        $this->articles->entityClass(__NAMESPACE__ . '\ProtectedArticle');
-        $this->users->entityClass(__NAMESPACE__ . '\ProtectedArticle');
+        $this->articles->setEntityClass(__NAMESPACE__ . '\ProtectedArticle');
+        $this->users->setEntityClass(__NAMESPACE__ . '\ProtectedArticle');
 
         $marshall = new Marshaller($this->articles);
 
@@ -829,7 +829,7 @@ class MarshallerTest extends TestCase
      */
     public function testBelongsToManyAddingNewExisting()
     {
-        $this->tags->entityClass(__NAMESPACE__ . '\Tag');
+        $this->tags->setEntityClass(__NAMESPACE__ . '\Tag');
         $data = [
             'title' => 'My title',
             'body' => 'My content',
@@ -3360,8 +3360,8 @@ class MarshallerTest extends TestCase
         ];
 
         $articles = TableRegistry::get('Articles');
-        $articles->schema()->dropConstraint('primary');
-        $articles->primaryKey('id');
+        $articles->getSchema()->dropConstraint('primary');
+        $articles->setPrimaryKey('id');
 
         $marshall = new Marshaller($articles);
         $result = $marshall->one($data);
@@ -3390,8 +3390,8 @@ class MarshallerTest extends TestCase
         ];
 
         $tags = TableRegistry::get('Tags');
-        $tags->schema()->dropConstraint('primary');
-        $tags->primaryKey('id');
+        $tags->getSchema()->dropConstraint('primary');
+        $tags->setPrimaryKey('id');
 
         $marshall = new Marshaller($this->articles);
         $result = $marshall->one($data, ['associated' => ['Tags']]);

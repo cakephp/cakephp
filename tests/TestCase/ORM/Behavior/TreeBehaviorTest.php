@@ -38,7 +38,7 @@ class TreeBehaviorTest extends TestCase
     {
         parent::setUp();
         $this->table = TableRegistry::get('NumberTrees');
-        $this->table->primaryKey(['id']);
+        $this->table->setPrimaryKey(['id']);
         $this->table->addBehavior('Tree');
     }
 
@@ -1378,7 +1378,7 @@ class TreeBehaviorTest extends TestCase
     {
         $table = $this->table;
         $other = TableRegistry::get('FriendlyTrees', [
-            'table' => $table->table()
+            'table' => $table->getTable()
         ]);
         $table->hasOne('FriendlyTrees', [
             'foreignKey' => 'id'
@@ -1487,11 +1487,11 @@ class TreeBehaviorTest extends TestCase
     public function assertMpttValues($expected, $table, $query = null)
     {
         $query = $query ?: $table->find();
-        $primaryKey = $table->primaryKey();
+        $primaryKey = $table->getPrimaryKey();
         if (is_array($primaryKey)) {
             $primaryKey = $primaryKey[0];
         }
-        $displayField = $table->displayField();
+        $displayField = $table->getDisplayField();
 
         $options = [
             'valuePath' => function ($item, $key, $iterator) use ($primaryKey, $displayField) {

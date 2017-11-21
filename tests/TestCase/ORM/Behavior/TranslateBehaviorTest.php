@@ -98,7 +98,7 @@ class TranslateBehaviorTest extends TestCase
 
         $this->assertEquals('\TestApp\Model\Table\I18nTable', $i18n->getName());
         $this->assertInstanceOf('TestApp\Model\Table\I18nTable', $i18n->getTarget());
-        $this->assertEquals('test_custom_i18n_datasource', $i18n->getTarget()->connection()->configName());
+        $this->assertEquals('test_custom_i18n_datasource', $i18n->getTarget()->getConnection()->configName());
         $this->assertEquals('custom_i18n_table', $i18n->getTarget()->getTable());
     }
 
@@ -1111,7 +1111,7 @@ class TranslateBehaviorTest extends TestCase
     {
         $table = TableRegistry::get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
-        $table->entityClass(__NAMESPACE__ . '\Article');
+        $table->setEntityClass(__NAMESPACE__ . '\Article');
         I18n::setLocale('fra');
         $translations = [
             'fra' => ['title' => 'Un article'],
@@ -1188,7 +1188,7 @@ class TranslateBehaviorTest extends TestCase
     public function testChangingReferenceName()
     {
         $table = TableRegistry::get('Articles');
-        $table->alias('FavoritePost');
+        $table->setAlias('FavoritePost');
         $table->addBehavior(
             'Translate',
             ['fields' => ['body'], 'referenceName' => 'Posts']
@@ -1289,7 +1289,7 @@ class TranslateBehaviorTest extends TestCase
     {
         $table = TableRegistry::get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title']]);
-        $table->entityClass(__NAMESPACE__ . '\Article');
+        $table->setEntityClass(__NAMESPACE__ . '\Article');
         I18n::setLocale('fra');
         $article = $table->get(1);
         $article->set('body', 'New Body');
@@ -1311,7 +1311,7 @@ class TranslateBehaviorTest extends TestCase
             'fields' => ['title'],
             'validator' => (new \Cake\Validation\Validator)->add('title', 'notBlank', ['rule' => 'notBlank'])
         ]);
-        $table->entityClass(__NAMESPACE__ . '\Article');
+        $table->setEntityClass(__NAMESPACE__ . '\Article');
 
         $data = [
             'author_id' => 1,
@@ -1395,7 +1395,7 @@ class TranslateBehaviorTest extends TestCase
     {
         $table = TableRegistry::get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
-        $table->entityClass(__NAMESPACE__ . '\Article');
+        $table->setEntityClass(__NAMESPACE__ . '\Article');
 
         $data = [
             '_translations' => [
@@ -1428,7 +1428,7 @@ class TranslateBehaviorTest extends TestCase
     {
         $table = TableRegistry::get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
-        $table->entityClass(__NAMESPACE__ . '\Article');
+        $table->setEntityClass(__NAMESPACE__ . '\Article');
 
         $data = [
             'author_id' => 1,
