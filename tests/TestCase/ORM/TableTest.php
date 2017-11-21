@@ -374,7 +374,7 @@ class TableTest extends TestCase
             ->find('all')
             ->where(['id IN' => [1, 2]])
             ->order('id')
-            ->hydrate(false)
+            ->enableHydration(false)
             ->toArray();
         $expected = [
             [
@@ -408,7 +408,7 @@ class TableTest extends TestCase
         ]);
         $results = $table->find('all')
             ->select(['username', 'password'])
-            ->hydrate(false)
+            ->enableHydration(false)
             ->order('username')->toArray();
         $expected = [
             ['username' => 'garrett', 'password' => '$2a$10$u05j8FjsvLBNdfhBhc21LOuVMpzpabVXQ9OpC2wO3pSO0q6t7HHMO'],
@@ -421,7 +421,7 @@ class TableTest extends TestCase
         $results = $table->find('all')
             ->select(['foo' => 'username', 'password'])
             ->order('username')
-            ->hydrate(false)
+            ->enableHydration(false)
             ->toArray();
         $expected = [
             ['foo' => 'garrett', 'password' => '$2a$10$u05j8FjsvLBNdfhBhc21LOuVMpzpabVXQ9OpC2wO3pSO0q6t7HHMO'],
@@ -447,7 +447,7 @@ class TableTest extends TestCase
         $query = $table->find('all')
             ->select(['id', 'username'])
             ->where(['created >=' => new Time('2010-01-22 00:00')])
-            ->hydrate(false)
+            ->enableHydration(false)
             ->order('id');
         $expected = [
             ['id' => 3, 'username' => 'larry'],
@@ -892,7 +892,7 @@ class TableTest extends TestCase
         $result = $table->find('all')
             ->select(['username'])
             ->order(['id' => 'asc'])
-            ->hydrate(false)
+            ->enableHydration(false)
             ->toArray();
         $expected = array_fill(0, 3, $fields);
         $expected[] = ['username' => 'garrett'];
@@ -1037,7 +1037,7 @@ class TableTest extends TestCase
         ]);
         $table->displayField('username');
         $query = $table->find('list')
-            ->hydrate(false)
+            ->enableHydration(false)
             ->order('id');
         $expected = [
             1 => 'mariano',
@@ -1048,7 +1048,7 @@ class TableTest extends TestCase
         $this->assertSame($expected, $query->toArray());
 
         $query = $table->find('list', ['fields' => ['id', 'username']])
-            ->hydrate(false)
+            ->enableHydration(false)
             ->order('id');
         $expected = [
             1 => 'mariano',
@@ -1060,7 +1060,7 @@ class TableTest extends TestCase
 
         $query = $table->find('list', ['groupField' => 'odd'])
             ->select(['id', 'username', 'odd' => new QueryExpression('id % 2')])
-            ->hydrate(false)
+            ->enableHydration(false)
             ->order('id');
         $expected = [
             1 => [
@@ -1141,7 +1141,7 @@ class TableTest extends TestCase
         ];
         $results = $table->find('all')
             ->select(['id', 'parent_id', 'name'])
-            ->hydrate(false)
+            ->enableHydration(false)
             ->find('threaded')
             ->toArray();
 
@@ -1232,7 +1232,7 @@ class TableTest extends TestCase
 
         $query = $table->find('list', ['groupField' => 'odd'])
             ->select(['id', 'username', 'odd' => new QueryExpression('id % 2')])
-            ->hydrate(true)
+            ->enableHydration(true)
             ->order('id');
         $expected = [
             1 => [
@@ -3974,7 +3974,7 @@ class TableTest extends TestCase
         ];
         $result = TableRegistry::get('PolymorphicTagged')
             ->find('all', ['sort' => ['id' => 'DESC']])
-            ->hydrate(false)
+            ->enableHydration(false)
             ->toArray();
         $this->assertEquals($expected, $result);
     }

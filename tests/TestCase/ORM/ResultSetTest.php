@@ -118,7 +118,7 @@ class ResultSetTest extends TestCase
      */
     public function testIteratorAfterSerializationNoHydration()
     {
-        $query = $this->table->find('all')->hydrate(false);
+        $query = $this->table->find('all')->enableHydration(false);
         $results = unserialize(serialize($query->all()));
 
         // Use a loop to test Iterator implementation
@@ -169,7 +169,7 @@ class ResultSetTest extends TestCase
     public function testFirst()
     {
         $query = $this->table->find('all');
-        $results = $query->hydrate(false)->all();
+        $results = $query->enableHydration(false)->all();
 
         $row = $results->first();
         $this->assertEquals($this->fixtureData[0], $row);
@@ -186,7 +186,7 @@ class ResultSetTest extends TestCase
     public function testFirstAfterSerialize()
     {
         $query = $this->table->find('all');
-        $results = $query->hydrate(false)->all();
+        $results = $query->enableHydration(false)->all();
         $results = unserialize(serialize($results));
 
         $row = $results->first();
@@ -279,7 +279,7 @@ class ResultSetTest extends TestCase
 
         $comment = $comments->find()->where(['Comments.id' => 1])
             ->contain(['Articles'])
-            ->hydrate(false)
+            ->enableHydration(false)
             ->first();
         $this->assertEquals(1, $comment['id']);
         $this->assertNotEmpty($comment['comment']);
@@ -317,8 +317,8 @@ class ResultSetTest extends TestCase
             ->select(['Articles.id', 'Articles.title', 'Authors.name'])
             ->contain(['Authors'])
             ->where(['Articles.id' => $article->id])
-            ->autoFields(false)
-            ->hydrate(false)
+            ->enableAutoFields(false)
+            ->enableHydration(false)
             ->first();
 
         $this->assertNotNull($result['author']);
@@ -344,7 +344,7 @@ class ResultSetTest extends TestCase
 
         $article = $this->table->find()->where(['articles.id' => 1])
             ->contain(['Comments'])
-            ->hydrate(false)
+            ->enableHydration(false)
             ->first();
         $this->assertNull($article['comment']);
         $this->assertEquals(1, $article['id']);
@@ -361,7 +361,7 @@ class ResultSetTest extends TestCase
     {
         $comments = TableRegistry::get('Comments');
         $query = $comments->find()->select(['Other__field' => 'test']);
-        $query->autoFields(false);
+        $query->enableAutoFields(false);
 
         $row = ['Other__field' => 'test'];
         $statement = $this->getMockBuilder('Cake\Database\StatementInterface')->getMock();

@@ -238,7 +238,7 @@ class EagerLoaderTest extends TestCase
 
         $loader = new EagerLoader;
         $loader->contain($contains);
-        $query->select('foo.id')->eagerLoader($loader)->sql();
+        $query->select('foo.id')->setEagerLoader($loader)->sql();
     }
 
     /**

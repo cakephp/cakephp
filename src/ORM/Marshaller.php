@@ -266,6 +266,9 @@ class Marshaller
         $options += ['validate' => true];
 
         if (!isset($options['fields']) && isset($options['fieldList'])) {
+            deprecationWarning(
+                'The `fieldList` option for marshalling is deprecated. Use the `fields` option instead.'
+            );
             $options['fields'] = $options['fieldList'];
             unset($options['fieldList']);
         }
@@ -494,6 +497,10 @@ class Marshaller
      */
     protected function _loadBelongsToMany($assoc, $ids)
     {
+        deprecationWarning(
+            'Marshaller::_loadBelongsToMany() is deprecated. Use _loadAssociatedByIds() instead.'
+        );
+
         return $this->_loadAssociatedByIds($assoc, $ids);
     }
 

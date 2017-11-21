@@ -750,6 +750,6 @@ class AssociationTest extends TestCase
             ])
             ->setConstructorArgs(['Foo', $config])
             ->getMock();
-        $this->assertEquals($locator, $assoc->tableLocator());
+        $this->assertEquals($locator, $assoc->getTableLocator());
     }
 }

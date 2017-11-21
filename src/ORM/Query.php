@@ -258,6 +258,10 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function eagerLoader(EagerLoader $instance = null)
     {
+        deprecationWarning(
+            'Query::eagerLoader() is deprecated. ' .
+            'Use setEagerLoader()/getEagerLoader() instead.'
+        );
         if ($instance !== null) {
             return $this->setEagerLoader($instance);
         }
@@ -949,6 +953,10 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function hydrate($enable = null)
     {
+        deprecationWarning(
+            'Query::hydrate() is deprecated. ' .
+            'Use enableHydration()/isHydrationEnabled() instead.'
+        );
         if ($enable === null) {
             return $this->isHydrationEnabled();
         }
@@ -1279,6 +1287,10 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function autoFields($value = null)
     {
+        deprecationWarning(
+            'Query::autoFields() is deprecated. ' .
+            'Use enableAutoFields()/isAutoFieldsEnabled() instead.'
+        );
         if ($value === null) {
             return $this->isAutoFieldsEnabled();
         }

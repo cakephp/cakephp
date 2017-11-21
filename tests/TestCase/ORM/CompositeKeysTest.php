@@ -159,7 +159,7 @@ class CompositeKeyTest extends TestCase
 
         $results = $query->select()
             ->contain('SiteArticles')
-            ->hydrate(false)
+            ->enableHydration(false)
             ->toArray();
         $expected = [
             [
@@ -208,7 +208,7 @@ class CompositeKeyTest extends TestCase
         $results = $query->repository($table)
             ->select()
             ->contain(['SiteArticles' => ['conditions' => ['SiteArticles.id' => 2]]])
-            ->hydrate(false)
+            ->enableHydration(false)
             ->toArray();
         $expected[0]['articles'] = [];
         $this->assertEquals($expected, $results);
@@ -238,7 +238,7 @@ class CompositeKeyTest extends TestCase
         ]);
         $query = new Query($this->connection, $articles);
 
-        $results = $query->select()->contain('SiteTags')->hydrate(false)->toArray();
+        $results = $query->select()->contain('SiteTags')->enableHydration(false)->toArray();
         $expected = [
             [
                 'id' => 1,
@@ -322,7 +322,7 @@ class CompositeKeyTest extends TestCase
         $results = $query->select()
             ->where(['SiteArticles.id IN' => [1, 2]])
             ->contain('SiteAuthors')
-            ->hydrate(false)
+            ->enableHydration(false)
             ->toArray();
         $expected = [
             [
@@ -371,7 +371,7 @@ class CompositeKeyTest extends TestCase
         $results = $query->select()
             ->where(['SiteAuthors.id IN' => [1, 3]])
             ->contain('SiteArticles')
-            ->hydrate(false)
+            ->enableHydration(false)
             ->toArray();
 
         $expected = [
@@ -545,7 +545,7 @@ class CompositeKeyTest extends TestCase
         ]);
         $table->displayField('name');
         $query = $table->find('list')
-            ->hydrate(false)
+            ->enableHydration(false)
             ->order('id');
         $expected = [
             '1;1' => 'mark',
@@ -557,7 +557,7 @@ class CompositeKeyTest extends TestCase
 
         $table->displayField(['name', 'site_id']);
         $query = $table->find('list')
-            ->hydrate(false)
+            ->enableHydration(false)
             ->order('id');
         $expected = [
             '1;1' => 'mark;1',
@@ -568,7 +568,7 @@ class CompositeKeyTest extends TestCase
         $this->assertEquals($expected, $query->toArray());
 
         $query = $table->find('list', ['groupField' => ['site_id', 'site_id']])
-            ->hydrate(false)
+            ->enableHydration(false)
             ->order('id');
         $expected = [
             '1;1' => [
@@ -769,7 +769,7 @@ class CompositeKeyTest extends TestCase
         ]);
 
         $results = $articles->find()
-            ->hydrate(false)
+            ->enableHydration(false)
             ->notMatching('SiteTags')
             ->toArray();
 
