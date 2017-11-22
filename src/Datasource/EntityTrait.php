@@ -1083,13 +1083,16 @@ trait EntityTrait
      */
     protected function _readError($object, $path = null)
     {
+        if ($path !== null && $object instanceof EntityInterface) {
+            return $object->getError($path);
+        }
         if ($object instanceof EntityInterface) {
-            return $object->errors($path);
+            return $object->getErrors();
         }
         if (is_array($object)) {
             $array = array_map(function ($val) {
                 if ($val instanceof EntityInterface) {
-                    return $val->errors();
+                    return $val->getErrors();
                 }
             }, $object);
 
