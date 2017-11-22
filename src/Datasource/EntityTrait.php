@@ -457,6 +457,10 @@ trait EntityTrait
      */
     public function hiddenProperties($properties = null)
     {
+        deprecationWarning(
+            get_called_class() . '::hiddenProperties() is deprecated. ' .
+            'Use setHidden()/getHidden() instead.'
+        );
         if ($properties === null) {
             return $this->_hidden;
         }
@@ -508,6 +512,10 @@ trait EntityTrait
      */
     public function virtualProperties($properties = null)
     {
+        deprecationWarning(
+            get_called_class() . '::virtualProperties() is deprecated. ' .
+            'Use setVirtual()/getVirtual() instead.'
+        );
         if ($properties === null) {
             return $this->getVirtual();
         }
@@ -775,6 +783,10 @@ trait EntityTrait
      */
     public function dirty($property = null, $isDirty = null)
     {
+        deprecationWarning(
+            get_called_class() . '::dirty() is deprecated. ' .
+            'Use setDirty()/isDirty() instead.'
+        );
         if ($property === null) {
             return $this->isDirty();
         }
@@ -999,6 +1011,10 @@ trait EntityTrait
      */
     public function errors($field = null, $errors = null, $overwrite = false)
     {
+        deprecationWarning(
+            get_called_class() . '::errors() is deprecated. ' .
+            'Use setError()/getError() or setErrors()/getErrors() instead.'
+        );
         if ($field === null) {
             return $this->getErrors();
         }
@@ -1159,6 +1175,10 @@ trait EntityTrait
      */
     public function invalid($field = null, $value = null, $overwrite = false)
     {
+        deprecationWarning(
+            get_called_class() . '::invalid() is deprecated. ' .
+            'Use setInvalid()/getInvalid()/getInvalidField() instead.'
+        );
         if ($field === null) {
             return $this->_invalid;
         }
@@ -1220,6 +1240,10 @@ trait EntityTrait
      */
     public function accessible($property, $set = null)
     {
+        deprecationWarning(
+            get_called_class() . '::accessible() is deprecated. ' .
+            'Use setAccess()/isAccessible() instead.'
+        );
         if ($set === null) {
             return $this->isAccessible($property);
         }
@@ -1325,6 +1349,10 @@ trait EntityTrait
      */
     public function source($alias = null)
     {
+        deprecationWarning(
+            get_called_class() . '::source() is deprecated. ' .
+            'Use setSource()/getSource() instead.'
+        );
         if (is_null($alias)) {
             return $this->getSource();
         }
