@@ -2777,7 +2777,7 @@ class FormHelperTest extends TestCase
     public function testFormValidationAssociated()
     {
         $nested = new Entity(['foo' => 'bar']);
-        $nested->errors('foo', ['not a valid bar']);
+        $nested->setError('foo', ['not a valid bar']);
         $entity = new Entity(['nested' => $nested]);
         $this->Form->create($entity, ['context' => ['table' => 'Articles']]);
 
@@ -2797,7 +2797,7 @@ class FormHelperTest extends TestCase
         $inner = new Entity(['bar' => 'baz']);
         $nested = new Entity(['foo' => $inner]);
         $entity = new Entity(['nested' => $nested]);
-        $inner->errors('bar', ['not a valid one']);
+        $inner->setError('bar', ['not a valid one']);
         $this->Form->create($entity, ['context' => ['table' => 'Articles']]);
         $result = $this->Form->error('nested.foo.bar');
         $this->assertEquals('<div class="error-message">not a valid one</div>', $result);
@@ -2818,10 +2818,10 @@ class FormHelperTest extends TestCase
             'className' => __NAMESPACE__ . '\ContactsTable'
         ]);
         $one->set('email', '');
-        $one->errors('email', ['invalid email']);
+        $one->setError('email', ['invalid email']);
 
         $two->set('name', '');
-        $two->errors('name', ['This is wrong']);
+        $two->setError('name', ['This is wrong']);
         $this->Form->create([$one, $two], ['context' => ['table' => 'Contacts']]);
 
         $result = $this->Form->control('0.email');
@@ -3042,7 +3042,7 @@ class FormHelperTest extends TestCase
 
         $this->Form->request->data = [];
 
-        $entity->errors('field', 'Badness!');
+        $entity->setError('field', 'Badness!');
         $this->Form->create($entity, ['context' => ['table' => 'Contacts']]);
         $result = $this->Form->control('field');
         $expected = [
@@ -3081,7 +3081,7 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $entity->errors('field', ['minLength'], true);
+        $entity->setError('field', ['minLength'], true);
         $result = $this->Form->control('field', [
             'error' => [
                 'minLength' => 'Le login doit contenir au moins 2 caractères',
@@ -3101,7 +3101,7 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $entity->errors('field', ['maxLength'], true);
+        $entity->setError('field', ['maxLength'], true);
         $result = $this->Form->control('field', [
             'error' => [
                 'minLength' => 'Le login doit contenir au moins 2 caractères',
@@ -5359,7 +5359,7 @@ class FormHelperTest extends TestCase
         $this->View->viewVars['spacecraft'] = $spacecraft;
 
         $article = new Article();
-        $article->errors('spacecraft', ['Invalid']);
+        $article->setError('spacecraft', ['Invalid']);
 
         $this->Form->create($article);
         $result = $this->Form->control('spacecraft._ids');
@@ -8213,7 +8213,7 @@ class FormHelperTest extends TestCase
         //@codingStandardsIgnoreEnd
         $this->assertHtml($expected, $result);
 
-        $comment->errors('comment', ['Not valid']);
+        $comment->setError('comment', ['Not valid']);
         $result = $this->Form->control('0.comments.0.comment');
         //@codingStandardsIgnoreStart
         $expected = [

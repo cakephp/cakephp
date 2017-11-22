@@ -60,7 +60,7 @@ class ModelAwareTraitTest extends TestCase
     {
         $stub = new Stub();
         $stub->setProps('Articles');
-        $stub->modelType('Table');
+        $stub->setModelType('Table');
 
         $result = $stub->loadModel();
         $this->assertInstanceOf('Cake\ORM\Table', $result);
@@ -83,7 +83,7 @@ class ModelAwareTraitTest extends TestCase
     {
         $stub = new Stub();
         $stub->setProps('Articles');
-        $stub->modelType('Table');
+        $stub->setModelType('Table');
 
         $result = $stub->loadModel('TestPlugin.Comments');
         $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $result);
@@ -120,25 +120,28 @@ class ModelAwareTraitTest extends TestCase
     /**
      * test alternate default model type.
      *
+     * @group deprecated
      * @return void
      */
     public function testModelType()
     {
-        $stub = new Stub();
-        $stub->setProps('Articles');
+        $this->deprecated(function () {
+            $stub = new Stub();
+            $stub->setProps('Articles');
 
-        FactoryLocator::add('Test', function ($name) {
-            $mock = new \StdClass();
-            $mock->name = $name;
+            FactoryLocator::add('Test', function ($name) {
+                $mock = new \StdClass();
+                $mock->name = $name;
 
-            return $mock;
+                return $mock;
+            });
+            $stub->modelType('Test');
+
+            $result = $stub->loadModel('Magic');
+            $this->assertInstanceOf('\StdClass', $result);
+            $this->assertInstanceOf('\StdClass', $stub->Magic);
+            $this->assertEquals('Magic', $stub->Magic->name);
         });
-        $stub->modelType('Test');
-
-        $result = $stub->loadModel('Magic');
-        $this->assertInstanceOf('\StdClass', $result);
-        $this->assertInstanceOf('\StdClass', $stub->Magic);
-        $this->assertEquals('Magic', $stub->Magic->name);
     }
 
     /**

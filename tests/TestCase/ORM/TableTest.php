@@ -3035,7 +3035,7 @@ class TableTest extends TestCase
         $table = TableRegistry::get('Articles');
         $entity = $table->get(1);
 
-        $entity->accessible('*', true);
+        $entity->setAccess('*', true);
         $entity->set($entity->toArray());
         $this->assertSame($entity, $table->save($entity));
     }
@@ -3117,7 +3117,7 @@ class TableTest extends TestCase
             new Entity(['name' => 'mark']),
             new Entity(['name' => 'jose'])
         ];
-        $entities[1]->errors(['name' => ['message']]);
+        $entities[1]->setErrors(['name' => ['message']]);
         $result = $table->saveMany($entities);
 
         $this->assertFalse($result);
@@ -3611,8 +3611,8 @@ class TableTest extends TestCase
         $existingAuthor = $table->find()->first();
         $newAuthor = $table->newEntity();
 
-        $this->assertEquals('TestPlugin.Authors', $existingAuthor->source());
-        $this->assertEquals('TestPlugin.Authors', $newAuthor->source());
+        $this->assertEquals('TestPlugin.Authors', $existingAuthor->getSource());
+        $this->assertEquals('TestPlugin.Authors', $newAuthor->getSource());
     }
 
     /**
@@ -3626,11 +3626,11 @@ class TableTest extends TestCase
         $table = TableRegistry::get('Articles');
         $validator = $table->getValidator()->requirePresence('title');
         $entity = $table->newEntity([]);
-        $errors = $entity->errors();
+        $errors = $entity->getErrors();
         $this->assertNotEmpty($errors['title']);
 
         $entity = $table->newEntity();
-        $this->assertEmpty($entity->errors());
+        $this->assertEmpty($entity->getErrors());
     }
 
     /**
@@ -6334,16 +6334,34 @@ class TableTest extends TestCase
     /**
      * Tests that calling newEntity() on a table sets the right source alias
      *
+     * @group deprecated
      * @return void
      */
     public function testEntitySource()
     {
+        $this->deprecated(function () {
+            $table = TableRegistry::get('Articles');
+            $this->assertEquals('Articles', $table->newEntity()->source());
+
+            Plugin::load('TestPlugin');
+            $table = TableRegistry::get('TestPlugin.Comments');
+            $this->assertEquals('TestPlugin.Comments', $table->newEntity()->source());
+        });
+    }
+
+    /**
+     * Tests that calling newEntity() on a table sets the right source alias
+     *
+     * @return void
+     */
+    public function testSetEntitySource()
+    {
         $table = TableRegistry::get('Articles');
-        $this->assertEquals('Articles', $table->newEntity()->source());
+        $this->assertEquals('Articles', $table->newEntity()->getSource());
 
         Plugin::load('TestPlugin');
         $table = TableRegistry::get('TestPlugin.Comments');
-        $this->assertEquals('TestPlugin.Comments', $table->newEntity()->source());
+        $this->assertEquals('TestPlugin.Comments', $table->newEntity()->getSource());
     }
 
     /**
@@ -6498,20 +6516,20 @@ class TableTest extends TestCase
         $entity = $table->newEntity(['title' => 'mark']);
 
         $entity->setDirty('title', true);
-        $entity->invalid('title', 'albert');
+        $entity->setInvalidField('title', 'albert');
 
-        $this->assertNotEmpty($entity->errors());
+        $this->assertNotEmpty($entity->getErrors());
         $this->assertTrue($entity->isDirty());
-        $this->assertEquals(['title' => 'albert'], $entity->invalid());
+        $this->assertEquals(['title' => 'albert'], $entity->getInvalid());
 
         $entity->title = 'alex';
         $this->assertSame($entity->getOriginal('title'), 'mark');
 
         $entity->clean();
 
-        $this->assertEmpty($entity->errors());
+        $this->assertEmpty($entity->getErrors());
         $this->assertFalse($entity->isDirty());
-        $this->assertEquals([], $entity->invalid());
+        $this->assertEquals([], $entity->getInvalid());
         $this->assertSame($entity->getOriginal('title'), 'alex');
     }
 

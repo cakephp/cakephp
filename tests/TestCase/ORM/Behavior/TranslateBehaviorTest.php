@@ -1574,7 +1574,7 @@ class TranslateBehaviorTest extends TestCase
         $entity = $table->newEntity();
         $result = $map['_translations']('garbage', $entity);
         $this->assertNull($result, 'Non-array should not error out.');
-        $this->assertEmpty($entity->errors());
+        $this->assertEmpty($entity->getErrors());
         $this->assertEmpty($entity->get('_translations'));
     }
 
@@ -1602,7 +1602,7 @@ class TranslateBehaviorTest extends TestCase
             ]
         ];
         $result = $map['_translations']($data, $entity);
-        $this->assertEmpty($entity->errors(), 'No validation errors.');
+        $this->assertEmpty($entity->getErrors(), 'No validation errors.');
         $this->assertCount(2, $result);
         $this->assertArrayHasKey('en', $result);
         $this->assertArrayHasKey('es', $result);
@@ -1639,13 +1639,13 @@ class TranslateBehaviorTest extends TestCase
             ]
         ];
         $result = $map['_translations']($data, $entity);
-        $this->assertNotEmpty($entity->errors(), 'Needs validation errors.');
+        $this->assertNotEmpty($entity->getErrors(), 'Needs validation errors.');
         $expected = [
             'title' => [
                 '_empty' => 'This field cannot be left empty'
             ]
         ];
-        $this->assertEquals($expected, $entity->errors('es'));
+        $this->assertEquals($expected, $entity->getError('es'));
 
         $this->assertEquals('English Title', $result['en']->title);
         $this->assertEquals('', $result['es']->title);
@@ -1681,7 +1681,7 @@ class TranslateBehaviorTest extends TestCase
             ]
         ];
         $result = $map['_translations']($data, $entity);
-        $this->assertEmpty($entity->errors(), 'No validation errors.');
+        $this->assertEmpty($entity->getErrors(), 'No validation errors.');
         $this->assertSame($en, $result['en']);
         $this->assertSame($es, $result['es']);
         $this->assertSame($en, $entity->get('_translations')['en']);
@@ -1728,12 +1728,12 @@ class TranslateBehaviorTest extends TestCase
             ]
         ];
         $result = $map['_translations']($data, $entity);
-        $this->assertNotEmpty($entity->errors(), 'Needs validation errors.');
+        $this->assertNotEmpty($entity->getErrors(), 'Needs validation errors.');
         $expected = [
             'title' => [
                 '_empty' => 'This field cannot be left empty'
             ]
         ];
-        $this->assertEquals($expected, $entity->errors('es'));
+        $this->assertEquals($expected, $entity->getError('es'));
     }
 }

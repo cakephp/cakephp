@@ -136,7 +136,7 @@ class EntityContext implements ContextInterface
             $isEntity = $entity instanceof EntityInterface;
 
             if ($isEntity) {
-                $table = $entity->source();
+                $table = $entity->getSource();
             }
             if (!$table && $isEntity && get_class($entity) !== 'Cake\ORM\Entity') {
                 list(, $entityClass) = namespaceSplit(get_class($entity));
@@ -581,7 +581,7 @@ class EntityContext implements ContextInterface
         $entity = $this->entity($parts);
 
         if ($entity instanceof EntityInterface) {
-            return $entity->errors(array_pop($parts));
+            return $entity->getError(array_pop($parts));
         }
 
         return [];

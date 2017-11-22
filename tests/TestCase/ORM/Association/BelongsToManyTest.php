@@ -854,7 +854,7 @@ class BelongsToManyTest extends TestCase
         ];
         $result = $assoc->replaceLinks($entity, $tags);
         $this->assertFalse($result, 'replace should have failed.');
-        $this->assertNotEmpty($tags[0]->errors(), 'Bad entity should have errors.');
+        $this->assertNotEmpty($tags[0]->getErrors(), 'Bad entity should have errors.');
 
         $entity = $articles->get(1, ['contain' => 'Tags']);
         $this->assertCount($originalCount, $entity->tags, 'Should not have changed.');

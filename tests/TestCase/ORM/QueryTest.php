@@ -2563,11 +2563,11 @@ class QueryTest extends TestCase
         $table = TableRegistry::get('authors');
         $table->hasMany('articles');
         $query = $table->find()->contain(['articles' => function ($q) {
-            $this->assertTrue($q->eagerLoaded());
+            $this->assertTrue($q->isEagerLoaded());
 
             return $q;
         }]);
-        $this->assertFalse($query->eagerLoaded());
+        $this->assertFalse($query->isEagerLoaded());
 
         $table->getEventManager()->on('Model.beforeFind', function ($e, $q, $o, $primary) {
             $this->assertTrue($primary);
