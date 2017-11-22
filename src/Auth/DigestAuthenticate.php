@@ -277,7 +277,7 @@ class DigestAuthenticate extends BasicAuthenticate
         if ($expires < microtime(true)) {
             return false;
         }
-        $check = hash_hmac('sha1', $expires . ':' . $this->getConfig('secret'), $this->getConfig('secret'));
+        $check = hash_hmac('sha256', $expires . ':' . $this->getConfig('secret'), $this->getConfig('secret'));
 
         return hash_equals($check, $checksum);
     }
