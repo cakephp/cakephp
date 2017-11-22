@@ -141,7 +141,7 @@ class ResultSetTest extends TestCase
         foreach ($results as $i => $row) {
             $expected = new Entity($this->fixtureData[$i]);
             $expected->isNew(false);
-            $expected->source($this->table->alias());
+            $expected->source($this->table->getAlias());
             $expected->clean();
             $this->assertEquals($expected, $row, "Row $i does not match");
         }
@@ -235,7 +235,7 @@ class ResultSetTest extends TestCase
         $options = [
             'markNew' => false,
             'markClean' => true,
-            'source' => $this->table->alias()
+            'source' => $this->table->getAlias()
         ];
         $expected = [
             1 => [

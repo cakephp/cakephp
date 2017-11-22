@@ -226,7 +226,7 @@ class FormAuthenticateTest extends TestCase
     public function testAuthenticateIncludesVirtualFields()
     {
         $users = TableRegistry::get('Users');
-        $users->entityClass('TestApp\Model\Entity\VirtualUser');
+        $users->setEntityClass('TestApp\Model\Entity\VirtualUser');
 
         $request = new ServerRequest('posts/index');
         $request->data = [

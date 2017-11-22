@@ -1068,7 +1068,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         }
 
         if (empty($this->_parts['from'])) {
-            $this->from([$this->_repository->getAlias() => $this->_repository->table()]);
+            $this->from([$this->_repository->getAlias() => $this->_repository->getTable()]);
         }
         $this->_addDefaultFields();
         $this->getEagerLoader()->attachAssociations($this, $this->_repository, !$this->_hasFields);
@@ -1156,7 +1156,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function update($table = null)
     {
-        $table = $table ?: $this->repository()->table();
+        $table = $table ?: $this->repository()->getTable();
 
         return parent::update($table);
     }
@@ -1173,7 +1173,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     public function delete($table = null)
     {
         $repo = $this->repository();
-        $this->from([$repo->getAlias() => $repo->table()]);
+        $this->from([$repo->getAlias() => $repo->getTable()]);
 
         return parent::delete();
     }
@@ -1193,7 +1193,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function insert(array $columns, array $types = [])
     {
-        $table = $this->repository()->table();
+        $table = $this->repository()->getTable();
         $this->into($table);
 
         return parent::insert($columns, $types);

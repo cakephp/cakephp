@@ -667,7 +667,7 @@ class QueryRegressionTest extends TestCase
         $tags = TableRegistry::get('Tags');
 
         $this->skipIf(
-            $tags->connection()->getDriver() instanceof \Cake\Database\Driver\Sqlserver,
+            $tags->getConnection()->getDriver() instanceof \Cake\Database\Driver\Sqlserver,
             'SQL server is temporarily weird in this test, will investigate later'
         );
         $tags = TableRegistry::get('Tags');

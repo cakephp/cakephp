@@ -698,12 +698,12 @@ abstract class TestCase extends BaseTestCase
             ->setConstructorArgs([$options])
             ->getMock();
 
-        if (empty($options['entityClass']) && $mock->entityClass() === '\Cake\ORM\Entity') {
+        if (empty($options['entityClass']) && $mock->getEntityClass() === '\Cake\ORM\Entity') {
             $parts = explode('\\', $options['className']);
             $entityAlias = Inflector::singularize(substr(array_pop($parts), 0, -5));
             $entityClass = implode('\\', array_slice($parts, 0, -1)) . '\Entity\\' . $entityAlias;
             if (class_exists($entityClass)) {
-                $mock->entityClass($entityClass);
+                $mock->setEntityClass($entityClass);
             }
         }
 

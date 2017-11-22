@@ -498,7 +498,7 @@ class CompositeKeyTest extends TestCase
     public function testOneGenerateBelongsToManyEntitiesFromIds()
     {
         $articles = TableRegistry::get('SiteArticles');
-        $articles->entityClass(__NAMESPACE__ . '\OpenArticleEntity');
+        $articles->setEntityClass(__NAMESPACE__ . '\OpenArticleEntity');
         $tags = TableRegistry::get('SiteTags');
         $junction = TableRegistry::get('SiteArticlesTags');
         $articles->belongsToMany('SiteTags', [
@@ -543,7 +543,7 @@ class CompositeKeyTest extends TestCase
             'table' => 'site_authors',
             'connection' => $this->connection,
         ]);
-        $table->displayField('name');
+        $table->setDisplayField('name');
         $query = $table->find('list')
             ->enableHydration(false)
             ->order('id');
@@ -555,7 +555,7 @@ class CompositeKeyTest extends TestCase
         ];
         $this->assertEquals($expected, $query->toArray());
 
-        $table->displayField(['name', 'site_id']);
+        $table->setDisplayField(['name', 'site_id']);
         $query = $table->find('list')
             ->enableHydration(false)
             ->order('id');

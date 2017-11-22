@@ -65,7 +65,7 @@ class ContactsTable extends Table
      */
     public function initialize(array $config)
     {
-        $this->schema($this->_schema);
+        $this->setSchema($this->_schema);
     }
 }
 
@@ -101,7 +101,7 @@ class ValidateUsersTable extends Table
      */
     public function initialize(array $config)
     {
-        $this->schema($this->_schema);
+        $this->setSchema($this->_schema);
     }
 }
 
@@ -1368,7 +1368,7 @@ class FormHelperTest extends TestCase
         $table = TableRegistry::get('Contacts', [
             'className' => __NAMESPACE__ . '\ContactsTable'
         ]);
-        $table->schema(['foo' => [
+        $table->setSchema(['foo' => [
             'type' => 'binary',
             'null' => false,
             'default' => null,
@@ -3302,7 +3302,7 @@ class FormHelperTest extends TestCase
     public function testControlCheckbox()
     {
         $articles = TableRegistry::get('Articles');
-        $articles->schema()->addColumn('active', ['type' => 'boolean', 'default' => null]);
+        $articles->getSchema()->addColumn('active', ['type' => 'boolean', 'default' => null]);
         $article = $articles->newEntity();
 
         $this->Form->create($article);
@@ -4381,8 +4381,8 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $Articles = TableRegistry::get('Articles');
-        $title = $Articles->schema()->getColumn('title');
-        $Articles->schema()->addColumn(
+        $title = $Articles->getSchema()->getColumn('title');
+        $Articles->getSchema()->addColumn(
             'title',
             ['default' => 'default title'] + $title
         );
@@ -4716,8 +4716,8 @@ class FormHelperTest extends TestCase
     public function testRadioDefaultValue()
     {
         $Articles = TableRegistry::get('Articles');
-        $title = $Articles->schema()->getColumn('title');
-        $Articles->schema()->addColumn(
+        $title = $Articles->getSchema()->getColumn('title');
+        $Articles->getSchema()->addColumn(
             'title',
             ['default' => '1'] + $title
         );
@@ -5862,7 +5862,7 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $Articles = TableRegistry::get('Articles');
-        $Articles->schema()->addColumn(
+        $Articles->getSchema()->addColumn(
             'published',
             ['type' => 'boolean', 'null' => false, 'default' => true]
         );

@@ -675,7 +675,7 @@ class EntityContextTest extends TestCase
         ]);
 
         TableRegistry::get('Users')->belongsToMany('Groups');
-        TableRegistry::get('Groups')->primaryKey('thing');
+        TableRegistry::get('Groups')->setPrimaryKey('thing');
 
         $result = $context->val('user.groups._ids');
         $this->assertEquals([1, 4], $result);
@@ -689,8 +689,8 @@ class EntityContextTest extends TestCase
     public function testValSchemaDefault()
     {
         $table = TableRegistry::get('Articles');
-        $column = $table->schema()->getColumn('title');
-        $table->schema()->addColumn('title', ['default' => 'default title'] + $column);
+        $column = $table->getSchema()->getColumn('title');
+        $table->getSchema()->addColumn('title', ['default' => 'default title'] + $column);
         $row = $table->newEntity();
 
         $context = new EntityContext($this->request, [
@@ -715,7 +715,7 @@ class EntityContextTest extends TestCase
             'table' => 'Articles',
         ]);
         $articles = TableRegistry::get('Articles');
-        $articles->schema()->addColumn('comments_on', [
+        $articles->getSchema()->addColumn('comments_on', [
             'type' => 'boolean'
         ]);
 
@@ -795,7 +795,7 @@ class EntityContextTest extends TestCase
         $this->_setupTables();
 
         $comments = TableRegistry::get('Comments');
-        $comments->schema()->addColumn('starred', 'boolean');
+        $comments->getSchema()->addColumn('starred', 'boolean');
         $comments->getValidator()->add('starred', 'valid', ['rule' => 'boolean']);
 
         $row = new Article([
@@ -1257,26 +1257,26 @@ class EntityContextTest extends TestCase
         $articles->belongsTo('Users');
         $articles->belongsToMany('Tags');
         $articles->hasMany('Comments');
-        $articles->entityClass(__NAMESPACE__ . '\Article');
+        $articles->setEntityClass(__NAMESPACE__ . '\Article');
 
         $articlesTags = TableRegistry::get('ArticlesTags');
         $comments = TableRegistry::get('Comments');
         $users = TableRegistry::get('Users');
         $users->hasMany('Articles');
 
-        $articles->schema([
+        $articles->setSchema([
             'id' => ['type' => 'integer', 'length' => 11, 'null' => false],
             'title' => ['type' => 'string', 'length' => 255],
             'user_id' => ['type' => 'integer', 'length' => 11, 'null' => false],
             'body' => ['type' => 'crazy_text', 'baseType' => 'text'],
             '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
         ]);
-        $articlesTags->schema([
+        $articlesTags->setSchema([
             'article_id' => ['type' => 'integer', 'length' => 11, 'null' => false],
             'tag_id' => ['type' => 'integer', 'length' => 11, 'null' => false],
             '_constraints' => ['unique_tag' => ['type' => 'primary', 'columns' => ['article_id', 'tag_id']]]
         ]);
-        $users->schema([
+        $users->setSchema([
             'id' => ['type' => 'integer', 'length' => 11],
             'username' => ['type' => 'string', 'length' => 255],
             'bio' => ['type' => 'text'],
@@ -1322,7 +1322,7 @@ class EntityContextTest extends TestCase
             'table' => 'Articles',
         ]);
         $articles = TableRegistry::get('Articles');
-        $this->assertEquals($articles->schema()->columns(), $context->fieldNames());
+        $this->assertEquals($articles->getSchema()->columns(), $context->fieldNames());
     }
 
     /**

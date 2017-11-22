@@ -427,7 +427,7 @@ trait QueryTrait
         if (!$entity) {
             throw new RecordNotFoundException(sprintf(
                 'Record not found in table "%s"',
-                $this->repository()->table()
+                $this->repository()->getTable()
             ));
         }
 
