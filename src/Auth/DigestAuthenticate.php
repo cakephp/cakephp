@@ -86,7 +86,7 @@ class DigestAuthenticate extends BasicAuthenticate
     {
         $this->setConfig([
             'nonceLifetime' => 300,
-            'secret' => Configure::read('Security.salt'),
+            'secret' => Security::getSalt(),
             'realm' => null,
             'qop' => 'auth',
             'opaque' => null,
