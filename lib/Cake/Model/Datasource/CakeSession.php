@@ -593,9 +593,9 @@ class CakeSession {
 			);
 		}
 		Configure::write('Session', $sessionConfig);
-		static::$sessionTime = static::$time + ($sessionConfig['timeout'] * 60);
-		if (static::$_useForwardsCompatibleTimeout) {
-			static::$sessionTime = static::$time;
+		static::$sessionTime = static::$time;
+		if (!static::$_useForwardsCompatibleTimeout) {
+			static::$sessionTime += ($sessionConfig['timeout'] * 60);
 		}
 	}
 
