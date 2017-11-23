@@ -71,7 +71,7 @@ class DigestAuthenticate extends BasicAuthenticate
      * Besides the keys specified in BaseAuthenticate::$_defaultConfig,
      * DigestAuthenticate uses the following extra keys:
      *
-     * - `secret` The secret to use for nonce validation. Defaults to Security.salt.
+     * - `secret` The secret to use for nonce validation. Defaults to Security::getSalt().
      * - `realm` The realm authentication is for, Defaults to the servername.
      * - `qop` Defaults to 'auth', no other values are supported at this time.
      * - `opaque` A string that must be returned unchanged by clients.
@@ -86,7 +86,7 @@ class DigestAuthenticate extends BasicAuthenticate
     {
         $this->setConfig([
             'nonceLifetime' => 300,
-            'secret' => Configure::read('Security.salt'),
+            'secret' => Security::getSalt(),
             'realm' => null,
             'qop' => 'auth',
             'opaque' => null,
@@ -251,7 +251,8 @@ class DigestAuthenticate extends BasicAuthenticate
     protected function generateNonce()
     {
         $expiryTime = microtime(true) + $this->getConfig('nonceLifetime');
-        $signatureValue = hash_hmac('sha256', $expiryTime . ':' . $this->getConfig('secret'), Security::getSalt());
+        $secret = $this->getConfig('secret');
+        $signatureValue = hash_hmac('sha256', $expiryTime . ':' . $secret, $secret);
         $nonceValue = $expiryTime . ':' . $signatureValue;
 
         return base64_encode($nonceValue);
@@ -277,7 +278,8 @@ class DigestAuthenticate extends BasicAuthenticate
         if ($expires < microtime(true)) {
             return false;
         }
-        $check = hash_hmac('sha1', $expires . ':' . $this->getConfig('secret'), $this->getConfig('secret'));
+        $secret = $this->getConfig('secret');
+        $check = hash_hmac('sha256', $expires . ':' . $secret, $secret);
 
         return hash_equals($check, $checksum);
     }
