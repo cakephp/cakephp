@@ -538,7 +538,7 @@ class CakeSession {
 			$sessionConfig['cookieTimeout'] = $sessionConfig['timeout'];
 		}
 		if (isset($sessionConfig['useForwardsCompatibleTimeout']) && $sessionConfig['useForwardsCompatibleTimeout']) {
-				static::$_useForwardsCompatibleTimeout = true;
+			static::$_useForwardsCompatibleTimeout = true;
 		}
 
 		if (!isset($sessionConfig['ini']['session.cookie_lifetime'])) {
