@@ -17,18 +17,8 @@ namespace Cake\Test\TestCase\Database;
 use Cake\Database\Type;
 use Cake\TestSuite\TestCase;
 use PDO;
-
-/**
- * Mock class for testing type registering
- */
-class FooType extends \Cake\Database\Type
-{
-
-    public function getBaseType()
-    {
-        return 'text';
-    }
-}
+use TestApp\Database\Type\BarType;
+use TestApp\Database\Type\FooType;
 
 /**
  * Tests Type class
@@ -131,7 +121,7 @@ class TypeTest extends TestCase
         $this->assertNotEmpty($map);
         $this->assertFalse(isset($map['foo']));
 
-        $fooType = __NAMESPACE__ . '\FooType';
+        $fooType = FooType::class;
         Type::map('foo', $fooType);
         $map = Type::map();
         $this->assertEquals($fooType, $map['foo']);
@@ -142,11 +132,31 @@ class TypeTest extends TestCase
         $this->assertEquals('foo', $type->getName());
         $this->assertEquals('text', $type->getBaseType());
 
-        $fooType = new FooType();
         Type::map('foo2', $fooType);
         $map = Type::map();
         $this->assertSame($fooType, $map['foo2']);
         $this->assertSame($fooType, Type::map('foo2'));
+
+        $type = Type::build('foo2');
+        $this->assertInstanceOf($fooType, $type);
+    }
+
+    /**
+     * Tests overwriting type map works for building
+     *
+     * @return void
+     */
+    public function testReMapAndBuild()
+    {
+        $fooType = FooType::class;
+        $map = Type::map('foo', $fooType);
+        $type = Type::build('foo');
+        $this->assertInstanceOf($fooType, $type);
+
+        $barType = BarType::class;
+        Type::map('foo', $barType);
+        $type = Type::build('foo');
+        $this->assertInstanceOf($barType, $type);
     }
 
     /**
