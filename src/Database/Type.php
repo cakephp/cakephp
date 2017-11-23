@@ -162,7 +162,9 @@ class Type implements TypeInterface
         if ($className === null) {
             return isset(self::$_types[$type]) ? self::$_types[$type] : null;
         }
+
         self::$_types[$type] = $className;
+        unset(self::$_builtTypes[$type]);
     }
 
     /**
