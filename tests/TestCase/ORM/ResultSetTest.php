@@ -141,7 +141,7 @@ class ResultSetTest extends TestCase
         foreach ($results as $i => $row) {
             $expected = new Entity($this->fixtureData[$i]);
             $expected->isNew(false);
-            $expected->source($this->table->getAlias());
+            $expected->setSource($this->table->getAlias());
             $expected->clean();
             $this->assertEquals($expected, $row, "Row $i does not match");
         }
@@ -390,14 +390,14 @@ class ResultSetTest extends TestCase
             'foreignKey' => 'user_id'
         ]);
         $result = $comments->find()->contain(['Authors'])->first();
-        $this->assertEquals('TestPlugin.Comments', $result->source());
-        $this->assertEquals('TestPlugin.Authors', $result->author->source());
+        $this->assertEquals('TestPlugin.Comments', $result->getSource());
+        $this->assertEquals('TestPlugin.Authors', $result->author->getSource());
 
         $result = $comments->find()->matching('Authors', function ($q) {
             return $q->where(['Authors.id' => 1]);
         })->first();
-        $this->assertEquals('TestPlugin.Comments', $result->source());
-        $this->assertEquals('TestPlugin.Authors', $result->_matchingData['Authors']->source());
+        $this->assertEquals('TestPlugin.Comments', $result->getSource());
+        $this->assertEquals('TestPlugin.Authors', $result->_matchingData['Authors']->getSource());
     }
 
     /**

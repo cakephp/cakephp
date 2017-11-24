@@ -189,7 +189,7 @@ class EntityContextTest extends TestCase
     public function testTableFromEntitySource()
     {
         $entity = new Entity();
-        $entity->source('Articles');
+        $entity->setSource('Articles');
         $context = new EntityContext($this->request, [
             'entity' => $entity,
         ]);
@@ -230,7 +230,7 @@ class EntityContextTest extends TestCase
             'title' => 'Test entity',
             'body' => 'Something new'
         ]);
-        $row->errors('title', ['Title is required.']);
+        $row->setError('title', ['Title is required.']);
 
         $context = new EntityContext($this->request, [
             'entity' => $row,
@@ -240,7 +240,7 @@ class EntityContextTest extends TestCase
         $this->assertEquals($row->title, $result);
 
         $result = $context->error('title');
-        $this->assertEquals($row->errors('title'), $result);
+        $this->assertEquals($row->getError('title'), $result);
         $this->assertTrue($context->hasError('title'));
     }
 
@@ -275,14 +275,14 @@ class EntityContextTest extends TestCase
             'body' => 'Stuff',
             'user' => new Entity(['username' => 'mark'])
         ]);
-        $one->errors('title', 'Required field');
+        $one->setError('title', 'Required field');
 
         $two = new Article([
             'title' => 'Second post',
             'body' => 'Some text',
             'user' => new Entity(['username' => 'jose'])
         ]);
-        $two->errors('body', 'Not long enough');
+        $two->setError('body', 'Not long enough');
 
         return [
             'array' => [[$one, $two]],
@@ -1108,9 +1108,9 @@ class EntityContextTest extends TestCase
             'title' => 'My title',
             'user' => new Entity(['username' => 'Mark']),
         ]);
-        $row->errors('title', []);
-        $row->errors('body', 'Gotta have one');
-        $row->errors('user_id', ['Required field']);
+        $row->setError('title', []);
+        $row->setError('body', 'Gotta have one');
+        $row->setError('user_id', ['Required field']);
         $context = new EntityContext($this->request, [
             'entity' => $row,
             'table' => 'Articles',
@@ -1135,9 +1135,9 @@ class EntityContextTest extends TestCase
             'title' => 'My title',
             'user' => new Entity(['username' => 'Mark']),
         ]);
-        $row->errors('title', []);
-        $row->errors('body', 'Gotta have one');
-        $row->user->errors('username', ['Required']);
+        $row->setError('title', []);
+        $row->setError('body', 'Gotta have one');
+        $row->user->setError('username', ['Required']);
         $context = new EntityContext($this->request, [
             'entity' => $row,
             'table' => 'Articles',
@@ -1161,11 +1161,11 @@ class EntityContextTest extends TestCase
             'title' => 'My title',
             'user' => new Entity(['username' => 'Mark']),
         ]);
-        $row->errors('title', []);
-        $row->errors('body', 'Gotta have one');
-        $row->errors('user_id', ['Required field']);
+        $row->setError('title', []);
+        $row->setError('body', 'Gotta have one');
+        $row->setError('user_id', ['Required field']);
 
-        $row->user->errors('username', ['Required']);
+        $row->user->setError('username', ['Required']);
 
         $context = new EntityContext($this->request, [
             'entity' => $row,
@@ -1198,8 +1198,8 @@ class EntityContextTest extends TestCase
                 new Entity(['comment' => 'Second comment']),
             ]
         ]);
-        $row->comments[0]->errors('comment', ['Is required']);
-        $row->comments[0]->errors('article_id', ['Is required']);
+        $row->comments[0]->setError('comment', ['Is required']);
+        $row->comments[0]->setError('article_id', ['Is required']);
 
         $context = new EntityContext($this->request, [
             'entity' => $row,
@@ -1235,7 +1235,7 @@ class EntityContextTest extends TestCase
                 ])
             ],
         ]);
-        $row->tags[0]->_joinData->errors('tag_id', ['Is required']);
+        $row->tags[0]->_joinData->setError('tag_id', ['Is required']);
 
         $context = new EntityContext($this->request, [
             'entity' => $row,
