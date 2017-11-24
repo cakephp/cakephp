@@ -205,6 +205,7 @@ trait QueryTrait
                 'Using ' . get_called_class() . '::eagerLoaded() as a getter is deprecated. ' .
                 'Use isEagerLoaded() instead.'
             );
+
             return $this->_eagerLoaded;
         }
         $this->_eagerLoaded = $value;
