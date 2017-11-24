@@ -237,8 +237,10 @@ class CounterCacheBehavior extends Behavior
             } else {
                 $count = $this->_getCount($config, $countConditions);
             }
-
-            $assoc->getTarget()->updateAll([$field => $count], $updateConditions);
+            if (!is_null($count)) {
+                $assoc->getTarget()->updateAll([$field => $count],
+                    $updateConditions);
+            }
 
             if (isset($updateOriginalConditions)) {
                 if (is_callable($config)) {
@@ -249,7 +251,10 @@ class CounterCacheBehavior extends Behavior
                 } else {
                     $count = $this->_getCount($config, $countOriginalConditions);
                 }
-                $assoc->getTarget()->updateAll([$field => $count], $updateOriginalConditions);
+                if (!is_null($count)) {
+                    $assoc->getTarget()->updateAll([$field => $count],
+                        $updateOriginalConditions);
+                }
             }
         }
     }
