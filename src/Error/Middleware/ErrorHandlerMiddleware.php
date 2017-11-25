@@ -137,10 +137,9 @@ class ErrorHandlerMiddleware
     {
         $body = $response->getBody();
         $body->write('An Internal Server Error Occurred');
-        $response = $response->withStatus(500)
-            ->withBody($body);
 
-        return $response;
+        return $response->withStatus(500)
+            ->withBody($body);
     }
 
     /**
