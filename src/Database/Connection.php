@@ -26,6 +26,7 @@ use Cake\Database\Schema\CachedCollection;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Log\Log;
+use Exception;
 
 /**
  * Represents a connection with a database server.
