@@ -212,7 +212,7 @@ class SecurityComponentTest extends TestCase
      */
     public function testBlackholeWithBrokenCallback()
     {
-        $this->expectException(\Cake\Network\Exception\BadRequestException::class);
+        $this->expectException(\Cake\Http\Exception\BadRequestException::class);
         $request = new ServerRequest([
             'url' => 'posts/index',
             'session' => $this->Security->session

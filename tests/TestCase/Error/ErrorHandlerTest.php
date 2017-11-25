@@ -18,10 +18,10 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Error\ErrorHandler;
 use Cake\Error\PHP7ErrorException;
+use Cake\Http\Exception\ForbiddenException;
+use Cake\Http\Exception\NotFoundException;
 use Cake\Http\ServerRequest;
 use Cake\Log\Log;
-use Cake\Network\Exception\ForbiddenException;
-use Cake\Network\Exception\NotFoundException;
 use Cake\Routing\Exception\MissingControllerException;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
@@ -282,14 +282,14 @@ class ErrorHandlerTest extends TestCase
         $this->_logger->expects($this->at(0))
             ->method('log')
             ->with('error', $this->logicalAnd(
-                $this->stringContains('[Cake\Network\Exception\NotFoundException] Kaboom!'),
+                $this->stringContains('[Cake\Http\Exception\NotFoundException] Kaboom!'),
                 $this->stringContains('ErrorHandlerTest->testHandleExceptionLog')
             ));
 
         $this->_logger->expects($this->at(1))
             ->method('log')
             ->with('error', $this->logicalAnd(
-                $this->stringContains('[Cake\Network\Exception\NotFoundException] Kaboom!'),
+                $this->stringContains('[Cake\Http\Exception\NotFoundException] Kaboom!'),
                 $this->logicalNot($this->stringContains('ErrorHandlerTest->testHandleExceptionLog'))
             ));
 
@@ -358,12 +358,12 @@ class ErrorHandlerTest extends TestCase
             ->method('log')
             ->with(
                 'error',
-                $this->stringContains('[Cake\Network\Exception\ForbiddenException] Fooled you!')
+                $this->stringContains('[Cake\Http\Exception\ForbiddenException] Fooled you!')
             );
 
         $errorHandler = new TestErrorHandler([
             'log' => true,
-            'skipLog' => ['Cake\Network\Exception\NotFoundException'],
+            'skipLog' => ['Cake\Http\Exception\NotFoundException'],
         ]);
 
         $errorHandler->handleException($notFound);

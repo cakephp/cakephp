@@ -22,7 +22,7 @@ use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Exception\PageOutOfBoundsException;
 use Cake\Datasource\Paginator;
 use Cake\Http\ServerRequest;
-use Cake\Network\Exception\NotFoundException;
+use Cake\Http\Exception\NotFoundException;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
@@ -772,7 +772,7 @@ class PaginatorComponentTest extends TestCase
      */
     public function testOutOfVeryBigPageNumberGetsClamped()
     {
-        $this->expectException(\Cake\Network\Exception\NotFoundException::class);
+        $this->expectException(\Cake\Http\Exception\NotFoundException::class);
         $this->loadFixtures('Posts');
         $this->request->query = [
             'page' => '3000000000000000000000000',

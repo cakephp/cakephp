@@ -13,7 +13,7 @@
  */
 namespace TestApp\Controller;
 
-use Cake\Network\Exception\NotFoundException;
+use Cake\Http\Exception\NotFoundException;
 
 /**
  * RequestActionController class
@@ -170,7 +170,7 @@ class RequestActionController extends AppController
     /**
      * Tests exception handling
      *
-     * @throws \Cake\Network\Exception\NotFoundException
+     * @throws \Cake\Http\Exception\NotFoundException
      * @return void
      */
     public function error_method()

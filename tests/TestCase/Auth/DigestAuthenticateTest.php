@@ -19,10 +19,10 @@ namespace Cake\Test\TestCase\Auth;
 use Cake\Auth\DigestAuthenticate;
 use Cake\Controller\ComponentRegistry;
 use Cake\Core\Configure;
+use Cake\Http\Exception\UnauthorizedException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\I18n\Time;
-use Cake\Network\Exception\UnauthorizedException;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
@@ -111,7 +111,7 @@ class DigestAuthenticateTest extends TestCase
      */
     public function testAuthenticateWrongUsername()
     {
-        $this->expectException(\Cake\Network\Exception\UnauthorizedException::class);
+        $this->expectException(\Cake\Http\Exception\UnauthorizedException::class);
         $this->expectExceptionCode(401);
         $request = new ServerRequest('posts/index');
         $request->addParams(['pass' => []]);
@@ -355,7 +355,7 @@ class DigestAuthenticateTest extends TestCase
      */
     public function testAuthenticateFailReChallenge()
     {
-        $this->expectException(\Cake\Network\Exception\UnauthorizedException::class);
+        $this->expectException(\Cake\Http\Exception\UnauthorizedException::class);
         $this->expectExceptionCode(401);
         $this->auth->setConfig('scope.username', 'nate');
         $request = new ServerRequest([

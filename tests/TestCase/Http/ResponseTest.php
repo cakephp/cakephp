@@ -18,10 +18,10 @@ include_once CORE_TEST_CASES . DS . 'Http' . DS . 'server_mocks.php';
 
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieCollection;
+use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Network\CorsBuilder;
-use Cake\Network\Exception\NotFoundException;
 use Cake\TestSuite\TestCase;
 use Zend\Diactoros\Stream;
 
@@ -1864,7 +1864,7 @@ class ResponseTest extends TestCase
      */
     public function testFileNotFound()
     {
-        $this->expectException(\Cake\Network\Exception\NotFoundException::class);
+        $this->expectException(\Cake\Http\Exception\NotFoundException::class);
         $this->deprecated(function () {
             $response = new Response();
             $response->file('/some/missing/folder/file.jpg');
@@ -1878,7 +1878,7 @@ class ResponseTest extends TestCase
      */
     public function testWithFileNotFound()
     {
-        $this->expectException(\Cake\Network\Exception\NotFoundException::class);
+        $this->expectException(\Cake\Http\Exception\NotFoundException::class);
         $response = new Response();
         $response->withFile('/some/missing/folder/file.jpg');
     }
