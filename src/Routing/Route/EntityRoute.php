@@ -28,7 +28,10 @@ class EntityRoute extends Route
 {
     /**
      * Match by entity and map its fields to the URL pattern by comparing the
-     * field names with the template vars
+     * field names with the template vars.
+     *
+     * If a routing key is defined in both `$url` and the entity, the value defined
+     * in `$url` will be preferred.
      *
      * @param array $url Array of parameters to convert to a string.
      * @param array $context An array of the current request context.
@@ -45,7 +48,9 @@ class EntityRoute extends Route
             preg_match_all('@:(\w+)@', $this->template, $matches);
 
             foreach ($matches[1] as $field) {
-                $url[$field] = $entity[$field];
+                if (!isset($url[$field]) && isset($entity[$field])) {
+                    $url[$field] = $entity[$field];
+                }
             }
         }
 

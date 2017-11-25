@@ -24,6 +24,34 @@ use TestApp\Model\Entity\Article;
 class EntityRouteTest extends TestCase
 {
     /**
+     * test that route keys take precedence to object properties.
+     *
+     * @return void
+     */
+    public function testMatchRouteKeyPrecedence()
+    {
+        $entity = new Article([
+            'category_id' => 2,
+            'slug' => 'article-slug'
+        ]);
+
+        $route = $route = new EntityRoute(
+            '/articles/:category_id/:slug',
+            [
+                '_name' => 'articlesView',
+            ]
+        );
+
+        $result = $route->match([
+            'slug' => 'other-slug',
+            '_entity' => $entity,
+            '_name' => 'articlesView'
+        ]);
+
+        $this->assertEquals('/articles/2/other-slug', $result);
+    }
+
+    /**
      * test that routes match their pattern.
      *
      * @return void
