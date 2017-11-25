@@ -223,7 +223,7 @@ class Connection implements ConnectionInterface
     {
         try {
             return $this->_driver->connect();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw new MissingConnectionException(['reason' => $e->getMessage()]);
         }
     }
@@ -679,7 +679,7 @@ class Connection implements ConnectionInterface
 
         try {
             $result = $callback($this);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->rollback(false);
             throw $e;
         }
@@ -727,7 +727,7 @@ class Connection implements ConnectionInterface
 
         try {
             $result = $callback($this);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->enableForeignKeys();
             throw $e;
         }

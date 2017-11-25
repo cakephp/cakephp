@@ -32,6 +32,7 @@ use Cake\Utility\Text;
 use Cake\View\Helper\SecureFieldTokenTrait;
 use Exception;
 use LogicException;
+use PHPUnit\Exception as PhpunitException;
 
 /**
  * A test case class intended to make integration tests of
@@ -487,7 +488,7 @@ abstract class IntegrationTestCase extends TestCase
                 $this->_requestSession->write('Flash', $this->_flashMessages);
             }
             $this->_response = $response;
-        } catch (\PHPUnit\Exception $e) {
+        } catch (PhpUnitException $e) {
             throw $e;
         } catch (DatabaseException $e) {
             throw $e;
