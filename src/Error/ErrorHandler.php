@@ -122,7 +122,7 @@ class ErrorHandler extends BaseErrorHandler
     /**
      * Displays an exception response body.
      *
-     * @param \Exception $exception The exception to display
+     * @param \Exception $exception The exception to display.
      * @return void
      * @throws \Exception When the chosen exception renderer is invalid.
      */
@@ -138,10 +138,10 @@ class ErrorHandler extends BaseErrorHandler
             $response = $renderer->render();
             $this->_clearOutput();
             $this->_sendResponse($response);
-        } catch (Throwable $t) {
-            $this->_logInternalError($t);
-        } catch (Exception $e) {
-            $this->_logInternalError($e);
+        } catch (Throwable $exception) {
+            $this->_logInternalError($exception);
+        } catch (Exception $exception) {
+            $this->_logInternalError($exception);
         }
     }
 
