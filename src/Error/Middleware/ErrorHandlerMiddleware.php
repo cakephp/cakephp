@@ -21,6 +21,7 @@ use Cake\Core\InstanceConfigTrait;
 use Cake\Error\ExceptionRenderer;
 use Cake\Log\Log;
 use Exception;
+use Throwable;
 
 /**
  * Error handling middleware.
@@ -93,8 +94,10 @@ class ErrorHandlerMiddleware
     {
         try {
             return $next($request, $response);
-        } catch (Exception $e) {
-            return $this->handleException($e, $request, $response);
+        } catch (Throwable $exception) {
+            return $this->handleException($exception, $request, $response);
+        } catch (Exception $exception) {
+            return $this->handleException($exception, $request, $response);
         }
     }
 
@@ -114,14 +117,28 @@ class ErrorHandlerMiddleware
             $this->logException($request, $exception);
 
             return $res;
-        } catch (Exception $e) {
-            $this->logException($request, $e);
-
-            $body = $response->getBody();
-            $body->write('An Internal Server Error Occurred');
-            $response = $response->withStatus(500)
-                ->withBody($body);
+        } catch (Throwable $exception) {
+            $this->logException($request, $exception);
+            $response = $this->handleInternalError($response);
+        } catch (Exception $exception) {
+            $this->logException($request, $exception);
+            $response = $this->handleInternalError($response);
         }
+
+        return $response;
+    }
+
+    /**
+     * @param \Psr\Http\Message\ResponseInterface $response The response
+     *
+     * @return \Psr\Http\Message\ResponseInterface A response
+     */
+    protected function handleInternalError($response)
+    {
+        $body = $response->getBody();
+        $body->write('An Internal Server Error Occurred');
+        $response = $response->withStatus(500)
+            ->withBody($body);
 
         return $response;
     }
