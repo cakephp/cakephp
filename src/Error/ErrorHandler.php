@@ -160,11 +160,11 @@ class ErrorHandler extends BaseErrorHandler
     }
 
     /**
-     * Log both PHP5 and PHP7 errors.
+     * Logs both PHP5 and PHP7 errors.
      *
      * The PHP5 part will be removed with 4.0.
      *
-     * @param \Throwable|\Exception $exception
+     * @param \Throwable|\Exception $exception Exception.
      *
      * @return void
      */
