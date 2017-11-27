@@ -135,6 +135,13 @@ class CakeSession {
 	protected static $_cookieName = null;
 
 /**
+ * Whether or not to make `_validAgentAndTime` 3.x compatible.
+ *
+ * @var bool
+ */
+	protected static $_useForwardsCompatibleTimeout = false;
+
+/**
  * Whether this session is running under a CLI environment
  *
  * @var bool
@@ -360,6 +367,9 @@ class CakeSession {
 	protected static function _validAgentAndTime() {
 		$userAgent = static::read('Config.userAgent');
 		$time = static::read('Config.time');
+		if (static::$_useForwardsCompatibleTimeout) {
+			$time += (Configure::read('Session.timeout') * 60);
+		}
 		$validAgent = (
 			Configure::read('Session.checkAgent') === false ||
 			isset($userAgent) && static::$_userAgent === $userAgent
@@ -527,6 +537,10 @@ class CakeSession {
 		if (isset($sessionConfig['timeout']) && !isset($sessionConfig['cookieTimeout'])) {
 			$sessionConfig['cookieTimeout'] = $sessionConfig['timeout'];
 		}
+		if (isset($sessionConfig['useForwardsCompatibleTimeout']) && $sessionConfig['useForwardsCompatibleTimeout']) {
+			static::$_useForwardsCompatibleTimeout = true;
+		}
+
 		if (!isset($sessionConfig['ini']['session.cookie_lifetime'])) {
 			$sessionConfig['ini']['session.cookie_lifetime'] = $sessionConfig['cookieTimeout'] * 60;
 		}
@@ -579,7 +593,10 @@ class CakeSession {
 			);
 		}
 		Configure::write('Session', $sessionConfig);
-		static::$sessionTime = static::$time + ($sessionConfig['timeout'] * 60);
+		static::$sessionTime = static::$time;
+		if (!static::$_useForwardsCompatibleTimeout) {
+			static::$sessionTime += ($sessionConfig['timeout'] * 60);
+		}
 	}
 
 /**

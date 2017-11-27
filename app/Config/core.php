@@ -198,6 +198,7 @@
  *
  * - `Session.cookie` - The name of the cookie to use. Defaults to 'CAKEPHP'
  * - `Session.timeout` - The number of minutes you want sessions to live for. This timeout is handled by CakePHP
+ * - `Session.useForwardsCompatibleTimeout` - Whether or not to make timeout 3.x compatible.
  * - `Session.cookieTimeout` - The number of minutes you want session cookies to live for.
  * - `Session.checkAgent` - Do you want the user agent to be checked when starting sessions? You might want to set the
  *    value to false, when dealing with older versions of IE, Chrome Frame or certain web-browsing devices and AJAX
