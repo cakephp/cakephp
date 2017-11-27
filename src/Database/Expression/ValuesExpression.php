@@ -225,7 +225,7 @@ class ValuesExpression implements ExpressionInterface
      * Gets the query object to be used as the values expression to be evaluated
      * to insert records in the table.
      *
-     * @return \Cake\Database\Query
+     * @return \Cake\Database\Query|null
      */
     public function getQuery()
     {
