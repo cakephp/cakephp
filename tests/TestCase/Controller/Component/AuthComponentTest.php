@@ -958,7 +958,7 @@ class AuthComponentTest extends TestCase
     public function testRedirectToUnauthorizedRedirectSuppressedAuthError()
     {
         $url = '/party/on';
-        $this->Auth->session = $this->getMockBuilder('Cake\Network\Session')
+        $this->Auth->session = $this->getMockBuilder(Session::class)
             ->setMethods(['flash'])
             ->getMock();
         $this->Auth->request = $Request = new ServerRequest($url);

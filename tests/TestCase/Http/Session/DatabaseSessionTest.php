@@ -14,10 +14,10 @@
  * @since         2.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Network\Session;
+namespace Cake\Test\TestCase\Http\Session;
 
 use Cake\Datasource\ConnectionManager;
-use Cake\Network\Session\DatabaseSession;
+use Cake\Http\Session\DatabaseSession;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
