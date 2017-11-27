@@ -16,7 +16,7 @@ namespace Cake\Http\Client\Adapter;
 use Cake\Core\Exception\Exception;
 use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
-use Cake\Network\Exception\HttpException;
+use Cake\Http\Exception\HttpException;
 
 /**
  * Implements sending Cake\Http\Client\Request
@@ -239,7 +239,7 @@ class Stream
      *
      * @param \Cake\Http\Client\Request $request The request object.
      * @return array Array of populated Response objects
-     * @throws \Cake\Network\Exception\HttpException
+     * @throws \Cake\Http\Exception\HttpException
      */
     protected function _send(Request $request)
     {

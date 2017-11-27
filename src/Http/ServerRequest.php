@@ -18,7 +18,7 @@ use ArrayAccess;
 use BadMethodCallException;
 use Cake\Core\Configure;
 use Cake\Http\Cookie\CookieCollection;
-use Cake\Network\Exception\MethodNotAllowedException;
+use Cake\Http\Exception\MethodNotAllowedException;
 use Cake\Network\Session;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
@@ -1895,7 +1895,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string|array $methods Allowed HTTP request methods.
      * @return bool true
-     * @throws \Cake\Network\Exception\MethodNotAllowedException
+     * @throws \Cake\Http\Exception\MethodNotAllowedException
      */
     public function allowMethod($methods)
     {

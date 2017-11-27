@@ -19,9 +19,9 @@ use Cake\Filesystem\File;
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Cookie\CookieInterface;
+use Cake\Http\Exception\NotFoundException;
 use Cake\Log\Log;
 use Cake\Network\CorsBuilder;
-use Cake\Network\Exception\NotFoundException;
 use DateTime;
 use DateTimeZone;
 use InvalidArgumentException;
@@ -2389,7 +2389,7 @@ class Response implements ResponseInterface
      *   to a file, `APP` will be prepended to the path.
      * @param array $options Options See above.
      * @return void
-     * @throws \Cake\Network\Exception\NotFoundException
+     * @throws \Cake\Http\Exception\NotFoundException
      * @deprecated 3.4.0 Use withFile() instead.
      */
     public function file($path, array $options = [])
@@ -2463,7 +2463,7 @@ class Response implements ResponseInterface
      *   to a file, `APP` will be prepended to the path.
      * @param array $options Options See above.
      * @return static
-     * @throws \Cake\Network\Exception\NotFoundException
+     * @throws \Cake\Http\Exception\NotFoundException
      */
     public function withFile($path, array $options = [])
     {
@@ -2534,7 +2534,7 @@ class Response implements ResponseInterface
      * Validate a file path is a valid response body.
      *
      * @param string $path The path to the file.
-     * @throws \Cake\Network\Exception\NotFoundException
+     * @throws \Cake\Http\Exception\NotFoundException
      * @return \Cake\Filesystem\File
      */
     protected function validateFile($path)

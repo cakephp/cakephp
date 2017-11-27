@@ -994,7 +994,7 @@ class AuthComponentTest extends TestCase
      */
     public function testForbiddenException()
     {
-        $this->expectException(\Cake\Network\Exception\ForbiddenException::class);
+        $this->expectException(\Cake\Http\Exception\ForbiddenException::class);
         $url = '/party/on';
         $this->Auth->request = $request = new ServerRequest($url);
         $this->Auth->request->addParams(['controller' => 'Party', 'action' => 'on']);
@@ -1591,7 +1591,7 @@ class AuthComponentTest extends TestCase
      */
     public function testStatelessAuthNoRedirect()
     {
-        $this->expectException(\Cake\Network\Exception\UnauthorizedException::class);
+        $this->expectException(\Cake\Http\Exception\UnauthorizedException::class);
         $this->expectExceptionCode(401);
         $event = new Event('Controller.startup', $this->Controller);
         $_SESSION = [];

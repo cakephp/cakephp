@@ -21,9 +21,9 @@ use Cake\Core\App;
 use Cake\Core\Exception\Exception;
 use Cake\Event\Event;
 use Cake\Event\EventDispatcherTrait;
+use Cake\Http\Exception\ForbiddenException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
-use Cake\Network\Exception\ForbiddenException;
 use Cake\Routing\Router;
 use Cake\Utility\Hash;
 
@@ -456,7 +456,7 @@ class AuthComponent extends Component
      *
      * @param \Cake\Controller\Controller $controller A reference to the controller object
      * @return \Cake\Http\Response
-     * @throws \Cake\Network\Exception\ForbiddenException
+     * @throws \Cake\Http\Exception\ForbiddenException
      */
     protected function _unauthorized(Controller $controller)
     {

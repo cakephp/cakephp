@@ -16,10 +16,10 @@ namespace Cake\Test\TestCase\Auth;
 
 use Cake\Auth\BasicAuthenticate;
 use Cake\Controller\ComponentRegistry;
+use Cake\Http\Exception\UnauthorizedException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\I18n\Time;
-use Cake\Network\Exception\UnauthorizedException;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
@@ -218,7 +218,7 @@ class BasicAuthenticateTest extends TestCase
      */
     public function testAuthenticateFailReChallenge()
     {
-        $this->expectException(\Cake\Network\Exception\UnauthorizedException::class);
+        $this->expectException(\Cake\Http\Exception\UnauthorizedException::class);
         $this->expectExceptionCode(401);
         $this->auth->setConfig('scope.username', 'nate');
         $request = new ServerRequest([

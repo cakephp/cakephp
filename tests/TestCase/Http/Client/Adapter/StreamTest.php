@@ -421,7 +421,7 @@ class StreamTest extends TestCase
      */
     public function testMissDeadline()
     {
-        $this->expectException(\Cake\Network\Exception\HttpException::class);
+        $this->expectException(\Cake\Http\Exception\HttpException::class);
         $this->expectExceptionMessage('Connection timed out http://dummy/?sleep');
         $request = new Request('http://dummy/?sleep');
         $options = [

@@ -172,7 +172,7 @@ class CsrfComponentTest extends TestCase
      */
     public function testInvalidTokenInHeader($method)
     {
-        $this->expectException(\Cake\Network\Exception\InvalidCsrfTokenException::class);
+        $this->expectException(\Cake\Http\Exception\InvalidCsrfTokenException::class);
         $controller = $this->getMockBuilder('Cake\Controller\Controller')
             ->setMethods(['redirect'])
             ->getMock();
@@ -225,7 +225,7 @@ class CsrfComponentTest extends TestCase
      */
     public function testInvalidTokenRequestData($method)
     {
-        $this->expectException(\Cake\Network\Exception\InvalidCsrfTokenException::class);
+        $this->expectException(\Cake\Http\Exception\InvalidCsrfTokenException::class);
         $controller = $this->getMockBuilder('Cake\Controller\Controller')
             ->setMethods(['redirect'])
             ->getMock();
@@ -249,7 +249,7 @@ class CsrfComponentTest extends TestCase
      */
     public function testInvalidTokenRequestDataMissing()
     {
-        $this->expectException(\Cake\Network\Exception\InvalidCsrfTokenException::class);
+        $this->expectException(\Cake\Http\Exception\InvalidCsrfTokenException::class);
         $controller = $this->getMockBuilder('Cake\Controller\Controller')
             ->setMethods(['redirect'])
             ->getMock();
@@ -274,7 +274,7 @@ class CsrfComponentTest extends TestCase
      */
     public function testInvalidTokenMissingCookie($method)
     {
-        $this->expectException(\Cake\Network\Exception\InvalidCsrfTokenException::class);
+        $this->expectException(\Cake\Http\Exception\InvalidCsrfTokenException::class);
         $controller = $this->getMockBuilder('Cake\Controller\Controller')
             ->setMethods(['redirect'])
             ->getMock();

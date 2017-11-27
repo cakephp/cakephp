@@ -62,7 +62,7 @@ class AssetFilter extends DispatcherFilter
      *
      * @param \Cake\Event\Event $event Event containing the request and response object
      * @return \Cake\Http\Response|null If the client is requesting a recognized asset, null otherwise
-     * @throws \Cake\Network\Exception\NotFoundException When asset not found
+     * @throws \Cake\Http\Exception\NotFoundException When asset not found
      */
     public function beforeDispatch(Event $event)
     {

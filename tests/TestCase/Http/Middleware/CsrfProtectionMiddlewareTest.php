@@ -146,7 +146,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
      */
     public function testInvalidTokenInHeader($method)
     {
-        $this->expectException(\Cake\Network\Exception\InvalidCsrfTokenException::class);
+        $this->expectException(\Cake\Http\Exception\InvalidCsrfTokenException::class);
         $request = new ServerRequest([
             'environment' => [
                 'REQUEST_METHOD' => $method,
@@ -195,7 +195,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
      */
     public function testInvalidTokenRequestData($method)
     {
-        $this->expectException(\Cake\Network\Exception\InvalidCsrfTokenException::class);
+        $this->expectException(\Cake\Http\Exception\InvalidCsrfTokenException::class);
         $request = new ServerRequest([
             'environment' => [
                 'REQUEST_METHOD' => $method,
@@ -216,7 +216,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
      */
     public function testInvalidTokenRequestDataMissing()
     {
-        $this->expectException(\Cake\Network\Exception\InvalidCsrfTokenException::class);
+        $this->expectException(\Cake\Http\Exception\InvalidCsrfTokenException::class);
         $request = new ServerRequest([
             'environment' => [
                 'REQUEST_METHOD' => 'POST',
@@ -238,7 +238,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
      */
     public function testInvalidTokenMissingCookie($method)
     {
-        $this->expectException(\Cake\Network\Exception\InvalidCsrfTokenException::class);
+        $this->expectException(\Cake\Http\Exception\InvalidCsrfTokenException::class);
         $request = new ServerRequest([
             'environment' => [
                 'REQUEST_METHOD' => $method

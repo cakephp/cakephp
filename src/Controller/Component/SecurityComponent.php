@@ -20,8 +20,8 @@ use Cake\Controller\Exception\AuthSecurityException;
 use Cake\Controller\Exception\SecurityException;
 use Cake\Core\Configure;
 use Cake\Event\Event;
+use Cake\Http\Exception\BadRequestException;
 use Cake\Http\ServerRequest;
-use Cake\Network\Exception\BadRequestException;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
 
@@ -180,7 +180,7 @@ class SecurityComponent extends Component
      * @return mixed If specified, controller blackHoleCallback's response, or no return otherwise
      * @see \Cake\Controller\Component\SecurityComponent::$blackHoleCallback
      * @link https://book.cakephp.org/3.0/en/controllers/components/security.html#handling-blackhole-callbacks
-     * @throws \Cake\Network\Exception\BadRequestException
+     * @throws \Cake\Http\Exception\BadRequestException
      */
     public function blackHole(Controller $controller, $error = '', SecurityException $exception = null)
     {
@@ -195,7 +195,7 @@ class SecurityComponent extends Component
      * Check debug status and throw an Exception based on the existing one
      *
      * @param \Cake\Controller\Exception\SecurityException|null $exception Additional debug info describing the cause
-     * @throws \Cake\Network\Exception\BadRequestException
+     * @throws \Cake\Http\Exception\BadRequestException
      * @return void
      */
     protected function _throwException($exception = null)
@@ -588,7 +588,7 @@ class SecurityComponent extends Component
      * @param string $method Method to execute
      * @param array $params Parameters to send to method
      * @return mixed Controller callback method's response
-     * @throws \Cake\Network\Exception\BadRequestException When a the blackholeCallback is not callable.
+     * @throws \Cake\Http\Exception\BadRequestException When a the blackholeCallback is not callable.
      */
     protected function _callback(Controller $controller, $method, $params = [])
     {
