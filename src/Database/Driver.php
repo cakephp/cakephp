@@ -21,7 +21,7 @@ use PDO;
  * Represents a database driver containing all specificities for
  * a database engine including its SQL dialect.
  *
- * @property \Cake\Datasource\ConnectionInterface $_connection
+ * @property \Cake\Datasource\ConnectionInterface|null $_connection
  */
 abstract class Driver
 {

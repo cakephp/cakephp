@@ -476,7 +476,7 @@ class FormHelper extends Helper
      *
      * @param \Cake\View\Form\ContextInterface $context The context object to use.
      * @param array $options An array of options from create()
-     * @return string The action attribute for the form.
+     * @return string|array The action attribute for the form.
      */
     protected function _formUrl($context, $options)
     {

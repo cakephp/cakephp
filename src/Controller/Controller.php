@@ -205,7 +205,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     /**
      * Automatically set to the name of a plugin.
      *
-     * @var string
+     * @var string|null
      */
     public $plugin;
 

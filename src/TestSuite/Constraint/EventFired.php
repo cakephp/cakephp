@@ -19,14 +19,14 @@ class EventFired extends Constraint
     /**
      * Array of fired events
      *
-     * @var EventManager
+     * @var \Cake\Event\EventManager
      */
     protected $_eventManager;
 
     /**
      * Constructor
      *
-     * @param EventManager $eventManager Event manager to check
+     * @param \Cake\Event\EventManager $eventManager Event manager to check
      */
     public function __construct($eventManager)
     {

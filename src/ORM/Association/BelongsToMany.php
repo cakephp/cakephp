@@ -617,7 +617,9 @@ class BelongsToMany extends Association
 
         $conditions = array_merge($conditions, $hasMany->getConditions());
 
-        return $table->deleteAll($conditions);
+        $table->deleteAll($conditions);
+
+        return true;
     }
 
     /**

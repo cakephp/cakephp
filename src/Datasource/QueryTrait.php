@@ -87,8 +87,8 @@ trait QueryTrait
      * When called with a Table argument, the default table object will be set
      * and this query object will be returned for chaining.
      *
-     * @param \Cake\Datasource\RepositoryInterface|null $table The default table object to use
-     * @return \Cake\Datasource\RepositoryInterface|$this
+     * @param \Cake\Datasource\RepositoryInterface|\Cake\ORM\Table|null $table The default table object to use
+     * @return \Cake\Datasource\RepositoryInterface|\Cake\ORM\Table|$this
      */
     public function repository(RepositoryInterface $table = null)
     {

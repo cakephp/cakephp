@@ -79,7 +79,7 @@ class TestFixture implements FixtureInterface, TableSchemaInterface, TableSchema
     /**
      * The schema for this fixture.
      *
-     * @var \Cake\Database\Schema\TableSchema
+     * @var \Cake\Database\Schema\TableSchema|\Cake\Database\Schema\TableSchemaInterface
      */
     protected $_schema;
 
@@ -264,8 +264,8 @@ class TestFixture implements FixtureInterface, TableSchemaInterface, TableSchema
     /**
      * Gets/Sets the TableSchema instance used by this fixture.
      *
-     * @param \Cake\Database\Schema\TableSchema|null $schema The table to set.
-     * @return \Cake\Database\Schema\TableSchema|null
+     * @param \Cake\Database\Schema\TableSchema|\Cake\Database\Schema\TableSchemaInterface|null $schema The table to set.
+     * @return \Cake\Database\Schema\TableSchema|\Cake\Database\Schema\TableSchemaInterface|null
      * @deprecated 3.5.0 Use getTableSchema/setTableSchema instead.
      */
     public function schema(TableSchema $schema = null)

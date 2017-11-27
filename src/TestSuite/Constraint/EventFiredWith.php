@@ -22,7 +22,7 @@ class EventFiredWith extends Constraint
     /**
      * Array of fired events
      *
-     * @var EventManager
+     * @var \Cake\Event\EventManager
      */
     protected $_eventManager;
 
@@ -43,7 +43,7 @@ class EventFiredWith extends Constraint
     /**
      * Constructor
      *
-     * @param EventManager $eventManager Event manager to check
+     * @param \Cake\Event\EventManager $eventManager Event manager to check
      * @param string $dataKey Data key
      * @param string $dataValue Data value
      */

@@ -31,7 +31,7 @@ if (!function_exists('h')) {
      * @param bool $double Encode existing html entities.
      * @param string|null $charset Character set to use when escaping. Defaults to config value in `mb_internal_encoding()`
      * or 'UTF-8'.
-     * @return string Wrapped text.
+     * @return string|array Wrapped text.
      * @link https://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#h
      */
     function h($text, $double = true, $charset = null)
@@ -189,7 +189,7 @@ if (!function_exists('env')) {
      *
      * @param string $key Environment variable name.
      * @param string|null $default Specify a default value in case the environment variable is not defined.
-     * @return string|null Environment variable setting.
+     * @return string|bool|null Environment variable setting.
      * @link https://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#env
      */
     function env($key, $default = null)

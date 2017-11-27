@@ -77,7 +77,7 @@ class Type implements TypeInterface
     /**
      * Identifier name for this type
      *
-     * @var string
+     * @var string|null
      */
     protected $_name;
 
@@ -163,7 +163,9 @@ class Type implements TypeInterface
         if ($className === null) {
             return isset(self::$_types[$type]) ? self::$_types[$type] : null;
         }
+
         self::$_types[$type] = $className;
+        unset(self::$_builtTypes[$type]);
     }
 
     /**
