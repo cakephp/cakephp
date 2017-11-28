@@ -741,11 +741,14 @@ class Route
         if (empty($url['_method'])) {
             return false;
         }
-        if (!in_array(strtoupper($url['_method']), (array)$this->defaults['_method'])) {
-            return false;
+        $methods = array_map('strtoupper', (array)$url['_method']);
+        foreach ($methods as $value) {
+            if (in_array($value, (array)$this->defaults['_method'])) {
+                return true;
+            }
         }
 
-        return true;
+        return false;
     }
 
     /**
