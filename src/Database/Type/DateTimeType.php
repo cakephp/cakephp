@@ -105,7 +105,7 @@ class DateTimeType extends Type implements TypeInterface
      *
      * @param string|int|\DateTime $value The value to convert.
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
-     * @return string
+     * @return string|null
      */
     public function toDatabase($value, Driver $driver)
     {

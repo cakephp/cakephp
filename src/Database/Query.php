@@ -104,7 +104,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * The object responsible for generating query placeholders and temporarily store values
      * associated to each of those.
      *
-     * @var \Cake\Database\ValueBinder|null
+     * @var \Cake\Database\ValueBinder|false|null
      */
     protected $_valueBinder;
 
@@ -1870,7 +1870,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * to the statement object.
      *
      * @deprecated 3.5.0 Use getValueBinder() for the getter part instead.
-     * @param \Cake\Database\ValueBinder|null $binder new instance to be set. If no value is passed the
+     * @param \Cake\Database\ValueBinder|false|null $binder new instance to be set. If no value is passed the
      *   default one will be returned
      * @return $this|\Cake\Database\ValueBinder
      */

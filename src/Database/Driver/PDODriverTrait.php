@@ -17,6 +17,7 @@ namespace Cake\Database\Driver;
 use Cake\Database\Query;
 use Cake\Database\Statement\PDOStatement;
 use PDO;
+use PDOException;
 
 /**
  * PDO driver trait
@@ -90,7 +91,7 @@ trait PDODriverTrait
         } else {
             try {
                 $connected = $this->_connection->query('SELECT 1');
-            } catch (\PDOException $e) {
+            } catch (PDOException $e) {
                 $connected = false;
             }
         }

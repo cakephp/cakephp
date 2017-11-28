@@ -26,6 +26,7 @@ use Cake\Database\Schema\CachedCollection;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Log\Log;
+use Exception;
 
 /**
  * Represents a connection with a database server.
@@ -223,7 +224,7 @@ class Connection implements ConnectionInterface
     {
         try {
             return $this->_driver->connect();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw new MissingConnectionException(['reason' => $e->getMessage()]);
         }
     }
@@ -458,7 +459,7 @@ class Connection implements ConnectionInterface
 
         $this->_transactionLevel++;
         if ($this->isSavePointsEnabled()) {
-            $this->createSavePoint($this->_transactionLevel);
+            $this->createSavePoint((string)$this->_transactionLevel);
         }
     }
 
@@ -489,7 +490,7 @@ class Connection implements ConnectionInterface
             return $this->_driver->commitTransaction();
         }
         if ($this->isSavePointsEnabled()) {
-            $this->releaseSavePoint($this->_transactionLevel);
+            $this->releaseSavePoint((string)$this->_transactionLevel);
         }
 
         $this->_transactionLevel--;
@@ -679,7 +680,7 @@ class Connection implements ConnectionInterface
 
         try {
             $result = $callback($this);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->rollback(false);
             throw $e;
         }
@@ -727,7 +728,7 @@ class Connection implements ConnectionInterface
 
         try {
             $result = $callback($this);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->enableForeignKeys();
             throw $e;
         }
