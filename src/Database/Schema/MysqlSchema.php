@@ -426,7 +426,7 @@ class MysqlSchema extends BaseSchema
         }
         if (isset($data['default']) &&
             in_array($data['type'], [TableSchema::TYPE_TIMESTAMP, TableSchema::TYPE_DATETIME]) &&
-            strtolower($data['default']) === 'current_timestamp'
+            in_array(strtolower($data['default']), ['current_timestamp', 'current_timestamp()'])
         ) {
             $out .= ' DEFAULT CURRENT_TIMESTAMP';
             unset($data['default']);
