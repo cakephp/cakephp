@@ -1825,13 +1825,20 @@ class AuthComponentTest extends CakeTestCase {
  * @return void
  */
 	public function testStatelessAuthAllowedActionsRetrieveUser() {
+		if (CakeSession::id()) {
+			session_destroy();
+			CakeSession::$id = null;
+		}
+		$_SESSION = null;
+
 		$_SERVER['PHP_AUTH_USER'] = 'mariano';
 		$_SERVER['PHP_AUTH_PW'] = 'cake';
-		$url = '/auth_test/add';
-		$this->Controller->request->addParams(Router::parse($url));
+
+		AuthComponent::$sessionKey = false;
 		$this->Controller->Auth->authenticate = array(
 			'Basic' => array('userModel' => 'AuthUser')
 		);
+		$this->Controller->request['action'] = 'add';
 		$this->Controller->Auth->initialize($this->Controller);
 		$this->Controller->Auth->allow();
 		$this->Controller->Auth->startup($this->Controller);
