@@ -7423,7 +7423,7 @@ class ModelReadTest extends BaseModelTest {
 	}
 
 /**
- * Test find(count) with Db::expression
+ * Test find(count) with DboSource::expression
  *
  * @return void
  */
@@ -7443,6 +7443,38 @@ class ModelReadTest extends BaseModelTest {
 			'Project.name' => $db->expression('\'Project 3\'')
 		)));
 		$this->assertEquals(1, $result);
+	}
+
+/**
+ * Test 'order' with DboSource::expression
+ */
+	public function testOrderWithDbExpressions() {
+		$this->loadFixtures('User');
+
+		$User = new User();
+
+		$results = $User->find('all', array(
+			'fields' => array('id'),
+			'recursive' => -1,
+			'order' => $this->db->expression('CASE id WHEN 4 THEN 0 ELSE id END'),
+		));
+
+		$expected = array(
+			array(
+				'User' => array('id' => 4),
+			),
+			array(
+				'User' => array('id' => 1),
+			),
+			array(
+				'User' => array('id' => 2),
+			),
+			array(
+				'User' => array('id' => 3),
+			),
+		);
+
+		$this->assertEquals($expected, $results);
 	}
 
 /**
