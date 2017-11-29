@@ -156,6 +156,8 @@ class EntityContext implements ContextInterface
             is_array($entity) ||
             $entity instanceof Traversable
         );
+
+        /* @var \Cake\Datasource\RepositoryInterface $table */
         $alias = $this->_rootName = $table->getAlias();
         $this->_tables[$alias] = $table;
     }

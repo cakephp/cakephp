@@ -97,7 +97,7 @@ class TableRegistry
     /**
      * Sets singleton instance of LocatorInterface implementation.
      *
-     * @param \Cake\ORM\Locator\LocatorInterface|null $tableLocator Instance of a locator to use.
+     * @param \Cake\ORM\Locator\LocatorInterface $tableLocator Instance of a locator to use.
      * @return void
      */
     public static function setTableLocator(LocatorInterface $tableLocator)

@@ -90,7 +90,7 @@ class OrmCacheShell extends Shell
     /**
      * Helper method to get the schema collection.
      *
-     * @return false|\Cake\Database\Schema\Collection|\Cake\Database\Schema\CachedCollection
+     * @return false|\Cake\Database\Schema\CachedCollection
      */
     protected function _getSchema()
     {

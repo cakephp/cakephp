@@ -152,8 +152,8 @@ class Security
      *
      * You can use this method to forcibly decide between mcrypt/openssl/custom implementations.
      *
-     * @param object|null $instance The crypto instance to use.
-     * @return object Crypto instance.
+     * @param \Cake\Utility\Crypto\OpenSsl|\Cake\Utility\Crypto\Mcrypt|null $instance The crypto instance to use.
+     * @return \Cake\Utility\Crypto\OpenSsl|\Cake\Utility\Crypto\Mcrypt Crypto instance.
      * @throws \InvalidArgumentException When no compatible crypto extension is available.
      */
     public static function engine($instance = null)
