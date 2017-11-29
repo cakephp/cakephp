@@ -102,7 +102,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @var string
      */
-    public $name;
+    protected $name;
 
     /**
      * An array containing the names of helpers this controller uses. The array elements should
@@ -115,6 +115,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @var array
      * @link https://book.cakephp.org/3.0/en/controllers.html#configuring-helpers-to-load
+     *
+     * @deprecated 3.0.0 You should configure helpers in your AppView::initialize() method.
      */
     public $helpers = [];
 
@@ -125,6 +127,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @var \Cake\Http\ServerRequest
      * @link https://book.cakephp.org/3.0/en/controllers/request-response.html#request
+     * @deprecated 3.6.0 The property will become protected in 4.0.0. Use getRequest()/setRequest instead.
      */
     public $request;
 
@@ -133,6 +136,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @var \Cake\Http\Response
      * @link https://book.cakephp.org/3.0/en/controllers/request-response.html#response
+     * @deprecated 3.6.0 The property will become protected in 4.0.0. Use getResponse()/setResponse instead.
      */
     public $response;
 
@@ -160,7 +164,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @var bool
      */
-    public $autoRender = true;
+    protected $autoRender = true;
 
     /**
      * Instance of ComponentRegistry used to create Components
@@ -180,6 +184,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @var array
      * @link https://book.cakephp.org/3.0/en/controllers/components.html
+     *
+     * @deprecated 3.0.0 You should configure components in your Controller::initialize() method.
      */
     public $components = [];
 
@@ -207,7 +213,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @var string|null
      */
-    public $plugin;
+    protected $plugin;
 
     /**
      * Holds all passed params.
@@ -245,15 +251,16 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             $this->name = substr($name, 0, -10);
         }
 
-        $this->setRequest($request !== null ? $request : new ServerRequest());
-        $this->response = $response !== null ? $response : new Response();
+        $this->setRequest($request ?: new ServerRequest());
+        $this->setResponse($response ?: new Response());
 
         if ($eventManager !== null) {
             $this->setEventManager($eventManager);
         }
 
         $this->modelFactory('Table', [$this->getTableLocator(), 'get']);
-        $modelClass = ($this->plugin ? $this->plugin . '.' : '') . $this->name;
+        $plugin = $this->request->getParam('plugin');
+        $modelClass = ($plugin ? $plugin . '.' : '') . $this->name;
         $this->_setModelClass($modelClass);
 
         if ($components !== null) {
@@ -333,6 +340,18 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     public function __get($name)
     {
         $deprecated = [
+            'name' => 'getName',
+            'plugin' => 'getPlugin',
+            'autoRender' => 'isAutoRenderEnabled',
+        ];
+        if (isset($deprecated[$name])) {
+            $method = $deprecated[$name];
+            deprecationWarning(sprintf('Controller::$%s is deprecated. Use $this->%s instead.', $name, $method));
+
+            return $this->{$method}();
+        }
+
+        $deprecated = [
             'layout' => 'getLayout',
             'view' => 'getTemplate',
             'theme' => 'getTheme',
@@ -365,6 +384,23 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     public function __set($name, $value)
     {
         $deprecated = [
+            'name' => 'setName',
+            'plugin' => 'setPlugin'
+        ];
+        if (isset($deprecated[$name])) {
+            $method = $deprecated[$name];
+            deprecationWarning(sprintf('Controller::$%s is deprecated. Use $this->%s() instead.', $name, $method));
+            $this->{$method}($value);
+
+            return;
+        }
+        if ($name === 'autoRender') {
+            $value ? $this->enableAutoRender() : $this->disableAutoRender();
+            deprecationWarning(sprintf('Controller::$%s is deprecated. Use $this->enableAutoRender/disableAutoRender() instead.', $name));
+
+            return;
+        }
+        $deprecated = [
             'layout' => 'setLayout',
             'view' => 'setTemplate',
             'theme' => 'setTheme',
@@ -385,17 +421,113 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     }
 
     /**
+     * Returns the controller name.
+     *
+     * @return string
+     * @since 3.6.0
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Sets the controller name.
+     *
+     * @param string $name Controller name.
+     * @return $this
+     * @since 3.6.0
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Returns the plugin name.
+     *
+     * @return string|null
+     * @since 3.6.0
+     */
+    public function getPlugin()
+    {
+        return $this->plugin;
+    }
+
+    /**
+     * Sets the plugin name.
+     *
+     * @param string $name Plugin name.
+     * @return $this
+     * @since 3.6.0
+     */
+    public function setPlugin($name)
+    {
+        $this->plugin = $name;
+
+        return $this;
+    }
+
+    /**
+     * Returns true if an action should be rendered automatically.
+     *
+     * @return bool
+     * @since 3.6.0
+     */
+    public function isAutoRenderEnabled()
+    {
+        return $this->autoRender;
+    }
+
+    /**
+     * Enable automatic action rendering.
+     *
+     * @return $this
+     * @since 3.6.0
+     */
+    public function enableAutoRender()
+    {
+        $this->autoRender = true;
+
+        return $this;
+    }
+
+    /**
+     * Disbale automatic action rendering.
+     *
+     * @return $this
+     * @since 3.6.0
+     */
+    public function disableAutoRender()
+    {
+        $this->autoRender = false;
+
+        return $this;
+    }
+
+    /**
+     * Gets the request instance.
+     *
+     * @return \Cake\Http\ServerRequest
+     * @since 3.6.0
+     */
+    public function getRequest()
+    {
+        return $this->request;
+    }
+
+    /**
      * Sets the request objects and configures a number of controller properties
      * based on the contents of the request. Controller acts as a proxy for certain View variables
      * which must also be updated here. The properties that get set are:
      *
      * - $this->request - To the $request parameter
-     * - $this->plugin - To the $request->params['plugin']
      * - $this->passedArgs - Same as $request->params['pass]
-     * - View::$plugin - $this->plugin
      *
      * @param \Cake\Http\ServerRequest $request Request instance.
-     * @return void
+     * @return $this
      */
     public function setRequest(ServerRequest $request)
     {
@@ -405,6 +537,33 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         if ($request->getParam('pass')) {
             $this->passedArgs = $request->getParam('pass');
         }
+
+        return $this;
+    }
+
+    /**
+     * Gets the response instance.
+     *
+     * @return \Cake\Http\Response
+     * @since 3.6.0
+     */
+    public function getResponse()
+    {
+        return $this->response;
+    }
+
+    /**
+     * Sets the response instance.
+     *
+     * @param \Cake\Http\Response $response Response instance.
+     * @return $this
+     * @since 3.6.0
+     */
+    public function setResponse(Response $response)
+    {
+        $this->response = $response;
+
+        return $this;
     }
 
     /**

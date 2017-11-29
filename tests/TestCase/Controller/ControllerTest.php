@@ -322,7 +322,7 @@ class ControllerTest extends TestCase
         Plugin::load('TestPlugin');
 
         $Controller = new TestPluginController();
-        $Controller->plugin = 'TestPlugin';
+        $Controller->setPlugin('TestPlugin');
 
         $this->assertFalse(isset($Controller->TestPluginComments));
 
@@ -497,7 +497,7 @@ class ControllerTest extends TestCase
         $this->assertSame($response, $Controller->response);
         $this->assertEquals($code, $response->getStatusCode());
         $this->assertEquals('http://cakephp.org', $response->getHeaderLine('Location'));
-        $this->assertFalse($Controller->autoRender);
+        $this->assertFalse($Controller->isAutoRenderEnabled());
     }
 
     /**
@@ -1083,6 +1083,169 @@ class ControllerTest extends TestCase
         $controller->render('index');
 
         $this->assertArrayHasKey('testVariable', $controller->View->viewVars);
+    }
+
+    /**
+     * Test name getter and setter.
+     *
+     * @return void
+     */
+    public function testName()
+    {
+        $controller = new PostsController();
+        $this->assertEquals('Posts', $controller->getName());
+
+        $this->assertSame($controller, $controller->setName('Articles'));
+        $this->assertEquals('Articles', $controller->getName());
+    }
+
+    /**
+     * Test plugin getter and setter.
+     *
+     * @return void
+     */
+    public function testPlugin()
+    {
+        $controller = new PostsController();
+        $this->assertEquals('', $controller->getPlugin());
+
+        $this->assertSame($controller, $controller->setPlugin('Articles'));
+        $this->assertEquals('Articles', $controller->getPlugin());
+    }
+
+    /**
+     * Test request getter and setter.
+     *
+     * @return void
+     */
+    public function testRequest()
+    {
+        $controller = new PostsController();
+        $this->assertInstanceOf(ServerRequest::class, $controller->getRequest());
+
+        $request = new ServerRequest([
+            'params' => [
+                'plugin' => 'Posts',
+                'pass' => [
+                    'foo',
+                    'bar'
+                ]
+            ]
+        ]);
+        $this->assertSame($controller, $controller->setRequest($request));
+        $this->assertSame($request, $controller->getRequest());
+
+        $this->assertEquals('Posts', $controller->getRequest()->getParam('plugin'));
+        $this->assertEquals(['foo', 'bar'], $controller->passedArgs);
+    }
+
+    /**
+     * Test response getter and setter.
+     *
+     * @return void
+     */
+    public function testResponse()
+    {
+        $controller = new PostsController();
+        $this->assertInstanceOf(Response::class, $controller->getResponse());
+
+        $response = new Response;
+        $this->assertSame($controller, $controller->setResponse($response));
+        $this->assertSame($response, $controller->getResponse());
+    }
+
+    /**
+     * Test autoRender getter and setter.
+     *
+     * @return void
+     */
+    public function testAutoRender()
+    {
+        $controller = new PostsController();
+        $this->assertTrue($controller->isAutoRenderEnabled());
+
+        $this->assertSame($controller, $controller->disableAutoRender());
+        $this->assertFalse($controller->isAutoRenderEnabled());
+
+        $this->assertSame($controller, $controller->enableAutoRender());
+        $this->assertTrue($controller->isAutoRenderEnabled());
+    }
+
+    /**
+     * Tests deprecated controller properties work
+     *
+     * @group deprecated
+     * @param $property Deprecated property name
+     * @param $getter Getter name
+     * @param $setter Setter name
+     * @param mixed $value Value to be set
+     * @return void
+     * @dataProvider deprecatedControllerPropertyProvider
+     */
+    public function testDeprecatedControllerProperty($property, $getter, $setter, $value)
+    {
+        $controller = new AnotherTestController();
+        $this->deprecated(function () use ($controller, $property, $value) {
+            $controller->$property = $value;
+            $this->assertSame($value, $controller->$property);
+        });
+        $this->assertSame($value, $controller->{$getter}());
+    }
+
+    /**
+     * Tests deprecated controller properties message
+     *
+     * @group deprecated
+     * @param $property Deprecated property name
+     * @param $getter Getter name
+     * @param $setter Setter name
+     * @param mixed $value Value to be set
+     * @return void
+     * @expectedException PHPUnit\Framework\Error\Deprecated
+     * @expectedExceptionMessageRegExp /^Controller::\$\w+ is deprecated(.*)/
+     * @dataProvider deprecatedControllerPropertyProvider
+     */
+    public function testDeprecatedControllerPropertySetterMessage($property, $getter, $setter, $value)
+    {
+        $controller = new AnotherTestController();
+        $this->withErrorReporting(E_ALL, function () use ($controller, $property, $value) {
+            $controller->$property = $value;
+        });
+    }
+
+    /**
+     * Tests deprecated controller properties message
+     *
+     * @param $property Deprecated property name
+     * @param $getter Getter name
+     * @param $setter Setter name
+     * @param mixed $value Value to be set
+     * @return void
+     * @expectedException PHPUnit\Framework\Error\Deprecated
+     * @expectedExceptionMessageRegExp /^Controller::\$\w+ is deprecated(.*)/
+     * @dataProvider deprecatedControllerPropertyProvider
+     */
+    public function testDeprecatedControllerPropertyGetterMessage($property, $getter, $setter, $value)
+    {
+        $controller = new AnotherTestController();
+        $controller->{$setter}($value);
+        $this->withErrorReporting(E_ALL, function () use ($controller, $property) {
+            $controller->$property;
+        });
+    }
+
+    /**
+     * Data provider for testing deprecated view properties
+     *
+     * @return array
+     */
+    public function deprecatedControllerPropertyProvider()
+    {
+        return [
+            ['name', 'getName', 'setName', 'Foo'],
+            ['plugin', 'getPlugin', 'setPlugin', 'Foo'],
+            ['autoRender', 'isAutoRenderEnabled', 'disableAutoRender', false],
+        ];
     }
 
     /**

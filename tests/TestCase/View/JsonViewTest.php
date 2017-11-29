@@ -318,7 +318,7 @@ class JsonViewTest extends TestCase
         $Request = new ServerRequest();
         $Response = new Response();
         $Controller = new Controller($Request, $Response);
-        $Controller->name = 'Posts';
+        $Controller->setName('Posts');
 
         $data = [
             'User' => [
@@ -332,7 +332,7 @@ class JsonViewTest extends TestCase
         $Controller->set('user', $data);
         $Controller->viewBuilder()->setClassName('Json');
         $View = $Controller->createView();
-        $View->setTemplatePath($Controller->name);
+        $View->setTemplatePath($Controller->getName());
         $output = $View->render('index');
 
         $expected = json_encode(['user' => 'fake', 'list' => ['item1', 'item2'], 'paging' => null]);
