@@ -541,7 +541,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             $settings = $this->_convertValidatorToArray($fieldName, $defaults, $setting);
             $fieldName = current(array_keys($settings));
 
-            $this->field($fieldName)->isPresenceRequired($settings[$fieldName]['mode']);
+            $this->field($fieldName)->requirePresence($settings[$fieldName]['mode']);
             if ($settings[$fieldName]['message']) {
                 $this->_presenceMessages[$fieldName] = $settings[$fieldName]['message'];
             }
@@ -631,7 +631,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             $settings = $this->_convertValidatorToArray($fieldName, $settingsDefault, $setting);
             $fieldName = current(array_keys($settings));
 
-            $this->field($fieldName)->isEmptyAllowed($settings[$fieldName]['when']);
+            $this->field($fieldName)->allowEmpty($settings[$fieldName]['when']);
             if ($settings[$fieldName]['message']) {
                 $this->_allowEmptyMessages[$fieldName] = $settings[$fieldName]['message'];
             }
@@ -754,7 +754,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 };
             }
 
-            $this->field($fieldName)->isEmptyAllowed($whenSetting);
+            $this->field($fieldName)->allowEmpty($whenSetting);
             if ($settings[$fieldName]['message']) {
                 $this->_allowEmptyMessages[$fieldName] = $settings[$fieldName]['message'];
             }
