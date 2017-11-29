@@ -46,6 +46,7 @@ class ResponseTest extends TestCase
     {
         parent::setUp();
         $this->server = $_SERVER;
+        $GLOBALS['mockedHeadersSent'] = false;
     }
 
     /**
@@ -57,6 +58,7 @@ class ResponseTest extends TestCase
     {
         parent::tearDown();
         $_SERVER = $this->server;
+        unset($GLOBALS['mockedHeadersSent']);
     }
 
     /**
