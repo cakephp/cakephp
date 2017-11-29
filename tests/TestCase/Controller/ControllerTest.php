@@ -1216,6 +1216,7 @@ class ControllerTest extends TestCase
     /**
      * Tests deprecated controller properties message
      *
+     * @group deprecated
      * @param $property Deprecated property name
      * @param $getter Getter name
      * @param $setter Setter name
@@ -1293,6 +1294,7 @@ class ControllerTest extends TestCase
     /**
      * Tests deprecated view properties message
      *
+     * @group deprecated
      * @param $property Deprecated property name
      * @param $getter Getter name
      * @param $setter Setter name
