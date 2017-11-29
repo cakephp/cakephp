@@ -18,6 +18,7 @@ namespace Cake\Error;
 
 use Cake\Core\App;
 use Exception;
+use Throwable;
 
 /**
  * Error Handler provides basic error and exception handling for your application. It captures and
@@ -121,7 +122,7 @@ class ErrorHandler extends BaseErrorHandler
     /**
      * Displays an exception response body.
      *
-     * @param \Exception $exception The exception to display
+     * @param \Exception $exception The exception to display.
      * @return void
      * @throws \Exception When the chosen exception renderer is invalid.
      */
@@ -137,16 +138,10 @@ class ErrorHandler extends BaseErrorHandler
             $response = $renderer->render();
             $this->_clearOutput();
             $this->_sendResponse($response);
-        } catch (Exception $e) {
-            // Disable trace for internal errors.
-            $this->_options['trace'] = false;
-            $message = sprintf(
-                "[%s] %s\n%s", // Keeping same message format
-                get_class($e),
-                $e->getMessage(),
-                $e->getTraceAsString()
-            );
-            trigger_error($message, E_USER_ERROR);
+        } catch (Throwable $exception) {
+            $this->_logInternalError($exception);
+        } catch (Exception $exception) {
+            $this->_logInternalError($exception);
         }
     }
 
@@ -162,6 +157,28 @@ class ErrorHandler extends BaseErrorHandler
         while (ob_get_level()) {
             ob_end_clean();
         }
+    }
+
+    /**
+     * Logs both PHP5 and PHP7 errors.
+     *
+     * The PHP5 part will be removed with 4.0.
+     *
+     * @param \Throwable|\Exception $exception Exception.
+     *
+     * @return void
+     */
+    protected function _logInternalError($exception)
+    {
+        // Disable trace for internal errors.
+        $this->_options['trace'] = false;
+        $message = sprintf(
+            "[%s] %s\n%s", // Keeping same message format
+            get_class($exception),
+            $exception->getMessage(),
+            $exception->getTraceAsString()
+        );
+        trigger_error($message, E_USER_ERROR);
     }
 
     /**

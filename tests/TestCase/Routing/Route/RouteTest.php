@@ -1243,6 +1243,13 @@ class RouteTest extends TestCase
             '_method' => 'POST',
         ];
         $this->assertEquals('/sample', $route->match($url));
+
+        $url = [
+            'controller' => 'posts',
+            'action' => 'index',
+            '_method' => ['PUT', 'POST'],
+        ];
+        $this->assertEquals('/sample', $route->match($url));
     }
 
     /**
