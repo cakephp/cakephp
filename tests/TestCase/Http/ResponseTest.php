@@ -46,7 +46,6 @@ class ResponseTest extends TestCase
     {
         parent::setUp();
         $this->server = $_SERVER;
-        $GLOBALS['mockedHeadersSent'] = false;
     }
 
     /**
@@ -394,6 +393,7 @@ class ResponseTest extends TestCase
      */
     public function testSend()
     {
+        $GLOBALS['mockedHeadersSent'] = false;
         $this->deprecated(function () {
             $response = $this->getMockBuilder('Cake\Http\Response')
                 ->setMethods(['_sendHeader', '_sendContent'])
@@ -871,6 +871,7 @@ class ResponseTest extends TestCase
      */
     public function testProtocol()
     {
+        $GLOBALS['mockedHeadersSent'] = false;
         $this->deprecated(function () {
             $response = $this->getMockBuilder('Cake\Http\Response')
                 ->setMethods(['_sendHeader', '_sendContent'])
