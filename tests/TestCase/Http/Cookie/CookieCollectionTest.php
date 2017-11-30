@@ -18,6 +18,7 @@ use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Security;
 use DateTime;
 
 /**
@@ -382,9 +383,10 @@ class CookieCollectionTest extends TestCase
      */
     public function testCookieSizeWarning()
     {
+        $string = Security::insecureRandomBytes(9000);
         $collection = new CookieCollection();
         $collection = $collection
-            ->add(new Cookie('default', random_bytes(9000), null, '/', 'example.com'));
+            ->add(new Cookie('default', $string, null, '/', 'example.com'));
         $request = new ClientRequest('http://example.com/api');
         $collection->addToRequest($request);
     }
