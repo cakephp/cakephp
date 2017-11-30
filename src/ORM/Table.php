@@ -861,6 +861,38 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
+     * Add Many Behaviors
+     *
+     * Adds an array of behaviors to the table's behavior collection.
+     *
+     * Example:
+     *
+     * ```
+     * $this->addBehaviors([
+     *      'Timestamp',
+     *      'Tree' => ['level' => 'level'],
+     * ]);
+     * ```
+     *
+     * @param array $behaviors All of the behaviors to load.
+     * @return $this
+     * @throws \RuntimeException If a behavior is being reloaded.
+     */
+    public function addBehaviors(array $behaviors)
+    {
+        foreach ($behaviors as $name => $options) {
+            if (is_int($name) === true) {
+                $name = $options;
+                $options = [];
+            }
+
+            $this->addBehavior($name, $options);
+        }
+
+        return $this;
+    }
+
+    /**
      * Removes a behavior from this table's behavior registry.
      *
      * Example:
