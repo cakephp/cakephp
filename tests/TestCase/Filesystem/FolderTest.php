@@ -1126,7 +1126,7 @@ class FolderTest extends TestCase
 
         $this->assertFileExists($folderThree . DS . 'file1.php');
         $this->assertFileExists($folderThree . DS . 'file2.php');
-        $this->assertTrue(!file_exists($folderThree . DS . 'folderA' . DS . 'fileA.php'));
+        $this->assertFileNotExists($folderThree . DS . 'folderA' . DS . 'fileA.php');
         $this->assertFileExists($folderThree . DS . 'folderB' . DS . 'fileB.php');
     }
 

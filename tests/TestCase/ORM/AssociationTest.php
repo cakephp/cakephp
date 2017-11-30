@@ -252,9 +252,9 @@ class AssociationTest extends TestCase
     public function testCascadeCallbacks()
     {
         $this->deprecated(function () {
-            $this->assertSame(false, $this->association->cascadeCallbacks());
+            $this->assertFalse($this->association->cascadeCallbacks());
             $this->association->cascadeCallbacks(true);
-            $this->assertSame(true, $this->association->cascadeCallbacks());
+            $this->assertTrue($this->association->cascadeCallbacks());
         });
     }
 

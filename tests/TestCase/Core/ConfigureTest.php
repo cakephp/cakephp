@@ -116,7 +116,7 @@ class ConfigureTest extends TestCase
         $this->assertTrue(isset($result['level1']));
 
         $result = Configure::read('something_I_just_made_up_now');
-        $this->assertEquals(null, $result, 'Missing key should return null.');
+        $this->assertNull($result, 'Missing key should return null.');
 
         $default = 'default';
         $result = Configure::read('something_I_just_made_up_now', $default);
@@ -142,7 +142,7 @@ class ConfigureTest extends TestCase
         $writeResult = Configure::write('SomeName.someKey', null);
         $this->assertTrue($writeResult);
         $result = Configure::read('SomeName.someKey');
-        $this->assertEquals(null, $result);
+        $this->assertNull($result);
 
         $expected = ['One' => ['Two' => ['Three' => ['Four' => ['Five' => 'cool']]]]];
         $writeResult = Configure::write('Key', $expected);

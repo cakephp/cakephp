@@ -191,7 +191,7 @@ class PluginTest extends TestCase
         $expected = ['TestPlugin', 'TestPluginTwo'];
         $this->assertEquals($expected, Plugin::loaded());
         $this->assertEquals('loaded plugin bootstrap', Configure::read('PluginTest.test_plugin.bootstrap'));
-        $this->assertEquals(null, Configure::read('PluginTest.test_plugin_two.bootstrap'));
+        $this->assertNull(Configure::read('PluginTest.test_plugin_two.bootstrap'));
     }
 
     /**
@@ -361,11 +361,11 @@ class PluginTest extends TestCase
         $this->assertEquals($expected, Plugin::loaded());
         $this->assertEquals('loaded js plugin bootstrap', Configure::read('PluginTest.js_plugin.bootstrap'));
         $this->assertEquals('loaded plugin routes', Configure::read('PluginTest.test_plugin.routes'));
-        $this->assertEquals(null, Configure::read('PluginTest.test_plugin.bootstrap'));
+        $this->assertNull(Configure::read('PluginTest.test_plugin.bootstrap'));
         $this->assertEquals('loaded plugin two bootstrap', Configure::read('PluginTest.test_plugin_two.bootstrap'));
         $this->assertEquals('loaded plugin four bootstrap', Configure::read('PluginTest.test_plugin_four.bootstrap'));
 
         // TestPluginThree won't get loaded by loadAll() since it's in a sub directory.
-        $this->assertEquals(null, Configure::read('PluginTest.test_plugin_three.bootstrap'));
+        $this->assertNull(Configure::read('PluginTest.test_plugin_three.bootstrap'));
     }
 }
