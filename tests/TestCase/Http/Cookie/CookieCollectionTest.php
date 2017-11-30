@@ -374,6 +374,22 @@ class CookieCollectionTest extends TestCase
     }
 
     /**
+     * Testing the cookie size limit warning
+     *
+     * @expectedException \PHPUnit\Framework\Error\Warning
+     * @expectedExceptionMessage The cookie `default` exceeds the recommended maximum cookie length of 4096 bytes.
+     * @return void
+     */
+    public function testCookieSizeWarning()
+    {
+        $collection = new CookieCollection();
+        $collection = $collection
+            ->add(new Cookie('default', random_bytes(9000), null, '/', 'example.com'));
+        $request = new ClientRequest('http://example.com/api');
+        $collection->addToRequest($request);
+    }
+
+    /**
      * Test adding cookies from the collection to request.
      *
      * @return void
