@@ -1739,6 +1739,35 @@ class TableTest extends TestCase
     }
 
     /**
+     * Test adding multiple behaviors to a table.
+     *
+     * @return void
+     */
+    public function testAddBehaviors()
+    {
+        $table = new Table(['table' => 'comments']);
+        $behaviors = [
+            'Sluggable',
+            'Timestamp' => [
+                'events' => [
+                    'Model.beforeSave' => [
+                        'created' => 'new',
+                        'updated' => 'always',
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertSame($table, $table->addBehaviors($behaviors));
+        $this->assertTrue($table->behaviors()->has('Sluggable'));
+        $this->assertTrue($table->behaviors()->has('Timestamp'));
+        $this->assertSame(
+            $behaviors['Timestamp']['events'],
+            $table->behaviors()->get('Timestamp')->getConfig('events')
+        );
+    }
+
+    /**
      * Test getting a behavior instance from a table.
      *
      * @return void
