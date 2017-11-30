@@ -1738,8 +1738,6 @@ class TableTest extends TestCase
         $this->assertSame($table, $result);
     }
 
-
-
     /**
      * Test adding multiple behaviors to a table.
      *
