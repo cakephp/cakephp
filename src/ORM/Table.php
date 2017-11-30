@@ -861,8 +861,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
-     * Add Many Behaviors
-     *
      * Adds an array of behaviors to the table's behavior collection.
      *
      * Example:
@@ -881,7 +879,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function addBehaviors(array $behaviors)
     {
         foreach ($behaviors as $name => $options) {
-            if (is_int($name) === true) {
+            if (is_int($name)) {
                 $name = $options;
                 $options = [];
             }
