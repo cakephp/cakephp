@@ -1574,10 +1574,10 @@ class AuthComponentTest extends TestCase
             $this->assertEquals($data['User']['Group']['name'], $result);
 
             $result = $this->Auth->user('invalid');
-            $this->assertEquals(null, $result);
+            $this->assertNull($result);
 
             $result = $this->Auth->user('Company.invalid');
-            $this->assertEquals(null, $result);
+            $this->assertNull($result);
 
             $result = $this->Auth->user('is_admin');
             $this->assertFalse($result);

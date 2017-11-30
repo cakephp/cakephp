@@ -142,14 +142,14 @@ class SocketTest extends TestCase
             $this->Socket->connect();
             $this->assertEquals('127.0.0.1', $this->Socket->address());
             $this->assertEquals(gethostbyaddr('127.0.0.1'), $this->Socket->host());
-            $this->assertEquals(null, $this->Socket->lastError());
+            $this->assertNull($this->Socket->lastError());
             $this->assertTrue(in_array('127.0.0.1', $this->Socket->addresses()));
 
             $this->Socket = new Socket(['host' => '127.0.0.1']);
             $this->Socket->connect();
             $this->assertEquals('127.0.0.1', $this->Socket->address());
             $this->assertEquals(gethostbyaddr('127.0.0.1'), $this->Socket->host());
-            $this->assertEquals(null, $this->Socket->lastError());
+            $this->assertNull($this->Socket->lastError());
             $this->assertTrue(in_array('127.0.0.1', $this->Socket->addresses()));
         } catch (SocketException $e) {
             $this->markTestSkipped('Cannot test network, skipping.');
@@ -181,12 +181,12 @@ class SocketTest extends TestCase
         $this->Socket = new Socket(['timeout' => 5]);
         try {
             $this->Socket->connect();
-            $this->assertEquals(null, $this->Socket->read(26));
+            $this->assertNull($this->Socket->read(26));
 
             $config = ['host' => 'google.com', 'port' => 80, 'timeout' => 1];
             $this->Socket = new Socket($config);
             $this->assertTrue($this->Socket->connect());
-            $this->assertEquals(null, $this->Socket->read(26));
+            $this->assertNull($this->Socket->read(26));
             $this->assertEquals('2: ' . 'Connection timed out', $this->Socket->lastError());
         } catch (SocketException $e) {
             $this->markTestSkipped('Cannot test network, skipping.');
