@@ -140,7 +140,7 @@ class ResponseTest extends TestCase
 
             $response = new Response();
             $response->body(null);
-            $this->assertEquals(null, $response->body());
+            $this->assertNull($response->body());
         });
     }
 

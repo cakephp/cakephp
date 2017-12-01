@@ -384,15 +384,15 @@ class StreamTest extends TestCase
         $this->assertEquals(200, $responses[2]->getStatusCode());
 
         $this->assertEquals('value', $responses[0]->getCookie('first'));
-        $this->assertEquals(null, $responses[0]->getCookie('second'));
-        $this->assertEquals(null, $responses[0]->getCookie('third'));
+        $this->assertNull($responses[0]->getCookie('second'));
+        $this->assertNull($responses[0]->getCookie('third'));
 
-        $this->assertEquals(null, $responses[1]->getCookie('first'));
+        $this->assertNull($responses[1]->getCookie('first'));
         $this->assertEquals('val', $responses[1]->getCookie('second'));
-        $this->assertEquals(null, $responses[1]->getCookie('third'));
+        $this->assertNull($responses[1]->getCookie('third'));
 
-        $this->assertEquals(null, $responses[2]->getCookie('first'));
-        $this->assertEquals(null, $responses[2]->getCookie('second'));
+        $this->assertNull($responses[2]->getCookie('first'));
+        $this->assertNull($responses[2]->getCookie('second'));
         $this->assertEquals('works', $responses[2]->getCookie('third'));
     }
 

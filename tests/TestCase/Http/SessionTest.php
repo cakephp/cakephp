@@ -219,7 +219,7 @@ class SessionTest extends TestCase
         ]);
         $this->assertEquals(1, $session->read('one'));
         $this->assertEquals(['something'], $session->read('three'));
-        $this->assertEquals(null, $session->read('null'));
+        $this->assertNull($session->read('null'));
     }
 
     /**
@@ -456,7 +456,7 @@ class SessionTest extends TestCase
         $this->assertFalse($session->read('SessionTestCase'));
 
         $session->write('SessionTestCase', null);
-        $this->assertEquals(null, $session->read('SessionTestCase'));
+        $this->assertNull($session->read('SessionTestCase'));
     }
 
     /**

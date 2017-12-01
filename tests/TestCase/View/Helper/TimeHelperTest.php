@@ -631,7 +631,7 @@ class TimeHelperTest extends TestCase
     public function testNullDateFormat()
     {
         $result = $this->Time->format(null);
-        $this->assertSame(false, $result);
+        $this->assertFalse($result);
 
         $fallback = 'Date invalid or not set';
         $result = $this->Time->format(null, \IntlDateFormatter::FULL, $fallback);
