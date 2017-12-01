@@ -191,19 +191,20 @@ class ValidationSetTest extends TestCase
      */
     public function testRemoveRule()
     {
-        $set = new ValidationSet('title', [
-            '_validatePresent' => true,
-            'notBlank' => ['rule' => 'notBlank'],
-            'numeric' => ['rule' => 'numeric'],
-            'other' => ['rule' => ['other', 1]],
-        ]);
+        $set = (new ValidationSet)
+            ->add('notBlank', ['rule' => 'notBlank'])
+            ->add('numeric', ['rule' => 'numeric'])
+            ->add('other', ['rule' => 'email']);
 
+        $this->assertTrue(isset($set['notBlank']));
         $set->remove('notBlank');
         $this->assertFalse(isset($set['notBlank']));
 
+        $this->assertTrue(isset($set['numeric']));
         $set->remove('numeric');
         $this->assertFalse(isset($set['numeric']));
 
+        $this->assertTrue(isset($set['other']));
         $set->remove('other');
         $this->assertFalse(isset($set['other']));
     }
