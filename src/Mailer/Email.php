@@ -247,7 +247,7 @@ class Email implements JsonSerializable, Serializable
      *
      * @var string|null
      */
-    public $transferEncoding;
+    protected $transferEncoding;
 
     /**
      * The application wide charset, used to encode headers and body
