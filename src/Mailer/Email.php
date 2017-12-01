@@ -250,6 +250,19 @@ class Email implements JsonSerializable, Serializable
     protected $transferEncoding;
 
     /**
+     * Available encoding to be set for transfer.
+     *
+     * @var array
+     */
+    protected $_transferEncodingAvailable = [
+        '7bit',
+        '8bit',
+        'base64',
+        'binary',
+        'quoted-printable'
+    ];
+
+    /**
      * The application wide charset, used to encode headers and body
      *
      * @var string|null
@@ -843,6 +856,15 @@ class Email implements JsonSerializable, Serializable
      */
     public function setTransferEncoding($encoding)
     {
+        $encoding = strtolower($encoding);
+        if (!in_array($encoding, $this->_transferEncodingAvailable)) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    'Transfer encoding not available. Can be : %s.',
+                    implode(', ', $this->_transferEncodingAvailable)
+                )
+            );
+        }
         $this->transferEncoding = $encoding;
 
         return $this;

@@ -2515,6 +2515,10 @@ class EmailTest extends TestCase
         $this->Email->reset();
         $this->assertNull($this->Email->getTransferEncoding());
         $this->assertSame($expected, $this->Email->getContentTransferEncoding());
+
+        //Test wrong encoding
+        $this->expectException(\InvalidArgumentException::class);
+        $this->Email->setTransferEncoding('invalid');
     }
 
     /**
