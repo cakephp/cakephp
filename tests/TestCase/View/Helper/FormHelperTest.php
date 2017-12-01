@@ -7325,6 +7325,18 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * Test generation of a form button with confirm message.
+     *
+     * @return void
+     */
+    public function testButtonWithConfirm()
+    {
+        $result = $this->Form->button('Hi', ['confirm' => 'Confirm me!']);
+        $expected = ['button' => ['type' => 'submit', 'onclick' => 'if (confirm(&quot;Confirm me!&quot;)) { return true; } return false;'], 'Hi', '/button'];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * testPostButton method
      *
      * @return void
