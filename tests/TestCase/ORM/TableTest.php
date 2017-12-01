@@ -555,7 +555,7 @@ class TableTest extends TestCase
         ];
         $this->assertSame($expected, $query->toArray());
 
-        $query= $table->find()
+        $query = $table->find()
             ->enableHydration(false)
             ->select(['id', 'username'])
             ->where(['OR' => [
