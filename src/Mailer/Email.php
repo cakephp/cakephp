@@ -242,6 +242,14 @@ class Email implements JsonSerializable, Serializable
     public $headerCharset;
 
     /**
+     * The email transfer encoding used.
+     * If null, the $charset property is used for determined the transfer encoding.
+     *
+     * @var string|null
+     */
+    public $transferEncoding;
+
+    /**
      * The application wide charset, used to encode headers and body
      *
      * @var string|null
@@ -825,6 +833,27 @@ class Email implements JsonSerializable, Serializable
         $this->setHeaderCharset($charset);
 
         return $this->headerCharset;
+    }
+
+    /**
+     * TransportCharset setter.
+     *
+     * @param string|null $encoding Character set.
+     * @return $this
+     */
+    public function setTransferEncoding($encoding) {
+        $this->transferEncoding = $encoding;
+
+        return $this;
+    }
+
+    /**
+     * TransportCharset getter.
+     *
+     * @return string|null Encoding
+     */
+    public function getTransferEncoding() {
+        return $this->transferEncoding;
     }
 
     /**
@@ -2224,6 +2253,7 @@ class Email implements JsonSerializable, Serializable
         $this->_priority = null;
         $this->charset = 'utf-8';
         $this->headerCharset = null;
+        $this->transferEncoding = null;
         $this->_attachments = [];
         $this->_profile = [];
         $this->_emailPattern = self::EMAIL_PATTERN;
@@ -2661,6 +2691,10 @@ class Email implements JsonSerializable, Serializable
      */
     protected function _getContentTransferEncoding()
     {
+        if ($this->transferEncoding) {
+            return $this->transferEncoding;
+        }
+
         $charset = strtoupper($this->charset);
         if (in_array($charset, $this->_charset8bit)) {
             return '8bit';
