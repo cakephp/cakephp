@@ -224,7 +224,7 @@ class CookieCollection implements IteratorAggregate, Countable
         $cookiePairs = [];
         foreach ($cookies as $key => $value) {
             $cookie = sprintf("%s=%s", rawurlencode($key), rawurlencode($value));
-            $size = mb_strlen($cookie);
+            $size = strlen($cookie);
             if ($size > 4096) {
                 triggerWarning(sprintf(
                     'The cookie `%s` exceeds the recommended maximum cookie length of 4096 bytes.',
