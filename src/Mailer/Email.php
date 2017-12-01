@@ -841,7 +841,8 @@ class Email implements JsonSerializable, Serializable
      * @param string|null $encoding Encoding set.
      * @return $this
      */
-    public function setTransferEncoding($encoding) {
+    public function setTransferEncoding($encoding)
+    {
         $this->transferEncoding = $encoding;
 
         return $this;
@@ -852,7 +853,8 @@ class Email implements JsonSerializable, Serializable
      *
      * @return string|null Encoding
      */
-    public function getTransferEncoding() {
+    public function getTransferEncoding()
+    {
         return $this->transferEncoding;
     }
 

@@ -96,7 +96,8 @@ class TestEmail extends Email
      *
      * @return string
      */
-    public function getContentTransferEncoding() {
+    public function getContentTransferEncoding()
+    {
         return $this->_getContentTransferEncoding();
     }
 
@@ -2502,7 +2503,8 @@ class EmailTest extends TestCase
      *
      * @return void
      */
-    public function testTransferEncoding(){
+    public function testTransferEncoding()
+    {
         // Test new transfer encoding
         $this->Email->setTransferEncoding('quoted-printable');
         $this->assertSame($this->Email->getTransferEncoding(), 'quoted-printable');
