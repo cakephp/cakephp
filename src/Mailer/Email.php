@@ -836,9 +836,9 @@ class Email implements JsonSerializable, Serializable
     }
 
     /**
-     * TransportCharset setter.
+     * TransferEncoding setter.
      *
-     * @param string|null $encoding Character set.
+     * @param string|null $encoding Encoding set.
      * @return $this
      */
     public function setTransferEncoding($encoding) {
@@ -848,7 +848,7 @@ class Email implements JsonSerializable, Serializable
     }
 
     /**
-     * TransportCharset getter.
+     * TransferEncoding getter.
      *
      * @return string|null Encoding
      */
@@ -2685,7 +2685,8 @@ class Email implements JsonSerializable, Serializable
     }
 
     /**
-     * Return the Content-Transfer Encoding value based on the set charset
+     * Return the Content-Transfer Encoding value based
+     * on the set transferEncoding or set charset.
      *
      * @return string
      */
