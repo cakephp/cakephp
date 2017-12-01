@@ -100,7 +100,6 @@ class TestEmail extends Email
     {
         return $this->_getContentTransferEncoding();
     }
-
 }
 
 /**
