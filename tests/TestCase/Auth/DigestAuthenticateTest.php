@@ -113,8 +113,7 @@ class DigestAuthenticateTest extends TestCase
     {
         $this->expectException(\Cake\Http\Exception\UnauthorizedException::class);
         $this->expectExceptionCode(401);
-        $request = new ServerRequest('posts/index');
-        $request->addParams(['pass' => []]);
+        $request = new ServerRequest(['url' => 'posts/index']);
 
         $data = [
             'username' => 'incorrect_user',
@@ -142,7 +141,6 @@ class DigestAuthenticateTest extends TestCase
             'url' => 'posts/index',
             'environment' => ['REQUEST_METHOD' => 'GET']
         ]);
-        $request->addParams(['pass' => []]);
 
         try {
             $this->auth->unauthenticated($request, $this->response);
@@ -169,7 +167,6 @@ class DigestAuthenticateTest extends TestCase
             'url' => 'posts/index',
             'environment' => ['REQUEST_METHOD' => 'GET']
         ]);
-        $request->addParams(['pass' => []]);
         $data = [
             'uri' => '/dir/index.html',
             'nonce' => $this->generateNonce(null, 5, strtotime('-10 minutes')),
@@ -201,7 +198,6 @@ class DigestAuthenticateTest extends TestCase
             'url' => 'posts/index',
             'environment' => ['REQUEST_METHOD' => 'GET']
         ]);
-        $request->addParams(['pass' => []]);
 
         $data = [
             'uri' => '/dir/index.html',
@@ -227,7 +223,6 @@ class DigestAuthenticateTest extends TestCase
             'url' => 'posts/index',
             'environment' => ['REQUEST_METHOD' => 'GET']
         ]);
-        $request->addParams(['pass' => []]);
 
         $data = [
             'username' => 'mariano',
@@ -255,7 +250,6 @@ class DigestAuthenticateTest extends TestCase
             'url' => 'posts/index',
             'environment' => ['REQUEST_METHOD' => 'GET']
         ]);
-        $request->addParams(['pass' => []]);
 
         $data = [
             'uri' => '/dir/index.html',
@@ -291,7 +285,6 @@ class DigestAuthenticateTest extends TestCase
             'url' => 'posts/index',
             'environment' => ['REQUEST_METHOD' => 'GET']
         ]);
-        $request->addParams(['pass' => []]);
 
         $data = [
             'uri' => '/dir/index.html',
@@ -325,7 +318,6 @@ class DigestAuthenticateTest extends TestCase
             'post' => ['_method' => 'PUT'],
             'environment' => ['REQUEST_METHOD' => 'GET']
         ]);
-        $request->addParams(['pass' => []]);
 
         $data = [
             'username' => 'mariano',
@@ -362,7 +354,6 @@ class DigestAuthenticateTest extends TestCase
             'url' => 'posts/index',
             'environment' => ['REQUEST_METHOD' => 'GET']
         ]);
-        $request->addParams(['pass' => []]);
 
         $data = [
             'username' => 'invalid',

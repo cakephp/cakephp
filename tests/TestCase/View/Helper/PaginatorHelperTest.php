@@ -54,19 +54,21 @@ class PaginatorHelperTest extends TestCase
         Configure::write('Config.language', 'eng');
         $this->View = new View();
         $this->Paginator = new PaginatorHelper($this->View);
-        $this->Paginator->request = new ServerRequest();
-        $this->Paginator->request->addParams([
-            'paging' => [
-                'Article' => [
-                    'page' => 1,
-                    'current' => 9,
-                    'count' => 62,
-                    'prevPage' => false,
-                    'nextPage' => true,
-                    'pageCount' => 7,
-                    'sort' => null,
-                    'direction' => null,
-                    'limit' => null,
+        $this->Paginator->request = new ServerRequest([
+            'url' => '/',
+            'params' => [
+                'paging' => [
+                    'Article' => [
+                        'page' => 1,
+                        'current' => 9,
+                        'count' => 62,
+                        'prevPage' => false,
+                        'nextPage' => true,
+                        'pageCount' => 7,
+                        'sort' => null,
+                        'direction' => null,
+                        'limit' => null,
+                    ]
                 ]
             ]
         ]);

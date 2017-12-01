@@ -266,12 +266,11 @@ class PaginatorComponent extends Component
      */
     protected function _setPagingParams()
     {
-        $request = $this->_registry->getController()->request;
+        $controller = $this->getController();
+        $request = $controller->getRequest();
+        $paging = $this->_paginator->getPagingParams() + (array)$request->getParam('paging');
 
-        $request->addParams([
-            'paging' => $this->_paginator->getPagingParams()
-                + (array)$request->getParam('paging')
-        ]);
+        $controller->setRequest($request->withParam('paging', $paging));
     }
 
     /**
