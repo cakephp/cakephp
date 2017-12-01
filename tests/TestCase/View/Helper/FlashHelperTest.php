@@ -16,7 +16,7 @@ namespace Cake\Test\TestCase\View\Helper;
 
 use Cake\Core\Plugin;
 use Cake\Http\ServerRequest;
-use Cake\Network\Session;
+use Cake\Http\Session;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\FlashHelper;
 use Cake\View\View;

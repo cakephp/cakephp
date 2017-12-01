@@ -18,7 +18,7 @@ use Cake\Event\Event;
 use Cake\Http\ActionDispatcher;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
-use Cake\Network\Session;
+use Cake\Http\Session;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Filter\ControllerFactoryFilter;
 use Cake\Routing\Router;

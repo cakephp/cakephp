@@ -17,7 +17,7 @@ namespace Cake\Test\TestCase\Http;
 use Cake\Core\Configure;
 use Cake\Http\RequestTransformer;
 use Cake\Http\ServerRequestFactory;
-use Cake\Network\Session;
+use Cake\Http\Session;
 use Cake\TestSuite\TestCase;
 use Zend\Diactoros\Stream;
 

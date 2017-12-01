@@ -18,10 +18,10 @@ include_once CORE_TEST_CASES . DS . 'Http' . DS . 'server_mocks.php';
 
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieCollection;
+use Cake\Http\CorsBuilder;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
-use Cake\Network\CorsBuilder;
 use Cake\TestSuite\TestCase;
 use Zend\Diactoros\Stream;
 
@@ -57,6 +57,7 @@ class ResponseTest extends TestCase
     {
         parent::tearDown();
         $_SERVER = $this->server;
+        unset($GLOBALS['mockedHeadersSent']);
     }
 
     /**
@@ -392,6 +393,7 @@ class ResponseTest extends TestCase
      */
     public function testSend()
     {
+        $GLOBALS['mockedHeadersSent'] = false;
         $this->deprecated(function () {
             $response = $this->getMockBuilder('Cake\Http\Response')
                 ->setMethods(['_sendHeader', '_sendContent'])
@@ -869,6 +871,7 @@ class ResponseTest extends TestCase
      */
     public function testProtocol()
     {
+        $GLOBALS['mockedHeadersSent'] = false;
         $this->deprecated(function () {
             $response = $this->getMockBuilder('Cake\Http\Response')
                 ->setMethods(['_sendHeader', '_sendContent'])

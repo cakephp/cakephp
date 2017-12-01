@@ -19,7 +19,7 @@ use BadMethodCallException;
 use Cake\Core\Configure;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Exception\MethodNotAllowedException;
-use Cake\Network\Session;
+use Cake\Http\Session;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
@@ -179,7 +179,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     /**
      * Instance of a Session object relative to this request
      *
-     * @var \Cake\Network\Session
+     * @var \Cake\Http\Session
      */
     protected $session;
 
@@ -521,7 +521,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     /**
      * Returns the instance of the Session object for this request
      *
-     * @return \Cake\Network\Session
+     * @return \Cake\Http\Session
      */
     public function getSession()
     {
@@ -535,8 +535,8 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * the session to use for this request
      *
      * @deprecated 3.5.0 Use getSession() instead. The setter part will be removed.
-     * @param \Cake\Network\Session|null $session the session object to use
-     * @return \Cake\Network\Session
+     * @param \Cake\Http\Session|null $session the session object to use
+     * @return \Cake\Http\Session
      */
     public function session(Session $session = null)
     {
@@ -1450,8 +1450,8 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     }
 
     /**
-     * Provides a read accessor for `$this->query`. Allows you
-     * to use a syntax similar to `CakeSession` for reading URL query data.
+     * Provides a read accessor for `$this->query`.
+     * Allows you to use a `Hash::get()` compatible syntax for reading post data.
      *
      * @param string|null $name Query string variable name or null to read all.
      * @return string|array|null The value being read
@@ -1498,8 +1498,8 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     }
 
     /**
-     * Provides a read/write accessor for `$this->data`. Allows you
-     * to use a syntax similar to `Cake\Model\Datasource\Session` for reading post data.
+     * Provides a read/write accessor for `$this->data`.
+     * Allows you to use a `Hash::get()` compatible syntax for reading post data.
      *
      * ### Reading values.
      *
