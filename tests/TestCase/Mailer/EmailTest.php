@@ -2506,14 +2506,16 @@ class EmailTest extends TestCase
     public function testTransferEncoding()
     {
         // Test new transfer encoding
-        $this->Email->setTransferEncoding('quoted-printable');
-        $this->assertSame($this->Email->getTransferEncoding(), 'quoted-printable');
-        $this->assertSame($this->Email->getContentTransferEncoding(), 'quoted-printable');
+        $expected = 'quoted-printable';
+        $this->Email->setTransferEncoding($expected);
+        $this->assertSame($expected, $this->Email->getTransferEncoding());
+        $this->assertSame($expected, $this->Email->getContentTransferEncoding());
 
         // Test default charset/encoding : utf8/8bit
+        $expected = '8bit';
         $this->Email->reset();
         $this->assertNull($this->Email->getTransferEncoding());
-        $this->assertSame($this->Email->getContentTransferEncoding(), '8bit');
+        $this->assertSame($expected, $this->Email->getContentTransferEncoding());
     }
 
     /**
