@@ -78,15 +78,15 @@ trait TupleComparisonTranslatorTrait
             $value = [$value];
         }
 
+        $conditions = ['OR' => []];
         foreach ($value as $tuple) {
-            $surrogate->orWhere(function ($exp) use ($fields, $tuple) {
-                foreach (array_values($tuple) as $i => $value) {
-                    $exp->add([$fields[$i] => $value]);
-                }
-
-                return $exp;
-            });
+            $item = [];
+            foreach (array_values($tuple) as $i => $value) {
+                $item[] = [$fields[$i] => $value];
+            }
+            $conditions['OR'][] = $item;
         }
+        $surrogate->where($conditions);
 
         $expression->setField($true);
         $expression->setValue($surrogate);

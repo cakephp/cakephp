@@ -811,6 +811,10 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * `$query->where(['OR' => [['published' => false], ['published' => true]])`
      *
+     * Would result in:
+     *
+     * `WHERE (published = false) OR (published = true)`
+     *
      * Keep in mind that every time you call where() with the third param set to false
      * (default), it will join the passed conditions to the previous stored list using
      * the `AND` operator. Also, using the same array key twice in consecutive calls to
@@ -1008,6 +1012,10 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function orWhere($conditions, $types = [])
     {
+        deprecationWarning(
+            'Query::orWhere() is deprecated as it creates hard to predict SQL based on the ' .
+            'current query state. Use `Query::where()` instead.'
+        );
         $this->_conjugate('where', $conditions, 'OR', $types);
 
         return $this;

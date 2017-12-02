@@ -555,7 +555,14 @@ class TableTest extends TestCase
         ];
         $this->assertSame($expected, $query->toArray());
 
-        $query->orWhere(['users.created' => new Time('2008-03-17 01:18:23')]);
+        $query = $table->find()
+            ->enableHydration(false)
+            ->select(['id', 'username'])
+            ->where(['OR' => [
+                'created >=' => new Time('2010-01-22 00:00'),
+                'users.created' => new Time('2008-03-17 01:18:23')
+            ]])
+            ->order('id');
         $expected = [
             ['id' => 2, 'username' => 'nate'],
             ['id' => 3, 'username' => 'larry'],

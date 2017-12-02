@@ -685,19 +685,20 @@ class Marshaller
             unset($indexed[$key]);
         }
 
-        $maybeExistentQuery = (new Collection($indexed))
+        $conditions = (new Collection($indexed))
             ->map(function ($data, $key) {
                 return explode(';', $key);
             })
             ->filter(function ($keys) use ($primary) {
                 return count(array_filter($keys, 'strlen')) === count($primary);
             })
-            ->reduce(function ($query, $keys) use ($primary) {
-                /* @var \Cake\ORM\Query $query */
+            ->reduce(function ($conditions, $keys) use ($primary) {
                 $fields = array_map([$this->_table, 'aliasField'], $primary);
+                $conditions['OR'][] = array_combine($fields, $keys);
 
-                return $query->orWhere($query->newExpr()->and_(array_combine($fields, $keys)));
-            }, $this->_table->find());
+                return $conditions;
+            }, ['OR' => []]);
+        $maybeExistentQuery = $this->_table->find()->where($conditions);
 
         if (!empty($indexed) && count($maybeExistentQuery->clause('where'))) {
             foreach ($maybeExistentQuery as $entity) {
