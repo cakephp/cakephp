@@ -106,9 +106,7 @@ class Type implements TypeInterface
             throw new InvalidArgumentException(sprintf('Unknown type "%s"', $name));
         }
         if (is_string(static::$_types[$name])) {
-            static::$_types[$name] = new static::$_types[$name]($name);
-
-            return static::$_builtTypes[$name] = static::$_types[$name];
+            return static::$_builtTypes[$name] = new static::$_types[$name]($name);
         }
 
         return static::$_builtTypes[$name] = static::$_types[$name];
@@ -145,6 +143,9 @@ class Type implements TypeInterface
      * Registers a new type identifier and maps it to a fully namespaced classname,
      * If called with no arguments it will return current types map array
      * If $className is omitted it will return mapped class for $type
+     *
+     * Deprecated: The usage of $type as \Cake\Database\Type[] is deprecated. Please always use string[] if you pass an array
+     * as first argument.
      *
      * @param string|string[]|\Cake\Database\Type[]|null $type If string name of type to map, if array list of arrays to be mapped
      * @param string|\Cake\Database\Type|null $className The classname or object instance of it to register.
