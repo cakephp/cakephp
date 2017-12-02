@@ -121,7 +121,7 @@ class Type implements TypeInterface
     public static function buildAll()
     {
         $result = [];
-        foreach (self::$_types as $name => $type) {
+        foreach (static::$_types as $name => $type) {
             $result[$name] = isset(static::$_builtTypes[$name]) ? static::$_builtTypes[$name] : static::build($name);
         }
 
@@ -153,19 +153,19 @@ class Type implements TypeInterface
     public static function map($type = null, $className = null)
     {
         if ($type === null) {
-            return self::$_types;
+            return static::$_types;
         }
         if (is_array($type)) {
-            self::$_types = $type;
+            static::$_types = $type;
 
             return null;
         }
         if ($className === null) {
-            return isset(self::$_types[$type]) ? self::$_types[$type] : null;
+            return isset(static::$_types[$type]) ? static::$_types[$type] : null;
         }
 
-        self::$_types[$type] = $className;
-        unset(self::$_builtTypes[$type]);
+        static::$_types[$type] = $className;
+        unset(static::$_builtTypes[$type]);
     }
 
     /**
@@ -175,8 +175,8 @@ class Type implements TypeInterface
      */
     public static function clear()
     {
-        self::$_types = [];
-        self::$_builtTypes = [];
+        static::$_types = [];
+        static::$_builtTypes = [];
     }
 
     /**
@@ -228,8 +228,8 @@ class Type implements TypeInterface
         if ($value === null) {
             return null;
         }
-        if (!empty(self::$_basicTypes[$this->_name])) {
-            $typeInfo = self::$_basicTypes[$this->_name];
+        if (!empty(static::$_basicTypes[$this->_name])) {
+            $typeInfo = static::$_basicTypes[$this->_name];
             if (isset($typeInfo['callback'])) {
                 return $typeInfo['callback']($value);
             }
