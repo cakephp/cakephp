@@ -52,6 +52,24 @@ class BehaviorRegistryTest extends TestCase
     }
 
     /**
+     * Test classname resolution.
+     *
+     * @return void
+     */
+    public function testClassName()
+    {
+        Plugin::load('TestPlugin');
+
+        $expected = 'Cake\ORM\Behavior\TranslateBehavior';
+        $result = BehaviorRegistry::className('Translate');
+        $this->assertSame($expected, $result);
+
+        $expected = 'TestPlugin\Model\Behavior\PersisterOneBehavior';
+        $result = BehaviorRegistry::className('TestPlugin.PersisterOne');
+        $this->assertSame($expected, $result);
+    }
+
+    /**
      * Test loading behaviors.
      *
      * @return void

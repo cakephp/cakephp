@@ -84,12 +84,11 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
     /**
      * Resolve a behavior classname.
      *
-     * Part of the template method for Cake\Core\ObjectRegistry::load()
-     *
      * @param string $class Partial classname to resolve.
      * @return string|false Either the correct classname or false.
+     * @since 3.5.7
      */
-    protected function _resolveClassName($class)
+    public static function className($class)
     {
         $result = App::className($class, 'Model/Behavior', 'Behavior');
         if (!$result) {
@@ -97,6 +96,19 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
         }
 
         return $result;
+    }
+
+    /**
+     * Resolve a behavior classname.
+     *
+     * Part of the template method for Cake\Core\ObjectRegistry::load()
+     *
+     * @param string $class Partial classname to resolve.
+     * @return string|false Either the correct classname or false.
+     */
+    protected function _resolveClassName($class)
+    {
+        return static::className($class);
     }
 
     /**
