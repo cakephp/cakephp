@@ -52,7 +52,7 @@ class Type implements TypeInterface
 
     /**
      * List of basic type mappings, used to avoid having to instantiate a class
-     * for doing conversion on these
+     * for doing conversion on these.
      *
      * @var array
      * @deprecated 3.1 All types will now use a specific class
@@ -67,7 +67,7 @@ class Type implements TypeInterface
     ];
 
     /**
-     * Contains a map of type object instances to be reused if needed
+     * Contains a map of type object instances to be reused if needed.
      *
      * @var array
      */
@@ -91,7 +91,7 @@ class Type implements TypeInterface
     }
 
     /**
-     * Returns a Type object capable of converting a type identified by $name
+     * Returns a Type object capable of converting a type identified by name.
      *
      * @param string $name type identifier
      * @throws \InvalidArgumentException If type identifier is unknown
@@ -115,7 +115,7 @@ class Type implements TypeInterface
     }
 
     /**
-     * Returns an arrays with all the mapped type objects, indexed by name
+     * Returns an arrays with all the mapped type objects, indexed by name.
      *
      * @return array
      */
@@ -146,7 +146,7 @@ class Type implements TypeInterface
      * If called with no arguments it will return current types map array
      * If $className is omitted it will return mapped class for $type
      *
-     * @param string|string[]|\Cake\Database\Type[]|null $type if string name of type to map, if array list of arrays to be mapped
+     * @param string|string[]|\Cake\Database\Type[]|null $type If string name of type to map, if array list of arrays to be mapped
      * @param string|\Cake\Database\Type|null $className The classname or object instance of it to register.
      * @return array|string|null If $type is null then array with current map, if $className is null string
      * configured class name for give $type, null otherwise
@@ -207,8 +207,8 @@ class Type implements TypeInterface
     /**
      * Casts given value from a database type to PHP equivalent
      *
-     * @param mixed $value value to be converted to PHP equivalent
-     * @param \Cake\Database\Driver $driver object from which database preferences and configuration will be extracted
+     * @param mixed $value Value to be converted to PHP equivalent
+     * @param \Cake\Database\Driver $driver Object from which database preferences and configuration will be extracted
      * @return mixed
      */
     public function toPHP($value, Driver $driver)
@@ -220,7 +220,7 @@ class Type implements TypeInterface
      * Checks whether this type is a basic one and can be converted using a callback
      * If it is, returns converted value
      *
-     * @param mixed $value value to be converted to PHP equivalent
+     * @param mixed $value Value to be converted to PHP equivalent
      * @return mixed
      * @deprecated 3.1 All types should now be a specific class
      */
