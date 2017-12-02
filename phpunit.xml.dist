@@ -14,13 +14,13 @@
     </php>
 
     <testsuites>
-        <testsuite name="CakePHP Test Suite">
+        <testsuite name="cakephp">
             <directory>./tests/TestCase/</directory>
             <!-- Excludes are required in order to let DatabaseSuite decorate the tests -->
             <exclude>./tests/TestCase/Database/</exclude>
             <exclude>./tests/TestCase/ORM/</exclude>
         </testsuite>
-        <testsuite name="Database Test Suite">
+        <testsuite name="database">
             <file>./tests/TestCase/DatabaseSuite.php</file>
         </testsuite>
     </testsuites>
