@@ -107,6 +107,7 @@ class Type implements TypeInterface
         }
         if (is_string(static::$_types[$name])) {
             static::$_types[$name] = new static::$_types[$name]($name);
+
             return static::$_builtTypes[$name] = static::$_types[$name];
         }
 
