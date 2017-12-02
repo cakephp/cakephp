@@ -29,7 +29,7 @@ class Type implements TypeInterface
      * identifier is used as key and a complete namespaced class name as value
      * representing the class that will do actual type conversions.
      *
-     * @var array
+     * @var string[]|\Cake\Database\Type[]
      */
     protected static $_types = [
         'tinyinteger' => 'Cake\Database\Type\IntegerType',
@@ -69,7 +69,7 @@ class Type implements TypeInterface
     /**
      * Contains a map of type object instances to be reused if needed.
      *
-     * @var array
+     * @var \Cake\Database\Type[]
      */
     protected static $_builtTypes = [];
 
