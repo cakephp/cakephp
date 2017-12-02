@@ -215,11 +215,11 @@ class SecurityComponentTest extends TestCase
         $this->expectException(\Cake\Http\Exception\BadRequestException::class);
         $request = new ServerRequest([
             'url' => 'posts/index',
-            'session' => $this->Security->session
-        ]);
-        $request->addParams([
-            'controller' => 'posts',
-            'action' => 'index'
+            'session' => $this->Security->session,
+            'params' => [
+                'controller' => 'posts',
+                'action' => 'index'
+            ]
         ]);
         $Controller = new \TestApp\Controller\SomePagesController($request);
         $event = new Event('Controller.startup', $Controller);
@@ -240,10 +240,10 @@ class SecurityComponentTest extends TestCase
      */
     public function testExceptionWhenActionIsBlackholeCallback()
     {
-        $this->Controller->request->addParams([
-            'controller' => 'posts',
-            'action' => 'fail'
-        ]);
+        $this->Controller->request = $this->Controller->request
+            ->withParam('controller', 'posts')
+            ->withParam('action', 'fail');
+
         $event = new Event('Controller.startup', $this->Controller);
         $this->assertFalse($this->Controller->failed);
         $this->Controller->Security->startup($event);

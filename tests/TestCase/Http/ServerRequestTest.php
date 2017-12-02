@@ -214,21 +214,24 @@ class ServerRequestTest extends TestCase
     /**
      * Test addParams() method
      *
+     * @group deprecated
      * @return void
      */
     public function testAddParams()
     {
-        $request = new ServerRequest();
-        $request = $request
-            ->withParam('controller', 'posts')
-            ->withParam('action', 'view');
-        $result = $request->addParams(['plugin' => null, 'action' => 'index']);
+        $this->deprecated(function () {
+            $request = new ServerRequest();
+            $request = $request
+                ->withParam('controller', 'posts')
+                ->withParam('action', 'view');
+            $result = $request->addParams(['plugin' => null, 'action' => 'index']);
 
-        $this->assertSame($result, $request, 'Method did not return itself. %s');
+            $this->assertSame($result, $request, 'Method did not return itself. %s');
 
-        $this->assertEquals('posts', $request->getParam('controller'));
-        $this->assertEquals('index', $request->getParam('action'));
-        $this->assertEquals(null, $request->getParam('plugin'));
+            $this->assertEquals('posts', $request->getParam('controller'));
+            $this->assertEquals('index', $request->getParam('action'));
+            $this->assertEquals(null, $request->getParam('plugin'));
+        });
     }
 
     /**
@@ -2669,22 +2672,25 @@ class ServerRequestTest extends TestCase
     /**
      * Test reading params
      *
+     * @group deprecated
      * @dataProvider paramReadingDataProvider
      */
     public function testGetParam($toRead, $expected)
     {
-        $request = new ServerRequest('/');
-        $request->addParams([
-            'action' => 'index',
-            'foo' => 'bar',
-            'baz' => [
-                'a' => [
-                    'b' => 'c',
+        $request = new ServerRequest([
+            'url' => '/',
+            'params' => [
+                'action' => 'index',
+                'foo' => 'bar',
+                'baz' => [
+                    'a' => [
+                        'b' => 'c',
+                    ],
                 ],
-            ],
-            'admin' => true,
-            'truthy' => 1,
-            'zero' => '0',
+                'admin' => true,
+                'truthy' => 1,
+                'zero' => '0',
+            ]
         ]);
         $this->deprecated(function () use ($expected, $request, $toRead) {
             $this->assertSame($expected, $request->param($toRead));
@@ -3074,21 +3080,23 @@ XML;
      */
     public function testIsRequested()
     {
-        $request = new ServerRequest();
-        $request->addParams([
-            'controller' => 'posts',
-            'action' => 'index',
-            'plugin' => null,
-            'requested' => 1
+        $request = new ServerRequest([
+            'params' => [
+                'controller' => 'posts',
+                'action' => 'index',
+                'plugin' => null,
+                'requested' => 1
+            ]
         ]);
         $this->assertTrue($request->is('requested'));
         $this->assertTrue($request->isRequested());
 
-        $request = new ServerRequest();
-        $request->addParams([
-            'controller' => 'posts',
-            'action' => 'index',
-            'plugin' => null,
+        $request = new ServerRequest([
+            'params' => [
+                'controller' => 'posts',
+                'action' => 'index',
+                'plugin' => null,
+            ]
         ]);
         $this->assertFalse($request->is('requested'));
         $this->assertFalse($request->isRequested());

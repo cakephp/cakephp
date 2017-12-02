@@ -129,9 +129,8 @@ class BasicAuthenticateTest extends TestCase
             'environment' => [
                 'PHP_AUTH_USER' => '> 1',
                 'PHP_AUTH_PW' => "' OR 1 = 1"
-            ]
+            ],
         ]);
-        $request->addParams(['pass' => []]);
 
         $this->assertFalse($this->auth->getUser($request));
         $this->assertFalse($this->auth->authenticate($request, $this->response));
@@ -172,7 +171,6 @@ class BasicAuthenticateTest extends TestCase
     public function testAuthenticateChallenge()
     {
         $request = new ServerRequest('posts/index');
-        $request->addParams(['pass' => []]);
 
         try {
             $this->auth->unauthenticated($request, $this->response);
@@ -199,7 +197,6 @@ class BasicAuthenticateTest extends TestCase
                 'PHP_AUTH_PW' => 'password'
             ]
         ]);
-        $request->addParams(['pass' => []]);
 
         $result = $this->auth->authenticate($request, $this->response);
         $expected = [
@@ -228,7 +225,6 @@ class BasicAuthenticateTest extends TestCase
                 'PHP_AUTH_PW' => 'password'
             ]
         ]);
-        $request->addParams(['pass' => []]);
 
         $this->auth->unauthenticated($request, $this->response);
     }

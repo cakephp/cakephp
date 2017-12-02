@@ -921,9 +921,15 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param array $params Array of parameters to merge in
      * @return $this The current object, you can chain this method.
+     * @deprecated 3.6.0 ServerRequest::addParams() is deprecated. Use `withParam()` or
+     *   `withAttribute('params')` instead.
      */
     public function addParams(array $params)
     {
+        deprecationWarning(
+            'ServerRequest::addParams() is deprecated. ' .
+            'Use `withParam()` or `withAttribute("params", $params)` instead.'
+        );
         $this->params = array_merge($this->params, $params);
 
         return $this;
@@ -935,6 +941,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param array $paths Array of paths to merge in
      * @return $this The current object, you can chain this method.
+     * @deprecated 3.6.0 Mutating a request in place is deprecated. Use `withAttribute()` to modify paths instead.
      */
     public function addPaths(array $paths)
     {

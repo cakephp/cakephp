@@ -104,15 +104,16 @@ class RouterTest extends TestCase
     public function testCurrentUrlWithBasePath()
     {
         Router::fullBaseUrl('http://example.com');
-        $request = new ServerRequest();
-        $request->addParams([
-            'action' => 'view',
-            'plugin' => null,
-            'controller' => 'pages',
-            'pass' => ['1']
+        $request = new ServerRequest([
+            'params' => [
+                'action' => 'view',
+                'plugin' => null,
+                'controller' => 'pages',
+                'pass' => ['1']
+            ],
+            'here' => '/cakephp',
+            'url' => '/cakephp/pages/view/1',
         ]);
-        $request->base = '/cakephp';
-        $request->here = '/cakephp/pages/view/1';
         Router::setRequestInfo($request);
         $this->assertEquals('http://example.com/cakephp/pages/view/1', Router::url(null, true));
         $this->assertEquals('/cakephp/pages/view/1', Router::url());
@@ -555,15 +556,16 @@ class RouterTest extends TestCase
     public function testUrlGenerationWithBasePath()
     {
         Router::connect('/:controller/:action/*');
-        $request = new ServerRequest();
-        $request->addParams([
-            'action' => 'index',
-            'plugin' => null,
-            'controller' => 'subscribe',
+        $request = new ServerRequest([
+            'params' => [
+                'action' => 'index',
+                'plugin' => null,
+                'controller' => 'subscribe',
+            ],
+            'here' => '/magazine/',
+            'base' => '/magazine',
+            'webroot' => '/magazine/'
         ]);
-        $request->base = '/magazine';
-        $request->here = '/magazine/';
-        $request->webroot = '/magazine/';
         Router::pushRequest($request);
 
         $result = Router::url();
@@ -696,15 +698,13 @@ class RouterTest extends TestCase
 
         Router::reload();
         Router::connect('/:controller/:action');
-        $request = new ServerRequest();
-        $request->addParams([
-            'action' => 'index',
-            'plugin' => null,
-            'controller' => 'users',
+        $request = new ServerRequest([
+            'params' => [
+                'action' => 'index',
+                'plugin' => null,
+                'controller' => 'users',
+            ]
         ]);
-        $request->base = '/';
-        $request->here = '/';
-        $request->webroot = '/';
         Router::setRequestInfo($request);
 
         $result = Router::url(['action' => 'login']);
@@ -725,15 +725,13 @@ class RouterTest extends TestCase
 
         Router::reload();
         Router::connect('/:controller', ['action' => 'index']);
-        $request = new ServerRequest();
-        $request->addParams([
-            'action' => 'index',
-            'plugin' => 'myplugin',
-            'controller' => 'mycontroller',
+        $request = new ServerRequest([
+            'params' => [
+                'action' => 'index',
+                'plugin' => 'myplugin',
+                'controller' => 'mycontroller',
+            ]
         ]);
-        $request->base = '/';
-        $request->here = '/';
-        $request->webroot = '/';
         Router::setRequestInfo($request);
 
         $result = Router::url(['plugin' => null, 'controller' => 'myothercontroller']);
@@ -897,17 +895,16 @@ class RouterTest extends TestCase
         Router::connect('/admin/:controller/:action/*', ['prefix' => 'admin']);
         Router::extensions('rss', false);
 
-        $request = new ServerRequest();
-        $request->addParams([
-            'controller' => 'registrations',
-            'action' => 'admin_index',
-            'plugin' => null,
-            'prefix' => 'admin',
-            '_ext' => 'html'
+        $request = new ServerRequest([
+            'params' => [
+                'controller' => 'registrations',
+                'action' => 'admin_index',
+                'plugin' => null,
+                'prefix' => 'admin',
+                '_ext' => 'html'
+            ],
+            'url' => '/admin/registrations/index',
         ]);
-        $request->base = '';
-        $request->here = '/admin/registrations/index';
-        $request->webroot = '/';
         Router::setRequestInfo($request);
 
         $result = Router::url([]);
@@ -918,16 +915,17 @@ class RouterTest extends TestCase
         Router::connect('/admin/subscriptions/:action/*', ['controller' => 'subscribe', 'prefix' => 'admin']);
         Router::connect('/admin/:controller/:action/*', ['prefix' => 'admin']);
 
-        $request = new ServerRequest();
-        $request->addParams([
-            'action' => 'index',
-            'plugin' => null,
-            'controller' => 'subscribe',
-            'prefix' => 'admin',
+        $request = new ServerRequest([
+            'params' => [
+                'action' => 'index',
+                'plugin' => null,
+                'controller' => 'subscribe',
+                'prefix' => 'admin',
+            ],
+            'webroot' => '/magazine/',
+            'base' => '/magazine',
+            'url' => '/magazine/admin/subscriptions/edit/1',
         ]);
-        $request->base = '/magazine';
-        $request->here = '/magazine/admin/subscriptions/edit/1';
-        $request->webroot = '/magazine/';
         Router::setRequestInfo($request);
 
         $result = Router::url(['action' => 'edit', 1]);
@@ -939,16 +937,16 @@ class RouterTest extends TestCase
         $this->assertEquals($expected, $result);
 
         Router::reload();
-        $request = new ServerRequest();
-        $request->addParams([
-            'prefix' => 'admin',
-            'action' => 'index',
-            'plugin' => null,
-            'controller' => 'users',
+        $request = new ServerRequest([
+            'params' => [
+                'prefix' => 'admin',
+                'action' => 'index',
+                'plugin' => null,
+                'controller' => 'users',
+            ],
+            'webroot' => '/',
+            'url' => '/admin/users/index',
         ]);
-        $request->base = '/';
-        $request->here = '/';
-        $request->webroot = '/';
         Router::setRequestInfo($request);
 
         Router::connect('/page/*', ['controller' => 'pages', 'action' => 'view', 'prefix' => 'admin']);
@@ -960,16 +958,16 @@ class RouterTest extends TestCase
         Router::reload();
         Router::connect('/admin/:controller/:action/*', ['prefix' => 'admin']);
 
-        $request = new ServerRequest();
-        $request->addParams([
-            'plugin' => null,
-            'controller' => 'pages',
-            'action' => 'add',
-            'prefix' => 'admin'
+        $request = new ServerRequest([
+            'params' => [
+                'plugin' => null,
+                'controller' => 'pages',
+                'action' => 'add',
+                'prefix' => 'admin'
+            ],
+            'webroot' => '/',
+            'url' => '/admin/pages/add',
         ]);
-        $request->base = '';
-        $request->here = '/admin/pages/add';
-        $request->webroot = '/';
         Router::setRequestInfo($request);
 
         $result = Router::url(['plugin' => null, 'controller' => 'pages', 'action' => 'add', 'id' => false]);
@@ -978,16 +976,16 @@ class RouterTest extends TestCase
 
         Router::reload();
         Router::connect('/admin/:controller/:action/*', ['prefix' => 'admin']);
-        $request = new ServerRequest();
-        $request->addParams([
-            'plugin' => null,
-            'controller' => 'pages',
-            'action' => 'add',
-            'prefix' => 'admin'
+        $request = new ServerRequest([
+            'params' => [
+                'plugin' => null,
+                'controller' => 'pages',
+                'action' => 'add',
+                'prefix' => 'admin'
+            ],
+            'webroot' => '/',
+            'url' => '/admin/pages/add',
         ]);
-        $request->base = '';
-        $request->here = '/admin/pages/add';
-        $request->webroot = '/';
         Router::setRequestInfo($request);
 
         $result = Router::url(['plugin' => null, 'controller' => 'pages', 'action' => 'add', 'id' => false]);
@@ -996,20 +994,17 @@ class RouterTest extends TestCase
 
         Router::reload();
         Router::connect('/admin/:controller/:action/:id', ['prefix' => 'admin'], ['id' => '[0-9]+']);
-        $request = new ServerRequest();
-        Router::setRequestInfo(
-            $request->addParams([
+        $request = new ServerRequest([
+            'params' => [
                 'plugin' => null,
                 'controller' => 'pages',
                 'action' => 'edit',
                 'pass' => ['284'],
                 'prefix' => 'admin'
-            ])->addPaths([
-                'base' => '',
-                'here' => '/admin/pages/edit/284',
-                'webroot' => '/'
-            ])
-        );
+            ],
+            'url' => '/admin/pages/edit/284',
+        ]);
+        Router::setRequestInfo($request);
 
         $result = Router::url(['plugin' => null, 'controller' => 'pages', 'action' => 'edit', 'id' => '284']);
         $expected = '/admin/pages/edit/284';
@@ -1018,14 +1013,13 @@ class RouterTest extends TestCase
         Router::reload();
         Router::connect('/admin/:controller/:action/*', ['prefix' => 'admin']);
 
-        $request = new ServerRequest();
-        Router::setRequestInfo(
-            $request->addParams([
+        $request = new ServerRequest([
+            'params' => [
                 'plugin' => null, 'controller' => 'pages', 'action' => 'add', 'prefix' => 'admin',
-            ])->addPaths([
-                'base' => '', 'here' => '/admin/pages/add', 'webroot' => '/'
-            ])
-        );
+            ],
+            'url' => '/admin/pages/add',
+        ]);
+        Router::setRequestInfo($request);
 
         $result = Router::url(['plugin' => null, 'controller' => 'pages', 'action' => 'add', 'id' => false]);
         $expected = '/admin/pages/add';
@@ -1034,15 +1028,13 @@ class RouterTest extends TestCase
         Router::reload();
         Router::connect('/admin/:controller/:action/*', ['prefix' => 'admin']);
 
-        $request = new ServerRequest();
-        Router::setRequestInfo(
-            $request->addParams([
+        $request = new ServerRequest([
+            'params' => [
                 'plugin' => null, 'controller' => 'pages', 'action' => 'edit', 'prefix' => 'admin',
-                'pass' => ['284']
-            ])->addPaths([
-                'base' => '', 'here' => '/admin/pages/edit/284', 'webroot' => '/'
-            ])
-        );
+            ],
+            'url' => '/admin/pages/edit/284',
+        ]);
+        Router::setRequestInfo($request);
 
         $result = Router::url(['plugin' => null, 'controller' => 'pages', 'action' => 'edit', 284]);
         $expected = '/admin/pages/edit/284';
@@ -1050,14 +1042,14 @@ class RouterTest extends TestCase
 
         Router::reload();
         Router::connect('/admin/posts/*', ['controller' => 'posts', 'action' => 'index', 'prefix' => 'admin']);
-        Router::setRequestInfo(
-            $request->addParams([
+        $request = new ServerRequest([
+            'params' => [
                 'plugin' => null, 'controller' => 'posts', 'action' => 'index', 'prefix' => 'admin',
                 'pass' => ['284']
-            ])->addPaths([
-                'base' => '', 'here' => '/admin/posts', 'webroot' => '/'
-            ])
-        );
+            ],
+            'url' => '/admin/pages/edit/284',
+        ]);
+        Router::setRequestInfo($request);
 
         $result = Router::url(['all']);
         $expected = '/admin/posts/all';
@@ -1163,8 +1155,9 @@ class RouterTest extends TestCase
         Router::scope('/', function ($r) {
             $r->fallbacks('InflectedRoute');
         });
-        $request = new ServerRequest();
-        $request->addParams(['controller' => 'Tasks', 'action' => 'index', '_ext' => 'rss']);
+        $request = new ServerRequest([
+            'params' => ['plugin' => null, 'controller' => 'Tasks', 'action' => 'index', '_ext' => 'rss']
+        ]);
         Router::pushRequest($request);
 
         $result = Router::url([
@@ -1277,14 +1270,13 @@ class RouterTest extends TestCase
     public function testUrlGenerationWithUrlFilter()
     {
         Router::connect('/:lang/:controller/:action/*');
-        $request = new ServerRequest();
-        $request->addParams([
-            'lang' => 'en',
-            'controller' => 'posts',
-            'action' => 'index'
-        ])->addPaths([
-            'base' => '',
-            'here' => '/'
+        $request = new ServerRequest([
+            'params' => [
+                'plugin' => null,
+                'lang' => 'en',
+                'controller' => 'posts',
+                'action' => 'index'
+            ]
         ]);
         Router::pushRequest($request);
 
@@ -1314,14 +1306,14 @@ class RouterTest extends TestCase
     public function testUrlParamPersistence()
     {
         Router::connect('/:lang/:controller/:action/*', [], ['persist' => ['lang']]);
-        $request = new ServerRequest();
-        $request->addParams([
-            'lang' => 'en',
-            'controller' => 'posts',
-            'action' => 'index'
-        ])->addPaths([
-            'base' => '',
-            'here' => '/'
+        $request = new ServerRequest([
+            'url' => '/en/posts/index',
+            'params' => [
+                'plugin' => null,
+                'lang' => 'en',
+                'controller' => 'posts',
+                'action' => 'index'
+            ]
         ]);
         Router::pushRequest($request);
 
@@ -1358,20 +1350,17 @@ class RouterTest extends TestCase
     {
         Router::connect('/admin/:controller', ['action' => 'index', 'prefix' => 'admin']);
         Router::connect('/admin/:controller/:action/*', ['prefix' => 'admin']);
-        $request = new ServerRequest();
-        Router::setRequestInfo(
-            $request->addParams([
+        $request = new ServerRequest([
+            'url' => '/admin/this/interesting/index',
+            'params' => [
                 'pass' => [],
                 'prefix' => 'admin',
                 'plugin' => 'this',
                 'action' => 'index',
                 'controller' => 'interesting',
-            ])->addPaths([
-                'base' => '',
-                'here' => '/admin/this/interesting/index',
-                'webroot' => '/',
-            ])
-        );
+            ]
+        ]);
+        Router::setRequestInfo($request);
         $result = Router::url(['plugin' => null, 'controller' => 'posts', 'action' => 'index']);
         $this->assertEquals('/admin/posts', $result);
     }
@@ -2002,17 +1991,14 @@ class RouterTest extends TestCase
         Router::connect('/admin/:controller/:action/*', ['prefix' => 'admin']);
         Router::connect('/:controller/:action/*');
 
-        $request = new ServerRequest();
-        Router::setRequestInfo(
-            $request->addParams([
+        $request = new ServerRequest([
+            'url' => '/images/index',
+            'params' => [
                 'plugin' => null, 'controller' => 'images', 'action' => 'index',
                 'prefix' => null, 'protected' => false, 'url' => ['url' => 'images/index']
-            ])->addPaths([
-                'base' => '',
-                'here' => '/images/index',
-                'webroot' => '/',
-            ])
-        );
+            ],
+        ]);
+        Router::setRequestInfo($request);
 
         $result = Router::url(['controller' => 'images', 'action' => 'add']);
         $expected = '/images/add';
@@ -2059,19 +2045,14 @@ class RouterTest extends TestCase
     public function testGenerationWithSslOption()
     {
         Router::connect('/:controller/:action/*');
-
         $request = new ServerRequest([
+            'url' => '/images/index',
+            'params' => [
+                'plugin' => null, 'controller' => 'images', 'action' => 'index'
+            ],
             'environment' => ['HTTP_HOST' => 'localhost']
         ]);
-        Router::pushRequest(
-            $request->addParams([
-                'plugin' => null, 'controller' => 'images', 'action' => 'index'
-            ])->addPaths([
-                'base' => '',
-                'here' => '/images/index',
-                'webroot' => '/',
-            ])
-        );
+        Router::pushRequest($request);
 
         $result = Router::url([
             '_ssl' => true
@@ -2092,21 +2073,16 @@ class RouterTest extends TestCase
     public function testGenerateWithSslInSsl()
     {
         Router::connect('/:controller/:action/*');
-
         $request = new ServerRequest([
-            'environment' => ['HTTP_HOST' => 'localhost', 'HTTPS' => 'on']
-        ]);
-        Router::pushRequest(
-            $request->addParams([
+            'url' => '/images/index',
+            'environment' => ['HTTP_HOST' => 'localhost', 'HTTPS' => 'on'],
+            'params' => [
                 'plugin' => null,
                 'controller' => 'images',
                 'action' => 'index'
-            ])->addPaths([
-                'base' => '',
-                'here' => '/images/index',
-                'webroot' => '/',
-            ])
-        );
+            ]
+        ]);
+        Router::pushRequest($request);
 
         $result = Router::url([
             '_ssl' => false
@@ -2130,19 +2106,16 @@ class RouterTest extends TestCase
         Router::connect('/protected/:controller/:action', ['prefix' => 'protected']);
         Router::connect('/:controller/:action');
 
-        $request = new ServerRequest();
-        Router::setRequestInfo(
-            $request->addParams([
+        $request = new ServerRequest([
+            'url' => '/protected/images/index',
+            'params' => [
                 'plugin' => null,
                 'controller' => 'images',
                 'action' => 'index',
                 'prefix' => 'protected',
-            ])->addPaths([
-                'base' => '',
-                'here' => '/protected/images/index',
-                'webroot' => '/',
-            ])
-        );
+            ]
+        ]);
+        Router::setRequestInfo($request);
 
         $result = Router::url(['prefix' => 'protected', 'controller' => 'images', 'action' => 'add']);
         $expected = '/protected/images/add';
@@ -2167,34 +2140,25 @@ class RouterTest extends TestCase
         Router::connect('/admin/:controller/:action', ['prefix' => 'admin']);
         Router::connect('/protected/:controller/:action', ['prefix' => 'protected']);
 
-        $request = new ServerRequest();
-        Router::setRequestInfo(
-            $request->addParams([
+        $request = new ServerRequest([
+            'url' => '/protected/images/index',
+            'params' => [
                 'plugin' => null, 'controller' => 'images', 'action' => 'index', 'prefix' => 'protected',
-            ])->addPaths([
-                'base' => '',
-                'here' => '/protected/images/index',
-                'webroot' => '/',
-            ])
-        );
+            ],
+        ]);
+        Router::setRequestInfo($request);
 
         $result = Router::url(['controller' => 'images', 'action' => 'add', 'prefix' => 'admin']);
         $expected = '/admin/images/add';
         $this->assertEquals($expected, $result);
 
-        $request = new ServerRequest();
-        Router::setRequestInfo(
-            $request->addParams([
-                'plugin' => null,
-                'controller' => 'images',
-                'action' => 'index',
-                'prefix' => 'admin',
-            ])->addPaths([
-                'base' => '',
-                'here' => '/admin/images/index',
-                'webroot' => '/',
-            ])
-        );
+        $request = new ServerRequest([
+            'url' => '/admin/images/index',
+            'params' => [
+                'plugin' => null, 'controller' => 'images', 'action' => 'index', 'prefix' => 'admin',
+            ],
+        ]);
+        Router::setRequestInfo($request);
         $result = Router::url(['controller' => 'images', 'action' => 'add', 'prefix' => 'protected']);
         $expected = '/protected/images/add';
         $this->assertEquals($expected, $result);
@@ -2236,17 +2200,14 @@ class RouterTest extends TestCase
     public function testRemoveBase()
     {
         Router::connect('/:controller/:action');
-
-        $request = new ServerRequest();
-        Router::setRequestInfo(
-            $request->addParams([
+        $request = new ServerRequest([
+            'url' => '/',
+            'base' => '/base',
+            'params' => [
                 'plugin' => null, 'controller' => 'controller', 'action' => 'index',
-            ])->addPaths([
-                'base' => '/base',
-                'here' => '/',
-                'webroot' => '/base/',
-            ])
-        );
+            ]
+        ]);
+        Router::setRequestInfo($request);
 
         $result = Router::url(['controller' => 'my_controller', 'action' => 'my_action']);
         $expected = '/base/my_controller/my_action';
@@ -2408,16 +2369,12 @@ class RouterTest extends TestCase
         Router::connect('/admin/:controller', $adminParams);
         Router::connect('/admin/:controller/:action/*', $adminParams);
 
-        $request = new ServerRequest();
-        Router::setRequestInfo(
-            $request->addParams([
-                'plugin' => null, 'controller' => 'controller', 'action' => 'index'
-            ])->addPaths([
-                'base' => '/base',
-                'here' => '/',
-                'webroot' => '/base/',
-            ])
-        );
+        $request = new ServerRequest([
+            'url' => '/',
+            'base' => '/base',
+            'params' => ['plugin' => null, 'controller' => 'controller', 'action' => 'index']
+        ]);
+        Router::setRequestInfo($request);
 
         $result = Router::parseRequest($this->makeRequest('/admin/posts/', 'GET'));
         $expected = [
@@ -2444,16 +2401,12 @@ class RouterTest extends TestCase
         Router::connect('/members/:controller/:action', $prefixParams);
         Router::connect('/members/:controller/:action/*', $prefixParams);
 
-        $request = new ServerRequest();
-        Router::setRequestInfo(
-            $request->addParams([
-                'plugin' => null, 'controller' => 'controller', 'action' => 'index',
-            ])->addPaths([
-                'base' => '/base',
-                'here' => '/',
-                'webroot' => '/',
-            ])
-        );
+        $request = new ServerRequest([
+            'url' => '/',
+            'base' => '/base',
+            'params' => ['plugin' => null, 'controller' => 'controller', 'action' => 'index']
+        ]);
+        Router::setRequestInfo($request);
 
         $result = Router::parseRequest($this->makeRequest('/members/posts/index', 'GET'));
         $expected = [
@@ -2485,19 +2438,16 @@ class RouterTest extends TestCase
         $expected = '/company/users/login';
         $this->assertEquals($expected, $result);
 
-        $request = new ServerRequest();
-        Router::setRequestInfo(
-            $request->addParams([
+        $request = new ServerRequest([
+            'url' => '/',
+            'params' => [
                 'plugin' => null,
                 'controller' => 'users',
                 'action' => 'login',
                 'prefix' => 'company'
-            ])->addPaths([
-                'base' => '/',
-                'here' => '/',
-                'webroot' => '/base/',
-            ])
-        );
+            ]
+        ]);
+        Router::setRequestInfo($request);
 
         $result = Router::url(['controller' => 'users', 'action' => 'login', 'prefix' => false]);
         $expected = '/login';
@@ -2515,17 +2465,17 @@ class RouterTest extends TestCase
             '/admin/login',
             ['controller' => 'users', 'action' => 'login', 'prefix' => 'admin']
         );
-        $request = new ServerRequest();
-        Router::setRequestInfo(
-            $request->addParams([
-                'plugin' => null, 'controller' => 'posts', 'action' => 'index',
+        $request = new ServerRequest([
+            'url' => '/',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'posts',
+                'action' => 'index',
                 'prefix' => 'admin'
-            ])->addPaths([
-                'base' => '/',
-                'here' => '/',
-                'webroot' => '/',
-            ])
-        );
+            ],
+            'webroot' => '/'
+        ]);
+        Router::setRequestInfo($request);
         $result = Router::url(['controller' => 'users', 'action' => 'login']);
         $this->assertEquals('/admin/login', $result);
 
@@ -2603,19 +2553,16 @@ class RouterTest extends TestCase
         $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
         Router::connect('/:locale/:controller/:action/*', [], ['locale' => 'dan|eng']);
 
-        $request = new ServerRequest();
-        Router::setRequestInfo(
-            $request->addParams([
+        $request = new ServerRequest([
+            'url' => '/test/test_action',
+            'params' => [
                 'plugin' => null,
                 'controller' => 'test',
                 'action' => 'index',
-                'url' => ['url' => 'test/test_action']
-            ])->addPaths([
-                'base' => '',
-                'here' => '/test/test_action',
-                'webroot' => '/',
-            ])
-        );
+            ],
+            'webroot' => '/'
+        ]);
+        Router::setRequestInfo($request);
 
         $result = Router::url(['action' => 'test_another_action', 'locale' => 'eng']);
         $expected = '/eng/test/test_another_action';
@@ -2748,14 +2695,16 @@ class RouterTest extends TestCase
     public function testReverseCakeRequestQuery()
     {
         Router::connect('/:lang/:controller/:action/*', [], ['lang' => '[a-z]{3}']);
-        $request = new ServerRequest('/eng/posts/view/1');
-        $request->addParams([
-            'lang' => 'eng',
-            'controller' => 'posts',
-            'action' => 'view',
-            'pass' => [1],
+        $request = new ServerRequest([
+            'url' => '/eng/posts/view/1',
+            'params' => [
+                'lang' => 'eng',
+                'controller' => 'posts',
+                'action' => 'view',
+                'pass' => [1],
+            ],
+            'query' => ['url' => 'eng/posts/view/1', 'test' => 'value']
         ]);
-        $request->query = ['url' => 'eng/posts/view/1', 'test' => 'value'];
         $result = Router::reverse($request);
         $expected = '/eng/posts/view/1?test=value';
         $this->assertEquals($expected, $result);
@@ -2784,14 +2733,15 @@ class RouterTest extends TestCase
         Router::connect('/:controller/:action/*');
         Router::extensions('json', false);
 
-        $request = new ServerRequest('/posts/view/1.json');
-        $request->addParams([
-            'controller' => 'posts',
-            'action' => 'view',
-            'pass' => [1],
-            '_ext' => 'json',
+        $request = new ServerRequest([
+            'url' => '/posts/view/1.json',
+            'params' => [
+                'controller' => 'posts',
+                'action' => 'view',
+                'pass' => [1],
+                '_ext' => 'json',
+            ]
         ]);
-        $request->query = [];
         $result = Router::reverse($request);
         $expected = '/posts/view/1.json';
         $this->assertEquals($expected, $result);
@@ -2823,22 +2773,22 @@ class RouterTest extends TestCase
     public function testReverseToArrayRequestQuery()
     {
         Router::connect('/:lang/:controller/:action/*', [], ['lang' => '[a-z]{3}']);
-        $request = new ServerRequest('/eng/posts/view/1');
-        $request->addParams([
-            'lang' => 'eng',
-            'controller' => 'posts',
-            'action' => 'view',
-            'pass' => [123],
+        $request = new ServerRequest([
+            'url' => '/eng/posts/view/1',
+            'params' => [
+                'lang' => 'eng',
+                'controller' => 'posts',
+                'action' => 'view',
+                'pass' => [123],
+            ],
+            'query' => ['url' => 'eng/posts/view/1', 'test' => 'value']
         ]);
-        $request->query = ['url' => 'eng/posts/view/1', 'test' => 'value'];
         $actual = Router::reverseToArray($request);
         $expected = [
             'lang' => 'eng',
-            'plugin' => null,
             'controller' => 'posts',
             'action' => 'view',
             123,
-            '_ext' => null,
             '?' => [
                 'test' => 'value',
             ],
@@ -2906,21 +2856,24 @@ class RouterTest extends TestCase
         Router::connect('/:controller', ['action' => 'index']);
         Router::connect('/:controller/:action');
 
-        $firstRequest = new ServerRequest('/posts/index');
-        $firstRequest->addParams([
-            'plugin' => null,
-            'controller' => 'posts',
-            'action' => 'index'
-        ])->addPaths(['base' => '']);
+        $firstRequest = new ServerRequest([
+            'url' => '/posts/index',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'posts',
+                'action' => 'index'
+            ]
+        ]);
 
-        $secondRequest = new ServerRequest('/posts/index');
-        $secondRequest->addParams([
-            'requested' => 1,
-            'plugin' => null,
-            'controller' => 'comments',
-            'action' => 'listing'
-        ])->addPaths(['base' => '']);
-
+        $secondRequest = new ServerRequest([
+            'url' => '/posts/index',
+            'params' => [
+                'requested' => 1,
+                'plugin' => null,
+                'controller' => 'comments',
+                'action' => 'listing'
+            ]
+        ]);
         Router::setRequestInfo($firstRequest);
         Router::setRequestInfo($secondRequest);
 

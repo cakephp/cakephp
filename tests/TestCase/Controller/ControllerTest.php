@@ -812,8 +812,10 @@ class ControllerTest extends TestCase
     {
         $this->expectException(\Cake\Controller\Exception\MissingActionException::class);
         $this->expectExceptionMessage('Action TestController::missing() could not be found, or is not accessible.');
-        $url = new ServerRequest('test/missing');
-        $url->addParams(['controller' => 'Test', 'action' => 'missing']);
+        $url = new ServerRequest([
+            'url' => 'test/missing',
+            'params' => ['controller' => 'Test', 'action' => 'missing']
+        ]);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
         $Controller = new TestController($url, $response);
@@ -829,8 +831,10 @@ class ControllerTest extends TestCase
     {
         $this->expectException(\Cake\Controller\Exception\MissingActionException::class);
         $this->expectExceptionMessage('Action TestController::private_m() could not be found, or is not accessible.');
-        $url = new ServerRequest('test/private_m/');
-        $url->addParams(['controller' => 'Test', 'action' => 'private_m']);
+        $url = new ServerRequest([
+            'url' => 'test/private_m/',
+            'params' => ['controller' => 'Test', 'action' => 'private_m']
+        ]);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
         $Controller = new TestController($url, $response);
@@ -846,8 +850,10 @@ class ControllerTest extends TestCase
     {
         $this->expectException(\Cake\Controller\Exception\MissingActionException::class);
         $this->expectExceptionMessage('Action TestController::protected_m() could not be found, or is not accessible.');
-        $url = new ServerRequest('test/protected_m/');
-        $url->addParams(['controller' => 'Test', 'action' => 'protected_m']);
+        $url = new ServerRequest([
+            'url' => 'test/protected_m/',
+            'params' => ['controller' => 'Test', 'action' => 'protected_m']
+        ]);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
         $Controller = new TestController($url, $response);
@@ -863,8 +869,10 @@ class ControllerTest extends TestCase
     {
         $this->expectException(\Cake\Controller\Exception\MissingActionException::class);
         $this->expectExceptionMessage('Action TestController::redirect() could not be found, or is not accessible.');
-        $url = new ServerRequest('test/redirect/');
-        $url->addParams(['controller' => 'Test', 'action' => 'redirect']);
+        $url = new ServerRequest([
+            'url' => 'test/redirect/',
+            'params' => ['controller' => 'Test', 'action' => 'redirect']
+        ]);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
         $Controller = new TestController($url, $response);
@@ -878,11 +886,13 @@ class ControllerTest extends TestCase
      */
     public function testInvokeActionReturnValue()
     {
-        $url = new ServerRequest('test/returner/');
-        $url->addParams([
-            'controller' => 'Test',
-            'action' => 'returner',
-            'pass' => []
+        $url = new ServerRequest([
+            'url' => 'test/returner/',
+            'params' => [
+                'controller' => 'Test',
+                'action' => 'returner',
+                'pass' => []
+            ]
         ]);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
@@ -898,11 +908,13 @@ class ControllerTest extends TestCase
      */
     public function testInvokeActionWithPassedParams()
     {
-        $url = new ServerRequest('test/index/1/2');
-        $url->addParams([
-            'controller' => 'Test',
-            'action' => 'index',
-            'pass' => ['param1' => '1', 'param2' => '2']
+        $url = new ServerRequest([
+            'url' => 'test/index/1/2',
+            'params' => [
+                'controller' => 'Test',
+                'action' => 'index',
+                'pass' => ['param1' => '1', 'param2' => '2']
+            ]
         ]);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
@@ -921,9 +933,9 @@ class ControllerTest extends TestCase
      */
     public function testViewPathConventions()
     {
-        $request = new ServerRequest('admin/posts');
-        $request->addParams([
-            'prefix' => 'admin'
+        $request = new ServerRequest([
+            'url' => 'admin/posts',
+            'params' => ['prefix' => 'admin']
         ]);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $Controller = new \TestApp\Controller\Admin\PostsController($request, $response);
@@ -933,9 +945,7 @@ class ControllerTest extends TestCase
         $Controller->render();
         $this->assertEquals('Admin' . DS . 'Posts', $Controller->viewBuilder()->templatePath());
 
-        $request->addParams([
-            'prefix' => 'admin/super'
-        ]);
+        $request = $request->withParam('prefix', 'admin/super');
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $Controller = new \TestApp\Controller\Admin\PostsController($request, $response);
         $Controller->getEventManager()->on('Controller.beforeRender', function (Event $e) {
@@ -944,9 +954,11 @@ class ControllerTest extends TestCase
         $Controller->render();
         $this->assertEquals('Admin' . DS . 'Super' . DS . 'Posts', $Controller->viewBuilder()->templatePath());
 
-        $request = new ServerRequest('pages/home');
-        $request->addParams([
-            'prefix' => false
+        $request = new ServerRequest([
+            'url' => 'pages/home',
+            'params' => [
+                'prefix' => false
+            ]
         ]);
         $Controller = new \TestApp\Controller\PagesController($request, $response);
         $Controller->getEventManager()->on('Controller.beforeRender', function (Event $e) {
