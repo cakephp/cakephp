@@ -177,9 +177,11 @@ class TypeTest extends TestCase
 
         $this->assertEmpty(Type::map());
         Type::map($map);
-        $this->assertEquals($map, Type::map());
+        $newMap = Type::map();
 
-        $this->assertNotSame($type, Type::build('float'));
+        $this->assertEquals(array_keys($map), array_keys($newMap));
+        $this->assertEquals($map['integer'], $newMap['integer']);
+        $this->assertSame($type, Type::build('float'));
     }
 
     /**
