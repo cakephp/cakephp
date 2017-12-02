@@ -106,7 +106,8 @@ class Type implements TypeInterface
             throw new InvalidArgumentException(sprintf('Unknown type "%s"', $name));
         }
         if (is_string(static::$_types[$name])) {
-            return static::$_builtTypes[$name] = new static::$_types[$name]($name);
+            static::$_types[$name] = new static::$_types[$name]($name);
+            return static::$_builtTypes[$name] = static::$_types[$name];
         }
 
         return static::$_builtTypes[$name] = static::$_types[$name];
@@ -144,9 +145,9 @@ class Type implements TypeInterface
      * If called with no arguments it will return current types map array
      * If $className is omitted it will return mapped class for $type
      *
-     * @param string|array|\Cake\Database\Type|null $type if string name of type to map, if array list of arrays to be mapped
-     * @param string|null $className The classname to register.
-     * @return array|string|null if $type is null then array with current map, if $className is null string
+     * @param string|string[]|\Cake\Database\Type[]|null $type if string name of type to map, if array list of arrays to be mapped
+     * @param string|\Cake\Database\Type|null $className The classname or object instance of it to register.
+     * @return array|string|null If $type is null then array with current map, if $className is null string
      * configured class name for give $type, null otherwise
      */
     public static function map($type = null, $className = null)
@@ -299,5 +300,20 @@ class Type implements TypeInterface
     public function marshal($value)
     {
         return $this->_basicTypeCast($value);
+    }
+
+    /**
+     * Returns an array that can be used to describe the internal state of this
+     * object.
+     *
+     * @return array
+     */
+    public function __debugInfo()
+    {
+        return [
+            'name' => $this->_name,
+            'types' => static::$_types,
+            'builtTypes' => static::$_builtTypes,
+        ];
     }
 }

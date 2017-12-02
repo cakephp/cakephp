@@ -15,6 +15,9 @@
 namespace Cake\Test\TestCase\Database;
 
 use Cake\Database\Type;
+use Cake\Database\Type\BoolType;
+use Cake\Database\Type\IntegerType;
+use Cake\Database\Type\UuidType;
 use Cake\TestSuite\TestCase;
 use PDO;
 use TestApp\Database\Type\BarType;
@@ -250,5 +253,34 @@ class TypeTest extends TestCase
         $instance = $this->getMockBuilder('Cake\Database\Type')->getMock();
         Type::set('random', $instance);
         $this->assertSame($instance, Type::build('random'));
+    }
+
+    /**
+     * @return void
+     */
+    public function testDebugInfo()
+    {
+        $type = new Type('foo');
+        Type::clear();
+        Type::map('bool', BoolType::class);
+        Type::map('int', IntegerType::class);
+        $uuidType = new UuidType('uuid');
+        Type::map('uuid', $uuidType);
+        Type::build('bool');
+
+        $result = $type->__debugInfo();
+        $boolType = new BoolType('bool');
+        $expected = [
+            'name' => 'foo',
+            'types' => [
+                'bool' => $boolType,
+                'int' => IntegerType::class,
+                'uuid' => $uuidType,
+            ],
+            'builtTypes' => [
+                'bool' => $boolType,
+            ],
+        ];
+        $this->assertEquals($expected, $result);
     }
 }
