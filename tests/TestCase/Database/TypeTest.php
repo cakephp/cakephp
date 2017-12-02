@@ -163,6 +163,23 @@ class TypeTest extends TestCase
     }
 
     /**
+     * Tests new types can be registered and built as objects
+     *
+     * @return void
+     */
+    public function testMapAndBuildWithObjects()
+    {
+        $map = Type::map();
+        Type::clear();
+
+        $uuidType = new UuidType('uuid');
+        Type::map('uuid', $uuidType);
+
+        $this->assertSame($uuidType, Type::build('uuid'));
+        Type::map($map);
+    }
+
+    /**
      * Tests clear function in conjunction with map
      *
      * @return void
@@ -181,7 +198,7 @@ class TypeTest extends TestCase
 
         $this->assertEquals(array_keys($map), array_keys($newMap));
         $this->assertEquals($map['integer'], $newMap['integer']);
-        $this->assertSame($type, Type::build('float'));
+        $this->assertEquals($type, Type::build('float'));
     }
 
     /**
@@ -263,25 +280,9 @@ class TypeTest extends TestCase
     public function testDebugInfo()
     {
         $type = new Type('foo');
-        Type::clear();
-        Type::map('bool', BoolType::class);
-        Type::map('int', IntegerType::class);
-        $uuidType = new UuidType('uuid');
-        Type::map('uuid', $uuidType);
-        Type::build('bool');
-
         $result = $type->__debugInfo();
-        $boolType = new BoolType('bool');
         $expected = [
             'name' => 'foo',
-            'types' => [
-                'bool' => $boolType,
-                'int' => IntegerType::class,
-                'uuid' => $uuidType,
-            ],
-            'builtTypes' => [
-                'bool' => $boolType,
-            ],
         ];
         $this->assertEquals($expected, $result);
     }

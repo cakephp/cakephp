@@ -313,8 +313,6 @@ class Type implements TypeInterface
     {
         return [
             'name' => $this->_name,
-            'types' => static::$_types,
-            'builtTypes' => static::$_builtTypes,
         ];
     }
 }
