@@ -152,7 +152,7 @@ class TypeTest extends TestCase
     public function testReMapAndBuild()
     {
         $fooType = FooType::class;
-        $map = Type::map('foo', $fooType);
+        Type::map('foo', $fooType);
         $type = Type::build('foo');
         $this->assertInstanceOf($fooType, $type);
 
