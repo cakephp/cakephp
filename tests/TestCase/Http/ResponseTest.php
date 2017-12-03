@@ -718,7 +718,7 @@ class ResponseTest extends TestCase
         $_SERVER['HTTP_ACCEPT_ENCODING'] = 'gzip';
         $result = $response->compress();
         $this->assertTrue($result);
-        $this->assertTrue(in_array('ob_gzhandler', ob_list_handlers()));
+        $this->assertContains('ob_gzhandler', ob_list_handlers());
 
         ob_get_clean();
     }
@@ -2039,7 +2039,7 @@ class ResponseTest extends TestCase
             $result = $response->send();
             $output = ob_get_clean();
             $this->assertEquals("/* this is the test asset css file */\n", $output);
-            $this->assertNotSame(false, $result);
+            $this->assertNotFalse($result);
             $this->assertEquals('text/css', $response->getType());
             $this->assertEquals('bytes', $response->getHeaderLine('Accept-Ranges'));
             $this->assertEquals('binary', $response->getHeaderLine('Content-Transfer-Encoding'));
@@ -2075,7 +2075,7 @@ class ResponseTest extends TestCase
             $result = $response->send();
             $output = ob_get_clean();
             $this->assertEquals("some_key = some_value\nbool_key = 1\n", $output);
-            $this->assertNotSame(false, $result);
+            $this->assertNotFalse($result);
             $this->assertEquals('text/html', $response->getType());
             $this->assertEquals('bytes', $response->getHeaderLine('Accept-Ranges'));
             $this->assertEquals('binary', $response->getHeaderLine('Content-Transfer-Encoding'));
@@ -2131,7 +2131,7 @@ class ResponseTest extends TestCase
             $result = $response->send();
             $output = ob_get_clean();
             $this->assertEquals("some_key = some_value\nbool_key = 1\n", $output);
-            $this->assertNotSame(false, $result);
+            $this->assertNotFalse($result);
             $this->assertEquals('application/octet-stream', $response->getType());
             $this->assertEquals('bytes', $response->getHeaderLine('Accept-Ranges'));
             $this->assertEquals('binary', $response->getHeaderLine('Content-Transfer-Encoding'));
@@ -2187,7 +2187,7 @@ class ResponseTest extends TestCase
             $result = $response->send();
             $output = ob_get_clean();
             $this->assertEquals("some_key = some_value\nbool_key = 1\n", $output);
-            $this->assertNotSame(false, $result);
+            $this->assertNotFalse($result);
             $this->assertEquals('application/force-download', $response->getType());
             $this->assertEquals('bytes', $response->getHeaderLine('Accept-Ranges'));
             $this->assertEquals('binary', $response->getHeaderLine('Content-Transfer-Encoding'));
@@ -2459,7 +2459,7 @@ class ResponseTest extends TestCase
             $result = $response->send();
             $output = ob_get_clean();
             $this->assertEquals('is the test asset ', $output);
-            $this->assertNotSame(false, $result);
+            $this->assertNotFalse($result);
 
             $this->assertEquals(
                 'attachment; filename="test_asset.css"',
@@ -2707,7 +2707,7 @@ class ResponseTest extends TestCase
             $this->assertEquals('text/css', $response->getType());
             $this->assertEquals(206, $response->getStatusCode());
             $this->assertEquals('is the test asset ', $output);
-            $this->assertNotSame(false, $result);
+            $this->assertNotFalse($result);
         });
     }
 

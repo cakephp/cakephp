@@ -583,7 +583,7 @@ class ShellTest extends TestCase
         $result = $this->Shell->createFile($file, $contents);
         $this->assertTrue($result);
         $this->assertFileExists($file);
-        $this->assertEquals(file_get_contents($file), $contents);
+        $this->assertStringEqualsFile($file, $contents);
     }
 
     /**
@@ -660,7 +660,7 @@ class ShellTest extends TestCase
         $this->Shell->interactive = false;
         $result = $this->Shell->createFile($file, 'My content');
         $this->assertTrue($result);
-        $this->assertEquals(file_get_contents($file), 'My content');
+        $this->assertStringEqualsFile($file, 'My content');
     }
 
     /**

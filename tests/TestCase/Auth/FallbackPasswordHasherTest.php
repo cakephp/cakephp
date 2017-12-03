@@ -73,7 +73,7 @@ class FallbackPasswordHasherTest extends TestCase
 
         $hash = $simple->hash('foo');
         $legacyHash = $legacy->hash('foo');
-        $this->assertTrue($hash !== $legacyHash);
+        $this->assertNotSame($hash, $legacyHash);
         $this->assertTrue($hasher->check('foo', $hash));
         $this->assertTrue($hasher->check('foo', $legacyHash));
     }

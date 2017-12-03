@@ -143,14 +143,14 @@ class SocketTest extends TestCase
             $this->assertEquals('127.0.0.1', $this->Socket->address());
             $this->assertEquals(gethostbyaddr('127.0.0.1'), $this->Socket->host());
             $this->assertNull($this->Socket->lastError());
-            $this->assertTrue(in_array('127.0.0.1', $this->Socket->addresses()));
+            $this->assertContains('127.0.0.1', $this->Socket->addresses());
 
             $this->Socket = new Socket(['host' => '127.0.0.1']);
             $this->Socket->connect();
             $this->assertEquals('127.0.0.1', $this->Socket->address());
             $this->assertEquals(gethostbyaddr('127.0.0.1'), $this->Socket->host());
             $this->assertNull($this->Socket->lastError());
-            $this->assertTrue(in_array('127.0.0.1', $this->Socket->addresses()));
+            $this->assertContains('127.0.0.1', $this->Socket->addresses());
         } catch (SocketException $e) {
             $this->markTestSkipped('Cannot test network, skipping.');
         }

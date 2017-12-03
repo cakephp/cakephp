@@ -65,7 +65,7 @@ class TextTest extends TestCase
             $result = Text::uuid();
             $match = (bool)preg_match($pattern, $result);
             $this->assertTrue($match);
-            $this->assertFalse(in_array($result, $check));
+            $this->assertNotContains($result, $check);
             $check[] = $result;
         }
     }
