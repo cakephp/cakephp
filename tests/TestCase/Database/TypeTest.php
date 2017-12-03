@@ -15,6 +15,9 @@
 namespace Cake\Test\TestCase\Database;
 
 use Cake\Database\Type;
+use Cake\Database\Type\BoolType;
+use Cake\Database\Type\IntegerType;
+use Cake\Database\Type\UuidType;
 use Cake\TestSuite\TestCase;
 use PDO;
 use TestApp\Database\Type\BarType;
@@ -149,7 +152,7 @@ class TypeTest extends TestCase
     public function testReMapAndBuild()
     {
         $fooType = FooType::class;
-        $map = Type::map('foo', $fooType);
+        Type::map('foo', $fooType);
         $type = Type::build('foo');
         $this->assertInstanceOf($fooType, $type);
 
@@ -157,6 +160,23 @@ class TypeTest extends TestCase
         Type::map('foo', $barType);
         $type = Type::build('foo');
         $this->assertInstanceOf($barType, $type);
+    }
+
+    /**
+     * Tests new types can be registered and built as objects
+     *
+     * @return void
+     */
+    public function testMapAndBuildWithObjects()
+    {
+        $map = Type::map();
+        Type::clear();
+
+        $uuidType = new UuidType('uuid');
+        Type::map('uuid', $uuidType);
+
+        $this->assertSame($uuidType, Type::build('uuid'));
+        Type::map($map);
     }
 
     /**
@@ -174,9 +194,11 @@ class TypeTest extends TestCase
 
         $this->assertEmpty(Type::map());
         Type::map($map);
-        $this->assertEquals($map, Type::map());
+        $newMap = Type::map();
 
-        $this->assertNotSame($type, Type::build('float'));
+        $this->assertEquals(array_keys($map), array_keys($newMap));
+        $this->assertEquals($map['integer'], $newMap['integer']);
+        $this->assertEquals($type, Type::build('float'));
     }
 
     /**
@@ -250,5 +272,18 @@ class TypeTest extends TestCase
         $instance = $this->getMockBuilder('Cake\Database\Type')->getMock();
         Type::set('random', $instance);
         $this->assertSame($instance, Type::build('random'));
+    }
+
+    /**
+     * @return void
+     */
+    public function testDebugInfo()
+    {
+        $type = new Type('foo');
+        $result = $type->__debugInfo();
+        $expected = [
+            'name' => 'foo',
+        ];
+        $this->assertEquals($expected, $result);
     }
 }
