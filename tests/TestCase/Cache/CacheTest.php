@@ -598,13 +598,13 @@ class CacheTest extends TestCase
     {
         $this->_configCache();
         Cache::write('App.falseTest', false, 'tests');
-        $this->assertSame(Cache::read('App.falseTest', 'tests'), false);
+        $this->assertFalse(Cache::read('App.falseTest', 'tests'));
 
         Cache::write('App.trueTest', true, 'tests');
-        $this->assertSame(Cache::read('App.trueTest', 'tests'), true);
+        $this->assertTrue(Cache::read('App.trueTest', 'tests'));
 
         Cache::write('App.nullTest', null, 'tests');
-        $this->assertSame(Cache::read('App.nullTest', 'tests'), null);
+        $this->assertNull(Cache::read('App.nullTest', 'tests'));
 
         Cache::write('App.zeroTest', 0, 'tests');
         $this->assertSame(Cache::read('App.zeroTest', 'tests'), 0);
@@ -645,9 +645,9 @@ class CacheTest extends TestCase
 
         $read = Cache::readMany(array_keys($data), 'tests');
 
-        $this->assertSame($read['App.falseTest'], false);
-        $this->assertSame($read['App.trueTest'], true);
-        $this->assertSame($read['App.nullTest'], null);
+        $this->assertFalse($read['App.falseTest']);
+        $this->assertTrue($read['App.trueTest']);
+        $this->assertNull($read['App.nullTest']);
         $this->assertSame($read['App.zeroTest'], 0);
         $this->assertSame($read['App.zeroTest2'], '0');
     }
@@ -672,11 +672,11 @@ class CacheTest extends TestCase
         Cache::deleteMany(array_keys($data), 'tests');
         $read = Cache::readMany(array_merge(array_keys($data), ['App.keepTest']), 'tests');
 
-        $this->assertSame($read['App.falseTest'], false);
-        $this->assertSame($read['App.trueTest'], false);
-        $this->assertSame($read['App.nullTest'], false);
-        $this->assertSame($read['App.zeroTest'], false);
-        $this->assertSame($read['App.zeroTest2'], false);
+        $this->assertFalse($read['App.falseTest']);
+        $this->assertFalse($read['App.trueTest']);
+        $this->assertFalse($read['App.nullTest']);
+        $this->assertFalse($read['App.zeroTest']);
+        $this->assertFalse($read['App.zeroTest2']);
         $this->assertSame($read['App.keepTest'], 'keepMe');
     }
 

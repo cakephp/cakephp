@@ -450,7 +450,7 @@ class SessionTest extends TestCase
 
         $session->write('SessionTestCase', '0');
         $this->assertEquals('0', $session->read('SessionTestCase'));
-        $this->assertFalse($session->read('SessionTestCase') === 0);
+        $this->assertNotSame($session->read('SessionTestCase'), 0);
 
         $session->write('SessionTestCase', false);
         $this->assertFalse($session->read('SessionTestCase'));

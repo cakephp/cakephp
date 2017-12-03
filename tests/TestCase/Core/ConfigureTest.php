@@ -108,7 +108,7 @@ class ConfigureTest extends TestCase
         $this->assertEquals('something_else', $result);
 
         $result = Configure::read('debug');
-        $this->assertTrue($result >= 0);
+        $this->assertGreaterThanOrEqual(0, $result);
 
         $result = Configure::read();
         $this->assertInternalType('array', $result);
@@ -198,7 +198,7 @@ class ConfigureTest extends TestCase
 
         Configure::delete('SomeName.someKey');
         $result = Configure::read('SomeName.someKey');
-        $this->assertTrue($result === null);
+        $this->assertNull($result);
 
         Configure::write('SomeName', ['someKey' => 'myvalue', 'otherKey' => 'otherValue']);
 
@@ -211,10 +211,10 @@ class ConfigureTest extends TestCase
         Configure::delete('SomeName');
 
         $result = Configure::read('SomeName.someKey');
-        $this->assertTrue($result === null);
+        $this->assertNull($result);
 
         $result = Configure::read('SomeName.otherKey');
-        $this->assertTrue($result === null);
+        $this->assertNull($result);
     }
 
     /**
@@ -482,7 +482,7 @@ class ConfigureTest extends TestCase
         Configure::config('test', $engine);
         $configured = Configure::configured();
 
-        $this->assertTrue(in_array('test', $configured));
+        $this->assertContains('test', $configured);
 
         $this->assertTrue(Configure::configured('test'));
         $this->assertFalse(Configure::configured('fake_garbage'));

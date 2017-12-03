@@ -2438,7 +2438,7 @@ class FormHelperTest extends TestCase
         $this->Form->text('Article.title');
 
         $this->assertEquals(1, $this->Form->fields['Article.id'], 'Hidden input should be secured.');
-        $this->assertTrue(in_array('Article.title', $this->Form->fields), 'Field should be secured.');
+        $this->assertContains('Article.title', $this->Form->fields, 'Field should be secured.');
 
         $this->Form->unlockField('Article.title');
         $this->Form->unlockField('Article.id');
@@ -7347,7 +7347,7 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $result = $this->Form->postButton('Send', '/', ['data' => ['extra' => 'value']]);
-        $this->assertTrue(strpos($result, '<input type="hidden" name="extra" value="value"') !== false);
+        $this->assertNotFalse(strpos($result, '<input type="hidden" name="extra" value="value"'));
     }
 
     /**
