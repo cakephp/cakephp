@@ -945,6 +945,10 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function addPaths(array $paths)
     {
+        deprecationWarning(
+            'ServerRequest::addPaths() is deprecated. ' .
+            'Use `withAttribute($key, $value)` instead.'
+        );
         foreach (['webroot', 'here', 'base'] as $element) {
             if (isset($paths[$element])) {
                 $this->{$element} = $paths[$element];

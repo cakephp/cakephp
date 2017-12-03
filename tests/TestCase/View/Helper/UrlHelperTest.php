@@ -212,11 +212,10 @@ class UrlHelperTest extends TestCase
      */
     public function testAssetUrlNoRewrite()
     {
-        $this->Helper->request->addPaths([
-            'base' => '/cake_dev/index.php',
-            'webroot' => '/cake_dev/app/webroot/',
-            'here' => '/cake_dev/index.php/tasks',
-        ]);
+        $this->Helper->request = $this->Helper->request
+            ->withAttribute('base', '/cake_dev/index.php')
+            ->withAttribute('webroot', '/cake_dev/app/webroot/')
+            ->withRequestTarget('/cake_dev/index.php/tasks');
         $result = $this->Helper->assetUrl('img/cake.icon.png', ['fullBase' => true]);
         $expected = Configure::read('App.fullBaseUrl') . '/cake_dev/app/webroot/img/cake.icon.png';
         $this->assertEquals($expected, $result);
