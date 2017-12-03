@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Validation;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\ValidationRule;
 use Cake\Validation\ValidationSet;
+use PHPUnit\Framework\Error\Deprecated;
 
 /**
  * ValidationSetTest
@@ -191,20 +192,129 @@ class ValidationSetTest extends TestCase
      */
     public function testRemoveRule()
     {
-        $set = new ValidationSet('title', [
-            '_validatePresent' => true,
-            'notBlank' => ['rule' => 'notBlank'],
-            'numeric' => ['rule' => 'numeric'],
-            'other' => ['rule' => ['other', 1]],
-        ]);
+        $set = (new ValidationSet)
+            ->add('notBlank', ['rule' => 'notBlank'])
+            ->add('numeric', ['rule' => 'numeric'])
+            ->add('other', ['rule' => 'email']);
 
+        $this->assertTrue(isset($set['notBlank']));
         $set->remove('notBlank');
         $this->assertFalse(isset($set['notBlank']));
 
+        $this->assertTrue(isset($set['numeric']));
         $set->remove('numeric');
         $this->assertFalse(isset($set['numeric']));
 
+        $this->assertTrue(isset($set['other']));
         $set->remove('other');
         $this->assertFalse(isset($set['other']));
+    }
+
+    /**
+     * Test requirePresence and isPresenceRequired methods
+     *
+     * @return void
+     */
+    public function testRequirePresence()
+    {
+        $set = new ValidationSet();
+
+        $this->assertFalse($set->isPresenceRequired());
+
+        $set->requirePresence(true);
+        $this->assertTrue($set->isPresenceRequired());
+
+        $set->requirePresence(false);
+        $this->assertFalse($set->isPresenceRequired());
+    }
+
+    /**
+     * Test isPresenceRequired deprecated setter
+     *
+     * @group deprecated
+     * @return void
+     */
+    public function testRequirePresenceDeprecated()
+    {
+        $this->deprecated(function () {
+            $set = new ValidationSet();
+
+            $this->assertFalse($set->isPresenceRequired());
+
+            $set->isPresenceRequired(true);
+            $this->assertTrue($set->isPresenceRequired());
+
+            $set->isPresenceRequired(false);
+            $this->assertFalse($set->isPresenceRequired());
+        });
+    }
+
+    /**
+     * Test isPresenceRequired method deprecation
+     *
+     * @group deprecated
+     * @return void
+     */
+    public function testIsPresenceRequiredDeprecation()
+    {
+        $this->expectException(Deprecated::class);
+        $this->expectExceptionMessage('ValidationSet::isPresenceRequired() is deprecated as a setter. Use ValidationSet::requirePresence() instead.');
+
+        $set = new ValidationSet();
+        $set->isPresenceRequired(true);
+    }
+
+    /**
+     * Test allowEmpty and isEmptyAllowed methods
+     *
+     * @return void
+     */
+    public function testAllowEmpty()
+    {
+        $set = new ValidationSet();
+
+        $this->assertFalse($set->isEmptyAllowed());
+
+        $set->allowEmpty(true);
+        $this->assertTrue($set->isEmptyAllowed());
+
+        $set->allowEmpty(false);
+        $this->assertFalse($set->isEmptyAllowed());
+    }
+
+    /**
+     * Test isEmptyAllowed deprecated setter
+     *
+     * @group deprecated
+     * @return void
+     */
+    public function testAllowEmptyDeprecated()
+    {
+        $this->deprecated(function () {
+            $set = new ValidationSet();
+
+            $this->assertFalse($set->isEmptyAllowed());
+
+            $set->isEmptyAllowed(true);
+            $this->assertTrue($set->isEmptyAllowed());
+
+            $set->isEmptyAllowed(false);
+            $this->assertFalse($set->isEmptyAllowed());
+        });
+    }
+
+    /**
+     * Test isEmptyAllowed method deprecation
+     *
+     * @group deprecated
+     * @return void
+     */
+    public function testIsEmptyAllowedDeprecation()
+    {
+        $this->expectException(Deprecated::class);
+        $this->expectExceptionMessage('ValidationSet::isEmptyAllowed() is deprecated as a setter. Use ValidationSet::allowEmpty() instead.');
+
+        $set = new ValidationSet();
+        $set->isEmptyAllowed(true);
     }
 }
