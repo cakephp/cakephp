@@ -63,6 +63,20 @@ class FormTest extends TestCase
     }
 
     /**
+     * Test setValidator()
+     *
+     * @return void
+     */
+    public function testSetValidator()
+    {
+        $form = new Form();
+
+        $validator = $this->getMockBuilder('Cake\Validation\Validator')->getMock();
+        $form->setValidator($validator);
+        $this->assertSame($validator, $form->getValidator());
+    }
+
+    /**
      * Test validate method.
      *
      * @return void
