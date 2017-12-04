@@ -165,8 +165,7 @@ class ExceptionRendererTest extends TestCase
         Configure::write('Config.language', 'eng');
         Router::reload();
 
-        $request = new ServerRequest();
-        $request->base = '';
+        $request = new ServerRequest(['base' => '']);
         Router::setRequestInfo($request);
         Configure::write('debug', true);
     }

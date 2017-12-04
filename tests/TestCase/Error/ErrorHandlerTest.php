@@ -86,11 +86,11 @@ class ErrorHandlerTest extends TestCase
         Router::reload();
 
         $request = new ServerRequest([
+            'base' => '',
             'environment' => [
                 'HTTP_REFERER' => '/referer'
             ]
         ]);
-        $request->base = '';
 
         Router::setRequestInfo($request);
         Configure::write('debug', true);
