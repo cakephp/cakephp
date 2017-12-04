@@ -828,7 +828,7 @@ class Response implements ResponseInterface
         }
 
         // Compatibility with closure/streaming responses
-        if (is_callable($content)) {
+        if (!is_string($content) && is_callable($content)) {
             $this->stream = new CallbackStream($content);
         } else {
             $this->_createStream();
