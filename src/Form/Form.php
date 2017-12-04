@@ -58,6 +58,13 @@ class Form
     protected $_validator;
 
     /**
+     * Validator class.
+     *
+     * @var string
+     */
+    protected $_validatorClass = '\Cake\Validation\Validator';
+
+    /**
      * Get/Set the schema for this form.
      *
      * This method will call `_buildSchema()` when the schema
@@ -107,7 +114,7 @@ class Form
     public function validator(Validator $validator = null)
     {
         if ($validator === null && empty($this->_validator)) {
-            $validator = $this->_buildValidator(new Validator());
+            $validator = $this->_buildValidator(new $this->_validatorClass);
         }
         if ($validator) {
             $this->_validator = $validator;
