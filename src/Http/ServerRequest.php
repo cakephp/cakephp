@@ -2026,6 +2026,8 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * Returns an updated request object. This method returns
      * a *new* request object and does not mutate the request in-place.
      *
+     * Use `withParsedBody()` if you need to replace the all request data.
+     *
      * @param string $name The dot separated path to insert $value at.
      * @param mixed $value The value to insert into the request data.
      * @return static
