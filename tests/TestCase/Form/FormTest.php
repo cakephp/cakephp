@@ -45,7 +45,7 @@ class FormTest extends TestCase
      * Test validator()
      *
      * @return void
-     * @deprecated
+     * @group deprecated
      */
     public function testValidator()
     {
