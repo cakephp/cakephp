@@ -441,10 +441,7 @@ class AuthComponent extends Component
      */
     protected function _isLoginAction(Controller $controller)
     {
-        $url = '';
-        if (isset($controller->request->url)) {
-            $url = $controller->request->url;
-        }
+        $url = $controller->request->getRequestTarget();
         $url = Router::normalize($url);
         $loginAction = Router::normalize($this->_config['loginAction']);
 
