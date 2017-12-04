@@ -146,11 +146,15 @@ class BasicAuthenticateTest extends TestCase
         $User = TableRegistry::get('Users');
         $User->updateAll(['username' => '0'], ['username' => 'mariano']);
 
-        $request = new ServerRequest('posts/index');
-        $request->data = ['User' => [
-            'user' => '0',
-            'password' => 'password'
-        ]];
+        $request = new ServerRequest([
+            'url' =>  'posts/index',
+            'data' => [
+                'User' => [
+                    'user' => '0',
+                    'password' => 'password'
+                ]
+            ]
+        ]);
         $_SERVER['PHP_AUTH_USER'] = '0';
         $_SERVER['PHP_AUTH_PW'] = 'password';
 
