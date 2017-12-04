@@ -101,14 +101,15 @@ class SecurityComponent extends Component
     {
         /* @var \Cake\Controller\Controller $controller */
         $controller = $event->getSubject();
-        $this->session = $controller->request->getSession();
-        $this->_action = $controller->request->getParam('action');
-        $hasData = ($controller->request->getData() || $controller->request->is(['put', 'post', 'delete', 'patch']));
+        $request = $controller->request;
+        $this->session = $request->getSession();
+        $this->_action = $request->getParam('action');
+        $hasData = ($request->getData() || $request->is(['put', 'post', 'delete', 'patch']));
         try {
             $this->_secureRequired($controller);
             $this->_authRequired($controller);
 
-            $isNotRequestAction = !$controller->request->getParam('requested');
+            $isNotRequestAction = !$request->getParam('requested');
 
             if ($this->_action === $this->_config['blackHoleCallback']) {
                 throw new AuthSecurityException(sprintf('Action %s is defined as the blackhole callback.', $this->_action));
@@ -117,17 +118,19 @@ class SecurityComponent extends Component
             if (!in_array($this->_action, (array)$this->_config['unlockedActions']) &&
                 $hasData &&
                 $isNotRequestAction &&
-                $this->_config['validatePost']) {
+                $this->_config['validatePost']
+            ) {
                     $this->_validatePost($controller);
             }
         } catch (SecurityException $se) {
             $this->blackHole($controller, $se->getType(), $se);
         }
 
-        $this->generateToken($controller->request);
+        $request = $this->generateToken($request);
         if ($hasData && is_array($controller->request->getData())) {
-            unset($controller->request->data['_Token']);
+            $request = $request->withoutData('_Token');
         }
+        $controller->request = $request;
     }
 
     /**
@@ -556,16 +559,16 @@ class SecurityComponent extends Component
      * request object.
      *
      * @param \Cake\Http\ServerRequest $request The request object to add into.
-     * @return bool
+     * @return \Cake\Http\ServerRequest The modified request.
      */
     public function generateToken(ServerRequest $request)
     {
         if ($request->is('requested')) {
             if ($this->session->check('_Token')) {
-                $request->params['_Token'] = $this->session->read('_Token');
+                $request = $request->withParam('_Token', $this->session->read('_Token'));
             }
 
-            return false;
+            return $request;
         }
         $token = [
             'allowedControllers' => $this->_config['allowedControllers'],
@@ -574,11 +577,10 @@ class SecurityComponent extends Component
         ];
 
         $this->session->write('_Token', $token);
-        $request->params['_Token'] = [
-            'unlockedFields' => $token['unlockedFields']
-        ];
 
-        return true;
+        return $request->withParam('_Token', [
+            'unlockedFields' => $token['unlockedFields']
+        ]);
     }
 
     /**
