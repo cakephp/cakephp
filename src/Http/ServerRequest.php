@@ -43,7 +43,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * @var array
      * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use getParam() instead.
      */
-    public $params = [
+    protected $params = [
         'plugin' => null,
         'controller' => null,
         'action' => null,
@@ -59,7 +59,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * @var array
      * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use getData() instead.
      */
-    public $data = [];
+    protected $data = [];
 
     /**
      * Array of query string arguments
@@ -67,7 +67,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * @var array
      * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use getQuery() or getQueryParams() instead.
      */
-    public $query = [];
+    protected $query = [];
 
     /**
      * Array of cookie data.
@@ -75,7 +75,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * @var array
      * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use getCookie() instead.
      */
-    public $cookies = [];
+    protected $cookies = [];
 
     /**
      * Array of environment data.
@@ -88,8 +88,9 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * The URL string used for the request.
      *
      * @var string
+     * @deprecated 3.6.0 This public property will be removed in 4.0.0. Use getRequestTarget() instead.
      */
-    public $url;
+    protected $url;
 
     /**
      * Base URL path.
@@ -97,7 +98,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * @var string
      * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use getAttribute('base') instead.
      */
-    public $base;
+    protected $base;
 
     /**
      * webroot path segment for the request.
@@ -105,7 +106,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * @var string
      * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use getAttribute('webroot') instead.
      */
-    public $webroot = '/';
+    protected $webroot = '/';
 
     /**
      * The full address to the current request
@@ -113,7 +114,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * @var string
      * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use getUri()->getPath() instead.
      */
-    public $here;
+    protected $here;
 
     /**
      * Whether or not to trust HTTP_X headers set by most load balancers.
@@ -217,6 +218,23 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * @var string|null
      */
     protected $requestTarget;
+
+    /**
+     * List of deprecated properties that have backwards
+     * compatibility offered through magic methods.
+     *
+     * @var array
+     */
+    private $deprecatedProperties = [
+        'data' => ['get' => 'getData()', 'set' => 'withData()'],
+        'query' => ['get' => 'getQuery()', 'set' => 'withQueryParams()'],
+        'params' => ['get' => 'getParam()', 'set' => 'withParam()'],
+        'cookies' => ['get' => 'getCookie()', 'set' => 'withCookieParams()'],
+        'url' => ['get' => 'getRequestTarget()', 'set' => 'withRequestTarget()'],
+        'base' => ['get' => 'getAttribute("base")', 'set' => 'withAttribute("base")'],
+        'webroot' => ['get' => 'getAttribute("webroot")', 'set' => 'withAttribute("webroot")'],
+        'here' => ['get' => 'getRequestTarget()', 'set' => 'withRequestTarget()'],
+    ];
 
     /**
      * Wrapper method to create a new request from PHP superglobals.
@@ -624,6 +642,29 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     }
 
     /**
+     * Magic set method allows backward compatibility for former public properties
+     *
+     *
+     * @param string $name The property being accessed.
+     * @param mixed $value The property value.
+     * @return mixed Either the value of the parameter or null.
+     * @deprecated 3.6.0 Public properties will be removed in 4.0.0.
+     *   Use appropriate setters instead.
+     */
+    public function __set($name, $value)
+    {
+        if (isset($this->deprecatedProperties[$name])) {
+            $method = $this->deprecatedProperties[$name]['set'];
+            deprecationWarning(
+                "Setting {$name} as a property will be removed in 4.0.0. " .
+                "Use {$method} instead."
+            );
+            return $this->{$name} = $value;
+        }
+        throw new BadMethodCallException("Cannot set {$name} it is not a known property.");
+    }
+
+    /**
      * Magic get method allows access to parsed routing parameters directly on the object.
      *
      * Allows access to `$this->params['controller']` via `$this->controller`
@@ -633,8 +674,17 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * @deprecated 3.4.0 Accessing routing parameters through __get will removed in 4.0.0.
      *   Use getParam() instead.
      */
-    public function __get($name)
+    public function &__get($name)
     {
+        if (isset($this->deprecatedProperties[$name])) {
+            $method = $this->deprecatedProperties[$name]['get'];
+            deprecationWarning(
+                "Accessing `{$name}` as a property will be removed in 4.0.0. " .
+                "Use request->{$method} instead."
+            );
+            return $this->{$name};
+        }
+
         deprecationWarning(sprintf(
             'Accessing routing parameters through `%s` will removed in 4.0.0. ' .
             'Use `getParam()` instead.',
@@ -644,8 +694,9 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
         if (isset($this->params[$name])) {
             return $this->params[$name];
         }
+        $value = null;
 
-        return null;
+        return $value;
     }
 
     /**
@@ -659,6 +710,15 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function __isset($name)
     {
+        if (isset($this->deprecatedProperties[$name])) {
+            $method = $this->deprecatedProperties[$name]['get'];
+            deprecationWarning(
+                "Accessing {$name} as a property will be removed in 4.0.0. " .
+                "Use {$method} instead."
+            );
+            return isset($this->{$name});
+        }
+
         deprecationWarning(
             'Accessing routing parameters through __isset will removed in 4.0.0. ' .
             'Use getParam() instead.'
