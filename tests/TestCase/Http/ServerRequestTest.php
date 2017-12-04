@@ -723,6 +723,9 @@ class ServerRequestTest extends TestCase
         $result = $request->referer();
         $this->assertSame('http://cakephp.org', $result);
 
+        $result = $request->referer(true);
+        $this->assertSame('/', $result);
+
         $request->env('HTTP_REFERER', '');
         $result = $request->referer();
         $this->assertSame('/', $result);
@@ -730,6 +733,10 @@ class ServerRequestTest extends TestCase
         $request->env('HTTP_REFERER', Configure::read('App.fullBaseUrl') . '/some/path');
         $result = $request->referer(true);
         $this->assertSame('/some/path', $result);
+
+        $request->env('HTTP_REFERER', Configure::read('App.fullBaseUrl') . '///cakephp.org/');
+        $result = $request->referer(true);
+        $this->assertSame('/', $result); // Avoid returning scheme-relative URLs.
 
         $request->env('HTTP_REFERER', Configure::read('App.fullBaseUrl') . '/0');
         $result = $request->referer(true);

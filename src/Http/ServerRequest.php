@@ -576,7 +576,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
         if (!empty($ref) && !empty($base)) {
             if ($local && strpos($ref, $base) === 0) {
                 $ref = substr($ref, strlen($base));
-                if (!strlen($ref)) {
+                if (!strlen($ref) || strpos($ref, '//') === 0) {
                     $ref = '/';
                 }
                 if ($ref[0] !== '/') {
