@@ -62,7 +62,7 @@ class Form
      *
      * @var string
      */
-    protected $_validatorClass = '\Cake\Validation\Validator';
+    protected $_validatorClass = 'Cake\Validation\Validator';
 
     /**
      * Get/Set the schema for this form.
