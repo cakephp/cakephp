@@ -45,18 +45,21 @@ class FormTest extends TestCase
      * Test validator()
      *
      * @return void
+     * @deprecated
      */
     public function testValidator()
     {
-        $form = new Form();
-        $validator = $form->validator();
+        $this->deprecated(function () {
+            $form = new Form();
+            $validator = $form->validator();
 
-        $this->assertInstanceOf('Cake\Validation\Validator', $validator);
-        $this->assertSame($validator, $form->validator(), 'Same instance each time');
+            $this->assertInstanceOf('Cake\Validation\Validator', $validator);
+            $this->assertSame($validator, $form->validator(), 'Same instance each time');
 
-        $validator = $this->getMockBuilder('Cake\Validation\Validator')->getMock();
-        $this->assertSame($validator, $form->validator($validator));
-        $this->assertSame($validator, $form->validator());
+            $validator = $this->getMockBuilder('Cake\Validation\Validator')->getMock();
+            $this->assertSame($validator, $form->validator($validator));
+            $this->assertSame($validator, $form->validator());
+        });
     }
 
     /**
@@ -67,7 +70,7 @@ class FormTest extends TestCase
     public function testValidate()
     {
         $form = new Form();
-        $form->validator()
+        $form->getValidator()
             ->add('email', 'format', ['rule' => 'email'])
             ->add('body', 'length', ['rule' => ['minLength', 12]]);
 
@@ -94,7 +97,7 @@ class FormTest extends TestCase
     public function testErrors()
     {
         $form = new Form();
-        $form->validator()
+        $form->getValidator()
             ->add('email', 'format', [
                 'message' => 'Must be a valid email',
                 'rule' => 'email'
@@ -141,7 +144,7 @@ class FormTest extends TestCase
         $form = $this->getMockBuilder('Cake\Form\Form')
             ->setMethods(['_execute'])
             ->getMock();
-        $form->validator()
+        $form->getValidator()
             ->add('email', 'format', ['rule' => 'email']);
         $data = [
             'email' => 'rong'
@@ -162,7 +165,7 @@ class FormTest extends TestCase
         $form = $this->getMockBuilder('Cake\Form\Form')
             ->setMethods(['_execute'])
             ->getMock();
-        $form->validator()
+        $form->getValidator()
             ->add('email', 'format', ['rule' => 'email']);
         $data = [
             'email' => 'test@example.com'

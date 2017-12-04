@@ -113,6 +113,11 @@ class Form
      */
     public function validator(Validator $validator = null)
     {
+        deprecationWarning(
+            'Form::validator() is deprecated. ' .
+            'Use Form::getValidator()/setValidator() instead.'
+        );
+
         if ($validator === null && empty($this->_validator)) {
             $validator = $this->_buildValidator(new $this->_validatorClass);
         }
@@ -121,6 +126,37 @@ class Form
         }
 
         return $this->_validator;
+    }
+
+    /**
+     * Get the validator for this form.
+     *
+     * This method will call `_buildValidator()` when the validator
+     * is first built. This hook method lets you configure the
+     * validator or load a pre-defined one.
+     *
+     * @return \Cake\Validation\Validator the validator instance.
+     */
+    public function getValidator()
+    {
+        if (empty($this->_validator)) {
+            $this->_validator = $this->_buildValidator(new $this->_validatorClass);
+        }
+
+        return $this->_validator;
+    }
+
+    /**
+     * Set a custom validator instance.
+     *
+     * @param \Cake\Validation\Validator $validator Validator object to be set.
+     * @return $this
+     */
+    public function setValidator(Validator $validator)
+    {
+        $this->_validator = $validator;
+
+        return $this;
     }
 
     /**
@@ -146,7 +182,7 @@ class Form
      */
     public function validate(array $data)
     {
-        $validator = $this->validator();
+        $validator = $this->getValidator();
         $this->_errors = $validator->errors($data);
 
         return count($this->_errors) === 0;
@@ -231,7 +267,7 @@ class Form
         $special = [
             '_schema' => $this->schema()->__debugInfo(),
             '_errors' => $this->errors(),
-            '_validator' => $this->validator()->__debugInfo()
+            '_validator' => $this->getValidator()->__debugInfo()
         ];
 
         return $special + get_object_vars($this);
