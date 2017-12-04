@@ -69,7 +69,7 @@ class AssetFilter extends DispatcherFilter
         /* @var \Cake\Http\ServerRequest $request */
         $request = $event->getData('request');
 
-        $url = urldecode($request->url);
+        $url = urldecode($request->getUri()->getPath());
         if (strpos($url, '..') !== false || strpos($url, '.') === false) {
             return null;
         }
@@ -101,7 +101,7 @@ class AssetFilter extends DispatcherFilter
      */
     protected function _getAssetFile($url)
     {
-        $parts = explode('/', $url);
+        $parts = explode('/', ltrim($url, '/'));
         $pluginPart = [];
         for ($i = 0; $i < 2; $i++) {
             if (!isset($parts[$i])) {

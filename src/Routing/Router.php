@@ -620,8 +620,8 @@ class Router
         // In 4.x this should be replaced with state injected via setRequestContext
         $request = static::getRequest(true);
         if ($request) {
-            $params = $request->params;
-            $here = $request->here;
+            $params = $request->getAttribute('params');
+            $here = $request->getRequestTarget();
             $base = $request->getAttribute('base');
         } else {
             $base = Configure::read('App.base');
@@ -750,8 +750,8 @@ class Router
     {
         $url = [];
         if ($params instanceof ServerRequest) {
-            $url = $params->query;
-            $params = $params->params;
+            $url = $params->getQueryParams();
+            $params = $params->getAttribute('params');
         } elseif (isset($params['url'])) {
             $url = $params['url'];
         }
@@ -820,8 +820,11 @@ class Router
         }
         $request = static::getRequest();
 
-        if (!empty($request->base) && stristr($url, $request->base)) {
-            $url = preg_replace('/^' . preg_quote($request->base, '/') . '/', '', $url, 1);
+        if ($request) {
+            $base = $request->getAttribute('base');
+            if (strlen($base) && stristr($url, $base)) {
+                $url = preg_replace('/^' . preg_quote($base, '/') . '/', '', $url, 1);
+            }
         }
         $url = '/' . $url;
 

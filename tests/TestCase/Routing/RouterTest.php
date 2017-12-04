@@ -512,16 +512,14 @@ class RouterTest extends TestCase
         $result = Router::normalize('/recipe/recipes/add');
         $this->assertEquals('/recipe/recipes/add', $result);
 
-        $request = new ServerRequest();
-        $request->base = '/us';
+        $request = new ServerRequest(['base' => '/us']);
         Router::setRequestInfo($request);
         $result = Router::normalize('/us/users/logout/');
         $this->assertEquals('/users/logout', $result);
 
         Router::reload();
 
-        $request = new ServerRequest();
-        $request->base = '/cake_12';
+        $request = new ServerRequest(['base' => '/cake_12']);
         Router::setRequestInfo($request);
         $result = Router::normalize('/cake_12/users/logout/');
         $this->assertEquals('/users/logout', $result);
@@ -531,15 +529,13 @@ class RouterTest extends TestCase
         Configure::write('App.fullBaseUrl', '/');
 
         $request = new ServerRequest();
-        $request->base = '/';
         Router::setRequestInfo($request);
         $result = Router::normalize('users/login');
         $this->assertEquals('/users/login', $result);
         Configure::write('App.fullBaseUrl', $_back);
 
         Router::reload();
-        $request = new ServerRequest();
-        $request->base = 'beer';
+        $request = new ServerRequest(['base' => 'beer']);
         Router::setRequestInfo($request);
         $result = Router::normalize('beer/admin/beers_tags/add');
         $this->assertEquals('/admin/beers_tags/add', $result);
@@ -562,7 +558,7 @@ class RouterTest extends TestCase
                 'plugin' => null,
                 'controller' => 'subscribe',
             ],
-            'here' => '/magazine/',
+            'url' => '/magazine/',
             'base' => '/magazine',
             'webroot' => '/magazine/'
         ]);
