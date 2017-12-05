@@ -152,6 +152,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      *
      * @param \Cake\Validation\Validator|null $validator The validator to set, or null.
      * @return \Cake\Validation\Validator the validator instance.
+     * @deprecated 3.6.0 Use Form::getValidator()/setValidator() instead.
      */
     public function validator(Validator $validator = null)
     {
@@ -179,6 +180,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      *
      * @param \Cake\Validation\Validator $validator The validator to customize.
      * @return \Cake\Validation\Validator The validator to use.
+     * @deprecated 3.6.0 Use Form::getValidator()/setValidator() and buildValidator() instead.
      */
     protected function _buildValidator(Validator $validator)
     {
