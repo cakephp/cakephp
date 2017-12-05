@@ -85,7 +85,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      * Resolve a behavior classname.
      *
      * @param string $class Partial classname to resolve.
-     * @return string|false Either the correct classname or false.
+     * @return string|null Either the correct classname or null.
      * @since 3.5.7
      */
     public static function className($class)
@@ -95,7 +95,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
             $result = App::className($class, 'ORM/Behavior', 'Behavior');
         }
 
-        return $result;
+        return $result ?: null;
     }
 
     /**
@@ -108,7 +108,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      */
     protected function _resolveClassName($class)
     {
-        return static::className($class);
+        return static::className($class) ?: false;
     }
 
     /**

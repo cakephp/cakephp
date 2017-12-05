@@ -67,6 +67,8 @@ class BehaviorRegistryTest extends TestCase
         $expected = 'TestPlugin\Model\Behavior\PersisterOneBehavior';
         $result = BehaviorRegistry::className('TestPlugin.PersisterOne');
         $this->assertSame($expected, $result);
+
+        $this->assertNull(BehaviorRegistry::className('NonExistent'));
     }
 
     /**
