@@ -77,8 +77,8 @@ class PoFileParserTest extends TestCase
             'p:%d = 0 or > 1' => [
                 '_context' => [
                     'Another Context' => [
-                        (int)0 => '%d = 1 (translated)',
-                        (int)1 => '%d = 0 or > 1 (translated)'
+                        0 => '%d = 1 (translated)',
+                        1 => '%d = 0 or > 1 (translated)'
                     ]
                 ]
             ],
@@ -90,11 +90,11 @@ class PoFileParserTest extends TestCase
             'p:%-5d = 0 or > 1' => [
                 '_context' => [
                     '' => [
-                        (int)0 => '%-5d = 1 (translated)',
-                        (int)1 => '',
-                        (int)2 => '',
-                        (int)3 => '',
-                        (int)4 => '%-5d = 0 or > 1 (translated)'
+                        0 => '%-5d = 1 (translated)',
+                        1 => '',
+                        2 => '',
+                        3 => '',
+                        4 => '%-5d = 0 or > 1 (translated)'
                     ]
                 ]
             ]
