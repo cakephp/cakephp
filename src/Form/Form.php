@@ -166,9 +166,10 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
         }
         if ($validator) {
             $this->_validator = $validator;
+            $this->setValidator('default', $validator);
         }
 
-        return $this->_validator;
+        return $this->getValidator();
     }
 
     /**
