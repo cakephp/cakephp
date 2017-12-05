@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\Form;
 
 use Cake\Form\Form;
 use Cake\TestSuite\TestCase;
+use Cake\Validation\Validator;
 
 /**
  * Form test case.
@@ -63,6 +64,23 @@ class FormTest extends TestCase
     }
 
     /**
+     * Test getValidator()
+     *
+     * @return void
+     */
+    public function testGetValidator()
+    {
+        $form = $this->getMockBuilder(Form::class)
+            ->setMethods(['buildValidator'])
+            ->getMock();
+
+        $form->expects($this->once())
+            ->method('buildValidator');
+
+        $this->assertInstanceof(Validator::class, $form->getValidator());
+    }
+
+    /**
      * Test setValidator()
      *
      * @return void
@@ -70,9 +88,9 @@ class FormTest extends TestCase
     public function testSetValidator()
     {
         $form = new Form();
-
         $validator = $this->getMockBuilder('Cake\Validation\Validator')->getMock();
-        $form->setValidator($validator);
+
+        $form->setValidator('default', $validator);
         $this->assertSame($validator, $form->getValidator());
     }
 

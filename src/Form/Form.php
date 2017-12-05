@@ -14,7 +14,14 @@
  */
 namespace Cake\Form;
 
+use Cake\Event\Event;
+use Cake\Event\EventDispatcherInterface;
+use Cake\Event\EventDispatcherTrait;
+use Cake\Event\EventListenerInterface;
+use Cake\Event\EventManager;
 use Cake\Validation\Validator;
+use Cake\Validation\ValidatorAwareInterface;
+use Cake\Validation\ValidatorAwareTrait;
 
 /**
  * Form abstraction used to create forms not tied to ORM backed models,
@@ -33,8 +40,25 @@ use Cake\Validation\Validator;
  *
  * Forms are conventionally placed in the `App\Form` namespace.
  */
-class Form
+class Form implements EventListenerInterface, EventDispatcherInterface, ValidatorAwareInterface
 {
+
+    use EventDispatcherTrait;
+    use ValidatorAwareTrait;
+
+    /**
+     * The alias this object is assigned to validators as.
+     *
+     * @var string
+     */
+    const VALIDATOR_PROVIDER_NAME = 'form';
+
+    /**
+     * The name of the event dispatched when a validator has been built.
+     *
+     * @var string
+     */
+    const BUILD_VALIDATOR_EVENT = 'Form.buildValidator';
 
     /**
      * The schema used by this form.
@@ -58,11 +82,29 @@ class Form
     protected $_validator;
 
     /**
-     * Validator class.
-     *
-     * @var string
+     * Constructor
      */
-    protected $_validatorClass = 'Cake\Validation\Validator';
+    public function __construct()
+    {
+        $this->_eventManager = new EventManager();
+        $this->_eventManager->on($this);
+    }
+
+    /**
+     * Get the Form callbacks this form is interested in.
+     *
+     * The conventional method map is:
+     *
+     * - Form.buildValidator => buildValidator
+     *
+     * @return array
+     */
+    public function implementedEvents()
+    {
+        return [
+            'Form.buildValidator' => 'buildValidator',
+        ];
+    }
 
     /**
      * Get/Set the schema for this form.
@@ -129,37 +171,6 @@ class Form
     }
 
     /**
-     * Get the validator for this form.
-     *
-     * This method will call `_buildValidator()` when the validator
-     * is first built. This hook method lets you configure the
-     * validator or load a pre-defined one.
-     *
-     * @return \Cake\Validation\Validator the validator instance.
-     */
-    public function getValidator()
-    {
-        if (empty($this->_validator)) {
-            $this->_validator = $this->_buildValidator(new $this->_validatorClass);
-        }
-
-        return $this->_validator;
-    }
-
-    /**
-     * Set a custom validator instance.
-     *
-     * @param \Cake\Validation\Validator $validator Validator object to be set.
-     * @return $this
-     */
-    public function setValidator(Validator $validator)
-    {
-        $this->_validator = $validator;
-
-        return $this;
-    }
-
-    /**
      * A hook method intended to be implemented by subclasses.
      *
      * You can use this method to define the validator using
@@ -172,6 +183,18 @@ class Form
     protected function _buildValidator(Validator $validator)
     {
         return $validator;
+    }
+
+    /**
+     * Callback method for Form.buildValidator event.
+     *
+     * @param \Cake\Event\Event $event The Form.buildValidator event instance.
+     * @param \Cake\Validation\Validator $validator The validator to customize.
+     * @param string $name Validator name
+     * @return void
+     */
+    public function buildValidator(Event $event, Validator $validator, $name)
+    {
     }
 
     /**
