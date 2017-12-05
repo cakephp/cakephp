@@ -65,8 +65,8 @@ class PoFileParserTest extends TestCase
         $expected = [
             'Plural Rule 1' => [
                 '_context' => [
-                    '' => 'Plural Rule 1 (translated)',
-                ],
+                    '' => 'Plural Rule 1 (translated)'
+                ]
             ],
             '%d = 1' => [
                 '_context' => [
@@ -74,30 +74,30 @@ class PoFileParserTest extends TestCase
                     'Another Context' => '%d = 1 (translated)'
                 ]
             ],
-            '%d = 0 or > 1' => [
+            'p:%d = 0 or > 1' => [
                 '_context' => [
                     'Another Context' => [
-                        0 => '%d = 1 (translated)',
-                        1 => '%d = 0 or > 1 (translated)'
+                        (int)0 => '%d = 1 (translated)',
+                        (int)1 => '%d = 0 or > 1 (translated)'
                     ]
                 ]
             ],
             '%-5d = 1' => [
                 '_context' => [
-                    '' => '%-5d = 1 (translated)',
-                ],
+                    '' => '%-5d = 1 (translated)'
+                ]
             ],
-            '%-5d = 0 or > 1' => [
+            'p:%-5d = 0 or > 1' => [
                 '_context' => [
                     '' => [
-                        0 => '%-5d = 1 (translated)',
-                        1 => '',
-                        2 => '',
-                        3 => '',
-                        4 => '%-5d = 0 or > 1 (translated)'
-                    ],
-                ],
-            ],
+                        (int)0 => '%-5d = 1 (translated)',
+                        (int)1 => '',
+                        (int)2 => '',
+                        (int)3 => '',
+                        (int)4 => '%-5d = 0 or > 1 (translated)'
+                    ]
+                ]
+            ]
         ];
         $this->assertEquals($expected, $messages);
     }
