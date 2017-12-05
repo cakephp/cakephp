@@ -188,4 +188,29 @@ class PoFileParserTest extends TestCase
         $this->assertSame('Titel mit anderem Kontext', __x('another_context', 'title'));
         $this->assertSame('Titel ohne Kontext', __('title'));
     }
+
+    /**
+     * Test parsing plurals
+     *
+     * @return void
+     */
+    public function testPlurals()
+    {
+        $parser = new PoFileParser();
+        $file = APP . 'Locale' . DS . 'de' . DS . 'wa.po';
+        $messages = $parser->parse($file);
+
+        I18n::translator('default', 'de_DE', function () use ($messages) {
+            $package = new Package('default');
+            $package->setMessages($messages);
+
+            return $package;
+        });
+
+        // Check translated messages
+        I18n::locale('de_DE');
+        $this->assertEquals('Standorte', __d('wa', 'Locations'));
+        I18n::locale('en_EN');
+        $this->assertEquals('Locations', __d('wa', 'Locations'));
+    }
 }
