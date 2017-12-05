@@ -123,7 +123,7 @@ class FormContext implements ContextInterface
      */
     public function isRequired($field)
     {
-        $validator = $this->_form->validator();
+        $validator = $this->_form->getValidator();
         if (!$validator->hasField($field)) {
             return false;
         }
