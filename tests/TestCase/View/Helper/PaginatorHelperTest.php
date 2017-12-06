@@ -124,7 +124,7 @@ class PaginatorHelperTest extends TestCase
     public function testHasPrevious()
     {
         $this->assertFalse($this->Paginator->hasPrev());
-        $this->Paginator->request = $this->Paginator->withParam('paging.Article.prevPage', true);
+        $this->Paginator->request = $this->Paginator->request->withParam('paging.Article.prevPage', true);
         $this->assertTrue($this->Paginator->hasPrev());
     }
 
@@ -136,7 +136,7 @@ class PaginatorHelperTest extends TestCase
     public function testHasNext()
     {
         $this->assertTrue($this->Paginator->hasNext());
-        $this->Paginator->request = $this->Paginator->withParam('paging.Article.nextPage', false);
+        $this->Paginator->request = $this->Paginator->request->withParam('paging.Article.nextPage', false);
         $this->assertFalse($this->Paginator->hasNext());
     }
 
@@ -209,7 +209,7 @@ class PaginatorHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Paginator->request->params['paging']['Article']['sort'] = 'title';
+        $this->Paginator->request = $this->Paginator->request->withParam('paging.Article.sort', 'title');
         $result = $this->Paginator->sort('title', ['asc' => 'ascending', 'desc' => 'descending']);
         $expected = [
             'a' => ['href' => '/accounts/index/param?sort=title&amp;direction=desc', 'class' => 'asc'],
@@ -218,8 +218,9 @@ class PaginatorHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Paginator->request->params['paging']['Article']['sort'] = 'Article.title';
-        $this->Paginator->request->params['paging']['Article']['direction'] = 'desc';
+        $this->Paginator->request = $this->Paginator->request
+            ->withParam('paging.Article.sort', 'Article.title')
+            ->withParam('paging.Article.direction', 'desc');
         $result = $this->Paginator->sort('title');
         $expected = [
             'a' => ['href' => '/accounts/index/param?sort=title&amp;direction=asc', 'class' => 'desc'],
@@ -228,8 +229,9 @@ class PaginatorHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Paginator->request->params['paging']['Article']['sort'] = 'Article.title';
-        $this->Paginator->request->params['paging']['Article']['direction'] = 'asc';
+        $this->Paginator->request = $this->Paginator->request
+            ->withParam('paging.Article.sort', 'Article.title')
+            ->withParam('paging.Article.direction', 'asc');
         $result = $this->Paginator->sort('title');
         $expected = [
             'a' => ['href' => '/accounts/index/param?sort=title&amp;direction=desc', 'class' => 'asc'],
@@ -238,8 +240,9 @@ class PaginatorHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Paginator->request->params['paging']['Article']['sort'] = 'Article.title';
-        $this->Paginator->request->params['paging']['Article']['direction'] = 'desc';
+        $this->Paginator->request = $this->Paginator->request
+            ->withParam('paging.Article.sort', 'Article.title')
+            ->withParam('paging.Article.direction', 'desc');
         $result = $this->Paginator->sort('title', 'Title', ['direction' => 'desc']);
         $expected = [
             'a' => ['href' => '/accounts/index/param?sort=title&amp;direction=asc', 'class' => 'desc'],
@@ -248,8 +251,9 @@ class PaginatorHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Paginator->request->params['paging']['Article']['sort'] = 'Article.title';
-        $this->Paginator->request->params['paging']['Article']['direction'] = 'desc';
+        $this->Paginator->request = $this->Paginator->request
+            ->withParam('paging.Article.sort', 'Article.title')
+            ->withParam('paging.Article.direction', 'desc');
         $result = $this->Paginator->sort('title', 'Title', ['direction' => 'ASC']);
         $expected = [
             'a' => ['href' => '/accounts/index/param?sort=title&amp;direction=asc', 'class' => 'desc'],
@@ -258,8 +262,9 @@ class PaginatorHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Paginator->request->params['paging']['Article']['sort'] = 'Article.title';
-        $this->Paginator->request->params['paging']['Article']['direction'] = 'asc';
+        $this->Paginator->request = $this->Paginator->request
+            ->withParam('paging.Article.sort', 'Article.title')
+            ->withParam('paging.Article.direction', 'asc');
         $result = $this->Paginator->sort('title', 'Title', ['direction' => 'asc']);
         $expected = [
             'a' => ['href' => '/accounts/index/param?sort=title&amp;direction=desc', 'class' => 'asc'],
@@ -268,8 +273,9 @@ class PaginatorHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Paginator->request->params['paging']['Article']['sort'] = 'Article.title';
-        $this->Paginator->request->params['paging']['Article']['direction'] = 'asc';
+        $this->Paginator->request = $this->Paginator->request
+            ->withParam('paging.Article.sort', 'Article.title')
+            ->withParam('paging.Article.direction', 'asc');
 
         $result = $this->Paginator->sort('title', 'Title', ['direction' => 'desc']);
         $expected = [
@@ -322,8 +328,9 @@ class PaginatorHelperTest extends TestCase
         ]);
         Router::setRequestInfo($request);
 
-        $this->Paginator->request->params['paging']['Article']['sort'] = 'full_name';
-        $this->Paginator->request->params['paging']['Article']['direction'] = 'asc';
+        $this->Paginator->request = $this->Paginator->request
+            ->withParam('paging.Article.sort', 'full_name')
+            ->withParam('paging.Article.direction', 'asc');
 
         $result = $this->Paginator->sort('Article.full_name');
         $expected = [
@@ -341,8 +348,9 @@ class PaginatorHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Paginator->request->params['paging']['Article']['sort'] = 'full_name';
-        $this->Paginator->request->params['paging']['Article']['direction'] = 'desc';
+        $this->Paginator->request = $this->Paginator->request
+            ->withParam('paging.Article.sort', 'full_name')
+            ->withParam('paging.Article.direction', 'desc');
         $result = $this->Paginator->sort('Article.full_name');
         $expected = [
             'a' => ['href' => '/accounts/index?sort=Article.full_name&amp;direction=asc', 'class' => 'desc'],
@@ -413,8 +421,9 @@ class PaginatorHelperTest extends TestCase
         ]);
         Router::setRequestInfo($request);
 
-        $this->Paginator->request->params['paging']['Article']['sort'] = 'Article.title';
-        $this->Paginator->request->params['paging']['Article']['direction'] = 'desc';
+        $this->Paginator->request = $this->Paginator->request
+            ->withParam('paging.Article.sort', 'Article.title')
+            ->withParam('paging.Article.direction', 'desc');
         $result = $this->Paginator->sort('Article.title');
         $expected = [
             'a' => ['href' => '/accounts/index?sort=Article.title&amp;direction=asc', 'class' => 'desc'],
@@ -423,8 +432,9 @@ class PaginatorHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Paginator->request->params['paging']['Article']['sort'] = 'Article.title';
-        $this->Paginator->request->params['paging']['Article']['direction'] = 'desc';
+        $this->Paginator->request = $this->Paginator->request
+            ->withParam('paging.Article.sort', 'Article.title')
+            ->withParam('paging.Article.direction', 'desc');
         $result = $this->Paginator->sort('Article.title', 'Title');
         $expected = [
             'a' => ['href' => '/accounts/index?sort=Article.title&amp;direction=asc', 'class' => 'desc'],
@@ -433,8 +443,9 @@ class PaginatorHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Paginator->request->params['paging']['Article']['sort'] = 'Article.title';
-        $this->Paginator->request->params['paging']['Article']['direction'] = 'asc';
+        $this->Paginator->request = $this->Paginator->request
+            ->withParam('paging.Article.sort', 'Article.title')
+            ->withParam('paging.Article.direction', 'asc');
         $result = $this->Paginator->sort('Article.title', 'Title');
         $expected = [
             'a' => ['href' => '/accounts/index?sort=Article.title&amp;direction=desc', 'class' => 'asc'],
@@ -443,8 +454,9 @@ class PaginatorHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Paginator->request->params['paging']['Article']['sort'] = 'Account.title';
-        $this->Paginator->request->params['paging']['Article']['direction'] = 'asc';
+        $this->Paginator->request = $this->Paginator->request
+            ->withParam('paging.Article.sort', 'Account.title')
+            ->withParam('paging.Article.direction', 'asc');
         $result = $this->Paginator->sort('title');
         $expected = [
             'a' => ['href' => '/accounts/index?sort=title&amp;direction=asc'],
@@ -572,15 +584,16 @@ class PaginatorHelperTest extends TestCase
      */
     public function testSortKeyFallbackToParams()
     {
-        $this->Paginator->request->params['paging']['Article']['sort'] = 'Article.body';
+        $this->Paginator->request = $this->Paginator->request->withParam('paging.Article.sort', 'Article.body');
         $result = $this->Paginator->sortKey();
         $this->assertEquals('Article.body', $result);
 
         $result = $this->Paginator->sortKey('Article');
         $this->assertEquals('Article.body', $result);
 
-        $this->Paginator->request->params['paging']['Article']['sort'] = 'Article.body';
-        $this->Paginator->request->params['paging']['Article']['order'] = 'DESC';
+        $this->Paginator->request = $this->Paginator->request
+            ->withParam('paging.Article.sort', 'Article.body')
+            ->withParam('paging.Article.order', 'DESC');
         $result = $this->Paginator->sortKey();
         $this->assertEquals('Article.body', $result);
 
@@ -599,27 +612,31 @@ class PaginatorHelperTest extends TestCase
         $expected = 'asc';
         $this->assertEquals($expected, $result);
 
-        $this->Paginator->request->params['paging']['Article']['sort'] = 'Article.title';
-        $this->Paginator->request->params['paging']['Article']['direction'] = 'desc';
+        $this->Paginator->request = $this->Paginator->request
+            ->withParam('paging.Article.sort', 'Article.title')
+            ->withParam('paging.Article.direction', 'desc');
         $result = $this->Paginator->sortDir();
         $this->assertEquals('desc', $result);
 
-        $this->Paginator->request->params['paging']['Article']['sort'] = 'Article.title';
-        $this->Paginator->request->params['paging']['Article']['direction'] = 'asc';
+        $this->Paginator->request = $this->Paginator->request
+            ->withParam('paging.Article.sort', 'Article.title')
+            ->withParam('paging.Article.direction', 'asc');
         $result = $this->Paginator->sortDir();
         $this->assertEquals('asc', $result);
 
-        $this->Paginator->request->params['paging']['Article']['sort'] = 'title';
-        $this->Paginator->request->params['paging']['Article']['direction'] = 'desc';
+        $this->Paginator->request = $this->Paginator->request
+            ->withParam('paging.Article.sort', 'title')
+            ->withParam('paging.Article.direction', 'desc');
         $result = $this->Paginator->sortDir();
         $this->assertEquals('desc', $result);
 
-        $this->Paginator->request->params['paging']['Article']['sort'] = 'title';
-        $this->Paginator->request->params['paging']['Article']['direction'] = 'asc';
+        $this->Paginator->request = $this->Paginator->request
+            ->withParam('paging.Article.sort', 'title')
+            ->withParam('paging.Article.direction', 'asc');
         $result = $this->Paginator->sortDir();
         $this->assertEquals('asc', $result);
 
-        unset($this->Paginator->request->params['paging']['Article']['direction']);
+        $this->Paginator->request = $this->Paginator->request->withParam('paging.Article.direction', null);
         $result = $this->Paginator->sortDir('Article', ['direction' => 'asc']);
         $this->assertEquals('asc', $result);
 
@@ -638,8 +655,9 @@ class PaginatorHelperTest extends TestCase
      */
     public function testSortDirFallbackToParams()
     {
-        $this->Paginator->request->params['paging']['Article']['sort'] = 'Article.body';
-        $this->Paginator->request->params['paging']['Article']['direction'] = 'asc';
+        $this->Paginator->request = $this->Paginator->request
+            ->withParam('paging.Article.sort', 'Article.body')
+            ->withParam('paging.Article.direction', 'asc');
 
         $result = $this->Paginator->sortDir();
         $this->assertEquals('asc', $result);
@@ -647,8 +665,9 @@ class PaginatorHelperTest extends TestCase
         $result = $this->Paginator->sortDir('Article');
         $this->assertEquals('asc', $result);
 
-        $this->Paginator->request->params['paging']['Article']['sort'] = 'Article.body';
-        $this->Paginator->request->params['paging']['Article']['direction'] = 'DESC';
+        $this->Paginator->request = $this->Paginator->request
+            ->withParam('paging.Article.sort', 'Article.body')
+            ->withParam('paging.Article.direction', 'DESC');
 
         $result = $this->Paginator->sortDir();
         $this->assertEquals('desc', $result);
@@ -678,7 +697,7 @@ class PaginatorHelperTest extends TestCase
         ]);
         Router::setRequestInfo($request);
 
-        $this->Paginator->request->params['paging']['Article']['page'] = 1;
+        $this->Paginator->request = $this->Paginator->request->withParam('paging.Article.page', 1);
         $result = $this->Paginator->next('Next');
         $expected = [
             'li' => ['class' => 'next'],
@@ -725,14 +744,14 @@ class PaginatorHelperTest extends TestCase
         ]);
         Router::setRequestInfo($request);
 
-        $this->Paginator->request->params['paging'] = [
+        $this->Paginator->request = $this->Paginator->request->withParam('paging', [
             'Article' => [
                 'page' => 1, 'current' => 3, 'count' => 13,
                 'prevPage' => false, 'nextPage' => true, 'pageCount' => 8,
                 'sortDefault' => 'Article.title', 'directionDefault' => 'ASC',
                 'sort' => null
             ]
-        ];
+        ]);
         $result = $this->Paginator->next('Next');
         $expected = [
             'li' => ['class' => 'next'],
@@ -762,7 +781,7 @@ class PaginatorHelperTest extends TestCase
         $result = $this->Paginator->generateUrl();
         $this->assertEquals('/index', $result);
 
-        $this->Paginator->request->params['paging']['Article']['page'] = 2;
+        $this->Paginator->request = $this->Paginator->request->withParam('paging.Article.page', 2);
         $result = $this->Paginator->generateUrl();
         $this->assertEquals('/index?page=2', $result);
 
@@ -770,23 +789,23 @@ class PaginatorHelperTest extends TestCase
         $result = $this->Paginator->generateUrl($options);
         $this->assertEquals('/index?page=2&amp;sort=Article&amp;direction=desc', $result);
 
-        $this->Paginator->request->params['paging']['Article']['page'] = 3;
+        $this->Paginator->request = $this->Paginator->request->withParam('paging.Article.page', 3);
         $options = ['sort' => 'Article.name', 'direction' => 'desc'];
         $result = $this->Paginator->generateUrl($options);
         $this->assertEquals('/index?page=3&amp;sort=Article.name&amp;direction=desc', $result);
 
-        $this->Paginator->request->params['paging']['Article']['page'] = 3;
+        $this->Paginator->request = $this->Paginator->request->withParam('paging.Article.page', 3);
         $options = ['sort' => 'Article.name', 'direction' => 'desc'];
         $result = $this->Paginator->generateUrl($options, null, ['escape' => false]);
         $this->assertEquals('/index?page=3&sort=Article.name&direction=desc', $result);
 
-        $this->Paginator->request->params['paging']['Article']['page'] = 3;
+        $this->Paginator->request = $this->Paginator->request->withParam('paging.Article.page', 3);
         $options = ['sort' => 'Article.name', 'direction' => 'desc'];
         $result = $this->Paginator->generateUrl($options, null, ['fullBase' => true]);
         $this->assertEquals('http://localhost/index?page=3&amp;sort=Article.name&amp;direction=desc', $result);
 
         // @deprecated 3.3.5 Use fullBase array option instead.
-        $this->Paginator->request->params['paging']['Article']['page'] = 3;
+        $this->Paginator->request = $this->Paginator->request->withParam('paging.Article.page', 3);
         $options = ['sort' => 'Article.name', 'direction' => 'desc'];
         $result = $this->Paginator->generateUrl($options, null, true);
         $this->assertEquals('http://localhost/index?page=3&amp;sort=Article.name&amp;direction=desc', $result);
@@ -814,8 +833,9 @@ class PaginatorHelperTest extends TestCase
         ]);
         Router::setRequestInfo($request);
 
-        $this->Paginator->request->params['paging']['Article']['page'] = 2;
-        $this->Paginator->request->params['paging']['Article']['prevPage'] = true;
+        $this->Paginator->request = $this->Paginator->request
+            ->withParam('paging.Article.page', 2)
+            ->withParam('paging.Article.prevPage', true);
         $options = ['prefix' => 'members'];
 
         $result = $this->Paginator->generateUrl($options);
@@ -878,9 +898,10 @@ class PaginatorHelperTest extends TestCase
         ]);
         Router::setRequestInfo($request);
 
-        $this->Paginator->request->params['paging']['Article']['scope'] = 'article';
-        $this->Paginator->request->params['paging']['Article']['page'] = 3;
-        $this->Paginator->request->params['paging']['Article']['prevPage'] = true;
+        $this->Paginator->request = $this->Paginator->request
+            ->withParam('paging.Article.scope', 'article')
+            ->withParam('paging.Article.page', 3)
+            ->withParam('paging.Article.prevPage', true);
         $this->Paginator->options(['model' => 'Article']);
 
         $result = $this->Paginator->generateUrl([]);
@@ -935,14 +956,15 @@ class PaginatorHelperTest extends TestCase
         ]);
         Router::setRequestInfo($request);
 
-        $this->View->request->params['paging']['Article']['scope'] = 'article';
-        $this->View->request->params['paging']['Article']['page'] = 3;
-        $this->View->request->params['paging']['Article']['prevPage'] = true;
-        $this->View->request->query = [
-            'article' => [
-                'puppy' => 'no'
-            ]
-        ];
+        $this->View->request = $this->Paginator->request
+            ->withParam('paging.Article.scope', 'article')
+            ->withParam('paging.Article.page', 3)
+            ->withParam('paging.Article.prevPage', true)
+            ->withQueryParams([
+                'article' => [
+                    'puppy' => 'no'
+                ]
+            ]);
         // Need to run __construct to update _config['url']
         $paginator = new PaginatorHelper($this->View);
         $paginator->options(['model' => 'Article']);
@@ -964,7 +986,7 @@ class PaginatorHelperTest extends TestCase
     public function testOptions()
     {
         $this->Paginator->options = [];
-        $this->Paginator->request->params = [];
+        $this->Paginator->request = $this->Paginator->request->withAttribute('params', []);
 
         $options = ['paging' => ['Article' => [
             'direction' => 'desc',
@@ -976,17 +998,17 @@ class PaginatorHelperTest extends TestCase
             'direction' => 'desc',
             'sort' => 'title'
         ]];
-        $this->assertEquals($expected, $this->Paginator->request->params['paging']);
+        $this->assertEquals($expected, $this->Paginator->request->getParam('paging'));
 
         $this->Paginator->options = [];
-        $this->Paginator->request->params = [];
+        $this->Paginator->request = $this->Paginator->request->withAttribute('params', []);
 
         $options = ['Article' => [
             'direction' => 'desc',
             'sort' => 'title'
         ]];
         $this->Paginator->options($options);
-        $this->assertEquals($expected, $this->Paginator->request->params['paging']);
+        $this->assertEquals($expected, $this->Paginator->request->getParam('paging'));
 
         $options = ['paging' => ['Article' => [
             'direction' => 'desc',
@@ -998,7 +1020,7 @@ class PaginatorHelperTest extends TestCase
             'direction' => 'desc',
             'sort' => 'Article.title'
         ]];
-        $this->assertEquals($expected, $this->Paginator->request->params['paging']);
+        $this->assertEquals($expected, $this->Paginator->request->getParam('paging'));
     }
 
     /**
@@ -1016,16 +1038,17 @@ class PaginatorHelperTest extends TestCase
         ]);
         Router::setRequestInfo($request);
 
-        $this->Paginator->request->params['paging'] = [
+        $this->Paginator->request = $this->Paginator->request->withParam('paging', [
             'Article' => [
                 'page' => 1, 'current' => 3, 'count' => 13,
                 'prevPage' => false, 'nextPage' => true, 'pageCount' => 8,
                 'sort' => null, 'direction' => null,
             ]
-        ];
+        ]);
 
-        $this->Paginator->request->params['pass'] = [2];
-        $this->Paginator->request->query = ['page' => 1, 'foo' => 'bar', 'x' => 'y', 'num' => 0];
+        $this->Paginator->request = $this->Paginator->request
+            ->withParam('pass', [2])
+            ->withQueryParams(['page' => 1, 'foo' => 'bar', 'x' => 'y', 'num' => 0]);
         $this->View->request = $this->Paginator->request;
         $this->Paginator = new PaginatorHelper($this->View);
 
@@ -1075,14 +1098,14 @@ class PaginatorHelperTest extends TestCase
         ]);
         Router::setRequestInfo($request);
 
-        $this->Paginator->request->params['paging'] = [
+        $this->Paginator->request = $this->Paginator->request->withParam('paging', [
             'Article' => [
                 'page' => 1, 'current' => 3, 'count' => 13,
                 'prevPage' => false, 'nextPage' => true, 'pageCount' => 8,
                 'sort' => 'Article.title', 'direction' => 'ASC',
                 'sortDefault' => 'Article.title', 'directionDefault' => 'ASC'
             ]
-        ];
+        ]);
         $result = $this->Paginator->next('Next');
         $expected = [
             'li' => ['class' => 'next'],
@@ -1101,7 +1124,7 @@ class PaginatorHelperTest extends TestCase
      */
     public function testPrev()
     {
-        $this->Paginator->request->params['paging'] = [
+        $this->Paginator->request = $this->Paginator->request->withParam('paging', [
             'Client' => [
                 'page' => 1,
                 'current' => 3,
@@ -1110,7 +1133,7 @@ class PaginatorHelperTest extends TestCase
                 'nextPage' => true,
                 'pageCount' => 5,
             ]
-        ];
+        ]);
         $result = $this->Paginator->prev('<< Previous');
         $expected = [
             'li' => ['class' => 'prev disabled'],
@@ -1134,8 +1157,9 @@ class PaginatorHelperTest extends TestCase
         $result = $this->Paginator->prev('<< Previous', ['disabledTitle' => false]);
         $this->assertEquals('', $result, 'disabled + no text = no link');
 
-        $this->Paginator->request->params['paging']['Client']['page'] = 2;
-        $this->Paginator->request->params['paging']['Client']['prevPage'] = true;
+        $this->Paginator->request = $this->Paginator->request
+            ->withParam('paging.Client.page', 2)
+            ->withParam('paging.Client.prevPage', true);
         $result = $this->Paginator->prev('<< Previous');
         $expected = [
             'li' => ['class' => 'prev'],
@@ -1166,13 +1190,13 @@ class PaginatorHelperTest extends TestCase
      */
     public function testPrevWithOptions()
     {
-        $this->Paginator->request->params['paging'] = [
+        $this->Paginator->request = $this->Paginator->request->withParam('paging', [
             'Client' => [
                 'page' => 2, 'current' => 1, 'count' => 13, 'prevPage' => true,
                 'nextPage' => false, 'pageCount' => 2,
                 'limit' => 10,
             ]
-        ];
+        ]);
         $this->Paginator->options(['url' => [12, 'page' => 3]]);
         $result = $this->Paginator->prev('Prev', ['url' => ['foo' => 'bar']]);
         $expected = [
@@ -1232,7 +1256,7 @@ class PaginatorHelperTest extends TestCase
      */
     public function testNextDisabled()
     {
-        $this->Paginator->request->params['paging'] = [
+        $this->Paginator->request = $this->Paginator->request->withParam('paging', [
             'Client' => [
                 'page' => 5,
                 'current' => 3,
@@ -1241,7 +1265,7 @@ class PaginatorHelperTest extends TestCase
                 'nextPage' => false,
                 'pageCount' => 5,
             ]
-        ];
+        ]);
         $result = $this->Paginator->next('Next >>');
         $expected = [
             'li' => ['class' => 'next disabled'],
@@ -1273,7 +1297,7 @@ class PaginatorHelperTest extends TestCase
      */
     public function testNextAndPrevNonDefaultModel()
     {
-        $this->Paginator->request->params['paging'] = [
+        $this->Paginator->request = $this->Paginator->request->withParam('paging', [
             'Client' => [
                 'page' => 1,
                 'current' => 3,
@@ -1290,7 +1314,7 @@ class PaginatorHelperTest extends TestCase
                 'nextPage' => false,
                 'pageCount' => 5,
             ]
-        ];
+        ]);
         $result = $this->Paginator->next('Next', [
             'model' => 'Client'
         ]);
@@ -1335,7 +1359,7 @@ class PaginatorHelperTest extends TestCase
      */
     public function testNumbers()
     {
-        $this->Paginator->request->params['paging'] = [
+        $this->Paginator->request = $this->Paginator->request->withParam('paging', [
             'Client' => [
                 'page' => 8,
                 'current' => 3,
@@ -1344,7 +1368,7 @@ class PaginatorHelperTest extends TestCase
                 'nextPage' => 2,
                 'pageCount' => 15,
             ]
-        ];
+        ]);
         $result = $this->Paginator->numbers();
         $expected = [
             ['li' => []], ['a' => ['href' => '/index?page=4']], '4', '/a', '/li',
@@ -1413,7 +1437,7 @@ class PaginatorHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Paginator->request->params['paging'] = [
+        $this->Paginator->request = $this->Paginator->request->withParam('paging', [
             'Client' => [
                 'page' => 1,
                 'current' => 3,
@@ -1422,7 +1446,7 @@ class PaginatorHelperTest extends TestCase
                 'nextPage' => 2,
                 'pageCount' => 15,
             ]
-        ];
+        ]);
         $result = $this->Paginator->numbers();
         $expected = [
             ['li' => ['class' => 'active']], '<a href=""', '1', '/a', '/li',
@@ -1437,7 +1461,7 @@ class PaginatorHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Paginator->request->params['paging'] = [
+        $this->Paginator->request = $this->Paginator->request->withParam('paging', [
             'Client' => [
                 'page' => 14,
                 'current' => 3,
@@ -1446,7 +1470,7 @@ class PaginatorHelperTest extends TestCase
                 'nextPage' => 2,
                 'pageCount' => 15,
             ]
-        ];
+        ]);
         $result = $this->Paginator->numbers();
         $expected = [
             ['li' => []], ['a' => ['href' => '/index?page=7']], '7', '/a', '/li',
@@ -1461,7 +1485,7 @@ class PaginatorHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Paginator->request->params['paging'] = [
+        $this->Paginator->request = $this->Paginator->request->withParam('paging', [
             'Client' => [
                 'page' => 2,
                 'current' => 3,
@@ -1470,7 +1494,7 @@ class PaginatorHelperTest extends TestCase
                 'nextPage' => 2,
                 'pageCount' => 9,
             ]
-        ];
+        ]);
 
         $result = $this->Paginator->numbers(['first' => 1]);
         $expected = [
@@ -1500,7 +1524,7 @@ class PaginatorHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Paginator->request->params['paging'] = [
+        $this->Paginator->request = $this->Paginator->request->withParam('paging', [
             'Client' => [
                 'page' => 15,
                 'current' => 3,
@@ -1509,7 +1533,7 @@ class PaginatorHelperTest extends TestCase
                 'nextPage' => 2,
                 'pageCount' => 15,
             ]
-        ];
+        ]);
 
         $result = $this->Paginator->numbers(['first' => 1]);
         $expected = [
@@ -1527,7 +1551,7 @@ class PaginatorHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Paginator->request->params['paging'] = [
+        $this->Paginator->request = $this->Paginator->request->withParam('paging', [
             'Client' => [
                 'page' => 10,
                 'current' => 3,
@@ -1536,7 +1560,7 @@ class PaginatorHelperTest extends TestCase
                 'nextPage' => 2,
                 'pageCount' => 15,
             ]
-        ];
+        ]);
 
         $result = $this->Paginator->numbers(['first' => 1, 'last' => 1]);
         $expected = [
@@ -1555,7 +1579,7 @@ class PaginatorHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Paginator->request->params['paging'] = [
+        $this->Paginator->request = $this->Paginator->request->withParam('paging', [
             'Client' => [
                 'page' => 6,
                 'current' => 15,
@@ -1564,7 +1588,7 @@ class PaginatorHelperTest extends TestCase
                 'nextPage' => 1,
                 'pageCount' => 42,
             ]
-        ];
+        ]);
 
         $result = $this->Paginator->numbers(['first' => 1, 'last' => 1]);
         $expected = [
@@ -1583,7 +1607,7 @@ class PaginatorHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Paginator->request->params['paging'] = [
+        $this->Paginator->request = $this->Paginator->request->withParam('paging', [
             'Client' => [
                 'page' => 37,
                 'current' => 15,
@@ -1592,7 +1616,7 @@ class PaginatorHelperTest extends TestCase
                 'nextPage' => 1,
                 'pageCount' => 42,
             ]
-        ];
+        ]);
 
         $result = $this->Paginator->numbers(['first' => 1, 'last' => 1]);
         $expected = [
@@ -1814,17 +1838,16 @@ class PaginatorHelperTest extends TestCase
             'ellipsis' => '... ',
         ];
 
-        $this->Paginator->request->params['paging'] = [
+        $this->Paginator->request = $this->Paginator->request->withParam('paging', [
             'Client' => [
                 'page' => 1,
                 'pageCount' => $pageCount,
             ]
-        ];
+        ]);
 
         $result = [];
-
         foreach ($pagesToCheck as $page) {
-            $this->Paginator->request->params['paging']['Client']['page'] = $page;
+            $this->Paginator->request = $this->Paginator->request->withParam('paging.Client.page', $page);
 
             $result[$page] = $this->Paginator->numbers($options);
         }
@@ -1841,7 +1864,7 @@ class PaginatorHelperTest extends TestCase
      */
     public function testNumbersTemplates()
     {
-        $this->Paginator->request->params['paging'] = [
+        $this->Paginator->request = $this->Paginator->request->withParam('paging', [
             'Client' => [
                 'page' => 8,
                 'current' => 3,
@@ -1850,7 +1873,7 @@ class PaginatorHelperTest extends TestCase
                 'nextPage' => 2,
                 'pageCount' => 15,
             ]
-        ];
+        ]);
         $result = $this->Paginator->numbers(['templates' => 'htmlhelper_tags']);
         $expected = [
             ['a' => ['href' => '/index?page=4']], '4', '/a',
@@ -1879,7 +1902,7 @@ class PaginatorHelperTest extends TestCase
      */
     public function testNumbersModulus()
     {
-        $this->Paginator->request->params['paging'] = [
+        $this->Paginator->request = $this->Paginator->request->withParam('paging', [
             'Client' => [
                 'page' => 1,
                 'current' => 10,
@@ -1888,7 +1911,7 @@ class PaginatorHelperTest extends TestCase
                 'nextPage' => 2,
                 'pageCount' => 3,
             ]
-        ];
+        ]);
 
         $result = $this->Paginator->numbers(['modulus' => 10]);
         $expected = [
@@ -1906,7 +1929,7 @@ class PaginatorHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Paginator->request->params['paging'] = [
+        $this->Paginator->request = $this->Paginator->request->withParam('paging', [
             'Client' => [
                 'page' => 4895,
                 'current' => 10,
@@ -1915,7 +1938,7 @@ class PaginatorHelperTest extends TestCase
                 'nextPage' => 1,
                 'pageCount' => 4897,
             ]
-        ];
+        ]);
 
         $result = $this->Paginator->numbers(['first' => 2, 'modulus' => 2, 'last' => 2]);
         $expected = [
@@ -1929,7 +1952,7 @@ class PaginatorHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Paginator->request->params['paging']['Client']['page'] = 3;
+        $this->Paginator->request = $this->Paginator->request->withParam('paging.Client.page', 3);
 
         $result = $this->Paginator->numbers(['first' => 2, 'modulus' => 2, 'last' => 2]);
         $expected = [
@@ -1960,7 +1983,7 @@ class PaginatorHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Paginator->request->params['paging']['Client']['page'] = 4893;
+        $this->Paginator->request = $this->Paginator->request->withParam('paging.Client.page', 4893);
         $result = $this->Paginator->numbers(['first' => 5, 'modulus' => 4, 'last' => 5]);
         $expected = [
             ['li' => []], ['a' => ['href' => '/index']], '1', '/a', '/li',
@@ -1979,7 +2002,7 @@ class PaginatorHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Paginator->request->params['paging']['Client']['page'] = 58;
+        $this->Paginator->request = $this->Paginator->request->withParam('paging.Client.page', 58);
         $result = $this->Paginator->numbers(['first' => 5, 'modulus' => 4, 'last' => 5]);
         $expected = [
             ['li' => []], ['a' => ['href' => '/index']], '1', '/a', '/li',
@@ -2002,7 +2025,7 @@ class PaginatorHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Paginator->request->params['paging']['Client']['page'] = 5;
+        $this->Paginator->request = $this->Paginator->request->withParam('paging.Client.page', 5);
         $result = $this->Paginator->numbers(['first' => 5, 'modulus' => 4, 'last' => 5]);
         $expected = [
             ['li' => []], ['a' => ['href' => '/index']], '1', '/a', '/li',
@@ -2021,7 +2044,7 @@ class PaginatorHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Paginator->request->params['paging']['Client']['page'] = 3;
+        $this->Paginator->request = $this->Paginator->request->withParam('paging.Client.page', 3);
         $result = $this->Paginator->numbers(['first' => 2, 'modulus' => 2, 'last' => 2]);
         $expected = [
             ['li' => []], ['a' => ['href' => '/index']], '1', '/a', '/li',
@@ -2034,7 +2057,7 @@ class PaginatorHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Paginator->request->params['paging']['Client']['page'] = 3;
+        $this->Paginator->request = $this->Paginator->request->withParam('paging.Client.page', 3);
         $result = $this->Paginator->numbers(['first' => 2, 'modulus' => 0, 'last' => 2]);
         $expected = [
             ['li' => []], ['a' => ['href' => '/index']], '1', '/a', '/li',
@@ -2129,7 +2152,7 @@ class PaginatorHelperTest extends TestCase
      */
     public function testModulusDisabled()
     {
-        $this->Paginator->request->params['paging'] = [
+        $this->Paginator->request = $this->Paginator->request->withParam('paging', [
             'Client' => [
                 'page' => 4,
                 'current' => 2,
@@ -2138,7 +2161,7 @@ class PaginatorHelperTest extends TestCase
                 'nextPage' => 1,
                 'pageCount' => 6,
             ]
-        ];
+        ]);
 
         $result = $this->Paginator->numbers(['modulus' => false]);
         $expected = [
@@ -2159,7 +2182,7 @@ class PaginatorHelperTest extends TestCase
      */
     public function testNumbersWithUrlOptions()
     {
-        $this->Paginator->request->params['paging'] = [
+        $this->Paginator->request = $this->Paginator->request->withParam('paging', [
             'Client' => [
                 'page' => 8,
                 'current' => 3,
@@ -2168,7 +2191,7 @@ class PaginatorHelperTest extends TestCase
                 'nextPage' => 2,
                 'pageCount' => 15,
             ]
-        ];
+        ]);
         $result = $this->Paginator->numbers(['url' => ['#' => 'foo']]);
         $expected = [
             ['li' => []], ['a' => ['href' => '/index?page=4#foo']], '4', '/a', '/li',
@@ -2183,7 +2206,7 @@ class PaginatorHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Paginator->request->params['paging'] = [
+        $this->Paginator->request = $this->Paginator->request->withParam('paging', [
             'Client' => [
                 'page' => 3,
                 'current' => 10,
@@ -2192,7 +2215,7 @@ class PaginatorHelperTest extends TestCase
                 'nextPage' => 1,
                 'pageCount' => 4897,
             ]
-        ];
+        ]);
         $result = $this->Paginator->numbers([
             'first' => 2,
             'modulus' => 2,
@@ -2217,7 +2240,7 @@ class PaginatorHelperTest extends TestCase
      */
     public function testNumbersRouting()
     {
-        $this->Paginator->request->params['paging'] = [
+        $this->Paginator->request = $this->Paginator->request->withParam('paging', [
             'Client' => [
                 'page' => 2,
                 'current' => 2,
@@ -2226,7 +2249,7 @@ class PaginatorHelperTest extends TestCase
                 'nextPage' => 3,
                 'pageCount' => 3,
             ]
-        ];
+        ]);
 
         $request = new ServerRequest([
             'params' => ['controller' => 'clients', 'action' => 'index', 'plugin' => null],
@@ -2250,7 +2273,7 @@ class PaginatorHelperTest extends TestCase
      */
     public function testNumbersNonDefaultModel()
     {
-        $this->Paginator->request->params['paging'] = [
+        $this->Paginator->request = $this->Paginator->request->withParam('paging', [
             'Client' => [
                 'page' => 1,
                 'current' => 3,
@@ -2267,7 +2290,7 @@ class PaginatorHelperTest extends TestCase
                 'nextPage' => false,
                 'pageCount' => 5,
             ]
-        ];
+        ]);
         $result = $this->Paginator->numbers(['model' => 'Server']);
         $this->assertContains('<li class="active"><a href="">5</a></li>', $result);
         $this->assertNotContains('<li class="active"><a href="">1</a></li>', $result);
@@ -2284,7 +2307,7 @@ class PaginatorHelperTest extends TestCase
      */
     public function testFirstAndLastTag()
     {
-        $this->Paginator->request->params['paging']['Article']['page'] = 2;
+        $this->Paginator->request = $this->Paginator->request->withParam('paging.Article.page', 2);
         $result = $this->Paginator->first('<<');
         $expected = [
             'li' => ['class' => 'first'],
@@ -2334,8 +2357,9 @@ class PaginatorHelperTest extends TestCase
      */
     public function testLastNoOutput()
     {
-        $this->Paginator->request->params['paging']['Article']['page'] = 15;
-        $this->Paginator->request->params['paging']['Article']['pageCount'] = 15;
+        $this->Paginator->request = $this->Paginator->request
+            ->withParam('paging.Article.page', 15)
+            ->withParam('paging.Article.pageCount', 15);
 
         $result = $this->Paginator->last();
         $expected = '';
@@ -2349,15 +2373,16 @@ class PaginatorHelperTest extends TestCase
      */
     public function testFirstNonDefaultModel()
     {
-        $this->Paginator->request->params['paging']['Article']['page'] = 1;
-        $this->Paginator->request->params['paging']['Client'] = [
-            'page' => 3,
-            'current' => 3,
-            'count' => 13,
-            'prevPage' => false,
-            'nextPage' => true,
-            'pageCount' => 5,
-        ];
+        $this->Paginator->request = $this->Paginator->request
+            ->withParam('paging.Article.page', 1)
+            ->withParam('paging.Client', [
+                'page' => 3,
+                'current' => 3,
+                'count' => 13,
+                'prevPage' => false,
+                'nextPage' => true,
+                'pageCount' => 5,
+            ]);
 
         $result = $this->Paginator->first('first', ['model' => 'Article']);
         $this->assertEquals('', $result);
@@ -2380,7 +2405,7 @@ class PaginatorHelperTest extends TestCase
      */
     public function testFirstEmpty()
     {
-        $this->Paginator->request->params['paging']['Article']['page'] = 1;
+        $this->Paginator->request = $this->Paginator->request->withParam('paging.Article.page', 1);
 
         $result = $this->Paginator->first();
         $expected = '';
@@ -2394,9 +2419,10 @@ class PaginatorHelperTest extends TestCase
      */
     public function testFirstFullBaseUrl()
     {
-        $this->Paginator->request->params['paging']['Article']['page'] = 3;
-        $this->Paginator->request->params['paging']['Article']['direction'] = 'DESC';
-        $this->Paginator->request->params['paging']['Article']['sort'] = 'Article.title';
+        $this->Paginator->request = $this->Paginator->request
+            ->withParam('paging.Article.page', 3)
+            ->withParam('paging.Article.direction', 'DESC')
+            ->withParam('paging.Article.sort', 'Article.title');
 
         $this->Paginator->options(['url' => ['_full' => true]]);
 
@@ -2420,7 +2446,7 @@ class PaginatorHelperTest extends TestCase
      */
     public function testFirstBoundaries()
     {
-        $this->Paginator->request->params['paging']['Article']['page'] = 3;
+        $this->Paginator->request = $this->Paginator->request->withParam('paging.Article.page', 3);
         $result = $this->Paginator->first();
         $expected = [
             'li' => ['class' => 'first'],
@@ -2442,7 +2468,7 @@ class PaginatorHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Paginator->request->params['paging']['Article']['page'] = 2;
+        $this->Paginator->request = $this->Paginator->request->withParam('paging.Article.page', 2);
         $result = $this->Paginator->first(3);
         $this->assertEquals('', $result, 'When inside the first links range, no links should be made');
     }
@@ -2503,7 +2529,7 @@ class PaginatorHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Paginator->request->params['paging']['Article']['page'] = 6;
+        $this->Paginator->request = $this->Paginator->request->withParam('paging.Article.page', 6);
 
         $result = $this->Paginator->last(2);
         $expected = [
@@ -2527,7 +2553,7 @@ class PaginatorHelperTest extends TestCase
      */
     public function testLastOptions()
     {
-        $this->Paginator->request->params['paging'] = [
+        $this->Paginator->request = $this->Paginator->request->withParam('paging', [
             'Client' => [
                 'page' => 4,
                 'current' => 3,
@@ -2538,7 +2564,7 @@ class PaginatorHelperTest extends TestCase
                 'sort' => 'Client.name',
                 'direction' => 'DESC',
             ]
-        ];
+        ]);
 
         $result = $this->Paginator->last();
         $expected = [
@@ -2578,15 +2604,16 @@ class PaginatorHelperTest extends TestCase
      */
     public function testLastNonDefaultModel()
     {
-        $this->Paginator->request->params['paging']['Article']['page'] = 7;
-        $this->Paginator->request->params['paging']['Client'] = [
-            'page' => 3,
-            'current' => 3,
-            'count' => 13,
-            'prevPage' => false,
-            'nextPage' => true,
-            'pageCount' => 5,
-        ];
+        $this->Paginator->request = $this->Paginator->request
+            ->withParam('paging.Article.page', 7)
+            ->withParam('paging.Client', [
+                'page' => 3,
+                'current' => 3,
+                'count' => 13,
+                'prevPage' => false,
+                'nextPage' => true,
+                'pageCount' => 5,
+            ]);
 
         $result = $this->Paginator->last('last', ['model' => 'Article']);
         $this->assertEquals('', $result);
@@ -2650,7 +2677,7 @@ class PaginatorHelperTest extends TestCase
      */
     public function testCounterBigNumbers()
     {
-        $this->Paginator->request = $this->Paginator->withParam('paging', [
+        $this->Paginator->request = $this->Paginator->request->withParam('paging', [
             'Client' => [
                 'page' => 1523,
                 'current' => 1230,
