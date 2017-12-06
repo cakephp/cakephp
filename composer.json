@@ -46,7 +46,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Cake\\": "src"
+            "Cake\\": "src/"
         },
         "files": [
             "src/Core/functions.php",
@@ -57,15 +57,15 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Cake\\PHPStan\\": "tests/PHPStan",
-            "Cake\\Test\\": "tests",
-            "TestApp\\": "tests/test_app/TestApp",
-            "TestPlugin\\": "tests/test_app/Plugin/TestPlugin/src",
-            "TestPlugin\\Test\\": "tests/test_app/Plugin/TestPlugin/tests",
-            "TestPluginTwo\\": "tests/test_app/Plugin/TestPluginTwo/src",
-            "Company\\TestPluginThree\\": "tests/test_app/Plugin/Company/TestPluginThree/src",
-            "Company\\TestPluginThree\\Test\\": "tests/test_app/Plugin/Company/TestPluginThree/tests",
-            "PluginJs\\": "tests/test_app/Plugin/PluginJs/src"
+            "Cake\\PHPStan\\": "tests/PHPStan/",
+            "Cake\\Test\\": "tests/",
+            "TestApp\\": "tests/test_app/TestApp/",
+            "TestPlugin\\": "tests/test_app/Plugin/TestPlugin/src/",
+            "TestPlugin\\Test\\": "tests/test_app/Plugin/TestPlugin/tests/",
+            "TestPluginTwo\\": "tests/test_app/Plugin/TestPluginTwo/src/",
+            "Company\\TestPluginThree\\": "tests/test_app/Plugin/Company/TestPluginThree/src/",
+            "Company\\TestPluginThree\\Test\\": "tests/test_app/Plugin/Company/TestPluginThree/tests/",
+            "PluginJs\\": "tests/test_app/Plugin/PluginJs/src/"
         }
     },
     "replace": {

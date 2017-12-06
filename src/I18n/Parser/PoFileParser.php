@@ -14,6 +14,8 @@
  */
 namespace Cake\I18n\Parser;
 
+use Cake\I18n\Translator;
+
 /**
  * Parses file in PO format
  *
@@ -23,7 +25,6 @@ namespace Cake\I18n\Parser;
  */
 class PoFileParser
 {
-
     /**
      * Parses portable object (PO) format.
      *
@@ -166,9 +167,9 @@ class PoFileParser
             $key = stripcslashes($item['ids']['plural']);
 
             if ($context !== null) {
-                $messages[$key]['_context'][$context] = $plurals;
+                $messages[Translator::PLURAL_PREFIX . $key]['_context'][$context] = $plurals;
             } else {
-                $messages[$key]['_context'][''] = $plurals;
+                $messages[Translator::PLURAL_PREFIX . $key]['_context'][''] = $plurals;
             }
         }
     }
