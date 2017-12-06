@@ -201,7 +201,7 @@ class PoFileParserTest extends TestCase
         $file = APP . 'Locale' . DS . 'de' . DS . 'wa.po';
         $messages = $parser->parse($file);
 
-        I18n::translator('default', 'de_DE', function () use ($messages) {
+        I18n::getTranslator('default', 'de_DE', function () use ($messages) {
             $package = new Package('default');
             $package->setMessages($messages);
 
@@ -209,9 +209,9 @@ class PoFileParserTest extends TestCase
         });
 
         // Check translated messages
-        I18n::locale('de_DE');
+        I18n::setLocale('de_DE');
         $this->assertEquals('Standorte', __d('wa', 'Locations'));
-        I18n::locale('en_EN');
+        I18n::setLocale('en_EN');
         $this->assertEquals('Locations', __d('wa', 'Locations'));
     }
 }

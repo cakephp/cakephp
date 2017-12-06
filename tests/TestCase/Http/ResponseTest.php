@@ -587,18 +587,21 @@ class ResponseTest extends TestCase
     /**
      * Tests that callable strings are not triggered
      *
+     * @group deprecated
      * @return void
      */
     public function testSendWithCallableStringBody()
     {
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods(['_sendHeader'])
-            ->getMock();
-        $response->body('phpversion');
+        $this->deprecated(function () {
+            $response = $this->getMockBuilder('Cake\Http\Response')
+                ->setMethods(['_sendHeader'])
+                ->getMock();
+            $response->body('phpversion');
 
-        ob_start();
-        $response->send();
-        $this->assertEquals('phpversion', ob_get_clean());
+            ob_start();
+            $response->send();
+            $this->assertEquals('phpversion', ob_get_clean());
+        });
     }
 
     /**
