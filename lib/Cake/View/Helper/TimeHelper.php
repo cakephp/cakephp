@@ -477,7 +477,7 @@ class TimeHelper extends AppHelper {
  * @see CakeTime::format()
  * @link https://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
-	public function format($format, $date = null, $invalid = false, $timezone = null) {
+	public function format($date, $format = null, $invalid = false, $timezone = null) {
 		return $this->_engine->format($format, $date, $invalid, $timezone);
 	}
 
