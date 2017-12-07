@@ -295,13 +295,13 @@ class JsonViewTest extends TestCase
         $this->assertSame(json_encode($data), $output);
         $this->assertSame('application/json', $View->response->getType());
 
-        $View->request->query = ['callback' => 'jfunc'];
+        $View->request = $View->request->withQueryParams(['callback' => 'jfunc']);
         $output = $View->render(false);
         $expected = 'jfunc(' . json_encode($data) . ')';
         $this->assertSame($expected, $output);
         $this->assertSame('application/javascript', $View->response->getType());
 
-        $View->request->query = ['jsonCallback' => 'jfunc'];
+        $View->request = $View->request->withQueryParams(['jsonCallback' => 'jfunc']);
         $View->viewVars['_jsonp'] = 'jsonCallback';
         $output = $View->render(false);
         $expected = 'jfunc(' . json_encode($data) . ')';
