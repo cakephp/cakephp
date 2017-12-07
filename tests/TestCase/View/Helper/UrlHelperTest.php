@@ -158,7 +158,7 @@ class UrlHelperTest extends TestCase
         $result = $this->Helper->assetTimestamp(Configure::read('App.cssBaseUrl') . 'cake.generic.css?someparam');
         $this->assertEquals(Configure::read('App.cssBaseUrl') . 'cake.generic.css?someparam', $result);
 
-        $this->Helper->request->webroot = '/some/dir/';
+        $this->Helper->request = $this->Helper->request->withAttribute('webroot', '/some/dir/');
         $result = $this->Helper->assetTimestamp('/some/dir/' . Configure::read('App.cssBaseUrl') . 'cake.generic.css');
         $this->assertRegExp('/' . preg_quote(Configure::read('App.cssBaseUrl') . 'cake.generic.css?', '/') . '[0-9]+/', $result);
     }
@@ -345,7 +345,7 @@ class UrlHelperTest extends TestCase
      */
     public function testWebrootPaths()
     {
-        $this->Helper->request->webroot = '/';
+        $this->Helper->request = $this->Helper->request->withAttribute('webroot', '/');
         $result = $this->Helper->webroot('/img/cake.power.gif');
         $expected = '/img/cake.power.gif';
         $this->assertEquals($expected, $result);
