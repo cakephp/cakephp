@@ -109,7 +109,7 @@ class FormHelper extends Helper
             // Wrapper container for checkboxes.
             'checkboxWrapper' => '<div class="checkbox">{{label}}</div>',
             // Widget ordering for date/time/datetime pickers.
-            'dateWidget' => '{{year}}{{month}}{{day}}{{hour}}{{minute}}{{second}}{{meridian}}',
+            'dateWidget' => '{{year}}{{month}}{{day}}{{hour}}{{minute}}{{second}}{{meridian}}{{timezone}}',
             // Error message wrapper elements.
             'error' => '<div class="error-message">{{content}}</div>',
             // Container for error items.

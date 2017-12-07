@@ -14,6 +14,7 @@
  */
 namespace Cake\Database\Type;
 
+use Cake\Core\Configure;
 use Cake\Database\Driver;
 use Cake\Database\Type;
 use Cake\Database\TypeInterface;
@@ -181,7 +182,7 @@ class DateTimeType extends Type implements TypeInterface
             return $value;
         }
 
-        if (is_array($value) && implode('', $value) === '') {
+        if (is_array($value) && $this->_isEmpty($value)) {
             return null;
         }
         $value += ['hour' => 0, 'minute' => 0, 'second' => 0];
@@ -206,9 +207,17 @@ class DateTimeType extends Type implements TypeInterface
             $value['minute'],
             $value['second']
         );
-        $tz = isset($value['timezone']) ? $value['timezone'] : null;
+        $tz = isset($value['timezone']) ? $value['timezone'] : Configure::read('App.defaultOutputTimezone');
 
-        return new $class($format, $tz);
+        /* @var \Cake\I18n\Time $time */
+        $time = new $class($format, $tz);
+
+        $internalTimezone = date_default_timezone_get();
+        if ($tz && $tz !== $internalTimezone) {
+            $time = $time->timezone($internalTimezone);
+        }
+
+        return $time;
     }
 
     /**
@@ -225,6 +234,19 @@ class DateTimeType extends Type implements TypeInterface
         }
 
         return false;
+    }
+
+    /**
+     * Returns true if the array can be considered an empty date time value.
+     *
+     * @param array $value Date time array.
+     *
+     * @return bool
+     */
+    protected function _isEmpty($value) {
+        unset($value['timezone']);
+
+        return implode('', $value) === '';
     }
 
     /**

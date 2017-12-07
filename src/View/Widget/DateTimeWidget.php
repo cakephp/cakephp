@@ -14,6 +14,7 @@
  */
 namespace Cake\View\Widget;
 
+use Cake\Core\Configure;
 use Cake\View\Form\ContextInterface;
 use Cake\View\StringTemplate;
 use DateTime;
@@ -93,6 +94,7 @@ class DateTimeWidget implements WidgetInterface
      * - `second` - Set to true to enable the seconds input. Defaults to false.
      * - `meridian` - Set to true to enable the meridian input. Defaults to false.
      *   The meridian will be enabled automatically if you choose a 12 hour format.
+     * - `timezone` - A hidden field for timezone handling when working with UTC internally.
      *
      * The `year` option accepts the `start` and `end` options. These let you control
      * the year range that is generated. It defaults to +-5 years from today.
@@ -188,6 +190,7 @@ class DateTimeWidget implements WidgetInterface
             'minute' => [],
             'second' => [],
             'meridian' => null,
+            'timezone' => [],
             'templateVars' => [],
         ];
 
@@ -211,25 +214,30 @@ class DateTimeWidget implements WidgetInterface
      */
     protected function _deconstructDate($value, $options)
     {
+        $timezone = Configure::read('App.defaultOutputTimezone') ?: null;
+
         if ($value === '' || $value === null) {
             return [
                 'year' => '', 'month' => '', 'day' => '',
                 'hour' => '', 'minute' => '', 'second' => '',
                 'meridian' => '',
+                'timezone' => $timezone,
             ];
         }
+
         try {
             if (is_string($value) && !is_numeric($value)) {
-                $date = new DateTime($value);
+                $date = new DateTime($value, $timezone);
             } elseif (is_bool($value)) {
-                $date = new DateTime();
+                $date = new DateTime('now', $timezone);
             } elseif (is_int($value) || is_numeric($value)) {
-                $date = new DateTime('@' . $value);
+                $date = new DateTime('@' . $value, $timezone);
             } elseif (is_array($value)) {
                 $dateArray = [
                     'year' => '', 'month' => '', 'day' => '',
                     'hour' => '', 'minute' => '', 'second' => '',
                     'meridian' => '',
+                    'timezone' => $timezone,
                 ];
                 $validDate = false;
                 foreach ($dateArray as $key => $dateValue) {
@@ -257,13 +265,16 @@ class DateTimeWidget implements WidgetInterface
                     return $dateArray;
                 }
 
-                $date = new DateTime();
+                $date = new DateTime('now', $timezone);
             } else {
                 /* @var \DateTime $value */
                 $date = clone $value;
+                if ($timezone) {
+                    $date = $date->timezone($timezone);
+                }
             }
         } catch (Exception $e) {
-            $date = new DateTime();
+            $date = new DateTime('now', $timezone);
         }
 
         if (isset($options['minute']['interval'])) {
@@ -279,6 +290,7 @@ class DateTimeWidget implements WidgetInterface
             'minute' => $date->format('i'),
             'second' => $date->format('s'),
             'meridian' => $date->format('a'),
+            'timezone' => $timezone,
         ];
     }
 
@@ -522,6 +534,26 @@ class DateTimeWidget implements WidgetInterface
             'name' => '',
             'val' => null,
             'options' => ['am' => 'am', 'pm' => 'pm'],
+            'templateVars' => [],
+        ];
+
+        return $this->_select->render($options, $context);
+    }
+
+    /**
+     * Generates a meridian select
+     *
+     * @param array $options The options to generate a meridian select with.
+     * @param \Cake\View\Form\ContextInterface $context The current form context.
+     * @return string
+     */
+    protected function _timezoneSelect($options, $context)
+    {
+        $options += [
+            'name' => '',
+            'val' => null,
+            'style' => ['display: none'],
+            'options' => [$options['val'] => $options['val']],
             'templateVars' => [],
         ];
 
