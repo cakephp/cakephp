@@ -243,7 +243,8 @@ class DateTimeType extends Type implements TypeInterface
      *
      * @return bool
      */
-    protected function _isEmpty($value) {
+    protected function _isEmpty($value)
+    {
         unset($value['timezone']);
 
         return implode('', $value) === '';
