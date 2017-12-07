@@ -88,7 +88,7 @@ class RequestActionController extends AppController
      */
     public function post_pass()
     {
-        return $this->response->withStringBody(json_encode($this->request->data));
+        return $this->response->withStringBody(json_encode($this->request->getData()));
     }
 
     /**
@@ -98,7 +98,7 @@ class RequestActionController extends AppController
      */
     public function query_pass()
     {
-        return $this->response->withStringBody(json_encode($this->request->query));
+        return $this->response->withStringBody(json_encode($this->request->getQueryParams()));
     }
 
     /**
@@ -108,7 +108,7 @@ class RequestActionController extends AppController
      */
     public function cookie_pass()
     {
-        return $this->response->withStringBody(json_encode($this->request->cookies));
+        return $this->response->withStringBody(json_encode($this->request->getCookieParams()));
     }
 
     /**
