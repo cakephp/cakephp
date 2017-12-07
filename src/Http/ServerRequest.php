@@ -659,6 +659,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
                 "Setting {$name} as a property will be removed in 4.0.0. " .
                 "Use {$method} instead."
             );
+
             return $this->{$name} = $value;
         }
         throw new BadMethodCallException("Cannot set {$name} it is not a known property.");
@@ -682,6 +683,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
                 "Accessing `{$name}` as a property will be removed in 4.0.0. " .
                 "Use request->{$method} instead."
             );
+
             return $this->{$name};
         }
 
@@ -716,6 +718,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
                 "Accessing {$name} as a property will be removed in 4.0.0. " .
                 "Use {$method} instead."
             );
+
             return isset($this->{$name});
         }
 

@@ -147,7 +147,7 @@ class BasicAuthenticateTest extends TestCase
         $User->updateAll(['username' => '0'], ['username' => 'mariano']);
 
         $request = new ServerRequest([
-            'url' =>  'posts/index',
+            'url' => 'posts/index',
             'data' => [
                 'User' => [
                     'user' => '0',

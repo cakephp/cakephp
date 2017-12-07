@@ -1260,7 +1260,7 @@ class ServerRequestTest extends TestCase
         ServerRequest::addDetector('callme', function ($request) {
             return $request->getAttribute('return');
         });
-        $request = $request->withAttribute('return', true);;
+        $request = $request->withAttribute('return', true);
         $request->clearDetectorCache();
         $this->assertTrue($request->isCallMe());
 
