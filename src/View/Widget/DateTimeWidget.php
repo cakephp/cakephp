@@ -524,7 +524,7 @@ class DateTimeWidget implements WidgetInterface
     /**
      * Generates a meridian select
      *
-     * @param array $options The options to generate a meridian select with.
+     * @param array $options The options to generate a meridian select.
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return string
      */
@@ -541,9 +541,9 @@ class DateTimeWidget implements WidgetInterface
     }
 
     /**
-     * Generates a meridian select
+     * Generates a timezone select
      *
-     * @param array $options The options to generate a meridian select with.
+     * @param array $options The options to generate a timezone select.
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return string
      */
