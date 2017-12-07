@@ -267,7 +267,7 @@ class DateTimeWidget implements WidgetInterface
 
                 $date = new DateTime('now', $timezone);
             } else {
-                /* @var \DateTime $value */
+                /* @var \Cake\Chronos\ChronosInterface $value */
                 $date = clone $value;
                 if ($timezone) {
                     $date = $date->timezone($timezone);
