@@ -340,16 +340,11 @@ class ViewTest extends TestCase
      */
     public function testGetTemplate()
     {
-        $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
-        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
-
         $viewOptions = [
             'plugin' => null,
             'name' => 'Pages',
             'viewPath' => 'Pages'
         ];
-        $request->action = 'display';
-        $request->params['pass'] = ['home'];
 
         $ThemeView = new TestView(null, null, null, $viewOptions);
         $ThemeView->theme = 'TestTheme';
@@ -416,16 +411,11 @@ class ViewTest extends TestCase
     public function testPluginGetTemplateAbsoluteFail()
     {
         $this->expectException(\Cake\View\Exception\MissingTemplateException::class);
-        $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
-        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
-
         $viewOptions = [
             'plugin' => null,
             'name' => 'Pages',
             'viewPath' => 'Pages'
         ];
-        $request->action = 'display';
-        $request->params['pass'] = ['home'];
 
         $view = new TestView(null, null, null, $viewOptions);
         $expected = TEST_APP . 'Plugin' . DS . 'Company' . DS . 'TestPluginThree' . DS . 'src' . DS . 'Template' . DS . 'Pages' . DS . 'index.ctp';
