@@ -912,8 +912,8 @@ TEXT;
         $this->assertEquals($spec['epilog'], $parser->getEpilog());
 
         $options = $parser->options();
-        $this->assertTrue(isset($options['name']));
-        $this->assertTrue(isset($options['other']));
+        $this->assertArrayHasKey('name', $options);
+        $this->assertArrayHasKey('other', $options);
 
         $args = $parser->arguments();
         $this->assertCount(2, $args);
@@ -1009,8 +1009,8 @@ TEXT;
         $this->assertEquals($spec['epilog'], $result['epilog']);
 
         $options = $result['options'];
-        $this->assertTrue(isset($options['name']));
-        $this->assertTrue(isset($options['other']));
+        $this->assertArrayHasKey('name', $options);
+        $this->assertArrayHasKey('other', $options);
 
         $this->assertCount(2, $result['arguments']);
         $this->assertCount(1, $result['subcommands']);
@@ -1037,10 +1037,10 @@ TEXT;
         $result = $parser->toArray();
 
         $options = $result['options'];
-        $this->assertTrue(isset($options['quiet']));
-        $this->assertTrue(isset($options['test']));
-        $this->assertTrue(isset($options['file']));
-        $this->assertTrue(isset($options['output']));
+        $this->assertArrayHasKey('quiet', $options);
+        $this->assertArrayHasKey('test', $options);
+        $this->assertArrayHasKey('file', $options);
+        $this->assertArrayHasKey('output', $options);
 
         $this->assertCount(2, $result['arguments']);
         $this->assertCount(6, $result['options']);

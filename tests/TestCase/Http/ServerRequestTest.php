@@ -1181,12 +1181,12 @@ class ServerRequestTest extends TestCase
             $this->assertEquals('speedy-slug', $request->slug);
             $this->assertEquals('speedy-slug', $request['slug']);
 
-            $this->assertTrue(isset($request['action']));
-            $this->assertFalse(isset($request['wrong-param']));
+            $this->assertArrayHasKey('action', $request);
+            $this->assertArrayNotHasKey('wrong-param', $request);
 
-            $this->assertTrue(isset($request['plugin']));
+            $this->assertArrayHasKey('plugin', $request);
             unset($request['plugin']);
-            $this->assertFalse(isset($request['plugin']));
+            $this->assertArrayNotHasKey('plugin', $request);
             $this->assertNull($request['plugin']);
             $this->assertNull($request->plugin);
 

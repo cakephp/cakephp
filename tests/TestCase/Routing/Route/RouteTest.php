@@ -156,10 +156,10 @@ class RouteTest extends TestCase
         );
 
         $result = $route->parse('/posts/index', 'GET');
-        $this->assertFalse(isset($result['_ext']));
+        $this->assertArrayNotHasKey('_ext', $result);
 
         $result = $route->parse('/posts/index.pdf', 'GET');
-        $this->assertFalse(isset($result['_ext']));
+        $this->assertArrayNotHasKey('_ext', $result);
 
         $result = $route->setExtensions(['pdf', 'json', 'xml', 'xml.gz'])->parse('/posts/index.pdf', 'GET');
         $this->assertEquals('pdf', $result['_ext']);

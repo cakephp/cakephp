@@ -3553,7 +3553,7 @@ class TableTest extends TestCase
 
         $validator = $table->getValidator('Behavior');
         $set = $validator->field('name');
-        $this->assertTrue(isset($set['behaviorRule']));
+        $this->assertArrayHasKey('behaviorRule', $set);
     }
 
     /**
@@ -5932,7 +5932,7 @@ class TableTest extends TestCase
 
         $callbackExecuted = false;
         $firstArticle = $articles->findOrCreate(['title' => 'Not there'], function ($article) use (&$callbackExecuted) {
-            $this->assertTrue($article instanceof EntityInterface);
+            $this->assertInstanceOf(EntityInterface::class, $article);
             $article->body = 'New body';
             $callbackExecuted = true;
         });

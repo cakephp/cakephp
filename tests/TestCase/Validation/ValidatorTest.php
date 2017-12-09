@@ -1118,9 +1118,9 @@ class ValidatorTest extends TestCase
         $validator
             ->add('email', 'alpha', ['rule' => 'alphanumeric'])
             ->add('title', 'cool', ['rule' => 'isCool', 'provider' => 'thing']);
-        $this->assertTrue(isset($validator['email']));
-        $this->assertTrue(isset($validator['title']));
-        $this->assertFalse(isset($validator['foo']));
+        $this->assertArrayHasKey('email', $validator);
+        $this->assertArrayHasKey('title', $validator);
+        $this->assertArrayNotHasKey('foo', $validator);
     }
 
     /**
@@ -1151,9 +1151,9 @@ class ValidatorTest extends TestCase
         $validator
             ->add('email', 'alpha', ['rule' => 'alphanumeric'])
             ->add('title', 'cool', ['rule' => 'isCool', 'provider' => 'thing']);
-        $this->assertTrue(isset($validator['title']));
+        $this->assertArrayHasKey('title', $validator);
         unset($validator['title']);
-        $this->assertFalse(isset($validator['title']));
+        $this->assertArrayNotHasKey('title', $validator);
     }
 
     /**

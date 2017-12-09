@@ -112,8 +112,8 @@ class ConfigureTest extends TestCase
 
         $result = Configure::read();
         $this->assertInternalType('array', $result);
-        $this->assertTrue(isset($result['debug']));
-        $this->assertTrue(isset($result['level1']));
+        $this->assertArrayHasKey('debug', $result);
+        $this->assertArrayHasKey('level1', $result);
 
         $result = Configure::read('something_I_just_made_up_now');
         $this->assertNull($result, 'Missing key should return null.');
