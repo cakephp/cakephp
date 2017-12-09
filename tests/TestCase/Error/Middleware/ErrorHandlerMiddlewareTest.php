@@ -147,6 +147,24 @@ class ErrorHandlerMiddlewareTest extends TestCase
     }
 
     /**
+     * Test handling PHP 7's Error instance.
+     *
+     * @return void
+     */
+    public function testHandlePHP7Error()
+    {
+        $this->skipIf(version_compare(PHP_VERSION, '7.0.0', '<'), 'Error class only exists since PHP 7.');
+
+        $middleware = new ErrorHandlerMiddleware();
+        $request = ServerRequestFactory::fromGlobals();
+        $response = new Response();
+        $error = new Error();
+
+        $result = $middleware->handleException($error, $request, $response);
+        $this->assertInstanceOf(Response::class, $result);
+    }
+
+    /**
      * Test rendering an error page logs errors
      *
      * @return void
