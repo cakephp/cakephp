@@ -216,6 +216,20 @@ XML;
         $this->assertTrue($response->isOk());
 
         $headers = [
+            'HTTP/1.1 203 Non-Authoritative Information',
+            'Content-Type: text/html'
+        ];
+        $response = new Response($headers, 'ok');
+        $this->assertTrue($response->isOk());
+
+        $headers = [
+            'HTTP/1.1 204 No Content',
+            'Content-Type: text/html'
+        ];
+        $response = new Response($headers, 'ok');
+        $this->assertTrue($response->isOk());
+
+        $headers = [
             'HTTP/1.1 301 Moved Permanently',
             'Content-Type: text/html'
         ];
