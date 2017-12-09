@@ -22,7 +22,7 @@ if (class_exists('PHPUnit_Runner_Version') && !interface_exists('PHPUnit\Excepti
 
 use Cake\Core\Configure;
 use Cake\Database\Exception as DatabaseException;
-use Cake\Network\Session;
+use Cake\Http\Session;
 use Cake\Routing\Router;
 use Cake\TestSuite\Stub\TestExceptionRenderer;
 use Cake\Utility\CookieCryptTrait;
@@ -130,7 +130,7 @@ abstract class IntegrationTestCase extends TestCase
     /**
      * The session instance from the last request
      *
-     * @var \Cake\Network\Session|null
+     * @var \Cake\Http\Session|null
      */
     protected $_requestSession;
 

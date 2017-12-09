@@ -87,7 +87,7 @@ class SecurityComponent extends Component
     /**
      * The Session object
      *
-     * @var \Cake\Network\Session
+     * @var \Cake\Http\Session
      */
     public $session;
 

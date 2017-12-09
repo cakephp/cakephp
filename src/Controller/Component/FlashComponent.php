@@ -34,7 +34,7 @@ class FlashComponent extends Component
     /**
      * The Session object instance
      *
-     * @var \Cake\Network\Session
+     * @var \Cake\Http\Session
      */
     protected $_session;
 
