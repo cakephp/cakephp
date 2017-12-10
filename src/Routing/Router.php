@@ -902,17 +902,15 @@ class Router
             '2.x backwards compatible named parameter support will be removed in 4.0'
         );
         $options += ['separator' => ':'];
-        if (empty($request->params['pass'])) {
-            $request->params['named'] = [];
-
-            return $request;
+        if (!$request->getParam('pass')) {
+            return $request->withParam('named', []);
         }
         $named = [];
         foreach ($request->getParam('pass') as $key => $value) {
             if (strpos($value, $options['separator']) === false) {
                 continue;
             }
-            unset($request->params['pass'][$key]);
+            $request = $request->withoutParam("pass.{$key}");
             list($key, $value) = explode($options['separator'], $value, 2);
 
             if (preg_match_all('/\[([A-Za-z0-9_-]+)?\]/', $key, $matches, PREG_SET_ORDER)) {
@@ -933,9 +931,7 @@ class Router
             }
             $named = array_merge_recursive($named, [$key => $value]);
         }
-        $request->params['named'] = $named;
-
-        return $request;
+        return $request->withParam('named', $named);
     }
 
     /**

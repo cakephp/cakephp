@@ -136,8 +136,8 @@ trait RequestActionTrait
         }
         $current = Router::getRequest();
         if ($current) {
-            $params['base'] = $current->base;
-            $params['webroot'] = $current->webroot;
+            $params['base'] = $current->getAttribute('base');
+            $params['webroot'] = $current->getAttribute('webroot');
         }
 
         $params['post'] = $params['query'] = [];
