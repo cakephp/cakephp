@@ -191,15 +191,9 @@ class ErrorHandlerMiddleware
             return;
         }
 
-        $unwrapped = $exception instanceof PHP7ErrorException ?
-            $exception->getError() :
-            $exception;
-
-        if ($this->getConfig('skipLog')) {
-            foreach ((array)$this->getConfig('skipLog') as $class) {
-                if ($unwrapped instanceof $class) {
-                    return;
-                }
+        foreach ((array)$this->getConfig('skipLog') as $class) {
+            if ($exception instanceof $class) {
+                return;
             }
         }
 
