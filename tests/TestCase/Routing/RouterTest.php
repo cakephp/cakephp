@@ -1817,7 +1817,7 @@ class RouterTest extends TestCase
         $this->assertEquals('rss', $result['_ext']);
 
         $result = Router::parseRequest($this->makeRequest('/posts.xml', 'GET'));
-        $this->assertFalse(isset($result['_ext']));
+        $this->assertArrayNotHasKey('_ext', $result);
 
         Router::extensions(['xml']);
     }

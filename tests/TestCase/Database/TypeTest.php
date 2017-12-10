@@ -122,7 +122,7 @@ class TypeTest extends TestCase
     {
         $map = Type::map();
         $this->assertNotEmpty($map);
-        $this->assertFalse(isset($map['foo']));
+        $this->assertArrayNotHasKey('foo', $map);
 
         $fooType = FooType::class;
         Type::map('foo', $fooType);

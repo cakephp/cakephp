@@ -588,10 +588,10 @@ class EntityTest extends TestCase
     public function testIssetArrayAccess()
     {
         $entity = new Entity(['id' => 1, 'name' => 'Juan', 'foo' => null]);
-        $this->assertTrue(isset($entity['id']));
-        $this->assertTrue(isset($entity['name']));
-        $this->assertFalse(isset($entity['foo']));
-        $this->assertFalse(isset($entity['thing']));
+        $this->assertArrayHasKey('id', $entity);
+        $this->assertArrayHasKey('name', $entity);
+        $this->assertArrayNotHasKey('foo', $entity);
+        $this->assertArrayNotHasKey('thing', $entity);
     }
 
     /**

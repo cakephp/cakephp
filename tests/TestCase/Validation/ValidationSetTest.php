@@ -94,10 +94,10 @@ class ValidationSetTest extends TestCase
             ->add('numeric', ['rule' => 'numeric'])
             ->add('other', ['rule' => 'email']);
 
-        $this->assertTrue(isset($set['notBlank']));
-        $this->assertTrue(isset($set['numeric']));
-        $this->assertTrue(isset($set['other']));
-        $this->assertFalse(isset($set['fail']));
+        $this->assertArrayHasKey('notBlank', $set);
+        $this->assertArrayHasKey('numeric', $set);
+        $this->assertArrayHasKey('other', $set);
+        $this->assertArrayNotHasKey('fail', $set);
     }
 
     /**
@@ -110,7 +110,7 @@ class ValidationSetTest extends TestCase
         $set = (new ValidationSet)
             ->add('notBlank', ['rule' => 'notBlank']);
 
-        $this->assertFalse(isset($set['other']));
+        $this->assertArrayNotHasKey('other', $set);
         $set['other'] = ['rule' => 'email'];
         $rule = $set['other'];
         $this->assertInstanceOf('Cake\Validation\ValidationRule', $rule);
@@ -130,13 +130,13 @@ class ValidationSetTest extends TestCase
             ->add('other', ['rule' => 'email']);
 
         unset($set['notBlank']);
-        $this->assertFalse(isset($set['notBlank']));
+        $this->assertArrayNotHasKey('notBlank', $set);
 
         unset($set['numeric']);
-        $this->assertFalse(isset($set['numeric']));
+        $this->assertArrayNotHasKey('numeric', $set);
 
         unset($set['other']);
-        $this->assertFalse(isset($set['other']));
+        $this->assertArrayNotHasKey('other', $set);
     }
 
     /**
@@ -197,17 +197,17 @@ class ValidationSetTest extends TestCase
             ->add('numeric', ['rule' => 'numeric'])
             ->add('other', ['rule' => 'email']);
 
-        $this->assertTrue(isset($set['notBlank']));
+        $this->assertArrayHasKey('notBlank', $set);
         $set->remove('notBlank');
-        $this->assertFalse(isset($set['notBlank']));
+        $this->assertArrayNotHasKey('notBlank', $set);
 
-        $this->assertTrue(isset($set['numeric']));
+        $this->assertArrayHasKey('numeric', $set);
         $set->remove('numeric');
-        $this->assertFalse(isset($set['numeric']));
+        $this->assertArrayNotHasKey('numeric', $set);
 
-        $this->assertTrue(isset($set['other']));
+        $this->assertArrayHasKey('other', $set);
         $set->remove('other');
-        $this->assertFalse(isset($set['other']));
+        $this->assertArrayNotHasKey('other', $set);
     }
 
     /**

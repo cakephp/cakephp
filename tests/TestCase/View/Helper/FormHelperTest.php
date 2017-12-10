@@ -7359,7 +7359,7 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $result = $this->Form->postButton('Send', '/', ['data' => ['extra' => 'value']]);
-        $this->assertNotFalse(strpos($result, '<input type="hidden" name="extra" value="value"'));
+        $this->assertContains('<input type="hidden" name="extra" value="value"', $result);
     }
 
     /**

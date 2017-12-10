@@ -82,8 +82,8 @@ class XcacheEngineTest extends TestCase
             'probability' => 100,
             'groups' => [],
         ];
-        $this->assertTrue(isset($config['PHP_AUTH_USER']));
-        $this->assertTrue(isset($config['PHP_AUTH_PW']));
+        $this->assertArrayHasKey('PHP_AUTH_USER', $config);
+        $this->assertArrayHasKey('PHP_AUTH_PW', $config);
 
         unset($config['PHP_AUTH_USER'], $config['PHP_AUTH_PW']);
         $this->assertEquals($config, $expecting);

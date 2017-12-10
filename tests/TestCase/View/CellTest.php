@@ -338,7 +338,7 @@ class CellTest extends TestCase
     {
         $cell = $this->View->cell('Articles', [], ['limit' => 10, 'nope' => 'nope']);
         $this->assertEquals(10, $cell->limit);
-        $this->assertFalse(property_exists('nope', $cell), 'Not a valid option');
+        $this->assertObjectNotHasAttribute('nope', $cell, 'Not a valid option');
     }
 
     /**
