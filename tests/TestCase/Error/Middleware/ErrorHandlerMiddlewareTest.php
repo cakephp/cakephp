@@ -19,6 +19,7 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequestFactory;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
+use Error;
 use LogicException;
 use Psr\Log\LoggerInterface;
 
