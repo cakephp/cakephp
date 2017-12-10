@@ -931,6 +931,7 @@ class Router
             }
             $named = array_merge_recursive($named, [$key => $value]);
         }
+
         return $request->withParam('named', $named);
     }
 
