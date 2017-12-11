@@ -214,7 +214,7 @@ class CsrfComponentTest extends TestCase
         $event = new Event('Controller.startup', $controller);
         $result = $this->component->startup($event);
         $this->assertNull($result, 'No exception means valid.');
-        $this->assertFalse(isset($controller->request->data['_csrfToken']));
+        $this->assertNull($controller->request->getData('_csrfToken'));
     }
 
     /**
@@ -313,7 +313,7 @@ class CsrfComponentTest extends TestCase
         $event = new Event('Controller.startup', $controller);
         $result = $this->component->startup($event);
         $this->assertNull($result, 'No error.');
-        $this->assertEquals('testing123', $controller->request->params['_csrfToken']);
+        $this->assertEquals('testing123', $controller->request->getParam('_csrfToken'));
     }
 
     /**

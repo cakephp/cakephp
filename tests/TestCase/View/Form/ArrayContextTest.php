@@ -135,12 +135,12 @@ class ArrayContextTest extends TestCase
      */
     public function testValPresent()
     {
-        $this->request->data = [
+        $this->request = $this->request->withParsedBody([
             'Articles' => [
                 'title' => 'New title',
                 'body' => 'My copy',
             ]
-        ];
+        ]);
         $context = new ArrayContext($this->request, [
             'defaults' => [
                 'Articles' => [

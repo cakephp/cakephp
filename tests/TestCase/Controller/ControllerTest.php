@@ -108,10 +108,10 @@ class TestController extends ControllerTestAppController
      */
     public function index($testId, $testTwoId)
     {
-        $this->request->data = [
+        $this->request = $this->request->withParsedBody([
             'testId' => $testId,
             'test2Id' => $testTwoId
-        ];
+        ]);
     }
 
     /**
@@ -123,10 +123,10 @@ class TestController extends ControllerTestAppController
      */
     public function view($testId, $testTwoId)
     {
-        $this->request->data = [
+        $this->request = $this->request->withParsedBody([
             'testId' => $testId,
             'test2Id' => $testTwoId
-        ];
+        ]);
     }
 
     public function returner()
@@ -356,7 +356,7 @@ class ControllerTest extends TestCase
         $this->assertEquals('Posts', $controller->modelClass);
         $this->assertInstanceOf('Cake\ORM\Table', $controller->Posts);
 
-        $request->params['plugin'] = 'TestPlugin';
+        $request = $request->withParam('plugin', 'TestPlugin');
         $controller = new \TestPlugin\Controller\Admin\CommentsController($request, $response);
         $this->assertEquals('TestPlugin.Comments', $controller->modelClass);
         $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $controller->Comments);
@@ -386,8 +386,12 @@ class ControllerTest extends TestCase
     {
         Plugin::load('TestPlugin');
 
-        $request = new ServerRequest('controller_posts/index');
-        $request->params['action'] = 'index';
+        $request = new ServerRequest([
+            'url' => 'controller_posts/index',
+            'params' => [
+                'action' => 'header'
+            ]
+        ]);
 
         $Controller = new Controller($request, new Response());
         $Controller->viewBuilder()->templatePath('Posts');
@@ -410,8 +414,12 @@ class ControllerTest extends TestCase
      */
     public function testRenderViewChangesResponse()
     {
-        $request = new ServerRequest('controller_posts/index');
-        $request->params['action'] = 'header';
+        $request = new ServerRequest([
+            'url' => 'controller_posts/index',
+            'params' => [
+                'action' => 'header'
+            ]
+        ]);
 
         $controller = new Controller($request, new Response());
         $controller->viewBuilder()->templatePath('Posts');
@@ -643,7 +651,7 @@ class ControllerTest extends TestCase
         $request = $this->getMockBuilder('Cake\Http\ServerRequest')
             ->setMethods(['referer'])
             ->getMock();
-        $request->base = '/base';
+        $request = $request->withAttribute('base', '/base');
         Router::pushRequest($request);
 
         $request->expects($this->any())->method('referer')
@@ -670,8 +678,8 @@ class ControllerTest extends TestCase
         $TestController = new TestController($request);
         $TestController->setAction('view', 1, 2);
         $expected = ['testId' => 1, 'test2Id' => 2];
-        $this->assertSame($expected, $TestController->request->data);
-        $this->assertSame('view', $TestController->request->params['action']);
+        $this->assertSame($expected, $TestController->request->getData());
+        $this->assertSame('view', $TestController->request->getParam('action'));
     }
 
     /**
@@ -737,20 +745,18 @@ class ControllerTest extends TestCase
      */
     public function testPaginate()
     {
-        $request = new ServerRequest('controller_posts/index');
-        $request->params['pass'] = [];
+        $request = new ServerRequest(['url' => 'controller_posts/index']);
         $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['httpCodes'])
             ->getMock();
 
         $Controller = new Controller($request, $response);
-        $Controller->request->query = [
-            'url' => [],
+        $Controller->request = $Controller->request->withQueryParams([
             'posts' => [
                 'page' => 2,
                 'limit' => 2,
             ]
-        ];
+        ]);
 
         $this->assertEquals([], $Controller->paginate);
 
@@ -765,21 +771,23 @@ class ControllerTest extends TestCase
         $this->assertInstanceOf('Cake\Datasource\ResultSetInterface', $results);
         $this->assertCount(3, $results);
 
-        $this->assertSame($Controller->request->params['paging']['Posts']['page'], 1);
-        $this->assertSame($Controller->request->params['paging']['Posts']['pageCount'], 1);
-        $this->assertSame($Controller->request->params['paging']['Posts']['prevPage'], false);
-        $this->assertSame($Controller->request->params['paging']['Posts']['nextPage'], false);
-        $this->assertNull($Controller->request->params['paging']['Posts']['scope']);
+        $paging = $Controller->request->getParam('paging');
+        $this->assertSame($paging['Posts']['page'], 1);
+        $this->assertSame($paging['Posts']['pageCount'], 1);
+        $this->assertFalse($paging['Posts']['prevPage']);
+        $this->assertFalse($paging['Posts']['nextPage']);
+        $this->assertNull($paging['Posts']['scope']);
 
         $results = $Controller->paginate(TableRegistry::get('Posts'), ['scope' => 'posts']);
         $this->assertInstanceOf('Cake\Datasource\ResultSetInterface', $results);
         $this->assertCount(1, $results);
 
-        $this->assertSame($Controller->request->params['paging']['Posts']['page'], 2);
-        $this->assertSame($Controller->request->params['paging']['Posts']['pageCount'], 2);
-        $this->assertSame($Controller->request->params['paging']['Posts']['prevPage'], true);
-        $this->assertSame($Controller->request->params['paging']['Posts']['nextPage'], false);
-        $this->assertSame($Controller->request->params['paging']['Posts']['scope'], 'posts');
+        $paging = $Controller->request->getParam('paging');
+        $this->assertSame($paging['Posts']['page'], 2);
+        $this->assertSame($paging['Posts']['pageCount'], 2);
+        $this->assertTrue($paging['Posts']['prevPage']);
+        $this->assertFalse($paging['Posts']['nextPage']);
+        $this->assertSame($paging['Posts']['scope'], 'posts');
     }
 
     /**
@@ -789,14 +797,14 @@ class ControllerTest extends TestCase
      */
     public function testPaginateUsesModelClass()
     {
-        $request = new ServerRequest('controller_posts/index');
-        $request->params['pass'] = [];
+        $request = new ServerRequest([
+            'url' => 'controller_posts/index',
+        ]);
         $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['httpCodes'])
             ->getMock();
 
         $Controller = new Controller($request, $response);
-        $Controller->request->query['url'] = [];
         $Controller->modelClass = 'Posts';
         $results = $Controller->paginate();
 
@@ -922,7 +930,7 @@ class ControllerTest extends TestCase
         $result = $Controller->invokeAction();
         $this->assertEquals(
             ['testId' => '1', 'test2Id' => '2'],
-            $Controller->request->data
+            $Controller->request->getData()
         );
     }
 

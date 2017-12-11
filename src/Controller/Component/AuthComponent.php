@@ -221,7 +221,7 @@ class AuthComponent extends Component
     /**
      * Instance of the Session object
      *
-     * @var \Cake\Network\Session
+     * @var \Cake\Http\Session
      * @deprecated 3.1.0 Will be removed in 4.0
      */
     public $session;
@@ -441,10 +441,7 @@ class AuthComponent extends Component
      */
     protected function _isLoginAction(Controller $controller)
     {
-        $url = '';
-        if (isset($controller->request->url)) {
-            $url = $controller->request->url;
-        }
+        $url = $controller->request->getRequestTarget();
         $url = Router::normalize($url);
         $loginAction = Router::normalize($this->_config['loginAction']);
 

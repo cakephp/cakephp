@@ -516,10 +516,10 @@ class EntityContextTest extends TestCase
      */
     public function testValReadsRequest()
     {
-        $this->request->data = [
+        $this->request = $this->request->withParsedBody([
             'title' => 'New title',
             'notInEntity' => 'yes',
-        ];
+        ]);
         $row = new Article([
             'title' => 'Test entity',
             'body' => 'Something new'

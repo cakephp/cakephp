@@ -117,7 +117,7 @@ class HtmlHelperTest extends TestCase
     {
         Router::connect('/:controller/:action/*');
 
-        $this->Html->request->webroot = '';
+        $this->Html->request = $this->Html->request->withAttribute('webroot', '');
 
         $result = $this->Html->link('/home');
         $expected = ['a' => ['href' => '/home'], 'preg:/\/home/', '/a'];
@@ -330,8 +330,6 @@ class HtmlHelperTest extends TestCase
         Router::connect('/:controller', ['action' => 'index']);
         Router::connect('/:controller/:action/*');
 
-        $this->Html->request->webroot = '';
-
         $result = $this->Html->image('test.gif');
         $expected = ['img' => ['src' => 'img/test.gif', 'alt' => '']];
         $this->assertHtml($expected, $result);
@@ -430,14 +428,13 @@ class HtmlHelperTest extends TestCase
         $expected = ['img' => ['src' => $here . 'img/sub/test.gif', 'alt' => '']];
         $this->assertHtml($expected, $result);
 
-        $request = $this->Html->request;
-        $request->webroot = '/myproject/';
-        $request->base = '/myproject';
-        Router::pushRequest($request);
+        $this->Html->Url->request = $this->Html->request
+            ->withAttribute('webroot', '/myproject/')
+            ->withAttribute('base', '/myproject');
 
         $result = $this->Html->image('sub/test.gif', ['fullBase' => true]);
         $here = $this->Html->Url->build('/', true);
-        $expected = ['img' => ['src' => $here . 'img/sub/test.gif', 'alt' => '']];
+        $expected = ['img' => ['src' => $here . 'myproject/img/sub/test.gif', 'alt' => '']];
         $this->assertHtml($expected, $result);
     }
 
@@ -450,7 +447,7 @@ class HtmlHelperTest extends TestCase
     {
         Configure::write('Asset.timestamp', 'force');
 
-        $this->Html->request->webroot = '/';
+        $this->Html->Url->request = $this->Html->request->withAttribute('webroot', '/');
         $result = $this->Html->image('cake.icon.png');
         $expected = ['img' => ['src' => 'preg:/\/img\/cake\.icon\.png\?\d+/', 'alt' => '']];
         $this->assertHtml($expected, $result);
@@ -462,7 +459,7 @@ class HtmlHelperTest extends TestCase
         $expected = ['img' => ['src' => 'preg:/\/img\/cake\.icon\.png\?\d+/', 'alt' => '']];
         $this->assertHtml($expected, $result);
 
-        $this->Html->request->webroot = '/testing/longer/';
+        $this->Html->Url->request = $this->Html->request->withAttribute('webroot', '/testing/longer/');
         $result = $this->Html->image('cake.icon.png');
         $expected = [
             'img' => ['src' => 'preg:/\/testing\/longer\/img\/cake\.icon\.png\?[0-9]+/', 'alt' => '']
@@ -485,25 +482,26 @@ class HtmlHelperTest extends TestCase
         Configure::write('Asset.timestamp', true);
         Configure::write('debug', true);
 
-        $this->Html->Url->request->webroot = '/';
+        $this->Html->Url->request = $this->Html->request->withAttribute('webroot', '/');
         $this->Html->Url->theme = 'TestTheme';
         $result = $this->Html->image('__cake_test_image.gif');
         $expected = [
             'img' => [
                 'src' => 'preg:/\/test_theme\/img\/__cake_test_image\.gif\?\d+/',
                 'alt' => ''
-            ]];
-            $this->assertHtml($expected, $result);
+            ]
+        ];
+        $this->assertHtml($expected, $result);
 
-            $this->Html->Url->request->webroot = '/testing/';
-            $result = $this->Html->image('__cake_test_image.gif');
-            $expected = [
-            'img' => [
-                'src' => 'preg:/\/testing\/test_theme\/img\/__cake_test_image\.gif\?\d+/',
-                'alt' => ''
-            ]];
-            $this->assertHtml($expected, $result);
-            $File->delete();
+        $this->Html->Url->request = $this->Html->request->withAttribute('webroot', '/testing/');
+        $result = $this->Html->image('__cake_test_image.gif');
+        $expected = [
+        'img' => [
+            'src' => 'preg:/\/testing\/test_theme\/img\/__cake_test_image\.gif\?\d+/',
+            'alt' => ''
+        ]];
+        $this->assertHtml($expected, $result);
+        $File->delete();
     }
 
     /**
@@ -735,12 +733,12 @@ class HtmlHelperTest extends TestCase
         $expected['link']['href'] = 'preg:/.*css\/cake\.generic\.css\?[0-9]+/';
         $this->assertHtml($expected, $result);
 
-        $this->Html->request->webroot = '/testing/';
+        $this->Html->Url->request = $this->Html->request->withAttribute('webroot', '/testing/');
         $result = $this->Html->css('cake.generic', ['once' => false]);
         $expected['link']['href'] = 'preg:/\/testing\/css\/cake\.generic\.css\?[0-9]+/';
         $this->assertHtml($expected, $result);
 
-        $this->Html->request->webroot = '/testing/longer/';
+        $this->Html->Url->request = $this->Html->request->withAttribute('webroot', '/testing/longer/');
         $result = $this->Html->css('cake.generic', ['once' => false]);
         $expected['link']['href'] = 'preg:/\/testing\/longer\/css\/cake\.generic\.css\?[0-9]+/';
         $this->assertHtml($expected, $result);
@@ -778,12 +776,12 @@ class HtmlHelperTest extends TestCase
         $expected['link']['href'] = 'preg:/.*test_plugin\/css\/test_plugin_asset\.css\?[0-9]+/';
         $this->assertHtml($expected, $result);
 
-        $this->Html->request->webroot = '/testing/';
+        $this->Html->Url->request = $this->Html->request->withAttribute('webroot', '/testing/');
         $result = $this->Html->css('TestPlugin.test_plugin_asset', ['once' => false]);
         $expected['link']['href'] = 'preg:/\/testing\/test_plugin\/css\/test_plugin_asset\.css\?[0-9]+/';
         $this->assertHtml($expected, $result);
 
-        $this->Html->request->webroot = '/testing/longer/';
+        $this->Html->Url->request = $this->Html->request->withAttribute('webroot', '/testing/longer/');
         $result = $this->Html->css('TestPlugin.test_plugin_asset', ['once' => false]);
         $expected['link']['href'] = 'preg:/\/testing\/longer\/test_plugin\/css\/test_plugin_asset\.css\?[0-9]+/';
         $this->assertHtml($expected, $result);
@@ -1093,7 +1091,7 @@ class HtmlHelperTest extends TestCase
         $testfile = WWW_ROOT . '/test_theme/js/__test_js.js';
         $File = new File($testfile, true);
 
-        $this->Html->Url->request->webroot = '/';
+        $this->Html->Url->request = $this->Html->request->withAttribute('webroot', '/');
         $this->Html->Url->theme = 'TestTheme';
         $result = $this->Html->script('__test_js.js');
         $expected = [
@@ -1766,7 +1764,7 @@ class HtmlHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Html->request->webroot = '/testing/';
+        $this->Html->request = $this->Html->Url->request = $this->Html->request->withAttribute('webroot', '/testing/');
         $result = $this->Html->meta('icon');
         $expected = [
             'link' => ['href' => '/testing/favicon.ico', 'type' => 'image/x-icon', 'rel' => 'icon'],
@@ -1798,7 +1796,7 @@ class HtmlHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Html->request->webroot = '/testing/';
+        $this->Html->request = $this->Html->Url->request = $this->Html->request->withAttribute('webroot', '/testing/');
         $result = $this->Html->meta('icon');
         $expected = [
             'link' => ['href' => '/testing/test_theme/favicon.ico', 'type' => 'image/x-icon', 'rel' => 'icon'],

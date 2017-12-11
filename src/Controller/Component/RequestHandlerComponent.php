@@ -201,9 +201,10 @@ class RequestHandlerComponent extends Component
             $this->_setExtension($request, $response);
         }
 
-        $request->params['isAjax'] = $request->is('ajax');
+        $isAjax = $request->is('ajax');
+        $controller->request = $request->withParam('isAjax', $isAjax);
 
-        if (!$this->ext && $request->is('ajax')) {
+        if (!$this->ext && $isAjax) {
             $this->ext = 'ajax';
         }
 
@@ -217,7 +218,7 @@ class RequestHandlerComponent extends Component
             }
             if ($this->requestedWith($type)) {
                 $input = $request->input(...$handler);
-                $request->data = (array)$input;
+                $controller->request = $request->withParsedBody((array)$input);
             }
         }
     }

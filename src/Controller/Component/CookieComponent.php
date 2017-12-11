@@ -128,7 +128,7 @@ class CookieComponent extends Component
         }
 
         if (empty($this->_config['path'])) {
-            $this->setConfig('path', $this->request->webroot);
+            $this->setConfig('path', $this->request->getAttribute('webroot'));
         }
     }
 

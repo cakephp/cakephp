@@ -1294,7 +1294,7 @@ class PaginatorComponentTest extends TestCase
      */
     public function testPaginateQueryWithLimit()
     {
-        $this->controller->request->query = ['page' => '-1'];
+        $this->controller->request = $this->controller->request->withQueryParams(['page' => '-1']);
         $settings = [
             'PaginatorPosts' => [
                 'contain' => ['PaginatorAuthor'],

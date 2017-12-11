@@ -81,12 +81,12 @@ class FormContextTest extends TestCase
      */
     public function testValPresent()
     {
-        $this->request->data = [
+        $this->request = $this->request->withParsedBody([
             'Articles' => [
                 'title' => 'New title',
                 'body' => 'My copy',
             ]
-        ];
+        ]);
         $context = new FormContext($this->request, ['entity' => new Form()]);
         $this->assertEquals('New title', $context->val('Articles.title'));
         $this->assertEquals('My copy', $context->val('Articles.body'));

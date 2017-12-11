@@ -167,9 +167,9 @@ class CookieComponentTest extends TestCase
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Invalid encryption cipher. Must be one of aes, rijndael.');
-        $this->request->cookies = [
+        $this->Controller->request = $this->request->withCookieParams([
             'Test' => $this->_encrypt('value'),
-        ];
+        ]);
         $this->Cookie->setConfig('encryption', 'derp');
         $this->Cookie->read('Test');
     }
@@ -215,14 +215,14 @@ class CookieComponentTest extends TestCase
      */
     public function testReadMultipleNames()
     {
-        $this->request->cookies = [
+        $this->Controller->request = $this->request->withCookieParams([
             'CakeCookie' => [
                 'key' => 'value'
             ],
             'OtherCookie' => [
                 'key' => 'other value'
             ]
-        ];
+        ]);
         $this->assertEquals('value', $this->Cookie->read('CakeCookie.key'));
         $this->assertEquals(['key' => 'value'], $this->Cookie->read('CakeCookie'));
         $this->assertEquals('other value', $this->Cookie->read('OtherCookie.key'));
@@ -261,9 +261,9 @@ class CookieComponentTest extends TestCase
      */
     public function testWriteThanRead()
     {
-        $this->request->cookies = [
+        $this->Controller->request = $this->request->withCookieParams([
             'User' => ['name' => 'mark']
-        ];
+        ]);
         $this->Cookie->write('Testing', 'value');
         $this->assertEquals('mark', $this->Cookie->read('User.name'));
     }
@@ -617,7 +617,7 @@ class CookieComponentTest extends TestCase
         $data = $this->Cookie->read('Plain_multi_cookies');
         $this->assertNull($data);
 
-        $this->request->cookies = [
+        $this->Controller->request = $this->request->withCookieParams([
             'Encrypted_array' => $this->_encrypt(['name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' => 'CakePHP Rocks!']),
             'Encrypted_multi_cookies' => [
                 'name' => $this->_encrypt('CakePHP'),
@@ -630,7 +630,7 @@ class CookieComponentTest extends TestCase
                 'version' => '1.2.0.x',
                 'tag' => 'CakePHP Rocks!'
             ]
-        ];
+        ]);
 
         $data = $this->Cookie->read('Encrypted_array');
         $expected = ['name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' => 'CakePHP Rocks!'];
@@ -656,9 +656,9 @@ class CookieComponentTest extends TestCase
      */
     public function testReadLegacyCookieValue()
     {
-        $this->request->cookies = [
+        $this->Controller->request = $this->request->withCookieParams([
             'Legacy' => ['value' => $this->_oldImplode([1, 2, 3])]
-        ];
+        ]);
         $result = $this->Cookie->read('Legacy.value');
         $expected = [1, 2, 3];
         $this->assertEquals($expected, $result);
@@ -671,12 +671,12 @@ class CookieComponentTest extends TestCase
      */
     public function testReadEmpty()
     {
-        $this->request->cookies = [
+        $this->Controller->request = $this->request->withCookieParams([
             'JSON' => '{"name":"value"}',
             'Empty' => '',
             'String' => '{"somewhat:"broken"}',
             'Array' => '{}'
-        ];
+        ]);
         $this->assertEquals(['name' => 'value'], $this->Cookie->read('JSON'));
         $this->assertEquals('value', $this->Cookie->read('JSON.name'));
         $this->assertEquals('', $this->Cookie->read('Empty'));
@@ -743,10 +743,10 @@ class CookieComponentTest extends TestCase
      */
     public function testDeleteRemovesChildren()
     {
-        $this->request->cookies = [
+        $this->Controller->request = $this->request->withCookieParams([
             'User' => ['email' => 'example@example.com', 'name' => 'mark'],
             'other' => 'value'
-        ];
+        ]);
         $this->assertEquals('mark', $this->Cookie->read('User.name'));
 
         $this->Cookie->delete('User');

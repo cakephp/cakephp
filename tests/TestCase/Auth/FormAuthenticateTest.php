@@ -86,8 +86,10 @@ class FormAuthenticateTest extends TestCase
      */
     public function testAuthenticateNoData()
     {
-        $request = new ServerRequest('posts/index');
-        $request->data = [];
+        $request = new ServerRequest([
+            'url' => 'posts/index',
+            'post' => [],
+        ]);
         $this->assertFalse($this->auth->authenticate($request, $this->response));
     }
 
@@ -98,8 +100,10 @@ class FormAuthenticateTest extends TestCase
      */
     public function testAuthenticateNoUsername()
     {
-        $request = new ServerRequest('posts/index');
-        $request->data = ['password' => 'foobar'];
+        $request = new ServerRequest([
+            'url' => 'posts/index',
+            'post' => ['password' => 'foobar'],
+        ]);
         $this->assertFalse($this->auth->authenticate($request, $this->response));
     }
 
@@ -110,8 +114,10 @@ class FormAuthenticateTest extends TestCase
      */
     public function testAuthenticateNoPassword()
     {
-        $request = new ServerRequest('posts/index');
-        $request->data = ['username' => 'mariano'];
+        $request = new ServerRequest([
+            'url' => 'posts/index',
+            'post' => ['username' => 'mariano'],
+        ]);
         $this->assertFalse($this->auth->authenticate($request, $this->response));
     }
 
@@ -123,10 +129,13 @@ class FormAuthenticateTest extends TestCase
     public function testAuthenticatePasswordIsFalse()
     {
         $request = new ServerRequest('posts/index', false);
-        $request->data = [
-            'username' => 'mariano',
-            'password' => null
-        ];
+        $request = new ServerRequest([
+            'url' => 'posts/index',
+            'post' => [
+                'username' => 'mariano',
+                'password' => null
+            ],
+        ]);
         $this->assertFalse($this->auth->authenticate($request, $this->response));
     }
 
@@ -138,11 +147,13 @@ class FormAuthenticateTest extends TestCase
      */
     public function testAuthenticatePasswordIsEmptyString()
     {
-        $request = new ServerRequest('posts/index', false);
-        $request->data = [
-            'username' => 'mariano',
-            'password' => ''
-        ];
+        $request = new ServerRequest([
+            'url' => 'posts/index',
+            'post' => [
+                'username' => 'mariano',
+                'password' => ''
+            ],
+        ]);
 
         $this->auth = $this->getMockBuilder(FormAuthenticate::class)
             ->setMethods(['_checkFields'])
@@ -167,17 +178,22 @@ class FormAuthenticateTest extends TestCase
      */
     public function testAuthenticateFieldsAreNotString()
     {
-        $request = new ServerRequest('posts/index', false);
-        $request->data = [
-            'username' => ['mariano', 'phpnut'],
-            'password' => 'my password'
-        ];
+        $request = new ServerRequest([
+            'url' => 'posts/index',
+            'post' => [
+                'username' => ['mariano', 'phpnut'],
+                'password' => 'my password'
+            ],
+        ]);
         $this->assertFalse($this->auth->authenticate($request, $this->response));
 
-        $request->data = [
-            'username' => 'mariano',
+        $request = new ServerRequest([
+            'url' => 'posts/index',
+            'post' => [
+                'username' => 'mariano',
             'password' => ['password1', 'password2']
-        ];
+            ],
+        ]);
         $this->assertFalse($this->auth->authenticate($request, $this->response));
     }
 
@@ -188,11 +204,13 @@ class FormAuthenticateTest extends TestCase
      */
     public function testAuthenticateInjection()
     {
-        $request = new ServerRequest('posts/index');
-        $request->data = [
-            'username' => '> 1',
-            'password' => "' OR 1 = 1"
-        ];
+        $request = new ServerRequest([
+            'url' => 'posts/index',
+            'post' => [
+                'username' => '> 1',
+                'password' => "' OR 1 = 1"
+            ],
+        ]);
         $this->assertFalse($this->auth->authenticate($request, $this->response));
     }
 
@@ -203,11 +221,13 @@ class FormAuthenticateTest extends TestCase
      */
     public function testAuthenticateSuccess()
     {
-        $request = new ServerRequest('posts/index');
-        $request->data = [
-            'username' => 'mariano',
-            'password' => 'password'
-        ];
+        $request = new ServerRequest([
+            'url' => 'posts/index',
+            'post' => [
+                'username' => 'mariano',
+                'password' => 'password'
+            ],
+        ]);
         $result = $this->auth->authenticate($request, $this->response);
         $expected = [
             'id' => 1,
@@ -228,11 +248,13 @@ class FormAuthenticateTest extends TestCase
         $users = TableRegistry::get('Users');
         $users->setEntityClass('TestApp\Model\Entity\VirtualUser');
 
-        $request = new ServerRequest('posts/index');
-        $request->data = [
-            'username' => 'mariano',
-            'password' => 'password'
-        ];
+        $request = new ServerRequest([
+            'url' => 'posts/index',
+            'post' => [
+                'username' => 'mariano',
+                'password' => 'password'
+            ],
+        ]);
         $result = $this->auth->authenticate($request, $this->response);
         $expected = [
             'id' => 1,
@@ -261,11 +283,13 @@ class FormAuthenticateTest extends TestCase
 
         $this->auth->setConfig('userModel', 'TestPlugin.AuthUsers');
 
-        $request = new ServerRequest('posts/index');
-        $request->data = [
-            'username' => 'gwoo',
-            'password' => 'cake'
-        ];
+        $request = new ServerRequest([
+            'url' => 'posts/index',
+            'post' => [
+                'username' => 'gwoo',
+                'password' => 'cake'
+            ],
+        ]);
 
         $result = $this->auth->authenticate($request, $this->response);
         $expected = [
@@ -285,11 +309,13 @@ class FormAuthenticateTest extends TestCase
      */
     public function testFinder()
     {
-        $request = new ServerRequest('posts/index');
-        $request->data = [
-            'username' => 'mariano',
-            'password' => 'password'
-        ];
+        $request = new ServerRequest([
+            'url' => 'posts/index',
+            'post' => [
+                'username' => 'mariano',
+                'password' => 'password'
+            ],
+        ]);
 
         $this->auth->setConfig([
             'userModel' => 'AuthUsers',
@@ -323,11 +349,13 @@ class FormAuthenticateTest extends TestCase
      */
     public function testFinderOptions()
     {
-        $request = new ServerRequest('posts/index');
-        $request->data = [
-            'username' => 'mariano',
-            'password' => 'password'
-        ];
+        $request = new ServerRequest([
+            'url' => 'posts/index',
+            'post' => [
+                'username' => 'mariano',
+                'password' => 'password'
+            ],
+        ]);
 
         $this->auth->setConfig([
             'userModel' => 'AuthUsers',
@@ -376,11 +404,13 @@ class FormAuthenticateTest extends TestCase
             ['username' => 'mariano']
         );
 
-        $request = new ServerRequest('posts/index');
-        $request->data = [
-            'username' => 'mariano',
-            'password' => 'mypass'
-        ];
+        $request = new ServerRequest([
+            'url' => 'posts/index',
+            'post' => [
+                'username' => 'mariano',
+                'password' => 'mypass'
+            ],
+        ]);
 
         $result = $this->auth->authenticate($request, $this->response);
         $expected = [
@@ -414,11 +444,13 @@ class FormAuthenticateTest extends TestCase
      */
     public function testAuthenticateNoRehash()
     {
-        $request = new ServerRequest('posts/index');
-        $request->data = [
-            'username' => 'mariano',
-            'password' => 'password'
-        ];
+        $request = new ServerRequest([
+            'url' => 'posts/index',
+            'post' => [
+                'username' => 'mariano',
+                'password' => 'password'
+            ],
+        ]);
         $result = $this->auth->authenticate($request, $this->response);
         $this->assertNotEmpty($result);
         $this->assertFalse($this->auth->needsPasswordRehash());
@@ -439,11 +471,13 @@ class FormAuthenticateTest extends TestCase
         $password = $this->auth->passwordHasher()->hash('password');
         TableRegistry::get('Users')->updateAll(['password' => $password], []);
 
-        $request = new ServerRequest('posts/index');
-        $request->data = [
-            'username' => 'mariano',
-            'password' => 'password'
-        ];
+        $request = new ServerRequest([
+            'url' => 'posts/index',
+            'post' => [
+                'username' => 'mariano',
+                'password' => 'password'
+            ],
+        ]);
         $result = $this->auth->authenticate($request, $this->response);
         $this->assertNotEmpty($result);
         $this->assertTrue($this->auth->needsPasswordRehash());
