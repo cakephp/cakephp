@@ -16,6 +16,7 @@ namespace Cake\Http;
 
 use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\HttpApplicationInterface;
+use Cake\Core\PluginRegistry;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
 use Psr\Http\Message\ResponseInterface;
@@ -37,6 +38,13 @@ abstract class BaseApplication implements ConsoleApplicationInterface, HttpAppli
     protected $configDir;
 
     /**
+     * Plugin Registry
+     *
+     * @param \Cake\Core\PluginRegistry
+     */
+    protected $plugins;
+
+    /**
      * Constructor
      *
      * @param string $configDir The directory the bootstrap configuration is held in.
@@ -44,6 +52,7 @@ abstract class BaseApplication implements ConsoleApplicationInterface, HttpAppli
     public function __construct($configDir)
     {
         $this->configDir = $configDir;
+        $this->plugins = new PluginRegistry();
     }
 
     /**
@@ -116,5 +125,15 @@ abstract class BaseApplication implements ConsoleApplicationInterface, HttpAppli
     protected function getDispatcher()
     {
         return new ActionDispatcher(null, null, DispatcherFactory::filters());
+    }
+
+    /**
+     * Plugins
+     *
+     * @return \Cake\Core\PluginRegistry
+     */
+    public function plugins()
+    {
+        return $this->plugins;
     }
 }

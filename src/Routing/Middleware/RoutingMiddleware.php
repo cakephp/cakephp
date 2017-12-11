@@ -59,6 +59,10 @@ class RoutingMiddleware
         if ($this->app) {
             $builder = Router::createRouteBuilder('/');
             $this->app->routes($builder);
+
+            foreach ($this->app->plugins() as $plugin) {
+                $plugin->routes($builder);
+            }
         }
     }
 
