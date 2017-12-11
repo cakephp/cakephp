@@ -1018,7 +1018,12 @@ class Controller extends CakeObject implements CakeEventListener {
 	}
 
 /**
- * Converts POST'ed form data to a model conditions array, suitable for use in a Model::find() call.
+ * Converts POST'ed form data to a model conditions array. 
+ *
+ * If combined with SecurityComponent these conditions could be suitable
+ * for use in a Model::find() call. Without SecurityComponent this method
+ * is vulnerable creating conditions containing SQL injection. While we
+ * attempt to raise exceptions.
  *
  * @param array $data POST'ed data organized by model and field
  * @param string|array $op A string containing an SQL comparison operator, or an array matching operators
@@ -1046,6 +1051,9 @@ class Controller extends CakeObject implements CakeEventListener {
 		$arrayOp = is_array($op);
 		foreach ($data as $model => $fields) {
 			foreach ($fields as $field => $value) {
+				if (preg_match('#[!=><~\&\|\)\(]#', $field)) {
+					throw new RuntimeException("Unsafe operator found in {$model}.{$field}");
+				}
 				$key = $model . '.' . $field;
 				$fieldOp = $op;
 				if ($arrayOp) {
