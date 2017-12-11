@@ -1,7 +1,6 @@
 parameters:
     autoload_files:
         - %rootDir%/../../../tests/bootstrap.php
-        - %rootDir%/../../../src/TestSuite/IntegrationTestCase.php
     ignoreErrors:
         - '#Function wincache_ucache_[a-zA-Z0-9_]+ not found#'
         - '#Function xcache_[a-zA-Z0-9_]+ not found#'
