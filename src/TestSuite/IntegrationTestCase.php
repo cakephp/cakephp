@@ -524,6 +524,7 @@ abstract class IntegrationTestCase extends TestCase
     public function controllerSpy($event, $controller = null)
     {
         if (!$controller) {
+            /** @var \Cake\Controller\Controller $controller */
             $controller = $event->getSubject();
         }
         $this->_controller = $controller;
