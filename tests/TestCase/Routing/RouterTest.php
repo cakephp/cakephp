@@ -3044,7 +3044,7 @@ class RouterTest extends TestCase
                 'action' => 'index',
                 'pass' => ['home', 'one:two', 'three:four', 'five[nested][0]:six', 'five[nested][1]:seven']
             ]);
-            Router::parseNamedParams($request);
+            $request = Router::parseNamedParams($request);
             $expected = [
                 'plugin' => null,
                 'controller' => 'posts',

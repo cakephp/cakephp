@@ -906,11 +906,12 @@ class Router
             return $request->withParam('named', []);
         }
         $named = [];
-        foreach ($request->getParam('pass') as $key => $value) {
+        $pass = $request->getParam('pass');
+        foreach ((array)$pass as $key => $value) {
             if (strpos($value, $options['separator']) === false) {
                 continue;
             }
-            $request = $request->withoutParam("pass.{$key}");
+            unset($pass[$key]);
             list($key, $value) = explode($options['separator'], $value, 2);
 
             if (preg_match_all('/\[([A-Za-z0-9_-]+)?\]/', $key, $matches, PREG_SET_ORDER)) {
@@ -932,7 +933,9 @@ class Router
             $named = array_merge_recursive($named, [$key => $value]);
         }
 
-        return $request->withParam('named', $named);
+        return $request
+            ->withParam('pass', $pass)
+            ->withParam('named', $named);
     }
 
     /**
