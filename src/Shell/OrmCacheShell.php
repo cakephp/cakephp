@@ -94,7 +94,7 @@ class OrmCacheShell extends Shell
      */
     protected function _getSchema()
     {
-        /* @var \Cake\Database\Connection $source */
+        /** @var \Cake\Database\Connection $source */
         $source = ConnectionManager::get($this->params['connection']);
         if (!method_exists($source, 'schemaCollection')) {
             $msg = sprintf(

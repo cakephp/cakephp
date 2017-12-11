@@ -106,7 +106,7 @@ class Marshaller
             }
             if (isset($options['isMerge'])) {
                 $callback = function ($value, $entity) use ($assoc, $nested) {
-                    /* @var \Cake\Datasource\EntityInterface $entity */
+                    /** @var \Cake\Datasource\EntityInterface $entity */
                     $options = $nested + ['associated' => [], 'association' => $assoc];
 
                     return $this->_mergeAssociation($entity->get($assoc->getProperty()), $assoc, $value, $options);
@@ -170,7 +170,7 @@ class Marshaller
 
         $primaryKey = (array)$this->_table->getPrimaryKey();
         $entityClass = $this->_table->getEntityClass();
-        /* @var \Cake\Datasource\EntityInterface $entity */
+        /** @var \Cake\Datasource\EntityInterface $entity */
         $entity = new $entityClass();
         $entity->setSource($this->_table->getRegistryAlias());
 
@@ -409,7 +409,7 @@ class Marshaller
         if (!empty($conditions)) {
             $query = $target->find();
             $query->andWhere(function ($exp) use ($conditions) {
-                /* @var \Cake\Database\Expression\QueryExpression $exp */
+                /** @var \Cake\Database\Expression\QueryExpression $exp */
                 return $exp->or_($conditions);
             });
 
@@ -686,7 +686,7 @@ class Marshaller
                 return count(array_filter($keys, 'strlen')) === count($primary);
             })
             ->reduce(function ($query, $keys) use ($primary) {
-                /* @var \Cake\ORM\Query $query */
+                /** @var \Cake\ORM\Query $query */
                 $fields = array_map([$this->_table, 'aliasField'], $primary);
 
                 return $query->orWhere($query->newExpr()->and_(array_combine($fields, $keys)));

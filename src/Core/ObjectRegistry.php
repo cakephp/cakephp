@@ -126,7 +126,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
         if (empty($config)) {
             return;
         }
-        /* @var \Cake\Core\InstanceConfigTrait $existing */
+        /** @var \Cake\Core\InstanceConfigTrait $existing */
         $existingConfig = $existing->getConfig();
         unset($config['enabled'], $existingConfig['enabled']);
 
