@@ -899,7 +899,7 @@ class PaginatorHelper extends Helper
     /**
      * Generates the first number for the paginator numbers() method.
      *
-     * @param \Cake\View\StringTemplate $ellipsis StringTemplate instance.
+     * @param string $ellipsis Ellipsis character.
      * @param array $params Params from the numbers() method.
      * @param int $start Start number.
      * @param array $options Options from the numbers() method.
@@ -923,7 +923,7 @@ class PaginatorHelper extends Helper
     /**
      * Generates the last number for the paginator numbers() method.
      *
-     * @param \Cake\View\StringTemplate $ellipsis StringTemplate instance.
+     * @param string $ellipsis Ellipsis character.
      * @param array $params Params from the numbers() method.
      * @param int $end End number.
      * @param array $options Options from the numbers() method.
