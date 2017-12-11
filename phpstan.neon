@@ -21,7 +21,7 @@ parameters:
         - '#Access to an undefined property PHPUnit\\Framework\\Test::\$fixtureManager#'
         - '#Method Redis::#'
         - '#Call to an undefined method Traversable::getArrayCopy().#'
-        - '#Variable $config in isset\(\) is never defined#'
+        - '#Variable \$config in isset\(\) is never defined#'
     earlyTerminatingMethodCalls:
         Cake\Shell\Shell:
             - abort
