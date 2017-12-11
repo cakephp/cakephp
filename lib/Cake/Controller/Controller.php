@@ -1033,6 +1033,7 @@ class Controller extends CakeObject implements CakeEventListener {
  *        included in the returned conditions
  * @return array|null An array of model conditions
  * @deprecated 3.0.0 Will be removed in 3.0.
+ * @throws RuntimeException when unsafe operators are found.
  */
 	public function postConditions($data = array(), $op = null, $bool = 'AND', $exclusive = false) {
 		if (!is_array($data) || empty($data)) {
@@ -1051,7 +1052,7 @@ class Controller extends CakeObject implements CakeEventListener {
 		$arrayOp = is_array($op);
 		foreach ($data as $model => $fields) {
 			foreach ($fields as $field => $value) {
-				if (preg_match('#[!=><~\&\|\)\(]#', $field)) {
+				if (preg_match('#[^a-zA-Z0-9_ ]#', $field)) {
 					throw new RuntimeException("Unsafe operator found in {$model}.{$field}");
 				}
 				$key = $model . '.' . $field;

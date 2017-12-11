@@ -1182,7 +1182,7 @@ class ControllerTest extends CakeTestCase {
  *
  * @return array
  */
-    public function dangerousPostConditionsProvider() {
+	public function dangerousPostConditionsProvider() {
 		return array(
 			array(
 				array('Model' => array('field !=' => 1))
@@ -1195,6 +1195,9 @@ class ControllerTest extends CakeTestCase {
 			),
 			array(
 				array('Model' => array('field OR RAND()' => 1))
+			),
+			array(
+				array('Posts' => array('id IS NULL union all select posts.* from posts where id; --' => 1))
 			),
 		);
 	}
