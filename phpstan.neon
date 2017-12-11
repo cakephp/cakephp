@@ -22,6 +22,7 @@ parameters:
         - '#Call to an undefined method Traversable::getArrayCopy().#'
         - '#Variable \$config in isset\(\) is never defined#'
         - '#Call to static method id\(\) on an unknown class PHPUnit_Runner_Version#'
+        - '#Call to an undefined method DateTimeInterface::i18nFormat\(\)#'
     earlyTerminatingMethodCalls:
         Cake\Shell\Shell:
             - abort

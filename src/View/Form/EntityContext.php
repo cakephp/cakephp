@@ -17,6 +17,7 @@ namespace Cake\View\Form;
 use ArrayAccess;
 use Cake\Collection\Collection;
 use Cake\Datasource\EntityInterface;
+use Cake\Datasource\RepositoryInterface;
 use Cake\Http\ServerRequest;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
@@ -147,7 +148,7 @@ class EntityContext implements ContextInterface
             $table = TableRegistry::get($table);
         }
 
-        if (!is_object($table)) {
+        if (!($table instanceof RepositoryInterface)) {
             throw new RuntimeException(
                 'Unable to find table class for current entity'
             );
@@ -157,7 +158,6 @@ class EntityContext implements ContextInterface
             $entity instanceof Traversable
         );
 
-        /** @var \Cake\Datasource\RepositoryInterface $table */
         $alias = $this->_rootName = $table->getAlias();
         $this->_tables[$alias] = $table;
     }

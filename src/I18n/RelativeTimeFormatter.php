@@ -115,7 +115,6 @@ class RelativeTimeFormatter
         }
 
         if ($diff > abs($now - (new FrozenTime($options['end']))->format('U'))) {
-            /** @var \Cake\I18n\DateFormatTrait $time */
             return sprintf($options['absoluteString'], $time->i18nFormat($options['format']));
         }
 
@@ -306,7 +305,6 @@ class RelativeTimeFormatter
         }
 
         if ($diff > abs($now - (new FrozenDate($options['end']))->format('U'))) {
-            /** @var \Cake\I18n\DateFormatTrait $time */
             return sprintf($options['absoluteString'], $date->i18nFormat($options['format']));
         }
 
