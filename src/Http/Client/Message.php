@@ -46,6 +46,20 @@ class Message
     const STATUS_ACCEPTED = 202;
 
     /**
+     * HTTP 203 code
+     *
+     * @var int
+     */
+    const STATUS_NON_AUTHORITATIVE_INFORMATION = 203;
+
+    /**
+     * HTTP 204 code
+     *
+     * @var int
+     */
+    const STATUS_NO_CONTENT = 204;
+
+    /**
      * HTTP 301 code
      *
      * @var int

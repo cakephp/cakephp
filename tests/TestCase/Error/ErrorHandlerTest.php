@@ -153,7 +153,7 @@ class ErrorHandlerTest extends TestCase
     /**
      * provides errors for mapping tests.
      *
-     * @return void
+     * @return array
      */
     public static function errorProvider()
     {

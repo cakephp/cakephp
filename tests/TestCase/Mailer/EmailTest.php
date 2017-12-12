@@ -90,6 +90,16 @@ class TestEmail extends Email
     {
         return $this->_render($content);
     }
+
+    /**
+     * GetContentTransferEncoding to protected method
+     *
+     * @return string
+     */
+    public function getContentTransferEncoding()
+    {
+        return $this->_getContentTransferEncoding();
+    }
 }
 
 /**
@@ -2496,6 +2506,30 @@ class EmailTest extends TestCase
 
         $charset = $this->Email->setHeaderCharset('Shift_JIS');
         $this->assertSame('Shift_JIS', $charset->getHeaderCharset());
+    }
+
+    /**
+     * Test transferEncoding
+     *
+     * @return void
+     */
+    public function testTransferEncoding()
+    {
+        // Test new transfer encoding
+        $expected = 'quoted-printable';
+        $this->Email->setTransferEncoding($expected);
+        $this->assertSame($expected, $this->Email->getTransferEncoding());
+        $this->assertSame($expected, $this->Email->getContentTransferEncoding());
+
+        // Test default charset/encoding : utf8/8bit
+        $expected = '8bit';
+        $this->Email->reset();
+        $this->assertNull($this->Email->getTransferEncoding());
+        $this->assertSame($expected, $this->Email->getContentTransferEncoding());
+
+        //Test wrong encoding
+        $this->expectException(\InvalidArgumentException::class);
+        $this->Email->setTransferEncoding('invalid');
     }
 
     /**
