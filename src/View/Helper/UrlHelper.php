@@ -218,15 +218,15 @@ class UrlHelper extends Helper
      * a timestamp will be added.
      *
      * @param string $path The file path to timestamp, the path must be inside WWW_ROOT
-     * @param bool|string $stamp If set will overrule the value of `Asset.timestamp` in Configure.
+     * @param bool|string $timestamp If set will overrule the value of `Asset.timestamp` in Configure.
      * @return string Path with a timestamp added, or not.
      */
-    public function assetTimestamp($path, $stamp = null)
+    public function assetTimestamp($path, $timestamp = null)
     {
-        if (is_null($stamp)) {
-            $stamp = Configure::read('Asset.timestamp');
+        if (is_null($timestamp)) {
+            $timestamp = Configure::read('Asset.timestamp');
         }
-        $timestampEnabled = $stamp === 'force' || ($stamp === true && Configure::read('debug'));
+        $timestampEnabled = $timestamp === 'force' || ($timestamp === true && Configure::read('debug'));
         if ($timestampEnabled && strpos($path, '?') === false) {
             $filepath = preg_replace(
                 '/^' . preg_quote($this->request->getAttribute('webroot'), '/') . '/',
