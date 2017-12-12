@@ -33,7 +33,7 @@ use LogicException;
 use PDO;
 use RuntimeException;
 use Serializable;
-use SimpleXmlElement;
+use SimpleXMLElement;
 
 /**
  * CakePHP Email class.
@@ -2753,7 +2753,7 @@ class Email implements JsonSerializable, Serializable
      * It has certain limitations for viewVars that are good to know:
      *
      *    - ORM\Query executed and stored as resultset
-     *    - SimpleXmlElements stored as associative array
+     *    - SimpleXMLElements stored as associative array
      *    - Exceptions stored as strings
      *    - Resources, \Closure and \PDO are not supported.
      *
@@ -2843,7 +2843,7 @@ class Email implements JsonSerializable, Serializable
     {
         $array = $this->jsonSerialize();
         array_walk_recursive($array, function (&$item, $key) {
-            if ($item instanceof SimpleXmlElement) {
+            if ($item instanceof SimpleXMLElement) {
                 $item = json_decode(json_encode((array)$item), true);
             }
         });

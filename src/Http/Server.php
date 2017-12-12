@@ -109,7 +109,7 @@ class Server
     /**
      * Set the application.
      *
-     * @param Cake\Core\HttpApplicationInterface $app The application to set.
+     * @param \Cake\Core\HttpApplicationInterface $app The application to set.
      * @return $this
      */
     public function setApp(HttpApplicationInterface $app)

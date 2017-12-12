@@ -364,7 +364,7 @@ class ExtractTask extends Shell
      */
     protected function _extractTokens()
     {
-        /* @var \Cake\Shell\Helper\ProgressHelper $progress */
+        /** @var \Cake\Shell\Helper\ProgressHelper $progress */
         $progress = $this->helper('progress');
         $progress->init(['total' => count($this->_files)]);
         $isVerbose = $this->param('verbose');

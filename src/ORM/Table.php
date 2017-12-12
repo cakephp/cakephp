@@ -170,7 +170,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Connection instance
      *
-     * @var \Cake\Database\Connection|\Cake\Datasource\ConnectionInterface
+     * @var \Cake\Database\Connection
      */
     protected $_connection;
 
@@ -495,7 +495,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Returns the connection instance.
      *
-     * @return \Cake\Database\Connection|\Cake\Datasource\ConnectionInterface
+     * @return \Cake\Database\Connection
      */
     public function getConnection()
     {
@@ -1289,7 +1289,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         );
 
         return $query->formatResults(function ($results) use ($options) {
-            /* @var \Cake\Collection\CollectionInterface $results */
+            /** @var \Cake\Collection\CollectionInterface $results */
             return $results->combine(
                 $options['keyField'],
                 $options['valueField'],
@@ -1339,7 +1339,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $options = $this->_setFieldMatchers($options, ['keyField', 'parentField']);
 
         return $query->formatResults(function ($results) use ($options) {
-            /* @var \Cake\Collection\CollectionInterface $results */
+            /** @var \Cake\Collection\CollectionInterface $results */
             return $results->nest($options['keyField'], $options['parentField'], $options['nestingKey']);
         });
     }

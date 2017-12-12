@@ -16,7 +16,7 @@ namespace Cake\Console;
 
 use Cake\Console\Exception\ConsoleException;
 use Cake\Utility\Text;
-use SimpleXmlElement;
+use SimpleXMLElement;
 
 /**
  * HelpFormatter formats help for console shells. Can format to either
@@ -211,12 +211,12 @@ class HelpFormatter
      * Get the help as an xml string.
      *
      * @param bool $string Return the SimpleXml object or a string. Defaults to true.
-     * @return string|\SimpleXmlElement See $string
+     * @return string|\SimpleXMLElement See $string
      */
     public function xml($string = true)
     {
         $parser = $this->_parser;
-        $xml = new SimpleXmlElement('<shell></shell>');
+        $xml = new SimpleXMLElement('<shell></shell>');
         $xml->addChild('command', $parser->getCommand());
         $xml->addChild('description', $parser->getDescription());
 
