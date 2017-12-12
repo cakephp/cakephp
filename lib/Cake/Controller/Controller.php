@@ -1049,10 +1049,14 @@ class Controller extends CakeObject implements CakeEventListener {
 			$op = '';
 		}
 
+		$allowedChars = '#[^a-zA-Z0-9_ ]#';
 		$arrayOp = is_array($op);
 		foreach ($data as $model => $fields) {
+			if (preg_match($allowedChars, $model)) {
+				throw new RuntimeException("Unsafe operator found in {$model}");
+			}
 			foreach ($fields as $field => $value) {
-				if (preg_match('#[^a-zA-Z0-9_ ]#', $field)) {
+				if (preg_match($allowedChars, $field)) {
 					throw new RuntimeException("Unsafe operator found in {$model}.{$field}");
 				}
 				$key = $model . '.' . $field;

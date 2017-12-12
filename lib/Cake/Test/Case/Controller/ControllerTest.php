@@ -1199,6 +1199,9 @@ class ControllerTest extends CakeTestCase {
 			array(
 				array('Posts' => array('id IS NULL union all select posts.* from posts where id; --' => 1))
 			),
+			array(
+				array('Post.id IS NULL; --' => array('id' => 1))
+			),
 		);
 	}
 
