@@ -71,7 +71,7 @@ class UrlHelper extends Helper
      *   `fullBase` Return full URL with domain name
      *   `pathPrefix` Path prefix for relative URLs
      *   `plugin` False value will prevent parsing path as a plugin
-     *   `assetTimestamp` Overrides the value of `Asset.timestamp` in Configure.
+     *   `timestamp` Overrides the value of `Asset.timestamp` in Configure.
      *        Set to false to skip timestamp generation.
      *        Set to true to apply timestamps when debug is true. Set to 'force' to always
      *        enable timestamping regardless of debug value.
@@ -96,7 +96,7 @@ class UrlHelper extends Helper
      *   `pathPrefix` Path prefix for relative URLs
      *   `ext` Asset extension to append
      *   `plugin` False value will prevent parsing path as a plugin
-     *   `assetTimestamp` Overrides the value of `Asset.timestamp` in Configure.
+     *   `timestamp` Overrides the value of `Asset.timestamp` in Configure.
      *        Set to false to skip timestamp generation.
      *        Set to true to apply timestamps when debug is true. Set to 'force' to always
      *        enable timestamping regardless of debug value.
@@ -122,7 +122,7 @@ class UrlHelper extends Helper
      *   `pathPrefix` Path prefix for relative URLs
      *   `ext` Asset extension to append
      *   `plugin` False value will prevent parsing path as a plugin
-     *   `assetTimestamp` Overrides the value of `Asset.timestamp` in Configure.
+     *   `timestamp` Overrides the value of `Asset.timestamp` in Configure.
      *        Set to false to skip timestamp generation.
      *        Set to true to apply timestamps when debug is true. Set to 'force' to always
      *        enable timestamping regardless of debug value.
@@ -148,7 +148,7 @@ class UrlHelper extends Helper
      *   `pathPrefix` Path prefix for relative URLs
      *   `ext` Asset extension to append
      *   `plugin` False value will prevent parsing path as a plugin
-     *   `assetTimestamp` Overrides the value of `Asset.timestamp` in Configure.
+     *   `timestamp` Overrides the value of `Asset.timestamp` in Configure.
      *        Set to false to skip timestamp generation.
      *        Set to true to apply timestamps when debug is true. Set to 'force' to always
      *        enable timestamping regardless of debug value.
@@ -181,11 +181,11 @@ class UrlHelper extends Helper
             $path = Inflector::underscore($plugin) . '/' . $path;
         }
 
-        $optionAssetTimestamp = null;
-        if (array_key_exists('assetTimestamp', $options)) {
-            $optionAssetTimestamp = $options['assetTimestamp'];
+        $optionTimestamp = null;
+        if (array_key_exists('timestamp', $options)) {
+            $optionTimestamp = $options['timestamp'];
         }
-        $webPath = $this->assetTimestamp($this->webroot($path), $optionAssetTimestamp);
+        $webPath = $this->assetTimestamp($this->webroot($path), $optionTimestamp);
 
         $path = $this->_encodeUrl($webPath);
 
