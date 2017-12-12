@@ -254,6 +254,16 @@ class UrlHelperTest extends TestCase
         $this->assertRegExp('/' . preg_quote(Configure::read('App.cssBaseUrl') . 'cake.generic.css?', '/') . '[0-9]+/', $result);
     }
 
+    public function testAssetTimestampConfigureOverride()
+    {
+        $this->Helper->webroot = '';
+        Configure::write('Asset.timestamp', 'force');
+        $timestamp = false;
+
+        $result = $this->Helper->assetTimestamp(Configure::read('App.cssBaseUrl') . 'cake.generic.css', $timestamp);
+        $this->assertEquals(Configure::read('App.cssBaseUrl') . 'cake.generic.css', $result);
+    }
+
     /**
      * test assetTimestamp with plugins and themes
      *
