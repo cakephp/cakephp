@@ -148,7 +148,7 @@ class CakeObject {
  * Convenience method to write a message to CakeLog. See CakeLog::write()
  * for more information on writing to logs.
  *
- * @param string $msg Log message
+ * @param mixed $msg Log message
  * @param int $type Error type constant. Defined in app/Config/core.php.
  * @param null|string|array $scope The scope(s) a log message is being created in.
  *    See CakeLog::config() for more information on logging scopes.
