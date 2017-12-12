@@ -13,10 +13,9 @@
  */
 namespace Cake\Test\TestCase\Core;
 
-use Cake\Core\App;
 use Cake\Core\Plugin;
+use Cake\Core\PluginApp;
 use Cake\TestSuite\TestCase;
-use TestApp\Core\TestApp;
 
 /**
  * AppTest class
@@ -29,8 +28,25 @@ class PluginAppTest extends TestCase
      *
      * @return void
      */
-    public function tearDown() {
+    public function tearDown()
+    {
         parent::tearDown();
         Plugin::unload();
+    }
+
+    /**
+     * testConfigForRoutesAndBootstrap
+     *
+     * @return void
+     */
+    public function testConfigForRoutesAndBootstrap()
+    {
+        $plugin = new PluginApp([
+            'bootstrap' => false,
+            'routes' => false
+        ]);
+
+        $this->assertFalse($plugin->isBootstrapEnabled());
+        $this->assertFalse($plugin->isRouteLoadingEnabled());
     }
 }

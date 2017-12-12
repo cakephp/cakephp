@@ -31,6 +31,18 @@ class PluginRegistry extends ObjectRegistry implements ConsoleApplicationInterfa
      */
     protected function _resolveClassName($class)
     {
+        if (class_exists($class)) {
+            return $class;
+        }
+
+        list($plugin, $name) = pluginSplit($class, true);
+
+        if (empty($plugin)) {
+            $class = $name . '\\' . 'Plugin';
+        } else {
+            $class = $plugin . $name;
+        }
+
         return $class;
     }
 
@@ -45,7 +57,7 @@ class PluginRegistry extends ObjectRegistry implements ConsoleApplicationInterfa
     protected function _throwMissingClassError($class, $plugin)
     {
         new RuntimeException(sprintf(
-            'Plugin class `%s` is missing',
+            'Plugin class `%s` not found.',
             $class
         ));
     }
@@ -64,9 +76,15 @@ class PluginRegistry extends ObjectRegistry implements ConsoleApplicationInterfa
     {
         $instance = new $class($config);
 
-        if (!$instance instanceof HttpApplicationInterface
-            && !$instance instanceof ConsoleApplicationInterface) {
-            throw new \RuntimeException(sprintf('%s is not a valid plugin .', get_class($instance)));
+        if ((!$instance instanceof HttpApplicationInterface
+            && !$instance instanceof ConsoleApplicationInterface)
+            || !$instance instanceof PluginInterface) {
+            throw new \RuntimeException(sprintf(
+                '`%s` is not a valid plugin object. It\'s not implementing `%s` or `%s`',
+                get_class($instance)),
+                HttpApplicationInterface::class,
+                ConsoleApplicationInterface::class
+            );
         }
 
         return $instance;
@@ -81,7 +99,9 @@ class PluginRegistry extends ObjectRegistry implements ConsoleApplicationInterfa
     public function bootstrap()
     {
         foreach ($this as $plugin) {
-            $plugin->bootstrap();
+            if ($plugin->isBootstrapEnabled()) {
+                $plugin->bootstrap();
+            }
         }
     }
 
@@ -110,7 +130,9 @@ class PluginRegistry extends ObjectRegistry implements ConsoleApplicationInterfa
     public function routes($routes)
     {
         foreach ($this as $plugin) {
-            $plugin->middleware($routes);
+            if ($plugin->isRouteLoadingEnabled()) {
+                $plugin->routes($routes);
+            }
         }
     }
 

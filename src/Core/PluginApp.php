@@ -1,15 +1,58 @@
 <?php
+/**
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright 2005-2011, Cake Software Foundation, Inc. (https://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
+ * @since         3.6.0
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
+ */
 namespace Cake\Core;
 
-use Cake\Routing\RouteBuilder;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class PluginApp implements ConsoleApplicationInterface, HttpApplicationInterface
+/**
+ * Base Plugin Class
+ *
+ * Every plugin should extends from this class or implement the interfaces and
+ * include a plugin class in it's src root folder.
+ */
+class PluginApp implements ConsoleApplicationInterface, HttpApplicationInterface, PluginInterface
 {
 
+    /**
+     * Do bootstrapping or not
+     *
+     * @var bool
+     */
+    protected $doBootstrap = true;
+
+    /**
+     * Load routes or not
+     *
+     * @var bool
+     */
+    protected $loadRoutes = true;
+
+    /**
+     * Constructor
+     *
+     * @param array $options Options
+     */
     public function __construct(array $options = [])
     {
+        if (isset($options['bootstrap'])) {
+            $this->disableBootstrap((bool)$options['bootstrap']);
+        }
+        if (isset($options['routes'])) {
+            $this->disableRoutes((bool)$options['routes']);
+        }
+
         $this->initialize();
     }
 
@@ -19,6 +62,38 @@ class PluginApp implements ConsoleApplicationInterface, HttpApplicationInterface
     public function initialize()
     {
 
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function disableRoutes($disabled)
+    {
+        $this->loadRoutes = $disabled;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function disableBootstrap($disabled)
+    {
+        $this->doBootstrap = $disabled;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isRouteLoadingEnabled()
+    {
+        return $this->loadRoutes;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isBootstrapEnabled()
+    {
+        return $this->doBootstrap;
     }
 
     /**
@@ -60,12 +135,7 @@ class PluginApp implements ConsoleApplicationInterface, HttpApplicationInterface
     }
 
     /**
-     * Invoke the application.
-     *
-     * @param \Psr\Http\Message\ServerRequestInterface $request The request
-     * @param \Psr\Http\Message\ResponseInterface $response The response
-     * @param callable $next The next middleware
-     * @return \Psr\Http\Message\ResponseInterface
+     * {@inheritdoc}
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next)
     {

@@ -42,4 +42,27 @@ class PluginRegistryTest extends TestCase
         $result = $registry->loaded();
         $this->assertEquals(['TestPlugin'], $result);
     }
+
+    public function testDotSyntax()
+    {
+        /*
+        $registry = new PluginRegistry();
+        //$result = $registry->load('TestPlugin');
+        //$this->assertInstanceOf(TestPlugin::class, $result);
+
+        $result = $registry->load('Company\TestPluginFive');
+        //$this->assertInstanceOf(TestPlugin::class, $result);
+        debug($result);
+        */
+    }
+
+    /**
+     * @expectedException \Error
+     * @expectedExceptionMessage Class 'DoesNotExist\Plugin' not found
+     */
+    public function testClassNotFoundException()
+    {
+        $registry = new PluginRegistry();
+        $registry->load('DoesNotExist');
+    }
 }
