@@ -23,6 +23,9 @@ parameters:
         - '#Variable \$config in isset\(\) is never defined#'
         - '#Call to static method id\(\) on an unknown class PHPUnit_Runner_Version#'
         - '#Call to an undefined method DateTimeInterface::i18nFormat\(\)#'
+        - '#Call to an undefined method object::__toString\(\)#'
+        - '#Call to an undefined method object::toArray\(\)#'
+        - '#Call to an undefined method object::__debugInfo\(\)#'
     earlyTerminatingMethodCalls:
         Cake\Shell\Shell:
             - abort
