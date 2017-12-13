@@ -22,7 +22,7 @@ use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\ConsoleOutput;
 use Cake\Utility\Inflector;
-use SimpleXmlElement;
+use SimpleXMLElement;
 
 /**
  * Print out command list
@@ -124,7 +124,7 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
      */
     protected function asXml($io, $commands)
     {
-        $shells = new SimpleXmlElement('<shells></shells>');
+        $shells = new SimpleXMLElement('<shells></shells>');
         foreach ($commands as $name => $class) {
             $shell = $shells->addChild('shell');
             $shell->addAttribute('name', $name);

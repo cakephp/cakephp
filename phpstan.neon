@@ -26,6 +26,7 @@ parameters:
         - '#Call to an undefined method object::__toString\(\)#'
         - '#Call to an undefined method object::toArray\(\)#'
         - '#Call to an undefined method object::__debugInfo\(\)#'
+        - '#Static call to instance method Cake\\ORM\\TableRegistry::getConfig\(\)#'
     earlyTerminatingMethodCalls:
         Cake\Shell\Shell:
             - abort
