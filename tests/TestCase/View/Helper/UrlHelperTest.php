@@ -328,6 +328,20 @@ class UrlHelperTest extends TestCase
     }
 
     /**
+     * Test script with timestamp option overriding `Asset.timestamp` in Configure
+     *
+     * @return void
+     */
+    public function testScriptTimestampConfigureOverride()
+    {
+        Configure::write('Asset.timestamp', 'force');
+        $timestamp = false;
+
+        $result = $this->Helper->script('script.js', ['timestamp' => $timestamp]);
+        $this->assertEquals(Configure::read('App.jsBaseUrl').'script.js', $result);
+    }
+
+    /**
      * test image()
      *
      * @return void
