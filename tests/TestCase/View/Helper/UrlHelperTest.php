@@ -338,7 +338,7 @@ class UrlHelperTest extends TestCase
         $timestamp = false;
 
         $result = $this->Helper->script('script.js', ['timestamp' => $timestamp]);
-        $this->assertEquals(Configure::read('App.jsBaseUrl').'script.js', $result);
+        $this->assertEquals(Configure::read('App.jsBaseUrl') . 'script.js', $result);
     }
 
     /**
