@@ -17,9 +17,11 @@ namespace Cake\I18n;
 use Aura\Intl\FormatterLocator;
 use Aura\Intl\PackageLocator;
 use Cake\Cache\Cache;
+use Cake\I18n\Formatter\FormatterInterface;
 use Cake\I18n\Formatter\IcuFormatter;
 use Cake\I18n\Formatter\SprintfFormatter;
 use Locale;
+use RuntimeException;
 
 /**
  * I18n handles translation of Text and time format strings.
@@ -194,7 +196,7 @@ class I18n
      *
      * @param string $name The domain of the translation messages.
      * @param string|null $locale The locale for the translator.
-     * @return \Aura\Intl\TranslatorInterface The configured translator.
+     * @return \Aura\Intl\TranslatorInterface|\Cake\I18n\Formatter\FormatterInterface The configured translator.
      */
     public static function getTranslator($name = 'default', $locale = null)
     {
@@ -212,6 +214,23 @@ class I18n
         }
 
         return $translator;
+    }
+
+    /**
+     * Formats a message with the same formatter as the translator uses.
+     *
+     * @param string $message The message content.
+     * @param string|array $args Array with arguments or multiple arguments in function.
+     * @return string
+     */
+    public static function format($message, $args)
+    {
+        $translator = static::getTranslator();
+        if (!($translator instanceof FormatterInterface)) {
+            throw new RuntimeException(sprintf('Translater %s does not implement %s', get_class($translator), FormatterInterface::class));
+        }
+
+        return $translator->format($message, $args);
     }
 
     /**

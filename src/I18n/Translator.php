@@ -13,13 +13,14 @@
 namespace Cake\I18n;
 
 use Aura\Intl\Translator as BaseTranslator;
+use Cake\I18n\Formatter\FormatterInterface;
 
 /**
  * Provides missing message behavior for CakePHP internal message formats.
  *
  * @internal
  */
-class Translator extends BaseTranslator
+class Translator extends BaseTranslator implements FormatterInterface
 {
 
     const PLURAL_PREFIX = 'p:';
@@ -84,6 +85,18 @@ class Translator extends BaseTranslator
         }
 
         return $this->formatter->format($this->locale, $message, $tokensValues);
+    }
+
+    /**
+     * Formats a message with the same formatter as the translator uses.
+     *
+     * @param string $message The message content.
+     * @param string|array $args Array with arguments or multiple arguments in function.
+     * @return string
+     */
+    public function format($message, $args)
+    {
+        return $this->formatter->format($this->locale, $message, (array)$args);
     }
 
     /**
