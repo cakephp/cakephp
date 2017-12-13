@@ -223,7 +223,7 @@ class UrlHelper extends Helper
      */
     public function assetTimestamp($path, $timestamp = null)
     {
-        if (is_null($timestamp)) {
+        if ($timestamp === null) {
             $timestamp = Configure::read('Asset.timestamp');
         }
         $timestampEnabled = $timestamp === 'force' || ($timestamp === true && Configure::read('debug'));
