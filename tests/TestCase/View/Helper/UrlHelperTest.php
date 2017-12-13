@@ -381,6 +381,19 @@ class UrlHelperTest extends TestCase
     }
 
     /**
+     * Test css with `Asset.timestamp` = force
+     *
+     * @return void
+     */
+    public function testCssTimestampForce()
+    {
+        Configure::write('Asset.timestamp', 'force');
+
+        $result = $this->Helper->css('cake.generic');
+        $this->assertRegExp('/' . preg_quote('css/cake.generic.css?', '/') . '[0-9]+/', $result);
+    }
+
+    /**
      * Test generating paths with webroot().
      *
      * @return void
