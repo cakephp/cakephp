@@ -394,6 +394,20 @@ class UrlHelperTest extends TestCase
     }
 
     /**
+     * Test image with timestamp option overriding `Asset.timestamp` in Configure
+     *
+     * @return void
+     */
+    public function testCssTimestampConfigureOverride()
+    {
+        Configure::write('Asset.timestamp', 'force');
+        $timestamp = false;
+
+        $result = $this->Helper->css('cake.generic', ['timestamp' => $timestamp]);
+        $this->assertEquals('css/cake.generic.css', $result);
+    }
+
+    /**
      * Test generating paths with webroot().
      *
      * @return void
