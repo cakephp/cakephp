@@ -314,6 +314,20 @@ class UrlHelperTest extends TestCase
     }
 
     /**
+     * Test script and Asset.timestamp = force
+     *
+     * @return void
+     */
+    public function testScriptTimestampForce()
+    {
+        $this->Helper->webroot = '';
+        Configure::write('Asset.timestamp', 'force');
+
+        $result = $this->Helper->script('script.js');
+        $this->assertRegExp('/' . preg_quote(Configure::read('App.jsBaseUrl') . 'script.js?', '/') . '[0-9]+/', $result);
+    }
+
+    /**
      * test image()
      *
      * @return void
