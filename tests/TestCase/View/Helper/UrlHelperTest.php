@@ -254,6 +254,11 @@ class UrlHelperTest extends TestCase
         $this->assertRegExp('/' . preg_quote(Configure::read('App.cssBaseUrl') . 'cake.generic.css?', '/') . '[0-9]+/', $result);
     }
 
+    /**
+     * Test assetTimestamp with timestamp option overriding `Asset.timestamp` in Configure.
+     *
+     * @return void
+     */
     public function testAssetTimestampConfigureOverride()
     {
         $this->Helper->webroot = '';
