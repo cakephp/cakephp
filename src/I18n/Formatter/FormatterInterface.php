@@ -19,8 +19,8 @@ interface FormatterInterface
     /**
      * Formats message
      *
-     * @param string $message
-     * @param string|array $args
+     * @param string $message The message content.
+     * @param string|array $args Argument or multiple arguments.
      * @return string
      */
     public function format($message, $args);

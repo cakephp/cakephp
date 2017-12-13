@@ -220,7 +220,7 @@ class I18n
      * Formats a message with the same formatter as the translator uses.
      *
      * @param string $message The message content.
-     * @param string|array $args Array with arguments or multiple arguments in function.
+     * @param string|array $args Argument or multiple arguments.
      * @return string
      */
     public static function format($message, $args)
