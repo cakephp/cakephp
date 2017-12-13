@@ -157,7 +157,7 @@ class CsrfProtectionMiddleware
      * @param string $token The token to add.
      * @param \Cake\Http\ServerRequest $request The request to validate against.
      * @param \Cake\Http\Response $response The response.
-     * @return @param \Cake\Http\Response $response Modified response.
+     * @return \Cake\Http\Response $response Modified response.
      */
     protected function _addTokenCookie($token, ServerRequest $request, Response $response)
     {

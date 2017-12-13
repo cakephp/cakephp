@@ -133,7 +133,7 @@ class ErrorHandler extends BaseErrorHandler
             if (!$rendererClassName) {
                 throw new Exception("$rendererClassName is an invalid class.");
             }
-            /* @var \Cake\Error\ExceptionRendererInterface $renderer */
+            /** @var \Cake\Error\ExceptionRendererInterface $renderer */
             $renderer = new $rendererClassName($exception);
             $response = $renderer->render();
             $this->_clearOutput();

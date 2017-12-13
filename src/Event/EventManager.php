@@ -63,7 +63,7 @@ class EventManager
     /**
      * Enables automatic adding of events to the event list object if it is present.
      *
-     * @param bool
+     * @var bool
      */
     protected $_trackEvents = false;
 

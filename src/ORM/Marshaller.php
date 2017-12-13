@@ -106,7 +106,7 @@ class Marshaller
             }
             if (isset($options['isMerge'])) {
                 $callback = function ($value, $entity) use ($assoc, $nested) {
-                    /* @var \Cake\Datasource\EntityInterface $entity */
+                    /** @var \Cake\Datasource\EntityInterface $entity */
                     $options = $nested + ['associated' => [], 'association' => $assoc];
 
                     return $this->_mergeAssociation($entity->get($assoc->getProperty()), $assoc, $value, $options);
@@ -170,7 +170,7 @@ class Marshaller
 
         $primaryKey = (array)$this->_table->getPrimaryKey();
         $entityClass = $this->_table->getEntityClass();
-        /* @var \Cake\Datasource\EntityInterface $entity */
+        /** @var \Cake\Datasource\EntityInterface $entity */
         $entity = new $entityClass();
         $entity->setSource($this->_table->getRegistryAlias());
 
@@ -240,19 +240,23 @@ class Marshaller
         if (!$options['validate']) {
             return [];
         }
+
+        $validator = null;
         if ($options['validate'] === true) {
-            $options['validate'] = $this->_table->getValidator();
+            $validator = $this->_table->getValidator();
+        } elseif (is_string($options['validate'])) {
+            $validator = $this->_table->getValidator($options['validate']);
+        } elseif (is_object($options['validate'])) {
+            $validator = $options['validate'];
         }
-        if (is_string($options['validate'])) {
-            $options['validate'] = $this->_table->getValidator($options['validate']);
-        }
-        if (!is_object($options['validate'])) {
+
+        if ($validator === null) {
             throw new RuntimeException(
                 sprintf('validate must be a boolean, a string or an object. Got %s.', getTypeName($options['validate']))
             );
         }
 
-        return $options['validate']->errors($data, $isNew);
+        return $validator->errors($data, $isNew);
     }
 
     /**
@@ -412,7 +416,7 @@ class Marshaller
         if (!empty($conditions)) {
             $query = $target->find();
             $query->andWhere(function ($exp) use ($conditions) {
-                /* @var \Cake\Database\Expression\QueryExpression $exp */
+                /** @var \Cake\Database\Expression\QueryExpression $exp */
                 return $exp->or_($conditions);
             });
 

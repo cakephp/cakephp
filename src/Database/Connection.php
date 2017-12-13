@@ -840,7 +840,7 @@ class Connection implements ConnectionInterface
     /**
      * Sets a logger
      *
-     * @param object $logger Logger object
+     * @param \Cake\Database\Log\QueryLogger $logger Logger object
      * @return $this
      */
     public function setLogger($logger)
@@ -853,7 +853,7 @@ class Connection implements ConnectionInterface
     /**
      * Gets the logger object
      *
-     * @return object logger instance
+     * @return \Cake\Database\Log\QueryLogger logger instance
      */
     public function getLogger()
     {
