@@ -20,7 +20,7 @@ use RuntimeException;
 /**
  * Plugin Registry
  */
-class PluginRegistry extends ObjectRegistry implements ConsoleApplicationInterface, HttpApplicationInterface
+class PluginRegistry extends ObjectRegistry implements PluginRegistryInterface
 {
 
     /**
@@ -79,7 +79,7 @@ class PluginRegistry extends ObjectRegistry implements ConsoleApplicationInterfa
         if ((!$instance instanceof HttpApplicationInterface
             && !$instance instanceof ConsoleApplicationInterface)
             || !$instance instanceof PluginInterface) {
-            throw new \RuntimeException(sprintf(
+            throw new RuntimeException(sprintf(
                 '`%s` is not a valid plugin object. It\'s not implementing `%s` or `%s`',
                 get_class($instance)),
                 HttpApplicationInterface::class,

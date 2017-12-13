@@ -18,6 +18,14 @@ namespace Cake\Core;
  */
 interface PluginInterface
 {
+    /**
+     * Load all the application configuration and bootstrap logic.
+     *
+     * Override this method to add additional bootstrap logic for your application.
+     *
+     * @return void
+     */
+    public function bootstrap();
 
     /**
      * Disables route loading for the plugin

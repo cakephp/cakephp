@@ -17,8 +17,10 @@ namespace Cake\Http;
 use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\HttpApplicationInterface;
 use Cake\Core\PluginRegistry;
+use Cake\Core\PluginRegistryInterface;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
+use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -42,17 +44,51 @@ abstract class BaseApplication implements ConsoleApplicationInterface, HttpAppli
      *
      * @param \Cake\Core\PluginRegistry
      */
-    protected $plugins;
+    protected $pluginRegistry;
+
+    /**
+     * Default Plugin Registry Class
+     *
+     * @var string
+     */
+    protected $defaultPluginRegistry = PluginRegistry::class;
 
     /**
      * Constructor
      *
      * @param string $configDir The directory the bootstrap configuration is held in.
+     * @param string|null $pluginRegistry Plugin Registry Object
      */
-    public function __construct($configDir)
+    public function __construct($configDir, $pluginRegistry = null)
     {
         $this->configDir = $configDir;
-        $this->plugins = new PluginRegistry();
+
+        $this->setPluginRegistry($pluginRegistry);
+    }
+
+    /**
+     * Sets the plugin registry
+     *
+     * @param string|null $pluginRegistry Plugin Registry Object
+     * @return void
+     */
+    public function setPluginRegistry($pluginRegistry = null)
+    {
+        if (empty($pluginRegistry)) {
+            $this->pluginRegistry = new $this->defaultPluginRegistry();
+
+            return;
+        }
+
+        if (!$pluginRegistry instanceof PluginRegistryInterface) {
+            throw new InvalidArgumentException(sprintf(
+                '`%s` is not an instance of `%s`',
+                get_class($pluginRegistry),
+                PluginRegistryInterface::class
+            ));
+        }
+
+        $this->pluginRegistry = $pluginRegistry;
     }
 
     /**
@@ -134,6 +170,6 @@ abstract class BaseApplication implements ConsoleApplicationInterface, HttpAppli
      */
     public function plugins()
     {
-        return $this->plugins;
+        return $this->pluginRegistry;
     }
 }
