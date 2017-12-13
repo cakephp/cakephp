@@ -356,6 +356,20 @@ class UrlHelperTest extends TestCase
     }
 
     /**
+     * Test image with timestamp option overriding `Asset.timestamp` in Configure
+     *
+     * @return void
+     */
+    public function testImageTimestampConfigureOverride()
+    {
+        Configure::write('Asset.timestamp', 'force');
+        $timestamp = false;
+
+        $result = $this->Helper->image('cake.icon.png', ['timestamp' => $timestamp]);
+        $this->assertEquals('img/cake.icon.png', $result);
+    }
+
+    /**
      * test css
      *
      * @return void
