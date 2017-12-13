@@ -343,6 +343,19 @@ class UrlHelperTest extends TestCase
     }
 
     /**
+     * Test image with `Asset.timestamp` = force
+     *
+     * @return void
+     */
+    public function testImageTimestampForce()
+    {
+        Configure::write('Asset.timestamp', 'force');
+
+        $result = $this->Helper->image('cake.icon.png');
+        $this->assertRegExp('/' . preg_quote('img/cake.icon.png?', '/') . '[0-9]+/', $result);
+    }
+
+    /**
      * test css
      *
      * @return void
