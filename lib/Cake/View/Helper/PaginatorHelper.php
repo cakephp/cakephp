@@ -128,14 +128,7 @@ class PaginatorHelper extends AppHelper {
 			$model = $this->defaultModel();
 		}
 		if (!isset($this->request->params['paging']) || empty($this->request->params['paging'][$model])) {
-			return array(
-				'prevPage' => false,
-				'nextPage' => true,
-				'paramType' => 'named',
-				'pageCount' => 1,
-				'options' => array(),
-				'page' => 1
-			);
+			return null;
 		}
 		return $this->request->params['paging'][$model];
 	}
@@ -599,6 +592,9 @@ class PaginatorHelper extends AppHelper {
 			$model = null;
 		}
 		$paging = $this->params($model);
+		if (empty($paging)) {
+			return false;
+		}
 		return $page <= $paging['pageCount'];
 	}
 
