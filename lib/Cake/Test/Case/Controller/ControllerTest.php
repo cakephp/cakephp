@@ -1178,6 +1178,48 @@ class ControllerTest extends CakeTestCase {
 	}
 
 /**
+ * data provider for dangerous post conditions.
+ *
+ * @return array
+ */
+	public function dangerousPostConditionsProvider() {
+		return array(
+			array(
+				array('Model' => array('field !=' => 1))
+			),
+			array(
+				array('Model' => array('field AND 1=1 OR' => 'thing'))
+			),
+			array(
+				array('Model' => array('field >' => 1))
+			),
+			array(
+				array('Model' => array('field OR RAND()' => 1))
+			),
+			array(
+				array('Posts' => array('id IS NULL union all select posts.* from posts where id; --' => 1))
+			),
+			array(
+				array('Post.id IS NULL; --' => array('id' => 1))
+			),
+		);
+	}
+
+/**
+ * test postConditions raising an exception on unsafe keys.
+ *
+ * @expectedException RuntimeException
+ * @dataProvider dangerousPostConditionsProvider
+ * @return void
+ */
+	public function testPostConditionsDangerous($data) {
+		$request = new CakeRequest('controller_posts/index');
+
+		$Controller = new Controller($request);
+		$Controller->postConditions($data);
+	}
+
+/**
  * testControllerHttpCodes method
  *
  * @return void
