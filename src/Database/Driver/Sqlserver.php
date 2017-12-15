@@ -39,6 +39,7 @@ class Sqlserver extends Driver
         'username' => '',
         'password' => '',
         'database' => 'cake',
+        'port' => '',
         // PDO::SQLSRV_ENCODING_UTF8
         'encoding' => 65001,
         'flags' => [],
@@ -82,8 +83,12 @@ class Sqlserver extends Driver
         if (!empty($config['encoding'])) {
             $config['flags'][PDO::SQLSRV_ATTR_ENCODING] = $config['encoding'];
         }
+        $port = '';
+        if (strlen($config['port'])) {
+            $port = ',' . $config['port'];
+        }
 
-        $dsn = "sqlsrv:Server={$config['host']};Database={$config['database']};MultipleActiveResultSets=false";
+        $dsn = "sqlsrv:Server={$config['host']}{$port};Database={$config['database']};MultipleActiveResultSets=false";
         if ($config['app'] !== null) {
             $dsn .= ";APP={$config['app']}";
         }

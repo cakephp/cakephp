@@ -66,7 +66,15 @@ class SqlserverTest extends TestCase
                 [
                 ],
                 'sqlsrv:Server=localhost\SQLEXPRESS;Database=cake;MultipleActiveResultSets=false',
-            ]
+            ],
+            [
+                [
+                    'app' => 'CakePHP-Testapp',
+                    'host' => 'locahost',
+                    'port' => 9001,
+                ],
+                'sqlsrv:Server=localhost\SQLEXPRESS,9001;Database=cake;MultipleActiveResultSets=false;APP=CakePHP-Testapp',
+            ],
         ];
     }
 
