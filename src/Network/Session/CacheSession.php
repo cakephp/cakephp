@@ -123,7 +123,7 @@ class CacheSession implements SessionHandlerInterface
     /**
      * Helper function called on gc for cache sessions.
      *
-     * @param string $maxlifetime Sessions that have not updated for the last maxlifetime seconds will be removed.
+     * @param int $maxlifetime Sessions that have not updated for the last maxlifetime seconds will be removed.
      * @return bool Always true.
      */
     public function gc($maxlifetime)
