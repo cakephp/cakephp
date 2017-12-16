@@ -27,7 +27,7 @@ class Event implements EventInterface
     /**
      * The object this event applies to (usually the same object that generates the event)
      *
-     * @var object
+     * @var object|null
      */
     protected $_subject;
 
@@ -71,8 +71,8 @@ class Event implements EventInterface
     public function __construct($name, $subject = null, $data = null)
     {
         $this->_name = $name;
-        $this->_data = (array)$data;
         $this->_subject = $subject;
+        $this->_data = (array)$data;
     }
 
     /**
