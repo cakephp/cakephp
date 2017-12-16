@@ -819,7 +819,7 @@ class EventManagerTest extends TestCase
         );
 
         $eventManager->setEventList(new EventList());
-        $eventManager->addEventToList(new Event('Foo'));
+        $eventManager->addEventToList(new Event('Foo', $this));
         $this->assertSame(
             [
                 '_listeners' => [],
@@ -827,7 +827,7 @@ class EventManagerTest extends TestCase
                 '_trackEvents' => true,
                 '_generalManager' => '(object) EventManager',
                 '_dispatchedEvents' => [
-                    'Foo with subject Cake\Event\EventManager'
+                    'Foo with subject Cake\Test\TestCase\Event\EventManagerTest'
                 ],
             ],
             $eventManager->__debugInfo()
