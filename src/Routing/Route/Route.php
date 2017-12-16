@@ -384,7 +384,7 @@ class Route
             if ($value === null) {
                 continue;
             }
-            if (is_bool($value)) {
+            if ($value === true || $value === false) {
                 $value = $value ? '1' : '0';
             }
             $name .= $value . $glue;
