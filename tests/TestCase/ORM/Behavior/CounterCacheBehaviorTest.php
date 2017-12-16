@@ -350,9 +350,9 @@ class CounterCacheBehaviorTest extends TestCase
 
                     if (!$original) {
                         return 2;
-                    } else {
-                        return 1;
                     }
+
+                    return 1;
                 }
             ]
         ]);
