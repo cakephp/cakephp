@@ -743,7 +743,9 @@ class RouteBuilder
             }
 
             $route = str_replace('//', '/', $this->_path . $route);
-            $route = $route === '/' ? $route : rtrim($route, '/');
+            if ($route !== '/') {
+                $route = rtrim($route, '/');
+            }
 
             foreach ($this->_params as $param => $val) {
                 if (isset($defaults[$param]) && $param !== 'prefix' && $defaults[$param] !== $val) {
@@ -758,8 +760,7 @@ class RouteBuilder
                     ));
                 }
             }
-            $defaults += $this->_params;
-            $defaults += ['plugin' => null];
+            $defaults += $this->_params + ['plugin' => null];
 
             $route = new $routeClass($route, $defaults, $options);
         }
