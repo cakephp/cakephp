@@ -968,8 +968,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         $options += ['sourceTable' => $this];
         $association = new BelongsTo($associated, $options);
+        $this->_associations->add($association->getName(), $association);
 
-        return $this->_associations->add($association->getName(), $association);
+        return $association;
     }
 
     /**
@@ -1012,8 +1013,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         $options += ['sourceTable' => $this];
         $association = new HasOne($associated, $options);
+        $this->_associations->add($association->getName(), $association);
 
-        return $this->_associations->add($association->getName(), $association);
+        return $association;
     }
 
     /**
@@ -1062,8 +1064,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         $options += ['sourceTable' => $this];
         $association = new HasMany($associated, $options);
+        $this->_associations->add($association->getName(), $association);
 
-        return $this->_associations->add($association->getName(), $association);
+        return $association;
     }
 
     /**
@@ -1114,8 +1117,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         $options += ['sourceTable' => $this];
         $association = new BelongsToMany($associated, $options);
+        $this->_associations->add($association->getName(), $association);
 
-        return $this->_associations->add($association->getName(), $association);
+        return $association;
     }
 
     /**

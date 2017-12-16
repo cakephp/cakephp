@@ -739,7 +739,7 @@ class ConsoleOptionParser
                 return $formatter->text($width);
             }
             if ($format === 'xml') {
-                return $formatter->xml();
+                return (string)$formatter->xml();
             }
         }
 

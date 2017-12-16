@@ -1591,6 +1591,13 @@ class Email implements JsonSerializable, Serializable
         $config = static::$_transportConfig[$name];
 
         if (is_object($config['className'])) {
+            if (!$config['className'] instanceof AbstractTransport) {
+                throw new InvalidArgumentException(sprintf(
+                    'Transport object must be of type "AbstractTransport". Found invalid type: "%s".',
+                    get_class($config['className'])
+                ));
+            }
+
             return $config['className'];
         }
 
