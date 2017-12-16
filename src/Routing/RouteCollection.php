@@ -121,10 +121,6 @@ class RouteCollection
 
         // Index path prefixes (for parsing)
         $path = $route->staticPath();
-        if (empty($this->_paths[$path])) {
-            $this->_paths[$path] = [];
-            krsort($this->_paths);
-        }
         $this->_paths[$path][] = $route;
 
         $extensions = $route->getExtensions();
@@ -144,7 +140,12 @@ class RouteCollection
     public function parse($url, $method = '')
     {
         $decoded = urldecode($url);
-        foreach (array_keys($this->_paths) as $path) {
+
+        // Sort path segments matching longest paths first.
+        $paths = array_keys($this->_paths);
+        rsort($paths);
+
+        foreach ($paths as $path) {
             if (strpos($decoded, $path) !== 0) {
                 continue;
             }
@@ -189,7 +190,12 @@ class RouteCollection
     {
         $uri = $request->getUri();
         $urlPath = urldecode($uri->getPath());
-        foreach (array_keys($this->_paths) as $path) {
+
+        // Sort path segments matching longest paths first.
+        $paths = array_keys($this->_paths);
+        rsort($paths);
+
+        foreach ($paths as $path) {
             if (strpos($urlPath, $path) !== 0) {
                 continue;
             }
