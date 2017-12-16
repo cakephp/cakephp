@@ -23,7 +23,7 @@ class MemoryStorage implements StorageInterface
     /**
      * User record.
      *
-     * @var array|null
+     * @var \ArrayAccess|array|null
      */
     protected $_user;
 

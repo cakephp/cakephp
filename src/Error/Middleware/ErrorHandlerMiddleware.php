@@ -61,7 +61,7 @@ class ErrorHandlerMiddleware
     /**
      * Exception render.
      *
-     * @var \Cake\Error\ExceptionRendererInterface|string|null
+     * @var \Cake\Error\ExceptionRendererInterface|callable|string|null
      */
     protected $exceptionRenderer;
 
