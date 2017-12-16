@@ -11,11 +11,6 @@
 debug.log
 error.log
 
-# IDE and editor specific files #
-#################################
-/nbproject
-.idea
-
 # OS generated files #
 ######################
 .DS_Store
@@ -26,3 +21,23 @@ error.log
 Icon?
 ehthumbs.db
 Thumbs.db
+
+# Tool specific files #
+#######################
+# vim
+*~
+*.swp
+*.swo
+# sublime text & textmate
+*.sublime-*
+*.stTheme.cache
+*.tmlanguage.cache
+*.tmPreferences.cache
+# Eclipse
+.settings/*
+# JetBrains, aka PHPStorm, IntelliJ IDEA
+.idea/*
+# NetBeans
+nbproject/*
+# Visual Studio Code
+.vscode
