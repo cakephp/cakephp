@@ -1046,13 +1046,13 @@ class FormHelper extends Helper
         }
 
         if ($legend === true) {
-            $actionName = __d('cake', 'New %s');
             $isCreate = $context->isCreate();
-            if (!$isCreate) {
-                $actionName = __d('cake', 'Edit %s');
-            }
             $modelName = Inflector::humanize(Inflector::singularize($this->request->getParam('controller')));
-            $legend = sprintf($actionName, $modelName);
+            if (!$isCreate) {
+                $legend = __d('cake', 'Edit {0}', $modelName);
+            } else {
+                $legend = __d('cake', 'New {0}', $modelName);
+            }
         }
 
         if ($fieldset !== false) {
