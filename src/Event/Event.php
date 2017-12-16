@@ -41,6 +41,8 @@ class Event implements EventInterface
     /**
      * Property used to retain the result value of the event listeners
      *
+     * Note: Public access is deprecated, use setResult() and getResult() instead.
+     *
      * @var mixed
      */
     public $result;
