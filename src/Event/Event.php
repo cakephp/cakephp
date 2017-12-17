@@ -14,17 +14,7 @@
  */
 namespace Cake\Event;
 
-/**
- * Represents the transport class of events across the system. It receives a name, subject and an optional
- * payload. The name can be any string that uniquely identifies the event across the application, while the subject
- * represents the object that the event applies to.
- *
- * @property string $name (deprecated) Name of the event
- * @property object $subject (deprecated) The object this event applies to
- * @property mixed $result (deprecated) Property used to retain the result value of the event listeners
- * @property array $data (deprecated) Custom data for the method that receives the event
- */
-class Event
+class Event implements EventInterface
 {
 
     /**
@@ -37,7 +27,7 @@ class Event
     /**
      * The object this event applies to (usually the same object that generates the event)
      *
-     * @var object
+     * @var object|null
      */
     protected $_subject;
 
@@ -50,6 +40,8 @@ class Event
 
     /**
      * Property used to retain the result value of the event listeners
+     *
+     * Note: Public access is deprecated, use setResult() and getResult() instead.
      *
      * @var mixed
      */
@@ -79,8 +71,8 @@ class Event
     public function __construct($name, $subject = null, $data = null)
     {
         $this->_name = $name;
-        $this->_data = (array)$data;
         $this->_subject = $subject;
+        $this->_data = (array)$data;
     }
 
     /**
