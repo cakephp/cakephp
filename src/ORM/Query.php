@@ -1059,20 +1059,12 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
             return;
         }
 
-        $joins = $this->_parts['join'];
-        $this->_parts['join'] = [];
-
         if (empty($this->_parts['from'])) {
             $this->from([$this->_repository->getAlias() => $this->_repository->table()]);
         }
         $this->_addDefaultFields();
         $this->getEagerLoader()->attachAssociations($this, $this->_repository, !$this->_hasFields);
         $this->_addDefaultSelectTypes();
-
-        $i = count($this->_parts['join']);
-        foreach ($joins as $a => $j) {
-            $this->_parts['join'][is_string($a) ? $a : $i++] = $j;
-        }
     }
 
     /**
