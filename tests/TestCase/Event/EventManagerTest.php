@@ -811,12 +811,29 @@ class EventManagerTest extends TestCase
             [
                 '_listeners' => [],
                 '_isGlobal' => false,
-                '_eventList' => null,
                 '_trackEvents' => false,
                 '_generalManager' => '(object) EventManager',
+                '_dispatchedEvents' => null,
             ],
             $eventManager->__debugInfo()
         );
+
+        $eventManager->setEventList(new EventList());
+        $eventManager->addEventToList(new Event('Foo', $this));
+        $this->assertSame(
+            [
+                '_listeners' => [],
+                '_isGlobal' => false,
+                '_trackEvents' => true,
+                '_generalManager' => '(object) EventManager',
+                '_dispatchedEvents' => [
+                    'Foo with subject Cake\Test\TestCase\Event\EventManagerTest'
+                ],
+            ],
+            $eventManager->__debugInfo()
+        );
+
+        $eventManager->unsetEventList();
 
         $func = function () {
         };
@@ -828,9 +845,9 @@ class EventManagerTest extends TestCase
                     'foo' => '1 listener(s)',
                 ],
                 '_isGlobal' => false,
-                '_eventList' => null,
                 '_trackEvents' => false,
                 '_generalManager' => '(object) EventManager',
+                '_dispatchedEvents' => null,
             ],
             $eventManager->__debugInfo()
         );
@@ -843,9 +860,9 @@ class EventManagerTest extends TestCase
                     'foo' => '0 listener(s)',
                 ],
                 '_isGlobal' => false,
-                '_eventList' => null,
                 '_trackEvents' => false,
                 '_generalManager' => '(object) EventManager',
+                '_dispatchedEvents' => null,
             ],
             $eventManager->__debugInfo()
         );
@@ -867,9 +884,9 @@ class EventManagerTest extends TestCase
                     'baz' => '1 listener(s)',
                 ],
                 '_isGlobal' => false,
-                '_eventList' => null,
                 '_trackEvents' => false,
                 '_generalManager' => '(object) EventManager',
+                '_dispatchedEvents' => null,
             ],
             $eventManager->__debugInfo()
         );
