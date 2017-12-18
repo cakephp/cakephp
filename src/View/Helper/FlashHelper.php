@@ -29,7 +29,7 @@ class FlashHelper extends Helper
     /**
      * Used to render the message set in FlashComponent::set()
      *
-     * In your view: $this->Flash->render('somekey');
+     * In your template file: $this->Flash->render('somekey');
      * Will default to flash if no param is passed
      *
      * You can pass additional information into the flash message generation. This allows you
