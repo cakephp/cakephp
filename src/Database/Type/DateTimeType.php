@@ -148,7 +148,7 @@ class DateTimeType extends Type implements TypeInterface
      * Convert request data into a datetime object.
      *
      * @param mixed $value Request data
-     * @return \DateTimeInterface
+     * @return \DateTimeInterface|null
      */
     public function marshal($value)
     {
