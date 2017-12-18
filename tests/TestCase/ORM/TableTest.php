@@ -5654,7 +5654,7 @@ class TableTest extends TestCase
      *
      * @return void
      */
-    public function testPatchEntity()
+    public function testPatchEntityMarshallerUsage()
     {
         $table = $this->getMockBuilder('Cake\ORM\Table')
             ->setMethods(['marshaller'])
@@ -5677,12 +5677,29 @@ class TableTest extends TestCase
     }
 
     /**
+     * Tests patchEntity in a simple scenario. The tests for Marshaller cover
+     * patch scenarios in more depth.
+     *
+     * @return void
+     */
+    public function testPatchEntity()
+    {
+        $table = TableRegistry::get('Articles');
+        $entity = new Entity(['title' => 'old title'], ['markNew' => false]);
+        $data = ['title' => 'new title'];
+        $entity = $table->patchEntity($entity, $data);
+
+        $this->assertSame($data['title'], $entity->title);
+        $this->assertFalse($entity->isNew(), 'entity should not be new.');
+    }
+
+    /**
      * Tests that patchEntities delegates the task to the marshaller and passed
      * all associations
      *
      * @return void
      */
-    public function testPatchEntities()
+    public function testPatchEntitiesMarshallerUsage()
     {
         $table = $this->getMockBuilder('Cake\ORM\Table')
             ->setMethods(['marshaller'])
@@ -5702,6 +5719,28 @@ class TableTest extends TestCase
             ->with($entities, $data, ['associated' => ['users', 'articles']])
             ->will($this->returnValue($entities));
         $table->patchEntities($entities, $data);
+    }
+
+    /**
+     * Tests patchEntities in a simple scenario. The tests for Marshaller cover
+     * patch scenarios in more depth.
+     *
+     * @return void
+     */
+    public function testPatchEntities()
+    {
+        $table = TableRegistry::get('Articles');
+        $entities = $table->find()->limit(2)->toArray();
+
+        $data = [
+            ['id' => $entities[0]->id, 'title' => 'new title'],
+            ['id' => $entities[1]->id, 'title' => 'new title2'],
+        ];
+        $entities = $table->patchEntities($entities, $data);
+        foreach ($entities as $i => $entity) {
+            $this->assertFalse($entity->isNew(), 'entities should not be new.');
+            $this->assertSame($data[$i]['title'], $entity->title);
+        }
     }
 
     /**
