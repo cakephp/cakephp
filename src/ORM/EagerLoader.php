@@ -460,7 +460,7 @@ class EagerLoader
      *
      * @param \Cake\ORM\Table $repository The table containing the associations to be
      * attached
-     * @return array
+     * @return \Cake\ORM\EagerLoadable[]
      */
     public function attachableAssociations(Table $repository)
     {

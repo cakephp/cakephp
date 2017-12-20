@@ -12,6 +12,7 @@
  * @since         3.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace Cake\ORM;
 
 use ArrayObject;
@@ -42,16 +43,16 @@ use RuntimeException;
  * @method \Cake\Collection\CollectionInterface extract($field) Extracts a single column from each row
  * @method mixed max($field, $type = SORT_NUMERIC) Returns the maximum value for a single column in all the results.
  * @method mixed min($field, $type = SORT_NUMERIC) Returns the minimum value for a single column in all the results.
- * @method \Cake\Collection\CollectionInterface groupBy(string|callable $field) In-memory group all results by the value of a column.
- * @method \Cake\Collection\CollectionInterface indexBy(string|callable $field) Returns the results indexed by the value of a column.
- * @method int countBy(string|callable $field) Returns the number of unique values for a column
- * @method float sumOf(string|callable $field) Returns the sum of all values for a single column
+ * @method \Cake\Collection\CollectionInterface groupBy(string | callable $field) In-memory group all results by the value of a column.
+ * @method \Cake\Collection\CollectionInterface indexBy(string | callable $field) Returns the results indexed by the value of a column.
+ * @method int countBy(string | callable $field) Returns the number of unique values for a column
+ * @method float sumOf(string | callable $field) Returns the sum of all values for a single column
  * @method \Cake\Collection\CollectionInterface shuffle() In-memory randomize the order the results are returned
  * @method \Cake\Collection\CollectionInterface sample($size = 10) In-memory shuffle the results and return a subset of them.
  * @method \Cake\Collection\CollectionInterface take($size = 1, $from = 0) In-memory limit and offset for the query results.
  * @method \Cake\Collection\CollectionInterface skip(int $howMany) Skips some rows from the start of the query result.
  * @method mixed last() Return the last row of the query result
- * @method \Cake\Collection\CollectionInterface append(array|\Traversable $items) Appends more rows to the result of the query.
+ * @method \Cake\Collection\CollectionInterface append(array | \Traversable $items) Appends more rows to the result of the query.
  * @method \Cake\Collection\CollectionInterface combine($k, $v, $g = null) Returns the values of the column $v index by column $k,
  *   and grouped by $g.
  * @method \Cake\Collection\CollectionInterface nest($k, $p, $n = 'children') Creates a tree structure by nesting the values of column $p into that
@@ -59,7 +60,7 @@ use RuntimeException;
  * @method array toArray() Returns a key-value array with the results of this query.
  * @method array toList() Returns a numerically indexed array with the results of this query.
  * @method \Cake\Collection\CollectionInterface stopWhen(callable $c) Returns each row until the callable returns true.
- * @method \Cake\Collection\CollectionInterface zip(array|\Traversable $c) Returns the first result of both the query and $c in an array,
+ * @method \Cake\Collection\CollectionInterface zip(array | \Traversable $c) Returns the first result of both the query and $c in an array,
  *   then the second results and so on.
  * @method \Cake\Collection\CollectionInterface zipWith($collections, callable $callable) Returns each of the results out of calling $c
  *   with the first rows of the query and each of the items, then the second rows and so on.
@@ -1068,6 +1069,32 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     }
 
     /**
+     * Intelligently sorts the join according to the conditions.
+     *
+     * @return void
+     */
+    protected function _smartOrderingJoin()
+    {
+        if (count($this->_parts['join']) < 2)
+            return;
+
+        $keys = array_keys($this->_parts['join']);
+        $names = [];
+
+        for ($i = count($keys) - 1; $i >= 0; $i--) {
+            if (!is_numeric($keys[$i]))
+                $names[$keys[$i]] = $keys[$i];
+
+            $join = &$this->_parts['join'][$keys[$i]];
+
+            $names[$join['table']] = $keys[$i];
+
+            //$join['conditions'];
+
+        }
+    }
+
+    /**
      * Inspects if there are any set fields for selecting, otherwise adds all
      * the fields for the default table.
      *
@@ -1215,15 +1242,15 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         $eagerLoader = $this->getEagerLoader();
 
         return parent::__debugInfo() + [
-            'hydrate' => $this->_hydrate,
-            'buffered' => $this->_useBufferedResults,
-            'formatters' => count($this->_formatters),
-            'mapReducers' => count($this->_mapReduce),
-            'contain' => $eagerLoader ? $eagerLoader->contain() : [],
-            'matching' => $eagerLoader ? $eagerLoader->getMatching() : [],
-            'extraOptions' => $this->_options,
-            'repository' => $this->_repository
-        ];
+                'hydrate' => $this->_hydrate,
+                'buffered' => $this->_useBufferedResults,
+                'formatters' => count($this->_formatters),
+                'mapReducers' => count($this->_mapReduce),
+                'contain' => $eagerLoader ? $eagerLoader->contain() : [],
+                'matching' => $eagerLoader ? $eagerLoader->getMatching() : [],
+                'extraOptions' => $this->_options,
+                'repository' => $this->_repository
+            ];
     }
 
     /**
