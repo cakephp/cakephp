@@ -114,7 +114,9 @@ class PluginRegistry extends ObjectRegistry implements PluginRegistryInterface
     public function console($commands)
     {
         foreach ($this as $plugin) {
-            $commands = $plugin->console($commands);
+            if ($plugin instanceof ConsoleApplicationInterface) {
+                $commands = $plugin->console($commands);
+            }
         }
 
         return $commands;

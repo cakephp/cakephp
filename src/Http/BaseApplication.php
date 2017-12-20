@@ -103,6 +103,8 @@ abstract class BaseApplication implements ConsoleApplicationInterface, HttpAppli
     public function bootstrap()
     {
         require_once $this->configDir . '/bootstrap.php';
+
+        $this->pluginRegistry()->bootstrap();
     }
 
     /**
@@ -118,6 +120,8 @@ abstract class BaseApplication implements ConsoleApplicationInterface, HttpAppli
         if (!Router::$initialized) {
             require $this->configDir . '/routes.php';
             // Prevent routes from being loaded again
+
+            $this->pluginRegistry()->routes($routes);
             Router::$initialized = true;
         }
     }
@@ -133,7 +137,9 @@ abstract class BaseApplication implements ConsoleApplicationInterface, HttpAppli
      */
     public function console($commands)
     {
-        return $commands->addMany($commands->autoDiscover());
+        $commands->addMany($commands->autoDiscover());
+
+        return $this->pluginRegistry()->console($commands);
     }
 
     /**
@@ -168,7 +174,7 @@ abstract class BaseApplication implements ConsoleApplicationInterface, HttpAppli
      *
      * @return \Cake\Core\PluginRegistry
      */
-    public function plugins()
+    public function pluginRegistry()
     {
         return $this->pluginRegistry;
     }

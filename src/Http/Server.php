@@ -69,7 +69,6 @@ class Server
     public function run(ServerRequestInterface $request = null, ResponseInterface $response = null)
     {
         $this->app->bootstrap();
-        $this->app->plugins()->bootstrap();
 
         $response = $response ?: new Response();
         $request = $request ?: ServerRequestFactory::fromGlobals();
@@ -80,7 +79,6 @@ class Server
         }
         $this->dispatchEvent('Server.buildMiddleware', ['middleware' => $middleware]);
         $middleware->add($this->app);
-        $middleware = $this->app->plugins()->middleware($middleware);
 
         $response = $this->runner->run($middleware, $request, $response);
 
