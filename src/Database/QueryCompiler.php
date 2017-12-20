@@ -225,7 +225,6 @@ class QueryCompiler
     protected function _buildJoinPart($parts, $query, $generator)
     {
         if ($query->isSmartJoin()) {
-
             return $this->_buildJoinPartSmartly($parts, $query, $generator);
         }
 
