@@ -224,8 +224,10 @@ class QueryCompiler
      */
     protected function _buildJoinPart($parts, $query, $generator)
     {
-        if ($query->isSmartJoin())
+        if ($query->isSmartJoin()) {
+
             return $this->_buildJoinPartSmartly($parts, $query, $generator);
+        }
 
         $joins = '';
         foreach ($parts as $join) {
@@ -295,8 +297,9 @@ class QueryCompiler
                 }
             }
 
-            if (!$ordered)
+            if (!$ordered) {
                 array_unshift($order, $join['alias']);
+            }
 
             if (strlen($condition)) {
                 $part .= " ON {$condition}";

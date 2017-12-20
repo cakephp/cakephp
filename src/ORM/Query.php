@@ -1069,32 +1069,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     }
 
     /**
-     * Intelligently sorts the join according to the conditions.
-     *
-     * @return void
-     */
-    protected function _smartOrderingJoin()
-    {
-        if (count($this->_parts['join']) < 2)
-            return;
-
-        $keys = array_keys($this->_parts['join']);
-        $names = [];
-
-        for ($i = count($keys) - 1; $i >= 0; $i--) {
-            if (!is_numeric($keys[$i]))
-                $names[$keys[$i]] = $keys[$i];
-
-            $join = &$this->_parts['join'][$keys[$i]];
-
-            $names[$join['table']] = $keys[$i];
-
-            //$join['conditions'];
-
-        }
-    }
-
-    /**
      * Inspects if there are any set fields for selecting, otherwise adds all
      * the fields for the default table.
      *
