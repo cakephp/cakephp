@@ -46,7 +46,7 @@ class DispatcherFactory
      */
     public static function add($filter, array $options = [])
     {
-        if (is_string($filter)) {
+        if (\is_string($filter)) {
             $filter = static::_createFilter($filter, $options);
         }
         static::$_stack[] = $filter;
@@ -66,7 +66,7 @@ class DispatcherFactory
     {
         $className = App::className($name, 'Routing/Filter', 'Filter');
         if (!$className) {
-            $msg = sprintf('Cannot locate dispatcher filter named "%s".', $name);
+            $msg = \sprintf('Cannot locate dispatcher filter named "%s".', $name);
             throw new MissingDispatcherFilterException($msg);
         }
 

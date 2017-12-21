@@ -162,10 +162,10 @@ class ErrorHandlerMiddleware
             $exception = new PHP7ErrorException($exception);
         }
 
-        if (is_string($this->exceptionRenderer)) {
+        if (\is_string($this->exceptionRenderer)) {
             $class = App::className($this->exceptionRenderer, 'Error');
             if (!$class) {
-                throw new Exception(sprintf(
+                throw new Exception(\sprintf(
                     "The '%s' renderer class could not be found.",
                     $this->exceptionRenderer
                 ));
@@ -209,9 +209,9 @@ class ErrorHandlerMiddleware
      */
     protected function getMessage($request, $exception)
     {
-        $message = sprintf(
+        $message = \sprintf(
             '[%s] %s',
-            get_class($exception),
+            \get_class($exception),
             $exception->getMessage()
         );
         $debug = Configure::read('debug');
@@ -219,7 +219,7 @@ class ErrorHandlerMiddleware
         if ($debug && $exception instanceof CakeException) {
             $attributes = $exception->getAttributes();
             if ($attributes) {
-                $message .= "\nException Attributes: " . var_export($exception->getAttributes(), true);
+                $message .= "\nException Attributes: " . \var_export($exception->getAttributes(), true);
             }
         }
         $message .= "\nRequest URL: " . $request->getRequestTarget();

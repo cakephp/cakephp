@@ -103,9 +103,9 @@ class Type implements TypeInterface
             return static::$_builtTypes[$name];
         }
         if (!isset(static::$_types[$name])) {
-            throw new InvalidArgumentException(sprintf('Unknown type "%s"', $name));
+            throw new InvalidArgumentException(\sprintf('Unknown type "%s"', $name));
         }
-        if (is_string(static::$_types[$name])) {
+        if (\is_string(static::$_types[$name])) {
             return static::$_builtTypes[$name] = new static::$_types[$name]($name);
         }
 
@@ -157,7 +157,7 @@ class Type implements TypeInterface
         if ($type === null) {
             return static::$_types;
         }
-        if (is_array($type)) {
+        if (\is_array($type)) {
             static::$_types = $type;
 
             return null;
@@ -263,8 +263,8 @@ class Type implements TypeInterface
      */
     public static function boolval($value)
     {
-        if (is_string($value) && !is_numeric($value)) {
-            return strtolower($value) === 'true';
+        if (\is_string($value) && !\is_numeric($value)) {
+            return \strtolower($value) === 'true';
         }
 
         return !empty($value);
@@ -281,7 +281,7 @@ class Type implements TypeInterface
      */
     public static function strval($value)
     {
-        if (is_array($value)) {
+        if (\is_array($value)) {
             $value = '';
         }
 

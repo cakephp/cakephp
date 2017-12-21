@@ -78,7 +78,7 @@ class MiddlewareDispatcher
             $reflect = new ReflectionClass($this->_class);
             $app = $reflect->newInstanceArgs($this->_constructorArgs);
         } catch (ReflectionException $e) {
-            throw new LogicException(sprintf(
+            throw new LogicException(\sprintf(
                 'Cannot load "%s" for use in integration testing.',
                 $this->_class
             ));
@@ -109,7 +109,7 @@ class MiddlewareDispatcher
             $spec['post'] = [];
         }
         $request = ServerRequestFactory::fromGlobals(
-            array_merge($_SERVER, $spec['environment'], ['REQUEST_URI' => $spec['url']]),
+            \array_merge($_SERVER, $spec['environment'], ['REQUEST_URI' => $spec['url']]),
             $spec['query'],
             $spec['post'],
             $spec['cookies']

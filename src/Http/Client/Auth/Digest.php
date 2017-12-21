@@ -89,7 +89,7 @@ class Digest
         if (!$response->getHeader('WWW-Authenticate')) {
             return [];
         }
-        preg_match_all(
+        \preg_match_all(
             '@(\w+)=(?:(?:")([^"]+)"|([^\s,$]+))@',
             $response->getHeaderLine('WWW-Authenticate'),
             $matches,
@@ -115,20 +115,20 @@ class Digest
     protected function _generateHeader(Request $request, $credentials)
     {
         $path = $request->getUri()->getPath();
-        $a1 = md5($credentials['username'] . ':' . $credentials['realm'] . ':' . $credentials['password']);
-        $a2 = md5($request->method() . ':' . $path);
+        $a1 = \md5($credentials['username'] . ':' . $credentials['realm'] . ':' . $credentials['password']);
+        $a2 = \md5($request->method() . ':' . $path);
         $nc = null;
 
         if (empty($credentials['qop'])) {
-            $response = md5($a1 . ':' . $credentials['nonce'] . ':' . $a2);
+            $response = \md5($a1 . ':' . $credentials['nonce'] . ':' . $a2);
         } else {
-            $credentials['cnonce'] = uniqid();
-            $nc = sprintf('%08x', $credentials['nc']++);
-            $response = md5($a1 . ':' . $credentials['nonce'] . ':' . $nc . ':' . $credentials['cnonce'] . ':auth:' . $a2);
+            $credentials['cnonce'] = \uniqid();
+            $nc = \sprintf('%08x', $credentials['nc']++);
+            $response = \md5($a1 . ':' . $credentials['nonce'] . ':' . $nc . ':' . $credentials['cnonce'] . ':auth:' . $a2);
         }
 
         $authHeader = 'Digest ';
-        $authHeader .= 'username="' . str_replace(['\\', '"'], ['\\\\', '\\"'], $credentials['username']) . '", ';
+        $authHeader .= 'username="' . \str_replace(['\\', '"'], ['\\\\', '\\"'], $credentials['username']) . '", ';
         $authHeader .= 'realm="' . $credentials['realm'] . '", ';
         $authHeader .= 'nonce="' . $credentials['nonce'] . '", ';
         $authHeader .= 'uri="' . $path . '", ';
@@ -145,4 +145,4 @@ class Digest
 }
 
 // @deprecated Add backwards compat alias.
-class_alias('Cake\Http\Client\Auth\Digest', 'Cake\Network\Http\Auth\Digest');
+\class_alias('Cake\Http\Client\Auth\Digest', 'Cake\Network\Http\Auth\Digest');

@@ -124,7 +124,7 @@ class RouteCollection
         $this->_paths[$path][] = $route;
 
         $extensions = $route->getExtensions();
-        if (count($extensions) > 0) {
+        if (\count($extensions) > 0) {
             $this->setExtensions($extensions);
         }
     }
@@ -139,21 +139,21 @@ class RouteCollection
      */
     public function parse($url, $method = '')
     {
-        $decoded = urldecode($url);
+        $decoded = \urldecode($url);
 
         // Sort path segments matching longest paths first.
-        $paths = array_keys($this->_paths);
-        rsort($paths);
+        $paths = \array_keys($this->_paths);
+        \rsort($paths);
 
         foreach ($paths as $path) {
-            if (strpos($decoded, $path) !== 0) {
+            if (\strpos($decoded, $path) !== 0) {
                 continue;
             }
 
             $queryParameters = null;
-            if (strpos($url, '?') !== false) {
-                list($url, $queryParameters) = explode('?', $url, 2);
-                parse_str($queryParameters, $queryParameters);
+            if (\strpos($url, '?') !== false) {
+                list($url, $queryParameters) = \explode('?', $url, 2);
+                \parse_str($queryParameters, $queryParameters);
             }
             /* @var \Cake\Routing\Route\Route $route */
             foreach ($this->_paths[$path] as $route) {
@@ -174,7 +174,7 @@ class RouteCollection
             // Ensure that if the method is included, it is the first element of
             // the array, to match the order that the strings are printed in the
             // MissingRouteException error message, $_messageTemplateWithMethod.
-            $exceptionProperties = array_merge(['method' => $method], $exceptionProperties);
+            $exceptionProperties = \array_merge(['method' => $method], $exceptionProperties);
         }
         throw new MissingRouteException($exceptionProperties);
     }
@@ -189,14 +189,14 @@ class RouteCollection
     public function parseRequest(ServerRequestInterface $request)
     {
         $uri = $request->getUri();
-        $urlPath = urldecode($uri->getPath());
+        $urlPath = \urldecode($uri->getPath());
 
         // Sort path segments matching longest paths first.
-        $paths = array_keys($this->_paths);
-        rsort($paths);
+        $paths = \array_keys($this->_paths);
+        \rsort($paths);
 
         foreach ($paths as $path) {
-            if (strpos($urlPath, $path) !== 0) {
+            if (\strpos($urlPath, $path) !== 0) {
                 continue;
             }
 
@@ -207,7 +207,7 @@ class RouteCollection
                     continue;
                 }
                 if ($uri->getQuery()) {
-                    parse_str($uri->getQuery(), $queryParameters);
+                    \parse_str($uri->getQuery(), $queryParameters);
                     $r['?'] = $queryParameters;
                 }
 
@@ -228,14 +228,14 @@ class RouteCollection
     {
         $plugin = false;
         if (isset($url['plugin']) && $url['plugin'] !== false) {
-            $plugin = strtolower($url['plugin']);
+            $plugin = \strtolower($url['plugin']);
         }
         $prefix = false;
         if (isset($url['prefix']) && $url['prefix'] !== false) {
-            $prefix = strtolower($url['prefix']);
+            $prefix = \strtolower($url['prefix']);
         }
-        $controller = strtolower($url['controller']);
-        $action = strtolower($url['action']);
+        $controller = \strtolower($url['controller']);
+        $action = \strtolower($url['action']);
 
         $names = [
             "${controller}:${action}",
@@ -340,11 +340,11 @@ class RouteCollection
             foreach ($this->_routeTable[$name] as $route) {
                 $match = $route->match($url, $context);
                 if ($match) {
-                    return strlen($match) > 1 ? trim($match, '/') : $match;
+                    return \strlen($match) > 1 ? \trim($match, '/') : $match;
                 }
             }
         }
-        throw new MissingRouteException(['url' => var_export($url, true), 'context' => $context]);
+        throw new MissingRouteException(['url' => \var_export($url, true), 'context' => $context]);
     }
 
     /**
@@ -407,7 +407,7 @@ class RouteCollection
     public function setExtensions(array $extensions, $merge = true)
     {
         if ($merge) {
-            $extensions = array_unique(array_merge(
+            $extensions = \array_unique(\array_merge(
                 $this->_extensions,
                 $extensions
             ));
@@ -468,7 +468,7 @@ class RouteCollection
      */
     public function hasMiddlewareGroup($name)
     {
-        return array_key_exists($name, $this->_middlewareGroups);
+        return \array_key_exists($name, $this->_middlewareGroups);
     }
 
     /**
@@ -509,13 +509,13 @@ class RouteCollection
             }
         }
         // Matches route element pattern in Cake\Routing\Route
-        $path = '#^' . preg_quote($path, '#') . '#';
-        $path = preg_replace('/\\\\:([a-z0-9-_]+(?<![-_]))/i', '[^/]+', $path);
+        $path = '#^' . \preg_quote($path, '#') . '#';
+        $path = \preg_replace('/\\\\:([a-z0-9-_]+(?<![-_]))/i', '[^/]+', $path);
 
         if (!isset($this->_middlewarePaths[$path])) {
             $this->_middlewarePaths[$path] = [];
         }
-        $this->_middlewarePaths[$path] = array_merge($this->_middlewarePaths[$path], $middleware);
+        $this->_middlewarePaths[$path] = \array_merge($this->_middlewarePaths[$path], $middleware);
 
         return $this;
     }
@@ -533,7 +533,7 @@ class RouteCollection
         $out = [];
         foreach ($names as $name) {
             if ($this->hasMiddlewareGroup($name)) {
-                $out = array_merge($out, $this->getMiddleware($this->_middlewareGroups[$name]));
+                $out = \array_merge($out, $this->getMiddleware($this->_middlewareGroups[$name]));
                 continue;
             }
             if (!$this->hasMiddleware($name)) {

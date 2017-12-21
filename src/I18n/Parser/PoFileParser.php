@@ -72,7 +72,7 @@ class PoFileParser
      */
     public function parse($resource)
     {
-        $stream = fopen($resource, 'rb');
+        $stream = \fopen($resource, 'rb');
 
         $defaults = [
             'ids' => [],
@@ -82,40 +82,40 @@ class PoFileParser
         $messages = [];
         $item = $defaults;
 
-        while ($line = fgets($stream)) {
-            $line = trim($line);
+        while ($line = \fgets($stream)) {
+            $line = \trim($line);
 
             if ($line === '') {
                 // Whitespace indicated current item is done
                 $this->_addMessage($messages, $item);
                 $item = $defaults;
-            } elseif (substr($line, 0, 7) === 'msgid "') {
+            } elseif (\substr($line, 0, 7) === 'msgid "') {
                 // We start a new msg so save previous
                 $this->_addMessage($messages, $item);
-                $item['ids']['singular'] = substr($line, 7, -1);
-            } elseif (substr($line, 0, 8) === 'msgstr "') {
-                $item['translated'] = substr($line, 8, -1);
-            } elseif (substr($line, 0, 9) === 'msgctxt "') {
-                $item['context'] = substr($line, 9, -1);
+                $item['ids']['singular'] = \substr($line, 7, -1);
+            } elseif (\substr($line, 0, 8) === 'msgstr "') {
+                $item['translated'] = \substr($line, 8, -1);
+            } elseif (\substr($line, 0, 9) === 'msgctxt "') {
+                $item['context'] = \substr($line, 9, -1);
             } elseif ($line[0] === '"') {
                 $continues = isset($item['translated']) ? 'translated' : 'ids';
 
-                if (is_array($item[$continues])) {
-                    end($item[$continues]);
-                    $item[$continues][key($item[$continues])] .= substr($line, 1, -1);
+                if (\is_array($item[$continues])) {
+                    \end($item[$continues]);
+                    $item[$continues][\key($item[$continues])] .= \substr($line, 1, -1);
                 } else {
-                    $item[$continues] .= substr($line, 1, -1);
+                    $item[$continues] .= \substr($line, 1, -1);
                 }
-            } elseif (substr($line, 0, 14) === 'msgid_plural "') {
-                $item['ids']['plural'] = substr($line, 14, -1);
-            } elseif (substr($line, 0, 7) === 'msgstr[') {
-                $size = strpos($line, ']');
-                $item['translated'][(int)substr($line, 7, 1)] = substr($line, $size + 3, -1);
+            } elseif (\substr($line, 0, 14) === 'msgid_plural "') {
+                $item['ids']['plural'] = \substr($line, 14, -1);
+            } elseif (\substr($line, 0, 7) === 'msgstr[') {
+                $size = \strpos($line, ']');
+                $item['translated'][(int)\substr($line, 7, 1)] = \substr($line, $size + 3, -1);
             }
         }
         // save last item
         $this->_addMessage($messages, $item);
-        fclose($stream);
+        \fclose($stream);
 
         return $messages;
     }
@@ -133,15 +133,15 @@ class PoFileParser
             return;
         }
 
-        $singular = stripcslashes($item['ids']['singular']);
+        $singular = \stripcslashes($item['ids']['singular']);
         $context = isset($item['context']) ? $item['context'] : null;
         $translation = $item['translated'];
 
-        if (is_array($translation)) {
+        if (\is_array($translation)) {
             $translation = $translation[0];
         }
 
-        $translation = stripcslashes($translation);
+        $translation = \stripcslashes($translation);
 
         if ($context !== null && !isset($messages[$singular]['_context'][$context])) {
             $messages[$singular]['_context'][$context] = $translation;
@@ -152,19 +152,19 @@ class PoFileParser
         if (isset($item['ids']['plural'])) {
             $plurals = $item['translated'];
             // PO are by definition indexed so sort by index.
-            ksort($plurals);
+            \ksort($plurals);
 
             // Make sure every index is filled.
-            end($plurals);
-            $count = key($plurals);
+            \end($plurals);
+            $count = \key($plurals);
 
             // Fill missing spots with an empty string.
-            $empties = array_fill(0, $count + 1, '');
+            $empties = \array_fill(0, $count + 1, '');
             $plurals += $empties;
-            ksort($plurals);
+            \ksort($plurals);
 
-            $plurals = array_map('stripcslashes', $plurals);
-            $key = stripcslashes($item['ids']['plural']);
+            $plurals = \array_map('stripcslashes', $plurals);
+            $key = \stripcslashes($item['ids']['plural']);
 
             if ($context !== null) {
                 $messages[Translator::PLURAL_PREFIX . $key]['_context'][$context] = $plurals;

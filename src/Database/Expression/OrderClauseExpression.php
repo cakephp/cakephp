@@ -40,7 +40,7 @@ class OrderClauseExpression implements ExpressionInterface, FieldInterface
     public function __construct($field, $direction)
     {
         $this->_field = $field;
-        $this->_direction = strtolower($direction) === 'asc' ? 'ASC' : 'DESC';
+        $this->_direction = \strtolower($direction) === 'asc' ? 'ASC' : 'DESC';
     }
 
     /**
@@ -53,7 +53,7 @@ class OrderClauseExpression implements ExpressionInterface, FieldInterface
             $field = $field->sql($generator);
         }
 
-        return sprintf('%s %s', $field, $this->_direction);
+        return \sprintf('%s %s', $field, $this->_direction);
     }
 
     /**

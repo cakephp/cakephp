@@ -79,14 +79,14 @@ class ExistsIn
      */
     public function __invoke(EntityInterface $entity, array $options)
     {
-        if (is_string($this->_repository)) {
+        if (\is_string($this->_repository)) {
             $repository = $options['repository']->association($this->_repository);
             if (!$repository) {
-                throw new RuntimeException(sprintf(
+                throw new RuntimeException(\sprintf(
                     "ExistsIn rule for '%s' is invalid. '%s' is not associated with '%s'.",
-                    implode(', ', $this->_fields),
+                    \implode(', ', $this->_fields),
                     $this->_repository,
-                    get_class($options['repository'])
+                    \get_class($options['repository'])
                 ));
             }
             $this->_repository = $repository;
@@ -125,11 +125,11 @@ class ExistsIn
             }
         }
 
-        $primary = array_map(
+        $primary = \array_map(
             [$target, 'aliasField'],
             $bindingKey
         );
-        $conditions = array_combine(
+        $conditions = \array_combine(
             $primary,
             $entity->extract($this->_fields)
         );
@@ -154,6 +154,6 @@ class ExistsIn
             }
         }
 
-        return $nulls === count($this->_fields);
+        return $nulls === \count($this->_fields);
     }
 }

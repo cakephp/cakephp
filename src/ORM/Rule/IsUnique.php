@@ -74,7 +74,7 @@ class IsUnique
         if ($entity->isNew() === false) {
             $keys = (array)$options['repository']->getPrimaryKey();
             $keys = $this->_alias($alias, $entity->extract($keys), $allowMultipleNulls);
-            if (array_filter($keys, 'strlen')) {
+            if (\array_filter($keys, 'strlen')) {
                 $conditions['NOT'] = $keys;
             }
         }

@@ -109,17 +109,17 @@ class DateTimeType extends Type implements TypeInterface
      */
     public function toDatabase($value, Driver $driver)
     {
-        if ($value === null || is_string($value)) {
+        if ($value === null || \is_string($value)) {
             return $value;
         }
-        if (is_int($value)) {
+        if (\is_int($value)) {
             $class = $this->_className;
             $value = new $class('@' . $value);
         }
 
         $format = (array)$this->_format;
 
-        return $value->format(array_shift($format));
+        return $value->format(\array_shift($format));
     }
 
     /**
@@ -131,12 +131,12 @@ class DateTimeType extends Type implements TypeInterface
      */
     public function toPHP($value, Driver $driver)
     {
-        if ($value === null || strpos($value, '0000-00-00') === 0) {
+        if ($value === null || \strpos($value, '0000-00-00') === 0) {
             return null;
         }
 
-        if (strpos($value, '.') !== false) {
-            list($value) = explode('.', $value);
+        if (\strpos($value, '.') !== false) {
+            list($value) = \explode('.', $value);
         }
 
         $instance = clone $this->_datetimeInstance;
@@ -162,8 +162,8 @@ class DateTimeType extends Type implements TypeInterface
             if ($value === '' || $value === null || $value === false || $value === true) {
                 return null;
             }
-            $isString = is_string($value);
-            if (ctype_digit($value)) {
+            $isString = \is_string($value);
+            if (\ctype_digit($value)) {
                 $date = new $class('@' . $value);
             } elseif ($isString && $this->_useLocaleParser) {
                 return $this->_parseValue($value);
@@ -181,25 +181,25 @@ class DateTimeType extends Type implements TypeInterface
             return $value;
         }
 
-        if (is_array($value) && implode('', $value) === '') {
+        if (\is_array($value) && \implode('', $value) === '') {
             return null;
         }
         $value += ['hour' => 0, 'minute' => 0, 'second' => 0];
 
         $format = '';
         if (isset($value['year'], $value['month'], $value['day']) &&
-            (is_numeric($value['year']) && is_numeric($value['month']) && is_numeric($value['day']))
+            (\is_numeric($value['year']) && \is_numeric($value['month']) && \is_numeric($value['day']))
         ) {
-            $format .= sprintf('%d-%02d-%02d', $value['year'], $value['month'], $value['day']);
+            $format .= \sprintf('%d-%02d-%02d', $value['year'], $value['month'], $value['day']);
         }
 
         if (isset($value['meridian']) && (int)$value['hour'] === 12) {
             $value['hour'] = 0;
         }
         if (isset($value['meridian'])) {
-            $value['hour'] = strtolower($value['meridian']) === 'am' ? $value['hour'] : $value['hour'] + 12;
+            $value['hour'] = \strtolower($value['meridian']) === 'am' ? $value['hour'] : $value['hour'] + 12;
         }
-        $format .= sprintf(
+        $format .= \sprintf(
             '%s%02d:%02d:%02d',
             empty($format) ? '' : ' ',
             $value['hour'],
@@ -241,13 +241,13 @@ class DateTimeType extends Type implements TypeInterface
 
             return $this;
         }
-        if (method_exists($this->_className, 'parseDateTime')) {
+        if (\method_exists($this->_className, 'parseDateTime')) {
             $this->_useLocaleParser = $enable;
 
             return $this;
         }
         throw new RuntimeException(
-            sprintf('Cannot use locale parsing with the %s class', $this->_className)
+            \sprintf('Cannot use locale parsing with the %s class', $this->_className)
         );
     }
 
@@ -288,7 +288,7 @@ class DateTimeType extends Type implements TypeInterface
      */
     protected function _setClassName($class, $fallback)
     {
-        if (!class_exists($class)) {
+        if (!\class_exists($class)) {
             $class = $fallback;
         }
         $this->_className = $class;

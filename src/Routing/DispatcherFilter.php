@@ -104,7 +104,7 @@ class DispatcherFilter implements EventListenerInterface
             $config['priority'] = $this->_priority;
         }
         $this->setConfig($config);
-        if (isset($config['when']) && !is_callable($config['when'])) {
+        if (isset($config['when']) && !\is_callable($config['when'])) {
             throw new InvalidArgumentException('"when" conditions must be a callable.');
         }
     }
@@ -141,7 +141,7 @@ class DispatcherFilter implements EventListenerInterface
     public function handle(Event $event)
     {
         $name = $event->getName();
-        list(, $method) = explode('.', $name);
+        list(, $method) = \explode('.', $name);
         if (empty($this->_config['for']) && empty($this->_config['when'])) {
             return $this->{$method}($event);
         }
@@ -162,13 +162,13 @@ class DispatcherFilter implements EventListenerInterface
         $request = $event->getData('request');
         $pass = true;
         if (!empty($this->_config['for'])) {
-            $len = strlen('preg:');
+            $len = \strlen('preg:');
             $for = $this->_config['for'];
             $url = $request->here(false);
-            if (substr($for, 0, $len) === 'preg:') {
-                $pass = (bool)preg_match(substr($for, $len), $url);
+            if (\substr($for, 0, $len) === 'preg:') {
+                $pass = (bool)\preg_match(\substr($for, $len), $url);
             } else {
-                $pass = strpos($url, $for) === 0;
+                $pass = \strpos($url, $for) === 0;
             }
         }
         if ($pass && !empty($this->_config['when'])) {

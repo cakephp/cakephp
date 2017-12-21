@@ -89,7 +89,7 @@ class CookieCollection implements IteratorAggregate, Countable
      */
     public function count()
     {
-        return count($this->cookies);
+        return \count($this->cookies);
     }
 
     /**
@@ -118,9 +118,9 @@ class CookieCollection implements IteratorAggregate, Countable
      */
     public function get($name)
     {
-        $key = mb_strtolower($name);
+        $key = \mb_strtolower($name);
         foreach ($this->cookies as $cookie) {
-            if (mb_strtolower($cookie->getName()) === $key) {
+            if (\mb_strtolower($cookie->getName()) === $key) {
                 return $cookie;
             }
         }
@@ -136,9 +136,9 @@ class CookieCollection implements IteratorAggregate, Countable
      */
     public function has($name)
     {
-        $key = mb_strtolower($name);
+        $key = \mb_strtolower($name);
         foreach ($this->cookies as $cookie) {
-            if (mb_strtolower($cookie->getName()) === $key) {
+            if (\mb_strtolower($cookie->getName()) === $key) {
                 return true;
             }
         }
@@ -157,9 +157,9 @@ class CookieCollection implements IteratorAggregate, Countable
     public function remove($name)
     {
         $new = clone $this;
-        $key = mb_strtolower($name);
+        $key = \mb_strtolower($name);
         foreach ($new->cookies as $i => $cookie) {
-            if (mb_strtolower($cookie->getName()) === $key) {
+            if (\mb_strtolower($cookie->getName()) === $key) {
                 unset($new->cookies[$i]);
             }
         }
@@ -179,10 +179,10 @@ class CookieCollection implements IteratorAggregate, Countable
         foreach ($cookies as $index => $cookie) {
             if (!$cookie instanceof CookieInterface) {
                 throw new InvalidArgumentException(
-                    sprintf(
+                    \sprintf(
                         'Expected `%s[]` as $cookies but instead got `%s` at index %d',
                         static::class,
-                        is_object($cookie) ? get_class($cookie) : gettype($cookie),
+                        \is_object($cookie) ? \get_class($cookie) : \gettype($cookie),
                         $index
                     )
                 );
@@ -220,16 +220,16 @@ class CookieCollection implements IteratorAggregate, Countable
             $uri->getHost(),
             $uri->getPath() ?: '/'
         );
-        $cookies = array_merge($cookies, $extraCookies);
+        $cookies = \array_merge($cookies, $extraCookies);
         $cookiePairs = [];
         foreach ($cookies as $key => $value) {
-            $cookiePairs[] = sprintf("%s=%s", rawurlencode($key), rawurlencode($value));
+            $cookiePairs[] = \sprintf("%s=%s", \rawurlencode($key), \rawurlencode($value));
         }
         if (empty($cookiePairs)) {
             return $request;
         }
 
-        return $request->withHeader('Cookie', implode('; ', $cookiePairs));
+        return $request->withHeader('Cookie', \implode('; ', $cookiePairs));
     }
 
     /**
@@ -248,21 +248,21 @@ class CookieCollection implements IteratorAggregate, Countable
             if ($scheme === 'http' && $cookie->isSecure()) {
                 continue;
             }
-            if (strpos($path, $cookie->getPath()) !== 0) {
+            if (\strpos($path, $cookie->getPath()) !== 0) {
                 continue;
             }
             $domain = $cookie->getDomain();
-            $leadingDot = substr($domain, 0, 1) === '.';
+            $leadingDot = \substr($domain, 0, 1) === '.';
             if ($leadingDot) {
-                $domain = ltrim($domain, '.');
+                $domain = \ltrim($domain, '.');
             }
 
             if ($cookie->isExpired($now)) {
                 continue;
             }
 
-            $pattern = '/' . preg_quote($domain, '/') . '$/';
-            if (!preg_match($pattern, $host)) {
+            $pattern = '/' . \preg_quote($domain, '/') . '$/';
+            if (!\preg_match($pattern, $host)) {
                 continue;
             }
 
@@ -330,8 +330,8 @@ class CookieCollection implements IteratorAggregate, Countable
     {
         $cookies = [];
         foreach ($values as $value) {
-            $value = rtrim($value, ';');
-            $parts = preg_split('/\;[ \t]*/', $value);
+            $value = \rtrim($value, ';');
+            $parts = \preg_split('/\;[ \t]*/', $value);
 
             $name = false;
             $cookie = [
@@ -344,27 +344,27 @@ class CookieCollection implements IteratorAggregate, Countable
                 'max-age' => null
             ];
             foreach ($parts as $i => $part) {
-                if (strpos($part, '=') !== false) {
-                    list($key, $value) = explode('=', $part, 2);
+                if (\strpos($part, '=') !== false) {
+                    list($key, $value) = \explode('=', $part, 2);
                 } else {
                     $key = $part;
                     $value = true;
                 }
                 if ($i === 0) {
                     $name = $key;
-                    $cookie['value'] = urldecode($value);
+                    $cookie['value'] = \urldecode($value);
                     continue;
                 }
-                $key = strtolower($key);
-                if (array_key_exists($key, $cookie) && !strlen($cookie[$key])) {
+                $key = \strtolower($key);
+                if (\array_key_exists($key, $cookie) && !\strlen($cookie[$key])) {
                     $cookie[$key] = $value;
                 }
             }
             $expires = null;
             if ($cookie['max-age'] !== null) {
-                $expires = new DateTimeImmutable('@' . (time() + $cookie['max-age']));
+                $expires = new DateTimeImmutable('@' . (\time() + $cookie['max-age']));
             } elseif ($cookie['expires']) {
-                $expires = new DateTimeImmutable('@' . strtotime($cookie['expires']));
+                $expires = new DateTimeImmutable('@' . \strtotime($cookie['expires']));
             }
 
             $cookies[] = new Cookie(
@@ -391,12 +391,12 @@ class CookieCollection implements IteratorAggregate, Countable
     protected function removeExpiredCookies($host, $path)
     {
         $time = new DateTimeImmutable('now', new DateTimeZone('UTC'));
-        $hostPattern = '/' . preg_quote($host, '/') . '$/';
+        $hostPattern = '/' . \preg_quote($host, '/') . '$/';
 
         foreach ($this->cookies as $i => $cookie) {
             $expired = $cookie->isExpired($time);
-            $pathMatches = strpos($path, $cookie->getPath()) === 0;
-            $hostMatches = preg_match($hostPattern, $cookie->getDomain());
+            $pathMatches = \strpos($path, $cookie->getPath()) === 0;
+            $hostMatches = \preg_match($hostPattern, $cookie->getDomain());
             if ($pathMatches && $hostMatches && $expired) {
                 unset($this->cookies[$i]);
             }

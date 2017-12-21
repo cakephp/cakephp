@@ -57,9 +57,9 @@ trait CellTrait
      */
     protected function cell($cell, array $data = [], array $options = [])
     {
-        $parts = explode('::', $cell);
+        $parts = \explode('::', $cell);
 
-        if (count($parts) === 2) {
+        if (\count($parts) === 2) {
             list($pluginAndCell, $action) = [$parts[0], $parts[1]];
         } else {
             list($pluginAndCell, $action) = [$parts[0], 'display'];
@@ -73,7 +73,7 @@ trait CellTrait
         }
 
         if (!empty($data)) {
-            $data = array_values($data);
+            $data = \array_values($data);
         }
         $options = ['action' => $action, 'args' => $data] + $options;
         $cell = $this->_createCell($className, $action, $plugin, $options);
@@ -110,14 +110,14 @@ trait CellTrait
                 $builder->setTheme($this->theme);
             }
 
-            $class = get_class($this);
+            $class = \get_class($this);
             $builder->setClassName($class);
             $instance->viewClass = $class;
 
             return $instance;
         }
 
-        if (method_exists($this, 'viewBuilder')) {
+        if (\method_exists($this, 'viewBuilder')) {
             $builder->setTheme($this->viewBuilder()->getTheme());
         }
 

@@ -68,7 +68,7 @@ class NestIterator extends Collection implements RecursiveIterator
         $property = $this->_propertyExtractor($this->_nestKey);
         $children = $property($this->current());
 
-        if (is_array($children)) {
+        if (\is_array($children)) {
             return !empty($children);
         }
 

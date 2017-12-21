@@ -96,7 +96,7 @@ class ConsoleInputOption
         $choices = [],
         $multiple = false
     ) {
-        if (is_array($name) && isset($name['name'])) {
+        if (\is_array($name) && isset($name['name'])) {
             foreach ($name as $key => $value) {
                 $this->{'_' . $key} = $value;
             }
@@ -109,9 +109,9 @@ class ConsoleInputOption
             $this->_choices = $choices;
             $this->_multiple = $multiple;
         }
-        if (strlen($this->_short) > 1) {
+        if (\strlen($this->_short) > 1) {
             throw new ConsoleException(
-                sprintf('Short option "%s" is invalid, short options must be one letter.', $this->_short)
+                \sprintf('Short option "%s" is invalid, short options must be one letter.', $this->_short)
             );
         }
     }
@@ -146,20 +146,20 @@ class ConsoleInputOption
     {
         $default = $short = '';
         if ($this->_default && $this->_default !== true) {
-            $default = sprintf(' <comment>(default: %s)</comment>', $this->_default);
+            $default = \sprintf(' <comment>(default: %s)</comment>', $this->_default);
         }
         if ($this->_choices) {
-            $default .= sprintf(' <comment>(choices: %s)</comment>', implode('|', $this->_choices));
+            $default .= \sprintf(' <comment>(choices: %s)</comment>', \implode('|', $this->_choices));
         }
-        if (strlen($this->_short) > 0) {
+        if (\strlen($this->_short) > 0) {
             $short = ', -' . $this->_short;
         }
-        $name = sprintf('--%s%s', $this->_name, $short);
-        if (strlen($name) < $width) {
-            $name = str_pad($name, $width, ' ');
+        $name = \sprintf('--%s%s', $this->_name, $short);
+        if (\strlen($name) < $width) {
+            $name = \str_pad($name, $width, ' ');
         }
 
-        return sprintf('%s%s%s', $name, $this->_help, $default);
+        return \sprintf('%s%s%s', $name, $this->_help, $default);
     }
 
     /**
@@ -169,16 +169,16 @@ class ConsoleInputOption
      */
     public function usage()
     {
-        $name = (strlen($this->_short) > 0) ? ('-' . $this->_short) : ('--' . $this->_name);
+        $name = (\strlen($this->_short) > 0) ? ('-' . $this->_short) : ('--' . $this->_name);
         $default = '';
-        if (strlen($this->_default) > 0 && $this->_default !== true) {
+        if (\strlen($this->_default) > 0 && $this->_default !== true) {
             $default = ' ' . $this->_default;
         }
         if ($this->_choices) {
-            $default = ' ' . implode('|', $this->_choices);
+            $default = ' ' . \implode('|', $this->_choices);
         }
 
-        return sprintf('[%s%s]', $name, $default);
+        return \sprintf('[%s%s]', $name, $default);
     }
 
     /**
@@ -223,13 +223,13 @@ class ConsoleInputOption
         if (empty($this->_choices)) {
             return true;
         }
-        if (!in_array($value, $this->_choices)) {
+        if (!\in_array($value, $this->_choices)) {
             throw new ConsoleException(
-                sprintf(
+                \sprintf(
                     '"%s" is not a valid value for --%s. Please use one of "%s"',
                     $value,
                     $this->_name,
-                    implode(', ', $this->_choices)
+                    \implode(', ', $this->_choices)
                 )
             );
         }
@@ -248,7 +248,7 @@ class ConsoleInputOption
         $option = $parent->addChild('option');
         $option->addAttribute('name', '--' . $this->_name);
         $short = '';
-        if (strlen($this->_short) > 0) {
+        if (\strlen($this->_short) > 0) {
             $short = '-' . $this->_short;
         }
         $option->addAttribute('short', $short);

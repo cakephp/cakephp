@@ -68,7 +68,7 @@ class NumberHelper extends Helper
         if ($engineClass) {
             $this->_engine = new $engineClass($config);
         } else {
-            throw new Exception(sprintf('Class for %s could not be found', $config['engine']));
+            throw new Exception(\sprintf('Class for %s could not be found', $config['engine']));
         }
     }
 
@@ -81,7 +81,7 @@ class NumberHelper extends Helper
      */
     public function __call($method, $params)
     {
-        return call_user_func_array([$this->_engine, $method], $params);
+        return \call_user_func_array([$this->_engine, $method], $params);
     }
 
     /**

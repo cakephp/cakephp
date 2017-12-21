@@ -101,7 +101,7 @@ abstract class TestCase extends BaseTestCase
         if (!$this->_configure) {
             $this->_configure = Configure::read();
         }
-        if (class_exists('Cake\Routing\Router', false)) {
+        if (\class_exists('Cake\Routing\Router', false)) {
             Router::reload();
         }
 
@@ -138,7 +138,7 @@ abstract class TestCase extends BaseTestCase
         if ($this->fixtureManager === null) {
             throw new Exception('No fixture manager to load the test fixture');
         }
-        $args = func_get_args();
+        $args = \func_get_args();
         foreach ($args as $class) {
             $this->fixtureManager->loadSingle($class, null, $this->dropTables);
         }
@@ -198,8 +198,8 @@ abstract class TestCase extends BaseTestCase
      */
     public function assertTextNotEquals($expected, $result, $message = '')
     {
-        $expected = str_replace(["\r\n", "\r"], "\n", $expected);
-        $result = str_replace(["\r\n", "\r"], "\n", $result);
+        $expected = \str_replace(["\r\n", "\r"], "\n", $expected);
+        $result = \str_replace(["\r\n", "\r"], "\n", $result);
         $this->assertNotEquals($expected, $result, $message);
     }
 
@@ -214,8 +214,8 @@ abstract class TestCase extends BaseTestCase
      */
     public function assertTextEquals($expected, $result, $message = '')
     {
-        $expected = str_replace(["\r\n", "\r"], "\n", $expected);
-        $result = str_replace(["\r\n", "\r"], "\n", $result);
+        $expected = \str_replace(["\r\n", "\r"], "\n", $expected);
+        $result = \str_replace(["\r\n", "\r"], "\n", $result);
         $this->assertEquals($expected, $result, $message);
     }
 
@@ -230,8 +230,8 @@ abstract class TestCase extends BaseTestCase
      */
     public function assertTextStartsWith($prefix, $string, $message = '')
     {
-        $prefix = str_replace(["\r\n", "\r"], "\n", $prefix);
-        $string = str_replace(["\r\n", "\r"], "\n", $string);
+        $prefix = \str_replace(["\r\n", "\r"], "\n", $prefix);
+        $string = \str_replace(["\r\n", "\r"], "\n", $string);
         $this->assertStringStartsWith($prefix, $string, $message);
     }
 
@@ -246,8 +246,8 @@ abstract class TestCase extends BaseTestCase
      */
     public function assertTextStartsNotWith($prefix, $string, $message = '')
     {
-        $prefix = str_replace(["\r\n", "\r"], "\n", $prefix);
-        $string = str_replace(["\r\n", "\r"], "\n", $string);
+        $prefix = \str_replace(["\r\n", "\r"], "\n", $prefix);
+        $string = \str_replace(["\r\n", "\r"], "\n", $string);
         $this->assertStringStartsNotWith($prefix, $string, $message);
     }
 
@@ -262,8 +262,8 @@ abstract class TestCase extends BaseTestCase
      */
     public function assertTextEndsWith($suffix, $string, $message = '')
     {
-        $suffix = str_replace(["\r\n", "\r"], "\n", $suffix);
-        $string = str_replace(["\r\n", "\r"], "\n", $string);
+        $suffix = \str_replace(["\r\n", "\r"], "\n", $suffix);
+        $string = \str_replace(["\r\n", "\r"], "\n", $string);
         $this->assertStringEndsWith($suffix, $string, $message);
     }
 
@@ -278,8 +278,8 @@ abstract class TestCase extends BaseTestCase
      */
     public function assertTextEndsNotWith($suffix, $string, $message = '')
     {
-        $suffix = str_replace(["\r\n", "\r"], "\n", $suffix);
-        $string = str_replace(["\r\n", "\r"], "\n", $string);
+        $suffix = \str_replace(["\r\n", "\r"], "\n", $suffix);
+        $string = \str_replace(["\r\n", "\r"], "\n", $string);
         $this->assertStringEndsNotWith($suffix, $string, $message);
     }
 
@@ -295,8 +295,8 @@ abstract class TestCase extends BaseTestCase
      */
     public function assertTextContains($needle, $haystack, $message = '', $ignoreCase = false)
     {
-        $needle = str_replace(["\r\n", "\r"], "\n", $needle);
-        $haystack = str_replace(["\r\n", "\r"], "\n", $haystack);
+        $needle = \str_replace(["\r\n", "\r"], "\n", $needle);
+        $haystack = \str_replace(["\r\n", "\r"], "\n", $haystack);
         $this->assertContains($needle, $haystack, $message, $ignoreCase);
     }
 
@@ -312,8 +312,8 @@ abstract class TestCase extends BaseTestCase
      */
     public function assertTextNotContains($needle, $haystack, $message = '', $ignoreCase = false)
     {
-        $needle = str_replace(["\r\n", "\r"], "\n", $needle);
-        $haystack = str_replace(["\r\n", "\r"], "\n", $haystack);
+        $needle = \str_replace(["\r\n", "\r"], "\n", $needle);
+        $haystack = \str_replace(["\r\n", "\r"], "\n", $haystack);
         $this->assertNotContains($needle, $haystack, $message, $ignoreCase);
     }
 
@@ -328,7 +328,7 @@ abstract class TestCase extends BaseTestCase
      */
     public function assertTags($string, $expected, $fullDebug = false)
     {
-        trigger_error(
+        \trigger_error(
             'assertTags() is deprecated, use assertHtml() instead.',
             E_USER_DEPRECATED
         );
@@ -384,7 +384,7 @@ abstract class TestCase extends BaseTestCase
         $regex = [];
         $normalized = [];
         foreach ((array)$expected as $key => $val) {
-            if (!is_numeric($key)) {
+            if (!\is_numeric($key)) {
                 $normalized[] = [$key => $val];
             } else {
                 $normalized[] = $val;
@@ -392,37 +392,37 @@ abstract class TestCase extends BaseTestCase
         }
         $i = 0;
         foreach ($normalized as $tags) {
-            if (!is_array($tags)) {
+            if (!\is_array($tags)) {
                 $tags = (string)$tags;
             }
             $i++;
-            if (is_string($tags) && $tags{0} === '<') {
-                $tags = [substr($tags, 1) => []];
-            } elseif (is_string($tags)) {
-                $tagsTrimmed = preg_replace('/\s+/m', '', $tags);
+            if (\is_string($tags) && $tags{0} === '<') {
+                $tags = [\substr($tags, 1) => []];
+            } elseif (\is_string($tags)) {
+                $tagsTrimmed = \preg_replace('/\s+/m', '', $tags);
 
-                if (preg_match('/^\*?\//', $tags, $match) && $tagsTrimmed !== '//') {
+                if (\preg_match('/^\*?\//', $tags, $match) && $tagsTrimmed !== '//') {
                     $prefix = [null, null];
 
                     if ($match[0] === '*/') {
                         $prefix = ['Anything, ', '.*?'];
                     }
                     $regex[] = [
-                        sprintf('%sClose %s tag', $prefix[0], substr($tags, strlen($match[0]))),
-                        sprintf('%s\s*<[\s]*\/[\s]*%s[\s]*>[\n\r]*', $prefix[1], substr($tags, strlen($match[0]))),
+                        \sprintf('%sClose %s tag', $prefix[0], \substr($tags, \strlen($match[0]))),
+                        \sprintf('%s\s*<[\s]*\/[\s]*%s[\s]*>[\n\r]*', $prefix[1], \substr($tags, \strlen($match[0]))),
                         $i,
                     ];
                     continue;
                 }
-                if (!empty($tags) && preg_match('/^preg\:\/(.+)\/$/i', $tags, $matches)) {
+                if (!empty($tags) && \preg_match('/^preg\:\/(.+)\/$/i', $tags, $matches)) {
                     $tags = $matches[1];
                     $type = 'Regex matches';
                 } else {
-                    $tags = '\s*' . preg_quote($tags, '/');
+                    $tags = '\s*' . \preg_quote($tags, '/');
                     $type = 'Text equals';
                 }
                 $regex[] = [
-                    sprintf('%s "%s"', $type, $tags),
+                    \sprintf('%s "%s"', $type, $tags),
                     $tags,
                     $i,
                 ];
@@ -430,8 +430,8 @@ abstract class TestCase extends BaseTestCase
             }
             foreach ($tags as $tag => $attributes) {
                 $regex[] = [
-                    sprintf('Open %s tag', $tag),
-                    sprintf('[\s]*<%s', preg_quote($tag, '/')),
+                    \sprintf('Open %s tag', $tag),
+                    \sprintf('[\s]*<%s', \preg_quote($tag, '/')),
                     $i,
                 ];
                 if ($attributes === true) {
@@ -441,31 +441,31 @@ abstract class TestCase extends BaseTestCase
                 $explanations = [];
                 $i = 1;
                 foreach ($attributes as $attr => $val) {
-                    if (is_numeric($attr) && preg_match('/^preg\:\/(.+)\/$/i', $val, $matches)) {
+                    if (\is_numeric($attr) && \preg_match('/^preg\:\/(.+)\/$/i', $val, $matches)) {
                         $attrs[] = $matches[1];
-                        $explanations[] = sprintf('Regex "%s" matches', $matches[1]);
+                        $explanations[] = \sprintf('Regex "%s" matches', $matches[1]);
                         continue;
                     }
 
                     $quotes = '["\']';
-                    if (is_numeric($attr)) {
+                    if (\is_numeric($attr)) {
                         $attr = $val;
                         $val = '.+?';
-                        $explanations[] = sprintf('Attribute "%s" present', $attr);
-                    } elseif (!empty($val) && preg_match('/^preg\:\/(.+)\/$/i', $val, $matches)) {
-                        $val = str_replace(
+                        $explanations[] = \sprintf('Attribute "%s" present', $attr);
+                    } elseif (!empty($val) && \preg_match('/^preg\:\/(.+)\/$/i', $val, $matches)) {
+                        $val = \str_replace(
                             ['.*', '.+'],
                             ['.*?', '.+?'],
                             $matches[1]
                         );
                         $quotes = $val !== $matches[1] ? '["\']' : '["\']?';
 
-                        $explanations[] = sprintf('Attribute "%s" matches "%s"', $attr, $val);
+                        $explanations[] = \sprintf('Attribute "%s" matches "%s"', $attr, $val);
                     } else {
-                        $explanations[] = sprintf('Attribute "%s" == "%s"', $attr, $val);
-                        $val = preg_quote($val, '/');
+                        $explanations[] = \sprintf('Attribute "%s" == "%s"', $attr, $val);
+                        $val = \preg_quote($val, '/');
                     }
-                    $attrs[] = '[\s]+' . preg_quote($attr, '/') . '=' . $quotes . $val . $quotes;
+                    $attrs[] = '[\s]+' . \preg_quote($attr, '/') . '=' . $quotes . $val . $quotes;
                     $i++;
                 }
                 if ($attrs) {
@@ -475,7 +475,7 @@ abstract class TestCase extends BaseTestCase
                     ];
                 }
                 $regex[] = [
-                    sprintf('End %s tag', $tag),
+                    \sprintf('End %s tag', $tag),
                     '[\s]*\/?[\s]*>[\n\r]*',
                     $i,
                 ];
@@ -495,10 +495,10 @@ abstract class TestCase extends BaseTestCase
             list($description, $expressions, $itemNum) = $assertion;
             $expression = null;
             foreach ((array)$expressions as $expression) {
-                $expression = sprintf('/^%s/s', $expression);
-                if (preg_match($expression, $string, $match)) {
+                $expression = \sprintf('/^%s/s', $expression);
+                if (\preg_match($expression, $string, $match)) {
                     $matches = true;
-                    $string = substr($string, strlen($match[0]));
+                    $string = \substr($string, \strlen($match[0]));
                     break;
                 }
             }
@@ -507,7 +507,7 @@ abstract class TestCase extends BaseTestCase
                     debug($string);
                     debug($regex);
                 }
-                $this->assertRegExp($expression, $string, sprintf('Item #%d / regex #%d failed: %s', $itemNum, $i, $description));
+                $this->assertRegExp($expression, $string, \sprintf('Item #%d / regex #%d failed: %s', $itemNum, $i, $description));
 
                 return false;
             }
@@ -535,11 +535,11 @@ abstract class TestCase extends BaseTestCase
             $matches = false;
             $j = null;
             foreach ($asserts as $j => $assert) {
-                if (preg_match(sprintf('/^%s/s', $assert), $string, $match)) {
+                if (\preg_match(\sprintf('/^%s/s', $assert), $string, $match)) {
                     $matches = true;
-                    $string = substr($string, strlen($match[0]));
-                    array_splice($asserts, $j, 1);
-                    array_splice($explains, $j, 1);
+                    $string = \substr($string, \strlen($match[0]));
+                    \array_splice($asserts, $j, 1);
+                    \array_splice($explains, $j, 1);
                     break;
                 }
             }
@@ -550,7 +550,7 @@ abstract class TestCase extends BaseTestCase
                 }
                 $this->assertTrue(false, 'Attribute did not match. Was expecting ' . $explains[$j]);
             }
-            $len = count($asserts);
+            $len = \count($asserts);
         } while ($len > 0);
 
         return $string;
@@ -564,7 +564,7 @@ abstract class TestCase extends BaseTestCase
      */
     protected function _normalizePath($path)
     {
-        return str_replace('/', DIRECTORY_SEPARATOR, $path);
+        return \str_replace('/', DIRECTORY_SEPARATOR, $path);
     }
 
 // @codingStandardsIgnoreStart
@@ -611,8 +611,8 @@ abstract class TestCase extends BaseTestCase
      */
     protected static function assertPathEquals($expected, $result, $message = '')
     {
-        $expected = str_replace(DIRECTORY_SEPARATOR, '/', $expected);
-        $result = str_replace(DIRECTORY_SEPARATOR, '/', $result);
+        $expected = \str_replace(DIRECTORY_SEPARATOR, '/', $expected);
+        $result = \str_replace(DIRECTORY_SEPARATOR, '/', $result);
         static::assertEquals($expected, $result, $message);
     }
 
@@ -668,15 +668,15 @@ abstract class TestCase extends BaseTestCase
             ->getMock();
 
         if (empty($options['entityClass']) && $mock->entityClass() === '\Cake\ORM\Entity') {
-            $parts = explode('\\', $options['className']);
-            $entityAlias = Inflector::singularize(substr(array_pop($parts), 0, -5));
-            $entityClass = implode('\\', array_slice($parts, 0, -1)) . '\Entity\\' . $entityAlias;
-            if (class_exists($entityClass)) {
+            $parts = \explode('\\', $options['className']);
+            $entityAlias = Inflector::singularize(\substr(\array_pop($parts), 0, -5));
+            $entityClass = \implode('\\', \array_slice($parts, 0, -1)) . '\Entity\\' . $entityAlias;
+            if (\class_exists($entityClass)) {
                 $mock->entityClass($entityClass);
             }
         }
 
-        if (stripos($mock->getTable(), 'mock') === 0) {
+        if (\stripos($mock->getTable(), 'mock') === 0) {
             $mock->setTable(Inflector::tableize($baseClass));
         }
 

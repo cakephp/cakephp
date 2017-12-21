@@ -1,15 +1,15 @@
 <?php
 namespace Cake\TestSuite\Constraint;
 
-if (class_exists('PHPUnit_Runner_Version', false)
-    && !class_exists('PHPUnit\Framework\Constraint\Constraint', false)
+if (\class_exists('PHPUnit_Runner_Version', false)
+    && !\class_exists('PHPUnit\Framework\Constraint\Constraint', false)
 ) {
-    class_alias('PHPUnit_Framework_Constraint', 'PHPUnit\Framework\Constraint\Constraint');
+    \class_alias('PHPUnit_Framework_Constraint', 'PHPUnit\Framework\Constraint\Constraint');
 }
-if (class_exists('PHPUnit_Runner_Version', false)
-    && !class_exists('PHPUnit\Framework\AssertionFailedError', false)
+if (\class_exists('PHPUnit_Runner_Version', false)
+    && !\class_exists('PHPUnit\Framework\AssertionFailedError', false)
 ) {
-    class_alias('PHPUnit_Framework_AssertionFailedError', 'PHPUnit\Framework\AssertionFailedError');
+    \class_alias('PHPUnit_Framework_AssertionFailedError', 'PHPUnit\Framework\AssertionFailedError');
 }
 
 use Cake\Event\Event;
@@ -73,7 +73,7 @@ class EventFiredWith extends Constraint
     {
         $firedEvents = [];
         $list = $this->_eventManager->getEventList();
-        $totalEvents = count($list);
+        $totalEvents = \count($list);
         for ($e = 0; $e < $totalEvents; $e++) {
             $firedEvents[] = $list[$e];
         }
@@ -84,20 +84,20 @@ class EventFiredWith extends Constraint
             })
             ->toArray();
 
-        if (!array_key_exists($other, $eventGroup)) {
+        if (!\array_key_exists($other, $eventGroup)) {
             return false;
         }
 
         $events = $eventGroup[$other];
 
-        if (count($events) > 1) {
-            throw new AssertionFailedError(sprintf('Event "%s" was fired %d times, cannot make data assertion', $other, count($events)));
+        if (\count($events) > 1) {
+            throw new AssertionFailedError(\sprintf('Event "%s" was fired %d times, cannot make data assertion', $other, \count($events)));
         }
 
         /* @var \Cake\Event\Event $event */
         $event = $events[0];
 
-        if (array_key_exists($this->_dataKey, $event->getData()) === false) {
+        if (\array_key_exists($this->_dataKey, $event->getData()) === false) {
             return false;
         }
 

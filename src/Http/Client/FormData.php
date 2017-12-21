@@ -64,7 +64,7 @@ class FormData implements Countable
         if ($this->_boundary) {
             return $this->_boundary;
         }
-        $this->_boundary = md5(uniqid(time()));
+        $this->_boundary = \md5(\uniqid(\time()));
 
         return $this->_boundary;
     }
@@ -97,12 +97,12 @@ class FormData implements Countable
      */
     public function add($name, $value = null)
     {
-        if (is_array($value)) {
+        if (\is_array($value)) {
             $this->addRecursive($name, $value);
-        } elseif (is_resource($value)) {
+        } elseif (\is_resource($value)) {
             $this->addFile($name, $value);
-        } elseif (is_string($value) && strlen($value) && $value[0] === '@') {
-            trigger_error(
+        } elseif (\is_string($value) && \strlen($value) && $value[0] === '@') {
+            \trigger_error(
                 'Using the @ syntax for file uploads is not safe and is deprecated. ' .
                 'Instead you should use file handles.',
                 E_USER_DEPRECATED
@@ -149,19 +149,19 @@ class FormData implements Countable
 
         $filename = false;
         $contentType = 'application/octet-stream';
-        if (is_resource($value)) {
-            $content = stream_get_contents($value);
-            if (stream_is_local($value)) {
+        if (\is_resource($value)) {
+            $content = \stream_get_contents($value);
+            if (\stream_is_local($value)) {
                 $finfo = new finfo(FILEINFO_MIME);
-                $metadata = stream_get_meta_data($value);
+                $metadata = \stream_get_meta_data($value);
                 $contentType = $finfo->file($metadata['uri']);
-                $filename = basename($metadata['uri']);
+                $filename = \basename($metadata['uri']);
             }
         } else {
             $finfo = new finfo(FILEINFO_MIME);
-            $value = substr($value, 1);
-            $filename = basename($value);
-            $content = file_get_contents($value);
+            $value = \substr($value, 1);
+            $filename = \basename($value);
+            $content = \file_get_contents($value);
             $contentType = $finfo->file($value);
         }
         $part = $this->newPart($name, $content);
@@ -196,7 +196,7 @@ class FormData implements Countable
      */
     public function count()
     {
-        return count($this->_parts);
+        return \count($this->_parts);
     }
 
     /**
@@ -266,9 +266,9 @@ class FormData implements Countable
             $data[$part->name()] = $part->value();
         }
 
-        return http_build_query($data);
+        return \http_build_query($data);
     }
 }
 
 // @deprecated Add backwards compat alias.
-class_alias('Cake\Http\Client\FormData', 'Cake\Network\Http\FormData');
+\class_alias('Cake\Http\Client\FormData', 'Cake\Network\Http\FormData');

@@ -154,8 +154,8 @@ class ErrorHandler extends BaseErrorHandler
      */
     protected function _clearOutput()
     {
-        while (ob_get_level()) {
-            ob_end_clean();
+        while (\ob_get_level()) {
+            \ob_end_clean();
         }
     }
 
@@ -172,13 +172,13 @@ class ErrorHandler extends BaseErrorHandler
     {
         // Disable trace for internal errors.
         $this->_options['trace'] = false;
-        $message = sprintf(
+        $message = \sprintf(
             "[%s] %s\n%s", // Keeping same message format
-            get_class($exception),
+            \get_class($exception),
             $exception->getMessage(),
             $exception->getTraceAsString()
         );
-        trigger_error($message, E_USER_ERROR);
+        \trigger_error($message, E_USER_ERROR);
     }
 
     /**
@@ -189,7 +189,7 @@ class ErrorHandler extends BaseErrorHandler
      */
     protected function _sendResponse($response)
     {
-        if (is_string($response)) {
+        if (\is_string($response)) {
             echo $response;
 
             return;

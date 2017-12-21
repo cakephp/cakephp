@@ -119,7 +119,7 @@ class CommandRunner
         ]);
         $commands = $this->app->console($commands);
         if (!($commands instanceof CommandCollection)) {
-            $type = is_object($commands) ? get_class($commands) : gettype($commands);
+            $type = \is_object($commands) ? \get_class($commands) : \gettype($commands);
             throw new RuntimeException(
                 "The application's `console` method did not return a CommandCollection." .
                 " Got '{$type}' instead."
@@ -131,10 +131,10 @@ class CommandRunner
             throw new RuntimeException("Cannot run any commands. No arguments received.");
         }
         // Remove the root executable segment
-        array_shift($argv);
+        \array_shift($argv);
 
         $io = $io ?: new ConsoleIo();
-        $shell = $this->getShell($io, $commands, array_shift($argv));
+        $shell = $this->getShell($io, $commands, \array_shift($argv));
 
         try {
             $shell->initialize();
@@ -146,7 +146,7 @@ class CommandRunner
         if ($result === null || $result === true) {
             return Shell::CODE_SUCCESS;
         }
-        if (is_int($result)) {
+        if (\is_int($result)) {
             return $result;
         }
 
@@ -180,7 +180,7 @@ class CommandRunner
             );
         }
         $instance = $commands->get($name);
-        if (is_string($instance)) {
+        if (\is_string($instance)) {
             $instance = $this->createShell($instance, $io);
         }
         $instance->setRootName($this->root);

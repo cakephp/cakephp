@@ -60,8 +60,8 @@ class CommandCollection implements IteratorAggregate, Countable
     {
         // Once we have a new Command class this should check
         // against that interface.
-        if (!is_subclass_of($command, Shell::class)) {
-            $class = is_string($command) ? $command : get_class($command);
+        if (!\is_subclass_of($command, Shell::class)) {
+            $class = \is_string($command) ? $command : \get_class($command);
             throw new InvalidArgumentException(
                 "Cannot use '$class' for command '$name' it is not a subclass of Cake\Console\Shell."
             );
@@ -147,7 +147,7 @@ class CommandCollection implements IteratorAggregate, Countable
      */
     public function count()
     {
-        return count($this->commands);
+        return \count($this->commands);
     }
 
     /**
@@ -200,7 +200,7 @@ class CommandCollection implements IteratorAggregate, Countable
 
         $out = $adder([], $shells, 'CORE');
         $out = $adder($out, $shells, 'app');
-        foreach (array_keys($shells['plugins']) as $key) {
+        foreach (\array_keys($shells['plugins']) as $key) {
             $out = $adder($out, $shells['plugins'], $key);
         }
 

@@ -114,7 +114,7 @@ class FrozenTime extends Chronos implements JsonSerializable
             $time = $time->format('Y-m-d H:i:s');
         }
 
-        if (is_numeric($time)) {
+        if (\is_numeric($time)) {
             $time = '@' . $time;
         }
 
@@ -180,7 +180,7 @@ class FrozenTime extends Chronos implements JsonSerializable
      */
     public static function listTimezones($filter = null, $country = null, $options = [])
     {
-        if (is_bool($options)) {
+        if (\is_bool($options)) {
             $options = [
                 'group' => $options,
             ];
@@ -195,7 +195,7 @@ class FrozenTime extends Chronos implements JsonSerializable
         $group = $options['group'];
 
         $regex = null;
-        if (is_string($filter)) {
+        if (\is_string($filter)) {
             $regex = $filter;
             $filter = null;
         }
@@ -206,7 +206,7 @@ class FrozenTime extends Chronos implements JsonSerializable
 
         if ($regex) {
             foreach ($identifiers as $key => $tz) {
-                if (!preg_match($regex, $tz)) {
+                if (!\preg_match($regex, $tz)) {
                     unset($identifiers[$key]);
                 }
             }
@@ -214,7 +214,7 @@ class FrozenTime extends Chronos implements JsonSerializable
 
         if ($group) {
             $groupedIdentifiers = [];
-            $now = time();
+            $now = \time();
             $before = $options['before'];
             $after = $options['after'];
             foreach ($identifiers as $key => $tz) {
@@ -226,7 +226,7 @@ class FrozenTime extends Chronos implements JsonSerializable
                         $before . $trans[0]['abbr'] . $after :
                         null;
                 }
-                $item = explode('/', $tz, 2);
+                $item = \explode('/', $tz, 2);
                 if (isset($item[1])) {
                     $groupedIdentifiers[$item[0]][$tz] = $item[1] . $abbr;
                 } else {
@@ -237,7 +237,7 @@ class FrozenTime extends Chronos implements JsonSerializable
             return $groupedIdentifiers;
         }
 
-        return array_combine($identifiers, $identifiers);
+        return \array_combine($identifiers, $identifiers);
     }
 
     /**
@@ -253,8 +253,8 @@ class FrozenTime extends Chronos implements JsonSerializable
      */
     public function wasWithinLast($timeInterval)
     {
-        $tmp = trim($timeInterval);
-        if (is_numeric($tmp)) {
+        $tmp = \trim($timeInterval);
+        if (\is_numeric($tmp)) {
             $timeInterval = $tmp . ' days';
         }
 
@@ -274,8 +274,8 @@ class FrozenTime extends Chronos implements JsonSerializable
      */
     public function isWithinNext($timeInterval)
     {
-        $tmp = trim($timeInterval);
-        if (is_numeric($tmp)) {
+        $tmp = \trim($timeInterval);
+        if (\is_numeric($tmp)) {
             $timeInterval = $tmp . ' days';
         }
 

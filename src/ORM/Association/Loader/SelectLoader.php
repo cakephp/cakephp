@@ -220,11 +220,11 @@ class SelectLoader
     {
         $finderData = (array)$finderData;
 
-        if (is_numeric(key($finderData))) {
-            return [current($finderData), []];
+        if (\is_numeric(\key($finderData))) {
+            return [\current($finderData), []];
         }
 
-        return [key($finderData), current($finderData)];
+        return [\key($finderData), \current($finderData)];
     }
 
     /**
@@ -245,7 +245,7 @@ class SelectLoader
         }
         $missingKey = function ($fieldList, $key) {
             foreach ($key as $keyField) {
-                if (!in_array($keyField, $fieldList, true)) {
+                if (!\in_array($keyField, $fieldList, true)) {
                     return true;
                 }
             }
@@ -256,15 +256,15 @@ class SelectLoader
         $missingFields = $missingKey($select, $key);
         if ($missingFields) {
             $driver = $fetchQuery->getConnection()->getDriver();
-            $quoted = array_map([$driver, 'quoteIdentifier'], $key);
+            $quoted = \array_map([$driver, 'quoteIdentifier'], $key);
             $missingFields = $missingKey($select, $quoted);
         }
 
         if ($missingFields) {
             throw new InvalidArgumentException(
-                sprintf(
+                \sprintf(
                     'You are required to select the "%s" field(s)',
-                    implode(', ', (array)$key)
+                    \implode(', ', (array)$key)
                 )
             );
         }
@@ -286,7 +286,7 @@ class SelectLoader
         $aliasedTable = $this->sourceAlias;
 
         foreach ($subquery->clause('select') as $aliasedField => $field) {
-            if (is_int($aliasedField)) {
+            if (\is_int($aliasedField)) {
                 $filter[] = new IdentifierExpression($field);
             } else {
                 $filter[$aliasedField] = $field;
@@ -294,10 +294,10 @@ class SelectLoader
         }
         $subquery->select($filter, true);
 
-        if (is_array($key)) {
+        if (\is_array($key)) {
             $conditions = $this->_createTupleCondition($query, $key, $filter, '=');
         } else {
-            $filter = current($filter);
+            $filter = \current($filter);
         }
 
         $conditions = isset($conditions) ? $conditions : $query->newExpr([$key => $filter]);
@@ -319,7 +319,7 @@ class SelectLoader
      */
     protected function _addFilteringCondition($query, $key, $filter)
     {
-        if (is_array($key)) {
+        if (\is_array($key)) {
             $conditions = $this->_createTupleCondition($query, $key, $filter, 'IN');
         }
 
@@ -369,15 +369,15 @@ class SelectLoader
             throw new RuntimeException($msg);
         }
 
-        $keys = in_array($this->associationType, [Association::ONE_TO_ONE, Association::ONE_TO_MANY]) ?
+        $keys = \in_array($this->associationType, [Association::ONE_TO_ONE, Association::ONE_TO_MANY]) ?
             $this->foreignKey :
             $this->bindingKey;
 
         foreach ((array)$keys as $key) {
-            $links[] = sprintf('%s.%s', $name, $key);
+            $links[] = \sprintf('%s.%s', $name, $key);
         }
 
-        if (count($links) === 1) {
+        if (\count($links) === 1) {
             return $links[0];
         }
 
@@ -432,7 +432,7 @@ class SelectLoader
         }
 
         $fields = $query->aliasFields($keys, $this->sourceAlias);
-        $group = $fields = array_values($fields);
+        $group = $fields = \array_values($fields);
 
         $order = $query->clause('order');
         if ($order) {
@@ -458,8 +458,8 @@ class SelectLoader
     protected function _buildResultMap($fetchQuery, $options)
     {
         $resultMap = [];
-        $singleResult = in_array($this->associationType, [Association::MANY_TO_ONE, Association::ONE_TO_ONE]);
-        $keys = in_array($this->associationType, [Association::ONE_TO_ONE, Association::ONE_TO_MANY]) ?
+        $singleResult = \in_array($this->associationType, [Association::MANY_TO_ONE, Association::ONE_TO_ONE]);
+        $keys = \in_array($this->associationType, [Association::ONE_TO_ONE, Association::ONE_TO_MANY]) ?
             $this->foreignKey :
             $this->bindingKey;
         $key = (array)$keys;
@@ -470,9 +470,9 @@ class SelectLoader
                 $values[] = $result[$k];
             }
             if ($singleResult) {
-                $resultMap[implode(';', $values)] = $result;
+                $resultMap[\implode(';', $values)] = $result;
             } else {
-                $resultMap[implode(';', $values)][] = $result;
+                $resultMap[\implode(';', $values)][] = $result;
             }
         }
 
@@ -498,11 +498,11 @@ class SelectLoader
         $sourceKeys = [];
         foreach ((array)$keys as $key) {
             $f = $fetchQuery->aliasField($key, $this->sourceAlias);
-            $sourceKeys[] = key($f);
+            $sourceKeys[] = \key($f);
         }
 
         $nestKey = $options['nestKey'];
-        if (count($sourceKeys) > 1) {
+        if (\count($sourceKeys) > 1) {
             return $this->_multiKeysInjector($resultMap, $sourceKeys, $nestKey);
         }
 
@@ -535,7 +535,7 @@ class SelectLoader
                 $values[] = $row[$key];
             }
 
-            $key = implode(';', $values);
+            $key = \implode(';', $values);
             if (isset($resultMap[$key])) {
                 $row[$nestKey] = $resultMap[$key];
             }

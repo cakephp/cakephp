@@ -185,14 +185,14 @@ class SmtpTransport extends AbstractTransport
     {
         $response = [];
         foreach ($responseLines as $responseLine) {
-            if (preg_match('/^(\d{3})(?:[ -]+(.*))?$/', $responseLine, $match)) {
+            if (\preg_match('/^(\d{3})(?:[ -]+(.*))?$/', $responseLine, $match)) {
                 $response[] = [
                     'code' => $match[1],
                     'message' => isset($match[2]) ? $match[2] : null
                 ];
             }
         }
-        $this->_lastResponse = array_merge($this->_lastResponse, $response);
+        $this->_lastResponse = \array_merge($this->_lastResponse, $response);
     }
 
     /**
@@ -214,7 +214,7 @@ class SmtpTransport extends AbstractTransport
         if (isset($config['client'])) {
             $host = $config['client'];
         } elseif ($httpHost = env('HTTP_HOST')) {
-            list($host) = explode(':', $httpHost);
+            list($host) = \explode(':', $httpHost);
         } else {
             $host = 'localhost';
         }
@@ -250,12 +250,12 @@ class SmtpTransport extends AbstractTransport
             $replyCode = (string)$this->_smtpSend('AUTH LOGIN', '334|500|502|504');
             if ($replyCode === '334') {
                 try {
-                    $this->_smtpSend(base64_encode($this->_config['username']), '334');
+                    $this->_smtpSend(\base64_encode($this->_config['username']), '334');
                 } catch (SocketException $e) {
                     throw new SocketException('SMTP server did not accept the username.');
                 }
                 try {
-                    $this->_smtpSend(base64_encode($this->_config['password']), '235');
+                    $this->_smtpSend(\base64_encode($this->_config['password']), '235');
                 } catch (SocketException $e) {
                     throw new SocketException('SMTP server did not accept the password.');
                 }
@@ -317,7 +317,7 @@ class SmtpTransport extends AbstractTransport
         $cc = $email->getCc();
         $bcc = $email->getBcc();
 
-        return array_merge(array_keys($to), array_keys($cc), array_keys($bcc));
+        return \array_merge(\array_keys($to), \array_keys($cc), \array_keys($bcc));
     }
 
     /**
@@ -349,7 +349,7 @@ class SmtpTransport extends AbstractTransport
             }
         }
 
-        return implode("\r\n", $messages);
+        return \implode("\r\n", $messages);
     }
 
     /**
@@ -362,7 +362,7 @@ class SmtpTransport extends AbstractTransport
     protected function _sendRcpt($email)
     {
         $from = $this->_prepareFromAddress($email);
-        $this->_smtpSend($this->_prepareFromCmd(key($from)));
+        $this->_smtpSend($this->_prepareFromCmd(\key($from)));
 
         $emails = $this->_prepareRecipientAddresses($email);
         foreach ($emails as $mail) {
@@ -431,30 +431,30 @@ class SmtpTransport extends AbstractTransport
 
         while ($checkCode !== false) {
             $response = '';
-            $startTime = time();
-            while (substr($response, -2) !== "\r\n" && ((time() - $startTime) < $timeout)) {
+            $startTime = \time();
+            while (\substr($response, -2) !== "\r\n" && ((\time() - $startTime) < $timeout)) {
                 $bytes = $this->_socket->read();
                 if ($bytes === false || $bytes === null) {
                     break;
                 }
                 $response .= $bytes;
             }
-            if (substr($response, -2) !== "\r\n") {
+            if (\substr($response, -2) !== "\r\n") {
                 throw new SocketException('SMTP timeout.');
             }
-            $responseLines = explode("\r\n", rtrim($response, "\r\n"));
-            $response = end($responseLines);
+            $responseLines = \explode("\r\n", \rtrim($response, "\r\n"));
+            $response = \end($responseLines);
 
             $this->_bufferResponseLines($responseLines);
 
-            if (preg_match('/^(' . $checkCode . ')(.)/', $response, $code)) {
+            if (\preg_match('/^(' . $checkCode . ')(.)/', $response, $code)) {
                 if ($code[2] === '-') {
                     continue;
                 }
 
                 return $code[1];
             }
-            throw new SocketException(sprintf('SMTP Error: %s', $response));
+            throw new SocketException(\sprintf('SMTP Error: %s', $response));
         }
     }
 }

@@ -97,7 +97,7 @@ class RadioWidget implements WidgetInterface
             'templateVars' => [],
         ];
         if ($data['options'] instanceof Traversable) {
-            $options = iterator_to_array($data['options']);
+            $options = \iterator_to_array($data['options']);
         } else {
             $options = (array)$data['options'];
         }
@@ -115,7 +115,7 @@ class RadioWidget implements WidgetInterface
             $opts[] = $this->_renderInput($val, $text, $data, $context);
         }
 
-        return implode('', $opts);
+        return \implode('', $opts);
     }
 
     /**
@@ -133,9 +133,9 @@ class RadioWidget implements WidgetInterface
         if ($disabled === true) {
             return true;
         }
-        $isNumeric = is_numeric($radio['value']);
+        $isNumeric = \is_numeric($radio['value']);
 
-        return (!is_array($disabled) || in_array((string)$radio['value'], $disabled, !$isNumeric));
+        return (!\is_array($disabled) || \in_array((string)$radio['value'], $disabled, !$isNumeric));
     }
 
     /**
@@ -150,7 +150,7 @@ class RadioWidget implements WidgetInterface
     protected function _renderInput($val, $text, $data, $context)
     {
         $escape = $data['escape'];
-        if (is_int($val) && isset($text['text'], $text['value'])) {
+        if (\is_int($val) && isset($text['text'], $text['value'])) {
             $radio = $text;
         } else {
             $radio = ['value' => $val, 'text' => $text];
@@ -161,13 +161,13 @@ class RadioWidget implements WidgetInterface
             $radio['templateVars'] = [];
         }
         if (!empty($data['templateVars'])) {
-            $radio['templateVars'] = array_merge($data['templateVars'], $radio['templateVars']);
+            $radio['templateVars'] = \array_merge($data['templateVars'], $radio['templateVars']);
         }
 
         if (empty($radio['id'])) {
             $radio['id'] = $this->_id($radio['name'], $radio['value']);
         }
-        if (isset($data['val']) && is_bool($data['val'])) {
+        if (isset($data['val']) && \is_bool($data['val'])) {
             $data['val'] = $data['val'] ? 1 : 0;
         }
         if (isset($data['val']) && (string)$data['val'] === (string)$radio['value']) {
@@ -175,7 +175,7 @@ class RadioWidget implements WidgetInterface
             $radio['templateVars']['activeClass'] = 'active';
         }
 
-        if (!is_bool($data['label']) && isset($radio['checked']) && $radio['checked']) {
+        if (!\is_bool($data['label']) && isset($radio['checked']) && $radio['checked']) {
             $data['label'] = $this->_templates->addClass($data['label'], 'selected');
         }
 
@@ -203,7 +203,7 @@ class RadioWidget implements WidgetInterface
         );
 
         if ($label === false &&
-            strpos($this->_templates->get('radioWrapper'), '{{input}}') === false
+            \strpos($this->_templates->get('radioWrapper'), '{{input}}') === false
         ) {
             $label = $input;
         }
@@ -233,7 +233,7 @@ class RadioWidget implements WidgetInterface
         if ($label === false) {
             return false;
         }
-        $labelAttrs = is_array($label) ? $label : [];
+        $labelAttrs = \is_array($label) ? $label : [];
         $labelAttrs += [
             'for' => $radio['id'],
             'escape' => $escape,

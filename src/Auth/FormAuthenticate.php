@@ -49,7 +49,7 @@ class FormAuthenticate extends BaseAuthenticate
     {
         foreach ([$fields['username'], $fields['password']] as $field) {
             $value = $request->getData($field);
-            if (empty($value) || !is_string($value)) {
+            if (empty($value) || !\is_string($value)) {
                 return false;
             }
         }

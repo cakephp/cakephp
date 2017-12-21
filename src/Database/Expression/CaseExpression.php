@@ -65,9 +65,9 @@ class CaseExpression implements ExpressionInterface
             $this->add($conditions, $values, $types);
         }
 
-        if (is_array($conditions) && is_array($values) && count($values) > count($conditions)) {
-            end($values);
-            $key = key($values);
+        if (\is_array($conditions) && \is_array($values) && \count($values) > \count($conditions)) {
+            \end($values);
+            $key = \key($values);
             $this->elseValue($values[$key], isset($types[$key]) ? $types[$key] : null);
         }
     }
@@ -85,13 +85,13 @@ class CaseExpression implements ExpressionInterface
      */
     public function add($conditions = [], $values = [], $types = [])
     {
-        if (!is_array($conditions)) {
+        if (!\is_array($conditions)) {
             $conditions = [$conditions];
         }
-        if (!is_array($values)) {
+        if (!\is_array($values)) {
             $values = [$values];
         }
-        if (!is_array($types)) {
+        if (!\is_array($types)) {
             $types = [$types];
         }
 
@@ -112,11 +112,11 @@ class CaseExpression implements ExpressionInterface
      */
     protected function _addExpressions($conditions, $values, $types)
     {
-        $rawValues = array_values($values);
-        $keyValues = array_keys($values);
+        $rawValues = \array_values($values);
+        $keyValues = \array_keys($values);
 
         foreach ($conditions as $k => $c) {
-            $numericKey = is_numeric($k);
+            $numericKey = \is_numeric($k);
 
             if ($numericKey && empty($c)) {
                 continue;
@@ -166,9 +166,9 @@ class CaseExpression implements ExpressionInterface
      */
     public function elseValue($value = null, $type = null)
     {
-        if (is_array($value)) {
-            end($value);
-            $value = key($value);
+        if (\is_array($value)) {
+            \end($value);
+            $value = \key($value);
         }
 
         if ($value !== null && !$value instanceof ExpressionInterface) {
@@ -194,7 +194,7 @@ class CaseExpression implements ExpressionInterface
     {
         if ($part instanceof ExpressionInterface) {
             $part = $part->sql($generator);
-        } elseif (is_array($part)) {
+        } elseif (\is_array($part)) {
             $placeholder = $generator->placeholder('param');
             $generator->bind($placeholder, $part['value'], $part['type']);
             $part = $placeholder;
@@ -224,7 +224,7 @@ class CaseExpression implements ExpressionInterface
         }
         $parts[] = 'END';
 
-        return implode(' ', $parts);
+        return \implode(' ', $parts);
     }
 
     /**

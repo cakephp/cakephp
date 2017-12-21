@@ -64,7 +64,7 @@ class ConsoleInputArgument
      */
     public function __construct($name, $help = '', $required = false, $choices = [])
     {
-        if (is_array($name) && isset($name['name'])) {
+        if (\is_array($name) && isset($name['name'])) {
             foreach ($name as $key => $value) {
                 $this->{'_' . $key} = $value;
             }
@@ -106,18 +106,18 @@ class ConsoleInputArgument
     public function help($width = 0)
     {
         $name = $this->_name;
-        if (strlen($name) < $width) {
-            $name = str_pad($name, $width, ' ');
+        if (\strlen($name) < $width) {
+            $name = \str_pad($name, $width, ' ');
         }
         $optional = '';
         if (!$this->isRequired()) {
             $optional = ' <comment>(optional)</comment>';
         }
         if ($this->_choices) {
-            $optional .= sprintf(' <comment>(choices: %s)</comment>', implode('|', $this->_choices));
+            $optional .= \sprintf(' <comment>(choices: %s)</comment>', \implode('|', $this->_choices));
         }
 
-        return sprintf('%s%s%s', $name, $this->_help, $optional);
+        return \sprintf('%s%s%s', $name, $this->_help, $optional);
     }
 
     /**
@@ -129,7 +129,7 @@ class ConsoleInputArgument
     {
         $name = $this->_name;
         if ($this->_choices) {
-            $name = implode('|', $this->_choices);
+            $name = \implode('|', $this->_choices);
         }
         $name = '<' . $name . '>';
         if (!$this->isRequired()) {
@@ -161,13 +161,13 @@ class ConsoleInputArgument
         if (empty($this->_choices)) {
             return true;
         }
-        if (!in_array($value, $this->_choices)) {
+        if (!\in_array($value, $this->_choices)) {
             throw new ConsoleException(
-                sprintf(
+                \sprintf(
                     '"%s" is not a valid value for %s. Please use one of "%s"',
                     $value,
                     $this->_name,
-                    implode(', ', $this->_choices)
+                    \implode(', ', $this->_choices)
                 )
             );
         }

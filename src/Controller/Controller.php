@@ -241,8 +241,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         }
 
         if ($this->name === null) {
-            list(, $name) = namespaceSplit(get_class($this));
-            $this->name = substr($name, 0, -10);
+            list(, $name) = namespaceSplit(\get_class($this));
+            $this->name = \substr($name, 0, -10);
         }
 
         $this->setRequest($request !== null ? $request : new ServerRequest());
@@ -342,8 +342,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         ];
         if (isset($deprecated[$name])) {
             $method = $deprecated[$name];
-            trigger_error(
-                sprintf('Controller::$%s is deprecated. Use $this->viewBuilder()->%s() instead.', $name, $method),
+            \trigger_error(
+                \sprintf('Controller::$%s is deprecated. Use $this->viewBuilder()->%s() instead.', $name, $method),
                 E_USER_DEPRECATED
             );
 
@@ -377,8 +377,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         ];
         if (isset($deprecated[$name])) {
             $method = $deprecated[$name];
-            trigger_error(
-                sprintf('Controller::$%s is deprecated. Use $this->viewBuilder()->%s() instead.', $name, $method),
+            \trigger_error(
+                \sprintf('Controller::$%s is deprecated. Use $this->viewBuilder()->%s() instead.', $name, $method),
                 E_USER_DEPRECATED
             );
             $this->viewBuilder()->{$method}($value);
@@ -437,7 +437,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         /* @var callable $callable */
         $callable = [$this, $request->getParam('action')];
 
-        return $callable(...array_values($request->getParam('pass')));
+        return $callable(...\array_values($request->getParam('pass')));
     }
 
     /**
@@ -635,11 +635,11 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     {
         $viewPath = $this->name;
         if ($this->request->getParam('prefix')) {
-            $prefixes = array_map(
+            $prefixes = \array_map(
                 'Cake\Utility\Inflector::camelize',
-                explode('/', $this->request->getParam('prefix'))
+                \explode('/', $this->request->getParam('prefix'))
             );
-            $viewPath = implode(DIRECTORY_SEPARATOR, $prefixes) . DIRECTORY_SEPARATOR . $viewPath;
+            $viewPath = \implode(DIRECTORY_SEPARATOR, $prefixes) . DIRECTORY_SEPARATOR . $viewPath;
         }
 
         return $viewPath;
@@ -662,8 +662,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         if ($referer === '/' && $default && $default !== $referer) {
             $url = Router::url($default, !$local);
             $base = $this->request->getAttribute('base');
-            if ($local && $base && strpos($url, $base) === 0) {
-                $url = substr($url, strlen($base));
+            if ($local && $base && \strpos($url, $base) === 0) {
+                $url = \substr($url, \strlen($base));
                 if ($url[0] !== '/') {
                     $url = '/' . $url;
                 }
@@ -694,11 +694,11 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     public function paginate($object = null, array $settings = [])
     {
-        if (is_object($object)) {
+        if (\is_object($object)) {
             $table = $object;
         }
 
-        if (is_string($object) || $object === null) {
+        if (\is_string($object) || $object === null) {
             $try = [$object, $this->modelClass];
             foreach ($try as $tableName) {
                 if (empty($tableName)) {

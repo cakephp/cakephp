@@ -121,7 +121,7 @@ class RuleInvoker
         if (isset($this->options['message'])) {
             $message = $this->options['message'];
         }
-        if (is_string($pass)) {
+        if (\is_string($pass)) {
             $message = $pass;
         }
         if ($this->name) {

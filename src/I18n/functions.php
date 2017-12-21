@@ -14,7 +14,7 @@
  */
 use Cake\I18n\I18n;
 
-if (!function_exists('__')) {
+if (!\function_exists('__')) {
     /**
      * Returns a translated string if one is found; Otherwise, the submitted message.
      *
@@ -28,7 +28,7 @@ if (!function_exists('__')) {
         if (!$singular) {
             return null;
         }
-        if (isset($args[0]) && is_array($args[0])) {
+        if (isset($args[0]) && \is_array($args[0])) {
             $args = $args[0];
         }
 
@@ -37,7 +37,7 @@ if (!function_exists('__')) {
 
 }
 
-if (!function_exists('__n')) {
+if (!\function_exists('__n')) {
     /**
      * Returns correct plural form of message identified by $singular and $plural for count $count.
      * Some languages have more than one form for plural messages dependent on the count.
@@ -54,7 +54,7 @@ if (!function_exists('__n')) {
         if (!$singular) {
             return null;
         }
-        if (isset($args[0]) && is_array($args[0])) {
+        if (isset($args[0]) && \is_array($args[0])) {
             $args = $args[0];
         }
 
@@ -66,7 +66,7 @@ if (!function_exists('__n')) {
 
 }
 
-if (!function_exists('__d')) {
+if (!\function_exists('__d')) {
     /**
      * Allows you to override the current domain for a single message lookup.
      *
@@ -81,7 +81,7 @@ if (!function_exists('__d')) {
         if (!$msg) {
             return null;
         }
-        if (isset($args[0]) && is_array($args[0])) {
+        if (isset($args[0]) && \is_array($args[0])) {
             $args = $args[0];
         }
 
@@ -90,7 +90,7 @@ if (!function_exists('__d')) {
 
 }
 
-if (!function_exists('__dn')) {
+if (!\function_exists('__dn')) {
     /**
      * Allows you to override the current domain for a single plural message lookup.
      * Returns correct plural form of message identified by $singular and $plural for count $count
@@ -109,7 +109,7 @@ if (!function_exists('__dn')) {
         if (!$singular) {
             return null;
         }
-        if (isset($args[0]) && is_array($args[0])) {
+        if (isset($args[0]) && \is_array($args[0])) {
             $args = $args[0];
         }
 
@@ -121,7 +121,7 @@ if (!function_exists('__dn')) {
 
 }
 
-if (!function_exists('__x')) {
+if (!\function_exists('__x')) {
     /**
      * Returns a translated string if one is found; Otherwise, the submitted message.
      * The context is a unique identifier for the translations string that makes it unique
@@ -138,7 +138,7 @@ if (!function_exists('__x')) {
         if (!$singular) {
             return null;
         }
-        if (isset($args[0]) && is_array($args[0])) {
+        if (isset($args[0]) && \is_array($args[0])) {
             $args = $args[0];
         }
 
@@ -147,7 +147,7 @@ if (!function_exists('__x')) {
 
 }
 
-if (!function_exists('__xn')) {
+if (!\function_exists('__xn')) {
     /**
      * Returns correct plural form of message identified by $singular and $plural for count $count.
      * Some languages have more than one form for plural messages dependent on the count.
@@ -167,7 +167,7 @@ if (!function_exists('__xn')) {
         if (!$singular) {
             return null;
         }
-        if (isset($args[0]) && is_array($args[0])) {
+        if (isset($args[0]) && \is_array($args[0])) {
             $args = $args[0];
         }
 
@@ -179,7 +179,7 @@ if (!function_exists('__xn')) {
 
 }
 
-if (!function_exists('__dx')) {
+if (!\function_exists('__dx')) {
     /**
      * Allows you to override the current domain for a single message lookup.
      * The context is a unique identifier for the translations string that makes it unique
@@ -197,7 +197,7 @@ if (!function_exists('__dx')) {
         if (!$msg) {
             return null;
         }
-        if (isset($args[0]) && is_array($args[0])) {
+        if (isset($args[0]) && \is_array($args[0])) {
             $args = $args[0];
         }
 
@@ -209,7 +209,7 @@ if (!function_exists('__dx')) {
 
 }
 
-if (!function_exists('__dxn')) {
+if (!\function_exists('__dxn')) {
     /**
      * Returns correct plural form of message identified by $singular and $plural for count $count.
      * Allows you to override the current domain for a single message lookup.
@@ -230,7 +230,7 @@ if (!function_exists('__dxn')) {
         if (!$singular) {
             return null;
         }
-        if (isset($args[0]) && is_array($args[0])) {
+        if (isset($args[0]) && \is_array($args[0])) {
             $args = $args[0];
         }
 

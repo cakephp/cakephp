@@ -110,7 +110,7 @@ class RulesChecker
     public function __construct(array $options = [])
     {
         $this->_options = $options;
-        $this->_useI18n = function_exists('__d');
+        $this->_useI18n = \function_exists('__d');
     }
 
     /**
@@ -252,7 +252,7 @@ class RulesChecker
      */
     public function checkCreate(EntityInterface $entity, array $options = [])
     {
-        return $this->_checkRules($entity, $options, array_merge($this->_rules, $this->_createRules));
+        return $this->_checkRules($entity, $options, \array_merge($this->_rules, $this->_createRules));
     }
 
     /**
@@ -265,7 +265,7 @@ class RulesChecker
      */
     public function checkUpdate(EntityInterface $entity, array $options = [])
     {
-        return $this->_checkRules($entity, $options, array_merge($this->_rules, $this->_updateRules));
+        return $this->_checkRules($entity, $options, \array_merge($this->_rules, $this->_updateRules));
     }
 
     /**
@@ -312,7 +312,7 @@ class RulesChecker
      */
     protected function _addError($rule, $name, $options)
     {
-        if (is_array($name)) {
+        if (\is_array($name)) {
             $options = $name;
             $name = null;
         }

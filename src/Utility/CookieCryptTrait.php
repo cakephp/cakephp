@@ -51,7 +51,7 @@ trait CookieCryptTrait
      */
     protected function _encrypt($value, $encrypt, $key = null)
     {
-        if (is_array($value)) {
+        if (\is_array($value)) {
             $value = $this->_implode($value);
         }
         if ($encrypt === false) {
@@ -70,7 +70,7 @@ trait CookieCryptTrait
             $cipher = Security::encrypt($value, $key);
         }
 
-        return $prefix . base64_encode($cipher);
+        return $prefix . \base64_encode($cipher);
     }
 
     /**
@@ -82,10 +82,10 @@ trait CookieCryptTrait
      */
     protected function _checkCipher($encrypt)
     {
-        if (!in_array($encrypt, $this->_validCiphers)) {
-            $msg = sprintf(
+        if (!\in_array($encrypt, $this->_validCiphers)) {
+            $msg = \sprintf(
                 'Invalid encryption cipher. Must be one of %s.',
-                implode(', ', $this->_validCiphers)
+                \implode(', ', $this->_validCiphers)
             );
             throw new RuntimeException($msg);
         }
@@ -101,7 +101,7 @@ trait CookieCryptTrait
      */
     protected function _decrypt($values, $mode, $key = null)
     {
-        if (is_string($values)) {
+        if (\is_string($values)) {
             return $this->_decode($values, $mode, $key);
         }
 
@@ -128,7 +128,7 @@ trait CookieCryptTrait
         }
         $this->_checkCipher($encrypt);
         $prefix = 'Q2FrZQ==.';
-        $value = base64_decode(substr($value, strlen($prefix)));
+        $value = \base64_decode(\substr($value, \strlen($prefix)));
         if ($key === null) {
             $key = $this->_getCookieEncryptionKey();
         }
@@ -150,7 +150,7 @@ trait CookieCryptTrait
      */
     protected function _implode(array $array)
     {
-        return json_encode($array);
+        return \json_encode($array);
     }
 
     /**
@@ -162,15 +162,15 @@ trait CookieCryptTrait
      */
     protected function _explode($string)
     {
-        $first = substr($string, 0, 1);
+        $first = \substr($string, 0, 1);
         if ($first === '{' || $first === '[') {
-            $ret = json_decode($string, true);
+            $ret = \json_decode($string, true);
 
             return ($ret !== null) ? $ret : $string;
         }
         $array = [];
-        foreach (explode(',', $string) as $pair) {
-            $key = explode('|', $pair);
+        foreach (\explode(',', $string) as $pair) {
+            $key = \explode('|', $pair);
             if (!isset($key[1])) {
                 return $key[0];
             }

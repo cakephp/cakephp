@@ -65,7 +65,7 @@ class QueryExpression implements ExpressionInterface, Countable
     public function __construct($conditions = [], $types = [], $conjunction = 'AND')
     {
         $this->setTypeMap($types);
-        $this->setConjunction(strtoupper($conjunction));
+        $this->setConjunction(\strtoupper($conjunction));
         if (!empty($conditions)) {
             $this->add($conditions, $this->getTypeMap()->getTypes());
         }
@@ -79,7 +79,7 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function setConjunction($conjunction)
     {
-        $this->_conjunction = strtoupper($conjunction);
+        $this->_conjunction = \strtoupper($conjunction);
 
         return $this;
     }
@@ -147,7 +147,7 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function add($conditions, $types = [])
     {
-        if (is_string($conditions)) {
+        if (\is_string($conditions)) {
             $this->_conditions[] = $conditions;
 
             return $this;
@@ -498,7 +498,7 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function count()
     {
-        return count($this->_conditions);
+        return \count($this->_conditions);
     }
 
     /**
@@ -545,12 +545,12 @@ class QueryExpression implements ExpressionInterface, Countable
             } elseif ($part instanceof ExpressionInterface) {
                 $part = $part->sql($generator);
             }
-            if (strlen($part)) {
+            if (\strlen($part)) {
                 $parts[] = $part;
             }
         }
 
-        return sprintf($template, implode(" $conjunction ", $parts));
+        return \sprintf($template, \implode(" $conjunction ", $parts));
     }
 
     /**
@@ -614,10 +614,10 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function __call($method, $args)
     {
-        if (in_array($method, ['and', 'or'])) {
-            return call_user_func_array([$this, $method . '_'], $args);
+        if (\in_array($method, ['and', 'or'])) {
+            return \call_user_func_array([$this, $method . '_'], $args);
         }
-        throw new BadMethodCallException(sprintf('Method %s does not exist', $method));
+        throw new BadMethodCallException(\sprintf('Method %s does not exist', $method));
     }
 
     /**
@@ -632,14 +632,14 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function isCallable($c)
     {
-        if (is_string($c)) {
+        if (\is_string($c)) {
             return false;
         }
-        if (is_object($c) && is_callable($c)) {
+        if (\is_object($c) && \is_callable($c)) {
             return true;
         }
 
-        return is_array($c) && isset($c[0]) && is_object($c[0]) && is_callable($c);
+        return \is_array($c) && isset($c[0]) && \is_object($c[0]) && \is_callable($c);
     }
 
     /**
@@ -676,7 +676,7 @@ class QueryExpression implements ExpressionInterface, Countable
         $typeMap = $this->getTypeMap()->setTypes($types);
 
         foreach ($conditions as $k => $c) {
-            $numericKey = is_numeric($k);
+            $numericKey = \is_numeric($k);
 
             if ($numericKey && empty($c)) {
                 continue;
@@ -687,22 +687,22 @@ class QueryExpression implements ExpressionInterface, Countable
                 $c = $c($expr, $this);
             }
 
-            if ($numericKey && is_string($c)) {
+            if ($numericKey && \is_string($c)) {
                 $this->_conditions[] = $c;
                 continue;
             }
 
-            if ($numericKey && is_array($c) || in_array(strtolower($k), $operators)) {
+            if ($numericKey && \is_array($c) || \in_array(\strtolower($k), $operators)) {
                 $this->_conditions[] = new static($c, $typeMap, $numericKey ? 'AND' : $k);
                 continue;
             }
 
-            if (strtolower($k) === 'not') {
+            if (\strtolower($k) === 'not') {
                 $this->_conditions[] = new UnaryExpression('NOT', new static($c, $typeMap));
                 continue;
             }
 
-            if ($c instanceof self && count($c) === 0) {
+            if ($c instanceof self && \count($c) === 0) {
                 continue;
             }
 
@@ -733,17 +733,17 @@ class QueryExpression implements ExpressionInterface, Countable
     {
         $operator = '=';
         $expression = $field;
-        $parts = explode(' ', trim($field), 2);
+        $parts = \explode(' ', \trim($field), 2);
 
-        if (count($parts) > 1) {
+        if (\count($parts) > 1) {
             list($expression, $operator) = $parts;
         }
 
         $type = $this->getTypeMap()->type($expression);
-        $operator = strtolower(trim($operator));
+        $operator = \strtolower(\trim($operator));
 
-        $typeMultiple = strpos($type, '[]') !== false;
-        if (in_array($operator, ['in', 'not in']) || $typeMultiple) {
+        $typeMultiple = \strpos($type, '[]') !== false;
+        if (\in_array($operator, ['in', 'not in']) || $typeMultiple) {
             $type = $type ?: 'string';
             $type .= $typeMultiple ? null : '[]';
             $operator = $operator === '=' ? 'IN' : $operator;
@@ -791,7 +791,7 @@ class QueryExpression implements ExpressionInterface, Countable
     protected function _calculateType($field)
     {
         $field = $field instanceof IdentifierExpression ? $field->getIdentifier() : $field;
-        if (is_string($field)) {
+        if (\is_string($field)) {
             return $this->getTypeMap()->type($field);
         }
 

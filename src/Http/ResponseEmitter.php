@@ -42,10 +42,10 @@ class ResponseEmitter implements EmitterInterface
     public function emit(ResponseInterface $response, $maxBufferLength = 8192)
     {
         $file = $line = null;
-        if (headers_sent($file, $line)) {
+        if (\headers_sent($file, $line)) {
             $message = "Unable to emit headers. Headers sent in file=$file line=$line";
             if (Configure::read('debug')) {
-                trigger_error($message, E_USER_WARNING);
+                \trigger_error($message, E_USER_WARNING);
             } else {
                 Log::warning($message);
             }
@@ -56,13 +56,13 @@ class ResponseEmitter implements EmitterInterface
         $this->flush();
 
         $range = $this->parseContentRange($response->getHeaderLine('Content-Range'));
-        if (is_array($range)) {
+        if (\is_array($range)) {
             $this->emitBodyRange($range, $response, $maxBufferLength);
         } else {
             $this->emitBody($response, $maxBufferLength);
         }
 
-        if (function_exists('fastcgi_finish_request')) {
+        if (\function_exists('fastcgi_finish_request')) {
             fastcgi_finish_request();
         }
     }
@@ -76,7 +76,7 @@ class ResponseEmitter implements EmitterInterface
      */
     protected function emitBody(ResponseInterface $response, $maxBufferLength)
     {
-        if (in_array($response->getStatusCode(), [204, 304])) {
+        if (\in_array($response->getStatusCode(), [204, 304])) {
             return;
         }
         $body = $response->getBody();
@@ -109,7 +109,7 @@ class ResponseEmitter implements EmitterInterface
 
         if (!$body->isSeekable()) {
             $contents = $body->getContents();
-            echo substr($contents, $first, $last - $first + 1);
+            echo \substr($contents, $first, $last - $first + 1);
 
             return;
         }
@@ -141,7 +141,7 @@ class ResponseEmitter implements EmitterInterface
     protected function emitStatusLine(ResponseInterface $response)
     {
         $reasonPhrase = $response->getReasonPhrase();
-        header(sprintf(
+        \header(\sprintf(
             'HTTP/%s %d%s',
             $response->getProtocolVersion(),
             $response->getStatusCode(),
@@ -163,18 +163,18 @@ class ResponseEmitter implements EmitterInterface
     protected function emitHeaders(ResponseInterface $response)
     {
         $cookies = [];
-        if (method_exists($response, 'getCookies')) {
+        if (\method_exists($response, 'getCookies')) {
             $cookies = $response->getCookies();
         }
 
         foreach ($response->getHeaders() as $name => $values) {
-            if (strtolower($name) === 'set-cookie') {
-                $cookies = array_merge($cookies, $values);
+            if (\strtolower($name) === 'set-cookie') {
+                $cookies = \array_merge($cookies, $values);
                 continue;
             }
             $first = true;
             foreach ($values as $value) {
-                header(sprintf(
+                \header(\sprintf(
                     '%s: %s',
                     $name,
                     $value
@@ -195,8 +195,8 @@ class ResponseEmitter implements EmitterInterface
     protected function emitCookies(array $cookies)
     {
         foreach ($cookies as $cookie) {
-            if (is_array($cookie)) {
-                setcookie(
+            if (\is_array($cookie)) {
+                \setcookie(
                     $cookie['name'],
                     $cookie['value'],
                     $cookie['expire'],
@@ -208,17 +208,17 @@ class ResponseEmitter implements EmitterInterface
                 continue;
             }
 
-            if (strpos($cookie, '";"') !== false) {
-                $cookie = str_replace('";"', '{__cookie_replace__}', $cookie);
-                $parts = str_replace('{__cookie_replace__}', '";"', explode(';', $cookie));
+            if (\strpos($cookie, '";"') !== false) {
+                $cookie = \str_replace('";"', '{__cookie_replace__}', $cookie);
+                $parts = \str_replace('{__cookie_replace__}', '";"', \explode(';', $cookie));
             } else {
-                $parts = preg_split('/\;[ \t]*/', $cookie);
+                $parts = \preg_split('/\;[ \t]*/', $cookie);
             }
 
-            list($name, $value) = explode('=', array_shift($parts), 2);
+            list($name, $value) = \explode('=', \array_shift($parts), 2);
             $data = [
-                'name' => urldecode($name),
-                'value' => urldecode($value),
+                'name' => \urldecode($name),
+                'value' => \urldecode($value),
                 'expires' => 0,
                 'path' => '',
                 'domain' => '',
@@ -227,20 +227,20 @@ class ResponseEmitter implements EmitterInterface
             ];
 
             foreach ($parts as $part) {
-                if (strpos($part, '=') !== false) {
-                    list($key, $value) = explode('=', $part);
+                if (\strpos($part, '=') !== false) {
+                    list($key, $value) = \explode('=', $part);
                 } else {
                     $key = $part;
                     $value = true;
                 }
 
-                $key = strtolower($key);
+                $key = \strtolower($key);
                 $data[$key] = $value;
             }
             if (!empty($data['expires'])) {
-                $data['expires'] = strtotime($data['expires']);
+                $data['expires'] = \strtotime($data['expires']);
             }
-            setcookie(
+            \setcookie(
                 $data['name'],
                 $data['value'],
                 $data['expires'],
@@ -262,11 +262,11 @@ class ResponseEmitter implements EmitterInterface
     protected function flush($maxBufferLevel = null)
     {
         if (null === $maxBufferLevel) {
-            $maxBufferLevel = ob_get_level();
+            $maxBufferLevel = \ob_get_level();
         }
 
-        while (ob_get_level() > $maxBufferLevel) {
-            ob_end_flush();
+        while (\ob_get_level() > $maxBufferLevel) {
+            \ob_end_flush();
         }
     }
 
@@ -280,7 +280,7 @@ class ResponseEmitter implements EmitterInterface
      */
     protected function parseContentRange($header)
     {
-        if (preg_match('/(?P<unit>[\w]+)\s+(?P<first>\d+)-(?P<last>\d+)\/(?P<length>\d+|\*)/', $header, $matches)) {
+        if (\preg_match('/(?P<unit>[\w]+)\s+(?P<first>\d+)-(?P<last>\d+)\/(?P<length>\d+|\*)/', $header, $matches)) {
             return [
                 $matches['unit'],
                 (int)$matches['first'],

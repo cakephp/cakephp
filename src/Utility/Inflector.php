@@ -444,7 +444,7 @@ class Inflector
     public static function reset()
     {
         if (empty(static::$_initialState)) {
-            static::$_initialState = get_class_vars(__CLASS__);
+            static::$_initialState = \get_class_vars(__CLASS__);
 
             return;
         }
@@ -482,7 +482,7 @@ class Inflector
         if ($reset) {
             static::${$var} = $rules;
         } elseif ($type === 'uninflected') {
-            static::$_uninflected = array_merge(
+            static::$_uninflected = \array_merge(
                 $rules,
                 static::$_uninflected
             );
@@ -507,29 +507,29 @@ class Inflector
         }
 
         if (!isset(static::$_cache['irregular']['pluralize'])) {
-            static::$_cache['irregular']['pluralize'] = '(?:' . implode('|', array_keys(static::$_irregular)) . ')';
+            static::$_cache['irregular']['pluralize'] = '(?:' . \implode('|', \array_keys(static::$_irregular)) . ')';
         }
 
-        if (preg_match('/(.*?(?:\\b|_))(' . static::$_cache['irregular']['pluralize'] . ')$/i', $word, $regs)) {
-            static::$_cache['pluralize'][$word] = $regs[1] . substr($regs[2], 0, 1) .
-                substr(static::$_irregular[strtolower($regs[2])], 1);
+        if (\preg_match('/(.*?(?:\\b|_))(' . static::$_cache['irregular']['pluralize'] . ')$/i', $word, $regs)) {
+            static::$_cache['pluralize'][$word] = $regs[1] . \substr($regs[2], 0, 1) .
+                \substr(static::$_irregular[\strtolower($regs[2])], 1);
 
             return static::$_cache['pluralize'][$word];
         }
 
         if (!isset(static::$_cache['uninflected'])) {
-            static::$_cache['uninflected'] = '(?:' . implode('|', static::$_uninflected) . ')';
+            static::$_cache['uninflected'] = '(?:' . \implode('|', static::$_uninflected) . ')';
         }
 
-        if (preg_match('/^(' . static::$_cache['uninflected'] . ')$/i', $word, $regs)) {
+        if (\preg_match('/^(' . static::$_cache['uninflected'] . ')$/i', $word, $regs)) {
             static::$_cache['pluralize'][$word] = $word;
 
             return $word;
         }
 
         foreach (static::$_plural as $rule => $replacement) {
-            if (preg_match($rule, $word)) {
-                static::$_cache['pluralize'][$word] = preg_replace($rule, $replacement, $word);
+            if (\preg_match($rule, $word)) {
+                static::$_cache['pluralize'][$word] = \preg_replace($rule, $replacement, $word);
 
                 return static::$_cache['pluralize'][$word];
             }
@@ -550,29 +550,29 @@ class Inflector
         }
 
         if (!isset(static::$_cache['irregular']['singular'])) {
-            static::$_cache['irregular']['singular'] = '(?:' . implode('|', static::$_irregular) . ')';
+            static::$_cache['irregular']['singular'] = '(?:' . \implode('|', static::$_irregular) . ')';
         }
 
-        if (preg_match('/(.*?(?:\\b|_))(' . static::$_cache['irregular']['singular'] . ')$/i', $word, $regs)) {
-            static::$_cache['singularize'][$word] = $regs[1] . substr($regs[2], 0, 1) .
-                substr(array_search(strtolower($regs[2]), static::$_irregular), 1);
+        if (\preg_match('/(.*?(?:\\b|_))(' . static::$_cache['irregular']['singular'] . ')$/i', $word, $regs)) {
+            static::$_cache['singularize'][$word] = $regs[1] . \substr($regs[2], 0, 1) .
+                \substr(\array_search(\strtolower($regs[2]), static::$_irregular), 1);
 
             return static::$_cache['singularize'][$word];
         }
 
         if (!isset(static::$_cache['uninflected'])) {
-            static::$_cache['uninflected'] = '(?:' . implode('|', static::$_uninflected) . ')';
+            static::$_cache['uninflected'] = '(?:' . \implode('|', static::$_uninflected) . ')';
         }
 
-        if (preg_match('/^(' . static::$_cache['uninflected'] . ')$/i', $word, $regs)) {
+        if (\preg_match('/^(' . static::$_cache['uninflected'] . ')$/i', $word, $regs)) {
             static::$_cache['pluralize'][$word] = $word;
 
             return $word;
         }
 
         foreach (static::$_singular as $rule => $replacement) {
-            if (preg_match($rule, $word)) {
-                static::$_cache['singularize'][$word] = preg_replace($rule, $replacement, $word);
+            if (\preg_match($rule, $word)) {
+                static::$_cache['singularize'][$word] = \preg_replace($rule, $replacement, $word);
 
                 return static::$_cache['singularize'][$word];
             }
@@ -597,7 +597,7 @@ class Inflector
         $result = static::_cache($cacheKey, $string);
 
         if ($result === false) {
-            $result = str_replace(' ', '', static::humanize($string, $delimiter));
+            $result = \str_replace(' ', '', static::humanize($string, $delimiter));
             static::_cache($cacheKey, $string, $result);
         }
 
@@ -615,7 +615,7 @@ class Inflector
      */
     public static function underscore($string)
     {
-        return static::delimit(str_replace('-', '_', $string), '_');
+        return static::delimit(\str_replace('-', '_', $string), '_');
     }
 
     /**
@@ -628,7 +628,7 @@ class Inflector
      */
     public static function dasherize($string)
     {
-        return static::delimit(str_replace('_', '-', $string), '-');
+        return static::delimit(\str_replace('_', '-', $string), '-');
     }
 
     /**
@@ -647,11 +647,11 @@ class Inflector
         $result = static::_cache($cacheKey, $string);
 
         if ($result === false) {
-            $result = explode(' ', str_replace($delimiter, ' ', $string));
+            $result = \explode(' ', \str_replace($delimiter, ' ', $string));
             foreach ($result as &$word) {
-                $word = mb_strtoupper(mb_substr($word, 0, 1)) . mb_substr($word, 1);
+                $word = \mb_strtoupper(\mb_substr($word, 0, 1)) . \mb_substr($word, 1);
             }
-            $result = implode(' ', $result);
+            $result = \implode(' ', $result);
             static::_cache($cacheKey, $string, $result);
         }
 
@@ -672,7 +672,7 @@ class Inflector
         $result = static::_cache($cacheKey, $string);
 
         if ($result === false) {
-            $result = mb_strtolower(preg_replace('/(?<=\\w)([A-Z])/', $delimiter . '\\1', $string));
+            $result = \mb_strtolower(\preg_replace('/(?<=\\w)([A-Z])/', $delimiter . '\\1', $string));
             static::_cache($cacheKey, $string, $result);
         }
 
@@ -730,8 +730,8 @@ class Inflector
 
         if ($result === false) {
             $camelized = static::camelize(static::underscore($string));
-            $replace = strtolower(substr($camelized, 0, 1));
-            $result = $replace . substr($camelized, 1);
+            $replace = \strtolower(\substr($camelized, 0, 1));
+            $result = $replace . \substr($camelized, 1);
             static::_cache(__FUNCTION__, $string, $result);
         }
 
@@ -750,20 +750,20 @@ class Inflector
      */
     public static function slug($string, $replacement = '-')
     {
-        $quotedReplacement = preg_quote($replacement, '/');
+        $quotedReplacement = \preg_quote($replacement, '/');
 
         $map = [
             '/[^\s\p{Zs}\p{Ll}\p{Lm}\p{Lo}\p{Lt}\p{Lu}\p{Nd}]/mu' => ' ',
             '/[\s\p{Zs}]+/mu' => $replacement,
-            sprintf('/^[%s]+|[%s]+$/', $quotedReplacement, $quotedReplacement) => '',
+            \sprintf('/^[%s]+|[%s]+$/', $quotedReplacement, $quotedReplacement) => '',
         ];
 
-        $string = str_replace(
-            array_keys(static::$_transliteration),
-            array_values(static::$_transliteration),
+        $string = \str_replace(
+            \array_keys(static::$_transliteration),
+            \array_values(static::$_transliteration),
             $string
         );
 
-        return preg_replace(array_keys($map), array_values($map), $string);
+        return \preg_replace(\array_keys($map), \array_values($map), $string);
     }
 }

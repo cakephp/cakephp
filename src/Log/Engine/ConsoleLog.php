@@ -58,7 +58,7 @@ class ConsoleLog extends BaseLog
     public function __construct(array $config = [])
     {
         if ((DIRECTORY_SEPARATOR === '\\' && !(bool)env('ANSICON') && env('ConEmuANSI') !== 'ON') ||
-            (function_exists('posix_isatty') && !posix_isatty($this->_output))
+            (\function_exists('posix_isatty') && !\posix_isatty($this->_output))
         ) {
             $this->_defaultConfig['outputAs'] = ConsoleOutput::PLAIN;
         } else {
@@ -70,7 +70,7 @@ class ConsoleLog extends BaseLog
         $config = $this->_config;
         if ($config['stream'] instanceof ConsoleOutput) {
             $this->_output = $config['stream'];
-        } elseif (is_string($config['stream'])) {
+        } elseif (\is_string($config['stream'])) {
             $this->_output = new ConsoleOutput($config['stream']);
         } else {
             throw new InvalidArgumentException('`stream` not a ConsoleOutput nor string');
@@ -89,8 +89,8 @@ class ConsoleLog extends BaseLog
     public function log($level, $message, array $context = [])
     {
         $message = $this->_format($message, $context);
-        $output = date('Y-m-d H:i:s') . ' ' . ucfirst($level) . ': ' . $message;
+        $output = \date('Y-m-d H:i:s') . ' ' . \ucfirst($level) . ': ' . $message;
 
-        return $this->_output->write(sprintf('<%s>%s</%s>', $level, $output, $level));
+        return $this->_output->write(\sprintf('<%s>%s</%s>', $level, $output, $level));
     }
 }

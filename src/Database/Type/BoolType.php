@@ -63,7 +63,7 @@ class BoolType extends Type implements TypeInterface
             return $value;
         }
 
-        if (in_array($value, [1, 0, '1', '0'], true)) {
+        if (\in_array($value, [1, 0, '1', '0'], true)) {
             return (bool)$value;
         }
 
@@ -82,8 +82,8 @@ class BoolType extends Type implements TypeInterface
         if ($value === null) {
             return null;
         }
-        if (is_string($value) && !is_numeric($value)) {
-            return strtolower($value) === 'true';
+        if (\is_string($value) && !\is_numeric($value)) {
+            return \strtolower($value) === 'true';
         }
 
         return !empty($value);

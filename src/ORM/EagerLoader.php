@@ -138,9 +138,9 @@ class EagerLoader
         }
 
         if ($queryBuilder) {
-            if (!is_string($associations)) {
+            if (!\is_string($associations)) {
                 throw new InvalidArgumentException(
-                    sprintf('Cannot set containments. To use $queryBuilder, $associations must be a string')
+                    \sprintf('Cannot set containments. To use $queryBuilder, $associations must be a string')
                 );
             }
 
@@ -242,8 +242,8 @@ class EagerLoader
             $options['joinType'] = QueryInterface::JOIN_TYPE_INNER;
         }
 
-        $assocs = explode('.', $assoc);
-        $last = array_pop($assocs);
+        $assocs = \explode('.', $assoc);
+        $last = \array_pop($assocs);
         $containments = [];
         $pointer =& $containments;
         $opts = ['matching' => true] + $options;
@@ -357,15 +357,15 @@ class EagerLoader
 
         foreach ((array)$associations as $table => $options) {
             $pointer =& $result;
-            if (is_int($table)) {
+            if (\is_int($table)) {
                 $table = $options;
                 $options = [];
             }
 
             if ($options instanceof EagerLoadable) {
                 $options = $options->asContainArray();
-                $table = key($options);
-                $options = current($options);
+                $table = \key($options);
+                $options = \current($options);
             }
 
             if (isset($this->_containOptions[$table])) {
@@ -373,16 +373,16 @@ class EagerLoader
                 continue;
             }
 
-            if (strpos($table, '.')) {
-                $path = explode('.', $table);
-                $table = array_pop($path);
+            if (\strpos($table, '.')) {
+                $path = \explode('.', $table);
+                $table = \array_pop($path);
                 foreach ($path as $t) {
                     $pointer += [$t => []];
                     $pointer =& $pointer[$t];
                 }
             }
 
-            if (is_array($options)) {
+            if (\is_array($options)) {
                 $options = isset($options['config']) ?
                     $options['config'] + $options['associations'] :
                     $options;
@@ -406,7 +406,7 @@ class EagerLoader
                 };
             }
 
-            if (!is_array($options)) {
+            if (!\is_array($options)) {
                 $options = [$options => []];
             }
 
@@ -449,7 +449,7 @@ class EagerLoader
             }
 
             $newAttachable = $this->attachableAssociations($repository);
-            $attachable = array_diff_key($newAttachable, $processed);
+            $attachable = \array_diff_key($newAttachable, $processed);
         } while (!empty($attachable));
     }
 
@@ -511,7 +511,7 @@ class EagerLoader
         $instance = $parent->association($alias);
         if (!$instance) {
             throw new InvalidArgumentException(
-                sprintf('%s is not associated with %s', $parent->getAlias(), $alias)
+                \sprintf('%s is not associated with %s', $parent->getAlias(), $alias)
             );
         }
 
@@ -521,13 +521,13 @@ class EagerLoader
 
         $table = $instance->getTarget();
 
-        $extra = array_diff_key($options, $defaults);
+        $extra = \array_diff_key($options, $defaults);
         $config = [
             'associations' => [],
             'instance' => $instance,
-            'config' => array_diff_key($options, $extra),
-            'aliasPath' => trim($paths['aliasPath'], '.'),
-            'propertyPath' => trim($paths['propertyPath'], '.'),
+            'config' => \array_diff_key($options, $extra),
+            'aliasPath' => \trim($paths['aliasPath'], '.'),
+            'propertyPath' => \trim($paths['propertyPath'], '.'),
             'targetProperty' => $instance->getProperty()
         ];
         $config['canBeJoined'] = $instance->canBeJoined($config['config']);
@@ -562,12 +562,12 @@ class EagerLoader
     {
         foreach ($this->_aliasList as $aliases) {
             foreach ($aliases as $configs) {
-                if (count($configs) < 2) {
+                if (\count($configs) < 2) {
                     continue;
                 }
                 /* @var \Cake\ORM\EagerLoadable $loadable */
                 foreach ($configs as $loadable) {
-                    if (strpos($loadable->aliasPath(), '.')) {
+                    if (\strpos($loadable->aliasPath(), '.')) {
                         $this->_correctStrategy($loadable);
                     }
                 }
@@ -794,9 +794,9 @@ class EagerLoader
             $alias = $source->getAlias();
             $pkFields = [];
             foreach ($keys as $key) {
-                $pkFields[] = key($query->aliasField($key, $alias));
+                $pkFields[] = \key($query->aliasField($key, $alias));
             }
-            $collectKeys[$meta->aliasPath()] = [$alias, $pkFields, count($pkFields) === 1];
+            $collectKeys[$meta->aliasPath()] = [$alias, $pkFields, \count($pkFields) === 1];
         }
 
         if (empty($collectKeys)) {
@@ -838,7 +838,7 @@ class EagerLoader
                 foreach ($parts[1] as $key) {
                     $collected[] = $result[$key];
                 }
-                $keys[$nestKey][$parts[0]][implode(';', $collected)] = $collected;
+                $keys[$nestKey][$parts[0]][\implode(';', $collected)] = $collected;
             }
         }
 

@@ -670,7 +670,7 @@ class View implements EventDispatcherInterface
 
         if (empty($options['ignoreMissing'])) {
             list ($plugin, $name) = pluginSplit($name, true);
-            $name = str_replace('/', DIRECTORY_SEPARATOR, $name);
+            $name = \str_replace('/', DIRECTORY_SEPARATOR, $name);
             $file = $plugin . static::NAME_ELEMENT . DIRECTORY_SEPARATOR . $name . $this->_ext;
             throw new MissingElementException([$file]);
         }
@@ -700,9 +700,9 @@ class View implements EventDispatcherInterface
         if ($result) {
             return $result;
         }
-        ob_start();
+        \ob_start();
         $block();
-        $result = ob_get_clean();
+        $result = \ob_get_clean();
 
         Cache::write($options['key'], $result, $options['config']);
 
@@ -823,7 +823,7 @@ class View implements EventDispatcherInterface
      */
     public function getVars()
     {
-        return array_keys($this->viewVars);
+        return \array_keys($this->viewVars);
     }
 
     /**
@@ -1012,7 +1012,7 @@ class View implements EventDispatcherInterface
                         list($plugin, $name) = $this->pluginSplit($name);
                         $paths = $this->_paths($plugin);
                         $defaultPath = $paths[0] . static::NAME_ELEMENT . DIRECTORY_SEPARATOR;
-                        throw new LogicException(sprintf(
+                        throw new LogicException(\sprintf(
                             'You cannot extend an element which does not exist (%s).',
                             $defaultPath . $name . $this->_ext
                         ));
@@ -1048,9 +1048,9 @@ class View implements EventDispatcherInterface
     {
         $c = 1;
         $url = Router::url($url);
-        $hash = $object . substr(md5($object . $url), 0, 10);
-        while (in_array($hash, $this->uuids)) {
-            $hash = $object . substr(md5($object . $url . $c), 0, 10);
+        $hash = $object . \substr(\md5($object . $url), 0, 10);
+        while (\in_array($hash, $this->uuids)) {
+            $hash = $object . \substr(\md5($object . $url . $c), 0, 10);
             $c++;
         }
         $this->uuids[] = $hash;
@@ -1150,7 +1150,7 @@ class View implements EventDispatcherInterface
             $data = $this->viewVars;
         }
         $this->_current = $viewFile;
-        $initialBlocks = count($this->Blocks->unclosed());
+        $initialBlocks = \count($this->Blocks->unclosed());
 
         $this->dispatchEvent('View.beforeRenderFile', [$viewFile]);
 
@@ -1166,13 +1166,13 @@ class View implements EventDispatcherInterface
             $this->assign('content', $content);
 
             $content = $this->_render($this->_parents[$viewFile]);
-            $this->assign('content', array_pop($this->_stack));
+            $this->assign('content', \array_pop($this->_stack));
         }
 
-        $remainingBlocks = count($this->Blocks->unclosed());
+        $remainingBlocks = \count($this->Blocks->unclosed());
 
         if ($initialBlocks !== $remainingBlocks) {
-            throw new LogicException(sprintf(
+            throw new LogicException(\sprintf(
                 'The "%s" block was left open. Blocks are not allowed to cross files.',
                 $this->Blocks->active()
             ));
@@ -1190,12 +1190,12 @@ class View implements EventDispatcherInterface
      */
     protected function _evaluate($viewFile, $dataForView)
     {
-        extract($dataForView);
-        ob_start();
+        \extract($dataForView);
+        \ob_start();
 
-        include func_get_arg(0);
+        include \func_get_arg(0);
 
-        return ob_get_clean();
+        return \ob_get_clean();
     }
 
     /**
@@ -1246,10 +1246,10 @@ class View implements EventDispatcherInterface
         if ($this->templatePath) {
             $templatePath = $this->templatePath . DIRECTORY_SEPARATOR;
         }
-        if (strlen($this->subDir)) {
+        if (\strlen($this->subDir)) {
             $subDir = $this->subDir . DIRECTORY_SEPARATOR;
             // Check if templatePath already terminates with subDir
-            if (strrpos($templatePath, $subDir) == strlen($templatePath) - strlen($subDir)) {
+            if (\strrpos($templatePath, $subDir) == \strlen($templatePath) - \strlen($subDir)) {
                 $subDir = '';
             }
         }
@@ -1259,13 +1259,13 @@ class View implements EventDispatcherInterface
         }
 
         list($plugin, $name) = $this->pluginSplit($name);
-        $name = str_replace('/', DIRECTORY_SEPARATOR, $name);
+        $name = \str_replace('/', DIRECTORY_SEPARATOR, $name);
 
-        if (strpos($name, DIRECTORY_SEPARATOR) === false && $name !== '' && $name[0] !== '.') {
+        if (\strpos($name, DIRECTORY_SEPARATOR) === false && $name !== '' && $name[0] !== '.') {
             $name = $templatePath . $subDir . $this->_inflectViewFileName($name);
-        } elseif (strpos($name, DIRECTORY_SEPARATOR) !== false) {
+        } elseif (\strpos($name, DIRECTORY_SEPARATOR) !== false) {
             if ($name[0] === DIRECTORY_SEPARATOR || $name[1] === ':') {
-                $name = trim($name, DIRECTORY_SEPARATOR);
+                $name = \trim($name, DIRECTORY_SEPARATOR);
             } elseif (!$plugin || $this->templatePath !== $this->name) {
                 $name = $templatePath . $subDir . $name;
             } else {
@@ -1274,7 +1274,7 @@ class View implements EventDispatcherInterface
         }
 
         foreach ($this->_paths($plugin) as $path) {
-            if (file_exists($path . $name . $this->_ext)) {
+            if (\file_exists($path . $name . $this->_ext)) {
                 return $this->_checkFilePath($path . $name . $this->_ext, $path);
             }
         }
@@ -1305,12 +1305,12 @@ class View implements EventDispatcherInterface
      */
     protected function _checkFilePath($file, $path)
     {
-        if (strpos($file, '..') === false) {
+        if (\strpos($file, '..') === false) {
             return $file;
         }
-        $absolute = realpath($file);
-        if (strpos($absolute, $path) !== 0) {
-            throw new InvalidArgumentException(sprintf(
+        $absolute = \realpath($file);
+        if (\strpos($absolute, $path) !== 0) {
+            throw new InvalidArgumentException(\sprintf(
                 'Cannot use "%s" as a template, it is not within any view template path.',
                 $file
             ));
@@ -1367,7 +1367,7 @@ class View implements EventDispatcherInterface
         foreach ($this->_paths($plugin) as $path) {
             foreach ($layoutPaths as $layoutPath) {
                 $currentPath = $path . $layoutPath;
-                if (file_exists($currentPath . $name . $this->_ext)) {
+                if (\file_exists($currentPath . $name . $this->_ext)) {
                     return $this->_checkFilePath($currentPath . $name . $this->_ext, $currentPath);
                 }
             }
@@ -1393,7 +1393,7 @@ class View implements EventDispatcherInterface
 
         foreach ($paths as $path) {
             foreach ($elementPaths as $elementPath) {
-                if (file_exists($path . $elementPath . DIRECTORY_SEPARATOR . $name . $this->_ext)) {
+                if (\file_exists($path . $elementPath . DIRECTORY_SEPARATOR . $name . $this->_ext)) {
                     return $path . $elementPath . DIRECTORY_SEPARATOR . $name . $this->_ext;
                 }
             }
@@ -1417,12 +1417,12 @@ class View implements EventDispatcherInterface
     {
         $paths = [$basePath];
         if ($this->request->getParam('prefix')) {
-            $prefixPath = explode('/', $this->request->getParam('prefix'));
+            $prefixPath = \explode('/', $this->request->getParam('prefix'));
             $path = '';
             foreach ($prefixPath as $prefixPart) {
                 $path .= Inflector::camelize($prefixPart) . DIRECTORY_SEPARATOR;
 
-                array_unshift(
+                \array_unshift(
                     $paths,
                     $path . $basePath
                 );
@@ -1452,27 +1452,27 @@ class View implements EventDispatcherInterface
         $templatePaths = App::path(static::NAME_TEMPLATE);
         $pluginPaths = $themePaths = [];
         if (!empty($plugin)) {
-            for ($i = 0, $count = count($templatePaths); $i < $count; $i++) {
+            for ($i = 0, $count = \count($templatePaths); $i < $count; $i++) {
                 $pluginPaths[] = $templatePaths[$i] . 'Plugin' . DIRECTORY_SEPARATOR . $plugin . DIRECTORY_SEPARATOR;
             }
-            $pluginPaths = array_merge($pluginPaths, App::path(static::NAME_TEMPLATE, $plugin));
+            $pluginPaths = \array_merge($pluginPaths, App::path(static::NAME_TEMPLATE, $plugin));
         }
 
         if (!empty($this->theme)) {
             $themePaths = App::path(static::NAME_TEMPLATE, Inflector::camelize($this->theme));
 
             if ($plugin) {
-                for ($i = 0, $count = count($themePaths); $i < $count; $i++) {
-                    array_unshift($themePaths, $themePaths[$i] . 'Plugin' . DIRECTORY_SEPARATOR . $plugin . DIRECTORY_SEPARATOR);
+                for ($i = 0, $count = \count($themePaths); $i < $count; $i++) {
+                    \array_unshift($themePaths, $themePaths[$i] . 'Plugin' . DIRECTORY_SEPARATOR . $plugin . DIRECTORY_SEPARATOR);
                 }
             }
         }
 
-        $paths = array_merge(
+        $paths = \array_merge(
             $themePaths,
             $pluginPaths,
             $templatePaths,
-            [dirname(__DIR__) . DIRECTORY_SEPARATOR . static::NAME_TEMPLATE . DIRECTORY_SEPARATOR]
+            [\dirname(__DIR__) . DIRECTORY_SEPARATOR . static::NAME_TEMPLATE . DIRECTORY_SEPARATOR]
         );
 
         if ($plugin !== null) {
@@ -1509,16 +1509,16 @@ class View implements EventDispatcherInterface
 
         $cache = $options['cache'];
         unset($options['cache'], $options['callbacks'], $options['plugin']);
-        $keys = array_merge(
+        $keys = \array_merge(
             [$underscored, $name],
-            array_keys($options),
-            array_keys($data)
+            \array_keys($options),
+            \array_keys($data)
         );
         $config = [
             'config' => $this->elementCache,
-            'key' => implode('_', $keys)
+            'key' => \implode('_', $keys)
         ];
-        if (is_array($cache)) {
+        if (\is_array($cache)) {
             $defaults = [
                 'config' => $this->elementCache,
                 'key' => $config['key']
@@ -1551,7 +1551,7 @@ class View implements EventDispatcherInterface
             $this->dispatchEvent('View.beforeRender', [$file]);
         }
 
-        $element = $this->_render($file, array_merge($this->viewVars, $data));
+        $element = $this->_render($file, \array_merge($this->viewVars, $data));
 
         if ($options['callbacks']) {
             $this->dispatchEvent('View.afterRender', [$file, $element]);

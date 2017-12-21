@@ -37,15 +37,15 @@ class StringType extends Type implements OptionalConvertInterface, TypeInterface
      */
     public function toDatabase($value, Driver $driver)
     {
-        if ($value === null || is_string($value)) {
+        if ($value === null || \is_string($value)) {
             return $value;
         }
 
-        if (is_object($value) && method_exists($value, '__toString')) {
+        if (\is_object($value) && \method_exists($value, '__toString')) {
             return $value->__toString();
         }
 
-        if (is_scalar($value)) {
+        if (\is_scalar($value)) {
             return (string)$value;
         }
 
@@ -91,7 +91,7 @@ class StringType extends Type implements OptionalConvertInterface, TypeInterface
         if ($value === null) {
             return null;
         }
-        if (is_array($value)) {
+        if (\is_array($value)) {
             return '';
         }
 

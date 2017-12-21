@@ -213,6 +213,6 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
      */
     public function count()
     {
-        return count($this->_rules);
+        return \count($this->_rules);
     }
 }

@@ -56,7 +56,7 @@ class I18nShell extends Shell
         $this->out('[H]elp');
         $this->out('[Q]uit');
 
-        $choice = strtolower($this->in('What would you like to do?', ['E', 'I', 'H', 'Q']));
+        $choice = \strtolower($this->in('What would you like to do?', ['E', 'I', 'H', 'Q']));
         switch ($choice) {
             case 'e':
                 $this->Extract->main();
@@ -90,7 +90,7 @@ class I18nShell extends Shell
         if (!$language) {
             $language = $this->in('Please specify language code, e.g. `en`, `eng`, `en_US` etc.');
         }
-        if (strlen($language) < 2) {
+        if (\strlen($language) < 2) {
             $this->abort('Invalid language code. Valid is `en`, `eng`, `en_US` etc.');
         }
 
@@ -100,11 +100,11 @@ class I18nShell extends Shell
             $this->_paths = [Plugin::classPath($plugin)];
         }
 
-        $response = $this->in('What folder?', null, rtrim($this->_paths[0], DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'Locale');
-        $sourceFolder = rtrim($response, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+        $response = $this->in('What folder?', null, \rtrim($this->_paths[0], DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'Locale');
+        $sourceFolder = \rtrim($response, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
         $targetFolder = $sourceFolder . $language . DIRECTORY_SEPARATOR;
-        if (!is_dir($targetFolder)) {
-            mkdir($targetFolder, 0775, true);
+        if (!\is_dir($targetFolder)) {
+            \mkdir($targetFolder, 0775, true);
         }
 
         $count = 0;
@@ -117,7 +117,7 @@ class I18nShell extends Shell
             $newFilename = $fileinfo->getBasename('.pot');
             $newFilename .= '.po';
 
-            $this->createFile($targetFolder . $newFilename, file_get_contents($sourceFolder . $filename));
+            $this->createFile($targetFolder . $newFilename, \file_get_contents($sourceFolder . $filename));
             $count++;
         }
 

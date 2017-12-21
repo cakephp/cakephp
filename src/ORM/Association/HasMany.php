@@ -110,8 +110,8 @@ class HasMany extends Association
      */
     public function setSaveStrategy($strategy)
     {
-        if (!in_array($strategy, [self::SAVE_APPEND, self::SAVE_REPLACE])) {
-            $msg = sprintf('Invalid save strategy "%s"', $strategy);
+        if (!\in_array($strategy, [self::SAVE_APPEND, self::SAVE_REPLACE])) {
+            $msg = \sprintf('Invalid save strategy "%s"', $strategy);
             throw new InvalidArgumentException($msg);
         }
 
@@ -165,7 +165,7 @@ class HasMany extends Association
     {
         $targetEntities = $entity->get($this->getProperty());
 
-        $isEmpty = in_array($targetEntities, [null, [], '', false], true);
+        $isEmpty = \in_array($targetEntities, [null, [], '', false], true);
         if ($isEmpty) {
             if ($entity->isNew() ||
                 $this->getSaveStrategy() !== self::SAVE_REPLACE
@@ -176,15 +176,15 @@ class HasMany extends Association
             $targetEntities = [];
         }
 
-        if (!is_array($targetEntities) &&
+        if (!\is_array($targetEntities) &&
             !($targetEntities instanceof Traversable)
         ) {
             $name = $this->getProperty();
-            $message = sprintf('Could not save %s, it cannot be traversed', $name);
+            $message = \sprintf('Could not save %s, it cannot be traversed', $name);
             throw new InvalidArgumentException($message);
         }
 
-        $foreignKeyReference = array_combine(
+        $foreignKeyReference = \array_combine(
             (array)$this->getForeignKey(),
             $entity->extract((array)$this->getBindingKey())
         );
@@ -219,7 +219,7 @@ class HasMany extends Association
      */
     protected function _saveTarget(array $foreignKeyReference, EntityInterface $parentEntity, $entities, array $options)
     {
-        $foreignKey = array_keys($foreignKeyReference);
+        $foreignKey = \array_keys($foreignKeyReference);
         $table = $this->getTarget();
         $original = $entities;
 
@@ -285,8 +285,8 @@ class HasMany extends Association
         $this->setSaveStrategy(self::SAVE_APPEND);
         $property = $this->getProperty();
 
-        $currentEntities = array_unique(
-            array_merge(
+        $currentEntities = \array_unique(
+            \array_merge(
                 (array)$sourceEntity->get($property),
                 $targetEntities
             )
@@ -351,20 +351,20 @@ class HasMany extends Association
      */
     public function unlink(EntityInterface $sourceEntity, array $targetEntities, $options = [])
     {
-        if (is_bool($options)) {
+        if (\is_bool($options)) {
             $options = [
                 'cleanProperty' => $options
             ];
         } else {
             $options += ['cleanProperty' => true];
         }
-        if (count($targetEntities) === 0) {
+        if (\count($targetEntities) === 0) {
             return;
         }
 
         $foreignKey = (array)$this->getForeignKey();
         $target = $this->getTarget();
-        $targetPrimaryKey = array_merge((array)$target->getPrimaryKey(), $foreignKey);
+        $targetPrimaryKey = \array_merge((array)$target->getPrimaryKey(), $foreignKey);
         $property = $this->getProperty();
 
         $conditions = [
@@ -384,7 +384,7 @@ class HasMany extends Association
                 (new Collection($sourceEntity->get($property)))
                 ->reject(
                     function ($assoc) use ($targetEntities) {
-                        return in_array($assoc, $targetEntities);
+                        return \in_array($assoc, $targetEntities);
                     }
                 )
                 ->toList()
@@ -477,14 +477,14 @@ class HasMany extends Association
         )
         ->filter(
             function ($v) {
-                return !in_array(null, array_values($v), true);
+                return !\in_array(null, \array_values($v), true);
             }
         )
         ->toArray();
 
         $conditions = $foreignKeyReference;
 
-        if (count($exclusions) > 0) {
+        if (\count($exclusions) > 0) {
             $conditions = [
                 'NOT' => [
                     'OR' => $exclusions
@@ -493,7 +493,7 @@ class HasMany extends Association
             ];
         }
 
-        return $this->_unlink(array_keys($foreignKeyReference), $target, $conditions, $options);
+        return $this->_unlink(\array_keys($foreignKeyReference), $target, $conditions, $options);
     }
 
     /**
@@ -527,14 +527,14 @@ class HasMany extends Association
                 return $ok;
             }
 
-            $conditions = array_merge($conditions, $this->getConditions());
+            $conditions = \array_merge($conditions, $this->getConditions());
             $target->deleteAll($conditions);
 
             return true;
         }
 
-        $updateFields = array_fill_keys($foreignKey, null);
-        $conditions = array_merge($conditions, $this->getConditions());
+        $updateFields = \array_fill_keys($foreignKey, null);
+        $conditions = \array_merge($conditions, $this->getConditions());
         $target->updateAll($updateFields, $conditions);
 
         return true;
@@ -549,9 +549,9 @@ class HasMany extends Association
      */
     protected function _foreignKeyAcceptsNull(Table $table, array $properties)
     {
-        return !in_array(
+        return !\in_array(
             false,
-            array_map(
+            \array_map(
                 function ($prop) use ($table) {
                     return $table->getSchema()->isNullable($prop);
                 },

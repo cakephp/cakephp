@@ -253,12 +253,12 @@ abstract class Driver
         if ($value === true) {
             return 'TRUE';
         }
-        if (is_float($value)) {
-            return str_replace(',', '.', (string)$value);
+        if (\is_float($value)) {
+            return \str_replace(',', '.', (string)$value);
         }
-        if ((is_int($value) || $value === '0') || (
-            is_numeric($value) && strpos($value, ',') === false &&
-            $value[0] !== '0' && strpos($value, 'e') === false)
+        if ((\is_int($value) || $value === '0') || (
+            \is_numeric($value) && \strpos($value, ',') === false &&
+            $value[0] !== '0' && \strpos($value, 'e') === false)
         ) {
             return (string)$value;
         }

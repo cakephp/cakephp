@@ -74,7 +74,7 @@ class OrmCacheShell extends Shell
         $configName = $schema->getCacheMetadata();
 
         foreach ($tables as $table) {
-            $this->_io->verbose(sprintf(
+            $this->_io->verbose(\sprintf(
                 'Clearing metadata cache from "%s" for %s',
                 $configName,
                 $table
@@ -96,8 +96,8 @@ class OrmCacheShell extends Shell
     {
         /** @var \Cake\Database\Connection $source */
         $source = ConnectionManager::get($this->params['connection']);
-        if (!method_exists($source, 'schemaCollection')) {
-            $msg = sprintf(
+        if (!\method_exists($source, 'schemaCollection')) {
+            $msg = \sprintf(
                 'The "%s" connection is not compatible with orm caching, ' .
                 'as it does not implement a "schemaCollection()" method.',
                 $this->params['connection']

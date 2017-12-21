@@ -62,14 +62,14 @@ class Sqlite extends Driver
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
         ];
 
-        $databaseExists = file_exists($config['database']);
+        $databaseExists = \file_exists($config['database']);
 
         $dsn = "sqlite:{$config['database']}";
         $this->_connect($dsn, $config);
 
         if (!$databaseExists && $config['database'] != ':memory:') {
             //@codingStandardsIgnoreStart
-            @chmod($config['database'], $config['mask']);
+            @\chmod($config['database'], $config['mask']);
             //@codingStandardsIgnoreEnd
         }
 
@@ -89,7 +89,7 @@ class Sqlite extends Driver
      */
     public function enabled()
     {
-        return in_array('sqlite', PDO::getAvailableDrivers());
+        return \in_array('sqlite', PDO::getAvailableDrivers());
     }
 
     /**

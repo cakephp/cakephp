@@ -275,7 +275,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $associations = $config['associations'];
         }
         if (!empty($config['validator'])) {
-            if (!is_array($config['validator'])) {
+            if (!\is_array($config['validator'])) {
                 $this->setValidator(static::DEFAULT_VALIDATOR, $config['validator']);
             } else {
                 foreach ($config['validator'] as $name => $validator) {
@@ -350,8 +350,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function getTable()
     {
         if ($this->_table === null) {
-            $table = namespaceSplit(get_class($this));
-            $table = substr(end($table), 0, -5);
+            $table = namespaceSplit(\get_class($this));
+            $table = \substr(\end($table), 0, -5);
             if (!$table) {
                 $table = $this->getAlias();
             }
@@ -398,8 +398,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function getAlias()
     {
         if ($this->_alias === null) {
-            $alias = namespaceSplit(get_class($this));
-            $alias = substr(end($alias), 0, -5) ?: $this->_table;
+            $alias = namespaceSplit(\get_class($this));
+            $alias = \substr(\end($alias), 0, -5) ?: $this->_table;
             $this->_alias = $alias;
         }
 
@@ -429,7 +429,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function aliasField($field)
     {
-        if (strpos($field, '.') !== false) {
+        if (\strpos($field, '.') !== false) {
             return $field;
         }
 
@@ -547,7 +547,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function setSchema($schema)
     {
-        if (is_array($schema)) {
+        if (\is_array($schema)) {
             $constraints = [];
 
             if (isset($schema['_constraints'])) {
@@ -651,7 +651,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         if ($this->_primaryKey === null) {
             $key = (array)$this->getSchema()->primaryKey();
-            if (count($key) === 1) {
+            if (\count($key) === 1) {
                 $key = $key[0];
             }
             $this->_primaryKey = $key;
@@ -699,7 +699,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if ($this->_displayField === null) {
             $schema = $this->getSchema();
             $primary = (array)$this->getPrimaryKey();
-            $this->_displayField = array_shift($primary);
+            $this->_displayField = \array_shift($primary);
             if ($schema->getColumn('title')) {
                 $this->_displayField = 'title';
             }
@@ -736,16 +736,16 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         if (!$this->_entityClass) {
             $default = '\Cake\ORM\Entity';
-            $self = get_called_class();
-            $parts = explode('\\', $self);
+            $self = \get_called_class();
+            $parts = \explode('\\', $self);
 
-            if ($self === __CLASS__ || count($parts) < 3) {
+            if ($self === __CLASS__ || \count($parts) < 3) {
                 return $this->_entityClass = $default;
             }
 
-            $alias = Inflector::singularize(substr(array_pop($parts), 0, -5));
-            $name = implode('\\', array_slice($parts, 0, -1)) . '\Entity\\' . $alias;
-            if (!class_exists($name)) {
+            $alias = Inflector::singularize(\substr(\array_pop($parts), 0, -5));
+            $name = \implode('\\', \array_slice($parts, 0, -1)) . '\Entity\\' . $alias;
+            if (!\class_exists($name)) {
                 return $this->_entityClass = $default;
             }
 
@@ -923,7 +923,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         foreach ($params as $assocType => $tables) {
             foreach ($tables as $associated => $options) {
-                if (is_numeric($associated)) {
+                if (\is_numeric($associated)) {
                     $associated = $options;
                     $options = [];
                 }
@@ -1268,21 +1268,21 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if (isset($options['idField'])) {
             $options['keyField'] = $options['idField'];
             unset($options['idField']);
-            trigger_error('Option "idField" is deprecated, use "keyField" instead.', E_USER_DEPRECATED);
+            \trigger_error('Option "idField" is deprecated, use "keyField" instead.', E_USER_DEPRECATED);
         }
 
         if (!$query->clause('select') &&
-            !is_object($options['keyField']) &&
-            !is_object($options['valueField']) &&
-            !is_object($options['groupField'])
+            !\is_object($options['keyField']) &&
+            !\is_object($options['valueField']) &&
+            !\is_object($options['groupField'])
         ) {
-            $fields = array_merge(
+            $fields = \array_merge(
                 (array)$options['keyField'],
                 (array)$options['valueField'],
                 (array)$options['groupField']
             );
             $columns = $this->getSchema()->columns();
-            if (count($fields) === count(array_intersect($fields, $columns))) {
+            if (\count($fields) === \count(\array_intersect($fields, $columns))) {
                 $query->select($fields);
             }
         }
@@ -1337,7 +1337,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if (isset($options['idField'])) {
             $options['keyField'] = $options['idField'];
             unset($options['idField']);
-            trigger_error('Option "idField" is deprecated, use "keyField" instead.', E_USER_DEPRECATED);
+            \trigger_error('Option "idField" is deprecated, use "keyField" instead.', E_USER_DEPRECATED);
         }
 
         $options = $this->_setFieldMatchers($options, ['keyField', 'parentField']);
@@ -1364,12 +1364,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     protected function _setFieldMatchers($options, $keys)
     {
         foreach ($keys as $field) {
-            if (!is_array($options[$field])) {
+            if (!\is_array($options[$field])) {
                 continue;
             }
 
-            if (count($options[$field]) === 1) {
-                $options[$field] = current($options[$field]);
+            if (\count($options[$field]) === 1) {
+                $options[$field] = \current($options[$field]);
                 continue;
             }
 
@@ -1380,7 +1380,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                     $matches[] = $row[$field];
                 }
 
-                return implode(';', $matches);
+                return \implode(';', $matches);
             };
         }
 
@@ -1409,19 +1409,19 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $key[$index] = $alias . '.' . $keyname;
         }
         $primaryKey = (array)$primaryKey;
-        if (count($key) !== count($primaryKey)) {
+        if (\count($key) !== \count($primaryKey)) {
             $primaryKey = $primaryKey ?: [null];
-            $primaryKey = array_map(function ($key) {
-                return var_export($key, true);
+            $primaryKey = \array_map(function ($key) {
+                return \var_export($key, true);
             }, $primaryKey);
 
-            throw new InvalidPrimaryKeyException(sprintf(
+            throw new InvalidPrimaryKeyException(\sprintf(
                 'Record not found in table "%s" with primary key [%s]',
                 $this->getTable(),
-                implode($primaryKey, ', ')
+                \implode($primaryKey, ', ')
             ));
         }
-        $conditions = array_combine($key, $primaryKey);
+        $conditions = \array_combine($key, $primaryKey);
 
         $cacheConfig = isset($options['cache']) ? $options['cache'] : false;
         $cacheKey = isset($options['key']) ? $options['key'] : false;
@@ -1432,11 +1432,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
         if ($cacheConfig) {
             if (!$cacheKey) {
-                $cacheKey = sprintf(
+                $cacheKey = \sprintf(
                     'get:%s.%s%s',
                     $this->getConnection()->configName(),
                     $this->getTable(),
-                    json_encode($primaryKey)
+                    \json_encode($primaryKey)
                 );
             }
             $query->cache($cacheKey, $cacheConfig);
@@ -1533,10 +1533,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     protected function _processFindOrCreate($search, callable $callback = null, $options = [])
     {
-        if (is_callable($search)) {
+        if (\is_callable($search)) {
             $query = $this->find();
             $search($query);
-        } elseif (is_array($search)) {
+        } elseif (\is_array($search)) {
             $query = $this->find()->where($search);
         } elseif ($search instanceof Query) {
             $query = $search;
@@ -1548,7 +1548,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             return $row;
         }
         $entity = $this->newEntity();
-        if ($options['defaults'] && is_array($search)) {
+        if ($options['defaults'] && \is_array($search)) {
             $entity->set($search, ['guard' => false]);
         }
         if ($callback !== null) {
@@ -1616,7 +1616,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function exists($conditions)
     {
-        return (bool)count(
+        return (bool)\count(
             $this->find('all')
             ->select(['existing' => 1])
             ->where($conditions)
@@ -1738,7 +1738,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
         if ($success) {
             if ($this->_transactionCommitted($options['atomic'], $options['_primary'])) {
-                $this->dispatchEvent('Model.afterSaveCommit', compact('entity', 'options'));
+                $this->dispatchEvent('Model.afterSaveCommit', \compact('entity', 'options'));
             }
             if ($options['atomic'] || $options['_primary']) {
                 $entity->clean();
@@ -1799,7 +1799,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
 
         $options['associated'] = $this->_associations->normalizeKeys($options['associated']);
-        $event = $this->dispatchEvent('Model.beforeSave', compact('entity', 'options'));
+        $event = $this->dispatchEvent('Model.beforeSave', \compact('entity', 'options'));
 
         if ($event->isStopped()) {
             return $event->getResult();
@@ -1860,10 +1860,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             return false;
         }
 
-        $this->dispatchEvent('Model.afterSave', compact('entity', 'options'));
+        $this->dispatchEvent('Model.afterSave', \compact('entity', 'options'));
 
         if ($options['atomic'] && !$this->getConnection()->inTransaction()) {
-            throw new RolledbackTransactionException(['table' => get_class($this)]);
+            throw new RolledbackTransactionException(['table' => \get_class($this)]);
         }
 
         if (!$options['atomic'] && !$options['_primary']) {
@@ -1888,31 +1888,31 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         $primary = (array)$this->getPrimaryKey();
         if (empty($primary)) {
-            $msg = sprintf(
+            $msg = \sprintf(
                 'Cannot insert row in "%s" table, it has no primary key.',
                 $this->getTable()
             );
             throw new RuntimeException($msg);
         }
-        $keys = array_fill(0, count($primary), null);
+        $keys = \array_fill(0, \count($primary), null);
         $id = (array)$this->_newId($primary) + $keys;
 
         // Generate primary keys preferring values in $data.
-        $primary = array_combine($primary, $id);
-        $primary = array_intersect_key($data, $primary) + $primary;
+        $primary = \array_combine($primary, $id);
+        $primary = \array_intersect_key($data, $primary) + $primary;
 
-        $filteredKeys = array_filter($primary, 'strlen');
+        $filteredKeys = \array_filter($primary, 'strlen');
         $data += $filteredKeys;
 
-        if (count($primary) > 1) {
+        if (\count($primary) > 1) {
             $schema = $this->getSchema();
             foreach ($primary as $k => $v) {
                 if (!isset($data[$k]) && empty($schema->getColumn($k)['autoIncrement'])) {
                     $msg = 'Cannot insert row, some of the primary key values are missing. ';
-                    $msg .= sprintf(
+                    $msg .= \sprintf(
                         'Got (%s), expecting (%s)',
-                        implode(', ', $filteredKeys + $entity->extract(array_keys($primary))),
-                        implode(', ', array_keys($primary))
+                        \implode(', ', $filteredKeys + $entity->extract(\array_keys($primary))),
+                        \implode(', ', \array_keys($primary))
                     );
                     throw new RuntimeException($msg);
                 }
@@ -1924,7 +1924,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             return $success;
         }
 
-        $statement = $this->query()->insert(array_keys($data))
+        $statement = $this->query()->insert(\array_keys($data))
             ->values($data)
             ->execute();
 
@@ -1962,7 +1962,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     protected function _newId($primary)
     {
-        if (!$primary || count((array)$primary) > 1) {
+        if (!$primary || \count((array)$primary) > 1) {
             return null;
         }
         $typeName = $this->getSchema()->getColumnType($primary[0]);
@@ -1984,14 +1984,14 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $primaryColumns = (array)$this->getPrimaryKey();
         $primaryKey = $entity->extract($primaryColumns);
 
-        $data = array_diff_key($data, $primaryKey);
+        $data = \array_diff_key($data, $primaryKey);
         if (empty($data)) {
             return $entity;
         }
 
         if (!$entity->has($primaryColumns)) {
             $message = 'All primary key value(s) are needed for updating, ';
-            $message .= get_class($entity) . ' is missing ' . implode(', ', $primaryColumns);
+            $message .= \get_class($entity) . ' is missing ' . \implode(', ', $primaryColumns);
             throw new InvalidArgumentException($message);
         }
 
@@ -2191,7 +2191,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         $finder = 'find' . $type;
 
-        return method_exists($this, $finder) || ($this->_behaviors && $this->_behaviors->hasFinder($type));
+        return \method_exists($this, $finder) || ($this->_behaviors && $this->_behaviors->hasFinder($type));
     }
 
     /**
@@ -2209,7 +2209,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $query->applyOptions($options);
         $options = $query->getOptions();
         $finder = 'find' . $type;
-        if (method_exists($this, $finder)) {
+        if (\method_exists($this, $finder)) {
             return $this->{$finder}($query, $options);
         }
 
@@ -2218,7 +2218,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
 
         throw new BadMethodCallException(
-            sprintf('Unknown finder method "%s"', $type)
+            \sprintf('Unknown finder method "%s"', $type)
         );
     }
 
@@ -2234,29 +2234,29 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     protected function _dynamicFinder($method, $args)
     {
         $method = Inflector::underscore($method);
-        preg_match('/^find_([\w]+)_by_/', $method, $matches);
+        \preg_match('/^find_([\w]+)_by_/', $method, $matches);
         if (empty($matches)) {
             // find_by_ is 8 characters.
-            $fields = substr($method, 8);
+            $fields = \substr($method, 8);
             $findType = 'all';
         } else {
-            $fields = substr($method, strlen($matches[0]));
+            $fields = \substr($method, \strlen($matches[0]));
             $findType = Inflector::variable($matches[1]);
         }
-        $hasOr = strpos($fields, '_or_');
-        $hasAnd = strpos($fields, '_and_');
+        $hasOr = \strpos($fields, '_or_');
+        $hasAnd = \strpos($fields, '_and_');
 
         $makeConditions = function ($fields, $args) {
             $conditions = [];
-            if (count($args) < count($fields)) {
-                throw new BadMethodCallException(sprintf(
+            if (\count($args) < \count($fields)) {
+                throw new BadMethodCallException(\sprintf(
                     'Not enough arguments for magic finder. Got %s required %s',
-                    count($args),
-                    count($fields)
+                    \count($args),
+                    \count($fields)
                 ));
             }
             foreach ($fields as $field) {
-                $conditions[$this->aliasField($field)] = array_shift($args);
+                $conditions[$this->aliasField($field)] = \array_shift($args);
             }
 
             return $conditions;
@@ -2272,12 +2272,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if ($hasOr === false && $hasAnd === false) {
             $conditions = $makeConditions([$fields], $args);
         } elseif ($hasOr !== false) {
-            $fields = explode('_or_', $fields);
+            $fields = \explode('_or_', $fields);
             $conditions = [
             'OR' => $makeConditions($fields, $args)
             ];
         } elseif ($hasAnd !== false) {
-            $fields = explode('_and_', $fields);
+            $fields = \explode('_and_', $fields);
             $conditions = $makeConditions($fields, $args);
         }
 
@@ -2302,12 +2302,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if ($this->_behaviors && $this->_behaviors->hasMethod($method)) {
             return $this->_behaviors->call($method, $args);
         }
-        if (preg_match('/^find(?:\w+)?By/', $method) > 0) {
+        if (\preg_match('/^find(?:\w+)?By/', $method) > 0) {
             return $this->_dynamicFinder($method, $args);
         }
 
         throw new BadMethodCallException(
-            sprintf('Unknown method "%s"', $method)
+            \sprintf('Unknown method "%s"', $method)
         );
     }
 
@@ -2323,9 +2323,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         $association = $this->_associations->get($property);
         if (!$association) {
-            throw new RuntimeException(sprintf(
+            throw new RuntimeException(\sprintf(
                 'Table "%s" is not associated with "%s"',
-                get_class($this),
+                \get_class($this),
                 $property
             ));
         }
@@ -2594,13 +2594,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 'source' => $this->getRegistryAlias()
             ]
         );
-        $fields = array_merge(
+        $fields = \array_merge(
             [$context['field']],
             isset($options['scope']) ? (array)$options['scope'] : []
         );
         $values = $entity->extract($fields);
         foreach ($values as $field) {
-            if ($field !== null && !is_scalar($field)) {
+            if ($field !== null && !\is_scalar($field)) {
                 return false;
             }
         }
@@ -2652,7 +2652,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $events = [];
 
         foreach ($eventMap as $event => $method) {
-            if (!method_exists($this, $method)) {
+            if (!\method_exists($this, $method)) {
                 continue;
             }
             $events[$event] = $method;
@@ -2723,7 +2723,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     protected function validationMethodExists($method)
     {
-        return method_exists($this, $method) || $this->behaviors()->hasMethod($method);
+        return \method_exists($this, $method) || $this->behaviors()->hasMethod($method);
     }
 
     /**

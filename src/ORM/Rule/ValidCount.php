@@ -51,10 +51,10 @@ class ValidCount
     public function __invoke(EntityInterface $entity, array $options)
     {
         $value = $entity->{$this->_field};
-        if (!is_array($value) && !$value instanceof Countable) {
+        if (!\is_array($value) && !$value instanceof Countable) {
             return false;
         }
 
-        return Validation::comparison(count($value), $options['operator'], $options['count']);
+        return Validation::comparison(\count($value), $options['operator'], $options['count']);
     }
 }

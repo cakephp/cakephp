@@ -76,7 +76,7 @@ class BreadcrumbsHelper extends Helper
      */
     public function add($title, $url = null, array $options = [])
     {
-        if (is_array($title)) {
+        if (\is_array($title)) {
             foreach ($title as $crumb) {
                 $this->crumbs[] = $crumb + ['title' => '', 'url' => null, 'options' => []];
             }
@@ -84,7 +84,7 @@ class BreadcrumbsHelper extends Helper
             return $this;
         }
 
-        $this->crumbs[] = compact('title', 'url', 'options');
+        $this->crumbs[] = \compact('title', 'url', 'options');
 
         return $this;
     }
@@ -109,18 +109,18 @@ class BreadcrumbsHelper extends Helper
      */
     public function prepend($title, $url = null, array $options = [])
     {
-        if (is_array($title)) {
+        if (\is_array($title)) {
             $crumbs = [];
             foreach ($title as $crumb) {
                 $crumbs[] = $crumb + ['title' => '', 'url' => null, 'options' => []];
             }
 
-            array_splice($this->crumbs, 0, 0, $crumbs);
+            \array_splice($this->crumbs, 0, 0, $crumbs);
 
             return $this;
         }
 
-        array_unshift($this->crumbs, compact('title', 'url', 'options'));
+        \array_unshift($this->crumbs, \compact('title', 'url', 'options'));
 
         return $this;
     }
@@ -147,10 +147,10 @@ class BreadcrumbsHelper extends Helper
     public function insertAt($index, $title, $url = null, array $options = [])
     {
         if (!isset($this->crumbs[$index])) {
-            throw new LogicException(sprintf("No crumb could be found at index '%s'", $index));
+            throw new LogicException(\sprintf("No crumb could be found at index '%s'", $index));
         }
 
-        array_splice($this->crumbs, $index, 0, [compact('title', 'url', 'options')]);
+        \array_splice($this->crumbs, $index, 0, [\compact('title', 'url', 'options')]);
 
         return $this;
     }
@@ -178,7 +178,7 @@ class BreadcrumbsHelper extends Helper
         $key = $this->findCrumb($matchingTitle);
 
         if ($key === null) {
-            throw new LogicException(sprintf("No crumb matching '%s' could be found.", $matchingTitle));
+            throw new LogicException(\sprintf("No crumb matching '%s' could be found.", $matchingTitle));
         }
 
         return $this->insertAt($key, $title, $url, $options);
@@ -207,7 +207,7 @@ class BreadcrumbsHelper extends Helper
         $key = $this->findCrumb($matchingTitle);
 
         if ($key === null) {
-            throw new LogicException(sprintf("No crumb matching '%s' could be found.", $matchingTitle));
+            throw new LogicException(\sprintf("No crumb matching '%s' could be found.", $matchingTitle));
         }
 
         return $this->insertAt($key + 1, $title, $url, $options);
@@ -256,7 +256,7 @@ class BreadcrumbsHelper extends Helper
         }
 
         $crumbs = $this->crumbs;
-        $crumbsCount = count($crumbs);
+        $crumbsCount = \count($crumbs);
         $templater = $this->templater();
         $separatorString = '';
 

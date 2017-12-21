@@ -35,7 +35,7 @@ class PasswordHasherFactory
     public static function build($passwordHasher)
     {
         $config = [];
-        if (is_string($passwordHasher)) {
+        if (\is_string($passwordHasher)) {
             $class = $passwordHasher;
         } else {
             $class = $passwordHasher['className'];
@@ -45,7 +45,7 @@ class PasswordHasherFactory
 
         $className = App::className($class, 'Auth', 'PasswordHasher');
         if ($className === false) {
-            throw new RuntimeException(sprintf('Password hasher class "%s" was not found.', $class));
+            throw new RuntimeException(\sprintf('Password hasher class "%s" was not found.', $class));
         }
 
         $hasher = new $className($config);

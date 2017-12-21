@@ -67,7 +67,7 @@ class Validation
      */
     public static function notEmpty($check)
     {
-        trigger_error('Validation::notEmpty() is deprecated. Use Validation::notBlank() instead.', E_USER_DEPRECATED);
+        \trigger_error('Validation::notEmpty() is deprecated. Use Validation::notBlank() instead.', E_USER_DEPRECATED);
 
         return static::notBlank($check);
     }
@@ -82,7 +82,7 @@ class Validation
      */
     public static function notBlank($check)
     {
-        if (empty($check) && !is_bool($check) && !is_numeric($check)) {
+        if (empty($check) && !\is_bool($check) && !\is_numeric($check)) {
             return false;
         }
 
@@ -118,10 +118,10 @@ class Validation
      */
     public static function lengthBetween($check, $min, $max)
     {
-        if (!is_string($check)) {
+        if (!\is_string($check)) {
             return false;
         }
-        $length = mb_strlen($check);
+        $length = \mb_strlen($check);
 
         return ($length >= $min && $length <= $max);
     }
@@ -136,7 +136,7 @@ class Validation
      */
     public static function blank($check)
     {
-        trigger_error('Validation::blank() is deprecated.', E_USER_DEPRECATED);
+        \trigger_error('Validation::blank() is deprecated.', E_USER_DEPRECATED);
 
         return !static::_check($check, '/[^\\s]/');
     }
@@ -156,12 +156,12 @@ class Validation
      */
     public static function cc($check, $type = 'fast', $deep = false, $regex = null)
     {
-        if (!is_scalar($check)) {
+        if (!\is_scalar($check)) {
             return false;
         }
 
-        $check = str_replace(['-', ' '], '', $check);
-        if (mb_strlen($check) < 13) {
+        $check = \str_replace(['-', ' '], '', $check);
+        if (\mb_strlen($check) < 13) {
             return false;
         }
 
@@ -189,9 +189,9 @@ class Validation
             'fast' => '/^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6011[0-9]{12}|3(?:0[0-5]|[68][0-9])[0-9]{11}|3[47][0-9]{13})$/'
         ];
 
-        if (is_array($type)) {
+        if (\is_array($type)) {
             foreach ($type as $value) {
-                $regex = $cards['all'][strtolower($value)];
+                $regex = $cards['all'][\strtolower($value)];
 
                 if (static::_check($check, $regex)) {
                     return static::luhn($check);
@@ -228,11 +228,11 @@ class Validation
      */
     public static function numElements($check, $operator, $expectedCount)
     {
-        if (!is_array($check) && !$check instanceof \Countable) {
+        if (!\is_array($check) && !$check instanceof \Countable) {
             return false;
         }
 
-        return self::comparison(count($check), $operator, $expectedCount);
+        return self::comparison(\count($check), $operator, $expectedCount);
     }
 
     /**
@@ -252,7 +252,7 @@ class Validation
             return false;
         }
 
-        $operator = str_replace([' ', "\t", "\n", "\r", "\0", "\x0B"], '', strtolower($operator));
+        $operator = \str_replace([' ', "\t", "\n", "\r", "\0", "\x0B"], '', \strtolower($operator));
         switch ($operator) {
             case 'isgreater':
             case '>':
@@ -327,11 +327,11 @@ class Validation
      */
     public static function containsNonAlphaNumeric($check, $count = 1)
     {
-        if (!is_scalar($check)) {
+        if (!\is_scalar($check)) {
             return false;
         }
 
-        $matches = preg_match_all('/[^a-zA-Z0-9]/', $check);
+        $matches = \preg_match_all('/[^a-zA-Z0-9]/', $check);
 
         return $matches >= $count;
     }
@@ -383,10 +383,10 @@ class Validation
         if ($check instanceof DateTimeInterface) {
             return true;
         }
-        if (is_object($check)) {
+        if (\is_object($check)) {
             return false;
         }
-        if (is_array($check)) {
+        if (\is_array($check)) {
             $check = static::_getDateString($check);
             $format = 'ymd';
         }
@@ -424,7 +424,7 @@ class Validation
         $regex['ym'] = '%^(' . $year . $separator . $month . ')$%';
         $regex['y'] = '%^(' . $fourDigitYear . ')$%';
 
-        $format = is_array($format) ? array_values($format) : [$format];
+        $format = \is_array($format) ? \array_values($format) : [$format];
         foreach ($format as $key) {
             if (static::_check($check, $regex[$key]) === true) {
                 return true;
@@ -451,18 +451,18 @@ class Validation
         if ($check instanceof DateTimeInterface) {
             return true;
         }
-        if (is_object($check)) {
+        if (\is_object($check)) {
             return false;
         }
         $valid = false;
-        if (is_array($check)) {
+        if (\is_array($check)) {
             $check = static::_getDateString($check);
             $dateFormat = 'ymd';
         }
-        $parts = explode(' ', $check);
-        if (!empty($parts) && count($parts) > 1) {
-            $date = rtrim(array_shift($parts), ',');
-            $time = implode(' ', $parts);
+        $parts = \explode(' ', $check);
+        if (!empty($parts) && \count($parts) > 1) {
+            $date = \rtrim(\array_shift($parts), ',');
+            $time = \implode(' ', $parts);
             $valid = static::date($date, $dateFormat, $regex) && static::time($time);
         }
 
@@ -482,7 +482,7 @@ class Validation
         if ($check instanceof DateTimeInterface) {
             return true;
         }
-        if (is_array($check)) {
+        if (\is_array($check)) {
             $check = static::_getDateString($check);
         }
 
@@ -505,7 +505,7 @@ class Validation
         if ($check instanceof DateTimeInterface) {
             return true;
         }
-        if (is_object($check)) {
+        if (\is_object($check)) {
             return false;
         }
         static $methods = [
@@ -536,7 +536,7 @@ class Validation
             $booleanValues = [true, false, 0, 1, '0', '1'];
         }
 
-        return in_array($check, $booleanValues, true);
+        return \in_array($check, $booleanValues, true);
     }
 
     /**
@@ -554,7 +554,7 @@ class Validation
             $truthyValues = [true, 1, '1'];
         }
 
-        return in_array($check, $truthyValues, true);
+        return \in_array($check, $truthyValues, true);
     }
 
     /**
@@ -572,7 +572,7 @@ class Validation
             $falseyValues = [false, 0, '0'];
         }
 
-        return in_array($check, $falseyValues, true);
+        return \in_array($check, $falseyValues, true);
     }
 
     /**
@@ -600,11 +600,11 @@ class Validation
             if ($places === null) {
                 $regex = "/^{$sign}(?:{$lnum}|{$dnum}){$exp}$/";
             } elseif ($places === true) {
-                if (is_float($check) && floor($check) === $check) {
-                    $check = sprintf('%.1f', $check);
+                if (\is_float($check) && \floor($check) === $check) {
+                    $check = \sprintf('%.1f', $check);
                 }
                 $regex = "/^{$sign}{$dnum}{$exp}$/";
-            } elseif (is_numeric($places)) {
+            } elseif (\is_numeric($places)) {
                 $places = '[0-9]{' . $places . '}';
                 $dnum = "(?:[0-9]*[\.]{$places}|{$lnum}[\.]{$places})";
                 $regex = "/^{$sign}{$dnum}{$exp}$/";
@@ -612,13 +612,13 @@ class Validation
         }
 
         // account for localized floats.
-        $locale = ini_get('intl.default_locale') ?: static::DEFAULT_LOCALE;
+        $locale = \ini_get('intl.default_locale') ?: static::DEFAULT_LOCALE;
         $formatter = new NumberFormatter($locale, NumberFormatter::DECIMAL);
         $decimalPoint = $formatter->getSymbol(NumberFormatter::DECIMAL_SEPARATOR_SYMBOL);
         $groupingSep = $formatter->getSymbol(NumberFormatter::GROUPING_SEPARATOR_SYMBOL);
 
-        $check = str_replace($groupingSep, '', $check);
-        $check = str_replace($decimalPoint, '.', $check);
+        $check = \str_replace($groupingSep, '', $check);
+        $check = \str_replace($decimalPoint, '.', $check);
 
         return static::_check($check, $regex);
     }
@@ -636,7 +636,7 @@ class Validation
      */
     public static function email($check, $deep = false, $regex = null)
     {
-        if (!is_string($check)) {
+        if (!\is_string($check)) {
             return false;
         }
 
@@ -648,15 +648,15 @@ class Validation
             return $return;
         }
 
-        if ($return === true && preg_match('/@(' . static::$_pattern['hostname'] . ')$/i', $check, $regs)) {
-            if (function_exists('getmxrr') && getmxrr($regs[1], $mxhosts)) {
+        if ($return === true && \preg_match('/@(' . static::$_pattern['hostname'] . ')$/i', $check, $regs)) {
+            if (\function_exists('getmxrr') && \getmxrr($regs[1], $mxhosts)) {
                 return true;
             }
-            if (function_exists('checkdnsrr') && checkdnsrr($regs[1], 'MX')) {
+            if (\function_exists('checkdnsrr') && \checkdnsrr($regs[1], 'MX')) {
                 return true;
             }
 
-            return is_array(gethostbynamel($regs[1] . '.'));
+            return \is_array(\gethostbynamel($regs[1] . '.'));
         }
 
         return false;
@@ -683,14 +683,14 @@ class Validation
      */
     public static function extension($check, $extensions = ['gif', 'jpeg', 'png', 'jpg'])
     {
-        if (is_array($check)) {
-            $check = isset($check['name']) ? $check['name'] : array_shift($check);
+        if (\is_array($check)) {
+            $check = isset($check['name']) ? $check['name'] : \array_shift($check);
 
             return static::extension($check, $extensions);
         }
-        $extension = strtolower(pathinfo($check, PATHINFO_EXTENSION));
+        $extension = \strtolower(\pathinfo($check, PATHINFO_EXTENSION));
         foreach ($extensions as $value) {
-            if ($extension === strtolower($value)) {
+            if ($extension === \strtolower($value)) {
                 return true;
             }
         }
@@ -707,7 +707,7 @@ class Validation
      */
     public static function ip($check, $type = 'both')
     {
-        $type = strtolower($type);
+        $type = \strtolower($type);
         $flags = 0;
         if ($type === 'ipv4') {
             $flags = FILTER_FLAG_IPV4;
@@ -716,7 +716,7 @@ class Validation
             $flags = FILTER_FLAG_IPV6;
         }
 
-        return (bool)filter_var($check, FILTER_VALIDATE_IP, ['flags' => $flags]);
+        return (bool)\filter_var($check, FILTER_VALIDATE_IP, ['flags' => $flags]);
     }
 
     /**
@@ -728,7 +728,7 @@ class Validation
      */
     public static function minLength($check, $min)
     {
-        return mb_strlen($check) >= $min;
+        return \mb_strlen($check) >= $min;
     }
 
     /**
@@ -740,7 +740,7 @@ class Validation
      */
     public static function maxLength($check, $max)
     {
-        return mb_strlen($check) <= $max;
+        return \mb_strlen($check) <= $max;
     }
 
     /**
@@ -752,7 +752,7 @@ class Validation
      */
     public static function minLengthBytes($check, $min)
     {
-        return strlen($check) >= $min;
+        return \strlen($check) >= $min;
     }
 
     /**
@@ -764,7 +764,7 @@ class Validation
      */
     public static function maxLengthBytes($check, $max)
     {
-        return strlen($check) <= $max;
+        return \strlen($check) <= $max;
     }
 
     /**
@@ -805,28 +805,28 @@ class Validation
         $defaults = ['in' => null, 'max' => null, 'min' => null];
         $options += $defaults;
 
-        $check = array_filter((array)$check, function ($value) {
-            return ($value || is_numeric($value));
+        $check = \array_filter((array)$check, function ($value) {
+            return ($value || \is_numeric($value));
         });
         if (empty($check)) {
             return false;
         }
-        if ($options['max'] && count($check) > $options['max']) {
+        if ($options['max'] && \count($check) > $options['max']) {
             return false;
         }
-        if ($options['min'] && count($check) < $options['min']) {
+        if ($options['min'] && \count($check) < $options['min']) {
             return false;
         }
-        if ($options['in'] && is_array($options['in'])) {
+        if ($options['in'] && \is_array($options['in'])) {
             if ($caseInsensitive) {
-                $options['in'] = array_map('mb_strtolower', $options['in']);
+                $options['in'] = \array_map('mb_strtolower', $options['in']);
             }
             foreach ($check as $val) {
-                $strict = !is_numeric($val);
+                $strict = !\is_numeric($val);
                 if ($caseInsensitive) {
-                    $val = mb_strtolower($val);
+                    $val = \mb_strtolower($val);
                 }
-                if (!in_array((string)$val, $options['in'], $strict)) {
+                if (!\in_array((string)$val, $options['in'], $strict)) {
                     return false;
                 }
             }
@@ -843,7 +843,7 @@ class Validation
      */
     public static function numeric($check)
     {
-        return is_numeric($check);
+        return \is_numeric($check);
     }
 
     /**
@@ -875,7 +875,7 @@ class Validation
      */
     public static function range($check, $lower = null, $upper = null)
     {
-        if (!is_numeric($check)) {
+        if (!\is_numeric($check)) {
             return false;
         }
         if ((float)$check != $check) {
@@ -885,7 +885,7 @@ class Validation
             return ($check >= $lower && $check <= $upper);
         }
 
-        return is_finite($check);
+        return \is_finite($check);
     }
 
     /**
@@ -913,7 +913,7 @@ class Validation
         $emoji = '\x{1F190}-\x{1F9EF}';
         $alpha = '0-9\p{L}\p{N}' . $emoji;
         $hex = '(%[0-9a-f]{2})';
-        $subDelimiters = preg_quote('/!"$&\'()*+,-.@_:;=~[]', '/');
+        $subDelimiters = \preg_quote('/!"$&\'()*+,-.@_:;=~[]', '/');
         $path = '([' . $subDelimiters . $alpha . ']|' . $hex . ')';
         $fragmentAndQuery = '([\?' . $subDelimiters . $alpha . ']|' . $hex . ')';
         $regex = '/^(?:(?:https?|ftps?|sftp|file|news|gopher):\/\/)' . (!empty($strict) ? '' : '?') .
@@ -936,13 +936,13 @@ class Validation
     public static function inList($check, array $list, $caseInsensitive = false)
     {
         if ($caseInsensitive) {
-            $list = array_map('mb_strtolower', $list);
-            $check = mb_strtolower($check);
+            $list = \array_map('mb_strtolower', $list);
+            $check = \mb_strtolower($check);
         } else {
-            $list = array_map('strval', $list);
+            $list = \array_map('strval', $list);
         }
 
-        return in_array((string)$check, $list, true);
+        return \in_array((string)$check, $list, true);
     }
 
     /**
@@ -957,7 +957,7 @@ class Validation
      */
     public static function userDefined($check, $object, $method, $args = null)
     {
-        trigger_error(
+        \trigger_error(
             'Validation::userDefined() is deprecated. Just set a callable for `rule` key when adding validators instead.',
             E_USER_DEPRECATED
         );
@@ -987,7 +987,7 @@ class Validation
      */
     protected static function _check($check, $regex)
     {
-        return is_string($regex) && is_scalar($check) && preg_match($regex, $check);
+        return \is_string($regex) && \is_scalar($check) && \preg_match($regex, $check);
     }
 
     /**
@@ -999,11 +999,11 @@ class Validation
      */
     public static function luhn($check)
     {
-        if (!is_scalar($check) || (int)$check === 0) {
+        if (!\is_scalar($check) || (int)$check === 0) {
             return false;
         }
         $sum = 0;
-        $length = strlen($check);
+        $length = \strlen($check);
 
         for ($position = 1 - ($length % 2); $position < $length; $position += 2) {
             $sum += $check[$position];
@@ -1037,32 +1037,32 @@ class Validation
             return false;
         }
 
-        if (!function_exists('finfo_open')) {
+        if (!\function_exists('finfo_open')) {
             throw new LogicException('ext/fileinfo is required for validating file mime types');
         }
 
-        if (!is_file($file)) {
+        if (!\is_file($file)) {
             throw new RuntimeException('Cannot validate mimetype for a missing file');
         }
 
-        $finfo = finfo_open(FILEINFO_MIME);
-        $finfo = finfo_file($finfo, $file);
+        $finfo = \finfo_open(FILEINFO_MIME);
+        $finfo = \finfo_file($finfo, $file);
 
         if (!$finfo) {
             throw new RuntimeException('Can not determine the mimetype.');
         }
 
-        list($mime) = explode(';', $finfo);
+        list($mime) = \explode(';', $finfo);
 
-        if (is_string($mimeTypes)) {
+        if (\is_string($mimeTypes)) {
             return self::_check($mime, $mimeTypes);
         }
 
         foreach ($mimeTypes as $key => $val) {
-            $mimeTypes[$key] = strtolower($val);
+            $mimeTypes[$key] = \strtolower($val);
         }
 
-        return in_array($mime, $mimeTypes);
+        return \in_array($mime, $mimeTypes);
     }
 
     /**
@@ -1082,7 +1082,7 @@ class Validation
                 return false;
             }
         }
-        if (is_array($check) && isset($check['tmp_name'])) {
+        if (\is_array($check) && isset($check['tmp_name'])) {
             return $check['tmp_name'];
         }
 
@@ -1108,10 +1108,10 @@ class Validation
             return false;
         }
 
-        if (is_string($size)) {
+        if (\is_string($size)) {
             $size = Text::parseFileSize($size);
         }
-        $filesize = filesize($file);
+        $filesize = \filesize($file);
 
         return static::comparison($filesize, $operator, $size);
     }
@@ -1128,13 +1128,13 @@ class Validation
     {
         if ($check instanceof UploadedFileInterface) {
             $code = $check->getError();
-        } elseif (is_array($check) && isset($check['error'])) {
+        } elseif (\is_array($check) && isset($check['error'])) {
             $code = $check['error'];
         } else {
             $code = $check;
         }
         if ($allowNoFile) {
-            return in_array((int)$code, [UPLOAD_ERR_OK, UPLOAD_ERR_NO_FILE], true);
+            return \in_array((int)$code, [UPLOAD_ERR_OK, UPLOAD_ERR_NO_FILE], true);
         }
 
         return (int)$code === UPLOAD_ERR_OK;
@@ -1168,7 +1168,7 @@ class Validation
             'types' => null,
             'optional' => false,
         ];
-        if (!is_array($file) && !($file instanceof UploadedFileInterface)) {
+        if (!\is_array($file) && !($file instanceof UploadedFileInterface)) {
             return false;
         }
         $error = $isUploaded = false;
@@ -1176,14 +1176,14 @@ class Validation
             $error = $file->getError();
             $isUploaded = true;
         }
-        if (is_array($file)) {
+        if (\is_array($file)) {
             $keys = ['error', 'name', 'size', 'tmp_name', 'type'];
-            ksort($file);
-            if (array_keys($file) != $keys) {
+            \ksort($file);
+            if (\array_keys($file) != $keys) {
                 return false;
             }
             $error = (int)$file['error'];
-            $isUploaded = is_uploaded_file($file['tmp_name']);
+            $isUploaded = \is_uploaded_file($file['tmp_name']);
         }
 
         if (!static::uploadError($file, $options['optional'])) {
@@ -1220,11 +1220,11 @@ class Validation
 
         if ($file instanceof UploadedFileInterface) {
             $file = $file->getStream()->getContents();
-        } elseif (is_array($file) && isset($file['tmp_name'])) {
+        } elseif (\is_array($file) && isset($file['tmp_name'])) {
             $file = $file['tmp_name'];
         }
 
-        list($width, $height) = getimagesize($file);
+        list($width, $height) = \getimagesize($file);
 
         if (isset($options['height'])) {
             $validHeight = self::comparison($height, $options['height'][0], $options['height'][1]);
@@ -1305,7 +1305,7 @@ class Validation
             'type' => 'latLong'
         ];
         if ($options['type'] !== 'latLong') {
-            throw new RuntimeException(sprintf(
+            throw new RuntimeException(\sprintf(
                 'Unsupported coordinate type "%s". Use "latLong" instead.',
                 $options['type']
             ));
@@ -1318,7 +1318,7 @@ class Validation
             $pattern = '/^' . self::$_pattern['latitude'] . '$/';
         }
 
-        return (bool)preg_match($pattern, $value);
+        return (bool)\preg_match($pattern, $value);
     }
 
     /**
@@ -1363,11 +1363,11 @@ class Validation
      */
     public static function ascii($value)
     {
-        if (!is_string($value)) {
+        if (!\is_string($value)) {
             return false;
         }
 
-        return strlen($value) <= mb_strlen($value, 'utf-8');
+        return \strlen($value) <= \mb_strlen($value, 'utf-8');
     }
 
     /**
@@ -1387,7 +1387,7 @@ class Validation
      */
     public static function utf8($value, array $options = [])
     {
-        if (!is_string($value)) {
+        if (!\is_string($value)) {
             return false;
         }
         $options += ['extended' => false];
@@ -1395,7 +1395,7 @@ class Validation
             return true;
         }
 
-        return preg_match('/[\x{10000}-\x{10FFFF}]/u', $value) === 0;
+        return \preg_match('/[\x{10000}-\x{10FFFF}]/u', $value) === 0;
     }
 
     /**
@@ -1409,14 +1409,14 @@ class Validation
      */
     public static function isInteger($value)
     {
-        if (!is_scalar($value) || is_float($value)) {
+        if (!\is_scalar($value) || \is_float($value)) {
             return false;
         }
-        if (is_int($value)) {
+        if (\is_int($value)) {
             return true;
         }
 
-        return (bool)preg_match('/^-?[0-9]+$/', $value);
+        return (bool)\preg_match('/^-?[0-9]+$/', $value);
     }
 
     /**
@@ -1427,7 +1427,7 @@ class Validation
      */
     public static function isArray($value)
     {
-        return is_array($value);
+        return \is_array($value);
     }
 
     /**
@@ -1441,7 +1441,7 @@ class Validation
      */
     public static function isScalar($value)
     {
-        return is_scalar($value);
+        return \is_scalar($value);
     }
 
     /**
@@ -1467,9 +1467,9 @@ class Validation
     {
         $formatted = '';
         if (isset($value['year'], $value['month'], $value['day']) &&
-            (is_numeric($value['year']) && is_numeric($value['month']) && is_numeric($value['day']))
+            (\is_numeric($value['year']) && \is_numeric($value['month']) && \is_numeric($value['day']))
         ) {
-            $formatted .= sprintf('%d-%02d-%02d ', $value['year'], $value['month'], $value['day']);
+            $formatted .= \sprintf('%d-%02d-%02d ', $value['year'], $value['month'], $value['day']);
         }
 
         if (isset($value['hour'])) {
@@ -1477,15 +1477,15 @@ class Validation
                 $value['hour'] = 0;
             }
             if (isset($value['meridian'])) {
-                $value['hour'] = strtolower($value['meridian']) === 'am' ? $value['hour'] : $value['hour'] + 12;
+                $value['hour'] = \strtolower($value['meridian']) === 'am' ? $value['hour'] : $value['hour'] + 12;
             }
             $value += ['minute' => 0, 'second' => 0];
-            if (is_numeric($value['hour']) && is_numeric($value['minute']) && is_numeric($value['second'])) {
-                $formatted .= sprintf('%02d:%02d:%02d', $value['hour'], $value['minute'], $value['second']);
+            if (\is_numeric($value['hour']) && \is_numeric($value['minute']) && \is_numeric($value['second'])) {
+                $formatted .= \sprintf('%02d:%02d:%02d', $value['hour'], $value['minute'], $value['second']);
             }
         }
 
-        return trim($formatted);
+        return \trim($formatted);
     }
 
     /**

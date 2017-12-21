@@ -135,11 +135,11 @@ class RssHelper extends Helper
         $elems = '';
         foreach ($elements as $elem => $data) {
             $attributes = [];
-            if (is_array($data)) {
-                if (strtolower($elem) === 'cloud') {
+            if (\is_array($data)) {
+                if (\strtolower($elem) === 'cloud') {
                     $attributes = $data;
                     $data = [];
-                } elseif (isset($data['attrib']) && is_array($data['attrib'])) {
+                } elseif (isset($data['attrib']) && \is_array($data['attrib'])) {
                     $attributes = $data['attrib'];
                     unset($data['attrib']);
                 } else {
@@ -168,11 +168,11 @@ class RssHelper extends Helper
     public function items($items, $callback = null)
     {
         if ($callback) {
-            $items = array_map($callback, $items);
+            $items = \array_map($callback, $items);
         }
 
         $out = '';
-        $c = count($items);
+        $c = \count($items);
 
         for ($i = 0; $i < $c; $i++) {
             $out .= $this->item([], $items[$i]);
@@ -200,7 +200,7 @@ class RssHelper extends Helper
             $attrib = [];
 
             $escape = true;
-            if (is_array($val) && isset($val['convertEntities'])) {
+            if (\is_array($val) && isset($val['convertEntities'])) {
                 $escape = $val['convertEntities'];
                 unset($val['convertEntities']);
             }
@@ -210,27 +210,27 @@ class RssHelper extends Helper
                     $val = $this->time($val);
                     break;
                 case 'category':
-                    if (is_array($val) && !empty($val[0])) {
+                    if (\is_array($val) && !empty($val[0])) {
                         $categories = [];
                         foreach ($val as $category) {
                             $attrib = [];
-                            if (is_array($category) && isset($category['domain'])) {
+                            if (\is_array($category) && isset($category['domain'])) {
                                 $attrib['domain'] = $category['domain'];
                                 unset($category['domain']);
                             }
                             $categories[] = $this->elem($key, $attrib, $category);
                         }
-                        $elements[$key] = implode('', $categories);
+                        $elements[$key] = \implode('', $categories);
                         continue 2;
                     }
-                    if (is_array($val) && isset($val['domain'])) {
+                    if (\is_array($val) && isset($val['domain'])) {
                         $attrib['domain'] = $val['domain'];
                     }
                     break;
                 case 'link':
                 case 'guid':
                 case 'comments':
-                    if (is_array($val) && isset($val['url'])) {
+                    if (\is_array($val) && isset($val['url'])) {
                         $attrib = $val;
                         unset($attrib['url']);
                         $val = $val['url'];
@@ -238,21 +238,21 @@ class RssHelper extends Helper
                     $val = $this->Url->build($val, true);
                     break;
                 case 'source':
-                    if (is_array($val) && isset($val['url'])) {
+                    if (\is_array($val) && isset($val['url'])) {
                         $attrib['url'] = $this->Url->build($val['url'], true);
                         $val = $val['title'];
-                    } elseif (is_array($val)) {
+                    } elseif (\is_array($val)) {
                         $attrib['url'] = $this->Url->build($val[0], true);
                         $val = $val[1];
                     }
                     break;
                 case 'enclosure':
-                    if (is_string($val['url']) && is_file(WWW_ROOT . $val['url']) && file_exists(WWW_ROOT . $val['url'])) {
-                        if (!isset($val['length']) && strpos($val['url'], '://') === false) {
-                            $val['length'] = sprintf('%u', filesize(WWW_ROOT . $val['url']));
+                    if (\is_string($val['url']) && \is_file(WWW_ROOT . $val['url']) && \file_exists(WWW_ROOT . $val['url'])) {
+                        if (!isset($val['length']) && \strpos($val['url'], '://') === false) {
+                            $val['length'] = \sprintf('%u', \filesize(WWW_ROOT . $val['url']));
                         }
-                        if (!isset($val['type']) && function_exists('mime_content_type')) {
-                            $val['type'] = mime_content_type(WWW_ROOT . $val['url']);
+                        if (!isset($val['type']) && \function_exists('mime_content_type')) {
+                            $val['type'] = \mime_content_type(WWW_ROOT . $val['url']);
                         }
                     }
                     $val['url'] = $this->Url->build($val['url'], true);
@@ -268,7 +268,7 @@ class RssHelper extends Helper
             $elements[$key] = $this->elem($key, $attrib, $val);
         }
         if (!empty($elements)) {
-            $content = implode('', $elements);
+            $content = \implode('', $elements);
         }
 
         return $this->elem('item', (array)$att, $content, !($content === null));
@@ -303,15 +303,15 @@ class RssHelper extends Helper
             unset($attrib['namespace']);
         }
         $cdata = false;
-        if (is_array($content) && isset($content['cdata'])) {
+        if (\is_array($content) && isset($content['cdata'])) {
             $cdata = true;
             unset($content['cdata']);
         }
-        if (is_array($content) && array_key_exists('value', $content)) {
+        if (\is_array($content) && \array_key_exists('value', $content)) {
             $content = $content['value'];
         }
         $children = [];
-        if (is_array($content)) {
+        if (\is_array($content)) {
             $children = $content;
             $content = null;
         }
@@ -319,15 +319,15 @@ class RssHelper extends Helper
         $xml = '<' . $name;
         if (!empty($namespace)) {
             $xml .= ' xmlns';
-            if (is_array($namespace)) {
+            if (\is_array($namespace)) {
                 $xml .= ':' . $namespace['prefix'];
                 $namespace = $namespace['url'];
             }
             $xml .= '="' . $namespace . '"';
         }
         $bareName = $name;
-        if (strpos($name, ':') !== false) {
-            list($prefix, $bareName) = explode(':', $name, 2);
+        if (\strpos($name, ':') !== false) {
+            list($prefix, $bareName) = \explode(':', $name, 2);
             switch ($prefix) {
                 case 'atom':
                     $xml .= ' xmlns:atom="http://www.w3.org/2005/Atom"';
@@ -351,7 +351,7 @@ class RssHelper extends Helper
         }
 
         $xml = $elem->saveXml();
-        $xml = trim(substr($xml, strpos($xml, '?>') + 2));
+        $xml = \trim(\substr($xml, \strpos($xml, '?>') + 2));
 
         return $xml;
     }

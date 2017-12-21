@@ -111,19 +111,19 @@ class Xml
         ];
         $options += $defaults;
 
-        if (is_array($input) || is_object($input)) {
+        if (\is_array($input) || \is_object($input)) {
             return static::fromArray($input, $options);
         }
 
-        if (strpos($input, '<') !== false) {
+        if (\strpos($input, '<') !== false) {
             return static::_loadXml($input, $options);
         }
 
-        if ($options['readFile'] && file_exists($input)) {
-            return static::_loadXml(file_get_contents($input), $options);
+        if ($options['readFile'] && \file_exists($input)) {
+            return static::_loadXml(\file_get_contents($input), $options);
         }
 
-        if (!is_string($input)) {
+        if (!\is_string($input)) {
             throw new XmlException('Invalid input.');
         }
 
@@ -140,10 +140,10 @@ class Xml
      */
     protected static function _loadXml($input, $options)
     {
-        $hasDisable = function_exists('libxml_disable_entity_loader');
-        $internalErrors = libxml_use_internal_errors(true);
+        $hasDisable = \function_exists('libxml_disable_entity_loader');
+        $internalErrors = \libxml_use_internal_errors(true);
         if ($hasDisable && !$options['loadEntities']) {
-            libxml_disable_entity_loader(true);
+            \libxml_disable_entity_loader(true);
         }
         $flags = LIBXML_NOCDATA;
         if (!empty($options['parseHuge'])) {
@@ -160,9 +160,9 @@ class Xml
             $xml = null;
         }
         if ($hasDisable && !$options['loadEntities']) {
-            libxml_disable_entity_loader(false);
+            \libxml_disable_entity_loader(false);
         }
-        libxml_use_internal_errors($internalErrors);
+        \libxml_use_internal_errors($internalErrors);
         if ($xml === null) {
             throw new XmlException('Xml cannot be read.');
         }
@@ -210,24 +210,24 @@ class Xml
      */
     public static function fromArray($input, $options = [])
     {
-        if (is_object($input) && method_exists($input, 'toArray') && is_callable([$input, 'toArray'])) {
-            $input = call_user_func([$input, 'toArray']);
+        if (\is_object($input) && \method_exists($input, 'toArray') && \is_callable([$input, 'toArray'])) {
+            $input = \call_user_func([$input, 'toArray']);
         }
-        if (!is_array($input) || count($input) !== 1) {
+        if (!\is_array($input) || \count($input) !== 1) {
             throw new XmlException('Invalid input.');
         }
-        $key = key($input);
-        if (is_int($key)) {
+        $key = \key($input);
+        if (\is_int($key)) {
             throw new XmlException('The key of input must be alphanumeric');
         }
 
-        if (!is_array($options)) {
+        if (!\is_array($options)) {
             $options = ['format' => (string)$options];
         }
         $defaults = [
             'format' => 'tags',
             'version' => '1.0',
-            'encoding' => mb_internal_encoding(),
+            'encoding' => \mb_internal_encoding(),
             'return' => 'simplexml',
             'pretty' => false
         ];
@@ -239,7 +239,7 @@ class Xml
         }
         self::_fromArray($dom, $dom, $input, $options['format']);
 
-        $options['return'] = strtolower($options['return']);
+        $options['return'] = \strtolower($options['return']);
         if ($options['return'] === 'simplexml' || $options['return'] === 'simplexmlelement') {
             return new SimpleXMLElement($dom->saveXML());
         }
@@ -259,28 +259,28 @@ class Xml
      */
     protected static function _fromArray($dom, $node, &$data, $format)
     {
-        if (empty($data) || !is_array($data)) {
+        if (empty($data) || !\is_array($data)) {
             return;
         }
         foreach ($data as $key => $value) {
-            if (is_string($key)) {
-                if (is_object($value) && method_exists($value, 'toArray') && is_callable([$value, 'toArray'])) {
-                    $value = call_user_func([$value, 'toArray']);
+            if (\is_string($key)) {
+                if (\is_object($value) && \method_exists($value, 'toArray') && \is_callable([$value, 'toArray'])) {
+                    $value = \call_user_func([$value, 'toArray']);
                 }
 
-                if (!is_array($value)) {
-                    if (is_bool($value)) {
+                if (!\is_array($value)) {
+                    if (\is_bool($value)) {
                         $value = (int)$value;
                     } elseif ($value === null) {
                         $value = '';
                     }
-                    $isNamespace = strpos($key, 'xmlns:');
+                    $isNamespace = \strpos($key, 'xmlns:');
                     if ($isNamespace !== false) {
                         $node->setAttributeNS('http://www.w3.org/2000/xmlns/', $key, $value);
                         continue;
                     }
                     if ($key[0] !== '@' && $format === 'tags') {
-                        if (!is_numeric($value)) {
+                        if (!\is_numeric($value)) {
                             // Escape special characters
                             // https://www.w3.org/TR/REC-xml/#syntax
                             // https://bugs.php.net/bug.php?id=36795
@@ -292,7 +292,7 @@ class Xml
                         $node->appendChild($child);
                     } else {
                         if ($key[0] === '@') {
-                            $key = substr($key, 1);
+                            $key = \substr($key, 1);
                         }
                         $attribute = $dom->createAttribute($key);
                         $attribute->appendChild($dom->createTextNode($value));
@@ -302,16 +302,16 @@ class Xml
                     if ($key[0] === '@') {
                         throw new XmlException('Invalid array');
                     }
-                    if (is_numeric(implode('', array_keys($value)))) {
+                    if (\is_numeric(\implode('', \array_keys($value)))) {
 // List
                         foreach ($value as $item) {
-                            $itemData = compact('dom', 'node', 'key', 'format');
+                            $itemData = \compact('dom', 'node', 'key', 'format');
                             $itemData['value'] = $item;
                             static::_createChild($itemData);
                         }
                     } else {
 // Struct
-                        static::_createChild(compact('dom', 'node', 'key', 'value', 'format'));
+                        static::_createChild(\compact('dom', 'node', 'key', 'value', 'format'));
                     }
                 }
             } else {
@@ -343,10 +343,10 @@ class Xml
         $node = $data['node'];
 
         $childNS = $childValue = null;
-        if (is_object($value) && method_exists($value, 'toArray') && is_callable([$value, 'toArray'])) {
-            $value = call_user_func([$value, 'toArray']);
+        if (\is_object($value) && \method_exists($value, 'toArray') && \is_callable([$value, 'toArray'])) {
+            $value = \call_user_func([$value, 'toArray']);
         }
-        if (is_array($value)) {
+        if (\is_array($value)) {
             if (isset($value['@'])) {
                 $childValue = (string)$value['@'];
                 unset($value['@']);
@@ -381,14 +381,14 @@ class Xml
     public static function toArray($obj)
     {
         if ($obj instanceof DOMNode) {
-            $obj = simplexml_import_dom($obj);
+            $obj = \simplexml_import_dom($obj);
         }
         if (!($obj instanceof SimpleXMLElement)) {
             throw new XmlException('The input is not instance of SimpleXMLElement, DOMDocument or DOMNode.');
         }
         $result = [];
-        $namespaces = array_merge(['' => ''], $obj->getNamespaces(true));
-        static::_toArray($obj, $result, '', array_keys($namespaces));
+        $namespaces = \array_merge(['' => ''], $obj->getNamespaces(true));
+        static::_toArray($obj, $result, '', \array_keys($namespaces));
 
         return $result;
     }
@@ -419,10 +419,10 @@ class Xml
             }
         }
 
-        $asString = trim((string)$xml);
+        $asString = \trim((string)$xml);
         if (empty($data)) {
             $data = $asString;
-        } elseif (strlen($asString) > 0) {
+        } elseif (\strlen($asString) > 0) {
             $data['@'] = $asString;
         }
 
@@ -431,7 +431,7 @@ class Xml
         }
         $name = $ns . $xml->getName();
         if (isset($parentData[$name])) {
-            if (!is_array($parentData[$name]) || !isset($parentData[$name][0])) {
+            if (!\is_array($parentData[$name]) || !isset($parentData[$name][0])) {
                 $parentData[$name] = [$parentData[$name]];
             }
             $parentData[$name][] = $data;

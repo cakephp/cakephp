@@ -39,7 +39,7 @@ trait ExpressionTypeCasterTrait
             return $value;
         }
 
-        $baseType = str_replace('[]', '', $type);
+        $baseType = \str_replace('[]', '', $type);
         $converter = Type::build($baseType);
 
         if (!$converter instanceof ExpressionTypeInterface) {
@@ -49,7 +49,7 @@ trait ExpressionTypeCasterTrait
         $multi = $type !== $baseType;
 
         if ($multi) {
-            return array_map([$converter, 'toExpression'], $value);
+            return \array_map([$converter, 'toExpression'], $value);
         }
 
         return $converter->toExpression($value);
@@ -66,7 +66,7 @@ trait ExpressionTypeCasterTrait
     protected function _requiresToExpressionCasting($types)
     {
         $result = [];
-        $types = array_filter($types);
+        $types = \array_filter($types);
         foreach ($types as $k => $type) {
             $object = Type::build($type);
             if ($object instanceof ExpressionTypeInterface) {

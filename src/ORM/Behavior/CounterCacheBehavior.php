@@ -123,14 +123,14 @@ class CounterCacheBehavior extends Behavior
         foreach ($this->_config as $assoc => $settings) {
             $assoc = $this->_table->association($assoc);
             foreach ($settings as $field => $config) {
-                if (is_int($field)) {
+                if (\is_int($field)) {
                     continue;
                 }
 
                 $registryAlias = $assoc->getTarget()->getRegistryAlias();
                 $entityAlias = $assoc->getProperty();
 
-                if (!is_callable($config) &&
+                if (!\is_callable($config) &&
                     isset($config['ignoreDirty']) &&
                     $config['ignoreDirty'] === true &&
                     $entity->$entityAlias->isDirty($field)
@@ -210,15 +210,15 @@ class CounterCacheBehavior extends Behavior
         $foreignKeys = (array)$assoc->getForeignKey();
         $primaryKeys = (array)$assoc->getBindingKey();
         $countConditions = $entity->extract($foreignKeys);
-        $updateConditions = array_combine($primaryKeys, $countConditions);
+        $updateConditions = \array_combine($primaryKeys, $countConditions);
         $countOriginalConditions = $entity->extractOriginalChanged($foreignKeys);
 
         if ($countOriginalConditions !== []) {
-            $updateOriginalConditions = array_combine($primaryKeys, $countOriginalConditions);
+            $updateOriginalConditions = \array_combine($primaryKeys, $countOriginalConditions);
         }
 
         foreach ($settings as $field => $config) {
-            if (is_int($field)) {
+            if (\is_int($field)) {
                 $field = $config;
                 $config = [];
             }
@@ -229,8 +229,8 @@ class CounterCacheBehavior extends Behavior
                 continue;
             }
 
-            if (is_callable($config)) {
-                if (is_string($config)) {
+            if (\is_callable($config)) {
+                if (\is_string($config)) {
                     throw new RuntimeException('You must not use a string as callable.');
                 }
                 $count = $config($event, $entity, $this->_table, false);
@@ -241,8 +241,8 @@ class CounterCacheBehavior extends Behavior
             $assoc->getTarget()->updateAll([$field => $count], $updateConditions);
 
             if (isset($updateOriginalConditions)) {
-                if (is_callable($config)) {
-                    if (is_string($config)) {
+                if (\is_callable($config)) {
+                    if (\is_string($config)) {
                         throw new RuntimeException('You must not use a string as callable.');
                     }
                     $count = $config($event, $entity, $this->_table, true);
@@ -272,7 +272,7 @@ class CounterCacheBehavior extends Behavior
         if (!isset($config['conditions'])) {
             $config['conditions'] = [];
         }
-        $config['conditions'] = array_merge($conditions, $config['conditions']);
+        $config['conditions'] = \array_merge($conditions, $config['conditions']);
         $query = $this->_table->find($finder, $config);
 
         return $query->count();

@@ -69,11 +69,11 @@ class SqlserverCompiler extends QueryCompiler
         $columns = $this->_stringifyExpressions($parts[1], $generator);
         $modifiers = $this->_buildModifierPart($query->clause('modifier'), $query, $generator);
 
-        return sprintf(
+        return \sprintf(
             'INSERT%s INTO %s (%s) OUTPUT INSERTED.*',
             $modifiers,
             $table,
-            implode(', ', $columns)
+            \implode(', ', $columns)
         );
     }
 
@@ -90,6 +90,6 @@ class SqlserverCompiler extends QueryCompiler
             return '';
         }
 
-        return sprintf(' FETCH FIRST %d ROWS ONLY', $limit);
+        return \sprintf(' FETCH FIRST %d ROWS ONLY', $limit);
     }
 }

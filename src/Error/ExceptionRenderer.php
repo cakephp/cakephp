@@ -162,7 +162,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
 
         $isDebug = Configure::read('debug');
         if (($isDebug || $exception instanceof HttpException) &&
-            method_exists($this, $method)
+            \method_exists($this, $method)
         ) {
             return $this->_customMethod($method, $unwrapped);
         }
@@ -209,9 +209,9 @@ class ExceptionRenderer implements ExceptionRendererInterface
      */
     protected function _customMethod($method, $exception)
     {
-        $result = call_user_func([$this, $method], $exception);
+        $result = \call_user_func([$this, $method], $exception);
         $this->_shutdown();
-        if (is_string($result)) {
+        if (\is_string($result)) {
             $this->controller->response->body($result);
             $result = $this->controller->response;
         }
@@ -228,10 +228,10 @@ class ExceptionRenderer implements ExceptionRendererInterface
     protected function _method(Exception $exception)
     {
         $exception = $this->_unwrap($exception);
-        list(, $baseClass) = namespaceSplit(get_class($exception));
+        list(, $baseClass) = namespaceSplit(\get_class($exception));
 
-        if (substr($baseClass, -9) === 'Exception') {
-            $baseClass = substr($baseClass, 0, -9);
+        if (\substr($baseClass, -9) === 'Exception') {
+            $baseClass = \substr($baseClass, 0, -9);
         }
 
         $method = Inflector::variable($baseClass) ?: 'error500';
@@ -327,7 +327,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
             return $this->_shutdown();
         } catch (MissingTemplateException $e) {
             $attributes = $e->getAttributes();
-            if (isset($attributes['file']) && strpos($attributes['file'], 'error500') !== false) {
+            if (isset($attributes['file']) && \strpos($attributes['file'], 'error500') !== false) {
                 return $this->_outputMessageSafe('error500');
             }
 

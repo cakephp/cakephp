@@ -100,7 +100,7 @@ class ArrayContext implements ContextInterface
     public function primaryKey()
     {
         if (empty($this->_context['schema']['_constraints']) ||
-            !is_array($this->_context['schema']['_constraints'])
+            !\is_array($this->_context['schema']['_constraints'])
         ) {
             return [];
         }
@@ -120,7 +120,7 @@ class ArrayContext implements ContextInterface
     {
         $primaryKey = $this->primaryKey();
 
-        return in_array($field, $primaryKey);
+        return \in_array($field, $primaryKey);
     }
 
     /**
@@ -173,7 +173,7 @@ class ArrayContext implements ContextInterface
         if ($options['default'] !== null || !$options['schemaDefault']) {
             return $options['default'];
         }
-        if (empty($this->_context['defaults']) || !is_array($this->_context['defaults'])) {
+        if (empty($this->_context['defaults']) || !\is_array($this->_context['defaults'])) {
             return null;
         }
 
@@ -195,7 +195,7 @@ class ArrayContext implements ContextInterface
      */
     public function isRequired($field)
     {
-        if (!is_array($this->_context['required'])) {
+        if (!\is_array($this->_context['required'])) {
             return false;
         }
         $required = Hash::get($this->_context['required'], $field);
@@ -214,7 +214,7 @@ class ArrayContext implements ContextInterface
         $schema = $this->_context['schema'];
         unset($schema['_constraints'], $schema['_indexes']);
 
-        return array_keys($schema);
+        return \array_keys($schema);
     }
 
     /**
@@ -226,7 +226,7 @@ class ArrayContext implements ContextInterface
      */
     public function type($field)
     {
-        if (!is_array($this->_context['schema'])) {
+        if (!\is_array($this->_context['schema'])) {
             return null;
         }
 
@@ -246,7 +246,7 @@ class ArrayContext implements ContextInterface
      */
     public function attributes($field)
     {
-        if (!is_array($this->_context['schema'])) {
+        if (!\is_array($this->_context['schema'])) {
             return [];
         }
         $schema = Hash::get($this->_context['schema'], $field);
@@ -255,7 +255,7 @@ class ArrayContext implements ContextInterface
         }
         $whitelist = ['length' => null, 'precision' => null];
 
-        return array_intersect_key((array)$schema, $whitelist);
+        return \array_intersect_key((array)$schema, $whitelist);
     }
 
     /**
@@ -299,6 +299,6 @@ class ArrayContext implements ContextInterface
      */
     protected function stripNesting($field)
     {
-        return preg_replace('/\.\d*\./', '.', $field);
+        return \preg_replace('/\.\d*\./', '.', $field);
     }
 }

@@ -101,31 +101,31 @@ class XmlView extends SerializedView
         $rootNode = isset($this->viewVars['_rootNode']) ? $this->viewVars['_rootNode'] : 'response';
 
         if ($serialize === true) {
-            $serialize = array_diff(
-                array_keys($this->viewVars),
+            $serialize = \array_diff(
+                \array_keys($this->viewVars),
                 $this->_specialVars
             );
 
             if (empty($serialize)) {
                 $serialize = null;
-            } elseif (count($serialize) === 1) {
-                $serialize = current($serialize);
+            } elseif (\count($serialize) === 1) {
+                $serialize = \current($serialize);
             }
         }
 
-        if (is_array($serialize)) {
+        if (\is_array($serialize)) {
             $data = [$rootNode => []];
             foreach ($serialize as $alias => $key) {
-                if (is_numeric($alias)) {
+                if (\is_numeric($alias)) {
                     $alias = $key;
                 }
-                if (array_key_exists($key, $this->viewVars)) {
+                if (\array_key_exists($key, $this->viewVars)) {
                     $data[$rootNode][$alias] = $this->viewVars[$key];
                 }
             }
         } else {
             $data = isset($this->viewVars[$serialize]) ? $this->viewVars[$serialize] : null;
-            if (is_array($data) && Hash::numeric(array_keys($data))) {
+            if (\is_array($data) && Hash::numeric(\array_keys($data))) {
                 $data = [$rootNode => [$serialize => $data]];
             }
         }
@@ -138,7 +138,7 @@ class XmlView extends SerializedView
             $options['pretty'] = true;
         }
 
-        if (isset($options['return']) && strtolower($options['return']) === 'domdocument') {
+        if (isset($options['return']) && \strtolower($options['return']) === 'domdocument') {
             return Xml::fromArray($data, $options)->saveXML();
         }
 

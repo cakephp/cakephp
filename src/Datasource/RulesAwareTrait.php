@@ -50,13 +50,13 @@ trait RulesAwareTrait
     {
         $rules = $this->rulesChecker();
         $options = $options ?: new ArrayObject();
-        $options = is_array($options) ? new ArrayObject($options) : $options;
+        $options = \is_array($options) ? new ArrayObject($options) : $options;
         $hasEvents = ($this instanceof EventDispatcherInterface);
 
         if ($hasEvents) {
             $event = $this->dispatchEvent(
                 'Model.beforeRules',
-                compact('entity', 'options', 'operation')
+                \compact('entity', 'options', 'operation')
             );
             if ($event->isStopped()) {
                 return $event->getResult();
@@ -68,7 +68,7 @@ trait RulesAwareTrait
         if ($hasEvents) {
             $event = $this->dispatchEvent(
                 'Model.afterRules',
-                compact('entity', 'options', 'result', 'operation')
+                \compact('entity', 'options', 'result', 'operation')
             );
 
             if ($event->isStopped()) {
@@ -94,7 +94,7 @@ trait RulesAwareTrait
         if ($this->_rulesChecker !== null) {
             return $this->_rulesChecker;
         }
-        $class = defined('static::RULES_CLASS') ? static::RULES_CLASS : 'Cake\Datasource\RulesChecker';
+        $class = \defined('static::RULES_CLASS') ? static::RULES_CLASS : 'Cake\Datasource\RulesChecker';
         $this->_rulesChecker = $this->buildRules(new $class(['repository' => $this]));
         $this->dispatchEvent('Model.buildRules', ['rules' => $this->_rulesChecker]);
 

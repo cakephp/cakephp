@@ -35,7 +35,7 @@ class LogEngineRegistry extends ObjectRegistry
      */
     protected function _resolveClassName($class)
     {
-        if (is_object($class)) {
+        if (\is_object($class)) {
             return $class;
         }
 
@@ -54,7 +54,7 @@ class LogEngineRegistry extends ObjectRegistry
      */
     protected function _throwMissingClassError($class, $plugin)
     {
-        throw new RuntimeException(sprintf('Could not load class %s', $class));
+        throw new RuntimeException(\sprintf('Could not load class %s', $class));
     }
 
     /**
@@ -70,11 +70,11 @@ class LogEngineRegistry extends ObjectRegistry
      */
     protected function _create($class, $alias, $settings)
     {
-        if (is_callable($class)) {
+        if (\is_callable($class)) {
             $class = $class($alias);
         }
 
-        if (is_object($class)) {
+        if (\is_object($class)) {
             $instance = $class;
         }
 

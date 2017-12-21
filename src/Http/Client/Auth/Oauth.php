@@ -47,7 +47,7 @@ class Oauth
         if (empty($credentials['method'])) {
             $credentials['method'] = 'hmac-sha1';
         }
-        $credentials['method'] = strtoupper($credentials['method']);
+        $credentials['method'] = \strtoupper($credentials['method']);
         switch ($credentials['method']) {
             case 'HMAC-SHA1':
                 $hasKeys = isset(
@@ -81,7 +81,7 @@ class Oauth
                 break;
 
             default:
-                throw new Exception(sprintf('Unknown Oauth signature method %s', $credentials['method']));
+                throw new Exception(\sprintf('Unknown Oauth signature method %s', $credentials['method']));
         }
 
         return $request->withHeader('Authorization', $value);
@@ -102,8 +102,8 @@ class Oauth
     {
         $values = [
             'oauth_version' => '1.0',
-            'oauth_nonce' => uniqid(),
-            'oauth_timestamp' => time(),
+            'oauth_nonce' => \uniqid(),
+            'oauth_timestamp' => \time(),
             'oauth_signature_method' => 'PLAINTEXT',
             'oauth_token' => $credentials['token'],
             'oauth_consumer_key' => $credentials['consumerKey'],
@@ -112,7 +112,7 @@ class Oauth
             $values['oauth_realm'] = $credentials['realm'];
         }
         $key = [$credentials['consumerSecret'], $credentials['tokenSecret']];
-        $key = implode('&', $key);
+        $key = \implode('&', $key);
         $values['oauth_signature'] = $key;
 
         return $this->_buildAuth($values);
@@ -129,8 +129,8 @@ class Oauth
      */
     protected function _hmacSha1($request, $credentials)
     {
-        $nonce = isset($credentials['nonce']) ? $credentials['nonce'] : uniqid();
-        $timestamp = isset($credentials['timestamp']) ? $credentials['timestamp'] : time();
+        $nonce = isset($credentials['nonce']) ? $credentials['nonce'] : \uniqid();
+        $timestamp = isset($credentials['timestamp']) ? $credentials['timestamp'] : \time();
         $values = [
             'oauth_version' => '1.0',
             'oauth_nonce' => $nonce,
@@ -145,11 +145,11 @@ class Oauth
             $values['oauth_realm'] = $credentials['realm'];
         }
         $key = [$credentials['consumerSecret'], $credentials['tokenSecret']];
-        $key = array_map([$this, '_encode'], $key);
-        $key = implode('&', $key);
+        $key = \array_map([$this, '_encode'], $key);
+        $key = \implode('&', $key);
 
-        $values['oauth_signature'] = base64_encode(
-            hash_hmac('sha1', $baseString, $key, true)
+        $values['oauth_signature'] = \base64_encode(
+            \hash_hmac('sha1', $baseString, $key, true)
         );
 
         return $this->_buildAuth($values);
@@ -168,12 +168,12 @@ class Oauth
      */
     protected function _rsaSha1($request, $credentials)
     {
-        if (!function_exists('openssl_pkey_get_private')) {
+        if (!\function_exists('openssl_pkey_get_private')) {
             throw new RuntimeException('RSA-SHA1 signature method requires the OpenSSL extension.');
         }
 
-        $nonce = isset($credentials['nonce']) ? $credentials['nonce'] : bin2hex(Security::randomBytes(16));
-        $timestamp = isset($credentials['timestamp']) ? $credentials['timestamp'] : time();
+        $nonce = isset($credentials['nonce']) ? $credentials['nonce'] : \bin2hex(Security::randomBytes(16));
+        $timestamp = isset($credentials['timestamp']) ? $credentials['timestamp'] : \time();
         $values = [
             'oauth_version' => '1.0',
             'oauth_nonce' => $nonce,
@@ -196,28 +196,28 @@ class Oauth
             $values['oauth_realm'] = $credentials['realm'];
         }
 
-        if (is_resource($credentials['privateKey'])) {
+        if (\is_resource($credentials['privateKey'])) {
             $resource = $credentials['privateKey'];
-            $privateKey = stream_get_contents($resource);
-            rewind($resource);
+            $privateKey = \stream_get_contents($resource);
+            \rewind($resource);
             $credentials['privateKey'] = $privateKey;
         }
 
         $credentials += [
             'privateKeyPassphrase' => null,
         ];
-        if (is_resource($credentials['privateKeyPassphrase'])) {
+        if (\is_resource($credentials['privateKeyPassphrase'])) {
             $resource = $credentials['privateKeyPassphrase'];
-            $passphrase = stream_get_line($resource, 0, PHP_EOL);
-            rewind($resource);
+            $passphrase = \stream_get_line($resource, 0, PHP_EOL);
+            \rewind($resource);
             $credentials['privateKeyPassphrase'] = $passphrase;
         }
-        $privateKey = openssl_pkey_get_private($credentials['privateKey'], $credentials['privateKeyPassphrase']);
+        $privateKey = \openssl_pkey_get_private($credentials['privateKey'], $credentials['privateKeyPassphrase']);
         $signature = '';
-        openssl_sign($baseString, $signature, $privateKey);
-        openssl_free_key($privateKey);
+        \openssl_sign($baseString, $signature, $privateKey);
+        \openssl_free_key($privateKey);
 
-        $values['oauth_signature'] = base64_encode($signature);
+        $values['oauth_signature'] = \base64_encode($signature);
 
         return $this->_buildAuth($values);
     }
@@ -242,9 +242,9 @@ class Oauth
             $this->_normalizedUrl($request->getUri()),
             $this->_normalizedParams($request, $oauthValues),
         ];
-        $parts = array_map([$this, '_encode'], $parts);
+        $parts = \array_map([$this, '_encode'], $parts);
 
-        return implode('&', $parts);
+        return \implode('&', $parts);
     }
 
     /**
@@ -258,7 +258,7 @@ class Oauth
     protected function _normalizedUrl($uri)
     {
         $out = $uri->getScheme() . '://';
-        $out .= strtolower($uri->getHost());
+        $out .= \strtolower($uri->getHost());
         $out .= $uri->getPath();
 
         return $out;
@@ -278,27 +278,27 @@ class Oauth
      */
     protected function _normalizedParams($request, $oauthValues)
     {
-        $query = parse_url($request->getUri(), PHP_URL_QUERY);
-        parse_str($query, $queryArgs);
+        $query = \parse_url($request->getUri(), PHP_URL_QUERY);
+        \parse_str($query, $queryArgs);
 
         $post = [];
         $body = $request->body();
-        if (is_string($body) && $request->getHeaderLine('content-type') === 'application/x-www-form-urlencoded') {
-            parse_str($body, $post);
+        if (\is_string($body) && $request->getHeaderLine('content-type') === 'application/x-www-form-urlencoded') {
+            \parse_str($body, $post);
         }
-        if (is_array($body)) {
+        if (\is_array($body)) {
             $post = $body;
         }
 
-        $args = array_merge($queryArgs, $oauthValues, $post);
+        $args = \array_merge($queryArgs, $oauthValues, $post);
         $pairs = $this->_normalizeData($args);
         $data = [];
         foreach ($pairs as $pair) {
-            $data[] = implode('=', $pair);
+            $data[] = \implode('=', $pair);
         }
-        sort($data, SORT_STRING);
+        \sort($data, SORT_STRING);
 
-        return implode('&', $data);
+        return \implode('&', $data);
     }
 
     /**
@@ -317,15 +317,15 @@ class Oauth
                 // Fold string keys with [].
                 // Numeric keys result in a=b&a=c. While this isn't
                 // standard behavior in PHP, it is common in other platforms.
-                if (!is_numeric($key)) {
+                if (!\is_numeric($key)) {
                     $key = "{$path}[{$key}]";
                 } else {
                     $key = $path;
                 }
             }
-            if (is_array($value)) {
-                uksort($value, 'strcmp');
-                $data = array_merge($data, $this->_normalizeData($value, $key));
+            if (\is_array($value)) {
+                \uksort($value, 'strcmp');
+                $data = \array_merge($data, $this->_normalizeData($value, $key));
             } else {
                 $data[] = [$key, $value];
             }
@@ -347,7 +347,7 @@ class Oauth
         foreach ($data as $key => $value) {
             $params[] = $key . '="' . $this->_encode($value) . '"';
         }
-        $out .= implode(',', $params);
+        $out .= \implode(',', $params);
 
         return $out;
     }
@@ -360,13 +360,13 @@ class Oauth
      */
     protected function _encode($value)
     {
-        return str_replace(
+        return \str_replace(
             '+',
             ' ',
-            str_replace('%7E', '~', rawurlencode($value))
+            \str_replace('%7E', '~', \rawurlencode($value))
         );
     }
 }
 
 // @deprecated Add backwards compat alias.
-class_alias('Cake\Http\Client\Auth\Oauth', 'Cake\Network\Http\Auth\Oauth');
+\class_alias('Cake\Http\Client\Auth\Oauth', 'Cake\Network\Http\Auth\Oauth');

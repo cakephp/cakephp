@@ -166,7 +166,7 @@ class CookieComponent extends Component
 
             return $local + $default;
         }
-        if (!is_array($option)) {
+        if (!\is_array($option)) {
             $option = [$option => $value];
         }
         $this->_keyConfig[$keyname] = $option;
@@ -196,7 +196,7 @@ class CookieComponent extends Component
      */
     public function write($key, $value = null)
     {
-        if (!is_array($key)) {
+        if (!\is_array($key)) {
             $key = [$key => $value];
         }
 
@@ -205,7 +205,7 @@ class CookieComponent extends Component
             $this->_load($name);
 
             $this->_values = Hash::insert($this->_values, $name, $value);
-            $parts = explode('.', $name);
+            $parts = \explode('.', $name);
             $keys[] = $parts[0];
         }
 
@@ -241,8 +241,8 @@ class CookieComponent extends Component
      */
     protected function _load($key)
     {
-        $parts = explode('.', $key);
-        $first = array_shift($parts);
+        $parts = \explode('.', $key);
+        $first = \array_shift($parts);
         if (isset($this->_loaded[$first])) {
             return;
         }
@@ -287,7 +287,7 @@ class CookieComponent extends Component
         $this->_load($key);
 
         $this->_values = Hash::remove($this->_values, $key);
-        $parts = explode('.', $key);
+        $parts = \explode('.', $key);
         $top = $parts[0];
 
         if (isset($this->_values[$top])) {

@@ -41,7 +41,7 @@ class ApcEngine extends CacheEngine
      */
     public function init(array $config = [])
     {
-        if (!extension_loaded('apcu')) {
+        if (!\extension_loaded('apcu')) {
             return false;
         }
 
@@ -64,7 +64,7 @@ class ApcEngine extends CacheEngine
         $expires = 0;
         $duration = $this->_config['duration'];
         if ($duration) {
-            $expires = time() + $duration;
+            $expires = \time() + $duration;
         }
         apcu_store($key . '_expires', $expires, $duration);
 
@@ -82,7 +82,7 @@ class ApcEngine extends CacheEngine
     {
         $key = $this->_key($key);
 
-        $time = time();
+        $time = \time();
         $cachetime = (int)apcu_fetch($key . '_expires');
         if ($cachetime !== 0 && ($cachetime < $time || ($time + $this->_config['duration']) < $cachetime)) {
             return false;
@@ -144,9 +144,9 @@ class ApcEngine extends CacheEngine
         if ($check) {
             return true;
         }
-        if (class_exists('APCuIterator', false)) {
+        if (\class_exists('APCuIterator', false)) {
             $iterator = new APCuIterator(
-                '/^' . preg_quote($this->_config['prefix'], '/') . '/',
+                '/^' . \preg_quote($this->_config['prefix'], '/') . '/',
                 APC_ITER_NONE
             );
             apcu_delete($iterator);
@@ -155,7 +155,7 @@ class ApcEngine extends CacheEngine
         }
         $cache = apcu_cache_info();
         foreach ($cache['cache_list'] as $key) {
-            if (strpos($key['info'], $this->_config['prefix']) === 0) {
+            if (\strpos($key['info'], $this->_config['prefix']) === 0) {
                 apcu_delete($key['info']);
             }
         }
@@ -179,7 +179,7 @@ class ApcEngine extends CacheEngine
         $expires = 0;
         $duration = $this->_config['duration'];
         if ($duration) {
-            $expires = time() + $duration;
+            $expires = \time() + $duration;
         }
         apcu_add($key . '_expires', $expires, $duration);
 
@@ -202,18 +202,18 @@ class ApcEngine extends CacheEngine
         }
 
         $groups = apcu_fetch($this->_compiledGroupNames);
-        if (count($groups) !== count($this->_config['groups'])) {
+        if (\count($groups) !== \count($this->_config['groups'])) {
             foreach ($this->_compiledGroupNames as $group) {
                 if (!isset($groups[$group])) {
                     apcu_store($group, 1);
                     $groups[$group] = 1;
                 }
             }
-            ksort($groups);
+            \ksort($groups);
         }
 
         $result = [];
-        $groups = array_values($groups);
+        $groups = \array_values($groups);
         foreach ($this->_config['groups'] as $i => $group) {
             $result[] = $group . $groups[$i];
         }

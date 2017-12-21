@@ -193,7 +193,7 @@ class BufferedIterator extends Collection implements Countable, Serializable
             $this->count();
         }
 
-        return serialize($this->_buffer);
+        return \serialize($this->_buffer);
     }
 
     /**
@@ -205,7 +205,7 @@ class BufferedIterator extends Collection implements Countable, Serializable
     public function unserialize($buffer)
     {
         $this->__construct([]);
-        $this->_buffer = unserialize($buffer);
+        $this->_buffer = \unserialize($buffer);
         $this->_started = true;
         $this->_finished = true;
     }

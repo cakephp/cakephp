@@ -128,7 +128,7 @@ class CacheSession implements SessionHandlerInterface
      */
     public function gc($maxlifetime)
     {
-        Cache::gc($this->_options['config'], time() - $maxlifetime);
+        Cache::gc($this->_options['config'], \time() - $maxlifetime);
 
         return true;
     }

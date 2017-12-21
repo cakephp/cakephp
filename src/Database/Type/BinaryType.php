@@ -79,16 +79,16 @@ class BinaryType extends Type implements TypeInterface
         if ($value === null) {
             return null;
         }
-        if (is_string($value) && $driver instanceof Sqlserver) {
-            $value = pack('H*', $value);
+        if (\is_string($value) && $driver instanceof Sqlserver) {
+            $value = \pack('H*', $value);
         }
-        if (is_string($value)) {
-            return fopen('data:text/plain;base64,' . base64_encode($value), 'rb');
+        if (\is_string($value)) {
+            return \fopen('data:text/plain;base64,' . \base64_encode($value), 'rb');
         }
-        if (is_resource($value)) {
+        if (\is_resource($value)) {
             return $value;
         }
-        throw new Exception(sprintf('Unable to convert %s into binary.', gettype($value)));
+        throw new Exception(\sprintf('Unable to convert %s into binary.', \gettype($value)));
     }
 
     /**

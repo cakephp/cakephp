@@ -77,7 +77,7 @@ class RedisEngine extends CacheEngine
      */
     public function init(array $config = [])
     {
-        if (!extension_loaded('redis')) {
+        if (!\extension_loaded('redis')) {
             return false;
         }
 
@@ -131,8 +131,8 @@ class RedisEngine extends CacheEngine
     {
         $key = $this->_key($key);
 
-        if (!is_int($value)) {
-            $value = serialize($value);
+        if (!\is_int($value)) {
+            $value = \serialize($value);
         }
 
         $duration = $this->_config['duration'];
@@ -154,11 +154,11 @@ class RedisEngine extends CacheEngine
         $key = $this->_key($key);
 
         $value = $this->_Redis->get($key);
-        if (preg_match('/^[-]?\d+$/', $value)) {
+        if (\preg_match('/^[-]?\d+$/', $value)) {
             return (int)$value;
         }
-        if ($value !== false && is_string($value)) {
-            return unserialize($value);
+        if ($value !== false && \is_string($value)) {
+            return \unserialize($value);
         }
 
         return $value;
@@ -235,7 +235,7 @@ class RedisEngine extends CacheEngine
             $result[] = $this->_Redis->delete($key) > 0;
         }
 
-        return !in_array(false, $result);
+        return !\in_array(false, $result);
     }
 
     /**
@@ -252,8 +252,8 @@ class RedisEngine extends CacheEngine
         $duration = $this->_config['duration'];
         $key = $this->_key($key);
 
-        if (!is_int($value)) {
-            $value = serialize($value);
+        if (!\is_int($value)) {
+            $value = \serialize($value);
         }
 
         // setnx() doesn't have an expiry option, so follow up with an expiry

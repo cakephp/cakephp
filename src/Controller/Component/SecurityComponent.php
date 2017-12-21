@@ -111,10 +111,10 @@ class SecurityComponent extends Component
             $isNotRequestAction = !$controller->request->getParam('requested');
 
             if ($this->_action === $this->_config['blackHoleCallback']) {
-                throw new AuthSecurityException(sprintf('Action %s is defined as the blackhole callback.', $this->_action));
+                throw new AuthSecurityException(\sprintf('Action %s is defined as the blackhole callback.', $this->_action));
             }
 
-            if (!in_array($this->_action, (array)$this->_config['unlockedActions']) &&
+            if (!\in_array($this->_action, (array)$this->_config['unlockedActions']) &&
                 $hasData &&
                 $isNotRequestAction &&
                 $this->_config['validatePost']) {
@@ -125,7 +125,7 @@ class SecurityComponent extends Component
         }
 
         $this->generateToken($controller->request);
-        if ($hasData && is_array($controller->request->getData())) {
+        if ($hasData && \is_array($controller->request->getData())) {
             unset($controller->request->data['_Token']);
         }
     }
@@ -218,7 +218,7 @@ class SecurityComponent extends Component
      */
     protected function _requireMethod($method, $actions = [])
     {
-        if (isset($actions[0]) && is_array($actions[0])) {
+        if (isset($actions[0]) && \is_array($actions[0])) {
             $actions = $actions[0];
         }
         $this->setConfig('require' . $method, empty($actions) ? ['*'] : $actions);
@@ -232,12 +232,12 @@ class SecurityComponent extends Component
      */
     protected function _secureRequired(Controller $controller)
     {
-        if (is_array($this->_config['requireSecure']) &&
+        if (\is_array($this->_config['requireSecure']) &&
             !empty($this->_config['requireSecure'])
         ) {
             $requireSecure = $this->_config['requireSecure'];
 
-            if (in_array($this->_action, $requireSecure) || $requireSecure === ['*']) {
+            if (\in_array($this->_action, $requireSecure) || $requireSecure === ['*']) {
                 if (!$this->request->is('ssl')) {
                     throw new SecurityException(
                         'Request is not SSL and the action is required to be secure'
@@ -259,13 +259,13 @@ class SecurityComponent extends Component
     protected function _authRequired(Controller $controller)
     {
         $request = $controller->request;
-        if (is_array($this->_config['requireAuth']) &&
+        if (\is_array($this->_config['requireAuth']) &&
             !empty($this->_config['requireAuth']) &&
             $request->getData()
         ) {
             $requireAuth = $this->_config['requireAuth'];
 
-            if (in_array($request->getParam('action'), $requireAuth) || $requireAuth == ['*']) {
+            if (\in_array($request->getParam('action'), $requireAuth) || $requireAuth == ['*']) {
                 if ($request->getData('_Token') === null) {
                     throw new AuthSecurityException('\'_Token\' was not found in request data.');
                 }
@@ -274,24 +274,24 @@ class SecurityComponent extends Component
                     $tData = $this->session->read('_Token');
 
                     if (!empty($tData['allowedControllers']) &&
-                        !in_array($request->getParam('controller'), $tData['allowedControllers'])) {
+                        !\in_array($request->getParam('controller'), $tData['allowedControllers'])) {
                         throw new AuthSecurityException(
-                            sprintf(
+                            \sprintf(
                                 'Controller \'%s\' was not found in allowed controllers: \'%s\'.',
                                 $request->getParam('controller'),
-                                implode(', ', (array)$tData['allowedControllers'])
+                                \implode(', ', (array)$tData['allowedControllers'])
                             )
                         );
                     }
                     if (!empty($tData['allowedActions']) &&
-                        !in_array($request->getParam('action'), $tData['allowedActions'])
+                        !\in_array($request->getParam('action'), $tData['allowedActions'])
                     ) {
                         throw new AuthSecurityException(
-                            sprintf(
+                            \sprintf(
                                 'Action \'%s::%s\' was not found in allowed actions: \'%s\'.',
                                 $request->getParam('controller'),
                                 $request->getParam('action'),
-                                implode(', ', (array)$tData['allowedActions'])
+                                \implode(', ', (array)$tData['allowedActions'])
                             )
                         );
                     }
@@ -315,7 +315,7 @@ class SecurityComponent extends Component
     {
         $token = $this->_validToken($controller);
         $hashParts = $this->_hashParts($controller);
-        $check = Security::hash(implode('', $hashParts), 'sha1');
+        $check = Security::hash(\implode('', $hashParts), 'sha1');
 
         if ($token === $check) {
             return true;
@@ -342,24 +342,24 @@ class SecurityComponent extends Component
 
         $message = '\'%s\' was not found in request data.';
         if (!isset($check['_Token'])) {
-            throw new AuthSecurityException(sprintf($message, '_Token'));
+            throw new AuthSecurityException(\sprintf($message, '_Token'));
         }
         if (!isset($check['_Token']['fields'])) {
-            throw new AuthSecurityException(sprintf($message, '_Token.fields'));
+            throw new AuthSecurityException(\sprintf($message, '_Token.fields'));
         }
         if (!isset($check['_Token']['unlocked'])) {
-            throw new AuthSecurityException(sprintf($message, '_Token.unlocked'));
+            throw new AuthSecurityException(\sprintf($message, '_Token.unlocked'));
         }
         if (Configure::read('debug') && !isset($check['_Token']['debug'])) {
-            throw new SecurityException(sprintf($message, '_Token.debug'));
+            throw new SecurityException(\sprintf($message, '_Token.debug'));
         }
         if (!Configure::read('debug') && isset($check['_Token']['debug'])) {
             throw new SecurityException('Unexpected \'_Token.debug\' found in request data');
         }
 
-        $token = urldecode($check['_Token']['fields']);
-        if (strpos($token, ':')) {
-            list($token, ) = explode(':', $token, 2);
+        $token = \urldecode($check['_Token']['fields']);
+        if (\strpos($token, ':')) {
+            list($token, ) = \explode(':', $token, 2);
         }
 
         return $token;
@@ -378,7 +378,7 @@ class SecurityComponent extends Component
 
         return [
             $controller->request->here(),
-            serialize($fieldList),
+            \serialize($fieldList),
             $unlocked,
             Security::getSalt()
         ];
@@ -393,45 +393,45 @@ class SecurityComponent extends Component
     protected function _fieldsList(array $check)
     {
         $locked = '';
-        $token = urldecode($check['_Token']['fields']);
+        $token = \urldecode($check['_Token']['fields']);
         $unlocked = $this->_unlocked($check);
 
-        if (strpos($token, ':')) {
-            list($token, $locked) = explode(':', $token, 2);
+        if (\strpos($token, ':')) {
+            list($token, $locked) = \explode(':', $token, 2);
         }
         unset($check['_Token'], $check['_csrfToken']);
 
-        $locked = explode('|', $locked);
-        $unlocked = explode('|', $unlocked);
+        $locked = \explode('|', $locked);
+        $unlocked = \explode('|', $unlocked);
 
         $fields = Hash::flatten($check);
-        $fieldList = array_keys($fields);
+        $fieldList = \array_keys($fields);
         $multi = $lockedFields = [];
         $isUnlocked = false;
 
         foreach ($fieldList as $i => $key) {
-            if (preg_match('/(\.\d+){1,10}$/', $key)) {
-                $multi[$i] = preg_replace('/(\.\d+){1,10}$/', '', $key);
+            if (\preg_match('/(\.\d+){1,10}$/', $key)) {
+                $multi[$i] = \preg_replace('/(\.\d+){1,10}$/', '', $key);
                 unset($fieldList[$i]);
             } else {
                 $fieldList[$i] = (string)$key;
             }
         }
         if (!empty($multi)) {
-            $fieldList += array_unique($multi);
+            $fieldList += \array_unique($multi);
         }
 
-        $unlockedFields = array_unique(
-            array_merge((array)$this->getConfig('disabledFields'), (array)$this->_config['unlockedFields'], $unlocked)
+        $unlockedFields = \array_unique(
+            \array_merge((array)$this->getConfig('disabledFields'), (array)$this->_config['unlockedFields'], $unlocked)
         );
 
         foreach ($fieldList as $i => $key) {
-            $isLocked = (is_array($locked) && in_array($key, $locked));
+            $isLocked = (\is_array($locked) && \in_array($key, $locked));
 
             if (!empty($unlockedFields)) {
                 foreach ($unlockedFields as $off) {
-                    $off = explode('.', $off);
-                    $field = array_values(array_intersect(explode('.', $key), $off));
+                    $off = \explode('.', $off);
+                    $field = \array_values(\array_intersect(\explode('.', $key), $off));
                     $isUnlocked = ($field === $off);
                     if ($isUnlocked) {
                         break;
@@ -446,8 +446,8 @@ class SecurityComponent extends Component
                 }
             }
         }
-        sort($fieldList, SORT_STRING);
-        ksort($lockedFields, SORT_STRING);
+        \sort($fieldList, SORT_STRING);
+        \ksort($lockedFields, SORT_STRING);
         $fieldList += $lockedFields;
 
         return $fieldList;
@@ -461,7 +461,7 @@ class SecurityComponent extends Component
      */
     protected function _unlocked(array $data)
     {
-        return urldecode($data['_Token']['unlocked']);
+        return \urldecode($data['_Token']['unlocked']);
     }
 
     /**
@@ -473,10 +473,10 @@ class SecurityComponent extends Component
     protected function _sortedUnlocked($data)
     {
         $unlocked = $this->_unlocked($data);
-        $unlocked = explode('|', $unlocked);
-        sort($unlocked, SORT_STRING);
+        $unlocked = \explode('|', $unlocked);
+        \sort($unlocked, SORT_STRING);
 
-        return implode('|', $unlocked);
+        return \implode('|', $unlocked);
     }
 
     /**
@@ -489,19 +489,19 @@ class SecurityComponent extends Component
     protected function _debugPostTokenNotMatching(Controller $controller, $hashParts)
     {
         $messages = [];
-        $expectedParts = json_decode(urldecode($controller->request->getData('_Token.debug')), true);
-        if (!is_array($expectedParts) || count($expectedParts) !== 3) {
+        $expectedParts = \json_decode(\urldecode($controller->request->getData('_Token.debug')), true);
+        if (!\is_array($expectedParts) || \count($expectedParts) !== 3) {
             return 'Invalid security debug token.';
         }
         $expectedUrl = Hash::get($expectedParts, 0);
         $url = Hash::get($hashParts, 0);
         if ($expectedUrl !== $url) {
-            $messages[] = sprintf('URL mismatch in POST data (expected \'%s\' but found \'%s\')', $expectedUrl, $url);
+            $messages[] = \sprintf('URL mismatch in POST data (expected \'%s\' but found \'%s\')', $expectedUrl, $url);
         }
         $expectedFields = Hash::get($expectedParts, 1);
         $dataFields = Hash::get($hashParts, 1);
         if ($dataFields) {
-            $dataFields = unserialize($dataFields);
+            $dataFields = \unserialize($dataFields);
         }
         $fieldsMessages = $this->_debugCheckFields(
             $dataFields,
@@ -513,7 +513,7 @@ class SecurityComponent extends Component
         $expectedUnlockedFields = Hash::get($expectedParts, 2);
         $dataUnlockedFields = Hash::get($hashParts, 2) ?: null;
         if ($dataUnlockedFields) {
-            $dataUnlockedFields = explode('|', $dataUnlockedFields);
+            $dataUnlockedFields = \explode('|', $dataUnlockedFields);
         }
         $unlockFieldsMessages = $this->_debugCheckFields(
             (array)$dataUnlockedFields,
@@ -523,9 +523,9 @@ class SecurityComponent extends Component
             'Missing unlocked field: \'%s\''
         );
 
-        $messages = array_merge($messages, $fieldsMessages, $unlockFieldsMessages);
+        $messages = \array_merge($messages, $fieldsMessages, $unlockFieldsMessages);
 
-        return implode(', ', $messages);
+        return \implode(', ', $messages);
     }
 
     /**
@@ -590,11 +590,11 @@ class SecurityComponent extends Component
      */
     protected function _callback(Controller $controller, $method, $params = [])
     {
-        if (!is_callable([$controller, $method])) {
+        if (!\is_callable([$controller, $method])) {
             throw new BadRequestException('The request has been black-holed');
         }
 
-        return call_user_func_array([&$controller, $method], empty($params) ? null : $params);
+        return \call_user_func_array([&$controller, $method], empty($params) ? null : $params);
     }
 
     /**
@@ -611,16 +611,16 @@ class SecurityComponent extends Component
     {
         $messages = [];
         foreach ((array)$dataFields as $key => $value) {
-            if (is_int($key)) {
-                $foundKey = array_search($value, (array)$expectedFields);
+            if (\is_int($key)) {
+                $foundKey = \array_search($value, (array)$expectedFields);
                 if ($foundKey === false) {
-                    $messages[] = sprintf($intKeyMessage, $value);
+                    $messages[] = \sprintf($intKeyMessage, $value);
                 } else {
                     unset($expectedFields[$foundKey]);
                 }
-            } elseif (is_string($key)) {
+            } elseif (\is_string($key)) {
                 if (isset($expectedFields[$key]) && $value !== $expectedFields[$key]) {
-                    $messages[] = sprintf($stringKeyMessage, $key, $expectedFields[$key], $value);
+                    $messages[] = \sprintf($stringKeyMessage, $key, $expectedFields[$key], $value);
                 }
                 unset($expectedFields[$key]);
             }
@@ -638,19 +638,19 @@ class SecurityComponent extends Component
      */
     protected function _debugExpectedFields($expectedFields = [], $missingMessage = '')
     {
-        if (count($expectedFields) === 0) {
+        if (\count($expectedFields) === 0) {
             return null;
         }
 
         $expectedFieldNames = [];
         foreach ((array)$expectedFields as $key => $expectedField) {
-            if (is_int($key)) {
+            if (\is_int($key)) {
                 $expectedFieldNames[] = $expectedField;
             } else {
                 $expectedFieldNames[] = $key;
             }
         }
 
-        return sprintf($missingMessage, implode(', ', $expectedFieldNames));
+        return \sprintf($missingMessage, \implode(', ', $expectedFieldNames));
     }
 }

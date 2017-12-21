@@ -95,14 +95,14 @@ class FixtureManager
     public function fixturize($test)
     {
         $this->_initDb();
-        if (empty($test->fixtures) || !empty($this->_processed[get_class($test)])) {
+        if (empty($test->fixtures) || !empty($this->_processed[\get_class($test)])) {
             return;
         }
-        if (!is_array($test->fixtures)) {
-            $test->fixtures = array_map('trim', explode(',', $test->fixtures));
+        if (!\is_array($test->fixtures)) {
+            $test->fixtures = \array_map('trim', \explode(',', $test->fixtures));
         }
         $this->_loadFixtures($test);
-        $this->_processed[get_class($test)] = true;
+        $this->_processed[\get_class($test)] = true;
     }
 
     /**
@@ -135,8 +135,8 @@ class FixtureManager
             if (isset($map[$connection])) {
                 continue;
             }
-            if (strpos($connection, 'test_') === 0) {
-                $map[$connection] = substr($connection, 5);
+            if (\strpos($connection, 'test_') === 0) {
+                $map[$connection] = \substr($connection, 5);
             } else {
                 $map['test_' . $connection] = $connection;
             }
@@ -177,21 +177,21 @@ class FixtureManager
                 continue;
             }
 
-            if (strpos($fixture, '.')) {
-                list($type, $pathName) = explode('.', $fixture, 2);
-                $path = explode('/', $pathName);
-                $name = array_pop($path);
-                $additionalPath = implode('\\', $path);
+            if (\strpos($fixture, '.')) {
+                list($type, $pathName) = \explode('.', $fixture, 2);
+                $path = \explode('/', $pathName);
+                $name = \array_pop($path);
+                $additionalPath = \implode('\\', $path);
 
                 if ($type === 'core') {
                     $baseNamespace = 'Cake';
                 } elseif ($type === 'app') {
                     $baseNamespace = Configure::read('App.namespace');
                 } elseif ($type === 'plugin') {
-                    list($plugin, $name) = explode('.', $pathName);
+                    list($plugin, $name) = \explode('.', $pathName);
                     // Flip vendored plugin separators
-                    $path = implode('\\', explode('/', $plugin));
-                    $baseNamespace = Inflector::camelize(str_replace('\\', '\ ', $path));
+                    $path = \implode('\\', \explode('/', $plugin));
+                    $baseNamespace = Inflector::camelize(\str_replace('\\', '\ ', $path));
                     $additionalPath = null;
                 } else {
                     $baseNamespace = '';
@@ -199,8 +199,8 @@ class FixtureManager
                 }
 
                 // Tweak subdirectory names, so camelize() can make the correct name
-                if (strpos($name, '/') > 0) {
-                    $name = implode('\\ ', explode('/', $name));
+                if (\strpos($name, '/') > 0) {
+                    $name = \implode('\\ ', \explode('/', $name));
                 }
 
                 $name = Inflector::camelize($name);
@@ -210,21 +210,21 @@ class FixtureManager
                     $additionalPath,
                     $name . 'Fixture'
                 ];
-                $className = implode('\\', array_filter($nameSegments));
+                $className = \implode('\\', \array_filter($nameSegments));
             } else {
                 $className = $fixture;
-                $name = preg_replace('/Fixture\z/', '', substr(strrchr($fixture, '\\'), 1));
+                $name = \preg_replace('/Fixture\z/', '', \substr(\strrchr($fixture, '\\'), 1));
             }
 
-            if (class_exists($className)) {
+            if (\class_exists($className)) {
                 $this->_loaded[$fixture] = new $className();
                 $this->_fixtureMap[$name] = $this->_loaded[$fixture];
             } else {
-                $msg = sprintf(
+                $msg = \sprintf(
                     'Referenced fixture class "%s" not found. Fixture "%s" was referenced in test case "%s".',
                     $className,
                     $fixture,
-                    get_class($test)
+                    \get_class($test)
                 );
                 throw new UnexpectedValueException($msg);
             }
@@ -249,7 +249,7 @@ class FixtureManager
         }
 
         $table = $fixture->sourceName();
-        $exists = in_array($table, $sources);
+        $exists = \in_array($table, $sources);
 
         $hasSchema = $fixture instanceof TableSchemaInterface && $fixture->schema() instanceof TableSchema
             || $fixture instanceof TableSchemaAwareInterface && $fixture->getTableSchema() instanceof TableSchema;
@@ -293,14 +293,14 @@ class FixtureManager
                 }
 
                 foreach ($fixtures as $name => $fixture) {
-                    if (in_array($fixture->table, $tables)) {
+                    if (\in_array($fixture->table, $tables)) {
                         try {
                             $fixture->dropConstraints($db);
                         } catch (PDOException $e) {
-                            $msg = sprintf(
+                            $msg = \sprintf(
                                 'Unable to drop constraints for fixture "%s" in "%s" test case: ' . "\n" . '%s',
-                                get_class($fixture),
-                                get_class($test),
+                                \get_class($fixture),
+                                \get_class($test),
                                 $e->getMessage()
                             );
                             throw new Exception($msg);
@@ -309,7 +309,7 @@ class FixtureManager
                 }
 
                 foreach ($fixtures as $fixture) {
-                    if (!in_array($fixture, $this->_insertionMap[$configName])) {
+                    if (!\in_array($fixture, $this->_insertionMap[$configName])) {
                         $this->_setupTable($fixture, $db, $tables, $test->dropTables);
                     } else {
                         $fixture->truncate($db);
@@ -320,10 +320,10 @@ class FixtureManager
                     try {
                         $fixture->createConstraints($db);
                     } catch (PDOException $e) {
-                        $msg = sprintf(
+                        $msg = \sprintf(
                             'Unable to create constraints for fixture "%s" in "%s" test case: ' . "\n" . '%s',
-                            get_class($fixture),
-                            get_class($test),
+                            \get_class($fixture),
+                            \get_class($test),
                             $e->getMessage()
                         );
                         throw new Exception($msg);
@@ -338,10 +338,10 @@ class FixtureManager
                     try {
                         $fixture->insert($db);
                     } catch (PDOException $e) {
-                        $msg = sprintf(
+                        $msg = \sprintf(
                             'Unable to insert fixture "%s" in "%s" test case: ' . "\n" . '%s',
-                            get_class($fixture),
-                            get_class($test),
+                            \get_class($fixture),
+                            \get_class($test),
                             $e->getMessage()
                         );
                         throw new Exception($msg);
@@ -350,9 +350,9 @@ class FixtureManager
             };
             $this->_runOperation($fixtures, $insert);
         } catch (PDOException $e) {
-            $msg = sprintf(
+            $msg = \sprintf(
                 'Unable to insert fixtures for "%s" test case. %s',
-                get_class($test),
+                \get_class($test),
                 $e->getMessage()
             );
             throw new Exception($msg);
@@ -446,7 +446,7 @@ class FixtureManager
     public function loadSingle($name, $db = null, $dropTables = true)
     {
         if (!isset($this->_fixtureMap[$name])) {
-            throw new UnexpectedValueException(sprintf('Referenced fixture class %s not found', $name));
+            throw new UnexpectedValueException(\sprintf('Referenced fixture class %s not found', $name));
         }
 
         $fixture = $this->_fixtureMap[$name];
@@ -480,12 +480,12 @@ class FixtureManager
             foreach ($fixtures as $fixture) {
                 if ($this->isFixtureSetup($connection, $fixture)) {
                     $fixture->drop($db);
-                    $index = array_search($fixture, $this->_insertionMap[$connection]);
+                    $index = \array_search($fixture, $this->_insertionMap[$connection]);
                     unset($this->_insertionMap[$connection][$index]);
                 }
             }
         };
-        $this->_runOperation(array_keys($this->_loaded), $shutdown);
+        $this->_runOperation(\array_keys($this->_loaded), $shutdown);
     }
 
     /**
@@ -497,6 +497,6 @@ class FixtureManager
      */
     public function isFixtureSetup($connection, $fixture)
     {
-        return isset($this->_insertionMap[$connection]) && in_array($fixture, $this->_insertionMap[$connection]);
+        return isset($this->_insertionMap[$connection]) && \in_array($fixture, $this->_insertionMap[$connection]);
     }
 }

@@ -33,7 +33,7 @@ trait TypeMapTrait
      */
     public function setTypeMap($typeMap)
     {
-        $this->_typeMap = is_array($typeMap) ? new TypeMap($typeMap) : $typeMap;
+        $this->_typeMap = \is_array($typeMap) ? new TypeMap($typeMap) : $typeMap;
 
         return $this;
     }

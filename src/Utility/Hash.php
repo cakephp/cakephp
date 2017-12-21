@@ -47,7 +47,7 @@ class Hash
      */
     public static function get($data, $path, $default = null)
     {
-        if (!(is_array($data) || $data instanceof ArrayAccess)) {
+        if (!(\is_array($data) || $data instanceof ArrayAccess)) {
             throw new InvalidArgumentException(
                 'Invalid data type, must be an array or \ArrayAccess instance.'
             );
@@ -57,11 +57,11 @@ class Hash
             return $default;
         }
 
-        if (is_string($path) || is_numeric($path)) {
-            $parts = explode('.', $path);
+        if (\is_string($path) || \is_numeric($path)) {
+            $parts = \explode('.', $path);
         } else {
-            if (!is_array($path)) {
-                throw new InvalidArgumentException(sprintf(
+            if (!\is_array($path)) {
+                throw new InvalidArgumentException(\sprintf(
                     'Invalid Parameter %s, should be dot separated path or array.',
                     $path
                 ));
@@ -70,7 +70,7 @@ class Hash
             $parts = $path;
         }
 
-        switch (count($parts)) {
+        switch (\count($parts)) {
             case 1:
                 return isset($data[$parts[0]]) ? $data[$parts[0]] : $default;
             case 2:
@@ -79,7 +79,7 @@ class Hash
                 return isset($data[$parts[0]][$parts[1]][$parts[2]]) ? $data[$parts[0]][$parts[1]][$parts[2]] : $default;
             default:
                 foreach ($parts as $key) {
-                    if ((is_array($data) || $data instanceof ArrayAccess) && isset($data[$key])) {
+                    if ((\is_array($data) || $data instanceof ArrayAccess) && isset($data[$key])) {
                         $data = $data[$key];
                     } else {
                         return $default;
@@ -123,7 +123,7 @@ class Hash
      */
     public static function extract($data, $path)
     {
-        if (!(is_array($data) || $data instanceof ArrayAccess)) {
+        if (!(\is_array($data) || $data instanceof ArrayAccess)) {
             throw new InvalidArgumentException(
                 'Invalid data type, must be an array or \ArrayAccess instance.'
             );
@@ -134,17 +134,17 @@ class Hash
         }
 
         // Simple paths.
-        if (!preg_match('/[{\[]/', $path)) {
+        if (!\preg_match('/[{\[]/', $path)) {
             $data = static::get($data, $path);
-            if ($data !== null && !(is_array($data) || $data instanceof ArrayAccess)) {
+            if ($data !== null && !(\is_array($data) || $data instanceof ArrayAccess)) {
                 return [$data];
             }
 
             return $data !== null ? (array)$data : [];
         }
 
-        if (strpos($path, '[') === false) {
-            $tokens = explode('.', $path);
+        if (\strpos($path, '[') === false) {
+            $tokens = \explode('.', $path);
         } else {
             $tokens = Text::tokenize($path, '.', '[', ']');
         }
@@ -159,7 +159,7 @@ class Hash
             list($token, $conditions) = self::_splitConditions($token);
 
             foreach ($context[$_key] as $item) {
-                if (is_object($item) && method_exists($item, 'toArray')) {
+                if (\is_object($item) && \method_exists($item, 'toArray')) {
                     /** @var \Cake\Datasource\EntityInterface $item */
                     $item = $item->toArray();
                 }
@@ -174,7 +174,7 @@ class Hash
             if ($conditions) {
                 $filter = [];
                 foreach ($next as $item) {
-                    if ((is_array($item) || $item instanceof ArrayAccess) &&
+                    if ((\is_array($item) || $item instanceof ArrayAccess) &&
                         static::_matches($item, $conditions)
                     ) {
                         $filter[] = $item;
@@ -197,10 +197,10 @@ class Hash
     protected static function _splitConditions($token)
     {
         $conditions = false;
-        $position = strpos($token, '[');
+        $position = \strpos($token, '[');
         if ($position !== false) {
-            $conditions = substr($token, $position);
-            $token = substr($token, 0, $position);
+            $conditions = \substr($token, $position);
+            $token = \substr($token, 0, $position);
         }
 
         return [$token, $conditions];
@@ -217,13 +217,13 @@ class Hash
     {
         switch ($token) {
             case '{n}':
-                return is_numeric($key);
+                return \is_numeric($key);
             case '{s}':
-                return is_string($key);
+                return \is_string($key);
             case '{*}':
                 return true;
             default:
-                return is_numeric($token) ? ($key == $token) : $key === $token;
+                return \is_numeric($token) ? ($key == $token) : $key === $token;
         }
     }
 
@@ -236,7 +236,7 @@ class Hash
      */
     protected static function _matches($data, $selector)
     {
-        preg_match_all(
+        \preg_match_all(
             '/(\[ (?P<attr>[^=><!]+?) (\s* (?P<op>[><!]?[=]|[><]) \s* (?P<val>(?:\/.*?\/ | [^\]]+)) )? \])/x',
             $selector,
             $conditions,
@@ -254,7 +254,7 @@ class Hash
             }
 
             // Empty attribute = fail.
-            if (!(isset($data[$attr]) || array_key_exists($attr, $data))) {
+            if (!(isset($data[$attr]) || \array_key_exists($attr, $data))) {
                 return false;
             }
 
@@ -262,8 +262,8 @@ class Hash
             if (isset($data[$attr])) {
                 $prop = $data[$attr];
             }
-            $isBool = is_bool($prop);
-            if ($isBool && is_numeric($val)) {
+            $isBool = \is_bool($prop);
+            if ($isBool && \is_numeric($val)) {
                 $prop = $prop ? '1' : '0';
             } elseif ($isBool) {
                 $prop = $prop ? 'true' : 'false';
@@ -271,7 +271,7 @@ class Hash
 
             // Pattern matches and other operators.
             if ($op === '=' && $val && $val[0] === '/') {
-                if (!preg_match($val, $prop)) {
+                if (!\preg_match($val, $prop)) {
                     return false;
                 }
             } elseif (($op === '=' && $prop != $val) ||
@@ -300,25 +300,25 @@ class Hash
      */
     public static function insert(array $data, $path, $values = null)
     {
-        $noTokens = strpos($path, '[') === false;
-        if ($noTokens && strpos($path, '.') === false) {
+        $noTokens = \strpos($path, '[') === false;
+        if ($noTokens && \strpos($path, '.') === false) {
             $data[$path] = $values;
 
             return $data;
         }
 
         if ($noTokens) {
-            $tokens = explode('.', $path);
+            $tokens = \explode('.', $path);
         } else {
             $tokens = Text::tokenize($path, '.', '[', ']');
         }
 
-        if ($noTokens && strpos($path, '{') === false) {
+        if ($noTokens && \strpos($path, '{') === false) {
             return static::_simpleOp('insert', $data, $tokens, $values);
         }
 
-        $token = array_shift($tokens);
-        $nextPath = implode('.', $tokens);
+        $token = \array_shift($tokens);
+        $nextPath = \implode('.', $tokens);
 
         list($token, $conditions) = static::_splitConditions($token);
 
@@ -327,7 +327,7 @@ class Hash
                 if (!$conditions || static::_matches($v, $conditions)) {
                     $data[$k] = $nextPath
                         ? static::insert($v, $nextPath, $values)
-                        : array_merge($v, (array)$values);
+                        : \array_merge($v, (array)$values);
                 }
             }
         }
@@ -348,7 +348,7 @@ class Hash
     {
         $_list =& $data;
 
-        $count = count($path);
+        $count = \count($path);
         $last = $count - 1;
         foreach ($path as $i => $key) {
             if ($op === 'insert') {
@@ -361,12 +361,12 @@ class Hash
                     $_list[$key] = [];
                 }
                 $_list =& $_list[$key];
-                if (!is_array($_list)) {
+                if (!\is_array($_list)) {
                     $_list = [];
                 }
             } elseif ($op === 'remove') {
                 if ($i === $last) {
-                    if (is_array($_list)) {
+                    if (\is_array($_list)) {
                         unset($_list[$key]);
                     }
 
@@ -392,29 +392,29 @@ class Hash
      */
     public static function remove(array $data, $path)
     {
-        $noTokens = strpos($path, '[') === false;
-        $noExpansion = strpos($path, '{') === false;
+        $noTokens = \strpos($path, '[') === false;
+        $noExpansion = \strpos($path, '{') === false;
 
-        if ($noExpansion && $noTokens && strpos($path, '.') === false) {
+        if ($noExpansion && $noTokens && \strpos($path, '.') === false) {
             unset($data[$path]);
 
             return $data;
         }
 
-        $tokens = $noTokens ? explode('.', $path) : Text::tokenize($path, '.', '[', ']');
+        $tokens = $noTokens ? \explode('.', $path) : Text::tokenize($path, '.', '[', ']');
 
         if ($noExpansion && $noTokens) {
             return static::_simpleOp('remove', $data, $tokens);
         }
 
-        $token = array_shift($tokens);
-        $nextPath = implode('.', $tokens);
+        $token = \array_shift($tokens);
+        $nextPath = \implode('.', $tokens);
 
         list($token, $conditions) = self::_splitConditions($token);
 
         foreach ($data as $k => $v) {
             $match = static::_matchToken($k, $token);
-            if ($match && is_array($v)) {
+            if ($match && \is_array($v)) {
                 if ($conditions) {
                     if (static::_matches($v, $conditions)) {
                         if ($nextPath !== '') {
@@ -457,8 +457,8 @@ class Hash
             return [];
         }
 
-        if (is_array($keyPath)) {
-            $format = array_shift($keyPath);
+        if (\is_array($keyPath)) {
+            $format = \array_shift($keyPath);
             $keys = static::format($data, $keyPath, $format);
         } else {
             $keys = static::extract($data, $keyPath);
@@ -468,17 +468,17 @@ class Hash
         }
 
         $vals = null;
-        if (!empty($valuePath) && is_array($valuePath)) {
-            $format = array_shift($valuePath);
+        if (!empty($valuePath) && \is_array($valuePath)) {
+            $format = \array_shift($valuePath);
             $vals = static::format($data, $valuePath, $format);
         } elseif (!empty($valuePath)) {
             $vals = static::extract($data, $valuePath);
         }
         if (empty($vals)) {
-            $vals = array_fill(0, count($keys), null);
+            $vals = \array_fill(0, \count($keys), null);
         }
 
-        if (count($keys) !== count($vals)) {
+        if (\count($keys) !== \count($vals)) {
             throw new RuntimeException(
                 'Hash::combine() needs an equal number of keys + values.'
             );
@@ -487,7 +487,7 @@ class Hash
         if ($groupPath !== null) {
             $group = static::extract($data, $groupPath);
             if (!empty($group)) {
-                $c = count($keys);
+                $c = \count($keys);
                 $out = [];
                 for ($i = 0; $i < $c; $i++) {
                     if (!isset($group[$i])) {
@@ -506,7 +506,7 @@ class Hash
             return [];
         }
 
-        return array_combine($keys, $vals);
+        return \array_combine($keys, $vals);
     }
 
     /**
@@ -532,7 +532,7 @@ class Hash
     public static function format(array $data, array $paths, $format)
     {
         $extracted = [];
-        $count = count($paths);
+        $count = \count($paths);
 
         if (!$count) {
             return null;
@@ -543,17 +543,17 @@ class Hash
         }
         $out = [];
         $data = $extracted;
-        $count = count($data[0]);
+        $count = \count($data[0]);
 
-        $countTwo = count($data);
+        $countTwo = \count($data);
         for ($j = 0; $j < $count; $j++) {
             $args = [];
             for ($i = 0; $i < $countTwo; $i++) {
-                if (array_key_exists($j, $data[$i])) {
+                if (\array_key_exists($j, $data[$i])) {
                     $args[] = $data[$i][$j];
                 }
             }
-            $out[] = vsprintf($format, $args);
+            $out[] = \vsprintf($format, $args);
         }
 
         return $out;
@@ -575,23 +575,23 @@ class Hash
         $stack = [];
 
         while (!empty($needle)) {
-            $key = key($needle);
+            $key = \key($needle);
             $val = $needle[$key];
             unset($needle[$key]);
 
-            if (array_key_exists($key, $data) && is_array($val)) {
+            if (\array_key_exists($key, $data) && \is_array($val)) {
                 $next = $data[$key];
                 unset($data[$key]);
 
                 if (!empty($val)) {
                     $stack[] = [$val, $next];
                 }
-            } elseif (!array_key_exists($key, $data) || $data[$key] != $val) {
+            } elseif (!\array_key_exists($key, $data) || $data[$key] != $val) {
                 return false;
             }
 
             if (empty($needle) && !empty($stack)) {
-                list($needle, $data) = array_pop($stack);
+                list($needle, $data) = \array_pop($stack);
             }
         }
 
@@ -614,11 +614,11 @@ class Hash
     public static function check(array $data, $path)
     {
         $results = static::extract($data, $path);
-        if (!is_array($results)) {
+        if (!\is_array($results)) {
             return false;
         }
 
-        return count($results) > 0;
+        return \count($results) > 0;
     }
 
     /**
@@ -633,12 +633,12 @@ class Hash
     public static function filter(array $data, $callback = ['self', '_filter'])
     {
         foreach ($data as $k => $v) {
-            if (is_array($v)) {
+            if (\is_array($v)) {
                 $data[$k] = static::filter($v, $callback);
             }
         }
 
-        return array_filter($data, $callback);
+        return \array_filter($data, $callback);
     }
 
     /**
@@ -668,26 +668,26 @@ class Hash
         $stack = [];
         $path = null;
 
-        reset($data);
+        \reset($data);
         while (!empty($data)) {
-            $key = key($data);
+            $key = \key($data);
             $element = $data[$key];
             unset($data[$key]);
 
-            if (is_array($element) && !empty($element)) {
+            if (\is_array($element) && !empty($element)) {
                 if (!empty($data)) {
                     $stack[] = [$data, $path];
                 }
                 $data = $element;
-                reset($data);
+                \reset($data);
                 $path .= $key . $separator;
             } else {
                 $result[$path . $key] = $element;
             }
 
             if (empty($data) && !empty($stack)) {
-                list($data, $path) = array_pop($stack);
-                reset($data);
+                list($data, $path) = \array_pop($stack);
+                \reset($data);
             }
         }
 
@@ -710,12 +710,12 @@ class Hash
     {
         $result = [];
         foreach ($data as $flat => $value) {
-            $keys = explode($separator, $flat);
-            $keys = array_reverse($keys);
+            $keys = \explode($separator, $flat);
+            $keys = \array_reverse($keys);
             $child = [
                 $keys[0] => $value
             ];
-            array_shift($keys);
+            \array_shift($keys);
             foreach ($keys as $k) {
                 $child = [
                     $k => $child
@@ -745,7 +745,7 @@ class Hash
      */
     public static function merge(array $data, $merge)
     {
-        $args = array_slice(func_get_args(), 1);
+        $args = \array_slice(\func_get_args(), 1);
         $return = $data;
         $stack = [];
 
@@ -770,7 +770,7 @@ class Hash
         while (!empty($stack)) {
             foreach ($stack as $curKey => &$curMerge) {
                 foreach ($curMerge[0] as $key => &$val) {
-                    $isArray = is_array($curMerge[1]);
+                    $isArray = \is_array($curMerge[1]);
                     if ($isArray && !empty($curMerge[1][$key]) && (array)$curMerge[1][$key] === $curMerge[1][$key] && (array)$val === $val) {
                         // Recurse into the current merge data as it is an array.
                         $stack[] = [&$val, &$curMerge[1][$key]];
@@ -799,7 +799,7 @@ class Hash
             return false;
         }
 
-        return $data === array_filter($data, 'is_numeric');
+        return $data === \array_filter($data, 'is_numeric');
     }
 
     /**
@@ -818,10 +818,10 @@ class Hash
         if (empty($data)) {
             return 0;
         }
-        reset($data);
+        \reset($data);
         $depth = 1;
-        while ($elem = array_shift($data)) {
-            if (is_array($elem)) {
+        while ($elem = \array_shift($data)) {
+            if (\is_array($elem)) {
                 $depth++;
                 $data = $elem;
             } else {
@@ -843,9 +843,9 @@ class Hash
     public static function maxDimensions(array $data)
     {
         $depth = [];
-        if (is_array($data) && !empty($data)) {
+        if (\is_array($data) && !empty($data)) {
             foreach ($data as $value) {
-                if (is_array($value)) {
+                if (\is_array($value)) {
                     $depth[] = static::maxDimensions($value) + 1;
                 } else {
                     $depth[] = 1;
@@ -853,7 +853,7 @@ class Hash
             }
         }
 
-        return empty($depth) ? 0 : max($depth);
+        return empty($depth) ? 0 : \max($depth);
     }
 
     /**
@@ -870,7 +870,7 @@ class Hash
     {
         $values = (array)static::extract($data, $path);
 
-        return array_map($function, $values);
+        return \array_map($function, $values);
     }
 
     /**
@@ -886,7 +886,7 @@ class Hash
     {
         $values = (array)static::extract($data, $path);
 
-        return array_reduce($values, $function);
+        return \array_reduce($values, $function);
     }
 
     /**
@@ -918,7 +918,7 @@ class Hash
     {
         $values = (array)static::extract($data, $path);
 
-        return call_user_func($function, $values);
+        return \call_user_func($function, $values);
     }
 
     /**
@@ -959,40 +959,40 @@ class Hash
         if (empty($data)) {
             return [];
         }
-        $originalKeys = array_keys($data);
-        $numeric = is_numeric(implode('', $originalKeys));
+        $originalKeys = \array_keys($data);
+        $numeric = \is_numeric(\implode('', $originalKeys));
         if ($numeric) {
-            $data = array_values($data);
+            $data = \array_values($data);
         }
         $sortValues = static::extract($data, $path);
-        $dataCount = count($data);
+        $dataCount = \count($data);
 
         // Make sortValues match the data length, as some keys could be missing
         // the sorted value path.
-        $missingData = count($sortValues) < $dataCount;
+        $missingData = \count($sortValues) < $dataCount;
         if ($missingData && $numeric) {
             // Get the path without the leading '{n}.'
-            $itemPath = substr($path, 4);
+            $itemPath = \substr($path, 4);
             foreach ($data as $key => $value) {
                 $sortValues[$key] = static::get($value, $itemPath);
             }
         } elseif ($missingData) {
-            $sortValues = array_pad($sortValues, $dataCount, null);
+            $sortValues = \array_pad($sortValues, $dataCount, null);
         }
         $result = static::_squash($sortValues);
         $keys = static::extract($result, '{n}.id');
         $values = static::extract($result, '{n}.value');
 
-        $dir = strtolower($dir);
+        $dir = \strtolower($dir);
         $ignoreCase = false;
 
         // $type can be overloaded for case insensitive sort
-        if (is_array($type)) {
+        if (\is_array($type)) {
             $type += ['ignoreCase' => false, 'type' => 'regular'];
             $ignoreCase = $type['ignoreCase'];
             $type = $type['type'];
         }
-        $type = strtolower($type);
+        $type = \strtolower($type);
 
         if ($dir === 'asc') {
             $dir = SORT_ASC;
@@ -1011,11 +1011,11 @@ class Hash
             $type = SORT_REGULAR;
         }
         if ($ignoreCase) {
-            $values = array_map('mb_strtolower', $values);
+            $values = \array_map('mb_strtolower', $values);
         }
-        array_multisort($values, $dir, $type, $keys, $dir, $type);
+        \array_multisort($values, $dir, $type, $keys, $dir, $type);
         $sorted = [];
-        $keys = array_unique($keys);
+        $keys = \array_unique($keys);
 
         foreach ($keys as $k) {
             if ($numeric) {
@@ -1048,8 +1048,8 @@ class Hash
             if ($key !== null) {
                 $id = $key;
             }
-            if (is_array($r) && !empty($r)) {
-                $stack = array_merge($stack, static::_squash($r, $id));
+            if (\is_array($r) && !empty($r)) {
+                $stack = \array_merge($stack, static::_squash($r, $id));
             } else {
                 $stack[] = ['id' => $id, 'value' => $r];
             }
@@ -1077,12 +1077,12 @@ class Hash
         if (empty($compare)) {
             return (array)$data;
         }
-        $intersection = array_intersect_key($data, $compare);
-        while (($key = key($intersection)) !== null) {
+        $intersection = \array_intersect_key($data, $compare);
+        while (($key = \key($intersection)) !== null) {
             if ($data[$key] == $compare[$key]) {
                 unset($data[$key], $compare[$key]);
             }
-            next($intersection);
+            \next($intersection);
         }
 
         return $data + $compare;
@@ -1105,9 +1105,9 @@ class Hash
             return $data;
         }
         foreach ($compare as $key => $value) {
-            if (!array_key_exists($key, $data)) {
+            if (!\array_key_exists($key, $data)) {
                 $data[$key] = $value;
-            } elseif (is_array($value)) {
+            } elseif (\is_array($value)) {
                 $data[$key] = static::mergeDiff($data[$key], $compare[$key]);
             }
         }
@@ -1125,13 +1125,13 @@ class Hash
      */
     public static function normalize(array $data, $assoc = true)
     {
-        $keys = array_keys($data);
-        $count = count($keys);
+        $keys = \array_keys($data);
+        $count = \count($keys);
         $numeric = true;
 
         if (!$assoc) {
             for ($i = 0; $i < $count; $i++) {
-                if (!is_int($keys[$i])) {
+                if (!\is_int($keys[$i])) {
                     $numeric = false;
                     break;
                 }
@@ -1140,7 +1140,7 @@ class Hash
         if (!$numeric || $assoc) {
             $newList = [];
             for ($i = 0; $i < $count; $i++) {
-                if (is_int($keys[$i])) {
+                if (\is_int($keys[$i])) {
                     $newList[$data[$keys[$i]]] = null;
                 } else {
                     $newList[$keys[$i]] = $data[$keys[$i]];
@@ -1177,7 +1177,7 @@ class Hash
             return $data;
         }
 
-        $alias = key(current($data));
+        $alias = \key(\current($data));
         $options += [
             'idPath' => "{n}.$alias.id",
             'parentPath' => "{n}.$alias.parent_id",
@@ -1188,11 +1188,11 @@ class Hash
         $return = $idMap = [];
         $ids = static::extract($data, $options['idPath']);
 
-        $idKeys = explode('.', $options['idPath']);
-        array_shift($idKeys);
+        $idKeys = \explode('.', $options['idPath']);
+        \array_shift($idKeys);
 
-        $parentKeys = explode('.', $options['parentPath']);
-        array_shift($parentKeys);
+        $parentKeys = \explode('.', $options['parentPath']);
+        \array_shift($parentKeys);
 
         foreach ($data as $result) {
             $result[$options['children']] = [];
@@ -1201,11 +1201,11 @@ class Hash
             $parentId = static::get($result, $parentKeys);
 
             if (isset($idMap[$id][$options['children']])) {
-                $idMap[$id] = array_merge($result, (array)$idMap[$id]);
+                $idMap[$id] = \array_merge($result, (array)$idMap[$id]);
             } else {
-                $idMap[$id] = array_merge($result, [$options['children'] => []]);
+                $idMap[$id] = \array_merge($result, [$options['children'] => []]);
             }
-            if (!$parentId || !in_array($parentId, $ids)) {
+            if (!$parentId || !\in_array($parentId, $ids)) {
                 $return[] =& $idMap[$id];
             } else {
                 $idMap[$parentId][$options['children']][] =& $idMap[$id];
@@ -1230,6 +1230,6 @@ class Hash
             }
         }
 
-        return array_values($return);
+        return \array_values($return);
     }
 }

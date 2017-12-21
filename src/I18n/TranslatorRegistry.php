@@ -259,7 +259,7 @@ class TranslatorRegistry extends TranslatorLocator
         $loader = $this->_loaders[$name]($name, $locale);
         $package = $loader;
 
-        if (!is_callable($loader)) {
+        if (!\is_callable($loader)) {
             $loader = function () use ($package) {
                 return $package;
             };

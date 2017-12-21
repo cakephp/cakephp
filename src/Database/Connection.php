@@ -129,7 +129,7 @@ class Connection implements ConnectionInterface
      */
     public function __destruct()
     {
-        if ($this->_transactionStarted && class_exists('Cake\Log\Log')) {
+        if ($this->_transactionStarted && \class_exists('Cake\Log\Log')) {
             Log::warning('The connection is going to be closed but there is an active transaction.');
         }
     }
@@ -166,15 +166,15 @@ class Connection implements ConnectionInterface
      */
     public function setDriver($driver, $config = [])
     {
-        if (is_string($driver)) {
+        if (\is_string($driver)) {
             $className = App::className($driver, 'Database/Driver');
-            if (!$className || !class_exists($className)) {
+            if (!$className || !\class_exists($className)) {
                 throw new MissingDriverException(['driver' => $driver]);
             }
             $driver = new $className($config);
         }
         if (!$driver->enabled()) {
-            throw new MissingExtensionException(['driver' => get_class($driver)]);
+            throw new MissingExtensionException(['driver' => \get_class($driver)]);
         }
 
         $this->_driver = $driver;
@@ -398,7 +398,7 @@ class Connection implements ConnectionInterface
      */
     public function insert($table, array $data, array $types = [])
     {
-        $columns = array_keys($data);
+        $columns = \array_keys($data);
 
         return $this->newQuery()->insert($columns, $types)
             ->into($table)
@@ -894,7 +894,7 @@ class Connection implements ConnectionInterface
             'database' => '*****',
             'port' => '*****'
         ];
-        $replace = array_intersect_key($secrets, $this->_config);
+        $replace = \array_intersect_key($secrets, $this->_config);
         $config = $replace + $this->_config;
 
         return [

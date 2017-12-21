@@ -257,7 +257,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function __construct($config = [])
     {
-        if (is_string($config)) {
+        if (\is_string($config)) {
             $config = ['url' => $config];
         }
         $config += [
@@ -286,7 +286,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     protected function _setConfig($config)
     {
         if (!empty($config['url']) && $config['url'][0] === '/') {
-            $config['url'] = substr($config['url'], 1);
+            $config['url'] = \substr($config['url'], 1);
         }
 
         if (empty($config['session'])) {
@@ -308,13 +308,13 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
         // This is required for backwards compatibility and keeping
         // UriInterface implementations happy.
         $querystr = '';
-        if (strpos($config['url'], '?') !== false) {
-            list($config['url'], $querystr) = explode('?', $config['url']);
+        if (\strpos($config['url'], '?') !== false) {
+            list($config['url'], $querystr) = \explode('?', $config['url']);
         }
         if ($config['url']) {
             $uri = $uri->withPath('/' . $config['url']);
         }
-        if (strlen($querystr)) {
+        if (\strlen($querystr)) {
             $uri = $uri->withQuery($querystr);
         }
 
@@ -322,7 +322,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
         $this->base = $config['base'];
         $this->webroot = $config['webroot'];
 
-        $this->url = substr($uri->getPath(), 1);
+        $this->url = \substr($uri->getPath(), 1);
         $this->here = $this->base . '/' . $this->url;
 
         if (isset($config['input'])) {
@@ -354,11 +354,11 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
         $method = $this->getEnv('REQUEST_METHOD');
         $override = false;
 
-        if (in_array($method, ['PUT', 'DELETE', 'PATCH']) &&
-            strpos($this->contentType(), 'application/x-www-form-urlencoded') === 0
+        if (\in_array($method, ['PUT', 'DELETE', 'PATCH']) &&
+            \strpos($this->contentType(), 'application/x-www-form-urlencoded') === 0
         ) {
             $data = $this->input();
-            parse_str($data, $data);
+            \parse_str($data, $data);
         }
         if ($this->hasHeader('X-Http-Method-Override')) {
             $data['_method'] = $this->getHeaderLine('X-Http-Method-Override');
@@ -371,7 +371,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
             $override = true;
         }
 
-        if ($override && !in_array($this->_environment['REQUEST_METHOD'], ['PUT', 'POST', 'DELETE', 'PATCH'])) {
+        if ($override && !\in_array($this->_environment['REQUEST_METHOD'], ['PUT', 'POST', 'DELETE', 'PATCH'])) {
             $data = [];
         }
 
@@ -387,10 +387,10 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     protected function _processGet($query, $queryString = '')
     {
-        $unsetUrl = '/' . str_replace(['.', ' '], '_', urldecode($this->url));
+        $unsetUrl = '/' . \str_replace(['.', ' '], '_', \urldecode($this->url));
         unset($query[$unsetUrl], $query[$this->base . $unsetUrl]);
-        if (strlen($queryString)) {
-            parse_str($queryString, $queryArgs);
+        if (\strlen($queryString)) {
+            \parse_str($queryString, $queryArgs);
             $query += $queryArgs;
         }
 
@@ -406,7 +406,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     protected function _processFiles($post, $files)
     {
-        if (!is_array($files)) {
+        if (!\is_array($files)) {
             return $post;
         }
         $fileData = [];
@@ -416,14 +416,14 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
                 continue;
             }
 
-            if (is_array($value) && isset($value['tmp_name'])) {
+            if (\is_array($value) && isset($value['tmp_name'])) {
                 $fileData[$key] = $this->_createUploadedFile($value);
                 continue;
             }
 
-            throw new InvalidArgumentException(sprintf(
+            throw new InvalidArgumentException(\sprintf(
                 'Invalid value in FILES "%s"',
-                json_encode($value)
+                \json_encode($value)
             ));
         }
         $this->uploadedFiles = $fileData;
@@ -459,7 +459,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     protected function _createUploadedFile(array $value)
     {
-        if (is_array($value['tmp_name'])) {
+        if (\is_array($value['tmp_name'])) {
             return $this->_normalizeNestedFiles($value);
         }
 
@@ -484,7 +484,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     protected function _normalizeNestedFiles(array $files = [])
     {
         $normalizedFiles = [];
-        foreach (array_keys($files['tmp_name']) as $key) {
+        foreach (\array_keys($files['tmp_name']) as $key) {
             $spec = [
                 'tmp_name' => $files['tmp_name'][$key],
                 'size' => $files['size'][$key],
@@ -550,15 +550,15 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     public function clientIp()
     {
         if ($this->trustProxy && $this->getEnv('HTTP_X_FORWARDED_FOR')) {
-            $addresses = explode(',', $this->getEnv('HTTP_X_FORWARDED_FOR'));
-            $ipaddr = end($addresses);
+            $addresses = \explode(',', $this->getEnv('HTTP_X_FORWARDED_FOR'));
+            $ipaddr = \end($addresses);
         } elseif ($this->trustProxy && $this->getEnv('HTTP_CLIENT_IP')) {
             $ipaddr = $this->getEnv('HTTP_CLIENT_IP');
         } else {
             $ipaddr = $this->getEnv('REMOTE_ADDR');
         }
 
-        return trim($ipaddr);
+        return \trim($ipaddr);
     }
 
     /**
@@ -574,9 +574,9 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
 
         $base = Configure::read('App.fullBaseUrl') . $this->webroot;
         if (!empty($ref) && !empty($base)) {
-            if ($local && strpos($ref, $base) === 0) {
-                $ref = substr($ref, strlen($base));
-                if (!strlen($ref) || strpos($ref, '//') === 0) {
+            if ($local && \strpos($ref, $base) === 0) {
+                $ref = \substr($ref, \strlen($base));
+                if (!\strlen($ref) || \strpos($ref, '//') === 0) {
                     $ref = '/';
                 }
                 if ($ref[0] !== '/') {
@@ -603,14 +603,14 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function __call($name, $params)
     {
-        if (strpos($name, 'is') === 0) {
-            $type = strtolower(substr($name, 2));
+        if (\strpos($name, 'is') === 0) {
+            $type = \strtolower(\substr($name, 2));
 
-            array_unshift($params, $type);
+            \array_unshift($params, $type);
 
             return $this->is(...$params);
         }
-        throw new BadMethodCallException(sprintf('Method %s does not exist', $name));
+        throw new BadMethodCallException(\sprintf('Method %s does not exist', $name));
     }
 
     /**
@@ -660,13 +660,13 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function is($type, ...$args)
     {
-        if (is_array($type)) {
-            $result = array_map([$this, 'is'], $type);
+        if (\is_array($type)) {
+            $result = \array_map([$this, 'is'], $type);
 
-            return count(array_filter($result)) > 0;
+            return \count(\array_filter($result)) > 0;
         }
 
-        $type = strtolower($type);
+        $type = \strtolower($type);
         if (!isset(static::$_detectors[$type])) {
             return false;
         }
@@ -701,8 +701,8 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     protected function _is($type, $args)
     {
         $detect = static::$_detectors[$type];
-        if (is_callable($detect)) {
-            array_unshift($args, $this);
+        if (\is_callable($detect)) {
+            \array_unshift($args, $this);
 
             return $detect(...$args);
         }
@@ -730,9 +730,9 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     protected function _acceptHeaderDetector($detect)
     {
-        $acceptHeaders = explode(',', $this->getEnv('HTTP_ACCEPT'));
+        $acceptHeaders = \explode(',', $this->getEnv('HTTP_ACCEPT'));
         foreach ($detect['accept'] as $header) {
-            if (in_array($header, $acceptHeaders)) {
+            if (\in_array($header, $acceptHeaders)) {
                 return true;
             }
         }
@@ -751,8 +751,8 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
         foreach ($detect['header'] as $header => $value) {
             $header = $this->getEnv('http_' . $header);
             if ($header !== null) {
-                if (!is_string($value) && !is_bool($value) && is_callable($value)) {
-                    return call_user_func($value, $header);
+                if (!\is_string($value) && !\is_bool($value) && \is_callable($value)) {
+                    return \call_user_func($value, $header);
                 }
 
                 return ($header === $value);
@@ -777,7 +777,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
             return isset($this->params[$key]) ? $this->params[$key] == $value : false;
         }
         if (isset($detect['options'])) {
-            return isset($this->params[$key]) ? in_array($this->params[$key], $detect['options']) : false;
+            return isset($this->params[$key]) ? \in_array($this->params[$key], $detect['options']) : false;
         }
 
         return false;
@@ -796,12 +796,12 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
                 return $this->getEnv($detect['env']) == $detect['value'];
             }
             if (isset($detect['pattern'])) {
-                return (bool)preg_match($detect['pattern'], $this->getEnv($detect['env']));
+                return (bool)\preg_match($detect['pattern'], $this->getEnv($detect['env']));
             }
             if (isset($detect['options'])) {
-                $pattern = '/' . implode('|', $detect['options']) . '/i';
+                $pattern = '/' . \implode('|', $detect['options']) . '/i';
 
-                return (bool)preg_match($pattern, $this->getEnv($detect['env']));
+                return (bool)\preg_match($pattern, $this->getEnv($detect['env']));
             }
         }
 
@@ -821,9 +821,9 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function isAll(array $types)
     {
-        $result = array_filter(array_map([$this, 'is'], $types));
+        $result = \array_filter(\array_map([$this, 'is'], $types));
 
-        return count($result) === count($types);
+        return \count($result) === \count($types);
     }
 
     /**
@@ -882,8 +882,8 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public static function addDetector($name, $callable)
     {
-        $name = strtolower($name);
-        if (is_callable($callable)) {
+        $name = \strtolower($name);
+        if (\is_callable($callable)) {
             static::$_detectors[$name] = $callable;
 
             return;
@@ -903,7 +903,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function addParams(array $params)
     {
-        $this->params = array_merge($this->params, $params);
+        $this->params = \array_merge($this->params, $params);
 
         return $this;
     }
@@ -937,10 +937,10 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     {
         $url = $this->here;
         if (!empty($this->query)) {
-            $url .= '?' . http_build_query($this->query, null, '&');
+            $url .= '?' . \http_build_query($this->query, null, '&');
         }
         if (!$base) {
-            $url = preg_replace('/^' . preg_quote($this->base, '/') . '/', '', $url, 1);
+            $url = \preg_replace('/^' . \preg_quote($this->base, '/') . '/', '', $url, 1);
         }
 
         return $url;
@@ -954,8 +954,8 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     protected function normalizeHeaderName($name)
     {
-        $name = str_replace('-', '_', strtoupper($name));
-        if (!in_array($name, ['CONTENT_LENGTH', 'CONTENT_TYPE'])) {
+        $name = \str_replace('-', '_', \strtoupper($name));
+        if (!\in_array($name, ['CONTENT_LENGTH', 'CONTENT_TYPE'])) {
             $name = 'HTTP_' . $name;
         }
 
@@ -997,15 +997,15 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
         $headers = [];
         foreach ($this->_environment as $key => $value) {
             $name = null;
-            if (strpos($key, 'HTTP_') === 0) {
-                $name = substr($key, 5);
+            if (\strpos($key, 'HTTP_') === 0) {
+                $name = \substr($key, 5);
             }
-            if (strpos($key, 'CONTENT_') === 0) {
+            if (\strpos($key, 'CONTENT_') === 0) {
                 $name = $key;
             }
             if ($name !== null) {
-                $name = strtr(strtolower($name), '_', ' ');
-                $name = strtr(ucwords($name), ' ', '-');
+                $name = \strtr(\strtolower($name), '_', ' ');
+                $name = \strtr(\ucwords($name), ' ', '-');
                 $headers[$name] = (array)$value;
             }
         }
@@ -1059,7 +1059,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     {
         $value = $this->getHeader($name);
 
-        return implode(', ', $value);
+        return \implode(', ', $value);
     }
 
     /**
@@ -1098,7 +1098,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
         if (isset($new->_environment[$name])) {
             $existing = (array)$new->_environment[$name];
         }
-        $existing = array_merge($existing, (array)$value);
+        $existing = \array_merge($existing, (array)$value);
         $new->_environment[$name] = $existing;
 
         return $new;
@@ -1161,10 +1161,10 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     {
         $new = clone $this;
 
-        if (!is_string($method) ||
-            !preg_match('/^[!#$%&\'*+.^_`\|~0-9a-z-]+$/i', $method)
+        if (!\is_string($method) ||
+            !\preg_match('/^[!#$%&\'*+.^_`\|~0-9a-z-]+$/i', $method)
         ) {
-            throw new InvalidArgumentException(sprintf(
+            throw new InvalidArgumentException(\sprintf(
                 'Unsupported HTTP method "%s" provided',
                 $method
             ));
@@ -1268,10 +1268,10 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function domain($tldLength = 1)
     {
-        $segments = explode('.', $this->host());
-        $domain = array_slice($segments, -1 * ($tldLength + 1));
+        $segments = \explode('.', $this->host());
+        $domain = \array_slice($segments, -1 * ($tldLength + 1));
 
-        return implode('.', $domain);
+        return \implode('.', $domain);
     }
 
     /**
@@ -1283,9 +1283,9 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function subdomains($tldLength = 1)
     {
-        $segments = explode('.', $this->host());
+        $segments = \explode('.', $this->host());
 
-        return array_slice($segments, 0, -1 * ($tldLength + 1));
+        return \array_slice($segments, 0, -1 * ($tldLength + 1));
     }
 
     /**
@@ -1316,13 +1316,13 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
         $raw = $this->parseAccept();
         $accept = [];
         foreach ($raw as $types) {
-            $accept = array_merge($accept, $types);
+            $accept = \array_merge($accept, $types);
         }
         if ($type === null) {
             return $accept;
         }
 
-        return in_array($type, $accept);
+        return \in_array($type, $accept);
     }
 
     /**
@@ -1359,18 +1359,18 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
         $accept = [];
         foreach ($raw as $languages) {
             foreach ($languages as &$lang) {
-                if (strpos($lang, '_')) {
-                    $lang = str_replace('_', '-', $lang);
+                if (\strpos($lang, '_')) {
+                    $lang = \str_replace('_', '-', $lang);
                 }
-                $lang = strtolower($lang);
+                $lang = \strtolower($lang);
             }
-            $accept = array_merge($accept, $languages);
+            $accept = \array_merge($accept, $languages);
         }
         if ($language === null) {
             return $accept;
         }
 
-        return in_array(strtolower($language), $accept);
+        return \in_array(\strtolower($language), $accept);
     }
 
     /**
@@ -1385,19 +1385,19 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     protected function _parseAcceptWithQualifier($header)
     {
         $accept = [];
-        $header = explode(',', $header);
-        foreach (array_filter($header) as $value) {
+        $header = \explode(',', $header);
+        foreach (\array_filter($header) as $value) {
             $prefValue = '1.0';
-            $value = trim($value);
+            $value = \trim($value);
 
-            $semiPos = strpos($value, ';');
+            $semiPos = \strpos($value, ';');
             if ($semiPos !== false) {
-                $params = explode(';', $value);
-                $value = trim($params[0]);
+                $params = \explode(';', $value);
+                $value = \trim($params[0]);
                 foreach ($params as $param) {
-                    $qPos = strpos($param, 'q=');
+                    $qPos = \strpos($param, 'q=');
                     if ($qPos !== false) {
-                        $prefValue = substr($param, $qPos + 2);
+                        $prefValue = \substr($param, $qPos + 2);
                     }
                 }
             }
@@ -1409,7 +1409,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
                 $accept[$prefValue][] = $value;
             }
         }
-        krsort($accept);
+        \krsort($accept);
 
         return $accept;
     }
@@ -1485,7 +1485,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function data($name = null, ...$args)
     {
-        if (count($args) === 1) {
+        if (\count($args) === 1) {
             $this->data = Hash::insert($this->data, $name, $args[0]);
 
             return $this;
@@ -1525,7 +1525,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
         if ($name === null) {
             return $this->data;
         }
-        if (!is_array($this->data) && $name) {
+        if (!\is_array($this->data) && $name) {
             return $default;
         }
 
@@ -1543,7 +1543,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function param($name, ...$args)
     {
-        if (count($args) === 1) {
+        if (\count($args) === 1) {
             $this->params = Hash::insert($this->params, $name, $args[0]);
 
             return $this;
@@ -1581,9 +1581,9 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
         $this->stream->rewind();
         $input = $this->stream->getContents();
         if ($callback) {
-            array_unshift($args, $input);
+            \array_unshift($args, $input);
 
-            return call_user_func_array($callback, $args);
+            return \call_user_func_array($callback, $args);
         }
 
         return $input;
@@ -1723,7 +1723,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
         }
 
         // Lazily populate this data as it is generally not used.
-        preg_match('/^HTTP\/([\d.]+)$/', $this->getEnv('SERVER_PROTOCOL'), $match);
+        \preg_match('/^HTTP\/([\d.]+)$/', $this->getEnv('SERVER_PROTOCOL'), $match);
         $protocol = '1.1';
         if (isset($match[1])) {
             $protocol = $match[1];
@@ -1744,7 +1744,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function withProtocolVersion($version)
     {
-        if (!preg_match('/^(1\.[01]|2)$/', $version)) {
+        if (!\preg_match('/^(1\.[01]|2)$/', $version)) {
             throw new InvalidArgumentException("Unsupported protocol version '{$version}' provided");
         }
         $new = clone $this;
@@ -1764,8 +1764,8 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function getEnv($key, $default = null)
     {
-        $key = strtoupper($key);
-        if (!array_key_exists($key, $this->_environment)) {
+        $key = \strtoupper($key);
+        if (!\array_key_exists($key, $this->_environment)) {
             $this->_environment[$key] = env($key);
         }
 
@@ -1812,8 +1812,8 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
             return $this;
         }
 
-        $key = strtoupper($key);
-        if (!array_key_exists($key, $this->_environment)) {
+        $key = \strtoupper($key);
+        if (!\array_key_exists($key, $this->_environment)) {
             $this->_environment[$key] = env($key);
         }
 
@@ -1845,7 +1845,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
                 return true;
             }
         }
-        $allowed = strtoupper(implode(', ', $methods));
+        $allowed = \strtoupper(\implode(', ', $methods));
         $e = new MethodNotAllowedException();
         $e->responseHeader('Allow', $allowed);
         throw $e;
@@ -1859,9 +1859,9 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     protected function _readInput()
     {
         if (empty($this->_input)) {
-            $fh = fopen('php://input', 'rb');
-            $content = stream_get_contents($fh);
-            fclose($fh);
+            $fh = \fopen('php://input', 'rb');
+            $content = \stream_get_contents($fh);
+            \fclose($fh);
             $this->_input = $content;
         }
 
@@ -1942,7 +1942,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     public function withAttribute($name, $value)
     {
         $new = clone $this;
-        if (in_array($name, $this->emulatedAttributes, true)) {
+        if (\in_array($name, $this->emulatedAttributes, true)) {
             $new->{$name} = $value;
         } else {
             $new->attributes[$name] = $value;
@@ -1961,7 +1961,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     public function withoutAttribute($name)
     {
         $new = clone $this;
-        if (in_array($name, $this->emulatedAttributes, true)) {
+        if (\in_array($name, $this->emulatedAttributes, true)) {
             throw new InvalidArgumentException(
                 "You cannot unset '$name'. It is a required CakePHP attribute."
             );
@@ -1980,10 +1980,10 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function getAttribute($name, $default = null)
     {
-        if (in_array($name, $this->emulatedAttributes, true)) {
+        if (\in_array($name, $this->emulatedAttributes, true)) {
             return $this->{$name};
         }
-        if (array_key_exists($name, $this->attributes)) {
+        if (\array_key_exists($name, $this->attributes)) {
             return $this->attributes[$name];
         }
 
@@ -2062,7 +2062,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     protected function validateUploadedFiles(array $uploadedFiles, $path)
     {
         foreach ($uploadedFiles as $key => $file) {
-            if (is_array($file)) {
+            if (\is_array($file)) {
                 $this->validateUploadedFiles($file, $key . '.');
                 continue;
             }
@@ -2252,4 +2252,4 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
 }
 
 // @deprecated Add backwards compat alias.
-class_alias('Cake\Http\ServerRequest', 'Cake\Network\Request');
+\class_alias('Cake\Http\ServerRequest', 'Cake\Network\Request');

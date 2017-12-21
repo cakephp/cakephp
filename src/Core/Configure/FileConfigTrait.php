@@ -42,7 +42,7 @@ trait FileConfigTrait
      */
     protected function _getFilePath($key, $checkExists = false)
     {
-        if (strpos($key, '..') !== false) {
+        if (\strpos($key, '..') !== false) {
             throw new Exception('Cannot load/dump configuration files with ../ in them.');
         }
 
@@ -56,14 +56,14 @@ trait FileConfigTrait
 
         $file .= $this->_extension;
 
-        if (!$checkExists || is_file($file)) {
+        if (!$checkExists || \is_file($file)) {
             return $file;
         }
 
-        if (is_file(realpath($file))) {
-            return realpath($file);
+        if (\is_file(\realpath($file))) {
+            return \realpath($file);
         }
 
-        throw new Exception(sprintf('Could not load configuration file: %s', $file));
+        throw new Exception(\sprintf('Could not load configuration file: %s', $file));
     }
 }

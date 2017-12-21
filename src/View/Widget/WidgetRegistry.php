@@ -66,7 +66,7 @@ class WidgetRegistry
         if (!empty($widgets)) {
             $this->add($widgets);
             foreach ($this->_widgets as $key => $widget) {
-                if (is_string($widget) && !class_exists($widget)) {
+                if (\is_string($widget) && !\class_exists($widget)) {
                     $this->load($widget);
                     unset($this->_widgets[$key]);
                 }
@@ -115,7 +115,7 @@ class WidgetRegistry
     public function add(array $widgets)
     {
         foreach ($widgets as $object) {
-            if (is_object($object) &&
+            if (\is_object($object) &&
                 !($object instanceof WidgetInterface)
             ) {
                 throw new RuntimeException(
@@ -141,7 +141,7 @@ class WidgetRegistry
     public function get($name)
     {
         if (!isset($this->_widgets[$name]) && empty($this->_widgets['_default'])) {
-            throw new RuntimeException(sprintf('Unknown widget "%s"', $name));
+            throw new RuntimeException(\sprintf('Unknown widget "%s"', $name));
         }
         if (!isset($this->_widgets[$name])) {
             $name = '_default';
@@ -171,7 +171,7 @@ class WidgetRegistry
      */
     protected function _resolveWidget($widget)
     {
-        $type = gettype($widget);
+        $type = \gettype($widget);
         if ($type === 'object') {
             return $widget;
         }
@@ -180,12 +180,12 @@ class WidgetRegistry
             $widget = [$widget];
         }
 
-        $class = array_shift($widget);
+        $class = \array_shift($widget);
         $className = App::className($class, 'View/Widget', 'Widget');
-        if ($className === false || !class_exists($className)) {
-            throw new RuntimeException(sprintf('Unable to locate widget class "%s"', $class));
+        if ($className === false || !\class_exists($className)) {
+            throw new RuntimeException(\sprintf('Unable to locate widget class "%s"', $class));
         }
-        if ($type === 'array' && count($widget)) {
+        if ($type === 'array' && \count($widget)) {
             $reflection = new ReflectionClass($className);
             $arguments = [$this->_templates];
             foreach ($widget as $requirement) {
@@ -196,7 +196,7 @@ class WidgetRegistry
             $instance = new $className($this->_templates);
         }
         if (!($instance instanceof WidgetInterface)) {
-            throw new RuntimeException(sprintf('"%s" does not implement the WidgetInterface', $className));
+            throw new RuntimeException(\sprintf('"%s" does not implement the WidgetInterface', $className));
         }
 
         return $instance;

@@ -51,7 +51,7 @@ class AssociationCollection implements IteratorAggregate
     {
         list(, $alias) = pluginSplit($alias);
 
-        return $this->_items[strtolower($alias)] = $association;
+        return $this->_items[\strtolower($alias)] = $association;
     }
 
     /**
@@ -62,7 +62,7 @@ class AssociationCollection implements IteratorAggregate
      */
     public function get($alias)
     {
-        $alias = strtolower($alias);
+        $alias = \strtolower($alias);
         if (isset($this->_items[$alias])) {
             return $this->_items[$alias];
         }
@@ -95,7 +95,7 @@ class AssociationCollection implements IteratorAggregate
      */
     public function has($alias)
     {
-        return isset($this->_items[strtolower($alias)]);
+        return isset($this->_items[\strtolower($alias)]);
     }
 
     /**
@@ -105,7 +105,7 @@ class AssociationCollection implements IteratorAggregate
      */
     public function keys()
     {
-        return array_keys($this->_items);
+        return \array_keys($this->_items);
     }
 
     /**
@@ -131,15 +131,15 @@ class AssociationCollection implements IteratorAggregate
      */
     public function getByType($class)
     {
-        $class = array_map('strtolower', (array)$class);
+        $class = \array_map('strtolower', (array)$class);
 
-        $out = array_filter($this->_items, function ($assoc) use ($class) {
-            list(, $name) = namespaceSplit(get_class($assoc));
+        $out = \array_filter($this->_items, function ($assoc) use ($class) {
+            list(, $name) = namespaceSplit(\get_class($assoc));
 
-            return in_array(strtolower($name), $class, true);
+            return \in_array(\strtolower($name), $class, true);
         });
 
-        return array_values($out);
+        return \array_values($out);
     }
 
     /**
@@ -152,7 +152,7 @@ class AssociationCollection implements IteratorAggregate
      */
     public function remove($alias)
     {
-        unset($this->_items[strtolower($alias)]);
+        unset($this->_items[\strtolower($alias)]);
     }
 
     /**
@@ -229,13 +229,13 @@ class AssociationCollection implements IteratorAggregate
     {
         unset($options['associated']);
         foreach ($associations as $alias => $nested) {
-            if (is_int($alias)) {
+            if (\is_int($alias)) {
                 $alias = $nested;
                 $nested = [];
             }
             $relation = $this->get($alias);
             if (!$relation) {
-                $msg = sprintf(
+                $msg = \sprintf(
                     'Cannot save %s, it is not associated to %s',
                     $alias,
                     $table->getAlias()

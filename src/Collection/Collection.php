@@ -38,7 +38,7 @@ class Collection extends IteratorIterator implements CollectionInterface, Serial
      */
     public function __construct($items)
     {
-        if (is_array($items)) {
+        if (\is_array($items)) {
             $items = new ArrayIterator($items);
         }
 
@@ -58,7 +58,7 @@ class Collection extends IteratorIterator implements CollectionInterface, Serial
      */
     public function serialize()
     {
-        return serialize($this->buffered());
+        return \serialize($this->buffered());
     }
 
     /**
@@ -69,7 +69,7 @@ class Collection extends IteratorIterator implements CollectionInterface, Serial
      */
     public function unserialize($collection)
     {
-        $this->__construct(unserialize($collection));
+        $this->__construct(\unserialize($collection));
     }
 
     /**
@@ -95,7 +95,7 @@ class Collection extends IteratorIterator implements CollectionInterface, Serial
     public function __debugInfo()
     {
         return [
-            'count' => iterator_count($this),
+            'count' => \iterator_count($this),
         ];
     }
 }

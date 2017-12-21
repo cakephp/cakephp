@@ -51,7 +51,7 @@ class TupleComparison extends Comparison
         $fields = [];
         $originalFields = $this->getField();
 
-        if (!is_array($originalFields)) {
+        if (!\is_array($originalFields)) {
             $originalFields = [$originalFields];
         }
 
@@ -61,9 +61,9 @@ class TupleComparison extends Comparison
 
         $values = $this->_stringifyValues($generator);
 
-        $field = implode(', ', $fields);
+        $field = \implode(', ', $fields);
 
-        return sprintf($template, $field, $this->_operator, $values);
+        return \sprintf($template, $field, $this->_operator, $values);
     }
 
     /**
@@ -89,9 +89,9 @@ class TupleComparison extends Comparison
             }
 
             $type = $this->_type;
-            $multiType = is_array($type);
+            $multiType = \is_array($type);
             $isMulti = $this->isMulti();
-            $type = $multiType ? $type : str_replace('[]', '', $type);
+            $type = $multiType ? $type : \str_replace('[]', '', $type);
             $type = $type ?: null;
 
             if ($isMulti) {
@@ -101,7 +101,7 @@ class TupleComparison extends Comparison
                     $bound[] = $this->_bindValue($generator, $val, $valType);
                 }
 
-                $values[] = sprintf('(%s)', implode(',', $bound));
+                $values[] = \sprintf('(%s)', \implode(',', $bound));
                 continue;
             }
 
@@ -109,7 +109,7 @@ class TupleComparison extends Comparison
             $values[] = $this->_bindValue($generator, $value, $valType);
         }
 
-        return implode(', ', $values);
+        return \implode(', ', $values);
     }
 
     /**
@@ -187,6 +187,6 @@ class TupleComparison extends Comparison
      */
     public function isMulti()
     {
-        return in_array(strtolower($this->_operator), ['in', 'not in']);
+        return \in_array(\strtolower($this->_operator), ['in', 'not in']);
     }
 }

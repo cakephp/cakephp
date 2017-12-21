@@ -129,7 +129,7 @@ class ConsoleIntegrationTestCase extends TestCase
      */
     public function assertExitCode($expected, $message = '')
     {
-        $message = sprintf(
+        $message = \sprintf(
             'Shell exited with code %d instead of the expected code %d. %s',
             $this->_exitCode,
             $expected,
@@ -146,7 +146,7 @@ class ConsoleIntegrationTestCase extends TestCase
      */
     public function assertOutputEmpty($message = 'stdout was not empty')
     {
-        $output = implode(PHP_EOL, $this->_out->messages());
+        $output = \implode(PHP_EOL, $this->_out->messages());
         $this->assertSame('', $output, $message);
     }
 
@@ -159,7 +159,7 @@ class ConsoleIntegrationTestCase extends TestCase
      */
     public function assertOutputContains($expected, $message = '')
     {
-        $output = implode(PHP_EOL, $this->_out->messages());
+        $output = \implode(PHP_EOL, $this->_out->messages());
         $this->assertContains($expected, $output, $message);
     }
 
@@ -172,7 +172,7 @@ class ConsoleIntegrationTestCase extends TestCase
      */
     public function assertOutputRegExp($pattern, $message = '')
     {
-        $output = implode(PHP_EOL, $this->_out->messages());
+        $output = \implode(PHP_EOL, $this->_out->messages());
         $this->assertRegExp($pattern, $output, $message);
     }
 
@@ -185,10 +185,10 @@ class ConsoleIntegrationTestCase extends TestCase
      */
     protected function assertOutputContainsRow(array $row, $message = '')
     {
-        $row = array_map(function ($cell) {
-            return preg_quote($cell, '/');
+        $row = \array_map(function ($cell) {
+            return \preg_quote($cell, '/');
         }, $row);
-        $cells = implode('\s+\|\s+', $row);
+        $cells = \implode('\s+\|\s+', $row);
         $pattern = '/' . $cells . '/';
         $this->assertOutputRegExp($pattern);
     }
@@ -202,7 +202,7 @@ class ConsoleIntegrationTestCase extends TestCase
      */
     public function assertErrorContains($expected, $message = '')
     {
-        $output = implode(PHP_EOL, $this->_err->messages());
+        $output = \implode(PHP_EOL, $this->_err->messages());
         $this->assertContains($expected, $output, $message);
     }
 
@@ -215,7 +215,7 @@ class ConsoleIntegrationTestCase extends TestCase
      */
     public function assertErrorRegExp($pattern, $message = '')
     {
-        $output = implode(PHP_EOL, $this->_err->messages());
+        $output = \implode(PHP_EOL, $this->_err->messages());
         $this->assertRegExp($pattern, $output, $message);
     }
 
@@ -227,7 +227,7 @@ class ConsoleIntegrationTestCase extends TestCase
      */
     public function assertErrorEmpty($message = 'stderr was not empty')
     {
-        $output = implode(PHP_EOL, $this->_err->messages());
+        $output = \implode(PHP_EOL, $this->_err->messages());
         $this->assertSame('', $output, $message);
     }
 
@@ -255,17 +255,17 @@ class ConsoleIntegrationTestCase extends TestCase
      */
     protected function _commandStringToArgs($command)
     {
-        $charCount = strlen($command);
+        $charCount = \strlen($command);
         $argv = [];
         $arg = '';
         $inDQuote = false;
         $inSQuote = false;
         for ($i = 0; $i < $charCount; $i++) {
-            $char = substr($command, $i, 1);
+            $char = \substr($command, $i, 1);
 
             // end of argument
             if ($char === ' ' && !$inDQuote && !$inSQuote) {
-                if (strlen($arg)) {
+                if (\strlen($arg)) {
                     $argv[] = $arg;
                 }
                 $arg = '';

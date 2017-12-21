@@ -193,14 +193,14 @@ class ConsoleIo
         $size = $size ?: $this->_lastWritten;
 
         // Output backspaces.
-        $this->out(str_repeat("\x08", $size), 0);
+        $this->out(\str_repeat("\x08", $size), 0);
 
         $newBytes = $this->out($message, 0);
 
         // Fill any remaining bytes with spaces.
         $fill = $size - $newBytes;
         if ($fill > 0) {
-            $this->out(str_repeat(' ', $fill), 0);
+            $this->out(\str_repeat(' ', $fill), 0);
         }
         if ($newlines) {
             $this->out($this->nl($newlines), 0);
@@ -235,7 +235,7 @@ class ConsoleIo
      */
     public function nl($multiplier = 1)
     {
-        return str_repeat(ConsoleOutput::LF, $multiplier);
+        return \str_repeat(ConsoleOutput::LF, $multiplier);
     }
 
     /**
@@ -248,7 +248,7 @@ class ConsoleIo
     public function hr($newlines = 0, $width = 79)
     {
         $this->out(null, $newlines);
-        $this->out(str_repeat('-', $width));
+        $this->out(\str_repeat('-', $width));
         $this->out(null, $newlines);
     }
 
@@ -314,24 +314,24 @@ class ConsoleIo
      */
     public function askChoice($prompt, $options, $default = null)
     {
-        if ($options && is_string($options)) {
-            if (strpos($options, ',')) {
-                $options = explode(',', $options);
-            } elseif (strpos($options, '/')) {
-                $options = explode('/', $options);
+        if ($options && \is_string($options)) {
+            if (\strpos($options, ',')) {
+                $options = \explode(',', $options);
+            } elseif (\strpos($options, '/')) {
+                $options = \explode('/', $options);
             } else {
                 $options = [$options];
             }
         }
 
-        $printOptions = '(' . implode('/', $options) . ')';
-        $options = array_merge(
-            array_map('strtolower', $options),
-            array_map('strtoupper', $options),
+        $printOptions = '(' . \implode('/', $options) . ')';
+        $options = \array_merge(
+            \array_map('strtolower', $options),
+            \array_map('strtoupper', $options),
             $options
         );
         $in = '';
-        while ($in === '' || !in_array($in, $options)) {
+        while ($in === '' || !\in_array($in, $options)) {
             $in = $this->_getInput($prompt, $printOptions, $default);
         }
 
@@ -360,7 +360,7 @@ class ConsoleIo
         $this->_out->write('<question>' . $prompt . "</question>$optionsText\n$defaultText> ", 0);
         $result = $this->_in->read();
 
-        $result = trim($result);
+        $result = \trim($result);
         if ($default !== null && ($result === '' || $result === null)) {
             return $default;
         }
@@ -418,7 +418,7 @@ class ConsoleIo
      */
     public function helper($name, array $settings = [])
     {
-        $name = ucfirst($name);
+        $name = \ucfirst($name);
 
         return $this->_helpers->load($name, $settings);
     }

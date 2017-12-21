@@ -196,4 +196,4 @@ class Message
 }
 
 // @deprecated Add backwards compat alias.
-class_alias('Cake\Http\Client\Message', 'Cake\Network\Http\Message');
+\class_alias('Cake\Http\Client\Message', 'Cake\Network\Http\Message');

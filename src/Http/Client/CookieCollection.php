@@ -39,8 +39,8 @@ class CookieCollection extends BaseCollection
      */
     public function store(Response $response, $url)
     {
-        $host = parse_url($url, PHP_URL_HOST);
-        $path = parse_url($url, PHP_URL_PATH);
+        $host = \parse_url($url, PHP_URL_HOST);
+        $path = \parse_url($url, PHP_URL_PATH);
         $path = $path ?: '/';
 
         $header = $response->getHeader('Set-Cookie');
@@ -63,9 +63,9 @@ class CookieCollection extends BaseCollection
      */
     public function get($url)
     {
-        $path = parse_url($url, PHP_URL_PATH) ?: '/';
-        $host = parse_url($url, PHP_URL_HOST);
-        $scheme = parse_url($url, PHP_URL_SCHEME);
+        $path = \parse_url($url, PHP_URL_PATH) ?: '/';
+        $host = \parse_url($url, PHP_URL_HOST);
+        $scheme = \parse_url($url, PHP_URL_SCHEME);
 
         return $this->findMatchingCookies($scheme, $host, $path);
     }
@@ -108,4 +108,4 @@ class CookieCollection extends BaseCollection
 }
 
 // @deprecated Add backwards compat alias.
-class_alias('Cake\Http\Client\CookieCollection', 'Cake\Network\Http\CookieCollection');
+\class_alias('Cake\Http\Client\CookieCollection', 'Cake\Network\Http\CookieCollection');

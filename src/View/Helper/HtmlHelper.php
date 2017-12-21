@@ -232,7 +232,7 @@ class HtmlHelper extends Helper
      */
     public function meta($type, $content = null, array $options = [])
     {
-        if (!is_array($type)) {
+        if (!\is_array($type)) {
             $types = [
                 'rss' => ['type' => 'application/rss+xml', 'rel' => 'alternate', 'title' => $type, 'link' => $content],
                 'atom' => ['type' => 'application/atom+xml', 'title' => $type, 'link' => $content],
@@ -255,7 +255,7 @@ class HtmlHelper extends Helper
             if (isset($types[$type])) {
                 $type = $types[$type];
             } elseif (!isset($options['type']) && $content !== null) {
-                if (is_array($content) && isset($content['_ext'])) {
+                if (\is_array($content) && isset($content['_ext'])) {
                     $type = $types[$content['_ext']];
                 } else {
                     $type = ['name' => $type, 'content' => $content];
@@ -310,7 +310,7 @@ class HtmlHelper extends Helper
     public function charset($charset = null)
     {
         if (empty($charset)) {
-            $charset = strtolower(Configure::read('App.encoding'));
+            $charset = \strtolower(Configure::read('App.encoding'));
         }
 
         return $this->formatTemplate('charset', [
@@ -350,8 +350,8 @@ class HtmlHelper extends Helper
             unset($options['fullBase']);
         } else {
             $url = $this->Url->build($title);
-            $title = htmlspecialchars_decode($url, ENT_QUOTES);
-            $title = h(urldecode($title));
+            $title = \htmlspecialchars_decode($url, ENT_QUOTES);
+            $title = h(\urldecode($title));
             $escapeTitle = false;
         }
 
@@ -364,8 +364,8 @@ class HtmlHelper extends Helper
 
         if ($escapeTitle === true) {
             $title = h($title);
-        } elseif (is_string($escapeTitle)) {
-            $title = htmlentities($title, ENT_QUOTES, $escapeTitle);
+        } elseif (\is_string($escapeTitle)) {
+            $title = \htmlentities($title, ENT_QUOTES, $escapeTitle);
         }
 
         $confirmMessage = null;
@@ -437,7 +437,7 @@ class HtmlHelper extends Helper
     {
         $options += ['once' => true, 'block' => null, 'rel' => 'stylesheet'];
 
-        if (is_array($path)) {
+        if (\is_array($path)) {
             $out = '';
             foreach ($path as $i) {
                 $out .= "\n\t" . $this->css($i, $options);
@@ -449,11 +449,11 @@ class HtmlHelper extends Helper
             return null;
         }
 
-        if (strpos($path, '//') !== false) {
+        if (\strpos($path, '//') !== false) {
             $url = $path;
         } else {
             $url = $this->Url->css($path, $options);
-            $options = array_diff_key($options, ['fullBase' => null, 'pathPrefix' => null]);
+            $options = \array_diff_key($options, ['fullBase' => null, 'pathPrefix' => null]);
         }
 
         if ($options['once'] && isset($this->_includedAssets[__METHOD__][$path])) {
@@ -531,7 +531,7 @@ class HtmlHelper extends Helper
         $defaults = ['block' => null, 'once' => true];
         $options += $defaults;
 
-        if (is_array($url)) {
+        if (\is_array($url)) {
             $out = '';
             foreach ($url as $i) {
                 $out .= "\n\t" . $this->script($i, $options);
@@ -543,9 +543,9 @@ class HtmlHelper extends Helper
             return null;
         }
 
-        if (strpos($url, '//') === false) {
+        if (\strpos($url, '//') === false) {
             $url = $this->Url->script($url, $options);
-            $options = array_diff_key($options, ['fullBase' => null, 'pathPrefix' => null]);
+            $options = \array_diff_key($options, ['fullBase' => null, 'pathPrefix' => null]);
         }
         if ($options['once'] && isset($this->_includedAssets[__METHOD__][$url])) {
             return null;
@@ -623,7 +623,7 @@ class HtmlHelper extends Helper
     public function scriptStart(array $options = [])
     {
         $this->_scriptBlockOptions = $options;
-        ob_start();
+        \ob_start();
     }
 
     /**
@@ -636,7 +636,7 @@ class HtmlHelper extends Helper
      */
     public function scriptEnd()
     {
-        $buffer = ob_get_clean();
+        $buffer = \ob_get_clean();
         $options = $this->_scriptBlockOptions;
         $this->_scriptBlockOptions = [];
 
@@ -667,10 +667,10 @@ class HtmlHelper extends Helper
             $out[] = $key . ':' . $value . ';';
         }
         if ($oneLine) {
-            return implode(' ', $out);
+            return \implode(' ', $out);
         }
 
-        return implode("\n", $out);
+        return \implode("\n", $out);
     }
 
     /**
@@ -703,7 +703,7 @@ class HtmlHelper extends Helper
                 }
             }
 
-            return implode($separator, $out);
+            return \implode($separator, $out);
         }
 
         return null;
@@ -745,7 +745,7 @@ class HtmlHelper extends Helper
         }
 
         $result = '';
-        $crumbCount = count($crumbs);
+        $crumbCount = \count($crumbs);
         $ulOptions = $options;
         foreach ($crumbs as $which => $crumb) {
             $options = [];
@@ -786,7 +786,7 @@ class HtmlHelper extends Helper
     {
         $crumbs = $this->_crumbs;
         if ($startText) {
-            if (!is_array($startText)) {
+            if (!\is_array($startText)) {
                 $startText = [
                     'url' => '/',
                     'text' => $startText
@@ -795,7 +795,7 @@ class HtmlHelper extends Helper
             $startText += ['url' => '/', 'text' => __d('cake', 'Home')];
             list($url, $text) = [$startText['url'], $startText['text']];
             unset($startText['url'], $startText['text']);
-            array_unshift($crumbs, [$text, $url, $startText + ['escape' => $escape]]);
+            \array_unshift($crumbs, [$text, $url, $startText + ['escape' => $escape]]);
         }
 
         return $crumbs;
@@ -835,7 +835,7 @@ class HtmlHelper extends Helper
     public function image($path, array $options = [])
     {
         $path = $this->Url->image($path, $options);
-        $options = array_diff_key($options, ['fullBase' => null, 'pathPrefix' => null]);
+        $options = \array_diff_key($options, ['fullBase' => null, 'pathPrefix' => null]);
 
         if (!isset($options['alt'])) {
             $options['alt'] = '';
@@ -878,20 +878,20 @@ class HtmlHelper extends Helper
     {
         $out = [];
         foreach ($names as $arg) {
-            if (!is_array($arg)) {
+            if (!\is_array($arg)) {
                 $out[] = $this->formatTemplate('tableheader', [
                     'attrs' => $this->templater()->formatAttributes($thOptions),
                     'content' => $arg
                 ]);
             } else {
                 $out[] = $this->formatTemplate('tableheader', [
-                    'attrs' => $this->templater()->formatAttributes(current($arg)),
-                    'content' => key($arg)
+                    'attrs' => $this->templater()->formatAttributes(\current($arg)),
+                    'content' => \key($arg)
                 ]);
             }
         }
 
-        return $this->tableRow(implode(' ', $out), (array)$trOptions);
+        return $this->tableRow(\implode(' ', $out), (array)$trOptions);
     }
 
     /**
@@ -908,7 +908,7 @@ class HtmlHelper extends Helper
      */
     public function tableCells($data, $oddTrOptions = null, $evenTrOptions = null, $useCount = false, $continueOddEven = true)
     {
-        if (empty($data[0]) || !is_array($data[0])) {
+        if (empty($data[0]) || !\is_array($data[0])) {
             $data = [$data];
         }
 
@@ -933,10 +933,10 @@ class HtmlHelper extends Helper
             $count++;
             $cellsOut = $this->_renderCells($line, $useCount);
             $opts = $count % 2 ? $oddTrOptions : $evenTrOptions;
-            $out[] = $this->tableRow(implode(' ', $cellsOut), (array)$opts);
+            $out[] = $this->tableRow(\implode(' ', $cellsOut), (array)$opts);
         }
 
-        return implode("\n", $out);
+        return \implode("\n", $out);
     }
 
     /**
@@ -956,7 +956,7 @@ class HtmlHelper extends Helper
         foreach ($line as $cell) {
             $cellOptions = [];
 
-            if (is_array($cell)) {
+            if (\is_array($cell)) {
                 $cellOptions = $cell[1];
                 $cell = $cell[0];
             }
@@ -1167,16 +1167,16 @@ class HtmlHelper extends Helper
             $tag = null;
         }
 
-        if (is_array($path)) {
+        if (\is_array($path)) {
             $sourceTags = '';
             foreach ($path as &$source) {
-                if (is_string($source)) {
+                if (\is_string($source)) {
                     $source = [
                         'src' => $source,
                     ];
                 }
                 if (!isset($source['type'])) {
-                    $ext = pathinfo($source['src'], PATHINFO_EXTENSION);
+                    $ext = \pathinfo($source['src'], PATHINFO_EXTENSION);
                     $source['type'] = $this->response->getMimeType($ext);
                 }
                 $source['src'] = $this->Url->assetUrl($source['src'], $options);
@@ -1196,12 +1196,12 @@ class HtmlHelper extends Helper
         }
 
         if ($tag === null) {
-            if (is_array($path)) {
+            if (\is_array($path)) {
                 $mimeType = $path[0]['type'];
             } else {
-                $mimeType = $this->response->getMimeType(pathinfo($path, PATHINFO_EXTENSION));
+                $mimeType = $this->response->getMimeType(\pathinfo($path, PATHINFO_EXTENSION));
             }
-            if (preg_match('#^video/#', $mimeType)) {
+            if (\preg_match('#^video/#', $mimeType)) {
                 $tag = 'video';
             } else {
                 $tag = 'audio';
@@ -1213,7 +1213,7 @@ class HtmlHelper extends Helper
         }
         $text = $options['text'];
 
-        $options = array_diff_key($options, [
+        $options = \array_diff_key($options, [
             'tag' => null,
             'fullBase' => null,
             'pathPrefix' => null,
@@ -1267,7 +1267,7 @@ class HtmlHelper extends Helper
 
         $index = 1;
         foreach ($items as $key => $item) {
-            if (is_array($item)) {
+            if (\is_array($item)) {
                 $item = $key . $this->nestedList($item, $options, $itemOptions);
             }
             if (isset($itemOptions['even']) && $index % 2 === 0) {

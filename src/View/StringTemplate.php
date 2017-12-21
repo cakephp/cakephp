@@ -136,7 +136,7 @@ class StringTemplate
         if (empty($this->_configStack)) {
             return;
         }
-        list($this->_config, $this->_compiled) = array_pop($this->_configStack);
+        list($this->_config, $this->_compiled) = \array_pop($this->_configStack);
     }
 
     /**
@@ -157,7 +157,7 @@ class StringTemplate
     public function add(array $templates)
     {
         $this->setConfig($templates);
-        $this->_compileTemplates(array_keys($templates));
+        $this->_compileTemplates(\array_keys($templates));
 
         return $this;
     }
@@ -171,7 +171,7 @@ class StringTemplate
     protected function _compileTemplates(array $templates = [])
     {
         if (empty($templates)) {
-            $templates = array_keys($this->_config);
+            $templates = \array_keys($this->_config);
         }
         foreach ($templates as $name) {
             $template = $this->get($name);
@@ -179,10 +179,10 @@ class StringTemplate
                 $this->_compiled[$name] = [null, null];
             }
 
-            $template = str_replace('%', '%%', $template);
-            preg_match_all('#\{\{([\w\d\._]+)\}\}#', $template, $matches);
+            $template = \str_replace('%', '%%', $template);
+            \preg_match_all('#\{\{([\w\d\._]+)\}\}#', $template, $matches);
             $this->_compiled[$name] = [
-                str_replace($matches[0], '%s', $template),
+                \str_replace($matches[0], '%s', $template),
                 $matches[1]
             ];
         }
@@ -238,13 +238,13 @@ class StringTemplate
         $replace = [];
         foreach ($placeholders as $placeholder) {
             $replacement = isset($data[$placeholder]) ? $data[$placeholder] : null;
-            if (is_array($replacement)) {
-                $replacement = implode('', $replacement);
+            if (\is_array($replacement)) {
+                $replacement = \implode('', $replacement);
             }
             $replace[] = $replacement;
         }
 
-        return vsprintf($template, $replace);
+        return \vsprintf($template, $replace);
     }
 
     /**
@@ -278,11 +278,11 @@ class StringTemplate
         $insertBefore = ' ';
         $options = (array)$options + ['escape' => true];
 
-        if (!is_array($exclude)) {
+        if (!\is_array($exclude)) {
             $exclude = [];
         }
 
-        $exclude = ['escape' => true, 'idPrefix' => true, 'templateVars' => true] + array_flip($exclude);
+        $exclude = ['escape' => true, 'idPrefix' => true, 'templateVars' => true] + \array_flip($exclude);
         $escape = $options['escape'];
         $attributes = [];
 
@@ -291,7 +291,7 @@ class StringTemplate
                 $attributes[] = $this->_formatAttribute($key, $value, $escape);
             }
         }
-        $out = trim(implode(' ', $attributes));
+        $out = \trim(\implode(' ', $attributes));
 
         return $out ? $insertBefore . $out : '';
     }
@@ -307,18 +307,18 @@ class StringTemplate
      */
     protected function _formatAttribute($key, $value, $escape = true)
     {
-        if (is_array($value)) {
-            $value = implode(' ', $value);
+        if (\is_array($value)) {
+            $value = \implode(' ', $value);
         }
-        if (is_numeric($key)) {
+        if (\is_numeric($key)) {
             return "$value=\"$value\"";
         }
         $truthy = [1, '1', true, 'true', $key];
         $isMinimized = isset($this->_compactAttributes[$key]);
-        if (!preg_match('/\A(\w|[.-])+\z/', $key)) {
+        if (!\preg_match('/\A(\w|[.-])+\z/', $key)) {
             $key = h($key);
         }
-        if ($isMinimized && in_array($value, $truthy, true)) {
+        if ($isMinimized && \in_array($value, $truthy, true)) {
             return "$key=\"$key\"";
         }
         if ($isMinimized) {
@@ -343,7 +343,7 @@ class StringTemplate
             return $input;
         }
 
-        if (is_array($input)) {
+        if (\is_array($input)) {
             $class = Hash::get($input, $useIndex, []);
         } else {
             $class = $input;
@@ -351,19 +351,19 @@ class StringTemplate
         }
 
         // Convert and sanitise the inputs
-        if (!is_array($class)) {
-            if (is_string($class) && !empty($class)) {
-                $class = explode(' ', $class);
+        if (!\is_array($class)) {
+            if (\is_string($class) && !empty($class)) {
+                $class = \explode(' ', $class);
             } else {
                 $class = [];
             }
         }
 
-        if (is_string($newClass)) {
-            $newClass = explode(' ', $newClass);
+        if (\is_string($newClass)) {
+            $newClass = \explode(' ', $newClass);
         }
 
-        $class = array_unique(array_merge($class, $newClass));
+        $class = \array_unique(\array_merge($class, $newClass));
 
         $input = Hash::insert($input, $useIndex, $class);
 

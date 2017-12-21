@@ -59,11 +59,11 @@ class OpenSsl
     public static function encrypt($plain, $key)
     {
         $method = 'AES-256-CBC';
-        $ivSize = openssl_cipher_iv_length($method);
+        $ivSize = \openssl_cipher_iv_length($method);
 
-        $iv = openssl_random_pseudo_bytes($ivSize);
+        $iv = \openssl_random_pseudo_bytes($ivSize);
 
-        return $iv . openssl_encrypt($plain, $method, $key, OPENSSL_RAW_DATA, $iv);
+        return $iv . \openssl_encrypt($plain, $method, $key, OPENSSL_RAW_DATA, $iv);
     }
 
     /**
@@ -77,12 +77,12 @@ class OpenSsl
     public static function decrypt($cipher, $key)
     {
         $method = 'AES-256-CBC';
-        $ivSize = openssl_cipher_iv_length($method);
+        $ivSize = \openssl_cipher_iv_length($method);
 
-        $iv = mb_substr($cipher, 0, $ivSize, '8bit');
+        $iv = \mb_substr($cipher, 0, $ivSize, '8bit');
 
-        $cipher = mb_substr($cipher, $ivSize, null, '8bit');
+        $cipher = \mb_substr($cipher, $ivSize, null, '8bit');
 
-        return openssl_decrypt($cipher, $method, $key, OPENSSL_RAW_DATA, $iv);
+        return \openssl_decrypt($cipher, $method, $key, OPENSSL_RAW_DATA, $iv);
     }
 }

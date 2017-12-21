@@ -206,10 +206,10 @@ abstract class Mailer implements EventListenerInterface
     public function getName()
     {
         if (!static::$name) {
-            static::$name = str_replace(
+            static::$name = \str_replace(
                 'Mailer',
                 '',
-                implode('', array_slice(explode('\\', get_class($this)), -1))
+                \implode('', \array_slice(\explode('\\', \get_class($this)), -1))
             );
         }
 
@@ -250,7 +250,7 @@ abstract class Mailer implements EventListenerInterface
     public function __call($method, $args)
     {
         $result = $this->_email->$method(...$args);
-        if (strpos($method, 'get') === 0) {
+        if (\strpos($method, 'get') === 0) {
             return $result;
         }
 
@@ -266,7 +266,7 @@ abstract class Mailer implements EventListenerInterface
      */
     public function set($key, $value = null)
     {
-        $this->_email->setViewVars(is_string($key) ? [$key => $value] : $key);
+        $this->_email->setViewVars(\is_string($key) ? [$key => $value] : $key);
 
         return $this;
     }
@@ -284,7 +284,7 @@ abstract class Mailer implements EventListenerInterface
     public function send($action, $args = [], $headers = [])
     {
         try {
-            if (!method_exists($this, $action)) {
+            if (!\method_exists($this, $action)) {
                 throw new MissingActionException([
                     'mailer' => $this->getName() . 'Mailer',
                     'action' => $action,

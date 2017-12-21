@@ -60,26 +60,26 @@ class Translator extends BaseTranslator
 
         if (!$tokensValues) {
             // Fallback for plurals that were using the singular key
-            if (is_array($message)) {
-                return array_values($message + [''])[0];
+            if (\is_array($message)) {
+                return \array_values($message + [''])[0];
             }
 
             return $message;
         }
 
         // Singular message, but plural call
-        if (is_string($message) && isset($tokensValues['_singular'])) {
+        if (\is_string($message) && isset($tokensValues['_singular'])) {
             $message = [$tokensValues['_singular'], $message];
         }
 
         // Resolve plural form.
-        if (is_array($message)) {
+        if (\is_array($message)) {
             $count = isset($tokensValues['_count']) ? $tokensValues['_count'] : 0;
             $form = PluralRules::calculate($this->locale, $count);
-            $message = isset($message[$form]) ? $message[$form] : (string)end($message);
+            $message = isset($message[$form]) ? $message[$form] : (string)\end($message);
         }
 
-        if (strlen($message) === 0) {
+        if (\strlen($message) === 0) {
             $message = $key;
         }
 
@@ -104,7 +104,7 @@ class Translator extends BaseTranslator
                 return $message['_context'][''] === '' ? $key : $message['_context'][''];
             }
 
-            return current($message['_context']);
+            return \current($message['_context']);
         }
         if (!isset($message['_context'][$context])) {
             return $key;

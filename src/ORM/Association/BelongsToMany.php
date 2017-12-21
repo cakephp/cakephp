@@ -312,7 +312,7 @@ class BelongsToMany extends Association
             $table = $tableLocator->get($tableAlias, $config);
         }
 
-        if (is_string($table)) {
+        if (\is_string($table)) {
             $table = $tableLocator->get($table);
         }
         $source = $this->getSource();
@@ -464,7 +464,7 @@ class BelongsToMany extends Association
 
         // Attach the junction table as well we need it to populate _joinData.
         $assoc = $this->_targetTable->association($junction->getAlias());
-        $newOptions = array_intersect_key($options, ['joinType' => 1, 'fields' => 1]);
+        $newOptions = \array_intersect_key($options, ['joinType' => 1, 'fields' => 1]);
         $newOptions += [
             'conditions' => $cond,
             'includeFields' => $includeFields,
@@ -496,7 +496,7 @@ class BelongsToMany extends Association
         $conds = $belongsTo->_joinCondition(['foreignKey' => $belongsTo->getForeignKey()]);
 
         $subquery = $this->find()
-            ->select(array_values($conds))
+            ->select(\array_values($conds))
             ->where($options['conditions'])
             ->andWhere($this->junctionConditions());
 
@@ -513,7 +513,7 @@ class BelongsToMany extends Association
         $query
             ->andWhere(function ($exp) use ($subquery, $conds) {
                 $identifiers = [];
-                foreach (array_keys($conds) as $field) {
+                foreach (\array_keys($conds) as $field) {
                     $identifiers[] = new IdentifierExpression($field);
                 }
                 $identifiers = $subquery->newExpr()->add($identifiers)->setConjunction(',');
@@ -522,7 +522,7 @@ class BelongsToMany extends Association
                 return $exp
                     ->or_([
                         $exp->notIn($identifiers, $subquery),
-                        $nullExp->and(array_map([$nullExp, 'isNull'], array_keys($conds))),
+                        $nullExp->and(\array_map([$nullExp, 'isNull'], \array_keys($conds))),
                     ]);
             });
     }
@@ -594,7 +594,7 @@ class BelongsToMany extends Association
         $conditions = [];
 
         if (!empty($bindingKey)) {
-            $conditions = array_combine($foreignKey, $entity->extract($bindingKey));
+            $conditions = \array_combine($foreignKey, $entity->extract($bindingKey));
         }
 
         $table = $this->junction();
@@ -607,7 +607,7 @@ class BelongsToMany extends Association
             return true;
         }
 
-        $conditions = array_merge($conditions, $hasMany->getConditions());
+        $conditions = \array_merge($conditions, $hasMany->getConditions());
 
         $table->deleteAll($conditions);
 
@@ -635,8 +635,8 @@ class BelongsToMany extends Association
      */
     public function setSaveStrategy($strategy)
     {
-        if (!in_array($strategy, [self::SAVE_APPEND, self::SAVE_REPLACE])) {
-            $msg = sprintf('Invalid save strategy "%s"', $strategy);
+        if (!\in_array($strategy, [self::SAVE_APPEND, self::SAVE_REPLACE])) {
+            $msg = \sprintf('Invalid save strategy "%s"', $strategy);
             throw new InvalidArgumentException($msg);
         }
 
@@ -702,7 +702,7 @@ class BelongsToMany extends Association
         $targetEntity = $entity->get($this->getProperty());
         $strategy = $this->getSaveStrategy();
 
-        $isEmpty = in_array($targetEntity, [null, [], '', false], true);
+        $isEmpty = \in_array($targetEntity, [null, [], '', false], true);
         if ($isEmpty && $entity->isNew()) {
             return $entity;
         }
@@ -743,9 +743,9 @@ class BelongsToMany extends Association
         }
         unset($options['associated'][$this->_junctionProperty]);
 
-        if (!(is_array($entities) || $entities instanceof Traversable)) {
+        if (!(\is_array($entities) || $entities instanceof Traversable)) {
             $name = $this->getProperty();
-            $message = sprintf('Could not save %s, it cannot be traversed', $name);
+            $message = \sprintf('Could not save %s, it cannot be traversed', $name);
             throw new InvalidArgumentException($message);
         }
 
@@ -820,8 +820,8 @@ class BelongsToMany extends Association
             if (!$joint || !($joint instanceof EntityInterface)) {
                 $joint = new $entityClass([], ['markNew' => true, 'source' => $junctionAlias]);
             }
-            $sourceKeys = array_combine($foreignKey, $sourceEntity->extract($bindingKey));
-            $targetKeys = array_combine($assocForeignKey, $e->extract($targetPrimaryKey));
+            $sourceKeys = \array_combine($foreignKey, $sourceEntity->extract($bindingKey));
+            $targetKeys = \array_combine($assocForeignKey, $e->extract($targetPrimaryKey));
 
             $changedKeys = (
                 $sourceKeys !== $joint->extract($foreignKey) ||
@@ -834,7 +834,7 @@ class BelongsToMany extends Association
             if ($changedKeys) {
                 $joint->isNew(true);
                 $joint->unsetProperty($junction->getPrimaryKey())
-                    ->set(array_merge($sourceKeys, $targetKeys), ['guard' => false]);
+                    ->set(\array_merge($sourceKeys, $targetKeys), ['guard' => false]);
             }
             $saved = $junction->save($joint, $options);
 
@@ -883,7 +883,7 @@ class BelongsToMany extends Association
         $this->_checkPersistenceStatus($sourceEntity, $targetEntities);
         $property = $this->getProperty();
         $links = $sourceEntity->get($property) ?: [];
-        $links = array_merge($links, $targetEntities);
+        $links = \array_merge($links, $targetEntities);
         $sourceEntity->set($property, $links);
 
         return $this->junction()->getConnection()->transactional(
@@ -931,7 +931,7 @@ class BelongsToMany extends Association
      */
     public function unlink(EntityInterface $sourceEntity, array $targetEntities, $options = [])
     {
-        if (is_bool($options)) {
+        if (\is_bool($options)) {
             $options = [
                 'cleanProperty' => $options
             ];
@@ -967,7 +967,7 @@ class BelongsToMany extends Association
             }
         }
 
-        $sourceEntity->set($property, array_values($existing));
+        $sourceEntity->set($property, \array_values($existing));
         $sourceEntity->setDirty($property, false);
 
         return true;
@@ -1023,15 +1023,15 @@ class BelongsToMany extends Association
             return $this->_targetConditions;
         }
         $conditions = $this->getConditions();
-        if (!is_array($conditions)) {
+        if (!\is_array($conditions)) {
             return $conditions;
         }
         $matching = [];
         $alias = $this->getAlias() . '.';
         foreach ($conditions as $field => $value) {
-            if (is_string($field) && strpos($field, $alias) === 0) {
+            if (\is_string($field) && \strpos($field, $alias) === 0) {
                 $matching[$field] = $value;
-            } elseif (is_int($field) || $value instanceof ExpressionInterface) {
+            } elseif (\is_int($field) || $value instanceof ExpressionInterface) {
                 $matching[$field] = $value;
             }
         }
@@ -1052,18 +1052,18 @@ class BelongsToMany extends Association
         }
         $matching = [];
         $conditions = $this->getConditions();
-        if (!is_array($conditions)) {
+        if (!\is_array($conditions)) {
             return $matching;
         }
         $alias = $this->_junctionAssociationName() . '.';
         foreach ($conditions as $field => $value) {
-            $isString = is_string($field);
-            if ($isString && strpos($field, $alias) === 0) {
+            $isString = \is_string($field);
+            if ($isString && \strpos($field, $alias) === 0) {
                 $matching[$field] = $value;
             }
             // Assume that operators contain junction conditions.
             // Trying to manage complex conditions could result in incorrect queries.
-            if ($isString && in_array(strtoupper($field), ['OR', 'NOT', 'AND', 'XOR'])) {
+            if ($isString && \in_array(\strtoupper($field), ['OR', 'NOT', 'AND', 'XOR'])) {
                 $matching[$field] = $value;
             }
         }
@@ -1188,17 +1188,17 @@ class BelongsToMany extends Association
         $bindingKey = (array)$this->getBindingKey();
         $primaryValue = $sourceEntity->extract($bindingKey);
 
-        if (count(array_filter($primaryValue, 'strlen')) !== count($bindingKey)) {
+        if (\count(\array_filter($primaryValue, 'strlen')) !== \count($bindingKey)) {
             $message = 'Could not find primary key value for source entity';
             throw new InvalidArgumentException($message);
         }
 
         return $this->junction()->getConnection()->transactional(
             function () use ($sourceEntity, $targetEntities, $primaryValue, $options) {
-                $foreignKey = array_map([$this->_junctionTable, 'aliasField'], (array)$this->getForeignKey());
+                $foreignKey = \array_map([$this->_junctionTable, 'aliasField'], (array)$this->getForeignKey());
                 $hasMany = $this->getSource()->association($this->_junctionTable->getAlias());
                 $existing = $hasMany->find('all')
-                    ->where(array_combine($foreignKey, $primaryValue));
+                    ->where(\array_combine($foreignKey, $primaryValue));
 
                 $associationConditions = $this->getConditions();
                 if ($associationConditions) {
@@ -1215,16 +1215,16 @@ class BelongsToMany extends Association
 
                 $property = $this->getProperty();
 
-                if (count($inserts)) {
-                    $inserted = array_combine(
-                        array_keys($inserts),
+                if (\count($inserts)) {
+                    $inserted = \array_combine(
+                        \array_keys($inserts),
                         (array)$sourceEntity->get($property)
                     );
                     $targetEntities = $inserted + $targetEntities;
                 }
 
-                ksort($targetEntities);
-                $sourceEntity->set($property, array_values($targetEntities));
+                \ksort($targetEntities);
+                $sourceEntity->set($property, \array_values($targetEntities));
                 $sourceEntity->setDirty($property, false);
 
                 return true;
@@ -1252,12 +1252,12 @@ class BelongsToMany extends Association
         $foreignKey = (array)$this->getForeignKey();
         $assocForeignKey = (array)$belongsTo->getForeignKey();
 
-        $keys = array_merge($foreignKey, $assocForeignKey);
+        $keys = \array_merge($foreignKey, $assocForeignKey);
         $deletes = $indexed = $present = [];
 
         foreach ($jointEntities as $i => $entity) {
             $indexed[$i] = $entity->extract($keys);
-            $present[$i] = array_values($entity->extract($assocForeignKey));
+            $present[$i] = \array_values($entity->extract($assocForeignKey));
         }
 
         foreach ($existing as $result) {
@@ -1282,7 +1282,7 @@ class BelongsToMany extends Association
             if (!($entity instanceof EntityInterface)) {
                 continue;
             }
-            $key = array_values($entity->extract($primary));
+            $key = \array_values($entity->extract($primary));
             foreach ($present as $i => $data) {
                 if ($key === $data && !$entity->get($jointProperty)) {
                     unset($targetEntities[$k], $present[$i]);
@@ -1376,16 +1376,16 @@ class BelongsToMany extends Association
 
         foreach ($missing as $key) {
             $unions[] = $hasMany->find('all')
-                ->where(array_combine($foreignKey, $sourceKey))
-                ->andWhere(array_combine($assocForeignKey, $key));
+                ->where(\array_combine($foreignKey, $sourceKey))
+                ->andWhere(\array_combine($assocForeignKey, $key));
         }
 
-        $query = array_shift($unions);
+        $query = \array_shift($unions);
         foreach ($unions as $q) {
             $query->union($q);
         }
 
-        return array_merge($result, $query->toArray());
+        return \array_merge($result, $query->toArray());
     }
 
     /**
@@ -1418,12 +1418,12 @@ class BelongsToMany extends Association
     {
         if ($name === null) {
             if (empty($this->_junctionTableName)) {
-                $tablesNames = array_map('\Cake\Utility\Inflector::underscore', [
+                $tablesNames = \array_map('\Cake\Utility\Inflector::underscore', [
                     $this->getSource()->getTable(),
                     $this->getTarget()->getTable()
                 ]);
-                sort($tablesNames);
-                $this->_junctionTableName = implode('_', $tablesNames);
+                \sort($tablesNames);
+                $this->_junctionTableName = \implode('_', $tablesNames);
             }
 
             return $this->_junctionTableName;

@@ -107,14 +107,14 @@ class HasOne extends Association
             return $entity;
         }
 
-        $properties = array_combine(
+        $properties = \array_combine(
             (array)$this->getForeignKey(),
             $entity->extract((array)$this->getBindingKey())
         );
         $targetEntity->set($properties, ['guard' => false]);
 
         if (!$this->getTarget()->save($targetEntity, $options)) {
-            $targetEntity->unsetProperty(array_keys($properties));
+            $targetEntity->unsetProperty(\array_keys($properties));
 
             return false;
         }

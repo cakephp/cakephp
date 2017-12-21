@@ -83,7 +83,7 @@ class Configure
      */
     public static function write($config, $value = null)
     {
-        if (!is_array($config)) {
+        if (!\is_array($config)) {
             $config = [$config => $value];
         }
 
@@ -93,10 +93,10 @@ class Configure
 
         if (isset($config['debug'])) {
             if (static::$_hasIniSet === null) {
-                static::$_hasIniSet = function_exists('ini_set');
+                static::$_hasIniSet = \function_exists('ini_set');
             }
             if (static::$_hasIniSet) {
-                ini_set('display_errors', $config['debug'] ? '1' : '0');
+                \ini_set('display_errors', $config['debug'] ? '1' : '0');
             }
         }
 
@@ -164,7 +164,7 @@ class Configure
     public static function readOrFail($var)
     {
         if (static::check($var) === false) {
-            throw new RuntimeException(sprintf('Expected configuration key "%s" not found.', $var));
+            throw new RuntimeException(\sprintf('Expected configuration key "%s" not found.', $var));
         }
 
         return static::read($var);
@@ -199,7 +199,7 @@ class Configure
      */
     public static function consume($var)
     {
-        if (strpos($var, '.') === false) {
+        if (\strpos($var, '.') === false) {
             if (!isset(static::$_values[$var])) {
                 return null;
             }
@@ -247,7 +247,7 @@ class Configure
             return isset(static::$_engines[$name]);
         }
 
-        return array_keys(static::$_engines);
+        return \array_keys(static::$_engines);
     }
 
     /**
@@ -341,11 +341,11 @@ class Configure
     {
         $engine = static::_getEngine($config);
         if (!$engine) {
-            throw new Exception(sprintf('There is no "%s" config engine.', $config));
+            throw new Exception(\sprintf('There is no "%s" config engine.', $config));
         }
         $values = static::$_values;
-        if (!empty($keys) && is_array($keys)) {
-            $values = array_intersect_key($values, array_flip($keys));
+        if (!empty($keys) && \is_array($keys)) {
+            $values = \array_intersect_key($values, \array_flip($keys));
         }
 
         return (bool)$engine->dump($key, $values);

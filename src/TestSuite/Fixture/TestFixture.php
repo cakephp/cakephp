@@ -99,8 +99,8 @@ class TestFixture implements FixtureInterface, TableSchemaInterface, TableSchema
     {
         if (!empty($this->connection)) {
             $connection = $this->connection;
-            if (strpos($connection, 'test') !== 0) {
-                $message = sprintf(
+            if (\strpos($connection, 'test') !== 0) {
+                $message = \sprintf(
                     'Invalid datasource name "%s" for "%s" fixture. Fixture datasource names must begin with "test".',
                     $connection,
                     $this->table
@@ -159,8 +159,8 @@ class TestFixture implements FixtureInterface, TableSchemaInterface, TableSchema
      */
     protected function _tableFromClass()
     {
-        list(, $class) = namespaceSplit(get_class($this));
-        preg_match('/^(.*)Fixture$/', $class, $matches);
+        list(, $class) = namespaceSplit(\get_class($this));
+        \preg_match('/^(.*)Fixture$/', $class, $matches);
         $table = $class;
 
         if (isset($matches[1])) {
@@ -212,7 +212,7 @@ class TestFixture implements FixtureInterface, TableSchemaInterface, TableSchema
      */
     protected function _schemaFromImport()
     {
-        if (!is_array($this->import)) {
+        if (!\is_array($this->import)) {
             return;
         }
         $import = $this->import + ['connection' => 'default', 'table' => null, 'model' => null];
@@ -248,12 +248,12 @@ class TestFixture implements FixtureInterface, TableSchemaInterface, TableSchema
         $schemaCollection = $db->schemaCollection();
         $tables = $schemaCollection->listTables();
 
-        if (!in_array($this->table, $tables)) {
+        if (!\in_array($this->table, $tables)) {
             throw new CakeException(
-                sprintf(
+                \sprintf(
                     'Cannot describe schema for table `%s` for fixture `%s` : the table does not exist.',
                     $this->table,
-                    get_class($this)
+                    \get_class($this)
                 )
             );
         }
@@ -298,13 +298,13 @@ class TestFixture implements FixtureInterface, TableSchemaInterface, TableSchema
                 $stmt->closeCursor();
             }
         } catch (Exception $e) {
-            $msg = sprintf(
+            $msg = \sprintf(
                 'Fixture creation for "%s" failed "%s"',
                 $this->table,
                 $e->getMessage()
             );
             Log::error($msg);
-            trigger_error($msg, E_USER_WARNING);
+            \trigger_error($msg, E_USER_WARNING);
 
             return false;
         }
@@ -422,15 +422,15 @@ class TestFixture implements FixtureInterface, TableSchemaInterface, TableSchema
         $fields = $values = $types = [];
         $columns = $this->_schema->columns();
         foreach ($this->records as $record) {
-            $fields = array_merge($fields, array_intersect(array_keys($record), $columns));
+            $fields = \array_merge($fields, \array_intersect(\array_keys($record), $columns));
         }
-        $fields = array_values(array_unique($fields));
+        $fields = \array_values(\array_unique($fields));
         foreach ($fields as $field) {
             $types[$field] = $this->_schema->getColumn($field)['type'];
         }
-        $default = array_fill_keys($fields, null);
+        $default = \array_fill_keys($fields, null);
         foreach ($this->records as $record) {
-            $values[] = array_merge($default, $record);
+            $values[] = \array_merge($default, $record);
         }
 
         return [$fields, $values, $types];

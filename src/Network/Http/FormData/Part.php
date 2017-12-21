@@ -1,3 +1,3 @@
 <?php
 // @deprecated Load new class and alias.
-class_exists('Cake\Http\Client\FormDataPart');
+\class_exists('Cake\Http\Client\FormDataPart');

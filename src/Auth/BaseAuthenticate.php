@@ -127,8 +127,8 @@ abstract class BaseAuthenticate implements EventListenerInterface
             $result->unsetProperty($passwordField);
         }
         $hidden = $result->getHidden();
-        if ($password === null && in_array($passwordField, $hidden)) {
-            $key = array_search($passwordField, $hidden);
+        if ($password === null && \in_array($passwordField, $hidden)) {
+            $key = \array_search($passwordField, $hidden);
             unset($hidden[$key]);
             $result->setHidden($hidden);
         }
@@ -152,16 +152,16 @@ abstract class BaseAuthenticate implements EventListenerInterface
         ];
 
         if (!empty($config['scope'])) {
-            $options['conditions'] = array_merge($options['conditions'], $config['scope']);
+            $options['conditions'] = \array_merge($options['conditions'], $config['scope']);
         }
         if (!empty($config['contain'])) {
             $options['contain'] = $config['contain'];
         }
 
         $finder = $config['finder'];
-        if (is_array($finder)) {
-            $options += current($finder);
-            $finder = key($finder);
+        if (\is_array($finder)) {
+            $options += \current($finder);
+            $finder = \key($finder);
         }
 
         if (!isset($options['username'])) {

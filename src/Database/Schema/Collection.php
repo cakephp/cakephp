@@ -89,14 +89,14 @@ class Collection
     public function describe($name, array $options = [])
     {
         $config = $this->_connection->config();
-        if (strpos($name, '.')) {
-            list($config['schema'], $name) = explode('.', $name);
+        if (\strpos($name, '.')) {
+            list($config['schema'], $name) = \explode('.', $name);
         }
         $table = new TableSchema($name);
 
         $this->_reflect('Column', $name, $config, $table);
-        if (count($table->columns()) === 0) {
-            throw new Exception(sprintf('Cannot describe %s. It has 0 columns.', $name));
+        if (\count($table->columns()) === 0) {
+            throw new Exception(\sprintf('Cannot describe %s. It has 0 columns.', $name));
         }
 
         $this->_reflect('Index', $name, $config, $table);

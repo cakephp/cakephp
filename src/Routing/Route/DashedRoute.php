@@ -42,11 +42,11 @@ class DashedRoute extends Route
      */
     protected function _camelizePlugin($plugin)
     {
-        $plugin = str_replace('-', '_', $plugin);
-        if (strpos($plugin, '/') === false) {
+        $plugin = \str_replace('-', '_', $plugin);
+        if (\strpos($plugin, '/') === false) {
             return Inflector::camelize($plugin);
         }
-        list($vendor, $plugin) = explode('/', $plugin, 2);
+        list($vendor, $plugin) = \explode('/', $plugin, 2);
 
         return Inflector::camelize($vendor) . '/' . Inflector::camelize($plugin);
     }
@@ -73,7 +73,7 @@ class DashedRoute extends Route
             $params['plugin'] = $this->_camelizePlugin($params['plugin']);
         }
         if (!empty($params['action'])) {
-            $params['action'] = Inflector::variable(str_replace(
+            $params['action'] = Inflector::variable(\str_replace(
                 '-',
                 '_',
                 $params['action']

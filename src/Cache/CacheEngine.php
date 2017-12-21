@@ -70,11 +70,11 @@ abstract class CacheEngine
         $this->setConfig($config);
 
         if (!empty($this->_config['groups'])) {
-            sort($this->_config['groups']);
-            $this->_groupPrefix = str_repeat('%s_', count($this->_config['groups']));
+            \sort($this->_config['groups']);
+            $this->_groupPrefix = \str_repeat('%s_', \count($this->_config['groups']));
         }
-        if (!is_numeric($this->_config['duration'])) {
-            $this->_config['duration'] = strtotime($this->_config['duration']) - time();
+        if (!\is_numeric($this->_config['duration'])) {
+            $this->_config['duration'] = \strtotime($this->_config['duration']) - \time();
         }
 
         return true;
@@ -252,10 +252,10 @@ abstract class CacheEngine
 
         $prefix = '';
         if ($this->_groupPrefix) {
-            $prefix = vsprintf($this->_groupPrefix, $this->groups());
+            $prefix = \vsprintf($this->_groupPrefix, $this->groups());
         }
 
-        $key = preg_replace('/[\s]+/', '_', strtolower(trim(str_replace([DIRECTORY_SEPARATOR, '/', '.'], '_', (string)$key))));
+        $key = \preg_replace('/[\s]+/', '_', \strtolower(\trim(\str_replace([DIRECTORY_SEPARATOR, '/', '.'], '_', (string)$key))));
 
         return $prefix . $key;
     }

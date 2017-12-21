@@ -128,7 +128,7 @@ class EntityContext implements ContextInterface
         $table = $this->_context['table'];
         $entity = $this->_context['entity'];
         if (empty($table)) {
-            if (is_array($entity) || $entity instanceof Traversable) {
+            if (\is_array($entity) || $entity instanceof Traversable) {
                 foreach ($entity as $e) {
                     $entity = $e;
                     break;
@@ -139,12 +139,12 @@ class EntityContext implements ContextInterface
             if ($isEntity) {
                 $table = $entity->source();
             }
-            if (!$table && $isEntity && get_class($entity) !== 'Cake\ORM\Entity') {
-                list(, $entityClass) = namespaceSplit(get_class($entity));
+            if (!$table && $isEntity && \get_class($entity) !== 'Cake\ORM\Entity') {
+                list(, $entityClass) = namespaceSplit(\get_class($entity));
                 $table = Inflector::pluralize($entityClass);
             }
         }
-        if (is_string($table)) {
+        if (\is_string($table)) {
             $table = TableRegistry::get($table);
         }
 
@@ -154,7 +154,7 @@ class EntityContext implements ContextInterface
             );
         }
         $this->_isCollection = (
-            is_array($entity) ||
+            \is_array($entity) ||
             $entity instanceof Traversable
         );
 
@@ -179,11 +179,11 @@ class EntityContext implements ContextInterface
      */
     public function isPrimaryKey($field)
     {
-        $parts = explode('.', $field);
+        $parts = \explode('.', $field);
         $table = $this->_getTable($parts);
         $primaryKey = (array)$table->getPrimaryKey();
 
-        return in_array(array_pop($parts), $primaryKey);
+        return \in_array(\array_pop($parts), $primaryKey);
     }
 
     /**
@@ -200,7 +200,7 @@ class EntityContext implements ContextInterface
     public function isCreate()
     {
         $entity = $this->_context['entity'];
-        if (is_array($entity) || $entity instanceof Traversable) {
+        if (\is_array($entity) || $entity instanceof Traversable) {
             foreach ($entity as $e) {
                 $entity = $e;
                 break;
@@ -240,15 +240,15 @@ class EntityContext implements ContextInterface
         if (empty($this->_context['entity'])) {
             return $options['default'];
         }
-        $parts = explode('.', $field);
+        $parts = \explode('.', $field);
         $entity = $this->entity($parts);
 
-        if (end($parts) === '_ids' && !empty($entity)) {
+        if (\end($parts) === '_ids' && !empty($entity)) {
             return $this->_extractMultiple($entity, $parts);
         }
 
         if ($entity instanceof EntityInterface) {
-            $part = array_pop($parts);
+            $part = \array_pop($parts);
             $val = $entity->get($part);
             if ($val !== null) {
                 return $val;
@@ -262,8 +262,8 @@ class EntityContext implements ContextInterface
 
             return $this->_schemaDefault($part, $entity);
         }
-        if (is_array($entity) || $entity instanceof ArrayAccess) {
-            $key = array_pop($parts);
+        if (\is_array($entity) || $entity instanceof ArrayAccess) {
+            $key = \array_pop($parts);
 
             return isset($entity[$key]) ? $entity[$key] : $options['default'];
         }
@@ -285,7 +285,7 @@ class EntityContext implements ContextInterface
             return null;
         }
         $defaults = $table->getSchema()->defaultValues();
-        if (!array_key_exists($field, $defaults)) {
+        if (!\array_key_exists($field, $defaults)) {
             return null;
         }
 
@@ -302,7 +302,7 @@ class EntityContext implements ContextInterface
      */
     protected function _extractMultiple($values, $path)
     {
-        if (!(is_array($values) || $values instanceof Traversable)) {
+        if (!(\is_array($values) || $values instanceof Traversable)) {
             return null;
         }
         $table = $this->_getTable($path, false);
@@ -329,7 +329,7 @@ class EntityContext implements ContextInterface
             return $this->_context['entity'];
         }
 
-        $oneElement = count($path) === 1;
+        $oneElement = \count($path) === 1;
         if ($oneElement && $this->_isCollection) {
             return false;
         }
@@ -339,10 +339,10 @@ class EntityContext implements ContextInterface
         }
 
         if ($path[0] === $this->_rootName) {
-            $path = array_slice($path, 1);
+            $path = \array_slice($path, 1);
         }
 
-        $len = count($path);
+        $len = \count($path);
         $last = $len - 1;
         for ($i = 0; $i < $len; $i++) {
             $prop = $path[$i];
@@ -356,7 +356,7 @@ class EntityContext implements ContextInterface
             }
 
             $isTraversable = (
-                is_array($next) ||
+                \is_array($next) ||
                 $next instanceof Traversable ||
                 $next instanceof EntityInterface
             );
@@ -365,9 +365,9 @@ class EntityContext implements ContextInterface
             }
             $entity = $next;
         }
-        throw new RuntimeException(sprintf(
+        throw new RuntimeException(\sprintf(
             'Unable to fetch property "%s"',
-            implode('.', $path)
+            \implode('.', $path)
         ));
     }
 
@@ -380,7 +380,7 @@ class EntityContext implements ContextInterface
      */
     protected function _getProp($target, $field)
     {
-        if (is_array($target) && isset($target[$field])) {
+        if (\is_array($target) && isset($target[$field])) {
             return $target[$field];
         }
         if ($target instanceof EntityInterface) {
@@ -405,7 +405,7 @@ class EntityContext implements ContextInterface
      */
     public function isRequired($field)
     {
-        $parts = explode('.', $field);
+        $parts = \explode('.', $field);
         $entity = $this->entity($parts);
 
         $isNew = true;
@@ -414,7 +414,7 @@ class EntityContext implements ContextInterface
         }
 
         $validator = $this->_getValidator($parts);
-        $fieldName = array_pop($parts);
+        $fieldName = \array_pop($parts);
         if (!$validator->hasField($fieldName)) {
             return false;
         }
@@ -448,10 +448,10 @@ class EntityContext implements ContextInterface
      */
     protected function _getValidator($parts)
     {
-        $keyParts = array_filter(array_slice($parts, 0, -1), function ($part) {
-            return !is_numeric($part);
+        $keyParts = \array_filter(\array_slice($parts, 0, -1), function ($part) {
+            return !\is_numeric($part);
         });
-        $key = implode('.', $keyParts);
+        $key = \implode('.', $keyParts);
         $entity = $this->entity($parts) ?: null;
 
         if (isset($this->_validator[$key])) {
@@ -464,7 +464,7 @@ class EntityContext implements ContextInterface
         $alias = $table->getAlias();
 
         $method = 'default';
-        if (is_string($this->_context['validator'])) {
+        if (\is_string($this->_context['validator'])) {
             $method = $this->_context['validator'];
         } elseif (isset($this->_context['validator'][$alias])) {
             $method = $this->_context['validator'][$alias];
@@ -486,21 +486,21 @@ class EntityContext implements ContextInterface
      */
     protected function _getTable($parts, $fallback = true)
     {
-        if (!is_array($parts) || count($parts) === 1) {
+        if (!\is_array($parts) || \count($parts) === 1) {
             return $this->_tables[$this->_rootName];
         }
 
-        $normalized = array_slice(array_filter($parts, function ($part) {
-            return !is_numeric($part);
+        $normalized = \array_slice(\array_filter($parts, function ($part) {
+            return !\is_numeric($part);
         }), 0, -1);
 
-        $path = implode('.', $normalized);
+        $path = \implode('.', $normalized);
         if (isset($this->_tables[$path])) {
             return $this->_tables[$path];
         }
 
-        if (current($normalized) === $this->_rootName) {
-            $normalized = array_slice($normalized, 1);
+        if (\current($normalized) === $this->_rootName) {
+            $normalized = \array_slice($normalized, 1);
         }
 
         $table = $this->_tables[$this->_rootName];
@@ -538,10 +538,10 @@ class EntityContext implements ContextInterface
      */
     public function type($field)
     {
-        $parts = explode('.', $field);
+        $parts = \explode('.', $field);
         $table = $this->_getTable($parts);
 
-        return $table->getSchema()->baseColumnType(array_pop($parts));
+        return $table->getSchema()->baseColumnType(\array_pop($parts));
     }
 
     /**
@@ -552,12 +552,12 @@ class EntityContext implements ContextInterface
      */
     public function attributes($field)
     {
-        $parts = explode('.', $field);
+        $parts = \explode('.', $field);
         $table = $this->_getTable($parts);
-        $column = (array)$table->getSchema()->getColumn(array_pop($parts));
+        $column = (array)$table->getSchema()->getColumn(\array_pop($parts));
         $whitelist = ['length' => null, 'precision' => null];
 
-        return array_intersect_key($column, $whitelist);
+        return \array_intersect_key($column, $whitelist);
     }
 
     /**
@@ -579,11 +579,11 @@ class EntityContext implements ContextInterface
      */
     public function error($field)
     {
-        $parts = explode('.', $field);
+        $parts = \explode('.', $field);
         $entity = $this->entity($parts);
 
         if ($entity instanceof EntityInterface) {
-            return $entity->errors(array_pop($parts));
+            return $entity->errors(\array_pop($parts));
         }
 
         return [];

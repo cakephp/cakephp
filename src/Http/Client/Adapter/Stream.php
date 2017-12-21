@@ -96,14 +96,14 @@ class Stream
     {
         $indexes = $responses = [];
         foreach ($headers as $i => $header) {
-            if (strtoupper(substr($header, 0, 5)) === 'HTTP/') {
+            if (\strtoupper(\substr($header, 0, 5)) === 'HTTP/') {
                 $indexes[] = $i;
             }
         }
-        $last = count($indexes) - 1;
+        $last = \count($indexes) - 1;
         foreach ($indexes as $i => $start) {
             $end = isset($indexes[$i + 1]) ? $indexes[$i + 1] - $start : null;
-            $headerSlice = array_slice($headers, $start, $end);
+            $headerSlice = \array_slice($headers, $start, $end);
             $body = $i == $last ? $content : '';
             $responses[] = $this->_buildResponse($headerSlice, $body);
         }
@@ -125,11 +125,11 @@ class Stream
         $this->_buildOptions($request, $options);
 
         $url = $request->getUri();
-        $scheme = parse_url($url, PHP_URL_SCHEME);
+        $scheme = \parse_url($url, PHP_URL_SCHEME);
         if ($scheme === 'https') {
             $this->_buildSslContext($request, $options);
         }
-        $this->_context = stream_context_create([
+        $this->_context = \stream_context_create([
             'http' => $this->_contextOptions,
             'ssl' => $this->_sslContextOptions,
         ]);
@@ -148,9 +148,9 @@ class Stream
     {
         $headers = [];
         foreach ($request->getHeaders() as $name => $values) {
-            $headers[] = sprintf('%s: %s', $name, implode(', ', $values));
+            $headers[] = \sprintf('%s: %s', $name, \implode(', ', $values));
         }
-        $this->_contextOptions['header'] = implode("\r\n", $headers);
+        $this->_contextOptions['header'] = \implode("\r\n", $headers);
     }
 
     /**
@@ -223,12 +223,12 @@ class Stream
         }
         if (!empty($options['ssl_verify_host'])) {
             $url = $request->getUri();
-            $host = parse_url($url, PHP_URL_HOST);
+            $host = \parse_url($url, PHP_URL_HOST);
             $this->_sslContextOptions['peer_name'] = $host;
         }
         foreach ($sslOptions as $key) {
             if (isset($options[$key])) {
-                $name = substr($key, 4);
+                $name = \substr($key, 4);
                 $this->_sslContextOptions[$name] = $options[$key];
             }
         }
@@ -245,7 +245,7 @@ class Stream
     {
         $deadline = false;
         if (isset($this->_contextOptions['timeout']) && $this->_contextOptions['timeout'] > 0) {
-            $deadline = time() + $this->_contextOptions['timeout'];
+            $deadline = \time() + $this->_contextOptions['timeout'];
         }
 
         $url = $request->getUri();
@@ -253,28 +253,28 @@ class Stream
         $content = '';
         $timedOut = false;
 
-        while (!feof($this->_stream)) {
+        while (!\feof($this->_stream)) {
             if ($deadline !== false) {
-                stream_set_timeout($this->_stream, max($deadline - time(), 1));
+                \stream_set_timeout($this->_stream, \max($deadline - \time(), 1));
             }
 
-            $content .= fread($this->_stream, 8192);
+            $content .= \fread($this->_stream, 8192);
 
-            $meta = stream_get_meta_data($this->_stream);
-            if ($meta['timed_out'] || ($deadline !== false && time() > $deadline)) {
+            $meta = \stream_get_meta_data($this->_stream);
+            if ($meta['timed_out'] || ($deadline !== false && \time() > $deadline)) {
                 $timedOut = true;
                 break;
             }
         }
-        $meta = stream_get_meta_data($this->_stream);
-        fclose($this->_stream);
+        $meta = \stream_get_meta_data($this->_stream);
+        \fclose($this->_stream);
 
         if ($timedOut) {
             throw new HttpException('Connection timed out ' . $url, 504);
         }
 
         $headers = $meta['wrapper_data'];
-        if (isset($headers['headers']) && is_array($headers['headers'])) {
+        if (isset($headers['headers']) && \is_array($headers['headers'])) {
             $headers = $headers['headers'];
         }
 
@@ -303,14 +303,14 @@ class Stream
      */
     protected function _open($url)
     {
-        set_error_handler(function ($code, $message) {
+        \set_error_handler(function ($code, $message) {
             $this->_connectionErrors[] = $message;
         });
-        $this->_stream = fopen($url, 'rb', false, $this->_context);
-        restore_error_handler();
+        $this->_stream = \fopen($url, 'rb', false, $this->_context);
+        \restore_error_handler();
 
         if (!$this->_stream || !empty($this->_connectionErrors)) {
-            throw new Exception(implode("\n", $this->_connectionErrors));
+            throw new Exception(\implode("\n", $this->_connectionErrors));
         }
     }
 
@@ -323,9 +323,9 @@ class Stream
      */
     public function contextOptions()
     {
-        return array_merge($this->_contextOptions, $this->_sslContextOptions);
+        return \array_merge($this->_contextOptions, $this->_sslContextOptions);
     }
 }
 
 // @deprecated Add backwards compat alias.
-class_alias('Cake\Http\Client\Adapter\Stream', 'Cake\Network\Http\Adapter\Stream');
+\class_alias('Cake\Http\Client\Adapter\Stream', 'Cake\Network\Http\Adapter\Stream');

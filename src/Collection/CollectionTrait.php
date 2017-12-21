@@ -140,7 +140,7 @@ trait CollectionTrait
     public function reduce(callable $c, $zero = null)
     {
         $isFirst = false;
-        if (func_num_args() < 2) {
+        if (\func_num_args() < 2) {
             $isFirst = true;
         }
 
@@ -163,10 +163,10 @@ trait CollectionTrait
     public function extract($matcher)
     {
         $extractor = new ExtractIterator($this->unwrap(), $matcher);
-        if (is_string($matcher) && strpos($matcher, '{*}') !== false) {
+        if (\is_string($matcher) && \strpos($matcher, '{*}') !== false) {
             $extractor = $extractor
                 ->filter(function ($data) {
-                    return $data !== null && ($data instanceof Traversable || is_array($data));
+                    return $data !== null && ($data instanceof Traversable || \is_array($data));
                 })
                 ->unfold();
         }
@@ -223,8 +223,8 @@ trait CollectionTrait
             $elements = $elements->extract($matcher);
         }
         $values = $elements->toList();
-        sort($values);
-        $count = count($values);
+        \sort($values);
+        $count = \count($values);
 
         if ($count === 0) {
             return null;
@@ -287,7 +287,7 @@ trait CollectionTrait
         };
 
         $reducer = function ($values, $key, $mr) {
-            $mr->emit(count($values), $key);
+            $mr->emit(\count($values), $key);
         };
 
         return new Collection(new MapReduce($this->unwrap(), $mapper, $reducer));
@@ -299,7 +299,7 @@ trait CollectionTrait
     public function sumOf($matcher = null)
     {
         if ($matcher === null) {
-            return array_sum($this->toList());
+            return \array_sum($this->toList());
         }
 
         $callback = $this->_propertyExtractor($matcher);
@@ -317,7 +317,7 @@ trait CollectionTrait
     public function shuffle()
     {
         $elements = $this->toArray();
-        shuffle($elements);
+        \shuffle($elements);
 
         return new Collection($elements);
     }
@@ -379,12 +379,12 @@ trait CollectionTrait
     public function last()
     {
         $iterator = $this->optimizeUnwrap();
-        if (is_array($iterator)) {
-            return array_pop($iterator);
+        if (\is_array($iterator)) {
+            return \array_pop($iterator);
         }
 
         if ($iterator instanceof Countable) {
-            $count = count($iterator);
+            $count = \count($iterator);
             if ($count === 0) {
                 return null;
             }
@@ -471,7 +471,7 @@ trait CollectionTrait
         $reducer = function ($values, $key, $mapReduce) use (&$parents, &$isObject, $nestingKey) {
             static $foundOutType = false;
             if (!$foundOutType) {
-                $isObject = is_object(current($parents));
+                $isObject = \is_object(\current($parents));
                 $foundOutType = true;
             }
             if (empty($key) || !isset($parents[$key])) {
@@ -515,15 +515,15 @@ trait CollectionTrait
         if ($iterator instanceof ArrayIterator) {
             $items = $iterator->getArrayCopy();
 
-            return $preserveKeys ? $items : array_values($items);
+            return $preserveKeys ? $items : \array_values($items);
         }
         // RecursiveIteratorIterator can return duplicate key values causing
         // data loss when converted into an array
-        if ($preserveKeys && get_class($iterator) === 'RecursiveIteratorIterator') {
+        if ($preserveKeys && \get_class($iterator) === 'RecursiveIteratorIterator') {
             $preserveKeys = false;
         }
 
-        return iterator_to_array($this, $preserveKeys);
+        return \iterator_to_array($this, $preserveKeys);
     }
 
     /**
@@ -567,7 +567,7 @@ trait CollectionTrait
      */
     public function listNested($dir = 'desc', $nestingKey = 'children')
     {
-        $dir = strtolower($dir);
+        $dir = \strtolower($dir);
         $modes = [
             'desc' => TreeIterator::SELF_FIRST,
             'asc' => TreeIterator::CHILD_FIRST,
@@ -587,7 +587,7 @@ trait CollectionTrait
      */
     public function stopWhen($condition)
     {
-        if (!is_callable($condition)) {
+        if (!\is_callable($condition)) {
             $condition = $this->_createMatcherFilter($condition);
         }
 
@@ -628,7 +628,7 @@ trait CollectionTrait
      */
     public function zip($items)
     {
-        return new ZipIterator(array_merge([$this->unwrap()], func_get_args()));
+        return new ZipIterator(\array_merge([$this->unwrap()], \func_get_args()));
     }
 
     /**
@@ -636,14 +636,14 @@ trait CollectionTrait
      */
     public function zipWith($items, $callable)
     {
-        if (func_num_args() > 2) {
-            $items = func_get_args();
-            $callable = array_pop($items);
+        if (\func_num_args() > 2) {
+            $items = \func_get_args();
+            $callable = \array_pop($items);
         } else {
             $items = [$items];
         }
 
-        return new ZipIterator(array_merge([$this->unwrap()], $items), $callable);
+        return new ZipIterator(\array_merge([$this->unwrap()], $items), $callable);
     }
 
     /**
@@ -710,7 +710,7 @@ trait CollectionTrait
     public function unwrap()
     {
         $iterator = $this;
-        while (get_class($iterator) === 'Cake\Collection\Collection') {
+        while (\get_class($iterator) === 'Cake\Collection\Collection') {
             $iterator = $iterator->getInnerIterator();
         }
 
@@ -749,25 +749,25 @@ trait CollectionTrait
         $collectionArraysCounts = [];
 
         foreach ($this->toList() as $value) {
-            $valueCount = count($value);
-            if ($valueCount !== count($value, COUNT_RECURSIVE)) {
+            $valueCount = \count($value);
+            if ($valueCount !== \count($value, COUNT_RECURSIVE)) {
                 throw new LogicException('Cannot find the cartesian product of a multidimensional array');
             }
 
-            $collectionArraysKeys[] = array_keys($value);
+            $collectionArraysKeys[] = \array_keys($value);
             $collectionArraysCounts[] = $valueCount;
             $collectionArrays[] = $value;
         }
 
         $result = [];
-        $lastIndex = count($collectionArrays) - 1;
+        $lastIndex = \count($collectionArrays) - 1;
         // holds the indexes of the arrays that generate the current combination
-        $currentIndexes = array_fill(0, $lastIndex + 1, 0);
+        $currentIndexes = \array_fill(0, $lastIndex + 1, 0);
 
         $changeIndex = $lastIndex;
 
         while (!($changeIndex === 0 && $currentIndexes[0] === $collectionArraysCounts[0])) {
-            $currentCombination = array_map(function ($value, $keys, $index) {
+            $currentCombination = \array_map(function ($value, $keys, $index) {
                 return $value[$keys[$index]];
             }, $collectionArrays, $collectionArraysKeys, $currentIndexes);
 
@@ -794,16 +794,16 @@ trait CollectionTrait
     public function transpose()
     {
         $arrayValue = $this->toList();
-        $length = count(current($arrayValue));
+        $length = \count(\current($arrayValue));
         $result = [];
         foreach ($arrayValue as $column => $row) {
-            if (count($row) != $length) {
+            if (\count($row) != $length) {
                 throw new LogicException('Child arrays do not have even length');
             }
         }
 
         for ($column = 0; $column < $length; $column++) {
-            $result[] = array_column($arrayValue, $column);
+            $result[] = \array_column($arrayValue, $column);
         }
 
         return new Collection($result);
@@ -819,7 +819,7 @@ trait CollectionTrait
     {
         $iterator = $this->unwrap();
 
-        if (get_class($iterator) === ArrayIterator::class) {
+        if (\get_class($iterator) === ArrayIterator::class) {
             $iterator = $iterator->getArrayCopy();
         }
 

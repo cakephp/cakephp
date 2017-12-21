@@ -84,8 +84,8 @@ class ValuesExpression implements ExpressionInterface
      */
     public function add($data)
     {
-        if ((count($this->_values) && $data instanceof Query) ||
-            ($this->_query && is_array($data))
+        if ((\count($this->_values) && $data instanceof Query) ||
+            ($this->_query && \is_array($data))
         ) {
             throw new Exception(
                 'You cannot mix subqueries and array data in inserts.'
@@ -153,8 +153,8 @@ class ValuesExpression implements ExpressionInterface
     {
         $columns = [];
         foreach ($this->_columns as $col) {
-            if (is_string($col)) {
-                $col = trim($col, '`[]"');
+            if (\is_string($col)) {
+                $col = \trim($col, '`[]"');
             }
             $columns[] = $col;
         }
@@ -267,7 +267,7 @@ class ValuesExpression implements ExpressionInterface
         }
 
         $columns = $this->_columnNames();
-        $defaults = array_fill_keys($columns, null);
+        $defaults = \array_fill_keys($columns, null);
         $placeholders = [];
 
         $types = [];
@@ -293,14 +293,14 @@ class ValuesExpression implements ExpressionInterface
                 $generator->bind($placeholder, $value, $types[$column]);
             }
 
-            $placeholders[] = implode(', ', $rowPlaceholders);
+            $placeholders[] = \implode(', ', $rowPlaceholders);
         }
 
         if ($this->getQuery()) {
             return ' ' . $this->getQuery()->sql($generator);
         }
 
-        return sprintf(' VALUES (%s)', implode('), (', $placeholders));
+        return \sprintf(' VALUES (%s)', \implode('), (', $placeholders));
     }
 
     /**
@@ -326,7 +326,7 @@ class ValuesExpression implements ExpressionInterface
             if ($v instanceof ExpressionInterface) {
                 $v->traverse($visitor);
             }
-            if (!is_array($v)) {
+            if (!\is_array($v)) {
                 continue;
             }
             foreach ($v as $column => $field) {
@@ -350,7 +350,7 @@ class ValuesExpression implements ExpressionInterface
 
         $columns = $this->_columnNames();
         foreach ($columns as $c) {
-            if (!is_scalar($c)) {
+            if (!\is_scalar($c)) {
                 continue;
             }
             $types[$c] = $typeMap->type($c);

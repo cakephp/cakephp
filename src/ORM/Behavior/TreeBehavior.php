@@ -260,7 +260,7 @@ class TreeBehavior extends Behavior
         $left = $entity->get($config['left']);
 
         if ($parentLeft > $left && $parentLeft < $right) {
-            throw new RuntimeException(sprintf(
+            throw new RuntimeException(\sprintf(
                 'Cannot use node "%s" as parent for entity "%s"',
                 $parent,
                 $entity->get($this->_getPrimaryKey())
@@ -380,7 +380,7 @@ class TreeBehavior extends Behavior
         }
 
         $config = $this->getConfig();
-        list($left, $right) = array_map(
+        list($left, $right) = \array_map(
             function ($field) {
                 return $this->_table->aliasField($field);
             },
@@ -441,7 +441,7 @@ class TreeBehavior extends Behavior
     {
         $config = $this->getConfig();
         $options += ['for' => null, 'direct' => false];
-        list($parent, $left, $right) = array_map(
+        list($parent, $left, $right) = \array_map(
             function ($field) {
                 return $this->_table->aliasField($field);
             },
@@ -631,7 +631,7 @@ class TreeBehavior extends Behavior
     {
         $config = $this->getConfig();
         list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
-        list($nodeParent, $nodeLeft, $nodeRight) = array_values($node->extract([$parent, $left, $right]));
+        list($nodeParent, $nodeLeft, $nodeRight) = \array_values($node->extract([$parent, $left, $right]));
 
         $targetNode = null;
         if ($number !== true) {
@@ -664,7 +664,7 @@ class TreeBehavior extends Behavior
             }
         }
 
-        list($targetLeft) = array_values($targetNode->extract([$left, $right]));
+        list($targetLeft) = \array_values($targetNode->extract([$left, $right]));
         $edge = $this->_getMax();
         $leftBoundary = $targetLeft;
         $rightBoundary = $nodeLeft - 1;
@@ -721,7 +721,7 @@ class TreeBehavior extends Behavior
     {
         $config = $this->getConfig();
         list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
-        list($nodeParent, $nodeLeft, $nodeRight) = array_values($node->extract([$parent, $left, $right]));
+        list($nodeParent, $nodeLeft, $nodeRight) = \array_values($node->extract([$parent, $left, $right]));
 
         $targetNode = null;
         if ($number !== true) {
@@ -754,7 +754,7 @@ class TreeBehavior extends Behavior
             }
         }
 
-        list(, $targetRight) = array_values($targetNode->extract([$left, $right]));
+        list(, $targetRight) = \array_values($targetNode->extract([$left, $right]));
         $edge = $this->_getMax();
         $leftBoundary = $nodeRight + 1;
         $rightBoundary = $targetRight;
@@ -934,10 +934,10 @@ class TreeBehavior extends Behavior
     {
         $config = $this->getConfig();
 
-        if (is_array($config['scope'])) {
+        if (\is_array($config['scope'])) {
             return $query->where($config['scope']);
         }
-        if (is_callable($config['scope'])) {
+        if (\is_callable($config['scope'])) {
             return $config['scope']($query);
         }
 
@@ -955,8 +955,8 @@ class TreeBehavior extends Behavior
     {
         $config = $this->getConfig();
         $fields = [$config['left'], $config['right']];
-        $values = array_filter($entity->extract($fields));
-        if (count($values) === count($fields)) {
+        $values = \array_filter($entity->extract($fields));
+        if (\count($values) === \count($fields)) {
             return;
         }
 

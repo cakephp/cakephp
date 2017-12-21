@@ -42,13 +42,13 @@ class MailTransport extends AbstractTransport
         $to = $headers['To'];
         unset($headers['To']);
         foreach ($headers as $key => $header) {
-            $headers[$key] = str_replace(["\r", "\n"], '', $header);
+            $headers[$key] = \str_replace(["\r", "\n"], '', $header);
         }
         $headers = $this->_headersToString($headers, $eol);
-        $subject = str_replace(["\r", "\n"], '', $email->getSubject());
-        $to = str_replace(["\r", "\n"], '', $to);
+        $subject = \str_replace(["\r", "\n"], '', $email->getSubject());
+        $to = \str_replace(["\r", "\n"], '', $to);
 
-        $message = implode($eol, $email->message());
+        $message = \implode($eol, $email->message());
 
         $params = isset($this->_config['additionalParameters']) ? $this->_config['additionalParameters'] : null;
         $this->_mail($to, $subject, $message, $headers, $params);
@@ -73,8 +73,8 @@ class MailTransport extends AbstractTransport
     protected function _mail($to, $subject, $message, $headers, $params = null)
     {
         //@codingStandardsIgnoreStart
-        if (!@mail($to, $subject, $message, $headers, $params)) {
-            $error = error_get_last();
+        if (!@\mail($to, $subject, $message, $headers, $params)) {
+            $error = \error_get_last();
             $msg = 'Could not send email: ' . (isset($error['message']) ? $error['message'] : 'unknown');
             throw new SocketException($msg);
         }

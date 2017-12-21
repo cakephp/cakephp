@@ -47,7 +47,7 @@ class UrlHelper extends Helper
             'fullBase' => false,
             'escape' => true,
         ];
-        if (!is_array($options)) {
+        if (!\is_array($options)) {
             $options = ['fullBase' => $options];
         }
         $options += $defaults;
@@ -77,7 +77,7 @@ class UrlHelper extends Helper
     {
         $pathPrefix = Configure::read('App.imageBaseUrl');
 
-        return $this->assetUrl($path, $options + compact('pathPrefix'));
+        return $this->assetUrl($path, $options + \compact('pathPrefix'));
     }
 
     /**
@@ -99,7 +99,7 @@ class UrlHelper extends Helper
         $pathPrefix = Configure::read('App.cssBaseUrl');
         $ext = '.css';
 
-        return $this->assetUrl($path, $options + compact('pathPrefix', 'ext'));
+        return $this->assetUrl($path, $options + \compact('pathPrefix', 'ext'));
     }
 
     /**
@@ -121,7 +121,7 @@ class UrlHelper extends Helper
         $pathPrefix = Configure::read('App.jsBaseUrl');
         $ext = '.js';
 
-        return $this->assetUrl($path, $options + compact('pathPrefix', 'ext'));
+        return $this->assetUrl($path, $options + \compact('pathPrefix', 'ext'));
     }
 
     /**
@@ -140,25 +140,25 @@ class UrlHelper extends Helper
      */
     public function assetUrl($path, array $options = [])
     {
-        if (is_array($path)) {
+        if (\is_array($path)) {
             return $this->build($path, !empty($options['fullBase']));
         }
-        if (strpos($path, '://') !== false || preg_match('/^[a-z]+:/i', $path)) {
-            return ltrim($this->build($path), '/');
+        if (\strpos($path, '://') !== false || \preg_match('/^[a-z]+:/i', $path)) {
+            return \ltrim($this->build($path), '/');
         }
-        if (!array_key_exists('plugin', $options) || $options['plugin'] !== false) {
+        if (!\array_key_exists('plugin', $options) || $options['plugin'] !== false) {
             list($plugin, $path) = $this->_View->pluginSplit($path, false);
         }
         if (!empty($options['pathPrefix']) && $path[0] !== '/') {
             $path = $options['pathPrefix'] . $path;
         }
         if (!empty($options['ext']) &&
-            strpos($path, '?') === false &&
-            substr($path, -strlen($options['ext'])) !== $options['ext']
+            \strpos($path, '?') === false &&
+            \substr($path, -\strlen($options['ext'])) !== $options['ext']
         ) {
             $path .= $options['ext'];
         }
-        if (preg_match('|^([a-z0-9]+:)?//|', $path)) {
+        if (\preg_match('|^([a-z0-9]+:)?//|', $path)) {
             return $this->build($path);
         }
         if (isset($plugin)) {
@@ -167,7 +167,7 @@ class UrlHelper extends Helper
         $path = $this->_encodeUrl($this->assetTimestamp($this->webroot($path)));
 
         if (!empty($options['fullBase'])) {
-            $path = rtrim(Router::fullBaseUrl(), '/') . '/' . ltrim($path, '/');
+            $path = \rtrim(Router::fullBaseUrl(), '/') . '/' . \ltrim($path, '/');
         }
 
         return $path;
@@ -181,12 +181,12 @@ class UrlHelper extends Helper
      */
     protected function _encodeUrl($url)
     {
-        $path = parse_url($url, PHP_URL_PATH);
-        $parts = array_map('rawurldecode', explode('/', $path));
-        $parts = array_map('rawurlencode', $parts);
-        $encoded = implode('/', $parts);
+        $path = \parse_url($url, PHP_URL_PATH);
+        $parts = \array_map('rawurldecode', \explode('/', $path));
+        $parts = \array_map('rawurlencode', $parts);
+        $encoded = \implode('/', $parts);
 
-        return h(str_replace($path, $encoded, $url));
+        return h(\str_replace($path, $encoded, $url));
     }
 
     /**
@@ -201,23 +201,23 @@ class UrlHelper extends Helper
     {
         $stamp = Configure::read('Asset.timestamp');
         $timestampEnabled = $stamp === 'force' || ($stamp === true && Configure::read('debug'));
-        if ($timestampEnabled && strpos($path, '?') === false) {
-            $filepath = preg_replace(
-                '/^' . preg_quote($this->request->getAttribute('webroot'), '/') . '/',
+        if ($timestampEnabled && \strpos($path, '?') === false) {
+            $filepath = \preg_replace(
+                '/^' . \preg_quote($this->request->getAttribute('webroot'), '/') . '/',
                 '',
-                urldecode($path)
+                \urldecode($path)
             );
-            $webrootPath = WWW_ROOT . str_replace('/', DIRECTORY_SEPARATOR, $filepath);
-            if (file_exists($webrootPath)) {
-                return $path . '?' . filemtime($webrootPath);
+            $webrootPath = WWW_ROOT . \str_replace('/', DIRECTORY_SEPARATOR, $filepath);
+            if (\file_exists($webrootPath)) {
+                return $path . '?' . \filemtime($webrootPath);
             }
-            $segments = explode('/', ltrim($filepath, '/'));
+            $segments = \explode('/', \ltrim($filepath, '/'));
             $plugin = Inflector::camelize($segments[0]);
             if (Plugin::loaded($plugin)) {
                 unset($segments[0]);
-                $pluginPath = Plugin::path($plugin) . 'webroot' . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $segments);
-                if (file_exists($pluginPath)) {
-                    return $path . '?' . filemtime($pluginPath);
+                $pluginPath = Plugin::path($plugin) . 'webroot' . DIRECTORY_SEPARATOR . \implode(DIRECTORY_SEPARATOR, $segments);
+                if (\file_exists($pluginPath)) {
+                    return $path . '?' . \filemtime($pluginPath);
                 }
             }
         }
@@ -233,31 +233,31 @@ class UrlHelper extends Helper
      */
     public function webroot($file)
     {
-        $asset = explode('?', $file);
+        $asset = \explode('?', $file);
         $asset[1] = isset($asset[1]) ? '?' . $asset[1] : null;
         $webPath = $this->request->getAttribute('webroot') . $asset[0];
         $file = $asset[0];
 
         if (!empty($this->theme)) {
-            $file = trim($file, '/');
+            $file = \trim($file, '/');
             $theme = $this->_inflectThemeName($this->theme) . '/';
 
             if (DIRECTORY_SEPARATOR === '\\') {
-                $file = str_replace('/', '\\', $file);
+                $file = \str_replace('/', '\\', $file);
             }
 
-            if (file_exists(Configure::read('App.wwwRoot') . $theme . $file)) {
+            if (\file_exists(Configure::read('App.wwwRoot') . $theme . $file)) {
                 $webPath = $this->request->getAttribute('webroot') . $theme . $asset[0];
             } else {
                 $themePath = Plugin::path($this->theme);
                 $path = $themePath . 'webroot/' . $file;
-                if (file_exists($path)) {
+                if (\file_exists($path)) {
                     $webPath = $this->request->getAttribute('webroot') . $theme . $asset[0];
                 }
             }
         }
-        if (strpos($webPath, '//') !== false) {
-            return str_replace('//', '/', $webPath . $asset[1]);
+        if (\strpos($webPath, '//') !== false) {
+            return \str_replace('//', '/', $webPath . $asset[1]);
         }
 
         return $webPath . $asset[1];

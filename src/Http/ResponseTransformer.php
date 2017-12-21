@@ -92,32 +92,32 @@ class ResponseTransformer
     {
         $cookies = [];
         foreach ($cookieHeader as $cookie) {
-            if (strpos($cookie, '";"') !== false) {
-                $cookie = str_replace('";"', '{__cookie_replace__}', $cookie);
-                $parts = preg_split('/\;[ \t]*/', $cookie);
-                $parts = str_replace('{__cookie_replace__}', '";"', $parts);
+            if (\strpos($cookie, '";"') !== false) {
+                $cookie = \str_replace('";"', '{__cookie_replace__}', $cookie);
+                $parts = \preg_split('/\;[ \t]*/', $cookie);
+                $parts = \str_replace('{__cookie_replace__}', '";"', $parts);
             } else {
-                $parts = preg_split('/\;[ \t]*/', $cookie);
+                $parts = \preg_split('/\;[ \t]*/', $cookie);
             }
 
-            list($name, $value) = explode('=', array_shift($parts), 2);
-            $parsed = ['name' => $name, 'value' => urldecode($value)];
+            list($name, $value) = \explode('=', \array_shift($parts), 2);
+            $parsed = ['name' => $name, 'value' => \urldecode($value)];
 
             foreach ($parts as $part) {
-                if (strpos($part, '=') !== false) {
-                    list($key, $value) = explode('=', $part);
+                if (\strpos($part, '=') !== false) {
+                    list($key, $value) = \explode('=', $part);
                 } else {
                     $key = $part;
                     $value = true;
                 }
 
-                $key = strtolower($key);
+                $key = \strtolower($key);
                 if ($key === 'httponly') {
                     $key = 'httpOnly';
                 }
                 if ($key === 'expires') {
                     $key = 'expire';
-                    $value = strtotime($value);
+                    $value = \strtotime($value);
                 }
                 if (!isset($parsed[$key])) {
                     $parsed[$key] = $value;
@@ -139,7 +139,7 @@ class ResponseTransformer
     {
         $out = [];
         foreach ($response->getHeaders() as $name => $value) {
-            if (count($value) === 1) {
+            if (\count($value) === 1) {
                 $out[$name] = $value[0];
             } else {
                 $out[$name] = $value;
@@ -183,7 +183,7 @@ class ResponseTransformer
         if (isset($headers['Content-Type'])) {
             return $headers;
         }
-        if (in_array($response->statusCode(), [204, 304])) {
+        if (\in_array($response->statusCode(), [204, 304])) {
             return $headers;
         }
 
@@ -195,7 +195,7 @@ class ResponseTransformer
         $charset = $response->charset();
 
         $hasCharset = false;
-        if ($charset && (strpos($type, 'text/') === 0 || in_array($type, $whitelist))) {
+        if ($charset && (\strpos($type, 'text/') === 0 || \in_array($type, $whitelist))) {
             $hasCharset = true;
         }
 
@@ -219,10 +219,10 @@ class ResponseTransformer
         $headers = [];
         foreach ($cookies as $cookie) {
             $parts = [
-                sprintf('%s=%s', urlencode($cookie['name']), urlencode($cookie['value']))
+                \sprintf('%s=%s', \urlencode($cookie['name']), \urlencode($cookie['value']))
             ];
             if ($cookie['expire']) {
-                $cookie['expire'] = gmdate('D, d M Y H:i:s T', $cookie['expire']);
+                $cookie['expire'] = \gmdate('D, d M Y H:i:s T', $cookie['expire']);
             }
             $attributes = [
                 'expire' => 'Expires=%s',
@@ -233,10 +233,10 @@ class ResponseTransformer
             ];
             foreach ($attributes as $key => $attr) {
                 if ($cookie[$key]) {
-                    $parts[] = sprintf($attr, $cookie[$key]);
+                    $parts[] = \sprintf($attr, $cookie[$key]);
                 }
             }
-            $headers[] = implode('; ', $parts);
+            $headers[] = \implode('; ', $parts);
         }
 
         return $headers;
@@ -252,13 +252,13 @@ class ResponseTransformer
     {
         $stream = 'php://memory';
         $body = $response->body();
-        if (is_string($body) && strlen($body)) {
+        if (\is_string($body) && \strlen($body)) {
             $stream = new Stream('php://memory', 'wb');
             $stream->write($body);
 
             return $stream;
         }
-        if (is_callable($body)) {
+        if (\is_callable($body)) {
             $stream = new CallbackStream($body);
 
             return $stream;

@@ -75,7 +75,7 @@ class I18n
             static::getLocale()
         );
 
-        if (class_exists('Cake\Cache\Cache')) {
+        if (\class_exists('Cake\Cache\Cache')) {
             static::$_collection->setCacher(Cache::engine('_cake_core_'));
         }
 

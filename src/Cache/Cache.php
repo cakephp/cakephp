@@ -160,7 +160,7 @@ class Cache
 
         if (empty(static::$_config[$name]['className'])) {
             throw new InvalidArgumentException(
-                sprintf('The "%s" cache configuration does not exist.', $name)
+                \sprintf('The "%s" cache configuration does not exist.', $name)
             );
         }
 
@@ -169,16 +169,16 @@ class Cache
         try {
             $registry->load($name, $config);
         } catch (RuntimeException $e) {
-            if (!array_key_exists('fallback', $config)) {
+            if (!\array_key_exists('fallback', $config)) {
                 $registry->set($name, new NullEngine());
-                trigger_error($e->getMessage(), E_USER_WARNING);
+                \trigger_error($e->getMessage(), E_USER_WARNING);
 
                 return;
             }
 
             if ($config['fallback'] === $name) {
                 throw new InvalidArgumentException(
-                    sprintf('"%s" cache configuration cannot fallback to itself.', $name)
+                    \sprintf('"%s" cache configuration cannot fallback to itself.', $name)
                 );
             }
 
@@ -198,8 +198,8 @@ class Cache
         if (!empty($config['groups'])) {
             foreach ($config['groups'] as $group) {
                 static::$_groups[$group][] = $name;
-                static::$_groups[$group] = array_unique(static::$_groups[$group]);
-                sort(static::$_groups[$group]);
+                static::$_groups[$group] = \array_unique(static::$_groups[$group]);
+                \sort(static::$_groups[$group]);
             }
         }
     }
@@ -270,18 +270,18 @@ class Cache
     public static function write($key, $value, $config = 'default')
     {
         $engine = static::engine($config);
-        if (is_resource($value)) {
+        if (\is_resource($value)) {
             return false;
         }
 
         $success = $engine->write($key, $value);
         if ($success === false && $value !== '') {
-            trigger_error(
-                sprintf(
+            \trigger_error(
+                \sprintf(
                     "%s cache was unable to write '%s' to %s cache",
                     $config,
                     $key,
-                    get_class($engine)
+                    \get_class($engine)
                 ),
                 E_USER_WARNING
             );
@@ -318,11 +318,11 @@ class Cache
         $return = $engine->writeMany($data);
         foreach ($return as $key => $success) {
             if ($success === false && $data[$key] !== '') {
-                throw new RuntimeException(sprintf(
+                throw new RuntimeException(\sprintf(
                     '%s cache was unable to write \'%s\' to %s cache',
                     $config,
                     $key,
-                    get_class($engine)
+                    \get_class($engine)
                 ));
             }
         }
@@ -399,7 +399,7 @@ class Cache
     public static function increment($key, $offset = 1, $config = 'default')
     {
         $engine = static::engine($config);
-        if (!is_int($offset) || $offset < 0) {
+        if (!\is_int($offset) || $offset < 0) {
             return false;
         }
 
@@ -418,7 +418,7 @@ class Cache
     public static function decrement($key, $offset = 1, $config = 'default')
     {
         $engine = static::engine($config);
-        if (!is_int($offset) || $offset < 0) {
+        if (!\is_int($offset) || $offset < 0) {
             return false;
         }
 
@@ -545,7 +545,7 @@ class Cache
      */
     public static function groupConfigs($group = null)
     {
-        foreach (array_keys(static::$_config) as $config) {
+        foreach (\array_keys(static::$_config) as $config) {
             static::engine($config);
         }
         if ($group === null) {
@@ -556,7 +556,7 @@ class Cache
             return [$group => self::$_groups[$group]];
         }
 
-        throw new InvalidArgumentException(sprintf('Invalid cache group %s', $group));
+        throw new InvalidArgumentException(\sprintf('Invalid cache group %s', $group));
     }
 
     /**
@@ -625,7 +625,7 @@ class Cache
         if ($existing !== false) {
             return $existing;
         }
-        $results = call_user_func($callable);
+        $results = \call_user_func($callable);
         self::write($key, $results, $config);
 
         return $results;
@@ -657,7 +657,7 @@ class Cache
     public static function add($key, $value, $config = 'default')
     {
         $engine = static::engine($config);
-        if (is_resource($value)) {
+        if (\is_resource($value)) {
             return false;
         }
 

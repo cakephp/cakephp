@@ -66,14 +66,14 @@ class TableLocator implements LocatorInterface
      */
     public function setConfig($alias, $options = null)
     {
-        if (!is_string($alias)) {
+        if (!\is_string($alias)) {
             $this->_config = $alias;
 
             return $this;
         }
 
         if (isset($this->_instances[$alias])) {
-            throw new RuntimeException(sprintf(
+            throw new RuntimeException(\sprintf(
                 'You cannot configure "%s", it has already been constructed.',
                 $alias
             ));
@@ -119,7 +119,7 @@ class TableLocator implements LocatorInterface
     public function config($alias = null, $options = null)
     {
         if ($alias !== null) {
-            if (is_string($alias) && $options === null) {
+            if (\is_string($alias) && $options === null) {
                 return $this->getConfig($alias);
             }
 
@@ -169,7 +169,7 @@ class TableLocator implements LocatorInterface
     {
         if (isset($this->_instances[$alias])) {
             if (!empty($options) && $this->_options[$alias] !== $options) {
-                throw new RuntimeException(sprintf(
+                throw new RuntimeException(\sprintf(
                     'You cannot configure "%s", it already exists in the registry.',
                     $alias
                 ));
@@ -194,7 +194,7 @@ class TableLocator implements LocatorInterface
         if ($className) {
             $options['className'] = $className;
         } else {
-            if (!isset($options['table']) && strpos($options['className'], '\\') === false) {
+            if (!isset($options['table']) && \strpos($options['className'], '\\') === false) {
                 list(, $table) = pluginSplit($options['className']);
                 $options['table'] = Inflector::underscore($table);
             }

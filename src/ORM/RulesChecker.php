@@ -47,7 +47,7 @@ class RulesChecker extends BaseRulesChecker
     public function isUnique(array $fields, $message = null)
     {
         $options = [];
-        if (is_array($message)) {
+        if (\is_array($message)) {
             $options = $message + ['message' => null];
             $message = $options['message'];
             unset($options['message']);
@@ -60,9 +60,9 @@ class RulesChecker extends BaseRulesChecker
             }
         }
 
-        $errorField = current($fields);
+        $errorField = \current($fields);
 
-        return $this->_addError(new IsUnique($fields, $options), '_isUnique', compact('errorField', 'message'));
+        return $this->_addError(new IsUnique($fields, $options), '_isUnique', \compact('errorField', 'message'));
     }
 
     /**
@@ -93,7 +93,7 @@ class RulesChecker extends BaseRulesChecker
     public function existsIn($field, $table, $message = null)
     {
         $options = [];
-        if (is_array($message)) {
+        if (\is_array($message)) {
             $options = $message + ['message' => null];
             $message = $options['message'];
             unset($options['message']);
@@ -107,9 +107,9 @@ class RulesChecker extends BaseRulesChecker
             }
         }
 
-        $errorField = is_string($field) ? $field : current($field);
+        $errorField = \is_string($field) ? $field : \current($field);
 
-        return $this->_addError(new ExistsIn($field, $table, $options), '_existsIn', compact('errorField', 'message'));
+        return $this->_addError(new ExistsIn($field, $table, $options), '_existsIn', \compact('errorField', 'message'));
     }
 
     /**
@@ -127,7 +127,7 @@ class RulesChecker extends BaseRulesChecker
             if ($this->_useI18n) {
                 $message = __d('cake', 'The count does not match {0}{1}', [$operator, $count]);
             } else {
-                $message = sprintf('The count does not match %s%d', $operator, $count);
+                $message = \sprintf('The count does not match %s%d', $operator, $count);
             }
         }
 
@@ -136,7 +136,7 @@ class RulesChecker extends BaseRulesChecker
         return $this->_addError(
             new ValidCount($field),
             '_validCount',
-            compact('count', 'operator', 'errorField', 'message')
+            \compact('count', 'operator', 'errorField', 'message')
         );
     }
 }

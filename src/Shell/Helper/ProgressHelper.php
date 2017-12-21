@@ -74,7 +74,7 @@ class ProgressHelper extends Helper
         if (isset($args[0])) {
             $args['callback'] = $args[0];
         }
-        if (!$args['callback'] || !is_callable($args['callback'])) {
+        if (!$args['callback'] || !\is_callable($args['callback'])) {
             throw new RuntimeException('Callback option must be a callable.');
         }
         $this->init($args);
@@ -117,7 +117,7 @@ class ProgressHelper extends Helper
      */
     public function increment($num = 1)
     {
-        $this->_progress = min(max(0, $this->_progress + $num), $this->_total);
+        $this->_progress = \min(\max(0, $this->_progress + $num), $this->_total);
 
         return $this;
     }
@@ -129,20 +129,20 @@ class ProgressHelper extends Helper
      */
     public function draw()
     {
-        $numberLen = strlen(' 100%');
-        $complete = round($this->_progress / $this->_total, 2);
+        $numberLen = \strlen(' 100%');
+        $complete = \round($this->_progress / $this->_total, 2);
         $barLen = ($this->_width - $numberLen) * ($this->_progress / $this->_total);
         $bar = '';
         if ($barLen > 1) {
-            $bar = str_repeat('=', $barLen - 1) . '>';
+            $bar = \str_repeat('=', $barLen - 1) . '>';
         }
 
-        $pad = ceil($this->_width - $numberLen - $barLen);
+        $pad = \ceil($this->_width - $numberLen - $barLen);
         if ($pad > 0) {
-            $bar .= str_repeat(' ', $pad);
+            $bar .= \str_repeat(' ', $pad);
         }
         $percent = ($complete * 100) . '%';
-        $bar .= str_pad($percent, $numberLen, ' ', STR_PAD_LEFT);
+        $bar .= \str_pad($percent, $numberLen, ' ', STR_PAD_LEFT);
 
         $this->_io->overwrite($bar, 0);
 

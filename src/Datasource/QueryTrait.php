@@ -222,18 +222,18 @@ trait QueryTrait
      */
     public function aliasField($field, $alias = null)
     {
-        $namespaced = strpos($field, '.') !== false;
+        $namespaced = \strpos($field, '.') !== false;
         $aliasedField = $field;
 
         if ($namespaced) {
-            list($alias, $field) = explode('.', $field);
+            list($alias, $field) = \explode('.', $field);
         }
 
         if (!$alias) {
             $alias = $this->repository()->getAlias();
         }
 
-        $key = sprintf('%s__%s', $alias, $field);
+        $key = \sprintf('%s__%s', $alias, $field);
         if (!$namespaced) {
             $aliasedField = $alias . '.' . $field;
         }
@@ -253,7 +253,7 @@ trait QueryTrait
     {
         $aliased = [];
         foreach ($fields as $alias => $field) {
-            if (is_numeric($alias) && is_string($field)) {
+            if (\is_numeric($alias) && \is_string($field)) {
                 $aliased += $this->aliasField($field, $defaultAlias);
                 continue;
             }
@@ -331,7 +331,7 @@ trait QueryTrait
         if ($mapper === null) {
             return $this->_mapReduce;
         }
-        $this->_mapReduce[] = compact('mapper', 'reducer');
+        $this->_mapReduce[] = \compact('mapper', 'reducer');
 
         return $this;
     }
@@ -384,7 +384,7 @@ trait QueryTrait
         }
 
         if ($mode === self::PREPEND) {
-            array_unshift($this->_formatters, $formatter);
+            \array_unshift($this->_formatters, $formatter);
 
             return $this;
         }
@@ -425,7 +425,7 @@ trait QueryTrait
     {
         $entity = $this->first();
         if (!$entity) {
-            throw new RecordNotFoundException(sprintf(
+            throw new RecordNotFoundException(\sprintf(
                 'Record not found in table "%s"',
                 $this->repository()->table()
             ));
@@ -465,13 +465,13 @@ trait QueryTrait
     public function __call($method, $arguments)
     {
         $resultSetClass = $this->_decoratorClass();
-        if (in_array($method, get_class_methods($resultSetClass))) {
+        if (\in_array($method, \get_class_methods($resultSetClass))) {
             $results = $this->all();
 
             return $results->$method(...$arguments);
         }
         throw new BadMethodCallException(
-            sprintf('Unknown method "%s"', $method)
+            \sprintf('Unknown method "%s"', $method)
         );
     }
 

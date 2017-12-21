@@ -223,4 +223,4 @@ class FormDataPart
 }
 
 // @deprecated Add backwards compat alias.
-class_alias('Cake\Http\Client\FormDataPart', 'Cake\Network\Http\FormData\Part');
+\class_alias('Cake\Http\Client\FormDataPart', 'Cake\Network\Http\FormData\Part');

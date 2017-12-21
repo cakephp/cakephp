@@ -307,7 +307,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function traverse(callable $visitor, array $parts = [])
     {
-        $parts = $parts ?: array_keys($this->_parts);
+        $parts = $parts ?: \array_keys($this->_parts);
         foreach ($parts as $name) {
             $visitor($this->_parts[$name], $name);
         }
@@ -352,18 +352,18 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function select($fields = [], $overwrite = false)
     {
-        if (!is_string($fields) && is_callable($fields)) {
+        if (!\is_string($fields) && \is_callable($fields)) {
             $fields = $fields($this);
         }
 
-        if (!is_array($fields)) {
+        if (!\is_array($fields)) {
             $fields = [$fields];
         }
 
         if ($overwrite) {
             $this->_parts['select'] = $fields;
         } else {
-            $this->_parts['select'] = array_merge($this->_parts['select'], $fields);
+            $this->_parts['select'] = \array_merge($this->_parts['select'], $fields);
         }
 
         $this->_dirty();
@@ -404,16 +404,16 @@ class Query implements ExpressionInterface, IteratorAggregate
     {
         if ($on === []) {
             $on = true;
-        } elseif (is_string($on)) {
+        } elseif (\is_string($on)) {
             $on = [$on];
         }
 
-        if (is_array($on)) {
+        if (\is_array($on)) {
             $merge = [];
-            if (is_array($this->_parts['distinct'])) {
+            if (\is_array($this->_parts['distinct'])) {
                 $merge = $this->_parts['distinct'];
             }
-            $on = $overwrite ? array_values($on) : array_merge($merge, array_values($on));
+            $on = $overwrite ? \array_values($on) : \array_merge($merge, \array_values($on));
         }
 
         $this->_parts['distinct'] = $on;
@@ -450,7 +450,7 @@ class Query implements ExpressionInterface, IteratorAggregate
         if ($overwrite) {
             $this->_parts['modifier'] = [];
         }
-        $this->_parts['modifier'] = array_merge($this->_parts['modifier'], (array)$modifiers);
+        $this->_parts['modifier'] = \array_merge($this->_parts['modifier'], (array)$modifiers);
 
         return $this;
     }
@@ -495,7 +495,7 @@ class Query implements ExpressionInterface, IteratorAggregate
         if ($overwrite) {
             $this->_parts['from'] = $tables;
         } else {
-            $this->_parts['from'] = array_merge($this->_parts['from'], $tables);
+            $this->_parts['from'] = \array_merge($this->_parts['from'], $tables);
         }
 
         $this->_dirty();
@@ -595,32 +595,32 @@ class Query implements ExpressionInterface, IteratorAggregate
             return $this->_parts['join'];
         }
 
-        if (is_string($tables) || isset($tables['table'])) {
+        if (\is_string($tables) || isset($tables['table'])) {
             $tables = [$tables];
         }
 
         $joins = [];
-        $i = count($this->_parts['join']);
+        $i = \count($this->_parts['join']);
         foreach ($tables as $alias => $t) {
-            if (!is_array($t)) {
+            if (!\is_array($t)) {
                 $t = ['table' => $t, 'conditions' => $this->newExpr()];
             }
 
-            if (!is_string($t['conditions']) && is_callable($t['conditions'])) {
+            if (!\is_string($t['conditions']) && \is_callable($t['conditions'])) {
                 $t['conditions'] = $t['conditions']($this->newExpr(), $this);
             }
 
             if (!($t['conditions'] instanceof ExpressionInterface)) {
                 $t['conditions'] = $this->newExpr()->add($t['conditions'], $types);
             }
-            $alias = is_string($alias) ? $alias : null;
+            $alias = \is_string($alias) ? $alias : null;
             $joins[$alias ?: $i++] = $t + ['type' => QueryInterface::JOIN_TYPE_INNER, 'alias' => $alias];
         }
 
         if ($overwrite) {
             $this->_parts['join'] = $joins;
         } else {
-            $this->_parts['join'] = array_merge($this->_parts['join'], $joins);
+            $this->_parts['join'] = \array_merge($this->_parts['join'], $joins);
         }
 
         $this->_dirty();
@@ -740,9 +740,9 @@ class Query implements ExpressionInterface, IteratorAggregate
     {
         $alias = $table;
 
-        if (is_array($table)) {
-            $alias = key($table);
-            $table = current($table);
+        if (\is_array($table)) {
+            $alias = \key($table);
+            $table = \current($table);
         }
 
         return [
@@ -1168,11 +1168,11 @@ class Query implements ExpressionInterface, IteratorAggregate
             $this->_parts['group'] = [];
         }
 
-        if (!is_array($fields)) {
+        if (!\is_array($fields)) {
             $fields = [$fields];
         }
 
-        $this->_parts['group'] = array_merge($this->_parts['group'], array_values($fields));
+        $this->_parts['group'] = \array_merge($this->_parts['group'], \array_values($fields));
         $this->_dirty();
 
         return $this;
@@ -1299,7 +1299,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function limit($num)
     {
         $this->_dirty();
-        if ($num !== null && !is_object($num)) {
+        if ($num !== null && !\is_object($num)) {
             $num = (int)$num;
         }
         $this->_parts['limit'] = $num;
@@ -1328,7 +1328,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function offset($num)
     {
         $this->_dirty();
-        if ($num !== null && !is_object($num)) {
+        if ($num !== null && !\is_object($num)) {
             $num = (int)$num;
         }
         $this->_parts['offset'] = $num;
@@ -1499,9 +1499,9 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function update($table)
     {
-        if (!is_string($table) && !($table instanceof ExpressionInterface)) {
+        if (!\is_string($table) && !($table instanceof ExpressionInterface)) {
             $text = 'Table must be of type string or "%s", got "%s"';
-            $message = sprintf($text, ExpressionInterface::class, gettype($table));
+            $message = \sprintf($text, ExpressionInterface::class, \gettype($table));
             throw new InvalidArgumentException($message);
         }
 
@@ -1559,14 +1559,14 @@ class Query implements ExpressionInterface, IteratorAggregate
             return $this;
         }
 
-        if (is_array($key) || $key instanceof ExpressionInterface) {
+        if (\is_array($key) || $key instanceof ExpressionInterface) {
             $types = (array)$value;
             $this->_parts['set']->add($key, $types);
 
             return $this;
         }
 
-        if (is_string($types) && is_string($key)) {
+        if (\is_string($types) && \is_string($key)) {
             $types = [$key => $types];
         }
         $this->_parts['set']->eq($key, $value, $types);
@@ -1730,8 +1730,8 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function clause($name)
     {
-        if (!array_key_exists($name, $this->_parts)) {
-            $clauses = implode(', ', array_keys($this->_parts));
+        if (!\array_key_exists($name, $this->_parts)) {
+            $clauses = \implode(', ', \array_keys($this->_parts));
             throw new InvalidArgumentException("The '$name' clause is not defined. Valid clauses are: $clauses");
         }
 
@@ -1795,7 +1795,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function traverseExpressions(callable $callback)
     {
         $visitor = function ($expression) use (&$visitor, $callback) {
-            if (is_array($expression)) {
+            if (\is_array($expression)) {
                 foreach ($expression as $e) {
                     $visitor($e);
                 }
@@ -2085,7 +2085,7 @@ class Query implements ExpressionInterface, IteratorAggregate
             if (empty($part)) {
                 continue;
             }
-            if (is_array($part)) {
+            if (\is_array($part)) {
                 foreach ($part as $i => $piece) {
                     if ($piece instanceof ExpressionInterface) {
                         $this->_parts[$name][$i] = clone $piece;
@@ -2117,7 +2117,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function __debugInfo()
     {
         try {
-            set_error_handler(function ($errno, $errstr) {
+            \set_error_handler(function ($errno, $errstr) {
                 throw new RuntimeException($errstr, $errno);
             }, E_ALL);
             $sql = $this->sql();
@@ -2126,7 +2126,7 @@ class Query implements ExpressionInterface, IteratorAggregate
             $sql = 'SQL could not be generated for this query as it is incomplete.';
             $params = [];
         } finally {
-            restore_error_handler();
+            \restore_error_handler();
         }
 
         return [
@@ -2134,7 +2134,7 @@ class Query implements ExpressionInterface, IteratorAggregate
             'sql' => $sql,
             'params' => $params,
             'defaultTypes' => $this->getDefaultTypes(),
-            'decorators' => count($this->_resultDecorators),
+            'decorators' => \count($this->_resultDecorators),
             'executed' => $this->_iterator ? true : false
         ];
     }

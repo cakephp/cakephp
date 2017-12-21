@@ -64,10 +64,10 @@ class Schema
      */
     public function addField($name, $attrs)
     {
-        if (is_string($attrs)) {
+        if (\is_string($attrs)) {
             $attrs = ['type' => $attrs];
         }
-        $attrs = array_intersect_key($attrs, $this->_fieldDefaults);
+        $attrs = \array_intersect_key($attrs, $this->_fieldDefaults);
         $this->_fields[$name] = $attrs + $this->_fieldDefaults;
 
         return $this;
@@ -93,7 +93,7 @@ class Schema
      */
     public function fields()
     {
-        return array_keys($this->_fields);
+        return \array_keys($this->_fields);
     }
 
     /**

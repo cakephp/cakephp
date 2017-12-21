@@ -57,7 +57,7 @@ class ShellDispatcher
      */
     public function __construct($args = [], $bootstrap = true)
     {
-        set_time_limit(0);
+        \set_time_limit(0);
         $this->args = (array)$args;
 
         $this->addShortPluginAliases();
@@ -141,10 +141,10 @@ class ShellDispatcher
             throw new Exception($message);
         }
 
-        if (function_exists('ini_set')) {
-            ini_set('html_errors', '0');
-            ini_set('implicit_flush', '1');
-            ini_set('max_execution_time', '0');
+        if (\function_exists('ini_set')) {
+            \ini_set('html_errors', '0');
+            \ini_set('implicit_flush', '1');
+            \ini_set('max_execution_time', '0');
         }
 
         $this->shiftArgs();
@@ -186,7 +186,7 @@ class ShellDispatcher
         if ($result === null || $result === true) {
             return Shell::CODE_SUCCESS;
         }
-        if (is_int($result)) {
+        if (\is_int($result)) {
             return $result;
         }
 
@@ -212,12 +212,12 @@ class ShellDispatcher
 
             return false;
         }
-        if (in_array($shell, ['help', '--help', '-h'])) {
+        if (\in_array($shell, ['help', '--help', '-h'])) {
             $this->help();
 
             return true;
         }
-        if (in_array($shell, ['version', '--version'])) {
+        if (\in_array($shell, ['version', '--version'])) {
             $this->version();
 
             return true;
@@ -246,7 +246,7 @@ class ShellDispatcher
         $task = new CommandTask($io);
         $io->setLoggers(false);
         $list = $task->getShellList() + ['app' => []];
-        $fixed = array_flip($list['app']) + array_flip($list['CORE']);
+        $fixed = \array_flip($list['app']) + \array_flip($list['CORE']);
         $aliases = $others = [];
 
         foreach ($plugins as $plugin) {
@@ -259,7 +259,7 @@ class ShellDispatcher
                 if (!isset($others[$shell])) {
                     $others[$shell] = [$plugin];
                 } else {
-                    $others[$shell] = array_merge($others[$shell], [$plugin]);
+                    $others[$shell] = \array_merge($others[$shell], [$plugin]);
                 }
             }
         }
@@ -288,9 +288,9 @@ class ShellDispatcher
             }
 
             if (isset($others[$shell])) {
-                $conflicts = array_diff($others[$shell], [$plugin]);
-                if (count($conflicts) > 0) {
-                    $conflictList = implode("', '", $conflicts);
+                $conflicts = \array_diff($others[$shell], [$plugin]);
+                if (\count($conflicts) > 0) {
+                    $conflictList = \implode("', '", $conflicts);
                     Log::write(
                         'debug',
                         "command '$shell' in plugin '$plugin' was not aliased, conflicts with '$conflictList'",
@@ -345,9 +345,9 @@ class ShellDispatcher
             $shell = $aliased;
         }
 
-        $class = array_map('Cake\Utility\Inflector::camelize', explode('.', $shell));
+        $class = \array_map('Cake\Utility\Inflector::camelize', \explode('.', $shell));
 
-        return implode('.', $class);
+        return \implode('.', $class);
     }
 
     /**
@@ -359,7 +359,7 @@ class ShellDispatcher
     protected function _shellExists($shell)
     {
         $class = App::className($shell, 'Shell', 'Shell');
-        if (class_exists($class)) {
+        if (\class_exists($class)) {
             return $class;
         }
 
@@ -377,7 +377,7 @@ class ShellDispatcher
     {
         list($plugin) = pluginSplit($shortName);
         $instance = new $className();
-        $instance->plugin = trim($plugin, '.');
+        $instance->plugin = \trim($plugin, '.');
 
         return $instance;
     }
@@ -389,7 +389,7 @@ class ShellDispatcher
      */
     public function shiftArgs()
     {
-        return array_shift($this->args);
+        return \array_shift($this->args);
     }
 
     /**
@@ -399,7 +399,7 @@ class ShellDispatcher
      */
     public function help()
     {
-        $this->args = array_merge(['command_list'], $this->args);
+        $this->args = \array_merge(['command_list'], $this->args);
         $this->dispatch();
     }
 
@@ -410,7 +410,7 @@ class ShellDispatcher
      */
     public function version()
     {
-        $this->args = array_merge(['command_list', '--version'], $this->args);
+        $this->args = \array_merge(['command_list', '--version'], $this->args);
         $this->dispatch();
     }
 }

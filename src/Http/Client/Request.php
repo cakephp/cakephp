@@ -67,8 +67,8 @@ class Request extends Message implements RequestInterface
         if ($method === null) {
             return $this->method;
         }
-        $name = get_called_class() . '::METHOD_' . strtoupper($method);
-        if (!defined($name)) {
+        $name = \get_called_class() . '::METHOD_' . \strtoupper($method);
+        if (!\defined($name)) {
             throw new Exception('Invalid method type');
         }
         $this->method = $method;
@@ -130,7 +130,7 @@ class Request extends Message implements RequestInterface
      */
     public function header($name = null, $value = null)
     {
-        if ($value === null && is_string($name)) {
+        if ($value === null && \is_string($name)) {
             $val = $this->getHeaderLine($name);
             if ($val === '') {
                 return null;
@@ -139,7 +139,7 @@ class Request extends Message implements RequestInterface
             return $val;
         }
 
-        if ($value !== null && !is_array($name)) {
+        if ($value !== null && !\is_array($name)) {
             $name = [$name => $value];
         }
         $this->addHeaders($name);
@@ -156,7 +156,7 @@ class Request extends Message implements RequestInterface
     protected function addHeaders(array $headers)
     {
         foreach ($headers as $key => $val) {
-            $normalized = strtolower($key);
+            $normalized = \strtolower($key);
             $this->headers[$key] = (array)$val;
             $this->headerNames[$normalized] = $key;
         }
@@ -192,10 +192,10 @@ class Request extends Message implements RequestInterface
      */
     public function cookie($name, $value = null)
     {
-        if ($value === null && is_string($name)) {
+        if ($value === null && \is_string($name)) {
             return isset($this->_cookies[$name]) ? $this->_cookies[$name] : null;
         }
-        if (is_string($name) && is_string($value)) {
+        if (\is_string($name) && \is_string($value)) {
             $name = [$name => $value];
         }
         foreach ($name as $key => $val) {
@@ -242,7 +242,7 @@ class Request extends Message implements RequestInterface
 
             return $body ? $body->__toString() : '';
         }
-        if (is_array($body)) {
+        if (\is_array($body)) {
             $formData = new FormData();
             $formData->addMany($body);
             $this->header('Content-Type', $formData->contentType());
@@ -257,4 +257,4 @@ class Request extends Message implements RequestInterface
 }
 
 // @deprecated Add backwards compact alias.
-class_alias('Cake\Http\Client\Request', 'Cake\Network\Http\Request');
+\class_alias('Cake\Http\Client\Request', 'Cake\Network\Http\Request');

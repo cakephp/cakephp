@@ -76,7 +76,7 @@ class BasicAuthenticate extends BaseAuthenticate
         $username = $request->getEnv('PHP_AUTH_USER');
         $pass = $request->getEnv('PHP_AUTH_PW');
 
-        if (!is_string($username) || $username === '' || !is_string($pass) || $pass === '') {
+        if (!\is_string($username) || $username === '' || !\is_string($pass) || $pass === '') {
             return false;
         }
 
@@ -108,6 +108,6 @@ class BasicAuthenticate extends BaseAuthenticate
     {
         $realm = $this->getConfig('realm') ?: $request->getEnv('SERVER_NAME');
 
-        return sprintf('WWW-Authenticate: Basic realm="%s"', $realm);
+        return \sprintf('WWW-Authenticate: Basic realm="%s"', $realm);
     }
 }

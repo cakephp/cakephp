@@ -77,7 +77,7 @@ class HelpFormatter
      */
     public function setAlias($alias)
     {
-        if (is_string($alias)) {
+        if (\is_string($alias)) {
             $this->_alias = $alias;
         } else {
             throw new ConsoleException('Alias must be of type string.');
@@ -110,12 +110,12 @@ class HelpFormatter
             foreach ($subcommands as $command) {
                 $out[] = Text::wrapBlock($command->help($max), [
                     'width' => $width,
-                    'indent' => str_repeat(' ', $max),
+                    'indent' => \str_repeat(' ', $max),
                     'indentAt' => 1
                 ]);
             }
             $out[] = '';
-            $out[] = sprintf('To see help on a subcommand use <info>`' . $this->_alias . ' %s [subcommand] --help`</info>', $parser->getCommand());
+            $out[] = \sprintf('To see help on a subcommand use <info>`' . $this->_alias . ' %s [subcommand] --help`</info>', $parser->getCommand());
             $out[] = '';
         }
 
@@ -127,7 +127,7 @@ class HelpFormatter
             foreach ($options as $option) {
                 $out[] = Text::wrapBlock($option->help($max), [
                     'width' => $width,
-                    'indent' => str_repeat(' ', $max),
+                    'indent' => \str_repeat(' ', $max),
                     'indentAt' => 1
                 ]);
             }
@@ -142,7 +142,7 @@ class HelpFormatter
             foreach ($arguments as $argument) {
                 $out[] = Text::wrapBlock($argument->help($max), [
                     'width' => $width,
-                    'indent' => str_repeat(' ', $max),
+                    'indent' => \str_repeat(' ', $max),
                     'indentAt' => 1
                 ]);
             }
@@ -154,7 +154,7 @@ class HelpFormatter
             $out[] = '';
         }
 
-        return implode("\n", $out);
+        return \implode("\n", $out);
     }
 
     /**
@@ -175,20 +175,20 @@ class HelpFormatter
         foreach ($this->_parser->options() as $option) {
             $options[] = $option->usage();
         }
-        if (count($options) > $this->_maxOptions) {
+        if (\count($options) > $this->_maxOptions) {
             $options = ['[options]'];
         }
-        $usage = array_merge($usage, $options);
+        $usage = \array_merge($usage, $options);
         $args = [];
         foreach ($this->_parser->arguments() as $argument) {
             $args[] = $argument->usage();
         }
-        if (count($args) > $this->_maxArgs) {
+        if (\count($args) > $this->_maxArgs) {
             $args = ['[arguments]'];
         }
-        $usage = array_merge($usage, $args);
+        $usage = \array_merge($usage, $args);
 
-        return implode(' ', $usage);
+        return \implode(' ', $usage);
     }
 
     /**
@@ -201,7 +201,7 @@ class HelpFormatter
     {
         $max = 0;
         foreach ($collection as $item) {
-            $max = (strlen($item->name()) > $max) ? strlen($item->name()) : $max;
+            $max = (\strlen($item->name()) > $max) ? \strlen($item->name()) : $max;
         }
 
         return $max;

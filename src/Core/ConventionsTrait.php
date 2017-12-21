@@ -67,7 +67,7 @@ trait ConventionsTrait
      */
     protected function _modelNameFromKey($key)
     {
-        $key = str_replace('_id', '', $key);
+        $key = \str_replace('_id', '', $key);
 
         return Inflector::camelize(Inflector::pluralize($key));
     }
@@ -139,7 +139,7 @@ trait ConventionsTrait
             return Plugin::path($pluginName);
         }
 
-        return current(App::path('Plugin')) . $pluginName . DIRECTORY_SEPARATOR;
+        return \current(App::path('Plugin')) . $pluginName . DIRECTORY_SEPARATOR;
     }
 
     /**
@@ -150,6 +150,6 @@ trait ConventionsTrait
      */
     protected function _pluginNamespace($pluginName)
     {
-        return str_replace('/', '\\', $pluginName);
+        return \str_replace('/', '\\', $pluginName);
     }
 }

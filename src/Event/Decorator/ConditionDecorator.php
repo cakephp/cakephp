@@ -31,7 +31,7 @@ class ConditionDecorator extends AbstractDecorator
      */
     public function __invoke()
     {
-        $args = func_get_args();
+        $args = \func_get_args();
         if (!$this->canTrigger($args[0])) {
             return;
         }
@@ -69,7 +69,7 @@ class ConditionDecorator extends AbstractDecorator
 
             return true;
         }
-        if (!is_callable($this->_options[$condition])) {
+        if (!\is_callable($this->_options[$condition])) {
             throw new RuntimeException(self::class . ' the `' . $condition . '` condition is not a callable!');
         }
 

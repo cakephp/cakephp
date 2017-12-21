@@ -74,7 +74,7 @@ class CheckboxWidget extends BasicWidget
      */
     protected function _isChecked($data)
     {
-        if (array_key_exists('checked', $data)) {
+        if (\array_key_exists('checked', $data)) {
             return (bool)$data['checked'];
         }
 

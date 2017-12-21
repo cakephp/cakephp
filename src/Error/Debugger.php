@@ -108,13 +108,13 @@ class Debugger
      */
     public function __construct()
     {
-        $docRef = ini_get('docref_root');
+        $docRef = \ini_get('docref_root');
 
-        if (empty($docRef) && function_exists('ini_set')) {
-            ini_set('docref_root', 'https://secure.php.net/');
+        if (empty($docRef) && \function_exists('ini_set')) {
+            \ini_set('docref_root', 'https://secure.php.net/');
         }
-        if (!defined('E_RECOVERABLE_ERROR')) {
-            define('E_RECOVERABLE_ERROR', 4096);
+        if (!\defined('E_RECOVERABLE_ERROR')) {
+            \define('E_RECOVERABLE_ERROR', 4096);
         }
 
         $e = '<pre class="cake-error">';
@@ -169,7 +169,7 @@ class Debugger
     {
         static $instance = [];
         if (!empty($class)) {
-            if (!$instance || strtolower($class) !== strtolower(get_class($instance[0]))) {
+            if (!$instance || \strtolower($class) !== \strtolower(\get_class($instance[0]))) {
                 $instance[0] = new $class();
             }
         }
@@ -191,7 +191,7 @@ class Debugger
      */
     public static function configInstance($key = null, $value = null, $merge = true)
     {
-        if (is_array($key) || func_num_args() >= 2) {
+        if (\is_array($key) || \func_num_args() >= 2) {
             return static::getInstance()->setConfig($key, $value, $merge);
         }
 
@@ -271,7 +271,7 @@ class Debugger
      */
     public static function trace(array $options = [])
     {
-        return Debugger::formatTrace(debug_backtrace(), $options);
+        return Debugger::formatTrace(\debug_backtrace(), $options);
     }
 
     /**
@@ -307,7 +307,7 @@ class Debugger
         ];
         $options = Hash::merge($defaults, $options);
 
-        $count = count($backtrace);
+        $count = \count($backtrace);
         $back = [];
 
         $_trace = [
@@ -333,12 +333,12 @@ class Debugger
                         foreach ($next['args'] as $arg) {
                             $args[] = Debugger::exportVar($arg);
                         }
-                        $reference .= implode(', ', $args);
+                        $reference .= \implode(', ', $args);
                     }
                     $reference .= ')';
                 }
             }
-            if (in_array($signature, $options['exclude'])) {
+            if (\in_array($signature, $options['exclude'])) {
                 continue;
             }
             if ($options['format'] === 'points' && $trace['file'] !== '[internal]') {
@@ -362,7 +362,7 @@ class Debugger
             return $back;
         }
 
-        return implode("\n", $back);
+        return \implode("\n", $back);
     }
 
     /**
@@ -374,14 +374,14 @@ class Debugger
      */
     public static function trimPath($path)
     {
-        if (defined('APP') && strpos($path, APP) === 0) {
-            return str_replace(APP, 'APP/', $path);
+        if (\defined('APP') && \strpos($path, APP) === 0) {
+            return \str_replace(APP, 'APP/', $path);
         }
-        if (defined('CAKE_CORE_INCLUDE_PATH') && strpos($path, CAKE_CORE_INCLUDE_PATH) === 0) {
-            return str_replace(CAKE_CORE_INCLUDE_PATH, 'CORE', $path);
+        if (\defined('CAKE_CORE_INCLUDE_PATH') && \strpos($path, CAKE_CORE_INCLUDE_PATH) === 0) {
+            return \str_replace(CAKE_CORE_INCLUDE_PATH, 'CORE', $path);
         }
-        if (defined('ROOT') && strpos($path, ROOT) === 0) {
-            return str_replace(ROOT, 'ROOT', $path);
+        if (\defined('ROOT') && \strpos($path, ROOT) === 0) {
+            return \str_replace(ROOT, 'ROOT', $path);
         }
 
         return $path;
@@ -411,15 +411,15 @@ class Debugger
     public static function excerpt($file, $line, $context = 2)
     {
         $lines = [];
-        if (!file_exists($file)) {
+        if (!\file_exists($file)) {
             return [];
         }
-        $data = file_get_contents($file);
+        $data = \file_get_contents($file);
         if (empty($data)) {
             return $lines;
         }
-        if (strpos($data, "\n") !== false) {
-            $data = explode("\n", $data);
+        if (\strpos($data, "\n") !== false) {
+            $data = \explode("\n", $data);
         }
         $line--;
         if (!isset($data[$line])) {
@@ -429,7 +429,7 @@ class Debugger
             if (!isset($data[$i])) {
                 continue;
             }
-            $string = str_replace(["\r\n", "\n"], '', static::_highlight($data[$i]));
+            $string = \str_replace(["\r\n", "\n"], '', static::_highlight($data[$i]));
             if ($i == $line) {
                 $lines[] = '<span class="code-highlight">' . $string . '</span>';
             } else {
@@ -449,17 +449,17 @@ class Debugger
      */
     protected static function _highlight($str)
     {
-        if (function_exists('hphp_log') || function_exists('hphp_gettid')) {
-            return htmlentities($str);
+        if (\function_exists('hphp_log') || \function_exists('hphp_gettid')) {
+            return \htmlentities($str);
         }
         $added = false;
-        if (strpos($str, '<?php') === false) {
+        if (\strpos($str, '<?php') === false) {
             $added = true;
             $str = "<?php \n" . $str;
         }
-        $highlight = highlight_string($str, true);
+        $highlight = \highlight_string($str, true);
         if ($added) {
-            $highlight = str_replace(
+            $highlight = \str_replace(
                 ['&lt;?php&nbsp;<br/>', '&lt;?php&nbsp;<br />'],
                 '',
                 $highlight
@@ -513,7 +513,7 @@ class Debugger
             case 'float':
                 return '(float) ' . $var;
             case 'string':
-                if (trim($var) === '' && ctype_space($var) === false) {
+                if (\trim($var) === '' && \ctype_space($var) === false) {
                     return "''";
                 }
 
@@ -521,7 +521,7 @@ class Debugger
             case 'array':
                 return static::_array($var, $depth - 1, $indent + 1);
             case 'resource':
-                return strtolower(gettype($var));
+                return \strtolower(\gettype($var));
             case 'null':
                 return 'null';
             case 'unknown':
@@ -554,8 +554,8 @@ class Debugger
         $out = '[';
         $break = $end = null;
         if (!empty($var)) {
-            $break = "\n" . str_repeat("\t", $indent);
-            $end = "\n" . str_repeat("\t", $indent - 1);
+            $break = "\n" . \str_repeat("\t", $indent);
+            $end = "\n" . \str_repeat("\t", $indent - 1);
         }
         $vars = [];
 
@@ -563,9 +563,9 @@ class Debugger
             $outputMask = (array)static::outputMask();
             foreach ($var as $key => $val) {
                 // Sniff for globals as !== explodes in < 5.4
-                if ($key === 'GLOBALS' && is_array($val) && isset($val['GLOBALS'])) {
+                if ($key === 'GLOBALS' && \is_array($val) && isset($val['GLOBALS'])) {
                     $val = '[recursion]';
-                } elseif (array_key_exists($key, $outputMask)) {
+                } elseif (\array_key_exists($key, $outputMask)) {
                     $val = (string)$outputMask[$key];
                 } elseif ($val !== $var) {
                     $val = static::_export($val, $depth, $indent);
@@ -578,7 +578,7 @@ class Debugger
             $vars[] = $break . '[maximum depth reached]';
         }
 
-        return $out . implode(',', $vars) . $end . ']';
+        return $out . \implode(',', $vars) . $end . ']';
     }
 
     /**
@@ -595,15 +595,15 @@ class Debugger
         $out = '';
         $props = [];
 
-        $className = get_class($var);
+        $className = \get_class($var);
         $out .= 'object(' . $className . ') {';
-        $break = "\n" . str_repeat("\t", $indent);
-        $end = "\n" . str_repeat("\t", $indent - 1);
+        $break = "\n" . \str_repeat("\t", $indent);
+        $end = "\n" . \str_repeat("\t", $indent - 1);
 
-        if ($depth > 0 && method_exists($var, '__debugInfo')) {
+        if ($depth > 0 && \method_exists($var, '__debugInfo')) {
             try {
                 return $out . "\n" .
-                    substr(static::_array($var->__debugInfo(), $depth - 1, $indent), 1, -1) .
+                    \substr(static::_array($var->__debugInfo(), $depth - 1, $indent), 1, -1) .
                     $end . '}';
             } catch (Exception $e) {
                 $message = $e->getMessage();
@@ -614,9 +614,9 @@ class Debugger
 
         if ($depth > 0) {
             $outputMask = (array)static::outputMask();
-            $objectVars = get_object_vars($var);
+            $objectVars = \get_object_vars($var);
             foreach ($objectVars as $key => $value) {
-                $value = array_key_exists($key, $outputMask) ? $outputMask[$key] : static::_export($value, $depth - 1, $indent);
+                $value = \array_key_exists($key, $outputMask) ? $outputMask[$key] : static::_export($value, $depth - 1, $indent);
                 $props[] = "$key => " . $value;
             }
 
@@ -634,16 +634,16 @@ class Debugger
 
                     $value = static::_export($property, $depth - 1, $indent);
                     $key = $reflectionProperty->name;
-                    $props[] = sprintf(
+                    $props[] = \sprintf(
                         '[%s] %s => %s',
                         $visibility,
                         $key,
-                        array_key_exists($key, $outputMask) ? $outputMask[$key] : $value
+                        \array_key_exists($key, $outputMask) ? $outputMask[$key] : $value
                     );
                 }
             }
 
-            $out .= $break . implode($break, $props) . $end;
+            $out .= $break . \implode($break, $props) . $end;
         }
         $out .= '}';
 
@@ -749,7 +749,7 @@ class Debugger
         $self = Debugger::getInstance();
         if (isset($self->_templates[$format])) {
             if (isset($strings['links'])) {
-                $self->_templates[$format]['links'] = array_merge(
+                $self->_templates[$format]['links'] = \array_merge(
                     $self->_templates[$format]['links'],
                     $strings['links']
                 );
@@ -806,17 +806,17 @@ class Debugger
 
         switch ($this->_outputFormat) {
             case false:
-                $this->_data[] = compact('context', 'trace') + $data;
+                $this->_data[] = \compact('context', 'trace') + $data;
 
                 return;
             case 'log':
-                static::log(compact('context', 'trace') + $data);
+                static::log(\compact('context', 'trace') + $data);
 
                 return;
         }
 
         $data['trace'] = $trace;
-        $data['id'] = 'cakeErr' . uniqid();
+        $data['id'] = 'cakeErr' . \uniqid();
         $tpl = $this->_templates[$this->_outputFormat] + $this->_templates['base'];
 
         if (isset($tpl['links'])) {
@@ -830,24 +830,24 @@ class Debugger
             $data['description'] = h($data['description']);
         }
 
-        $infoData = compact('code', 'context', 'trace');
+        $infoData = \compact('code', 'context', 'trace');
         foreach ($infoData as $key => $value) {
             if (empty($value) || !isset($tpl[$key])) {
                 continue;
             }
-            if (is_array($value)) {
-                $value = implode("\n", $value);
+            if (\is_array($value)) {
+                $value = \implode("\n", $value);
             }
             $info .= Text::insert($tpl[$key], [$key => $value] + $data, $insertOpts);
         }
-        $links = implode(' ', $links);
+        $links = \implode(' ', $links);
 
-        if (isset($tpl['callback']) && is_callable($tpl['callback'])) {
-            call_user_func($tpl['callback'], $data, compact('links', 'info'));
+        if (isset($tpl['callback']) && \is_callable($tpl['callback'])) {
+            \call_user_func($tpl['callback'], $data, \compact('links', 'info'));
 
             return;
         }
-        echo Text::insert($tpl['error'], compact('links', 'info') + $data, $insertOpts);
+        echo Text::insert($tpl['error'], \compact('links', 'info') + $data, $insertOpts);
     }
 
     /**
@@ -859,28 +859,28 @@ class Debugger
      */
     public static function getType($var)
     {
-        if (is_object($var)) {
-            return get_class($var);
+        if (\is_object($var)) {
+            return \get_class($var);
         }
         if ($var === null) {
             return 'null';
         }
-        if (is_string($var)) {
+        if (\is_string($var)) {
             return 'string';
         }
-        if (is_array($var)) {
+        if (\is_array($var)) {
             return 'array';
         }
-        if (is_int($var)) {
+        if (\is_int($var)) {
             return 'integer';
         }
-        if (is_bool($var)) {
+        if (\is_bool($var)) {
             return 'boolean';
         }
-        if (is_float($var)) {
+        if (\is_float($var)) {
             return 'float';
         }
-        if (is_resource($var)) {
+        if (\is_resource($var)) {
             return 'resource';
         }
 
@@ -905,13 +905,13 @@ class Debugger
         $lineInfo = '';
         if ($file) {
             $search = [];
-            if (defined('ROOT')) {
+            if (\defined('ROOT')) {
                 $search = [ROOT];
             }
-            if (defined('CAKE_CORE_INCLUDE_PATH')) {
-                array_unshift($search, CAKE_CORE_INCLUDE_PATH);
+            if (\defined('CAKE_CORE_INCLUDE_PATH')) {
+                \array_unshift($search, CAKE_CORE_INCLUDE_PATH);
             }
-            $file = str_replace($search, '', $file);
+            $file = \str_replace($search, '', $file);
         }
         $html = <<<HTML
 <div class="cake-debug-output">
@@ -932,7 +932,7 @@ TEXT;
         if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') || $showHtml === false) {
             $template = $text;
             if ($file && $line) {
-                $lineInfo = sprintf('%s (line %s)', $file, $line);
+                $lineInfo = \sprintf('%s (line %s)', $file, $line);
             }
         }
         if ($showHtml === null && $template !== $text) {
@@ -943,10 +943,10 @@ TEXT;
             $template = $html;
             $var = h($var);
             if ($file && $line) {
-                $lineInfo = sprintf('<span><strong>%s</strong> (line <strong>%s</strong>)</span>', $file, $line);
+                $lineInfo = \sprintf('<span><strong>%s</strong> (line <strong>%s</strong>)</span>', $file, $line);
             }
         }
-        printf($template, $lineInfo, $var);
+        \printf($template, $lineInfo, $var);
     }
 
     /**
@@ -957,7 +957,7 @@ TEXT;
     public static function checkSecurityKeys()
     {
         if (Security::getSalt() === '__SALT__') {
-            trigger_error(sprintf('Please change the value of %s in %s to a salt value specific to your application.', '\'Security.salt\'', 'ROOT/config/app.php'), E_USER_NOTICE);
+            \trigger_error(\sprintf('Please change the value of %s in %s to a salt value specific to your application.', '\'Security.salt\'', 'ROOT/config/app.php'), E_USER_NOTICE);
         }
     }
 }

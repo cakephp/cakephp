@@ -53,7 +53,7 @@ class RedirectRoute extends Route
     public function __construct($template, $defaults = [], array $options = [])
     {
         parent::__construct($template, $defaults, $options);
-        if (is_array($defaults) && isset($defaults['redirect'])) {
+        if (\is_array($defaults) && isset($defaults['redirect'])) {
             $defaults = $defaults['redirect'];
         }
         $this->redirect = (array)$defaults;
@@ -76,12 +76,12 @@ class RedirectRoute extends Route
             return false;
         }
         $redirect = $this->redirect;
-        if (count($this->redirect) === 1 && !isset($this->redirect['controller'])) {
+        if (\count($this->redirect) === 1 && !isset($this->redirect['controller'])) {
             $redirect = $this->redirect[0];
         }
-        if (isset($this->options['persist']) && is_array($redirect)) {
+        if (isset($this->options['persist']) && \is_array($redirect)) {
             $redirect += ['pass' => $params['pass'], 'url' => []];
-            if (is_array($this->options['persist'])) {
+            if (\is_array($this->options['persist'])) {
                 foreach ($this->options['persist'] as $elem) {
                     if (isset($params[$elem])) {
                         $redirect[$elem] = $params[$elem];

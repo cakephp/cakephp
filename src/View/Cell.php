@@ -151,7 +151,7 @@ abstract class Cell
         $this->response = $response;
         $this->modelFactory('Table', [$this->getTableLocator(), 'get']);
 
-        $this->_validCellOptions = array_merge(['action', 'args'], $this->_validCellOptions);
+        $this->_validCellOptions = \array_merge(['action', 'args'], $this->_validCellOptions);
         foreach ($this->_validCellOptions as $var) {
             if (isset($cellOptions[$var])) {
                 $this->{$var} = $cellOptions[$var];
@@ -182,9 +182,9 @@ abstract class Cell
                 $reflect = new ReflectionMethod($this, $this->action);
                 $reflect->invokeArgs($this, $this->args);
             } catch (ReflectionException $e) {
-                throw new BadMethodCallException(sprintf(
+                throw new BadMethodCallException(\sprintf(
                     'Class %s does not have a "%s" method.',
-                    get_class($this),
+                    \get_class($this),
                     $this->action
                 ));
             }
@@ -192,8 +192,8 @@ abstract class Cell
             $builder = $this->viewBuilder();
 
             if ($template !== null &&
-                strpos($template, '/') === false &&
-                strpos($template, '.') === false
+                \strpos($template, '/') === false &&
+                \strpos($template, '.') === false
             ) {
                 $template = Inflector::underscore($template);
             }
@@ -203,12 +203,12 @@ abstract class Cell
             $builder->setLayout(false)
                 ->setTemplate($template);
 
-            $className = get_class($this);
+            $className = \get_class($this);
             $namePrefix = '\View\Cell\\';
-            $name = substr($className, strpos($className, $namePrefix) + strlen($namePrefix));
-            $name = substr($name, 0, -4);
+            $name = \substr($className, \strpos($className, $namePrefix) + \strlen($namePrefix));
+            $name = \substr($name, 0, -4);
             if (!$builder->getTemplatePath()) {
-                $builder->setTemplatePath('Cell' . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $name));
+                $builder->setTemplatePath('Cell' . DIRECTORY_SEPARATOR . \str_replace('\\', DIRECTORY_SEPARATOR, $name));
             }
 
             $this->View = $this->createView();
@@ -241,8 +241,8 @@ abstract class Cell
             return [];
         }
         $template = $template ?: 'default';
-        $key = 'cell_' . Inflector::underscore(get_class($this)) . '_' . $action . '_' . $template;
-        $key = str_replace('\\', '_', $key);
+        $key = 'cell_' . Inflector::underscore(\get_class($this)) . '_' . $action . '_' . $template;
+        $key = \str_replace('\\', '_', $key);
         $default = [
             'config' => 'default',
             'key' => $key
@@ -270,11 +270,11 @@ abstract class Cell
         try {
             return $this->render();
         } catch (Exception $e) {
-            trigger_error(sprintf('Could not render cell - %s [%s, line %d]', $e->getMessage(), $e->getFile(), $e->getLine()), E_USER_WARNING);
+            \trigger_error(\sprintf('Could not render cell - %s [%s, line %d]', $e->getMessage(), $e->getFile(), $e->getLine()), E_USER_WARNING);
 
             return '';
         } catch (Error $e) {
-            throw new Error(sprintf('Could not render cell - %s [%s, line %d]', $e->getMessage(), $e->getFile(), $e->getLine()));
+            throw new Error(\sprintf('Could not render cell - %s [%s, line %d]', $e->getMessage(), $e->getFile(), $e->getLine()));
         }
     }
 

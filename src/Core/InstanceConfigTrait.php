@@ -175,7 +175,7 @@ trait InstanceConfigTrait
      */
     public function config($key = null, $value = null, $merge = true)
     {
-        if (is_array($key) || func_num_args() >= 2) {
+        if (\is_array($key) || \func_num_args() >= 2) {
             return $this->setConfig($key, $value, $merge);
         }
 
@@ -232,14 +232,14 @@ trait InstanceConfigTrait
             return $this->_config;
         }
 
-        if (strpos($key, '.') === false) {
+        if (\strpos($key, '.') === false) {
             return isset($this->_config[$key]) ? $this->_config[$key] : null;
         }
 
         $return = $this->_config;
 
-        foreach (explode('.', $key) as $k) {
-            if (!is_array($return) || !isset($return[$k])) {
+        foreach (\explode('.', $key) as $k) {
+            if (!\is_array($return) || !isset($return[$k])) {
                 $return = null;
                 break;
             }
@@ -262,16 +262,16 @@ trait InstanceConfigTrait
      */
     protected function _configWrite($key, $value, $merge = false)
     {
-        if (is_string($key) && $value === null) {
+        if (\is_string($key) && $value === null) {
             $this->_configDelete($key);
 
             return;
         }
 
         if ($merge) {
-            $update = is_array($key) ? $key : [$key => $value];
+            $update = \is_array($key) ? $key : [$key => $value];
             if ($merge === 'shallow') {
-                $this->_config = array_merge($this->_config, Hash::expand($update));
+                $this->_config = \array_merge($this->_config, Hash::expand($update));
             } else {
                 $this->_config = Hash::merge($this->_config, Hash::expand($update));
             }
@@ -279,7 +279,7 @@ trait InstanceConfigTrait
             return;
         }
 
-        if (is_array($key)) {
+        if (\is_array($key)) {
             foreach ($key as $k => $val) {
                 $this->_configWrite($k, $val);
             }
@@ -287,18 +287,18 @@ trait InstanceConfigTrait
             return;
         }
 
-        if (strpos($key, '.') === false) {
+        if (\strpos($key, '.') === false) {
             $this->_config[$key] = $value;
 
             return;
         }
 
         $update =& $this->_config;
-        $stack = explode('.', $key);
+        $stack = \explode('.', $key);
 
         foreach ($stack as $k) {
-            if (!is_array($update)) {
-                throw new Exception(sprintf('Cannot set %s value', $key));
+            if (!\is_array($update)) {
+                throw new Exception(\sprintf('Cannot set %s value', $key));
             }
 
             if (!isset($update[$k])) {
@@ -320,19 +320,19 @@ trait InstanceConfigTrait
      */
     protected function _configDelete($key)
     {
-        if (strpos($key, '.') === false) {
+        if (\strpos($key, '.') === false) {
             unset($this->_config[$key]);
 
             return;
         }
 
         $update =& $this->_config;
-        $stack = explode('.', $key);
-        $length = count($stack);
+        $stack = \explode('.', $key);
+        $length = \count($stack);
 
         foreach ($stack as $i => $k) {
-            if (!is_array($update)) {
-                throw new Exception(sprintf('Cannot unset %s value', $key));
+            if (!\is_array($update)) {
+                throw new Exception(\sprintf('Cannot unset %s value', $key));
             }
 
             if (!isset($update[$k])) {

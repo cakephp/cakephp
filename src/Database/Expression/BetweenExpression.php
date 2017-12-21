@@ -95,7 +95,7 @@ class BetweenExpression implements ExpressionInterface, FieldInterface
             $parts[$name] = $this->_bindValue($part, $generator, $this->_type);
         }
 
-        return sprintf('%s BETWEEN %s AND %s', $field, $parts['from'], $parts['to']);
+        return \sprintf('%s BETWEEN %s AND %s', $field, $parts['from'], $parts['to']);
     }
 
     /**

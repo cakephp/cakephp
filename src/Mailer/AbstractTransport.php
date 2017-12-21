@@ -68,7 +68,7 @@ abstract class AbstractTransport
             $out .= $key . ': ' . $value . $eol;
         }
         if (!empty($out)) {
-            $out = substr($out, 0, -1 * strlen($eol));
+            $out = \substr($out, 0, -1 * \strlen($eol));
         }
 
         return $out;

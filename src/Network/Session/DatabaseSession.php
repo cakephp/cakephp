@@ -59,7 +59,7 @@ class DatabaseSession implements SessionHandlerInterface
             $this->_table = $tableLocator->get($config['model']);
         }
 
-        $this->_timeout = ini_get('session.gc_maxlifetime');
+        $this->_timeout = \ini_get('session.gc_maxlifetime');
     }
 
     /**
@@ -118,11 +118,11 @@ class DatabaseSession implements SessionHandlerInterface
             return '';
         }
 
-        if (is_string($result['data'])) {
+        if (\is_string($result['data'])) {
             return $result['data'];
         }
 
-        $session = stream_get_contents($result['data']);
+        $session = \stream_get_contents($result['data']);
 
         if ($session === false) {
             return '';
@@ -143,8 +143,8 @@ class DatabaseSession implements SessionHandlerInterface
         if (!$id) {
             return false;
         }
-        $expires = time() + $this->_timeout;
-        $record = compact('data', 'expires');
+        $expires = \time() + $this->_timeout;
+        $record = \compact('data', 'expires');
         $record[$this->_table->getPrimaryKey()] = $id;
         $result = $this->_table->save(new Entity($record));
 
@@ -175,7 +175,7 @@ class DatabaseSession implements SessionHandlerInterface
      */
     public function gc($maxlifetime)
     {
-        $this->_table->deleteAll(['expires <' => time() - $maxlifetime]);
+        $this->_table->deleteAll(['expires <' => \time() - $maxlifetime]);
 
         return true;
     }

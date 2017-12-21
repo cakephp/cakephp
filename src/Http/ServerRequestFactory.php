@@ -122,8 +122,8 @@ abstract class ServerRequestFactory extends BaseFactory
     protected static function updatePath($base, $uri)
     {
         $path = $uri->getPath();
-        if (strlen($base) > 0 && strpos($path, $base) === 0) {
-            $path = substr($path, strlen($base));
+        if (\strlen($base) > 0 && \strpos($path, $base) === 0) {
+            $path = \substr($path, \strlen($base));
         }
         if ($path === '/index.php' && $uri->getQuery()) {
             $path = $uri->getQuery();
@@ -132,9 +132,9 @@ abstract class ServerRequestFactory extends BaseFactory
             $path = '/';
         }
         $endsWithIndex = '/webroot/index.php';
-        $endsWithLength = strlen($endsWithIndex);
-        if (strlen($path) >= $endsWithLength &&
-            substr($path, -$endsWithLength) === $endsWithIndex
+        $endsWithLength = \strlen($endsWithIndex);
+        if (\strlen($path) >= $endsWithLength &&
+            \substr($path, -$endsWithLength) === $endsWithIndex
         ) {
             $path = '/';
         }
@@ -165,28 +165,28 @@ abstract class ServerRequestFactory extends BaseFactory
         }
 
         if (!$baseUrl) {
-            $base = dirname(Hash::get($server, 'PHP_SELF'));
+            $base = \dirname(Hash::get($server, 'PHP_SELF'));
             // Clean up additional / which cause following code to fail..
-            $base = preg_replace('#/+#', '/', $base);
+            $base = \preg_replace('#/+#', '/', $base);
 
-            $indexPos = strpos($base, '/' . $webroot . '/index.php');
+            $indexPos = \strpos($base, '/' . $webroot . '/index.php');
             if ($indexPos !== false) {
-                $base = substr($base, 0, $indexPos) . '/' . $webroot;
+                $base = \substr($base, 0, $indexPos) . '/' . $webroot;
             }
-            if ($webroot === basename($base)) {
-                $base = dirname($base);
+            if ($webroot === \basename($base)) {
+                $base = \dirname($base);
             }
 
             if ($base === DIRECTORY_SEPARATOR || $base === '.') {
                 $base = '';
             }
-            $base = implode('/', array_map('rawurlencode', explode('/', $base)));
+            $base = \implode('/', \array_map('rawurlencode', \explode('/', $base)));
 
             return [$base, $base . '/'];
         }
 
-        $file = '/' . basename($baseUrl);
-        $base = dirname($baseUrl);
+        $file = '/' . \basename($baseUrl);
+        $base = \dirname($baseUrl);
 
         if ($base === DIRECTORY_SEPARATOR || $base === '.') {
             $base = '';
@@ -194,10 +194,10 @@ abstract class ServerRequestFactory extends BaseFactory
         $webrootDir = $base . '/';
 
         $docRoot = Hash::get($server, 'DOCUMENT_ROOT');
-        $docRootContainsWebroot = strpos($docRoot, $webroot);
+        $docRootContainsWebroot = \strpos($docRoot, $webroot);
 
         if (!empty($base) || !$docRootContainsWebroot) {
-            if (strpos($webrootDir, '/' . $webroot . '/') === false) {
+            if (\strpos($webrootDir, '/' . $webroot . '/') === false) {
                 $webrootDir .= $webroot . '/';
             }
         }

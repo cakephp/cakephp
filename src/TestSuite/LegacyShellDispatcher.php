@@ -49,7 +49,7 @@ class LegacyShellDispatcher extends ShellDispatcher
     {
         list($plugin) = pluginSplit($shortName);
         $instance = new $className($this->_io);
-        $instance->plugin = trim($plugin, '.');
+        $instance->plugin = \trim($plugin, '.');
 
         return $instance;
     }

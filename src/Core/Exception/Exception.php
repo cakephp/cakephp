@@ -66,9 +66,9 @@ class Exception extends RuntimeException
             $code = $this->_defaultCode;
         }
 
-        if (is_array($message)) {
+        if (\is_array($message)) {
             $this->_attributes = $message;
-            $message = vsprintf($this->_messageTemplate, $message);
+            $message = \vsprintf($this->_messageTemplate, $message);
         }
         parent::__construct($message, $code, $previous);
     }
@@ -99,7 +99,7 @@ class Exception extends RuntimeException
         if ($header === null) {
             return $this->_responseHeaders;
         }
-        if (is_array($header)) {
+        if (\is_array($header)) {
             return $this->_responseHeaders = $header;
         }
         $this->_responseHeaders = [$header => $value];

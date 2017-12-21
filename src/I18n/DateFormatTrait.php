@@ -190,16 +190,16 @@ trait DateFormatTrait
     {
         $pattern = $dateFormat = $timeFormat = $calendar = null;
 
-        if (is_array($format)) {
+        if (\is_array($format)) {
             list($dateFormat, $timeFormat) = $format;
-        } elseif (is_numeric($format)) {
+        } elseif (\is_numeric($format)) {
             $dateFormat = $format;
         } else {
             $dateFormat = $timeFormat = IntlDateFormatter::FULL;
             $pattern = $format;
         }
 
-        if (preg_match('/@calendar=(japanese|buddhist|chinese|persian|indian|islamic|hebrew|coptic|ethiopic)/', $locale)) {
+        if (\preg_match('/@calendar=(japanese|buddhist|chinese|persian|indian|islamic|hebrew|coptic|ethiopic)/', $locale)) {
             $calendar = IntlDateFormatter::TRADITIONAL;
         } else {
             $calendar = IntlDateFormatter::GREGORIAN;
@@ -214,7 +214,7 @@ trait DateFormatTrait
             } elseif ($timezone[0] === '+' || $timezone[0] === '-') {
                 $timezone = 'GMT' . $timezone;
             }
-            static::$_formatters[$key] = datefmt_create(
+            static::$_formatters[$key] = \datefmt_create(
                 $locale,
                 $dateFormat,
                 $timeFormat,
@@ -295,7 +295,7 @@ trait DateFormatTrait
         $dateFormat = $format ?: static::$_toStringFormat;
         $timeFormat = $pattern = null;
 
-        if (is_array($dateFormat)) {
+        if (\is_array($dateFormat)) {
             list($newDateFormat, $timeFormat) = $dateFormat;
             $dateFormat = $newDateFormat;
         } else {
@@ -305,12 +305,12 @@ trait DateFormatTrait
 
         if (static::$_isDateInstance === null) {
             static::$_isDateInstance =
-                is_subclass_of(static::class, ChronosDate::class) ||
-                is_subclass_of(static::class, MutableDate::class);
+                \is_subclass_of(static::class, ChronosDate::class) ||
+                \is_subclass_of(static::class, MutableDate::class);
         }
 
-        $defaultTimezone = static::$_isDateInstance ? 'UTC' : date_default_timezone_get();
-        $formatter = datefmt_create(
+        $defaultTimezone = static::$_isDateInstance ? 'UTC' : \date_default_timezone_get();
+        $formatter = \datefmt_create(
             static::$defaultLocale,
             $dateFormat,
             $timeFormat,
@@ -352,7 +352,7 @@ trait DateFormatTrait
      */
     public static function parseDate($date, $format = null)
     {
-        if (is_int($format)) {
+        if (\is_int($format)) {
             $format = [$format, -1];
         }
         $format = $format ?: static::$wordFormat;
@@ -382,7 +382,7 @@ trait DateFormatTrait
      */
     public static function parseTime($time, $format = null)
     {
-        if (is_int($format)) {
+        if (\is_int($format)) {
             $format = [-1, $format];
         }
         $format = $format ?: [-1, IntlDateFormatter::SHORT];

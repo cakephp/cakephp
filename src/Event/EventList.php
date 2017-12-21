@@ -112,7 +112,7 @@ class EventList implements ArrayAccess, Countable
      */
     public function count()
     {
-        return count($this->_events);
+        return \count($this->_events);
     }
 
     /**

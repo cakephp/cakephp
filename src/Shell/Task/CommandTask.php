@@ -40,15 +40,15 @@ class CommandTask extends Shell
         $hiddenCommands = ['CommandListShell', 'CompletionShell'];
 
         $plugins = Plugin::loaded();
-        $shellList = array_fill_keys($plugins, null) + ['CORE' => null, 'app' => null];
+        $shellList = \array_fill_keys($plugins, null) + ['CORE' => null, 'app' => null];
 
         $appPath = App::path('Shell');
         $appShells = $this->_scanDir($appPath[0]);
-        $appShells = array_diff($appShells, $skipFiles);
+        $appShells = \array_diff($appShells, $skipFiles);
         $shellList = $this->_appendShells('app', $appShells, $shellList);
 
-        $shells = $this->_scanDir(dirname(__DIR__));
-        $shells = array_diff($shells, $appShells, $skipFiles, $hiddenCommands);
+        $shells = $this->_scanDir(\dirname(__DIR__));
+        $shells = \array_diff($shells, $appShells, $skipFiles, $hiddenCommands);
         $shellList = $this->_appendShells('CORE', $shells, $shellList);
 
         foreach ($plugins as $plugin) {
@@ -57,7 +57,7 @@ class CommandTask extends Shell
             $shellList = $this->_appendShells($plugin, $pluginShells, $shellList);
         }
 
-        return array_filter($shellList);
+        return \array_filter($shellList);
     }
 
     /**
@@ -71,7 +71,7 @@ class CommandTask extends Shell
     protected function _appendShells($type, $shells, $shellList)
     {
         foreach ($shells as $shell) {
-            $shellList[$type][] = Inflector::underscore(str_replace('Shell', '', $shell));
+            $shellList[$type][] = Inflector::underscore(\str_replace('Shell', '', $shell));
         }
 
         return $shellList;
@@ -93,10 +93,10 @@ class CommandTask extends Shell
         }
         $shells = [];
         foreach ($contents[1] as $file) {
-            if (substr($file, -4) !== '.php') {
+            if (\substr($file, -4) !== '.php') {
                 continue;
             }
-            $shells[] = substr($file, 0, -4);
+            $shells[] = \substr($file, 0, -4);
         }
 
         return $shells;
@@ -111,16 +111,16 @@ class CommandTask extends Shell
     {
         $shellList = $this->getShellList();
         $flatten = Hash::flatten($shellList);
-        $duplicates = array_intersect($flatten, array_unique(array_diff_key($flatten, array_unique($flatten))));
+        $duplicates = \array_intersect($flatten, \array_unique(\array_diff_key($flatten, \array_unique($flatten))));
         $duplicates = Hash::expand($duplicates);
 
         $options = [];
         foreach ($shellList as $type => $commands) {
             foreach ($commands as $shell) {
                 $prefix = '';
-                if (!in_array(strtolower($type), ['app', 'core']) &&
+                if (!\in_array(\strtolower($type), ['app', 'core']) &&
                     isset($duplicates[$type]) &&
-                    in_array($shell, $duplicates[$type])
+                    \in_array($shell, $duplicates[$type])
                 ) {
                     $prefix = $type . '.';
                 }
@@ -147,8 +147,8 @@ class CommandTask extends Shell
         }
 
         $taskMap = $this->Tasks->normalizeArray((array)$Shell->tasks);
-        $return = array_keys($taskMap);
-        $return = array_map('Cake\Utility\Inflector::underscore', $return);
+        $return = \array_keys($taskMap);
+        $return = \array_map('Cake\Utility\Inflector::underscore', $return);
 
         $shellMethodNames = ['main', 'help', 'getOptionParser', 'initialize', 'runCommand'];
 
@@ -159,13 +159,13 @@ class CommandTask extends Shell
         $methodNames = [];
         foreach ($methods as $method) {
             $declaringClass = $method->getDeclaringClass()->getShortName();
-            if (!in_array($declaringClass, $baseClasses)) {
+            if (!\in_array($declaringClass, $baseClasses)) {
                 $methodNames[] = $method->getName();
             }
         }
 
-        $return = array_merge($return, array_diff($methodNames, $shellMethodNames));
-        sort($return);
+        $return = \array_merge($return, \array_diff($methodNames, $shellMethodNames));
+        \sort($return);
 
         return $return;
     }
@@ -180,22 +180,22 @@ class CommandTask extends Shell
     {
         list($pluginDot, $name) = pluginSplit($commandName, true);
 
-        if (in_array(strtolower($pluginDot), ['app.', 'core.'])) {
+        if (\in_array(\strtolower($pluginDot), ['app.', 'core.'])) {
             $commandName = $name;
             $pluginDot = '';
         }
 
-        if (!in_array($commandName, $this->commands()) && (empty($pluginDot) && !in_array($name, $this->commands()))) {
+        if (!\in_array($commandName, $this->commands()) && (empty($pluginDot) && !\in_array($name, $this->commands()))) {
             return false;
         }
 
         if (empty($pluginDot)) {
             $shellList = $this->getShellList();
 
-            if (!in_array($commandName, $shellList['app']) && !in_array($commandName, $shellList['CORE'])) {
+            if (!\in_array($commandName, $shellList['app']) && !\in_array($commandName, $shellList['CORE'])) {
                 unset($shellList['CORE'], $shellList['app']);
                 foreach ($shellList as $plugin => $commands) {
-                    if (in_array($commandName, $commands)) {
+                    if (\in_array($commandName, $commands)) {
                         $pluginDot = $plugin . '.';
                         break;
                     }
@@ -212,7 +212,7 @@ class CommandTask extends Shell
 
         /* @var \Cake\Console\Shell $Shell */
         $Shell = new $class();
-        $Shell->plugin = trim($pluginDot, '.');
+        $Shell->plugin = \trim($pluginDot, '.');
         $Shell->initialize();
 
         return $Shell;

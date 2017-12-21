@@ -86,11 +86,11 @@ class Number
         switch (true) {
             case $size < 1024:
                 return __dn('cake', '{0,number,integer} Byte', '{0,number,integer} Bytes', $size, $size);
-            case round($size / 1024) < 1024:
+            case \round($size / 1024) < 1024:
                 return __d('cake', '{0,number,#,###.##} KB', $size / 1024);
-            case round($size / 1024 / 1024, 2) < 1024:
+            case \round($size / 1024 / 1024, 2) < 1024:
                 return __d('cake', '{0,number,#,###.##} MB', $size / 1024 / 1024);
-            case round($size / 1024 / 1024 / 1024, 2) < 1024:
+            case \round($size / 1024 / 1024 / 1024, 2) < 1024:
                 return __d('cake', '{0,number,#,###.##} GB', $size / 1024 / 1024 / 1024);
             default:
                 return __d('cake', '{0,number,#,###.##} TB', $size / 1024 / 1024 / 1024 / 1024);
@@ -183,7 +183,7 @@ class Number
     public static function formatDelta($value, array $options = [])
     {
         $options += ['places' => 0];
-        $value = number_format($value, $options['places'], '.', '');
+        $value = \number_format($value, $options['places'], '.', '');
         $sign = $value > 0 ? '+' : '';
         $options['before'] = isset($options['before']) ? $options['before'] . $sign : $sign;
 
@@ -223,7 +223,7 @@ class Number
         }
 
         $formatter = static::formatter(['type' => static::FORMAT_CURRENCY] + $options);
-        $abs = abs($value);
+        $abs = \abs($value);
         if (!empty($options['fractionSymbol']) && $abs > 0 && $abs < 1) {
             $value *= 100;
             $pos = isset($options['fractionPosition']) ? $options['fractionPosition'] : 'after';
@@ -256,7 +256,7 @@ class Number
         }
 
         if (empty(self::$_defaultCurrency)) {
-            $locale = ini_get('intl.default_locale') ?: static::DEFAULT_LOCALE;
+            $locale = \ini_get('intl.default_locale') ?: static::DEFAULT_LOCALE;
             $formatter = new NumberFormatter($locale, NumberFormatter::CURRENCY);
             self::$_defaultCurrency = $formatter->getTextAttribute(NumberFormatter::CURRENCY_CODE);
         }
@@ -286,7 +286,7 @@ class Number
      */
     public static function formatter($options = [])
     {
-        $locale = isset($options['locale']) ? $options['locale'] : ini_get('intl.default_locale');
+        $locale = isset($options['locale']) ? $options['locale'] : \ini_get('intl.default_locale');
 
         if (!$locale) {
             $locale = static::DEFAULT_LOCALE;
@@ -306,7 +306,7 @@ class Number
 
         $formatter = static::$_formatters[$locale][$type];
 
-        $options = array_intersect_key($options, [
+        $options = \array_intersect_key($options, [
             'places' => null,
             'precision' => null,
             'pattern' => null,
@@ -363,7 +363,7 @@ class Number
             // is denoted with ¤, whereas the international code is marked with ¤¤,
             // in order to use the code we need to simply duplicate the character wherever
             // it appears in the pattern.
-            $pattern = trim(str_replace('¤', '¤¤ ', $formatter->getPattern()));
+            $pattern = \trim(\str_replace('¤', '¤¤ ', $formatter->getPattern()));
             $formatter->setPattern($pattern);
         }
 

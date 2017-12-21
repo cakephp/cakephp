@@ -122,7 +122,7 @@ class DigestAuthenticate extends BasicAuthenticate
         unset($user[$field]);
 
         $hash = $this->generateResponseHash($digest, $password, $request->getEnv('ORIGINAL_REQUEST_METHOD'));
-        if (hash_equals($hash, $digest['response'])) {
+        if (\hash_equals($hash, $digest['response'])) {
             return $user;
         }
 
@@ -138,10 +138,10 @@ class DigestAuthenticate extends BasicAuthenticate
     protected function _getDigest(ServerRequest $request)
     {
         $digest = $request->getEnv('PHP_AUTH_DIGEST');
-        if (empty($digest) && function_exists('apache_request_headers')) {
+        if (empty($digest) && \function_exists('apache_request_headers')) {
             $headers = apache_request_headers();
-            if (!empty($headers['Authorization']) && substr($headers['Authorization'], 0, 7) === 'Digest ') {
-                $digest = substr($headers['Authorization'], 7);
+            if (!empty($headers['Authorization']) && \substr($headers['Authorization'], 0, 7) === 'Digest ') {
+                $digest = \substr($headers['Authorization'], 7);
             }
         }
         if (empty($digest)) {
@@ -159,12 +159,12 @@ class DigestAuthenticate extends BasicAuthenticate
      */
     public function parseAuthData($digest)
     {
-        if (substr($digest, 0, 7) === 'Digest ') {
-            $digest = substr($digest, 7);
+        if (\substr($digest, 0, 7) === 'Digest ') {
+            $digest = \substr($digest, 7);
         }
         $keys = $match = [];
         $req = ['nonce' => 1, 'nc' => 1, 'cnonce' => 1, 'qop' => 1, 'username' => 1, 'uri' => 1, 'response' => 1];
-        preg_match_all('/(\w+)=([\'"]?)([a-zA-Z0-9\:\#\%\?\&@=\.\/_-]+)\2/', $digest, $match, PREG_SET_ORDER);
+        \preg_match_all('/(\w+)=([\'"]?)([a-zA-Z0-9\:\#\%\?\&@=\.\/_-]+)\2/', $digest, $match, PREG_SET_ORDER);
 
         foreach ($match as $i) {
             $keys[$i[1]] = $i[3];
@@ -188,10 +188,10 @@ class DigestAuthenticate extends BasicAuthenticate
      */
     public function generateResponseHash($digest, $password, $method)
     {
-        return md5(
+        return \md5(
             $password .
             ':' . $digest['nonce'] . ':' . $digest['nc'] . ':' . $digest['cnonce'] . ':' . $digest['qop'] . ':' .
-            md5($method . ':' . $digest['uri'])
+            \md5($method . ':' . $digest['uri'])
         );
     }
 
@@ -205,7 +205,7 @@ class DigestAuthenticate extends BasicAuthenticate
      */
     public static function password($username, $password, $realm)
     {
-        return md5($username . ':' . $realm . ':' . $password);
+        return \md5($username . ':' . $realm . ':' . $password);
     }
 
     /**
@@ -222,7 +222,7 @@ class DigestAuthenticate extends BasicAuthenticate
             'realm' => $realm,
             'qop' => $this->_config['qop'],
             'nonce' => $this->generateNonce(),
-            'opaque' => $this->_config['opaque'] ?: md5($realm)
+            'opaque' => $this->_config['opaque'] ?: \md5($realm)
         ];
 
         $digest = $this->_getDigest($request);
@@ -232,15 +232,15 @@ class DigestAuthenticate extends BasicAuthenticate
 
         $opts = [];
         foreach ($options as $k => $v) {
-            if (is_bool($v)) {
+            if (\is_bool($v)) {
                 $v = $v ? 'true' : 'false';
-                $opts[] = sprintf('%s=%s', $k, $v);
+                $opts[] = \sprintf('%s=%s', $k, $v);
             } else {
-                $opts[] = sprintf('%s="%s"', $k, $v);
+                $opts[] = \sprintf('%s="%s"', $k, $v);
             }
         }
 
-        return 'WWW-Authenticate: Digest ' . implode(',', $opts);
+        return 'WWW-Authenticate: Digest ' . \implode(',', $opts);
     }
 
     /**
@@ -250,12 +250,12 @@ class DigestAuthenticate extends BasicAuthenticate
      */
     protected function generateNonce()
     {
-        $expiryTime = microtime(true) + $this->getConfig('nonceLifetime');
+        $expiryTime = \microtime(true) + $this->getConfig('nonceLifetime');
         $secret = $this->getConfig('secret');
-        $signatureValue = hash_hmac('sha256', $expiryTime . ':' . $secret, $secret);
+        $signatureValue = \hash_hmac('sha256', $expiryTime . ':' . $secret, $secret);
         $nonceValue = $expiryTime . ':' . $signatureValue;
 
-        return base64_encode($nonceValue);
+        return \base64_encode($nonceValue);
     }
 
     /**
@@ -266,21 +266,21 @@ class DigestAuthenticate extends BasicAuthenticate
      */
     protected function validNonce($nonce)
     {
-        $value = base64_decode($nonce);
+        $value = \base64_decode($nonce);
         if ($value === false) {
             return false;
         }
-        $parts = explode(':', $value);
-        if (count($parts) !== 2) {
+        $parts = \explode(':', $value);
+        if (\count($parts) !== 2) {
             return false;
         }
         list($expires, $checksum) = $parts;
-        if ($expires < microtime(true)) {
+        if ($expires < \microtime(true)) {
             return false;
         }
         $secret = $this->getConfig('secret');
-        $check = hash_hmac('sha256', $expires . ':' . $secret, $secret);
+        $check = \hash_hmac('sha256', $expires . ':' . $secret, $secret);
 
-        return hash_equals($check, $checksum);
+        return \hash_equals($check, $checksum);
     }
 }

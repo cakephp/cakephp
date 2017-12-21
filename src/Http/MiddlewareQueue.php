@@ -78,11 +78,11 @@ class MiddlewareQueue implements Countable
             return null;
         }
 
-        if (is_string($this->queue[$index])) {
+        if (\is_string($this->queue[$index])) {
             $class = $this->queue[$index];
             $className = App::className($class, 'Middleware', 'Middleware');
-            if (!$className || !class_exists($className)) {
-                throw new RuntimeException(sprintf(
+            if (!$className || !\class_exists($className)) {
+                throw new RuntimeException(\sprintf(
                     'Middleware "%s" was not found.',
                     $class
                 ));
@@ -103,8 +103,8 @@ class MiddlewareQueue implements Countable
      */
     public function add($middleware)
     {
-        if (is_array($middleware)) {
-            $this->queue = array_merge($this->queue, $middleware);
+        if (\is_array($middleware)) {
+            $this->queue = \array_merge($this->queue, $middleware);
 
             return $this;
         }
@@ -133,12 +133,12 @@ class MiddlewareQueue implements Countable
      */
     public function prepend($middleware)
     {
-        if (is_array($middleware)) {
-            $this->queue = array_merge($middleware, $this->queue);
+        if (\is_array($middleware)) {
+            $this->queue = \array_merge($middleware, $this->queue);
 
             return $this;
         }
-        array_unshift($this->queue, $middleware);
+        \array_unshift($this->queue, $middleware);
 
         return $this;
     }
@@ -155,7 +155,7 @@ class MiddlewareQueue implements Countable
      */
     public function insertAt($index, $middleware)
     {
-        array_splice($this->queue, $index, 0, [$middleware]);
+        \array_splice($this->queue, $index, 0, [$middleware]);
 
         return $this;
     }
@@ -176,8 +176,8 @@ class MiddlewareQueue implements Countable
         $found = false;
         $i = null;
         foreach ($this->queue as $i => $object) {
-            if ((is_string($object) && $object === $class)
-                || is_a($object, $class)
+            if ((\is_string($object) && $object === $class)
+                || \is_a($object, $class)
             ) {
                 $found = true;
                 break;
@@ -186,7 +186,7 @@ class MiddlewareQueue implements Countable
         if ($found) {
             return $this->insertAt($i, $middleware);
         }
-        throw new LogicException(sprintf("No middleware matching '%s' could be found.", $class));
+        throw new LogicException(\sprintf("No middleware matching '%s' could be found.", $class));
     }
 
     /**
@@ -205,8 +205,8 @@ class MiddlewareQueue implements Countable
         $found = false;
         $i = null;
         foreach ($this->queue as $i => $object) {
-            if ((is_string($object) && $object === $class)
-                || is_a($object, $class)
+            if ((\is_string($object) && $object === $class)
+                || \is_a($object, $class)
             ) {
                 $found = true;
                 break;
@@ -228,6 +228,6 @@ class MiddlewareQueue implements Countable
      */
     public function count()
     {
-        return count($this->queue);
+        return \count($this->queue);
     }
 }
