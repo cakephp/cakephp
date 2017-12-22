@@ -56,7 +56,7 @@ class PluginRegistry extends ObjectRegistry implements PluginRegistryInterface
      */
     protected function _throwMissingClassError($class, $plugin)
     {
-        new RuntimeException(sprintf(
+        throw new RuntimeException(sprintf(
             'Plugin class `%s` not found.',
             $class
         ));
@@ -78,7 +78,8 @@ class PluginRegistry extends ObjectRegistry implements PluginRegistryInterface
 
         if ((!$instance instanceof HttpApplicationInterface
             && !$instance instanceof ConsoleApplicationInterface)
-            || !$instance instanceof PluginInterface) {
+            || !$instance instanceof PluginInterface
+        ) {
             throw new RuntimeException(sprintf(
                 '`%s` is not a valid plugin object. It\'s not implementing `%s` or `%s`',
                 get_class($instance)),
@@ -147,7 +148,9 @@ class PluginRegistry extends ObjectRegistry implements PluginRegistryInterface
     public function middleware($middleware)
     {
         foreach ($this as $plugin) {
-            $middleware->add($plugin);
+            if ($plugin instanceof HttpApplicationInterface) {
+                $middleware = $plugin->middleware($middleware);
+            }
         }
 
         return $middleware;
@@ -163,10 +166,6 @@ class PluginRegistry extends ObjectRegistry implements PluginRegistryInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next)
     {
-        foreach ($this as $plugin) {
-            $response = $plugin($request, $response, $next);
-        }
-
-        return $response;
+        // Required by the inherited interfaces
     }
 }

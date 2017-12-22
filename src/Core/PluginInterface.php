@@ -33,7 +33,15 @@ interface PluginInterface
      * @param bool $disabled True to disable it, false to enable it
      * @return $this
      */
-    public function disableRoutes($disabled);
+    public function disableRoutes();
+
+    /**
+     * Enables route loading for the plugin
+     *
+     * @param bool $disabled True to disable it, false to enable it
+     * @return $this
+     */
+    public function enableRoutes();
 
     /**
      * Disables bootstrapping for the plugin
@@ -41,7 +49,15 @@ interface PluginInterface
      * @param bool $disabled True to disable it, false to enable it
      * @return $this
      */
-    public function disableBootstrap($disabled);
+    public function disableBootstrap();
+
+    /**
+     * Enables bootstrapping for the plugin
+     *
+     * @param bool $disabled True to disable it, false to enable it
+     * @return $this
+     */
+    public function enableBootstrap();
 
     /**
      * If the routes should be loaded or not for this plugin

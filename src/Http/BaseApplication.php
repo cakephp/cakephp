@@ -174,7 +174,7 @@ abstract class BaseApplication implements ConsoleApplicationInterface, HttpAppli
      *
      * @return \Cake\Core\PluginRegistry
      */
-    public function pluginRegistry()
+    public function getPluginRegistry()
     {
         return $this->pluginRegistry;
     }

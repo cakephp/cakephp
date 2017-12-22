@@ -49,8 +49,9 @@ class PluginApp implements ConsoleApplicationInterface, HttpApplicationInterface
         if (isset($options['bootstrap'])) {
             $this->disableBootstrap((bool)$options['bootstrap']);
         }
+
         if (isset($options['routes'])) {
-            $this->disableRoutes((bool)$options['routes']);
+            (bool)$options['routes'] ? $this->enableRoutes() : $this->disableRoutes();
         }
 
         $this->initialize();
@@ -61,23 +62,46 @@ class PluginApp implements ConsoleApplicationInterface, HttpApplicationInterface
      */
     public function initialize()
     {
-
     }
 
     /**
      * {@inheritdoc}
      */
-    public function disableRoutes($disabled)
+    public function disableRoutes()
     {
-        $this->loadRoutes = $disabled;
+        $this->loadRoutes = false;
+
+        return $this;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function disableBootstrap($disabled)
+    public function enableRoutes()
     {
-        $this->doBootstrap = $disabled;
+        $this->loadRoutes = true;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function disableBootstrap()
+    {
+        $this->doBootstrap = false;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function enableBootstrap()
+    {
+        $this->doBootstrap = true;
+
+        return $this;
     }
 
     /**
