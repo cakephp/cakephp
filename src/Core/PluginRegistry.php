@@ -78,8 +78,7 @@ class PluginRegistry extends ObjectRegistry implements PluginRegistryInterface
 
         if ((!$instance instanceof HttpApplicationInterface
             && !$instance instanceof ConsoleApplicationInterface)
-            || !$instance instanceof PluginInterface
-        ) {
+            || !$instance instanceof PluginInterface) {
             throw new RuntimeException(sprintf(
                 '`%s` is not a valid plugin object. It\'s not implementing `%s` or `%s`',
                 get_class($instance)),
@@ -166,6 +165,6 @@ class PluginRegistry extends ObjectRegistry implements PluginRegistryInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next)
     {
-        // Required by the inherited interfaces
+        return $next($request, $response);
     }
 }
