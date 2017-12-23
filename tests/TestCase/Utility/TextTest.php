@@ -592,6 +592,11 @@ TEXT;
         ]);
         $expected = '<p><span style="font-size: medium;"><a>Iamatestwi...</a></span></p>';
         $this->assertEquals($expected, $result);
+
+        $text = '<style>text-align: center;</style><script>console.log(\'test\');</script><p>The quick brown fox jumps over the lazy dog</p>';
+        $expected = '<style>text-align: center;</style><script>console.log(\'test\');</script><p>The qu...</p>';
+        $result = $this->Text->truncate($text, 9, ['html' => true, 'ellipsis' => '...']);
+        $this->assertSame($expected, $result);
     }
 
     /**
