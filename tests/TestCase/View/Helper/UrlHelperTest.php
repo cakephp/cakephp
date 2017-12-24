@@ -255,6 +255,21 @@ class UrlHelperTest extends TestCase
     }
 
     /**
+     * Test assetTimestamp with timestamp option overriding `Asset.timestamp` in Configure.
+     *
+     * @return void
+     */
+    public function testAssetTimestampConfigureOverride()
+    {
+        $this->Helper->webroot = '';
+        Configure::write('Asset.timestamp', 'force');
+        $timestamp = false;
+
+        $result = $this->Helper->assetTimestamp(Configure::read('App.cssBaseUrl') . 'cake.generic.css', $timestamp);
+        $this->assertEquals(Configure::read('App.cssBaseUrl') . 'cake.generic.css', $result);
+    }
+
+    /**
      * test assetTimestamp with plugins and themes
      *
      * @return void
@@ -299,6 +314,34 @@ class UrlHelperTest extends TestCase
     }
 
     /**
+     * Test script and Asset.timestamp = force
+     *
+     * @return void
+     */
+    public function testScriptTimestampForce()
+    {
+        $this->Helper->webroot = '';
+        Configure::write('Asset.timestamp', 'force');
+
+        $result = $this->Helper->script('script.js');
+        $this->assertRegExp('/' . preg_quote(Configure::read('App.jsBaseUrl') . 'script.js?', '/') . '[0-9]+/', $result);
+    }
+
+    /**
+     * Test script with timestamp option overriding `Asset.timestamp` in Configure
+     *
+     * @return void
+     */
+    public function testScriptTimestampConfigureOverride()
+    {
+        Configure::write('Asset.timestamp', 'force');
+        $timestamp = false;
+
+        $result = $this->Helper->script('script.js', ['timestamp' => $timestamp]);
+        $this->assertEquals(Configure::read('App.jsBaseUrl') . 'script.js', $result);
+    }
+
+    /**
      * test image()
      *
      * @return void
@@ -328,6 +371,33 @@ class UrlHelperTest extends TestCase
     }
 
     /**
+     * Test image with `Asset.timestamp` = force
+     *
+     * @return void
+     */
+    public function testImageTimestampForce()
+    {
+        Configure::write('Asset.timestamp', 'force');
+
+        $result = $this->Helper->image('cake.icon.png');
+        $this->assertRegExp('/' . preg_quote('img/cake.icon.png?', '/') . '[0-9]+/', $result);
+    }
+
+    /**
+     * Test image with timestamp option overriding `Asset.timestamp` in Configure
+     *
+     * @return void
+     */
+    public function testImageTimestampConfigureOverride()
+    {
+        Configure::write('Asset.timestamp', 'force');
+        $timestamp = false;
+
+        $result = $this->Helper->image('cake.icon.png', ['timestamp' => $timestamp]);
+        $this->assertEquals('img/cake.icon.png', $result);
+    }
+
+    /**
      * test css
      *
      * @return void
@@ -336,6 +406,33 @@ class UrlHelperTest extends TestCase
     {
         $result = $this->Helper->css('style');
         $this->assertEquals('css/style.css', $result);
+    }
+
+    /**
+     * Test css with `Asset.timestamp` = force
+     *
+     * @return void
+     */
+    public function testCssTimestampForce()
+    {
+        Configure::write('Asset.timestamp', 'force');
+
+        $result = $this->Helper->css('cake.generic');
+        $this->assertRegExp('/' . preg_quote('css/cake.generic.css?', '/') . '[0-9]+/', $result);
+    }
+
+    /**
+     * Test image with timestamp option overriding `Asset.timestamp` in Configure
+     *
+     * @return void
+     */
+    public function testCssTimestampConfigureOverride()
+    {
+        Configure::write('Asset.timestamp', 'force');
+        $timestamp = false;
+
+        $result = $this->Helper->css('cake.generic', ['timestamp' => $timestamp]);
+        $this->assertEquals('css/cake.generic.css', $result);
     }
 
     /**
