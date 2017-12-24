@@ -204,6 +204,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      */
     public function buildValidator(Event $event, Validator $validator, $name)
     {
+        $this->_buildValidator($validator);
     }
 
     /**
