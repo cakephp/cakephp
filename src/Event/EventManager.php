@@ -42,7 +42,7 @@ class EventManager
     /**
      * List of listener callbacks associated to
      *
-     * @var object
+     * @var array
      */
     protected $_listeners = [];
 
@@ -581,10 +581,15 @@ class EventManager
             $properties['_listeners'][$key] = $listenerCount . ' listener(s)';
         }
         if ($this->_eventList) {
-            foreach ($this->_eventList as $event) {
+            $count = count($this->_eventList);
+            for ($i = 0; $i < $count; $i++) {
+                $event = $this->_eventList[$i];
                 $properties['_dispatchedEvents'][] = $event->getName() . ' with subject ' . get_class($event->getSubject());
             }
+        } else {
+            $properties['_dispatchedEvents'] = null;
         }
+        unset($properties['_eventList']);
 
         return $properties;
     }

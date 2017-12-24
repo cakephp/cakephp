@@ -160,7 +160,10 @@ class Route
      */
     public function setExtensions(array $extensions)
     {
-        $this->_extensions = array_map('strtolower', $extensions);
+        $this->_extensions = [];
+        foreach ($extensions as $ext) {
+            $this->_extensions[] = strtolower($ext);
+        }
 
         return $this;
     }
@@ -386,7 +389,7 @@ class Route
             if ($value === null) {
                 continue;
             }
-            if (is_bool($value)) {
+            if ($value === true || $value === false) {
                 $value = $value ? '1' : '0';
             }
             $name .= $value . $glue;

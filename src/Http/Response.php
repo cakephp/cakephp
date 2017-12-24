@@ -843,7 +843,7 @@ class Response implements ResponseInterface
      *
      * @param string|callable|null $content the string or callable message to be sent
      * @return string|null Current message buffer if $content param is passed as null
-     * @deprecated 3.4.0 Mutable response methods are deprecated. Use `withBody()` and `getBody()` instead.
+     * @deprecated 3.4.0 Mutable response methods are deprecated. Use `withBody()`/`withStringBody()` and `getBody()` instead.
      */
     public function body($content = null)
     {

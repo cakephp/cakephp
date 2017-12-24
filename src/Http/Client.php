@@ -503,6 +503,7 @@ class Client
 
         $request = new Request($url, $method, $headers, $data);
         $cookies = isset($options['cookies']) ? $options['cookies'] : [];
+        /** @var \Cake\Http\Client\Request $request */
         $request = $this->_cookies->addToRequest($request, $cookies);
         if (isset($options['auth'])) {
             $request = $this->_addAuthentication($request, $options);

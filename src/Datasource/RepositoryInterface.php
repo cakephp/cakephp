@@ -132,7 +132,7 @@ interface RepositoryInterface
      *
      * @param \Cake\Datasource\EntityInterface $entity the entity to be saved
      * @param array|\ArrayAccess $options The options to use when saving.
-     * @return \Cake\Datasource\EntityInterface|bool
+     * @return \Cake\Datasource\EntityInterface|false
      */
     public function save(EntityInterface $entity, $options = []);
 

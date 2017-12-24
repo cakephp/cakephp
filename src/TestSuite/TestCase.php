@@ -693,7 +693,7 @@ abstract class TestCase extends BaseTestCase
         $options += ['alias' => $baseClass, 'connection' => $connection];
         $options += TableRegistry::getConfig($alias);
 
-        /** @var \Cake\ORM\Table $mock */
+        /** @var \Cake\ORM\Table|\PHPUnit_Framework_MockObject_MockObject $mock */
         $mock = $this->getMockBuilder($options['className'])
             ->setMethods($methods)
             ->setConstructorArgs([$options])

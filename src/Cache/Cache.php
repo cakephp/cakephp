@@ -60,9 +60,6 @@ use RuntimeException;
  * See Cache engine documentation for expected configuration keys.
  *
  * @see config/app.php for configuration settings
- * @param string $name Name of the configuration
- * @param array $config Optional associative array of settings passed to the engine
- * @return array [engine, settings] on success, false on failure
  */
 class Cache
 {

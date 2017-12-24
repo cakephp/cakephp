@@ -41,7 +41,7 @@
         "lib-ICU": "The intl PHP library, to use Text::transliterate() or Text::slug()"
     },
     "require-dev": {
-        "phpunit/phpunit": "^5.7|^6.0",
+        "phpunit/phpunit": "^5.7.14|^6.0",
         "cakephp/cakephp-codesniffer": "^3.0"
     },
     "autoload": {
