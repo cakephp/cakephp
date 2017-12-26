@@ -63,6 +63,7 @@ use RuntimeException;
  *
  * Counter cache using lambda function returning the count
  * This is equivalent to example #2
+ *
  * ```
  * [
  *     'Users' => [
@@ -76,6 +77,9 @@ use RuntimeException;
  *     ]
  * ]
  * ```
+ *
+ * When using a lambda function you can return `false` to disable updating the counter value
+ * for the current operation.
  *
  * Ignore updating the field if it is dirty
  * ```
@@ -238,8 +242,9 @@ class CounterCacheBehavior extends Behavior
             } else {
                 $count = $this->_getCount($config, $countConditions);
             }
-
-            $assoc->getTarget()->updateAll([$field => $count], $updateConditions);
+            if ($count !== false) {
+                $assoc->getTarget()->updateAll([$field => $count], $updateConditions);
+            }
 
             if (isset($updateOriginalConditions)) {
                 if (is_callable($config)) {
@@ -250,7 +255,9 @@ class CounterCacheBehavior extends Behavior
                 } else {
                     $count = $this->_getCount($config, $countOriginalConditions);
                 }
-                $assoc->getTarget()->updateAll([$field => $count], $updateOriginalConditions);
+                if ($count !== false) {
+                    $assoc->getTarget()->updateAll([$field => $count], $updateOriginalConditions);
+                }
             }
         }
     }
