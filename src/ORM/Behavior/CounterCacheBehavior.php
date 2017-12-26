@@ -63,6 +63,7 @@ use RuntimeException;
  *
  * Counter cache using lambda function returning the count
  * This is equivalent to example #2
+ *
  * ```
  * [
  *     'Users' => [
@@ -76,6 +77,9 @@ use RuntimeException;
  *     ]
  * ]
  * ```
+ *
+ * When using a lambda function you can return `false` to disable updating the counter value
+ * for the current operation.
  *
  * Ignore updating the field if it is dirty
  * ```
