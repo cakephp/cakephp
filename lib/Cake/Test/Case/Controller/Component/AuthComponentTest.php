@@ -1818,4 +1818,38 @@ class AuthComponentTest extends CakeTestCase {
 
 		$this->assertEquals('/users/login', $this->Controller->testUrl);
 	}
+
+/**
+ * testStatelessAuthAllowedActionsRetrieveUser method
+ *
+ * @return void
+ */
+	public function testStatelessAuthAllowedActionsRetrieveUser() {
+		if (CakeSession::id()) {
+			session_destroy();
+			CakeSession::$id = null;
+		}
+		$_SESSION = null;
+
+		$_SERVER['PHP_AUTH_USER'] = 'mariano';
+		$_SERVER['PHP_AUTH_PW'] = 'cake';
+
+		AuthComponent::$sessionKey = false;
+		$this->Controller->Auth->authenticate = array(
+			'Basic' => array('userModel' => 'AuthUser')
+		);
+		$this->Controller->request['action'] = 'add';
+		$this->Controller->Auth->initialize($this->Controller);
+		$this->Controller->Auth->allow();
+		$this->Controller->Auth->startup($this->Controller);
+
+		$expectedUser = array(
+			'id' => '1',
+			'username' => 'mariano',
+			'created' => '2007-03-17 01:16:23',
+			'updated' => '2007-03-17 01:18:31',
+		);
+
+		$this->assertEquals($expectedUser, $this->Controller->Auth->user());
+	}
 }

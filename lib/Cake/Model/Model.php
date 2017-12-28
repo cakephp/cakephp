@@ -1695,6 +1695,8 @@ class Model extends CakeObject implements CakeEventListener {
  *   If an array, allows control of 'validate', 'callbacks' and 'counterCache' options.
  *   See Model::save() for details of each options.
  * @return bool|array See Model::save() False on failure or an array of model data on success.
+ * @deprecated 3.0.0 To ease migration to the new major, do not use this method anymore.
+ *   Stateful model usage will be removed. Use the existing save() methods instead.
  * @see Model::save()
  * @link https://book.cakephp.org/2.0/en/models/saving-your-data.html#model-savefield-string-fieldname-string-fieldvalue-validate-false
  */
@@ -3083,7 +3085,11 @@ class Model extends CakeObject implements CakeEventListener {
 			$query['order'] = $this->order;
 		}
 
-		$query['order'] = (array)$query['order'];
+		if (is_object($query['order'])) {
+			$query['order'] = array($query['order']);
+		} else {
+			$query['order'] = (array)$query['order'];
+		}
 
 		if ($query['callbacks'] === true || $query['callbacks'] === 'before') {
 			$event = new CakeEvent('Model.beforeFind', $this, array($query));
