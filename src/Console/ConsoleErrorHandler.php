@@ -68,7 +68,7 @@ class ConsoleErrorHandler extends BaseErrorHandler
         $this->_displayException($exception);
         $this->_logException($exception);
         $code = $exception->getCode();
-        $code = ($code && is_int($code)) ? $code : 1;
+        $code = ($code && \is_int($code)) ? $code : 1;
         $this->_stop($code);
     }
 
@@ -89,7 +89,7 @@ class ConsoleErrorHandler extends BaseErrorHandler
             $exception = $exception->getError();
         }
 
-        $message = sprintf(
+        $message = \sprintf(
             '<error>%s</error> %s in [%s, line %s]',
             $errorName,
             $exception->getMessage(),
@@ -110,13 +110,13 @@ class ConsoleErrorHandler extends BaseErrorHandler
      */
     protected function _displayError($error, $debug)
     {
-        $message = sprintf(
+        $message = \sprintf(
             '%s in [%s, line %s]',
             $error['description'],
             $error['file'],
             $error['line']
         );
-        $message = sprintf(
+        $message = \sprintf(
             "<error>%s Error:</error> %s\n",
             $error['error'],
             $message

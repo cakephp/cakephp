@@ -34,13 +34,13 @@ trait ExtractTrait
      */
     protected function _propertyExtractor($callback)
     {
-        if (!is_string($callback)) {
+        if (!\is_string($callback)) {
             return $callback;
         }
 
-        $path = explode('.', $callback);
+        $path = \explode('.', $callback);
 
-        if (strpos($callback, '{*}') !== false) {
+        if (\strpos($callback, '{*}') !== false) {
             return function ($element) use ($path) {
                 return $this->_extract($element, $path);
             };
@@ -72,12 +72,12 @@ trait ExtractTrait
             }
 
             if ($collectionTransform &&
-                !($data instanceof Traversable || is_array($data))) {
+                !($data instanceof Traversable || \is_array($data))) {
                 return null;
             }
 
             if ($collectionTransform) {
-                $rest = implode('.', array_slice($path, $i));
+                $rest = \implode('.', \array_slice($path, $i));
 
                 return (new Collection($data))->extract($rest);
             }

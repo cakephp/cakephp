@@ -51,10 +51,10 @@ class TranslatorFactory extends BaseTranslatorFactory
         TranslatorInterface $fallback = null
     ) {
         $class = $this->class;
-        if ($fallback !== null && get_class($fallback) !== $class) {
-            throw new RuntimeException(sprintf(
+        if ($fallback !== null && \get_class($fallback) !== $class) {
+            throw new RuntimeException(\sprintf(
                 'Translator fallback class %s does not match Cake\I18n\Translator, try clearing your _cake_core_ cache.',
-                get_class($fallback)
+                \get_class($fallback)
             ));
         }
 

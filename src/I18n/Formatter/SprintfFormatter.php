@@ -36,6 +36,6 @@ class SprintfFormatter implements FormatterInterface
     {
         unset($vars['_singular']);
 
-        return vsprintf($message, $vars);
+        return \vsprintf($message, $vars);
     }
 }

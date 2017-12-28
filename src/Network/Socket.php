@@ -142,9 +142,9 @@ class Socket
             $this->disconnect();
         }
 
-        $hasProtocol = strpos($this->_config['host'], '://') !== false;
+        $hasProtocol = \strpos($this->_config['host'], '://') !== false;
         if ($hasProtocol) {
-            list($this->_config['protocol'], $this->_config['host']) = explode('://', $this->_config['host']);
+            list($this->_config['protocol'], $this->_config['host']) = \explode('://', $this->_config['host']);
         }
         $scheme = null;
         if (!empty($this->_config['protocol'])) {
@@ -153,9 +153,9 @@ class Socket
 
         $this->_setSslContext($this->_config['host']);
         if (!empty($this->_config['context'])) {
-            $context = stream_context_create($this->_config['context']);
+            $context = \stream_context_create($this->_config['context']);
         } else {
-            $context = stream_context_create();
+            $context = \stream_context_create();
         }
 
         $connectAs = STREAM_CLIENT_CONNECT;
@@ -163,8 +163,8 @@ class Socket
             $connectAs |= STREAM_CLIENT_PERSISTENT;
         }
 
-        set_error_handler([$this, '_connectionErrorHandler']);
-        $this->connection = stream_socket_client(
+        \set_error_handler([$this, '_connectionErrorHandler']);
+        $this->connection = \stream_socket_client(
             $scheme . $this->_config['host'] . ':' . $this->_config['port'],
             $errNum,
             $errStr,
@@ -172,7 +172,7 @@ class Socket
             $connectAs,
             $context
         );
-        restore_error_handler();
+        \restore_error_handler();
 
         if (!empty($errNum) || !empty($errStr)) {
             $this->setLastError($errNum, $errStr);
@@ -180,13 +180,13 @@ class Socket
         }
 
         if (!$this->connection && $this->_connectionErrors) {
-            $message = implode("\n", $this->_connectionErrors);
+            $message = \implode("\n", $this->_connectionErrors);
             throw new SocketException($message, E_WARNING);
         }
 
-        $this->connected = is_resource($this->connection);
+        $this->connected = \is_resource($this->connection);
         if ($this->connected) {
-            stream_set_timeout($this->connection, $this->_config['timeout']);
+            \stream_set_timeout($this->connection, $this->_config['timeout']);
         }
 
         return $this->connected;
@@ -201,10 +201,10 @@ class Socket
     protected function _setSslContext($host)
     {
         foreach ($this->_config as $key => $value) {
-            if (substr($key, 0, 4) !== 'ssl_') {
+            if (\substr($key, 0, 4) !== 'ssl_') {
                 continue;
             }
-            $contextKey = substr($key, 4);
+            $contextKey = \substr($key, 4);
             if (empty($this->_config['context']['ssl'][$contextKey])) {
                 $this->_config['context']['ssl'][$contextKey] = $value;
             }
@@ -217,7 +217,7 @@ class Socket
             $this->_config['context']['ssl']['peer_name'] = $host;
         }
         if (empty($this->_config['context']['ssl']['cafile'])) {
-            $dir = dirname(dirname(__DIR__));
+            $dir = \dirname(\dirname(__DIR__));
             $this->_config['context']['ssl']['cafile'] = $dir . DIRECTORY_SEPARATOR .
                 'config' . DIRECTORY_SEPARATOR . 'cacert.pem';
         }
@@ -253,7 +253,7 @@ class Socket
             return null;
         }
 
-        return stream_context_get_options($this->connection);
+        return \stream_context_get_options($this->connection);
     }
 
     /**
@@ -264,10 +264,10 @@ class Socket
     public function host()
     {
         if (Validation::ip($this->_config['host'])) {
-            return gethostbyaddr($this->_config['host']);
+            return \gethostbyaddr($this->_config['host']);
         }
 
-        return gethostbyaddr($this->address());
+        return \gethostbyaddr($this->address());
     }
 
     /**
@@ -281,7 +281,7 @@ class Socket
             return $this->_config['host'];
         }
 
-        return gethostbyname($this->_config['host']);
+        return \gethostbyname($this->_config['host']);
     }
 
     /**
@@ -295,7 +295,7 @@ class Socket
             return [$this->_config['host']];
         }
 
-        return gethostbynamel($this->_config['host']);
+        return \gethostbynamel($this->_config['host']);
     }
 
     /**
@@ -338,10 +338,10 @@ class Socket
         if (!$this->connected && !$this->connect()) {
             return false;
         }
-        $totalBytes = strlen($data);
+        $totalBytes = \strlen($data);
         $written = 0;
         while ($written < $totalBytes) {
-            $rv = fwrite($this->connection, substr($data, $written));
+            $rv = \fwrite($this->connection, \substr($data, $written));
             if ($rv === false || $rv === 0) {
                 return $written;
             }
@@ -367,9 +367,9 @@ class Socket
             return false;
         }
 
-        if (!feof($this->connection)) {
-            $buffer = fread($this->connection, $length);
-            $info = stream_get_meta_data($this->connection);
+        if (!\feof($this->connection)) {
+            $buffer = \fread($this->connection, $length);
+            $info = \stream_get_meta_data($this->connection);
             if ($info['timed_out']) {
                 $this->setLastError(E_WARNING, 'Connection timed out');
 
@@ -389,12 +389,12 @@ class Socket
      */
     public function disconnect()
     {
-        if (!is_resource($this->connection)) {
+        if (!\is_resource($this->connection)) {
             $this->connected = false;
 
             return true;
         }
-        $this->connected = !fclose($this->connection);
+        $this->connected = !\fclose($this->connection);
 
         if (!$this->connected) {
             $this->connection = null;
@@ -422,7 +422,7 @@ class Socket
         if (empty($state)) {
             static $initalState = [];
             if (empty($initalState)) {
-                $initalState = get_class_vars(__CLASS__);
+                $initalState = \get_class_vars(__CLASS__);
             }
             $state = $initalState;
         }
@@ -447,7 +447,7 @@ class Socket
      */
     public function enableCrypto($type, $clientOrServer = 'client', $enable = true)
     {
-        if (!array_key_exists($type . '_' . $clientOrServer, $this->_encryptMethods)) {
+        if (!\array_key_exists($type . '_' . $clientOrServer, $this->_encryptMethods)) {
             throw new InvalidArgumentException('Invalid encryption scheme chosen');
         }
         $method = $this->_encryptMethods[$type . '_' . $clientOrServer];
@@ -456,7 +456,7 @@ class Socket
         // to fix backwards compatibility issues, and now only resolves to TLS1.0
         //
         // See https://github.com/php/php-src/commit/10bc5fd4c4c8e1dd57bd911b086e9872a56300a0
-        if (version_compare(PHP_VERSION, '5.6.7', '>=')) {
+        if (\version_compare(PHP_VERSION, '5.6.7', '>=')) {
             if ($method == STREAM_CRYPTO_METHOD_TLS_CLIENT) {
                 // @codingStandardsIgnoreStart
                 $method |= STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT | STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT;
@@ -470,7 +470,7 @@ class Socket
         }
 
         try {
-            $enableCryptoResult = stream_socket_enable_crypto($this->connection, $enable, $method);
+            $enableCryptoResult = \stream_socket_enable_crypto($this->connection, $enable, $method);
         } catch (Exception $e) {
             $this->setLastError(null, $e->getMessage());
             throw new SocketException($e->getMessage());

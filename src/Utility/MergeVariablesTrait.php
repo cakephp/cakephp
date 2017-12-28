@@ -34,10 +34,10 @@ trait MergeVariablesTrait
      */
     protected function _mergeVars($properties, $options = [])
     {
-        $class = get_class($this);
+        $class = \get_class($this);
         $parents = [];
         while (true) {
-            $parent = get_parent_class($class);
+            $parent = \get_parent_class($class);
             if (!$parent) {
                 break;
             }
@@ -45,7 +45,7 @@ trait MergeVariablesTrait
             $class = $parent;
         }
         foreach ($properties as $property) {
-            if (!property_exists($this, $property)) {
+            if (!\property_exists($this, $property)) {
                 continue;
             }
             $thisValue = $this->{$property};
@@ -69,7 +69,7 @@ trait MergeVariablesTrait
         $thisValue = $this->{$property};
         $isAssoc = false;
         if (isset($options['associative']) &&
-            in_array($property, (array)$options['associative'])
+            \in_array($property, (array)$options['associative'])
         ) {
             $isAssoc = true;
         }
@@ -78,12 +78,12 @@ trait MergeVariablesTrait
             $thisValue = Hash::normalize($thisValue);
         }
         foreach ($parentClasses as $class) {
-            $parentProperties = get_class_vars($class);
+            $parentProperties = \get_class_vars($class);
             if (empty($parentProperties[$property])) {
                 continue;
             }
             $parentProperty = $parentProperties[$property];
-            if (!is_array($parentProperty)) {
+            if (!\is_array($parentProperty)) {
                 continue;
             }
             $thisValue = $this->_mergePropertyData($thisValue, $parentProperty, $isAssoc);
@@ -102,7 +102,7 @@ trait MergeVariablesTrait
     protected function _mergePropertyData($current, $parent, $isAssoc)
     {
         if (!$isAssoc) {
-            return array_merge($parent, $current);
+            return \array_merge($parent, $current);
         }
         $parent = Hash::normalize($parent);
         foreach ($parent as $key => $value) {

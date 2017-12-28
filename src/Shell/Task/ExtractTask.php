@@ -122,26 +122,26 @@ class ExtractTask extends Shell
     {
         $defaultPath = APP;
         while (true) {
-            $currentPaths = count($this->_paths) > 0 ? $this->_paths : ['None'];
-            $message = sprintf(
+            $currentPaths = \count($this->_paths) > 0 ? $this->_paths : ['None'];
+            $message = \sprintf(
                 "Current paths: %s\nWhat is the path you would like to extract?\n[Q]uit [D]one",
-                implode(', ', $currentPaths)
+                \implode(', ', $currentPaths)
             );
             $response = $this->in($message, null, $defaultPath);
-            if (strtoupper($response) === 'Q') {
+            if (\strtoupper($response) === 'Q') {
                 $this->err('Extract Aborted');
                 $this->_stop();
 
                 return;
             }
-            if (strtoupper($response) === 'D' && count($this->_paths)) {
+            if (\strtoupper($response) === 'D' && \count($this->_paths)) {
                 $this->out();
 
                 return;
             }
-            if (strtoupper($response) === 'D') {
+            if (\strtoupper($response) === 'D') {
                 $this->warn('No directories selected. Please choose a directory.');
-            } elseif (is_dir($response)) {
+            } elseif (\is_dir($response)) {
                 $this->_paths[] = $response;
                 $defaultPath = 'D';
             } else {
@@ -159,13 +159,13 @@ class ExtractTask extends Shell
     public function main()
     {
         if (!empty($this->params['exclude'])) {
-            $this->_exclude = explode(',', $this->params['exclude']);
+            $this->_exclude = \explode(',', $this->params['exclude']);
         }
-        if (isset($this->params['files']) && !is_array($this->params['files'])) {
-            $this->_files = explode(',', $this->params['files']);
+        if (isset($this->params['files']) && !\is_array($this->params['files'])) {
+            $this->_files = \explode(',', $this->params['files']);
         }
         if (isset($this->params['paths'])) {
-            $this->_paths = explode(',', $this->params['paths']);
+            $this->_paths = \explode(',', $this->params['paths']);
         } elseif (isset($this->params['plugin'])) {
             $plugin = Inflector::camelize($this->params['plugin']);
             if (!Plugin::loaded($plugin)) {
@@ -178,14 +178,14 @@ class ExtractTask extends Shell
         }
 
         if (isset($this->params['extract-core'])) {
-            $this->_extractCore = !(strtolower($this->params['extract-core']) === 'no');
+            $this->_extractCore = !(\strtolower($this->params['extract-core']) === 'no');
         } else {
             $response = $this->in('Would you like to extract the messages from the CakePHP core?', ['y', 'n'], 'n');
-            $this->_extractCore = strtolower($response) === 'y';
+            $this->_extractCore = \strtolower($response) === 'y';
         }
 
         if (!empty($this->params['exclude-plugins']) && $this->_isExtractingApp()) {
-            $this->_exclude = array_merge($this->_exclude, App::path('Plugin'));
+            $this->_exclude = \array_merge($this->_exclude, App::path('Plugin'));
         }
 
         if (!empty($this->params['validation-domain'])) {
@@ -203,8 +203,8 @@ class ExtractTask extends Shell
         } else {
             $message = "What is the path you would like to output?\n[Q]uit";
             while (true) {
-                $response = $this->in($message, null, rtrim($this->_paths[0], DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'Locale');
-                if (strtoupper($response) === 'Q') {
+                $response = $this->in($message, null, \rtrim($this->_paths[0], DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'Locale');
+                if (\strtoupper($response) === 'Q') {
                     $this->err('Extract Aborted');
                     $this->_stop();
 
@@ -225,20 +225,20 @@ class ExtractTask extends Shell
         }
 
         if (isset($this->params['merge'])) {
-            $this->_merge = !(strtolower($this->params['merge']) === 'no');
+            $this->_merge = !(\strtolower($this->params['merge']) === 'no');
         } else {
             $this->out();
             $response = $this->in('Would you like to merge all domain strings into the default.pot file?', ['y', 'n'], 'n');
-            $this->_merge = strtolower($response) === 'y';
+            $this->_merge = \strtolower($response) === 'y';
         }
 
         if (empty($this->_files)) {
             $this->_searchFiles();
         }
 
-        $this->_output = rtrim($this->_output, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+        $this->_output = \rtrim($this->_output, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
         if (!$this->_isPathUsable($this->_output)) {
-            $this->err(sprintf('The output directory %s was not found or writable.', $this->_output));
+            $this->err(\sprintf('The output directory %s was not found or writable.', $this->_output));
             $this->_stop();
 
             return;
@@ -366,21 +366,21 @@ class ExtractTask extends Shell
     {
         /** @var \Cake\Shell\Helper\ProgressHelper $progress */
         $progress = $this->helper('progress');
-        $progress->init(['total' => count($this->_files)]);
+        $progress->init(['total' => \count($this->_files)]);
         $isVerbose = $this->param('verbose');
 
         foreach ($this->_files as $file) {
             $this->_file = $file;
             if ($isVerbose) {
-                $this->out(sprintf('Processing %s...', $file), 1, Shell::VERBOSE);
+                $this->out(\sprintf('Processing %s...', $file), 1, Shell::VERBOSE);
             }
 
-            $code = file_get_contents($file);
-            $allTokens = token_get_all($code);
+            $code = \file_get_contents($file);
+            $allTokens = \token_get_all($code);
 
             $this->_tokens = [];
             foreach ($allTokens as $token) {
-                if (!is_array($token) || ($token[0] !== T_WHITESPACE && $token[0] !== T_INLINE_HTML)) {
+                if (!\is_array($token) || ($token[0] !== T_WHITESPACE && $token[0] !== T_INLINE_HTML)) {
                     $this->_tokens[] = $token;
                 }
             }
@@ -411,12 +411,12 @@ class ExtractTask extends Shell
     protected function _parse($functionName, $map)
     {
         $count = 0;
-        $tokenCount = count($this->_tokens);
+        $tokenCount = \count($this->_tokens);
 
         while (($tokenCount - $count) > 1) {
             $countToken = $this->_tokens[$count];
             $firstParenthesis = $this->_tokens[$count + 1];
-            if (!is_array($countToken)) {
+            if (!\is_array($countToken)) {
                 $count++;
                 continue;
             }
@@ -435,12 +435,12 @@ class ExtractTask extends Shell
                     $position++;
                 }
 
-                $mapCount = count($map);
+                $mapCount = \count($map);
                 $strings = $this->_getStrings($position, $mapCount);
 
-                if ($mapCount === count($strings)) {
+                if ($mapCount === \count($strings)) {
                     $singular = null;
-                    extract(array_combine($map, $strings));
+                    \extract(\array_combine($map, $strings));
                     $domain = isset($domain) ? $domain : 'default';
                     $details = [
                         'file' => $this->_file,
@@ -453,7 +453,7 @@ class ExtractTask extends Shell
                         $details['msgctxt'] = $context;
                     }
                     $this->_addTranslation($domain, $singular, $details);
-                } elseif (strpos($this->_file, CAKE_CORE_INCLUDE_PATH) === false) {
+                } elseif (\strpos($this->_file, CAKE_CORE_INCLUDE_PATH) === false) {
                     $this->_markerError($this->_file, $line, $functionName, $count);
                 }
             }
@@ -469,10 +469,10 @@ class ExtractTask extends Shell
     protected function _buildFiles()
     {
         $paths = $this->_paths;
-        $paths[] = realpath(APP) . DIRECTORY_SEPARATOR;
+        $paths[] = \realpath(APP) . DIRECTORY_SEPARATOR;
 
-        usort($paths, function ($a, $b) {
-            return strlen($a) - strlen($b);
+        \usort($paths, function ($a, $b) {
+            return \strlen($a) - \strlen($b);
         });
 
         foreach ($this->_translations as $domain => $translations) {
@@ -482,13 +482,13 @@ class ExtractTask extends Shell
                     $files = $details['references'];
                     $occurrences = [];
                     foreach ($files as $file => $lines) {
-                        $lines = array_unique($lines);
-                        $occurrences[] = $file . ':' . implode(';', $lines);
+                        $lines = \array_unique($lines);
+                        $occurrences[] = $file . ':' . \implode(';', $lines);
                     }
-                    $occurrences = implode("\n#: ", $occurrences);
+                    $occurrences = \implode("\n#: ", $occurrences);
                     $header = '';
                     if (!$this->param('no-location')) {
-                        $header = '#: ' . str_replace(DIRECTORY_SEPARATOR, '/', str_replace($paths, '', $occurrences)) . "\n";
+                        $header = '#: ' . \str_replace(DIRECTORY_SEPARATOR, '/', \str_replace($paths, '', $occurrences)) . "\n";
                     }
 
                     $sentence = '';
@@ -553,29 +553,29 @@ class ExtractTask extends Shell
             }
 
             // Remove vendor prefix if present.
-            $slashPosition = strpos($domain, '/');
+            $slashPosition = \strpos($domain, '/');
             if ($slashPosition !== false) {
-                $domain = substr($domain, $slashPosition + 1);
+                $domain = \substr($domain, $slashPosition + 1);
             }
 
-            $filename = str_replace('/', '_', $domain) . '.pot';
+            $filename = \str_replace('/', '_', $domain) . '.pot';
             $File = new File($this->_output . $filename);
             $response = '';
-            while ($overwriteAll === false && $File->exists() && strtoupper($response) !== 'Y') {
+            while ($overwriteAll === false && $File->exists() && \strtoupper($response) !== 'Y') {
                 $this->out();
                 $response = $this->in(
-                    sprintf('Error: %s already exists in this location. Overwrite? [Y]es, [N]o, [A]ll', $filename),
+                    \sprintf('Error: %s already exists in this location. Overwrite? [Y]es, [N]o, [A]ll', $filename),
                     ['y', 'n', 'a'],
                     'y'
                 );
-                if (strtoupper($response) === 'N') {
+                if (\strtoupper($response) === 'N') {
                     $response = '';
                     while (!$response) {
                         $response = $this->in('What would you like to name this file?', null, 'new_' . $filename);
                         $File = new File($this->_output . $response);
                         $filename = $response;
                     }
-                } elseif (strtoupper($response) === 'A') {
+                } elseif (\strtoupper($response) === 'A') {
                     $overwriteAll = true;
                 }
             }
@@ -598,7 +598,7 @@ class ExtractTask extends Shell
         $output .= "msgid \"\"\n";
         $output .= "msgstr \"\"\n";
         $output .= "\"Project-Id-Version: PROJECT VERSION\\n\"\n";
-        $output .= '"POT-Creation-Date: ' . date('Y-m-d H:iO') . "\\n\"\n";
+        $output .= '"POT-Creation-Date: ' . \date('Y-m-d H:iO') . "\\n\"\n";
         $output .= "\"PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\\n\"\n";
         $output .= "\"Last-Translator: NAME <EMAIL@ADDRESS>\\n\"\n";
         $output .= "\"Language-Team: LANGUAGE <EMAIL@ADDRESS>\\n\"\n";
@@ -620,9 +620,9 @@ class ExtractTask extends Shell
     protected function _getStrings(&$position, $target)
     {
         $strings = [];
-        $count = count($strings);
+        $count = \count($strings);
         while ($count < $target && ($this->_tokens[$position] === ',' || $this->_tokens[$position][0] == T_CONSTANT_ENCAPSED_STRING || $this->_tokens[$position][0] == T_LNUMBER)) {
-            $count = count($strings);
+            $count = \count($strings);
             if ($this->_tokens[$position][0] == T_CONSTANT_ENCAPSED_STRING && $this->_tokens[$position + 1] === '.') {
                 $string = '';
                 while ($this->_tokens[$position][0] == T_CONSTANT_ENCAPSED_STRING || $this->_tokens[$position] === '.') {
@@ -651,16 +651,16 @@ class ExtractTask extends Shell
      */
     protected function _formatString($string)
     {
-        $quote = substr($string, 0, 1);
-        $string = substr($string, 1, -1);
+        $quote = \substr($string, 0, 1);
+        $string = \substr($string, 1, -1);
         if ($quote === '"') {
-            $string = stripcslashes($string);
+            $string = \stripcslashes($string);
         } else {
-            $string = strtr($string, ["\\'" => "'", '\\\\' => '\\']);
+            $string = \strtr($string, ["\\'" => "'", '\\\\' => '\\']);
         }
-        $string = str_replace("\r\n", "\n", $string);
+        $string = \str_replace("\r\n", "\n", $string);
 
-        return addcslashes($string, "\0..\37\\\"");
+        return \addcslashes($string, "\0..\37\\\"");
     }
 
     /**
@@ -674,13 +674,13 @@ class ExtractTask extends Shell
      */
     protected function _markerError($file, $line, $marker, $count)
     {
-        $this->err(sprintf("Invalid marker content in %s:%s\n* %s(", $file, $line, $marker));
+        $this->err(\sprintf("Invalid marker content in %s:%s\n* %s(", $file, $line, $marker));
         $count += 2;
-        $tokenCount = count($this->_tokens);
+        $tokenCount = \count($this->_tokens);
         $parenthesis = 1;
 
         while ((($tokenCount - $count) > 0) && $parenthesis) {
-            if (is_array($this->_tokens[$count])) {
+            if (\is_array($this->_tokens[$count])) {
                 $this->err($this->_tokens[$count][1], false);
             } else {
                 $this->err($this->_tokens[$count], false);
@@ -711,21 +711,21 @@ class ExtractTask extends Shell
                 if (DIRECTORY_SEPARATOR !== '\\' && $e[0] !== DIRECTORY_SEPARATOR) {
                     $e = DIRECTORY_SEPARATOR . $e;
                 }
-                $exclude[] = preg_quote($e, '/');
+                $exclude[] = \preg_quote($e, '/');
             }
-            $pattern = '/' . implode('|', $exclude) . '/';
+            $pattern = '/' . \implode('|', $exclude) . '/';
         }
         foreach ($this->_paths as $path) {
-            $path = realpath($path) . DIRECTORY_SEPARATOR;
+            $path = \realpath($path) . DIRECTORY_SEPARATOR;
             $Folder = new Folder($path);
             $files = $Folder->findRecursive('.*\.(php|ctp|thtml|inc|tpl)', true);
             if (!empty($pattern)) {
-                $files = preg_grep($pattern, $files, PREG_GREP_INVERT);
-                $files = array_values($files);
+                $files = \preg_grep($pattern, $files, PREG_GREP_INVERT);
+                $files = \array_values($files);
             }
-            $this->_files = array_merge($this->_files, $files);
+            $this->_files = \array_merge($this->_files, $files);
         }
-        $this->_files = array_unique($this->_files);
+        $this->_files = \array_unique($this->_files);
     }
 
     /**
@@ -747,10 +747,10 @@ class ExtractTask extends Shell
      */
     protected function _isPathUsable($path)
     {
-        if (!is_dir($path)) {
-            mkdir($path, 0770, true);
+        if (!\is_dir($path)) {
+            \mkdir($path, 0770, true);
         }
 
-        return is_dir($path) && is_writable($path);
+        return \is_dir($path) && \is_writable($path);
     }
 }

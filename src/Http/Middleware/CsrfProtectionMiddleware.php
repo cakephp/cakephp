@@ -87,7 +87,7 @@ class CsrfProtectionMiddleware
         $cookies = $request->getCookieParams();
         $cookieData = Hash::get($cookies, $this->_config['cookieName']);
 
-        if (strlen($cookieData) > 0) {
+        if (\strlen($cookieData) > 0) {
             $params = $request->getAttribute('params');
             $params['_csrfToken'] = $cookieData;
             $request = $request->withAttribute('params', $params);
@@ -114,10 +114,10 @@ class CsrfProtectionMiddleware
      */
     protected function _validateAndUnsetTokenField(ServerRequest $request)
     {
-        if (in_array($request->getMethod(), ['PUT', 'POST', 'DELETE', 'PATCH']) || $request->getData()) {
+        if (\in_array($request->getMethod(), ['PUT', 'POST', 'DELETE', 'PATCH']) || $request->getData()) {
             $this->_validateToken($request);
             $body = $request->getParsedBody();
-            if (is_array($body)) {
+            if (\is_array($body)) {
                 unset($body[$this->_config['field']]);
                 $request = $request->withParsedBody($body);
             }
@@ -133,7 +133,7 @@ class CsrfProtectionMiddleware
      */
     protected function _createToken()
     {
-        return hash('sha512', Security::randomBytes(16), false);
+        return \hash('sha512', Security::randomBytes(16), false);
     }
 
     /**

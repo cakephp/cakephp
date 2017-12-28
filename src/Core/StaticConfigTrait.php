@@ -75,7 +75,7 @@ trait StaticConfigTrait
     public static function setConfig($key, $config = null)
     {
         if ($config === null) {
-            if (!is_array($key)) {
+            if (!\is_array($key)) {
                 throw new LogicException('If config is null, key must be an array.');
             }
             foreach ($key as $name => $settings) {
@@ -86,10 +86,10 @@ trait StaticConfigTrait
         }
 
         if (isset(static::$_config[$key])) {
-            throw new BadMethodCallException(sprintf('Cannot reconfigure existing key "%s"', $key));
+            throw new BadMethodCallException(\sprintf('Cannot reconfigure existing key "%s"', $key));
         }
 
-        if (is_object($config)) {
+        if (\is_object($config)) {
             $config = ['className' => $config];
         }
 
@@ -163,7 +163,7 @@ trait StaticConfigTrait
      */
     public static function config($key, $config = null)
     {
-        if ($config !== null || is_array($key)) {
+        if ($config !== null || \is_array($key)) {
             static::setConfig($key, $config);
 
             return null;
@@ -204,7 +204,7 @@ trait StaticConfigTrait
      */
     public static function configured()
     {
-        return array_keys(static::$_config);
+        return \array_keys(static::$_config);
     }
 
     /**
@@ -245,7 +245,7 @@ trait StaticConfigTrait
             return [];
         }
 
-        if (!is_string($dsn)) {
+        if (!\is_string($dsn)) {
             throw new InvalidArgumentException('Only strings can be passed to parseDsn');
         }
 
@@ -281,7 +281,7 @@ trait StaticConfigTrait
 }x
 REGEXP;
 
-        preg_match($pattern, $dsn, $parsed);
+        \preg_match($pattern, $dsn, $parsed);
 
         if (!$parsed) {
             throw new InvalidArgumentException("The DSN string '{$dsn}' could not be parsed.");
@@ -289,10 +289,10 @@ REGEXP;
 
         $exists = [];
         foreach ($parsed as $k => $v) {
-            if (is_int($k)) {
+            if (\is_int($k)) {
                 unset($parsed[$k]);
-            } elseif (strpos($k, '_') === 0) {
-                $exists[substr($k, 1)] = ($v !== '');
+            } elseif (\strpos($k, '_') === 0) {
+                $exists[\substr($k, 1)] = ($v !== '');
                 unset($parsed[$k]);
             } elseif ($v === '' && !$exists[$k]) {
                 unset($parsed[$k]);
@@ -306,7 +306,7 @@ REGEXP;
             unset($parsed['query']);
         }
 
-        parse_str($query, $queryArgs);
+        \parse_str($query, $queryArgs);
 
         foreach ($queryArgs as $key => $value) {
             if ($value === 'true') {

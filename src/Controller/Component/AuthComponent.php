@@ -287,7 +287,7 @@ class AuthComponent extends Component
         /** @var \Cake\Controller\Controller $controller */
         $controller = $event->getSubject();
 
-        $action = strtolower($controller->request->getParam('action'));
+        $action = \strtolower($controller->request->getParam('action'));
         if (!$controller->isAction($action)) {
             return null;
         }
@@ -346,9 +346,9 @@ class AuthComponent extends Component
      */
     protected function _isAllowed(Controller $controller)
     {
-        $action = strtolower($controller->request->getParam('action'));
+        $action = \strtolower($controller->request->getParam('action'));
 
-        return in_array($action, array_map('strtolower', $this->allowedActions));
+        return \in_array($action, \array_map('strtolower', $this->allowedActions));
     }
 
     /**
@@ -371,7 +371,7 @@ class AuthComponent extends Component
             $this->constructAuthenticate();
         }
         $response = $this->response;
-        $auth = end($this->_authenticateObjects);
+        $auth = \end($this->_authenticateObjects);
         if ($auth === false) {
             throw new Exception('At least one authenticate object must be available.');
         }
@@ -415,11 +415,11 @@ class AuthComponent extends Component
             return $loginAction;
         }
 
-        if (is_array($loginAction)) {
+        if (\is_array($loginAction)) {
             $loginAction['?'][static::QUERY_STRING_REDIRECT] = $urlToRedirectBackTo;
         } else {
-            $char = strpos($loginAction, '?') === false ? '?' : '&';
-            $loginAction .= $char . static::QUERY_STRING_REDIRECT . '=' . urlencode($urlToRedirectBackTo);
+            $char = \strpos($loginAction, '?') === false ? '?' : '&';
+            $loginAction .= $char . static::QUERY_STRING_REDIRECT . '=' . \urlencode($urlToRedirectBackTo);
         }
 
         return $loginAction;
@@ -462,7 +462,7 @@ class AuthComponent extends Component
             if (!empty($this->_config['loginRedirect'])) {
                 $default = $this->_config['loginRedirect'];
             }
-            if (is_array($default)) {
+            if (\is_array($default)) {
                 $default['_base'] = false;
             }
             $url = $controller->referer($default, true);
@@ -569,10 +569,10 @@ class AuthComponent extends Component
                 $class = $alias;
             }
             $className = App::className($class, 'Auth', 'Authorize');
-            if (!class_exists($className)) {
-                throw new Exception(sprintf('Authorization adapter "%s" was not found.', $class));
+            if (!\class_exists($className)) {
+                throw new Exception(\sprintf('Authorization adapter "%s" was not found.', $class));
             }
-            if (!method_exists($className, 'authorize')) {
+            if (!\method_exists($className, 'authorize')) {
                 throw new Exception('Authorization objects must implement an authorize() method.');
             }
             $config = (array)$config + $global;
@@ -620,11 +620,11 @@ class AuthComponent extends Component
     {
         if ($actions === null) {
             $controller = $this->_registry->getController();
-            $this->allowedActions = get_class_methods($controller);
+            $this->allowedActions = \get_class_methods($controller);
 
             return;
         }
-        $this->allowedActions = array_merge($this->allowedActions, (array)$actions);
+        $this->allowedActions = \array_merge($this->allowedActions, (array)$actions);
     }
 
     /**
@@ -655,12 +655,12 @@ class AuthComponent extends Component
             return;
         }
         foreach ((array)$actions as $action) {
-            $i = array_search($action, $this->allowedActions);
-            if (is_int($i)) {
+            $i = \array_search($action, $this->allowedActions);
+            if (\is_int($i)) {
                 unset($this->allowedActions[$i]);
             }
         }
-        $this->allowedActions = array_values($this->allowedActions);
+        $this->allowedActions = \array_values($this->allowedActions);
     }
 
     /**
@@ -742,7 +742,7 @@ class AuthComponent extends Component
         }
         foreach ($this->_authenticateObjects as $auth) {
             $result = $auth->getUser($this->request);
-            if (!empty($result) && is_array($result)) {
+            if (!empty($result) && \is_array($result)) {
                 $this->_authenticationProvider = $auth;
                 $event = $this->dispatchEvent('Auth.afterIdentify', [$result, $auth]);
                 if ($event->getResult() !== null) {
@@ -778,7 +778,7 @@ class AuthComponent extends Component
     public function redirectUrl($url = null)
     {
         $redirectUrl = $this->request->getQuery(static::QUERY_STRING_REDIRECT);
-        if ($redirectUrl && (substr($redirectUrl, 0, 1) !== '/' || substr($redirectUrl, 0, 2) === '//')) {
+        if ($redirectUrl && (\substr($redirectUrl, 0, 1) !== '/' || \substr($redirectUrl, 0, 2) === '//')) {
             $redirectUrl = null;
         }
 
@@ -793,7 +793,7 @@ class AuthComponent extends Component
         } else {
             $redirectUrl = '/';
         }
-        if (is_array($redirectUrl)) {
+        if (\is_array($redirectUrl)) {
             return Router::url($redirectUrl + ['_base' => false]);
         }
 
@@ -858,13 +858,13 @@ class AuthComponent extends Component
                 $class = $alias;
             }
             $className = App::className($class, 'Auth', 'Authenticate');
-            if (!class_exists($className)) {
-                throw new Exception(sprintf('Authentication adapter "%s" was not found.', $class));
+            if (!\class_exists($className)) {
+                throw new Exception(\sprintf('Authentication adapter "%s" was not found.', $class));
             }
-            if (!method_exists($className, 'authenticate')) {
+            if (!\method_exists($className, 'authenticate')) {
                 throw new Exception('Authentication objects must implement an authenticate() method.');
             }
-            $config = array_merge($global, (array)$config);
+            $config = \array_merge($global, (array)$config);
             $this->_authenticateObjects[$alias] = new $className($this->_registry, $config);
             $this->getEventManager()->on($this->_authenticateObjects[$alias]);
         }
@@ -892,7 +892,7 @@ class AuthComponent extends Component
         }
 
         $config = $this->_config['storage'];
-        if (is_string($config)) {
+        if (\is_string($config)) {
             $class = $config;
             $config = [];
         } else {
@@ -900,8 +900,8 @@ class AuthComponent extends Component
             unset($config['className']);
         }
         $className = App::className($class, 'Auth/Storage', 'Storage');
-        if (!class_exists($className)) {
-            throw new Exception(sprintf('Auth storage adapter "%s" was not found.', $class));
+        if (!\class_exists($className)) {
+            throw new Exception(\sprintf('Auth storage adapter "%s" was not found.', $class));
         }
         $this->_storage = new $className($this->request, $this->response, $config);
 

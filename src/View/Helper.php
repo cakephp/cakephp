@@ -136,7 +136,7 @@ class Helper implements EventListenerInterface
      */
     public function __call($method, $params)
     {
-        trigger_error(sprintf('Method %1$s::%2$s does not exist', get_class($this), $method), E_USER_WARNING);
+        \trigger_error(\sprintf('Method %1$s::%2$s does not exist', \get_class($this), $method), E_USER_WARNING);
     }
 
     /**
@@ -176,7 +176,7 @@ class Helper implements EventListenerInterface
      */
     protected function _confirm($message, $okCode, $cancelCode = '', $options = [])
     {
-        $message = str_replace('\\\n', '\n', json_encode($message));
+        $message = \str_replace('\\\n', '\n', \json_encode($message));
         $confirm = "if (confirm({$message})) { {$okCode} } {$cancelCode}";
         // We cannot change the key here in 3.x, but the behavior is inverted in this case
         $escape = isset($options['escape']) && $options['escape'] === false;
@@ -197,9 +197,9 @@ class Helper implements EventListenerInterface
      */
     public function addClass(array $options = [], $class = null, $key = 'class')
     {
-        if (isset($options[$key]) && is_array($options[$key])) {
+        if (isset($options[$key]) && \is_array($options[$key])) {
             $options[$key][] = $class;
-        } elseif (isset($options[$key]) && trim($options[$key])) {
+        } elseif (isset($options[$key]) && \trim($options[$key])) {
             $options[$key] .= ' ' . $class;
         } else {
             $options[$key] = $class;
@@ -231,7 +231,7 @@ class Helper implements EventListenerInterface
         ];
         $events = [];
         foreach ($eventMap as $event => $method) {
-            if (method_exists($this, $method)) {
+            if (\method_exists($this, $method)) {
                 $events[$event] = $method;
             }
         }

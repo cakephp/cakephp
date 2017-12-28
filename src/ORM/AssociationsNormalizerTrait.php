@@ -34,19 +34,19 @@ trait AssociationsNormalizerTrait
         foreach ((array)$associations as $table => $options) {
             $pointer =& $result;
 
-            if (is_int($table)) {
+            if (\is_int($table)) {
                 $table = $options;
                 $options = [];
             }
 
-            if (!strpos($table, '.')) {
+            if (!\strpos($table, '.')) {
                 $result[$table] = $options;
                 continue;
             }
 
-            $path = explode('.', $table);
-            $table = array_pop($path);
-            $first = array_shift($path);
+            $path = \explode('.', $table);
+            $table = \array_pop($path);
+            $first = \array_shift($path);
             $pointer += [$first => []];
             $pointer =& $pointer[$first];
             $pointer += ['associated' => []];

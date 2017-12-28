@@ -69,7 +69,7 @@ class AssetMiddleware
             $this->cacheTime = $options['cacheTime'];
         }
         if (!empty($options['types'])) {
-            $this->typeMap = array_merge($this->typeMap, $options['types']);
+            $this->typeMap = \array_merge($this->typeMap, $options['types']);
         }
     }
 
@@ -84,16 +84,16 @@ class AssetMiddleware
     public function __invoke($request, $response, $next)
     {
         $url = $request->getUri()->getPath();
-        if (strpos($url, '..') !== false || strpos($url, '.') === false) {
+        if (\strpos($url, '..') !== false || \strpos($url, '.') === false) {
             return $next($request, $response);
         }
 
-        if (strpos($url, '/.') !== false) {
+        if (\strpos($url, '/.') !== false) {
             return $next($request, $response);
         }
 
         $assetFile = $this->_getAssetFile($url);
-        if ($assetFile === null || !file_exists($assetFile)) {
+        if ($assetFile === null || !\file_exists($assetFile)) {
             return $next($request, $response);
         }
 
@@ -101,7 +101,7 @@ class AssetMiddleware
         $modifiedTime = $file->lastChange();
         if ($this->isNotModified($request, $file)) {
             $headers = $response->getHeaders();
-            $headers['Last-Modified'] = date(DATE_RFC850, $modifiedTime);
+            $headers['Last-Modified'] = \date(DATE_RFC850, $modifiedTime);
 
             return new Response('php://memory', 304, $headers);
         }
@@ -123,7 +123,7 @@ class AssetMiddleware
             return false;
         }
 
-        return strtotime($modifiedSince) === $file->lastChange();
+        return \strtotime($modifiedSince) === $file->lastChange();
     }
 
     /**
@@ -134,17 +134,17 @@ class AssetMiddleware
      */
     protected function _getAssetFile($url)
     {
-        $parts = explode('/', ltrim($url, '/'));
+        $parts = \explode('/', \ltrim($url, '/'));
         $pluginPart = [];
         for ($i = 0; $i < 2; $i++) {
             if (!isset($parts[$i])) {
                 break;
             }
             $pluginPart[] = Inflector::camelize($parts[$i]);
-            $plugin = implode('/', $pluginPart);
+            $plugin = \implode('/', $pluginPart);
             if ($plugin && Plugin::loaded($plugin)) {
-                $parts = array_slice($parts, $i + 1);
-                $fileFragment = implode(DIRECTORY_SEPARATOR, $parts);
+                $parts = \array_slice($parts, $i + 1);
+                $fileFragment = \implode(DIRECTORY_SEPARATOR, $parts);
                 $pluginWebroot = Plugin::path($plugin) . 'webroot' . DIRECTORY_SEPARATOR;
 
                 return $pluginWebroot . $fileFragment;
@@ -166,17 +166,17 @@ class AssetMiddleware
     {
         $contentType = $this->getType($file);
         $modified = $file->lastChange();
-        $expire = strtotime($this->cacheTime);
-        $maxAge = $expire - time();
+        $expire = \strtotime($this->cacheTime);
+        $maxAge = $expire - \time();
 
-        $stream = new Stream(fopen($file->path, 'rb'));
+        $stream = new Stream(\fopen($file->path, 'rb'));
 
         return $response->withBody($stream)
             ->withHeader('Content-Type', $contentType)
             ->withHeader('Cache-Control', 'public,max-age=' . $maxAge)
-            ->withHeader('Date', gmdate('D, j M Y G:i:s \G\M\T', time()))
-            ->withHeader('Last-Modified', gmdate('D, j M Y G:i:s \G\M\T', $modified))
-            ->withHeader('Expires', gmdate('D, j M Y G:i:s \G\M\T', $expire));
+            ->withHeader('Date', \gmdate('D, j M Y G:i:s \G\M\T', \time()))
+            ->withHeader('Last-Modified', \gmdate('D, j M Y G:i:s \G\M\T', $modified))
+            ->withHeader('Expires', \gmdate('D, j M Y G:i:s \G\M\T', $expire));
     }
 
     /**

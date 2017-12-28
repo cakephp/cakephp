@@ -57,7 +57,7 @@ class UuidType extends StringType
      */
     public function marshal($value)
     {
-        if ($value === null || $value === '' || is_array($value)) {
+        if ($value === null || $value === '' || \is_array($value)) {
             return null;
         }
 

@@ -288,7 +288,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     public function setHelpers(array $helpers, $merge = true)
     {
         if ($merge) {
-            $helpers = array_merge($this->_helpers, $helpers);
+            $helpers = \array_merge($this->_helpers, $helpers);
         }
         $this->_helpers = $helpers;
 
@@ -462,7 +462,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     public function setOptions(array $options, $merge = true)
     {
         if ($merge) {
-            $options = array_merge($this->_options, $options);
+            $options = \array_merge($this->_options, $options);
         }
         $this->_options = $options;
 
@@ -648,8 +648,8 @@ class ViewBuilder implements JsonSerializable, Serializable
             $array[$property] = $this->{$property};
         }
 
-        return array_filter($array, function ($i) {
-            return !is_array($i) && strlen($i) || !empty($i);
+        return \array_filter($array, function ($i) {
+            return !\is_array($i) && \strlen($i) || !empty($i);
         });
     }
 
@@ -677,7 +677,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     {
         $array = $this->jsonSerialize();
 
-        return serialize($array);
+        return \serialize($array);
     }
 
     /**
@@ -688,6 +688,6 @@ class ViewBuilder implements JsonSerializable, Serializable
      */
     public function unserialize($data)
     {
-        return $this->createFromArray(unserialize($data));
+        return $this->createFromArray(\unserialize($data));
     }
 }

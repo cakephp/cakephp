@@ -94,7 +94,7 @@ class FloatType extends Type implements TypeInterface
         if ($value === null) {
             return null;
         }
-        if (is_array($value)) {
+        if (\is_array($value)) {
             return 1.0;
         }
 
@@ -124,13 +124,13 @@ class FloatType extends Type implements TypeInterface
         if ($value === null || $value === '') {
             return null;
         }
-        if (is_numeric($value)) {
+        if (\is_numeric($value)) {
             return (float)$value;
         }
-        if (is_string($value) && $this->_useLocaleParser) {
+        if (\is_string($value) && $this->_useLocaleParser) {
             return $this->_parseValue($value);
         }
-        if (is_array($value)) {
+        if (\is_array($value)) {
             return 1.0;
         }
 
@@ -152,14 +152,14 @@ class FloatType extends Type implements TypeInterface
             return $this;
         }
         if (static::$numberClass === 'Cake\I18n\Number' ||
-            is_subclass_of(static::$numberClass, 'Cake\I18n\Number')
+            \is_subclass_of(static::$numberClass, 'Cake\I18n\Number')
         ) {
             $this->_useLocaleParser = $enable;
 
             return $this;
         }
         throw new RuntimeException(
-            sprintf('Cannot use locale parsing with the %s class', static::$numberClass)
+            \sprintf('Cannot use locale parsing with the %s class', static::$numberClass)
         );
     }
 

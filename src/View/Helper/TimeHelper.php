@@ -218,7 +218,7 @@ class TimeHelper extends Helper
      */
     public function toAtom($dateString, $timezone = null)
     {
-        $timezone = $this->_getTimezone($timezone) ?: date_default_timezone_get();
+        $timezone = $this->_getTimezone($timezone) ?: \date_default_timezone_get();
 
         return (new Time($dateString))->timezone($timezone)->toAtomString();
     }
@@ -232,7 +232,7 @@ class TimeHelper extends Helper
      */
     public function toRss($dateString, $timezone = null)
     {
-        $timezone = $this->_getTimezone($timezone) ?: date_default_timezone_get();
+        $timezone = $this->_getTimezone($timezone) ?: \date_default_timezone_get();
 
         return (new Time($dateString))->timezone($timezone)->toRssString();
     }
@@ -273,7 +273,7 @@ class TimeHelper extends Helper
                 'title' => $dateTime
             ];
 
-            if (is_array($options['element'])) {
+            if (\is_array($options['element'])) {
                 $element = $options['element'] + $element;
             } else {
                 $element['tag'] = $options['element'];
@@ -283,7 +283,7 @@ class TimeHelper extends Helper
         $relativeDate = (new Time($dateTime))->timeAgoInWords($options);
 
         if ($element) {
-            $relativeDate = sprintf(
+            $relativeDate = \sprintf(
                 '<%s%s>%s</%s>',
                 $element['tag'],
                 $this->templater()->formatAttributes($element, ['tag']),

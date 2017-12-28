@@ -154,11 +154,11 @@ class SecurityHeadersMiddleware
      */
     protected function checkValues($value, array $allowed)
     {
-        if (!in_array($value, $allowed)) {
-            throw new InvalidArgumentException(sprintf(
+        if (!\in_array($value, $allowed)) {
+            throw new InvalidArgumentException(\sprintf(
                 'Invalid arg `%s`, use one of these: %s',
                 $value,
-                implode(', ', $allowed)
+                \implode(', ', $allowed)
             ));
         }
     }

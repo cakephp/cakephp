@@ -164,21 +164,21 @@ trait ValidatorAwareTrait
      */
     protected function createValidator($name)
     {
-        $method = 'validation' . ucfirst($name);
+        $method = 'validation' . \ucfirst($name);
         if (!$this->validationMethodExists($method)) {
-            $message = sprintf('The %s::%s() validation method does not exists.', __CLASS__, $method);
+            $message = \sprintf('The %s::%s() validation method does not exists.', __CLASS__, $method);
             throw new RuntimeException($message);
         }
 
         $validator = new $this->_validatorClass;
         $validator = $this->$method($validator);
         if ($this instanceof EventDispatcherInterface) {
-            $event = defined(self::class . '::BUILD_VALIDATOR_EVENT') ? self::BUILD_VALIDATOR_EVENT : 'Model.buildValidator';
-            $this->dispatchEvent($event, compact('validator', 'name'));
+            $event = \defined(self::class . '::BUILD_VALIDATOR_EVENT') ? self::BUILD_VALIDATOR_EVENT : 'Model.buildValidator';
+            $this->dispatchEvent($event, \compact('validator', 'name'));
         }
 
         if (!$validator instanceof Validator) {
-            throw new RuntimeException(sprintf('The %s::%s() validation method must return an instance of %s.', __CLASS__, $method, Validator::class));
+            throw new RuntimeException(\sprintf('The %s::%s() validation method must return an instance of %s.', __CLASS__, $method, Validator::class));
         }
 
         return $validator;
@@ -218,7 +218,7 @@ trait ValidatorAwareTrait
      */
     public function hasValidator($name)
     {
-        $method = 'validation' . ucfirst($name);
+        $method = 'validation' . \ucfirst($name);
         if ($this->validationMethodExists($method)) {
             return true;
         }
@@ -234,7 +234,7 @@ trait ValidatorAwareTrait
      */
     protected function validationMethodExists($name)
     {
-        return method_exists($this, $name);
+        return \method_exists($this, $name);
     }
 
     /**

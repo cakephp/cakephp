@@ -100,7 +100,7 @@ class Session
             }
         }
 
-        if (!isset($sessionConfig['ini']['session.cookie_secure']) && env('HTTPS') && ini_get('session.cookie_secure') != 1) {
+        if (!isset($sessionConfig['ini']['session.cookie_secure']) && env('HTTPS') && \ini_get('session.cookie_secure') != 1) {
             $sessionConfig['ini']['session.cookie_secure'] = 1;
         }
 
@@ -110,11 +110,11 @@ class Session
 
         // In PHP7.1.0+ session.save_handler can't be set to user by the user.
         // https://github.com/php/php-src/blob/master/ext/session/session.c#L559
-        if (!empty($sessionConfig['handler']) && version_compare(PHP_VERSION, '7.1.0', '<=')) {
+        if (!empty($sessionConfig['handler']) && \version_compare(PHP_VERSION, '7.1.0', '<=')) {
             $sessionConfig['ini']['session.save_handler'] = 'user';
         }
 
-        if (!isset($sessionConfig['ini']['session.cookie_httponly']) && ini_get('session.cookie_httponly') != 1) {
+        if (!isset($sessionConfig['ini']['session.cookie_httponly']) && \ini_get('session.cookie_httponly') != 1) {
             $sessionConfig['ini']['session.cookie_httponly'] = 1;
         }
 
@@ -210,19 +210,19 @@ class Session
             $config['ini']['session.cookie_path'] = $cookiePath;
         }
 
-        if (!empty($config['ini']) && is_array($config['ini'])) {
+        if (!empty($config['ini']) && \is_array($config['ini'])) {
             $this->options($config['ini']);
         }
 
         if (!empty($config['handler']['engine'])) {
             $class = $config['handler']['engine'];
             unset($config['handler']['engine']);
-            session_set_save_handler($this->engine($class, $config['handler']), false);
+            \session_set_save_handler($this->engine($class, $config['handler']), false);
         }
 
-        $this->_lifetime = ini_get('session.gc_maxlifetime');
+        $this->_lifetime = \ini_get('session.gc_maxlifetime');
         $this->_isCLI = (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg');
-        session_register_shutdown();
+        \session_register_shutdown();
     }
 
     /**
@@ -255,7 +255,7 @@ class Session
         $className = App::className($class, 'Network/Session');
         if (!$className) {
             throw new InvalidArgumentException(
-                sprintf('The class "%s" does not exist and cannot be used as a session engine', $class)
+                \sprintf('The class "%s" does not exist and cannot be used as a session engine', $class)
             );
         }
 
@@ -285,14 +285,14 @@ class Session
      */
     public function options(array $options)
     {
-        if (session_status() === \PHP_SESSION_ACTIVE || headers_sent()) {
+        if (\session_status() === \PHP_SESSION_ACTIVE || \headers_sent()) {
             return;
         }
 
         foreach ($options as $setting => $value) {
-            if (ini_set($setting, (string)$value) === false) {
+            if (\ini_set($setting, (string)$value) === false) {
                 throw new RuntimeException(
-                    sprintf('Unable to configure the session, setting %s failed.', $setting)
+                    \sprintf('Unable to configure the session, setting %s failed.', $setting)
                 );
             }
         }
@@ -317,15 +317,15 @@ class Session
             return $this->_started = true;
         }
 
-        if (session_status() === \PHP_SESSION_ACTIVE) {
+        if (\session_status() === \PHP_SESSION_ACTIVE) {
             throw new RuntimeException('Session was already started');
         }
 
-        if (ini_get('session.use_cookies') && headers_sent($file, $line)) {
+        if (\ini_get('session.use_cookies') && \headers_sent($file, $line)) {
             return false;
         }
 
-        if (!session_start()) {
+        if (!\session_start()) {
             throw new RuntimeException('Could not start the session');
         }
 
@@ -347,7 +347,7 @@ class Session
      */
     public function started()
     {
-        return $this->_started || session_status() === \PHP_SESSION_ACTIVE;
+        return $this->_started || \session_status() === \PHP_SESSION_ACTIVE;
     }
 
     /**
@@ -427,7 +427,7 @@ class Session
         }
 
         $write = $name;
-        if (!is_array($name)) {
+        if (!\is_array($name)) {
             $write = [$name => $value];
         }
 
@@ -455,11 +455,11 @@ class Session
      */
     public function id($id = null)
     {
-        if ($id !== null && !headers_sent()) {
-            session_id($id);
+        if ($id !== null && !\headers_sent()) {
+            \session_id($id);
         }
 
-        return session_id();
+        return \session_id();
     }
 
     /**
@@ -507,8 +507,8 @@ class Session
             $this->start();
         }
 
-        if (!$this->_isCLI && session_status() === PHP_SESSION_ACTIVE) {
-            session_destroy();
+        if (!$this->_isCLI && \session_status() === PHP_SESSION_ACTIVE) {
+            \session_destroy();
         }
 
         $_SESSION = [];
@@ -538,10 +538,10 @@ class Session
      */
     protected function _hasSession()
     {
-        return !ini_get('session.use_cookies')
-            || isset($_COOKIE[session_name()])
+        return !\ini_get('session.use_cookies')
+            || isset($_COOKIE[\session_name()])
             || $this->_isCLI
-            || (ini_get('session.use_trans_sid') && isset($_GET[session_name()]));
+            || (\ini_get('session.use_trans_sid') && isset($_GET[\session_name()]));
     }
 
     /**
@@ -556,19 +556,19 @@ class Session
         }
 
         $this->start();
-        $params = session_get_cookie_params();
-        setcookie(
-            session_name(),
+        $params = \session_get_cookie_params();
+        \setcookie(
+            \session_name(),
             '',
-            time() - 42000,
+            \time() - 42000,
             $params['path'],
             $params['domain'],
             $params['secure'],
             $params['httponly']
         );
 
-        if (session_id()) {
-            session_regenerate_id(true);
+        if (\session_id()) {
+            \session_regenerate_id(true);
         }
     }
 
@@ -584,11 +584,11 @@ class Session
         $result = false;
 
         $checkTime = $time !== null && $this->_lifetime > 0;
-        if ($checkTime && (time() - $time > $this->_lifetime)) {
+        if ($checkTime && (\time() - $time > $this->_lifetime)) {
             $result = true;
         }
 
-        $this->write('Config.time', time());
+        $this->write('Config.time', \time());
 
         return $result;
     }

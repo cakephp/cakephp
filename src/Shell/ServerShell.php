@@ -94,10 +94,10 @@ class ServerShell extends Shell
         }
 
         // For Windows
-        if (substr($this->_documentRoot, -1, 1) === DIRECTORY_SEPARATOR) {
-            $this->_documentRoot = substr($this->_documentRoot, 0, strlen($this->_documentRoot) - 1);
+        if (\substr($this->_documentRoot, -1, 1) === DIRECTORY_SEPARATOR) {
+            $this->_documentRoot = \substr($this->_documentRoot, 0, \strlen($this->_documentRoot) - 1);
         }
-        if (preg_match("/^([a-z]:)[\\\]+(.+)$/i", $this->_documentRoot, $m)) {
+        if (\preg_match("/^([a-z]:)[\\\]+(.+)$/i", $this->_documentRoot, $m)) {
             $this->_documentRoot = $m[1] . '\\' . $m[2];
         }
 
@@ -112,11 +112,11 @@ class ServerShell extends Shell
     protected function _welcome()
     {
         $this->out();
-        $this->out(sprintf('<info>Welcome to CakePHP %s Console</info>', 'v' . Configure::version()));
+        $this->out(\sprintf('<info>Welcome to CakePHP %s Console</info>', 'v' . Configure::version()));
         $this->hr();
-        $this->out(sprintf('App : %s', APP_DIR));
-        $this->out(sprintf('Path: %s', APP));
-        $this->out(sprintf('DocumentRoot: %s', $this->_documentRoot));
+        $this->out(\sprintf('App : %s', APP_DIR));
+        $this->out(\sprintf('Path: %s', APP));
+        $this->out(\sprintf('DocumentRoot: %s', $this->_documentRoot));
         $this->hr();
     }
 
@@ -127,18 +127,18 @@ class ServerShell extends Shell
      */
     public function main()
     {
-        $command = sprintf(
+        $command = \sprintf(
             'php -S %s:%d -t %s %s',
             $this->_host,
             $this->_port,
-            escapeshellarg($this->_documentRoot),
-            escapeshellarg($this->_documentRoot . '/index.php')
+            \escapeshellarg($this->_documentRoot),
+            \escapeshellarg($this->_documentRoot . '/index.php')
         );
 
         $port = ':' . $this->_port;
-        $this->out(sprintf('built-in server is running in http://%s%s/', $this->_host, $port));
-        $this->out(sprintf('You can exit with <info>`CTRL-C`</info>'));
-        system($command);
+        $this->out(\sprintf('built-in server is running in http://%s%s/', $this->_host, $port));
+        $this->out(\sprintf('You can exit with <info>`CTRL-C`</info>'));
+        \system($command);
     }
 
     /**

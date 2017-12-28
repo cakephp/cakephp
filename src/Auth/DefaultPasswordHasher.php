@@ -46,7 +46,7 @@ class DefaultPasswordHasher extends AbstractPasswordHasher
      */
     public function hash($password)
     {
-        return password_hash(
+        return \password_hash(
             $password,
             $this->_config['hashType'],
             $this->_config['hashOptions']
@@ -62,7 +62,7 @@ class DefaultPasswordHasher extends AbstractPasswordHasher
      */
     public function check($password, $hashedPassword)
     {
-        return password_verify($password, $hashedPassword);
+        return \password_verify($password, $hashedPassword);
     }
 
     /**
@@ -74,6 +74,6 @@ class DefaultPasswordHasher extends AbstractPasswordHasher
      */
     public function needsRehash($password)
     {
-        return password_needs_rehash($password, $this->_config['hashType'], $this->_config['hashOptions']);
+        return \password_needs_rehash($password, $this->_config['hashType'], $this->_config['hashOptions']);
     }
 }

@@ -322,10 +322,10 @@ class ResultSet implements ResultSetInterface
         }
 
         if ($this->_results instanceof SplFixedArray) {
-            return serialize($this->_results->toArray());
+            return \serialize($this->_results->toArray());
         }
 
-        return serialize($this->_results);
+        return \serialize($this->_results);
     }
 
     /**
@@ -338,7 +338,7 @@ class ResultSet implements ResultSetInterface
      */
     public function unserialize($serialized)
     {
-        $results = (array)(unserialize($serialized) ?: []);
+        $results = (array)(\unserialize($serialized) ?: []);
         $this->_results = SplFixedArray::fromArray($results);
         $this->_useBuffering = true;
         $this->_count = $this->_results->count();
@@ -363,7 +363,7 @@ class ResultSet implements ResultSetInterface
         if ($this->_results instanceof SplFixedArray) {
             $this->_count = $this->_results->count();
         } else {
-            $this->_count = count($this->_results);
+            $this->_count = \count($this->_results);
         }
 
         return $this->_count;
@@ -384,7 +384,7 @@ class ResultSet implements ResultSetInterface
             ->indexBy('alias')
             ->toArray();
 
-        $this->_containMap = (new Collection(array_reverse($map)))
+        $this->_containMap = (new Collection(\array_reverse($map)))
             ->match(['matching' => false])
             ->indexBy('nestKey')
             ->toArray();
@@ -401,14 +401,14 @@ class ResultSet implements ResultSetInterface
     {
         $map = [];
         foreach ($query->clause('select') as $key => $field) {
-            $key = trim($key, '"`[]');
+            $key = \trim($key, '"`[]');
 
-            if (strpos($key, '__') <= 0) {
+            if (\strpos($key, '__') <= 0) {
                 $map[$this->_defaultAlias][$key] = $key;
                 continue;
             }
 
-            $parts = explode('__', $key, 2);
+            $parts = \explode('__', $key, 2);
             $map[$parts[0]][$key] = $parts[1];
         }
 
@@ -446,19 +446,19 @@ class ResultSet implements ResultSetInterface
     {
         $types = [];
         $schema = $table->getSchema();
-        $map = array_keys(Type::map() + ['string' => 1, 'text' => 1, 'boolean' => 1]);
-        $typeMap = array_combine(
+        $map = \array_keys(Type::map() + ['string' => 1, 'text' => 1, 'boolean' => 1]);
+        $typeMap = \array_combine(
             $map,
-            array_map(['Cake\Database\Type', 'build'], $map)
+            \array_map(['Cake\Database\Type', 'build'], $map)
         );
 
         foreach (['string', 'text'] as $t) {
-            if (get_class($typeMap[$t]) === 'Cake\Database\Type') {
+            if (\get_class($typeMap[$t]) === 'Cake\Database\Type') {
                 unset($typeMap[$t]);
             }
         }
 
-        foreach (array_intersect($fields, $schema->columns()) as $col) {
+        foreach (\array_intersect($fields, $schema->columns()) as $col) {
             $typeName = $schema->getColumnType($col);
             if (isset($typeMap[$typeName])) {
                 $types[$col] = $typeMap[$typeName];
@@ -507,9 +507,9 @@ class ResultSet implements ResultSetInterface
 
         foreach ($this->_matchingMapColumns as $alias => $keys) {
             $matching = $this->_matchingMap[$alias];
-            $results['_matchingData'][$alias] = array_combine(
+            $results['_matchingData'][$alias] = \array_combine(
                 $keys,
-                array_intersect_key($row, $keys)
+                \array_intersect_key($row, $keys)
             );
             if ($this->_hydrate) {
                 /* @var \Cake\ORM\Table $table */
@@ -522,7 +522,7 @@ class ResultSet implements ResultSetInterface
         }
 
         foreach ($this->_map as $table => $keys) {
-            $results[$table] = array_combine($keys, array_intersect_key($row, $keys));
+            $results[$table] = \array_combine($keys, \array_intersect_key($row, $keys));
             $presentAliases[$table] = true;
         }
 

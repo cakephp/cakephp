@@ -80,7 +80,7 @@ abstract class BaseSchema
     protected function _convertOnClause($clause)
     {
         if ($clause === 'CASCADE' || $clause === 'RESTRICT') {
-            return strtolower($clause);
+            return \strtolower($clause);
         }
         if ($clause === 'NO ACTION') {
             return TableSchema::ACTION_NO_ACTION;
@@ -98,11 +98,11 @@ abstract class BaseSchema
      */
     protected function _convertConstraintColumns($references)
     {
-        if (is_string($references)) {
+        if (\is_string($references)) {
             return $this->_driver->quoteIdentifier($references);
         }
 
-        return implode(', ', array_map(
+        return \implode(', ', \array_map(
             [$this->_driver, 'quoteIdentifier'],
             $references
         ));
@@ -116,7 +116,7 @@ abstract class BaseSchema
      */
     public function dropTableSql(TableSchema $schema)
     {
-        $sql = sprintf(
+        $sql = \sprintf(
             'DROP TABLE %s',
             $this->_driver->quoteIdentifier($schema->name())
         );

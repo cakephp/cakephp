@@ -73,7 +73,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      */
     public function load($objectName, $config = [])
     {
-        if (is_array($config) && isset($config['className'])) {
+        if (\is_array($config) && isset($config['className'])) {
             $name = $objectName;
             $objectName = $config['className'];
         } else {
@@ -89,7 +89,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
         }
 
         $className = $this->_resolveClassName($objectName);
-        if (!$className || (is_string($className) && !class_exists($className))) {
+        if (!$className || (\is_string($className) && !\class_exists($className))) {
             list($plugin, $objectName) = pluginSplit($objectName);
             $this->_throwMissingClassError($objectName, $plugin);
         }
@@ -119,8 +119,8 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
     {
         /** @var \Cake\Core\InstanceConfigTrait $existing */
         $existing = $this->_loaded[$name];
-        $msg = sprintf('The "%s" alias has already been loaded', $name);
-        $hasConfig = method_exists($existing, 'config');
+        $msg = \sprintf('The "%s" alias has already been loaded', $name);
+        $hasConfig = \method_exists($existing, 'config');
         if (!$hasConfig) {
             throw new RuntimeException($msg);
         }
@@ -132,7 +132,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
 
         $fail = false;
         foreach ($config as $key => $value) {
-            if (!array_key_exists($key, $existingConfig)) {
+            if (!\array_key_exists($key, $existingConfig)) {
                 $fail = true;
                 break;
             }
@@ -143,8 +143,8 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
         }
         if ($fail) {
             $msg .= ' with the following config: ';
-            $msg .= var_export($existingConfig, true);
-            $msg .= ' which differs from ' . var_export($config, true);
+            $msg .= \var_export($existingConfig, true);
+            $msg .= ' which differs from ' . \var_export($config, true);
             throw new RuntimeException($msg);
         }
     }
@@ -187,7 +187,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      */
     public function loaded()
     {
-        return array_keys($this->_loaded);
+        return \array_keys($this->_loaded);
     }
 
     /**
@@ -273,7 +273,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
         $normal = [];
         foreach ($objects as $i => $objectName) {
             $config = [];
-            if (!is_int($i)) {
+            if (!\is_int($i)) {
                 $config = (array)$objectName;
                 $objectName = $i;
             }
@@ -293,7 +293,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      */
     public function reset()
     {
-        foreach (array_keys($this->_loaded) as $name) {
+        foreach (\array_keys($this->_loaded) as $name) {
             $this->unload($name);
         }
 
@@ -315,7 +315,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
         list(, $name) = pluginSplit($objectName);
 
         // Just call unload if the object was loaded before
-        if (array_key_exists($objectName, $this->_loaded)) {
+        if (\array_key_exists($objectName, $this->_loaded)) {
             $this->unload($objectName);
         }
         if ($this instanceof EventDispatcherInterface && $object instanceof EventListenerInterface) {
@@ -367,7 +367,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      */
     public function count()
     {
-        return count($this->_loaded);
+        return \count($this->_loaded);
     }
 
     /**
@@ -377,9 +377,9 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      */
     public function __debugInfo()
     {
-        $properties = get_object_vars($this);
+        $properties = \get_object_vars($this);
         if (isset($properties['_loaded'])) {
-            $properties['_loaded'] = array_keys($properties['_loaded']);
+            $properties['_loaded'] = \array_keys($properties['_loaded']);
         }
 
         return $properties;

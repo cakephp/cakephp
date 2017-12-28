@@ -69,10 +69,10 @@ class ControllerAuthorize extends BaseAuthorize
     public function controller(Controller $controller = null)
     {
         if ($controller) {
-            if (!method_exists($controller, 'isAuthorized')) {
-                throw new Exception(sprintf(
+            if (!\method_exists($controller, 'isAuthorized')) {
+                throw new Exception(\sprintf(
                     '%s does not implement an isAuthorized() method.',
-                    get_class($controller)
+                    \get_class($controller)
                 ));
             }
             $this->_Controller = $controller;

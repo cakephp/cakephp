@@ -34,7 +34,7 @@ class ClassLoader
      */
     public function register()
     {
-        spl_autoload_register([$this, 'loadClass']);
+        \spl_autoload_register([$this, 'loadClass']);
     }
 
     /**
@@ -50,17 +50,17 @@ class ClassLoader
      */
     public function addNamespace($prefix, $baseDir, $prepend = false)
     {
-        $prefix = trim($prefix, '\\') . '\\';
+        $prefix = \trim($prefix, '\\') . '\\';
 
-        $baseDir = rtrim($baseDir, '/') . DIRECTORY_SEPARATOR;
-        $baseDir = rtrim($baseDir, DIRECTORY_SEPARATOR) . '/';
+        $baseDir = \rtrim($baseDir, '/') . DIRECTORY_SEPARATOR;
+        $baseDir = \rtrim($baseDir, DIRECTORY_SEPARATOR) . '/';
 
         if (!isset($this->_prefixes[$prefix])) {
             $this->_prefixes[$prefix] = [];
         }
 
         if ($prepend) {
-            array_unshift($this->_prefixes[$prefix], $baseDir);
+            \array_unshift($this->_prefixes[$prefix], $baseDir);
         } else {
             $this->_prefixes[$prefix][] = $baseDir;
         }
@@ -77,16 +77,16 @@ class ClassLoader
     {
         $prefix = $class;
 
-        while (($pos = strrpos($prefix, '\\')) !== false) {
-            $prefix = substr($class, 0, $pos + 1);
-            $relativeClass = substr($class, $pos + 1);
+        while (($pos = \strrpos($prefix, '\\')) !== false) {
+            $prefix = \substr($class, 0, $pos + 1);
+            $relativeClass = \substr($class, $pos + 1);
 
             $mappedFile = $this->_loadMappedFile($prefix, $relativeClass);
             if ($mappedFile) {
                 return $mappedFile;
             }
 
-            $prefix = rtrim($prefix, '\\');
+            $prefix = \rtrim($prefix, '\\');
         }
 
         return false;
@@ -107,7 +107,7 @@ class ClassLoader
         }
 
         foreach ($this->_prefixes[$prefix] as $baseDir) {
-            $file = $baseDir . str_replace('\\', DIRECTORY_SEPARATOR, $relativeClass) . '.php';
+            $file = $baseDir . \str_replace('\\', DIRECTORY_SEPARATOR, $relativeClass) . '.php';
 
             if ($this->_requireFile($file)) {
                 return $file;
@@ -125,7 +125,7 @@ class ClassLoader
      */
     protected function _requireFile($file)
     {
-        if (file_exists($file)) {
+        if (\file_exists($file)) {
             require $file;
 
             return true;

@@ -39,19 +39,19 @@ class Mcrypt
     {
         $algorithm = MCRYPT_RIJNDAEL_256;
         $mode = MCRYPT_MODE_CBC;
-        $ivSize = mcrypt_get_iv_size($algorithm, $mode);
+        $ivSize = \mcrypt_get_iv_size($algorithm, $mode);
 
-        $cryptKey = mb_substr($key, 0, 32, '8bit');
+        $cryptKey = \mb_substr($key, 0, 32, '8bit');
 
         if ($operation === 'encrypt') {
-            $iv = mcrypt_create_iv($ivSize, MCRYPT_DEV_URANDOM);
+            $iv = \mcrypt_create_iv($ivSize, MCRYPT_DEV_URANDOM);
 
-            return $iv . '$$' . mcrypt_encrypt($algorithm, $cryptKey, $text, $mode, $iv);
+            return $iv . '$$' . \mcrypt_encrypt($algorithm, $cryptKey, $text, $mode, $iv);
         }
-        $iv = mb_substr($text, 0, $ivSize, '8bit');
-        $text = mb_substr($text, $ivSize + 2, null, '8bit');
+        $iv = \mb_substr($text, 0, $ivSize, '8bit');
+        $text = \mb_substr($text, $ivSize + 2, null, '8bit');
 
-        return rtrim(mcrypt_decrypt($algorithm, $cryptKey, $text, $mode, $iv), "\0");
+        return \rtrim(\mcrypt_decrypt($algorithm, $cryptKey, $text, $mode, $iv), "\0");
     }
 
     /**
@@ -71,14 +71,14 @@ class Mcrypt
         $algorithm = MCRYPT_RIJNDAEL_128;
         $mode = MCRYPT_MODE_CBC;
 
-        $ivSize = mcrypt_get_iv_size($algorithm, $mode);
-        $iv = mcrypt_create_iv($ivSize, MCRYPT_DEV_URANDOM);
+        $ivSize = \mcrypt_get_iv_size($algorithm, $mode);
+        $iv = \mcrypt_create_iv($ivSize, MCRYPT_DEV_URANDOM);
 
         // Pad out plain to make it AES compatible.
-        $pad = ($ivSize - (mb_strlen($plain, '8bit') % $ivSize));
-        $plain .= str_repeat(chr($pad), $pad);
+        $pad = ($ivSize - (\mb_strlen($plain, '8bit') % $ivSize));
+        $plain .= \str_repeat(\chr($pad), $pad);
 
-        return $iv . mcrypt_encrypt($algorithm, $key, $plain, $mode, $iv);
+        return $iv . \mcrypt_encrypt($algorithm, $key, $plain, $mode, $iv);
     }
 
     /**
@@ -93,21 +93,21 @@ class Mcrypt
     {
         $algorithm = MCRYPT_RIJNDAEL_128;
         $mode = MCRYPT_MODE_CBC;
-        $ivSize = mcrypt_get_iv_size($algorithm, $mode);
+        $ivSize = \mcrypt_get_iv_size($algorithm, $mode);
 
-        $iv = mb_substr($cipher, 0, $ivSize, '8bit');
-        $cipher = mb_substr($cipher, $ivSize, null, '8bit');
-        $plain = mcrypt_decrypt($algorithm, $key, $cipher, $mode, $iv);
+        $iv = \mb_substr($cipher, 0, $ivSize, '8bit');
+        $cipher = \mb_substr($cipher, $ivSize, null, '8bit');
+        $plain = \mcrypt_decrypt($algorithm, $key, $cipher, $mode, $iv);
 
         // Remove PKCS#7 padding or Null bytes
         // Newer values will be PKCS#7 padded, while old
         // mcrypt values will be null byte padded.
-        $padChar = mb_substr($plain, -1, null, '8bit');
+        $padChar = \mb_substr($plain, -1, null, '8bit');
         if ($padChar === "\0") {
-            return trim($plain, "\0");
+            return \trim($plain, "\0");
         }
-        $padLen = ord($padChar);
-        $result = mb_substr($plain, 0, -$padLen, '8bit');
+        $padLen = \ord($padChar);
+        $result = \mb_substr($plain, 0, -$padLen, '8bit');
 
         return $result === '' ? false : $result;
     }

@@ -59,11 +59,11 @@ class JsonType extends Type implements TypeInterface
      */
     public function toDatabase($value, Driver $driver)
     {
-        if (is_resource($value)) {
+        if (\is_resource($value)) {
             throw new InvalidArgumentException('Cannot convert a resource value to JSON');
         }
 
-        return json_encode($value);
+        return \json_encode($value);
     }
 
     /**
@@ -75,7 +75,7 @@ class JsonType extends Type implements TypeInterface
      */
     public function toPHP($value, Driver $driver)
     {
-        return json_decode($value, true);
+        return \json_decode($value, true);
     }
 
     /**

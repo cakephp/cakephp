@@ -167,7 +167,7 @@ class CompletionShell extends Shell
     protected function _output($options = [])
     {
         if ($options) {
-            return $this->out(implode($options, ' '));
+            return $this->out(\implode($options, ' '));
         }
     }
 }

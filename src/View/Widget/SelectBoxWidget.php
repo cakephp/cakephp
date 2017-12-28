@@ -116,7 +116,7 @@ class SelectBoxWidget extends BasicWidget
         $options = $this->_renderContent($data);
         $name = $data['name'];
         unset($data['name'], $data['options'], $data['empty'], $data['val'], $data['escape']);
-        if (isset($data['disabled']) && is_array($data['disabled'])) {
+        if (isset($data['disabled']) && \is_array($data['disabled'])) {
             unset($data['disabled']);
         }
 
@@ -131,7 +131,7 @@ class SelectBoxWidget extends BasicWidget
             'name' => $name,
             'templateVars' => $data['templateVars'],
             'attrs' => $attrs,
-            'content' => implode('', $options),
+            'content' => \implode('', $options),
         ]);
     }
 
@@ -146,7 +146,7 @@ class SelectBoxWidget extends BasicWidget
         $options = $data['options'];
 
         if ($options instanceof Traversable) {
-            $options = iterator_to_array($options);
+            $options = \iterator_to_array($options);
         }
 
         if (!empty($data['empty'])) {
@@ -158,7 +158,7 @@ class SelectBoxWidget extends BasicWidget
 
         $selected = isset($data['val']) ? $data['val'] : null;
         $disabled = null;
-        if (isset($data['disabled']) && is_array($data['disabled'])) {
+        if (isset($data['disabled']) && \is_array($data['disabled'])) {
             $disabled = $data['disabled'];
         }
         $templateVars = $data['templateVars'];
@@ -177,10 +177,10 @@ class SelectBoxWidget extends BasicWidget
         if ($value === true) {
             return ['' => ''];
         }
-        if (is_scalar($value)) {
+        if (\is_scalar($value)) {
             return ['' => $value];
         }
-        if (is_array($value)) {
+        if (\is_array($value)) {
             return $value;
         }
 
@@ -211,7 +211,7 @@ class SelectBoxWidget extends BasicWidget
 
         return $this->_templates->format('optgroup', [
             'label' => $escape ? h($label) : $label,
-            'content' => implode('', $groupOptions),
+            'content' => \implode('', $groupOptions),
             'templateVars' => $templateVars,
             'attrs' => $this->_templates->formatAttributes($attrs, ['text', 'options']),
         ]);
@@ -234,9 +234,9 @@ class SelectBoxWidget extends BasicWidget
         $out = [];
         foreach ($options as $key => $val) {
             // Option groups
-            $arrayVal = (is_array($val) || $val instanceof Traversable);
-            if ((!is_int($key) && $arrayVal) ||
-                (is_int($key) && $arrayVal && (isset($val['options']) || !isset($val['value'])))
+            $arrayVal = (\is_array($val) || $val instanceof Traversable);
+            if ((!\is_int($key) && $arrayVal) ||
+                (\is_int($key) && $arrayVal && (isset($val['options']) || !isset($val['value'])))
             ) {
                 $out[] = $this->_renderOptgroup($key, $val, $disabled, $selected, $templateVars, $escape);
                 continue;
@@ -248,7 +248,7 @@ class SelectBoxWidget extends BasicWidget
                 'text' => $val,
                 'templateVars' => [],
             ];
-            if (is_array($val) && isset($val['text'], $val['value'])) {
+            if (\is_array($val) && isset($val['text'], $val['value'])) {
                 $optAttrs = $val;
                 $key = $optAttrs['value'];
             }
@@ -262,7 +262,7 @@ class SelectBoxWidget extends BasicWidget
                 $optAttrs['disabled'] = true;
             }
             if (!empty($templateVars)) {
-                $optAttrs['templateVars'] = array_merge($templateVars, $optAttrs['templateVars']);
+                $optAttrs['templateVars'] = \array_merge($templateVars, $optAttrs['templateVars']);
             }
             $optAttrs['escape'] = $escape;
 
@@ -289,15 +289,15 @@ class SelectBoxWidget extends BasicWidget
         if ($selected === null) {
             return false;
         }
-        $isArray = is_array($selected);
+        $isArray = \is_array($selected);
         if (!$isArray) {
             $selected = $selected === false ? '0' : $selected;
 
             return (string)$key === (string)$selected;
         }
-        $strict = !is_numeric($key);
+        $strict = !\is_numeric($key);
 
-        return in_array((string)$key, $selected, $strict);
+        return \in_array((string)$key, $selected, $strict);
     }
 
     /**
@@ -312,8 +312,8 @@ class SelectBoxWidget extends BasicWidget
         if ($disabled === null) {
             return false;
         }
-        $strict = !is_numeric($key);
+        $strict = !\is_numeric($key);
 
-        return in_array((string)$key, $disabled, $strict);
+        return \in_array((string)$key, $disabled, $strict);
     }
 }

@@ -104,7 +104,7 @@ class QueryCompiler
         if ($query->getValueBinder() !== $generator) {
             foreach ($query->getValueBinder()->bindings() as $binding) {
                 $placeholder = ':' . $binding['placeholder'];
-                if (preg_match('/' . $placeholder . '(?:\W|$)/', $sql) > 0) {
+                if (\preg_match('/' . $placeholder . '(?:\W|$)/', $sql) > 0) {
                     $generator->bind($placeholder, $binding['value'], $binding['type']);
                 }
             }
@@ -126,7 +126,7 @@ class QueryCompiler
     {
         return function ($parts, $name) use (&$sql, $query, $generator) {
             if (!isset($parts) ||
-                ((is_array($parts) || $parts instanceof \Countable) && !count($parts))
+                ((\is_array($parts) || $parts instanceof \Countable) && !\count($parts))
             ) {
                 return;
             }
@@ -136,10 +136,10 @@ class QueryCompiler
             if (isset($this->_templates[$name])) {
                 $parts = $this->_stringifyExpressions((array)$parts, $generator);
 
-                return $sql .= sprintf($this->_templates[$name], implode(', ', $parts));
+                return $sql .= \sprintf($this->_templates[$name], \implode(', ', $parts));
             }
 
-            return $sql .= $this->{'_build' . ucfirst($name) . 'Part'}($parts, $query, $generator);
+            return $sql .= $this->{'_build' . \ucfirst($name) . 'Part'}($parts, $query, $generator);
         };
     }
 
@@ -167,7 +167,7 @@ class QueryCompiler
         $normalized = [];
         $parts = $this->_stringifyExpressions($parts, $generator);
         foreach ($parts as $k => $p) {
-            if (!is_numeric($k)) {
+            if (!\is_numeric($k)) {
                 $p = $p . ' AS ' . $driver->quoteIdentifier($k);
             }
             $normalized[] = $p;
@@ -177,12 +177,12 @@ class QueryCompiler
             $distinct = 'DISTINCT ';
         }
 
-        if (is_array($distinct)) {
+        if (\is_array($distinct)) {
             $distinct = $this->_stringifyExpressions($distinct, $generator);
-            $distinct = sprintf('DISTINCT ON (%s) ', implode(', ', $distinct));
+            $distinct = \sprintf('DISTINCT ON (%s) ', \implode(', ', $distinct));
         }
 
-        return sprintf($select, $modifiers, $distinct, implode(', ', $normalized));
+        return \sprintf($select, $modifiers, $distinct, \implode(', ', $normalized));
     }
 
     /**
@@ -201,13 +201,13 @@ class QueryCompiler
         $normalized = [];
         $parts = $this->_stringifyExpressions($parts, $generator);
         foreach ($parts as $k => $p) {
-            if (!is_numeric($k)) {
+            if (!\is_numeric($k)) {
                 $p = $p . ' ' . $k;
             }
             $normalized[] = $p;
         }
 
-        return sprintf($select, implode(', ', $normalized));
+        return \sprintf($select, \implode(', ', $normalized));
     }
 
     /**
@@ -234,13 +234,13 @@ class QueryCompiler
                 $join['table'] = '(' . $join['table'] . ')';
             }
 
-            $joins .= sprintf(' %s JOIN %s %s', $join['type'], $join['table'], $join['alias']);
+            $joins .= \sprintf(' %s JOIN %s %s', $join['type'], $join['table'], $join['alias']);
 
             $condition = '';
             if (isset($join['conditions']) && $join['conditions'] instanceof ExpressionInterface) {
                 $condition = $join['conditions']->sql($generator);
             }
-            if (strlen($condition)) {
+            if (\strlen($condition)) {
                 $joins .= " ON {$condition}";
             } else {
                 $joins .= ' ON 1 = 1';
@@ -266,12 +266,12 @@ class QueryCompiler
                 $part = $part->sql($generator);
             }
             if ($part[0] === '(') {
-                $part = substr($part, 1, -1);
+                $part = \substr($part, 1, -1);
             }
             $set[] = $part;
         }
 
-        return ' SET ' . implode('', $set);
+        return ' SET ' . \implode('', $set);
     }
 
     /**
@@ -286,9 +286,9 @@ class QueryCompiler
      */
     protected function _buildUnionPart($parts, $query, $generator)
     {
-        $parts = array_map(function ($p) use ($generator) {
+        $parts = \array_map(function ($p) use ($generator) {
             $p['query'] = $p['query']->sql($generator);
-            $p['query'] = $p['query'][0] === '(' ? trim($p['query'], '()') : $p['query'];
+            $p['query'] = $p['query'][0] === '(' ? \trim($p['query'], '()') : $p['query'];
             $prefix = $p['all'] ? 'ALL ' : '';
             if ($this->_orderedUnion) {
                 return "{$prefix}({$p['query']})";
@@ -298,10 +298,10 @@ class QueryCompiler
         }, $parts);
 
         if ($this->_orderedUnion) {
-            return sprintf(")\nUNION %s", implode("\nUNION ", $parts));
+            return \sprintf(")\nUNION %s", \implode("\nUNION ", $parts));
         }
 
-        return sprintf("\nUNION %s", implode("\nUNION ", $parts));
+        return \sprintf("\nUNION %s", \implode("\nUNION ", $parts));
     }
 
     /**
@@ -318,7 +318,7 @@ class QueryCompiler
         $columns = $this->_stringifyExpressions($parts[1], $generator);
         $modifiers = $this->_buildModifierPart($query->clause('modifier'), $query, $generator);
 
-        return sprintf('INSERT%s INTO %s (%s)', $modifiers, $table, implode(', ', $columns));
+        return \sprintf('INSERT%s INTO %s (%s)', $modifiers, $table, \implode(', ', $columns));
     }
 
     /**
@@ -331,7 +331,7 @@ class QueryCompiler
      */
     protected function _buildValuesPart($parts, $query, $generator)
     {
-        return implode('', $this->_stringifyExpressions($parts, $generator));
+        return \implode('', $this->_stringifyExpressions($parts, $generator));
     }
 
     /**
@@ -347,7 +347,7 @@ class QueryCompiler
         $table = $this->_stringifyExpressions($parts, $generator);
         $modifiers = $this->_buildModifierPart($query->clause('modifier'), $query, $generator);
 
-        return sprintf('UPDATE%s %s', $modifiers, implode(',', $table));
+        return \sprintf('UPDATE%s %s', $modifiers, \implode(',', $table));
     }
 
     /**
@@ -364,7 +364,7 @@ class QueryCompiler
             return '';
         }
 
-        return ' ' . implode(' ', $this->_stringifyExpressions($parts, $generator, false));
+        return ' ' . \implode(' ', $this->_stringifyExpressions($parts, $generator, false));
     }
 
     /**

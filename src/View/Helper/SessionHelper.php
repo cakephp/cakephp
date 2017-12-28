@@ -36,7 +36,7 @@ class SessionHelper extends Helper
      */
     public function __construct(View $View, array $config = [])
     {
-        trigger_error('SessionHelper has been deprecated. Use request->session() instead.', E_USER_DEPRECATED);
+        \trigger_error('SessionHelper has been deprecated. Use request->session() instead.', E_USER_DEPRECATED);
         parent::__construct($View, $config);
     }
 

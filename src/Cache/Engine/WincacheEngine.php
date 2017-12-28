@@ -42,7 +42,7 @@ class WincacheEngine extends CacheEngine
      */
     public function init(array $config = [])
     {
-        if (!extension_loaded('wincache')) {
+        if (!\extension_loaded('wincache')) {
             return false;
         }
 
@@ -63,7 +63,7 @@ class WincacheEngine extends CacheEngine
         $key = $this->_key($key);
 
         $duration = $this->_config['duration'];
-        $expires = time() + $duration;
+        $expires = \time() + $duration;
 
         $data = [
             $key . '_expires' => $expires,
@@ -85,7 +85,7 @@ class WincacheEngine extends CacheEngine
     {
         $key = $this->_key($key);
 
-        $time = time();
+        $time = \time();
         $cachetime = (int)wincache_ucache_get($key . '_expires');
         if ($cachetime < $time || ($time + $this->_config['duration']) < $cachetime) {
             return false;
@@ -152,7 +152,7 @@ class WincacheEngine extends CacheEngine
         $cacheKeys = $info['ucache_entries'];
         unset($info);
         foreach ($cacheKeys as $key) {
-            if (strpos($key['key_name'], $this->_config['prefix']) === 0) {
+            if (\strpos($key['key_name'], $this->_config['prefix']) === 0) {
                 wincache_ucache_delete($key['key_name']);
             }
         }
@@ -176,18 +176,18 @@ class WincacheEngine extends CacheEngine
         }
 
         $groups = wincache_ucache_get($this->_compiledGroupNames);
-        if (count($groups) !== count($this->_config['groups'])) {
+        if (\count($groups) !== \count($this->_config['groups'])) {
             foreach ($this->_compiledGroupNames as $group) {
                 if (!isset($groups[$group])) {
                     wincache_ucache_set($group, 1);
                     $groups[$group] = 1;
                 }
             }
-            ksort($groups);
+            \ksort($groups);
         }
 
         $result = [];
-        $groups = array_values($groups);
+        $groups = \array_values($groups);
         foreach ($this->_config['groups'] as $i => $group) {
             $result[] = $group . $groups[$i];
         }

@@ -36,7 +36,7 @@ class ConnectionRegistry extends ObjectRegistry
      */
     protected function _resolveClassName($class)
     {
-        if (is_object($class)) {
+        if (\is_object($class)) {
             return $class;
         }
 
@@ -76,11 +76,11 @@ class ConnectionRegistry extends ObjectRegistry
      */
     protected function _create($class, $alias, $settings)
     {
-        if (is_callable($class)) {
+        if (\is_callable($class)) {
             return $class($alias);
         }
 
-        if (is_object($class)) {
+        if (\is_object($class)) {
             return $class;
         }
 

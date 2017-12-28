@@ -86,7 +86,7 @@ class BufferedStatement extends StatementDecorator
     {
         if ($this->_allFetched) {
             $row = ($this->_counter < $this->_count) ? $this->_records[$this->_counter++] : false;
-            $row = ($row && $type === 'num') ? array_values($row) : $row;
+            $row = ($row && $type === 'num') ? \array_values($row) : $row;
 
             return $row;
         }
@@ -119,7 +119,7 @@ class BufferedStatement extends StatementDecorator
         }
 
         $this->_records = parent::fetchAll($type);
-        $this->_count = count($this->_records);
+        $this->_count = \count($this->_records);
         $this->_allFetched = true;
         $this->_statement->closeCursor();
 

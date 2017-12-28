@@ -68,8 +68,8 @@ class UnloadTask extends Shell
         $bootstrap = new File($this->bootstrap, false);
         $content = $bootstrap->read();
 
-        if (!preg_match("@\n\s*Plugin::loadAll@", $content)) {
-            $newContent = preg_replace($finder, '', $content);
+        if (!\preg_match("@\n\s*Plugin::loadAll@", $content)) {
+            $newContent = \preg_replace($finder, '', $content);
 
             if ($newContent === $content) {
                 return false;
@@ -78,7 +78,7 @@ class UnloadTask extends Shell
             $bootstrap->write($newContent);
 
             $this->out('');
-            $this->out(sprintf('%s modified', $this->bootstrap));
+            $this->out(\sprintf('%s modified', $this->bootstrap));
 
             return true;
         }

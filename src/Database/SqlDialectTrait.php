@@ -31,7 +31,7 @@ trait SqlDialectTrait
      */
     public function quoteIdentifier($identifier)
     {
-        $identifier = trim($identifier);
+        $identifier = \trim($identifier);
 
         if ($identifier === '*') {
             return '*';
@@ -42,33 +42,33 @@ trait SqlDialectTrait
         }
 
         // string
-        if (preg_match('/^[\w-]+$/', $identifier)) {
+        if (\preg_match('/^[\w-]+$/', $identifier)) {
             return $this->_startQuote . $identifier . $this->_endQuote;
         }
 
-        if (preg_match('/^[\w-]+\.[^ \*]*$/', $identifier)) {
+        if (\preg_match('/^[\w-]+\.[^ \*]*$/', $identifier)) {
 // string.string
-            $items = explode('.', $identifier);
+            $items = \explode('.', $identifier);
 
-            return $this->_startQuote . implode($this->_endQuote . '.' . $this->_startQuote, $items) . $this->_endQuote;
+            return $this->_startQuote . \implode($this->_endQuote . '.' . $this->_startQuote, $items) . $this->_endQuote;
         }
 
-        if (preg_match('/^[\w-]+\.\*$/', $identifier)) {
+        if (\preg_match('/^[\w-]+\.\*$/', $identifier)) {
 // string.*
-            return $this->_startQuote . str_replace('.*', $this->_endQuote . '.*', $identifier);
+            return $this->_startQuote . \str_replace('.*', $this->_endQuote . '.*', $identifier);
         }
 
-        if (preg_match('/^([\w-]+)\((.*)\)$/', $identifier, $matches)) {
+        if (\preg_match('/^([\w-]+)\((.*)\)$/', $identifier, $matches)) {
 // Functions
             return $matches[1] . '(' . $this->quoteIdentifier($matches[2]) . ')';
         }
 
         // Alias.field AS thing
-        if (preg_match('/^([\w-]+(\.[\w-]+|\(.*\))*)\s+AS\s*([\w-]+)$/i', $identifier, $matches)) {
+        if (\preg_match('/^([\w-]+(\.[\w-]+|\(.*\))*)\s+AS\s*([\w-]+)$/i', $identifier, $matches)) {
             return $this->quoteIdentifier($matches[1]) . ' AS ' . $this->quoteIdentifier($matches[3]);
         }
 
-        if (preg_match('/^[\w-_\s]*[\w-_]+/', $identifier)) {
+        if (\preg_match('/^[\w-_\s]*[\w-_]+/', $identifier)) {
             return $this->_startQuote . $identifier . $this->_endQuote;
         }
 
@@ -141,7 +141,7 @@ trait SqlDialectTrait
      */
     protected function _transformDistinct($query)
     {
-        if (is_array($query->clause('distinct'))) {
+        if (\is_array($query->clause('distinct'))) {
             $query->group($query->clause('distinct'), true);
             $query->distinct(false);
         }
@@ -166,7 +166,7 @@ trait SqlDialectTrait
         $hadAlias = false;
         $tables = [];
         foreach ($query->clause('from') as $alias => $table) {
-            if (is_string($alias)) {
+            if (\is_string($alias)) {
                 $hadAlias = true;
             }
             $tables[] = $table;
@@ -223,11 +223,11 @@ trait SqlDialectTrait
                 }
 
                 $field = $condition->getField();
-                if ($field instanceof ExpressionInterface || strpos($field, '.') === false) {
+                if ($field instanceof ExpressionInterface || \strpos($field, '.') === false) {
                     return $condition;
                 }
 
-                list(, $field) = explode('.', $field);
+                list(, $field) = \explode('.', $field);
                 $condition->setField($field);
 
                 return $condition;

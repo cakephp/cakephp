@@ -155,23 +155,23 @@ class RequestHandlerComponent extends Component
     protected function _setExtension($request, $response)
     {
         $accept = $request->parseAccept();
-        if (empty($accept) || current($accept)[0] === 'text/html') {
+        if (empty($accept) || \current($accept)[0] === 'text/html') {
             return;
         }
 
         $accepts = $response->mapType($accept);
-        $preferredTypes = current($accepts);
-        if (array_intersect($preferredTypes, ['html', 'xhtml'])) {
+        $preferredTypes = \current($accepts);
+        if (\array_intersect($preferredTypes, ['html', 'xhtml'])) {
             return;
         }
 
-        $extensions = array_unique(
-            array_merge(Router::extensions(), array_keys($this->getConfig('viewClassMap')))
+        $extensions = \array_unique(
+            \array_merge(Router::extensions(), \array_keys($this->getConfig('viewClassMap')))
         );
         foreach ($accepts as $types) {
-            $ext = array_intersect($extensions, $types);
+            $ext = \array_intersect($extensions, $types);
             if ($ext) {
-                $this->ext = current($ext);
+                $this->ext = \current($ext);
                 break;
             }
         }
@@ -197,7 +197,7 @@ class RequestHandlerComponent extends Component
         if ($request->getParam('_ext')) {
             $this->ext = $request->getParam('_ext');
         }
-        if (!$this->ext || in_array($this->ext, ['html', 'htm'])) {
+        if (!$this->ext || \in_array($this->ext, ['html', 'htm'])) {
             $this->_setExtension($request, $response);
         }
 
@@ -212,8 +212,8 @@ class RequestHandlerComponent extends Component
         }
 
         foreach ($this->getConfig('inputTypeMap') as $type => $handler) {
-            if (!is_callable($handler[0])) {
-                throw new RuntimeException(sprintf("Invalid callable for '%s' type.", $type));
+            if (!\is_callable($handler[0])) {
+                throw new RuntimeException(\sprintf("Invalid callable for '%s' type.", $type));
             }
             if ($this->requestedWith($type)) {
                 $input = $request->input(...$handler);
@@ -265,13 +265,13 @@ class RequestHandlerComponent extends Component
         if (empty($url)) {
             return null;
         }
-        if (is_array($url)) {
+        if (\is_array($url)) {
             $url = Router::url($url + ['_base' => false]);
         }
         $query = [];
-        if (strpos($url, '?') !== false) {
-            list($url, $querystr) = explode('?', $url, 2);
-            parse_str($querystr, $query);
+        if (\strpos($url, '?') !== false) {
+            list($url, $querystr) = \explode('?', $url, 2);
+            \parse_str($querystr, $query);
         }
         /** @var \Cake\Controller\Controller $controller */
         $controller = $event->getSubject();
@@ -319,7 +319,7 @@ class RequestHandlerComponent extends Component
         $request = $controller->request;
 
         $isRecognized = (
-            !in_array($this->ext, ['html', 'htm']) &&
+            !\in_array($this->ext, ['html', 'htm']) &&
             $response->getMimeType($this->ext)
         );
 
@@ -425,18 +425,18 @@ class RequestHandlerComponent extends Component
         if (!$type) {
             return $response->mapType($accepted);
         }
-        if (is_array($type)) {
+        if (\is_array($type)) {
             foreach ($type as $t) {
                 $t = $this->mapAlias($t);
-                if (in_array($t, $accepted)) {
+                if (\in_array($t, $accepted)) {
                     return true;
                 }
             }
 
             return false;
         }
-        if (is_string($type)) {
-            return in_array($this->mapAlias($type), $accepted);
+        if (\is_string($type)) {
+            return \in_array($this->mapAlias($type), $accepted);
         }
 
         return false;
@@ -463,7 +463,7 @@ class RequestHandlerComponent extends Component
         ) {
             return null;
         }
-        if (is_array($type)) {
+        if (\is_array($type)) {
             foreach ($type as $t) {
                 if ($this->requestedWith($t)) {
                     return $t;
@@ -473,11 +473,11 @@ class RequestHandlerComponent extends Component
             return false;
         }
 
-        list($contentType) = explode(';', $request->contentType());
+        list($contentType) = \explode(';', $request->contentType());
         if ($type === null) {
             return $response->mapType($contentType);
         }
-        if (is_string($type)) {
+        if (\is_string($type)) {
             return ($type === $response->mapType($contentType));
         }
     }
@@ -508,7 +508,7 @@ class RequestHandlerComponent extends Component
         if (empty($acceptRaw)) {
             return $this->ext;
         }
-        $accepts = $response->mapType(array_shift($acceptRaw));
+        $accepts = $response->mapType(\array_shift($acceptRaw));
 
         if (!$type) {
             if (empty($this->ext) && !empty($accepts)) {
@@ -520,15 +520,15 @@ class RequestHandlerComponent extends Component
 
         $types = (array)$type;
 
-        if (count($types) === 1) {
+        if (\count($types) === 1) {
             if ($this->ext) {
-                return in_array($this->ext, $types);
+                return \in_array($this->ext, $types);
             }
 
-            return in_array($types[0], $accepts);
+            return \in_array($types[0], $accepts);
         }
 
-        $intersect = array_values(array_intersect($accepts, $types));
+        $intersect = \array_values(\array_intersect($accepts, $types));
         if (!$intersect) {
             return false;
         }
@@ -571,7 +571,7 @@ class RequestHandlerComponent extends Component
         $options += $defaults;
 
         $builder = $controller->viewBuilder();
-        if (array_key_exists($type, $viewClassMap)) {
+        if (\array_key_exists($type, $viewClassMap)) {
             $view = $viewClassMap[$type];
         } else {
             $view = Inflector::classify($type);
@@ -589,7 +589,7 @@ class RequestHandlerComponent extends Component
             if (!$this->_renderType) {
                 $builder->setTemplatePath($builder->getTemplatePath() . DIRECTORY_SEPARATOR . $type);
             } else {
-                $builder->setTemplatePath(preg_replace(
+                $builder->setTemplatePath(\preg_replace(
                     "/([\/\\\\]{$this->_renderType})$/",
                     DIRECTORY_SEPARATOR . $type,
                     $builder->getTemplatePath()
@@ -628,10 +628,10 @@ class RequestHandlerComponent extends Component
         $response = $controller->response;
         $request = $controller->request;
 
-        if (strpos($type, '/') === false) {
+        if (\strpos($type, '/') === false) {
             $cType = $response->getMimeType($type);
         }
-        if (is_array($cType)) {
+        if (\is_array($cType)) {
             if (isset($cType[$options['index']])) {
                 $cType = $cType[$options['index']];
             }
@@ -682,13 +682,13 @@ class RequestHandlerComponent extends Component
      */
     public function mapAlias($alias)
     {
-        if (is_array($alias)) {
-            return array_map([$this, 'mapAlias'], $alias);
+        if (\is_array($alias)) {
+            return \array_map([$this, 'mapAlias'], $alias);
         }
         $response = $this->getController()->response;
         $type = $response->getMimeType($alias);
         if ($type) {
-            if (is_array($type)) {
+            if (\is_array($type)) {
                 return $type[0];
             }
 
@@ -712,11 +712,11 @@ class RequestHandlerComponent extends Component
      */
     public function addInputType($type, $handler)
     {
-        trigger_error(
+        \trigger_error(
             'RequestHandlerComponent::addInputType() is deprecated. Use setConfig("inputTypeMap", ...) instead.',
             E_USER_DEPRECATED
         );
-        if (!is_array($handler) || !isset($handler[0]) || !is_callable($handler[0])) {
+        if (!\is_array($handler) || !isset($handler[0]) || !\is_callable($handler[0])) {
             throw new Exception('You must give a handler callback.');
         }
         $this->setConfig('inputTypeMap.' . $type, $handler);
@@ -732,16 +732,16 @@ class RequestHandlerComponent extends Component
      */
     public function viewClassMap($type = null, $viewClass = null)
     {
-        trigger_error(
+        \trigger_error(
             'RequestHandlerComponent::viewClassMap() is deprecated. Use setConfig("viewClassMap", ...) instead.',
             E_USER_DEPRECATED
         );
-        if (!$viewClass && is_string($type)) {
+        if (!$viewClass && \is_string($type)) {
             return $this->getConfig('viewClassMap.' . $type);
         }
-        if (is_string($type)) {
+        if (\is_string($type)) {
             $this->setConfig('viewClassMap.' . $type, $viewClass);
-        } elseif (is_array($type)) {
+        } elseif (\is_array($type)) {
             $this->setConfig('viewClassMap', $type, true);
         }
 

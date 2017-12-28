@@ -14,7 +14,7 @@
  */
 use Cake\Collection\Collection;
 
-if (!function_exists('collection')) {
+if (!\function_exists('collection')) {
     /**
      * Returns a new Cake\Collection\Collection object wrapping the passed argument.
      *

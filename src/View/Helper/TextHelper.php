@@ -84,7 +84,7 @@ class TextHelper extends Helper
         if ($engineClass) {
             $this->_engine = new $engineClass($config);
         } else {
-            throw new Exception(sprintf('Class for %s could not be found', $config['engine']));
+            throw new Exception(\sprintf('Class for %s could not be found', $config['engine']));
         }
     }
 
@@ -97,7 +97,7 @@ class TextHelper extends Helper
      */
     public function __call($method, $params)
     {
-        return call_user_func_array([$this->_engine, $method], $params);
+        return \call_user_func_array([$this->_engine, $method], $params);
     }
 
     /**
@@ -133,12 +133,12 @@ class TextHelper extends Helper
             )
             )/ixu';
 
-        $text = preg_replace_callback(
+        $text = \preg_replace_callback(
             $pattern,
             [&$this, '_insertPlaceHolder'],
             $text
         );
-        $text = preg_replace_callback(
+        $text = \preg_replace_callback(
             '#(?<!href="|">)(?<!\b[[:punct:]])(?<!http://|https://|ftp://|nntp://)www\.[^\s\n\%\ <]+[^\s<\n\%\,\.\ <](?<!\))#i',
             [&$this, '_insertPlaceHolder'],
             $text
@@ -168,7 +168,7 @@ class TextHelper extends Helper
         if (isset($matches['url_bare'])) {
             $match = $matches['url_bare'];
         }
-        $key = hash_hmac('sha1', $match, Security::getSalt());
+        $key = \hash_hmac('sha1', $match, Security::getSalt());
         $this->_placeholders[$key] = [
             'content' => $match,
             'envelope' => $envelope
@@ -190,13 +190,13 @@ class TextHelper extends Helper
         foreach ($this->_placeholders as $hash => $content) {
             $link = $url = $content['content'];
             $envelope = $content['envelope'];
-            if (!preg_match('#^[a-z]+\://#i', $url)) {
+            if (!\preg_match('#^[a-z]+\://#i', $url)) {
                 $url = 'http://' . $url;
             }
             $replace[$hash] = $envelope[0] . $this->Html->link($link, $url, $htmlOptions) . $envelope[1];
         }
 
-        return strtr($text, $replace);
+        return \strtr($text, $replace);
     }
 
     /**
@@ -216,7 +216,7 @@ class TextHelper extends Helper
             $replace[$hash] = $envelope[0] . $this->Html->link($url, 'mailto:' . $url, $options) . $envelope[1];
         }
 
-        return strtr($text, $replace);
+        return \strtr($text, $replace);
     }
 
     /**
@@ -237,7 +237,7 @@ class TextHelper extends Helper
         $this->_placeholders = [];
 
         $atom = '[\p{L}0-9!#$%&\'*+\/=?^_`{|}~-]';
-        $text = preg_replace_callback(
+        $text = \preg_replace_callback(
             '/(?<=\s|^|\(|\>|\;)(' . $atom . '*(?:\.' . $atom . '+)*@[\p{L}0-9-]+(?:\.[\p{L}0-9-]+)+)/ui',
             [&$this, '_insertPlaceholder'],
             $text
@@ -295,15 +295,15 @@ class TextHelper extends Helper
      */
     public function autoParagraph($text)
     {
-        if (trim($text) !== '') {
-            $text = preg_replace('|<br[^>]*>\s*<br[^>]*>|i', "\n\n", $text . "\n");
-            $text = preg_replace("/\n\n+/", "\n\n", str_replace(["\r\n", "\r"], "\n", $text));
-            $texts = preg_split('/\n\s*\n/', $text, -1, PREG_SPLIT_NO_EMPTY);
+        if (\trim($text) !== '') {
+            $text = \preg_replace('|<br[^>]*>\s*<br[^>]*>|i', "\n\n", $text . "\n");
+            $text = \preg_replace("/\n\n+/", "\n\n", \str_replace(["\r\n", "\r"], "\n", $text));
+            $texts = \preg_split('/\n\s*\n/', $text, -1, PREG_SPLIT_NO_EMPTY);
             $text = '';
             foreach ($texts as $txt) {
-                $text .= '<p>' . nl2br(trim($txt, "\n")) . "</p>\n";
+                $text .= '<p>' . \nl2br(\trim($txt, "\n")) . "</p>\n";
             }
-            $text = preg_replace('|<p>\s*</p>|', '', $text);
+            $text = \preg_replace('|<p>\s*</p>|', '', $text);
         }
 
         return $text;

@@ -36,33 +36,33 @@ trait SecureFieldTokenTrait
     {
         $locked = [];
         foreach ($fields as $key => $value) {
-            if (is_numeric($value)) {
+            if (\is_numeric($value)) {
                 $value = (string)$value;
             }
-            if (!is_int($key)) {
+            if (!\is_int($key)) {
                 $locked[$key] = $value;
                 unset($fields[$key]);
             }
         }
 
-        sort($unlockedFields, SORT_STRING);
-        sort($fields, SORT_STRING);
-        ksort($locked, SORT_STRING);
+        \sort($unlockedFields, SORT_STRING);
+        \sort($fields, SORT_STRING);
+        \ksort($locked, SORT_STRING);
         $fields += $locked;
 
-        $locked = implode(array_keys($locked), '|');
-        $unlocked = implode($unlockedFields, '|');
+        $locked = \implode(\array_keys($locked), '|');
+        $unlocked = \implode($unlockedFields, '|');
         $hashParts = [
             $url,
-            serialize($fields),
+            \serialize($fields),
             $unlocked,
             Security::getSalt()
         ];
-        $fields = Security::hash(implode('', $hashParts), 'sha1');
+        $fields = Security::hash(\implode('', $hashParts), 'sha1');
 
         return [
-            'fields' => urlencode($fields . ':' . $locked),
-            'unlocked' => urlencode($unlocked),
+            'fields' => \urlencode($fields . ':' . $locked),
+            'unlocked' => \urlencode($unlocked),
         ];
     }
 }

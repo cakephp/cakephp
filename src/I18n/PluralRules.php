@@ -137,10 +137,10 @@ class PluralRules
      */
     public static function calculate($locale, $n)
     {
-        $locale = strtolower($locale);
+        $locale = \strtolower($locale);
 
         if (!isset(static::$_rulesMap[$locale])) {
-            $locale = explode('_', $locale)[0];
+            $locale = \explode('_', $locale)[0];
         }
 
         if (!isset(static::$_rulesMap[$locale])) {

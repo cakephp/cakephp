@@ -179,8 +179,8 @@ class Shell
     public function __construct(ConsoleIo $io = null)
     {
         if (!$this->name) {
-            list(, $class) = namespaceSplit(get_class($this));
-            $this->name = str_replace(['Shell', 'Task'], '', $class);
+            list(, $class) = namespaceSplit(\get_class($this));
+            $this->name = \str_replace(['Shell', 'Task'], '', $class);
         }
         $this->_io = $io ?: new ConsoleIo();
 
@@ -298,7 +298,7 @@ class Shell
             return true;
         }
         $this->_taskMap = $this->Tasks->normalizeArray((array)$this->tasks);
-        $this->taskNames = array_merge($this->taskNames, array_keys($this->_taskMap));
+        $this->taskNames = \array_merge($this->taskNames, \array_keys($this->_taskMap));
 
         return true;
     }
@@ -380,7 +380,7 @@ class Shell
      */
     public function dispatchShell()
     {
-        list($args, $extra) = $this->parseDispatchArguments(func_get_args());
+        list($args, $extra) = $this->parseDispatchArguments(\func_get_args());
 
         if (!isset($extra['requested'])) {
             $extra['requested'] = true;
@@ -403,16 +403,16 @@ class Shell
     {
         $extra = [];
 
-        if (is_string($args[0]) && count($args) === 1) {
-            $args = explode(' ', $args[0]);
+        if (\is_string($args[0]) && \count($args) === 1) {
+            $args = \explode(' ', $args[0]);
 
             return [$args, $extra];
         }
 
-        if (is_array($args[0]) && !empty($args[0]['command'])) {
+        if (\is_array($args[0]) && !empty($args[0]['command'])) {
             $command = $args[0]['command'];
-            if (is_string($command)) {
-                $command = explode(' ', $command);
+            if (\is_string($command)) {
+                $command = \explode(' ', $command);
             }
 
             if (!empty($args[0]['extra'])) {
@@ -464,8 +464,8 @@ class Shell
             return false;
         }
 
-        if (!empty($extra) && is_array($extra)) {
-            $this->params = array_merge($this->params, $extra);
+        if (!empty($extra) && \is_array($extra)) {
+            $this->params = \array_merge($this->params, $extra);
         }
         $this->_setOutputLevel();
         if (!empty($this->params['plugin']) && !Plugin::loaded($this->params['plugin'])) {
@@ -480,8 +480,8 @@ class Shell
         $method = Inflector::camelize($command);
         $isMethod = $this->hasMethod($method);
 
-        if ($isMethod && $autoMethod && count($subcommands) === 0) {
-            array_shift($this->args);
+        if ($isMethod && $autoMethod && \count($subcommands) === 0) {
+            \array_shift($this->args);
             $this->startup();
 
             return $this->$method(...$this->args);
@@ -495,7 +495,7 @@ class Shell
 
         if ($this->hasTask($command) && isset($subcommands[$command])) {
             $this->startup();
-            array_shift($argv);
+            \array_shift($argv);
 
             return $this->{$method}->runCommand($argv, false, ['requested' => true]);
         }
@@ -581,7 +581,7 @@ class Shell
      */
     public function __get($name)
     {
-        if (empty($this->{$name}) && in_array($name, $this->taskNames)) {
+        if (empty($this->{$name}) && \in_array($name, $this->taskNames)) {
             $properties = $this->_taskMap[$name];
             $this->{$name} = $this->Tasks->load($properties['class'], $properties['config']);
             $this->{$name}->args =& $this->args;
@@ -771,7 +771,7 @@ class Shell
      */
     protected function wrapMessageWithType($messageType, $message)
     {
-        if (is_array($message)) {
+        if (\is_array($message)) {
             foreach ($message as $k => $v) {
                 $message[$k] = "<$messageType>" . $v . "</$messageType>";
             }
@@ -837,7 +837,7 @@ class Shell
      */
     public function error($title, $message = null, $exitCode = self::CODE_ERROR)
     {
-        $this->_io->err(sprintf('<error>Error:</error> %s', $title));
+        $this->_io->err(\sprintf('<error>Error:</error> %s', $title));
 
         if (!empty($message)) {
             $this->_io->err($message);
@@ -858,9 +858,9 @@ class Shell
     {
         if (empty($this->params['noclear'])) {
             if (DIRECTORY_SEPARATOR === '/') {
-                passthru('clear');
+                \passthru('clear');
             } else {
-                passthru('cls');
+                \passthru('cls');
             }
         }
     }
@@ -875,31 +875,31 @@ class Shell
      */
     public function createFile($path, $contents)
     {
-        $path = str_replace(DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, $path);
+        $path = \str_replace(DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, $path);
 
         $this->_io->out();
 
-        if (is_file($path) && empty($this->params['force']) && $this->interactive) {
-            $this->_io->out(sprintf('<warning>File `%s` exists</warning>', $path));
+        if (\is_file($path) && empty($this->params['force']) && $this->interactive) {
+            $this->_io->out(\sprintf('<warning>File `%s` exists</warning>', $path));
             $key = $this->_io->askChoice('Do you want to overwrite?', ['y', 'n', 'a', 'q'], 'n');
 
-            if (strtolower($key) === 'q') {
+            if (\strtolower($key) === 'q') {
                 $this->_io->out('<error>Quitting</error>.', 2);
                 $this->_stop();
 
                 return false;
             }
-            if (strtolower($key) === 'a') {
+            if (\strtolower($key) === 'a') {
                 $this->params['force'] = true;
                 $key = 'y';
             }
-            if (strtolower($key) !== 'y') {
-                $this->_io->out(sprintf('Skip `%s`', $path), 2);
+            if (\strtolower($key) !== 'y') {
+                $this->_io->out(\sprintf('Skip `%s`', $path), 2);
 
                 return false;
             }
         } else {
-            $this->out(sprintf('Creating file %s', $path));
+            $this->out(\sprintf('Creating file %s', $path));
         }
 
         $File = new File($path, true);
@@ -907,12 +907,12 @@ class Shell
         try {
             if ($File->exists() && $File->writable()) {
                 $File->write($contents);
-                $this->_io->out(sprintf('<success>Wrote</success> `%s`', $path));
+                $this->_io->out(\sprintf('<success>Wrote</success> `%s`', $path));
 
                 return true;
             }
 
-            $this->_io->err(sprintf('<error>Could not write to `%s`</error>.', $path), 2);
+            $this->_io->err(\sprintf('<error>Could not write to `%s`</error>.', $path), 2);
 
             return false;
         } finally {
@@ -929,11 +929,11 @@ class Shell
      */
     public function shortPath($file)
     {
-        $shortPath = str_replace(ROOT, null, $file);
-        $shortPath = str_replace('..' . DIRECTORY_SEPARATOR, '', $shortPath);
-        $shortPath = str_replace(DIRECTORY_SEPARATOR, '/', $shortPath);
+        $shortPath = \str_replace(ROOT, null, $file);
+        $shortPath = \str_replace('..' . DIRECTORY_SEPARATOR, '', $shortPath);
+        $shortPath = \str_replace(DIRECTORY_SEPARATOR, '/', $shortPath);
 
-        return str_replace('//', DIRECTORY_SEPARATOR, $shortPath);
+        return \str_replace('//', DIRECTORY_SEPARATOR, $shortPath);
     }
 
     /**

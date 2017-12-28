@@ -95,7 +95,7 @@ class TreePrinter extends RecursiveIteratorIterator
     {
         $extractor = $this->_value;
         $current = $this->_fetchCurrent();
-        $spacer = str_repeat($this->_spacer, $this->getDepth());
+        $spacer = \str_repeat($this->_spacer, $this->getDepth());
 
         return $spacer . $extractor($current, parent::key(), $this);
     }

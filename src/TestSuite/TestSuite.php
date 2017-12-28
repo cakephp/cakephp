@@ -39,7 +39,7 @@ class TestSuite extends BaseTestSuite
         list(, $files) = $Folder->read(true, true, true);
 
         foreach ($files as $file) {
-            if (substr($file, -4) === '.php') {
+            if (\substr($file, -4) === '.php') {
                 $this->addTestFile($file);
             }
         }
@@ -57,7 +57,7 @@ class TestSuite extends BaseTestSuite
         $files = $Folder->tree(null, true, 'files');
 
         foreach ($files as $file) {
-            if (substr($file, -4) === '.php') {
+            if (\substr($file, -4) === '.php') {
                 $this->addTestFile($file);
             }
         }

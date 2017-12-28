@@ -326,8 +326,8 @@ class ConsoleOptionParser
      */
     public function setDescription($text)
     {
-        if (is_array($text)) {
-            $text = implode("\n", $text);
+        if (\is_array($text)) {
+            $text = \implode("\n", $text);
         }
         $this->_description = $text;
 
@@ -371,8 +371,8 @@ class ConsoleOptionParser
      */
     public function setEpilog($text)
     {
-        if (is_array($text)) {
-            $text = implode("\n", $text);
+        if (\is_array($text)) {
+            $text = \implode("\n", $text);
         }
         $this->_epilog = $text;
 
@@ -449,10 +449,10 @@ class ConsoleOptionParser
             $option = new ConsoleInputOption($options);
         }
         $this->_options[$name] = $option;
-        asort($this->_options);
+        \asort($this->_options);
         if ($option->short() !== null) {
             $this->_shortOptions[$option->short()] = $name;
-            asort($this->_shortOptions);
+            \asort($this->_shortOptions);
         }
 
         return $this;
@@ -493,12 +493,12 @@ class ConsoleOptionParser
     {
         if ($name instanceof ConsoleInputArgument) {
             $arg = $name;
-            $index = count($this->_args);
+            $index = \count($this->_args);
         } else {
             $defaults = [
                 'name' => $name,
                 'help' => '',
-                'index' => count($this->_args),
+                'index' => \count($this->_args),
                 'required' => false,
                 'choices' => []
             ];
@@ -516,7 +516,7 @@ class ConsoleOptionParser
             }
         }
         $this->_args[$index] = $arg;
-        ksort($this->_args);
+        \ksort($this->_args);
 
         return $this;
     }
@@ -595,7 +595,7 @@ class ConsoleOptionParser
             $command = new ConsoleInputSubcommand($options);
         }
         $this->_subcommands[$name] = $command;
-        asort($this->_subcommands);
+        \asort($this->_subcommands);
 
         return $this;
     }
@@ -675,20 +675,20 @@ class ConsoleOptionParser
     {
         $command = isset($argv[0]) ? Inflector::underscore($argv[0]) : null;
         if (isset($this->_subcommands[$command])) {
-            array_shift($argv);
+            \array_shift($argv);
         }
         if (isset($this->_subcommands[$command]) && $this->_subcommands[$command]->parser()) {
             return $this->_subcommands[$command]->parser()->parse($argv);
         }
         $params = $args = [];
         $this->_tokens = $argv;
-        while (($token = array_shift($this->_tokens)) !== null) {
+        while (($token = \array_shift($this->_tokens)) !== null) {
             if (isset($this->_subcommands[$token])) {
                 continue;
             }
-            if (substr($token, 0, 2) === '--') {
+            if (\substr($token, 0, 2) === '--') {
                 $params = $this->_parseLongOption($token, $params);
-            } elseif (substr($token, 0, 1) === '-') {
+            } elseif (\substr($token, 0, 1) === '-') {
                 $params = $this->_parseShortOption($token, $params);
             } else {
                 $args = $this->_parseArg($token, $args);
@@ -697,7 +697,7 @@ class ConsoleOptionParser
         foreach ($this->_args as $i => $arg) {
             if ($arg->isRequired() && !isset($args[$i]) && empty($params['help'])) {
                 throw new ConsoleException(
-                    sprintf('Missing required arguments. %s is required.', $arg->name())
+                    \sprintf('Missing required arguments. %s is required.', $arg->name())
                 );
             }
         }
@@ -749,7 +749,7 @@ class ConsoleOptionParser
             if (!($subparser instanceof self)) {
                 $subparser = clone $this;
             }
-            if (strlen($subparser->getDescription()) === 0) {
+            if (\strlen($subparser->getDescription()) === 0) {
                 $subparser->setDescription($command->getRawHelp());
             }
             $subparser->setCommand($this->getCommand() . ' ' . $subcommand);
@@ -796,11 +796,11 @@ class ConsoleOptionParser
     protected function getCommandError($command)
     {
         $rootCommand = $this->getCommand();
-        $subcommands = array_keys((array)$this->subcommands());
+        $subcommands = \array_keys((array)$this->subcommands());
         $bestGuess = $this->findClosestItem($command, $subcommands);
 
         $out = [
-            sprintf(
+            \sprintf(
                 'Unable to find the `%s %s` subcommand. See `bin/%s %s --help`.',
                 $rootCommand,
                 $command,
@@ -811,16 +811,16 @@ class ConsoleOptionParser
         ];
 
         if ($bestGuess !== null) {
-            $out[] = sprintf('Did you mean : `%s %s` ?', $rootCommand, $bestGuess);
+            $out[] = \sprintf('Did you mean : `%s %s` ?', $rootCommand, $bestGuess);
             $out[] = '';
         }
-        $out[] = sprintf('Available subcommands for the `%s` command are : ', $rootCommand);
+        $out[] = \sprintf('Available subcommands for the `%s` command are : ', $rootCommand);
         $out[] = '';
         foreach ($subcommands as $subcommand) {
             $out[] = ' - ' . $subcommand;
         }
 
-        return implode("\n", $out);
+        return \implode("\n", $out);
     }
 
     /**
@@ -832,15 +832,15 @@ class ConsoleOptionParser
      */
     protected function getOptionError($option)
     {
-        $availableOptions = array_keys($this->_options);
+        $availableOptions = \array_keys($this->_options);
         $bestGuess = $this->findClosestItem($option, $availableOptions);
         $out = [
-            sprintf('Unknown option `%s`.', $option),
+            \sprintf('Unknown option `%s`.', $option),
             ''
         ];
 
         if ($bestGuess !== null) {
-            $out[] = sprintf('Did you mean `%s` ?', $bestGuess);
+            $out[] = \sprintf('Did you mean `%s` ?', $bestGuess);
             $out[] = '';
         }
 
@@ -850,7 +850,7 @@ class ConsoleOptionParser
             $out[] = ' - ' . $availableOption;
         }
 
-        return implode("\n", $out);
+        return \implode("\n", $out);
     }
 
     /**
@@ -862,16 +862,16 @@ class ConsoleOptionParser
      */
     protected function getShortOptionError($option)
     {
-        $out = [sprintf('Unknown short option `%s`', $option)];
+        $out = [\sprintf('Unknown short option `%s`', $option)];
         $out[] = '';
         $out[] = 'Available short options are :';
         $out[] = '';
 
         foreach ($this->_shortOptions as $short => $long) {
-            $out[] = sprintf(' - `%s` (short for `--%s`)', $short, $long);
+            $out[] = \sprintf(' - `%s` (short for `--%s`)', $short, $long);
         }
 
-        return implode("\n", $out);
+        return \implode("\n", $out);
     }
 
     /**
@@ -886,17 +886,17 @@ class ConsoleOptionParser
     {
         $bestGuess = null;
         foreach ($haystack as $item) {
-            if (preg_match('/^' . $needle . '/', $item)) {
+            if (\preg_match('/^' . $needle . '/', $item)) {
                 return $item;
             }
         }
 
         foreach ($haystack as $item) {
-            if (preg_match('/' . $needle . '/', $item)) {
+            if (\preg_match('/' . $needle . '/', $item)) {
                 return $item;
             }
 
-            $score = levenshtein($needle, $item);
+            $score = \levenshtein($needle, $item);
 
             if (!isset($bestScore) || $score < $bestScore) {
                 $bestScore = $score;
@@ -917,10 +917,10 @@ class ConsoleOptionParser
      */
     protected function _parseLongOption($option, $params)
     {
-        $name = substr($option, 2);
-        if (strpos($name, '=') !== false) {
-            list($name, $value) = explode('=', $name, 2);
-            array_unshift($this->_tokens, $value);
+        $name = \substr($option, 2);
+        if (\strpos($name, '=') !== false) {
+            list($name, $value) = \explode('=', $name, 2);
+            \array_unshift($this->_tokens, $value);
         }
 
         return $this->_parseOption($name, $params);
@@ -938,12 +938,12 @@ class ConsoleOptionParser
      */
     protected function _parseShortOption($option, $params)
     {
-        $key = substr($option, 1);
-        if (strlen($key) > 1) {
-            $flags = str_split($key);
+        $key = \substr($option, 1);
+        if (\strlen($key) > 1) {
+            $flags = \str_split($key);
             $key = $flags[0];
-            for ($i = 1, $len = count($flags); $i < $len; $i++) {
-                array_unshift($this->_tokens, '-' . $flags[$i]);
+            for ($i = 1, $len = \count($flags); $i < $len; $i++) {
+                \array_unshift($this->_tokens, '-' . $flags[$i]);
             }
         }
         if (!isset($this->_shortOptions[$key])) {
@@ -972,7 +972,7 @@ class ConsoleOptionParser
         $nextValue = $this->_nextToken();
         $emptyNextValue = (empty($nextValue) && $nextValue !== '0');
         if (!$isBoolean && !$emptyNextValue && !$this->_optionExists($nextValue)) {
-            array_shift($this->_tokens);
+            \array_shift($this->_tokens);
             $value = $nextValue;
         } elseif ($isBoolean) {
             $value = true;
@@ -1000,8 +1000,8 @@ class ConsoleOptionParser
      */
     protected function _optionExists($name)
     {
-        if (substr($name, 0, 2) === '--') {
-            return isset($this->_options[substr($name, 2)]);
+        if (\substr($name, 0, 2) === '--') {
+            return isset($this->_options[\substr($name, 2)]);
         }
         if ($name{0} === '-' && $name{1} !== '-') {
             return isset($this->_shortOptions[$name{1}]);
@@ -1026,7 +1026,7 @@ class ConsoleOptionParser
 
             return $args;
         }
-        $next = count($args);
+        $next = \count($args);
         if (!isset($this->_args[$next])) {
             throw new ConsoleException('Too many arguments.');
         }

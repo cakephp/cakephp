@@ -129,7 +129,7 @@ class BelongsTo extends Association
             return false;
         }
 
-        $properties = array_combine(
+        $properties = \array_combine(
             (array)$this->getForeignKey(),
             $targetEntity->extract((array)$this->getBindingKey())
         );
@@ -155,24 +155,24 @@ class BelongsTo extends Association
         $foreignKey = (array)$options['foreignKey'];
         $bindingKey = (array)$this->getBindingKey();
 
-        if (count($foreignKey) !== count($bindingKey)) {
+        if (\count($foreignKey) !== \count($bindingKey)) {
             if (empty($bindingKey)) {
                 $msg = 'The "%s" table does not define a primary key. Please set one.';
-                throw new RuntimeException(sprintf($msg, $this->getTarget()->getTable()));
+                throw new RuntimeException(\sprintf($msg, $this->getTarget()->getTable()));
             }
 
             $msg = 'Cannot match provided foreignKey for "%s", got "(%s)" but expected foreign key for "(%s)"';
-            throw new RuntimeException(sprintf(
+            throw new RuntimeException(\sprintf(
                 $msg,
                 $this->_name,
-                implode(', ', $foreignKey),
-                implode(', ', $bindingKey)
+                \implode(', ', $foreignKey),
+                \implode(', ', $bindingKey)
             ));
         }
 
         foreach ($foreignKey as $k => $f) {
-            $field = sprintf('%s.%s', $tAlias, $bindingKey[$k]);
-            $value = new IdentifierExpression(sprintf('%s.%s', $sAlias, $f));
+            $field = \sprintf('%s.%s', $tAlias, $bindingKey[$k]);
+            $value = new IdentifierExpression(\sprintf('%s.%s', $sAlias, $f));
             $conditions[$field] = $value;
         }
 

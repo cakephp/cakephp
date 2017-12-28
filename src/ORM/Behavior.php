@@ -210,14 +210,14 @@ class Behavior implements EventListenerInterface
             return $config;
         }
 
-        $indexed = array_flip($defaults[$key]);
-        $indexedCustom = array_flip($config[$key]);
+        $indexed = \array_flip($defaults[$key]);
+        $indexedCustom = \array_flip($config[$key]);
         foreach ($indexed as $method => $alias) {
             if (!isset($indexedCustom[$method])) {
                 $indexedCustom[$method] = $alias;
             }
         }
-        $this->setConfig($key, array_flip($indexedCustom), false);
+        $this->setConfig($key, \array_flip($indexedCustom), false);
         unset($config[$key]);
 
         return $config;
@@ -240,8 +240,8 @@ class Behavior implements EventListenerInterface
             }
 
             foreach ($this->_config[$key] as $method) {
-                if (!is_callable([$this, $method])) {
-                    throw new Exception(sprintf('The method %s is not callable on class %s', $method, get_class($this)));
+                if (!\is_callable([$this, $method])) {
+                    throw new Exception(\sprintf('The method %s is not callable on class %s', $method, \get_class($this)));
                 }
             }
         }
@@ -279,7 +279,7 @@ class Behavior implements EventListenerInterface
         $events = [];
 
         foreach ($eventMap as $event => $method) {
-            if (!method_exists($this, $method)) {
+            if (!\method_exists($this, $method)) {
                 continue;
             }
             if ($priority === null) {
@@ -368,7 +368,7 @@ class Behavior implements EventListenerInterface
      */
     protected function _reflectionCache()
     {
-        $class = get_class($this);
+        $class = \get_class($this);
         if (isset(self::$_reflectionCache[$class])) {
             return self::$_reflectionCache[$class];
         }
@@ -376,7 +376,7 @@ class Behavior implements EventListenerInterface
         $events = $this->implementedEvents();
         $eventMethods = [];
         foreach ($events as $e => $binding) {
-            if (is_array($binding) && isset($binding['callable'])) {
+            if (\is_array($binding) && isset($binding['callable'])) {
                 /* @var string $callable */
                 $callable = $binding['callable'];
                 $binding = $callable;
@@ -388,7 +388,7 @@ class Behavior implements EventListenerInterface
         if (isset(self::$_reflectionCache[$baseClass])) {
             $baseMethods = self::$_reflectionCache[$baseClass];
         } else {
-            $baseMethods = get_class_methods($baseClass);
+            $baseMethods = \get_class_methods($baseClass);
             self::$_reflectionCache[$baseClass] = $baseMethods;
         }
 
@@ -401,14 +401,14 @@ class Behavior implements EventListenerInterface
 
         foreach ($reflection->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
             $methodName = $method->getName();
-            if (in_array($methodName, $baseMethods) ||
+            if (\in_array($methodName, $baseMethods) ||
                 isset($eventMethods[$methodName])
             ) {
                 continue;
             }
 
-            if (substr($methodName, 0, 4) === 'find') {
-                $return['finders'][lcfirst(substr($methodName, 4))] = $methodName;
+            if (\substr($methodName, 0, 4) === 'find') {
+                $return['finders'][\lcfirst(\substr($methodName, 4))] = $methodName;
             } else {
                 $return['methods'][$methodName] = $methodName;
             }

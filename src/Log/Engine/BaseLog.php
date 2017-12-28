@@ -48,11 +48,11 @@ abstract class BaseLog extends AbstractLogger
     {
         $this->setConfig($config);
 
-        if (!is_array($this->_config['scopes']) && $this->_config['scopes'] !== false) {
+        if (!\is_array($this->_config['scopes']) && $this->_config['scopes'] !== false) {
             $this->_config['scopes'] = (array)$this->_config['scopes'];
         }
 
-        if (!is_array($this->_config['levels'])) {
+        if (!\is_array($this->_config['levels'])) {
             $this->_config['levels'] = (array)$this->_config['levels'];
         }
 
@@ -92,24 +92,24 @@ abstract class BaseLog extends AbstractLogger
      */
     protected function _format($data, array $context = [])
     {
-        if (is_string($data)) {
+        if (\is_string($data)) {
             return $data;
         }
 
-        $isObject = is_object($data);
+        $isObject = \is_object($data);
 
         if ($isObject && $data instanceof EntityInterface) {
-            return json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+            return \json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
         }
 
-        if ($isObject && method_exists($data, '__toString')) {
+        if ($isObject && \method_exists($data, '__toString')) {
             return (string)$data;
         }
 
         if ($isObject && $data instanceof JsonSerializable) {
-            return json_encode($data, JSON_UNESCAPED_UNICODE);
+            return \json_encode($data, JSON_UNESCAPED_UNICODE);
         }
 
-        return print_r($data, true);
+        return \print_r($data, true);
     }
 }

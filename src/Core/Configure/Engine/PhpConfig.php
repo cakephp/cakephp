@@ -86,12 +86,12 @@ class PhpConfig implements ConfigEngineInterface
         $file = $this->_getFilePath($key, true);
 
         $return = include $file;
-        if (is_array($return)) {
+        if (\is_array($return)) {
             return $return;
         }
 
         if (!isset($config)) {
-            throw new Exception(sprintf('Config file "%s" did not return an array', $key . '.php'));
+            throw new Exception(\sprintf('Config file "%s" did not return an array', $key . '.php'));
         }
 
         return $config;
@@ -108,10 +108,10 @@ class PhpConfig implements ConfigEngineInterface
      */
     public function dump($key, array $data)
     {
-        $contents = '<?php' . "\n" . 'return ' . var_export($data, true) . ';';
+        $contents = '<?php' . "\n" . 'return ' . \var_export($data, true) . ';';
 
         $filename = $this->_getFilePath($key);
 
-        return file_put_contents($filename, $contents) > 0;
+        return \file_put_contents($filename, $contents) > 0;
     }
 }

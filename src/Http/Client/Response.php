@@ -178,17 +178,17 @@ class Response extends Message implements ResponseInterface
      */
     protected function _decodeGzipBody($body)
     {
-        if (!function_exists('gzinflate')) {
+        if (!\function_exists('gzinflate')) {
             throw new RuntimeException('Cannot decompress gzip response body without gzinflate()');
         }
         $offset = 0;
         // Look for gzip 'signature'
-        if (substr($body, 0, 2) === "\x1f\x8b") {
+        if (\substr($body, 0, 2) === "\x1f\x8b") {
             $offset = 2;
         }
         // Check the format byte
-        if (substr($body, $offset, 1) === "\x08") {
-            return gzinflate(substr($body, $offset + 8));
+        if (\substr($body, $offset, 1) === "\x08") {
+            return \gzinflate(\substr($body, $offset + 8));
         }
     }
 
@@ -204,18 +204,18 @@ class Response extends Message implements ResponseInterface
     protected function _parseHeaders($headers)
     {
         foreach ($headers as $key => $value) {
-            if (substr($value, 0, 5) === 'HTTP/') {
-                preg_match('/HTTP\/([\d.]+) ([0-9]+)(.*)/i', $value, $matches);
+            if (\substr($value, 0, 5) === 'HTTP/') {
+                \preg_match('/HTTP\/([\d.]+) ([0-9]+)(.*)/i', $value, $matches);
                 $this->protocol = $matches[1];
                 $this->code = (int)$matches[2];
-                $this->reasonPhrase = trim($matches[3]);
+                $this->reasonPhrase = \trim($matches[3]);
                 continue;
             }
-            list($name, $value) = explode(':', $value, 2);
-            $value = trim($value);
-            $name = trim($name);
+            list($name, $value) = \explode(':', $value, 2);
+            $value = \trim($value);
+            $name = \trim($name);
 
-            $normalized = strtolower($name);
+            $normalized = \strtolower($name);
 
             if (isset($this->headers[$name])) {
                 $this->headers[$name][] = $value;
@@ -241,7 +241,7 @@ class Response extends Message implements ResponseInterface
             static::STATUS_NO_CONTENT
         ];
 
-        return in_array($this->code, $codes);
+        return \in_array($this->code, $codes);
     }
 
     /**
@@ -259,7 +259,7 @@ class Response extends Message implements ResponseInterface
         ];
 
         return (
-            in_array($this->code, $codes) &&
+            \in_array($this->code, $codes) &&
             $this->getHeaderLine('Location')
         );
     }
@@ -333,7 +333,7 @@ class Response extends Message implements ResponseInterface
         if (!$content) {
             return null;
         }
-        preg_match('/charset\s?=\s?[\'"]?([a-z0-9-_]+)[\'"]?/i', $content, $matches);
+        \preg_match('/charset\s?=\s?[\'"]?([a-z0-9-_]+)[\'"]?/i', $content, $matches);
         if (empty($matches[1])) {
             return null;
         }
@@ -358,7 +358,7 @@ class Response extends Message implements ResponseInterface
             return $this->_getHeaders();
         }
         $header = $this->getHeader($name);
-        if (count($header) === 1) {
+        if (\count($header) === 1) {
             return $header[0];
         }
 
@@ -552,7 +552,7 @@ class Response extends Message implements ResponseInterface
             return $this->_json;
         }
 
-        return $this->_json = json_decode($this->_getBody(), true);
+        return $this->_json = \json_decode($this->_getBody(), true);
     }
 
     /**
@@ -565,8 +565,8 @@ class Response extends Message implements ResponseInterface
         if ($this->_xml) {
             return $this->_xml;
         }
-        libxml_use_internal_errors();
-        $data = simplexml_load_string($this->_getBody());
+        \libxml_use_internal_errors();
+        $data = \simplexml_load_string($this->_getBody());
         if ($data) {
             $this->_xml = $data;
 
@@ -585,7 +585,7 @@ class Response extends Message implements ResponseInterface
     {
         $out = [];
         foreach ($this->headers as $key => $values) {
-            $out[$key] = implode(',', $values);
+            $out[$key] = \implode(',', $values);
         }
 
         return $out;
@@ -615,7 +615,7 @@ class Response extends Message implements ResponseInterface
             return false;
         }
         $key = $this->_exposedProperties[$name];
-        if (substr($key, 0, 4) === '_get') {
+        if (\substr($key, 0, 4) === '_get') {
             return $this->{$key}();
         }
 
@@ -634,7 +634,7 @@ class Response extends Message implements ResponseInterface
             return false;
         }
         $key = $this->_exposedProperties[$name];
-        if (substr($key, 0, 4) === '_get') {
+        if (\substr($key, 0, 4) === '_get') {
             $val = $this->{$key}();
 
             return $val !== null;
@@ -645,4 +645,4 @@ class Response extends Message implements ResponseInterface
 }
 
 // @deprecated Add backwards compat alias.
-class_alias('Cake\Http\Client\Response', 'Cake\Network\Http\Response');
+\class_alias('Cake\Http\Client\Response', 'Cake\Network\Http\Response');

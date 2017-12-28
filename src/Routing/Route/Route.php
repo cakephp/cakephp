@@ -157,7 +157,7 @@ class Route
     {
         $this->_extensions = [];
         foreach ($extensions as $ext) {
-            $this->_extensions[] = strtolower($ext);
+            $this->_extensions[] = \strtolower($ext);
         }
 
         return $this;
@@ -182,11 +182,11 @@ class Route
      */
     public function setMethods(array $methods)
     {
-        $methods = array_map('strtoupper', $methods);
-        $diff = array_diff($methods, static::VALID_METHODS);
+        $methods = \array_map('strtoupper', $methods);
+        $diff = \array_diff($methods, static::VALID_METHODS);
         if ($diff !== []) {
             throw new InvalidArgumentException(
-                sprintf('Invalid HTTP method received. %s is invalid.', implode(', ', $diff))
+                \sprintf('Invalid HTTP method received. %s is invalid.', \implode(', ', $diff))
             );
         }
         $this->defaults['_method'] = $methods;
@@ -205,11 +205,11 @@ class Route
      */
     public function setPatterns(array $patterns)
     {
-        $patternValues = implode("", $patterns);
-        if (mb_strlen($patternValues) < strlen($patternValues)) {
+        $patternValues = \implode("", $patterns);
+        if (\mb_strlen($patternValues) < \strlen($patternValues)) {
             $this->options['multibytePattern'] = true;
         }
-        $this->options = array_merge($this->options, $patterns);
+        $this->options = \array_merge($this->options, $patterns);
 
         return $this;
     }
@@ -308,18 +308,18 @@ class Route
         }
         $route = $this->template;
         $names = $routeParams = [];
-        $parsed = preg_quote($this->template, '#');
+        $parsed = \preg_quote($this->template, '#');
 
-        preg_match_all('/:([a-z0-9-_]+(?<![-_]))/i', $route, $namedElements);
+        \preg_match_all('/:([a-z0-9-_]+(?<![-_]))/i', $route, $namedElements);
         foreach ($namedElements[1] as $i => $name) {
             $search = '\\' . $namedElements[0][$i];
             if (isset($this->options[$name])) {
                 $option = null;
-                if ($name !== 'plugin' && array_key_exists($name, $this->defaults)) {
+                if ($name !== 'plugin' && \array_key_exists($name, $this->defaults)) {
                     $option = '?';
                 }
                 $slashParam = '/\\' . $namedElements[0][$i];
-                if (strpos($parsed, $slashParam) !== false) {
+                if (\strpos($parsed, $slashParam) !== false) {
                     $routeParams[$slashParam] = '(?:/(?P<' . $name . '>' . $this->options[$name] . ')' . $option . ')' . $option;
                 } else {
                     $routeParams[$search] = '(?:(?P<' . $name . '>' . $this->options[$name] . ')' . $option . ')' . $option;
@@ -329,20 +329,20 @@ class Route
             }
             $names[] = $name;
         }
-        if (preg_match('#\/\*\*$#', $route)) {
-            $parsed = preg_replace('#/\\\\\*\\\\\*$#', '(?:/(?P<_trailing_>.*))?', $parsed);
+        if (\preg_match('#\/\*\*$#', $route)) {
+            $parsed = \preg_replace('#/\\\\\*\\\\\*$#', '(?:/(?P<_trailing_>.*))?', $parsed);
             $this->_greedy = true;
         }
-        if (preg_match('#\/\*$#', $route)) {
-            $parsed = preg_replace('#/\\\\\*$#', '(?:/(?P<_args_>.*))?', $parsed);
+        if (\preg_match('#\/\*$#', $route)) {
+            $parsed = \preg_replace('#/\\\\\*$#', '(?:/(?P<_args_>.*))?', $parsed);
             $this->_greedy = true;
         }
         $mode = '';
         if (!empty($this->options['multibytePattern'])) {
             $mode = 'u';
         }
-        krsort($routeParams);
-        $parsed = str_replace(array_keys($routeParams), array_values($routeParams), $parsed);
+        \krsort($routeParams);
+        $parsed = \str_replace(\array_keys($routeParams), \array_values($routeParams), $parsed);
         $this->_compiledRoute = '#^' . $parsed . '[/]*$#' . $mode;
         $this->keys = $names;
 
@@ -352,8 +352,8 @@ class Route
         }
 
         $keys = $this->keys;
-        sort($keys);
-        $this->keys = array_reverse($keys);
+        \sort($keys);
+        $this->keys = \array_reverse($keys);
     }
 
     /**
@@ -375,7 +375,7 @@ class Route
         ];
         foreach ($keys as $key => $glue) {
             $value = null;
-            if (strpos($this->template, ':' . $key) !== false) {
+            if (\strpos($this->template, ':' . $key) !== false) {
                 $value = '_' . $key;
             } elseif (isset($this->defaults[$key])) {
                 $value = $this->defaults[$key];
@@ -390,7 +390,7 @@ class Route
             $name .= $value . $glue;
         }
 
-        return $this->_name = strtolower($name);
+        return $this->_name = \strtolower($name);
     }
 
     /**
@@ -430,7 +430,7 @@ class Route
         }
         list($url, $ext) = $this->_parseExtension($url);
 
-        if (!preg_match($this->_compiledRoute, urldecode($url), $route)) {
+        if (!\preg_match($this->_compiledRoute, \urldecode($url), $route)) {
             return false;
         }
 
@@ -440,13 +440,13 @@ class Route
                 $request = Router::getRequest(true) ?: ServerRequest::createFromGlobals();
                 $method = $request->getMethod();
             }
-            if (!in_array($method, (array)$this->defaults['_method'], true)) {
+            if (!\in_array($method, (array)$this->defaults['_method'], true)) {
                 return false;
             }
         }
 
-        array_shift($route);
-        $count = count($this->keys);
+        \array_shift($route);
+        $count = \count($this->keys);
         for ($i = 0; $i <= $count; $i++) {
             unset($route[$i]);
         }
@@ -457,7 +457,7 @@ class Route
             if (isset($route[$key])) {
                 continue;
             }
-            if (is_int($key)) {
+            if (\is_int($key)) {
                 $route['pass'][] = $value;
                 continue;
             }
@@ -466,7 +466,7 @@ class Route
 
         if (isset($route['_args_'])) {
             $pass = $this->_parseArgs($route['_args_'], $route);
-            $route['pass'] = array_merge($route['pass'], $pass);
+            $route['pass'] = \array_merge($route['pass'], $pass);
             unset($route['_args_']);
         }
 
@@ -481,15 +481,15 @@ class Route
 
         // restructure 'pass' key route params
         if (isset($this->options['pass'])) {
-            $j = count($this->options['pass']);
+            $j = \count($this->options['pass']);
             while ($j--) {
                 if (isset($route[$this->options['pass'][$j]])) {
-                    array_unshift($route['pass'], $route[$this->options['pass'][$j]]);
+                    \array_unshift($route['pass'], $route[$this->options['pass'][$j]]);
                 }
             }
         }
         $route['_matchedRoute'] = $this->template;
-        if (count($this->middleware) > 0) {
+        if (\count($this->middleware) > 0) {
             $route['_middleware'] = $this->middleware;
         }
 
@@ -504,9 +504,9 @@ class Route
      */
     public function hostMatches($host)
     {
-        $pattern = '@^' . str_replace('\*', '.*', preg_quote($this->options['_host'], '@')) . '$@';
+        $pattern = '@^' . \str_replace('\*', '.*', \preg_quote($this->options['_host'], '@')) . '$@';
 
-        return preg_match($pattern, $host) !== 0;
+        return \preg_match($pattern, $host) !== 0;
     }
 
     /**
@@ -518,11 +518,11 @@ class Route
      */
     protected function _parseExtension($url)
     {
-        if (count($this->_extensions) && strpos($url, '.') !== false) {
+        if (\count($this->_extensions) && \strpos($url, '.') !== false) {
             foreach ($this->_extensions as $ext) {
-                $len = strlen($ext) + 1;
-                if (substr($url, -$len) === '.' . $ext) {
-                    return [substr($url, 0, $len * -1), $ext];
+                $len = \strlen($ext) + 1;
+                if (\substr($url, -$len) === '.' . $ext) {
+                    return [\substr($url, 0, $len * -1), $ext];
                 }
             }
         }
@@ -543,13 +543,13 @@ class Route
     protected function _parseArgs($args, $context)
     {
         $pass = [];
-        $args = explode('/', $args);
+        $args = \explode('/', $args);
 
         foreach ($args as $param) {
             if (empty($param) && $param !== '0' && $param !== 0) {
                 continue;
             }
-            $pass[] = rawurldecode($param);
+            $pass[] = \rawurldecode($param);
         }
 
         return $pass;
@@ -567,7 +567,7 @@ class Route
     protected function _persistParams(array $url, array $params)
     {
         foreach ($this->options['persist'] as $persistKey) {
-            if (array_key_exists($persistKey, $params) && !isset($url[$persistKey])) {
+            if (\array_key_exists($persistKey, $params) && !isset($url[$persistKey])) {
                 $url[$persistKey] = $params[$persistKey];
             }
         }
@@ -597,12 +597,12 @@ class Route
         $context += ['params' => [], '_port' => null, '_scheme' => null, '_host' => null];
 
         if (!empty($this->options['persist']) &&
-            is_array($this->options['persist'])
+            \is_array($this->options['persist'])
         ) {
             $url = $this->_persistParams($url, $context['params']);
         }
         unset($context['params']);
-        $hostOptions = array_intersect_key($url, $context);
+        $hostOptions = \array_intersect_key($url, $context);
 
         // Check for properties that will cause an
         // absolute url. Copy the other properties over.
@@ -619,7 +619,7 @@ class Route
 
         // Apply the _host option if possible
         if (isset($this->options['_host'])) {
-            if (!isset($hostOptions['_host']) && strpos($this->options['_host'], '*') === false) {
+            if (!isset($hostOptions['_host']) && \strpos($this->options['_host'], '*') === false) {
                 $hostOptions['_host'] = $this->options['_host'];
             }
             if (!isset($hostOptions['_host'])) {
@@ -654,12 +654,12 @@ class Route
         unset($url['_method'], $url['[method]'], $defaults['_method']);
 
         // Missing defaults is a fail.
-        if (array_diff_key($defaults, $url) !== []) {
+        if (\array_diff_key($defaults, $url) !== []) {
             return false;
         }
 
         // Defaults with different values are a fail.
-        if (array_intersect_key($url, $defaults) != $defaults) {
+        if (\array_intersect_key($url, $defaults) != $defaults) {
             return false;
         }
 
@@ -675,23 +675,23 @@ class Route
         }
 
         // check that all the key names are in the url
-        $keyNames = array_flip($this->keys);
-        if (array_intersect_key($keyNames, $url) !== $keyNames) {
+        $keyNames = \array_flip($this->keys);
+        if (\array_intersect_key($keyNames, $url) !== $keyNames) {
             return false;
         }
 
         $pass = [];
         foreach ($url as $key => $value) {
             // keys that exist in the defaults and have different values is a match failure.
-            $defaultExists = array_key_exists($key, $defaults);
+            $defaultExists = \array_key_exists($key, $defaults);
 
             // If the key is a routed key, it's not different yet.
-            if (array_key_exists($key, $keyNames)) {
+            if (\array_key_exists($key, $keyNames)) {
                 continue;
             }
 
             // pull out passed args
-            $numeric = is_numeric($key);
+            $numeric = \is_numeric($key);
             if ($numeric && isset($defaults[$key]) && $defaults[$key] == $value) {
                 continue;
             }
@@ -716,7 +716,7 @@ class Route
         // check patterns for routed params
         if (!empty($this->options)) {
             foreach ($this->options as $key => $pattern) {
-                if (isset($url[$key]) && !preg_match('#^' . $pattern . '$#', $url[$key])) {
+                if (isset($url[$key]) && !\preg_match('#^' . $pattern . '$#', $url[$key])) {
                     return false;
                 }
             }
@@ -744,9 +744,9 @@ class Route
         if (empty($url['_method'])) {
             return false;
         }
-        $methods = array_map('strtoupper', (array)$url['_method']);
+        $methods = \array_map('strtoupper', (array)$url['_method']);
         foreach ($methods as $value) {
-            if (in_array($value, (array)$this->defaults['_method'])) {
+            if (\in_array($value, (array)$this->defaults['_method'])) {
                 return true;
             }
         }
@@ -767,7 +767,7 @@ class Route
      */
     protected function _writeUrl($params, $pass = [], $query = [])
     {
-        $pass = implode('/', array_map('rawurlencode', $pass));
+        $pass = \implode('/', \array_map('rawurlencode', $pass));
         $out = $this->template;
 
         $search = $replace = [];
@@ -775,21 +775,21 @@ class Route
             $string = null;
             if (isset($params[$key])) {
                 $string = $params[$key];
-            } elseif (strpos($out, $key) != strlen($out) - strlen($key)) {
+            } elseif (\strpos($out, $key) != \strlen($out) - \strlen($key)) {
                 $key .= '/';
             }
             $search[] = ':' . $key;
             $replace[] = $string;
         }
 
-        if (strpos($this->template, '**') !== false) {
-            array_push($search, '**', '%2F');
-            array_push($replace, $pass, '/');
-        } elseif (strpos($this->template, '*') !== false) {
+        if (\strpos($this->template, '**') !== false) {
+            \array_push($search, '**', '%2F');
+            \array_push($replace, $pass, '/');
+        } elseif (\strpos($this->template, '*') !== false) {
             $search[] = '*';
             $replace[] = $pass;
         }
-        $out = str_replace($search, $replace, $out);
+        $out = \str_replace($search, $replace, $out);
 
         // add base url if applicable.
         if (isset($params['_base'])) {
@@ -797,7 +797,7 @@ class Route
             unset($params['_base']);
         }
 
-        $out = str_replace('//', '/', $out);
+        $out = \str_replace('//', '/', $out);
         if (isset($params['_scheme']) ||
             isset($params['_host']) ||
             isset($params['_port'])
@@ -812,13 +812,13 @@ class Route
             $out = "{$scheme}://{$host}{$out}";
         }
         if (!empty($params['_ext']) || !empty($query)) {
-            $out = rtrim($out, '/');
+            $out = \rtrim($out, '/');
         }
         if (!empty($params['_ext'])) {
             $out .= '.' . $params['_ext'];
         }
         if (!empty($query)) {
-            $out .= rtrim('?' . http_build_query($query), '?');
+            $out .= \rtrim('?' . \http_build_query($query), '?');
         }
 
         return $out;
@@ -831,13 +831,13 @@ class Route
      */
     public function staticPath()
     {
-        $routeKey = strpos($this->template, ':');
+        $routeKey = \strpos($this->template, ':');
         if ($routeKey !== false) {
-            return substr($this->template, 0, $routeKey);
+            return \substr($this->template, 0, $routeKey);
         }
-        $star = strpos($this->template, '*');
+        $star = \strpos($this->template, '*');
         if ($star !== false) {
-            $path = rtrim(substr($this->template, 0, $star), '/');
+            $path = \rtrim(\substr($this->template, 0, $star), '/');
 
             return $path === '' ? '/' : $path;
         }
@@ -880,7 +880,7 @@ class Route
      */
     public static function __set_state($fields)
     {
-        $class = get_called_class();
+        $class = \get_called_class();
         $obj = new $class('');
         foreach ($fields as $field => $value) {
             $obj->$field = $value;

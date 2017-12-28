@@ -349,12 +349,12 @@ class Log
     public static function write($level, $message, $context = [])
     {
         static::_init();
-        if (is_int($level) && in_array($level, static::$_levelMap)) {
-            $level = array_search($level, static::$_levelMap);
+        if (\is_int($level) && \in_array($level, static::$_levelMap)) {
+            $level = \array_search($level, static::$_levelMap);
         }
 
-        if (!in_array($level, static::$_levels)) {
-            throw new InvalidArgumentException(sprintf('Invalid log level "%s"', $level));
+        if (!\in_array($level, static::$_levels)) {
+            throw new InvalidArgumentException(\sprintf('Invalid log level "%s"', $level));
         }
 
         $logged = false;
@@ -376,9 +376,9 @@ class Log
                 $scopes = [];
             }
 
-            $correctLevel = empty($levels) || in_array($level, $levels);
+            $correctLevel = empty($levels) || \in_array($level, $levels);
             $inScope = $scopes === false && empty($context['scope']) || $scopes === [] ||
-                is_array($scopes) && array_intersect((array)$context['scope'], $scopes);
+                \is_array($scopes) && \array_intersect((array)$context['scope'], $scopes);
 
             if ($correctLevel && $inScope) {
                 $logger->log($level, $message, $context);

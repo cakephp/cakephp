@@ -227,7 +227,7 @@ trait EntityTrait
      */
     public function set($property, $value = null, array $options = [])
     {
-        if (is_string($property) && $property !== '') {
+        if (\is_string($property) && $property !== '') {
             $guard = false;
             $property = [$property => $value];
         } else {
@@ -235,7 +235,7 @@ trait EntityTrait
             $options = (array)$value;
         }
 
-        if (!is_array($property)) {
+        if (!\is_array($property)) {
             throw new InvalidArgumentException('Cannot set an empty property');
         }
         $options += ['setter' => true, 'guard' => $guard];
@@ -247,8 +247,8 @@ trait EntityTrait
 
             $this->setDirty($p, true);
 
-            if (!array_key_exists($p, $this->_original) &&
-                array_key_exists($p, $this->_properties) &&
+            if (!\array_key_exists($p, $this->_original) &&
+                \array_key_exists($p, $this->_properties) &&
                 $this->_properties[$p] !== $value
             ) {
                 $this->_original[$p] = $this->_properties[$p];
@@ -278,7 +278,7 @@ trait EntityTrait
      */
     public function &get($property)
     {
-        if (!strlen((string)$property)) {
+        if (!\strlen((string)$property)) {
             throw new InvalidArgumentException('Cannot get an empty property');
         }
 
@@ -307,10 +307,10 @@ trait EntityTrait
      */
     public function getOriginal($property)
     {
-        if (!strlen((string)$property)) {
+        if (!\strlen((string)$property)) {
             throw new InvalidArgumentException('Cannot get an empty property');
         }
-        if (array_key_exists($property, $this->_original)) {
+        if (\array_key_exists($property, $this->_original)) {
             return $this->_original[$property];
         }
 
@@ -325,9 +325,9 @@ trait EntityTrait
     public function getOriginalValues()
     {
         $originals = $this->_original;
-        $originalKeys = array_keys($originals);
+        $originalKeys = \array_keys($originals);
         foreach ($this->_properties as $key => $value) {
-            if (!in_array($key, $originalKeys)) {
+            if (!\in_array($key, $originalKeys)) {
                 $originals[$key] = $value;
             }
         }
@@ -431,8 +431,8 @@ trait EntityTrait
             return $this;
         }
 
-        $properties = array_merge($this->_hidden, $properties);
-        $this->_hidden = array_unique($properties);
+        $properties = \array_merge($this->_hidden, $properties);
+        $this->_hidden = \array_unique($properties);
 
         return $this;
     }
@@ -481,8 +481,8 @@ trait EntityTrait
             return $this;
         }
 
-        $properties = array_merge($this->_virtual, $properties);
-        $this->_virtual = array_unique($properties);
+        $properties = \array_merge($this->_virtual, $properties);
+        $this->_virtual = \array_unique($properties);
 
         return $this;
     }
@@ -508,10 +508,10 @@ trait EntityTrait
      */
     public function visibleProperties()
     {
-        $properties = array_keys($this->_properties);
-        $properties = array_merge($properties, $this->_virtual);
+        $properties = \array_keys($this->_properties);
+        $properties = \array_merge($properties, $this->_virtual);
 
-        return array_diff($properties, $this->_hidden);
+        return \array_diff($properties, $this->_hidden);
     }
 
     /**
@@ -528,7 +528,7 @@ trait EntityTrait
         $result = [];
         foreach ($this->visibleProperties() as $property) {
             $value = $this->get($property);
-            if (is_array($value)) {
+            if (\is_array($value)) {
                 $result[$property] = [];
                 foreach ($value as $k => $entity) {
                     if ($entity instanceof EntityInterface) {
@@ -626,14 +626,14 @@ trait EntityTrait
             return '';
         }
 
-        foreach (get_class_methods($class) as $method) {
-            $prefix = substr($method, 1, 3);
+        foreach (\get_class_methods($class) as $method) {
+            $prefix = \substr($method, 1, 3);
             if ($method[0] !== '_' || ($prefix !== 'get' && $prefix !== 'set')) {
                 continue;
             }
-            $field = lcfirst(substr($method, 4));
+            $field = \lcfirst(\substr($method, 4));
             $snakeField = Inflector::underscore($field);
-            $titleField = ucfirst($field);
+            $titleField = \ucfirst($field);
             static::$_accessors[$class][$prefix][$snakeField] = $method;
             static::$_accessors[$class][$prefix][$field] = $method;
             static::$_accessors[$class][$prefix][$titleField] = $method;
@@ -783,7 +783,7 @@ trait EntityTrait
      */
     public function getDirty()
     {
-        return array_keys($this->_dirty);
+        return \array_keys($this->_dirty);
     }
 
     /**
@@ -837,11 +837,11 @@ trait EntityTrait
      */
     public function getErrors()
     {
-        $diff = array_diff_key($this->_properties, $this->_errors);
+        $diff = \array_diff_key($this->_properties, $this->_errors);
 
         return $this->_errors + (new Collection($diff))
             ->filter(function ($value) {
-                return is_array($value) || $value instanceof EntityInterface;
+                return \is_array($value) || $value instanceof EntityInterface;
             })
             ->map(function ($value) {
                 return $this->_readError($value);
@@ -886,7 +886,7 @@ trait EntityTrait
             $this->_errors += [$f => []];
             $this->_errors[$f] = $overwrite ?
                 (array)$error :
-                array_merge($this->_errors[$f], (array)$error);
+                \array_merge($this->_errors[$f], (array)$error);
         }
 
         return $this;
@@ -909,7 +909,7 @@ trait EntityTrait
      */
     public function setError($field, $errors, $overwrite = false)
     {
-        if (is_string($errors)) {
+        if (\is_string($errors)) {
             $errors = [$errors];
         }
 
@@ -954,11 +954,11 @@ trait EntityTrait
             return $this->getErrors();
         }
 
-        if (is_string($field) && $errors === null) {
+        if (\is_string($field) && $errors === null) {
             return $this->getError($field);
         }
 
-        if (!is_array($field)) {
+        if (!\is_array($field)) {
             $field = [$field => $errors];
         }
 
@@ -973,26 +973,26 @@ trait EntityTrait
      */
     protected function _nestedErrors($field)
     {
-        $path = explode('.', $field);
+        $path = \explode('.', $field);
 
         // Only one path element, check for nested entity with error.
-        if (count($path) === 1) {
+        if (\count($path) === 1) {
             return $this->_readError($this->get($path[0]));
         }
 
         $entity = $this;
-        $len = count($path);
+        $len = \count($path);
         while ($len) {
-            $part = array_shift($path);
-            $len = count($path);
+            $part = \array_shift($path);
+            $len = \count($path);
             $val = null;
             if ($entity instanceof EntityInterface) {
                 $val = $entity->get($part);
-            } elseif (is_array($entity)) {
+            } elseif (\is_array($entity)) {
                 $val = isset($entity[$part]) ? $entity[$part] : false;
             }
 
-            if (is_array($val) ||
+            if (\is_array($val) ||
                 $val instanceof Traversable ||
                 $val instanceof EntityInterface
             ) {
@@ -1002,8 +1002,8 @@ trait EntityTrait
                 break;
             }
         }
-        if (count($path) <= 1) {
-            return $this->_readError($entity, array_pop($path));
+        if (\count($path) <= 1) {
+            return $this->_readError($entity, \array_pop($path));
         }
 
         return [];
@@ -1021,14 +1021,14 @@ trait EntityTrait
         if ($object instanceof EntityInterface) {
             return $object->errors($path);
         }
-        if (is_array($object)) {
-            $array = array_map(function ($val) {
+        if (\is_array($object)) {
+            $array = \array_map(function ($val) {
                 if ($val instanceof EntityInterface) {
                     return $val->errors();
                 }
             }, $object);
 
-            return array_filter($array);
+            return \array_filter($array);
         }
 
         return [];
@@ -1114,13 +1114,13 @@ trait EntityTrait
             return $this->_invalid;
         }
 
-        if (is_string($field) && $value === null) {
+        if (\is_string($field) && $value === null) {
             $value = isset($this->_invalid[$field]) ? $this->_invalid[$field] : null;
 
             return $value;
         }
 
-        if (!is_array($field)) {
+        if (!\is_array($field)) {
             $field = [$field => $value];
         }
 
@@ -1205,7 +1205,7 @@ trait EntityTrait
     public function setAccess($property, $set)
     {
         if ($property === '*') {
-            $this->_accessible = array_map(function ($p) use ($set) {
+            $this->_accessible = \array_map(function ($p) use ($set) {
                 return (bool)$set;
             }, $this->_accessible);
             $this->_accessible['*'] = (bool)$set;
@@ -1276,7 +1276,7 @@ trait EntityTrait
      */
     public function source($alias = null)
     {
-        if (is_null($alias)) {
+        if (\is_null($alias)) {
             return $this->getSource();
         }
 
@@ -1292,7 +1292,7 @@ trait EntityTrait
      */
     public function __toString()
     {
-        return json_encode($this, JSON_PRETTY_PRINT);
+        return \json_encode($this, JSON_PRETTY_PRINT);
     }
 
     /**

@@ -111,9 +111,9 @@ class Plugin
      */
     public static function load($plugin, array $config = [])
     {
-        if (is_array($plugin)) {
+        if (\is_array($plugin)) {
             foreach ($plugin as $name => $conf) {
-                list($name, $conf) = is_numeric($name) ? [$conf, $config] : [$name, $conf];
+                list($name, $conf) = \is_numeric($name) ? [$conf, $config] : [$name, $conf];
                 static::load($name, $conf);
             }
 
@@ -136,9 +136,9 @@ class Plugin
 
         if (empty($config['path'])) {
             $paths = App::path('Plugin');
-            $pluginPath = str_replace('/', DIRECTORY_SEPARATOR, $plugin);
+            $pluginPath = \str_replace('/', DIRECTORY_SEPARATOR, $plugin);
             foreach ($paths as $path) {
-                if (is_dir($path . $pluginPath)) {
+                if (\is_dir($path . $pluginPath)) {
                     $config['path'] = $path . $pluginPath . DIRECTORY_SEPARATOR;
                     break;
                 }
@@ -162,11 +162,11 @@ class Plugin
                 static::$_loader->register();
             }
             static::$_loader->addNamespace(
-                str_replace('/', '\\', $plugin),
+                \str_replace('/', '\\', $plugin),
                 $config['path'] . $config['classBase'] . DIRECTORY_SEPARATOR
             );
             static::$_loader->addNamespace(
-                str_replace('/', '\\', $plugin) . '\Test',
+                \str_replace('/', '\\', $plugin) . '\Test',
                 $config['path'] . 'tests' . DIRECTORY_SEPARATOR
             );
         }
@@ -186,10 +186,10 @@ class Plugin
         if (Configure::check('plugins')) {
             return;
         }
-        $vendorFile = dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'cakephp-plugins.php';
-        if (!file_exists($vendorFile)) {
-            $vendorFile = dirname(dirname(dirname(dirname(__DIR__)))) . DIRECTORY_SEPARATOR . 'cakephp-plugins.php';
-            if (!file_exists($vendorFile)) {
+        $vendorFile = \dirname(\dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'cakephp-plugins.php';
+        if (!\file_exists($vendorFile)) {
+            $vendorFile = \dirname(\dirname(\dirname(\dirname(__DIR__)))) . DIRECTORY_SEPARATOR . 'cakephp-plugins.php';
+            if (!\file_exists($vendorFile)) {
                 Configure::write(['plugins' => []]);
 
                 return;
@@ -227,7 +227,7 @@ class Plugin
         static::_loadConfig();
         $plugins = [];
         foreach (App::path('Plugin') as $path) {
-            if (!is_dir($path)) {
+            if (!\is_dir($path)) {
                 continue;
             }
             $dir = new DirectoryIterator($path);
@@ -238,8 +238,8 @@ class Plugin
             }
         }
         if (Configure::check('plugins')) {
-            $plugins = array_merge($plugins, array_keys(Configure::read('plugins')));
-            $plugins = array_unique($plugins);
+            $plugins = \array_merge($plugins, \array_keys(Configure::read('plugins')));
+            $plugins = \array_unique($plugins);
         }
 
         foreach ($plugins as $p) {
@@ -366,8 +366,8 @@ class Plugin
         if ($plugin !== null) {
             return isset(static::$_plugins[$plugin]);
         }
-        $return = array_keys(static::$_plugins);
-        sort($return);
+        $return = \array_keys(static::$_plugins);
+        \sort($return);
 
         return $return;
     }
@@ -396,7 +396,7 @@ class Plugin
      */
     protected static function _includeFile($file, $ignoreMissing = false)
     {
-        if ($ignoreMissing && !is_file($file)) {
+        if ($ignoreMissing && !\is_file($file)) {
             return false;
         }
 

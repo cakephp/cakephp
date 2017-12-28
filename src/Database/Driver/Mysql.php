@@ -75,10 +75,10 @@ class Mysql extends Driver
         }
 
         if (!empty($config['timezone'])) {
-            $config['init'][] = sprintf("SET time_zone = '%s'", $config['timezone']);
+            $config['init'][] = \sprintf("SET time_zone = '%s'", $config['timezone']);
         }
         if (!empty($config['encoding'])) {
-            $config['init'][] = sprintf('SET NAMES %s', $config['encoding']);
+            $config['init'][] = \sprintf('SET NAMES %s', $config['encoding']);
         }
 
         $config['flags'] += [
@@ -120,7 +120,7 @@ class Mysql extends Driver
      */
     public function enabled()
     {
-        return in_array('mysql', PDO::getAvailableDrivers());
+        return \in_array('mysql', PDO::getAvailableDrivers());
     }
 
     /**
@@ -173,6 +173,6 @@ class Mysql extends Driver
             $this->_version = $this->_connection->getAttribute(PDO::ATTR_SERVER_VERSION);
         }
 
-        return $this->_supportsNativeJson = version_compare($this->_version, '5.7.0', '>=');
+        return $this->_supportsNativeJson = \version_compare($this->_version, '5.7.0', '>=');
     }
 }

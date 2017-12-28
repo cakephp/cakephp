@@ -267,7 +267,7 @@ class FormHelper extends Helper
             unset($config['registry']);
         }
         if (isset($config['widgets'])) {
-            if (is_string($config['widgets'])) {
+            if (\is_string($config['widgets'])) {
                 $config['widgets'] = (array)$config['widgets'];
             }
             $widgets = $config['widgets'] + $widgets;
@@ -374,14 +374,14 @@ class FormHelper extends Helper
             'type' => $isCreate ? 'post' : 'put',
             'action' => null,
             'url' => null,
-            'encoding' => strtolower(Configure::read('App.encoding')),
+            'encoding' => \strtolower(Configure::read('App.encoding')),
             'templates' => null,
             'idPrefix' => null,
             'valueSources' => null,
         ];
 
         if (isset($options['action'])) {
-            trigger_error('Using key `action` is deprecated, use `url` directly instead.', E_USER_DEPRECATED);
+            \trigger_error('Using key `action` is deprecated, use `url` directly instead.', E_USER_DEPRECATED);
         }
 
         if (isset($options['valueSources'])) {
@@ -396,7 +396,7 @@ class FormHelper extends Helper
 
         if (!empty($options['templates'])) {
             $templater->push();
-            $method = is_string($options['templates']) ? 'load' : 'add';
+            $method = \is_string($options['templates']) ? 'load' : 'add';
             $templater->{$method}($options['templates']);
         }
         unset($options['templates']);
@@ -413,7 +413,7 @@ class FormHelper extends Helper
         unset($options['url'], $options['action'], $options['idPrefix']);
 
         $htmlAttributes = [];
-        switch (strtolower($options['type'])) {
+        switch (\strtolower($options['type'])) {
             case 'get':
                 $htmlAttributes['method'] = 'get';
                 break;
@@ -431,7 +431,7 @@ class FormHelper extends Helper
             case 'patch':
                 $append .= $this->hidden('_method', [
                     'name' => '_method',
-                    'value' => strtoupper($options['type']),
+                    'value' => \strtoupper($options['type']),
                     'secure' => static::SECURE_SKIP
                 ]);
             // Default to post method
@@ -439,13 +439,13 @@ class FormHelper extends Helper
                 $htmlAttributes['method'] = 'post';
         }
         if (isset($options['method'])) {
-            $htmlAttributes['method'] = strtolower($options['method']);
+            $htmlAttributes['method'] = \strtolower($options['method']);
         }
         if (isset($options['enctype'])) {
-            $htmlAttributes['enctype'] = strtolower($options['enctype']);
+            $htmlAttributes['enctype'] = \strtolower($options['enctype']);
         }
 
-        $this->requestType = strtolower($options['type']);
+        $this->requestType = \strtolower($options['type']);
 
         if (!empty($options['encoding'])) {
             $htmlAttributes['accept-charset'] = $options['encoding'];
@@ -484,8 +484,8 @@ class FormHelper extends Helper
             return $this->request->here(false);
         }
 
-        if (is_string($options['url']) ||
-            (is_array($options['url']) && isset($options['url']['_name']))
+        if (\is_string($options['url']) ||
+            (\is_array($options['url']) && isset($options['url']['_name']))
         ) {
             return $options['url'];
         }
@@ -503,7 +503,7 @@ class FormHelper extends Helper
         $action = (array)$options['url'] + $actionDefaults;
 
         $pk = $context->primaryKey();
-        if (count($pk)) {
+        if (\count($pk)) {
             $id = $this->getSourceValue($pk[0]);
         }
         if (empty($action[0]) && isset($id)) {
@@ -522,9 +522,9 @@ class FormHelper extends Helper
     protected function _lastAction($url)
     {
         $action = Router::url($url, true);
-        $query = parse_url($action, PHP_URL_QUERY);
+        $query = \parse_url($action, PHP_URL_QUERY);
         $query = $query ? '?' . $query : '';
-        $this->_lastAction = parse_url($action, PHP_URL_PATH) . $query;
+        $this->_lastAction = \parse_url($action, PHP_URL_PATH) . $query;
     }
 
     /**
@@ -616,17 +616,17 @@ class FormHelper extends Helper
             $fields,
             $this->_unlockedFields
         );
-        $tokenFields = array_merge($secureAttributes, [
+        $tokenFields = \array_merge($secureAttributes, [
             'value' => $tokenData['fields'],
         ]);
         $out = $this->hidden('_Token.fields', $tokenFields);
-        $tokenUnlocked = array_merge($secureAttributes, [
+        $tokenUnlocked = \array_merge($secureAttributes, [
             'value' => $tokenData['unlocked'],
         ]);
         $out .= $this->hidden('_Token.unlocked', $tokenUnlocked);
         if ($debugSecurity) {
-            $tokenDebug = array_merge($secureAttributes, [
-                'value' => urlencode(json_encode([
+            $tokenDebug = \array_merge($secureAttributes, [
+                'value' => \urlencode(\json_encode([
                     $this->_lastAction,
                     $fields,
                     $this->_unlockedFields
@@ -653,10 +653,10 @@ class FormHelper extends Helper
         if ($name === null) {
             return $this->_unlockedFields;
         }
-        if (!in_array($name, $this->_unlockedFields)) {
+        if (!\in_array($name, $this->_unlockedFields)) {
             $this->_unlockedFields[] = $name;
         }
-        $index = array_search($name, $this->fields);
+        $index = \array_search($name, $this->fields);
         if ($index !== false) {
             unset($this->fields[$index]);
         }
@@ -680,22 +680,22 @@ class FormHelper extends Helper
             return;
         }
 
-        if (is_string($field)) {
-            $field = Hash::filter(explode('.', $field));
+        if (\is_string($field)) {
+            $field = Hash::filter(\explode('.', $field));
         }
 
         foreach ($this->_unlockedFields as $unlockField) {
-            $unlockParts = explode('.', $unlockField);
-            if (array_values(array_intersect($field, $unlockParts)) === $unlockParts) {
+            $unlockParts = \explode('.', $unlockField);
+            if (\array_values(\array_intersect($field, $unlockParts)) === $unlockParts) {
                 return;
             }
         }
 
-        $field = implode('.', $field);
-        $field = preg_replace('/(\.\d+)+$/', '', $field);
+        $field = \implode('.', $field);
+        $field = \preg_replace('/(\.\d+)+$/', '', $field);
 
         if ($lock) {
-            if (!in_array($field, $this->fields)) {
+            if (!\in_array($field, $this->fields)) {
                 if ($value !== null) {
                     $this->fields[$field] = $value;
 
@@ -742,8 +742,8 @@ class FormHelper extends Helper
      */
     public function error($field, $text = null, array $options = [])
     {
-        if (substr($field, -5) === '._ids') {
-            $field = substr($field, 0, -5);
+        if (\substr($field, -5) === '._ids') {
+            $field = \substr($field, 0, -5);
         }
         $options += ['escape' => true];
 
@@ -753,7 +753,7 @@ class FormHelper extends Helper
         }
         $error = (array)$context->error($field);
 
-        if (is_array($text)) {
+        if (\is_array($text)) {
             $tmp = [];
             foreach ($error as $k => $e) {
                 if (isset($text[$k])) {
@@ -776,17 +776,17 @@ class FormHelper extends Helper
             unset($options['escape']);
         }
 
-        if (is_array($error)) {
-            if (count($error) > 1) {
+        if (\is_array($error)) {
+            if (\count($error) > 1) {
                 $errorText = [];
                 foreach ($error as $err) {
                     $errorText[] = $this->formatTemplate('errorItem', ['text' => $err]);
                 }
                 $error = $this->formatTemplate('errorList', [
-                    'content' => implode('', $errorText)
+                    'content' => \implode('', $errorText)
                 ]);
             } else {
-                $error = array_pop($error);
+                $error = \array_pop($error);
             }
         }
 
@@ -853,15 +853,15 @@ class FormHelper extends Helper
     {
         if ($text === null) {
             $text = $fieldName;
-            if (substr($text, -5) === '._ids') {
-                $text = substr($text, 0, -5);
+            if (\substr($text, -5) === '._ids') {
+                $text = \substr($text, 0, -5);
             }
-            if (strpos($text, '.') !== false) {
-                $fieldElements = explode('.', $text);
-                $text = array_pop($fieldElements);
+            if (\strpos($text, '.') !== false) {
+                $fieldElements = \explode('.', $text);
+                $text = \array_pop($fieldElements);
             }
-            if (substr($text, -3) === '_id') {
-                $text = substr($text, 0, -3);
+            if (\substr($text, -3) === '_id') {
+                $text = \substr($text, 0, -3);
             }
             $text = __(Inflector::humanize(Inflector::underscore($text)));
         }
@@ -877,7 +877,7 @@ class FormHelper extends Helper
             'text' => $text,
         ];
         if (isset($options['input'])) {
-            if (is_array($options['input'])) {
+            if (\is_array($options['input'])) {
                 $attrs = $options['input'] + $attrs;
             }
 
@@ -923,7 +923,7 @@ class FormHelper extends Helper
 
         $modelFields = $context->fieldNames();
 
-        $fields = array_merge(
+        $fields = \array_merge(
             Hash::normalize($modelFields),
             Hash::normalize($fields)
         );
@@ -1042,7 +1042,7 @@ class FormHelper extends Helper
                 $actionName = __d('cake', 'Edit %s');
             }
             $modelName = Inflector::humanize(Inflector::singularize($this->request->getParam('controller')));
-            $legend = sprintf($actionName, $modelName);
+            $legend = \sprintf($actionName, $modelName);
         }
 
         if ($fieldset !== false) {
@@ -1051,7 +1051,7 @@ class FormHelper extends Helper
             }
 
             $fieldsetParams = ['content' => $out, 'attrs' => ''];
-            if (is_array($fieldset) && !empty($fieldset)) {
+            if (\is_array($fieldset) && !empty($fieldset)) {
                 $fieldsetParams['attrs'] = $this->templater()->formatAttributes($fieldset);
             }
             $out = $this->formatTemplate('fieldset', $fieldsetParams);
@@ -1111,7 +1111,7 @@ class FormHelper extends Helper
 
         if ($newTemplates) {
             $templater->push();
-            $templateMethod = is_string($options['templates']) ? 'load' : 'add';
+            $templateMethod = \is_string($options['templates']) ? 'load' : 'add';
             $templater->{$templateMethod}($options['templates']);
         }
         unset($options['templates']);
@@ -1119,7 +1119,7 @@ class FormHelper extends Helper
         $error = null;
         $errorSuffix = '';
         if ($options['type'] !== 'hidden' && $options['error'] !== false) {
-            if (is_array($options['error'])) {
+            if (\is_array($options['error'])) {
                 $error = $this->error($fieldName, $options['error'], $options['error']);
             } else {
                 $error = $this->error($fieldName, $options['error']);
@@ -1141,7 +1141,7 @@ class FormHelper extends Helper
         $nestedInput = isset($options['nestedInput']) ? $options['nestedInput'] : $nestedInput;
         unset($options['nestedInput']);
 
-        if ($nestedInput === true && $options['type'] === 'checkbox' && !array_key_exists('hiddenField', $options) && $label !== false) {
+        if ($nestedInput === true && $options['type'] === 'checkbox' && !\array_key_exists('hiddenField', $options) && $label !== false) {
             $options['hiddenField'] = '_split';
         }
 
@@ -1154,11 +1154,11 @@ class FormHelper extends Helper
             return $input;
         }
 
-        $label = $this->_getLabel($fieldName, compact('input', 'label', 'error', 'nestedInput') + $options);
+        $label = $this->_getLabel($fieldName, \compact('input', 'label', 'error', 'nestedInput') + $options);
         if ($nestedInput) {
-            $result = $this->_groupTemplate(compact('label', 'error', 'options'));
+            $result = $this->_groupTemplate(\compact('label', 'error', 'options'));
         } else {
-            $result = $this->_groupTemplate(compact('input', 'label', 'error', 'options'));
+            $result = $this->_groupTemplate(\compact('input', 'label', 'error', 'options'));
         }
         $result = $this->_inputContainerTemplate([
             'content' => $result,
@@ -1242,7 +1242,7 @@ class FormHelper extends Helper
     {
         $label = $options['labelOptions'];
         unset($options['labelOptions']);
-        switch (strtolower($options['type'])) {
+        switch (\strtolower($options['type'])) {
             case 'select':
                 $opts = $options['options'];
                 unset($options['options']);
@@ -1303,23 +1303,23 @@ class FormHelper extends Helper
             return 'hidden';
         }
 
-        if (substr($fieldName, -3) === '_id') {
+        if (\substr($fieldName, -3) === '_id') {
             return 'select';
         }
 
         $internalType = $context->type($fieldName);
         $map = $this->_config['typeMap'];
         $type = isset($map[$internalType]) ? $map[$internalType] : 'text';
-        $fieldName = array_slice(explode('.', $fieldName), -1)[0];
+        $fieldName = \array_slice(\explode('.', $fieldName), -1)[0];
 
         switch (true) {
             case isset($options['checked']):
                 return 'checkbox';
             case isset($options['options']):
                 return 'select';
-            case in_array($fieldName, ['passwd', 'password']):
+            case \in_array($fieldName, ['passwd', 'password']):
                 return 'password';
-            case in_array($fieldName, ['tel', 'telephone', 'phone']):
+            case \in_array($fieldName, ['tel', 'telephone', 'phone']):
                 return 'tel';
             case $fieldName === 'email':
                 return 'email';
@@ -1345,19 +1345,19 @@ class FormHelper extends Helper
         }
 
         $pluralize = true;
-        if (substr($fieldName, -5) === '._ids') {
-            $fieldName = substr($fieldName, 0, -5);
+        if (\substr($fieldName, -5) === '._ids') {
+            $fieldName = \substr($fieldName, 0, -5);
             $pluralize = false;
-        } elseif (substr($fieldName, -3) === '_id') {
-            $fieldName = substr($fieldName, 0, -3);
+        } elseif (\substr($fieldName, -3) === '_id') {
+            $fieldName = \substr($fieldName, 0, -3);
         }
-        $fieldName = array_slice(explode('.', $fieldName), -1)[0];
+        $fieldName = \array_slice(\explode('.', $fieldName), -1)[0];
 
         $varName = Inflector::variable(
             $pluralize ? Inflector::pluralize($fieldName) : $fieldName
         );
         $varOptions = $this->_View->get($varName);
-        if (!is_array($varOptions) && !($varOptions instanceof Traversable)) {
+        if (!\is_array($varOptions) && !($varOptions instanceof Traversable)) {
             return $options;
         }
         if ($options['type'] !== 'radio') {
@@ -1391,39 +1391,39 @@ class FormHelper extends Helper
         if ($options['type'] === 'number' && !isset($options['step'])) {
             if ($type === 'decimal' && isset($fieldDef['precision'])) {
                 $decimalPlaces = $fieldDef['precision'];
-                $options['step'] = sprintf('%.' . $decimalPlaces . 'F', pow(10, -1 * $decimalPlaces));
+                $options['step'] = \sprintf('%.' . $decimalPlaces . 'F', \pow(10, -1 * $decimalPlaces));
             } elseif ($type === 'float') {
                 $options['step'] = 'any';
             }
         }
 
         $typesWithOptions = ['text', 'number', 'radio', 'select'];
-        $magicOptions = (in_array($options['type'], ['radio', 'select']) || $allowOverride);
-        if ($magicOptions && in_array($options['type'], $typesWithOptions)) {
+        $magicOptions = (\in_array($options['type'], ['radio', 'select']) || $allowOverride);
+        if ($magicOptions && \in_array($options['type'], $typesWithOptions)) {
             $options = $this->_optionsOptions($fieldName, $options);
         }
 
-        if ($allowOverride && substr($fieldName, -5) === '._ids') {
+        if ($allowOverride && \substr($fieldName, -5) === '._ids') {
             $options['type'] = 'select';
             if (empty($options['multiple'])) {
                 $options['multiple'] = true;
             }
         }
 
-        if ($options['type'] === 'select' && array_key_exists('step', $options)) {
+        if ($options['type'] === 'select' && \array_key_exists('step', $options)) {
             unset($options['step']);
         }
 
-        $autoLength = !array_key_exists('maxlength', $options)
+        $autoLength = !\array_key_exists('maxlength', $options)
             && !empty($fieldDef['length'])
             && $options['type'] !== 'select';
 
         $allowedTypes = ['text', 'textarea', 'email', 'tel', 'url', 'search'];
-        if ($autoLength && in_array($options['type'], $allowedTypes)) {
-            $options['maxlength'] = min($fieldDef['length'], 100000);
+        if ($autoLength && \in_array($options['type'], $allowedTypes)) {
+            $options['maxlength'] = \min($fieldDef['length'], 100000);
         }
 
-        if (in_array($options['type'], ['datetime', 'date', 'time', 'select'])) {
+        if (\in_array($options['type'], ['datetime', 'date', 'time', 'select'])) {
             $options += ['empty' => false];
         }
 
@@ -1468,7 +1468,7 @@ class FormHelper extends Helper
      */
     protected function _extractOption($name, $options, $default = null)
     {
-        if (array_key_exists($name, $options)) {
+        if (\array_key_exists($name, $options)) {
             return $options[$name];
         }
 
@@ -1490,20 +1490,20 @@ class FormHelper extends Helper
     {
         $options += ['id' => null, 'input' => null, 'nestedInput' => false, 'templateVars' => []];
         $labelAttributes = ['templateVars' => $options['templateVars']];
-        if (is_array($label)) {
+        if (\is_array($label)) {
             $labelText = null;
             if (isset($label['text'])) {
                 $labelText = $label['text'];
                 unset($label['text']);
             }
-            $labelAttributes = array_merge($labelAttributes, $label);
+            $labelAttributes = \array_merge($labelAttributes, $label);
         } else {
             $labelText = $label;
         }
 
         $labelAttributes['for'] = $options['id'];
         $groupTypes = ['radio', 'multicheckbox', 'date', 'time', 'datetime'];
-        if (in_array($options['type'], $groupTypes, true)) {
+        if (\in_array($options['type'], $groupTypes, true)) {
             $labelAttributes['for'] = false;
         }
         if ($options['nestedInput']) {
@@ -1641,7 +1641,7 @@ class FormHelper extends Helper
     {
         $options = [];
         if (empty($params)) {
-            throw new Exception(sprintf('Missing field name for FormHelper::%s', $method));
+            throw new Exception(\sprintf('Missing field name for FormHelper::%s', $method));
         }
         if (isset($params[1])) {
             $options = $params[1];
@@ -1689,7 +1689,7 @@ class FormHelper extends Helper
         $secure = $options['secure'];
         unset($options['secure']);
 
-        $options = $this->_initInputField($fieldName, array_merge(
+        $options = $this->_initInputField($fieldName, \array_merge(
             $options,
             ['secure' => static::SECURE_SKIP]
         ));
@@ -1779,12 +1779,12 @@ class FormHelper extends Helper
             $formOptions['type'] = $options['method'];
             unset($options['method']);
         }
-        if (isset($options['form']) && is_array($options['form'])) {
+        if (isset($options['form']) && \is_array($options['form'])) {
             $formOptions = $options['form'] + $formOptions;
             unset($options['form']);
         }
         $out = $this->create(false, $formOptions);
-        if (isset($options['data']) && is_array($options['data'])) {
+        if (isset($options['data']) && \is_array($options['data'])) {
             foreach (Hash::flatten($options['data']) as $key => $value) {
                 $out .= $this->hidden($key, ['value' => $value]);
             }
@@ -1831,14 +1831,14 @@ class FormHelper extends Helper
 
         $requestMethod = 'POST';
         if (!empty($options['method'])) {
-            $requestMethod = strtoupper($options['method']);
+            $requestMethod = \strtoupper($options['method']);
             unset($options['method']);
         }
 
         $confirmMessage = $options['confirm'];
         unset($options['confirm']);
 
-        $formName = str_replace('.', '', uniqid('post_', true));
+        $formName = \str_replace('.', '', \uniqid('post_', true));
         $formOptions = [
             'name' => $formName,
             'style' => 'display:none;',
@@ -1868,7 +1868,7 @@ class FormHelper extends Helper
         $out .= $this->_csrfField();
 
         $fields = [];
-        if (isset($options['data']) && is_array($options['data'])) {
+        if (isset($options['data']) && \is_array($options['data'])) {
             foreach (Hash::flatten($options['data']) as $key => $value) {
                 $fields[$key] = $value;
                 $out .= $this->hidden($key, ['value' => $value, 'secure' => static::SECURE_SKIP]);
@@ -1923,7 +1923,7 @@ class FormHelper extends Helper
      */
     public function submit($caption = null, array $options = [])
     {
-        if (!is_string($caption) && empty($caption)) {
+        if (!\is_string($caption) && empty($caption)) {
             $caption = __d('cake', 'Submit');
         }
         $options += [
@@ -1937,8 +1937,8 @@ class FormHelper extends Helper
         }
         unset($options['secure']);
 
-        $isUrl = strpos($caption, '://') !== false;
-        $isImage = preg_match('/\.(jpg|jpe|jpeg|gif|png|ico)$/', $caption);
+        $isUrl = \strpos($caption, '://') !== false;
+        $isImage = \preg_match('/\.(jpg|jpe|jpeg|gif|png|ico)$/', $caption);
 
         $type = $options['type'];
         unset($options['type']);
@@ -1963,7 +1963,7 @@ class FormHelper extends Helper
             if ($caption{0} !== '/') {
                 $url = $this->Url->webroot(Configure::read('App.imageBaseUrl') . $caption);
             } else {
-                $url = $this->Url->webroot(trim($caption, '/'));
+                $url = $this->Url->webroot(\trim($caption, '/'));
             }
             $url = $this->Url->assetTimestamp($url);
             $options['src'] = $url;
@@ -2144,15 +2144,15 @@ class FormHelper extends Helper
      */
     protected function _singleDatetime($options, $keep)
     {
-        $off = array_diff($this->_datetimeParts, [$keep]);
-        $off = array_combine(
+        $off = \array_diff($this->_datetimeParts, [$keep]);
+        $off = \array_combine(
             $off,
-            array_fill(0, count($off), false)
+            \array_fill(0, \count($off), false)
         );
 
-        $attributes = array_diff_key(
+        $attributes = \array_diff_key(
             $options,
-            array_flip(array_merge($this->_datetimeOptions, ['value', 'empty']))
+            \array_flip(\array_merge($this->_datetimeOptions, ['value', 'empty']))
         );
         $options = $options + $off + [$keep => $attributes];
 
@@ -2183,8 +2183,8 @@ class FormHelper extends Helper
 
         if (isset($options['val']) && $options['val'] > 0 && $options['val'] <= 31) {
             $options['val'] = [
-                'year' => date('Y'),
-                'month' => date('m'),
+                'year' => \date('Y'),
+                'month' => \date('m'),
                 'day' => (int)$options['val']
             ];
         }
@@ -2214,12 +2214,12 @@ class FormHelper extends Helper
     {
         $options = $this->_singleDatetime($options, 'year');
 
-        $len = isset($options['val']) ? strlen($options['val']) : 0;
+        $len = isset($options['val']) ? \strlen($options['val']) : 0;
         if (isset($options['val']) && $len > 0 && $len < 5) {
             $options['val'] = [
                 'year' => (int)$options['val'],
-                'month' => date('m'),
-                'day' => date('d')
+                'month' => \date('m'),
+                'day' => \date('d')
             ];
         }
 
@@ -2248,9 +2248,9 @@ class FormHelper extends Helper
 
         if (isset($options['val']) && $options['val'] > 0 && $options['val'] <= 12) {
             $options['val'] = [
-                'year' => date('Y'),
+                'year' => \date('Y'),
                 'month' => (int)$options['val'],
-                'day' => date('d')
+                'day' => \date('d')
             ];
         }
 
@@ -2283,7 +2283,7 @@ class FormHelper extends Helper
         if (isset($options['val']) && $options['val'] > 0 && $options['val'] <= 24) {
             $options['val'] = [
                 'hour' => (int)$options['val'],
-                'minute' => date('i'),
+                'minute' => \date('i'),
             ];
         }
 
@@ -2313,7 +2313,7 @@ class FormHelper extends Helper
 
         if (isset($options['val']) && $options['val'] > 0 && $options['val'] <= 60) {
             $options['val'] = [
-                'hour' => date('H'),
+                'hour' => \date('H'),
                 'minute' => (int)$options['val'],
             ];
         }
@@ -2340,7 +2340,7 @@ class FormHelper extends Helper
         $options = $this->_singleDatetime($options, 'meridian');
 
         if (isset($options['val'])) {
-            $hour = date('H');
+            $hour = \date('H');
             $options['val'] = [
                 'hour' => $hour,
                 'minute' => (int)$options['val'],
@@ -2416,7 +2416,7 @@ class FormHelper extends Helper
     protected function _datetimeOptions($options)
     {
         foreach ($this->_datetimeParts as $type) {
-            if (!array_key_exists($type, $options)) {
+            if (!\array_key_exists($type, $options)) {
                 $options[$type] = [];
             }
             if ($options[$type] === true) {
@@ -2425,7 +2425,7 @@ class FormHelper extends Helper
 
             // Pass empty options to each type.
             if (!empty($options['empty']) &&
-                is_array($options[$type])
+                \is_array($options[$type])
             ) {
                 $options[$type]['empty'] = $options['empty'];
             }
@@ -2436,7 +2436,7 @@ class FormHelper extends Helper
             }
         }
 
-        $hasYear = is_array($options['year']);
+        $hasYear = \is_array($options['year']);
         if ($hasYear && isset($options['minYear'])) {
             $options['year']['start'] = $options['minYear'];
         }
@@ -2448,17 +2448,17 @@ class FormHelper extends Helper
         }
         unset($options['minYear'], $options['maxYear'], $options['orderYear']);
 
-        if (is_array($options['month'])) {
+        if (\is_array($options['month'])) {
             $options['month']['names'] = $options['monthNames'];
         }
         unset($options['monthNames']);
 
-        if (is_array($options['hour']) && isset($options['timeFormat'])) {
+        if (\is_array($options['hour']) && isset($options['timeFormat'])) {
             $options['hour']['format'] = $options['timeFormat'];
         }
         unset($options['timeFormat']);
 
-        if (is_array($options['minute'])) {
+        if (\is_array($options['minute'])) {
             $options['minute']['interval'] = $options['interval'];
             $options['minute']['round'] = $options['round'];
         }
@@ -2573,21 +2573,21 @@ class FormHelper extends Helper
             $options['id'] = $this->_domId($field);
         }
 
-        $disabledIndex = array_search('disabled', $options, true);
-        if (is_int($disabledIndex)) {
+        $disabledIndex = \array_search('disabled', $options, true);
+        if (\is_int($disabledIndex)) {
             unset($options[$disabledIndex]);
             $options['disabled'] = true;
         }
 
         if (!isset($options['name'])) {
             $endsWithBrackets = '';
-            if (substr($field, -2) === '[]') {
-                $field = substr($field, 0, -2);
+            if (\substr($field, -2) === '[]') {
+                $field = \substr($field, 0, -2);
                 $endsWithBrackets = '[]';
             }
-            $parts = explode('.', $field);
-            $first = array_shift($parts);
-            $options['name'] = $first . (!empty($parts) ? '[' . implode('][', $parts) . ']' : '') . $endsWithBrackets;
+            $parts = \explode('.', $field);
+            $first = \array_shift($parts);
+            $options['name'] = $first . (!empty($parts) ? '[' . \implode('][', $parts) . ']' : '') . $endsWithBrackets;
         }
 
         if (isset($options['value']) && !isset($options['val'])) {
@@ -2634,25 +2634,25 @@ class FormHelper extends Helper
         if (!isset($options['disabled'])) {
             return false;
         }
-        if (is_scalar($options['disabled'])) {
+        if (\is_scalar($options['disabled'])) {
             return ($options['disabled'] === true || $options['disabled'] === 'disabled');
         }
         if (!isset($options['options'])) {
             return false;
         }
-        if (is_array($options['options'])) {
+        if (\is_array($options['options'])) {
             // Simple list options
-            $first = $options['options'][array_keys($options['options'])[0]];
-            if (is_scalar($first)) {
-                return array_diff($options['options'], $options['disabled']) === [];
+            $first = $options['options'][\array_keys($options['options'])[0]];
+            if (\is_scalar($first)) {
+                return \array_diff($options['options'], $options['disabled']) === [];
             }
             // Complex option types
-            if (is_array($first)) {
-                $disabled = array_filter($options['options'], function ($i) use ($options) {
-                    return in_array($i['value'], $options['disabled']);
+            if (\is_array($first)) {
+                $disabled = \array_filter($options['options'], function ($i) use ($options) {
+                    return \in_array($i['value'], $options['disabled']);
                 });
 
-                return count($disabled) > 0;
+                return \count($disabled) > 0;
             }
         }
 
@@ -2676,15 +2676,15 @@ class FormHelper extends Helper
             return [];
         }
 
-        if (strpos($name, '[') === false) {
+        if (\strpos($name, '[') === false) {
             return [$name];
         }
-        $parts = explode('[', $name);
-        $parts = array_map(function ($el) {
-            return trim($el, ']');
+        $parts = \explode('[', $name);
+        $parts = \array_map(function ($el) {
+            return \trim($el, ']');
         }, $parts);
 
-        return array_filter($parts, 'strlen');
+        return \array_filter($parts, 'strlen');
     }
 
     /**
@@ -2834,7 +2834,7 @@ class FormHelper extends Helper
      */
     public function setValueSources($sources)
     {
-        $this->_valueSources = array_values(array_intersect((array)$sources, ['context', 'data', 'query']));
+        $this->_valueSources = \array_values(\array_intersect((array)$sources, ['context', 'data', 'query']));
 
         return $this;
     }

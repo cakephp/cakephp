@@ -199,7 +199,7 @@ class Component implements EventListenerInterface
         ];
         $events = [];
         foreach ($eventMap as $event => $method) {
-            if (method_exists($this, $method)) {
+            if (\method_exists($this, $method)) {
                 $events[$event] = $method;
             }
         }

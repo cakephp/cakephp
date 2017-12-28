@@ -60,15 +60,15 @@ trait IdGeneratorTrait
     {
         $name = $this->_domId($name);
 
-        $idSuffix = mb_strtolower(str_replace(['/', '@', '<', '>', ' ', '"', '\''], '-', $val));
+        $idSuffix = \mb_strtolower(\str_replace(['/', '@', '<', '>', ' ', '"', '\''], '-', $val));
         $count = 1;
         $check = $idSuffix;
-        while (in_array($check, $this->_idSuffixes)) {
+        while (\in_array($check, $this->_idSuffixes)) {
             $check = $idSuffix . $count++;
         }
         $this->_idSuffixes[] = $check;
 
-        return trim($name . '-' . $check, '-');
+        return \trim($name . '-' . $check, '-');
     }
 
     /**
@@ -79,7 +79,7 @@ trait IdGeneratorTrait
      */
     protected function _domId($value)
     {
-        $domId = mb_strtolower(Text::slug($value, '-'));
+        $domId = \mb_strtolower(Text::slug($value, '-'));
         if ($this->_idPrefix) {
             $domId = $this->_idPrefix . '-' . $domId;
         }

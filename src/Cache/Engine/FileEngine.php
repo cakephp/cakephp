@@ -90,16 +90,16 @@ class FileEngine extends CacheEngine
         parent::init($config);
 
         if ($this->_config['path'] === null) {
-            $this->_config['path'] = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'cake_cache' . DIRECTORY_SEPARATOR;
+            $this->_config['path'] = \sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'cake_cache' . DIRECTORY_SEPARATOR;
         }
         if (DIRECTORY_SEPARATOR === '\\') {
             $this->_config['isWindows'] = true;
         }
-        if (substr($this->_config['path'], -1) !== DIRECTORY_SEPARATOR) {
+        if (\substr($this->_config['path'], -1) !== DIRECTORY_SEPARATOR) {
             $this->_config['path'] .= DIRECTORY_SEPARATOR;
         }
         if ($this->_groupPrefix) {
-            $this->_groupPrefix = str_replace('_', DIRECTORY_SEPARATOR, $this->_groupPrefix);
+            $this->_groupPrefix = \str_replace('_', DIRECTORY_SEPARATOR, $this->_groupPrefix);
         }
 
         return $this->_active();
@@ -143,15 +143,15 @@ class FileEngine extends CacheEngine
 
         if (!empty($this->_config['serialize'])) {
             if ($this->_config['isWindows']) {
-                $data = str_replace('\\', '\\\\\\\\', serialize($data));
+                $data = \str_replace('\\', '\\\\\\\\', \serialize($data));
             } else {
-                $data = serialize($data);
+                $data = \serialize($data);
             }
         }
 
         $duration = $this->_config['duration'];
-        $expires = time() + $duration;
-        $contents = implode([$expires, $lineBreak, $data, $lineBreak]);
+        $expires = \time() + $duration;
+        $contents = \implode([$expires, $lineBreak, $data, $lineBreak]);
 
         if ($this->_config['lock']) {
             $this->_File->flock(LOCK_EX);
@@ -190,7 +190,7 @@ class FileEngine extends CacheEngine
         }
 
         $this->_File->rewind();
-        $time = time();
+        $time = \time();
         $cachetime = (int)$this->_File->current();
 
         if ($cachetime < $time || ($time + $this->_config['duration']) < $cachetime) {
@@ -212,13 +212,13 @@ class FileEngine extends CacheEngine
             $this->_File->flock(LOCK_UN);
         }
 
-        $data = trim($data);
+        $data = \trim($data);
 
         if ($data !== '' && !empty($this->_config['serialize'])) {
             if ($this->_config['isWindows']) {
-                $data = str_replace('\\\\\\\\', '\\', $data);
+                $data = \str_replace('\\\\\\\\', '\\', $data);
             }
-            $data = unserialize((string)$data);
+            $data = \unserialize((string)$data);
         }
 
         return $data;
@@ -243,7 +243,7 @@ class FileEngine extends CacheEngine
         $this->_File = null;
 
         //@codingStandardsIgnoreStart
-        return @unlink($path);
+        return @\unlink($path);
         //@codingStandardsIgnoreEnd
     }
 
@@ -262,7 +262,7 @@ class FileEngine extends CacheEngine
 
         $threshold = $now = false;
         if ($check) {
-            $now = time();
+            $now = \time();
             $threshold = $now - $this->_config['duration'];
         }
 
@@ -280,7 +280,7 @@ class FileEngine extends CacheEngine
             }
 
             $path = $path->getRealPath() . DIRECTORY_SEPARATOR;
-            if (!in_array($path, $cleared)) {
+            if (!\in_array($path, $cleared)) {
                 $this->_clearDirectory($path, $now, $threshold);
                 $cleared[] = $path;
             }
@@ -299,14 +299,14 @@ class FileEngine extends CacheEngine
      */
     protected function _clearDirectory($path, $now, $threshold)
     {
-        if (!is_dir($path)) {
+        if (!\is_dir($path)) {
             return;
         }
-        $prefixLength = strlen($this->_config['prefix']);
+        $prefixLength = \strlen($this->_config['prefix']);
 
-        $dir = dir($path);
+        $dir = \dir($path);
         while (($entry = $dir->read()) !== false) {
-            if (substr($entry, 0, $prefixLength) !== $this->_config['prefix']) {
+            if (\substr($entry, 0, $prefixLength) !== $this->_config['prefix']) {
                 continue;
             }
 
@@ -332,7 +332,7 @@ class FileEngine extends CacheEngine
                 $file = null;
 
                 //@codingStandardsIgnoreStart
-                @unlink($filePath);
+                @\unlink($filePath);
                 //@codingStandardsIgnoreEnd
             }
         }
@@ -376,12 +376,12 @@ class FileEngine extends CacheEngine
     {
         $groups = null;
         if ($this->_groupPrefix) {
-            $groups = vsprintf($this->_groupPrefix, $this->groups());
+            $groups = \vsprintf($this->_groupPrefix, $this->groups());
         }
         $dir = $this->_config['path'] . $groups;
 
-        if (!is_dir($dir)) {
-            mkdir($dir, 0775, true);
+        if (!\is_dir($dir)) {
+            \mkdir($dir, 0775, true);
         }
 
         $path = new SplFileInfo($dir . $key);
@@ -390,18 +390,18 @@ class FileEngine extends CacheEngine
             return false;
         }
         if (empty($this->_File) || $this->_File->getBasename() !== $key) {
-            $exists = file_exists($path->getPathname());
+            $exists = \file_exists($path->getPathname());
             try {
                 $this->_File = $path->openFile('c+');
             } catch (Exception $e) {
-                trigger_error($e->getMessage(), E_USER_WARNING);
+                \trigger_error($e->getMessage(), E_USER_WARNING);
 
                 return false;
             }
             unset($path);
 
-            if (!$exists && !chmod($this->_File->getPathname(), (int)$this->_config['mask'])) {
-                trigger_error(sprintf(
+            if (!$exists && !\chmod($this->_File->getPathname(), (int)$this->_config['mask'])) {
+                \trigger_error(\sprintf(
                     'Could not apply permission mask "%s" on cache file "%s"',
                     $this->_File->getPathname(),
                     $this->_config['mask']
@@ -422,16 +422,16 @@ class FileEngine extends CacheEngine
         $dir = new SplFileInfo($this->_config['path']);
         $path = $dir->getPathname();
         $success = true;
-        if (!is_dir($path)) {
+        if (!\is_dir($path)) {
             //@codingStandardsIgnoreStart
-            $success = @mkdir($path, 0775, true);
+            $success = @\mkdir($path, 0775, true);
             //@codingStandardsIgnoreEnd
         }
 
         $isWritableDir = ($dir->isDir() && $dir->isWritable());
         if (!$success || ($this->_init && !$isWritableDir)) {
             $this->_init = false;
-            trigger_error(sprintf(
+            \trigger_error(\sprintf(
                 '%s is not writable',
                 $this->_config['path']
             ), E_USER_WARNING);
@@ -452,7 +452,7 @@ class FileEngine extends CacheEngine
             return false;
         }
 
-        $key = Inflector::underscore(str_replace(
+        $key = Inflector::underscore(\str_replace(
             [DIRECTORY_SEPARATOR, '/', '.', '<', '>', '?', ':', '|', '*', '"'],
             '_',
             (string)$key
@@ -476,16 +476,16 @@ class FileEngine extends CacheEngine
             RecursiveIteratorIterator::CHILD_FIRST
         );
         foreach ($contents as $object) {
-            $containsGroup = strpos($object->getPathname(), DIRECTORY_SEPARATOR . $group . DIRECTORY_SEPARATOR) !== false;
+            $containsGroup = \strpos($object->getPathname(), DIRECTORY_SEPARATOR . $group . DIRECTORY_SEPARATOR) !== false;
             $hasPrefix = true;
-            if (strlen($this->_config['prefix']) !== 0) {
-                $hasPrefix = strpos($object->getBasename(), $this->_config['prefix']) === 0;
+            if (\strlen($this->_config['prefix']) !== 0) {
+                $hasPrefix = \strpos($object->getBasename(), $this->_config['prefix']) === 0;
             }
             if ($object->isFile() && $containsGroup && $hasPrefix) {
                 $path = $object->getPathname();
                 $object = null;
                 //@codingStandardsIgnoreStart
-                @unlink($path);
+                @\unlink($path);
                 //@codingStandardsIgnoreEnd
             }
         }

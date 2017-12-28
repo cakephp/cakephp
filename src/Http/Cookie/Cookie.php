@@ -162,16 +162,16 @@ class Cookie implements CookieInterface
         if ($this->isExpanded) {
             $value = $this->_flatten($this->value);
         }
-        $headerValue[] = sprintf('%s=%s', $this->name, rawurlencode($value));
+        $headerValue[] = \sprintf('%s=%s', $this->name, \rawurlencode($value));
 
         if ($this->expiresAt) {
-            $headerValue[] = sprintf('expires=%s', $this->getFormattedExpires());
+            $headerValue[] = \sprintf('expires=%s', $this->getFormattedExpires());
         }
         if ($this->path !== '') {
-            $headerValue[] = sprintf('path=%s', $this->path);
+            $headerValue[] = \sprintf('path=%s', $this->path);
         }
         if ($this->domain !== '') {
-            $headerValue[] = sprintf('domain=%s', $this->domain);
+            $headerValue[] = \sprintf('domain=%s', $this->domain);
         }
         if ($this->secure) {
             $headerValue[] = 'secure';
@@ -180,7 +180,7 @@ class Cookie implements CookieInterface
             $headerValue[] = 'httponly';
         }
 
-        return implode('; ', $headerValue);
+        return \implode('; ', $headerValue);
     }
 
     /**
@@ -200,7 +200,7 @@ class Cookie implements CookieInterface
      */
     public function getId()
     {
-        $name = mb_strtolower($this->name);
+        $name = \mb_strtolower($this->name);
 
         return "{$name};{$this->domain};{$this->path}";
     }
@@ -223,9 +223,9 @@ class Cookie implements CookieInterface
      */
     protected function validateName($name)
     {
-        if (preg_match("/[=,;\t\r\n\013\014]/", $name)) {
+        if (\preg_match("/[=,;\t\r\n\013\014]/", $name)) {
             throw new InvalidArgumentException(
-                sprintf('The cookie name `%s` contains invalid characters.', $name)
+                \sprintf('The cookie name `%s` contains invalid characters.', $name)
             );
         }
 
@@ -273,7 +273,7 @@ class Cookie implements CookieInterface
      */
     protected function _setValue($value)
     {
-        $this->isExpanded = is_array($value);
+        $this->isExpanded = \is_array($value);
         $this->value = $value;
     }
 
@@ -326,10 +326,10 @@ class Cookie implements CookieInterface
      */
     protected function validateString($value)
     {
-        if (!is_string($value)) {
-            throw new InvalidArgumentException(sprintf(
+        if (!\is_string($value)) {
+            throw new InvalidArgumentException(\sprintf(
                 'The provided arg must be of type `string` but `%s` given',
-                gettype($value)
+                \gettype($value)
             ));
         }
     }
@@ -375,10 +375,10 @@ class Cookie implements CookieInterface
      */
     protected function validateBool($value)
     {
-        if (!is_bool($value)) {
-            throw new InvalidArgumentException(sprintf(
+        if (!\is_bool($value)) {
+            throw new InvalidArgumentException(\sprintf(
                 'The provided arg must be of type `bool` but `%s` given',
-                gettype($value)
+                \gettype($value)
             ));
         }
     }
@@ -562,7 +562,7 @@ class Cookie implements CookieInterface
      */
     protected function _flatten(array $array)
     {
-        return json_encode($array);
+        return \json_encode($array);
     }
 
     /**
@@ -575,16 +575,16 @@ class Cookie implements CookieInterface
     protected function _expand($string)
     {
         $this->isExpanded = true;
-        $first = substr($string, 0, 1);
+        $first = \substr($string, 0, 1);
         if ($first === '{' || $first === '[') {
-            $ret = json_decode($string, true);
+            $ret = \json_decode($string, true);
 
             return ($ret !== null) ? $ret : $string;
         }
 
         $array = [];
-        foreach (explode(',', $string) as $pair) {
-            $key = explode('|', $pair);
+        foreach (\explode(',', $string) as $pair) {
+            $key = \explode('|', $pair);
             if (!isset($key[1])) {
                 return $key[0];
             }

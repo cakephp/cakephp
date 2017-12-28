@@ -42,8 +42,8 @@ class RequestTransformer
         $post = $request->getParsedBody();
         $headers = [];
         foreach ($request->getHeaders() as $k => $value) {
-            $name = sprintf('HTTP_%s', strtoupper(str_replace('-', '_', $k)));
-            $headers[$name] = implode(',', $value);
+            $name = \sprintf('HTTP_%s', \strtoupper(\str_replace('-', '_', $k)));
+            $headers[$name] = \implode(',', $value);
         }
         $server = $headers + $request->getServerParams();
 
@@ -122,7 +122,7 @@ class RequestTransformer
                 $newPath .= '.' . $key;
             }
 
-            if (is_array($file)) {
+            if (\is_array($file)) {
                 $data = static::convertFiles($data, $file, $newPath);
             } else {
                 $data = Hash::insert($data, $newPath, static::convertFile($file));

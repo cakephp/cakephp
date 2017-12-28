@@ -163,7 +163,7 @@ class Client
 
         $adapter = $this->_config['adapter'];
         $this->setConfig('adapter', null);
-        if (is_string($adapter)) {
+        if (\is_string($adapter)) {
             $adapter = new $adapter();
         }
         $this->_adapter = $adapter;
@@ -433,7 +433,7 @@ class Client
             $this->_cookies = $this->_cookies->addFromResponse($response, $request);
         }
 
-        return array_pop($responses);
+        return \array_pop($responses);
     }
 
     /**
@@ -450,9 +450,9 @@ class Client
             return $url;
         }
         if ($query) {
-            $q = (strpos($url, '?') === false) ? '?' : '&';
+            $q = (\strpos($url, '?') === false) ? '?' : '&';
             $url .= $q;
-            $url .= is_string($query) ? $query : http_build_query($query);
+            $url .= \is_string($query) ? $query : \http_build_query($query);
         }
         $defaults = [
             'host' => null,
@@ -462,10 +462,10 @@ class Client
         ];
         $options += $defaults;
 
-        if ($options['protocolRelative'] && preg_match('#^//#', $url)) {
+        if ($options['protocolRelative'] && \preg_match('#^//#', $url)) {
             $url = $options['scheme'] . ':' . $url;
         }
-        if (preg_match('#^https?://#', $url)) {
+        if (\preg_match('#^https?://#', $url)) {
             return $url;
         }
 
@@ -477,7 +477,7 @@ class Client
         if ($options['port'] && $options['port'] != $defaultPorts[$options['scheme']]) {
             $out .= ':' . $options['port'];
         }
-        $out .= '/' . ltrim($url, '/');
+        $out .= '/' . \ltrim($url, '/');
 
         return $out;
     }
@@ -495,9 +495,9 @@ class Client
     {
         $headers = isset($options['headers']) ? (array)$options['headers'] : [];
         if (isset($options['type'])) {
-            $headers = array_merge($headers, $this->_typeHeaders($options['type']));
+            $headers = \array_merge($headers, $this->_typeHeaders($options['type']));
         }
-        if (is_string($data) && !isset($headers['Content-Type']) && !isset($headers['content-type'])) {
+        if (\is_string($data) && !isset($headers['Content-Type']) && !isset($headers['content-type'])) {
             $headers['Content-Type'] = 'application/x-www-form-urlencoded';
         }
 
@@ -525,7 +525,7 @@ class Client
      */
     protected function _typeHeaders($type)
     {
-        if (strpos($type, '/') !== false) {
+        if (\strpos($type, '/') !== false) {
             return [
                 'Accept' => $type,
                 'Content-Type' => $type
@@ -599,11 +599,11 @@ class Client
         if (empty($auth['type'])) {
             $auth['type'] = 'basic';
         }
-        $name = ucfirst($auth['type']);
+        $name = \ucfirst($auth['type']);
         $class = App::className($name, 'Http/Client/Auth');
         if (!$class) {
             throw new Exception(
-                sprintf('Invalid authentication type %s', $name)
+                \sprintf('Invalid authentication type %s', $name)
             );
         }
 
@@ -611,4 +611,4 @@ class Client
     }
 }
 // @deprecated Backwards compatibility with earler 3.x versions.
-class_alias('Cake\Http\Client', 'Cake\Network\Http\Client');
+\class_alias('Cake\Http\Client', 'Cake\Network\Http\Client');

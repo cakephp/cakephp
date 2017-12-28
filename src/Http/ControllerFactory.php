@@ -62,25 +62,25 @@ class ControllerFactory
             $pluginPath = $request->getParam('plugin') . '.';
         }
         if ($request->getParam('prefix')) {
-            if (strpos($request->getParam('prefix'), '/') === false) {
+            if (\strpos($request->getParam('prefix'), '/') === false) {
                 $namespace .= '/' . Inflector::camelize($request->getParam('prefix'));
             } else {
-                $prefixes = array_map(
+                $prefixes = \array_map(
                     'Cake\Utility\Inflector::camelize',
-                    explode('/', $request->getParam('prefix'))
+                    \explode('/', $request->getParam('prefix'))
                 );
-                $namespace .= '/' . implode('/', $prefixes);
+                $namespace .= '/' . \implode('/', $prefixes);
             }
         }
-        $firstChar = substr($controller, 0, 1);
+        $firstChar = \substr($controller, 0, 1);
 
         // Disallow plugin short forms, / and \\ from
         // controller names as they allow direct references to
         // be created.
-        if (strpos($controller, '\\') !== false ||
-            strpos($controller, '/') !== false ||
-            strpos($controller, '.') !== false ||
-            $firstChar === strtolower($firstChar)
+        if (\strpos($controller, '\\') !== false ||
+            \strpos($controller, '/') !== false ||
+            \strpos($controller, '.') !== false ||
+            $firstChar === \strtolower($firstChar)
         ) {
             $this->missingController($request);
         }

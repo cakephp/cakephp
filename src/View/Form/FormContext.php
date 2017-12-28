@@ -158,7 +158,7 @@ class FormContext implements ContextInterface
         $column = (array)$this->_form->schema()->field($field);
         $whiteList = ['length' => null, 'precision' => null];
 
-        return array_intersect_key($column, $whiteList);
+        return \array_intersect_key($column, $whiteList);
     }
 
     /**
@@ -168,7 +168,7 @@ class FormContext implements ContextInterface
     {
         $errors = $this->error($field);
 
-        return count($errors) > 0;
+        return \count($errors) > 0;
     }
 
     /**
@@ -176,6 +176,6 @@ class FormContext implements ContextInterface
      */
     public function error($field)
     {
-        return array_values((array)Hash::get($this->_form->errors(), $field, []));
+        return \array_values((array)Hash::get($this->_form->errors(), $field, []));
     }
 }

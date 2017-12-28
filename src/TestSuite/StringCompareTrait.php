@@ -52,7 +52,7 @@ trait StringCompareTrait
      */
     public function assertSameAsFile($path, $result)
     {
-        if (!file_exists($path)) {
+        if (!\file_exists($path)) {
             $path = $this->_compareBasePath . $path;
         }
 
@@ -65,7 +65,7 @@ trait StringCompareTrait
             $file->write($result);
         }
 
-        $expected = file_get_contents($path);
+        $expected = \file_get_contents($path);
         $this->assertTextEquals($expected, $result);
     }
 }

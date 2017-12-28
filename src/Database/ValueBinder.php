@@ -50,8 +50,8 @@ class ValueBinder
      */
     public function bind($param, $value, $type = 'string')
     {
-        $this->_bindings[$param] = compact('value', 'type') + [
-            'placeholder' => is_int($param) ? $param : substr($param, 1)
+        $this->_bindings[$param] = \compact('value', 'type') + [
+            'placeholder' => \is_int($param) ? $param : \substr($param, 1)
         ];
     }
 
@@ -68,7 +68,7 @@ class ValueBinder
     {
         $number = $this->_bindingsCount++;
         if ($token[0] !== ':' && $token !== '?') {
-            $token = sprintf(':%s%s', $token, $number);
+            $token = \sprintf(':%s%s', $token, $number);
         }
 
         return $token;
@@ -90,7 +90,7 @@ class ValueBinder
             $this->_bindings[$param] = [
                 'value' => $value,
                 'type' => $type,
-                'placeholder' => substr($param, 1),
+                'placeholder' => \substr($param, 1),
             ];
             $placeholders[$k] = $param;
         }

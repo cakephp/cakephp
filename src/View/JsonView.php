@@ -112,7 +112,7 @@ class JsonView extends SerializedView
                 $jsonpParam = 'callback';
             }
             if ($this->request->getQuery($jsonpParam)) {
-                $return = sprintf('%s(%s)', h($this->request->getQuery($jsonpParam)), $return);
+                $return = \sprintf('%s(%s)', h($this->request->getQuery($jsonpParam)), $return);
                 $this->response->type('js');
             }
         }
@@ -150,7 +150,7 @@ class JsonView extends SerializedView
             $jsonOptions |= JSON_PRETTY_PRINT;
         }
 
-        return json_encode($data, $jsonOptions);
+        return \json_encode($data, $jsonOptions);
     }
 
     /**
@@ -163,9 +163,9 @@ class JsonView extends SerializedView
     protected function _dataToSerialize($serialize = true)
     {
         if ($serialize === true) {
-            $data = array_diff_key(
+            $data = \array_diff_key(
                 $this->viewVars,
-                array_flip($this->_specialVars)
+                \array_flip($this->_specialVars)
             );
 
             if (empty($data)) {
@@ -175,13 +175,13 @@ class JsonView extends SerializedView
             return $data;
         }
 
-        if (is_array($serialize)) {
+        if (\is_array($serialize)) {
             $data = [];
             foreach ($serialize as $alias => $key) {
-                if (is_numeric($alias)) {
+                if (\is_numeric($alias)) {
                     $alias = $key;
                 }
-                if (array_key_exists($key, $this->viewVars)) {
+                if (\array_key_exists($key, $this->viewVars)) {
                     $data[$alias] = $this->viewVars[$key];
                 }
             }

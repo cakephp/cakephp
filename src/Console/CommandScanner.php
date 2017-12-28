@@ -46,7 +46,7 @@ class CommandScanner
         );
 
         $shellList['CORE'] = $this->scanDir(
-            dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Shell' . DIRECTORY_SEPARATOR,
+            \dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Shell' . DIRECTORY_SEPARATOR,
             'Cake\Shell\\',
             '',
             ['command_list']
@@ -56,7 +56,7 @@ class CommandScanner
         foreach (Plugin::loaded() as $plugin) {
             $plugins[$plugin] = $this->scanDir(
                 Plugin::classPath($plugin) . 'Shell',
-                str_replace('/', '\\', $plugin) . '\Shell\\',
+                \str_replace('/', '\\', $plugin) . '\Shell\\',
                 Inflector::underscore($plugin) . '.',
                 []
             );
@@ -86,13 +86,13 @@ class CommandScanner
 
         $shells = [];
         foreach ($contents[1] as $file) {
-            if (substr($file, -4) !== '.php') {
+            if (\substr($file, -4) !== '.php') {
                 continue;
             }
 
-            $shell = substr($file, 0, -4);
-            $name = Inflector::underscore(str_replace('Shell', '', $shell));
-            if (in_array($name, $hide, true)) {
+            $shell = \substr($file, 0, -4);
+            $name = Inflector::underscore(\str_replace('Shell', '', $shell));
+            if (\in_array($name, $hide, true)) {
                 continue;
             }
 

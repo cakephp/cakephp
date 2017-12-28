@@ -49,7 +49,7 @@ class LoggingStatement extends StatementDecorator
      */
     public function execute($params = null)
     {
-        $t = microtime(true);
+        $t = \microtime(true);
         $query = new LoggedQuery();
 
         try {
@@ -78,7 +78,7 @@ class LoggingStatement extends StatementDecorator
      */
     protected function _log($query, $params, $startTime)
     {
-        $query->took = round((microtime(true) - $startTime) * 1000, 0);
+        $query->took = \round((\microtime(true) - $startTime) * 1000, 0);
         $query->params = $params ?: $this->_compiledParams;
         $query->query = $this->queryString;
         $this->getLogger()->log($query);
@@ -99,7 +99,7 @@ class LoggingStatement extends StatementDecorator
         if ($type === null) {
             $type = 'string';
         }
-        if (!ctype_digit($type)) {
+        if (!\ctype_digit($type)) {
             $value = $this->cast($value, $type)[0];
         }
         $this->_compiledParams[$column] = $value;

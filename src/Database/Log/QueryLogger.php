@@ -60,22 +60,22 @@ class QueryLogger
      */
     protected function _interpolate($query)
     {
-        $params = array_map(function ($p) {
+        $params = \array_map(function ($p) {
             if ($p === null) {
                 return 'NULL';
             }
-            if (is_bool($p)) {
+            if (\is_bool($p)) {
                 return $p ? '1' : '0';
             }
 
-            if (is_string($p)) {
+            if (\is_string($p)) {
                 $replacements = [
                     '$' => '\\$',
                     '\\' => '\\\\\\\\',
                     "'" => "''",
                 ];
 
-                $p = strtr($p, $replacements);
+                $p = \strtr($p, $replacements);
 
                 return "'$p'";
             }
@@ -84,11 +84,11 @@ class QueryLogger
         }, $query->params);
 
         $keys = [];
-        $limit = is_int(key($params)) ? 1 : -1;
+        $limit = \is_int(\key($params)) ? 1 : -1;
         foreach ($params as $key => $param) {
-            $keys[] = is_string($key) ? "/:$key\b/" : '/[?]/';
+            $keys[] = \is_string($key) ? "/:$key\b/" : '/[?]/';
         }
 
-        return preg_replace($keys, $params, $query->query, $limit);
+        return \preg_replace($keys, $params, $query->query, $limit);
     }
 }

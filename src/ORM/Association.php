@@ -224,7 +224,7 @@ abstract class Association
             }
         }
 
-        if (empty($this->_className) && strpos($alias, '.')) {
+        if (empty($this->_className) && \strpos($alias, '.')) {
             $this->_className = $alias;
         }
 
@@ -397,7 +397,7 @@ abstract class Association
     public function getTarget()
     {
         if (!$this->_targetTable) {
-            if (strpos($this->_className, '.')) {
+            if (\strpos($this->_className, '.')) {
                 list($plugin) = pluginSplit($this->_className, true);
                 $registryAlias = $plugin . $this->_name;
             } else {
@@ -420,12 +420,12 @@ abstract class Association
                     $errorMessage = '%s association "%s" of type "%s" to "%s" doesn\'t match the expected class "%s". ';
                     $errorMessage .= 'You can\'t have an association of the same name with a different target "className" option anywhere in your app.';
 
-                    throw new RuntimeException(sprintf(
+                    throw new RuntimeException(\sprintf(
                         $errorMessage,
-                        $this->_sourceTable ? get_class($this->_sourceTable) : 'null',
+                        $this->_sourceTable ? \get_class($this->_sourceTable) : 'null',
                         $this->getName(),
                         $this->type(),
-                        $this->_targetTable ? get_class($this->_targetTable) : 'null',
+                        $this->_targetTable ? \get_class($this->_targetTable) : 'null',
                         $className
                     ));
                 }
@@ -716,11 +716,11 @@ abstract class Association
     {
         if (!$this->_propertyName) {
             $this->_propertyName = $this->_propertyName();
-            if (in_array($this->_propertyName, $this->_sourceTable->getSchema()->columns())) {
+            if (\in_array($this->_propertyName, $this->_sourceTable->getSchema()->columns())) {
                 $msg = 'Association property name "%s" clashes with field of same name of table "%s".' .
                     ' You should explicitly specify the "propertyName" option.';
-                trigger_error(
-                    sprintf($msg, $this->_propertyName, $this->_sourceTable->getTable()),
+                \trigger_error(
+                    \sprintf($msg, $this->_propertyName, $this->_sourceTable->getTable()),
                     E_USER_WARNING
                 );
             }
@@ -770,9 +770,9 @@ abstract class Association
      */
     public function setStrategy($name)
     {
-        if (!in_array($name, $this->_validStrategies)) {
+        if (!\in_array($name, $this->_validStrategies)) {
             throw new InvalidArgumentException(
-                sprintf('Invalid strategy "%s" was provided', $name)
+                \sprintf('Invalid strategy "%s" was provided', $name)
             );
         }
         $this->_strategy = $name;
@@ -924,7 +924,7 @@ abstract class Association
         if (!empty($options['queryBuilder'])) {
             $dummy = $options['queryBuilder']($dummy);
             if (!($dummy instanceof Query)) {
-                throw new RuntimeException(sprintf(
+                throw new RuntimeException(\sprintf(
                     'Query builder for association "%s" did not return a query',
                     $this->getName()
                 ));
@@ -936,7 +936,7 @@ abstract class Association
 
         $joinOptions = ['table' => 1, 'conditions' => 1, 'type' => 1];
         $options['conditions'] = $dummy->clause('where');
-        $query->join([$this->_name => array_intersect_key($options, $joinOptions)]);
+        $query->join([$this->_name => \array_intersect_key($options, $joinOptions)]);
 
         $this->_appendFields($query, $dummy, $options);
         $this->_formatAssociationResults($query, $dummy, $options);
@@ -958,7 +958,7 @@ abstract class Association
         if (!empty($options['negateMatch'])) {
             $primaryKey = $query->aliasFields((array)$target->getPrimaryKey(), $this->_name);
             $query->andWhere(function ($exp) use ($primaryKey) {
-                array_map([$exp, 'isNull'], $primaryKey);
+                \array_map([$exp, 'isNull'], $primaryKey);
 
                 return $exp;
             });
@@ -1143,7 +1143,7 @@ abstract class Association
         }
 
         if ($autoFields === true) {
-            $fields = array_merge((array)$fields, $target->getSchema()->columns());
+            $fields = \array_merge((array)$fields, $target->getSchema()->columns());
         }
 
         if ($fields) {
@@ -1174,7 +1174,7 @@ abstract class Association
         }
 
         $property = $options['propertyPath'];
-        $propertyPath = explode('.', $property);
+        $propertyPath = \explode('.', $property);
         $query->formatResults(function ($results) use ($formatters, $property, $propertyPath) {
             $extracted = [];
             foreach ($results as $result) {
@@ -1254,28 +1254,28 @@ abstract class Association
         $foreignKey = (array)$options['foreignKey'];
         $bindingKey = (array)$this->getBindingKey();
 
-        if (count($foreignKey) !== count($bindingKey)) {
+        if (\count($foreignKey) !== \count($bindingKey)) {
             if (empty($bindingKey)) {
                 $table = $this->getTarget()->getTable();
                 if ($this->isOwningSide($this->getSource())) {
                     $table = $this->getSource()->getTable();
                 }
                 $msg = 'The "%s" table does not define a primary key, and cannot have join conditions generated.';
-                throw new RuntimeException(sprintf($msg, $table));
+                throw new RuntimeException(\sprintf($msg, $table));
             }
 
             $msg = 'Cannot match provided foreignKey for "%s", got "(%s)" but expected foreign key for "(%s)"';
-            throw new RuntimeException(sprintf(
+            throw new RuntimeException(\sprintf(
                 $msg,
                 $this->_name,
-                implode(', ', $foreignKey),
-                implode(', ', $bindingKey)
+                \implode(', ', $foreignKey),
+                \implode(', ', $bindingKey)
             ));
         }
 
         foreach ($foreignKey as $k => $f) {
-            $field = sprintf('%s.%s', $sAlias, $bindingKey[$k]);
-            $value = new IdentifierExpression(sprintf('%s.%s', $tAlias, $f));
+            $field = \sprintf('%s.%s', $sAlias, $bindingKey[$k]);
+            $value = new IdentifierExpression(\sprintf('%s.%s', $tAlias, $f));
             $conditions[$field] = $value;
         }
 
@@ -1302,11 +1302,11 @@ abstract class Association
     {
         $finderData = (array)$finderData;
 
-        if (is_numeric(key($finderData))) {
-            return [current($finderData), []];
+        if (\is_numeric(\key($finderData))) {
+            return [\current($finderData), []];
         }
 
-        return [key($finderData), current($finderData)];
+        return [\key($finderData), \current($finderData)];
     }
 
     /**
@@ -1324,7 +1324,7 @@ abstract class Association
 
         $className = App::className($options['className'], 'Model/Table', 'Table') ?: 'Cake\ORM\Table';
 
-        return ltrim($className, '\\');
+        return \ltrim($className, '\\');
     }
 
     /**

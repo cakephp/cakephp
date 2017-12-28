@@ -40,7 +40,7 @@ class CallbackStream extends BaseCallbackStream
     {
         $callback = $this->detach();
         $result = $callback ? $callback() : '';
-        if (!is_string($result)) {
+        if (!\is_string($result)) {
             return '';
         }
 

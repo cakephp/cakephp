@@ -141,10 +141,10 @@ class SelectWithPivotLoader extends SelectLoader
         $name = $this->junctionAssociationName;
 
         foreach ((array)$options['foreignKey'] as $key) {
-            $links[] = sprintf('%s.%s', $name, $key);
+            $links[] = \sprintf('%s.%s', $name, $key);
         }
 
-        if (count($links) === 1) {
+        if (\count($links) === 1) {
             return $links[0];
         }
 
@@ -167,7 +167,7 @@ class SelectWithPivotLoader extends SelectLoader
 
         foreach ($fetchQuery->all() as $result) {
             if (!isset($result[$this->junctionProperty])) {
-                throw new RuntimeException(sprintf(
+                throw new RuntimeException(\sprintf(
                     '"%s" is missing from the belongsToMany results. Results cannot be created.',
                     $this->junctionProperty
                 ));
@@ -177,7 +177,7 @@ class SelectWithPivotLoader extends SelectLoader
             foreach ($key as $k) {
                 $values[] = $result[$this->junctionProperty][$k];
             }
-            $resultMap[implode(';', $values)][] = $result;
+            $resultMap[\implode(';', $values)][] = $result;
         }
 
         return $resultMap;

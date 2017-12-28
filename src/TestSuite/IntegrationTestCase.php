@@ -13,11 +13,11 @@
  */
 namespace Cake\TestSuite;
 
-if (class_exists('PHPUnit_Runner_Version', false) && !interface_exists('PHPUnit\Exception', false)) {
-    if (version_compare(\PHPUnit_Runner_Version::id(), '5.7', '<')) {
-        trigger_error(sprintf('Your PHPUnit Version must be at least 5.7.0 to use CakePHP Testsuite, found %s', \PHPUnit_Runner_Version::id()), E_USER_ERROR);
+if (\class_exists('PHPUnit_Runner_Version', false) && !\interface_exists('PHPUnit\Exception', false)) {
+    if (\version_compare(\PHPUnit_Runner_Version::id(), '5.7', '<')) {
+        \trigger_error(\sprintf('Your PHPUnit Version must be at least 5.7.0 to use CakePHP Testsuite, found %s', \PHPUnit_Runner_Version::id()), E_USER_ERROR);
     }
-    class_alias('PHPUnit_Exception', 'PHPUnit\Exception');
+    \class_alias('PHPUnit_Exception', 'PHPUnit\Exception');
 }
 
 use Cake\Core\Configure;
@@ -180,7 +180,7 @@ abstract class IntegrationTestCase extends TestCase
     {
         parent::setUp();
         $namespace = Configure::read('App.namespace');
-        $this->_useHttpServer = class_exists($namespace . '\Application');
+        $this->_useHttpServer = \class_exists($namespace . '\Application');
     }
 
     /**
@@ -555,7 +555,7 @@ abstract class IntegrationTestCase extends TestCase
     protected function _handleError($exception)
     {
         $class = Configure::read('Error.exceptionRenderer');
-        if (empty($class) || !class_exists($class)) {
+        if (empty($class) || !\class_exists($class)) {
             $class = 'Cake\Error\ExceptionRenderer';
         }
         /** @var \Cake\Error\ExceptionRenderer $instance */
@@ -581,10 +581,10 @@ abstract class IntegrationTestCase extends TestCase
         list ($url, $query) = $this->_url($url);
         $tokenUrl = $url;
 
-        parse_str($query, $queryData);
+        \parse_str($query, $queryData);
 
         if ($query) {
-            $tokenUrl .= '?' . http_build_query($queryData);
+            $tokenUrl .= '?' . \http_build_query($queryData);
         }
 
         $props = [
@@ -592,7 +592,7 @@ abstract class IntegrationTestCase extends TestCase
             'session' => $session,
             'query' => $queryData
         ];
-        if (is_string($data)) {
+        if (\is_string($data)) {
             $props['input'] = $data;
         }
         if (!isset($props['input'])) {
@@ -607,8 +607,8 @@ abstract class IntegrationTestCase extends TestCase
         ];
         if (isset($this->_request['headers'])) {
             foreach ($this->_request['headers'] as $k => $v) {
-                $name = strtoupper(str_replace('-', '_', $k));
-                if (!in_array($name, ['CONTENT_LENGTH', 'CONTENT_TYPE'])) {
+                $name = \strtoupper(\str_replace('-', '_', $k));
+                if (!\in_array($name, ['CONTENT_LENGTH', 'CONTENT_TYPE'])) {
                     $name = 'HTTP_' . $name;
                 }
                 $env[$name] = $v;
@@ -631,10 +631,10 @@ abstract class IntegrationTestCase extends TestCase
     protected function _addTokens($url, $data)
     {
         if ($this->_securityToken === true) {
-            $keys = array_map(function ($field) {
-                return preg_replace('/(\.\d+)+$/', '', $field);
-            }, array_keys(Hash::flatten($data)));
-            $tokenData = $this->_buildFieldToken($url, array_unique($keys));
+            $keys = \array_map(function ($field) {
+                return \preg_replace('/(\.\d+)+$/', '', $field);
+            }, \array_keys(Hash::flatten($data)));
+            $tokenData = $this->_buildFieldToken($url, \array_unique($keys));
             $data['_Token'] = $tokenData;
             $data['_Token']['debug'] = 'SecurityComponent debug data would be added here';
         }
@@ -662,8 +662,8 @@ abstract class IntegrationTestCase extends TestCase
         $url = Router::url($url);
         $query = '';
 
-        if (strpos($url, '?') !== false) {
-            list($url, $query) = explode('?', $url, 2);
+        if (\strpos($url, '?') !== false) {
+            list($url, $query) = \explode('?', $url, 2);
         }
 
         return [$url, $query];

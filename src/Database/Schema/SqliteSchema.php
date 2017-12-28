@@ -50,17 +50,17 @@ class SqliteSchema extends BaseSchema
      */
     protected function _convertColumn($column)
     {
-        preg_match('/(unsigned)?\s*([a-z]+)(?:\(([0-9,]+)\))?/i', $column, $matches);
+        \preg_match('/(unsigned)?\s*([a-z]+)(?:\(([0-9,]+)\))?/i', $column, $matches);
         if (empty($matches)) {
-            throw new Exception(sprintf('Unable to parse column type from "%s"', $column));
+            throw new Exception(\sprintf('Unable to parse column type from "%s"', $column));
         }
 
         $unsigned = false;
-        if (strtolower($matches[1]) === 'unsigned') {
+        if (\strtolower($matches[1]) === 'unsigned') {
             $unsigned = true;
         }
 
-        $col = strtolower($matches[2]);
+        $col = \strtolower($matches[2]);
         $length = null;
         if (isset($matches[3])) {
             $length = (int)$matches[3];
@@ -75,17 +75,17 @@ class SqliteSchema extends BaseSchema
         if ($col == 'tinyint') {
             return ['type' => TableSchema::TYPE_TINYINTEGER, 'length' => $length, 'unsigned' => $unsigned];
         }
-        if (strpos($col, 'int') !== false) {
+        if (\strpos($col, 'int') !== false) {
             return ['type' => TableSchema::TYPE_INTEGER, 'length' => $length, 'unsigned' => $unsigned];
         }
-        if (strpos($col, 'decimal') !== false) {
+        if (\strpos($col, 'decimal') !== false) {
             return ['type' => TableSchema::TYPE_DECIMAL, 'length' => null, 'unsigned' => $unsigned];
         }
-        if (in_array($col, ['float', 'real', 'double'])) {
+        if (\in_array($col, ['float', 'real', 'double'])) {
             return ['type' => TableSchema::TYPE_FLOAT, 'length' => null, 'unsigned' => $unsigned];
         }
 
-        if (strpos($col, 'boolean') !== false) {
+        if (\strpos($col, 'boolean') !== false) {
             return ['type' => TableSchema::TYPE_BOOLEAN, 'length' => null];
         }
 
@@ -95,14 +95,14 @@ class SqliteSchema extends BaseSchema
         if ($col === 'char') {
             return ['type' => TableSchema::TYPE_STRING, 'fixed' => true, 'length' => $length];
         }
-        if (strpos($col, 'char') !== false) {
+        if (\strpos($col, 'char') !== false) {
             return ['type' => TableSchema::TYPE_STRING, 'length' => $length];
         }
 
-        if (in_array($col, ['blob', 'clob'])) {
+        if (\in_array($col, ['blob', 'clob'])) {
             return ['type' => TableSchema::TYPE_BINARY, 'length' => null];
         }
-        if (in_array($col, ['date', 'time', 'timestamp', 'datetime'])) {
+        if (\in_array($col, ['date', 'time', 'timestamp', 'datetime'])) {
             return ['type' => $col, 'length' => null];
         }
 
@@ -126,7 +126,7 @@ class SqliteSchema extends BaseSchema
      */
     public function describeColumnSql($tableName, $config)
     {
-        $sql = sprintf(
+        $sql = \sprintf(
             'PRAGMA table_info(%s)',
             $this->_driver->quoteIdentifier($tableName)
         );
@@ -163,7 +163,7 @@ class SqliteSchema extends BaseSchema
                 'type' => TableSchema::CONSTRAINT_PRIMARY,
                 'columns' => []
             ];
-            $constraint['columns'] = array_merge($constraint['columns'], [$row['name']]);
+            $constraint['columns'] = \array_merge($constraint['columns'], [$row['name']]);
             $schema->addConstraint('primary', $constraint);
         }
     }
@@ -184,8 +184,8 @@ class SqliteSchema extends BaseSchema
         }
 
         // Remove quotes
-        if (preg_match("/^'(.*)'$/", $default, $matches)) {
-            return str_replace("''", "'", $matches[1]);
+        if (\preg_match("/^'(.*)'$/", $default, $matches)) {
+            return \str_replace("''", "'", $matches[1]);
         }
 
         return $default;
@@ -196,7 +196,7 @@ class SqliteSchema extends BaseSchema
      */
     public function describeIndexSql($tableName, $config)
     {
-        $sql = sprintf(
+        $sql = \sprintf(
             'PRAGMA index_list(%s)',
             $this->_driver->quoteIdentifier($tableName)
         );
@@ -215,7 +215,7 @@ class SqliteSchema extends BaseSchema
      */
     public function convertIndexDescription(TableSchema $schema, $row)
     {
-        $sql = sprintf(
+        $sql = \sprintf(
             'PRAGMA index_info(%s)',
             $this->_driver->quoteIdentifier($row['name'])
         );
@@ -244,7 +244,7 @@ class SqliteSchema extends BaseSchema
      */
     public function describeForeignKeySql($tableName, $config)
     {
-        $sql = sprintf('PRAGMA foreign_key_list(%s)', $this->_driver->quoteIdentifier($tableName));
+        $sql = \sprintf('PRAGMA foreign_key_list(%s)', $this->_driver->quoteIdentifier($tableName));
 
         return [$sql, []];
     }
@@ -310,7 +310,7 @@ class SqliteSchema extends BaseSchema
             TableSchema::TYPE_DECIMAL
         ];
 
-        if (in_array($data['type'], $hasUnsigned, true) &&
+        if (\in_array($data['type'], $hasUnsigned, true) &&
             isset($data['unsigned']) && $data['unsigned'] === true
         ) {
             if ($data['type'] !== TableSchema::TYPE_INTEGER || [$name] !== (array)$schema->primaryKey()) {
@@ -341,14 +341,14 @@ class SqliteSchema extends BaseSchema
             TableSchema::TYPE_SMALLINTEGER,
             TableSchema::TYPE_INTEGER,
         ];
-        if (in_array($data['type'], $integerTypes, true) &&
+        if (\in_array($data['type'], $integerTypes, true) &&
             isset($data['length']) && [$name] !== (array)$schema->primaryKey()
         ) {
                 $out .= '(' . (int)$data['length'] . ')';
         }
 
         $hasPrecision = [TableSchema::TYPE_FLOAT, TableSchema::TYPE_DECIMAL];
-        if (in_array($data['type'], $hasPrecision, true) &&
+        if (\in_array($data['type'], $hasPrecision, true) &&
             (isset($data['length']) || isset($data['precision']))
         ) {
             $out .= '(' . (int)$data['length'] . ',' . (int)$data['precision'] . ')';
@@ -383,7 +383,7 @@ class SqliteSchema extends BaseSchema
     {
         $data = $schema->getConstraint($name);
         if ($data['type'] === TableSchema::CONSTRAINT_PRIMARY &&
-            count($data['columns']) === 1 &&
+            \count($data['columns']) === 1 &&
             $schema->getColumn($data['columns'][0])['type'] === TableSchema::TYPE_INTEGER
         ) {
             return '';
@@ -399,7 +399,7 @@ class SqliteSchema extends BaseSchema
         if ($data['type'] === TableSchema::CONSTRAINT_FOREIGN) {
             $type = 'FOREIGN KEY';
 
-            $clause = sprintf(
+            $clause = \sprintf(
                 ' REFERENCES %s (%s) ON UPDATE %s ON DELETE %s',
                 $this->_driver->quoteIdentifier($data['references'][0]),
                 $this->_convertConstraintColumns($data['references'][1]),
@@ -407,16 +407,16 @@ class SqliteSchema extends BaseSchema
                 $this->_foreignOnClause($data['delete'])
             );
         }
-        $columns = array_map(
+        $columns = \array_map(
             [$this->_driver, 'quoteIdentifier'],
             $data['columns']
         );
 
-        return sprintf(
+        return \sprintf(
             'CONSTRAINT %s %s (%s)%s',
             $this->_driver->quoteIdentifier($name),
             $type,
-            implode(', ', $columns),
+            \implode(', ', $columns),
             $clause
         );
     }
@@ -449,16 +449,16 @@ class SqliteSchema extends BaseSchema
     public function indexSql(TableSchema $schema, $name)
     {
         $data = $schema->getIndex($name);
-        $columns = array_map(
+        $columns = \array_map(
             [$this->_driver, 'quoteIdentifier'],
             $data['columns']
         );
 
-        return sprintf(
+        return \sprintf(
             'CREATE INDEX %s ON %s (%s)',
             $this->_driver->quoteIdentifier($name),
             $this->_driver->quoteIdentifier($schema->name()),
-            implode(', ', $columns)
+            \implode(', ', $columns)
         );
     }
 
@@ -467,10 +467,10 @@ class SqliteSchema extends BaseSchema
      */
     public function createTableSql(TableSchema $schema, $columns, $constraints, $indexes)
     {
-        $lines = array_merge($columns, $constraints);
-        $content = implode(",\n", array_filter($lines));
+        $lines = \array_merge($columns, $constraints);
+        $content = \implode(",\n", \array_filter($lines));
         $temporary = $schema->isTemporary() ? ' TEMPORARY ' : ' ';
-        $table = sprintf("CREATE%sTABLE \"%s\" (\n%s\n)", $temporary, $schema->name(), $content);
+        $table = \sprintf("CREATE%sTABLE \"%s\" (\n%s\n)", $temporary, $schema->name(), $content);
         $out = [$table];
         foreach ($indexes as $index) {
             $out[] = $index;
@@ -487,10 +487,10 @@ class SqliteSchema extends BaseSchema
         $name = $schema->name();
         $sql = [];
         if ($this->hasSequences()) {
-            $sql[] = sprintf('DELETE FROM sqlite_sequence WHERE name="%s"', $name);
+            $sql[] = \sprintf('DELETE FROM sqlite_sequence WHERE name="%s"', $name);
         }
 
-        $sql[] = sprintf('DELETE FROM "%s"', $name);
+        $sql[] = \sprintf('DELETE FROM "%s"', $name);
 
         return $sql;
     }

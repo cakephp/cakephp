@@ -107,7 +107,7 @@ class IdentifierQuoter
         foreach (['distinct', 'select', 'from', 'group'] as $part) {
             $contents = $query->clause($part);
 
-            if (!is_array($contents)) {
+            if (!\is_array($contents)) {
                 continue;
             }
 
@@ -134,8 +134,8 @@ class IdentifierQuoter
     {
         $result = [];
         foreach ((array)$part as $alias => $value) {
-            $value = !is_string($value) ? $value : $this->_driver->quoteIdentifier($value);
-            $alias = is_numeric($alias) ? $alias : $this->_driver->quoteIdentifier($alias);
+            $value = !\is_string($value) ? $value : $this->_driver->quoteIdentifier($value);
+            $alias = \is_numeric($alias) ? $alias : $this->_driver->quoteIdentifier($alias);
             $result[$alias] = $value;
         }
 
@@ -159,7 +159,7 @@ class IdentifierQuoter
                 $value['alias'] = $alias;
             }
 
-            if (is_string($value['table'])) {
+            if (\is_string($value['table'])) {
                 $value['table'] = $this->_driver->quoteIdentifier($value['table']);
             }
 
@@ -180,7 +180,7 @@ class IdentifierQuoter
         list($table, $columns) = $query->clause('insert');
         $table = $this->_driver->quoteIdentifier($table);
         foreach ($columns as &$column) {
-            if (is_scalar($column)) {
+            if (\is_scalar($column)) {
                 $column = $this->_driver->quoteIdentifier($column);
             }
         }
@@ -197,7 +197,7 @@ class IdentifierQuoter
     {
         $table = $query->clause('update')[0];
 
-        if (is_string($table)) {
+        if (\is_string($table)) {
             $query->update($this->_driver->quoteIdentifier($table));
         }
     }
@@ -211,9 +211,9 @@ class IdentifierQuoter
     protected function _quoteComparison(FieldInterface $expression)
     {
         $field = $expression->getField();
-        if (is_string($field)) {
+        if (\is_string($field)) {
             $expression->setField($this->_driver->quoteIdentifier($field));
-        } elseif (is_array($field)) {
+        } elseif (\is_array($field)) {
             $quoted = [];
             foreach ($field as $f) {
                 $quoted[] = $this->_driver->quoteIdentifier($f);
@@ -236,12 +236,12 @@ class IdentifierQuoter
     protected function _quoteOrderBy(OrderByExpression $expression)
     {
         $expression->iterateParts(function ($part, &$field) {
-            if (is_string($field)) {
+            if (\is_string($field)) {
                 $field = $this->_driver->quoteIdentifier($field);
 
                 return $part;
             }
-            if (is_string($part) && strpos($part, ' ') === false) {
+            if (\is_string($part) && \strpos($part, ' ') === false) {
                 return $this->_driver->quoteIdentifier($part);
             }
 

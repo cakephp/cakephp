@@ -225,7 +225,7 @@ class Router
      */
     public static function redirect($route, $url, $options = [])
     {
-        if (is_string($url)) {
+        if (\is_string($url)) {
             $url = ['redirect' => $url];
         }
         if (!isset($options['routeClass'])) {
@@ -308,7 +308,7 @@ class Router
             };
 
             if ($plugin && $prefix) {
-                $path = '/' . implode('/', [$prefix, $pluginUrl]);
+                $path = '/' . \implode('/', [$prefix, $pluginUrl]);
                 $params = ['prefix' => $prefix, 'plugin' => $plugin];
                 static::scope($path, $params, $callback);
 
@@ -347,7 +347,7 @@ class Router
         if (!static::$initialized) {
             static::_loadRoutes();
         }
-        if (strpos($url, '/') !== 0) {
+        if (\strpos($url, '/') !== 0) {
             $url = '/' . $url;
         }
 
@@ -442,11 +442,11 @@ class Router
      */
     public static function popRequest()
     {
-        $removed = array_pop(static::$_requests);
-        $last = end(static::$_requests);
+        $removed = \array_pop(static::$_requests);
+        $last = \end(static::$_requests);
         if ($last) {
             static::setRequestContext($last);
-            reset(static::$_requests);
+            \reset(static::$_requests);
         }
 
         return $removed;
@@ -461,7 +461,7 @@ class Router
     public static function getRequest($current = false)
     {
         if ($current) {
-            $request = end(static::$_requests);
+            $request = \end(static::$_requests);
 
             return $request ?: null;
         }
@@ -479,7 +479,7 @@ class Router
     {
         if (empty(static::$_initialState)) {
             static::$_collection = new RouteCollection();
-            static::$_initialState = get_class_vars(get_called_class());
+            static::$_initialState = \get_class_vars(\get_called_class());
 
             return;
         }
@@ -616,7 +616,7 @@ class Router
 
             return $output;
         }
-        if (is_array($url)) {
+        if (\is_array($url)) {
             if (isset($url['_full']) && $url['_full'] === true) {
                 $full = true;
                 unset($url['_full']);
@@ -656,14 +656,14 @@ class Router
             $output = static::$_collection->match($url, static::$_requestContext + ['params' => $params]);
         } else {
             $plainString = (
-                strpos($url, 'javascript:') === 0 ||
-                strpos($url, 'mailto:') === 0 ||
-                strpos($url, 'tel:') === 0 ||
-                strpos($url, 'sms:') === 0 ||
-                strpos($url, '#') === 0 ||
-                strpos($url, '?') === 0 ||
-                strpos($url, '//') === 0 ||
-                strpos($url, '://') !== false
+                \strpos($url, 'javascript:') === 0 ||
+                \strpos($url, 'mailto:') === 0 ||
+                \strpos($url, 'tel:') === 0 ||
+                \strpos($url, 'sms:') === 0 ||
+                \strpos($url, '#') === 0 ||
+                \strpos($url, '?') === 0 ||
+                \strpos($url, '//') === 0 ||
+                \strpos($url, '://') !== false
             );
 
             if ($plainString) {
@@ -671,9 +671,9 @@ class Router
             }
             $output = $base . $url;
         }
-        $protocol = preg_match('#^[a-z][a-z0-9+\-.]*\://#i', $output);
+        $protocol = \preg_match('#^[a-z][a-z0-9+\-.]*\://#i', $output);
         if ($protocol === 0) {
-            $output = str_replace('//', '/', '/' . $output);
+            $output = \str_replace('//', '/', '/' . $output);
             if ($full) {
                 $output = static::fullBaseUrl() . $output;
             }
@@ -748,7 +748,7 @@ class Router
             $params['_Token'],
             $params['_matchedRoute']
         );
-        $params = array_merge($params, $pass);
+        $params = \array_merge($params, $pass);
         if (!empty($url)) {
             $params['?'] = $url;
         }
@@ -790,23 +790,23 @@ class Router
      */
     public static function normalize($url = '/')
     {
-        if (is_array($url)) {
+        if (\is_array($url)) {
             $url = static::url($url);
         }
-        if (preg_match('/^[a-z\-]+:\/\//', $url)) {
+        if (\preg_match('/^[a-z\-]+:\/\//', $url)) {
             return $url;
         }
         $request = static::getRequest();
 
-        if (!empty($request->base) && stristr($url, $request->base)) {
-            $url = preg_replace('/^' . preg_quote($request->base, '/') . '/', '', $url, 1);
+        if (!empty($request->base) && \stristr($url, $request->base)) {
+            $url = \preg_replace('/^' . \preg_quote($request->base, '/') . '/', '', $url, 1);
         }
         $url = '/' . $url;
 
-        while (strpos($url, '//') !== false) {
-            $url = str_replace('//', '/', $url);
+        while (\strpos($url, '//') !== false) {
+            $url = \str_replace('//', '/', $url);
         }
-        $url = preg_replace('/(?:(\/$))/', '', $url);
+        $url = \preg_replace('/(?:(\/$))/', '', $url);
 
         if (empty($url)) {
             return '/';
@@ -843,11 +843,11 @@ class Router
                 static::_loadRoutes();
             }
 
-            return array_unique(array_merge(static::$_defaultExtensions, $collection->getExtensions()));
+            return \array_unique(\array_merge(static::$_defaultExtensions, $collection->getExtensions()));
         }
         $extensions = (array)$extensions;
         if ($merge) {
-            $extensions = array_unique(array_merge(static::$_defaultExtensions, $extensions));
+            $extensions = \array_unique(\array_merge(static::$_defaultExtensions, $extensions));
         }
 
         return static::$_defaultExtensions = $extensions;
@@ -880,16 +880,16 @@ class Router
         }
         $named = [];
         foreach ($request->getParam('pass') as $key => $value) {
-            if (strpos($value, $options['separator']) === false) {
+            if (\strpos($value, $options['separator']) === false) {
                 continue;
             }
             unset($request->params['pass'][$key]);
-            list($key, $value) = explode($options['separator'], $value, 2);
+            list($key, $value) = \explode($options['separator'], $value, 2);
 
-            if (preg_match_all('/\[([A-Za-z0-9_-]+)?\]/', $key, $matches, PREG_SET_ORDER)) {
-                $matches = array_reverse($matches);
-                $parts = explode('[', $key);
-                $key = array_shift($parts);
+            if (\preg_match_all('/\[([A-Za-z0-9_-]+)?\]/', $key, $matches, PREG_SET_ORDER)) {
+                $matches = \array_reverse($matches);
+                $parts = \explode('[', $key);
+                $key = \array_shift($parts);
                 $arr = $value;
                 foreach ($matches as $match) {
                     if (empty($match[1])) {
@@ -902,7 +902,7 @@ class Router
                 }
                 $value = $arr;
             }
-            $named = array_merge_recursive($named, [$key => $value]);
+            $named = \array_merge_recursive($named, [$key => $value]);
         }
         $request->params['named'] = $named;
 
@@ -975,7 +975,7 @@ class Router
     public static function scope($path, $params = [], $callback = null)
     {
         $options = [];
-        if (is_array($params)) {
+        if (\is_array($params)) {
             $options = $params;
             unset($params['routeClass'], $params['extensions']);
         }
@@ -1021,7 +1021,7 @@ class Router
             unset($params['path']);
         }
 
-        $params = array_merge($params, ['prefix' => $name]);
+        $params = \array_merge($params, ['prefix' => $name]);
         static::scope($path, $params, $callback);
     }
 

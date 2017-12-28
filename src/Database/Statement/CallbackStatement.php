@@ -69,6 +69,6 @@ class CallbackStatement extends StatementDecorator
      */
     public function fetchAll($type = 'num')
     {
-        return array_map($this->_callback, $this->_statement->fetchAll($type));
+        return \array_map($this->_callback, $this->_statement->fetchAll($type));
     }
 }

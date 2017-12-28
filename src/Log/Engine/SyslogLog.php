@@ -104,9 +104,9 @@ class SyslogLog extends BaseLog
             $priority = $this->_levelMap[$level];
         }
 
-        $messages = explode("\n", $this->_format($message, $context));
+        $messages = \explode("\n", $this->_format($message, $context));
         foreach ($messages as $message) {
-            $message = sprintf($this->_config['format'], $level, $message);
+            $message = \sprintf($this->_config['format'], $level, $message);
             $this->_write($priority, $message);
         }
 
@@ -124,7 +124,7 @@ class SyslogLog extends BaseLog
      */
     protected function _open($ident, $options, $facility)
     {
-        openlog($ident, $options, $facility);
+        \openlog($ident, $options, $facility);
     }
 
     /**
@@ -137,7 +137,7 @@ class SyslogLog extends BaseLog
      */
     protected function _write($priority, $message)
     {
-        return syslog($priority, $message);
+        return \syslog($priority, $message);
     }
 
     /**
@@ -145,6 +145,6 @@ class SyslogLog extends BaseLog
      */
     public function __destruct()
     {
-        closelog();
+        \closelog();
     }
 }

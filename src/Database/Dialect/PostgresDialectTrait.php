@@ -112,7 +112,7 @@ trait PostgresDialectTrait
                     ->setName('')
                     ->setConjunction('-')
                     ->iterateParts(function ($p) {
-                        if (is_string($p)) {
+                        if (\is_string($p)) {
                             $p = ['value' => [$p => 'literal'], 'type' => null];
                         } else {
                             $p['value'] = [$p['value']];
@@ -138,7 +138,7 @@ trait PostgresDialectTrait
                     ->setConjunction(' + INTERVAL')
                     ->iterateParts(function ($p, $key) {
                         if ($key === 1) {
-                            $p = sprintf("'%s'", $p);
+                            $p = \sprintf("'%s'", $p);
                         }
 
                         return $p;

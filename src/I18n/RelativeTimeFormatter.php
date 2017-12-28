@@ -114,12 +114,12 @@ class RelativeTimeFormatter
             return __d('cake', 'just now', 'just now');
         }
 
-        if ($diff > abs($now - (new FrozenTime($options['end']))->format('U'))) {
-            return sprintf($options['absoluteString'], $time->i18nFormat($options['format']));
+        if ($diff > \abs($now - (new FrozenTime($options['end']))->format('U'))) {
+            return \sprintf($options['absoluteString'], $time->i18nFormat($options['format']));
         }
 
         $diffData = $this->_diffData($futureTime, $pastTime, $backwards, $options);
-        list($fNum, $fWord, $years, $months, $weeks, $days, $hours, $minutes, $seconds) = array_values($diffData);
+        list($fNum, $fWord, $years, $months, $weeks, $days, $hours, $minutes, $seconds) = \array_values($diffData);
 
         $relativeDate = [];
         if ($fNum >= 1 && $years > 0) {
@@ -143,7 +143,7 @@ class RelativeTimeFormatter
         if ($fNum >= 7 && $seconds > 0) {
             $relativeDate[] = __dn('cake', '{0} second', '{0} seconds', $seconds, $seconds);
         }
-        $relativeDate = implode(', ', $relativeDate);
+        $relativeDate = \implode(', ', $relativeDate);
 
         // When time has passed
         if (!$backwards) {
@@ -157,7 +157,7 @@ class RelativeTimeFormatter
                 'year' => __d('cake', 'about a year ago')
             ];
 
-            return $relativeDate ? sprintf($options['relativeString'], $relativeDate) : $aboutAgo[$fWord];
+            return $relativeDate ? \sprintf($options['relativeString'], $relativeDate) : $aboutAgo[$fWord];
         }
 
         // When time is to come
@@ -192,16 +192,16 @@ class RelativeTimeFormatter
 
         // If more than a week, then take into account the length of months
         if ($diff >= 604800) {
-            list($future['H'], $future['i'], $future['s'], $future['d'], $future['m'], $future['Y']) = explode('/', date('H/i/s/d/m/Y', $futureTime));
+            list($future['H'], $future['i'], $future['s'], $future['d'], $future['m'], $future['Y']) = \explode('/', \date('H/i/s/d/m/Y', $futureTime));
 
-            list($past['H'], $past['i'], $past['s'], $past['d'], $past['m'], $past['Y']) = explode('/', date('H/i/s/d/m/Y', $pastTime));
+            list($past['H'], $past['i'], $past['s'], $past['d'], $past['m'], $past['Y']) = \explode('/', \date('H/i/s/d/m/Y', $pastTime));
             $weeks = $days = $hours = $minutes = $seconds = 0;
 
             $years = $future['Y'] - $past['Y'];
             $months = $future['m'] + ((12 * $years) - $past['m']);
 
             if ($months >= 12) {
-                $years = floor($months / 12);
+                $years = \floor($months / 12);
                 $months -= ($years * 12);
             }
             if ($future['m'] < $past['m'] && $future['Y'] - $past['Y'] === 1) {
@@ -211,8 +211,8 @@ class RelativeTimeFormatter
             if ($future['d'] >= $past['d']) {
                 $days = $future['d'] - $past['d'];
             } else {
-                $daysInPastMonth = date('t', $pastTime);
-                $daysInFutureMonth = date('t', mktime(0, 0, 0, $future['m'] - 1, 1, $future['Y']));
+                $daysInPastMonth = \date('t', $pastTime);
+                $daysInFutureMonth = \date('t', \mktime(0, 0, 0, $future['m'] - 1, 1, $future['Y']));
 
                 if (!$backwards) {
                     $days = ($daysInPastMonth - $past['d']) + $future['d'];
@@ -236,19 +236,19 @@ class RelativeTimeFormatter
             }
 
             if ($days >= 7) {
-                $weeks = floor($days / 7);
+                $weeks = \floor($days / 7);
                 $days -= ($weeks * 7);
             }
         } else {
             $years = $months = $weeks = 0;
-            $days = floor($diff / 86400);
+            $days = \floor($diff / 86400);
 
             $diff -= ($days * 86400);
 
-            $hours = floor($diff / 3600);
+            $hours = \floor($diff / 3600);
             $diff -= ($hours * 3600);
 
-            $minutes = floor($diff / 60);
+            $minutes = \floor($diff / 60);
             $diff -= ($minutes * 60);
             $seconds = $diff;
         }
@@ -256,19 +256,19 @@ class RelativeTimeFormatter
         $fWord = $options['accuracy']['second'];
         if ($years > 0) {
             $fWord = $options['accuracy']['year'];
-        } elseif (abs($months) > 0) {
+        } elseif (\abs($months) > 0) {
             $fWord = $options['accuracy']['month'];
-        } elseif (abs($weeks) > 0) {
+        } elseif (\abs($weeks) > 0) {
             $fWord = $options['accuracy']['week'];
-        } elseif (abs($days) > 0) {
+        } elseif (\abs($days) > 0) {
             $fWord = $options['accuracy']['day'];
-        } elseif (abs($hours) > 0) {
+        } elseif (\abs($hours) > 0) {
             $fWord = $options['accuracy']['hour'];
-        } elseif (abs($minutes) > 0) {
+        } elseif (\abs($minutes) > 0) {
             $fWord = $options['accuracy']['minute'];
         }
 
-        $fNum = str_replace(['year', 'month', 'week', 'day', 'hour', 'minute', 'second'], [1, 2, 3, 4, 5, 6, 7], $fWord);
+        $fNum = \str_replace(['year', 'month', 'week', 'day', 'hour', 'minute', 'second'], [1, 2, 3, 4, 5, 6, 7], $fWord);
 
         return [$fNum, $fWord, $years, $months, $weeks, $days, $hours, $minutes, $seconds];
     }
@@ -304,12 +304,12 @@ class RelativeTimeFormatter
             return __d('cake', 'today');
         }
 
-        if ($diff > abs($now - (new FrozenDate($options['end']))->format('U'))) {
-            return sprintf($options['absoluteString'], $date->i18nFormat($options['format']));
+        if ($diff > \abs($now - (new FrozenDate($options['end']))->format('U'))) {
+            return \sprintf($options['absoluteString'], $date->i18nFormat($options['format']));
         }
 
         $diffData = $this->_diffData($futureTime, $pastTime, $backwards, $options);
-        list($fNum, $fWord, $years, $months, $weeks, $days) = array_values($diffData);
+        list($fNum, $fWord, $years, $months, $weeks, $days) = \array_values($diffData);
 
         $relativeDate = [];
         if ($fNum >= 1 && $years > 0) {
@@ -324,7 +324,7 @@ class RelativeTimeFormatter
         if ($fNum >= 4 && $days > 0) {
             $relativeDate[] = __dn('cake', '{0} day', '{0} days', $days, $days);
         }
-        $relativeDate = implode(', ', $relativeDate);
+        $relativeDate = \implode(', ', $relativeDate);
 
         // When time has passed
         if (!$backwards) {
@@ -335,7 +335,7 @@ class RelativeTimeFormatter
                 'year' => __d('cake', 'about a year ago')
             ];
 
-            return $relativeDate ? sprintf($options['relativeString'], $relativeDate) : $aboutAgo[$fWord];
+            return $relativeDate ? \sprintf($options['relativeString'], $relativeDate) : $aboutAgo[$fWord];
         }
 
         // When time is to come
@@ -370,7 +370,7 @@ class RelativeTimeFormatter
             'relativeString' => __d('cake', '%s ago'),
             'absoluteString' => __d('cake', 'on %s'),
         ];
-        if (is_string($options['accuracy'])) {
+        if (\is_string($options['accuracy'])) {
             $accuracy = $options['accuracy'];
             $options['accuracy'] = [];
             foreach ($class::$wordAccuracy as $key => $level) {

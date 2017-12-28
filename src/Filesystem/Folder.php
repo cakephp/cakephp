@@ -142,11 +142,11 @@ class Folder
             $this->mode = $mode;
         }
 
-        if (!file_exists($path) && $create === true) {
+        if (!\file_exists($path) && $create === true) {
             $this->create($path, $this->mode);
         }
         if (!Folder::isAbsolute($path)) {
-            $path = realpath($path);
+            $path = \realpath($path);
         }
         if (!empty($path)) {
             $this->cd($path);
@@ -172,7 +172,7 @@ class Folder
     public function cd($path)
     {
         $path = $this->realpath($path);
-        if (is_dir($path)) {
+        if (\is_dir($path)) {
             return $this->path = $path;
         }
 
@@ -196,8 +196,8 @@ class Folder
         if (!$this->pwd()) {
             return [$dirs, $files];
         }
-        if (is_array($exceptions)) {
-            $exceptions = array_flip($exceptions);
+        if (\is_array($exceptions)) {
+            $exceptions = \array_flip($exceptions);
         }
         $skipHidden = isset($exceptions['.']) || $exceptions === true;
 
@@ -207,7 +207,7 @@ class Folder
             return [$dirs, $files];
         }
 
-        if (!is_bool($sort) && isset($this->_fsorts[$sort])) {
+        if (!\is_bool($sort) && isset($this->_fsorts[$sort])) {
             $methodName = $this->_fsorts[$sort];
         } else {
             $methodName = $this->_fsorts[self::SORT_NAME];
@@ -233,16 +233,16 @@ class Folder
         }
 
         if ($sort || $this->sort) {
-            ksort($dirs);
-            ksort($files);
+            \ksort($dirs);
+            \ksort($files);
         }
 
         if ($dirs) {
-            $dirs = array_merge(...array_values($dirs));
+            $dirs = \array_merge(...\array_values($dirs));
         }
 
         if ($files) {
-            $files = array_merge(...array_values($files));
+            $files = \array_merge(...\array_values($files));
         }
 
         return [$dirs, $files];
@@ -259,7 +259,7 @@ class Folder
     {
         list(, $files) = $this->read($sort);
 
-        return array_values(preg_grep('/^' . $regexpPattern . '$/i', $files));
+        return \array_values(\preg_grep('/^' . $regexpPattern . '$/i', $files));
     }
 
     /**
@@ -294,7 +294,7 @@ class Folder
         $found = [];
 
         foreach ($files as $file) {
-            if (preg_match('/^' . $pattern . '$/i', $file)) {
+            if (\preg_match('/^' . $pattern . '$/i', $file)) {
                 $found[] = Folder::addPathElement($this->path, $file);
             }
         }
@@ -302,7 +302,7 @@ class Folder
 
         foreach ($dirs as $dir) {
             $this->cd(Folder::addPathElement($start, $dir));
-            $found = array_merge($found, $this->findRecursive($pattern, $sort));
+            $found = \array_merge($found, $this->findRecursive($pattern, $sort));
         }
 
         return $found;
@@ -316,7 +316,7 @@ class Folder
      */
     public static function isWindowsPath($path)
     {
-        return (preg_match('/^[A-Z]:\\\\/i', $path) || substr($path, 0, 2) === '\\\\');
+        return (\preg_match('/^[A-Z]:\\\\/i', $path) || \substr($path, 0, 2) === '\\\\');
     }
 
     /**
@@ -332,8 +332,8 @@ class Folder
         }
 
         return $path[0] === '/' ||
-            preg_match('/^[A-Z]:\\\\/i', $path) ||
-            substr($path, 0, 2) === '\\\\' ||
+            \preg_match('/^[A-Z]:\\\\/i', $path) ||
+            \substr($path, 0, 2) === '\\\\' ||
             self::isRegisteredStreamWrapper($path);
     }
 
@@ -345,8 +345,8 @@ class Folder
      */
     public static function isRegisteredStreamWrapper($path)
     {
-        return preg_match('/^[A-Z]+(?=:\/\/)/i', $path, $matches) &&
-            in_array($matches[0], stream_get_wrappers());
+        return \preg_match('/^[A-Z]+(?=:\/\/)/i', $path, $matches) &&
+            \in_array($matches[0], \stream_get_wrappers());
     }
 
     /**
@@ -396,9 +396,9 @@ class Folder
     public static function addPathElement($path, $element)
     {
         $element = (array)$element;
-        array_unshift($element, rtrim($path, DIRECTORY_SEPARATOR));
+        \array_unshift($element, \rtrim($path, DIRECTORY_SEPARATOR));
 
-        return implode(DIRECTORY_SEPARATOR, $element);
+        return \implode(DIRECTORY_SEPARATOR, $element);
     }
 
     /**
@@ -410,7 +410,7 @@ class Folder
      */
     public function inCakePath($path = '')
     {
-        $dir = substr(Folder::slashTerm(ROOT), 0, -1);
+        $dir = \substr(Folder::slashTerm(ROOT), 0, -1);
         $newdir = $dir . $path;
 
         return $this->inPath($newdir);
@@ -434,9 +434,9 @@ class Folder
         $current = Folder::slashTerm($this->pwd());
 
         if (!$reverse) {
-            $return = preg_match('/^' . preg_quote($dir, '/') . '(.*)/', $current);
+            $return = \preg_match('/^' . \preg_quote($dir, '/') . '(.*)/', $current);
         } else {
-            $return = preg_match('/^' . preg_quote($current, '/') . '(.*)/', $dir);
+            $return = \preg_match('/^' . \preg_quote($current, '/') . '(.*)/', $dir);
         }
 
         return (bool)$return;
@@ -457,38 +457,38 @@ class Folder
             $mode = $this->mode;
         }
 
-        if ($recursive === false && is_dir($path)) {
+        if ($recursive === false && \is_dir($path)) {
             //@codingStandardsIgnoreStart
-            if (@chmod($path, intval($mode, 8))) {
+            if (@\chmod($path, \intval($mode, 8))) {
                 //@codingStandardsIgnoreEnd
-                $this->_messages[] = sprintf('%s changed to %s', $path, $mode);
+                $this->_messages[] = \sprintf('%s changed to %s', $path, $mode);
 
                 return true;
             }
 
-            $this->_errors[] = sprintf('%s NOT changed to %s', $path, $mode);
+            $this->_errors[] = \sprintf('%s NOT changed to %s', $path, $mode);
 
             return false;
         }
 
-        if (is_dir($path)) {
+        if (\is_dir($path)) {
             $paths = $this->tree($path);
 
             foreach ($paths as $type) {
                 foreach ($type as $fullpath) {
-                    $check = explode(DIRECTORY_SEPARATOR, $fullpath);
-                    $count = count($check);
+                    $check = \explode(DIRECTORY_SEPARATOR, $fullpath);
+                    $count = \count($check);
 
-                    if (in_array($check[$count - 1], $exceptions)) {
+                    if (\in_array($check[$count - 1], $exceptions)) {
                         continue;
                     }
 
                     //@codingStandardsIgnoreStart
-                    if (@chmod($fullpath, intval($mode, 8))) {
+                    if (@\chmod($fullpath, \intval($mode, 8))) {
                         //@codingStandardsIgnoreEnd
-                        $this->_messages[] = sprintf('%s changed to %s', $fullpath, $mode);
+                        $this->_messages[] = \sprintf('%s changed to %s', $fullpath, $mode);
                     } else {
-                        $this->_errors[] = sprintf('%s NOT changed to %s', $fullpath, $mode);
+                        $this->_errors[] = \sprintf('%s NOT changed to %s', $fullpath, $mode);
                     }
                 }
             }
@@ -548,8 +548,8 @@ class Folder
         $files = [];
         $directories = [$path];
 
-        if (is_array($exceptions)) {
-            $exceptions = array_flip($exceptions);
+        if (\is_array($exceptions)) {
+            $exceptions = \array_flip($exceptions);
         }
         $skipHidden = false;
         if ($exceptions === true) {
@@ -573,7 +573,7 @@ class Folder
         foreach ($iterator as $itemPath => $fsIterator) {
             if ($skipHidden) {
                 $subPathName = $fsIterator->getSubPathname();
-                if ($subPathName{0} === '.' || strpos($subPathName, DIRECTORY_SEPARATOR . '.') !== false) {
+                if ($subPathName{0} === '.' || \strpos($subPathName, DIRECTORY_SEPARATOR . '.') !== false) {
                     continue;
                 }
             }
@@ -611,7 +611,7 @@ class Folder
      */
     public function create($pathname, $mode = false)
     {
-        if (is_dir($pathname) || empty($pathname)) {
+        if (\is_dir($pathname) || empty($pathname)) {
             return true;
         }
 
@@ -623,25 +623,25 @@ class Folder
             $mode = $this->mode;
         }
 
-        if (is_file($pathname)) {
-            $this->_errors[] = sprintf('%s is a file', $pathname);
+        if (\is_file($pathname)) {
+            $this->_errors[] = \sprintf('%s is a file', $pathname);
 
             return false;
         }
-        $pathname = rtrim($pathname, DIRECTORY_SEPARATOR);
-        $nextPathname = substr($pathname, 0, strrpos($pathname, DIRECTORY_SEPARATOR));
+        $pathname = \rtrim($pathname, DIRECTORY_SEPARATOR);
+        $nextPathname = \substr($pathname, 0, \strrpos($pathname, DIRECTORY_SEPARATOR));
 
         if ($this->create($nextPathname, $mode)) {
-            if (!file_exists($pathname)) {
-                $old = umask(0);
-                if (mkdir($pathname, $mode, true)) {
-                    umask($old);
-                    $this->_messages[] = sprintf('%s created', $pathname);
+            if (!\file_exists($pathname)) {
+                $old = \umask(0);
+                if (\mkdir($pathname, $mode, true)) {
+                    \umask($old);
+                    $this->_messages[] = \sprintf('%s created', $pathname);
 
                     return true;
                 }
-                umask($old);
-                $this->_errors[] = sprintf('%s NOT created', $pathname);
+                \umask($old);
+                $this->_errors[] = \sprintf('%s NOT created', $pathname);
 
                 return false;
             }
@@ -660,12 +660,12 @@ class Folder
         $size = 0;
         $directory = Folder::slashTerm($this->path);
         $stack = [$directory];
-        $count = count($stack);
+        $count = \count($stack);
         for ($i = 0, $j = $count; $i < $j; ++$i) {
-            if (is_file($stack[$i])) {
-                $size += filesize($stack[$i]);
-            } elseif (is_dir($stack[$i])) {
-                $dir = dir($stack[$i]);
+            if (\is_file($stack[$i])) {
+                $size += \filesize($stack[$i]);
+            } elseif (\is_dir($stack[$i])) {
+                $dir = \dir($stack[$i]);
                 if ($dir) {
                     while (($entry = $dir->read()) !== false) {
                         if ($entry === '.' || $entry === '..') {
@@ -673,7 +673,7 @@ class Folder
                         }
                         $add = $stack[$i] . $entry;
 
-                        if (is_dir($stack[$i] . $entry)) {
+                        if (\is_dir($stack[$i] . $entry)) {
                             $add = Folder::slashTerm($add);
                         }
                         $stack[] = $add;
@@ -681,7 +681,7 @@ class Folder
                     $dir->close();
                 }
             }
-            $j = count($stack);
+            $j = \count($stack);
         }
 
         return $size;
@@ -702,7 +702,7 @@ class Folder
             return false;
         }
         $path = Folder::slashTerm($path);
-        if (is_dir($path)) {
+        if (\is_dir($path)) {
             try {
                 $directory = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::CURRENT_AS_SELF);
                 $iterator = new RecursiveIteratorIterator($directory, RecursiveIteratorIterator::CHILD_FIRST);
@@ -714,32 +714,32 @@ class Folder
                 $filePath = $item->getPathname();
                 if ($item->isFile() || $item->isLink()) {
                     //@codingStandardsIgnoreStart
-                    if (@unlink($filePath)) {
+                    if (@\unlink($filePath)) {
                         //@codingStandardsIgnoreEnd
-                        $this->_messages[] = sprintf('%s removed', $filePath);
+                        $this->_messages[] = \sprintf('%s removed', $filePath);
                     } else {
-                        $this->_errors[] = sprintf('%s NOT removed', $filePath);
+                        $this->_errors[] = \sprintf('%s NOT removed', $filePath);
                     }
                 } elseif ($item->isDir() && !$item->isDot()) {
                     //@codingStandardsIgnoreStart
-                    if (@rmdir($filePath)) {
+                    if (@\rmdir($filePath)) {
                         //@codingStandardsIgnoreEnd
-                        $this->_messages[] = sprintf('%s removed', $filePath);
+                        $this->_messages[] = \sprintf('%s removed', $filePath);
                     } else {
-                        $this->_errors[] = sprintf('%s NOT removed', $filePath);
+                        $this->_errors[] = \sprintf('%s NOT removed', $filePath);
 
                         return false;
                     }
                 }
             }
 
-            $path = rtrim($path, DIRECTORY_SEPARATOR);
+            $path = \rtrim($path, DIRECTORY_SEPARATOR);
             //@codingStandardsIgnoreStart
-            if (@rmdir($path)) {
+            if (@\rmdir($path)) {
                 //@codingStandardsIgnoreEnd
-                $this->_messages[] = sprintf('%s removed', $path);
+                $this->_messages[] = \sprintf('%s removed', $path);
             } else {
-                $this->_errors[] = sprintf('%s NOT removed', $path);
+                $this->_errors[] = \sprintf('%s NOT removed', $path);
 
                 return false;
             }
@@ -769,7 +769,7 @@ class Folder
             return false;
         }
         $to = null;
-        if (is_string($options)) {
+        if (\is_string($options)) {
             $to = $options;
             $options = [];
         }
@@ -787,67 +787,67 @@ class Folder
         $mode = $options['mode'];
 
         if (!$this->cd($fromDir)) {
-            $this->_errors[] = sprintf('%s not found', $fromDir);
+            $this->_errors[] = \sprintf('%s not found', $fromDir);
 
             return false;
         }
 
-        if (!is_dir($toDir)) {
+        if (!\is_dir($toDir)) {
             $this->create($toDir, $mode);
         }
 
-        if (!is_writable($toDir)) {
-            $this->_errors[] = sprintf('%s not writable', $toDir);
+        if (!\is_writable($toDir)) {
+            $this->_errors[] = \sprintf('%s not writable', $toDir);
 
             return false;
         }
 
-        $exceptions = array_merge(['.', '..', '.svn'], $options['skip']);
+        $exceptions = \array_merge(['.', '..', '.svn'], $options['skip']);
         //@codingStandardsIgnoreStart
-        if ($handle = @opendir($fromDir)) {
+        if ($handle = @\opendir($fromDir)) {
             //@codingStandardsIgnoreEnd
-            while (($item = readdir($handle)) !== false) {
+            while (($item = \readdir($handle)) !== false) {
                 $to = Folder::addPathElement($toDir, $item);
-                if (($options['scheme'] != Folder::SKIP || !is_dir($to)) && !in_array($item, $exceptions)) {
+                if (($options['scheme'] != Folder::SKIP || !\is_dir($to)) && !\in_array($item, $exceptions)) {
                     $from = Folder::addPathElement($fromDir, $item);
-                    if (is_file($from) && (!is_file($to) || $options['scheme'] != Folder::SKIP)) {
-                        if (copy($from, $to)) {
-                            chmod($to, intval($mode, 8));
-                            touch($to, filemtime($from));
-                            $this->_messages[] = sprintf('%s copied to %s', $from, $to);
+                    if (\is_file($from) && (!\is_file($to) || $options['scheme'] != Folder::SKIP)) {
+                        if (\copy($from, $to)) {
+                            \chmod($to, \intval($mode, 8));
+                            \touch($to, \filemtime($from));
+                            $this->_messages[] = \sprintf('%s copied to %s', $from, $to);
                         } else {
-                            $this->_errors[] = sprintf('%s NOT copied to %s', $from, $to);
+                            $this->_errors[] = \sprintf('%s NOT copied to %s', $from, $to);
                         }
                     }
 
-                    if (is_dir($from) && file_exists($to) && $options['scheme'] === Folder::OVERWRITE) {
+                    if (\is_dir($from) && \file_exists($to) && $options['scheme'] === Folder::OVERWRITE) {
                         $this->delete($to);
                     }
 
-                    if (is_dir($from) && $options['recursive'] === false) {
+                    if (\is_dir($from) && $options['recursive'] === false) {
                         continue;
                     }
 
-                    if (is_dir($from) && !file_exists($to)) {
-                        $old = umask(0);
-                        if (mkdir($to, $mode, true)) {
-                            umask($old);
-                            $old = umask(0);
-                            chmod($to, $mode);
-                            umask($old);
-                            $this->_messages[] = sprintf('%s created', $to);
+                    if (\is_dir($from) && !\file_exists($to)) {
+                        $old = \umask(0);
+                        if (\mkdir($to, $mode, true)) {
+                            \umask($old);
+                            $old = \umask(0);
+                            \chmod($to, $mode);
+                            \umask($old);
+                            $this->_messages[] = \sprintf('%s created', $to);
                             $options = ['to' => $to, 'from' => $from] + $options;
                             $this->copy($options);
                         } else {
-                            $this->_errors[] = sprintf('%s not created', $to);
+                            $this->_errors[] = \sprintf('%s not created', $to);
                         }
-                    } elseif (is_dir($from) && $options['scheme'] === Folder::MERGE) {
+                    } elseif (\is_dir($from) && $options['scheme'] === Folder::MERGE) {
                         $options = ['to' => $to, 'from' => $from] + $options;
                         $this->copy($options);
                     }
                 }
             }
-            closedir($handle);
+            \closedir($handle);
         } else {
             return false;
         }
@@ -873,7 +873,7 @@ class Folder
     public function move($options)
     {
         $to = null;
-        if (is_string($options)) {
+        if (\is_string($options)) {
             $to = $options;
             $options = (array)$options;
         }
@@ -926,28 +926,28 @@ class Folder
      */
     public function realpath($path)
     {
-        if (strpos($path, '..') === false) {
+        if (\strpos($path, '..') === false) {
             if (!Folder::isAbsolute($path)) {
                 $path = Folder::addPathElement($this->path, $path);
             }
 
             return $path;
         }
-        $path = str_replace('/', DIRECTORY_SEPARATOR, trim($path));
-        $parts = explode(DIRECTORY_SEPARATOR, $path);
+        $path = \str_replace('/', DIRECTORY_SEPARATOR, \trim($path));
+        $parts = \explode(DIRECTORY_SEPARATOR, $path);
         $newparts = [];
         $newpath = '';
         if ($path[0] === DIRECTORY_SEPARATOR) {
             $newpath = DIRECTORY_SEPARATOR;
         }
 
-        while (($part = array_shift($parts)) !== null) {
+        while (($part = \array_shift($parts)) !== null) {
             if ($part === '.' || $part === '') {
                 continue;
             }
             if ($part === '..') {
                 if (!empty($newparts)) {
-                    array_pop($newparts);
+                    \array_pop($newparts);
                     continue;
                 }
 
@@ -955,7 +955,7 @@ class Folder
             }
             $newparts[] = $part;
         }
-        $newpath .= implode(DIRECTORY_SEPARATOR, $newparts);
+        $newpath .= \implode(DIRECTORY_SEPARATOR, $newparts);
 
         return Folder::slashTerm($newpath);
     }
@@ -968,7 +968,7 @@ class Folder
      */
     public static function isSlashTerm($path)
     {
-        $lastChar = $path[strlen($path) - 1];
+        $lastChar = $path[\strlen($path) - 1];
 
         return $lastChar === '/' || $lastChar === '\\';
     }

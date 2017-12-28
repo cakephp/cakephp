@@ -104,7 +104,7 @@ trait RequestActionTrait
         if (empty($url)) {
             return false;
         }
-        if (($index = array_search('return', $extra)) !== false) {
+        if (($index = \array_search('return', $extra)) !== false) {
             $extra['return'] = 0;
             $extra['autoRender'] = 1;
             unset($extra[$index]);
@@ -112,14 +112,14 @@ trait RequestActionTrait
         $extra += ['autoRender' => 0, 'return' => 1, 'bare' => 1, 'requested' => 1];
 
         $baseUrl = Configure::read('App.fullBaseUrl');
-        if (is_string($url) && strpos($url, $baseUrl) === 0) {
-            $url = Router::normalize(str_replace($baseUrl, '', $url));
+        if (\is_string($url) && \strpos($url, $baseUrl) === 0) {
+            $url = Router::normalize(\str_replace($baseUrl, '', $url));
         }
-        if (is_string($url)) {
+        if (\is_string($url)) {
             $params = [
                 'url' => $url
             ];
-        } elseif (is_array($url)) {
+        } elseif (\is_array($url)) {
             $defaultParams = ['plugin' => null, 'controller' => null, 'action' => null];
             $params = [
                 'params' => $url + $defaultParams,

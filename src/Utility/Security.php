@@ -63,16 +63,16 @@ class Security
         if (empty($type)) {
             $type = static::$hashType;
         }
-        $type = strtolower($type);
+        $type = \strtolower($type);
 
         if ($salt) {
-            if (!is_string($salt)) {
+            if (!\is_string($salt)) {
                 $salt = static::$_salt;
             }
             $string = $salt . $string;
         }
 
-        return hash($type, $string);
+        return \hash($type, $string);
     }
 
     /**
@@ -99,13 +99,13 @@ class Security
      */
     public static function randomBytes($length)
     {
-        if (function_exists('random_bytes')) {
-            return random_bytes($length);
+        if (\function_exists('random_bytes')) {
+            return \random_bytes($length);
         }
-        if (function_exists('openssl_random_pseudo_bytes')) {
-            $bytes = openssl_random_pseudo_bytes($length, $strongSource);
+        if (\function_exists('openssl_random_pseudo_bytes')) {
+            $bytes = \openssl_random_pseudo_bytes($length, $strongSource);
             if (!$strongSource) {
-                trigger_error(
+                \trigger_error(
                     'openssl was unable to use a strong source of entropy. ' .
                     'Consider updating your system libraries, or ensuring ' .
                     'you have more available entropy.',
@@ -115,7 +115,7 @@ class Security
 
             return $bytes;
         }
-        trigger_error(
+        \trigger_error(
             'You do not have a safe source of random data available. ' .
             'Install either the openssl extension, or paragonie/random_compat. ' .
             'Falling back to an insecure random source.',
@@ -139,12 +139,12 @@ class Security
         $bytes = '';
         $byteLength = 0;
         while ($byteLength < $length) {
-            $bytes .= static::hash(Text::uuid() . uniqid(mt_rand(), true), 'sha512', true);
-            $byteLength = strlen($bytes);
+            $bytes .= static::hash(Text::uuid() . \uniqid(\mt_rand(), true), 'sha512', true);
+            $byteLength = \strlen($bytes);
         }
-        $bytes = substr($bytes, 0, $length);
+        $bytes = \substr($bytes, 0, $length);
 
-        return pack('H*', $bytes);
+        return \pack('H*', $bytes);
     }
 
     /**
@@ -159,9 +159,9 @@ class Security
     public static function engine($instance = null)
     {
         if ($instance === null && static::$_instance === null) {
-            if (extension_loaded('openssl')) {
+            if (\extension_loaded('openssl')) {
                 $instance = new OpenSsl();
-            } elseif (extension_loaded('mcrypt')) {
+            } elseif (\extension_loaded('mcrypt')) {
                 $instance = new Mcrypt();
             }
         }
@@ -191,10 +191,10 @@ class Security
         if (empty($key)) {
             throw new InvalidArgumentException('You cannot use an empty key for Security::rijndael()');
         }
-        if (empty($operation) || !in_array($operation, ['encrypt', 'decrypt'])) {
+        if (empty($operation) || !\in_array($operation, ['encrypt', 'decrypt'])) {
             throw new InvalidArgumentException('You must specify the operation for Security::rijndael(), either encrypt or decrypt');
         }
-        if (mb_strlen($key, '8bit') < 32) {
+        if (\mb_strlen($key, '8bit') < 32) {
             throw new InvalidArgumentException('You must use a key larger than 32 bytes for Security::rijndael()');
         }
         $crypto = static::engine();
@@ -223,11 +223,11 @@ class Security
             $hmacSalt = static::$_salt;
         }
         // Generate the encryption and hmac key.
-        $key = mb_substr(hash('sha256', $key . $hmacSalt), 0, 32, '8bit');
+        $key = \mb_substr(\hash('sha256', $key . $hmacSalt), 0, 32, '8bit');
 
         $crypto = static::engine();
         $ciphertext = $crypto->encrypt($plain, $key);
-        $hmac = hash_hmac('sha256', $ciphertext, $key);
+        $hmac = \hash_hmac('sha256', $ciphertext, $key);
 
         return $hmac . $ciphertext;
     }
@@ -242,9 +242,9 @@ class Security
      */
     protected static function _checkKey($key, $method)
     {
-        if (mb_strlen($key, '8bit') < 32) {
+        if (\mb_strlen($key, '8bit') < 32) {
             throw new InvalidArgumentException(
-                sprintf('Invalid key for %s, key must be at least 256 bits (32 bytes) long.', $method)
+                \sprintf('Invalid key for %s, key must be at least 256 bits (32 bytes) long.', $method)
             );
         }
     }
@@ -269,14 +269,14 @@ class Security
         }
 
         // Generate the encryption and hmac key.
-        $key = mb_substr(hash('sha256', $key . $hmacSalt), 0, 32, '8bit');
+        $key = \mb_substr(\hash('sha256', $key . $hmacSalt), 0, 32, '8bit');
 
         // Split out hmac for comparison
         $macSize = 64;
-        $hmac = mb_substr($cipher, 0, $macSize, '8bit');
-        $cipher = mb_substr($cipher, $macSize, null, '8bit');
+        $hmac = \mb_substr($cipher, 0, $macSize, '8bit');
+        $cipher = \mb_substr($cipher, $macSize, null, '8bit');
 
-        $compareHmac = hash_hmac('sha256', $cipher, $key);
+        $compareHmac = \hash_hmac('sha256', $cipher, $key);
         if (!static::_constantEquals($hmac, $compareHmac)) {
             return false;
         }
@@ -296,17 +296,17 @@ class Security
      */
     protected static function _constantEquals($hmac, $compare)
     {
-        if (function_exists('hash_equals')) {
-            return hash_equals($hmac, $compare);
+        if (\function_exists('hash_equals')) {
+            return \hash_equals($hmac, $compare);
         }
-        $hashLength = mb_strlen($hmac, '8bit');
-        $compareLength = mb_strlen($compare, '8bit');
+        $hashLength = \mb_strlen($hmac, '8bit');
+        $compareLength = \mb_strlen($compare, '8bit');
         if ($hashLength !== $compareLength) {
             return false;
         }
         $result = 0;
         for ($i = 0; $i < $hashLength; $i++) {
-            $result |= (ord($hmac[$i]) ^ ord($compare[$i]));
+            $result |= (\ord($hmac[$i]) ^ \ord($compare[$i]));
         }
 
         return $result === 0;

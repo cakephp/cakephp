@@ -58,7 +58,7 @@ class ConsoleInputSubcommand
      */
     public function __construct($name, $help = '', $parser = null)
     {
-        if (is_array($name) && isset($name['name'])) {
+        if (\is_array($name) && isset($name['name'])) {
             foreach ($name as $key => $value) {
                 $this->{'_' . $key} = $value;
             }
@@ -67,7 +67,7 @@ class ConsoleInputSubcommand
             $this->_help = $help;
             $this->_parser = $parser;
         }
-        if (is_array($this->_parser)) {
+        if (\is_array($this->_parser)) {
             $this->_parser['command'] = $this->_name;
             $this->_parser = ConsoleOptionParser::buildFromArray($this->_parser);
         }
@@ -102,8 +102,8 @@ class ConsoleInputSubcommand
     public function help($width = 0)
     {
         $name = $this->_name;
-        if (strlen($name) < $width) {
-            $name = str_pad($name, $width, ' ');
+        if (\strlen($name) < $width) {
+            $name = \str_pad($name, $width, ' ');
         }
 
         return $name . $this->_help;

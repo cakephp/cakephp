@@ -76,7 +76,7 @@ class Postgres extends Driver
         }
 
         if (!empty($config['timezone'])) {
-            $config['init'][] = sprintf('SET timezone = %s', $connection->quote($config['timezone']));
+            $config['init'][] = \sprintf('SET timezone = %s', $connection->quote($config['timezone']));
         }
 
         foreach ($config['init'] as $command) {
@@ -93,7 +93,7 @@ class Postgres extends Driver
      */
     public function enabled()
     {
-        return in_array('pgsql', PDO::getAvailableDrivers());
+        return \in_array('pgsql', PDO::getAvailableDrivers());
     }
 
     /**

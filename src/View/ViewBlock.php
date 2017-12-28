@@ -86,11 +86,11 @@ class ViewBlock
      */
     public function start($name, $mode = ViewBlock::OVERRIDE)
     {
-        if (array_key_exists($name, $this->_active)) {
-            throw new Exception(sprintf("A view block with the name '%s' is already/still open.", $name));
+        if (\array_key_exists($name, $this->_active)) {
+            throw new Exception(\sprintf("A view block with the name '%s' is already/still open.", $name));
         }
         $this->_active[$name] = $mode;
-        ob_start();
+        \ob_start();
     }
 
     /**
@@ -103,20 +103,20 @@ class ViewBlock
     {
         if ($this->_discardActiveBufferOnEnd) {
             $this->_discardActiveBufferOnEnd = false;
-            ob_end_clean();
+            \ob_end_clean();
 
             return;
         }
         if ($this->_active) {
-            $mode = end($this->_active);
-            $active = key($this->_active);
-            $content = ob_get_clean();
+            $mode = \end($this->_active);
+            $active = \key($this->_active);
+            $content = \ob_get_clean();
             if ($mode === ViewBlock::OVERRIDE) {
                 $this->_blocks[$active] = $content;
             } else {
                 $this->concat($active, $content, $mode);
             }
-            array_pop($this->_active);
+            \array_pop($this->_active);
         }
     }
 
@@ -201,7 +201,7 @@ class ViewBlock
      */
     public function keys()
     {
-        return array_keys($this->_blocks);
+        return \array_keys($this->_blocks);
     }
 
     /**
@@ -211,9 +211,9 @@ class ViewBlock
      */
     public function active()
     {
-        end($this->_active);
+        \end($this->_active);
 
-        return key($this->_active);
+        return \key($this->_active);
     }
 
     /**

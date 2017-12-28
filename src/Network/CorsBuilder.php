@@ -106,7 +106,7 @@ class CorsBuilder
     {
         $allowed = $this->_normalizeDomains((array)$domain);
         foreach ($allowed as $domain) {
-            if (!preg_match($domain['preg'], $this->_origin)) {
+            if (!\preg_match($domain['preg'], $this->_origin)) {
                 continue;
             }
             $value = $domain['original'] === '*' ? '*' : $this->_origin;
@@ -133,11 +133,11 @@ class CorsBuilder
             }
 
             $original = $preg = $domain;
-            if (strpos($domain, '://') === false) {
+            if (\strpos($domain, '://') === false) {
                 $preg = ($this->_isSsl ? 'https://' : 'http://') . $domain;
             }
-            $preg = '@^' . str_replace('\*', '.*', preg_quote($preg, '@')) . '$@';
-            $result[] = compact('original', 'preg');
+            $preg = '@^' . \str_replace('\*', '.*', \preg_quote($preg, '@')) . '$@';
+            $result[] = \compact('original', 'preg');
         }
 
         return $result;
@@ -151,7 +151,7 @@ class CorsBuilder
      */
     public function allowMethods(array $methods)
     {
-        $this->_headers['Access-Control-Allow-Methods'] = implode(', ', $methods);
+        $this->_headers['Access-Control-Allow-Methods'] = \implode(', ', $methods);
 
         return $this;
     }
@@ -176,7 +176,7 @@ class CorsBuilder
      */
     public function allowHeaders(array $headers)
     {
-        $this->_headers['Access-Control-Allow-Headers'] = implode(', ', $headers);
+        $this->_headers['Access-Control-Allow-Headers'] = \implode(', ', $headers);
 
         return $this;
     }
@@ -189,7 +189,7 @@ class CorsBuilder
      */
     public function exposeHeaders(array $headers)
     {
-        $this->_headers['Access-Control-Expose-Headers'] = implode(', ', $headers);
+        $this->_headers['Access-Control-Expose-Headers'] = \implode(', ', $headers);
 
         return $this;
     }

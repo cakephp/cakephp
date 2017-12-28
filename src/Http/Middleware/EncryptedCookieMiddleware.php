@@ -137,7 +137,7 @@ class EncryptedCookieMiddleware
     {
         $cookies = $response->getCookieCollection();
         foreach ($cookies as $cookie) {
-            if (in_array($cookie->getName(), $this->cookieNames, true)) {
+            if (\in_array($cookie->getName(), $this->cookieNames, true)) {
                 $value = $this->_encrypt($cookie->getValue(), $this->cipherType);
                 $response = $response->withCookie($cookie->withValue($value));
             }
@@ -157,7 +157,7 @@ class EncryptedCookieMiddleware
         $cookies = CookieCollection::createFromHeader($response->getHeader('Set-Cookie'));
         $header = [];
         foreach ($cookies as $cookie) {
-            if (in_array($cookie->getName(), $this->cookieNames, true)) {
+            if (\in_array($cookie->getName(), $this->cookieNames, true)) {
                 $value = $this->_encrypt($cookie->getValue(), $this->cipherType);
                 $cookie = $cookie->withValue($value);
             }

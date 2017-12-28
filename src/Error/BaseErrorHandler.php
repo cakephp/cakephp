@@ -71,10 +71,10 @@ abstract class BaseErrorHandler
         if (isset($this->_options['errorLevel'])) {
             $level = $this->_options['errorLevel'];
         }
-        error_reporting($level);
-        set_error_handler([$this, 'handleError'], $level);
-        set_exception_handler([$this, 'wrapAndHandleException']);
-        register_shutdown_function(function () {
+        \error_reporting($level);
+        \set_error_handler([$this, 'handleError'], $level);
+        \set_exception_handler([$this, 'wrapAndHandleException']);
+        \register_shutdown_function(function () {
             if (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') {
                 return;
             }
@@ -85,8 +85,8 @@ abstract class BaseErrorHandler
             if ($megabytes > 0) {
                 $this->increaseMemoryLimit($megabytes * 1024);
             }
-            $error = error_get_last();
-            if (!is_array($error)) {
+            $error = \error_get_last();
+            if (!\is_array($error)) {
                 return;
             }
             $fatals = [
@@ -94,7 +94,7 @@ abstract class BaseErrorHandler
                 E_ERROR,
                 E_PARSE,
             ];
-            if (!in_array($error['type'], $fatals, true)) {
+            if (!\in_array($error['type'], $fatals, true)) {
                 return;
             }
             $this->handleFatalError(
@@ -125,7 +125,7 @@ abstract class BaseErrorHandler
      */
     public function handleError($code, $description, $file = null, $line = null, $context = null)
     {
-        if (error_reporting() === 0) {
+        if (\error_reporting() === 0) {
             return false;
         }
         list($error, $log) = static::mapErrorCode($code);
@@ -236,13 +236,13 @@ abstract class BaseErrorHandler
      */
     public function increaseMemoryLimit($additionalKb)
     {
-        $limit = ini_get('memory_limit');
-        if (!strlen($limit) || $limit === '-1') {
+        $limit = \ini_get('memory_limit');
+        if (!\strlen($limit) || $limit === '-1') {
             return;
         }
-        $limit = trim($limit);
-        $units = strtoupper(substr($limit, -1));
-        $current = (int)substr($limit, 0, strlen($limit) - 1);
+        $limit = \trim($limit);
+        $units = \strtoupper(\substr($limit, -1));
+        $current = (int)\substr($limit, 0, \strlen($limit) - 1);
         if ($units === 'M') {
             $current *= 1024;
             $units = 'K';
@@ -253,7 +253,7 @@ abstract class BaseErrorHandler
         }
 
         if ($units === 'K') {
-            ini_set('memory_limit', ceil($current + $additionalKb) . 'K');
+            \ini_set('memory_limit', \ceil($current + $additionalKb) . 'K');
         }
     }
 
@@ -266,7 +266,7 @@ abstract class BaseErrorHandler
      */
     protected function _logError($level, $data)
     {
-        $message = sprintf(
+        $message = \sprintf(
             '%s (%s): %s in [%s, line %s]',
             $data['error'],
             $data['code'],
@@ -353,19 +353,19 @@ abstract class BaseErrorHandler
             $exception->getError() :
             $exception;
         $config = $this->_options;
-        $message = sprintf(
+        $message = \sprintf(
             '[%s] %s in %s on line %s',
-            get_class($exception),
+            \get_class($exception),
             $exception->getMessage(),
             $exception->getFile(),
             $exception->getLine()
         );
         $debug = Configure::read('debug');
 
-        if ($debug && method_exists($exception, 'getAttributes')) {
+        if ($debug && \method_exists($exception, 'getAttributes')) {
             $attributes = $exception->getAttributes();
             if ($attributes) {
-                $message .= "\nException Attributes: " . var_export($exception->getAttributes(), true);
+                $message .= "\nException Attributes: " . \var_export($exception->getAttributes(), true);
             }
         }
 
@@ -416,6 +416,6 @@ abstract class BaseErrorHandler
         $error = $levelMap[$code];
         $log = $logMap[$error];
 
-        return [ucfirst($error), $log];
+        return [\ucfirst($error), $log];
     }
 }

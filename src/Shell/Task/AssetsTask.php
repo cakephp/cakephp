@@ -65,7 +65,7 @@ class AssetsTask extends Shell
             $pluginsList = Plugin::loaded();
         } else {
             if (!Plugin::loaded($name)) {
-                $this->err(sprintf('Plugin %s is not loaded.', $name));
+                $this->err(\sprintf('Plugin %s is not loaded.', $name));
 
                 return [];
             }
@@ -76,10 +76,10 @@ class AssetsTask extends Shell
 
         foreach ($pluginsList as $plugin) {
             $path = Plugin::path($plugin) . 'webroot';
-            if (!is_dir($path)) {
+            if (!\is_dir($path)) {
                 $this->out('', 1, Shell::VERBOSE);
                 $this->out(
-                    sprintf('Skipping plugin %s. It does not have webroot folder.', $plugin),
+                    \sprintf('Skipping plugin %s. It does not have webroot folder.', $plugin),
                     2,
                     Shell::VERBOSE
                 );
@@ -89,11 +89,11 @@ class AssetsTask extends Shell
             $link = Inflector::underscore($plugin);
             $dir = WWW_ROOT;
             $namespaced = false;
-            if (strpos($link, '/') !== false) {
+            if (\strpos($link, '/') !== false) {
                 $namespaced = true;
-                $parts = explode('/', $link);
-                $link = array_pop($parts);
-                $dir = WWW_ROOT . implode(DIRECTORY_SEPARATOR, $parts) . DIRECTORY_SEPARATOR;
+                $parts = \explode('/', $link);
+                $link = \array_pop($parts);
+                $dir = WWW_ROOT . \implode(DIRECTORY_SEPARATOR, $parts) . DIRECTORY_SEPARATOR;
             }
 
             $plugins[$plugin] = [
@@ -122,13 +122,13 @@ class AssetsTask extends Shell
             $this->hr();
 
             if ($config['namespaced'] &&
-                !is_dir($config['destDir']) &&
+                !\is_dir($config['destDir']) &&
                 !$this->_createDirectory($config['destDir'])
             ) {
                 continue;
             }
 
-            if (file_exists($config['destDir'] . $config['link'])) {
+            if (\file_exists($config['destDir'] . $config['link'])) {
                 $this->out(
                     $config['destDir'] . $config['link'] . ' already exists',
                     1,
@@ -165,11 +165,11 @@ class AssetsTask extends Shell
      */
     protected function _createDirectory($dir)
     {
-        $old = umask(0);
+        $old = \umask(0);
         // @codingStandardsIgnoreStart
-        $result = @mkdir($dir, 0755, true);
+        $result = @\mkdir($dir, 0755, true);
         // @codingStandardsIgnoreEnd
-        umask($old);
+        \umask($old);
 
         if ($result) {
             $this->out('Created directory ' . $dir);
@@ -192,7 +192,7 @@ class AssetsTask extends Shell
     protected function _createSymlink($target, $link)
     {
         // @codingStandardsIgnoreStart
-        $result = @symlink($target, $link);
+        $result = @\symlink($target, $link);
         // @codingStandardsIgnoreEnd
 
         if ($result) {

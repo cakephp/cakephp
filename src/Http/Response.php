@@ -499,7 +499,7 @@ class Response implements ResponseInterface
             $this->_sendContent($this->body());
         }
 
-        if (function_exists('fastcgi_finish_request')) {
+        if (\function_exists('fastcgi_finish_request')) {
             fastcgi_finish_request();
         }
     }
@@ -513,7 +513,7 @@ class Response implements ResponseInterface
     public function sendHeaders()
     {
         $file = $line = null;
-        if (headers_sent($file, $line)) {
+        if (\headers_sent($file, $line)) {
             Log::warning("Headers already sent in {$file}:{$line}");
 
             return;
@@ -542,7 +542,7 @@ class Response implements ResponseInterface
     protected function _setCookies()
     {
         foreach ($this->_cookies as $cookie) {
-            setcookie(
+            \setcookie(
                 $cookie->getName(),
                 $cookie->getValue(),
                 $cookie->getExpiresTimestamp(),
@@ -562,7 +562,7 @@ class Response implements ResponseInterface
      */
     protected function _setContentType()
     {
-        if (in_array($this->_status, [304, 204])) {
+        if (\in_array($this->_status, [304, 204])) {
             $this->_clearHeader('Content-Type');
 
             return;
@@ -573,7 +573,7 @@ class Response implements ResponseInterface
 
         $charset = false;
         if ($this->_charset &&
-            (strpos($this->_contentType, 'text/') === 0 || in_array($this->_contentType, $whitelist))
+            (\strpos($this->_contentType, 'text/') === 0 || \in_array($this->_contentType, $whitelist))
         ) {
             $charset = true;
         }
@@ -593,7 +593,7 @@ class Response implements ResponseInterface
      */
     protected function _setContent()
     {
-        if (in_array($this->_status, [304, 204])) {
+        if (\in_array($this->_status, [304, 204])) {
             $this->body('');
         }
     }
@@ -609,9 +609,9 @@ class Response implements ResponseInterface
     protected function _sendHeader($name, $value = null)
     {
         if ($value === null) {
-            header($name);
+            \header($name);
         } else {
-            header("{$name}: {$value}");
+            \header("{$name}: {$value}");
         }
     }
 
@@ -628,7 +628,7 @@ class Response implements ResponseInterface
      */
     protected function _sendContent($content)
     {
-        if (!is_string($content) && is_callable($content)) {
+        if (!\is_string($content) && \is_callable($content)) {
             $content = $content();
         }
 
@@ -683,23 +683,23 @@ class Response implements ResponseInterface
             return $this->getSimpleHeaders();
         }
 
-        $headers = is_array($header) ? $header : [$header => $value];
+        $headers = \is_array($header) ? $header : [$header => $value];
         foreach ($headers as $header => $value) {
-            if (is_numeric($header)) {
+            if (\is_numeric($header)) {
                 list($header, $value) = [$value, null];
             }
             if ($value === null) {
-                list($header, $value) = explode(':', $header, 2);
+                list($header, $value) = \explode(':', $header, 2);
             }
 
-            $lower = strtolower($header);
-            if (array_key_exists($lower, $this->headerNames)) {
+            $lower = \strtolower($header);
+            if (\array_key_exists($lower, $this->headerNames)) {
                 $header = $this->headerNames[$lower];
             } else {
                 $this->headerNames[$lower] = $header;
             }
 
-            $this->headers[$header] = is_array($value) ? array_map('trim', $value) : [trim($value)];
+            $this->headers[$header] = \is_array($value) ? \array_map('trim', $value) : [\trim($value)];
         }
 
         return $this->getSimpleHeaders();
@@ -717,8 +717,8 @@ class Response implements ResponseInterface
     {
         $out = [];
         foreach ($this->headers as $key => $values) {
-            $header = $this->headerNames[strtolower($key)];
-            if (count($values) === 1) {
+            $header = $this->headerNames[\strtolower($key)];
+            if (\count($values) === 1) {
                 $values = $values[0];
             }
             $out[$header] = $values;
@@ -784,7 +784,7 @@ class Response implements ResponseInterface
      */
     protected function _setHeader($header, $value)
     {
-        $normalized = strtolower($header);
+        $normalized = \strtolower($header);
         $this->headerNames[$normalized] = $header;
         $this->headers[$header] = [$value];
     }
@@ -797,7 +797,7 @@ class Response implements ResponseInterface
      */
     protected function _clearHeader($header)
     {
-        $normalized = strtolower($header);
+        $normalized = \strtolower($header);
         if (!isset($this->headerNames[$normalized])) {
             return;
         }
@@ -820,7 +820,7 @@ class Response implements ResponseInterface
                 $this->stream->rewind();
             }
             $result = $this->stream->getContents();
-            if (strlen($result) === 0) {
+            if (\strlen($result) === 0) {
                 return null;
             }
 
@@ -828,7 +828,7 @@ class Response implements ResponseInterface
         }
 
         // Compatibility with closure/streaming responses
-        if (!is_string($content) && is_callable($content)) {
+        if (!\is_string($content) && \is_callable($content)) {
             $this->stream = new CallbackStream($content);
         } else {
             $this->_createStream();
@@ -846,10 +846,10 @@ class Response implements ResponseInterface
      */
     protected function _handleCallableBody(callable $content)
     {
-        ob_start();
+        \ob_start();
         $result1 = $content();
-        $result2 = ob_get_contents();
-        ob_get_clean();
+        $result2 = \ob_get_contents();
+        \ob_get_clean();
 
         if ($result1) {
             return $result1;
@@ -991,10 +991,10 @@ class Response implements ResponseInterface
         if (empty($code)) {
             return $this->_statusCodes;
         }
-        if (is_array($code)) {
-            $codes = array_keys($code);
-            $min = min($codes);
-            if (!is_int($min) || $min < 100 || max($codes) > 999) {
+        if (\is_array($code)) {
+            $codes = \array_keys($code);
+            $min = \min($codes);
+            if (!\is_int($min) || $min < 100 || \max($codes) > 999) {
                 throw new InvalidArgumentException('Invalid status code');
             }
             $this->_statusCodes = $code + $this->_statusCodes;
@@ -1050,7 +1050,7 @@ class Response implements ResponseInterface
         if ($contentType === null) {
             return $this->getType();
         }
-        if (is_array($contentType)) {
+        if (\is_array($contentType)) {
             foreach ($contentType as $type => $definition) {
                 $this->_mimeTypes[$type] = $definition;
             }
@@ -1059,9 +1059,9 @@ class Response implements ResponseInterface
         }
         if (isset($this->_mimeTypes[$contentType])) {
             $contentType = $this->_mimeTypes[$contentType];
-            $contentType = is_array($contentType) ? current($contentType) : $contentType;
+            $contentType = \is_array($contentType) ? \current($contentType) : $contentType;
         }
-        if (strpos($contentType, '/') === false) {
+        if (\strpos($contentType, '/') === false) {
             return false;
         }
         $this->_contentType = $contentType;
@@ -1110,10 +1110,10 @@ class Response implements ResponseInterface
     {
         $mapped = $this->getMimeType($contentType);
         if ($mapped) {
-            return is_array($mapped) ? current($mapped) : $mapped;
+            return \is_array($mapped) ? \current($mapped) : $mapped;
         }
-        if (strpos($contentType, '/') === false) {
-            throw new InvalidArgumentException(sprintf('"%s" is an invalid content type.', $contentType));
+        if (\strpos($contentType, '/') === false) {
+            throw new InvalidArgumentException(\sprintf('"%s" is an invalid content type.', $contentType));
         }
 
         return $contentType;
@@ -1146,12 +1146,12 @@ class Response implements ResponseInterface
      */
     public function mapType($ctype)
     {
-        if (is_array($ctype)) {
-            return array_map([$this, 'mapType'], $ctype);
+        if (\is_array($ctype)) {
+            return \array_map([$this, 'mapType'], $ctype);
         }
 
         foreach ($this->_mimeTypes as $alias => $types) {
-            if (in_array($ctype, (array)$types)) {
+            if (\in_array($ctype, (array)$types)) {
                 return $alias;
             }
         }
@@ -1212,7 +1212,7 @@ class Response implements ResponseInterface
     public function disableCache()
     {
         $this->_setHeader('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT');
-        $this->_setHeader('Last-Modified', gmdate('D, d M Y H:i:s') . ' GMT');
+        $this->_setHeader('Last-Modified', \gmdate('D, d M Y H:i:s') . ' GMT');
         $this->_setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
     }
 
@@ -1224,7 +1224,7 @@ class Response implements ResponseInterface
     public function withDisabledCache()
     {
         return $this->withHeader('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT')
-            ->withHeader('Last-Modified', gmdate('D, d M Y H:i:s') . ' GMT')
+            ->withHeader('Last-Modified', \gmdate('D, d M Y H:i:s') . ' GMT')
             ->withHeader('Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
     }
 
@@ -1238,16 +1238,16 @@ class Response implements ResponseInterface
      */
     public function cache($since, $time = '+1 day')
     {
-        if (!is_int($time)) {
-            $time = strtotime($time);
+        if (!\is_int($time)) {
+            $time = \strtotime($time);
         }
 
-        $this->_setHeader('Date', gmdate('D, j M Y G:i:s ', time()) . 'GMT');
+        $this->_setHeader('Date', \gmdate('D, j M Y G:i:s ', \time()) . 'GMT');
 
         $this->modified($since);
         $this->expires($time);
         $this->sharable(true);
-        $this->maxAge($time - time());
+        $this->maxAge($time - \time());
     }
 
     /**
@@ -1259,15 +1259,15 @@ class Response implements ResponseInterface
      */
     public function withCache($since, $time = '+1 day')
     {
-        if (!is_int($time)) {
-            $time = strtotime($time);
+        if (!\is_int($time)) {
+            $time = \strtotime($time);
         }
 
-        return $this->withHeader('Date', gmdate('D, j M Y G:i:s ', time()) . 'GMT')
+        return $this->withHeader('Date', \gmdate('D, j M Y G:i:s ', \time()) . 'GMT')
             ->withModified($since)
             ->withExpires($time)
             ->withSharable(true)
-            ->withMaxAge($time - time());
+            ->withMaxAge($time - \time());
     }
 
     /**
@@ -1284,9 +1284,9 @@ class Response implements ResponseInterface
     public function sharable($public = null, $time = null)
     {
         if ($public === null) {
-            $public = array_key_exists('public', $this->_cacheDirectives);
-            $private = array_key_exists('private', $this->_cacheDirectives);
-            $noCache = array_key_exists('no-cache', $this->_cacheDirectives);
+            $public = \array_key_exists('public', $this->_cacheDirectives);
+            $private = \array_key_exists('private', $this->_cacheDirectives);
+            $noCache = \array_key_exists('no-cache', $this->_cacheDirectives);
             if (!$public && !$private && !$noCache) {
                 return null;
             }
@@ -1437,7 +1437,7 @@ class Response implements ResponseInterface
             $this->_setCacheControl();
         }
 
-        return array_key_exists('must-revalidate', $this->_cacheDirectives);
+        return \array_key_exists('must-revalidate', $this->_cacheDirectives);
     }
 
     /**
@@ -1474,10 +1474,10 @@ class Response implements ResponseInterface
     {
         $control = '';
         foreach ($this->_cacheDirectives as $key => $val) {
-            $control .= $val === true ? $key : sprintf('%s=%s', $key, $val);
+            $control .= $val === true ? $key : \sprintf('%s=%s', $key, $val);
             $control .= ', ';
         }
-        $control = rtrim($control, ', ');
+        $control = \rtrim($control, ', ');
         $this->_setHeader('Cache-Control', $control);
     }
 
@@ -1653,11 +1653,11 @@ class Response implements ResponseInterface
     {
         if ($cacheVariances !== null) {
             $cacheVariances = (array)$cacheVariances;
-            $this->_setHeader('Vary', implode(', ', $cacheVariances));
+            $this->_setHeader('Vary', \implode(', ', $cacheVariances));
         }
 
         if ($this->hasHeader('Vary')) {
-            return explode(', ', $this->getHeaderLine('Vary'));
+            return \explode(', ', $this->getHeaderLine('Vary'));
         }
 
         return null;
@@ -1704,7 +1704,7 @@ class Response implements ResponseInterface
     public function etag($hash = null, $weak = false)
     {
         if ($hash !== null) {
-            $this->_setHeader('Etag', sprintf('%s"%s"', $weak ? 'W/' : null, $hash));
+            $this->_setHeader('Etag', \sprintf('%s"%s"', $weak ? 'W/' : null, $hash));
         }
 
         if ($this->hasHeader('Etag')) {
@@ -1737,7 +1737,7 @@ class Response implements ResponseInterface
      */
     public function withEtag($hash, $weak = false)
     {
-        $hash = sprintf('%s"%s"', $weak ? 'W/' : null, $hash);
+        $hash = \sprintf('%s"%s"', $weak ? 'W/' : null, $hash);
 
         return $this->withHeader('Etag', $hash);
     }
@@ -1753,8 +1753,8 @@ class Response implements ResponseInterface
     {
         if ($time instanceof DateTime) {
             $result = clone $time;
-        } elseif (is_int($time)) {
-            $result = new DateTime(date('Y-m-d H:i:s', $time));
+        } elseif (\is_int($time)) {
+            $result = new DateTime(\date('Y-m-d H:i:s', $time));
         } else {
             $result = new DateTime($time);
         }
@@ -1771,11 +1771,11 @@ class Response implements ResponseInterface
      */
     public function compress()
     {
-        $compressionEnabled = ini_get('zlib.output_compression') !== '1' &&
-            extension_loaded('zlib') &&
-            (strpos(env('HTTP_ACCEPT_ENCODING'), 'gzip') !== false);
+        $compressionEnabled = \ini_get('zlib.output_compression') !== '1' &&
+            \extension_loaded('zlib') &&
+            (\strpos(env('HTTP_ACCEPT_ENCODING'), 'gzip') !== false);
 
-        return $compressionEnabled && ob_start('ob_gzhandler');
+        return $compressionEnabled && \ob_start('ob_gzhandler');
     }
 
     /**
@@ -1785,8 +1785,8 @@ class Response implements ResponseInterface
      */
     public function outputCompressed()
     {
-        return strpos(env('HTTP_ACCEPT_ENCODING'), 'gzip') !== false
-            && (ini_get('zlib.output_compression') === '1' || in_array('ob_gzhandler', ob_list_handlers()));
+        return \strpos(env('HTTP_ACCEPT_ENCODING'), 'gzip') !== false
+            && (\ini_get('zlib.output_compression') === '1' || \in_array('ob_gzhandler', \ob_list_handlers()));
     }
 
     /**
@@ -1876,19 +1876,19 @@ class Response implements ResponseInterface
      */
     public function checkNotModified(ServerRequest $request)
     {
-        $etags = preg_split('/\s*,\s*/', (string)$request->header('If-None-Match'), 0, PREG_SPLIT_NO_EMPTY);
+        $etags = \preg_split('/\s*,\s*/', (string)$request->header('If-None-Match'), 0, PREG_SPLIT_NO_EMPTY);
         $modifiedSince = $request->header('If-Modified-Since');
         if ($responseTag = $this->etag()) {
-            $etagMatches = in_array('*', $etags) || in_array($responseTag, $etags);
+            $etagMatches = \in_array('*', $etags) || \in_array($responseTag, $etags);
         }
         if ($modifiedSince) {
-            $timeMatches = strtotime($this->modified()) === strtotime($modifiedSince);
+            $timeMatches = \strtotime($this->modified()) === \strtotime($modifiedSince);
         }
-        $checks = compact('etagMatches', 'timeMatches');
+        $checks = \compact('etagMatches', 'timeMatches');
         if (empty($checks)) {
             return false;
         }
-        $notModified = !in_array(false, $checks, true);
+        $notModified = !\in_array(false, $checks, true);
         if ($notModified) {
             $this->notModified();
         }
@@ -1956,7 +1956,7 @@ class Response implements ResponseInterface
             return $this->getCookies();
         }
 
-        if (is_string($options)) {
+        if (\is_string($options)) {
             if (!$this->_cookies->has($options)) {
                 return null;
             }
@@ -2023,7 +2023,7 @@ class Response implements ResponseInterface
         if ($name instanceof Cookie) {
             $cookie = $name;
         } else {
-            if (!is_array($data)) {
+            if (!\is_array($data)) {
                 $data = ['value' => $data];
             }
             $data += [
@@ -2263,7 +2263,7 @@ class Response implements ResponseInterface
             'download' => null
         ];
 
-        $extension = strtolower($file->ext());
+        $extension = \strtolower($file->ext());
         $download = $options['download'];
         if ((!$extension || $this->type($extension) === false) && $download === null) {
             $download = true;
@@ -2273,9 +2273,9 @@ class Response implements ResponseInterface
         if ($download) {
             $agent = env('HTTP_USER_AGENT');
 
-            if (preg_match('%Opera(/| )([0-9].[0-9]{1,2})%', $agent)) {
+            if (\preg_match('%Opera(/| )([0-9].[0-9]{1,2})%', $agent)) {
                 $contentType = 'application/octet-stream';
-            } elseif (preg_match('/MSIE ([0-9].[0-9]{1,2})/', $agent)) {
+            } elseif (\preg_match('/MSIE ([0-9].[0-9]{1,2})/', $agent)) {
                 $contentType = 'application/force-download';
             }
 
@@ -2331,7 +2331,7 @@ class Response implements ResponseInterface
             'download' => null
         ];
 
-        $extension = strtolower($file->ext());
+        $extension = \strtolower($file->ext());
         $mapped = $this->getMimeType($extension);
         if ((!$extension || !$mapped) && $options['download'] === null) {
             $options['download'] = true;
@@ -2346,9 +2346,9 @@ class Response implements ResponseInterface
         if ($options['download']) {
             $agent = env('HTTP_USER_AGENT');
 
-            if (preg_match('%Opera(/| )([0-9].[0-9]{1,2})%', $agent)) {
+            if (\preg_match('%Opera(/| )([0-9].[0-9]{1,2})%', $agent)) {
                 $contentType = 'application/octet-stream';
-            } elseif (preg_match('/MSIE ([0-9].[0-9]{1,2})/', $agent)) {
+            } elseif (\preg_match('/MSIE ([0-9].[0-9]{1,2})/', $agent)) {
                 $contentType = 'application/force-download';
             }
 
@@ -2397,17 +2397,17 @@ class Response implements ResponseInterface
      */
     protected function validateFile($path)
     {
-        if (strpos($path, '../') !== false || strpos($path, '..\\') !== false) {
+        if (\strpos($path, '../') !== false || \strpos($path, '..\\') !== false) {
             throw new NotFoundException(__d('cake', 'The requested file contains `..` and will not be read.'));
         }
-        if (!is_file($path)) {
+        if (!\is_file($path)) {
             $path = APP . $path;
         }
 
         $file = new File($path);
         if (!$file->exists() || !$file->readable()) {
             if (Configure::read('debug')) {
-                throw new NotFoundException(sprintf('The requested file %s was not found or not readable', $path));
+                throw new NotFoundException(\sprintf('The requested file %s was not found or not readable', $path));
             }
             throw new NotFoundException(__d('cake', 'The requested file was not found'));
         }
@@ -2444,7 +2444,7 @@ class Response implements ResponseInterface
         $start = 0;
         $end = $lastByte;
 
-        preg_match('/^bytes\s*=\s*(\d+)?\s*-\s*(\d+)?$/', $httpRange, $matches);
+        \preg_match('/^bytes\s*=\s*(\d+)?\s*-\s*(\d+)?$/', $httpRange, $matches);
         if ($matches) {
             $start = $matches[1];
             $end = isset($matches[2]) ? $matches[2] : '';
@@ -2486,7 +2486,7 @@ class Response implements ResponseInterface
      */
     protected function _sendFile($file, $range)
     {
-        ob_implicit_flush(true);
+        \ob_implicit_flush(true);
 
         $file->open('rb');
 
@@ -2499,9 +2499,9 @@ class Response implements ResponseInterface
         }
 
         $bufferSize = 8192;
-        set_time_limit(0);
-        session_write_close();
-        while (!feof($file->handle)) {
+        \set_time_limit(0);
+        \session_write_close();
+        while (!\feof($file->handle)) {
             if (!$this->_isActive()) {
                 $file->close();
 
@@ -2514,7 +2514,7 @@ class Response implements ResponseInterface
             if ($end && $offset + $bufferSize >= $end) {
                 $bufferSize = $end - $offset + 1;
             }
-            echo fread($file->handle, $bufferSize);
+            echo \fread($file->handle, $bufferSize);
         }
         $file->close();
 
@@ -2529,7 +2529,7 @@ class Response implements ResponseInterface
      */
     protected function _isActive()
     {
-        return connection_status() === CONNECTION_NORMAL && !connection_aborted();
+        return \connection_status() === CONNECTION_NORMAL && !\connection_aborted();
     }
 
     /**
@@ -2541,7 +2541,7 @@ class Response implements ResponseInterface
     protected function _clearBuffer()
     {
         //@codingStandardsIgnoreStart
-        return @ob_end_clean();
+        return @\ob_end_clean();
         //@codingStandardsIgnoreEnd
     }
 
@@ -2554,9 +2554,9 @@ class Response implements ResponseInterface
     protected function _flushBuffer()
     {
         //@codingStandardsIgnoreStart
-        @flush();
-        if (ob_get_level()) {
-            @ob_flush();
+        @\flush();
+        if (\ob_get_level()) {
+            @\ob_flush();
         }
         //@codingStandardsIgnoreEnd
     }
@@ -2596,4 +2596,4 @@ class Response implements ResponseInterface
 }
 
 // @deprecated Add backwards compat alias.
-class_alias('Cake\Http\Response', 'Cake\Network\Response');
+\class_alias('Cake\Http\Response', 'Cake\Network\Response');

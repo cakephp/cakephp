@@ -76,24 +76,24 @@ class PostgresSchema extends BaseSchema
      */
     protected function _convertColumn($column)
     {
-        preg_match('/([a-z\s]+)(?:\(([0-9,]+)\))?/i', $column, $matches);
+        \preg_match('/([a-z\s]+)(?:\(([0-9,]+)\))?/i', $column, $matches);
         if (empty($matches)) {
-            throw new Exception(sprintf('Unable to parse column type from "%s"', $column));
+            throw new Exception(\sprintf('Unable to parse column type from "%s"', $column));
         }
 
-        $col = strtolower($matches[1]);
+        $col = \strtolower($matches[1]);
         $length = null;
         if (isset($matches[2])) {
             $length = (int)$matches[2];
         }
 
-        if (in_array($col, ['date', 'time', 'boolean'])) {
+        if (\in_array($col, ['date', 'time', 'boolean'])) {
             return ['type' => $col, 'length' => null];
         }
-        if (strpos($col, 'timestamp') !== false) {
+        if (\strpos($col, 'timestamp') !== false) {
             return ['type' => TableSchema::TYPE_TIMESTAMP, 'length' => null];
         }
-        if (strpos($col, 'time') !== false) {
+        if (\strpos($col, 'time') !== false) {
             return ['type' => TableSchema::TYPE_TIME, 'length' => null];
         }
         if ($col === 'serial' || $col === 'integer') {
@@ -116,27 +116,27 @@ class PostgresSchema extends BaseSchema
         }
         // money is 'string' as it includes arbitrary text content
         // before the number value.
-        if (strpos($col, 'char') !== false ||
-            strpos($col, 'money') !== false
+        if (\strpos($col, 'char') !== false ||
+            \strpos($col, 'money') !== false
         ) {
             return ['type' => TableSchema::TYPE_STRING, 'length' => $length];
         }
-        if (strpos($col, 'text') !== false) {
+        if (\strpos($col, 'text') !== false) {
             return ['type' => TableSchema::TYPE_TEXT, 'length' => null];
         }
         if ($col === 'bytea') {
             return ['type' => TableSchema::TYPE_BINARY, 'length' => null];
         }
-        if ($col === 'real' || strpos($col, 'double') !== false) {
+        if ($col === 'real' || \strpos($col, 'double') !== false) {
             return ['type' => TableSchema::TYPE_FLOAT, 'length' => null];
         }
-        if (strpos($col, 'numeric') !== false ||
-            strpos($col, 'decimal') !== false
+        if (\strpos($col, 'numeric') !== false ||
+            \strpos($col, 'decimal') !== false
         ) {
             return ['type' => TableSchema::TYPE_DECIMAL, 'length' => null];
         }
 
-        if (strpos($col, 'json') !== false) {
+        if (\strpos($col, 'json') !== false) {
             return ['type' => TableSchema::TYPE_JSON, 'length' => null];
         }
 
@@ -188,16 +188,16 @@ class PostgresSchema extends BaseSchema
      */
     protected function _defaultValue($default)
     {
-        if (is_numeric($default) || $default === null) {
+        if (\is_numeric($default) || $default === null) {
             return $default;
         }
         // Sequences
-        if (strpos($default, 'nextval') === 0) {
+        if (\strpos($default, 'nextval') === 0) {
             return null;
         }
 
         // Remove quotes and postgres casts
-        return preg_replace(
+        return \preg_replace(
             "/^'(.*)'(?:::.*)$/",
             '$1',
             $default
@@ -398,7 +398,7 @@ class PostgresSchema extends BaseSchema
         }
 
         $hasCollate = [TableSchema::TYPE_TEXT, TableSchema::TYPE_STRING];
-        if (in_array($data['type'], $hasCollate, true) && isset($data['collate']) && $data['collate'] !== '') {
+        if (\in_array($data['type'], $hasCollate, true) && isset($data['collate']) && $data['collate'] !== '') {
             $out .= ' COLLATE "' . $data['collate'] . '"';
         }
 
@@ -417,8 +417,8 @@ class PostgresSchema extends BaseSchema
         }
 
         if (isset($data['default']) &&
-            in_array($data['type'], [TableSchema::TYPE_TIMESTAMP, TableSchema::TYPE_DATETIME]) &&
-            strtolower($data['default']) === 'current_timestamp'
+            \in_array($data['type'], [TableSchema::TYPE_TIMESTAMP, TableSchema::TYPE_DATETIME]) &&
+            \strtolower($data['default']) === 'current_timestamp'
         ) {
             $out .= ' DEFAULT CURRENT_TIMESTAMP';
         } elseif (isset($data['default'])) {
@@ -446,7 +446,7 @@ class PostgresSchema extends BaseSchema
             $constraint = $schema->getConstraint($name);
             if ($constraint['type'] === TableSchema::CONSTRAINT_FOREIGN) {
                 $tableName = $this->_driver->quoteIdentifier($schema->name());
-                $sql[] = sprintf($sqlPattern, $tableName, $this->constraintSql($schema, $name));
+                $sql[] = \sprintf($sqlPattern, $tableName, $this->constraintSql($schema, $name));
             }
         }
 
@@ -466,7 +466,7 @@ class PostgresSchema extends BaseSchema
             if ($constraint['type'] === TableSchema::CONSTRAINT_FOREIGN) {
                 $tableName = $this->_driver->quoteIdentifier($schema->name());
                 $constraintName = $this->_driver->quoteIdentifier($name);
-                $sql[] = sprintf($sqlPattern, $tableName, $constraintName);
+                $sql[] = \sprintf($sqlPattern, $tableName, $constraintName);
             }
         }
 
@@ -479,16 +479,16 @@ class PostgresSchema extends BaseSchema
     public function indexSql(TableSchema $schema, $name)
     {
         $data = $schema->getIndex($name);
-        $columns = array_map(
+        $columns = \array_map(
             [$this->_driver, 'quoteIdentifier'],
             $data['columns']
         );
 
-        return sprintf(
+        return \sprintf(
             'CREATE INDEX %s ON %s (%s)',
             $this->_driver->quoteIdentifier($name),
             $this->_driver->quoteIdentifier($schema->name()),
-            implode(', ', $columns)
+            \implode(', ', $columns)
         );
     }
 
@@ -518,14 +518,14 @@ class PostgresSchema extends BaseSchema
      */
     protected function _keySql($prefix, $data)
     {
-        $columns = array_map(
+        $columns = \array_map(
             [$this->_driver, 'quoteIdentifier'],
             $data['columns']
         );
         if ($data['type'] === TableSchema::CONSTRAINT_FOREIGN) {
-            return $prefix . sprintf(
+            return $prefix . \sprintf(
                 ' FOREIGN KEY (%s) REFERENCES %s (%s) ON UPDATE %s ON DELETE %s DEFERRABLE INITIALLY IMMEDIATE',
-                implode(', ', $columns),
+                \implode(', ', $columns),
                 $this->_driver->quoteIdentifier($data['references'][0]),
                 $this->_convertConstraintColumns($data['references'][1]),
                 $this->_foreignOnClause($data['update']),
@@ -533,7 +533,7 @@ class PostgresSchema extends BaseSchema
             );
         }
 
-        return $prefix . ' (' . implode(', ', $columns) . ')';
+        return $prefix . ' (' . \implode(', ', $columns) . ')';
     }
 
     /**
@@ -541,19 +541,19 @@ class PostgresSchema extends BaseSchema
      */
     public function createTableSql(TableSchema $schema, $columns, $constraints, $indexes)
     {
-        $content = array_merge($columns, $constraints);
-        $content = implode(",\n", array_filter($content));
+        $content = \array_merge($columns, $constraints);
+        $content = \implode(",\n", \array_filter($content));
         $tableName = $this->_driver->quoteIdentifier($schema->name());
         $temporary = $schema->isTemporary() ? ' TEMPORARY ' : ' ';
         $out = [];
-        $out[] = sprintf("CREATE%sTABLE %s (\n%s\n)", $temporary, $tableName, $content);
+        $out[] = \sprintf("CREATE%sTABLE %s (\n%s\n)", $temporary, $tableName, $content);
         foreach ($indexes as $index) {
             $out[] = $index;
         }
         foreach ($schema->columns() as $column) {
             $columnData = $schema->getColumn($column);
             if (isset($columnData['comment'])) {
-                $out[] = sprintf(
+                $out[] = \sprintf(
                     'COMMENT ON COLUMN %s.%s IS %s',
                     $tableName,
                     $this->_driver->quoteIdentifier($column),
@@ -573,7 +573,7 @@ class PostgresSchema extends BaseSchema
         $name = $this->_driver->quoteIdentifier($schema->name());
 
         return [
-            sprintf('TRUNCATE %s RESTART IDENTITY CASCADE', $name)
+            \sprintf('TRUNCATE %s RESTART IDENTITY CASCADE', $name)
         ];
     }
 
@@ -585,7 +585,7 @@ class PostgresSchema extends BaseSchema
      */
     public function dropTableSql(TableSchema $schema)
     {
-        $sql = sprintf(
+        $sql = \sprintf(
             'DROP TABLE %s CASCADE',
             $this->_driver->quoteIdentifier($schema->name())
         );

@@ -101,7 +101,7 @@ class SaveOptionsBuilder extends ArrayObject
     protected function _associated(Table $table, array $associations)
     {
         foreach ($associations as $key => $associated) {
-            if (is_int($key)) {
+            if (\is_int($key)) {
                 $this->_checkAssociation($table, $associated);
                 continue;
             }
@@ -124,7 +124,7 @@ class SaveOptionsBuilder extends ArrayObject
     protected function _checkAssociation(Table $table, $association)
     {
         if (!$table->associations()->has($association)) {
-            throw new RuntimeException(sprintf('Table `%s` is not associated with `%s`', get_class($table), $association));
+            throw new RuntimeException(\sprintf('Table `%s` is not associated with `%s`', \get_class($table), $association));
         }
     }
 
@@ -211,7 +211,7 @@ class SaveOptionsBuilder extends ArrayObject
      */
     public function set($option, $value)
     {
-        if (method_exists($this, $option)) {
+        if (\method_exists($this, $option)) {
             return $this->{$option}($value);
         }
         $this->_options[$option] = $value;

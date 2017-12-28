@@ -48,10 +48,10 @@ class OrderByExpression extends QueryExpression
             if ($direction instanceof ExpressionInterface) {
                 $direction = $direction->sql($generator);
             }
-            $order[] = is_numeric($k) ? $direction : sprintf('%s %s', $k, $direction);
+            $order[] = \is_numeric($k) ? $direction : \sprintf('%s %s', $k, $direction);
         }
 
-        return sprintf('ORDER BY %s', implode(', ', $order));
+        return \sprintf('ORDER BY %s', \implode(', ', $order));
     }
 
     /**
@@ -66,6 +66,6 @@ class OrderByExpression extends QueryExpression
      */
     protected function _addConditions(array $orders, array $types)
     {
-        $this->_conditions = array_merge($this->_conditions, $orders);
+        $this->_conditions = \array_merge($this->_conditions, $orders);
     }
 }

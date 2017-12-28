@@ -37,7 +37,7 @@ class CacheRegistry extends ObjectRegistry
      */
     protected function _resolveClassName($class)
     {
-        if (is_object($class)) {
+        if (\is_object($class)) {
             return $class;
         }
 
@@ -56,7 +56,7 @@ class CacheRegistry extends ObjectRegistry
      */
     protected function _throwMissingClassError($class, $plugin)
     {
-        throw new BadMethodCallException(sprintf('Cache engine %s is not available.', $class));
+        throw new BadMethodCallException(\sprintf('Cache engine %s is not available.', $class));
     }
 
     /**
@@ -72,7 +72,7 @@ class CacheRegistry extends ObjectRegistry
      */
     protected function _create($class, $alias, $config)
     {
-        if (is_object($class)) {
+        if (\is_object($class)) {
             $instance = $class;
         }
 
@@ -89,12 +89,12 @@ class CacheRegistry extends ObjectRegistry
 
         if (!$instance->init($config)) {
             throw new RuntimeException(
-                sprintf('Cache engine %s is not properly configured.', get_class($instance))
+                \sprintf('Cache engine %s is not properly configured.', \get_class($instance))
             );
         }
 
         $config = $instance->getConfig();
-        if ($config['probability'] && time() % $config['probability'] === 0) {
+        if ($config['probability'] && \time() % $config['probability'] === 0) {
             $instance->gc();
         }
 

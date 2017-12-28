@@ -68,9 +68,9 @@ trait EmailAssertTrait
      */
     public function getMockForMailer($className, array $methods = [])
     {
-        $name = current(array_slice(explode('\\', $className), -1));
+        $name = \current(\array_slice(\explode('\\', $className), -1));
 
-        if (!in_array('profile', $methods)) {
+        if (!\in_array('profile', $methods)) {
             $methods[] = 'profile';
         }
 

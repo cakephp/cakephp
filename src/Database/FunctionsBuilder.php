@@ -51,7 +51,7 @@ class FunctionsBuilder
      */
     protected function _literalArgumentFunction($name, $expression, $types = [], $return = 'string')
     {
-        if (!is_string($expression)) {
+        if (!\is_string($expression)) {
             $expression = [$expression];
         } else {
             $expression = [$expression => 'literal'];
@@ -70,7 +70,7 @@ class FunctionsBuilder
     public function sum($expression, $types = [])
     {
         $returnType = 'float';
-        if (current($types) === 'integer') {
+        if (\current($types) === 'integer') {
             $returnType = 'integer';
         }
 
@@ -98,7 +98,7 @@ class FunctionsBuilder
      */
     public function max($expression, $types = [])
     {
-        return $this->_literalArgumentFunction('MAX', $expression, $types, current($types) ?: 'string');
+        return $this->_literalArgumentFunction('MAX', $expression, $types, \current($types) ?: 'string');
     }
 
     /**
@@ -110,7 +110,7 @@ class FunctionsBuilder
      */
     public function min($expression, $types = [])
     {
-        return $this->_literalArgumentFunction('MIN', $expression, $types, current($types) ?: 'string');
+        return $this->_literalArgumentFunction('MIN', $expression, $types, \current($types) ?: 'string');
     }
 
     /**
@@ -146,7 +146,7 @@ class FunctionsBuilder
      */
     public function coalesce($args, $types = [])
     {
-        return $this->_build('COALESCE', $args, $types, current($types) ?: 'string');
+        return $this->_build('COALESCE', $args, $types, \current($types) ?: 'string');
     }
 
     /**
@@ -202,7 +202,7 @@ class FunctionsBuilder
      */
     public function dateAdd($expression, $value, $unit, $types = [])
     {
-        if (!is_numeric($value)) {
+        if (!\is_numeric($value)) {
             $value = 0;
         }
         $interval = $value . ' ' . $unit;
@@ -270,7 +270,7 @@ class FunctionsBuilder
      */
     public function __call($name, $args)
     {
-        switch (count($args)) {
+        switch (\count($args)) {
             case 0:
                 return $this->_build($name);
             case 1:

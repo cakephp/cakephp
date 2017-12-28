@@ -84,7 +84,7 @@ class Sqlserver extends Driver
             $config['flags'][PDO::SQLSRV_ATTR_ENCODING] = $config['encoding'];
         }
         $port = '';
-        if (strlen($config['port'])) {
+        if (\strlen($config['port'])) {
             $port = ',' . $config['port'];
         }
 
@@ -112,12 +112,12 @@ class Sqlserver extends Driver
                 $connection->exec($command);
             }
         }
-        if (!empty($config['settings']) && is_array($config['settings'])) {
+        if (!empty($config['settings']) && \is_array($config['settings'])) {
             foreach ($config['settings'] as $key => $value) {
                 $connection->exec("SET {$key} {$value}");
             }
         }
-        if (!empty($config['attributes']) && is_array($config['attributes'])) {
+        if (!empty($config['attributes']) && \is_array($config['attributes'])) {
             foreach ($config['attributes'] as $key => $value) {
                 $connection->setAttribute($key, $value);
             }
@@ -133,7 +133,7 @@ class Sqlserver extends Driver
      */
     public function enabled()
     {
-        return in_array('sqlsrv', PDO::getAvailableDrivers());
+        return \in_array('sqlsrv', PDO::getAvailableDrivers());
     }
 
     /**

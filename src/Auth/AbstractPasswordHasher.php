@@ -74,6 +74,6 @@ abstract class AbstractPasswordHasher
      */
     public function needsRehash($password)
     {
-        return password_needs_rehash($password, PASSWORD_DEFAULT);
+        return \password_needs_rehash($password, PASSWORD_DEFAULT);
     }
 }

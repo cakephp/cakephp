@@ -355,9 +355,9 @@ class Email implements JsonSerializable, Serializable
         if ($this->_appCharset !== null) {
             $this->charset = $this->_appCharset;
         }
-        $this->_domain = preg_replace('/\:\d+$/', '', env('HTTP_HOST'));
+        $this->_domain = \preg_replace('/\:\d+$/', '', env('HTTP_HOST'));
         if (empty($this->_domain)) {
-            $this->_domain = php_uname('n');
+            $this->_domain = \php_uname('n');
         }
 
         $this->viewBuilder()
@@ -856,12 +856,12 @@ class Email implements JsonSerializable, Serializable
      */
     public function setTransferEncoding($encoding)
     {
-        $encoding = strtolower($encoding);
-        if (!in_array($encoding, $this->_transferEncodingAvailable)) {
+        $encoding = \strtolower($encoding);
+        if (!\in_array($encoding, $this->_transferEncodingAvailable)) {
             throw new InvalidArgumentException(
-                sprintf(
+                \sprintf(
                     'Transfer encoding not available. Can be : %s.',
-                    implode(', ', $this->_transferEncodingAvailable)
+                    \implode(', ', $this->_transferEncodingAvailable)
                 )
             );
         }
@@ -934,7 +934,7 @@ class Email implements JsonSerializable, Serializable
      */
     protected function _setEmail($varName, $email, $name)
     {
-        if (!is_array($email)) {
+        if (!\is_array($email)) {
             $this->_validateEmail($email, $varName);
             if ($name === null) {
                 $name = $email;
@@ -945,7 +945,7 @@ class Email implements JsonSerializable, Serializable
         }
         $list = [];
         foreach ($email as $key => $value) {
-            if (is_int($key)) {
+            if (\is_int($key)) {
                 $key = $value;
             }
             $this->_validateEmail($key, $varName);
@@ -967,18 +967,18 @@ class Email implements JsonSerializable, Serializable
     protected function _validateEmail($email, $context)
     {
         if ($this->_emailPattern === null) {
-            if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            if (\filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 return;
             }
-        } elseif (preg_match($this->_emailPattern, $email)) {
+        } elseif (\preg_match($this->_emailPattern, $email)) {
             return;
         }
 
-        $context = ltrim($context, '_');
+        $context = \ltrim($context, '_');
         if ($email == '') {
-            throw new InvalidArgumentException(sprintf('The email set for "%s" is empty.', $context));
+            throw new InvalidArgumentException(\sprintf('The email set for "%s" is empty.', $context));
         }
-        throw new InvalidArgumentException(sprintf('Invalid email set for "%s". You passed "%s".', $context, $email));
+        throw new InvalidArgumentException(\sprintf('Invalid email set for "%s". You passed "%s".', $context, $email));
     }
 
     /**
@@ -996,7 +996,7 @@ class Email implements JsonSerializable, Serializable
     {
         $current = $this->{$varName};
         $this->_setEmail($varName, $email, $name);
-        if (count($this->{$varName}) !== 1) {
+        if (\count($this->{$varName}) !== 1) {
             $this->{$varName} = $current;
             throw new InvalidArgumentException($throwMessage);
         }
@@ -1016,7 +1016,7 @@ class Email implements JsonSerializable, Serializable
      */
     protected function _addEmail($varName, $email, $name)
     {
-        if (!is_array($email)) {
+        if (!\is_array($email)) {
             $this->_validateEmail($email, $varName);
             if ($name === null) {
                 $name = $email;
@@ -1027,13 +1027,13 @@ class Email implements JsonSerializable, Serializable
         }
         $list = [];
         foreach ($email as $key => $value) {
-            if (is_int($key)) {
+            if (\is_int($key)) {
                 $key = $value;
             }
             $this->_validateEmail($key, $varName);
             $list[$key] = $value;
         }
-        $this->{$varName} = array_merge($this->{$varName}, $list);
+        $this->{$varName} = \array_merge($this->{$varName}, $list);
 
         return $this;
     }
@@ -1108,7 +1108,7 @@ class Email implements JsonSerializable, Serializable
      */
     public function addHeaders(array $headers)
     {
-        $this->_headers = array_merge($this->_headers, $headers);
+        $this->_headers = \array_merge($this->_headers, $headers);
 
         return $this;
     }
@@ -1132,10 +1132,10 @@ class Email implements JsonSerializable, Serializable
      */
     public function getHeaders(array $include = [])
     {
-        if ($include == array_values($include)) {
-            $include = array_fill_keys($include, true);
+        if ($include == \array_values($include)) {
+            $include = \array_fill_keys($include, true);
         }
-        $defaults = array_fill_keys(
+        $defaults = \array_fill_keys(
             [
                 'from', 'sender', 'replyTo', 'readReceipt', 'returnPath',
                 'to', 'cc', 'bcc', 'subject'],
@@ -1153,31 +1153,31 @@ class Email implements JsonSerializable, Serializable
         foreach ($relation as $var => $header) {
             if ($include[$var]) {
                 $var = '_' . $var;
-                $headers[$header] = current($this->_formatAddress($this->{$var}));
+                $headers[$header] = \current($this->_formatAddress($this->{$var}));
             }
         }
         if ($include['sender']) {
-            if (key($this->_sender) === key($this->_from)) {
+            if (\key($this->_sender) === \key($this->_from)) {
                 $headers['Sender'] = '';
             } else {
-                $headers['Sender'] = current($this->_formatAddress($this->_sender));
+                $headers['Sender'] = \current($this->_formatAddress($this->_sender));
             }
         }
 
         foreach (['to', 'cc', 'bcc'] as $var) {
             if ($include[$var]) {
                 $classVar = '_' . $var;
-                $headers[ucfirst($var)] = implode(', ', $this->_formatAddress($this->{$classVar}));
+                $headers[\ucfirst($var)] = \implode(', ', $this->_formatAddress($this->{$classVar}));
             }
         }
 
         $headers += $this->_headers;
         if (!isset($headers['Date'])) {
-            $headers['Date'] = date(DATE_RFC2822);
+            $headers['Date'] = \date(DATE_RFC2822);
         }
         if ($this->_messageId !== false) {
             if ($this->_messageId === true) {
-                $headers['Message-ID'] = '<' . str_replace('-', '', Text::uuid()) . '@' . $this->_domain . '>';
+                $headers['Message-ID'] = '<' . \str_replace('-', '', Text::uuid()) . '@' . $this->_domain . '>';
             } else {
                 $headers['Message-ID'] = $this->_messageId;
             }
@@ -1224,10 +1224,10 @@ class Email implements JsonSerializable, Serializable
                 $return[] = $email;
             } else {
                 $encoded = $this->_encode($alias);
-                if ($encoded === $alias && preg_match('/[^a-z0-9 ]/i', $encoded)) {
-                    $encoded = '"' . str_replace('"', '\"', $encoded) . '"';
+                if ($encoded === $alias && \preg_match('/[^a-z0-9 ]/i', $encoded)) {
+                    $encoded = '"' . \str_replace('"', '\"', $encoded) . '"';
                 }
-                $return[] = sprintf('%s <%s>', $encoded, $email);
+                $return[] = \sprintf('%s <%s>', $encoded, $email);
             }
         }
 
@@ -1470,7 +1470,7 @@ class Email implements JsonSerializable, Serializable
      */
     public function setEmailFormat($format)
     {
-        if (!in_array($format, $this->_emailFormatAvailable)) {
+        if (!\in_array($format, $this->_emailFormatAvailable)) {
             throw new InvalidArgumentException('Format not available.');
         }
         $this->_emailFormat = $format;
@@ -1519,17 +1519,17 @@ class Email implements JsonSerializable, Serializable
      */
     public function setTransport($name)
     {
-        if (is_string($name)) {
+        if (\is_string($name)) {
             $transport = $this->_constructTransport($name);
-        } elseif (is_object($name)) {
+        } elseif (\is_object($name)) {
             $transport = $name;
         } else {
             throw new InvalidArgumentException(
-                sprintf('The value passed for the "$name" argument must be either a string, or an object, %s given.', gettype($name))
+                \sprintf('The value passed for the "$name" argument must be either a string, or an object, %s given.', \gettype($name))
             );
         }
-        if (!method_exists($transport, 'send')) {
-            throw new LogicException(sprintf('The "%s" do not have send method.', get_class($transport)));
+        if (!\method_exists($transport, 'send')) {
+            throw new LogicException(\sprintf('The "%s" do not have send method.', \get_class($transport)));
         }
 
         $this->_transport = $transport;
@@ -1579,22 +1579,22 @@ class Email implements JsonSerializable, Serializable
     protected function _constructTransport($name)
     {
         if (!isset(static::$_transportConfig[$name])) {
-            throw new InvalidArgumentException(sprintf('Transport config "%s" is missing.', $name));
+            throw new InvalidArgumentException(\sprintf('Transport config "%s" is missing.', $name));
         }
 
         if (!isset(static::$_transportConfig[$name]['className'])) {
             throw new InvalidArgumentException(
-                sprintf('Transport config "%s" is invalid, the required `className` option is missing', $name)
+                \sprintf('Transport config "%s" is invalid, the required `className` option is missing', $name)
             );
         }
 
         $config = static::$_transportConfig[$name];
 
-        if (is_object($config['className'])) {
+        if (\is_object($config['className'])) {
             if (!$config['className'] instanceof AbstractTransport) {
-                throw new InvalidArgumentException(sprintf(
+                throw new InvalidArgumentException(\sprintf(
                     'Transport object must be of type "AbstractTransport". Found invalid type: "%s".',
-                    get_class($config['className'])
+                    \get_class($config['className'])
                 ));
             }
 
@@ -1605,7 +1605,7 @@ class Email implements JsonSerializable, Serializable
         if (!$className) {
             $className = App::className($config['className'], 'Network/Email', 'Transport');
             if ($className) {
-                trigger_error(
+                \trigger_error(
                     'Transports in "Network/Email" are deprecated, use "Mailer/Transport" instead.',
                     E_USER_DEPRECATED
                 );
@@ -1613,10 +1613,10 @@ class Email implements JsonSerializable, Serializable
         }
 
         if (!$className) {
-            throw new InvalidArgumentException(sprintf('Transport class "%s" not found.', $config['className']));
+            throw new InvalidArgumentException(\sprintf('Transport class "%s" not found.', $config['className']));
         }
-        if (!method_exists($className, 'send')) {
-            throw new InvalidArgumentException(sprintf('The "%s" does not have a send() method.', $className));
+        if (!\method_exists($className, 'send')) {
+            throw new InvalidArgumentException(\sprintf('The "%s" does not have a send() method.', $className));
         }
 
         unset($config['className']);
@@ -1633,10 +1633,10 @@ class Email implements JsonSerializable, Serializable
      */
     public function setMessageId($message)
     {
-        if (is_bool($message)) {
+        if (\is_bool($message)) {
             $this->_messageId = $message;
         } else {
-            if (!preg_match('/^\<.+@.+\>$/', $message)) {
+            if (!\preg_match('/^\<.+@.+\>$/', $message)) {
                 throw new InvalidArgumentException('Invalid format to Message-ID. The text should be something like "<uuid@server.com>"');
             }
             $this->_messageId = $message;
@@ -1766,29 +1766,29 @@ class Email implements JsonSerializable, Serializable
     {
         $attach = [];
         foreach ((array)$attachments as $name => $fileInfo) {
-            if (!is_array($fileInfo)) {
+            if (!\is_array($fileInfo)) {
                 $fileInfo = ['file' => $fileInfo];
             }
             if (!isset($fileInfo['file'])) {
                 if (!isset($fileInfo['data'])) {
                     throw new InvalidArgumentException('No file or data specified.');
                 }
-                if (is_int($name)) {
+                if (\is_int($name)) {
                     throw new InvalidArgumentException('No filename specified.');
                 }
-                $fileInfo['data'] = chunk_split(base64_encode($fileInfo['data']), 76, "\r\n");
+                $fileInfo['data'] = \chunk_split(\base64_encode($fileInfo['data']), 76, "\r\n");
             } else {
                 $fileName = $fileInfo['file'];
-                $fileInfo['file'] = realpath($fileInfo['file']);
-                if ($fileInfo['file'] === false || !file_exists($fileInfo['file'])) {
-                    throw new InvalidArgumentException(sprintf('File not found: "%s"', $fileName));
+                $fileInfo['file'] = \realpath($fileInfo['file']);
+                if ($fileInfo['file'] === false || !\file_exists($fileInfo['file'])) {
+                    throw new InvalidArgumentException(\sprintf('File not found: "%s"', $fileName));
                 }
-                if (is_int($name)) {
-                    $name = basename($fileInfo['file']);
+                if (\is_int($name)) {
+                    $name = \basename($fileInfo['file']);
                 }
             }
-            if (!isset($fileInfo['mimetype']) && function_exists('mime_content_type')) {
-                $fileInfo['mimetype'] = mime_content_type($fileInfo['file']);
+            if (!isset($fileInfo['mimetype']) && \function_exists('mime_content_type')) {
+                $fileInfo['mimetype'] = \mime_content_type($fileInfo['file']);
             }
             if (!isset($fileInfo['mimetype'])) {
                 $fileInfo['mimetype'] = 'application/octet-stream';
@@ -1881,7 +1881,7 @@ class Email implements JsonSerializable, Serializable
     {
         $current = $this->_attachments;
         $this->setAttachments($attachments);
-        $this->_attachments = array_merge($current, $this->_attachments);
+        $this->_attachments = \array_merge($current, $this->_attachments);
 
         return $this;
     }
@@ -1950,7 +1950,7 @@ class Email implements JsonSerializable, Serializable
      */
     public static function setConfigTransport($key, $config = null)
     {
-        if (is_array($key)) {
+        if (\is_array($key)) {
             foreach ($key as $name => $settings) {
                 static::setConfigTransport($name, $settings);
             }
@@ -1959,10 +1959,10 @@ class Email implements JsonSerializable, Serializable
         }
 
         if (isset(static::$_transportConfig[$key])) {
-            throw new BadMethodCallException(sprintf('Cannot modify an existing config "%s"', $key));
+            throw new BadMethodCallException(\sprintf('Cannot modify an existing config "%s"', $key));
         }
 
-        if (is_object($config)) {
+        if (\is_object($config)) {
             $config = ['className' => $config];
         }
 
@@ -2010,10 +2010,10 @@ class Email implements JsonSerializable, Serializable
      */
     public static function configTransport($key, $config = null)
     {
-        if ($config === null && is_string($key)) {
+        if ($config === null && \is_string($key)) {
             return static::getConfigTransport($key);
         }
-        if ($config === null && is_array($key)) {
+        if ($config === null && \is_array($key)) {
             static::setConfigTransport($key);
 
             return null;
@@ -2029,7 +2029,7 @@ class Email implements JsonSerializable, Serializable
      */
     public static function configuredTransport()
     {
-        return array_keys(static::$_transportConfig);
+        return \array_keys(static::$_transportConfig);
     }
 
     /**
@@ -2052,7 +2052,7 @@ class Email implements JsonSerializable, Serializable
      */
     public function setProfile($config)
     {
-        if (!is_array($config)) {
+        if (!\is_array($config)) {
             $config = (string)$config;
         }
         $this->_applyConfig($config);
@@ -2103,8 +2103,8 @@ class Email implements JsonSerializable, Serializable
             throw new BadMethodCallException('You need specify one destination on to, cc or bcc.');
         }
 
-        if (is_array($content)) {
-            $content = implode("\n", $content) . "\n";
+        if (\is_array($content)) {
+            $content = \implode("\n", $content) . "\n";
         }
 
         $this->_message = $this->_render($this->_wrap($content));
@@ -2137,7 +2137,7 @@ class Email implements JsonSerializable, Serializable
             'scope' => 'email'
         ];
         if ($this->_profile['log'] !== true) {
-            if (!is_array($this->_profile['log'])) {
+            if (!\is_array($this->_profile['log'])) {
                 $this->_profile['log'] = ['level' => $this->_profile['log']];
             }
             $config = $this->_profile['log'] + $config;
@@ -2157,7 +2157,7 @@ class Email implements JsonSerializable, Serializable
      */
     protected function flatten($value)
     {
-        return is_array($value) ? implode(';', $value) : (string)$value;
+        return \is_array($value) ? \implode(';', $value) : (string)$value;
     }
 
     /**
@@ -2175,7 +2175,7 @@ class Email implements JsonSerializable, Serializable
     {
         $class = __CLASS__;
 
-        if (is_array($transportConfig) && !isset($transportConfig['transport'])) {
+        if (\is_array($transportConfig) && !isset($transportConfig['transport'])) {
             $transportConfig['transport'] = 'default';
         }
         /* @var \Cake\Mailer\Email $instance */
@@ -2186,10 +2186,10 @@ class Email implements JsonSerializable, Serializable
         if ($subject !== null) {
             $instance->setSubject($subject);
         }
-        if (is_array($message)) {
+        if (\is_array($message)) {
             $instance->setViewVars($message);
             $message = null;
-        } elseif ($message === null && array_key_exists('message', $config = $instance->getProfile())) {
+        } elseif ($message === null && \array_key_exists('message', $config = $instance->getProfile())) {
             $message = $config['message'];
         }
 
@@ -2209,16 +2209,16 @@ class Email implements JsonSerializable, Serializable
      */
     protected function _applyConfig($config)
     {
-        if (is_string($config)) {
+        if (\is_string($config)) {
             $name = $config;
             $config = static::getConfig($name);
             if (empty($config)) {
-                throw new InvalidArgumentException(sprintf('Unknown email configuration "%s".', $name));
+                throw new InvalidArgumentException(\sprintf('Unknown email configuration "%s".', $name));
             }
             unset($name);
         }
 
-        $this->_profile = array_merge($this->_profile, $config);
+        $this->_profile = \array_merge($this->_profile, $config);
 
         $simpleMethods = [
             'from', 'sender', 'to', 'replyTo', 'readReceipt', 'returnPath',
@@ -2242,18 +2242,18 @@ class Email implements JsonSerializable, Serializable
             'template', 'layout', 'theme'
         ];
         foreach ($viewBuilderMethods as $method) {
-            if (array_key_exists($method, $config)) {
+            if (\array_key_exists($method, $config)) {
                 $this->viewBuilder()->$method($config[$method]);
             }
         }
 
-        if (array_key_exists('helpers', $config)) {
+        if (\array_key_exists('helpers', $config)) {
             $this->viewBuilder()->setHelpers($config['helpers'], false);
         }
-        if (array_key_exists('viewRender', $config)) {
+        if (\array_key_exists('viewRender', $config)) {
             $this->viewBuilder()->setClassName($config['viewRender']);
         }
-        if (array_key_exists('viewVars', $config)) {
+        if (\array_key_exists('viewVars', $config)) {
             $this->set($config['viewVars']);
         }
     }
@@ -2307,13 +2307,13 @@ class Email implements JsonSerializable, Serializable
      */
     protected function _encode($text)
     {
-        $restore = mb_internal_encoding();
-        mb_internal_encoding($this->_appCharset);
+        $restore = \mb_internal_encoding();
+        \mb_internal_encoding($this->_appCharset);
         if (empty($this->headerCharset)) {
             $this->headerCharset = $this->charset;
         }
-        $return = mb_encode_mimeheader($text, $this->headerCharset, 'B');
-        mb_internal_encoding($restore);
+        $return = \mb_encode_mimeheader($text, $this->headerCharset, 'B');
+        \mb_internal_encoding($restore);
 
         return $return;
     }
@@ -2326,10 +2326,10 @@ class Email implements JsonSerializable, Serializable
      */
     protected function _decode($text)
     {
-        $restore = mb_internal_encoding();
-        mb_internal_encoding($this->_appCharset);
-        $return = mb_decode_mimeheader($text);
-        mb_internal_encoding($restore);
+        $restore = \mb_internal_encoding();
+        \mb_internal_encoding($this->_appCharset);
+        $return = \mb_decode_mimeheader($text);
+        \mb_internal_encoding($restore);
 
         return $return;
     }
@@ -2348,7 +2348,7 @@ class Email implements JsonSerializable, Serializable
             return $text;
         }
 
-        return mb_convert_encoding($text, $charset, $this->_appCharset);
+        return \mb_convert_encoding($text, $charset, $this->_appCharset);
     }
 
     /**
@@ -2360,11 +2360,11 @@ class Email implements JsonSerializable, Serializable
      */
     protected function _wrap($message, $wrapLength = Email::LINE_LENGTH_MUST)
     {
-        if (strlen($message) === 0) {
+        if (\strlen($message) === 0) {
             return [''];
         }
-        $message = str_replace(["\r\n", "\r"], "\n", $message);
-        $lines = explode("\n", $message);
+        $message = \str_replace(["\r\n", "\r"], "\n", $message);
+        $lines = \explode("\n", $message);
         $formatted = [];
         $cut = ($wrapLength == Email::LINE_LENGTH_MUST);
 
@@ -2373,14 +2373,14 @@ class Email implements JsonSerializable, Serializable
                 $formatted[] = '';
                 continue;
             }
-            if (strlen($line) < $wrapLength) {
+            if (\strlen($line) < $wrapLength) {
                 $formatted[] = $line;
                 continue;
             }
-            if (!preg_match('/<[a-z]+.*>/i', $line)) {
-                $formatted = array_merge(
+            if (!\preg_match('/<[a-z]+.*>/i', $line)) {
+                $formatted = \array_merge(
                     $formatted,
-                    explode("\n", wordwrap($line, $wrapLength, "\n", $cut))
+                    \explode("\n", \wordwrap($line, $wrapLength, "\n", $cut))
                 );
                 continue;
             }
@@ -2388,20 +2388,20 @@ class Email implements JsonSerializable, Serializable
             $tagOpen = false;
             $tmpLine = $tag = '';
             $tmpLineLength = 0;
-            for ($i = 0, $count = strlen($line); $i < $count; $i++) {
+            for ($i = 0, $count = \strlen($line); $i < $count; $i++) {
                 $char = $line[$i];
                 if ($tagOpen) {
                     $tag .= $char;
                     if ($char === '>') {
-                        $tagLength = strlen($tag);
+                        $tagLength = \strlen($tag);
                         if ($tagLength + $tmpLineLength < $wrapLength) {
                             $tmpLine .= $tag;
                             $tmpLineLength += $tagLength;
                         } else {
                             if ($tmpLineLength > 0) {
-                                $formatted = array_merge(
+                                $formatted = \array_merge(
                                     $formatted,
-                                    explode("\n", wordwrap(trim($tmpLine), $wrapLength, "\n", $cut))
+                                    \explode("\n", \wordwrap(\trim($tmpLine), $wrapLength, "\n", $cut))
                                 );
                                 $tmpLine = '';
                                 $tmpLineLength = 0;
@@ -2433,21 +2433,21 @@ class Email implements JsonSerializable, Serializable
                 if ($tmpLineLength === $wrapLength) {
                     $nextChar = $line[$i + 1];
                     if ($nextChar === ' ' || $nextChar === '<') {
-                        $formatted[] = trim($tmpLine);
+                        $formatted[] = \trim($tmpLine);
                         $tmpLine = '';
                         $tmpLineLength = 0;
                         if ($nextChar === ' ') {
                             $i++;
                         }
                     } else {
-                        $lastSpace = strrpos($tmpLine, ' ');
+                        $lastSpace = \strrpos($tmpLine, ' ');
                         if ($lastSpace === false) {
                             continue;
                         }
-                        $formatted[] = trim(substr($tmpLine, 0, $lastSpace));
-                        $tmpLine = substr($tmpLine, $lastSpace + 1);
+                        $formatted[] = \trim(\substr($tmpLine, 0, $lastSpace));
+                        $tmpLine = \substr($tmpLine, $lastSpace + 1);
 
-                        $tmpLineLength = strlen($tmpLine);
+                        $tmpLineLength = \strlen($tmpLine);
                     }
                 }
             }
@@ -2468,7 +2468,7 @@ class Email implements JsonSerializable, Serializable
     protected function _createBoundary()
     {
         if ($this->_attachments || $this->_emailFormat === 'both') {
-            $this->_boundary = md5(Security::randomBytes(16));
+            $this->_boundary = \md5(Security::randomBytes(16));
         }
     }
 
@@ -2521,7 +2521,7 @@ class Email implements JsonSerializable, Serializable
     {
         $File = new File($path);
 
-        return chunk_split(base64_encode($File->read()));
+        return \chunk_split(\base64_encode($File->read()));
     }
 
     /**
@@ -2566,16 +2566,16 @@ class Email implements JsonSerializable, Serializable
     {
         $this->_textMessage = $this->_htmlMessage = '';
 
-        $content = implode("\n", $content);
+        $content = \implode("\n", $content);
         $rendered = $this->_renderTemplates($content);
 
         $this->_createBoundary();
         $msg = [];
 
-        $contentIds = array_filter((array)Hash::extract($this->_attachments, '{s}.contentId'));
-        $hasInlineAttachments = count($contentIds) > 0;
+        $contentIds = \array_filter((array)Hash::extract($this->_attachments, '{s}.contentId'));
+        $hasInlineAttachments = \count($contentIds) > 0;
         $hasAttachments = !empty($this->_attachments);
-        $hasMultipleTypes = count($rendered) > 1;
+        $hasMultipleTypes = \count($rendered) > 1;
         $multiPart = ($hasAttachments || $hasMultipleTypes);
 
         $boundary = $relBoundary = $textBoundary = $this->_boundary;
@@ -2602,8 +2602,8 @@ class Email implements JsonSerializable, Serializable
                 $msg[] = '';
             }
             $this->_textMessage = $rendered['text'];
-            $content = explode("\n", $this->_textMessage);
-            $msg = array_merge($msg, $content);
+            $content = \explode("\n", $this->_textMessage);
+            $msg = \array_merge($msg, $content);
             $msg[] = '';
         }
 
@@ -2615,8 +2615,8 @@ class Email implements JsonSerializable, Serializable
                 $msg[] = '';
             }
             $this->_htmlMessage = $rendered['html'];
-            $content = explode("\n", $this->_htmlMessage);
-            $msg = array_merge($msg, $content);
+            $content = \explode("\n", $this->_htmlMessage);
+            $msg = \array_merge($msg, $content);
             $msg[] = '';
         }
 
@@ -2627,7 +2627,7 @@ class Email implements JsonSerializable, Serializable
 
         if ($hasInlineAttachments) {
             $attachments = $this->_attachInlineFiles($relBoundary);
-            $msg = array_merge($msg, $attachments);
+            $msg = \array_merge($msg, $attachments);
             $msg[] = '';
             $msg[] = '--' . $relBoundary . '--';
             $msg[] = '';
@@ -2635,7 +2635,7 @@ class Email implements JsonSerializable, Serializable
 
         if ($hasAttachments) {
             $attachments = $this->_attachFiles($boundary);
-            $msg = array_merge($msg, $attachments);
+            $msg = \array_merge($msg, $attachments);
         }
         if ($hasAttachments || $hasMultipleTypes) {
             $msg[] = '';
@@ -2702,14 +2702,14 @@ class Email implements JsonSerializable, Serializable
             $View->setLayoutPath('Email' . DIRECTORY_SEPARATOR . $type);
 
             $render = $View->render();
-            $render = str_replace(["\r\n", "\r"], "\n", $render);
+            $render = \str_replace(["\r\n", "\r"], "\n", $render);
             $rendered[$type] = $this->_encodeString($render, $this->charset);
         }
 
         foreach ($rendered as $type => $content) {
             $rendered[$type] = $this->_wrap($content);
-            $rendered[$type] = implode("\n", $rendered[$type]);
-            $rendered[$type] = rtrim($rendered[$type], "\n");
+            $rendered[$type] = \implode("\n", $rendered[$type]);
+            $rendered[$type] = \rtrim($rendered[$type], "\n");
         }
 
         return $rendered;
@@ -2727,8 +2727,8 @@ class Email implements JsonSerializable, Serializable
             return $this->transferEncoding;
         }
 
-        $charset = strtoupper($this->charset);
-        if (in_array($charset, $this->_charset8bit)) {
+        $charset = \strtoupper($this->charset);
+        if (\in_array($charset, $this->_charset8bit)) {
             return '8bit';
         }
 
@@ -2745,12 +2745,12 @@ class Email implements JsonSerializable, Serializable
      */
     protected function _getContentTypeCharset()
     {
-        $charset = strtoupper($this->charset);
-        if (array_key_exists($charset, $this->_contentTypeCharset)) {
-            return strtoupper($this->_contentTypeCharset[$charset]);
+        $charset = \strtoupper($this->charset);
+        if (\array_key_exists($charset, $this->_contentTypeCharset)) {
+            return \strtoupper($this->_contentTypeCharset[$charset]);
         }
 
-        return strtoupper($this->charset);
+        return \strtoupper($this->charset);
     }
 
     /**
@@ -2781,17 +2781,17 @@ class Email implements JsonSerializable, Serializable
             $array[$property] = $this->{$property};
         }
 
-        array_walk($array['_attachments'], function (&$item, $key) {
+        \array_walk($array['_attachments'], function (&$item, $key) {
             if (!empty($item['file'])) {
                 $item['data'] = $this->_readFile($item['file']);
                 unset($item['file']);
             }
         });
 
-        array_walk_recursive($array['viewVars'], [$this, '_checkViewVars']);
+        \array_walk_recursive($array['viewVars'], [$this, '_checkViewVars']);
 
-        return array_filter($array, function ($i) {
-            return !is_array($i) && strlen($i) || !empty($i);
+        return \array_filter($array, function ($i) {
+            return !\is_array($i) && \strlen($i) || !empty($i);
         });
     }
 
@@ -2808,14 +2808,14 @@ class Email implements JsonSerializable, Serializable
             $item = (string)$item;
         }
 
-        if (is_resource($item) ||
+        if (\is_resource($item) ||
             $item instanceof Closure ||
             $item instanceof PDO
         ) {
-            throw new RuntimeException(sprintf(
+            throw new RuntimeException(\sprintf(
                 'Failed serializing the `%s` %s in the `%s` view var',
-                is_resource($item) ? get_resource_type($item) : get_class($item),
-                is_resource($item) ? 'resource' : 'object',
+                \is_resource($item) ? \get_resource_type($item) : \get_class($item),
+                \is_resource($item) ? 'resource' : 'object',
                 $key
             ));
         }
@@ -2849,13 +2849,13 @@ class Email implements JsonSerializable, Serializable
     public function serialize()
     {
         $array = $this->jsonSerialize();
-        array_walk_recursive($array, function (&$item, $key) {
+        \array_walk_recursive($array, function (&$item, $key) {
             if ($item instanceof SimpleXMLElement) {
-                $item = json_decode(json_encode((array)$item), true);
+                $item = \json_decode(\json_encode((array)$item), true);
             }
         });
 
-        return serialize($array);
+        return \serialize($array);
     }
 
     /**
@@ -2866,6 +2866,6 @@ class Email implements JsonSerializable, Serializable
      */
     public function unserialize($data)
     {
-        return $this->createFromArray(unserialize($data));
+        return $this->createFromArray(\unserialize($data));
     }
 }

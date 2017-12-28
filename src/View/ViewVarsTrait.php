@@ -82,7 +82,7 @@ trait ViewVarsTrait
         $validViewOptions = $this->viewOptions();
         $viewOptions = [];
         foreach ($validViewOptions as $option) {
-            if (property_exists($this, $option)) {
+            if (\property_exists($this, $option)) {
                 $viewOptions[$option] = $this->{$option};
             }
         }
@@ -96,9 +96,9 @@ trait ViewVarsTrait
             'layoutPath' => 'layoutPath',
         ];
         foreach ($deprecatedOptions as $old => $new) {
-            if (property_exists($this, $old)) {
+            if (\property_exists($this, $old)) {
                 $builder->{$new}($this->{$old});
-                trigger_error(sprintf(
+                \trigger_error(\sprintf(
                     'Property $%s is deprecated. Use $this->viewBuilder()->%s() instead in beforeRender().',
                     $old,
                     $new
@@ -131,9 +131,9 @@ trait ViewVarsTrait
      */
     public function set($name, $value = null)
     {
-        if (is_array($name)) {
-            if (is_array($value)) {
-                $data = array_combine($name, $value);
+        if (\is_array($name)) {
+            if (\is_array($value)) {
+                $data = \array_combine($name, $value);
             } else {
                 $data = $name;
             }
@@ -169,6 +169,6 @@ trait ViewVarsTrait
             return $this->_validViewOptions = (array)$options;
         }
 
-        return $this->_validViewOptions = array_merge($this->_validViewOptions, (array)$options);
+        return $this->_validViewOptions = \array_merge($this->_validViewOptions, (array)$options);
     }
 }

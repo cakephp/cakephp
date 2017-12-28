@@ -30,7 +30,7 @@ trait TypeConverterTrait
      */
     public function cast($value, $type)
     {
-        if (is_string($type)) {
+        if (\is_string($type)) {
             $type = Type::build($type);
         }
         if ($type instanceof TypeInterface) {
@@ -53,10 +53,10 @@ trait TypeConverterTrait
      */
     public function matchTypes($columns, $types)
     {
-        if (!is_int(key($types))) {
-            $positions = array_intersect_key(array_flip($columns), $types);
-            $types = array_intersect_key($types, $positions);
-            $types = array_combine($positions, $types);
+        if (!\is_int(\key($types))) {
+            $positions = \array_intersect_key(\array_flip($columns), $types);
+            $types = \array_intersect_key($types, $positions);
+            $types = \array_combine($positions, $types);
         }
 
         return $types;

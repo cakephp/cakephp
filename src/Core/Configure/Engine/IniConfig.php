@@ -100,17 +100,17 @@ class IniConfig implements ConfigEngineInterface
     {
         $file = $this->_getFilePath($key, true);
 
-        $contents = parse_ini_file($file, true);
+        $contents = \parse_ini_file($file, true);
         if ($this->_section && isset($contents[$this->_section])) {
             $values = $this->_parseNestedValues($contents[$this->_section]);
         } else {
             $values = [];
             foreach ($contents as $section => $attribs) {
-                if (is_array($attribs)) {
+                if (\is_array($attribs)) {
                     $values[$section] = $this->_parseNestedValues($attribs);
                 } else {
                     $parse = $this->_parseNestedValues([$attribs]);
-                    $values[$section] = array_shift($parse);
+                    $values[$section] = \array_shift($parse);
                 }
             }
         }
@@ -134,7 +134,7 @@ class IniConfig implements ConfigEngineInterface
                 $value = false;
             }
             unset($values[$key]);
-            if (strpos($key, '.') !== false) {
+            if (\strpos($key, '.') !== false) {
                 $values = Hash::insert($values, $key, $value);
             } else {
                 $values[$key] = $value;
@@ -161,7 +161,7 @@ class IniConfig implements ConfigEngineInterface
                 $result[] = "[$k]";
                 $isSection = true;
             }
-            if (is_array($value)) {
+            if (\is_array($value)) {
                 $kValues = Hash::flatten($value, '.');
                 foreach ($kValues as $k2 => $v) {
                     $result[] = "$k2 = " . $this->_value($v);
@@ -171,11 +171,11 @@ class IniConfig implements ConfigEngineInterface
                 $result[] = '';
             }
         }
-        $contents = trim(implode("\n", $result));
+        $contents = \trim(\implode("\n", $result));
 
         $filename = $this->_getFilePath($key);
 
-        return file_put_contents($filename, $contents) > 0;
+        return \file_put_contents($filename, $contents) > 0;
     }
 
     /**

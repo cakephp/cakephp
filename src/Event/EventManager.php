@@ -172,7 +172,7 @@ class EventManager
 
             return $this;
         }
-        $argCount = func_num_args();
+        $argCount = \func_num_args();
         if ($argCount === 2) {
             $this->_listeners[$eventKey][static::$defaultPriority][] = [
                 'callable' => $options
@@ -203,16 +203,16 @@ class EventManager
         foreach ((array)$subscriber->implementedEvents() as $eventKey => $function) {
             $options = [];
             $method = $function;
-            if (is_array($function) && isset($function['callable'])) {
+            if (\is_array($function) && isset($function['callable'])) {
                 list($method, $options) = $this->_extractCallable($function, $subscriber);
-            } elseif (is_array($function) && is_numeric(key($function))) {
+            } elseif (\is_array($function) && \is_numeric(\key($function))) {
                 foreach ($function as $f) {
                     list($method, $options) = $this->_extractCallable($f, $subscriber);
                     $this->on($eventKey, $options, $method);
                 }
                 continue;
             }
-            if (is_string($method)) {
+            if (\is_string($method)) {
                 $method = [$subscriber, $function];
             }
             $this->on($eventKey, $options, $method);
@@ -232,7 +232,7 @@ class EventManager
         $method = $function['callable'];
         $options = $function;
         unset($options['callable']);
-        if (is_string($method)) {
+        if (\is_string($method)) {
             $method = [$object, $method];
         }
 
@@ -301,13 +301,13 @@ class EventManager
 
             return $this;
         }
-        if ($callable === null && is_string($eventKey)) {
+        if ($callable === null && \is_string($eventKey)) {
             unset($this->_listeners[$eventKey]);
 
             return $this;
         }
         if ($callable === null) {
-            foreach (array_keys($this->_listeners) as $name) {
+            foreach (\array_keys($this->_listeners) as $name) {
                 $this->off($name, $eventKey);
             }
 
@@ -345,8 +345,8 @@ class EventManager
             $events = [$eventKey => $events[$eventKey]];
         }
         foreach ($events as $key => $function) {
-            if (is_array($function)) {
-                if (is_numeric(key($function))) {
+            if (\is_array($function)) {
+                if (\is_numeric(\key($function))) {
                     foreach ($function as $handler) {
                         $handler = isset($handler['callable']) ? $handler['callable'] : $handler;
                         $this->off($key, [$subscriber, $handler]);
@@ -368,7 +368,7 @@ class EventManager
      */
     public function dispatch($event)
     {
-        if (is_string($event)) {
+        if (\is_string($event)) {
             $event = new Event($event);
         }
 
@@ -413,7 +413,7 @@ class EventManager
     {
         $data = $event->getData();
 
-        return $listener($event, ...array_values($data));
+        return $listener($event, ...\array_values($data));
     }
 
     /**
@@ -432,17 +432,17 @@ class EventManager
         $globalListeners = static::instance()->prioritisedListeners($eventKey);
         $globalListeners = empty($globalListeners) ? [] : $globalListeners;
 
-        $priorities = array_merge(array_keys($globalListeners), array_keys($localListeners));
-        $priorities = array_unique($priorities);
-        asort($priorities);
+        $priorities = \array_merge(\array_keys($globalListeners), \array_keys($localListeners));
+        $priorities = \array_unique($priorities);
+        \asort($priorities);
 
         $result = [];
         foreach ($priorities as $priority) {
             if (isset($globalListeners[$priority])) {
-                $result = array_merge($result, $globalListeners[$priority]);
+                $result = \array_merge($result, $globalListeners[$priority]);
             }
             if (isset($localListeners[$priority])) {
-                $result = array_merge($result, $localListeners[$priority]);
+                $result = \array_merge($result, $localListeners[$priority]);
             }
         }
 
@@ -472,11 +472,11 @@ class EventManager
      */
     public function matchingListeners($eventKeyPattern)
     {
-        $matchPattern = '/' . preg_quote($eventKeyPattern, '/') . '/';
-        $matches = array_intersect_key(
+        $matchPattern = '/' . \preg_quote($eventKeyPattern, '/') . '/';
+        $matches = \array_intersect_key(
             $this->_listeners,
-            array_flip(
-                preg_grep($matchPattern, array_keys($this->_listeners), 0)
+            \array_flip(
+                \preg_grep($matchPattern, \array_keys($this->_listeners), 0)
             )
         );
 
@@ -565,21 +565,21 @@ class EventManager
      */
     public function __debugInfo()
     {
-        $properties = get_object_vars($this);
+        $properties = \get_object_vars($this);
         $properties['_generalManager'] = '(object) EventManager';
         $properties['_listeners'] = [];
         foreach ($this->_listeners as $key => $priorities) {
             $listenerCount = 0;
             foreach ($priorities as $listeners) {
-                $listenerCount += count($listeners);
+                $listenerCount += \count($listeners);
             }
             $properties['_listeners'][$key] = $listenerCount . ' listener(s)';
         }
         if ($this->_eventList) {
-            $count = count($this->_eventList);
+            $count = \count($this->_eventList);
             for ($i = 0; $i < $count; $i++) {
                 $event = $this->_eventList[$i];
-                $properties['_dispatchedEvents'][] = $event->getName() . ' with subject ' . get_class($event->getSubject());
+                $properties['_dispatchedEvents'][] = $event->getName() . ' with subject ' . \get_class($event->getSubject());
             }
         } else {
             $properties['_dispatchedEvents'] = null;

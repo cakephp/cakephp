@@ -73,7 +73,7 @@ class ConnectionManager
      */
     public static function setConfig($key, $config = null)
     {
-        if (is_array($config)) {
+        if (\is_array($config)) {
             $config['name'] = $key;
         }
 
@@ -110,7 +110,7 @@ class ConnectionManager
         $config = static::_parseDsn($config);
 
         if (isset($config['path']) && empty($config['database'])) {
-            $config['database'] = substr($config['path'], 1);
+            $config['database'] = \substr($config['path'], 1);
         }
 
         if (empty($config['driver'])) {
@@ -153,7 +153,7 @@ class ConnectionManager
     {
         if (empty(static::$_config[$source]) && empty(static::$_config[$alias])) {
             throw new MissingDatasourceConfigException(
-                sprintf('Cannot create alias of "%s" as it does not exist.', $alias)
+                \sprintf('Cannot create alias of "%s" as it does not exist.', $alias)
             );
         }
         static::$_aliasMap[$source] = $alias;

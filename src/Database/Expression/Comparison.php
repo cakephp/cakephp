@@ -76,7 +76,7 @@ class Comparison implements ExpressionInterface, FieldInterface
      */
     public function __construct($field, $value, $type, $operator)
     {
-        if (is_string($type)) {
+        if (\is_string($type)) {
             $this->_type = $type;
         }
 
@@ -93,8 +93,8 @@ class Comparison implements ExpressionInterface, FieldInterface
      */
     public function setValue($value)
     {
-        $hasType = isset($this->_type) && is_string($this->_type);
-        $isMultiple = $hasType && strpos($this->_type, '[]') !== false;
+        $hasType = isset($this->_type) && \is_string($this->_type);
+        $isMultiple = $hasType && \strpos($this->_type, '[]') !== false;
 
         if ($hasType) {
             $value = $this->_castToExpression($value, $this->_type);
@@ -160,7 +160,7 @@ class Comparison implements ExpressionInterface, FieldInterface
             list($template, $value) = $this->_stringExpression($generator);
         }
 
-        return sprintf($template, $field, $this->_operator, $value);
+        return \sprintf($template, $field, $this->_operator, $value);
     }
 
     /**
@@ -218,7 +218,7 @@ class Comparison implements ExpressionInterface, FieldInterface
 
         if ($this->_isMultiple) {
             $template .= '%s (%s)';
-            $type = str_replace('[]', '', $this->_type);
+            $type = \str_replace('[]', '', $this->_type);
             $value = $this->_flattenValue($this->_value, $generator, $type);
 
             // To avoid SQL errors when comparing a field to a list of empty values,
@@ -274,7 +274,7 @@ class Comparison implements ExpressionInterface, FieldInterface
             $parts += $generator->generateManyNamed($value, $type);
         }
 
-        return implode(',', $parts);
+        return \implode(',', $parts);
     }
 
     /**
@@ -292,7 +292,7 @@ class Comparison implements ExpressionInterface, FieldInterface
         }
 
         $expressions = $result = [];
-        $isArray = is_array($values);
+        $isArray = \is_array($values);
 
         if ($isArray) {
             $result = $values;

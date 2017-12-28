@@ -59,7 +59,7 @@ class ContextFactory
             [
                 'type' => 'orm',
                 'callable' => function ($request, $data) {
-                    if (is_array($data['entity']) || $data['entity'] instanceof Traversable) {
+                    if (\is_array($data['entity']) || $data['entity'] instanceof Traversable) {
                         $pass = (new Collection($data['entity']))->first() !== null;
                         if ($pass) {
                             return new EntityContext($request, $data);
@@ -68,7 +68,7 @@ class ContextFactory
                     if ($data['entity'] instanceof EntityInterface) {
                         return new EntityContext($request, $data);
                     }
-                    if (is_array($data['entity']) && empty($data['entity']['schema'])) {
+                    if (\is_array($data['entity']) && empty($data['entity']['schema'])) {
                         return new EntityContext($request, $data);
                     }
                 }
@@ -76,7 +76,7 @@ class ContextFactory
             [
                 'type' => 'array',
                 'callable' => function ($request, $data) {
-                    if (is_array($data['entity']) && isset($data['entity']['schema'])) {
+                    if (\is_array($data['entity']) && isset($data['entity']['schema'])) {
                         return new ArrayContext($request, $data['entity']);
                     }
                 }
@@ -143,10 +143,10 @@ class ContextFactory
             $context = new NullContext($request, $data);
         }
         if (!($context instanceof ContextInterface)) {
-            throw new RuntimeException(sprintf(
+            throw new RuntimeException(\sprintf(
                 'Context providers must return object implementing %s. Got "%s" instead.',
                 ContextInterface::class,
-                is_object($context) ? get_class($context) : gettype($context)
+                \is_object($context) ? \get_class($context) : \gettype($context)
             ));
         }
 

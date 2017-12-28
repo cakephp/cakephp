@@ -63,7 +63,7 @@ trait SqlserverDialectTrait
         $offset = $query->clause('offset');
 
         if ($limit && $offset === null) {
-            $query->modifier(['_auto_top_' => sprintf('TOP %d', $limit)]);
+            $query->modifier(['_auto_top_' => \sprintf('TOP %d', $limit)]);
         }
 
         if ($offset !== null && !$query->clause('order')) {
@@ -171,7 +171,7 @@ trait SqlserverDialectTrait
      */
     protected function _transformDistinct($original)
     {
-        if (!is_array($original->clause('distinct'))) {
+        if (!\is_array($original->clause('distinct'))) {
             return $original;
         }
 
@@ -280,8 +280,8 @@ trait SqlserverDialectTrait
                     if ($key === 0) {
                         $params[2] = $p;
                     } else {
-                        $valueUnit = explode(' ', $p);
-                        $params[0] = rtrim($valueUnit[1], 's');
+                        $valueUnit = \explode(' ', $p);
+                        $params[0] = \rtrim($valueUnit[1], 's');
                         $params[1] = $valueUnit[0];
                     }
 
@@ -306,7 +306,7 @@ trait SqlserverDialectTrait
                 break;
             case 'SUBSTR':
                 $expression->setName('SUBSTRING');
-                if (count($expression) < 4) {
+                if (\count($expression) < 4) {
                     $params = [];
                     $expression
                         ->iterateParts(function ($p) use (&$params) {

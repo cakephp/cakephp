@@ -233,8 +233,8 @@ class RouteBuilder
      */
     public function addExtensions($extensions)
     {
-        $extensions = array_merge($this->_extensions, (array)$extensions);
-        $this->_extensions = array_unique($extensions);
+        $extensions = \array_merge($this->_extensions, (array)$extensions);
+        $this->_extensions = \array_unique($extensions);
     }
 
     /**
@@ -244,9 +244,9 @@ class RouteBuilder
      */
     public function path()
     {
-        $routeKey = strpos($this->_path, ':');
+        $routeKey = \strpos($this->_path, ':');
         if ($routeKey !== false) {
-            return substr($this->_path, 0, $routeKey);
+            return \substr($this->_path, 0, $routeKey);
         }
 
         return $this->_path;
@@ -270,7 +270,7 @@ class RouteBuilder
      */
     public function nameExists($name)
     {
-        return array_key_exists($name, $this->_collection->named());
+        return \array_key_exists($name, $this->_collection->named());
     }
 
     /**
@@ -380,7 +380,7 @@ class RouteBuilder
      */
     public function resources($name, $options = [], $callback = null)
     {
-        if (is_callable($options) && $callback === null) {
+        if (\is_callable($options) && $callback === null) {
             $callback = $options;
             $options = [];
         }
@@ -409,11 +409,11 @@ class RouteBuilder
             $method = $options['inflect'];
             $options['path'] = Inflector::$method($name);
         }
-        $resourceMap = array_merge(static::$_resourceMap, $options['map']);
+        $resourceMap = \array_merge(static::$_resourceMap, $options['map']);
 
         $only = (array)$options['only'];
         if (empty($only)) {
-            $only = array_keys($resourceMap);
+            $only = \array_keys($resourceMap);
         }
 
         $prefix = '';
@@ -425,7 +425,7 @@ class RouteBuilder
         }
 
         foreach ($resourceMap as $method => $params) {
-            if (!in_array($method, $only, true)) {
+            if (!\in_array($method, $only, true)) {
                 continue;
             }
 
@@ -434,7 +434,7 @@ class RouteBuilder
                 $action = $options['actions'][$method];
             }
 
-            $url = '/' . implode('/', array_filter([$options['path'], $params['path']]));
+            $url = '/' . \implode('/', \array_filter([$options['path'], $params['path']]));
             $params = [
                 'controller' => $name,
                 'action' => $action,
@@ -451,7 +451,7 @@ class RouteBuilder
             $this->connect($url, $params, $routeOptions);
         }
 
-        if (is_callable($callback)) {
+        if (\is_callable($callback)) {
             $idName = Inflector::singularize(Inflector::underscore($name)) . '_id';
             $path = '/' . $options['path'] . '/:' . $idName;
             $this->scope($path, [], $callback);
@@ -605,8 +605,8 @@ class RouteBuilder
         }
 
         $path = Plugin::configPath($name) . DIRECTORY_SEPARATOR . $file;
-        if (!file_exists($path)) {
-            throw new InvalidArgumentException(sprintf(
+        if (!\file_exists($path)) {
+            throw new InvalidArgumentException(\sprintf(
                 'Cannot load routes for the plugin named %s. The %s file does not exist.',
                 $name,
                 $path
@@ -733,25 +733,25 @@ class RouteBuilder
      */
     protected function _makeRoute($route, $defaults, $options)
     {
-        if (is_string($route)) {
+        if (\is_string($route)) {
             $routeClass = App::className($options['routeClass'], 'Routing/Route');
             if ($routeClass === false) {
-                throw new InvalidArgumentException(sprintf(
+                throw new InvalidArgumentException(\sprintf(
                     'Cannot find route class %s',
                     $options['routeClass']
                 ));
             }
 
-            $route = str_replace('//', '/', $this->_path . $route);
+            $route = \str_replace('//', '/', $this->_path . $route);
             if ($route !== '/') {
-                $route = rtrim($route, '/');
+                $route = \rtrim($route, '/');
             }
 
             foreach ($this->_params as $param => $val) {
                 if (isset($defaults[$param]) && $param !== 'prefix' && $defaults[$param] !== $val) {
                     $msg = 'You cannot define routes that conflict with the scope. ' .
                         'Scope had %s = %s, while route had %s = %s';
-                    throw new BadMethodCallException(sprintf(
+                    throw new BadMethodCallException(\sprintf(
                         $msg,
                         $param,
                         $val,
@@ -813,7 +813,7 @@ class RouteBuilder
         if (!isset($options['routeClass'])) {
             $options['routeClass'] = 'Cake\Routing\Route\RedirectRoute';
         }
-        if (is_string($url)) {
+        if (\is_string($url)) {
             $url = ['redirect' => $url];
         }
         $this->connect($route, $url, $options);
@@ -854,7 +854,7 @@ class RouteBuilder
     public function prefix($name, $params = [], callable $callback = null)
     {
         if ($callback === null) {
-            if (!is_callable($params)) {
+            if (!\is_callable($params)) {
                 throw new InvalidArgumentException('A valid callback is expected');
             }
             $callback = $params;
@@ -869,7 +869,7 @@ class RouteBuilder
         if (isset($this->_params['prefix'])) {
             $name = $this->_params['prefix'] . '/' . $name;
         }
-        $params = array_merge($params, ['prefix' => $name]);
+        $params = \array_merge($params, ['prefix' => $name]);
         $this->scope($path, $params, $callback);
     }
 
@@ -924,7 +924,7 @@ class RouteBuilder
             $callback = $params;
             $params = [];
         }
-        if (!is_callable($callback)) {
+        if (!\is_callable($callback)) {
             $msg = 'Need a callable function/object to connect routes.';
             throw new InvalidArgumentException($msg);
         }
@@ -960,8 +960,8 @@ class RouteBuilder
     public function fallbacks($routeClass = null)
     {
         $routeClass = $routeClass ?: $this->_routeClass;
-        $this->connect('/:controller', ['action' => 'index'], compact('routeClass'));
-        $this->connect('/:controller/:action/*', [], compact('routeClass'));
+        $this->connect('/:controller', ['action' => 'index'], \compact('routeClass'));
+        $this->connect('/:controller/:action/*', [], \compact('routeClass'));
     }
 
     /**
@@ -1000,7 +1000,7 @@ class RouteBuilder
                 throw new RuntimeException($message);
             }
         }
-        $this->middleware = array_merge($this->middleware, $names);
+        $this->middleware = \array_merge($this->middleware, $names);
 
         return $this;
     }

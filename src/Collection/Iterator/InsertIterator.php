@@ -73,8 +73,8 @@ class InsertIterator extends Collection
             $values = new Collection($values);
         }
 
-        $path = explode('.', $path);
-        $target = array_pop($path);
+        $path = \explode('.', $path);
+        $target = \array_pop($path);
         $this->_path = $path;
         $this->_target = $target;
         $this->_values = $values;

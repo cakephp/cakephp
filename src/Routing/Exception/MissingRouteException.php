@@ -38,7 +38,7 @@ class MissingRouteException extends Exception
      */
     public function __construct($message, $code = 404, $previous = null)
     {
-        if (is_array($message)) {
+        if (\is_array($message)) {
             if (isset($message['message'])) {
                 $this->_messageTemplate = $message['message'];
             } elseif (isset($message['method']) && $message['method']) {

@@ -75,7 +75,7 @@ class ActionDispatcher
         if (Router::getRequest(true) !== $request) {
             Router::pushRequest($request);
         }
-        $beforeEvent = $this->dispatchEvent('Dispatcher.beforeDispatch', compact('request', 'response'));
+        $beforeEvent = $this->dispatchEvent('Dispatcher.beforeDispatch', \compact('request', 'response'));
 
         $request = $beforeEvent->getData('request');
         if ($beforeEvent->getResult() instanceof Response) {
@@ -95,7 +95,7 @@ class ActionDispatcher
             return $response;
         }
 
-        $afterEvent = $this->dispatchEvent('Dispatcher.afterDispatch', compact('request', 'response'));
+        $afterEvent = $this->dispatchEvent('Dispatcher.afterDispatch', \compact('request', 'response'));
 
         return $afterEvent->getData('response');
     }

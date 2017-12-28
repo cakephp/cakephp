@@ -184,20 +184,20 @@ class Paginator implements PaginatorInterface
 
         $cleanQuery = clone $query;
         $results = $query->all();
-        $numResults = count($results);
+        $numResults = \count($results);
         $count = $cleanQuery->count();
 
         $page = $options['page'];
         $limit = $options['limit'];
-        $pageCount = max((int)ceil($count / $limit), 1);
+        $pageCount = \max((int)\ceil($count / $limit), 1);
         $requestedPage = $page;
-        $page = min($page, $pageCount);
+        $page = \min($page, $pageCount);
 
         $order = (array)$options['order'];
         $sortDefault = $directionDefault = false;
-        if (!empty($defaults['order']) && count($defaults['order']) === 1) {
-            $sortDefault = key($defaults['order']);
-            $directionDefault = current($defaults['order']);
+        if (!empty($defaults['order']) && \count($defaults['order']) === 1) {
+            $sortDefault = \key($defaults['order']);
+            $directionDefault = \current($defaults['order']);
         }
 
         $paging = [
@@ -209,8 +209,8 @@ class Paginator implements PaginatorInterface
             'prevPage' => $page > 1,
             'nextPage' => $count > ($page * $limit),
             'pageCount' => $pageCount,
-            'sort' => key($order),
-            'direction' => current($order),
+            'sort' => \key($order),
+            'direction' => \current($order),
             'limit' => $defaults['limit'] != $limit ? $limit : null,
             'sortDefault' => $sortDefault,
             'directionDefault' => $directionDefault,
@@ -241,9 +241,9 @@ class Paginator implements PaginatorInterface
         $type = !empty($options['finder']) ? $options['finder'] : 'all';
         unset($options['finder'], $options['maxLimit']);
 
-        if (is_array($type)) {
-            $options = (array)current($type) + $options;
-            $type = key($type);
+        if (\is_array($type)) {
+            $options = (array)\current($type) + $options;
+            $type = \key($type);
         }
 
         return [$type, $options];
@@ -281,9 +281,9 @@ class Paginator implements PaginatorInterface
             $scope = $settings['scope'];
             $params = !empty($params[$scope]) ? (array)$params[$scope] : [];
         }
-        $params = array_intersect_key($params, array_flip($this->getConfig('whitelist')));
+        $params = \array_intersect_key($params, \array_flip($this->getConfig('whitelist')));
 
-        return array_merge($settings, $params);
+        return \array_merge($settings, $params);
     }
 
     /**
@@ -343,9 +343,9 @@ class Paginator implements PaginatorInterface
         if (isset($options['sort'])) {
             $direction = null;
             if (isset($options['direction'])) {
-                $direction = strtolower($options['direction']);
+                $direction = \strtolower($options['direction']);
             }
-            if (!in_array($direction, ['asc', 'desc'])) {
+            if (!\in_array($direction, ['asc', 'desc'])) {
                 $direction = 'asc';
             }
             $options['order'] = [$options['sort'] => $direction];
@@ -355,14 +355,14 @@ class Paginator implements PaginatorInterface
         if (empty($options['order'])) {
             $options['order'] = [];
         }
-        if (!is_array($options['order'])) {
+        if (!\is_array($options['order'])) {
             return $options;
         }
 
         $inWhitelist = false;
         if (isset($options['sortWhitelist'])) {
-            $field = key($options['order']);
-            $inWhitelist = in_array($field, $options['sortWhitelist'], true);
+            $field = \key($options['order']);
+            $inWhitelist = \in_array($field, $options['sortWhitelist'], true);
             if (!$inWhitelist) {
                 $options['order'] = [];
 
@@ -388,15 +388,15 @@ class Paginator implements PaginatorInterface
         $tableAlias = $object->alias();
         $tableOrder = [];
         foreach ($order as $key => $value) {
-            if (is_numeric($key)) {
+            if (\is_numeric($key)) {
                 $tableOrder[] = $value;
                 continue;
             }
             $field = $key;
             $alias = $tableAlias;
 
-            if (strpos($key, '.') !== false) {
-                list($alias, $field) = explode('.', $key);
+            if (\strpos($key, '.') !== false) {
+                list($alias, $field) = \explode('.', $key);
             }
             $correctAlias = ($tableAlias === $alias);
 
@@ -428,7 +428,7 @@ class Paginator implements PaginatorInterface
         if (empty($options['limit']) || $options['limit'] < 1) {
             $options['limit'] = 1;
         }
-        $options['limit'] = max(min($options['limit'], $options['maxLimit']), 1);
+        $options['limit'] = \max(\min($options['limit'], $options['maxLimit']), 1);
 
         return $options;
     }

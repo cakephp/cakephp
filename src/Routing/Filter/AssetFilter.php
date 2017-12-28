@@ -69,26 +69,26 @@ class AssetFilter extends DispatcherFilter
         /* @var \Cake\Http\ServerRequest $request */
         $request = $event->getData('request');
 
-        $url = urldecode($request->url);
-        if (strpos($url, '..') !== false || strpos($url, '.') === false) {
+        $url = \urldecode($request->url);
+        if (\strpos($url, '..') !== false || \strpos($url, '.') === false) {
             return null;
         }
 
         $assetFile = $this->_getAssetFile($url);
-        if ($assetFile === null || !file_exists($assetFile)) {
+        if ($assetFile === null || !\file_exists($assetFile)) {
             return null;
         }
         /* @var \Cake\Http\Response $response */
         $response = $event->getData('response');
         $event->stopPropagation();
 
-        $response->modified(filemtime($assetFile));
+        $response->modified(\filemtime($assetFile));
         if ($response->checkNotModified($request)) {
             return $response;
         }
 
-        $pathSegments = explode('.', $url);
-        $ext = array_pop($pathSegments);
+        $pathSegments = \explode('.', $url);
+        $ext = \array_pop($pathSegments);
 
         return $this->_deliverAsset($request, $response, $assetFile, $ext);
     }
@@ -101,17 +101,17 @@ class AssetFilter extends DispatcherFilter
      */
     protected function _getAssetFile($url)
     {
-        $parts = explode('/', $url);
+        $parts = \explode('/', $url);
         $pluginPart = [];
         for ($i = 0; $i < 2; $i++) {
             if (!isset($parts[$i])) {
                 break;
             }
             $pluginPart[] = Inflector::camelize($parts[$i]);
-            $plugin = implode('/', $pluginPart);
+            $plugin = \implode('/', $pluginPart);
             if ($plugin && Plugin::loaded($plugin)) {
-                $parts = array_slice($parts, $i + 1);
-                $fileFragment = implode(DIRECTORY_SEPARATOR, $parts);
+                $parts = \array_slice($parts, $i + 1);
+                $fileFragment = \implode(DIRECTORY_SEPARATOR, $parts);
                 $pluginWebroot = Plugin::path($plugin) . 'webroot' . DIRECTORY_SEPARATOR;
 
                 return $pluginWebroot . $fileFragment;
@@ -134,15 +134,15 @@ class AssetFilter extends DispatcherFilter
         if ($response->type($ext) === $ext) {
             $contentType = 'application/octet-stream';
             $agent = $request->getEnv('HTTP_USER_AGENT');
-            if (preg_match('%Opera(/| )([0-9].[0-9]{1,2})%', $agent) || preg_match('/MSIE ([0-9].[0-9]{1,2})/', $agent)) {
+            if (\preg_match('%Opera(/| )([0-9].[0-9]{1,2})%', $agent) || \preg_match('/MSIE ([0-9].[0-9]{1,2})/', $agent)) {
                 $contentType = 'application/octetstream';
             }
             $response->type($contentType);
         }
         if (!$compressionEnabled) {
-            $response->header('Content-Length', filesize($assetFile));
+            $response->header('Content-Length', \filesize($assetFile));
         }
-        $response->cache(filemtime($assetFile), $this->_cacheTime);
+        $response->cache(\filemtime($assetFile), $this->_cacheTime);
         $response->file($assetFile);
 
         return $response;

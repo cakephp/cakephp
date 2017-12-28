@@ -66,7 +66,7 @@ trait StringTemplateTrait
      */
     public function templates($templates = null)
     {
-        if ($templates === null || is_string($templates)) {
+        if ($templates === null || \is_string($templates)) {
             return $this->templater()->get($templates);
         }
 
@@ -100,7 +100,7 @@ trait StringTemplateTrait
 
             $templates = $this->getConfig('templates');
             if ($templates) {
-                if (is_string($templates)) {
+                if (\is_string($templates)) {
                     $this->_templater->add($this->_defaultConfig['templates']);
                     $this->_templater->load($templates);
                 } else {

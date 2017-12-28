@@ -118,7 +118,7 @@ class MultiCheckboxWidget implements WidgetInterface
         $this->_idPrefix = $data['idPrefix'];
         $this->_clearIds();
 
-        return implode('', $this->_renderInputs($data, $context));
+        return \implode('', $this->_renderInputs($data, $context));
     }
 
     /**
@@ -133,11 +133,11 @@ class MultiCheckboxWidget implements WidgetInterface
         $out = [];
         foreach ($data['options'] as $key => $val) {
             // Grouped inputs in a fieldset.
-            if (is_string($key) && is_array($val) && !isset($val['text'], $val['value'])) {
+            if (\is_string($key) && \is_array($val) && !isset($val['text'], $val['value'])) {
                 $inputs = $this->_renderInputs(['options' => $val] + $data, $context);
                 $title = $this->_templates->format('multicheckboxTitle', ['text' => $key]);
                 $out[] = $this->_templates->format('multicheckboxWrapper', [
-                    'content' => $title . implode('', $inputs)
+                    'content' => $title . \implode('', $inputs)
                 ]);
                 continue;
             }
@@ -147,7 +147,7 @@ class MultiCheckboxWidget implements WidgetInterface
                 'value' => $key,
                 'text' => $val,
             ];
-            if (is_array($val) && isset($val['text'], $val['value'])) {
+            if (\is_array($val) && isset($val['text'], $val['value'])) {
                 $checkbox = $val;
             }
             if (!isset($checkbox['templateVars'])) {
@@ -157,7 +157,7 @@ class MultiCheckboxWidget implements WidgetInterface
                 $checkbox['label'] = $data['label'];
             }
             if (!empty($data['templateVars'])) {
-                $checkbox['templateVars'] = array_merge($data['templateVars'], $checkbox['templateVars']);
+                $checkbox['templateVars'] = \array_merge($data['templateVars'], $checkbox['templateVars']);
             }
             $checkbox['name'] = $data['name'];
             $checkbox['escape'] = $data['escape'];
@@ -191,7 +191,7 @@ class MultiCheckboxWidget implements WidgetInterface
             )
         ]);
 
-        if ($checkbox['label'] === false && strpos($this->_templates->get('radioWrapper'), '{{input}}') === false) {
+        if ($checkbox['label'] === false && \strpos($this->_templates->get('radioWrapper'), '{{input}}') === false) {
             $label = $input;
         } else {
             $labelAttrs = [
@@ -202,7 +202,7 @@ class MultiCheckboxWidget implements WidgetInterface
                 'input' => $input
             ];
 
-            if (is_array($checkbox['label'])) {
+            if (\is_array($checkbox['label'])) {
                 $labelAttrs += $checkbox['label'];
             }
 
@@ -232,13 +232,13 @@ class MultiCheckboxWidget implements WidgetInterface
         if ($selected === null) {
             return false;
         }
-        $isArray = is_array($selected);
+        $isArray = \is_array($selected);
         if (!$isArray) {
             return (string)$key === (string)$selected;
         }
-        $strict = !is_numeric($key);
+        $strict = !\is_numeric($key);
 
-        return in_array((string)$key, $selected, $strict);
+        return \in_array((string)$key, $selected, $strict);
     }
 
     /**
@@ -253,12 +253,12 @@ class MultiCheckboxWidget implements WidgetInterface
         if ($disabled === null || $disabled === false) {
             return false;
         }
-        if ($disabled === true || is_string($disabled)) {
+        if ($disabled === true || \is_string($disabled)) {
             return true;
         }
-        $strict = !is_numeric($key);
+        $strict = !\is_numeric($key);
 
-        return in_array((string)$key, $disabled, $strict);
+        return \in_array((string)$key, $disabled, $strict);
     }
 
     /**

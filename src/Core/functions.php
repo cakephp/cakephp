@@ -14,14 +14,14 @@
  */
 use Cake\Core\Configure;
 
-if (!defined('DS')) {
+if (!\defined('DS')) {
     /**
      * Define DS as short form of DIRECTORY_SEPARATOR.
      */
-    define('DS', DIRECTORY_SEPARATOR);
+    \define('DS', DIRECTORY_SEPARATOR);
 }
 
-if (!function_exists('h')) {
+if (!\function_exists('h')) {
     /**
      * Convenience method for htmlspecialchars.
      *
@@ -36,42 +36,42 @@ if (!function_exists('h')) {
      */
     function h($text, $double = true, $charset = null)
     {
-        if (is_string($text)) {
+        if (\is_string($text)) {
             //optimize for strings
-        } elseif (is_array($text)) {
+        } elseif (\is_array($text)) {
             $texts = [];
             foreach ($text as $k => $t) {
                 $texts[$k] = h($t, $double, $charset);
             }
 
             return $texts;
-        } elseif (is_object($text)) {
-            if (method_exists($text, '__toString')) {
+        } elseif (\is_object($text)) {
+            if (\method_exists($text, '__toString')) {
                 $text = (string)$text;
             } else {
-                $text = '(object)' . get_class($text);
+                $text = '(object)' . \get_class($text);
             }
-        } elseif (is_bool($text) || is_null($text) || is_int($text)) {
+        } elseif (\is_bool($text) || \is_null($text) || \is_int($text)) {
             return $text;
         }
 
         static $defaultCharset = false;
         if ($defaultCharset === false) {
-            $defaultCharset = mb_internal_encoding();
+            $defaultCharset = \mb_internal_encoding();
             if ($defaultCharset === null) {
                 $defaultCharset = 'UTF-8';
             }
         }
-        if (is_string($double)) {
+        if (\is_string($double)) {
             $charset = $double;
         }
 
-        return htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, $charset ?: $defaultCharset, $double);
+        return \htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, $charset ?: $defaultCharset, $double);
     }
 
 }
 
-if (!function_exists('pluginSplit')) {
+if (!\function_exists('pluginSplit')) {
     /**
      * Splits a dot syntax plugin name into its plugin and class name.
      * If $name does not have a dot, then index 0 will be null.
@@ -89,8 +89,8 @@ if (!function_exists('pluginSplit')) {
      */
     function pluginSplit($name, $dotAppend = false, $plugin = null)
     {
-        if (strpos($name, '.') !== false) {
-            $parts = explode('.', $name, 2);
+        if (\strpos($name, '.') !== false) {
+            $parts = \explode('.', $name, 2);
             if ($dotAppend) {
                 $parts[0] .= '.';
             }
@@ -103,7 +103,7 @@ if (!function_exists('pluginSplit')) {
 
 }
 
-if (!function_exists('namespaceSplit')) {
+if (!\function_exists('namespaceSplit')) {
     /**
      * Split the namespace from the classname.
      *
@@ -114,17 +114,17 @@ if (!function_exists('namespaceSplit')) {
      */
     function namespaceSplit($class)
     {
-        $pos = strrpos($class, '\\');
+        $pos = \strrpos($class, '\\');
         if ($pos === false) {
             return ['', $class];
         }
 
-        return [substr($class, 0, $pos), substr($class, $pos + 1)];
+        return [\substr($class, 0, $pos), \substr($class, $pos + 1)];
     }
 
 }
 
-if (!function_exists('pr')) {
+if (!\function_exists('pr')) {
     /**
      * print_r() convenience function.
      *
@@ -145,14 +145,14 @@ if (!function_exists('pr')) {
         }
 
         $template = (PHP_SAPI !== 'cli' && PHP_SAPI !== 'phpdbg') ? '<pre class="pr">%s</pre>' : "\n%s\n\n";
-        printf($template, trim(print_r($var, true)));
+        \printf($template, \trim(\print_r($var, true)));
 
         return $var;
     }
 
 }
 
-if (!function_exists('pj')) {
+if (!\function_exists('pj')) {
     /**
      * json pretty print convenience function.
      *
@@ -173,14 +173,14 @@ if (!function_exists('pj')) {
         }
 
         $template = (PHP_SAPI !== 'cli' && PHP_SAPI !== 'phpdbg') ? '<pre class="pj">%s</pre>' : "\n%s\n\n";
-        printf($template, trim(json_encode($var, JSON_PRETTY_PRINT)));
+        \printf($template, \trim(\json_encode($var, JSON_PRETTY_PRINT)));
 
         return $var;
     }
 
 }
 
-if (!function_exists('env')) {
+if (!\function_exists('env')) {
     /**
      * Gets an environment variable from available sources, and provides emulation
      * for unsupported or inconsistent environment variables (i.e. DOCUMENT_ROOT on
@@ -199,7 +199,7 @@ if (!function_exists('env')) {
                 return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
             }
 
-            return (strpos((string)env('SCRIPT_URI'), 'https://') === 0);
+            return (\strpos((string)env('SCRIPT_URI'), 'https://') === 0);
         }
 
         if ($key === 'SCRIPT_NAME') {
@@ -213,8 +213,8 @@ if (!function_exists('env')) {
             $val = $_SERVER[$key];
         } elseif (isset($_ENV[$key])) {
             $val = $_ENV[$key];
-        } elseif (getenv($key) !== false) {
-            $val = getenv($key);
+        } elseif (\getenv($key) !== false) {
+            $val = \getenv($key);
         }
 
         if ($key === 'REMOTE_ADDR' && $val === env('SERVER_ADDR')) {
@@ -233,13 +233,13 @@ if (!function_exists('env')) {
                 $name = env('SCRIPT_NAME');
                 $filename = env('SCRIPT_FILENAME');
                 $offset = 0;
-                if (!strpos($name, '.php')) {
+                if (!\strpos($name, '.php')) {
                     $offset = 4;
                 }
 
-                return substr($filename, 0, -(strlen($name) + $offset));
+                return \substr($filename, 0, -(\strlen($name) + $offset));
             case 'PHP_SELF':
-                return str_replace(env('DOCUMENT_ROOT'), '', env('SCRIPT_FILENAME'));
+                return \str_replace(env('DOCUMENT_ROOT'), '', env('SCRIPT_FILENAME'));
             case 'CGI_MODE':
                 return (PHP_SAPI === 'cgi');
         }

@@ -162,10 +162,10 @@ class ConsoleOutput
      */
     public function __construct($stream = 'php://stdout')
     {
-        $this->_output = fopen($stream, 'wb');
+        $this->_output = \fopen($stream, 'wb');
 
         if ((DIRECTORY_SEPARATOR === '\\' && !(bool)env('ANSICON') && env('ConEmuANSI') !== 'ON') ||
-            (function_exists('posix_isatty') && !posix_isatty($this->_output))
+            (\function_exists('posix_isatty') && !\posix_isatty($this->_output))
         ) {
             $this->_outputAs = self::PLAIN;
         }
@@ -181,11 +181,11 @@ class ConsoleOutput
      */
     public function write($message, $newlines = 1)
     {
-        if (is_array($message)) {
-            $message = implode(static::LF, $message);
+        if (\is_array($message)) {
+            $message = \implode(static::LF, $message);
         }
 
-        return $this->_write($this->styleText($message . str_repeat(static::LF, $newlines)));
+        return $this->_write($this->styleText($message . \str_repeat(static::LF, $newlines)));
     }
 
     /**
@@ -200,12 +200,12 @@ class ConsoleOutput
             return $text;
         }
         if ($this->_outputAs == static::PLAIN) {
-            $tags = implode('|', array_keys(static::$_styles));
+            $tags = \implode('|', \array_keys(static::$_styles));
 
-            return preg_replace('#</?(?:' . $tags . ')>#', '', $text);
+            return \preg_replace('#</?(?:' . $tags . ')>#', '', $text);
         }
 
-        return preg_replace_callback(
+        return \preg_replace_callback(
             '/<(?P<tag>[a-z0-9-_]+)>(?P<text>.*?)<\/(\1)>/ims',
             [$this, '_replaceTags'],
             $text
@@ -239,7 +239,7 @@ class ConsoleOutput
             }
         }
 
-        return "\033[" . implode($styleInfo, ';') . 'm' . $matches['text'] . "\033[0m";
+        return "\033[" . \implode($styleInfo, ';') . 'm' . $matches['text'] . "\033[0m";
     }
 
     /**
@@ -250,7 +250,7 @@ class ConsoleOutput
      */
     protected function _write($message)
     {
-        return fwrite($this->_output, $message);
+        return \fwrite($this->_output, $message);
     }
 
     /**
@@ -291,7 +291,7 @@ class ConsoleOutput
         if ($style === null && $definition === null) {
             return static::$_styles;
         }
-        if (is_string($style) && $definition === null) {
+        if (\is_string($style) && $definition === null) {
             return isset(static::$_styles[$style]) ? static::$_styles[$style] : null;
         }
         if ($definition === false) {
@@ -323,8 +323,8 @@ class ConsoleOutput
      */
     public function setOutputAs($type)
     {
-        if (!in_array($type, [self::RAW, self::PLAIN, self::COLOR], true)) {
-            throw new InvalidArgumentException(sprintf('Invalid output type "%s".', $type));
+        if (!\in_array($type, [self::RAW, self::PLAIN, self::COLOR], true)) {
+            throw new InvalidArgumentException(\sprintf('Invalid output type "%s".', $type));
         }
 
         $this->_outputAs = $type;
@@ -350,8 +350,8 @@ class ConsoleOutput
      */
     public function __destruct()
     {
-        if (is_resource($this->_output)) {
-            fclose($this->_output);
+        if (\is_resource($this->_output)) {
+            \fclose($this->_output);
         }
     }
 }

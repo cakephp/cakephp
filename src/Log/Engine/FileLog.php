@@ -88,20 +88,20 @@ class FileLog extends BaseLog
         }
         if ($this->_path !== null &&
             Configure::read('debug') &&
-            !is_dir($this->_path)
+            !\is_dir($this->_path)
         ) {
-            mkdir($this->_path, 0775, true);
+            \mkdir($this->_path, 0775, true);
         }
 
         if (!empty($this->_config['file'])) {
             $this->_file = $this->_config['file'];
-            if (substr($this->_file, -4) !== '.log') {
+            if (\substr($this->_file, -4) !== '.log') {
                 $this->_file .= '.log';
             }
         }
 
         if (!empty($this->_config['size'])) {
-            if (is_numeric($this->_config['size'])) {
+            if (\is_numeric($this->_config['size'])) {
                 $this->_size = (int)$this->_config['size'];
             } else {
                 $this->_size = Text::parseFileSize($this->_config['size']);
@@ -121,7 +121,7 @@ class FileLog extends BaseLog
     public function log($level, $message, array $context = [])
     {
         $message = $this->_format($message, $context);
-        $output = date('Y-m-d H:i:s') . ' ' . ucfirst($level) . ': ' . $message . "\n";
+        $output = \date('Y-m-d H:i:s') . ' ' . \ucfirst($level) . ': ' . $message . "\n";
         $filename = $this->_getFilename($level);
         if ($this->_size) {
             $this->_rotateFile($filename);
@@ -130,16 +130,16 @@ class FileLog extends BaseLog
         $pathname = $this->_path . $filename;
         $mask = $this->_config['mask'];
         if (!$mask) {
-            return file_put_contents($pathname, $output, FILE_APPEND);
+            return \file_put_contents($pathname, $output, FILE_APPEND);
         }
 
-        $exists = file_exists($pathname);
-        $result = file_put_contents($pathname, $output, FILE_APPEND);
+        $exists = \file_exists($pathname);
+        $result = \file_put_contents($pathname, $output, FILE_APPEND);
         static $selfError = false;
 
-        if (!$selfError && !$exists && !chmod($pathname, (int)$mask)) {
+        if (!$selfError && !$exists && !\chmod($pathname, (int)$mask)) {
             $selfError = true;
-            trigger_error(vsprintf(
+            \trigger_error(\vsprintf(
                 'Could not apply permission mask "%s" on log file "%s"',
                 [$mask, $pathname]
             ), E_USER_WARNING);
@@ -163,7 +163,7 @@ class FileLog extends BaseLog
             $filename = $this->_file;
         } elseif ($level === 'error' || $level === 'warning') {
             $filename = 'error.log';
-        } elseif (in_array($level, $debugTypes)) {
+        } elseif (\in_array($level, $debugTypes)) {
             $filename = 'debug.log';
         } else {
             $filename = $level . '.log';
@@ -183,26 +183,26 @@ class FileLog extends BaseLog
     protected function _rotateFile($filename)
     {
         $filePath = $this->_path . $filename;
-        clearstatcache(true, $filePath);
+        \clearstatcache(true, $filePath);
 
-        if (!file_exists($filePath) ||
-            filesize($filePath) < $this->_size
+        if (!\file_exists($filePath) ||
+            \filesize($filePath) < $this->_size
         ) {
             return null;
         }
 
         $rotate = $this->_config['rotate'];
         if ($rotate === 0) {
-            $result = unlink($filePath);
+            $result = \unlink($filePath);
         } else {
-            $result = rename($filePath, $filePath . '.' . time());
+            $result = \rename($filePath, $filePath . '.' . \time());
         }
 
-        $files = glob($filePath . '.*');
+        $files = \glob($filePath . '.*');
         if ($files) {
-            $filesToDelete = count($files) - $rotate;
+            $filesToDelete = \count($files) - $rotate;
             while ($filesToDelete > 0) {
-                unlink(array_shift($files));
+                \unlink(\array_shift($files));
                 $filesToDelete--;
             }
         }

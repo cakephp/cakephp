@@ -81,9 +81,9 @@ class Server
         $response = $this->runner->run($middleware, $request, $response);
 
         if (!($response instanceof ResponseInterface)) {
-            throw new RuntimeException(sprintf(
+            throw new RuntimeException(\sprintf(
                 'Application did not create a response. Got "%s" instead.',
-                is_object($response) ? get_class($response) : $response
+                \is_object($response) ? \get_class($response) : $response
             ));
         }
 

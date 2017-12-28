@@ -74,17 +74,17 @@ class LoadTask extends Shell
     {
         $bootstrap = new File($this->bootstrap, false);
         $contents = $bootstrap->read();
-        if (!preg_match("@\n\s*Plugin::loadAll@", $contents)) {
+        if (!\preg_match("@\n\s*Plugin::loadAll@", $contents)) {
             $autoloadString = $hasAutoloader ? "'autoload' => true" : '';
             $bootstrapString = $hasBootstrap ? "'bootstrap' => true" : '';
             $routesString = $hasRoutes ? "'routes' => true" : '';
 
             $append = "\nPlugin::load('%s', [%s]);\n";
-            $options = implode(', ', array_filter([$autoloadString, $bootstrapString, $routesString]));
+            $options = \implode(', ', \array_filter([$autoloadString, $bootstrapString, $routesString]));
 
-            $bootstrap->append(str_replace(', []', '', sprintf($append, $plugin, $options)));
+            $bootstrap->append(\str_replace(', []', '', \sprintf($append, $plugin, $options)));
             $this->out('');
-            $this->out(sprintf('%s modified', $this->bootstrap));
+            $this->out(\sprintf('%s modified', $this->bootstrap));
 
             return true;
         }

@@ -59,15 +59,15 @@ class MoFileParser
      */
     public function parse($resource)
     {
-        $stream = fopen($resource, 'rb');
+        $stream = \fopen($resource, 'rb');
 
-        $stat = fstat($stream);
+        $stat = \fstat($stream);
 
         if ($stat['size'] < self::MO_HEADER_SIZE) {
             throw new RuntimeException('Invalid format for MO translations file');
         }
-        $magic = unpack('V1', fread($stream, 4));
-        $magic = hexdec(substr(dechex(current($magic)), -8));
+        $magic = \unpack('V1', \fread($stream, 4));
+        $magic = \hexdec(\substr(\dechex(\current($magic)), -8));
 
         if ($magic == self::MO_LITTLE_ENDIAN_MAGIC) {
             $isBigEndian = false;
@@ -78,14 +78,14 @@ class MoFileParser
         }
 
         // offset formatRevision
-        fread($stream, 4);
+        \fread($stream, 4);
 
         $count = $this->_readLong($stream, $isBigEndian);
         $offsetId = $this->_readLong($stream, $isBigEndian);
         $offsetTranslated = $this->_readLong($stream, $isBigEndian);
 
         // Offset to start of translations
-        fread($stream, 8);
+        \fread($stream, 8);
         $messages = [];
 
         for ($i = 0; $i < $count; $i++) {
@@ -93,7 +93,7 @@ class MoFileParser
             $context = null;
             $plurals = null;
 
-            fseek($stream, $offsetId + $i * 8);
+            \fseek($stream, $offsetId + $i * 8);
 
             $length = $this->_readLong($stream, $isBigEndian);
             $offset = $this->_readLong($stream, $isBigEndian);
@@ -102,30 +102,30 @@ class MoFileParser
                 continue;
             }
 
-            fseek($stream, $offset);
-            $singularId = fread($stream, $length);
+            \fseek($stream, $offset);
+            $singularId = \fread($stream, $length);
 
-            if (strpos($singularId, "\x04") !== false) {
-                list($context, $singularId) = explode("\x04", $singularId);
+            if (\strpos($singularId, "\x04") !== false) {
+                list($context, $singularId) = \explode("\x04", $singularId);
             }
 
-            if (strpos($singularId, "\000") !== false) {
-                list($singularId, $pluralId) = explode("\000", $singularId);
+            if (\strpos($singularId, "\000") !== false) {
+                list($singularId, $pluralId) = \explode("\000", $singularId);
             }
 
-            fseek($stream, $offsetTranslated + $i * 8);
+            \fseek($stream, $offsetTranslated + $i * 8);
             $length = $this->_readLong($stream, $isBigEndian);
             $offset = $this->_readLong($stream, $isBigEndian);
-            fseek($stream, $offset);
-            $translated = fread($stream, $length);
+            \fseek($stream, $offset);
+            $translated = \fread($stream, $length);
 
-            if ($pluralId !== null || strpos($translated, "\000") !== false) {
-                $translated = explode("\000", $translated);
-                $plurals = $pluralId !== null ? array_map('stripcslashes', $translated) : null;
+            if ($pluralId !== null || \strpos($translated, "\000") !== false) {
+                $translated = \explode("\000", $translated);
+                $plurals = $pluralId !== null ? \array_map('stripcslashes', $translated) : null;
                 $translated = $translated[0];
             }
 
-            $singular = stripcslashes($translated);
+            $singular = \stripcslashes($translated);
             if ($context !== null) {
                 $messages[$singularId]['_context'][$context] = $singular;
                 if ($pluralId !== null) {
@@ -140,7 +140,7 @@ class MoFileParser
             }
         }
 
-        fclose($stream);
+        \fclose($stream);
 
         return $messages;
     }
@@ -154,9 +154,9 @@ class MoFileParser
      */
     protected function _readLong($stream, $isBigEndian)
     {
-        $result = unpack($isBigEndian ? 'N1' : 'V1', fread($stream, 4));
-        $result = current($result);
+        $result = \unpack($isBigEndian ? 'N1' : 'V1', \fread($stream, 4));
+        $result = \current($result);
 
-        return (int)substr($result, -8);
+        return (int)\substr($result, -8);
     }
 }

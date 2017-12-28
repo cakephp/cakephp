@@ -63,7 +63,7 @@ class IntegerType extends Type implements TypeInterface
             return null;
         }
 
-        if (!is_scalar($value)) {
+        if (!\is_scalar($value)) {
             throw new InvalidArgumentException('Cannot convert value to integer');
         }
 
@@ -109,10 +109,10 @@ class IntegerType extends Type implements TypeInterface
         if ($value === null || $value === '') {
             return null;
         }
-        if (is_numeric($value) || ctype_digit($value)) {
+        if (\is_numeric($value) || \ctype_digit($value)) {
             return (int)$value;
         }
-        if (is_array($value)) {
+        if (\is_array($value)) {
             return 1;
         }
 

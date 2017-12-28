@@ -117,24 +117,24 @@ class ValidationRule
             return true;
         }
 
-        if (!is_string($this->_rule) && is_callable($this->_rule)) {
+        if (!\is_string($this->_rule) && \is_callable($this->_rule)) {
             $callable = $this->_rule;
             $isCallable = true;
         } else {
             $provider = $providers[$this->_provider];
             $callable = [$provider, $this->_rule];
-            $isCallable = is_callable($callable);
+            $isCallable = \is_callable($callable);
         }
 
         if (!$isCallable) {
             $message = 'Unable to call method "%s" in "%s" provider for field "%s"';
             throw new InvalidArgumentException(
-                sprintf($message, $this->_rule, $this->_provider, $context['field'])
+                \sprintf($message, $this->_rule, $this->_provider, $context['field'])
             );
         }
 
         if ($this->_pass) {
-            $args = array_values(array_merge([$value], $this->_pass, [$context]));
+            $args = \array_values(\array_merge([$value], $this->_pass, [$context]));
             $result = $callable(...$args);
         } else {
             $result = $callable($value, $context);
@@ -161,7 +161,7 @@ class ValidationRule
      */
     protected function _skip($context)
     {
-        if (!is_string($this->_on) && is_callable($this->_on)) {
+        if (!\is_string($this->_on) && \is_callable($this->_on)) {
             $function = $this->_on;
 
             return !$function($context);
@@ -189,11 +189,11 @@ class ValidationRule
             if (!isset($value) || empty($value)) {
                 continue;
             }
-            if ($key === 'rule' && is_array($value) && !is_callable($value)) {
-                $this->_pass = array_slice($value, 1);
-                $value = array_shift($value);
+            if ($key === 'rule' && \is_array($value) && !\is_callable($value)) {
+                $this->_pass = \array_slice($value, 1);
+                $value = \array_shift($value);
             }
-            if (in_array($key, ['rule', 'on', 'message', 'last', 'provider', 'pass'])) {
+            if (\in_array($key, ['rule', 'on', 'message', 'last', 'provider', 'pass'])) {
                 $this->{"_$key"} = $value;
             }
         }

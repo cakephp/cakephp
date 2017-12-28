@@ -43,8 +43,8 @@ class TableHelper extends Helper
     {
         $widths = [];
         foreach ($rows as $line) {
-            foreach (array_values($line) as $k => $v) {
-                $columnLength = mb_strwidth($v);
+            foreach (\array_values($line) as $k => $v) {
+                $columnLength = \mb_strwidth($v);
                 if ($columnLength >= (isset($widths[$k]) ? $widths[$k] : 0)) {
                     $widths[$k] = $columnLength;
                 }
@@ -64,7 +64,7 @@ class TableHelper extends Helper
     {
         $out = '';
         foreach ($widths as $column) {
-            $out .= '+' . str_repeat('-', $column + 2);
+            $out .= '+' . \str_repeat('-', $column + 2);
         }
         $out .= '+';
         $this->_io->out($out);
@@ -80,17 +80,17 @@ class TableHelper extends Helper
      */
     protected function _render(array $row, $widths, $options = [])
     {
-        if (count($row) === 0) {
+        if (\count($row) === 0) {
             return;
         }
 
         $out = '';
-        foreach (array_values($row) as $i => $column) {
-            $pad = $widths[$i] - mb_strwidth($column);
+        foreach (\array_values($row) as $i => $column) {
+            $pad = $widths[$i] - \mb_strwidth($column);
             if (!empty($options['style'])) {
                 $column = $this->_addStyle($column, $options['style']);
             }
-            $out .= '| ' . $column . str_repeat(' ', $pad) . ' ';
+            $out .= '| ' . $column . \str_repeat(' ', $pad) . ' ';
         }
         $out .= '|';
         $this->_io->out($out);
@@ -107,7 +107,7 @@ class TableHelper extends Helper
      */
     public function output($rows)
     {
-        if (!is_array($rows) || count($rows) === 0) {
+        if (!\is_array($rows) || \count($rows) === 0) {
             return;
         }
 
@@ -116,7 +116,7 @@ class TableHelper extends Helper
 
         $this->_rowSeparator($widths);
         if ($config['headers'] === true) {
-            $this->_render(array_shift($rows), $widths, ['style' => $config['headerStyle']]);
+            $this->_render(\array_shift($rows), $widths, ['style' => $config['headerStyle']]);
             $this->_rowSeparator($widths);
         }
 

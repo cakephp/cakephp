@@ -39,6 +39,6 @@ class ResultSetDecorator extends Collection implements ResultSetInterface
             return $this->getInnerIterator()->count();
         }
 
-        return count($this->toArray());
+        return \count($this->toArray());
     }
 }

@@ -52,12 +52,12 @@ class QueryCacher
      */
     public function __construct($key, $config)
     {
-        if (!is_string($key) && !is_callable($key)) {
+        if (!\is_string($key) && !\is_callable($key)) {
             throw new RuntimeException('Cache keys must be strings or callables.');
         }
         $this->_key = $key;
 
-        if (!is_string($config) && !($config instanceof CacheEngine)) {
+        if (!\is_string($config) && !($config instanceof CacheEngine)) {
             throw new RuntimeException('Cache configs must be strings or CacheEngine instances.');
         }
         $this->_config = $config;
@@ -105,13 +105,13 @@ class QueryCacher
      */
     protected function _resolveKey($query)
     {
-        if (is_string($this->_key)) {
+        if (\is_string($this->_key)) {
             return $this->_key;
         }
         $func = $this->_key;
         $key = $func($query);
-        if (!is_string($key)) {
-            $msg = sprintf('Cache key functions must return a string. Got %s.', var_export($key, true));
+        if (!\is_string($key)) {
+            $msg = \sprintf('Cache key functions must return a string. Got %s.', \var_export($key, true));
             throw new RuntimeException($msg);
         }
 
@@ -125,7 +125,7 @@ class QueryCacher
      */
     protected function _resolveCacher()
     {
-        if (is_string($this->_config)) {
+        if (\is_string($this->_config)) {
             return Cache::engine($this->_config);
         }
 

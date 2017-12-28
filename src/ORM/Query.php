@@ -397,7 +397,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         }
 
         $queryBuilder = null;
-        if (is_callable($override)) {
+        if (\is_callable($override)) {
             $queryBuilder = $override;
         }
 
@@ -751,7 +751,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
             'page' => 'page',
         ];
 
-        ksort($options);
+        \ksort($options);
         foreach ($options as $option => $values) {
             if (isset($valid[$option], $values)) {
                 $this->{$valid[$option]}($values);
@@ -845,8 +845,8 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
 
         $complex = (
             $query->clause('distinct') ||
-            count($query->clause('group')) ||
-            count($query->clause('union')) ||
+            \count($query->clause('group')) ||
+            \count($query->clause('union')) ||
             $query->clause('having')
         );
 
@@ -1078,7 +1078,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         $select = $this->clause('select');
         $this->_hasFields = true;
 
-        if (!count($select) || $this->_autoFields === true) {
+        if (!\count($select) || $this->_autoFields === true) {
             $this->_hasFields = false;
             $this->select($this->repository()->getSchema()->columns());
             $select = $this->clause('select');
@@ -1104,7 +1104,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
                 $types[$alias] = $typeMap[$alias];
                 continue;
             }
-            if (is_string($value) && isset($typeMap[$value])) {
+            if (\is_string($value) && isset($typeMap[$value])) {
                 $types[$alias] = $typeMap[$value];
             }
             if ($value instanceof TypedResultInterface) {
@@ -1203,7 +1203,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         }
 
         throw new \BadMethodCallException(
-            sprintf('Cannot call method "%s" on a "%s" query', $method, $this->type())
+            \sprintf('Cannot call method "%s" on a "%s" query', $method, $this->type())
         );
     }
 
@@ -1217,8 +1217,8 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         return parent::__debugInfo() + [
             'hydrate' => $this->_hydrate,
             'buffered' => $this->_useBufferedResults,
-            'formatters' => count($this->_formatters),
-            'mapReducers' => count($this->_mapReduce),
+            'formatters' => \count($this->_formatters),
+            'mapReducers' => \count($this->_mapReduce),
             'contain' => $eagerLoader ? $eagerLoader->contain() : [],
             'matching' => $eagerLoader ? $eagerLoader->getMatching() : [],
             'extraOptions' => $this->_options,

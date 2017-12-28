@@ -168,8 +168,8 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
         $parts = [];
         foreach ($this->_conditions as $condition) {
             if ($condition instanceof ExpressionInterface) {
-                $condition = sprintf('%s', $condition->sql($generator));
-            } elseif (is_array($condition)) {
+                $condition = \sprintf('%s', $condition->sql($generator));
+            } elseif (\is_array($condition)) {
                 $p = $generator->placeholder('param');
                 $generator->bind($p, $condition['value'], $condition['type']);
                 $condition = $p;
@@ -177,7 +177,7 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
             $parts[] = $condition;
         }
 
-        return $this->_name . sprintf('(%s)', implode(
+        return $this->_name . \sprintf('(%s)', \implode(
             $this->_conjunction . ' ',
             $parts
         ));
@@ -191,6 +191,6 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
      */
     public function count()
     {
-        return 1 + count($this->_conditions);
+        return 1 + \count($this->_conditions);
     }
 }

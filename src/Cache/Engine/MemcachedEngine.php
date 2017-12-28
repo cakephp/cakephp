@@ -105,7 +105,7 @@ class MemcachedEngine extends CacheEngine
      */
     public function init(array $config = [])
     {
-        if (!extension_loaded('memcached')) {
+        if (!\extension_loaded('memcached')) {
             return false;
         }
 
@@ -114,7 +114,7 @@ class MemcachedEngine extends CacheEngine
             'json' => Memcached::SERIALIZER_JSON,
             'php' => Memcached::SERIALIZER_PHP
         ];
-        if (defined('Memcached::HAVE_MSGPACK') && Memcached::HAVE_MSGPACK) {
+        if (\defined('Memcached::HAVE_MSGPACK') && Memcached::HAVE_MSGPACK) {
             $this->_serializers['msgpack'] = Memcached::SERIALIZER_MSGPACK;
         }
 
@@ -124,7 +124,7 @@ class MemcachedEngine extends CacheEngine
             if (empty($config['port'])) {
                 $config['servers'] = [$config['host']];
             } else {
-                $config['servers'] = [sprintf('%s:%d', $config['host'], $config['port'])];
+                $config['servers'] = [\sprintf('%s:%d', $config['host'], $config['port'])];
             }
         }
 
@@ -132,7 +132,7 @@ class MemcachedEngine extends CacheEngine
             $this->setConfig('servers', $config['servers'], false);
         }
 
-        if (!is_array($this->_config['servers'])) {
+        if (!\is_array($this->_config['servers'])) {
             $this->_config['servers'] = [$this->_config['servers']];
         }
 
@@ -147,7 +147,7 @@ class MemcachedEngine extends CacheEngine
         }
         $this->_setOptions();
 
-        if (count($this->_Memcached->getServerList())) {
+        if (\count($this->_Memcached->getServerList())) {
             return true;
         }
 
@@ -160,7 +160,7 @@ class MemcachedEngine extends CacheEngine
             return false;
         }
 
-        if (is_array($this->_config['options'])) {
+        if (\is_array($this->_config['options'])) {
             foreach ($this->_config['options'] as $opt => $value) {
                 $this->_Memcached->setOption($opt, $value);
             }
@@ -173,7 +173,7 @@ class MemcachedEngine extends CacheEngine
         }
 
         if ($this->_config['username'] !== null && $this->_config['password'] !== null) {
-            if (!method_exists($this->_Memcached, 'setSaslAuthData')) {
+            if (!\method_exists($this->_Memcached, 'setSaslAuthData')) {
                 throw new InvalidArgumentException(
                     'Memcached extension is not built with SASL support'
                 );
@@ -199,18 +199,18 @@ class MemcachedEngine extends CacheEngine
     {
         $this->_Memcached->setOption(Memcached::OPT_LIBKETAMA_COMPATIBLE, true);
 
-        $serializer = strtolower($this->_config['serialize']);
+        $serializer = \strtolower($this->_config['serialize']);
         if (!isset($this->_serializers[$serializer])) {
             throw new InvalidArgumentException(
-                sprintf('%s is not a valid serializer engine for Memcached', $serializer)
+                \sprintf('%s is not a valid serializer engine for Memcached', $serializer)
             );
         }
 
         if ($serializer !== 'php' &&
-            !constant('Memcached::HAVE_' . strtoupper($serializer))
+            !\constant('Memcached::HAVE_' . \strtoupper($serializer))
         ) {
             throw new InvalidArgumentException(
-                sprintf('Memcached extension is not compiled with %s support', $serializer)
+                \sprintf('Memcached extension is not compiled with %s support', $serializer)
             );
         }
 
@@ -220,8 +220,8 @@ class MemcachedEngine extends CacheEngine
         );
 
         // Check for Amazon ElastiCache instance
-        if (defined('Memcached::OPT_CLIENT_MODE') &&
-            defined('Memcached::DYNAMIC_CLIENT_MODE')
+        if (\defined('Memcached::OPT_CLIENT_MODE') &&
+            \defined('Memcached::DYNAMIC_CLIENT_MODE')
         ) {
             $this->_Memcached->setOption(
                 Memcached::OPT_CLIENT_MODE,
@@ -245,22 +245,22 @@ class MemcachedEngine extends CacheEngine
     public function parseServerString($server)
     {
         $socketTransport = 'unix://';
-        if (strpos($server, $socketTransport) === 0) {
-            return [substr($server, strlen($socketTransport)), 0];
+        if (\strpos($server, $socketTransport) === 0) {
+            return [\substr($server, \strlen($socketTransport)), 0];
         }
-        if (substr($server, 0, 1) === '[') {
-            $position = strpos($server, ']:');
+        if (\substr($server, 0, 1) === '[') {
+            $position = \strpos($server, ']:');
             if ($position !== false) {
                 $position++;
             }
         } else {
-            $position = strpos($server, ':');
+            $position = \strpos($server, ':');
         }
         $port = 11211;
         $host = $server;
         if ($position !== false) {
-            $host = substr($server, 0, $position);
-            $port = substr($server, $position + 1);
+            $host = \substr($server, 0, $position);
+            $port = \substr($server, $position + 1);
         }
 
         return [$host, (int)$port];
@@ -329,7 +329,7 @@ class MemcachedEngine extends CacheEngine
         $success = $this->_Memcached->setMulti($cacheData);
 
         $return = [];
-        foreach (array_keys($data) as $key) {
+        foreach (\array_keys($data) as $key) {
             $return[$key] = $success;
         }
 
@@ -367,7 +367,7 @@ class MemcachedEngine extends CacheEngine
         $values = $this->_Memcached->getMulti($cacheKeys);
         $return = [];
         foreach ($keys as &$key) {
-            $return[$key] = array_key_exists($this->_key($key), $values) ?
+            $return[$key] = \array_key_exists($this->_key($key), $values) ?
                 $values[$this->_key($key)] : false;
         }
 
@@ -458,7 +458,7 @@ class MemcachedEngine extends CacheEngine
         }
 
         foreach ($keys as $key) {
-            if (strpos($key, $this->_config['prefix']) === 0) {
+            if (\strpos($key, $this->_config['prefix']) === 0) {
                 $this->_Memcached->delete($key);
             }
         }
@@ -501,18 +501,18 @@ class MemcachedEngine extends CacheEngine
         }
 
         $groups = $this->_Memcached->getMulti($this->_compiledGroupNames);
-        if (count($groups) !== count($this->_config['groups'])) {
+        if (\count($groups) !== \count($this->_config['groups'])) {
             foreach ($this->_compiledGroupNames as $group) {
                 if (!isset($groups[$group])) {
                     $this->_Memcached->set($group, 1, 0);
                     $groups[$group] = 1;
                 }
             }
-            ksort($groups);
+            \ksort($groups);
         }
 
         $result = [];
-        $groups = array_values($groups);
+        $groups = \array_values($groups);
         foreach ($this->_config['groups'] as $i => $group) {
             $result[] = $group . $groups[$i];
         }

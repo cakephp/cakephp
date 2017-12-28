@@ -51,11 +51,11 @@ class LazyEagerLoader
 
         $entities = new Collection($entities);
         $query = $this->_getQuery($entities, $contain, $source);
-        $associations = array_keys($query->contain());
+        $associations = \array_keys($query->contain());
 
         $entities = $this->_injectResults($entities, $query, $associations, $source);
 
-        return $returnSingle ? array_shift($entities) : $entities;
+        return $returnSingle ? \array_shift($entities) : $entities;
     }
 
     /**
@@ -70,7 +70,7 @@ class LazyEagerLoader
     protected function _getQuery($objects, $contain, $source)
     {
         $primaryKey = $source->getPrimaryKey();
-        $method = is_string($primaryKey) ? 'get' : 'extract';
+        $method = \is_string($primaryKey) ? 'get' : 'extract';
 
         $keys = $objects->map(function ($entity) use ($primaryKey, $method) {
             return $entity->{$method}($primaryKey);
@@ -80,16 +80,16 @@ class LazyEagerLoader
             ->find()
             ->select((array)$primaryKey)
             ->where(function ($exp, $q) use ($primaryKey, $keys, $source) {
-                if (is_array($primaryKey) && count($primaryKey) === 1) {
-                    $primaryKey = current($primaryKey);
+                if (\is_array($primaryKey) && \count($primaryKey) === 1) {
+                    $primaryKey = \current($primaryKey);
                 }
 
-                if (is_string($primaryKey)) {
+                if (\is_string($primaryKey)) {
                     return $exp->in($source->aliasField($primaryKey), $keys->toList());
                 }
 
-                $types = array_intersect_key($q->defaultTypes(), array_flip($primaryKey));
-                $primaryKey = array_map([$source, 'aliasField'], $primaryKey);
+                $types = \array_intersect_key($q->defaultTypes(), \array_flip($primaryKey));
+                $primaryKey = \array_map([$source, 'aliasField'], $primaryKey);
 
                 return new TupleComparison($primaryKey, $keys->toList(), $types, 'IN');
             })
@@ -140,12 +140,12 @@ class LazyEagerLoader
         $primaryKey = (array)$source->getPrimaryKey();
         $results = $results
             ->indexBy(function ($e) use ($primaryKey) {
-                return implode(';', $e->extract($primaryKey));
+                return \implode(';', $e->extract($primaryKey));
             })
             ->toArray();
 
         foreach ($objects as $k => $object) {
-            $key = implode(';', $object->extract($primaryKey));
+            $key = \implode(';', $object->extract($primaryKey));
             if (!isset($results[$key])) {
                 $injected[$k] = $object;
                 continue;

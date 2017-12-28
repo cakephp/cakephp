@@ -52,14 +52,14 @@ class App
      */
     public static function className($class, $type = '', $suffix = '')
     {
-        if (strpos($class, '\\') !== false) {
+        if (\strpos($class, '\\') !== false) {
             return $class;
         }
 
         list($plugin, $name) = pluginSplit($class);
         $base = $plugin ?: Configure::read('App.namespace');
-        $base = str_replace('/', '\\', rtrim($base, '\\'));
-        $fullname = '\\' . str_replace('/', '\\', $type . '\\' . $name) . $suffix;
+        $base = \str_replace('/', '\\', \rtrim($base, '\\'));
+        $fullname = '\\' . \str_replace('/', '\\', $type . '\\' . $name) . $suffix;
 
         if (static::_classExistsInBase($fullname, $base)) {
             return $base . $fullname;
@@ -116,22 +116,22 @@ class App
      */
     public static function shortName($class, $type, $suffix = '')
     {
-        $class = str_replace('\\', '/', $class);
+        $class = \str_replace('\\', '/', $class);
         $type = '/' . $type . '/';
 
-        $pos = strrpos($class, $type);
-        $pluginName = substr($class, 0, $pos);
-        $name = substr($class, $pos + strlen($type));
+        $pos = \strrpos($class, $type);
+        $pluginName = \substr($class, 0, $pos);
+        $name = \substr($class, $pos + \strlen($type));
 
         if ($suffix) {
-            $name = substr($name, 0, -strlen($suffix));
+            $name = \substr($name, 0, -\strlen($suffix));
         }
 
         $nonPluginNamespaces = [
             'Cake',
-            str_replace('\\', '/', Configure::read('App.namespace'))
+            \str_replace('\\', '/', Configure::read('App.namespace'))
         ];
-        if (in_array($pluginName, $nonPluginNamespaces)) {
+        if (\in_array($pluginName, $nonPluginNamespaces)) {
             return $name;
         }
 
@@ -149,7 +149,7 @@ class App
      */
     protected static function _classExistsInBase($name, $namespace)
     {
-        return class_exists($namespace . $name);
+        return \class_exists($namespace . $name);
     }
 
     /**
@@ -209,6 +209,6 @@ class App
      */
     public static function core($type)
     {
-        return [CAKE . str_replace('/', DIRECTORY_SEPARATOR, $type) . DIRECTORY_SEPARATOR];
+        return [CAKE . \str_replace('/', DIRECTORY_SEPARATOR, $type) . DIRECTORY_SEPARATOR];
     }
 }
