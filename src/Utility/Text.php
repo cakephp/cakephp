@@ -619,7 +619,7 @@ class Text
             preg_match_all('/(<\/?([\w+]+)[^>]*>)?([^<>]*)/', $text, $tags, PREG_SET_ORDER);
             foreach ($tags as $tag) {
                 $contentLength = 0;
-                if (!in_array($tag[2], static::$_defaultHtmlNoCount)) {
+                if (!in_array($tag[2], static::$_defaultHtmlNoCount, true)) {
                     $contentLength = self::_strlen($tag[3], $options);
                 }
 
@@ -1132,26 +1132,5 @@ class Text
         $string = preg_replace(array_keys($map), $map, $string);
 
         return $string;
-    }
-
-    /**
-     * Get default html tags not counted for truncate.
-     *
-     * @return array Html tags.
-     */
-    public static function getHtmlNoCount()
-    {
-        return static::$_defaultHtmlNoCount;
-    }
-
-    /**
-     * Set html tags not counted for truncate.
-     *
-     * @param array $htmlNoCount New html tags not counted for truncate.
-     * @return void
-     */
-    public static function setHtmlNoCount($htmlNoCount)
-    {
-        static::$_defaultHtmlNoCount = $htmlNoCount;
     }
 }
