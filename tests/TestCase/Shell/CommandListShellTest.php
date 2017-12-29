@@ -65,7 +65,7 @@ class CommandListShellTest extends ConsoleIntegrationTestCase
         $expected = "/\[.*CORE.*\] cache, help, i18n, orm_cache, plugin, routes, server/";
         $this->assertOutputRegExp($expected);
 
-        $expected = "/\[.*app.*\] i18m, integration, sample/";
+        $expected = "/\[.*app.*\] i18m, integration, merge, sample/";
         $this->assertOutputRegExp($expected);
         $this->assertExitCode(Shell::CODE_SUCCESS);
         $this->assertErrorEmpty();
@@ -86,7 +86,7 @@ class CommandListShellTest extends ConsoleIntegrationTestCase
         $expected = "/\[.*CORE.*\] cache, help, orm_cache, plugin, routes, server/";
         $this->assertOutputRegExp($expected);
 
-        $expected = "/\[.*app.*\] i18n, integration, sample/";
+        $expected = "/\[.*app.*\] i18n, integration, merge, sample/";
         $this->assertOutputRegExp($expected);
         $this->assertExitCode(Shell::CODE_SUCCESS);
         $this->assertErrorEmpty();
