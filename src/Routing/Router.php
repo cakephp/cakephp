@@ -617,6 +617,12 @@ class Router
             return $output;
         }
         if (is_array($url)) {
+            if (isset($url['_ssl'])) {
+                if (!isset($url['_full'])) {
+                    $url['_scheme'] = ($url['_ssl'] === true) ? 'https' : 'http';
+                }
+                unset($url['_ssl']);
+            }
             if (isset($url['_full']) && $url['_full'] === true) {
                 $full = true;
                 unset($url['_full']);
@@ -624,10 +630,6 @@ class Router
             if (isset($url['#'])) {
                 $frag = '#' . $url['#'];
                 unset($url['#']);
-            }
-            if (isset($url['_ssl'])) {
-                $url['_scheme'] = ($url['_ssl'] === true) ? 'https' : 'http';
-                unset($url['_ssl']);
             }
 
             $url = static::_applyUrlFilters($url);
@@ -677,6 +679,11 @@ class Router
             if ($full) {
                 $output = static::fullBaseUrl() . $output;
             }
+        }
+
+        $protocolError = preg_match('#^[a-z][a-z0-9+\-.]*\:///#i', $output);
+        if ($protocolError === 1) {
+            $output = str_replace(':///', '://', $output);
         }
 
         return $output . $frag;
