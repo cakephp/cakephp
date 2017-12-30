@@ -14,7 +14,9 @@
  */
 namespace Cake\Test\TestCase\ORM\Behavior;
 
+use Cake\Database\Type;
 use Cake\Event\Event;
+use Cake\I18n\FrozenTime;
 use Cake\I18n\Time;
 use Cake\ORM\Behavior\TimestampBehavior;
 use Cake\ORM\Entity;
@@ -292,6 +294,33 @@ class TimestampBehaviorTest extends TestCase
             $ts->format('c'),
             $return->format('c'),
             'Should return the same value as initially set'
+        );
+    }
+
+    /**
+     * testGetTimestampFollowingDatetimeClassSetting
+     *
+     * @return void
+     */
+    public function testGetTimestampFollowingDatetimeClassSetting()
+    {
+        $table = $this->getMockBuilder('Cake\ORM\Table')->getMock();
+        $behavior = new TimestampBehavior($table);
+
+        Type::build('datetime')->useImmutable();
+        $return = $behavior->timestamp(null, true);
+        $this->assertInstanceOf(
+            FrozenTime::class,
+            $return,
+            'Should return a immutable datetime object'
+        );
+
+        Type::build('datetime')->useMutable();
+        $return = $behavior->timestamp(null, true);
+        $this->assertInstanceOf(
+            Time::class,
+            $return,
+            'Should return a mutable datetime object'
         );
     }
 
