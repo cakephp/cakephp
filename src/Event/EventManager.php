@@ -584,7 +584,9 @@ class EventManager
             $count = count($this->_eventList);
             for ($i = 0; $i < $count; $i++) {
                 $event = $this->_eventList[$i];
-                $properties['_dispatchedEvents'][] = $event->getName() . ' with subject ' . get_class($event->getSubject());
+                $subject = $event->getSubject();
+                $properties['_dispatchedEvents'][] = $event->getName() . ' with ' .
+                    (is_object($subject) ? 'subject ' . get_class($subject) : 'no subject');
             }
         } else {
             $properties['_dispatchedEvents'] = null;

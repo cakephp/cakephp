@@ -58,6 +58,7 @@ class ConnectionTest extends TestCase
     {
         Log::reset();
         $this->connection->enableSavePoints(false);
+        $this->connection->setLogger(null);
         unset($this->connection);
         parent::tearDown();
     }
