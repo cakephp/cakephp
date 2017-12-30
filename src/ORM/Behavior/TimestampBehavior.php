@@ -136,8 +136,9 @@ class TimestampBehavior extends Behavior
      */
     public function timestamp(DateTimeInterface $ts = null, $refreshTimestamp = false)
     {
-        $class = Type::build('datetime')
-            ->getDateTimeClassName();
+        /** @var \Cake\Database\Type\DateTimeType $type */
+        $type = Type::build('datetime');
+        $class = $type->getDateTimeClassName();
 
         if ($ts) {
             if ($this->_config['refreshTimestamp']) {

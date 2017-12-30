@@ -306,8 +306,10 @@ class TimestampBehaviorTest extends TestCase
     {
         $table = $this->getMockBuilder('Cake\ORM\Table')->getMock();
         $behavior = new TimestampBehavior($table);
+        /** @var \Cake\Database\Type\DateTimeType $type */
+        $type = Type::build('datetime');
 
-        Type::build('datetime')->useImmutable();
+        $type->useImmutable();
         $return = $behavior->timestamp(null, true);
         $this->assertInstanceOf(
             FrozenTime::class,
@@ -315,7 +317,7 @@ class TimestampBehaviorTest extends TestCase
             'Should return a immutable datetime object'
         );
 
-        Type::build('datetime')->useMutable();
+        $type->useMutable();
         $return = $behavior->timestamp(null, true);
         $this->assertInstanceOf(
             Time::class,
