@@ -64,6 +64,7 @@ class ConfigureTest extends TestCase
             unlink(TMP . 'cache/persistent/test.php');
         }
         Configure::drop('test');
+        Cache::enable();
     }
 
     /**

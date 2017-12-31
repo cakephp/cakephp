@@ -959,7 +959,7 @@ class EventManagerTest extends TestCase
                 '_trackEvents' => true,
                 '_generalManager' => '(object) EventManager',
                 '_dispatchedEvents' => [
-                    'example with subject Cake\Event\EventManager'
+                    'example with no subject',
                 ],
             ],
             $eventManager->__debugInfo()
