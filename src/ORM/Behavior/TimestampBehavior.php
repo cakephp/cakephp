@@ -14,11 +14,11 @@
  */
 namespace Cake\ORM\Behavior;
 
-use Cake\Database\Type;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
+use Cake\I18n\Time;
 use Cake\ORM\Behavior;
-use DateTimeInterface;
+use DateTime;
 use UnexpectedValueException;
 
 class TimestampBehavior extends Behavior
@@ -57,7 +57,7 @@ class TimestampBehavior extends Behavior
     /**
      * Current timestamp
      *
-     * @var \DateTimeInterface
+     * @var \DateTime
      */
     protected $_ts;
 
@@ -130,23 +130,19 @@ class TimestampBehavior extends Behavior
      * If an explicit date time is passed, the config option `refreshTimestamp` is
      * automatically set to false.
      *
-     * @param \DateTimeInterface|null $ts Timestamp
+     * @param \DateTime|null $ts Timestamp
      * @param bool $refreshTimestamp If true timestamp is refreshed.
-     * @return \DateTimeInterface
+     * @return \DateTime
      */
-    public function timestamp(DateTimeInterface $ts = null, $refreshTimestamp = false)
+    public function timestamp(DateTime $ts = null, $refreshTimestamp = false)
     {
-        /** @var \Cake\Database\Type\DateTimeType $type */
-        $type = Type::build('datetime');
-        $class = $type->getDateTimeClassName();
-
         if ($ts) {
             if ($this->_config['refreshTimestamp']) {
                 $this->_config['refreshTimestamp'] = false;
             }
-            $this->_ts = new $class($ts);
+            $this->_ts = new Time($ts);
         } elseif ($this->_ts === null || $refreshTimestamp) {
-            $this->_ts = new $class();
+            $this->_ts = new Time();
         }
 
         return $this->_ts;
