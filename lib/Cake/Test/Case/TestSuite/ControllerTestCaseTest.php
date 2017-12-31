@@ -281,8 +281,7 @@ class ControllerTestCaseTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testGenerateWithMockedAliasedComponent()
-	{
+	public function testGenerateWithMockedAliasedComponent() {
 		$Posts = $this->Case->generate('Posts', array(
 			'components' => array(
 				'AliasedEmail' => array('send')
@@ -301,8 +300,7 @@ class ControllerTestCaseTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testGenerateWithMockedAliasedPluginComponent()
-	{
+	public function testGenerateWithMockedAliasedPluginComponent() {
 		$Posts = $this->Case->generate('Posts', array(
 			'components' => array(
 				'AliasedPluginEmail' => array('send')
