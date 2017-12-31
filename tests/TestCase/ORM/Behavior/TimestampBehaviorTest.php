@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\ORM\Behavior;
 
+use Cake\Database\Type;
 use Cake\Event\Event;
 use Cake\I18n\Time;
 use Cake\ORM\Behavior\TimestampBehavior;
@@ -193,6 +194,30 @@ class TimestampBehaviorTest extends TestCase
         $this->assertTrue($return, 'Handle Event is expected to always return true');
         $this->assertInstanceOf('Cake\I18n\Time', $entity->modified);
         $this->assertSame($ts->format('c'), $entity->modified->format('c'), 'Modified timestamp is expected to be updated');
+    }
+
+    /**
+     * testUseImmutable
+     *
+     * @return void
+     * @triggers Model.beforeSave
+     */
+    public function testUseImmutable()
+    {
+        $table = $this->getTable();
+        $this->Behavior = new TimestampBehavior($table);
+        $entity = new Entity();
+        $event = new Event('Model.beforeSave');
+
+        Type::build('timestamp')->useImmutable();
+        $entity->clean();
+        $this->Behavior->handleEvent($event, $entity);
+        $this->assertInstanceOf('Cake\I18n\FrozenTime', $entity->modified);
+
+        Type::build('timestamp')->useMutable();
+        $entity->clean();
+        $this->Behavior->handleEvent($event, $entity);
+        $this->assertInstanceOf('Cake\I18n\Time', $entity->modified);
     }
 
     /**
