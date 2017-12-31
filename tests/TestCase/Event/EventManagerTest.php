@@ -941,7 +941,7 @@ class EventManagerTest extends TestCase
      *
      * @return void
      */
-    public function testDebubInfoEventList()
+    public function testDebugInfoEventList()
     {
         $eventList = new EventList();
         $eventManager = new EventManager();
@@ -956,9 +956,11 @@ class EventManagerTest extends TestCase
                     'example' => '1 listener(s)',
                 ],
                 '_isGlobal' => false,
-                '_eventList' => $eventList,
                 '_trackEvents' => true,
                 '_generalManager' => '(object) EventManager',
+                '_dispatchedEvents' => [
+                    'example with subject Cake\Event\EventManager'
+                ],
             ],
             $eventManager->__debugInfo()
         );
