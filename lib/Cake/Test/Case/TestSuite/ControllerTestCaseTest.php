@@ -79,6 +79,12 @@ if (!class_exists('PostsController')) {
 		public $components = array(
 			'RequestHandler',
 			'Email',
+			'AliasedEmail' => array(
+				'className' => 'Email',
+			),
+			'AliasedPluginEmail' => array(
+				'className' => 'TestPlugin.TestPluginEmail',
+			),
 			'Auth'
 		);
 	}
@@ -268,6 +274,44 @@ class ControllerTestCaseTest extends CakeTestCase {
 			->will($this->returnValue(false));
 		$this->assertTrue($Tests->TestPluginComment->save(array()));
 		$this->assertFalse($Tests->TestPluginComment->save(array()));
+	}
+
+/**
+ * Tests ControllerTestCase::generate() using aliased component
+ *
+ * @return void
+ */
+	public function testGenerateWithMockedAliasedComponent() {
+		$Posts = $this->Case->generate('Posts', array(
+			'components' => array(
+				'AliasedEmail' => array('send')
+			)
+		));
+		$Posts->AliasedEmail->expects($this->once())
+			->method('send')
+			->will($this->returnValue(true));
+
+		$this->assertInstanceOf('EmailComponent', $Posts->AliasedEmail);
+		$this->assertTrue($Posts->AliasedEmail->send());
+	}
+
+/**
+ * Tests ControllerTestCase::generate() using aliased plugin component
+ *
+ * @return void
+ */
+	public function testGenerateWithMockedAliasedPluginComponent() {
+		$Posts = $this->Case->generate('Posts', array(
+			'components' => array(
+				'AliasedPluginEmail' => array('send')
+			)
+		));
+		$Posts->AliasedPluginEmail->expects($this->once())
+			->method('send')
+			->will($this->returnValue(true));
+
+		$this->assertInstanceOf('TestPluginEmailComponent', $Posts->AliasedPluginEmail);
+		$this->assertTrue($Posts->AliasedPluginEmail->send());
 	}
 
 /**
