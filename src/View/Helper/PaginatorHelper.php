@@ -536,7 +536,7 @@ class PaginatorHelper extends Helper
         }
 
         $url = array_filter($url, function ($value) {
-            return ($value || is_numeric($value));
+            return ($value || is_numeric($value) || $value === false);
         });
         $url = array_merge($url, $options);
 
