@@ -57,8 +57,10 @@ class PluginRegistryTest extends TestCase
     }
 
     /**
-     * @expectedException \Error
-     * @expectedExceptionMessage Class 'DoesNotExist\Plugin' not found
+     * testClassNotFoundException
+     *
+     * @expectedException \Exception
+     * @expectedExceptionMessage Plugin class `DoesNotExist` not found.
      */
     public function testClassNotFoundException()
     {
