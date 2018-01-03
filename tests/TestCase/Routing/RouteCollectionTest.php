@@ -78,7 +78,7 @@ class RouteCollectionTest extends TestCase
         $routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
         $routes->connect('/', ['controller' => 'Articles']);
         $routes->connect('/:id', ['controller' => 'Articles', 'action' => 'view']);
-        $routes->connect('/media/search/*', ['controller' => 'Media', 'action' => 'search']);
+        $routes->connect('/media/search/*', ['controller' => 'Media', 'action' => 'search'], ['_name' => 'media_search']);
 
         $result = $this->collection->parse('/b/');
         $expected = [
@@ -112,6 +112,7 @@ class RouteCollectionTest extends TestCase
             'controller' => 'Media',
             'action' => 'search',
             '_matchedRoute' => '/b/media/search/*',
+            '_name' => 'media_search'
         ];
         $this->assertEquals($expected, $result);
 
@@ -123,6 +124,7 @@ class RouteCollectionTest extends TestCase
             'controller' => 'Media',
             'action' => 'search',
             '_matchedRoute' => '/b/media/search/*',
+            '_name' => 'media_search'
         ];
         $this->assertEquals($expected, $result);
     }
@@ -300,7 +302,7 @@ class RouteCollectionTest extends TestCase
         $routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
         $routes->connect('/', ['controller' => 'Articles']);
         $routes->connect('/:id', ['controller' => 'Articles', 'action' => 'view']);
-        $routes->connect('/media/search/*', ['controller' => 'Media', 'action' => 'search']);
+        $routes->connect('/media/search/*', ['controller' => 'Media', 'action' => 'search'], ['_name' => 'media_search']);
 
         $request = new ServerRequest(['url' => '/b/']);
         $result = $this->collection->parseRequest($request);
@@ -323,6 +325,7 @@ class RouteCollectionTest extends TestCase
             'controller' => 'Media',
             'action' => 'search',
             '_matchedRoute' => '/b/media/search/*',
+            '_name' => 'media_search'
         ];
         $this->assertEquals($expected, $result);
 
@@ -335,6 +338,7 @@ class RouteCollectionTest extends TestCase
             'controller' => 'Media',
             'action' => 'search',
             '_matchedRoute' => '/b/media/search/*',
+            '_name' => 'media_search'
         ];
         $this->assertEquals($expected, $result);
 
