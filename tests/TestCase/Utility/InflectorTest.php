@@ -304,8 +304,7 @@ class InflectorTest extends TestCase
             ['blue_octopuses', 'blue_octopus'],
             ['chefs', 'chef'],
             ['', ''],
-            ['pokemon', 'pokemon'],
-            ['receives', 'receive'],
+            ['pokemon', 'pokemon']
         ];
     }
 
