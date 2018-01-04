@@ -39,6 +39,62 @@ class Validation
     const DEFAULT_LOCALE = 'en_US';
 
     /**
+     * Same as operator.
+     *
+     * @var string
+     */
+    const COMPARE_SAME_AS = '===';
+
+    /**
+     * Not same as comparison operator.
+     *
+     * @var string
+     */
+    const COMPARE_NOT_SAME_AS = '!==';
+
+    /**
+     * Equal to comparison operator.
+     *
+     * @var string
+     */
+    const COMPARE_EQUAL_TO = '==';
+
+    /**
+     * Not equal to comparison operator.
+     *
+     * @var string
+     */
+    const COMPARE_NOT_EQUAL_TO = '!=';
+
+    /**
+     * Greater than comparison operator.
+     *
+     * @var string
+     */
+    const COMPARE_GREATER_THAN = '>';
+
+    /**
+     * Greater than or equal to comparison operator.
+     *
+     * @var string
+     */
+    const COMPARE_GREATER_THAN_OR_EQUAL_TO = '>=';
+
+    /**
+     * Less than comparison operator.
+     *
+     * @var string
+     */
+    const COMPARE_LESS_THAN = '<';
+
+    /**
+     * Less than or equal to comparison operator.
+     *
+     * @var string
+     */
+    const COMPARE_LESS_THAN_OR_EQUAL_TO = '<=';
+
+    /**
      * Some complex patterns needed in multiple places
      *
      * @var array
@@ -260,49 +316,49 @@ class Validation
         $operator = str_replace([' ', "\t", "\n", "\r", "\0", "\x0B"], '', strtolower($operator));
         switch ($operator) {
             case 'isgreater':
-            case '>':
+            case static::COMPARE_GREATER_THAN:
                 if ($check1 > $check2) {
                     return true;
                 }
                 break;
             case 'isless':
-            case '<':
+            case static::COMPARE_LESS_THAN:
                 if ($check1 < $check2) {
                     return true;
                 }
                 break;
             case 'greaterorequal':
-            case '>=':
+            case static::COMPARE_GREATER_THAN_OR_EQUAL_TO:
                 if ($check1 >= $check2) {
                     return true;
                 }
                 break;
             case 'lessorequal':
-            case '<=':
+            case static::COMPARE_LESS_THAN_OR_EQUAL_TO:
                 if ($check1 <= $check2) {
                     return true;
                 }
                 break;
             case 'equalto':
-            case '==':
+            case static::COMPARE_EQUAL_TO:
                 if ($check1 == $check2) {
                     return true;
                 }
                 break;
             case 'notequal':
-            case '!=':
+            case static::COMPARE_NOT_EQUAL_TO:
                 if ($check1 != $check2) {
                     return true;
                 }
                 break;
             case 'sameas':
-            case '===':
+            case static::COMPARE_SAME_AS:
                 if ($check1 === $check2) {
                     return true;
                 }
                 break;
             case 'notsameas':
-            case '!==':
+            case static::COMPARE_NOT_SAME_AS:
                 if ($check1 !== $check2) {
                     return true;
                 }
@@ -326,7 +382,7 @@ class Validation
      */
     public static function compareWith($check, $field, $context)
     {
-        return self::compareFields($check, $field, '===', $context);
+        return self::compareFields($check, $field, static::COMPARE_SAME_AS, $context);
     }
 
     /**
@@ -1226,10 +1282,10 @@ class Validation
         if ($options['optional'] && $error === UPLOAD_ERR_NO_FILE) {
             return true;
         }
-        if (isset($options['minSize']) && !static::fileSize($file, '>=', $options['minSize'])) {
+        if (isset($options['minSize']) && !static::fileSize($file, static::COMPARE_GREATER_THAN_OR_EQUAL_TO, $options['minSize'])) {
             return false;
         }
-        if (isset($options['maxSize']) && !static::fileSize($file, '<=', $options['maxSize'])) {
+        if (isset($options['maxSize']) && !static::fileSize($file, static::COMPARE_LESS_THAN_OR_EQUAL_TO, $options['maxSize'])) {
             return false;
         }
         if (isset($options['types']) && !static::mimeType($file, $options['types'])) {
