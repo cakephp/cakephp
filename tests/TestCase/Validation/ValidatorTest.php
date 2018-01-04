@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\Validation;
 
 use Cake\TestSuite\TestCase;
+use Cake\Validation\Validation;
 use Cake\Validation\ValidationSet;
 use Cake\Validation\Validator;
 
@@ -1352,7 +1353,7 @@ class ValidatorTest extends TestCase
     public function testGreaterThan()
     {
         $validator = new Validator();
-        $this->assertProxyMethod($validator, 'greaterThan', 5, ['>', 5], 'comparison');
+        $this->assertProxyMethod($validator, 'greaterThan', 5, [Validation::COMPARE_GREATER, 5], 'comparison');
         $this->assertNotEmpty($validator->errors(['username' => 2]));
     }
 
@@ -1364,7 +1365,7 @@ class ValidatorTest extends TestCase
     public function testGreaterThanOrEqual()
     {
         $validator = new Validator();
-        $this->assertProxyMethod($validator, 'greaterThanOrEqual', 5, ['>=', 5], 'comparison');
+        $this->assertProxyMethod($validator, 'greaterThanOrEqual', 5, [Validation::COMPARE_GREATER_OR_EQUAL, 5], 'comparison');
         $this->assertNotEmpty($validator->errors(['username' => 2]));
     }
 
@@ -1376,7 +1377,7 @@ class ValidatorTest extends TestCase
     public function testLessThan()
     {
         $validator = new Validator();
-        $this->assertProxyMethod($validator, 'lessThan', 5, ['<', 5], 'comparison');
+        $this->assertProxyMethod($validator, 'lessThan', 5, [Validation::COMPARE_LESS, 5], 'comparison');
         $this->assertNotEmpty($validator->errors(['username' => 5]));
     }
 
@@ -1388,7 +1389,7 @@ class ValidatorTest extends TestCase
     public function testLessThanOrEqual()
     {
         $validator = new Validator();
-        $this->assertProxyMethod($validator, 'lessThanOrEqual', 5, ['<=', 5], 'comparison');
+        $this->assertProxyMethod($validator, 'lessThanOrEqual', 5, [Validation::COMPARE_LESS_OR_EQUAL, 5], 'comparison');
         $this->assertNotEmpty($validator->errors(['username' => 6]));
     }
 
@@ -1400,7 +1401,7 @@ class ValidatorTest extends TestCase
     public function testEquals()
     {
         $validator = new Validator();
-        $this->assertProxyMethod($validator, 'equals', 5, ['==', 5], 'comparison');
+        $this->assertProxyMethod($validator, 'equals', 5, [Validation::COMPARE_EQUAL, 5], 'comparison');
         $this->assertEmpty($validator->errors(['username' => 5]));
         $this->assertNotEmpty($validator->errors(['username' => 6]));
     }
@@ -1413,7 +1414,7 @@ class ValidatorTest extends TestCase
     public function testNotEquals()
     {
         $validator = new Validator();
-        $this->assertProxyMethod($validator, 'notEquals', 5, ['!=', 5], 'comparison');
+        $this->assertProxyMethod($validator, 'notEquals', 5, [Validation::COMPARE_NOT_EQUAL, 5], 'comparison');
         $this->assertNotEmpty($validator->errors(['username' => 5]));
     }
 
@@ -1425,7 +1426,7 @@ class ValidatorTest extends TestCase
     public function testSameAs()
     {
         $validator = new Validator();
-        $this->assertProxyMethod($validator, 'sameAs', 'other', ['other', '==='], 'compareFields');
+        $this->assertProxyMethod($validator, 'sameAs', 'other', ['other', Validation::COMPARE_SAME], 'compareFields');
         $this->assertNotEmpty($validator->errors(['username' => 'foo']));
         $this->assertNotEmpty($validator->errors(['username' => 1, 'other' => '1']));
     }
@@ -1438,7 +1439,7 @@ class ValidatorTest extends TestCase
     public function testNotSameAs()
     {
         $validator = new Validator();
-        $this->assertProxyMethod($validator, 'notSameAs', 'other', ['other', '!=='], 'compareFields');
+        $this->assertProxyMethod($validator, 'notSameAs', 'other', ['other', Validation::COMPARE_NOT_SAME], 'compareFields');
         $this->assertNotEmpty($validator->errors(['username' => 'foo', 'other' => 'foo']));
     }
 
@@ -1450,7 +1451,7 @@ class ValidatorTest extends TestCase
     public function testEqualToField()
     {
         $validator = new Validator();
-        $this->assertProxyMethod($validator, 'equalToField', 'other', ['other', '=='], 'compareFields');
+        $this->assertProxyMethod($validator, 'equalToField', 'other', ['other', Validation::COMPARE_EQUAL], 'compareFields');
         $this->assertNotEmpty($validator->errors(['username' => 'foo']));
         $this->assertNotEmpty($validator->errors(['username' => 'foo', 'other' => 'bar']));
     }
@@ -1463,7 +1464,7 @@ class ValidatorTest extends TestCase
     public function testNotEqualToField()
     {
         $validator = new Validator();
-        $this->assertProxyMethod($validator, 'notEqualToField', 'other', ['other', '!='], 'compareFields');
+        $this->assertProxyMethod($validator, 'notEqualToField', 'other', ['other', Validation::COMPARE_NOT_EQUAL], 'compareFields');
         $this->assertNotEmpty($validator->errors(['username' => 'foo', 'other' => 'foo']));
     }
 
@@ -1475,7 +1476,7 @@ class ValidatorTest extends TestCase
     public function testGreaterThanField()
     {
         $validator = new Validator();
-        $this->assertProxyMethod($validator, 'greaterThanField', 'other', ['other', '>'], 'compareFields');
+        $this->assertProxyMethod($validator, 'greaterThanField', 'other', ['other', Validation::COMPARE_GREATER], 'compareFields');
         $this->assertNotEmpty($validator->errors(['username' => 1, 'other' => 1]));
         $this->assertNotEmpty($validator->errors(['username' => 1, 'other' => 2]));
     }
@@ -1488,7 +1489,7 @@ class ValidatorTest extends TestCase
     public function testGreaterThanOrEqualToField()
     {
         $validator = new Validator();
-        $this->assertProxyMethod($validator, 'greaterThanOrEqualToField', 'other', ['other', '>='], 'compareFields');
+        $this->assertProxyMethod($validator, 'greaterThanOrEqualToField', 'other', ['other', Validation::COMPARE_GREATER_OR_EQUAL], 'compareFields');
         $this->assertNotEmpty($validator->errors(['username' => 1, 'other' => 2]));
     }
 
@@ -1500,7 +1501,7 @@ class ValidatorTest extends TestCase
     public function testLessThanField()
     {
         $validator = new Validator();
-        $this->assertProxyMethod($validator, 'lessThanField', 'other', ['other', '<'], 'compareFields');
+        $this->assertProxyMethod($validator, 'lessThanField', 'other', ['other', Validation::COMPARE_LESS], 'compareFields');
         $this->assertNotEmpty($validator->errors(['username' => 1, 'other' => 1]));
         $this->assertNotEmpty($validator->errors(['username' => 2, 'other' => 1]));
     }
@@ -1513,7 +1514,7 @@ class ValidatorTest extends TestCase
     public function testLessThanOrEqualToField()
     {
         $validator = new Validator();
-        $this->assertProxyMethod($validator, 'lessThanOrEqualToField', 'other', ['other', '<='], 'compareFields');
+        $this->assertProxyMethod($validator, 'lessThanOrEqualToField', 'other', ['other', Validation::COMPARE_LESS_OR_EQUAL], 'compareFields');
         $this->assertNotEmpty($validator->errors(['username' => 2, 'other' => 1]));
     }
 

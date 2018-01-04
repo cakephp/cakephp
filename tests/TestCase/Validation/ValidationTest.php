@@ -842,44 +842,44 @@ class ValidationTest extends TestCase
     {
         $this->assertFalse(Validation::comparison(7, null, 6));
         $this->assertTrue(Validation::comparison(7, 'is greater', 6));
-        $this->assertTrue(Validation::comparison(7, '>', 6));
+        $this->assertTrue(Validation::comparison(7, Validation::COMPARE_GREATER, 6));
         $this->assertTrue(Validation::comparison(6, 'is less', 7));
-        $this->assertTrue(Validation::comparison(6, '<', 7));
+        $this->assertTrue(Validation::comparison(6, Validation::COMPARE_LESS, 7));
         $this->assertTrue(Validation::comparison(7, 'greater or equal', 7));
-        $this->assertTrue(Validation::comparison(7, '>=', 7));
+        $this->assertTrue(Validation::comparison(7, Validation::COMPARE_GREATER_OR_EQUAL, 7));
         $this->assertTrue(Validation::comparison(7, 'greater or equal', 6));
-        $this->assertTrue(Validation::comparison(7, '>=', 6));
+        $this->assertTrue(Validation::comparison(7, Validation::COMPARE_GREATER_OR_EQUAL, 6));
         $this->assertTrue(Validation::comparison(6, 'less or equal', 7));
-        $this->assertTrue(Validation::comparison(6, '<=', 7));
+        $this->assertTrue(Validation::comparison(6, Validation::COMPARE_LESS_OR_EQUAL, 7));
         $this->assertTrue(Validation::comparison(7, 'equal to', 7));
-        $this->assertTrue(Validation::comparison(7, '==', 7));
+        $this->assertTrue(Validation::comparison(7, Validation::COMPARE_EQUAL, 7));
         $this->assertTrue(Validation::comparison(7, 'not equal', 6));
-        $this->assertTrue(Validation::comparison(7, '!=', 6));
+        $this->assertTrue(Validation::comparison(7, Validation::COMPARE_NOT_EQUAL, 6));
         $this->assertTrue(Validation::comparison(7, 'same as', 7));
-        $this->assertTrue(Validation::comparison(7, '===', 7));
+        $this->assertTrue(Validation::comparison(7, Validation::COMPARE_SAME, 7));
         $this->assertTrue(Validation::comparison(7, 'not same as', '7'));
-        $this->assertTrue(Validation::comparison(7, '!==', '7'));
+        $this->assertTrue(Validation::comparison(7, Validation::COMPARE_NOT_SAME, '7'));
         $this->assertFalse(Validation::comparison(6, 'is greater', 7));
-        $this->assertFalse(Validation::comparison(6, '>', 7));
+        $this->assertFalse(Validation::comparison(6, Validation::COMPARE_GREATER, 7));
         $this->assertFalse(Validation::comparison(7, 'is less', 6));
-        $this->assertFalse(Validation::comparison(7, '<', 6));
+        $this->assertFalse(Validation::comparison(7, Validation::COMPARE_LESS, 6));
         $this->assertFalse(Validation::comparison(6, 'greater or equal', 7));
-        $this->assertFalse(Validation::comparison(6, '>=', 7));
+        $this->assertFalse(Validation::comparison(6, Validation::COMPARE_GREATER_OR_EQUAL, 7));
         $this->assertFalse(Validation::comparison(6, 'greater or equal', 7));
-        $this->assertFalse(Validation::comparison(6, '>=', 7));
+        $this->assertFalse(Validation::comparison(6, Validation::COMPARE_GREATER_OR_EQUAL, 7));
         $this->assertFalse(Validation::comparison(7, 'less or equal', 6));
-        $this->assertFalse(Validation::comparison(7, '<=', 6));
+        $this->assertFalse(Validation::comparison(7, Validation::COMPARE_LESS_OR_EQUAL, 6));
         $this->assertFalse(Validation::comparison(7, 'equal to', 6));
-        $this->assertFalse(Validation::comparison(7, '==', 6));
+        $this->assertFalse(Validation::comparison(7, Validation::COMPARE_EQUAL, 6));
         $this->assertFalse(Validation::comparison(7, 'not equal', 7));
-        $this->assertFalse(Validation::comparison(7, '!=', 7));
+        $this->assertFalse(Validation::comparison(7, Validation::COMPARE_NOT_EQUAL, 7));
         $this->assertFalse(Validation::comparison(7, 'same as', '7'));
-        $this->assertFalse(Validation::comparison(7, '===', '7'));
+        $this->assertFalse(Validation::comparison(7, Validation::COMPARE_SAME, '7'));
         $this->assertFalse(Validation::comparison(7, 'not same as', 7));
-        $this->assertFalse(Validation::comparison(7, '!==', 7));
+        $this->assertFalse(Validation::comparison(7, Validation::COMPARE_NOT_SAME, 7));
 
-        $this->assertTrue(Validation::comparison('6.5', '!=', 6));
-        $this->assertTrue(Validation::comparison('6.5', '<', 7));
+        $this->assertTrue(Validation::comparison('6.5', Validation::COMPARE_NOT_EQUAL, 6));
+        $this->assertTrue(Validation::comparison('6.5', Validation::COMPARE_LESS, 7));
     }
 
     /**
@@ -889,14 +889,14 @@ class ValidationTest extends TestCase
      */
     public function testComparisonTypeChecks()
     {
-        $this->assertFalse(Validation::comparison('\x028', '>=', 1), 'hexish encoding fails');
-        $this->assertFalse(Validation::comparison('0b010', '>=', 1), 'binary string data fails');
-        $this->assertFalse(Validation::comparison('0x01', '>=', 1), 'hex string data fails');
-        $this->assertFalse(Validation::comparison('0x1', '>=', 1), 'hex string data fails');
+        $this->assertFalse(Validation::comparison('\x028', Validation::COMPARE_GREATER_OR_EQUAL, 1), 'hexish encoding fails');
+        $this->assertFalse(Validation::comparison('0b010', Validation::COMPARE_GREATER_OR_EQUAL, 1), 'binary string data fails');
+        $this->assertFalse(Validation::comparison('0x01', Validation::COMPARE_GREATER_OR_EQUAL, 1), 'hex string data fails');
+        $this->assertFalse(Validation::comparison('0x1', Validation::COMPARE_GREATER_OR_EQUAL, 1), 'hex string data fails');
 
-        $this->assertFalse(Validation::comparison('\x028', '>=', 1.5), 'hexish encoding fails');
-        $this->assertFalse(Validation::comparison('0b010', '>=', 1.5), 'binary string data fails');
-        $this->assertFalse(Validation::comparison('0x02', '>=', 1.5), 'hex string data fails');
+        $this->assertFalse(Validation::comparison('\x028', Validation::COMPARE_GREATER_OR_EQUAL, 1.5), 'hexish encoding fails');
+        $this->assertFalse(Validation::comparison('0b010', Validation::COMPARE_GREATER_OR_EQUAL, 1.5), 'binary string data fails');
+        $this->assertFalse(Validation::comparison('0x02', Validation::COMPARE_GREATER_OR_EQUAL, 1.5), 'hex string data fails');
     }
 
     /**
@@ -2601,15 +2601,15 @@ class ValidationTest extends TestCase
     public function testFileSize()
     {
         $image = TEST_APP . 'webroot/img/cake.power.gif';
-        $this->assertTrue(Validation::fileSize($image, '<', 1024));
+        $this->assertTrue(Validation::fileSize($image, Validation::COMPARE_LESS, 1024));
         $this->assertTrue(Validation::fileSize(['tmp_name' => $image], 'isless', 1024));
-        $this->assertTrue(Validation::fileSize($image, '<', '1KB'));
-        $this->assertTrue(Validation::fileSize($image, '>=', 200));
-        $this->assertTrue(Validation::fileSize($image, '==', 201));
-        $this->assertTrue(Validation::fileSize($image, '==', '201B'));
+        $this->assertTrue(Validation::fileSize($image, Validation::COMPARE_LESS, '1KB'));
+        $this->assertTrue(Validation::fileSize($image, Validation::COMPARE_GREATER_OR_EQUAL, 200));
+        $this->assertTrue(Validation::fileSize($image, Validation::COMPARE_EQUAL, 201));
+        $this->assertTrue(Validation::fileSize($image, Validation::COMPARE_EQUAL, '201B'));
 
         $this->assertFalse(Validation::fileSize($image, 'isgreater', 1024));
-        $this->assertFalse(Validation::fileSize(['tmp_name' => $image], '>', '1KB'));
+        $this->assertFalse(Validation::fileSize(['tmp_name' => $image], Validation::COMPARE_GREATER, '1KB'));
     }
 
     /**
@@ -2622,10 +2622,10 @@ class ValidationTest extends TestCase
         $image = TEST_APP . 'webroot/img/cake.power.gif';
         $file = new UploadedFile($image, 1000, UPLOAD_ERR_OK, 'cake.power.gif', 'image/gif');
 
-        $this->assertTrue(Validation::fileSize($file, '==', 201));
-        $this->assertTrue(Validation::fileSize($file, '<', 1024));
-        $this->assertFalse(Validation::fileSize($file, '>', 202));
-        $this->assertFalse(Validation::fileSize($file, '>', 1000));
+        $this->assertTrue(Validation::fileSize($file, Validation::COMPARE_EQUAL, 201));
+        $this->assertTrue(Validation::fileSize($file, Validation::COMPARE_LESS, 1024));
+        $this->assertFalse(Validation::fileSize($file, Validation::COMPARE_GREATER, 202));
+        $this->assertFalse(Validation::fileSize($file, Validation::COMPARE_GREATER, 1000));
     }
 
     /**
@@ -3044,19 +3044,19 @@ class ValidationTest extends TestCase
     public function testNumElements()
     {
         $array = ['cake', 'php'];
-        $this->assertTrue(Validation::numElements($array, '==', 2));
-        $this->assertFalse(Validation::numElements($array, '>', 3));
-        $this->assertFalse(Validation::numElements($array, '<', 1));
+        $this->assertTrue(Validation::numElements($array, Validation::COMPARE_EQUAL, 2));
+        $this->assertFalse(Validation::numElements($array, Validation::COMPARE_GREATER, 3));
+        $this->assertFalse(Validation::numElements($array, Validation::COMPARE_LESS, 1));
 
         $callable = function () {
             return '';
         };
 
-        $this->assertFalse(Validation::numElements(null, '==', 0));
-        $this->assertFalse(Validation::numElements(new stdClass(), '==', 0));
-        $this->assertFalse(Validation::numElements($callable, '==', 0));
-        $this->assertFalse(Validation::numElements(false, '==', 0));
-        $this->assertFalse(Validation::numElements(true, '==', 0));
+        $this->assertFalse(Validation::numElements(null, Validation::COMPARE_EQUAL, 0));
+        $this->assertFalse(Validation::numElements(new stdClass(), Validation::COMPARE_EQUAL, 0));
+        $this->assertFalse(Validation::numElements($callable, Validation::COMPARE_EQUAL, 0));
+        $this->assertFalse(Validation::numElements(false, Validation::COMPARE_EQUAL, 0));
+        $this->assertFalse(Validation::numElements(true, Validation::COMPARE_EQUAL, 0));
     }
 
     /**
@@ -3083,38 +3083,38 @@ class ValidationTest extends TestCase
         ];
 
         $this->assertTrue(Validation::imageSize($upload, [
-            'width' => ['>', 100],
-            'height' => ['>', 100],
+            'width' => [Validation::COMPARE_GREATER, 100],
+            'height' => [Validation::COMPARE_GREATER, 100],
         ]));
 
         $this->assertFalse(Validation::imageSize($upload, [
-            'width' => ['>', 100],
-            'height' => ['<', 100],
+            'width' => [Validation::COMPARE_GREATER, 100],
+            'height' => [Validation::COMPARE_LESS, 100],
         ]));
 
         $this->assertFalse(Validation::imageSize($upload, [
-            'width' => ['==', 100],
-            'height' => ['==', 300],
+            'width' => [Validation::COMPARE_EQUAL, 100],
+            'height' => [Validation::COMPARE_EQUAL, 300],
         ]));
 
         $this->assertTrue(Validation::imageSize($upload, [
-            'width' => ['>=', 300],
-            'height' => ['>=', 300],
+            'width' => [Validation::COMPARE_GREATER_OR_EQUAL, 300],
+            'height' => [Validation::COMPARE_GREATER_OR_EQUAL, 300],
         ]));
 
         $this->assertTrue(Validation::imageSize($upload, [
-            'width' => ['<=', 300],
-            'height' => ['<=', 300],
+            'width' => [Validation::COMPARE_LESS_OR_EQUAL, 300],
+            'height' => [Validation::COMPARE_LESS_OR_EQUAL, 300],
         ]));
 
         $this->assertTrue(Validation::imageSize($upload, [
-            'width' => ['<=', 300],
-            'height' => ['>=', 300],
+            'width' => [Validation::COMPARE_LESS_OR_EQUAL, 300],
+            'height' => [Validation::COMPARE_GREATER_OR_EQUAL, 300],
         ]));
 
         $this->assertFalse(Validation::imageSize($upload, [
-            'width' => ['<=', 299],
-            'height' => ['>=', 300],
+            'width' => [Validation::COMPARE_LESS_OR_EQUAL, 299],
+            'height' => [Validation::COMPARE_GREATER_OR_EQUAL, 300],
         ]));
     }
 
@@ -3130,13 +3130,13 @@ class ValidationTest extends TestCase
             'tmp_name' => $image
         ];
 
-        $this->assertTrue(Validation::imageHeight($upload, '>', 100));
-        $this->assertTrue(Validation::imageHeight($upload, '<', 2000));
-        $this->assertTrue(Validation::imageHeight($upload, '==', 300));
+        $this->assertTrue(Validation::imageHeight($upload, Validation::COMPARE_GREATER, 100));
+        $this->assertTrue(Validation::imageHeight($upload, Validation::COMPARE_LESS, 2000));
+        $this->assertTrue(Validation::imageHeight($upload, Validation::COMPARE_EQUAL, 300));
 
-        $this->assertFalse(Validation::imageHeight($upload, '<', 100));
-        $this->assertFalse(Validation::imageHeight($upload, '>', 2000));
-        $this->assertFalse(Validation::imageHeight($upload, '==', 3000));
+        $this->assertFalse(Validation::imageHeight($upload, Validation::COMPARE_LESS, 100));
+        $this->assertFalse(Validation::imageHeight($upload, Validation::COMPARE_GREATER, 2000));
+        $this->assertFalse(Validation::imageHeight($upload, Validation::COMPARE_EQUAL, 3000));
     }
 
     /**
@@ -3151,13 +3151,13 @@ class ValidationTest extends TestCase
             'tmp_name' => $image
         ];
 
-        $this->assertTrue(Validation::imageWidth($upload, '>', 100));
-        $this->assertTrue(Validation::imageWidth($upload, '<', 2000));
-        $this->assertTrue(Validation::imageWidth($upload, '==', 300));
+        $this->assertTrue(Validation::imageWidth($upload, Validation::COMPARE_GREATER, 100));
+        $this->assertTrue(Validation::imageWidth($upload, Validation::COMPARE_LESS, 2000));
+        $this->assertTrue(Validation::imageWidth($upload, Validation::COMPARE_EQUAL, 300));
 
-        $this->assertFalse(Validation::imageWidth($upload, '<', 100));
-        $this->assertFalse(Validation::imageWidth($upload, '>', 2000));
-        $this->assertFalse(Validation::imageWidth($upload, '==', 3000));
+        $this->assertFalse(Validation::imageWidth($upload, Validation::COMPARE_LESS, 100));
+        $this->assertFalse(Validation::imageWidth($upload, Validation::COMPARE_GREATER, 2000));
+        $this->assertFalse(Validation::imageWidth($upload, Validation::COMPARE_EQUAL, 3000));
     }
 
     /**
