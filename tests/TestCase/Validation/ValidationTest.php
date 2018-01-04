@@ -2742,53 +2742,53 @@ class ValidationTest extends TestCase
     }
 
     /**
-     * Test the compareFields method with true result.
+     * Test the compareFields method with eual result.
      *
      * @return void
      */
-    public function testCompareFieldsTrue()
+    public function testCompareFieldsEqualTo()
     {
         $context = [
             'data' => [
                 'other' => 'a value'
             ]
         ];
-        $this->assertTrue(Validation::compareFields('a value', 'other', true, $context));
+        $this->assertTrue(Validation::compareFields('a value', 'other', 'equalto', $context));
 
         $context = [
             'data' => [
                 'other' => 'different'
             ]
         ];
-        $this->assertFalse(Validation::compareFields('a value', 'other', true, $context));
+        $this->assertFalse(Validation::compareFields('a value', 'other', 'equalto', $context));
 
         $context = [];
-        $this->assertFalse(Validation::compareFields('a value', 'other', true, $context));
+        $this->assertFalse(Validation::compareFields('a value', 'other', 'equalto', $context));
     }
 
     /**
-     * Test the compareFields method with false result.
+     * Test the compareFields method with not equal result.
      *
      * @return void
      */
-    public function testCompareFieldsFalse()
+    public function testCompareFieldsNotEqual()
     {
         $context = [
             'data' => [
                 'other' => 'different'
             ]
         ];
-        $this->assertTrue(Validation::compareFields('a value', 'other', false, $context));
+        $this->assertTrue(Validation::compareFields('a value', 'other', 'notequal', $context));
 
         $context = [
             'data' => [
                 'other' => 'a value'
             ]
         ];
-        $this->assertFalse(Validation::compareFields('a value', 'other', false, $context));
+        $this->assertFalse(Validation::compareFields('a value', 'other', 'notequal', $context));
 
         $context = [];
-        $this->assertFalse(Validation::compareFields('a value', 'other', false, $context));
+        $this->assertFalse(Validation::compareFields('a value', 'other', 'notequal', $context));
     }
 
     /**

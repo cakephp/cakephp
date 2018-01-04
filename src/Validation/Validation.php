@@ -314,7 +314,7 @@ class Validation
      */
     public static function compareWith($check, $field, $context)
     {
-        return self::compareFields($check, $field, true, $context);
+        return self::compareFields($check, $field, 'equalto', $context);
     }
 
     /**
@@ -324,20 +324,18 @@ class Validation
      *
      * @param mixed $check The value to find in $field.
      * @param string $field The field to check $check against. This field must be present in $context.
-     * @param bool $result The expected result of field comparison.
+     * @param string $operator Comparison operator.
      * @param array $context The validation context.
      * @return bool
      * @since 3.6.0
      */
-    public static function compareFields($check, $field, $result, $context)
+    public static function compareFields($check, $field, $operator, $context)
     {
         if (!isset($context['data'][$field])) {
             return false;
         }
 
-        $comparison = $context['data'][$field] === $check;
-
-        return $comparison === $result;
+        return static::comparison($check, $operator, $context['data'][$field]);
     }
 
     /**
