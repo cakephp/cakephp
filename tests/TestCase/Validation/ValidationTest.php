@@ -2750,7 +2750,7 @@ class ValidationTest extends TestCase
     }
 
     /**
-     * Test the compareFields method with eual result.
+     * Test the compareFields method with equal result.
      *
      * @return void
      */
