@@ -2761,17 +2761,17 @@ class ValidationTest extends TestCase
                 'other' => 'a value'
             ]
         ];
-        $this->assertTrue(Validation::compareFields('a value', 'other', 'equalto', $context));
+        $this->assertTrue(Validation::compareFields('a value', 'other', Validation::COMPARE_EQUAL, $context));
 
         $context = [
             'data' => [
                 'other' => 'different'
             ]
         ];
-        $this->assertFalse(Validation::compareFields('a value', 'other', 'equalto', $context));
+        $this->assertFalse(Validation::compareFields('a value', 'other', Validation::COMPARE_EQUAL, $context));
 
         $context = [];
-        $this->assertFalse(Validation::compareFields('a value', 'other', 'equalto', $context));
+        $this->assertFalse(Validation::compareFields('a value', 'other', Validation::COMPARE_EQUAL, $context));
     }
 
     /**
@@ -2786,17 +2786,17 @@ class ValidationTest extends TestCase
                 'other' => 'different'
             ]
         ];
-        $this->assertTrue(Validation::compareFields('a value', 'other', 'notequal', $context));
+        $this->assertTrue(Validation::compareFields('a value', 'other', Validation::COMPARE_NOT_EQUAL, $context));
 
         $context = [
             'data' => [
                 'other' => 'a value'
             ]
         ];
-        $this->assertFalse(Validation::compareFields('a value', 'other', 'notequal', $context));
+        $this->assertFalse(Validation::compareFields('a value', 'other', Validation::COMPARE_NOT_EQUAL, $context));
 
         $context = [];
-        $this->assertFalse(Validation::compareFields('a value', 'other', 'notequal', $context));
+        $this->assertFalse(Validation::compareFields('a value', 'other', Validation::COMPARE_NOT_EQUAL, $context));
     }
 
     /**
