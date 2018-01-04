@@ -861,7 +861,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'greaterThan', $extra + [
-            'rule' => ['comparison', Validation::COMPARE_GREATER_THAN, $value]
+            'rule' => ['comparison', Validation::COMPARE_GREATER, $value]
         ]);
     }
 
@@ -901,7 +901,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'lessThan', $extra + [
-            'rule' => ['comparison', Validation::COMPARE_LESS_THAN, $value]
+            'rule' => ['comparison', Validation::COMPARE_LESS, $value]
         ]);
     }
 
@@ -941,7 +941,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'equals', $extra + [
-            'rule' => ['comparison', Validation::COMPARE_EQUAL_TO, $value]
+            'rule' => ['comparison', Validation::COMPARE_EQUAL, $value]
         ]);
     }
 
@@ -961,7 +961,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'notEquals', $extra + [
-            'rule' => ['comparison', Validation::COMPARE_NOT_EQUAL_TO, $value]
+            'rule' => ['comparison', Validation::COMPARE_NOT_EQUAL, $value]
         ]);
     }
 
@@ -983,7 +983,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'sameAs', $extra + [
-            'rule' => ['compareFields', $secondField, Validation::COMPARE_SAME_AS]
+            'rule' => ['compareFields', $secondField, Validation::COMPARE_SAME]
         ]);
     }
 
@@ -1004,7 +1004,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'notSameAs', $extra + [
-            'rule' => ['compareFields', $secondField, Validation::COMPARE_NOT_SAME_AS]
+            'rule' => ['compareFields', $secondField, Validation::COMPARE_NOT_SAME]
         ]);
     }
 
@@ -1025,7 +1025,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'equalToField', $extra + [
-            'rule' => ['compareFields', $secondField, Validation::COMPARE_EQUAL_TO]
+            'rule' => ['compareFields', $secondField, Validation::COMPARE_EQUAL]
         ]);
     }
 
@@ -1046,7 +1046,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'notEqualToField', $extra + [
-            'rule' => ['compareFields', $secondField, Validation::COMPARE_NOT_EQUAL_TO]
+            'rule' => ['compareFields', $secondField, Validation::COMPARE_NOT_EQUAL]
         ]);
     }
 
@@ -1067,7 +1067,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'greaterThanField', $extra + [
-            'rule' => ['compareFields', $secondField, Validation::COMPARE_GREATER_THAN]
+            'rule' => ['compareFields', $secondField, Validation::COMPARE_GREATER]
         ]);
     }
 
@@ -1109,7 +1109,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'lessThanField', $extra + [
-            'rule' => ['compareFields', $secondField, Validation::COMPARE_LESS_THAN]
+            'rule' => ['compareFields', $secondField, Validation::COMPARE_LESS]
         ]);
     }
 

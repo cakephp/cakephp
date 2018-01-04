@@ -33,64 +33,46 @@ class Validation
 
     /**
      * Default locale
-     *
-     * @var string
      */
     const DEFAULT_LOCALE = 'en_US';
 
     /**
      * Same as operator.
-     *
-     * @var string
      */
-    const COMPARE_SAME_AS = '===';
+    const COMPARE_SAME = '===';
 
     /**
      * Not same as comparison operator.
-     *
-     * @var string
      */
-    const COMPARE_NOT_SAME_AS = '!==';
+    const COMPARE_NOT_SAME = '!==';
 
     /**
      * Equal to comparison operator.
-     *
-     * @var string
      */
-    const COMPARE_EQUAL_TO = '==';
+    const COMPARE_EQUAL = '==';
 
     /**
      * Not equal to comparison operator.
-     *
-     * @var string
      */
-    const COMPARE_NOT_EQUAL_TO = '!=';
+    const COMPARE_NOT_EQUAL = '!=';
 
     /**
      * Greater than comparison operator.
-     *
-     * @var string
      */
-    const COMPARE_GREATER_THAN = '>';
+    const COMPARE_GREATER = '>';
 
     /**
      * Greater than or equal to comparison operator.
-     *
-     * @var string
      */
     const COMPARE_GREATER_OR_EQUAL = '>=';
 
     /**
      * Less than comparison operator.
-     *
-     * @var string
      */
-    const COMPARE_LESS_THAN = '<';
+    const COMPARE_LESS = '<';
 
     /**
      * Less than or equal to comparison operator.
-     *
-     * @var string
      */
     const COMPARE_LESS_OR_EQUAL = '<=';
 
@@ -316,13 +298,13 @@ class Validation
         $operator = str_replace([' ', "\t", "\n", "\r", "\0", "\x0B"], '', strtolower($operator));
         switch ($operator) {
             case 'isgreater':
-            case static::COMPARE_GREATER_THAN:
+            case static::COMPARE_GREATER:
                 if ($check1 > $check2) {
                     return true;
                 }
                 break;
             case 'isless':
-            case static::COMPARE_LESS_THAN:
+            case static::COMPARE_LESS:
                 if ($check1 < $check2) {
                     return true;
                 }
@@ -340,25 +322,25 @@ class Validation
                 }
                 break;
             case 'equalto':
-            case static::COMPARE_EQUAL_TO:
+            case static::COMPARE_EQUAL:
                 if ($check1 == $check2) {
                     return true;
                 }
                 break;
             case 'notequal':
-            case static::COMPARE_NOT_EQUAL_TO:
+            case static::COMPARE_NOT_EQUAL:
                 if ($check1 != $check2) {
                     return true;
                 }
                 break;
             case 'sameas':
-            case static::COMPARE_SAME_AS:
+            case static::COMPARE_SAME:
                 if ($check1 === $check2) {
                     return true;
                 }
                 break;
             case 'notsameas':
-            case static::COMPARE_NOT_SAME_AS:
+            case static::COMPARE_NOT_SAME:
                 if ($check1 !== $check2) {
                     return true;
                 }
@@ -382,7 +364,7 @@ class Validation
      */
     public static function compareWith($check, $field, $context)
     {
-        return self::compareFields($check, $field, static::COMPARE_SAME_AS, $context);
+        return self::compareFields($check, $field, static::COMPARE_SAME, $context);
     }
 
     /**
