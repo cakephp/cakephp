@@ -855,6 +855,10 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::comparison(7, '==', 7));
         $this->assertTrue(Validation::comparison(7, 'not equal', 6));
         $this->assertTrue(Validation::comparison(7, '!=', 6));
+        $this->assertTrue(Validation::comparison(7, 'same as', 7));
+        $this->assertTrue(Validation::comparison(7, '===', 7));
+        $this->assertTrue(Validation::comparison(7, 'not same as', '7'));
+        $this->assertTrue(Validation::comparison(7, '!==', '7'));
         $this->assertFalse(Validation::comparison(6, 'is greater', 7));
         $this->assertFalse(Validation::comparison(6, '>', 7));
         $this->assertFalse(Validation::comparison(7, 'is less', 6));
@@ -869,6 +873,10 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::comparison(7, '==', 6));
         $this->assertFalse(Validation::comparison(7, 'not equal', 7));
         $this->assertFalse(Validation::comparison(7, '!=', 7));
+        $this->assertFalse(Validation::comparison(7, 'same as', '7'));
+        $this->assertFalse(Validation::comparison(7, '===', '7'));
+        $this->assertFalse(Validation::comparison(7, 'not same as', 7));
+        $this->assertFalse(Validation::comparison(7, '!==', 7));
 
         $this->assertTrue(Validation::comparison('6.5', '!=', 6));
         $this->assertTrue(Validation::comparison('6.5', '<', 7));

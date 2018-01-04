@@ -1425,7 +1425,7 @@ class ValidatorTest extends TestCase
     public function testSameAs()
     {
         $validator = new Validator();
-        $this->assertProxyMethod($validator, 'sameAs', 'other', ['other', 'equalto'], 'compareFields');
+        $this->assertProxyMethod($validator, 'sameAs', 'other', ['other', '==='], 'compareFields');
         $this->assertNotEmpty($validator->errors(['username' => 'foo']));
     }
 
@@ -1437,7 +1437,7 @@ class ValidatorTest extends TestCase
     public function testNotSameAs()
     {
         $validator = new Validator();
-        $this->assertProxyMethod($validator, 'notSameAs', 'other', ['other', 'notequal'], 'compareFields');
+        $this->assertProxyMethod($validator, 'notSameAs', 'other', ['other', '!=='], 'compareFields');
         $this->assertNotEmpty($validator->errors(['username' => 'foo', 'other' => 'foo']));
     }
 

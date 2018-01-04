@@ -295,6 +295,18 @@ class Validation
                     return true;
                 }
                 break;
+            case 'sameas':
+            case '===':
+                if ($check1 === $check2) {
+                    return true;
+                }
+                break;
+            case 'notsameas':
+            case '!==':
+                if ($check1 !== $check2) {
+                    return true;
+                }
+                break;
             default:
                 static::$errors[] = 'You must define the $operator parameter for Validation::comparison()';
         }
@@ -314,7 +326,7 @@ class Validation
      */
     public static function compareWith($check, $field, $context)
     {
-        return self::compareFields($check, $field, 'equalto', $context);
+        return self::compareFields($check, $field, '===', $context);
     }
 
     /**
