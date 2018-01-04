@@ -1009,6 +1009,48 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
+     * Add a rule to compare one field is equal to another.
+     *
+     * @param mixed $field The field you want to apply the rule to.
+     * @param mixed $secondField The field you want to compare against.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::compareFields()
+     * @return $this
+     * @since 3.6.0
+     */
+    public function equalToField($field, $secondField, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+
+        return $this->add($field, 'equalToField', $extra + [
+            'rule' => ['compareFields', $secondField, '==']
+        ]);
+    }
+
+    /**
+     * Add a rule to compare one field is not equal to another.
+     *
+     * @param mixed $field The field you want to apply the rule to.
+     * @param mixed $secondField The field you want to compare against.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::compareFields()
+     * @return $this
+     * @since 3.6.0
+     */
+    public function notEqualToField($field, $secondField, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+
+        return $this->add($field, 'notEqualToField', $extra + [
+            'rule' => ['compareFields', $secondField, '!=']
+        ]);
+    }
+
+    /**
      * Add a rule to compare one field is greater than another.
      *
      * @param mixed $field The field you want to apply the rule to.
@@ -1018,6 +1060,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::compareFields()
      * @return $this
+     * @since 3.6.0
      */
     public function greaterThanField($field, $secondField, $message = null, $when = null)
     {
@@ -1038,6 +1081,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::compareFields()
      * @return $this
+     * @since 3.6.0
      */
     public function greaterThanOrEqualToField($field, $secondField, $message = null, $when = null)
     {
@@ -1058,6 +1102,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::compareFields()
      * @return $this
+     * @since 3.6.0
      */
     public function lessThanField($field, $secondField, $message = null, $when = null)
     {
@@ -1078,6 +1123,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::compareFields()
      * @return $this
+     * @since 3.6.0
      */
     public function lessThanOrEqualToField($field, $secondField, $message = null, $when = null)
     {

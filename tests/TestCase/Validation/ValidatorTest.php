@@ -1427,6 +1427,7 @@ class ValidatorTest extends TestCase
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'sameAs', 'other', ['other', '==='], 'compareFields');
         $this->assertNotEmpty($validator->errors(['username' => 'foo']));
+        $this->assertNotEmpty($validator->errors(['username' => 1, 'other' => '1']));
     }
 
     /**
@@ -1438,6 +1439,31 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $this->assertProxyMethod($validator, 'notSameAs', 'other', ['other', '!=='], 'compareFields');
+        $this->assertNotEmpty($validator->errors(['username' => 'foo', 'other' => 'foo']));
+    }
+
+    /**
+     * Tests the equalToField proxy method
+     *
+     * @return void
+     */
+    public function testEqualToField()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'equalToField', 'other', ['other', '=='], 'compareFields');
+        $this->assertNotEmpty($validator->errors(['username' => 'foo']));
+        $this->assertNotEmpty($validator->errors(['username' => 'foo', 'other' => 'bar']));
+    }
+
+    /**
+     * Tests the notEqualToField proxy method
+     *
+     * @return void
+     */
+    public function testNotEqualToField()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'notEqualToField', 'other', ['other', '!='], 'compareFields');
         $this->assertNotEmpty($validator->errors(['username' => 'foo', 'other' => 'foo']));
     }
 
