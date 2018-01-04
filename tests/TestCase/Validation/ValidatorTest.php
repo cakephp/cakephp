@@ -1442,6 +1442,56 @@ class ValidatorTest extends TestCase
     }
 
     /**
+     * Tests the greaterThanField proxy method
+     *
+     * @return void
+     */
+    public function testGreaterThanField()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'greaterThanField', 'other', ['other', '>'], 'compareFields');
+        $this->assertNotEmpty($validator->errors(['username' => 1, 'other' => 1]));
+        $this->assertNotEmpty($validator->errors(['username' => 1, 'other' => 2]));
+    }
+
+    /**
+     * Tests the greaterThanOrEqualToField proxy method
+     *
+     * @return void
+     */
+    public function testGreaterThanOrEqualToField()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'greaterThanOrEqualToField', 'other', ['other', '>='], 'compareFields');
+        $this->assertNotEmpty($validator->errors(['username' => 1, 'other' => 2]));
+    }
+
+    /**
+     * Tests the lessThanField proxy method
+     *
+     * @return void
+     */
+    public function testLessThanField()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'lessThanField', 'other', ['other', '<'], 'compareFields');
+        $this->assertNotEmpty($validator->errors(['username' => 1, 'other' => 1]));
+        $this->assertNotEmpty($validator->errors(['username' => 2, 'other' => 1]));
+    }
+
+    /**
+     * Tests the lessThanOrEqualToField proxy method
+     *
+     * @return void
+     */
+    public function testLessThanOrEqualToField()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'lessThanOrEqualToField', 'other', ['other', '<='], 'compareFields');
+        $this->assertNotEmpty($validator->errors(['username' => 2, 'other' => 1]));
+    }
+
+    /**
      * Tests the containsNonAlphaNumeric proxy method
      *
      * @return void

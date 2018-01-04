@@ -1009,6 +1009,86 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
+     * Add a rule to compare one field is greater than another.
+     *
+     * @param mixed $field The field you want to apply the rule to.
+     * @param mixed $secondField The field you want to compare against.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::compareFields()
+     * @return $this
+     */
+    public function greaterThanField($field, $secondField, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+
+        return $this->add($field, 'greaterThanField', $extra + [
+            'rule' => ['compareFields', $secondField, '>']
+        ]);
+    }
+
+    /**
+     * Add a rule to compare one field is greater than or equal to another.
+     *
+     * @param mixed $field The field you want to apply the rule to.
+     * @param mixed $secondField The field you want to compare against.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::compareFields()
+     * @return $this
+     */
+    public function greaterThanOrEqualToField($field, $secondField, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+
+        return $this->add($field, 'greaterThanOrEqualToField', $extra + [
+            'rule' => ['compareFields', $secondField, '>=']
+        ]);
+    }
+
+    /**
+     * Add a rule to compare one field is less than another.
+     *
+     * @param mixed $field The field you want to apply the rule to.
+     * @param mixed $secondField The field you want to compare against.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::compareFields()
+     * @return $this
+     */
+    public function lessThanField($field, $secondField, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+
+        return $this->add($field, 'lessThanField', $extra + [
+            'rule' => ['compareFields', $secondField, '<']
+        ]);
+    }
+
+    /**
+     * Add a rule to compare one field is less than or equal to another.
+     *
+     * @param mixed $field The field you want to apply the rule to.
+     * @param mixed $secondField The field you want to compare against.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::compareFields()
+     * @return $this
+     */
+    public function lessThanOrEqualToField($field, $secondField, $message = null, $when = null)
+    {
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+
+        return $this->add($field, 'lessThanOrEqualToField', $extra + [
+            'rule' => ['compareFields', $secondField, '<=']
+        ]);
+    }
+
+    /**
      * Add a rule to check if a field contains non alpha numeric characters.
      *
      * @param string $field The field you want to apply the rule to.
