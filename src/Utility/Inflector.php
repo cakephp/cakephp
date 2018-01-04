@@ -144,8 +144,7 @@ class Inflector
         'goose' => 'geese',
         'foot' => 'feet',
         'foe' => 'foes',
-        'sieve' => 'sieves',
-        'receive' => 'receives',
+        'sieve' => 'sieves'
     ];
 
     /**
