@@ -78,7 +78,7 @@ class Validation
      *
      * @var string
      */
-    const COMPARE_GREATER_THAN_OR_EQUAL_TO = '>=';
+    const COMPARE_GREATER_OR_EQUAL = '>=';
 
     /**
      * Less than comparison operator.
@@ -92,7 +92,7 @@ class Validation
      *
      * @var string
      */
-    const COMPARE_LESS_THAN_OR_EQUAL_TO = '<=';
+    const COMPARE_LESS_OR_EQUAL = '<=';
 
     /**
      * Some complex patterns needed in multiple places
@@ -328,13 +328,13 @@ class Validation
                 }
                 break;
             case 'greaterorequal':
-            case static::COMPARE_GREATER_THAN_OR_EQUAL_TO:
+            case static::COMPARE_GREATER_OR_EQUAL:
                 if ($check1 >= $check2) {
                     return true;
                 }
                 break;
             case 'lessorequal':
-            case static::COMPARE_LESS_THAN_OR_EQUAL_TO:
+            case static::COMPARE_LESS_OR_EQUAL:
                 if ($check1 <= $check2) {
                     return true;
                 }
@@ -1282,10 +1282,10 @@ class Validation
         if ($options['optional'] && $error === UPLOAD_ERR_NO_FILE) {
             return true;
         }
-        if (isset($options['minSize']) && !static::fileSize($file, static::COMPARE_GREATER_THAN_OR_EQUAL_TO, $options['minSize'])) {
+        if (isset($options['minSize']) && !static::fileSize($file, static::COMPARE_GREATER_OR_EQUAL, $options['minSize'])) {
             return false;
         }
-        if (isset($options['maxSize']) && !static::fileSize($file, static::COMPARE_LESS_THAN_OR_EQUAL_TO, $options['maxSize'])) {
+        if (isset($options['maxSize']) && !static::fileSize($file, static::COMPARE_LESS_OR_EQUAL, $options['maxSize'])) {
             return false;
         }
         if (isset($options['types']) && !static::mimeType($file, $options['types'])) {

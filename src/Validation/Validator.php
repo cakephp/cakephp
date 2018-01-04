@@ -881,7 +881,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'greaterThanOrEqual', $extra + [
-            'rule' => ['comparison', Validation::COMPARE_GREATER_THAN_OR_EQUAL_TO, $value]
+            'rule' => ['comparison', Validation::COMPARE_GREATER_OR_EQUAL, $value]
         ]);
     }
 
@@ -921,7 +921,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'lessThanOrEqual', $extra + [
-            'rule' => ['comparison', Validation::COMPARE_LESS_THAN_OR_EQUAL_TO, $value]
+            'rule' => ['comparison', Validation::COMPARE_LESS_OR_EQUAL, $value]
         ]);
     }
 
@@ -1088,7 +1088,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'greaterThanOrEqualToField', $extra + [
-            'rule' => ['compareFields', $secondField, Validation::COMPARE_GREATER_THAN_OR_EQUAL_TO]
+            'rule' => ['compareFields', $secondField, Validation::COMPARE_GREATER_OR_EQUAL]
         ]);
     }
 
@@ -1130,7 +1130,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'lessThanOrEqualToField', $extra + [
-            'rule' => ['compareFields', $secondField, Validation::COMPARE_LESS_THAN_OR_EQUAL_TO]
+            'rule' => ['compareFields', $secondField, Validation::COMPARE_LESS_OR_EQUAL]
         ]);
     }
 
@@ -1853,7 +1853,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                     $value = $value['_ids'];
                 }
 
-                return Validation::numElements($value, Validation::COMPARE_GREATER_THAN_OR_EQUAL_TO, $count);
+                return Validation::numElements($value, Validation::COMPARE_GREATER_OR_EQUAL, $count);
             }
         ]);
     }
@@ -1880,7 +1880,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                     $value = $value['_ids'];
                 }
 
-                return Validation::numElements($value, Validation::COMPARE_LESS_THAN_OR_EQUAL_TO, $count);
+                return Validation::numElements($value, Validation::COMPARE_LESS_OR_EQUAL, $count);
             }
         ]);
     }
