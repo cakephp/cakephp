@@ -970,8 +970,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * If both fields have the exact same value the rule will pass.
      *
-     * @param mixed $field The field you want to apply the rule to.
-     * @param mixed $secondField The field you want to compare against.
+     * @param string $field The field you want to apply the rule to.
+     * @param string $secondField The field you want to compare against.
      * @param string|null $message The error message when the rule fails.
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
@@ -990,8 +990,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Add a rule to compare that two fields have different values.
      *
-     * @param mixed $field The field you want to apply the rule to.
-     * @param mixed $secondField The field you want to compare against.
+     * @param string $field The field you want to apply the rule to.
+     * @param string $secondField The field you want to compare against.
      * @param string|null $message The error message when the rule fails.
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
@@ -1011,8 +1011,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Add a rule to compare one field is equal to another.
      *
-     * @param mixed $field The field you want to apply the rule to.
-     * @param mixed $secondField The field you want to compare against.
+     * @param string $field The field you want to apply the rule to.
+     * @param string $secondField The field you want to compare against.
      * @param string|null $message The error message when the rule fails.
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
@@ -1032,8 +1032,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Add a rule to compare one field is not equal to another.
      *
-     * @param mixed $field The field you want to apply the rule to.
-     * @param mixed $secondField The field you want to compare against.
+     * @param string $field The field you want to apply the rule to.
+     * @param string $secondField The field you want to compare against.
      * @param string|null $message The error message when the rule fails.
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
@@ -1053,8 +1053,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Add a rule to compare one field is greater than another.
      *
-     * @param mixed $field The field you want to apply the rule to.
-     * @param mixed $secondField The field you want to compare against.
+     * @param string $field The field you want to apply the rule to.
+     * @param string $secondField The field you want to compare against.
      * @param string|null $message The error message when the rule fails.
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
@@ -1074,8 +1074,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Add a rule to compare one field is greater than or equal to another.
      *
-     * @param mixed $field The field you want to apply the rule to.
-     * @param mixed $secondField The field you want to compare against.
+     * @param string $field The field you want to apply the rule to.
+     * @param string $secondField The field you want to compare against.
      * @param string|null $message The error message when the rule fails.
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
@@ -1095,8 +1095,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Add a rule to compare one field is less than another.
      *
-     * @param mixed $field The field you want to apply the rule to.
-     * @param mixed $secondField The field you want to compare against.
+     * @param string $field The field you want to apply the rule to.
+     * @param string $secondField The field you want to compare against.
      * @param string|null $message The error message when the rule fails.
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
@@ -1116,8 +1116,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Add a rule to compare one field is less than or equal to another.
      *
-     * @param mixed $field The field you want to apply the rule to.
-     * @param mixed $secondField The field you want to compare against.
+     * @param string $field The field you want to apply the rule to.
+     * @param string $secondField The field you want to compare against.
      * @param string|null $message The error message when the rule fails.
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
