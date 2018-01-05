@@ -22,7 +22,7 @@ use Cake\Console\ConsoleIo;
 use Cake\Console\Exception\StopException;
 use Cake\Console\Shell;
 use Cake\Core\ConsoleApplicationInterface;
-use Cake\Event\EventManagerTrait;
+use Cake\Event\EventDispatcherTrait;
 use Cake\Utility\Inflector;
 use RuntimeException;
 
@@ -31,7 +31,7 @@ use RuntimeException;
  */
 class CommandRunner
 {
-    use EventManagerTrait;
+    use EventDispatcherTrait;
 
     /**
      * The application console commands are being run for.
