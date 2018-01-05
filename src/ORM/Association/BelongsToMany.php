@@ -784,7 +784,7 @@ class BelongsToMany extends Association
             // Saving the new linked entity failed, copy errors back into the
             // original entity if applicable and abort.
             if (!empty($options['atomic'])) {
-                $original[$k]->errors($entity->errors());
+                $original[$k]->setErrors($entity->getErrors());
             }
             if (!$saved) {
                 return false;
