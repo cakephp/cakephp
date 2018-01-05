@@ -22,6 +22,7 @@ use Cake\Console\ConsoleIo;
 use Cake\Console\Exception\StopException;
 use Cake\Console\Shell;
 use Cake\Core\ConsoleApplicationInterface;
+use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Utility\Inflector;
 use RuntimeException;
@@ -29,7 +30,7 @@ use RuntimeException;
 /**
  * Run CLI commands for the provided application.
  */
-class CommandRunner
+class CommandRunner implements EventDispatcherInterface
 {
     use EventDispatcherTrait;
 
