@@ -553,6 +553,12 @@ class PaginatorHelper extends Helper
         if (!empty($paging['scope'])) {
             $scope = $paging['scope'];
             $currentParams = $this->_config['options']['url'];
+
+            if (isset($url['#'])) {
+                $currentParams['#'] = $url['#'];
+                unset($url['#']);
+            }
+
             // Merge existing query parameters in the scope.
             if (isset($currentParams['?'][$scope]) && is_array($currentParams['?'][$scope])) {
                 $url += $currentParams['?'][$scope];
