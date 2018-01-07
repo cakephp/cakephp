@@ -910,6 +910,10 @@ class PaginatorHelperTest extends TestCase
         $result = $this->Paginator->generateUrl(['sort' => 'name']);
         $expected = '/posts/index?article%5Bpage%5D=3&amp;article%5Bsort%5D=name';
         $this->assertEquals($expected, $result);
+
+        $result = $this->Paginator->generateUrl(['#' => 'foo']);
+        $expected = '/posts/index?article%5Bpage%5D=3#foo';
+        $this->assertEquals($expected, $result);
     }
 
     /**
