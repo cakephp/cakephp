@@ -300,7 +300,7 @@ class Validation
         $operator = str_replace([' ', "\t", "\n", "\r", "\0", "\x0B"], '', strtolower($operator));
         switch ($operator) {
             case 'isgreater':
-                /**
+                /*
                  * @deprecated 3.6.0 Use Validation::COMPARE_GREATER instead.
                  */
                 deprecationWarning(sprintf($message, $operator, 'COMPARE_GREATER'));
@@ -311,7 +311,7 @@ class Validation
                 }
                 break;
             case 'isless':
-                /**
+                /*
                  * @deprecated 3.6.0 Use Validation::COMPARE_LESS instead.
                  */
                 deprecationWarning(sprintf($message, $operator, 'COMPARE_LESS'));
@@ -322,7 +322,7 @@ class Validation
                 }
                 break;
             case 'greaterorequal':
-                /**
+                /*
                  * @deprecated 3.6.0 Use Validation::COMPARE_GREATER_OR_EQUAL instead.
                  */
                 deprecationWarning(sprintf($message, $operator, 'COMPARE_GREATER_OR_EQUAL'));
@@ -333,7 +333,7 @@ class Validation
                 }
                 break;
             case 'lessorequal':
-                /**
+                /*
                  * @deprecated 3.6.0 Use Validation::COMPARE_LESS_OR_EQUAL instead.
                  */
                 deprecationWarning(sprintf($message, $operator, 'COMPARE_LESS_OR_EQUAL'));
@@ -344,7 +344,7 @@ class Validation
                 }
                 break;
             case 'equalto':
-                /**
+                /*
                  * @deprecated 3.6.0 Use Validation::COMPARE_EQUAL instead.
                  */
                 deprecationWarning(sprintf($message, $operator, 'COMPARE_EQUAL'));
@@ -355,7 +355,7 @@ class Validation
                 }
                 break;
             case 'notequal':
-                /**
+                /*
                  * @deprecated 3.6.0 Use Validation::COMPARE_NOT_EQUAL instead.
                  */
                 deprecationWarning(sprintf($message, $operator, 'COMPARE_NOT_EQUAL'));
