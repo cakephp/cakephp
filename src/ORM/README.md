@@ -32,7 +32,8 @@ ConnectionManager::setConfig('default', [
 	'database' => 'test',
 	'username' => 'root',
 	'password' => 'secret',
-	'cacheMetadata' => false // If set to `true` you need to install the optional "cakephp/cache" package.
+	'cacheMetadata' => true,
+	'quoteIdentifiers' => false,
 ]);
 ```
 
