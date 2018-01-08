@@ -191,6 +191,19 @@ class RouteTest extends TestCase
     public function testRouteCompileMixedPlaceholders()
     {
         $route = new Route(
+            '/images/{open/:id',
+            ['controller' => 'Images', 'action' => 'open']
+        );
+        $pattern = $route->compile();
+        $this->assertRegExp($pattern, '/images/{open/9', 'Need both {} to enable brace mode');
+        $result = $route->match([
+            'controller' => 'Images',
+            'action' => 'open',
+            'id' => 123,
+        ]);
+        $this->assertEquals('/images/{open/123', $result);
+
+        $route = new Route(
             '/fighters/{id}/move/{x}/:y',
             ['controller' => 'Fighters', 'action' => 'move'],
             ['id' => '\d+', 'x' => '\d+', 'pass' => ['id', 'x']]
