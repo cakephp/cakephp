@@ -300,48 +300,66 @@ class Validation
         $operator = str_replace([' ', "\t", "\n", "\r", "\0", "\x0B"], '', strtolower($operator));
         switch ($operator) {
             case 'isgreater':
+                /**
+                 * @deprecated 3.6.0 Use Validation::COMPARE_GREATER instead.
+                 */
                 deprecationWarning(sprintf($message, $operator, 'COMPARE_GREATER'));
-                // @deprecated 3.6.0 Use Validation::COMPARE_GREATER instead.
+                // no break
             case static::COMPARE_GREATER:
                 if ($check1 > $check2) {
                     return true;
                 }
                 break;
             case 'isless':
+                /**
+                 * @deprecated 3.6.0 Use Validation::COMPARE_LESS instead.
+                 */
                 deprecationWarning(sprintf($message, $operator, 'COMPARE_LESS'));
-                // @deprecated 3.6.0 Use Validation::COMPARE_LESS instead.
+                // no break
             case static::COMPARE_LESS:
                 if ($check1 < $check2) {
                     return true;
                 }
                 break;
             case 'greaterorequal':
+                /**
+                 * @deprecated 3.6.0 Use Validation::COMPARE_GREATER_OR_EQUAL instead.
+                 */
                 deprecationWarning(sprintf($message, $operator, 'COMPARE_GREATER_OR_EQUAL'));
-                // @deprecated 3.6.0 Use Validation::COMPARE_GREATER_OR_EQUAL instead.
+                // no break
             case static::COMPARE_GREATER_OR_EQUAL:
                 if ($check1 >= $check2) {
                     return true;
                 }
                 break;
             case 'lessorequal':
+                /**
+                 * @deprecated 3.6.0 Use Validation::COMPARE_LESS_OR_EQUAL instead.
+                 */
                 deprecationWarning(sprintf($message, $operator, 'COMPARE_LESS_OR_EQUAL'));
-                // @deprecated 3.6.0 Use Validation::COMPARE_LESS_OR_EQUAL instead.
+                // no break
             case static::COMPARE_LESS_OR_EQUAL:
                 if ($check1 <= $check2) {
                     return true;
                 }
                 break;
             case 'equalto':
+                /**
+                 * @deprecated 3.6.0 Use Validation::COMPARE_EQUAL instead.
+                 */
                 deprecationWarning(sprintf($message, $operator, 'COMPARE_EQUAL'));
-                // @deprecated 3.6.0 Use Validation::COMPARE_EQUAL instead.
+                // no break
             case static::COMPARE_EQUAL:
                 if ($check1 == $check2) {
                     return true;
                 }
                 break;
             case 'notequal':
+                /**
+                 * @deprecated 3.6.0 Use Validation::COMPARE_NOT_EQUAL instead.
+                 */
                 deprecationWarning(sprintf($message, $operator, 'COMPARE_NOT_EQUAL'));
-                // @deprecated 3.6.0 Use Validation::COMPARE_NOT_EQUAL instead.
+                // no break
             case static::COMPARE_NOT_EQUAL:
                 if ($check1 != $check2) {
                     return true;
