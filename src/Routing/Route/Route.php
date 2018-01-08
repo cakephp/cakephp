@@ -96,6 +96,13 @@ class Route
     protected $middleware = [];
 
     /**
+     * Track whether or not brace keys `{var}` were used.
+     *
+     * @var bool
+     */
+    protected $braceKeys = false;
+
+    /**
      * Valid HTTP methods.
      *
      * @var array
@@ -315,15 +322,21 @@ class Route
         $names = $routeParams = [];
         $parsed = preg_quote($this->template, '#');
 
-        preg_match_all('/:([a-z0-9-_]+(?<![-_]))/i', $route, $namedElements);
+        if (strpos($route, '{') !== false) {
+            preg_match_all('/\{([a-z0-9-_]+)\}/i', $route, $namedElements);
+            $this->braceKeys = true;
+        } else {
+            preg_match_all('/:([a-z0-9-_]+(?<![-_]))/i', $route, $namedElements);
+            $this->braceKeys = false;
+        }
         foreach ($namedElements[1] as $i => $name) {
-            $search = '\\' . $namedElements[0][$i];
+            $search = preg_quote($namedElements[0][$i]);
             if (isset($this->options[$name])) {
                 $option = null;
                 if ($name !== 'plugin' && array_key_exists($name, $this->defaults)) {
                     $option = '?';
                 }
-                $slashParam = '/\\' . $namedElements[0][$i];
+                $slashParam = '/' . $search;
                 if (strpos($parsed, $slashParam) !== false) {
                     $routeParams[$slashParam] = '(?:/(?P<' . $name . '>' . $this->options[$name] . ')' . $option . ')' . $option;
                 } else {
@@ -788,7 +801,11 @@ class Route
             } elseif (strpos($out, $key) != strlen($out) - strlen($key)) {
                 $key .= '/';
             }
-            $search[] = ':' . $key;
+            if ($this->braceKeys) {
+                $search[] = "{{$key}}";
+            } else {
+                $search[] = ':' . $key;
+            }
             $replace[] = $string;
         }
 

@@ -122,7 +122,7 @@ class RouteTest extends TestCase
      *
      * @return void
      */
-    public function testRouteBuildingSmallPlaceholders()
+    public function testRouteCompileSmallPlaceholders()
     {
         $route = new Route(
             '/fighters/:id/move/:x/:y',
@@ -140,6 +140,72 @@ class RouteTest extends TestCase
             'y' => 42
         ]);
         $this->assertEquals('/fighters/123/move/8/42', $result);
+    }
+
+    /**
+     * Test route compile with brace format.
+     *
+     * @return void
+     */
+    public function testRouteCompileBraces()
+    {
+        $route = new Route(
+            '/fighters/{id}/move/{x}/{y}',
+            ['controller' => 'Fighters', 'action' => 'move'],
+            ['id' => '\d+', 'x' => '\d+', 'y' => '\d+', 'pass' => ['id', 'x', 'y']]
+        );
+        $pattern = $route->compile();
+        $this->assertRegExp($pattern, '/fighters/123/move/8/42');
+
+        $result = $route->match([
+            'controller' => 'Fighters',
+            'action' => 'move',
+            'id' => 123,
+            'x' => 8,
+            'y' => 42
+        ]);
+        $this->assertEquals('/fighters/123/move/8/42', $result);
+
+        $route = new Route(
+            '/images/{id}/{x}x{y}',
+            ['controller' => 'Images', 'action' => 'view']
+        );
+        $pattern = $route->compile();
+        $this->assertRegExp($pattern, '/images/123/640x480');
+
+        $result = $route->match([
+            'controller' => 'Images',
+            'action' => 'view',
+            'id' => 123,
+            'x' => 8,
+            'y' => 42
+        ]);
+        $this->assertEquals('/images/123/8x42', $result);
+    }
+
+    /**
+     * Test route compile with mixed placeholder types brace format.
+     *
+     * @return void
+     */
+    public function testRouteCompileMixedPlaceholders()
+    {
+        $route = new Route(
+            '/fighters/{id}/move/{x}/:y',
+            ['controller' => 'Fighters', 'action' => 'move'],
+            ['id' => '\d+', 'x' => '\d+', 'pass' => ['id', 'x']]
+        );
+        $pattern = $route->compile();
+        $this->assertRegExp($pattern, '/fighters/123/move/8/:y');
+
+        $result = $route->match([
+            'controller' => 'Fighters',
+            'action' => 'move',
+            'id' => 123,
+            'x' => 8,
+            'y' => 9
+        ]);
+        $this->assertEquals('/fighters/123/move/8/:y?y=9', $result);
     }
 
     /**
