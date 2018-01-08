@@ -841,45 +841,43 @@ class ValidationTest extends TestCase
     public function testComparison()
     {
         $this->assertFalse(Validation::comparison(7, null, 6));
-        $this->assertTrue(Validation::comparison(7, 'is greater', 6));
         $this->assertTrue(Validation::comparison(7, Validation::COMPARE_GREATER, 6));
-        $this->assertTrue(Validation::comparison(6, 'is less', 7));
         $this->assertTrue(Validation::comparison(6, Validation::COMPARE_LESS, 7));
-        $this->assertTrue(Validation::comparison(7, 'greater or equal', 7));
         $this->assertTrue(Validation::comparison(7, Validation::COMPARE_GREATER_OR_EQUAL, 7));
-        $this->assertTrue(Validation::comparison(7, 'greater or equal', 6));
         $this->assertTrue(Validation::comparison(7, Validation::COMPARE_GREATER_OR_EQUAL, 6));
-        $this->assertTrue(Validation::comparison(6, 'less or equal', 7));
         $this->assertTrue(Validation::comparison(6, Validation::COMPARE_LESS_OR_EQUAL, 7));
-        $this->assertTrue(Validation::comparison(7, 'equal to', 7));
         $this->assertTrue(Validation::comparison(7, Validation::COMPARE_EQUAL, 7));
-        $this->assertTrue(Validation::comparison(7, 'not equal', 6));
         $this->assertTrue(Validation::comparison(7, Validation::COMPARE_NOT_EQUAL, 6));
-        $this->assertTrue(Validation::comparison(7, 'same as', 7));
         $this->assertTrue(Validation::comparison(7, Validation::COMPARE_SAME, 7));
-        $this->assertTrue(Validation::comparison(7, 'not same as', '7'));
         $this->assertTrue(Validation::comparison(7, Validation::COMPARE_NOT_SAME, '7'));
-        $this->assertFalse(Validation::comparison(6, 'is greater', 7));
         $this->assertFalse(Validation::comparison(6, Validation::COMPARE_GREATER, 7));
-        $this->assertFalse(Validation::comparison(7, 'is less', 6));
         $this->assertFalse(Validation::comparison(7, Validation::COMPARE_LESS, 6));
-        $this->assertFalse(Validation::comparison(6, 'greater or equal', 7));
         $this->assertFalse(Validation::comparison(6, Validation::COMPARE_GREATER_OR_EQUAL, 7));
-        $this->assertFalse(Validation::comparison(6, 'greater or equal', 7));
         $this->assertFalse(Validation::comparison(6, Validation::COMPARE_GREATER_OR_EQUAL, 7));
-        $this->assertFalse(Validation::comparison(7, 'less or equal', 6));
         $this->assertFalse(Validation::comparison(7, Validation::COMPARE_LESS_OR_EQUAL, 6));
-        $this->assertFalse(Validation::comparison(7, 'equal to', 6));
         $this->assertFalse(Validation::comparison(7, Validation::COMPARE_EQUAL, 6));
-        $this->assertFalse(Validation::comparison(7, 'not equal', 7));
         $this->assertFalse(Validation::comparison(7, Validation::COMPARE_NOT_EQUAL, 7));
-        $this->assertFalse(Validation::comparison(7, 'same as', '7'));
         $this->assertFalse(Validation::comparison(7, Validation::COMPARE_SAME, '7'));
-        $this->assertFalse(Validation::comparison(7, 'not same as', 7));
         $this->assertFalse(Validation::comparison(7, Validation::COMPARE_NOT_SAME, 7));
-
         $this->assertTrue(Validation::comparison('6.5', Validation::COMPARE_NOT_EQUAL, 6));
         $this->assertTrue(Validation::comparison('6.5', Validation::COMPARE_LESS, 7));
+
+        $this->deprecated(function () {
+            $this->assertTrue(Validation::comparison(7, 'is greater', 6));
+            $this->assertTrue(Validation::comparison(6, 'is less', 7));
+            $this->assertTrue(Validation::comparison(7, 'greater or equal', 7));
+            $this->assertTrue(Validation::comparison(7, 'greater or equal', 6));
+            $this->assertTrue(Validation::comparison(6, 'less or equal', 7));
+            $this->assertTrue(Validation::comparison(7, 'equal to', 7));
+            $this->assertTrue(Validation::comparison(7, 'not equal', 6));
+            $this->assertFalse(Validation::comparison(6, 'is greater', 7));
+            $this->assertFalse(Validation::comparison(7, 'is less', 6));
+            $this->assertFalse(Validation::comparison(6, 'greater or equal', 7));
+            $this->assertFalse(Validation::comparison(6, 'greater or equal', 7));
+            $this->assertFalse(Validation::comparison(7, 'less or equal', 6));
+            $this->assertFalse(Validation::comparison(7, 'equal to', 6));
+            $this->assertFalse(Validation::comparison(7, 'not equal', 7));
+        });
     }
 
     /**
@@ -2602,13 +2600,13 @@ class ValidationTest extends TestCase
     {
         $image = TEST_APP . 'webroot/img/cake.power.gif';
         $this->assertTrue(Validation::fileSize($image, Validation::COMPARE_LESS, 1024));
-        $this->assertTrue(Validation::fileSize(['tmp_name' => $image], 'isless', 1024));
+        $this->assertTrue(Validation::fileSize(['tmp_name' => $image], Validation::COMPARE_LESS, 1024));
         $this->assertTrue(Validation::fileSize($image, Validation::COMPARE_LESS, '1KB'));
         $this->assertTrue(Validation::fileSize($image, Validation::COMPARE_GREATER_OR_EQUAL, 200));
         $this->assertTrue(Validation::fileSize($image, Validation::COMPARE_EQUAL, 201));
         $this->assertTrue(Validation::fileSize($image, Validation::COMPARE_EQUAL, '201B'));
 
-        $this->assertFalse(Validation::fileSize($image, 'isgreater', 1024));
+        $this->assertFalse(Validation::fileSize($image, Validation::COMPARE_GREATER, 1024));
         $this->assertFalse(Validation::fileSize(['tmp_name' => $image], Validation::COMPARE_GREATER, '1KB'));
     }
 

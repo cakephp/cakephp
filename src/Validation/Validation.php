@@ -295,51 +295,57 @@ class Validation
             return false;
         }
 
+        $message = 'Operator `%s` is deprecated, use constant `Validation::%s` instead.';
+
         $operator = str_replace([' ', "\t", "\n", "\r", "\0", "\x0B"], '', strtolower($operator));
         switch ($operator) {
             case 'isgreater':
+                deprecationWarning(sprintf($message, $operator, 'COMPARE_GREATER'));
             case static::COMPARE_GREATER:
                 if ($check1 > $check2) {
                     return true;
                 }
                 break;
             case 'isless':
+                deprecationWarning(sprintf($message, $operator, 'COMPARE_LESS'));
             case static::COMPARE_LESS:
                 if ($check1 < $check2) {
                     return true;
                 }
                 break;
             case 'greaterorequal':
+                deprecationWarning(sprintf($message, $operator, 'COMPARE_GREATER_OR_EQUAL'));
             case static::COMPARE_GREATER_OR_EQUAL:
                 if ($check1 >= $check2) {
                     return true;
                 }
                 break;
             case 'lessorequal':
+                deprecationWarning(sprintf($message, $operator, 'COMPARE_LESS_OR_EQUAL'));
             case static::COMPARE_LESS_OR_EQUAL:
                 if ($check1 <= $check2) {
                     return true;
                 }
                 break;
             case 'equalto':
+                deprecationWarning(sprintf($message, $operator, 'COMPARE_EQUAL'));
             case static::COMPARE_EQUAL:
                 if ($check1 == $check2) {
                     return true;
                 }
                 break;
             case 'notequal':
+                deprecationWarning(sprintf($message, $operator, 'COMPARE_NOT_EQUAL'));
             case static::COMPARE_NOT_EQUAL:
                 if ($check1 != $check2) {
                     return true;
                 }
                 break;
-            case 'sameas':
             case static::COMPARE_SAME:
                 if ($check1 === $check2) {
                     return true;
                 }
                 break;
-            case 'notsameas':
             case static::COMPARE_NOT_SAME:
                 if ($check1 !== $check2) {
                     return true;
