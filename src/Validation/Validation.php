@@ -301,6 +301,7 @@ class Validation
         switch ($operator) {
             case 'isgreater':
                 deprecationWarning(sprintf($message, $operator, 'COMPARE_GREATER'));
+                // @deprecated 3.6.0 Use Validation::COMPARE_GREATER instead.
             case static::COMPARE_GREATER:
                 if ($check1 > $check2) {
                     return true;
@@ -308,6 +309,7 @@ class Validation
                 break;
             case 'isless':
                 deprecationWarning(sprintf($message, $operator, 'COMPARE_LESS'));
+                // @deprecated 3.6.0 Use Validation::COMPARE_LESS instead.
             case static::COMPARE_LESS:
                 if ($check1 < $check2) {
                     return true;
@@ -315,6 +317,7 @@ class Validation
                 break;
             case 'greaterorequal':
                 deprecationWarning(sprintf($message, $operator, 'COMPARE_GREATER_OR_EQUAL'));
+                // @deprecated 3.6.0 Use Validation::COMPARE_GREATER_OR_EQUAL instead.
             case static::COMPARE_GREATER_OR_EQUAL:
                 if ($check1 >= $check2) {
                     return true;
@@ -322,6 +325,7 @@ class Validation
                 break;
             case 'lessorequal':
                 deprecationWarning(sprintf($message, $operator, 'COMPARE_LESS_OR_EQUAL'));
+                // @deprecated 3.6.0 Use Validation::COMPARE_LESS_OR_EQUAL instead.
             case static::COMPARE_LESS_OR_EQUAL:
                 if ($check1 <= $check2) {
                     return true;
@@ -329,6 +333,7 @@ class Validation
                 break;
             case 'equalto':
                 deprecationWarning(sprintf($message, $operator, 'COMPARE_EQUAL'));
+                // @deprecated 3.6.0 Use Validation::COMPARE_EQUAL instead.
             case static::COMPARE_EQUAL:
                 if ($check1 == $check2) {
                     return true;
@@ -336,6 +341,7 @@ class Validation
                 break;
             case 'notequal':
                 deprecationWarning(sprintf($message, $operator, 'COMPARE_NOT_EQUAL'));
+                // @deprecated 3.6.0 Use Validation::COMPARE_NOT_EQUAL instead.
             case static::COMPARE_NOT_EQUAL:
                 if ($check1 != $check2) {
                     return true;
