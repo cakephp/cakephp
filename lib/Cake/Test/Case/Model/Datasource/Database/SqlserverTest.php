@@ -383,6 +383,10 @@ class SqlserverTest extends CakeTestCase {
 		$result = $this->db->fields($this->model, null, 'DISTINCT Car.country_code');
 		$expected = array('DISTINCT [Car].[country_code] AS [Car__country_code]');
 		$this->assertEquals($expected, $result);
+
+		$result = $this->db->fields($this->model, null, 'COUNT(DISTINCT Car.country_code)');
+		$expected = array('COUNT(DISTINCT [Car].[country_code]) AS [Car__country_code]');
+		$this->assertEquals($expected, $result);
 	}
 
 /**
