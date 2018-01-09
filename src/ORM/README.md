@@ -115,6 +115,22 @@ $article = $articles->get(2);
 $articles->delete($article);
 ```
 
+## Meta Data Cache
+
+It is recommended to enable meta data cache for production systems to avoid performance issues.
+For e.g. file system strategy your bootstrap file could look like this:
+```php
+use Cake\Cache\Engine\FileEngine;
+
+$cacheConfig = [
+   'className' => FileEngine::class,
+   'duration' => '+1 year',
+   'serialize' => true,
+   'prefix'    => 'orm_',
+],
+Cache::setConfig('_cake_model_', $cacheConfig);
+```
+
 ## Additional Documentation
 
 Consult [the CakePHP ORM documentation](https://book.cakephp.org/3.0/en/orm.html)
