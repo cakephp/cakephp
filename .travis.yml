@@ -50,6 +50,7 @@ matrix:
 
 
 before_script:
+  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.2" ]] ; then pear config-set preferred_state snapshot && yes "" | pecl install mcrypt ; fi
   - composer require "phpunit/phpunit=$PHPUNIT"
   - echo "require_once 'vendors/autoload.php';" >> app/Config/bootstrap.php
   - sudo locale-gen de_DE
@@ -62,7 +63,6 @@ before_script:
   - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE SCHEMA test3;' -U postgres -d cakephp_test; fi"
   - chmod -R 777 ./app/tmp
   - if [[ ${TRAVIS_PHP_VERSION:0:3} == "5.3" ]] ; then pecl install timezonedb ; fi
-  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.2" ]] ; then pecl install mcrypt ; fi
   - sh -c "if [ '$PHPCS' = '1' ]; then composer require 'cakephp/cakephp-codesniffer:1.*'; fi"
   - sh -c "if [ '$PHPCS' = '1' ]; then vendors/bin/phpcs --config-set installed_paths vendors/cakephp/cakephp-codesniffer; fi"
   - echo "extension = memcached.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
