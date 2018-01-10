@@ -78,6 +78,65 @@ class RouteCollectionTest extends TestCase
         $routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
         $routes->connect('/', ['controller' => 'Articles']);
         $routes->connect('/:id', ['controller' => 'Articles', 'action' => 'view']);
+        $routes->connect('/media/search/*', ['controller' => 'Media', 'action' => 'search']);
+
+        $result = $this->collection->parse('/b/');
+        $expected = [
+            'controller' => 'Articles',
+            'action' => 'index',
+            'pass' => [],
+            'plugin' => null,
+            'key' => 'value',
+            '_matchedRoute' => '/b',
+        ];
+        $this->assertEquals($expected, $result);
+
+        $result = $this->collection->parse('/b/the-thing?one=two');
+        $expected = [
+            'controller' => 'Articles',
+            'action' => 'view',
+            'id' => 'the-thing',
+            'pass' => [],
+            'plugin' => null,
+            'key' => 'value',
+            '?' => ['one' => 'two'],
+            '_matchedRoute' => '/b/:id',
+        ];
+        $this->assertEquals($expected, $result);
+
+        $result = $this->collection->parse('/b/media/search');
+        $expected = [
+            'key' => 'value',
+            'pass' => [],
+            'plugin' => null,
+            'controller' => 'Media',
+            'action' => 'search',
+            '_matchedRoute' => '/b/media/search/*',
+        ];
+        $this->assertEquals($expected, $result);
+
+        $result = $this->collection->parse('/b/media/search/thing');
+        $expected = [
+            'key' => 'value',
+            'pass' => ['thing'],
+            'plugin' => null,
+            'controller' => 'Media',
+            'action' => 'search',
+            '_matchedRoute' => '/b/media/search/*',
+        ];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test parsing routes with and without _name.
+     *
+     * @return void
+     */
+    public function testParseWithNameParameter()
+    {
+        $routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
+        $routes->connect('/', ['controller' => 'Articles']);
+        $routes->connect('/:id', ['controller' => 'Articles', 'action' => 'view']);
         $routes->connect('/media/search/*', ['controller' => 'Media', 'action' => 'search'], ['_name' => 'media_search']);
 
         $result = $this->collection->parse('/b/');
