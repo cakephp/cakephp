@@ -932,13 +932,13 @@ class TreeBehavior extends Behavior
      */
     protected function _scope($query)
     {
-        $config = $this->getConfig();
+        $scope = $this->getConfig('scope');
 
-        if (is_array($config['scope'])) {
-            return $query->where($config['scope']);
+        if (is_array($scope)) {
+            return $query->where($scope);
         }
-        if (is_callable($config['scope'])) {
-            return $config['scope']($query);
+        if (is_callable($scope)) {
+            return $scope($query);
         }
 
         return $query;

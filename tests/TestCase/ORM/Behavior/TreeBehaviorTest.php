@@ -197,7 +197,7 @@ class TreeBehaviorTest extends TestCase
      *
      * @return void
      */
-    public function testCallableScoping()
+    public function testScopeCallable()
     {
         $table = TableRegistry::get('MenuLinkTrees');
         $table->addBehavior('Tree', [
@@ -208,7 +208,6 @@ class TreeBehaviorTest extends TestCase
         $count = $table->childCount($table->get(1), false);
         $this->assertEquals(4, $count);
     }
-
     /**
      * Tests the find('children') method
      *
@@ -230,6 +229,21 @@ class TreeBehaviorTest extends TestCase
         $this->assertCount(0, $nodes->extract('id')->toArray());
 
         // direct children
+        $nodes = $table->find('children', ['for' => 1, 'direct' => true])->all();
+        $this->assertEquals([2, 3], $nodes->extract('id')->toArray());
+    }
+
+    /**
+     * Tests the find('children') plus scope=null
+     *
+     * @return void
+     */
+    public function testScopeNull()
+    {
+        $table = TableRegistry::get('MenuLinkTrees');
+        $table->addBehavior('Tree');
+        $table->behaviors()->get('Tree')->setConfig('scope', null);
+
         $nodes = $table->find('children', ['for' => 1, 'direct' => true])->all();
         $this->assertEquals([2, 3], $nodes->extract('id')->toArray());
     }
