@@ -1264,6 +1264,32 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function find($type = 'all', $options = [])
     {
+        $deprecatedKeys = [
+            // 'fields', // 24 error warnings
+            // 'conditions', // 77 errors warnings, core seems to rely on thi...
+            'join', // 0 error warnings
+            // 'order', // 19 error warnings
+            // 'limit', // 21 error warnings
+            'offset', // 0 error warnings
+            // 'group', // 1 error warning in cakephp/src/Controller/Component/PaginatorComponent.php, line: 201
+            'having', // 0 error warnings
+            // 'contain', // 83 error warnings, core seems to rely on this...
+            // 'page', // 17 error warnings
+        ];
+
+        $deprecatedKeyWarns = [];
+        foreach ($deprecatedKeys as $key) {
+            if (array_key_exists($key, $options)) {
+                $deprecatedKeyWarns[] = $key;
+            }
+        }
+        if ($deprecatedKeyWarns !== []) {
+            deprecationWarning(
+                '2.x-style finder options will be removed in 4.0, but you supplied following 2.x-style finder options: '
+                . join(',', $deprecatedKeyWarns)
+            , 3);
+        }
+
         $query = $this->query();
         $query->select();
 
