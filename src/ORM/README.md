@@ -32,7 +32,8 @@ ConnectionManager::setConfig('default', [
 	'database' => 'test',
 	'username' => 'root',
 	'password' => 'secret',
-	'cacheMetadata' => false // If set to `true` you need to install the optional "cakephp/cache" package.
+	'cacheMetadata' => true,
+	'quoteIdentifiers' => false,
 ]);
 ```
 
@@ -112,6 +113,22 @@ Once you have a reference to an entity, you can use it to delete data:
 $articles = TableRegistry::get('Articles');
 $article = $articles->get(2);
 $articles->delete($article);
+```
+
+## Meta Data Cache
+
+It is recommended to enable meta data cache for production systems to avoid performance issues.
+For e.g. file system strategy your bootstrap file could look like this:
+```php
+use Cake\Cache\Engine\FileEngine;
+
+$cacheConfig = [
+   'className' => FileEngine::class,
+   'duration' => '+1 year',
+   'serialize' => true,
+   'prefix'    => 'orm_',
+],
+Cache::setConfig('_cake_model_', $cacheConfig);
 ```
 
 ## Additional Documentation
