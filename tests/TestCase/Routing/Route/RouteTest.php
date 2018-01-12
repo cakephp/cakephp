@@ -154,8 +154,7 @@ class RouteTest extends TestCase
             ['controller' => 'Fighters', 'action' => 'move'],
             ['id' => '\d+', 'x' => '\d+', 'y' => '\d+', 'pass' => ['id', 'x', 'y']]
         );
-        $pattern = $route->compile();
-        $this->assertRegExp($pattern, '/fighters/123/move/8/42');
+        $this->assertRegExp($route->compile(), '/fighters/123/move/8/42');
 
         $result = $route->match([
             'controller' => 'Fighters',
@@ -170,8 +169,7 @@ class RouteTest extends TestCase
             '/images/{id}/{x}x{y}',
             ['controller' => 'Images', 'action' => 'view']
         );
-        $pattern = $route->compile();
-        $this->assertRegExp($pattern, '/images/123/640x480');
+        $this->assertRegExp($route->compile(), '/images/123/640x480');
 
         $result = $route->match([
             'controller' => 'Images',
@@ -181,6 +179,50 @@ class RouteTest extends TestCase
             'y' => 42
         ]);
         $this->assertEquals('/images/123/8x42', $result);
+    }
+
+    /**
+     * Test route compile with brace format.
+     *
+     * @return void
+     */
+    public function testRouteCompileBracesVariableName()
+    {
+        $route = new Route(
+            '/fighters/{0id}',
+            ['controller' => 'Fighters', 'action' => 'move']
+        );
+        $pattern = $route->compile();
+        $this->assertNotRegExp($route->compile(), '/fighters/123', 'Placeholders must start with letter');
+
+        $route = new Route('/fighters/{Id}', ['controller' => 'Fighters', 'action' => 'move']);
+        $this->assertRegExp($route->compile(), '/fighters/123');
+
+        $route = new Route('/fighters/{i_d}', ['controller' => 'Fighters', 'action' => 'move']);
+        $this->assertRegExp($route->compile(), '/fighters/123');
+
+        $route = new Route('/fighters/{id99}', ['controller' => 'Fighters', 'action' => 'move']);
+        $this->assertRegExp($route->compile(), '/fighters/123');
+    }
+
+    /**
+     * Test route compile with brace format.
+     *
+     * @return void
+     */
+    public function testRouteCompileBracesInvalid()
+    {
+        $route = new Route(
+            '/fighters/{ id }',
+            ['controller' => 'Fighters', 'action' => 'move']
+        );
+        $this->assertNotRegExp($route->compile(), '/fighters/123', 'no spaces in placeholder');
+
+        $route = new Route(
+            '/fighters/{i d}',
+            ['controller' => 'Fighters', 'action' => 'move']
+        );
+        $this->assertNotRegExp($route->compile(), '/fighters/123', 'no spaces in placeholder');
     }
 
     /**

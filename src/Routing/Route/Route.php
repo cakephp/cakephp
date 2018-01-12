@@ -323,7 +323,7 @@ class Route
         $parsed = preg_quote($this->template, '#');
 
         if (strpos($route, '{') !== false && strpos($route, '}') !== false) {
-            preg_match_all('/\{([a-z0-9-_]+)\}/i', $route, $namedElements);
+            preg_match_all('/\{([a-z][a-z0-9-_]*)\}/i', $route, $namedElements);
             $this->braceKeys = true;
         } else {
             preg_match_all('/:([a-z0-9-_]+(?<![-_]))/i', $route, $namedElements);
