@@ -488,6 +488,11 @@ class Route
             $route['_ext'] = $ext;
         }
 
+        // pass the name if set
+        if (isset($this->options['_name'])) {
+            $route['_name'] = $this->options['_name'];
+        }
+
         // restructure 'pass' key route params
         if (isset($this->options['pass'])) {
             $j = count($this->options['pass']);

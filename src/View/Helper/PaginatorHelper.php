@@ -536,7 +536,7 @@ class PaginatorHelper extends Helper
         }
 
         $url = array_filter($url, function ($value) {
-            return ($value || is_numeric($value));
+            return ($value || is_numeric($value) || $value === false);
         });
         $url = array_merge($url, $options);
 
@@ -553,6 +553,12 @@ class PaginatorHelper extends Helper
         if (!empty($paging['scope'])) {
             $scope = $paging['scope'];
             $currentParams = $this->_config['options']['url'];
+
+            if (isset($url['#'])) {
+                $currentParams['#'] = $url['#'];
+                unset($url['#']);
+            }
+
             // Merge existing query parameters in the scope.
             if (isset($currentParams['?'][$scope]) && is_array($currentParams['?'][$scope])) {
                 $url += $currentParams['?'][$scope];
