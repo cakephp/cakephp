@@ -328,7 +328,7 @@ class ControllerTask extends BakeTask {
  * @param array $components Components to use in controller
  * @return string Baked controller
  */
-	public function bake($controllerName, $actions = '', $helpers = null, $components = null) {
+	public function bake($controllerName, $actions = '', $helpers = array(), $components = array()) {
 		$this->out("\n" . __d('cake_console', 'Baking controller class for %s...', $controllerName), 1, Shell::QUIET);
 
 		$isScaffold = ($actions === 'scaffold') ? true : false;
