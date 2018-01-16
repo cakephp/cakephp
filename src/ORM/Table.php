@@ -936,7 +936,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Returns an association object configured for the specified alias if any.
      *
-     * @deprecated 3.6.0 Use getAssociation() instead.
+     * @deprecated 3.6.0 Use getAssociation() and Table::hasAssocation() instead.
      * @param string $name the alias used for the association.
      * @return \Cake\ORM\Association|null Either the association or null.
      */
@@ -948,7 +948,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
-     * Returns an association object configured for the specified alias if any.
+     * Returns an association object configured for the specified alias.
      *
      * The name argument also supports dot syntax to access deeper associations.
      *
