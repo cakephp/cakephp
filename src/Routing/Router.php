@@ -16,8 +16,8 @@ namespace Cake\Routing;
 
 use Cake\Core\Configure;
 use Cake\Http\ServerRequest;
-use Cake\Utility\Inflector;
 use Cake\Routing\Exception\MissingRouteException;
+use Cake\Utility\Inflector;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
