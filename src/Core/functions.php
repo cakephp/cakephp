@@ -279,11 +279,11 @@ if (!function_exists('deprecationWarning')) {
      * Helper method for outputting deprecation warnings
      *
      * @param string $message The message to output as a deprecation warning.
-     * @param int $stackFrame The stack frame to include in the error. Defaults to 2
+     * @param int $stackFrame The stack frame to include in the error. Defaults to 1
      *   as that should point to application/plugin code.
      * @return void
      */
-    function deprecationWarning($message, $stackFrame = 2)
+    function deprecationWarning($message, $stackFrame = 1)
     {
         if (!(error_reporting() & E_USER_DEPRECATED)) {
             return;
