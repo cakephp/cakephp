@@ -130,6 +130,19 @@ class RouterTest extends TestCase
     }
 
     /**
+     * testRouteUrlOrNull method
+     *
+     * @return void
+     */
+    public function testRouteUrlOrNull()
+    {
+        Router::connect('/:controller/:action', ['controller' => 'posts']);
+        $this->assertEquals(Router::urlOrNull(['action' => 'view']), '/view');
+
+        $this->assertEquals(Router::urlOrNull(['action' => 'view', 'controller' => 'users', 'plugin' => 'test']), null);
+    }
+
+    /**
      * testMapResources method
      *
      * @return void

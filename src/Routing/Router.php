@@ -683,6 +683,54 @@ class Router
     }
 
     /**
+     * Finds URL for specified action.
+     *
+     * Returns a URL pointing to a combination of controller and action.
+     *
+     * If the url doesn't exist returns null
+     *
+     * ### Usage
+     *
+     * - `Router::url('/posts/edit/1');` Returns the string with the base dir prepended.
+     *   This usage does not use reverser routing.
+     * - `Router::url(['controller' => 'posts', 'action' => 'edit']);` Returns a URL
+     *   generated through reverse routing.
+     * - `Router::url(['_name' => 'custom-name', ...]);` Returns a URL generated
+     *   through reverse routing. This form allows you to leverage named routes.
+     *
+     * There are a few 'special' parameters that can change the final URL string that is generated
+     *
+     * - `_base` - Set to false to remove the base path from the generated URL. If your application
+     *   is not in the root directory, this can be used to generate URLs that are 'cake relative'.
+     *   cake relative URLs are required when using requestAction.
+     * - `_scheme` - Set to create links on different schemes like `webcal` or `ftp`. Defaults
+     *   to the current scheme.
+     * - `_host` - Set the host to use for the link. Defaults to the current host.
+     * - `_port` - Set the port if you need to create links on non-standard ports.
+     * - `_full` - If true output of `Router::fullBaseUrl()` will be prepended to generated URLs.
+     * - `#` - Allows you to set URL hash fragments.
+     * - `_ssl` - Set to true to convert the generated URL to https, or false to force http.
+     * - `_name` - Name of route. If you have setup named routes you can use this key
+     *   to specify it.
+     *
+     * @param string|array|null $url An array specifying any of the following:
+     *   'controller', 'action', 'plugin' additionally, you can provide routed
+     *   elements or query string parameters. If string it can be name any valid url
+     *   string.
+     * @param bool $full If true, the full base URL will be prepended to the result.
+     *   Default is false.
+     * @return string Full translated URL with base path or null if url does not exist
+     */
+    public static function urlOrNull($url = null, $full = false)
+    {
+        try {
+            return static::url($url, $full);
+        } catch (\Cake\Routing\Exception\MissingRouteException $e) {
+            return null;
+        }
+    }
+
+    /**
      * Sets the full base URL that will be used as a prefix for generating
      * fully qualified URLs for this application. If not parameters are passed,
      * the currently configured value is returned.
