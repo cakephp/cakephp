@@ -923,6 +923,17 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
+     * Get a behavior from the registry.
+     *
+     * @param string $name The behavior alias to get from the registry.
+     * @return \Cake\ORM\Behavior|null
+     */
+    public function getBehavior($name)
+    {
+        return $this->_behaviors->get($name);
+    }
+
+    /**
      * Check if a behavior with the given alias has been loaded.
      *
      * @param string $name The behavior alias to check.
