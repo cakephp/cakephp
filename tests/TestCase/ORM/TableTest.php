@@ -1787,6 +1787,21 @@ class TableTest extends TestCase
     }
 
     /**
+     * Test that the getBehavior() method retrieves a behavior from the table registry.
+     *
+     * @return void
+     */
+    public function testGetBehavior()
+    {
+        $table = new Table(['table' => 'comments']);
+        $table->addBehavior('Sluggable');
+
+        $this->assertSame($table->behaviors()->get('Sluggable'), $table->getBehavior('Sluggable'));
+        $this->assertFalse($table->hasBehavior('FakeBehavior'));
+        $this->assertNull($table->getBehavior('FakeBehavior'));
+    }
+
+    /**
      * Ensure exceptions are raised on missing behaviors.
      *
      */
