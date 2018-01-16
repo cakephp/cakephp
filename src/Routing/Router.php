@@ -17,6 +17,7 @@ namespace Cake\Routing;
 use Cake\Core\Configure;
 use Cake\Http\ServerRequest;
 use Cake\Utility\Inflector;
+use Cake\Routing\Exception\MissingRouteException;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -725,7 +726,7 @@ class Router
     {
         try {
             return static::url($url, $full);
-        } catch (\Cake\Routing\Exception\MissingRouteException $e) {
+        } catch (MissingRouteException $e) {
             return null;
         }
     }

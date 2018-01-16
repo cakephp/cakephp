@@ -139,7 +139,7 @@ class RouterTest extends TestCase
         Router::connect('/:controller/:action', ['controller' => 'posts']);
         $this->assertEquals(Router::urlOrNull(['action' => 'view']), '/view');
 
-        $this->assertEquals(Router::urlOrNull(['action' => 'view', 'controller' => 'users', 'plugin' => 'test']), null);
+        $this->assertNull(Router::urlOrNull(['action' => 'view', 'controller' => 'users', 'plugin' => 'test']));
     }
 
     /**
