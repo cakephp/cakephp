@@ -41,7 +41,7 @@ matrix:
 
     - php: 7.2
       env: DB=mysql PHPUNIT=5.7.19
-  allow_failures:
+  exclude:
     - php: 7.2
       env: DB=mysql
 
