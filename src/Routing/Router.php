@@ -692,27 +692,7 @@ class Router
      *
      * ### Usage
      *
-     * - `Router::url('/posts/edit/1');` Returns the string with the base dir prepended.
-     *   This usage does not use reverser routing.
-     * - `Router::url(['controller' => 'posts', 'action' => 'edit']);` Returns a URL
-     *   generated through reverse routing.
-     * - `Router::url(['_name' => 'custom-name', ...]);` Returns a URL generated
-     *   through reverse routing. This form allows you to leverage named routes.
-     *
-     * There are a few 'special' parameters that can change the final URL string that is generated
-     *
-     * - `_base` - Set to false to remove the base path from the generated URL. If your application
-     *   is not in the root directory, this can be used to generate URLs that are 'cake relative'.
-     *   cake relative URLs are required when using requestAction.
-     * - `_scheme` - Set to create links on different schemes like `webcal` or `ftp`. Defaults
-     *   to the current scheme.
-     * - `_host` - Set the host to use for the link. Defaults to the current host.
-     * - `_port` - Set the port if you need to create links on non-standard ports.
-     * - `_full` - If true output of `Router::fullBaseUrl()` will be prepended to generated URLs.
-     * - `#` - Allows you to set URL hash fragments.
-     * - `_ssl` - Set to true to convert the generated URL to https, or false to force http.
-     * - `_name` - Name of route. If you have setup named routes you can use this key
-     *   to specify it.
+     * @see Router::url()
      *
      * @param string|array|null $url An array specifying any of the following:
      *   'controller', 'action', 'plugin' additionally, you can provide routed
