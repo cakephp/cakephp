@@ -551,6 +551,49 @@ class EmailTest extends TestCase
     }
 
     /**
+     * test reset addresses method
+     *
+     * @return void
+     */
+    public function testResetAddresses()
+    {
+        $this->Email->reset();
+        $this->Email
+            ->setFrom('cake@cakephp.org', 'CakePHP')
+            ->setReplyTo('replyto@cakephp.org', 'ReplyTo CakePHP')
+            ->setReadReceipt('readreceipt@cakephp.org', 'ReadReceipt CakePHP')
+            ->setReturnPath('returnpath@cakephp.org', 'ReturnPath CakePHP')
+            ->setTo('to@cakephp.org', 'To, CakePHP')
+            ->setCc('cc@cakephp.org', 'Cc CakePHP')
+            ->setBcc('bcc@cakephp.org', 'Bcc CakePHP');
+
+        $this->assertNotEmpty($this->Email->getFrom());
+        $this->assertNotEmpty($this->Email->getReplyTo());
+        $this->assertNotEmpty($this->Email->getReadReceipt());
+        $this->assertNotEmpty($this->Email->getReturnPath());
+        $this->assertNotEmpty($this->Email->getTo());
+        $this->assertNotEmpty($this->Email->getCc());
+        $this->assertNotEmpty($this->Email->getBcc());
+
+        $this->Email
+            ->setFrom([])
+            ->setReplyTo([])
+            ->setReadReceipt([])
+            ->setReturnPath([])
+            ->setTo([])
+            ->setCc([])
+            ->setBcc([]);
+
+        $this->assertEmpty($this->Email->getFrom());
+        $this->assertEmpty($this->Email->getReplyTo());
+        $this->assertEmpty($this->Email->getReadReceipt());
+        $this->assertEmpty($this->Email->getReturnPath());
+        $this->assertEmpty($this->Email->getTo());
+        $this->assertEmpty($this->Email->getCc());
+        $this->assertEmpty($this->Email->getBcc());
+    }
+
+    /**
      * testMessageId method
      *
      * @return void

@@ -1012,6 +1012,12 @@ class Email implements JsonSerializable, Serializable
      */
     protected function _setEmailSingle($varName, $email, $name, $throwMessage)
     {
+        if ($email === []) {
+            $this->{$varName} = $email;
+
+            return $this;
+        }
+
         $current = $this->{$varName};
         $this->_setEmail($varName, $email, $name);
         if (count($this->{$varName}) !== 1) {
