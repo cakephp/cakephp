@@ -554,7 +554,7 @@ class Multibyte {
 
 				if (!empty($keys)) {
 					foreach ($keys as $key => $value) {
-						if ($keys[$key]['upper'] == $char && count($keys[$key]['lower'][0]) === 1) {
+						if ($keys[$key]['upper'] == $char && count($keys[$key]['lower']) > 0) {
 							$lowerCase[] = $keys[$key]['lower'][0];
 							$matched = true;
 							break 1;
