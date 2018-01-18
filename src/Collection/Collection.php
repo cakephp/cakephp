@@ -73,25 +73,17 @@ class Collection extends IteratorIterator implements CollectionInterface, Serial
     }
 
     /**
-     * Dynamic method handler
+     * Throws an exception.
      *
-     * Collections do not allow access to methods of the inner iterator,
-     * if that iterator is one of the PHP base classes as many of
-     * these methods allow in-place mutation which breaks the immutability
-     * Collection tries to provide.
+     * Collection doesn't permit access to methods of the inner iterator.
      *
      * @param string $name Method name.
      * @param array $args Method arguments.
-     * @return mixed
+     * @return void
      * @throws \BadMethodCallException
      */
     public function __call($name, $args)
     {
-        if (!method_exists(ArrayIterator::class, $name)) {
-            $inner = $this->getInnerIterator();
-
-            return call_user_func_array([$inner, $name], $args);
-        }
         throw new BadMethodCallException(sprintf('Call to undefined method %s::%s()', get_class($this), $name));
     }
 
