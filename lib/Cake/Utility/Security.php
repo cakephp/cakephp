@@ -191,9 +191,12 @@ class Security {
 		if (function_exists('openssl_random_pseudo_bytes')) {
 			return openssl_random_pseudo_bytes($length);
 		}
+		if (function_exists('mcrypt_create_iv')) {
+			return mcrypt_create_iv($length);
+		}
 		trigger_error(
 			'You do not have a safe source of random data available. ' .
-			'Install either the openssl extension, or paragonie/random_compat. ' .
+			'Install either the openssl extension, the mcrypt extension, or paragonie/random_compat. ' .
 			'Falling back to an insecure random source.',
 			E_USER_WARNING
 		);
