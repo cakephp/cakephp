@@ -51,6 +51,7 @@ class I18nTest extends CakeTestCase {
 		parent::tearDown();
 
 		Cache::delete('object_map', '_cake_core_');
+		CakeSession::destroy();
 		App::build();
 		CakePlugin::unload();
 	}

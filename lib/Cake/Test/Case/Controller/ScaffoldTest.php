@@ -17,6 +17,7 @@
  */
 
 App::uses('Router', 'Routing');
+App::uses('CakeSession', 'Model/Datasource');
 App::uses('Controller', 'Controller');
 App::uses('Scaffold', 'Controller');
 App::uses('ScaffoldView', 'View');
@@ -175,6 +176,7 @@ class ScaffoldTest extends CakeTestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
+		CakeSession::destroy();
 		unset($this->Controller);
 	}
 

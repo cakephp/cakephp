@@ -415,6 +415,7 @@ class AuthComponentTest extends CakeTestCase {
 		TestAuthComponent::clearUser();
 		$this->Auth->Session->delete('Auth');
 		$this->Auth->Session->delete('Message.auth');
+		$this->Auth->Session->destroy();
 		unset($this->Controller, $this->Auth);
 	}
 

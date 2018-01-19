@@ -331,6 +331,12 @@ class ControllerTask extends BakeTask {
 	public function bake($controllerName, $actions = '', $helpers = null, $components = null) {
 		$this->out("\n" . __d('cake_console', 'Baking controller class for %s...', $controllerName), 1, Shell::QUIET);
 
+		if ($helpers === null) {
+			$helpers = array();
+		}
+		if ($components === null) {
+			$components = array();
+		}
 		$isScaffold = ($actions === 'scaffold') ? true : false;
 
 		$this->Template->set(array(
