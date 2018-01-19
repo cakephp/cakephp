@@ -39,6 +39,7 @@ use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
+use InvalidArgumentException;
 
 /**
  * Used to test correct class is instantiated when using TableRegistry::get();
@@ -1796,6 +1797,23 @@ class TableTest extends TestCase
         $table = new Table(['table' => 'comments']);
         $table->addBehavior('Sluggable');
         $this->assertSame($table->behaviors()->get('Sluggable'), $table->getBehavior('Sluggable'));
+    }
+
+    /**
+     * Test that the getBehavior() method will throw an exception when you try to
+     * get a behavior that does not exist.
+     *
+     * @return void
+     */
+    public function testGetBehaviorThrowsExceptionForMissingBehavior()
+    {
+        $table = new Table(['table' => 'comments']);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The Sluggable behavior is not defined on ' . get_class($table) . '.');
+
+        $this->assertFalse($table->hasBehavior('Sluggable'));
+        $table->getBehavior('Sluggable');
     }
 
     /**

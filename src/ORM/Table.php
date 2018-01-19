@@ -927,9 +927,18 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param string $name The behavior alias to get from the registry.
      * @return \Cake\ORM\Behavior
+     * @throws \InvalidArgumentException If the behavior does not exist.
      */
     public function getBehavior($name)
     {
+        if ($this->hasBehavior($name) === false) {
+            throw new InvalidArgumentException(sprintf(
+                'The %s behavior is not defined on %s.',
+                $name,
+                get_class($this)
+            ));
+        }
+
         return $this->_behaviors->get($name);
     }
 
