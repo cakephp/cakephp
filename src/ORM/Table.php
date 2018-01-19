@@ -968,7 +968,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         $association = $this->findAssociation($name);
         if (!$association) {
-            throw new InvalidArgumentException('Association does not exist: ' . $name);
+            throw new InvalidArgumentException("The {$name} association is not defined on {$this->getAlias()}.");
         }
 
         return $association;
