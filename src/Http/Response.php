@@ -2116,7 +2116,6 @@ class Response implements ResponseInterface
      *
      * ### Options
      *
-     * - `name`: The Cookie name
      * - `value`: Value of the cookie
      * - `expire`: Time the cookie expires in
      * - `path`: Path the cookie applies to
