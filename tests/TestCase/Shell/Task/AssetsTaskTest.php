@@ -214,7 +214,7 @@ class AssetsTaskTest extends TestCase
     {
         if (DS === '\\') {
             $this->markTestSkipped(
-              "Can't test symlink removal on windows."
+                "Can't test symlink removal on windows."
             );
         }
 

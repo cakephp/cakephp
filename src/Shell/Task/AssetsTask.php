@@ -60,7 +60,8 @@ class AssetsTask extends Shell
      * @return void
      * @since 3.5.11
      */
-    public function remove($name = null) {
+    public function remove($name = null)
+    {
         $plugins = $this->_list($name);
 
         foreach ($plugins as $plugin => $config) {
