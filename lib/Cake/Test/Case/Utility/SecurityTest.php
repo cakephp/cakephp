@@ -30,6 +30,45 @@ class SecurityTest extends CakeTestCase {
 	public $sut = null;
 
 /**
+ * setUp method
+ *
+ * @return void
+ */
+	public function setUp() {
+		parent::setUp();
+		Security::engine(null);
+	}
+
+/**
+ * tearDown method
+ *
+ * @return void
+ */
+	public function tearDown() {
+		parent::tearDown();
+		Security::engine(null);
+	}
+
+/**
+ * Tests that Security::engine() works
+ *
+ * @return void
+ */
+	public function testEngine() {
+		if (extension_loaded('mcrypt')) {
+			$this->assertEquals('mcrypt', Security::engine());
+		}
+
+		$this->assertContains(Security::engine(), array('mcrypt', 'openssl'));
+
+		Security::engine('mcrypt');
+		$this->assertEquals('mcrypt', Security::engine());
+
+		Security::engine('openssl');
+		$this->assertEquals('openssl', Security::engine());
+	}
+
+/**
  * testInactiveMins method
  *
  * @return void
@@ -335,6 +374,54 @@ class SecurityTest extends CakeTestCase {
 		$this->assertNotEquals($txt, $result, 'Should be encrypted.');
 		$this->assertNotEquals($result, Security::encrypt($txt, $key), 'Each result is unique.');
 		$this->assertEquals($txt, Security::decrypt($result, $key));
+	}
+
+/**
+ * Tests that encrypted strings are comatible between the mcrypt and openssl engine.
+ *
+ * @dataProvider plainTextProvider
+ * @param string $txt Plain text to be encrypted.
+ * @return void
+ */
+	public function testEncryptDecryptCompatibility($txt) {
+		$this->skipIf(!extension_loaded('mcrypt'), 'This test requires mcrypt to be installed');
+		$this->skipIf(!extension_loaded('openssl'), 'This test requires oepnssl to be installed');
+		$this->skipIf(version_compare(PHP_VERSION, '5.3.3', '<'), 'This test requires PHP 5.3.3 or grater');
+
+		$key = '12345678901234567890123456789012';
+
+		Security::engine('mcrypt');
+		$mcrypt = Security::encrypt($txt, $key);
+
+		Security::engine('openssl');
+		$openssl = Security::encrypt($txt, $key);
+
+		$this->assertEquals(strlen($mcrypt), strlen($openssl));
+
+		Security::engine('mcrypt');
+		$this->assertEquals($txt, Security::decrypt($mcrypt, $key));
+		$this->assertEquals($txt, Security::decrypt($openssl, $key));
+
+		Security::engine('openssl');
+		$this->assertEquals($txt, Security::decrypt($mcrypt, $key));
+		$this->assertEquals($txt, Security::decrypt($openssl, $key));
+	}
+
+/**
+ * Data provider for testEncryptDecryptCompatibility
+ *
+ * @return array
+ */
+	public function plainTextProvider() {
+		return array(
+			array(''),
+			array('abcdefg'),
+			array('1234567890123456'),
+			array('The quick brown fox'),
+			array('12345678901234567890123456789012'),
+			array('The quick brown fox jumped over the lazy dog.'),
+			array('何らかのマルチバイト文字列'),
+		);
 	}
 
 /**
