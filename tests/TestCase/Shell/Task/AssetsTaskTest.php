@@ -204,4 +204,65 @@ class AssetsTaskTest extends TestCase
         $folder = new Folder(WWW_ROOT . 'company');
         $folder->delete();
     }
+
+    /**
+     * testRemoveSymlink method
+     *
+     * @return void
+     */
+    public function testRemoveSymlink()
+    {
+        if (DS === '\\') {
+            $this->markTestSkipped(
+              "Can't test symlink removal on windows."
+            );
+        }
+
+        Plugin::load('TestPlugin');
+        Plugin::load('Company/TestPluginThree');
+
+        mkdir(WWW_ROOT . 'company');
+        clearstatcache();
+
+        $this->Task->symlink();
+
+        $link = new \SplFileInfo(WWW_ROOT . 'test_plugin');
+        $this->assertTrue($link->isLink());
+
+        $link = new \SplFileInfo(WWW_ROOT . 'company' . DS . 'test_plugin_three');
+        $this->assertTrue($link->isLink());
+
+        $this->Task->remove();
+
+        $this->assertFalse(is_link(WWW_ROOT . 'test_plugin'));
+        $this->assertFalse(is_link(WWW_ROOT . 'company' . DS . 'test_plugin_three'));
+        $this->assertTrue(is_dir(WWW_ROOT . 'company'), 'Ensure namespace folder isn\'t removed');
+
+        rmdir(WWW_ROOT . 'company');
+    }
+
+    /**
+     * testRemoveFolder method
+     *
+     * @return void
+     */
+    public function testRemoveFolder()
+    {
+        Plugin::load('TestPlugin');
+        Plugin::load('Company/TestPluginThree');
+
+        $this->Task->copy();
+
+        $this->assertTrue(is_dir(WWW_ROOT . 'test_plugin'));
+
+        $this->assertTrue(is_dir(WWW_ROOT . 'company' . DS . 'test_plugin_three'));
+
+        $this->Task->remove();
+
+        $this->assertFalse(is_dir(WWW_ROOT . 'test_plugin'));
+        $this->assertFalse(is_dir(WWW_ROOT . 'company' . DS . 'test_plugin_three'));
+        $this->assertTrue(is_dir(WWW_ROOT . 'company'), 'Ensure namespace folder isn\'t removed');
+
+        rmdir(WWW_ROOT . 'company');
+    }
 }

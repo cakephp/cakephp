@@ -53,6 +53,29 @@ class AssetsTask extends Shell
     }
 
     /**
+     * Remove plugin assets from app's webroot.
+     *
+     * @param string|null $name Name of plugin for which to remove assets.
+     *   If null all plugins will be processed.
+     * @return void
+     * @since 3.5.11
+     */
+    public function remove($name = null) {
+        $plugins = $this->_list($name);
+
+        foreach ($plugins as $plugin => $config) {
+            $this->out();
+            $this->out('For plugin: ' . $plugin);
+            $this->hr();
+
+            $this->_remove($config);
+        }
+
+        $this->out();
+        $this->out('Done');
+    }
+
+    /**
      * Get list of plugins to process. Plugins without a webroot directory are skipped.
      *
      * @param string|null $name Name of plugin for which to symlink assets.
@@ -158,6 +181,55 @@ class AssetsTask extends Shell
     }
 
     /**
+     * Remove folder/symlink.
+     *
+     * @param array $config Plugin config.
+     * @return void
+     */
+    protected function _remove($config)
+    {
+        if ($config['namespaced'] && !is_dir($config['destDir'])) {
+            $this->out(
+                $config['destDir'] . $config['link'] . ' does not exist',
+                1,
+                Shell::VERBOSE
+            );
+
+            return;
+        }
+
+        $dest = $config['destDir'] . $config['link'];
+
+        if (!file_exists($dest)) {
+            $this->out(
+                $dest . ' does not exist',
+                1,
+                Shell::VERBOSE
+            );
+
+            return;
+        }
+
+        if (is_link($dest)) {
+            // @codingStandardsIgnoreLine
+            if (@unlink($dest)) {
+                $this->out('Unlinked ' . $dest);
+            } else {
+                $this->err('Failed to unlink  ' . $dest);
+            }
+
+            return;
+        }
+
+        $folder = new Folder($dest);
+        if ($folder->delete()) {
+            $this->out('Deleted ' . $dest);
+        } else {
+            $this->err('Failed to delete ' . $dest);
+        }
+    }
+
+    /**
      * Create directory
      *
      * @param string $dir Directory name
@@ -238,6 +310,8 @@ class AssetsTask extends Shell
             'help' => 'Symlink (copy as fallback) plugin assets to app\'s webroot.'
         ])->addSubcommand('copy', [
             'help' => 'Copy plugin assets to app\'s webroot.'
+        ])->addSubcommand('remove', [
+            'help' => 'Remove plugin assets from app\'s webroot.'
         ])->addArgument('name', [
             'help' => 'A specific plugin you want to symlink assets for.',
             'optional' => true,
