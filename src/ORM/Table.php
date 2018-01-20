@@ -931,7 +931,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function getBehavior($name)
     {
-        if ($this->hasBehavior($name) === false) {
+        $behavior = $this->_behaviors->get($name);
+        if ($behavior === null) {
             throw new InvalidArgumentException(sprintf(
                 'The %s behavior is not defined on %s.',
                 $name,
@@ -939,7 +940,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             ));
         }
 
-        return $this->_behaviors->get($name);
+        return $behavior;
     }
 
     /**
