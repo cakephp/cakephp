@@ -39,6 +39,7 @@ use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
+use InvalidArgumentException;
 
 /**
  * Used to test correct class is instantiated when using TableRegistry::get();
@@ -641,6 +642,18 @@ class TableTest extends TestCase
             $groups->getAssociation('GroupsMembers')->getAssociation('Members')->getAssociation('Groups'),
             $association
         );
+    }
+
+    /**
+     * Tests that the getAssociation() method throws an exception on non-existent ones.
+     *
+     * @return void
+     */
+    public function testGetAssociationNonExistent()
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        TableRegistry::get('Groups')->getAssociation('FooBar');
     }
 
     /**
