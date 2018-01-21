@@ -58,7 +58,7 @@ class AssetsTask extends Shell
      * @param string|null $name Name of plugin for which to remove assets.
      *   If null all plugins will be processed.
      * @return void
-     * @since 3.5.11
+     * @since 3.5.12
      */
     public function remove($name = null)
     {
