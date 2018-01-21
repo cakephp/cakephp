@@ -101,11 +101,10 @@ class AssetsTask extends Shell
         foreach ($pluginsList as $plugin) {
             $path = Plugin::path($plugin) . 'webroot';
             if (!is_dir($path)) {
-                $this->out('', 1, Shell::VERBOSE);
-                $this->out(
+                $this->verbose('', 1);
+                $this->verbose(
                     sprintf('Skipping plugin %s. It does not have webroot folder.', $plugin),
-                    2,
-                    Shell::VERBOSE
+                    2
                 );
                 continue;
             }
@@ -153,10 +152,9 @@ class AssetsTask extends Shell
             }
 
             if (file_exists($config['destDir'] . $config['link'])) {
-                $this->out(
+                $this->verbose(
                     $config['destDir'] . $config['link'] . ' already exists',
-                    1,
-                    Shell::VERBOSE
+                    1
                 );
                 continue;
             }
@@ -190,10 +188,9 @@ class AssetsTask extends Shell
     protected function _remove($config)
     {
         if ($config['namespaced'] && !is_dir($config['destDir'])) {
-            $this->out(
+            $this->verbose(
                 $config['destDir'] . $config['link'] . ' does not exist',
-                1,
-                Shell::VERBOSE
+                1
             );
 
             return;
@@ -202,10 +199,9 @@ class AssetsTask extends Shell
         $dest = $config['destDir'] . $config['link'];
 
         if (!file_exists($dest)) {
-            $this->out(
+            $this->verbose(
                 $dest . ' does not exist',
-                1,
-                Shell::VERBOSE
+                1
             );
 
             return;
