@@ -645,6 +645,18 @@ class TableTest extends TestCase
     }
 
     /**
+     * Tests that the getAssociation() method throws an exception on non-existent ones.
+     *
+     * @return void
+     */
+    public function testGetAssociationNonExistent()
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        TableRegistry::get('Groups')->getAssociation('FooBar');
+    }
+
+    /**
      * Tests that belongsTo() creates and configures correctly the association
      *
      * @return void

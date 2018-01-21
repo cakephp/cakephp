@@ -354,14 +354,14 @@ class BelongsToMany extends Association
         $junctionAlias = $junction->getAlias();
         $sAlias = $source->getAlias();
 
-        if (!$target->getAssociation($junctionAlias)) {
+        if (!$target->hasAssociation($junctionAlias)) {
             $target->hasMany($junctionAlias, [
                 'targetTable' => $junction,
                 'foreignKey' => $this->getTargetForeignKey(),
                 'strategy' => $this->_strategy,
             ]);
         }
-        if (!$target->getAssociation($sAlias)) {
+        if (!$target->hasAssociation($sAlias)) {
             $target->belongsToMany($sAlias, [
                 'sourceTable' => $target,
                 'targetTable' => $source,
@@ -391,7 +391,7 @@ class BelongsToMany extends Association
     protected function _generateSourceAssociations($junction, $source)
     {
         $junctionAlias = $junction->getAlias();
-        if (!$source->getAssociation($junctionAlias)) {
+        if (!$source->hasAssociation($junctionAlias)) {
             $source->hasMany($junctionAlias, [
                 'targetTable' => $junction,
                 'foreignKey' => $this->getForeignKey(),
@@ -421,13 +421,13 @@ class BelongsToMany extends Association
         $tAlias = $target->getAlias();
         $sAlias = $source->getAlias();
 
-        if (!$junction->getAssociation($tAlias)) {
+        if (!$junction->hasAssociation($tAlias)) {
             $junction->belongsTo($tAlias, [
                 'foreignKey' => $this->getTargetForeignKey(),
                 'targetTable' => $target
             ]);
         }
-        if (!$junction->getAssociation($sAlias)) {
+        if (!$junction->hasAssociation($sAlias)) {
             $junction->belongsTo($sAlias, [
                 'foreignKey' => $this->getForeignKey(),
                 'targetTable' => $source

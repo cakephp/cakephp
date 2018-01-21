@@ -954,17 +954,61 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
-     * Returns an association object configured for the specified alias if any
+     * Returns an association object configured for the specified alias if any.
      *
-     * @deprecated 3.6.0 Use getAssociation() instead.
+     * @deprecated 3.6.0 Use getAssociation() and Table::hasAssocation() instead.
      * @param string $name the alias used for the association.
      * @return \Cake\ORM\Association|null Either the association or null.
      */
     public function association($name)
     {
-        deprecationWarning('Use Table::getAssociation() instead.');
+        deprecationWarning('Use Table::getAssociation() and Table::hasAssocation() instead.');
 
-        return $this->getAssociation($name);
+        return $this->findAssociation($name);
+    }
+
+    /**
+     * Returns an association object configured for the specified alias.
+     *
+     * The name argument also supports dot syntax to access deeper associations.
+     *
+     * ```
+     * $users = $this->getAssociation('Articles.Comments.Users');
+     * ```
+     *
+     * Note that this method requires the association to be present or otherwise
+     * throws an exception.
+     * If you are not sure, use hasAssociation() before calling this method.
+     *
+     * @param string $name The alias used for the association.
+     * @return \Cake\ORM\Association The association.
+     * @throws \InvalidArgumentException
+     */
+    public function getAssociation($name)
+    {
+        $association = $this->findAssociation($name);
+        if (!$association) {
+            throw new InvalidArgumentException("The {$name} association is not defined on {$this->getAlias()}.");
+        }
+
+        return $association;
+    }
+
+    /**
+     * Checks whether a specific association exists on this Table instance.
+     *
+     * The name argument also supports dot syntax to access deeper associations.
+     *
+     * ```
+     * $hasUsers = $this->hasAssociation('Articles.Comments.Users');
+     * ```
+     *
+     * @param string $name The alias used for the association.
+     * @return bool
+     */
+    public function hasAssociation($name)
+    {
+        return $this->findAssociation($name) !== null;
     }
 
     /**
@@ -976,10 +1020,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * $users = $this->getAssociation('Articles.Comments.Users');
      * ```
      *
-     * @param string $name the alias used for the association.
+     * @param string $name The alias used for the association.
      * @return \Cake\ORM\Association|null Either the association or null.
      */
-    public function getAssociation($name)
+    protected function findAssociation($name)
     {
         if (strpos($name, '.') === false) {
             return $this->_associations->get($name);

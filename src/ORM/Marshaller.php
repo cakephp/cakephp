@@ -88,10 +88,9 @@ class Marshaller
                 $key = $nested;
                 $nested = [];
             }
-            $assoc = $this->_table->getAssociation($key);
             // If the key is not a special field like _ids or _joinData
             // it is a missing association that we should error on.
-            if (!$assoc) {
+            if (!$this->_table->hasAssociation($key)) {
                 if (substr($key, 0, 1) !== '_') {
                     throw new \InvalidArgumentException(sprintf(
                         'Cannot marshal data for "%s" association. It is not associated with "%s".',
@@ -101,6 +100,8 @@ class Marshaller
                 }
                 continue;
             }
+            $assoc = $this->_table->getAssociation($key);
+
             if (isset($options['forceNew'])) {
                 $nested['forceNew'] = $options['forceNew'];
             }
