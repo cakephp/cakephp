@@ -216,7 +216,6 @@ class AssetsTaskTest extends TestCase
         Plugin::load('Company/TestPluginThree');
 
         mkdir(WWW_ROOT . 'company');
-        clearstatcache();
 
         $this->Task->symlink();
 
@@ -257,5 +256,54 @@ class AssetsTaskTest extends TestCase
         $this->assertDirectoryExists(WWW_ROOT . 'company', 'Ensure namespace folder isn\'t removed');
 
         rmdir(WWW_ROOT . 'company');
+    }
+
+    /**
+     * testOverwrite
+     *
+     * @return void
+     */
+    public function testOverwrite()
+    {
+        Plugin::load('TestPlugin');
+        Plugin::load('Company/TestPluginThree');
+
+        $path = WWW_ROOT . 'test_plugin';
+
+        mkdir($path);
+        $filectime = filectime($path);
+
+        sleep(1);
+        $this->Task->params['overwrite'] = true;
+        $this->Task->symlink('TestPlugin');
+        if (DS === '\\') {
+            $this->assertDirectoryExists($path);
+        } else {
+            $this->assertTrue(is_link($path));
+        }
+
+        $newfilectime = filectime($path);
+        $this->assertTrue($newfilectime !== $filectime);
+
+        if (DS === '\\') {
+            $folder = new Folder($path);
+            $folder->delete();
+        } else {
+            unlink($path);
+        }
+
+        $path = WWW_ROOT . 'company' . DS . 'test_plugin_three';
+        mkdir($path, 0777, true);
+        $filectime = filectime($path);
+
+        sleep(1);
+        $this->Task->params['overwrite'] = true;
+        $this->Task->copy('Company/TestPluginThree');
+
+        $newfilectime = filectime($path);
+        $this->assertTrue($newfilectime > $filectime);
+
+        $folder = new Folder(WWW_ROOT . 'company');
+        $folder->delete();
     }
 }

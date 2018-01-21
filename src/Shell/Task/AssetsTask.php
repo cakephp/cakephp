@@ -139,6 +139,8 @@ class AssetsTask extends Shell
      */
     protected function _process($plugins, $copy = false)
     {
+        $overwrite = (bool)$this->param('overwrite');
+
         foreach ($plugins as $plugin => $config) {
             $this->out();
             $this->out('For plugin: ' . $plugin);
@@ -151,18 +153,25 @@ class AssetsTask extends Shell
                 continue;
             }
 
-            if (file_exists($config['destDir'] . $config['link'])) {
-                $this->verbose(
-                    $config['destDir'] . $config['link'] . ' already exists',
-                    1
-                );
-                continue;
+            $dest = $config['destDir'] . $config['link'];
+
+            if (file_exists($dest)) {
+                if ($overwrite && !$this->_remove($config)) {
+                    continue;
+                } elseif (!$overwrite) {
+                    $this->verbose(
+                        $dest . ' already exists',
+                        1
+                    );
+
+                    continue;
+                }
             }
 
             if (!$copy) {
                 $result = $this->_createSymlink(
                     $config['srcPath'],
-                    $config['destDir'] . $config['link']
+                    $dest
                 );
                 if ($result) {
                     continue;
@@ -171,7 +180,7 @@ class AssetsTask extends Shell
 
             $this->_copyDirectory(
                 $config['srcPath'],
-                $config['destDir'] . $config['link']
+                $dest
             );
         }
 
@@ -183,7 +192,7 @@ class AssetsTask extends Shell
      * Remove folder/symlink.
      *
      * @param array $config Plugin config.
-     * @return void
+     * @return bool
      */
     protected function _remove($config)
     {
@@ -193,7 +202,7 @@ class AssetsTask extends Shell
                 1
             );
 
-            return;
+            return false;
         }
 
         $dest = $config['destDir'] . $config['link'];
@@ -204,25 +213,31 @@ class AssetsTask extends Shell
                 1
             );
 
-            return;
+            return false;
         }
 
         if (is_link($dest)) {
             // @codingStandardsIgnoreLine
             if (@unlink($dest)) {
                 $this->out('Unlinked ' . $dest);
+
+                return true;
             } else {
                 $this->err('Failed to unlink  ' . $dest);
-            }
 
-            return;
+                return false;
+            }
         }
 
         $folder = new Folder($dest);
         if ($folder->delete()) {
             $this->out('Deleted ' . $dest);
+
+            return true;
         } else {
             $this->err('Failed to delete ' . $dest);
+
+            return false;
         }
     }
 
@@ -312,6 +327,11 @@ class AssetsTask extends Shell
         ])->addArgument('name', [
             'help' => 'A specific plugin you want to symlink assets for.',
             'optional' => true,
+        ])
+        ->addOption('overwrite', [
+            'boolean' => true,
+            'default' => false,
+            'help' => 'Overwrite existing symlink / folder.'
         ]);
 
         return $parser;
