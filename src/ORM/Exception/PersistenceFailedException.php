@@ -45,7 +45,35 @@ class PersistenceFailedException extends Exception
     public function __construct(EntityInterface $entity, $message, $code = null, $previous = null)
     {
         $this->_entity = $entity;
+        if (is_array($message)) {
+            $errors = [];
+            foreach ($entity->getErrors() as $field => $error) {
+                $errors[] = $field . ': "' . $this->buildError($error) . '"';
+            }
+            if ($errors) {
+                $message[] = implode(', ', $errors);
+                $this->_messageTemplate = 'Entity %s failure (%s).';
+            }
+        }
         parent::__construct($message, $code, $previous);
+    }
+
+    /**
+     * @param string|array $error Error message.
+     * @return string
+     */
+    protected function buildError($error)
+    {
+        if (!is_array($error)) {
+            return $error;
+        }
+
+        $errors = [];
+        foreach ($error as $key => $message) {
+            $errors[] = is_int($key) ? $message : $key;
+        }
+
+        return implode(', ', $errors);
     }
 
     /**
