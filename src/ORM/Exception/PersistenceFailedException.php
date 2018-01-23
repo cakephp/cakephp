@@ -85,5 +85,4 @@ class PersistenceFailedException extends Exception
     {
         return $this->_entity;
     }
-
 }

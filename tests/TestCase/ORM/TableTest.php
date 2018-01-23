@@ -6507,7 +6507,7 @@ class TableTest extends TestCase
     {
         $this->expectException(\Cake\ORM\Exception\PersistenceFailedException::class);
         $this->expectExceptionMessage('Entity save failure.');
-        
+
         $entity = new Entity([
             'foo' => 'bar'
         ]);
@@ -6525,7 +6525,7 @@ class TableTest extends TestCase
     {
         $this->expectException(\Cake\ORM\Exception\PersistenceFailedException::class);
         $this->expectExceptionMessage('Entity save failure (field: "Some message", multiple: "one, two")');
-        
+
         $entity = new Entity([
             'foo' => 'bar'
         ]);
