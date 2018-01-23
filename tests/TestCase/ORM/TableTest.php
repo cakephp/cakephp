@@ -6519,6 +6519,28 @@ class TableTest extends TestCase
     }
 
     /**
+     * Tests that saveOrFail displays useful messages on output, especially in tests for CLI.
+     *
+     * @return void
+     */
+    public function testSaveOrFailErrorDisplay()
+    {
+        $this->expectException(\Cake\ORM\Exception\PersistenceFailedException::class);
+        $this->expectExceptionMessage('Entity save failure (field: "Some message", multiple: "one, two")');
+        $entity = new Entity([
+            'foo' => 'bar'
+        ]);
+        $entity->setError('field', 'Some message');
+        $entity->setError('multiple', ['one' => 'One', 'two' => 'Two']);
+        $table = TableRegistry::get('users');
+
+        $table->saveOrFail($entity);
+
+        $row = $table->find('all')->where(['foo' => 'bar'])->toArray();
+        $this->assertSame([], $row->toArray());
+    }
+
+    /**
      * Tests that saveOrFail returns the right entity
      *
      * @return void
