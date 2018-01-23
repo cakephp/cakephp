@@ -270,7 +270,7 @@ class PaginatorComponent extends Component
 
         $request->addParams([
             'paging' => $this->_paginator->getPagingParams()
-                + (array)$request->getParam('paging')
+                + $request->getParam('paging', [])
         ]);
     }
 
