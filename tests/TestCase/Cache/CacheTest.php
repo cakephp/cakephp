@@ -97,6 +97,27 @@ class CacheTest extends TestCase
     }
 
     /**
+     * tests you can disable Cache::engine() fallback
+     *
+     * @return void
+     */
+    public function testCacheEngineFallbackDisabled()
+    {
+        $this->expectException(Error::class);
+
+        $filename = tempnam(TMP, 'tmp_');
+
+        Cache::setConfig('tests', [
+            'engine' => 'File',
+            'path' => $filename,
+            'prefix' => 'test_',
+            'fallback' => false
+        ]);
+
+        $engine = Cache::engine('tests');
+    }
+
+    /**
      * tests handling misconfiguration of fallback
      *
      * @return void

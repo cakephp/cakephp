@@ -178,6 +178,10 @@ class Cache
                 return;
             }
 
+            if ($config['fallback'] === false) {
+                throw $e;
+            }
+
             if ($config['fallback'] === $name) {
                 throw new InvalidArgumentException(sprintf('"%s" cache configuration cannot fallback to itself.', $name), null, $e);
             }
