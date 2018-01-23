@@ -6507,15 +6507,13 @@ class TableTest extends TestCase
     {
         $this->expectException(\Cake\ORM\Exception\PersistenceFailedException::class);
         $this->expectExceptionMessage('Entity save failure.');
+        
         $entity = new Entity([
             'foo' => 'bar'
         ]);
         $table = TableRegistry::get('users');
 
         $table->saveOrFail($entity);
-
-        $row = $table->find('all')->where(['foo' => 'bar'])->toArray();
-        $this->assertSame([], $row->toArray());
     }
 
     /**
@@ -6527,6 +6525,7 @@ class TableTest extends TestCase
     {
         $this->expectException(\Cake\ORM\Exception\PersistenceFailedException::class);
         $this->expectExceptionMessage('Entity save failure (field: "Some message", multiple: "one, two")');
+        
         $entity = new Entity([
             'foo' => 'bar'
         ]);
@@ -6535,9 +6534,6 @@ class TableTest extends TestCase
         $table = TableRegistry::get('users');
 
         $table->saveOrFail($entity);
-
-        $row = $table->find('all')->where(['foo' => 'bar'])->toArray();
-        $this->assertSame([], $row->toArray());
     }
 
     /**
