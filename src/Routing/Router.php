@@ -16,6 +16,7 @@ namespace Cake\Routing;
 
 use Cake\Core\Configure;
 use Cake\Http\ServerRequest;
+use Cake\Routing\Exception\MissingRouteException;
 use Cake\Utility\Inflector;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -702,6 +703,34 @@ class Router
         }
 
         return $output . $frag;
+    }
+
+    /**
+     * Finds URL for specified action.
+     *
+     * Returns a bool if the url exists
+     *
+     * ### Usage
+     *
+     * @see Router::url()
+     *
+     * @param string|array|null $url An array specifying any of the following:
+     *   'controller', 'action', 'plugin' additionally, you can provide routed
+     *   elements or query string parameters. If string it can be name any valid url
+     *   string.
+     * @param bool $full If true, the full base URL will be prepended to the result.
+     *   Default is false.
+     * @return bool
+     */
+    public static function routeExists($url = null, $full = false)
+    {
+        try {
+            $route = static::url($url, $full);
+
+            return true;
+        } catch (MissingRouteException $e) {
+            return false;
+        }
     }
 
     /**

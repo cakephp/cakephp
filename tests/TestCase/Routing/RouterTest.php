@@ -131,6 +131,19 @@ class RouterTest extends TestCase
     }
 
     /**
+     * testRouteExists method
+     *
+     * @return void
+     */
+    public function testRouteExists()
+    {
+        Router::connect('/:controller/:action', ['controller' => 'posts']);
+        $this->assertTrue(Router::routeExists(['action' => 'view']));
+
+        $this->assertFalse(Router::routeExists(['action' => 'view', 'controller' => 'users', 'plugin' => 'test']));
+    }
+
+    /**
      * testMapResources method
      *
      * @group deprecated
