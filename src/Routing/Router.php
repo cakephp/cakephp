@@ -707,7 +707,6 @@ class Router
 
             return true;
         } catch (MissingRouteException $e) {
-
             return false;
         }
     }
