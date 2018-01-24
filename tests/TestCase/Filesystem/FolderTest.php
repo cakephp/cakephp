@@ -1391,7 +1391,7 @@ class FolderTest extends TestCase
 
         $this->assertSame(['a.txt', 'b.txt', 'c.txt'], $results);
     }
-    
+
     /**
      * testIsRegisteredStreamWrapper
      *
