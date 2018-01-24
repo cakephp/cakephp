@@ -1478,9 +1478,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function findThreaded(Query $query, array $options)
     {
+        $treeBehavior = $this->behaviors()->get('Tree');
         $options += [
             'keyField' => $this->getPrimaryKey(),
-            'parentField' => 'parent_id',
+            'parentField' => $treeBehavior ? $treeBehavior->getConfig('parent') : 'parent_id',
             'nestingKey' => 'children'
         ];
 
