@@ -130,16 +130,16 @@ class RouterTest extends TestCase
     }
 
     /**
-     * testRouteUrlOrNull method
+     * testRouteExists method
      *
      * @return void
      */
-    public function testRouteUrlOrNull()
+    public function testRouteExists()
     {
         Router::connect('/:controller/:action', ['controller' => 'posts']);
-        $this->assertEquals(Router::urlOrNull(['action' => 'view']), '/view');
+        $this->assertTrue(Router::routeExists(['action' => 'view']));
 
-        $this->assertNull(Router::urlOrNull(['action' => 'view', 'controller' => 'users', 'plugin' => 'test']));
+        $this->assertFalse(Router::routeExists(['action' => 'view', 'controller' => 'users', 'plugin' => 'test']));
     }
 
     /**

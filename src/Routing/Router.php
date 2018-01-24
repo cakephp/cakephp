@@ -686,9 +686,7 @@ class Router
     /**
      * Finds URL for specified action.
      *
-     * Returns a URL pointing to a combination of controller and action.
-     *
-     * If the url doesn't exist returns null
+     * Returns a bool if the url exists
      *
      * ### Usage
      *
@@ -700,14 +698,15 @@ class Router
      *   string.
      * @param bool $full If true, the full base URL will be prepended to the result.
      *   Default is false.
-     * @return string Full translated URL with base path or null if url does not exist
+     * @return bool
      */
-    public static function urlOrNull($url = null, $full = false)
+    public static function routeExists($url = null, $full = false)
     {
         try {
-            return static::url($url, $full);
+            $route = static::url($url, $full);
+            return true;
         } catch (MissingRouteException $e) {
-            return null;
+            return false;
         }
     }
 
