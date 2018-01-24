@@ -704,8 +704,10 @@ class Router
     {
         try {
             $route = static::url($url, $full);
+
             return true;
         } catch (MissingRouteException $e) {
+
             return false;
         }
     }
