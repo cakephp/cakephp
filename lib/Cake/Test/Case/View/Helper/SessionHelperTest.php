@@ -155,7 +155,7 @@ class SessionHelperTest extends CakeTestCase {
  *
  * @return void
  */
-    public function testFlashWithNoParams() {
+	public function testFlashWithNoParams() {
 		$result = $this->Session->flash();
 		$expected = '<div id="flashMessage" class="message">This is a calling</div>';
 		$this->assertEquals($expected, $result);
