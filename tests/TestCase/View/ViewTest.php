@@ -676,6 +676,27 @@ class ViewTest extends TestCase
     }
 
     /**
+     * Test getViewFileName applies subdirectories on equal length names
+     *
+     * @return void
+     */
+    public function testGetViewFileNameSubDirLength()
+    {
+        $viewOptions = [
+            'plugin' => null,
+            'name' => 'Jobs',
+            'viewPath' => 'Jobs',
+            'layoutPath' => 'json',
+        ];
+        $view = new TestView(null, null, null, $viewOptions);
+
+        $view->subDir = 'json';
+        $result = $view->getViewFileName('index');
+        $expected = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Jobs' . DS . 'json' . DS . 'index.ctp';
+        $this->assertPathEquals($expected, $result);
+    }
+
+    /**
      * Test getting layout filenames
      *
      * @return void
