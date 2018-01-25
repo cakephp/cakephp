@@ -151,6 +151,18 @@ class SessionHelperTest extends CakeTestCase {
 	}
 
 /**
+ * Test the flash method works without any params being passed
+ *
+ * @return void
+ */
+	public function testFlashWithNoParams() {
+		$result = $this->Session->flash();
+		$expected = '<div id="flashMessage" class="message">This is a calling</div>';
+		$this->assertEquals($expected, $result);
+		$this->assertFalse($this->Session->check('Message.flash'));
+	}
+
+/**
  * test flash() with the attributes.
  *
  * @return void
