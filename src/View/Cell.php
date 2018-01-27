@@ -168,7 +168,7 @@ abstract class Cell
      * Initialization hook method.
      *
      * Implement this method to avoid having to overwrite
-     * the constructor and call parent.
+     * the constructor and calling parent::__construct().
      *
      * @return void
      */
