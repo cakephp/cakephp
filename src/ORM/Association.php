@@ -1143,7 +1143,8 @@ abstract class Association
         }
 
         if ($autoFields === true) {
-            $fields = array_merge((array)$fields, $target->getSchema()->columns());
+            $fields = array_filter((array)$fields);
+            $fields = array_merge($fields, $target->getSchema()->columns());
         }
 
         if ($fields) {
