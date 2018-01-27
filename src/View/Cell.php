@@ -160,6 +160,20 @@ abstract class Cell
         if (!empty($cellOptions['cache'])) {
             $this->_cache = $cellOptions['cache'];
         }
+
+        $this->initialize();
+    }
+
+    /**
+     * Initialization hook method.
+     *
+     * Implement this method to avoid having to overwrite
+     * the constructor and call parent.
+     *
+     * @return void
+     */
+    public function initialize()
+    {
     }
 
     /**
