@@ -222,6 +222,29 @@ class PaginatorComponentTest extends TestCase
     }
 
     /**
+     * testRequestParamsSetting
+     *
+     * @return void
+     * @see https://github.com/cakephp/cakephp/issues/11655
+     */
+    public function testRequestParamsSetting()
+    {
+        $this->loadFixtures('Posts');
+
+        $settings = [
+            'PaginatorPosts' => [
+                'limit' => 10,
+            ]
+        ];
+
+        $table = TableRegistry::get('PaginatorPosts');
+
+        $this->Paginator->paginate($table, $settings);
+        $this->assertArrayHasKey('PaginatorPosts', $this->controller->request->getParam('paging'));
+        $this->assertArrayNotHasKey(0, $this->controller->request->getParam('paging'));
+    }
+
+    /**
      * Test that special paginate types are called and that the type param doesn't leak out into defaults or options.
      *
      * @return void

@@ -108,10 +108,14 @@ class Session
             $sessionConfig['ini']['session.name'] = $sessionConfig['cookie'];
         }
 
-        // In PHP7.1.0+ session.save_handler can't be set to user by the user.
-        // https://github.com/php/php-src/blob/master/ext/session/session.c#L559
-        if (!empty($sessionConfig['handler']) && version_compare(PHP_VERSION, '7.1.0', '<=')) {
+        if (!empty($sessionConfig['handler'])) {
             $sessionConfig['ini']['session.save_handler'] = 'user';
+        }
+
+        // In PHP7.2.0+ session.save_handler can't be set to user by the user.
+        // https://github.com/php/php-src/commit/a93a51c3bf4ea1638ce0adc4a899cb93531b9f0d
+        if (version_compare(PHP_VERSION, '7.2.0', '>=')) {
+            unset($sessionConfig['ini']['session.save_handler']);
         }
 
         if (!isset($sessionConfig['ini']['session.cookie_httponly']) && ini_get('session.cookie_httponly') != 1) {
