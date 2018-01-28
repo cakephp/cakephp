@@ -1249,7 +1249,8 @@ class ConnectionTest extends TestCase
             ->method('prepare')
             ->will($this->returnValue($statement));
 
-        $this->assertSame($statement, $conn->query('SELECT 1'));
+        $res = $conn->query('SELECT 1');
+        $this->assertInstanceOf('Cake\Database\StatementInterface', $res);
     }
 
     /**

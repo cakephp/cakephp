@@ -49,13 +49,13 @@ class CommandRetryTest extends TestCase
             ->method('shouldRetry')
             ->will($this->returnCallback(function ($e, $c) use ($exception, &$count) {
                 $this->assertSame($e, $exception);
-                $this->assertEquals($c, $count);
+                $this->assertEquals($c + 1, $count);
 
                 return true;
             }));
 
         $retry = new CommandRetry($strategy, 5);
-        $retry->run($action);
+        $this->assertEquals(4, $retry->run($action));
     }
 
     /**
@@ -72,7 +72,7 @@ class CommandRetryTest extends TestCase
 
         $strategy = $this->getMockBuilder(RetryStrategyInterface::class)->getMock();
         $strategy
-            ->expects($this->exactly(3))
+            ->expects($this->exactly(4))
             ->method('shouldRetry')
             ->will($this->returnCallback(function ($e) use ($exception) {
                 return true;

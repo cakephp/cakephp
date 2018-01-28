@@ -61,8 +61,8 @@ class CommandRetry
     {
         $retryCount = 0;
         $lastException = null;
-        while ($this->retries > $retryCount) {
-            $retryCount++;
+
+        do {
             try {
                 return $action();
             } catch (Exception $e) {
@@ -71,7 +71,7 @@ class CommandRetry
                     throw $e;
                 }
             }
-        }
+        } while ($this->retries > $retryCount++);
 
         if ($lastException !== null) {
             throw $lastException;
