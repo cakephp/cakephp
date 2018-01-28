@@ -17,8 +17,8 @@ namespace Cake\Core\Retry;
 use Exception;
 
 /**
- * Makes sure the connection to the database is alive before authorizing
- * the retry of an action.
+ * Used to instruct the CommandRetry object on whether or not a retry
+ * for an action should be performed
  */
 interface RetryStrategyInterface
 {
