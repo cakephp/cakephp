@@ -229,6 +229,7 @@ class AssetsTaskTest extends TestCase
         $this->assertFileEquals($path . DS . 'root.js', $pluginPath . DS . 'root.js');
 
         $folder = new Folder($path);
+        $folder->delete();
     }
 
     /**
