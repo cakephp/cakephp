@@ -25,9 +25,9 @@ use Exception;
 class ReconnectStrategy implements RetryStrategyInterface
 {
     /**
-     * The list of errors strings to match when looking for disconnection error.
-     * This is a static variable to avoid holding all the strings in the array can
-     * be inlined by the opcache.
+     * The list of error strings to match when looking for a disconnection error.
+     *
+     * This is a static variable to enable opcache to inline the values.
      *
      * @var array
      */

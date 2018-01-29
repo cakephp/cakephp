@@ -185,8 +185,8 @@ class Connection implements ConnectionInterface
     }
 
     /**
-     * Get the retry wrapper object, that is used to recover from server disconnects
-     * while performing ceratain database actions, such as executing a query
+     * Get the retry wrapper object that is allows recovery from server disconnects
+     * while performing certain database actions, such as executing a query.
      *
      * @return \Cake\Core\Retry\CommandRetry The retry wrapper
      */

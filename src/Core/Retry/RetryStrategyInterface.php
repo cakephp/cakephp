@@ -17,7 +17,7 @@ namespace Cake\Core\Retry;
 use Exception;
 
 /**
- * Used to instruct the CommandRetry object on whether or not a retry
+ * Used to instruct a CommandRetry object on whether or not a retry
  * for an action should be performed
  */
 interface RetryStrategyInterface

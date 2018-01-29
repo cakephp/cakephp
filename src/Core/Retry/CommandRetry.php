@@ -19,21 +19,21 @@ use Exception;
 /**
  * Allows any action to be retried in case of an exception.
  *
- * This class can be parametrized with an strategy, which will be followed
+ * This class can be parametrized with a strategy, which will be followed
  * to determine whether or not the action should be retried.
  */
 class CommandRetry
 {
 
     /**
-     * The strategy to follow should the executed action fail
+     * The strategy to follow should the executed action fail.
      *
      * @var \Cake\Core\Retry\RetryStrategyInterface
      */
     protected $strategy;
 
     /**
-     * The number of retries to perform in case of failure
+     * The number of retries to perform in case of failure.
      *
      * @var int
      */
