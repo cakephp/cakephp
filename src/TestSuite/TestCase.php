@@ -96,9 +96,9 @@ abstract class TestCase extends BaseTestCase
      */
     public function withErrorReporting($errorLevel, $callable)
     {
+        $default = error_reporting();
+        error_reporting($errorLevel);
         try {
-            $default = error_reporting();
-            error_reporting($errorLevel);
             $callable();
         } finally {
             error_reporting($default);
@@ -113,9 +113,9 @@ abstract class TestCase extends BaseTestCase
      */
     public function deprecated($callable)
     {
+        $errorLevel = error_reporting();
+        error_reporting(E_ALL ^ E_USER_DEPRECATED);
         try {
-            $errorLevel = error_reporting();
-            error_reporting(E_ALL ^ E_USER_DEPRECATED);
             $callable();
         } finally {
             error_reporting($errorLevel);
