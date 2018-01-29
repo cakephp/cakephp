@@ -21,6 +21,8 @@ use Exception;
 /**
  * Makes sure the connection to the database is alive before authorizing
  * the retry of an action.
+ *
+ * @internal
  */
 class ReconnectStrategy implements RetryStrategyInterface
 {

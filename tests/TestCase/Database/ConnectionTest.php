@@ -22,6 +22,7 @@ use Cake\Database\Log\LoggingStatement;
 use Cake\Database\Log\QueryLogger;
 use Cake\Database\Retry\CommandRetry;
 use Cake\Database\Retry\ReconnectStrategy;
+use Cake\Database\StatementInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
@@ -1250,7 +1251,7 @@ class ConnectionTest extends TestCase
             ->will($this->returnValue($statement));
 
         $res = $conn->query('SELECT 1');
-        $this->assertInstanceOf('Cake\Database\StatementInterface', $res);
+        $this->assertInstanceOf(StatementInterface::class, $res);
     }
 
     /**
