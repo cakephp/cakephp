@@ -258,7 +258,7 @@ if (!function_exists('triggerWarning')) {
      */
     function triggerWarning($message)
     {
-        $stackFrame = 2;
+        $stackFrame = 1;
         $trace = debug_backtrace();
         if (isset($trace[$stackFrame])) {
             $frame = $trace[$stackFrame];
