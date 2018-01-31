@@ -929,7 +929,7 @@ class Response implements ResponseInterface
             throw new InvalidArgumentException('Unknown status code');
         }
         $new = clone $this;
-        $new->_status = $code === null ? $this->_status : $code;
+        $new->_status = $code;
         if (empty($reasonPhrase) && isset($new->_statusCodes[$code])) {
             $reasonPhrase = $new->_statusCodes[$code];
         }
