@@ -925,14 +925,11 @@ class Response implements ResponseInterface
      */
     public function withStatus($code, $reasonPhrase = '')
     {
-        if ($code === null) {
-            return $this->_status;
-        }
         if (!isset($this->_statusCodes[$code])) {
             throw new InvalidArgumentException('Unknown status code');
         }
         $new = clone $this;
-        $new->_status = $code;
+        $new->_status = $code === null ? $this->_status : $code;
         if (empty($reasonPhrase) && isset($new->_statusCodes[$code])) {
             $reasonPhrase = $new->_statusCodes[$code];
         }
