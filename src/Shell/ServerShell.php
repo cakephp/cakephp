@@ -43,41 +43,28 @@ class ServerShell extends Shell
      *
      * @var string
      */
-    protected $_host;
+    protected $_host = self::DEFAULT_HOST;
 
     /**
      * listen port
      *
      * @var int
      */
-    protected $_port;
+    protected $_port = self::DEFAULT_PORT;
 
     /**
      * document root
      *
      * @var string
      */
-    protected $_documentRoot;
+    protected $_documentRoot = WWW_ROOT;
 
     /**
      * ini path
      *
      * @var string
      */
-    protected $_iniPath;
-
-    /**
-     * Override initialize of the Shell
-     *
-     * @return void
-     */
-    public function initialize()
-    {
-        $this->_host = self::DEFAULT_HOST;
-        $this->_port = self::DEFAULT_PORT;
-        $this->_documentRoot = WWW_ROOT;
-        $this->_iniPath = '';
-    }
+    protected $_iniPath = '';
 
     /**
      * Starts up the Shell and displays the welcome message.
@@ -91,17 +78,17 @@ class ServerShell extends Shell
      */
     public function startup()
     {
-        if (!empty($this->params['host'])) {
-            $this->_host = $this->params['host'];
+        if ($this->param('host')) {
+            $this->_host = $this->param('host');
         }
-        if (!empty($this->params['port'])) {
-            $this->_port = $this->params['port'];
+        if ($this->param('port')) {
+            $this->_port = $this->param('port');
         }
-        if (!empty($this->params['document_root'])) {
-            $this->_documentRoot = $this->params['document_root'];
+        if ($this->param('document_root')) {
+            $this->_documentRoot = $this->param('document_root');
         }
-        if (!empty($this->params['ini_path'])) {
-            $this->_iniPath = $this->params['ini_path'];
+        if ($this->param('ini_path')) {
+            $this->_iniPath = $this->param('ini_path');
         }
 
         // For Windows
@@ -111,9 +98,8 @@ class ServerShell extends Shell
         if (preg_match("/^([a-z]:)[\\\]+(.+)$/i", $this->_documentRoot, $m)) {
             $this->_documentRoot = $m[1] . '\\' . $m[2];
         }
-        if (substr($this->_iniPath, -1, 1) === DIRECTORY_SEPARATOR) {
-            $this->_iniPath = substr($this->_iniPath, 0, strlen($this->_iniPath) - 1);
-        }
+
+        $this->_iniPath = rtrim($this->_iniPath, DIRECTORY_SEPARATOR);
         if (preg_match("/^([a-z]:)[\\\]+(.+)$/i", $this->_iniPath, $m)) {
             $this->_iniPath = $m[1] . '\\' . $m[2];
         }
