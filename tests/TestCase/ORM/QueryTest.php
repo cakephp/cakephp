@@ -3318,6 +3318,25 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Tests that leftJoinWith() can be used with autofields()
+     *
+     * @return void
+     */
+    public function testLeftJoinWithAutoFields()
+    {
+        $table = TableRegistry::get('articles');
+        $table->belongsTo('authors');
+
+        $results = $table
+            ->find()
+            ->leftJoinWith('authors', function ($q) {
+                return $q->enableAutoFields(true);
+            })
+            ->all();
+        $this->assertCount(3, $results);
+    }
+
+    /**
      * Tests innerJoinWith()
      *
      * @return void
