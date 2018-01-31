@@ -617,18 +617,17 @@ class Router
             return $output;
         }
         if (is_array($url)) {
+            if (isset($url['_ssl'])) {
+                $url['_scheme'] = ($url['_ssl'] === true) ? 'https' : 'http';
+            }
+
             if (isset($url['_full']) && $url['_full'] === true) {
                 $full = true;
-                unset($url['_full']);
             }
             if (isset($url['#'])) {
                 $frag = '#' . $url['#'];
-                unset($url['#']);
             }
-            if (isset($url['_ssl'])) {
-                $url['_scheme'] = ($url['_ssl'] === true) ? 'https' : 'http';
-                unset($url['_ssl']);
-            }
+            unset($url['_ssl'], $url['_full'], $url['#']);
 
             $url = static::_applyUrlFilters($url);
 
@@ -651,6 +650,12 @@ class Router
                     'action' => 'index',
                     '_ext' => null
                 ];
+            }
+
+            // If a full URL is requested with a scheme the host should default
+            // to App.fullBaseUrl to avoid corrupt URLs
+            if ($full && isset($url['_scheme']) && !isset($url['_host'])) {
+                $url['_host'] = parse_url(static::fullBaseUrl(), PHP_URL_HOST);
             }
 
             $output = static::$_collection->match($url, static::$_requestContext + ['params' => $params]);

@@ -2060,6 +2060,46 @@ class RouterTest extends TestCase
     }
 
     /**
+     * Test that the _ssl + _full options work together.
+     *
+     * @return void
+     */
+    public function testGenerationWithSslAndFullOption()
+    {
+        Configure::write('App.fullBaseUrl', 'http://app.localhost');
+        Router::connect('/:controller/:action/*');
+
+        $request = new ServerRequest([
+            'environment' => ['HTTP_HOST' => 'localhost']
+        ]);
+        Router::pushRequest($request);
+
+        $result = Router::url([
+            'controller' => 'images',
+            'action' => 'index',
+            '_ssl' => true,
+            '_full' => true
+        ]);
+        $this->assertEquals('https://app.localhost/images/index', $result);
+
+        $result = Router::url([
+            'controller' => 'images',
+            'action' => 'index',
+            '_ssl' => false,
+            '_full' => true,
+        ]);
+        $this->assertEquals('http://app.localhost/images/index', $result);
+
+        $result = Router::url([
+            'controller' => 'images',
+            'action' => 'index',
+            '_full' => false,
+            '_ssl' => false
+        ]);
+        $this->assertEquals('http://localhost/images/index', $result);
+    }
+
+    /**
      * Test ssl option when the current request is ssl.
      *
      * @return void
