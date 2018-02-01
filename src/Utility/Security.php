@@ -134,6 +134,18 @@ class Security
     }
 
     /**
+     * Creates a secure random string.
+     *
+     * @param int $length String length
+     * @return string
+     * @since 3.6.0
+     */
+    public static function randomString($length)
+    {
+        return bin2hex(Security::randomBytes($length / 2));
+    }
+
+    /**
      * Like randomBytes() above, but not cryptographically secure.
      *
      * @param int $length The number of bytes you want.

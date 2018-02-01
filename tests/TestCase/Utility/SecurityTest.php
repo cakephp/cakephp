@@ -335,6 +335,22 @@ class SecurityTest extends TestCase
     }
 
     /**
+     * Test the randomString method.
+     *
+     * @return void
+     */
+    public function testRandomString()
+    {
+        $value = Security::randomString(16);
+        $this->assertSame(16, strlen($value));
+
+        $value = Security::randomString(64);
+        $this->assertSame(64, strlen($value));
+
+        $this->assertRegExp('/^[0-9a-f]+$/', $value, 'should return a ASCII string');
+    }
+
+    /**
      * Test the insecureRandomBytes method
      *
      * @return void
