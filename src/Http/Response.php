@@ -975,11 +975,19 @@ class Response implements ResponseInterface
      * @param int $code The code to set.
      * @param string $reasonPhrase The response reason phrase.
      * @return void
+     * @throws \InvalidArgumentException For invalid status code arguments.
      */
     protected function _setStatus($code, $reasonPhrase = '')
     {
+        if (!isset($this->_statusCodes[$code])) {
+            throw new InvalidArgumentException(sprintf(
+                'Invalid status code: %s. Use a valid HTTP status code in range 1xx - 5xx.',
+                $code
+            ));
+        }
+
         $this->_status = $code;
-        if (empty($reasonPhrase) && isset($this->_statusCodes[$code])) {
+        if (empty($reasonPhrase)) {
             $reasonPhrase = $this->_statusCodes[$code];
         }
         $this->_reasonPhrase = $reasonPhrase;
