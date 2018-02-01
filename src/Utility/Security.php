@@ -136,11 +136,11 @@ class Security
     /**
      * Creates a secure random string.
      *
-     * @param int $length String length
+     * @param int $length String length. Default 64.
      * @return string
      * @since 3.6.0
      */
-    public static function randomString($length)
+    public static function randomString($length = 64)
     {
         return substr(
             bin2hex(Security::randomBytes(ceil($length / 2))),
