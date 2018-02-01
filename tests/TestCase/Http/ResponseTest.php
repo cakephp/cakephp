@@ -2836,6 +2836,19 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * Test invalid status codes
+     *
+     * @return void
+     */
+    public function testWithStatusInvalid()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid status code: 1001. Use a valid HTTP status code in range 1xx - 5xx.');
+        $response = new Response();
+        $response->withStatus(1001);
+    }
+
+    /**
      * Test get reason phrase.
      *
      * @return void
