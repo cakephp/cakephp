@@ -142,7 +142,11 @@ class Security
      */
     public static function randomString($length)
     {
-        return bin2hex(Security::randomBytes($length / 2));
+        return substr(
+            bin2hex(Security::randomBytes(ceil($length / 2))),
+            0,
+            $length
+        );
     }
 
     /**

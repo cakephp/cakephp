@@ -341,8 +341,8 @@ class SecurityTest extends TestCase
      */
     public function testRandomString()
     {
-        $value = Security::randomString(16);
-        $this->assertSame(16, strlen($value));
+        $value = Security::randomString(7);
+        $this->assertSame(7, strlen($value));
 
         $value = Security::randomString(64);
         $this->assertSame(64, strlen($value));
