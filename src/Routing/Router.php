@@ -191,7 +191,7 @@ class Router
      * Compatibility proxy to \Cake\Routing\RouteBuilder::connect() in the `/` scope.
      *
      * @param string $route A string describing the template of the route
-     * @param array $defaults An array describing the default route parameters. These parameters will be used by default
+     * @param array|string|null $defaults An array describing the default route parameters. These parameters will be used by default
      *   and can supply routing parameters that are not dynamic. See above.
      * @param array $options An array matching the named elements in the route to regular expressions which that
      *   element should match. Also contains additional parameters such as which routed parameters should be
@@ -202,12 +202,57 @@ class Router
      * @see \Cake\Routing\RouteBuilder::connect()
      * @see \Cake\Routing\Router::scope()
      */
-    public static function connect($route, $defaults = [], $options = [])
+    public static function connect($route, $defaults = null, $options = [])
     {
+        $defaults = static::parseDefaults($defaults);
+
         static::$initialized = true;
         static::scope('/', function ($routes) use ($route, $defaults, $options) {
             $routes->connect($route, $defaults, $options);
         });
+    }
+
+    /**
+     * Parse the defaults if they're a string
+     *
+     * @param string|array
+     * @return mixed
+     */
+    protected static function parseDefaults($defaults)
+    {
+        if (!is_string($defaults)) {
+            return $defaults;
+        }
+
+        $regex = '/(?:([a-zA-Z0-9]*)\.)?([a-zA-Z0-9]*)(?:\\\\)?([a-zA-Z0-9]*):{2}([a-zA-Z0-9]*)/i';
+
+        if (preg_match($regex, $defaults, $matches)) {
+            unset($matches[0]);
+            $matches = array_filter($matches, function($value) {
+                return $value !== '' && $value !== '::';
+            });
+
+            switch (count($matches)) {
+                case 2:
+                    return [
+                        'controller' => $matches[2],
+                        'view' => $matches[4]
+                    ];
+                case 3:
+                    return [
+                        'prefix' => $matches[2],
+                        'controller' => $matches[3],
+                        'view' => $matches[4]
+                    ];
+                case 4:
+                    return [
+                        'plugin' => $matches[1],
+                        'prefix' => $matches[2],
+                        'controller' => $matches[3],
+                        'view' => $matches[4]
+                    ];
+            }
+        }
     }
 
     /**
