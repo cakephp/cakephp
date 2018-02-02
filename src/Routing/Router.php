@@ -228,7 +228,7 @@ class Router
 
         if (preg_match($regex, $defaults, $matches)) {
             unset($matches[0]);
-            $matches = array_filter($matches, function($value) {
+            $matches = array_filter($matches, function ($value) {
                 return $value !== '' && $value !== '::';
             });
 
