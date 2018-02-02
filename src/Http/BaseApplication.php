@@ -120,8 +120,6 @@ abstract class BaseApplication implements ConsoleApplicationInterface, HttpAppli
         if (!Router::$initialized) {
             require $this->configDir . '/routes.php';
             // Prevent routes from being loaded again
-
-            $this->pluginRegistry()->routes($routes);
             Router::$initialized = true;
         }
     }

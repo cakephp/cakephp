@@ -13,6 +13,8 @@
  */
 namespace Cake\Core;
 
+use Cake\Event\Event;
+use Cake\Event\EventManager;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
@@ -22,6 +24,25 @@ use RuntimeException;
  */
 class PluginRegistry extends ObjectRegistry implements PluginRegistryInterface
 {
+
+    /**
+     * @inheritDoc
+     */
+    public function load($objectName, $config = [])
+    {
+        $plugin = parent::load($objectName, $config);
+
+        if (class_exists('\Cake\Event\Event')) {
+            $event = new Event('Plugin.loaded', $this, [
+                'name' => $objectName,
+                'plugin' => $plugin,
+                'config' => $config
+            ]);
+            EventManager::instance()->dispatch($event);
+        };
+
+        return $plugin;
+    }
 
     /**
      * Should resolve the classname for a given object type.

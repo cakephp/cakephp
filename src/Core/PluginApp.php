@@ -163,6 +163,6 @@ class PluginApp implements ConsoleApplicationInterface, HttpApplicationInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next)
     {
-        return $next($request, $response)
+        return $next($request, $response);
     }
 }
