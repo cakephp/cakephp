@@ -17,9 +17,9 @@ namespace Cake\TestSuite\Fixture;
 loadPHPUnitAliases();
 
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Test;
 use PHPUnit\Framework\TestListener;
 use PHPUnit\Framework\TestListenerDefaultImplementation;
-use PHPUnit\Framework\Test;
 use PHPUnit\Framework\TestSuite;
 
 /**
