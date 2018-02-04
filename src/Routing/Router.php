@@ -19,6 +19,7 @@ use Cake\Http\ServerRequest;
 use Cake\Routing\Exception\MissingRouteException;
 use Cake\Utility\Inflector;
 use Psr\Http\Message\ServerRequestInterface;
+use RuntimeException;
 
 /**
  * Parses the request URL into controller, action, and parameters. Uses the connected routes
@@ -191,7 +192,7 @@ class Router
      * Compatibility proxy to \Cake\Routing\RouteBuilder::connect() in the `/` scope.
      *
      * @param string $route A string describing the template of the route
-     * @param array|string|null $defaults An array describing the default route parameters. These parameters will be used by default
+     * @param array|string $defaults An array describing the default route parameters. These parameters will be used by default
      *   and can supply routing parameters that are not dynamic. See above.
      * @param array $options An array matching the named elements in the route to regular expressions which that
      *   element should match. Also contains additional parameters such as which routed parameters should be
@@ -202,7 +203,7 @@ class Router
      * @see \Cake\Routing\RouteBuilder::connect()
      * @see \Cake\Routing\Router::scope()
      */
-    public static function connect($route, $defaults = null, $options = [])
+    public static function connect($route, $defaults = [], $options = [])
     {
         $defaults = static::parseDefaults($defaults);
 
@@ -215,8 +216,8 @@ class Router
     /**
      * Parse the defaults if they're a string
      *
-     * @param string|array
-     * @return mixed
+     * @param string|array Defaults array from the connect() method.
+     * @return string|array
      */
     protected static function parseDefaults($defaults)
     {
@@ -251,6 +252,8 @@ class Router
                         'controller' => $matches[3],
                         'view' => $matches[4]
                     ];
+                default:
+                    throw new RuntimeException('Could not parse the string syntax for Router::connect() defaults.');
             }
         }
     }

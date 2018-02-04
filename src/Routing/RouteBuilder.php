@@ -693,7 +693,7 @@ class RouteBuilder
      * The above route will only be matched for GET requests. POST requests will fail to match this route.
      *
      * @param string $route A string describing the template of the route
-     * @param array|string|null $defaults An array describing the default route parameters. These parameters will be used by default
+     * @param array|string $defaults An array describing the default route parameters. These parameters will be used by default
      *   and can supply routing parameters that are not dynamic. See above.
      * @param array $options An array matching the named elements in the route to regular expressions which that
      *   element should match. Also contains additional parameters such as which routed parameters should be
@@ -703,7 +703,7 @@ class RouteBuilder
      * @throws \InvalidArgumentException
      * @throws \BadMethodCallException
      */
-    public function connect($route, array $defaults = null, array $options = [])
+    public function connect($route, array $defaults = [], array $options = [])
     {
         if ($defaults === null) {
             $defaults = [];
