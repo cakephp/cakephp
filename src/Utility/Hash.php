@@ -267,6 +267,8 @@ class Hash
                 $prop = $prop ? '1' : '0';
             } elseif ($isBool) {
                 $prop = $prop ? 'true' : 'false';
+            } elseif (is_numeric($prop)) {
+                $prop = (string)$prop;
             }
 
             // Pattern matches and other operators.
@@ -274,8 +276,8 @@ class Hash
                 if (!preg_match($val, $prop)) {
                     return false;
                 }
-            } elseif (($op === '=' && $prop != $val) ||
-                ($op === '!=' && $prop == $val) ||
+            } elseif (($op === '=' && $prop !== $val) ||
+                ($op === '!=' && $prop === $val) ||
                 ($op === '>' && $prop <= $val) ||
                 ($op === '<' && $prop >= $val) ||
                 ($op === '>=' && $prop < $val) ||
