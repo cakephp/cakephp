@@ -302,6 +302,10 @@ class Sqlserver extends DboSource {
 					$prepend = 'DISTINCT ';
 					$fields[$i] = trim(str_replace('DISTINCT', '', $fields[$i]));
 				}
+				if (strpos($fields[$i], 'COUNT(DISTINCT') !== false) {
+					$prepend = 'COUNT(DISTINCT ';
+					$fields[$i] = trim(str_replace('COUNT(DISTINCT', '', $this->_quoteFields($fields[$i])));
+				}
 
 				if (!preg_match('/\s+AS\s+/i', $fields[$i])) {
 					if (substr($fields[$i], -1) === '*') {
