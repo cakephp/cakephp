@@ -1127,10 +1127,8 @@ class DboSource extends DataSource {
 		}
 
 		if (!empty($queryData['fields'])) {
-			$noAssocFields = true;
 			$queryData['fields'] = $this->fields($Model, null, $queryData['fields']);
 		} else {
-			$noAssocFields = false;
 			$queryData['fields'] = $this->fields($Model);
 		}
 
@@ -1164,8 +1162,32 @@ class DboSource extends DataSource {
 					continue;
 				}
 
-				if ($noAssocFields) {
-					$assocData['fields'] = false;
+				if (!empty($queryData['fields'])) {
+					foreach ($queryData['fields'] as $key => $field) {
+						$fieldExploded = explode('.', $field);
+						if (count($fieldExploded) === 2 && trim($fieldExploded[0], " \`]['") === $LinkModel->alias) {
+							$modelName = trim($fieldExploded[0], " \`]['");
+							$fieldName = trim($fieldExploded[1], " \`]['");
+							$virtualFields = $LinkModel->getVirtualField();
+							if (!empty($virtualFields)) {
+								foreach ($virtualFields as $virtualFieldName => $virtualFieldValue) {
+									if ($fieldName === '*' || $fieldName === $virtualFieldName) {
+										$assocData['fields'][] = $virtualFieldValue . ' AS ' . $modelName . '__' . $virtualFieldName;
+									}
+								}
+							}
+							if ($LinkModel->isVirtualField($fieldName)) {
+								unset($queryData['fields'][$key]);
+							} else {
+								$assocData['fields'][] = $field;
+							}
+						}
+					}
+					if (empty($assocData['fields'])) {
+						$assocData['fields'] = false;
+					} else {
+						$assocData['fields'] = $this->fields($LinkModel, $assoc, $assocData['fields']);
+					}
 				}
 
 				$external = isset($assocData['external']);
