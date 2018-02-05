@@ -16,6 +16,11 @@ namespace Cake\Http;
 
 use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\HttpApplicationInterface;
+use Cake\Event\EventApplicationInterface;
+use Cake\Event\EventDispatcherInterface;
+use Cake\Event\EventDispatcherTrait;
+use Cake\Event\EventManager;
+use Cake\Event\EventManagerInterface;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
 use Psr\Http\Message\ResponseInterface;
@@ -28,8 +33,10 @@ use Psr\Http\Message\ServerRequestInterface;
  * and ensuring that middleware is attached. It is also invoked as the last piece
  * of middleware, and delegates request/response handling to the correct controller.
  */
-abstract class BaseApplication implements ConsoleApplicationInterface, HttpApplicationInterface
+abstract class BaseApplication implements ConsoleApplicationInterface, HttpApplicationInterface, EventApplicationInterface, EventDispatcherInterface
 {
+
+    use EventDispatcherTrait;
 
     /**
      * @var string Contains the path of the config directory
@@ -40,10 +47,12 @@ abstract class BaseApplication implements ConsoleApplicationInterface, HttpAppli
      * Constructor
      *
      * @param string $configDir The directory the bootstrap configuration is held in.
+     * @param \Cake\Event\EventManagerInterface $eventManager Application event manager instance.
      */
-    public function __construct($configDir)
+    public function __construct($configDir, EventManagerInterface $eventManager = null)
     {
         $this->configDir = $configDir;
+        $this->_eventManager = $eventManager ?: EventManager::instance();
     }
 
     /**
@@ -92,6 +101,14 @@ abstract class BaseApplication implements ConsoleApplicationInterface, HttpAppli
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function events(EventManagerInterface $eventManager)
+    {
+        return $eventManager;
+    }
+
+    /**
      * Invoke the application.
      *
      * - Convert the PSR response into CakePHP equivalents.
@@ -115,6 +132,6 @@ abstract class BaseApplication implements ConsoleApplicationInterface, HttpAppli
      */
     protected function getDispatcher()
     {
-        return new ActionDispatcher(null, null, DispatcherFactory::filters());
+        return new ActionDispatcher(null, $this->getEventManager(), DispatcherFactory::filters());
     }
 }
