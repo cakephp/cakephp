@@ -1422,6 +1422,26 @@ class HashTest extends TestCase
     }
 
     /**
+     * Test extracting value-zero contained data based on attributes with string
+     *
+     * @return void
+     */
+    public function testExtractAttributeStringWithDataContainsZero()
+    {
+        $data = [
+            ['value' => '0'],
+            ['value' => 0],
+            ['value' => 'string-value'],
+        ];
+
+        $expected = [
+            ['value' => 'string-value'],
+        ];
+        $result = Hash::extract($data, '{n}[value=string-value]');
+        $this->assertSame($expected, $result);
+    }
+
+    /**
      * Test that uneven keys are handled correctly.
      *
      * @return void
