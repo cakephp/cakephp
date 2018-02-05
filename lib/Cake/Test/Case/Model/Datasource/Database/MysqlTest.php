@@ -2108,6 +2108,10 @@ SQL;
 		$expected = " WHERE `Post`.`title` = '1.1'";
 		$this->assertEquals($expected, $result);
 
+		$result = $this->Dbo->conditions(array('Post.title' => array('foo', 'bar')));
+		$expected = " WHERE `Post`.`title` IN ('foo', 'bar')";
+		$this->assertEquals($expected, $result);
+
 		$result = $this->Dbo->conditions("User.id != 0 AND User.user LIKE '%arr%'");
 		$expected = " WHERE `User`.`id` != 0 AND `User`.`user` LIKE '%arr%'";
 		$this->assertEquals($expected, $result);
@@ -2416,6 +2420,10 @@ SQL;
 		$expected = " WHERE `score` IN (1, 2, 10)";
 		$this->assertEquals($expected, $result);
 
+		$result = $this->Dbo->conditions(array('score' => array('1', '2', '10')));
+		$expected = " WHERE `score` IN ('1', '2', '10')";
+		$this->assertEquals($expected, $result);
+
 		$result = $this->Dbo->conditions(array('score' => array()));
 		$expected = " WHERE `score` IS NULL";
 		$this->assertEquals($expected, $result);
@@ -2635,9 +2643,19 @@ SQL;
 		$expected = " WHERE id = (1)";
 		$this->assertEquals($expected, $result);
 
+		$conditions = array('key' => array('939'));
+		$result = $this->Dbo->conditions($conditions);
+		$expected = " WHERE `key` IN ('939')";
+		$this->assertEquals($expected, $result);
+
 		$conditions = array('id NOT' => array(1));
 		$result = $this->Dbo->conditions($conditions);
 		$expected = " WHERE NOT (id = (1))";
+		$this->assertEquals($expected, $result);
+
+		$conditions = array('key NOT' => array('939'));
+		$result = $this->Dbo->conditions($conditions);
+		$expected = " WHERE NOT (`key` IN ('939'))";
 		$this->assertEquals($expected, $result);
 	}
 
