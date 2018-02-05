@@ -97,7 +97,7 @@ class CakeTestRunner extends PHPUnit_TextUI_TestRunner {
  * @throws RuntimeException When fixture manager class cannot be loaded.
  */
 	protected function _getFixtureManager($arguments) {
-		if (isset($arguments['fixtureManager'])) {
+		if (!empty($arguments['fixtureManager'])) {
 			App::uses($arguments['fixtureManager'], 'TestSuite');
 			if (class_exists($arguments['fixtureManager'])) {
 				return new $arguments['fixtureManager'];
