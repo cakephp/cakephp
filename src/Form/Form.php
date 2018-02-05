@@ -14,6 +14,7 @@
  */
 namespace Cake\Form;
 
+use Cake\Form\Schema;
 use Cake\Validation\Validator;
 
 /**
@@ -40,7 +41,7 @@ class Form
      *
      * @var string
      */
-    protected $_schemaClass = '\Cake\Form\Schema';
+    protected $_schemaClass = Schema::class;
 
     /**
      * The schema used by this form.
