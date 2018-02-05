@@ -70,6 +70,10 @@ class CommandRunner implements EventDispatcherInterface
             '--help' => 'help',
             '-h' => 'help',
         ];
+
+        if ($app instanceof EventDispatcherInterface) {
+            $this->setEventManager($app->getEventManager());
+        }
     }
 
     /**
