@@ -22,6 +22,7 @@ use Cake\Console\ConsoleIo;
 use Cake\Console\Exception\StopException;
 use Cake\Console\Shell;
 use Cake\Core\ConsoleApplicationInterface;
+use Cake\Event\EventApplicationInterface;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Utility\Inflector;
@@ -117,6 +118,10 @@ class CommandRunner implements EventDispatcherInterface
     public function run(array $argv, ConsoleIo $io = null)
     {
         $this->app->bootstrap();
+        if ($this->app instanceof EventApplicationInterface) {
+            $eventManager = $this->app->events($this->getEventManager());
+            $this->setEventManager($eventManager);
+        }
 
         $commands = new CommandCollection([
             'version' => VersionCommand::class,
