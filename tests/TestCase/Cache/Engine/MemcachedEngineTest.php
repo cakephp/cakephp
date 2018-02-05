@@ -35,9 +35,9 @@ class MemcachedEngineTest extends TestCase
         parent::setUp();
         $this->skipIf(!class_exists('Memcached'), 'Memcached is not installed or configured properly.');
 
-        // @codingStandardsIgnoreStart
+        // phpcs:disable
         $socket = @fsockopen('127.0.0.1', 11211, $errno, $errstr, 1);
-        // @codingStandardsIgnoreEnd
+        // phpcs:enable
         $this->skipIf(!$socket, 'Memcached is not running.');
         fclose($socket);
 
@@ -374,11 +374,11 @@ class MemcachedEngineTest extends TestCase
 
         foreach ($servers as $server) {
             list($host, $port) = explode(':', $server);
-            //@codingStandardsIgnoreStart
+            // phpcs:disable
             if (!$Memcached->addServer($host, $port)) {
                 $available = false;
             }
-            //@codingStandardsIgnoreEnd
+            // phpcs:enable
         }
 
         $this->skipIf(!$available, 'Need memcached servers at ' . implode(', ', $servers) . ' to run this test.');

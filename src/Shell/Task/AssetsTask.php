@@ -217,7 +217,7 @@ class AssetsTask extends Shell
         }
 
         if (is_link($dest)) {
-            // @codingStandardsIgnoreLine
+            // phpcs:ignore
             if (@unlink($dest)) {
                 $this->out('Unlinked ' . $dest);
 
@@ -250,9 +250,9 @@ class AssetsTask extends Shell
     protected function _createDirectory($dir)
     {
         $old = umask(0);
-        // @codingStandardsIgnoreStart
+        // phpcs:disable
         $result = @mkdir($dir, 0755, true);
-        // @codingStandardsIgnoreEnd
+        // phpcs:enable
         umask($old);
 
         if ($result) {
@@ -275,9 +275,9 @@ class AssetsTask extends Shell
      */
     protected function _createSymlink($target, $link)
     {
-        // @codingStandardsIgnoreStart
+        // phpcs:disable
         $result = @symlink($target, $link);
-        // @codingStandardsIgnoreEnd
+        // phpcs:enable
 
         if ($result) {
             $this->out('Created symlink ' . $link);

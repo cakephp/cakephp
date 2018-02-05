@@ -89,7 +89,7 @@ class Socket
      * @var array
      */
     protected $_encryptMethods = [
-        // @codingStandardsIgnoreStart
+        // phpcs:disable
         // @deprecated Will be removed in 4.0.0
         'sslv2_client' => STREAM_CRYPTO_METHOD_SSLv2_CLIENT,
         // @deprecated Will be removed in 4.0.0
@@ -108,7 +108,7 @@ class Socket
         'tlsv10_server' => STREAM_CRYPTO_METHOD_TLSv1_0_SERVER,
         'tlsv11_server' => STREAM_CRYPTO_METHOD_TLSv1_1_SERVER,
         'tlsv12_server' => STREAM_CRYPTO_METHOD_TLSv1_2_SERVER
-        // @codingStandardsIgnoreEnd
+        // phpcs:enable
     ];
 
     /**
@@ -458,14 +458,14 @@ class Socket
         // See https://github.com/php/php-src/commit/10bc5fd4c4c8e1dd57bd911b086e9872a56300a0
         if (version_compare(PHP_VERSION, '5.6.7', '>=')) {
             if ($method == STREAM_CRYPTO_METHOD_TLS_CLIENT) {
-                // @codingStandardsIgnoreStart
+                // phpcs:disable
                 $method |= STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT | STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT;
-                // @codingStandardsIgnoreEnd
+                // phpcs:enable
             }
             if ($method == STREAM_CRYPTO_METHOD_TLS_SERVER) {
-                // @codingStandardsIgnoreStart
+                // phpcs:disable
                 $method |= STREAM_CRYPTO_METHOD_TLSv1_1_SERVER | STREAM_CRYPTO_METHOD_TLSv1_2_SERVER;
-                // @codingStandardsIgnoreEnd
+                // phpcs:enable
             }
         }
 

@@ -148,7 +148,7 @@ class RssHelperTest extends TestCase
         ];
         $content = 'content-here';
         $result = $this->Rss->channel($attrib, $elements, $content);
-        //@codingStandardsIgnoreStart
+        // phpcs:disable
         $expected = [
             '<channel',
                 '<title', 'Title of RSS Feed', '/title',
@@ -169,7 +169,7 @@ class RssHelperTest extends TestCase
             'content-here',
             '/channel',
         ];
-        //@codingStandardsIgnoreEnd
+        // phpcs:enable
         $this->assertHtml($expected, $result);
     }
 
@@ -194,7 +194,7 @@ class RssHelperTest extends TestCase
         ];
         $content = 'content-here';
         $result = $this->Rss->channel($attrib, $elements, $content);
-        //@codingStandardsIgnoreStart
+        // phpcs:disable
         $expected = [
             '<channel',
                 '<title', 'Title of RSS Feed', '/title',
@@ -214,7 +214,7 @@ class RssHelperTest extends TestCase
             'content-here',
             '/channel',
         ];
-        //@codingStandardsIgnoreEnd
+        // phpcs:enable
         $this->assertHtml($expected, $result);
     }
 

@@ -435,7 +435,7 @@ class QueryExpression implements ExpressionInterface, Countable
         return $this->add(new BetweenExpression($field, $from, $to, $type));
     }
 
-// @codingStandardsIgnoreStart
+// phpcs:disable
     /**
      * Returns a new QueryExpression object containing all the conditions passed
      * and set up the conjunction to be "AND"
@@ -471,7 +471,7 @@ class QueryExpression implements ExpressionInterface, Countable
 
         return new static($conditions, $this->getTypeMap()->setTypes($types), 'OR');
     }
-// @codingStandardsIgnoreEnd
+// phpcs:enable
 
     /**
      * Adds a new set of conditions to this level of the tree and negates

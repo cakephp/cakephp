@@ -68,9 +68,9 @@ class Sqlite extends Driver
         $this->_connect($dsn, $config);
 
         if (!$databaseExists && $config['database'] != ':memory:') {
-            //@codingStandardsIgnoreStart
+            // phpcs:disable
             @chmod($config['database'], $config['mask']);
-            //@codingStandardsIgnoreEnd
+            // phpcs:enable
         }
 
         if (!empty($config['init'])) {

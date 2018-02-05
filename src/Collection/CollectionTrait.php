@@ -727,7 +727,7 @@ trait CollectionTrait
      * @return \Traversable
      * @deprecated
      */
-    // @codingStandardsIgnoreLine
+    // phpcs:ignore
     public function _unwrap()
     {
         return $this->unwrap();
