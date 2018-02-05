@@ -3367,7 +3367,9 @@ class ModelWriteTest extends BaseModelTest {
 				array(
 					'comment' => 'Article comment',
 					'user_id' => 1
-		)));
+				)
+			)
+		);
 		$Article = new Article();
 		$result = $Article->saveAll($data);
 		$this->assertFalse(empty($result));
@@ -3376,7 +3378,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertEquals(2, count($result['Tag']));
 		$this->assertEquals('tag1', $result['Tag'][0]['tag']);
 		$this->assertEquals(1, count($result['Comment']));
-		$this->assertEquals(1, count($result['Comment'][0]['comment']));
+		$this->assertEquals('Article comment', $result['Comment'][0]['comment']);
 	}
 
 /**
@@ -5647,7 +5649,9 @@ class ModelWriteTest extends BaseModelTest {
 				array(
 					'comment' => 'Article comment',
 					'user_id' => 1
-		)));
+				)
+			)
+		);
 		$Article = new Article();
 		$result = $Article->saveAssociated($data);
 		$this->assertFalse(empty($result));
@@ -5656,7 +5660,7 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertEquals(2, count($result['Tag']));
 		$this->assertEquals('tag1', $result['Tag'][0]['tag']);
 		$this->assertEquals(1, count($result['Comment']));
-		$this->assertEquals(1, count($result['Comment'][0]['comment']));
+		$this->assertEquals('Article comment', $result['Comment'][0]['comment']);
 	}
 
 /**

@@ -26,6 +26,13 @@ App::uses('CakeBaseReporter', 'TestSuite/Reporter');
 class CakeHtmlReporter extends CakeBaseReporter {
 
 /**
+ * The content buffer
+ *
+ * @var string
+ */
+	protected $_buffer = '';
+
+/**
  * Paints the top of the web page setting the
  * title to the name of the starting test.
  *
@@ -33,12 +40,13 @@ class CakeHtmlReporter extends CakeBaseReporter {
  */
 	public function paintHeader() {
 		$this->_headerSent = true;
+		ob_start();
 		$this->sendContentType();
 		$this->sendNoCacheHeaders();
 		$this->paintDocumentStart();
 		$this->paintTestMenu();
 		echo "<ul class='tests'>\n";
-		ob_end_flush();
+		$this->_buffer = ob_get_clean();
 	}
 
 /**
@@ -58,7 +66,6 @@ class CakeHtmlReporter extends CakeBaseReporter {
  * @return void
  */
 	public function paintDocumentStart() {
-		ob_start();
 		$baseDir = $this->params['baseDir'];
 		include CAKE . 'TestSuite' . DS . 'templates' . DS . 'header.php';
 	}
@@ -135,7 +142,9 @@ class CakeHtmlReporter extends CakeBaseReporter {
  * @return void
  */
 	public function paintFooter($result) {
+		echo $this->_buffer;
 		ob_end_flush();
+
 		$colour = ($result->failureCount() + $result->errorCount() > 0 ? "red" : "green");
 		echo "</ul>\n";
 		echo "<div style=\"";
@@ -248,6 +257,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
  * @return void
  */
 	public function paintFail($message, $test) {
+		ob_start();
 		$trace = $this->_getStackTrace($message);
 		$className = get_class($test);
 		$testName = $className . '::' . $test->getName() . '()';
@@ -286,6 +296,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
 		}
 		echo "<div class='msg'>" . __d('cake_dev', 'Stack trace:') . '<br />' . $trace . "</div>\n";
 		echo "</li>\n";
+		$this->_buffer .= ob_get_clean();
 	}
 
 /**
@@ -298,6 +309,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
  * @return void
  */
 	public function paintPass(PHPUnit_Framework_Test $test, $time = null) {
+		ob_start();
 		if (isset($this->params['showPasses']) && $this->params['showPasses']) {
 			echo "<li class='pass'>\n";
 			echo "<span>Passed</span> ";
@@ -305,6 +317,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
 			echo "<br />" . $this->_htmlEntities($test->getName()) . " ($time seconds)\n";
 			echo "</li>\n";
 		}
+		$this->_buffer .= ob_get_clean();
 	}
 
 /**
@@ -315,6 +328,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
  * @return void
  */
 	public function paintException($message, $test) {
+		ob_start();
 		$trace = $this->_getStackTrace($message);
 		$testName = get_class($test) . '(' . $test->getName() . ')';
 
@@ -325,6 +339,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
 		echo "<div class='msg'>" . __d('cake_dev', 'Test case: %s', $testName) . "</div>\n";
 		echo "<div class='msg'>" . __d('cake_dev', 'Stack trace:') . '<br />' . $trace . "</div>\n";
 		echo "</li>\n";
+		$this->_buffer .= ob_get_clean();
 	}
 
 /**
@@ -335,10 +350,12 @@ class CakeHtmlReporter extends CakeBaseReporter {
  * @return void
  */
 	public function paintSkip($message, $test) {
+		ob_start();
 		echo "<li class='skipped'>\n";
 		echo "<span>Skipped</span> ";
 		echo $test->getName() . ': ' . $this->_htmlEntities($message->getMessage());
 		echo "</li>\n";
+		$this->_buffer .= ob_get_clean();
 	}
 
 /**
@@ -390,9 +407,9 @@ class CakeHtmlReporter extends CakeBaseReporter {
  */
 	public function startTestSuite(PHPUnit_Framework_TestSuite $suite) {
 		if (!$this->_headerSent) {
-			echo $this->paintHeader();
+			$this->paintHeader();
 		}
-		echo '<h2>' . __d('cake_dev', 'Running  %s', $suite->getName()) . '</h2>';
+		$this->_buffer .= '<h2>' . __d('cake_dev', 'Running  %s', $suite->getName()) . '</h2>';
 	}
 
 /**

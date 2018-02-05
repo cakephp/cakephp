@@ -552,6 +552,12 @@ class CakeSession {
 
 		if (!empty($sessionConfig['handler'])) {
 			$sessionConfig['ini']['session.save_handler'] = 'user';
+
+			// In PHP7.2.0+ session.save_handler can't be set to 'user' by the user.
+			// https://github.com/php/php-src/commit/a93a51c3bf4ea1638ce0adc4a899cb93531b9f0d
+			if (version_compare(PHP_VERSION, '7.2.0', '>=')) {
+				unset($sessionConfig['ini']['session.save_handler']);
+			}
 		} elseif (!empty($sessionConfig['session.save_path']) && Configure::read('debug')) {
 			if (!is_dir($sessionConfig['session.save_path'])) {
 				mkdir($sessionConfig['session.save_path'], 0775, true);

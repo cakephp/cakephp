@@ -87,6 +87,7 @@ class SessionHelperTest extends CakeTestCase {
 	public function tearDown() {
 		$_SESSION = array();
 		unset($this->View, $this->Session);
+		CakeSession::destroy();
 		CakePlugin::unload();
 		parent::tearDown();
 	}
@@ -147,6 +148,18 @@ class SessionHelperTest extends CakeTestCase {
 		$expected = 'Bare message';
 		$this->assertEquals($expected, $result);
 		$this->assertFalse($this->Session->check('Message.bare'));
+	}
+
+/**
+ * Test the flash method works without any params being passed
+ *
+ * @return void
+ */
+	public function testFlashWithNoParams() {
+		$result = $this->Session->flash();
+		$expected = '<div id="flashMessage" class="message">This is a calling</div>';
+		$this->assertEquals($expected, $result);
+		$this->assertFalse($this->Session->check('Message.flash'));
 	}
 
 /**

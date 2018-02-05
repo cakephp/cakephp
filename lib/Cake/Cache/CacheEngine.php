@@ -181,7 +181,7 @@ abstract class CacheEngine {
 
 		$prefix = '';
 		if (!empty($this->_groupPrefix)) {
-			$prefix = vsprintf($this->_groupPrefix, $this->groups());
+			$prefix = md5(implode('_', $this->groups()));
 		}
 
 		$key = preg_replace('/[\s]+/', '_', strtolower(trim(str_replace(array(DS, '/', '.'), '_', strval($key)))));

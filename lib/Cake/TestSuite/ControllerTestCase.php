@@ -388,7 +388,15 @@ abstract class ControllerTestCase extends CakeTestCase {
 			if ($methods === true) {
 				$methods = array();
 			}
+			$config = isset($controllerObj->components[$component]) ? $controllerObj->components[$component] : array();
+			if (isset($config['className'])) {
+				$alias = $component;
+				$component = $config['className'];
+			}
 			list($plugin, $name) = pluginSplit($component, true);
+			if (!isset($alias)) {
+				$alias = $name;
+			}
 			$componentClass = $name . 'Component';
 			App::uses($componentClass, $plugin . 'Controller/Component');
 			if (!class_exists($componentClass)) {
@@ -396,11 +404,11 @@ abstract class ControllerTestCase extends CakeTestCase {
 					'class' => $componentClass
 				));
 			}
-			$config = isset($controllerObj->components[$component]) ? $controllerObj->components[$component] : array();
 			/** @var Component|PHPUnit_Framework_MockObject_MockObject $componentObj */
 			$componentObj = $this->getMock($componentClass, $methods, array($controllerObj->Components, $config));
-			$controllerObj->Components->set($name, $componentObj);
-			$controllerObj->Components->enable($name);
+			$controllerObj->Components->set($alias, $componentObj);
+			$controllerObj->Components->enable($alias);
+			unset($alias);
 		}
 
 		$controllerObj->constructClasses();
