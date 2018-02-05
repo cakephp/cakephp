@@ -82,7 +82,7 @@ trait SqlserverDialectTrait
      *
      * @return int
      */
-    // @codingStandardsIgnoreLine
+    // phpcs:ignore
     public function _version()
     {
         $this->connect();

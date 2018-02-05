@@ -35,9 +35,9 @@ class RedisEngineTest extends TestCase
         $this->skipIf(!class_exists('Redis'), 'Redis extension is not installed or configured properly.');
         $this->skipIf(version_compare(PHP_VERSION, '7.2.0dev', '>='), 'Redis is misbehaving in PHP7.2');
 
-        // @codingStandardsIgnoreStart
+        // phpcs:disable
         $socket = @fsockopen('127.0.0.1', 6379, $errno, $errstr, 1);
-        // @codingStandardsIgnoreEnd
+        // phpcs:enable
         $this->skipIf(!$socket, 'Redis is not running.');
         fclose($socket);
 

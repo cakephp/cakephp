@@ -60,7 +60,7 @@ class ShellTestShell extends Shell
     {
     }
 
-    //@codingStandardsIgnoreStart
+    // phpcs:disable
     public function doSomething()
     {
     }
@@ -73,5 +73,5 @@ class ShellTestShell extends Shell
     {
         $this->log($this->testMessage);
     }
-    //@codingStandardsIgnoreEnd
+    // phpcs:enable
 }

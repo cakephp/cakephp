@@ -2539,9 +2539,9 @@ class Response implements ResponseInterface
      */
     protected function _clearBuffer()
     {
-        //@codingStandardsIgnoreStart
+        // phpcs:disable
         return @ob_end_clean();
-        //@codingStandardsIgnoreEnd
+        // phpcs:enable
     }
 
     /**
@@ -2552,12 +2552,12 @@ class Response implements ResponseInterface
      */
     protected function _flushBuffer()
     {
-        //@codingStandardsIgnoreStart
+        // phpcs:disable
         @flush();
         if (ob_get_level()) {
             @ob_flush();
         }
-        //@codingStandardsIgnoreEnd
+        // phpcs:enable
     }
 
     /**

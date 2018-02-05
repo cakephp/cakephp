@@ -173,9 +173,9 @@ class ErrorHandlerTest extends TestCase
         $this->_restoreError = true;
 
         ob_start();
-        //@codingStandardsIgnoreStart
+        // phpcs:disable
         @include 'invalid.file';
-        //@codingStandardsIgnoreEnd
+        // phpcs:enable
         $result = ob_get_clean();
         $this->assertEmpty($result);
     }

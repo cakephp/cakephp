@@ -242,9 +242,9 @@ class FileEngine extends CacheEngine
         $path = $this->_File->getRealPath();
         $this->_File = null;
 
-        //@codingStandardsIgnoreStart
+        // phpcs:disable
         return @unlink($path);
-        //@codingStandardsIgnoreEnd
+        // phpcs:enable
     }
 
     /**
@@ -331,9 +331,9 @@ class FileEngine extends CacheEngine
                 $filePath = $file->getRealPath();
                 $file = null;
 
-                //@codingStandardsIgnoreStart
+                // phpcs:disable
                 @unlink($filePath);
-                //@codingStandardsIgnoreEnd
+                // phpcs:enable
             }
         }
     }
@@ -423,9 +423,9 @@ class FileEngine extends CacheEngine
         $path = $dir->getPathname();
         $success = true;
         if (!is_dir($path)) {
-            //@codingStandardsIgnoreStart
+            // phpcs:disable
             $success = @mkdir($path, 0775, true);
-            //@codingStandardsIgnoreEnd
+            // phpcs:enable
         }
 
         $isWritableDir = ($dir->isDir() && $dir->isWritable());
@@ -484,9 +484,9 @@ class FileEngine extends CacheEngine
             if ($object->isFile() && $containsGroup && $hasPrefix) {
                 $path = $object->getPathname();
                 $object = null;
-                //@codingStandardsIgnoreStart
+                // phpcs:disable
                 @unlink($path);
-                //@codingStandardsIgnoreEnd
+                // phpcs:enable
             }
         }
 
