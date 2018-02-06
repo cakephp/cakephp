@@ -205,57 +205,10 @@ class Router
      */
     public static function connect($route, $defaults = [], $options = [])
     {
-        $defaults = static::parseDefaults($defaults);
-
         static::$initialized = true;
         static::scope('/', function ($routes) use ($route, $defaults, $options) {
             $routes->connect($route, $defaults, $options);
         });
-    }
-
-    /**
-     * Parse the defaults if they're a string
-     *
-     * @param string|array Defaults array from the connect() method.
-     * @return string|array
-     */
-    protected static function parseDefaults($defaults)
-    {
-        if (!is_string($defaults)) {
-            return $defaults;
-        }
-
-        $regex = '/(?:([a-zA-Z0-9]*)\.)?([a-zA-Z0-9]*)(?:\\\\)?([a-zA-Z0-9]*):{2}([a-zA-Z0-9]*)/i';
-
-        if (preg_match($regex, $defaults, $matches)) {
-            unset($matches[0]);
-            $matches = array_filter($matches, function ($value) {
-                return $value !== '' && $value !== '::';
-            });
-
-            switch (count($matches)) {
-                case 2:
-                    return [
-                        'controller' => $matches[2],
-                        'view' => $matches[4]
-                    ];
-                case 3:
-                    return [
-                        'prefix' => $matches[2],
-                        'controller' => $matches[3],
-                        'view' => $matches[4]
-                    ];
-                case 4:
-                    return [
-                        'plugin' => $matches[1],
-                        'prefix' => $matches[2],
-                        'controller' => $matches[3],
-                        'view' => $matches[4]
-                    ];
-                default:
-                    throw new RuntimeException('Could not parse the string syntax for Router::connect() defaults.');
-            }
-        }
     }
 
     /**

@@ -3423,48 +3423,22 @@ class RouterTest extends TestCase
     }
 
     /**
-     * testShortStringSyntax
+     * test connect() with short string syntax
      *
      * @return void
      */
-    public function testShortStringSyntax()
+    public function testConnectShortStringSyntax()
     {
-        Router::connect('/admin/articles/view', 'Admin\Articles::view');
+        Router::connect('/admin/articles/view', 'Admin/Articles::view');
         $result = Router::parseRequest($this->makeRequest('/admin/articles/view', 'GET'));
         $expected = [
             'pass' => [],
-            'prefix' => 'Admin',
+            'prefix' => 'admin',
             'controller' => 'Articles',
-            'view' => 'view',
-            'action' => 'index',
+            'action' => 'view',
             'plugin' => null,
             '_matchedRoute' => '/admin/articles/view'
 
-        ];
-        $this->assertEquals($result, $expected);
-
-        Router::connect('/admin/blog/articles/view', 'Blog.Admin\Articles::view');
-        $result = Router::parseRequest($this->makeRequest('/admin/blog/articles/view', 'GET'));
-        $expected = [
-            'pass' => [],
-            'plugin' => 'Blog',
-            'prefix' => 'Admin',
-            'controller' => 'Articles',
-            'view' => 'view',
-            'action' => 'index',
-            '_matchedRoute' => '/admin/blog/articles/view'
-        ];
-        $this->assertEquals($result, $expected);
-
-        Router::connect('/my-articles/view', 'Articles::view');
-        $result = Router::parseRequest($this->makeRequest('/my-articles/view', 'GET'));
-        $expected = [
-            'pass' => [],
-            'controller' => 'Articles',
-            'view' => 'view',
-            'action' => 'index',
-            'plugin' => null,
-            '_matchedRoute' => '/my-articles/view'
         ];
         $this->assertEquals($result, $expected);
     }

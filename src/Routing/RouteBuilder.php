@@ -586,6 +586,7 @@ class RouteBuilder
             'routeClass' => $this->_routeClass,
         ];
 
+        $target = $this->parseDefaults($target);
         $target['_method'] = $method;
 
         $route = $this->_makeRoute($template, $target, $options);
@@ -703,12 +704,9 @@ class RouteBuilder
      * @throws \InvalidArgumentException
      * @throws \BadMethodCallException
      */
-    public function connect($route, array $defaults = [], array $options = [])
+    public function connect($route, $defaults = [], array $options = [])
     {
-        if ($defaults === null) {
-            $defaults = [];
-        }
-
+        $defaults = $this->parseDefaults($defaults);
         if (!isset($options['action']) && !isset($defaults['action'])) {
             $defaults['action'] = 'index';
         }
@@ -731,6 +729,50 @@ class RouteBuilder
         $this->_collection->add($route, $options);
 
         return $route;
+    }
+
+    /**
+     * Parse the defaults if they're a string
+     *
+     * @param string|array $defaults Defaults array from the connect() method.
+     * @return string|array
+     */
+    protected static function parseDefaults($defaults)
+    {
+        if (!is_string($defaults)) {
+            return $defaults;
+        }
+
+        $regex = '/(?:([a-zA-Z0-9\/]*)\.)?([a-zA-Z0-9\/]*?)(?:\/)?([a-zA-Z0-9]*):{2}([a-zA-Z0-9_]*)/i';
+        if (preg_match($regex, $defaults, $matches)) {
+            unset($matches[0]);
+            $matches = array_filter($matches, function ($value) {
+                return $value !== '' && $value !== '::';
+            });
+
+            // Intentionally incomplete switch
+            switch (count($matches)) {
+                case 2:
+                    return [
+                        'controller' => $matches[3],
+                        'action' => $matches[4]
+                    ];
+                case 3:
+                    return [
+                        'prefix' => strtolower($matches[2]),
+                        'controller' => $matches[3],
+                        'action' => $matches[4]
+                    ];
+                case 4:
+                    return [
+                        'plugin' => $matches[1],
+                        'prefix' => strtolower($matches[2]),
+                        'controller' => $matches[3],
+                        'action' => $matches[4]
+                    ];
+            }
+        }
+        throw new RuntimeException("Could not parse `{$defaults}` route destination string.");
     }
 
     /**
