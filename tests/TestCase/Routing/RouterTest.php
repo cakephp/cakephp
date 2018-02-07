@@ -3423,6 +3423,27 @@ class RouterTest extends TestCase
     }
 
     /**
+     * test connect() with short string syntax
+     *
+     * @return void
+     */
+    public function testConnectShortStringSyntax()
+    {
+        Router::connect('/admin/articles/view', 'Admin/Articles::view');
+        $result = Router::parseRequest($this->makeRequest('/admin/articles/view', 'GET'));
+        $expected = [
+            'pass' => [],
+            'prefix' => 'admin',
+            'controller' => 'Articles',
+            'action' => 'view',
+            'plugin' => null,
+            '_matchedRoute' => '/admin/articles/view'
+
+        ];
+        $this->assertEquals($result, $expected);
+    }
+
+    /**
      * Connect some fallback routes for testing router behavior.
      *
      * @return void

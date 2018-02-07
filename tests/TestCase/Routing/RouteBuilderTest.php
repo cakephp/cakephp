@@ -22,6 +22,7 @@ use Cake\Routing\Route\InflectedRoute;
 use Cake\Routing\Route\RedirectRoute;
 use Cake\Routing\Route\Route;
 use Cake\TestSuite\TestCase;
+use RuntimeException;
 
 /**
  * RouteBuilder test case
@@ -185,6 +186,65 @@ class RouteBuilderTest extends TestCase
     }
 
     /**
+     * Test connect() with short string syntax
+     *
+     * @return void
+     */
+    public function testConnectShortStringInvalid()
+    {
+        $this->expectException(RuntimeException::class);
+        $routes = new RouteBuilder($this->collection, '/');
+        $routes->connect('/my-articles/view', 'Articles:no');
+    }
+
+    /**
+     * Test connect() with short string syntax
+     *
+     * @return void
+     */
+    public function testConnectShortString()
+    {
+        $routes = new RouteBuilder($this->collection, '/');
+        $routes->connect('/my-articles/view', 'Articles::view');
+        $expected = [
+            'pass' => [],
+            'controller' => 'Articles',
+            'action' => 'view',
+            'plugin' => null,
+            '_matchedRoute' => '/my-articles/view'
+        ];
+        $this->assertEquals($expected, $this->collection->parse('/my-articles/view'));
+
+        $url = $expected['_matchedRoute'];
+        unset($expected['_matchedRoute']);
+        $this->assertEquals($url, '/' . $this->collection->match($expected, []));
+    }
+
+    /**
+     * Test connect() with short string syntax
+     *
+     * @return void
+     */
+    public function testConnectShortStringPluginPrefix()
+    {
+        $routes = new RouteBuilder($this->collection, '/');
+        $routes->connect('/admin/blog/articles/view', 'Vendor/Blog.Management/Admin/Articles::view');
+        $expected = [
+            'pass' => [],
+            'plugin' => 'Vendor/Blog',
+            'prefix' => 'management/admin',
+            'controller' => 'Articles',
+            'action' => 'view',
+            '_matchedRoute' => '/admin/blog/articles/view'
+        ];
+        $this->assertEquals($expected, $this->collection->parse('/admin/blog/articles/view'));
+
+        $url = $expected['_matchedRoute'];
+        unset($expected['_matchedRoute']);
+        $this->assertEquals($url, '/' . $this->collection->match($expected, []));
+    }
+
+    /**
      * Test if a route name already exist
      *
      * @return void
@@ -192,11 +252,9 @@ class RouteBuilderTest extends TestCase
     public function testNameExists()
     {
         $routes = new RouteBuilder($this->collection, '/l', ['prefix' => 'api']);
-
         $this->assertFalse($routes->nameExists('myRouteName'));
 
         $routes->connect('myRouteUrl', ['action' => 'index'], ['_name' => 'myRouteName']);
-
         $this->assertTrue($routes->nameExists('myRouteName'));
     }
 
@@ -1022,6 +1080,30 @@ class RouteBuilderTest extends TestCase
         $route = $routes->{strtolower($method)}(
             '/bookmarks/:id',
             ['controller' => 'Bookmarks', 'action' => 'view'],
+            'route-name'
+        );
+        $this->assertInstanceOf(Route::class, $route, 'Should return a route');
+        $this->assertSame($method, $route->defaults['_method']);
+        $this->assertSame('app:route-name', $route->options['_name']);
+        $this->assertSame('/bookmarks/:id', $route->template);
+        $this->assertEquals(
+            ['plugin' => null, 'controller' => 'Bookmarks', 'action' => 'view', '_method' => $method],
+            $route->defaults
+        );
+    }
+
+    /**
+     * Test that the HTTP method helpers create the right kind of routes.
+     *
+     * @dataProvider httpMethodProvider
+     * @return void
+     */
+    public function testHttpMethodsStringTarget($method)
+    {
+        $routes = new RouteBuilder($this->collection, '/', [], ['namePrefix' => 'app:']);
+        $route = $routes->{strtolower($method)}(
+            '/bookmarks/:id',
+            'Bookmarks::view',
             'route-name'
         );
         $this->assertInstanceOf(Route::class, $route, 'Should return a route');
