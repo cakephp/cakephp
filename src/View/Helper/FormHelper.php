@@ -2434,6 +2434,9 @@ class FormHelper extends Helper
             if (isset($options['empty'][$type])) {
                 $options[$type]['empty'] = $options['empty'][$type];
             }
+            if (isset($options['required']) && is_array($options[$type])) {
+                $options[$type]['required'] = $options['required'];
+            }
         }
 
         $hasYear = is_array($options['year']);
