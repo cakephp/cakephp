@@ -276,8 +276,8 @@ class Hash
                 if (!preg_match($val, $prop)) {
                     return false;
                 }
-            } elseif (($op === '=' && $prop !== $val) ||
-                ($op === '!=' && $prop === $val) ||
+            } elseif (($op === '=' && $prop != $val) ||
+                ($op === '!=' && $prop == $val) ||
                 ($op === '>' && $prop <= $val) ||
                 ($op === '<' && $prop >= $val) ||
                 ($op === '>=' && $prop < $val) ||
