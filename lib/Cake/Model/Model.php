@@ -779,6 +779,61 @@ class Model extends CakeObject implements CakeEventListener {
 
 		$this->_createLinks();
 		$this->Behaviors->init($this->alias, $this->actsAs);
+		$this->initialize(array(
+			'table' => $this->table,
+			'alias' => $this->alias,
+			'schema' => $this->schemaName,
+		));
+	}
+
+/**
+ * Initialize a table instance. Called after the constructor.
+ *
+ * You can use this method to define associations, attach behaviors
+ * define validation and do any other initialization logic you need.
+ *
+ * ```
+ *  public function initialize(array $config)
+ *  {
+ *      $this->belongsTo('User');
+ *      $this->belongsToMany('Tagging.Tag');
+ *  }
+ * ```
+ *
+ * @param array $config Configuration options passed to the constructor.
+ * @return void
+ */
+	public function initialize(array $config) {
+	}
+
+/**
+ * Creates a permament BelongsTo association between this model and a target
+ * model.
+ *
+ * The options array accept the following keys:
+ *
+ * - className
+ * - foreignKey
+ * - conditions
+ * - type
+ * - fields
+ * - order
+ * - counterCache
+ * - counterScope
+ *
+ * @param string $associated The alias for the target model. This is used to
+ * uniquely identify the association.
+ * @param array $options List of options to configure the association definition.
+ * @return void
+ * @link https://book.cakephp.org/2.0/en/models/associations-linking-models-together.html#belongsto
+ */
+	public function belongsTo($associated, array $options = []) {
+		$params = array(
+			'belongsTo' => array(
+				$associated => $options,
+			),
+		);
+		$this->bindModel($params, false);
 	}
 
 /**

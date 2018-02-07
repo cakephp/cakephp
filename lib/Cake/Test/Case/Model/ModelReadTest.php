@@ -4859,6 +4859,34 @@ class ModelReadTest extends BaseModelTest {
 	}
 
 /**
+ * testBelongsTo method
+ *
+ * @return void
+ */
+	public function testBelongsTo() {
+		$expected = array(
+			'className' => 'FeatureSet',
+			'foreignKey' => false,
+			'conditions' => array(
+				'Feature.name' => 'DeviceType.name',
+			),
+			'fields' => '',
+			'order' => '',
+			'counterCache' => '',
+		);
+		$DeviceType = new DeviceType();
+		$options = array(
+			'className' => 'FeatureSet',
+			'foreignKey' => false,
+			'conditions' => array(
+				'Feature.name' => 'DeviceType.name',
+			),
+		);
+		$DeviceType->belongsTo('FeatureSet', $options);
+		$this->assertEquals($expected, $DeviceType->belongsTo['FeatureSet']);
+	}
+
+/**
  * testBindMultipleTimes method
  *
  * @return void
