@@ -827,7 +827,7 @@ class Model extends CakeObject implements CakeEventListener {
  * @return void
  * @link https://book.cakephp.org/2.0/en/models/associations-linking-models-together.html#belongsto
  */
-	public function belongsTo($associated, array $options = []) {
+	public function belongsTo($associated, array $options = array()) {
 		$params = array(
 			'belongsTo' => array(
 				$associated => $options,
@@ -855,7 +855,7 @@ class Model extends CakeObject implements CakeEventListener {
  * @return void
  * @link https://book.cakephp.org/2.0/en/models/associations-linking-models-together.html#hasone
  */
-	public function hasOne($associated, array $options = []) {
+	public function hasOne($associated, array $options = array()) {
 		$params = array(
 			'hasOne' => array(
 				$associated => $options,
@@ -886,7 +886,7 @@ class Model extends CakeObject implements CakeEventListener {
  * @return void
  * @link https://book.cakephp.org/2.0/en/models/associations-linking-models-together.html#hasmany
  */
-	public function hasMany($associated, array $options = []) {
+	public function hasMany($associated, array $options = array()) {
 		$params = array(
 			'hasMany' => array(
 				$associated => $options,
@@ -920,7 +920,7 @@ class Model extends CakeObject implements CakeEventListener {
  * @return void
  * @link https://book.cakephp.org/2.0/en/models/associations-linking-models-together.html#hasandbelongstomany-habtm
  */
-	public function belongsToMany($associated, array $options = []) {
+	public function belongsToMany($associated, array $options = array()) {
 		$params = array(
 			'hasAndBelongsToMany' => array(
 				$associated => $options,
