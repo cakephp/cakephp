@@ -64,7 +64,7 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 	public function testStringScope() {
 		$this->Tree = new FlagTree();
 		$this->Tree->order = null;
-		$this->Tree->initialize(2, 3);
+		$this->Tree->init(2, 3);
 
 		$this->Tree->id = 1;
 		$this->Tree->saveField('flag', 1);
@@ -101,7 +101,7 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 	public function testArrayScope() {
 		$this->Tree = new FlagTree();
 		$this->Tree->order = null;
-		$this->Tree->initialize(2, 3);
+		$this->Tree->init(2, 3);
 
 		$this->Tree->id = 1;
 		$this->Tree->saveField('flag', 1);
@@ -315,7 +315,7 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->order = null;
-		$this->Tree->initialize(2, 2);
+		$this->Tree->init(2, 2);
 
 		$this->TreeTwo = new NumberTreeTwo();
 		$this->TreeTwo->order = null;
@@ -373,7 +373,7 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->order = null;
-		$this->Tree->initialize(2, 3);
+		$this->Tree->init(2, 3);
 
 		$this->Tree->id = 1;
 		$this->Tree->saveField('flag', 1);
@@ -412,7 +412,7 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->order = null;
-		$this->Tree->initialize(2, 3);
+		$this->Tree->init(2, 3);
 
 		$this->Tree->Behaviors->load('Tree', array('scope' => 'FlagTree.flag = 1'));
 		$this->Tree->Behaviors->disable('Tree');
@@ -472,7 +472,7 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->order = null;
-		$this->Tree->initialize(2, 2);
+		$this->Tree->init(2, 2);
 
 		$this->Tree->id = 1;
 		$this->Tree->saveField('flag', 1);
@@ -503,7 +503,7 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->order = null;
-		$this->Tree->initialize(2, 2);
+		$this->Tree->init(2, 2);
 
 		$this->Tree->id = 1;
 		$this->Tree->saveField('flag', 1);
@@ -533,7 +533,7 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->order = null;
-		$this->Tree->initialize(2, 2);
+		$this->Tree->init(2, 2);
 
 		$this->Tree->id = 1;
 		$this->Tree->saveField('flag', 1);
@@ -562,7 +562,7 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
 		$this->Tree->order = null;
-		$this->Tree->initialize(1, 3);
+		$this->Tree->init(1, 3);
 
 		$this->Tree->id = 1;
 		$this->Tree->saveField('flag', 1);

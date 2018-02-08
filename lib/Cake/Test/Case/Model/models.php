@@ -2613,12 +2613,12 @@ class NumberTree extends CakeTestModel {
  * @param bool $hierarchal
  * @return void
  */
-	public function initialize($levelLimit = 3, $childLimit = 3, $currentLevel = null, $parentId = null, $prefix = '1', $hierarchal = true) {
+	public function init($levelLimit = 3, $childLimit = 3, $currentLevel = null, $parentId = null, $prefix = '1', $hierarchal = true) {
 		if (!$parentId) {
 			$db = ConnectionManager::getDataSource($this->useDbConfig);
 			$db->truncate($this->table);
 			$this->save(array($this->name => array('name' => '1. Root')));
-			$this->initialize($levelLimit, $childLimit, 1, $this->id, '1', $hierarchal);
+			$this->init($levelLimit, $childLimit, 1, $this->id, '1', $hierarchal);
 			$this->create(array());
 		}
 
@@ -2639,7 +2639,7 @@ class NumberTree extends CakeTestModel {
 				}
 			}
 			$this->save($data);
-			$this->initialize($levelLimit, $childLimit, $currentLevel + 1, $this->id, $name, $hierarchal);
+			$this->init($levelLimit, $childLimit, $currentLevel + 1, $this->id, $name, $hierarchal);
 		}
 	}
 
