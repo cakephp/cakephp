@@ -838,7 +838,7 @@ class Model extends CakeObject implements CakeEventListener {
 			foreach ($tables as $associated => $options) {
 				if (is_numeric($associated)) {
 					$associated = $options;
-					$options = [];
+					$options = array();
 				}
 				$this->{$assocType}($associated, $options);
 			}
