@@ -4985,6 +4985,67 @@ class ModelReadTest extends BaseModelTest {
 	}
 
 /**
+ * testAddAssociations method
+ *
+ * @return void
+ */
+	public function testAddAssociations() {
+		$this->loadFixtures('Article', 'Tag', 'User');
+		$options = array(
+			'belongsTo' => array(
+				'Users' => array(
+					'className' => 'User',
+					'foreignKey' => 'user_id',
+					'conditions' => array(
+						'user_id >' => 10,
+					),
+				),
+			),
+			'belongsToMany' => array(
+				'Tags' => array(
+					'className' => 'Tag',
+					'conditions' => array(
+						'article_id >' => 15,
+					),
+				),
+			),
+		);
+		$Article = new Article();
+		$Article->addAssociations($options);
+
+		$expectedBelongsTo = array(
+			'className' => 'User',
+			'foreignKey' => 'user_id',
+			'conditions' => array(
+				'user_id >' => 10,
+			),
+			'fields' => '',
+			'order' => '',
+			'counterCache' => '',
+		);
+		$this->assertEquals($expectedBelongsTo, $Article->belongsTo['Users']);
+
+		$expectedHabtm = array(
+			'className' => 'Tag',
+			'foreignKey' => 'article_id',
+			'conditions' => array(
+				'article_id >' => 15,
+			),
+			'fields' => '',
+			'order' => '',
+			'limit' => '',
+			'offset' => '',
+			'finderQuery' => '',
+			'joinTable' => 'articles_tags',
+			'with' => 'ArticlesTag',
+			'dynamicWith' => true,
+			'associationForeignKey' => 'tag_id',
+			'unique' => true,
+		);
+		$this->assertEquals($expectedHabtm, $Article->hasAndBelongsToMany['Tags']);
+	}
+
+/**
  * testBindMultipleTimes method
  *
  * @return void

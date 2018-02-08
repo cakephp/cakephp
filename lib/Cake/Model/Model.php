@@ -807,6 +807,46 @@ class Model extends CakeObject implements CakeEventListener {
 	}
 
 /**
+ * Setup multiple associations.
+ *
+ * It takes an array containing set of table names indexed by association type
+ * as argument:
+ *
+ * ```
+ * $this->Post->addAssociations([
+ *   'belongsTo' => [
+ *     'User' => ['className' => 'Users']
+ *   ],
+ *   'hasMany' => ['Comment'],
+ *   'belongsToMany' => ['Tag']
+ * ]);
+ * ```
+ *
+ * Each association type accepts multiple associations where the keys
+ * are the aliases, and the values are association config data. If numeric
+ * keys are used the values will be treated as association aliases.
+ *
+ * @param array $params Set of associations to bind (indexed by association type).
+ * @return $this
+ * @see Model::belongsTo()
+ * @see Model::hasOne()
+ * @see Model::hasMany()
+ * @see Model::belongsToMany()
+ */
+	public function addAssociations(array $params) {
+		foreach ($params as $assocType => $tables) {
+			foreach ($tables as $associated => $options) {
+				if (is_numeric($associated)) {
+					$associated = $options;
+					$options = [];
+				}
+				$this->{$assocType}($associated, $options);
+			}
+		}
+		return $this;
+	}
+
+/**
  * Creates a permament BelongsTo association between this model and a target
  * model.
  *
