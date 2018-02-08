@@ -4864,6 +4864,7 @@ class ModelReadTest extends BaseModelTest {
  * @return void
  */
 	public function testBelongsTo() {
+		$this->loadFixtures('DeviceType', 'FeatureSet');
 		$expected = array(
 			'className' => 'FeatureSet',
 			'foreignKey' => false,
@@ -4884,6 +4885,103 @@ class ModelReadTest extends BaseModelTest {
 		);
 		$DeviceType->belongsTo('FeatureSet', $options);
 		$this->assertEquals($expected, $DeviceType->belongsTo['FeatureSet']);
+	}
+
+/**
+ * testHasOne method
+ *
+ * @return void
+ */
+	public function testHasOne() {
+		$this->loadFixtures('DeviceType', 'FeatureSet');
+		$expected = array(
+			'className' => 'DeviceType',
+			'foreignKey' => false,
+			'conditions' => array(
+				'Feature.name' => 'DeviceType.name',
+			),
+			'fields' => '',
+			'order' => '',
+			'dependent' => '',
+		);
+		$FeatureSet = new FeatureSet();
+		$options = array(
+			'className' => 'DeviceType',
+			'foreignKey' => false,
+			'conditions' => array(
+				'Feature.name' => 'DeviceType.name',
+			),
+		);
+		$FeatureSet->hasOne('DeviceType', $options);
+		$this->assertEquals($expected, $FeatureSet->hasOne['DeviceType']);
+	}
+
+/**
+ * testHasMany method
+ *
+ * @return void
+ */
+	public function testHasMany() {
+		$this->loadFixtures('DeviceType', 'FeatureSet');
+		$expected = array(
+			'className' => 'FeatureSet',
+			'foreignKey' => 'device_type_id',
+			'conditions' => array(
+				'active' => true,
+			),
+			'fields' => '',
+			'order' => '',
+			'dependent' => '',
+			'limit' => '',
+			'offset' => '',
+			'exclusive' => '',
+			'finderQuery' => '',
+			'counterQuery' => '',
+		);
+		$DeviceType = new DeviceType();
+		$options = array(
+			'className' => 'FeatureSet',
+			'conditions' => array(
+				'active' => true,
+			),
+		);
+		$DeviceType->hasMany('NewFeatureSet', $options);
+		$this->assertEquals($expected, $DeviceType->hasMany['NewFeatureSet']);
+	}
+
+/**
+ * testHasMany method
+ *
+ * @return void
+ */
+	public function testBelongsToMany() {
+		$this->loadFixtures('Article', 'Tag');
+		$expected = array(
+			'className' => 'Tag',
+			'foreignKey' => 'article_id',
+			'conditions' => array(
+				'article_id >' => 15,
+			),
+			'fields' => '',
+			'order' => '',
+			'limit' => '',
+			'offset' => '',
+			'finderQuery' => '',
+			'joinTable' => 'articles_tags',
+			'with' => 'ArticlesTag',
+			'dynamicWith' => true,
+			'associationForeignKey' => 'tag_id',
+			'unique' => true,
+		);
+		$Article = new Article();
+		$options = array(
+			'className' => 'Tag',
+			'conditions' => array(
+				'article_id >' => 15,
+			),
+		);
+		$Article->belongsToMany('Tags', $options);
+		$this->assertEquals($expected, $Article->hasAndBelongsToMany['Tags']);
 	}
 
 /**

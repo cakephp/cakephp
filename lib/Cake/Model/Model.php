@@ -837,6 +837,99 @@ class Model extends CakeObject implements CakeEventListener {
 	}
 
 /**
+ * Creates a new HasOne association between this model and a target
+ * model. A "has one" association is a 1-1 relationship.
+ *
+ * The options array accept the following keys:
+ *
+ * - className
+ * - foreignKey
+ * - conditions
+ * - fields
+ * - order
+ * - dependent
+ *
+ * @param string $associated the alias for the target model. This is used to
+ * uniquely identify the association.
+ * @param array $options list of options to configure the association definition.
+ * @return void
+ * @link https://book.cakephp.org/2.0/en/models/associations-linking-models-together.html#hasone
+ */
+	public function hasOne($associated, array $options = []) {
+		$params = array(
+			'hasOne' => array(
+				$associated => $options,
+			),
+		);
+		$this->bindModel($params, false);
+	}
+
+/**
+ * Creates a new HasMany association between this model and a target
+ * model. A "has many" association is a 1-N relationship.
+ *
+ * The options array accept the following keys:
+ *
+ * - className
+ * - foreignKey
+ * - conditions
+ * - order
+ * - limit
+ * - offset
+ * - dependent
+ * - exclusive
+ * - finderQuery
+ *
+ * @param string $associated the alias for the target model. This is used to
+ * uniquely identify the association.
+ * @param array $options list of options to configure the association definition.
+ * @return void
+ * @link https://book.cakephp.org/2.0/en/models/associations-linking-models-together.html#hasmany
+ */
+	public function hasMany($associated, array $options = []) {
+		$params = array(
+			'hasMany' => array(
+				$associated => $options,
+			),
+		);
+		$this->bindModel($params, false);
+	}
+
+/**
+ * Creates a new HasAndBelongsToMany association between this model and a target
+ * model. A "has and belongs to many" association is a M-N relationship.
+ *
+ * The options array accept the following keys:
+ *
+ * - className
+ * - joinTable
+ * - with
+ * - foreignKey
+ * - associationForeignKey
+ * - unique
+ * - conditions
+ * - fields
+ * - order
+ * - limit
+ * - offset
+ * - finderQuery
+ *
+ * @param string $associated the alias for the target model. This is used to
+ * uniquely identify the association.
+ * @param array $options list of options to configure the association definition.
+ * @return void
+ * @link https://book.cakephp.org/2.0/en/models/associations-linking-models-together.html#hasandbelongstomany-habtm
+ */
+	public function belongsToMany($associated, array $options = []) {
+		$params = array(
+			'hasAndBelongsToMany' => array(
+				$associated => $options,
+			),
+		);
+		$this->bindModel($params, false);
+	}
+
+/**
  * Returns a list of all events that will fire in the model during it's lifecycle.
  * You can override this function to add your own listener callbacks
  *
