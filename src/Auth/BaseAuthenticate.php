@@ -147,9 +147,22 @@ abstract class BaseAuthenticate implements EventListenerInterface
         $config = $this->_config;
         $table = TableRegistry::get($config['userModel']);
 
-        $options = [
-            'conditions' => [$table->aliasField($config['fields']['username']) => $username]
-        ];
+        if (empty($config['userIdentificationColumns'])) {
+            $config['userIdentificationColumns'] = $config['fields']['username'];
+        }
+        if (is_array($config['userIdentificationColumns'])) {
+            foreach ($config['userIdentificationColumns'] as $userIdentificationColumn) {
+                if (!empty($options['conditions']['OR']) && is_array($options['conditions']['OR'])) {
+                    $options['conditions']['OR'] += [$table->aliasField($userIdentificationColumn) => $username];
+                } else {
+                    $options['conditions']['OR'] = [$table->aliasField($userIdentificationColumn) => $username];
+                }
+            }
+        } else {
+            $options = [
+                'conditions' => [$table->aliasField($config['fields']['username']) => $username]
+            ];
+        }
 
         if (!empty($config['scope'])) {
             $options['conditions'] = array_merge($options['conditions'], $config['scope']);
@@ -167,7 +180,6 @@ abstract class BaseAuthenticate implements EventListenerInterface
         if (!isset($options['username'])) {
             $options['username'] = $username;
         }
-
         return $table->find($finder, $options);
     }
 
