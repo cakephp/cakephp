@@ -19,6 +19,13 @@ namespace Cake\Core;
 interface PluginInterface
 {
     /**
+     * Get the name of this plugin.
+     *
+     * @return void
+     */
+    public function getName();
+
+    /**
      * Load all the application configuration and bootstrap logic.
      *
      * Override this method to add additional bootstrap logic for your application.
@@ -60,7 +67,7 @@ interface PluginInterface
      *
      * @return bool
      */
-    public function isRouteLoadingEnabled();
+    public function isRoutesEnabled();
 
     /**
      * If bootstrapping should be done or not for this plugin
@@ -68,4 +75,18 @@ interface PluginInterface
      * @return bool
      */
     public function isBootstrapEnabled();
+
+    /**
+     * If middleware is enabled
+     *
+     * @return bool
+     */
+    public function isMiddlewareEnabled();
+
+    /**
+     * If console is enabled
+     *
+     * @return bool
+     */
+    public function isConsoleEnabled();
 }

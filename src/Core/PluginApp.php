@@ -30,14 +30,28 @@ class PluginApp implements ConsoleApplicationInterface, HttpApplicationInterface
      *
      * @var bool
      */
-    protected $doBootstrap = true;
+    protected $bootstrapEnabled = true;
 
     /**
      * Load routes or not
      *
      * @var bool
      */
-    protected $loadRoutes = true;
+    protected $routesEnabled = true;
+
+    /**
+     * Enable middleware
+     *
+     * @var bool
+     */
+    protected $middlewareEnabled = true;
+
+    /**
+     * Console middleware
+     *
+     * @var bool
+     */
+    protected $consoleEnabled = true;
 
     /**
      * Constructor
@@ -65,11 +79,22 @@ class PluginApp implements ConsoleApplicationInterface, HttpApplicationInterface
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function getName()
+    {
+        $parts = explode('\\', get_class($this));
+        array_pop($parts);
+
+        return implode('/', $parts);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function disableRoutes()
     {
-        $this->loadRoutes = false;
+        $this->routesEnabled = false;
 
         return $this;
     }
@@ -79,7 +104,7 @@ class PluginApp implements ConsoleApplicationInterface, HttpApplicationInterface
      */
     public function enableRoutes()
     {
-        $this->loadRoutes = true;
+        $this->routesEnabled = true;
 
         return $this;
     }
@@ -89,7 +114,7 @@ class PluginApp implements ConsoleApplicationInterface, HttpApplicationInterface
      */
     public function disableBootstrap()
     {
-        $this->doBootstrap = false;
+        $this->bootstrapEnabled = false;
 
         return $this;
     }
@@ -99,7 +124,7 @@ class PluginApp implements ConsoleApplicationInterface, HttpApplicationInterface
      */
     public function enableBootstrap()
     {
-        $this->doBootstrap = true;
+        $this->bootstrapEnabled = true;
 
         return $this;
     }
@@ -107,9 +132,9 @@ class PluginApp implements ConsoleApplicationInterface, HttpApplicationInterface
     /**
      * {@inheritdoc}
      */
-    public function isRouteLoadingEnabled()
+    public function isRoutesEnabled()
     {
-        return $this->loadRoutes;
+        return $this->routesEnabled;
     }
 
     /**
@@ -117,7 +142,23 @@ class PluginApp implements ConsoleApplicationInterface, HttpApplicationInterface
      */
     public function isBootstrapEnabled()
     {
-        return $this->doBootstrap;
+        return $this->bootstrapEnabled;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isConsoleEnabled()
+    {
+        return $this->consoleEnabled;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isMiddlewareEnabled()
+    {
+        return $this->middlewareEnabled;
     }
 
     /**
@@ -125,9 +166,9 @@ class PluginApp implements ConsoleApplicationInterface, HttpApplicationInterface
      */
     public function routes($routes)
     {
-        $bootstrap = __DIR__ . 'config' . DS . 'routes.php';
-        if (file_exists($bootstrap)) {
-            require_once $bootstrap;
+        $routes = __DIR__ . 'config' . DS . 'routes.php';
+        if (file_exists($routes)) {
+            require_once $routes;
         }
     }
 
