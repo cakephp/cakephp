@@ -25,6 +25,7 @@ use Cake\View\Helper;
 use Cake\View\StringTemplateTrait;
 use Cake\View\View;
 use Cake\View\Widget\WidgetLocator;
+use Cake\View\Widget\WidgetRegistry;
 use DateTime;
 use RuntimeException;
 use Traversable;
@@ -262,6 +263,11 @@ class FormHelper extends Helper
     {
         $locator = null;
         $widgets = $this->_defaultWidgets;
+        if (isset($config['registry'])) {
+            deprecationWarning('`registry` config key is deprecated in FormHelper, use `locator` instead.');
+            $config['locator'] = $config['registry'];
+            unset($config['registry']);
+        }
         if (isset($config['locator'])) {
             $locator = $config['locator'];
             unset($config['locator']);
@@ -278,6 +284,21 @@ class FormHelper extends Helper
 
         $this->widgetLocator($locator, $widgets);
         $this->_idPrefix = $this->getConfig('idPrefix');
+    }
+
+    /**
+     * Set the widget registry the helper will use.
+     *
+     * @param \Cake\View\Widget\WidgetRegistry|null $instance The registry instance to set.
+     * @param array $widgets An array of widgets
+     * @return \Cake\View\Widget\WidgetRegistry
+     * @deprecated 3.6.0 Use FormHelper::widgetLocator() instead.
+     */
+    public function widgetRegistry(WidgetRegistry $instance = null, $widgets = [])
+    {
+        deprecationWarning('widgetRegistry is deprecated, use widgetLocator instead.');
+
+        return $this->widgetLocator($instance, $widgets);
     }
 
     /**
