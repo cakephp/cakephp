@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         3.0.0
+ * @since         3.6.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\View\Widget;
@@ -36,7 +36,7 @@ use RuntimeException;
  *
  * Widgets can ask for the current view by using the `_view` widget.
  */
-class WidgetRegistry
+class WidgetLocator
 {
 
     /**

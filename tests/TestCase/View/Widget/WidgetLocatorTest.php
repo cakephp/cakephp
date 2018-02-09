@@ -18,12 +18,12 @@ use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 use Cake\View\StringTemplate;
 use Cake\View\View;
-use Cake\View\Widget\WidgetRegistry;
+use Cake\View\Widget\WidgetLocator;
 
 /**
- * WidgetRegistry test case
+ * WidgetLocator test case
  */
-class WidgetRegistryTestCase extends TestCase
+class WidgetLocatorTestCase extends TestCase
 {
 
     /**
@@ -49,7 +49,7 @@ class WidgetRegistryTestCase extends TestCase
             'text' => ['Cake\View\Widget\BasicWidget'],
             'label' => ['Label'],
         ];
-        $inputs = new WidgetRegistry($this->templates, $this->view, $widgets);
+        $inputs = new WidgetLocator($this->templates, $this->view, $widgets);
         $result = $inputs->get('text');
         $this->assertInstanceOf('Cake\View\Widget\BasicWidget', $result);
 
@@ -58,13 +58,13 @@ class WidgetRegistryTestCase extends TestCase
     }
 
     /**
-     * Test getting view instance from registry.
+     * Test getting view instance from locator.
      *
      * @return void
      */
     public function testGetViewInstance()
     {
-        $inputs = new WidgetRegistry($this->templates, $this->view, []);
+        $inputs = new WidgetLocator($this->templates, $this->view, []);
 
         $result = $inputs->get('_view');
         $this->assertInstanceOf('Cake\View\View', $result);
@@ -81,7 +81,7 @@ class WidgetRegistryTestCase extends TestCase
             'text' => ['Cake\View\Widget\BasicWidget'],
             'test_widgets',
         ];
-        $inputs = new WidgetRegistry($this->templates, $this->view, $widgets);
+        $inputs = new WidgetLocator($this->templates, $this->view, $widgets);
         $this->assertInstanceOf('Cake\View\Widget\LabelWidget', $inputs->get('text'));
     }
 
@@ -97,7 +97,7 @@ class WidgetRegistryTestCase extends TestCase
             'text' => ['Cake\View\Widget\BasicWidget'],
             'TestPlugin.test_widgets',
         ];
-        $inputs = new WidgetRegistry($this->templates, $this->view, $widgets);
+        $inputs = new WidgetLocator($this->templates, $this->view, $widgets);
         $this->assertInstanceOf('Cake\View\Widget\LabelWidget', $inputs->get('text'));
     }
 
@@ -108,7 +108,7 @@ class WidgetRegistryTestCase extends TestCase
      */
     public function testAdd()
     {
-        $inputs = new WidgetRegistry($this->templates, $this->view);
+        $inputs = new WidgetLocator($this->templates, $this->view);
         $result = $inputs->add([
             'text' => ['Cake\View\Widget\BasicWidget'],
         ]);
@@ -116,7 +116,7 @@ class WidgetRegistryTestCase extends TestCase
         $result = $inputs->get('text');
         $this->assertInstanceOf('Cake\View\Widget\WidgetInterface', $result);
 
-        $inputs = new WidgetRegistry($this->templates, $this->view);
+        $inputs = new WidgetLocator($this->templates, $this->view);
         $result = $inputs->add([
             'hidden' => 'Cake\View\Widget\BasicWidget',
         ]);
@@ -134,7 +134,7 @@ class WidgetRegistryTestCase extends TestCase
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Widget objects must implement Cake\View\Widget\WidgetInterface');
-        $inputs = new WidgetRegistry($this->templates, $this->view);
+        $inputs = new WidgetLocator($this->templates, $this->view);
         $inputs->add([
             'text' => new \StdClass()
         ]);
@@ -147,7 +147,7 @@ class WidgetRegistryTestCase extends TestCase
      */
     public function testGet()
     {
-        $inputs = new WidgetRegistry($this->templates, $this->view);
+        $inputs = new WidgetLocator($this->templates, $this->view);
         $inputs->add([
             'text' => ['Cake\View\Widget\BasicWidget'],
         ]);
@@ -163,7 +163,7 @@ class WidgetRegistryTestCase extends TestCase
      */
     public function testGetFallback()
     {
-        $inputs = new WidgetRegistry($this->templates, $this->view);
+        $inputs = new WidgetLocator($this->templates, $this->view);
         $inputs->add([
             '_default' => ['Cake\View\Widget\BasicWidget'],
         ]);
@@ -183,7 +183,7 @@ class WidgetRegistryTestCase extends TestCase
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Unknown widget "foo"');
-        $inputs = new WidgetRegistry($this->templates, $this->view);
+        $inputs = new WidgetLocator($this->templates, $this->view);
         $inputs->clear();
         $inputs->get('foo');
     }
@@ -195,7 +195,7 @@ class WidgetRegistryTestCase extends TestCase
      */
     public function testGetResolveDependency()
     {
-        $inputs = new WidgetRegistry($this->templates, $this->view);
+        $inputs = new WidgetLocator($this->templates, $this->view);
         $inputs->clear();
         $inputs->add([
             'label' => ['Cake\View\Widget\LabelWidget'],
@@ -214,7 +214,7 @@ class WidgetRegistryTestCase extends TestCase
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Unable to locate widget class "TestApp\View\DerpWidget"');
-        $inputs = new WidgetRegistry($this->templates, $this->view);
+        $inputs = new WidgetLocator($this->templates, $this->view);
         $inputs->add(['test' => ['TestApp\View\DerpWidget']]);
         $inputs->get('test');
     }
@@ -228,7 +228,7 @@ class WidgetRegistryTestCase extends TestCase
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Unknown widget "label"');
-        $inputs = new WidgetRegistry($this->templates, $this->view);
+        $inputs = new WidgetLocator($this->templates, $this->view);
         $inputs->clear();
         $inputs->add(['multicheckbox' => ['Cake\View\Widget\MultiCheckboxWidget', 'label']]);
         $inputs->get('multicheckbox');

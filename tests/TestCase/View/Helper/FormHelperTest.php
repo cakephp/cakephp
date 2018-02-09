@@ -228,21 +228,21 @@ class FormHelperTest extends TestCase
             ]
         ];
         $helper = new FormHelper($this->View, $config);
-        $registry = $helper->widgetRegistry();
-        $this->assertInstanceOf('Cake\View\Widget\LabelWidget', $registry->get('datetime'));
+        $locator = $helper->widgetLocator();
+        $this->assertInstanceOf('Cake\View\Widget\LabelWidget', $locator->get('datetime'));
     }
 
     /**
      * Test that when specifying custom widgets config file and it should be
-     * added to widgets array. WidgetRegistry will load widgets in constructor.
+     * added to widgets array. WidgetLocator will load widgets in constructor.
      *
      * @return void
      */
     public function testConstructWithWidgetsConfig()
     {
         $helper = new FormHelper($this->View, ['widgets' => ['test_widgets']]);
-        $registry = $helper->widgetRegistry();
-        $this->assertInstanceOf('Cake\View\Widget\LabelWidget', $registry->get('text'));
+        $locator = $helper->widgetLocator();
+        $this->assertInstanceOf('Cake\View\Widget\LabelWidget', $locator->get('text'));
     }
 
     /**
