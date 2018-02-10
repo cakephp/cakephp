@@ -13,16 +13,13 @@
  */
 namespace Cake\Core;
 
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-
 /**
  * Base Plugin Class
  *
  * Every plugin should extends from this class or implement the interfaces and
  * include a plugin class in it's src root folder.
  */
-class PluginApp implements ConsoleApplicationInterface, HttpApplicationInterface, PluginInterface
+class PluginApp implements PluginInterface
 {
 
     /**
@@ -197,13 +194,5 @@ class PluginApp implements ConsoleApplicationInterface, HttpApplicationInterface
     public function middleware($middleware)
     {
         return $middleware;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next)
-    {
-        return $next($request, $response);
     }
 }

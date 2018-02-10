@@ -13,12 +13,16 @@
  */
 namespace Cake\Test\TestCase\Core;
 
+use Cake\Console\CommandCollection;
 use Cake\Core\Plugin;
 use Cake\Core\PluginApp;
+use Cake\Http\MiddlewareQueue;
 use Cake\TestSuite\TestCase;
+use Company\TestPluginThree\Plugin as TestPluginThree;
+use TestPlugin\Plugin as TestPlugin;
 
 /**
- * AppTest class
+ * PluginAppTest class
  */
 class PluginAppTest extends TestCase
 {
@@ -47,6 +51,29 @@ class PluginAppTest extends TestCase
         ]);
 
         $this->assertFalse($plugin->isBootstrapEnabled());
-        $this->assertFalse($plugin->isRouteLoadingEnabled());
+        $this->assertFalse($plugin->isRoutesEnabled());
+    }
+
+    public function testGetName()
+    {
+        $plugin = new TestPlugin();
+        $this->assertSame('TestPlugin', $plugin->getName());
+
+        $plugin = new TestPluginThree();
+        $this->assertSame('Company/TestPluginThree', $plugin->getName());
+    }
+
+    public function testMiddleware()
+    {
+        $plugin = new PluginApp();
+        $middleware = new MiddlewareQueue();
+        $this->assertSame($middleware, $plugin->middleware($middleware));
+    }
+
+    public function testConsole()
+    {
+        $plugin = new PluginApp();
+        $commands = new CommandCollection();
+        $this->assertSame($commands, $plugin->console($commands));
     }
 }
