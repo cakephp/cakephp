@@ -22,6 +22,7 @@ use Cake\Http\CorsBuilder;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
+use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Zend\Diactoros\Stream;
 
@@ -934,6 +935,31 @@ class ResponseTest extends TestCase
         $this->assertFalse($response->hasHeader('Content-Length'), 'Old instance not modified');
 
         $this->assertSame('100', $new->getHeaderLine('Content-Length'));
+    }
+
+    /**
+     * Tests settings the link
+     *
+     * @return void
+     */
+    public function testWithAddedLink()
+    {
+        $response = new Response();
+        $this->assertFalse($response->hasHeader('Link'));
+
+        $new = $response->withAddedLink('http://example.com', ['rel' => 'prev']);
+        $this->assertFalse($response->hasHeader('Link'), 'Old instance not modified');
+        $this->assertEquals('<http://example.com>; rel="prev"', $new->getHeaderLine('Link'));
+
+        $new = $response->withAddedLink([], ['rel' => 'prev']);
+        $this->assertEquals('</>; rel="prev"', $new->getHeaderLine('Link'));
+
+        $new = $response->withAddedLink('http://example.com');
+        $this->assertEquals('<http://example.com>', $new->getHeaderLine('Link'));
+
+        $new = $response->withAddedLink('http://example.com?p=1', ['rel' => 'prev'])
+            ->withAddedLink('http://example.com?p=2', ['rel' => 'next', 'foo' => 'bar']);
+        $this->assertEquals('<http://example.com?p=1>; rel="prev",<http://example.com?p=2>; rel="next"; foo="bar"', $new->getHeaderLine('Link'));
     }
 
     /**
