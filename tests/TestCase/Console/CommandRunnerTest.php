@@ -338,6 +338,34 @@ class CommandRunnerTest extends TestCase
         $this->assertTrue($this->eventTriggered, 'Should have triggered event.');
     }
 
+    /**
+     * Test that run calls plugin hook methods
+     *
+     * @return void
+     */
+    public function testRunCallsPluginHookMethods()
+    {
+        $app = $this->getMockBuilder(BaseApplication::class)
+            ->setMethods(['middleware', 'bootstrap', 'pluginBootstrap', 'pluginConsole'])
+            ->setConstructorArgs([$this->config])
+            ->getMock();
+        $app->expects($this->once())
+            ->method('pluginBootstrap');
+
+        $commands = new CommandCollection();
+        $app->expects($this->once())
+            ->method('pluginConsole')
+            ->with($this->isinstanceOf(CommandCollection::class))
+            ->will($this->returnCallback(function ($commands) {
+                return $commands;
+            }));
+
+        $output = new ConsoleOutput();
+        $runner = new CommandRunner($app, 'cake');
+        $result = $runner->run(['cake', '--version'], $this->getMockIo($output));
+        $this->assertContains(Configure::version(), $output->messages()[0]);
+    }
+
     protected function makeAppWithCommands($commands)
     {
         $app = $this->getMockBuilder(BaseApplication::class)

@@ -16,8 +16,8 @@ namespace Cake\Http;
 
 use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\HttpApplicationInterface;
-use Cake\Core\PluginRegistry;
-use Cake\Core\PluginRegistryInterface;
+use Cake\Core\PluginApplicationInterface;
+use Cake\Core\PluginCollection;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
 use InvalidArgumentException;
@@ -31,7 +31,10 @@ use Psr\Http\Message\ServerRequestInterface;
  * and ensuring that middleware is attached. It is also invoked as the last piece
  * of middleware, and delegates request/response handling to the correct controller.
  */
-abstract class BaseApplication implements ConsoleApplicationInterface, HttpApplicationInterface
+abstract class BaseApplication implements
+    ConsoleApplicationInterface,
+    HttpApplicationInterface,
+    PluginApplicationInterface
 {
 
     /**
@@ -40,18 +43,11 @@ abstract class BaseApplication implements ConsoleApplicationInterface, HttpAppli
     protected $configDir;
 
     /**
-     * Plugin Registry
+     * Plugin Collection
      *
-     * @param \Cake\Core\PluginRegistry
+     * @param \Cake\Core\PluginCollection
      */
-    protected $pluginRegistry;
-
-    /**
-     * Default Plugin Registry Class
-     *
-     * @var string
-     */
-    protected $defaultPluginRegistry = PluginRegistry::class;
+    protected $plugins;
 
     /**
      * Constructor
@@ -62,33 +58,7 @@ abstract class BaseApplication implements ConsoleApplicationInterface, HttpAppli
     public function __construct($configDir, $pluginRegistry = null)
     {
         $this->configDir = $configDir;
-
-        $this->setPluginRegistry($pluginRegistry);
-    }
-
-    /**
-     * Sets the plugin registry
-     *
-     * @param string|null $pluginRegistry Plugin Registry Object
-     * @return void
-     */
-    public function setPluginRegistry($pluginRegistry = null)
-    {
-        if (empty($pluginRegistry)) {
-            $this->pluginRegistry = new $this->defaultPluginRegistry();
-
-            return;
-        }
-
-        if (!$pluginRegistry instanceof PluginRegistryInterface) {
-            throw new InvalidArgumentException(sprintf(
-                '`%s` is not an instance of `%s`',
-                get_class($pluginRegistry),
-                PluginRegistryInterface::class
-            ));
-        }
-
-        $this->pluginRegistry = $pluginRegistry;
+        $this->plugins = new PluginCollection();
     }
 
     /**
@@ -100,11 +70,40 @@ abstract class BaseApplication implements ConsoleApplicationInterface, HttpAppli
     /**
      * {@inheritDoc}
      */
+    public function pluginMiddleware($middleware)
+    {
+        foreach ($this->plugins->with('middleware') as $plugin) {
+            $middleware = $plugin->middleware($middleware);
+        }
+
+        return $middleware;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function addPlugin($name, array $config = [])
+    {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function bootstrap()
     {
         require_once $this->configDir . '/bootstrap.php';
 
         $this->pluginRegistry()->bootstrap();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function pluginBootstrap()
+    {
+        foreach ($this->plugins->with('bootstrap') as $plugin) {
+            $plugin->bootstrap();
+        }
     }
 
     /**
@@ -125,6 +124,18 @@ abstract class BaseApplication implements ConsoleApplicationInterface, HttpAppli
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function pluginRoutes($routes)
+    {
+        foreach ($this->plugins->with('routes') as $plugin) {
+            $routes = $plugin->routes($routes);
+        }
+
+        return $routes;
+    }
+
+    /**
      * Define the console commands for an application.
      *
      * By default all commands in CakePHP, plugins and the application will be
@@ -138,6 +149,18 @@ abstract class BaseApplication implements ConsoleApplicationInterface, HttpAppli
         $commands->addMany($commands->autoDiscover());
 
         return $this->pluginRegistry()->console($commands);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function pluginConsole($commands)
+    {
+        foreach ($this->plugins->with('console') as $plugin) {
+            $commands = $plugin->console($commands);
+        }
+
+        return $commands;
     }
 
     /**
@@ -165,15 +188,5 @@ abstract class BaseApplication implements ConsoleApplicationInterface, HttpAppli
     protected function getDispatcher()
     {
         return new ActionDispatcher(null, null, DispatcherFactory::filters());
-    }
-
-    /**
-     * Plugins
-     *
-     * @return \Cake\Core\PluginRegistry
-     */
-    public function getPluginRegistry()
-    {
-        return $this->pluginRegistry;
     }
 }
