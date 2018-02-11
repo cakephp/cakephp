@@ -17,7 +17,6 @@ namespace Cake\Console;
 use Cake\Console\Exception\ConsoleException;
 use Cake\Console\Exception\StopException;
 use Cake\Core\App;
-use Cake\Core\Plugin;
 use Cake\Datasource\ModelAwareTrait;
 use Cake\Filesystem\File;
 use Cake\Log\LogTrait;
