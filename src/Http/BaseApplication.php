@@ -53,9 +53,8 @@ abstract class BaseApplication implements
      * Constructor
      *
      * @param string $configDir The directory the bootstrap configuration is held in.
-     * @param string|null $pluginRegistry Plugin Registry Object
      */
-    public function __construct($configDir, $pluginRegistry = null)
+    public function __construct($configDir)
     {
         $this->configDir = $configDir;
         $this->plugins = new PluginCollection();
@@ -92,8 +91,6 @@ abstract class BaseApplication implements
     public function bootstrap()
     {
         require_once $this->configDir . '/bootstrap.php';
-
-        $this->pluginRegistry()->bootstrap();
     }
 
     /**
@@ -129,7 +126,7 @@ abstract class BaseApplication implements
     public function pluginRoutes($routes)
     {
         foreach ($this->plugins->with('routes') as $plugin) {
-            $routes = $plugin->routes($routes);
+            $plugin->routes($routes);
         }
 
         return $routes;
@@ -146,9 +143,7 @@ abstract class BaseApplication implements
      */
     public function console($commands)
     {
-        $commands->addMany($commands->autoDiscover());
-
-        return $this->pluginRegistry()->console($commands);
+        return $commands->addMany($commands->autoDiscover());
     }
 
     /**

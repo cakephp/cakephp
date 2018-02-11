@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase;
 
 use Cake\Event\Event;
 use Cake\Http\CallbackStream;
+use Cake\Http\MiddlewareQueue;
 use Cake\Http\Server;
 use Cake\TestSuite\TestCase;
 use TestApp\Http\BadResponseApplication;
@@ -83,6 +84,44 @@ class ServerTest extends TestCase
         $request = $request->withHeader('X-pass', 'request header');
 
         $app = new MiddlewareApplication($this->config);
+        $server = new Server($app);
+        $res = $server->run($request, $response);
+        $this->assertEquals(
+            'source header',
+            $res->getHeaderLine('X-testing'),
+            'Input response is carried through out middleware'
+        );
+        $this->assertEquals(
+            'request header',
+            $res->getHeaderLine('X-pass'),
+            'Request is used in middleware'
+        );
+    }
+
+    /**
+     * test run calling plugin hooks
+     *
+     * @return void
+     */
+    public function testRunCallingPluginHooks()
+    {
+        $response = new Response('php://memory', 200, ['X-testing' => 'source header']);
+        $request = ServerRequestFactory::fromGlobals();
+        $request = $request->withHeader('X-pass', 'request header');
+
+        $app = $this->getMockBuilder(MiddlewareApplication::class)
+            ->setMethods(['pluginBootstrap', 'pluginMiddleware'])
+            ->setConstructorArgs([$this->config])
+            ->getMock();
+        $app->expects($this->once())
+            ->method('pluginBootstrap');
+        $app->expects($this->once())
+            ->method('pluginMiddleware')
+            ->with($this->isInstanceOf(MiddlewareQueue::class))
+            ->will($this->returnCallback(function ($middleware) {
+                return $middleware;
+            }));
+
         $server = new Server($app);
         $res = $server->run($request, $response);
         $this->assertEquals(

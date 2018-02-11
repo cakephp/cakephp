@@ -15,6 +15,7 @@
 namespace Cake\Http;
 
 use Cake\Core\HttpApplicationInterface;
+use Cake\Core\PluginApplicationInterface;
 use Cake\Event\EventDispatcherTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -69,11 +70,19 @@ class Server
     public function run(ServerRequestInterface $request = null, ResponseInterface $response = null)
     {
         $this->app->bootstrap();
+        $hasPlugins = $this->app instanceof PluginApplicationInterface;
+        if ($hasPlugins) {
+            $this->app->pluginBootstrap();
+        }
 
         $response = $response ?: new Response();
         $request = $request ?: ServerRequestFactory::fromGlobals();
 
         $middleware = $this->app->middleware(new MiddlewareQueue());
+        if ($hasPlugins) {
+            $middleware = $this->app->pluginMiddleware($middleware);
+        }
+
         if (!($middleware instanceof MiddlewareQueue)) {
             throw new RuntimeException('The application `middleware` method did not return a middleware queue.');
         }
