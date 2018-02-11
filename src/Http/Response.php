@@ -2003,6 +2003,7 @@ class Response implements ResponseInterface
      * @param string $url link-value
      * @param array $options link-param
      * @return static
+     * @since 3.6.0
      */
     public function withAddedLink($url, $options = [])
     {
