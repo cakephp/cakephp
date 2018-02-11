@@ -22,7 +22,6 @@ use Cake\Http\Cookie\CookieInterface;
 use Cake\Http\CorsBuilder;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Log\Log;
-use Cake\Routing\Router;
 use DateTime;
 use DateTimeZone;
 use InvalidArgumentException;
@@ -1990,25 +1989,23 @@ class Response implements ResponseInterface
      * ### Examples
      *
      * ```
-     * $response = $response->withAddedLink('http://example.com', ['rel' => 'prev'])
-     *     ->withAddedLink(['controller' => 'Posts', 'action' => 'view'], ['rel' => 'next']);
+     * $response = $response->withAddedLink('http://example.com?page=1', ['rel' => 'prev'])
+     *     ->withAddedLink('http://example.com?page=3', ['rel' => 'next']);
      * ```
      *
      * Will generate:
      *
      * ```
-     * Link: <http://example.com>; rel="prev"
-     * Link: </posts/view>; rel="next"
+     * Link: <http://example.com?page=1>; rel="prev"
+     * Link: <http://example.com?page=3>; rel="next"
      * ```
      *
-     * @param string|array $url link-value
+     * @param string $url link-value
      * @param array $options link-param
      * @return static
      */
     public function withAddedLink($url, $options = [])
     {
-        $url = '<' . Router::url($url) . '>';
-
         $params = [];
         foreach ($options as $key => $option) {
             $params[] = $key . '="' . $option . '"';
@@ -2019,7 +2016,7 @@ class Response implements ResponseInterface
             $param = '; ' . implode('; ', $params);
         }
 
-        return $this->withAddedHeader('Link', $url . $param);
+        return $this->withAddedHeader('Link', '<' . $url . '>' . $param);
     }
 
     /**

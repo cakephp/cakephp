@@ -950,9 +950,6 @@ class ResponseTest extends TestCase
         $this->assertFalse($response->hasHeader('Link'), 'Old instance not modified');
         $this->assertEquals('<http://example.com>; rel="prev"', $new->getHeaderLine('Link'));
 
-        $new = $response->withAddedLink([], ['rel' => 'prev']);
-        $this->assertEquals('</>; rel="prev"', $new->getHeaderLine('Link'));
-
         $new = $response->withAddedLink('http://example.com');
         $this->assertEquals('<http://example.com>', $new->getHeaderLine('Link'));
 
