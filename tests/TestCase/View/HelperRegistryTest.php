@@ -351,4 +351,81 @@ class HelperRegistryTest extends TestCase
         $this->Helpers->load('Html', ['key' => 'value']);
         $this->Helpers->load('Html', ['key' => 'new value']);
     }
+
+    /**
+     * Test ObjectRegistry normalizeArray
+     *
+     * @return void
+     */
+    public function testArrayIsNormalized()
+    {
+        $config = [
+            'SomeHelper' => [
+                'value' => 1,
+                'value2' => 2
+            ],
+            'Plugin.SomeOtherHelper' => [
+                'value' => 1,
+                'value2' => 2
+            ]
+        ];
+        $result = $this->Helpers->normalizeArray($config);
+        $expected = [
+            'SomeHelper' => [
+                'class' => 'SomeHelper',
+                'config' => [
+                    'value' => 1,
+                    'value2' => 2
+                ]
+            ],
+            'SomeOtherHelper' => [
+                'class' => 'Plugin.SomeOtherHelper',
+                'config' => [
+                    'value' => 1,
+                    'value2' => 2
+                ]
+            ],
+        ];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test that calling normalizeArray multiple times does
+     * not nest the configuration.
+     *
+     * @return void
+     */
+    public function testArrayIsNormalizedAfterMultipleCalls()
+    {
+        $config = [
+            'SomeHelper' => [
+                'value' => 1,
+                'value2' => 2
+            ],
+            'Plugin.SomeOtherHelper' => [
+                'value' => 1,
+                'value2' => 2
+            ]
+        ];
+
+        $result1 = $this->Helpers->normalizeArray($config);
+        $result2 = $this->Helpers->normalizeArray($result1);
+        $expected = [
+            'SomeHelper' => [
+                'class' => 'SomeHelper',
+                'config' => [
+                    'value' => 1,
+                    'value2' => 2
+                ]
+            ],
+            'SomeOtherHelper' => [
+                'class' => 'Plugin.SomeOtherHelper',
+                'config' => [
+                    'value' => 1,
+                    'value2' => 2
+                ]
+            ],
+        ];
+        $this->assertEquals($expected, $result2);
+    }
 }
