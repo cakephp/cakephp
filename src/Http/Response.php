@@ -1984,6 +1984,43 @@ class Response implements ResponseInterface
     }
 
     /**
+     * Create a new response with the Link header set.
+     *
+     * ### Examples
+     *
+     * ```
+     * $response = $response->withAddedLink('http://example.com?page=1', ['rel' => 'prev'])
+     *     ->withAddedLink('http://example.com?page=3', ['rel' => 'next']);
+     * ```
+     *
+     * Will generate:
+     *
+     * ```
+     * Link: <http://example.com?page=1>; rel="prev"
+     * Link: <http://example.com?page=3>; rel="next"
+     * ```
+     *
+     * @param string $url The LinkHeader url.
+     * @param array $options The LinkHeader params.
+     * @return static
+     * @since 3.6.0
+     */
+    public function withAddedLink($url, $options = [])
+    {
+        $params = [];
+        foreach ($options as $key => $option) {
+            $params[] = $key . '="' . $option . '"';
+        }
+
+        $param = '';
+        if ($params) {
+            $param = '; ' . implode('; ', $params);
+        }
+
+        return $this->withAddedHeader('Link', '<' . $url . '>' . $param);
+    }
+
+    /**
      * Checks whether a response has not been modified according to the 'If-None-Match'
      * (Etags) and 'If-Modified-Since' (last modification date) request
      * headers. If the response is detected to be not modified, it
