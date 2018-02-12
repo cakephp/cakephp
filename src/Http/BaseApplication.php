@@ -18,6 +18,7 @@ use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\HttpApplicationInterface;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Core\PluginCollection;
+use Cake\Core\PluginInterface;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
 use InvalidArgumentException;
@@ -83,6 +84,44 @@ abstract class BaseApplication implements
      */
     public function addPlugin($name, array $config = [])
     {
+        if (is_string($name)) {
+            $plugin = $this->makePlugin($name, $config);
+        } else {
+            $plugin = $name;
+        }
+        $this->plugins->add($plugin);
+
+        return $this;
+    }
+
+    /**
+     * Get the plugin collection in use.
+     *
+     * @return \Cake\Core\PluginCollection
+     */
+    public function getPlugins()
+    {
+        return $this->plugins;
+    }
+
+    /**
+     * Create a plugin instance from a classname and configuration
+     *
+     * @param string $name The plugin classname
+     * @param array $config Configuration options for the plugin
+     * @return \Cake\Core\PluginInterface
+     */
+    public function makePlugin($name, array $config)
+    {
+        if (!class_exists($name)) {
+            throw new InvalidArgumentException("The `{$name}` plugin cannot be found");
+        }
+        $plugin = new $name($config);
+        if (!$plugin instanceof PluginInterface) {
+            throw new InvalidArgumentException("The `{$name}` plugin does not implement Cake\Core\PluginInterface.");
+        }
+
+        return $plugin;
     }
 
     /**
