@@ -64,17 +64,13 @@ class CommandRunner implements EventDispatcherInterface
      */
     public function __construct(ConsoleApplicationInterface $app, $root = 'cake')
     {
-        $this->app = $app;
+        $this->setApp($app);
         $this->root = $root;
         $this->aliases = [
             '--version' => 'version',
             '--help' => 'help',
             '-h' => 'help',
         ];
-
-        if ($app instanceof EventDispatcherInterface) {
-            $this->setEventManager($app->getEventManager());
-        }
     }
 
     /**
@@ -96,6 +92,23 @@ class CommandRunner implements EventDispatcherInterface
     public function setAliases(array $aliases)
     {
         $this->aliases = $aliases;
+
+        return $this;
+    }
+
+    /**
+     * Set the application.
+     *
+     * @param \Cake\Core\ConsoleApplicationInterface $app The application to run CLI commands for.
+     * @return $this
+     */
+    public function setApp(ConsoleApplicationInterface $app)
+    {
+        $this->app = $app;
+
+        if ($app instanceof EventDispatcherInterface) {
+            $this->setEventManager($app->getEventManager());
+        }
 
         return $this;
     }
