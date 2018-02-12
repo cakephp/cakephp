@@ -63,6 +63,34 @@ interface PluginInterface
     public function enableBootstrap();
 
     /**
+     * Disables console commands for the plugin
+     *
+     * @return $this
+     */
+    public function disableConsole();
+
+    /**
+     * Enables console commands for the plugin
+     *
+     * @return $this
+     */
+    public function enableConsole();
+
+    /**
+     * Disables middleware for the plugin
+     *
+     * @return $this
+     */
+    public function disableMiddleware();
+
+    /**
+     * Enables middleware for the plugin
+     *
+     * @return $this
+     */
+    public function enableMiddleware();
+
+    /**
      * If the routes should be loaded or not for this plugin
      *
      * @return bool

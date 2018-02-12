@@ -127,6 +127,46 @@ class PluginApp implements PluginInterface
     /**
      * {@inheritdoc}
      */
+    public function disableMiddleware()
+    {
+        $this->middlewareEnabled = false;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function enableMiddleware()
+    {
+        $this->middlewareEnabled = true;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function disableConsole()
+    {
+        $this->consoleEnabled = false;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function enableConsole()
+    {
+        $this->consoleEnabled = true;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function isRoutesEnabled()
     {
         return $this->routesEnabled;
