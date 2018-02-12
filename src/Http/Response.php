@@ -2000,8 +2000,8 @@ class Response implements ResponseInterface
      * Link: <http://example.com?page=3>; rel="next"
      * ```
      *
-     * @param string $url link-value
-     * @param array $options link-param
+     * @param string $url The LinkHeader url.
+     * @param array $options The LinkHeader params.
      * @return static
      * @since 3.6.0
      */
