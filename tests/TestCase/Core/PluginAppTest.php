@@ -76,4 +76,18 @@ class PluginAppTest extends TestCase
         $commands = new CommandCollection();
         $this->assertSame($commands, $plugin->console($commands));
     }
+
+    public function testConstructorArguments()
+    {
+        $plugin = new PluginApp([
+            'routes' => false,
+            'bootstrap' => false,
+            'console' => false,
+            'middleware' => false
+        ]);
+        $this->assertFalse($plugin->isRoutesEnabled());
+        $this->assertFalse($plugin->isBootstrapEnabled());
+        $this->assertFalse($plugin->isConsoleEnabled());
+        $this->assertFalse($plugin->isMiddlewareEnabled());
+    }
 }

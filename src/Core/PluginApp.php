@@ -57,12 +57,10 @@ class PluginApp implements PluginInterface
      */
     public function __construct(array $options = [])
     {
-        if (isset($options['bootstrap'])) {
-            $this->disableBootstrap((bool)$options['bootstrap']);
-        }
-
-        if (isset($options['routes'])) {
-            (bool)$options['routes'] ? $this->enableRoutes() : $this->disableRoutes();
+        foreach (['bootstrap', 'routes', 'console', 'middleware'] as $key) {
+            if (isset($options[$key])) {
+                $this->{"{$key}Enabled"} = (bool)$options[$key];
+            }
         }
 
         $this->initialize();
