@@ -17,7 +17,6 @@ namespace Cake\Console;
 use Cake\Console\Exception\ConsoleException;
 use Cake\Console\Exception\StopException;
 use Cake\Core\App;
-use Cake\Core\Plugin;
 use Cake\Datasource\ModelAwareTrait;
 use Cake\Filesystem\File;
 use Cake\Log\LogTrait;
@@ -495,9 +494,6 @@ class Shell
             $this->params = array_merge($this->params, $extra);
         }
         $this->_setOutputLevel();
-        if (!empty($this->params['plugin']) && !Plugin::loaded($this->params['plugin'])) {
-            Plugin::load($this->params['plugin']);
-        }
         $this->command = $command;
         if (!empty($this->params['help'])) {
             return $this->_displayHelp($command);
