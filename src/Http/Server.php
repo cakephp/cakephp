@@ -135,6 +135,10 @@ class Server implements EventDispatcherInterface
     {
         $this->app = $app;
 
+        if ($app instanceof EventDispatcherInterface) {
+            $this->setEventManager($app->getEventManager());
+        }
+
         return $this;
     }
 
