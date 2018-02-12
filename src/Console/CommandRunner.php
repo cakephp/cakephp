@@ -117,11 +117,7 @@ class CommandRunner implements EventDispatcherInterface
      */
     public function run(array $argv, ConsoleIo $io = null)
     {
-        $this->app->bootstrap();
-        if ($this->app instanceof EventApplicationInterface) {
-            $eventManager = $this->app->events($this->getEventManager());
-            $this->setEventManager($eventManager);
-        }
+        $this->bootstrap();
 
         $commands = new CommandCollection([
             'version' => VersionCommand::class,
@@ -163,6 +159,22 @@ class CommandRunner implements EventDispatcherInterface
         }
 
         return Shell::CODE_ERROR;
+    }
+
+    /**
+     * Application bootstrap wrapper.
+     *
+     * Calls `bootstrap()` and `events()` if application implements `EventApplicationInterface`.
+     *
+     * @return void
+     */
+    protected function bootstrap()
+    {
+        $this->app->bootstrap();
+        if ($this->app instanceof EventApplicationInterface) {
+            $eventManager = $this->app->events($this->getEventManager());
+            $this->setEventManager($eventManager);
+        }
     }
 
     /**

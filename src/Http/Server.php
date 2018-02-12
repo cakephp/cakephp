@@ -15,6 +15,8 @@
 namespace Cake\Http;
 
 use Cake\Core\HttpApplicationInterface;
+use Cake\Event\EventApplicationInterface;
+use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -24,7 +26,7 @@ use Zend\Diactoros\Response\EmitterInterface;
 /**
  * Runs an application invoking all the PSR7 middleware and the registered application.
  */
-class Server
+class Server implements EventDispatcherInterface
 {
 
     use EventDispatcherTrait;
@@ -68,7 +70,8 @@ class Server
      */
     public function run(ServerRequestInterface $request = null, ResponseInterface $response = null)
     {
-        $this->app->bootstrap();
+        $this->bootstrap();
+
         $response = $response ?: new Response();
         $request = $request ?: ServerRequestFactory::fromGlobals();
 
@@ -88,6 +91,22 @@ class Server
         }
 
         return $response;
+    }
+
+    /**
+     * Application bootstrap wrapper.
+     *
+     * Calls `bootstrap()` and `events()` if application implements `EventApplicationInterface`.
+     *
+     * @return void
+     */
+    protected function bootstrap()
+    {
+        $this->app->bootstrap();
+        if ($this->app instanceof EventApplicationInterface) {
+            $eventManager = $this->app->events($this->getEventManager());
+            $this->setEventManager($eventManager);
+        }
     }
 
     /**
