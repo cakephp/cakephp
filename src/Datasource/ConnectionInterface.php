@@ -26,7 +26,6 @@ namespace Cake\Datasource;
  * @method \Cake\Database\StatementInterface prepare($sql)
  * @method \Cake\Database\StatementInterface execute($query, $params = [], array $types = [])
  * @method string quote($value, $type = null)
- * @method string|int lastInsertId($table = null, $column = null)
  */
 interface ConnectionInterface
 {
