@@ -93,8 +93,8 @@ interface EventManagerInterface
     /**
      * Dispatches a new event to all configured listeners
      *
-     * @param string|\Cake\Event\EventInterface $event the event key name or instance of Event
-     * @return \Cake\Event\Event
+     * @param string|\Cake\Event\EventInterface $event The event key name or instance of EventInterface.
+     * @return \Cake\Event\EventInterface
      * @triggers $event
      */
     public function dispatch($event);
