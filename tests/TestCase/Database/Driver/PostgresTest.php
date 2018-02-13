@@ -147,7 +147,7 @@ class PostgresTest extends TestCase
     public function testInsertReturning()
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')
-            ->setMethods(['_connect', 'connection'])
+            ->setMethods(['_connect', 'getConnection'])
             ->setConstructorArgs([[]])
             ->getMock();
         $connection = $this
