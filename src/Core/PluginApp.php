@@ -60,6 +60,20 @@ class PluginApp implements PluginInterface
     protected $path;
 
     /**
+     * The class path for this plugin.
+     *
+     * @var string
+     */
+    protected $classPath;
+
+    /**
+     * The config path for this plugin.
+     *
+     * @var string
+     */
+    protected $configPath;
+
+    /**
      * Constructor
      *
      * @param array $options Options
@@ -71,8 +85,10 @@ class PluginApp implements PluginInterface
                 $this->{"{$key}Enabled"} = (bool)$options[$key];
             }
         }
-        if (isset($options['path'])) {
-            $this->path = $options['path'];
+        foreach (['path', 'classPath', 'configPath'] as $path) {
+            if (isset($options[$path])) {
+                $this->{$path} = $options[$path];
+            }
         }
 
         $this->initialize();
@@ -111,8 +127,35 @@ class PluginApp implements PluginInterface
         if (substr($path, -3) === 'src') {
             $path = substr($path, 0, -3);
         }
+        $this->path = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
 
-        return rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+        return $this->path;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getConfigPath()
+    {
+        if ($this->configPath) {
+            return $this->configPath;
+        }
+        $path = $this->getPath();
+
+        return $path . 'config' . DIRECTORY_SEPARATOR;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getClassPath()
+    {
+        if ($this->classPath) {
+            return $this->classPath;
+        }
+        $path = $this->getPath();
+
+        return $path . 'src' . DIRECTORY_SEPARATOR;
     }
 
     /**

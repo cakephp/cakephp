@@ -97,17 +97,25 @@ class PluginAppTest extends TestCase
 
         $expected = CAKE . 'Core' . DS;
         $this->assertSame($expected, $plugin->getPath());
+        $this->assertSame($expected . 'config' . DS, $plugin->getConfigPath());
+        $this->assertSame($expected . 'src' . DS, $plugin->getClassPath());
     }
 
     public function testGetPathOptionValue()
     {
         $plugin = new PluginApp(['path' => '/some/path']);
-        $this->assertSame('/some/path', $plugin->getPath());
+        $expected = '/some/path';
+        $this->assertSame($expected, $plugin->getPath());
+        $this->assertSame($expected . 'config' . DS, $plugin->getConfigPath());
+        $this->assertSame($expected . 'src' . DS, $plugin->getClassPath());
     }
 
     public function testGetPathSubclass()
     {
         $plugin = new TestPlugin();
-        $this->assertSame(TEST_APP . 'Plugin/TestPlugin' . DS, $plugin->getPath());
+        $expected = TEST_APP . 'Plugin/TestPlugin' . DS;
+        $this->assertSame($expected, $plugin->getPath());
+        $this->assertSame($expected . 'config' . DS, $plugin->getConfigPath());
+        $this->assertSame($expected . 'src' . DS, $plugin->getClassPath());
     }
 }
