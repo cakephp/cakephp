@@ -13,6 +13,8 @@
  */
 namespace Cake\Core;
 
+use ReflectionClass;
+
 /**
  * Base Plugin Class
  *
@@ -51,6 +53,13 @@ class PluginApp implements PluginInterface
     protected $consoleEnabled = true;
 
     /**
+     * The path to this plugin.
+     *
+     * @var string
+     */
+    protected $path;
+
+    /**
      * Constructor
      *
      * @param array $options Options
@@ -61,6 +70,9 @@ class PluginApp implements PluginInterface
             if (isset($options[$key])) {
                 $this->{"{$key}Enabled"} = (bool)$options[$key];
             }
+        }
+        if (isset($options['path'])) {
+            $this->path = $options['path'];
         }
 
         $this->initialize();
@@ -82,6 +94,25 @@ class PluginApp implements PluginInterface
         array_pop($parts);
 
         return implode('/', $parts);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getPath()
+    {
+        if ($this->path) {
+            return $this->path;
+        }
+        $reflection = new ReflectionClass($this);
+        $path = dirname($reflection->getFileName());
+
+        // Trim off src
+        if (substr($path, -3) === 'src') {
+            $path = substr($path, 0, -3);
+        }
+
+        return rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
     }
 
     /**

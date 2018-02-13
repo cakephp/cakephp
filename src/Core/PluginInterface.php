@@ -26,6 +26,13 @@ interface PluginInterface
     public function getName();
 
     /**
+     * Get the filesystem path to this plugin
+     *
+     * @return void
+     */
+    public function getPath();
+
+    /**
      * Load all the application configuration and bootstrap logic.
      *
      * Override this method to add additional bootstrap logic for your application.

@@ -90,4 +90,24 @@ class PluginAppTest extends TestCase
         $this->assertFalse($plugin->isConsoleEnabled());
         $this->assertFalse($plugin->isMiddlewareEnabled());
     }
+
+    public function testGetPathBaseClass()
+    {
+        $plugin = new PluginApp();
+
+        $expected = CAKE . 'Core' . DS;
+        $this->assertSame($expected, $plugin->getPath());
+    }
+
+    public function testGetPathOptionValue()
+    {
+        $plugin = new PluginApp(['path' => '/some/path']);
+        $this->assertSame('/some/path', $plugin->getPath());
+    }
+
+    public function testGetPathSubclass()
+    {
+        $plugin = new TestPlugin();
+        $this->assertSame(TEST_APP . 'Plugin/TestPlugin' . DS, $plugin->getPath());
+    }
 }
