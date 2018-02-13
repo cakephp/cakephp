@@ -26,7 +26,6 @@ use PDO;
 class Sqlserver extends Driver
 {
 
-    use PDODriverTrait;
     use SqlserverDialectTrait;
 
     /**

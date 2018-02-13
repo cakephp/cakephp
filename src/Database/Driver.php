@@ -14,17 +14,24 @@
  */
 namespace Cake\Database;
 
+use Cake\Database\Query;
+use Cake\Database\Statement\PDOStatement;
 use InvalidArgumentException;
 use PDO;
+use PDOException;
 
 /**
  * Represents a database driver containing all specificities for
  * a database engine including its SQL dialect.
- *
- * @property \PDO|null $_connection
  */
 abstract class Driver
 {
+    /**
+     * Instance of PDO.
+     *
+     * @var \PDO|null
+     */
+    protected $_connection;
 
     /**
      * Configuration data.
@@ -72,6 +79,26 @@ abstract class Driver
     /**
      * Establishes a connection to the database server
      *
+     * @param string $dsn A Driver-specific PDO-DSN
+     * @param array $config configuration to be used for creating connection
+     * @return bool true on success
+     */
+    protected function _connect($dsn, array $config)
+    {
+        $connection = new PDO(
+            $dsn,
+            $config['username'],
+            $config['password'],
+            $config['flags']
+        );
+        $this->connection($connection);
+
+        return true;
+    }
+
+    /**
+     * Establishes a connection to the database server
+     *
      * @return bool true on success
      */
     abstract public function connect();
@@ -81,16 +108,27 @@ abstract class Driver
      *
      * @return void
      */
-    abstract public function disconnect();
+    public function disconnect()
+    {
+        $this->_connection = null;
+    }
 
     /**
      * Returns correct connection resource or object that is internally used
-     * If first argument is passed,
+     * If first argument is passed, it will set internal connection object or
+     * result to the value passed
      *
-     * @param null|\PDO $connection The connection object
-     * @return \PDO
+     * @param null|\PDO $connection The PDO connection instance.
+     * @return \PDO connection object used internally
      */
-    abstract public function connection($connection = null);
+    public function connection($connection = null)
+    {
+        if ($connection !== null) {
+            $this->_connection = $connection;
+        }
+
+        return $this->_connection;
+    }
 
     /**
      * Returns whether php is able to use this driver for connecting to database
@@ -102,31 +140,62 @@ abstract class Driver
     /**
      * Prepares a sql statement to be executed
      *
-     * @param string|\Cake\Database\Query $query The query to convert into a statement.
+     * @param string|\Cake\Database\Query $query The query to turn into a prepared statement.
      * @return \Cake\Database\StatementInterface
      */
-    abstract public function prepare($query);
+    public function prepare($query)
+    {
+        $this->connect();
+        $isObject = $query instanceof Query;
+        $statement = $this->_connection->prepare($isObject ? $query->sql() : $query);
+
+        return new PDOStatement($statement, $this);
+    }
 
     /**
      * Starts a transaction
      *
      * @return bool true on success, false otherwise
      */
-    abstract public function beginTransaction();
+    public function beginTransaction()
+    {
+        $this->connect();
+        if ($this->_connection->inTransaction()) {
+            return true;
+        }
+
+        return $this->_connection->beginTransaction();
+    }
 
     /**
      * Commits a transaction
      *
      * @return bool true on success, false otherwise
      */
-    abstract public function commitTransaction();
+    public function commitTransaction()
+    {
+        $this->connect();
+        if (!$this->_connection->inTransaction()) {
+            return false;
+        }
+
+        return $this->_connection->commit();
+    }
 
     /**
-     * Rollsback a transaction
+     * Rollback a transaction
      *
      * @return bool true on success, false otherwise
      */
-    abstract public function rollbackTransaction();
+    public function rollbackTransaction()
+    {
+        $this->connect();
+        if (!$this->_connection->inTransaction()) {
+            return false;
+        }
+
+        return $this->_connection->rollBack();
+    }
 
     /**
      * Get the SQL for releasing a save point.
@@ -191,16 +260,23 @@ abstract class Driver
      * @param string $type Type to be used for determining kind of quoting to perform
      * @return string
      */
-    abstract public function quote($value, $type);
+    public function quote($value, $type)
+    {
+        $this->connect();
+
+        return $this->_connection->quote($value, $type);
+    }
 
     /**
-     * Checks if the driver supports quoting
+     * Checks if the driver supports quoting, as PDO_ODBC does not support it.
      *
      * @return bool
      */
     public function supportsQuoting()
     {
-        return true;
+        $this->connect();
+
+        return $this->_connection->getAttribute(PDO::ATTR_DRIVER_NAME) !== 'odbc';
     }
 
     /**
@@ -285,17 +361,33 @@ abstract class Driver
      */
     public function lastInsertId($table = null, $column = null)
     {
+        $this->connect();
+
+        if ($this->_connection instanceof PDO) {
+            return $this->_connection->lastInsertId($table);
+        }
+
         return $this->_connection->lastInsertId($table, $column);
     }
 
     /**
-     * Check whether or not the driver is connected.
+     * Checks whether or not the driver is connected.
      *
      * @return bool
      */
     public function isConnected()
     {
-        return $this->_connection !== null;
+        if ($this->_connection === null) {
+            $connected = false;
+        } else {
+            try {
+                $connected = $this->_connection->query('SELECT 1');
+            } catch (PDOException $e) {
+                $connected = false;
+            }
+        }
+
+        return (bool)$connected;
     }
 
     /**

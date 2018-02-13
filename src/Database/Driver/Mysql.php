@@ -24,7 +24,6 @@ class Mysql extends Driver
 {
 
     use MysqlDialectTrait;
-    use PDODriverTrait;
 
     /**
      * Base configuration settings for MySQL driver

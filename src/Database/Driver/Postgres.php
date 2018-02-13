@@ -21,7 +21,6 @@ use PDO;
 class Postgres extends Driver
 {
 
-    use PDODriverTrait;
     use PostgresDialectTrait;
 
     /**
