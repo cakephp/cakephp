@@ -26,7 +26,8 @@ parameters:
         - '#Call to an undefined method object::__toString\(\)#'
         - '#Call to an undefined method object::toArray\(\)#'
         - '#Call to an undefined method object::__debugInfo\(\)#'
-        - '#Method PDO::lastInsertId\(\) invoked with 2 parameters, 0-1 required#'
+        - '#Call to an undefined static method Cake\\ORM\\TableRegistry::getConfig\(\)#'
+        - '#Cannot call method lastInsertId\(\) on null#'
     earlyTerminatingMethodCalls:
         Cake\Shell\Shell:
             - abort
