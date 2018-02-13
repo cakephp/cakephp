@@ -57,7 +57,7 @@ class PluginApp implements PluginInterface
      */
     public function __construct(array $options = [])
     {
-        foreach (['bootstrap', 'routes', 'console', 'middleware'] as $key) {
+        foreach (PluginCollection::VALID_HOOKS as $key) {
             if (isset($options[$key])) {
                 $this->{"{$key}Enabled"} = (bool)$options[$key];
             }
