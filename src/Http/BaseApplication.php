@@ -16,6 +16,7 @@ namespace Cake\Http;
 
 use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\HttpApplicationInterface;
+use Cake\Core\Plugin;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Core\PluginCollection;
 use Cake\Core\PluginInterface;
@@ -58,7 +59,7 @@ abstract class BaseApplication implements
     public function __construct($configDir)
     {
         $this->configDir = $configDir;
-        $this->plugins = new PluginCollection();
+        $this->plugins = Plugin::getCollection();
     }
 
     /**
