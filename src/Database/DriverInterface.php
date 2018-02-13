@@ -40,14 +40,19 @@ interface DriverInterface
     public function disconnect();
 
     /**
-     * Returns correct connection resource or object that is internally used
-     * If first argument is passed, it will set internal connection object or
-     * result to the value passed.
+     * Returns correct connection resource or object that is internally used.
      *
-     * @param mixed $connection The PDO connection instance.
      * @return mixed Connection object used internally.
      */
-    public function connection($connection = null);
+    public function getConnection();
+
+    /**
+     * Set the internal connection object.
+     *
+     * @param mixed $connection The connection instance.
+     * @return $this
+     */
+    public function setConnection($connection);
 
     /**
      * Returns whether php is able to use this driver for connecting to database.

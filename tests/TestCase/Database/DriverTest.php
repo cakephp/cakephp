@@ -98,7 +98,7 @@ class DriverTest extends TestCase
             ->with(PDO::ATTR_DRIVER_NAME)
             ->willReturn('mysql');
 
-        $this->driver->connection($connection);
+        $this->driver->setConnection($connection);
 
         $result = $this->driver->supportsQuoting();
         $this->assertTrue($result);
@@ -137,7 +137,7 @@ class DriverTest extends TestCase
             ->method('quote')
             ->with($value, PDO::PARAM_STR);
 
-        $this->driver->connection($connection);
+        $this->driver->setConnection($connection);
 
         $this->driver->schemaValue($value);
     }
@@ -159,7 +159,7 @@ class DriverTest extends TestCase
             ->method('lastInsertId')
             ->willReturn('all-the-bears');
 
-        $this->driver->connection($connection);
+        $this->driver->setConnection($connection);
         $this->assertSame('all-the-bears', $this->driver->lastInsertId());
     }
 
@@ -182,7 +182,7 @@ class DriverTest extends TestCase
             ->method('query')
             ->willReturn(true);
 
-        $this->driver->connection($connection);
+        $this->driver->setConnection($connection);
         $this->assertTrue($this->driver->isConnected());
     }
 
@@ -274,10 +274,10 @@ class DriverTest extends TestCase
      */
     public function testDestructor()
     {
-        $this->driver->connection(true);
+        $this->driver->setConnection(true);
         $this->driver->__destruct();
 
-        $this->assertNull($this->driver->connection());
+        $this->assertNull($this->driver->getConnection());
     }
 
     /**

@@ -91,7 +91,7 @@ abstract class Driver implements DriverInterface
             $config['password'],
             $config['flags']
         );
-        $this->connection($connection);
+        $this->setConnection($connection);
 
         return true;
     }
@@ -110,15 +110,48 @@ abstract class Driver implements DriverInterface
     }
 
     /**
-     * {@inheritDoc}
+     * Returns correct connection resource or object that is internally used
+     * If first argument is passed, it will set internal connection object or
+     * result to the value passed.
+     *
+     * @param mixed $connection The PDO connection instance.
+     * @return mixed Connection object used internally.
+     * @deprecated 3.6.0 Use getConnection()/setConnection() instead.
      */
     public function connection($connection = null)
     {
+        deprecationWarning(
+            get_called_class() . '::connection() is deprecated. ' .
+            'Use setConnection()/getConnection() instead.'
+        );
         if ($connection !== null) {
             $this->_connection = $connection;
         }
 
         return $this->_connection;
+    }
+
+    /**
+     * Get the internal PDO connection instance.
+     *
+     * @return \PDO
+     */
+    public function getConnection()
+    {
+        return $this->_connection;
+    }
+
+    /**
+     * Set the internal PDO connection instance.
+     *
+     * @param \PDO $connection PDO instance.
+     * @return $this
+     */
+    public function setConnection($connection)
+    {
+        $this->_connection = $connection;
+
+        return $this;
     }
 
     /**

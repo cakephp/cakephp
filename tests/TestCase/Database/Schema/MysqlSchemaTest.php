@@ -1038,7 +1038,7 @@ SQL;
         $connection->expects($this->any())->method('getDriver')
             ->will($this->returnValue($driver));
 
-        $driver->connection()
+        $driver->getConnection()
             ->expects($this->any())
             ->method('getAttribute')
             ->will($this->returnValue('5.6.0'));
@@ -1108,7 +1108,7 @@ SQL;
             ->method('getDriver')
             ->will($this->returnValue($driver));
 
-        $driver->connection()
+        $driver->getConnection()
             ->expects($this->any())
             ->method('getAttribute')
             ->will($this->returnValue('5.7.0'));
@@ -1329,7 +1329,7 @@ SQL;
             ->will($this->returnCallback(function ($value) {
                 return "'$value'";
             }));
-        $driver->connection($mock);
+        $driver->setConnection($mock);
 
         return $driver;
     }
