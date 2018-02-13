@@ -63,6 +63,12 @@ class PluginAppTest extends TestCase
         $this->assertSame('Company/TestPluginThree', $plugin->getName());
     }
 
+    public function testGetNameOption()
+    {
+        $plugin = new TestPlugin(['name' => 'Elephants']);
+        $this->assertSame('Elephants', $plugin->getName());
+    }
+
     public function testMiddleware()
     {
         $plugin = new PluginApp();

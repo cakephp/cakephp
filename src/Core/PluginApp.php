@@ -74,6 +74,13 @@ class PluginApp implements PluginInterface
     protected $configPath;
 
     /**
+     * The name of this plugin
+     *
+     * @var string
+     */
+    protected $name;
+
+    /**
      * Constructor
      *
      * @param array $options Options
@@ -85,7 +92,7 @@ class PluginApp implements PluginInterface
                 $this->{"{$key}Enabled"} = (bool)$options[$key];
             }
         }
-        foreach (['path', 'classPath', 'configPath'] as $path) {
+        foreach (['name', 'path', 'classPath', 'configPath'] as $path) {
             if (isset($options[$path])) {
                 $this->{$path} = $options[$path];
             }
@@ -106,10 +113,14 @@ class PluginApp implements PluginInterface
      */
     public function getName()
     {
+        if ($this->name) {
+            return $this->name;
+        }
         $parts = explode('\\', get_class($this));
         array_pop($parts);
+        $this->name = implode('/', $parts);
 
-        return implode('/', $parts);
+        return $this->name;
     }
 
     /**
