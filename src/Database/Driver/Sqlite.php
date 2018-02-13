@@ -74,7 +74,7 @@ class Sqlite extends Driver
 
         if (!empty($config['init'])) {
             foreach ((array)$config['init'] as $command) {
-                $this->connection()->exec($command);
+                $this->getConnection()->exec($command);
             }
         }
 

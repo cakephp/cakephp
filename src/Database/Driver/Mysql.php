@@ -103,7 +103,7 @@ class Mysql extends Driver
         $this->_connect($dsn, $config);
 
         if (!empty($config['init'])) {
-            $connection = $this->connection();
+            $connection = $this->getConnection();
             foreach ((array)$config['init'] as $command) {
                 $connection->exec($command);
             }
