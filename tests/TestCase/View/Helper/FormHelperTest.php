@@ -7018,6 +7018,23 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * test control() datetime & required attributes
+     *
+     * @return void
+     */
+    public function testControlDatetimeRequired()
+    {
+        $result = $this->Form->control('birthday', [
+            'type' => 'date',
+            'required' => true
+        ]);
+        $this->assertContains(
+            '<select name="birthday[year]" required="required"',
+            $result
+        );
+    }
+
+    /**
      * testYearAutoExpandRange method
      *
      * @return void
