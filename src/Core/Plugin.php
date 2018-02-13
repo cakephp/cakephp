@@ -244,12 +244,13 @@ class Plugin
             $plugins = array_unique($plugins);
         }
 
+        $collection = static::getCollection();
         foreach ($plugins as $p) {
             $opts = isset($options[$p]) ? $options[$p] : null;
             if ($opts === null && isset($options[0])) {
                 $opts = $options[0];
             }
-            if (isset(static::$_plugins[$p])) {
+            if ($collection->has($p)) {
                 continue;
             }
             static::load($p, (array)$opts);
