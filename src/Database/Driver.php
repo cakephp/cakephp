@@ -24,7 +24,7 @@ use PDOException;
  * Represents a database driver containing all specificities for
  * a database engine including its SQL dialect.
  */
-abstract class Driver
+abstract class Driver implements DriverInterface
 {
     /**
      * Instance of PDO.
@@ -97,16 +97,12 @@ abstract class Driver
     }
 
     /**
-     * Establishes a connection to the database server
-     *
-     * @return bool true on success
+     * {@inheritDoc}
      */
     abstract public function connect();
 
     /**
-     * Disconnects from database server
-     *
-     * @return void
+     * {@inheritDoc}
      */
     public function disconnect()
     {
@@ -114,12 +110,7 @@ abstract class Driver
     }
 
     /**
-     * Returns correct connection resource or object that is internally used
-     * If first argument is passed, it will set internal connection object or
-     * result to the value passed
-     *
-     * @param null|\PDO $connection The PDO connection instance.
-     * @return \PDO connection object used internally
+     * {@inheritDoc}
      */
     public function connection($connection = null)
     {
@@ -131,17 +122,12 @@ abstract class Driver
     }
 
     /**
-     * Returns whether php is able to use this driver for connecting to database
-     *
-     * @return bool true if it is valid to use this driver
+     * {@inheritDoc}
      */
     abstract public function enabled();
 
     /**
-     * Prepares a sql statement to be executed
-     *
-     * @param string|\Cake\Database\Query $query The query to turn into a prepared statement.
-     * @return \Cake\Database\StatementInterface
+     * {@inheritDoc}
      */
     public function prepare($query)
     {
@@ -153,9 +139,7 @@ abstract class Driver
     }
 
     /**
-     * Starts a transaction
-     *
-     * @return bool true on success, false otherwise
+     * {@inheritDoc}
      */
     public function beginTransaction()
     {
@@ -168,9 +152,7 @@ abstract class Driver
     }
 
     /**
-     * Commits a transaction
-     *
-     * @return bool true on success, false otherwise
+     * {@inheritDoc}
      */
     public function commitTransaction()
     {
@@ -183,9 +165,7 @@ abstract class Driver
     }
 
     /**
-     * Rollback a transaction
-     *
-     * @return bool true on success, false otherwise
+     * {@inheritDoc}
      */
     public function rollbackTransaction()
     {
@@ -198,55 +178,37 @@ abstract class Driver
     }
 
     /**
-     * Get the SQL for releasing a save point.
-     *
-     * @param string $name The table name
-     * @return string
+     * {@inheritDoc}
      */
     abstract public function releaseSavePointSQL($name);
 
     /**
-     * Get the SQL for creating a save point.
-     *
-     * @param string $name The table name
-     * @return string
+     * {@inheritDoc}
      */
     abstract public function savePointSQL($name);
 
     /**
-     * Get the SQL for rollingback a save point.
-     *
-     * @param string $name The table name
-     * @return string
+     * {@inheritDoc}
      */
     abstract public function rollbackSavePointSQL($name);
 
     /**
-     * Get the SQL for disabling foreign keys
-     *
-     * @return string
+     * {@inheritDoc}
      */
     abstract public function disableForeignKeySQL();
 
     /**
-     * Get the SQL for enabling foreign keys
-     *
-     * @return string
+     * {@inheritDoc}
      */
     abstract public function enableForeignKeySQL();
 
     /**
-     * Returns whether the driver supports adding or dropping constraints
-     * to already created tables.
-     *
-     * @return bool true if driver supports dynamic constraints
+     * {@inheritDoc}
      */
     abstract public function supportsDynamicConstraints();
 
     /**
-     * Returns whether this driver supports save points for nested transactions
-     *
-     * @return bool true if save points are supported, false otherwise
+     * {@inheritDoc}
      */
     public function supportsSavePoints()
     {
@@ -254,11 +216,7 @@ abstract class Driver
     }
 
     /**
-     * Returns a value in a safe representation to be used in a query string
-     *
-     * @param mixed $value The value to quote.
-     * @param string $type Type to be used for determining kind of quoting to perform
-     * @return string
+     * {@inheritDoc}
      */
     public function quote($value, $type)
     {
@@ -280,43 +238,22 @@ abstract class Driver
     }
 
     /**
-     * Returns a callable function that will be used to transform a passed Query object.
-     * This function, in turn, will return an instance of a Query object that has been
-     * transformed to accommodate any specificities of the SQL dialect in use.
-     *
-     * @param string $type the type of query to be transformed
-     * (select, insert, update, delete)
-     * @return callable
+     * {@inheritDoc}
      */
     abstract public function queryTranslator($type);
 
     /**
-     * Get the schema dialect.
-     *
-     * Used by Cake\Database\Schema package to reflect schema and
-     * generate schema.
-     *
-     * If all the tables that use this Driver specify their
-     * own schemas, then this may return null.
-     *
-     * @return \Cake\Database\Schema\BaseSchema
+     * {@inheritDoc}
      */
     abstract public function schemaDialect();
 
     /**
-     * Quotes a database identifier (a column name, table name, etc..) to
-     * be used safely in queries without the risk of using reserved words
-     *
-     * @param string $identifier The identifier expression to quote.
-     * @return string
+     * {@inheritDoc}
      */
     abstract public function quoteIdentifier($identifier);
 
     /**
-     * Escapes values for use in schema definitions.
-     *
-     * @param mixed $value The value to escape.
-     * @return string String for use in schema definitions.
+     * {@inheritDoc}
      */
     public function schemaValue($value)
     {
@@ -343,9 +280,7 @@ abstract class Driver
     }
 
     /**
-     * Returns the schema name that's being used
-     *
-     * @return string
+     * {@inheritDoc}
      */
     public function schema()
     {
@@ -353,11 +288,7 @@ abstract class Driver
     }
 
     /**
-     * Returns last id generated for a table or sequence in database
-     *
-     * @param string|null $table table name or sequence to get last insert value from
-     * @param string|null $column the name of the column representing the primary key
-     * @return string|int
+     * {@inheritDoc}
      */
     public function lastInsertId($table = null, $column = null)
     {
@@ -371,9 +302,7 @@ abstract class Driver
     }
 
     /**
-     * Checks whether or not the driver is connected.
-     *
-     * @return bool
+     * {@inheritDoc}
      */
     public function isConnected()
     {
@@ -391,11 +320,7 @@ abstract class Driver
     }
 
     /**
-     * Sets whether or not this driver should automatically quote identifiers
-     * in queries.
-     *
-     * @param bool $enable Whether to enable auto quoting
-     * @return $this
+     * {@inheritDoc}
      */
     public function enableAutoQuoting($enable = true)
     {
@@ -405,10 +330,7 @@ abstract class Driver
     }
 
     /**
-     * Returns whether or not this driver should automatically quote identifiers
-     * in queries
-     *
-     * @return bool
+     * {@inheritDoc}
      */
     public function isAutoQuotingEnabled()
     {
@@ -440,13 +362,7 @@ abstract class Driver
     }
 
     /**
-     * Transforms the passed query to this Driver's dialect and returns an instance
-     * of the transformed query and the full compiled SQL string
-     *
-     * @param \Cake\Database\Query $query The query to compile.
-     * @param \Cake\Database\ValueBinder $generator The value binder to use.
-     * @return array containing 2 entries. The first entity is the transformed query
-     * and the second one the compiled SQL
+     * {@inheritDoc}
      */
     public function compileQuery(Query $query, ValueBinder $generator)
     {
@@ -458,9 +374,7 @@ abstract class Driver
     }
 
     /**
-     * Returns an instance of a QueryCompiler
-     *
-     * @return \Cake\Database\QueryCompiler
+     * {@inheritDoc}
      */
     public function newCompiler()
     {
