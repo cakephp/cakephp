@@ -14,6 +14,7 @@
 namespace Cake\Core;
 
 use ArrayIterator;
+use Cake\Core\Exception\MissingPluginException;
 use Countable;
 use InvalidArgumentException;
 use IteratorAggregate;
@@ -94,12 +95,12 @@ class PluginCollection implements IteratorAggregate, Countable
      *
      * @param string $name The plugin to get.
      * @return \Cake\Core\PluginInterface The plugin.
-     * @throws \InvalidArgumentException when unknown plugins are fetched.
+     * @throws \Cake\Core\Exception\MissingPluginException when unknown plugins are fetched.
      */
     public function get($name)
     {
         if (!$this->has($name)) {
-            throw new InvalidArgumentException("`$name` is not a loaded plugin.");
+            throw new MissingPluginException(['plugin' => $name]);
         }
 
         return $this->plugins[$name];

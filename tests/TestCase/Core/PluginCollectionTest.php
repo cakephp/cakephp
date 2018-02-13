@@ -13,6 +13,7 @@
  */
 namespace Cake\Test\TestCase\Core;
 
+use Cake\Core\Exception\MissingPluginException;
 use Cake\Core\PluginCollection;
 use Cake\Core\PluginInterface;
 use Cake\TestSuite\TestCase;
@@ -88,7 +89,7 @@ class PluginCollectionTest extends TestCase
 
     public function testGetInvalid()
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(MissingPluginException::class);
 
         $plugins = new PluginCollection();
         $plugins->get('Invalid');
