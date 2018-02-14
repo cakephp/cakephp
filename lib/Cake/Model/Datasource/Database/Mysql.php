@@ -131,7 +131,8 @@ class Mysql extends DboSource {
 		'time' => array('name' => 'time', 'format' => 'H:i:s', 'formatter' => 'date'),
 		'date' => array('name' => 'date', 'format' => 'Y-m-d', 'formatter' => 'date'),
 		'binary' => array('name' => 'blob'),
-		'boolean' => array('name' => 'tinyint', 'limit' => '1')
+		'boolean' => array('name' => 'tinyint', 'limit' => '1'),
+		'enum' => array('name' => 'enum', 'limit' => '512')
 	);
 
 /**

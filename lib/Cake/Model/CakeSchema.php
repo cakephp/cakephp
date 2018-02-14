@@ -624,10 +624,16 @@ class CakeSchema extends CakeObject {
 			if ($Obj->primaryKey === $name && !$hasPrimaryAlready && !isset($value['key'])) {
 				$value['key'] = 'primary';
 			}
-			if (!isset($db->columns[$value['type']])) {
+			$isEnum = (strpos($value['type'], 'enum') !== false);
+			if (!isset($db->columns[$value['type']]) && !$isEnum) {
 				trigger_error(__d('cake_dev', 'Schema generation error: invalid column type %s for %s.%s does not exist in DBO', $value['type'], $Obj->name, $name), E_USER_NOTICE);
 				continue;
 			} else {
+				if ($isEnum) {
+					$length = trim(str_replace(')', '', str_replace('enum(', '', $value['type'])));
+					$value['type'] = 'enum';
+					$value['length'] = $length;
+				}
 				$defaultCol = $db->columns[$value['type']];
 				if (isset($defaultCol['limit']) && $defaultCol['limit'] == $value['length']) {
 					unset($value['length']);
