@@ -94,7 +94,7 @@ class DateTimeWidget implements WidgetInterface
      * - `second` - Set to true to enable the seconds input. Defaults to false.
      * - `meridian` - Set to true to enable the meridian input. Defaults to false.
      *   The meridian will be enabled automatically if you choose a 12 hour format.
-     * - `timezone` - A hidden field for timezone handling when working with UTC internally.
+     * - `timezone` - A hidden field for timezone handling when working with a specific timezone internally.
      *
      * The `year` option accepts the `start` and `end` options. These let you control
      * the year range that is generated. It defaults to +-5 years from today.
