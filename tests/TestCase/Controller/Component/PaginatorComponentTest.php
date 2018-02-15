@@ -236,7 +236,7 @@ class PaginatorComponentTest extends TestCase
             ]
         ];
 
-        $table = TableRegistry::get('PaginatorPosts');
+        $table = $this->getTableLocator()->get('PaginatorPosts');
 
         $this->Paginator->paginate($table, $settings);
         $this->assertArrayHasKey('PaginatorPosts', $this->controller->request->getParam('paging'));

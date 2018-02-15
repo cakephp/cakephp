@@ -695,7 +695,7 @@ abstract class TestCase extends BaseTestCase
 
         list(, $baseClass) = pluginSplit($alias);
         $options += ['alias' => $baseClass, 'connection' => $connection];
-        $options += $locator->config($alias);
+        $options += $locator->getConfig($alias);
 
         /** @var \Cake\ORM\Table|\PHPUnit_Framework_MockObject_MockObject $mock */
         $mock = $this->getMockBuilder($options['className'])

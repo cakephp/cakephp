@@ -3323,7 +3323,7 @@ class QueryTest extends TestCase
      */
     public function testLeftJoinWithAutoFields()
     {
-        $table = TableRegistry::get('articles');
+        $table = $this->getTableLocator()->get('articles');
         $table->belongsTo('authors');
 
         $results = $table

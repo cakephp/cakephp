@@ -36,7 +36,7 @@ class TreeBehaviorTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->table = TableRegistry::get('NumberTrees');
+        $this->table = $this->getTableLocator()->get('NumberTrees');
         $this->table->setPrimaryKey(['id']);
         $this->table->addBehavior('Tree');
     }
@@ -239,7 +239,7 @@ class TreeBehaviorTest extends TestCase
      */
     public function testScopeNull()
     {
-        $table = TableRegistry::get('MenuLinkTrees');
+        $table = $this->getTableLocator()->get('MenuLinkTrees');
         $table->addBehavior('Tree');
         $table->behaviors()->get('Tree')->setConfig('scope', null);
 

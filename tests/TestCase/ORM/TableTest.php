@@ -652,7 +652,7 @@ class TableTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        TableRegistry::get('Groups')->getAssociation('FooBar');
+        $this->getTableLocator()->get('Groups')->getAssociation('FooBar');
     }
 
     /**
@@ -5905,7 +5905,7 @@ class TableTest extends TestCase
      */
     public function testPatchEntity()
     {
-        $table = TableRegistry::get('Articles');
+        $table = $this->getTableLocator()->get('Articles');
         $entity = new Entity(['title' => 'old title'], ['markNew' => false]);
         $data = ['title' => 'new title'];
         $entity = $table->patchEntity($entity, $data);
@@ -5950,7 +5950,7 @@ class TableTest extends TestCase
      */
     public function testPatchEntities()
     {
-        $table = TableRegistry::get('Articles');
+        $table = $this->getTableLocator()->get('Articles');
         $entities = $table->find()->limit(2)->toArray();
 
         $data = [
@@ -6770,7 +6770,7 @@ class TableTest extends TestCase
         ]);
         $entity->setError('field', 'Some message');
         $entity->setError('multiple', ['one' => 'One', 'two' => 'Two']);
-        $table = TableRegistry::get('users');
+        $table = $this->getTableLocator()->get('users');
 
         $table->saveOrFail($entity);
     }
