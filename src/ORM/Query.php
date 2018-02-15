@@ -258,6 +258,10 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function eagerLoader(EagerLoader $instance = null)
     {
+        deprecationWarning(
+            'Query::eagerLoader() is deprecated. ' .
+            'Use setEagerLoader()/getEagerLoader() instead.'
+        );
         if ($instance !== null) {
             return $this->setEagerLoader($instance);
         }
@@ -424,7 +428,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * Used to recursively add contained association column types to
      * the query.
      *
-     * @param \Cake\ORM\Table|\Cake\Datasource\RepositoryInterface $table The table instance to pluck associations from.
+     * @param \Cake\ORM\Table $table The table instance to pluck associations from.
      * @param \Cake\Database\TypeMap $typeMap The typemap to check for columns in.
      *   This typemap is indirectly mutated via Cake\ORM\Query::addDefaultTypes()
      * @param array $associations The nested tree of associations to walk.
@@ -433,10 +437,10 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     protected function _addAssociationsToTypeMap($table, $typeMap, $associations)
     {
         foreach ($associations as $name => $nested) {
-            $association = $table->getAssociation($name);
-            if (!$association) {
+            if (!$table->hasAssociation($name)) {
                 continue;
             }
+            $association = $table->getAssociation($name);
             $target = $association->getTarget();
             $primary = (array)$target->getPrimaryKey();
             if (empty($primary) || $typeMap->type($target->aliasField($primary[0])) === null) {
@@ -949,6 +953,10 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function hydrate($enable = null)
     {
+        deprecationWarning(
+            'Query::hydrate() is deprecated. ' .
+            'Use enableHydration()/isHydrationEnabled() instead.'
+        );
         if ($enable === null) {
             return $this->isHydrationEnabled();
         }
@@ -1060,7 +1068,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         }
 
         if (empty($this->_parts['from'])) {
-            $this->from([$this->_repository->getAlias() => $this->_repository->table()]);
+            $this->from([$this->_repository->getAlias() => $this->_repository->getTable()]);
         }
         $this->_addDefaultFields();
         $this->getEagerLoader()->attachAssociations($this, $this->_repository, !$this->_hasFields);
@@ -1148,7 +1156,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function update($table = null)
     {
-        $table = $table ?: $this->repository()->table();
+        $table = $table ?: $this->repository()->getTable();
 
         return parent::update($table);
     }
@@ -1165,7 +1173,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     public function delete($table = null)
     {
         $repo = $this->repository();
-        $this->from([$repo->getAlias() => $repo->table()]);
+        $this->from([$repo->getAlias() => $repo->getTable()]);
 
         return parent::delete();
     }
@@ -1185,7 +1193,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function insert(array $columns, array $types = [])
     {
-        $table = $this->repository()->table();
+        $table = $this->repository()->getTable();
         $this->into($table);
 
         return parent::insert($columns, $types);
@@ -1279,6 +1287,10 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function autoFields($value = null)
     {
+        deprecationWarning(
+            'Query::autoFields() is deprecated. ' .
+            'Use enableAutoFields()/isAutoFieldsEnabled() instead.'
+        );
         if ($value === null) {
             return $this->isAutoFieldsEnabled();
         }

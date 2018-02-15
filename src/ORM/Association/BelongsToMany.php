@@ -354,14 +354,14 @@ class BelongsToMany extends Association
         $junctionAlias = $junction->getAlias();
         $sAlias = $source->getAlias();
 
-        if (!$target->getAssociation($junctionAlias)) {
+        if (!$target->hasAssociation($junctionAlias)) {
             $target->hasMany($junctionAlias, [
                 'targetTable' => $junction,
                 'foreignKey' => $this->getTargetForeignKey(),
                 'strategy' => $this->_strategy,
             ]);
         }
-        if (!$target->getAssociation($sAlias)) {
+        if (!$target->hasAssociation($sAlias)) {
             $target->belongsToMany($sAlias, [
                 'sourceTable' => $target,
                 'targetTable' => $source,
@@ -391,7 +391,7 @@ class BelongsToMany extends Association
     protected function _generateSourceAssociations($junction, $source)
     {
         $junctionAlias = $junction->getAlias();
-        if (!$source->getAssociation($junctionAlias)) {
+        if (!$source->hasAssociation($junctionAlias)) {
             $source->hasMany($junctionAlias, [
                 'targetTable' => $junction,
                 'foreignKey' => $this->getForeignKey(),
@@ -421,13 +421,13 @@ class BelongsToMany extends Association
         $tAlias = $target->getAlias();
         $sAlias = $source->getAlias();
 
-        if (!$junction->getAssociation($tAlias)) {
+        if (!$junction->hasAssociation($tAlias)) {
             $junction->belongsTo($tAlias, [
                 'foreignKey' => $this->getTargetForeignKey(),
                 'targetTable' => $target
             ]);
         }
-        if (!$junction->getAssociation($sAlias)) {
+        if (!$junction->hasAssociation($sAlias)) {
             $junction->belongsTo($sAlias, [
                 'foreignKey' => $this->getForeignKey(),
                 'targetTable' => $source
@@ -559,7 +559,7 @@ class BelongsToMany extends Association
     /**
      * {@inheritDoc}
      *
-     * @return callable
+     * @return \Closure
      */
     public function eagerLoader(array $options)
     {
@@ -617,7 +617,9 @@ class BelongsToMany extends Association
 
         $conditions = array_merge($conditions, $hasMany->getConditions());
 
-        return $table->deleteAll($conditions);
+        $table->deleteAll($conditions);
+
+        return true;
     }
 
     /**
@@ -699,8 +701,7 @@ class BelongsToMany extends Association
      * not deleted.
      *
      * @param \Cake\Datasource\EntityInterface $entity an entity from the source table
-     * @param array|\ArrayObject $options options to be passed to the save method in
-     * the target table
+     * @param array $options options to be passed to the save method in the target table
      * @throws \InvalidArgumentException if the property representing the association
      * in the parent entity cannot be traversed
      * @return bool|\Cake\Datasource\EntityInterface false if $entity could not be saved, otherwise it returns
@@ -783,7 +784,7 @@ class BelongsToMany extends Association
             // Saving the new linked entity failed, copy errors back into the
             // original entity if applicable and abort.
             if (!empty($options['atomic'])) {
-                $original[$k]->errors($entity->errors());
+                $original[$k]->setErrors($entity->getErrors());
             }
             if (!$saved) {
                 return false;

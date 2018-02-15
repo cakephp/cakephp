@@ -107,10 +107,10 @@ class TestController extends ControllerTestAppController
      */
     public function index($testId, $testTwoId)
     {
-        $this->request->data = [
+        $this->request = $this->request->withParsedBody([
             'testId' => $testId,
             'test2Id' => $testTwoId
-        ];
+        ]);
     }
 
     /**
@@ -122,10 +122,10 @@ class TestController extends ControllerTestAppController
      */
     public function view($testId, $testTwoId)
     {
-        $this->request->data = [
+        $this->request = $this->request->withParsedBody([
             'testId' => $testId,
             'test2Id' => $testTwoId
-        ];
+        ]);
     }
 
     public function returner()
@@ -321,7 +321,7 @@ class ControllerTest extends TestCase
         Plugin::load('TestPlugin');
 
         $Controller = new TestPluginController();
-        $Controller->plugin = 'TestPlugin';
+        $Controller->setPlugin('TestPlugin');
 
         $this->assertFalse(isset($Controller->TestPluginComments));
 
@@ -355,7 +355,7 @@ class ControllerTest extends TestCase
         $this->assertEquals('Posts', $controller->modelClass);
         $this->assertInstanceOf('Cake\ORM\Table', $controller->Posts);
 
-        $request->params['plugin'] = 'TestPlugin';
+        $request = $request->withParam('plugin', 'TestPlugin');
         $controller = new \TestPlugin\Controller\Admin\CommentsController($request, $response);
         $this->assertEquals('TestPlugin.Comments', $controller->modelClass);
         $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $controller->Comments);
@@ -385,8 +385,12 @@ class ControllerTest extends TestCase
     {
         Plugin::load('TestPlugin');
 
-        $request = new ServerRequest('controller_posts/index');
-        $request->params['action'] = 'index';
+        $request = new ServerRequest([
+            'url' => 'controller_posts/index',
+            'params' => [
+                'action' => 'header'
+            ]
+        ]);
 
         $Controller = new Controller($request, new Response());
         $Controller->viewBuilder()->templatePath('Posts');
@@ -409,8 +413,12 @@ class ControllerTest extends TestCase
      */
     public function testRenderViewChangesResponse()
     {
-        $request = new ServerRequest('controller_posts/index');
-        $request->params['action'] = 'header';
+        $request = new ServerRequest([
+            'url' => 'controller_posts/index',
+            'params' => [
+                'action' => 'header'
+            ]
+        ]);
 
         $controller = new Controller($request, new Response());
         $controller->viewBuilder()->templatePath('Posts');
@@ -496,7 +504,7 @@ class ControllerTest extends TestCase
         $this->assertSame($response, $Controller->response);
         $this->assertEquals($code, $response->getStatusCode());
         $this->assertEquals('http://cakephp.org', $response->getHeaderLine('Location'));
-        $this->assertFalse($Controller->autoRender);
+        $this->assertFalse($Controller->isAutoRenderEnabled());
     }
 
     /**
@@ -642,7 +650,7 @@ class ControllerTest extends TestCase
         $request = $this->getMockBuilder('Cake\Http\ServerRequest')
             ->setMethods(['referer'])
             ->getMock();
-        $request->base = '/base';
+        $request = $request->withAttribute('base', '/base');
         Router::pushRequest($request);
 
         $request->expects($this->any())->method('referer')
@@ -669,8 +677,8 @@ class ControllerTest extends TestCase
         $TestController = new TestController($request);
         $TestController->setAction('view', 1, 2);
         $expected = ['testId' => 1, 'test2Id' => 2];
-        $this->assertSame($expected, $TestController->request->data);
-        $this->assertSame('view', $TestController->request->params['action']);
+        $this->assertSame($expected, $TestController->request->getData());
+        $this->assertSame('view', $TestController->request->getParam('action'));
     }
 
     /**
@@ -736,20 +744,18 @@ class ControllerTest extends TestCase
      */
     public function testPaginate()
     {
-        $request = new ServerRequest('controller_posts/index');
-        $request->params['pass'] = [];
+        $request = new ServerRequest(['url' => 'controller_posts/index']);
         $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['httpCodes'])
             ->getMock();
 
         $Controller = new Controller($request, $response);
-        $Controller->request->query = [
-            'url' => [],
+        $Controller->request = $Controller->request->withQueryParams([
             'posts' => [
                 'page' => 2,
                 'limit' => 2,
             ]
-        ];
+        ]);
 
         $this->assertEquals([], $Controller->paginate);
 
@@ -764,21 +770,23 @@ class ControllerTest extends TestCase
         $this->assertInstanceOf('Cake\Datasource\ResultSetInterface', $results);
         $this->assertCount(3, $results);
 
-        $this->assertSame($Controller->request->params['paging']['Posts']['page'], 1);
-        $this->assertSame($Controller->request->params['paging']['Posts']['pageCount'], 1);
-        $this->assertSame($Controller->request->params['paging']['Posts']['prevPage'], false);
-        $this->assertSame($Controller->request->params['paging']['Posts']['nextPage'], false);
-        $this->assertNull($Controller->request->params['paging']['Posts']['scope']);
+        $paging = $Controller->request->getParam('paging');
+        $this->assertSame($paging['Posts']['page'], 1);
+        $this->assertSame($paging['Posts']['pageCount'], 1);
+        $this->assertFalse($paging['Posts']['prevPage']);
+        $this->assertFalse($paging['Posts']['nextPage']);
+        $this->assertNull($paging['Posts']['scope']);
 
         $results = $Controller->paginate($this->getTableLocator()->get('Posts'), ['scope' => 'posts']);
         $this->assertInstanceOf('Cake\Datasource\ResultSetInterface', $results);
         $this->assertCount(1, $results);
 
-        $this->assertSame($Controller->request->params['paging']['Posts']['page'], 2);
-        $this->assertSame($Controller->request->params['paging']['Posts']['pageCount'], 2);
-        $this->assertSame($Controller->request->params['paging']['Posts']['prevPage'], true);
-        $this->assertSame($Controller->request->params['paging']['Posts']['nextPage'], false);
-        $this->assertSame($Controller->request->params['paging']['Posts']['scope'], 'posts');
+        $paging = $Controller->request->getParam('paging');
+        $this->assertSame($paging['Posts']['page'], 2);
+        $this->assertSame($paging['Posts']['pageCount'], 2);
+        $this->assertTrue($paging['Posts']['prevPage']);
+        $this->assertFalse($paging['Posts']['nextPage']);
+        $this->assertSame($paging['Posts']['scope'], 'posts');
     }
 
     /**
@@ -788,14 +796,14 @@ class ControllerTest extends TestCase
      */
     public function testPaginateUsesModelClass()
     {
-        $request = new ServerRequest('controller_posts/index');
-        $request->params['pass'] = [];
+        $request = new ServerRequest([
+            'url' => 'controller_posts/index',
+        ]);
         $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['httpCodes'])
             ->getMock();
 
         $Controller = new Controller($request, $response);
-        $Controller->request->query['url'] = [];
         $Controller->modelClass = 'Posts';
         $results = $Controller->paginate();
 
@@ -811,8 +819,10 @@ class ControllerTest extends TestCase
     {
         $this->expectException(\Cake\Controller\Exception\MissingActionException::class);
         $this->expectExceptionMessage('Action TestController::missing() could not be found, or is not accessible.');
-        $url = new ServerRequest('test/missing');
-        $url->addParams(['controller' => 'Test', 'action' => 'missing']);
+        $url = new ServerRequest([
+            'url' => 'test/missing',
+            'params' => ['controller' => 'Test', 'action' => 'missing']
+        ]);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
         $Controller = new TestController($url, $response);
@@ -828,8 +838,10 @@ class ControllerTest extends TestCase
     {
         $this->expectException(\Cake\Controller\Exception\MissingActionException::class);
         $this->expectExceptionMessage('Action TestController::private_m() could not be found, or is not accessible.');
-        $url = new ServerRequest('test/private_m/');
-        $url->addParams(['controller' => 'Test', 'action' => 'private_m']);
+        $url = new ServerRequest([
+            'url' => 'test/private_m/',
+            'params' => ['controller' => 'Test', 'action' => 'private_m']
+        ]);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
         $Controller = new TestController($url, $response);
@@ -845,8 +857,10 @@ class ControllerTest extends TestCase
     {
         $this->expectException(\Cake\Controller\Exception\MissingActionException::class);
         $this->expectExceptionMessage('Action TestController::protected_m() could not be found, or is not accessible.');
-        $url = new ServerRequest('test/protected_m/');
-        $url->addParams(['controller' => 'Test', 'action' => 'protected_m']);
+        $url = new ServerRequest([
+            'url' => 'test/protected_m/',
+            'params' => ['controller' => 'Test', 'action' => 'protected_m']
+        ]);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
         $Controller = new TestController($url, $response);
@@ -862,8 +876,10 @@ class ControllerTest extends TestCase
     {
         $this->expectException(\Cake\Controller\Exception\MissingActionException::class);
         $this->expectExceptionMessage('Action TestController::redirect() could not be found, or is not accessible.');
-        $url = new ServerRequest('test/redirect/');
-        $url->addParams(['controller' => 'Test', 'action' => 'redirect']);
+        $url = new ServerRequest([
+            'url' => 'test/redirect/',
+            'params' => ['controller' => 'Test', 'action' => 'redirect']
+        ]);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
         $Controller = new TestController($url, $response);
@@ -877,11 +893,13 @@ class ControllerTest extends TestCase
      */
     public function testInvokeActionReturnValue()
     {
-        $url = new ServerRequest('test/returner/');
-        $url->addParams([
-            'controller' => 'Test',
-            'action' => 'returner',
-            'pass' => []
+        $url = new ServerRequest([
+            'url' => 'test/returner/',
+            'params' => [
+                'controller' => 'Test',
+                'action' => 'returner',
+                'pass' => []
+            ]
         ]);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
@@ -897,11 +915,13 @@ class ControllerTest extends TestCase
      */
     public function testInvokeActionWithPassedParams()
     {
-        $url = new ServerRequest('test/index/1/2');
-        $url->addParams([
-            'controller' => 'Test',
-            'action' => 'index',
-            'pass' => ['param1' => '1', 'param2' => '2']
+        $url = new ServerRequest([
+            'url' => 'test/index/1/2',
+            'params' => [
+                'controller' => 'Test',
+                'action' => 'index',
+                'pass' => ['param1' => '1', 'param2' => '2']
+            ]
         ]);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
@@ -909,7 +929,7 @@ class ControllerTest extends TestCase
         $result = $Controller->invokeAction();
         $this->assertEquals(
             ['testId' => '1', 'test2Id' => '2'],
-            $Controller->request->data
+            $Controller->request->getData()
         );
     }
 
@@ -920,9 +940,9 @@ class ControllerTest extends TestCase
      */
     public function testViewPathConventions()
     {
-        $request = new ServerRequest('admin/posts');
-        $request->addParams([
-            'prefix' => 'admin'
+        $request = new ServerRequest([
+            'url' => 'admin/posts',
+            'params' => ['prefix' => 'admin']
         ]);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $Controller = new \TestApp\Controller\Admin\PostsController($request, $response);
@@ -932,9 +952,7 @@ class ControllerTest extends TestCase
         $Controller->render();
         $this->assertEquals('Admin' . DS . 'Posts', $Controller->viewBuilder()->templatePath());
 
-        $request->addParams([
-            'prefix' => 'admin/super'
-        ]);
+        $request = $request->withParam('prefix', 'admin/super');
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $Controller = new \TestApp\Controller\Admin\PostsController($request, $response);
         $Controller->getEventManager()->on('Controller.beforeRender', function (Event $e) {
@@ -943,9 +961,11 @@ class ControllerTest extends TestCase
         $Controller->render();
         $this->assertEquals('Admin' . DS . 'Super' . DS . 'Posts', $Controller->viewBuilder()->templatePath());
 
-        $request = new ServerRequest('pages/home');
-        $request->addParams([
-            'prefix' => false
+        $request = new ServerRequest([
+            'url' => 'pages/home',
+            'params' => [
+                'prefix' => false
+            ]
         ]);
         $Controller = new \TestApp\Controller\PagesController($request, $response);
         $Controller->getEventManager()->on('Controller.beforeRender', function (Event $e) {
@@ -1085,6 +1105,170 @@ class ControllerTest extends TestCase
     }
 
     /**
+     * Test name getter and setter.
+     *
+     * @return void
+     */
+    public function testName()
+    {
+        $controller = new PostsController();
+        $this->assertEquals('Posts', $controller->getName());
+
+        $this->assertSame($controller, $controller->setName('Articles'));
+        $this->assertEquals('Articles', $controller->getName());
+    }
+
+    /**
+     * Test plugin getter and setter.
+     *
+     * @return void
+     */
+    public function testPlugin()
+    {
+        $controller = new PostsController();
+        $this->assertEquals('', $controller->getPlugin());
+
+        $this->assertSame($controller, $controller->setPlugin('Articles'));
+        $this->assertEquals('Articles', $controller->getPlugin());
+    }
+
+    /**
+     * Test request getter and setter.
+     *
+     * @return void
+     */
+    public function testRequest()
+    {
+        $controller = new PostsController();
+        $this->assertInstanceOf(ServerRequest::class, $controller->getRequest());
+
+        $request = new ServerRequest([
+            'params' => [
+                'plugin' => 'Posts',
+                'pass' => [
+                    'foo',
+                    'bar'
+                ]
+            ]
+        ]);
+        $this->assertSame($controller, $controller->setRequest($request));
+        $this->assertSame($request, $controller->getRequest());
+
+        $this->assertEquals('Posts', $controller->getRequest()->getParam('plugin'));
+        $this->assertEquals(['foo', 'bar'], $controller->passedArgs);
+    }
+
+    /**
+     * Test response getter and setter.
+     *
+     * @return void
+     */
+    public function testResponse()
+    {
+        $controller = new PostsController();
+        $this->assertInstanceOf(Response::class, $controller->getResponse());
+
+        $response = new Response;
+        $this->assertSame($controller, $controller->setResponse($response));
+        $this->assertSame($response, $controller->getResponse());
+    }
+
+    /**
+     * Test autoRender getter and setter.
+     *
+     * @return void
+     */
+    public function testAutoRender()
+    {
+        $controller = new PostsController();
+        $this->assertTrue($controller->isAutoRenderEnabled());
+
+        $this->assertSame($controller, $controller->disableAutoRender());
+        $this->assertFalse($controller->isAutoRenderEnabled());
+
+        $this->assertSame($controller, $controller->enableAutoRender());
+        $this->assertTrue($controller->isAutoRenderEnabled());
+    }
+
+    /**
+     * Tests deprecated controller properties work
+     *
+     * @group deprecated
+     * @param $property Deprecated property name
+     * @param $getter Getter name
+     * @param $setter Setter name
+     * @param mixed $value Value to be set
+     * @return void
+     * @dataProvider deprecatedControllerPropertyProvider
+     */
+    public function testDeprecatedControllerProperty($property, $getter, $setter, $value)
+    {
+        $controller = new AnotherTestController();
+        $this->deprecated(function () use ($controller, $property, $value) {
+            $controller->$property = $value;
+            $this->assertSame($value, $controller->$property);
+        });
+        $this->assertSame($value, $controller->{$getter}());
+    }
+
+    /**
+     * Tests deprecated controller properties message
+     *
+     * @group deprecated
+     * @param $property Deprecated property name
+     * @param $getter Getter name
+     * @param $setter Setter name
+     * @param mixed $value Value to be set
+     * @return void
+     * @expectedException PHPUnit\Framework\Error\Deprecated
+     * @expectedExceptionMessageRegExp /^Controller::\$\w+ is deprecated(.*)/
+     * @dataProvider deprecatedControllerPropertyProvider
+     */
+    public function testDeprecatedControllerPropertySetterMessage($property, $getter, $setter, $value)
+    {
+        $controller = new AnotherTestController();
+        $this->withErrorReporting(E_ALL, function () use ($controller, $property, $value) {
+            $controller->$property = $value;
+        });
+    }
+
+    /**
+     * Tests deprecated controller properties message
+     *
+     * @group deprecated
+     * @param $property Deprecated property name
+     * @param $getter Getter name
+     * @param $setter Setter name
+     * @param mixed $value Value to be set
+     * @return void
+     * @expectedException PHPUnit\Framework\Error\Deprecated
+     * @expectedExceptionMessageRegExp /^Controller::\$\w+ is deprecated(.*)/
+     * @dataProvider deprecatedControllerPropertyProvider
+     */
+    public function testDeprecatedControllerPropertyGetterMessage($property, $getter, $setter, $value)
+    {
+        $controller = new AnotherTestController();
+        $controller->{$setter}($value);
+        $this->withErrorReporting(E_ALL, function () use ($controller, $property) {
+            $controller->$property;
+        });
+    }
+
+    /**
+     * Data provider for testing deprecated view properties
+     *
+     * @return array
+     */
+    public function deprecatedControllerPropertyProvider()
+    {
+        return [
+            ['name', 'getName', 'setName', 'Foo'],
+            ['plugin', 'getPlugin', 'setPlugin', 'Foo'],
+            ['autoRender', 'isAutoRenderEnabled', 'disableAutoRender', false],
+        ];
+    }
+
+    /**
      * Tests deprecated view properties work
      *
      * @group deprecated
@@ -1129,6 +1313,7 @@ class ControllerTest extends TestCase
     /**
      * Tests deprecated view properties message
      *
+     * @group deprecated
      * @param $property Deprecated property name
      * @param $getter Getter name
      * @param $setter Setter name

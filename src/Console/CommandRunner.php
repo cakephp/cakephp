@@ -22,16 +22,17 @@ use Cake\Console\ConsoleIo;
 use Cake\Console\Exception\StopException;
 use Cake\Console\Shell;
 use Cake\Core\ConsoleApplicationInterface;
-use Cake\Event\EventManagerTrait;
+use Cake\Event\EventDispatcherInterface;
+use Cake\Event\EventDispatcherTrait;
 use Cake\Utility\Inflector;
 use RuntimeException;
 
 /**
  * Run CLI commands for the provided application.
  */
-class CommandRunner
+class CommandRunner implements EventDispatcherInterface
 {
-    use EventManagerTrait;
+    use EventDispatcherTrait;
 
     /**
      * The application console commands are being run for.

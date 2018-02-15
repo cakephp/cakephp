@@ -105,7 +105,7 @@ class DateTimeType extends Type implements TypeInterface
      *
      * @param string|int|\DateTime $value The value to convert.
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
-     * @return string
+     * @return string|null
      */
     public function toDatabase($value, Driver $driver)
     {
@@ -127,7 +127,7 @@ class DateTimeType extends Type implements TypeInterface
      *
      * @param string $value The value to convert.
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
-     * @return \Cake\I18n\Time|\DateTime
+     * @return \Cake\I18n\Time|\DateTime|null
      */
     public function toPHP($value, Driver $driver)
     {
@@ -148,7 +148,7 @@ class DateTimeType extends Type implements TypeInterface
      * Convert request data into a datetime object.
      *
      * @param mixed $value Request data
-     * @return \Cake\I18n\Time|\DateTime
+     * @return \DateTimeInterface
      */
     public function marshal($value)
     {

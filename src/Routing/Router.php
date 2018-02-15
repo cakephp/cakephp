@@ -16,8 +16,10 @@ namespace Cake\Routing;
 
 use Cake\Core\Configure;
 use Cake\Http\ServerRequest;
+use Cake\Routing\Exception\MissingRouteException;
 use Cake\Utility\Inflector;
 use Psr\Http\Message\ServerRequestInterface;
+use RuntimeException;
 
 /**
  * Parses the request URL into controller, action, and parameters. Uses the connected routes
@@ -190,7 +192,7 @@ class Router
      * Compatibility proxy to \Cake\Routing\RouteBuilder::connect() in the `/` scope.
      *
      * @param string $route A string describing the template of the route
-     * @param array $defaults An array describing the default route parameters. These parameters will be used by default
+     * @param array|string $defaults An array describing the default route parameters. These parameters will be used by default
      *   and can supply routing parameters that are not dynamic. See above.
      * @param array $options An array matching the named elements in the route to regular expressions which that
      *   element should match. Also contains additional parameters such as which routed parameters should be
@@ -620,8 +622,8 @@ class Router
         // In 4.x this should be replaced with state injected via setRequestContext
         $request = static::getRequest(true);
         if ($request) {
-            $params = $request->params;
-            $here = $request->here;
+            $params = $request->getAttribute('params');
+            $here = $request->getRequestTarget();
             $base = $request->getAttribute('base');
         } else {
             $base = Configure::read('App.base');
@@ -639,18 +641,17 @@ class Router
             return $output;
         }
         if (is_array($url)) {
+            if (isset($url['_ssl'])) {
+                $url['_scheme'] = ($url['_ssl'] === true) ? 'https' : 'http';
+            }
+
             if (isset($url['_full']) && $url['_full'] === true) {
                 $full = true;
-                unset($url['_full']);
             }
             if (isset($url['#'])) {
                 $frag = '#' . $url['#'];
-                unset($url['#']);
             }
-            if (isset($url['_ssl'])) {
-                $url['_scheme'] = ($url['_ssl'] === true) ? 'https' : 'http';
-                unset($url['_ssl']);
-            }
+            unset($url['_ssl'], $url['_full'], $url['#']);
 
             $url = static::_applyUrlFilters($url);
 
@@ -673,6 +674,12 @@ class Router
                     'action' => 'index',
                     '_ext' => null
                 ];
+            }
+
+            // If a full URL is requested with a scheme the host should default
+            // to App.fullBaseUrl to avoid corrupt URLs
+            if ($full && isset($url['_scheme']) && !isset($url['_host'])) {
+                $url['_host'] = parse_url(static::fullBaseUrl(), PHP_URL_HOST);
             }
 
             $output = static::$_collection->match($url, static::$_requestContext + ['params' => $params]);
@@ -702,6 +709,34 @@ class Router
         }
 
         return $output . $frag;
+    }
+
+    /**
+     * Finds URL for specified action.
+     *
+     * Returns a bool if the url exists
+     *
+     * ### Usage
+     *
+     * @see Router::url()
+     *
+     * @param string|array|null $url An array specifying any of the following:
+     *   'controller', 'action', 'plugin' additionally, you can provide routed
+     *   elements or query string parameters. If string it can be name any valid url
+     *   string.
+     * @param bool $full If true, the full base URL will be prepended to the result.
+     *   Default is false.
+     * @return bool
+     */
+    public static function routeExists($url = null, $full = false)
+    {
+        try {
+            $route = static::url($url, $full);
+
+            return true;
+        } catch (MissingRouteException $e) {
+            return false;
+        }
     }
 
     /**
@@ -750,8 +785,8 @@ class Router
     {
         $url = [];
         if ($params instanceof ServerRequest) {
-            $url = $params->query;
-            $params = $params->params;
+            $url = $params->getQueryParams();
+            $params = $params->getAttribute('params');
         } elseif (isset($params['url'])) {
             $url = $params['url'];
         }
@@ -768,7 +803,8 @@ class Router
             $params['requested'],
             $params['return'],
             $params['_Token'],
-            $params['_matchedRoute']
+            $params['_matchedRoute'],
+            $params['_name']
         );
         $params = array_merge($params, $pass);
         if (!empty($url)) {
@@ -820,8 +856,11 @@ class Router
         }
         $request = static::getRequest();
 
-        if (!empty($request->base) && stristr($url, $request->base)) {
-            $url = preg_replace('/^' . preg_quote($request->base, '/') . '/', '', $url, 1);
+        if ($request) {
+            $base = $request->getAttribute('base');
+            if (strlen($base) && stristr($url, $base)) {
+                $url = preg_replace('/^' . preg_quote($base, '/') . '/', '', $url, 1);
+            }
         }
         $url = '/' . $url;
 
@@ -899,17 +938,16 @@ class Router
             '2.x backwards compatible named parameter support will be removed in 4.0'
         );
         $options += ['separator' => ':'];
-        if (empty($request->params['pass'])) {
-            $request->params['named'] = [];
-
-            return $request;
+        if (!$request->getParam('pass')) {
+            return $request->withParam('named', []);
         }
         $named = [];
-        foreach ($request->getParam('pass') as $key => $value) {
+        $pass = $request->getParam('pass');
+        foreach ((array)$pass as $key => $value) {
             if (strpos($value, $options['separator']) === false) {
                 continue;
             }
-            unset($request->params['pass'][$key]);
+            unset($pass[$key]);
             list($key, $value) = explode($options['separator'], $value, 2);
 
             if (preg_match_all('/\[([A-Za-z0-9_-]+)?\]/', $key, $matches, PREG_SET_ORDER)) {
@@ -930,9 +968,10 @@ class Router
             }
             $named = array_merge_recursive($named, [$key => $value]);
         }
-        $request->params['named'] = $named;
 
-        return $request;
+        return $request
+            ->withParam('pass', $pass)
+            ->withParam('named', $named);
     }
 
     /**

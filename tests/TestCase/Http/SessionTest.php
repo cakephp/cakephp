@@ -14,9 +14,9 @@
  */
 namespace Cake\Test\TestCase\Network;
 
-use Cake\Network\Session;
-use Cake\Network\Session\CacheSession;
-use Cake\Network\Session\DatabaseSession;
+use Cake\Http\Session;
+use Cake\Http\Session\CacheSession;
+use Cake\Http\Session\DatabaseSession;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -219,7 +219,7 @@ class SessionTest extends TestCase
         ]);
         $this->assertEquals(1, $session->read('one'));
         $this->assertEquals(['something'], $session->read('three'));
-        $this->assertEquals(null, $session->read('null'));
+        $this->assertNull($session->read('null'));
     }
 
     /**
@@ -450,17 +450,17 @@ class SessionTest extends TestCase
 
         $session->write('SessionTestCase', '0');
         $this->assertEquals('0', $session->read('SessionTestCase'));
-        $this->assertFalse($session->read('SessionTestCase') === 0);
+        $this->assertNotSame($session->read('SessionTestCase'), 0);
 
         $session->write('SessionTestCase', false);
         $this->assertFalse($session->read('SessionTestCase'));
 
         $session->write('SessionTestCase', null);
-        $this->assertEquals(null, $session->read('SessionTestCase'));
+        $this->assertNull($session->read('SessionTestCase'));
     }
 
     /**
-     * test using a handler from app/Model/Datasource/Session.
+     * test using a handler from app/Http/Session.
      *
      * @preserveGlobalState disabled
      * @runInSeparateProcess
@@ -479,7 +479,7 @@ class SessionTest extends TestCase
         ];
 
         $session = Session::create($config);
-        $this->assertInstanceOf('TestApp\Network\Session\TestAppLibSession', $session->engine());
+        $this->assertInstanceOf('TestApp\Http\Session\TestAppLibSession', $session->engine());
         $this->assertEquals('user', ini_get('session.save_handler'));
         $this->assertEquals(['these' => 'are', 'a few' => 'options'], $session->engine()->options);
     }
@@ -504,7 +504,7 @@ class SessionTest extends TestCase
         ];
 
         $session = Session::create($config);
-        $this->assertInstanceOf('TestPlugin\Network\Session\TestPluginSession', $session->engine());
+        $this->assertInstanceOf('TestPlugin\Http\Session\TestPluginSession', $session->engine());
         $this->assertEquals('user', ini_get('session.save_handler'));
     }
 
@@ -518,7 +518,7 @@ class SessionTest extends TestCase
     public function testEngineWithPreMadeInstance()
     {
         static::setAppNamespace();
-        $engine = new \TestApp\Network\Session\TestAppLibSession;
+        $engine = new \TestApp\Http\Session\TestAppLibSession;
         $session = new Session(['handler' => ['engine' => $engine]]);
         $this->assertSame($engine, $session->engine());
 
@@ -534,10 +534,13 @@ class SessionTest extends TestCase
      */
     public function testBadEngine()
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('The class "Derp" does not exist and cannot be used as a session engine');
-        $session = new Session();
-        $session->engine('Derp');
+        // Not actually deprecated, but we need to supress the deprecation warning.
+        $this->deprecated(function () {
+            $this->expectException(\InvalidArgumentException::class);
+            $this->expectExceptionMessage('The class "Derp" does not exist and cannot be used as a session engine');
+            $session = new Session();
+            $session->engine('Derp');
+        });
     }
 
     /**

@@ -19,10 +19,10 @@ namespace Cake\Test\TestCase\Auth;
 use Cake\Auth\DigestAuthenticate;
 use Cake\Controller\ComponentRegistry;
 use Cake\Core\Configure;
+use Cake\Http\Exception\UnauthorizedException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\I18n\Time;
-use Cake\Network\Exception\UnauthorizedException;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 
@@ -110,10 +110,9 @@ class DigestAuthenticateTest extends TestCase
      */
     public function testAuthenticateWrongUsername()
     {
-        $this->expectException(\Cake\Network\Exception\UnauthorizedException::class);
+        $this->expectException(\Cake\Http\Exception\UnauthorizedException::class);
         $this->expectExceptionCode(401);
-        $request = new ServerRequest('posts/index');
-        $request->addParams(['pass' => []]);
+        $request = new ServerRequest(['url' => 'posts/index']);
 
         $data = [
             'username' => 'incorrect_user',
@@ -141,7 +140,6 @@ class DigestAuthenticateTest extends TestCase
             'url' => 'posts/index',
             'environment' => ['REQUEST_METHOD' => 'GET']
         ]);
-        $request->addParams(['pass' => []]);
 
         try {
             $this->auth->unauthenticated($request, $this->response);
@@ -168,7 +166,6 @@ class DigestAuthenticateTest extends TestCase
             'url' => 'posts/index',
             'environment' => ['REQUEST_METHOD' => 'GET']
         ]);
-        $request->addParams(['pass' => []]);
         $data = [
             'uri' => '/dir/index.html',
             'nonce' => $this->generateNonce(null, 5, strtotime('-10 minutes')),
@@ -200,7 +197,6 @@ class DigestAuthenticateTest extends TestCase
             'url' => 'posts/index',
             'environment' => ['REQUEST_METHOD' => 'GET']
         ]);
-        $request->addParams(['pass' => []]);
 
         $data = [
             'uri' => '/dir/index.html',
@@ -226,7 +222,6 @@ class DigestAuthenticateTest extends TestCase
             'url' => 'posts/index',
             'environment' => ['REQUEST_METHOD' => 'GET']
         ]);
-        $request->addParams(['pass' => []]);
 
         $data = [
             'username' => 'mariano',
@@ -254,7 +249,6 @@ class DigestAuthenticateTest extends TestCase
             'url' => 'posts/index',
             'environment' => ['REQUEST_METHOD' => 'GET']
         ]);
-        $request->addParams(['pass' => []]);
 
         $data = [
             'uri' => '/dir/index.html',
@@ -290,7 +284,6 @@ class DigestAuthenticateTest extends TestCase
             'url' => 'posts/index',
             'environment' => ['REQUEST_METHOD' => 'GET']
         ]);
-        $request->addParams(['pass' => []]);
 
         $data = [
             'uri' => '/dir/index.html',
@@ -324,7 +317,6 @@ class DigestAuthenticateTest extends TestCase
             'post' => ['_method' => 'PUT'],
             'environment' => ['REQUEST_METHOD' => 'GET']
         ]);
-        $request->addParams(['pass' => []]);
 
         $data = [
             'username' => 'mariano',
@@ -354,14 +346,13 @@ class DigestAuthenticateTest extends TestCase
      */
     public function testAuthenticateFailReChallenge()
     {
-        $this->expectException(\Cake\Network\Exception\UnauthorizedException::class);
+        $this->expectException(\Cake\Http\Exception\UnauthorizedException::class);
         $this->expectExceptionCode(401);
         $this->auth->setConfig('scope.username', 'nate');
         $request = new ServerRequest([
             'url' => 'posts/index',
             'environment' => ['REQUEST_METHOD' => 'GET']
         ]);
-        $request->addParams(['pass' => []]);
 
         $data = [
             'username' => 'invalid',
@@ -514,7 +505,7 @@ DIGEST;
         $secret = $secret ?: Configure::read('Security.salt');
         $time = $time ?: microtime(true);
         $expiryTime = $time + $expires;
-        $signatureValue = hash_hmac('sha1', $expiryTime . ':' . $secret, $secret);
+        $signatureValue = hash_hmac('sha256', $expiryTime . ':' . $secret, $secret);
         $nonceValue = $expiryTime . ':' . $signatureValue;
 
         return base64_encode($nonceValue);

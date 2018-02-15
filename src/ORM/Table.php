@@ -370,6 +370,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function table($table = null)
     {
+        deprecationWarning(
+            get_called_class() . '::table() is deprecated. ' .
+            'Use setTable()/getTable() instead.'
+        );
         if ($table !== null) {
             $this->setTable($table);
         }
@@ -412,6 +416,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function alias($alias = null)
     {
+        deprecationWarning(
+            get_called_class() . '::alias() is deprecated. ' .
+            'Use setAlias()/getAlias() instead.'
+        );
         if ($alias !== null) {
             $this->setAlias($alias);
         }
@@ -472,6 +480,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function registryAlias($registryAlias = null)
     {
+        deprecationWarning(
+            get_called_class() . '::registryAlias() is deprecated. ' .
+            'Use setRegistryAlias()/getRegistryAlias() instead.'
+        );
         if ($registryAlias !== null) {
             $this->setRegistryAlias($registryAlias);
         }
@@ -482,7 +494,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Sets the connection instance.
      *
-     * @param \Cake\Datasource\ConnectionInterface $connection The connection instance
+     * @param \Cake\Database\Connection|\Cake\Datasource\ConnectionInterface $connection The connection instance
      * @return $this
      */
     public function setConnection(ConnectionInterface $connection)
@@ -511,6 +523,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function connection(ConnectionInterface $connection = null)
     {
+        deprecationWarning(
+            get_called_class() . '::connection() is deprecated. ' .
+            'Use setConnection()/getConnection() instead.'
+        );
         if ($connection !== null) {
             $this->setConnection($connection);
         }
@@ -582,6 +598,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function schema($schema = null)
     {
+        deprecationWarning(
+            get_called_class() . '::schema() is deprecated. ' .
+            'Use setSchema()/getSchema() instead.'
+        );
         if ($schema !== null) {
             $this->setSchema($schema);
         }
@@ -669,6 +689,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function primaryKey($key = null)
     {
+        deprecationWarning(
+            get_called_class() . '::primaryKey() is deprecated. ' .
+            'Use setPrimaryKey()/getPrimaryKey() instead.'
+        );
         if ($key !== null) {
             $this->setPrimaryKey($key);
         }
@@ -720,6 +744,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function displayField($key = null)
     {
+        deprecationWarning(
+            get_called_class() . '::displayKey() is deprecated. ' .
+            'Use setDisplayKey()/getDisplayKey() instead.'
+        );
         if ($key !== null) {
             return $this->setDisplayField($key);
         }
@@ -790,6 +818,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function entityClass($name = null)
     {
+        deprecationWarning(
+            get_called_class() . '::entityClass() is deprecated. ' .
+            'Use setEntityClass()/getEntityClass() instead.'
+        );
         if ($name !== null) {
             $this->setEntityClass($name);
         }
@@ -829,6 +861,36 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
+     * Adds an array of behaviors to the table's behavior collection.
+     *
+     * Example:
+     *
+     * ```
+     * $this->addBehaviors([
+     *      'Timestamp',
+     *      'Tree' => ['level' => 'level'],
+     * ]);
+     * ```
+     *
+     * @param array $behaviors All of the behaviors to load.
+     * @return $this
+     * @throws \RuntimeException If a behavior is being reloaded.
+     */
+    public function addBehaviors(array $behaviors)
+    {
+        foreach ($behaviors as $name => $options) {
+            if (is_int($name)) {
+                $name = $options;
+                $options = [];
+            }
+
+            $this->addBehavior($name, $options);
+        }
+
+        return $this;
+    }
+
+    /**
      * Removes a behavior from this table's behavior registry.
      *
      * Example:
@@ -861,6 +923,27 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
+     * Get a behavior from the registry.
+     *
+     * @param string $name The behavior alias to get from the registry.
+     * @return \Cake\ORM\Behavior
+     * @throws \InvalidArgumentException If the behavior does not exist.
+     */
+    public function getBehavior($name)
+    {
+        $behavior = $this->_behaviors->get($name);
+        if ($behavior === null) {
+            throw new InvalidArgumentException(sprintf(
+                'The %s behavior is not defined on %s.',
+                $name,
+                get_class($this)
+            ));
+        }
+
+        return $behavior;
+    }
+
+    /**
      * Check if a behavior with the given alias has been loaded.
      *
      * @param string $name The behavior alias to check.
@@ -872,17 +955,61 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
-     * Returns an association object configured for the specified alias if any
+     * Returns an association object configured for the specified alias if any.
      *
-     * @deprecated 3.6.0 Use getAssociation() instead.
+     * @deprecated 3.6.0 Use getAssociation() and Table::hasAssocation() instead.
      * @param string $name the alias used for the association.
      * @return \Cake\ORM\Association|null Either the association or null.
      */
     public function association($name)
     {
-        deprecationWarning('Use Table::getAssociation() instead.');
+        deprecationWarning('Use Table::getAssociation() and Table::hasAssocation() instead.');
 
-        return $this->getAssociation($name);
+        return $this->findAssociation($name);
+    }
+
+    /**
+     * Returns an association object configured for the specified alias.
+     *
+     * The name argument also supports dot syntax to access deeper associations.
+     *
+     * ```
+     * $users = $this->getAssociation('Articles.Comments.Users');
+     * ```
+     *
+     * Note that this method requires the association to be present or otherwise
+     * throws an exception.
+     * If you are not sure, use hasAssociation() before calling this method.
+     *
+     * @param string $name The alias used for the association.
+     * @return \Cake\ORM\Association The association.
+     * @throws \InvalidArgumentException
+     */
+    public function getAssociation($name)
+    {
+        $association = $this->findAssociation($name);
+        if (!$association) {
+            throw new InvalidArgumentException("The {$name} association is not defined on {$this->getAlias()}.");
+        }
+
+        return $association;
+    }
+
+    /**
+     * Checks whether a specific association exists on this Table instance.
+     *
+     * The name argument also supports dot syntax to access deeper associations.
+     *
+     * ```
+     * $hasUsers = $this->hasAssociation('Articles.Comments.Users');
+     * ```
+     *
+     * @param string $name The alias used for the association.
+     * @return bool
+     */
+    public function hasAssociation($name)
+    {
+        return $this->findAssociation($name) !== null;
     }
 
     /**
@@ -894,10 +1021,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * $users = $this->getAssociation('Articles.Comments.Users');
      * ```
      *
-     * @param string $name the alias used for the association.
+     * @param string $name The alias used for the association.
      * @return \Cake\ORM\Association|null Either the association or null.
      */
-    public function getAssociation($name)
+    protected function findAssociation($name)
     {
         if (strpos($name, '.') === false) {
             return $this->_associations->get($name);
@@ -1291,7 +1418,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if (isset($options['idField'])) {
             $options['keyField'] = $options['idField'];
             unset($options['idField']);
-            trigger_error('Option "idField" is deprecated, use "keyField" instead.', E_USER_DEPRECATED);
+            deprecationWarning('Option "idField" is deprecated, use "keyField" instead.');
         }
 
         if (!$query->clause('select') &&
@@ -1316,7 +1443,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         );
 
         return $query->formatResults(function ($results) use ($options) {
-            /* @var \Cake\Collection\CollectionInterface $results */
+            /** @var \Cake\Collection\CollectionInterface $results */
             return $results->combine(
                 $options['keyField'],
                 $options['valueField'],
@@ -1360,13 +1487,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if (isset($options['idField'])) {
             $options['keyField'] = $options['idField'];
             unset($options['idField']);
-            trigger_error('Option "idField" is deprecated, use "keyField" instead.', E_USER_DEPRECATED);
+            deprecationWarning('Option "idField" is deprecated, use "keyField" instead.');
         }
 
         $options = $this->_setFieldMatchers($options, ['keyField', 'parentField']);
 
         return $query->formatResults(function ($results) use ($options) {
-            /* @var \Cake\Collection\CollectionInterface $results */
+            /** @var \Cake\Collection\CollectionInterface $results */
             return $results->nest($options['keyField'], $options['parentField'], $options['nestingKey']);
         });
     }

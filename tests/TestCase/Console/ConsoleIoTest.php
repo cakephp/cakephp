@@ -589,7 +589,7 @@ class ConsoleIoTest extends TestCase
 
         $this->assertTrue($result);
         $this->assertFileExists($file);
-        $this->assertEquals($contents, file_get_contents($file));
+        $this->assertStringEqualsFile($file, $contents);
     }
 
     /**
@@ -660,7 +660,7 @@ class ConsoleIoTest extends TestCase
 
         $this->assertFalse($result);
         $this->assertFileExists($file);
-        $this->assertEquals('original', file_get_contents($file));
+        $this->assertStringEqualsFile($file, 'original');
     }
 
     /**
@@ -682,7 +682,7 @@ class ConsoleIoTest extends TestCase
 
         $this->assertTrue($result);
         $this->assertFileExists($file);
-        $this->assertEquals($contents, file_get_contents($file));
+        $this->assertStringEqualsFile($file, $contents);
     }
 
     /**
@@ -704,15 +704,15 @@ class ConsoleIoTest extends TestCase
             ->will($this->returnValue('a'));
 
         $this->io->createFile($file, 'new content');
-        $this->assertEquals('new content', file_get_contents($file));
+        $this->assertStringEqualsFile($file, 'new content');
 
         $this->io->createFile($file, 'newer content');
-        $this->assertEquals('newer content', file_get_contents($file));
+        $this->assertStringEqualsFile($file, 'newer content');
 
         $this->io->createFile($file, 'newest content', false);
-        $this->assertEquals(
+        $this->assertStringEqualsFile(
+            $file,
             'newest content',
-            file_get_contents($file),
             'overwrite state replaces parameter'
         );
     }

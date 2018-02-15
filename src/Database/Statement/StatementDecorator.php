@@ -39,14 +39,14 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      * Statement instance implementation, such as PDOStatement
      * or any other custom implementation.
      *
-     * @var \Cake\Database\StatementInterface|\PDOStatement
+     * @var \Cake\Database\StatementInterface|\PDOStatement|null
      */
     protected $_statement;
 
     /**
      * Reference to the driver object associated to this statement.
      *
-     * @var \Cake\Database\Driver
+     * @var \Cake\Database\Driver|null
      */
     protected $_driver;
 
@@ -246,7 +246,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      * }
      * ```
      *
-     * @return \Iterator
+     * @return \Cake\Database\StatementInterface|\PDOStatement
      */
     public function getIterator()
     {

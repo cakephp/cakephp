@@ -27,11 +27,11 @@ use Cake\Datasource\Exception\MissingDatasourceException;
 use Cake\Error\ExceptionRenderer;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
+use Cake\Http\Exception\InternalErrorException;
+use Cake\Http\Exception\MethodNotAllowedException;
+use Cake\Http\Exception\NotFoundException;
 use Cake\Http\ServerRequest;
 use Cake\Mailer\Exception\MissingActionException as MissingMailerActionException;
-use Cake\Network\Exception\InternalErrorException;
-use Cake\Network\Exception\MethodNotAllowedException;
-use Cake\Network\Exception\NotFoundException;
 use Cake\Network\Exception\SocketException;
 use Cake\ORM\Exception\MissingBehaviorException;
 use Cake\Routing\DispatcherFactory;
@@ -165,8 +165,7 @@ class ExceptionRendererTest extends TestCase
         Configure::write('Config.language', 'eng');
         Router::reload();
 
-        $request = new ServerRequest();
-        $request->base = '';
+        $request = new ServerRequest(['base' => '']);
         Router::setRequestInfo($request);
         Configure::write('debug', true);
     }
@@ -781,7 +780,7 @@ class ExceptionRendererTest extends TestCase
         $ExceptionRenderer->controller = $this->getMockBuilder('Cake\Controller\Controller')
             ->setMethods(['render'])
             ->getMock();
-        $ExceptionRenderer->controller->plugin = 'TestPlugin';
+        $ExceptionRenderer->controller->setPlugin('TestPlugin');
         $ExceptionRenderer->controller->request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
 
         $exception = new MissingPluginException(['plugin' => 'TestPlugin']);
@@ -810,7 +809,7 @@ class ExceptionRendererTest extends TestCase
         $ExceptionRenderer->controller = $this->getMockBuilder('Cake\Controller\Controller')
             ->setMethods(['render'])
             ->getMock();
-        $ExceptionRenderer->controller->plugin = 'TestPlugin';
+        $ExceptionRenderer->controller->setPlugin('TestPlugin');
         $ExceptionRenderer->controller->request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
 
         $exception = new MissingPluginException(['plugin' => 'TestPluginTwo']);

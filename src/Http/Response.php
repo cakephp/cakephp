@@ -19,9 +19,9 @@ use Cake\Filesystem\File;
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Cookie\CookieInterface;
+use Cake\Http\CorsBuilder;
+use Cake\Http\Exception\NotFoundException;
 use Cake\Log\Log;
-use Cake\Network\CorsBuilder;
-use Cake\Network\Exception\NotFoundException;
 use DateTime;
 use DateTimeZone;
 use InvalidArgumentException;
@@ -365,7 +365,7 @@ class Response implements ResponseInterface
     /**
      * File object for file to be read out as response
      *
-     * @var \Cake\Filesystem\File
+     * @var \Cake\Filesystem\File|null
      */
     protected $_file;
 
@@ -495,7 +495,8 @@ class Response implements ResponseInterface
 
         if ($this->_file) {
             $this->_sendFile($this->_file, $this->_fileRange);
-            $this->_file = $this->_fileRange = null;
+            $this->_file = null;
+            $this->_fileRange = [];
         } else {
             $this->_sendContent($this->body());
         }
@@ -841,8 +842,8 @@ class Response implements ResponseInterface
      * if $content is null the current buffer is returned
      *
      * @param string|callable|null $content the string or callable message to be sent
-     * @return string Current message buffer if $content param is passed as null
-     * @deprecated 3.4.0 Mutable response methods are deprecated. Use `withBody()` and `getBody()` instead.
+     * @return string|null Current message buffer if $content param is passed as null
+     * @deprecated 3.4.0 Mutable response methods are deprecated. Use `withBody()`/`withStringBody()` and `getBody()` instead.
      */
     public function body($content = null)
     {
@@ -864,7 +865,7 @@ class Response implements ResponseInterface
         }
 
         // Compatibility with closure/streaming responses
-        if (is_callable($content)) {
+        if (!is_string($content) && is_callable($content)) {
             $this->stream = new CallbackStream($content);
         } else {
             $this->_createStream();
@@ -974,11 +975,19 @@ class Response implements ResponseInterface
      * @param int $code The code to set.
      * @param string $reasonPhrase The response reason phrase.
      * @return void
+     * @throws \InvalidArgumentException For invalid status code arguments.
      */
     protected function _setStatus($code, $reasonPhrase = '')
     {
+        if (!isset($this->_statusCodes[$code])) {
+            throw new InvalidArgumentException(sprintf(
+                'Invalid status code: %s. Use a valid HTTP status code in range 1xx - 5xx.',
+                $code
+            ));
+        }
+
         $this->_status = $code;
-        if (empty($reasonPhrase) && isset($this->_statusCodes[$code])) {
+        if (empty($reasonPhrase)) {
             $reasonPhrase = $this->_statusCodes[$code];
         }
         $this->_reasonPhrase = $reasonPhrase;
@@ -1942,7 +1951,7 @@ class Response implements ResponseInterface
      * If called with no arguments returns the last Content-Length set
      *
      * @param int|null $bytes Number of bytes
-     * @return int|null
+     * @return string|null
      * @deprecated 3.4.0 Use withLength() to set length instead.
      */
     public function length($bytes = null)
@@ -1972,6 +1981,43 @@ class Response implements ResponseInterface
     public function withLength($bytes)
     {
         return $this->withHeader('Content-Length', (string)$bytes);
+    }
+
+    /**
+     * Create a new response with the Link header set.
+     *
+     * ### Examples
+     *
+     * ```
+     * $response = $response->withAddedLink('http://example.com?page=1', ['rel' => 'prev'])
+     *     ->withAddedLink('http://example.com?page=3', ['rel' => 'next']);
+     * ```
+     *
+     * Will generate:
+     *
+     * ```
+     * Link: <http://example.com?page=1>; rel="prev"
+     * Link: <http://example.com?page=3>; rel="next"
+     * ```
+     *
+     * @param string $url The LinkHeader url.
+     * @param array $options The LinkHeader params.
+     * @return static
+     * @since 3.6.0
+     */
+    public function withAddedLink($url, $options = [])
+    {
+        $params = [];
+        foreach ($options as $key => $option) {
+            $params[] = $key . '="' . $option . '"';
+        }
+
+        $param = '';
+        if ($params) {
+            $param = '; ' . implode('; ', $params);
+        }
+
+        return $this->withAddedHeader('Link', '<' . $url . '>' . $param);
     }
 
     /**
@@ -2115,7 +2161,6 @@ class Response implements ResponseInterface
      *
      * ### Options
      *
-     * - `name`: The Cookie name
      * - `value`: Value of the cookie
      * - `expire`: Time the cookie expires in
      * - `path`: Path the cookie applies to
@@ -2336,7 +2381,7 @@ class Response implements ResponseInterface
      * @param string|array $allowedDomains List of allowed domains, see method description for more details
      * @param string|array $allowedMethods List of HTTP verbs allowed
      * @param string|array $allowedHeaders List of HTTP headers allowed
-     * @return \Cake\Network\CorsBuilder A builder object the provides a fluent interface for defining
+     * @return \Cake\Http\CorsBuilder A builder object the provides a fluent interface for defining
      *   additional CORS headers.
      */
     public function cors(ServerRequest $request, $allowedDomains = [], $allowedMethods = [], $allowedHeaders = [])
@@ -2388,7 +2433,7 @@ class Response implements ResponseInterface
      *   to a file, `APP` will be prepended to the path.
      * @param array $options Options See above.
      * @return void
-     * @throws \Cake\Network\Exception\NotFoundException
+     * @throws \Cake\Http\Exception\NotFoundException
      * @deprecated 3.4.0 Use withFile() instead.
      */
     public function file($path, array $options = [])
@@ -2462,7 +2507,7 @@ class Response implements ResponseInterface
      *   to a file, `APP` will be prepended to the path.
      * @param array $options Options See above.
      * @return static
-     * @throws \Cake\Network\Exception\NotFoundException
+     * @throws \Cake\Http\Exception\NotFoundException
      */
     public function withFile($path, array $options = [])
     {
@@ -2533,7 +2578,7 @@ class Response implements ResponseInterface
      * Validate a file path is a valid response body.
      *
      * @param string $path The path to the file.
-     * @throws \Cake\Network\Exception\NotFoundException
+     * @throws \Cake\Http\Exception\NotFoundException
      * @return \Cake\Filesystem\File
      */
     protected function validateFile($path)

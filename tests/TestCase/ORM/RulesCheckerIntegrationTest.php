@@ -80,8 +80,8 @@ class RulesCheckerIntegrationTest extends TestCase
         $this->assertTrue($entity->isNew());
         $this->assertTrue($entity->author->isNew());
         $this->assertNull($entity->get('author_id'));
-        $this->assertNotEmpty($entity->author->errors('name'));
-        $this->assertEquals(['This is an error'], $entity->author->errors('name'));
+        $this->assertNotEmpty($entity->author->getError('name'));
+        $this->assertEquals(['This is an error'], $entity->author->getError('name'));
     }
 
     /**
@@ -119,8 +119,8 @@ class RulesCheckerIntegrationTest extends TestCase
         $this->assertNull($entity->article->id);
         $this->assertNull($entity->article->get('author_id'));
         $this->assertFalse($entity->article->isDirty('author_id'));
-        $this->assertNotEmpty($entity->article->errors('title'));
-        $this->assertSame('A Title', $entity->article->invalid('title'));
+        $this->assertNotEmpty($entity->article->getError('title'));
+        $this->assertSame('A Title', $entity->article->getInvalidField('title'));
     }
 
     /**
@@ -168,8 +168,8 @@ class RulesCheckerIntegrationTest extends TestCase
         $this->assertNull($entity->articles[1]->id);
         $this->assertNull($entity->articles[0]->author_id);
         $this->assertNull($entity->articles[1]->author_id);
-        $this->assertEmpty($entity->articles[0]->errors());
-        $this->assertNotEmpty($entity->articles[1]->errors());
+        $this->assertEmpty($entity->articles[0]->getErrors());
+        $this->assertNotEmpty($entity->articles[1]->getErrors());
     }
 
     /**
@@ -214,7 +214,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $this->assertFalse($entity->articles[1]->isNew());
         $this->assertEquals(4, $entity->articles[1]->id);
         $this->assertNull($entity->articles[0]->id);
-        $this->assertNotEmpty($entity->articles[0]->errors('title'));
+        $this->assertNotEmpty($entity->articles[0]->getError('title'));
     }
 
     /**
@@ -320,7 +320,7 @@ class RulesCheckerIntegrationTest extends TestCase
         );
 
         $this->assertFalse($table->save($entity));
-        $this->assertEquals(['ruleName' => 'invalid'], $entity->errors('name'));
+        $this->assertEquals(['ruleName' => 'invalid'], $entity->getError('name'));
     }
 
     /**
@@ -341,10 +341,10 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $this->assertEquals(
             ['_isUnique' => 'This value is already in use'],
-            $entity->errors('title'),
+            $entity->getError('title'),
             'Provided field should have errors'
         );
-        $this->assertEmpty($entity->errors('name'), 'Errors should not apply to original field.');
+        $this->assertEmpty($entity->getError('name'), 'Errors should not apply to original field.');
     }
 
     /**
@@ -364,7 +364,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules->add($rules->isUnique(['name']));
 
         $this->assertFalse($table->save($entity));
-        $this->assertEquals(['_isUnique' => 'This value is already in use'], $entity->errors('name'));
+        $this->assertEquals(['_isUnique' => 'This value is already in use'], $entity->getError('name'));
 
         $entity->name = 'jose';
         $this->assertSame($entity, $table->save($entity));
@@ -392,7 +392,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules->add($rules->isUnique(['title', 'author_id'], 'Nope'));
 
         $this->assertFalse($table->save($entity));
-        $this->assertEquals(['title' => ['_isUnique' => 'Nope']], $entity->errors());
+        $this->assertEquals(['title' => ['_isUnique' => 'Nope']], $entity->getErrors());
 
         $entity->clean();
         $entity->author_id = 2;
@@ -421,7 +421,7 @@ class RulesCheckerIntegrationTest extends TestCase
         ]));
 
         $this->assertFalse($table->save($entity));
-        $this->assertEquals(['_isUnique' => 'All fields are required'], $entity->errors('author_id'));
+        $this->assertEquals(['_isUnique' => 'All fields are required'], $entity->getError('author_id'));
 
         $entity->author_id = 11;
         $this->assertSame($entity, $table->save($entity));
@@ -453,7 +453,7 @@ class RulesCheckerIntegrationTest extends TestCase
         ]));
 
         $this->assertFalse($table->save($entity));
-        $this->assertEquals(['author_id' => ['_isUnique' => 'Nope']], $entity->errors());
+        $this->assertEquals(['author_id' => ['_isUnique' => 'Nope']], $entity->getErrors());
 
         $entity->clean();
         $entity->article_id = 10;
@@ -507,7 +507,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules->add($rules->existsIn('author_id', 'Authors'));
 
         $this->assertFalse($table->save($entity));
-        $this->assertEquals(['_existsIn' => 'This value does not exist'], $entity->errors('author_id'));
+        $this->assertEquals(['_existsIn' => 'This value does not exist'], $entity->getError('author_id'));
     }
 
     /**
@@ -530,10 +530,10 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $this->assertEquals(
             ['_existsIn' => 'This value does not exist'],
-            $entity->errors('other'),
+            $entity->getError('other'),
             'Provided field should have errors'
         );
-        $this->assertEmpty($entity->errors('author_id'), 'Errors should not apply to original field.');
+        $this->assertEmpty($entity->getError('author_id'), 'Errors should not apply to original field.');
     }
 
     /**
@@ -554,7 +554,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules->add($rules->existsIn('author_id', $this->getTableLocator()->get('Authors'), 'Nope'));
 
         $this->assertFalse($table->save($entity));
-        $this->assertEquals(['_existsIn' => 'Nope'], $entity->errors('author_id'));
+        $this->assertEquals(['_existsIn' => 'Nope'], $entity->getError('author_id'));
     }
 
     /**
@@ -575,7 +575,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules->add($rules->existsIn('author_id', 'Authors'));
 
         $this->assertEquals($entity, $table->save($entity));
-        $this->assertEquals([], $entity->errors('author_id'));
+        $this->assertEquals([], $entity->getError('author_id'));
     }
 
     /**
@@ -599,7 +599,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules = $table->rulesChecker();
         $rules->add($rules->existsIn('parent_id', 'Categories'));
         $this->assertTrue($table->checkRules($entity, RulesChecker::CREATE));
-        $this->assertEmpty($entity->errors('parent_id'));
+        $this->assertEmpty($entity->getError('parent_id'));
     }
 
     /**
@@ -622,7 +622,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules->add($rules->existsIn('title', 'Authors'));
 
         $this->assertFalse($table->save($entity));
-        $this->assertNotEmpty($entity->errors('title'));
+        $this->assertNotEmpty($entity->getError('title'));
 
         $entity->clean();
         $entity->title = 'larry';
@@ -817,7 +817,7 @@ class RulesCheckerIntegrationTest extends TestCase
         });
 
         $this->assertFalse($table->save($entity));
-        $this->assertEquals(['_isUnique' => 'This value is already in use'], $entity->errors('author_id'));
+        $this->assertEquals(['_isUnique' => 'This value is already in use'], $entity->getError('author_id'));
     }
 
     /**
@@ -863,7 +863,7 @@ class RulesCheckerIntegrationTest extends TestCase
         });
 
         $this->assertFalse($table->save($entity));
-        $this->assertEquals(['_existsIn' => 'This value does not exist'], $entity->errors('author_id'));
+        $this->assertEquals(['_existsIn' => 'This value does not exist'], $entity->getError('author_id'));
     }
 
     /**
@@ -884,7 +884,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules->add($rules->existsIn(['author_id'], 'Authors'));
 
         $this->assertFalse($table->save($entity));
-        $this->assertEquals(['_existsIn' => 'This value does not exist'], $entity->errors('author_id'));
+        $this->assertEquals(['_existsIn' => 'This value does not exist'], $entity->getError('author_id'));
     }
 
     /**
@@ -976,7 +976,7 @@ class RulesCheckerIntegrationTest extends TestCase
             'message' => 'Niente'
         ]));
         $this->assertFalse($table->save($entity));
-        $this->assertEquals(['author_id' => ['_existsIn' => 'Niente']], $entity->errors());
+        $this->assertEquals(['author_id' => ['_existsIn' => 'Niente']], $entity->getErrors());
     }
 
     /**
@@ -1133,7 +1133,7 @@ class RulesCheckerIntegrationTest extends TestCase
             'allowNullableNulls' => true,
             'message' => 'will error']));
         $this->assertFalse($table->save($entity));
-        $this->assertEquals(['author_id' => ['_existsIn' => 'will error']], $entity->errors());
+        $this->assertEquals(['author_id' => ['_existsIn' => 'will error']], $entity->getErrors());
     }
 
     /**
@@ -1158,7 +1158,7 @@ class RulesCheckerIntegrationTest extends TestCase
             'allowNullableNulls' => true,
             'message' => 'will error']));
         $this->assertFalse($table->save($entity));
-        $this->assertEquals(['author_id' => ['_existsIn' => 'will error']], $entity->errors());
+        $this->assertEquals(['author_id' => ['_existsIn' => 'will error']], $entity->getErrors());
     }
 
     /**
@@ -1183,7 +1183,7 @@ class RulesCheckerIntegrationTest extends TestCase
             'allowNullableNulls' => true,
             'message' => 'will error']));
         $this->assertFalse($table->save($entity));
-        $this->assertEquals(['author_id' => ['_existsIn' => 'will error']], $entity->errors());
+        $this->assertEquals(['author_id' => ['_existsIn' => 'will error']], $entity->getErrors());
     }
 
     /**
@@ -1268,7 +1268,7 @@ class RulesCheckerIntegrationTest extends TestCase
         }, ['errorField' => 'name']);
 
         $this->assertFalse($table->save($entity));
-        $this->assertEquals(['So much nope'], $entity->errors('name'));
+        $this->assertEquals(['So much nope'], $entity->getError('name'));
     }
 
     /**
@@ -1290,7 +1290,7 @@ class RulesCheckerIntegrationTest extends TestCase
         });
 
         $this->assertFalse($table->save($entity));
-        $this->assertEmpty($entity->errors());
+        $this->assertEmpty($entity->getErrors());
     }
 
     /**
@@ -1355,7 +1355,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules->add($rules->existsIn('author_id', 'Authors'));
 
         $this->assertFalse($table->save($entity));
-        $this->assertEquals(['_existsIn' => 'This value does not exist'], $entity->errors('author_id'));
+        $this->assertEquals(['_existsIn' => 'This value does not exist'], $entity->getError('author_id'));
     }
 
     /**
@@ -1387,7 +1387,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules->add($rules->validCount('tags', 3));
 
         $this->assertFalse($table->save($entity));
-        $this->assertEquals($entity->errors(), [
+        $this->assertEquals($entity->getErrors(), [
             'tags' => [
                 '_validCount' => 'The count does not match >3'
             ]

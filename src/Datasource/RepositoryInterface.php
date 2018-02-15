@@ -132,7 +132,7 @@ interface RepositoryInterface
      *
      * @param \Cake\Datasource\EntityInterface $entity the entity to be saved
      * @param array|\ArrayAccess $options The options to use when saving.
-     * @return \Cake\Datasource\EntityInterface|bool
+     * @return \Cake\Datasource\EntityInterface|false
      */
     public function save(EntityInterface $entity, $options = []);
 
@@ -182,7 +182,7 @@ interface RepositoryInterface
      *
      * @param array $data The data to build an entity with.
      * @param array $options A list of options for the objects hydration.
-     * @return array An array of hydrated records.
+     * @return \Cake\Datasource\EntityInterface[] An array of hydrated records.
      */
     public function newEntities(array $data, array $options = []);
 
@@ -217,11 +217,11 @@ interface RepositoryInterface
      * $article = $this->Articles->patchEntities($articles, $this->request->getData());
      * ```
      *
-     * @param array|\Traversable $entities the entities that will get the
+     * @param \Cake\Datasource\EntityInterface[]|\Traversable $entities the entities that will get the
      * data merged in
      * @param array $data list of arrays to be merged into the entities
      * @param array $options A list of options for the objects hydration.
-     * @return array
+     * @return \Cake\Datasource\EntityInterface[]
      */
     public function patchEntities($entities, array $data, array $options = []);
 }

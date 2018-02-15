@@ -96,6 +96,13 @@ class Route
     protected $middleware = [];
 
     /**
+     * Track whether or not brace keys `{var}` were used.
+     *
+     * @var bool
+     */
+    protected $braceKeys = false;
+
+    /**
      * Valid HTTP methods.
      *
      * @var array
@@ -160,7 +167,10 @@ class Route
      */
     public function setExtensions(array $extensions)
     {
-        $this->_extensions = array_map('strtolower', $extensions);
+        $this->_extensions = [];
+        foreach ($extensions as $ext) {
+            $this->_extensions[] = strtolower($ext);
+        }
 
         return $this;
     }
@@ -312,15 +322,21 @@ class Route
         $names = $routeParams = [];
         $parsed = preg_quote($this->template, '#');
 
-        preg_match_all('/:([a-z0-9-_]+(?<![-_]))/i', $route, $namedElements);
+        if (strpos($route, '{') !== false && strpos($route, '}') !== false) {
+            preg_match_all('/\{([a-z][a-z0-9-_]*)\}/i', $route, $namedElements);
+            $this->braceKeys = true;
+        } else {
+            preg_match_all('/:([a-z0-9-_]+(?<![-_]))/i', $route, $namedElements);
+            $this->braceKeys = false;
+        }
         foreach ($namedElements[1] as $i => $name) {
-            $search = '\\' . $namedElements[0][$i];
+            $search = preg_quote($namedElements[0][$i]);
             if (isset($this->options[$name])) {
                 $option = null;
                 if ($name !== 'plugin' && array_key_exists($name, $this->defaults)) {
                     $option = '?';
                 }
-                $slashParam = '/\\' . $namedElements[0][$i];
+                $slashParam = '/' . $search;
                 if (strpos($parsed, $slashParam) !== false) {
                     $routeParams[$slashParam] = '(?:/(?P<' . $name . '>' . $this->options[$name] . ')' . $option . ')' . $option;
                 } else {
@@ -386,7 +402,7 @@ class Route
             if ($value === null) {
                 continue;
             }
-            if (is_bool($value)) {
+            if ($value === true || $value === false) {
                 $value = $value ? '1' : '0';
             }
             $name .= $value . $glue;
@@ -483,6 +499,11 @@ class Route
 
         if (!empty($ext)) {
             $route['_ext'] = $ext;
+        }
+
+        // pass the name if set
+        if (isset($this->options['_name'])) {
+            $route['_name'] = $this->options['_name'];
         }
 
         // restructure 'pass' key route params
@@ -751,11 +772,14 @@ class Route
         if (empty($url['_method'])) {
             return false;
         }
-        if (!in_array(strtoupper($url['_method']), (array)$this->defaults['_method'])) {
-            return false;
+        $methods = array_map('strtoupper', (array)$url['_method']);
+        foreach ($methods as $value) {
+            if (in_array($value, (array)$this->defaults['_method'])) {
+                return true;
+            }
         }
 
-        return true;
+        return false;
     }
 
     /**
@@ -782,7 +806,11 @@ class Route
             } elseif (strpos($out, $key) != strlen($out) - strlen($key)) {
                 $key .= '/';
             }
-            $search[] = ':' . $key;
+            if ($this->braceKeys) {
+                $search[] = "{{$key}}";
+            } else {
+                $search[] = ':' . $key;
+            }
             $replace[] = $string;
         }
 

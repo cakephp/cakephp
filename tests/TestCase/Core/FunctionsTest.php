@@ -44,23 +44,23 @@ class FunctionsTest extends TestCase
     }
 
     /**
-     * Test error messages coming out when debug is on, manually setting the stack frame
+     * Test error messages coming out when deprecated level is on, manually setting the stack frame
      *
      * @expectedException PHPUnit\Framework\Error\Deprecated
-     * @expectedExceptionMessageRegExp /This is going away - (.*?)[\/\\]TestCase.php, line\: \d+/
+     * @expectedExceptionMessageRegExp /This is going away - (.*?)[\/\\]FunctionsTest.php, line\: \d+/
      */
     public function testDeprecationWarningEnabled()
     {
         $this->withErrorReporting(E_ALL, function () {
-            deprecationWarning('This is going away', 1);
+            deprecationWarning('This is going away', 2);
         });
     }
 
     /**
-     * Test error messages coming out when debug is on, not setting the stack frame manually
+     * Test error messages coming out when deprecated level is on, not setting the stack frame manually
      *
      * @expectedException PHPUnit\Framework\Error\Deprecated
-     * @expectedExceptionMessageRegExp /This is going away - (.*?)[\/\\]FunctionsTest.php, line\: \d+/
+     * @expectedExceptionMessageRegExp /This is going away - (.*?)[\/\\]TestCase.php, line\: \d+/
      */
     public function testDeprecationWarningEnabledDefaultFrame()
     {
@@ -70,7 +70,7 @@ class FunctionsTest extends TestCase
     }
 
     /**
-     * Test no error when debug is off.
+     * Test no error when deprecated level is off.
      *
      * @return void
      */
@@ -78,6 +78,31 @@ class FunctionsTest extends TestCase
     {
         $this->withErrorReporting(E_ALL ^ E_USER_DEPRECATED, function () {
             $this->assertNull(deprecationWarning('This is going away'));
+        });
+    }
+
+    /**
+     * Test error messages coming out when warning level is on.
+     *
+     * @expectedException PHPUnit\Framework\Error\Warning
+     * @expectedExceptionMessageRegExp /This is going away - (.*?)[\/\\]TestCase.php, line\: \d+/
+     */
+    public function testTriggerWarningEnabled()
+    {
+        $this->withErrorReporting(E_ALL, function () {
+            triggerWarning('This is going away');
+        });
+    }
+
+    /**
+     * Test no error when warning level is off.
+     *
+     * @return void
+     */
+    public function testTriggerWarningLevelDisabled()
+    {
+        $this->withErrorReporting(E_ALL ^ E_USER_WARNING, function () {
+            $this->assertNull(triggerWarning('This is going away'));
         });
     }
 

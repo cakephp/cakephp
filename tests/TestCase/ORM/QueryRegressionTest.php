@@ -666,7 +666,7 @@ class QueryRegressionTest extends TestCase
         $tags = $this->getTableLocator()->get('Tags');
 
         $this->skipIf(
-            $tags->connection()->getDriver() instanceof \Cake\Database\Driver\Sqlserver,
+            $tags->getConnection()->getDriver() instanceof \Cake\Database\Driver\Sqlserver,
             'SQL server is temporarily weird in this test, will investigate later'
         );
         $tags = $this->getTableLocator()->get('Tags');
@@ -1541,7 +1541,7 @@ class QueryRegressionTest extends TestCase
                 return $q->where(['Authors.id' => 2]);
             })
             ->distinct()
-            ->hydrate(false)
+            ->enableHydration(false)
             ->toArray();
 
         $this->assertEquals([['name' => 'nate', 'tag' => 'tag1']], $results);
@@ -1589,7 +1589,7 @@ class QueryRegressionTest extends TestCase
         ]);
         $query = $table->find()
             ->select(['score' => 100])
-            ->autoFields(true)
+            ->enableAutoFields(true)
             ->contain(['Comments'])
             ->limit(5)
             ->order(['score' => 'desc']);

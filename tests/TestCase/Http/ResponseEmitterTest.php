@@ -28,11 +28,28 @@ class ResponseEmitterTest extends TestCase
 {
     protected $emitter;
 
+    /**
+     * setup
+     *
+     * @return void
+     */
     public function setUp()
     {
         parent::setUp();
+        $GLOBALS['mockedHeadersSent'] = false;
         $GLOBALS['mockedHeaders'] = $GLOBALS['mockedCookies'] = [];
         $this->emitter = new ResponseEmitter();
+    }
+
+    /**
+     * teardown
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        parent::tearDown();
+        unset($GLOBALS['mockedHeadersSent']);
     }
 
     /**

@@ -16,10 +16,10 @@ namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
 use Cake\Event\Event;
+use Cake\Http\Exception\InvalidCsrfTokenException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\I18n\Time;
-use Cake\Network\Exception\InvalidCsrfTokenException;
 use Cake\Utility\Security;
 
 /**
@@ -78,7 +78,7 @@ class CsrfComponent extends Component
      */
     public function startup(Event $event)
     {
-        /* @var \Cake\Controller\Controller $controller */
+        /** @var \Cake\Controller\Controller $controller */
         $controller = $event->getSubject();
         $request = $controller->request;
         $response = $controller->response;
@@ -149,7 +149,7 @@ class CsrfComponent extends Component
      * Validate the request data against the cookie token.
      *
      * @param \Cake\Http\ServerRequest $request The request to validate against.
-     * @throws \Cake\Network\Exception\InvalidCsrfTokenException when the CSRF token is invalid or missing.
+     * @throws \Cake\Http\Exception\InvalidCsrfTokenException when the CSRF token is invalid or missing.
      * @return void
      */
     protected function _validateToken(ServerRequest $request)

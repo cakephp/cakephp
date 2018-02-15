@@ -42,6 +42,7 @@ class ServerTest extends TestCase
         $this->server = $_SERVER;
         $this->config = dirname(dirname(__DIR__));
         $GLOBALS['mockedHeaders'] = [];
+        $GLOBALS['mockedHeadersSent'] = true;
     }
 
     /**
@@ -53,6 +54,7 @@ class ServerTest extends TestCase
     {
         parent::tearDown();
         $_SERVER = $this->server;
+        unset($GLOBALS['mockedHeadersSent']);
     }
 
     /**
@@ -184,6 +186,7 @@ class ServerTest extends TestCase
      */
     public function testEmitCallbackStream()
     {
+        $GLOBALS['mockedHeadersSent'] = false;
         $response = new Response('php://memory', 200, ['x-testing' => 'source header']);
         $response = $response->withBody(new CallbackStream(function () {
             echo 'body content';

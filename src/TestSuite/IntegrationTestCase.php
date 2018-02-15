@@ -13,7 +13,7 @@
  */
 namespace Cake\TestSuite;
 
-if (class_exists('PHPUnit_Runner_Version') && !interface_exists('PHPUnit\Exception')) {
+if (class_exists('PHPUnit_Runner_Version', false) && !interface_exists('PHPUnit\Exception', false)) {
     if (version_compare(\PHPUnit_Runner_Version::id(), '5.7', '<')) {
         trigger_error(sprintf('Your PHPUnit Version must be at least 5.7.0 to use CakePHP Testsuite, found %s', \PHPUnit_Runner_Version::id()), E_USER_ERROR);
     }
@@ -22,7 +22,7 @@ if (class_exists('PHPUnit_Runner_Version') && !interface_exists('PHPUnit\Excepti
 
 use Cake\Core\Configure;
 use Cake\Database\Exception as DatabaseException;
-use Cake\Network\Session;
+use Cake\Http\Session;
 use Cake\Routing\Router;
 use Cake\TestSuite\Stub\TestExceptionRenderer;
 use Cake\Utility\CookieCryptTrait;
@@ -32,6 +32,7 @@ use Cake\Utility\Text;
 use Cake\View\Helper\SecureFieldTokenTrait;
 use Exception;
 use LogicException;
+use PHPUnit\Exception as PhpunitException;
 
 /**
  * A test case class intended to make integration tests of
@@ -129,7 +130,7 @@ abstract class IntegrationTestCase extends TestCase
     /**
      * The session instance from the last request
      *
-     * @var \Cake\Network\Session|null
+     * @var \Cake\Http\Session|null
      */
     protected $_requestSession;
 
@@ -487,7 +488,7 @@ abstract class IntegrationTestCase extends TestCase
                 $this->_requestSession->write('Flash', $this->_flashMessages);
             }
             $this->_response = $response;
-        } catch (\PHPUnit\Exception $e) {
+        } catch (PhpUnitException $e) {
             throw $e;
         } catch (DatabaseException $e) {
             throw $e;
@@ -523,6 +524,7 @@ abstract class IntegrationTestCase extends TestCase
     public function controllerSpy($event, $controller = null)
     {
         if (!$controller) {
+            /** @var \Cake\Controller\Controller $controller */
             $controller = $event->getSubject();
         }
         $this->_controller = $controller;
@@ -556,7 +558,7 @@ abstract class IntegrationTestCase extends TestCase
         if (empty($class) || !class_exists($class)) {
             $class = 'Cake\Error\ExceptionRenderer';
         }
-        /* @var \Cake\Error\ExceptionRenderer $instance */
+        /** @var \Cake\Error\ExceptionRenderer $instance */
         $instance = new $class($exception);
         $this->_response = $instance->render();
     }

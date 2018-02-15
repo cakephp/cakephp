@@ -89,6 +89,16 @@ class TestEmail extends Email
     {
         return $this->_render($content);
     }
+
+    /**
+     * GetContentTransferEncoding to protected method
+     *
+     * @return string
+     */
+    public function getContentTransferEncoding()
+    {
+        return $this->_getContentTransferEncoding();
+    }
 }
 
 /**
@@ -540,6 +550,49 @@ class EmailTest extends TestCase
     }
 
     /**
+     * test reset addresses method
+     *
+     * @return void
+     */
+    public function testResetAddresses()
+    {
+        $this->Email->reset();
+        $this->Email
+            ->setFrom('cake@cakephp.org', 'CakePHP')
+            ->setReplyTo('replyto@cakephp.org', 'ReplyTo CakePHP')
+            ->setReadReceipt('readreceipt@cakephp.org', 'ReadReceipt CakePHP')
+            ->setReturnPath('returnpath@cakephp.org', 'ReturnPath CakePHP')
+            ->setTo('to@cakephp.org', 'To, CakePHP')
+            ->setCc('cc@cakephp.org', 'Cc CakePHP')
+            ->setBcc('bcc@cakephp.org', 'Bcc CakePHP');
+
+        $this->assertNotEmpty($this->Email->getFrom());
+        $this->assertNotEmpty($this->Email->getReplyTo());
+        $this->assertNotEmpty($this->Email->getReadReceipt());
+        $this->assertNotEmpty($this->Email->getReturnPath());
+        $this->assertNotEmpty($this->Email->getTo());
+        $this->assertNotEmpty($this->Email->getCc());
+        $this->assertNotEmpty($this->Email->getBcc());
+
+        $this->Email
+            ->setFrom([])
+            ->setReplyTo([])
+            ->setReadReceipt([])
+            ->setReturnPath([])
+            ->setTo([])
+            ->setCc([])
+            ->setBcc([]);
+
+        $this->assertEmpty($this->Email->getFrom());
+        $this->assertEmpty($this->Email->getReplyTo());
+        $this->assertEmpty($this->Email->getReadReceipt());
+        $this->assertEmpty($this->Email->getReturnPath());
+        $this->assertEmpty($this->Email->getTo());
+        $this->assertEmpty($this->Email->getCc());
+        $this->assertEmpty($this->Email->getBcc());
+    }
+
+    /**
      * testMessageId method
      *
      * @return void
@@ -548,11 +601,11 @@ class EmailTest extends TestCase
     {
         $this->Email->setMessageId(true);
         $result = $this->Email->getHeaders();
-        $this->assertTrue(isset($result['Message-ID']));
+        $this->assertArrayHasKey('Message-ID', $result);
 
         $this->Email->setMessageId(false);
         $result = $this->Email->getHeaders();
-        $this->assertFalse(isset($result['Message-ID']));
+        $this->assertArrayNotHasKey('Message-ID', $result);
 
         $result = $this->Email->setMessageId('<my-email@localhost>');
         $this->assertSame($this->Email, $result);
@@ -573,7 +626,7 @@ class EmailTest extends TestCase
         $this->assertSame(4, $this->Email->getPriority());
 
         $result = $this->Email->getHeaders();
-        $this->assertTrue(isset($result['X-Priority']));
+        $this->assertArrayHasKey('X-Priority', $result);
     }
 
     /**
@@ -1161,15 +1214,15 @@ class EmailTest extends TestCase
         $expected = "Here is my body, with multi lines.\r\nThis is the second line.\r\n\r\nAnd the last.\r\n\r\n";
 
         $this->assertEquals($expected, $result['message']);
-        $this->assertTrue((bool)strpos($result['headers'], 'Date: '));
-        $this->assertTrue((bool)strpos($result['headers'], 'Message-ID: '));
-        $this->assertTrue((bool)strpos($result['headers'], 'To: '));
+        $this->assertContains('Date: ', $result['headers']);
+        $this->assertContains('Message-ID: ', $result['headers']);
+        $this->assertContains('To: ', $result['headers']);
 
         $result = $this->Email->send('Other body');
         $expected = "Other body\r\n\r\n";
         $this->assertSame($expected, $result['message']);
-        $this->assertTrue((bool)strpos($result['headers'], 'Message-ID: '));
-        $this->assertTrue((bool)strpos($result['headers'], 'To: '));
+        $this->assertContains('Message-ID: ', $result['headers']);
+        $this->assertContains('To: ', $result['headers']);
 
         $this->Email->reset();
         $this->Email->setTransport('debug');
@@ -1757,7 +1810,7 @@ class EmailTest extends TestCase
         $result = $this->Email->send();
 
         $expected = mb_convert_encoding('ここにあなたの設定した値が入ります: 日本語の差し込み123', 'ISO-2022-JP');
-        $this->assertTrue((bool)strpos($result['message'], $expected));
+        $this->assertContains($expected, $result['message']);
     }
 
     /**
@@ -1784,7 +1837,7 @@ class EmailTest extends TestCase
         $result = $this->Email->send();
         $dateTime = new \DateTime;
         $dateTime->setTimestamp($timestamp);
-        $this->assertTrue((bool)strpos($result['message'], 'Right now: ' . $dateTime->format($dateTime::ATOM)));
+        $this->assertContains('Right now: ' . $dateTime->format($dateTime::ATOM), $result['message']);
 
         $result = $this->Email->getHelpers();
         $this->assertEquals(['Time'], $result);
@@ -2183,8 +2236,8 @@ class EmailTest extends TestCase
 
         $result = $this->Email->send('This is the message');
 
-        $this->assertTrue((bool)strpos($result['headers'], 'Message-ID: '));
-        $this->assertTrue((bool)strpos($result['headers'], 'To: '));
+        $this->assertContains('Message-ID: ', $result['headers']);
+        $this->assertContains('To: ', $result['headers']);
     }
 
     /**
@@ -2240,8 +2293,8 @@ class EmailTest extends TestCase
 
         $result = $this->Email->send('This is the message');
 
-        $this->assertTrue((bool)strpos($result['headers'], 'Message-ID: '));
-        $this->assertTrue((bool)strpos($result['headers'], 'To: '));
+        $this->assertContains('Message-ID: ', $result['headers']);
+        $this->assertContains('To: ', $result['headers']);
     }
 
     /**
@@ -2495,6 +2548,30 @@ class EmailTest extends TestCase
 
         $charset = $this->Email->setHeaderCharset('Shift_JIS');
         $this->assertSame('Shift_JIS', $charset->getHeaderCharset());
+    }
+
+    /**
+     * Test transferEncoding
+     *
+     * @return void
+     */
+    public function testTransferEncoding()
+    {
+        // Test new transfer encoding
+        $expected = 'quoted-printable';
+        $this->Email->setTransferEncoding($expected);
+        $this->assertSame($expected, $this->Email->getTransferEncoding());
+        $this->assertSame($expected, $this->Email->getContentTransferEncoding());
+
+        // Test default charset/encoding : utf8/8bit
+        $expected = '8bit';
+        $this->Email->reset();
+        $this->assertNull($this->Email->getTransferEncoding());
+        $this->assertSame($expected, $this->Email->getContentTransferEncoding());
+
+        //Test wrong encoding
+        $this->expectException(\InvalidArgumentException::class);
+        $this->Email->setTransferEncoding('invalid');
     }
 
     /**

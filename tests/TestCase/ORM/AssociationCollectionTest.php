@@ -155,7 +155,7 @@ class AssociationCollectionTest extends TestCase
         $table = $this->getMockBuilder('Cake\ORM\Table')
             ->setMethods(['table'])
             ->getMock();
-        $table->schema([]);
+        $table->setSchema([]);
         $belongsTo = new BelongsTo('Users', [
             'sourceTable' => $table
         ]);
@@ -282,7 +282,7 @@ class AssociationCollectionTest extends TestCase
         $table = $this->getMockBuilder('Cake\ORM\Table')
             ->setMethods(['table'])
             ->getMock();
-        $table->schema([]);
+        $table->setSchema([]);
         $mockOne = $this->getMockBuilder('Cake\ORM\Association\BelongsTo')
             ->setMethods(['saveAssociated'])
             ->setConstructorArgs(['Parent', [
@@ -332,7 +332,7 @@ class AssociationCollectionTest extends TestCase
         $table = $this->getMockBuilder('Cake\ORM\Table')
             ->setMethods(['table'])
             ->getMock();
-        $table->schema([]);
+        $table->setSchema([]);
         $mockOne = $this->getMockBuilder('Cake\ORM\Association\BelongsTo')
             ->setMethods(['saveAssociated'])
             ->setConstructorArgs(['Parents', [
@@ -382,7 +382,7 @@ class AssociationCollectionTest extends TestCase
         $table = $this->getMockBuilder('Cake\ORM\Table')
             ->setMethods(['table'])
             ->getMock();
-        $table->schema([]);
+        $table->setSchema([]);
         $mockOne = $this->getMockBuilder('Cake\ORM\Association\HasMany')
             ->setMethods(['saveAssociated'])
             ->setConstructorArgs(['Comments', [

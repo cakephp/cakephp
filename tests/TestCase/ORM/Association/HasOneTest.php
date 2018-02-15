@@ -181,7 +181,7 @@ class HasOneTest extends TestCase
             'foreignKey' => ['user_id', 'user_site_id']
         ];
 
-        $this->user->primaryKey(['id', 'site_id']);
+        $this->user->setPrimaryKey(['id', 'site_id']);
         $association = new HasOne('Profiles', $config);
 
         $query = $this->getMockBuilder('\Cake\ORM\Query')
@@ -223,7 +223,7 @@ class HasOneTest extends TestCase
             'targetTable' => $this->profile,
             'conditions' => ['Profiles.is_active' => true],
         ];
-        $this->user->primaryKey(['id', 'site_id']);
+        $this->user->setPrimaryKey(['id', 'site_id']);
         $association = new HasOne('Profiles', $config);
         $association->attachTo($query, ['includeFields' => false]);
     }

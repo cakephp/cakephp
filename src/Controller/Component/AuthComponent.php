@@ -21,9 +21,9 @@ use Cake\Core\App;
 use Cake\Core\Exception\Exception;
 use Cake\Event\Event;
 use Cake\Event\EventDispatcherTrait;
+use Cake\Http\Exception\ForbiddenException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
-use Cake\Network\Exception\ForbiddenException;
 use Cake\Routing\Router;
 use Cake\Utility\Hash;
 
@@ -221,7 +221,7 @@ class AuthComponent extends Component
     /**
      * Instance of the Session object
      *
-     * @var \Cake\Network\Session
+     * @var \Cake\Http\Session
      * @deprecated 3.1.0 Will be removed in 4.0
      */
     public $session;
@@ -292,7 +292,7 @@ class AuthComponent extends Component
             return null;
         }
 
-        /* @var \Cake\Controller\Controller $controller */
+        /** @var \Cake\Controller\Controller $controller */
         $controller = $event->getSubject();
 
         $action = strtolower($controller->request->getParam('action'));
@@ -383,7 +383,7 @@ class AuthComponent extends Component
         if ($auth === false) {
             throw new Exception('At least one authenticate object must be available.');
         }
-        $result = $auth->unauthenticated($this->request, $response);
+        $result = $auth->unauthenticated($controller->request, $response);
         if ($result !== null) {
             return $result;
         }
@@ -441,10 +441,7 @@ class AuthComponent extends Component
      */
     protected function _isLoginAction(Controller $controller)
     {
-        $url = '';
-        if (isset($controller->request->url)) {
-            $url = $controller->request->url;
-        }
+        $url = $controller->request->getRequestTarget();
         $url = Router::normalize($url);
         $loginAction = Router::normalize($this->_config['loginAction']);
 
@@ -456,7 +453,7 @@ class AuthComponent extends Component
      *
      * @param \Cake\Controller\Controller $controller A reference to the controller object
      * @return \Cake\Http\Response
-     * @throws \Cake\Network\Exception\ForbiddenException
+     * @throws \Cake\Http\Exception\ForbiddenException
      */
     protected function _unauthorized(Controller $controller)
     {
@@ -535,7 +532,7 @@ class AuthComponent extends Component
             $user = $this->user();
         }
         if (empty($request)) {
-            $request = $this->request;
+            $request = $this->getController()->getRequest();
         }
         if (empty($this->_authorizeObjects)) {
             $this->constructAuthorize();
@@ -749,7 +746,7 @@ class AuthComponent extends Component
             $this->constructAuthenticate();
         }
         foreach ($this->_authenticateObjects as $auth) {
-            $result = $auth->getUser($this->request);
+            $result = $auth->getUser($this->getController()->getRequest());
             if (!empty($result) && is_array($result)) {
                 $this->_authenticationProvider = $auth;
                 $event = $this->dispatchEvent('Auth.afterIdentify', [$result, $auth]);
@@ -785,7 +782,7 @@ class AuthComponent extends Component
      */
     public function redirectUrl($url = null)
     {
-        $redirectUrl = $this->request->getQuery(static::QUERY_STRING_REDIRECT);
+        $redirectUrl = $this->getController()->getRequest()->getQuery(static::QUERY_STRING_REDIRECT);
         if ($redirectUrl && (substr($redirectUrl, 0, 1) !== '/' || substr($redirectUrl, 0, 2) === '//')) {
             $redirectUrl = null;
         }
@@ -825,7 +822,7 @@ class AuthComponent extends Component
             $this->constructAuthenticate();
         }
         foreach ($this->_authenticateObjects as $auth) {
-            $result = $auth->authenticate($this->request, $this->response);
+            $result = $auth->authenticate($this->getController()->getRequest(), $this->response);
             if (!empty($result)) {
                 $this->_authenticationProvider = $auth;
                 $event = $this->dispatchEvent('Auth.afterIdentify', [$result, $auth]);
@@ -911,7 +908,9 @@ class AuthComponent extends Component
         if (!class_exists($className)) {
             throw new Exception(sprintf('Auth storage adapter "%s" was not found.', $class));
         }
-        $this->_storage = new $className($this->request, $this->response, $config);
+        $request = $this->getController()->getRequest();
+        $response = $this->getController()->getResponse();
+        $this->_storage = new $className($request, $response, $config);
 
         return $this->_storage;
     }

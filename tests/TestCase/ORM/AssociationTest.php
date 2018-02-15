@@ -26,7 +26,7 @@ class TestTable extends Table
 
     public function initialize(array $config = [])
     {
-        $this->schema(['id' => ['type' => 'integer']]);
+        $this->setSchema(['id' => ['type' => 'integer']]);
     }
 
     public function findPublished($query)
@@ -251,9 +251,9 @@ class AssociationTest extends TestCase
     public function testCascadeCallbacks()
     {
         $this->deprecated(function () {
-            $this->assertSame(false, $this->association->cascadeCallbacks());
+            $this->assertFalse($this->association->cascadeCallbacks());
             $this->association->cascadeCallbacks(true);
-            $this->assertSame(true, $this->association->cascadeCallbacks());
+            $this->assertTrue($this->association->cascadeCallbacks());
         });
     }
 
@@ -301,7 +301,7 @@ class AssociationTest extends TestCase
      */
     public function testBindingKeyDefault()
     {
-        $this->source->primaryKey(['id', 'site_id']);
+        $this->source->setPrimaryKey(['id', 'site_id']);
         $this->association
             ->expects($this->once())
             ->method('isOwningSide')
@@ -319,7 +319,7 @@ class AssociationTest extends TestCase
     public function testBindingDefaultNoOwningSide()
     {
         $target = new Table;
-        $target->primaryKey(['foo', 'site_id']);
+        $target->setPrimaryKey(['foo', 'site_id']);
         $this->association->setTarget($target);
 
         $this->association
@@ -583,7 +583,7 @@ class AssociationTest extends TestCase
     {
         $this->expectException(\PHPUnit\Framework\Error\Warning::class);
         $this->expectExceptionMessageRegExp('/^Association property name "foo" clashes with field of same name of table "test"/');
-        $this->source->schema(['foo' => ['type' => 'string']]);
+        $this->source->setSchema(['foo' => ['type' => 'string']]);
         $this->assertEquals('foo', $this->association->getProperty());
     }
 
@@ -594,7 +594,7 @@ class AssociationTest extends TestCase
      */
     public function testPropertyNameExplicitySet()
     {
-        $this->source->schema(['foo' => ['type' => 'string']]);
+        $this->source->setSchema(['foo' => ['type' => 'string']]);
 
         $config = [
             'className' => '\Cake\Test\TestCase\ORM\TestTable',
@@ -749,6 +749,6 @@ class AssociationTest extends TestCase
             ])
             ->setConstructorArgs(['Foo', $config])
             ->getMock();
-        $this->assertEquals($locator, $assoc->tableLocator());
+        $this->assertEquals($locator, $assoc->getTableLocator());
     }
 }

@@ -33,7 +33,7 @@ use LogicException;
 use PDO;
 use RuntimeException;
 use Serializable;
-use SimpleXmlElement;
+use SimpleXMLElement;
 
 /**
  * CakePHP Email class.
@@ -240,6 +240,27 @@ class Email implements JsonSerializable, Serializable
      * @var string|null
      */
     public $headerCharset;
+
+    /**
+     * The email transfer encoding used.
+     * If null, the $charset property is used for determined the transfer encoding.
+     *
+     * @var string|null
+     */
+    protected $transferEncoding;
+
+    /**
+     * Available encoding to be set for transfer.
+     *
+     * @var array
+     */
+    protected $_transferEncodingAvailable = [
+        '7bit',
+        '8bit',
+        'base64',
+        'binary',
+        'quoted-printable'
+    ];
 
     /**
      * The application wide charset, used to encode headers and body
@@ -844,6 +865,38 @@ class Email implements JsonSerializable, Serializable
     }
 
     /**
+     * TransferEncoding setter.
+     *
+     * @param string|null $encoding Encoding set.
+     * @return $this
+     */
+    public function setTransferEncoding($encoding)
+    {
+        $encoding = strtolower($encoding);
+        if (!in_array($encoding, $this->_transferEncodingAvailable)) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    'Transfer encoding not available. Can be : %s.',
+                    implode(', ', $this->_transferEncodingAvailable)
+                )
+            );
+        }
+        $this->transferEncoding = $encoding;
+
+        return $this;
+    }
+
+    /**
+     * TransferEncoding getter.
+     *
+     * @return string|null Encoding
+     */
+    public function getTransferEncoding()
+    {
+        return $this->transferEncoding;
+    }
+
+    /**
      * EmailPattern setter/getter
      *
      * @param string|null $regex The pattern to use for email address validation,
@@ -959,6 +1012,12 @@ class Email implements JsonSerializable, Serializable
      */
     protected function _setEmailSingle($varName, $email, $name, $throwMessage)
     {
+        if ($email === []) {
+            $this->{$varName} = $email;
+
+            return $this;
+        }
+
         $current = $this->{$varName};
         $this->_setEmail($varName, $email, $name);
         if (count($this->{$varName}) !== 1) {
@@ -1572,6 +1631,13 @@ class Email implements JsonSerializable, Serializable
         $config = static::$_transportConfig[$name];
 
         if (is_object($config['className'])) {
+            if (!$config['className'] instanceof AbstractTransport) {
+                throw new InvalidArgumentException(sprintf(
+                    'Transport object must be of type "AbstractTransport". Found invalid type: "%s".',
+                    get_class($config['className'])
+                ));
+            }
+
             return $config['className'];
         }
 
@@ -1870,7 +1936,7 @@ class Email implements JsonSerializable, Serializable
      * Get generated message (used by transport classes)
      *
      * @param string|null $type Use MESSAGE_* constants or null to return the full message as array
-     * @return string|array String if have type, array if type is null
+     * @return string|array String if type is given, array if type is null
      */
     public function message($type = null)
     {
@@ -2262,12 +2328,13 @@ class Email implements JsonSerializable, Serializable
         $this->_headers = [];
         $this->_textMessage = '';
         $this->_htmlMessage = '';
-        $this->_message = '';
+        $this->_message = [];
         $this->_emailFormat = 'text';
         $this->_transport = null;
         $this->_priority = null;
         $this->charset = 'utf-8';
         $this->headerCharset = null;
+        $this->transferEncoding = null;
         $this->_attachments = [];
         $this->_profile = [];
         $this->_emailPattern = self::EMAIL_PATTERN;
@@ -2699,12 +2766,17 @@ class Email implements JsonSerializable, Serializable
     }
 
     /**
-     * Return the Content-Transfer Encoding value based on the set charset
+     * Return the Content-Transfer Encoding value based
+     * on the set transferEncoding or set charset.
      *
      * @return string
      */
     protected function _getContentTransferEncoding()
     {
+        if ($this->transferEncoding) {
+            return $this->transferEncoding;
+        }
+
         $charset = strtoupper($this->charset);
         if (in_array($charset, $this->_charset8bit)) {
             return '8bit';
@@ -2738,7 +2810,7 @@ class Email implements JsonSerializable, Serializable
      * It has certain limitations for viewVars that are good to know:
      *
      *    - ORM\Query executed and stored as resultset
-     *    - SimpleXmlElements stored as associative array
+     *    - SimpleXMLElements stored as associative array
      *    - Exceptions stored as strings
      *    - Resources, \Closure and \PDO are not supported.
      *
@@ -2828,7 +2900,7 @@ class Email implements JsonSerializable, Serializable
     {
         $array = $this->jsonSerialize();
         array_walk_recursive($array, function (&$item, $key) {
-            if ($item instanceof SimpleXmlElement) {
+            if ($item instanceof SimpleXMLElement) {
                 $item = json_decode(json_encode((array)$item), true);
             }
         });

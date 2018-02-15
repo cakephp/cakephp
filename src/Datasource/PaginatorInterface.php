@@ -22,10 +22,10 @@ interface PaginatorInterface
     /**
      * Handles pagination of datasource records.
      *
-     * @param mixed $object The repository or query to paginate.
+     * @param \Cake\Datasource\RepositoryInterface|\Cake\Datasource\QueryInterface $object The repository or query to paginate.
      * @param array $params Request params
      * @param array $settings The settings/configuration used for pagination.
-     * @return mixed Query results
+     * @return \Cake\Datasource\ResultSetInterface Query results
      */
     public function paginate($object, array $params = [], array $settings = []);
 

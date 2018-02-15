@@ -20,9 +20,9 @@ use Cake\Core\Configure;
 use Cake\Core\Exception\Exception as CakeException;
 use Cake\Core\Exception\MissingPluginException;
 use Cake\Event\Event;
+use Cake\Http\Exception\HttpException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequestFactory;
-use Cake\Network\Exception\HttpException;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
@@ -338,8 +338,8 @@ class ExceptionRenderer implements ExceptionRendererInterface
             return $this->_outputMessage('error500');
         } catch (MissingPluginException $e) {
             $attributes = $e->getAttributes();
-            if (isset($attributes['plugin']) && $attributes['plugin'] === $this->controller->plugin) {
-                $this->controller->plugin = null;
+            if (isset($attributes['plugin']) && $attributes['plugin'] === $this->controller->getPlugin()) {
+                $this->controller->setPlugin(null);
             }
 
             return $this->_outputMessageSafe('error500');

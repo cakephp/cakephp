@@ -47,6 +47,7 @@ class SqlserverTest extends TestCase
             [
                 [
                     'app' => 'CakePHP-Testapp',
+                    'encoding' => '',
                     'connectionPooling' => true,
                     'failoverPartner' => 'failover.local',
                     'loginTimeout' => 10,
@@ -57,6 +58,7 @@ class SqlserverTest extends TestCase
             [
                 [
                     'app' => 'CakePHP-Testapp',
+                    'encoding' => '',
                     'failoverPartner' => 'failover.local',
                     'multiSubnetFailover' => 'failover.local',
                 ],
@@ -64,9 +66,19 @@ class SqlserverTest extends TestCase
             ],
             [
                 [
+                    'encoding' => '',
                 ],
                 'sqlsrv:Server=localhost\SQLEXPRESS;Database=cake;MultipleActiveResultSets=false',
-            ]
+            ],
+            [
+                [
+                    'app' => 'CakePHP-Testapp',
+                    'encoding' => '',
+                    'host' => 'localhost\SQLEXPRESS',
+                    'port' => 9001,
+                ],
+                'sqlsrv:Server=localhost\SQLEXPRESS,9001;Database=cake;MultipleActiveResultSets=false;APP=CakePHP-Testapp',
+            ],
         ];
     }
 
@@ -80,7 +92,6 @@ class SqlserverTest extends TestCase
      */
     public function testDnsString($constructorArgs, $dnsString)
     {
-        $this->skipIf($this->missingExtension, 'pdo_sqlsrv is not installed.');
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
             ->setMethods(['_connect'])
             ->setConstructorArgs([$constructorArgs])
@@ -88,7 +99,9 @@ class SqlserverTest extends TestCase
 
         $driver->method('_connect')
             ->with($this->callback(function ($dns) use ($dnsString) {
-                return $dns === $dnsString;
+                $this->assertSame($dns, $dnsString);
+
+                return true;
             }))
             ->will($this->returnValue([]));
         $driver->connect();
@@ -130,6 +143,7 @@ class SqlserverTest extends TestCase
         $expected['failoverPartner'] = null;
         $expected['loginTimeout'] = null;
         $expected['multiSubnetFailover'] = null;
+        $expected['port'] = null;
 
         $connection = $this->getMockBuilder('stdClass')
             ->setMethods(['exec', 'quote'])
@@ -193,6 +207,7 @@ class SqlserverTest extends TestCase
         $expected['failoverPartner'] = null;
         $expected['loginTimeout'] = null;
         $expected['multiSubnetFailover'] = null;
+        $expected['port'] = null;
 
         $driver->expects($this->once())->method('_connect')
             ->with($dsn, $expected);

@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\Routing;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Http\ServerRequest;
+use Cake\Http\Session;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
@@ -416,7 +417,7 @@ class RequestActionTraitTest extends TestCase
         $result = $this->object->requestAction('/request_action/session_test');
         $this->assertNull($result);
 
-        $session = $this->getMockBuilder('Cake\Network\Session')->getMock();
+        $session = $this->getMockBuilder(Session::class)->getMock();
         $session->expects($this->once())
             ->method('read')
             ->with('foo')

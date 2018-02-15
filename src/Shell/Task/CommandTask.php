@@ -90,6 +90,10 @@ class CommandTask extends Shell
      */
     protected function _appendShells($type, $shells, $shellList, $skip)
     {
+        if (!isset($shellList[$type])) {
+            $shellList[$type] = [];
+        }
+
         foreach ($shells as $shell) {
             $name = Inflector::underscore(preg_replace('/(Shell|Command)$/', '', $shell));
             if (!in_array($name, $skip, true)) {

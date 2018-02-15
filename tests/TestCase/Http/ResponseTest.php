@@ -18,10 +18,10 @@ include_once CORE_TEST_CASES . DS . 'Http' . DS . 'server_mocks.php';
 
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieCollection;
+use Cake\Http\CorsBuilder;
+use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
-use Cake\Network\CorsBuilder;
-use Cake\Network\Exception\NotFoundException;
 use Cake\TestSuite\TestCase;
 use Zend\Diactoros\Stream;
 
@@ -57,6 +57,7 @@ class ResponseTest extends TestCase
     {
         parent::tearDown();
         $_SERVER = $this->server;
+        unset($GLOBALS['mockedHeadersSent']);
     }
 
     /**
@@ -139,7 +140,7 @@ class ResponseTest extends TestCase
 
             $response = new Response();
             $response->body(null);
-            $this->assertEquals(null, $response->body());
+            $this->assertNull($response->body());
         });
     }
 
@@ -392,6 +393,7 @@ class ResponseTest extends TestCase
      */
     public function testSend()
     {
+        $GLOBALS['mockedHeadersSent'] = false;
         $this->deprecated(function () {
             $response = $this->getMockBuilder('Cake\Http\Response')
                 ->setMethods(['_sendHeader', '_sendContent'])
@@ -583,6 +585,26 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * Tests that callable strings are not triggered
+     *
+     * @group deprecated
+     * @return void
+     */
+    public function testSendWithCallableStringBody()
+    {
+        $this->deprecated(function () {
+            $response = $this->getMockBuilder('Cake\Http\Response')
+                ->setMethods(['_sendHeader'])
+                ->getMock();
+            $response->body('phpversion');
+
+            ob_start();
+            $response->send();
+            $this->assertEquals('phpversion', ob_get_clean());
+        });
+    }
+
+    /**
      * Tests the disableCache method
      *
      * @group deprecated
@@ -716,7 +738,7 @@ class ResponseTest extends TestCase
         $_SERVER['HTTP_ACCEPT_ENCODING'] = 'gzip';
         $result = $response->compress();
         $this->assertTrue($result);
-        $this->assertTrue(in_array('ob_gzhandler', ob_list_handlers()));
+        $this->assertContains('ob_gzhandler', ob_list_handlers());
 
         ob_get_clean();
     }
@@ -869,6 +891,7 @@ class ResponseTest extends TestCase
      */
     public function testProtocol()
     {
+        $GLOBALS['mockedHeadersSent'] = false;
         $this->deprecated(function () {
             $response = $this->getMockBuilder('Cake\Http\Response')
                 ->setMethods(['_sendHeader', '_sendContent'])
@@ -911,6 +934,28 @@ class ResponseTest extends TestCase
         $this->assertFalse($response->hasHeader('Content-Length'), 'Old instance not modified');
 
         $this->assertSame('100', $new->getHeaderLine('Content-Length'));
+    }
+
+    /**
+     * Tests settings the link
+     *
+     * @return void
+     */
+    public function testWithAddedLink()
+    {
+        $response = new Response();
+        $this->assertFalse($response->hasHeader('Link'));
+
+        $new = $response->withAddedLink('http://example.com', ['rel' => 'prev']);
+        $this->assertFalse($response->hasHeader('Link'), 'Old instance not modified');
+        $this->assertEquals('<http://example.com>; rel="prev"', $new->getHeaderLine('Link'));
+
+        $new = $response->withAddedLink('http://example.com');
+        $this->assertEquals('<http://example.com>', $new->getHeaderLine('Link'));
+
+        $new = $response->withAddedLink('http://example.com?p=1', ['rel' => 'prev'])
+            ->withAddedLink('http://example.com?p=2', ['rel' => 'next', 'foo' => 'bar']);
+        $this->assertEquals('<http://example.com?p=1>; rel="prev",<http://example.com?p=2>; rel="next"; foo="bar"', $new->getHeaderLine('Link'));
     }
 
     /**
@@ -1864,7 +1909,7 @@ class ResponseTest extends TestCase
      */
     public function testFileNotFound()
     {
-        $this->expectException(\Cake\Network\Exception\NotFoundException::class);
+        $this->expectException(\Cake\Http\Exception\NotFoundException::class);
         $this->deprecated(function () {
             $response = new Response();
             $response->file('/some/missing/folder/file.jpg');
@@ -1878,7 +1923,7 @@ class ResponseTest extends TestCase
      */
     public function testWithFileNotFound()
     {
-        $this->expectException(\Cake\Network\Exception\NotFoundException::class);
+        $this->expectException(\Cake\Http\Exception\NotFoundException::class);
         $response = new Response();
         $response->withFile('/some/missing/folder/file.jpg');
     }
@@ -2036,7 +2081,7 @@ class ResponseTest extends TestCase
             $result = $response->send();
             $output = ob_get_clean();
             $this->assertEquals("/* this is the test asset css file */\n", $output);
-            $this->assertNotSame(false, $result);
+            $this->assertNotFalse($result);
             $this->assertEquals('text/css', $response->getType());
             $this->assertEquals('bytes', $response->getHeaderLine('Accept-Ranges'));
             $this->assertEquals('binary', $response->getHeaderLine('Content-Transfer-Encoding'));
@@ -2072,7 +2117,7 @@ class ResponseTest extends TestCase
             $result = $response->send();
             $output = ob_get_clean();
             $this->assertEquals("some_key = some_value\nbool_key = 1\n", $output);
-            $this->assertNotSame(false, $result);
+            $this->assertNotFalse($result);
             $this->assertEquals('text/html', $response->getType());
             $this->assertEquals('bytes', $response->getHeaderLine('Accept-Ranges'));
             $this->assertEquals('binary', $response->getHeaderLine('Content-Transfer-Encoding'));
@@ -2128,7 +2173,7 @@ class ResponseTest extends TestCase
             $result = $response->send();
             $output = ob_get_clean();
             $this->assertEquals("some_key = some_value\nbool_key = 1\n", $output);
-            $this->assertNotSame(false, $result);
+            $this->assertNotFalse($result);
             $this->assertEquals('application/octet-stream', $response->getType());
             $this->assertEquals('bytes', $response->getHeaderLine('Accept-Ranges'));
             $this->assertEquals('binary', $response->getHeaderLine('Content-Transfer-Encoding'));
@@ -2184,7 +2229,7 @@ class ResponseTest extends TestCase
             $result = $response->send();
             $output = ob_get_clean();
             $this->assertEquals("some_key = some_value\nbool_key = 1\n", $output);
-            $this->assertNotSame(false, $result);
+            $this->assertNotFalse($result);
             $this->assertEquals('application/force-download', $response->getType());
             $this->assertEquals('bytes', $response->getHeaderLine('Accept-Ranges'));
             $this->assertEquals('binary', $response->getHeaderLine('Content-Transfer-Encoding'));
@@ -2456,7 +2501,7 @@ class ResponseTest extends TestCase
             $result = $response->send();
             $output = ob_get_clean();
             $this->assertEquals('is the test asset ', $output);
-            $this->assertNotSame(false, $result);
+            $this->assertNotFalse($result);
 
             $this->assertEquals(
                 'attachment; filename="test_asset.css"',
@@ -2704,7 +2749,7 @@ class ResponseTest extends TestCase
             $this->assertEquals('text/css', $response->getType());
             $this->assertEquals(206, $response->getStatusCode());
             $this->assertEquals('is the test asset ', $output);
-            $this->assertNotSame(false, $result);
+            $this->assertNotFalse($result);
         });
     }
 
@@ -2810,6 +2855,19 @@ class ResponseTest extends TestCase
         $statusCode = $response->getStatusCode();
         $this->assertEquals(200, $statusCode);
         $this->assertNotEquals($response, $response2);
+    }
+
+    /**
+     * Test invalid status codes
+     *
+     * @return void
+     */
+    public function testWithStatusInvalid()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid status code: 1001. Use a valid HTTP status code in range 1xx - 5xx.');
+        $response = new Response();
+        $response->withStatus(1001);
     }
 
     /**

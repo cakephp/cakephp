@@ -1,10 +1,10 @@
 <?php
-namespace TestApp\Network\Session;
+namespace TestApp\Http\Session;
 
 use SessionHandlerInterface;
 
 /**
- * Test suite app/Network/Session session handler
+ * Test suite app/Http/Session session handler
  */
 class TestAppLibSession implements SessionHandlerInterface
 {

@@ -156,7 +156,7 @@ class Paginator implements PaginatorInterface
      * @param array $params Request params
      * @param array $settings The settings/configuration used for pagination.
      * @return \Cake\Datasource\ResultSetInterface Query results
-     * @throws \Cake\ORM\Exception\PageOutOfBoundsException
+     * @throws \Cake\Datasource\Exception\PageOutOfBoundsException
      */
     public function paginate($object, array $params = [], array $settings = [])
     {
@@ -166,7 +166,7 @@ class Paginator implements PaginatorInterface
             $object = $query->repository();
         }
 
-        $alias = $object->alias();
+        $alias = $object->getAlias();
         $defaults = $this->getDefaults($alias, $settings);
         $options = $this->mergeOptions($params, $defaults);
         $options = $this->validateSort($object, $options);
@@ -389,7 +389,7 @@ class Paginator implements PaginatorInterface
      */
     protected function _prefix(RepositoryInterface $object, $order, $whitelisted = false)
     {
-        $tableAlias = $object->alias();
+        $tableAlias = $object->getAlias();
         $tableOrder = [];
         foreach ($order as $key => $value) {
             if (is_numeric($key)) {

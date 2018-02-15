@@ -432,6 +432,7 @@ class ResultSet implements ResultSetInterface
      */
     protected function _calculateTypeMap()
     {
+        deprecationWarning('ResultSet::_calculateTypeMap() is deprecated, and will be removed in 4.0.0.');
     }
 
     /**
@@ -491,7 +492,7 @@ class ResultSet implements ResultSetInterface
     /**
      * Correctly nests results keys including those coming from associations
      *
-     * @param mixed $row Array containing columns and values or false if there is no results
+     * @param array $row Array containing columns and values or false if there is no results
      * @return array Results
      */
     protected function _groupResult($row)
@@ -584,7 +585,7 @@ class ResultSet implements ResultSetInterface
             $results[$defaultAlias]['_matchingData'] = $results['_matchingData'];
         }
 
-        $options['source'] = $this->_defaultTable->registryAlias();
+        $options['source'] = $this->_defaultTable->getRegistryAlias();
         if (isset($results[$defaultAlias])) {
             $results = $results[$defaultAlias];
         }
@@ -606,6 +607,8 @@ class ResultSet implements ResultSetInterface
      */
     protected function _castValues($alias, $values)
     {
+        deprecationWarning('ResultSet::_castValues() is deprecated, and will be removed in 4.0.0.');
+
         return $values;
     }
 

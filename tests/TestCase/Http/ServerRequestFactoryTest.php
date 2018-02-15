@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\Http;
 
 use Cake\Core\Configure;
 use Cake\Http\ServerRequestFactory;
+use Cake\Http\Session;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -136,7 +137,7 @@ class ServerRequestFactoryTest extends TestCase
         ];
         $res = ServerRequestFactory::fromGlobals($server);
         $session = $res->getAttribute('session');
-        $this->assertInstanceOf('Cake\Network\Session', $session);
+        $this->assertInstanceOf(Session::class, $session);
         $this->assertEquals('/basedir/', ini_get('session.cookie_path'), 'Needs trailing / for cookie to work');
     }
 

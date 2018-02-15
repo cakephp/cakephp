@@ -36,8 +36,8 @@ class TreeBehaviorTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->table = $this->getTableLocator()->get('NumberTrees');
-        $this->table->primaryKey(['id']);
+        $this->table = TableRegistry::get('NumberTrees');
+        $this->table->setPrimaryKey(['id']);
         $this->table->addBehavior('Tree');
     }
 
@@ -196,7 +196,7 @@ class TreeBehaviorTest extends TestCase
      *
      * @return void
      */
-    public function testCallableScoping()
+    public function testScopeCallable()
     {
         $table = $this->getTableLocator()->get('MenuLinkTrees');
         $table->addBehavior('Tree', [
@@ -207,7 +207,6 @@ class TreeBehaviorTest extends TestCase
         $count = $table->childCount($table->get(1), false);
         $this->assertEquals(4, $count);
     }
-
     /**
      * Tests the find('children') method
      *
@@ -229,6 +228,21 @@ class TreeBehaviorTest extends TestCase
         $this->assertCount(0, $nodes->extract('id')->toArray());
 
         // direct children
+        $nodes = $table->find('children', ['for' => 1, 'direct' => true])->all();
+        $this->assertEquals([2, 3], $nodes->extract('id')->toArray());
+    }
+
+    /**
+     * Tests the find('children') plus scope=null
+     *
+     * @return void
+     */
+    public function testScopeNull()
+    {
+        $table = TableRegistry::get('MenuLinkTrees');
+        $table->addBehavior('Tree');
+        $table->behaviors()->get('Tree')->setConfig('scope', null);
+
         $nodes = $table->find('children', ['for' => 1, 'direct' => true])->all();
         $this->assertEquals([2, 3], $nodes->extract('id')->toArray());
     }
@@ -1026,7 +1040,7 @@ class TreeBehaviorTest extends TestCase
         $this->assertEquals(17, $entity->lft);
         $this->assertEquals(18, $entity->rght);
 
-        $result = $table->find()->order('lft')->hydrate(false);
+        $result = $table->find()->order('lft')->enableHydration(false);
 
         $expected = [
             ' 1:20 -  1:electronics',
@@ -1286,8 +1300,8 @@ class TreeBehaviorTest extends TestCase
         $this->assertSame($entity, $table->removeFromTree($entity));
         $this->assertEquals(21, $entity->lft);
         $this->assertEquals(22, $entity->rght);
-        $this->assertEquals(null, $entity->parent_id);
-        $result = $table->find()->order('lft')->hydrate(false);
+        $this->assertNull($entity->parent_id);
+        $result = $table->find()->order('lft')->enableHydration(false);
         $expected = [
             ' 1:18 -  1:electronics',
             '_ 2: 9 -  2:televisions',
@@ -1315,11 +1329,11 @@ class TreeBehaviorTest extends TestCase
         $table = $this->table;
         $entity = $table->get(6);
         $this->assertSame($entity, $table->removeFromTree($entity));
-        $result = $table->find('threaded')->order('lft')->hydrate(false)->toArray();
+        $result = $table->find('threaded')->order('lft')->enableHydration(false)->toArray();
         $this->assertEquals(21, $entity->lft);
         $this->assertEquals(22, $entity->rght);
-        $this->assertEquals(null, $entity->parent_id);
-        $result = $table->find()->order('lft')->hydrate(false);
+        $this->assertNull($entity->parent_id);
+        $result = $table->find()->order('lft')->enableHydration(false);
         $expected = [
             ' 1:18 -  1:electronics',
             '_ 2: 9 -  2:televisions',
@@ -1346,10 +1360,10 @@ class TreeBehaviorTest extends TestCase
         $table = $this->table;
         $entity = $table->get(1);
         $this->assertSame($entity, $table->removeFromTree($entity));
-        $result = $table->find('threaded')->order('lft')->hydrate(false)->toArray();
+        $result = $table->find('threaded')->order('lft')->enableHydration(false)->toArray();
         $this->assertEquals(21, $entity->lft);
         $this->assertEquals(22, $entity->rght);
-        $this->assertEquals(null, $entity->parent_id);
+        $this->assertNull($entity->parent_id);
 
         $expected = [
             ' 1: 8 -  2:televisions',
@@ -1377,7 +1391,7 @@ class TreeBehaviorTest extends TestCase
     {
         $table = $this->table;
         $other = $this->getTableLocator()->get('FriendlyTrees', [
-            'table' => $table->table()
+            'table' => $table->getTable()
         ]);
         $table->hasOne('FriendlyTrees', [
             'foreignKey' => 'id'
@@ -1486,11 +1500,11 @@ class TreeBehaviorTest extends TestCase
     public function assertMpttValues($expected, $table, $query = null)
     {
         $query = $query ?: $table->find();
-        $primaryKey = $table->primaryKey();
+        $primaryKey = $table->getPrimaryKey();
         if (is_array($primaryKey)) {
             $primaryKey = $primaryKey[0];
         }
-        $displayField = $table->displayField();
+        $displayField = $table->getDisplayField();
 
         $options = [
             'valuePath' => function ($item, $key, $iterator) use ($primaryKey, $displayField) {

@@ -140,7 +140,7 @@ class JsonConfigTest extends TestCase
         Plugin::load('TestPlugin');
         $engine = new JsonConfig($this->path);
         $result = $engine->read('TestPlugin.load');
-        $this->assertTrue(isset($result['plugin_load']));
+        $this->assertArrayHasKey('plugin_load', $result);
 
         Plugin::unload();
     }

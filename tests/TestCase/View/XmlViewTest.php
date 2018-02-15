@@ -281,7 +281,7 @@ class XmlViewTest extends TestCase
         $Request = new ServerRequest();
         $Response = new Response();
         $Controller = new Controller($Request, $Response);
-        $Controller->name = 'Posts';
+        $Controller->setName('Posts');
 
         $data = [
             [

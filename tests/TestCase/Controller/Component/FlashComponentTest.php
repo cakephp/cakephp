@@ -18,7 +18,7 @@ use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\FlashComponent;
 use Cake\Controller\Controller;
 use Cake\Http\ServerRequest;
-use Cake\Network\Session;
+use Cake\Http\Session;
 use Cake\TestSuite\TestCase;
 use Exception;
 

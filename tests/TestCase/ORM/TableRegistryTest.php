@@ -69,6 +69,7 @@ class TableRegistryTest extends TestCase
     /**
      * Test locator() method.
      *
+     * @group deprecated
      * @return void
      */
     public function testLocator()

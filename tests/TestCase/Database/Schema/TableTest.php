@@ -575,7 +575,7 @@ class TableTest extends TestCase
     public function testConstraintForeignKey()
     {
         $table = $this->getTableLocator()->get('ArticlesTags');
-        $compositeConstraint = $table->schema()->getConstraint('tag_id_fk');
+        $compositeConstraint = $table->getSchema()->getConstraint('tag_id_fk');
         $expected = [
             'type' => 'foreign',
             'columns' => ['tag_id'],
@@ -588,7 +588,7 @@ class TableTest extends TestCase
         $this->assertEquals($expected, $compositeConstraint);
 
         $expectedSubstring = 'CONSTRAINT <tag_id_fk> FOREIGN KEY \(<tag_id>\) REFERENCES <tags> \(<id>\)';
-        $this->assertQuotedQuery($expectedSubstring, $table->schema()->createSql(ConnectionManager::get('test'))[0]);
+        $this->assertQuotedQuery($expectedSubstring, $table->getSchema()->createSql(ConnectionManager::get('test'))[0]);
     }
 
     /**
@@ -599,7 +599,7 @@ class TableTest extends TestCase
     public function testConstraintForeignKeyTwoColumns()
     {
         $table = $this->getTableLocator()->get('Orders');
-        $compositeConstraint = $table->schema()->getConstraint('product_category_fk');
+        $compositeConstraint = $table->getSchema()->getConstraint('product_category_fk');
         $expected = [
             'type' => 'foreign',
             'columns' => [
@@ -619,7 +619,7 @@ class TableTest extends TestCase
         $expectedSubstring = 'CONSTRAINT <product_category_fk> FOREIGN KEY \(<product_category>, <product_id>\)' .
             ' REFERENCES <products> \(<category>, <id>\)';
 
-        $this->assertQuotedQuery($expectedSubstring, $table->schema()->createSql(ConnectionManager::get('test'))[0]);
+        $this->assertQuotedQuery($expectedSubstring, $table->getSchema()->createSql(ConnectionManager::get('test'))[0]);
     }
 
     /**

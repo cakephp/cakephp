@@ -19,6 +19,7 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequestFactory;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
+use Error;
 use LogicException;
 use Psr\Log\LoggerInterface;
 
@@ -136,7 +137,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $response = new Response();
         $middleware = new ErrorHandlerMiddleware();
         $next = function ($req, $res) {
-            throw new \Cake\Network\Exception\NotFoundException('whoops');
+            throw new \Cake\Http\Exception\NotFoundException('whoops');
         };
         $result = $middleware($request, $response, $next);
         $this->assertInstanceOf('Psr\Http\Message\ResponseInterface', $result);
@@ -144,6 +145,24 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $this->assertNotSame($result, $response);
         $this->assertEquals(404, $result->getStatusCode());
         $this->assertContains('was not found', '' . $result->getBody());
+    }
+
+    /**
+     * Test handling PHP 7's Error instance.
+     *
+     * @return void
+     */
+    public function testHandlePHP7Error()
+    {
+        $this->skipIf(version_compare(PHP_VERSION, '7.0.0', '<'), 'Error class only exists since PHP 7.');
+
+        $middleware = new ErrorHandlerMiddleware();
+        $request = ServerRequestFactory::fromGlobals();
+        $response = new Response();
+        $error = new Error();
+
+        $result = $middleware->handleException($error, $request, $response);
+        $this->assertInstanceOf(Response::class, $result);
     }
 
     /**
@@ -156,7 +175,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $this->logger->expects($this->at(0))
             ->method('log')
             ->with('error', $this->logicalAnd(
-                $this->stringContains('[Cake\Network\Exception\NotFoundException] Kaboom!'),
+                $this->stringContains('[Cake\Http\Exception\NotFoundException] Kaboom!'),
                 $this->stringContains('ErrorHandlerMiddlewareTest->testHandleException'),
                 $this->stringContains('Request URL: /target/url'),
                 $this->stringContains('Referer URL: /other/path')
@@ -169,7 +188,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $response = new Response();
         $middleware = new ErrorHandlerMiddleware(null, ['log' => true, 'trace' => true]);
         $next = function ($req, $res) {
-            throw new \Cake\Network\Exception\NotFoundException('Kaboom!');
+            throw new \Cake\Http\Exception\NotFoundException('Kaboom!');
         };
         $result = $middleware($request, $response, $next);
         $this->assertNotSame($result, $response);
@@ -190,10 +209,10 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $response = new Response();
         $middleware = new ErrorHandlerMiddleware(null, [
             'log' => true,
-            'skipLog' => ['Cake\Network\Exception\NotFoundException']
+            'skipLog' => ['Cake\Http\Exception\NotFoundException']
         ]);
         $next = function ($req, $res) {
-            throw new \Cake\Network\Exception\NotFoundException('Kaboom!');
+            throw new \Cake\Http\Exception\NotFoundException('Kaboom!');
         };
         $result = $middleware($request, $response, $next);
         $this->assertNotSame($result, $response);
@@ -253,7 +272,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         };
         $middleware = new ErrorHandlerMiddleware($factory);
         $next = function ($req, $res) {
-            throw new \Cake\Network\Exception\ServiceUnavailableException('whoops');
+            throw new \Cake\Http\Exception\ServiceUnavailableException('whoops');
         };
         $response = $middleware($request, $response, $next);
         $this->assertEquals(500, $response->getStatusCode());

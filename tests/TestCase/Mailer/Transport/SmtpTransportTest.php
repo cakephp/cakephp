@@ -94,10 +94,7 @@ class SmtpTransportTest extends TestCase
         $this->socket->expects($this->any())->method('connect')->will($this->returnValue(true));
         $this->socket->expects($this->any())
            ->method('read')
-           ->will($this->onConsecutiveCalls(
-               "220 Welcome message\r\n",
-               "250 Accepted\r\n"
-           ));
+            ->will($this->onConsecutiveCalls("220 Welcome message\r\n", "250 Accepted\r\n"));
         $this->socket->expects($this->once())->method('write')->with("EHLO localhost\r\n");
         $this->SmtpTransport->connect();
     }

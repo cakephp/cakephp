@@ -15,6 +15,7 @@
 namespace Cake\Database;
 
 use Cake\Core\App;
+use Cake\Core\Retry\CommandRetry;
 use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Exception\MissingDriverException;
 use Cake\Database\Exception\MissingExtensionException;
@@ -22,10 +23,12 @@ use Cake\Database\Exception\NestedTransactionRollbackException;
 use Cake\Database\Log\LoggedQuery;
 use Cake\Database\Log\LoggingStatement;
 use Cake\Database\Log\QueryLogger;
+use Cake\Database\Retry\ReconnectStrategy;
 use Cake\Database\Schema\CachedCollection;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Log\Log;
+use Exception;
 
 /**
  * Represents a connection with a database server.
@@ -182,6 +185,17 @@ class Connection implements ConnectionInterface
     }
 
     /**
+     * Get the retry wrapper object that is allows recovery from server disconnects
+     * while performing certain database actions, such as executing a query.
+     *
+     * @return \Cake\Core\Retry\CommandRetry The retry wrapper
+     */
+    public function getDisconnectRetry()
+    {
+        return new CommandRetry(new ReconnectStrategy($this));
+    }
+
+    /**
      * Gets the driver instance.
      *
      * @return \Cake\Database\Driver
@@ -224,7 +238,7 @@ class Connection implements ConnectionInterface
     {
         try {
             return $this->_driver->connect();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw new MissingConnectionException(['reason' => $e->getMessage()], null, $e);
         }
     }
@@ -257,13 +271,15 @@ class Connection implements ConnectionInterface
      */
     public function prepare($sql)
     {
-        $statement = $this->_driver->prepare($sql);
+        return $this->getDisconnectRetry()->run(function () use ($sql) {
+            $statement = $this->_driver->prepare($sql);
 
-        if ($this->_logQueries) {
-            $statement = $this->_newLogger($statement);
-        }
+            if ($this->_logQueries) {
+                $statement = $this->_newLogger($statement);
+            }
 
-        return $statement;
+            return $statement;
+        });
     }
 
     /**
@@ -277,15 +293,17 @@ class Connection implements ConnectionInterface
      */
     public function execute($query, array $params = [], array $types = [])
     {
-        if (!empty($params)) {
-            $statement = $this->prepare($query);
-            $statement->bind($params, $types);
-            $statement->execute();
-        } else {
-            $statement = $this->query($query);
-        }
+        return $this->getDisconnectRetry()->run(function () use ($query, $params, $types) {
+            if (!empty($params)) {
+                $statement = $this->prepare($query);
+                $statement->bind($params, $types);
+                $statement->execute();
+            } else {
+                $statement = $this->query($query);
+            }
 
-        return $statement;
+            return $statement;
+        });
     }
 
     /**
@@ -310,11 +328,13 @@ class Connection implements ConnectionInterface
      */
     public function run(Query $query)
     {
-        $statement = $this->prepare($query);
-        $query->getValueBinder()->attachTo($statement);
-        $statement->execute();
+        return $this->getDisconnectRetry()->run(function () use ($query) {
+            $statement = $this->prepare($query);
+            $query->getValueBinder()->attachTo($statement);
+            $statement->execute();
 
-        return $statement;
+            return $statement;
+        });
     }
 
     /**
@@ -325,10 +345,12 @@ class Connection implements ConnectionInterface
      */
     public function query($sql)
     {
-        $statement = $this->prepare($sql);
-        $statement->execute();
+        return $this->getDisconnectRetry()->run(function () use ($sql) {
+            $statement = $this->prepare($sql);
+            $statement->execute();
 
-        return $statement;
+            return $statement;
+        });
     }
 
     /**
@@ -402,12 +424,14 @@ class Connection implements ConnectionInterface
      */
     public function insert($table, array $data, array $types = [])
     {
-        $columns = array_keys($data);
+        return $this->getDisconnectRetry()->run(function () use ($table, $data, $types) {
+            $columns = array_keys($data);
 
-        return $this->newQuery()->insert($columns, $types)
-            ->into($table)
-            ->values($data)
-            ->execute();
+            return $this->newQuery()->insert($columns, $types)
+                ->into($table)
+                ->values($data)
+                ->execute();
+        });
     }
 
     /**
@@ -421,10 +445,12 @@ class Connection implements ConnectionInterface
      */
     public function update($table, array $data, array $conditions = [], $types = [])
     {
-        return $this->newQuery()->update($table)
-            ->set($data, $types)
-            ->where($conditions, $types)
-            ->execute();
+        return $this->getDisconnectRetry()->run(function () use ($table, $data, $conditions, $types) {
+            return $this->newQuery()->update($table)
+                ->set($data, $types)
+                ->where($conditions, $types)
+                ->execute();
+        });
     }
 
     /**
@@ -437,9 +463,11 @@ class Connection implements ConnectionInterface
      */
     public function delete($table, $conditions = [], $types = [])
     {
-        return $this->newQuery()->delete($table)
-            ->where($conditions, $types)
-            ->execute();
+        return $this->getDisconnectRetry()->run(function () use ($table, $conditions, $types) {
+            return $this->newQuery()->delete($table)
+                ->where($conditions, $types)
+                ->execute();
+        });
     }
 
     /**
@@ -453,7 +481,11 @@ class Connection implements ConnectionInterface
             if ($this->_logQueries) {
                 $this->log('BEGIN');
             }
-            $this->_driver->beginTransaction();
+
+            $this->getDisconnectRetry()->run(function () {
+                $this->_driver->beginTransaction();
+            });
+
             $this->_transactionLevel = 0;
             $this->_transactionStarted = true;
             $this->nestedTransactionRollbackException = null;
@@ -463,7 +495,7 @@ class Connection implements ConnectionInterface
 
         $this->_transactionLevel++;
         if ($this->isSavePointsEnabled()) {
-            $this->createSavePoint($this->_transactionLevel);
+            $this->createSavePoint((string)$this->_transactionLevel);
         }
     }
 
@@ -494,7 +526,7 @@ class Connection implements ConnectionInterface
             return $this->_driver->commitTransaction();
         }
         if ($this->isSavePointsEnabled()) {
-            $this->releaseSavePoint($this->_transactionLevel);
+            $this->releaseSavePoint((string)$this->_transactionLevel);
         }
 
         $this->_transactionLevel--;
@@ -647,7 +679,9 @@ class Connection implements ConnectionInterface
      */
     public function disableForeignKeys()
     {
-        $this->execute($this->_driver->disableForeignKeySQL())->closeCursor();
+        $this->getDisconnectRetry()->run(function () {
+            $this->execute($this->_driver->disableForeignKeySQL())->closeCursor();
+        });
     }
 
     /**
@@ -657,7 +691,9 @@ class Connection implements ConnectionInterface
      */
     public function enableForeignKeys()
     {
-        $this->execute($this->_driver->enableForeignKeySQL())->closeCursor();
+        $this->getDisconnectRetry()->run(function () {
+            $this->execute($this->_driver->enableForeignKeySQL())->closeCursor();
+        });
     }
 
     /**
@@ -688,7 +724,7 @@ class Connection implements ConnectionInterface
 
         try {
             $result = $callback($this);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->rollback(false);
             throw $e;
         }
@@ -732,18 +768,20 @@ class Connection implements ConnectionInterface
      */
     public function disableConstraints(callable $callback)
     {
-        $this->disableForeignKeys();
+        return $this->getDisconnectRetry()->run(function () use ($callback) {
+            $this->disableForeignKeys();
 
-        try {
-            $result = $callback($this);
-        } catch (\Exception $e) {
+            try {
+                $result = $callback($this);
+            } catch (Exception $e) {
+                $this->enableForeignKeys();
+                throw $e;
+            }
+
             $this->enableForeignKeys();
-            throw $e;
-        }
 
-        $this->enableForeignKeys();
-
-        return $result;
+            return $result;
+        });
     }
 
     /**
@@ -839,7 +877,7 @@ class Connection implements ConnectionInterface
     /**
      * Sets a logger
      *
-     * @param object $logger Logger object
+     * @param \Cake\Database\Log\QueryLogger $logger Logger object
      * @return $this
      */
     public function setLogger($logger)
@@ -852,7 +890,7 @@ class Connection implements ConnectionInterface
     /**
      * Gets the logger object
      *
-     * @return object logger instance
+     * @return \Cake\Database\Log\QueryLogger logger instance
      */
     public function getLogger()
     {

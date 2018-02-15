@@ -98,9 +98,9 @@ abstract class TestCase extends BaseTestCase
      */
     public function withErrorReporting($errorLevel, $callable)
     {
+        $default = error_reporting();
+        error_reporting($errorLevel);
         try {
-            $default = error_reporting();
-            error_reporting($errorLevel);
             $callable();
         } finally {
             error_reporting($default);
@@ -115,9 +115,9 @@ abstract class TestCase extends BaseTestCase
      */
     public function deprecated($callable)
     {
+        $errorLevel = error_reporting();
+        error_reporting(E_ALL ^ E_USER_DEPRECATED);
         try {
-            $errorLevel = error_reporting();
-            error_reporting(E_ALL ^ E_USER_DEPRECATED);
             $callable();
         } finally {
             error_reporting($errorLevel);
@@ -672,7 +672,7 @@ abstract class TestCase extends BaseTestCase
      * Mock a model, maintain fixtures and table association
      *
      * @param string $alias The model to get a mock for.
-     * @param mixed $methods The list of methods to mock
+     * @param array $methods The list of methods to mock
      * @param array $options The config data for the mock's constructor.
      * @throws \Cake\ORM\Exception\MissingTableClassException
      * @return \Cake\ORM\Table|\PHPUnit_Framework_MockObject_MockObject
@@ -697,17 +697,18 @@ abstract class TestCase extends BaseTestCase
         $options += ['alias' => $baseClass, 'connection' => $connection];
         $options += $locator->config($alias);
 
+        /** @var \Cake\ORM\Table|\PHPUnit_Framework_MockObject_MockObject $mock */
         $mock = $this->getMockBuilder($options['className'])
             ->setMethods($methods)
             ->setConstructorArgs([$options])
             ->getMock();
 
-        if (empty($options['entityClass']) && $mock->entityClass() === '\Cake\ORM\Entity') {
+        if (empty($options['entityClass']) && $mock->getEntityClass() === '\Cake\ORM\Entity') {
             $parts = explode('\\', $options['className']);
             $entityAlias = Inflector::singularize(substr(array_pop($parts), 0, -5));
             $entityClass = implode('\\', array_slice($parts, 0, -1)) . '\Entity\\' . $entityAlias;
             if (class_exists($entityClass)) {
-                $mock->entityClass($entityClass);
+                $mock->setEntityClass($entityClass);
             }
         }
 

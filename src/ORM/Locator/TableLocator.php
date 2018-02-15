@@ -119,6 +119,10 @@ class TableLocator implements LocatorInterface
      */
     public function config($alias = null, $options = null)
     {
+        deprecationWarning(
+            'TableLocator::config() is deprecated. ' .
+            'Use getConfig()/setConfig() instead.'
+        );
         if ($alias !== null) {
             if (is_string($alias) && $options === null) {
                 return $this->getConfig($alias);

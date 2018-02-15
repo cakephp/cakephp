@@ -17,6 +17,7 @@ namespace Cake\View\Form;
 use ArrayAccess;
 use Cake\Collection\Collection;
 use Cake\Datasource\EntityInterface;
+use Cake\Datasource\RepositoryInterface;
 use Cake\Http\ServerRequest;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Inflector;
@@ -137,7 +138,7 @@ class EntityContext implements ContextInterface
             $isEntity = $entity instanceof EntityInterface;
 
             if ($isEntity) {
-                $table = $entity->source();
+                $table = $entity->getSource();
             }
             if (!$table && $isEntity && get_class($entity) !== 'Cake\ORM\Entity') {
                 list(, $entityClass) = namespaceSplit(get_class($entity));
@@ -148,7 +149,7 @@ class EntityContext implements ContextInterface
             $table = $this->getTableLocator()->get($table);
         }
 
-        if (!is_object($table)) {
+        if (!($table instanceof RepositoryInterface)) {
             throw new RuntimeException(
                 'Unable to find table class for current entity'
             );
@@ -157,6 +158,7 @@ class EntityContext implements ContextInterface
             is_array($entity) ||
             $entity instanceof Traversable
         );
+
         $alias = $this->_rootName = $table->getAlias();
         $this->_tables[$alias] = $table;
     }
@@ -582,7 +584,7 @@ class EntityContext implements ContextInterface
         $entity = $this->entity($parts);
 
         if ($entity instanceof EntityInterface) {
-            return $entity->errors(array_pop($parts));
+            return $entity->getError(array_pop($parts));
         }
 
         return [];

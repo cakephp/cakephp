@@ -340,16 +340,11 @@ class ViewTest extends TestCase
      */
     public function testGetTemplate()
     {
-        $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
-        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
-
         $viewOptions = [
             'plugin' => null,
             'name' => 'Pages',
             'viewPath' => 'Pages'
         ];
-        $request->action = 'display';
-        $request->params['pass'] = ['home'];
 
         $ThemeView = new TestView(null, null, null, $viewOptions);
         $ThemeView->theme = 'TestTheme';
@@ -416,16 +411,11 @@ class ViewTest extends TestCase
     public function testPluginGetTemplateAbsoluteFail()
     {
         $this->expectException(\Cake\View\Exception\MissingTemplateException::class);
-        $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
-        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
-
         $viewOptions = [
             'plugin' => null,
             'name' => 'Pages',
             'viewPath' => 'Pages'
         ];
-        $request->action = 'display';
-        $request->params['pass'] = ['home'];
 
         $view = new TestView(null, null, null, $viewOptions);
         $expected = TEST_APP . 'Plugin' . DS . 'Company' . DS . 'TestPluginThree' . DS . 'src' . DS . 'Template' . DS . 'Pages' . DS . 'index.ctp';
@@ -676,6 +666,27 @@ class ViewTest extends TestCase
     }
 
     /**
+     * Test getViewFileName applies subdirectories on equal length names
+     *
+     * @return void
+     */
+    public function testGetViewFileNameSubDirLength()
+    {
+        $viewOptions = [
+            'plugin' => null,
+            'name' => 'Jobs',
+            'viewPath' => 'Jobs',
+            'layoutPath' => 'json',
+        ];
+        $view = new TestView(null, null, null, $viewOptions);
+
+        $view->subDir = 'json';
+        $result = $view->getViewFileName('index');
+        $expected = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Jobs' . DS . 'json' . DS . 'index.ctp';
+        $this->assertPathEquals($expected, $result);
+    }
+
+    /**
      * Test getting layout filenames
      *
      * @return void
@@ -743,31 +754,30 @@ class ViewTest extends TestCase
         $View = new TestView();
 
         // Prefix specific layout
-        $View->request->params['prefix'] = 'foo_prefix';
+        $View->request = $View->request->withParam('prefix', 'foo_prefix');
         $expected = TEST_APP . 'TestApp' . DS . 'Template' . DS .
             'FooPrefix' . DS . 'Layout' . DS . 'default.ctp';
         $result = $View->getLayoutFileName();
         $this->assertPathEquals($expected, $result);
 
-        $View->request->params['prefix'] = 'FooPrefix';
+        $View->request = $View->request->withParam('prefix', 'FooPrefix');
         $result = $View->getLayoutFileName();
         $this->assertPathEquals($expected, $result);
 
         // Nested prefix layout
-        $View->request->params['prefix'] = 'foo_prefix/bar_prefix';
+        $View->request = $View->request->withParam('prefix', 'foo_prefix/bar_prefix');
         $expected = TEST_APP . 'TestApp' . DS . 'Template' . DS .
             'FooPrefix' . DS . 'BarPrefix' . DS . 'Layout' . DS . 'default.ctp';
         $result = $View->getLayoutFileName();
         $this->assertPathEquals($expected, $result);
 
-        $View->request->params['prefix'] = 'foo_prefix/bar_prefix';
         $expected = TEST_APP . 'TestApp' . DS . 'Template' . DS .
             'FooPrefix' . DS . 'Layout' . DS . 'nested_prefix_cascade.ctp';
         $result = $View->getLayoutFileName('nested_prefix_cascade');
         $this->assertPathEquals($expected, $result);
 
         // Fallback to app's layout
-        $View->request->params['prefix'] = 'Admin';
+        $View->request = $View->request->withParam('prefix', 'Admin');
         $expected = TEST_APP . 'TestApp' . DS . 'Template' . DS .
             'Layout' . DS . 'default.ctp';
         $result = $View->getLayoutFileName();
@@ -911,7 +921,7 @@ class ViewTest extends TestCase
      */
     public function testPrefixElement()
     {
-        $this->View->request->params['prefix'] = 'Admin';
+        $this->View->request = $this->View->request->withParam('prefix', 'Admin');
         $result = $this->View->element('prefix_element');
         $this->assertEquals('this is a prefixed test element', $result);
 
@@ -922,11 +932,10 @@ class ViewTest extends TestCase
         $result = $this->View->element('test_plugin_element');
         $this->assertEquals('this is the test set using View::$plugin plugin prefixed element', $result);
 
-        $this->View->request->params['prefix'] = 'FooPrefix/BarPrefix';
+        $this->View->request = $this->View->request->withParam('prefix', 'FooPrefix/BarPrefix');
         $result = $this->View->element('prefix_element');
         $this->assertEquals('this is a nested prefixed test element', $result);
 
-        $this->View->request->params['prefix'] = 'FooPrefix/BarPrefix';
         $result = $this->View->element('prefix_element_in_parent');
         $this->assertEquals('this is a nested prefixed test element in first level element', $result);
     }
@@ -934,24 +943,26 @@ class ViewTest extends TestCase
     /**
      * Test loading non-existent view element
      *
-     * @expectedException \Cake\View\Exception\MissingElementException
-     * @expectedExceptionMessageRegExp $Element file \"Element[\\|/]non_existent_element\.ctp\" is missing$
      * @return void
      */
     public function testElementNonExistent()
     {
+        $this->expectException(\Cake\View\Exception\MissingElementException::class);
+        $this->expectExceptionMessageRegExp('#^Element file "Element[\\\\/]non_existent_element\.ctp" is missing\.$#');
+
         $this->View->element('non_existent_element');
     }
 
     /**
      * Test loading non-existent plugin view element
      *
-     * @expectedException \Cake\View\Exception\MissingElementException
-     * @expectedExceptionMessageRegExp $Element file "test_plugin\.Element[\\|/]plugin_element\.ctp\" is missing$
      * @return void
      */
     public function testElementInexistentPluginElement()
     {
+        $this->expectException(\Cake\View\Exception\MissingElementException::class);
+        $this->expectExceptionMessageRegExp('#^Element file "test_plugin\.Element[\\\\/]plugin_element\.ctp" is missing\.$#');
+
         $this->View->element('test_plugin.plugin_element');
     }
 
@@ -1069,7 +1080,7 @@ class ViewTest extends TestCase
     public function testViewEvent()
     {
         $View = $this->PostsController->createView();
-        $View->setTemplatePath($this->PostsController->name);
+        $View->setTemplatePath($this->PostsController->getName());
         $View->enableAutoLayout(false);
         $listener = new TestViewEventListenerInterface();
 
@@ -1178,7 +1189,7 @@ class ViewTest extends TestCase
     public function testHelperCallbackTriggering()
     {
         $View = $this->PostsController->createView();
-        $View->setTemplatePath($this->PostsController->name);
+        $View->setTemplatePath($this->PostsController->getName());
 
         $manager = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
         $View->setEventManager($manager);
@@ -1270,7 +1281,7 @@ class ViewTest extends TestCase
             'Html'
         ];
         $View = $this->PostsController->createView();
-        $View->setTemplatePath($this->PostsController->name);
+        $View->setTemplatePath($this->PostsController->getName());
         $View->render('index');
         $this->assertEquals('Valuation', $View->helpers()->TestBeforeAfter->property);
     }
@@ -1289,7 +1300,7 @@ class ViewTest extends TestCase
         $this->PostsController->set('variable', 'values');
 
         $View = $this->PostsController->createView();
-        $View->setTemplatePath($this->PostsController->name);
+        $View->setTemplatePath($this->PostsController->getName());
 
         $content = 'This is my view output';
         $result = $View->renderLayout($content, 'default');
@@ -1306,7 +1317,7 @@ class ViewTest extends TestCase
     {
         $this->PostsController->helpers = ['Form', 'Number'];
         $View = $this->PostsController->createView('Cake\Test\TestCase\View\TestView');
-        $View->setTemplatePath($this->PostsController->name);
+        $View->setTemplatePath($this->PostsController->getName());
 
         $result = $View->render('index', false);
         $this->assertEquals('posts index', $result);
@@ -1317,7 +1328,7 @@ class ViewTest extends TestCase
 
         $this->PostsController->helpers = ['Html', 'Form', 'Number', 'TestPlugin.PluggedHelper'];
         $View = $this->PostsController->createView('Cake\Test\TestCase\View\TestView');
-        $View->setTemplatePath($this->PostsController->name);
+        $View->setTemplatePath($this->PostsController->getName());
 
         $result = $View->render('index', false);
         $this->assertEquals('posts index', $result);
@@ -1335,7 +1346,7 @@ class ViewTest extends TestCase
     public function testRender()
     {
         $View = $this->PostsController->createView('Cake\Test\TestCase\View\TestView');
-        $View->setTemplatePath($this->PostsController->name);
+        $View->setTemplatePath($this->PostsController->getName());
         $result = $View->render('index');
 
         $this->assertRegExp("/<meta charset=\"utf-8\"\/>\s*<title>/", $result);
@@ -1350,11 +1361,11 @@ class ViewTest extends TestCase
         $this->assertNull($View->render(false, 'ajax2'));
 
         $this->PostsController->helpers = ['Html'];
-        $this->PostsController->request->params['action'] = 'index';
+        $this->PostsController->request = $this->PostsController->request->withParam('action', 'index');
         Configure::write('Cache.check', true);
 
         $View = $this->PostsController->createView('Cake\Test\TestCase\View\TestView');
-        $View->setTemplatePath($this->PostsController->name);
+        $View->setTemplatePath($this->PostsController->getName());
         $result = $View->render('index');
 
         $this->assertRegExp("/<meta charset=\"utf-8\"\/>\s*<title>/", $result);
@@ -1369,7 +1380,7 @@ class ViewTest extends TestCase
     public function testRenderUsingViewProperty()
     {
         $View = $this->PostsController->createView('Cake\Test\TestCase\View\TestView');
-        $View->setTemplatePath($this->PostsController->name);
+        $View->setTemplatePath($this->PostsController->getName());
         $View->setTemplate('cache_form');
 
         $this->assertEquals('cache_form', $View->getTemplate());
@@ -1406,8 +1417,8 @@ class ViewTest extends TestCase
      */
     public function testGetViewFileNameSubdirWithPluginAndViewPath()
     {
-        $this->PostsController->plugin = 'TestPlugin';
-        $this->PostsController->name = 'Posts';
+        $this->PostsController->setPlugin('TestPlugin');
+        $this->PostsController->setName('Posts');
         $View = $this->PostsController->createView('Cake\Test\TestCase\View\TestView');
         $View->setTemplatePath('Element');
 
@@ -1429,7 +1440,7 @@ class ViewTest extends TestCase
         $Controller->helpers = ['Html'];
         $Controller->set('html', 'I am some test html');
         $View = $Controller->createView();
-        $View->setTemplatePath($Controller->name);
+        $View->setTemplatePath($Controller->getName());
         $result = $View->render('helper_overwrite', false);
 
         $this->assertRegExp('/I am some test html/', $result);
@@ -1898,7 +1909,7 @@ TEXT;
      */
     public function testExtendPrefixElement()
     {
-        $this->View->request->params['prefix'] = 'Admin';
+        $this->View->request = $this->View->request->withParam('prefix', 'Admin');
         $this->View->layout = false;
         $content = $this->View->render('extend_element');
         $expected = <<<TEXT
@@ -1953,7 +1964,7 @@ TEXT;
      */
     public function testExtendWithPrefixElementBeforeExtend()
     {
-        $this->View->request->params['prefix'] = 'Admin';
+        $this->View->request = $this->View->request->withParam('prefix', 'Admin');
         $this->View->layout = false;
         $result = $this->View->render('extend_with_element');
         $expected = <<<TEXT
@@ -1972,8 +1983,8 @@ TEXT;
     public function testMemoryLeakInPaths()
     {
         $this->skipIf(env('CODECOVERAGE') == 1, 'Running coverage this causes this tests to fail sometimes.');
-        $this->ThemeController->plugin = null;
-        $this->ThemeController->name = 'Posts';
+        $this->ThemeController->setPlugin(null);
+        $this->ThemeController->setName('Posts');
 
         $View = $this->ThemeController->createView();
         $View->setTemplatePath('Posts');

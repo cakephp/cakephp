@@ -55,9 +55,7 @@ class PaginatorTest extends TestCase
 
         $this->Paginator = new Paginator();
 
-        $this->Post = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->Post = $this->getMockRepository();
     }
 
     /**
@@ -79,7 +77,7 @@ class PaginatorTest extends TestCase
     public function testPageParamCasting()
     {
         $this->Post->expects($this->any())
-            ->method('alias')
+            ->method('getAlias')
             ->will($this->returnValue('Posts'));
 
         $query = $this->_getMockFindQuery();
@@ -614,9 +612,9 @@ class PaginatorTest extends TestCase
      */
     public function testValidateSortInvalidDirection()
     {
-        $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')->getMock();
+        $model = $this->getMockRepository();
         $model->expects($this->any())
-            ->method('alias')
+            ->method('getAlias')
             ->will($this->returnValue('model'));
         $model->expects($this->any())
             ->method('hasField')
@@ -748,9 +746,9 @@ class PaginatorTest extends TestCase
      */
     public function testValidateSortWhitelistNotInSchema()
     {
-        $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')->getMock();
+        $model = $this->getMockRepository();
         $model->expects($this->any())
-            ->method('alias')
+            ->method('getAlias')
             ->will($this->returnValue('model'));
         $model->expects($this->once())->method('hasField')
             ->will($this->returnValue(false));
@@ -795,11 +793,23 @@ class PaginatorTest extends TestCase
         $this->assertEquals($expected, $result['order']);
     }
 
+    protected function getMockRepository()
+    {
+        $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')
+            ->setMethods([
+                'getAlias', 'hasField', 'alias', 'find', 'get', 'query', 'updateAll', 'deleteAll',
+                'exists', 'save', 'delete', 'newEntity', 'newEntities', 'patchEntity', 'patchEntities'
+            ])
+            ->getMock();
+
+        return $model;
+    }
+
     protected function mockAliasHasFieldModel()
     {
-        $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')->getMock();
+        $model = $this->getMockRepository();
         $model->expects($this->any())
-            ->method('alias')
+            ->method('getAlias')
             ->will($this->returnValue('model'));
         $model->expects($this->any())
             ->method('hasField')

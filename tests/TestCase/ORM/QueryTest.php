@@ -153,7 +153,7 @@ class QueryTest extends TestCase
         $query = new Query($this->connection, $table);
         $results = $query->select()
             ->contain('authors')
-            ->hydrate(false)
+            ->enableHydration(false)
             ->order(['articles.id' => 'asc'])
             ->toArray();
         $expected = [
@@ -216,7 +216,7 @@ class QueryTest extends TestCase
 
         $results = $query->select()
             ->contain('articles')
-            ->hydrate(false)
+            ->enableHydration(false)
             ->toArray();
         $expected = [
             [
@@ -268,7 +268,7 @@ class QueryTest extends TestCase
         $results = $query->repository($table)
             ->select()
             ->contain(['articles' => ['conditions' => ['articles.id' => 2]]])
-            ->hydrate(false)
+            ->enableHydration(false)
             ->toArray();
         $expected[0]['articles'] = [];
         $this->assertEquals($expected, $results);
@@ -298,11 +298,11 @@ class QueryTest extends TestCase
 
         $expected = 4;
 
-        $results = $query->hydrate(false)
+        $results = $query->enableHydration(false)
             ->count();
         $this->assertEquals($expected, $results);
 
-        $results = $query->hydrate(true)
+        $results = $query->enableHydration(true)
             ->count();
         $this->assertEquals($expected, $results);
     }
@@ -327,7 +327,7 @@ class QueryTest extends TestCase
                     'sort' => ['articles.id' => 'DESC']
                 ]
             ])
-            ->hydrate(false)
+            ->enableHydration(false)
             ->toArray();
         $expected = [
             [
@@ -379,7 +379,7 @@ class QueryTest extends TestCase
 
         $results = $query->select()
             ->contain(['articles' => ['authors']])
-            ->hydrate(false)
+            ->enableHydration(false)
             ->toArray();
         $expected = [
             [
@@ -456,7 +456,7 @@ class QueryTest extends TestCase
         $results = $query->select()
             ->contain(['authors' => ['posts']])
             ->order(['articles.id' => 'ASC'])
-            ->hydrate(false)
+            ->enableHydration(false)
             ->toArray();
         $expected = [
             [
@@ -558,7 +558,7 @@ class QueryTest extends TestCase
         ]);
         $query = new Query($this->connection, $table);
 
-        $results = $query->select()->contain('Tags')->hydrate(false)->toArray();
+        $results = $query->select()->contain('Tags')->enableHydration(false)->toArray();
         $expected = [
             [
                 'id' => 1,
@@ -619,7 +619,7 @@ class QueryTest extends TestCase
 
         $results = $query->select()
             ->contain(['Tags' => ['conditions' => ['Tags.id' => 3]]])
-            ->hydrate(false)
+            ->enableHydration(false)
             ->toArray();
         $expected = [
             [
@@ -672,7 +672,7 @@ class QueryTest extends TestCase
 
         $results = $query->repository($table)
             ->select()
-            ->hydrate(false)
+            ->enableHydration(false)
             ->matching('Comments', function ($q) {
                 return $q->where(['Comments.user_id' => 4]);
             })
@@ -743,7 +743,7 @@ class QueryTest extends TestCase
             ->matching('Tags', function ($q) {
                 return $q->where(['Tags.id' => 3]);
             })
-            ->hydrate(false)
+            ->enableHydration(false)
             ->toArray();
         $expected = [
             [
@@ -770,7 +770,7 @@ class QueryTest extends TestCase
             ->matching('Tags', function ($q) {
                 return $q->where(['Tags.name' => 'tag2']);
             })
-            ->hydrate(false)
+            ->enableHydration(false)
             ->toArray();
         $expected = [
             [
@@ -808,7 +808,7 @@ class QueryTest extends TestCase
 
         $results = $query->repository($table)
             ->select()
-            ->hydrate(false)
+            ->enableHydration(false)
             ->matching('articles.tags', function ($q) {
                 return $q->where(['tags.id' => 2]);
             })
@@ -1100,7 +1100,7 @@ class QueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('articles', ['table' => 'articles']);
         $query = new Query($this->connection, $table);
-        $result = $query->select(['id'])->hydrate(false)->first();
+        $result = $query->select(['id'])->enableHydration(false)->first();
         $this->assertEquals(['id' => 1], $result);
         $this->assertEquals(1, $query->clause('limit'));
         $result = $query->select(['id'])->first();
@@ -1118,7 +1118,7 @@ class QueryTest extends TestCase
         $query = new Query($this->connection, $table);
         $query->select(['id'])->toArray();
 
-        $first = $query->hydrate(false)->first();
+        $first = $query->enableHydration(false)->first();
         $this->assertEquals(['id' => 1], $first);
         $this->assertEquals(1, $query->clause('limit'));
     }
@@ -1134,7 +1134,7 @@ class QueryTest extends TestCase
         $query = new Query($this->connection, $table);
         $query->select(['id'])->toArray();
 
-        $first = $query->hydrate(false)->first();
+        $first = $query->enableHydration(false)->first();
         $resultSet = $query->all();
         $this->assertEquals(['id' => 1], $first);
         $this->assertSame($resultSet, $query->all());
@@ -1157,7 +1157,7 @@ class QueryTest extends TestCase
         $table = $this->getTableLocator()->get('articles', ['table' => 'articles']);
         $query = new Query($this->connection, $table);
         $query->select(['id'])
-            ->hydrate(false)
+            ->enableHydration(false)
             ->mapReduce($map, $reduce);
 
         $first = $query->first();
@@ -1175,7 +1175,7 @@ class QueryTest extends TestCase
         $query = new Query($this->connection, $table);
         $query->select(['id']);
 
-        $first = $query->hydrate(false)
+        $first = $query->enableHydration(false)
             ->enableBufferedResults(false)->first();
 
         $this->assertEquals(['id' => 1], $first);
@@ -2495,7 +2495,7 @@ class QueryTest extends TestCase
         $query = $table->find()
             ->where(['id > ' => 1])
             ->enableBufferedResults(false)
-            ->hydrate(false)
+            ->enableHydration(false)
             ->matching('articles')
             ->applyOptions(['foo' => 'bar'])
             ->formatResults(function ($results) {
@@ -2562,11 +2562,11 @@ class QueryTest extends TestCase
         $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles');
         $query = $table->find()->contain(['articles' => function ($q) {
-            $this->assertTrue($q->eagerLoaded());
+            $this->assertTrue($q->isEagerLoaded());
 
             return $q;
         }]);
-        $this->assertFalse($query->eagerLoaded());
+        $this->assertFalse($query->isEagerLoaded());
 
         $table->getEventManager()->on('Model.beforeFind', function ($e, $q, $o, $primary) {
             $this->assertTrue($primary);
@@ -2625,7 +2625,7 @@ class QueryTest extends TestCase
                 ]
             ])
             ->order(['articles.id' => 'ASC'])
-            ->hydrate(false)
+            ->enableHydration(false)
             ->toArray();
         $expected = [
             ['title' => 'First Article', 'person' => ['name' => 'mariano']],
@@ -2651,7 +2651,7 @@ class QueryTest extends TestCase
         $results = $table
             ->find()
             ->contain(['Articles', 'Tags.Articles'])
-            ->hydrate(false)
+            ->enableHydration(false)
             ->toArray();
         $this->assertNotEmpty($results[0]['tag']['articles']);
         $this->assertNotEmpty($results[0]['article']);
@@ -2672,7 +2672,7 @@ class QueryTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $table->hasOne('ArticlesTags', ['strategy' => 'select']);
         $article = $table->find()->where(['id' => 3])
-            ->hydrate(false)
+            ->enableHydration(false)
             ->contain('ArticlesTags')
             ->first();
 
@@ -2703,8 +2703,8 @@ class QueryTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $result = $table->find('all')
             ->select(['myField' => '(SELECT 20)'])
-            ->autoFields(true)
-            ->hydrate(false)
+            ->enableAutoFields(true)
+            ->enableHydration(false)
             ->first();
 
         $this->assertArrayHasKey('myField', $result);
@@ -2724,8 +2724,8 @@ class QueryTest extends TestCase
 
         $result = $table->find()
             ->select(['myField' => '(SELECT 2 + 2)'])
-            ->autoFields(true)
-            ->hydrate(false)
+            ->enableAutoFields(true)
+            ->enableHydration(false)
             ->contain('Authors')
             ->first();
 
@@ -2748,11 +2748,11 @@ class QueryTest extends TestCase
 
         $result = $table->find()
             ->select(['myField' => '(SELECT 2 + 2)'])
-            ->autoFields(true)
-            ->hydrate(false)
+            ->enableAutoFields(true)
+            ->enableHydration(false)
             ->contain(['Authors' => function ($q) {
                 return $q->select(['compute' => '(SELECT 2 + 20)'])
-                    ->autoFields(true);
+                    ->enableAutoFields(true);
             }])
             ->first();
 
@@ -2775,7 +2775,7 @@ class QueryTest extends TestCase
 
         $result = $table->find()
             ->select(['myField' => '(SELECT (2 + 2))'])
-            ->autoFields(true)
+            ->enableAutoFields(true)
             ->count();
 
         $this->assertEquals(3, $result);
@@ -3170,7 +3170,7 @@ class QueryTest extends TestCase
             ->select(function ($q) {
                 return ['foo' => $q->newExpr('1 + 1')];
             })
-            ->autoFields(true)
+            ->enableAutoFields(true)
             ->contain(['authors'])
             ->first();
 
@@ -3220,7 +3220,7 @@ class QueryTest extends TestCase
         $results = $table
             ->find()
             ->select(['total_articles' => 'count(articles.id)'])
-            ->autoFields(true)
+            ->enableAutoFields(true)
             ->leftJoinWith('articles')
             ->group(['authors.id', 'authors.name']);
 
@@ -3301,7 +3301,7 @@ class QueryTest extends TestCase
                     ->select(['articles.id', 'articles.title', 'tags.name'])
                     ->where(['tags.name' => 'tag3']);
             })
-            ->autoFields(true)
+            ->enableAutoFields(true)
             ->where(['ArticlesTags.tag_id' => 3])
             ->all();
 
@@ -3314,6 +3314,25 @@ class QueryTest extends TestCase
             ['name' => 'tag3'],
             $results->first()->_matchingData['tags']->toArray()
         );
+    }
+
+    /**
+     * Tests that leftJoinWith() can be used with autofields()
+     *
+     * @return void
+     */
+    public function testLeftJoinWithAutoFields()
+    {
+        $table = TableRegistry::get('articles');
+        $table->belongsTo('authors');
+
+        $results = $table
+            ->find()
+            ->leftJoinWith('authors', function ($q) {
+                return $q->enableAutoFields(true);
+            })
+            ->all();
+        $this->assertCount(3, $results);
     }
 
     /**
@@ -3336,7 +3355,7 @@ class QueryTest extends TestCase
             'name' => 'mariano'
             ]
         ];
-        $this->assertEquals($expected, $results->hydrate(false)->toArray());
+        $this->assertEquals($expected, $results->enableHydration(false)->toArray());
     }
 
     /**
@@ -3360,7 +3379,7 @@ class QueryTest extends TestCase
             'name' => 'larry'
             ]
         ];
-        $this->assertEquals($expected, $results->hydrate(false)->toArray());
+        $this->assertEquals($expected, $results->enableHydration(false)->toArray());
     }
 
     /**
@@ -3374,7 +3393,7 @@ class QueryTest extends TestCase
         $table->hasMany('articles');
         $results = $table
             ->find()
-            ->autoFields(true)
+            ->enableAutoFields(true)
             ->innerJoinWith('articles', function ($q) {
                 return $q->select(['id', 'author_id', 'title', 'body', 'published']);
             })
@@ -3398,7 +3417,7 @@ class QueryTest extends TestCase
         $table->hasMany('articles');
 
         $results = $table->find()
-            ->hydrate(false)
+            ->enableHydration(false)
             ->notMatching('articles')
             ->order(['authors.id'])
             ->toArray();
@@ -3410,7 +3429,7 @@ class QueryTest extends TestCase
         $this->assertEquals($expected, $results);
 
         $results = $table->find()
-            ->hydrate(false)
+            ->enableHydration(false)
             ->notMatching('articles', function ($q) {
                 return $q->where(['articles.author_id' => 1]);
             })
@@ -3435,7 +3454,7 @@ class QueryTest extends TestCase
         $table->belongsToMany('tags');
 
         $results = $table->find()
-            ->hydrate(false)
+            ->enableHydration(false)
             ->notMatching('tags', function ($q) {
                 return $q->where(['tags.name' => 'tag2']);
             });
@@ -3473,7 +3492,7 @@ class QueryTest extends TestCase
         $articles->belongsToMany('tags');
 
         $results = $table->find()
-            ->hydrate(false)
+            ->enableHydration(false)
             ->select('authors.id')
             ->notMatching('articles.tags', function ($q) {
                 return $q->where(['tags.name' => 'tag3']);
@@ -3483,7 +3502,7 @@ class QueryTest extends TestCase
         $this->assertEquals([1, 2, 4], $results->extract('id')->toList());
 
         $results = $table->find()
-            ->hydrate(false)
+            ->enableHydration(false)
             ->notMatching('articles.tags', function ($q) {
                 return $q->where(['tags.name' => 'tag3']);
             })
@@ -3506,7 +3525,7 @@ class QueryTest extends TestCase
         $articles->belongsToMany('tags');
 
         $results = $table->find()
-            ->hydrate(false)
+            ->enableHydration(false)
             ->matching('articles', function ($q) {
                 return $q->notMatching('tags', function ($q) {
                     return $q->where(['tags.name' => 'tag3']);

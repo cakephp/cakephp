@@ -49,7 +49,7 @@ class File
     /**
      * Holds the file handler resource if the file is opened
      *
-     * @var resource
+     * @var resource|null
      * https://book.cakephp.org/3.0/en/core-libraries/file-folder.html#Cake\Filesystem\File::$handle
      */
     public $handle;
@@ -57,7 +57,7 @@ class File
     /**
      * Enable locking for file reading and writing
      *
-     * @var bool
+     * @var bool|null
      * https://book.cakephp.org/3.0/en/core-libraries/file-folder.html#Cake\Filesystem\File::$lock
      */
     public $lock;
@@ -67,7 +67,7 @@ class File
      *
      * Current file's absolute path
      *
-     * @var mixed
+     * @var string|null
      * https://book.cakephp.org/3.0/en/core-libraries/file-folder.html#Cake\Filesystem\File::$path
      */
     public $path;

@@ -117,7 +117,7 @@ class RoutesShellTest extends ConsoleIntegrationTestCase
         $this->assertOutputContainsRow([
             'testName',
             '/tests/index',
-            '{"action":"index","pass":[],"controller":"Tests","plugin":null}'
+            '{"action":"index","pass":[],"controller":"Tests","plugin":null,"_name":"testName"}'
         ]);
     }
 

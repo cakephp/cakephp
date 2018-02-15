@@ -189,7 +189,7 @@ class RequestHandlerComponent extends Component
      */
     public function startup(Event $event)
     {
-        /* @var \Cake\Controller\Controller $controller */
+        /** @var \Cake\Controller\Controller $controller */
         $controller = $event->getSubject();
         $request = $controller->request;
         $response = $controller->response;
@@ -201,9 +201,10 @@ class RequestHandlerComponent extends Component
             $this->_setExtension($request, $response);
         }
 
-        $request->params['isAjax'] = $request->is('ajax');
+        $isAjax = $request->is('ajax');
+        $controller->request = $request->withParam('isAjax', $isAjax);
 
-        if (!$this->ext && $request->is('ajax')) {
+        if (!$this->ext && $isAjax) {
             $this->ext = 'ajax';
         }
 
@@ -217,7 +218,7 @@ class RequestHandlerComponent extends Component
             }
             if ($this->requestedWith($type)) {
                 $input = $request->input(...$handler);
-                $request->data = (array)$input;
+                $controller->request = $request->withParsedBody((array)$input);
             }
         }
     }
@@ -278,7 +279,7 @@ class RequestHandlerComponent extends Component
             list($url, $querystr) = explode('?', $url, 2);
             parse_str($querystr, $query);
         }
-        /* @var \Cake\Controller\Controller $controller */
+        /** @var \Cake\Controller\Controller $controller */
         $controller = $event->getSubject();
         $response->body($controller->requestAction($url, [
             'return',
@@ -318,7 +319,7 @@ class RequestHandlerComponent extends Component
      */
     public function beforeRender(Event $event)
     {
-        /* @var \Cake\Controller\Controller $controller */
+        /** @var \Cake\Controller\Controller $controller */
         $controller = $event->getSubject();
         $response = $controller->response;
         $request = $controller->request;

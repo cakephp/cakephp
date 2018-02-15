@@ -34,7 +34,7 @@ class SchemaCache
     /**
      * Schema
      *
-     * @var \Cake\Database\Schema\Collection|\Cake\Database\Schema\CachedCollection
+     * @var \Cake\Database\Schema\CachedCollection
      */
     protected $_schema;
 

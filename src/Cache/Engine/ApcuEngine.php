@@ -14,7 +14,7 @@
  */
 namespace Cake\Cache\Engine;
 
-use APCUIterator;
+use APCuIterator;
 use Cake\Cache\CacheEngine;
 
 /**
@@ -137,8 +137,8 @@ class ApcuEngine extends CacheEngine
         if ($check) {
             return true;
         }
-        if (class_exists('APCUIterator', false)) {
-            $iterator = new APCUIterator(
+        if (class_exists('APCuIterator', false)) {
+            $iterator = new APCuIterator(
                 '/^' . preg_quote($this->_config['prefix'], '/') . '/',
                 APC_ITER_NONE
             );

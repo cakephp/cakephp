@@ -38,6 +38,7 @@ use Cake\ORM\SaveOptionsBuilder;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
+use InvalidArgumentException;
 
 /**
  * Used to test correct class is instantiated when using $this->getTableLocator()->get();
@@ -137,51 +138,80 @@ class TableTest extends TestCase
     public function testTableMethod()
     {
         $table = new Table(['table' => 'users']);
-        $this->assertEquals('users', $table->table());
+        $this->assertEquals('users', $table->getTable());
 
         $table = new UsersTable;
-        $this->assertEquals('users', $table->table());
+        $this->assertEquals('users', $table->getTable());
 
         $table = $this->getMockBuilder('\Cake\ORM\Table')
             ->setMethods(['find'])
             ->setMockClassName('SpecialThingsTable')
             ->getMock();
-        $this->assertEquals('special_things', $table->table());
+        $this->assertEquals('special_things', $table->getTable());
 
         $table = new Table(['alias' => 'LoveBoats']);
-        $this->assertEquals('love_boats', $table->table());
+        $this->assertEquals('love_boats', $table->getTable());
 
-        $table->table('other');
-        $this->assertEquals('other', $table->table());
+        $table->setTable('other');
+        $this->assertEquals('other', $table->getTable());
 
-        $table->table('database.other');
-        $this->assertEquals('database.other', $table->table());
+        $table->setTable('database.other');
+        $this->assertEquals('database.other', $table->getTable());
     }
 
     /**
      * Tests the alias method
      *
+     * @group deprecated
      * @return void
      */
     public function testAliasMethod()
     {
+        $this->deprecated(function () {
+            $table = new Table(['alias' => 'users']);
+            $this->assertEquals('users', $table->alias());
+
+            $table = new Table(['table' => 'stuffs']);
+            $this->assertEquals('stuffs', $table->alias());
+
+            $table = new UsersTable;
+            $this->assertEquals('Users', $table->alias());
+
+            $table = $this->getMockBuilder('\Cake\ORM\Table')
+                ->setMethods(['find'])
+                ->setMockClassName('SpecialThingTable')
+                ->getMock();
+            $this->assertEquals('SpecialThing', $table->alias());
+
+            $table->alias('AnotherOne');
+            $this->assertEquals('AnotherOne', $table->alias());
+        });
+    }
+
+    /**
+     * Tests the setAlias method
+     *
+     * @return void
+     */
+    public function testSetAlias()
+    {
         $table = new Table(['alias' => 'users']);
-        $this->assertEquals('users', $table->alias());
+        $this->assertEquals('users', $table->getAlias());
 
         $table = new Table(['table' => 'stuffs']);
-        $this->assertEquals('stuffs', $table->alias());
+        $this->assertEquals('stuffs', $table->getAlias());
 
         $table = new UsersTable;
-        $this->assertEquals('Users', $table->alias());
+        $this->assertEquals('Users', $table->getAlias());
 
         $table = $this->getMockBuilder('\Cake\ORM\Table')
             ->setMethods(['find'])
             ->setMockClassName('SpecialThingTable')
             ->getMock();
-        $this->assertEquals('SpecialThing', $table->alias());
+        $this->assertEquals('SpecialThing', $table->getAlias());
 
-        $table->alias('AnotherOne');
-        $this->assertEquals('AnotherOne', $table->alias());
+        $table->setAlias('AnotherOne');
+        $this->assertEquals('AnotherOne', $table->getAlias());
     }
 
     /**
@@ -200,14 +230,55 @@ class TableTest extends TestCase
     /**
      * Tests connection method
      *
+     * @group deprecated
      * @return void
      */
     public function testConnection()
     {
+        $this->deprecated(function () {
+            $table = new Table(['table' => 'users']);
+            $this->assertNull($table->connection());
+            $table->connection($this->connection);
+            $this->assertSame($this->connection, $table->connection());
+        });
+    }
+
+    /**
+     * Tests setConnection method
+     *
+     * @return void
+     */
+    public function testSetConnection()
+    {
         $table = new Table(['table' => 'users']);
-        $this->assertNull($table->connection());
-        $table->connection($this->connection);
-        $this->assertSame($this->connection, $table->connection());
+        $this->assertNull($table->getConnection());
+        $this->assertSame($table, $table->setConnection($this->connection));
+        $this->assertSame($this->connection, $table->getConnection());
+    }
+
+    /**
+     * Tests primaryKey method
+     *
+     * @group deprecated
+     * @return void
+     */
+    public function testPrimaryKey()
+    {
+        $this->deprecated(function () {
+            $table = new Table([
+                'table' => 'users',
+                'schema' => [
+                    'id' => ['type' => 'integer'],
+                    '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
+                ]
+            ]);
+            $this->assertEquals('id', $table->primaryKey());
+            $table->primaryKey('thingID');
+            $this->assertEquals('thingID', $table->primaryKey());
+
+            $table->primaryKey(['thingID', 'user_id']);
+            $this->assertEquals(['thingID', 'user_id'], $table->primaryKey());
+        });
     }
 
     /**
@@ -215,7 +286,7 @@ class TableTest extends TestCase
      *
      * @return void
      */
-    public function testPrimaryKey()
+    public function testSetPrimaryKey()
     {
         $table = new Table([
             'table' => 'users',
@@ -224,12 +295,12 @@ class TableTest extends TestCase
                 '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
             ]
         ]);
-        $this->assertEquals('id', $table->primaryKey());
-        $table->primaryKey('thingID');
-        $this->assertEquals('thingID', $table->primaryKey());
+        $this->assertEquals('id', $table->getPrimaryKey());
+        $this->assertSame($table, $table->setPrimaryKey('thingID'));
+        $this->assertEquals('thingID', $table->getPrimaryKey());
 
-        $table->primaryKey(['thingID', 'user_id']);
-        $this->assertEquals(['thingID', 'user_id'], $table->primaryKey());
+        $table->setPrimaryKey(['thingID', 'user_id']);
+        $this->assertEquals(['thingID', 'user_id'], $table->getPrimaryKey());
     }
 
     /**
@@ -246,7 +317,7 @@ class TableTest extends TestCase
                 'name' => ['type' => 'string']
             ]
         ]);
-        $this->assertEquals('name', $table->displayField());
+        $this->assertEquals('name', $table->getDisplayField());
     }
 
     /**
@@ -263,7 +334,7 @@ class TableTest extends TestCase
                 'title' => ['type' => 'string']
             ]
         ]);
-        $this->assertEquals('title', $table->displayField());
+        $this->assertEquals('title', $table->getDisplayField());
     }
 
     /**
@@ -281,7 +352,7 @@ class TableTest extends TestCase
                 '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
             ]
         ]);
-        $this->assertEquals('id', $table->displayField());
+        $this->assertEquals('id', $table->getDisplayField());
     }
 
     /**
@@ -299,9 +370,39 @@ class TableTest extends TestCase
                 '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
             ]
         ]);
-        $this->assertEquals('id', $table->displayField());
-        $table->displayField('foo');
-        $this->assertEquals('foo', $table->displayField());
+        $this->assertEquals('id', $table->getDisplayField());
+        $table->setDisplayField('foo');
+        $this->assertEquals('foo', $table->getDisplayField());
+    }
+
+    /**
+     * Tests schema method
+     *
+     * @group deprecated
+     * @return void
+     */
+    public function testSchema()
+    {
+        $this->deprecated(function () {
+            $schema = $this->connection->getSchemaCollection()->describe('users');
+            $table = new Table([
+                'table' => 'users',
+                'connection' => $this->connection,
+            ]);
+            $this->assertEquals($schema, $table->schema());
+
+            $table = new Table(['table' => 'stuff']);
+            $table->schema($schema);
+            $this->assertSame($schema, $table->schema());
+
+            $table = new Table(['table' => 'another']);
+            $schema = ['id' => ['type' => 'integer']];
+            $table->schema($schema);
+            $this->assertEquals(
+                new TableSchema('another', $schema),
+                $table->schema()
+            );
+        });
     }
 
     /**
@@ -309,25 +410,25 @@ class TableTest extends TestCase
      *
      * @return void
      */
-    public function testSchema()
+    public function testSetSchema()
     {
         $schema = $this->connection->getSchemaCollection()->describe('users');
         $table = new Table([
             'table' => 'users',
             'connection' => $this->connection,
         ]);
-        $this->assertEquals($schema, $table->schema());
+        $this->assertEquals($schema, $table->getSchema());
 
         $table = new Table(['table' => 'stuff']);
-        $table->schema($schema);
-        $this->assertSame($schema, $table->schema());
+        $table->setSchema($schema);
+        $this->assertSame($schema, $table->getSchema());
 
         $table = new Table(['table' => 'another']);
         $schema = ['id' => ['type' => 'integer']];
-        $table->schema($schema);
+        $table->setSchema($schema);
         $this->assertEquals(
             new TableSchema('another', $schema),
-            $table->schema()
+            $table->getSchema()
         );
     }
 
@@ -351,10 +452,10 @@ class TableTest extends TestCase
 
                 return $schema;
             }));
-        $result = $table->schema();
+        $result = $table->getSchema();
         $schema->setColumnType('username', 'integer');
         $this->assertEquals($schema, $result);
-        $this->assertEquals($schema, $table->schema(), '_initializeSchema should be called once');
+        $this->assertEquals($schema, $table->getSchema(), '_initializeSchema should be called once');
     }
 
     /**
@@ -373,7 +474,7 @@ class TableTest extends TestCase
             ->find('all')
             ->where(['id IN' => [1, 2]])
             ->order('id')
-            ->hydrate(false)
+            ->enableHydration(false)
             ->toArray();
         $expected = [
             [
@@ -407,7 +508,7 @@ class TableTest extends TestCase
         ]);
         $results = $table->find('all')
             ->select(['username', 'password'])
-            ->hydrate(false)
+            ->enableHydration(false)
             ->order('username')->toArray();
         $expected = [
             ['username' => 'garrett', 'password' => '$2a$10$u05j8FjsvLBNdfhBhc21LOuVMpzpabVXQ9OpC2wO3pSO0q6t7HHMO'],
@@ -420,7 +521,7 @@ class TableTest extends TestCase
         $results = $table->find('all')
             ->select(['foo' => 'username', 'password'])
             ->order('username')
-            ->hydrate(false)
+            ->enableHydration(false)
             ->toArray();
         $expected = [
             ['foo' => 'garrett', 'password' => '$2a$10$u05j8FjsvLBNdfhBhc21LOuVMpzpabVXQ9OpC2wO3pSO0q6t7HHMO'],
@@ -446,7 +547,7 @@ class TableTest extends TestCase
         $query = $table->find('all')
             ->select(['id', 'username'])
             ->where(['created >=' => new Time('2010-01-22 00:00')])
-            ->hydrate(false)
+            ->enableHydration(false)
             ->order('id');
         $expected = [
             ['id' => 3, 'username' => 'larry'],
@@ -454,7 +555,14 @@ class TableTest extends TestCase
         ];
         $this->assertSame($expected, $query->toArray());
 
-        $query->orWhere(['users.created' => new Time('2008-03-17 01:18:23')]);
+        $query = $table->find()
+            ->enableHydration(false)
+            ->select(['id', 'username'])
+            ->where(['OR' => [
+                'created >=' => new Time('2010-01-22 00:00'),
+                'users.created' => new Time('2008-03-17 01:18:23')
+            ]])
+            ->order('id');
         $expected = [
             ['id' => 2, 'username' => 'nate'],
             ['id' => 3, 'username' => 'larry'],
@@ -533,6 +641,18 @@ class TableTest extends TestCase
             $groups->getAssociation('GroupsMembers')->getAssociation('Members')->getAssociation('Groups'),
             $association
         );
+    }
+
+    /**
+     * Tests that the getAssociation() method throws an exception on non-existent ones.
+     *
+     * @return void
+     */
+    public function testGetAssociationNonExistent()
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        TableRegistry::get('Groups')->getAssociation('FooBar');
     }
 
     /**
@@ -891,7 +1011,7 @@ class TableTest extends TestCase
         $result = $table->find('all')
             ->select(['username'])
             ->order(['id' => 'asc'])
-            ->hydrate(false)
+            ->enableHydration(false)
             ->toArray();
         $expected = array_fill(0, 3, $fields);
         $expected[] = ['username' => 'garrett'];
@@ -1034,9 +1154,9 @@ class TableTest extends TestCase
             'table' => 'users',
             'connection' => $this->connection,
         ]);
-        $table->displayField('username');
+        $table->setDisplayField('username');
         $query = $table->find('list')
-            ->hydrate(false)
+            ->enableHydration(false)
             ->order('id');
         $expected = [
             1 => 'mariano',
@@ -1047,7 +1167,7 @@ class TableTest extends TestCase
         $this->assertSame($expected, $query->toArray());
 
         $query = $table->find('list', ['fields' => ['id', 'username']])
-            ->hydrate(false)
+            ->enableHydration(false)
             ->order('id');
         $expected = [
             1 => 'mariano',
@@ -1059,7 +1179,7 @@ class TableTest extends TestCase
 
         $query = $table->find('list', ['groupField' => 'odd'])
             ->select(['id', 'username', 'odd' => new QueryExpression('id % 2')])
-            ->hydrate(false)
+            ->enableHydration(false)
             ->order('id');
         $expected = [
             1 => [
@@ -1140,7 +1260,7 @@ class TableTest extends TestCase
         ];
         $results = $table->find('all')
             ->select(['id', 'parent_id', 'name'])
-            ->hydrate(false)
+            ->enableHydration(false)
             ->find('threaded')
             ->toArray();
 
@@ -1217,7 +1337,7 @@ class TableTest extends TestCase
             'table' => 'users',
             'connection' => $this->connection,
         ]);
-        $table->displayField('username');
+        $table->setDisplayField('username');
         $query = $table
             ->find('list', ['fields' => ['id', 'username']])
             ->order('id');
@@ -1231,7 +1351,7 @@ class TableTest extends TestCase
 
         $query = $table->find('list', ['groupField' => 'odd'])
             ->select(['id', 'username', 'odd' => new QueryExpression('id % 2')])
-            ->hydrate(true)
+            ->enableHydration(true)
             ->order('id');
         $expected = [
             1 => [
@@ -1257,7 +1377,7 @@ class TableTest extends TestCase
             'table' => 'users',
             'connection' => $this->connection,
         ]);
-        $table->displayField('username');
+        $table->setDisplayField('username');
 
         $query = $table->find('list');
         $expected = ['id', 'username'];
@@ -1309,7 +1429,7 @@ class TableTest extends TestCase
             'connection' => $this->connection,
             'entityClass' => '\TestApp\Model\Entity\VirtualUser'
         ]);
-        $table->displayField('bonus');
+        $table->setDisplayField('bonus');
 
         $query = $table
             ->find('list')
@@ -1362,7 +1482,7 @@ class TableTest extends TestCase
     public function testEntityClassDefault()
     {
         $table = new Table();
-        $this->assertEquals('\Cake\ORM\Entity', $table->entityClass());
+        $this->assertEquals('\Cake\ORM\Entity', $table->getEntityClass());
     }
 
     /**
@@ -1380,7 +1500,8 @@ class TableTest extends TestCase
         }
 
         $table = new Table();
-        $this->assertEquals('TestApp\Model\Entity\TestUser', $table->entityClass('TestUser'));
+        $this->assertSame($table, $table->setEntityClass('TestUser'));
+        $this->assertEquals('TestApp\Model\Entity\TestUser', $table->getEntityClass());
     }
 
     /**
@@ -1398,9 +1519,10 @@ class TableTest extends TestCase
         }
 
         $table = new Table();
+        $this->assertSame($table, $table->setEntityClass('MyPlugin.SuperUser'));
         $this->assertEquals(
             'MyPlugin\Model\Entity\SuperUser',
-            $table->entityClass('MyPlugin.SuperUser')
+            $table->getEntityClass()
         );
     }
 
@@ -1415,7 +1537,7 @@ class TableTest extends TestCase
         $this->expectException(\Cake\ORM\Exception\MissingEntityException::class);
         $this->expectExceptionMessage('Entity class FooUser could not be found.');
         $table = new Table;
-        $this->assertFalse($table->entityClass('FooUser'));
+        $table->setEntityClass('FooUser');
     }
 
     /**
@@ -1427,7 +1549,23 @@ class TableTest extends TestCase
     public function testTableClassConventionForAPP()
     {
         $table = new \TestApp\Model\Table\ArticlesTable;
-        $this->assertEquals('TestApp\Model\Entity\Article', $table->entityClass());
+        $this->assertEquals('TestApp\Model\Entity\Article', $table->getEntityClass());
+    }
+
+    /**
+     * Tests setting a entity class object using the setter method
+     *
+     * @group deprecated
+     * @return void
+     */
+    public function testEntityClass()
+    {
+        $this->deprecated(function () {
+            $table = new Table;
+            $class = '\\' . $this->getMockClass('\Cake\ORM\Entity');
+            $table->entityClass($class);
+            $this->assertEquals($class, $table->getEntityClass());
+        });
     }
 
     /**
@@ -1439,8 +1577,8 @@ class TableTest extends TestCase
     {
         $table = new Table;
         $class = '\\' . $this->getMockClass('\Cake\ORM\Entity');
-        $table->entityClass($class);
-        $this->assertEquals($class, $table->entityClass());
+        $this->assertSame($table, $table->setEntityClass($class));
+        $this->assertEquals($class, $table->getEntityClass());
     }
 
     /**
@@ -1620,6 +1758,35 @@ class TableTest extends TestCase
     }
 
     /**
+     * Test adding multiple behaviors to a table.
+     *
+     * @return void
+     */
+    public function testAddBehaviors()
+    {
+        $table = new Table(['table' => 'comments']);
+        $behaviors = [
+            'Sluggable',
+            'Timestamp' => [
+                'events' => [
+                    'Model.beforeSave' => [
+                        'created' => 'new',
+                        'updated' => 'always',
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertSame($table, $table->addBehaviors($behaviors));
+        $this->assertTrue($table->behaviors()->has('Sluggable'));
+        $this->assertTrue($table->behaviors()->has('Timestamp'));
+        $this->assertSame(
+            $behaviors['Timestamp']['events'],
+            $table->behaviors()->get('Timestamp')->getConfig('events')
+        );
+    }
+
+    /**
      * Test getting a behavior instance from a table.
      *
      * @return void
@@ -1629,6 +1796,35 @@ class TableTest extends TestCase
         $table = $this->getTableLocator()->get('article');
         $result = $table->behaviors();
         $this->assertInstanceOf('Cake\ORM\BehaviorRegistry', $result);
+    }
+
+    /**
+     * Test that the getBehavior() method retrieves a behavior from the table registry.
+     *
+     * @return void
+     */
+    public function testGetBehavior()
+    {
+        $table = new Table(['table' => 'comments']);
+        $table->addBehavior('Sluggable');
+        $this->assertSame($table->behaviors()->get('Sluggable'), $table->getBehavior('Sluggable'));
+    }
+
+    /**
+     * Test that the getBehavior() method will throw an exception when you try to
+     * get a behavior that does not exist.
+     *
+     * @return void
+     */
+    public function testGetBehaviorThrowsExceptionForMissingBehavior()
+    {
+        $table = new Table(['table' => 'comments']);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The Sluggable behavior is not defined on ' . get_class($table) . '.');
+
+        $this->assertFalse($table->hasBehavior('Sluggable'));
+        $table->getBehavior('Sluggable');
     }
 
     /**
@@ -2916,7 +3112,7 @@ class TableTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $entity = $table->get(1);
 
-        $entity->accessible('*', true);
+        $entity->setAccess('*', true);
         $entity->set($entity->toArray());
         $this->assertSame($entity, $table->save($entity));
     }
@@ -2998,7 +3194,7 @@ class TableTest extends TestCase
             new Entity(['name' => 'mark']),
             new Entity(['name' => 'jose'])
         ];
-        $entities[1]->errors(['name' => ['message']]);
+        $entities[1]->setErrors(['name' => ['message']]);
         $result = $table->saveMany($entities);
 
         $this->assertFalse($result);
@@ -3398,7 +3594,7 @@ class TableTest extends TestCase
 
         $validator = $table->getValidator('Behavior');
         $set = $validator->field('name');
-        $this->assertTrue(isset($set['behaviorRule']));
+        $this->assertArrayHasKey('behaviorRule', $set);
     }
 
     /**
@@ -3492,8 +3688,8 @@ class TableTest extends TestCase
         $existingAuthor = $table->find()->first();
         $newAuthor = $table->newEntity();
 
-        $this->assertEquals('TestPlugin.Authors', $existingAuthor->source());
-        $this->assertEquals('TestPlugin.Authors', $newAuthor->source());
+        $this->assertEquals('TestPlugin.Authors', $existingAuthor->getSource());
+        $this->assertEquals('TestPlugin.Authors', $newAuthor->getSource());
     }
 
     /**
@@ -3507,11 +3703,11 @@ class TableTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $validator = $table->getValidator()->requirePresence('title');
         $entity = $table->newEntity([]);
-        $errors = $entity->errors();
+        $errors = $entity->getErrors();
         $this->assertNotEmpty($errors['title']);
 
         $entity = $table->newEntity();
-        $this->assertEmpty($entity->errors());
+        $this->assertEmpty($entity->getErrors());
     }
 
     /**
@@ -3973,7 +4169,7 @@ class TableTest extends TestCase
         ];
         $result = $this->getTableLocator()->get('PolymorphicTagged')
             ->find('all', ['sort' => ['id' => 'DESC']])
-            ->hydrate(false)
+            ->enableHydration(false)
             ->toArray();
         $this->assertEquals($expected, $result);
     }
@@ -5501,7 +5697,7 @@ class TableTest extends TestCase
             ->will($this->returnValue($query));
 
         $query->expects($this->once())->method('where')
-            ->with([$table->alias() . '.bar' => 10])
+            ->with([$table->getAlias() . '.bar' => 10])
             ->will($this->returnSelf());
         $query->expects($this->never())->method('cache');
         $query->expects($this->once())->method('firstOrFail')
@@ -5551,7 +5747,7 @@ class TableTest extends TestCase
             ->will($this->returnValue($query));
 
         $query->expects($this->once())->method('where')
-            ->with([$table->alias() . '.bar' => 10])
+            ->with([$table->getAlias() . '.bar' => 10])
             ->will($this->returnSelf());
         $query->expects($this->never())->method('cache');
         $query->expects($this->once())->method('firstOrFail')
@@ -5596,7 +5792,7 @@ class TableTest extends TestCase
                 ]
             ]])
             ->getMock();
-        $table->table('table_name');
+        $table->setTable('table_name');
 
         $query = $this->getMockBuilder('\Cake\ORM\Query')
             ->setMethods(['addDefaultTypes', 'firstOrFail', 'where', 'cache'])
@@ -5611,7 +5807,7 @@ class TableTest extends TestCase
             ->will($this->returnValue($query));
 
         $query->expects($this->once())->method('where')
-            ->with([$table->alias() . '.bar' => 10])
+            ->with([$table->getAlias() . '.bar' => 10])
             ->will($this->returnSelf());
         $query->expects($this->once())->method('cache')
             ->with($cacheKey, $cacheConfig)
@@ -5679,7 +5875,7 @@ class TableTest extends TestCase
      *
      * @return void
      */
-    public function testPatchEntity()
+    public function testPatchEntityMarshallerUsage()
     {
         $table = $this->getMockBuilder('Cake\ORM\Table')
             ->setMethods(['marshaller'])
@@ -5702,12 +5898,29 @@ class TableTest extends TestCase
     }
 
     /**
+     * Tests patchEntity in a simple scenario. The tests for Marshaller cover
+     * patch scenarios in more depth.
+     *
+     * @return void
+     */
+    public function testPatchEntity()
+    {
+        $table = TableRegistry::get('Articles');
+        $entity = new Entity(['title' => 'old title'], ['markNew' => false]);
+        $data = ['title' => 'new title'];
+        $entity = $table->patchEntity($entity, $data);
+
+        $this->assertSame($data['title'], $entity->title);
+        $this->assertFalse($entity->isNew(), 'entity should not be new.');
+    }
+
+    /**
      * Tests that patchEntities delegates the task to the marshaller and passed
      * all associations
      *
      * @return void
      */
-    public function testPatchEntities()
+    public function testPatchEntitiesMarshallerUsage()
     {
         $table = $this->getMockBuilder('Cake\ORM\Table')
             ->setMethods(['marshaller'])
@@ -5727,6 +5940,28 @@ class TableTest extends TestCase
             ->with($entities, $data, ['associated' => ['users', 'articles']])
             ->will($this->returnValue($entities));
         $table->patchEntities($entities, $data);
+    }
+
+    /**
+     * Tests patchEntities in a simple scenario. The tests for Marshaller cover
+     * patch scenarios in more depth.
+     *
+     * @return void
+     */
+    public function testPatchEntities()
+    {
+        $table = TableRegistry::get('Articles');
+        $entities = $table->find()->limit(2)->toArray();
+
+        $data = [
+            ['id' => $entities[0]->id, 'title' => 'new title'],
+            ['id' => $entities[1]->id, 'title' => 'new title2'],
+        ];
+        $entities = $table->patchEntities($entities, $data);
+        foreach ($entities as $i => $entity) {
+            $this->assertFalse($entity->isNew(), 'entities should not be new.');
+            $this->assertSame($data[$i]['title'], $entity->title);
+        }
     }
 
     /**
@@ -5777,7 +6012,7 @@ class TableTest extends TestCase
 
         $callbackExecuted = false;
         $firstArticle = $articles->findOrCreate(['title' => 'Not there'], function ($article) use (&$callbackExecuted) {
-            $this->assertTrue($article instanceof EntityInterface);
+            $this->assertInstanceOf(EntityInterface::class, $article);
             $article->body = 'New body';
             $callbackExecuted = true;
         });
@@ -6215,16 +6450,34 @@ class TableTest extends TestCase
     /**
      * Tests that calling newEntity() on a table sets the right source alias
      *
+     * @group deprecated
      * @return void
      */
     public function testEntitySource()
     {
+        $this->deprecated(function () {
+            $table = $this->getTableLocator()->get('Articles');
+            $this->assertEquals('Articles', $table->newEntity()->source());
+
+            Plugin::load('TestPlugin');
+            $table = $this->getTableLocator()->get('TestPlugin.Comments');
+            $this->assertEquals('TestPlugin.Comments', $table->newEntity()->source());
+        });
+    }
+
+    /**
+     * Tests that calling newEntity() on a table sets the right source alias
+     *
+     * @return void
+     */
+    public function testSetEntitySource()
+    {
         $table = $this->getTableLocator()->get('Articles');
-        $this->assertEquals('Articles', $table->newEntity()->source());
+        $this->assertEquals('Articles', $table->newEntity()->getSource());
 
         Plugin::load('TestPlugin');
         $table = $this->getTableLocator()->get('TestPlugin.Comments');
-        $this->assertEquals('TestPlugin.Comments', $table->newEntity()->source());
+        $this->assertEquals('TestPlugin.Comments', $table->newEntity()->getSource());
     }
 
     /**
@@ -6379,20 +6632,20 @@ class TableTest extends TestCase
         $entity = $table->newEntity(['title' => 'mark']);
 
         $entity->setDirty('title', true);
-        $entity->invalid('title', 'albert');
+        $entity->setInvalidField('title', 'albert');
 
-        $this->assertNotEmpty($entity->errors());
+        $this->assertNotEmpty($entity->getErrors());
         $this->assertTrue($entity->isDirty());
-        $this->assertEquals(['title' => 'albert'], $entity->invalid());
+        $this->assertEquals(['title' => 'albert'], $entity->getInvalid());
 
         $entity->title = 'alex';
         $this->assertSame($entity->getOriginal('title'), 'mark');
 
         $entity->clean();
 
-        $this->assertEmpty($entity->errors());
+        $this->assertEmpty($entity->getErrors());
         $this->assertFalse($entity->isDirty());
-        $this->assertEquals([], $entity->invalid());
+        $this->assertEquals([], $entity->getInvalid());
         $this->assertSame($entity->getOriginal('title'), 'alex');
     }
 
@@ -6493,15 +6746,33 @@ class TableTest extends TestCase
     {
         $this->expectException(\Cake\ORM\Exception\PersistenceFailedException::class);
         $this->expectExceptionMessage('Entity save failure.');
+
         $entity = new Entity([
             'foo' => 'bar'
         ]);
         $table = $this->getTableLocator()->get('users');
 
         $table->saveOrFail($entity);
+    }
 
-        $row = $table->find('all')->where(['foo' => 'bar'])->toArray();
-        $this->assertSame([], $row->toArray());
+    /**
+     * Tests that saveOrFail displays useful messages on output, especially in tests for CLI.
+     *
+     * @return void
+     */
+    public function testSaveOrFailErrorDisplay()
+    {
+        $this->expectException(\Cake\ORM\Exception\PersistenceFailedException::class);
+        $this->expectExceptionMessage('Entity save failure (field: "Some message", multiple: "one, two")');
+
+        $entity = new Entity([
+            'foo' => 'bar'
+        ]);
+        $entity->setError('field', 'Some message');
+        $entity->setError('multiple', ['one' => 'One', 'two' => 'Two']);
+        $table = TableRegistry::get('users');
+
+        $table->saveOrFail($entity);
     }
 
     /**

@@ -330,6 +330,37 @@ class CounterCacheBehaviorTest extends TestCase
     }
 
     /**
+     * Testing counter cache with lambda returning false
+     *
+     * @return void
+     */
+    public function testLambdaFalse()
+    {
+        $this->post->belongsTo('Users');
+
+        $table = $this->post;
+        $entity = $this->_getEntity();
+
+        $this->post->addBehavior('CounterCache', [
+            'Users' => [
+                'posts_published' => function (Event $orgEvent, EntityInterface $orgEntity, Table $orgTable) use ($entity, $table) {
+                    $this->assertSame($orgTable, $table);
+                    $this->assertSame($orgEntity, $entity);
+
+                    return false;
+                }
+            ]
+        ]);
+
+        $before = $this->_getUser();
+        $this->post->save($entity);
+        $after = $this->_getUser();
+
+        $this->assertEquals(1, $before->get('posts_published'));
+        $this->assertEquals(1, $after->get('posts_published'));
+    }
+
+    /**
      * Testing counter cache with lambda returning number and changing of related ID
      *
      * @return void
@@ -349,9 +380,9 @@ class CounterCacheBehaviorTest extends TestCase
 
                     if (!$original) {
                         return 2;
-                    } else {
-                        return 1;
                     }
+
+                    return 1;
                 }
             ]
         ]);

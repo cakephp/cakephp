@@ -105,7 +105,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * The object responsible for generating query placeholders and temporarily store values
      * associated to each of those.
      *
-     * @var \Cake\Database\ValueBinder|null
+     * @var \Cake\Database\ValueBinder|false|null
      */
     protected $_valueBinder;
 
@@ -811,6 +811,10 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * `$query->where(['OR' => [['published' => false], ['published' => true]])`
      *
+     * Would result in:
+     *
+     * `WHERE (published = false) OR (published = true)`
+     *
      * Keep in mind that every time you call where() with the third param set to false
      * (default), it will join the passed conditions to the previous stored list using
      * the `AND` operator. Also, using the same array key twice in consecutive calls to
@@ -1008,6 +1012,10 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function orWhere($conditions, $types = [])
     {
+        deprecationWarning(
+            'Query::orWhere() is deprecated as it creates hard to predict SQL based on the ' .
+            'current query state. Use `Query::where()` instead.'
+        );
         $this->_conjugate('where', $conditions, 'OR', $types);
 
         return $this;
@@ -1918,7 +1926,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * to the statement object.
      *
      * @deprecated 3.5.0 Use setValueBinder()/getValueBinder() instead.
-     * @param \Cake\Database\ValueBinder|null $binder new instance to be set. If no value is passed the
+     * @param \Cake\Database\ValueBinder|false|null $binder new instance to be set. If no value is passed the
      *   default one will be returned
      * @return $this|\Cake\Database\ValueBinder
      */

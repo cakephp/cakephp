@@ -34,14 +34,14 @@ class SessionStorage implements StorageInterface
      * Stores user record array if fetched from session or false if session
      * does not have user record.
      *
-     * @var array|bool
+     * @var \ArrayAccess|array|bool
      */
     protected $_user;
 
     /**
      * Session object.
      *
-     * @var \Cake\Network\Session
+     * @var \Cake\Http\Session
      */
     protected $_session;
 

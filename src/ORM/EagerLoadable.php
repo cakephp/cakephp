@@ -35,7 +35,7 @@ class EagerLoadable
     /**
      * A list of other associations to load from this level.
      *
-     * @var \Cake\Orm\EagerLoadable[]
+     * @var \Cake\ORM\EagerLoadable[]
      */
     protected $_associations = [];
 

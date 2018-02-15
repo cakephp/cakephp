@@ -1,5 +1,5 @@
 <?php
-namespace TestPlugin\Network\Session;
+namespace TestPlugin\Http\Session;
 
 use SessionHandlerInterface;
 

@@ -43,33 +43,28 @@ class ServerShell extends Shell
      *
      * @var string
      */
-    protected $_host;
+    protected $_host = self::DEFAULT_HOST;
 
     /**
      * listen port
      *
      * @var int
      */
-    protected $_port;
+    protected $_port = self::DEFAULT_PORT;
 
     /**
      * document root
      *
      * @var string
      */
-    protected $_documentRoot;
+    protected $_documentRoot = WWW_ROOT;
 
     /**
-     * Override initialize of the Shell
+     * ini path
      *
-     * @return void
+     * @var string
      */
-    public function initialize()
-    {
-        $this->_host = self::DEFAULT_HOST;
-        $this->_port = self::DEFAULT_PORT;
-        $this->_documentRoot = WWW_ROOT;
-    }
+    protected $_iniPath = '';
 
     /**
      * Starts up the Shell and displays the welcome message.
@@ -83,14 +78,17 @@ class ServerShell extends Shell
      */
     public function startup()
     {
-        if (!empty($this->params['host'])) {
-            $this->_host = $this->params['host'];
+        if ($this->param('host')) {
+            $this->_host = $this->param('host');
         }
-        if (!empty($this->params['port'])) {
-            $this->_port = $this->params['port'];
+        if ($this->param('port')) {
+            $this->_port = $this->param('port');
         }
-        if (!empty($this->params['document_root'])) {
-            $this->_documentRoot = $this->params['document_root'];
+        if ($this->param('document_root')) {
+            $this->_documentRoot = $this->param('document_root');
+        }
+        if ($this->param('ini_path')) {
+            $this->_iniPath = $this->param('ini_path');
         }
 
         // For Windows
@@ -99,6 +97,11 @@ class ServerShell extends Shell
         }
         if (preg_match("/^([a-z]:)[\\\]+(.+)$/i", $this->_documentRoot, $m)) {
             $this->_documentRoot = $m[1] . '\\' . $m[2];
+        }
+
+        $this->_iniPath = rtrim($this->_iniPath, DIRECTORY_SEPARATOR);
+        if (preg_match("/^([a-z]:)[\\\]+(.+)$/i", $this->_iniPath, $m)) {
+            $this->_iniPath = $m[1] . '\\' . $m[2];
         }
 
         parent::startup();
@@ -117,6 +120,7 @@ class ServerShell extends Shell
         $this->out(sprintf('App : %s', APP_DIR));
         $this->out(sprintf('Path: %s', APP));
         $this->out(sprintf('DocumentRoot: %s', $this->_documentRoot));
+        $this->out(sprintf('Ini Path: %s', $this->_iniPath));
         $this->hr();
     }
 
@@ -128,12 +132,17 @@ class ServerShell extends Shell
     public function main()
     {
         $command = sprintf(
-            'php -S %s:%d -t %s %s',
+            'php -S %s:%d -t %s',
             $this->_host,
             $this->_port,
-            escapeshellarg($this->_documentRoot),
-            escapeshellarg($this->_documentRoot . '/index.php')
+            escapeshellarg($this->_documentRoot)
         );
+
+        if (!empty($this->_iniPath)) {
+            $command = sprintf('%s -c %s', $command, $this->_iniPath);
+        }
+
+        $command = sprintf('%s %s', $command, escapeshellarg($this->_documentRoot . '/index.php'));
 
         $port = ':' . $this->_port;
         $this->out(sprintf('built-in server is running in http://%s%s/', $this->_host, $port));
@@ -159,6 +168,9 @@ class ServerShell extends Shell
         ])->addOption('port', [
             'short' => 'p',
             'help' => 'ListenPort'
+        ])->addOption('ini_path', [
+            'short' => 'I',
+            'help' => 'php.ini path'
         ])->addOption('document_root', [
             'short' => 'd',
             'help' => 'DocumentRoot'

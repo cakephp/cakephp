@@ -17,7 +17,7 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
-use Cake\Network\Session;
+use Cake\Http\Session;
 use Cake\Routing\Dispatcher;
 use Cake\Routing\Filter\ControllerFactoryFilter;
 use Cake\TestSuite\TestCase;

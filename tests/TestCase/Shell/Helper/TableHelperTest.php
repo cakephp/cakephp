@@ -25,17 +25,17 @@ use Cake\TestSuite\TestCase;
 class TableHelperTest extends TestCase
 {
     /**
-     * @var ConsoleOutput
+     * @var \Cake\Console\ConsoleOutput
      */
     public $stub;
 
     /**
-     * @var ConsoleIo
+     * @var \Cake\Console\ConsoleIo
      */
     public $io;
 
     /**
-     * @var TableHelper
+     * @var \Cake\Shell\Helper\TableHelper
      */
     public $helper;
 

@@ -20,10 +20,15 @@ use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Exception\NestedTransactionRollbackException;
 use Cake\Database\Log\LoggingStatement;
 use Cake\Database\Log\QueryLogger;
+use Cake\Database\Retry\CommandRetry;
+use Cake\Database\Retry\ReconnectStrategy;
+use Cake\Database\StatementInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
+use Exception;
 use ReflectionMethod;
+use ReflectionProperty;
 
 /**
  * Tests Connection class
@@ -58,6 +63,7 @@ class ConnectionTest extends TestCase
     {
         Log::reset();
         $this->connection->enableSavePoints(false);
+        $this->connection->setLogger(null);
         unset($this->connection);
         parent::tearDown();
     }
@@ -1213,5 +1219,67 @@ class ConnectionTest extends TestCase
         $method = new ReflectionMethod($this->connection, 'wasNestedTransactionRolledback');
         $method->setAccessible(true);
         $this->nestedTransactionStates[] = $method->invoke($this->connection);
+    }
+
+    /**
+     * Tests that the connection is restablished whenever it is interrupted
+     * after having used the connection at least once.
+     *
+     * @return void
+     */
+    public function testAutomaticReconnect()
+    {
+        $conn = clone $this->connection;
+        $statement = $conn->query('SELECT 1');
+        $statement->execute();
+        $statement->closeCursor();
+
+        $prop = new ReflectionProperty($conn, '_driver');
+        $prop->setAccessible(true);
+        $oldDriver = $prop->getValue($conn);
+        $newDriver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
+        $prop->setValue($conn, $newDriver);
+
+        $newDriver->expects($this->at(0))
+            ->method('prepare')
+            ->will($this->throwException(new Exception('server gone away')));
+
+        $newDriver->expects($this->at(1))->method('disconnect');
+        $newDriver->expects($this->at(2))->method('connect');
+        $newDriver->expects($this->at(3))
+            ->method('prepare')
+            ->will($this->returnValue($statement));
+
+        $res = $conn->query('SELECT 1');
+        $this->assertInstanceOf(StatementInterface::class, $res);
+    }
+
+    /**
+     * Tests that the connection is not restablished whenever it is interrupted
+     * inside a transaction.
+     *
+     * @return void
+     */
+    public function testNoAutomaticReconnect()
+    {
+        $conn = clone $this->connection;
+        $statement = $conn->query('SELECT 1');
+        $statement->execute();
+        $statement->closeCursor();
+
+        $conn->begin();
+
+        $prop = new ReflectionProperty($conn, '_driver');
+        $prop->setAccessible(true);
+        $oldDriver = $prop->getValue($conn);
+        $newDriver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
+        $prop->setValue($conn, $newDriver);
+
+        $newDriver->expects($this->once())
+            ->method('prepare')
+            ->will($this->throwException(new Exception('server gone away')));
+
+        $this->expectException(Exception::class);
+        $conn->query('SELECT 1');
     }
 }

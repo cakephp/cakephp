@@ -62,14 +62,14 @@ class AssetFilter extends DispatcherFilter
      *
      * @param \Cake\Event\Event $event Event containing the request and response object
      * @return \Cake\Http\Response|null If the client is requesting a recognized asset, null otherwise
-     * @throws \Cake\Network\Exception\NotFoundException When asset not found
+     * @throws \Cake\Http\Exception\NotFoundException When asset not found
      */
     public function beforeDispatch(Event $event)
     {
         /* @var \Cake\Http\ServerRequest $request */
         $request = $event->getData('request');
 
-        $url = urldecode($request->url);
+        $url = urldecode($request->getUri()->getPath());
         if (strpos($url, '..') !== false || strpos($url, '.') === false) {
             return null;
         }
@@ -101,7 +101,7 @@ class AssetFilter extends DispatcherFilter
      */
     protected function _getAssetFile($url)
     {
-        $parts = explode('/', $url);
+        $parts = explode('/', ltrim($url, '/'));
         $pluginPart = [];
         for ($i = 0; $i < 2; $i++) {
             if (!isset($parts[$i])) {

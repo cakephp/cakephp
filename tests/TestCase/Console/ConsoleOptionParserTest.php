@@ -370,7 +370,7 @@ class ConsoleOptionParserTest extends TestCase
         $this->assertEquals($parser, $result, 'addOptions is not chainable.');
 
         $result = $parser->options();
-        $this->assertEquals(3, count($result), 'Not enough options');
+        $this->assertCount(3, $result, 'Not enough options');
     }
 
     /**
@@ -519,7 +519,7 @@ class ConsoleOptionParserTest extends TestCase
             ->addArgument('other', ['index' => 0]);
 
         $result = $parser->arguments();
-        $this->assertEquals(1, count($result), 'Overwrite did not occur');
+        $this->assertCount(1, $result, 'Overwrite did not occur');
     }
 
     /**
@@ -618,7 +618,7 @@ class ConsoleOptionParserTest extends TestCase
         $this->assertEquals($parser, $result, 'addArguments is not chainable.');
 
         $result = $parser->arguments();
-        $this->assertEquals(2, count($result), 'Not enough arguments');
+        $this->assertCount(2, $result, 'Not enough arguments');
     }
 
     /**
@@ -702,7 +702,7 @@ class ConsoleOptionParserTest extends TestCase
         $this->assertCount(1, $result);
         $parser->removeSubcommand('test');
         $result = $parser->subcommands();
-        $this->assertEquals(0, count($result), 'Remove a subcommand does not work');
+        $this->assertCount(0, $result, 'Remove a subcommand does not work');
     }
 
     /**
@@ -719,7 +719,7 @@ class ConsoleOptionParserTest extends TestCase
         ]);
         $this->assertEquals($parser, $result, 'Adding a subcommands is not chainable');
         $result = $parser->subcommands();
-        $this->assertEquals(2, count($result), 'Not enough subcommands');
+        $this->assertCount(2, $result, 'Not enough subcommands');
     }
 
     /**
@@ -912,8 +912,8 @@ TEXT;
         $this->assertEquals($spec['epilog'], $parser->getEpilog());
 
         $options = $parser->options();
-        $this->assertTrue(isset($options['name']));
-        $this->assertTrue(isset($options['other']));
+        $this->assertArrayHasKey('name', $options);
+        $this->assertArrayHasKey('other', $options);
 
         $args = $parser->arguments();
         $this->assertCount(2, $args);
@@ -1009,8 +1009,8 @@ TEXT;
         $this->assertEquals($spec['epilog'], $result['epilog']);
 
         $options = $result['options'];
-        $this->assertTrue(isset($options['name']));
-        $this->assertTrue(isset($options['other']));
+        $this->assertArrayHasKey('name', $options);
+        $this->assertArrayHasKey('other', $options);
 
         $this->assertCount(2, $result['arguments']);
         $this->assertCount(1, $result['subcommands']);
@@ -1037,10 +1037,10 @@ TEXT;
         $result = $parser->toArray();
 
         $options = $result['options'];
-        $this->assertTrue(isset($options['quiet']));
-        $this->assertTrue(isset($options['test']));
-        $this->assertTrue(isset($options['file']));
-        $this->assertTrue(isset($options['output']));
+        $this->assertArrayHasKey('quiet', $options);
+        $this->assertArrayHasKey('test', $options);
+        $this->assertArrayHasKey('file', $options);
+        $this->assertArrayHasKey('output', $options);
 
         $this->assertCount(2, $result['arguments']);
         $this->assertCount(6, $result['options']);

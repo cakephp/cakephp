@@ -15,9 +15,9 @@
 namespace Cake\Collection;
 
 use ArrayIterator;
-use BadMethodCallException;
 use InvalidArgumentException;
 use IteratorIterator;
+use LogicException;
 use Serializable;
 use Traversable;
 
@@ -73,26 +73,17 @@ class Collection extends IteratorIterator implements CollectionInterface, Serial
     }
 
     /**
-     * Dynamic method handler
+     * Throws an exception.
      *
-     * Collections do not allow access to methods of the inner iterator,
-     * if that iterator is one of the PHP base classes as many of
-     * these methods allow in-place mutation which breaks the immutability
-     * Collection tries to provide.
+     * Issuing a count on a Collection can have many side effects, some making the
+     * Collection unusable after the count operation.
      *
-     * @param string $name Method name.
-     * @param array $args Method arguments.
-     * @return mixed
-     * @throws \BadMethodCallException
+     * @return void
+     * @throws \LogicException
      */
-    public function __call($name, $args)
+    public function count()
     {
-        if (!method_exists(ArrayIterator::class, $name)) {
-            $inner = $this->getInnerIterator();
-
-            return call_user_func_array([$inner, $name], $args);
-        }
-        throw new BadMethodCallException(sprintf('Call to undefined method %s::%s()', get_class($this), $name));
+        throw new LogicException('You cannot issue a count on a Collection.');
     }
 
     /**

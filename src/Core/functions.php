@@ -31,7 +31,7 @@ if (!function_exists('h')) {
      * @param bool $double Encode existing html entities.
      * @param string|null $charset Character set to use when escaping. Defaults to config value in `mb_internal_encoding()`
      * or 'UTF-8'.
-     * @return string Wrapped text.
+     * @return string|array Wrapped text.
      * @link https://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#h
      */
     function h($text, $double = true, $charset = null)
@@ -189,7 +189,7 @@ if (!function_exists('env')) {
      *
      * @param string $key Environment variable name.
      * @param string|null $default Specify a default value in case the environment variable is not defined.
-     * @return string|null Environment variable setting.
+     * @return string|bool|null Environment variable setting.
      * @link https://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#env
      */
     function env($key, $default = null)
@@ -258,7 +258,7 @@ if (!function_exists('triggerWarning')) {
      */
     function triggerWarning($message)
     {
-        $stackFrame = 2;
+        $stackFrame = 1;
         $trace = debug_backtrace();
         if (isset($trace[$stackFrame])) {
             $frame = $trace[$stackFrame];
@@ -279,11 +279,11 @@ if (!function_exists('deprecationWarning')) {
      * Helper method for outputting deprecation warnings
      *
      * @param string $message The message to output as a deprecation warning.
-     * @param int $stackFrame The stack frame to include in the error. Defaults to 2
+     * @param int $stackFrame The stack frame to include in the error. Defaults to 1
      *   as that should point to application/plugin code.
      * @return void
      */
-    function deprecationWarning($message, $stackFrame = 2)
+    function deprecationWarning($message, $stackFrame = 1)
     {
         if (!(error_reporting() & E_USER_DEPRECATED)) {
             return;

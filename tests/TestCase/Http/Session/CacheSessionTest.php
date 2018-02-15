@@ -14,10 +14,10 @@
  * @since         2.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Network\Session;
+namespace Cake\Test\TestCase\Http\Session;
 
 use Cake\Cache\Cache;
-use Cake\Network\Session\CacheSession;
+use Cake\Http\Session\CacheSession;
 use Cake\TestSuite\TestCase;
 
 /**

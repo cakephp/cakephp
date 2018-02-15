@@ -13,7 +13,7 @@
  */
 namespace TestApp\Controller;
 
-use Cake\Network\Exception\NotFoundException;
+use Cake\Http\Exception\NotFoundException;
 
 /**
  * RequestActionController class
@@ -88,7 +88,7 @@ class RequestActionController extends AppController
      */
     public function post_pass()
     {
-        return $this->response->withStringBody(json_encode($this->request->data));
+        return $this->response->withStringBody(json_encode($this->request->getData()));
     }
 
     /**
@@ -98,7 +98,7 @@ class RequestActionController extends AppController
      */
     public function query_pass()
     {
-        return $this->response->withStringBody(json_encode($this->request->query));
+        return $this->response->withStringBody(json_encode($this->request->getQueryParams()));
     }
 
     /**
@@ -108,7 +108,7 @@ class RequestActionController extends AppController
      */
     public function cookie_pass()
     {
-        return $this->response->withStringBody(json_encode($this->request->cookies));
+        return $this->response->withStringBody(json_encode($this->request->getCookieParams()));
     }
 
     /**
@@ -170,7 +170,7 @@ class RequestActionController extends AppController
     /**
      * Tests exception handling
      *
-     * @throws \Cake\Network\Exception\NotFoundException
+     * @throws \Cake\Http\Exception\NotFoundException
      * @return void
      */
     public function error_method()

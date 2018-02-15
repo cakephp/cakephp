@@ -81,12 +81,12 @@ class FormContextTest extends TestCase
      */
     public function testValPresent()
     {
-        $this->request->data = [
+        $this->request = $this->request->withParsedBody([
             'Articles' => [
                 'title' => 'New title',
                 'body' => 'My copy',
             ]
-        ];
+        ]);
         $context = new FormContext($this->request, ['entity' => new Form()]);
         $this->assertEquals('New title', $context->val('Articles.title'));
         $this->assertEquals('My copy', $context->val('Articles.body'));
@@ -139,7 +139,7 @@ class FormContextTest extends TestCase
     public function testIsRequired()
     {
         $form = new Form();
-        $form->validator()
+        $form->getValidator()
             ->requirePresence('name')
             ->add('email', 'format', ['rule' => 'email']);
 
@@ -211,7 +211,7 @@ class FormContextTest extends TestCase
             ->add('password', 'length', ['rule' => ['minLength', 8]])
             ->add('confirm', 'length', ['rule' => ['minLength', 8]]);
         $form = new Form();
-        $form->validator()
+        $form->getValidator()
             ->add('email', 'format', ['rule' => 'email'])
             ->add('name', 'length', ['rule' => ['minLength', 10]])
             ->addNested('pass', $nestedValidator);
@@ -238,7 +238,7 @@ class FormContextTest extends TestCase
         $mock->expects($this->once())
             ->method('errors')
             ->willReturn(['key' => 'should be an array, not a string']);
-        $form->validator($mock);
+        $form->setValidator('default', $mock);
         $form->validate([]);
         $context = new FormContext($this->request, ['entity' => $form]);
         $this->assertEquals(
@@ -260,7 +260,7 @@ class FormContextTest extends TestCase
             ->add('password', 'length', ['rule' => ['minLength', 8]])
             ->add('confirm', 'length', ['rule' => ['minLength', 8]]);
         $form = new Form();
-        $form->validator()
+        $form->getValidator()
             ->add('email', 'format', ['rule' => 'email'])
             ->add('name', 'length', ['rule' => ['minLength', 10]])
             ->addNested('pass', $nestedValidator);

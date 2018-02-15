@@ -129,7 +129,7 @@ class RequestHandlerComponentTest extends TestCase
     public function testInitializeCallback()
     {
         $this->assertNull($this->RequestHandler->ext);
-        $this->Controller->request->params['_ext'] = 'rss';
+        $this->Controller->request = $this->Controller->request->withParam('_ext', 'rss');
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
         $this->assertEquals('rss', $this->RequestHandler->ext);
     }
@@ -411,7 +411,7 @@ class RequestHandlerComponentTest extends TestCase
         $this->RequestHandler->initialize([]);
         $this->Controller->beforeFilter($event);
         $this->RequestHandler->startup($event);
-        $this->assertTrue($this->Controller->request->params['isAjax']);
+        $this->assertTrue($this->Controller->request->getParam('isAjax'));
     }
 
     /**
@@ -431,10 +431,10 @@ class RequestHandlerComponentTest extends TestCase
 
         $this->assertEquals($this->Controller->viewClass, 'Cake\View\AjaxView');
         $view = $this->Controller->createView();
-        $this->assertEquals('ajax', $view->layout);
+        $this->assertEquals('ajax', $view->getLayout());
 
         $this->_init();
-        $this->Controller->request->params['_ext'] = 'js';
+        $this->Controller->request = $this->Controller->request->withParam('_ext', 'js');
         $this->RequestHandler->initialize([]);
         $this->RequestHandler->startup($event);
         $this->assertNotEquals($this->Controller->viewClass, 'Cake\View\AjaxView');
@@ -449,7 +449,7 @@ class RequestHandlerComponentTest extends TestCase
     public function testJsonViewLoaded()
     {
         Router::extensions(['json', 'xml', 'ajax'], false);
-        $this->Controller->request->params['_ext'] = 'json';
+        $this->Controller->request = $this->Controller->request->withParam('_ext', 'json');
         $event = new Event('Controller.startup', $this->Controller);
         $this->RequestHandler->initialize([]);
         $this->RequestHandler->startup($event);
@@ -457,7 +457,7 @@ class RequestHandlerComponentTest extends TestCase
         $this->RequestHandler->beforeRender($event);
         $this->assertEquals('Cake\View\JsonView', $this->Controller->viewClass);
         $view = $this->Controller->createView();
-        $this->assertEquals('json', $view->layoutPath);
+        $this->assertEquals('json', $view->getLayoutPath());
         $this->assertEquals('json', $view->subDir);
     }
 
@@ -470,7 +470,7 @@ class RequestHandlerComponentTest extends TestCase
     public function testXmlViewLoaded()
     {
         Router::extensions(['json', 'xml', 'ajax'], false);
-        $this->Controller->request->params['_ext'] = 'xml';
+        $this->Controller->request = $this->Controller->request->withParam('_ext', 'xml');
         $event = new Event('Controller.startup', $this->Controller);
         $this->RequestHandler->initialize([]);
         $this->RequestHandler->startup($event);
@@ -478,7 +478,7 @@ class RequestHandlerComponentTest extends TestCase
         $this->RequestHandler->beforeRender($event);
         $this->assertEquals('Cake\View\XmlView', $this->Controller->viewClass);
         $view = $this->Controller->createView();
-        $this->assertEquals('xml', $view->layoutPath);
+        $this->assertEquals('xml', $view->getLayoutPath());
         $this->assertEquals('xml', $view->subDir);
     }
 
@@ -491,7 +491,7 @@ class RequestHandlerComponentTest extends TestCase
     public function testAjaxViewLoaded()
     {
         Router::extensions(['json', 'xml', 'ajax'], false);
-        $this->Controller->request->params['_ext'] = 'ajax';
+        $this->Controller->request = $this->Controller->request->withParam('_ext', 'ajax');
         $event = new Event('Controller.startup', $this->Controller);
         $this->RequestHandler->initialize([]);
         $this->RequestHandler->startup($event);
@@ -499,7 +499,7 @@ class RequestHandlerComponentTest extends TestCase
         $this->RequestHandler->beforeRender($event);
         $this->assertEquals('Cake\View\AjaxView', $this->Controller->viewClass);
         $view = $this->Controller->createView();
-        $this->assertEquals('ajax', $view->layout);
+        $this->assertEquals('ajax', $view->getLayout());
     }
 
     /**
@@ -511,7 +511,7 @@ class RequestHandlerComponentTest extends TestCase
     public function testNoViewClassExtension()
     {
         Router::extensions(['json', 'xml', 'ajax', 'csv'], false);
-        $this->Controller->request->params['_ext'] = 'csv';
+        $this->Controller->request = $this->Controller->request->withParam('_ext', 'csv');
         $event = new Event('Controller.startup', $this->Controller);
         $this->RequestHandler->initialize([]);
         $this->RequestHandler->startup($event);

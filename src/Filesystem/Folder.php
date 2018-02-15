@@ -131,7 +131,7 @@ class Folder
      *
      * @param string|null $path Path to folder
      * @param bool $create Create folder if not found
-     * @param int|bool $mode Mode (CHMOD) to apply to created folder, false to ignore
+     * @param int|false $mode Mode (CHMOD) to apply to created folder, false to ignore
      */
     public function __construct($path = null, $create = false, $mode = false)
     {
@@ -345,7 +345,7 @@ class Folder
      */
     public static function isRegisteredStreamWrapper($path)
     {
-        return preg_match('/^[A-Z]+(?=:\/\/)/i', $path, $matches) &&
+        return preg_match('/^[^:\/\/]+?(?=:\/\/)/i', $path, $matches) &&
             in_array($matches[0], stream_get_wrappers());
     }
 
