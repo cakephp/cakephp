@@ -50,8 +50,10 @@ class PluginAppTest extends TestCase
             'routes' => false
         ]);
 
-        $this->assertFalse($plugin->isBootstrapEnabled());
-        $this->assertFalse($plugin->isRoutesEnabled());
+        $this->assertFalse($plugin->isEnabled('routes'));
+        $this->assertFalse($plugin->isEnabled('bootstrap'));
+        $this->assertTrue($plugin->isEnabled('console'));
+        $this->assertTrue($plugin->isEnabled('middleware'));
     }
 
     public function testGetName()
@@ -91,10 +93,10 @@ class PluginAppTest extends TestCase
             'console' => false,
             'middleware' => false
         ]);
-        $this->assertFalse($plugin->isRoutesEnabled());
-        $this->assertFalse($plugin->isBootstrapEnabled());
-        $this->assertFalse($plugin->isConsoleEnabled());
-        $this->assertFalse($plugin->isMiddlewareEnabled());
+        $this->assertFalse($plugin->isEnabled('routes'));
+        $this->assertFalse($plugin->isEnabled('bootstrap'));
+        $this->assertFalse($plugin->isEnabled('console'));
+        $this->assertFalse($plugin->isEnabled('middleware'));
     }
 
     public function testGetPathBaseClass()

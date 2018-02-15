@@ -87,7 +87,7 @@ class PluginApp implements PluginInterface
      */
     public function __construct(array $options = [])
     {
-        foreach (PluginCollection::VALID_HOOKS as $key) {
+        foreach (static::VALID_HOOKS as $key) {
             if (isset($options[$key])) {
                 $this->{"{$key}Enabled"} = (bool)$options[$key];
             }
@@ -172,9 +172,10 @@ class PluginApp implements PluginInterface
     /**
      * {@inheritdoc}
      */
-    public function disableRoutes()
+    public function enable($hook)
     {
-        $this->routesEnabled = false;
+        $this->checkHook($hook);
+        $this->{"{$hook}Enabled}"} = true;
 
         return $this;
     }
@@ -182,9 +183,10 @@ class PluginApp implements PluginInterface
     /**
      * {@inheritdoc}
      */
-    public function enableRoutes()
+    public function disable($hook)
     {
-        $this->routesEnabled = true;
+        $this->checkHook($hook);
+        $this->{"{$hook}Enabled"} = false;
 
         return $this;
     }
@@ -192,93 +194,27 @@ class PluginApp implements PluginInterface
     /**
      * {@inheritdoc}
      */
-    public function disableBootstrap()
+    public function isEnabled($hook)
     {
-        $this->bootstrapEnabled = false;
+        $this->checkHook($hook);
 
-        return $this;
+        return $this->{"{$hook}Enabled"} === true;
     }
 
     /**
-     * {@inheritdoc}
+     * Check if a hook name is valid
+     *
+     * @param string $hook The hook name to check
+     * @throws \InvalidArgumentException on invalid hooks
+     * @return void
      */
-    public function enableBootstrap()
+    protected function checkHook($hook)
     {
-        $this->bootstrapEnabled = true;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function disableMiddleware()
-    {
-        $this->middlewareEnabled = false;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function enableMiddleware()
-    {
-        $this->middlewareEnabled = true;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function disableConsole()
-    {
-        $this->consoleEnabled = false;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function enableConsole()
-    {
-        $this->consoleEnabled = true;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isRoutesEnabled()
-    {
-        return $this->routesEnabled;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isBootstrapEnabled()
-    {
-        return $this->bootstrapEnabled;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isConsoleEnabled()
-    {
-        return $this->consoleEnabled;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isMiddlewareEnabled()
-    {
-        return $this->middlewareEnabled;
+        if (!in_array($hook, static::VALID_HOOKS)) {
+            throw new InvalidArgumentException(
+                "`$hook` is not a valid hook name. Must be one of " . implode(', ', static::VALID_HOOKS)
+            );
+        }
     }
 
     /**

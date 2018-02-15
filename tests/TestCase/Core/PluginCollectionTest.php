@@ -114,7 +114,7 @@ class PluginCollectionTest extends TestCase
     {
         $plugins = new PluginCollection();
         $plugin = new TestPlugin();
-        $plugin->disableRoutes();
+        $plugin->disable('routes');
 
         $pluginThree = new TestPluginThree();
 

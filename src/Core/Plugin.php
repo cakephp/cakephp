@@ -309,7 +309,7 @@ class Plugin
     public static function bootstrap($name)
     {
         $plugin = static::getCollection()->get($name);
-        if (!$plugin->isBootstrapEnabled()) {
+        if (!$plugin->isEnabled('bootstrap')) {
             return false;
         }
 
@@ -339,7 +339,7 @@ class Plugin
             return true;
         }
         $plugin = static::getCollection()->get($name);
-        if (!$plugin->isRoutesEnabled()) {
+        if (!$plugin->isEnabled('routes')) {
             return false;
         }
 

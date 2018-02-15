@@ -36,8 +36,6 @@ class PluginCollection implements IteratorAggregate, Countable
      */
     protected $plugins = [];
 
-    const VALID_HOOKS = ['routes', 'bootstrap', 'console', 'middleware'];
-
     /**
      * Constructor
      *
@@ -137,13 +135,11 @@ class PluginCollection implements IteratorAggregate, Countable
      */
     public function with($hook)
     {
-        if (!in_array($hook, static::VALID_HOOKS)) {
+        if (!in_array($hook, PluginInterface::VALID_HOOKS)) {
             throw new InvalidArgumentException("The `{$hook}` hook is not a known plugin hook.");
         }
-        $hook = ucfirst($hook);
-        $method = "is{$hook}Enabled";
         foreach ($this as $plugin) {
-            if ($plugin->{$method}()) {
+            if ($plugin->isEnabled($hook)) {
                 yield $plugin;
             }
         }

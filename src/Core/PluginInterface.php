@@ -10,7 +10,6 @@
  * @since         3.6.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-
 namespace Cake\Core;
 
 /**
@@ -18,6 +17,11 @@ namespace Cake\Core;
  */
 interface PluginInterface
 {
+    /**
+     * The list of valid hooks
+     */
+    const VALID_HOOKS = ['routes', 'bootstrap', 'console', 'middleware'];
+
     /**
      * Get the name of this plugin.
      *
@@ -56,86 +60,50 @@ interface PluginInterface
     public function bootstrap();
 
     /**
-     * Disables route loading for the plugin
+     * Add a plugins console commands
      *
-     * @return $this
+     * @param \Cake\Console\CommandCollection $commands The command collection to update
+     * @return \Cake\Console\CommandCollection
      */
-    public function disableRoutes();
+    public function console($commands);
 
     /**
-     * Enables route loading for the plugin
+     * Add a plugins middleware
      *
-     * @return $this
+     * @param \Cake\Http\MiddlewareQueue $middleware The middleware queue to update.
+     * @return \Cake\Http\MiddlewareQueue
      */
-    public function enableRoutes();
+    public function middleware($middleware);
 
     /**
-     * Disables bootstrapping for the plugin
+     * Add a routes
      *
-     * @return $this
+     * @param \Cake\Routing\RouteBuilder $route The route builder to update.
+     * @return \Cake\Routing\RouteBuilder
      */
-    public function disableBootstrap();
+    public function routes($routes);
 
     /**
-     * Enables bootstrapping for the plugin
+     * Disables the named hook
      *
+     * @param string $hook The hook to disable
      * @return $this
      */
-    public function enableBootstrap();
+    public function disable($hook);
 
     /**
-     * Disables console commands for the plugin
+     * Enables the named hook
      *
+     * @param string $hook The hook to disable
      * @return $this
      */
-    public function disableConsole();
+    public function enable($hook);
 
     /**
-     * Enables console commands for the plugin
+     * Check if the named hook is enabled
      *
-     * @return $this
-     */
-    public function enableConsole();
-
-    /**
-     * Disables middleware for the plugin
-     *
-     * @return $this
-     */
-    public function disableMiddleware();
-
-    /**
-     * Enables middleware for the plugin
-     *
-     * @return $this
-     */
-    public function enableMiddleware();
-
-    /**
-     * If the routes should be loaded or not for this plugin
-     *
+     * @param string $hook The hook to check
      * @return bool
      */
-    public function isRoutesEnabled();
-
-    /**
-     * If bootstrapping should be done or not for this plugin
-     *
-     * @return bool
-     */
-    public function isBootstrapEnabled();
-
-    /**
-     * If middleware is enabled
-     *
-     * @return bool
-     */
-    public function isMiddlewareEnabled();
-
-    /**
-     * If console is enabled
-     *
-     * @return bool
-     */
-    public function isConsoleEnabled();
+    public function isEnabled($hook);
 }
