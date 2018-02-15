@@ -40,6 +40,38 @@ ConnectionManager::setConfig('default', [
 Once a 'default' connection is registered, it will be used by all the Table
 mappers if no explicit connection is defined.
 
+## Using Table Locator
+
+In order to access table instances you need to use a *Table Locator*.
+
+```php
+use Cake\ORM\Locator\TableLocator;
+
+$locator = new TableLocator();
+$articles = $locator->get('Articles');
+```
+
+You can also use a trait for easy access to the locator instance:
+
+```php
+use Cake\ORM\Locator\LocatorAwareTrait;
+
+$articles = $this->getTableLocator()->get('Articles');
+```
+
+By default classes using `LocatorAwareTrait` will share a global locator instance.
+You can inject your own locator instance into the object:
+
+```php
+use Cake\ORM\Locator\TableLocator;
+use Cake\ORM\Locator\LocatorAwareTrait;
+
+$locator = new TableLocator();
+$this->setTableLocator($locator);
+
+$articles = $this->getTableLocator()->get('Articles');
+```
+
 ## Creating Associations
 
 In your table classes you can define the relations between your tables. CakePHP's ORM
