@@ -13,6 +13,7 @@
  */
 namespace Cake\Core;
 
+use InvalidArgumentException;
 use ReflectionClass;
 
 /**

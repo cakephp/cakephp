@@ -25,28 +25,28 @@ interface PluginInterface
     /**
      * Get the name of this plugin.
      *
-     * @return void
+     * @return string
      */
     public function getName();
 
     /**
      * Get the filesystem path to this plugin
      *
-     * @return void
+     * @return string
      */
     public function getPath();
 
     /**
      * Get the filesystem path to configuration for this plugin
      *
-     * @return void
+     * @return string
      */
     public function getConfigPath();
 
     /**
      * Get the filesystem path to configuration for this plugin
      *
-     * @return void
+     * @return string
      */
     public function getClassPath();
 

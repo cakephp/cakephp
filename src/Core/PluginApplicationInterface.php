@@ -46,8 +46,8 @@ interface PluginApplicationInterface
     /**
      * Run middleware hooks for plugins
      *
-     * @param \Cake\Http\MiddlewareStack $middleware The MiddlewareStack to use.
-     * @return \Cake\Http\MiddlewareStack
+     * @param \Cake\Http\MiddlewareQueue $middleware The MiddlewareQueue to use.
+     * @return \Cake\Http\MiddlewareQueue
      */
     public function pluginMiddleware($middleware);
 
