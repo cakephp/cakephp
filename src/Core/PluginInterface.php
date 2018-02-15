@@ -78,7 +78,7 @@ interface PluginInterface
     /**
      * Add a routes
      *
-     * @param \Cake\Routing\RouteBuilder $route The route builder to update.
+     * @param \Cake\Routing\RouteBuilder $routes The route builder to update.
      * @return \Cake\Routing\RouteBuilder
      */
     public function routes($routes);
