@@ -18,7 +18,6 @@ use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\HttpApplicationInterface;
 use Cake\Core\Plugin;
 use Cake\Core\PluginApplicationInterface;
-use Cake\Core\PluginCollection;
 use Cake\Core\PluginInterface;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
@@ -47,7 +46,7 @@ abstract class BaseApplication implements
     /**
      * Plugin Collection
      *
-     * @param \Cake\Core\PluginCollection
+     * @var \Cake\Core\PluginCollection
      */
     protected $plugins;
 

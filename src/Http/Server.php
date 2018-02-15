@@ -70,8 +70,7 @@ class Server
     public function run(ServerRequestInterface $request = null, ResponseInterface $response = null)
     {
         $this->app->bootstrap();
-        $hasPlugins = $this->app instanceof PluginApplicationInterface;
-        if ($hasPlugins) {
+        if ($this->app instanceof PluginApplicationInterface) {
             $this->app->pluginBootstrap();
         }
 
@@ -79,7 +78,7 @@ class Server
         $request = $request ?: ServerRequestFactory::fromGlobals();
 
         $middleware = $this->app->middleware(new MiddlewareQueue());
-        if ($hasPlugins) {
+        if ($this->app instanceof PluginApplicationInterface) {
             $middleware = $this->app->pluginMiddleware($middleware);
         }
 

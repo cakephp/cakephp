@@ -25,7 +25,6 @@ use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
-use Cake\Event\EventManagerTrait;
 use Cake\Utility\Inflector;
 use RuntimeException;
 
@@ -114,9 +113,8 @@ class CommandRunner implements EventDispatcherInterface
      */
     public function run(array $argv, ConsoleIo $io = null)
     {
-        $hasPlugins = $this->app instanceof PluginApplicationInterface;
         $this->app->bootstrap();
-        if ($hasPlugins) {
+        if ($this->app instanceof PluginApplicationInterface) {
             $this->app->pluginBootstrap();
         }
 
@@ -125,7 +123,7 @@ class CommandRunner implements EventDispatcherInterface
             'help' => HelpCommand::class,
         ]);
         $commands = $this->app->console($commands);
-        if ($hasPlugins) {
+        if ($this->app instanceof PluginApplicationInterface) {
             $commands = $this->app->pluginConsole($commands);
         }
 
