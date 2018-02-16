@@ -42,14 +42,14 @@ interface DriverInterface
     /**
      * Returns correct connection resource or object that is internally used.
      *
-     * @return mixed Connection object used internally.
+     * @return object Connection object used internally.
      */
     public function getConnection();
 
     /**
      * Set the internal connection object.
      *
-     * @param mixed $connection The connection instance.
+     * @param object $connection The connection instance.
      * @return $this
      */
     public function setConnection($connection);
