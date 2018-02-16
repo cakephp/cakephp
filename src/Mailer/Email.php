@@ -87,7 +87,7 @@ class Email implements JsonSerializable, Serializable
      *
      * @var string
      */
-    const EMAIL_PATTERN = '/^((?:[\p{L}0-9.!#$%&\'*+\/=?^_`{|}~-]+)*@[\p{L}0-9-._]+)$/ui';
+    const EMAIL_PATTERN = '/^(((?:[\p{L}0-9.!#$%&\'*+\/=?^_`{|}~-]+)*|(".*"))@([\p{L}0-9-_.]+|\[[0-9A-F:.]+\]))$/ui';
 
     /**
      * Recipient of the email
