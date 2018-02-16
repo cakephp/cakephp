@@ -14,6 +14,7 @@
  */
 namespace Cake\Form;
 
+use Cake\Form\Schema;
 use Cake\Validation\Validator;
 
 /**
@@ -35,6 +36,12 @@ use Cake\Validation\Validator;
  */
 class Form
 {
+    /**
+     * Schema class.
+     *
+     * @var string
+     */
+    protected $_schemaClass = Schema::class;
 
     /**
      * The schema used by this form.
@@ -70,7 +77,7 @@ class Form
     public function schema(Schema $schema = null)
     {
         if ($schema === null && empty($this->_schema)) {
-            $schema = $this->_buildSchema(new Schema());
+            $schema = $this->_buildSchema(new $this->_schemaClass);
         }
         if ($schema) {
             $this->_schema = $schema;

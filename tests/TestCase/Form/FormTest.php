@@ -16,6 +16,8 @@ namespace Cake\Test\TestCase\Form;
 
 use Cake\Form\Form;
 use Cake\TestSuite\TestCase;
+use TestApp\Form\AppForm;
+use TestApp\Form\FormSchema;
 
 /**
  * Form test case.
@@ -39,6 +41,9 @@ class FormTest extends TestCase
         $schema = $this->getMockBuilder('Cake\Form\Schema')->getMock();
         $this->assertSame($schema, $form->schema($schema));
         $this->assertSame($schema, $form->schema());
+
+        $form = new AppForm();
+        $this->assertInstanceOf(FormSchema::class, $form->schema());
     }
 
     /**
