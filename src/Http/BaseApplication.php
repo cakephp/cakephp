@@ -81,6 +81,18 @@ abstract class BaseApplication implements
     /**
      * {@inheritDoc}
      */
+    public function pluginEvents()
+    {
+        $events = $this->getEventManager();
+
+        foreach ($this->plugins->with('events') as $plugin) {
+            $plugin->events($events);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function pluginMiddleware($middleware)
     {
         foreach ($this->plugins->with('middleware') as $plugin) {

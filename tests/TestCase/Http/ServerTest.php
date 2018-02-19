@@ -121,12 +121,14 @@ class ServerTest extends TestCase
         $request = $request->withHeader('X-pass', 'request header');
 
         $app = $this->getMockBuilder(MiddlewareApplication::class)
-            ->setMethods(['pluginBootstrap', 'pluginMiddleware'])
+            ->setMethods(['pluginBootstrap', 'pluginEvents', 'pluginMiddleware'])
             ->setConstructorArgs([$this->config])
             ->getMock();
-        $app->expects($this->once())
+        $app->expects($this->at(0))
             ->method('pluginBootstrap');
-        $app->expects($this->once())
+        $app->expects($this->at(1))
+            ->method('pluginBootstrap');
+        $app->expects($this->at(2))
             ->method('pluginMiddleware')
             ->with($this->isInstanceOf(MiddlewareQueue::class))
             ->will($this->returnCallback(function ($middleware) {

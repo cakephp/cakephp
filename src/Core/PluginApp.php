@@ -33,6 +33,13 @@ class PluginApp implements PluginInterface
     protected $bootstrapEnabled = true;
 
     /**
+     * Are events enabled.
+     *
+     * @var bool
+     */
+    protected $eventsEnabled = true;
+
+    /**
      * Load routes or not
      *
      * @var bool
@@ -254,5 +261,12 @@ class PluginApp implements PluginInterface
     public function middleware($middleware)
     {
         return $middleware;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function events($events)
+    {
     }
 }

@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\Core;
 use Cake\Console\CommandCollection;
 use Cake\Core\Plugin;
 use Cake\Core\PluginApp;
+use Cake\Event\EventManager;
 use Cake\Http\MiddlewareQueue;
 use Cake\TestSuite\TestCase;
 use Company\TestPluginThree\Plugin as TestPluginThree;
@@ -83,6 +84,13 @@ class PluginAppTest extends TestCase
         $plugin = new PluginApp();
         $commands = new CommandCollection();
         $this->assertSame($commands, $plugin->console($commands));
+    }
+
+    public function testEvents()
+    {
+        $plugin = new PluginApp();
+        $events = new EventManager();
+        $this->assertNull($plugin->events($events));
     }
 
     public function testConstructorArguments()

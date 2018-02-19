@@ -18,9 +18,9 @@ namespace Cake\Core;
 interface PluginInterface
 {
     /**
-     * The list of valid hooks
+     * List of valid hooks.
      */
-    const VALID_HOOKS = ['routes', 'bootstrap', 'console', 'middleware'];
+    const VALID_HOOKS = ['routes', 'bootstrap', 'console', 'middleware', 'events'];
 
     /**
      * Get the name of this plugin.
@@ -60,7 +60,7 @@ interface PluginInterface
     public function bootstrap();
 
     /**
-     * Add a plugins console commands
+     * Add console commands for the plugin.
      *
      * @param \Cake\Console\CommandCollection $commands The command collection to update
      * @return \Cake\Console\CommandCollection
@@ -68,7 +68,7 @@ interface PluginInterface
     public function console($commands);
 
     /**
-     * Add a plugins middleware
+     * Add middleware for the plugin.
      *
      * @param \Cake\Http\MiddlewareQueue $middleware The middleware queue to update.
      * @return \Cake\Http\MiddlewareQueue
@@ -76,12 +76,20 @@ interface PluginInterface
     public function middleware($middleware);
 
     /**
-     * Add a routes
+     * Add routes for the plugin.
      *
      * @param \Cake\Routing\RouteBuilder $routes The route builder to update.
      * @return \Cake\Routing\RouteBuilder
      */
     public function routes($routes);
+
+    /**
+     * Add events for the plugin.
+     *
+     * @param \Cake\Event\EventManager $events The application's event manager
+     * @return void
+     */
+    public function events($events);
 
     /**
      * Disables the named hook

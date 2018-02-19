@@ -394,14 +394,16 @@ class CommandRunnerTest extends TestCase
     public function testRunCallsPluginHookMethods()
     {
         $app = $this->getMockBuilder(BaseApplication::class)
-            ->setMethods(['middleware', 'bootstrap', 'pluginBootstrap', 'pluginConsole'])
+            ->setMethods(['middleware', 'bootstrap', 'pluginBootstrap', 'pluginEvents', 'pluginConsole'])
             ->setConstructorArgs([$this->config])
             ->getMock();
-        $app->expects($this->once())
-            ->method('pluginBootstrap');
+
+        $app->expects($this->at(0))->method('bootstrap');
+        $app->expects($this->at(1))->method('pluginBootstrap');
+        $app->expects($this->at(2))->method('pluginEvents');
 
         $commands = new CommandCollection();
-        $app->expects($this->once())
+        $app->expects($this->at(3))
             ->method('pluginConsole')
             ->with($this->isinstanceOf(CommandCollection::class))
             ->will($this->returnCallback(function ($commands) {

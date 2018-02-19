@@ -58,4 +58,11 @@ interface PluginApplicationInterface
      * @return \Cake\Console\CommandCollection
      */
     public function pluginConsole($commands);
+
+    /**
+     * Run events hook for plugins
+     *
+     * @return void
+     */
+    public function pluginEvents();
 }
