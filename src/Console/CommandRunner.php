@@ -22,6 +22,7 @@ use Cake\Console\ConsoleIo;
 use Cake\Console\Exception\StopException;
 use Cake\Console\Shell;
 use Cake\Core\ConsoleApplicationInterface;
+use Cake\Event\EventApplicationInterface;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Utility\Inflector;
@@ -63,7 +64,7 @@ class CommandRunner implements EventDispatcherInterface
      */
     public function __construct(ConsoleApplicationInterface $app, $root = 'cake')
     {
-        $this->app = $app;
+        $this->setApp($app);
         $this->root = $root;
         $this->aliases = [
             '--version' => 'version',
@@ -96,6 +97,23 @@ class CommandRunner implements EventDispatcherInterface
     }
 
     /**
+     * Set the application.
+     *
+     * @param \Cake\Core\ConsoleApplicationInterface $app The application to run CLI commands for.
+     * @return $this
+     */
+    public function setApp(ConsoleApplicationInterface $app)
+    {
+        $this->app = $app;
+
+        if ($app instanceof EventDispatcherInterface) {
+            $this->setEventManager($app->getEventManager());
+        }
+
+        return $this;
+    }
+
+    /**
      * Run the command contained in $argv.
      *
      * Use the application to do the following:
@@ -112,7 +130,7 @@ class CommandRunner implements EventDispatcherInterface
      */
     public function run(array $argv, ConsoleIo $io = null)
     {
-        $this->app->bootstrap();
+        $this->bootstrap();
 
         $commands = new CommandCollection([
             'version' => VersionCommand::class,
@@ -154,6 +172,22 @@ class CommandRunner implements EventDispatcherInterface
         }
 
         return Shell::CODE_ERROR;
+    }
+
+    /**
+     * Application bootstrap wrapper.
+     *
+     * Calls `bootstrap()` and `events()` if application implements `EventApplicationInterface`.
+     *
+     * @return void
+     */
+    protected function bootstrap()
+    {
+        $this->app->bootstrap();
+        if ($this->app instanceof EventApplicationInterface) {
+            $eventManager = $this->app->events($this->getEventManager());
+            $this->setEventManager($eventManager);
+        }
     }
 
     /**
