@@ -19,6 +19,11 @@ use Cake\Core\HttpApplicationInterface;
 use Cake\Core\Plugin;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Core\PluginInterface;
+use Cake\Event\EventApplicationInterface;
+use Cake\Event\EventDispatcherInterface;
+use Cake\Event\EventDispatcherTrait;
+use Cake\Event\EventManager;
+use Cake\Event\EventManagerInterface;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
 use InvalidArgumentException;
@@ -34,9 +39,13 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 abstract class BaseApplication implements
     ConsoleApplicationInterface,
+    EventApplicationInterface,
+    EventDispatcherInterface,
     HttpApplicationInterface,
     PluginApplicationInterface
 {
+
+    use EventDispatcherTrait;
 
     /**
      * @var string Contains the path of the config directory
@@ -54,11 +63,13 @@ abstract class BaseApplication implements
      * Constructor
      *
      * @param string $configDir The directory the bootstrap configuration is held in.
+     * @param \Cake\Event\EventManagerInterface $eventManager Application event manager instance.
      */
-    public function __construct($configDir)
+    public function __construct($configDir, EventManagerInterface $eventManager = null)
     {
         $this->configDir = $configDir;
         $this->plugins = Plugin::getCollection();
+        $this->_eventManager = $eventManager ?: EventManager::instance();
     }
 
     /**
@@ -198,6 +209,14 @@ abstract class BaseApplication implements
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function events(EventManagerInterface $eventManager)
+    {
+        return $eventManager;
+    }
+
+    /**
      * Invoke the application.
      *
      * - Convert the PSR response into CakePHP equivalents.
@@ -221,6 +240,6 @@ abstract class BaseApplication implements
      */
     protected function getDispatcher()
     {
-        return new ActionDispatcher(null, null, DispatcherFactory::filters());
+        return new ActionDispatcher(null, $this->getEventManager(), DispatcherFactory::filters());
     }
 }

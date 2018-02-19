@@ -15,11 +15,16 @@
 namespace Cake\Test\TestCase;
 
 use Cake\Event\Event;
+use Cake\Event\EventList;
+use Cake\Event\EventManager;
 use Cake\Http\CallbackStream;
 use Cake\Http\MiddlewareQueue;
 use Cake\Http\Server;
 use Cake\TestSuite\TestCase;
+use Psr\Http\Message\ResponseInterface;
+use RuntimeException;
 use TestApp\Http\BadResponseApplication;
+use TestApp\Http\EventApplication;
 use TestApp\Http\InvalidMiddlewareApplication;
 use TestApp\Http\MiddlewareApplication;
 use Zend\Diactoros\Response;
@@ -68,8 +73,14 @@ class ServerTest extends TestCase
         $app = $this->getMockBuilder('Cake\Http\BaseApplication')
             ->setConstructorArgs([$this->config])
             ->getMock();
+
+        $manager = new EventManager();
+        $app->method('getEventManager')
+            ->willReturn($manager);
+
         $server = new Server($app);
         $this->assertSame($app, $server->getApp($app));
+        $this->assertSame($app->getEventManager(), $server->getEventManager());
     }
 
     /**
@@ -159,10 +170,11 @@ class ServerTest extends TestCase
     /**
      * Test an application failing to build middleware properly
      *
+     * @return void
      */
     public function testRunWithApplicationNotMakingMiddleware()
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('The application `middleware` method');
         $app = new InvalidMiddlewareApplication($this->config);
         $server = new Server($app);
@@ -186,14 +198,34 @@ class ServerTest extends TestCase
     /**
      * Test middleware not creating a response.
      *
+     * @return void
      */
     public function testRunMiddlewareNoResponse()
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Application did not create a response. Got "Not a response" instead.');
         $app = new BadResponseApplication($this->config);
         $server = new Server($app);
         $server->run();
+    }
+
+    /**
+     * Test application events.
+     *
+     * @return void
+     */
+    public function testRunEvents()
+    {
+        $manager = new EventManager();
+        $manager->setEventList(new EventList());
+        $app = new EventApplication($this->config, $manager);
+
+        $server = new Server($app);
+        $res = $server->run();
+
+        $this->assertCount(1, $manager->listeners('My.event'));
+        $this->assertEventFired('Server.buildMiddleware', $manager);
+        $this->assertInstanceOf(ResponseInterface::class, $res);
     }
 
     /**

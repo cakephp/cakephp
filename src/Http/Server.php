@@ -16,6 +16,8 @@ namespace Cake\Http;
 
 use Cake\Core\HttpApplicationInterface;
 use Cake\Core\PluginApplicationInterface;
+use Cake\Event\EventApplicationInterface;
+use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -25,7 +27,7 @@ use Zend\Diactoros\Response\EmitterInterface;
 /**
  * Runs an application invoking all the PSR7 middleware and the registered application.
  */
-class Server
+class Server implements EventDispatcherInterface
 {
 
     use EventDispatcherTrait;
@@ -69,10 +71,7 @@ class Server
      */
     public function run(ServerRequestInterface $request = null, ResponseInterface $response = null)
     {
-        $this->app->bootstrap();
-        if ($this->app instanceof PluginApplicationInterface) {
-            $this->app->pluginBootstrap();
-        }
+        $this->bootstrap();
 
         $response = $response ?: new Response();
         $request = $request ?: ServerRequestFactory::fromGlobals();
@@ -101,6 +100,25 @@ class Server
     }
 
     /**
+     * Application bootstrap wrapper.
+     *
+     * Calls `bootstrap()` and `events()` if application implements `EventApplicationInterface`.
+     *
+     * @return void
+     */
+    protected function bootstrap()
+    {
+        $this->app->bootstrap();
+        if ($this->app instanceof EventApplicationInterface) {
+            $eventManager = $this->app->events($this->getEventManager());
+            $this->setEventManager($eventManager);
+        }
+        if ($this->app instanceof PluginApplicationInterface) {
+            $this->app->pluginBootstrap();
+        }
+    }
+
+    /**
      * Emit the response using the PHP SAPI.
      *
      * @param \Psr\Http\Message\ResponseInterface $response The response to emit
@@ -125,6 +143,10 @@ class Server
     public function setApp(HttpApplicationInterface $app)
     {
         $this->app = $app;
+
+        if ($app instanceof EventDispatcherInterface) {
+            $this->setEventManager($app->getEventManager());
+        }
 
         return $this;
     }

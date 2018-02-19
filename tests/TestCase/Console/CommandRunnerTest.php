@@ -19,10 +19,13 @@ use Cake\Console\CommandRunner;
 use Cake\Console\ConsoleIo;
 use Cake\Console\Shell;
 use Cake\Core\Configure;
+use Cake\Event\EventList;
+use Cake\Event\EventManager;
 use Cake\Http\BaseApplication;
 use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
 use TestApp\Command\DemoCommand;
+use TestApp\Http\EventApplication;
 use TestApp\Shell\SampleShell;
 
 /**
@@ -47,6 +50,25 @@ class CommandRunnerTest extends TestCase
         parent::setUp();
         Configure::write('App.namespace', 'TestApp');
         $this->config = dirname(dirname(__DIR__));
+    }
+
+    /**
+     * test set on the app
+     *
+     * @return void
+     */
+    public function testSetApp()
+    {
+        $app = $this->getMockBuilder(BaseApplication::class)
+            ->setConstructorArgs([$this->config])
+            ->getMock();
+
+        $manager = new EventManager();
+        $app->method('getEventManager')
+            ->willReturn($manager);
+
+        $runner = new CommandRunner($app);
+        $this->assertSame($app->getEventManager(), $runner->getEventManager());
     }
 
     /**
@@ -295,6 +317,32 @@ class CommandRunnerTest extends TestCase
 
         $messages = implode("\n", $output->messages());
         $this->assertContains('Demo Command!', $messages);
+    }
+
+    /**
+     * Test running a valid command
+     *
+     * @return void
+     */
+    public function testRunEvents()
+    {
+        $app = new EventApplication($this->config);
+        $output = new ConsoleOutput();
+
+        $manager = $app->getEventManager();
+        $manager->setEventList(new EventList());
+
+        $runner = new CommandRunner($app, 'cake');
+        $this->assertSame($manager, $runner->getEventManager());
+
+        $result = $runner->run(['cake', 'ex'], $this->getMockIo($output));
+        $this->assertSame(Shell::CODE_SUCCESS, $result);
+
+        $messages = implode("\n", $output->messages());
+        $this->assertContains('Demo Command!', $messages);
+
+        $this->assertCount(1, $manager->listeners('My.event'));
+        $this->assertEventFired('Console.buildCommands', $manager);
     }
 
     /**
