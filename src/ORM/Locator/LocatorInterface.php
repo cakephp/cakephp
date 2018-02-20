@@ -19,7 +19,7 @@ use Cake\ORM\Table;
 /**
  * Registries for Table objects should implement this interface.
  *
- * @method array getConfig()
+ * @method array getConfig($alias)
  * @method $this setConfig($alias, $options = null)
  */
 interface LocatorInterface

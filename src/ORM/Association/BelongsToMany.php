@@ -1430,7 +1430,7 @@ class BelongsToMany extends Association
     {
         if ($name === null) {
             if (empty($this->_junctionTableName)) {
-                $tablesNames = array_map('\Cake\Utility\Inflector::underscore', [
+                $tablesNames = array_map('Cake\Utility\Inflector::underscore', [
                     $this->getSource()->getTable(),
                     $this->getTarget()->getTable()
                 ]);

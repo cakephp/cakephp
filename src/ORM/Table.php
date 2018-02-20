@@ -763,7 +763,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function getEntityClass()
     {
         if (!$this->_entityClass) {
-            $default = '\Cake\ORM\Entity';
+            $default = Entity::class;
             $self = get_called_class();
             $parts = explode('\\', $self);
 
@@ -772,7 +772,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             }
 
             $alias = Inflector::singularize(substr(array_pop($parts), 0, -5));
-            $name = implode('\\', array_slice($parts, 0, -1)) . '\Entity\\' . $alias;
+            $name = implode('\\', array_slice($parts, 0, -1)) . '\\Entity\\' . $alias;
             if (!class_exists($name)) {
                 return $this->_entityClass = $default;
             }
