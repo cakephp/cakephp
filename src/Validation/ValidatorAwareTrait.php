@@ -44,7 +44,7 @@ trait ValidatorAwareTrait
      *
      * @var string
      */
-    protected $_validatorClass = '\Cake\Validation\Validator';
+    protected $_validatorClass = Validator::class;
 
     /**
      * A list of validation objects indexed by name

@@ -22,7 +22,7 @@ if (!empty($plugin)) {
 }
 $prefixNs = '';
 if (!empty($prefix)) {
-    $prefix = array_map('\Cake\Utility\Inflector::camelize', explode('/', $prefix));
+    $prefix = array_map('Cake\Utility\Inflector::camelize', explode('/', $prefix));
     $prefixNs = '\\' . implode('\\', $prefix);
     $prefix = implode(DIRECTORY_SEPARATOR, $prefix) . DIRECTORY_SEPARATOR;
 }

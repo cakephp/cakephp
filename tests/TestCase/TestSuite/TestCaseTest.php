@@ -409,7 +409,7 @@ class TestCaseTest extends TestCase
             ->method('save')
             ->will($this->returnValue('mocked'));
         $this->assertEquals('mocked', $Posts->save($entity));
-        $this->assertEquals('\Cake\ORM\Entity', $Posts->getEntityClass());
+        $this->assertEquals('Cake\ORM\Entity', $Posts->getEntityClass());
 
         $Posts = $this->getMockForModel('Posts', ['doSomething']);
         $this->assertInstanceOf('Cake\Database\Connection', $Posts->getConnection());
@@ -450,7 +450,7 @@ class TestCaseTest extends TestCase
         $TestPluginComment = $this->getMockForModel('TestPlugin.TestPluginComments', ['save']);
 
         $this->assertInstanceOf('TestPlugin\Model\Table\TestPluginCommentsTable', $TestPluginComment);
-        $this->assertEquals('\Cake\ORM\Entity', $TestPluginComment->getEntityClass());
+        $this->assertEquals('Cake\ORM\Entity', $TestPluginComment->getEntityClass());
         $TestPluginComment->expects($this->at(0))
             ->method('save')
             ->will($this->returnValue(true));

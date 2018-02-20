@@ -59,10 +59,10 @@ class Type implements TypeInterface
      * @deprecated 3.1 All types will now use a specific class
      */
     protected static $_basicTypes = [
-        'string' => ['callback' => ['\Cake\Database\Type', 'strval']],
-        'text' => ['callback' => ['\Cake\Database\Type', 'strval']],
+        'string' => ['callback' => [Type::class, 'strval']],
+        'text' => ['callback' => [Type::class, 'strval']],
         'boolean' => [
-            'callback' => ['\Cake\Database\Type', 'boolval'],
+            'callback' => [Type::class, 'boolval'],
             'pdo' => PDO::PARAM_BOOL
         ],
     ];

@@ -1482,7 +1482,7 @@ class TableTest extends TestCase
     public function testEntityClassDefault()
     {
         $table = new Table();
-        $this->assertEquals('\Cake\ORM\Entity', $table->getEntityClass());
+        $this->assertEquals('Cake\ORM\Entity', $table->getEntityClass());
     }
 
     /**
@@ -5992,7 +5992,7 @@ class TableTest extends TestCase
             'registryAlias' => 'Foo.Articles',
             'table' => 'articles',
             'alias' => 'Articles',
-            'entityClass' => '\Cake\ORM\Entity',
+            'entityClass' => 'Cake\ORM\Entity',
             'associations' => [],
             'behaviors' => [],
             'defaultConnection' => 'default',

@@ -17,6 +17,7 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
 use Cake\Event\EventManager;
+use Cake\ORM\Entity;
 use Cake\ORM\Exception\MissingTableClassException;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Routing\Router;
@@ -679,34 +680,27 @@ abstract class TestCase extends BaseTestCase
      */
     public function getMockForModel($alias, array $methods = [], array $options = [])
     {
-        $locator = $this->getTableLocator();
-
-        if (empty($options['className'])) {
-            $class = Inflector::camelize($alias);
-            $className = App::className($class, 'Model/Table', 'Table');
-            if (!$className) {
-                throw new MissingTableClassException([$alias]);
-            }
-            $options['className'] = $className;
-        }
-
-        $connectionName = $options['className']::defaultConnectionName();
+        /** @var \Cake\ORM\Table $className */
+        $className = $this->_getTableClassName($alias, $options);
+        $connectionName = $className::defaultConnectionName();
         $connection = ConnectionManager::get($connectionName);
+
+        $locator = $this->getTableLocator();
 
         list(, $baseClass) = pluginSplit($alias);
         $options += ['alias' => $baseClass, 'connection' => $connection];
         $options += $locator->getConfig($alias);
 
         /** @var \Cake\ORM\Table|\PHPUnit_Framework_MockObject_MockObject $mock */
-        $mock = $this->getMockBuilder($options['className'])
+        $mock = $this->getMockBuilder($className)
             ->setMethods($methods)
             ->setConstructorArgs([$options])
             ->getMock();
 
-        if (empty($options['entityClass']) && $mock->getEntityClass() === '\Cake\ORM\Entity') {
-            $parts = explode('\\', $options['className']);
+        if (empty($options['entityClass']) && $mock->getEntityClass() === Entity::class) {
+            $parts = explode('\\', $className);
             $entityAlias = Inflector::singularize(substr(array_pop($parts), 0, -5));
-            $entityClass = implode('\\', array_slice($parts, 0, -1)) . '\Entity\\' . $entityAlias;
+            $entityClass = implode('\\', array_slice($parts, 0, -1)) . '\\Entity\\' . $entityAlias;
             if (class_exists($entityClass)) {
                 $mock->setEntityClass($entityClass);
             }
@@ -720,6 +714,28 @@ abstract class TestCase extends BaseTestCase
         $locator->set($alias, $mock);
 
         return $mock;
+    }
+
+    /**
+     * Gets the class name for the table.
+     *
+     * @param string $alias The model to get a mock for.
+     * @param array $options The config data for the mock's constructor.
+     * @return string
+     * @throws \Cake\ORM\Exception\MissingTableClassException
+     */
+    protected function _getTableClassName($alias, array $options)
+    {
+        if (empty($options['className'])) {
+            $class = Inflector::camelize($alias);
+            $className = App::className($class, 'Model/Table', 'Table');
+            if (!$className) {
+                throw new MissingTableClassException([$alias]);
+            }
+            $options['className'] = $className;
+        }
+
+        return $options['className'];
     }
 
     /**
