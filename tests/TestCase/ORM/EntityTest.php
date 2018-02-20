@@ -1506,6 +1506,7 @@ class EntityTest extends TestCase
         $expected = [
             'foo' => 'bar',
             'somethingElse' => 'value',
+            'baz' => null,
             '[new]' => true,
             '[accessible]' => ['*' => true, 'id' => false, 'name' => true],
             '[dirty]' => ['somethingElse' => true, 'foo' => true],
