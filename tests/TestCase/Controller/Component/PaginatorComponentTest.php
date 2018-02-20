@@ -192,6 +192,7 @@ class PaginatorComponentTest extends TestCase
                 'page' => 1,
                 'whitelist' => ['limit', 'sort', 'page', 'direction'],
                 'scope' => null,
+                'sort' => null,
             ]);
         $this->Paginator->paginate($table, $settings);
     }
@@ -327,6 +328,7 @@ class PaginatorComponentTest extends TestCase
                 'order' => ['PaginatorPosts.id' => 'DESC'],
                 'whitelist' => ['limit', 'sort', 'page', 'direction'],
                 'scope' => null,
+                'sort' => null,
             ]);
 
         $this->Paginator->paginate($table, $settings);
@@ -359,6 +361,7 @@ class PaginatorComponentTest extends TestCase
                 'order' => ['PaginatorPosts.id' => 'DESC'],
                 'whitelist' => ['limit', 'sort', 'page', 'direction'],
                 'scope' => null,
+                'sort' => null,
             ]);
 
         $this->Paginator->paginate($table, $settings);
@@ -668,6 +671,7 @@ class PaginatorComponentTest extends TestCase
                 'order' => ['PaginatorPosts.id' => 'asc'],
                 'whitelist' => ['limit', 'sort', 'page', 'direction'],
                 'scope' => null,
+                'sort' => 'id',
             ]);
 
         $this->request->query = [
@@ -676,7 +680,7 @@ class PaginatorComponentTest extends TestCase
             'direction' => 'herp'
         ];
         $this->Paginator->paginate($table);
-        $this->assertEquals('PaginatorPosts.id', $this->request->params['paging']['PaginatorPosts']['sort']);
+        $this->assertEquals('id', $this->request->params['paging']['PaginatorPosts']['sort']);
         $this->assertEquals('asc', $this->request->params['paging']['PaginatorPosts']['direction']);
     }
 
@@ -1236,6 +1240,7 @@ class PaginatorComponentTest extends TestCase
                 'order' => [],
                 'whitelist' => ['limit', 'sort', 'page', 'direction'],
                 'scope' => null,
+                'sort' => null,
             ]);
         $this->Paginator->paginate($table, $settings);
     }
@@ -1270,6 +1275,7 @@ class PaginatorComponentTest extends TestCase
                 'page' => 1,
                 'whitelist' => ['limit', 'sort', 'page', 'direction'],
                 'scope' => null,
+                'sort' => null,
             ]);
         $this->Paginator->paginate($query, $settings);
     }
@@ -1330,6 +1336,7 @@ class PaginatorComponentTest extends TestCase
                 'page' => 1,
                 'whitelist' => ['limit', 'sort', 'page', 'direction'],
                 'scope' => null,
+                'sort' => null,
             ]);
         $this->Paginator->paginate($query, $settings);
     }
