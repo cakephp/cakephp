@@ -282,7 +282,10 @@ class FormHelper extends Helper
 
         parent::__construct($View, $config);
 
-        $this->widgetLocator($locator, $widgets);
+        if (!$locator) {
+            $locator = new WidgetLocator($this->templater(), $this->_View, $widgets);
+        }
+        $this->setWidgetLocator($locator);
         $this->_idPrefix = $this->getConfig('idPrefix');
     }
 
@@ -298,29 +301,37 @@ class FormHelper extends Helper
     {
         deprecationWarning('widgetRegistry is deprecated, use widgetLocator instead.');
 
-        return $this->widgetLocator($instance, $widgets);
+        if ($instance) {
+            $instance->add($widgets);
+            $this->setWidgetLocator($instance);
+        }
+
+        return $this->getWidgetLocator();
     }
 
     /**
-     * Set the widget registry the helper will use.
+     * Get the widget locator currently used by the helper.
      *
-     * @param \Cake\View\Widget\WidgetLocator|null $instance The locator instance to set.
-     * @param array $widgets An array of widgets
-     * @return \Cake\View\Widget\WidgetLocator
+     * @return \Cake\View\Widget\WidgetLocator Current locator instance
      * @since 3.6.0
      */
-    public function widgetLocator(WidgetLocator $instance = null, $widgets = [])
+    public function getWidgetLocator()
     {
-        if ($instance === null) {
-            if ($this->_locator === null) {
-                $this->_locator = new WidgetLocator($this->templater(), $this->_View, $widgets);
-            }
+        return $this->_locator;
+    }
 
-            return $this->_locator;
-        }
+    /**
+     * Set the widget locator the helper will use.
+     *
+     * @param \Cake\View\Widget\WidgetLocator $instance The locator instance to set.
+     * @return $this
+     * @since 3.6.0
+     */
+    public function setWidgetLocator(WidgetLocator $instance)
+    {
         $this->_locator = $instance;
 
-        return $this->_locator;
+        return $this;
     }
 
     /**

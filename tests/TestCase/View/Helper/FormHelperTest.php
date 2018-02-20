@@ -26,6 +26,7 @@ use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
 use Cake\View\Helper\FormHelper;
 use Cake\View\View;
+use Cake\View\Widget\WidgetLocator;
 
 /**
  * Test stub.
@@ -228,7 +229,7 @@ class FormHelperTest extends TestCase
             ]
         ];
         $helper = new FormHelper($this->View, $config);
-        $locator = $helper->widgetLocator();
+        $locator = $helper->getWidgetLocator();
         $this->assertInstanceOf('Cake\View\Widget\LabelWidget', $locator->get('datetime'));
     }
 
@@ -241,8 +242,22 @@ class FormHelperTest extends TestCase
     public function testConstructWithWidgetsConfig()
     {
         $helper = new FormHelper($this->View, ['widgets' => ['test_widgets']]);
-        $locator = $helper->widgetLocator();
+        $locator = $helper->getWidgetLocator();
         $this->assertInstanceOf('Cake\View\Widget\LabelWidget', $locator->get('text'));
+    }
+
+    /**
+     * Test setting the widget locator
+     *
+     * @return void
+     */
+    public function testSetAndGetWidgetLocator()
+    {
+        $helper = new FormHelper($this->View);
+        $locator = new WidgetLocator($helper->templater(), $this->View);
+        $helper->setWidgetLocator($locator);
+
+        $this->assertSame($locator, $helper->getWidgetLocator());
     }
 
     /**
