@@ -87,6 +87,19 @@ class DriverTest extends TestCase
      */
     public function testSupportsQuoting()
     {
+        $connection = $this->getMockBuilder(PDO::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getAttribute'])
+            ->getMock();
+
+        $connection
+            ->expects($this->once())
+            ->method('getAttribute')
+            ->with(PDO::ATTR_DRIVER_NAME)
+            ->willReturn('mysql');
+
+        $this->driver->setConnection($connection);
+
         $result = $this->driver->supportsQuoting();
         $this->assertTrue($result);
     }
@@ -114,15 +127,17 @@ class DriverTest extends TestCase
     {
         $value = 'string';
 
-        $this->driver->_connection = $this->getMockBuilder(Mysql::class)
+        $connection = $this->getMockBuilder(PDO::class)
             ->disableOriginalConstructor()
             ->setMethods(['quote'])
             ->getMock();
 
-        $this->driver->_connection
+        $connection
             ->expects($this->once())
             ->method('quote')
             ->with($value, PDO::PARAM_STR);
+
+        $this->driver->setConnection($connection);
 
         $this->driver->schemaValue($value);
     }
@@ -144,7 +159,7 @@ class DriverTest extends TestCase
             ->method('lastInsertId')
             ->willReturn('all-the-bears');
 
-        $this->driver->_connection = $connection;
+        $this->driver->setConnection($connection);
         $this->assertSame('all-the-bears', $this->driver->lastInsertId());
     }
 
@@ -155,11 +170,20 @@ class DriverTest extends TestCase
      */
     public function testIsConnected()
     {
-        $this->driver->_connection = 'connection';
-        $this->assertTrue($this->driver->isConnected());
-
-        $this->driver->_connection = null;
         $this->assertFalse($this->driver->isConnected());
+
+        $connection = $this->getMockBuilder(PDO::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['query'])
+            ->getMock();
+
+        $connection
+            ->expects($this->once())
+            ->method('query')
+            ->willReturn(true);
+
+        $this->driver->setConnection($connection);
+        $this->assertTrue($this->driver->isConnected());
     }
 
     /**
@@ -250,10 +274,10 @@ class DriverTest extends TestCase
      */
     public function testDestructor()
     {
-        $this->driver->_connection = true;
+        $this->driver->setConnection(true);
         $this->driver->__destruct();
 
-        $this->assertNull($this->driver->_connection);
+        $this->assertNull($this->driver->getConnection());
     }
 
     /**

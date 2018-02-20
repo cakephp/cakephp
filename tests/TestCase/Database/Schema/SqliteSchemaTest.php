@@ -1026,7 +1026,7 @@ SQL;
         $statement = $this->getMockBuilder('\PDOStatement')
             ->setMethods(['execute', 'rowCount', 'closeCursor', 'fetch'])
             ->getMock();
-        $driver->connection()->expects($this->once())->method('prepare')
+        $driver->getConnection()->expects($this->once())->method('prepare')
             ->with('SELECT 1 FROM sqlite_master WHERE name = "sqlite_sequence"')
             ->will($this->returnValue($statement));
         $statement->expects($this->at(0))->method('fetch')
@@ -1058,7 +1058,7 @@ SQL;
         $statement = $this->getMockBuilder('\PDOStatement')
             ->setMethods(['execute', 'rowCount', 'closeCursor', 'fetch'])
             ->getMock();
-        $driver->connection()->expects($this->once())->method('prepare')
+        $driver->getConnection()->expects($this->once())->method('prepare')
             ->with('SELECT 1 FROM sqlite_master WHERE name = "sqlite_sequence"')
             ->will($this->returnValue($statement));
         $statement->expects($this->once())->method('fetch')
@@ -1087,7 +1087,7 @@ SQL;
             ->will($this->returnCallback(function ($value) {
                 return '"' . $value . '"';
             }));
-        $driver->connection($mock);
+        $driver->setConnection($mock);
 
         return $driver;
     }

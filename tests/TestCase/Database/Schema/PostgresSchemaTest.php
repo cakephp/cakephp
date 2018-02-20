@@ -1264,7 +1264,7 @@ SQL;
             ->will($this->returnCallback(function ($value) {
                 return "'$value'";
             }));
-        $driver->connection($mock);
+        $driver->setConnection($mock);
 
         return $driver;
     }

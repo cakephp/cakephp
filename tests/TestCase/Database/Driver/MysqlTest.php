@@ -44,7 +44,7 @@ class MysqlTest extends TestCase
     public function testConnectionConfigDefault()
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
-            ->setMethods(['_connect', 'connection'])
+            ->setMethods(['_connect', 'getConnection'])
             ->getMock();
         $dsn = 'mysql:host=localhost;port=3306;dbname=cake;charset=utf8mb4';
         $expected = [
@@ -73,7 +73,7 @@ class MysqlTest extends TestCase
             ->with($dsn, $expected);
 
         $driver->expects($this->any())
-            ->method('connection')
+            ->method('getConnection')
             ->will($this->returnValue($connection));
         $driver->connect([]);
     }
@@ -101,7 +101,7 @@ class MysqlTest extends TestCase
             ]
         ];
         $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
-            ->setMethods(['_connect', 'connection'])
+            ->setMethods(['_connect', 'getConnection'])
             ->setConstructorArgs([$config])
             ->getMock();
         $dsn = 'mysql:host=foo;port=3440;dbname=bar;charset=some-encoding';
@@ -125,7 +125,7 @@ class MysqlTest extends TestCase
 
         $driver->expects($this->once())->method('_connect')
             ->with($dsn, $expected);
-        $driver->expects($this->any())->method('connection')
+        $driver->expects($this->any())->method('getConnection')
             ->will($this->returnValue($connection));
         $driver->connect($config);
     }
