@@ -21,6 +21,7 @@ use Cake\Datasource\ModelAwareTrait;
 use Cake\Filesystem\File;
 use Cake\Log\LogTrait;
 use Cake\ORM\Locator\LocatorAwareTrait;
+use Cake\ORM\Locator\LocatorInterface;
 use Cake\Utility\Inflector;
 use Cake\Utility\MergeVariablesTrait;
 use Cake\Utility\Text;
@@ -175,18 +176,19 @@ class Shell
      * Constructs this Shell instance.
      *
      * @param \Cake\Console\ConsoleIo|null $io An io instance.
+     * @param \Cake\ORM\Locator\LocatorInterface|null $locator Table locator instance.
      * @link https://book.cakephp.org/3.0/en/console-and-shells.html#Shell
      */
-    public function __construct(ConsoleIo $io = null)
+    public function __construct(ConsoleIo $io = null, LocatorInterface $locator = null)
     {
         if (!$this->name) {
             list(, $class) = namespaceSplit(get_class($this));
             $this->name = str_replace(['Shell', 'Task'], '', $class);
         }
         $this->_io = $io ?: new ConsoleIo();
+        $this->_tableLocator = $locator;
 
-        $locator = $this->getTableLocator() ? : 'Cake\ORM\TableRegistry';
-        $this->modelFactory('Table', [$locator, 'get']);
+        $this->modelFactory('Table', [$this->getTableLocator(), 'get']);
         $this->Tasks = new TaskRegistry($this);
 
         $this->_mergeVars(

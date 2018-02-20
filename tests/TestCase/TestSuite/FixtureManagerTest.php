@@ -16,10 +16,9 @@ namespace Cake\Test\TestSuite;
 
 use Cake\Core\Exception\Exception as CakeException;
 use Cake\Core\Plugin;
-use Cake\Database\Schema\Table;
+use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\Fixture\FixtureManager;
 use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
@@ -114,7 +113,7 @@ class FixtureManagerTest extends TestCase
             'stream' => $buffer
         ]);
 
-        $table = new Table('articles', [
+        $table = new TableSchema('articles', [
             'id' => ['type' => 'integer', 'unsigned' => true],
             'title' => ['type' => 'string', 'length' => 255],
         ]);
@@ -145,7 +144,7 @@ class FixtureManagerTest extends TestCase
         $this->manager->fixturize($test);
         $this->manager->load($test);
 
-        $table = TableRegistry::get('ArticlesTags');
+        $table = $this->getTableLocator()->get('ArticlesTags');
         $schema = $table->getSchema();
         $expectedConstraint = [
             'type' => 'foreign',
@@ -164,7 +163,7 @@ class FixtureManagerTest extends TestCase
         $this->manager->unload($test);
 
         $this->manager->load($test);
-        $table = TableRegistry::get('ArticlesTags');
+        $table = $this->getTableLocator()->get('ArticlesTags');
         $schema = $table->getSchema();
         $expectedConstraint = [
             'type' => 'foreign',
@@ -344,7 +343,7 @@ class FixtureManagerTest extends TestCase
         $this->manager->loadSingle('Tags');
         $this->manager->loadSingle('ArticlesTags');
 
-        $table = TableRegistry::get('ArticlesTags');
+        $table = $this->getTableLocator()->get('ArticlesTags');
         $results = $table->find('all')->toArray();
         $schema = $table->getSchema();
         $expectedConstraint = [
@@ -369,7 +368,7 @@ class FixtureManagerTest extends TestCase
         $this->manager->loadSingle('Tags');
         $this->manager->loadSingle('ArticlesTags');
 
-        $table = TableRegistry::get('ArticlesTags');
+        $table = $this->getTableLocator()->get('ArticlesTags');
         $results = $table->find('all')->toArray();
         $schema = $table->getSchema();
         $expectedConstraint = [

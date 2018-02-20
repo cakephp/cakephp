@@ -372,7 +372,7 @@ SQL;
                 'collate' => null,
             ],
         ];
-        $this->assertInstanceOf('Cake\Database\Schema\Table', $result);
+        $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $result);
         $this->assertEquals(['id'], $result->primaryKey());
         foreach ($expected as $field => $definition) {
             $this->assertEquals($definition, $result->getColumn($field));
@@ -411,7 +411,7 @@ SQL;
 
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_articles');
-        $this->assertInstanceOf('Cake\Database\Schema\Table', $result);
+        $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $result);
         $expected = [
             'primary' => [
                 'type' => 'primary',

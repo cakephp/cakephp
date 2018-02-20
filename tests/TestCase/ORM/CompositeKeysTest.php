@@ -21,7 +21,6 @@ use Cake\ORM\Entity;
 use Cake\ORM\Marshaller;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use PDO;
 
@@ -116,7 +115,7 @@ class CompositeKeyTest extends TestCase
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Cannot insert row, some of the primary key values are missing');
-        $articles = TableRegistry::get('SiteArticles');
+        $articles = $this->getTableLocator()->get('SiteArticles');
         $article = $articles->newEntity(['site_id' => 1, 'author_id' => 1, 'title' => 'testing']);
         $articles->save($article);
     }
@@ -132,7 +131,7 @@ class CompositeKeyTest extends TestCase
     public function testSaveNewCompositeKeyIncrement()
     {
         $this->skipIfSqlite();
-        $table = TableRegistry::get('CompositeIncrements');
+        $table = $this->getTableLocator()->get('CompositeIncrements');
         $thing = $table->newEntity(['account_id' => 3, 'name' => 'new guy']);
         $this->assertSame($thing, $table->save($thing));
         $this->assertNotEmpty($thing->id, 'Primary key should have been populated');
@@ -148,7 +147,7 @@ class CompositeKeyTest extends TestCase
      */
     public function testHasManyEager($strategy)
     {
-        $table = TableRegistry::get('SiteAuthors');
+        $table = $this->getTableLocator()->get('SiteAuthors');
         $table->hasMany('SiteArticles', [
             'propertyName' => 'articles',
             'strategy' => $strategy,
@@ -224,9 +223,9 @@ class CompositeKeyTest extends TestCase
      */
     public function testBelongsToManyEager($strategy)
     {
-        $articles = TableRegistry::get('SiteArticles');
-        $tags = TableRegistry::get('SiteTags');
-        $junction = TableRegistry::get('SiteArticlesTags');
+        $articles = $this->getTableLocator()->get('SiteArticles');
+        $tags = $this->getTableLocator()->get('SiteTags');
+        $junction = $this->getTableLocator()->get('SiteArticlesTags');
         $articles->belongsToMany('SiteTags', [
             'strategy' => $strategy,
             'targetTable' => $tags,
@@ -312,7 +311,7 @@ class CompositeKeyTest extends TestCase
      */
     public function testBelongsToEager($strategy)
     {
-        $table = TableRegistry::get('SiteArticles');
+        $table = $this->getTableLocator()->get('SiteArticles');
         $table->belongsTo('SiteAuthors', [
             'propertyName' => 'author',
             'strategy' => $strategy,
@@ -361,7 +360,7 @@ class CompositeKeyTest extends TestCase
      */
     public function testHasOneEager($strategy)
     {
-        $table = TableRegistry::get('SiteAuthors');
+        $table = $this->getTableLocator()->get('SiteAuthors');
         $table->hasOne('SiteArticles', [
             'propertyName' => 'first_article',
             'strategy' => $strategy,
@@ -419,7 +418,7 @@ class CompositeKeyTest extends TestCase
             'body' => 'Fifth Article Body',
             'author_id' => 3,
         ]);
-        $table = TableRegistry::get('SiteArticles');
+        $table = $this->getTableLocator()->get('SiteArticles');
         $this->assertSame($entity, $table->save($entity));
         $this->assertEquals($entity->id, 5);
 
@@ -444,7 +443,7 @@ class CompositeKeyTest extends TestCase
             'body' => 'Fifth Article Body',
             'author_id' => 3,
         ]);
-        $table = TableRegistry::get('SiteArticles');
+        $table = $this->getTableLocator()->get('SiteArticles');
         $table->save($entity);
     }
 
@@ -455,7 +454,7 @@ class CompositeKeyTest extends TestCase
      */
     public function testDelete()
     {
-        $table = TableRegistry::get('SiteAuthors');
+        $table = $this->getTableLocator()->get('SiteAuthors');
         $table->save(new Entity(['id' => 1, 'site_id' => 2]));
         $entity = $table->get([1, 1]);
         $result = $table->delete($entity);
@@ -472,7 +471,7 @@ class CompositeKeyTest extends TestCase
      */
     public function testDeleteDependent()
     {
-        $table = TableRegistry::get('SiteAuthors');
+        $table = $this->getTableLocator()->get('SiteAuthors');
         $table->hasMany('SiteArticles', [
             'foreignKey' => ['author_id', 'site_id'],
             'dependent' => true,
@@ -497,10 +496,10 @@ class CompositeKeyTest extends TestCase
      */
     public function testOneGenerateBelongsToManyEntitiesFromIds()
     {
-        $articles = TableRegistry::get('SiteArticles');
+        $articles = $this->getTableLocator()->get('SiteArticles');
         $articles->setEntityClass(__NAMESPACE__ . '\OpenArticleEntity');
-        $tags = TableRegistry::get('SiteTags');
-        $junction = TableRegistry::get('SiteArticlesTags');
+        $tags = $this->getTableLocator()->get('SiteTags');
+        $junction = $this->getTableLocator()->get('SiteArticlesTags');
         $articles->belongsToMany('SiteTags', [
             'targetTable' => $tags,
             'propertyName' => 'tags',
@@ -590,7 +589,7 @@ class CompositeKeyTest extends TestCase
      */
     public function testFindThreadedCompositeKeys()
     {
-        $table = TableRegistry::get('SiteAuthors');
+        $table = $this->getTableLocator()->get('SiteAuthors');
         $query = $this->getMockBuilder('\Cake\ORM\Query')
             ->setMethods(['_addDefaultFields', 'execute'])
             ->setConstructorArgs([null, $table])
@@ -681,8 +680,8 @@ class CompositeKeyTest extends TestCase
      */
     public function testLoadInto()
     {
-        $table = TableRegistry::get('SiteAuthors');
-        $tags = TableRegistry::get('SiteTags');
+        $table = $this->getTableLocator()->get('SiteAuthors');
+        $tags = $this->getTableLocator()->get('SiteTags');
         $table->hasMany('SiteArticles', [
             'foreignKey' => ['author_id', 'site_id'],
         ]);
@@ -704,7 +703,7 @@ class CompositeKeyTest extends TestCase
      */
     public function testLoadIntoWithBelongsTo()
     {
-        $table = TableRegistry::get('SiteArticles');
+        $table = $this->getTableLocator()->get('SiteArticles');
         $table->belongsTo('SiteAuthors', [
             'foreignKey' => ['author_id', 'site_id'],
         ]);
@@ -726,8 +725,8 @@ class CompositeKeyTest extends TestCase
      */
     public function testLoadIntoMany()
     {
-        $table = TableRegistry::get('SiteAuthors');
-        $tags = TableRegistry::get('SiteTags');
+        $table = $this->getTableLocator()->get('SiteAuthors');
+        $tags = $this->getTableLocator()->get('SiteTags');
         $table->hasMany('SiteArticles', [
             'foreignKey' => ['author_id', 'site_id'],
         ]);
@@ -761,7 +760,7 @@ class CompositeKeyTest extends TestCase
             }
         }
 
-        $articles = TableRegistry::get('SiteArticles');
+        $articles = $this->getTableLocator()->get('SiteArticles');
         $articles->belongsToMany('SiteTags', [
             'through' => 'SiteArticlesTags',
             'foreignKey' => ['article_id', 'site_id'],

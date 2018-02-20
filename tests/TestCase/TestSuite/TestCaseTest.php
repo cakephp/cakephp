@@ -21,7 +21,6 @@ use Cake\Event\EventList;
 use Cake\Event\EventManager;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\Fixture\FixtureManager;
 use Cake\TestSuite\TestCase;
 use Cake\Test\Fixture\FixturizedTestCase;
@@ -444,7 +443,7 @@ class TestCaseTest extends TestCase
         Plugin::load('TestPlugin');
         $TestPluginComment = $this->getMockForModel('TestPlugin.TestPluginComments');
 
-        $result = TableRegistry::get('TestPlugin.TestPluginComments');
+        $result = $this->getTableLocator()->get('TestPlugin.TestPluginComments');
         $this->assertInstanceOf('TestPlugin\Model\Table\TestPluginCommentsTable', $result);
         $this->assertSame($TestPluginComment, $result);
 
@@ -481,7 +480,7 @@ class TestCaseTest extends TestCase
             ['alias' => 'Comments', 'className' => '\Cake\ORM\Table']
         );
 
-        $result = TableRegistry::get('Comments');
+        $result = $this->getTableLocator()->get('Comments');
         $this->assertInstanceOf('Cake\ORM\Table', $result);
         $this->assertEquals('Comments', $Mock->getAlias());
 

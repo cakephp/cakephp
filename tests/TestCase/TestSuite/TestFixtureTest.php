@@ -14,7 +14,7 @@
  */
 namespace Cake\Test\TestCase\TestSuite;
 
-use Cake\Database\Schema\Table;
+use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
 use Cake\TestSuite\Fixture\TestFixture;
@@ -190,7 +190,7 @@ class TestFixtureTest extends TestCase
         $this->assertEquals('articles', $Fixture->table);
 
         $schema = $Fixture->getTableSchema();
-        $this->assertInstanceOf('Cake\Database\Schema\Table', $schema);
+        $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $schema);
 
         $fields = $Fixture->fields;
         unset($fields['_constraints'], $fields['_indexes']);
@@ -275,7 +275,7 @@ class TestFixtureTest extends TestCase
     public function testInitNoImportNoFields()
     {
         $db = ConnectionManager::get('test');
-        $table = new Table('letters', [
+        $table = new TableSchema('letters', [
             'id' => ['type' => 'integer'],
             'letter' => ['type' => 'string', 'length' => 1]
         ]);
@@ -317,7 +317,7 @@ class TestFixtureTest extends TestCase
         $db = $this->getMockBuilder('Cake\Database\Connection')
             ->disableOriginalConstructor()
             ->getMock();
-        $table = $this->getMockBuilder('Cake\Database\Schema\Table')
+        $table = $this->getMockBuilder('Cake\Database\Schema\TableSchema')
             ->setConstructorArgs(['articles'])
             ->getMock();
         $table->expects($this->once())
@@ -349,7 +349,7 @@ class TestFixtureTest extends TestCase
         $db = $this->getMockBuilder('Cake\Database\Connection')
             ->disableOriginalConstructor()
             ->getMock();
-        $table = $this->getMockBuilder('Cake\Database\Schema\Table')
+        $table = $this->getMockBuilder('Cake\Database\Schema\TableSchema')
             ->setConstructorArgs(['articles'])
             ->getMock();
         $table->expects($this->once())
@@ -545,7 +545,7 @@ class TestFixtureTest extends TestCase
             ->with('sql')
             ->will($this->returnValue($statement));
 
-        $table = $this->getMockBuilder('Cake\Database\Schema\Table')
+        $table = $this->getMockBuilder('Cake\Database\Schema\TableSchema')
             ->setConstructorArgs(['articles'])
             ->getMock();
         $table->expects($this->once())
@@ -577,7 +577,7 @@ class TestFixtureTest extends TestCase
             ->with('sql')
             ->will($this->returnValue($statement));
 
-        $table = $this->getMockBuilder('Cake\Database\Schema\Table')
+        $table = $this->getMockBuilder('Cake\Database\Schema\TableSchema')
             ->setConstructorArgs(['articles'])
             ->getMock();
         $table->expects($this->once())

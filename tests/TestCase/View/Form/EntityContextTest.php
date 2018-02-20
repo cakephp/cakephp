@@ -19,7 +19,6 @@ use ArrayObject;
 use Cake\Collection\Collection;
 use Cake\Http\ServerRequest;
 use Cake\ORM\Entity;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
 use Cake\View\Form\EntityContext;
@@ -674,8 +673,8 @@ class EntityContextTest extends TestCase
             'table' => 'Articles',
         ]);
 
-        TableRegistry::get('Users')->belongsToMany('Groups');
-        TableRegistry::get('Groups')->setPrimaryKey('thing');
+        $this->getTableLocator()->get('Users')->belongsToMany('Groups');
+        $this->getTableLocator()->get('Groups')->setPrimaryKey('thing');
 
         $result = $context->val('user.groups._ids');
         $this->assertEquals([1, 4], $result);
@@ -688,7 +687,7 @@ class EntityContextTest extends TestCase
      */
     public function testValSchemaDefault()
     {
-        $table = TableRegistry::get('Articles');
+        $table = $this->getTableLocator()->get('Articles');
         $column = $table->getSchema()->getColumn('title');
         $table->getSchema()->addColumn('title', ['default' => 'default title'] + $column);
         $row = $table->newEntity();
@@ -714,7 +713,7 @@ class EntityContextTest extends TestCase
             'entity' => new Entity(),
             'table' => 'Articles',
         ]);
-        $articles = TableRegistry::get('Articles');
+        $articles = $this->getTableLocator()->get('Articles');
         $articles->getSchema()->addColumn('comments_on', [
             'type' => 'boolean'
         ]);
@@ -760,7 +759,7 @@ class EntityContextTest extends TestCase
     {
         $this->_setupTables();
 
-        $comments = TableRegistry::get('Comments');
+        $comments = $this->getTableLocator()->get('Comments');
         $validator = $comments->getValidator();
         $validator->add('user_id', 'number', [
             'rule' => 'numeric',
@@ -794,7 +793,7 @@ class EntityContextTest extends TestCase
     {
         $this->_setupTables();
 
-        $comments = TableRegistry::get('Comments');
+        $comments = $this->getTableLocator()->get('Comments');
         $comments->getSchema()->addColumn('starred', 'boolean');
         $comments->getValidator()->add('starred', 'valid', ['rule' => 'boolean']);
 
@@ -824,8 +823,8 @@ class EntityContextTest extends TestCase
     public function testIsRequiredAssociatedCustomValidator()
     {
         $this->_setupTables();
-        $users = TableRegistry::get('Users');
-        $articles = TableRegistry::get('Articles');
+        $users = $this->getTableLocator()->get('Users');
+        $articles = $this->getTableLocator()->get('Articles');
 
         $validator = $articles->getValidator();
         $validator->notEmpty('title', 'nope', function ($context) {
@@ -854,7 +853,7 @@ class EntityContextTest extends TestCase
     {
         $this->_setupTables();
 
-        $comments = TableRegistry::get('Comments');
+        $comments = $this->getTableLocator()->get('Comments');
         $validator = $comments->getValidator();
         $validator->allowEmpty('comment', function ($context) {
             return $context['providers']['entity']->isNew();
@@ -1190,7 +1189,7 @@ class EntityContextTest extends TestCase
     {
         $this->_setupTables();
 
-        $comments = TableRegistry::get('Comments');
+        $comments = $this->getTableLocator()->get('Comments');
         $row = new Article([
             'title' => 'My title',
             'comments' => [
@@ -1253,15 +1252,15 @@ class EntityContextTest extends TestCase
      */
     protected function _setupTables()
     {
-        $articles = TableRegistry::get('Articles');
+        $articles = $this->getTableLocator()->get('Articles');
         $articles->belongsTo('Users');
         $articles->belongsToMany('Tags');
         $articles->hasMany('Comments');
         $articles->setEntityClass(__NAMESPACE__ . '\Article');
 
-        $articlesTags = TableRegistry::get('ArticlesTags');
-        $comments = TableRegistry::get('Comments');
-        $users = TableRegistry::get('Users');
+        $articlesTags = $this->getTableLocator()->get('ArticlesTags');
+        $comments = $this->getTableLocator()->get('Comments');
+        $users = $this->getTableLocator()->get('Users');
         $users->hasMany('Articles');
 
         $articles->setSchema([
@@ -1321,7 +1320,7 @@ class EntityContextTest extends TestCase
             'entity' => new Entity(),
             'table' => 'Articles',
         ]);
-        $articles = TableRegistry::get('Articles');
+        $articles = $this->getTableLocator()->get('Articles');
         $this->assertEquals($articles->getSchema()->columns(), $context->fieldNames());
     }
 
@@ -1341,7 +1340,7 @@ class EntityContextTest extends TestCase
             'table' => 'Articles',
         ]);
         $context->isRequired('title');
-        $articles = TableRegistry::get('Articles');
+        $articles = $this->getTableLocator()->get('Articles');
         $this->assertSame($row, $articles->getValidator()->getProvider('entity'));
 
         $row = new Article([

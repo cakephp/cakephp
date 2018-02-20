@@ -17,7 +17,7 @@
 namespace Cake\Http\Session;
 
 use Cake\ORM\Entity;
-use Cake\ORM\TableRegistry;
+use Cake\ORM\Locator\LocatorAwareTrait;
 use SessionHandlerInterface;
 
 /**
@@ -25,6 +25,7 @@ use SessionHandlerInterface;
  */
 class DatabaseSession implements SessionHandlerInterface
 {
+    use LocatorAwareTrait;
 
     /**
      * Reference to the table handling the session data
@@ -49,7 +50,10 @@ class DatabaseSession implements SessionHandlerInterface
      */
     public function __construct(array $config = [])
     {
-        $tableLocator = isset($config['tableLocator']) ? $config['tableLocator'] : TableRegistry::getTableLocator();
+        if (isset($config['tableLocator'])) {
+            $this->setTableLocator($config['tableLocator']);
+        }
+        $tableLocator = $this->getTableLocator();
 
         if (empty($config['model'])) {
             $config = $tableLocator->exists('Sessions') ? [] : ['table' => 'sessions'];

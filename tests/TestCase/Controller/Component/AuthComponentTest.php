@@ -22,7 +22,6 @@ use Cake\Event\Event;
 use Cake\Event\EventManager;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
-use Cake\ORM\TableRegistry;
 use Cake\Routing\Router;
 use Cake\Routing\Route\InflectedRoute;
 use Cake\TestSuite\TestCase;
@@ -83,7 +82,7 @@ class AuthComponentTest extends TestCase
         $this->Controller = new AuthTestController($request, $response);
         $this->Auth = new TestAuthComponent($this->Controller->components());
 
-        $Users = TableRegistry::get('AuthUsers');
+        $Users = $this->getTableLocator()->get('AuthUsers');
         $Users->updateAll(['password' => password_hash('cake', PASSWORD_BCRYPT)], []);
         $this->request = $request;
     }
@@ -202,7 +201,7 @@ class AuthComponentTest extends TestCase
     public function testAuthorizeFalse()
     {
         $event = new Event('Controller.startup', $this->Controller);
-        $Users = TableRegistry::get('Users');
+        $Users = $this->getTableLocator()->get('Users');
         $user = $Users->find('all')->enableHydration(false)->first();
         $this->Controller->Auth->storage()->write($user);
         $this->Controller->Auth->setConfig('userModel', 'Users');

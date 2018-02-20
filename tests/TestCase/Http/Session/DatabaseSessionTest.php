@@ -19,7 +19,6 @@ namespace Cake\Test\TestCase\Http\Session;
 use Cake\Datasource\ConnectionManager;
 use Cake\Http\Session\DatabaseSession;
 use Cake\ORM\Entity;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -55,7 +54,7 @@ class DatabaseSessionTest extends TestCase
     public function tearDown()
     {
         unset($this->storage);
-        TableRegistry::clear();
+        $this->getTableLocator()->clear();
         parent::tearDown();
     }
 
@@ -66,10 +65,10 @@ class DatabaseSessionTest extends TestCase
      */
     public function testConstructionSettings()
     {
-        TableRegistry::clear();
+        $this->getTableLocator()->clear();
         new DatabaseSession();
 
-        $session = TableRegistry::get('Sessions');
+        $session = $this->getTableLocator()->get('Sessions');
         $this->assertInstanceOf('Cake\ORM\Table', $session);
         $this->assertEquals('Sessions', $session->getAlias());
         $this->assertEquals(ConnectionManager::get('test'), $session->getConnection());
@@ -96,7 +95,7 @@ class DatabaseSessionTest extends TestCase
         $result = $this->storage->write('foo', 'Some value');
         $this->assertTrue($result);
 
-        $expires = TableRegistry::get('Sessions')->get('foo')->expires;
+        $expires = $this->getTableLocator()->get('Sessions')->get('foo')->expires;
         $expected = time() + ini_get('session.gc_maxlifetime');
         $this->assertWithinRange($expected, $expires, 1);
     }
@@ -150,7 +149,7 @@ class DatabaseSessionTest extends TestCase
      */
     public function testGc()
     {
-        TableRegistry::clear();
+        $this->getTableLocator()->clear();
 
         $storage = new DatabaseSession();
         $storage->setTimeout(0);
@@ -171,7 +170,7 @@ class DatabaseSessionTest extends TestCase
         $entity = new Entity();
         $entity->value = 'something';
         $result = $this->storage->write('key', serialize($entity));
-        $data = TableRegistry::get('Sessions')->get('key')->data;
+        $data = $this->getTableLocator()->get('Sessions')->get('key')->data;
         $this->assertEquals(serialize($entity), stream_get_contents($data));
     }
 }

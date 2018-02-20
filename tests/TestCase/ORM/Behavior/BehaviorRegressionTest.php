@@ -16,7 +16,6 @@ namespace Cake\Test\TestCase\ORM\Behavior;
 
 use Cake\ORM\Behavior\Translate\TranslateTrait;
 use Cake\ORM\Entity;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -51,7 +50,7 @@ class BehaviorRegressionTest extends TestCase
      */
     public function testTreeAndTranslateIntegration()
     {
-        $table = TableRegistry::get('NumberTrees');
+        $table = $this->getTableLocator()->get('NumberTrees');
         $table->setPrimaryKey(['id']);
         $table->addBehavior('Tree');
         $table->addBehavior('Translate', ['fields' => ['name']]);

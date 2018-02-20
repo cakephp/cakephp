@@ -19,7 +19,6 @@ use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Entity;
 use Cake\ORM\Locator\LocatorInterface;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -50,7 +49,7 @@ class AssociationCollectionTest extends TestCase
      */
     public function testConstructor()
     {
-        $this->assertSame(TableRegistry::getTableLocator(), $this->associations->getTableLocator());
+        $this->assertSame($this->getTableLocator(), $this->associations->getTableLocator());
 
         $tableLocator = $this->createMock(LocatorInterface::class);
         $associations = new AssociationCollection($tableLocator);
