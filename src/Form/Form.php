@@ -19,6 +19,7 @@ use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManager;
+use Cake\Form\Schema;
 use Cake\Validation\Validator;
 use Cake\Validation\ValidatorAwareInterface;
 use Cake\Validation\ValidatorAwareTrait;
@@ -42,6 +43,12 @@ use Cake\Validation\ValidatorAwareTrait;
  */
 class Form implements EventListenerInterface, EventDispatcherInterface, ValidatorAwareInterface
 {
+    /**
+     * Schema class.
+     *
+     * @var string
+     */
+    protected $_schemaClass = Schema::class;
 
     use EventDispatcherTrait;
     use ValidatorAwareTrait;
@@ -125,7 +132,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
     public function schema(Schema $schema = null)
     {
         if ($schema === null && empty($this->_schema)) {
-            $schema = $this->_buildSchema(new Schema());
+            $schema = $this->_buildSchema(new $this->_schemaClass);
         }
         if ($schema) {
             $this->_schema = $schema;

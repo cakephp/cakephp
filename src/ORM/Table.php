@@ -2139,6 +2139,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             return $entity;
         }
 
+        if (count($primaryColumns) === 0) {
+            $entityClass = get_class($entity);
+            $table = $this->getTable();
+            $message = "Cannot update `$entityClass`. The `$table` has no primary key.";
+            throw new InvalidArgumentException($message);
+        }
+
         if (!$entity->has($primaryColumns)) {
             $message = 'All primary key value(s) are needed for updating, ';
             $message .= get_class($entity) . ' is missing ' . implode(', ', $primaryColumns);

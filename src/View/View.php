@@ -279,6 +279,13 @@ class View implements EventDispatcherInterface
     protected $_stack = [];
 
     /**
+     * ViewBlock class.
+     *
+     * @var string
+     */
+    protected $_viewBlockClass = ViewBlock::class;
+
+    /**
      * Constant for view file type 'view'
      *
      * @var string
@@ -359,7 +366,7 @@ class View implements EventDispatcherInterface
                 'webroot' => '/'
             ]);
         }
-        $this->Blocks = new ViewBlock();
+        $this->Blocks = new $this->_viewBlockClass();
         $this->initialize();
         $this->loadHelpers();
     }

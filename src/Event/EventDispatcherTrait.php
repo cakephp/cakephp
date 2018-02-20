@@ -33,7 +33,7 @@ trait EventDispatcherTrait
      *
      * @var string
      */
-    protected $_eventClass = '\Cake\Event\Event';
+    protected $_eventClass = Event::class;
 
     /**
      * Returns the Cake\Event\EventManager manager instance for this object.

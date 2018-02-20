@@ -209,7 +209,7 @@ class Paginator implements PaginatorInterface
             'prevPage' => $page > 1,
             'nextPage' => $count > ($page * $limit),
             'pageCount' => $pageCount,
-            'sort' => key($order),
+            'sort' => $options['sort'],
             'direction' => current($order),
             'limit' => $defaults['limit'] != $limit ? $limit : null,
             'sortDefault' => $sortDefault,
@@ -354,8 +354,10 @@ class Paginator implements PaginatorInterface
             }
             $order = (isset($options['order']) && is_array($options['order'])) ? $options['order'] : [];
             $options['order'] = [$options['sort'] => $direction] + $order;
+        } else {
+            $options['sort'] = null;
         }
-        unset($options['sort'], $options['direction']);
+        unset($options['direction']);
 
         if (empty($options['order'])) {
             $options['order'] = [];
@@ -370,6 +372,7 @@ class Paginator implements PaginatorInterface
             $inWhitelist = in_array($field, $options['sortWhitelist'], true);
             if (!$inWhitelist) {
                 $options['order'] = [];
+                $options['sort'] = null;
 
                 return $options;
             }

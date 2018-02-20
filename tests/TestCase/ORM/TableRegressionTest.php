@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 
 /**
  * Contains regression test for the Table class
@@ -61,6 +62,23 @@ class TableRegressionTest extends TestCase
             }
         );
         $entity = $table->newEntity(['name' => 'Jon']);
+        $table->save($entity);
+    }
+
+    /**
+     * Ensure that saving to a table with no primary key fails.
+     *
+     * @return void
+     */
+    public function testSaveNoPrimaryKeyException()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('primary key');
+        $table = TableRegistry::get('Authors');
+        $table->getSchema()->dropConstraint('primary');
+
+        $entity = $table->find()->first();
+        $entity->name = 'new name';
         $table->save($entity);
     }
 }
