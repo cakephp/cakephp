@@ -26,7 +26,6 @@ parameters:
         - '#Call to an undefined method object::__toString\(\)#'
         - '#Call to an undefined method object::toArray\(\)#'
         - '#Call to an undefined method object::__debugInfo\(\)#'
-        - '#Call to an undefined static method Cake\\ORM\\TableRegistry::getConfig\(\)#'
         - '#Cannot call method lastInsertId\(\) on null#'
     earlyTerminatingMethodCalls:
         Cake\Shell\Shell:
