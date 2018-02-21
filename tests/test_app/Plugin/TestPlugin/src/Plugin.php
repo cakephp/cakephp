@@ -14,8 +14,24 @@
 namespace TestPlugin;
 
 use Cake\Core\PluginApp;
+use Cake\Event\EventManagerInterface;
 
 class Plugin extends PluginApp
 {
+    public function events(EventManagerInterface $events)
+    {
+        $events->on('TestPlugin.load', function () {
+        });
 
+        return $events;
+    }
+
+    public function middleware($middleware)
+    {
+        $middleware->add(function ($req, $res, $next) {
+            return $next($req, $res);
+        });
+
+        return $middleware;
+    }
 }

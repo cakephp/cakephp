@@ -231,9 +231,9 @@ class PluginApp implements PluginInterface
      */
     public function routes($routes)
     {
-        $routes = __DIR__ . 'config' . DS . 'routes.php';
-        if (file_exists($routes)) {
-            require_once $routes;
+        $path = $this->getConfigPath() . DS . 'routes.php';
+        if (file_exists($path)) {
+            require_once $path;
         }
     }
 
@@ -242,7 +242,7 @@ class PluginApp implements PluginInterface
      */
     public function bootstrap()
     {
-        $bootstrap = __DIR__ . 'config' . DS . 'bootstrap.php';
+        $bootstrap = $this->getConfigPath() . DS . 'bootstrap.php';
         if (file_exists($bootstrap)) {
             require_once $bootstrap;
         }
