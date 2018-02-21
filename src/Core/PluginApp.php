@@ -13,6 +13,7 @@
  */
 namespace Cake\Core;
 
+use Cake\Event\EventManagerInterface;
 use InvalidArgumentException;
 use ReflectionClass;
 
@@ -266,7 +267,8 @@ class PluginApp implements PluginInterface
     /**
      * {@inheritdoc}
      */
-    public function events($events)
+    public function events(EventManagerInterface $events)
     {
+        return $events;
     }
 }

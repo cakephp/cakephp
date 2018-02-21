@@ -12,6 +12,8 @@
  */
 namespace Cake\Core;
 
+use Cake\Event\EventManagerInterface;
+
 /**
  * Plugin Interface
  */
@@ -53,7 +55,8 @@ interface PluginInterface
     /**
      * Load all the application configuration and bootstrap logic.
      *
-     * Override this method to add additional bootstrap logic for your application.
+     * The default implementation of this method will include the `config/bootstrap.php` in the plugin if it exist. You
+     * can override this method to replace that behavior.
      *
      * @return void
      */
@@ -78,6 +81,9 @@ interface PluginInterface
     /**
      * Add routes for the plugin.
      *
+     * The default implementation of this method will include the `config/routes.php` in the plugin if it exists. You
+     * can override this method to replace that behavior.
+     *
      * @param \Cake\Routing\RouteBuilder $routes The route builder to update.
      * @return \Cake\Routing\RouteBuilder
      */
@@ -86,10 +92,10 @@ interface PluginInterface
     /**
      * Add events for the plugin.
      *
-     * @param \Cake\Event\EventManager $events The application's event manager
-     * @return void
+     * @param \Cake\Event\EventManagerInterface $events The application's event manager
+     * @return \Cake\Event\EventManagerInterface The updated event manager.
      */
-    public function events($events);
+    public function events(EventManagerInterface $events);
 
     /**
      * Disables the named hook

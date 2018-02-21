@@ -86,8 +86,9 @@ abstract class BaseApplication implements
         $events = $this->getEventManager();
 
         foreach ($this->plugins->with('events') as $plugin) {
-            $plugin->events($events);
+            $events = $plugin->events($events);
         }
+        $this->setEventManager($events);
     }
 
     /**
