@@ -137,7 +137,7 @@ abstract class BaseApplication implements
      */
     public function makePlugin($name, array $config)
     {
-        if (!class_exists($name)) {
+        if (strpos($name, '\\') === false) {
             $name = str_replace('/', '\\', $name) . '\\' . 'Plugin';
         }
         if (!class_exists($name)) {
