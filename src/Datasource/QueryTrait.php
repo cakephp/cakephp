@@ -526,6 +526,6 @@ trait QueryTrait
      */
     protected function _decoratorClass()
     {
-        return 'Cake\Datasource\ResultSetDecorator';
+        return \Cake\Datasource\ResultSetDecorator::class;
     }
 }
