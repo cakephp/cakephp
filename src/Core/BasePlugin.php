@@ -233,7 +233,7 @@ class BasePlugin implements PluginInterface
     {
         $path = $this->getConfigPath() . DS . 'routes.php';
         if (file_exists($path)) {
-            require_once $path;
+            require $path;
         }
     }
 
@@ -244,7 +244,7 @@ class BasePlugin implements PluginInterface
     {
         $bootstrap = $this->getConfigPath() . DS . 'bootstrap.php';
         if (file_exists($bootstrap)) {
-            require_once $bootstrap;
+            require $bootstrap;
         }
     }
 
