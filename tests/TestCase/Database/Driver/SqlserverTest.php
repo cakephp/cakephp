@@ -161,7 +161,7 @@ class SqlserverTest extends TestCase
         $connection->expects($this->at(2))->method('exec')->with('SET config1 value1');
         $connection->expects($this->at(3))->method('exec')->with('SET config2 value2');
 
-        $driver->connection($connection);
+        $driver->setConnection($connection);
         $driver->expects($this->once())->method('_connect')
             ->with($dsn, $expected);
 

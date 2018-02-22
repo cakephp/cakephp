@@ -124,10 +124,12 @@ class TableRegistryTest extends TestCase
      */
     public function testConfig()
     {
-        $locator = $this->_setMockLocator();
-        $locator->expects($this->once())->method('config')->with('Test', []);
+        $this->deprecated(function () {
+            $locator = $this->_setMockLocator();
+            $locator->expects($this->once())->method('config')->with('Test', []);
 
-        TableRegistry::config('Test', []);
+            TableRegistry::config('Test', []);
+        });
     }
 
     /**
@@ -137,10 +139,12 @@ class TableRegistryTest extends TestCase
      */
     public function testGet()
     {
-        $locator = $this->_setMockLocator();
-        $locator->expects($this->once())->method('get')->with('Test', []);
+        $this->deprecated(function () {
+            $locator = $this->_setMockLocator();
+            $locator->expects($this->once())->method('get')->with('Test', []);
 
-        TableRegistry::get('Test', []);
+            TableRegistry::get('Test', []);
+        });
     }
 
     /**
@@ -150,12 +154,14 @@ class TableRegistryTest extends TestCase
      */
     public function testSet()
     {
-        $table = $this->getMockBuilder('Cake\ORM\Table')->getMock();
+        $this->deprecated(function () {
+            $table = $this->getMockBuilder('Cake\ORM\Table')->getMock();
 
-        $locator = $this->_setMockLocator();
-        $locator->expects($this->once())->method('set')->with('Test', $table);
+            $locator = $this->_setMockLocator();
+            $locator->expects($this->once())->method('set')->with('Test', $table);
 
-        TableRegistry::set('Test', $table);
+            TableRegistry::set('Test', $table);
+        });
     }
 
     /**
@@ -165,10 +171,12 @@ class TableRegistryTest extends TestCase
      */
     public function testRemove()
     {
-        $locator = $this->_setMockLocator();
-        $locator->expects($this->once())->method('remove')->with('Test');
+        $this->deprecated(function () {
+            $locator = $this->_setMockLocator();
+            $locator->expects($this->once())->method('remove')->with('Test');
 
-        TableRegistry::remove('Test');
+            TableRegistry::remove('Test');
+        });
     }
 
     /**
@@ -178,9 +186,11 @@ class TableRegistryTest extends TestCase
      */
     public function testClear()
     {
-        $locator = $this->_setMockLocator();
-        $locator->expects($this->once())->method('clear');
+        $this->deprecated(function () {
+            $locator = $this->_setMockLocator();
+            $locator->expects($this->once())->method('clear');
 
-        TableRegistry::clear();
+            TableRegistry::clear();
+        });
     }
 }

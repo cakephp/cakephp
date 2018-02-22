@@ -19,7 +19,7 @@ use Cake\Collection\Collection;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\RepositoryInterface;
 use Cake\Http\ServerRequest;
-use Cake\ORM\TableRegistry;
+use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Inflector;
 use RuntimeException;
 use Traversable;
@@ -46,6 +46,7 @@ use Traversable;
  */
 class EntityContext implements ContextInterface
 {
+    use LocatorAwareTrait;
 
     /**
      * The request object.
@@ -112,7 +113,7 @@ class EntityContext implements ContextInterface
      * Prepare some additional data from the context.
      *
      * If the table option was provided to the constructor and it
-     * was a string, ORM\TableRegistry will be used to get the correct table instance.
+     * was a string, TableLocator will be used to get the correct table instance.
      *
      * If an object is provided as the table option, it will be used as is.
      *
@@ -145,7 +146,7 @@ class EntityContext implements ContextInterface
             }
         }
         if (is_string($table)) {
-            $table = TableRegistry::get($table);
+            $table = $this->getTableLocator()->get($table);
         }
 
         if (!($table instanceof RepositoryInterface)) {

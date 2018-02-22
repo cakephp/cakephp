@@ -24,7 +24,6 @@ use PDO;
 class Sqlite extends Driver
 {
 
-    use PDODriverTrait;
     use SqliteDialectTrait;
 
     /**
@@ -75,7 +74,7 @@ class Sqlite extends Driver
 
         if (!empty($config['init'])) {
             foreach ((array)$config['init'] as $command) {
-                $this->connection()->exec($command);
+                $this->getConnection()->exec($command);
             }
         }
 

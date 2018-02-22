@@ -312,7 +312,7 @@ SQL;
 
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_articles');
-        $this->assertInstanceOf('Cake\Database\Schema\Table', $result);
+        $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $result);
         $expected = [
             'id' => [
                 'type' => 'biginteger',
@@ -400,7 +400,7 @@ SQL;
 
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_articles');
-        $this->assertInstanceOf('Cake\Database\Schema\Table', $result);
+        $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $result);
 
         $this->assertCount(3, $result->constraints());
         $expected = [
@@ -1038,7 +1038,7 @@ SQL;
         $connection->expects($this->any())->method('getDriver')
             ->will($this->returnValue($driver));
 
-        $driver->connection()
+        $driver->getConnection()
             ->expects($this->any())
             ->method('getAttribute')
             ->will($this->returnValue('5.6.0'));
@@ -1108,7 +1108,7 @@ SQL;
             ->method('getDriver')
             ->will($this->returnValue($driver));
 
-        $driver->connection()
+        $driver->getConnection()
             ->expects($this->any())
             ->method('getAttribute')
             ->will($this->returnValue('5.7.0'));
@@ -1296,7 +1296,7 @@ SQL;
 
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_json');
-        $this->assertInstanceOf('Cake\Database\Schema\Table', $result);
+        $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $result);
         $expected = [
             'type' => 'json',
             'null' => false,
@@ -1329,7 +1329,7 @@ SQL;
             ->will($this->returnCallback(function ($value) {
                 return "'$value'";
             }));
-        $driver->connection($mock);
+        $driver->setConnection($mock);
 
         return $driver;
     }

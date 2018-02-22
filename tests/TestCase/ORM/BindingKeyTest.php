@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\ORM;
 
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -62,7 +61,7 @@ class BindingKeyTest extends TestCase
      */
     public function testBelongsto($strategy)
     {
-        $users = TableRegistry::get('Users');
+        $users = $this->getTableLocator()->get('Users');
         $users->belongsTo('AuthUsers', [
             'bindingKey' => 'username',
             'foreignKey' => 'username',
@@ -94,7 +93,7 @@ class BindingKeyTest extends TestCase
      */
     public function testHasOne($strategy)
     {
-        $users = TableRegistry::get('Users');
+        $users = $this->getTableLocator()->get('Users');
         $users->hasOne('SiteAuthors', [
             'bindingKey' => 'username',
             'foreignKey' => 'name',
@@ -118,7 +117,7 @@ class BindingKeyTest extends TestCase
      */
     public function testHasMany($strategy)
     {
-        $users = TableRegistry::get('Users');
+        $users = $this->getTableLocator()->get('Users');
         $authors = $users->hasMany('SiteAuthors', [
             'bindingKey' => 'username',
             'foreignKey' => 'name',

@@ -297,10 +297,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Get the default connection name.
      *
      * This method is used to get the fallback connection name if an
-     * instance is created through the TableRegistry without a connection.
+     * instance is created through the TableLocator without a connection.
      *
      * @return string
-     * @see \Cake\ORM\TableRegistry::get()
+     * @see \Cake\ORM\Locator\TableLocator::get()
      */
     public static function defaultConnectionName()
     {
@@ -763,7 +763,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function getEntityClass()
     {
         if (!$this->_entityClass) {
-            $default = '\Cake\ORM\Entity';
+            $default = Entity::class;
             $self = get_called_class();
             $parts = explode('\\', $self);
 
@@ -772,7 +772,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             }
 
             $alias = Inflector::singularize(substr(array_pop($parts), 0, -5));
-            $name = implode('\\', array_slice($parts, 0, -1)) . '\Entity\\' . $alias;
+            $name = implode('\\', array_slice($parts, 0, -1)) . '\\Entity\\' . $alias;
             if (!class_exists($name)) {
                 return $this->_entityClass = $default;
             }
@@ -2137,6 +2137,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $data = array_diff_key($data, $primaryKey);
         if (empty($data)) {
             return $entity;
+        }
+
+        if (count($primaryColumns) === 0) {
+            $entityClass = get_class($entity);
+            $table = $this->getTable();
+            $message = "Cannot update `$entityClass`. The `$table` has no primary key.";
+            throw new InvalidArgumentException($message);
         }
 
         if (!$entity->has($primaryColumns)) {

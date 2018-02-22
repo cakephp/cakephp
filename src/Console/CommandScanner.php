@@ -21,7 +21,7 @@ use Cake\Filesystem\Folder;
 use Cake\Utility\Inflector;
 
 /**
- * Used by CommanCollection and CommandTask to scan the filesystem
+ * Used by CommandCollection and CommandTask to scan the filesystem
  * for command classes.
  *
  * @internal

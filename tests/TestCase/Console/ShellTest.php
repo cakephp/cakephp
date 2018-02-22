@@ -82,7 +82,7 @@ class ShellTest extends TestCase
         $this->io = $this->getMockBuilder('Cake\Console\ConsoleIo')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->Shell = new ShellTestShell($this->io);
+        $this->Shell = new ShellTestShell($this->io, $this->getTableLocator());
 
         if (is_dir(TMP . 'shell_test')) {
             $Folder = new Folder(TMP . 'shell_test');

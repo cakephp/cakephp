@@ -16,7 +16,6 @@ namespace Cake\Test\TestCase\ORM;
 
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Entity;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Text;
 
@@ -56,7 +55,7 @@ class TableUuidTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        TableRegistry::clear();
+        $this->getTableLocator()->clear();
     }
 
     /**
@@ -81,7 +80,7 @@ class TableUuidTest extends TestCase
             'name' => 'shiny new',
             'published' => true,
         ]);
-        $table = TableRegistry::get($tableName);
+        $table = $this->getTableLocator()->get($tableName);
         $this->assertSame($entity, $table->save($entity));
         $this->assertRegExp('/^[a-f0-9-]{36}$/', $entity->id, 'Should be 36 characters');
 
@@ -104,7 +103,7 @@ class TableUuidTest extends TestCase
             'name' => 'shiny and new',
             'published' => true,
         ]);
-        $table = TableRegistry::get($tableName);
+        $table = $this->getTableLocator()->get($tableName);
         $this->assertSame($entity, $table->save($entity));
         $this->assertSame($id, $entity->id);
 
@@ -129,7 +128,7 @@ class TableUuidTest extends TestCase
             'published' => true,
         ]);
 
-        $table = TableRegistry::get($tableName);
+        $table = $this->getTableLocator()->get($tableName);
         $this->assertSame($entity, $table->save($entity));
         $this->assertEquals($id, $entity->id, 'Should be 36 characters');
 
@@ -146,7 +145,7 @@ class TableUuidTest extends TestCase
      */
     public function testGetById($tableName)
     {
-        $table = TableRegistry::get($tableName);
+        $table = $this->getTableLocator()->get($tableName);
         $entity = $table->find('all')->firstOrFail();
 
         $result = $table->get($entity->id);
@@ -161,7 +160,7 @@ class TableUuidTest extends TestCase
      */
     public function testDelete($tableName)
     {
-        $table = TableRegistry::get($tableName);
+        $table = $this->getTableLocator()->get($tableName);
         $entity = $table->find('all')->firstOrFail();
 
         $this->assertTrue($table->delete($entity));
@@ -178,7 +177,7 @@ class TableUuidTest extends TestCase
     public function testEmptyUuid($tableName)
     {
         $id = '';
-        $table = TableRegistry::get($tableName);
+        $table = $this->getTableLocator()->get($tableName);
         $entity = $table->find('all')
             ->where(['id' => $id])
             ->first();

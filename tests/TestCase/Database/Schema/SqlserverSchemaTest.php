@@ -274,7 +274,7 @@ SQL;
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')->getMock();
         $dialect = new SqlserverSchema($driver);
 
-        $table = $this->getMockBuilder('Cake\Database\Schema\Table')
+        $table = $this->getMockBuilder('Cake\Database\Schema\TableSchema')
             ->setConstructorArgs(['table'])
             ->getMock();
         $table->expects($this->at(0))->method('addColumn')->with('field', $expected);
@@ -472,7 +472,7 @@ SQL;
 
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_articles');
-        $this->assertInstanceOf('Cake\Database\Schema\Table', $result);
+        $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $result);
         $this->assertCount(3, $result->constraints());
         $expected = [
             'primary' => [
@@ -1021,7 +1021,7 @@ SQL;
             ->will($this->returnCallback(function ($value) {
                 return "'$value'";
             }));
-        $driver->connection($mock);
+        $driver->setConnection($mock);
 
         return $driver;
     }
