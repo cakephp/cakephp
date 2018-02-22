@@ -15,6 +15,7 @@
 namespace Cake\Test\Console;
 
 use Cake\Console\CommandCollection;
+use Cake\Console\CommandFactoryInterface;
 use Cake\Console\CommandRunner;
 use Cake\Console\ConsoleIo;
 use Cake\Console\Shell;
@@ -313,6 +314,31 @@ class CommandRunnerTest extends TestCase
 
         $runner = new CommandRunner($app, 'cake');
         $result = $runner->run(['cake', 'ex'], $this->getMockIo($output));
+        $this->assertSame(Shell::CODE_SUCCESS, $result);
+
+        $messages = implode("\n", $output->messages());
+        $this->assertContains('Demo Command!', $messages);
+    }
+
+    /**
+     * Test using a custom factory
+     *
+     * @return void
+     */
+    public function testRunWithCustomFactory()
+    {
+        $output = new ConsoleOutput();
+        $io = $this->getMockIo($output);
+        $factory = $this->createMock(CommandFactoryInterface::class);
+        $factory->expects($this->once())
+            ->method('create')
+            ->with(DemoCommand::class, $io)
+            ->willReturn(new DemoCommand());
+
+        $app = $this->makeAppWithCommands(['ex' => DemoCommand::class]);
+
+        $runner = new CommandRunner($app, 'cake', $factory);
+        $result = $runner->run(['cake', 'ex'], $io);
         $this->assertSame(Shell::CODE_SUCCESS, $result);
 
         $messages = implode("\n", $output->messages());
