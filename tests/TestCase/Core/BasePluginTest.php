@@ -14,8 +14,8 @@
 namespace Cake\Test\TestCase\Core;
 
 use Cake\Console\CommandCollection;
+use Cake\Core\BasePlugin;
 use Cake\Core\Plugin;
-use Cake\Core\PluginApp;
 use Cake\Event\EventManager;
 use Cake\Http\MiddlewareQueue;
 use Cake\TestSuite\TestCase;
@@ -23,9 +23,9 @@ use Company\TestPluginThree\Plugin as TestPluginThree;
 use TestPlugin\Plugin as TestPlugin;
 
 /**
- * PluginAppTest class
+ * BasePluginTest class
  */
-class PluginAppTest extends TestCase
+class BasePluginTest extends TestCase
 {
 
     /**
@@ -46,7 +46,7 @@ class PluginAppTest extends TestCase
      */
     public function testConfigForRoutesAndBootstrap()
     {
-        $plugin = new PluginApp([
+        $plugin = new BasePlugin([
             'bootstrap' => false,
             'routes' => false
         ]);
@@ -74,28 +74,28 @@ class PluginAppTest extends TestCase
 
     public function testMiddleware()
     {
-        $plugin = new PluginApp();
+        $plugin = new BasePlugin();
         $middleware = new MiddlewareQueue();
         $this->assertSame($middleware, $plugin->middleware($middleware));
     }
 
     public function testConsole()
     {
-        $plugin = new PluginApp();
+        $plugin = new BasePlugin();
         $commands = new CommandCollection();
         $this->assertSame($commands, $plugin->console($commands));
     }
 
     public function testEvents()
     {
-        $plugin = new PluginApp();
+        $plugin = new BasePlugin();
         $events = new EventManager();
-        $this->assertNull($plugin->events($events));
+        $this->assertSame($events, $plugin->events($events));
     }
 
     public function testConstructorArguments()
     {
-        $plugin = new PluginApp([
+        $plugin = new BasePlugin([
             'routes' => false,
             'bootstrap' => false,
             'console' => false,
@@ -109,7 +109,7 @@ class PluginAppTest extends TestCase
 
     public function testGetPathBaseClass()
     {
-        $plugin = new PluginApp();
+        $plugin = new BasePlugin();
 
         $expected = CAKE . 'Core' . DS;
         $this->assertSame($expected, $plugin->getPath());
@@ -119,7 +119,7 @@ class PluginAppTest extends TestCase
 
     public function testGetPathOptionValue()
     {
-        $plugin = new PluginApp(['path' => '/some/path']);
+        $plugin = new BasePlugin(['path' => '/some/path']);
         $expected = '/some/path';
         $this->assertSame($expected, $plugin->getPath());
         $this->assertSame($expected . 'config' . DS, $plugin->getConfigPath());

@@ -13,10 +13,10 @@
  */
 namespace TestPlugin;
 
-use Cake\Core\PluginApp;
+use Cake\Core\BasePlugin;
 use Cake\Event\EventManagerInterface;
 
-class Plugin extends PluginApp
+class Plugin extends BasePlugin
 {
     public function events(EventManagerInterface $events)
     {

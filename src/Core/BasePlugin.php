@@ -23,7 +23,7 @@ use ReflectionClass;
  * Every plugin should extends from this class or implement the interfaces and
  * include a plugin class in it's src root folder.
  */
-class PluginApp implements PluginInterface
+class BasePlugin implements PluginInterface
 {
 
     /**

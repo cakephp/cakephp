@@ -156,7 +156,7 @@ class Plugin
         }
 
         // Use stub plugins as this method will be removed long term.
-        static::getCollection()->add(new PluginApp($config));
+        static::getCollection()->add(new BasePlugin($config));
 
         if ($config['autoload'] === true) {
             if (empty(static::$_loader)) {
