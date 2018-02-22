@@ -138,6 +138,9 @@ abstract class BaseApplication implements
     public function makePlugin($name, array $config)
     {
         if (!class_exists($name)) {
+            $name = str_replace('/', '\\', $name) . '\\' . 'Plugin';
+        }
+        if (!class_exists($name)) {
             throw new InvalidArgumentException("The `{$name}` plugin cannot be found");
         }
         $plugin = new $name($config);

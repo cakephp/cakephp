@@ -77,6 +77,19 @@ class BaseApplicationTest extends TestCase
         $app->addPlugin(__CLASS__);
     }
 
+    public function testAddPluginValidShortName()
+    {
+        $app = $this->getMockForAbstractClass(BaseApplication::class, [$this->path]);
+        $app->addPlugin('TestPlugin');
+
+        $this->assertCount(1, $app->getPlugins());
+        $this->assertTrue($app->getPlugins()->has('TestPlugin'));
+
+        $app->addPlugin('Company/TestPluginThree');
+        $this->assertCount(2, $app->getPlugins());
+        $this->assertTrue($app->getPlugins()->has('Company/TestPluginThree'));
+    }
+
     public function testAddPluginValid()
     {
         $app = $this->getMockForAbstractClass(BaseApplication::class, [$this->path]);
