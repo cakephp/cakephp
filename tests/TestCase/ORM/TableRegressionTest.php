@@ -74,7 +74,7 @@ class TableRegressionTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('primary key');
-        $table = TableRegistry::get('Authors');
+        $table = $this->getTableLocator()->get('Authors');
         $table->getSchema()->dropConstraint('primary');
 
         $entity = $table->find()->first();
