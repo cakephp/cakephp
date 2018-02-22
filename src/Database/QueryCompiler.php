@@ -12,6 +12,7 @@
  * @since         3.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace Cake\Database;
 
 use Cake\Database\Expression\QueryExpression;
@@ -223,6 +224,10 @@ class QueryCompiler
      */
     protected function _buildJoinPart($parts, $query, $generator)
     {
+        if ($query->isSmartJoin()) {
+            return $this->_buildJoinPartSmartly($parts, $query, $generator);
+        }
+
         $joins = '';
         foreach ($parts as $join) {
             $subquery = $join['table'] instanceof Query || $join['table'] instanceof QueryExpression;
@@ -248,6 +253,71 @@ class QueryCompiler
         }
 
         return $joins;
+    }
+
+    /**
+     *
+     * @param array $parts list of joins to be transformed to string
+     * @param \Cake\Database\Query $query The query that is being compiled
+     * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
+     * @return string
+     */
+    protected function _buildJoinPartSmartly($parts, $query, $generator)
+    {
+        $alias = [];
+        $joins = [];
+        $order = [];
+        foreach (array_reverse($parts) as $join) {
+            $subquery = $join['table'] instanceof Query || $join['table'] instanceof QueryExpression;
+            if ($join['table'] instanceof ExpressionInterface) {
+                $join['table'] = $join['table']->sql($generator);
+            }
+
+            if ($subquery) {
+                $join['table'] = '(' . $join['table'] . ')';
+            }
+
+            $part = sprintf(' %s JOIN %s %s', $join['type'], $join['table'], $join['alias']);
+
+            $condition = '';
+            if (isset($join['conditions']) && $join['conditions'] instanceof ExpressionInterface) {
+                $condition = $join['conditions']->sql($generator);
+            }
+
+            $ordered = false;
+            if (preg_match_all('/(^|\s)([\w\d]+)\s*\.|`([^`]+)`\s*\./', $condition, $matches, PREG_SET_ORDER)) {
+                foreach ($matches as $match) {
+                    $identified = end($match);
+                    if (isset($alias[$identified]) && $p = array_search($alias[$identified], $order) !== false) {
+                        $order = array_merge(array_slice($order, 0, $p + 1), [$join['alias']], array_slice($order, $p + 1));
+                        $ordered = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!$ordered) {
+                array_unshift($order, $join['alias']);
+            }
+
+            if (strlen($condition)) {
+                $part .= " ON {$condition}";
+            } else {
+                $part .= ' ON 1 = 1';
+            }
+
+            $joins[$join['alias']] = $part;
+
+            $alias[trim($join['alias'], '`')] = $join['alias'];
+            $alias[trim($join['table'], '`')] = $join['alias'];
+        }
+
+        $part = '';
+        foreach ($order as $alias) {
+            $part .= $joins[$alias];
+        }
+
+        return $part;
     }
 
     /**

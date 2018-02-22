@@ -12,6 +12,7 @@
  * @since         3.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace Cake\Database;
 
 use Cake\Database\Expression\OrderByExpression;
@@ -41,6 +42,13 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @var \Cake\Database\Connection
      */
     protected $_connection;
+
+    /**
+     * Enable smart ordering of JOIN.
+     *
+     * @var bool
+     */
+    protected $_smartJoin = false;
 
     /**
      * Type of this query (select, insert, update, delete).
@@ -1927,6 +1935,31 @@ class Query implements ExpressionInterface, IteratorAggregate
     }
 
     /**
+     * Toggle smart join.
+     *
+     * If set to true, enables smart sorting in query compilation.
+     *
+     * @param bool $enable Use a boolean to set the smart join mode.
+     * @return $this
+     */
+    public function enableSmartJoin($enable = true)
+    {
+        $this->_smartJoin = (bool)$enable;
+
+        return $this;
+    }
+
+    /**
+     * Returns the current hydration mode.
+     *
+     * @return bool
+     */
+    public function isSmartJoin()
+    {
+        return $this->_smartJoin;
+    }
+
+    /**
      * Enable/Disable buffered results.
      *
      * When enabled the results returned by this Query will be
@@ -1965,6 +1998,7 @@ class Query implements ExpressionInterface, IteratorAggregate
 
         return $this;
     }
+
     /**
      * Gets the TypeMap class where the types for each of the fields in the
      * select clause are stored.

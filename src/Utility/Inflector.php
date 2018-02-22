@@ -729,9 +729,7 @@ class Inflector
         $result = static::_cache(__FUNCTION__, $string);
 
         if ($result === false) {
-            $camelized = static::camelize(static::underscore($string));
-            $replace = strtolower(substr($camelized, 0, 1));
-            $result = $replace . substr($camelized, 1);
+            $result = lcfirst(static::camelize(static::underscore($string)));
             static::_cache(__FUNCTION__, $string, $result);
         }
 
