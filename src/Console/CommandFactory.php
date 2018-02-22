@@ -14,6 +14,12 @@ namespace Cake\Console;
 
 use InvalidArgumentException;
 
+/**
+ * This is a factory for creating Command and Shell instances.
+ *
+ * This factory can be replaced or extended if you need to customize building
+ * your command and shell objects.
+ */
 class CommandFactory implements CommandFactoryInterface
 {
 
