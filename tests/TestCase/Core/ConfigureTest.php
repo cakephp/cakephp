@@ -602,7 +602,7 @@ class ConfigureTest extends TestCase
     {
         $expected = 'ok';
         Configure::write('This.Key.Exists', $expected);
-        $result = Configure::readOrFail('This.Key.Exists');
+        $result = Configure::consumeOrFail('This.Key.Exists');
         $this->assertEquals($expected, $result);
     }
 
