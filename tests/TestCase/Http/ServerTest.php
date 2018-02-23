@@ -14,13 +14,16 @@
  */
 namespace Cake\Test\TestCase;
 
+use Cake\Core\HttpApplicationInterface;
 use Cake\Event\Event;
 use Cake\Event\EventList;
 use Cake\Event\EventManager;
+use Cake\Http\BaseApplication;
 use Cake\Http\CallbackStream;
 use Cake\Http\MiddlewareQueue;
 use Cake\Http\Server;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 use TestApp\Http\BadResponseApplication;
@@ -300,5 +303,49 @@ class ServerTest extends TestCase
         $this->assertTrue($this->called, 'Middleware added in the event was not triggered.');
         $this->assertInstanceOf('Closure', $this->middleware->get(3), '2nd last middleware is a closure');
         $this->assertSame($app, $this->middleware->get(4), 'Last middleware is an app instance');
+    }
+
+    /**
+     * test event manager proxies to the application.
+     *
+     * @return void
+     */
+    public function testEventManagerProxies()
+    {
+        $app = $this->getMockForAbstractClass(
+            BaseApplication::class,
+            [$this->config]
+        );
+
+        $server = new Server($app);
+        $this->assertSame($app->getEventManager(), $server->getEventManager());
+    }
+
+    /**
+     * test event manager cannot be set on applications without events.
+     *
+     * @return void
+     */
+    public function testGetEventManagerNonEventedApplication()
+    {
+        $app = $this->createMock(HttpApplicationInterface::class);
+
+        $server = new Server($app);
+        $this->assertSame(EventManager::instance(), $server->getEventManager());
+    }
+
+    /**
+     * test event manager cannot be set on applications without events.
+     *
+     * @return void
+     */
+    public function testSetEventManagerNonEventedApplication()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $app = $this->createMock(HttpApplicationInterface::class);
+
+        $events = new EventManager();
+        $server = new Server($app);
+        $server->setEventManager($events);
     }
 }

@@ -19,11 +19,13 @@ use Cake\Console\CommandRunner;
 use Cake\Console\ConsoleIo;
 use Cake\Console\Shell;
 use Cake\Core\Configure;
+use Cake\Core\ConsoleApplicationInterface;
 use Cake\Event\EventList;
 use Cake\Event\EventManager;
 use Cake\Http\BaseApplication;
 use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use TestApp\Command\DemoCommand;
 use TestApp\Http\EventApplication;
 use TestApp\Shell\SampleShell;
@@ -53,22 +55,47 @@ class CommandRunnerTest extends TestCase
     }
 
     /**
-     * test set on the app
+     * test event manager proxies to the application.
      *
      * @return void
      */
-    public function testSetApp()
+    public function testEventManagerProxies()
     {
-        $app = $this->getMockBuilder(BaseApplication::class)
-            ->setConstructorArgs([$this->config])
-            ->getMock();
-
-        $manager = new EventManager();
-        $app->method('getEventManager')
-            ->willReturn($manager);
+        $app = $this->getMockForAbstractClass(
+            BaseApplication::class,
+            [$this->config]
+        );
 
         $runner = new CommandRunner($app);
         $this->assertSame($app->getEventManager(), $runner->getEventManager());
+    }
+
+    /**
+     * test event manager cannot be set on applications without events.
+     *
+     * @return void
+     */
+    public function testGetEventManagerNonEventedApplication()
+    {
+        $app = $this->createMock(ConsoleApplicationInterface::class);
+
+        $runner = new CommandRunner($app);
+        $this->assertSame(EventManager::instance(), $runner->getEventManager());
+    }
+
+    /**
+     * test event manager cannot be set on applications without events.
+     *
+     * @return void
+     */
+    public function testSetEventManagerNonEventedApplication()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $app = $this->createMock(ConsoleApplicationInterface::class);
+
+        $events = new EventManager();
+        $runner = new CommandRunner($app);
+        $runner->setEventManager($events);
     }
 
     /**
