@@ -14,10 +14,13 @@
  */
 namespace Cake\Core;
 
+use Cake\Event\EventDispatcherInterface;
+use Cake\Event\EventManagerInterface;
+
 /**
  * Interface for Applications that leverage plugins
  */
-interface PluginApplicationInterface
+interface PluginApplicationInterface extends EventDispatcherInterface
 {
     /**
      * Add a plugin to the loaded plugin set.
@@ -62,7 +65,16 @@ interface PluginApplicationInterface
     /**
      * Run events hook for plugins
      *
-     * @return void
+     * @param \Cake\Event\EventManagerInterface $eventManager Event manager instance.
+     * @return \Cake\Event\EventManagerInterface
      */
-    public function pluginEvents();
+    public function pluginEvents(EventManagerInterface $eventManager);
+
+    /**
+     * Application hook for attaching events to the Application event manager instance.
+     *
+     * @param \Cake\Event\EventManagerInterface $eventManager Event manager instance.
+     * @return \Cake\Event\EventManagerInterface
+     */
+    public function events(EventManagerInterface $eventManager);
 }

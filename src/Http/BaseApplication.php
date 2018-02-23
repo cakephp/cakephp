@@ -19,8 +19,6 @@ use Cake\Core\HttpApplicationInterface;
 use Cake\Core\Plugin;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Core\PluginInterface;
-use Cake\Event\EventApplicationInterface;
-use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventManager;
 use Cake\Event\EventManagerInterface;
@@ -39,8 +37,6 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 abstract class BaseApplication implements
     ConsoleApplicationInterface,
-    EventApplicationInterface,
-    EventDispatcherInterface,
     HttpApplicationInterface,
     PluginApplicationInterface
 {
@@ -81,14 +77,13 @@ abstract class BaseApplication implements
     /**
      * {@inheritDoc}
      */
-    public function pluginEvents()
+    public function pluginEvents($events)
     {
-        $events = $this->getEventManager();
-
         foreach ($this->plugins->with('events') as $plugin) {
             $events = $plugin->events($events);
         }
-        $this->setEventManager($events);
+
+        return $events;
     }
 
     /**

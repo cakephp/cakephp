@@ -127,7 +127,10 @@ class ServerTest extends TestCase
         $app->expects($this->at(0))
             ->method('pluginBootstrap');
         $app->expects($this->at(1))
-            ->method('pluginBootstrap');
+            ->method('pluginEvents')
+            ->will($this->returnCallback(function ($events) {
+                return $events;
+            }));
         $app->expects($this->at(2))
             ->method('pluginMiddleware')
             ->with($this->isInstanceOf(MiddlewareQueue::class))

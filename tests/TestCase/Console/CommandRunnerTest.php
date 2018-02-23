@@ -400,7 +400,10 @@ class CommandRunnerTest extends TestCase
 
         $app->expects($this->at(0))->method('bootstrap');
         $app->expects($this->at(1))->method('pluginBootstrap');
-        $app->expects($this->at(2))->method('pluginEvents');
+        $app->expects($this->at(2))->method('pluginEvents')
+            ->will($this->returnCallback(function ($events) {
+                return $events;
+            }));
 
         $commands = new CommandCollection();
         $app->expects($this->at(3))

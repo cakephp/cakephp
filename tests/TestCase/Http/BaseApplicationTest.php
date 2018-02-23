@@ -122,7 +122,7 @@ class BaseApplicationTest extends TestCase
         $this->assertCount(0, $start->listeners('TestPlugin.load'));
 
         $app->addPlugin(TestPlugin::class);
-        $this->assertNull($app->pluginEvents());
+        $this->assertSame($start, $app->pluginEvents($start));
 
         $after = $app->getEventManager();
         $this->assertSame($after, $start);

@@ -191,13 +191,12 @@ class CommandRunner implements EventDispatcherInterface
     protected function bootstrap()
     {
         $this->app->bootstrap();
-        if ($this->app instanceof EventApplicationInterface) {
-            $eventManager = $this->app->events($this->getEventManager());
-            $this->setEventManager($eventManager);
-        }
         if ($this->app instanceof PluginApplicationInterface) {
             $this->app->pluginBootstrap();
-            $this->app->pluginEvents();
+
+            $events = $this->app->events($this->getEventManager());
+            $events = $this->app->pluginEvents($events);
+            $this->setEventManager($events);
         }
     }
 
