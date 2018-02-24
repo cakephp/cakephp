@@ -54,20 +54,39 @@ class IntegerTypeTest extends TestCase
     {
         $this->assertNull($this->type->toPHP(null, $this->driver));
 
-        $result = $this->type->toPHP('some data', $this->driver);
-        $this->assertSame(0, $result);
-
         $result = $this->type->toPHP('2', $this->driver);
         $this->assertSame(2, $result);
 
-        $result = $this->type->toPHP('2 bears', $this->driver);
+        $result = $this->type->toPHP('2.3', $this->driver);
         $this->assertSame(2, $result);
 
         $result = $this->type->toPHP('-2', $this->driver);
         $this->assertSame(-2, $result);
+    }
 
-        $result = $this->type->toPHP(['3', '4'], $this->driver);
-        $this->assertSame(1, $result);
+    /**
+     * Test converting string float to PHP values.
+     *
+     * @return void
+     */
+    public function testManyToPHP()
+    {
+        $values = [
+            'a' => null,
+            'b' => '2.3',
+            'c' => '15',
+            'c' => '0.0',
+        ];
+        $expected = [
+            'a' => null,
+            'b' => 2,
+            'c' => 15,
+            'c' => 0,
+        ];
+        $this->assertEquals(
+            $expected,
+            $this->type->manyToPHP($values, array_keys($values), $this->driver)
+        );
     }
 
     /**

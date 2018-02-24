@@ -95,6 +95,29 @@ class DateTimeTypeTest extends TestCase
     }
 
     /**
+     * Test converting string datetimes to PHP values.
+     *
+     * @return void
+     */
+    public function testManyToPHP()
+    {
+        $values = [
+            'a' => null,
+            'b' => '2001-01-04 12:13:14',
+            'c' => '2001-01-04 12:13:14.12345',
+        ];
+        $expected = [
+            'a' => null,
+            'b' => new Time('2001-01-04 12:13:14'),
+            'c' => new Time('2001-01-04 12:13:14.12345'),
+        ];
+        $this->assertEquals(
+            $expected,
+            $this->type->manyToPHP($values, array_keys($values), $this->driver)
+        );
+    }
+
+    /**
      * Test datetime parsing when value include milliseconds.
      *
      * Postgres includes milliseconds in timestamp columns,

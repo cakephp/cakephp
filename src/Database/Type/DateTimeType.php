@@ -17,6 +17,7 @@ namespace Cake\Database\Type;
 use Cake\Database\Driver;
 use Cake\Database\Type;
 use Cake\Database\TypeInterface;
+use Cake\Database\Type\BatchCastingInterface;
 use DateTimeInterface;
 use Exception;
 use PDO;
@@ -27,7 +28,7 @@ use RuntimeException;
  *
  * Use to convert datetime instances to strings & back.
  */
-class DateTimeType extends Type implements TypeInterface
+class DateTimeType extends Type implements TypeInterface, BatchCastingInterface
 {
     /**
      * Identifier name for this type.
@@ -49,6 +50,17 @@ class DateTimeType extends Type implements TypeInterface
      * @deprecated 3.2.0 Use DateTimeType::useMutable() or DateTimeType::useImmutable() instead.
      */
     public static $dateTimeClass = 'Cake\I18n\Time';
+
+
+    /**
+     * Whether or not we want to override the time of the converted Time objets
+     * so the point to the start of the day.
+     *
+     * This is mainly there to avoid subclasses re-implement the same functionality.
+     *
+     * @var bool
+     */
+    protected $setToDateStart = false;
 
     /**
      * String format to use for DateTime parsing
@@ -135,13 +147,42 @@ class DateTimeType extends Type implements TypeInterface
             return null;
         }
 
-        if (strpos($value, '.') !== false) {
-            list($value) = explode('.', $value);
+        $instance = (clone $this->_datetimeInstance)->modify($value);
+
+        if ($this->setToDateStart) {
+            $instance = $instance->setTime(0, 0, 0);
         }
 
-        $instance = clone $this->_datetimeInstance;
+        return $instance;
+    }
 
-        return $instance->modify($value);
+    /**
+     * {@inheritDoc}
+     *
+     * @return array
+     */
+    public function manyToPHP(array $values, array $fields, Driver $driver)
+    {
+        foreach ($fields as $field) {
+            if (!isset($values[$field])) {
+                continue;
+            }
+
+            if (strpos($values[$field], '0000-00-00') === 0) {
+                $values[$field] = null;
+                continue;
+            }
+
+            $instance = (clone $this->_datetimeInstance)->modify($values[$field]);
+
+            if ($this->setToDateStart) {
+                $instance = $instance->setTime(0, 0, 0);
+            }
+
+            $values[$field] = $instance;
+        }
+
+        return $values;
     }
 
     /**

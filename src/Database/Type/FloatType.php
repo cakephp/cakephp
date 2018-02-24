@@ -17,6 +17,7 @@ namespace Cake\Database\Type;
 use Cake\Database\Driver;
 use Cake\Database\Type;
 use Cake\Database\TypeInterface;
+use Cake\Database\Type\BatchCastingInterface;
 use PDO;
 use RuntimeException;
 
@@ -25,7 +26,7 @@ use RuntimeException;
  *
  * Use to convert float/decimal data between PHP and the database types.
  */
-class FloatType extends Type implements TypeInterface
+class FloatType extends Type implements TypeInterface, BatchCastingInterface
 {
     /**
      * Identifier name for this type.
@@ -94,11 +95,32 @@ class FloatType extends Type implements TypeInterface
         if ($value === null) {
             return null;
         }
-        if (is_array($value)) {
-            return 1.0;
+
+        // Using coersion is faster than casting
+        // @codingStandardsIgnoreStart
+        return (float)+$value;
+        // @codingStandardsIgnoreEnd
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return array
+     */
+    public function manyToPHP(array $values, array $fields, Driver $driver)
+    {
+        foreach ($fields as $field) {
+            if (!isset($values[$field])) {
+                continue;
+            }
+
+            // Using coersion is faster than casting
+            // @codingStandardsIgnoreStart
+            $values[$field] = (float)+$values[$field];
+            // @codingStandardsIgnoreEnd
         }
 
-        return (float)$value;
+        return $values;
     }
 
     /**

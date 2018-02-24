@@ -4461,6 +4461,28 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Test automatic results casting
+     *
+     * @return void
+     */
+    public function testCastResults()
+    {
+        $query = new Query($this->connection);
+        $typeMap = new TypeMap([
+            'one' => 'integer',
+            'two' => 'integer',
+            'three' => 'integer',
+            'true' => 'boolean'
+        ]);
+        $results = $query
+            ->select(['one' => '1', 'two' => '2', 'true' => '1', 'three' => '3.0'])
+            ->setSelectTypeMap($typeMap)
+            ->execute()
+            ->fetchAll('assoc');
+        $this->assertSame([['one' => 1, 'two' => 2, 'true' => true, 'three' => 3]], $results);
+    }
+
+    /**
      * Test that reading an undefined clause does not emit an error.
      *
      * @return void

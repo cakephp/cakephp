@@ -14,6 +14,7 @@
  */
 namespace Cake\Database;
 
+use Cake\Database\Type\BatchCastingInterface;
 use Cake\Database\Type\OptionalConvertInterface;
 
 /**
@@ -30,6 +31,16 @@ class FieldTypeConverter
      * @var array
      */
     protected $_typeMap;
+
+    /**
+     * An array containing the name of the fields and the Type objects
+     * each should use when converting them using batching.
+     *
+     * @var array
+     */
+    protected $batchingTypeMap;
+
+    protected $types;
 
     /**
      * The driver object to be used in the type conversion
@@ -49,20 +60,50 @@ class FieldTypeConverter
         $this->_driver = $driver;
         $map = $typeMap->toArray();
         $types = Type::buildAll();
-        $result = [];
+
+        $simpleMap = $batchingMap = [];
+        $simpleResult = $batchingResult = [];
 
         foreach ($types as $k => $type) {
             if ($type instanceof OptionalConvertInterface && !$type->requiresToPhpCast()) {
-                unset($types[$k]);
+                continue;
             }
+
+            if ($type instanceof BatchCastingInterface) {
+                $batchingMap[$k] = $type;
+                continue;
+            }
+
+            $simpleMap[$k] = $type;
         }
 
         foreach ($map as $field => $type) {
-            if (isset($types[$type])) {
-                $result[$field] = $types[$type];
+            if (isset($simpleMap[$type])) {
+                $simpleResult[$field] = $simpleMap[$type];
+                continue;
+            }
+            if (isset($batchingMap[$type])) {
+                $batchingResult[$type][] = $field;
             }
         }
-        $this->_typeMap = $result;
+
+
+        // Using batching when there is onl a couple for the type is actually slower,
+        // so, let's check for that case here.
+        foreach ($batchingResult as $type => $fields) {
+            if (count($fields) > 2) {
+                continue;
+            }
+
+            foreach ($fields as $f) {
+                $simpleResult[$f] = $batchingMap[$type];
+            }
+            unset($batchingResult[$type]);
+        }
+
+        $this->types = $types;
+        $this->_typeMap = $simpleResult;
+        $this->batchingTypeMap = $batchingResult;
     }
 
     /**
@@ -74,8 +115,16 @@ class FieldTypeConverter
      */
     public function __invoke($row)
     {
-        foreach ($this->_typeMap as $field => $type) {
-            $row[$field] = $type->toPHP($row[$field], $this->_driver);
+        if (!empty($this->_typeMap)) {
+            foreach ($this->_typeMap as $field => $type) {
+                $row[$field] = $type->toPHP($row[$field], $this->_driver);
+            }
+        }
+
+        if (!empty($this->batchingTypeMap)) {
+            foreach ($this->batchingTypeMap as $t => $fields) {
+                $row = $this->types[$t]->manyToPHP($row, $fields, $this->_driver);
+            }
         }
 
         return $row;
