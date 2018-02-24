@@ -77,18 +77,6 @@ abstract class BaseApplication implements
     /**
      * {@inheritDoc}
      */
-    public function pluginEvents(EventManagerInterface $events)
-    {
-        foreach ($this->plugins->with('events') as $plugin) {
-            $events = $plugin->events($events);
-        }
-
-        return $events;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function pluginMiddleware($middleware)
     {
         foreach ($this->plugins->with('middleware') as $plugin) {
@@ -160,7 +148,7 @@ abstract class BaseApplication implements
     public function pluginBootstrap()
     {
         foreach ($this->plugins->with('bootstrap') as $plugin) {
-            $plugin->bootstrap();
+            $plugin->bootstrap($this);
         }
     }
 
@@ -217,14 +205,6 @@ abstract class BaseApplication implements
         }
 
         return $commands;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function events(EventManagerInterface $eventManager)
-    {
-        return $eventManager;
     }
 
     /**

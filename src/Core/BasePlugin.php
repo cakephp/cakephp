@@ -240,7 +240,7 @@ class BasePlugin implements PluginInterface
     /**
      * {@inheritdoc}
      */
-    public function bootstrap()
+    public function bootstrap(PluginApplicationInterface $app)
     {
         $bootstrap = $this->getConfigPath() . DS . 'bootstrap.php';
         if (file_exists($bootstrap)) {
@@ -262,13 +262,5 @@ class BasePlugin implements PluginInterface
     public function middleware($middleware)
     {
         return $middleware;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function events(EventManagerInterface $events)
-    {
-        return $events;
     }
 }

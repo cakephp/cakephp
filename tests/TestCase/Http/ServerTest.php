@@ -130,11 +130,6 @@ class ServerTest extends TestCase
         $app->expects($this->at(0))
             ->method('pluginBootstrap');
         $app->expects($this->at(1))
-            ->method('pluginEvents')
-            ->will($this->returnCallback(function ($events) {
-                return $events;
-            }));
-        $app->expects($this->at(2))
             ->method('pluginMiddleware')
             ->with($this->isInstanceOf(MiddlewareQueue::class))
             ->will($this->returnCallback(function ($middleware) {
@@ -215,25 +210,6 @@ class ServerTest extends TestCase
         $app = new BadResponseApplication($this->config);
         $server = new Server($app);
         $server->run();
-    }
-
-    /**
-     * Test application events.
-     *
-     * @return void
-     */
-    public function testRunEvents()
-    {
-        $manager = new EventManager();
-        $manager->setEventList(new EventList());
-        $app = new EventApplication($this->config, $manager);
-
-        $server = new Server($app);
-        $res = $server->run();
-
-        $this->assertCount(1, $manager->listeners('My.event'));
-        $this->assertEventFired('Server.buildMiddleware', $manager);
-        $this->assertInstanceOf(ResponseInterface::class, $res);
     }
 
     /**

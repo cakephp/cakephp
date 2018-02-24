@@ -112,23 +112,6 @@ class BaseApplicationTest extends TestCase
         $this->assertTrue($app->getPlugins()->has('TestPlugin'));
     }
 
-    public function testPluginEvents()
-    {
-        $app = $this->getMockForAbstractClass(
-            BaseApplication::class,
-            [$this->path]
-        );
-        $start = $app->getEventManager();
-        $this->assertCount(0, $start->listeners('TestPlugin.load'));
-
-        $app->addPlugin(TestPlugin::class);
-        $this->assertSame($start, $app->pluginEvents($start));
-
-        $after = $app->getEventManager();
-        $this->assertSame($after, $start);
-        $this->assertCount(1, $after->listeners('TestPlugin.load'));
-    }
-
     public function testPluginMiddleware()
     {
         $start = new MiddlewareQueue();

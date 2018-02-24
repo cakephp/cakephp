@@ -347,32 +347,6 @@ class CommandRunnerTest extends TestCase
     }
 
     /**
-     * Test running a valid command
-     *
-     * @return void
-     */
-    public function testRunEvents()
-    {
-        $app = new EventApplication($this->config);
-        $output = new ConsoleOutput();
-
-        $manager = $app->getEventManager();
-        $manager->setEventList(new EventList());
-
-        $runner = new CommandRunner($app, 'cake');
-        $this->assertSame($manager, $runner->getEventManager());
-
-        $result = $runner->run(['cake', 'ex'], $this->getMockIo($output));
-        $this->assertSame(Shell::CODE_SUCCESS, $result);
-
-        $messages = implode("\n", $output->messages());
-        $this->assertContains('Demo Command!', $messages);
-
-        $this->assertCount(1, $manager->listeners('My.event'));
-        $this->assertEventFired('Console.buildCommands', $manager);
-    }
-
-    /**
      * Test running a command class' help
      *
      * @return void
@@ -427,13 +401,9 @@ class CommandRunnerTest extends TestCase
 
         $app->expects($this->at(0))->method('bootstrap');
         $app->expects($this->at(1))->method('pluginBootstrap');
-        $app->expects($this->at(2))->method('pluginEvents')
-            ->will($this->returnCallback(function ($events) {
-                return $events;
-            }));
 
         $commands = new CommandCollection();
-        $app->expects($this->at(3))
+        $app->expects($this->at(2))
             ->method('pluginConsole')
             ->with($this->isinstanceOf(CommandCollection::class))
             ->will($this->returnCallback(function ($commands) {

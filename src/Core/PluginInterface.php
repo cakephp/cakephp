@@ -22,7 +22,7 @@ interface PluginInterface
     /**
      * List of valid hooks.
      */
-    const VALID_HOOKS = ['routes', 'bootstrap', 'console', 'middleware', 'events'];
+    const VALID_HOOKS = ['routes', 'bootstrap', 'console', 'middleware'];
 
     /**
      * Get the name of this plugin.
@@ -58,9 +58,13 @@ interface PluginInterface
      * The default implementation of this method will include the `config/bootstrap.php` in the plugin if it exist. You
      * can override this method to replace that behavior.
      *
+     * The host application is provided as an argument. This allows you to load additional
+     * plugin dependencies, or attach events.
+     *
+     * @param \Cake\Core\PluginApplicationInterface $app The host application
      * @return void
      */
-    public function bootstrap();
+    public function bootstrap(PluginApplicationInterface $app);
 
     /**
      * Add console commands for the plugin.
@@ -88,14 +92,6 @@ interface PluginInterface
      * @return \Cake\Routing\RouteBuilder
      */
     public function routes($routes);
-
-    /**
-     * Add events for the plugin.
-     *
-     * @param \Cake\Event\EventManagerInterface $events The application's event manager
-     * @return \Cake\Event\EventManagerInterface The updated event manager.
-     */
-    public function events(EventManagerInterface $events);
 
     /**
      * Disables the named hook

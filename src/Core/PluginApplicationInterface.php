@@ -18,7 +18,10 @@ use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventManagerInterface;
 
 /**
- * Interface for Applications that leverage plugins
+ * Interface for Applications that leverage plugins & events.
+ *
+ * Events can be bound to the application event manager during
+ * the application's bootstrap and plugin bootstrap.
  */
 interface PluginApplicationInterface extends EventDispatcherInterface
 {
@@ -32,7 +35,7 @@ interface PluginApplicationInterface extends EventDispatcherInterface
     public function addPlugin($name, array $config = []);
 
     /**
-     * Run bootstrap logic for loaded plugins
+     * Run bootstrap logic for loaded plugins.
      *
      * @return void
      */
@@ -61,20 +64,4 @@ interface PluginApplicationInterface extends EventDispatcherInterface
      * @return \Cake\Console\CommandCollection
      */
     public function pluginConsole($commands);
-
-    /**
-     * Run events hook for plugins
-     *
-     * @param \Cake\Event\EventManagerInterface $eventManager Event manager instance.
-     * @return \Cake\Event\EventManagerInterface
-     */
-    public function pluginEvents(EventManagerInterface $eventManager);
-
-    /**
-     * Application hook for attaching events to the Application event manager instance.
-     *
-     * @param \Cake\Event\EventManagerInterface $eventManager Event manager instance.
-     * @return \Cake\Event\EventManagerInterface
-     */
-    public function events(EventManagerInterface $eventManager);
 }

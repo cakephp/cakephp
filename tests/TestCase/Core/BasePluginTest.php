@@ -15,7 +15,9 @@ namespace Cake\Test\TestCase\Core;
 
 use Cake\Console\CommandCollection;
 use Cake\Core\BasePlugin;
+use Cake\Core\Configure;
 use Cake\Core\Plugin;
+use Cake\Core\PluginApplicationInterface;
 use Cake\Event\EventManager;
 use Cake\Http\MiddlewareQueue;
 use Cake\TestSuite\TestCase;
@@ -86,11 +88,14 @@ class BasePluginTest extends TestCase
         $this->assertSame($commands, $plugin->console($commands));
     }
 
-    public function testEvents()
+    public function testBootstrap()
     {
-        $plugin = new BasePlugin();
-        $events = new EventManager();
-        $this->assertSame($events, $plugin->events($events));
+        $app = $this->createMock(PluginApplicationInterface::class);
+        $plugin = new TestPlugin();
+
+        $this->assertFalse(Configure::check('PluginTest.test_plugin.bootstrap'));
+        $this->assertNull($plugin->bootstrap($app));
+        $this->assertTrue(Configure::check('PluginTest.test_plugin.bootstrap'));
     }
 
     public function testConstructorArguments()
