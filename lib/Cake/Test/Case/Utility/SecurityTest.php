@@ -36,7 +36,7 @@ class SecurityTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		Security::engine(null);
+		Configure::delete('Security.useOpenSsl');
 	}
 
 /**
@@ -46,26 +46,7 @@ class SecurityTest extends CakeTestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		Security::engine(null);
-	}
-
-/**
- * Tests that Security::engine() works
- *
- * @return void
- */
-	public function testEngine() {
-		if (extension_loaded('mcrypt')) {
-			$this->assertEquals('mcrypt', Security::engine());
-		}
-
-		$this->assertContains(Security::engine(), array('mcrypt', 'openssl'));
-
-		Security::engine('mcrypt');
-		$this->assertEquals('mcrypt', Security::engine());
-
-		Security::engine('openssl');
-		$this->assertEquals('openssl', Security::engine());
+		Configure::delete('Security.useOpenSsl');
 	}
 
 /**
@@ -385,24 +366,24 @@ class SecurityTest extends CakeTestCase {
  */
 	public function testEncryptDecryptCompatibility($txt) {
 		$this->skipIf(!extension_loaded('mcrypt'), 'This test requires mcrypt to be installed');
-		$this->skipIf(!extension_loaded('openssl'), 'This test requires oepnssl to be installed');
-		$this->skipIf(version_compare(PHP_VERSION, '5.3.3', '<'), 'This test requires PHP 5.3.3 or grater');
+		$this->skipIf(!extension_loaded('openssl'), 'This test requires openssl to be installed');
+		$this->skipIf(version_compare(PHP_VERSION, '5.3.3', '<'), 'This test requires PHP 5.3.3 or greater');
 
 		$key = '12345678901234567890123456789012';
 
-		Security::engine('mcrypt');
+		Configure::write('Security.useOpenSsl', false);
 		$mcrypt = Security::encrypt($txt, $key);
 
-		Security::engine('openssl');
+		Configure::write('Security.useOpenSsl', true);
 		$openssl = Security::encrypt($txt, $key);
 
 		$this->assertEquals(strlen($mcrypt), strlen($openssl));
 
-		Security::engine('mcrypt');
+		Configure::write('Security.useOpenSsl', false);
 		$this->assertEquals($txt, Security::decrypt($mcrypt, $key));
 		$this->assertEquals($txt, Security::decrypt($openssl, $key));
 
-		Security::engine('openssl');
+		Configure::write('Security.useOpenSsl', true);
 		$this->assertEquals($txt, Security::decrypt($mcrypt, $key));
 		$this->assertEquals($txt, Security::decrypt($openssl, $key));
 	}

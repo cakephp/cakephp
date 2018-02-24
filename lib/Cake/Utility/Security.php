@@ -26,13 +26,6 @@ App::uses('CakeText', 'Utility');
 class Security {
 
 /**
- * The encryption engine
- *
- * @var string
- */
-	protected static $_engine = null;
-
-/**
  * Default hash method
  *
  * @var string
@@ -359,7 +352,7 @@ class Security {
 		// Generate the encryption and hmac key.
 		$key = substr(hash('sha256', $key . $hmacSalt), 0, 32);
 
-		if (static::engine() === 'openssl') {
+		if (Configure::read('Security.useOpenSsl')) {
 			$method = 'AES-256-CBC';
 			$ivSize = openssl_cipher_iv_length($method);
 			$iv = openssl_random_pseudo_bytes($ivSize);
@@ -426,7 +419,7 @@ class Security {
 			return false;
 		}
 
-		if (static::engine() === 'openssl') {
+		if (Configure::read('Security.useOpenSsl')) {
 			$method = 'AES-256-CBC';
 			$ivSize = openssl_cipher_iv_length($method);
 			$iv = substr($cipher, 0, $ivSize);
@@ -444,24 +437,6 @@ class Security {
 		}
 
 		return rtrim($plain, "\0");
-	}
-
-/**
- * Set or get the encryption engine
- *
- * @param string $engine The encryption engine to use
- * @return string
- */
-	public static function engine($engine = null) {
-		if (func_num_args() > 0) {
-			static::$_engine = $engine;
-		} elseif (static::$_engine === null) {
-			static::$_engine = 'mcrypt';
-			if (!extension_loaded('mcrypt') && extension_loaded('openssl') && version_compare(PHP_VERSION, '5.3.3', '>=')) {
-				static::$_engine = 'openssl';
-			}
-		}
-		return static::$_engine;
 	}
 
 }
