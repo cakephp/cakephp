@@ -146,7 +146,8 @@ class DateTimeType extends Type implements TypeInterface, BatchCastingInterface
             return null;
         }
 
-        $instance = (clone $this->_datetimeInstance)->modify($value);
+        $instance = clone $this->_datetimeInstance;
+        $instance = $instance->modify($value);
 
         if ($this->setToDateStart) {
             $instance = $instance->setTime(0, 0, 0);
@@ -172,7 +173,8 @@ class DateTimeType extends Type implements TypeInterface, BatchCastingInterface
                 continue;
             }
 
-            $instance = (clone $this->_datetimeInstance)->modify($values[$field]);
+            $instance = clone $this->_datetimeInstance;
+            $instance = $instance->modify($value);
 
             if ($this->setToDateStart) {
                 $instance = $instance->setTime(0, 0, 0);

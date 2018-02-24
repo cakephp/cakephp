@@ -4475,7 +4475,7 @@ class QueryTest extends TestCase
             'true' => 'boolean'
         ]);
         $results = $query
-            ->select(['one' => '1', 'two' => '2', 'true' => '1', 'three' => '3.0'])
+            ->select(['one' => '1 * 1', 'two' => '1 * 2', 'true' => '1', 'three' => '1 + 2'])
             ->setSelectTypeMap($typeMap)
             ->execute()
             ->fetchAll('assoc');

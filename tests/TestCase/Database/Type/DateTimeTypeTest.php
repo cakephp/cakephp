@@ -104,12 +104,10 @@ class DateTimeTypeTest extends TestCase
         $values = [
             'a' => null,
             'b' => '2001-01-04 12:13:14',
-            'c' => '2001-01-04 12:13:14.12345',
         ];
         $expected = [
             'a' => null,
             'b' => new Time('2001-01-04 12:13:14'),
-            'c' => new Time('2001-01-04 12:13:14.12345'),
         ];
         $this->assertEquals(
             $expected,

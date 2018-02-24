@@ -95,12 +95,10 @@ class TimeTypeTest extends TestCase
         $values = [
             'a' => null,
             'b' => '01:30:13',
-            'c' => '12:13:14.12345',
         ];
         $expected = [
             'a' => null,
             'b' => new Time('01:30:13'),
-            'c' => new Time('12:13:14.12345'),
         ];
         $this->assertEquals(
             $expected,
