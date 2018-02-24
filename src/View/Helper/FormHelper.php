@@ -24,6 +24,7 @@ use Cake\View\Form\ContextInterface;
 use Cake\View\Helper;
 use Cake\View\StringTemplateTrait;
 use Cake\View\View;
+use Cake\View\Widget\WidgetLocator;
 use Cake\View\Widget\WidgetRegistry;
 use DateTime;
 use RuntimeException;
@@ -217,11 +218,11 @@ class FormHelper extends Helper
     protected $_unlockedFields = [];
 
     /**
-     * Registry for input widgets.
+     * Locator for input widgets.
      *
-     * @var \Cake\View\Widget\WidgetRegistry
+     * @var \Cake\View\Widget\WidgetLocator
      */
-    protected $_registry;
+    protected $_locator;
 
     /**
      * Context for the current form.
@@ -260,11 +261,16 @@ class FormHelper extends Helper
      */
     public function __construct(View $View, array $config = [])
     {
-        $registry = null;
+        $locator = null;
         $widgets = $this->_defaultWidgets;
         if (isset($config['registry'])) {
-            $registry = $config['registry'];
+            deprecationWarning('`registry` config key is deprecated in FormHelper, use `locator` instead.');
+            $config['locator'] = $config['registry'];
             unset($config['registry']);
+        }
+        if (isset($config['locator'])) {
+            $locator = $config['locator'];
+            unset($config['locator']);
         }
         if (isset($config['widgets'])) {
             if (is_string($config['widgets'])) {
@@ -276,7 +282,10 @@ class FormHelper extends Helper
 
         parent::__construct($View, $config);
 
-        $this->widgetRegistry($registry, $widgets);
+        if (!$locator) {
+            $locator = new WidgetLocator($this->templater(), $this->_View, $widgets);
+        }
+        $this->setWidgetLocator($locator);
         $this->_idPrefix = $this->getConfig('idPrefix');
     }
 
@@ -286,19 +295,43 @@ class FormHelper extends Helper
      * @param \Cake\View\Widget\WidgetRegistry|null $instance The registry instance to set.
      * @param array $widgets An array of widgets
      * @return \Cake\View\Widget\WidgetRegistry
+     * @deprecated 3.6.0 Use FormHelper::widgetLocator() instead.
      */
     public function widgetRegistry(WidgetRegistry $instance = null, $widgets = [])
     {
-        if ($instance === null) {
-            if ($this->_registry === null) {
-                $this->_registry = new WidgetRegistry($this->templater(), $this->_View, $widgets);
-            }
+        deprecationWarning('widgetRegistry is deprecated, use widgetLocator instead.');
 
-            return $this->_registry;
+        if ($instance) {
+            $instance->add($widgets);
+            $this->setWidgetLocator($instance);
         }
-        $this->_registry = $instance;
 
-        return $this->_registry;
+        return $this->getWidgetLocator();
+    }
+
+    /**
+     * Get the widget locator currently used by the helper.
+     *
+     * @return \Cake\View\Widget\WidgetLocator Current locator instance
+     * @since 3.6.0
+     */
+    public function getWidgetLocator()
+    {
+        return $this->_locator;
+    }
+
+    /**
+     * Set the widget locator the helper will use.
+     *
+     * @param \Cake\View\Widget\WidgetLocator $instance The locator instance to set.
+     * @return $this
+     * @since 3.6.0
+     */
+    public function setWidgetLocator(WidgetLocator $instance)
+    {
+        $this->_locator = $instance;
+
+        return $this;
     }
 
     /**
@@ -2774,7 +2807,7 @@ class FormHelper extends Helper
      */
     public function addWidget($name, $spec)
     {
-        $this->_registry->add([$name => $spec]);
+        $this->_locator->add([$name => $spec]);
     }
 
     /**
@@ -2796,7 +2829,7 @@ class FormHelper extends Helper
             $secure = $data['secure'];
             unset($data['secure']);
         }
-        $widget = $this->_registry->get($name);
+        $widget = $this->_locator->get($name);
         $out = $widget->render($data, $this->context());
         if (isset($data['name']) && $secure !== null && $secure !== self::SECURE_SKIP) {
             foreach ($widget->secureFields($data) as $field) {
