@@ -28,7 +28,7 @@ use Cake\TestSuite\TestCase;
 class QueryTest extends TestCase
 {
 
-    public $fixtures = ['core.articles', 'core.authors', 'core.comments'];
+    public $fixtures = ['core.articles', 'core.authors', 'core.comments', 'core.profiles'];
 
     public $autoFixtures = false;
 
@@ -4467,19 +4467,23 @@ class QueryTest extends TestCase
      */
     public function testCastResults()
     {
+        $this->loadFixtures('Profiles');
         $query = new Query($this->connection);
-        $typeMap = new TypeMap([
-            'one' => 'integer',
-            'two' => 'integer',
-            'three' => 'integer',
-            'true' => 'boolean'
-        ]);
+        $fields = [
+            'id' => 'integer',
+            'user_id' => 'integer',
+            'is_active' => 'boolean'
+        ];
+        $typeMap = new TypeMap($fields + ['a' => 'integer']);
         $results = $query
-            ->select(['one' => '1 * 1', 'two' => '1 * 2', 'true' => '1', 'three' => '1 + 2'])
+            ->select(array_keys($fields))
+            ->select(['a' => 'id'])
+            ->from('profiles')
             ->setSelectTypeMap($typeMap)
+            ->limit(1)
             ->execute()
             ->fetchAll('assoc');
-        $this->assertSame([['one' => 1, 'two' => 2, 'true' => true, 'three' => 3]], $results);
+        $this->assertSame([['id' => 1, 'user_id' => 1, 'is_active' => true, 'a' => 1]], $results);
     }
 
     /**
@@ -4489,20 +4493,43 @@ class QueryTest extends TestCase
      */
     public function testCastResultsDisable()
     {
+        $this->loadFixtures('Profiles');
         $query = new Query($this->connection);
-        $typeMap = new TypeMap([
-            'one' => 'integer',
-            'two' => 'integer',
-            'three' => 'integer',
-            'true' => 'boolean'
-        ]);
+        $typeMap = new TypeMap(['a' => 'datetime']);
         $results = $query
-            ->select(['one' => '1 * 1', 'two' => '1 * 2', 'true' => '1 * 1', 'three' => '1 + 2'])
+            ->select(['a' => 'id'])
+            ->from('profiles')
             ->setSelectTypeMap($typeMap)
+            ->limit(1)
             ->disableResultsCasting()
             ->execute()
             ->fetchAll('assoc');
-        $this->assertSame([['one' => '1', 'two' => '2', 'true' => '1', 'three' => '3']], $results);
+        $this->assertEquals([['a' => '1']], $results);
+    }
+
+    /**
+     * Test that type conversion is only applied once.
+     *
+     * @return void
+     */
+    public function testAllNoDuplicateTypeCasting()
+    {
+        $query = new Query($this->connection);
+        $query
+            ->select('1.5 AS a')
+            ->setSelectTypeMap(new TypeMap(['a' => 'integer']));
+
+        // Convert to an array and make the query dirty again.
+        $result = $query->execute()->fetchAll('assoc');
+        $this->assertEquals([['a' => 1]], $result);
+
+        $query->setSelectTypeMap(new TypeMap(['a' => 'float']));
+        // Get results a second time.
+        $result = $query->execute()->fetchAll('assoc');
+
+        // Had the type casting being rememberd from the first time,
+        // The valuewould be a truncated float (1.0)
+        $this->assertEquals([['a' => 1.5]], $result);
     }
 
     /**

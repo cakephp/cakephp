@@ -2015,6 +2015,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function setSelectTypeMap(TypeMap $typeMap)
     {
         $this->_selectTypeMap = $typeMap;
+        $this->_dirty();
 
         return $this;
     }
