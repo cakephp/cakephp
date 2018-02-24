@@ -4483,7 +4483,7 @@ class QueryTest extends TestCase
             ->limit(1)
             ->execute()
             ->fetchAll('assoc');
-        $this->assertSame([['id' => 1, 'user_id' => 1, 'is_active' => true, 'a' => 1]], $results);
+        $this->assertSame([['id' => 1, 'user_id' => 1, 'is_active' => false, 'a' => 1]], $results);
     }
 
     /**
