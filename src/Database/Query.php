@@ -1801,7 +1801,6 @@ class Query implements ExpressionInterface, IteratorAggregate
     {
         if ($overwrite) {
             $this->_resultDecorators = [];
-            $this->_typeCastAttached = false;
         }
 
         if ($callback !== null) {
