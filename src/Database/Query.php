@@ -132,11 +132,11 @@ class Query implements ExpressionInterface, IteratorAggregate
     protected $_selectTypeMap;
 
     /**
-     * Tracking flag to ensure only one type caster is appended.
+     * Tracking flag to disable casting
      *
      * @var bool
      */
-    protected $_typeCastAttached = false;
+    protected $typeCastEnabled = true;
 
     /**
      * Constructor.
@@ -217,14 +217,6 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function execute()
     {
         $statement = $this->_connection->run($this);
-        $typeMap = $this->getSelectTypeMap();
-
-        if ($typeMap->toArray() && $this->_typeCastAttached === false) {
-            $driver = $this->_connection->getDriver();
-            $this->decorateResults(new FieldTypeConverter($typeMap, $driver));
-            $this->_typeCastAttached = true;
-        }
-
         $this->_iterator = $this->_decorateStatement($statement);
         $this->_dirty = false;
 
@@ -2026,6 +2018,7 @@ class Query implements ExpressionInterface, IteratorAggregate
 
         return $this;
     }
+
     /**
      * Gets the TypeMap class where the types for each of the fields in the
      * select clause are stored.
@@ -2039,6 +2032,30 @@ class Query implements ExpressionInterface, IteratorAggregate
         }
 
         return $this->_selectTypeMap;
+    }
+
+    /**
+     * Disables the automatic casting of fields to their corresponding type
+     *
+     * @return $this
+     */
+    public function disableResultsCasting()
+    {
+        $this->typeCastEnabled = false;
+
+        return $this;
+    }
+
+    /**
+     * Enables the automatic casting of fields to their corresponding type
+     *
+     * @return $this
+     */
+    public function enableResultsCasting()
+    {
+        $this->typeCastEnabled = true;
+
+        return $this;
     }
 
     /**
@@ -2073,8 +2090,16 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     protected function _decorateStatement($statement)
     {
+        $typeMap = $this->getSelectTypeMap();
+        $driver = $this->getConnection()->getDriver();
+
+        if ($this->typeCastEnabled && $typeMap->toArray()) {
+            $driver = $this->_connection->getDriver();
+            $statement = new CallbackStatement($statement, $driver, new FieldTypeConverter($typeMap, $driver));
+        }
+
         foreach ($this->_resultDecorators as $f) {
-            $statement = new CallbackStatement($statement, $this->getConnection()->getDriver(), $f);
+            $statement = new CallbackStatement($statement, $driver, $f);
         }
 
         return $statement;
