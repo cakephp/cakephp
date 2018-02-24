@@ -4514,6 +4514,7 @@ class QueryTest extends TestCase
      */
     public function testAllNoDuplicateTypeCasting()
     {
+        $this->skipIf($this->autoQuote, 'Produces bad SQL in postgres with autoQuoting');
         $query = new Query($this->connection);
         $query
             ->select('1.5 AS a')
