@@ -51,7 +51,6 @@ class DateTimeType extends Type implements TypeInterface, BatchCastingInterface
      */
     public static $dateTimeClass = 'Cake\I18n\Time';
 
-
     /**
      * Whether or not we want to override the time of the converted Time objets
      * so the point to the start of the day.
