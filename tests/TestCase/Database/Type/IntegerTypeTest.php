@@ -62,6 +62,9 @@ class IntegerTypeTest extends TestCase
 
         $result = $this->type->toPHP('-2', $this->driver);
         $this->assertSame(-2, $result);
+
+        $result = $this->type->toPHP(10, $this->driver);
+        $this->assertSame(10, $result);
     }
 
     /**
@@ -76,12 +79,14 @@ class IntegerTypeTest extends TestCase
             'b' => '2.3',
             'c' => '15',
             'c' => '0.0',
+            'd' => 10
         ];
         $expected = [
             'a' => null,
             'b' => 2,
             'c' => 15,
             'c' => 0,
+            'd' => 10
         ];
         $this->assertEquals(
             $expected,

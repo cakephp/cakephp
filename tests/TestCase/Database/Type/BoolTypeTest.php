@@ -95,11 +95,13 @@ class BoolTypeTest extends TestCase
         $this->assertTrue($this->type->toPHP('1', $this->driver));
         $this->assertTrue($this->type->toPHP('TRUE', $this->driver));
         $this->assertTrue($this->type->toPHP('true', $this->driver));
+        $this->assertTrue($this->type->toPHP(true, $this->driver));
 
         $this->assertFalse($this->type->toPHP(0, $this->driver));
         $this->assertFalse($this->type->toPHP('0', $this->driver));
         $this->assertFalse($this->type->toPHP('FALSE', $this->driver));
         $this->assertFalse($this->type->toPHP('false', $this->driver));
+        $this->assertFalse($this->type->toPHP(false, $this->driver));
     }
 
     /**
@@ -116,7 +118,9 @@ class BoolTypeTest extends TestCase
             'd' => 'false',
             'e' => 'FALSE',
             'f' => '0',
-            'g' => '1'
+            'g' => '1',
+            'h' => true,
+            'i' => false,
         ];
         $expected = [
             'a' => null,
@@ -126,6 +130,8 @@ class BoolTypeTest extends TestCase
             'e' => false,
             'f' => false,
             'g' => true,
+            'h' => true,
+            'i' => false,
         ];
         $this->assertEquals(
             $expected,

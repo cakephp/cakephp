@@ -80,9 +80,10 @@ class BoolType extends Type implements TypeInterface, BatchCastingInterface
      */
     public function toPHP($value, Driver $driver)
     {
-        if ($value === null) {
-            return null;
+        if ($value === null || $value === true || $value === false) {
+            return $value;
         }
+
         if (!is_numeric($value)) {
             return strtolower($value) === 'true';
         }
@@ -98,7 +99,7 @@ class BoolType extends Type implements TypeInterface, BatchCastingInterface
     public function manyToPHP(array $values, array $fields, Driver $driver)
     {
         foreach ($fields as $field) {
-            if (!isset($values[$field])) {
+            if (!isset($values[$field]) || $values[$field] === true || $values[$field] === false) {
                 continue;
             }
 

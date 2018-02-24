@@ -174,7 +174,7 @@ class DateTimeType extends Type implements TypeInterface, BatchCastingInterface
             }
 
             $instance = clone $this->_datetimeInstance;
-            $instance = $instance->modify($value);
+            $instance = $instance->modify($values[$field]);
 
             if ($this->setToDateStart) {
                 $instance = $instance->setTime(0, 0, 0);
