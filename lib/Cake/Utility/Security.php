@@ -184,9 +184,12 @@ class Security {
 		if (function_exists('openssl_random_pseudo_bytes')) {
 			return openssl_random_pseudo_bytes($length);
 		}
+		if (function_exists('mcrypt_create_iv')) {
+			return mcrypt_create_iv($length, MCRYPT_DEV_URANDOM);
+		}
 		trigger_error(
 			'You do not have a safe source of random data available. ' .
-			'Install either the openssl extension, or paragonie/random_compat. ' .
+			'Install either the openssl extension, the mcrypt extension, or paragonie/random_compat. ' .
 			'Falling back to an insecure random source.',
 			E_USER_WARNING
 		);
@@ -206,7 +209,7 @@ class Security {
  * for sensitive data. Additionally this method does *not* work in environments
  * where suhosin is enabled.
  *
- * Instead you should use Security::rijndael() when you need strong
+ * Instead you should use Security::encrypt() when you need strong
  * encryption.
  *
  * @param string $text Encrypted string to decrypt, normal string to encrypt
@@ -349,12 +352,24 @@ class Security {
 		// Generate the encryption and hmac key.
 		$key = substr(hash('sha256', $key . $hmacSalt), 0, 32);
 
-		$algorithm = MCRYPT_RIJNDAEL_128;
-		$mode = MCRYPT_MODE_CBC;
+		if (Configure::read('Security.useOpenSsl')) {
+			$method = 'AES-256-CBC';
+			$ivSize = openssl_cipher_iv_length($method);
+			$iv = openssl_random_pseudo_bytes($ivSize);
+			$padLength = (int)ceil((strlen($plain) ?: 1) / $ivSize) * $ivSize;
+			$ciphertext = openssl_encrypt(str_pad($plain, $padLength, "\0"), $method, $key, true, $iv);
+			// Remove the PKCS#7 padding block for compatibility with mcrypt.
+			// Since we have padded the provided data with \0, the final block contains only padded bytes.
+			// So it can be removed safely.
+			$ciphertext = $iv . substr($ciphertext, 0, -$ivSize);
+		} else {
+			$algorithm = MCRYPT_RIJNDAEL_128;
+			$mode = MCRYPT_MODE_CBC;
+			$ivSize = mcrypt_get_iv_size($algorithm, $mode);
+			$iv = mcrypt_create_iv($ivSize, MCRYPT_DEV_URANDOM);
+			$ciphertext = $iv . mcrypt_encrypt($algorithm, $key, $plain, $mode, $iv);
+		}
 
-		$ivSize = mcrypt_get_iv_size($algorithm, $mode);
-		$iv = mcrypt_create_iv($ivSize, MCRYPT_DEV_URANDOM);
-		$ciphertext = $iv . mcrypt_encrypt($algorithm, $key, $plain, $mode, $iv);
 		$hmac = hash_hmac('sha256', $ciphertext, $key);
 		return $hmac . $ciphertext;
 	}
@@ -404,13 +419,23 @@ class Security {
 			return false;
 		}
 
-		$algorithm = MCRYPT_RIJNDAEL_128;
-		$mode = MCRYPT_MODE_CBC;
-		$ivSize = mcrypt_get_iv_size($algorithm, $mode);
+		if (Configure::read('Security.useOpenSsl')) {
+			$method = 'AES-256-CBC';
+			$ivSize = openssl_cipher_iv_length($method);
+			$iv = substr($cipher, 0, $ivSize);
+			$cipher = substr($cipher, $ivSize);
+			// Regenerate PKCS#7 padding block
+			$padding = openssl_encrypt('', $method, $key, true, substr($cipher, -$ivSize));
+			$plain = openssl_decrypt($cipher . $padding, $method, $key, true, $iv);
+		} else {
+			$algorithm = MCRYPT_RIJNDAEL_128;
+			$mode = MCRYPT_MODE_CBC;
+			$ivSize = mcrypt_get_iv_size($algorithm, $mode);
+			$iv = substr($cipher, 0, $ivSize);
+			$cipher = substr($cipher, $ivSize);
+			$plain = mcrypt_decrypt($algorithm, $key, $cipher, $mode, $iv);
+		}
 
-		$iv = substr($cipher, 0, $ivSize);
-		$cipher = substr($cipher, $ivSize);
-		$plain = mcrypt_decrypt($algorithm, $key, $cipher, $mode, $iv);
 		return rtrim($plain, "\0");
 	}
 
