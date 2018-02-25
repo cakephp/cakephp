@@ -48,14 +48,14 @@ class Session
      *
      * @var bool
      */
-    protected $_started;
+    protected $_started = false;
 
     /**
      * The time in seconds the session will be valid for
      *
      * @var int
      */
-    protected $_lifetime;
+    protected $_lifetime = 0;
 
     /**
      * Whether this session is running under a CLI environment
