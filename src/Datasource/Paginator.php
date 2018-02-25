@@ -373,6 +373,13 @@ class Paginator implements PaginatorInterface
             }
         }
 
+        if ($options['sort'] === null
+            && count($options['order']) === 1
+            && !is_numeric(key($options['order']))
+        ) {
+            $options['sort'] = key($options['order']);
+        }
+
         $options['order'] = $this->_prefix($object, $options['order'], $inWhitelist);
 
         return $options;
