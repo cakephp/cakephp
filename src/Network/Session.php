@@ -218,7 +218,7 @@ class Session
             $this->options($config['ini']);
         }
 
-        if (!empty($config['handler']['engine'])) {
+        if (!empty($config['handler']['engine']) && !$this->started()) {
             $class = $config['handler']['engine'];
             unset($config['handler']['engine']);
             session_set_save_handler($this->engine($class, $config['handler']), false);
