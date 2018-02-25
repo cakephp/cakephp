@@ -358,7 +358,7 @@ class SecurityTest extends CakeTestCase {
 	}
 
 /**
- * Tests that encrypted strings are comatible between the mcrypt and openssl engine.
+ * Tests that encrypted strings are compatible between the mcrypt and openssl engine.
  *
  * @dataProvider plainTextProvider
  * @param string $txt Plain text to be encrypted.
