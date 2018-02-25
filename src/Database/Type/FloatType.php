@@ -96,7 +96,7 @@ class FloatType extends Type implements TypeInterface, BatchCastingInterface
             return null;
         }
 
-        // Using coersion is faster than casting
+        // Using coercion is faster than casting
         // @codingStandardsIgnoreStart
         return (float)+$value;
         // @codingStandardsIgnoreEnd
@@ -114,7 +114,7 @@ class FloatType extends Type implements TypeInterface, BatchCastingInterface
                 continue;
             }
 
-            // Using coersion is faster than casting
+            // Using coercion is faster than casting
             // @codingStandardsIgnoreStart
             $values[$field] = (float)+$values[$field];
             // @codingStandardsIgnoreEnd

@@ -2035,7 +2035,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     }
 
     /**
-     * Disables the automatic casting of fields to their corresponding type
+     * Disables the automatic casting of fields to their corresponding PHP data type
      *
      * @return $this
      */
