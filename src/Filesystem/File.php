@@ -86,7 +86,7 @@ class File
         $splInfo = new SplFileInfo($path);
         $this->Folder = new Folder($splInfo->getPath(), $create, $mode);
         if (!is_dir($path)) {
-            $this->name = ltrim($splInfo->getFilename(), '/');
+            $this->name = ltrim($splInfo->getFilename(), DS);
         }
         $this->pwd();
         $create && !$this->exists() && $this->safe($path) && $this->create();
@@ -345,13 +345,28 @@ class File
             $this->info();
         }
         if (isset($this->info['extension'])) {
-            return basename($this->name, '.' . $this->info['extension']);
+            return $this->_basename($this->name, '.' . $this->info['extension']);
         }
         if ($this->name) {
             return $this->name;
         }
 
         return false;
+    }
+
+    /**
+     * Returns the file basename. simulate the php basename().
+     *
+     * @return string the file basename.
+     */
+    protected function _basename($name, $ext=null)
+    {
+        $splInfo = new SplFileInfo($name);
+        $name = ltrim($splInfo->getFilename(), DS);
+        if($ext===null || rtrim($name,$ext)===''){
+            return $name;
+        }
+        return rtrim($name,$ext);
     }
 
     /**
@@ -370,7 +385,7 @@ class File
             $ext = $this->ext();
         }
 
-        return preg_replace("/(?:[^\w\.-]+)/", '_', basename($name, $ext));
+        return preg_replace("/(?:[^\w\.-]+)/", '_', $this->_basename($name, $ext));
     }
 
     /**
