@@ -86,7 +86,7 @@ class File
         $splInfo = new SplFileInfo($path);
         $this->Folder = new Folder($splInfo->getPath(), $create, $mode);
         if (!is_dir($path)) {
-            $this->name = $splInfo->getBasename();
+            $this->name = ltrim($splInfo->getFilename(), '/');
         }
         $this->pwd();
         $create && !$this->exists() && $this->safe($path) && $this->create();
