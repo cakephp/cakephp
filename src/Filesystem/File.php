@@ -357,11 +357,13 @@ class File
     /**
      * Returns the file basename. simulate the php basename().
      *
+     * @param string $path Path to file
+     * @param string|null $ext The name of the extension
      * @return string the file basename.
      */
-    protected function _basename($name, $ext = null)
+    protected function _basename($path, $ext = null)
     {
-        $splInfo = new SplFileInfo($name);
+        $splInfo = new SplFileInfo($path);
         $name = ltrim($splInfo->getFilename(), DS);
         if ($ext === null || rtrim($name, $ext) === '') {
             return $name;
