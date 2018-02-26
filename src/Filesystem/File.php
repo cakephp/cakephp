@@ -359,14 +359,15 @@ class File
      *
      * @return string the file basename.
      */
-    protected function _basename($name, $ext=null)
+    protected function _basename($name, $ext = null)
     {
         $splInfo = new SplFileInfo($name);
         $name = ltrim($splInfo->getFilename(), DS);
-        if($ext===null || rtrim($name,$ext)===''){
+        if ($ext === null || rtrim($name, $ext) === '') {
             return $name;
         }
-        return rtrim($name,$ext);
+
+        return rtrim($name, $ext);
     }
 
     /**
