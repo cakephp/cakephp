@@ -177,6 +177,7 @@ class FileTest extends TestCase
             ['/نام فارسی.txt', '.txt'],
             //
             ['/etc/sudoers.d', null],
+            ['/etc/.d', '.d'],
             ['/etc/sudoers.d', '.d'],
             ['/etc/passwd', null],
             ['/etc/', null],
