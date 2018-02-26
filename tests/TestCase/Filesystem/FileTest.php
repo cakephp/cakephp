@@ -138,6 +138,54 @@ class FileTest extends TestCase
     }
 
     /**
+     * Test _basename method
+     * @dataProvider baseNameValueProvider
+     * @return void
+     */
+    public function testBasename($path, $suffix)
+    {
+        $class = new \ReflectionClass('Cake\Filesystem\File');
+        $method = $class->getMethod('_basename');
+        $method->setAccessible(true);
+        if ($suffix === null) {
+            $this->assertEquals(basename($path), $method->invokeArgs(null, [$path]));
+        } else {
+            $this->assertEquals(basename($path, $suffix), $method->invokeArgs(null, [$path, $suffix]));
+        }
+    }
+
+    /**
+     * Data provider for testBasename().
+     *
+     * @return array
+     */
+    public function baseNameValueProvider()
+    {
+        return [
+            ['folder/نام.txt', null],
+            ['folder/نام فارسی.txt', null],
+            ['نام.txt', null],
+            ['نام فارسی.txt', null],
+            ['/نام.txt', null],
+            ['/نام فارسی.txt', null],
+            //
+            ['folder/نام.txt', '.txt'],
+            ['folder/نام فارسی.txt', '.txt'],
+            ['نام.txt', '.txt'],
+            ['نام فارسی.txt', '.txt'],
+            ['/نام.txt', '.txt'],
+            ['/نام فارسی.txt', '.txt'],
+            //
+            ['/etc/sudoers.d', null],
+            ['/etc/sudoers.d', '.d'],
+            ['/etc/passwd', null],
+            ['/etc/', null],
+            ['.', null],
+            ['/', null],
+        ];
+    }
+
+    /**
      * testPermission method
      *
      * @return void

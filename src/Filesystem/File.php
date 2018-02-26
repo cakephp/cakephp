@@ -345,7 +345,7 @@ class File
             $this->info();
         }
         if (isset($this->info['extension'])) {
-            return $this->_basename($this->name, '.' . $this->info['extension']);
+            return static::_basename($this->name, '.' . $this->info['extension']);
         }
         if ($this->name) {
             return $this->name;
@@ -361,7 +361,7 @@ class File
      * @param string|null $ext The name of the extension
      * @return string the file basename.
      */
-    protected function _basename($path, $ext = null)
+    protected static function _basename($path, $ext = null)
     {
         $splInfo = new SplFileInfo($path);
         $name = ltrim($splInfo->getFilename(), DS);
@@ -388,7 +388,7 @@ class File
             $ext = $this->ext();
         }
 
-        return preg_replace("/(?:[^\w\.-]+)/", '_', $this->_basename($name, $ext));
+        return preg_replace("/(?:[^\w\.-]+)/", '_', static::_basename($name, $ext));
     }
 
     /**
