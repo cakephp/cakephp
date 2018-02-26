@@ -124,6 +124,20 @@ class FileTest extends TestCase
     }
 
     /**
+     * testUtf8Filenames
+     *
+     * @link https://github.com/cakephp/cakephp/issues/11749
+     * @return void
+     */
+    public function testUtf8Filenames()
+    {
+        $File = new File(TMP . 'tests/permissions/نام فارسی.php', true);
+        $this->assertEquals('نام فارسی', $File->name());
+        $this->assertTrue($File->exists());
+        $this->assertTrue($File->readable());
+    }
+
+    /**
      * testPermission method
      *
      * @return void

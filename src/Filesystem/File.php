@@ -15,6 +15,7 @@
 namespace Cake\Filesystem;
 
 use finfo;
+use SplFileInfo;
 
 /**
  * Convenience class for reading, writing and appending to files.
@@ -82,9 +83,10 @@ class File
      */
     public function __construct($path, $create = false, $mode = 0755)
     {
-        $this->Folder = new Folder(dirname($path), $create, $mode);
+        $splInfo = new SplFileInfo($path);
+        $this->Folder = new Folder($splInfo->getPath(), $create, $mode);
         if (!is_dir($path)) {
-            $this->name = basename($path);
+            $this->name = $splInfo->getBasename();
         }
         $this->pwd();
         $create && !$this->exists() && $this->safe($path) && $this->create();
