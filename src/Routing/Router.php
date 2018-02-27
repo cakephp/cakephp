@@ -1151,7 +1151,7 @@ class Router
     /**
      * Set the RouteCollection inside the Router
      *
-     * @param RouteCollection $routeCollection
+     * @param RouteCollection $routeCollection route collection
      * @return void
      */
     public static function setRouteCollection($routeCollection)
