@@ -475,6 +475,7 @@ class RoutingMiddlewareTest extends TestCase
         $next = function ($req, $res) {
             $routeCollection = Cache::read('routeCollection', '_cake_router_');
             $this->assertInstanceOf('\Cake\Routing\RouteCollection', $routeCollection);
+
             return $res;
         };
         $app = new Application(CONFIG);
@@ -504,6 +505,7 @@ class RoutingMiddlewareTest extends TestCase
         $next = function ($req, $res) {
             $routeCollection = Cache::read('routeCollection', '_cake_router_');
             $this->assertFalse($routeCollection);
+
             return $res;
         };
         $app = new Application(CONFIG);

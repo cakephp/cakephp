@@ -1171,5 +1171,4 @@ class Router
         static::$initialized = true;
         include CONFIG . 'routes.php';
     }
-
 }
