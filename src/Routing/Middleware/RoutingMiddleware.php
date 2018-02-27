@@ -14,7 +14,6 @@
  */
 namespace Cake\Routing\Middleware;
 
-=======
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Core\PluginApplicationInterface;
@@ -74,10 +73,9 @@ class RoutingMiddleware
         if (!$this->app) {
             return;
         }
+
         $routeCollection = $this->buildRouteCollection();
         Router::setRouteCollection($routeCollection);
-        // Prevent routes from being loaded again
-        Router::$initialized = true;
     }
 
     /**

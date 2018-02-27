@@ -1157,6 +1157,7 @@ class Router
     public static function setRouteCollection($routeCollection)
     {
         static::$_collection = $routeCollection;
+        Router::$initialized = true;
     }
 
     /**
