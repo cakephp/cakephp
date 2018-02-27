@@ -89,9 +89,9 @@ class RoutingMiddleware
     {
         $isRouterCacheEnabled = Configure::read('Router.cache');
         if (Cache::enabled() && $isRouterCacheEnabled) {
-            $routesCacheConfig = Configure::read('Router.cacheConfig', self::DEFAULT_ROUTER_CACHE_CONFIG);
+            $routesCacheConfig = Configure::read('Router.cacheConfig', static::DEFAULT_ROUTER_CACHE_CONFIG);
 
-            return Cache::remember(self::ROUTE_COLLECTION_CACHE_KEY, function () {
+            return Cache::remember(static::ROUTE_COLLECTION_CACHE_KEY, function () {
 
                 return $this->prepareRouteCollection();
             }, $routesCacheConfig);
