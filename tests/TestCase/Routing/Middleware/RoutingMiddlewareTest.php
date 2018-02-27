@@ -14,6 +14,8 @@
  */
 namespace Cake\Test\TestCase\Routing\Middleware;
 
+use Cake\Cache\Cache;
+use Cake\Core\Configure;
 use Cake\Routing\Middleware\RoutingMiddleware;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
@@ -453,5 +455,90 @@ class RoutingMiddlewareTest extends TestCase
             ['/api/ping', ['first', 'last']],
             ['/api/version', ['second', 'last']],
         ];
+    }
+
+    /**
+     * Test we store route collection in cache.
+     *
+     * @return void
+     */
+    public function testCacheRoutes()
+    {
+        Configure::write('Router.cache', true);
+        Cache::setConfig('_cake_router_', [
+            'engine' => 'File',
+            'path' => TMP,
+        ]);
+        Router::$initialized = false;
+        $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/articles']);
+        $response = new Response();
+        $next = function ($req, $res) {
+            $routeCollection = Cache::read('routeCollection', '_cake_router_');
+            $this->assertInstanceOf('\Cake\Routing\RouteCollection', $routeCollection);
+            return $res;
+        };
+        $app = new Application(CONFIG);
+        $middleware = new RoutingMiddleware($app);
+        $middleware($request, $response, $next);
+
+        Cache::clear(false, '_cake_router_');
+        Cache::drop('_cake_router_');
+    }
+
+    /**
+     * Test we don't cache routes if cache is disabled.
+     *
+     * @return void
+     */
+    public function testCacheNotUsedIfCacheDisabled()
+    {
+        Configure::write('Router.cache', true);
+        Cache::disable();
+        Cache::setConfig('_cake_router_', [
+            'engine' => 'File',
+            'path' => TMP,
+        ]);
+        Router::$initialized = false;
+        $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/articles']);
+        $response = new Response();
+        $next = function ($req, $res) {
+            $routeCollection = Cache::read('routeCollection', '_cake_router_');
+            $this->assertFalse($routeCollection);
+            return $res;
+        };
+        $app = new Application(CONFIG);
+        $middleware = new RoutingMiddleware($app);
+        $middleware($request, $response, $next);
+
+        Cache::drop('_cake_router_');
+        Cache::enable();
+    }
+
+    /**
+     * Test cache name is used
+     *
+     * @return void
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage The "notfound" cache configuration does not exist
+     */
+    public function testCacheConfigNotFound()
+    {
+        Configure::write('Router.cache', true);
+        Configure::write('Router.cacheConfig', 'notfound');
+        Cache::setConfig('_cake_router_', [
+            'engine' => 'File',
+            'path' => TMP,
+        ]);
+        Router::$initialized = false;
+        $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/articles']);
+        $response = new Response();
+        $next = function ($req, $res) {
+            return $res;
+        };
+        $app = new Application(CONFIG);
+        $middleware = new RoutingMiddleware($app);
+        $middleware($request, $response, $next);
+
+        Cache::drop('_cake_router_');
     }
 }

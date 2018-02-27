@@ -14,6 +14,9 @@
  */
 namespace Cake\Routing\Middleware;
 
+=======
+use Cake\Cache\Cache;
+use Cake\Core\Configure;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Http\BaseApplication;
 use Cake\Http\MiddlewareQueue;
@@ -30,6 +33,16 @@ use Zend\Diactoros\Response\RedirectResponse;
  */
 class RoutingMiddleware
 {
+    /**
+     * Name of the default cache configuration name used to store routes collection
+     */
+    const DEFAULT_ROUTER_CACHE_CONFIG = '_cake_router_';
+
+    /**
+     * Key used to store the route collection in the cache engine
+     */
+    const ROUTE_COLLECTION_CACHE_KEY = 'routeCollection';
+
     /**
      * The application that will have its routing hook invoked.
      *
@@ -49,6 +62,7 @@ class RoutingMiddleware
 
     /**
      * Trigger the application's routes() hook if the application exists and Router isn't initialized.
+     * Uses the routes cache if enabled via configuration param "Router.cache"
      *
      * If the middleware is created without an Application, routes will be
      * loaded via the automatic route loading that pre-dates the routes() hook.
@@ -60,11 +74,46 @@ class RoutingMiddleware
         if (!$this->app) {
             return;
         }
+        $routeCollection = $this->buildRouteCollection();
+        Router::setRouteCollection($routeCollection);
+        // Prevent routes from being loaded again
+        Router::$initialized = true;
+    }
+
+    /**
+     * Check if route cache is enabled and use the configured Cache to 'remember' the route collection
+     *
+     * @return \Cake\Routing\RouteCollection
+     */
+    protected function buildRouteCollection()
+    {
+        $isRouterCacheEnabled = Configure::read('Router.cache');
+        if (Cache::enabled() && $isRouterCacheEnabled) {
+            $routesCacheConfig = Configure::read('Router.cacheConfig', self::DEFAULT_ROUTER_CACHE_CONFIG);
+
+            return Cache::remember(self::ROUTE_COLLECTION_CACHE_KEY, function () {
+
+                return $this->prepareRouteCollection();
+            }, $routesCacheConfig);
+        }
+
+        return $this->prepareRouteCollection();
+    }
+
+    /**
+     * Generate the route collection using the builder
+     *
+     * @return \Cake\Routing\RouteCollection
+     */
+    protected function prepareRouteCollection()
+    {
         $builder = Router::createRouteBuilder('/');
         $this->app->routes($builder);
         if ($this->app instanceof PluginApplicationInterface) {
             $this->app->pluginRoutes($builder);
         }
+
+        return Router::getRouteCollection();
     }
 
     /**
@@ -77,6 +126,7 @@ class RoutingMiddleware
      * @param \Psr\Http\Message\ResponseInterface $response The response.
      * @param callable $next The next middleware to call.
      * @return \Psr\Http\Message\ResponseInterface A response.
+     * @throws \Cake\Routing\InvalidArgumentException
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next)
     {
