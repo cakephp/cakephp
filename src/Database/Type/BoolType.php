@@ -67,7 +67,10 @@ class BoolType extends Type implements TypeInterface
             return (bool)$value;
         }
 
-        throw new InvalidArgumentException('Cannot convert value to bool');
+        throw new InvalidArgumentException(sprintf(
+            'Cannot convert value of type `%s` to bool',
+            getTypeName($value)
+        ));
     }
 
     /**

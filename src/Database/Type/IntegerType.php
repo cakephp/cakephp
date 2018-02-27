@@ -64,7 +64,10 @@ class IntegerType extends Type implements TypeInterface
         }
 
         if (!is_scalar($value)) {
-            throw new InvalidArgumentException('Cannot convert value to integer');
+            throw new InvalidArgumentException(sprintf(
+                'Cannot convert value of type `%s` to integer',
+                getTypeName($value)
+            ));
         }
 
         return (int)$value;

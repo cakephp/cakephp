@@ -80,7 +80,10 @@ class DecimalType extends Type implements TypeInterface
             return null;
         }
         if (!is_scalar($value)) {
-            throw new InvalidArgumentException('Cannot convert value to a decimal.');
+            throw new InvalidArgumentException(sprintf(
+                'Cannot convert value of type `%s` to a decimal',
+                getTypeName($value)
+            ));
         }
         if (is_string($value) && is_numeric($value)) {
             return $value;
