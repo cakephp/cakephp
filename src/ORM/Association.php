@@ -120,7 +120,7 @@ abstract class Association
      * A list of conditions to be always included when fetching records from
      * the target association
      *
-     * @var array
+     * @var array|callable
      */
     protected $_conditions = [];
 
@@ -472,7 +472,7 @@ abstract class Association
      * the target association.
      *
      * @see \Cake\Database\Query::where() for examples on the format of the array
-     * @return array
+     * @return array|callable
      */
     public function getConditions()
     {
