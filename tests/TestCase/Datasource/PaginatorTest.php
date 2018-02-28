@@ -126,7 +126,7 @@ class PaginatorTest extends TestCase
                 'page' => 1,
                 'whitelist' => ['limit', 'sort', 'page', 'direction'],
                 'scope' => null,
-                'sort' => null,
+                'sort' => 'PaginatorPosts.id',
             ]);
         $this->Paginator->paginate($table, $params, $settings);
     }
@@ -238,7 +238,7 @@ class PaginatorTest extends TestCase
                 'order' => ['PaginatorPosts.id' => 'DESC'],
                 'whitelist' => ['limit', 'sort', 'page', 'direction'],
                 'scope' => null,
-                'sort' => null,
+                'sort' => 'PaginatorPosts.id',
             ]);
 
         $this->Paginator->paginate($table, [], $settings);
@@ -271,7 +271,7 @@ class PaginatorTest extends TestCase
                 'order' => ['PaginatorPosts.id' => 'DESC'],
                 'whitelist' => ['limit', 'sort', 'page', 'direction'],
                 'scope' => null,
-                'sort' => null,
+                'sort' => 'PaginatorPosts.id',
             ]);
 
         $this->Paginator->paginate($table, [], $settings);
@@ -628,6 +628,45 @@ class PaginatorTest extends TestCase
         $result = $this->Paginator->validateSort($model, $options);
 
         $this->assertEquals('asc', $result['order']['model.something']);
+    }
+
+    /**
+     * Test that "sort" and "direction" in paging params is properly set based
+     * on initial value of "order" in paging settings.
+     *
+     * @return void
+     */
+    public function testValidaSortInitialSortAndDirection()
+    {
+        $table = $this->_getMockPosts(['query']);
+        $query = $this->_getMockFindQuery();
+
+        $table->expects($this->once())
+            ->method('query')
+            ->will($this->returnValue($query));
+
+        $query->expects($this->once())->method('applyOptions')
+            ->with([
+                'limit' => 20,
+                'page' => 1,
+                'order' => ['PaginatorPosts.id' => 'asc'],
+                'whitelist' => ['limit', 'sort', 'page', 'direction'],
+                'sort' => 'id',
+                'scope' => null,
+                'sortWhitelist' => ['id'],
+            ]);
+
+        $options = [
+            'order' => [
+                'id' => 'asc',
+            ],
+            'sortWhitelist' => ['id'],
+        ];
+        $this->Paginator->paginate($table, [], $options);
+        $pagingParams = $this->Paginator->getPagingParams();
+
+        $this->assertEquals('id', $pagingParams['PaginatorPosts']['sort']);
+        $this->assertEquals('asc', $pagingParams['PaginatorPosts']['direction']);
     }
 
     /**
@@ -1223,7 +1262,7 @@ class PaginatorTest extends TestCase
                 'page' => 1,
                 'whitelist' => ['limit', 'sort', 'page', 'direction'],
                 'scope' => null,
-                'sort' => null,
+                'sort' => 'PaginatorPosts.id',
             ]);
         $this->Paginator->paginate($query, $params, $settings);
     }
@@ -1284,7 +1323,7 @@ class PaginatorTest extends TestCase
                 'page' => 1,
                 'whitelist' => ['limit', 'sort', 'page', 'direction'],
                 'scope' => null,
-                'sort' => null,
+                'sort' => 'PaginatorPosts.id',
             ]);
         $this->Paginator->paginate($query, $params, $settings);
     }

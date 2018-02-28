@@ -221,7 +221,10 @@ class Session
         if (!empty($config['handler']['engine'])) {
             $class = $config['handler']['engine'];
             unset($config['handler']['engine']);
-            session_set_save_handler($this->engine($class, $config['handler']), false);
+            $engine = $this->engine($class, $config['handler']);
+            if (!headers_sent()) {
+                session_set_save_handler($engine, false);
+            }
         }
 
         $this->_lifetime = ini_get('session.gc_maxlifetime');
