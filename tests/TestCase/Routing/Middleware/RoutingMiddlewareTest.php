@@ -18,6 +18,7 @@ use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Routing\Middleware\RoutingMiddleware;
 use Cake\Routing\RouteBuilder;
+use Cake\Routing\RouteCollection;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use TestApp\Application;
@@ -474,7 +475,7 @@ class RoutingMiddlewareTest extends TestCase
         $response = new Response();
         $next = function ($req, $res) {
             $routeCollection = Cache::read('routeCollection', '_cake_router_');
-            $this->assertInstanceOf('\Cake\Routing\RouteCollection', $routeCollection);
+            $this->assertInstanceOf(RouteCollection::class, $routeCollection);
 
             return $res;
         };
@@ -520,11 +521,12 @@ class RoutingMiddlewareTest extends TestCase
      * Test cache name is used
      *
      * @return void
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage The "notfound" cache configuration does not exist
      */
     public function testCacheConfigNotFound()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The "notfound" cache configuration does not exist');
+
         Configure::write('Router.cache', true);
         Configure::write('Router.cacheConfig', 'notfound');
         Cache::setConfig('_cake_router_', [
