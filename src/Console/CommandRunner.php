@@ -207,13 +207,14 @@ class CommandRunner implements EventDispatcherInterface
      * If the application does not support events and this method is used as
      * a setter, an exception will be raised.
      *
-     * @param \Cake\Event\EventManagerInterface $events The event manager to set.
-     * @return \Cake\Event\EventManagerInterface|$this
-     * @deprecated Will be removed in 4.0
+     * @param \Cake\Event\EventManager|null $events The event manager to set.
+     * @return \Cake\Event\EventManager|$this
+     * @deprecated 3.6.0 Will be removed in 4.0
      */
     public function eventManager(EventManager $events = null)
     {
-        if ($eventManager === null) {
+        deprecationWarning('eventManager() is deprecated. Use getEventManager()/setEventManager() instead.');
+        if ($events === null) {
             return $this->getEventManager();
         }
 
@@ -226,7 +227,7 @@ class CommandRunner implements EventDispatcherInterface
      * If the application does not support events and this method is used as
      * a setter, an exception will be raised.
      *
-     * @param \Cake\Event\EventManagerInterface $events The event manager to set.
+     * @param \Cake\Event\EventManager $events The event manager to set.
      * @return $this
      */
     public function setEventManager(EventManager $events)

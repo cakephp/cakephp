@@ -99,6 +99,21 @@ class CommandRunnerTest extends TestCase
     }
 
     /**
+     * test deprecated method defined in interface
+     *
+     * @return void
+     */
+    public function testEventManagerCompat()
+    {
+        $this->deprecated(function () {
+            $app = $this->createMock(ConsoleApplicationInterface::class);
+
+            $runner = new CommandRunner($app);
+            $this->assertSame(EventManager::instance(), $runner->eventManager());
+        });
+    }
+
+    /**
      * Test that the console hook not returning a command collection
      * raises an error.
      *
