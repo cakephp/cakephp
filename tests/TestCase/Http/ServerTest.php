@@ -14,12 +14,16 @@
  */
 namespace Cake\Test\TestCase;
 
+use Cake\Core\HttpApplicationInterface;
 use Cake\Event\Event;
 use Cake\Event\EventList;
 use Cake\Event\EventManager;
+use Cake\Http\BaseApplication;
 use Cake\Http\CallbackStream;
+use Cake\Http\MiddlewareQueue;
 use Cake\Http\Server;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 use TestApp\Http\BadResponseApplication;
@@ -109,6 +113,44 @@ class ServerTest extends TestCase
     }
 
     /**
+     * test run calling plugin hooks
+     *
+     * @return void
+     */
+    public function testRunCallingPluginHooks()
+    {
+        $response = new Response('php://memory', 200, ['X-testing' => 'source header']);
+        $request = ServerRequestFactory::fromGlobals();
+        $request = $request->withHeader('X-pass', 'request header');
+
+        $app = $this->getMockBuilder(MiddlewareApplication::class)
+            ->setMethods(['pluginBootstrap', 'pluginEvents', 'pluginMiddleware'])
+            ->setConstructorArgs([$this->config])
+            ->getMock();
+        $app->expects($this->at(0))
+            ->method('pluginBootstrap');
+        $app->expects($this->at(1))
+            ->method('pluginMiddleware')
+            ->with($this->isInstanceOf(MiddlewareQueue::class))
+            ->will($this->returnCallback(function ($middleware) {
+                return $middleware;
+            }));
+
+        $server = new Server($app);
+        $res = $server->run($request, $response);
+        $this->assertEquals(
+            'source header',
+            $res->getHeaderLine('X-testing'),
+            'Input response is carried through out middleware'
+        );
+        $this->assertEquals(
+            'request header',
+            $res->getHeaderLine('X-pass'),
+            'Request is used in middleware'
+        );
+    }
+
+    /**
      * test run building a request from globals.
      *
      * @return void
@@ -168,25 +210,6 @@ class ServerTest extends TestCase
         $app = new BadResponseApplication($this->config);
         $server = new Server($app);
         $server->run();
-    }
-
-    /**
-     * Test application events.
-     *
-     * @return void
-     */
-    public function testRunEvents()
-    {
-        $manager = new EventManager();
-        $manager->setEventList(new EventList());
-        $app = new EventApplication($this->config, $manager);
-
-        $server = new Server($app);
-        $res = $server->run();
-
-        $this->assertCount(1, $manager->listeners('My.event'));
-        $this->assertEventFired('Server.buildMiddleware', $manager);
-        $this->assertInstanceOf(ResponseInterface::class, $res);
     }
 
     /**
@@ -256,5 +279,64 @@ class ServerTest extends TestCase
         $this->assertTrue($this->called, 'Middleware added in the event was not triggered.');
         $this->assertInstanceOf('Closure', $this->middleware->get(3), '2nd last middleware is a closure');
         $this->assertSame($app, $this->middleware->get(4), 'Last middleware is an app instance');
+    }
+
+    /**
+     * test event manager proxies to the application.
+     *
+     * @return void
+     */
+    public function testEventManagerProxies()
+    {
+        $app = $this->getMockForAbstractClass(
+            BaseApplication::class,
+            [$this->config]
+        );
+
+        $server = new Server($app);
+        $this->assertSame($app->getEventManager(), $server->getEventManager());
+    }
+
+    /**
+     * test event manager cannot be set on applications without events.
+     *
+     * @return void
+     */
+    public function testGetEventManagerNonEventedApplication()
+    {
+        $app = $this->createMock(HttpApplicationInterface::class);
+
+        $server = new Server($app);
+        $this->assertSame(EventManager::instance(), $server->getEventManager());
+    }
+
+    /**
+     * test event manager cannot be set on applications without events.
+     *
+     * @return void
+     */
+    public function testSetEventManagerNonEventedApplication()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $app = $this->createMock(HttpApplicationInterface::class);
+
+        $events = new EventManager();
+        $server = new Server($app);
+        $server->setEventManager($events);
+    }
+
+    /**
+     * test deprecated method defined in interface
+     *
+     * @return void
+     */
+    public function testEventManagerCompat()
+    {
+        $this->deprecated(function () {
+            $app = $this->createMock(HttpApplicationInterface::class);
+
+            $server = new Server($app);
+            $this->assertSame(EventManager::instance(), $server->eventManager());
+        });
     }
 }

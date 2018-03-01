@@ -195,18 +195,6 @@ class PluginTest extends TestCase
     }
 
     /**
-     * Tests that loading a missing routes file throws a warning
-     *
-     * @return void
-     */
-    public function testLoadMultipleWithDefaultsMissingFile()
-    {
-        $this->expectException(\PHPUnit\Framework\Error\Warning::class);
-        Plugin::load(['TestPlugin', 'TestPluginTwo'], ['bootstrap' => true, 'routes' => true]);
-        Plugin::routes();
-    }
-
-    /**
      * Test ignoring missing bootstrap/routes file
      *
      * @return void

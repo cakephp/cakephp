@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\Routing\Middleware;
 
 use Cake\Routing\Middleware\RoutingMiddleware;
+use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use TestApp\Application;
@@ -161,6 +162,32 @@ class RoutingMiddlewareTest extends TestCase
             $this->assertEquals('/app/articles', Router::routes()[0]->template);
         };
         $app = new Application(CONFIG);
+        $middleware = new RoutingMiddleware($app);
+        $middleware($request, $response, $next);
+    }
+
+    /**
+     * Test that pluginRoutes hook is called
+     *
+     * @return void
+     */
+    public function testRoutesHookCallsPluginHook()
+    {
+        Router::reload();
+        $this->assertFalse(Router::$initialized, 'Router precondition failed');
+
+        $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/app/articles']);
+        $response = new Response();
+        $next = function ($req, $res) {
+            return $res;
+        };
+        $app = $this->getMockBuilder(Application::class)
+            ->setMethods(['pluginRoutes'])
+            ->setConstructorArgs([CONFIG])
+            ->getMock();
+        $app->expects($this->once())
+            ->method('pluginRoutes')
+            ->with($this->isInstanceOf(RouteBuilder::class));
         $middleware = new RoutingMiddleware($app);
         $middleware($request, $response, $next);
     }
