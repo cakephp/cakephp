@@ -898,6 +898,10 @@ class RequestHandlerComponentTest extends TestCase
         $this->request->env('HTTP_ACCEPT', '*/*;q=0.5');
         $this->assertEquals('html', $this->RequestHandler->prefers());
         $this->assertFalse($this->RequestHandler->prefers('rss'));
+
+        $this->Controller->request = $this->request->withEnv('HTTP_ACCEPT', null);
+        $this->RequestHandler->ext = 'json';
+        $this->assertFalse($this->RequestHandler->prefers('xml'));
     }
 
     /**
