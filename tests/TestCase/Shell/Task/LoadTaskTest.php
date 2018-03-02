@@ -37,15 +37,6 @@ class LoadTaskTest extends ConsoleIntegrationTestCase
     {
         parent::setUp();
 
-        $this->io = $this->getMockBuilder('Cake\Console\ConsoleIo')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->Task = $this->getMockBuilder('Cake\Shell\Task\LoadTask')
-            ->setMethods(['in', 'out', 'err', '_stop'])
-            ->setConstructorArgs([$this->io])
-            ->getMock();
-
         $this->app = APP . DS . 'Application.php';
         $this->bootstrap = ROOT . DS . 'config' . DS . 'bootstrap.php';
         $this->bootstrapCli = ROOT . DS . 'config' . DS . 'bootstrap_cli.php';
@@ -66,8 +57,6 @@ class LoadTaskTest extends ConsoleIntegrationTestCase
     public function tearDown()
     {
         parent::tearDown();
-        unset($this->shell);
-        Plugin::unload();
 
         $bootstrap = new File($this->bootstrap, false);
         $bootstrap->write($this->originalBootstrapContent);
@@ -171,5 +160,47 @@ class LoadTaskTest extends ConsoleIntegrationTestCase
 
         $contents = file_get_contents($this->bootstrap);
         $this->assertContains("Plugin::load('TestPlugin');", $contents);
+    }
+
+    /**
+     * Test loading the app
+     *
+     * @return void
+     */
+    public function testLoadApp()
+    {
+        $this->exec('plugin load TestPlugin');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
+
+        $contents = file_get_contents($this->app);
+        $this->assertContains("\$this->addPlugin('TestPlugin');", $contents);
+    }
+
+    /**
+     * Test loading the app
+     *
+     * @return void
+     */
+    public function testLoadAppBootstrap()
+    {
+        $this->exec('plugin load --bootstrap TestPlugin');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
+
+        $contents = file_get_contents($this->app);
+        $this->assertContains("\$this->addPlugin('TestPlugin', ['bootstrap' => true]);", $contents);
+    }
+
+    /**
+     * Test loading the app
+     *
+     * @return void
+     */
+    public function testLoadAppRoutes()
+    {
+        $this->exec('plugin load --routes TestPlugin');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
+
+        $contents = file_get_contents($this->app);
+        $this->assertContains("\$this->addPlugin('TestPlugin', ['routes' => true]);", $contents);
     }
 }
