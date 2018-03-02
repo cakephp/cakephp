@@ -890,6 +890,46 @@ class Query implements ExpressionInterface, IteratorAggregate
     }
 
     /**
+     * Adds an IN condition or set of conditions to be used in the WHERE clause for this
+     * query.
+     *
+     * This method does allow empty inputs in contrast to where().
+     * Be careful about using it without proper sanity checks.
+     *
+     * @param string $field Field
+     * @param array $values Array of values
+     * @return $this
+     */
+    public function whereIn($field, array $values)
+    {
+        if (!$values) {
+            return $this->where('1=0');
+        }
+
+        return $this->where([$field . ' IN' => $values]);
+    }
+
+    /**
+     * Adds a NOT IN condition or set of conditions to be used in the WHERE clause for this
+     * query.
+     *
+     * This method does allow empty inputs in contrast to where().
+     * Be careful about using it without proper sanity checks.
+     *
+     * @param string $field Field
+     * @param array $values Array of values
+     * @return $this
+     */
+    public function whereNotIn($field, array $values)
+    {
+        if (!$values) {
+            return $this->where('1=1');
+        }
+
+        return $this->where([$field . ' NOT IN' => $values]);
+    }
+
+    /**
      * Connects any previously defined set of conditions to the provided list
      * using the AND operator. This function accepts the conditions list in the same
      * format as the method `where` does, hence you can use arrays, expression objects
