@@ -5033,6 +5033,13 @@ class FormHelperTest extends TestCase
             ['multiple' => 'multiple', 'form' => 'my-form']
         );
         $this->assertHtml($expected, $result);
+
+        $result = $this->Form->select(
+            'Model.multi_field',
+            $options,
+            ['form' => 'my-form', 'multiple' => false]
+        );
+        $this->assertNotContains('multiple', $result);
     }
 
     /**
