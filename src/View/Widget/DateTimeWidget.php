@@ -164,6 +164,14 @@ class DateTimeWidget implements WidgetInterface
             $templateOptions[$select] = $this->{$method}($data[$select], $context);
             unset($data[$select]);
         }
+
+        if (!empty($selected['timezone'])) {
+            $data['timezone']['name'] = $data['name'] . '[timezone]';
+            $data['timezone']['val'] = $selected['timezone'];
+
+            $templateOptions['timezone'] = $this->_timezoneHidden($data['timezone'], $context);
+        }
+
         unset($data['name'], $data['empty'], $data['disabled'], $data['val']);
         $templateOptions['attrs'] = $this->_templates->formatAttributes($data);
 
@@ -541,23 +549,27 @@ class DateTimeWidget implements WidgetInterface
     }
 
     /**
-     * Generates a timezone select
+     * Generates a hidden input for timezone.
      *
-     * @param array $options The options to generate a timezone select.
+     * @param array $options The options to generate a hidden input for timezone.
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return string
      */
-    protected function _timezoneSelect($options, $context)
+    protected function _timezoneHidden($options, $context)
     {
         $options += [
             'name' => '',
             'val' => null,
-            'style' => ['display: none'],
-            'options' => [$options['val'] => $options['val']],
-            'templateVars' => [],
         ];
 
-        return $this->_select->render($options, $context);
+        return $this->_templates->format('input', [
+            'name' => $options['name'],
+            'type' => 'hidden',
+            'attrs' => $this->_templates->formatAttributes(
+                $options,
+                ['name', 'type']
+            ),
+        ]);
     }
 
     /**
@@ -654,6 +666,13 @@ class DateTimeWidget implements WidgetInterface
             }
 
             $fields[] = $data['name'] . '[' . $select . ']';
+        }
+
+        if (Configure::read('App.defaultOutputTimezone')
+            && $data[$select] !== false
+            && $data[$select] !== null
+        ) {
+            $fields[] = $data['name'] . '[timezone]';
         }
 
         return $fields;
