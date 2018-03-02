@@ -13,14 +13,15 @@
  */
 namespace Cake\Test\TestCase\Shell\Task;
 
+use Cake\Console\Shell;
 use Cake\Core\Plugin;
 use Cake\Filesystem\File;
-use Cake\TestSuite\TestCase;
+use Cake\TestSuite\ConsoleIntegrationTestCase;
 
 /**
  * LoadTaskTest class.
  */
-class LoadTaskTest extends TestCase
+class LoadTaskTest extends ConsoleIntegrationTestCase
 {
     /**
      * @var \Cake\Shell\Task\LoadTask|\PHPUnit_Framework_MockObject_MockObject
@@ -45,12 +46,16 @@ class LoadTaskTest extends TestCase
             ->setConstructorArgs([$this->io])
             ->getMock();
 
+        $this->app = APP . DS . 'Application.php';
         $this->bootstrap = ROOT . DS . 'config' . DS . 'bootstrap.php';
         $this->bootstrapCli = ROOT . DS . 'config' . DS . 'bootstrap_cli.php';
         copy($this->bootstrap, $this->bootstrapCli);
 
         $bootstrap = new File($this->bootstrap, false);
         $this->originalBootstrapContent = $bootstrap->read();
+
+        $app = new File($this->app, false);
+        $this->originalAppContent = $app->read();
     }
 
     /**
@@ -67,6 +72,9 @@ class LoadTaskTest extends TestCase
         $bootstrap = new File($this->bootstrap, false);
         $bootstrap->write($this->originalBootstrapContent);
         unlink($this->bootstrapCli);
+
+        $app = new File($this->app, false);
+        $app->write($this->originalAppContent);
     }
 
     /**
@@ -76,20 +84,14 @@ class LoadTaskTest extends TestCase
      */
     public function testLoad()
     {
-        $this->Task->params = [
-            'bootstrap' => false,
-            'routes' => false,
-            'autoload' => true,
-            'cli' => false
-        ];
+        $this->exec('plugin load --no_app --autoload TestPlugin');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
 
-        $action = $this->Task->main('TestPlugin');
-
-        $this->assertTrue($action);
-
-        $expected = "Plugin::load('TestPlugin', ['autoload' => true]);";
-        $bootstrap = new File($this->bootstrap, false);
-        $this->assertContains($expected, $bootstrap->read());
+        $contents = file_get_contents($this->bootstrap);
+        $this->assertContains(
+            "Plugin::load('TestPlugin', ['autoload' => true]);",
+            $contents
+        );
     }
 
     /**
@@ -99,20 +101,14 @@ class LoadTaskTest extends TestCase
      */
     public function testLoadWithBootstrap()
     {
-        $this->Task->params = [
-            'bootstrap' => true,
-            'routes' => false,
-            'autoload' => true,
-            'cli' => false
-        ];
+        $this->exec('plugin load --no_app --bootstrap --autoload TestPlugin');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
 
-        $action = $this->Task->main('TestPlugin');
-
-        $this->assertTrue($action);
-
-        $expected = "Plugin::load('TestPlugin', ['autoload' => true, 'bootstrap' => true]);";
-        $bootstrap = new File($this->bootstrap, false);
-        $this->assertContains($expected, $bootstrap->read());
+        $contents = file_get_contents($this->bootstrap);
+        $this->assertContains(
+            "Plugin::load('TestPlugin', ['autoload' => true, 'bootstrap' => true]);",
+            $contents
+        );
     }
 
     /**
@@ -122,20 +118,14 @@ class LoadTaskTest extends TestCase
      */
     public function testLoadBootstrapCli()
     {
-        $this->Task->params = [
-            'bootstrap' => false,
-            'routes' => false,
-            'autoload' => false,
-            'cli' => true
-        ];
+        $this->exec('plugin load --no_app --cli TestPlugin');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
 
-        $action = $this->Task->main('CliPlugin');
-
-        $this->assertTrue($action);
-
-        $expected = "Plugin::load('CliPlugin');";
-        $bootstrap = new File($this->bootstrapCli, false);
-        $this->assertContains($expected, $bootstrap->read());
+        $contents = file_get_contents($this->bootstrapCli);
+        $this->assertContains(
+            "Plugin::load('TestPlugin');",
+            $contents
+        );
     }
 
     /**
@@ -145,20 +135,14 @@ class LoadTaskTest extends TestCase
      */
     public function testLoadWithRoutes()
     {
-        $this->Task->params = [
-            'bootstrap' => false,
-            'routes' => true,
-            'autoload' => true,
-            'cli' => false
-        ];
+        $this->exec('plugin load --no_app --routes --autoload TestPlugin');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
 
-        $action = $this->Task->main('TestPlugin');
-
-        $this->assertTrue($action);
-
-        $expected = "Plugin::load('TestPlugin', ['autoload' => true, 'routes' => true]);";
-        $bootstrap = new File($this->bootstrap, false);
-        $this->assertContains($expected, $bootstrap->read());
+        $contents = file_get_contents($this->bootstrap);
+        $this->assertContains(
+            "Plugin::load('TestPlugin', ['autoload' => true, 'routes' => true]);",
+            $contents
+        );
     }
 
     /**
@@ -168,20 +152,11 @@ class LoadTaskTest extends TestCase
      */
     public function testLoadNoAutoload()
     {
-        $this->Task->params = [
-            'bootstrap' => false,
-            'routes' => true,
-            'autoload' => false,
-            'cli' => false
-        ];
+        $this->exec('plugin load --no_app --routes TestPlugin');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
 
-        $action = $this->Task->main('TestPlugin');
-
-        $this->assertTrue($action);
-
-        $expected = "Plugin::load('TestPlugin', ['routes' => true]);";
-        $bootstrap = new File($this->bootstrap, false);
-        $this->assertContains($expected, $bootstrap->read());
+        $contents = file_get_contents($this->bootstrap);
+        $this->assertContains("Plugin::load('TestPlugin', ['routes' => true]);", $contents);
     }
 
     /**
@@ -191,19 +166,10 @@ class LoadTaskTest extends TestCase
      */
     public function testLoadNothing()
     {
-        $this->Task->params = [
-            'bootstrap' => false,
-            'routes' => false,
-            'autoload' => false,
-            'cli' => false
-        ];
+        $this->exec('plugin load --no_app TestPlugin');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
 
-        $action = $this->Task->main('TestPlugin');
-
-        $this->assertTrue($action);
-
-        $expected = "Plugin::load('TestPlugin');";
-        $bootstrap = new File($this->bootstrap, false);
-        $this->assertContains($expected, $bootstrap->read());
+        $contents = file_get_contents($this->bootstrap);
+        $this->assertContains("Plugin::load('TestPlugin');", $contents);
     }
 }
