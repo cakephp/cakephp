@@ -1231,7 +1231,7 @@ class Validation
         if (isset($options['width'])) {
             $validWidth = self::comparison($width, $options['width'][0], $options['width'][1]);
         }
-        if (isset($validHeight) && isset($validWidth)) {
+        if (isset($validHeight, $validWidth)) {
             return ($validHeight && $validWidth);
         }
         if (isset($validHeight)) {

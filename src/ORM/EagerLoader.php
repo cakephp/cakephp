@@ -398,7 +398,7 @@ class EagerLoader
 
             $pointer += [$table => []];
 
-            if (isset($options['queryBuilder']) && isset($pointer[$table]['queryBuilder'])) {
+            if (isset($options['queryBuilder'], $pointer[$table]['queryBuilder'])) {
                 $first = $pointer[$table]['queryBuilder'];
                 $second = $options['queryBuilder'];
                 $options['queryBuilder'] = function ($query) use ($first, $second) {
