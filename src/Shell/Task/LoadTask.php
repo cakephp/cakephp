@@ -56,7 +56,9 @@ class LoadTask extends Shell
 
         $app = APP . 'Application.php';
         if (file_exists($app) && !$this->param('no_app')) {
-            return $this->modifyApplication($app, $plugin, $options);
+            $this->modifyApplication($app, $plugin, $options);
+
+            return true;
         }
 
         return $this->_modifyBootstrap($plugin, $options);
