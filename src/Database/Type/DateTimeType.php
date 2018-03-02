@@ -18,6 +18,7 @@ use Cake\Database\Driver;
 use Cake\Database\Type;
 use Cake\Database\TypeInterface;
 use DateTimeInterface;
+use DateTimeZone;
 use Exception;
 use PDO;
 use RuntimeException;
@@ -91,6 +92,13 @@ class DateTimeType extends Type implements TypeInterface
     protected $_className;
 
     /**
+     * Timezone string.
+     *
+     * @var string|null
+     */
+    protected $dbTimezone;
+
+    /**
      * {@inheritDoc}
      */
     public function __construct($name = null)
@@ -119,7 +127,29 @@ class DateTimeType extends Type implements TypeInterface
 
         $format = (array)$this->_format;
 
+        if ($this->dbTimezone !== null
+            && $this->dbTimezone !== $value->getTimezone()->getName()) {
+            $value->setTimezone(new DateTimeZone($this->dbTimezone));
+        }
+
         return $value->format(array_shift($format));
+    }
+
+    /**
+     * Set database timezone.
+     *
+     * Specified timezone will be set for DateTime objects before generating
+     * datetime string for saving to database. If `null` no timezone conversion
+     * will be done.
+     *
+     * @param string|null $timezone Database timezone.
+     * @return $this
+     */
+    public function setTimezone($timezone)
+    {
+        $this->dbTimezone = $timezone;
+
+        return $this;
     }
 
     /**

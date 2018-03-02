@@ -124,6 +124,11 @@ class DateTimeTypeTest extends TestCase
         $result = $this->type->toDatabase($date, $this->driver);
         $this->assertEquals('2013-08-12 15:16:17', $result);
 
+        $this->type->setTimezone('Asia/Kolkata'); // UTC+5:30
+        $result = $this->type->toDatabase($date, $this->driver);
+        $this->assertEquals('2013-08-12 20:46:17', $result);
+        $this->type->setTimezone(null);
+
         $date = 1401906995;
         $result = $this->type->toDatabase($date, $this->driver);
         $this->assertEquals('2014-06-04 18:36:35', $result);
