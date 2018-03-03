@@ -893,16 +893,18 @@ class Query implements ExpressionInterface, IteratorAggregate
      * Adds an IN condition or set of conditions to be used in the WHERE clause for this
      * query.
      *
-     * This method does allow empty inputs in contrast to where().
+     * This method does allow empty inputs in contrast to where() if you set
+     * $allowEmpty to true.
      * Be careful about using it without proper sanity checks.
      *
      * @param string $field Field
      * @param array $values Array of values
+     * @param bool $allowEmpty Allow empty array
      * @return $this
      */
-    public function whereIn($field, array $values)
+    public function whereIn($field, array $values, $allowEmpty = false)
     {
-        if (!$values) {
+        if ($allowEmpty && !$values) {
             return $this->where('1=0');
         }
 
@@ -913,16 +915,18 @@ class Query implements ExpressionInterface, IteratorAggregate
      * Adds a NOT IN condition or set of conditions to be used in the WHERE clause for this
      * query.
      *
-     * This method does allow empty inputs in contrast to where().
+     * This method does allow empty inputs in contrast to where() if you set
+     * $allowEmpty to true.
      * Be careful about using it without proper sanity checks.
      *
      * @param string $field Field
      * @param array $values Array of values
+     * @param bool $allowEmpty Allow empty array
      * @return $this
      */
-    public function whereNotIn($field, array $values)
+    public function whereNotIn($field, array $values, $allowEmpty = false)
     {
-        if (!$values) {
+        if ($allowEmpty && !$values) {
             return $this->where('1=1');
         }
 

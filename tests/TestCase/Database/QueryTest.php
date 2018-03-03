@@ -1749,7 +1749,7 @@ class QueryTest extends TestCase
         $query = new Query($this->connection);
         $query->select(['id'])
             ->from('articles')
-            ->whereIn('id', [])
+            ->whereIn('id', [], true)
             ->execute();
         $sql = $query->sql();
 
@@ -1799,7 +1799,7 @@ class QueryTest extends TestCase
         $query = new Query($this->connection);
         $query->select(['id'])
             ->from('articles')
-            ->whereNotIn('id', [])
+            ->whereNotIn('id', [], true)
             ->execute();
         $sql = $query->sql();
 
