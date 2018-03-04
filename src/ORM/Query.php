@@ -17,6 +17,7 @@ namespace Cake\ORM;
 use ArrayObject;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query as DatabaseQuery;
+use Cake\Database\Schema\TableSchema;
 use Cake\Database\TypedResultInterface;
 use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
@@ -192,6 +193,30 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         }
 
         return parent::select($fields, $overwrite);
+    }
+
+    /**
+     * Select all the columns associated to $table except the $excludedFields.
+     * Excluded fields should not be aliased names.
+     *
+     *
+     * @param Table|Association $table The table to use to get an array of columns
+     * @param array $excludedFields The un-aliased column names you do not want selected from $table
+     * @param bool $overwrite Whether to reset/remove previous selected fields
+     * @return Query
+     */
+    public function selectAllExcept($table, array $excludedFields, $overwrite = false)
+    {
+        if ($table instanceof Association) {
+            $table = $table->getTarget();
+        }
+        $aliasedFields = [];
+        if ($table instanceof Table) {
+            $fields = array_diff($table->getSchema()->columns(), $excludedFields);
+            $aliasedFields = $this->aliasFields($fields);
+        }
+
+        return $this->select($aliasedFields, $overwrite);
     }
 
     /**

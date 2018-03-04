@@ -3569,4 +3569,90 @@ class QueryTest extends TestCase
 
         $this->assertEquals(1, $query->__debugInfo()['decorators'], 'Only one typecaster should exist');
     }
+
+    /**
+     * Test to see that the excluded fields are not in the select clause
+     *
+     * @return void
+     */
+    public function testSelectAllExcept()
+    {
+        $table = $this->getTableLocator()->get('Articles');
+        $result = $table
+            ->find()
+            ->selectAllExcept($table, ['body']);
+        $selectedFields = $result->clause('select');
+        $expected = [
+            'Articles__id' => 'Articles.id',
+            'Articles__author_id' => 'Articles.author_id',
+            'Articles__title' => 'Articles.title',
+            'Articles__published' => 'Articles.published'
+        ];
+        $this->assertEquals($expected, $selectedFields);
+    }
+
+    /**
+     * Test that the excluded fields are not included
+     * in the final query result.
+     *
+     * @return void
+     */
+    public function testSelectAllExceptWithContains()
+    {
+        $table = $this->getTableLocator()->get('Articles');
+        $this->getTableLocator()->get('Articles');
+        $table->hasMany('Comments');
+        $table->belongsTo('Authors');
+
+        $result = $table
+            ->find()
+            ->contain(['Comments' => function ($query) use ($table) {
+                return $query->selectAllExcept($table->Comments, ['published']);
+            }])
+            ->selectAllExcept($table, ['body'])
+            ->first();
+        $this->assertNull($result->comments[0]->published);
+        $this->assertNull($result->body);
+        $this->assertNotEmpty($result->id);
+        $this->assertNotEmpty($result->comments[0]->id);
+    }
+
+    /**
+     * Test what happens if you call selectAllExcept() more
+     * than once.
+     *
+     * @return void
+     */
+    public function testSelectAllExceptWithMulitpleCalls()
+    {
+        $table = $this->getTableLocator()->get('Articles');
+        $this->getTableLocator()->get('Articles');
+
+        $result = $table
+            ->find()
+            ->selectAllExcept($table, ['body'])
+            ->selectAllExcept($table, ['published']);
+        $selectedFields = $result->clause('select');
+        $expected = [
+            'Articles__id' => 'Articles.id',
+            'Articles__author_id' => 'Articles.author_id',
+            'Articles__title' => 'Articles.title',
+            'Articles__published' => 'Articles.published',
+            'Articles__body' => 'Articles.body'
+        ];
+        $this->assertEquals($expected, $selectedFields);
+
+        $result = $table
+            ->find()
+            ->selectAllExcept($table, ['body'])
+            ->selectAllExcept($table, ['published', 'body']);
+        $selectedFields = $result->clause('select');
+        $expected = [
+            'Articles__id' => 'Articles.id',
+            'Articles__author_id' => 'Articles.author_id',
+            'Articles__title' => 'Articles.title',
+            'Articles__published' => 'Articles.published'
+        ];
+        $this->assertEquals($expected, $selectedFields);
+    }
 }
