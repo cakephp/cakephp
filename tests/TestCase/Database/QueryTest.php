@@ -4528,8 +4528,8 @@ class QueryTest extends TestCase
         // Get results a second time.
         $result = $query->execute()->fetchAll('assoc');
 
-        // Had the type casting being rememberd from the first time,
-        // The valuewould be a truncated float (1.0)
+        // Had the type casting being remembered from the first time,
+        // The value would be a truncated float (1.0)
         $this->assertEquals([['a' => 1.5]], $result);
     }
 
