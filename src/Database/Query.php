@@ -2094,7 +2094,6 @@ class Query implements ExpressionInterface, IteratorAggregate
         $driver = $this->getConnection()->getDriver();
 
         if ($this->typeCastEnabled && $typeMap->toArray()) {
-            $driver = $this->_connection->getDriver();
             $statement = new CallbackStatement($statement, $driver, new FieldTypeConverter($typeMap, $driver));
         }
 
