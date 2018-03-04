@@ -173,7 +173,10 @@ class Plugin
             );
         }
 
-        if ($config['bootstrap'] === true) {
+        // Defer the bootstrap process if an Application class exists.
+        // Immediate plugin bootstrapping is deprecated and will be removed in 4.x
+        $appClass = Configure::read('App.namespace') . '\\' . 'Application';
+        if ($config['bootstrap'] === true && !class_exists($appClass)) {
             static::bootstrap($plugin);
         }
     }

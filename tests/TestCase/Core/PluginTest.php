@@ -111,6 +111,7 @@ class PluginTest extends TestCase
     /**
      * Tests loading a plugin and its bootstrap file
      *
+     * @deprecated Immediate plugin bootstrap should be removed in 4.x
      * @return void
      */
     public function testLoadSingleWithBootstrap()
@@ -122,6 +123,20 @@ class PluginTest extends TestCase
         Plugin::load('Company/TestPluginThree', ['bootstrap' => true]);
         $this->assertTrue(Plugin::loaded('Company/TestPluginThree'));
         $this->assertEquals('loaded plugin three bootstrap', Configure::read('PluginTest.test_plugin_three.bootstrap'));
+    }
+
+    /**
+     * Tests loading a plugin defers bootstrap when an application exists
+     *
+     * @return void
+     */
+    public function testLoadSingleDeferBootstrap()
+    {
+        static::setAppNamespace('TestApp');
+
+        Plugin::load('TestPlugin', ['bootstrap' => true]);
+        $this->assertTrue(Plugin::loaded('TestPlugin'));
+        $this->assertNull(Configure::read('PluginTest.test_plugin.bootstrap'), 'Normally this value would be loaded');
     }
 
     /**

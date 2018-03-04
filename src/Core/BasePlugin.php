@@ -34,13 +34,6 @@ class BasePlugin implements PluginInterface
     protected $bootstrapEnabled = true;
 
     /**
-     * Are events enabled.
-     *
-     * @var bool
-     */
-    protected $eventsEnabled = true;
-
-    /**
      * Load routes or not
      *
      * @var bool
