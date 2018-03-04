@@ -1007,16 +1007,29 @@ class CollectionTest extends TestCase
     }
 
     /**
-     * Tests that issuing a count will throw an exception
+     * Tests that Count returns the number of elements
      *
+     * @dataProvider simpleProvider
      * @return void
      */
-    public function testCollectionCount()
+    public function testCollectionCount($list)
     {
-        $this->expectException(\LogicException::class);
-        $data = [1, 2, 3, 4];
-        $collection = new Collection($data);
-        $collection->count();
+        $list = (new Collection($list))->buffered();
+        $collection = new Collection($list);
+        $this->assertEquals(8, $collection->append($list)->count());
+    }
+
+    /**
+     * Tests that countKeys returns the number of unique keys
+     *
+     * @dataProvider simpleProvider
+     * @return void
+     */
+    public function testCollectionCountKeys($list)
+    {
+        $list = (new Collection($list))->buffered();
+        $collection = new Collection($list);
+        $this->assertEquals(4, $collection->append($list)->countKeys());
     }
 
     /**

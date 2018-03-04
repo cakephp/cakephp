@@ -812,6 +812,32 @@ trait CollectionTrait
     }
 
     /**
+     * {@inheritDoc}
+     *
+     * @return int
+     */
+    public function count()
+    {
+        $traversable = $this->optimizeUnwrap();
+
+        if (is_array($traversable)) {
+            return count($traversable);
+        }
+
+        return iterator_count($traversable);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return int
+     */
+    public function countKeys()
+    {
+        return count($this->toArray());
+    }
+
+    /**
      * Unwraps this iterator and returns the simplest
      * traversable that can be used for getting the data out
      *
