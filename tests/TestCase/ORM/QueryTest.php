@@ -3569,4 +3569,28 @@ class QueryTest extends TestCase
 
         $this->assertEquals(1, $query->__debugInfo()['decorators'], 'Only one typecaster should exist');
     }
+
+    /**
+     * Tests that selectAllExcept() selects all columns, except
+     * the one that are passed.
+     *
+     * @return void
+     */
+    public function testSelectAllExcept()
+    {
+        $table = TableRegistry::get('articles');
+        $result = $table
+            ->find()
+            ->selectAllExcept(['body']);
+
+        $selectedFields = $result->clause('select');
+        $expected = [
+            'articles__id' => 'articles.id',
+            'articles__author_id' => 'articles.author_id',
+            'articles__title' => 'articles.title',
+            'articles__published' =>'articles.published'
+        ];
+
+        $this->assertEquals($expected, $selectedFields);
+    }
 }

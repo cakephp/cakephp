@@ -1315,4 +1315,22 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
 
         return $result;
     }
+
+    /**
+     * Selects all fields in the schema with the exception of the fields you pass
+     * in the $excludedFields parameter.
+     *
+     * @param array $excludedFields fields you don't want to select
+     * @param bool $overwrite whether to reset fields with passed list or not
+     * @return $this
+     */
+    public function selectAllExcept(array $excludedFields = [], $overwrite = false)
+    {
+        $allFields = $this->repository()->getSchema()->columns();
+        $aliased = $this->aliasFields($allFields, $this->repository()->alias());
+        $aliasedExcluded = $this->aliasFields($excludedFields, $this->repository()->alias());
+
+        $fields = array_diff($aliased, $aliasedExcluded);
+        return $this->select($fields, $overwrite);
+    }
 }
