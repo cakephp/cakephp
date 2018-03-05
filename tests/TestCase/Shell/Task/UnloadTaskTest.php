@@ -31,7 +31,17 @@ class UnloadTaskTest extends ConsoleIntegrationTestCase
     /**
      * @var string
      */
+    protected $app;
+
+    /**
+     * @var string
+     */
     protected $originalBootstrapContent;
+
+    /**
+     * @var string
+     */
+    protected $originalAppContent;
 
     /**
      * setUp method
@@ -42,9 +52,10 @@ class UnloadTaskTest extends ConsoleIntegrationTestCase
     {
         parent::setUp();
         $this->bootstrap = ROOT . DS . 'config' . DS . 'bootstrap.php';
+        $this->app = APP . DS . 'Application.php';
 
-        $bootstrap = new File($this->bootstrap, false);
-        $this->originalBootstrapContent = $bootstrap->read();
+        $this->originalBootstrapContent = file_get_contents($this->bootstrap);
+        $this->originalAppContent = file_get_contents($this->app);
     }
 
     /**
@@ -59,6 +70,7 @@ class UnloadTaskTest extends ConsoleIntegrationTestCase
         Plugin::unload();
 
         file_put_contents($this->bootstrap, $this->originalBootstrapContent);
+        file_put_contents($this->app, $this->originalAppContent);
     }
 
     /**
@@ -75,7 +87,7 @@ class UnloadTaskTest extends ConsoleIntegrationTestCase
         $expected = "Plugin::load('TestPlugin', ['autoload' => true, 'bootstrap' => false, 'routes' => false]);";
         $this->assertContains($expected, $contents);
 
-        $this->exec('plugin unload TestPlugin');
+        $this->exec('plugin unload --no_app TestPlugin');
 
         $this->assertExitCode(Shell::CODE_SUCCESS);
         $contents = file_get_contents($this->bootstrap);
@@ -157,11 +169,31 @@ class UnloadTaskTest extends ConsoleIntegrationTestCase
         $bootstrap = new File($this->bootstrap, false);
         $bootstrap->append($content);
 
-        $this->exec('plugin unload TestPlugin');
+        $this->exec('plugin unload --no_app TestPlugin');
         $this->assertExitCode(Shell::CODE_SUCCESS);
 
         $result = $bootstrap->read();
         $this->assertNotRegexp("/Plugin\:\:load\([\'\"]TestPlugin'[\'\"][^\)]*\)\;/mi", $result);
+    }
+
+    /**
+     * This method will tests multiple notations of plugin loading in the application class
+     *
+     * @dataProvider variantProvider
+     * @return void
+     */
+    public function testRegularExpressionsApplication($content)
+    {
+        $content = str_replace('Plugin::load', "        \$this->addPlugin", $content);
+        $this->addPluginToApp($content);
+
+        $this->exec('plugin unload TestPlugin');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
+
+        $result = file_get_contents($this->app);
+
+        $this->assertNotContains("addPlugin('TestPlugin'", $result);
+        $this->assertNotRegexp("/this\-\>addPlugin\([\'\"]TestPlugin'[\'\"][^\)]*\)\;/mi", $result);
     }
 
     /**
@@ -176,5 +208,20 @@ class UnloadTaskTest extends ConsoleIntegrationTestCase
     {
         $bootstrap = new File($this->bootstrap, false);
         $bootstrap->append("\n\nPlugin::load('$name', ['autoload' => true, 'bootstrap' => false, 'routes' => false]);\n");
+    }
+
+    /**
+     * _addPluginToApp
+     *
+     * Quick method to add a plugin to the bootstrap file.
+     * This is useful for the tests
+     *
+     * @param string $insert The addPlugin line to add.
+     */
+    protected function addPluginToApp($insert)
+    {
+        $contents = file_get_contents($this->app);
+        $contents = preg_replace('/(function bootstrap\(\)(?:\s+)\{)/m', '$1' . $insert, $contents);
+        file_put_contents($this->app, $contents);
     }
 }

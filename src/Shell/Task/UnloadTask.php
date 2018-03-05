@@ -52,7 +52,40 @@ class UnloadTask extends Shell
             return false;
         }
 
+        $app = APP . 'Application.php';
+        if (file_exists($app) && !$this->param('no_app')) {
+            $this->modifyApplication($app, $plugin);
+
+            return true;
+        }
+
         return (bool)$this->_modifyBootstrap($plugin);
+    }
+
+    /**
+     * Update the applications bootstrap.php file.
+     *
+     * @param string $app Path to the application to update.
+     * @param string $plugin Name of plugin.
+     * @return bool If modify passed.
+     */
+    protected function modifyApplication($app, $plugin)
+    {
+        $finder = "@\\\$this\-\>addPlugin\(\s*'$plugin'(.|.\n|)+\);+@";
+
+        $content = file_get_contents($app);
+        $newContent = preg_replace($finder, '', $content);
+
+        if ($newContent === $content) {
+            return false;
+        }
+
+        file_put_contents($app, $newContent);
+
+        $this->out('');
+        $this->out(sprintf('%s modified', $app));
+
+        return true;
     }
 
     /**
@@ -97,6 +130,11 @@ class UnloadTask extends Shell
 
         $parser->addOption('cli', [
                 'help' => 'Use the bootstrap_cli file.',
+                'boolean' => true,
+                'default' => false,
+            ])
+            ->addOption('no_app', [
+                'help' => 'Do not update the Application if it exist. Forces config/bootstrap.php to be updated.',
                 'boolean' => true,
                 'default' => false,
             ])
