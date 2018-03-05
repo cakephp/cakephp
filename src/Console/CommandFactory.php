@@ -26,15 +26,10 @@ class CommandFactory implements CommandFactoryInterface
     /**
      * {@inheritDoc}
      */
-    public function create($className, ConsoleIo $io)
+    public function create($className)
     {
-        if (is_subclass_of($className, Shell::class)) {
-            return new $className($io);
-        }
-
-        // Command class
         $command = new $className();
-        if (!$command instanceof Command) {
+        if (!($command instanceof Command) && !($command instanceof Shell)) {
             $valid = implode('` or `', [Shell::class, Command::class]);
             $message = sprintf('Class `%s` must be an instance of `%s`.', $className, $valid);
             throw new InvalidArgumentException($message);

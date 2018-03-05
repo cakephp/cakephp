@@ -285,6 +285,11 @@ class CommandRunner implements EventDispatcherInterface
      */
     protected function createShell($className, ConsoleIo $io)
     {
-        return $this->factory->create($className, $io);
+        $shell = $this->factory->create($className);
+        if ($shell instanceof Shell) {
+            $shell->setIo($io);
+        }
+
+        return $shell;
     }
 }

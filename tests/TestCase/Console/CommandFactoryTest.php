@@ -25,7 +25,7 @@ class CommandFactoryTest extends TestCase
     {
         $factory = new CommandFactory();
 
-        $command = $factory->create(DemoCommand::class, new ConsoleIo());
+        $command = $factory->create(DemoCommand::class);
         $this->assertInstanceOf(DemoCommand::class, $command);
     }
 
@@ -33,11 +33,8 @@ class CommandFactoryTest extends TestCase
     {
         $factory = new CommandFactory();
 
-        $io = new ConsoleIo();
-        $shell = $factory->create(SampleShell::class, $io);
-
+        $shell = $factory->create(SampleShell::class);
         $this->assertInstanceOf(SampleShell::class, $shell);
-        $this->assertSame($io, $shell->getIo());
     }
 
     public function testInvalid()
@@ -47,6 +44,6 @@ class CommandFactoryTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Class `Cake\Test\TestCase\Console\CommandFactoryTest` must be an instance of `Cake\Console\Shell` or `Cake\Console\Command`.');
 
-        $factory->create(static::class, new ConsoleIo());
+        $factory->create(static::class);
     }
 }

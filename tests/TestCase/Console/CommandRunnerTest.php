@@ -332,7 +332,7 @@ class CommandRunnerTest extends TestCase
         $factory = $this->createMock(CommandFactoryInterface::class);
         $factory->expects($this->once())
             ->method('create')
-            ->with(DemoCommand::class, $io)
+            ->with(DemoCommand::class)
             ->willReturn(new DemoCommand());
 
         $app = $this->makeAppWithCommands(['ex' => DemoCommand::class]);
