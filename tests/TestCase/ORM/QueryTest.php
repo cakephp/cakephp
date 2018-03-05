@@ -3700,5 +3700,4 @@ class QueryTest extends TestCase
             $this->assertTrue(true);
         }
     }
-
 }
