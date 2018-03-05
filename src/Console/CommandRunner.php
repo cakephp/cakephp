@@ -52,6 +52,13 @@ class CommandRunner implements EventDispatcherInterface
     protected $app;
 
     /**
+     * The application console commands are being run for.
+     *
+     * @var \Cake\Console\CommandFactoryInterface
+     */
+    protected $factory;
+
+    /**
      * The root command name. Defaults to `cake`.
      *
      * @var string
@@ -70,11 +77,13 @@ class CommandRunner implements EventDispatcherInterface
      *
      * @param \Cake\Core\ConsoleApplicationInterface $app The application to run CLI commands for.
      * @param string $root The root command name to be removed from argv.
+     * @param \Cake\Console\CommandFactoryInterface|null $factory Command factory instance.
      */
-    public function __construct(ConsoleApplicationInterface $app, $root = 'cake')
+    public function __construct(ConsoleApplicationInterface $app, $root = 'cake', CommandFactoryInterface $factory = null)
     {
         $this->app = $app;
         $this->root = $root;
+        $this->factory = $factory ?: new CommandFactory();
         $this->aliases = [
             '--version' => 'version',
             '--help' => 'help',
@@ -325,11 +334,11 @@ class CommandRunner implements EventDispatcherInterface
      */
     protected function createShell($className, ConsoleIo $io)
     {
-        if (is_subclass_of($className, Shell::class)) {
-            return new $className($io);
+        $shell = $this->factory->create($className);
+        if ($shell instanceof Shell) {
+            $shell->setIo($io);
         }
 
-        // Command class
-        return new $className();
+        return $shell;
     }
 }
