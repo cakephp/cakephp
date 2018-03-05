@@ -14,6 +14,7 @@
  */
 namespace Cake\Routing\Middleware;
 
+use Cake\Core\PluginApplicationInterface;
 use Cake\Http\BaseApplication;
 use Cake\Http\MiddlewareQueue;
 use Cake\Http\Runner;
@@ -56,9 +57,13 @@ class RoutingMiddleware
      */
     protected function loadRoutes()
     {
-        if ($this->app) {
-            $builder = Router::createRouteBuilder('/');
-            $this->app->routes($builder);
+        if (!$this->app) {
+            return;
+        }
+        $builder = Router::createRouteBuilder('/');
+        $this->app->routes($builder);
+        if ($this->app instanceof PluginApplicationInterface) {
+            $this->app->pluginRoutes($builder);
         }
     }
 

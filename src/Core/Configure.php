@@ -189,6 +189,28 @@ class Configure
     }
 
     /**
+     * Used to consume information stored in Configure. It's not
+     * possible to store `null` values in Configure.
+     *
+     * Acts as a wrapper around Configure::consume() and Configure::check().
+     * The configure key/value pair consumed via this method is expected to exist.
+     * In case it does not an exception will be thrown.
+     *
+     * @param string $var Variable to consume. Use '.' to access array elements.
+     * @return mixed Value stored in configure.
+     * @throws \RuntimeException if the requested configuration is not set.
+     * @since 3.6.0
+     */
+    public static function consumeOrFail($var)
+    {
+        if (static::check($var) === false) {
+            throw new RuntimeException(sprintf('Expected configuration key "%s" not found.', $var));
+        }
+
+        return static::consume($var);
+    }
+
+    /**
      * Used to read and delete a variable from Configure.
      *
      * This is primarily used during bootstrapping to move configuration data

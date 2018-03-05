@@ -17,6 +17,7 @@ namespace Cake\Database\Type;
 use Cake\Database\Driver;
 use Cake\Database\Type;
 use Cake\Database\TypeInterface;
+use Cake\Database\Type\BatchCastingInterface;
 use InvalidArgumentException;
 use PDO;
 
@@ -25,7 +26,7 @@ use PDO;
  *
  * Use to convert bool data between PHP and the database types.
  */
-class BoolType extends Type implements TypeInterface
+class BoolType extends Type implements TypeInterface, BatchCastingInterface
 {
     /**
      * Identifier name for this type.
@@ -67,7 +68,10 @@ class BoolType extends Type implements TypeInterface
             return (bool)$value;
         }
 
-        throw new InvalidArgumentException('Cannot convert value to bool');
+        throw new InvalidArgumentException(sprintf(
+            'Cannot convert value of type `%s` to bool',
+            getTypeName($value)
+        ));
     }
 
     /**
@@ -79,14 +83,49 @@ class BoolType extends Type implements TypeInterface
      */
     public function toPHP($value, Driver $driver)
     {
-        if ($value === null) {
-            return null;
+        if ($value === null || $value === true || $value === false) {
+            return $value;
         }
-        if (is_string($value) && !is_numeric($value)) {
+
+        if (!is_numeric($value)) {
             return strtolower($value) === 'true';
         }
 
         return !empty($value);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return array
+     */
+    public function manyToPHP(array $values, array $fields, Driver $driver)
+    {
+        foreach ($fields as $field) {
+            if (!isset($values[$field]) || $values[$field] === true || $values[$field] === false) {
+                continue;
+            }
+
+            if ($values[$field] === '1') {
+                $values[$field] = true;
+                continue;
+            }
+
+            if ($values[$field] === '0') {
+                $values[$field] = false;
+                continue;
+            }
+
+            $value = $values[$field];
+            if (!is_numeric($value)) {
+                $values[$field] = strtolower($value) === 'true';
+                continue;
+            }
+
+            $values[$field] = !empty($value);
+        }
+
+        return $values;
     }
 
     /**

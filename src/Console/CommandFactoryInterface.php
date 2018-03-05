@@ -8,19 +8,20 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         3.6.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Event;
+namespace Cake\Console;
 
-interface EventApplicationInterface
+/**
+ * An interface for abstracting creation of command and shell instances.
+ */
+interface CommandFactoryInterface
 {
-
     /**
-     * Application hook for attaching events to the Application event manager instance.
+     * The factory method for creating Command and Shell instances.
      *
-     * @param \Cake\Event\EventManagerInterface $eventManager Event manager instance.
-     * @return \Cake\Event\EventManagerInterface
+     * @param string $className Command/Shell class name.
+     * @return \Cake\Console\Shell|\Cake\Console\Command
      */
-    public function events(EventManagerInterface $eventManager);
+    public function create($className);
 }

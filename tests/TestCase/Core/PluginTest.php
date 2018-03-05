@@ -111,6 +111,7 @@ class PluginTest extends TestCase
     /**
      * Tests loading a plugin and its bootstrap file
      *
+     * @deprecated Immediate plugin bootstrap should be removed in 4.x
      * @return void
      */
     public function testLoadSingleWithBootstrap()
@@ -122,6 +123,20 @@ class PluginTest extends TestCase
         Plugin::load('Company/TestPluginThree', ['bootstrap' => true]);
         $this->assertTrue(Plugin::loaded('Company/TestPluginThree'));
         $this->assertEquals('loaded plugin three bootstrap', Configure::read('PluginTest.test_plugin_three.bootstrap'));
+    }
+
+    /**
+     * Tests loading a plugin defers bootstrap when an application exists
+     *
+     * @return void
+     */
+    public function testLoadSingleDeferBootstrap()
+    {
+        static::setAppNamespace('TestApp');
+
+        Plugin::load('TestPlugin', ['bootstrap' => true]);
+        $this->assertTrue(Plugin::loaded('TestPlugin'));
+        $this->assertNull(Configure::read('PluginTest.test_plugin.bootstrap'), 'Normally this value would be loaded');
     }
 
     /**
@@ -192,18 +207,6 @@ class PluginTest extends TestCase
         $this->assertEquals($expected, Plugin::loaded());
         $this->assertEquals('loaded plugin bootstrap', Configure::read('PluginTest.test_plugin.bootstrap'));
         $this->assertNull(Configure::read('PluginTest.test_plugin_two.bootstrap'));
-    }
-
-    /**
-     * Tests that loading a missing routes file throws a warning
-     *
-     * @return void
-     */
-    public function testLoadMultipleWithDefaultsMissingFile()
-    {
-        $this->expectException(\PHPUnit\Framework\Error\Warning::class);
-        Plugin::load(['TestPlugin', 'TestPluginTwo'], ['bootstrap' => true, 'routes' => true]);
-        Plugin::routes();
     }
 
     /**
