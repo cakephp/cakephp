@@ -39,6 +39,14 @@ class DateType extends DateTimeType
     protected $_format = 'Y-m-d';
 
     /**
+     * In this class we want Date objects to  have their time
+     * set to the beginning of the day.
+     *
+     * @var bool
+     */
+    protected $setToDateStart = true;
+
+    /**
      * Change the preferred class name to the FrozenDate implementation.
      *
      * @return $this
@@ -71,23 +79,6 @@ class DateType extends DateTimeType
     public function marshal($value)
     {
         $date = parent::marshal($value);
-        if ($date instanceof DateTime) {
-            $date->setTime(0, 0, 0);
-        }
-
-        return $date;
-    }
-
-    /**
-     * Convert strings into Date instances.
-     *
-     * @param string $value The value to convert.
-     * @param \Cake\Database\Driver $driver The driver instance to convert with.
-     * @return \Cake\I18n\Date|\DateTime
-     */
-    public function toPHP($value, Driver $driver)
-    {
-        $date = parent::toPHP($value, $driver);
         if ($date instanceof DateTime) {
             $date->setTime(0, 0, 0);
         }

@@ -28,7 +28,7 @@ use Cake\TestSuite\TestCase;
 class QueryTest extends TestCase
 {
 
-    public $fixtures = ['core.articles', 'core.authors', 'core.comments'];
+    public $fixtures = ['core.articles', 'core.authors', 'core.comments', 'core.profiles'];
 
     public $autoFixtures = false;
 
@@ -4458,6 +4458,79 @@ class QueryTest extends TestCase
         $query = new Query($this->connection);
 
         $this->assertInstanceOf('\Cake\Database\ValueBinder', $query->getValueBinder());
+    }
+
+    /**
+     * Test automatic results casting
+     *
+     * @return void
+     */
+    public function testCastResults()
+    {
+        $this->loadFixtures('Profiles');
+        $query = new Query($this->connection);
+        $fields = [
+            'id' => 'integer',
+            'user_id' => 'integer',
+            'is_active' => 'boolean'
+        ];
+        $typeMap = new TypeMap($fields + ['a' => 'integer']);
+        $results = $query
+            ->select(array_keys($fields))
+            ->select(['a' => 'id'])
+            ->from('profiles')
+            ->setSelectTypeMap($typeMap)
+            ->limit(1)
+            ->execute()
+            ->fetchAll('assoc');
+        $this->assertSame([['id' => 1, 'user_id' => 1, 'is_active' => false, 'a' => 1]], $results);
+    }
+
+    /**
+     * Test disabling type casting
+     *
+     * @return void
+     */
+    public function testCastResultsDisable()
+    {
+        $this->loadFixtures('Profiles');
+        $query = new Query($this->connection);
+        $typeMap = new TypeMap(['a' => 'datetime']);
+        $results = $query
+            ->select(['a' => 'id'])
+            ->from('profiles')
+            ->setSelectTypeMap($typeMap)
+            ->limit(1)
+            ->disableResultsCasting()
+            ->execute()
+            ->fetchAll('assoc');
+        $this->assertEquals([['a' => '1']], $results);
+    }
+
+    /**
+     * Test that type conversion is only applied once.
+     *
+     * @return void
+     */
+    public function testAllNoDuplicateTypeCasting()
+    {
+        $this->skipIf($this->autoQuote, 'Produces bad SQL in postgres with autoQuoting');
+        $query = new Query($this->connection);
+        $query
+            ->select('1.5 AS a')
+            ->setSelectTypeMap(new TypeMap(['a' => 'integer']));
+
+        // Convert to an array and make the query dirty again.
+        $result = $query->execute()->fetchAll('assoc');
+        $this->assertEquals([['a' => 1]], $result);
+
+        $query->setSelectTypeMap(new TypeMap(['a' => 'float']));
+        // Get results a second time.
+        $result = $query->execute()->fetchAll('assoc');
+
+        // Had the type casting being remembered from the first time,
+        // The value would be a truncated float (1.0)
+        $this->assertEquals([['a' => 1.5]], $result);
     }
 
     /**

@@ -17,6 +17,7 @@ namespace Cake\Database\Type;
 use Cake\Database\Driver;
 use Cake\Database\Type;
 use Cake\Database\TypeInterface;
+use Cake\Database\Type\BatchCastingInterface;
 use InvalidArgumentException;
 use PDO;
 
@@ -25,7 +26,7 @@ use PDO;
  *
  * Use to convert integer data between PHP and the database types.
  */
-class IntegerType extends Type implements TypeInterface
+class IntegerType extends Type implements TypeInterface, BatchCastingInterface
 {
     /**
      * Identifier name for this type.
@@ -83,10 +84,33 @@ class IntegerType extends Type implements TypeInterface
     public function toPHP($value, Driver $driver)
     {
         if ($value === null) {
-            return null;
+            return $value;
         }
 
-        return (int)$value;
+        // Using coercion is faster than casting
+        // @codingStandardsIgnoreStart
+        return (int)+$value;
+        // @codingStandardsIgnoreEnd
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return array
+     */
+    public function manyToPHP(array $values, array $fields, Driver $driver)
+    {
+        foreach ($fields as $field) {
+            if (!isset($values[$field])) {
+                continue;
+            }
+            // Using coercion is faster than casting
+            // @codingStandardsIgnoreStart
+            $values[$field] = (int)+$values[$field];
+            // @codingStandardsIgnoreEnd
+        }
+
+        return $values;
     }
 
     /**
