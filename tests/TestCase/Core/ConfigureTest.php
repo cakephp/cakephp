@@ -592,4 +592,29 @@ class ConfigureTest extends TestCase
         $result = Configure::consume(null);
         $this->assertNull($result);
     }
+
+    /**
+     * testConsumeOrFail method
+     *
+     * @return void
+     */
+    public function testConsumeOrFail()
+    {
+        $expected = 'ok';
+        Configure::write('This.Key.Exists', $expected);
+        $result = Configure::consumeOrFail('This.Key.Exists');
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * testConsumeOrFail method
+     *
+     * @return void
+     */
+    public function testConsumeOrFailThrowingException()
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Expected configuration key "This.Key.Does.Not.exist" not found');
+        Configure::consumeOrFail('This.Key.Does.Not.exist');
+    }
 }

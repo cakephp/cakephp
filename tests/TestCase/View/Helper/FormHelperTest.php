@@ -25,6 +25,7 @@ use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
 use Cake\View\Helper\FormHelper;
 use Cake\View\View;
+use Cake\View\Widget\WidgetLocator;
 
 /**
  * Test stub.
@@ -227,21 +228,35 @@ class FormHelperTest extends TestCase
             ]
         ];
         $helper = new FormHelper($this->View, $config);
-        $registry = $helper->widgetRegistry();
-        $this->assertInstanceOf('Cake\View\Widget\LabelWidget', $registry->get('datetime'));
+        $locator = $helper->getWidgetLocator();
+        $this->assertInstanceOf('Cake\View\Widget\LabelWidget', $locator->get('datetime'));
     }
 
     /**
      * Test that when specifying custom widgets config file and it should be
-     * added to widgets array. WidgetRegistry will load widgets in constructor.
+     * added to widgets array. WidgetLocator will load widgets in constructor.
      *
      * @return void
      */
     public function testConstructWithWidgetsConfig()
     {
         $helper = new FormHelper($this->View, ['widgets' => ['test_widgets']]);
-        $registry = $helper->widgetRegistry();
-        $this->assertInstanceOf('Cake\View\Widget\LabelWidget', $registry->get('text'));
+        $locator = $helper->getWidgetLocator();
+        $this->assertInstanceOf('Cake\View\Widget\LabelWidget', $locator->get('text'));
+    }
+
+    /**
+     * Test setting the widget locator
+     *
+     * @return void
+     */
+    public function testSetAndGetWidgetLocator()
+    {
+        $helper = new FormHelper($this->View);
+        $locator = new WidgetLocator($helper->templater(), $this->View);
+        $helper->setWidgetLocator($locator);
+
+        $this->assertSame($locator, $helper->getWidgetLocator());
     }
 
     /**
@@ -5208,6 +5223,13 @@ class FormHelperTest extends TestCase
             ['multiple' => 'multiple', 'form' => 'my-form']
         );
         $this->assertHtml($expected, $result);
+
+        $result = $this->Form->select(
+            'Model.multi_field',
+            $options,
+            ['form' => 'my-form', 'multiple' => false]
+        );
+        $this->assertNotContains('multiple', $result);
     }
 
     /**

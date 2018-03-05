@@ -44,6 +44,10 @@ class ValidatorTest extends TestCase
         $validator->add('body', 'another', ['rule' => 'crazy']);
         $this->assertCount(1, $validator->field('body'));
         $this->assertCount(2, $validator);
+
+        $validator->add('email', 'notBlank');
+        $result = $validator->field('email')->rule('notBlank')->get('rule');
+        $this->assertEquals('notBlank', $result);
     }
 
     /**

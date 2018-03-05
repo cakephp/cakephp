@@ -82,17 +82,36 @@ class DecimalTypeTest extends TestCase
     {
         $this->assertNull($this->type->toPHP(null, $this->driver));
 
-        $result = $this->type->toPHP('some data', $this->driver);
-        $this->assertSame(0.0, $result);
-
         $result = $this->type->toPHP('2', $this->driver);
         $this->assertSame(2.0, $result);
 
-        $result = $this->type->toPHP('2 bears', $this->driver);
-        $this->assertSame(2.0, $result);
+        $result = $this->type->toPHP('15.3', $this->driver);
+        $this->assertSame(15.3, $result);
+    }
 
-        $result = $this->type->toPHP(['3', '4'], $this->driver);
-        $this->assertSame(1.0, $result);
+    /**
+     * Test converting string decimals to PHP values.
+     *
+     * @return void
+     */
+    public function testManyToPHP()
+    {
+        $values = [
+            'a' => null,
+            'b' => '2.3',
+            'c' => '15',
+            'c' => '0.0',
+        ];
+        $expected = [
+            'a' => null,
+            'b' => 2.3,
+            'c' => 15,
+            'c' => 0.0,
+        ];
+        $this->assertEquals(
+            $expected,
+            $this->type->manyToPHP($values, array_keys($values), $this->driver)
+        );
     }
 
     /**

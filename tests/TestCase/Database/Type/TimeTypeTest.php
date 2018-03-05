@@ -86,6 +86,27 @@ class TimeTypeTest extends TestCase
     }
 
     /**
+     * Test converting string times to PHP values.
+     *
+     * @return void
+     */
+    public function testManyToPHP()
+    {
+        $values = [
+            'a' => null,
+            'b' => '01:30:13',
+        ];
+        $expected = [
+            'a' => null,
+            'b' => new Time('01:30:13'),
+        ];
+        $this->assertEquals(
+            $expected,
+            $this->type->manyToPHP($values, array_keys($values), $this->driver)
+        );
+    }
+
+    /**
      * Test converting to database format
      *
      * @return void

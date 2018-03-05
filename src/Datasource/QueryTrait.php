@@ -17,6 +17,7 @@ namespace Cake\Datasource;
 use BadMethodCallException;
 use Cake\Collection\Iterator\MapReduce;
 use Cake\Datasource\Exception\RecordNotFoundException;
+use Cake\Datasource\ResultSetDecorator;
 
 /**
  * Contains the characteristics for an object that is attached to a repository and
@@ -531,6 +532,6 @@ trait QueryTrait
      */
     protected function _decoratorClass()
     {
-        return 'Cake\Datasource\ResultSetDecorator';
+        return ResultSetDecorator::class;
     }
 }
