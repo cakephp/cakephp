@@ -87,10 +87,7 @@ class IntegerType extends Type implements TypeInterface, BatchCastingInterface
             return $value;
         }
 
-        // Using coercion is faster than casting
-        // @codingStandardsIgnoreStart
-        return (int)+$value;
-        // @codingStandardsIgnoreEnd
+        return (int)$value;
     }
 
     /**
@@ -104,10 +101,7 @@ class IntegerType extends Type implements TypeInterface, BatchCastingInterface
             if (!isset($values[$field])) {
                 continue;
             }
-            // Using coercion is faster than casting
-            // @codingStandardsIgnoreStart
-            $values[$field] = (int)+$values[$field];
-            // @codingStandardsIgnoreEnd
+            $values[$field] = (int)$values[$field];
         }
 
         return $values;

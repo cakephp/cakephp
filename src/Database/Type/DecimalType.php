@@ -107,10 +107,7 @@ class DecimalType extends Type implements TypeInterface, BatchCastingInterface
             return $value;
         }
 
-        // Using coercion is faster than casting
-        // @codingStandardsIgnoreStart
-        return (float)+$value;
-        // @codingStandardsIgnoreEnd
+        return (float)$value;
     }
 
     /**
@@ -125,10 +122,7 @@ class DecimalType extends Type implements TypeInterface, BatchCastingInterface
                 continue;
             }
 
-            // Using coercion is faster than casting
-            // @codingStandardsIgnoreStart
-            $values[$field] = (float)+$values[$field];
-            // @codingStandardsIgnoreEnd
+            $values[$field] = (float)$values[$field];
         }
 
         return $values;

@@ -82,8 +82,8 @@ class FieldTypeConverter
             // the interface. Users can implement the TypeInterface instead to have
             // access to this feature.
             $batchingType = $type instanceof BatchCastingInterface &&
-                $type instanceof Type &&
-                strpos(get_class($type), 'Cake\Database\Type') === false;
+                !($type instanceof Type &&
+                strpos(get_class($type), 'Cake\Database\Type') === false);
 
             if ($batchingType) {
                 $batchingMap[$k] = $type;
