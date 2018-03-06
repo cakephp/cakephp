@@ -397,7 +397,10 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         }
 
         foreach ($rules as $name => $rule) {
-            $field->add($name, $rule + ['rule' => $name]);
+            if (is_array($rule)) {
+                $rule += ['rule' => $name];
+            }
+            $field->add($name, $rule);
         }
 
         return $this;
