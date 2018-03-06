@@ -245,6 +245,63 @@ XML;
     }
 
     /**
+     * Test isSuccessful()
+     *
+     * @return void
+     */
+    public function testisSuccessful()
+    {
+        $headers = [
+            'HTTP/1.1 100 Continue',
+            'Content-Type: text/html'
+        ];
+        $response = new Response($headers, '');
+        $this->assertFalse($response->isSuccessful());
+
+        $headers = [
+            'HTTP/1.1 200 OK',
+            'Content-Type: text/html'
+        ];
+        $response = new Response($headers, 'ok');
+        $this->assertTrue($response->isSuccessful());
+
+        $headers = [
+            'HTTP/1.1 201 Created',
+            'Content-Type: text/html'
+        ];
+        $response = new Response($headers, 'ok');
+        $this->assertTrue($response->isSuccessful());
+
+        $headers = [
+            'HTTP/1.1 202 Accepted',
+            'Content-Type: text/html'
+        ];
+        $response = new Response($headers, 'ok');
+        $this->assertTrue($response->isSuccessful());
+
+        $headers = [
+            'HTTP/1.1 205 Reset Content',
+            'Content-Type: text/html'
+        ];
+        $response = new Response($headers, 'ok');
+        $this->assertTrue($response->isSuccessful());
+
+        $headers = [
+            'HTTP/1.1 301 Moved Permanently',
+            'Content-Type: text/html'
+        ];
+        $response = new Response($headers, '');
+        $this->assertTrue($response->isSuccessful());
+
+        $headers = [
+            'HTTP/1.0 404 Not Found',
+            'Content-Type: text/html'
+        ];
+        $response = new Response($headers, '');
+        $this->assertFalse($response->isSuccessful());
+    }
+
+    /**
      * Test isRedirect()
      *
      * @return void
