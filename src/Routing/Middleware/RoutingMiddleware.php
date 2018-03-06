@@ -33,11 +33,6 @@ use Zend\Diactoros\Response\RedirectResponse;
 class RoutingMiddleware
 {
     /**
-     * Name of the default cache configuration name used to store routes collection
-     */
-    const DEFAULT_ROUTER_CACHE_CONFIG = '_cake_router_';
-
-    /**
      * Key used to store the route collection in the cache engine
      */
     const ROUTE_COLLECTION_CACHE_KEY = 'routeCollection';
@@ -50,13 +45,23 @@ class RoutingMiddleware
     protected $app;
 
     /**
+     * The cache configuration name to use for route collection caching,
+     * null to disable caching
+     *
+     * @var string
+     */
+    protected $cacheConfig;
+
+    /**
      * Constructor
      *
      * @param \Cake\Http\BaseApplication $app The application instance that routes are defined on.
+     * @param string|null $cacheConfig The cache config name to use or null to disable routes cache
      */
-    public function __construct(BaseApplication $app = null)
+    public function __construct(BaseApplication $app = null, $cacheConfig = null)
     {
         $this->app = $app;
+        $this->cacheConfig = $cacheConfig;
     }
 
     /**
@@ -85,14 +90,10 @@ class RoutingMiddleware
      */
     protected function buildRouteCollection()
     {
-        $isRouterCacheEnabled = Configure::read('Router.cache');
-        if (Cache::enabled() && $isRouterCacheEnabled) {
-            $routesCacheConfig = Configure::read('Router.cacheConfig', static::DEFAULT_ROUTER_CACHE_CONFIG);
-
+        if (Cache::enabled() && $this->cacheConfig !== null) {
             return Cache::remember(static::ROUTE_COLLECTION_CACHE_KEY, function () {
-
                 return $this->prepareRouteCollection();
-            }, $routesCacheConfig);
+            }, $this->cacheConfig);
         }
 
         return $this->prepareRouteCollection();
