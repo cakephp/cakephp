@@ -244,6 +244,16 @@ class Response extends Message implements ResponseInterface
     }
 
     /**
+     * Check if the response was in the 2xx/3xx range.
+     *
+     * @return bool
+     */
+    public function isSuccessful()
+    {
+        return $this->code >= 200 && $this->code <= 308;
+    }
+
+    /**
      * Check if the response had a redirect status code.
      *
      * @return bool
