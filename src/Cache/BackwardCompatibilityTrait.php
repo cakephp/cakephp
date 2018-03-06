@@ -19,6 +19,7 @@ namespace Cake\Cache;
  */
 trait BackwardCompatibilityTrait
 {
+
     /**
      * Garbage collection
      *
@@ -66,6 +67,7 @@ trait BackwardCompatibilityTrait
     /**
      * Write data for many keys into cache
      *
+     * @deprecated Use setMultiple()
      * @param array $data An array of data to be stored in the cache
      * @return array of bools for each key provided, true if the data was successfully cached, false on failure
      */
@@ -81,7 +83,7 @@ trait BackwardCompatibilityTrait
     /**
      * Read multiple keys from the cache
      *
-     * @deprecated Use readMultiple() instead
+     * @deprecated Use getMultiple() instead
      * @param array $keys An array of identifiers for the data
      * @return array For each cache key (given as the array key) the cache data associated or false if the data doesn't
      * exist, has expired, or if there was an error fetching it
