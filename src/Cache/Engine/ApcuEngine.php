@@ -16,6 +16,7 @@ namespace Cake\Cache\Engine;
 
 use APCuIterator;
 use Cake\Cache\CacheEngine;
+use Cake\Cache\DateInterval;
 
 /**
  * APCu storage engine for cache
@@ -124,19 +125,27 @@ class ApcuEngine extends CacheEngine
     }
 
     /**
+     * Clears all expired cache entries
+     *
+     * Actually nothing will happen in this method as cache entries are cleared
+     * any way when they expired.
+     *
+     * @return bool
+     */
+    public function clearExpired()
+    {
+        return true;
+    }
+
+    /**
      * Delete all keys from the cache. This will clear every cache config using APC.
      *
-     * @param bool $check If true, nothing will be cleared, as entries are removed
-     *    from APC as they expired. This flag is really only used by FileEngine.
      * @return bool True Returns true.
      * @link https://secure.php.net/manual/en/function.apcu-cache-info.php
      * @link https://secure.php.net/manual/en/function.apcu-delete.php
      */
-    public function clear($check)
+    public function clear()
     {
-        if ($check) {
-            return true;
-        }
         if (class_exists('APCuIterator', false)) {
             $iterator = new APCuIterator(
                 '/^' . preg_quote($this->_config['prefix'], '/') . '/',
@@ -231,5 +240,34 @@ class ApcuEngine extends CacheEngine
         apcu_inc($this->_config['prefix'] . $group, 1, $success);
 
         return $success;
+    }
+
+    /**
+     * Fetches a value from the cache.
+     *
+     * @param string $key The unique key of this item in the cache.
+     * @param mixed $default Default value to return if the key does not exist.
+     * @return mixed The value of the item from the cache, or $default in case of cache miss.
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     *   MUST be thrown if the $key string is not a legal value.
+     */
+    public function get($key, $default = null) {
+        // TODO: Implement get() method.
+    }
+
+    /**
+     * Persists data in the cache, uniquely referenced by a key with an optional expiration TTL time.
+     *
+     * @param string $key The key of the item to store.
+     * @param mixed $value The value of the item to store, must be serializable.
+     * @param null|int|DateInterval $ttl Optional. The TTL value of this item. If no value is sent and
+     *                                     the driver supports TTL then the library may set a default value
+     *                                     for it or let the driver take care of that.
+     * @return bool True on success and false on failure.
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     *   MUST be thrown if the $key string is not a legal value.
+     */
+    public function set($key, $value, $ttl = null) {
+        // TODO: Implement set() method.
     }
 }

@@ -15,9 +15,9 @@
 namespace Cake\Cache;
 
 use Cake\Cache\Engine\NullEngine;
+use Cake\Cache\Exception\InvalidArgumentException;
 use Cake\Core\ObjectRegistry;
 use Cake\Core\StaticConfigTrait;
-use InvalidArgumentException;
 use RuntimeException;
 
 /**

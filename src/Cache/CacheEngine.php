@@ -256,9 +256,7 @@ abstract class CacheEngine implements CacheInterface
      */
     public function getMultiple($keys, $default = null)
     {
-        if (!is_array($keys) && !$keys instanceof Traversable) {
-            throw new InvalidArgumentException();
-        }
+        $this->_checkTraversable($keys);
 
         $return = [];
         foreach ($keys as $key) {
@@ -282,9 +280,7 @@ abstract class CacheEngine implements CacheInterface
      */
     public function setMultiple($values, $ttl = null)
     {
-        if (!is_array($values) && !$values instanceof Traversable) {
-            throw new InvalidArgumentException();
-        }
+        $this->_checkTraversable($values);
 
         $return = true;
         foreach ($values as $key => $value) {
@@ -310,9 +306,7 @@ abstract class CacheEngine implements CacheInterface
      */
     public function deleteMultiple($keys)
     {
-        if (!is_array($keys) && !$keys instanceof Traversable) {
-            throw new InvalidArgumentException();
-        }
+        $this->_checkTraversable($keys);
 
         $return = true;
         foreach ($keys as $key) {
@@ -325,7 +319,22 @@ abstract class CacheEngine implements CacheInterface
     }
 
     /**
+     * Checks if the given value is traversable or an array
+     *
+     * @throws \Cake\Cache\Exception\InvalidArgumentException
+     * @param $value Value to check
+     * @return void
+     */
+    protected function _checkTraversable($value)
+    {
+        if (!is_array($value) && !$value instanceof Traversable) {
+            throw new InvalidArgumentException();
+        }
+    }
+
+    /**
      * Determines whether an item is present in the cache.
+     *
      * NOTE: It is recommended that has() is only to be used for cache warming type purposes
      * and not to be used within your live applications operations for get/set, as this method
      * is subject to a race condition where your has() will return true and immediately after,

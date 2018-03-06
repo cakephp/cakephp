@@ -18,9 +18,9 @@ use Cake\Cache\Cache;
 use Cake\Cache\CacheRegistry;
 use Cake\Cache\Engine\FileEngine;
 use Cake\Cache\Engine\NullEngine;
+use Cake\Cache\Exception\InvalidArgumentException;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
-use InvalidArgumentException;
 use PHPUnit\Framework\Error\Error;
 
 /**
@@ -323,7 +323,7 @@ class CacheTest extends TestCase
      */
     public function testWriteNonExistingConfig()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->assertFalse(Cache::write('key', 'value', 'totally fake'));
     }
 
@@ -334,7 +334,7 @@ class CacheTest extends TestCase
      */
     public function testIncrementNonExistingConfig()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->assertFalse(Cache::increment('key', 1, 'totally fake'));
     }
 
@@ -345,7 +345,7 @@ class CacheTest extends TestCase
      */
     public function testDecrementNonExistingConfig()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->assertFalse(Cache::decrement('key', 1, 'totally fake'));
     }
 
@@ -569,7 +569,7 @@ class CacheTest extends TestCase
      */
     public function testGroupConfigsThrowsException()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         Cache::groupConfigs('bogus');
     }
 
@@ -641,7 +641,7 @@ class CacheTest extends TestCase
      */
     public function testWriteEmptyKey()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('An empty value is not valid as a cache key');
         $this->_configCache();
         Cache::write(null, 'not null', 'tests');

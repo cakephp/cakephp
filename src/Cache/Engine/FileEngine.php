@@ -107,17 +107,6 @@ class FileEngine extends CacheEngine
     }
 
     /**
-     * Garbage collection. Permanently remove all expired and deleted data
-     *
-     * @param int|null $expires [optional] An expires timestamp, invalidating all data before.
-     * @return bool True if garbage collection was successful, false on failure
-     */
-    public function gc($expires = null)
-    {
-        return $this->clear(true);
-    }
-
-    /**
      * @inheritDoc
      */
     public function set($key, $data, $ttl = null)
@@ -279,6 +268,16 @@ class FileEngine extends CacheEngine
         }
 
         return true;
+    }
+
+    /**
+     * Clears all expired cache entries
+     *
+     * @return bool
+     */
+    public function clearExpired()
+    {
+        return $this->_clear(true);
     }
 
     /**

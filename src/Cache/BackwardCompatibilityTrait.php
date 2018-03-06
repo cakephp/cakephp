@@ -17,8 +17,8 @@ namespace Cake\Cache;
 /**
  * Trait for methods that are going to be removed
  */
-trait BackwardCompatibilityTrait {
-
+trait BackwardCompatibilityTrait
+{
     /**
      * Garbage collection
      *
@@ -30,22 +30,33 @@ trait BackwardCompatibilityTrait {
      */
     public function gc($expires = null)
     {
-        return $this->clearExpired();
+        $this->clearExpired();
     }
 
     /**
      * Read a key from the cache
      *
+     * @deprecated Use get() instead
      * @param string $key Identifier for the data
      * @return mixed The cached data, or false if the data doesn't exist, has expired, or if there was an error fetching it
      */
     public function read($key)
     {
-        return $this->get($key);
+        $result = $this->get($key);
+        if ($result === null) {
+            return false;
+        }
+
+        return $result;
     }
 
     /**
+     * Write data for key into cache
      *
+     * @deprecated Use set() instead
+     * @param string $key Identifier for the data
+     * @param mixed $value Data to be cached
+     * @return bool True if the data was successfully cached, false on failure
      */
     public function write($key, $data)
     {
@@ -55,6 +66,7 @@ trait BackwardCompatibilityTrait {
     /**
      * Read multiple keys from the cache
      *
+     * @deprecated Use readMultiple() instead
      * @param array $keys An array of identifiers for the data
      * @return array For each cache key (given as the array key) the cache data associated or false if the data doesn't
      * exist, has expired, or if there was an error fetching it
@@ -72,6 +84,7 @@ trait BackwardCompatibilityTrait {
     /**
      * Deletes keys from the cache
      *
+     * @deprecated Use deleteMultiple() instead
      * @param array $keys An array of identifiers for the data
      * @return array For each provided cache key (given back as the array key) true if the value was successfully deleted,
      * false if it didn't exist or couldn't be removed
