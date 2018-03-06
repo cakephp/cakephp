@@ -64,6 +64,21 @@ trait BackwardCompatibilityTrait
     }
 
     /**
+     * Write data for many keys into cache
+     *
+     * @param array $data An array of data to be stored in the cache
+     * @return array of bools for each key provided, true if the data was successfully cached, false on failure
+     */
+    public function writeMany($data)
+    {
+        $return = [];
+        foreach ($data as $key => $value) {
+            $return[$key] = $this->write($key, $value);
+        }
+        return $return;
+    }
+
+    /**
      * Read multiple keys from the cache
      *
      * @deprecated Use readMultiple() instead
