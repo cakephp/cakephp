@@ -196,6 +196,28 @@ class TimestampBehaviorTest extends TestCase
     }
 
     /**
+     * test that timestamp creation doesn't fail on missing columns
+     *
+     * @return void
+     */
+    public function testModifiedMissingColumn()
+    {
+        $table = $this->getTable();
+        $table->getSchema()->removeColumn('created')->removeColumn('modified');
+        $this->Behavior = new TimestampBehavior($table);
+        $ts = new \DateTime('2000-01-01');
+        $this->Behavior->timestamp($ts);
+
+        $event = new Event('Model.beforeSave');
+        $entity = new Entity(['name' => 'Foo']);
+
+        $return = $this->Behavior->handleEvent($event, $entity);
+        $this->assertTrue($return, 'Handle Event is expected to always return true');
+        $this->assertNull($entity->created);
+        $this->assertNull($entity->modified);
+    }
+
+    /**
      * testUseImmutable
      *
      * @return void
