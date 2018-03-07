@@ -198,6 +198,10 @@ class TimestampBehavior extends Behavior
         $ts = $this->timestamp(null, $refreshTimestamp);
 
         $columnType = $this->getTable()->getSchema()->getColumnType($field);
+        if (!$columnType) {
+            return;
+        }
+
         /** @var \Cake\Database\Type\DateTimeType $type */
         $type = Type::build($columnType);
         $class = $type->getDateTimeClassName();
