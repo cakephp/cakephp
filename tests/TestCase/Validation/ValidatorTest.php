@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\Validation;
 
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validation;
+use Cake\Validation\ValidationRule;
 use Cake\Validation\ValidationSet;
 use Cake\Validation\Validator;
 
@@ -48,6 +49,11 @@ class ValidatorTest extends TestCase
         $validator->add('email', 'notBlank');
         $result = $validator->field('email')->rule('notBlank')->get('rule');
         $this->assertEquals('notBlank', $result);
+
+        $rule = new ValidationRule();
+        $validator->add('field', 'myrule', $rule);
+        $result = $validator->field('field')->rule('myrule');
+        $this->assertSame($rule, $result);
     }
 
     /**
