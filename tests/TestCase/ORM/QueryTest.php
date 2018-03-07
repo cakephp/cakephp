@@ -3614,7 +3614,6 @@ class QueryTest extends TestCase
     public function testSelectAllExceptWithContains()
     {
         $table = $this->getTableLocator()->get('Articles');
-        $this->getTableLocator()->get('Articles');
         $table->hasMany('Comments');
         $table->belongsTo('Authors');
 
@@ -3642,7 +3641,6 @@ class QueryTest extends TestCase
     public function testSelectAllExceptWithMulitpleCalls()
     {
         $table = $this->getTableLocator()->get('Articles');
-        $this->getTableLocator()->get('Articles');
 
         $result = $table
             ->find()
@@ -3692,12 +3690,9 @@ class QueryTest extends TestCase
     public function testSelectAllExceptThrowsInvalidArgument()
     {
         $table = $this->getTableLocator()->get('Articles');
-        try {
+        $this->expectException(\InvalidArgumentException::class);
             $table
                 ->find()
                 ->selectAllExcept([], ['body']);
-        } catch (\InvalidArgumentException $e) {
-            $this->assertTrue(true);
-        }
     }
 }
