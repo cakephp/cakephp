@@ -3564,27 +3564,6 @@ class QueryTest extends TestCase
     }
 
     /**
-     * Test that type conversion is only applied once.
-     *
-     * @return void
-     */
-    public function testAllNoDuplicateTypeCasting()
-    {
-        $table = $this->getTableLocator()->get('Comments');
-        $query = $table->find()
-            ->select(['id', 'comment', 'created']);
-
-        // Convert to an array and make the query dirty again.
-        $result = $query->all()->toArray();
-        $query->limit(99);
-
-        // Get results a second time.
-        $result2 = $query->all()->toArray();
-
-        $this->assertEquals(1, $query->__debugInfo()['decorators'], 'Only one typecaster should exist');
-    }
-
-    /**
      * Test to see that the excluded fields are not in the select clause
      *
      * @return void
