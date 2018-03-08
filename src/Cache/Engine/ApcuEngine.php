@@ -16,7 +16,7 @@ namespace Cake\Cache\Engine;
 
 use APCuIterator;
 use Cake\Cache\CacheEngine;
-use Cake\Cache\DateInterval;
+use DateInterval;
 
 /**
  * APCu storage engine for cache
@@ -60,7 +60,7 @@ class ApcuEngine extends CacheEngine
      * @return bool True if the data was successfully cached, false on failure
      * @link https://secure.php.net/manual/en/function.apcu-store.php
      */
-    public function write($key, $value, $ttl = null)
+    public function set($key, $value, $ttl = null)
     {
         $key = $this->_key($key);
         $duration = $this->_config['duration'];
@@ -253,5 +253,4 @@ class ApcuEngine extends CacheEngine
 
         return $success;
     }
-
 }

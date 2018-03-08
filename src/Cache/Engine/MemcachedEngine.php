@@ -454,17 +454,22 @@ class MemcachedEngine extends CacheEngine
     }
 
     /**
+     * Clears all expired cache entries
+     *
+     * @return bool
+     */
+    public function clearExpired()
+    {
+        return true;
+    }
+
+    /**
      * Delete all keys from the cache
      *
-     * @param bool $check If true will check expiration, otherwise delete all.
      * @return bool True if the cache was successfully cleared, false otherwise
      */
-    public function clear($check)
+    public function clear()
     {
-        if ($check) {
-            return true;
-        }
-
         $keys = $this->_Memcached->getAllKeys();
         if ($keys === false) {
             return false;

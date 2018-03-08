@@ -107,7 +107,7 @@ class FileEngine extends CacheEngine
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function set($key, $data, $ttl = null)
     {
@@ -157,7 +157,7 @@ class FileEngine extends CacheEngine
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function get($key, $default = null)
     {
@@ -283,7 +283,6 @@ class FileEngine extends CacheEngine
     /**
      * Delete all values from the cache
      *
-     * @param bool $check Optional - only delete expired cache items
      * @return bool True if the cache was successfully cleared, false otherwise
      */
     public function clear()
@@ -496,7 +495,7 @@ class FileEngine extends CacheEngine
     }
 
     /**
-     * @inheritdoc
+     * {@inheritDoc}
      */
     public function has($key)
     {

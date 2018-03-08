@@ -27,8 +27,8 @@ use Traversable;
 abstract class CacheEngine implements CacheInterface
 {
 
-    use InstanceConfigTrait;
     use BackwardCompatibilityTrait;
+    use InstanceConfigTrait;
 
     /**
      * The default cache configuration is overridden in most cache adapters. These are
@@ -220,6 +220,13 @@ abstract class CacheEngine implements CacheInterface
     abstract public function clear();
 
     /**
+     * Delete all expired keys from the cache
+     *
+     * @return bool True if the cache was successfully cleared, false otherwise
+     */
+    abstract public function clearExpired();
+
+    /**
     * Fetches a value from the cache.
     *
     * @param string $key The unique key of this item in the cache.
@@ -322,13 +329,27 @@ abstract class CacheEngine implements CacheInterface
      * Checks if the given value is traversable or an array
      *
      * @throws \Cake\Cache\Exception\InvalidArgumentException
-     * @param $value Value to check
+     * @param mixed $key Key to check
+     * @return void
+     */
+    protected function _checkValidKey($key)
+    {
+        if (is_string($key)) {
+            throw new InvalidArgumentException(sprintf('Invalid key, expected a string but got `%s`', getTypeName($key)));
+        }
+    }
+
+    /**
+     * Checks if the given value is traversable or an array
+     *
+     * @throws \Cake\Cache\Exception\InvalidArgumentException
+     * @param mixed $value Value to check
      * @return void
      */
     protected function _checkTraversable($value)
     {
         if (!is_array($value) && !$value instanceof Traversable) {
-            throw new InvalidArgumentException();
+            throw new InvalidArgumentException(sprintf('Array or Traversable expected, but got `%s`', getTypeName($value)));
         }
     }
 
@@ -345,5 +366,10 @@ abstract class CacheEngine implements CacheInterface
      * @throws \Psr\SimpleCache\InvalidArgumentException
      *   MUST be thrown if the $key string is not a legal value.
      */
-    public function has($key) {}
+    public function has($key)
+    {
+        $this->_checkValidKey($key);
+
+        return $this->get($key) !== null;
+    }
 }

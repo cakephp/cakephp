@@ -119,7 +119,7 @@ class RedisEngine extends CacheEngine
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function set($key, $data, $ttl = null) {
         $key = $this->_key($key);
@@ -137,7 +137,7 @@ class RedisEngine extends CacheEngine
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function get($key, $default = null)
     {

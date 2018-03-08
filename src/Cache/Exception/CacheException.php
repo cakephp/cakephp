@@ -14,7 +14,8 @@
  */
 namespace Cake\Cache\Exception;
 
-use Psr\SimpleCache\InvalidArgumentException as InvalidCacheArgument;
+use Cake\Core\Exception\Exception;
+use Psr\SimpleCache\CacheException as CacheExceptionInterface;
 
 /**
  * Exception interface for invalid cache arguments.
@@ -22,6 +23,6 @@ use Psr\SimpleCache\InvalidArgumentException as InvalidCacheArgument;
  * When an invalid argument is passed it must throw an exception which implements
  * this interface
  */
-class InvalidArgumentException extends CacheException implements InvalidCacheArgument
+class CacheException extends Exception implements CacheExceptionInterface
 {
 }

@@ -15,6 +15,7 @@
 namespace Cake\Cache;
 
 use BadMethodCallException;
+use Cake\Cache\Exception\CacheException;
 use Cake\Core\App;
 use Cake\Core\ObjectRegistry;
 use RuntimeException;
@@ -82,13 +83,13 @@ class CacheRegistry extends ObjectRegistry
         }
 
         if (!($instance instanceof CacheEngine)) {
-            throw new RuntimeException(
+            throw new CacheException(
                 'Cache engines must use Cake\Cache\CacheEngine as a base class.'
             );
         }
 
         if (!$instance->init($config)) {
-            throw new RuntimeException(
+            throw new CacheException(
                 sprintf('Cache engine %s is not properly configured.', get_class($instance))
             );
         }

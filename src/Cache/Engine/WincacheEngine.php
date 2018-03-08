@@ -131,11 +131,19 @@ class WincacheEngine extends CacheEngine
     }
 
     /**
+     * Clears all expired cache entries
+     *
+     * @return bool
+     */
+    public function clearExpired()
+    {
+        return true;
+    }
+
+    /**
      * Delete all keys from the cache. This will clear every
      * item in the cache matching the cache config prefix.
      *
-     * @param bool $check If true, nothing will be cleared, as entries will
-     *   naturally expire in wincache..
      * @return bool True Returns true.
      */
     public function clear()

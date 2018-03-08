@@ -15,6 +15,7 @@
 namespace Cake\Cache;
 
 use Cake\Cache\Engine\NullEngine;
+use Cake\Cache\Exception\CacheException;
 use Cake\Cache\Exception\InvalidArgumentException;
 use Cake\Core\ObjectRegistry;
 use Cake\Core\StaticConfigTrait;
@@ -341,7 +342,7 @@ class Cache
         $return = $engine->writeMany($data);
         foreach ($return as $key => $success) {
             if ($success === false && $data[$key] !== '') {
-                throw new RuntimeException(sprintf(
+                throw new CacheException(sprintf(
                     '%s cache was unable to write \'%s\' to %s cache',
                     $config,
                     $key,
@@ -462,6 +463,7 @@ class Cache
      * ```
      *
      * @param array $keys an array of keys to fetch from the cache
+     * @param mixed $default Default value
      * @param string $config optional name of the configuration to use. Defaults to 'default'
      * @return array An array containing, for each of the given $keys, the cached data or false if cached data could not be
      * retrieved.
