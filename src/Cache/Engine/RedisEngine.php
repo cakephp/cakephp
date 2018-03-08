@@ -121,7 +121,8 @@ class RedisEngine extends CacheEngine
     /**
      * {@inheritDoc}
      */
-    public function set($key, $data, $ttl = null) {
+    public function set($key, $data, $ttl = null)
+    {
         $key = $this->_key($key);
 
         if (!is_int($data)) {

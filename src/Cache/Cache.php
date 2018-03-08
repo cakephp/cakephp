@@ -383,7 +383,6 @@ class Cache
         return $engine->get($key);
     }
 
-
     /**
     * Fetches a value from the cache.
     *
