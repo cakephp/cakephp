@@ -195,8 +195,12 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     }
 
     /**
-     * Select all the columns associated to $table except the $excludedFields.
-     * Excluded fields should not be aliased names.
+     * All the fields associated with the passed table except the excluded
+     * fields will be added to the select clause of the query. Passed excluded fields should not be aliased.
+     * After the first call to this method, a second call cannot be used to remove fields that have already
+     * been added to the query by the first. If you need to change the list after the first call,
+     * pass overwrite boolean true which will reset the select clause removing all previous additions.
+     *
      *
      *
      * @param \Cake\ORM\Table|\Cake\ORM\Association $table The table to use to get an array of columns
