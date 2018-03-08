@@ -384,29 +384,29 @@ class Cache
     }
 
     /**
-    * Fetches a value from the cache.
-    *
-    * ### Usage:
-    *
-    * Reading from the active cache configuration.
-    *
-    * ```
-    * Cache::get('my_data');
-    * ```
-    *
-    * Reading from a specific cache configuration.
-    *
-    * ```
-    * Cache::get('my_data', null, 'long_term');
-    * ```
-    *
-    * @param string $key The unique key of this item in the cache.
-    * @param mixed $default Default value to return if the key does not exist.
-    * @param string $config optional name of the configuration to use. Defaults to 'default'
-    * @return mixed The value of the item from the cache, or $default in case of cache miss.
-    * @throws \Psr\SimpleCache\InvalidArgumentException
-    *   MUST be thrown if the $key string is not a legal value.
-    */
+     * Fetches a value from the cache.
+     *
+     * ### Usage:
+     *
+     * Reading from the active cache configuration.
+     *
+     * ```
+     * Cache::get('my_data');
+     * ```
+     *
+     * Reading from a specific cache configuration.
+     *
+     * ```
+     * Cache::get('my_data', null, 'long_term');
+     * ```
+     *
+     * @param string $key The unique key of this item in the cache.
+     * @param mixed $default Default value to return if the key does not exist.
+     * @param string $config optional name of the configuration to use. Defaults to 'default'
+     * @return mixed The value of the item from the cache, or $default in case of cache miss.
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     *   MUST be thrown if the $key string is not a legal value.
+     */
     public static function get($key, $default = null, $config = 'default')
     {
         $engine = static::engine($config);
