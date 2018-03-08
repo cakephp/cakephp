@@ -58,10 +58,13 @@ class WincacheEngine extends CacheEngine
      * @param mixed $value Data to be cached
      * @return bool True if the data was successfully cached, false on failure
      */
-    public function write($key, $value)
+    public function set($key, $value, $ttl = null)
     {
         $key = $this->_key($key);
         $duration = $this->_config['duration'];
+        if ($ttl !== null) {
+            $duration = $ttl;
+        }
 
         return wincache_ucache_set($key, $value, $duration);
     }
@@ -70,14 +73,20 @@ class WincacheEngine extends CacheEngine
      * Read a key from the cache
      *
      * @param string $key Identifier for the data
+     * @param mixed $default Default value
      * @return mixed The cached data, or false if the data doesn't exist,
      *   has expired, or if there was an error fetching it
      */
-    public function read($key)
+    public function get($key, $default = null)
     {
         $key = $this->_key($key);
 
-        return wincache_ucache_get($key);
+        $result = wincache_ucache_get($key);
+        if ($result === false) {
+            return $default;
+        }
+
+        return $result;
     }
 
     /**
@@ -129,11 +138,8 @@ class WincacheEngine extends CacheEngine
      *   naturally expire in wincache..
      * @return bool True Returns true.
      */
-    public function clear($check)
+    public function clear()
     {
-        if ($check) {
-            return true;
-        }
         $info = wincache_ucache_info();
         $cacheKeys = $info['ucache_entries'];
         unset($info);

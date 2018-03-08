@@ -54,13 +54,19 @@ class ApcuEngine extends CacheEngine
      *
      * @param string $key Identifier for the data
      * @param mixed $value Data to be cached
+     * @param null|int|DateInterval $ttl Optional. The TTL value of this item. If no value is sent and
+     *                                     the driver supports TTL then the library may set a default value
+     *                                     for it or let the driver take care of that.
      * @return bool True if the data was successfully cached, false on failure
      * @link https://secure.php.net/manual/en/function.apcu-store.php
      */
-    public function write($key, $value)
+    public function write($key, $value, $ttl = null)
     {
         $key = $this->_key($key);
         $duration = $this->_config['duration'];
+        if ($ttl !== null) {
+            $duration = $ttl;
+        }
 
         return apcu_store($key, $value, $duration);
     }
@@ -69,15 +75,21 @@ class ApcuEngine extends CacheEngine
      * Read a key from the cache
      *
      * @param string $key Identifier for the data
+     * @param mixed $default Default value
      * @return mixed The cached data, or false if the data doesn't exist,
      *   has expired, or if there was an error fetching it
      * @link https://secure.php.net/manual/en/function.apcu-fetch.php
      */
-    public function read($key)
+    public function get($key, $default = null)
     {
         $key = $this->_key($key);
 
-        return apcu_fetch($key);
+        $result = apcu_fetch($key);
+        if ($result === false) {
+            return $default;
+        }
+
+        return $result;
     }
 
     /**
@@ -242,32 +254,4 @@ class ApcuEngine extends CacheEngine
         return $success;
     }
 
-    /**
-     * Fetches a value from the cache.
-     *
-     * @param string $key The unique key of this item in the cache.
-     * @param mixed $default Default value to return if the key does not exist.
-     * @return mixed The value of the item from the cache, or $default in case of cache miss.
-     * @throws \Psr\SimpleCache\InvalidArgumentException
-     *   MUST be thrown if the $key string is not a legal value.
-     */
-    public function get($key, $default = null) {
-        // TODO: Implement get() method.
-    }
-
-    /**
-     * Persists data in the cache, uniquely referenced by a key with an optional expiration TTL time.
-     *
-     * @param string $key The key of the item to store.
-     * @param mixed $value The value of the item to store, must be serializable.
-     * @param null|int|DateInterval $ttl Optional. The TTL value of this item. If no value is sent and
-     *                                     the driver supports TTL then the library may set a default value
-     *                                     for it or let the driver take care of that.
-     * @return bool True on success and false on failure.
-     * @throws \Psr\SimpleCache\InvalidArgumentException
-     *   MUST be thrown if the $key string is not a legal value.
-     */
-    public function set($key, $value, $ttl = null) {
-        // TODO: Implement set() method.
-    }
 }

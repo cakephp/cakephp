@@ -134,6 +134,6 @@ class NullEngine extends CacheEngine
      * {@inheritDoc}
      */
     public function set($key, $value, $ttl = null) {
-        return false;
+        return null;
     }
 }
