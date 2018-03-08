@@ -379,12 +379,7 @@ class Cache
     {
         $engine = static::engine($config);
 
-        $result = $engine->get($key);
-        if ($result === null && !$engine instanceof NullEngine) {
-            return false;
-        }
-
-        return $result;
+        return $engine->get($key);
     }
 
 
@@ -446,7 +441,7 @@ class Cache
     {
         $engine = static::engine($config);
 
-        return $engine->readMany($keys);
+        return $engine->getMultiple($keys);
     }
 
     /**
