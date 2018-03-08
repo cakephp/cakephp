@@ -56,7 +56,7 @@ trait BackwardCompatibilityTrait
      *
      * @deprecated Use set() instead
      * @param string $key Identifier for the data
-     * @param mixed $value Data to be cached
+     * @param mixed $data Data to be cached
      * @return bool True if the data was successfully cached, false on failure
      */
     public function write($key, $data)
@@ -77,6 +77,7 @@ trait BackwardCompatibilityTrait
         foreach ($data as $key => $value) {
             $return[$key] = $this->write($key, $value);
         }
+
         return $return;
     }
 

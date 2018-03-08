@@ -126,14 +126,16 @@ class NullEngine extends CacheEngine
     /**
      * {@inheritDoc}
      */
-    public function get($key, $default = null) {
+    public function get($key, $default = null)
+    {
         return false;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function set($key, $value, $ttl = null) {
+    public function set($key, $value, $ttl = null)
+    {
         return null;
     }
 }

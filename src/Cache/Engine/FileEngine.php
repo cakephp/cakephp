@@ -235,7 +235,8 @@ class FileEngine extends CacheEngine
      * @param bool $check Optional - only delete expired cache items
      * @return bool True if the cache was successfully cleared, false otherwise
      */
-    protected function _clear($check = false) {
+    protected function _clear($check = false)
+    {
         if (!$this->_init) {
             return false;
         }

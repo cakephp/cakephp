@@ -253,5 +253,4 @@ class ApcuEngine extends CacheEngine
 
         return $success;
     }
-
 }
