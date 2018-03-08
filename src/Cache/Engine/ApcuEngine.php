@@ -84,8 +84,8 @@ class ApcuEngine extends CacheEngine
     {
         $key = $this->_key($key);
 
-        $result = apcu_fetch($key);
-        if ($result === false) {
+        $result = apcu_fetch($key, $success);
+        if ($success === false) {
             return $default;
         }
 

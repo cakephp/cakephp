@@ -81,8 +81,8 @@ class WincacheEngine extends CacheEngine
     {
         $key = $this->_key($key);
 
-        $result = wincache_ucache_get($key);
-        if ($result === false) {
+        $result = wincache_ucache_get($key, $success);
+        if ($success === false) {
             return $default;
         }
 
