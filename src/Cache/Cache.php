@@ -380,7 +380,7 @@ class Cache
     {
         $engine = static::engine($config);
 
-        return $engine->get($key);
+        return $engine->read($key);
     }
 
     /**
