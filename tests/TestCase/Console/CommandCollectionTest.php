@@ -21,6 +21,7 @@ use Cake\Core\Plugin;
 use Cake\Shell\I18nShell;
 use Cake\Shell\RoutesShell;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use stdClass;
 use TestApp\Command\DemoCommand;
 
@@ -238,49 +239,62 @@ class CommandCollectionTest extends TestCase
     }
 
     /**
+     * test missing plugin discovery
+     *
+     * @return void
+     */
+    public function testDiscoverPluginUnknown()
+    {
+        $this->assertSame([], $collection = new CommandCollection());
+    }
+
+    /**
      * test autodiscovering plugin shells
      *
      * @return void
      */
-    public function testAutoDiscoverPlugin()
+    public function testDiscoverPlugin()
     {
         Plugin::load('TestPlugin');
         Plugin::load('Company/TestPluginThree');
-        $collection = new CommandCollection();
-        $collection->addMany($collection->autoDiscover());
 
-        $this->assertTrue(
-            $collection->has('example'),
+        $collection = new CommandCollection();
+        // Add a dupe to test de-duping
+        $collection->add('sample', DemoCommand::class);
+
+        $result = $collection->discoverPlugin('TestPlugin');
+
+        $this->assertArrayHasKey(
+            'example',
+            $result,
             'Used short name for unique plugin shell'
         );
-        $this->assertTrue(
-            $collection->has('test_plugin.example'),
+        $this->assertArrayHasKey(
+            'test_plugin.example',
+            $result,
             'Long names are stored for unique shells'
         );
-        $this->assertTrue(
-            $collection->has('sample'),
-            'Has app shell'
-        );
-        $this->assertTrue(
-            $collection->has('test_plugin.sample'),
+        $this->assertArrayNotHasKey('sample', $result, 'Existing command not output');
+        $this->assertArrayHasKey(
+            'test_plugin.sample',
+            $result,
             'Duplicate shell was given a full alias'
         );
-        $this->assertTrue(
-            $collection->has('company'),
+        $this->assertEquals('TestPlugin\Shell\ExampleShell', $result['example']);
+        $this->assertEquals($result['example'], $result['test_plugin.example']);
+        $this->assertEquals('TestPlugin\Shell\SampleShell', $result['test_plugin.sample']);
+
+        $result = $collection->discoverPlugin('Company/TestPluginThree');
+        $this->assertArrayHasKey(
+            'company',
+            $result,
             'Used short name for unique plugin shell'
         );
-        $this->assertTrue(
-            $collection->has('company/test_plugin_three.company'),
+        $this->assertArrayHasKey(
+            'company/test_plugin_three.company',
+            $result,
             'Long names are stored as well'
         );
-
-        $this->assertEquals('TestPlugin\Shell\ExampleShell', $collection->get('example'));
-        $this->assertEquals($collection->get('example'), $collection->get('test_plugin.example'));
-        $this->assertEquals(
-            'TestApp\Shell\SampleShell',
-            $collection->get('sample'),
-            'Should prefer app shells over plugin ones'
-        );
-        $this->assertEquals('TestPlugin\Shell\SampleShell', $collection->get('test_plugin.sample'));
+        $this->assertSame($result['company'], $result['company/test_plugin_three.company']);
     }
 }

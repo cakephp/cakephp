@@ -19,6 +19,7 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Filesystem\Folder;
 use Cake\Utility\Inflector;
+use InvalidArgumentException;
 
 /**
  * Used by CommandCollection and CommandTask to scan the filesystem
@@ -29,27 +30,11 @@ use Cake\Utility\Inflector;
 class CommandScanner
 {
     /**
-     * Scan CakePHP core, the applications and plugins for shell classes
-     *
-     * @return array
-     */
-    public function scanAll()
-    {
-        $shellList = [
-            'CORE' => $this->scanCore(),
-            'app' => $this->scanApp(),
-            'plugins' => $this->scanPlugins()
-        ];
-
-        return $shellList;
-    }
-
-    /**
      * Scan CakePHP internals for shells & commands.
      *
      * @return array A list of command metadata.
      */
-    protected function scanCore()
+    public function scanCore()
     {
         $coreShells = $this->scanDir(
             dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Shell' . DIRECTORY_SEPARATOR,
@@ -72,7 +57,7 @@ class CommandScanner
      *
      * @return array A list of command metadata.
      */
-    protected function scanApp()
+    public function scanApp()
     {
         $appNamespace = Configure::read('App.namespace');
         $appShells = $this->scanDir(
@@ -92,25 +77,24 @@ class CommandScanner
     }
 
     /**
-     * Scan the plugins for shells & commands.
+     * Scan the named plugin for shells and commands
      *
+     * @param string $plugin The named plugin.
      * @return array A list of command metadata.
      */
-    protected function scanPlugins()
+    public function scanPlugin($plugin)
     {
-        $plugins = [];
-        foreach (Plugin::loaded() as $plugin) {
-            $path = Plugin::classPath($plugin);
-            $namespace = str_replace('/', '\\', $plugin);
-            $prefix = Inflector::underscore($plugin) . '.';
-
-            $commands = $this->scanDir($path . 'Command', $namespace . '\Command\\', $prefix, []);
-            $shells = $this->scanDir($path . 'Shell', $namespace . '\Shell\\', $prefix, []);
-
-            $plugins[$plugin] = array_merge($shells, $commands);
+        if (!Plugin::loaded($plugin)) {
+            return [];
         }
+        $path = Plugin::classPath($plugin);
+        $namespace = str_replace('/', '\\', $plugin);
+        $prefix = Inflector::underscore($plugin) . '.';
 
-        return $plugins;
+        $commands = $this->scanDir($path . 'Command', $namespace . '\Command\\', $prefix, []);
+        $shells = $this->scanDir($path . 'Shell', $namespace . '\Shell\\', $prefix, []);
+
+        return array_merge($shells, $commands);
     }
 
     /**
