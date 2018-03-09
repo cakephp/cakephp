@@ -245,7 +245,8 @@ class CommandCollectionTest extends TestCase
      */
     public function testDiscoverPluginUnknown()
     {
-        $this->assertSame([], $collection = new CommandCollection());
+        $collection = new CommandCollection();
+        $this->assertSame([], $collection->discoverPlugin('Nope'));
     }
 
     /**
