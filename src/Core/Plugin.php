@@ -126,6 +126,7 @@ class Plugin
             'autoload' => false,
             'bootstrap' => false,
             'routes' => false,
+            'console' => true,
             'classBase' => 'src',
             'ignoreMissing' => false,
             'name' => $plugin
