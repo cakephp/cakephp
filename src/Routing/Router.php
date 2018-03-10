@@ -1149,6 +1149,18 @@ class Router
     }
 
     /**
+     * Set the RouteCollection inside the Router
+     *
+     * @param RouteCollection $routeCollection route collection
+     * @return void
+     */
+    public static function setRouteCollection($routeCollection)
+    {
+        static::$_collection = $routeCollection;
+        static::$initialized = true;
+    }
+
+    /**
      * Loads route configuration
      *
      * @deprecated 3.5.0 Routes will be loaded via the Application::routes() hook in 4.0.0
