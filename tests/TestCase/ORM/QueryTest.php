@@ -1565,8 +1565,8 @@ class QueryTest extends TestCase
 
         $counter = $table->ArticlesTags->find();
         $counter->select([
-                'total' => $counter->func()->count('*')
-            ])
+            'total' => $counter->func()->count('*')
+        ])
             ->where([
                 'ArticlesTags.tag_id' => 1,
                 'ArticlesTags.article_id' => new IdentifierExpression('Articles.id')
@@ -2004,9 +2004,11 @@ class QueryTest extends TestCase
         $query = new Query($this->connection, $table);
         $query
             ->select()
-            ->contain(['articles' => function ($q) {
-                return $q->where(['articles.id' => 1]);
-            }]);
+            ->contain([
+                'articles' => function ($q) {
+                    return $q->where(['articles.id' => 1]);
+                }
+            ]);
 
         $ids = [];
         foreach ($query as $entity) {
@@ -2287,23 +2289,25 @@ class QueryTest extends TestCase
         $table->belongsTo('authors');
 
         $query = $table->find()
-            ->contain(['authors' => function ($q) {
-                return $q
-                    ->formatResults(function ($authors) {
-                        return $authors->map(function ($author) {
-                            $author->idCopy = $author->id;
+            ->contain([
+                'authors' => function ($q) {
+                    return $q
+                        ->formatResults(function ($authors) {
+                            return $authors->map(function ($author) {
+                                $author->idCopy = $author->id;
 
-                            return $author;
-                        });
-                    })
-                    ->formatResults(function ($authors) {
-                        return $authors->map(function ($author) {
-                            $author->idCopy = $author->idCopy + 2;
+                                return $author;
+                            });
+                        })
+                        ->formatResults(function ($authors) {
+                            return $authors->map(function ($author) {
+                                $author->idCopy = $author->idCopy + 2;
 
-                            return $author;
+                                return $author;
+                            });
                         });
-                    });
-            }]);
+                }
+            ]);
 
         $query->formatResults(function ($results) {
             return $results->combine('id', 'author.idCopy');
@@ -2374,15 +2378,17 @@ class QueryTest extends TestCase
         $articles->hasMany('articlesTags');
         $articles->getAssociation('articlesTags')->getTarget()->belongsTo('tags');
 
-        $query = $table->find()->contain(['articles.articlesTags.tags' => function ($q) {
-            return $q->formatResults(function ($results) {
-                return $results->map(function ($tag) {
-                    $tag->name .= ' - visited';
+        $query = $table->find()->contain([
+            'articles.articlesTags.tags' => function ($q) {
+                return $q->formatResults(function ($results) {
+                    return $results->map(function ($tag) {
+                        $tag->name .= ' - visited';
 
-                    return $tag;
+                        return $tag;
+                    });
                 });
-            });
-        }]);
+            }
+        ]);
 
         $query->mapReduce(function ($row, $key, $mr) {
             foreach ((array)$row->articles as $article) {
@@ -2450,9 +2456,11 @@ class QueryTest extends TestCase
 
         $query = $table->find()
             ->order(['Articles.id' => 'ASC'])
-            ->contain(['Articles' => function ($q) {
-                return $q->contain('Authors');
-            }]);
+            ->contain([
+                'Articles' => function ($q) {
+                    return $q->contain('Authors');
+                }
+            ]);
         $results = $query->extract('article.author.name')->toArray();
         $expected = ['mariano', 'mariano', 'larry', 'larry'];
         $this->assertEquals($expected, $results);
@@ -2561,11 +2569,13 @@ class QueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles');
-        $query = $table->find()->contain(['articles' => function ($q) {
-            $this->assertTrue($q->isEagerLoaded());
+        $query = $table->find()->contain([
+            'articles' => function ($q) {
+                $this->assertTrue($q->isEagerLoaded());
 
-            return $q;
-        }]);
+                return $q;
+            }
+        ]);
         $this->assertFalse($query->isEagerLoaded());
 
         $table->getEventManager()->on('Model.beforeFind', function ($e, $q, $o, $primary) {
@@ -2589,11 +2599,13 @@ class QueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles');
-        $query = $table->find()->contain(['articles' => function ($q) {
-            $this->assertTrue($q->isEagerLoaded());
+        $query = $table->find()->contain([
+            'articles' => function ($q) {
+                $this->assertTrue($q->isEagerLoaded());
 
-            return $q;
-        }]);
+                return $q;
+            }
+        ]);
         $this->assertFalse($query->isEagerLoaded());
 
         $table->getEventManager()->on('Model.beforeFind', function ($e, $q, $o, $primary) {
@@ -2750,10 +2762,12 @@ class QueryTest extends TestCase
             ->select(['myField' => '(SELECT 2 + 2)'])
             ->enableAutoFields(true)
             ->enableHydration(false)
-            ->contain(['Authors' => function ($q) {
-                return $q->select(['compute' => '(SELECT 2 + 20)'])
-                    ->enableAutoFields(true);
-            }])
+            ->contain([
+                'Authors' => function ($q) {
+                    return $q->select(['compute' => '(SELECT 2 + 20)'])
+                        ->enableAutoFields(true);
+                }
+            ])
             ->first();
 
         $this->assertArrayHasKey('myField', $result);
@@ -3351,8 +3365,8 @@ class QueryTest extends TestCase
             });
         $expected = [
             [
-            'id' => 1,
-            'name' => 'mariano'
+                'id' => 1,
+                'name' => 'mariano'
             ]
         ];
         $this->assertEquals($expected, $results->enableHydration(false)->toArray());
@@ -3375,8 +3389,8 @@ class QueryTest extends TestCase
             });
         $expected = [
             [
-            'id' => 3,
-            'name' => 'larry'
+                'id' => 3,
+                'name' => 'larry'
             ]
         ];
         $this->assertEquals($expected, $results->enableHydration(false)->toArray());
@@ -3547,5 +3561,117 @@ class QueryTest extends TestCase
             ]
         ];
         $this->assertSame($expected, $results->first());
+    }
+
+    /**
+     * Test to see that the excluded fields are not in the select clause
+     *
+     * @return void
+     */
+    public function testSelectAllExcept()
+    {
+        $table = $this->getTableLocator()->get('Articles');
+        $result = $table
+            ->find()
+            ->selectAllExcept($table, ['body']);
+        $selectedFields = $result->clause('select');
+        $expected = [
+            'Articles__id' => 'Articles.id',
+            'Articles__author_id' => 'Articles.author_id',
+            'Articles__title' => 'Articles.title',
+            'Articles__published' => 'Articles.published'
+        ];
+        $this->assertEquals($expected, $selectedFields);
+    }
+
+    /**
+     * Test that the excluded fields are not included
+     * in the final query result.
+     *
+     * @return void
+     */
+    public function testSelectAllExceptWithContains()
+    {
+        $table = $this->getTableLocator()->get('Articles');
+        $table->hasMany('Comments');
+        $table->belongsTo('Authors');
+
+        $result = $table
+            ->find()
+            ->contain([
+                'Comments' => function ($query) use ($table) {
+                    return $query->selectAllExcept($table->Comments, ['published']);
+                }
+            ])
+            ->selectAllExcept($table, ['body'])
+            ->first();
+        $this->assertNull($result->comments[0]->published);
+        $this->assertNull($result->body);
+        $this->assertNotEmpty($result->id);
+        $this->assertNotEmpty($result->comments[0]->id);
+    }
+
+    /**
+     * Test what happens if you call selectAllExcept() more
+     * than once.
+     *
+     * @return void
+     */
+    public function testSelectAllExceptWithMulitpleCalls()
+    {
+        $table = $this->getTableLocator()->get('Articles');
+
+        $result = $table
+            ->find()
+            ->selectAllExcept($table, ['body'])
+            ->selectAllExcept($table, ['published']);
+        $selectedFields = $result->clause('select');
+        $expected = [
+            'Articles__id' => 'Articles.id',
+            'Articles__author_id' => 'Articles.author_id',
+            'Articles__title' => 'Articles.title',
+            'Articles__published' => 'Articles.published',
+            'Articles__body' => 'Articles.body'
+        ];
+        $this->assertEquals($expected, $selectedFields);
+
+        $result = $table
+            ->find()
+            ->selectAllExcept($table, ['body'])
+            ->selectAllExcept($table, ['published', 'body']);
+        $selectedFields = $result->clause('select');
+        $expected = [
+            'Articles__id' => 'Articles.id',
+            'Articles__author_id' => 'Articles.author_id',
+            'Articles__title' => 'Articles.title',
+            'Articles__published' => 'Articles.published'
+        ];
+        $this->assertEquals($expected, $selectedFields);
+
+        $result = $table
+            ->find()
+            ->selectAllExcept($table, ['body'])
+            ->selectAllExcept($table, ['published', 'body'], true);
+        $selectedFields = $result->clause('select');
+        $expected = [
+            'Articles__id' => 'Articles.id',
+            'Articles__author_id' => 'Articles.author_id',
+            'Articles__title' => 'Articles.title',
+        ];
+        $this->assertEquals($expected, $selectedFields);
+    }
+
+    /**
+     * Test that given the wrong first parameter, Invalid argument exception is thrown
+     *
+     * @return void
+     */
+    public function testSelectAllExceptThrowsInvalidArgument()
+    {
+        $table = $this->getTableLocator()->get('Articles');
+        $this->expectException(\InvalidArgumentException::class);
+            $table
+                ->find()
+                ->selectAllExcept([], ['body']);
     }
 }
