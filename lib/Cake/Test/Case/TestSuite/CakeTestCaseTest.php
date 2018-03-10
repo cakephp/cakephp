@@ -445,7 +445,8 @@ class CakeTestCaseTest extends CakeTestCase {
 		), App::RESET);
 		CakePlugin::load('TestPlugin');
 		ConnectionManager::create('test_secondary', array(
-			'datasource' => 'Database/TestLocalDriver'
+			'datasource' => 'Database/TestLocalDriver',
+			'prefix' => ''
 		));
 		$post = $this->getMockForModel('SecondaryPost', array('save'));
 		$this->assertEquals('test_secondary', $post->useDbConfig);
