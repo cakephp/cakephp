@@ -81,11 +81,25 @@ class BasePluginTest extends TestCase
         $this->assertSame($middleware, $plugin->middleware($middleware));
     }
 
-    public function testConsole()
+    public function testConsoleNoop()
     {
         $plugin = new BasePlugin();
         $commands = new CommandCollection();
         $this->assertSame($commands, $plugin->console($commands));
+    }
+
+    public function testConsoleFind()
+    {
+        $plugin = new TestPlugin();
+        Plugin::getCollection()->add($plugin);
+
+        $result = $plugin->console(new CommandCollection());
+
+        $this->assertTrue($result->has('widget'), 'Should have plugin command added');
+        $this->assertTrue($result->has('test_plugin.widget'), 'Should have long plugin name');
+
+        $this->assertTrue($result->has('example'), 'Should have plugin shell added');
+        $this->assertTrue($result->has('test_plugin.example'), 'Should have long plugin name');
     }
 
     public function testBootstrap()
