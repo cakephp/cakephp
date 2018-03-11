@@ -24,11 +24,6 @@ use Cake\TestSuite\ConsoleIntegrationTestCase;
 class LoadTaskTest extends ConsoleIntegrationTestCase
 {
     /**
-     * @var \Cake\Shell\Task\LoadTask|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $Task;
-
-    /**
      * setUp method
      *
      * @return void

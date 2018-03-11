@@ -13,19 +13,35 @@
  */
 namespace Cake\Test\TestCase\Shell\Task;
 
+use Cake\Console\Shell;
 use Cake\Core\Plugin;
 use Cake\Filesystem\File;
-use Cake\TestSuite\TestCase;
+use Cake\TestSuite\ConsoleIntegrationTestCase;
 
 /**
  * UnloadTaskTest class
  */
-class UnloadTaskTest extends TestCase
+class UnloadTaskTest extends ConsoleIntegrationTestCase
 {
     /**
-     * @var \Cake\Shell\Task\UnloadTask|\PHPUnit_Framework_MockObject_MockObject
+     * @var string
      */
-    protected $Task;
+    protected $bootstrap;
+
+    /**
+     * @var string
+     */
+    protected $app;
+
+    /**
+     * @var string
+     */
+    protected $originalBootstrapContent;
+
+    /**
+     * @var string
+     */
+    protected $originalAppContent;
 
     /**
      * setUp method
@@ -35,21 +51,11 @@ class UnloadTaskTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-
-        $this->io = $this->getMockBuilder('Cake\Console\ConsoleIo')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->Task = $this->getMockBuilder('Cake\Shell\Task\UnloadTask')
-            ->setMethods(['in', 'out', 'err', '_stop'])
-            ->setConstructorArgs([$this->io])
-            ->getMock();
-
         $this->bootstrap = ROOT . DS . 'config' . DS . 'bootstrap.php';
+        $this->app = APP . DS . 'Application.php';
 
-        $bootstrap = new File($this->bootstrap, false);
-
-        $this->originalBootstrapContent = $bootstrap->read();
+        $this->originalBootstrapContent = file_get_contents($this->bootstrap);
+        $this->originalAppContent = file_get_contents($this->app);
     }
 
     /**
@@ -63,9 +69,8 @@ class UnloadTaskTest extends TestCase
         unset($this->shell);
         Plugin::unload();
 
-        $bootstrap = new File($this->bootstrap, false);
-
-        $bootstrap->write($this->originalBootstrapContent);
+        file_put_contents($this->bootstrap, $this->originalBootstrapContent);
+        file_put_contents($this->app, $this->originalAppContent);
     }
 
     /**
@@ -75,110 +80,120 @@ class UnloadTaskTest extends TestCase
      */
     public function testUnload()
     {
-        $bootstrap = new File($this->bootstrap, false);
-
         $this->_addPluginToBootstrap('TestPlugin');
-
         $this->_addPluginToBootstrap('TestPluginSecond');
 
+        $contents = file_get_contents($this->bootstrap);
         $expected = "Plugin::load('TestPlugin', ['autoload' => true, 'bootstrap' => false, 'routes' => false]);";
-        $this->assertContains($expected, $bootstrap->read());
+        $this->assertContains($expected, $contents);
 
-        $this->Task->params = [
-            'cli' => false
-        ];
+        $this->exec('plugin unload --no_app TestPlugin');
 
-        $action = $this->Task->main('TestPlugin');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $contents = file_get_contents($this->bootstrap);
 
-        $this->assertTrue($action);
         $expected = "Plugin::load('TestPlugin', ['autoload' => true, 'bootstrap' => false, 'routes' => false]);";
-        $this->assertNotContains($expected, $bootstrap->read());
+
+        $this->assertNotContains($expected, $contents);
         $expected = "Plugin::load('TestPluginSecond', ['autoload' => true, 'bootstrap' => false, 'routes' => false]);";
-        $this->assertContains($expected, $bootstrap->read());
+        $this->assertContains($expected, $contents);
+    }
+
+    /**
+     * Data provider for various forms.
+     *
+     * @return array
+     */
+    public function variantProvider()
+    {
+        return [
+            //  Plugin::load('TestPlugin', [
+            //      'bootstrap' => false
+            //  ]);
+            ["\nPlugin::load('TestPlugin', [\n\t'bootstrap' => false\n]);\n"],
+
+            //  Plugin::load(
+            //      'TestPlugin',
+            //      [ 'bootstrap' => false]
+            //  );
+            ["\nPlugin::load(\n\t'TestPlugin',\n\t[ 'bootstrap' => false]\n);\n"],
+
+            //  Plugin::load(
+            //      'Foo',
+            //      [
+            //          'bootstrap' => false
+            //      ]
+            //  );
+            ["\nPlugin::load(\n\t'TestPlugin',\n\t[\n\t\t'bootstrap' => false\n\t]\n);\n"],
+
+            //  Plugin::load('Test', [
+            //      'autoload' => false,
+            //      'bootstrap' => true,
+            //      'routes' => true
+            //  ]);
+            ["\nPlugin::load('TestPlugin', [\n\t'autoload' => false,\n\t'bootstrap' => true,\n\t'routes' => true\n]);\n"],
+
+            //  Plugin::load('Test',
+            //      [
+            //          'bootstrap' => true,
+            //          'routes' => true
+            //      ]
+            //  );
+            ["\nPlugin::load('TestPlugin',\n\t[\n\t\t'bootstrap' => true,\n\t\t'routes' => true\n\t]\n);\n"],
+
+            //  Plugin::load('Test',
+            //      [
+            //
+            //      ]
+            //  );
+            ["\nPlugin::load('TestPlugin',\n\t[\n\t\n\t]\n);\n"],
+
+            //  Plugin::load('Test');
+            ["\nPlugin::load('TestPlugin');\n"],
+
+            //  Plugin::load('Test', ['bootstrap' => true, 'route' => false]);
+            ["\nPlugin::load('TestPlugin', ['bootstrap' => true, 'route' => false]);\n"],
+        ];
     }
 
     /**
      * testRegularExpressions
      *
      * This method will tests multiple notations of plugin loading.
+     *
+     * @dataProvider variantProvider
+     * @return void
      */
-    public function testRegularExpressions()
+    public function testRegularExpressions($content)
     {
         $bootstrap = new File($this->bootstrap, false);
+        $bootstrap->append($content);
 
-        $this->Task->params = [
-            'cli' => false
-        ];
+        $this->exec('plugin unload --no_app TestPlugin');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
 
-        //  Plugin::load('TestPlugin', [
-        //      'bootstrap' => false
-        //  ]);
-        $bootstrap->append("\nPlugin::load('TestPlugin', [\n\t'bootstrap' => false\n]);\n");
-        $this->Task->main('TestPlugin');
-        $this->assertNotContains("Plugin::load('TestPlugin', [\n\t'bootstrap' => false\n]);", $bootstrap->read());
-        $this->_clearBootstrap();
+        $result = $bootstrap->read();
+        $this->assertNotRegexp("/Plugin\:\:load\([\'\"]TestPlugin'[\'\"][^\)]*\)\;/mi", $result);
+    }
 
-        //  Plugin::load(
-        //      'TestPlugin',
-        //      [ 'bootstrap' => false]
-        //  );
-        $bootstrap->append("\nPlugin::load(\n\t'TestPlugin',\n\t[ 'bootstrap' => false]\n);\n");
-        $this->Task->main('TestPlugin');
-        $this->assertNotContains("Plugin::load(\n\t'TestPlugin',\n\t[ 'bootstrap' => false]\n);", $bootstrap->read());
-        $this->_clearBootstrap();
+    /**
+     * This method will tests multiple notations of plugin loading in the application class
+     *
+     * @dataProvider variantProvider
+     * @return void
+     */
+    public function testRegularExpressionsApplication($content)
+    {
+        $content = str_replace('Plugin::load', "        \$this->addPlugin", $content);
+        $this->addPluginToApp($content);
 
-        //  Plugin::load(
-        //      'Foo',
-        //      [
-        //          'bootstrap' => false
-        //      ]
-        //  );
-        $bootstrap->append("\nPlugin::load(\n\t'TestPlugin',\n\t[\n\t\t'bootstrap' => false\n\t]\n);\n");
-        $this->Task->main('TestPlugin');
-        $this->assertNotContains("Plugin::load(\n\t'TestPlugin',\n\t[\n\t\t'bootstrap' => false\n\t]\n);", $bootstrap->read());
-        $this->_clearBootstrap();
+        $this->exec('plugin unload TestPlugin');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
 
-        //  Plugin::load('Test', [
-        //      'autoload' => false,
-        //      'bootstrap' => true,
-        //      'routes' => true
-        //  ]);
-        $bootstrap->append("\nPlugin::load('TestPlugin', [\n\t'autoload' => false,\n\t'bootstrap' => true,\n\t'routes' => true\n]);\n");
-        $this->Task->main('TestPlugin');
-        $this->assertNotContains("Plugin::load('TestPlugin', [\n\t'autoload' => false,\n\t'bootstrap' => true,\n\t'routes' => true\n]);", $bootstrap->read());
-        $this->_clearBootstrap();
+        $result = file_get_contents($this->app);
 
-        //  Plugin::load('Test',
-        //      [
-        //          'bootstrap' => true,
-        //          'routes' => true
-        //      ]
-        //  );
-        $bootstrap->append("\nPlugin::load('TestPlugin',\n\t[\n\t\t'bootstrap' => true,\n\t\t'routes' => true\n\t]\n);\n");
-        $this->Task->main('TestPlugin');
-        $this->assertNotContains("Plugin::load('TestPlugin',\n\t[\n\t\t'bootstrap' => true,\n\t\t'routes' => true\n\t]\n);", $bootstrap->read());
-        $this->_clearBootstrap();
-
-        //  Plugin::load('Test',
-        //      [
-        //
-        //      ]
-        //  );
-        $bootstrap->append("\nPlugin::load('TestPlugin',\n\t[\n\t\n\t]\n);\n");
-        $this->Task->main('TestPlugin');
-        $this->assertNotContains("Plugin::load('TestPlugin',\n\t[\n\t\n\t]\n);", $bootstrap->read());
-        $this->_clearBootstrap();
-
-        //  Plugin::load('Test');
-        $bootstrap->append("\nPlugin::load('TestPlugin');\n");
-        $this->Task->main('TestPlugin');
-        $this->assertNotContains("Plugin::load('TestPlugin');", $bootstrap->read());
-        $this->_clearBootstrap();
-
-        //  Plugin::load('Test', ['bootstrap' => true, 'route' => false]);
-        $bootstrap->append("\nPlugin::load('TestPlugin', ['bootstrap' => true, 'route' => false]);\n");
-        $this->Task->main('TestPlugin');
-        $this->assertNotContains("Plugin::load('TestPlugin', ['bootstrap' => true, 'route' => false]);", $bootstrap->read());
+        $this->assertNotContains("addPlugin('TestPlugin'", $result);
+        $this->assertNotRegexp("/this\-\>addPlugin\([\'\"]TestPlugin'[\'\"][^\)]*\)\;/mi", $result);
     }
 
     /**
@@ -196,16 +211,17 @@ class UnloadTaskTest extends TestCase
     }
 
     /**
-     * clearBootstrap
+     * _addPluginToApp
      *
-     * Helper to clear the bootstrap file.
+     * Quick method to add a plugin to the bootstrap file.
+     * This is useful for the tests
      *
-     * @return void
+     * @param string $insert The addPlugin line to add.
      */
-    protected function _clearBootstrap()
+    protected function addPluginToApp($insert)
     {
-        $bootstrap = new File($this->bootstrap, false);
-
-        $bootstrap->write($this->originalBootstrapContent);
+        $contents = file_get_contents($this->app);
+        $contents = preg_replace('/(function bootstrap\(\)(?:\s+)\{)/m', '$1' . $insert, $contents);
+        file_put_contents($this->app, $contents);
     }
 }
