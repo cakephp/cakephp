@@ -130,7 +130,7 @@ class TranslateBehaviorTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
-        $table->locale('eng');
+        $table->setLocale('eng');
         $results = $table->find()->combine('title', 'body', 'id')->toArray();
         $expected = [
             1 => ['Title #1' => 'Content #1'],
@@ -149,7 +149,7 @@ class TranslateBehaviorTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
-        $table->locale('eng');
+        $table->setLocale('eng');
         $results = $table->find('translations')
             ->limit(1)
             ->formatResults(function ($results) {
@@ -282,7 +282,7 @@ class TranslateBehaviorTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Comments');
         $table->addBehavior('Translate', ['fields' => ['comment']]);
-        $table->locale('spa');
+        $table->setLocale('spa');
         $results = $table->find()
             ->where(['Comments.id' => 6])
             ->combine('id', 'comment')->toArray();
@@ -300,7 +300,7 @@ class TranslateBehaviorTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
-        $table->locale('eng');
+        $table->setLocale('eng');
         $results = $table->find()
             ->where(['Articles.id' => 2])
             ->all();
@@ -317,6 +317,28 @@ class TranslateBehaviorTest extends TestCase
             '_locale' => 'eng'
         ];
         $this->assertEquals($expected, $row->toArray());
+    }
+
+    /**
+     * Tests the locale setter/getter.
+     *
+     * @return void
+     */
+    public function testSetGetLocale()
+    {
+        $table = $this->getTableLocator()->get('Articles');
+        $table->addBehavior('Translate');
+
+        $this->assertEquals('en_US', $table->getLocale());
+
+        $table->setLocale('fr_FR');
+        $this->assertEquals('fr_FR', $table->getLocale());
+
+        $table->setLocale(null);
+        $this->assertEquals('en_US', $table->getLocale());
+
+        I18n::setLocale('fr_FR');
+        $this->assertEquals('fr_FR', $table->getLocale());
     }
 
     /**
@@ -361,11 +383,11 @@ class TranslateBehaviorTest extends TestCase
         $field = $table->translationField('title');
         $this->assertSame($expectedOtherLocale, $field);
 
-        $table->locale('de_DE');
+        $table->setLocale('de_DE');
         $field = $table->translationField('title');
         $this->assertSame($expectedSameLocale, $field);
 
-        $table->locale('es');
+        $table->setLocale('es');
         $field = $table->translationField('title');
         $this->assertSame($expectedOtherLocale, $field);
     }
@@ -394,7 +416,7 @@ class TranslateBehaviorTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
-        $table->locale('eng');
+        $table->setLocale('eng');
 
         $results = $table->find('list')->toArray();
         $expected = [1 => 'Title #1', 2 => 'Title #2', 3 => 'Title #3'];
@@ -410,7 +432,7 @@ class TranslateBehaviorTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
-        $table->locale('eng');
+        $table->setLocale('eng');
 
         $this->assertEquals(3, $table->find()->count());
     }
@@ -528,7 +550,7 @@ class TranslateBehaviorTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
-        $table->locale('cze');
+        $table->setLocale('cze');
         $results = $table->find('translations', ['locales' => ['deu', 'cze']]);
         $expected = [
             [
@@ -571,8 +593,8 @@ class TranslateBehaviorTest extends TestCase
         $comments = $table->hasMany('Comments')->getTarget();
         $comments->addBehavior('Translate', ['fields' => ['comment']]);
 
-        $table->locale('eng');
-        $comments->locale('eng');
+        $table->setLocale('eng');
+        $comments->setLocale('eng');
 
         $results = $table->find()->contain(['Comments' => function ($q) {
             return $q->select(['id', 'comment', 'article_id']);
@@ -642,8 +664,8 @@ class TranslateBehaviorTest extends TestCase
         $comments = $table->hasMany('Comments')->getTarget();
         $comments->addBehavior('Translate', ['fields' => ['comment']]);
 
-        $table->locale('cze');
-        $comments->locale('eng');
+        $table->setLocale('cze');
+        $comments->setLocale('eng');
         $results = $table->find('translations')->contain([
             'Comments' => function ($q) {
                 return $q->find('translations')->select(['id', 'comment', 'article_id']);
@@ -694,8 +716,8 @@ class TranslateBehaviorTest extends TestCase
         $authors = $table->belongsTo('Authors')->getTarget();
         $authors->addBehavior('Translate', ['fields' => ['name']]);
 
-        $table->locale('eng');
-        $authors->locale('eng');
+        $table->setLocale('eng');
+        $authors->setLocale('eng');
 
         $results = $table->find()
             ->select(['title', 'body'])
@@ -744,7 +766,7 @@ class TranslateBehaviorTest extends TestCase
         $table->belongsToMany('Tags', [
             'through' => $specialTags
         ]);
-        $specialTags->locale('eng');
+        $specialTags->setLocale('eng');
 
         $result = $table->get(2, ['contain' => 'Tags']);
         $this->assertNotEmpty($result);
@@ -761,7 +783,7 @@ class TranslateBehaviorTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
-        $table->locale('eng');
+        $table->setLocale('eng');
         $article = $table->find()->first();
         $this->assertEquals(1, $article->get('id'));
         $article->set('title', 'New translated article');
@@ -773,12 +795,12 @@ class TranslateBehaviorTest extends TestCase
         $this->assertEquals('New translated article', $article->get('title'));
         $this->assertEquals('Content #1', $article->get('body'));
 
-        $table->locale(false);
+        $table->setLocale(false);
         $article = $table->find()->first();
         $this->assertEquals(1, $article->get('id'));
         $this->assertEquals('First Article', $article->get('title'));
 
-        $table->locale('eng');
+        $table->setLocale('eng');
         $article->set('title', 'Wow, such translated article');
         $article->set('body', 'A translated body');
         $table->save($article);
@@ -799,7 +821,7 @@ class TranslateBehaviorTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
-        $table->locale('fra');
+        $table->setLocale('fra');
 
         $article = $table->find()->first();
         $this->assertEquals(1, $article->get('id'));
@@ -982,7 +1004,7 @@ class TranslateBehaviorTest extends TestCase
         $this->assertEquals('First Article', $article->get('title'));
         $this->assertEquals('First Article Body', $article->get('body'));
 
-        $table->locale('fra');
+        $table->setLocale('fra');
         $article = $table->find()->first();
         $this->assertEquals(1, $article->get('id'));
         $this->assertEquals('Le titre', $article->get('title'));
@@ -1000,7 +1022,7 @@ class TranslateBehaviorTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $table->hasMany('Comments');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
-        $table->locale('fra');
+        $table->setLocale('fra');
 
         $article = $table->find()->first();
         $this->assertEquals(1, $article->get('id'));
@@ -1137,7 +1159,7 @@ class TranslateBehaviorTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Comments');
         $table->addBehavior('Translate', ['fields' => ['comment']]);
-        $table->locale('spa');
+        $table->setLocale('spa');
         $query = $table->find()->where(['Comments.id' => 6]);
         $query2 = $table->find()->where(['Comments.id' => 5]);
         $query->union($query2);
@@ -1222,11 +1244,11 @@ class TranslateBehaviorTest extends TestCase
             'fields' => ['title', 'body'],
             'onlyTranslated' => true
         ]);
-        $table->locale('eng');
+        $table->setLocale('eng');
         $results = $table->find()->where(['Articles.id' => 1])->all();
         $this->assertCount(1, $results);
 
-        $table->locale('fr');
+        $table->setLocale('fr');
         $results = $table->find()->where(['Articles.id' => 1])->all();
         $this->assertCount(0, $results);
     }
@@ -1245,19 +1267,19 @@ class TranslateBehaviorTest extends TestCase
             'fields' => ['comment'],
             'onlyTranslated' => true
         ]);
-        $table->locale('eng');
+        $table->setLocale('eng');
         $results = $table->find('translations')->all();
         $this->assertCount(4, $results);
 
-        $table->locale('spa');
+        $table->setLocale('spa');
         $results = $table->find('translations')->all();
         $this->assertCount(1, $results);
 
-        $table->locale('spa');
+        $table->setLocale('spa');
         $results = $table->find('translations', ['filterByCurrentLocale' => false])->all();
         $this->assertCount(6, $results);
 
-        $table->locale('spa');
+        $table->setLocale('spa');
         $results = $table->find('translations')->all();
         $this->assertCount(1, $results);
     }
@@ -1274,7 +1296,7 @@ class TranslateBehaviorTest extends TestCase
             'fields' => ['title', 'body', 'description'],
             'allowEmptyTranslations' => false,
         ]);
-        $table->locale('spa');
+        $table->setLocale('spa');
         $result = $table->find()->first();
         $this->assertNull($result->description);
     }
