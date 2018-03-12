@@ -894,21 +894,30 @@ class Query implements ExpressionInterface, IteratorAggregate
      * query.
      *
      * This method does allow empty inputs in contrast to where() if you set
-     * $allowEmpty to true.
+     * 'allowEmpty' to true.
      * Be careful about using it without proper sanity checks.
+     *
+     * Options:
+     * - `types` - Associative array of type names used to bind values to query
+     * - `allowEmpty` - Allow empty array.
      *
      * @param string $field Field
      * @param array $values Array of values
-     * @param bool $allowEmpty Allow empty array
+     * @param array $options Options
      * @return $this
      */
-    public function whereIn($field, array $values, $allowEmpty = false)
+    public function whereIn($field, array $values, array $options = [])
     {
-        if ($allowEmpty && !$values) {
+        $options += [
+            'types' => [],
+            'allowEmpty' => false,
+        ];
+
+        if ($options['allowEmpty'] && !$values) {
             return $this->where('1=0');
         }
 
-        return $this->where([$field . ' IN' => $values]);
+        return $this->where([$field . ' IN' => $values], $options['types']);
     }
 
     /**
@@ -916,21 +925,26 @@ class Query implements ExpressionInterface, IteratorAggregate
      * query.
      *
      * This method does allow empty inputs in contrast to where() if you set
-     * $allowEmpty to true.
+     * 'allowEmpty' to true.
      * Be careful about using it without proper sanity checks.
      *
      * @param string $field Field
      * @param array $values Array of values
-     * @param bool $allowEmpty Allow empty array
+     * @param array $options Options
      * @return $this
      */
-    public function whereNotIn($field, array $values, $allowEmpty = false)
+    public function whereNotIn($field, array $values, array $options = [])
     {
-        if ($allowEmpty && !$values) {
+        $options += [
+            'types' => [],
+            'allowEmpty' => false,
+        ];
+
+        if ($options['allowEmpty'] && !$values) {
             return $this->where('1=1');
         }
 
-        return $this->where([$field . ' NOT IN' => $values]);
+        return $this->where([$field . ' NOT IN' => $values], $options['types']);
     }
 
     /**
