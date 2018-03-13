@@ -745,8 +745,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function displayField($key = null)
     {
         deprecationWarning(
-            get_called_class() . '::displayKey() is deprecated. ' .
-            'Use setDisplayKey()/getDisplayKey() instead.'
+            get_called_class() . '::displayField() is deprecated. ' .
+            'Use setDisplayField()/getDisplayField() instead.'
         );
         if ($key !== null) {
             return $this->setDisplayField($key);
