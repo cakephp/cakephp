@@ -606,7 +606,7 @@ class CompositeKeyTest extends TestCase
             ['id' => 8, 'name' => 'a', 'site_id' => 2, 'parent_id' => 4],
         ]);
         $query->find('threaded', ['parentField' => ['parent_id', 'site_id']]);
-        $formatter = $query->formatResults()[0];
+        $formatter = $query->getResultFormatters()[0];
 
         $expected = [
             [
