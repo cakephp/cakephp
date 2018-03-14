@@ -341,6 +341,7 @@ trait QueryTrait
                     'Use getMapReducers() instead.'
                 );
             }
+
             return $this->_mapReduce;
         }
         $this->_mapReduce[] = compact('mapper', 'reducer');
@@ -408,6 +409,7 @@ trait QueryTrait
                     'Use getResultFormatters() instead.'
                 );
             }
+
             return $this->_formatters;
         }
 
