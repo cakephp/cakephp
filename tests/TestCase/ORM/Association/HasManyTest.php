@@ -303,6 +303,8 @@ class HasManyTest extends TestCase
 
         $association = new HasMany('Articles', $config);
         $keys = [1, 2, 3, 4];
+
+        /** @var \Cake\ORM\Query $query */
         $query = $this->article->query();
         $query->addDefaultTypes($this->article->Comments->getSource());
 
@@ -336,7 +338,7 @@ class HasManyTest extends TestCase
 
         $expected = new OrderByExpression(['title' => 'DESC']);
         $this->assertOrderClause($expected, $query);
-        $this->assertArrayHasKey('Comments', $query->contain());
+        $this->assertArrayHasKey('Comments', $query->getContain());
     }
 
     /**
@@ -382,6 +384,8 @@ class HasManyTest extends TestCase
         ];
         $association = new HasMany('Articles', $config);
         $keys = [1, 2, 3, 4];
+
+        /** @var \Cake\ORM\Query $query */
         $query = $this->article->query();
         $this->article->method('find')
             ->with('all')

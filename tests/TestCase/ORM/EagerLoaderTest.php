@@ -235,7 +235,7 @@ class EagerLoaderTest extends TestCase
             ]])
             ->will($this->returnValue($query));
 
-        $loader = new EagerLoader;
+        $loader = new EagerLoader();
         $loader->contain($contains);
         $query->select('foo.id')->setEagerLoader($loader)->sql();
     }
@@ -248,7 +248,7 @@ class EagerLoaderTest extends TestCase
      */
     public function testContainDotNotation()
     {
-        $loader = new EagerLoader;
+        $loader = new EagerLoader();
         $loader->contain([
             'clients.orders.stuff',
             'clients.companies.categories' => ['conditions' => ['a >' => 1]]
@@ -265,7 +265,7 @@ class EagerLoaderTest extends TestCase
                 ]
             ]
         ];
-        $this->assertEquals($expected, $loader->contain());
+        $this->assertEquals($expected, $loader->getContain());
         $loader->contain([
             'clients.orders' => ['fields' => ['a', 'b']],
             'clients' => ['sort' => ['a' => 'desc']],
@@ -273,7 +273,7 @@ class EagerLoaderTest extends TestCase
 
         $expected['clients']['orders'] += ['fields' => ['a', 'b']];
         $expected['clients'] += ['sort' => ['a' => 'desc']];
-        $this->assertEquals($expected, $loader->contain());
+        $this->assertEquals($expected, $loader->getContain());
     }
 
     /**
@@ -283,7 +283,7 @@ class EagerLoaderTest extends TestCase
      */
     public function testContainKeyValueNotation()
     {
-        $loader = new EagerLoader;
+        $loader = new EagerLoader();
         $loader->contain([
             'clients',
             'companies' => 'categories',
@@ -296,7 +296,7 @@ class EagerLoaderTest extends TestCase
                 ],
             ],
         ];
-        $this->assertEquals($expected, $loader->contain());
+        $this->assertEquals($expected, $loader->getContain());
     }
 
     /**
@@ -308,7 +308,7 @@ class EagerLoaderTest extends TestCase
     {
         $builder = function ($query) {
         };
-        $loader = new EagerLoader;
+        $loader = new EagerLoader();
         $loader->contain([
             'clients.orders.stuff' => ['fields' => ['a']],
             'clients' => $builder
@@ -322,14 +322,14 @@ class EagerLoaderTest extends TestCase
                 'queryBuilder' => $builder
             ]
         ];
-        $this->assertEquals($expected, $loader->contain());
+        $this->assertEquals($expected, $loader->getContain());
 
-        $loader = new EagerLoader;
+        $loader = new EagerLoader();
         $loader->contain([
             'clients.orders.stuff' => ['fields' => ['a']],
             'clients' => ['queryBuilder' => $builder]
         ]);
-        $this->assertEquals($expected, $loader->contain());
+        $this->assertEquals($expected, $loader->getContain());
     }
 
     /**
@@ -341,7 +341,7 @@ class EagerLoaderTest extends TestCase
     {
         $builder = function ($query) {
         };
-        $loader = new EagerLoader;
+        $loader = new EagerLoader();
         $loader->contain('clients', $builder);
 
         $expected = [
@@ -349,7 +349,7 @@ class EagerLoaderTest extends TestCase
                 'queryBuilder' => $builder
             ]
         ];
-        $this->assertEquals($expected, $loader->contain());
+        $this->assertEquals($expected, $loader->getContain());
     }
 
     /**
@@ -363,7 +363,7 @@ class EagerLoaderTest extends TestCase
 
         $builder = function ($query) {
         };
-        $loader = new EagerLoader;
+        $loader = new EagerLoader();
         $loader->contain(['clients'], $builder);
 
         $expected = [
@@ -371,7 +371,7 @@ class EagerLoaderTest extends TestCase
                 'queryBuilder' => $builder
             ]
         ];
-        $this->assertEquals($expected, $loader->contain());
+        $this->assertEquals($expected, $loader->getContain());
     }
 
     /**
@@ -381,7 +381,7 @@ class EagerLoaderTest extends TestCase
      */
     public function testContainMergeBuilders()
     {
-        $loader = new EagerLoader;
+        $loader = new EagerLoader();
         $loader->contain([
             'clients' => function ($query) {
                 return $query->select(['a']);
@@ -392,7 +392,7 @@ class EagerLoaderTest extends TestCase
                 return $query->select(['b']);
             }
         ]);
-        $builder = $loader->contain()['clients']['queryBuilder'];
+        $builder = $loader->getContain()['clients']['queryBuilder'];
         $table = $this->getTableLocator()->get('foo');
         $query = new Query($this->connection, $table);
         $query = $builder($query);
@@ -417,7 +417,7 @@ class EagerLoaderTest extends TestCase
 
         $table = $this->getTableLocator()->get('foo');
         $query = new Query($this->connection, $table);
-        $loader = new EagerLoader;
+        $loader = new EagerLoader();
         $loader->contain($contains);
         $query->select('foo.id');
         $loader->attachAssociations($query, $table, true);
@@ -502,7 +502,7 @@ class EagerLoaderTest extends TestCase
             ->setConstructorArgs([$this->connection, $this->table])
             ->getMock();
 
-        $loader = new EagerLoader;
+        $loader = new EagerLoader();
         $loader->contain($contains);
         $normalized = $loader->normalized($this->table);
         $this->assertEquals('clients', $normalized['clients']->aliasPath());

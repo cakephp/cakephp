@@ -923,7 +923,7 @@ class QueryTest extends TestCase
         $this->assertEquals($expected, $query->clause('having'));
 
         $expected = ['articles' => []];
-        $this->assertEquals($expected, $query->contain());
+        $this->assertEquals($expected, $query->getContain());
     }
 
     /**
@@ -1815,18 +1815,19 @@ class QueryTest extends TestCase
             ->setConstructorArgs([$this->connection, $this->table])
             ->getMock();
 
+        /** @var \Cake\ORM\Query $query */
         $query->contain([
             'Articles'
         ]);
 
-        $result = $query->contain();
+        $result = $query->getContain();
         $this->assertInternalType('array', $result);
         $this->assertNotEmpty($result);
 
         $result = $query->clearContain();
         $this->assertInstanceOf(Query::class, $result);
 
-        $result = $query->contain();
+        $result = $query->getContain();
         $this->assertInternalType('array', $result);
         $this->assertEmpty($result);
     }
@@ -1983,13 +1984,13 @@ class QueryTest extends TestCase
 
         $query = $table->find();
         $query->contain(['Comments']);
-        $this->assertEquals(['Comments'], array_keys($query->contain()));
+        $this->assertEquals(['Comments'], array_keys($query->getContain()));
 
         $query->contain(['Authors'], true);
-        $this->assertEquals(['Authors'], array_keys($query->contain()));
+        $this->assertEquals(['Authors'], array_keys($query->getContain()));
 
         $query->contain(['Comments', 'Authors'], true);
-        $this->assertEquals(['Comments', 'Authors'], array_keys($query->contain()));
+        $this->assertEquals(['Comments', 'Authors'], array_keys($query->getContain()));
     }
 
     /**
@@ -3540,8 +3541,8 @@ class QueryTest extends TestCase
 
         $results = $table->find()
             ->enableHydration(false)
-            ->matching('articles', function ($q) {
-                return $q->notMatching('tags', function ($q) {
+            ->matching('articles', function (Query $q) {
+                return $q->notMatching('tags', function (Query $q) {
                     return $q->where(['tags.name' => 'tag3']);
                 });
             })
@@ -3599,7 +3600,7 @@ class QueryTest extends TestCase
         $result = $table
             ->find()
             ->contain([
-                'Comments' => function ($query) use ($table) {
+                'Comments' => function (Query $query) use ($table) {
                     return $query->selectAllExcept($table->Comments, ['published']);
                 }
             ])

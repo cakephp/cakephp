@@ -408,7 +408,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      * If called with no arguments, this function will return an array with
      * with the list of previously configured associations to be contained in the
-     * result.
+     * result. This getter part is deprecated as of 3.6.0. Use getContain() instead.
      *
      * If called with an empty first argument and `$override` is set to true, the
      * previous list will be emptied.
@@ -428,7 +428,12 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         }
 
         if ($associations === null) {
-            return $loader->contain();
+            deprecationWarning(
+                'Using Query::contain() as getter is deprecated. ' .
+                'Use getContain() instead.'
+            );
+
+            return $loader->getContain();
         }
 
         $queryBuilder = null;
@@ -436,10 +441,20 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
             $queryBuilder = $override;
         }
 
-        $result = $loader->contain($associations, $queryBuilder);
-        $this->_addAssociationsToTypeMap($this->repository(), $this->getTypeMap(), $result);
+        if ($associations) {
+            $loader->contain($associations, $queryBuilder);
+        }
+        $this->_addAssociationsToTypeMap($this->repository(), $this->getTypeMap(), $loader->getContain());
 
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getContain()
+    {
+        return $this->getEagerLoader()->getContain();
     }
 
     /**
@@ -1258,7 +1273,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
             'buffered' => $this->_useBufferedResults,
             'formatters' => count($this->_formatters),
             'mapReducers' => count($this->_mapReduce),
-            'contain' => $eagerLoader ? $eagerLoader->contain() : [],
+            'contain' => $eagerLoader ? $eagerLoader->getContain() : [],
             'matching' => $eagerLoader ? $eagerLoader->getMatching() : [],
             'extraOptions' => $this->_options,
             'repository' => $this->_repository
