@@ -318,7 +318,7 @@ trait QueryTrait
      * result is attempted to be fetched.
      *
      * If the first argument is set to null, it will return the list of previously
-     * registered map reduce routines.
+     * registered map reduce routines. This is deprecated as of 3.6.0 - use getMapReducers() instead.
      *
      * If the third argument is set to true, it will erase previous map reducers
      * and replace it with the arguments passed.
@@ -335,11 +335,27 @@ trait QueryTrait
             $this->_mapReduce = [];
         }
         if ($mapper === null) {
+            if (!$overwrite) {
+                deprecationWarning(
+                    'Using QueryTrait::mapReduce() as a getter is deprecated. ' .
+                    'Use getMapReducers() instead.'
+                );
+            }
             return $this->_mapReduce;
         }
         $this->_mapReduce[] = compact('mapper', 'reducer');
 
         return $this;
+    }
+
+    /**
+     * Returns the list of previously registered map reduce routines.
+     *
+     * @return array
+     */
+    public function getMapReducers()
+    {
+        return $this->_mapReduce;
     }
 
     /**
@@ -354,7 +370,7 @@ trait QueryTrait
      * after all the `MapReduce` routines for this query have been executed.
      *
      * If the first argument is set to null, it will return the list of previously
-     * registered map reduce routines.
+     * registered format routines. This is deprecated as of 3.6.0 - use getResultFormatters() instead.
      *
      * If the second argument is set to true, it will erase previous formatters
      * and replace them with the passed first argument.
@@ -386,6 +402,12 @@ trait QueryTrait
             $this->_formatters = [];
         }
         if ($formatter === null) {
+            if ($mode !== self::OVERWRITE) {
+                deprecationWarning(
+                    'Using QueryTrait::formatResults() as a getter is deprecated. ' .
+                    'Use getResultFormatters() instead.'
+                );
+            }
             return $this->_formatters;
         }
 
@@ -398,6 +420,16 @@ trait QueryTrait
         $this->_formatters[] = $formatter;
 
         return $this;
+    }
+
+    /**
+     * Returns the list of previously registered format routines.
+     *
+     * @return array
+     */
+    public function getResultFormatters()
+    {
+        return $this->_formatters;
     }
 
     /**

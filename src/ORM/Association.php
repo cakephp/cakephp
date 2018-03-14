@@ -1216,7 +1216,7 @@ abstract class Association
      */
     protected function _formatAssociationResults($query, $surrogate, $options)
     {
-        $formatters = $surrogate->formatResults();
+        $formatters = $surrogate->getResultFormatters();
 
         if (!$formatters || empty($options['propertyPath'])) {
             return;

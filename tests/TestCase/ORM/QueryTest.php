@@ -991,11 +991,11 @@ class QueryTest extends TestCase
         $this->assertSame($query, $query->mapReduce($mapper1));
         $this->assertEquals(
             [['mapper' => $mapper1, 'reducer' => null]],
-            $query->mapReduce()
+            $query->getMapReducers()
         );
 
         $this->assertEquals($query, $query->mapReduce($mapper2));
-        $result = $query->mapReduce();
+        $result = $query->getMapReducers();
         $this->assertSame(
             [
                 ['mapper' => $mapper1, 'reducer' => null],
@@ -1024,7 +1024,7 @@ class QueryTest extends TestCase
         $this->assertSame($query, $query->mapReduce($mapper1, $reducer1));
         $this->assertEquals(
             [['mapper' => $mapper1, 'reducer' => $reducer1]],
-            $query->mapReduce()
+            $query->getMapReducers()
         );
 
         $this->assertSame($query, $query->mapReduce($mapper2, $reducer2));
@@ -1033,7 +1033,7 @@ class QueryTest extends TestCase
                 ['mapper' => $mapper1, 'reducer' => $reducer1],
                 ['mapper' => $mapper2, 'reducer' => $reducer2]
             ],
-            $query->mapReduce()
+            $query->getMapReducers()
         );
     }
 
@@ -1056,13 +1056,13 @@ class QueryTest extends TestCase
         $this->assertEquals($query, $query->mapReduce($mapper1, $reducer1));
         $this->assertEquals(
             [['mapper' => $mapper1, 'reducer' => $reducer1]],
-            $query->mapReduce()
+            $query->getMapReducers()
         );
 
         $this->assertEquals($query, $query->mapReduce($mapper2, $reducer2, true));
         $this->assertEquals(
             [['mapper' => $mapper2, 'reducer' => $reducer2]],
-            $query->mapReduce()
+            $query->getMapReducers()
         );
     }
 
@@ -2141,17 +2141,17 @@ class QueryTest extends TestCase
         $table = $this->getTableLocator()->get('authors');
         $query = new Query($this->connection, $table);
         $this->assertSame($query, $query->formatResults($callback1));
-        $this->assertSame([$callback1], $query->formatResults());
+        $this->assertSame([$callback1], $query->getResultFormatters());
         $this->assertSame($query, $query->formatResults($callback2));
-        $this->assertSame([$callback1, $callback2], $query->formatResults());
+        $this->assertSame([$callback1, $callback2], $query->getResultFormatters());
         $query->formatResults($callback2, true);
-        $this->assertSame([$callback2], $query->formatResults());
+        $this->assertSame([$callback2], $query->getResultFormatters());
         $query->formatResults(null, true);
-        $this->assertSame([], $query->formatResults());
+        $this->assertSame([], $query->getResultFormatters());
 
         $query->formatResults($callback1);
         $query->formatResults($callback2, $query::PREPEND);
-        $this->assertSame([$callback2, $callback1], $query->formatResults());
+        $this->assertSame([$callback2, $callback1], $query->getResultFormatters());
     }
 
     /**
