@@ -1566,23 +1566,25 @@ class DboSource extends DataSource {
 		// Make one pass through children and collect by parent key
 		// Make second pass through parents and associate children
 		$mergedByFK = array();
-		foreach ($assocResultSet as $data) {
-			$fk = $data[$association][$foreignKey];
-			if (! array_key_exists($fk, $mergedByFK)) {
-				$mergedByFK[$fk] = array();
-			}
-			if (count($data) > 1) {
-				$data = array_merge($data[$association], $data);
-				unset($data[$association]);
-				foreach ($data as $key => $name) {
-					if (is_numeric($key)) {
-						$data[$association][] = $name;
-						unset($data[$key]);
-					}
+		if (is_array($assocResultSet)) {
+			foreach ($assocResultSet as $data) {
+				$fk = $data[$association][$foreignKey];
+				if (! array_key_exists($fk, $mergedByFK)) {
+					$mergedByFK[$fk] = array();
 				}
-				$mergedByFK[$fk][] = $data;
-			} else {
-				$mergedByFK[$fk][] = $data[$association];
+				if (count($data) > 1) {
+					$data = array_merge($data[$association], $data);
+					unset($data[$association]);
+					foreach ($data as $key => $name) {
+						if (is_numeric($key)) {
+							$data[$association][] = $name;
+							unset($data[$key]);
+						}
+					}
+					$mergedByFK[$fk][] = $data;
+				} else {
+					$mergedByFK[$fk][] = $data[$association];
+				}
 			}
 		}
 
