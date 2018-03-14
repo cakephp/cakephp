@@ -77,6 +77,8 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     protected $_defaultConfig = [
         'implementedFinders' => ['translations' => 'findTranslations'],
         'implementedMethods' => [
+            'setLocale' => 'setLocale',
+            'getLocale' => 'getLocale',
             'locale' => 'locale',
             'translationField' => 'translationField'
         ],
@@ -207,7 +209,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      */
     public function beforeFind(Event $event, Query $query, ArrayObject $options)
     {
-        $locale = $this->locale();
+        $locale = $this->getLocale();
 
         if ($locale === $this->getConfig('defaultLocale')) {
             return;
@@ -271,7 +273,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      */
     public function beforeSave(Event $event, EntityInterface $entity, ArrayObject $options)
     {
-        $locale = $entity->get('_locale') ?: $this->locale();
+        $locale = $entity->get('_locale') ?: $this->getLocale();
         $newOptions = [$this->_translationTable->getAlias() => ['validate' => false]];
         $options['associated'] = $newOptions + $options['associated'];
 
@@ -413,20 +415,68 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     }
 
     /**
+     * Sets the locale that should be used for all future find and save operations on
+     * the table where this behavior is attached to.
+     *
+     * When fetching records, the behavior will include the content for the locale set
+     * via this method, and likewise when saving data, it will save the data in that
+     * locale.
+     *
+     * Note that in case an entity has a `_locale` property set, that locale will win
+     * over the locale set via this method (and over the globally configured one for
+     * that matter)!
+     *
+     * @param string|null $locale The locale to use for fetching and saving records. Pass `null`
+     * in order to unset the current locale, and to make the behavior fall back to using the
+     * globally configured locale.
+     * @return $this
+     * @see \Cake\ORM\Behavior\TranslateBehavior::getLocale()
+     * @link https://book.cakephp.org/3.0/en/orm/behaviors/translate.html#retrieving-one-language-without-using-i18n-locale
+     * @link https://book.cakephp.org/3.0/en/orm/behaviors/translate.html#saving-in-another-language
+     */
+    public function setLocale($locale)
+    {
+        $this->_locale = $locale;
+
+        return $this;
+    }
+
+    /**
+     * Returns the current locale.
+     *
+     * If no locale has been explicitly set via `setLocale()`, this method will return
+     * the currently configured global locale.
+     *
+     * @return string
+     * @see \Cake\I18n\I18n::getLocale()
+     * @see \Cake\ORM\Behavior\TranslateBehavior::setLocale()
+     */
+    public function getLocale()
+    {
+        return $this->_locale ?: I18n::getLocale();
+    }
+
+    /**
      * Sets all future finds for the bound table to also fetch translated fields for
      * the passed locale. If no value is passed, it returns the currently configured
      * locale
      *
+     * @deprecated 3.6.0 Use setLocale()/getLocale() instead.
      * @param string|null $locale The locale to use for fetching translated records
      * @return string
      */
     public function locale($locale = null)
     {
-        if ($locale === null) {
-            return $this->_locale ?: I18n::getLocale();
+        deprecationWarning(
+            get_called_class() . '::locale() is deprecated. ' .
+            'Use setLocale()/getLocale() instead.'
+        );
+
+        if ($locale !== null) {
+            $this->setLocale($locale);
         }
 
-        return $this->_locale = (string)$locale;
+        return $this->getLocale();
     }
 
     /**
@@ -442,7 +492,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     public function translationField($field)
     {
         $table = $this->_table;
-        if ($this->locale() === $this->getConfig('defaultLocale')) {
+        if ($this->getLocale() === $this->getConfig('defaultLocale')) {
             return $table->aliasField($field);
         }
         $associationName = $table->getAlias() . '_' . $field . '_translation';
