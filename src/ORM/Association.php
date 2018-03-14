@@ -1262,7 +1262,7 @@ abstract class Association
     protected function _bindNewAssociations($query, $surrogate, $options)
     {
         $loader = $surrogate->getEagerLoader();
-        $contain = $loader->contain();
+        $contain = $loader->getContain();
         $matching = $loader->getMatching();
 
         if (!$contain && !$matching) {
@@ -1275,7 +1275,9 @@ abstract class Association
         }
 
         $eagerLoader = $query->getEagerLoader();
-        $eagerLoader->contain($newContain);
+        if ($newContain) {
+            $eagerLoader->contain($newContain);
+        }
 
         foreach ($matching as $alias => $value) {
             $eagerLoader->setMatching(
