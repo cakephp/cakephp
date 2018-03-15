@@ -16,6 +16,7 @@ namespace Cake\ORM\Rule;
 
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
+use Cake\ORM\TableRegistry;
 use RuntimeException;
 
 /**
@@ -121,6 +122,50 @@ class ExistsIn
             foreach ($this->_fields as $i => $field) {
                 if ($schema->getColumn($field) && $schema->isNullable($field) && $entity->get($field) === null) {
                     unset($bindingKey[$i], $this->_fields[$i]);
+                }
+            }
+        }
+
+        if (isset($options['parent']) && is_a($options['parent'], EntityInterface::class)) {
+            /**
+             * @var EntityInterface $parent
+             */
+            $parent = $options['parent'];
+
+            //extract entity from given parent regarding HM and HABTM associations
+            $parentEntity = null;
+            if ($isAssociation) {
+                if (TableRegistry::get($parent->getSource()) === $target->getTarget()) {
+                    //parent is of same  as target
+                    $parentEntity = $parent;
+                } else {
+                    if (!empty($parent[strtolower($target->getName())])) {
+                        $parentEntity = $parent[strtolower($target->getName())];
+                    }
+                }
+            } else {
+                $parentEntity = $parent;
+            }
+
+            if (isset($parentEntity)) {
+                //extract fields to match
+                $parent_fields = [];
+                if (is_array($parentEntity)) {
+                    //reagrd HM and HABTM associations
+                    $isNew = true;
+                    foreach ($parentEntity as $record) {
+                        $isNew &= $record->isNew();
+                        $parent_fields = array_merge($parent_fields, $record->extract($bindingKey));
+                    }
+                } else {
+                    $isNew = $parentEntity->isNew();
+                    $parent_fields = $parentEntity->extract($bindingKey);
+                }
+
+                //just do this check if one or more entity is new
+                if ($isNew) {
+                    $child_fields = $entity->extract($this->_fields);
+                    return empty(array_diff($child_fields, $parent_fields));
                 }
             }
         }

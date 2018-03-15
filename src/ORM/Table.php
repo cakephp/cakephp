@@ -1853,7 +1853,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $this,
             $entity,
             $options['associated'],
-            ['_primary' => false] + $options->getArrayCopy()
+            ['_primary' => false] + ['parent' => $entity] + $options->getArrayCopy()
         );
 
         if (!$success && $options['atomic']) {
