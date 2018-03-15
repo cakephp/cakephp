@@ -906,7 +906,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @param array $options Options
      * @return $this
      */
-    public function whereInArray($field, array $values, array $options = [])
+    public function whereInList($field, array $values, array $options = [])
     {
         $options += [
             'types' => [],
@@ -933,7 +933,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @param array $options Options
      * @return $this
      */
-    public function whereNotInArray($field, array $values, array $options = [])
+    public function whereNotInList($field, array $values, array $options = [])
     {
         $options += [
             'types' => [],

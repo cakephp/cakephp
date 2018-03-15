@@ -1724,7 +1724,7 @@ class QueryTest extends TestCase
         $query = new Query($this->connection);
         $query->select(['id'])
             ->from('articles')
-            ->whereInArray('id', [2, 3])
+            ->whereInList('id', [2, 3])
             ->execute();
         $sql = $query->sql();
 
@@ -1749,7 +1749,7 @@ class QueryTest extends TestCase
         $query = new Query($this->connection);
         $query->select(['id'])
             ->from('articles')
-            ->whereInArray('id', [], ['allowEmpty' => true])
+            ->whereInList('id', [], ['allowEmpty' => true])
             ->execute();
         $sql = $query->sql();
 
@@ -1774,7 +1774,7 @@ class QueryTest extends TestCase
         $query = new Query($this->connection);
         $query->select(['id'])
             ->from('articles')
-            ->whereNotInArray('id', [1, 3])
+            ->whereNotInList('id', [1, 3])
             ->execute();
         $sql = $query->sql();
 
@@ -1799,7 +1799,7 @@ class QueryTest extends TestCase
         $query = new Query($this->connection);
         $query->select(['id'])
             ->from('articles')
-            ->whereNotInArray('id', [], ['allowEmpty' => true])
+            ->whereNotInList('id', [], ['allowEmpty' => true])
             ->execute();
         $sql = $query->sql();
 
