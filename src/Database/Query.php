@@ -906,7 +906,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @param array $options Options
      * @return $this
      */
-    public function whereIn($field, array $values, array $options = [])
+    public function whereInArray($field, array $values, array $options = [])
     {
         $options += [
             'types' => [],
@@ -933,7 +933,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @param array $options Options
      * @return $this
      */
-    public function whereNotIn($field, array $values, array $options = [])
+    public function whereNotInArray($field, array $values, array $options = [])
     {
         $options += [
             'types' => [],
@@ -941,7 +941,7 @@ class Query implements ExpressionInterface, IteratorAggregate
         ];
 
         if ($options['allowEmpty'] && !$values) {
-            return $this->where('1=1');
+            return $this->where([$field . ' IS NOT' => null]);
         }
 
         return $this->where([$field . ' NOT IN' => $values], $options['types']);

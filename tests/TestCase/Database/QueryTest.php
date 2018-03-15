@@ -1714,17 +1714,17 @@ class QueryTest extends TestCase
     }
 
     /**
-     * Tests whereIn() and its input types.
+     * Tests whereInArray() and its input types.
      *
      * @return void
      */
-    public function testWhereIn()
+    public function testWhereInArray()
     {
         $this->loadFixtures('Articles');
         $query = new Query($this->connection);
         $query->select(['id'])
             ->from('articles')
-            ->whereIn('id', [2, 3])
+            ->whereInArray('id', [2, 3])
             ->execute();
         $sql = $query->sql();
 
@@ -1739,17 +1739,17 @@ class QueryTest extends TestCase
     }
 
     /**
-     * Tests whereIn() and empty array input.
+     * Tests whereInArray() and empty array input.
      *
      * @return void
      */
-    public function testWhereInEmpty()
+    public function testWhereInArrayEmpty()
     {
         $this->loadFixtures('Articles');
         $query = new Query($this->connection);
         $query->select(['id'])
             ->from('articles')
-            ->whereIn('id', [], ['allowEmpty' => true])
+            ->whereInArray('id', [], ['allowEmpty' => true])
             ->execute();
         $sql = $query->sql();
 
@@ -1764,17 +1764,17 @@ class QueryTest extends TestCase
     }
 
     /**
-     * Tests whereNotIn() and its input types.
+     * Tests whereNotInArray() and its input types.
      *
      * @return void
      */
-    public function testWhereNotIn()
+    public function testWhereNotInArray()
     {
         $this->loadFixtures('Articles');
         $query = new Query($this->connection);
         $query->select(['id'])
             ->from('articles')
-            ->whereNotIn('id', [1, 3])
+            ->whereNotInArray('id', [1, 3])
             ->execute();
         $sql = $query->sql();
 
@@ -1789,17 +1789,17 @@ class QueryTest extends TestCase
     }
 
     /**
-     * Tests whereNotIn() and empty array input.
+     * Tests whereNotInArray() and empty array input.
      *
      * @return void
      */
-    public function testWhereNotInEmpty()
+    public function testWhereNotInArrayEmpty()
     {
         $this->loadFixtures('Articles');
         $query = new Query($this->connection);
         $query->select(['id'])
             ->from('articles')
-            ->whereNotIn('id', [], ['allowEmpty' => true])
+            ->whereNotInArray('id', [], ['allowEmpty' => true])
             ->execute();
         $sql = $query->sql();
 
@@ -1807,7 +1807,7 @@ class QueryTest extends TestCase
         $this->assertEquals(['id' => '1'], $result->fetch('assoc'));
 
         $this->assertQuotedQuery(
-            'SELECT <id> FROM <articles> WHERE 1=1',
+            'SELECT <id> FROM <articles> WHERE \(<id>\) IS NOT NULL',
             $sql,
             !$this->autoQuote
         );
