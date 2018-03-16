@@ -39,7 +39,7 @@ class PluginTest extends TestCase
      *
      * @return void
      */
-    public function testLoadSingle()
+    public function testLoad()
     {
         Plugin::unload();
         Plugin::load('TestPlugin');
@@ -74,7 +74,7 @@ class PluginTest extends TestCase
      *
      * @return void
      */
-    public function testLoadSingleWithAutoload()
+    public function testLoadWithAutoload()
     {
         $this->assertFalse(class_exists('Company\TestPluginFive\Utility\Hello'));
         Plugin::load('Company/TestPluginFive', [
@@ -91,7 +91,7 @@ class PluginTest extends TestCase
      *
      * @return void
      */
-    public function testLoadSingleWithAutoloadAndBootstrap()
+    public function testLoadWithAutoloadAndBootstrap()
     {
         Plugin::load(
             'Company/TestPluginFive',
@@ -111,10 +111,9 @@ class PluginTest extends TestCase
     /**
      * Tests loading a plugin and its bootstrap file
      *
-     * @deprecated Immediate plugin bootstrap should be removed in 4.x
      * @return void
      */
-    public function testLoadSingleWithBootstrap()
+    public function testLoadWithBootstrap()
     {
         Plugin::load('TestPlugin', ['bootstrap' => true]);
         $this->assertTrue(Plugin::loaded('TestPlugin'));
@@ -126,17 +125,18 @@ class PluginTest extends TestCase
     }
 
     /**
-     * Tests loading a plugin defers bootstrap when an application exists
+     * Tests loading a plugin and its bootstrap file
      *
      * @return void
      */
-    public function testLoadSingleDeferBootstrap()
+    public function testLoadWithBootstrapDisableBootstrapHook()
     {
-        static::setAppNamespace('TestApp');
-
         Plugin::load('TestPlugin', ['bootstrap' => true]);
         $this->assertTrue(Plugin::loaded('TestPlugin'));
-        $this->assertNull(Configure::read('PluginTest.test_plugin.bootstrap'), 'Normally this value would be loaded');
+        $this->assertEquals('loaded plugin bootstrap', Configure::read('PluginTest.test_plugin.bootstrap'));
+
+        $plugin = Plugin::getCollection()->get('TestPlugin');
+        $this->assertFalse($plugin->isEnabled('bootstrap'), 'Should be disabled as hook has been run.');
     }
 
     /**
