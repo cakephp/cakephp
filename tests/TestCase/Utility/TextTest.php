@@ -537,6 +537,17 @@ TEXT;
         $this->assertTextEquals($expected, $result);
     }
 
+    public function testIsMultibyteString()
+    {
+        $text = 'This is a test string without multi-bytes';
+        $result = Text::isMultibyte($text);
+        $this->assertFalse($result);
+
+        $text = 'This is a test string with multi-bytes 这是永远不会结束的歌曲';
+        $result = Text::isMultibyte($text);
+        $this->assertTrue($result);
+    }
+
     /**
      * testTruncate method
      *
