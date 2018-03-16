@@ -882,6 +882,64 @@ class Query implements ExpressionInterface, IteratorAggregate
     }
 
     /**
+     * Adds an IN condition or set of conditions to be used in the WHERE clause for this
+     * query.
+     *
+     * This method does allow empty inputs in contrast to where() if you set
+     * 'allowEmpty' to true.
+     * Be careful about using it without proper sanity checks.
+     *
+     * Options:
+     * - `types` - Associative array of type names used to bind values to query
+     * - `allowEmpty` - Allow empty array.
+     *
+     * @param string $field Field
+     * @param array $values Array of values
+     * @param array $options Options
+     * @return $this
+     */
+    public function whereInList($field, array $values, array $options = [])
+    {
+        $options += [
+            'types' => [],
+            'allowEmpty' => false,
+        ];
+
+        if ($options['allowEmpty'] && !$values) {
+            return $this->where('1=0');
+        }
+
+        return $this->where([$field . ' IN' => $values], $options['types']);
+    }
+
+    /**
+     * Adds a NOT IN condition or set of conditions to be used in the WHERE clause for this
+     * query.
+     *
+     * This method does allow empty inputs in contrast to where() if you set
+     * 'allowEmpty' to true.
+     * Be careful about using it without proper sanity checks.
+     *
+     * @param string $field Field
+     * @param array $values Array of values
+     * @param array $options Options
+     * @return $this
+     */
+    public function whereNotInList($field, array $values, array $options = [])
+    {
+        $options += [
+            'types' => [],
+            'allowEmpty' => false,
+        ];
+
+        if ($options['allowEmpty'] && !$values) {
+            return $this->where([$field . ' IS NOT' => null]);
+        }
+
+        return $this->where([$field . ' NOT IN' => $values], $options['types']);
+    }
+
+    /**
      * Connects any previously defined set of conditions to the provided list
      * using the AND operator. This function accepts the conditions list in the same
      * format as the method `where` does, hence you can use arrays, expression objects

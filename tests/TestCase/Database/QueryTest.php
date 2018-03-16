@@ -36,6 +36,16 @@ class QueryTest extends TestCase
     const AUTHOR_COUNT = 4;
     const COMMENT_COUNT = 6;
 
+    /**
+     * @var \Cake\Database\Connection
+     */
+    protected $connection;
+
+    /**
+     * @var bool
+     */
+    protected $autoQuote;
+
     public function setUp()
     {
         parent::setUp();
@@ -1701,6 +1711,106 @@ class QueryTest extends TestCase
         $this->assertEquals(['id' => 1], $result->fetch('assoc'));
         $this->assertEquals(['id' => 2], $result->fetch('assoc'));
         $result->closeCursor();
+    }
+
+    /**
+     * Tests whereInArray() and its input types.
+     *
+     * @return void
+     */
+    public function testWhereInArray()
+    {
+        $this->loadFixtures('Articles');
+        $query = new Query($this->connection);
+        $query->select(['id'])
+            ->from('articles')
+            ->whereInList('id', [2, 3])
+            ->execute();
+        $sql = $query->sql();
+
+        $result = $query->execute();
+        $this->assertEquals(['id' => '2'], $result->fetch('assoc'));
+
+        $this->assertQuotedQuery(
+            'SELECT <id> FROM <articles> WHERE <id> in \\(:c0,:c1\\)',
+            $sql,
+            !$this->autoQuote
+        );
+    }
+
+    /**
+     * Tests whereInArray() and empty array input.
+     *
+     * @return void
+     */
+    public function testWhereInArrayEmpty()
+    {
+        $this->loadFixtures('Articles');
+        $query = new Query($this->connection);
+        $query->select(['id'])
+            ->from('articles')
+            ->whereInList('id', [], ['allowEmpty' => true])
+            ->execute();
+        $sql = $query->sql();
+
+        $result = $query->execute();
+        $this->assertFalse($result->fetch('assoc'));
+
+        $this->assertQuotedQuery(
+            'SELECT <id> FROM <articles> WHERE 1=0',
+            $sql,
+            !$this->autoQuote
+        );
+    }
+
+    /**
+     * Tests whereNotInArray() and its input types.
+     *
+     * @return void
+     */
+    public function testWhereNotInArray()
+    {
+        $this->loadFixtures('Articles');
+        $query = new Query($this->connection);
+        $query->select(['id'])
+            ->from('articles')
+            ->whereNotInList('id', [1, 3])
+            ->execute();
+        $sql = $query->sql();
+
+        $result = $query->execute();
+        $this->assertEquals(['id' => '2'], $result->fetch('assoc'));
+
+        $this->assertQuotedQuery(
+            'SELECT <id> FROM <articles> WHERE <id> not in \\(:c0,:c1\\)',
+            $sql,
+            !$this->autoQuote
+        );
+    }
+
+    /**
+     * Tests whereNotInArray() and empty array input.
+     *
+     * @return void
+     */
+    public function testWhereNotInArrayEmpty()
+    {
+        $this->loadFixtures('Articles');
+        $query = new Query($this->connection);
+        $query->select(['id'])
+            ->from('articles')
+            ->whereNotInList('id', [], ['allowEmpty' => true])
+            ->execute();
+        $sql = $query->sql();
+
+        $result = $query->execute();
+        $this->assertEquals(['id' => '1'], $result->fetch('assoc'));
+
+        $this->assertQuotedQuery(
+            'SELECT <id> FROM <articles> WHERE \(<id>\) IS NOT NULL',
+            $sql,
+            !$this->autoQuote
+        );
     }
 
     /**
