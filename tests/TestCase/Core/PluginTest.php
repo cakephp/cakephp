@@ -301,7 +301,10 @@ class PluginTest extends TestCase
     public function testLoadAll()
     {
         Plugin::loadAll();
-        $expected = ['Company', 'PluginJs', 'TestPlugin', 'TestPluginFour', 'TestPluginTwo', 'TestTheme'];
+        $expected = [
+            'Company', 'ParentPlugin', 'PluginJs', 'TestPlugin',
+            'TestPluginFour', 'TestPluginTwo', 'TestTheme'
+        ];
         $this->assertEquals($expected, Plugin::loaded());
     }
 
@@ -338,7 +341,10 @@ class PluginTest extends TestCase
     {
         $defaults = ['bootstrap' => true, 'ignoreMissing' => true];
         Plugin::loadAll([$defaults]);
-        $expected = ['Company', 'PluginJs', 'TestPlugin', 'TestPluginFour', 'TestPluginTwo', 'TestTheme'];
+        $expected = [
+            'Company', 'ParentPlugin', 'PluginJs', 'TestPlugin',
+            'TestPluginFour', 'TestPluginTwo', 'TestTheme'
+        ];
         $this->assertEquals($expected, Plugin::loaded());
         $this->assertEquals('loaded js plugin bootstrap', Configure::read('PluginTest.js_plugin.bootstrap'));
         $this->assertEquals('loaded plugin bootstrap', Configure::read('PluginTest.test_plugin.bootstrap'));
@@ -360,7 +366,10 @@ class PluginTest extends TestCase
         ]);
         Plugin::routes();
 
-        $expected = ['Company', 'PluginJs', 'TestPlugin', 'TestPluginFour', 'TestPluginTwo', 'TestTheme'];
+        $expected = [
+            'Company', 'ParentPlugin', 'PluginJs', 'TestPlugin',
+            'TestPluginFour', 'TestPluginTwo', 'TestTheme'
+        ];
         $this->assertEquals($expected, Plugin::loaded());
         $this->assertEquals('loaded js plugin bootstrap', Configure::read('PluginTest.js_plugin.bootstrap'));
         $this->assertEquals('loaded plugin routes', Configure::read('PluginTest.test_plugin.routes'));

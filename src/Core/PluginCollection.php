@@ -17,7 +17,7 @@ use ArrayIterator;
 use Cake\Core\Exception\MissingPluginException;
 use Countable;
 use InvalidArgumentException;
-use IteratorAggregate;
+use Iterator;
 use RuntimeException;
 
 /**
@@ -26,8 +26,12 @@ use RuntimeException;
  * Holds onto plugin objects loaded into an application, and
  * provides methods for iterating, and finding plugins based
  * on criteria.
+ *
+ * This class implements the Iterator interface to allow plugins
+ * to be iterated, handling the situation where a plugin's hook
+ * method (usually bootstrap) loads another plugin during iteration.
  */
-class PluginCollection implements IteratorAggregate, Countable
+class PluginCollection implements Iterator, Countable
 {
     /**
      * Plugin list
@@ -35,6 +39,18 @@ class PluginCollection implements IteratorAggregate, Countable
      * @var array
      */
     protected $plugins = [];
+
+    /**
+     * Names of plugins
+     *
+     * @var array
+     */
+    protected $names = [];
+
+    /**
+     * @var null|string
+     */
+    protected $position = 0;
 
     /**
      * Constructor
@@ -60,6 +76,7 @@ class PluginCollection implements IteratorAggregate, Countable
     {
         $name = $plugin->getName();
         $this->plugins[$name] = $plugin;
+        $this->names = array_keys($this->plugins);
 
         return $this;
     }
@@ -73,6 +90,7 @@ class PluginCollection implements IteratorAggregate, Countable
     public function remove($name)
     {
         unset($this->plugins[$name]);
+        $this->names = array_keys($this->plugins);
 
         return $this;
     }
@@ -105,13 +123,55 @@ class PluginCollection implements IteratorAggregate, Countable
     }
 
     /**
-     * Implementation of IteratorAggregate.
+     * Part of Iterator Interface
      *
-     * @return \ArrayIterator
+     * @return void
      */
-    public function getIterator()
+    public function next()
     {
-        return new ArrayIterator($this->plugins);
+        $this->position += 1;
+    }
+
+    /**
+     * Part of Iterator Interface
+     *
+     * @return string
+     */
+    public function key()
+    {
+        return $this->names[$this->position];
+    }
+
+    /**
+     * Part of Iterator Interface
+     *
+     * @return \Cake\Core\PluginInterface
+     */
+    public function current()
+    {
+        $name = $this->names[$this->position];
+
+        return $this->plugins[$name];
+    }
+
+    /**
+     * Part of Iterator Interface
+     *
+     * @return void
+     */
+    public function rewind()
+    {
+        $this->position = 0;
+    }
+
+    /**
+     * Part of Iterator Interface
+     *
+     * @return bool
+     */
+    public function valid()
+    {
+        return $this->position < count($this->plugins);
     }
 
     /**

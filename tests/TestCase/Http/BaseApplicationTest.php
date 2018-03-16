@@ -182,4 +182,33 @@ class BaseApplicationTest extends TestCase
             'Key should not be set, as plugin has already had bootstrap run'
         );
     }
+
+    /**
+     * Test that plugins loaded with addPlugin() can load additional
+     * plugins.
+     *
+     * @return void
+     */
+    public function testPluginBootstrapRecursivePlugins()
+    {
+        $app = $this->getMockForAbstractClass(
+            BaseApplication::class,
+            [$this->path]
+        );
+        $app->addPlugin('ParentPlugin');
+        $app->pluginBootstrap();
+
+        $this->assertTrue(
+            Configure::check('ParentPlugin.bootstrap'),
+            'Plugin bootstrap should be run'
+        );
+        $this->assertTrue(
+            Configure::check('PluginTest.test_plugin.bootstrap'),
+            'Nested plugin should have bootstrap run'
+        );
+        $this->assertTrue(
+            Configure::check('PluginTest.test_plugin_two.bootstrap'),
+            'Nested plugin should have bootstrap run'
+        );
+    }
 }
