@@ -537,6 +537,11 @@ TEXT;
         $this->assertTextEquals($expected, $result);
     }
 
+    /**
+     * test isMultibyte() checking multibyte characters
+     *
+     * @return void
+     */
     public function testIsMultibyteString()
     {
         $text = 'This is a test string without multi-bytes';
