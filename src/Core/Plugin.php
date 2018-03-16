@@ -409,6 +409,7 @@ class Plugin
     /**
      * Get the shared plugin collection.
      *
+     * @internal
      * @return \Cake\Core\PluginCollection
      */
     public static function getCollection()
