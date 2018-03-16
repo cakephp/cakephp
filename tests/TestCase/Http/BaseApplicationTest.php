@@ -159,4 +159,27 @@ class BaseApplicationTest extends TestCase
         $this->assertNull($app->pluginBootstrap());
         $this->assertTrue(Configure::check('PluginTest.test_plugin.bootstrap'));
     }
+
+    /**
+     * Ensure that plugins loaded via Plugin::load()
+     * don't have their bootstrapping run twice.
+     *
+     * @return void
+     */
+    public function testPluginBootstrapInteractWithPluginLoad()
+    {
+        Plugin::load('TestPlugin', ['bootstrap' => true]);
+        $app = $this->getMockForAbstractClass(
+            BaseApplication::class,
+            [$this->path]
+        );
+        $this->assertTrue(Configure::check('PluginTest.test_plugin.bootstrap'));
+        Configure::delete('PluginTest.test_plugin.bootstrap');
+
+        $this->assertNull($app->pluginBootstrap());
+        $this->assertFalse(
+            Configure::check('PluginTest.test_plugin.bootstrap'),
+            'Key should not be set, as plugin has already had bootstrap run'
+        );
+    }
 }

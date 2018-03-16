@@ -174,10 +174,7 @@ class Plugin
             );
         }
 
-        // Defer the bootstrap process if an Application class exists.
-        // Immediate plugin bootstrapping is deprecated and will be removed in 4.x
-        $appClass = Configure::read('App.namespace') . '\\' . 'Application';
-        if ($config['bootstrap'] === true && !class_exists($appClass)) {
+        if ($config['bootstrap'] === true) {
             static::bootstrap($plugin);
         }
     }
@@ -316,6 +313,9 @@ class Plugin
         if (!$plugin->isEnabled('bootstrap')) {
             return false;
         }
+        // Disable bootstrapping for this plugin as it will have
+        // been bootstrapped.
+        $plugin->disable('bootstrap');
 
         return static::_includeFile(
             $plugin->getConfigPath() . 'bootstrap.php',
