@@ -1433,6 +1433,13 @@ class FormHelper extends Helper
             $options['required'] = $context->isRequired($fieldName);
         }
 
+        $message = $context->getErrorMessage($fieldName);
+        if ($options['required'] && $message) {
+            $message = htmlspecialchars(addslashes($message));
+            $options['oninvalid'] = "this.setCustomValidity('$message')";
+            $options['onvalid'] = "this.setCustomValidity('')";
+        }
+
         $type = $context->type($fieldName);
         $fieldDef = $context->attributes($fieldName);
 

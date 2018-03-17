@@ -8339,7 +8339,9 @@ class FormHelperTest extends TestCase
                     'name',
                     'required' => 'required',
                     'id' => '0-comments-1-comment',
-                    'rows' => 5
+                    'rows' => 5,
+                    'onvalid' => 'this.setCustomValidity(&#039;&#039;)',
+                    'oninvalid' => 'this.setCustomValidity(&#039;This field cannot be left empty&#039;)',
                 ],
                 '/textarea',
             '/div'
@@ -8415,6 +8417,82 @@ class FormHelperTest extends TestCase
     {
         $this->expectException(\Cake\Core\Exception\Exception::class);
         $this->Form->email();
+    }
+
+    /**
+     * tests fields that are required use custom validation messages
+     *
+     * @return void
+     */
+    public function testHtml5ErrorMessage()
+    {
+        $validator = (new \Cake\Validation\Validator())
+            ->requirePresence('email', true, 'Custom error message')
+            ->requirePresence('password')
+            ->alphaNumeric('password')
+            ->notBlank('phone');
+
+        $table = $this->getTableLocator()->get('Contacts', [
+            'className' => __NAMESPACE__ . '\ContactsTable'
+        ]);
+        $table->setValidator('default', $validator);
+        $contact = new Entity();
+
+        $this->Form->create($contact, ['context' => ['table' => 'Contacts']]);
+        $this->Form->setTemplates(['inputContainer' => '{{content}}']);
+
+        $result = $this->Form->control('password');
+        $expected = [
+            'label' => ['for' => 'password'],
+            'Password',
+            '/label',
+            'input' => [
+                'id' => 'password',
+                'name' => 'password',
+                'type' => 'password',
+                'value' => '',
+                'required' => 'required',
+                'onvalid' => 'this.setCustomValidity(&#039;&#039;)',
+                'oninvalid' => 'this.setCustomValidity(&#039;This field is required&#039;)',
+            ]
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->control('phone');
+        $expected = [
+            'label' => ['for' => 'phone'],
+            'Phone',
+            '/label',
+            'input' => [
+                'id' => 'phone',
+                'name' => 'phone',
+                'type' => 'tel',
+                'value' => '',
+                'maxlength' => 255,
+                'required' => 'required',
+                'onvalid' => 'this.setCustomValidity(&#039;&#039;)',
+                'oninvalid' => 'this.setCustomValidity(&#039;This field cannot be left empty&#039;)',
+            ]
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->control('email');
+        $expected = [
+            'label' => ['for' => 'email'],
+            'Email',
+            '/label',
+            'input' => [
+                'id' => 'email',
+                'name' => 'email',
+                'type' => 'email',
+                'value' => '',
+                'maxlength' => 255,
+                'required' => 'required',
+                'onvalid' => 'this.setCustomValidity(&#039;&#039;)',
+                'oninvalid' => 'this.setCustomValidity(&#039;Custom error message&#039;)',
+            ]
+        ];
+        $this->assertHtml($expected, $result);
     }
 
     /**
