@@ -143,6 +143,7 @@ class SqlserverTest extends TestCase
         $expected['failoverPartner'] = null;
         $expected['loginTimeout'] = null;
         $expected['multiSubnetFailover'] = null;
+        $expected['port'] = '';
 
         $connection = $this->getMockBuilder('stdClass')
             ->setMethods(['exec', 'quote'])
@@ -206,6 +207,7 @@ class SqlserverTest extends TestCase
         $expected['failoverPartner'] = null;
         $expected['loginTimeout'] = null;
         $expected['multiSubnetFailover'] = null;
+        $expected['port'] = '';
 
         $driver->expects($this->once())->method('_connect')
             ->with($dsn, $expected);
