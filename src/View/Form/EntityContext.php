@@ -427,6 +427,34 @@ class EntityContext implements ContextInterface
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function getErrorMessage($field)
+    {
+        $parts = explode('.', $field);
+
+        $validator = $this->_getValidator($parts);
+        $fieldName = array_pop($parts);
+        if (!$validator->hasField($fieldName)) {
+            return null;
+        }
+
+        $ruleset = $validator->field($fieldName);
+
+        $presenceErrors = $validator->errors([]);
+        $emptyErrors = $validator->errors([$fieldName => '']);
+
+        if ($ruleset->isPresenceRequired() && isset($presenceErrors[$fieldName])) {
+            return $presenceErrors[$fieldName]['_required'] ?? null;
+        }
+        if (!$ruleset->isEmptyAllowed() && isset($emptyErrors[$fieldName])) {
+            return $emptyErrors[$fieldName]['_empty'] ?? null;
+        }
+
+        return null;
+    }
+
+    /**
      * Get the field names from the top level entity.
      *
      * If the context is for an array of entities, the 0th index will be used.

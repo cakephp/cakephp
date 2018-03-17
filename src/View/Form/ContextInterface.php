@@ -71,6 +71,14 @@ interface ContextInterface
     public function isRequired($field);
 
     /**
+     * Gets the default "required" error message for a field
+     *
+     * @param string $field A dot separated path to the field
+     * @return string
+     */
+    public function getErrorMessage($field);
+
+    /**
      * Get the fieldnames of the top level object in this context.
      *
      * @return array A list of the field names in the context.

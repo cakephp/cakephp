@@ -209,6 +209,14 @@ class ArrayContext implements ContextInterface
     /**
      * {@inheritDoc}
      */
+    public function getErrorMessage($field)
+    {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function fieldNames()
     {
         $schema = $this->_context['schema'];

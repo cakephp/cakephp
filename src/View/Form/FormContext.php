@@ -137,6 +137,14 @@ class FormContext implements ContextInterface
     /**
      * {@inheritDoc}
      */
+    public function getErrorMessage($field)
+    {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function fieldNames()
     {
         return $this->_form->schema()->fields();
