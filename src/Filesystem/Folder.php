@@ -923,7 +923,7 @@ class Folder
      * Get the real path (taking ".." and such into account)
      *
      * @param string $path Path to resolve
-     * @return string|bool The resolved path
+     * @return string|false The resolved path
      */
     public function realpath($path)
     {

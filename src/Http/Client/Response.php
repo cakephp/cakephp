@@ -440,7 +440,7 @@ class Response extends Message implements ResponseInterface
      * Get the value of a single cookie.
      *
      * @param string $name The name of the cookie value.
-     * @return string|null Either the cookie's value or null when the cookie is undefined.
+     * @return string|array|null Either the cookie's value or null when the cookie is undefined.
      */
     public function getCookie($name)
     {

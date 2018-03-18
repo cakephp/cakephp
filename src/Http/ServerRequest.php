@@ -777,8 +777,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     /**
      * Worker for the public is() function
      *
-     * @param string|array $type The type of request you want to check. If an array
-     *   this method will return true if the request matches any type.
+     * @param string $type The type of request you want to check.
      * @param array $args Array of custom detector arguments.
      * @return bool Whether or not the request is the type you are checking.
      */

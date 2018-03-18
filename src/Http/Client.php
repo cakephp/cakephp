@@ -122,7 +122,7 @@ class Client
      * Cookies are indexed by the cookie's domain or
      * request host name.
      *
-     * @var \Cake\Http\Client\CookieCollection
+     * @var \Cake\Http\Cookie\CookieCollection
      */
     protected $_cookies;
 
