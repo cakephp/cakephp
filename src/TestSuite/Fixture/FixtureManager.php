@@ -21,7 +21,6 @@ use Cake\Core\Exception\Exception;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\Schema\TableSchemaAwareInterface;
 use Cake\Datasource\ConnectionManager;
-use Cake\Datasource\TableSchemaInterface;
 use Cake\Utility\Inflector;
 use PDOException;
 use UnexpectedValueException;
@@ -251,8 +250,7 @@ class FixtureManager
         $table = $fixture->sourceName();
         $exists = in_array($table, $sources);
 
-        $hasSchema = $fixture instanceof TableSchemaInterface && $fixture->schema() instanceof TableSchema
-            || $fixture instanceof TableSchemaAwareInterface && $fixture->getTableSchema() instanceof TableSchema;
+        $hasSchema = $fixture instanceof TableSchemaAwareInterface && $fixture->getTableSchema() instanceof TableSchema;
 
         if (($drop && $exists) || ($exists && !$isFixtureSetup && $hasSchema)) {
             $fixture->drop($db);
@@ -286,13 +284,13 @@ class FixtureManager
 
         try {
             $createTables = function ($db, $fixtures) use ($test) {
-                $tables = $db->schemaCollection()->listTables();
+                $tables = $db->getSchemaCollection()->listTables();
                 $configName = $db->configName();
                 if (!isset($this->_insertionMap[$configName])) {
                     $this->_insertionMap[$configName] = [];
                 }
 
-                foreach ($fixtures as $name => $fixture) {
+                foreach ($fixtures as $fixture) {
                     if (in_array($fixture->table, $tables)) {
                         try {
                             $fixture->dropConstraints($db);
@@ -303,7 +301,7 @@ class FixtureManager
                                 get_class($test),
                                 $e->getMessage()
                             );
-                            throw new Exception($msg);
+                            throw new Exception($msg, null, $e);
                         }
                     }
                 }
@@ -316,7 +314,7 @@ class FixtureManager
                     }
                 }
 
-                foreach ($fixtures as $name => $fixture) {
+                foreach ($fixtures as $fixture) {
                     try {
                         $fixture->createConstraints($db);
                     } catch (PDOException $e) {
@@ -326,7 +324,7 @@ class FixtureManager
                             get_class($test),
                             $e->getMessage()
                         );
-                        throw new Exception($msg);
+                        throw new Exception($msg, null, $e);
                     }
                 }
             };
@@ -344,7 +342,7 @@ class FixtureManager
                             get_class($test),
                             $e->getMessage()
                         );
-                        throw new Exception($msg);
+                        throw new Exception($msg, null, $e);
                     }
                 }
             };
@@ -355,7 +353,7 @@ class FixtureManager
                 get_class($test),
                 $e->getMessage()
             );
-            throw new Exception($msg);
+            throw new Exception($msg, null, $e);
         }
     }
 
@@ -455,7 +453,7 @@ class FixtureManager
         }
 
         if (!$this->isFixtureSetup($db->configName(), $fixture)) {
-            $sources = $db->schemaCollection()->listTables();
+            $sources = $db->getSchemaCollection()->listTables();
             $this->_setupTable($fixture, $db, $sources, $dropTables);
         }
 

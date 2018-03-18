@@ -34,12 +34,9 @@ class CookieEncryptedUsingControllerTest extends IntegrationTestCase
         parent::setUp();
         static::setAppNamespace();
 
-        Security::salt('abcdabcdabcdabcdabcdabcdabcdabcdabcd');
+        Security::setSalt('abcdabcdabcdabcdabcdabcdabcdabcdabcd');
         Router::connect('/:controller/:action/*', [], ['routeClass' => 'InflectedRoute']);
-        DispatcherFactory::clear();
-        DispatcherFactory::add('Routing');
-        DispatcherFactory::add('ControllerFactory');
-        $this->useHttpServer(false);
+        $this->useHttpServer(true);
     }
 
     /**
@@ -96,12 +93,12 @@ class CookieEncryptedUsingControllerTest extends IntegrationTestCase
     }
 
     /**
-     * Can be used Security::salt() as the encryption key.
+     * Can be used in Security::setSalt() as the encryption key.
      */
     public function testCanBeUsedSecuritySaltAsEncryptionKey()
     {
         $key = 'another salt xxxxxxxxxxxxxxxxxxx';
-        Security::salt($key);
+        Security::setSalt($key);
         $this->cookieEncrypted('NameOfCookie', 'Value of Cookie', 'aes');
 
         $this->get('/cookie_component_test/view/' . urlencode($key));
@@ -135,7 +132,7 @@ class CookieEncryptedUsingControllerTest extends IntegrationTestCase
     public function testCanAssertCookieEncryptedWithAnotherEncryptionKey()
     {
         $key = 'another salt xxxxxxxxxxxxxxxxxxx';
-        Security::salt($key);
+        Security::setSalt($key);
         $this->get('/cookie_component_test/set_cookie');
         $this->assertCookieEncrypted('abc', 'NameOfCookie', 'aes', $key);
     }

@@ -14,6 +14,7 @@
  */
 namespace Cake\ORM\Behavior;
 
+use ArrayObject;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Exception\RecordNotFoundException;
@@ -91,10 +92,11 @@ class TreeBehavior extends Behavior
      *
      * @param \Cake\Event\Event $event The beforeSave event that was fired
      * @param \Cake\Datasource\EntityInterface $entity the entity that is going to be saved
+     * @param \ArrayObject $options Options.
      * @return void
      * @throws \RuntimeException if the parent to set for the node is invalid
      */
-    public function beforeSave(Event $event, EntityInterface $entity)
+    public function beforeSave(Event $event, EntityInterface $entity, ArrayObject $options)
     {
         $isNew = $entity->isNew();
         $config = $this->getConfig();
@@ -160,9 +162,10 @@ class TreeBehavior extends Behavior
      *
      * @param \Cake\Event\Event $event The afterSave event that was fired
      * @param \Cake\Datasource\EntityInterface $entity the entity that is going to be saved
+     * @param \ArrayObject $options Options.
      * @return void
      */
-    public function afterSave(Event $event, EntityInterface $entity)
+    public function afterSave(Event $event, EntityInterface $entity, ArrayObject $options)
     {
         if (!$this->_config['level'] || $entity->isNew()) {
             return;
@@ -213,9 +216,10 @@ class TreeBehavior extends Behavior
      *
      * @param \Cake\Event\Event $event The beforeDelete event that was fired
      * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved
+     * @param \ArrayObject $options Options.
      * @return void
      */
-    public function beforeDelete(Event $event, EntityInterface $entity)
+    public function beforeDelete(Event $event, EntityInterface $entity, ArrayObject $options)
     {
         $config = $this->getConfig();
         $this->_ensureFields($entity);
@@ -349,7 +353,7 @@ class TreeBehavior extends Behavior
             function ($exp) use ($config) {
                 /* @var \Cake\Database\Expression\QueryExpression $exp */
                 $leftInverse = clone $exp;
-                $leftInverse->type('*')->add('-1');
+                $leftInverse->setConjunction('*')->add('-1');
                 $rightInverse = clone $leftInverse;
 
                 return $exp
@@ -932,13 +936,13 @@ class TreeBehavior extends Behavior
      */
     protected function _scope($query)
     {
-        $config = $this->getConfig();
+        $scope = $this->getConfig('scope');
 
-        if (is_array($config['scope'])) {
-            return $query->where($config['scope']);
+        if (is_array($scope)) {
+            return $query->where($scope);
         }
-        if (is_callable($config['scope'])) {
-            return $config['scope']($query);
+        if (is_callable($scope)) {
+            return $scope($query);
         }
 
         return $query;

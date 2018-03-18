@@ -19,7 +19,6 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Database\TypeMap;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Entity;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -43,7 +42,7 @@ class BelongsToTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->company = TableRegistry::get('Companies', [
+        $this->company = $this->getTableLocator()->get('Companies', [
             'schema' => [
                 'id' => ['type' => 'integer'],
                 'company_name' => ['type' => 'string'],
@@ -52,7 +51,7 @@ class BelongsToTest extends TestCase
                 ]
             ]
         ]);
-        $this->client = TableRegistry::get('Clients', [
+        $this->client = $this->getTableLocator()->get('Clients', [
             'schema' => [
                 'id' => ['type' => 'integer'],
                 'client_name' => ['type' => 'string'],
@@ -80,23 +79,42 @@ class BelongsToTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        TableRegistry::clear();
+        $this->getTableLocator()->clear();
     }
 
     /**
-     * Test that foreignKey generation ignores database names in target table.
+     * Test that foreignKey generation
      *
      * @return void
      */
-    public function testForeignKey()
+    public function testSetForeignKey()
     {
         $assoc = new BelongsTo('Companies', [
             'sourceTable' => $this->client,
             'targetTable' => $this->company,
         ]);
-        $this->assertEquals('company_id', $assoc->foreignKey());
-        $this->assertEquals('another_key', $assoc->foreignKey('another_key'));
-        $this->assertEquals('another_key', $assoc->foreignKey());
+        $this->assertEquals('company_id', $assoc->getForeignKey());
+        $this->assertSame($assoc, $assoc->setForeignKey('another_key'));
+        $this->assertEquals('another_key', $assoc->getForeignKey());
+    }
+
+    /**
+     * Test that foreignKey generation
+     *
+     * @group deprecated
+     * @return void
+     */
+    public function testForeignKey()
+    {
+        $this->deprecated(function () {
+            $assoc = new BelongsTo('Companies', [
+                'sourceTable' => $this->client,
+                'targetTable' => $this->company,
+            ]);
+            $this->assertEquals('company_id', $assoc->foreignKey());
+            $this->assertEquals('another_key', $assoc->foreignKey('another_key'));
+            $this->assertEquals('another_key', $assoc->foreignKey());
+        });
     }
 
     /**
@@ -106,13 +124,13 @@ class BelongsToTest extends TestCase
      */
     public function testForeignKeyIgnoreDatabaseName()
     {
-        $this->company->table('schema.companies');
-        $this->client->table('schema.clients');
+        $this->company->setTable('schema.companies');
+        $this->client->setTable('schema.clients');
         $assoc = new BelongsTo('Companies', [
             'sourceTable' => $this->client,
             'targetTable' => $this->company,
         ]);
-        $this->assertEquals('company_id', $assoc->foreignKey());
+        $this->assertEquals('company_id', $assoc->getForeignKey());
     }
 
     /**
@@ -133,7 +151,7 @@ class BelongsToTest extends TestCase
      */
     public function testCustomAlias()
     {
-        $table = TableRegistry::get('Articles', [
+        $table = $this->getTableLocator()->get('Articles', [
             'className' => 'TestPlugin.Articles'
         ]);
         $table->addAssociations([
@@ -186,7 +204,7 @@ class BelongsToTest extends TestCase
 
         $this->assertEquals(
             'integer',
-            $query->typeMap()->type('Companies__id'),
+            $query->getTypeMap()->type('Companies__id'),
             'Associations should map types.'
         );
     }
@@ -218,7 +236,7 @@ class BelongsToTest extends TestCase
      */
     public function testAttachToMultiPrimaryKey()
     {
-        $this->company->primaryKey(['id', 'tenant_id']);
+        $this->company->setPrimaryKey(['id', 'tenant_id']);
         $config = [
             'foreignKey' => ['company_id', 'company_tenant_id'],
             'sourceTable' => $this->client,
@@ -261,7 +279,7 @@ class BelongsToTest extends TestCase
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Cannot match provided foreignKey for "Companies", got "(company_id)" but expected foreign key for "(id, tenant_id)"');
-        $this->company->primaryKey(['id', 'tenant_id']);
+        $this->company->setPrimaryKey(['id', 'tenant_id']);
         $query = $this->client->query();
         $config = [
             'foreignKey' => 'company_id',
@@ -336,7 +354,7 @@ class BelongsToTest extends TestCase
     {
         $config = ['propertyName' => 'thing_placeholder'];
         $association = new BelongsTo('Thing', $config);
-        $this->assertEquals('thing_placeholder', $association->property());
+        $this->assertEquals('thing_placeholder', $association->getProperty());
     }
 
     /**
@@ -354,7 +372,7 @@ class BelongsToTest extends TestCase
             'targetTable' => $mock,
         ];
         $association = new BelongsTo('Contacts.Companies', $config);
-        $this->assertEquals('company', $association->property());
+        $this->assertEquals('company', $association->getProperty());
     }
 
     /**
@@ -373,7 +391,7 @@ class BelongsToTest extends TestCase
         $listener = $this->getMockBuilder('stdClass')
             ->setMethods(['__invoke'])
             ->getMock();
-        $this->company->getEventManager()->attach($listener, 'Model.beforeFind');
+        $this->company->getEventManager()->on('Model.beforeFind', $listener);
         $association = new BelongsTo('Companies', $config);
         $listener->expects($this->once())->method('__invoke')
             ->with(
@@ -401,7 +419,7 @@ class BelongsToTest extends TestCase
         $listener = $this->getMockBuilder('stdClass')
             ->setMethods(['__invoke'])
             ->getMock();
-        $this->company->getEventManager()->attach($listener, 'Model.beforeFind');
+        $this->company->getEventManager()->on('Model.beforeFind', $listener);
         $association = new BelongsTo('Companies', $config);
         $options = new \ArrayObject(['something' => 'more']);
         $listener->expects($this->once())->method('__invoke')

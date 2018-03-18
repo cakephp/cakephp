@@ -400,7 +400,7 @@ class SelectLoader
         $filterQuery->mapReduce(null, null, true);
         $filterQuery->formatResults(null, true);
         $filterQuery->contain([], true);
-        $filterQuery->valueBinder(new ValueBinder());
+        $filterQuery->setValueBinder(new ValueBinder());
 
         if (!$filterQuery->clause('limit')) {
             $filterQuery->limit(null);

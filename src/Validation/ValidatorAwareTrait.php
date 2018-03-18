@@ -44,7 +44,7 @@ trait ValidatorAwareTrait
      *
      * @var string
      */
-    protected $_validatorClass = '\Cake\Validation\Validator';
+    protected $_validatorClass = Validator::class;
 
     /**
      * A list of validation objects indexed by name
@@ -83,7 +83,7 @@ trait ValidatorAwareTrait
      *  ->add('email', 'valid-email', ['rule' => 'email'])
      *  ->add('password', 'valid', ['rule' => 'notBlank'])
      *  ->allowEmpty('bio');
-     * $table->validator('forSubscription', $validator);
+     * $table->setValidator('forSubscription', $validator);
      * ```
      *
      * You can implement the method in `validationDefault` in your Table subclass
@@ -99,6 +99,10 @@ trait ValidatorAwareTrait
      */
     public function validator($name = null, Validator $validator = null)
     {
+        deprecationWarning(
+            'ValidatorAwareTrait::validator() is deprecated. ' .
+            'Use ValidatorAwareTrait::getValidator()/setValidator() instead.'
+        );
         if ($validator !== null) {
             $name = $name ?: self::DEFAULT_VALIDATOR;
             $this->setValidator($name, $validator);

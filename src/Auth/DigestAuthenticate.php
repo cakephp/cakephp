@@ -212,7 +212,7 @@ class DigestAuthenticate extends BasicAuthenticate
      * Generate the login headers
      *
      * @param \Cake\Http\ServerRequest $request Request object.
-     * @return string Headers for logging in.
+     * @return array Headers for logging in.
      */
     public function loginHeaders(ServerRequest $request)
     {
@@ -240,7 +240,9 @@ class DigestAuthenticate extends BasicAuthenticate
             }
         }
 
-        return 'WWW-Authenticate: Digest ' . implode(',', $opts);
+        return [
+            'WWW-Authenticate' => 'Digest ' . implode(',', $opts)
+        ];
     }
 
     /**

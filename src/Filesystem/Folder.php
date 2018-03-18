@@ -345,7 +345,7 @@ class Folder
      */
     public static function isRegisteredStreamWrapper($path)
     {
-        return preg_match('/^[A-Z]+(?=:\/\/)/i', $path, $matches) &&
+        return preg_match('/^[^:\/\/]+?(?=:\/\/)/i', $path, $matches) &&
             in_array($matches[0], stream_get_wrappers());
     }
 
@@ -410,6 +410,7 @@ class Folder
      */
     public function inCakePath($path = '')
     {
+        deprecationWarning('Folder::inCakePath() is deprecated. Use Folder::inPath() instead.');
         $dir = substr(Folder::slashTerm(ROOT), 0, -1);
         $newdir = $dir . $path;
 

@@ -62,14 +62,14 @@ class AssetFilter extends DispatcherFilter
      *
      * @param \Cake\Event\Event $event Event containing the request and response object
      * @return \Cake\Http\Response|null If the client is requesting a recognized asset, null otherwise
-     * @throws \Cake\Network\Exception\NotFoundException When asset not found
+     * @throws \Cake\Http\Exception\NotFoundException When asset not found
      */
     public function beforeDispatch(Event $event)
     {
         /* @var \Cake\Http\ServerRequest $request */
         $request = $event->getData('request');
 
-        $url = urldecode($request->url);
+        $url = urldecode($request->getUri()->getPath());
         if (strpos($url, '..') !== false || strpos($url, '.') === false) {
             return null;
         }
@@ -82,7 +82,7 @@ class AssetFilter extends DispatcherFilter
         $response = $event->getData('response');
         $event->stopPropagation();
 
-        $response->modified(filemtime($assetFile));
+        $response = $response->withModified(filemtime($assetFile));
         if ($response->checkNotModified($request)) {
             return $response;
         }
@@ -101,7 +101,7 @@ class AssetFilter extends DispatcherFilter
      */
     protected function _getAssetFile($url)
     {
-        $parts = explode('/', $url);
+        $parts = explode('/', ltrim($url, '/'));
         $pluginPart = [];
         for ($i = 0; $i < 2; $i++) {
             if (!isset($parts[$i])) {
@@ -131,19 +131,19 @@ class AssetFilter extends DispatcherFilter
     protected function _deliverAsset(ServerRequest $request, Response $response, $assetFile, $ext)
     {
         $compressionEnabled = $response->compress();
-        if ($response->type($ext) === $ext) {
+        if ($response->getType() === $ext) {
             $contentType = 'application/octet-stream';
             $agent = $request->getEnv('HTTP_USER_AGENT');
             if (preg_match('%Opera(/| )([0-9].[0-9]{1,2})%', $agent) || preg_match('/MSIE ([0-9].[0-9]{1,2})/', $agent)) {
                 $contentType = 'application/octetstream';
             }
-            $response->type($contentType);
+            $response = $response->withType($contentType);
         }
         if (!$compressionEnabled) {
-            $response->header('Content-Length', filesize($assetFile));
+            $response = $response->withHeader('Content-Length', filesize($assetFile));
         }
-        $response->cache(filemtime($assetFile), $this->_cacheTime);
-        $response->file($assetFile);
+        $response = $response->withCache(filemtime($assetFile), $this->_cacheTime)
+            ->withFile($assetFile);
 
         return $response;
     }

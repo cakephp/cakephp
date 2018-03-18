@@ -18,8 +18,8 @@ use ArrayAccess;
 use BadMethodCallException;
 use Cake\Core\Configure;
 use Cake\Http\Cookie\CookieCollection;
-use Cake\Network\Exception\MethodNotAllowedException;
-use Cake\Network\Session;
+use Cake\Http\Exception\MethodNotAllowedException;
+use Cake\Http\Session;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
@@ -43,7 +43,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * @var array
      * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use getParam() instead.
      */
-    public $params = [
+    protected $params = [
         'plugin' => null,
         'controller' => null,
         'action' => null,
@@ -59,7 +59,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * @var null|array|object
      * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use getData() instead.
      */
-    public $data = [];
+    protected $data = [];
 
     /**
      * Array of query string arguments
@@ -67,7 +67,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * @var array
      * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use getQuery() or getQueryParams() instead.
      */
-    public $query = [];
+    protected $query = [];
 
     /**
      * Array of cookie data.
@@ -75,7 +75,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * @var array
      * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use getCookie() instead.
      */
-    public $cookies = [];
+    protected $cookies = [];
 
     /**
      * Array of environment data.
@@ -88,8 +88,9 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * The URL string used for the request.
      *
      * @var string
+     * @deprecated 3.6.0 This public property will be removed in 4.0.0. Use getRequestTarget() instead.
      */
-    public $url;
+    protected $url;
 
     /**
      * Base URL path.
@@ -97,7 +98,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * @var string
      * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use getAttribute('base') instead.
      */
-    public $base;
+    protected $base;
 
     /**
      * webroot path segment for the request.
@@ -105,7 +106,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * @var string
      * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use getAttribute('webroot') instead.
      */
-    public $webroot = '/';
+    protected $webroot = '/';
 
     /**
      * The full address to the current request
@@ -113,7 +114,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * @var string
      * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use getUri()->getPath() instead.
      */
-    public $here;
+    protected $here;
 
     /**
      * Whether or not to trust HTTP_X headers set by most load balancers.
@@ -179,7 +180,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     /**
      * Instance of a Session object relative to this request
      *
-     * @var \Cake\Network\Session
+     * @var \Cake\Http\Session
      */
     protected $session;
 
@@ -219,6 +220,23 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     protected $requestTarget;
 
     /**
+     * List of deprecated properties that have backwards
+     * compatibility offered through magic methods.
+     *
+     * @var array
+     */
+    private $deprecatedProperties = [
+        'data' => ['get' => 'getData()', 'set' => 'withData()'],
+        'query' => ['get' => 'getQuery()', 'set' => 'withQueryParams()'],
+        'params' => ['get' => 'getParam()', 'set' => 'withParam()'],
+        'cookies' => ['get' => 'getCookie()', 'set' => 'withCookieParams()'],
+        'url' => ['get' => 'getRequestTarget()', 'set' => 'withRequestTarget()'],
+        'base' => ['get' => 'getAttribute("base")', 'set' => 'withAttribute("base")'],
+        'webroot' => ['get' => 'getAttribute("webroot")', 'set' => 'withAttribute("webroot")'],
+        'here' => ['get' => 'getRequestTarget()', 'set' => 'withRequestTarget()'],
+    ];
+
+    /**
      * Wrapper method to create a new request from PHP superglobals.
      *
      * Uses the $_GET, $_POST, $_FILES, $_COOKIE, $_SERVER, $_ENV and php://input data to construct
@@ -229,6 +247,11 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public static function createFromGlobals()
     {
+        deprecationWarning(
+            'ServerRequest::createFromGlobals() is deprecated. ' .
+            'Use `Cake\Http\ServerRequestFactory` instead.'
+        );
+
         return ServerRequestFactory::fromGlobals();
     }
 
@@ -311,7 +334,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
         if (strpos($config['url'], '?') !== false) {
             list($config['url'], $querystr) = explode('?', $config['url']);
         }
-        if ($config['url']) {
+        if (strlen($config['url'])) {
             $uri = $uri->withPath('/' . $config['url']);
         }
         if (strlen($querystr)) {
@@ -516,7 +539,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     /**
      * Returns the instance of the Session object for this request
      *
-     * @return \Cake\Network\Session
+     * @return \Cake\Http\Session
      */
     public function getSession()
     {
@@ -530,11 +553,16 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * the session to use for this request
      *
      * @deprecated 3.5.0 Use getSession() instead. The setter part will be removed.
-     * @param \Cake\Network\Session|null $session the session object to use
-     * @return \Cake\Network\Session
+     * @param \Cake\Http\Session|null $session the session object to use
+     * @return \Cake\Http\Session
      */
     public function session(Session $session = null)
     {
+        deprecationWarning(
+            'ServerRequest::session() is deprecated. ' .
+            'Use getSession() instead. The setter part will be removed.'
+        );
+
         if ($session === null) {
             return $this->session;
         }
@@ -614,6 +642,30 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     }
 
     /**
+     * Magic set method allows backward compatibility for former public properties
+     *
+     *
+     * @param string $name The property being accessed.
+     * @param mixed $value The property value.
+     * @return mixed Either the value of the parameter or null.
+     * @deprecated 3.6.0 Public properties will be removed in 4.0.0.
+     *   Use appropriate setters instead.
+     */
+    public function __set($name, $value)
+    {
+        if (isset($this->deprecatedProperties[$name])) {
+            $method = $this->deprecatedProperties[$name]['set'];
+            deprecationWarning(
+                "Setting {$name} as a property will be removed in 4.0.0. " .
+                "Use {$method} instead."
+            );
+
+            return $this->{$name} = $value;
+        }
+        throw new BadMethodCallException("Cannot set {$name} it is not a known property.");
+    }
+
+    /**
      * Magic get method allows access to parsed routing parameters directly on the object.
      *
      * Allows access to `$this->params['controller']` via `$this->controller`
@@ -623,13 +675,30 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * @deprecated 3.4.0 Accessing routing parameters through __get will removed in 4.0.0.
      *   Use getParam() instead.
      */
-    public function __get($name)
+    public function &__get($name)
     {
+        if (isset($this->deprecatedProperties[$name])) {
+            $method = $this->deprecatedProperties[$name]['get'];
+            deprecationWarning(
+                "Accessing `{$name}` as a property will be removed in 4.0.0. " .
+                "Use request->{$method} instead."
+            );
+
+            return $this->{$name};
+        }
+
+        deprecationWarning(sprintf(
+            'Accessing routing parameters through `%s` will removed in 4.0.0. ' .
+            'Use `getParam()` instead.',
+            $name
+        ));
+
         if (isset($this->params[$name])) {
             return $this->params[$name];
         }
+        $value = null;
 
-        return null;
+        return $value;
     }
 
     /**
@@ -643,6 +712,21 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function __isset($name)
     {
+        if (isset($this->deprecatedProperties[$name])) {
+            $method = $this->deprecatedProperties[$name]['get'];
+            deprecationWarning(
+                "Accessing {$name} as a property will be removed in 4.0.0. " .
+                "Use {$method} instead."
+            );
+
+            return isset($this->{$name});
+        }
+
+        deprecationWarning(
+            'Accessing routing parameters through __isset will removed in 4.0.0. ' .
+            'Use getParam() instead.'
+        );
+
         return isset($this->params[$name]);
     }
 
@@ -900,9 +984,15 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param array $params Array of parameters to merge in
      * @return $this The current object, you can chain this method.
+     * @deprecated 3.6.0 ServerRequest::addParams() is deprecated. Use `withParam()` or
+     *   `withAttribute('params')` instead.
      */
     public function addParams(array $params)
     {
+        deprecationWarning(
+            'ServerRequest::addParams() is deprecated. ' .
+            'Use `withParam()` or `withAttribute("params", $params)` instead.'
+        );
         $this->params = array_merge($this->params, $params);
 
         return $this;
@@ -914,9 +1004,14 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param array $paths Array of paths to merge in
      * @return $this The current object, you can chain this method.
+     * @deprecated 3.6.0 Mutating a request in place is deprecated. Use `withAttribute()` to modify paths instead.
      */
     public function addPaths(array $paths)
     {
+        deprecationWarning(
+            'ServerRequest::addPaths() is deprecated. ' .
+            'Use `withAttribute($key, $value)` instead.'
+        );
         foreach (['webroot', 'here', 'base'] as $element) {
             if (isset($paths[$element])) {
                 $this->{$element} = $paths[$element];
@@ -935,6 +1030,10 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function here($base = true)
     {
+        deprecationWarning(
+            'ServerRequest::here() will be removed in 4.0.0. You should use getRequestTarget() instead.'
+        );
+
         $url = $this->here;
         if (!empty($this->query)) {
             $url .= '?' . http_build_query($this->query, null, '&');
@@ -975,6 +1074,11 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function header($name)
     {
+        deprecationWarning(
+            'ServerRequest::header() is deprecated. ' .
+            'The automatic fallback to env() will be removed in 4.0.0, see getHeader()'
+        );
+
         $name = $this->normalizeHeaderName($name);
 
         return $this->getEnv($name);
@@ -1128,6 +1232,11 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function method()
     {
+        deprecationWarning(
+            'ServerRequest::method() is deprecated. ' .
+            'This method will be removed in 4.0.0. Use getMethod() instead.'
+        );
+
         return $this->getEnv('REQUEST_METHOD');
     }
 
@@ -1415,8 +1524,8 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     }
 
     /**
-     * Provides a read accessor for `$this->query`. Allows you
-     * to use a syntax similar to `CakeSession` for reading URL query data.
+     * Provides a read accessor for `$this->query`.
+     * Allows you to use a `Hash::get()` compatible syntax for reading post data.
      *
      * @param string|null $name Query string variable name or null to read all.
      * @return string|array|null The value being read
@@ -1424,6 +1533,11 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function query($name = null)
     {
+        deprecationWarning(
+            'ServerRequest::query() is deprecated. ' .
+            'Use getQuery() or the PSR-7 getQueryParams() and withQueryParams() methods instead.'
+        );
+
         if ($name === null) {
             return $this->query;
         }
@@ -1458,8 +1572,8 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     }
 
     /**
-     * Provides a read/write accessor for `$this->data`. Allows you
-     * to use a syntax similar to `Cake\Model\Datasource\Session` for reading post data.
+     * Provides a read/write accessor for `$this->data`.
+     * Allows you to use a `Hash::get()` compatible syntax for reading post data.
      *
      * ### Reading values.
      *
@@ -1485,6 +1599,11 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function data($name = null, ...$args)
     {
+        deprecationWarning(
+            'ServerRequest::data() is deprecated. ' .
+            'Use withData() and getData() or getParsedBody() instead.'
+        );
+
         if (count($args) === 1) {
             $this->data = Hash::insert($this->data, $name, $args[0]);
 
@@ -1543,6 +1662,11 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function param($name, ...$args)
     {
+        deprecationWarning(
+            'ServerRequest::param() is deprecated. ' .
+            'Use getParam() and withParam() instead.'
+        );
+
         if (count($args) === 1) {
             $this->params = Hash::insert($this->params, $name, $args[0]);
 
@@ -1598,6 +1722,11 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function cookie($key)
     {
+        deprecationWarning(
+            'ServerRequest::cookie() is deprecated. ' .
+            'Use getCookie() instead.'
+        );
+
         if (isset($this->cookies[$key])) {
             return $this->cookies[$key];
         }
@@ -1805,6 +1934,11 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function env($key, $value = null, $default = null)
     {
+        deprecationWarning(
+            'ServerRequest::env() is deprecated. ' .
+            'Use getEnv()/withEnv() instead.'
+        );
+
         if ($value !== null) {
             $this->_environment[$key] = $value;
             $this->clearDetectorCache();
@@ -1835,7 +1969,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string|array $methods Allowed HTTP request methods.
      * @return bool true
-     * @throws \Cake\Network\Exception\MethodNotAllowedException
+     * @throws \Cake\Http\Exception\MethodNotAllowedException
      */
     public function allowMethod($methods)
     {
@@ -1878,6 +2012,11 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function setInput($input)
     {
+        deprecationWarning(
+            'This method will be removed in 4.0.0.' .
+            'Use withBody() instead.'
+        );
+
         $stream = new Stream('php://memory', 'rw');
         $stream->write($input);
         $stream->rewind();
@@ -1890,6 +2029,8 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * Returns an updated request object. This method returns
      * a *new* request object and does not mutate the request in-place.
      *
+     * Use `withParsedBody()` if you need to replace the all request data.
+     *
      * @param string $name The dot separated path to insert $value at.
      * @param mixed $value The value to insert into the request data.
      * @return static
@@ -1898,6 +2039,23 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     {
         $copy = clone $this;
         $copy->data = Hash::insert($copy->data, $name, $value);
+
+        return $copy;
+    }
+
+    /**
+     * Update the request removing a data element.
+     *
+     * Returns an updated request object. This method returns
+     * a *new* request object and does not mutate the request in-place.
+     *
+     * @param string $name The dot separated path to remove.
+     * @return static
+     */
+    public function withoutData($name)
+    {
+        $copy = clone $this;
+        $copy->data = Hash::remove($copy->data, $name);
 
         return $copy;
     }
@@ -2196,6 +2354,11 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function offsetGet($name)
     {
+        deprecationWarning(
+            'The ArrayAccess methods will be removed in 4.0.0.' .
+            'Use getParam(), getData() and getQuery() instead.'
+        );
+
         if (isset($this->params[$name])) {
             return $this->params[$name];
         }
@@ -2219,6 +2382,11 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function offsetSet($name, $value)
     {
+        deprecationWarning(
+            'The ArrayAccess methods will be removed in 4.0.0.' .
+            'Use withParam() instead.'
+        );
+
         $this->params[$name] = $value;
     }
 
@@ -2231,6 +2399,11 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function offsetExists($name)
     {
+        deprecationWarning(
+            'The ArrayAccess methods will be removed in 4.0.0.' .
+            'Use getParam() instead.'
+        );
+
         if ($name === 'url' || $name === 'data') {
             return true;
         }
@@ -2247,6 +2420,11 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function offsetUnset($name)
     {
+        deprecationWarning(
+            'The ArrayAccess methods will be removed in 4.0.0.' .
+            'Use withParam() instead.'
+        );
+
         unset($this->params[$name]);
     }
 }

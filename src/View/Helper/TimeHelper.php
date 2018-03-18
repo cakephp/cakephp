@@ -300,6 +300,7 @@ class TimeHelper extends Helper
      *
      * @param string|int $timeInterval the numeric value with space then time type.
      *    Example of valid types: 6 hours, 2 days, 1 minute.
+     *    Integer input values are deprecated and support will be removed in 4.0.0
      * @param int|string|\DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
      * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
      * @return bool
@@ -315,6 +316,7 @@ class TimeHelper extends Helper
      *
      * @param string|int $timeInterval the numeric value with space then time type.
      *    Example of valid types: 6 hours, 2 days, 1 minute.
+     *    Integer input values are deprecated and support will be removed in 4.0.0
      * @param int|string|\DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
      * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
      * @return bool

@@ -122,7 +122,7 @@ class TypeTest extends TestCase
     {
         $map = Type::map();
         $this->assertNotEmpty($map);
-        $this->assertFalse(isset($map['foo']));
+        $this->assertArrayNotHasKey('foo', $map);
 
         $fooType = FooType::class;
         Type::map('foo', $fooType);
@@ -246,7 +246,6 @@ class TypeTest extends TestCase
         $this->assertSame(3.14159, $type->toPHP('3.14159', $driver));
         $this->assertSame(3.14159, $type->toPHP(3.14159, $driver));
         $this->assertSame(3.0, $type->toPHP(3, $driver));
-        $this->assertSame(1.0, $type->toPHP(['3', '4'], $driver));
     }
 
     /**

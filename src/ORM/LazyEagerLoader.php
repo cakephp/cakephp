@@ -51,7 +51,7 @@ class LazyEagerLoader
 
         $entities = new Collection($entities);
         $query = $this->_getQuery($entities, $contain, $source);
-        $associations = array_keys($query->contain());
+        $associations = array_keys($query->getContain());
 
         $entities = $this->_injectResults($entities, $query, $associations, $source);
 
@@ -89,7 +89,7 @@ class LazyEagerLoader
                     return $exp->in($source->aliasField($primaryKey), $keys->toList());
                 }
 
-                $types = array_intersect_key($q->defaultTypes(), array_flip($primaryKey));
+                $types = array_intersect_key($q->getDefaultTypes(), array_flip($primaryKey));
                 $primaryKey = array_map([$source, 'aliasField'], $primaryKey);
 
                 return new TupleComparison($primaryKey, $keys->toList(), $types, 'IN');

@@ -16,6 +16,8 @@ namespace Cake\ORM;
 
 use ArrayIterator;
 use Cake\Datasource\EntityInterface;
+use Cake\ORM\Locator\LocatorAwareTrait;
+use Cake\ORM\Locator\LocatorInterface;
 use InvalidArgumentException;
 use IteratorAggregate;
 
@@ -29,6 +31,7 @@ class AssociationCollection implements IteratorAggregate
 {
 
     use AssociationsNormalizerTrait;
+    use LocatorAwareTrait;
 
     /**
      * Stored associations
@@ -36,6 +39,21 @@ class AssociationCollection implements IteratorAggregate
      * @var \Cake\ORM\Association[]
      */
     protected $_items = [];
+
+    /**
+     * Constructor.
+     *
+     * Sets the default table locator for associations.
+     * If no locator is provided, the global one will be used.
+     *
+     * @param \Cake\ORM\Locator\LocatorInterface|null $tableLocator Table locator instance.
+     */
+    public function __construct(LocatorInterface $tableLocator = null)
+    {
+        if ($tableLocator !== null) {
+            $this->_tableLocator = $tableLocator;
+        }
+    }
 
     /**
      * Add an association to the collection
@@ -52,6 +70,30 @@ class AssociationCollection implements IteratorAggregate
         list(, $alias) = pluginSplit($alias);
 
         return $this->_items[strtolower($alias)] = $association;
+    }
+
+    /**
+     * Creates and adds the Association object to this collection.
+     *
+     * @param string $className The name of association class.
+     * @param string $associated The alias for the target table.
+     * @param array $options List of options to configure the association definition.
+     * @return \Cake\ORM\Association
+     * @throws InvalidArgumentException
+     */
+    public function load($className, $associated, array $options = [])
+    {
+        $options += [
+            'tableLocator' => $this->getTableLocator()
+        ];
+
+        $association = new $className($associated, $options);
+        if (!$association instanceof Association) {
+            $message = sprintf('The association must extend `%s` class, `%s` given.', Association::class, get_class($association));
+            throw new InvalidArgumentException($message);
+        }
+
+        return $this->add($association->getName(), $association);
     }
 
     /**
@@ -118,6 +160,11 @@ class AssociationCollection implements IteratorAggregate
      */
     public function type($class)
     {
+        deprecationWarning(
+            'AssociationCollection::type() is deprecated. ' .
+            'Use getByType() instead.'
+        );
+
         return $this->getByType($class);
     }
 

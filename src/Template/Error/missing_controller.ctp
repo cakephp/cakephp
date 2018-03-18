@@ -26,7 +26,7 @@ $originalClass = $class;
 $class = Inflector::camelize($class);
 
 if (!empty($prefix)) {
-    $prefix = array_map('\Cake\Utility\Inflector::camelize', explode('/', $prefix));
+    $prefix = array_map('Cake\Utility\Inflector::camelize', explode('/', $prefix));
     $prefixNs = '\\' . implode('\\', $prefix);
     $prefixPath = implode(DIRECTORY_SEPARATOR, $prefix) . DIRECTORY_SEPARATOR;
 }

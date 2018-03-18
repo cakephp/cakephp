@@ -113,7 +113,7 @@ class JsonView extends SerializedView
             }
             if ($this->request->getQuery($jsonpParam)) {
                 $return = sprintf('%s(%s)', h($this->request->getQuery($jsonpParam)), $return);
-                $this->response->type('js');
+                $this->response = $this->response->withType('js');
             }
         }
 

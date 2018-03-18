@@ -18,7 +18,7 @@ use Cake\Event\Event;
 use Cake\Http\ActionDispatcher;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
-use Cake\Network\Session;
+use Cake\Http\Session;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Filter\ControllerFactoryFilter;
 use Cake\Routing\Router;
@@ -40,7 +40,6 @@ class ActionDispatcherTest extends TestCase
         Router::reload();
         static::setAppNamespace();
         $this->dispatcher = new ActionDispatcher();
-        $this->dispatcher->addFilter(new ControllerFactoryFilter());
     }
 
     /**
@@ -72,38 +71,46 @@ class ActionDispatcherTest extends TestCase
     /**
      * Ensure that filters connected to the DispatcherFactory are
      * also applied
+     *
+     * @group deprecated
+     * @return void
      */
     public function testDispatcherFactoryCompat()
     {
-        $filter = $this->getMockBuilder('Cake\Routing\DispatcherFilter')
-            ->setMethods(['beforeDispatch', 'afterDispatch'])
-            ->getMock();
-        DispatcherFactory::add($filter);
-        $dispatcher = new ActionDispatcher(null, null, DispatcherFactory::filters());
-        $this->assertCount(1, $dispatcher->getFilters());
-        $this->assertSame($filter, $dispatcher->getFilters()[0]);
+        $this->deprecated(function () {
+            $filter = $this->getMockBuilder('Cake\Routing\DispatcherFilter')
+                ->setMethods(['beforeDispatch', 'afterDispatch'])
+                ->getMock();
+            DispatcherFactory::add($filter);
+            $dispatcher = new ActionDispatcher(null, null, DispatcherFactory::filters());
+            $this->assertCount(1, $dispatcher->getFilters());
+            $this->assertSame($filter, $dispatcher->getFilters()[0]);
+        });
     }
 
     /**
      * Test adding routing filters
      *
+     * @group deprecated
      * @return void
      */
     public function testAddFilter()
     {
-        $this->assertCount(1, $this->dispatcher->getFilters());
-        $events = $this->dispatcher->getEventManager();
-        $this->assertCount(1, $events->listeners('Dispatcher.beforeDispatch'));
-        $this->assertCount(1, $events->listeners('Dispatcher.afterDispatch'));
+        $this->deprecated(function () {
+            $this->assertCount(0, $this->dispatcher->getFilters());
+            $events = $this->dispatcher->getEventManager();
+            $this->assertCount(0, $events->listeners('Dispatcher.beforeDispatch'));
+            $this->assertCount(0, $events->listeners('Dispatcher.afterDispatch'));
 
-        $filter = $this->getMockBuilder('Cake\Routing\DispatcherFilter')
-            ->setMethods(['beforeDispatch', 'afterDispatch'])
-            ->getMock();
-        $this->dispatcher->addFilter($filter);
+            $filter = $this->getMockBuilder('Cake\Routing\DispatcherFilter')
+                ->setMethods(['beforeDispatch', 'afterDispatch'])
+                ->getMock();
+            $this->dispatcher->addFilter($filter);
 
-        $this->assertCount(2, $this->dispatcher->getFilters());
-        $this->assertCount(2, $events->listeners('Dispatcher.beforeDispatch'));
-        $this->assertCount(2, $events->listeners('Dispatcher.afterDispatch'));
+            $this->assertCount(1, $this->dispatcher->getFilters());
+            $this->assertCount(1, $events->listeners('Dispatcher.beforeDispatch'));
+            $this->assertCount(1, $events->listeners('Dispatcher.afterDispatch'));
+        });
     }
 
     /**
@@ -115,16 +122,12 @@ class ActionDispatcherTest extends TestCase
     {
         $response = new Response();
         $dispatcher = new ActionDispatcher();
-        $filter = $this->getMockBuilder('Cake\Routing\DispatcherFilter')
-            ->setMethods(['beforeDispatch', 'afterDispatch'])
-            ->getMock();
-        $filter->expects($this->once())
-            ->method('beforeDispatch')
-            ->will($this->returnValue($response));
 
         $req = new ServerRequest();
         $res = new Response();
-        $dispatcher->addFilter($filter);
+        $dispatcher->getEventManager()->on('Dispatcher.beforeDispatch', function () use ($response) {
+            return $response;
+        });
         $result = $dispatcher->dispatch($req, $res);
         $this->assertSame($response, $result, 'Should be response from filter.');
     }
@@ -136,15 +139,6 @@ class ActionDispatcherTest extends TestCase
      */
     public function testDispatchAfterDispatchEventModifyResponse()
     {
-        $filter = $this->getMockBuilder('Cake\Routing\DispatcherFilter')
-            ->setMethods(['beforeDispatch', 'afterDispatch'])
-            ->getMock();
-        $filter->expects($this->once())
-            ->method('afterDispatch')
-            ->will($this->returnCallback(function (Event $event) {
-                $event->data('response')->body('Filter body');
-            }));
-
         $req = new ServerRequest([
             'url' => '/cakes',
             'params' => [
@@ -156,9 +150,12 @@ class ActionDispatcherTest extends TestCase
             'session' => new Session
         ]);
         $res = new Response();
-        $this->dispatcher->addFilter($filter);
+        $this->dispatcher->getEventManager()->on('Dispatcher.afterDispatch', function (Event $event) {
+            $response = $event->getData('response');
+            $event->setData('response', $response->withStringBody('Filter body'));
+        });
         $result = $this->dispatcher->dispatch($req, $res);
-        $this->assertSame('Filter body', $result->body(), 'Should be response from filter.');
+        $this->assertSame('Filter body', (string)$result->getBody(), 'Should be response from filter.');
     }
 
     /**
@@ -169,12 +166,6 @@ class ActionDispatcherTest extends TestCase
      */
     public function testDispatchActionReturnResponseNoAfterDispatch()
     {
-        $filter = $this->getMockBuilder('Cake\Routing\DispatcherFilter')
-            ->setMethods(['beforeDispatch', 'afterDispatch'])
-            ->getMock();
-        $filter->expects($this->never())
-            ->method('afterDispatch');
-
         $req = new ServerRequest([
             'url' => '/cakes',
             'params' => [
@@ -186,9 +177,11 @@ class ActionDispatcherTest extends TestCase
             ],
         ]);
         $res = new Response();
-        $this->dispatcher->addFilter($filter);
+        $this->dispatcher->getEventManager()->on('Dispatcher.afterDispatch', function () {
+            $this->fail('no afterDispatch event should be fired');
+        });
         $result = $this->dispatcher->dispatch($req, $res);
-        $this->assertSame('Hello Jane', $result->body(), 'Response from controller.');
+        $this->assertSame('Hello Jane', (string)$result->getBody(), 'Response from controller.');
     }
 
     /**
@@ -254,7 +247,7 @@ class ActionDispatcherTest extends TestCase
         $response = new Response();
         $result = $this->dispatcher->dispatch($request, $response);
         $this->assertInstanceOf('Cake\Http\Response', $result);
-        $this->assertContains('posts index', $result->body());
+        $this->assertContains('posts index', (string)$result->getBody());
     }
 
     /**
@@ -275,7 +268,7 @@ class ActionDispatcherTest extends TestCase
         $response = new Response();
         $result = $this->dispatcher->dispatch($request, $response);
         $this->assertInstanceOf('Cake\Http\Response', $result);
-        $this->assertContains('autoRender false body', $result->body());
+        $this->assertContains('autoRender false body', (string)$result->getBody());
     }
 
     /**
@@ -382,7 +375,7 @@ class ActionDispatcherTest extends TestCase
         ]);
         $response = new Response();
         $result = $this->dispatcher->dispatch($request, $response);
-        $this->assertSame('startup stop', $result->body());
+        $this->assertSame('startup stop', (string)$result->getBody());
     }
 
     /**
@@ -404,6 +397,6 @@ class ActionDispatcherTest extends TestCase
         ]);
         $response = new Response();
         $result = $this->dispatcher->dispatch($request, $response);
-        $this->assertSame('shutdown stop', $result->body());
+        $this->assertSame('shutdown stop', (string)$result->getBody());
     }
 }

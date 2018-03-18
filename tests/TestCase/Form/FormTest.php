@@ -16,6 +16,9 @@ namespace Cake\Test\TestCase\Form;
 
 use Cake\Form\Form;
 use Cake\TestSuite\TestCase;
+use Cake\Validation\Validator;
+use TestApp\Form\AppForm;
+use TestApp\Form\FormSchema;
 
 /**
  * Form test case.
@@ -39,24 +42,61 @@ class FormTest extends TestCase
         $schema = $this->getMockBuilder('Cake\Form\Schema')->getMock();
         $this->assertSame($schema, $form->schema($schema));
         $this->assertSame($schema, $form->schema());
+
+        $form = new AppForm();
+        $this->assertInstanceOf(FormSchema::class, $form->schema());
     }
 
     /**
      * Test validator()
      *
      * @return void
+     * @group deprecated
      */
     public function testValidator()
     {
+        $this->deprecated(function () {
+            $form = new Form();
+            $validator = $form->validator();
+
+            $this->assertInstanceOf('Cake\Validation\Validator', $validator);
+            $this->assertSame($validator, $form->validator(), 'Same instance each time');
+
+            $validator = $this->getMockBuilder('Cake\Validation\Validator')->getMock();
+            $this->assertSame($validator, $form->validator($validator));
+            $this->assertSame($validator, $form->validator());
+        });
+    }
+
+    /**
+     * Test getValidator()
+     *
+     * @return void
+     */
+    public function testGetValidator()
+    {
+        $form = $this->getMockBuilder(Form::class)
+            ->setMethods(['buildValidator'])
+            ->getMock();
+
+        $form->expects($this->once())
+            ->method('buildValidator');
+
+        $this->assertInstanceof(Validator::class, $form->getValidator());
+    }
+
+    /**
+     * Test setValidator()
+     *
+     * @return void
+     */
+    public function testSetValidator()
+    {
         $form = new Form();
-        $validator = $form->validator();
-
-        $this->assertInstanceOf('Cake\Validation\Validator', $validator);
-        $this->assertSame($validator, $form->validator(), 'Same instance each time');
-
         $validator = $this->getMockBuilder('Cake\Validation\Validator')->getMock();
-        $this->assertSame($validator, $form->validator($validator));
-        $this->assertSame($validator, $form->validator());
+
+        $form->setValidator('default', $validator);
+        $this->assertSame($validator, $form->getValidator());
     }
 
     /**
@@ -67,7 +107,7 @@ class FormTest extends TestCase
     public function testValidate()
     {
         $form = new Form();
-        $form->validator()
+        $form->getValidator()
             ->add('email', 'format', ['rule' => 'email'])
             ->add('body', 'length', ['rule' => ['minLength', 12]]);
 
@@ -94,7 +134,7 @@ class FormTest extends TestCase
     public function testErrors()
     {
         $form = new Form();
-        $form->validator()
+        $form->getValidator()
             ->add('email', 'format', [
                 'message' => 'Must be a valid email',
                 'rule' => 'email'
@@ -141,7 +181,7 @@ class FormTest extends TestCase
         $form = $this->getMockBuilder('Cake\Form\Form')
             ->setMethods(['_execute'])
             ->getMock();
-        $form->validator()
+        $form->getValidator()
             ->add('email', 'format', ['rule' => 'email']);
         $data = [
             'email' => 'rong'
@@ -162,7 +202,7 @@ class FormTest extends TestCase
         $form = $this->getMockBuilder('Cake\Form\Form')
             ->setMethods(['_execute'])
             ->getMock();
-        $form->validator()
+        $form->getValidator()
             ->add('email', 'format', ['rule' => 'email']);
         $data = [
             'email' => 'test@example.com'

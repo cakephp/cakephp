@@ -293,15 +293,15 @@ class JsonViewTest extends TestCase
         $output = $View->render(false);
 
         $this->assertSame(json_encode($data), $output);
-        $this->assertSame('application/json', $Response->type());
+        $this->assertSame('application/json', $View->response->getType());
 
-        $View->request->query = ['callback' => 'jfunc'];
+        $View->request = $View->request->withQueryParams(['callback' => 'jfunc']);
         $output = $View->render(false);
         $expected = 'jfunc(' . json_encode($data) . ')';
         $this->assertSame($expected, $output);
-        $this->assertSame('application/javascript', $Response->type());
+        $this->assertSame('application/javascript', $View->response->getType());
 
-        $View->request->query = ['jsonCallback' => 'jfunc'];
+        $View->request = $View->request->withQueryParams(['jsonCallback' => 'jfunc']);
         $View->viewVars['_jsonp'] = 'jsonCallback';
         $output = $View->render(false);
         $expected = 'jfunc(' . json_encode($data) . ')';
@@ -318,7 +318,7 @@ class JsonViewTest extends TestCase
         $Request = new ServerRequest();
         $Response = new Response();
         $Controller = new Controller($Request, $Response);
-        $Controller->name = 'Posts';
+        $Controller->setName('Posts');
 
         $data = [
             'User' => [
@@ -332,11 +332,11 @@ class JsonViewTest extends TestCase
         $Controller->set('user', $data);
         $Controller->viewBuilder()->setClassName('Json');
         $View = $Controller->createView();
-        $View->viewPath = $Controller->name;
+        $View->setTemplatePath($Controller->getName());
         $output = $View->render('index');
 
         $expected = json_encode(['user' => 'fake', 'list' => ['item1', 'item2'], 'paging' => null]);
         $this->assertSame($expected, $output);
-        $this->assertSame('application/json', $Response->type());
+        $this->assertSame('application/json', $View->response->getType());
     }
 }

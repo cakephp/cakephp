@@ -152,6 +152,10 @@ class RouteBuilder
      */
     public function routeClass($routeClass = null)
     {
+        deprecationWarning(
+            'RouteBuilder::routeClass() is deprecated. ' .
+            'Use RouteBuilder::setRouteClass()/getRouteClass() instead.'
+        );
         if ($routeClass === null) {
             return $this->getRouteClass();
         }
@@ -193,6 +197,10 @@ class RouteBuilder
      */
     public function extensions($extensions = null)
     {
+        deprecationWarning(
+            'RouteBuilder::extensions() is deprecated. ' .
+            'Use RouteBuilder::setExtensions()/getExtensions() instead.'
+        );
         if ($extensions === null) {
             return $this->getExtensions();
         }
@@ -578,6 +586,7 @@ class RouteBuilder
             'routeClass' => $this->_routeClass,
         ];
 
+        $target = $this->parseDefaults($target);
         $target['_method'] = $method;
 
         $route = $this->_makeRoute($template, $target, $options);
@@ -685,7 +694,7 @@ class RouteBuilder
      * The above route will only be matched for GET requests. POST requests will fail to match this route.
      *
      * @param string $route A string describing the template of the route
-     * @param array $defaults An array describing the default route parameters. These parameters will be used by default
+     * @param array|string $defaults An array describing the default route parameters. These parameters will be used by default
      *   and can supply routing parameters that are not dynamic. See above.
      * @param array $options An array matching the named elements in the route to regular expressions which that
      *   element should match. Also contains additional parameters such as which routed parameters should be
@@ -695,8 +704,9 @@ class RouteBuilder
      * @throws \InvalidArgumentException
      * @throws \BadMethodCallException
      */
-    public function connect($route, array $defaults = [], array $options = [])
+    public function connect($route, $defaults = [], array $options = [])
     {
+        $defaults = $this->parseDefaults($defaults);
         if (!isset($options['action']) && !isset($defaults['action'])) {
             $defaults['action'] = 'index';
         }
@@ -722,6 +732,50 @@ class RouteBuilder
     }
 
     /**
+     * Parse the defaults if they're a string
+     *
+     * @param string|array $defaults Defaults array from the connect() method.
+     * @return string|array
+     */
+    protected static function parseDefaults($defaults)
+    {
+        if (!is_string($defaults)) {
+            return $defaults;
+        }
+
+        $regex = '/(?:([a-zA-Z0-9\/]*)\.)?([a-zA-Z0-9\/]*?)(?:\/)?([a-zA-Z0-9]*):{2}([a-zA-Z0-9_]*)/i';
+        if (preg_match($regex, $defaults, $matches)) {
+            unset($matches[0]);
+            $matches = array_filter($matches, function ($value) {
+                return $value !== '' && $value !== '::';
+            });
+
+            // Intentionally incomplete switch
+            switch (count($matches)) {
+                case 2:
+                    return [
+                        'controller' => $matches[3],
+                        'action' => $matches[4]
+                    ];
+                case 3:
+                    return [
+                        'prefix' => strtolower($matches[2]),
+                        'controller' => $matches[3],
+                        'action' => $matches[4]
+                    ];
+                case 4:
+                    return [
+                        'plugin' => $matches[1],
+                        'prefix' => strtolower($matches[2]),
+                        'controller' => $matches[3],
+                        'action' => $matches[4]
+                    ];
+            }
+        }
+        throw new RuntimeException("Could not parse `{$defaults}` route destination string.");
+    }
+
+    /**
      * Create a route object, or return the provided object.
      *
      * @param string|\Cake\Routing\Route\Route $route The route template or route object.
@@ -743,7 +797,9 @@ class RouteBuilder
             }
 
             $route = str_replace('//', '/', $this->_path . $route);
-            $route = $route === '/' ? $route : rtrim($route, '/');
+            if ($route !== '/') {
+                $route = rtrim($route, '/');
+            }
 
             foreach ($this->_params as $param => $val) {
                 if (isset($defaults[$param]) && $param !== 'prefix' && $defaults[$param] !== $val) {
@@ -758,8 +814,7 @@ class RouteBuilder
                     ));
                 }
             }
-            $defaults += $this->_params;
-            $defaults += ['plugin' => null];
+            $defaults += $this->_params + ['plugin' => null];
 
             $route = new $routeClass($route, $defaults, $options);
         }

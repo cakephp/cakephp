@@ -175,6 +175,11 @@ trait InstanceConfigTrait
      */
     public function config($key = null, $value = null, $merge = true)
     {
+        deprecationWarning(
+            get_called_class() . '::config() is deprecated. ' .
+            'Use setConfig()/getConfig() instead.'
+        );
+
         if (is_array($key) || func_num_args() >= 2) {
             return $this->setConfig($key, $value, $merge);
         }

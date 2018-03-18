@@ -23,14 +23,14 @@ class TestUserMailer extends TestMailer
     public function invite($email)
     {
         $this->_email
-            ->subject('CakePHP')
-            ->from('jadb@cakephp.org')
-            ->to($email)
-            ->cc('markstory@cakephp.org')
+            ->setSubject('CakePHP')
+            ->setFrom('jadb@cakephp.org')
+            ->setTo($email)
+            ->setCc('markstory@cakephp.org')
             ->addCc('admad@cakephp.org', 'Adnan')
-            ->bcc('dereuromark@cakephp.org', 'Mark')
+            ->setBcc('dereuromark@cakephp.org', 'Mark')
             ->addBcc('antograssiot@cakephp.org')
-            ->attachments([
+            ->setAttachments([
                 dirname(__FILE__) . DS . 'TestMailer.php',
                 dirname(__FILE__) . DS . 'TestUserMailer.php'
             ])

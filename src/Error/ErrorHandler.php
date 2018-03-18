@@ -17,6 +17,7 @@
 namespace Cake\Error;
 
 use Cake\Core\App;
+use Cake\Http\ResponseEmitter;
 use Exception;
 use Throwable;
 
@@ -194,6 +195,8 @@ class ErrorHandler extends BaseErrorHandler
 
             return;
         }
-        $response->send();
+
+        $emitter = new ResponseEmitter();
+        $emitter->emit($response);
     }
 }

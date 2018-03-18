@@ -182,7 +182,7 @@ class CookieCollection implements IteratorAggregate, Countable
                     sprintf(
                         'Expected `%s[]` as $cookies but instead got `%s` at index %d',
                         static::class,
-                        is_object($cookie) ? get_class($cookie) : gettype($cookie),
+                        getTypeName($cookie),
                         $index
                     )
                 );
@@ -223,8 +223,17 @@ class CookieCollection implements IteratorAggregate, Countable
         $cookies = array_merge($cookies, $extraCookies);
         $cookiePairs = [];
         foreach ($cookies as $key => $value) {
-            $cookiePairs[] = sprintf("%s=%s", rawurlencode($key), rawurlencode($value));
+            $cookie = sprintf("%s=%s", rawurlencode($key), rawurlencode($value));
+            $size = strlen($cookie);
+            if ($size > 4096) {
+                triggerWarning(sprintf(
+                    'The cookie `%s` exceeds the recommended maximum cookie length of 4096 bytes.',
+                    $key
+                ));
+            }
+            $cookiePairs[] = $cookie;
         }
+
         if (empty($cookiePairs)) {
             return $request;
         }

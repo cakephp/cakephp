@@ -1,6 +1,6 @@
 parameters:
     autoload_files:
-        - %rootDir%/../../../tests/bootstrap.php
+        - tests/bootstrap.php
     ignoreErrors:
         - '#Function wincache_ucache_[a-zA-Z0-9_]+ not found#'
         - '#Function xcache_[a-zA-Z0-9_]+ not found#'
@@ -26,6 +26,7 @@ parameters:
         - '#Call to an undefined method object::__toString\(\)#'
         - '#Call to an undefined method object::toArray\(\)#'
         - '#Call to an undefined method object::__debugInfo\(\)#'
+        - '#Cannot call method lastInsertId\(\) on null#'
     earlyTerminatingMethodCalls:
         Cake\Shell\Shell:
             - abort

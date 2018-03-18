@@ -91,18 +91,52 @@ class BoolTypeTest extends TestCase
     public function testToPHP()
     {
         $this->assertNull($this->type->toPHP(null, $this->driver));
-        $this->assertTrue($this->type->toPHP(true, $this->driver));
         $this->assertTrue($this->type->toPHP(1, $this->driver));
         $this->assertTrue($this->type->toPHP('1', $this->driver));
         $this->assertTrue($this->type->toPHP('TRUE', $this->driver));
         $this->assertTrue($this->type->toPHP('true', $this->driver));
+        $this->assertTrue($this->type->toPHP(true, $this->driver));
 
-        $this->assertFalse($this->type->toPHP(false, $this->driver));
         $this->assertFalse($this->type->toPHP(0, $this->driver));
         $this->assertFalse($this->type->toPHP('0', $this->driver));
         $this->assertFalse($this->type->toPHP('FALSE', $this->driver));
         $this->assertFalse($this->type->toPHP('false', $this->driver));
-        $this->assertTrue($this->type->toPHP(['2', '3'], $this->driver));
+        $this->assertFalse($this->type->toPHP(false, $this->driver));
+    }
+
+    /**
+     * Test converting string booleans to PHP values.
+     *
+     * @return void
+     */
+    public function testManyToPHP()
+    {
+        $values = [
+            'a' => null,
+            'b' => 'true',
+            'c' => 'TRUE',
+            'd' => 'false',
+            'e' => 'FALSE',
+            'f' => '0',
+            'g' => '1',
+            'h' => true,
+            'i' => false,
+        ];
+        $expected = [
+            'a' => null,
+            'b' => true,
+            'c' => true,
+            'd' => false,
+            'e' => false,
+            'f' => false,
+            'g' => true,
+            'h' => true,
+            'i' => false,
+        ];
+        $this->assertEquals(
+            $expected,
+            $this->type->manyToPHP($values, array_keys($values), $this->driver)
+        );
     }
 
     /**

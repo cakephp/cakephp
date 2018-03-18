@@ -28,7 +28,7 @@ class EmailAssertTraitTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        Email::configTransport('debug', ['className' => DebugTransport::class]);
+        Email::setConfigTransport('debug', ['className' => DebugTransport::class]);
     }
 
     public function tearDown()

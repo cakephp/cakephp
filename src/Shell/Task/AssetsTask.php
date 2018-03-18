@@ -49,7 +49,31 @@ class AssetsTask extends Shell
      */
     public function copy($name = null)
     {
-        $this->_process($this->_list($name), true);
+        $this->_process($this->_list($name), true, $this->param('overwrite'));
+    }
+
+    /**
+     * Remove plugin assets from app's webroot.
+     *
+     * @param string|null $name Name of plugin for which to remove assets.
+     *   If null all plugins will be processed.
+     * @return void
+     * @since 3.5.12
+     */
+    public function remove($name = null)
+    {
+        $plugins = $this->_list($name);
+
+        foreach ($plugins as $plugin => $config) {
+            $this->out();
+            $this->out('For plugin: ' . $plugin);
+            $this->hr();
+
+            $this->_remove($config);
+        }
+
+        $this->out();
+        $this->out('Done');
     }
 
     /**
@@ -77,11 +101,10 @@ class AssetsTask extends Shell
         foreach ($pluginsList as $plugin) {
             $path = Plugin::path($plugin) . 'webroot';
             if (!is_dir($path)) {
-                $this->out('', 1, Shell::VERBOSE);
-                $this->out(
+                $this->verbose('', 1);
+                $this->verbose(
                     sprintf('Skipping plugin %s. It does not have webroot folder.', $plugin),
-                    2,
-                    Shell::VERBOSE
+                    2
                 );
                 continue;
             }
@@ -112,10 +135,13 @@ class AssetsTask extends Shell
      *
      * @param array $plugins List of plugins to process
      * @param bool $copy Force copy mode. Default false.
+     * @param bool $overwrite Overwrite existing files.
      * @return void
      */
-    protected function _process($plugins, $copy = false)
+    protected function _process($plugins, $copy = false, $overwrite = false)
     {
+        $overwrite = (bool)$this->param('overwrite');
+
         foreach ($plugins as $plugin => $config) {
             $this->out();
             $this->out('For plugin: ' . $plugin);
@@ -128,19 +154,25 @@ class AssetsTask extends Shell
                 continue;
             }
 
-            if (file_exists($config['destDir'] . $config['link'])) {
-                $this->out(
-                    $config['destDir'] . $config['link'] . ' already exists',
-                    1,
-                    Shell::VERBOSE
-                );
-                continue;
+            $dest = $config['destDir'] . $config['link'];
+
+            if (file_exists($dest)) {
+                if ($overwrite && !$this->_remove($config)) {
+                    continue;
+                } elseif (!$overwrite) {
+                    $this->verbose(
+                        $dest . ' already exists',
+                        1
+                    );
+
+                    continue;
+                }
             }
 
             if (!$copy) {
                 $result = $this->_createSymlink(
                     $config['srcPath'],
-                    $config['destDir'] . $config['link']
+                    $dest
                 );
                 if ($result) {
                     continue;
@@ -149,12 +181,65 @@ class AssetsTask extends Shell
 
             $this->_copyDirectory(
                 $config['srcPath'],
-                $config['destDir'] . $config['link']
+                $dest
             );
         }
 
         $this->out();
         $this->out('Done');
+    }
+
+    /**
+     * Remove folder/symlink.
+     *
+     * @param array $config Plugin config.
+     * @return bool
+     */
+    protected function _remove($config)
+    {
+        if ($config['namespaced'] && !is_dir($config['destDir'])) {
+            $this->verbose(
+                $config['destDir'] . $config['link'] . ' does not exist',
+                1
+            );
+
+            return false;
+        }
+
+        $dest = $config['destDir'] . $config['link'];
+
+        if (!file_exists($dest)) {
+            $this->verbose(
+                $dest . ' does not exist',
+                1
+            );
+
+            return false;
+        }
+
+        if (is_link($dest)) {
+            // @codingStandardsIgnoreLine
+            if (@unlink($dest)) {
+                $this->out('Unlinked ' . $dest);
+
+                return true;
+            } else {
+                $this->err('Failed to unlink  ' . $dest);
+
+                return false;
+            }
+        }
+
+        $folder = new Folder($dest);
+        if ($folder->delete()) {
+            $this->out('Deleted ' . $dest);
+
+            return true;
+        } else {
+            $this->err('Failed to delete ' . $dest);
+
+            return false;
+        }
     }
 
     /**
@@ -238,9 +323,15 @@ class AssetsTask extends Shell
             'help' => 'Symlink (copy as fallback) plugin assets to app\'s webroot.'
         ])->addSubcommand('copy', [
             'help' => 'Copy plugin assets to app\'s webroot.'
+        ])->addSubcommand('remove', [
+            'help' => 'Remove plugin assets from app\'s webroot.'
         ])->addArgument('name', [
             'help' => 'A specific plugin you want to symlink assets for.',
             'optional' => true,
+        ])->addOption('overwrite', [
+            'help' => 'Overwrite existing symlink / folder / files.',
+            'default' => false,
+            'boolean' => true
         ]);
 
         return $parser;

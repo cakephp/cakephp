@@ -66,6 +66,14 @@ class OrderByExpression extends QueryExpression
      */
     protected function _addConditions(array $orders, array $types)
     {
+        foreach ($orders as $key => $val) {
+            if (is_string($key) && is_string($val) && !in_array(strtoupper($val), ['ASC', 'DESC'], true)) {
+                deprecationWarning(
+                    'Passing extra sort expressions by associative array is deprecated. ' .
+                    'Use QueryExpression or numeric array instead.'
+                );
+            }
+        }
         $this->_conditions = array_merge($this->_conditions, $orders);
     }
 }

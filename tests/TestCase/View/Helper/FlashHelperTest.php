@@ -16,7 +16,7 @@ namespace Cake\Test\TestCase\View\Helper;
 
 use Cake\Core\Plugin;
 use Cake\Http\ServerRequest;
-use Cake\Network\Session;
+use Cake\Http\Session;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\FlashHelper;
 use Cake\View\View;
@@ -143,7 +143,7 @@ class FlashHelperTest extends TestCase
     public function testFlashThrowsException()
     {
         $this->expectException(\UnexpectedValueException::class);
-        $this->View->request->session()->write('Flash.foo', 'bar');
+        $this->View->request->getSession()->write('Flash.foo', 'bar');
         $this->Flash->render('foo');
     }
 
@@ -217,7 +217,7 @@ class FlashHelperTest extends TestCase
             ['div' => ['id' => 'classy-message']], 'Recorded', '/div'
         ];
         $this->assertHtml($expected, $result);
-        $this->assertNull($this->View->request->session()->read('Flash.stack'));
+        $this->assertNull($this->View->request->getSession()->read('Flash.stack'));
     }
 
     /**
@@ -228,7 +228,7 @@ class FlashHelperTest extends TestCase
      */
     public function testFlashWithPrefix()
     {
-        $this->View->request->params['prefix'] = 'Admin';
+        $this->View->request = $this->View->request->withParam('prefix', 'Admin');
         $result = $this->Flash->render('flash');
         $expected = 'flash element from Admin prefix folder';
         $this->assertContains($expected, $result);

@@ -41,7 +41,7 @@ class SessionStorage implements StorageInterface
     /**
      * Session object.
      *
-     * @var \Cake\Network\Session
+     * @var \Cake\Http\Session
      */
     protected $_session;
 

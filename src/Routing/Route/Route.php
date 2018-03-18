@@ -15,6 +15,7 @@
 namespace Cake\Routing\Route;
 
 use Cake\Http\ServerRequest;
+use Cake\Http\ServerRequestFactory;
 use Cake\Routing\Router;
 use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
@@ -95,6 +96,13 @@ class Route
     protected $middleware = [];
 
     /**
+     * Track whether or not brace keys `{var}` were used.
+     *
+     * @var bool
+     */
+    protected $braceKeys = false;
+
+    /**
      * Valid HTTP methods.
      *
      * @var array
@@ -120,8 +128,8 @@ class Route
     public function __construct($template, $defaults = [], array $options = [])
     {
         $this->template = $template;
-        // @deprecated The `[method]` format should be removed in 4.0.0
         if (isset($defaults['[method]'])) {
+            deprecationWarning('The `[method]` option is deprecated. Use `_method` instead.');
             $defaults['_method'] = $defaults['[method]'];
             unset($defaults['[method]']);
         }
@@ -141,6 +149,10 @@ class Route
      */
     public function extensions($extensions = null)
     {
+        deprecationWarning(
+            'Route::extensions() is deprecated. ' .
+            'Use Route::setExtensions()/getExtensions() instead.'
+        );
         if ($extensions === null) {
             return $this->_extensions;
         }
@@ -155,7 +167,10 @@ class Route
      */
     public function setExtensions(array $extensions)
     {
-        $this->_extensions = array_map('strtolower', $extensions);
+        $this->_extensions = [];
+        foreach ($extensions as $ext) {
+            $this->_extensions[] = strtolower($ext);
+        }
 
         return $this;
     }
@@ -307,15 +322,21 @@ class Route
         $names = $routeParams = [];
         $parsed = preg_quote($this->template, '#');
 
-        preg_match_all('/:([a-z0-9-_]+(?<![-_]))/i', $route, $namedElements);
+        if (strpos($route, '{') !== false && strpos($route, '}') !== false) {
+            preg_match_all('/\{([a-z][a-z0-9-_]*)\}/i', $route, $namedElements);
+            $this->braceKeys = true;
+        } else {
+            preg_match_all('/:([a-z0-9-_]+(?<![-_]))/i', $route, $namedElements);
+            $this->braceKeys = false;
+        }
         foreach ($namedElements[1] as $i => $name) {
-            $search = '\\' . $namedElements[0][$i];
+            $search = preg_quote($namedElements[0][$i]);
             if (isset($this->options[$name])) {
                 $option = null;
                 if ($name !== 'plugin' && array_key_exists($name, $this->defaults)) {
                     $option = '?';
                 }
-                $slashParam = '/\\' . $namedElements[0][$i];
+                $slashParam = '/' . $search;
                 if (strpos($parsed, $slashParam) !== false) {
                     $routeParams[$slashParam] = '(?:/(?P<' . $name . '>' . $this->options[$name] . ')' . $option . ')' . $option;
                 } else {
@@ -381,7 +402,7 @@ class Route
             if ($value === null) {
                 continue;
             }
-            if (is_bool($value)) {
+            if ($value === true || $value === false) {
                 $value = $value ? '1' : '0';
             }
             $name .= $value . $glue;
@@ -433,8 +454,12 @@ class Route
 
         if (isset($this->defaults['_method'])) {
             if (empty($method)) {
+                deprecationWarning(
+                    'Extracting the request method from global state when parsing routes is deprecated. ' .
+                    'Instead adopt Route::parseRequest() which extracts the method from the passed request.'
+                );
                 // Deprecated reading the global state is deprecated and will be removed in 4.x
-                $request = Router::getRequest(true) ?: ServerRequest::createFromGlobals();
+                $request = Router::getRequest(true) ?: ServerRequestFactory::fromGlobals();
                 $method = $request->getMethod();
             }
             if (!in_array($method, (array)$this->defaults['_method'], true)) {
@@ -474,6 +499,11 @@ class Route
 
         if (!empty($ext)) {
             $route['_ext'] = $ext;
+        }
+
+        // pass the name if set
+        if (isset($this->options['_name'])) {
+            $route['_name'] = $this->options['_name'];
         }
 
         // restructure 'pass' key route params
@@ -736,6 +766,7 @@ class Route
         }
         // @deprecated The `[method]` support should be removed in 4.0.0
         if (isset($url['[method]'])) {
+            deprecationWarning('The `[method]` key is deprecated. Use `_method` instead.');
             $url['_method'] = $url['[method]'];
         }
         if (empty($url['_method'])) {
@@ -775,7 +806,11 @@ class Route
             } elseif (strpos($out, $key) != strlen($out) - strlen($key)) {
                 $key .= '/';
             }
-            $search[] = ':' . $key;
+            if ($this->braceKeys) {
+                $search[] = "{{$key}}";
+            } else {
+                $search[] = ':' . $key;
+            }
             $replace[] = $string;
         }
 

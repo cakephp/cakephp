@@ -88,10 +88,9 @@ class Marshaller
                 $key = $nested;
                 $nested = [];
             }
-            $assoc = $this->_table->association($key);
             // If the key is not a special field like _ids or _joinData
             // it is a missing association that we should error on.
-            if (!$assoc) {
+            if (!$this->_table->hasAssociation($key)) {
                 if (substr($key, 0, 1) !== '_') {
                     throw new \InvalidArgumentException(sprintf(
                         'Cannot marshal data for "%s" association. It is not associated with "%s".',
@@ -101,6 +100,8 @@ class Marshaller
                 }
                 continue;
             }
+            $assoc = $this->_table->getAssociation($key);
+
             if (isset($options['forceNew'])) {
                 $nested['forceNew'] = $options['forceNew'];
             }
@@ -252,7 +253,7 @@ class Marshaller
 
         if ($validator === null) {
             throw new RuntimeException(
-                sprintf('validate must be a boolean, a string or an object. Got %s.', gettype($options['validate']))
+                sprintf('validate must be a boolean, a string or an object. Got %s.', getTypeName($options['validate']))
             );
         }
 
@@ -271,6 +272,9 @@ class Marshaller
         $options += ['validate' => true];
 
         if (!isset($options['fields']) && isset($options['fieldList'])) {
+            deprecationWarning(
+                'The `fieldList` option for marshalling is deprecated. Use the `fields` option instead.'
+            );
             $options['fields'] = $options['fieldList'];
             unset($options['fieldList']);
         }
@@ -500,6 +504,10 @@ class Marshaller
      */
     protected function _loadBelongsToMany($assoc, $ids)
     {
+        deprecationWarning(
+            'Marshaller::_loadBelongsToMany() is deprecated. Use _loadAssociatedByIds() instead.'
+        );
+
         return $this->_loadAssociatedByIds($assoc, $ids);
     }
 
@@ -682,19 +690,20 @@ class Marshaller
             unset($indexed[$key]);
         }
 
-        $maybeExistentQuery = (new Collection($indexed))
+        $conditions = (new Collection($indexed))
             ->map(function ($data, $key) {
                 return explode(';', $key);
             })
             ->filter(function ($keys) use ($primary) {
                 return count(array_filter($keys, 'strlen')) === count($primary);
             })
-            ->reduce(function ($query, $keys) use ($primary) {
-                /** @var \Cake\ORM\Query $query */
+            ->reduce(function ($conditions, $keys) use ($primary) {
                 $fields = array_map([$this->_table, 'aliasField'], $primary);
+                $conditions['OR'][] = array_combine($fields, $keys);
 
-                return $query->orWhere($query->newExpr()->and_(array_combine($fields, $keys)));
-            }, $this->_table->find());
+                return $conditions;
+            }, ['OR' => []]);
+        $maybeExistentQuery = $this->_table->find()->where($conditions);
 
         if (!empty($indexed) && count($maybeExistentQuery->clause('where'))) {
             foreach ($maybeExistentQuery as $entity) {

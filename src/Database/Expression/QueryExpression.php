@@ -105,6 +105,10 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function tieWith($conjunction = null)
     {
+        deprecationWarning(
+            'QueryExpression::tieWith() is deprecated. ' .
+            'Use QueryExpression::setConjunction()/getConjunction() instead.'
+        );
         if ($conjunction !== null) {
             return $this->setConjunction($conjunction);
         }
@@ -118,10 +122,15 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param string|null $conjunction value to be used for joining conditions. If null it
      * will not set any value, but return the currently stored one
      * @return string|$this
-     * @deprecated 3.2.0 Use tieWith() instead
+     * @deprecated 3.2.0 Use setConjunction()/getConjunction() instead
      */
     public function type($conjunction = null)
     {
+        deprecationWarning(
+            'QueryExpression::type() is deprecated. ' .
+            'Use QueryExpression::setConjunction()/getConjunction() instead.'
+        );
+
         return $this->tieWith($conjunction);
     }
 
@@ -559,7 +568,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * Useful for compiling the final expression, or doing
      * introspection in the structure.
      *
-     * Callback function receives as only argument an instance of a QueryExpression
+     * Callback function receives as only argument an instance of ExpressionInterface
      *
      * @param callable $callable The callable to apply to all sub-expressions.
      * @return void

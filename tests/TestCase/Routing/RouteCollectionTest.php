@@ -128,6 +128,67 @@ class RouteCollectionTest extends TestCase
     }
 
     /**
+     * Test parsing routes with and without _name.
+     *
+     * @return void
+     */
+    public function testParseWithNameParameter()
+    {
+        $routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
+        $routes->connect('/', ['controller' => 'Articles']);
+        $routes->connect('/:id', ['controller' => 'Articles', 'action' => 'view']);
+        $routes->connect('/media/search/*', ['controller' => 'Media', 'action' => 'search'], ['_name' => 'media_search']);
+
+        $result = $this->collection->parse('/b/');
+        $expected = [
+            'controller' => 'Articles',
+            'action' => 'index',
+            'pass' => [],
+            'plugin' => null,
+            'key' => 'value',
+            '_matchedRoute' => '/b',
+        ];
+        $this->assertEquals($expected, $result);
+
+        $result = $this->collection->parse('/b/the-thing?one=two');
+        $expected = [
+            'controller' => 'Articles',
+            'action' => 'view',
+            'id' => 'the-thing',
+            'pass' => [],
+            'plugin' => null,
+            'key' => 'value',
+            '?' => ['one' => 'two'],
+            '_matchedRoute' => '/b/:id',
+        ];
+        $this->assertEquals($expected, $result);
+
+        $result = $this->collection->parse('/b/media/search');
+        $expected = [
+            'key' => 'value',
+            'pass' => [],
+            'plugin' => null,
+            'controller' => 'Media',
+            'action' => 'search',
+            '_matchedRoute' => '/b/media/search/*',
+            '_name' => 'media_search'
+        ];
+        $this->assertEquals($expected, $result);
+
+        $result = $this->collection->parse('/b/media/search/thing');
+        $expected = [
+            'key' => 'value',
+            'pass' => ['thing'],
+            'plugin' => null,
+            'controller' => 'Media',
+            'action' => 'search',
+            '_matchedRoute' => '/b/media/search/*',
+            '_name' => 'media_search'
+        ];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
      * Test that parse decodes URL data before matching.
      * This is important for multibyte URLs that pass through URL rewriting.
      *
@@ -594,21 +655,23 @@ class RouteCollectionTest extends TestCase
     /**
      * Test combined get/set method.
      *
+     * @group deprecated
      * @return void
-     * @deprecated 3.5.0
      */
     public function testExtensions()
     {
-        $this->assertEquals([], $this->collection->extensions());
+        $this->deprecated(function () {
+            $this->assertEquals([], $this->collection->extensions());
 
-        $this->collection->extensions('json');
-        $this->assertEquals(['json'], $this->collection->extensions());
+            $this->collection->extensions('json');
+            $this->assertEquals(['json'], $this->collection->extensions());
 
-        $this->collection->extensions(['rss', 'xml']);
-        $this->assertEquals(['json', 'rss', 'xml'], $this->collection->extensions());
+            $this->collection->extensions(['rss', 'xml']);
+            $this->assertEquals(['json', 'rss', 'xml'], $this->collection->extensions());
 
-        $this->collection->extensions(['csv'], false);
-        $this->assertEquals(['csv'], $this->collection->extensions());
+            $this->collection->extensions(['csv'], false);
+            $this->assertEquals(['csv'], $this->collection->extensions());
+        });
     }
 
     /**

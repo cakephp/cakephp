@@ -14,9 +14,9 @@
  */
 namespace Cake\Auth;
 
+use Cake\Http\Exception\UnauthorizedException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
-use Cake\Network\Exception\UnauthorizedException;
 
 /**
  * Basic Authentication adapter for AuthComponent.
@@ -89,12 +89,12 @@ class BasicAuthenticate extends BaseAuthenticate
      * @param \Cake\Http\ServerRequest $request A request object.
      * @param \Cake\Http\Response $response A response object.
      * @return void
-     * @throws \Cake\Network\Exception\UnauthorizedException
+     * @throws \Cake\Http\Exception\UnauthorizedException
      */
     public function unauthenticated(ServerRequest $request, Response $response)
     {
         $Exception = new UnauthorizedException();
-        $Exception->responseHeader([$this->loginHeaders($request)]);
+        $Exception->responseHeader($this->loginHeaders($request));
         throw $Exception;
     }
 
@@ -102,12 +102,14 @@ class BasicAuthenticate extends BaseAuthenticate
      * Generate the login headers
      *
      * @param \Cake\Http\ServerRequest $request Request object.
-     * @return string Headers for logging in.
+     * @return array Headers for logging in.
      */
     public function loginHeaders(ServerRequest $request)
     {
         $realm = $this->getConfig('realm') ?: $request->getEnv('SERVER_NAME');
 
-        return sprintf('WWW-Authenticate: Basic realm="%s"', $realm);
+        return [
+            'WWW-Authenticate' => sprintf('Basic realm="%s"', $realm)
+        ];
     }
 }

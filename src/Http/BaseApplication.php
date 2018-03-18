@@ -16,8 +16,15 @@ namespace Cake\Http;
 
 use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\HttpApplicationInterface;
+use Cake\Core\Plugin;
+use Cake\Core\PluginApplicationInterface;
+use Cake\Core\PluginInterface;
+use Cake\Event\EventDispatcherTrait;
+use Cake\Event\EventManager;
+use Cake\Event\EventManagerInterface;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
+use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -28,8 +35,13 @@ use Psr\Http\Message\ServerRequestInterface;
  * and ensuring that middleware is attached. It is also invoked as the last piece
  * of middleware, and delegates request/response handling to the correct controller.
  */
-abstract class BaseApplication implements ConsoleApplicationInterface, HttpApplicationInterface
+abstract class BaseApplication implements
+    ConsoleApplicationInterface,
+    HttpApplicationInterface,
+    PluginApplicationInterface
 {
+
+    use EventDispatcherTrait;
 
     /**
      * @var string Contains the path of the config directory
@@ -37,13 +49,23 @@ abstract class BaseApplication implements ConsoleApplicationInterface, HttpAppli
     protected $configDir;
 
     /**
+     * Plugin Collection
+     *
+     * @var \Cake\Core\PluginCollection
+     */
+    protected $plugins;
+
+    /**
      * Constructor
      *
      * @param string $configDir The directory the bootstrap configuration is held in.
+     * @param \Cake\Event\EventManagerInterface $eventManager Application event manager instance.
      */
-    public function __construct($configDir)
+    public function __construct($configDir, EventManagerInterface $eventManager = null)
     {
         $this->configDir = $configDir;
+        $this->plugins = Plugin::getCollection();
+        $this->_eventManager = $eventManager ?: EventManager::instance();
     }
 
     /**
@@ -55,9 +77,79 @@ abstract class BaseApplication implements ConsoleApplicationInterface, HttpAppli
     /**
      * {@inheritDoc}
      */
+    public function pluginMiddleware($middleware)
+    {
+        foreach ($this->plugins->with('middleware') as $plugin) {
+            $middleware = $plugin->middleware($middleware);
+        }
+
+        return $middleware;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function addPlugin($name, array $config = [])
+    {
+        if (is_string($name)) {
+            $plugin = $this->makePlugin($name, $config);
+        } else {
+            $plugin = $name;
+        }
+        $this->plugins->add($plugin);
+
+        return $this;
+    }
+
+    /**
+     * Get the plugin collection in use.
+     *
+     * @return \Cake\Core\PluginCollection
+     */
+    public function getPlugins()
+    {
+        return $this->plugins;
+    }
+
+    /**
+     * Create a plugin instance from a classname and configuration
+     *
+     * @param string $name The plugin classname
+     * @param array $config Configuration options for the plugin
+     * @return \Cake\Core\PluginInterface
+     */
+    public function makePlugin($name, array $config)
+    {
+        if (strpos($name, '\\') === false) {
+            $name = str_replace('/', '\\', $name) . '\\' . 'Plugin';
+        }
+        if (!class_exists($name)) {
+            throw new InvalidArgumentException("The `{$name}` plugin cannot be found");
+        }
+        $plugin = new $name($config);
+        if (!$plugin instanceof PluginInterface) {
+            throw new InvalidArgumentException("The `{$name}` plugin does not implement Cake\Core\PluginInterface.");
+        }
+
+        return $plugin;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function bootstrap()
     {
         require_once $this->configDir . '/bootstrap.php';
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function pluginBootstrap()
+    {
+        foreach ($this->plugins->with('bootstrap') as $plugin) {
+            $plugin->bootstrap($this);
+        }
     }
 
     /**
@@ -78,6 +170,18 @@ abstract class BaseApplication implements ConsoleApplicationInterface, HttpAppli
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function pluginRoutes($routes)
+    {
+        foreach ($this->plugins->with('routes') as $plugin) {
+            $plugin->routes($routes);
+        }
+
+        return $routes;
+    }
+
+    /**
      * Define the console commands for an application.
      *
      * By default all commands in CakePHP, plugins and the application will be
@@ -89,6 +193,18 @@ abstract class BaseApplication implements ConsoleApplicationInterface, HttpAppli
     public function console($commands)
     {
         return $commands->addMany($commands->autoDiscover());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function pluginConsole($commands)
+    {
+        foreach ($this->plugins->with('console') as $plugin) {
+            $commands = $plugin->console($commands);
+        }
+
+        return $commands;
     }
 
     /**
@@ -115,6 +231,6 @@ abstract class BaseApplication implements ConsoleApplicationInterface, HttpAppli
      */
     protected function getDispatcher()
     {
-        return new ActionDispatcher(null, null, DispatcherFactory::filters());
+        return new ActionDispatcher(null, $this->getEventManager(), DispatcherFactory::filters());
     }
 }

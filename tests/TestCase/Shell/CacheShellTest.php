@@ -32,7 +32,7 @@ class CacheShellTest extends ConsoleIntegrationTestCase
     public function setUp()
     {
         parent::setUp();
-        Cache::config('test', ['engine' => 'File', 'path' => CACHE]);
+        Cache::setConfig('test', ['engine' => 'File', 'path' => CACHE]);
     }
 
     /**

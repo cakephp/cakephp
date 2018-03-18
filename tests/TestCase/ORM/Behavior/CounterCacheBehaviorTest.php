@@ -20,7 +20,6 @@ use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -64,17 +63,17 @@ class CounterCacheBehaviorTest extends TestCase
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
 
-        $this->user = TableRegistry::get('Users', [
+        $this->user = $this->getTableLocator()->get('Users', [
             'table' => 'counter_cache_users',
             'connection' => $this->connection
         ]);
 
-        $this->category = TableRegistry::get('Categories', [
+        $this->category = $this->getTableLocator()->get('Categories', [
             'table' => 'counter_cache_categories',
             'connection' => $this->connection
         ]);
 
-        $this->comment = TableRegistry::get('Comments', [
+        $this->comment = $this->getTableLocator()->get('Comments', [
             'alias' => 'Comment',
             'table' => 'counter_cache_comments',
             'connection' => $this->connection
@@ -103,7 +102,7 @@ class CounterCacheBehaviorTest extends TestCase
         parent::tearDown();
 
         unset($this->user, $this->post);
-        TableRegistry::clear();
+        $this->getTableLocator()->clear();
     }
 
     /**
@@ -331,6 +330,37 @@ class CounterCacheBehaviorTest extends TestCase
     }
 
     /**
+     * Testing counter cache with lambda returning false
+     *
+     * @return void
+     */
+    public function testLambdaFalse()
+    {
+        $this->post->belongsTo('Users');
+
+        $table = $this->post;
+        $entity = $this->_getEntity();
+
+        $this->post->addBehavior('CounterCache', [
+            'Users' => [
+                'posts_published' => function (Event $orgEvent, EntityInterface $orgEntity, Table $orgTable) use ($entity, $table) {
+                    $this->assertSame($orgTable, $table);
+                    $this->assertSame($orgEntity, $entity);
+
+                    return false;
+                }
+            ]
+        ]);
+
+        $before = $this->_getUser();
+        $this->post->save($entity);
+        $after = $this->_getUser();
+
+        $this->assertEquals(1, $before->get('posts_published'));
+        $this->assertEquals(1, $after->get('posts_published'));
+    }
+
+    /**
      * Testing counter cache with lambda returning number and changing of related ID
      *
      * @return void
@@ -350,9 +380,9 @@ class CounterCacheBehaviorTest extends TestCase
 
                     if (!$original) {
                         return 2;
-                    } else {
-                        return 1;
                     }
+
+                    return 1;
                 }
             ]
         ]);
@@ -440,7 +470,7 @@ class CounterCacheBehaviorTest extends TestCase
             'bindingKey' => ['category_id', 'user_id'],
             'foreignKey' => ['category_id', 'user_id']
         ]);
-        $this->post->association('UserCategoryPosts')->target($this->userCategoryPosts);
+        $this->post->getAssociation('UserCategoryPosts')->setTarget($this->userCategoryPosts);
         $this->post->addBehavior('CounterCache', [
             'UserCategoryPosts' => ['post_count']
         ]);

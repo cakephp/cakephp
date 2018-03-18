@@ -15,8 +15,6 @@
 namespace Cake\Console;
 
 use ArrayIterator;
-use Cake\Console\CommandScanner;
-use Cake\Console\Shell;
 use Countable;
 use InvalidArgumentException;
 use IteratorAggregate;
@@ -53,17 +51,17 @@ class CommandCollection implements IteratorAggregate, Countable
      * Add a command to the collection
      *
      * @param string $name The name of the command you want to map.
-     * @param string|\Cake\Console\Shell $command The command to map.
+     * @param string|\Cake\Console\Shell|\Cake\Console\Command $command The command to map.
      * @return $this
      */
     public function add($name, $command)
     {
         // Once we have a new Command class this should check
         // against that interface.
-        if (!is_subclass_of($command, Shell::class)) {
+        if (!is_subclass_of($command, Shell::class) && !is_subclass_of($command, Command::class)) {
             $class = is_string($command) ? $command : get_class($command);
             throw new InvalidArgumentException(
-                "Cannot use '$class' for command '$name' it is not a subclass of Cake\Console\Shell."
+                "Cannot use '$class' for command '$name' it is not a subclass of Cake\Console\Shell or Cake\Console\Command."
             );
         }
 
@@ -151,6 +149,54 @@ class CommandCollection implements IteratorAggregate, Countable
     }
 
     /**
+     * Auto-discover shell & commands from the named plugin.
+     *
+     * Discovered commands will have their names de-duplicated with
+     * existing commands in the collection. If a command is already
+     * defined in the collection and discovered in a plugin, only
+     * the long name (`plugin.command`) will be returned.
+     *
+     * @param string $plugin The plugin to scan.
+     * @return array Discovered plugin commands.
+     */
+    public function discoverPlugin($plugin)
+    {
+        $scanner = new CommandScanner();
+        $shells = $scanner->scanPlugin($plugin);
+
+        return $this->resolveNames($shells);
+    }
+
+    /**
+     * Resolve names based on existing commands
+     *
+     * @param array $input The results of a CommandScanner operation.
+     * @return array A flat map of command names => class names.
+     */
+    protected function resolveNames(array $input)
+    {
+        $out = [];
+        foreach ($input as $info) {
+            $name = $info['name'];
+            $addLong = $name !== $info['fullName'];
+
+            // If the short name has been used, use the full name.
+            // This allows app shells to have name preference.
+            // and app shells to overwrite core shells.
+            if ($this->has($name) && $addLong) {
+                $name = $info['fullName'];
+            }
+
+            $out[$name] = $info['class'];
+            if ($addLong) {
+                $out[$info['fullName']] = $info['class'];
+            }
+        }
+
+        return $out;
+    }
+
+    /**
      * Automatically discover shell commands in CakePHP, the application and all plugins.
      *
      * Commands will be located using filesystem conventions. Commands are
@@ -158,52 +204,19 @@ class CommandCollection implements IteratorAggregate, Countable
      *
      * - CakePHP provided commands
      * - Application commands
-     * - Plugin commands
      *
-     * Commands from plugins will be added based on the order plugins are loaded.
-     * Plugin shells will attempt to use a short name. If however, a plugin
-     * provides a shell that conflicts with CakePHP or the application shells,
-     * the full `plugin_name.shell` name will be used. Plugin shells are added
-     * in the order that plugins were loaded.
+     * Commands defined in the application will ovewrite commands with
+     * the same name provided by CakePHP.
      *
      * @return array An array of command names and their classes.
      */
     public function autoDiscover()
     {
         $scanner = new CommandScanner();
-        $shells = $scanner->scanAll();
 
-        $adder = function ($out, $shells, $key) {
-            if (empty($shells[$key])) {
-                return $out;
-            }
+        $core = $this->resolveNames($scanner->scanCore());
+        $app = $this->resolveNames($scanner->scanApp());
 
-            foreach ($shells[$key] as $info) {
-                $name = $info['name'];
-                $addLong = $name !== $info['fullName'];
-
-                // If the short name has been used, use the full name.
-                // This allows app shells to have name preference.
-                // and app shells to overwrite core shells.
-                if (isset($out[$name]) && $addLong) {
-                    $name = $info['fullName'];
-                }
-
-                $out[$name] = $info['class'];
-                if ($addLong) {
-                    $out[$info['fullName']] = $info['class'];
-                }
-            }
-
-            return $out;
-        };
-
-        $out = $adder([], $shells, 'CORE');
-        $out = $adder($out, $shells, 'app');
-        foreach (array_keys($shells['plugins']) as $key) {
-            $out = $adder($out, $shells['plugins'], $key);
-        }
-
-        return $out;
+        return array_merge($core, $app);
     }
 }

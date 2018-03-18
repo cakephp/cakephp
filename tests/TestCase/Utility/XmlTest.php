@@ -73,7 +73,7 @@ class XmlTest extends TestCase
     {
         $xml = '<tag>value</tag>';
         $obj = Xml::build($xml);
-        $this->assertTrue($obj instanceof \SimpleXMLElement);
+        $this->assertInstanceOf(\SimpleXMLElement::class, $obj);
         $this->assertEquals('tag', (string)$obj->getName());
         $this->assertEquals('value', (string)$obj);
 
@@ -81,7 +81,7 @@ class XmlTest extends TestCase
         $this->assertEquals($obj, Xml::build($xml));
 
         $obj = Xml::build($xml, ['return' => 'domdocument']);
-        $this->assertTrue($obj instanceof \DOMDocument);
+        $this->assertInstanceOf(\DOMDocument::class, $obj);
         $this->assertEquals('tag', $obj->firstChild->nodeName);
         $this->assertEquals('value', $obj->firstChild->nodeValue);
 
@@ -270,7 +270,7 @@ class XmlTest extends TestCase
             ]
         ];
         $obj = Xml::fromArray($xml, 'attributes');
-        $this->assertTrue($obj instanceof \SimpleXMLElement);
+        $this->assertInstanceOf(\SimpleXMLElement::class, $obj);
         $this->assertEquals('tags', $obj->getName());
         $this->assertEquals(2, count($obj));
         $xmlText = <<<XML
@@ -283,7 +283,7 @@ XML;
         $this->assertXmlStringEqualsXmlString($xmlText, $obj->asXML());
 
         $obj = Xml::fromArray($xml);
-        $this->assertTrue($obj instanceof \SimpleXMLElement);
+        $this->assertInstanceOf(\SimpleXMLElement::class, $obj);
         $this->assertEquals('tags', $obj->getName());
         $this->assertEquals(2, count($obj));
         $xmlText = <<<XML

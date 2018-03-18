@@ -11,6 +11,9 @@
     <php>
         <ini name="memory_limit" value="-1"/>
         <ini name="apc.enable_cli" value="1"/>
+        <!-- E_ALL & ~E_USER_DEPRECATED (16383)-->
+        <!-- E_ALL (32767) -->
+        <ini name="error_reporting" value="32767"/>
     </php>
 
     <testsuites>

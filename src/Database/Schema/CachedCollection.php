@@ -119,6 +119,10 @@ class CachedCollection extends Collection
      */
     public function cacheMetadata($enable = null)
     {
+        deprecationWarning(
+            'CachedCollection::cacheMetadata() is deprecated. ' .
+            'Use CachedCollection::setCacheMetadata()/getCacheMetadata() instead.'
+        );
         if ($enable !== null) {
             $this->setCacheMetadata($enable);
         }

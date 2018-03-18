@@ -121,41 +121,40 @@ class FormDataTest extends TestCase
     /**
      * Test adding a part with a file in it.
      *
+     * @group deprecated
      * @return void
      */
     public function testAddArrayWithFile()
     {
-        $errorLevel = error_reporting();
-        error_reporting($errorLevel & ~E_USER_DEPRECATED);
+        $this->deprecated(function () {
 
-        $file = CORE_PATH . 'VERSION.txt';
-        $contents = file_get_contents($file);
+            $file = CORE_PATH . 'VERSION.txt';
+            $contents = file_get_contents($file);
 
-        $data = new FormData();
-        $data->add('Article', [
-            'title' => 'first post',
-            'thumbnail' => '@' . $file
-        ]);
-        $boundary = $data->boundary();
-        $result = (string)$data;
+            $data = new FormData();
+            $data->add('Article', [
+                'title' => 'first post',
+                'thumbnail' => '@' . $file
+            ]);
+            $boundary = $data->boundary();
+            $result = (string)$data;
 
-        $expected = [
-            '--' . $boundary,
-            'Content-Disposition: form-data; name="Article[title]"',
-            '',
-            'first post',
-            '--' . $boundary,
-            'Content-Disposition: form-data; name="Article[thumbnail]"; filename="VERSION.txt"',
-            'Content-Type: text/plain; charset=us-ascii',
-            '',
-            $contents,
-            '--' . $boundary . '--',
-            '',
-            '',
-        ];
-        $this->assertEquals(implode("\r\n", $expected), $result);
-
-        error_reporting($errorLevel);
+            $expected = [
+                '--' . $boundary,
+                'Content-Disposition: form-data; name="Article[title]"',
+                '',
+                'first post',
+                '--' . $boundary,
+                'Content-Disposition: form-data; name="Article[thumbnail]"; filename="VERSION.txt"',
+                'Content-Type: text/plain; charset=us-ascii',
+                '',
+                $contents,
+                '--' . $boundary . '--',
+                '',
+                '',
+            ];
+            $this->assertEquals(implode("\r\n", $expected), $result);
+        });
     }
 
     /**

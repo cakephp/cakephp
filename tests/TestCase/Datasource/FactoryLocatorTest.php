@@ -86,7 +86,7 @@ class FactoryLocatorTest extends TestCase
     {
         $stub = new Stub();
         $stub->setProps('Articles');
-        $stub->modelType('Table');
+        $stub->setModelType('Table');
 
         $result = $stub->loadModel('TestPlugin.Comments');
         $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $result);
@@ -136,7 +136,7 @@ class FactoryLocatorTest extends TestCase
 
             return $mock;
         });
-        $stub->modelType('Test');
+        $stub->setModelType('Test');
 
         $result = $stub->loadModel('Magic');
         $this->assertInstanceOf('\StdClass', $result);

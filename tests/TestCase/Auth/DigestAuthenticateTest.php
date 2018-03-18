@@ -19,12 +19,11 @@ namespace Cake\Test\TestCase\Auth;
 use Cake\Auth\DigestAuthenticate;
 use Cake\Controller\ComponentRegistry;
 use Cake\Core\Configure;
+use Cake\Http\Exception\UnauthorizedException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\I18n\Time;
-use Cake\Network\Exception\UnauthorizedException;
 use Cake\ORM\Entity;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -65,7 +64,7 @@ class DigestAuthenticateTest extends TestCase
         ]);
 
         $password = DigestAuthenticate::password('mariano', 'cake', 'localhost');
-        $User = TableRegistry::get('Users');
+        $User = $this->getTableLocator()->get('Users');
         $User->updateAll(['password' => $password], []);
 
         $this->response = $this->getMockBuilder(Response::class)->getMock();
@@ -83,10 +82,10 @@ class DigestAuthenticateTest extends TestCase
             'fields' => ['username' => 'user', 'password' => 'pass'],
             'nonce' => 123456
         ]);
-        $this->assertEquals('AuthUser', $object->config('userModel'));
-        $this->assertEquals(['username' => 'user', 'password' => 'pass'], $object->config('fields'));
-        $this->assertEquals(123456, $object->config('nonce'));
-        $this->assertEquals(env('SERVER_NAME'), $object->config('realm'));
+        $this->assertEquals('AuthUser', $object->getConfig('userModel'));
+        $this->assertEquals(['username' => 'user', 'password' => 'pass'], $object->getConfig('fields'));
+        $this->assertEquals(123456, $object->getConfig('nonce'));
+        $this->assertEquals(env('SERVER_NAME'), $object->getConfig('realm'));
     }
 
     /**
@@ -111,10 +110,9 @@ class DigestAuthenticateTest extends TestCase
      */
     public function testAuthenticateWrongUsername()
     {
-        $this->expectException(\Cake\Network\Exception\UnauthorizedException::class);
+        $this->expectException(\Cake\Http\Exception\UnauthorizedException::class);
         $this->expectExceptionCode(401);
-        $request = new ServerRequest('posts/index');
-        $request->addParams(['pass' => []]);
+        $request = new ServerRequest(['url' => 'posts/index']);
 
         $data = [
             'username' => 'incorrect_user',
@@ -126,7 +124,7 @@ class DigestAuthenticateTest extends TestCase
             'cnonce' => '0a4f113b'
         ];
         $data['response'] = $this->auth->generateResponseHash($data, '09faa9931501bf30f0d4253fa7763022', 'GET');
-        $request->env('PHP_AUTH_DIGEST', $this->digestHeader($data));
+        $request = $request->withEnv('PHP_AUTH_DIGEST', $this->digestHeader($data));
 
         $this->auth->unauthenticated($request, $this->response);
     }
@@ -142,7 +140,6 @@ class DigestAuthenticateTest extends TestCase
             'url' => 'posts/index',
             'environment' => ['REQUEST_METHOD' => 'GET']
         ]);
-        $request->addParams(['pass' => []]);
 
         try {
             $this->auth->unauthenticated($request, $this->response);
@@ -151,10 +148,10 @@ class DigestAuthenticateTest extends TestCase
 
         $this->assertNotEmpty($e);
 
-        $header = $e->responseHeader()[0];
+        $header = $e->responseHeader();
         $this->assertRegexp(
-            '/^WWW\-Authenticate: Digest realm="localhost",qop="auth",nonce="[a-zA-Z0-9=]+",opaque="123abc"$/',
-            $e->responseHeader()[0]
+            '/^Digest realm="localhost",qop="auth",nonce="[a-zA-Z0-9=]+",opaque="123abc"$/',
+            $header['WWW-Authenticate']
         );
     }
 
@@ -169,7 +166,6 @@ class DigestAuthenticateTest extends TestCase
             'url' => 'posts/index',
             'environment' => ['REQUEST_METHOD' => 'GET']
         ]);
-        $request->addParams(['pass' => []]);
         $data = [
             'uri' => '/dir/index.html',
             'nonce' => $this->generateNonce(null, 5, strtotime('-10 minutes')),
@@ -178,7 +174,7 @@ class DigestAuthenticateTest extends TestCase
             'qop' => 'auth',
         ];
         $data['response'] = $this->auth->generateResponseHash($data, '09faa9931501bf30f0d4253fa7763022', 'GET');
-        $request->env('PHP_AUTH_DIGEST', $this->digestHeader($data));
+        $request = $request->withEnv('PHP_AUTH_DIGEST', $this->digestHeader($data));
 
         try {
             $this->auth->unauthenticated($request, $this->response);
@@ -186,7 +182,7 @@ class DigestAuthenticateTest extends TestCase
         }
         $this->assertNotEmpty($e);
 
-        $header = $e->responseHeader()[0];
+        $header = $e->responseHeader()['WWW-Authenticate'];
         $this->assertContains('stale=true', $header);
     }
 
@@ -201,7 +197,6 @@ class DigestAuthenticateTest extends TestCase
             'url' => 'posts/index',
             'environment' => ['REQUEST_METHOD' => 'GET']
         ]);
-        $request->addParams(['pass' => []]);
 
         $data = [
             'uri' => '/dir/index.html',
@@ -211,7 +206,7 @@ class DigestAuthenticateTest extends TestCase
             'qop' => 'auth',
         ];
         $data['response'] = $this->auth->generateResponseHash($data, '09faa9931501bf30f0d4253fa7763022', 'GET');
-        $request->env('PHP_AUTH_DIGEST', $this->digestHeader($data));
+        $request = $request->withEnv('PHP_AUTH_DIGEST', $this->digestHeader($data));
         $result = $this->auth->authenticate($request, $this->response);
         $this->assertFalse($result, 'Stale nonce should fail');
     }
@@ -227,7 +222,6 @@ class DigestAuthenticateTest extends TestCase
             'url' => 'posts/index',
             'environment' => ['REQUEST_METHOD' => 'GET']
         ]);
-        $request->addParams(['pass' => []]);
 
         $data = [
             'username' => 'mariano',
@@ -239,7 +233,7 @@ class DigestAuthenticateTest extends TestCase
             'qop' => 'auth',
         ];
         $data['response'] = $this->auth->generateResponseHash($data, '09faa9931501bf30f0d4253fa7763022', 'GET');
-        $request->env('PHP_AUTH_DIGEST', $this->digestHeader($data));
+        $request = $request->withEnv('PHP_AUTH_DIGEST', $this->digestHeader($data));
         $result = $this->auth->authenticate($request, $this->response);
         $this->assertFalse($result, 'Empty nonce should fail');
     }
@@ -255,7 +249,6 @@ class DigestAuthenticateTest extends TestCase
             'url' => 'posts/index',
             'environment' => ['REQUEST_METHOD' => 'GET']
         ]);
-        $request->addParams(['pass' => []]);
 
         $data = [
             'uri' => '/dir/index.html',
@@ -265,7 +258,7 @@ class DigestAuthenticateTest extends TestCase
             'qop' => 'auth',
         ];
         $data['response'] = $this->auth->generateResponseHash($data, '09faa9931501bf30f0d4253fa7763022', 'GET');
-        $request->env('PHP_AUTH_DIGEST', $this->digestHeader($data));
+        $request = $request->withEnv('PHP_AUTH_DIGEST', $this->digestHeader($data));
 
         $result = $this->auth->authenticate($request, $this->response);
         $expected = [
@@ -284,14 +277,13 @@ class DigestAuthenticateTest extends TestCase
      */
     public function testAuthenticateSuccessHiddenPasswordField()
     {
-        $User = TableRegistry::get('Users');
+        $User = $this->getTableLocator()->get('Users');
         $User->setEntityClass(ProtectedUser::class);
 
         $request = new ServerRequest([
             'url' => 'posts/index',
             'environment' => ['REQUEST_METHOD' => 'GET']
         ]);
-        $request->addParams(['pass' => []]);
 
         $data = [
             'uri' => '/dir/index.html',
@@ -301,7 +293,7 @@ class DigestAuthenticateTest extends TestCase
             'qop' => 'auth',
         ];
         $data['response'] = $this->auth->generateResponseHash($data, '09faa9931501bf30f0d4253fa7763022', 'GET');
-        $request->env('PHP_AUTH_DIGEST', $this->digestHeader($data));
+        $request = $request->withEnv('PHP_AUTH_DIGEST', $this->digestHeader($data));
 
         $result = $this->auth->authenticate($request, $this->response);
         $expected = [
@@ -325,7 +317,6 @@ class DigestAuthenticateTest extends TestCase
             'post' => ['_method' => 'PUT'],
             'environment' => ['REQUEST_METHOD' => 'GET']
         ]);
-        $request->addParams(['pass' => []]);
 
         $data = [
             'username' => 'mariano',
@@ -336,7 +327,7 @@ class DigestAuthenticateTest extends TestCase
             'qop' => 'auth',
         ];
         $data['response'] = $this->auth->generateResponseHash($data, '09faa9931501bf30f0d4253fa7763022', 'GET');
-        $request->env('PHP_AUTH_DIGEST', $this->digestHeader($data));
+        $request = $request->withEnv('PHP_AUTH_DIGEST', $this->digestHeader($data));
 
         $result = $this->auth->authenticate($request, $this->response);
         $expected = [
@@ -355,14 +346,13 @@ class DigestAuthenticateTest extends TestCase
      */
     public function testAuthenticateFailReChallenge()
     {
-        $this->expectException(\Cake\Network\Exception\UnauthorizedException::class);
+        $this->expectException(\Cake\Http\Exception\UnauthorizedException::class);
         $this->expectExceptionCode(401);
-        $this->auth->config('scope.username', 'nate');
+        $this->auth->setConfig('scope.username', 'nate');
         $request = new ServerRequest([
             'url' => 'posts/index',
             'environment' => ['REQUEST_METHOD' => 'GET']
         ]);
-        $request->addParams(['pass' => []]);
 
         $data = [
             'username' => 'invalid',
@@ -373,7 +363,7 @@ class DigestAuthenticateTest extends TestCase
             'qop' => 'auth',
         ];
         $data['response'] = $this->auth->generateResponseHash($data, '09faa9931501bf30f0d4253fa7763022', 'GET');
-        $request->env('PHP_AUTH_DIGEST', $this->digestHeader($data));
+        $request = $request->withEnv('PHP_AUTH_DIGEST', $this->digestHeader($data));
         $this->auth->unauthenticated($request, $this->response);
     }
 
@@ -393,8 +383,8 @@ class DigestAuthenticateTest extends TestCase
         $result = $this->auth->loginHeaders($request);
 
         $this->assertRegexp(
-            '/^WWW\-Authenticate: Digest realm="localhost",qop="auth",nonce="[a-zA-Z0-9=]+",opaque="[a-f0-9]+"$/',
-            $result
+            '/^Digest realm="localhost",qop="auth",nonce="[a-zA-Z0-9=]+",opaque="[a-f0-9]+"$/',
+            $result['WWW-Authenticate']
         );
     }
 

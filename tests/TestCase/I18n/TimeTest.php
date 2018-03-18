@@ -527,12 +527,12 @@ class TimeTest extends TestCase
         $this->assertTrue(isset($return['America']['America/Argentina/Buenos_Aires']));
         $this->assertEquals('Argentina/Buenos_Aires', $return['America']['America/Argentina/Buenos_Aires']);
         $this->assertTrue(isset($return['UTC']['UTC']));
-        $this->assertFalse(isset($return['Cuba']));
-        $this->assertFalse(isset($return['US']));
+        $this->assertArrayNotHasKey('Cuba', $return);
+        $this->assertArrayNotHasKey('US', $return);
 
         $return = $class::listTimezones('#^Asia/#');
         $this->assertTrue(isset($return['Asia']['Asia/Bangkok']));
-        $this->assertFalse(isset($return['Pacific']));
+        $this->assertArrayNotHasKey('Pacific', $return);
 
         $return = $class::listTimezones(null, null, ['abbr' => true]);
         $this->assertTrue(isset($return['Asia']['Asia/Jakarta']));
@@ -548,16 +548,16 @@ class TimeTest extends TestCase
         $this->assertEquals('Regina (CST)', $return['America']['America/Regina']);
 
         $return = $class::listTimezones('#^(America|Pacific)/#', null, false);
-        $this->assertTrue(isset($return['America/Argentina/Buenos_Aires']));
-        $this->assertTrue(isset($return['Pacific/Tahiti']));
+        $this->assertArrayHasKey('America/Argentina/Buenos_Aires', $return);
+        $this->assertArrayHasKey('Pacific/Tahiti', $return);
 
         $return = $class::listTimezones(\DateTimeZone::ASIA);
         $this->assertTrue(isset($return['Asia']['Asia/Bangkok']));
-        $this->assertFalse(isset($return['Pacific']));
+        $this->assertArrayNotHasKey('Pacific', $return);
 
         $return = $class::listTimezones(\DateTimeZone::PER_COUNTRY, 'US', false);
-        $this->assertTrue(isset($return['Pacific/Honolulu']));
-        $this->assertFalse(isset($return['Asia/Bangkok']));
+        $this->assertArrayHasKey('Pacific/Honolulu', $return);
+        $this->assertArrayNotHasKey('Asia/Bangkok', $return);
     }
 
     /**

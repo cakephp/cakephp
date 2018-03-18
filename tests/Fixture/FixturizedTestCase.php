@@ -1,7 +1,6 @@
 <?php
 namespace Cake\Test\Fixture;
 
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Exception;
 
@@ -45,9 +44,9 @@ class FixturizedTestCase extends TestCase
     public function testLoadAllFixtures()
     {
         $this->loadFixtures();
-        $article = TableRegistry::get('Articles')->get(1);
+        $article = $this->getTableLocator()->get('Articles')->get(1);
         $this->assertSame(1, $article->id);
-        $category = TableRegistry::get('Categories')->get(1);
+        $category = $this->getTableLocator()->get('Categories')->get(1);
         $this->assertSame(1, $category->id);
     }
 

@@ -165,6 +165,11 @@ class Message
      */
     public function headers()
     {
+        deprecationWarning(
+            'Message::headers() is deprecated. ' .
+            'Use getHeaders() instead.'
+        );
+
         return $this->headers;
     }
 
