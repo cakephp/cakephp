@@ -576,9 +576,10 @@ class ConsoleOptionParser
      *
      * @param \Cake\Console\ConsoleInputSubcommand|string $name Name of the subcommand. Will also accept an instance of ConsoleInputSubcommand
      * @param array $options Array of params, see above.
+     * @param boolean $sort
      * @return $this
      */
-    public function addSubcommand($name, array $options = [])
+    public function addSubcommand($name, array $options = [], $sort = true)
     {
         if ($name instanceof ConsoleInputSubcommand) {
             $command = $name;
@@ -595,7 +596,9 @@ class ConsoleOptionParser
             $command = new ConsoleInputSubcommand($options);
         }
         $this->_subcommands[$name] = $command;
-        asort($this->_subcommands);
+        if ($sort) {
+            asort($this->_subcommands);
+        }
 
         return $this;
     }
