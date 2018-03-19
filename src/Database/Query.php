@@ -105,7 +105,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * The object responsible for generating query placeholders and temporarily store values
      * associated to each of those.
      *
-     * @var \Cake\Database\ValueBinder|false|null
+     * @var \Cake\Database\ValueBinder|null
      */
     protected $_valueBinder;
 

@@ -2520,6 +2520,7 @@ class ValidationTest extends TestCase
 
         $this->assertFalse(Validation::mimeType($image, ['image/png']));
         $this->assertFalse(Validation::mimeType(['tmp_name' => $image], ['image/png']));
+        $this->assertFalse(Validation::mimeType([], ['image/png']));
     }
 
     /**

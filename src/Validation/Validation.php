@@ -1187,7 +1187,11 @@ class Validation
             return $check['tmp_name'];
         }
 
-        return $check;
+        if (is_string($check)) {
+            return $check;
+        }
+
+        return false;
     }
 
     /**

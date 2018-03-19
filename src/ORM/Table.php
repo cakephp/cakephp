@@ -749,7 +749,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             'Use setDisplayField()/getDisplayField() instead.'
         );
         if ($key !== null) {
-            return $this->setDisplayField($key);
+            $this->setDisplayField($key);
+
+            return $key;
         }
 
         return $this->getDisplayField();
@@ -931,6 +933,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function getBehavior($name)
     {
+        /** @var \Cake\ORM\Behavior $behavior */
         $behavior = $this->_behaviors->get($name);
         if ($behavior === null) {
             throw new InvalidArgumentException(sprintf(
@@ -1126,7 +1129,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         $options += ['sourceTable' => $this];
 
-        return $this->_associations->load(BelongsTo::class, $associated, $options);
+        /** @var \Cake\ORM\Association\BelongsTo $association */
+        $association = $this->_associations->load(BelongsTo::class, $associated, $options);
+
+        return $association;
     }
 
     /**
@@ -1169,7 +1175,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         $options += ['sourceTable' => $this];
 
-        return $this->_associations->load(HasOne::class, $associated, $options);
+        /** @var \Cake\ORM\Association\HasOne $association */
+        $association = $this->_associations->load(HasOne::class, $associated, $options);
+
+        return $association;
     }
 
     /**
@@ -1218,7 +1227,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         $options += ['sourceTable' => $this];
 
-        return $this->_associations->load(HasMany::class, $associated, $options);
+        /** @var \Cake\ORM\Association\HasMany $association */
+        $association = $this->_associations->load(HasMany::class, $associated, $options);
+
+        return $association;
     }
 
     /**
@@ -1269,7 +1281,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         $options += ['sourceTable' => $this];
 
-        return $this->_associations->load(BelongsToMany::class, $associated, $options);
+        /** @var \Cake\ORM\Association\BelongsToMany $association */
+        $association = $this->_associations->load(BelongsToMany::class, $associated, $options);
+
+        return $association;
     }
 
     /**

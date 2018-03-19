@@ -52,8 +52,10 @@ class UrlHelper extends Helper
         }
         $options += $defaults;
 
+        /** @var string $url */
         $url = Router::url($url, $options['fullBase']);
         if ($options['escape']) {
+            /** @var string $url */
             $url = h($url);
         }
 
@@ -209,7 +211,10 @@ class UrlHelper extends Helper
         $parts = array_map('rawurlencode', $parts);
         $encoded = implode('/', $parts);
 
-        return h(str_replace($path, $encoded, $url));
+        /** @var string $url */
+        $url = h(str_replace($path, $encoded, $url));
+
+        return $url;
     }
 
     /**

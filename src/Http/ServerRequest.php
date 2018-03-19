@@ -56,7 +56,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * In PUT/PATCH/DELETE requests this property will contain the form-urlencoded
      * data.
      *
-     * @var array
+     * @var null|array|object
      * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use getData() instead.
      */
     protected $data = [];
@@ -777,8 +777,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     /**
      * Worker for the public is() function
      *
-     * @param string|array $type The type of request you want to check. If an array
-     *   this method will return true if the request matches any type.
+     * @param string $type The type of request you want to check.
      * @param array $args Array of custom detector arguments.
      * @return bool Whether or not the request is the type you are checking.
      */

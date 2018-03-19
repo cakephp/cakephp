@@ -502,7 +502,7 @@ abstract class Association
      * @deprecated 3.4.0 Use setConditions()/getConditions() instead.
      * @param array|null $conditions list of conditions to be used
      * @see \Cake\Database\Query::where() for examples on the format of the array
-     * @return array
+     * @return array|callable
      */
     public function conditions($conditions = null)
     {
