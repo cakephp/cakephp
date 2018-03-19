@@ -25,6 +25,14 @@ use Cake\Cache\CacheEngine;
 class TestPluginCacheEngine extends CacheEngine
 {
 
+    public function set($key, $data, $ttl = null)
+    {
+    }
+
+    public function get($key, $default = null)
+    {
+    }
+
     public function write($key, $value)
     {
     }
@@ -45,7 +53,11 @@ class TestPluginCacheEngine extends CacheEngine
     {
     }
 
-    public function clear($check)
+    public function clearExpired()
+    {
+    }
+
+    public function clear()
     {
     }
 

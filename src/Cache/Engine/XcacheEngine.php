@@ -73,9 +73,12 @@ class XcacheEngine extends CacheEngine
      *
      * @param string $key Identifier for the data
      * @param mixed $value Data to be cached
+     * @param null|int|DateInterval $ttl Optional. The TTL value of this item. If no value is sent and
+     *                                     the driver supports TTL then the library may set a default value
+     *                                     for it or let the driver take care of that.
      * @return bool True if the data was successfully cached, false on failure
      */
-    public function write($key, $value)
+    public function set($key, $value, $ttl = null)
     {
         $key = $this->_key($key);
 
@@ -94,10 +97,11 @@ class XcacheEngine extends CacheEngine
      * Read a key from the cache
      *
      * @param string $key Identifier for the data
+     * @param mixed $default Default value
      * @return mixed The cached data, or false if the data doesn't exist,
      *   has expired, or if there was an error fetching it
      */
-    public function read($key)
+    public function get($key, $default = null)
     {
         $key = $this->_key($key);
 
@@ -116,7 +120,7 @@ class XcacheEngine extends CacheEngine
             return $value;
         }
 
-        return false;
+        return $default;
     }
 
     /**
@@ -165,12 +169,9 @@ class XcacheEngine extends CacheEngine
     /**
      * Delete all keys from the cache
      *
-     * @param bool $check If true no deletes will occur and instead CakePHP will rely
-     *   on key TTL values.
-     *   Unused for Xcache engine.
      * @return bool True if the cache was successfully cleared, false otherwise
      */
-    public function clear($check)
+    public function clear()
     {
         $this->_auth();
         $max = xcache_count(XC_TYPE_VAR);

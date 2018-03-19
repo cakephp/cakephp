@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\Cache\Engine;
 
 use Cake\Cache\Cache;
 use Cake\Cache\Engine\MemcachedEngine;
+use Cake\Cache\Exception\InvalidArgumentException;
 use Cake\TestSuite\TestCase;
 use Memcached;
 
@@ -156,7 +157,7 @@ class MemcachedEngineTest extends TestCase
      */
     public function testInvalidSerializerSetting()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('invalid_serializer is not a valid serializer engine for Memcached');
         $Memcached = new MemcachedEngine();
         $config = [
@@ -279,7 +280,7 @@ class MemcachedEngineTest extends TestCase
             'serialize' => 'json'
         ];
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Memcached extension is not compiled with json support');
         $Memcached->init($config);
     }
@@ -304,7 +305,7 @@ class MemcachedEngineTest extends TestCase
             'serialize' => 'msgpack'
         ];
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('msgpack is not a valid serializer engine for Memcached');
         $Memcached->init($config);
     }
@@ -329,7 +330,7 @@ class MemcachedEngineTest extends TestCase
             'serialize' => 'igbinary'
         ];
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Memcached extension is not compiled with igbinary support');
         $Memcached->init($config);
     }
@@ -342,7 +343,7 @@ class MemcachedEngineTest extends TestCase
      */
     public function testSaslAuthException()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Memcached extension is not build with SASL support');
         $this->skipIf(
             method_exists(Memcached::class, 'setSaslAuthData'),
@@ -356,7 +357,7 @@ class MemcachedEngineTest extends TestCase
             'username' => 'test',
             'password' => 'password'
         ];
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Memcached extension is not built with SASL support');
         $MemcachedEngine->init($config);
     }

@@ -15,6 +15,7 @@
 namespace Cake\Cache\Engine;
 
 use Cake\Cache\CacheEngine;
+use Cake\Cache\DateInterval;
 
 /**
  * Null cache engine, all operations return false.
@@ -101,7 +102,15 @@ class NullEngine extends CacheEngine
     /**
      * {@inheritDoc}
      */
-    public function clear($check)
+    public function clearExpired()
+    {
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function clear()
     {
         return false;
     }
@@ -112,5 +121,21 @@ class NullEngine extends CacheEngine
     public function clearGroup($group)
     {
         return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function get($key, $default = null)
+    {
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function set($key, $value, $ttl = null)
+    {
+        return null;
     }
 }

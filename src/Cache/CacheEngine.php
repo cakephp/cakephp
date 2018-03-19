@@ -14,17 +14,20 @@
  */
 namespace Cake\Cache;
 
+use Cake\Cache\Exception\InvalidArgumentException;
 use Cake\Core\InstanceConfigTrait;
-use InvalidArgumentException;
+use Psr\SimpleCache\CacheInterface;
+use Traversable;
 
 /**
  * Storage engine for CakePHP caching
  *
  * @mixin \Cake\Core\InstanceConfigTrait
  */
-abstract class CacheEngine
+abstract class CacheEngine implements CacheInterface
 {
 
+    use BackwardCompatibilityTrait;
     use InstanceConfigTrait;
 
     /**
@@ -84,68 +87,6 @@ abstract class CacheEngine
     }
 
     /**
-     * Garbage collection
-     *
-     * Permanently remove all expired and deleted data
-     *
-     * @param int|null $expires [optional] An expires timestamp, invalidating all data before.
-     * @return void
-     */
-    public function gc($expires = null)
-    {
-    }
-
-    /**
-     * Write value for a key into cache
-     *
-     * @param string $key Identifier for the data
-     * @param mixed $value Data to be cached
-     * @return bool True if the data was successfully cached, false on failure
-     */
-    abstract public function write($key, $value);
-
-    /**
-     * Write data for many keys into cache
-     *
-     * @param array $data An array of data to be stored in the cache
-     * @return array of bools for each key provided, true if the data was successfully cached, false on failure
-     */
-    public function writeMany($data)
-    {
-        $return = [];
-        foreach ($data as $key => $value) {
-            $return[$key] = $this->write($key, $value);
-        }
-
-        return $return;
-    }
-
-    /**
-     * Read a key from the cache
-     *
-     * @param string $key Identifier for the data
-     * @return mixed The cached data, or false if the data doesn't exist, has expired, or if there was an error fetching it
-     */
-    abstract public function read($key);
-
-    /**
-     * Read multiple keys from the cache
-     *
-     * @param array $keys An array of identifiers for the data
-     * @return array For each cache key (given as the array key) the cache data associated or false if the data doesn't
-     * exist, has expired, or if there was an error fetching it
-     */
-    public function readMany($keys)
-    {
-        $return = [];
-        foreach ($keys as $key) {
-            $return[$key] = $this->read($key);
-        }
-
-        return $return;
-    }
-
-    /**
      * Increment a number under the key and return incremented value
      *
      * @param string $key Identifier for the data
@@ -170,31 +111,6 @@ abstract class CacheEngine
      * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
      */
     abstract public function delete($key);
-
-    /**
-     * Delete all keys from the cache
-     *
-     * @param bool $check if true will check expiration, otherwise delete all
-     * @return bool True if the cache was successfully cleared, false otherwise
-     */
-    abstract public function clear($check);
-
-    /**
-     * Deletes keys from the cache
-     *
-     * @param array $keys An array of identifiers for the data
-     * @return array For each provided cache key (given back as the array key) true if the value was successfully deleted,
-     * false if it didn't exist or couldn't be removed
-     */
-    public function deleteMany($keys)
-    {
-        $return = [];
-        foreach ($keys as $key) {
-            $return[$key] = $this->delete($key);
-        }
-
-        return $return;
-    }
 
     /**
      * Add a key to the cache if it does not already exist.
@@ -294,5 +210,166 @@ abstract class CacheEngine
         }
 
         triggerWarning($message);
+    }
+
+    /**
+     * Delete all keys from the cache
+     *
+     * @return bool True if the cache was successfully cleared, false otherwise
+     */
+    abstract public function clear();
+
+    /**
+     * Delete all expired keys from the cache
+     *
+     * @return bool True if the cache was successfully cleared, false otherwise
+     */
+    abstract public function clearExpired();
+
+    /**
+     * Fetches a value from the cache.
+     *
+     * @param string $key The unique key of this item in the cache.
+     * @param mixed $default Default value to return if the key does not exist.
+     * @return mixed The value of the item from the cache, or $default in case of cache miss.
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     *   MUST be thrown if the $key string is not a legal value.
+     */
+    abstract public function get($key, $default = null);
+
+    /**
+     * Persists data in the cache, uniquely referenced by a key with an optional expiration TTL time.
+     *
+     * @param string $key The key of the item to store.
+     * @param mixed $value The value of the item to store, must be serializable.
+     * @param null|int|DateInterval $ttl Optional. The TTL value of this item. If no value is sent and
+     *                                     the driver supports TTL then the library may set a default value
+     *                                     for it or let the driver take care of that.
+     * @return bool True on success and false on failure.
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     *   MUST be thrown if the $key string is not a legal value.
+     */
+    abstract public function set($key, $value, $ttl = null);
+
+    /**
+     * Obtains multiple cache items by their unique keys.
+     *
+     * @param iterable $keys A list of keys that can obtained in a single operation.
+     * @param mixed $default Default value to return for keys that do not exist.
+     * @return iterable A list of key => value pairs. Cache keys that do not exist or are stale will have $default as value.
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     *   MUST be thrown if $keys is neither an array nor a Traversable,
+     *   or if any of the $keys are not a legal value.
+     */
+    public function getMultiple($keys, $default = null)
+    {
+        $this->_checkTraversable($keys);
+
+        $return = [];
+        foreach ($keys as $key) {
+            $return[$key] = $this->get($key);
+        }
+
+        return $return;
+    }
+
+    /**
+     * Persists a set of key => value pairs in the cache, with an optional TTL.
+     *
+     * @param iterable $values A list of key => value pairs for a multiple-set operation.
+     * @param null|int|DateInterval $ttl Optional. The TTL value of this item. If no value is sent and
+     *                                      the driver supports TTL then the library may set a default value
+     *                                      for it or let the driver take care of that.
+     * @return bool True on success and false on failure.
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     *   MUST be thrown if $values is neither an array nor a Traversable,
+     *   or if any of the $values are not a legal value.
+     */
+    public function setMultiple($values, $ttl = null)
+    {
+        $this->_checkTraversable($values);
+
+        $return = true;
+        foreach ($values as $key => $value) {
+            if (!is_string($key)) {
+                throw new InvalidArgumentException();
+            }
+            if (!$this->set($key, $value, $ttl)) {
+                $return = false;
+            }
+        }
+
+        return $return;
+    }
+
+    /**
+     * Deletes multiple cache items in a single operation.
+     *
+     * @param iterable $keys A list of string-based keys to be deleted.
+     * @return bool True if the items were successfully removed. False if there was an error.
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     *   MUST be thrown if $keys is neither an array nor a Traversable,
+     *   or if any of the $keys are not a legal value.
+     */
+    public function deleteMultiple($keys)
+    {
+        $this->_checkTraversable($keys);
+
+        $return = true;
+        foreach ($keys as $key) {
+            if (!$this->delete($key)) {
+                $return = false;
+            }
+        }
+
+        return $return;
+    }
+
+    /**
+     * Checks if the given value is traversable or an array
+     *
+     * @throws \Cake\Cache\Exception\InvalidArgumentException
+     * @param mixed $key Key to check
+     * @return void
+     */
+    protected function _checkValidKey($key)
+    {
+        if (is_string($key)) {
+            throw new InvalidArgumentException(sprintf('Invalid key, expected a string but got `%s`', getTypeName($key)));
+        }
+    }
+
+    /**
+     * Checks if the given value is traversable or an array
+     *
+     * @throws \Cake\Cache\Exception\InvalidArgumentException
+     * @param mixed $value Value to check
+     * @return void
+     */
+    protected function _checkTraversable($value)
+    {
+        if (!is_array($value) && !$value instanceof Traversable) {
+            throw new InvalidArgumentException(sprintf('Array or Traversable expected, but got `%s`', getTypeName($value)));
+        }
+    }
+
+    /**
+     * Determines whether an item is present in the cache.
+     *
+     * NOTE: It is recommended that has() is only to be used for cache warming type purposes
+     * and not to be used within your live applications operations for get/set, as this method
+     * is subject to a race condition where your has() will return true and immediately after,
+     * another script can remove it making the state of your app out of date.
+     *
+     * @param string $key The cache item key.
+     * @return bool
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     *   MUST be thrown if the $key string is not a legal value.
+     */
+    public function has($key)
+    {
+        $this->_checkValidKey($key);
+
+        return $this->get($key) !== null;
     }
 }

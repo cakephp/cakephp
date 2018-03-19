@@ -15,9 +15,10 @@
 namespace Cake\Cache;
 
 use Cake\Cache\Engine\NullEngine;
+use Cake\Cache\Exception\CacheException;
+use Cake\Cache\Exception\InvalidArgumentException;
 use Cake\Core\ObjectRegistry;
 use Cake\Core\StaticConfigTrait;
-use InvalidArgumentException;
 use RuntimeException;
 
 /**
@@ -239,6 +240,7 @@ class Cache
      *
      * Permanently remove all expired and deleted data
      *
+     * @deprecated Use clearExpired() instead
      * @param string $config [optional] The config name you wish to have garbage collected. Defaults to 'default'
      * @param int|null $expires [optional] An expires timestamp. Defaults to NULL
      * @return void
@@ -266,6 +268,7 @@ class Cache
      * Cache::write('cached_data', $data, 'long_term');
      * ```
      *
+     * @deprecated Use set() instead
      * @param string $key Identifier for the data
      * @param mixed $value Data to be cached - anything except a resource
      * @param string $config Optional string configuration name to write to. Defaults to 'default'
@@ -273,12 +276,30 @@ class Cache
      */
     public static function write($key, $value, $config = 'default')
     {
+        return static::set($key, $value, null, $config);
+    }
+
+    /**
+     * Persists data in the cache, uniquely referenced by a key with an optional expiration TTL time.
+     *
+     * @param string $key The key of the item to store.
+     * @param mixed $value The value of the item to store, must be serializable.
+     * @param null|int|DateInterval $ttl Optional. The TTL value of this item. If no value is sent and
+     *                                     the driver supports TTL then the library may set a default value
+     *                                     for it or let the driver take care of that.
+     * @param string $config Optional string configuration name to write to. Defaults to 'default'
+     * @return bool True on success and false on failure.
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     *   MUST be thrown if the $key string is not a legal value.
+     */
+    public static function set($key, $value, $ttl = null, $config = 'default')
+    {
         $engine = static::engine($config);
         if (is_resource($value)) {
             return false;
         }
 
-        $success = $engine->write($key, $value);
+        $success = $engine->set($key, $value, $ttl);
         if ($success === false && $value !== '') {
             trigger_error(
                 sprintf(
@@ -322,7 +343,7 @@ class Cache
         $return = $engine->writeMany($data);
         foreach ($return as $key => $success) {
             if ($success === false && $data[$key] !== '') {
-                throw new RuntimeException(sprintf(
+                throw new CacheException(sprintf(
                     '%s cache was unable to write \'%s\' to %s cache',
                     $config,
                     $key,
@@ -351,6 +372,7 @@ class Cache
      * Cache::read('my_data', 'long_term');
      * ```
      *
+     * @deprecated Use get() instead
      * @param string $key Identifier for the data
      * @param string $config optional name of the configuration to use. Defaults to 'default'
      * @return mixed The cached data, or false if the data doesn't exist, has expired, or if there was an error fetching it
@@ -360,6 +382,37 @@ class Cache
         $engine = static::engine($config);
 
         return $engine->read($key);
+    }
+
+    /**
+     * Fetches a value from the cache.
+     *
+     * ### Usage:
+     *
+     * Reading from the active cache configuration.
+     *
+     * ```
+     * Cache::get('my_data');
+     * ```
+     *
+     * Reading from a specific cache configuration.
+     *
+     * ```
+     * Cache::get('my_data', null, 'long_term');
+     * ```
+     *
+     * @param string $key The unique key of this item in the cache.
+     * @param mixed $default Default value to return if the key does not exist.
+     * @param string $config optional name of the configuration to use. Defaults to 'default'
+     * @return mixed The value of the item from the cache, or $default in case of cache miss.
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     *   MUST be thrown if the $key string is not a legal value.
+     */
+    public static function get($key, $default = null, $config = 'default')
+    {
+        $engine = static::engine($config);
+
+        return $engine->get($key, $default, $config);
     }
 
     /**
@@ -379,6 +432,7 @@ class Cache
      * Cache::readMany(['my_data_1', 'my_data_2], 'long_term');
      * ```
      *
+     * @deprecated Use getMultiple() instead
      * @param array $keys an array of keys to fetch from the cache
      * @param string $config optional name of the configuration to use. Defaults to 'default'
      * @return array An array containing, for each of the given $keys, the cached data or false if cached data could not be
@@ -388,7 +442,37 @@ class Cache
     {
         $engine = static::engine($config);
 
-        return $engine->readMany($keys);
+        return $engine->getMultiple($keys);
+    }
+
+    /**
+     * Get multiple keys from the cache.
+     *
+     * ### Usage:
+     *
+     * Reading multiple keys from the active cache configuration.
+     *
+     * ```
+     * Cache::getMultiple(['my_data_1', 'my_data_2]);
+     * ```
+     *
+     * Reading from a specific cache configuration.
+     *
+     * ```
+     * Cache::getMultiple(['my_data_1', 'my_data_2], null, 'long_term');
+     * ```
+     *
+     * @param array $keys an array of keys to fetch from the cache
+     * @param mixed $default Default value
+     * @param string $config optional name of the configuration to use. Defaults to 'default'
+     * @return array An array containing, for each of the given $keys, the cached data or false if cached data could not be
+     * retrieved.
+     */
+    public function getMultiple($keys, $default = null, $config = 'default')
+    {
+        $engine = static::engine($config);
+
+        return $engine->getMultiple($keys, $default);
     }
 
     /**
@@ -474,6 +558,7 @@ class Cache
      * Cache::deleteMany(['my_data_1', 'my_data_2], 'long_term');
      * ```
      *
+     * @deprecated Use deleteMultiple() instead
      * @param array $keys Array of cache keys to be deleted
      * @param string $config name of the configuration to use. Defaults to 'default'
      * @return array of boolean values that are true if the value was successfully deleted, false if it didn't exist or
@@ -484,6 +569,35 @@ class Cache
         $engine = static::engine($config);
 
         return $engine->deleteMany($keys);
+    }
+
+    /**
+     * Delete many keys from the cache.
+     *
+     * ### Usage:
+     *
+     * Deleting multiple keys from the active cache configuration.
+     *
+     * ```
+     * Cache::deleteMultiple(['my_data_1', 'my_data_2']);
+     * ```
+     *
+     * Deleting from a specific cache configuration.
+     *
+     * ```
+     * Cache::deleteMultiple(['my_data_1', 'my_data_2], 'long_term');
+     * ```
+     *
+     * @param array $keys Array of cache keys to be deleted
+     * @param string $config name of the configuration to use. Defaults to 'default'
+     * @return bool
+     * couldn't be removed
+     */
+    public static function deleteMultiple($keys, $config = 'default')
+    {
+        $engine = static::engine($config);
+
+        return $engine->deleteMultiple($keys);
     }
 
     /**
@@ -498,6 +612,19 @@ class Cache
         $engine = static::engine($config);
 
         return $engine->clear($check);
+    }
+
+    /**
+     * Clears only expired cache entries
+     *
+     * @param string $config name of the configuration to use. Defaults to 'default'
+     * @return bool
+     */
+    public function clearExpired($config = 'default')
+    {
+        $engine = static::engine($config);
+
+        return $engine->clearExpired();
     }
 
     /**

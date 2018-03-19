@@ -15,6 +15,7 @@
 namespace Cake\Cache\Engine;
 
 use Cake\Cache\CacheEngine;
+use Cake\Cache\Exception\InvalidArgumentException;
 use Cake\Utility\Inflector;
 use Exception;
 use LogicException;
@@ -106,24 +107,9 @@ class FileEngine extends CacheEngine
     }
 
     /**
-     * Garbage collection. Permanently remove all expired and deleted data
-     *
-     * @param int|null $expires [optional] An expires timestamp, invalidating all data before.
-     * @return bool True if garbage collection was successful, false on failure
+     * {@inheritDoc}
      */
-    public function gc($expires = null)
-    {
-        return $this->clear(true);
-    }
-
-    /**
-     * Write data for key into cache
-     *
-     * @param string $key Identifier for the data
-     * @param mixed $data Data to be cached
-     * @return bool True if the data was successfully cached, false on failure
-     */
-    public function write($key, $data)
+    public function set($key, $data, $ttl = null)
     {
         if ($data === '' || !$this->_init) {
             return false;
@@ -171,13 +157,9 @@ class FileEngine extends CacheEngine
     }
 
     /**
-     * Read a key from the cache
-     *
-     * @param string $key Identifier for the data
-     * @return mixed The cached data, or false if the data doesn't exist, has
-     *   expired, or if there was an error fetching it
+     * {@inheritDoc}
      */
-    public function read($key)
+    public function get($key, $default = null)
     {
         $key = $this->_key($key);
 
@@ -253,7 +235,7 @@ class FileEngine extends CacheEngine
      * @param bool $check Optional - only delete expired cache items
      * @return bool True if the cache was successfully cleared, false otherwise
      */
-    public function clear($check)
+    protected function _clear($check = false)
     {
         if (!$this->_init) {
             return false;
@@ -287,6 +269,26 @@ class FileEngine extends CacheEngine
         }
 
         return true;
+    }
+
+    /**
+     * Clears all expired cache entries
+     *
+     * @return bool
+     */
+    public function clearExpired()
+    {
+        return $this->_clear(true);
+    }
+
+    /**
+     * Delete all values from the cache
+     *
+     * @return bool True if the cache was successfully cleared, false otherwise
+     */
+    public function clear()
+    {
+        return $this->_clear();
     }
 
     /**
@@ -491,5 +493,17 @@ class FileEngine extends CacheEngine
         }
 
         return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function has($key)
+    {
+        if (!is_string($key)) {
+            throw new InvalidArgumentException();
+        }
+
+        return $this->get($key) !== null;
     }
 }
