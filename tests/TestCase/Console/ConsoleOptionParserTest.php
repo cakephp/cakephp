@@ -657,8 +657,11 @@ class ConsoleOptionParserTest extends TestCase
     public function testAddSubcommandSort()
     {
         $parser = new ConsoleOptionParser('test', false);
-        $parser->addSubcommand(new ConsoleInputSubcommand('betaTest'), [], false);
-        $parser->addSubcommand(new ConsoleInputSubcommand('alphaTest'), [], false);
+        $this->assertEquals(true, $parser->getSubcommandSort());
+        $parser->setSubcommandSort(false);
+        $this->assertEquals(false, $parser->getSubcommandSort());
+        $parser->addSubcommand(new ConsoleInputSubcommand('betaTest'), []);
+        $parser->addSubcommand(new ConsoleInputSubcommand('alphaTest'), []);
         $result = $parser->subcommands();
         $this->assertCount(2, $result);
         $firstResult = key($result);

@@ -121,6 +121,13 @@ class ConsoleOptionParser
     protected $_subcommands = [];
 
     /**
+     * Subcommand sorting option
+     *
+     * @var bool
+     */
+    protected $_subcommandSort = true;
+
+    /**
      * Command name.
      *
      * @var string
@@ -408,6 +415,32 @@ class ConsoleOptionParser
     }
 
     /**
+     * Gets the subcommandSort Property
+     *
+     * @return bool
+     */
+    public function getSubcommandSort()
+    {
+        return $this->_subcommandSort;
+    }
+
+    /**
+     * Sets the subcommandSort property.
+     *
+     * @param bool $sort Whether or not the ConsoleOptionParser should sort subcommands
+     *
+     * @return $this
+     */
+    public function setSubcommandSort($sort)
+    {
+        if ($sort !== true) {
+            $this->_subcommandSort = false;
+        }
+
+        return $this;
+    }
+
+    /**
      * Add an option to the option parser. Options allow you to define optional or required
      * parameters for your console application. Options are defined by the parameters they use.
      *
@@ -576,10 +609,9 @@ class ConsoleOptionParser
      *
      * @param \Cake\Console\ConsoleInputSubcommand|string $name Name of the subcommand. Will also accept an instance of ConsoleInputSubcommand
      * @param array $options Array of params, see above.
-     * @param boolean $sort Optional sorting of the subcommand
      * @return $this
      */
-    public function addSubcommand($name, array $options = [], $sort = true)
+    public function addSubcommand($name, array $options = [])
     {
         if ($name instanceof ConsoleInputSubcommand) {
             $command = $name;
@@ -596,7 +628,7 @@ class ConsoleOptionParser
             $command = new ConsoleInputSubcommand($options);
         }
         $this->_subcommands[$name] = $command;
-        if ($sort) {
+        if ($this->_subcommandSort) {
             asort($this->_subcommands);
         }
 
