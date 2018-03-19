@@ -150,6 +150,24 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
     public function dirty($property = null, $isDirty = null);
 
     /**
+     * Sets the dirty status of a single property.
+     *
+     * @param string $property the field to set or check status for
+     * @param bool $isDirty true means the property was changed, false means
+     * it was not changed
+     * @return $this
+     */
+    public function setDirty($property, $isDirty);
+
+    /**
+     * Checks if the entity is dirty or if a single property of it is dirty.
+     *
+     * @param string $property the field to check the status for
+     * @return bool Whether the property was changed or not
+     */
+    public function isDirty($property = null);
+
+    /**
      * Sets the entire entity as clean, which means that it will appear as
      * no properties being modified or added at all. This is an useful call
      * for an initial object hydration
