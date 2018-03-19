@@ -148,7 +148,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * @return bool whether the property was changed or not
      */
     public function dirty($property = null, $isDirty = null);
-    
+
     /**
      * Sets the dirty status of a single property.
      *
