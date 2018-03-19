@@ -204,6 +204,13 @@ class TimestampBehavior extends Behavior
 
         /** @var \Cake\Database\Type\DateTimeType $type */
         $type = Type::build($columnType);
+
+        if (!$type instanceof Type\DateTimeType) {
+            $entity->set($field, (string)$ts);
+
+            return;
+        }
+
         $class = $type->getDateTimeClassName();
 
         $entity->set($field, new $class($ts));

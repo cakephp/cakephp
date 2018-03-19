@@ -226,7 +226,15 @@ class TimestampBehaviorTest extends TestCase
     public function testUseImmutable()
     {
         $table = $this->getTable();
-        $this->Behavior = new TimestampBehavior($table);
+        $this->Behavior = new TimestampBehavior($table, [
+            'events' => [
+                'Model.beforeSave' => [
+                    'created' => 'new',
+                    'modified' => 'always',
+                    'timestamp_str' => 'always',
+                ]
+            ],
+        ]);
         $entity = new Entity();
         $event = new Event('Model.beforeSave');
 
@@ -239,6 +247,10 @@ class TimestampBehaviorTest extends TestCase
         $entity->clean();
         $this->Behavior->handleEvent($event, $entity);
         $this->assertInstanceOf('Cake\I18n\Time', $entity->modified);
+
+        $entity->clean();
+        $this->Behavior->handleEvent($event, $entity);
+        $this->assertInternalType('string', $entity->timestamp_str);
     }
 
     /**
@@ -457,6 +469,7 @@ class TimestampBehaviorTest extends TestCase
             'created' => ['type' => 'datetime'],
             'modified' => ['type' => 'timestamp'],
             'date_specialed' => ['type' => 'datetime'],
+            'timestamp_str' => ['type' => 'string'],
         ];
         $table = new Table(['schema' => $schema]);
 
