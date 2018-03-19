@@ -206,6 +206,7 @@ class TimestampBehavior extends Behavior
         $type = Type::build($columnType);
 
         if (!$type instanceof Type\DateTimeType) {
+            deprecationWarning('TimestampBehavior support for column types other than DateTimeType will be removed in 4.0.');
             $entity->set($field, (string)$ts);
 
             return;
