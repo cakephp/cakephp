@@ -16,6 +16,7 @@ namespace Cake\View\Form;
 
 use Cake\Http\ServerRequest;
 use Cake\Utility\Hash;
+use Cake\Validation\Validator;
 
 /**
  * Provides a basic array based context provider for FormHelper.
@@ -29,7 +30,8 @@ use Cake\Utility\Hash;
  *   will be used when there is no request data set. Data should be nested following
  *   the dot separated paths you access your fields with.
  * - `required` A nested array of fields, relationships and boolean
- *   flags to indicate a field is required.
+ *   flags to indicate a field is required. The value can also be a string to be used
+ *   as the required error message
  * - `schema` An array of data that emulate the column structures that
  *   Cake\Database\Schema\Schema uses. This array allows you to control
  *   the inferred type for fields and allows auto generation of attributes
@@ -53,7 +55,12 @@ use Cake\Utility\Hash;
  *    'defaults' => [
  *      'id' => 1,
  *      'title' => 'First post!',
- *    ]
+ *    ],
+ *    'required' => [
+ *      'id' => true, // will use default required message
+ *      'title' => 'Please enter a title',
+ *      'body' => false,
+ *    ],
  *  ];
  *  ```
  */
@@ -195,15 +202,7 @@ class ArrayContext implements ContextInterface
      */
     public function isRequired($field)
     {
-        if (!is_array($this->_context['required'])) {
-            return false;
-        }
-        $required = Hash::get($this->_context['required'], $field);
-        if ($required === null) {
-            $required = Hash::get($this->_context['required'], $this->stripNesting($field));
-        }
-
-        return (bool)$required;
+        return (bool)$this->getRequiredMessage($field);
     }
 
     /**
@@ -211,7 +210,27 @@ class ArrayContext implements ContextInterface
      */
     public function getRequiredMessage($field)
     {
-        return null;
+        if (!is_array($this->_context['required'])) {
+            return null;
+        }
+        $required = Hash::get($this->_context['required'], $field);
+        if ($required === null) {
+            $required = Hash::get($this->_context['required'], $this->stripNesting($field));
+        }
+
+        if ($required === false) {
+            return null;
+        }
+
+        if ($required === true) {
+            $required = Validator::DEFAULT_REQUIRED_MESSAGE;
+
+            if (function_exists('__d ')) {
+                $required = __d('cake', $required);
+            }
+        }
+
+        return $required;
     }
 
     /**
