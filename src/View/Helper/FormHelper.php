@@ -163,7 +163,9 @@ class FormHelper extends Helper
             'textarea' => '<textarea name="{{name}}"{{attrs}}>{{value}}</textarea>',
             // Container for submit buttons.
             'submitContainer' => '<div class="submit">{{content}}</div>',
-        ]
+        ],
+        // set HTML5 validation message to custom required/empty messages
+        'useValidationMessages' => false,
     ];
 
     /**
@@ -1434,7 +1436,7 @@ class FormHelper extends Helper
         }
 
         $message = $context->getRequiredMessage($fieldName);
-        if ($options['required'] && $message) {
+        if ($options['required'] && $message && $this->getConfig('useValidationMessages')) {
             $message = htmlspecialchars(addslashes($message));
             $options['oninvalid'] = "this.setCustomValidity('$message')";
             $options['onvalid'] = "this.setCustomValidity('')";

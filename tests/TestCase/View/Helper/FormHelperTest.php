@@ -8340,8 +8340,6 @@ class FormHelperTest extends TestCase
                     'required' => 'required',
                     'id' => '0-comments-1-comment',
                     'rows' => 5,
-                    'onvalid' => 'this.setCustomValidity(&#039;&#039;)',
-                    'oninvalid' => 'this.setCustomValidity(&#039;This field cannot be left empty&#039;)',
                 ],
                 '/textarea',
             '/div'
@@ -8426,6 +8424,8 @@ class FormHelperTest extends TestCase
      */
     public function testHtml5ErrorMessage()
     {
+        $this->Form->setConfig('useValidationMessages', true);
+
         $validator = (new \Cake\Validation\Validator())
             ->requirePresence('email', true, 'Custom error message')
             ->requirePresence('password')
