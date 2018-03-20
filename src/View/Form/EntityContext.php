@@ -429,7 +429,7 @@ class EntityContext implements ContextInterface
     /**
      * {@inheritDoc}
      */
-    public function getErrorMessage($field)
+    public function getRequiredMessage($field)
     {
         $parts = explode('.', $field);
 

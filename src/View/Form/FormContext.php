@@ -137,7 +137,7 @@ class FormContext implements ContextInterface
     /**
      * {@inheritDoc}
      */
-    public function getErrorMessage($field)
+    public function getRequiredMessage($field)
     {
         return null;
     }

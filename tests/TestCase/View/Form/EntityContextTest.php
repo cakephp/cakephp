@@ -67,11 +67,11 @@ class EntityContextTest extends TestCase
     }
 
     /**
-     * tests getMessage
+     * tests getRequiredMessage
      *
      * @return void
      */
-    public function testGetMessage()
+    public function testGetRequiredMessage()
     {
         $this->_setupTables();
 
@@ -81,8 +81,8 @@ class EntityContextTest extends TestCase
             'validator' => 'create',
         ]);
 
-        $this->assertNull($context->getErrorMessage('body'));
-        $this->assertSame('Don\'t forget a title!', $context->getErrorMessage('title'));
+        $this->assertNull($context->getRequiredMessage('body'));
+        $this->assertSame('Don\'t forget a title!', $context->getRequiredMessage('title'));
     }
 
     /**

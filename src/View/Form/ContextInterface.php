@@ -76,7 +76,7 @@ interface ContextInterface
      * @param string $field A dot separated path to the field
      * @return string
      */
-    public function getErrorMessage($field);
+    public function getRequiredMessage($field);
 
     /**
      * Get the fieldnames of the top level object in this context.
