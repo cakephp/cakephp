@@ -27,6 +27,44 @@ class ValidatorTest extends TestCase
 {
 
     /**
+     * tests getRequiredMessage
+     *
+     * @return void
+     */
+    public function testGetRequiredMessage()
+    {
+        $validator = new Validator();
+        $this->assertSame('This field is required', $validator->getRequiredMessage('field'));
+
+        $validator = new Validator();
+        $validator->requirePresence('field');
+        $this->assertSame('This field is required', $validator->getRequiredMessage('field'));
+
+        $validator = new Validator();
+        $validator->requirePresence('field', true, 'Custom message');
+        $this->assertSame('Custom message', $validator->getRequiredMessage('field'));
+    }
+
+    /**
+     * tests getEmptyMessage
+     *
+     * @return void
+     */
+    public function testGetEmptyMessage()
+    {
+        $validator = new Validator();
+        $this->assertSame('This field cannot be left empty', $validator->getEmptyMessage('field'));
+
+        $validator = new Validator();
+        $validator->requirePresence('field');
+        $this->assertSame('This field cannot be left empty', $validator->getEmptyMessage('field'));
+
+        $validator = new Validator();
+        $validator->notEmpty('field', 'Custom message');
+        $this->assertSame('Custom message', $validator->getEmptyMessage('field'));
+    }
+
+    /**
      * Testing you can dynamically add rules to a field
      *
      * @return void

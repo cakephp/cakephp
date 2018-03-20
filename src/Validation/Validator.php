@@ -104,14 +104,6 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     {
         $errors = [];
 
-        $requiredMessage = 'This field is required';
-        $emptyMessage = 'This field cannot be left empty';
-
-        if ($this->_useI18n) {
-            $requiredMessage = __d('cake', 'This field is required');
-            $emptyMessage = __d('cake', 'This field cannot be left empty');
-        }
-
         foreach ($this->_fields as $name => $field) {
             $keyPresent = array_key_exists($name, $data);
 
@@ -119,9 +111,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             $context = compact('data', 'newRecord', 'field', 'providers');
 
             if (!$keyPresent && !$this->_checkPresence($field, $context)) {
-                $errors[$name]['_required'] = isset($this->_presenceMessages[$name])
-                    ? $this->_presenceMessages[$name]
-                    : $requiredMessage;
+                $errors[$name]['_required'] = $this->getRequiredMessage($name);
                 continue;
             }
             if (!$keyPresent) {
@@ -132,9 +122,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             $isEmpty = $this->_fieldIsEmpty($data[$name]);
 
             if (!$canBeEmpty && $isEmpty) {
-                $errors[$name]['_empty'] = isset($this->_allowEmptyMessages[$name])
-                    ? $this->_allowEmptyMessages[$name]
-                    : $emptyMessage;
+                $errors[$name]['_empty'] = $this->getEmptyMessage($name);
                 continue;
             }
 
@@ -1939,6 +1927,42 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         return $this->add($field, 'regex', $extra + [
             'rule' => ['custom', $regex]
         ]);
+    }
+
+    /**
+     * Gets the required message for a field
+     *
+     * @param string $field Field name
+     * @return string
+     */
+    public function getRequiredMessage($field)
+    {
+        $defaultMessage = 'This field is required';
+        if ($this->_useI18n) {
+            $defaultMessage = __d('cake', 'This field is required');
+        }
+
+        return isset($this->_presenceMessages[$field])
+            ? $this->_presenceMessages[$field]
+            : $defaultMessage;
+    }
+
+    /**
+     * Gets the empty message for a field
+     *
+     * @param string $field Field name
+     * @return string
+     */
+    public function getEmptyMessage($field)
+    {
+        $defaultMessage = 'This field cannot be left empty';
+        if ($this->_useI18n) {
+            $defaultMessage = __d('cake', 'This field cannot be left empty');
+        }
+
+        return isset($this->_allowEmptyMessages[$field])
+            ? $this->_allowEmptyMessages[$field]
+            : $defaultMessage;
     }
 
     /**
