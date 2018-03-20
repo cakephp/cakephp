@@ -149,7 +149,6 @@ class FormContext implements ContextInterface
 
         $ruleset = $validator->field($fieldName);
 
-
         $requiredMessage = $validator->getRequiredMessage($fieldName);
         $emptyMessage = $validator->getEmptyMessage($fieldName);
 
