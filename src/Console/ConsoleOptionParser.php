@@ -414,12 +414,12 @@ class ConsoleOptionParser
         return $this->getEpilog();
     }
 
-  /**
-   * Enables sorting of subcommands
-   *
-   * @param bool $value Whether or not to sort subcommands
-   * @return $this
-   */
+    /**
+     * Enables sorting of subcommands
+     *
+     * @param bool $value Whether or not to sort subcommands
+     * @return $this
+     */
     public function enableSubcommandSort($value = true)
     {
         $this->_subcommandSort = (bool)$value;
