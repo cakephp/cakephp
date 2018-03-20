@@ -2026,7 +2026,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param array|\Cake\ORM\ResultSet $entities Entities to save.
      * @param array|\ArrayAccess $options Options used when calling Table::save() for each entity.
-     * @return bool|array|\Cake\ORM\ResultSet False on failure, entities list on success.
+     * @return bool|\Cake\Datasource\EntityInterface[]|\Cake\ORM\ResultSet False on failure, entities list on success.
      */
     public function saveMany($entities, $options = [])
     {
