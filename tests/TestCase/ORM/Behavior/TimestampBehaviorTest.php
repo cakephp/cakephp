@@ -21,6 +21,7 @@ use Cake\ORM\Behavior\TimestampBehavior;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Error\Deprecated;
 
 /**
  * Behavior test case
@@ -226,15 +227,7 @@ class TimestampBehaviorTest extends TestCase
     public function testUseImmutable()
     {
         $table = $this->getTable();
-        $this->Behavior = new TimestampBehavior($table, [
-            'events' => [
-                'Model.beforeSave' => [
-                    'created' => 'new',
-                    'modified' => 'always',
-                    'timestamp_str' => 'always',
-                ]
-            ],
-        ]);
+        $this->Behavior = new TimestampBehavior($table);
         $entity = new Entity();
         $event = new Event('Model.beforeSave');
 
@@ -247,8 +240,29 @@ class TimestampBehaviorTest extends TestCase
         $entity->clean();
         $this->Behavior->handleEvent($event, $entity);
         $this->assertInstanceOf('Cake\I18n\Time', $entity->modified);
+    }
 
-        $entity->clean();
+    /**
+     * tests using non-DateTimeType throws deprecation warning
+     *
+     * @return void
+     */
+    public function testNonDateTimeTypeDeprecated()
+    {
+        $this->expectException(Deprecated::class);
+        $this->expectExceptionMessage('TimestampBehavior support for column types other than DateTimeType will be removed in 4.0.');
+
+        $table = $this->getTable();
+        $this->Behavior = new TimestampBehavior($table, [
+            'events' => [
+                'Model.beforeSave' => [
+                    'timestamp_str' => 'always',
+                ]
+            ],
+        ]);
+
+        $entity = new Entity();
+        $event = new Event('Model.beforeSave');
         $this->Behavior->handleEvent($event, $entity);
         $this->assertInternalType('string', $entity->timestamp_str);
     }
