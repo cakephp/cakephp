@@ -174,6 +174,33 @@ class FormContextTest extends TestCase
     }
 
     /**
+     * Test the fieldNames method.
+     *
+     * @return void
+     */
+    public function testFieldNames()
+    {
+        $form = new Form();
+        $context = new FormContext($this->request, [
+            'entity' => $form
+        ]);
+        $expected = [];
+        $result = $context->fieldNames();
+        $this->assertEquals($expected, $result);
+
+        $form->schema()
+            ->addField('email', 'string')
+            ->addField('password', 'string');
+        $context = new FormContext($this->request, [
+            'entity' => $form
+        ]);
+
+        $expected = ['email', 'password'];
+        $result = $context->fieldNames();
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
      * Test fetching attributes.
      *
      * @return void

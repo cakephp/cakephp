@@ -500,7 +500,7 @@ class MemcachedEngine extends CacheEngine
             }
         }
 
-        $groups = $this->_Memcached->getMulti($this->_compiledGroupNames);
+        $groups = $this->_Memcached->getMulti($this->_compiledGroupNames) ?: [];
         if (count($groups) !== count($this->_config['groups'])) {
             foreach ($this->_compiledGroupNames as $group) {
                 if (!isset($groups[$group])) {
