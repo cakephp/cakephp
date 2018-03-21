@@ -127,6 +127,11 @@ class FormTest extends TestCase
         $this->assertCount(0, $form->errors());
     }
 
+    /**
+     * tests validate using deprecated validate() method
+     *
+     * @return void
+     */
     public function testValidateDeprected()
     {
         $this->deprecated(function() {
