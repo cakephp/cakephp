@@ -52,6 +52,37 @@ class ApcuEngine extends CacheEngine
     /**
      * Write data for key into cache
      *
+     * @deprecated Since 3.6 use set() instead
+     * @param string $key Identifier for the data
+     * @param mixed $value Data to be cached
+     * @return bool True if the data was successfully cached, false on failure
+     * @link https://secure.php.net/manual/en/function.apcu-store.php
+     */
+    public function write($key, $value)
+    {
+        $key = $this->_key($key);
+        $duration = $this->_config['duration'];
+        return apcu_store($key, $value, $duration);
+    }
+
+    /**
+     * Read a key from the cache
+     *
+     * @deprecated Since 3.6 use get() instead
+     * @param string $key Identifier for the data
+     * @return mixed The cached data, or false if the data doesn't exist,
+     *   has expired, or if there was an error fetching it
+     * @link https://secure.php.net/manual/en/function.apcu-fetch.php
+     */
+    public function read($key)
+    {
+        $key = $this->_key($key);
+        return apcu_fetch($key);
+    }
+
+    /**
+     * Write data for key into cache
+     *
      * @param string $key Identifier for the data
      * @param mixed $value Data to be cached
      * @param null|int|DateInterval $ttl Optional. The TTL value of this item. If no value is sent and

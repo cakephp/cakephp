@@ -15,7 +15,7 @@
 namespace Cake\Cache\Engine;
 
 use Cake\Cache\CacheEngine;
-use InvalidArgumentException;
+use Cake\Cache\Exception\InvalidArgumentException;;
 use Memcached;
 
 /**
@@ -290,6 +290,20 @@ class MemcachedEngine extends CacheEngine
     }
 
     /**
+     * Read a key from the cache
+     *
+     * @deprecated Since 3.6 use get()
+     * @param string $key Identifier for the data
+     * @return mixed The cached data, or false if the data doesn't exist, has
+     * expired, or if there was an error fetching it.
+     */
+    public function read($key)
+    {
+        $key = $this->_key($key);
+        return $this->_Memcached->get($key);
+    }
+
+    /**
      * Write data for key into cache. When using memcached as your cache engine
      * remember that the Memcached pecl extension does not support cache expiry
      * times greater than 30 days in the future. Any duration greater than 30 days
@@ -316,6 +330,28 @@ class MemcachedEngine extends CacheEngine
 
         $key = $this->_key($key);
 
+        return $this->_Memcached->set($key, $value, $duration);
+    }
+
+    /**
+     * Write data for key into cache. When using memcached as your cache engine
+     * remember that the Memcached pecl extension does not support cache expiry
+     * times greater than 30 days in the future. Any duration greater than 30 days
+     * will be treated as never expiring.
+     *
+     * @deprecated Since 3.6 use set()
+     * @param string $key Identifier for the data
+     * @param mixed $value Data to be cached
+     * @return bool True if the data was successfully cached, false on failure
+     * @see https://secure.php.net/manual/en/memcache.set.php
+     */
+    public function write($key, $value)
+    {
+        $duration = $this->_config['duration'];
+        if ($duration > 30 * DAY) {
+            $duration = 0;
+        }
+        $key = $this->_key($key);
         return $this->_Memcached->set($key, $value, $duration);
     }
 

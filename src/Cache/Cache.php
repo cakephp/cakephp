@@ -276,7 +276,25 @@ class Cache
      */
     public static function write($key, $value, $config = 'default')
     {
-        return static::set($key, $value, null, $config);
+        $engine = static::engine($config);
+        if (is_resource($value)) {
+            return false;
+        }
+
+        $success = $engine->write($key, $value);
+        if ($success === false && $value !== '') {
+            trigger_error(
+                sprintf(
+                    "%s cache was unable to write '%s' to %s cache",
+                    $config,
+                    $key,
+                    get_class($engine)
+                ),
+                E_USER_WARNING
+            );
+        }
+
+        return $success;
     }
 
     /**

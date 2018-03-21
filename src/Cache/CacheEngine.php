@@ -26,8 +26,6 @@ use Traversable;
  */
 abstract class CacheEngine implements CacheInterface
 {
-
-    use BackwardCompatibilityTrait;
     use InstanceConfigTrait;
 
     /**
@@ -274,6 +272,41 @@ abstract class CacheEngine implements CacheInterface
     }
 
     /**
+     * Write value for a key into cache
+     *
+     * @deprecated Since 3.6 use set() instead
+     * @param string $key Identifier for the data
+     * @param mixed $value Data to be cached
+     * @return bool True if the data was successfully cached, false on failure
+     */
+    abstract public function write($key, $value);
+
+    /**
+     * Read a key from the cache
+     *
+     * @deprecated Since 3.6 use get() instead
+     * @param string $key Identifier for the data
+     * @return mixed The cached data, or false if the data doesn't exist, has expired, or if there was an error fetching it
+     */
+    abstract public function read($key);
+
+    /**
+     * Write data for many keys into cache
+     *
+     * @deprecated Since 3.6 use setMultiple()
+     * @param array $data An array of data to be stored in the cache
+     * @return array of bools for each key provided, true if the data was successfully cached, false on failure
+     */
+    public function writeMany($data)
+    {
+        $return = [];
+        foreach ($data as $key => $value) {
+            $return[$key] = $this->write($key, $value);
+        }
+        return $return;
+    }
+
+    /**
      * Persists a set of key => value pairs in the cache, with an optional TTL.
      *
      * @param iterable $values A list of key => value pairs for a multiple-set operation.
@@ -297,6 +330,24 @@ abstract class CacheEngine implements CacheInterface
             if (!$this->set($key, $value, $ttl)) {
                 $return = false;
             }
+        }
+
+        return $return;
+    }
+
+    /**
+     * Deletes keys from the cache
+     *
+     * @deprecated Since 3.6 use deleteMany()
+     * @param array $keys An array of identifiers for the data
+     * @return array For each provided cache key (given back as the array key) true if the value was successfully deleted,
+     * false if it didn't exist or couldn't be removed
+     */
+    public function deleteMany($keys)
+    {
+        $return = [];
+        foreach ($keys as $key) {
+            $return[$key] = $this->delete($key);
         }
 
         return $return;

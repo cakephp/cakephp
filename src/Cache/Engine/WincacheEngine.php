@@ -161,6 +161,35 @@ class WincacheEngine extends CacheEngine
     }
 
     /**
+     * Write data for key into cache
+     *
+     * @deprecated Since 3.6 use set()
+     * @param string $key Identifier for the data
+     * @param mixed $value Data to be cached
+     * @return bool True if the data was successfully cached, false on failure
+     */
+    public function write($key, $value)
+    {
+        $key = $this->_key($key);
+        $duration = $this->_config['duration'];
+        return wincache_ucache_set($key, $value, $duration);
+    }
+
+    /**
+     * Read a key from the cache
+     *
+     * @deprecated Since 3.6 use get()
+     * @param string $key Identifier for the data
+     * @return mixed The cached data, or false if the data doesn't exist,
+     *   has expired, or if there was an error fetching it
+     */
+    public function read($key)
+    {
+        $key = $this->_key($key);
+        return wincache_ucache_get($key);
+    }
+
+    /**
      * Returns the `group value` for each of the configured groups
      * If the group initial value was not found, then it initializes
      * the group accordingly.

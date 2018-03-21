@@ -119,6 +119,27 @@ class RedisEngine extends CacheEngine
     }
 
     /**
+     * Write data for key into cache.
+     *
+     * @deprecated Since 3.6 use set() instead
+     * @param string $key Identifier for the data
+     * @param mixed $value Data to be cached
+     * @return bool True if the data was successfully cached, false on failure
+     */
+    public function write($key, $value)
+    {
+        $key = $this->_key($key);
+        if (!is_int($value)) {
+            $value = serialize($value);
+        }
+        $duration = $this->_config['duration'];
+        if ($duration === 0) {
+            return $this->_Redis->set($key, $value);
+        }
+        return $this->_Redis->setex($key, $duration, $value);
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function set($key, $data, $ttl = null)
@@ -135,6 +156,26 @@ class RedisEngine extends CacheEngine
         }
 
         return $this->_Redis->setex($key, $duration, $data);
+    }
+
+    /**
+     * Read a key from the cache
+     *
+     * @deprecated Since 3.6 use set() instead
+     * @param string $key Identifier for the data
+     * @return mixed The cached data, or false if the data doesn't exist, has expired, or if there was an error fetching it
+     */
+    public function read($key)
+    {
+        $key = $this->_key($key);
+        $value = $this->_Redis->get($key);
+        if (preg_match('/^[-]?\d+$/', $value)) {
+            return (int)$value;
+        }
+        if ($value !== false && is_string($value)) {
+            return unserialize($value);
+        }
+        return $value;
     }
 
     /**

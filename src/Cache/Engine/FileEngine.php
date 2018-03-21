@@ -107,6 +107,51 @@ class FileEngine extends CacheEngine
     }
 
     /**
+     * Write data for key into cache
+     *
+     * @deprecated Since 3.6 use set() instead
+     * @param string $key Identifier for the data
+     * @param mixed $data Data to be cached
+     * @return bool True if the data was successfully cached, false on failure
+     */
+    public function write($key, $data)
+    {
+        if ($data === '' || !$this->_init) {
+            return false;
+        }
+        $key = $this->_key($key);
+        if ($this->_setKey($key, true) === false) {
+            return false;
+        }
+        $lineBreak = "\n";
+        if ($this->_config['isWindows']) {
+            $lineBreak = "\r\n";
+        }
+        if (!empty($this->_config['serialize'])) {
+            if ($this->_config['isWindows']) {
+                $data = str_replace('\\', '\\\\\\\\', serialize($data));
+            } else {
+                $data = serialize($data);
+            }
+        }
+        $duration = $this->_config['duration'];
+        $expires = time() + $duration;
+        $contents = implode([$expires, $lineBreak, $data, $lineBreak]);
+        if ($this->_config['lock']) {
+            $this->_File->flock(LOCK_EX);
+        }
+        $this->_File->rewind();
+        $success = $this->_File->ftruncate(0) &&
+            $this->_File->fwrite($contents) &&
+            $this->_File->fflush();
+        if ($this->_config['lock']) {
+            $this->_File->flock(LOCK_UN);
+        }
+        $this->_File = null;
+        return $success;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function set($key, $data, $ttl = null)
@@ -157,6 +202,51 @@ class FileEngine extends CacheEngine
     }
 
     /**
+     * Read a key from the cache
+     *
+     * @deprecated Since 3.6 use get() instead
+     * @param string $key Identifier for the data
+     * @return mixed The cached data, or false if the data doesn't exist, has
+     *   expired, or if there was an error fetching it
+     */
+    public function read($key)
+    {
+        $key = $this->_key($key);
+        if (!$this->_init || $this->_setKey($key) === false) {
+            return false;
+        }
+        if ($this->_config['lock']) {
+            $this->_File->flock(LOCK_SH);
+        }
+        $this->_File->rewind();
+        $time = time();
+        $cachetime = (int)$this->_File->current();
+        if ($cachetime < $time || ($time + $this->_config['duration']) < $cachetime) {
+            if ($this->_config['lock']) {
+                $this->_File->flock(LOCK_UN);
+            }
+            return false;
+        }
+        $data = '';
+        $this->_File->next();
+        while ($this->_File->valid()) {
+            $data .= $this->_File->current();
+            $this->_File->next();
+        }
+        if ($this->_config['lock']) {
+            $this->_File->flock(LOCK_UN);
+        }
+        $data = trim($data);
+        if ($data !== '' && !empty($this->_config['serialize'])) {
+            if ($this->_config['isWindows']) {
+                $data = str_replace('\\\\\\\\', '\\', $data);
+            }
+            $data = unserialize((string)$data);
+        }
+        return $data;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function get($key, $default = null)
@@ -180,7 +270,7 @@ class FileEngine extends CacheEngine
                 $this->_File->flock(LOCK_UN);
             }
 
-            return false;
+            return null;
         }
 
         $data = '';
@@ -201,6 +291,10 @@ class FileEngine extends CacheEngine
                 $data = str_replace('\\\\\\\\', '\\', $data);
             }
             $data = unserialize((string)$data);
+        }
+
+        if ($data === false) {
+            return null;
         }
 
         return $data;

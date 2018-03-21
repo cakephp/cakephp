@@ -71,6 +71,52 @@ class XcacheEngine extends CacheEngine
     /**
      * Write data for key into cache
      *
+     * @deprecated Since 3.6 use set()
+     * @param string $key Identifier for the data
+     * @param mixed $value Data to be cached
+     * @return bool True if the data was successfully cached, false on failure
+     */
+    public function write($key, $value)
+    {
+        $key = $this->_key($key);
+        if (!is_numeric($value)) {
+            $value = serialize($value);
+        }
+        $duration = $this->_config['duration'];
+        $expires = time() + $duration;
+        xcache_set($key . '_expires', $expires, $duration);
+        return xcache_set($key, $value, $duration);
+    }
+
+    /**
+     * Read a key from the cache
+     *
+     * @deprecated Since 3.6 use get()
+     * @param string $key Identifier for the data
+     * @return mixed The cached data, or false if the data doesn't exist,
+     *   has expired, or if there was an error fetching it
+     */
+    public function read($key)
+    {
+        $key = $this->_key($key);
+        if (xcache_isset($key)) {
+            $time = time();
+            $cachetime = (int)xcache_get($key . '_expires');
+            if ($cachetime < $time || ($time + $this->_config['duration']) < $cachetime) {
+                return false;
+            }
+            $value = xcache_get($key);
+            if (is_string($value) && !is_numeric($value)) {
+                $value = unserialize($value);
+            }
+            return $value;
+        }
+        return false;
+    }
+
+    /**
+     * Write data for key into cache
+     *
      * @param string $key Identifier for the data
      * @param mixed $value Data to be cached
      * @param null|int|DateInterval $ttl Optional. The TTL value of this item. If no value is sent and
