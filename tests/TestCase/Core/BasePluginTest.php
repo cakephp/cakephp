@@ -148,7 +148,7 @@ class BasePluginTest extends TestCase
     public function testGetPathSubclass()
     {
         $plugin = new TestPlugin();
-        $expected = TEST_APP . 'Plugin/TestPlugin' . DS;
+        $expected = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS;
         $this->assertSame($expected, $plugin->getPath());
         $this->assertSame($expected . 'config' . DS, $plugin->getConfigPath());
         $this->assertSame($expected . 'src' . DS, $plugin->getClassPath());
