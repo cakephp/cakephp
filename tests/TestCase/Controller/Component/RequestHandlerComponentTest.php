@@ -46,6 +46,11 @@ class RequestHandlerComponentTest extends TestCase
     public $RequestHandler;
 
     /**
+     * @var ServerRequest
+     */
+    public $request;
+
+    /**
      * Backup of $_SERVER
      *
      * @var array
@@ -1339,5 +1344,20 @@ class RequestHandlerComponentTest extends TestCase
         $event = new Event('Controller.beforeRender', $this->Controller);
         $this->RequestHandler->beforeRender($event);
         $this->assertEquals('text/plain', $this->Controller->response->getType());
+    }
+
+    /**
+     * tests beforeRender automatically uses renderAs when a supported extension is found
+     *
+     * @return void
+     */
+    public function testBeforeRenderAutoRenderAs()
+    {
+        $this->Controller->setRequest($this->request->withParam('_ext', 'csv'));
+        $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
+
+        $event = new Event('Controller.beforeRender', $this->Controller);
+        $this->RequestHandler->beforeRender($event);
+        $this->assertEquals('text/csv', $this->Controller->response->getType());
     }
 }
