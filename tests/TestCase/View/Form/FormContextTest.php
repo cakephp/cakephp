@@ -259,13 +259,9 @@ class FormContextTest extends TestCase
         $this->assertEquals([], $context->error('Alias.name'));
         $this->assertEquals([], $context->error('nope.nope'));
 
-        $mock = $this->getMockBuilder('Cake\Validation\Validator')
-            ->setMethods(['errors'])
-            ->getMock();
-        $mock->expects($this->once())
-            ->method('errors')
-            ->willReturn(['key' => 'should be an array, not a string']);
-        $form->setValidator('default', $mock);
+        $validator = new Validator();
+        $validator->requirePresence('key', true, 'should be an array, not a string');
+        $form->setValidator('default', $validator);
         $form->validate([]);
         $context = new FormContext($this->request, ['entity' => $form]);
         $this->assertEquals(
