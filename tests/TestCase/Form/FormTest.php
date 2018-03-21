@@ -134,7 +134,7 @@ class FormTest extends TestCase
      */
     public function testValidateDeprected()
     {
-        $this->deprecated(function() {
+        $this->deprecated(function () {
             $form = new ValidateForm();
             $data = [];
             $this->assertFalse($form->validate($data));
