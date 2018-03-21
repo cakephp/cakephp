@@ -15,7 +15,8 @@
 namespace Cake\Cache\Engine;
 
 use Cake\Cache\CacheEngine;
-use Cake\Cache\Exception\InvalidArgumentException;;
+use Cake\Cache\Exception\InvalidArgumentException;
+;
 use Memcached;
 
 /**
@@ -300,6 +301,7 @@ class MemcachedEngine extends CacheEngine
     public function read($key)
     {
         $key = $this->_key($key);
+
         return $this->_Memcached->get($key);
     }
 
@@ -352,6 +354,7 @@ class MemcachedEngine extends CacheEngine
             $duration = 0;
         }
         $key = $this->_key($key);
+
         return $this->_Memcached->set($key, $value, $duration);
     }
 

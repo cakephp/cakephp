@@ -148,6 +148,7 @@ class FileEngine extends CacheEngine
             $this->_File->flock(LOCK_UN);
         }
         $this->_File = null;
+
         return $success;
     }
 
@@ -225,6 +226,7 @@ class FileEngine extends CacheEngine
             if ($this->_config['lock']) {
                 $this->_File->flock(LOCK_UN);
             }
+
             return false;
         }
         $data = '';
@@ -243,6 +245,7 @@ class FileEngine extends CacheEngine
             }
             $data = unserialize((string)$data);
         }
+
         return $data;
     }
 

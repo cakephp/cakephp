@@ -303,6 +303,7 @@ abstract class CacheEngine implements CacheInterface
         foreach ($data as $key => $value) {
             $return[$key] = $this->write($key, $value);
         }
+
         return $return;
     }
 
