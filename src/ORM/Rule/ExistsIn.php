@@ -165,6 +165,7 @@ class ExistsIn
                 //just do this check if one or more entity is new
                 if ($isNew) {
                     $child_fields = $entity->extract($this->_fields);
+
                     return empty(array_diff($child_fields, $parent_fields));
                 }
             }
