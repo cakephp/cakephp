@@ -19,6 +19,7 @@ use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
 use TestApp\Form\AppForm;
 use TestApp\Form\FormSchema;
+use TestApp\Form\ValidateForm;
 
 /**
  * Form test case.
@@ -124,6 +125,21 @@ class FormTest extends TestCase
         ];
         $this->assertTrue($form->validate($data));
         $this->assertCount(0, $form->errors());
+    }
+
+    /**
+     * tests validate using deprecated validate() method
+     *
+     * @return void
+     */
+    public function testValidateDeprected()
+    {
+        $this->deprecated(function () {
+            $form = new ValidateForm();
+            $data = [];
+            $this->assertFalse($form->validate($data));
+            $this->assertCount(1, $form->errors());
+        });
     }
 
     /**
