@@ -128,7 +128,7 @@ class Route
     public function __construct($template, $defaults = [], array $options = [])
     {
         $this->template = $template;
-        if (isset($defaults['[method]'])) {
+        if (is_array($defaults) && isset($defaults['[method]'])) {
             deprecationWarning('The `[method]` option is deprecated. Use `_method` instead.');
             $defaults['_method'] = $defaults['[method]'];
             unset($defaults['[method]']);

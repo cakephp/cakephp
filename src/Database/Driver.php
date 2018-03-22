@@ -303,7 +303,7 @@ abstract class Driver implements DriverInterface
             return str_replace(',', '.', (string)$value);
         }
         if ((is_int($value) || $value === '0') || (
-            is_numeric($value) && strpos($value, ',') === false &&
+            is_string($value) && is_numeric($value) && strpos($value, ',') === false &&
             $value[0] !== '0' && strpos($value, 'e') === false)
         ) {
             return (string)$value;
@@ -322,6 +322,8 @@ abstract class Driver implements DriverInterface
 
     /**
      * {@inheritDoc}
+     *
+     * @psalm-suppress NullReference for backwards-compatibility with non-PDO connections
      */
     public function lastInsertId($table = null, $column = null)
     {

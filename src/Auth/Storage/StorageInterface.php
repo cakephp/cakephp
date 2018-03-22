@@ -17,6 +17,9 @@ namespace Cake\Auth\Storage;
 /**
  * Describes the methods that any class representing an Auth data storage should
  * comply with.
+ *
+ * @method $this setConfig(string|array $key, mixed $value = null, bool $merge = true)
+ * @method mixed getConfig(string $key = null, mixed $default = null)
  */
 interface StorageInterface
 {

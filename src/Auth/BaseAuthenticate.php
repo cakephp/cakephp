@@ -239,10 +239,11 @@ abstract class BaseAuthenticate implements EventListenerInterface
      *
      * @param \Cake\Http\ServerRequest $request A request object.
      * @param \Cake\Http\Response $response A response object.
-     * @return void
+     * @return \Cake\Http\Response|null
      */
     public function unauthenticated(ServerRequest $request, Response $response)
     {
+        return null;
     }
 
     /**

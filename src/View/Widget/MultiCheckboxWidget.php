@@ -232,8 +232,8 @@ class MultiCheckboxWidget implements WidgetInterface
         if ($selected === null) {
             return false;
         }
-        $isArray = is_array($selected);
-        if (!$isArray) {
+
+        if (!is_array($selected)) {
             return (string)$key === (string)$selected;
         }
         $strict = !is_numeric($key);

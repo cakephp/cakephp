@@ -555,7 +555,7 @@ class Folder
         $skipHidden = false;
         if ($exceptions === true) {
             $skipHidden = true;
-        } elseif (isset($exceptions['.'])) {
+        } elseif (is_array($exceptions) && isset($exceptions['.'])) {
             $skipHidden = true;
             unset($exceptions['.']);
         }

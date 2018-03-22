@@ -68,8 +68,9 @@ class ConsoleInputSubcommand
             $this->_parser = $parser;
         }
         if (is_array($this->_parser)) {
-            $this->_parser['command'] = $this->_name;
-            $this->_parser = ConsoleOptionParser::buildFromArray($this->_parser);
+            $parser = $this->_parser;
+            $parser['command'] = $this->_name;
+            $this->_parser = ConsoleOptionParser::buildFromArray($parser);
         }
     }
 

@@ -880,7 +880,7 @@ class AuthComponent extends Component
      *
      * @param \Cake\Auth\Storage\StorageInterface|null $storage Sets provided
      *   object as storage or if null returns configured storage object.
-     * @return \Cake\Auth\Storage\StorageInterface|\Cake\Core\InstanceConfigTrait|null
+     * @return \Cake\Auth\Storage\StorageInterface|null
      */
     public function storage(StorageInterface $storage = null)
     {
@@ -903,7 +903,7 @@ class AuthComponent extends Component
             unset($config['className']);
         }
         $className = App::className($class, 'Auth/Storage', 'Storage');
-        if (!class_exists($className)) {
+        if (!$className || !class_exists($className)) {
             throw new Exception(sprintf('Auth storage adapter "%s" was not found.', $class));
         }
         $request = $this->getController()->getRequest();

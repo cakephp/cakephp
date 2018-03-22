@@ -672,8 +672,8 @@ class Marshaller
             })
             ->toArray();
 
-        $new = isset($indexed[null]) ? $indexed[null] : [];
-        unset($indexed[null]);
+        $new = isset($indexed['']) ? $indexed[''] : [];
+        unset($indexed['']);
         $output = [];
 
         foreach ($entities as $entity) {

@@ -38,6 +38,7 @@ class CallbackStream extends BaseCallbackStream
      */
     public function getContents()
     {
+        /** @var callable|null */
         $callback = $this->detach();
         $result = $callback ? $callback() : '';
         if (!is_string($result)) {
