@@ -365,7 +365,7 @@ class File
     {
         //check for multibyte string and use basename() if not found
         if (mb_strlen($path) === strlen($path)) {
-            return ($ext===null)? basename($path) : basename($path, $ext);
+            return ($ext === null)? basename($path) : basename($path, $ext);
         }
 
         $splInfo = new SplFileInfo($path);
@@ -379,7 +379,6 @@ class File
 
         // basename of '/etc/.d' is '.d' not ''
         return ($new === '')? $name : $new;
-
     }
 
     /**
