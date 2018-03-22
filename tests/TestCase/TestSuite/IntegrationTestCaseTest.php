@@ -1094,4 +1094,33 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         $this->disableErrorHandlerMiddleware();
         $this->get('/foo');
     }
+
+    /**
+     * tests getting a secure action while passing a query string
+     *
+     * @return void
+     * @dataProvider methodsProvider
+     */
+    public function testSecureWithQueryString($method)
+    {
+        $this->enableSecurityToken();
+        $this->{$method}('/posts/securePost/?ids[]=1&ids[]=2');
+        $this->assertResponseOk();
+    }
+
+    /**
+     * data provider for HTTP methods
+     *
+     * @return array
+     */
+    public function methodsProvider()
+    {
+        return [
+            'GET' => ['get'],
+            'POST' => ['post'],
+            'PATCH' => ['patch'],
+            'PUT' => ['put'],
+            'DELETE' => ['delete'],
+        ];
+    }
 }
