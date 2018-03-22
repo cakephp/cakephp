@@ -183,10 +183,11 @@ class ExistsIn
      *
      * @param \Cake\Datasource\EntityInterface $parent Parent of current entity.
      * @param \Cake\Datasource\RepositoryInterface|\Cake\ORM\Association|string $target Target table of current entity.
-     * @param boolean $isAssociation True if target is association of parent.
+     * @param bool $isAssociation True if target is association of parent.
      * @return EntityInterface|mixed|null
      */
-    protected function _extractParentEntity($parent, $target, $isAssociation) {
+    protected function _extractParentEntity($parent, $target, $isAssociation)
+    {
         $parentEntity = null;
         if ($isAssociation) {
             if (TableRegistry::get($parent->getSource()) === $target->getTarget()) {
@@ -211,7 +212,8 @@ class ExistsIn
      * @param mixed $bindingKey Name of foreign key field.
      * @return array|null Returns null if there is no new parentEntity otherwise the extracted values.
      */
-    protected function _extractParentFields($parentEntity, $bindingKey) {
+    protected function _extractParentFields($parentEntity, $bindingKey)
+    {
         $parentFields = [];
         if (is_array($parentEntity)) {
             //regard HM and HABTM associations
