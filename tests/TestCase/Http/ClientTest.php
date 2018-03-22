@@ -59,6 +59,12 @@ class ClientTest extends TestCase
         }
     }
 
+    public function testConstructWithEmptyOptions()
+    {
+        $http = new Client();
+        $this->assertEquals(\Cake\Http\Client\Adapter\Stream::class, $http->getConfig('adapter'));
+    }
+
     /**
      * Data provider for buildUrl() tests
      *
