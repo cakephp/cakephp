@@ -159,10 +159,14 @@ class Client
      */
     public function __construct($config = [])
     {
+        if (!isset($config['adapter'])) {
+            $adapter = $this->_defaultConfig['adapter'];
+        } else {
+            $adapter = $config['adapter'];
+        }
+        $this->setConfig('adapter', $adapter);
         $this->setConfig($config);
 
-        $adapter = $this->_config['adapter'];
-        $this->setConfig('adapter', null);
         if (is_string($adapter)) {
             $adapter = new $adapter();
         }
