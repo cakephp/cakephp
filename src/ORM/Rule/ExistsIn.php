@@ -16,7 +16,6 @@ namespace Cake\ORM\Rule;
 
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
-use Cake\ORM\TableRegistry;
 use RuntimeException;
 
 /**
@@ -126,11 +125,11 @@ class ExistsIn
             }
         }
 
-        if (isset($options['parent']) && $options['parent'] instanceof \Cake\Datasource\EntityInterface) {
+        if (isset($options['_parent']) && $options['_parent'] instanceof \Cake\Datasource\EntityInterface) {
             /**
              * @var \Cake\Datasource\EntityInterface $parent
              */
-            $parent = $options['parent'];
+            $parent = $options['_parent'];
             $parentEntity = $this->_extractParentEntity($parent, $target, $isAssociation);
 
             if (isset($parentEntity)) {
@@ -189,7 +188,7 @@ class ExistsIn
     protected function _extractParentEntity($parent, $target, $isAssociation) {
         $parentEntity = null;
         if ($isAssociation) {
-            if (TableRegistry::get($parent->getSource()) === $target->getTarget()) {
+            if ((new \Cake\ORM\Locator\TableLocator)->get($parent->getSource()) === $target->getTarget()) {
                 //parent is of same  as target
                 $parentEntity = $parent;
             } else {

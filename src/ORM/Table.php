@@ -2018,7 +2018,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $this,
             $entity,
             $options['associated'],
-            ['_primary' => false] + ['parent' => $entity] + $options->getArrayCopy()
+            ['_primary' => false] + ['_parent' => $entity] + $options->getArrayCopy()
         );
 
         if (!$success && $options['atomic']) {
