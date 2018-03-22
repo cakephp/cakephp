@@ -176,6 +176,7 @@ class FileTest extends TestCase
             ['/نام.txt', '.txt'],
             ['/نام فارسی.txt', '.txt'],
             //
+            ['abcde.ab', '.abe'],
             ['/etc/sudoers.d', null],
             ['/etc/.d', '.d'],
             ['/etc/sudoers.d', '.d'],

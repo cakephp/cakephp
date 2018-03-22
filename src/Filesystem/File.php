@@ -355,7 +355,7 @@ class File
     }
 
     /**
-     * Returns the file basename. simulate the php basename().
+     * Returns the file basename. simulate the php basename() for multibyte (mb_basename).
      *
      * @param string $path Path to file
      * @param string|null $ext The name of the extension
@@ -363,13 +363,23 @@ class File
      */
     protected static function _basename($path, $ext = null)
     {
-        $splInfo = new SplFileInfo($path);
-        $name = ltrim($splInfo->getFilename(), DS);
-        if ($ext === null || rtrim($name, $ext) === '') {
-            return $name;
+        //check for multibyte string and use basename() if not found
+        if (mb_strlen($path) === strlen($path)) {
+            return ($ext===null)? basename($path) : basename($path, $ext);
         }
 
-        return rtrim($name, $ext);
+        $splInfo = new SplFileInfo($path);
+        $name = ltrim($splInfo->getFilename(), DS);
+
+        if ($ext === null || $ext === '') {
+            return $name;
+        }
+        $ext = preg_quote($ext);
+        $new = preg_replace("/({$ext})$/u", "", $name);
+
+        // basename of '/etc/.d' is '.d' not ''
+        return ($new === '')? $name : $new;
+
     }
 
     /**
