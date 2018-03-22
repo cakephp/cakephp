@@ -592,7 +592,7 @@ XML;
 <?xml version="1.0" encoding="utf-8"?>
 <article>
     <id>1</id>
-    <title>first</title>
+    <title><![CDATA[first]]></title>
 </article>
 XML;
         $this->Controller->request = new ServerRequest(['input' => $xml]);

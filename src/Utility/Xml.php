@@ -145,12 +145,13 @@ class Xml
         if ($hasDisable && !$options['loadEntities']) {
             libxml_disable_entity_loader(true);
         }
-        $flags = LIBXML_NOCDATA;
+        $flags = 0;
         if (!empty($options['parseHuge'])) {
             $flags |= LIBXML_PARSEHUGE;
         }
         try {
             if ($options['return'] === 'simplexml' || $options['return'] === 'simplexmlelement') {
+                $flags |= LIBXML_NOCDATA;
                 $xml = new SimpleXMLElement($input, $flags);
             } else {
                 $xml = new DOMDocument();
