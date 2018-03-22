@@ -141,23 +141,40 @@ class DebuggerTest extends TestCase
     /**
      * Test that outputAs works.
      *
+     * @group deprecated
      * @return void
      */
     public function testOutputAs()
     {
-        Debugger::outputAs('html');
-        $this->assertEquals('html', Debugger::outputAs());
+        $this->deprecated(function () {
+            Debugger::outputAs('html');
+            $this->assertEquals('html', Debugger::outputAs());
+        });
+    }
+
+    /**
+     * Test that setOutputFormat works.
+     *
+     * @return void
+     */
+    public function testSetOutputFormat()
+    {
+        Debugger::setOutputFormat('html');
+        $this->assertEquals('html', Debugger::getOutputFormat());
     }
 
     /**
      * Test that choosing a non-existent format causes an exception
      *
+     * @group deprecated
      * @return void
      */
     public function testOutputAsException()
     {
         $this->expectException(\InvalidArgumentException::class);
-        Debugger::outputAs('Invalid junk');
+        $this->deprecated(function () {
+            Debugger::outputAs('Invalid junk');
+        });
     }
 
     /**
@@ -189,7 +206,7 @@ class DebuggerTest extends TestCase
      */
     public function testOutputErrorDescriptionEncoding()
     {
-        Debugger::outputAs('html');
+        Debugger::setOutputFormat('html');
 
         ob_start();
         $debugger = Debugger::getInstance();
@@ -213,7 +230,7 @@ class DebuggerTest extends TestCase
      */
     public function testOutputErrorLineHighlight()
     {
-        Debugger::outputAs('js');
+        Debugger::setOutputFormat('js');
 
         ob_start();
         $debugger = Debugger::getInstance();
@@ -242,7 +259,7 @@ class DebuggerTest extends TestCase
             'traceLine' => '{:reference} - <a href="txmt://open?url=file://{:file}' .
                 '&line={:line}">{:path}</a>, line {:line}'
         ]);
-        Debugger::outputAs('js');
+        Debugger::setOutputFormat('js');
 
         $result = Debugger::trace();
         $this->assertRegExp('/' . preg_quote('txmt://open?url=file://', '/') . '(\/|[A-Z]:\\\\)' . '/', $result);
@@ -251,7 +268,7 @@ class DebuggerTest extends TestCase
             'error' => '<error><code>{:code}</code><file>{:file}</file><line>{:line}</line>' .
                 '{:description}</error>',
         ]);
-        Debugger::outputAs('xml');
+        Debugger::setOutputFormat('xml');
 
         ob_start();
         $debugger = Debugger::getInstance();
@@ -283,7 +300,7 @@ class DebuggerTest extends TestCase
     public function testAddFormatCallback()
     {
         Debugger::addFormat('callback', ['callback' => [$this, 'customFormat']]);
-        Debugger::outputAs('callback');
+        Debugger::setOutputFormat('callback');
 
         ob_start();
         $debugger = Debugger::getInstance();
@@ -474,7 +491,7 @@ TEXT;
         $mock = $this->getMockBuilder('Cake\Log\Engine\BaseLog')
             ->setMethods(['log'])
             ->getMock();
-        Log::config('test', ['engine' => $mock]);
+        Log::setConfig('test', ['engine' => $mock]);
 
         $mock->expects($this->at(0))
             ->method('log')
@@ -508,7 +525,7 @@ TEXT;
         $mock = $this->getMockBuilder('Cake\Log\Engine\BaseLog')
             ->setMethods(['log'])
             ->getMock();
-        Log::config('test', ['engine' => $mock]);
+        Log::setConfig('test', ['engine' => $mock]);
 
         $mock->expects($this->at(0))
             ->method('log')

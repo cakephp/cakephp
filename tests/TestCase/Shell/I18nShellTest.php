@@ -78,10 +78,10 @@ class I18nShellTest extends TestCase
             unlink($deDir . 'cake.po');
         }
 
-        $this->shell->io()->expects($this->at(0))
+        $this->shell->getIo()->expects($this->at(0))
             ->method('ask')
             ->will($this->returnValue('de_DE'));
-        $this->shell->io()->expects($this->at(1))
+        $this->shell->getIo()->expects($this->at(1))
             ->method('ask')
             ->will($this->returnValue($this->localeDir));
 

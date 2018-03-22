@@ -20,12 +20,12 @@ use Cake\Form\Form;
 use Cake\Http\ServerRequest;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
-use Cake\ORM\TableRegistry;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
 use Cake\View\Helper\FormHelper;
 use Cake\View\View;
+use Cake\View\Widget\WidgetLocator;
 
 /**
  * Test stub.
@@ -65,7 +65,7 @@ class ContactsTable extends Table
      */
     public function initialize(array $config)
     {
-        $this->schema($this->_schema);
+        $this->setSchema($this->_schema);
     }
 }
 
@@ -101,7 +101,7 @@ class ValidateUsersTable extends Table
      */
     public function initialize(array $config)
     {
-        $this->schema($this->_schema);
+        $this->setSchema($this->_schema);
     }
 }
 
@@ -183,7 +183,7 @@ class FormHelperTest extends TestCase
             ]
         ];
 
-        Security::salt('foo!');
+        Security::setSalt('foo!');
         Router::connect('/:controller', ['action' => 'index']);
         Router::connect('/:controller/:action/*');
     }
@@ -197,7 +197,7 @@ class FormHelperTest extends TestCase
     {
         parent::tearDown();
         unset($this->Form, $this->Controller, $this->View);
-        TableRegistry::clear();
+        $this->getTableLocator()->clear();
     }
 
     /**
@@ -228,21 +228,35 @@ class FormHelperTest extends TestCase
             ]
         ];
         $helper = new FormHelper($this->View, $config);
-        $registry = $helper->widgetRegistry();
-        $this->assertInstanceOf('Cake\View\Widget\LabelWidget', $registry->get('datetime'));
+        $locator = $helper->getWidgetLocator();
+        $this->assertInstanceOf('Cake\View\Widget\LabelWidget', $locator->get('datetime'));
     }
 
     /**
      * Test that when specifying custom widgets config file and it should be
-     * added to widgets array. WidgetRegistry will load widgets in constructor.
+     * added to widgets array. WidgetLocator will load widgets in constructor.
      *
      * @return void
      */
     public function testConstructWithWidgetsConfig()
     {
         $helper = new FormHelper($this->View, ['widgets' => ['test_widgets']]);
-        $registry = $helper->widgetRegistry();
-        $this->assertInstanceOf('Cake\View\Widget\LabelWidget', $registry->get('text'));
+        $locator = $helper->getWidgetLocator();
+        $this->assertInstanceOf('Cake\View\Widget\LabelWidget', $locator->get('text'));
+    }
+
+    /**
+     * Test setting the widget locator
+     *
+     * @return void
+     */
+    public function testSetAndGetWidgetLocator()
+    {
+        $helper = new FormHelper($this->View);
+        $locator = new WidgetLocator($helper->templater(), $this->View);
+        $helper->setWidgetLocator($locator);
+
+        $this->assertSame($locator, $helper->getWidgetLocator());
     }
 
     /**
@@ -643,7 +657,7 @@ class FormHelperTest extends TestCase
      */
     public function testSubmitTemplateVars()
     {
-        $this->Form->templates([
+        $this->Form->setTemplates([
             'inputSubmit' => '<input custom="{{forinput}}" type="{{type}}"{{attrs}}/>',
             'submitContainer' => '<div class="submit">{{content}}{{forcontainer}}</div>'
         ]);
@@ -719,8 +733,9 @@ class FormHelperTest extends TestCase
     {
         $encoding = strtolower(Configure::read('App.encoding'));
 
-        $this->Form->request->here = '/articles/edit/1';
-        $this->Form->request->params['action'] = 'edit';
+        $this->Form->request = $this->Form->request
+            ->withRequestTarget('/articles/edit/1')
+            ->withParam('action', 'edit');
 
         $this->article['defaults']['id'] = 1;
 
@@ -747,9 +762,9 @@ class FormHelperTest extends TestCase
     {
         $encoding = strtolower(Configure::read('App.encoding'));
 
-        $this->Form->request->params['action'] = 'delete';
-        $this->Form->request->here = '/articles/delete/10';
-        $this->Form->request->base = '';
+        $this->Form->request = $this->Form->request
+            ->withRequestTarget('/articles/delete/10')
+            ->withParam('action', 'delete');
         $result = $this->Form->create($this->article);
         $expected = [
             'form' => [
@@ -763,8 +778,9 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $this->article['defaults'] = ['id' => 1];
-        $this->Form->request->here = '/articles/edit/1';
-        $this->Form->request->params['action'] = 'delete';
+        $this->Form->request = $this->Form->request
+            ->withRequestTarget('/articles/edit/1')
+            ->withParam('action', 'delete');
         $result = $this->Form->create($this->article, ['url' => ['action' => 'edit']]);
         $expected = [
             'form' => [
@@ -778,7 +794,8 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Form->request->params['action'] = 'add';
+        $this->Form->request = $this->Form->request
+            ->withParam('action', 'add');
         $result = $this->Form->create($this->article, ['url' => ['action' => 'publish']]);
         $expected = [
             'form' => [
@@ -801,7 +818,8 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Form->request->params['controller'] = 'Pages';
+        $this->Form->request = $this->Form->request
+            ->withParam('controller', 'Pages');
         $result = $this->Form->create($this->article, ['url' => ['action' => 'signup']]);
         $expected = [
             'form' => [
@@ -845,7 +863,8 @@ class FormHelperTest extends TestCase
         Router::connect('/login', ['controller' => 'users', 'action' => 'login']);
         $encoding = strtolower(Configure::read('App.encoding'));
 
-        $this->Form->request->params['controller'] = 'users';
+        $this->Form->request = $this->Form->request
+            ->withParam('controller', 'users');
 
         $result = $this->Form->create(false, ['url' => ['action' => 'login']]);
         $expected = [
@@ -951,7 +970,7 @@ class FormHelperTest extends TestCase
     {
         $encoding = strtolower(Configure::read('App.encoding'));
 
-        $this->Form->request->data['Article']['id'] = [1, 2];
+        $this->Form->request = $this->Form->request->withData('Article.id', [1, 2]);
         $result = $this->Form->create($this->article);
         $expected = [
             'form' => [
@@ -974,7 +993,7 @@ class FormHelperTest extends TestCase
     public function testCreatePassedArgs()
     {
         $encoding = strtolower(Configure::read('App.encoding'));
-        $this->Form->request->data['Article']['id'] = 1;
+        $this->Form->request = $this->Form->request->withData('Article.id', 1);
         $result = $this->Form->create($this->article, [
             'type' => 'post',
             'escape' => false,
@@ -1039,7 +1058,7 @@ class FormHelperTest extends TestCase
     public function testGetFormWithFalseModel()
     {
         $encoding = strtolower(Configure::read('App.encoding'));
-        $this->Form->request->params['controller'] = 'contact_test';
+        $this->Form->request = $this->Form->request->withParam('controller', 'contact_test');
         $result = $this->Form->create(false, [
             'type' => 'get', 'url' => ['controller' => 'contact_test']
         ]);
@@ -1066,7 +1085,7 @@ class FormHelperTest extends TestCase
      */
     public function testCreateWithSecurity()
     {
-        $this->Form->request->params['_csrfToken'] = 'testKey';
+        $this->Form->request = $this->Form->request->withParam('_csrfToken', 'testKey');
         $encoding = strtolower(Configure::read('App.encoding'));
         $result = $this->Form->create($this->article, [
             'url' => '/articles/publish',
@@ -1099,7 +1118,7 @@ class FormHelperTest extends TestCase
      */
     public function testCreateEndGetNoSecurity()
     {
-        $this->Form->request->params['_csrfToken'] = 'testKey';
+        $this->Form->request = $this->Form->request->withParam('_csrfToken', 'testKey');
         $article = new Article();
         $result = $this->Form->create($article, [
             'type' => 'get',
@@ -1130,10 +1149,13 @@ class FormHelperTest extends TestCase
      */
     public function testValidateHashNoModel()
     {
-        $this->Form->request->params['_Token'] = 'foo';
+        $this->Form->request = $this->Form->request->withParam('_Token', 'foo');
 
-        $result = $this->Form->secure(['anything']);
-        $this->assertRegExp('/540ac9c60d323c22bafe997b72c0790f39a8bdef/', $result);
+        $fields = ['anything'];
+        $result = $this->Form->secure($fields);
+
+        $hash = hash_hmac('sha1', serialize($fields) . session_id(), Security::getSalt());
+        $this->assertContains($hash, $result);
     }
 
     /**
@@ -1143,7 +1165,7 @@ class FormHelperTest extends TestCase
      */
     public function testNoCheckboxLocking()
     {
-        $this->Form->request->params['_Token'] = 'foo';
+        $this->Form->request = $this->Form->request->withParam('_Token', 'foo');
         $this->assertSame([], $this->Form->fields);
 
         $this->Form->checkbox('check', ['value' => '1']);
@@ -1161,10 +1183,10 @@ class FormHelperTest extends TestCase
     {
         $fields = ['Model.password', 'Model.username', 'Model.valid' => '0'];
 
-        $this->Form->request->params['_Token'] = 'testKey';
+        $this->Form->request = $this->Form->request->withParam('_Token', 'testKey');
         $result = $this->Form->secure($fields);
 
-        $hash = Security::hash(serialize($fields) . Security::salt());
+        $hash = hash_hmac('sha1', serialize($fields) . session_id(), Security::getSalt());
         $hash .= ':' . 'Model.valid';
         $hash = urlencode($hash);
         $tokenDebug = urlencode(json_encode([
@@ -1209,10 +1231,10 @@ class FormHelperTest extends TestCase
         Configure::write('debug', false);
         $fields = ['Model.password', 'Model.username', 'Model.valid' => '0'];
 
-        $this->Form->request->params['_Token'] = 'testKey';
+        $this->Form->request = $this->Form->request->withParam('_Token', 'testKey');
         $result = $this->Form->secure($fields);
 
-        $hash = Security::hash(serialize($fields) . Security::salt());
+        $hash = hash_hmac('sha1', serialize($fields) . session_id(), Security::getSalt());
         $hash .= ':' . 'Model.valid';
         $hash = urlencode($hash);
         $expected = [
@@ -1335,7 +1357,7 @@ class FormHelperTest extends TestCase
      */
     public function testTextFieldTypeNumberGenerationForIntegers()
     {
-        TableRegistry::get('Contacts', [
+        $this->getTableLocator()->get('Contacts', [
             'className' => __NAMESPACE__ . '\ContactsTable'
         ]);
         $this->Form->create([], ['context' => ['table' => 'Contacts']]);
@@ -1361,10 +1383,10 @@ class FormHelperTest extends TestCase
      */
     public function testFileUploadFieldTypeGenerationForBinaries()
     {
-        $table = TableRegistry::get('Contacts', [
+        $table = $this->getTableLocator()->get('Contacts', [
             'className' => __NAMESPACE__ . '\ContactsTable'
         ]);
-        $table->schema(['foo' => [
+        $table->setSchema(['foo' => [
             'type' => 'binary',
             'null' => false,
             'default' => null,
@@ -1396,7 +1418,7 @@ class FormHelperTest extends TestCase
      */
     public function testFormSecurityMultipleFields()
     {
-        $this->Form->request->params['_Token'] = 'foo';
+        $this->Form->request = $this->Form->request->withParam('_Token', 'foo');
 
         $fields = [
             'Model.0.password', 'Model.0.username', 'Model.0.hidden' => 'value',
@@ -1405,8 +1427,8 @@ class FormHelperTest extends TestCase
         ];
         $result = $this->Form->secure($fields);
 
-        $hash = '51e3b55a6edd82020b3f29c9ae200e14bbeb7ee5%3AModel.0.hidden%7CModel.0.valid';
-        $hash .= '%7CModel.1.hidden%7CModel.1.valid';
+        $hash = '8670192c3f040bf58680479060b4755b7a5c3596' .
+            '%3AModel.0.hidden%7CModel.0.valid%7CModel.1.hidden%7CModel.1.valid';
         $tokenDebug = urlencode(json_encode([
             '',
             $fields,
@@ -1447,7 +1469,7 @@ class FormHelperTest extends TestCase
      */
     public function testFormSecurityMultipleSubmitButtons()
     {
-        $this->Form->request->params['_Token'] = 'testKey';
+        $this->Form->request = $this->Form->request->withParam('_Token', 'testKey');
 
         $this->Form->create($this->article);
         $this->Form->text('Address.title');
@@ -1511,8 +1533,7 @@ class FormHelperTest extends TestCase
      */
     public function testSecurityButtonNestedNamed()
     {
-        $key = 'testKey';
-        $this->Form->request->params['_csrfToken'] = $key;
+        $this->Form->request = $this->Form->request->withParam('_csrfToken', 'testKey');
 
         $this->Form->create('Addresses');
         $this->Form->button('Test', ['type' => 'submit', 'name' => 'Address[button]']);
@@ -1527,7 +1548,7 @@ class FormHelperTest extends TestCase
      */
     public function testSecuritySubmitNestedNamed()
     {
-        $this->Form->request->params['_Token'] = 'testKey';
+        $this->Form->request = $this->Form->request->withParam('_Token', 'testKey');
 
         $this->Form->create($this->article);
         $this->Form->submit('Test', ['type' => 'submit', 'name' => 'Address[button]']);
@@ -1542,7 +1563,7 @@ class FormHelperTest extends TestCase
      */
     public function testSecuritySubmitImageNoName()
     {
-        $this->Form->request->params['_Token'] = 'testKey';
+        $this->Form->request = $this->Form->request->withParam('_Token', 'testKey');
 
         $this->Form->create(false);
         $result = $this->Form->submit('save.png');
@@ -1562,7 +1583,7 @@ class FormHelperTest extends TestCase
      */
     public function testSecuritySubmitImageName()
     {
-        $this->Form->request->params['_Token'] = 'testKey';
+        $this->Form->request = $this->Form->request->withParam('_Token', 'testKey');
 
         $this->Form->create(null);
         $result = $this->Form->submit('save.png', ['name' => 'test']);
@@ -1584,7 +1605,7 @@ class FormHelperTest extends TestCase
      */
     public function testFormSecurityMultipleControlFields()
     {
-        $this->Form->request->params['_Token'] = 'testKey';
+        $this->Form->request = $this->Form->request->withParam('_Token', 'testKey');
         $this->Form->create();
 
         $this->Form->hidden('Addresses.0.id', ['value' => '123456']);
@@ -1606,8 +1627,7 @@ class FormHelperTest extends TestCase
         $this->Form->control('Addresses.1.primary', ['type' => 'checkbox']);
 
         $result = $this->Form->secure($this->Form->fields);
-
-        $hash = '8bd3911b07b507408b1a969b31ee90c47b7d387e%3AAddresses.0.id%7CAddresses.1.id';
+        $hash = 'a4fe49bde94894a01375e7aa2873ea8114a96471%3AAddresses.0.id%7CAddresses.1.id';
         $tokenDebug = urlencode(json_encode([
             '/articles/add',
             [
@@ -1664,7 +1684,7 @@ class FormHelperTest extends TestCase
      */
     public function testFormSecurityArrayFields()
     {
-        $this->Form->request->params['_Token'] = 'testKey';
+        $this->Form->request = $this->Form->request->withParam('_Token', 'testKey');
 
         $this->Form->create();
         $this->Form->text('Address.primary.1');
@@ -1683,9 +1703,9 @@ class FormHelperTest extends TestCase
      */
     public function testFormSecurityMultipleControlDisabledFields()
     {
-        $this->Form->request->params['_Token'] = [
+        $this->Form->request = $this->Form->request->withParam('_Token', [
             'unlockedFields' => ['first_name', 'address']
-        ];
+        ]);
         $this->Form->create();
 
         $this->Form->hidden('Addresses.0.id', ['value' => '123456']);
@@ -1704,7 +1724,7 @@ class FormHelperTest extends TestCase
         $this->Form->text('Addresses.1.phone');
 
         $result = $this->Form->secure($this->Form->fields);
-        $hash = '4fb10b46873df4ddd4ef5c3a19944a2f29b38991%3AAddresses.0.id%7CAddresses.1.id';
+        $hash = '43c4db25e4162c5e4edd9dea51f5f9d9d92215ec%3AAddresses.0.id%7CAddresses.1.id';
         $tokenDebug = urlencode(json_encode([
                 '/articles/add',
                 [
@@ -1759,11 +1779,11 @@ class FormHelperTest extends TestCase
      */
     public function testFormSecurityControlUnlockedFields()
     {
-        $this->Form->request->params['_Token'] = [
+        $this->Form->request = $this->Form->request->withParam('_Token', [
             'unlockedFields' => ['first_name', 'address']
-        ];
+        ]);
         $this->Form->create();
-        $this->assertEquals($this->Form->request->params['_Token']['unlockedFields'], $this->Form->unlockField());
+        $this->assertEquals($this->Form->request->getParam('_Token.unlockedFields'), $this->Form->unlockField());
 
         $this->Form->hidden('Addresses.id', ['value' => '123456']);
         $this->Form->text('Addresses.title');
@@ -1782,7 +1802,7 @@ class FormHelperTest extends TestCase
 
         $result = $this->Form->secure($expected, ['data-foo' => 'bar']);
 
-        $hash = 'a303becbdd99cb42ca14a1cf7e63dfd48696a3c5%3AAddresses.id';
+        $hash = 'f98315a7d5515e5ae32e35f7d680207c085fae69%3AAddresses.id';
         $tokenDebug = urlencode(json_encode([
                 '/articles/add',
                 [
@@ -1834,11 +1854,11 @@ class FormHelperTest extends TestCase
      */
     public function testFormSecurityControlUnlockedFieldsDebugSecurityTrue()
     {
-        $this->Form->request->params['_Token'] = [
+        $this->Form->request = $this->Form->request->withParam('_Token', [
             'unlockedFields' => ['first_name', 'address']
-        ];
+        ]);
         $this->Form->create();
-        $this->assertEquals($this->Form->request->params['_Token']['unlockedFields'], $this->Form->unlockField());
+        $this->assertEquals($this->Form->request->getParam('_Token.unlockedFields'), $this->Form->unlockField());
 
         $this->Form->hidden('Addresses.id', ['value' => '123456']);
         $this->Form->text('Addresses.title');
@@ -1856,7 +1876,7 @@ class FormHelperTest extends TestCase
         $this->assertEquals($expected, $result);
         $result = $this->Form->secure($expected, ['data-foo' => 'bar', 'debugSecurity' => true]);
 
-        $hash = 'a303becbdd99cb42ca14a1cf7e63dfd48696a3c5%3AAddresses.id';
+        $hash = 'f98315a7d5515e5ae32e35f7d680207c085fae69%3AAddresses.id';
         $tokenDebug = urlencode(json_encode([
             '/articles/add',
             [
@@ -1908,11 +1928,11 @@ class FormHelperTest extends TestCase
      */
     public function testFormSecurityControlUnlockedFieldsDebugSecurityDebugFalse()
     {
-        $this->Form->request->params['_Token'] = [
+        $this->Form->request = $this->Form->request->withParam('_Token', [
             'unlockedFields' => ['first_name', 'address']
-        ];
+        ]);
         $this->Form->create();
-        $this->assertEquals($this->Form->request->params['_Token']['unlockedFields'], $this->Form->unlockField());
+        $this->assertEquals($this->Form->request->getParam('_Token.unlockedFields'), $this->Form->unlockField());
 
         $this->Form->hidden('Addresses.id', ['value' => '123456']);
         $this->Form->text('Addresses.title');
@@ -1931,7 +1951,7 @@ class FormHelperTest extends TestCase
         Configure::write('debug', false);
         $result = $this->Form->secure($expected, ['data-foo' => 'bar', 'debugSecurity' => true]);
 
-        $hash = 'a303becbdd99cb42ca14a1cf7e63dfd48696a3c5%3AAddresses.id';
+        $hash = 'f98315a7d5515e5ae32e35f7d680207c085fae69%3AAddresses.id';
         $expected = [
             'div' => ['style' => 'display:none;'],
             ['input' => [
@@ -1962,11 +1982,11 @@ class FormHelperTest extends TestCase
      */
     public function testFormSecurityControlUnlockedFieldsDebugSecurityFalse()
     {
-        $this->Form->request->params['_Token'] = [
+        $this->Form->request = $this->Form->request->withParam('_Token', [
             'unlockedFields' => ['first_name', 'address']
-        ];
+        ]);
         $this->Form->create();
-        $this->assertEquals($this->Form->request->params['_Token']['unlockedFields'], $this->Form->unlockField());
+        $this->assertEquals($this->Form->request->getParam('_Token.unlockedFields'), $this->Form->unlockField());
 
         $this->Form->hidden('Addresses.id', ['value' => '123456']);
         $this->Form->text('Addresses.title');
@@ -1984,8 +2004,7 @@ class FormHelperTest extends TestCase
         $this->assertEquals($expected, $result);
 
         $result = $this->Form->secure($expected, ['data-foo' => 'bar', 'debugSecurity' => false]);
-
-        $hash = 'a303becbdd99cb42ca14a1cf7e63dfd48696a3c5%3AAddresses.id';
+        $hash = 'f98315a7d5515e5ae32e35f7d680207c085fae69%3AAddresses.id';
 
         $expected = [
             'div' => ['style' => 'display:none;'],
@@ -2018,7 +2037,7 @@ class FormHelperTest extends TestCase
      */
     public function testFormSecureWithCustomNameAttribute()
     {
-        $this->Form->request->params['_Token'] = 'testKey';
+        $this->Form->request = $this->Form->request->withParam('_Token', 'testKey');
 
         $this->Form->text('UserForm.published', ['name' => 'User[custom]']);
         $this->assertEquals('User.custom', $this->Form->fields[0]);
@@ -2036,8 +2055,9 @@ class FormHelperTest extends TestCase
      */
     public function testFormSecuredControl()
     {
-        $this->Form->request->params['_csrfToken'] = 'testKey';
-        $this->Form->request->params['_Token'] = 'stuff';
+        $this->Form->request = $this->Form->request
+            ->withParam('_Token', 'stuff')
+            ->withParam('_csrfToken', 'testKey');
         $this->article['schema'] = [
             'ratio' => ['type' => 'decimal', 'length' => 5, 'precision' => 6],
             'population' => ['type' => 'decimal', 'length' => 15, 'precision' => 0],
@@ -2202,7 +2222,7 @@ class FormHelperTest extends TestCase
      */
     public function testSecuredControlCustomName()
     {
-        $this->Form->request->params['_Token'] = 'testKey';
+        $this->Form->request = $this->Form->request->withParam('_Token', 'testKey');
         $this->assertEquals([], $this->Form->fields);
 
         $this->Form->text('text_input', [
@@ -2232,7 +2252,7 @@ class FormHelperTest extends TestCase
      */
     public function testSecuredControlDuplicate()
     {
-        $this->Form->request->params['_Token'] = ['key' => 'testKey'];
+        $this->Form->request = $this->Form->request->withParam('_Token', 'testKey');
         $this->assertEquals([], $this->Form->fields);
 
         $this->Form->control('text_val', [
@@ -2278,7 +2298,7 @@ class FormHelperTest extends TestCase
      */
     public function testFormSecuredMultipleSelect()
     {
-        $this->Form->request->params['_csrfToken'] = 'testKey';
+        $this->Form->request = $this->Form->request->withParam('_csrfToken', 'testKey');
         $this->assertEquals([], $this->Form->fields);
         $options = ['1' => 'one', '2' => 'two'];
 
@@ -2298,7 +2318,7 @@ class FormHelperTest extends TestCase
      */
     public function testFormSecuredRadio()
     {
-        $this->Form->request->params['_Token'] = 'testKey';
+        $this->Form->request = $this->Form->request->withParam('_Token', 'testKey');
 
         $this->assertEquals([], $this->Form->fields);
         $options = ['1' => 'option1', '2' => 'option2'];
@@ -2329,7 +2349,7 @@ class FormHelperTest extends TestCase
      */
     public function testFormSecuredAndDisabledNotAssoc()
     {
-        $this->Form->request->params['_Token'] = 'testKey';
+        $this->Form->request = $this->Form->request->withParam('_Token', 'testKey');
 
         $this->Form->select('Model.select', [1, 2], ['disabled']);
         $this->Form->checkbox('Model.checkbox', ['disabled']);
@@ -2354,7 +2374,7 @@ class FormHelperTest extends TestCase
      */
     public function testFormSecuredAndDisabled()
     {
-        $this->Form->request->params['_Token'] = 'testKey';
+        $this->Form->request = $this->Form->request->withParam('_Token', 'testKey');
 
         $this->Form->checkbox('Model.checkbox', ['disabled' => true]);
         $this->Form->text('Model.text', ['disabled' => true]);
@@ -2382,9 +2402,9 @@ class FormHelperTest extends TestCase
      */
     public function testDisableSecurityUsingForm()
     {
-        $this->Form->request->params['_Token'] = [
+        $this->Form->request = $this->Form->request->withParam('_Token', [
             'disabledFields' => []
-        ];
+        ]);
         $this->Form->create();
 
         $this->Form->hidden('Addresses.id', ['value' => '123456']);
@@ -2409,9 +2429,9 @@ class FormHelperTest extends TestCase
      */
     public function testUnlockFieldAddsToList()
     {
-        $this->Form->request->params['_Token'] = [
+        $this->Form->request = $this->Form->request->withParam('_Token', [
             'unlockedFields' => []
-        ];
+        ]);
         $this->Form->unlockField('Contact.name');
         $this->Form->text('Contact.name');
 
@@ -2428,15 +2448,15 @@ class FormHelperTest extends TestCase
      */
     public function testUnlockFieldRemovingFromFields()
     {
-        $this->Form->request->params['_Token'] = [
+        $this->Form->request = $this->Form->request->withParam('_Token', [
             'unlockedFields' => []
-        ];
+        ]);
         $this->Form->create($this->article);
         $this->Form->hidden('Article.id', ['value' => 1]);
         $this->Form->text('Article.title');
 
         $this->assertEquals(1, $this->Form->fields['Article.id'], 'Hidden input should be secured.');
-        $this->assertTrue(in_array('Article.title', $this->Form->fields), 'Field should be secured.');
+        $this->assertContains('Article.title', $this->Form->fields, 'Field should be secured.');
 
         $this->Form->unlockField('Article.title');
         $this->Form->unlockField('Article.id');
@@ -2452,10 +2472,10 @@ class FormHelperTest extends TestCase
      */
     public function testResetUnlockFields()
     {
-        $this->Form->request->params['_Token'] = [
+        $this->Form->request = $this->Form->request->withParam('_Token', [
             'key' => 'testKey',
             'unlockedFields' => []
-        ];
+        ]);
 
         $this->Form->unlockField('Contact.id');
         $this->Form->create('Contact');
@@ -2477,9 +2497,9 @@ class FormHelperTest extends TestCase
      */
     public function testSecuredFormUrlIgnoresHost()
     {
-        $this->Form->request->params['_Token'] = ['key' => 'testKey'];
+        $this->Form->request = $this->Form->request->withParam('_Token', ['key' => 'testKey']);
 
-        $expected = '0ff0c85cd70584d8fd18fa136846d22c66c21e2d%3A';
+        $expected = '2548654895b160d724042ed269a2a863fd9d66ee%3A';
         $this->Form->create($this->article, [
             'url' => ['controller' => 'articles', 'action' => 'view', 1, '?' => ['page' => 1]]
         ]);
@@ -2508,9 +2528,9 @@ class FormHelperTest extends TestCase
      */
     public function testSecuredFormUrlHasHtmlAndIdentifier()
     {
-        $this->Form->request->params['_Token'] = ['key' => 'testKey'];
+        $this->Form->request = $this->Form->request->withParam('_Token', 'testKey');
 
-        $expected = 'ece0693fb1b19ca116133db1832ac29baaf41ce5%3A';
+        $expected = '0a913f45b887b4d9cc2650ef1edc50183896959c%3A';
         $this->Form->create($this->article, [
             'url' => [
                 'controller' => 'articles',
@@ -2775,7 +2795,7 @@ class FormHelperTest extends TestCase
     public function testFormValidationAssociated()
     {
         $nested = new Entity(['foo' => 'bar']);
-        $nested->errors('foo', ['not a valid bar']);
+        $nested->setError('foo', ['not a valid bar']);
         $entity = new Entity(['nested' => $nested]);
         $this->Form->create($entity, ['context' => ['table' => 'Articles']]);
 
@@ -2795,7 +2815,7 @@ class FormHelperTest extends TestCase
         $inner = new Entity(['bar' => 'baz']);
         $nested = new Entity(['foo' => $inner]);
         $entity = new Entity(['nested' => $nested]);
-        $inner->errors('bar', ['not a valid one']);
+        $inner->setError('bar', ['not a valid one']);
         $this->Form->create($entity, ['context' => ['table' => 'Articles']]);
         $result = $this->Form->error('nested.foo.bar');
         $this->assertEquals('<div class="error-message">not a valid one</div>', $result);
@@ -2812,14 +2832,14 @@ class FormHelperTest extends TestCase
     {
         $one = new Entity();
         $two = new Entity();
-        TableRegistry::get('Contacts', [
+        $this->getTableLocator()->get('Contacts', [
             'className' => __NAMESPACE__ . '\ContactsTable'
         ]);
         $one->set('email', '');
-        $one->errors('email', ['invalid email']);
+        $one->setError('email', ['invalid email']);
 
         $two->set('name', '');
-        $two->errors('name', ['This is wrong']);
+        $two->setError('name', ['This is wrong']);
         $this->Form->create([$one, $two], ['context' => ['table' => 'Contacts']]);
 
         $result = $this->Form->control('0.email');
@@ -2866,7 +2886,7 @@ class FormHelperTest extends TestCase
      */
     public function testControl()
     {
-        TableRegistry::get('ValidateUsers', [
+        $this->getTableLocator()->get('ValidateUsers', [
             'className' => __NAMESPACE__ . '\ValidateUsersTable'
         ]);
         $this->Form->create([], ['context' => ['table' => 'ValidateUsers']]);
@@ -2913,7 +2933,7 @@ class FormHelperTest extends TestCase
      */
     public function testControlCustomization()
     {
-        TableRegistry::get('Contacts', [
+        $this->getTableLocator()->get('Contacts', [
             'className' => __NAMESPACE__ . '\ContactsTable'
         ]);
         $this->Form->create([], ['context' => ['table' => 'Contacts']]);
@@ -3022,7 +3042,7 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Form->request->data['Model']['0']['OtherModel']['field'] = 'My value';
+        $this->Form->request = $this->Form->request->withData('Model.0.OtherModel.field', 'My value');
         $this->Form->create();
         $result = $this->Form->control('Model.0.OtherModel.field', ['id' => 'myId']);
         $expected = [
@@ -3038,9 +3058,10 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Form->request->data = [];
+        $this->Form->request = $this->Form->request->withParsedBody([]);
+        $this->Form->create();
 
-        $entity->errors('field', 'Badness!');
+        $entity->setError('field', 'Badness!');
         $this->Form->create($entity, ['context' => ['table' => 'Contacts']]);
         $result = $this->Form->control('field');
         $expected = [
@@ -3079,7 +3100,7 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $entity->errors('field', ['minLength'], true);
+        $entity->setError('field', ['minLength'], true);
         $result = $this->Form->control('field', [
             'error' => [
                 'minLength' => 'Le login doit contenir au moins 2 caractères',
@@ -3099,7 +3120,7 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $entity->errors('field', ['maxLength'], true);
+        $entity->setError('field', ['maxLength'], true);
         $result = $this->Form->control('field', [
             'error' => [
                 'minLength' => 'Le login doit contenir au moins 2 caractères',
@@ -3276,7 +3297,7 @@ class FormHelperTest extends TestCase
      */
     public function testControlZero()
     {
-        TableRegistry::get('Contacts', [
+        $this->getTableLocator()->get('Contacts', [
             'className' => __NAMESPACE__ . '\ContactsTable'
         ]);
         $this->Form->create([], ['context' => ['table' => 'Contacts']]);
@@ -3299,8 +3320,8 @@ class FormHelperTest extends TestCase
      */
     public function testControlCheckbox()
     {
-        $articles = TableRegistry::get('Articles');
-        $articles->schema()->addColumn('active', ['type' => 'boolean', 'default' => null]);
+        $articles = $this->getTableLocator()->get('Articles');
+        $articles->getSchema()->addColumn('active', ['type' => 'boolean', 'default' => null]);
         $article = $articles->newEntity();
 
         $this->Form->create($article);
@@ -3397,7 +3418,7 @@ class FormHelperTest extends TestCase
      */
     public function testControlHidden()
     {
-        TableRegistry::get('ValidateUsers', [
+        $this->getTableLocator()->get('ValidateUsers', [
             'className' => __NAMESPACE__ . '\ValidateUsersTable'
         ]);
         $this->Form->create([], ['context' => ['table' => 'ValidateUsers']]);
@@ -3655,8 +3676,8 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $this->View->viewVars['users'] = ['value' => 'good', 'other' => 'bad'];
-        $this->Form->request->data = ['Model' => ['user_id' => 'value']];
-
+        $this->Form->request = $this->Form->request->withData('Model', ['user_id' => 'value']);
+        $this->Form->create();
         $result = $this->Form->control('Model.user_id', ['empty' => true]);
         $expected = [
             'div' => ['class' => 'input select'],
@@ -3678,7 +3699,7 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $this->View->viewVars['users'] = ['value' => 'good', 'other' => 'bad'];
-        $this->Form->request->data = ['Thing' => ['user_id' => null]];
+        $this->Form->request = $this->Form->request->withData('Thing', ['user_id' => null]);
         $result = $this->Form->control('Thing.user_id', ['empty' => 'Some Empty']);
         $expected = [
             'div' => ['class' => 'input select'],
@@ -3701,7 +3722,8 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $this->View->viewVars['users'] = ['value' => 'good', 'other' => 'bad'];
-        $this->Form->request->data = ['Thing' => ['user_id' => 'value']];
+        $this->Form->request = $this->Form->request->withData('Thing', ['user_id' => 'value']);
+        $this->Form->create();
         $result = $this->Form->control('Thing.user_id', ['empty' => 'Some Empty']);
         $expected = [
             'div' => ['class' => 'input select'],
@@ -3723,12 +3745,11 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Form->data = [];
         $result = $this->Form->control('Publisher.id', [
-                'label' => 'Publisher',
-                'type' => 'select',
-                'multiple' => 'checkbox',
-                'options' => ['Value 1' => 'Label 1', 'Value 2' => 'Label 2']
+            'label' => 'Publisher',
+            'type' => 'select',
+            'multiple' => 'checkbox',
+            'options' => ['Value 1' => 'Label 1', 'Value 2' => 'Label 2']
         ]);
         $expected = [
             ['div' => ['class' => 'input select']],
@@ -3897,7 +3918,7 @@ class FormHelperTest extends TestCase
      */
     public function testControlMagicSelectForTypeNumber()
     {
-        TableRegistry::get('ValidateUsers', [
+        $this->getTableLocator()->get('ValidateUsers', [
             'className' => __NAMESPACE__ . '\ValidateUsersTable'
         ]);
         $entity = new Entity(['balance' => 1]);
@@ -4004,9 +4025,10 @@ class FormHelperTest extends TestCase
         $this->assertNotContains('<fieldset>', $result);
 
         $this->Form->create($this->article);
-        $this->Form->request->params['prefix'] = 'admin';
-        $this->Form->request->params['action'] = 'admin_edit';
-        $this->Form->request->params['controller'] = 'articles';
+        $this->Form->request = $this->Form->request
+            ->withParam('prefix', 'admin')
+            ->withParam('action', 'admin_edit')
+            ->withParam('controller', 'articles');
         $result = $this->Form->allControls();
         $expected = [
             '<fieldset',
@@ -4283,7 +4305,7 @@ class FormHelperTest extends TestCase
      */
     public function testLabelContainControl()
     {
-        $this->Form->templates([
+        $this->Form->setTemplates([
             'label' => '<label{{attrs}}>{{input}}{{text}}</label>',
         ]);
         $result = $this->Form->label('Person.accept_terms', 'Accept', [
@@ -4332,9 +4354,11 @@ class FormHelperTest extends TestCase
         $this->article['errors'] = [
             'Contact' => ['text' => 'wrong']
         ];
+        $this->Form->request = $this->Form->request
+            ->withData('Model.text', 'test <strong>HTML</strong> values')
+            ->withData('Contact.text', 'test');
         $this->Form->create($this->article);
 
-        $this->Form->request->data['Model']['text'] = 'test <strong>HTML</strong> values';
         $result = $this->Form->text('Model.text');
         $expected = [
             'input' => [
@@ -4345,7 +4369,6 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Form->request->data['Contact']['text'] = 'test';
         $result = $this->Form->text('Contact.text', ['id' => 'theID']);
         $expected = [
             'input' => [
@@ -4368,19 +4391,20 @@ class FormHelperTest extends TestCase
      */
     public function testTextDefaultValue()
     {
-        $this->Form->request->data['Model']['field'] = 'test';
+        $this->Form->request = $this->Form->request->withData('Model.field', 'test');
         $result = $this->Form->text('Model.field', ['default' => 'default value']);
         $expected = ['input' => ['type' => 'text', 'name' => 'Model[field]', 'value' => 'test']];
         $this->assertHtml($expected, $result);
 
-        unset($this->Form->request->data['Model']['field']);
+        $this->Form->request = $this->Form->request->withParsedBody([]);
+        $this->Form->create();
         $result = $this->Form->text('Model.field', ['default' => 'default value']);
         $expected = ['input' => ['type' => 'text', 'name' => 'Model[field]', 'value' => 'default value']];
         $this->assertHtml($expected, $result);
 
-        $Articles = TableRegistry::get('Articles');
-        $title = $Articles->schema()->column('title');
-        $Articles->schema()->addColumn(
+        $Articles = $this->getTableLocator()->get('Articles');
+        $title = $Articles->getSchema()->getColumn('title');
+        $Articles->getSchema()->addColumn(
             'title',
             ['default' => 'default title'] + $title
         );
@@ -4576,7 +4600,8 @@ class FormHelperTest extends TestCase
         $expected = ['input' => ['type' => 'password', 'name' => 'Contact[field]']];
         $this->assertHtml($expected, $result);
 
-        $this->Form->request->data['Contact']['passwd'] = 'test';
+        $this->Form->request = $this->Form->request->withData('Contact.passwd', 'test');
+        $this->Form->create($this->article);
         $result = $this->Form->password('Contact.passwd', ['id' => 'theID']);
         $expected = ['input' => ['type' => 'password', 'name' => 'Contact[passwd]', 'value' => 'test', 'id' => 'theID', 'class' => 'form-error']];
         $this->assertHtml($expected, $result);
@@ -4713,9 +4738,9 @@ class FormHelperTest extends TestCase
      */
     public function testRadioDefaultValue()
     {
-        $Articles = TableRegistry::get('Articles');
-        $title = $Articles->schema()->column('title');
-        $Articles->schema()->addColumn(
+        $Articles = $this->getTableLocator()->get('Articles');
+        $title = $Articles->getSchema()->getColumn('title');
+        $Articles->getSchema()->addColumn(
             'title',
             ['default' => '1'] + $title
         );
@@ -4857,7 +4882,7 @@ class FormHelperTest extends TestCase
      */
     public function testRadioControlInsideLabel()
     {
-        $this->Form->templates([
+        $this->Form->setTemplates([
             'label' => '<label{{attrs}}>{{input}}{{text}}</label>',
             'radioWrapper' => '{{label}}'
         ]);
@@ -4948,7 +4973,8 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Form->request->data = ['Model' => ['field' => 'value']];
+        $this->Form->request = $this->Form->request->withData('Model', ['field' => 'value']);
+        $this->Form->create();
         $result = $this->Form->select('Model.field', ['value' => 'good', 'other' => 'bad']);
         $expected = [
             'select' => ['name' => 'Model[field]'],
@@ -4965,7 +4991,8 @@ class FormHelperTest extends TestCase
         $result = $this->Form->select('Model.field', new Collection(['value' => 'good', 'other' => 'bad']));
         $this->assertHtml($expected, $result);
 
-        $this->Form->request->data = [];
+        $this->Form->request = $this->Form->request->withParsedBody([]);
+        $this->Form->create();
         $result = $this->Form->select('Model.field', ['value' => 'good', 'other' => 'bad']);
         $expected = [
             'select' => ['name' => 'Model[field]'],
@@ -5000,7 +5027,8 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Form->request->data = ['Model' => ['contact_id' => 228]];
+        $this->Form->request = $this->Form->request->withParsedBody(['Model' => ['contact_id' => 228]]);
+        $this->Form->create();
         $result = $this->Form->select(
             'Model.contact_id',
             ['228' => '228 value', '228-1' => '228-1 value', '228-2' => '228-2 value'],
@@ -5017,7 +5045,8 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Form->request->data['Model']['field'] = 0;
+        $this->Form->request = $this->Form->request->withData('Model.field', 0);
+        $this->Form->create();
         $result = $this->Form->select('Model.field', ['0' => 'No', '1' => 'Yes']);
         $expected = [
             'select' => ['name' => 'Model[field]'],
@@ -5364,7 +5393,7 @@ class FormHelperTest extends TestCase
         $this->View->viewVars['spacecraft'] = $spacecraft;
 
         $article = new Article();
-        $article->errors('spacecraft', ['Invalid']);
+        $article->setError('spacecraft', ['Invalid']);
 
         $this->Form->create($article);
         $result = $this->Form->control('spacecraft._ids');
@@ -5531,7 +5560,7 @@ class FormHelperTest extends TestCase
      */
     public function testSelectMultipleCheckboxRequestData()
     {
-        $this->Form->request->data = ['Model' => ['tags' => [1]]];
+        $this->Form->request = $this->Form->request->withData('Model', ['tags' => [1]]);
         $result = $this->Form->select(
             'Model.tags',
             ['1' => 'first', 'Array' => 'Array'],
@@ -5573,7 +5602,7 @@ class FormHelperTest extends TestCase
      */
     public function testSelectMultipleCheckboxSecurity()
     {
-        $this->Form->request->params['_Token'] = 'testKey';
+        $this->Form->request = $this->Form->request->withParam('_Token', 'testKey');
         $this->assertEquals([], $this->Form->fields);
 
         $this->Form->select(
@@ -5584,8 +5613,8 @@ class FormHelperTest extends TestCase
         $this->assertEquals(['Model.multi_field'], $this->Form->fields);
 
         $result = $this->Form->secure($this->Form->fields);
-        $key = 'f7d573650a295b94e0938d32b323fde775e5f32b%3A';
-        $this->assertRegExp('/"' . $key . '"/', $result);
+        $key = '8af36fb34e6f2ef8ba0eb473bb4365ec232f3fe5%3A';
+        $this->assertContains('"' . $key . '"', $result);
     }
 
     /**
@@ -5618,7 +5647,7 @@ class FormHelperTest extends TestCase
      */
     public function testSelectNoSecureWithNoOptions()
     {
-        $this->Form->request->params['_Token'] = 'testkey';
+        $this->Form->request = $this->Form->request->withParam('_Token', 'testkey');
         $this->assertEquals([], $this->Form->fields);
 
         $this->Form->select(
@@ -5846,28 +5875,31 @@ class FormHelperTest extends TestCase
      */
     public function testCheckboxDefaultValue()
     {
-        $this->Form->request->data['Model']['field'] = false;
+        $this->Form->request = $this->Form->request->withData('Model.field', false);
         $result = $this->Form->checkbox('Model.field', ['default' => true, 'hiddenField' => false]);
         $expected = ['input' => ['type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1']];
         $this->assertHtml($expected, $result);
 
-        unset($this->Form->request->data['Model']['field']);
+        $this->Form->request = $this->Form->request->withData('Model.field', null);
+        $this->Form->create();
         $result = $this->Form->checkbox('Model.field', ['default' => true, 'hiddenField' => false]);
         $expected = ['input' => ['type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1', 'checked' => 'checked']];
         $this->assertHtml($expected, $result);
 
-        $this->Form->request->data['Model']['field'] = true;
+        $this->Form->request = $this->Form->request->withData('Model.field', true);
+        $this->Form->create();
         $result = $this->Form->checkbox('Model.field', ['default' => false, 'hiddenField' => false]);
         $expected = ['input' => ['type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1', 'checked' => 'checked']];
         $this->assertHtml($expected, $result);
 
-        unset($this->Form->request->data['Model']['field']);
+        $this->Form->request = $this->Form->request->withData('Model.field', null);
+        $this->Form->create();
         $result = $this->Form->checkbox('Model.field', ['default' => false, 'hiddenField' => false]);
         $expected = ['input' => ['type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1']];
         $this->assertHtml($expected, $result);
 
-        $Articles = TableRegistry::get('Articles');
-        $Articles->schema()->addColumn(
+        $Articles = $this->getTableLocator()->get('Articles');
+        $Articles->getSchema()->addColumn(
             'published',
             ['type' => 'boolean', 'null' => false, 'default' => true]
         );
@@ -5890,7 +5922,7 @@ class FormHelperTest extends TestCase
         $this->article['errors'] = [
             'published' => true
         ];
-        $this->Form->request->data['published'] = 'myvalue';
+        $this->Form->request = $this->Form->request->withData('published', 'myvalue');
         $this->Form->create($this->article);
 
         $result = $this->Form->checkbox('published', ['id' => 'theID', 'value' => 'myvalue']);
@@ -5907,7 +5939,8 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Form->request->data['published'] = '';
+        $this->Form->request = $this->Form->request->withData('published', '');
+        $this->Form->create($this->article);
         $result = $this->Form->checkbox('published');
         $expected = [
             'input' => ['type' => 'hidden', 'class' => 'form-error', 'name' => 'published', 'value' => '0'],
@@ -6162,7 +6195,7 @@ class FormHelperTest extends TestCase
      */
     public function testDateTimeSecured()
     {
-        $this->Form->request->params['_Token'] = ['unlockedFields' => []];
+        $this->Form->request = $this->Form->request->withParam('_Token', ['unlockedFields' => []]);
         $this->Form->dateTime('Contact.date');
         $expected = [
             'Contact.date.year',
@@ -6192,7 +6225,7 @@ class FormHelperTest extends TestCase
      */
     public function testDateTimeSecuredDisabled()
     {
-        $this->Form->request->params['_Token'] = ['unlockedFields' => []];
+        $this->Form->request = $this->Form->request->withParam('_Token', ['unlockedFields' => []]);
         $this->Form->dateTime('Contact.date', ['secure' => false]);
         $expected = [];
         $this->assertEquals($expected, $this->Form->fields);
@@ -6327,7 +6360,7 @@ class FormHelperTest extends TestCase
      */
     public function testDateTimeRounding()
     {
-        $this->Form->request->data['Contact'] = [
+        $this->Form->request = $this->Form->request->withData('Contact', [
             'date' => [
                 'day' => '13',
                 'month' => '12',
@@ -6336,7 +6369,7 @@ class FormHelperTest extends TestCase
                 'minute' => '19',
                 'meridian' => 'AM'
             ]
-        ];
+        ]);
 
         $result = $this->Form->dateTime('Contact.date', ['interval' => 15]);
         $this->assertTextContains('<option value="15" selected="selected">15</option>', $result);
@@ -6559,7 +6592,8 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Form->request->data['Project']['release'] = '2050-02-10';
+        $this->Form->request = $this->Form->request->withData('Project.release', '2050-02-10');
+        $this->Form->create();
         $result = $this->Form->month('Project.release');
 
         $expected = [
@@ -6609,7 +6643,8 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Form->request->data['Model']['field'] = '2006-10-10 23:12:32';
+        $this->Form->request = $this->Form->request->withData('Model.field', '2006-10-10 23:12:32');
+        $this->Form->create();
         $result = $this->Form->day('Model.field');
         $expected = [
             ['select' => ['name' => 'Model[field][day]']],
@@ -6630,7 +6665,8 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Form->request->data['Model']['field'] = '';
+        $this->Form->request = $this->Form->request->withData('Model.field', '');
+        $this->Form->create();
         $result = $this->Form->day('Model.field', ['value' => '10']);
         $expected = [
             ['select' => ['name' => 'Model[field][day]']],
@@ -6651,7 +6687,8 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Form->request->data['Project']['release'] = '2050-10-10';
+        $this->Form->request = $this->Form->request->withData('Project.release', '2050-10-10');
+        $this->Form->create();
         $result = $this->Form->day('Project.release');
 
         $expected = [
@@ -6709,7 +6746,8 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Form->request->data['Model']['field'] = '2006-10-10 00:12:32';
+        $this->Form->request = $this->Form->request->withData('Model.field', '2006-10-10 00:12:32');
+        $this->Form->create();
         $result = $this->Form->minute('Model.field');
         $expected = [
             ['select' => ['name' => 'Model[field][minute]']],
@@ -6733,7 +6771,8 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Form->request->data['Model']['field'] = '';
+        $this->Form->request = $this->Form->request->withData('Model.field', '');
+        $this->Form->create();
         $result = $this->Form->minute('Model.field', ['interval' => 5]);
         $expected = [
             ['select' => ['name' => 'Model[field][minute]']],
@@ -6753,7 +6792,8 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Form->request->data['Model']['field'] = '2006-10-10 00:10:32';
+        $this->Form->request = $this->Form->request->withData('Model.field', '2006-10-10 00:10:32');
+        $this->Form->create();
         $result = $this->Form->minute('Model.field', ['interval' => 5]);
         $expected = [
             ['select' => ['name' => 'Model[field][minute]']],
@@ -6827,7 +6867,8 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Form->request->data['Model']['field'] = '2006-10-10 00:12:32';
+        $this->Form->request = $this->Form->request->withData('Model.field', '2006-10-10 00:12:32');
+        $this->Form->create();
         $result = $this->Form->hour('Model.field', ['format' => 12]);
         $expected = [
             ['select' => ['name' => 'Model[field][hour]']],
@@ -6847,14 +6888,16 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Form->request->data['Model']['field'] = '';
+        $this->Form->request = $this->Form->request->withData('Model.field', '');
+        $this->Form->create();
         $result = $this->Form->hour('Model.field', ['format' => 24, 'value' => '23']);
         $this->assertContains('<option value="23" selected="selected">23</option>', $result);
 
         $result = $this->Form->hour('Model.field', ['format' => 12, 'value' => '23']);
         $this->assertContains('<option value="11" selected="selected">11</option>', $result);
 
-        $this->Form->request->data['Model']['field'] = '2006-10-10 00:12:32';
+        $this->Form->request = $this->Form->request->withData('Model.field', '2006-10-10 00:12:32');
+        $this->Form->create();
         $result = $this->Form->hour('Model.field', ['format' => 24]);
         $expected = [
             ['select' => ['name' => 'Model[field][hour]']],
@@ -6874,13 +6917,15 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        unset($this->Form->request->data['Model']['field']);
+        $this->Form->request = $this->Form->request->withData('Model.field', null);
+        $this->Form->create();
         $result = $this->Form->hour('Model.field', ['format' => 24, 'value' => 'now']);
         $thisHour = date('H');
         $optValue = date('G');
         $this->assertRegExp('/<option value="' . $thisHour . '" selected="selected">' . $optValue . '<\/option>/', $result);
 
-        $this->Form->request->data['Model']['field'] = '2050-10-10 01:12:32';
+        $this->Form->request = $this->Form->request->withData('Model.field', '2050-10-10 01:12:32');
+        $this->Form->create();
         $result = $this->Form->hour('Model.field', ['format' => 24]);
         $expected = [
             ['select' => ['name' => 'Model[field][hour]']],
@@ -6910,6 +6955,7 @@ class FormHelperTest extends TestCase
      */
     public function testYear()
     {
+        $this->Form->request = $this->Form->request->withData('Contact.published', '2006-10-10');
         $result = $this->Form->year('Model.field', ['value' => '', 'minYear' => 2006, 'maxYear' => 2007]);
         $expected = [
             ['select' => ['name' => 'Model[field][year]']],
@@ -6945,7 +6991,6 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Form->request->data['Contact']['published'] = '2006-10-10';
         $result = $this->Form->year('Contact.published', [
             'empty' => false,
             'minYear' => 2006,
@@ -7017,7 +7062,7 @@ class FormHelperTest extends TestCase
      */
     public function testYearAutoExpandRange()
     {
-        $this->Form->request->data['User']['birthday'] = '1930-10-10';
+        $this->Form->request = $this->Form->request->withData('User.birthday', '1930-10-10');
         $result = $this->Form->year('User.birthday');
         preg_match_all('/<option value="([\d]+)"/', $result, $matches);
 
@@ -7025,7 +7070,8 @@ class FormHelperTest extends TestCase
         $expected = range(date('Y') + 5, 1930);
         $this->assertEquals($expected, $result);
 
-        $this->Form->request->data['Project']['release'] = '2050-10-10';
+        $this->Form->request = $this->Form->request->withData('Project.release', '2050-10-10');
+        $this->Form->create();
         $result = $this->Form->year('Project.release');
         preg_match_all('/<option value="([\d]+)"/', $result, $matches);
 
@@ -7033,7 +7079,8 @@ class FormHelperTest extends TestCase
         $expected = range(2050, date('Y') - 5);
         $this->assertEquals($expected, $result);
 
-        $this->Form->request->data['Project']['release'] = '1881-10-10';
+        $this->Form->request = $this->Form->request->withData('Project.release', '1881-10-10');
+        $this->Form->create();
         $result = $this->Form->year('Project.release', [
             'minYear' => 1890,
             'maxYear' => 1900
@@ -7054,9 +7101,9 @@ class FormHelperTest extends TestCase
      */
     public function testControlDate()
     {
-        $this->Form->request->data = [
+        $this->Form->request = $this->Form->request->withParsedBody([
             'month_year' => ['month' => date('m')],
-        ];
+        ]);
         $this->Form->create($this->article);
         $result = $this->Form->control('month_year', [
                 'label' => false,
@@ -7097,7 +7144,6 @@ class FormHelperTest extends TestCase
      */
     public function testControlDateMaxYear()
     {
-        $this->Form->request->data = [];
         $this->Form->create($this->article);
         $result = $this->Form->control('birthday', [
             'label' => false,
@@ -7121,7 +7167,7 @@ class FormHelperTest extends TestCase
      */
     public function testTextArea()
     {
-        $this->Form->request->data = ['field' => 'some test data'];
+        $this->Form->request = $this->Form->request->withData('field', 'some test data');
         $result = $this->Form->textarea('field');
         $expected = [
             'textarea' => ['name' => 'field', 'rows' => 5],
@@ -7137,7 +7183,9 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Form->request->data = ['field' => 'some <strong>test</strong> data with <a href="#">HTML</a> chars'];
+        $this->Form->request = $this->Form->request
+            ->withData('field', 'some <strong>test</strong> data with <a href="#">HTML</a> chars');
+        $this->Form->create();
         $result = $this->Form->textarea('field');
         $expected = [
             'textarea' => ['name' => 'field', 'rows' => 5],
@@ -7146,9 +7194,11 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Form->request->data = [
-            'Model' => ['field' => 'some <strong>test</strong> data with <a href="#">HTML</a> chars']
-        ];
+        $this->Form->request = $this->Form->request->withData(
+            'Model.field',
+            'some <strong>test</strong> data with <a href="#">HTML</a> chars'
+        );
+        $this->Form->create();
         $result = $this->Form->textarea('Model.field', ['escape' => false]);
         $expected = [
             'textarea' => ['name' => 'Model[field]', 'rows' => 5],
@@ -7238,7 +7288,7 @@ class FormHelperTest extends TestCase
         $this->article['errors'] = [
             'field' => true
         ];
-        $this->Form->request->data['field'] = 'test';
+        $this->Form->request = $this->Form->request->withData('field', 'test');
         $this->Form->create($this->article);
         $result = $this->Form->hidden('field', ['id' => 'theID']);
         $expected = [
@@ -7266,14 +7316,14 @@ class FormHelperTest extends TestCase
         $result = $this->Form->file('Model.upload');
         $this->assertHtml($expected, $result);
 
-        $this->Form->request->data['Model']['upload'] = [
+        $this->Form->request = $this->Form->request->withData('Model.upload', [
             'name' => '', 'type' => '', 'tmp_name' => '',
             'error' => 4, 'size' => 0
-        ];
+        ]);
         $result = $this->Form->file('Model.upload');
         $this->assertHtml($expected, $result);
 
-        $this->Form->request->data['Model']['upload'] = 'no data should be set in value';
+        $this->Form->request = $this->Form->request->withData('Model.upload', 'no data should be set in value');
         $result = $this->Form->file('Model.upload');
         $this->assertHtml($expected, $result);
     }
@@ -7340,7 +7390,7 @@ class FormHelperTest extends TestCase
      */
     public function testButtonUnlockedByDefault()
     {
-        $this->Form->request->params['_csrfToken'] = 'secured';
+        $this->Form->request = $this->Form->request->withParam('_csrfToken', 'secured');
         $this->Form->button('Save', ['name' => 'save']);
         $this->Form->button('Clear');
 
@@ -7381,7 +7431,7 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $result = $this->Form->postButton('Send', '/', ['data' => ['extra' => 'value']]);
-        $this->assertTrue(strpos($result, '<input type="hidden" name="extra" value="value"') !== false);
+        $this->assertContains('<input type="hidden" name="extra" value="value"', $result);
     }
 
     /**
@@ -7457,8 +7507,9 @@ class FormHelperTest extends TestCase
      */
     public function testSecurePostButton()
     {
-        $this->Form->request->params['_csrfToken'] = 'testkey';
-        $this->Form->request->params['_Token'] = ['unlockedFields' => []];
+        $this->Form->request = $this->Form->request
+            ->withParam('_csrfToken', 'testkey')
+            ->withParam('_Token.unlockedFields', []);
 
         $result = $this->Form->postButton('Delete', '/posts/delete/1');
         $tokenDebug = urlencode(json_encode([
@@ -7648,14 +7699,9 @@ class FormHelperTest extends TestCase
      */
     public function testPostLinkSecurityHash()
     {
-        $hash = Security::hash(
-            '/posts/delete/1' .
-            serialize(['id' => '1']) .
-            '' .
-            Security::salt()
-        );
+        $hash = hash_hmac('sha1', '/posts/delete/1' . serialize(['id' => '1']) . session_id(), Security::getSalt());
         $hash .= '%3Aid';
-        $this->Form->request->params['_Token']['key'] = 'test';
+        $this->Form->request = $this->Form->request->withParam('_Token.key', 'test');
 
         $result = $this->Form->postLink(
             'Delete',
@@ -7706,14 +7752,9 @@ class FormHelperTest extends TestCase
      */
     public function testPostLinkSecurityHashBlockMode()
     {
-        $hash = Security::hash(
-            '/posts/delete/1' .
-            serialize([]) .
-            '' .
-            Security::salt()
-        );
+        $hash = hash_hmac('sha1', '/posts/delete/1' . serialize([]) . session_id(), Security::getSalt());
         $hash .= '%3A';
-        $this->Form->request->params['_Token']['key'] = 'test';
+        $this->Form->request = $this->Form->request->withParam('_Token.key', 'test');
 
         $this->Form->create('Post', ['url' => ['action' => 'add']]);
         $this->Form->control('title');
@@ -7735,14 +7776,10 @@ class FormHelperTest extends TestCase
     public function testPostLinkSecurityHashNoDebugMode()
     {
         Configure::write('debug', false);
-        $hash = Security::hash(
-            '/posts/delete/1' .
-            serialize(['id' => '1']) .
-            '' .
-            Security::salt()
-        );
+        $hash = hash_hmac('sha1', '/posts/delete/1' . serialize(['id' => '1']) . session_id(), Security::getSalt());
         $hash .= '%3Aid';
-        $this->Form->request->params['_Token']['key'] = 'test';
+        $this->Form->request = $this->Form->request
+            ->withParam('_Token.key', 'test');
 
         $result = $this->Form->postLink(
             'Delete',
@@ -7782,7 +7819,7 @@ class FormHelperTest extends TestCase
                 'two' => [
                     3, 4, 5
                 ]
-                ]
+            ]
         ];
         $result = $this->Form->postLink('Send', '/', ['data' => $data]);
         $this->assertContains('<input type="hidden" name="one[two][0]" value="3"', $result);
@@ -7799,8 +7836,9 @@ class FormHelperTest extends TestCase
      */
     public function testPostLinkAfterGetForm()
     {
-        $this->Form->request->params['_csrfToken'] = 'testkey';
-        $this->Form->request->params['_Token'] = 'val';
+        $this->Form->request = $this->Form->request
+            ->withParam('_csrfToken', 'testkey')
+            ->withParam('_Token', 'val');
 
         $this->Form->create($this->article, ['type' => 'get']);
         $this->Form->end();
@@ -8014,7 +8052,7 @@ class FormHelperTest extends TestCase
      */
     public function testSubmitUnlockedByDefault()
     {
-        $this->Form->request->params['_Token'] = 'secured';
+        $this->Form->request = $this->Form->request->withParam('_Token', 'secured');
         $this->Form->submit('Go go');
         $this->Form->submit('Save', ['name' => 'save']);
 
@@ -8070,7 +8108,7 @@ class FormHelperTest extends TestCase
     public function testForMagicControlNonExistingNorValidated()
     {
         $this->Form->create($this->article);
-        $this->Form->templates(['inputContainer' => '{{content}}']);
+        $this->Form->setTemplates(['inputContainer' => '{{content}}']);
         $result = $this->Form->control('non_existing_nor_validated');
         $expected = [
             'label' => ['for' => 'non-existing-nor-validated'],
@@ -8097,7 +8135,8 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Form->request->data = ['non_existing_nor_validated' => 'CakePHP magic'];
+        $this->Form->request = $this->Form->request->withData('non_existing_nor_validated', 'CakePHP magic');
+        $this->Form->create($this->article);
         $result = $this->Form->control('non_existing_nor_validated');
         $expected = [
             'label' => ['for' => 'non-existing-nor-validated'],
@@ -8118,11 +8157,11 @@ class FormHelperTest extends TestCase
      */
     public function testFormMagicControlLabel()
     {
-        TableRegistry::get('Contacts', [
+        $this->getTableLocator()->get('Contacts', [
             'className' => __NAMESPACE__ . '\ContactsTable'
         ]);
         $this->Form->create([], ['context' => ['table' => 'Contacts']]);
-        $this->Form->templates(['inputContainer' => '{{content}}']);
+        $this->Form->setTemplates(['inputContainer' => '{{content}}']);
 
         $result = $this->Form->control('Contacts.name', ['label' => 'My label']);
         $expected = [
@@ -8219,7 +8258,7 @@ class FormHelperTest extends TestCase
     public function testMultiRecordForm()
     {
         $this->loadFixtures('Articles', 'Comments');
-        $articles = TableRegistry::get('Articles');
+        $articles = $this->getTableLocator()->get('Articles');
         $articles->hasMany('Comments');
 
         $comment = new Entity(['comment' => 'Value']);
@@ -8262,7 +8301,7 @@ class FormHelperTest extends TestCase
         //@codingStandardsIgnoreEnd
         $this->assertHtml($expected, $result);
 
-        $comment->errors('comment', ['Not valid']);
+        $comment->setError('comment', ['Not valid']);
         $result = $this->Form->control('0.comments.0.comment');
         //@codingStandardsIgnoreStart
         $expected = [
@@ -8286,8 +8325,8 @@ class FormHelperTest extends TestCase
         //@codingStandardsIgnoreEnd
         $this->assertHtml($expected, $result);
 
-        TableRegistry::get('Comments')
-            ->validator('default')
+        $this->getTableLocator()->get('Comments')
+            ->getValidator('default')
             ->allowEmpty('comment', false);
         $result = $this->Form->control('0.comments.1.comment');
         //@codingStandardsIgnoreStart
@@ -8353,7 +8392,7 @@ class FormHelperTest extends TestCase
     public function testHtml5ControlWithControl()
     {
         $this->Form->create();
-        $this->Form->templates(['inputContainer' => '{{content}}']);
+        $this->Form->setTemplates(['inputContainer' => '{{content}}']);
         $result = $this->Form->control('website', [
             'type' => 'url',
             'val' => 'http://domain.tld',
@@ -8440,7 +8479,7 @@ class FormHelperTest extends TestCase
      */
     public function testControlsNotNested()
     {
-        $this->Form->templates([
+        $this->Form->setTemplates([
             'nestingLabel' => '{{hidden}}{{input}}<label{{attrs}}>{{text}}</label>',
             'formGroup' => '{{input}}{{label}}',
         ]);
@@ -8518,7 +8557,7 @@ class FormHelperTest extends TestCase
      */
     public function testControlContainerTemplates()
     {
-        $this->Form->templates([
+        $this->Form->setTemplates([
             'checkboxContainer' => '<div class="check">{{content}}</div>',
             'radioContainer' => '<div class="rad">{{content}}</div>',
             'radioContainerError' => '<div class="rad err">{{content}}</div>',
@@ -8571,7 +8610,7 @@ class FormHelperTest extends TestCase
      */
     public function testFormGroupTemplates()
     {
-        $this->Form->templates([
+        $this->Form->setTemplates([
             'radioFormGroup' => '<div class="radio">{{label}}{{input}}</div>',
         ]);
 
@@ -8593,7 +8632,7 @@ class FormHelperTest extends TestCase
      */
     public function testResetTemplates()
     {
-        $this->Form->templates(['input' => '<input/>']);
+        $this->Form->setTemplates(['input' => '<input/>']);
         $this->assertEquals('<input/>', $this->Form->templater()->get('input'));
 
         $this->Form->resetTemplates();
@@ -8683,21 +8722,18 @@ class FormHelperTest extends TestCase
      */
     public function testFormValueSourcesSettersGetters()
     {
+        $this->Form->request = $this->Form->request
+            ->withData('id', '1')
+            ->withQueryParams(['id' => '2']);
+
         $expected = ['context'];
         $result = $this->Form->getValueSources();
-        $this->assertEquals($expected, $result);
-
-        $expected = null;
-        $result = $this->Form->getSourceValue('id');
         $this->assertEquals($expected, $result);
 
         $expected = ['query', 'data', 'context'];
         $this->Form->setValueSources(['query', 'data', 'invalid', 'context', 'foo']);
         $result = $this->Form->getValueSources();
         $this->assertEquals($expected, $result);
-
-        $this->Form->request->data['id'] = '1';
-        $this->Form->request->query['id'] = '2';
 
         $this->Form->setValueSources(['context']);
         $expected = '1';
@@ -8732,7 +8768,7 @@ class FormHelperTest extends TestCase
     public function testFormValueSourcesSingleSwitchRendering()
     {
         $this->loadFixtures('Articles');
-        $articles = TableRegistry::get('Articles');
+        $articles = $this->getTableLocator()->get('Articles');
         $article = new Article();
         $articles->patchEntity($article, ['id' => '3']);
 
@@ -8744,7 +8780,7 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Form->request->query['id'] = '5';
+        $this->Form->request = $this->Form->request->withQueryParams(['id' => 5]);
         $this->Form->setValueSources(['query']);
         $result = $this->Form->control('id');
         $expected = [
@@ -8752,8 +8788,9 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Form->request->query['id'] = '5a';
-        $this->Form->request->data['id'] = '5b';
+        $this->Form->request = $this->Form->request
+            ->withQueryParams(['id' => '5a'])
+            ->withData('id', '5b');
 
         $this->Form->setValueSources(['context']);
         $this->Form->create($article);
@@ -8788,10 +8825,10 @@ class FormHelperTest extends TestCase
     public function testFormValueSourcesListSwitchRendering()
     {
         $this->loadFixtures('Articles');
-        $articles = TableRegistry::get('Articles');
+        $articles = $this->getTableLocator()->get('Articles');
         $article = new Article();
         $articles->patchEntity($article, ['id' => '3']);
-        $this->Form->request->query['id'] = '9';
+        $this->Form->request = $this->Form->request->withQueryParams(['id' => '9']);
 
         $this->Form->create($article);
         $this->Form->setValueSources(['context', 'query']);
@@ -8815,8 +8852,9 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Form->request->data['id'] = '8';
-        $this->Form->request->query['id'] = '9';
+        $this->Form->request = $this->Form->request
+            ->withData('id', '8')
+            ->withQueryParams(['id' => '9']);
         $this->Form->setValueSources(['data', 'query', 'context']);
         $result = $this->Form->control('id');
         $expected = [
@@ -8833,11 +8871,11 @@ class FormHelperTest extends TestCase
     public function testFormValueSourcesSwitchViaOptionsRendering()
     {
         $this->loadFixtures('Articles');
-        $articles = TableRegistry::get('Articles');
+        $articles = $this->getTableLocator()->get('Articles');
         $article = new Article();
         $articles->patchEntity($article, ['id' => '3']);
-        $this->Form->request->data['id'] = '4';
-        $this->Form->request->query['id'] = '5';
+
+        $this->Form->request = $this->Form->request->withData('id', 4)->withQueryParams(['id' => 5]);
 
         $this->Form->create($article, ['valueSources' => 'query']);
         $result = $this->Form->control('id');
@@ -8888,12 +8926,11 @@ class FormHelperTest extends TestCase
     public function testFormValueSourcesSwitchViaOptionsAndSetterRendering()
     {
         $this->loadFixtures('Articles');
-        $articles = TableRegistry::get('Articles');
+        $articles = $this->getTableLocator()->get('Articles');
         $article = new Article();
         $articles->patchEntity($article, ['id' => '3']);
 
-        $this->Form->request->data['id'] = '10';
-        $this->Form->request->query['id'] = '11';
+        $this->Form->request = $this->Form->request->withData('id', 10)->withQueryParams(['id' => 11]);
 
         $this->Form->setValueSources(['context'])
             ->create($article, ['valueSources' => ['query', 'data']]);
@@ -8905,7 +8942,7 @@ class FormHelperTest extends TestCase
         $result = $this->Form->getSourceValue('id');
         $this->assertEquals('11', $result);
 
-        unset($this->Form->request->query['id']);
+        $this->Form->request = $this->Form->request->withQueryParams([]);
         $this->Form->setValueSources(['context'])
             ->create($article, ['valueSources' => ['query', 'data']]);
         $result = $this->Form->control('id');
@@ -8950,7 +8987,7 @@ class FormHelperTest extends TestCase
      */
     public function testFormValueSourcesDefaults()
     {
-        $this->Form->request->query['password'] = 'open Sesame';
+        $this->Form->request = $this->Form->request->withQueryParams(['password' => 'open Sesame']);
         $this->Form->create();
 
         $result = $this->Form->password('password');
@@ -8979,9 +9016,9 @@ class FormHelperTest extends TestCase
      */
     public function testSourcesValueDoesntExistPassThrough()
     {
-        $this->Form->request->query['category'] = 'sesame-cookies';
+        $this->Form->request = $this->Form->request->withQueryParams(['category' => 'sesame-cookies']);
 
-        $articles = TableRegistry::get('Articles');
+        $articles = $this->getTableLocator()->get('Articles');
         $entity = $articles->newEntity();
         $this->Form->create($entity);
 
@@ -8999,24 +9036,27 @@ class FormHelperTest extends TestCase
      *
      * Test the `nestedInput` parameter
      *
+     * @group deprecated
      * @return void
      */
     public function testNestedLabelInput()
     {
-        $result = $this->Form->input('foo', ['nestedInput' => true]);
-        $expected = [
-            'div' => ['class' => 'input text'],
-            'label' => ['for' => 'foo'],
-            ['input' => [
-                'type' => 'text',
-                'name' => 'foo',
-                'id' => 'foo'
-            ]],
-            'Foo',
-            '/label',
-            '/div'
-        ];
-        $this->assertHtml($expected, $result);
+        $this->deprecated(function () {
+            $result = $this->Form->input('foo', ['nestedInput' => true]);
+            $expected = [
+                'div' => ['class' => 'input text'],
+                'label' => ['for' => 'foo'],
+                ['input' => [
+                    'type' => 'text',
+                    'name' => 'foo',
+                    'id' => 'foo'
+                ]],
+                'Foo',
+                '/label',
+                '/div'
+            ];
+            $this->assertHtml($expected, $result);
+        });
     }
 
     /**
@@ -9026,9 +9066,9 @@ class FormHelperTest extends TestCase
      *
      * @return void
      */
-    public function testInputLabelManipulationDisableLabels()
+    public function testControlLabelManipulationDisableLabels()
     {
-        $result = $this->Form->input('test', [
+        $result = $this->Form->control('test', [
             'type' => 'radio',
             'options' => ['A', 'B'],
             'labelOptions' => false
@@ -9045,7 +9085,7 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Form->input('checkbox1', [
+        $result = $this->Form->control('checkbox1', [
             'label' => 'My checkboxes',
             'multiple' => 'checkbox',
             'type' => 'select',
@@ -9082,9 +9122,9 @@ class FormHelperTest extends TestCase
      *
      * @return void
      */
-    public function testInputLabelManipulationRadios()
+    public function testControlLabelManipulationRadios()
     {
-        $result = $this->Form->input('test', [
+        $result = $this->Form->control('test', [
             'type' => 'radio',
             'options' => ['A', 'B'],
             'labelOptions' => ['class' => 'custom-class']
@@ -9107,7 +9147,7 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Form->input('test', [
+        $result = $this->Form->control('test', [
             'type' => 'radio',
             'options' => ['A', 'B'],
             'value' => 1,
@@ -9131,7 +9171,7 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Form->input('test', [
+        $result = $this->Form->control('test', [
             'type' => 'radio',
             'options' => ['A', 'B'],
             'value' => 1,
@@ -9192,9 +9232,9 @@ class FormHelperTest extends TestCase
      *
      * @return void
      */
-    public function testInputLabelManipulationCheckboxes()
+    public function testControlLabelManipulationCheckboxes()
     {
-        $result = $this->Form->input('checkbox1', [
+        $result = $this->Form->control('checkbox1', [
             'label' => 'My checkboxes',
             'multiple' => 'checkbox',
             'type' => 'select',
@@ -9244,7 +9284,7 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Form->input('checkbox1', [
+        $result = $this->Form->control('checkbox1', [
             'label' => 'My checkboxes',
             'multiple' => 'checkbox',
             'type' => 'select',

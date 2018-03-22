@@ -61,12 +61,12 @@ class DriverTest extends TestCase
         $arg = ['quoteIdentifiers' => true];
         $driver = $this->getMockForAbstractClass(Driver::class, [$arg]);
 
-        $this->assertTrue($driver->autoQuoting());
+        $this->assertTrue($driver->isAutoQuotingEnabled());
 
         $arg = ['username' => 'GummyBear'];
         $driver = $this->getMockForAbstractClass(Driver::class, [$arg]);
 
-        $this->assertFalse($driver->autoQuoting());
+        $this->assertFalse($driver->isAutoQuotingEnabled());
     }
 
     /**
@@ -87,6 +87,19 @@ class DriverTest extends TestCase
      */
     public function testSupportsQuoting()
     {
+        $connection = $this->getMockBuilder(PDO::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getAttribute'])
+            ->getMock();
+
+        $connection
+            ->expects($this->once())
+            ->method('getAttribute')
+            ->with(PDO::ATTR_DRIVER_NAME)
+            ->willReturn('mysql');
+
+        $this->driver->setConnection($connection);
+
         $result = $this->driver->supportsQuoting();
         $this->assertTrue($result);
     }
@@ -114,15 +127,17 @@ class DriverTest extends TestCase
     {
         $value = 'string';
 
-        $this->driver->_connection = $this->getMockBuilder(Mysql::class)
+        $connection = $this->getMockBuilder(PDO::class)
             ->disableOriginalConstructor()
             ->setMethods(['quote'])
             ->getMock();
 
-        $this->driver->_connection
+        $connection
             ->expects($this->once())
             ->method('quote')
             ->with($value, PDO::PARAM_STR);
+
+        $this->driver->setConnection($connection);
 
         $this->driver->schemaValue($value);
     }
@@ -144,7 +159,7 @@ class DriverTest extends TestCase
             ->method('lastInsertId')
             ->willReturn('all-the-bears');
 
-        $this->driver->_connection = $connection;
+        $this->driver->setConnection($connection);
         $this->assertSame('all-the-bears', $this->driver->lastInsertId());
     }
 
@@ -155,11 +170,20 @@ class DriverTest extends TestCase
      */
     public function testIsConnected()
     {
-        $this->driver->_connection = 'connection';
-        $this->assertTrue($this->driver->isConnected());
-
-        $this->driver->_connection = null;
         $this->assertFalse($this->driver->isConnected());
+
+        $connection = $this->getMockBuilder(PDO::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['query'])
+            ->getMock();
+
+        $connection
+            ->expects($this->once())
+            ->method('query')
+            ->willReturn(true);
+
+        $this->driver->setConnection($connection);
+        $this->assertTrue($this->driver->isConnected());
     }
 
     /**
@@ -169,19 +193,25 @@ class DriverTest extends TestCase
      */
     public function testAutoQuoting()
     {
-        $this->assertFalse($this->driver->autoQuoting());
+        $this->assertFalse($this->driver->isAutoQuotingEnabled());
 
-        $this->driver->autoQuoting(true);
-        $this->assertTrue($this->driver->autoQuoting());
+        $this->assertSame($this->driver, $this->driver->enableAutoQuoting(true));
+        $this->assertTrue($this->driver->isAutoQuotingEnabled());
 
-        $this->assertTrue($this->driver->autoQuoting(true));
-        $this->assertFalse($this->driver->autoQuoting(false));
+        $this->driver->enableAutoQuoting(false);
+        $this->assertFalse($this->driver->isAutoQuotingEnabled());
 
-        $this->assertTrue($this->driver->autoQuoting('string'));
-        $this->assertFalse($this->driver->autoQuoting('0'));
+        $this->driver->enableAutoQuoting('string');
+        $this->assertTrue($this->driver->isAutoQuotingEnabled());
 
-        $this->assertTrue($this->driver->autoQuoting(1));
-        $this->assertFalse($this->driver->autoQuoting(0));
+        $this->driver->enableAutoQuoting('0');
+        $this->assertFalse($this->driver->isAutoQuotingEnabled());
+
+        $this->driver->enableAutoQuoting(1);
+        $this->assertTrue($this->driver->isAutoQuotingEnabled());
+
+        $this->driver->enableAutoQuoting(0);
+        $this->assertFalse($this->driver->isAutoQuotingEnabled());
     }
 
     /**
@@ -244,10 +274,10 @@ class DriverTest extends TestCase
      */
     public function testDestructor()
     {
-        $this->driver->_connection = true;
+        $this->driver->setConnection(true);
         $this->driver->__destruct();
 
-        $this->assertNull($this->driver->_connection);
+        $this->assertNull($this->driver->getConnection());
     }
 
     /**

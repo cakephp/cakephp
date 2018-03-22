@@ -14,6 +14,7 @@
  */
 namespace Cake\Database;
 
+use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\OrderClauseExpression;
 use Cake\Database\Expression\QueryExpression;
@@ -104,7 +105,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * The object responsible for generating query placeholders and temporarily store values
      * associated to each of those.
      *
-     * @var \Cake\Database\ValueBinder|false|null
+     * @var \Cake\Database\ValueBinder|null
      */
     protected $_valueBinder;
 
@@ -131,11 +132,11 @@ class Query implements ExpressionInterface, IteratorAggregate
     protected $_selectTypeMap;
 
     /**
-     * Tracking flag to ensure only one type caster is appended.
+     * Tracking flag to disable casting
      *
      * @var bool
      */
-    protected $_typeCastAttached = false;
+    protected $typeCastEnabled = true;
 
     /**
      * Constructor.
@@ -182,6 +183,10 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function connection($connection = null)
     {
+        deprecationWarning(
+            'Query::connection() is deprecated. ' .
+            'Use Query::setConnection()/getConnection() instead.'
+        );
         if ($connection !== null) {
             return $this->setConnection($connection);
         }
@@ -212,14 +217,6 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function execute()
     {
         $statement = $this->_connection->run($this);
-        $typeMap = $this->getSelectTypeMap();
-
-        if ($typeMap->toArray() && $this->_typeCastAttached === false) {
-            $driver = $this->_connection->getDriver();
-            $this->decorateResults(new FieldTypeConverter($typeMap, $driver));
-            $this->_typeCastAttached = true;
-        }
-
         $this->_iterator = $this->_decorateStatement($statement);
         $this->_dirty = false;
 
@@ -806,6 +803,10 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * `$query->where(['OR' => [['published' => false], ['published' => true]])`
      *
+     * Would result in:
+     *
+     * `WHERE (published = false) OR (published = true)`
+     *
      * Keep in mind that every time you call where() with the third param set to false
      * (default), it will join the passed conditions to the previous stored list using
      * the `AND` operator. Also, using the same array key twice in consecutive calls to
@@ -878,6 +879,64 @@ class Query implements ExpressionInterface, IteratorAggregate
         $this->_conjugate('where', $conditions, 'AND', $types);
 
         return $this;
+    }
+
+    /**
+     * Adds an IN condition or set of conditions to be used in the WHERE clause for this
+     * query.
+     *
+     * This method does allow empty inputs in contrast to where() if you set
+     * 'allowEmpty' to true.
+     * Be careful about using it without proper sanity checks.
+     *
+     * Options:
+     * - `types` - Associative array of type names used to bind values to query
+     * - `allowEmpty` - Allow empty array.
+     *
+     * @param string $field Field
+     * @param array $values Array of values
+     * @param array $options Options
+     * @return $this
+     */
+    public function whereInList($field, array $values, array $options = [])
+    {
+        $options += [
+            'types' => [],
+            'allowEmpty' => false,
+        ];
+
+        if ($options['allowEmpty'] && !$values) {
+            return $this->where('1=0');
+        }
+
+        return $this->where([$field . ' IN' => $values], $options['types']);
+    }
+
+    /**
+     * Adds a NOT IN condition or set of conditions to be used in the WHERE clause for this
+     * query.
+     *
+     * This method does allow empty inputs in contrast to where() if you set
+     * 'allowEmpty' to true.
+     * Be careful about using it without proper sanity checks.
+     *
+     * @param string $field Field
+     * @param array $values Array of values
+     * @param array $options Options
+     * @return $this
+     */
+    public function whereNotInList($field, array $values, array $options = [])
+    {
+        $options += [
+            'types' => [],
+            'allowEmpty' => false,
+        ];
+
+        if ($options['allowEmpty'] && !$values) {
+            return $this->where([$field . ' IS NOT' => null]);
+        }
+
+        return $this->where([$field . ' NOT IN' => $values], $options['types']);
     }
 
     /**
@@ -1003,6 +1062,10 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function orWhere($conditions, $types = [])
     {
+        deprecationWarning(
+            'Query::orWhere() is deprecated as it creates hard to predict SQL based on the ' .
+            'current query state. Use `Query::where()` instead.'
+        );
         $this->_conjugate('where', $conditions, 'OR', $types);
 
         return $this;
@@ -1242,6 +1305,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function orHaving($conditions, $types = [])
     {
+        deprecationWarning('Query::orHaving() is deprecated. Use Query::having() instead.');
         $this->_conjugate('having', $conditions, 'OR', $types);
 
         return $this;
@@ -1254,15 +1318,19 @@ class Query implements ExpressionInterface, IteratorAggregate
      * in the record set you want as results. If empty the limit will default to
      * the existing limit clause, and if that too is empty, then `25` will be used.
      *
-     * Pages should start at 1.
+     * Pages must start at 1.
      *
      * @param int $num The page number you want.
      * @param int|null $limit The number of rows you want in the page. If null
      *  the current limit clause will be used.
      * @return $this
+     * @throws \InvalidArgumentException If page number < 1.
      */
     public function page($num, $limit = null)
     {
+        if ($num < 1) {
+            throw new InvalidArgumentException('Pages must start at 1.');
+        }
         if ($limit !== null) {
             $this->limit($limit);
         }
@@ -1450,6 +1518,27 @@ class Query implements ExpressionInterface, IteratorAggregate
         $this->_parts['insert'][0] = $table;
 
         return $this;
+    }
+
+    /**
+     * Creates an expression that refers to an identifier. Identifiers are used to refer to field names and allow
+     * the SQL compiler to apply quotes or escape the identifier.
+     *
+     * The value is used as is, and you might be required to use aliases or include the table reference in
+     * the identifier. Do not use this method to inject SQL methods or logical statements.
+     *
+     * ### Example
+     *
+     * ```
+     * $query->newExp()->lte('count', $query->identifier('total'));
+     * ```
+     *
+     * @param string $identifier The identifier for an expression
+     * @return \Cake\Database\ExpressionInterface
+     */
+    public function identifier($identifier)
+    {
+        return new IdentifierExpression($identifier);
     }
 
     /**
@@ -1770,7 +1859,6 @@ class Query implements ExpressionInterface, IteratorAggregate
     {
         if ($overwrite) {
             $this->_resultDecorators = [];
-            $this->_typeCastAttached = false;
         }
 
         if ($callback !== null) {
@@ -1862,6 +1950,23 @@ class Query implements ExpressionInterface, IteratorAggregate
     }
 
     /**
+     * Overwrite the current value binder
+     *
+     * A ValueBinder is responsible for generating query placeholders and temporarily
+     * associate values to those placeholders so that they can be passed correctly
+     * to the statement object.
+     *
+     * @param \Cake\Database\ValueBinder|bool $binder The binder or false to disable binding.
+     * @return $this
+     */
+    public function setValueBinder($binder)
+    {
+        $this->_valueBinder = $binder;
+
+        return $this;
+    }
+
+    /**
      * Returns the currently used ValueBinder instance. If a value is passed,
      * it will be set as the new instance to be used.
      *
@@ -1869,13 +1974,14 @@ class Query implements ExpressionInterface, IteratorAggregate
      * associate values to those placeholders so that they can be passed correctly
      * to the statement object.
      *
-     * @deprecated 3.5.0 Use getValueBinder() for the getter part instead.
+     * @deprecated 3.5.0 Use setValueBinder()/getValueBinder() instead.
      * @param \Cake\Database\ValueBinder|false|null $binder new instance to be set. If no value is passed the
      *   default one will be returned
      * @return $this|\Cake\Database\ValueBinder
      */
     public function valueBinder($binder = null)
     {
+        deprecationWarning('Query::valueBinder() is deprecated. Use Query::getValueBinder()/setValueBinder() instead.');
         if ($binder === null) {
             if ($this->_valueBinder === null) {
                 $this->_valueBinder = new ValueBinder();
@@ -1945,6 +2051,10 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function bufferResults($enable = null)
     {
+        deprecationWarning(
+            'Query::bufferResults() is deprecated. ' .
+            'Use Query::enableBufferedResults()/isBufferedResultsEnabled() instead.'
+        );
         if ($enable !== null) {
             return $this->enableBufferedResults($enable);
         }
@@ -1962,9 +2072,11 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function setSelectTypeMap(TypeMap $typeMap)
     {
         $this->_selectTypeMap = $typeMap;
+        $this->_dirty();
 
         return $this;
     }
+
     /**
      * Gets the TypeMap class where the types for each of the fields in the
      * select clause are stored.
@@ -1981,6 +2093,30 @@ class Query implements ExpressionInterface, IteratorAggregate
     }
 
     /**
+     * Disables the automatic casting of fields to their corresponding PHP data type
+     *
+     * @return $this
+     */
+    public function disableResultsCasting()
+    {
+        $this->typeCastEnabled = false;
+
+        return $this;
+    }
+
+    /**
+     * Enables the automatic casting of fields to their corresponding type
+     *
+     * @return $this
+     */
+    public function enableResultsCasting()
+    {
+        $this->typeCastEnabled = true;
+
+        return $this;
+    }
+
+    /**
      * Sets the TypeMap class where the types for each of the fields in the
      * select clause are stored.
      *
@@ -1992,6 +2128,10 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function selectTypeMap(TypeMap $typeMap = null)
     {
+        deprecationWarning(
+            'Query::selectTypeMap() is deprecated. ' .
+            'Use Query::setSelectTypeMap()/getSelectTypeMap() instead.'
+        );
         if ($typeMap !== null) {
             return $this->setSelectTypeMap($typeMap);
         }
@@ -2008,8 +2148,15 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     protected function _decorateStatement($statement)
     {
+        $typeMap = $this->getSelectTypeMap();
+        $driver = $this->getConnection()->getDriver();
+
+        if ($this->typeCastEnabled && $typeMap->toArray()) {
+            $statement = new CallbackStatement($statement, $driver, new FieldTypeConverter($typeMap, $driver));
+        }
+
         foreach ($this->_resultDecorators as $f) {
-            $statement = new CallbackStatement($statement, $this->getConnection()->getDriver(), $f);
+            $statement = new CallbackStatement($statement, $driver, $f);
         }
 
         return $statement;

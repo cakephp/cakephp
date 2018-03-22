@@ -19,6 +19,7 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Filesystem\Folder;
 use Cake\Utility\Inflector;
+use InvalidArgumentException;
 
 /**
  * Used by CommandCollection and CommandTask to scan the filesystem
@@ -29,41 +30,71 @@ use Cake\Utility\Inflector;
 class CommandScanner
 {
     /**
-     * Scan CakePHP core, the applications and plugins for shell classes
+     * Scan CakePHP internals for shells & commands.
      *
-     * @return array
+     * @return array A list of command metadata.
      */
-    public function scanAll()
+    public function scanCore()
     {
-        $shellList = [];
-
-        $appNamespace = Configure::read('App.namespace');
-        $shellList['app'] = $this->scanDir(
-            App::path('Shell')[0],
-            $appNamespace . '\Shell\\',
-            '',
-            ['app']
-        );
-
-        $shellList['CORE'] = $this->scanDir(
+        $coreShells = $this->scanDir(
             dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Shell' . DIRECTORY_SEPARATOR,
             'Cake\Shell\\',
             '',
             ['command_list']
         );
+        $coreCommands = $this->scanDir(
+            dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Command' . DIRECTORY_SEPARATOR,
+            'Cake\Command\\',
+            '',
+            ['command_list']
+        );
 
-        $plugins = [];
-        foreach (Plugin::loaded() as $plugin) {
-            $plugins[$plugin] = $this->scanDir(
-                Plugin::classPath($plugin) . 'Shell',
-                str_replace('/', '\\', $plugin) . '\Shell\\',
-                Inflector::underscore($plugin) . '.',
-                []
-            );
+        return array_merge($coreShells, $coreCommands);
+    }
+
+    /**
+     * Scan the application for shells & commands.
+     *
+     * @return array A list of command metadata.
+     */
+    public function scanApp()
+    {
+        $appNamespace = Configure::read('App.namespace');
+        $appShells = $this->scanDir(
+            App::path('Shell')[0],
+            $appNamespace . '\Shell\\',
+            '',
+            ['app']
+        );
+        $appCommands = $this->scanDir(
+            App::path('Command')[0],
+            $appNamespace . '\Command\\',
+            '',
+            ['app']
+        );
+
+        return array_merge($appShells, $appCommands);
+    }
+
+    /**
+     * Scan the named plugin for shells and commands
+     *
+     * @param string $plugin The named plugin.
+     * @return array A list of command metadata.
+     */
+    public function scanPlugin($plugin)
+    {
+        if (!Plugin::loaded($plugin)) {
+            return [];
         }
-        $shellList['plugins'] = $plugins;
+        $path = Plugin::classPath($plugin);
+        $namespace = str_replace('/', '\\', $plugin);
+        $prefix = Inflector::underscore($plugin) . '.';
 
-        return $shellList;
+        $commands = $this->scanDir($path . 'Command', $namespace . '\Command\\', $prefix, []);
+        $shells = $this->scanDir($path . 'Shell', $namespace . '\Shell\\', $prefix, []);
+
+        return array_merge($shells, $commands);
     }
 
     /**
@@ -84,15 +115,24 @@ class CommandScanner
             return [];
         }
 
+        $classPattern = '/(Shell|Command)$/';
         $shells = [];
         foreach ($contents[1] as $file) {
             if (substr($file, -4) !== '.php') {
                 continue;
             }
-
             $shell = substr($file, 0, -4);
-            $name = Inflector::underscore(str_replace('Shell', '', $shell));
+            if (!preg_match($classPattern, $shell)) {
+                continue;
+            }
+
+            $name = Inflector::underscore(preg_replace($classPattern, '', $shell));
             if (in_array($name, $hide, true)) {
+                continue;
+            }
+
+            $class = $namespace . $shell;
+            if (!is_subclass_of($class, Shell::class) && !is_subclass_of($class, Command::class)) {
                 continue;
             }
 
@@ -100,7 +140,7 @@ class CommandScanner
                 'file' => $path . $file,
                 'fullName' => $prefix . $name,
                 'name' => $name,
-                'class' => $namespace . $shell
+                'class' => $class
             ];
         }
 

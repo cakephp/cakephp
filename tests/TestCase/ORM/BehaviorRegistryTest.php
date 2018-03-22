@@ -82,7 +82,7 @@ class BehaviorRegistryTest extends TestCase
         $config = ['alias' => 'Sluggable', 'replacement' => '-'];
         $result = $this->Behaviors->load('Sluggable', $config);
         $this->assertInstanceOf('TestApp\Model\Behavior\SluggableBehavior', $result);
-        $this->assertEquals($config, $result->config());
+        $this->assertEquals($config, $result->getConfig());
 
         $result = $this->Behaviors->load('TestPlugin.PersisterOne');
         $this->assertInstanceOf('TestPlugin\Model\Behavior\PersisterOneBehavior', $result);

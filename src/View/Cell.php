@@ -160,6 +160,20 @@ abstract class Cell
         if (!empty($cellOptions['cache'])) {
             $this->_cache = $cellOptions['cache'];
         }
+
+        $this->initialize();
+    }
+
+    /**
+     * Initialization hook method.
+     *
+     * Implement this method to avoid having to overwrite
+     * the constructor and calling parent::__construct().
+     *
+     * @return void
+     */
+    public function initialize()
+    {
     }
 
     /**
@@ -215,7 +229,7 @@ abstract class Cell
             try {
                 return $this->View->render($template);
             } catch (MissingTemplateException $e) {
-                throw new MissingCellViewException(['file' => $template, 'name' => $name]);
+                throw new MissingCellViewException(['file' => $template, 'name' => $name], null, $e);
             }
         };
 

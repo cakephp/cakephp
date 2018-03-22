@@ -67,6 +67,6 @@ class RequestHandlerTestController extends Controller
      */
     public function set_response_type()
     {
-        $this->response->type('txt');
+        $this->response = $this->response->withType('txt');
     }
 }

@@ -43,35 +43,41 @@ class QueryExpressionTest extends TestCase
     /**
      * Test tieWith() works.
      *
+     * @group deprecated
      * @return
      */
     public function testTieWith()
     {
-        $expr = new QueryExpression(['1', '2']);
-        $binder = new ValueBinder();
+        $this->deprecated(function () {
+            $expr = new QueryExpression(['1', '2']);
+            $binder = new ValueBinder();
 
-        $this->assertSame($expr, $expr->tieWith('+'));
-        $this->assertSame('+', $expr->tieWith());
+            $this->assertSame($expr, $expr->tieWith('+'));
+            $this->assertSame('+', $expr->tieWith());
 
-        $result = $expr->sql($binder);
-        $this->assertEquals('(1 + 2)', $result);
+            $result = $expr->sql($binder);
+            $this->assertEquals('(1 + 2)', $result);
+        });
     }
 
     /**
      * Test type() works.
      *
+     * @group deprecated
      * @return
      */
     public function testType()
     {
-        $expr = new QueryExpression(['1', '2']);
-        $binder = new ValueBinder();
+        $this->deprecated(function () {
+            $expr = new QueryExpression(['1', '2']);
+            $binder = new ValueBinder();
 
-        $this->assertSame($expr, $expr->type('+'));
-        $this->assertSame('+', $expr->type());
+            $this->assertSame($expr, $expr->type('+'));
+            $this->assertSame('+', $expr->type());
 
-        $result = $expr->sql($binder);
-        $this->assertEquals('(1 + 2)', $result);
+            $result = $expr->sql($binder);
+            $this->assertEquals('(1 + 2)', $result);
+        });
     }
 
     /**

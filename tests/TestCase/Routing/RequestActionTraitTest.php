@@ -16,12 +16,14 @@ namespace Cake\Test\TestCase\Routing;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Http\ServerRequest;
+use Cake\Http\Session;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
 
 /**
+ * @group deprecated
  */
 class RequestActionTraitTest extends TestCase
 {
@@ -41,12 +43,16 @@ class RequestActionTraitTest extends TestCase
     {
         parent::setUp();
         static::setAppNamespace();
-        Security::salt('not-the-default');
+        Security::setSalt('not-the-default');
+        DispatcherFactory::clear();
         DispatcherFactory::add('Routing');
         DispatcherFactory::add('ControllerFactory');
         $this->object = $this->getObjectForTrait('Cake\Routing\RequestActionTrait');
         Router::connect('/request_action/:action/*', ['controller' => 'RequestAction']);
         Router::connect('/tests_apps/:action/*', ['controller' => 'TestsApps']);
+
+        $this->errorLevel = error_reporting();
+        error_reporting(E_ALL ^ E_USER_DEPRECATED);
     }
 
     /**
@@ -59,6 +65,8 @@ class RequestActionTraitTest extends TestCase
         parent::tearDown();
         DispatcherFactory::clear();
         Router::reload();
+
+        error_reporting($this->errorLevel);
     }
 
     /**
@@ -237,7 +245,7 @@ class RequestActionTraitTest extends TestCase
     {
         $result = $this->object->requestAction('/request_action/params_pass');
         $result = json_decode($result, true);
-        $this->assertEquals('request_action/params_pass', $result['url']);
+        $this->assertEquals('/request_action/params_pass', $result['url']);
         $this->assertEquals('RequestAction', $result['params']['controller']);
         $this->assertEquals('params_pass', $result['params']['action']);
         $this->assertNull($result['params']['plugin']);
@@ -409,7 +417,7 @@ class RequestActionTraitTest extends TestCase
         $result = $this->object->requestAction('/request_action/session_test');
         $this->assertNull($result);
 
-        $session = $this->getMockBuilder('Cake\Network\Session')->getMock();
+        $session = $this->getMockBuilder(Session::class)->getMock();
         $session->expects($this->once())
             ->method('read')
             ->with('foo')

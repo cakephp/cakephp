@@ -300,7 +300,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      *
      * @param string|null $table table name or sequence to get last insert value from
      * @param string|null $column the name of the column representing the primary key
-     * @return string
+     * @return string|int
      */
     public function lastInsertId($table = null, $column = null)
     {

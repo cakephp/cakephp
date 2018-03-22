@@ -16,6 +16,7 @@ namespace Cake\ORM\Locator;
 
 use Cake\Core\App;
 use Cake\Datasource\ConnectionManager;
+use Cake\ORM\AssociationCollection;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 use RuntimeException;
@@ -118,6 +119,10 @@ class TableLocator implements LocatorInterface
      */
     public function config($alias = null, $options = null)
     {
+        deprecationWarning(
+            'TableLocator::config() is deprecated. ' .
+            'Use getConfig()/setConfig() instead.'
+        );
         if ($alias !== null) {
             if (is_string($alias) && $options === null) {
                 return $this->getConfig($alias);
@@ -211,6 +216,10 @@ class TableLocator implements LocatorInterface
             }
             $options['connection'] = ConnectionManager::get($connectionName);
         }
+        if (empty($options['associations'])) {
+            $associations = new AssociationCollection($this);
+            $options['associations'] = $associations;
+        }
 
         $options['registryAlias'] = $alias;
         $this->_instances[$alias] = $this->_create($options);
@@ -227,7 +236,7 @@ class TableLocator implements LocatorInterface
      *
      * @param string $alias The alias name you want to get.
      * @param array $options Table options array.
-     * @return string
+     * @return string|false
      */
     protected function _getClassName($alias, array $options = [])
     {

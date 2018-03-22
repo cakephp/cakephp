@@ -82,12 +82,12 @@ class CollectionTest extends TestCase
      */
     public function testDescribeCache()
     {
-        $schema = $this->connection->schemaCollection();
+        $schema = $this->connection->getSchemaCollection();
         $table = $schema->describe('users');
 
         Cache::delete('test_users', '_cake_model_');
         $this->connection->cacheMetadata(true);
-        $schema = $this->connection->schemaCollection();
+        $schema = $this->connection->getSchemaCollection();
 
         $result = $schema->describe('users');
         $this->assertEquals($table, $result);

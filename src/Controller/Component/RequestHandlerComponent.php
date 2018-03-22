@@ -201,9 +201,10 @@ class RequestHandlerComponent extends Component
             $this->_setExtension($request, $response);
         }
 
-        $request->params['isAjax'] = $request->is('ajax');
+        $isAjax = $request->is('ajax');
+        $controller->request = $request->withParam('isAjax', $isAjax);
 
-        if (!$this->ext && $request->is('ajax')) {
+        if (!$this->ext && $isAjax) {
             $this->ext = 'ajax';
         }
 
@@ -217,7 +218,7 @@ class RequestHandlerComponent extends Component
             }
             if ($this->requestedWith($type)) {
                 $input = $request->input(...$handler);
-                $request->data = (array)$input;
+                $controller->request = $request->withParsedBody((array)$input);
             }
         }
     }
@@ -258,6 +259,11 @@ class RequestHandlerComponent extends Component
         if (!$this->getConfig('enableBeforeRedirect')) {
             return null;
         }
+        deprecationWarning(
+            'RequestHandlerComponent::beforeRedirect() is deprecated. ' .
+            'This functionality will be removed in 4.0.0. Set the `enableBeforeRedirect` ' .
+            'option to `false` to disable this warning.'
+        );
         $request = $this->request;
         if (!$request->is('ajax')) {
             return null;
@@ -325,15 +331,19 @@ class RequestHandlerComponent extends Component
 
         if ($this->ext && $isRecognized) {
             $this->renderAs($controller, $this->ext);
+            $response = $controller->response;
         } else {
-            $response->charset(Configure::read('App.encoding'));
+            $response = $response->withCharset(Configure::read('App.encoding'));
         }
 
         if ($this->_config['checkHttpCache'] &&
             $response->checkNotModified($request)
         ) {
+            $controller->response = $response;
+
             return false;
         }
+        $controller->response = $response;
     }
 
     /**
@@ -647,14 +657,15 @@ class RequestHandlerComponent extends Component
             return false;
         }
         if (!$request->getParam('requested')) {
-            $response->type($cType);
+            $response = $response->withType($cType);
         }
         if (!empty($options['charset'])) {
-            $response->charset($options['charset']);
+            $response = $response->withCharset($options['charset']);
         }
         if (!empty($options['attachment'])) {
-            $response->download($options['attachment']);
+            $response = $response->withDownload($options['attachment']);
         }
+        $controller->response = $response;
 
         return true;
     }
@@ -669,7 +680,7 @@ class RequestHandlerComponent extends Component
     {
         $response = $this->getController()->response;
 
-        return $response->mapType($response->type());
+        return $response->mapType($response->getType());
     }
 
     /**
@@ -712,9 +723,8 @@ class RequestHandlerComponent extends Component
      */
     public function addInputType($type, $handler)
     {
-        trigger_error(
-            'RequestHandlerComponent::addInputType() is deprecated. Use setConfig("inputTypeMap", ...) instead.',
-            E_USER_DEPRECATED
+        deprecationWarning(
+            'RequestHandlerComponent::addInputType() is deprecated. Use setConfig("inputTypeMap", ...) instead.'
         );
         if (!is_array($handler) || !isset($handler[0]) || !is_callable($handler[0])) {
             throw new Exception('You must give a handler callback.');
@@ -732,9 +742,8 @@ class RequestHandlerComponent extends Component
      */
     public function viewClassMap($type = null, $viewClass = null)
     {
-        trigger_error(
-            'RequestHandlerComponent::viewClassMap() is deprecated. Use setConfig("viewClassMap", ...) instead.',
-            E_USER_DEPRECATED
+        deprecationWarning(
+            'RequestHandlerComponent::viewClassMap() is deprecated. Use setConfig("viewClassMap", ...) instead.'
         );
         if (!$viewClass && is_string($type)) {
             return $this->getConfig('viewClassMap.' . $type);

@@ -21,7 +21,6 @@ use PDO;
 class Postgres extends Driver
 {
 
-    use PDODriverTrait;
     use PostgresDialectTrait;
 
     /**
@@ -66,7 +65,7 @@ class Postgres extends Driver
         }
 
         $this->_connect($dsn, $config);
-        $this->_connection = $connection = $this->connection();
+        $this->_connection = $connection = $this->getConnection();
         if (!empty($config['encoding'])) {
             $this->setEncoding($config['encoding']);
         }

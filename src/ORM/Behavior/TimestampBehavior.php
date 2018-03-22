@@ -14,6 +14,7 @@
  */
 namespace Cake\ORM\Behavior;
 
+use Cake\Database\Type;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\I18n\Time;
@@ -193,6 +194,26 @@ class TimestampBehavior extends Behavior
         if ($entity->isDirty($field)) {
             return;
         }
-        $entity->set($field, $this->timestamp(null, $refreshTimestamp));
+
+        $ts = $this->timestamp(null, $refreshTimestamp);
+
+        $columnType = $this->getTable()->getSchema()->getColumnType($field);
+        if (!$columnType) {
+            return;
+        }
+
+        /** @var \Cake\Database\Type\DateTimeType $type */
+        $type = Type::build($columnType);
+
+        if (!$type instanceof Type\DateTimeType) {
+            deprecationWarning('TimestampBehavior support for column types other than DateTimeType will be removed in 4.0.');
+            $entity->set($field, (string)$ts);
+
+            return;
+        }
+
+        $class = $type->getDateTimeClassName();
+
+        $entity->set($field, new $class($ts));
     }
 }

@@ -14,8 +14,15 @@
  */
 namespace Cake\Form;
 
+use Cake\Event\Event;
+use Cake\Event\EventDispatcherInterface;
+use Cake\Event\EventDispatcherTrait;
+use Cake\Event\EventListenerInterface;
+use Cake\Event\EventManager;
 use Cake\Form\Schema;
 use Cake\Validation\Validator;
+use Cake\Validation\ValidatorAwareInterface;
+use Cake\Validation\ValidatorAwareTrait;
 
 /**
  * Form abstraction used to create forms not tied to ORM backed models,
@@ -34,7 +41,7 @@ use Cake\Validation\Validator;
  *
  * Forms are conventionally placed in the `App\Form` namespace.
  */
-class Form
+class Form implements EventListenerInterface, EventDispatcherInterface, ValidatorAwareInterface
 {
     /**
      * Schema class.
@@ -42,6 +49,23 @@ class Form
      * @var string
      */
     protected $_schemaClass = Schema::class;
+
+    use EventDispatcherTrait;
+    use ValidatorAwareTrait;
+
+    /**
+     * The alias this object is assigned to validators as.
+     *
+     * @var string
+     */
+    const VALIDATOR_PROVIDER_NAME = 'form';
+
+    /**
+     * The name of the event dispatched when a validator has been built.
+     *
+     * @var string
+     */
+    const BUILD_VALIDATOR_EVENT = 'Form.buildValidator';
 
     /**
      * The schema used by this form.
@@ -63,6 +87,37 @@ class Form
      * @var \Cake\Validation\Validator
      */
     protected $_validator;
+
+    /**
+     * Constructor
+     *
+     * @param \Cake\Event\EventManager|null $eventManager The event manager.
+     *  Defaults to a new instance.
+     */
+    public function __construct(EventManager $eventManager = null)
+    {
+        if ($eventManager !== null) {
+            $this->setEventManager($eventManager);
+        }
+
+        $this->getEventManager()->on($this);
+    }
+
+    /**
+     * Get the Form callbacks this form is interested in.
+     *
+     * The conventional method map is:
+     *
+     * - Form.buildValidator => buildValidator
+     *
+     * @return array
+     */
+    public function implementedEvents()
+    {
+        return [
+            'Form.buildValidator' => 'buildValidator',
+        ];
+    }
 
     /**
      * Get/Set the schema for this form.
@@ -110,17 +165,24 @@ class Form
      *
      * @param \Cake\Validation\Validator|null $validator The validator to set, or null.
      * @return \Cake\Validation\Validator the validator instance.
+     * @deprecated 3.6.0 Use Form::getValidator()/setValidator() instead.
      */
     public function validator(Validator $validator = null)
     {
+        deprecationWarning(
+            'Form::validator() is deprecated. ' .
+            'Use Form::getValidator()/setValidator() instead.'
+        );
+
         if ($validator === null && empty($this->_validator)) {
-            $validator = $this->_buildValidator(new Validator());
+            $validator = $this->_buildValidator(new $this->_validatorClass);
         }
         if ($validator) {
             $this->_validator = $validator;
+            $this->setValidator('default', $validator);
         }
 
-        return $this->_validator;
+        return $this->getValidator();
     }
 
     /**
@@ -132,10 +194,24 @@ class Form
      *
      * @param \Cake\Validation\Validator $validator The validator to customize.
      * @return \Cake\Validation\Validator The validator to use.
+     * @deprecated 3.6.0 Use Form::getValidator()/setValidator() and buildValidator() instead.
      */
     protected function _buildValidator(Validator $validator)
     {
         return $validator;
+    }
+
+    /**
+     * Callback method for Form.buildValidator event.
+     *
+     * @param \Cake\Event\Event $event The Form.buildValidator event instance.
+     * @param \Cake\Validation\Validator $validator The validator to customize.
+     * @param string $name Validator name
+     * @return void
+     */
+    public function buildValidator(Event $event, Validator $validator, $name)
+    {
+        $this->_buildValidator($validator);
     }
 
     /**
@@ -146,7 +222,10 @@ class Form
      */
     public function validate(array $data)
     {
-        $validator = $this->validator();
+        $validator = $this->getValidator();
+        if (!$validator->count()) {
+            $validator = $this->validator();
+        }
         $this->_errors = $validator->errors($data);
 
         return count($this->_errors) === 0;
@@ -231,7 +310,7 @@ class Form
         $special = [
             '_schema' => $this->schema()->__debugInfo(),
             '_errors' => $this->errors(),
-            '_validator' => $this->validator()->__debugInfo()
+            '_validator' => $this->getValidator()->__debugInfo()
         ];
 
         return $special + get_object_vars($this);

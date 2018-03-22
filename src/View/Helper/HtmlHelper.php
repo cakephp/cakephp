@@ -158,6 +158,11 @@ class HtmlHelper extends Helper
      */
     public function addCrumb($name, $link = null, array $options = [])
     {
+        deprecationWarning(
+            'HtmlHelper::addCrumb() is deprecated. ' .
+            'Use the BreadcrumbsHelper instead.'
+        );
+
         $this->_crumbs[] = [$name, $link, $options];
 
         return $this;
@@ -692,6 +697,11 @@ class HtmlHelper extends Helper
      */
     public function getCrumbs($separator = '&raquo;', $startText = false)
     {
+        deprecationWarning(
+            'HtmlHelper::getCrumbs() is deprecated. ' .
+            'Use the BreadcrumbsHelper instead.'
+        );
+
         $crumbs = $this->_prepareCrumbs($startText);
         if (!empty($crumbs)) {
             $out = [];
@@ -731,6 +741,11 @@ class HtmlHelper extends Helper
      */
     public function getCrumbList(array $options = [], $startText = false)
     {
+        deprecationWarning(
+            'HtmlHelper::getCrumbList() is deprecated. ' .
+            'Use the BreadcrumbsHelper instead.'
+        );
+
         $defaults = ['firstClass' => 'first', 'lastClass' => 'last', 'separator' => '', 'escape' => true];
         $options += $defaults;
         $firstClass = $options['firstClass'];
@@ -784,6 +799,11 @@ class HtmlHelper extends Helper
      */
     protected function _prepareCrumbs($startText, $escape = true)
     {
+        deprecationWarning(
+            'HtmlHelper::_prepareCrumbs() is deprecated. ' .
+            'Use the BreadcrumbsHelper instead.'
+        );
+
         $crumbs = $this->_crumbs;
         if ($startText) {
             if (!is_array($startText)) {

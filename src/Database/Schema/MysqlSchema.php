@@ -134,6 +134,9 @@ class MysqlSchema extends BaseSchema
 
             return ['type' => TableSchema::TYPE_TEXT, 'length' => $length];
         }
+        if ($col === 'binary' && $length === 16) {
+            return ['type' => TableSchema::TYPE_BINARY_UUID, 'length' => null];
+        }
         if (strpos($col, 'blob') !== false || $col === 'binary') {
             $lengthName = substr($col, 0, -4);
             $length = isset(TableSchema::$columnLengths[$lengthName]) ? TableSchema::$columnLengths[$lengthName] : null;
@@ -314,6 +317,7 @@ class MysqlSchema extends BaseSchema
             TableSchema::TYPE_SMALLINTEGER => ' SMALLINT',
             TableSchema::TYPE_INTEGER => ' INTEGER',
             TableSchema::TYPE_BIGINTEGER => ' BIGINT',
+            TableSchema::TYPE_BINARY_UUID => ' BINARY(16)',
             TableSchema::TYPE_BOOLEAN => ' BOOLEAN',
             TableSchema::TYPE_FLOAT => ' FLOAT',
             TableSchema::TYPE_DECIMAL => ' DECIMAL',

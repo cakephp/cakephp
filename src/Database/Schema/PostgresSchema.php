@@ -354,6 +354,7 @@ class PostgresSchema extends BaseSchema
         $typeMap = [
             TableSchema::TYPE_TINYINTEGER => ' SMALLINT',
             TableSchema::TYPE_SMALLINTEGER => ' SMALLINT',
+            TableSchema::TYPE_BINARY_UUID => ' UUID',
             TableSchema::TYPE_BINARY => ' BYTEA',
             TableSchema::TYPE_BOOLEAN => ' BOOLEAN',
             TableSchema::TYPE_FLOAT => ' FLOAT',

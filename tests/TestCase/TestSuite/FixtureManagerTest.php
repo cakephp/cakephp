@@ -14,14 +14,15 @@
  */
 namespace Cake\Test\TestSuite;
 
+use Cake\Core\Exception\Exception as CakeException;
 use Cake\Core\Plugin;
-use Cake\Database\Schema\Table;
+use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\Fixture\FixtureManager;
 use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
+use PDOException;
 
 /**
  * Fixture manager test case.
@@ -75,7 +76,7 @@ class FixtureManagerTest extends TestCase
 
         $this->manager->setDebug(true);
         $buffer = new ConsoleOutput();
-        Log::config('testQueryLogger', [
+        Log::setConfig('testQueryLogger', [
             'className' => 'Console',
             'stream' => $buffer
         ]);
@@ -107,12 +108,12 @@ class FixtureManagerTest extends TestCase
 
         $this->manager->setDebug(true);
         $buffer = new ConsoleOutput();
-        Log::config('testQueryLogger', [
+        Log::setConfig('testQueryLogger', [
             'className' => 'Console',
             'stream' => $buffer
         ]);
 
-        $table = new Table('articles', [
+        $table = new TableSchema('articles', [
             'id' => ['type' => 'integer', 'unsigned' => true],
             'title' => ['type' => 'string', 'length' => 255],
         ]);
@@ -143,8 +144,8 @@ class FixtureManagerTest extends TestCase
         $this->manager->fixturize($test);
         $this->manager->load($test);
 
-        $table = TableRegistry::get('ArticlesTags');
-        $schema = $table->schema();
+        $table = $this->getTableLocator()->get('ArticlesTags');
+        $schema = $table->getSchema();
         $expectedConstraint = [
             'type' => 'foreign',
             'columns' => [
@@ -158,12 +159,12 @@ class FixtureManagerTest extends TestCase
             'delete' => 'cascade',
             'length' => []
         ];
-        $this->assertEquals($expectedConstraint, $schema->constraint('tag_id_fk'));
+        $this->assertEquals($expectedConstraint, $schema->getConstraint('tag_id_fk'));
         $this->manager->unload($test);
 
         $this->manager->load($test);
-        $table = TableRegistry::get('ArticlesTags');
-        $schema = $table->schema();
+        $table = $this->getTableLocator()->get('ArticlesTags');
+        $schema = $table->getSchema();
         $expectedConstraint = [
             'type' => 'foreign',
             'columns' => [
@@ -177,7 +178,7 @@ class FixtureManagerTest extends TestCase
             'delete' => 'cascade',
             'length' => []
         ];
-        $this->assertEquals($expectedConstraint, $schema->constraint('tag_id_fk'));
+        $this->assertEquals($expectedConstraint, $schema->getConstraint('tag_id_fk'));
 
         $this->manager->unload($test);
     }
@@ -312,8 +313,8 @@ class FixtureManagerTest extends TestCase
             ->method('execute')
             ->will($this->returnValue($statement));
 
-        ConnectionManager::config('other', $other);
-        ConnectionManager::config('test_other', $testOther);
+        ConnectionManager::setConfig('other', $other);
+        ConnectionManager::setConfig('test_other', $testOther);
 
         // Connect the alias making test_other an alias of other.
         ConnectionManager::alias('test_other', 'other');
@@ -342,9 +343,9 @@ class FixtureManagerTest extends TestCase
         $this->manager->loadSingle('Tags');
         $this->manager->loadSingle('ArticlesTags');
 
-        $table = TableRegistry::get('ArticlesTags');
+        $table = $this->getTableLocator()->get('ArticlesTags');
         $results = $table->find('all')->toArray();
-        $schema = $table->schema();
+        $schema = $table->getSchema();
         $expectedConstraint = [
             'type' => 'foreign',
             'columns' => [
@@ -358,7 +359,7 @@ class FixtureManagerTest extends TestCase
             'delete' => 'cascade',
             'length' => []
         ];
-        $this->assertEquals($expectedConstraint, $schema->constraint('tag_id_fk'));
+        $this->assertEquals($expectedConstraint, $schema->getConstraint('tag_id_fk'));
         $this->assertCount(4, $results);
 
         $this->manager->unload($test);
@@ -367,9 +368,9 @@ class FixtureManagerTest extends TestCase
         $this->manager->loadSingle('Tags');
         $this->manager->loadSingle('ArticlesTags');
 
-        $table = TableRegistry::get('ArticlesTags');
+        $table = $this->getTableLocator()->get('ArticlesTags');
         $results = $table->find('all')->toArray();
-        $schema = $table->schema();
+        $schema = $table->getSchema();
         $expectedConstraint = [
             'type' => 'foreign',
             'columns' => [
@@ -383,8 +384,109 @@ class FixtureManagerTest extends TestCase
             'delete' => 'cascade',
             'length' => []
         ];
-        $this->assertEquals($expectedConstraint, $schema->constraint('tag_id_fk'));
+        $this->assertEquals($expectedConstraint, $schema->getConstraint('tag_id_fk'));
         $this->assertCount(4, $results);
         $this->manager->unload($test);
+    }
+
+    /**
+     * Test exception on load
+     *
+     * @return void
+     */
+    public function testExceptionOnLoad()
+    {
+        $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
+        $test->fixtures = ['core.products'];
+
+        $manager = $this->getMockBuilder(FixtureManager::class)
+            ->setMethods(['_runOperation'])
+            ->getMock();
+        $manager->expects($this->any())
+            ->method('_runOperation')
+            ->will($this->returnCallback(function () {
+                throw new PDOException('message');
+            }));
+
+        $manager->fixturize($test);
+
+        $e = null;
+        try {
+            $manager->load($test);
+        } catch (CakeException $e) {
+        }
+
+        $this->assertNotNull($e);
+        $this->assertRegExp('/^Unable to insert fixtures for "Mock_TestCase_\w+" test case. message$/D', $e->getMessage());
+        $this->assertInstanceOf('PDOException', $e->getPrevious());
+    }
+
+    /**
+     * Test exception on load fixture
+     *
+     * @dataProvider loadErrorMessageProvider
+     * @return void
+     */
+    public function testExceptionOnLoadFixture($method, $expectedMessage)
+    {
+        $fixture = $this->getMockBuilder('Cake\Test\Fixture\ProductsFixture')
+            ->setMethods([$method])
+            ->getMock();
+        $fixture->expects($this->once())
+            ->method($method)
+            ->will($this->returnCallback(function () {
+                throw new PDOException('message');
+            }));
+
+        $fixtures = [
+            'core.products' => $fixture,
+        ];
+
+        $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
+        $test->fixtures = array_keys($fixtures);
+
+        $manager = $this->getMockBuilder(FixtureManager::class)
+            ->setMethods(['_fixtureConnections'])
+            ->getMock();
+        $manager->expects($this->any())
+            ->method('_fixtureConnections')
+            ->will($this->returnValue([
+                'test' => $fixtures,
+            ]));
+        $manager->fixturize($test);
+        $manager->loadSingle('Products');
+
+        $e = null;
+        try {
+            $manager->load($test);
+        } catch (CakeException $e) {
+        }
+
+        $this->assertNotNull($e);
+        $this->assertRegExp($expectedMessage, $e->getMessage());
+        $this->assertInstanceOf('PDOException', $e->getPrevious());
+    }
+
+    /**
+     * Data provider for testExceptionOnLoadFixture
+     *
+     * @return array
+     */
+    public function loadErrorMessageProvider()
+    {
+        return [
+            [
+                'createConstraints',
+                '/^Unable to create constraints for fixture "Mock_ProductsFixture_\w+" in "Mock_TestCase_\w+" test case: \nmessage$/D',
+            ],
+            [
+                'dropConstraints',
+                '/^Unable to drop constraints for fixture "Mock_ProductsFixture_\w+" in "Mock_TestCase_\w+" test case: \nmessage$/D',
+            ],
+            [
+                'insert',
+                '/^Unable to insert fixture "Mock_ProductsFixture_\w+" in "Mock_TestCase_\w+" test case: \nmessage$/D',
+            ],
+        ];
     }
 }

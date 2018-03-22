@@ -16,8 +16,8 @@ namespace Cake\Http;
 use Cake\Core\App;
 use Cake\Core\Exception\Exception;
 use Cake\Core\InstanceConfigTrait;
-use Cake\Http\Client\CookieCollection;
 use Cake\Http\Client\Request;
+use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Cookie\CookieInterface;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
@@ -122,7 +122,7 @@ class Client
      * Cookies are indexed by the cookie's domain or
      * request host name.
      *
-     * @var \Cake\Http\Client\CookieCollection
+     * @var \Cake\Http\Cookie\CookieCollection
      */
     protected $_cookies;
 

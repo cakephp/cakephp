@@ -183,7 +183,7 @@ class FileTest extends TestCase
         $result = $this->File->read();
         $expecting = file_get_contents(__FILE__);
         $this->assertEquals($expecting, $result);
-        $this->assertTrue(!is_resource($this->File->handle));
+        $this->assertNotInternalType('resource', $this->File->handle);
 
         $this->File->lock = true;
         $result = $this->File->read();
@@ -214,7 +214,7 @@ class FileTest extends TestCase
         $result = $this->File->offset();
         $this->assertFalse($result);
 
-        $this->assertNotInternalType('resource', $this->File->handle);
+        $this->assertNull($this->File->handle);
         $success = $this->File->offset(0);
         $this->assertTrue($success);
         $this->assertInternalType('resource', $this->File->handle);
@@ -251,12 +251,12 @@ class FileTest extends TestCase
         $handle = $this->File->handle;
         $r = $this->File->open();
         $this->assertTrue($r);
-        $this->assertTrue($handle === $this->File->handle);
+        $this->assertSame($handle, $this->File->handle);
         $this->assertInternalType('resource', $this->File->handle);
 
         $r = $this->File->open('r', true);
         $this->assertTrue($r);
-        $this->assertFalse($handle === $this->File->handle);
+        $this->assertNotSame($handle, $this->File->handle);
         $this->assertInternalType('resource', $this->File->handle);
     }
 
@@ -268,9 +268,9 @@ class FileTest extends TestCase
     public function testClose()
     {
         $this->File->handle = null;
-        $this->assertNotInternalType('resource', $this->File->handle);
+        $this->assertNull($this->File->handle);
         $this->assertTrue($this->File->close());
-        $this->assertNotInternalType('resource', $this->File->handle);
+        $this->assertNull($this->File->handle);
 
         $this->File->handle = fopen(__FILE__, 'r');
         $this->assertInternalType('resource', $this->File->handle);
@@ -435,14 +435,14 @@ class FileTest extends TestCase
 
         $TmpFile = new File($tmpFile);
         $this->assertFileNotExists($tmpFile);
-        $this->assertNotInternalType('resource', $TmpFile->handle);
+        $this->assertNull($TmpFile->handle);
 
         $testData = ['CakePHP\'s', ' test suite', ' was here ...', ''];
         foreach ($testData as $data) {
             $r = $TmpFile->write($data);
             $this->assertTrue($r);
             $this->assertFileExists($tmpFile);
-            $this->assertEquals($data, file_get_contents($tmpFile));
+            $this->assertStringEqualsFile($tmpFile, $data);
             $this->assertInternalType('resource', $TmpFile->handle);
             $TmpFile->close();
         }
@@ -474,7 +474,7 @@ class FileTest extends TestCase
             $this->assertTrue($r);
             $this->assertFileExists($tmpFile);
             $data = $data . $fragment;
-            $this->assertEquals($data, file_get_contents($tmpFile));
+            $this->assertStringEqualsFile($tmpFile, $data);
             $newSize = $TmpFile->size();
             $this->assertTrue($newSize > $size);
             $size = $newSize;
@@ -482,7 +482,7 @@ class FileTest extends TestCase
         }
 
         $TmpFile->append('');
-        $this->assertEquals($data, file_get_contents($tmpFile));
+        $this->assertStringEqualsFile($tmpFile, $data);
         $TmpFile->close();
     }
 

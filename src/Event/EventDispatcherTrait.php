@@ -47,6 +47,10 @@ trait EventDispatcherTrait
      */
     public function eventManager(EventManager $eventManager = null)
     {
+        deprecationWarning(
+            'EventDispatcherTrait::eventManager() is deprecated. ' .
+            'Use EventDispatcherTrait::setEventManager()/getEventManager() instead.'
+        );
         if ($eventManager !== null) {
             $this->setEventManager($eventManager);
         }

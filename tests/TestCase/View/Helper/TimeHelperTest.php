@@ -178,7 +178,7 @@ class TimeHelperTest extends TestCase
      */
     public function testNiceOutputTimezone()
     {
-        $this->Time->config('outputTimezone', 'America/Vancouver');
+        $this->Time->setConfig('outputTimezone', 'America/Vancouver');
         $time = '2014-04-20 20:00';
         $this->assertTimeFormat('Apr 20, 2014, 1:00 PM', $this->Time->nice($time));
     }
@@ -211,7 +211,7 @@ class TimeHelperTest extends TestCase
      */
     public function testToAtomOutputTimezone()
     {
-        $this->Time->config('outputTimezone', 'America/Vancouver');
+        $this->Time->setConfig('outputTimezone', 'America/Vancouver');
         $dateTime = new Time;
         $vancouver = clone $dateTime;
         $vancouver->timezone('America/Vancouver');
@@ -245,7 +245,7 @@ class TimeHelperTest extends TestCase
      */
     public function testToRssOutputTimezone()
     {
-        $this->Time->config('outputTimezone', 'America/Vancouver');
+        $this->Time->setConfig('outputTimezone', 'America/Vancouver');
         $dateTime = new Time;
         $vancouver = clone $dateTime;
         $vancouver->timezone('America/Vancouver');
@@ -448,11 +448,22 @@ class TimeHelperTest extends TestCase
         $this->assertTrue($this->Time->wasWithinLast('1 year', '-60 minutes -30 seconds'));
         $this->assertTrue($this->Time->wasWithinLast('3 years', '-2 months'));
         $this->assertTrue($this->Time->wasWithinLast('5 months', '-4 months'));
+    }
 
-        $this->assertTrue($this->Time->wasWithinLast('5 ', '-3 days'));
-        $this->assertTrue($this->Time->wasWithinLast('1   ', '-1 hour'));
-        $this->assertTrue($this->Time->wasWithinLast('1   ', '-1 minute'));
-        $this->assertTrue($this->Time->wasWithinLast('1   ', '-23 hours -59 minutes -59 seconds'));
+    /**
+     * test deprecated usage of wasWithinLast()
+     *
+     * @group deprecated
+     * @return void
+     */
+    public function testWasWithinLastNumericString()
+    {
+        $this->deprecated(function () {
+            $this->assertTrue($this->Time->wasWithinLast('5 ', '-3 days'));
+            $this->assertTrue($this->Time->wasWithinLast('1   ', '-1 hour'));
+            $this->assertTrue($this->Time->wasWithinLast('1   ', '-1 minute'));
+            $this->assertTrue($this->Time->wasWithinLast('1   ', '-23 hours -59 minutes -59 seconds'));
+        });
     }
 
     /**
@@ -537,7 +548,7 @@ class TimeHelperTest extends TestCase
      */
     public function testFormatOutputTimezone()
     {
-        $this->Time->config('outputTimezone', 'America/Vancouver');
+        $this->Time->setConfig('outputTimezone', 'America/Vancouver');
 
         $time = strtotime('Thu Jan 14 8:59:28 2010 UTC');
         $result = $this->Time->format($time);
@@ -557,7 +568,7 @@ class TimeHelperTest extends TestCase
      */
     public function testI18nFormatOutputTimezone()
     {
-        $this->Time->config('outputTimezone', 'America/Vancouver');
+        $this->Time->setConfig('outputTimezone', 'America/Vancouver');
 
         $time = strtotime('Thu Jan 14 8:59:28 2010 UTC');
         $result = $this->Time->i18nFormat($time, \IntlDateFormatter::SHORT);
@@ -620,7 +631,7 @@ class TimeHelperTest extends TestCase
     public function testNullDateFormat()
     {
         $result = $this->Time->format(null);
-        $this->assertSame(false, $result);
+        $this->assertFalse($result);
 
         $fallback = 'Date invalid or not set';
         $result = $this->Time->format(null, \IntlDateFormatter::FULL, $fallback);

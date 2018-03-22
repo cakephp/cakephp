@@ -15,6 +15,7 @@
 namespace Cake\Shell;
 
 use Cake\Console\Shell;
+use Cake\Http\ServerRequest;
 use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Router;
 
@@ -52,7 +53,8 @@ class RoutesShell extends Shell
     public function check($url)
     {
         try {
-            $route = Router::parse($url);
+            $request = new ServerRequest(['url' => $url]);
+            $route = Router::parseRequest($request);
             $name = null;
             foreach (Router::routes() as $r) {
                 if ($r->match($route)) {

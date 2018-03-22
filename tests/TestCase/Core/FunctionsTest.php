@@ -42,4 +42,79 @@ class FunctionsTest extends TestCase
         $this->assertEquals('0', env('ZERO'));
         $this->assertEquals('0', env('ZERO', '1'));
     }
+
+    /**
+     * Test error messages coming out when deprecated level is on, manually setting the stack frame
+     *
+     * @expectedException PHPUnit\Framework\Error\Deprecated
+     * @expectedExceptionMessageRegExp /This is going away - (.*?)[\/\\]FunctionsTest.php, line\: \d+/
+     */
+    public function testDeprecationWarningEnabled()
+    {
+        $this->withErrorReporting(E_ALL, function () {
+            deprecationWarning('This is going away', 2);
+        });
+    }
+
+    /**
+     * Test error messages coming out when deprecated level is on, not setting the stack frame manually
+     *
+     * @expectedException PHPUnit\Framework\Error\Deprecated
+     * @expectedExceptionMessageRegExp /This is going away - (.*?)[\/\\]TestCase.php, line\: \d+/
+     */
+    public function testDeprecationWarningEnabledDefaultFrame()
+    {
+        $this->withErrorReporting(E_ALL, function () {
+            deprecationWarning('This is going away');
+        });
+    }
+
+    /**
+     * Test no error when deprecated level is off.
+     *
+     * @return void
+     */
+    public function testDeprecationWarningLevelDisabled()
+    {
+        $this->withErrorReporting(E_ALL ^ E_USER_DEPRECATED, function () {
+            $this->assertNull(deprecationWarning('This is going away'));
+        });
+    }
+
+    /**
+     * Test error messages coming out when warning level is on.
+     *
+     * @expectedException PHPUnit\Framework\Error\Warning
+     * @expectedExceptionMessageRegExp /This is going away - (.*?)[\/\\]TestCase.php, line\: \d+/
+     */
+    public function testTriggerWarningEnabled()
+    {
+        $this->withErrorReporting(E_ALL, function () {
+            triggerWarning('This is going away');
+        });
+    }
+
+    /**
+     * Test no error when warning level is off.
+     *
+     * @return void
+     */
+    public function testTriggerWarningLevelDisabled()
+    {
+        $this->withErrorReporting(E_ALL ^ E_USER_WARNING, function () {
+            $this->assertNull(triggerWarning('This is going away'));
+        });
+    }
+
+    /**
+     * testing getTypeName()
+     *
+     * @return void
+     */
+    public function testgetTypeName()
+    {
+        $this->assertEquals('stdClass', getTypeName(new \stdClass()));
+        $this->assertEquals('array', getTypeName([]));
+        $this->assertEquals('string', getTypeName(''));
+    }
 }

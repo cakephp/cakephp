@@ -115,6 +115,10 @@ class LoggingStatement extends StatementDecorator
      */
     public function logger($instance = null)
     {
+        deprecationWarning(
+            'LoggingStatement::logger() is deprecated. ' .
+            'Use LoggingStatement::setLogger()/getLogger() instead.'
+        );
         if ($instance === null) {
             return $this->getLogger();
         }

@@ -42,7 +42,7 @@ class TableRegressionTest extends TestCase
     {
         parent::tearDown();
 
-        TableRegistry::clear();
+        $this->getTableLocator()->clear();
     }
 
     /**
@@ -55,11 +55,11 @@ class TableRegressionTest extends TestCase
     public function testAfterSaveRollbackTransaction()
     {
         $this->expectException(\Cake\ORM\Exception\RolledbackTransactionException::class);
-        $table = TableRegistry::get('Authors');
+        $table = $this->getTableLocator()->get('Authors');
         $table->getEventManager()->on(
             'Model.afterSave',
             function () use ($table) {
-                $table->connection()->rollback();
+                $table->getConnection()->rollback();
             }
         );
         $entity = $table->newEntity(['name' => 'Jon']);
@@ -75,7 +75,7 @@ class TableRegressionTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('primary key');
-        $table = TableRegistry::get('Authors');
+        $table = $this->getTableLocator()->get('Authors');
         $table->getSchema()->dropConstraint('primary');
 
         $entity = $table->find()->first();

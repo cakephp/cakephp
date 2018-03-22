@@ -163,6 +163,11 @@ trait StaticConfigTrait
      */
     public static function config($key, $config = null)
     {
+        deprecationWarning(
+            get_called_class() . '::config() is deprecated. ' .
+            'Use setConfig()/getConfig() instead.'
+        );
+
         if ($config !== null || is_array($key)) {
             static::setConfig($key, $config);
 
@@ -362,6 +367,11 @@ REGEXP;
      */
     public static function dsnClassMap(array $map = null)
     {
+        deprecationWarning(
+            get_called_class() . '::setDsnClassMap() is deprecated. ' .
+            'Use setDsnClassMap()/getDsnClassMap() instead.'
+        );
+
         if ($map !== null) {
             static::setDsnClassMap($map);
         }

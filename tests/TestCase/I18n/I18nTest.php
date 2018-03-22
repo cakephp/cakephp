@@ -54,7 +54,7 @@ class I18nTest extends TestCase
     {
         parent::tearDown();
         I18n::clear();
-        I18n::defaultFormatter('default');
+        I18n::setDefaultFormatter('default');
         I18n::setLocale($this->locale);
         Plugin::unload();
         Cache::clear(false, '_cake_core_');
@@ -63,14 +63,17 @@ class I18nTest extends TestCase
     /**
      * Tests that the default locale is set correctly
      *
+     * @group deprecated
      * @return void
      */
     public function testDefaultLocale()
     {
-        $newLocale = 'de_DE';
-        I18n::setLocale($newLocale);
-        $this->assertEquals($newLocale, I18n::getLocale());
-        $this->assertEquals($this->locale, I18n::getDefaultLocale());
+        $this->deprecated(function () {
+            $newLocale = 'de_DE';
+            I18n::setLocale($newLocale);
+            $this->assertEquals($newLocale, I18n::getLocale());
+            $this->assertEquals($this->locale, I18n::getDefaultLocale());
+        });
     }
 
     /**
@@ -84,7 +87,7 @@ class I18nTest extends TestCase
         $translator = I18n::getTranslator();
         $this->assertInstanceOf('Aura\Intl\TranslatorInterface', $translator);
         $this->assertEquals('%d is 1 (po translated)', $translator->translate('%d = 1'));
-        $this->assertSame($translator, I18n::translator(), 'backwards compat works');
+        $this->assertSame($translator, I18n::getTranslator(), 'backwards compat works');
     }
 
     /**
@@ -106,7 +109,7 @@ class I18nTest extends TestCase
      */
     public function testPluralSelection()
     {
-        I18n::defaultFormatter('sprintf');
+        I18n::setDefaultFormatter('sprintf');
         $translator = I18n::getTranslator(); // en_US
         $result = $translator->translate('%d = 0 or > 1', ['_count' => 1]);
         $this->assertEquals('1 is 1 (po translated)', $result);
@@ -254,7 +257,7 @@ class I18nTest extends TestCase
      */
     public function testBasicTranslateFunction()
     {
-        I18n::defaultFormatter('sprintf');
+        I18n::setDefaultFormatter('sprintf');
         $this->assertEquals('%d is 1 (po translated)', __('%d = 1'));
         $this->assertEquals('1 is 1 (po translated)', __('%d = 1', 1));
         $this->assertEquals('1 is 1 (po translated)', __('%d = 1', [1]));
@@ -301,7 +304,7 @@ class I18nTest extends TestCase
      */
     public function testBasicTranslateFunctionPluralData()
     {
-        I18n::defaultFormatter('sprintf');
+        I18n::setDefaultFormatter('sprintf');
         $this->assertEquals('%d is 1 (po translated)', __('%d = 0 or > 1'));
     }
 
@@ -312,7 +315,7 @@ class I18nTest extends TestCase
      */
     public function testBasicTranslatePluralFunction()
     {
-        I18n::defaultFormatter('sprintf');
+        I18n::setDefaultFormatter('sprintf');
         $result = __n('singular msg', '%d = 0 or > 1', 1);
         $this->assertEquals('1 is 1 (po translated)', $result);
 
@@ -333,7 +336,7 @@ class I18nTest extends TestCase
      */
     public function testBasicTranslatePluralFunctionSingularMessage()
     {
-        I18n::defaultFormatter('sprintf');
+        I18n::setDefaultFormatter('sprintf');
         $result = __n('No translation needed', 'not used', 1);
         $this->assertEquals('No translation needed', $result);
     }
@@ -867,7 +870,7 @@ class I18nTest extends TestCase
      */
     public function testEmptyTranslationString()
     {
-        I18n::defaultFormatter('sprintf');
+        I18n::setDefaultFormatter('sprintf');
         $result = __('No translation needed');
         $this->assertEquals('No translation needed', $result);
     }
@@ -879,7 +882,7 @@ class I18nTest extends TestCase
      */
     public function testPluralTranslationsFromDomain()
     {
-        I18n::locale('de');
+        I18n::setLocale('de');
         $this->assertEquals('Standorte', __dn('wa', 'Location', 'Locations', 0));
         $this->assertEquals('Standort', __dn('wa', 'Location', 'Locations', 1));
         $this->assertEquals('Standorte', __dn('wa', 'Location', 'Locations', 2));

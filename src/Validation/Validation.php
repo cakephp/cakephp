@@ -33,10 +33,48 @@ class Validation
 
     /**
      * Default locale
-     *
-     * @var string
      */
     const DEFAULT_LOCALE = 'en_US';
+
+    /**
+     * Same as operator.
+     */
+    const COMPARE_SAME = '===';
+
+    /**
+     * Not same as comparison operator.
+     */
+    const COMPARE_NOT_SAME = '!==';
+
+    /**
+     * Equal to comparison operator.
+     */
+    const COMPARE_EQUAL = '==';
+
+    /**
+     * Not equal to comparison operator.
+     */
+    const COMPARE_NOT_EQUAL = '!=';
+
+    /**
+     * Greater than comparison operator.
+     */
+    const COMPARE_GREATER = '>';
+
+    /**
+     * Greater than or equal to comparison operator.
+     */
+    const COMPARE_GREATER_OR_EQUAL = '>=';
+
+    /**
+     * Less than comparison operator.
+     */
+    const COMPARE_LESS = '<';
+
+    /**
+     * Less than or equal to comparison operator.
+     */
+    const COMPARE_LESS_OR_EQUAL = '<=';
 
     /**
      * Some complex patterns needed in multiple places
@@ -67,7 +105,10 @@ class Validation
      */
     public static function notEmpty($check)
     {
-        trigger_error('Validation::notEmpty() is deprecated. Use Validation::notBlank() instead.', E_USER_DEPRECATED);
+        deprecationWarning(
+            'Validation::notEmpty() is deprecated. ' .
+            'Use Validation::notBlank() instead.'
+        );
 
         return static::notBlank($check);
     }
@@ -132,11 +173,13 @@ class Validation
      *
      * @param string $check Value to check
      * @return bool Success
-     * @deprecated 3.0.2
+     * @deprecated 3.0.2 Validation::blank() is deprecated.
      */
     public static function blank($check)
     {
-        trigger_error('Validation::blank() is deprecated.', E_USER_DEPRECATED);
+        deprecationWarning(
+            'Validation::blank() is deprecated.'
+        );
 
         return !static::_check($check, '/[^\\s]/');
     }
@@ -251,41 +294,83 @@ class Validation
             return false;
         }
 
+        $message = 'Operator `%s` is deprecated, use constant `Validation::%s` instead.';
+
         $operator = str_replace([' ', "\t", "\n", "\r", "\0", "\x0B"], '', strtolower($operator));
         switch ($operator) {
             case 'isgreater':
-            case '>':
+                /*
+                 * @deprecated 3.6.0 Use Validation::COMPARE_GREATER instead.
+                 */
+                deprecationWarning(sprintf($message, $operator, 'COMPARE_GREATER'));
+                // no break
+            case static::COMPARE_GREATER:
                 if ($check1 > $check2) {
                     return true;
                 }
                 break;
             case 'isless':
-            case '<':
+                /*
+                 * @deprecated 3.6.0 Use Validation::COMPARE_LESS instead.
+                 */
+                deprecationWarning(sprintf($message, $operator, 'COMPARE_LESS'));
+                // no break
+            case static::COMPARE_LESS:
                 if ($check1 < $check2) {
                     return true;
                 }
                 break;
             case 'greaterorequal':
-            case '>=':
+                /*
+                 * @deprecated 3.6.0 Use Validation::COMPARE_GREATER_OR_EQUAL instead.
+                 */
+                deprecationWarning(sprintf($message, $operator, 'COMPARE_GREATER_OR_EQUAL'));
+                // no break
+            case static::COMPARE_GREATER_OR_EQUAL:
                 if ($check1 >= $check2) {
                     return true;
                 }
                 break;
             case 'lessorequal':
-            case '<=':
+                /*
+                 * @deprecated 3.6.0 Use Validation::COMPARE_LESS_OR_EQUAL instead.
+                 */
+                deprecationWarning(sprintf($message, $operator, 'COMPARE_LESS_OR_EQUAL'));
+                // no break
+            case static::COMPARE_LESS_OR_EQUAL:
                 if ($check1 <= $check2) {
                     return true;
                 }
                 break;
             case 'equalto':
-            case '==':
+                /*
+                 * @deprecated 3.6.0 Use Validation::COMPARE_EQUAL instead.
+                 */
+                deprecationWarning(sprintf($message, $operator, 'COMPARE_EQUAL'));
+                // no break
+            case static::COMPARE_EQUAL:
                 if ($check1 == $check2) {
                     return true;
                 }
                 break;
             case 'notequal':
-            case '!=':
+                /*
+                 * @deprecated 3.6.0 Use Validation::COMPARE_NOT_EQUAL instead.
+                 */
+                deprecationWarning(sprintf($message, $operator, 'COMPARE_NOT_EQUAL'));
+                // no break
+            case static::COMPARE_NOT_EQUAL:
                 if ($check1 != $check2) {
+                    return true;
+                }
+                break;
+            case static::COMPARE_SAME:
+                if ($check1 === $check2) {
+                    return true;
+                }
+                break;
+            case static::COMPARE_NOT_SAME:
+                if ($check1 !== $check2) {
                     return true;
                 }
                 break;
@@ -308,11 +393,28 @@ class Validation
      */
     public static function compareWith($check, $field, $context)
     {
+        return self::compareFields($check, $field, static::COMPARE_SAME, $context);
+    }
+
+    /**
+     * Compare one field to another.
+     *
+     * Return true if the comparison matches the expected result.
+     *
+     * @param mixed $check The value to find in $field.
+     * @param string $field The field to check $check against. This field must be present in $context.
+     * @param string $operator Comparison operator.
+     * @param array $context The validation context.
+     * @return bool
+     * @since 3.6.0
+     */
+    public static function compareFields($check, $field, $operator, $context)
+    {
         if (!isset($context['data'][$field])) {
             return false;
         }
 
-        return $context['data'][$field] === $check;
+        return static::comparison($check, $operator, $context['data'][$field]);
     }
 
     /**
@@ -956,9 +1058,9 @@ class Validation
      */
     public static function userDefined($check, $object, $method, $args = null)
     {
-        trigger_error(
-            'Validation::userDefined() is deprecated. Just set a callable for `rule` key when adding validators instead.',
-            E_USER_DEPRECATED
+        deprecationWarning(
+            'Validation::userDefined() is deprecated. ' .
+            'You can just set a callable for `rule` key when adding validators.'
         );
 
         return $object->$method($check, $args);
@@ -1085,7 +1187,11 @@ class Validation
             return $check['tmp_name'];
         }
 
-        return $check;
+        if (is_string($check)) {
+            return $check;
+        }
+
+        return false;
     }
 
     /**
@@ -1191,10 +1297,10 @@ class Validation
         if ($options['optional'] && $error === UPLOAD_ERR_NO_FILE) {
             return true;
         }
-        if (isset($options['minSize']) && !static::fileSize($file, '>=', $options['minSize'])) {
+        if (isset($options['minSize']) && !static::fileSize($file, static::COMPARE_GREATER_OR_EQUAL, $options['minSize'])) {
             return false;
         }
-        if (isset($options['maxSize']) && !static::fileSize($file, '<=', $options['maxSize'])) {
+        if (isset($options['maxSize']) && !static::fileSize($file, static::COMPARE_LESS_OR_EQUAL, $options['maxSize'])) {
             return false;
         }
         if (isset($options['types']) && !static::mimeType($file, $options['types'])) {

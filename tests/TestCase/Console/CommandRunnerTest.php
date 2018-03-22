@@ -15,13 +15,20 @@
 namespace Cake\Test\Console;
 
 use Cake\Console\CommandCollection;
+use Cake\Console\CommandFactoryInterface;
 use Cake\Console\CommandRunner;
 use Cake\Console\ConsoleIo;
 use Cake\Console\Shell;
 use Cake\Core\Configure;
+use Cake\Core\ConsoleApplicationInterface;
+use Cake\Event\EventList;
+use Cake\Event\EventManager;
 use Cake\Http\BaseApplication;
 use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
+use TestApp\Command\DemoCommand;
+use TestApp\Http\EventApplication;
 use TestApp\Shell\SampleShell;
 
 /**
@@ -49,6 +56,65 @@ class CommandRunnerTest extends TestCase
     }
 
     /**
+     * test event manager proxies to the application.
+     *
+     * @return void
+     */
+    public function testEventManagerProxies()
+    {
+        $app = $this->getMockForAbstractClass(
+            BaseApplication::class,
+            [$this->config]
+        );
+
+        $runner = new CommandRunner($app);
+        $this->assertSame($app->getEventManager(), $runner->getEventManager());
+    }
+
+    /**
+     * test event manager cannot be set on applications without events.
+     *
+     * @return void
+     */
+    public function testGetEventManagerNonEventedApplication()
+    {
+        $app = $this->createMock(ConsoleApplicationInterface::class);
+
+        $runner = new CommandRunner($app);
+        $this->assertSame(EventManager::instance(), $runner->getEventManager());
+    }
+
+    /**
+     * test event manager cannot be set on applications without events.
+     *
+     * @return void
+     */
+    public function testSetEventManagerNonEventedApplication()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $app = $this->createMock(ConsoleApplicationInterface::class);
+
+        $events = new EventManager();
+        $runner = new CommandRunner($app);
+        $runner->setEventManager($events);
+    }
+
+    /**
+     * test deprecated method defined in interface
+     *
+     * @return void
+     */
+    public function testEventManagerCompat()
+    {
+        $this->deprecated(function () {
+            $app = $this->createMock(ConsoleApplicationInterface::class);
+
+            $runner = new CommandRunner($app);
+            $this->assertSame(EventManager::instance(), $runner->eventManager());
+        });
+    }
+
+    /**
      * Test that the console hook not returning a command collection
      * raises an error.
      *
@@ -60,6 +126,24 @@ class CommandRunnerTest extends TestCase
         $this->expectExceptionMessage('The application\'s `console` method did not return a CommandCollection.');
         $app = $this->getMockBuilder(BaseApplication::class)
             ->setMethods(['console', 'middleware', 'bootstrap'])
+            ->setConstructorArgs([$this->config])
+            ->getMock();
+        $runner = new CommandRunner($app);
+        $runner->run(['cake', '-h']);
+    }
+
+    /**
+     * Test that the console hook not returning a command collection
+     * raises an error.
+     *
+     * @return void
+     */
+    public function testRunPluginConsoleHookFailure()
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('The application\'s `pluginConsole` method did not return a CommandCollection.');
+        $app = $this->getMockBuilder(BaseApplication::class)
+            ->setMethods(['pluginConsole', 'middleware', 'bootstrap'])
             ->setConstructorArgs([$this->config])
             ->getMock();
         $runner = new CommandRunner($app);
@@ -238,14 +322,7 @@ class CommandRunnerTest extends TestCase
      */
     public function testRunValidCommandWithAbort()
     {
-        $app = $this->getMockBuilder(BaseApplication::class)
-            ->setMethods(['middleware', 'bootstrap', 'console'])
-            ->setConstructorArgs([$this->config])
-            ->getMock();
-
-        $commands = new CommandCollection(['failure' => SampleShell::class]);
-        $app->method('console')->will($this->returnValue($commands));
-
+        $app = $this->makeAppWithCommands(['failure' => SampleShell::class]);
         $output = new ConsoleOutput();
 
         $runner = new CommandRunner($app, 'cake');
@@ -260,14 +337,7 @@ class CommandRunnerTest extends TestCase
      */
     public function testRunValidCommandReturnInteger()
     {
-        $app = $this->getMockBuilder(BaseApplication::class)
-            ->setMethods(['middleware', 'bootstrap', 'console'])
-            ->setConstructorArgs([$this->config])
-            ->getMock();
-
-        $commands = new CommandCollection(['failure' => SampleShell::class]);
-        $app->method('console')->will($this->returnValue($commands));
-
+        $app = $this->makeAppWithCommands(['failure' => SampleShell::class]);
         $output = new ConsoleOutput();
 
         $runner = new CommandRunner($app, 'cake');
@@ -282,14 +352,7 @@ class CommandRunnerTest extends TestCase
      */
     public function testRunRootNamePropagates()
     {
-        $app = $this->getMockBuilder(BaseApplication::class)
-            ->setMethods(['middleware', 'bootstrap', 'console'])
-            ->setConstructorArgs([$this->config])
-            ->getMock();
-
-        $commands = new CommandCollection(['sample' => SampleShell::class]);
-        $app->method('console')->will($this->returnValue($commands));
-
+        $app = $this->makeAppWithCommands(['sample' => SampleShell::class]);
         $output = new ConsoleOutput();
 
         $runner = new CommandRunner($app, 'widget');
@@ -297,6 +360,68 @@ class CommandRunnerTest extends TestCase
         $result = implode("\n", $output->messages());
         $this->assertContains('widget sample [-h]', $result);
         $this->assertNotContains('cake sample [-h]', $result);
+    }
+
+    /**
+     * Test running a valid command
+     *
+     * @return void
+     */
+    public function testRunValidCommandClass()
+    {
+        $app = $this->makeAppWithCommands(['ex' => DemoCommand::class]);
+        $output = new ConsoleOutput();
+
+        $runner = new CommandRunner($app, 'cake');
+        $result = $runner->run(['cake', 'ex'], $this->getMockIo($output));
+        $this->assertSame(Shell::CODE_SUCCESS, $result);
+
+        $messages = implode("\n", $output->messages());
+        $this->assertContains('Demo Command!', $messages);
+    }
+
+    /**
+     * Test using a custom factory
+     *
+     * @return void
+     */
+    public function testRunWithCustomFactory()
+    {
+        $output = new ConsoleOutput();
+        $io = $this->getMockIo($output);
+        $factory = $this->createMock(CommandFactoryInterface::class);
+        $factory->expects($this->once())
+            ->method('create')
+            ->with(DemoCommand::class)
+            ->willReturn(new DemoCommand());
+
+        $app = $this->makeAppWithCommands(['ex' => DemoCommand::class]);
+
+        $runner = new CommandRunner($app, 'cake', $factory);
+        $result = $runner->run(['cake', 'ex'], $io);
+        $this->assertSame(Shell::CODE_SUCCESS, $result);
+
+        $messages = implode("\n", $output->messages());
+        $this->assertContains('Demo Command!', $messages);
+    }
+
+    /**
+     * Test running a command class' help
+     *
+     * @return void
+     */
+    public function testRunValidCommandClassHelp()
+    {
+        $app = $this->makeAppWithCommands(['ex' => DemoCommand::class]);
+        $output = new ConsoleOutput();
+
+        $runner = new CommandRunner($app, 'cake');
+        $result = $runner->run(['cake', 'ex', '-h'], $this->getMockIo($output));
+        $this->assertSame(Shell::CODE_SUCCESS, $result);
+
+        $messages = implode("\n", $output->messages());
+        $this->assertContains("\ncake ex [-h]", $messages);
+        $this->assertNotContains('Demo Command!', $messages);
     }
 
     /**
@@ -319,6 +444,47 @@ class CommandRunnerTest extends TestCase
         });
         $result = $runner->run(['cake', '--version'], $this->getMockIo($output));
         $this->assertTrue($this->eventTriggered, 'Should have triggered event.');
+    }
+
+    /**
+     * Test that run calls plugin hook methods
+     *
+     * @return void
+     */
+    public function testRunCallsPluginHookMethods()
+    {
+        $app = $this->getMockBuilder(BaseApplication::class)
+            ->setMethods(['middleware', 'bootstrap', 'pluginBootstrap', 'pluginEvents', 'pluginConsole'])
+            ->setConstructorArgs([$this->config])
+            ->getMock();
+
+        $app->expects($this->at(0))->method('bootstrap');
+        $app->expects($this->at(1))->method('pluginBootstrap');
+
+        $commands = new CommandCollection();
+        $app->expects($this->at(2))
+            ->method('pluginConsole')
+            ->with($this->isinstanceOf(CommandCollection::class))
+            ->will($this->returnCallback(function ($commands) {
+                return $commands;
+            }));
+
+        $output = new ConsoleOutput();
+        $runner = new CommandRunner($app, 'cake');
+        $result = $runner->run(['cake', '--version'], $this->getMockIo($output));
+        $this->assertContains(Configure::version(), $output->messages()[0]);
+    }
+
+    protected function makeAppWithCommands($commands)
+    {
+        $app = $this->getMockBuilder(BaseApplication::class)
+            ->setMethods(['middleware', 'bootstrap', 'console'])
+            ->setConstructorArgs([$this->config])
+            ->getMock();
+        $collection = new CommandCollection($commands);
+        $app->method('console')->will($this->returnValue($collection));
+
+        return $app;
     }
 
     protected function getMockIo($output)

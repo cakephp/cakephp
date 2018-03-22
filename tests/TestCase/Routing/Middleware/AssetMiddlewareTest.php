@@ -130,7 +130,7 @@ class AssetMiddlewareTest extends TestCase
         $res = $middleware($request, $response, $next);
 
         $body = $res->getBody()->getContents();
-        $this->assertEquals(file_get_contents($expectedFile), $body);
+        $this->assertStringEqualsFile($expectedFile, $body);
     }
 
     /**

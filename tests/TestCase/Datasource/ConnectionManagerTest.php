@@ -99,7 +99,7 @@ class ConnectionManagerTest extends TestCase
     public function testConfigVariants($settings)
     {
         $this->assertNotContains('test_variant', ConnectionManager::configured(), 'test_variant config should not exist.');
-        ConnectionManager::config('test_variant', $settings);
+        ConnectionManager::setConfig('test_variant', $settings);
 
         $ds = ConnectionManager::get('test_variant');
         $this->assertInstanceOf(__NAMESPACE__ . '\FakeConnection', $ds);
@@ -113,7 +113,7 @@ class ConnectionManagerTest extends TestCase
     public function testConfigInvalidOptions()
     {
         $this->expectException(\Cake\Datasource\Exception\MissingDatasourceException::class);
-        ConnectionManager::config('test_variant', [
+        ConnectionManager::setConfig('test_variant', [
             'className' => 'Herp\Derp'
         ]);
         ConnectionManager::get('test_variant');
@@ -132,8 +132,8 @@ class ConnectionManagerTest extends TestCase
             'className' => __NAMESPACE__ . '\FakeConnection',
             'database' => ':memory:',
         ];
-        ConnectionManager::config('test_variant', $settings);
-        ConnectionManager::config('test_variant', $settings);
+        ConnectionManager::setConfig('test_variant', $settings);
+        ConnectionManager::setConfig('test_variant', $settings);
     }
 
     /**
@@ -155,7 +155,7 @@ class ConnectionManagerTest extends TestCase
      */
     public function testGet()
     {
-        $config = ConnectionManager::config('test');
+        $config = ConnectionManager::getConfig('test');
         $this->skipIf(empty($config), 'No test config, skipping');
 
         $ds = ConnectionManager::get('test');
@@ -173,7 +173,7 @@ class ConnectionManagerTest extends TestCase
     {
         $this->expectException(\Cake\Core\Exception\Exception::class);
         $this->expectExceptionMessage('The datasource configuration "other_name" was not found.');
-        $config = ConnectionManager::config('test');
+        $config = ConnectionManager::getConfig('test');
         $this->skipIf(empty($config), 'No test config, skipping');
 
         ConnectionManager::alias('test', 'other_name');
@@ -187,7 +187,7 @@ class ConnectionManagerTest extends TestCase
      */
     public function testConfigured()
     {
-        ConnectionManager::config('test_variant', [
+        ConnectionManager::setConfig('test_variant', [
             'className' => __NAMESPACE__ . '\FakeConnection',
             'database' => ':memory:'
         ]);
@@ -205,7 +205,7 @@ class ConnectionManagerTest extends TestCase
         Plugin::load('TestPlugin');
         $name = 'test_variant';
         $config = ['className' => 'TestPlugin.TestSource', 'foo' => 'bar'];
-        ConnectionManager::config($name, $config);
+        ConnectionManager::setConfig($name, $config);
         $connection = ConnectionManager::get($name);
 
         $this->assertInstanceOf('TestPlugin\Datasource\TestSource', $connection);
@@ -220,7 +220,7 @@ class ConnectionManagerTest extends TestCase
      */
     public function testDrop()
     {
-        ConnectionManager::config('test_variant', [
+        ConnectionManager::setConfig('test_variant', [
             'className' => __NAMESPACE__ . '\FakeConnection',
             'database' => ':memory:'
         ]);
@@ -241,7 +241,7 @@ class ConnectionManagerTest extends TestCase
      */
     public function testAlias()
     {
-        ConnectionManager::config('test_variant', [
+        ConnectionManager::setConfig('test_variant', [
             'className' => __NAMESPACE__ . '\FakeConnection',
             'database' => ':memory:'
         ]);
@@ -466,7 +466,7 @@ class ConnectionManagerTest extends TestCase
     public function testConfigWithObject()
     {
         $connection = new FakeConnection;
-        ConnectionManager::config('test_variant', $connection);
+        ConnectionManager::setConfig('test_variant', $connection);
         $this->assertSame($connection, ConnectionManager::get('test_variant'));
     }
 
@@ -484,7 +484,7 @@ class ConnectionManagerTest extends TestCase
             return $connection;
         };
 
-        ConnectionManager::config('test_variant', $callable);
+        ConnectionManager::setConfig('test_variant', $callable);
         $this->assertSame($connection, ConnectionManager::get('test_variant'));
     }
 
@@ -496,7 +496,7 @@ class ConnectionManagerTest extends TestCase
     public function testSetConfigName()
     {
         //Set with explicit name
-        ConnectionManager::config('test_variant', [
+        ConnectionManager::setConfig('test_variant', [
             'className' => __NAMESPACE__ . '\FakeConnection',
             'database' => ':memory:'
         ]);
@@ -504,7 +504,7 @@ class ConnectionManagerTest extends TestCase
         $this->assertSame('test_variant', $result->configName());
 
         ConnectionManager::drop('test_variant');
-        ConnectionManager::config([
+        ConnectionManager::setConfig([
             'test_variant' => [
                 'className' => __NAMESPACE__ . '\FakeConnection',
                 'database' => ':memory:'

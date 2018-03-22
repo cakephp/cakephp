@@ -22,7 +22,7 @@ if (class_exists('PHPUnit_Runner_Version', false) && !interface_exists('PHPUnit\
 
 use Cake\Core\Configure;
 use Cake\Database\Exception as DatabaseException;
-use Cake\Network\Session;
+use Cake\Http\Session;
 use Cake\Routing\Router;
 use Cake\TestSuite\Stub\TestExceptionRenderer;
 use Cake\Utility\CookieCryptTrait;
@@ -130,7 +130,7 @@ abstract class IntegrationTestCase extends TestCase
     /**
      * The session instance from the last request
      *
-     * @var \Cake\Network\Session|null
+     * @var \Cake\Http\Session|null
      */
     protected $_requestSession;
 
@@ -534,7 +534,7 @@ abstract class IntegrationTestCase extends TestCase
                 $this->_viewName = $viewFile;
             }
             if ($this->_retainFlashMessages) {
-                $this->_flashMessages = $controller->request->session()->read('Flash');
+                $this->_flashMessages = $controller->request->getSession()->read('Flash');
             }
         });
         $events->on('View.beforeLayout', function ($event, $viewFile) {
@@ -581,12 +581,11 @@ abstract class IntegrationTestCase extends TestCase
         list ($url, $query) = $this->_url($url);
         $tokenUrl = $url;
 
-        parse_str($query, $queryData);
-
         if ($query) {
-            $tokenUrl .= '?' . http_build_query($queryData);
+            $tokenUrl .= '?' . $query;
         }
 
+        parse_str($query, $queryData);
         $props = [
             'url' => $url,
             'session' => $session,
@@ -918,7 +917,7 @@ abstract class IntegrationTestCase extends TestCase
         if ($alias !== false) {
             $type = $alias;
         }
-        $result = $this->_response->type();
+        $result = $this->_response->getType();
         $this->assertEquals($type, $result, $message);
     }
 
@@ -1089,7 +1088,7 @@ abstract class IntegrationTestCase extends TestCase
         if (!$this->_response) {
             $this->fail('Not response set, cannot assert cookies.');
         }
-        $result = $this->_response->cookie($name);
+        $result = $this->_response->getCookie($name);
         $this->assertEquals(
             $expected,
             $result['value'],
@@ -1148,7 +1147,7 @@ abstract class IntegrationTestCase extends TestCase
         if (!$this->_response) {
             $this->fail('No response set, cannot assert cookies.');
         }
-        $result = $this->_response->cookie($name);
+        $result = $this->_response->getCookie($name);
         $this->_cookieEncryptionKey = $key;
         $result['value'] = $this->_decrypt($result['value'], $encrypt);
         $this->assertEquals($expected, $result['value'], 'Cookie data differs. ' . $message);

@@ -116,7 +116,7 @@ class SelectLoader
      * iterator. The options accepted by this method are the same as `Association::eagerLoader()`
      *
      * @param array $options Same options as `Association::eagerLoader()`
-     * @return callable
+     * @return \Closure
      */
     public function buildEagerLoader(array $options)
     {
@@ -294,13 +294,14 @@ class SelectLoader
         }
         $subquery->select($filter, true);
 
+        $conditions = null;
         if (is_array($key)) {
             $conditions = $this->_createTupleCondition($query, $key, $filter, '=');
         } else {
             $filter = current($filter);
         }
 
-        $conditions = isset($conditions) ? $conditions : $query->newExpr([$key => $filter]);
+        $conditions = $conditions ?: $query->newExpr([$key => $filter]);
 
         return $query->innerJoin(
             [$aliasedTable => $subquery],
@@ -399,7 +400,7 @@ class SelectLoader
         $filterQuery->mapReduce(null, null, true);
         $filterQuery->formatResults(null, true);
         $filterQuery->contain([], true);
-        $filterQuery->valueBinder(new ValueBinder());
+        $filterQuery->setValueBinder(new ValueBinder());
 
         if (!$filterQuery->clause('limit')) {
             $filterQuery->limit(null);

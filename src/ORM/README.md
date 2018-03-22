@@ -40,6 +40,38 @@ ConnectionManager::setConfig('default', [
 Once a 'default' connection is registered, it will be used by all the Table
 mappers if no explicit connection is defined.
 
+## Using Table Locator
+
+In order to access table instances you need to use a *Table Locator*.
+
+```php
+use Cake\ORM\Locator\TableLocator;
+
+$locator = new TableLocator();
+$articles = $locator->get('Articles');
+```
+
+You can also use a trait for easy access to the locator instance:
+
+```php
+use Cake\ORM\Locator\LocatorAwareTrait;
+
+$articles = $this->getTableLocator()->get('Articles');
+```
+
+By default classes using `LocatorAwareTrait` will share a global locator instance.
+You can inject your own locator instance into the object:
+
+```php
+use Cake\ORM\Locator\TableLocator;
+use Cake\ORM\Locator\LocatorAwareTrait;
+
+$locator = new TableLocator();
+$this->setTableLocator($locator);
+
+$articles = $this->getTableLocator()->get('Articles');
+```
+
 ## Creating Associations
 
 In your table classes you can define the relations between your tables. CakePHP's ORM
@@ -59,9 +91,9 @@ complete examples.
 Once you've defined some table classes you can read existing data in your tables:
 
 ```php
-use Cake\ORM\TableRegistry;
+use Cake\ORM\Locator\LocatorAwareTrait;
 
-$articles = TableRegistry::get('Articles');
+$articles = $this->getTableLocator()->get('Articles');
 foreach ($articles->find() as $article) {
 	echo $article->title;
 }
@@ -77,7 +109,7 @@ Table objects provide ways to convert request data into entities, and then persi
 those entities to the database:
 
 ```php
-use Cake\ORM\TableRegistry;
+use Cake\ORM\Locator\LocatorAwareTrait;
 
 $data = [
 	'title' => 'My first article',
@@ -92,7 +124,7 @@ $data = [
 	]
 ];
 
-$articles = TableRegistry::get('Articles');
+$articles = $this->getTableLocator()->get('Articles');
 $article = $articles->newEntity($data, [
 	'associated' => ['Tags', 'Comments']
 ]);
@@ -110,7 +142,7 @@ for more in-depth examples.
 Once you have a reference to an entity, you can use it to delete data:
 
 ```php
-$articles = TableRegistry::get('Articles');
+$articles = $this->getTableLocator()->get('Articles');
 $article = $articles->get(2);
 $articles->delete($article);
 ```

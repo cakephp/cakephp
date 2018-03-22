@@ -104,6 +104,10 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
      */
     public function name($name = null)
     {
+        deprecationWarning(
+            'FunctionExpression::name() is deprecated. ' .
+            'Use FunctionExpression::setName()/getName() instead.'
+        );
         if ($name !== null) {
             return $this->setName($name);
         }

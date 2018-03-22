@@ -74,7 +74,7 @@ class FlashHelper extends Helper
             return null;
         }
 
-        $flash = $this->request->session()->read("Flash.$key");
+        $flash = $this->request->getSession()->read("Flash.$key");
         if (!is_array($flash)) {
             throw new UnexpectedValueException(sprintf(
                 'Value for flash setting key "%s" must be an array.',
