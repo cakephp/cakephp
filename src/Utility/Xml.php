@@ -154,7 +154,7 @@ class Xml
                 $xml = new SimpleXMLElement($input, $flags);
             } else {
                 $xml = new DOMDocument();
-                $xml->loadXML($input);
+                $xml->loadXML($input, $flags);
             }
         } catch (Exception $e) {
             $xml = null;
