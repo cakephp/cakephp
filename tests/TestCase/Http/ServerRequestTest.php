@@ -2882,6 +2882,33 @@ class ServerRequestTest extends TestCase
     }
 
     /**
+     * tests here() is compatible with the new getRequestTarget()
+     *
+     * @return void
+     */
+    public function testHereMatchesGetRequestTarget()
+    {
+        $this->deprecated(function () {
+            Configure::write('App.base', '/base_path');
+            $request = new ServerRequest([
+                'query' => [
+                    'q' => 'arg'
+                ],
+                'url' => '/posts/add/1/value',
+                'base' => '/base_path'
+            ]);
+
+            $this->assertSame($request->here(), $request->getRequestTarget(true));
+
+            $request = new ServerRequest([
+                'url' => '/posts/add/1/value?q=arg',
+            ]);
+
+            $this->assertSame($request->here(false), $request->getRequestTarget());
+        });
+    }
+
+    /**
      * Test the input() method.
      *
      * @return void

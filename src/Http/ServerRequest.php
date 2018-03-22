@@ -337,7 +337,10 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
         if (strlen($config['url'])) {
             $uri = $uri->withPath('/' . $config['url']);
         }
-        if (strlen($querystr)) {
+        if (strlen($querystr) || isset($config['query'])) {
+            if (!strlen($querystr)) {
+                $querystr = http_build_query($config['query']);
+            }
             $uri = $uri->withQuery($querystr);
         }
 
@@ -2324,9 +2327,10 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * application relative path without base directory, and the query string
      * defined in the SERVER environment.
      *
+     * @param bool $base Include the base path, set to false to trim the base path off.
      * @return string
      */
-    public function getRequestTarget()
+    public function getRequestTarget($base = false)
     {
         if ($this->requestTarget !== null) {
             return $this->requestTarget;
@@ -2334,11 +2338,15 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
 
         $target = $this->uri->getPath();
         if ($this->uri->getQuery()) {
-            $target .= '?' . $this->uri->getQuery();
+            $target .= '?' . urldecode($this->uri->getQuery());
         }
 
         if (empty($target)) {
             $target = '/';
+        }
+
+        if ($base) {
+            $target = $this->getAttribute('base') . $target;
         }
 
         return $target;
