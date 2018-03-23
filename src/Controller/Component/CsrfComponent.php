@@ -127,7 +127,12 @@ class CsrfComponent extends Component
     protected function _setCookie(ServerRequest $request, Response $response)
     {
         $expiry = new Time($this->_config['expiry']);
-        $value = hash('sha512', Security::randomBytes(16), false);
+        $data = json_encode([
+            'token' => hash('sha512', Security::randomBytes(16), false),
+            'expiry' => $expiry->format('U'),
+        ]);
+
+        $value = bin2hex(Security::encrypt($data, Security::getSalt()));
 
         $request->params['_csrfToken'] = $value;
         $response->cookie([
@@ -159,6 +164,20 @@ class CsrfComponent extends Component
 
         if ($post !== $cookie && $header !== $cookie) {
             throw new InvalidCsrfTokenException(__d('cake', 'CSRF token mismatch.'));
+        }
+
+        try {
+            $decrypted = json_decode(Security::decrypt(hex2bin($cookie), Security::getSalt()), true);
+            if (!$decrypted) {
+                throw new InvalidCsrfTokenException(__d('cake', 'Invalid CSRF token'));
+            }
+            $expiry = new Time('@' . $decrypted['expiry']);
+            $now = new Time();
+            if ($now > $expiry) {
+                throw new InvalidCsrfTokenException(__d('cake', 'Expired CSRF token'));
+            }
+        } catch (\InvalidArgumentException $e) {
+            throw new InvalidCsrfTokenException(__d('cake', 'Invalid CSRF token'));
         }
     }
 }
