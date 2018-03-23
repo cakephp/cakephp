@@ -276,6 +276,7 @@ abstract class CacheEngine implements CacheInterface
         foreach ($keys as $key) {
             $return[$key] = $this->read($key);
         }
+
         return $return;
     }
 
