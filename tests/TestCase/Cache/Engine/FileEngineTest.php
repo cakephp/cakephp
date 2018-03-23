@@ -118,8 +118,10 @@ class FileEngineTest extends TestCase
     public function testSetAndGet()
     {
         $result = $this->cache->get('test');
-        $expecting = '';
-        $this->assertEquals($expecting, $result);
+        $this->assertEquals('', $result);
+
+        $result = $this->cache->get('test', 'default');
+        $this->assertEquals('default', $result);
 
         $data = 'this is a test of the emergency broadcasting system';
         $result = $this->cache->set('test', $data);
@@ -160,7 +162,7 @@ class FileEngineTest extends TestCase
         $this->_configCache(['duration' => 100]);
 
         $result = $this->cache->get('test');
-        $this->assertFalse($result);
+        $this->assertNull($result);
 
         $data = 'this is a test of the emergency broadcasting system';
         $result = $this->cache->set('other_test', $data, 1);
@@ -169,6 +171,9 @@ class FileEngineTest extends TestCase
         sleep(2);
         $result = $this->cache->get('other_test');
         $this->assertNull($result);
+
+        $result = $this->cache->get('other_test', 'default');
+        $this->assertSame('default', $result);
     }
 
     /**
