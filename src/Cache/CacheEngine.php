@@ -225,6 +225,19 @@ abstract class CacheEngine implements CacheInterface
     abstract public function clearExpired();
 
     /**
+     * Garbage collection
+     *
+     * Permanently remove all expired and deleted data
+     *
+     * @deprecated Since 3.6 use clear() and clearExpired()
+     * @param int|null $expires [optional] An expires timestamp, invalidating all data before.
+     * @return void
+     */
+    public function gc($expires = null)
+    {
+    }
+
+    /**
      * Fetches a value from the cache.
      *
      * @param string $key The unique key of this item in the cache.
@@ -248,6 +261,23 @@ abstract class CacheEngine implements CacheInterface
      *   MUST be thrown if the $key string is not a legal value.
      */
     abstract public function set($key, $value, $ttl = null);
+
+    /**
+     * Read multiple keys from the cache
+     *
+     * @deprecated Since 3.6 use getMultiple() instead
+     * @param array $keys An array of identifiers for the data
+     * @return array For each cache key (given as the array key) the cache data associated or false if the data doesn't
+     * exist, has expired, or if there was an error fetching it
+     */
+    public function readMany($keys)
+    {
+        $return = [];
+        foreach ($keys as $key) {
+            $return[$key] = $this->read($key);
+        }
+        return $return;
+    }
 
     /**
      * Obtains multiple cache items by their unique keys.

@@ -149,7 +149,7 @@ class XcacheEngine extends CacheEngine
                 ->addMinutes($ttl->i)
                 ->addSeconds($ttl->s)
                 ->toUnixString();
-            $ttl = $expires - now();
+            $ttl = $expires - time();
         } else {
             $expires = time() + $ttl;
         }

@@ -460,7 +460,7 @@ class Cache
     {
         $engine = static::engine($config);
 
-        return $engine->getMultiple($keys);
+        return $engine->readMany($keys);
     }
 
     /**

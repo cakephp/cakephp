@@ -430,6 +430,23 @@ class FileEngineTest extends TestCase
     }
 
     /**
+     * testGetWithDefault method
+     *
+     * @return void
+     */
+    public function testGetWithDefault()
+    {
+        $result = Cache::get('does-not-exist', null, 'file_test');
+        $this->assertNull($result);
+
+        $result = Cache::get('does-not-exist', false, 'file_test');
+        $this->assertFalse($result);
+
+        $result = Cache::get('does-not-exist', 'no-it-does', 'file_test');
+        $this->assertEquals('no-it-does', $result);
+    }
+
+    /**
      * testWriteQuotedString method
      *
      * @return void
