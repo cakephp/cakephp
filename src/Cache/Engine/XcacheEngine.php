@@ -15,6 +15,7 @@
 namespace Cake\Cache\Engine;
 
 use Cake\Cache\CacheEngine;
+use DateInterval;
 
 /**
  * Xcache storage engine for cache
@@ -135,11 +136,27 @@ class XcacheEngine extends CacheEngine
             $value = serialize($value);
         }
 
-        $duration = $this->_config['duration'];
-        $expires = time() + $duration;
-        xcache_set($key . '_expires', $expires, $duration);
+        if ($ttl === null) {
+            $ttl = $this->_config['duration'];
+        }
 
-        return xcache_set($key, $value, $duration);
+        if ($ttl instanceof DateInterval) {
+            $expires = Chronos::now()
+                ->addYears($ttl->y)
+                ->addMonths($ttl->m)
+                ->addDays($ttl->d)
+                ->addHours($ttl->h)
+                ->addMinutes($ttl->i)
+                ->addSeconds($ttl->s)
+                ->toUnixString();
+            $ttl = $expires - now();
+        } else {
+            $expires = time() + $ttl;
+        }
+
+        xcache_set($key . '_expires', $expires, $ttl);
+
+        return xcache_set($key, $value, $ttl);
     }
 
     /**
