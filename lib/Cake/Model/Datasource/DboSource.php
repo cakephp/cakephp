@@ -2578,7 +2578,12 @@ class DboSource extends DataSource {
 		$virtual = array();
 		foreach ($fields as $field) {
 			$virtualField = $this->name($alias . $this->virtualFieldSeparator . $field);
-			$expression = $this->_quoteFields($Model->getVirtualField($field));
+			$virtualFieldExpression = $Model->getVirtualField($field);
+			if (is_object($virtualFieldExpression) && $virtualFieldExpression->type == 'expression') {
+				$expression = $virtualFieldExpression->value;
+			} else {
+				$expression = $this->_quoteFields($virtualFieldExpression);
+			}
 			$virtual[] = '(' . $expression . ") {$this->alias} {$virtualField}";
 		}
 		return $virtual;
@@ -2887,7 +2892,12 @@ class DboSource extends DataSource {
 
 		if ($Model !== null) {
 			if ($Model->isVirtualField($key)) {
-				$key = $this->_quoteFields($Model->getVirtualField($key));
+				$virtualField = $Model->getVirtualField($key);
+				if (is_object($virtualField) && $virtualField->type == 'expression') {
+					$key = $virtualField->value;
+				} else {
+					$key = $this->_quoteFields($virtualField);
+				}
 				$virtual = true;
 			}
 
