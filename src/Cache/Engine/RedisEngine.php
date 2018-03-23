@@ -193,10 +193,10 @@ class RedisEngine extends CacheEngine
         if ($value !== false && is_string($value)) {
             $result = unserialize($value);
 
-            return $result === false ? null : $result;
+            return $result === false ? $default : $result;
         }
 
-        return $value === false ? null : $value;
+        return $value === false ? $default : $value;
     }
 
     /**

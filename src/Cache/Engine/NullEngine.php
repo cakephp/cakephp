@@ -128,7 +128,7 @@ class NullEngine extends CacheEngine
      */
     public function get($key, $default = null)
     {
-        return false;
+        return $default;
     }
 
     /**
