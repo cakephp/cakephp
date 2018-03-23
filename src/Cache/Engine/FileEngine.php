@@ -116,40 +116,7 @@ class FileEngine extends CacheEngine
      */
     public function write($key, $data)
     {
-        if ($data === '' || !$this->_init) {
-            return false;
-        }
-        $key = $this->_key($key);
-        if ($this->_setKey($key, true) === false) {
-            return false;
-        }
-        $lineBreak = "\n";
-        if ($this->_config['isWindows']) {
-            $lineBreak = "\r\n";
-        }
-        if (!empty($this->_config['serialize'])) {
-            if ($this->_config['isWindows']) {
-                $data = str_replace('\\', '\\\\\\\\', serialize($data));
-            } else {
-                $data = serialize($data);
-            }
-        }
-        $duration = $this->_config['duration'];
-        $expires = time() + $duration;
-        $contents = implode([$expires, $lineBreak, $data, $lineBreak]);
-        if ($this->_config['lock']) {
-            $this->_File->flock(LOCK_EX);
-        }
-        $this->_File->rewind();
-        $success = $this->_File->ftruncate(0) &&
-            $this->_File->fwrite($contents) &&
-            $this->_File->fflush();
-        if ($this->_config['lock']) {
-            $this->_File->flock(LOCK_UN);
-        }
-        $this->_File = null;
-
-        return $success;
+        return $this->set($key, $data, $this->_config['duration']);
     }
 
     /**
@@ -162,7 +129,6 @@ class FileEngine extends CacheEngine
         }
 
         $key = $this->_key($key);
-
         if ($this->_setKey($key, true) === false) {
             return false;
         }
@@ -180,11 +146,12 @@ class FileEngine extends CacheEngine
                 $data = serialize($data);
             }
         }
+        if ($ttl === null) {
+            $ttl = $this->_config['duration'];
+        }
 
-        $duration = $this->_config['duration'];
-        $expires = time() + $duration;
+        $expires = time() + $ttl;
         $contents = implode([$expires, $lineBreak, $data, $lineBreak]);
-
         if ($this->_config['lock']) {
             $this->_File->flock(LOCK_EX);
         }

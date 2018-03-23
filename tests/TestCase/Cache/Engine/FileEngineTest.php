@@ -24,6 +24,10 @@ use Cake\TestSuite\TestCase;
  */
 class FileEngineTest extends TestCase
 {
+    /**
+     * @var \Cake\Cache\Engine\FileEngine
+     */
+    protected $engine;
 
     /**
      * setUp method
@@ -66,6 +70,8 @@ class FileEngineTest extends TestCase
         ];
         Cache::drop('file_test');
         Cache::setConfig('file_test', array_merge($defaults, $config));
+
+        $this->cache = Cache::engine('file_test');
     }
 
     /**
@@ -73,11 +79,11 @@ class FileEngineTest extends TestCase
      *
      * @return void
      */
-    public function testReadAndWriteCacheExpired()
+    public function testReadExpired()
     {
         $this->_configCache(['duration' => 1]);
 
-        $result = Cache::read('test', 'file_test');
+        $result = $this->cache->read('test');
         $expecting = '';
         $this->assertEquals($expecting, $result);
     }
@@ -105,6 +111,28 @@ class FileEngineTest extends TestCase
     }
 
     /**
+     * Test reading and writing to the cache.
+     *
+     * @return void
+     */
+    public function testSetAndGet()
+    {
+        $result = $this->cache->get('test');
+        $expecting = '';
+        $this->assertEquals($expecting, $result);
+
+        $data = 'this is a test of the emergency broadcasting system';
+        $result = $this->cache->set('test', $data);
+        $this->assertFileExists(TMP . 'tests/cake_test');
+
+        $result = $this->cache->get('test');
+        $expecting = $data;
+        $this->assertEquals($expecting, $result);
+
+        $this->cache->delete('test');
+    }
+
+    /**
      * Test read/write on the same cache key. Ensures file handles are re-wound.
      *
      * @return void
@@ -120,6 +148,27 @@ class FileEngineTest extends TestCase
         Cache::delete('rw', 'file_test');
         $this->assertEquals('first write', $result);
         $this->assertEquals('second write', $resultB);
+    }
+
+    /**
+     * test set ttl argument.
+     *
+     * @return void
+     */
+    public function testSetWithTtl()
+    {
+        $this->_configCache(['duration' => 100]);
+
+        $result = $this->cache->get('test');
+        $this->assertFalse($result);
+
+        $data = 'this is a test of the emergency broadcasting system';
+        $result = $this->cache->set('other_test', $data, 1);
+        $this->assertTrue($result);
+
+        sleep(2);
+        $result = $this->cache->get('other_test');
+        $this->assertNull($result);
     }
 
     /**
