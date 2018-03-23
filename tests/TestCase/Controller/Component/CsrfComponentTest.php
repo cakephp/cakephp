@@ -21,12 +21,15 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Security;
 
 /**
  * CsrfComponent test.
  */
 class CsrfComponentTest extends TestCase
 {
+
+    protected $expiry = null;
 
     /**
      * setup
@@ -36,6 +39,8 @@ class CsrfComponentTest extends TestCase
     public function setUp()
     {
         parent::setUp();
+
+        Security::salt('1234567890123456789012345678901234567890');
 
         $controller = $this->getMockBuilder('Cake\Controller\Controller')
             ->setMethods(['redirect'])
@@ -53,6 +58,18 @@ class CsrfComponentTest extends TestCase
     {
         parent::tearDown();
         unset($this->component);
+    }
+
+    protected function encrypt($val)
+    {
+        if (!$this->expiry) {
+            $this->expiry = (new Time('+1 day'))->format('U');
+        }
+        $data = json_encode([
+            'token' => $val,
+            'expiry' => $this->expiry,
+        ]);
+        return bin2hex(Security::encrypt($data, Security::getSalt()));
     }
 
     /**
@@ -113,9 +130,9 @@ class CsrfComponentTest extends TestCase
         $controller->request = new ServerRequest([
             'environment' => [
                 'REQUEST_METHOD' => $method,
-                'HTTP_X_CSRF_TOKEN' => 'nope',
+                'HTTP_X_CSRF_TOKEN' => $this->encrypt('nope'),
             ],
-            'cookies' => ['csrfToken' => 'testing123']
+            'cookies' => ['csrfToken' => $this->encrypt('testing123')]
         ]);
         $controller->response = new Response();
 
@@ -148,13 +165,14 @@ class CsrfComponentTest extends TestCase
         $controller = $this->getMockBuilder('Cake\Controller\Controller')
             ->setMethods(['redirect'])
             ->getMock();
+        $token = $this->encrypt('testing123');
         $controller->request = new ServerRequest([
             'environment' => [
                 'REQUEST_METHOD' => $method,
-                'HTTP_X_CSRF_TOKEN' => 'testing123',
+                'HTTP_X_CSRF_TOKEN' => $token,
             ],
             'post' => ['a' => 'b'],
-            'cookies' => ['csrfToken' => 'testing123']
+            'cookies' => ['csrfToken' => $token]
         ]);
         $controller->response = new Response();
 
@@ -179,10 +197,10 @@ class CsrfComponentTest extends TestCase
         $controller->request = new ServerRequest([
             'environment' => [
                 'REQUEST_METHOD' => $method,
-                'HTTP_X_CSRF_TOKEN' => 'nope',
+                'HTTP_X_CSRF_TOKEN' => $this->encrypt('nope'),
             ],
             'post' => ['a' => 'b'],
-            'cookies' => ['csrfToken' => 'testing123']
+            'cookies' => ['csrfToken' => $this->encrypt('testing123')]
         ]);
         $controller->response = new Response();
 
@@ -202,12 +220,13 @@ class CsrfComponentTest extends TestCase
         $controller = $this->getMockBuilder('Cake\Controller\Controller')
             ->setMethods(['redirect'])
             ->getMock();
+        $token = $this->encrypt('testing123');
         $controller->request = new ServerRequest([
             'environment' => [
                 'REQUEST_METHOD' => $method,
             ],
-            'post' => ['_csrfToken' => 'testing123'],
-            'cookies' => ['csrfToken' => 'testing123']
+            'post' => ['_csrfToken' => $token],
+            'cookies' => ['csrfToken' => $token]
         ]);
         $controller->response = new Response();
 
@@ -233,8 +252,8 @@ class CsrfComponentTest extends TestCase
             'environment' => [
                 'REQUEST_METHOD' => $method,
             ],
-            'post' => ['_csrfToken' => 'nope'],
-            'cookies' => ['csrfToken' => 'testing123']
+            'post' => ['_csrfToken' => $this->encrypt('nope')],
+            'cookies' => ['csrfToken' => $this->encrypt('testing123')]
         ]);
         $controller->response = new Response();
 
@@ -258,7 +277,7 @@ class CsrfComponentTest extends TestCase
                 'REQUEST_METHOD' => 'POST',
             ],
             'post' => [],
-            'cookies' => ['csrfToken' => 'testing123']
+            'cookies' => ['csrfToken' => $this->encrypt('testing123')]
         ]);
         $controller->response = new Response();
 
@@ -282,7 +301,7 @@ class CsrfComponentTest extends TestCase
             'environment' => [
                 'REQUEST_METHOD' => $method
             ],
-            'post' => ['_csrfToken' => 'could-be-valid'],
+            'post' => ['_csrfToken' => $this->encrypt('could-be-valid')],
             'cookies' => []
         ]);
         $controller->response = new Response();
@@ -302,18 +321,19 @@ class CsrfComponentTest extends TestCase
         $controller = $this->getMockBuilder('Cake\Controller\Controller')
             ->setMethods(['redirect'])
             ->getMock();
+        $token = $this->encrypt('testing123');
         $controller->request = new ServerRequest([
             'environment' => ['REQUEST_METHOD' => 'POST'],
             'params' => ['requested' => 1],
-            'post' => ['_csrfToken' => 'nope'],
-            'cookies' => ['csrfToken' => 'testing123']
+            'post' => ['_csrfToken' => $this->encrypt('nope')],
+            'cookies' => ['csrfToken' => $token]
         ]);
         $controller->response = new Response();
 
         $event = new Event('Controller.startup', $controller);
         $result = $this->component->startup($event);
         $this->assertNull($result, 'No error.');
-        $this->assertEquals('testing123', $controller->request->params['_csrfToken']);
+        $this->assertEquals($token, $controller->request->params['_csrfToken']);
     }
 
     /**
@@ -364,10 +384,11 @@ class CsrfComponentTest extends TestCase
         $controller = $this->getMockBuilder('Cake\Controller\Controller')
             ->setMethods(['redirect'])
             ->getMock();
+        $yes = $this->encrypt('yes');
         $controller->request = new ServerRequest([
             'environment' => ['REQUEST_METHOD' => 'POST'],
-            'cookies' => ['csrfToken' => 'nope', 'token' => 'yes'],
-            'post' => ['_csrfToken' => 'no match', 'token' => 'yes'],
+            'cookies' => ['csrfToken' => $this->encrypt('nope'), 'token' => $yes],
+            'post' => ['_csrfToken' => $this->encrypt('no match'), 'token' => $yes],
         ]);
         $controller->response = new Response();
 

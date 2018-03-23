@@ -19,12 +19,15 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Security;
 
 /**
  * Test for CsrfProtection
  */
 class CsrfProtectionMiddlewareTest extends TestCase
 {
+
+    protected $expiry = null;
 
     /**
      * Data provider for HTTP method tests.
@@ -63,6 +66,11 @@ class CsrfProtectionMiddlewareTest extends TestCase
         return function ($request, $response) {
             return $response;
         };
+    }
+
+    public function setUp()
+    {
+        Security::salt('1234567890123456789012345678901234567890');
     }
 
     /**
@@ -122,13 +130,14 @@ class CsrfProtectionMiddlewareTest extends TestCase
      */
     public function testValidTokenInHeader($method)
     {
+        $token = $this->encrypt('testing123');
         $request = new ServerRequest([
             'environment' => [
                 'REQUEST_METHOD' => $method,
-                'HTTP_X_CSRF_TOKEN' => 'testing123',
+                'HTTP_X_CSRF_TOKEN' => $token,
             ],
             'post' => ['a' => 'b'],
-            'cookies' => ['csrfToken' => 'testing123']
+            'cookies' => ['csrfToken' => $token],
         ]);
         $response = new Response();
 
@@ -150,10 +159,10 @@ class CsrfProtectionMiddlewareTest extends TestCase
         $request = new ServerRequest([
             'environment' => [
                 'REQUEST_METHOD' => $method,
-                'HTTP_X_CSRF_TOKEN' => 'nope',
+                'HTTP_X_CSRF_TOKEN' => $this->encrypt('nope'),
             ],
             'post' => ['a' => 'b'],
-            'cookies' => ['csrfToken' => 'testing123']
+            'cookies' => ['csrfToken' => $this->encrypt('testing123')]
         ]);
         $response = new Response();
 
@@ -169,12 +178,13 @@ class CsrfProtectionMiddlewareTest extends TestCase
      */
     public function testValidTokenRequestData($method)
     {
+        $token = $this->encrypt('testing123');
         $request = new ServerRequest([
             'environment' => [
                 'REQUEST_METHOD' => $method,
             ],
-            'post' => ['_csrfToken' => 'testing123'],
-            'cookies' => ['csrfToken' => 'testing123']
+            'post' => ['_csrfToken' => $token],
+            'cookies' => ['csrfToken' => $token]
         ]);
         $response = new Response();
 
@@ -185,6 +195,18 @@ class CsrfProtectionMiddlewareTest extends TestCase
         // No exception means everything is OK
         $middleware = new CsrfProtectionMiddleware();
         $middleware($request, $response, $closure);
+    }
+
+    protected function encrypt($val)
+    {
+        if (!$this->expiry) {
+            $this->expiry = (new Time('+1 day'))->format('U');
+        }
+        $data = json_encode([
+            'token' => $val,
+            'expiry' => $this->expiry,
+        ]);
+        return bin2hex(Security::encrypt($data, Security::getSalt()));
     }
 
     /**
@@ -200,8 +222,8 @@ class CsrfProtectionMiddlewareTest extends TestCase
             'environment' => [
                 'REQUEST_METHOD' => $method,
             ],
-            'post' => ['_csrfToken' => 'nope'],
-            'cookies' => ['csrfToken' => 'testing123']
+            'post' => ['_csrfToken' => $this->encrypt('nope')],
+            'cookies' => ['csrfToken' => $this->encrypt('testing123')]
         ]);
         $response = new Response();
 
@@ -222,7 +244,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
                 'REQUEST_METHOD' => 'POST',
             ],
             'post' => [],
-            'cookies' => ['csrfToken' => 'testing123']
+            'cookies' => ['csrfToken' => $this->encrypt('testing123')]
         ]);
         $response = new Response();
 
@@ -243,9 +265,61 @@ class CsrfProtectionMiddlewareTest extends TestCase
             'environment' => [
                 'REQUEST_METHOD' => $method
             ],
-            'post' => ['_csrfToken' => 'could-be-valid'],
+            'post' => ['_csrfToken' => $this->encrypt('could-be-valid')],
             'cookies' => []
         ]);
+        $response = new Response();
+
+        $middleware = new CsrfProtectionMiddleware();
+        $middleware($request, $response, $this->_getNextClosure());
+    }
+
+    /**
+     * Test that matching arbitrary values sent by client session is rejected
+     *
+     * @dataProvider httpMethodProvider
+     * @return void
+     */
+    public function testArbitraryTokenIsRejected($method)
+    {
+        $token = '12345678901234567890';
+        $this->expectException(\Cake\Network\Exception\InvalidCsrfTokenException::class);
+        $request = new ServerRequest([
+            'environment' => [
+                'REQUEST_METHOD' => $method,
+                'HTTP_X_CSRF_TOKEN' => $token,
+            ],
+            'post' => ['_csrfToken' => $token],
+            'cookies' => ['csrfToken' => $token],
+        ]);
+        $response = new Response();
+
+        $middleware = new CsrfProtectionMiddleware();
+        $middleware($request, $response, $this->_getNextClosure());
+    }
+
+    /**
+     * Test that mismatch of client data vs session is rejected
+     *
+     * @dataProvider httpMethodProvider
+     * @return void
+     */
+    public function testExpiredCookie($method)
+    {
+        $expirySave = $this->expiry;
+        $this->expiry = (new Time('-1 day'))->format('U');
+        $token = $this->encrypt('testing123');
+        $this->expiry = $expirySave;
+        $this->expectException(\Cake\Network\Exception\InvalidCsrfTokenException::class);
+        $request = new ServerRequest([
+            'environment' => [
+                'REQUEST_METHOD' => $method,
+                'HTTP_X_CSRF_TOKEN' => $token,
+            ],
+            'post' => ['_csrfToken' => $token],
+            'cookies' => ['csrfToken' => $token],
+        ]);
+        $request->session()->write('_csrfToken', 'testing123');
         $response = new Response();
 
         $middleware = new CsrfProtectionMiddleware();
@@ -294,10 +368,13 @@ class CsrfProtectionMiddlewareTest extends TestCase
      */
     public function testConfigurationValidate()
     {
+        $nope = $this->encrypt('nope');
+        $yes = $this->encrypt('yes');
+        $nomatch = $this->encrypt('nomatch');
         $request = new ServerRequest([
             'environment' => ['REQUEST_METHOD' => 'POST'],
-            'cookies' => ['csrfToken' => 'nope', 'token' => 'yes'],
-            'post' => ['_csrfToken' => 'no match', 'token' => 'yes'],
+            'cookies' => ['csrfToken' => $nope, 'token' => $yes],
+            'post' => ['_csrfToken' => $nomatch, 'token' => $yes],
         ]);
         $response = new Response();
 
