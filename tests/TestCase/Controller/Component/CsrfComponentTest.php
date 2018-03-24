@@ -69,6 +69,7 @@ class CsrfComponentTest extends TestCase
             'token' => $val,
             'expiry' => $this->expiry,
         ]);
+
         return bin2hex(Security::encrypt($data, Security::getSalt()));
     }
 
