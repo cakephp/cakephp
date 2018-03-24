@@ -98,7 +98,7 @@ class PoFileParser
             } elseif (substr($line, 0, 9) === 'msgctxt "') {
                 $item['context'] = substr($line, 9, -1);
             } elseif ($line[0] === '"') {
-                $continues = isset($item['translated']) ? 'translated' : 'ids';
+                $continues = isset($item['context']) ? 'context' : (isset($item['translated']) ? 'translated' : 'ids');
 
                 if (is_array($item[$continues])) {
                     end($item[$continues]);

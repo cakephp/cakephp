@@ -31,7 +31,7 @@
         "php": ">=5.6.0",
         "ext-intl": "*",
         "ext-mbstring": "*",
-        "cakephp/chronos": "^1.0.0",
+        "cakephp/chronos": "^1.0.1",
         "aura/intl": "^3.0.0",
         "psr/log": "^1.0.0",
         "zendframework/zend-diactoros": "^1.4.0"

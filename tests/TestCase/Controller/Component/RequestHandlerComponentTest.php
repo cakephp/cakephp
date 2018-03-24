@@ -611,6 +611,98 @@ class RequestHandlerComponentTest extends TestCase
     }
 
     /**
+     * Test that input xml is parsed
+     *
+     * @return void
+     */
+    public function testStartupConvertXmlDataWrapper()
+    {
+        $xml = <<<XML
+<?xml version="1.0" encoding="utf-8"?>
+<data>
+<article id="1" title="first"></article>
+</data>
+XML;
+        $this->Controller->request = new ServerRequest(['input' => $xml]);
+        $this->Controller->request->env('REQUEST_METHOD', 'POST');
+        $this->Controller->request->env('CONTENT_TYPE', 'application/xml');
+
+        $event = new Event('Controller.startup', $this->Controller);
+        $this->RequestHandler->startup($event);
+        $expected = [
+            'data' => [
+                'article' => [
+                    '@id' => 1,
+                    '@title' => 'first'
+                ]
+            ]
+        ];
+        $this->assertEquals($expected, $this->Controller->request->data);
+    }
+
+    /**
+     * Test that input xml is parsed
+     *
+     * @return void
+     */
+    public function testStartupConvertXmlElements()
+    {
+        $xml = <<<XML
+<?xml version="1.0" encoding="utf-8"?>
+<article>
+    <id>1</id>
+    <title><![CDATA[first]]></title>
+</article>
+XML;
+        $this->Controller->request = new ServerRequest(['input' => $xml]);
+        $this->Controller->request->env('REQUEST_METHOD', 'POST');
+        $this->Controller->request->env('CONTENT_TYPE', 'application/xml');
+
+        $event = new Event('Controller.startup', $this->Controller);
+        $this->RequestHandler->startup($event);
+        $expected = [
+            'article' => [
+                'id' => 1,
+                'title' => 'first'
+            ]
+        ];
+        $this->assertEquals($expected, $this->Controller->request->data);
+    }
+
+    /**
+     * Test that input xml is parsed
+     *
+     * @return void
+     */
+    public function testStartupConvertXmlIgnoreEntities()
+    {
+        $xml = <<<XML
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE item [
+  <!ENTITY item "item">
+  <!ENTITY item1 "&item;&item;&item;&item;&item;&item;">
+  <!ENTITY item2 "&item1;&item1;&item1;&item1;&item1;&item1;&item1;&item1;&item1;">
+  <!ENTITY item3 "&item2;&item2;&item2;&item2;&item2;&item2;&item2;&item2;&item2;">
+  <!ENTITY item4 "&item3;&item3;&item3;&item3;&item3;&item3;&item3;&item3;&item3;">
+  <!ENTITY item5 "&item4;&item4;&item4;&item4;&item4;&item4;&item4;&item4;&item4;">
+  <!ENTITY item6 "&item5;&item5;&item5;&item5;&item5;&item5;&item5;&item5;&item5;">
+  <!ENTITY item7 "&item6;&item6;&item6;&item6;&item6;&item6;&item6;&item6;&item6;">
+  <!ENTITY item8 "&item7;&item7;&item7;&item7;&item7;&item7;&item7;&item7;&item7;">
+]>
+<item>
+  <description>&item8;</description>
+</item>
+XML;
+        $this->Controller->request = new ServerRequest(['input' => $xml]);
+        $this->Controller->request->env('REQUEST_METHOD', 'POST');
+        $this->Controller->request->env('CONTENT_TYPE', 'application/xml');
+
+        $event = new Event('Controller.startup', $this->Controller);
+        $this->RequestHandler->startup($event);
+        $this->assertEquals([], $this->Controller->request->data);
+    }
+
+    /**
      * Test mapping a new type and having startup process it.
      *
      * @group deprecated
