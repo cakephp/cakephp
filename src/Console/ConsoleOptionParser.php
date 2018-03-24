@@ -121,6 +121,13 @@ class ConsoleOptionParser
     protected $_subcommands = [];
 
     /**
+     * Subcommand sorting option
+     *
+     * @var bool
+     */
+    protected $_subcommandSort = true;
+
+    /**
      * Command name.
      *
      * @var string
@@ -420,6 +427,29 @@ class ConsoleOptionParser
     }
 
     /**
+     * Enables sorting of subcommands
+     *
+     * @param bool $value Whether or not to sort subcommands
+     * @return $this
+     */
+    public function enableSubcommandSort($value = true)
+    {
+        $this->_subcommandSort = (bool)$value;
+
+        return $this;
+    }
+
+    /**
+     * Checks whether or not sorting is enabled for subcommands.
+     *
+     * @return bool
+     */
+    public function isSubcommandSortEnabled()
+    {
+        return $this->_subcommandSort;
+    }
+
+    /**
      * Add an option to the option parser. Options allow you to define optional or required
      * parameters for your console application. Options are defined by the parameters they use.
      *
@@ -607,7 +637,9 @@ class ConsoleOptionParser
             $command = new ConsoleInputSubcommand($options);
         }
         $this->_subcommands[$name] = $command;
-        asort($this->_subcommands);
+        if ($this->_subcommandSort) {
+            asort($this->_subcommands);
+        }
 
         return $this;
     }

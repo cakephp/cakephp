@@ -332,6 +332,7 @@ class RequestHandlerComponent extends Component
 
         if ($this->ext && $isRecognized) {
             $this->renderAs($controller, $this->ext);
+            $response = $controller->response;
         } else {
             $response = $response->withCharset(Configure::read('App.encoding'));
         }

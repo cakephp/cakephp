@@ -22,6 +22,7 @@ if (class_exists('PHPUnit_Runner_Version', false) && !interface_exists('PHPUnit\
 
 use Cake\Core\Configure;
 use Cake\Database\Exception as DatabaseException;
+use Cake\Http\ServerRequest;
 use Cake\Http\Session;
 use Cake\Routing\Router;
 use Cake\TestSuite\Stub\TestExceptionRenderer;
@@ -658,14 +659,19 @@ abstract class IntegrationTestCase extends TestCase
      */
     protected function _url($url)
     {
-        $url = Router::url($url);
+        // re-create URL in ServerRequest's context so
+        // query strings are encoded as expected
+        $request = new ServerRequest(['url' => Router::url($url)]);
+        $url = $request->getRequestTarget();
+
         $query = '';
 
+        $path = parse_url($url, PHP_URL_PATH);
         if (strpos($url, '?') !== false) {
-            list($url, $query) = explode('?', $url, 2);
+            $query = parse_url($url, PHP_URL_QUERY);
         }
 
-        return [$url, $query];
+        return [$path, $query];
     }
 
     /**
