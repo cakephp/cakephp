@@ -16,8 +16,10 @@ namespace Cake\Test\TestCase\Cache\Engine;
 
 use Cake\Cache\Cache;
 use Cake\Cache\Engine\FileEngine;
+use Cake\Cache\Exception\InvalidArgumentException;
 use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
+use LogicException;
 
 /**
  * FileEngineTest class
@@ -119,19 +121,33 @@ class FileEngineTest extends TestCase
     {
         $result = $this->cache->get('test');
         $this->assertEquals('', $result);
+        $this->assertFalse($this->cache->has('test'));
 
         $result = $this->cache->get('test', 'default');
         $this->assertEquals('default', $result);
 
+        $this->assertFalse($this->cache->set('test', ''));
+
         $data = 'this is a test of the emergency broadcasting system';
-        $result = $this->cache->set('test', $data);
+        $this->assertTrue($this->cache->set('test', $data));
+        $this->assertTrue($this->cache->has('test'));
         $this->assertFileExists(TMP . 'tests/cake_test');
 
         $result = $this->cache->get('test');
-        $expecting = $data;
-        $this->assertEquals($expecting, $result);
+        $this->assertEquals($data, $result);
 
         $this->cache->delete('test');
+    }
+
+    /**
+     * Test has() with bad input.
+     *
+     * @return void
+     */
+    public function testHasInvalid()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->cache->has(['thing']);
     }
 
     /**
@@ -711,5 +727,27 @@ class FileEngineTest extends TestCase
 
         $result = Cache::add('test_add_key', 'test data 2', 'file_test');
         $this->assertFalse($result);
+    }
+
+    /**
+     * Test increment
+     *
+     * @return void
+     */
+    public function testIncrement()
+    {
+        $this->expectException(LogicException::class);
+        $this->cache->increment('thing', 1);
+    }
+
+    /**
+     * Test decrement
+     *
+     * @return void
+     */
+    public function testDecrement()
+    {
+        $this->expectException(LogicException::class);
+        $this->cache->decrement('thing', 1);
     }
 }
