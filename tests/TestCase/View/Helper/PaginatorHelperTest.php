@@ -842,7 +842,7 @@ class PaginatorHelperTest extends TestCase
 
         $result = $this->Paginator->sort('name', null, ['url' => $options]);
         $expected = [
-            'a' => ['href' => '/members/posts/index?page=2&amp;sort=name&amp;direction=asc'],
+            'a' => ['href' => '/members/posts/index?sort=name&amp;direction=asc'],
             'Name',
             '/a'
         ];
@@ -951,7 +951,7 @@ class PaginatorHelperTest extends TestCase
 
         $result = $this->Paginator->sort('name');
         $expected = [
-            'a' => ['href' => '/posts/index?article%5Bpage%5D=3&amp;article%5Bsort%5D=name&amp;article%5Bdirection%5D=asc'],
+            'a' => ['href' => '/posts/index?article%5Bsort%5D=name&amp;article%5Bdirection%5D=asc'],
             'Name',
             '/a'
         ];
