@@ -139,6 +139,31 @@ class BodyParserMiddlewareTest extends TestCase
 
         $this->assertAttributeEquals(['application/json' => 'strpos'], 'parsers', $parser);
     }
+
+    /**
+     * test skipping parsing on unknown type
+     *
+     * @dataProvider httpMethodProvider
+     * @return void
+     */
+    public function testInvokeMismatchedType($method)
+    {
+        $parser = new BodyParserMiddleware();
+
+        $request = new ServerRequest([
+            'environment' => [
+                'REQUEST_METHOD' => $method,
+                'CONTENT_TYPE' => 'text/csv',
+            ],
+            'input' => 'a,b,c'
+        ]);
+        $response = new Response();
+        $next = function ($req, $res) {
+            $this->assertEquals([], $req->getParsedBody());
+        };
+        $parser($request, $response, $next);
+    }
+
     /**
      * test parsing on valid http method
      *
