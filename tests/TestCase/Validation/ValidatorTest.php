@@ -62,6 +62,15 @@ class ValidatorTest extends TestCase
         $validator = new Validator();
         $validator->notEmpty('field', 'Custom message');
         $this->assertSame('Custom message', $validator->getNotEmptyMessage('field'));
+
+        $validator = new Validator();
+        $validator->notBlank('field', 'Cannot be blank');
+        $this->assertSame('Cannot be blank', $validator->getNotEmptyMessage('field'));
+
+        $validator = new Validator();
+        $validator->notEmpty('field', 'Cannot be empty');
+        $validator->notBlank('field', 'Cannot be blank');
+        $this->assertSame('Cannot be blank', $validator->getNotEmptyMessage('field'));
     }
 
     /**
