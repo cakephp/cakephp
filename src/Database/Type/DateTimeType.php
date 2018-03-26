@@ -111,7 +111,7 @@ class DateTimeType extends Type implements TypeInterface
     /**
      * Convert DateTime instance into strings.
      *
-     * @param string|int|\DateTime $value The value to convert.
+     * @param string|int|\DateTime|\DateTimeImmutable $value The value to convert.
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return string|null
      */
@@ -128,8 +128,9 @@ class DateTimeType extends Type implements TypeInterface
         $format = (array)$this->_format;
 
         if ($this->dbTimezone !== null
-            && $this->dbTimezone !== $value->getTimezone()->getName()) {
-            $value->setTimezone(new DateTimeZone($this->dbTimezone));
+            && $this->dbTimezone !== $value->getTimezone()->getName()
+        ) {
+            $value = $value->setTimezone(new DateTimeZone($this->dbTimezone));
         }
 
         return $value->format(array_shift($format));
