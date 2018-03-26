@@ -629,8 +629,9 @@ class RequestHandlerComponentTest extends TestCase
 </data>
 XML;
         $this->Controller->request = new ServerRequest(['input' => $xml]);
-        $this->Controller->request->env('REQUEST_METHOD', 'POST');
-        $this->Controller->request->env('CONTENT_TYPE', 'application/xml');
+        $this->Controller->request = $this->Controller->request
+            ->withEnv('REQUEST_METHOD', 'POST')
+            ->withEnv('CONTENT_TYPE', 'application/xml');
 
         $event = new Event('Controller.startup', $this->Controller);
         $this->RequestHandler->startup($event);
@@ -642,7 +643,7 @@ XML;
                 ]
             ]
         ];
-        $this->assertEquals($expected, $this->Controller->request->data);
+        $this->assertEquals($expected, $this->Controller->request->getData());
     }
 
     /**
@@ -660,8 +661,9 @@ XML;
 </article>
 XML;
         $this->Controller->request = new ServerRequest(['input' => $xml]);
-        $this->Controller->request->env('REQUEST_METHOD', 'POST');
-        $this->Controller->request->env('CONTENT_TYPE', 'application/xml');
+        $this->Controller->request = $this->Controller->request
+            ->withEnv('REQUEST_METHOD', 'POST')
+            ->withEnv('CONTENT_TYPE', 'application/xml');
 
         $event = new Event('Controller.startup', $this->Controller);
         $this->RequestHandler->startup($event);
@@ -671,7 +673,7 @@ XML;
                 'title' => 'first'
             ]
         ];
-        $this->assertEquals($expected, $this->Controller->request->data);
+        $this->assertEquals($expected, $this->Controller->request->getData());
     }
 
     /**
@@ -699,12 +701,13 @@ XML;
 </item>
 XML;
         $this->Controller->request = new ServerRequest(['input' => $xml]);
-        $this->Controller->request->env('REQUEST_METHOD', 'POST');
-        $this->Controller->request->env('CONTENT_TYPE', 'application/xml');
+        $this->Controller->request = $this->Controller->request
+            ->withEnv('REQUEST_METHOD', 'POST')
+            ->withEnv('CONTENT_TYPE', 'application/xml');
 
         $event = new Event('Controller.startup', $this->Controller);
         $this->RequestHandler->startup($event);
-        $this->assertEquals([], $this->Controller->request->data);
+        $this->assertEquals([], $this->Controller->request->getData());
     }
 
     /**
