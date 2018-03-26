@@ -442,7 +442,7 @@ class EntityContext implements ContextInterface
         $ruleset = $validator->field($fieldName);
 
         $requiredMessage = $validator->getRequiredMessage($fieldName);
-        $emptyMessage = $validator->getEmptyMessage($fieldName);
+        $emptyMessage = $validator->getNotEmptyMessage($fieldName);
 
         if ($ruleset->isPresenceRequired() && $requiredMessage) {
             return $requiredMessage;

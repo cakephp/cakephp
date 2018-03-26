@@ -136,7 +136,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             $isEmpty = $this->_fieldIsEmpty($data[$name]);
 
             if (!$canBeEmpty && $isEmpty) {
-                $errors[$name]['_empty'] = $this->getEmptyMessage($name);
+                $errors[$name]['_empty'] = $this->getNotEmptyMessage($name);
                 continue;
             }
 
@@ -1962,12 +1962,12 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
-     * Gets the empty message for a field
+     * Gets the notEmpty message for a field
      *
      * @param string $field Field name
      * @return string
      */
-    public function getEmptyMessage($field)
+    public function getNotEmptyMessage($field)
     {
         $defaultMessage = static::DEFAULT_EMPTY_MESSAGE;
         if ($this->_useI18n) {

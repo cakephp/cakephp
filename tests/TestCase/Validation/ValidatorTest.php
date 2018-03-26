@@ -46,22 +46,22 @@ class ValidatorTest extends TestCase
     }
 
     /**
-     * tests getEmptyMessage
+     * tests getNotEmptyMessage
      *
      * @return void
      */
-    public function testGetEmptyMessage()
+    public function testGetNotEmptyMessage()
     {
         $validator = new Validator();
-        $this->assertSame('This field cannot be left empty', $validator->getEmptyMessage('field'));
+        $this->assertSame('This field cannot be left empty', $validator->getNotEmptyMessage('field'));
 
         $validator = new Validator();
         $validator->requirePresence('field');
-        $this->assertSame('This field cannot be left empty', $validator->getEmptyMessage('field'));
+        $this->assertSame('This field cannot be left empty', $validator->getNotEmptyMessage('field'));
 
         $validator = new Validator();
         $validator->notEmpty('field', 'Custom message');
-        $this->assertSame('Custom message', $validator->getEmptyMessage('field'));
+        $this->assertSame('Custom message', $validator->getNotEmptyMessage('field'));
     }
 
     /**
