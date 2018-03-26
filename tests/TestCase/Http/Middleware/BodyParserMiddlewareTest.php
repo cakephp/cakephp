@@ -213,6 +213,29 @@ class BodyParserMiddlewareTest extends TestCase
     }
 
     /**
+     * test parsing on valid http method with charset
+     *
+     * @return void
+     */
+    public function testInvokeParseStripCharset()
+    {
+        $parser = new BodyParserMiddleware();
+
+        $request = new ServerRequest([
+            'environment' => [
+                'REQUEST_METHOD' => 'POST',
+                'CONTENT_TYPE' => 'application/json; charset=utf-8',
+            ],
+            'input' => '{"title": "yay"}'
+        ]);
+        $response = new Response();
+        $next = function ($req, $res) {
+            $this->assertEquals(['title' => 'yay'], $req->getParsedBody());
+        };
+        $parser($request, $response, $next);
+    }
+
+    /**
      * test parsing on ignored http method
      *
      * @dataProvider safeHttpMethodProvider
