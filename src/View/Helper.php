@@ -181,6 +181,7 @@ class Helper implements EventListenerInterface
         // We cannot change the key here in 3.x, but the behavior is inverted in this case
         $escape = isset($options['escape']) && $options['escape'] === false;
         if ($escape) {
+            /** @var string $confirm */
             $confirm = h($confirm);
         }
 

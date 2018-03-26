@@ -233,12 +233,13 @@ class RequestHandlerComponent extends Component
     public function convertXml($xml)
     {
         try {
-            $xml = Xml::build($xml, ['readFile' => false]);
-            if (isset($xml->data)) {
-                return Xml::toArray($xml->data);
+            $xml = Xml::build($xml, ['return' => 'domdocument', 'readFile' => false]);
+            // We might not get child nodes if there are nested inline entities.
+            if ($xml->childNodes->length > 0) {
+                return Xml::toArray($xml);
             }
 
-            return Xml::toArray($xml);
+            return [];
         } catch (XmlException $e) {
             return [];
         }
@@ -331,6 +332,7 @@ class RequestHandlerComponent extends Component
 
         if ($this->ext && $isRecognized) {
             $this->renderAs($controller, $this->ext);
+            $response = $controller->response;
         } else {
             $response = $response->withCharset(Configure::read('App.encoding'));
         }

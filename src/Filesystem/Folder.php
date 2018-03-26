@@ -172,7 +172,7 @@ class Folder
     public function cd($path)
     {
         $path = $this->realpath($path);
-        if (is_dir($path)) {
+        if ($path !== false && is_dir($path)) {
             return $this->path = $path;
         }
 
@@ -923,7 +923,7 @@ class Folder
      * Get the real path (taking ".." and such into account)
      *
      * @param string $path Path to resolve
-     * @return string|bool The resolved path
+     * @return string|false The resolved path
      */
     public function realpath($path)
     {

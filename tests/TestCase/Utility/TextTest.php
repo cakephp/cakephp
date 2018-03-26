@@ -538,6 +538,22 @@ TEXT;
     }
 
     /**
+     * test isMultibyte() checking multibyte characters
+     *
+     * @return void
+     */
+    public function testIsMultibyteString()
+    {
+        $text = 'This is a test string without multi-bytes';
+        $result = Text::isMultibyte($text);
+        $this->assertFalse($result);
+
+        $text = 'This is a test string with multi-bytes 这是永远不会结束的歌曲';
+        $result = Text::isMultibyte($text);
+        $this->assertTrue($result);
+    }
+
+    /**
      * testTruncate method
      *
      * @return void
@@ -844,6 +860,11 @@ HTML;
 
             $text = 'This <strong>is</strong> a <a href="#">test</a> and <abbr>some</abbr> other <a href="#">text</a>';
             $expected = 'This <strong>is</strong> a test and <abbr>some</abbr> other text';
+            $result = $this->Text->stripLinks($text);
+            $this->assertEquals($expected, $result);
+
+            $text = 'This <strong><a href="#">is</a></strong> a <a href="javascript:void(0)">test</a> text';
+            $expected = 'This <strong>is</strong> a test text';
             $result = $this->Text->stripLinks($text);
             $this->assertEquals($expected, $result);
 

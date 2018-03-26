@@ -825,7 +825,7 @@ trait EntityTrait
     /**
      * Checks if the entity is dirty or if a single property of it is dirty.
      *
-     * @param string $property the field to check the status for
+     * @param string|null $property The field to check the status for. Null for the whole entity.
      * @return bool Whether the property was changed or not
      */
     public function isDirty($property = null)

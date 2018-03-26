@@ -365,7 +365,7 @@ class TimeHelper extends Helper
      * @param string|null $format Intl compatible format string.
      * @param bool|string $invalid Default value to display on invalid dates
      * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
-     * @return string Formatted and translated date string
+     * @return string|false Formatted and translated date string or value for `$invalid` on failure.
      * @throws \Exception When the date cannot be parsed
      * @see \Cake\I18n\Time::i18nFormat()
      */

@@ -210,7 +210,9 @@ class Server implements EventDispatcherInterface
     public function setEventManager(EventManager $events)
     {
         if ($this->app instanceof PluginApplicationInterface) {
-            return $this->app->setEventManager($events);
+            $this->app->setEventManager($events);
+
+            return $this;
         }
 
         throw new InvalidArgumentException('Cannot set the event manager, the application does not support events.');

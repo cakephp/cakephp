@@ -46,6 +46,11 @@ class RequestHandlerComponentTest extends TestCase
     public $RequestHandler;
 
     /**
+     * @var ServerRequest
+     */
+    public $request;
+
+    /**
      * Backup of $_SERVER
      *
      * @var array
@@ -604,6 +609,101 @@ class RequestHandlerComponentTest extends TestCase
                 'CONTENT_TYPE' => 'application/xml'
             ]
         ]);
+
+        $event = new Event('Controller.startup', $this->Controller);
+        $this->RequestHandler->startup($event);
+        $this->assertEquals([], $this->Controller->request->getData());
+    }
+
+    /**
+     * Test that input xml is parsed
+     *
+     * @return void
+     */
+    public function testStartupConvertXmlDataWrapper()
+    {
+        $xml = <<<XML
+<?xml version="1.0" encoding="utf-8"?>
+<data>
+<article id="1" title="first"></article>
+</data>
+XML;
+        $this->Controller->request = new ServerRequest(['input' => $xml]);
+        $this->Controller->request = $this->Controller->request
+            ->withEnv('REQUEST_METHOD', 'POST')
+            ->withEnv('CONTENT_TYPE', 'application/xml');
+
+        $event = new Event('Controller.startup', $this->Controller);
+        $this->RequestHandler->startup($event);
+        $expected = [
+            'data' => [
+                'article' => [
+                    '@id' => 1,
+                    '@title' => 'first'
+                ]
+            ]
+        ];
+        $this->assertEquals($expected, $this->Controller->request->getData());
+    }
+
+    /**
+     * Test that input xml is parsed
+     *
+     * @return void
+     */
+    public function testStartupConvertXmlElements()
+    {
+        $xml = <<<XML
+<?xml version="1.0" encoding="utf-8"?>
+<article>
+    <id>1</id>
+    <title><![CDATA[first]]></title>
+</article>
+XML;
+        $this->Controller->request = new ServerRequest(['input' => $xml]);
+        $this->Controller->request = $this->Controller->request
+            ->withEnv('REQUEST_METHOD', 'POST')
+            ->withEnv('CONTENT_TYPE', 'application/xml');
+
+        $event = new Event('Controller.startup', $this->Controller);
+        $this->RequestHandler->startup($event);
+        $expected = [
+            'article' => [
+                'id' => 1,
+                'title' => 'first'
+            ]
+        ];
+        $this->assertEquals($expected, $this->Controller->request->getData());
+    }
+
+    /**
+     * Test that input xml is parsed
+     *
+     * @return void
+     */
+    public function testStartupConvertXmlIgnoreEntities()
+    {
+        $xml = <<<XML
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE item [
+  <!ENTITY item "item">
+  <!ENTITY item1 "&item;&item;&item;&item;&item;&item;">
+  <!ENTITY item2 "&item1;&item1;&item1;&item1;&item1;&item1;&item1;&item1;&item1;">
+  <!ENTITY item3 "&item2;&item2;&item2;&item2;&item2;&item2;&item2;&item2;&item2;">
+  <!ENTITY item4 "&item3;&item3;&item3;&item3;&item3;&item3;&item3;&item3;&item3;">
+  <!ENTITY item5 "&item4;&item4;&item4;&item4;&item4;&item4;&item4;&item4;&item4;">
+  <!ENTITY item6 "&item5;&item5;&item5;&item5;&item5;&item5;&item5;&item5;&item5;">
+  <!ENTITY item7 "&item6;&item6;&item6;&item6;&item6;&item6;&item6;&item6;&item6;">
+  <!ENTITY item8 "&item7;&item7;&item7;&item7;&item7;&item7;&item7;&item7;&item7;">
+]>
+<item>
+  <description>&item8;</description>
+</item>
+XML;
+        $this->Controller->request = new ServerRequest(['input' => $xml]);
+        $this->Controller->request = $this->Controller->request
+            ->withEnv('REQUEST_METHOD', 'POST')
+            ->withEnv('CONTENT_TYPE', 'application/xml');
 
         $event = new Event('Controller.startup', $this->Controller);
         $this->RequestHandler->startup($event);
@@ -1339,5 +1439,20 @@ class RequestHandlerComponentTest extends TestCase
         $event = new Event('Controller.beforeRender', $this->Controller);
         $this->RequestHandler->beforeRender($event);
         $this->assertEquals('text/plain', $this->Controller->response->getType());
+    }
+
+    /**
+     * tests beforeRender automatically uses renderAs when a supported extension is found
+     *
+     * @return void
+     */
+    public function testBeforeRenderAutoRenderAs()
+    {
+        $this->Controller->setRequest($this->request->withParam('_ext', 'csv'));
+        $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
+
+        $event = new Event('Controller.beforeRender', $this->Controller);
+        $this->RequestHandler->beforeRender($event);
+        $this->assertEquals('text/csv', $this->Controller->response->getType());
     }
 }

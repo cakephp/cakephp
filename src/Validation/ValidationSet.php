@@ -54,7 +54,7 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param bool|string|callable|null $validatePresent Deprecated since 3.6.0 ValidationSet::isPresenceRequired() is deprecated as a setter
      * Use ValidationSet::requirePresence() instead.
-     * @return bool|string
+     * @return bool|string|callable
      */
     public function isPresenceRequired($validatePresent = null)
     {

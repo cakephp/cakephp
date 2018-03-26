@@ -690,6 +690,23 @@ class ConsoleOptionParserTest extends TestCase
     }
 
     /**
+     * test addSubcommand without sorting applied.
+     */
+    public function testAddSubcommandSort()
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $this->assertEquals(true, $parser->isSubcommandSortEnabled());
+        $parser->enableSubcommandSort(false);
+        $this->assertEquals(false, $parser->isSubcommandSortEnabled());
+        $parser->addSubcommand(new ConsoleInputSubcommand('betaTest'), []);
+        $parser->addSubcommand(new ConsoleInputSubcommand('alphaTest'), []);
+        $result = $parser->subcommands();
+        $this->assertCount(2, $result);
+        $firstResult = key($result);
+        $this->assertEquals('betaTest', $firstResult);
+    }
+
+    /**
      * test removeSubcommand with an object.
      *
      * @return void

@@ -15,7 +15,8 @@ msgstr ""
 msgid "Plural Rule 1"
 msgstr "Plural Rule 1 (translated)"
 
-msgctxt "This is the context"
+msgctxt ""
+"This is the context"
 msgid "%d = 1"
 msgstr "First Context trasnlation"
 

@@ -126,7 +126,7 @@ class SqlserverTest extends TestCase
             'settings' => ['config1' => 'value1', 'config2' => 'value2'],
         ];
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
-            ->setMethods(['_connect', 'connection'])
+            ->setMethods(['_connect', 'setConnection', 'getConnection'])
             ->setConstructorArgs([$config])
             ->getMock();
         $dsn = 'sqlsrv:Server=foo;Database=bar;MultipleActiveResultSets=false';
@@ -165,7 +165,7 @@ class SqlserverTest extends TestCase
         $driver->expects($this->once())->method('_connect')
             ->with($dsn, $expected);
 
-        $driver->expects($this->any())->method('connection')
+        $driver->expects($this->any())->method('getConnection')
             ->will($this->returnValue($connection));
 
         $driver->connect();
