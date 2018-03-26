@@ -1171,7 +1171,7 @@ class CollectionTest extends TestCase
     {
         $collection = new Collection([1, 2, 3]);
         $combined = $collection->prepend(['a']);
-        $this->assertEquals(['a', 1, 2, 3], $combined->toArray());
+        $this->assertEquals(['a', 1, 2, 3], $combined->toList());
 
         $collection = new Collection(['c' => 3, 'd' => 4]);
         $combined = $collection->prepend(['a' => 1, 'b' => 2]);
