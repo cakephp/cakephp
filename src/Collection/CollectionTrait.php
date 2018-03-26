@@ -414,6 +414,42 @@ trait CollectionTrait
     /**
      * {@inheritDoc}
      */
+    public function appendItem($item, $key = null)
+    {
+        if ($key !== null) {
+            $data = [$key => $item];
+        } else {
+            $data = [$item];
+        }
+
+        return $this->append($data);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function prepend($items)
+    {
+        return (new Collection($items))->append($this);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function prependItem($item, $key = null)
+    {
+        if ($key !== null) {
+            $data = [$key => $item];
+        } else {
+            $data = [$item];
+        }
+
+        return $this->prepend($data);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function combine($keyPath, $valuePath, $groupPath = null)
     {
         $options = [
