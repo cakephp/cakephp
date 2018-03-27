@@ -92,9 +92,9 @@ class DateTimeType extends Type implements TypeInterface
     protected $_className;
 
     /**
-     * Timezone string.
+     * Timezone instance.
      *
-     * @var string|null
+     * @var \DateTimeZone|null
      */
     protected $dbTimezone;
 
@@ -128,9 +128,9 @@ class DateTimeType extends Type implements TypeInterface
         $format = (array)$this->_format;
 
         if ($this->dbTimezone !== null
-            && $this->dbTimezone !== $value->getTimezone()->getName()
+            && $this->dbTimezone->getName() !== $value->getTimezone()->getName()
         ) {
-            $value = $value->setTimezone(new DateTimeZone($this->dbTimezone));
+            $value = $value->setTimezone($this->dbTimezone);
         }
 
         return $value->format(array_shift($format));
@@ -143,11 +143,14 @@ class DateTimeType extends Type implements TypeInterface
      * datetime string for saving to database. If `null` no timezone conversion
      * will be done.
      *
-     * @param string|null $timezone Database timezone.
+     * @param string|\DateTimeZone|null $timezone Database timezone.
      * @return $this
      */
     public function setTimezone($timezone)
     {
+        if (is_string($timezone)) {
+            $timezone = new DateTimeZone($timezone);
+        }
         $this->dbTimezone = $timezone;
 
         return $this;
