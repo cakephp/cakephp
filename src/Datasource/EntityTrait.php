@@ -1292,7 +1292,7 @@ trait EntityTrait
      */
     public function __toString()
     {
-        return json_encode($this, JSON_PRETTY_PRINT);
+        return json_encode($this, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     }
 
     /**
