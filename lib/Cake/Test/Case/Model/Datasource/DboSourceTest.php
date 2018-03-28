@@ -1658,7 +1658,7 @@ class DboSourceTest extends CakeTestCase {
 	public function testConditionKeysToStringVirtualFieldExpression() {
 		$Article = ClassRegistry::init('Article');
 		$Article->virtualFields = array(
-			'extra' => DboSource::expression('something virtual')
+			'extra' => $Article->getDataSource()->expression('something virtual')
 		);
 		$conn = $this->getMock('MockPDO', array('quote'));
 		$db = new DboTestSource();
