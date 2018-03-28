@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Filesystem;
 use Cake\Filesystem\File;
 use Cake\Filesystem\Folder;
 use Cake\TestSuite\TestCase;
+use SplFileInfo;
 
 /**
  * FileTest class
@@ -142,15 +143,33 @@ class FileTest extends TestCase
      * @dataProvider baseNameValueProvider
      * @return void
      */
-    public function testBasename($path, $suffix)
+    public function testBasename($path, $suffix, $isRoot)
     {
-        $class = new \ReflectionClass('Cake\Filesystem\File');
-        $method = $class->getMethod('_basename');
-        $method->setAccessible(true);
+        if (!$isRoot) {
+            $path = TMP . 'tests/permissions' . $path;
+        }
+        $File = new File($path, false);
+
+        //some of paths is directory like '/etc/sudoers.d'
+        if (!is_dir($path)) {
+            //test the name after running __construct()
+            $result = $File->name;
+            $expecting = basename($path);
+            $this->assertEquals($expecting, $result);
+        }
+
+        //test the name()
+        $splInfo = new SplFileInfo($path);
+        $File->name = ltrim($splInfo->getFilename(), '/\\');
         if ($suffix === null) {
-            $this->assertEquals(basename($path), $method->invokeArgs(null, [$path]));
+            $File->info();//to set and unset 'extension' in bellow
+            if (isset($File->info['extension'])) {
+                unset($File->info['extension']);
+            }
+            $this->assertEquals(basename($path), $File->name());
         } else {
-            $this->assertEquals(basename($path, $suffix), $method->invokeArgs(null, [$path, $suffix]));
+            $File->info['extension'] = $suffix;
+            $this->assertEquals(basename($path, '.' . $suffix), $File->name());
         }
     }
 
@@ -162,28 +181,28 @@ class FileTest extends TestCase
     public function baseNameValueProvider()
     {
         return [
-            ['folder/نام.txt', null],
-            ['folder/نام فارسی.txt', null],
-            ['نام.txt', null],
-            ['نام فارسی.txt', null],
-            ['/نام.txt', null],
-            ['/نام فارسی.txt', null],
+            ['folder/نام.txt', null, false],
+            ['folder/نام فارسی.txt', null, false],
+            ['نام.txt', null, true],
+            ['نام فارسی.txt', null, true],
+            ['/نام.txt', null, true],
+            ['/نام فارسی.txt', null, true],
             //
-            ['folder/نام.txt', '.txt'],
-            ['folder/نام فارسی.txt', '.txt'],
-            ['نام.txt', '.txt'],
-            ['نام فارسی.txt', '.txt'],
-            ['/نام.txt', '.txt'],
-            ['/نام فارسی.txt', '.txt'],
+            ['folder/نام.txt', 'txt', false],
+            ['folder/نام فارسی.txt', 'txt', false],
+            ['نام.txt', 'txt', true],
+            ['نام فارسی.txt', 'txt', true],
+            ['/نام.txt', 'txt', true],
+            ['/نام فارسی.txt', 'txt', true],
             //
-            ['abcde.ab', '.abe'],
-            ['/etc/sudoers.d', null],
-            ['/etc/.d', '.d'],
-            ['/etc/sudoers.d', '.d'],
-            ['/etc/passwd', null],
-            ['/etc/', null],
-            ['.', null],
-            ['/', null],
+            ['abcde.ab', 'abe', false],
+            ['/etc/sudoers.d', null, true],
+            ['/etc/.d', 'd', true],
+            ['/etc/sudoers.d', 'd', true],
+            ['/etc/passwd', null, true],
+            ['/etc/', null, true],
+            ['.', null, true],
+            ['/', null, true],
         ];
     }
 
