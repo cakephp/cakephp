@@ -568,7 +568,7 @@ class RequestHandlerComponentTest extends TestCase
      * @return void
      * @triggers Controller.startup $this->Controller
      */
-    public function testStartupProcessData()
+    public function testStartupProcessDataInvalid()
     {
         $this->Controller->request = new ServerRequest([
             'environment' => [
@@ -586,10 +586,28 @@ class RequestHandlerComponentTest extends TestCase
         $this->Controller->request = $this->Controller->request->withBody($stream);
         $this->RequestHandler->startup($event);
         $this->assertEquals(['invalid'], $this->Controller->request->getData());
+    }
+
+    /**
+     * Test that processing data results in an array.
+     *
+     * @return void
+     * @triggers Controller.startup $this->Controller
+     */
+    public function testStartupProcessData()
+    {
+        $this->Controller->request = new ServerRequest([
+            'environment' => [
+                'REQUEST_METHOD' => 'POST',
+                'CONTENT_TYPE' => 'application/json'
+            ]
+        ]);
 
         $stream = new Stream('php://memory', 'w');
         $stream->write('{"valid":true}');
         $this->Controller->request = $this->Controller->request->withBody($stream);
+        $event = new Event('Controller.startup', $this->Controller);
+
         $this->RequestHandler->startup($event);
         $this->assertEquals(['valid' => true], $this->Controller->request->getData());
     }
@@ -735,6 +753,34 @@ XML;
             ];
             $this->assertEquals($expected, $this->Controller->request->getData());
         });
+    }
+
+    /**
+     * Test that data isn't processed when parsed data already exists.
+     *
+     * @return void
+     * @triggers Controller.startup $this->Controller
+     */
+    public function testStartupSkipDataProcess()
+    {
+        $this->Controller->request = new ServerRequest([
+            'environment' => [
+                'REQUEST_METHOD' => 'POST',
+                'CONTENT_TYPE' => 'application/json'
+            ]
+        ]);
+
+        $event = new Event('Controller.startup', $this->Controller);
+        $this->RequestHandler->startup($event);
+        $this->assertEquals([], $this->Controller->request->getData());
+
+        $stream = new Stream('php://memory', 'w');
+        $stream->write('{"new": "data"}');
+        $this->Controller->request = $this->Controller->request
+            ->withBody($stream)
+            ->withParsedBody(['old' => 'news']);
+        $this->RequestHandler->startup($event);
+        $this->assertEquals(['old' => 'news'], $this->Controller->request->getData());
     }
 
     /**
