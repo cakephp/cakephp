@@ -69,6 +69,11 @@ class FormDataTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
+    /**
+     * Test addMany method.
+     *
+     * @return void
+     */
     public function testAddMany()
     {
         $data = new FormData();
