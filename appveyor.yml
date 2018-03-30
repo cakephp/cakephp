@@ -27,7 +27,7 @@ init:
 
 install:
   - cd c:\
-  - curl -fsS https://windows.php.net/downloads/releases/php-5.6.34-nts-Win32-VC11-x86.zip -o php.zip
+  - curl -fsS https://windows.php.net/downloads/releases/php-5.6.35-nts-Win32-VC11-x86.zip -o php.zip
   - 7z x php.zip -oc:\php > nul
   - curl -fsS https://dl.dropboxusercontent.com/s/euip490d9183jkr/SQLSRV32.cab -o sqlsrv.cab
   - 7z x sqlsrv.cab -oc:\php\ext php*_56_nts.dll > nul
