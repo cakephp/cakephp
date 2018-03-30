@@ -363,7 +363,7 @@ class File
      */
     protected static function _basename($path, $ext = null)
     {
-        //check for multibyte string and use basename() if not found
+        // check for multibyte string and use basename() if not found
         if (mb_strlen($path) === strlen($path)) {
             return ($ext === null)? basename($path) : basename($path, $ext);
         }

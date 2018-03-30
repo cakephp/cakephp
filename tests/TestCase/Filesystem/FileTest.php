@@ -140,6 +140,7 @@ class FileTest extends TestCase
 
     /**
      * Test _basename method
+     *
      * @dataProvider baseNameValueProvider
      * @return void
      */
@@ -150,22 +151,21 @@ class FileTest extends TestCase
         }
         $File = new File($path, false);
 
-        //some of paths is directory like '/etc/sudoers.d'
+        // some paths are directories like '/etc/sudoers.d'
         if (!is_dir($path)) {
-            //test the name after running __construct()
+            // Check the name after running __construct()
             $result = $File->name;
             $expecting = basename($path);
             $this->assertEquals($expecting, $result);
         }
 
-        //test the name()
+        // Check name()
         $splInfo = new SplFileInfo($path);
         $File->name = ltrim($splInfo->getFilename(), '/\\');
         if ($suffix === null) {
             $File->info();//to set and unset 'extension' in bellow
-            if (isset($File->info['extension'])) {
-                unset($File->info['extension']);
-            }
+            unset($File->info['extension']);
+
             $this->assertEquals(basename($path), $File->name());
         } else {
             $File->info['extension'] = $suffix;
