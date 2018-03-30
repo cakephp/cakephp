@@ -69,6 +69,22 @@ class FormDataTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
+    public function testAddMany()
+    {
+        $data = new FormData();
+        $array = [
+            'key' => 'value',
+            'empty' => '',
+            'int' => '1',
+            'float' => '2.3'
+        ];
+        $data->addMany($array);
+        $this->assertCount(4, $data);
+        $result = (string)$data;
+        $expected = 'key=value&empty=&int=1&float=2.3';
+        $this->assertEquals($expected, $result);
+    }
+
     /**
      * Test adding a part object.
      *
