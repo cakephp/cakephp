@@ -840,12 +840,12 @@ class PaginatorHelperTest extends TestCase
     public function urlGenerationResetsToPage1Provider()
     {
         return [
-            'Sorting the field currently sorted asc' => [
+            'Sorting the field currently sorted asc, asc' => [
                 'name',
                 ['sort' => 'name', 'direction' => 'asc'],
                 '<a class="asc" href="/index?sort=name&amp;direction=asc">Name</a>'
             ],
-            'Sorting the field currently sorted desc' => [
+            'Sorting the field currently sorted asc, desc' => [
                 'name',
                 ['sort' => 'name', 'direction' => 'desc'],
                 '<a class="asc" href="/index?sort=name&amp;direction=desc">Name</a>'
