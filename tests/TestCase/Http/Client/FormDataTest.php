@@ -70,6 +70,27 @@ class FormDataTest extends TestCase
     }
 
     /**
+     * Test addMany method.
+     *
+     * @return void
+     */
+    public function testAddMany()
+    {
+        $data = new FormData();
+        $array = [
+            'key' => 'value',
+            'empty' => '',
+            'int' => '1',
+            'float' => '2.3'
+        ];
+        $data->addMany($array);
+        $this->assertCount(4, $data);
+        $result = (string)$data;
+        $expected = 'key=value&empty=&int=1&float=2.3';
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
      * Test adding a part object.
      *
      * @return void
@@ -214,5 +235,27 @@ class FormDataTest extends TestCase
             ''
         ];
         $this->assertEquals(implode("\r\n", $expected), $result);
+    }
+
+    /**
+     * Test contentType method.
+     *
+     * @return void
+     */
+    public function testContentType()
+    {
+        $data = new FormData();
+        $data->add('key', 'value');
+        $result = $data->contentType();
+        $expected = 'application/x-www-form-urlencoded';
+        $this->assertEquals($expected, $result);
+
+        $file = CORE_PATH . 'VERSION.txt';
+        $data = new FormData();
+        $data->addFile('upload', fopen($file, 'r'));
+        $boundary = $data->boundary();
+        $result = $data->contentType();
+        $expected = 'multipart/form-data; boundary="' . $boundary . '"';
+        $this->assertEquals($expected, $result);
     }
 }
