@@ -4720,7 +4720,7 @@ class QueryTest extends TestCase
     }
 
     /**
-     * Test that calling fetchObject returns a \StdClass object
+     * Test that calling fetchObject returns a \stdClass object
      * @return void
      */
     public function testFetchObject()
@@ -4737,7 +4737,7 @@ class QueryTest extends TestCase
             ->limit(1)
             ->execute()
             ->fetchObject();
-        $this->assertInstanceOf(\StdClass::class, $results);
+        $this->assertInstanceOf(\stdClass::class, $results);
         $this->assertObjectHasAttribute('id', $results);
         $this->assertObjectHasAttribute('user_id', $results);
         $this->assertObjectHasAttribute('is_active', $results);
@@ -4812,7 +4812,7 @@ class QueryTest extends TestCase
             ->from('profiles');
         $statement = $query->execute();
         $results = $statement->fetchAllObjects();
-        $this->assertInstanceOf(\StdClass::class, $results[0]);
+        $this->assertInstanceOf(\stdClass::class, $results[0]);
         $this->assertEquals('2', $results[1]->id);
     }
 }

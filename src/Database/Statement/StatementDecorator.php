@@ -48,7 +48,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      */
     const FETCH_TYPE_ASSOC = 'assoc';
     /**
-     * Used to designate that objects of \StdClass be returned in a result when calling fetch methods
+     * Used to designate that objects of \stdClass be returned in a result when calling fetch methods
      *
      * @var string
      */
@@ -216,7 +216,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
     }
 
     /**
-     * Returns the next row as a StdClass object
+     * Returns the next row as a stdClass object
      *
      * @return array|false Result array containing columns and values in an anonymous object or false if no results
      */
@@ -269,9 +269,9 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
     }
 
     /**
-     * Returns an array of \StdClass objects or false
+     * Returns an array of \stdClass objects or false
      *
-     * @return \StdClass[]|false
+     * @return \stdClass[]|false
      */
     public function fetchAllObjects()
     {
