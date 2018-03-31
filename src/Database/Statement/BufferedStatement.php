@@ -92,7 +92,6 @@ class BufferedStatement extends StatementDecorator
         }
 
         $record = parent::fetch($type);
-
         if ($record === false) {
             $this->_allFetched = true;
             $this->_counter = $this->_count + 1;
@@ -104,6 +103,22 @@ class BufferedStatement extends StatementDecorator
         $this->_count++;
 
         return $this->_records[] = $record;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function fetchAssoc()
+    {
+        return $this->fetch(parent::FETCH_TYPE_ASSOC);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function fetchobject()
+    {
+        return $this->fetch(parent::FETCH_TYPE_OBJ);
     }
 
     /**

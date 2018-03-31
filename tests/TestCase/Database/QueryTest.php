@@ -4697,4 +4697,122 @@ class QueryTest extends TestCase
         $pattern = str_replace('>', '[`"\]]' . $optional, $pattern);
         $this->assertRegExp('#' . $pattern . '#', $query);
     }
+
+    /**
+     * Test that calling fetchAssoc return an associated array.
+     * @return void
+     */
+    public function testFetchAssoc()
+    {
+        $this->loadFixtures('Profiles');
+        $query = new Query($this->connection);
+        $results = $query
+            ->select([
+                'id',
+                'user_id',
+                'is_active'
+            ])
+            ->from('profiles')
+            ->limit(1)
+            ->execute()
+            ->fetchAssoc();
+        $this->assertSame(['id' => '1', 'user_id' => '1', 'is_active' => '0'], $results);
+    }
+
+    /**
+     * Test that calling fetchObject returns a \StdClass object
+     * @return void
+     */
+    public function testFetchObject()
+    {
+        $this->loadFixtures('Profiles');
+        $query = new Query($this->connection);
+        $results = $query
+            ->select([
+                'id',
+                'user_id',
+                'is_active'
+            ])
+            ->from('profiles')
+            ->limit(1)
+            ->execute()
+            ->fetchObject();
+        $this->assertInstanceOf(\StdClass::class, $results);
+        $this->assertObjectHasAttribute('id', $results);
+        $this->assertObjectHasAttribute('user_id', $results);
+        $this->assertObjectHasAttribute('is_active', $results);
+        $this->assertEquals($results->id, '1');
+        $this->assertEquals($results->user_id, '1');
+        $this->assertEquals($results->is_active, '0');
+    }
+
+    /**
+     * Test that calling fetchColumn returns the correct column value.
+     * @return void
+     */
+    public function testFetchColumn()
+    {
+        $this->loadFixtures('Profiles');
+        $query = new Query($this->connection);
+        $query
+            ->select([
+                'id',
+                'user_id',
+                'is_active'
+            ])
+            ->from('profiles')
+            ->where(['id' => 2])
+            ->limit(1);
+        $statement = $query->execute();
+        $results = $statement->fetchColumn(0);
+        $this->assertEquals('2', $results[0]);
+    }
+
+    /**
+     * Test that calling fetchAssoc, fetchColum and fetchObject in sequence
+     * alters the fetched data to the correct types and values.
+     * @return void
+     */
+    public function testFetchAllAssocColumnAndObj()
+    {
+        $this->loadFixtures('Profiles');
+        $query = new Query($this->connection);
+        $query
+            ->select([
+                'id',
+                'user_id',
+                'is_active'
+            ])
+            ->from('profiles');
+        $statement = $query->execute();
+        $results = $statement->fetchAssoc();
+        $this->assertEquals('1', $results['id']);
+        $results = $statement->fetchAssoc();
+        $this->assertEquals('2', $results['id']);
+        $results = $statement->fetchColumn(0);
+        $this->assertEquals('3', $results[0]);
+        $results = $statement->fetchObject();
+        $this->assertEquals('4', $results->id);
+    }
+
+    /**
+     * Test that an array of objects is returned
+     * @return void
+     */
+    public function testFetchAllObjects()
+    {
+        $this->loadFixtures('Profiles');
+        $query = new Query($this->connection);
+        $query
+            ->select([
+                'id',
+                'user_id',
+                'is_active'
+            ])
+            ->from('profiles');
+        $statement = $query->execute();
+        $results = $statement->fetchAllObjects();
+        $this->assertInstanceOf(\StdClass::class, $results[0]);
+        $this->assertEquals('2', $results[1]->id);
+    }
 }

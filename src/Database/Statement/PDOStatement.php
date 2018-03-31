@@ -90,13 +90,13 @@ class PDOStatement extends StatementDecorator
      */
     public function fetch($type = 'num')
     {
-        if ($type === 'num') {
+        if ($type === static::FETCH_TYPE_NUM) {
             return $this->_statement->fetch(PDO::FETCH_NUM);
         }
-        if ($type === 'assoc') {
+        if ($type === static::FETCH_TYPE_ASSOC) {
             return $this->_statement->fetch(PDO::FETCH_ASSOC);
         }
-        if ($type === 'obj') {
+        if ($type === static::FETCH_TYPE_OBJ) {
             return $this->_statement->fetch(PDO::FETCH_OBJ);
         }
 
@@ -119,13 +119,13 @@ class PDOStatement extends StatementDecorator
      */
     public function fetchAll($type = 'num')
     {
-        if ($type === 'num') {
+        if ($type === static::FETCH_TYPE_NUM) {
             return $this->_statement->fetchAll(PDO::FETCH_NUM);
         }
-        if ($type === 'assoc') {
+        if ($type === static::FETCH_TYPE_ASSOC) {
             return $this->_statement->fetchAll(PDO::FETCH_ASSOC);
         }
-        if ($type === 'obj') {
+        if ($type === static::FETCH_TYPE_OBJ) {
             return $this->_statement->fetchAll(PDO::FETCH_OBJ);
         }
 

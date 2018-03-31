@@ -36,6 +36,25 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
     use TypeConverterTrait;
 
     /**
+     * Used to designate that numeric indexes be returned in a result when calling fetch methods
+     *
+     * @var string
+     */
+    const FETCH_TYPE_NUM = 'num';
+    /**
+     * Used to designate that associated array be returned in a result when calling fetch methods
+     *
+     * @var string
+     */
+    const FETCH_TYPE_ASSOC = 'assoc';
+    /**
+     * Used to designate that objects of \StdClass be returned in a result when calling fetch methods
+     *
+     * @var string
+     */
+    const FETCH_TYPE_OBJ = 'obj';
+
+    /**
      * Statement instance implementation, such as PDOStatement
      * or any other custom implementation.
      *
@@ -197,6 +216,40 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
     }
 
     /**
+     * Returns the next row as a StdClass object
+     *
+     * @return array|false Result array containing columns and values in an anonymous object or false if no results
+     */
+    public function fetchObject()
+    {
+        return $this->fetch(static::FETCH_TYPE_OBJ);
+    }
+
+    /**
+     * @return array|false Result array containing columns and values an an associative array or false if no results
+     */
+    public function fetchAssoc()
+    {
+        return $this->fetch(static::FETCH_TYPE_ASSOC);
+    }
+
+    /**
+     * Returns the value of the result at position.
+     *
+     * @param int $position The numeric position of the column to retrieve in the result
+     * @return mixed|false Returns the specific value of the column designated at $position
+     */
+    public function fetchColumn($position)
+    {
+        $result = $this->_statement->fetch(static::FETCH_TYPE_NUM);
+        if (isset($result[$position])) {
+            return $result[$position];
+        };
+
+        return false;
+    }
+
+    /**
      * Returns an array with all rows resulting from executing this statement.
      *
      * ### Example:
@@ -213,6 +266,16 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
     public function fetchAll($type = 'num')
     {
         return $this->_statement->fetchAll($type);
+    }
+
+    /**
+     * Returns an array of \StdClass objects or false
+     *
+     * @return \StdClass[]|false
+     */
+    public function fetchAllObjects()
+    {
+        return $this->fetchAll(static::FETCH_TYPE_OBJ);
     }
 
     /**
