@@ -19,6 +19,7 @@ use Cake\Database\Type;
 use Cake\Database\TypeInterface;
 use Cake\Database\Type\BatchCastingInterface;
 use DateTimeInterface;
+use DateTimeZone;
 use Exception;
 use PDO;
 use RuntimeException;
@@ -102,6 +103,13 @@ class DateTimeType extends Type implements TypeInterface, BatchCastingInterface
     protected $_className;
 
     /**
+     * Timezone instance.
+     *
+     * @var \DateTimeZone|null
+     */
+    protected $dbTimezone;
+
+    /**
      * {@inheritDoc}
      */
     public function __construct($name = null)
@@ -114,7 +122,7 @@ class DateTimeType extends Type implements TypeInterface, BatchCastingInterface
     /**
      * Convert DateTime instance into strings.
      *
-     * @param string|int|\DateTime $value The value to convert.
+     * @param string|int|\DateTime|\DateTimeImmutable $value The value to convert.
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return string|null
      */
@@ -130,7 +138,33 @@ class DateTimeType extends Type implements TypeInterface, BatchCastingInterface
 
         $format = (array)$this->_format;
 
+        if ($this->dbTimezone !== null
+            && $this->dbTimezone->getName() !== $value->getTimezone()->getName()
+        ) {
+            $value = $value->setTimezone($this->dbTimezone);
+        }
+
         return $value->format(array_shift($format));
+    }
+
+    /**
+     * Set database timezone.
+     *
+     * Specified timezone will be set for DateTime objects before generating
+     * datetime string for saving to database. If `null` no timezone conversion
+     * will be done.
+     *
+     * @param string|\DateTimeZone|null $timezone Database timezone.
+     * @return $this
+     */
+    public function setTimezone($timezone)
+    {
+        if (is_string($timezone)) {
+            $timezone = new DateTimeZone($timezone);
+        }
+        $this->dbTimezone = $timezone;
+
+        return $this;
     }
 
     /**
