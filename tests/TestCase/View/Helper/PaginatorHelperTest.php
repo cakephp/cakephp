@@ -811,6 +811,59 @@ class PaginatorHelperTest extends TestCase
     }
 
     /**
+     * Verify that sort links always result in a url that is page 1 (page not
+     * present in the url)
+     *
+     * @param string $field
+     * @param array $options
+     * @param string $expected
+     * @dataProvider urlGenerationResetsToPage1Provider
+     */
+    public function testUrlGenerationResetsToPage1($field, $options, $expected)
+    {
+        $this->Paginator->request = $this->Paginator->request
+            ->withParam('paging.Article.page', 2)
+            ->withParam('paging.Article.sort', 'name')
+            ->withParam('paging.Article.direction', 'asc');
+        $result = $this->Paginator->sort($field, null, ['url' => $options]);
+        $this->assertSame($expected, $result);
+    }
+
+    /**
+     * Returns data sets of:
+     *  * the name of the field being sorted on
+     *  * url paramters to pass to paginator sort
+     *  * expected result as a string
+     *
+     * @return array
+     */
+    public function urlGenerationResetsToPage1Provider()
+    {
+        return [
+            'Sorting the field currently sorted asc' => [
+                'name',
+                ['sort' => 'name', 'direction' => 'asc'],
+                '<a class="asc" href="/index?sort=name&amp;direction=asc">Name</a>'
+            ],
+            'Sorting the field currently sorted desc' => [
+                'name',
+                ['sort' => 'name', 'direction' => 'desc'],
+                '<a class="asc" href="/index?sort=name&amp;direction=desc">Name</a>'
+            ],
+            'Sorting other asc' => [
+                'other',
+                ['sort' => 'other', 'direction' => 'asc'],
+                '<a href="/index?sort=other&amp;direction=asc">Other</a>'
+            ],
+            'Sorting other desc' => [
+                'other',
+                ['sort' => 'other', 'direction' => 'desc'],
+                '<a href="/index?sort=other&amp;direction=desc">Other</a>'
+            ]
+        ];
+    }
+
+    /**
      * test URL generation with prefix routes
      *
      * @return void
