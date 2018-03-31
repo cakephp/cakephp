@@ -82,7 +82,7 @@ class BufferedStatement extends StatementDecorator
      * @param string $type The type to fetch.
      * @return array|false
      */
-    public function fetch($type = 'num')
+    public function fetch($type = parent::FETCH_TYPE_NUM)
     {
         if ($this->_allFetched) {
             $row = ($this->_counter < $this->_count) ? $this->_records[$this->_counter++] : false;
