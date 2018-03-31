@@ -210,7 +210,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      * @return array|false Result array containing columns and values or false if no results
      * are left
      */
-    public function fetch($type = 'num')
+    public function fetch($type = self::FETCH_TYPE_NUM)
     {
         return $this->_statement->fetch($type);
     }
@@ -263,7 +263,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      * @param string $type num for fetching columns as positional keys or assoc for column names as keys
      * @return array List of all results from database for this statement
      */
-    public function fetchAll($type = 'num')
+    public function fetchAll($type = self::FETCH_TYPE_NUM)
     {
         return $this->_statement->fetchAll($type);
     }
@@ -369,7 +369,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
     {
         $row = null;
         if ($column && $this->columnCount()) {
-            $row = $this->fetch('assoc');
+            $row = $this->fetch(static::FETCH_TYPE_ASSOC);
         }
         if (isset($row[$column])) {
             return $row[$column];
