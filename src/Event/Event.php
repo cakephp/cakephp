@@ -84,6 +84,10 @@ class Event implements EventInterface
      */
     public function __get($attribute)
     {
+        if (!in_array($attribute, ['name', 'subject', 'data', 'result'])) {
+            return $this->{$attribute};
+        }
+        
         $method = 'get' . ucfirst($attribute);
         deprecationWarning(
             "Event::\${$attribute} is deprecated. " .
