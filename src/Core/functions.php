@@ -288,6 +288,9 @@ if (!function_exists('deprecationWarning')) {
         if (!(error_reporting() & E_USER_DEPRECATED)) {
             return;
         }
+        if (!defined('CAKEPHP_DEPRECATIONS') || !CAKEPHP_DEPRECATIONS) {
+            return;
+        }
 
         $trace = debug_backtrace();
         if (isset($trace[$stackFrame])) {
