@@ -218,7 +218,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
         $conditions = function ($field, $locale, $query, $select) {
             return function ($q) use ($field, $locale, $query, $select) {
                 /* @var \Cake\Datasource\QueryInterface $q */
-                $q->where([$q->repository()->aliasField('locale') => $locale]);
+                $q->where([$q->getRepository()->aliasField('locale') => $locale]);
 
                 /* @var \Cake\ORM\Query $query */
                 if ($query->isAutoFieldsEnabled() ||

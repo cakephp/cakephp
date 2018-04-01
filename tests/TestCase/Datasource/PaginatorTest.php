@@ -1380,7 +1380,9 @@ class PaginatorTest extends TestCase
             ->method('count')
             ->will($this->returnValue(2));
 
-        $query->repository($table);
+        if ($table) {
+            $query->repository($table);
+        }
 
         return $query;
     }
