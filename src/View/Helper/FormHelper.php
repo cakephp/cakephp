@@ -984,7 +984,7 @@ class FormHelper extends Helper
     {
         deprecationWarning(
             'FormHelper::allInputs() is deprecated. ' .
-            'Use FormHelper::allControlls() instead.'
+            'Use FormHelper::allControls() instead.'
         );
 
         return $this->allControls($fields, $options);
