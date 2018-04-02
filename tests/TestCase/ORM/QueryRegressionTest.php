@@ -1635,10 +1635,11 @@ class QueryRegressionTest extends TestCase
         $this->loadFixtures('Articles');
         $table = $this->getTableLocator()->get('Articles');
         $query = $table->find();
-        $query->orderDesc($query->newExpr()->addCase(
-            [$query->newExpr()->add(['id' => 3])],
-            [1, 0]
-        ));
+        $query->orderDesc(
+            $query->newCaseExpr()
+                ->add($query->newExpr()->add(['id' => 3]), 1)
+                ->elseValue(0)
+        );
         $query->order(['title' => 'desc']);
         // Executing the normal query before getting the count
         $query->all();
@@ -1646,10 +1647,11 @@ class QueryRegressionTest extends TestCase
 
         $table = $this->getTableLocator()->get('Articles');
         $query = $table->find();
-        $query->orderDesc($query->newExpr()->addCase(
-            [$query->newExpr()->add(['id' => 3])],
-            [1, 0]
-        ));
+        $query->orderDesc(
+            $query->newCaseExpr()
+                ->add($query->newExpr()->add(['id' => 3]), 1)
+                ->elseValue(0)
+        );
         $query->orderDesc($query->newExpr()->add(['id' => 3]));
         // Not executing the query first, just getting the count
         $this->assertEquals(3, $query->count());

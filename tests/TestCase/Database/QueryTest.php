@@ -4230,7 +4230,7 @@ class QueryTest extends TestCase
      *
      * @return void
      */
-    public function testQueryWithNewCaseExpr()
+    public function testQueryWithFluentCaseExpr()
     {
         $this->loadFixtures('Comments');
 
@@ -4282,17 +4282,17 @@ class QueryTest extends TestCase
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
         $publishedCase = $query
-            ->newExpr()
-            ->addCase(
+            ->newCaseExpr()
+            ->add(
                 $query
-                ->newExpr()
-                ->add(['published' => 'Y']),
+                    ->newExpr()
+                    ->add(['published' => 'Y']),
                 1,
                 'integer'
             );
         $notPublishedCase = $query
-            ->newExpr()
-            ->addCase(
+            ->newCaseExpr()
+            ->add(
                 $query
                     ->newExpr()
                     ->add(['published' => 'N']),
@@ -4321,7 +4321,14 @@ class QueryTest extends TestCase
 
         $this->assertEquals(5, $results[0]['published']);
         $this->assertEquals(1, $results[0]['not_published']);
+    }
 
+    /**
+     * @return void
+     */
+    public function testDeprecatedQueryExpressionAddCase()
+    {
+        $this->loadFixtures('Comments');
         $query = new Query($this->connection);
         $query
             ->insert(['article_id', 'user_id', 'comment', 'published'])
@@ -4349,11 +4356,15 @@ class QueryTest extends TestCase
             'Not published',
             'None'
         ];
+        $finalExpression = $query->newExpr();
+        $this->withErrorReporting(E_ALL ^ E_USER_DEPRECATED, function () use ($conditions, $values, $finalExpression) {
+            $finalExpression->addCase($conditions, $values);
+        });
         $results = $query
             ->select([
                 'id',
                 'comment',
-                'status' => $query->newExpr()->addCase($conditions, $values)
+                'status' => $finalExpression
             ])
             ->from(['comments'])
             ->execute()
