@@ -468,7 +468,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *   true when the validation rule should be applied.
      * @return $this
      */
-    public function addNestedMany($field, Validator $validator, $message = null,  $when = null)
+    public function addNestedMany($field, Validator $validator, $message = null, $when = null)
     {
         $extra = array_filter(['message' => $message, 'on' => $when]);
 
