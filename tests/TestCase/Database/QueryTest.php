@@ -4712,7 +4712,7 @@ class QueryTest extends TestCase
             ->limit(1);
         $statement = $query->execute();
         $results = $statement->fetchColumn(0);
-        $this->assertEquals('2', $results[0]);
+        $this->assertSame('2', $results[0]);
     }
 
     /**
@@ -4734,11 +4734,11 @@ class QueryTest extends TestCase
             ->from('profiles');
         $statement = $query->execute();
         $results = $statement->fetchAssoc();
-        $this->assertEquals('1', $results['id']);
+        $this->assertSame('1', $results['id']);
         $results = $statement->fetchAssoc();
-        $this->assertEquals('2', $results['id']);
+        $this->assertSame('2', $results['id']);
         $results = $statement->fetchColumn(0);
-        $this->assertEquals('3', $results[0]);
+        $this->assertSame('3', $results[0]);
     }
 }
 
