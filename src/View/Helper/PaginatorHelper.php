@@ -471,7 +471,7 @@ class PaginatorHelper extends Helper
         }
 
         $url = array_merge(
-            ['sort' => $key, 'direction' => $dir],
+            ['sort' => $key, 'direction' => $dir, 'page' => 1],
             $url,
             ['order' => null]
         );
