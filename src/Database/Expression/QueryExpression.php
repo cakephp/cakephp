@@ -380,6 +380,8 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function addCase($conditions, $values = [], $types = [])
     {
+        deprecationWarning('Use \Cake\Database\Query::newCaseExpr() instead.');
+
         return $this->add(new CaseExpression($conditions, $values, $types));
     }
 
