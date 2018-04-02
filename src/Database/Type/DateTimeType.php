@@ -18,6 +18,7 @@ use Cake\Database\Driver;
 use Cake\Database\Type;
 use Cake\Database\TypeInterface;
 use Cake\Database\Type\BatchCastingInterface;
+use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
 use Exception;
@@ -141,6 +142,9 @@ class DateTimeType extends Type implements TypeInterface, BatchCastingInterface
         if ($this->dbTimezone !== null
             && $this->dbTimezone->getName() !== $value->getTimezone()->getName()
         ) {
+            if (!$value instanceof DateTimeImmutable) {
+                $value = clone $value;
+            }
             $value = $value->setTimezone($this->dbTimezone);
         }
 
