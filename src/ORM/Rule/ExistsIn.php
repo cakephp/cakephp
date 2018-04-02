@@ -92,6 +92,7 @@ class ExistsIn
             $this->_repository = $repository;
         }
 
+        $fields = $this->_fields;
         $source = $target = $this->_repository;
         $isAssociation = $target instanceof Association;
         $bindingKey = $isAssociation ? (array)$target->getBindingKey() : (array)$target->getPrimaryKey();
@@ -118,9 +119,9 @@ class ExistsIn
 
         if ($this->_options['allowNullableNulls']) {
             $schema = $source->getSchema();
-            foreach ($this->_fields as $i => $field) {
+            foreach ($fields as $i => $field) {
                 if ($schema->getColumn($field) && $schema->isNullable($field) && $entity->get($field) === null) {
-                    unset($bindingKey[$i], $this->_fields[$i]);
+                    unset($bindingKey[$i], $fields[$i]);
                 }
             }
         }
@@ -131,7 +132,7 @@ class ExistsIn
         );
         $conditions = array_combine(
             $primary,
-            $entity->extract($this->_fields)
+            $entity->extract($fields)
         );
 
         return $target->exists($conditions);

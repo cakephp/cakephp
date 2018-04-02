@@ -1120,6 +1120,44 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
+     * Tests new allowNullableNulls with saveMany
+     *
+     * @return
+     */
+    public function testExistsInAllowNullableNullsSaveMany()
+    {
+        $entities = [
+            new Entity([
+                'id' => 1,
+                'author_id' => null,
+                'site_id' => 1,
+                'name' => 'New Site Article without Author',
+            ]),
+            new Entity([
+                'id' => 2,
+                'author_id' => 1,
+                'site_id' => 1,
+                'name' => 'New Site Article with Author',
+            ]),
+        ];
+        $table = TableRegistry::get('SiteArticles');
+        $table->belongsTo('SiteAuthors');
+        $rules = $table->rulesChecker();
+
+        $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', [
+            'allowNullableNulls' => true,
+            'message' => 'will error with array_combine warning']));
+        $result = $table->saveMany($entities);
+        $this->assertCount(2, $result);
+
+        $this->assertInstanceOf(Entity::class, $result[0]);
+        $this->assertEmpty($result[0]->getErrors());
+
+        $this->assertInstanceOf(Entity::class, $result[1]);
+        $this->assertEmpty($result[1]->getErrors());
+    }
+
+    /**
      * Tests using rules to prevent delete operations
      *
      * @group delete
