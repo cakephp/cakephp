@@ -4741,4 +4741,3 @@ class QueryTest extends TestCase
         $this->assertEquals('3', $results[0]);
     }
 }
-
