@@ -421,12 +421,17 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The root field for the nested validator.
      * @param \Cake\Validation\Validator $validator The nested validator.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
      * @return $this
      */
-    public function addNested($field, Validator $validator)
+    public function addNested($field, Validator $validator, $message = null, $when = null)
     {
+        $extra = array_filter(['message' => $message, 'on' => $when]);
+
         $field = $this->field($field);
-        $field->add(static::NESTED, ['rule' => function ($value, $context) use ($validator) {
+        $field->add(static::NESTED, $extra + ['rule' => function ($value, $context) use ($validator, $message) {
             if (!is_array($value)) {
                 return false;
             }
@@ -435,7 +440,9 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             }
             $errors = $validator->errors($value, $context['newRecord']);
 
-            return empty($errors) ? true : $errors;
+            $message = $message ? [static::NESTED => $message] : [];
+
+            return empty($errors) ? true : $errors + $message;
         }]);
 
         return $this;
@@ -456,12 +463,17 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The root field for the nested validator.
      * @param \Cake\Validation\Validator $validator The nested validator.
+     * @param string|null $message The error message when the rule fails.
+     * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
+     *   true when the validation rule should be applied.
      * @return $this
      */
-    public function addNestedMany($field, Validator $validator)
+    public function addNestedMany($field, Validator $validator, $message = null,  $when = null)
     {
+        $extra = array_filter(['message' => $message, 'on' => $when]);
+
         $field = $this->field($field);
-        $field->add(static::NESTED, ['rule' => function ($value, $context) use ($validator) {
+        $field->add(static::NESTED, $extra + ['rule' => function ($value, $context) use ($validator, $message) {
             if (!is_array($value)) {
                 return false;
             }
@@ -479,7 +491,9 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 }
             }
 
-            return empty($errors) ? true : $errors;
+            $message = $message ? [static::NESTED => $message] : [];
+
+            return empty($errors) ? true : $errors + $message;
         }]);
 
         return $this;
