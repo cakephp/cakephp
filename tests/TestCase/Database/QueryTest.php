@@ -4357,7 +4357,7 @@ class QueryTest extends TestCase
             'None'
         ];
         $finalExpression = $query->newExpr();
-        $this->withErrorReporting(E_ALL ^ E_USER_DEPRECATED, function () use ($conditions, $values, $finalExpression) {
+        $this->deprecated(function () use ($conditions, $values, $finalExpression) {
             $finalExpression->addCase($conditions, $values);
         });
         $results = $query
