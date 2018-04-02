@@ -115,14 +115,6 @@ class BufferedStatement extends StatementDecorator
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function fetchObject()
-    {
-        return $this->fetch(static::FETCH_TYPE_OBJ);
-    }
-
-    /**
      * {@inheritDoc}
      *
      * @param string $type The type to fetch.

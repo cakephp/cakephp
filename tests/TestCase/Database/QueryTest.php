@@ -4531,34 +4531,6 @@ class QueryTest extends TestCase
     }
 
     /**
-     * Tests that fetch returns an anonymous object when the string 'obj'
-     * is passed as an argument
-     *
-     * @return void
-     */
-    public function testSelectWithObjFetchType()
-    {
-        $this->loadFixtures('Comments');
-        $query = new Query($this->connection);
-        $result = $query
-            ->select(['id'])
-            ->from('comments')
-            ->where(['id' => '1'])
-            ->execute();
-        $obj = (object)['id' => 1];
-        $this->assertEquals($obj, $result->fetch('obj'));
-
-        $query = new Query($this->connection);
-        $result = $query
-            ->select(['id'])
-            ->from('comments')
-            ->where(['id' => '1'])
-            ->execute();
-        $rows = $result->fetchAll('obj');
-        $this->assertEquals($obj, $rows[0]);
-    }
-
-    /**
      * Test getValueBinder()
      *
      * @return void
@@ -4701,6 +4673,7 @@ class QueryTest extends TestCase
     /**
      * Test that calling fetchAssoc return an associated array.
      * @return void
+     * @throws \Exception
      */
     public function testFetchAssoc()
     {
@@ -4720,34 +4693,8 @@ class QueryTest extends TestCase
     }
 
     /**
-     * Test that calling fetchObject returns a \stdClass object
-     * @return void
-     */
-    public function testFetchObject()
-    {
-        $this->loadFixtures('Profiles');
-        $query = new Query($this->connection);
-        $results = $query
-            ->select([
-                'id',
-                'user_id',
-                'is_active'
-            ])
-            ->from('profiles')
-            ->limit(1)
-            ->execute()
-            ->fetchObject();
-        $this->assertInstanceOf(\stdClass::class, $results);
-        $this->assertObjectHasAttribute('id', $results);
-        $this->assertObjectHasAttribute('user_id', $results);
-        $this->assertObjectHasAttribute('is_active', $results);
-        $this->assertEquals($results->id, '1');
-        $this->assertEquals($results->user_id, '1');
-        $this->assertEquals($results->is_active, '0');
-    }
-
-    /**
-     * Test that calling fetchColumn returns the correct column value.
+     * Test that fetchColumn() will return the correct value at $position.
+     * @throws \Exception
      * @return void
      */
     public function testFetchColumn()
@@ -4772,8 +4719,9 @@ class QueryTest extends TestCase
      * Test that calling fetchAssoc, fetchColum and fetchObject in sequence
      * alters the fetched data to the correct types and values.
      * @return void
+     * @throws \Exception
      */
-    public function testFetchAllAssocColumnAndObj()
+    public function testFetchAllAssocColumn()
     {
         $this->loadFixtures('Profiles');
         $query = new Query($this->connection);
@@ -4791,28 +4739,6 @@ class QueryTest extends TestCase
         $this->assertEquals('2', $results['id']);
         $results = $statement->fetchColumn(0);
         $this->assertEquals('3', $results[0]);
-        $results = $statement->fetchObject();
-        $this->assertEquals('4', $results->id);
-    }
-
-    /**
-     * Test that an array of objects is returned
-     * @return void
-     */
-    public function testFetchAllObjects()
-    {
-        $this->loadFixtures('Profiles');
-        $query = new Query($this->connection);
-        $query
-            ->select([
-                'id',
-                'user_id',
-                'is_active'
-            ])
-            ->from('profiles');
-        $statement = $query->execute();
-        $results = $statement->fetchAllObjects();
-        $this->assertInstanceOf(\stdClass::class, $results[0]);
-        $this->assertEquals('2', $results[1]->id);
     }
 }
+

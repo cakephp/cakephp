@@ -47,12 +47,6 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      * @var string
      */
     const FETCH_TYPE_ASSOC = 'assoc';
-    /**
-     * Used to designate that objects of \stdClass be returned in a result when calling fetch methods
-     *
-     * @var string
-     */
-    const FETCH_TYPE_OBJ = 'obj';
 
     /**
      * Statement instance implementation, such as PDOStatement
@@ -216,16 +210,6 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
     }
 
     /**
-     * Returns the next row as a stdClass object
-     *
-     * @return array|false Result array containing columns and values in an anonymous object or false if no results
-     */
-    public function fetchObject()
-    {
-        return $this->fetch(static::FETCH_TYPE_OBJ);
-    }
-
-    /**
      * @return array|false Result array containing columns and values an an associative array or false if no results
      */
     public function fetchAssoc()
@@ -266,16 +250,6 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
     public function fetchAll($type = self::FETCH_TYPE_NUM)
     {
         return $this->_statement->fetchAll($type);
-    }
-
-    /**
-     * Returns an array of \stdClass objects or false
-     *
-     * @return \stdClass[]|false
-     */
-    public function fetchAllObjects()
-    {
-        return $this->fetchAll(static::FETCH_TYPE_OBJ);
     }
 
     /**
