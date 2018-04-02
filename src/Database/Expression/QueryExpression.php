@@ -376,6 +376,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param array $types associative array of types to be associated with the values
      * passed in $values
      * @return $this
+     * @deprecated 3.6.0 use \Cake\Database\Query::newCaseExpr()
      */
     public function addCase($conditions, $values = [], $types = [])
     {

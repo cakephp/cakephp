@@ -4225,6 +4225,54 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Tests case statements via $query->newCaseExpr()
+     * This is a rewrite of last test in testSqlCaseStatement()
+     *
+     * @return void
+     */
+    public function testQueryWithNewCaseExpr()
+    {
+        $this->loadFixtures('Comments');
+
+        $query = new Query($this->connection);
+        $query
+            ->insert(['article_id', 'user_id', 'comment', 'published'])
+            ->into('comments')
+            ->values([
+                'article_id' => 2,
+                'user_id' => 1,
+                'comment' => 'In limbo',
+                'published' => 'L'
+            ])
+            ->execute()
+            ->closeCursor();
+
+        $query = new Query($this->connection);
+        $results = $query
+            ->select([
+                'id',
+                'comment',
+                'status' => $query->newCaseExpr()
+                    ->add(
+                        $query->newExpr()->add(['published' => 'Y']),
+                        'Published'
+                    )
+                    ->add(
+                        $query->newExpr()->add(['published' => 'N']),
+                        'Not published'
+                    )
+                    ->elseValue('None')
+            ])
+            ->from(['comments'])
+            ->execute()
+            ->fetchAll('assoc');
+
+        $this->assertEquals('Published', $results[2]['status']);
+        $this->assertEquals('Not published', $results[3]['status']);
+        $this->assertEquals('None', $results[6]['status']);
+    }
+
+    /**
      * Tests that case statements work correctly for various use-cases.
      *
      * @return void

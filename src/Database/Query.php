@@ -14,6 +14,7 @@
  */
 namespace Cake\Database;
 
+use Cake\Database\Expression\CaseExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\OrderClauseExpression;
@@ -1786,6 +1787,16 @@ class Query implements ExpressionInterface, IteratorAggregate
         }
 
         return $expression;
+    }
+
+    /**
+     * Returns a new CaseExpression object to build SQL Case clauses
+     *
+     * @return \Cake\Database\Expression\CaseExpression
+     */
+    public function newCaseExpr()
+    {
+        return new CaseExpression();
     }
 
     /**
