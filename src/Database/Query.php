@@ -882,7 +882,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     }
 
     /**
-     * Convenience method that adds a NOT NULL condition to the query
+     * Adds a NOT NULL or IS NULL expression to the query
      *
      * @param array $fields A list of fields that should be not null
      * @param bool $isNull Toggles between NOT NULL and NULL checks
@@ -894,9 +894,9 @@ class Query implements ExpressionInterface, IteratorAggregate
             $this->where(function ($exp) use ($condition, $isNull) {
                 if ($isNull) {
                     return $exp->isNull($condition);
-                } else {
-                    return $exp->isNotNull($condition);
                 }
+
+                return $exp->isNotNull($condition);
             });
         }
 
