@@ -1650,11 +1650,11 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertEquals($expected, $result[0]);
 	}
 
-	/**
-	 * Test conditionKeysToString() with virtual field
-	 *
-	 * @return void
-	 */
+/**
+ * Test conditionKeysToString() with virtual field
+ *
+ * @return void
+ */
 	public function testConditionKeysToStringVirtualFieldExpression() {
 		$Article = ClassRegistry::init('Article');
 		$Article->virtualFields = array(
