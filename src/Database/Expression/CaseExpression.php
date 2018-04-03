@@ -318,7 +318,7 @@ class CaseExpression implements ExpressionInterface
         if (!$value instanceof ExpressionInterface) {
             $value = ['value' => $value, 'type' => $type];
         }
-        $this->$partName[] = $value;
+        $this->{$partName}[] = $value;
 
         return $this;
     }
