@@ -28,7 +28,13 @@ use Cake\TestSuite\TestCase;
 class QueryTest extends TestCase
 {
 
-    public $fixtures = ['core.articles', 'core.authors', 'core.comments', 'core.profiles'];
+    public $fixtures = [
+        'core.articles',
+        'core.authors',
+        'core.comments',
+        'core.profiles',
+        'core.menu_link_trees'
+    ];
 
     public $autoFixtures = false;
 
@@ -739,6 +745,44 @@ class QueryTest extends TestCase
             ->execute();
         $this->assertCount(1, $result);
         $this->assertEquals(['id' => 1], $result->fetch('assoc'));
+        $result->closeCursor();
+    }
+
+    /**
+     * Tests Query::whereNull()
+     *
+     * @return void
+     */
+    public function testSelectWhereNull()
+    {
+        $this->loadFixtures('MenuLinkTrees');
+
+        $query = new Query($this->connection);
+        $result = $query
+            ->select(['id', 'parent_id'])
+            ->from('menu_link_trees')
+            ->whereNull(['parent_id'])
+            ->execute();
+        $this->assertCount(5, $result);
+        $result->closeCursor();
+    }
+
+    /**
+     * Tests Query::whereNotNull()
+     *
+     * @return void
+     */
+    public function testSelectWhereNotNull()
+    {
+        $this->loadFixtures('MenuLinkTrees');
+
+        $query = new Query($this->connection);
+        $result = $query
+            ->select(['id', 'parent_id'])
+            ->from('menu_link_trees')
+            ->whereNotNull(['parent_id'])
+            ->execute();
+        $this->assertCount(13, $result);
         $result->closeCursor();
     }
 
