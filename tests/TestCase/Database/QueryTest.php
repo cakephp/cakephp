@@ -4724,6 +4724,29 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Test that fetchColumn() will return false if $position is not set.
+     * @throws \Exception
+     * @return void
+     */
+    public function testFetchColumnReturnsFalse()
+    {
+        $this->loadFixtures('Profiles');
+        $query = new Query($this->connection);
+        $query
+            ->select([
+                'id',
+                'user_id',
+                'is_active'
+            ])
+            ->from('profiles')
+            ->where(['id' => 2])
+            ->limit(1);
+        $statement = $query->execute();
+        $results = $statement->fetchColumn(3);
+        $this->assertFalse($results);
+    }
+
+    /**
      * Test that calling fetchAssoc, fetchColum and fetchObject in sequence
      * alters the fetched data to the correct types and values.
      * @return void
@@ -4746,6 +4769,6 @@ class QueryTest extends TestCase
         $results = $statement->fetchAssoc();
         $this->assertSame('2', $results['id']);
         $results = $statement->fetchColumn(0);
-        $this->assertSame('3', $results[0]);
+        $this->assertSame('3', $results);
     }
 }
