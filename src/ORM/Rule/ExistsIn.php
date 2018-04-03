@@ -125,6 +125,26 @@ class ExistsIn
             }
         }
 
+        if (isset($options['_parent']) && $options['_parent'] instanceof \Cake\Datasource\EntityInterface) {
+            /**
+             * @var \Cake\Datasource\EntityInterface $parent
+             */
+            $parent = $options['_parent'];
+            $parentEntity = $this->_extractParentEntity($parent, $target, $isAssociation);
+
+            if (isset($parentEntity)) {
+                //extract fields to match
+                $parentFields = $this->_extractParentFields($parentEntity, $bindingKey);
+
+                //just do this check if one or more entity is new
+                if (!empty($parentFields)) {
+                    $child_fields = $entity->extract($this->_fields);
+
+                    return empty(array_diff($child_fields, $parentFields));
+                }
+            }
+        }
+
         $primary = array_map(
             [$target, 'aliasField'],
             $bindingKey
@@ -155,5 +175,61 @@ class ExistsIn
         }
 
         return $nulls === count($this->_fields);
+    }
+
+    /**
+     * Extract entity from given parent regarding HM and HABTM associations
+     *
+     * @param \Cake\Datasource\EntityInterface $parent Parent of current entity.
+     * @param \Cake\Datasource\RepositoryInterface|\Cake\ORM\Association|string $target Target table of current entity.
+     * @param bool $isAssociation True if target is association of parent.
+     * @return EntityInterface|mixed|null
+     */
+    protected function _extractParentEntity($parent, $target, $isAssociation)
+    {
+        $parentEntity = null;
+        if ($isAssociation) {
+            if ((new \Cake\ORM\Locator\TableLocator)->get($parent->getSource()) === $target->getTarget()) {
+                //parent is of same  as target
+                $parentEntity = $parent;
+            } else {
+                if (!empty($parent->get($target->getName()))) {
+                    $parentEntity = $parent->get($target->getName());
+                }
+            }
+        } else {
+            $parentEntity = $parent;
+        }
+
+        return $parentEntity;
+    }
+
+    /**
+     * Extracts all the foreign key values from parent entity.
+     *
+     * @param EntityInterface $parentEntity Entity/Entities to extract the values from.
+     * @param mixed $bindingKey Name of foreign key field.
+     * @return array|null Returns null if there is no new parentEntity otherwise the extracted values.
+     */
+    protected function _extractParentFields($parentEntity, $bindingKey)
+    {
+        $parentFields = [];
+        if (is_array($parentEntity)) {
+            //regard HM and HABTM associations
+            $isNew = false;
+            foreach ($parentEntity as $record) {
+                $isNew |= $record->isNew();
+                $parentFields = array_merge($parentFields, $record->extract($bindingKey));
+            }
+        } else {
+            $isNew = $parentEntity->isNew();
+            $parentFields = $parentEntity->extract($bindingKey);
+        }
+
+        if (!$isNew) {
+            $parentFields = null;
+        }
+
+        return $parentFields;
     }
 }
