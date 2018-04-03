@@ -890,7 +890,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     protected function whereNullOrNotNull($fields, $isNull = true)
     {
         foreach ($fields as $condition) {
-            $this->where(function($exp) use ($condition, $isNull) {
+            $this->where(function ($exp) use ($condition, $isNull) {
                 if ($isNull) {
                     return $exp->isNull($condition);
                 } else {
