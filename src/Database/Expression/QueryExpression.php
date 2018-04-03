@@ -16,6 +16,7 @@ namespace Cake\Database\Expression;
 
 use BadMethodCallException;
 use Cake\Database\ExpressionInterface;
+use Cake\Database\Expression\CaseExpression;
 use Cake\Database\Query;
 use Cake\Database\TypeMapTrait;
 use Cake\Database\ValueBinder;
@@ -376,13 +377,25 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param array $types associative array of types to be associated with the values
      * passed in $values
      * @return $this
-     * @deprecated 3.6.0 use \Cake\Database\Query::newCaseExpr()
+     * @deprecated 3.6.0 use \Cake\Database\Expression\QueryExpression::newCaseExpr()
      */
     public function addCase($conditions, $values = [], $types = [])
     {
-        deprecationWarning('QueryExpression::addCase() is deprecated, use \Cake\Database\Query::newCaseExpr() instead.');
+        deprecationWarning('QueryExpression::addCase() is deprecated, use QueryExpression::newCaseExpr() instead.');
 
         return $this->add(new CaseExpression($conditions, $values, $types));
+    }
+
+    /**
+     * Returns a new CaseExpression object to build SQL Case clauses
+     *
+     * @param string|array|\Cake\Database\Expression\CaseExpression $caseValue base Case Value
+     * @param string $type Case Value Type
+     * @return \Cake\Database\Expression\CaseExpression
+     */
+    public function newCaseExpr($caseValue = [], $type = null)
+    {
+        return new CaseExpression($caseValue, $type);
     }
 
     /**

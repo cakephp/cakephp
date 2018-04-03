@@ -4225,7 +4225,7 @@ class QueryTest extends TestCase
     }
 
     /**
-     * Tests case statements via $query->newCaseExpr()
+     * Tests case statements via $query->newExpr()->newCaseExpr()
      * This is a rewrite of last test in testSqlCaseStatement()
      *
      * @return void
@@ -4252,7 +4252,7 @@ class QueryTest extends TestCase
             ->select([
                 'id',
                 'comment',
-                'status' => $query->newCaseExpr()
+                'status' => $query->newExpr()->newCaseExpr()
                     ->add(
                         $query->newExpr()->add(['published' => 'Y']),
                         'Published'
@@ -4282,6 +4282,7 @@ class QueryTest extends TestCase
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
         $publishedCase = $query
+            ->newExpr()
             ->newCaseExpr()
             ->add(
                 $query
@@ -4291,6 +4292,7 @@ class QueryTest extends TestCase
                 'integer'
             );
         $notPublishedCase = $query
+            ->newExpr()
             ->newCaseExpr()
             ->add(
                 $query
@@ -4331,10 +4333,12 @@ class QueryTest extends TestCase
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
         $publishedCase = $query
+            ->newExpr()
             ->newCaseExpr('published')
             ->when('Y')
             ->then(1, 'integer');
         $notPublishedCase = $query
+            ->newExpr()
             ->newCaseExpr('published')
             ->when('N')
             ->then(1, 'integer');
@@ -4370,12 +4374,14 @@ class QueryTest extends TestCase
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
         $publishedCase = $query
+            ->newExpr()
             ->newCaseExpr()
             ->when(
                 $query->newExpr()->add(['published' => 'Y'])
             )
             ->then(1, 'integer');
         $notPublishedCase = $query
+                ->newExpr()
             ->newCaseExpr()
             ->when(
                 $query->newExpr()->add(['published' => 'N'])

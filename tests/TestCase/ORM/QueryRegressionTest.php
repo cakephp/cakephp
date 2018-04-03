@@ -1636,7 +1636,8 @@ class QueryRegressionTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $query = $table->find();
         $query->orderDesc(
-            $query->newCaseExpr()
+            $query->newExpr()
+                ->newCaseExpr()
                 ->add($query->newExpr()->add(['id' => 3]), 1)
                 ->elseValue(0)
         );
@@ -1648,7 +1649,8 @@ class QueryRegressionTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $query = $table->find();
         $query->orderDesc(
-            $query->newCaseExpr()
+            $query->newExpr()
+                ->newCaseExpr()
                 ->add($query->newExpr()->add(['id' => 3]), 1)
                 ->elseValue(0)
         );
