@@ -4712,7 +4712,15 @@ class QueryTest extends TestCase
             ->limit(1);
         $statement = $query->execute();
         $results = $statement->fetchColumn(0);
-        $this->assertSame('2', $results[0]);
+        $this->assertSame('2', $results);
+
+        $statement = $query->execute();
+        $results = $statement->fetchColumn(1);
+        $this->assertSame('2', $results);
+
+        $statement = $query->execute();
+        $results = $statement->fetchColumn(2);
+        $this->assertSame('0', $results);
     }
 
     /**
