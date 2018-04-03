@@ -223,10 +223,10 @@ class ArrayContext implements ContextInterface
         }
 
         if ($required === true) {
-            $required = Validator::DEFAULT_REQUIRED_MESSAGE;
+            $required = 'This field is required';
 
             if (function_exists('__d ')) {
-                $required = __d('cake', $required);
+                $required = __d('cake', 'This field is required');
             }
         }
 

@@ -31,20 +31,6 @@ use IteratorAggregate;
 class Validator implements ArrayAccess, IteratorAggregate, Countable
 {
     /**
-     * Default empty message
-     *
-     * @var string
-     */
-    const DEFAULT_EMPTY_MESSAGE = 'This field cannot be left empty';
-
-    /**
-     * Default required message
-     *
-     * @var string
-     */
-    const DEFAULT_REQUIRED_MESSAGE = 'This field is required';
-
-    /**
      * Used to flag nested rules created with addNested() and addNestedMany()
      *
      * @var string
@@ -1951,9 +1937,9 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function getRequiredMessage($field)
     {
-        $defaultMessage = static::DEFAULT_REQUIRED_MESSAGE;
+        $defaultMessage = 'This field is required';
         if ($this->_useI18n) {
-            $defaultMessage = __d('cake', $defaultMessage);
+            $defaultMessage = __d('cake', 'This field is required');
         }
 
         return isset($this->_presenceMessages[$field])
@@ -1969,9 +1955,9 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function getNotEmptyMessage($field)
     {
-        $defaultMessage = static::DEFAULT_EMPTY_MESSAGE;
+        $defaultMessage = 'This field cannot be left empty';
         if ($this->_useI18n) {
-            $defaultMessage = __d('cake', $defaultMessage);
+            $defaultMessage = __d('cake', 'This field cannot be left empty');
         }
 
         $notBlankMessage = null;
