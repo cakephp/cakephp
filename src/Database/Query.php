@@ -1792,11 +1792,13 @@ class Query implements ExpressionInterface, IteratorAggregate
     /**
      * Returns a new CaseExpression object to build SQL Case clauses
      *
+     * @param string|array|\Cake\Database\Expression\CaseExpression $caseValue base Case Value
+     * @param string $type Case Value Type
      * @return \Cake\Database\Expression\CaseExpression
      */
-    public function newCaseExpr()
+    public function newCaseExpr($caseValue = [], $type = null)
     {
-        return new CaseExpression();
+        return new CaseExpression($caseValue, $type);
     }
 
     /**

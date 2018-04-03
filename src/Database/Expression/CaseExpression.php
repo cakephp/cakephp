@@ -43,6 +43,13 @@ class CaseExpression implements ExpressionInterface
     protected $_values = [];
 
     /**
+     * The `CASE` value for the case statement.
+     *
+     * @var string|\Cake\Database\ExpressionInterface|array|null
+     */
+    protected $_caseValue;
+
+    /**
      * The `ELSE` value for the case statement. If null then no `ELSE` will be included.
      *
      * @var string|\Cake\Database\ExpressionInterface|array|null
@@ -52,15 +59,25 @@ class CaseExpression implements ExpressionInterface
     /**
      * Constructs the case expression
      *
-     * @param array|\Cake\Database\ExpressionInterface $conditions The conditions to test. Must be a ExpressionInterface
+     * @param array|mixed|\Cake\Database\ExpressionInterface $conditions The conditions to test. Must be a ExpressionInterface
      * instance, or an array of ExpressionInterface instances.
-     * @param array|\Cake\Database\ExpressionInterface $values associative array of values to be associated with the conditions
+     * @param array|mixed|\Cake\Database\ExpressionInterface $values associative array of values to be associated with the conditions
      * passed in $conditions. If there are more $values than $conditions, the last $value is used as the `ELSE` value
      * @param array $types associative array of types to be associated with the values
      * passed in $values
      */
     public function __construct($conditions = [], $values = [], $types = [])
     {
+        if (!is_array($conditions) && empty($types)) {
+            $value = $conditions;
+            $type = $values == [] ? null : $values;
+            if ($type !== null && !$value instanceof ExpressionInterface) {
+                $value = $this->_castToExpression($value, $type);
+            }
+            $this->_caseValue = $value;
+
+            return;
+        }
         if (!empty($conditions)) {
             $this->add($conditions, $values, $types);
         }
@@ -157,6 +174,34 @@ class CaseExpression implements ExpressionInterface
     }
 
     /**
+     * Sets the case value
+     *
+     * @param \Cake\Database\ExpressionInterface|string|array|null $value Value to set
+     * @param string|null $type Type of value
+     *
+     * @return $this
+     */
+    public function caseValue($value = null, $type = null)
+    {
+        if (is_array($value)) {
+            end($value);
+            $value = key($value);
+        }
+
+        if ($value !== null && !$value instanceof ExpressionInterface) {
+            $value = $this->_castToExpression($value, $type);
+        }
+
+        if (!$value instanceof ExpressionInterface) {
+            $value = ['value' => $value, 'type' => $type];
+        }
+
+        $this->_caseValue = $value;
+
+        return $this;
+    }
+
+    /**
      * Sets the default value
      *
      * @param \Cake\Database\ExpressionInterface|string|array|null $value Value to set
@@ -216,6 +261,9 @@ class CaseExpression implements ExpressionInterface
     {
         $parts = [];
         $parts[] = 'CASE';
+        if ($this->_caseValue !== null) {
+            $parts[] = $this->_compile($this->_caseValue, $generator);
+        }
         foreach ($this->_conditions as $k => $part) {
             $value = $this->_values[$k];
             $parts[] = 'WHEN ' . $this->_compile($part, $generator) . ' THEN ' . $this->_compile($value, $generator);
@@ -251,19 +299,23 @@ class CaseExpression implements ExpressionInterface
 
     /**
      * Helper build a fluent case builder
-     * If condition is not an ExpressionInterface, it will be treated as a value
+     * If Value is not an ExpressionInterface, it will be treated as a value
      *
      * @param string $partName property to append the part
-     * @param string|\Cake\Database\ExpressionInterface $condition Boolean Condition or Case Value
-     * @param string $type Condition value type
+     * @param string|\Cake\Database\ExpressionInterface $value Boolean Condition or Case Value
+     * @param string $type value type
      * @return $this
      */
-    protected function _addPart($partName, $condition, $type = null)
+    protected function _addPart($partName, $value, $type = null)
     {
-        if (!$condition instanceof ExpressionInterface) {
-            $condition = $this->_castToExpression($condition, $type);
+        if ($value !== null && !$value instanceof ExpressionInterface) {
+            $value = $this->_castToExpression($value, $type);
         }
-        $this->$partName[] = $condition;
+
+        if (!$value instanceof ExpressionInterface) {
+            $value = ['value' => $value, 'type' => $type];
+        }
+        $this->$partName[] = $value;
 
         return $this;
     }
