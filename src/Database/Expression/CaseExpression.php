@@ -59,10 +59,11 @@ class CaseExpression implements ExpressionInterface
     /**
      * Constructs the case expression
      *
-     * @param array|mixed|\Cake\Database\ExpressionInterface $conditions The conditions to test. Must be a ExpressionInterface
-     * instance, or an array of ExpressionInterface instances.
-     * @param array|mixed|\Cake\Database\ExpressionInterface $values associative array of values to be associated with the conditions
-     * passed in $conditions. If there are more $values than $conditions, the last $value is used as the `ELSE` value
+     * @param array|string|\Cake\Database\ExpressionInterface $conditions The conditions to test. Must be a ExpressionInterface
+     * instance, or an array of ExpressionInterface instances. Or an array (column name) for simpler case clauses
+     * @param array|string|\Cake\Database\ExpressionInterface $values associative array of values to be associated with the conditions
+     * passed in $conditions. If there are more $values than $conditions, the last $value is used as the `ELSE` value.
+     * If $conditions is string, $values is the type of the column (optional)
      * @param array $types associative array of types to be associated with the values
      * passed in $values
      */
