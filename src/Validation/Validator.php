@@ -1977,18 +1977,15 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         $notBlankMessage = null;
         if (isset($this->_fields[$field])) {
             foreach ($this->_fields[$field] as $rule) {
-                if ($rule->get('rule') === 'notBlank') {
-                    $notBlankMessage = $rule->get('message');
-                    break;
+                if ($rule->get('rule') === 'notBlank' && $rule->get('message')) {
+                    return $rule->get('message');
                 }
             }
         }
 
-        $allowEmptyMessage = isset($this->_allowEmptyMessages[$field])
+        return isset($this->_allowEmptyMessages[$field])
             ? $this->_allowEmptyMessages[$field]
             : $defaultMessage;
-
-        return $notBlankMessage ? $notBlankMessage : $allowEmptyMessage;
     }
 
     /**
