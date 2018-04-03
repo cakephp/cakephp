@@ -60,25 +60,17 @@ class CaseExpression implements ExpressionInterface
      * Constructs the case expression
      *
      * @param array|string|\Cake\Database\ExpressionInterface $conditions The conditions to test. Must be a ExpressionInterface
-     * instance, or an array of ExpressionInterface instances. Or an array (column name) for simpler case clauses
-     * @param array|string|\Cake\Database\ExpressionInterface $values associative array of values to be associated with the conditions
+     * instance, or an array of ExpressionInterface instances. Or an string (column name) for simpler case clauses
+     * @param array|\Cake\Database\ExpressionInterface $values associative array of values to be associated with the conditions
      * passed in $conditions. If there are more $values than $conditions, the last $value is used as the `ELSE` value.
-     * If $conditions is string, $values is the type of the column (optional)
      * @param array $types associative array of types to be associated with the values
      * passed in $values
      */
     public function __construct($conditions = [], $values = [], $types = [])
     {
-        if (!is_array($conditions) && empty($types) && !$conditions instanceof ExpressionInterface) {
+        if (is_string($conditions)) {
             $value = $conditions;
-            $type = $values == [] ? null : $values;
-            if ($type !== null) {
-                $value = $this->_castToExpression($value, $type);
-            }
-            if (!$value instanceof ExpressionInterface) {
-                $value = ['value' => $value, 'type' => $type];
-            }
-            $this->_caseValue = $value;
+            $this->_caseValue = new IdentifierExpression($value);
 
             return;
         }
@@ -178,28 +170,17 @@ class CaseExpression implements ExpressionInterface
     }
 
     /**
-     * Sets the case value
+     * Sets the case value. For simpler case clauses
      *
-     * @param \Cake\Database\ExpressionInterface|string|array|null $value Value to set
-     * @param string|null $type Type of value
+     * @param string|null $value Value to set
      *
      * @return $this
      */
-    public function caseValue($value = null, $type = null)
+    public function caseValue($value)
     {
-        if (is_array($value)) {
-            end($value);
-            $value = key($value);
+        if ($value !== null) {
+            $value = new IdentifierExpression($value);
         }
-
-        if ($value !== null && !$value instanceof ExpressionInterface) {
-            $value = $this->_castToExpression($value, $type);
-        }
-
-        if (!$value instanceof ExpressionInterface) {
-            $value = ['value' => $value, 'type' => $type];
-        }
-
         $this->_caseValue = $value;
 
         return $this;

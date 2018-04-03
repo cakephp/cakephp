@@ -73,7 +73,7 @@ class CaseExpressionTest extends TestCase
         $caseExpression = (new CaseExpression('testColumn'))
             ->when('testValue')
             ->then('testResult');
-        $expected = 'CASE :param0 WHEN :param1 THEN :param2 END';
+        $expected = 'CASE testColumn WHEN :param0 THEN :param1 END';
         $this->assertSame($expected, $caseExpression->sql(new ValueBinder()));
 
         $caseExpression = new CaseExpression();
@@ -84,7 +84,17 @@ class CaseExpressionTest extends TestCase
             ->when('test3')
             ->elseValue('testElse')
             ->caseValue('test0');
-        $expected = 'CASE :param0 WHEN :param1 THEN :param2 WHEN :param3 THEN :param4 ELSE :param5 END';
+        $expected = 'CASE test0 WHEN :param0 THEN :param1 WHEN :param2 THEN :param3 ELSE :param4 END';
+        $this->assertSame($expected, $caseExpression->sql(new ValueBinder()));
+
+        $caseExpression = new CaseExpression('test0');
+        $caseExpression
+            ->when('test1')
+            ->then('test2')
+            ->then('test4')
+            ->when('test3')
+            ->elseValue('testElse');
+        $expected = 'CASE test0 WHEN :param0 THEN :param1 WHEN :param2 THEN :param3 ELSE :param4 END';
         $this->assertSame($expected, $caseExpression->sql(new ValueBinder()));
     }
 
