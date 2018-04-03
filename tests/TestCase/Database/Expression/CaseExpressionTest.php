@@ -14,6 +14,7 @@
 namespace Cake\Test\TestCase\Database\Expression;
 
 use Cake\Database\Expression\CaseExpression;
+use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
@@ -50,6 +51,29 @@ class CaseExpressionTest extends TestCase
 
         $caseExpression = new CaseExpression([$expr], ['foobar' => 'literal', 'else']);
         $expected = 'CASE WHEN test = :c0 THEN foobar ELSE :param1 END';
+        $this->assertSame($expected, $caseExpression->sql(new ValueBinder()));
+    }
+
+    /**
+     * @return void
+     */
+    public function testWhenThenSqlOutput()
+    {
+        $expr = new QueryExpression();
+        $expr->eq('test', 'true');
+        $expr2 = new QueryExpression();
+        $expr2->eq('test2', 'false');
+
+        $caseExpression = (new CaseExpression())
+            ->when($expr)
+            ->then(new IdentifierExpression('foobar'));
+        $expected = 'CASE WHEN test = :c0 THEN foobar END';
+        $this->assertSame($expected, $caseExpression->sql(new ValueBinder()));
+
+        $caseExpression = (new CaseExpression())
+            ->when($expr)
+            ->then($expr2);
+        $expected = 'CASE WHEN test = :c0 THEN test2 = :c1 END';
         $this->assertSame($expected, $caseExpression->sql(new ValueBinder()));
     }
 
