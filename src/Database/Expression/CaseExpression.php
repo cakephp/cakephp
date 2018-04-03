@@ -68,11 +68,14 @@ class CaseExpression implements ExpressionInterface
      */
     public function __construct($conditions = [], $values = [], $types = [])
     {
-        if (!is_array($conditions) && empty($types)) {
+        if (!is_array($conditions) && empty($types) && !$conditions instanceof ExpressionInterface) {
             $value = $conditions;
             $type = $values == [] ? null : $values;
-            if ($type !== null && !$value instanceof ExpressionInterface) {
+            if ($type !== null) {
                 $value = $this->_castToExpression($value, $type);
+            }
+            if (!$value instanceof ExpressionInterface) {
+                $value = ['value' => $value, 'type' => $type];
             }
             $this->_caseValue = $value;
 
@@ -311,7 +314,6 @@ class CaseExpression implements ExpressionInterface
         if ($value !== null && !$value instanceof ExpressionInterface) {
             $value = $this->_castToExpression($value, $type);
         }
-
         if (!$value instanceof ExpressionInterface) {
             $value = ['value' => $value, 'type' => $type];
         }

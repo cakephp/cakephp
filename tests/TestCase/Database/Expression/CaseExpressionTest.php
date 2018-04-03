@@ -70,10 +70,10 @@ class CaseExpressionTest extends TestCase
         $expected = 'CASE WHEN test = :c0 THEN foobar END';
         $this->assertSame($expected, $caseExpression->sql(new ValueBinder()));
 
-        $caseExpression = (new CaseExpression(new IdentifierExpression('testColumn')))
+        $caseExpression = (new CaseExpression('testColumn'))
             ->when('testValue')
             ->then('testResult');
-        $expected = 'CASE testColumn WHEN :param0 THEN :param1 END';
+        $expected = 'CASE :param0 WHEN :param1 THEN :param2 END';
         $this->assertSame($expected, $caseExpression->sql(new ValueBinder()));
 
         $caseExpression = new CaseExpression();
