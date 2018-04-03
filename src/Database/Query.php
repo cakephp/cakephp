@@ -881,6 +881,50 @@ class Query implements ExpressionInterface, IteratorAggregate
     }
 
     /**
+     * Convenience method that adds a NOT NULL condition to the query
+     *
+     * @param array $fields A list of fields that should be not null
+     * @param bool $isNull Toggles between NOT NULL and NULL checks
+     * @return $this
+     */
+    protected function whereNullOrNotNull($fields, $isNull = true)
+    {
+        foreach ($fields as $condition) {
+            $this->where(function($exp) use ($condition, $isNull) {
+                if ($isNull) {
+                    return $exp->isNull($condition);
+                } else {
+                    return $exp->isNotNull($condition);
+                }
+            });
+        }
+
+        return $this;
+    }
+
+    /**
+     * Convenience method that adds a NOT NULL condition to the query
+     *
+     * @param array $fields A list of fields that should be not null
+     * @return $this
+     */
+    public function whereNotNull($fields)
+    {
+        return $this->whereNullOrNotNull($fields, false);
+    }
+
+    /**
+     * Convenience method that adds a IS NULL condition to the query
+     *
+     * @param array $fields A list of fields that should be not null
+     * @return $this
+     */
+    public function whereNull($fields)
+    {
+        return $this->whereNullOrNotNull($fields, true);
+    }
+
+    /**
      * Connects any previously defined set of conditions to the provided list
      * using the AND operator. This function accepts the conditions list in the same
      * format as the method `where` does, hence you can use arrays, expression objects
