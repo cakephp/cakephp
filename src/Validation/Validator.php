@@ -1933,10 +1933,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Gets the required message for a field
      *
      * @param string $field Field name
-     * @return string
+     * @return string|null
      */
     public function getRequiredMessage($field)
     {
+        if (!isset($this->_fields[$field])) {
+            return null;
+        }
+
         $defaultMessage = 'This field is required';
         if ($this->_useI18n) {
             $defaultMessage = __d('cake', 'This field is required');
@@ -1951,21 +1955,23 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Gets the notEmpty message for a field
      *
      * @param string $field Field name
-     * @return string
+     * @return string|null
      */
     public function getNotEmptyMessage($field)
     {
+        if (!isset($this->_fields[$field])) {
+            return null;
+        }
+
         $defaultMessage = 'This field cannot be left empty';
         if ($this->_useI18n) {
             $defaultMessage = __d('cake', 'This field cannot be left empty');
         }
 
         $notBlankMessage = null;
-        if (isset($this->_fields[$field])) {
-            foreach ($this->_fields[$field] as $rule) {
-                if ($rule->get('rule') === 'notBlank' && $rule->get('message')) {
-                    return $rule->get('message');
-                }
+        foreach ($this->_fields[$field] as $rule) {
+            if ($rule->get('rule') === 'notBlank' && $rule->get('message')) {
+                return $rule->get('message');
             }
         }
 
