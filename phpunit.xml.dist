@@ -50,9 +50,9 @@
         <!-- Postgres
         <env name="db_dsn" value="postgres://localhost/cake_test?timezone=UTC"/>
         -->
-        <!-- Mysql
-        <env name="db_dsn" value="mysql://localhost/cake_test?timezone=UTC"/>
-        -->
+
+        <env name="db_dsn" value="mysql://root:root@localhost/cake_test?timezone=UTC"/>
+
         <!-- SQL Server
         <env name="db_dsn" value="sqlserver://localhost/cake_test?timezone=UTC"/>
         -->
