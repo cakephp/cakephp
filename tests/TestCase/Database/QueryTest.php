@@ -4708,6 +4708,12 @@ class QueryTest extends TestCase
     {
         $this->loadFixtures('Profiles');
         $query = new Query($this->connection);
+        $fields = [
+            'integer',
+            'integer',
+            'boolean'
+        ];
+        $typeMap = new TypeMap($fields);
         $query
             ->select([
                 'id',
@@ -4715,19 +4721,20 @@ class QueryTest extends TestCase
                 'is_active'
             ])
             ->from('profiles')
+            ->setSelectTypeMap($typeMap)
             ->where(['id' => 2])
             ->limit(1);
         $statement = $query->execute();
         $results = $statement->fetchColumn(0);
-        $this->assertSame('2', $results);
+        $this->assertSame(2, $results);
 
         $statement = $query->execute();
         $results = $statement->fetchColumn(1);
-        $this->assertSame('2', $results);
+        $this->assertSame(2, $results);
 
         $statement = $query->execute();
         $results = $statement->fetchColumn(2);
-        $this->assertSame('0', $results);
+        $this->assertSame(false, $results);
     }
 
     /**
@@ -4739,6 +4746,12 @@ class QueryTest extends TestCase
     {
         $this->loadFixtures('Profiles');
         $query = new Query($this->connection);
+        $fields = [
+            'integer',
+            'integer',
+            'boolean'
+        ];
+        $typeMap = new TypeMap($fields);
         $query
             ->select([
                 'id',
@@ -4746,36 +4759,11 @@ class QueryTest extends TestCase
                 'is_active'
             ])
             ->from('profiles')
+            ->setSelectTypeMap($typeMap)
             ->where(['id' => 2])
             ->limit(1);
         $statement = $query->execute();
         $results = $statement->fetchColumn(3);
         $this->assertFalse($results);
-    }
-
-    /**
-     * Test that calling fetchAssoc, fetchColum and fetchObject in sequence
-     * alters the fetched data to the correct types and values.
-     * @return void
-     * @throws \Exception
-     */
-    public function testFetchAllAssocColumn()
-    {
-        $this->loadFixtures('Profiles');
-        $query = new Query($this->connection);
-        $query
-            ->select([
-                'id',
-                'user_id',
-                'is_active'
-            ])
-            ->from('profiles');
-        $statement = $query->execute();
-        $results = $statement->fetchAssoc();
-        $this->assertSame('1', $results['id']);
-        $results = $statement->fetchAssoc();
-        $this->assertSame('2', $results['id']);
-        $results = $statement->fetchColumn(0);
-        $this->assertSame('3', $results);
     }
 }
