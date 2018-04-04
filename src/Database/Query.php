@@ -917,7 +917,7 @@ class Query implements ExpressionInterface, IteratorAggregate
         $exp = $this->newExpr();
 
         foreach ($fields as $field) {
-           $exp->isNull($field);
+            $exp->isNull($field);
         }
 
         return $this->where($exp);
