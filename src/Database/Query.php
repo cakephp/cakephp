@@ -882,47 +882,45 @@ class Query implements ExpressionInterface, IteratorAggregate
     }
 
     /**
-     * Adds a NOT NULL or IS NULL expression to the query
-     *
-     * @param array $fields A list of fields that should be not null
-     * @param bool $isNull Toggles between NOT NULL and NULL checks
-     * @return $this
-     */
-    protected function whereNullOrNotNull($fields, $isNull = true)
-    {
-        foreach ($fields as $condition) {
-            $this->where(function ($exp) use ($condition, $isNull) {
-                if ($isNull) {
-                    return $exp->isNull($condition);
-                }
-
-                return $exp->isNotNull($condition);
-            });
-        }
-
-        return $this;
-    }
-
-    /**
      * Convenience method that adds a NOT NULL condition to the query
      *
-     * @param array $fields A list of fields that should be not null
+     * @param array|string|\Cake\Database\ExpressionInterface $fields A single field or expressions or a list of them that should be not null
      * @return $this
      */
     public function whereNotNull($fields)
     {
-        return $this->whereNullOrNotNull($fields, false);
+        if (!is_array($fields)) {
+            $fields = [$fields];
+        }
+
+        $exp = $this->newExpr();
+
+        foreach ($fields as $field) {
+            $exp->isNotNull($field);
+        }
+
+        return $this->where($exp);
     }
 
     /**
      * Convenience method that adds a IS NULL condition to the query
      *
-     * @param array $fields A list of fields that should be not null
+     * @param array|string|\Cake\Database\ExpressionInterface $fields A single field or expressions or a list of them that should be null
      * @return $this
      */
     public function whereNull($fields)
     {
-        return $this->whereNullOrNotNull($fields, true);
+        if (!is_array($fields)) {
+            $fields = [$fields];
+        }
+
+        $exp = $this->newExpr();
+
+        foreach ($fields as $field) {
+           $exp->isNull($field);
+        }
+
+        return $this->where($exp);
     }
 
     /**

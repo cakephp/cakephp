@@ -765,6 +765,15 @@ class QueryTest extends TestCase
             ->execute();
         $this->assertCount(5, $result);
         $result->closeCursor();
+
+        $query = new Query($this->connection);
+        $result = $query
+            ->select(['id'])
+            ->from('menu_link_trees')
+            ->whereNull($this->connection->newQuery()->select('parent_id'))
+            ->execute();
+        $this->assertCount(5, $result);
+        $result->closeCursor();
     }
 
     /**
@@ -781,6 +790,15 @@ class QueryTest extends TestCase
             ->select(['id', 'parent_id'])
             ->from('menu_link_trees')
             ->whereNotNull(['parent_id'])
+            ->execute();
+        $this->assertCount(13, $result);
+        $result->closeCursor();
+
+        $query = new Query($this->connection);
+        $result = $query
+            ->select(['id'])
+            ->from('menu_link_trees')
+            ->whereNotNull($this->connection->newQuery()->select('parent_id'))
             ->execute();
         $this->assertCount(13, $result);
         $result->closeCursor();
