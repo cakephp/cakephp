@@ -228,7 +228,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      */
     public function fetchColumn($position)
     {
-        $result = $this->_statement->fetch(static::FETCH_TYPE_NUM);
+        $result = $this->fetch(static::FETCH_TYPE_NUM);
         if (isset($result[$position])) {
             return $result[$position];
         };
