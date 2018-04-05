@@ -96,6 +96,9 @@ class PDOStatement extends StatementDecorator
         if ($type === static::FETCH_TYPE_ASSOC) {
             return $this->_statement->fetch(PDO::FETCH_ASSOC);
         }
+        if ($type === static::FETCH_TYPE_OBJ) {
+            return $this->_statement->fetch(PDO::FETCH_OBJ);
+        }
 
         return $this->_statement->fetch($type);
     }
@@ -121,6 +124,9 @@ class PDOStatement extends StatementDecorator
         }
         if ($type === static::FETCH_TYPE_ASSOC) {
             return $this->_statement->fetchAll(PDO::FETCH_ASSOC);
+        }
+        if ($type === static::FETCH_TYPE_OBJ) {
+            return $this->_statement->fetch(PDO::FETCH_OBJ);
         }
 
         return $this->_statement->fetchAll($type);

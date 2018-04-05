@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Database;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Query;
+use Cake\Database\Statement\StatementDecorator;
 use Cake\Database\StatementInterface;
 use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
@@ -4697,6 +4698,28 @@ class QueryTest extends TestCase
             ->execute()
             ->fetchAssoc();
         $this->assertSame(['id' => 1, 'user_id' => 1, 'is_active' => false], $results);
+    }
+
+    /**
+     * Test that calling fetch with with FETCH_TYPE_OBJ return stdClass object.
+     * @return void
+     * @throws \Exception
+     */
+    public function testFetchObjects()
+    {
+        $this->loadFixtures('Profiles');
+        $query = new Query($this->connection);
+        $results = $query
+            ->select([
+                'id',
+                'user_id',
+                'is_active'
+            ])
+            ->from('profiles')
+            ->limit(1)
+            ->execute()
+            ->fetch(StatementDecorator::FETCH_TYPE_OBJ);
+        $this->assertInstanceOf(\stdClass::class, $results);
     }
 
     /**
