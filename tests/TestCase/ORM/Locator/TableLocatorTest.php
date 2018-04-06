@@ -399,34 +399,34 @@ class TableLocatorTest extends TestCase
 
         $connection = ConnectionManager::get('test', false);
         $options = ['connection' => $connection];
-        $this->_locator->config('users', $options);
-        $map = $this->_locator->config();
+        $this->_locator->setConfig('users', $options);
+        $map = $this->_locator->getConfig();
         $this->assertEquals(['users' => $options], $map);
-        $this->assertEquals($options, $this->_locator->config('users'));
+        $this->assertEquals($options, $this->_locator->getConfig('users'));
 
         $schema = ['id' => ['type' => 'rubbish']];
         $options += ['schema' => $schema];
-        $this->_locator->config('users', $options);
+        $this->_locator->setConfig('users', $options);
 
         $table = $this->_locator->get('users', ['table' => 'users']);
         $this->assertInstanceOf('Cake\ORM\Table', $table);
-        $this->assertEquals('users', $table->table());
-        $this->assertEquals('users', $table->alias());
-        $this->assertSame($connection, $table->connection());
-        $this->assertEquals(array_keys($schema), $table->schema()->columns());
-        $this->assertEquals($schema['id']['type'], $table->schema()->column('id')['type']);
+        $this->assertEquals('users', $table->getTable());
+        $this->assertEquals('users', $table->getAlias());
+        $this->assertSame($connection, $table->getConnection());
+        $this->assertEquals(array_keys($schema), $table->getSchema()->columns());
+        $this->assertEquals($schema['id']['type'], $table->getSchema()->getColumn('id')['type']);
 
         $this->_locator->clear();
-        $this->assertEmpty($this->_locator->config());
+        $this->assertEmpty($this->_locator->getConfig());
 
-        $this->_locator->config('users', $options);
+        $this->_locator->setConfig('users', $options);
         $table = $this->_locator->get('users', ['className' => __NAMESPACE__ . '\MyUsersTable']);
         $this->assertInstanceOf(__NAMESPACE__ . '\MyUsersTable', $table);
-        $this->assertEquals('users', $table->table());
-        $this->assertEquals('users', $table->alias());
-        $this->assertSame($connection, $table->connection());
-        $this->assertEquals(array_keys($schema), $table->schema()->columns());
-        $this->assertEquals($schema['id']['type'], $table->schema()->column('id')['type']);
+        $this->assertEquals('users', $table->getTable());
+        $this->assertEquals('users', $table->getAlias());
+        $this->assertSame($connection, $table->getConnection());
+        $this->assertEquals(array_keys($schema), $table->getSchema()->columns());
+        $this->assertEquals($schema['id']['type'], $table->getSchema()->getColumn('id')['type']);
     }
 
     /**
@@ -438,10 +438,10 @@ class TableLocatorTest extends TestCase
     {
         $validator = new Validator();
 
-        $this->_locator->config('users', ['validator' => $validator]);
+        $this->_locator->setConfig('users', ['validator' => $validator]);
         $table = $this->_locator->get('users');
 
-        $this->assertSame($table->validator('default'), $validator);
+        $this->assertSame($table->getValidator('default'), $validator);
     }
 
     /**
@@ -455,7 +455,7 @@ class TableLocatorTest extends TestCase
         $validator2 = new Validator();
         $validator3 = new Validator();
 
-        $this->_locator->config('users', [
+        $this->_locator->setConfig('users', [
             'validator' => [
                 'default' => $validator1,
                 'secondary' => $validator2,
@@ -464,9 +464,9 @@ class TableLocatorTest extends TestCase
         ]);
         $table = $this->_locator->get('users');
 
-        $this->assertSame($table->validator('default'), $validator1);
-        $this->assertSame($table->validator('secondary'), $validator2);
-        $this->assertSame($table->validator('tertiary'), $validator3);
+        $this->assertSame($table->getValidator('default'), $validator1);
+        $this->assertSame($table->getValidator('secondary'), $validator2);
+        $this->assertSame($table->getValidator('tertiary'), $validator3);
     }
 
     /**
