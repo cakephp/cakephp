@@ -226,7 +226,7 @@ class LogTest extends TestCase
         $expected = $config;
         $expected['className'] = $config['engine'];
         unset($expected['engine']);
-        $this->assertSame($expected, Log::config('tests'));
+        $this->assertSame($expected, Log::getConfig('tests'));
     }
 
     /**
