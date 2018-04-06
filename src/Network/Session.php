@@ -350,6 +350,7 @@ class Session
     /**
      * Write datas and close the session
      * @return bool True if session was started
+     * @throws \RuntimeException if the session was already started
      */
     public function close()
     {
@@ -357,7 +358,13 @@ class Session
             return true;
         }
 
-        return session_write_close();
+        if (!session_write_close()) {
+            throw new RuntimeException('Could not close the session');
+        }
+
+        $this->_started = false;
+
+        return true;
     }
 
     /**
