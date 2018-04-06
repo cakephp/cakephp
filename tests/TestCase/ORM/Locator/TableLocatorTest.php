@@ -68,16 +68,17 @@ class TableLocatorTest extends TestCase
      */
     public function testConfig()
     {
-        $this->assertEquals([], $this->_locator->config('Tests'));
+        $this->assertEquals([], $this->_locator->getConfig('Tests'));
 
         $data = [
             'connection' => 'testing',
             'entityClass' => 'TestApp\Model\Entity\Article',
         ];
-        $result = $this->_locator->config('Tests', $data);
+        $this->_locator->setConfig('Tests', $data);
+        $result = $this->_locator->getConfig('Tests');
         $this->assertEquals($data, $result, 'Returns config data.');
 
-        $result = $this->_locator->config();
+        $result = $this->_locator->getConfig();
         $expected = ['Tests' => $data];
         $this->assertEquals($expected, $result);
     }
@@ -96,7 +97,8 @@ class TableLocatorTest extends TestCase
             'entityClass' => 'TestPlugin\Model\Entity\Comment',
         ];
 
-        $result = $this->_locator->config('TestPlugin.TestPluginComments', $data);
+        $this->_locator->setConfig('TestPlugin.TestPluginComments', $data);
+        $result = $this->_locator->getConfig('TestPlugin.TestPluginComments');
         $this->assertEquals($data, $result, 'Returns config data.');
     }
 
@@ -110,7 +112,7 @@ class TableLocatorTest extends TestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('You cannot configure "Users", it has already been constructed.');
         $users = $this->_locator->get('Users');
-        $this->_locator->config('Users', ['table' => 'my_users']);
+        $this->_locator->setConfig('Users', ['table' => 'my_users']);
     }
 
     /**
@@ -122,7 +124,7 @@ class TableLocatorTest extends TestCase
     {
         $this->assertFalse($this->_locator->exists('Articles'));
 
-        $this->_locator->config('Articles', ['table' => 'articles']);
+        $this->_locator->setConfig('Articles', ['table' => 'articles']);
         $this->assertFalse($this->_locator->exists('Articles'));
 
         $this->_locator->get('Articles', ['table' => 'articles']);
@@ -139,7 +141,7 @@ class TableLocatorTest extends TestCase
         $this->assertFalse($this->_locator->exists('Comments'));
         $this->assertFalse($this->_locator->exists('TestPlugin.Comments'));
 
-        $this->_locator->config('TestPlugin.Comments', ['table' => 'comments']);
+        $this->_locator->setConfig('TestPlugin.Comments', ['table' => 'comments']);
         $this->assertFalse($this->_locator->exists('Comments'), 'The Comments key should not be populated');
         $this->assertFalse($this->_locator->exists('TestPlugin.Comments'), 'The plugin.alias key should not be populated');
 
@@ -159,11 +161,11 @@ class TableLocatorTest extends TestCase
             'table' => 'my_articles',
         ]);
         $this->assertInstanceOf('Cake\ORM\Table', $result);
-        $this->assertEquals('my_articles', $result->table());
+        $this->assertEquals('my_articles', $result->getTable());
 
         $result2 = $this->_locator->get('Articles');
         $this->assertSame($result, $result2);
-        $this->assertEquals('my_articles', $result->table());
+        $this->assertEquals('my_articles', $result->getTable());
     }
 
     /**
@@ -175,33 +177,33 @@ class TableLocatorTest extends TestCase
     {
         $result = $this->_locator->get('Droids');
         $this->assertInstanceOf('Cake\ORM\Table', $result);
-        $this->assertEquals('droids', $result->table());
-        $this->assertEquals('Droids', $result->alias());
+        $this->assertEquals('droids', $result->getTable());
+        $this->assertEquals('Droids', $result->getAlias());
 
         $result = $this->_locator->get('R2D2', ['className' => 'Droids']);
         $this->assertInstanceOf('Cake\ORM\Table', $result);
-        $this->assertEquals('droids', $result->table(), 'The table should be derived from the className');
-        $this->assertEquals('R2D2', $result->alias());
+        $this->assertEquals('droids', $result->getTable(), 'The table should be derived from the className');
+        $this->assertEquals('R2D2', $result->getAlias());
 
         $result = $this->_locator->get('C3P0', ['className' => 'Droids', 'table' => 'rebels']);
         $this->assertInstanceOf('Cake\ORM\Table', $result);
-        $this->assertEquals('rebels', $result->table(), 'The table should be taken from options');
-        $this->assertEquals('C3P0', $result->alias());
+        $this->assertEquals('rebels', $result->getTable(), 'The table should be taken from options');
+        $this->assertEquals('C3P0', $result->getAlias());
 
         $result = $this->_locator->get('Funky.Chipmunks');
         $this->assertInstanceOf('Cake\ORM\Table', $result);
-        $this->assertEquals('chipmunks', $result->table(), 'The table should be derived from the alias');
-        $this->assertEquals('Chipmunks', $result->alias());
+        $this->assertEquals('chipmunks', $result->getTable(), 'The table should be derived from the alias');
+        $this->assertEquals('Chipmunks', $result->getAlias());
 
         $result = $this->_locator->get('Awesome', ['className' => 'Funky.Monkies']);
         $this->assertInstanceOf('Cake\ORM\Table', $result);
-        $this->assertEquals('monkies', $result->table(), 'The table should be derived from the classname');
-        $this->assertEquals('Awesome', $result->alias());
+        $this->assertEquals('monkies', $result->getTable(), 'The table should be derived from the classname');
+        $this->assertEquals('Awesome', $result->getAlias());
 
         $result = $this->_locator->get('Stuff', ['className' => 'Cake\ORM\Table']);
         $this->assertInstanceOf('Cake\ORM\Table', $result);
-        $this->assertEquals('stuff', $result->table(), 'The table should be derived from the alias');
-        $this->assertEquals('Stuff', $result->alias());
+        $this->assertEquals('stuff', $result->getTable(), 'The table should be derived from the alias');
+        $this->assertEquals('Stuff', $result->getAlias());
     }
 
     /**
@@ -211,11 +213,11 @@ class TableLocatorTest extends TestCase
      */
     public function testGetWithConfig()
     {
-        $this->_locator->config('Articles', [
+        $this->_locator->setConfig('Articles', [
             'table' => 'my_articles',
         ]);
         $result = $this->_locator->get('Articles');
-        $this->assertEquals('my_articles', $result->table(), 'Should use config() data.');
+        $this->assertEquals('my_articles', $result->getTable(), 'Should use config() data.');
     }
 
     /**
@@ -229,8 +231,8 @@ class TableLocatorTest extends TestCase
         $result = $this->_locator->get('Articles', [
             'connectionName' => 'testing'
         ]);
-        $this->assertEquals('articles', $result->table());
-        $this->assertEquals('test', $result->connection()->configName());
+        $this->assertEquals('articles', $result->getTable());
+        $this->assertEquals('test', $result->getConnection()->configName());
     }
 
     /**
@@ -240,7 +242,7 @@ class TableLocatorTest extends TestCase
      */
     public function testGetWithConfigClassName()
     {
-        $this->_locator->config('MyUsersTableAlias', [
+        $this->_locator->setConfig('MyUsersTableAlias', [
             'className' => '\Cake\Test\TestCase\ORM\Locator\MyUsersTable',
         ]);
         $result = $this->_locator->get('MyUsersTableAlias');
@@ -392,7 +394,7 @@ class TableLocatorTest extends TestCase
     public function testConfigAndBuild()
     {
         $this->_locator->clear();
-        $map = $this->_locator->config();
+        $map = $this->_locator->getConfig();
         $this->assertEquals([], $map);
 
         $connection = ConnectionManager::get('test', false);
