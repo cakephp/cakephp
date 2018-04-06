@@ -369,6 +369,20 @@ class Session
     }
 
     /**
+     * Write datas and close the session
+     *
+     * @return bool True if session was started
+     */
+    public function close()
+    {
+        if (!$this->_started) {
+            return true;
+        }
+
+        return session_write_close();
+    }
+
+    /**
      * Determine if Session has already been started.
      *
      * @return bool True if session has been started.
