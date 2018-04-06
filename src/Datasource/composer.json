@@ -28,8 +28,9 @@
         "cakephp/core": "^3.0.0"
     },
     "suggest": {
-        "cakephp/utility": "Require this if you decide to use EntityTrait",
-        "cakephp/collection": "Require this if you decide to use ResultSetInterface"
+        "cakephp/utility": "If you decide to use EntityTrait.",
+        "cakephp/collection": "If you decide to use ResultSetInterface.",
+        "cakephp/cache": "If you decide to use Query caching."
     },
     "autoload": {
         "psr-4": {

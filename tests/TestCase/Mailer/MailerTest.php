@@ -211,11 +211,11 @@ class MailerTest extends TestCase
     }
 
     /**
-     * @expectedException \Cake\Mailer\Exception\MissingActionException
-     * @expectedExceptionMessage Mail TestMailer::test() could not be found, or is not accessible.
      */
     public function testMissingActionThrowsException()
     {
+        $this->expectException(\Cake\Mailer\Exception\MissingActionException::class);
+        $this->expectExceptionMessage('Mail TestMailer::test() could not be found, or is not accessible.');
         (new TestMailer())->send('test');
     }
 }

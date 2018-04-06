@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\ORM;
 
-use Cake\ORM\Association;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
@@ -65,12 +64,12 @@ class AssociationProxyTest extends TestCase
     /**
      * Tests that getting a bad property throws exception
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Table "Cake\ORM\Table" is not associated with "posts"
      * @return void
      */
     public function testGetBadAssociation()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Table "Cake\ORM\Table" is not associated with "posts"');
         $articles = TableRegistry::get('articles');
         $articles->posts;
     }

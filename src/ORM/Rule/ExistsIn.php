@@ -35,7 +35,7 @@ class ExistsIn
     /**
      * The repository where the field will be looked for
      *
-     * @var \Cake\Datasource\RepositoryInterface|\Cake\ORM\Association
+     * @var \Cake\Datasource\RepositoryInterface|\Cake\ORM\Association|string
      */
     protected $_repository;
 
@@ -53,7 +53,7 @@ class ExistsIn
      * Set to true to accept composite foreign keys where one or more nullable columns are null.
      *
      * @param string|array $fields The field or fields to check existence as primary key.
-     * @param object|string $repository The repository where the field will be looked for,
+     * @param \Cake\Datasource\RepositoryInterface|\Cake\ORM\Association|string $repository The repository where the field will be looked for,
      * or the association name for the repository.
      * @param array $options The options that modify the rules behavior.
      *     Options 'allowNullableNulls' will make the rule pass if given foreign keys are set to `null`.
@@ -92,6 +92,7 @@ class ExistsIn
             $this->_repository = $repository;
         }
 
+        $fields = $this->_fields;
         $source = $target = $this->_repository;
         $isAssociation = $target instanceof Association;
         $bindingKey = $isAssociation ? (array)$target->getBindingKey() : (array)$target->getPrimaryKey();
@@ -118,9 +119,9 @@ class ExistsIn
 
         if ($this->_options['allowNullableNulls']) {
             $schema = $source->getSchema();
-            foreach ($this->_fields as $i => $field) {
+            foreach ($fields as $i => $field) {
                 if ($schema->getColumn($field) && $schema->isNullable($field) && $entity->get($field) === null) {
-                    unset($bindingKey[$i], $this->_fields[$i]);
+                    unset($bindingKey[$i], $fields[$i]);
                 }
             }
         }
@@ -131,7 +132,7 @@ class ExistsIn
         );
         $conditions = array_combine(
             $primary,
-            $entity->extract($this->_fields)
+            $entity->extract($fields)
         );
 
         return $target->exists($conditions);

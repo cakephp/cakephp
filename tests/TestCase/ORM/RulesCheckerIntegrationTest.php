@@ -634,12 +634,12 @@ class RulesCheckerIntegrationTest extends TestCase
      * Tests existsIn with invalid associations
      *
      * @group save
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage ExistsIn rule for 'author_id' is invalid. 'NotValid' is not associated with 'Cake\ORM\Table'.
      * @return void
      */
     public function testExistsInInvalidAssociation()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('ExistsIn rule for \'author_id\' is invalid. \'NotValid\' is not associated with \'Cake\ORM\Table\'.');
         $entity = new Entity([
             'title' => 'An Article',
             'author_id' => 500
@@ -891,9 +891,9 @@ class RulesCheckerIntegrationTest extends TestCase
     /**
      * Tests new allowNullableNulls flag with author id set to null
      *
-     * @return
+     * @return void
      */
-    public function testExistsInAllowNullableNullsWithAuthorIdNullA()
+    public function testExistsInAllowNullableNullsOn()
     {
         $entity = new Entity([
             'id' => 10,
@@ -914,9 +914,9 @@ class RulesCheckerIntegrationTest extends TestCase
     /**
      * Tests new allowNullableNulls flag with author id set to null
      *
-     * @return
+     * @return void
      */
-    public function testExistsInAllowNullableNullsWithAuthorIdNullB()
+    public function testExistsInAllowNullableNullsOff()
     {
         $entity = new Entity([
             'id' => 10,
@@ -939,7 +939,7 @@ class RulesCheckerIntegrationTest extends TestCase
      *
      * @return
      */
-    public function testExistsInAllowNullableNullsWithAuthorIdNullC()
+    public function testExistsInAllowNullableNullsDefaultValue()
     {
         $entity = new Entity([
             'id' => 10,
@@ -960,7 +960,7 @@ class RulesCheckerIntegrationTest extends TestCase
      *
      * @return
      */
-    public function testExistsInAllowNullableNullsWithAuthorIdNullD()
+    public function testExistsInAllowNullableNullsCustomMessage()
     {
         $entity = new Entity([
             'id' => 10,
@@ -981,35 +981,11 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
-     * Tests new allowNullableNulls flag with author id set to null
-     *
-     * @return
-     */
-    public function testExistsInAllowNullableNullsWithAuthorIdNullE()
-    {
-        $entity = new Entity([
-            'id' => 10,
-            'author_id' => null,
-            'site_id' => 1,
-            'name' => 'New Site Article without Author',
-        ]);
-        $table = TableRegistry::get('SiteArticles');
-        $table->belongsTo('SiteAuthors');
-        $rules = $table->rulesChecker();
-
-        $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', [
-            'allowNullableNulls' => true,
-            'message' => 'Niente'
-        ]));
-        $this->assertInstanceOf('Cake\ORM\Entity', $table->save($entity));
-    }
-
-    /**
      * Tests new allowNullableNulls flag with author id set to 1
      *
      * @return
      */
-    public function testExistsInAllowNullableNullsWithAuthorId1A()
+    public function testExistsInAllowNullableNullsOnAllKeysSet()
     {
         $entity = new Entity([
             'id' => 10,
@@ -1030,7 +1006,7 @@ class RulesCheckerIntegrationTest extends TestCase
      *
      * @return
      */
-    public function testExistsInAllowNullableNullsWithAuthorIdB()
+    public function testExistsInAllowNullableNullsOffAllKeysSet()
     {
         $entity = new Entity([
             'id' => 10,
@@ -1051,28 +1027,7 @@ class RulesCheckerIntegrationTest extends TestCase
      *
      * @return
      */
-    public function testExistsInAllowNullableNullsWithAuthorId1C()
-    {
-        $entity = new Entity([
-            'id' => 10,
-            'author_id' => 1,
-            'site_id' => 1,
-            'name' => 'New Site Article with Author',
-        ]);
-        $table = TableRegistry::get('SiteArticles');
-        $table->belongsTo('SiteAuthors');
-        $rules = $table->rulesChecker();
-
-        $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors'));
-        $this->assertInstanceOf('Cake\ORM\Entity', $table->save($entity));
-    }
-
-    /**
-     * Tests new allowNullableNulls flag with author id set to 1
-     *
-     * @return
-     */
-    public function testExistsInAllowNullableNullsWithAuthorId1E()
+    public function testExistsInAllowNullableNullsOnAllKeysCustomMessage()
     {
         $entity = new Entity([
             'id' => 10,
@@ -1091,34 +1046,11 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
-     * Tests new allowNullableNulls flag with author id set to 1
-     *
-     * @return
-     */
-    public function testExistsInAllowNullableNullsWithAuthorId1F()
-    {
-        $entity = new Entity([
-            'id' => 10,
-            'author_id' => 1,
-            'site_id' => 1,
-            'name' => 'New Site Article with Author',
-        ]);
-        $table = TableRegistry::get('SiteArticles');
-        $table->belongsTo('SiteAuthors');
-        $rules = $table->rulesChecker();
-
-        $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', [
-            'allowNullableNulls' => false,
-            'message' => 'will not error']));
-        $this->assertInstanceOf('Cake\ORM\Entity', $table->save($entity));
-    }
-
-    /**
      * Tests new allowNullableNulls flag with author id set to 99999999 (does not exist)
      *
      * @return
      */
-    public function testExistsInAllowNullableNullsWithAuthorId1G()
+    public function testExistsInAllowNullableNullsOnInvalidKey()
     {
         $entity = new Entity([
             'id' => 10,
@@ -1143,7 +1075,7 @@ class RulesCheckerIntegrationTest extends TestCase
      *
      * @return
      */
-    public function testExistsInAllowNullableNullsWithAuthorId1H()
+    public function testExistsInAllowNullableNullsOnInvalidKeys()
     {
         $entity = new Entity([
             'id' => 10,
@@ -1168,7 +1100,7 @@ class RulesCheckerIntegrationTest extends TestCase
      *
      * @return
      */
-    public function testExistsInAllowNullableNullsWithAuthorId1I()
+    public function testExistsInAllowNullableNullsOnInvalidKeySecond()
     {
         $entity = new Entity([
             'id' => 10,
@@ -1185,6 +1117,44 @@ class RulesCheckerIntegrationTest extends TestCase
             'message' => 'will error']));
         $this->assertFalse($table->save($entity));
         $this->assertEquals(['author_id' => ['_existsIn' => 'will error']], $entity->errors());
+    }
+
+    /**
+     * Tests new allowNullableNulls with saveMany
+     *
+     * @return
+     */
+    public function testExistsInAllowNullableNullsSaveMany()
+    {
+        $entities = [
+            new Entity([
+                'id' => 1,
+                'author_id' => null,
+                'site_id' => 1,
+                'name' => 'New Site Article without Author',
+            ]),
+            new Entity([
+                'id' => 2,
+                'author_id' => 1,
+                'site_id' => 1,
+                'name' => 'New Site Article with Author',
+            ]),
+        ];
+        $table = TableRegistry::get('SiteArticles');
+        $table->belongsTo('SiteAuthors');
+        $rules = $table->rulesChecker();
+
+        $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', [
+            'allowNullableNulls' => true,
+            'message' => 'will error with array_combine warning']));
+        $result = $table->saveMany($entities);
+        $this->assertCount(2, $result);
+
+        $this->assertInstanceOf(Entity::class, $result[0]);
+        $this->assertEmpty($result[0]->getErrors());
+
+        $this->assertInstanceOf(Entity::class, $result[1]);
+        $this->assertEmpty($result[1]->getErrors());
     }
 
     /**

@@ -638,7 +638,6 @@ class PaginatorHelperTest extends TestCase
      */
     public function testSortAdminLinks()
     {
-        Configure::write('Routing.prefixes', ['admin']);
         Router::reload();
         Router::connect('/admin/:controller/:action/*', ['prefix' => 'admin']);
         Router::setRequestInfo([
@@ -760,7 +759,6 @@ class PaginatorHelperTest extends TestCase
      */
     public function testGenerateUrlWithPrefixes()
     {
-        Configure::write('Routing.prefixes', ['members']);
         Router::reload();
         Router::connect('/members/:controller/:action/*', ['prefix' => 'members']);
         Router::connect('/:controller/:action/*');
@@ -818,6 +816,49 @@ class PaginatorHelperTest extends TestCase
     }
 
     /**
+     * test URL generation can leave prefix routes
+     *
+     * @return void
+     */
+    public function testGenerateUrlWithPrefixesLeavePrefix()
+    {
+        Router::reload();
+        Router::connect('/members/:controller/:action/*', ['prefix' => 'members']);
+        Router::connect('/:controller/:action/*');
+
+        $request = new ServerRequest([
+            'params' => [
+                'prefix' => 'members',
+                'controller' => 'posts',
+                'action' => 'index',
+                'plugin' => null,
+                'paging' => [
+                    'Articles' => ['page' => 2, 'prevPage' => true]
+                ]
+            ],
+            'webroot' => '/'
+        ]);
+        Router::setRequestInfo($request);
+        $this->Paginator->request = $request;
+
+        $result = $this->Paginator->generateUrl();
+        $expected = '/members/posts/index?page=2';
+        $this->assertEquals($expected, $result);
+
+        $result = $this->Paginator->generateUrl(['prefix' => 'members']);
+        $expected = '/members/posts/index?page=2';
+        $this->assertEquals($expected, $result);
+
+        $result = $this->Paginator->generateUrl(['prefix' => false]);
+        $expected = '/posts/index?page=2';
+        $this->assertEquals($expected, $result);
+
+        $this->Paginator->options(['url' => ['prefix' => false]]);
+        $result = $this->Paginator->generateUrl();
+        $this->assertEquals($expected, $result, 'Setting prefix in options should work too.');
+    }
+
+    /**
      * test generateUrl with multiple pagination
      *
      * @return void
@@ -868,6 +909,10 @@ class PaginatorHelperTest extends TestCase
 
         $result = $this->Paginator->generateUrl(['sort' => 'name']);
         $expected = '/posts/index?article%5Bpage%5D=3&amp;article%5Bsort%5D=name';
+        $this->assertEquals($expected, $result);
+
+        $result = $this->Paginator->generateUrl(['#' => 'foo']);
+        $expected = '/posts/index?article%5Bpage%5D=3#foo';
         $this->assertEquals($expected, $result);
     }
 

@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Filesystem;
 use Cake\Filesystem\File;
 use Cake\Filesystem\Folder;
 use Cake\TestSuite\TestCase;
+use SplFileInfo;
 
 /**
  * FileTest class
@@ -124,6 +125,88 @@ class FileTest extends TestCase
     }
 
     /**
+     * testUtf8Filenames
+     *
+     * @link https://github.com/cakephp/cakephp/issues/11749
+     * @return void
+     */
+    public function testUtf8Filenames()
+    {
+        $File = new File(TMP . 'tests/permissions/نام فارسی.php', true);
+        $this->assertEquals('نام فارسی', $File->name());
+        $this->assertTrue($File->exists());
+        $this->assertTrue($File->readable());
+    }
+
+    /**
+     * Test _basename method
+     *
+     * @dataProvider baseNameValueProvider
+     * @return void
+     */
+    public function testBasename($path, $suffix, $isRoot)
+    {
+        if (!$isRoot) {
+            $path = TMP . 'tests/permissions' . $path;
+        }
+        $File = new File($path, false);
+
+        // some paths are directories like '/etc/sudoers.d'
+        if (!is_dir($path)) {
+            // Check the name after running __construct()
+            $result = $File->name;
+            $expecting = basename($path);
+            $this->assertEquals($expecting, $result);
+        }
+
+        // Check name()
+        $splInfo = new SplFileInfo($path);
+        $File->name = ltrim($splInfo->getFilename(), '/\\');
+        if ($suffix === null) {
+            $File->info();//to set and unset 'extension' in bellow
+            unset($File->info['extension']);
+
+            $this->assertEquals(basename($path), $File->name());
+        } else {
+            $File->info['extension'] = $suffix;
+            $this->assertEquals(basename($path, '.' . $suffix), $File->name());
+        }
+    }
+
+    /**
+     * Data provider for testBasename().
+     *
+     * @return array
+     */
+    public function baseNameValueProvider()
+    {
+        return [
+            ['folder/نام.txt', null, false],
+            ['folder/نام فارسی.txt', null, false],
+            ['نام.txt', null, true],
+            ['نام فارسی.txt', null, true],
+            ['/نام.txt', null, true],
+            ['/نام فارسی.txt', null, true],
+            //
+            ['folder/نام.txt', 'txt', false],
+            ['folder/نام فارسی.txt', 'txt', false],
+            ['نام.txt', 'txt', true],
+            ['نام فارسی.txt', 'txt', true],
+            ['/نام.txt', 'txt', true],
+            ['/نام فارسی.txt', 'txt', true],
+            //
+            ['abcde.ab', 'abe', false],
+            ['/etc/sudoers.d', null, true],
+            ['/etc/.d', 'd', true],
+            ['/etc/sudoers.d', 'd', true],
+            ['/etc/passwd', null, true],
+            ['/etc/', null, true],
+            ['.', null, true],
+            ['/', null, true],
+        ];
+    }
+
+    /**
      * testPermission method
      *
      * @return void
@@ -195,7 +278,7 @@ class FileTest extends TestCase
         $expecting = substr($data, 0, 3);
         $result = $this->File->read(3);
         $this->assertEquals($expecting, $result);
-        $this->assertTrue(is_resource($this->File->handle));
+        $this->assertInternalType('resource', $this->File->handle);
 
         $expecting = substr($data, 3, 3);
         $result = $this->File->read(3);
@@ -214,10 +297,10 @@ class FileTest extends TestCase
         $result = $this->File->offset();
         $this->assertFalse($result);
 
-        $this->assertFalse(is_resource($this->File->handle));
+        $this->assertNotInternalType('resource', $this->File->handle);
         $success = $this->File->offset(0);
         $this->assertTrue($success);
-        $this->assertTrue(is_resource($this->File->handle));
+        $this->assertInternalType('resource', $this->File->handle);
 
         $result = $this->File->offset();
         $expected = 0;
@@ -245,19 +328,19 @@ class FileTest extends TestCase
         $this->File->handle = null;
 
         $r = $this->File->open();
-        $this->assertTrue(is_resource($this->File->handle));
+        $this->assertInternalType('resource', $this->File->handle);
         $this->assertTrue($r);
 
         $handle = $this->File->handle;
         $r = $this->File->open();
         $this->assertTrue($r);
         $this->assertTrue($handle === $this->File->handle);
-        $this->assertTrue(is_resource($this->File->handle));
+        $this->assertInternalType('resource', $this->File->handle);
 
         $r = $this->File->open('r', true);
         $this->assertTrue($r);
         $this->assertFalse($handle === $this->File->handle);
-        $this->assertTrue(is_resource($this->File->handle));
+        $this->assertInternalType('resource', $this->File->handle);
     }
 
     /**
@@ -268,12 +351,12 @@ class FileTest extends TestCase
     public function testClose()
     {
         $this->File->handle = null;
-        $this->assertFalse(is_resource($this->File->handle));
+        $this->assertNotInternalType('resource', $this->File->handle);
         $this->assertTrue($this->File->close());
-        $this->assertFalse(is_resource($this->File->handle));
+        $this->assertNotInternalType('resource', $this->File->handle);
 
         $this->File->handle = fopen(__FILE__, 'r');
-        $this->assertTrue(is_resource($this->File->handle));
+        $this->assertInternalType('resource', $this->File->handle);
         $this->assertTrue($this->File->close());
         $this->assertFalse(is_resource($this->File->handle));
     }
@@ -435,7 +518,7 @@ class FileTest extends TestCase
 
         $TmpFile = new File($tmpFile);
         $this->assertFileNotExists($tmpFile);
-        $this->assertFalse(is_resource($TmpFile->handle));
+        $this->assertNotInternalType('resource', $TmpFile->handle);
 
         $testData = ['CakePHP\'s', ' test suite', ' was here ...', ''];
         foreach ($testData as $data) {
@@ -443,7 +526,7 @@ class FileTest extends TestCase
             $this->assertTrue($r);
             $this->assertFileExists($tmpFile);
             $this->assertEquals($data, file_get_contents($tmpFile));
-            $this->assertTrue(is_resource($TmpFile->handle));
+            $this->assertInternalType('resource', $TmpFile->handle);
             $TmpFile->close();
         }
         unlink($tmpFile);

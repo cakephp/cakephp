@@ -179,7 +179,7 @@ abstract class Mailer implements EventListenerInterface
      * Cloned Email instance for restoring instance after email is sent by
      * mailer action.
      *
-     * @var string
+     * @var \Cake\Mailer\Email
      */
     protected $_clonedEmail;
 
@@ -245,7 +245,7 @@ abstract class Mailer implements EventListenerInterface
      *
      * @param string $method Method name.
      * @param array $args Method arguments
-     * @return $this
+     * @return $this|mixed
      */
     public function __call($method, $args)
     {

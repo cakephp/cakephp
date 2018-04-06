@@ -197,7 +197,7 @@ class TreeBehaviorTest extends TestCase
      *
      * @return void
      */
-    public function testCallableScoping()
+    public function testScopeCallable()
     {
         $table = TableRegistry::get('MenuLinkTrees');
         $table->addBehavior('Tree', [
@@ -208,7 +208,6 @@ class TreeBehaviorTest extends TestCase
         $count = $table->childCount($table->get(1), false);
         $this->assertEquals(4, $count);
     }
-
     /**
      * Tests the find('children') method
      *
@@ -235,13 +234,28 @@ class TreeBehaviorTest extends TestCase
     }
 
     /**
+     * Tests the find('children') plus scope=null
+     *
+     * @return void
+     */
+    public function testScopeNull()
+    {
+        $table = TableRegistry::get('MenuLinkTrees');
+        $table->addBehavior('Tree');
+        $table->behaviors()->get('Tree')->setConfig('scope', null);
+
+        $nodes = $table->find('children', ['for' => 1, 'direct' => true])->all();
+        $this->assertEquals([2, 3], $nodes->extract('id')->toArray());
+    }
+
+    /**
      * Tests that find('children') will throw an exception if the node was not found
      *
-     * @expectedException \Cake\Datasource\Exception\RecordNotFoundException
      * @return void
      */
     public function testFindChildrenException()
     {
+        $this->expectException(\Cake\Datasource\Exception\RecordNotFoundException::class);
         $table = TableRegistry::get('MenuLinkTrees');
         $table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
         $query = $table->find('children', ['for' => 500]);
@@ -897,12 +911,12 @@ class TreeBehaviorTest extends TestCase
     /**
      * Tests making a node its own parent as an existing entity
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Cannot set a node's parent as itself
      * @return void
      */
     public function testReParentSelf()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Cannot set a node\'s parent as itself');
         $entity = $this->table->get(1);
         $entity->parent_id = $entity->id;
         $this->table->save($entity);
@@ -911,12 +925,12 @@ class TreeBehaviorTest extends TestCase
     /**
      * Tests making a node its own parent as a new entity.
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Cannot set a node's parent as itself
      * @return void
      */
     public function testReParentSelfNewEntity()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Cannot set a node\'s parent as itself');
         $entity = $this->table->newEntity(['name' => 'root']);
         $entity->id = 1;
         $entity->parent_id = $entity->id;
@@ -1142,12 +1156,12 @@ class TreeBehaviorTest extends TestCase
     /**
      * Tests that trying to create a cycle throws an exception
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Cannot use node "5" as parent for entity "2"
      * @return void
      */
     public function testReparentCycle()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Cannot use node "5" as parent for entity "2"');
         $table = $this->table;
         $entity = $table->get(2);
         $entity->parent_id = 5;
@@ -1200,6 +1214,43 @@ class TreeBehaviorTest extends TestCase
             '11:12 - 11:alien hardware'
         ];
         $this->assertMpttValues($expected, $this->table);
+    }
+
+    /**
+     * Tests deleting a subtree in a scoped tree
+     *
+     * @return void
+     */
+    public function testDeleteSubTreeScopedTree()
+    {
+        $table = TableRegistry::get('MenuLinkTrees');
+        $table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
+        $entity = $table->get(3);
+        $this->assertTrue($table->delete($entity));
+
+        $expected = [
+            ' 1: 4 -  1:Link 1',
+            '_ 2: 3 -  2:Link 2',
+            ' 5: 8 -  6:Link 6',
+            '_ 6: 7 -  7:Link 7',
+            ' 9:10 -  8:Link 8',
+        ];
+        $this->assertMpttValues($expected, $table);
+
+        $table->behaviors()->get('Tree')->config('scope', ['menu' => 'categories']);
+        $expected = [
+            ' 1:10 -  9:electronics',
+            '_ 2: 9 - 10:televisions',
+            '__ 3: 4 - 11:tube',
+            '__ 5: 8 - 12:lcd',
+            '___ 6: 7 - 13:plasma',
+            '11:20 - 14:portable',
+            '_12:15 - 15:mp3',
+            '__13:14 - 16:flash',
+            '_16:17 - 17:cd',
+            '_18:19 - 18:radios',
+        ];
+        $this->assertMpttValues($expected, $table);
     }
 
     /**

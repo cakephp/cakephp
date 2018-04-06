@@ -170,12 +170,12 @@ class DatabaseSession implements SessionHandlerInterface
     /**
      * Helper function called on gc for database sessions.
      *
-     * @param string $maxlifetime Sessions that have not updated for the last maxlifetime seconds will be removed.
+     * @param int $maxlifetime Sessions that have not updated for the last maxlifetime seconds will be removed.
      * @return bool True on success, false on failure.
      */
     public function gc($maxlifetime)
     {
-        $this->_table->deleteAll(['expires <' => time()]);
+        $this->_table->deleteAll(['expires <' => time() - $maxlifetime]);
 
         return true;
     }

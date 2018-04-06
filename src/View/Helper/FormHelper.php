@@ -16,7 +16,6 @@ namespace Cake\View\Helper;
 
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
-use Cake\Form\Form;
 use Cake\Routing\Router;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
@@ -477,7 +476,7 @@ class FormHelper extends Helper
      *
      * @param \Cake\View\Form\ContextInterface $context The context object to use.
      * @param array $options An array of options from create()
-     * @return string The action attribute for the form.
+     * @return string|array The action attribute for the form.
      */
     protected function _formUrl($context, $options)
     {
@@ -1406,7 +1405,7 @@ class FormHelper extends Helper
 
         if ($allowOverride && substr($fieldName, -5) === '._ids') {
             $options['type'] = 'select';
-            if (empty($options['multiple'])) {
+            if ((!isset($options['multiple']) || ($options['multiple'] && $options['multiple'] != 'checkbox'))) {
                 $options['multiple'] = true;
             }
         }
@@ -1731,6 +1730,7 @@ class FormHelper extends Helper
      * ### Options:
      *
      * - `escape` - HTML entity encode the $title of the button. Defaults to false.
+     * - `confirm` - Confirm message to show. Form execution will only continue if confirmed then.
      *
      * @param string $title The button's caption. Not automatically HTML encoded
      * @param array $options Array of options and HTML attributes.
@@ -1739,8 +1739,14 @@ class FormHelper extends Helper
      */
     public function button($title, array $options = [])
     {
-        $options += ['type' => 'submit', 'escape' => false, 'secure' => false];
+        $options += ['type' => 'submit', 'escape' => false, 'secure' => false, 'confirm' => null];
         $options['text'] = $title;
+
+        $confirmMessage = $options['confirm'];
+        unset($options['confirm']);
+        if ($confirmMessage) {
+            $options['onclick'] = $this->_confirm($confirmMessage, 'return true;', 'return false;', $options);
+        }
 
         return $this->widget('button', $options);
     }
@@ -1758,6 +1764,7 @@ class FormHelper extends Helper
      *   HTTP/1.1 DELETE (or others) request. Defaults to 'post'.
      * - `form` - Array with any option that FormHelper::create() can take
      * - Other options is the same of button method.
+     * - `confirm` - Confirm message to show. Form execution will only continue if confirmed then.
      *
      * @param string $title The button's caption. Not automatically HTML encoded
      * @param string|array $url URL as string or array
@@ -1805,7 +1812,7 @@ class FormHelper extends Helper
      * - `data` - Array with key/value to pass in input hidden
      * - `method` - Request method to use. Set to 'delete' to simulate
      *   HTTP/1.1 DELETE request. Defaults to 'post'.
-     * - `confirm` - Confirm message to show.
+     * - `confirm` - Confirm message to show. Form execution will only continue if confirmed then.
      * - `block` - Set to true to append form to view block "postLink" or provide
      *   custom block name.
      * - Other options are the same of HtmlHelper::link() method.
@@ -2426,6 +2433,9 @@ class FormHelper extends Helper
             // Move empty options into each type array.
             if (isset($options['empty'][$type])) {
                 $options[$type]['empty'] = $options['empty'][$type];
+            }
+            if (isset($options['required']) && is_array($options[$type])) {
+                $options[$type]['required'] = $options['required'];
             }
         }
 

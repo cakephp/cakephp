@@ -15,7 +15,6 @@
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\Core\Plugin;
-use Cake\ORM\Association;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
@@ -124,12 +123,12 @@ class AssociationTest extends TestCase
     /**
      * Tests that setName() fails after the target table is resolved.
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Association name does not match target table alias.
      * @return void
      */
     public function testSetNameAfterTarger()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Association name does not match target table alias.');
         $this->association->getTarget();
         $this->association->setName('Bar');
     }
@@ -182,10 +181,10 @@ class AssociationTest extends TestCase
      * from a registry.
      *
      * @return void
-     * @expectedException \RuntimeException
      */
     public function testInvalidTableFetchedFromRegistry()
     {
+        $this->expectException(\RuntimeException::class);
         TableRegistry::get('Test');
 
         $config = [
@@ -424,11 +423,11 @@ class AssociationTest extends TestCase
      * Test that warning is shown if property name clashes with table field.
      *
      * @return void
-     * @expectedException \PHPUnit\Framework\Error\Warning
-     * @expectedExceptionMessageRegExp /^Association property name "foo" clashes with field of same name of table "test"/
      */
     public function testPropertyNameClash()
     {
+        $this->expectException(\PHPUnit\Framework\Error\Warning::class);
+        $this->expectExceptionMessageRegExp('/^Association property name "foo" clashes with field of same name of table "test"/');
         $this->source->schema(['foo' => ['type' => 'string']]);
         $this->assertEquals('foo', $this->association->property());
     }
@@ -479,11 +478,11 @@ class AssociationTest extends TestCase
     /**
      * Tests that providing an invalid strategy throws an exception
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testInvalidStrategy()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->association->strategy('anotherThing');
         $this->assertEquals('subquery', $this->association->strategy());
     }

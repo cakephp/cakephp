@@ -65,8 +65,8 @@ class PoFileParserTest extends TestCase
         $expected = [
             'Plural Rule 1' => [
                 '_context' => [
-                    '' => 'Plural Rule 1 (translated)',
-                ],
+                    '' => 'Plural Rule 1 (translated)'
+                ]
             ],
             '%d = 1' => [
                 '_context' => [
@@ -74,7 +74,7 @@ class PoFileParserTest extends TestCase
                     'Another Context' => '%d = 1 (translated)'
                 ]
             ],
-            '%d = 0 or > 1' => [
+            'p:%d = 0 or > 1' => [
                 '_context' => [
                     'Another Context' => [
                         0 => '%d = 1 (translated)',
@@ -84,10 +84,10 @@ class PoFileParserTest extends TestCase
             ],
             '%-5d = 1' => [
                 '_context' => [
-                    '' => '%-5d = 1 (translated)',
-                ],
+                    '' => '%-5d = 1 (translated)'
+                ]
             ],
-            '%-5d = 0 or > 1' => [
+            'p:%-5d = 0 or > 1' => [
                 '_context' => [
                     '' => [
                         0 => '%-5d = 1 (translated)',
@@ -95,9 +95,9 @@ class PoFileParserTest extends TestCase
                         2 => '',
                         3 => '',
                         4 => '%-5d = 0 or > 1 (translated)'
-                    ],
-                ],
-            ],
+                    ]
+                ]
+            ]
         ];
         $this->assertEquals($expected, $messages);
     }
@@ -187,5 +187,30 @@ class PoFileParserTest extends TestCase
         $this->assertSame('Titel mit Kontext', __x('context', 'title'));
         $this->assertSame('Titel mit anderem Kontext', __x('another_context', 'title'));
         $this->assertSame('Titel ohne Kontext', __('title'));
+    }
+
+    /**
+     * Test parsing plurals
+     *
+     * @return void
+     */
+    public function testPlurals()
+    {
+        $parser = new PoFileParser();
+        $file = APP . 'Locale' . DS . 'de' . DS . 'wa.po';
+        $messages = $parser->parse($file);
+
+        I18n::translator('default', 'de_DE', function () use ($messages) {
+            $package = new Package('default');
+            $package->setMessages($messages);
+
+            return $package;
+        });
+
+        // Check translated messages
+        I18n::locale('de_DE');
+        $this->assertEquals('Standorte', __d('wa', 'Locations'));
+        I18n::locale('en_EN');
+        $this->assertEquals('Locations', __d('wa', 'Locations'));
     }
 }

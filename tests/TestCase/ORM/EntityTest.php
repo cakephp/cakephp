@@ -1506,6 +1506,7 @@ class EntityTest extends TestCase
         $expected = [
             'foo' => 'bar',
             'somethingElse' => 'value',
+            'baz' => null,
             '[new]' => true,
             '[accessible]' => ['*' => true, 'id' => false, 'name' => true],
             '[dirty]' => ['somethingElse' => true, 'foo' => true],
@@ -1555,11 +1556,11 @@ class EntityTest extends TestCase
      * Tests that trying to get an empty property name throws exception
      *
      * @dataProvider emptyNamesProvider
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testEmptyProperties($property)
     {
+        $this->expectException(\InvalidArgumentException::class);
         $entity = new Entity();
         $entity->get($property);
     }
@@ -1567,12 +1568,12 @@ class EntityTest extends TestCase
     /**
      * Tests that setting an empty property name does nothing
      *
-     * @expectedException \InvalidArgumentException
      * @dataProvider emptyNamesProvider
      * @return void
      */
     public function testSetEmptyPropertyName($property)
     {
+        $this->expectException(\InvalidArgumentException::class);
         $entity = new Entity();
         $entity->set($property, 'bar');
     }

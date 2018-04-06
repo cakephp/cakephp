@@ -107,12 +107,12 @@ class DigestAuthenticateTest extends TestCase
     /**
      * test the authenticate method
      *
-     * @expectedException \Cake\Network\Exception\UnauthorizedException
-     * @expectedExceptionCode 401
      * @return void
      */
     public function testAuthenticateWrongUsername()
     {
+        $this->expectException(\Cake\Network\Exception\UnauthorizedException::class);
+        $this->expectExceptionCode(401);
         $request = new ServerRequest('posts/index');
         $request->addParams(['pass' => []]);
 
@@ -351,12 +351,12 @@ class DigestAuthenticateTest extends TestCase
     /**
      * test scope failure.
      *
-     * @expectedException \Cake\Network\Exception\UnauthorizedException
-     * @expectedExceptionCode 401
      * @return void
      */
     public function testAuthenticateFailReChallenge()
     {
+        $this->expectException(\Cake\Network\Exception\UnauthorizedException::class);
+        $this->expectExceptionCode(401);
         $this->auth->config('scope.username', 'nate');
         $request = new ServerRequest([
             'url' => 'posts/index',
@@ -515,7 +515,7 @@ DIGEST;
         $secret = $secret ?: Configure::read('Security.salt');
         $time = $time ?: microtime(true);
         $expiryTime = $time + $expires;
-        $signatureValue = hash_hmac('sha1', $expiryTime . ':' . $secret, $secret);
+        $signatureValue = hash_hmac('sha256', $expiryTime . ':' . $secret, $secret);
         $nonceValue = $expiryTime . ':' . $signatureValue;
 
         return base64_encode($nonceValue);

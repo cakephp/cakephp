@@ -118,11 +118,11 @@ class ServerTest extends TestCase
     /**
      * Test an application failing to build middleware properly
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage The application `middleware` method
      */
     public function testRunWithApplicationNotMakingMiddleware()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('The application `middleware` method');
         $app = new InvalidMiddlewareApplication($this->config);
         $server = new Server($app);
         $server->run();
@@ -145,11 +145,11 @@ class ServerTest extends TestCase
     /**
      * Test middleware not creating a response.
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Application did not create a response. Got "Not a response" instead.
      */
     public function testRunMiddlewareNoResponse()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Application did not create a response. Got "Not a response" instead.');
         $app = new BadResponseApplication($this->config);
         $server = new Server($app);
         $server->run();

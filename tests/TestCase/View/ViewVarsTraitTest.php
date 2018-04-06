@@ -159,7 +159,7 @@ class ViewVarsTraitTest extends TestCase
     {
         $result = $this->subject->viewOptions([], false);
 
-        $this->assertTrue(is_array($result));
+        $this->assertInternalType('array', $result);
         $this->assertEmpty($result);
     }
 
@@ -233,12 +233,12 @@ class ViewVarsTraitTest extends TestCase
     /**
      * test createView() throws exception if view class cannot be found
      *
-     * @expectedException \Cake\View\Exception\MissingViewException
-     * @expectedExceptionMessage View class "Foo" is missing.
      * @return void
      */
     public function testCreateViewException()
     {
+        $this->expectException(\Cake\View\Exception\MissingViewException::class);
+        $this->expectExceptionMessage('View class "Foo" is missing.');
         $this->subject->createView('Foo');
     }
 }

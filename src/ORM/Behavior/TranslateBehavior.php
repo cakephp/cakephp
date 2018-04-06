@@ -370,9 +370,9 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     }
 
     /**
-     * Add in _translations marshalling handlers if translation marshalling is
-     * enabled. You need to specifically enable translation marshalling by adding
-     * `'translations' => true` to the options provided to `Table::newEntity()` or `Table::patchEntity()`.
+     * Add in `_translations` marshalling handlers. You can disable marshalling
+     * of translations by setting `'translations' => false` in the options
+     * provided to `Table::newEntity()` or `Table::patchEntity()`.
      *
      * {@inheritDoc}
      */

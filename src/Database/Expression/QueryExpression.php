@@ -559,7 +559,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * Useful for compiling the final expression, or doing
      * introspection in the structure.
      *
-     * Callback function receives as only argument an instance of a QueryExpression
+     * Callback function receives as only argument an instance of ExpressionInterface
      *
      * @param callable $callable The callable to apply to all sub-expressions.
      * @return void

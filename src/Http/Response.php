@@ -365,7 +365,7 @@ class Response implements ResponseInterface
     /**
      * File object for file to be read out as response
      *
-     * @var \Cake\Filesystem\File
+     * @var \Cake\Filesystem\File|null
      */
     protected $_file;
 
@@ -493,7 +493,8 @@ class Response implements ResponseInterface
 
         if ($this->_file) {
             $this->_sendFile($this->_file, $this->_fileRange);
-            $this->_file = $this->_fileRange = null;
+            $this->_file = null;
+            $this->_fileRange = [];
         } else {
             $this->_sendContent($this->body());
         }
@@ -809,8 +810,8 @@ class Response implements ResponseInterface
      * if $content is null the current buffer is returned
      *
      * @param string|callable|null $content the string or callable message to be sent
-     * @return string Current message buffer if $content param is passed as null
-     * @deprecated 3.4.0 Mutable response methods are deprecated. Use `withBody()` and `getBody()` instead.
+     * @return string|null Current message buffer if $content param is passed as null
+     * @deprecated 3.4.0 Mutable response methods are deprecated. Use `withBody()`/`withStringBody()` and `getBody()` instead.
      */
     public function body($content = null)
     {
@@ -827,7 +828,7 @@ class Response implements ResponseInterface
         }
 
         // Compatibility with closure/streaming responses
-        if (is_callable($content)) {
+        if (!is_string($content) && is_callable($content)) {
             $this->stream = new CallbackStream($content);
         } else {
             $this->_createStream();
@@ -1041,19 +1042,20 @@ class Response implements ResponseInterface
      * ```
      *
      * @param string|null $contentType Content type key.
-     * @return mixed Current content type or false if supplied an invalid content type
+     * @return mixed Current content type or false if supplied an invalid content type.
+     * @deprecated 3.5.5 Use getType() or withType() instead.
      */
     public function type($contentType = null)
     {
         if ($contentType === null) {
-            return $this->_contentType;
+            return $this->getType();
         }
         if (is_array($contentType)) {
             foreach ($contentType as $type => $definition) {
                 $this->_mimeTypes[$type] = $definition;
             }
 
-            return $this->_contentType;
+            return $this->getType();
         }
         if (isset($this->_mimeTypes[$contentType])) {
             $contentType = $this->_mimeTypes[$contentType];
@@ -1066,6 +1068,16 @@ class Response implements ResponseInterface
         $this->_setContentType();
 
         return $contentType;
+    }
+
+    /**
+     * Returns the current content type.
+     *
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->_contentType;
     }
 
     /**
@@ -1167,7 +1179,7 @@ class Response implements ResponseInterface
     }
 
     /**
-     * Retruns the current charset.
+     * Returns the current charset.
      *
      * @return string
      */
@@ -1822,7 +1834,7 @@ class Response implements ResponseInterface
      * If called with no arguments returns the last Content-Length set
      *
      * @param int|null $bytes Number of bytes
-     * @return int|null
+     * @return string|null
      * @deprecated 3.4.0 Use withLength() to set length instead.
      */
     public function length($bytes = null)
@@ -1981,7 +1993,6 @@ class Response implements ResponseInterface
      *
      * ### Options
      *
-     * - `name`: The Cookie name
      * - `value`: Value of the cookie
      * - `expire`: Time the cookie expires in
      * - `path`: Path the cookie applies to
@@ -2578,7 +2589,7 @@ class Response implements ResponseInterface
             'fileRange' => $this->_fileRange,
             'cookies' => $this->_cookies,
             'cacheDirectives' => $this->_cacheDirectives,
-            'body' => $this->getBody()->getContents(),
+            'body' => (string)$this->getBody(),
         ];
     }
 }

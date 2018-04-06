@@ -99,7 +99,7 @@ class SecurityComponent extends Component
      */
     public function startup(Event $event)
     {
-        /* @var \Cake\Controller\Controller $controller */
+        /** @var \Cake\Controller\Controller $controller */
         $controller = $event->getSubject();
         $this->session = $controller->request->getSession();
         $this->_action = $controller->request->getParam('action');

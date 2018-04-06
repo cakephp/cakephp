@@ -292,7 +292,7 @@ class FixtureManager
                     $this->_insertionMap[$configName] = [];
                 }
 
-                foreach ($fixtures as $name => $fixture) {
+                foreach ($fixtures as $fixture) {
                     if (in_array($fixture->table, $tables)) {
                         try {
                             $fixture->dropConstraints($db);
@@ -316,7 +316,7 @@ class FixtureManager
                     }
                 }
 
-                foreach ($fixtures as $name => $fixture) {
+                foreach ($fixtures as $fixture) {
                     try {
                         $fixture->createConstraints($db);
                     } catch (PDOException $e) {

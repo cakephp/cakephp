@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\ORM;
 
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 
 /**
  * Contains regression test for the Table class
@@ -49,11 +50,11 @@ class TableRegressionTest extends TestCase
      * in the afterSave callback
      *
      * @see https://github.com/cakephp/cakephp/issues/9079
-     * @expectedException \Cake\ORM\Exception\RolledbackTransactionException
      * @return void
      */
     public function testAfterSaveRollbackTransaction()
     {
+        $this->expectException(\Cake\ORM\Exception\RolledbackTransactionException::class);
         $table = TableRegistry::get('Authors');
         $table->getEventManager()->on(
             'Model.afterSave',
@@ -62,6 +63,23 @@ class TableRegressionTest extends TestCase
             }
         );
         $entity = $table->newEntity(['name' => 'Jon']);
+        $table->save($entity);
+    }
+
+    /**
+     * Ensure that saving to a table with no primary key fails.
+     *
+     * @return void
+     */
+    public function testSaveNoPrimaryKeyException()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('primary key');
+        $table = TableRegistry::get('Authors');
+        $table->getSchema()->dropConstraint('primary');
+
+        $entity = $table->find()->first();
+        $entity->name = 'new name';
         $table->save($entity);
     }
 }

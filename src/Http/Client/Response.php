@@ -13,7 +13,6 @@
  */
 namespace Cake\Http\Client;
 
-use Cake\Http\Cookie\Cookie;
 // This alias is necessary to avoid class name conflicts
 // with the deprecated class in this namespace.
 use Cake\Http\Cookie\CookieCollection as CookiesCollection;
@@ -237,7 +236,9 @@ class Response extends Message implements ResponseInterface
         $codes = [
             static::STATUS_OK,
             static::STATUS_CREATED,
-            static::STATUS_ACCEPTED
+            static::STATUS_ACCEPTED,
+            static::STATUS_NON_AUTHORITATIVE_INFORMATION,
+            static::STATUS_NO_CONTENT
         ];
 
         return in_array($this->code, $codes);

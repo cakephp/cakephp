@@ -66,7 +66,7 @@ class DateType extends DateTimeType
      * Convert request data into a datetime object.
      *
      * @param mixed $value Request data
-     * @return \DateTime
+     * @return \DateTimeInterface
      */
     public function marshal($value)
     {

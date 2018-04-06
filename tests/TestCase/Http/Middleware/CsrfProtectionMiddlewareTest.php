@@ -142,11 +142,11 @@ class CsrfProtectionMiddlewareTest extends TestCase
      * Test that the X-CSRF-Token works with the various http methods.
      *
      * @dataProvider httpMethodProvider
-     * @expectedException \Cake\Network\Exception\InvalidCsrfTokenException
      * @return void
      */
     public function testInvalidTokenInHeader($method)
     {
+        $this->expectException(\Cake\Network\Exception\InvalidCsrfTokenException::class);
         $request = new ServerRequest([
             'environment' => [
                 'REQUEST_METHOD' => $method,
@@ -191,11 +191,11 @@ class CsrfProtectionMiddlewareTest extends TestCase
      * Test that request data works with the various http methods.
      *
      * @dataProvider httpMethodProvider
-     * @expectedException \Cake\Network\Exception\InvalidCsrfTokenException
      * @return void
      */
     public function testInvalidTokenRequestData($method)
     {
+        $this->expectException(\Cake\Network\Exception\InvalidCsrfTokenException::class);
         $request = new ServerRequest([
             'environment' => [
                 'REQUEST_METHOD' => $method,
@@ -212,11 +212,11 @@ class CsrfProtectionMiddlewareTest extends TestCase
     /**
      * Test that missing post field fails
      *
-     * @expectedException \Cake\Network\Exception\InvalidCsrfTokenException
      * @return void
      */
     public function testInvalidTokenRequestDataMissing()
     {
+        $this->expectException(\Cake\Network\Exception\InvalidCsrfTokenException::class);
         $request = new ServerRequest([
             'environment' => [
                 'REQUEST_METHOD' => 'POST',
@@ -234,11 +234,11 @@ class CsrfProtectionMiddlewareTest extends TestCase
      * Test that missing header and cookie fails
      *
      * @dataProvider httpMethodProvider
-     * @expectedException \Cake\Network\Exception\InvalidCsrfTokenException
      * @return void
      */
     public function testInvalidTokenMissingCookie($method)
     {
+        $this->expectException(\Cake\Network\Exception\InvalidCsrfTokenException::class);
         $request = new ServerRequest([
             'environment' => [
                 'REQUEST_METHOD' => $method

@@ -346,12 +346,12 @@ class MarshallerTest extends TestCase
     /**
      * Test one() with an invalid association
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Cannot marshal data for "Derp" association. It is not associated with "Articles".
      * @return void
      */
     public function testOneInvalidAssociation()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cannot marshal data for "Derp" association. It is not associated with "Articles".');
         $data = [
             'title' => 'My title',
             'body' => 'My content',
@@ -1230,11 +1230,11 @@ class MarshallerTest extends TestCase
      * Test if exception is raised when called with [associated => NonExistingAssociation]
      * Previously such association were simply ignored
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testManyInvalidAssociation()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $data = [
             [
                 'comment' => 'First post',
@@ -1456,12 +1456,12 @@ class MarshallerTest extends TestCase
     /**
      * Test merge() with an invalid association
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Cannot marshal data for "Derp" association. It is not associated with "Articles".
      * @return void
      */
     public function testMergeInvalidAssociation()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cannot marshal data for "Derp" association. It is not associated with "Articles".');
         $data = [
             'title' => 'My title',
             'body' => 'My content',
@@ -2912,11 +2912,11 @@ class MarshallerTest extends TestCase
     /**
      * Test that invalid validate options raise exceptions
      *
-     * @expectedException \RuntimeException
      * @return void
      */
     public function testValidateInvalidType()
     {
+        $this->expectException(\RuntimeException::class);
         $data = ['title' => 'foo'];
         $marshaller = new Marshaller($this->articles);
         $marshaller->one($data, [

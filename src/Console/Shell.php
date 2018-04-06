@@ -16,7 +16,6 @@ namespace Cake\Console;
 
 use Cake\Console\Exception\ConsoleException;
 use Cake\Console\Exception\StopException;
-use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Datasource\ModelAwareTrait;
 use Cake\Filesystem\File;
@@ -880,7 +879,14 @@ class Shell
 
         $this->_io->out();
 
-        if (is_file($path) && empty($this->params['force']) && $this->interactive) {
+        $fileExists = is_file($path);
+        if ($fileExists && empty($this->params['force']) && !$this->interactive) {
+            $this->_io->out('<warning>File exists, skipping</warning>.');
+
+            return false;
+        }
+
+        if ($fileExists && $this->interactive && empty($this->params['force'])) {
             $this->_io->out(sprintf('<warning>File `%s` exists</warning>', $path));
             $key = $this->_io->askChoice('Do you want to overwrite?', ['y', 'n', 'a', 'q'], 'n');
 

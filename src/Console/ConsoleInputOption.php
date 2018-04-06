@@ -15,7 +15,7 @@
 namespace Cake\Console;
 
 use Cake\Console\Exception\ConsoleException;
-use SimpleXmlElement;
+use SimpleXMLElement;
 
 /**
  * An object to represent a single option used in the command line.
@@ -240,10 +240,10 @@ class ConsoleInputOption
     /**
      * Append the option's xml into the parent.
      *
-     * @param \SimpleXmlElement $parent The parent element.
-     * @return \SimpleXmlElement The parent with this option appended.
+     * @param \SimpleXMLElement $parent The parent element.
+     * @return \SimpleXMLElement The parent with this option appended.
      */
-    public function xml(SimpleXmlElement $parent)
+    public function xml(SimpleXMLElement $parent)
     {
         $option = $parent->addChild('option');
         $option->addAttribute('name', '--' . $this->_name);

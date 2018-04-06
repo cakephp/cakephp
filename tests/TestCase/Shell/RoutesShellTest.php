@@ -16,7 +16,6 @@ namespace Cake\Test\TestCase\Shell;
 
 use Cake\Console\Shell;
 use Cake\Routing\Router;
-use Cake\Shell\RoutesShell;
 use Cake\TestSuite\ConsoleIntegrationTestCase;
 
 /**
@@ -118,7 +117,7 @@ class RoutesShellTest extends ConsoleIntegrationTestCase
         $this->assertOutputContainsRow([
             'testName',
             '/tests/index',
-            '{"action":"index","pass":[],"controller":"Tests","plugin":null}'
+            '{"action":"index","pass":[],"controller":"Tests","plugin":null,"_name":"testName"}'
         ]);
     }
 

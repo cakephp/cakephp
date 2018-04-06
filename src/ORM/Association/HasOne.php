@@ -95,8 +95,7 @@ class HasOne extends Association
      * `$options`
      *
      * @param \Cake\Datasource\EntityInterface $entity an entity from the source table
-     * @param array|\ArrayObject $options options to be passed to the save method in
-     * the target table
+     * @param array $options options to be passed to the save method in the target table
      * @return bool|\Cake\Datasource\EntityInterface false if $entity could not be saved, otherwise it returns
      * the saved entity
      * @see \Cake\ORM\Table::save()
@@ -126,7 +125,7 @@ class HasOne extends Association
     /**
      * {@inheritDoc}
      *
-     * @return callable
+     * @return \Closure
      */
     public function eagerLoader(array $options)
     {

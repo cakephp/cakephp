@@ -491,7 +491,7 @@ class ResultSet implements ResultSetInterface
     /**
      * Correctly nests results keys including those coming from associations
      *
-     * @param mixed $row Array containing columns and values or false if there is no results
+     * @param array $row Array containing columns and values or false if there is no results
      * @return array Results
      */
     protected function _groupResult($row)

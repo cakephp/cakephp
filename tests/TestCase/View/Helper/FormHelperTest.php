@@ -316,11 +316,11 @@ class FormHelperTest extends TestCase
     /**
      * Test registering an invalid widget class.
      *
-     * @expectedException \RuntimeException
      * @return void
      */
     public function testAddWidgetInvalid()
     {
+        $this->expectException(\RuntimeException::class);
         $mock = new \StdClass();
         $this->Form->addWidget('test', $mock);
         $this->Form->widget('test');
@@ -385,12 +385,12 @@ class FormHelperTest extends TestCase
     /**
      * Test adding an invalid context class.
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Context providers must return object implementing Cake\View\Form\ContextInterface. Got "stdClass" instead.
      * @return void
      */
     public function testAddContextProviderInvalid()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Context providers must return object implementing Cake\View\Form\ContextInterface. Got "stdClass" instead.');
         $context = 'My data';
         $this->Form->addContextProvider('test', function ($request, $data) use ($context) {
             return new \StdClass();
@@ -3930,12 +3930,12 @@ class FormHelperTest extends TestCase
      *
      * Test invalid 'input' type option to control() function.
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Invalid type 'input' used for field 'text'
      * @return void
      */
     public function testInvalidControlTypeOption()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Invalid type \'input\' used for field \'text\'');
         $this->Form->control('text', ['type' => 'input']);
     }
 
@@ -5194,6 +5194,13 @@ class FormHelperTest extends TestCase
             ['multiple' => 'multiple', 'form' => 'my-form']
         );
         $this->assertHtml($expected, $result);
+
+        $result = $this->Form->select(
+            'Model.multi_field',
+            $options,
+            ['form' => 'my-form', 'multiple' => false]
+        );
+        $this->assertNotContains('multiple', $result);
     }
 
     /**
@@ -6987,6 +6994,23 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * test control() datetime & required attributes
+     *
+     * @return void
+     */
+    public function testControlDatetimeRequired()
+    {
+        $result = $this->Form->control('birthday', [
+            'type' => 'date',
+            'required' => true
+        ]);
+        $this->assertContains(
+            '<select name="birthday[year]" required="required"',
+            $result
+        );
+    }
+
+    /**
      * testYearAutoExpandRange method
      *
      * @return void
@@ -7322,6 +7346,18 @@ class FormHelperTest extends TestCase
 
         $result = $this->Form->unlockField();
         $this->assertEquals(['save'], $result);
+    }
+
+    /**
+     * Test generation of a form button with confirm message.
+     *
+     * @return void
+     */
+    public function testButtonWithConfirm()
+    {
+        $result = $this->Form->button('Hi', ['confirm' => 'Confirm me!']);
+        $expected = ['button' => ['type' => 'submit', 'onclick' => 'if (confirm(&quot;Confirm me!&quot;)) { return true; } return false;'], 'Hi', '/button'];
+        $this->assertHtml($expected, $result);
     }
 
     /**
@@ -8334,11 +8370,11 @@ class FormHelperTest extends TestCase
      *
      * Test errors when field name is missing.
      *
-     * @expectedException \Cake\Core\Exception\Exception
      * @return void
      */
     public function testHtml5ControlException()
     {
+        $this->expectException(\Cake\Core\Exception\Exception::class);
         $this->Form->email();
     }
 

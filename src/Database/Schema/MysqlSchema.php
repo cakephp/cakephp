@@ -130,13 +130,13 @@ class MysqlSchema extends BaseSchema
         }
         if (strpos($col, 'text') !== false) {
             $lengthName = substr($col, 0, -4);
-            $length = isset(Table::$columnLengths[$lengthName]) ? Table::$columnLengths[$lengthName] : null;
+            $length = isset(TableSchema::$columnLengths[$lengthName]) ? TableSchema::$columnLengths[$lengthName] : null;
 
             return ['type' => TableSchema::TYPE_TEXT, 'length' => $length];
         }
         if (strpos($col, 'blob') !== false || $col === 'binary') {
             $lengthName = substr($col, 0, -4);
-            $length = isset(Table::$columnLengths[$lengthName]) ? Table::$columnLengths[$lengthName] : null;
+            $length = isset(TableSchema::$columnLengths[$lengthName]) ? TableSchema::$columnLengths[$lengthName] : null;
 
             return ['type' => TableSchema::TYPE_BINARY, 'length' => $length];
         }
@@ -192,25 +192,25 @@ class MysqlSchema extends BaseSchema
 
         $name = $row['Key_name'];
         if ($name === 'PRIMARY') {
-            $name = $type = Table::CONSTRAINT_PRIMARY;
+            $name = $type = TableSchema::CONSTRAINT_PRIMARY;
         }
 
         $columns[] = $row['Column_name'];
 
         if ($row['Index_type'] === 'FULLTEXT') {
-            $type = Table::INDEX_FULLTEXT;
+            $type = TableSchema::INDEX_FULLTEXT;
         } elseif ($row['Non_unique'] == 0 && $type !== 'primary') {
-            $type = Table::CONSTRAINT_UNIQUE;
+            $type = TableSchema::CONSTRAINT_UNIQUE;
         } elseif ($type !== 'primary') {
-            $type = Table::INDEX_INDEX;
+            $type = TableSchema::INDEX_INDEX;
         }
 
         if (!empty($row['Sub_part'])) {
             $length[$row['Column_name']] = $row['Sub_part'];
         }
         $isIndex = (
-            $type === Table::INDEX_INDEX ||
-            $type === Table::INDEX_FULLTEXT
+            $type === TableSchema::INDEX_INDEX ||
+            $type === TableSchema::INDEX_FULLTEXT
         );
         if ($isIndex) {
             $existing = $schema->getIndex($name);
@@ -260,7 +260,7 @@ class MysqlSchema extends BaseSchema
     public function convertForeignKeyDescription(TableSchema $schema, $row)
     {
         $data = [
-            'type' => Table::CONSTRAINT_FOREIGN,
+            'type' => TableSchema::CONSTRAINT_FOREIGN,
             'columns' => [$row['COLUMN_NAME']],
             'references' => [$row['REFERENCED_TABLE_NAME'], $row['REFERENCED_COLUMN_NAME']],
             'update' => $this->_convertOnClause($row['UPDATE_RULE']),
@@ -341,27 +341,27 @@ class MysqlSchema extends BaseSchema
                     }
                     break;
                 case TableSchema::TYPE_TEXT:
-                    $isKnownLength = in_array($data['length'], Table::$columnLengths);
+                    $isKnownLength = in_array($data['length'], TableSchema::$columnLengths);
                     if (empty($data['length']) || !$isKnownLength) {
                         $out .= ' TEXT';
                         break;
                     }
 
                     if ($isKnownLength) {
-                        $length = array_search($data['length'], Table::$columnLengths);
+                        $length = array_search($data['length'], TableSchema::$columnLengths);
                         $out .= ' ' . strtoupper($length) . 'TEXT';
                     }
 
                     break;
                 case TableSchema::TYPE_BINARY:
-                    $isKnownLength = in_array($data['length'], Table::$columnLengths);
+                    $isKnownLength = in_array($data['length'], TableSchema::$columnLengths);
                     if (empty($data['length']) || !$isKnownLength) {
                         $out .= ' BLOB';
                         break;
                     }
 
                     if ($isKnownLength) {
-                        $length = array_search($data['length'], Table::$columnLengths);
+                        $length = array_search($data['length'], TableSchema::$columnLengths);
                         $out .= ' ' . strtoupper($length) . 'BLOB';
                     }
 
@@ -426,7 +426,7 @@ class MysqlSchema extends BaseSchema
         }
         if (isset($data['default']) &&
             in_array($data['type'], [TableSchema::TYPE_TIMESTAMP, TableSchema::TYPE_DATETIME]) &&
-            strtolower($data['default']) === 'current_timestamp'
+            in_array(strtolower($data['default']), ['current_timestamp', 'current_timestamp()'])
         ) {
             $out .= ' DEFAULT CURRENT_TIMESTAMP';
             unset($data['default']);
@@ -448,7 +448,7 @@ class MysqlSchema extends BaseSchema
     public function constraintSql(TableSchema $schema, $name)
     {
         $data = $schema->getConstraint($name);
-        if ($data['type'] === Table::CONSTRAINT_PRIMARY) {
+        if ($data['type'] === TableSchema::CONSTRAINT_PRIMARY) {
             $columns = array_map(
                 [$this->_driver, 'quoteIdentifier'],
                 $data['columns']
@@ -458,10 +458,10 @@ class MysqlSchema extends BaseSchema
         }
 
         $out = '';
-        if ($data['type'] === Table::CONSTRAINT_UNIQUE) {
+        if ($data['type'] === TableSchema::CONSTRAINT_UNIQUE) {
             $out = 'UNIQUE KEY ';
         }
-        if ($data['type'] === Table::CONSTRAINT_FOREIGN) {
+        if ($data['type'] === TableSchema::CONSTRAINT_FOREIGN) {
             $out = 'CONSTRAINT ';
         }
         $out .= $this->_driver->quoteIdentifier($name);
@@ -479,7 +479,7 @@ class MysqlSchema extends BaseSchema
 
         foreach ($schema->constraints() as $name) {
             $constraint = $schema->getConstraint($name);
-            if ($constraint['type'] === Table::CONSTRAINT_FOREIGN) {
+            if ($constraint['type'] === TableSchema::CONSTRAINT_FOREIGN) {
                 $tableName = $this->_driver->quoteIdentifier($schema->name());
                 $sql[] = sprintf($sqlPattern, $tableName, $this->constraintSql($schema, $name));
             }
@@ -498,7 +498,7 @@ class MysqlSchema extends BaseSchema
 
         foreach ($schema->constraints() as $name) {
             $constraint = $schema->getConstraint($name);
-            if ($constraint['type'] === Table::CONSTRAINT_FOREIGN) {
+            if ($constraint['type'] === TableSchema::CONSTRAINT_FOREIGN) {
                 $tableName = $this->_driver->quoteIdentifier($schema->name());
                 $constraintName = $this->_driver->quoteIdentifier($name);
                 $sql[] = sprintf($sqlPattern, $tableName, $constraintName);
@@ -515,10 +515,10 @@ class MysqlSchema extends BaseSchema
     {
         $data = $schema->getIndex($name);
         $out = '';
-        if ($data['type'] === Table::INDEX_INDEX) {
+        if ($data['type'] === TableSchema::INDEX_INDEX) {
             $out = 'KEY ';
         }
-        if ($data['type'] === Table::INDEX_FULLTEXT) {
+        if ($data['type'] === TableSchema::INDEX_FULLTEXT) {
             $out = 'FULLTEXT KEY ';
         }
         $out .= $this->_driver->quoteIdentifier($name);
@@ -544,7 +544,7 @@ class MysqlSchema extends BaseSchema
                 $columns[$i] .= sprintf('(%d)', $data['length'][$column]);
             }
         }
-        if ($data['type'] === Table::CONSTRAINT_FOREIGN) {
+        if ($data['type'] === TableSchema::CONSTRAINT_FOREIGN) {
             return $prefix . sprintf(
                 ' FOREIGN KEY (%s) REFERENCES %s (%s) ON UPDATE %s ON DELETE %s',
                 implode(', ', $columns),

@@ -1,14 +1,17 @@
 <?php
 namespace Cake\TestSuite\Constraint;
 
-if (class_exists('PHPUnit_Runner_Version') && !class_exists('PHPUnit\Framework\Constraint\Constraint')) {
+if (class_exists('PHPUnit_Runner_Version', false)
+    && !class_exists('PHPUnit\Framework\Constraint\Constraint', false)
+) {
     class_alias('PHPUnit_Framework_Constraint', 'PHPUnit\Framework\Constraint\Constraint');
 }
-if (class_exists('PHPUnit_Runner_Version') && !class_exists('PHPUnit\Framework\AssertionFailedError')) {
+if (class_exists('PHPUnit_Runner_Version', false)
+    && !class_exists('PHPUnit\Framework\AssertionFailedError', false)
+) {
     class_alias('PHPUnit_Framework_AssertionFailedError', 'PHPUnit\Framework\AssertionFailedError');
 }
 
-use Cake\Event\EventManager;
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Constraint\Constraint;
 
@@ -20,14 +23,14 @@ class EventFired extends Constraint
     /**
      * Array of fired events
      *
-     * @var EventManager
+     * @var \Cake\Event\EventManager
      */
     protected $_eventManager;
 
     /**
      * Constructor
      *
-     * @param EventManager $eventManager Event manager to check
+     * @param \Cake\Event\EventManager $eventManager Event manager to check
      */
     public function __construct($eventManager)
     {

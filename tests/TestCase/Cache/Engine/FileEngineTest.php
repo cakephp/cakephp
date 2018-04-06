@@ -418,7 +418,7 @@ class FileEngineTest extends TestCase
         ]);
 
         Cache::read('Test', 'file_test');
-        $this->assertTrue(file_exists($dir), 'Dir should exist.');
+        $this->assertFileExists($dir, 'Dir should exist.');
 
         // Cleanup
         rmdir($dir);
@@ -441,7 +441,7 @@ class FileEngineTest extends TestCase
         ]);
 
         Cache::read('Test', 'file_test');
-        $this->assertTrue(file_exists($dir), 'Dir should exist.');
+        $this->assertFileExists($dir, 'Dir should exist.');
 
         // Cleanup
         rmdir($dir);

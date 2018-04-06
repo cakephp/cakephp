@@ -73,23 +73,21 @@ class AssetsTaskTest extends TestCase
         $this->Task->symlink();
 
         $path = WWW_ROOT . 'test_plugin';
-        $link = new \SplFileInfo($path);
         $this->assertFileExists($path . DS . 'root.js');
         if (DS === '\\') {
-            $this->assertTrue($link->isDir());
+            $this->assertDirectoryExists($path);
             $folder = new Folder($path);
             $folder->delete();
         } else {
-            $this->assertTrue($link->isLink());
+            $this->assertTrue(is_link($path));
             unlink($path);
         }
 
         $path = WWW_ROOT . 'company' . DS . 'test_plugin_three';
-        $link = new \SplFileInfo($path);
         // If "company" directory exists beforehand "test_plugin_three" would
         // be a link. But if the directory is created by the shell itself
         // symlinking fails and the assets folder is copied as fallback.
-        $this->assertTrue($link->isDir());
+        $this->assertDirectoryExists($path);
         $this->assertFileExists($path . DS . 'css' . DS . 'company.css');
         $folder = new Folder(WWW_ROOT . 'company');
         $folder->delete();
@@ -108,11 +106,10 @@ class AssetsTaskTest extends TestCase
 
         $this->Task->symlink();
         $path = WWW_ROOT . 'company' . DS . 'test_plugin_three';
-        $link = new \SplFileInfo($path);
         if (DS === '\\') {
-            $this->assertTrue($link->isDir());
+            $this->assertDirectoryExits($path);
         } else {
-            $this->assertTrue($link->isLink());
+            $this->assertTrue(is_link($path));
         }
         $this->assertFileExists($path . DS . 'css' . DS . 'company.css');
         $folder = new Folder(WWW_ROOT . 'company');
@@ -133,7 +130,7 @@ class AssetsTaskTest extends TestCase
             ->setConstructorArgs([$this->io])
             ->getMock();
 
-        $this->assertTrue(is_dir(WWW_ROOT . 'test_theme'));
+        $this->assertDirectoryExists(WWW_ROOT . 'test_theme');
 
         $shell->expects($this->never())->method('_createSymlink');
         $shell->expects($this->never())->method('_copyDirectory');
@@ -171,9 +168,8 @@ class AssetsTaskTest extends TestCase
         unlink($path);
 
         $path = WWW_ROOT . 'company' . DS . 'test_plugin_three';
-        $link = new \SplFileInfo($path);
-        $this->assertFalse($link->isDir());
-        $this->assertFalse($link->isLink());
+        $this->assertDirectoryNotExists($path);
+        $this->assertFalse(is_link($path));
     }
 
     /**
@@ -189,17 +185,123 @@ class AssetsTaskTest extends TestCase
         $this->Task->copy();
 
         $path = WWW_ROOT . 'test_plugin';
-        $dir = new \SplFileInfo($path);
-        $this->assertTrue($dir->isDir());
+        $this->assertDirectoryExists($path);
         $this->assertFileExists($path . DS . 'root.js');
 
         $folder = new Folder($path);
         $folder->delete();
 
         $path = WWW_ROOT . 'company' . DS . 'test_plugin_three';
-        $link = new \SplFileInfo($path);
-        $this->assertTrue($link->isDir());
+        $this->assertDirectoryExists($path);
         $this->assertFileExists($path . DS . 'css' . DS . 'company.css');
+
+        $folder = new Folder(WWW_ROOT . 'company');
+        $folder->delete();
+    }
+
+    /**
+     * testRemoveSymlink method
+     *
+     * @return void
+     */
+    public function testRemoveSymlink()
+    {
+        if (DS === '\\') {
+            $this->markTestSkipped(
+                "Can't test symlink removal on windows."
+            );
+        }
+
+        Plugin::load('TestPlugin');
+        Plugin::load('Company/TestPluginThree');
+
+        mkdir(WWW_ROOT . 'company');
+
+        $this->Task->symlink();
+
+        $this->assertTrue(is_link(WWW_ROOT . 'test_plugin'));
+
+        $path = WWW_ROOT . 'company' . DS . 'test_plugin_three';
+        $this->assertTrue(is_link($path));
+
+        $this->Task->remove();
+
+        $this->assertFalse(is_link(WWW_ROOT . 'test_plugin'));
+        $this->assertFalse(is_link($path));
+        $this->assertDirectoryExists(WWW_ROOT . 'company', 'Ensure namespace folder isn\'t removed');
+
+        rmdir(WWW_ROOT . 'company');
+    }
+
+    /**
+     * testRemoveFolder method
+     *
+     * @return void
+     */
+    public function testRemoveFolder()
+    {
+        Plugin::load('TestPlugin');
+        Plugin::load('Company/TestPluginThree');
+
+        $this->Task->copy();
+
+        $this->assertTrue(is_dir(WWW_ROOT . 'test_plugin'));
+
+        $this->assertTrue(is_dir(WWW_ROOT . 'company' . DS . 'test_plugin_three'));
+
+        $this->Task->remove();
+
+        $this->assertDirectoryNotExists(WWW_ROOT . 'test_plugin');
+        $this->assertDirectoryNotExists(WWW_ROOT . 'company' . DS . 'test_plugin_three');
+        $this->assertDirectoryExists(WWW_ROOT . 'company', 'Ensure namespace folder isn\'t removed');
+
+        rmdir(WWW_ROOT . 'company');
+    }
+
+    /**
+     * testOverwrite
+     *
+     * @return void
+     */
+    public function testOverwrite()
+    {
+        Plugin::load('TestPlugin');
+        Plugin::load('Company/TestPluginThree');
+
+        $path = WWW_ROOT . 'test_plugin';
+
+        mkdir($path);
+        $filectime = filectime($path);
+
+        sleep(1);
+        $this->Task->params['overwrite'] = true;
+        $this->Task->symlink('TestPlugin');
+        if (DS === '\\') {
+            $this->assertDirectoryExists($path);
+        } else {
+            $this->assertTrue(is_link($path));
+        }
+
+        $newfilectime = filectime($path);
+        $this->assertTrue($newfilectime !== $filectime);
+
+        if (DS === '\\') {
+            $folder = new Folder($path);
+            $folder->delete();
+        } else {
+            unlink($path);
+        }
+
+        $path = WWW_ROOT . 'company' . DS . 'test_plugin_three';
+        mkdir($path, 0777, true);
+        $filectime = filectime($path);
+
+        sleep(1);
+        $this->Task->params['overwrite'] = true;
+        $this->Task->copy('Company/TestPluginThree');
+
+        $newfilectime = filectime($path);
+        $this->assertTrue($newfilectime > $filectime);
 
         $folder = new Folder(WWW_ROOT . 'company');
         $folder->delete();

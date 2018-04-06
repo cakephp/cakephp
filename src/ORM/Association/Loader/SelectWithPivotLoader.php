@@ -48,7 +48,7 @@ class SelectWithPivotLoader extends SelectLoader
     /**
      * Custom conditions for the junction association
      *
-     * @var mixed
+     * @var string|array|\Cake\Database\ExpressionInterface|callable|null
      */
     protected $junctionConditions;
 
@@ -111,7 +111,7 @@ class SelectWithPivotLoader extends SelectLoader
         }
 
         $query
-           ->where($this->junctionConditions)
+            ->where($this->junctionConditions)
             ->select($joinFields);
 
         $query
@@ -133,7 +133,7 @@ class SelectWithPivotLoader extends SelectLoader
      * which the filter should be applied
      *
      * @param array $options the options to use for getting the link field.
-     * @return string
+     * @return array|string
      */
     protected function _linkField($options)
     {

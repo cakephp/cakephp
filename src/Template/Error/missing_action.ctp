@@ -21,10 +21,11 @@ if (!empty($plugin)) {
     $namespace = str_replace('/', '\\', $plugin);
 }
 $prefixNs = '';
+$prefix = isset($prefix) ? $prefix : '';
 if (!empty($prefix)) {
-    $prefix = Inflector::camelize($prefix);
-    $prefixNs = '\\' . $prefix;
-    $prefix .= DIRECTORY_SEPARATOR;
+    $prefix = array_map('\Cake\Utility\Inflector::camelize', explode('/', $prefix));
+    $prefixNs = '\\' . implode('\\', $prefix);
+    $prefix = implode(DIRECTORY_SEPARATOR, $prefix) . DIRECTORY_SEPARATOR;
 }
 
 // Controller MissingAction support

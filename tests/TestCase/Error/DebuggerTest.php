@@ -103,12 +103,12 @@ class DebuggerTest extends TestCase
     public function testExcerpt()
     {
         $result = Debugger::excerpt(__FILE__, __LINE__ - 1, 2);
-        $this->assertTrue(is_array($result));
+        $this->assertInternalType('array', $result);
         $this->assertCount(5, $result);
         $this->assertRegExp('/function(.+)testExcerpt/', $result[1]);
 
         $result = Debugger::excerpt(__FILE__, 2, 2);
-        $this->assertTrue(is_array($result));
+        $this->assertInternalType('array', $result);
         $this->assertCount(4, $result);
 
         $this->skipIf(defined('HHVM_VERSION'), 'HHVM does not highlight php code');
@@ -152,11 +152,11 @@ class DebuggerTest extends TestCase
     /**
      * Test that choosing a non-existent format causes an exception
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testOutputAsException()
     {
+        $this->expectException(\InvalidArgumentException::class);
         Debugger::outputAs('Invalid junk');
     }
 
@@ -174,11 +174,11 @@ class DebuggerTest extends TestCase
     /**
      * Test that choosing a non-existent format causes an exception
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testSetOutputAsException()
     {
+        $this->expectException(\InvalidArgumentException::class);
         Debugger::setOutputFormat('Invalid junk');
     }
 
@@ -387,8 +387,9 @@ object(Cake\View\View) {
 	[protected] _current => null
 	[protected] _currentType => ''
 	[protected] _stack => []
+	[protected] _viewBlockClass => 'Cake\View\ViewBlock'
 	[protected] _eventManager => object(Cake\Event\EventManager) {}
-	[protected] _eventClass => '\Cake\Event\Event'
+	[protected] _eventClass => 'Cake\Event\Event'
 	[protected] _viewBuilder => null
 }
 TEXT;

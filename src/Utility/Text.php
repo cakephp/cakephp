@@ -30,6 +30,16 @@ class Text
     protected static $_defaultTransliteratorId = 'Any-Latin; Latin-ASCII; [\u0080-\u7fff] remove';
 
     /**
+     * Default html tags who must not be count for truncate text.
+     *
+     * @var array
+     */
+    protected static $_defaultHtmlNoCount = [
+        'style',
+        'script'
+    ];
+
+    /**
      * Generate a random UUID version 4
      *
      * Warning: This method should not be used as a random seed for any cryptographic operations.
@@ -608,7 +618,10 @@ class Text
 
             preg_match_all('/(<\/?([\w+]+)[^>]*>)?([^<>]*)/', $text, $tags, PREG_SET_ORDER);
             foreach ($tags as $tag) {
-                $contentLength = self::_strlen($tag[3], $options);
+                $contentLength = 0;
+                if (!in_array($tag[2], static::$_defaultHtmlNoCount, true)) {
+                    $contentLength = self::_strlen($tag[3], $options);
+                }
 
                 if ($truncate === '') {
                     if (!preg_match('/img|br|input|hr|area|base|basefont|col|frame|isindex|link|meta|param/i', $tag[2])) {
@@ -1108,7 +1121,7 @@ class Text
 
         $regex = '^\s\p{Ll}\p{Lm}\p{Lo}\p{Lt}\p{Lu}\p{Nd}';
         if ($options['preserve']) {
-            $regex .= '(' . preg_quote($options['preserve'], '/') . ')';
+            $regex .= preg_quote($options['preserve'], '/');
         }
         $quotedReplacement = preg_quote($options['replacement'], '/');
         $map = [

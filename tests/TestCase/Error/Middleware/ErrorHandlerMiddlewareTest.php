@@ -19,9 +19,9 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequestFactory;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
+use Error;
 use LogicException;
 use Psr\Log\LoggerInterface;
-use Zend\Diactoros\Request;
 
 /**
  * Test for ErrorHandlerMiddleware
@@ -82,11 +82,11 @@ class ErrorHandlerMiddlewareTest extends TestCase
     /**
      * Test an invalid rendering class.
      *
-     * @expectedException \Exception
-     * @expectedExceptionMessage The 'TotallyInvalid' renderer class could not be found
      */
     public function testInvalidRenderer()
     {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('The \'TotallyInvalid\' renderer class could not be found');
         $request = ServerRequestFactory::fromGlobals();
         $response = new Response();
 
@@ -145,6 +145,24 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $this->assertNotSame($result, $response);
         $this->assertEquals(404, $result->getStatusCode());
         $this->assertContains('was not found', '' . $result->getBody());
+    }
+
+    /**
+     * Test handling PHP 7's Error instance.
+     *
+     * @return void
+     */
+    public function testHandlePHP7Error()
+    {
+        $this->skipIf(version_compare(PHP_VERSION, '7.0.0', '<'), 'Error class only exists since PHP 7.');
+
+        $middleware = new ErrorHandlerMiddleware();
+        $request = ServerRequestFactory::fromGlobals();
+        $response = new Response();
+        $error = new Error();
+
+        $result = $middleware->handleException($error, $request, $response);
+        $this->assertInstanceOf(Response::class, $result);
     }
 
     /**

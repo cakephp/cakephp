@@ -14,6 +14,8 @@
  */
 namespace Cake\I18n\Parser;
 
+use Cake\I18n\Translator;
+
 /**
  * Parses file in PO format
  *
@@ -23,7 +25,6 @@ namespace Cake\I18n\Parser;
  */
 class PoFileParser
 {
-
     /**
      * Parses portable object (PO) format.
      *
@@ -97,7 +98,7 @@ class PoFileParser
             } elseif (substr($line, 0, 9) === 'msgctxt "') {
                 $item['context'] = substr($line, 9, -1);
             } elseif ($line[0] === '"') {
-                $continues = isset($item['translated']) ? 'translated' : 'ids';
+                $continues = isset($item['context']) ? 'context' : (isset($item['translated']) ? 'translated' : 'ids');
 
                 if (is_array($item[$continues])) {
                     end($item[$continues]);
@@ -166,9 +167,9 @@ class PoFileParser
             $key = stripcslashes($item['ids']['plural']);
 
             if ($context !== null) {
-                $messages[$key]['_context'][$context] = $plurals;
+                $messages[Translator::PLURAL_PREFIX . $key]['_context'][$context] = $plurals;
             } else {
-                $messages[$key]['_context'][''] = $plurals;
+                $messages[Translator::PLURAL_PREFIX . $key]['_context'][''] = $plurals;
             }
         }
     }

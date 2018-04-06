@@ -162,11 +162,11 @@ class QueryRegressionTest extends TestCase
     /**
      * Tests that eagerloading belongsToMany with find list fails with a helpful message.
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testEagerLoadingBelongsToManyList()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->loadFixtures('Articles', 'Tags', 'ArticlesTags');
         $table = TableRegistry::get('Articles');
         $table->belongsToMany('Tags', [
@@ -997,11 +997,11 @@ class QueryRegressionTest extends TestCase
      * Tests that trying to contain an inexistent association
      * throws an exception and not a fatal error.
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testQueryNotFatalError()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->loadFixtures('Comments');
         $comments = TableRegistry::get('Comments');
         $comments->find()->contain('Deprs')->all();

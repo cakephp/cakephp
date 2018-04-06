@@ -15,7 +15,7 @@
 namespace Cake\I18n;
 
 use Cake\Chronos\ChronosInterface;
-use DatetimeInterface;
+use DateTimeInterface;
 
 /**
  * Helper class for formatting relative dates & times.
@@ -91,7 +91,7 @@ class RelativeTimeFormatter
      * @return string Relative time string.
      * @see \Cake\I18n\Time::timeAgoInWords()
      */
-    public function timeAgoInWords(DatetimeInterface $time, array $options = [])
+    public function timeAgoInWords(DateTimeInterface $time, array $options = [])
     {
         $options = $this->_options($options, FrozenTime::class);
         if ($options['timezone'] && $time instanceof ChronosInterface) {
@@ -276,12 +276,12 @@ class RelativeTimeFormatter
     /**
      * Format a into a relative date string.
      *
-     * @param \DatetimeInterface $date The date to format.
+     * @param \DateTimeInterface $date The date to format.
      * @param array $options Array of options.
      * @return string Relative date string.
      * @see \Cake\I18n\Date::timeAgoInWords()
      */
-    public function dateAgoInWords(DatetimeInterface $date, array $options = [])
+    public function dateAgoInWords(DateTimeInterface $date, array $options = [])
     {
         $options = $this->_options($options, FrozenDate::class);
         if ($options['timezone'] && $date instanceof ChronosInterface) {

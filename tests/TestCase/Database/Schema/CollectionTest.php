@@ -66,11 +66,11 @@ class CollectionTest extends TestCase
      * Tests for positive describe() calls are in each platformSchema
      * test case.
      *
-     * @expectedException \Cake\Database\Exception
      * @return void
      */
     public function testDescribeIncorrectTable()
     {
+        $this->expectException(\Cake\Database\Exception::class);
         $schema = new Collection($this->connection);
         $this->assertNull($schema->describe('derp'));
     }

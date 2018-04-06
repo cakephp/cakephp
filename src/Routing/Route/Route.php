@@ -155,7 +155,10 @@ class Route
      */
     public function setExtensions(array $extensions)
     {
-        $this->_extensions = array_map('strtolower', $extensions);
+        $this->_extensions = [];
+        foreach ($extensions as $ext) {
+            $this->_extensions[] = strtolower($ext);
+        }
 
         return $this;
     }
@@ -381,7 +384,7 @@ class Route
             if ($value === null) {
                 continue;
             }
-            if (is_bool($value)) {
+            if ($value === true || $value === false) {
                 $value = $value ? '1' : '0';
             }
             $name .= $value . $glue;
@@ -474,6 +477,11 @@ class Route
 
         if (!empty($ext)) {
             $route['_ext'] = $ext;
+        }
+
+        // pass the name if set
+        if (isset($this->options['_name'])) {
+            $route['_name'] = $this->options['_name'];
         }
 
         // restructure 'pass' key route params
@@ -741,11 +749,14 @@ class Route
         if (empty($url['_method'])) {
             return false;
         }
-        if (!in_array(strtoupper($url['_method']), (array)$this->defaults['_method'])) {
-            return false;
+        $methods = array_map('strtoupper', (array)$url['_method']);
+        foreach ($methods as $value) {
+            if (in_array($value, (array)$this->defaults['_method'])) {
+                return true;
+            }
         }
 
-        return true;
+        return false;
     }
 
     /**

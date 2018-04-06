@@ -71,11 +71,11 @@ class PhpConfigTest extends TestCase
     /**
      * Test an exception is thrown by reading files that exist without .php extension.
      *
-     * @expectedException \Cake\Core\Exception\Exception
      * @return void
      */
     public function testReadWithExistentFileWithoutExtension()
     {
+        $this->expectException(\Cake\Core\Exception\Exception::class);
         $engine = new PhpConfig($this->path);
         $engine->read('no_php_extension');
     }
@@ -83,11 +83,11 @@ class PhpConfigTest extends TestCase
     /**
      * Test an exception is thrown by reading files that don't exist.
      *
-     * @expectedException \Cake\Core\Exception\Exception
      * @return void
      */
     public function testReadWithNonExistentFile()
     {
+        $this->expectException(\Cake\Core\Exception\Exception::class);
         $engine = new PhpConfig($this->path);
         $engine->read('fake_values');
     }
@@ -95,11 +95,11 @@ class PhpConfigTest extends TestCase
     /**
      * Test reading an empty file.
      *
-     * @expectedException \Cake\Core\Exception\Exception
      * @return void
      */
     public function testReadEmptyFile()
     {
+        $this->expectException(\Cake\Core\Exception\Exception::class);
         $engine = new PhpConfig($this->path);
         $engine->read('empty');
     }
@@ -107,11 +107,11 @@ class PhpConfigTest extends TestCase
     /**
      * Test reading keys with ../ doesn't work.
      *
-     * @expectedException \Cake\Core\Exception\Exception
      * @return void
      */
     public function testReadWithDots()
     {
+        $this->expectException(\Cake\Core\Exception\Exception::class);
         $engine = new PhpConfig($this->path);
         $engine->read('../empty');
     }

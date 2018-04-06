@@ -156,7 +156,7 @@ class Paginator implements PaginatorInterface
      * @param array $params Request params
      * @param array $settings The settings/configuration used for pagination.
      * @return \Cake\Datasource\ResultSetInterface Query results
-     * @throws \Cake\ORM\Exception\PageOutOfBoundsException
+     * @throws \Cake\Datasource\Exception\PageOutOfBoundsException
      */
     public function paginate($object, array $params = [], array $settings = [])
     {
@@ -209,7 +209,7 @@ class Paginator implements PaginatorInterface
             'prevPage' => $page > 1,
             'nextPage' => $count > ($page * $limit),
             'pageCount' => $pageCount,
-            'sort' => key($order),
+            'sort' => $options['sort'],
             'direction' => current($order),
             'limit' => $defaults['limit'] != $limit ? $limit : null,
             'sortDefault' => $sortDefault,
@@ -349,8 +349,10 @@ class Paginator implements PaginatorInterface
                 $direction = 'asc';
             }
             $options['order'] = [$options['sort'] => $direction];
+        } else {
+            $options['sort'] = null;
         }
-        unset($options['sort'], $options['direction']);
+        unset($options['direction']);
 
         if (empty($options['order'])) {
             $options['order'] = [];
@@ -365,9 +367,17 @@ class Paginator implements PaginatorInterface
             $inWhitelist = in_array($field, $options['sortWhitelist'], true);
             if (!$inWhitelist) {
                 $options['order'] = [];
+                $options['sort'] = null;
 
                 return $options;
             }
+        }
+
+        if ($options['sort'] === null
+            && count($options['order']) === 1
+            && !is_numeric(key($options['order']))
+        ) {
+            $options['sort'] = key($options['order']);
         }
 
         $options['order'] = $this->_prefix($object, $options['order'], $inWhitelist);

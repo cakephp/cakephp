@@ -15,10 +15,8 @@
 namespace Cake\Routing;
 
 use Cake\Core\Configure;
-use Cake\Http\MiddlewareQueue;
 use Cake\Http\ServerRequest;
 use Cake\Utility\Inflector;
-use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -40,6 +38,7 @@ class Router
      * Have routes been loaded
      *
      * @var bool
+     * @deprecated 3.5.0 Routes will be loaded via the Application::routes() hook in 4.0.0
      */
     public static $initialized = false;
 
@@ -618,18 +617,17 @@ class Router
             return $output;
         }
         if (is_array($url)) {
+            if (isset($url['_ssl'])) {
+                $url['_scheme'] = ($url['_ssl'] === true) ? 'https' : 'http';
+            }
+
             if (isset($url['_full']) && $url['_full'] === true) {
                 $full = true;
-                unset($url['_full']);
             }
             if (isset($url['#'])) {
                 $frag = '#' . $url['#'];
-                unset($url['#']);
             }
-            if (isset($url['_ssl'])) {
-                $url['_scheme'] = ($url['_ssl'] === true) ? 'https' : 'http';
-                unset($url['_ssl']);
-            }
+            unset($url['_ssl'], $url['_full'], $url['#']);
 
             $url = static::_applyUrlFilters($url);
 
@@ -652,6 +650,12 @@ class Router
                     'action' => 'index',
                     '_ext' => null
                 ];
+            }
+
+            // If a full URL is requested with a scheme the host should default
+            // to App.fullBaseUrl to avoid corrupt URLs
+            if ($full && isset($url['_scheme']) && !isset($url['_host'])) {
+                $url['_host'] = parse_url(static::fullBaseUrl(), PHP_URL_HOST);
             }
 
             $output = static::$_collection->match($url, static::$_requestContext + ['params' => $params]);
@@ -747,7 +751,8 @@ class Router
             $params['requested'],
             $params['return'],
             $params['_Token'],
-            $params['_matchedRoute']
+            $params['_matchedRoute'],
+            $params['_name']
         );
         $params = array_merge($params, $pass);
         if (!empty($url)) {

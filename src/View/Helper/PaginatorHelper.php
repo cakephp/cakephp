@@ -536,7 +536,7 @@ class PaginatorHelper extends Helper
         }
 
         $url = array_filter($url, function ($value) {
-            return ($value || is_numeric($value));
+            return ($value || is_numeric($value) || $value === false);
         });
         $url = array_merge($url, $options);
 
@@ -553,6 +553,12 @@ class PaginatorHelper extends Helper
         if (!empty($paging['scope'])) {
             $scope = $paging['scope'];
             $currentParams = $this->_config['options']['url'];
+
+            if (isset($url['#'])) {
+                $currentParams['#'] = $url['#'];
+                unset($url['#']);
+            }
+
             // Merge existing query parameters in the scope.
             if (isset($currentParams['?'][$scope]) && is_array($currentParams['?'][$scope])) {
                 $url += $currentParams['?'][$scope];
@@ -899,7 +905,7 @@ class PaginatorHelper extends Helper
     /**
      * Generates the first number for the paginator numbers() method.
      *
-     * @param \Cake\View\StringTemplate $ellipsis StringTemplate instance.
+     * @param string $ellipsis Ellipsis character.
      * @param array $params Params from the numbers() method.
      * @param int $start Start number.
      * @param array $options Options from the numbers() method.
@@ -923,7 +929,7 @@ class PaginatorHelper extends Helper
     /**
      * Generates the last number for the paginator numbers() method.
      *
-     * @param \Cake\View\StringTemplate $ellipsis StringTemplate instance.
+     * @param string $ellipsis Ellipsis character.
      * @param array $params Params from the numbers() method.
      * @param int $end End number.
      * @param array $options Options from the numbers() method.

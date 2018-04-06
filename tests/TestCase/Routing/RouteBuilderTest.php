@@ -22,7 +22,6 @@ use Cake\Routing\Route\InflectedRoute;
 use Cake\Routing\Route\RedirectRoute;
 use Cake\Routing\Route\Route;
 use Cake\TestSuite\TestCase;
-use stdClass;
 
 /**
  * RouteBuilder test case
@@ -278,12 +277,12 @@ class RouteBuilderTest extends TestCase
     /**
      * Test error on invalid route class
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Route class not found, or route class is not a subclass of
      * @return void
      */
     public function testConnectErrorInvalidRouteClass()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Route class not found, or route class is not a subclass of');
         $routes = new RouteBuilder(
             $this->collection,
             '/l',
@@ -296,12 +295,12 @@ class RouteBuilderTest extends TestCase
     /**
      * Test conflicting parameters raises an exception.
      *
-     * @expectedException \BadMethodCallException
-     * @expectedExceptionMessage You cannot define routes that conflict with the scope.
      * @return void
      */
     public function testConnectConflictingParameters()
     {
+        $this->expectException(\BadMethodCallException::class);
+        $this->expectExceptionMessage('You cannot define routes that conflict with the scope.');
         $routes = new RouteBuilder($this->collection, '/admin', ['plugin' => 'TestPlugin']);
         $routes->connect('/', ['plugin' => 'TestPlugin2', 'controller' => 'Dashboard', 'action' => 'view']);
     }
@@ -873,19 +872,6 @@ class RouteBuilderTest extends TestCase
     }
 
     /**
-     * Test registering invalid middleware
-     *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage The 'bad' middleware is not a callable object.
-     * @return void
-     */
-    public function testRegisterMiddlewareString()
-    {
-        $routes = new RouteBuilder($this->collection, '/api');
-        $routes->registerMiddleware('bad', 'strlen');
-    }
-
-    /**
      * Test middleware group
      *
      * @return void
@@ -907,12 +893,12 @@ class RouteBuilderTest extends TestCase
     /**
      * Test overlap between middleware name and group name
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Cannot add middleware group 'test'. A middleware by this name has already been registered.
      * @return void
      */
     public function testMiddlewareGroupOverlap()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Cannot add middleware group \'test\'. A middleware by this name has already been registered.');
         $func = function () {
         };
         $routes = new RouteBuilder($this->collection, '/api');
@@ -923,12 +909,12 @@ class RouteBuilderTest extends TestCase
     /**
      * Test applying middleware to a scope when it doesn't exist
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Cannot apply 'bad' middleware or middleware group. Use registerMiddleware() to register middleware
      * @return void
      */
     public function testApplyMiddlewareInvalidName()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Cannot apply \'bad\' middleware or middleware group. Use registerMiddleware() to register middleware');
         $routes = new RouteBuilder($this->collection, '/api');
         $routes->applyMiddleware('bad');
     }
@@ -1053,11 +1039,11 @@ class RouteBuilderTest extends TestCase
     /**
      * Test loading routes from a missing plugin
      *
-     * @expectedException Cake\Core\Exception\MissingPluginException
      * @return void
      */
     public function testLoadPluginBadPlugin()
     {
+        $this->expectException(\Cake\Core\Exception\MissingPluginException::class);
         $routes = new RouteBuilder($this->collection, '/');
         $routes->loadPlugin('Nope');
     }
@@ -1065,12 +1051,12 @@ class RouteBuilderTest extends TestCase
     /**
      * Test loading routes from a missing file
      *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Cannot load routes for the plugin named TestPlugin.
      * @return void
      */
     public function testLoadPluginBadFile()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cannot load routes for the plugin named TestPlugin.');
         Plugin::load('TestPlugin');
         $routes = new RouteBuilder($this->collection, '/');
         $routes->loadPlugin('TestPlugin', 'nope.php');

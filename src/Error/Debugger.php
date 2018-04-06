@@ -163,7 +163,7 @@ class Debugger
      * Returns a reference to the Debugger singleton object instance.
      *
      * @param string|null $class Class name.
-     * @return object|\Cake\Error\Debugger
+     * @return \Cake\Error\Debugger
      */
     public static function getInstance($class = null)
     {
@@ -766,7 +766,7 @@ class Debugger
     /**
      * Takes a processed array of data from an error and displays it in the chosen format.
      *
-     * @param string $data Data to output.
+     * @param array $data Data to output.
      * @return void
      */
     public function outputError($data)

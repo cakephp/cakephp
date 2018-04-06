@@ -12,8 +12,6 @@
  */
 namespace Cake\I18n;
 
-use Aura\Intl\FormatterInterface;
-use Aura\Intl\Package;
 use Aura\Intl\Translator as BaseTranslator;
 
 /**
@@ -23,6 +21,8 @@ use Aura\Intl\Translator as BaseTranslator;
  */
 class Translator extends BaseTranslator
 {
+
+    const PLURAL_PREFIX = 'p:';
 
     /**
      * Translates the message formatting any placeholders
@@ -35,7 +35,18 @@ class Translator extends BaseTranslator
      */
     public function translate($key, array $tokensValues = [])
     {
-        $message = $this->getMessage($key);
+        if (isset($tokensValues['_count'])) {
+            $message = $this->getMessage(static::PLURAL_PREFIX . $key);
+            if (!$message) {
+                $message = $this->getMessage($key);
+            }
+        } else {
+            $message = $this->getMessage($key);
+            if (!$message) {
+                $message = $this->getMessage(static::PLURAL_PREFIX . $key);
+            }
+        }
+
         if (!$message) {
             // Fallback to the message key
             $message = $key;

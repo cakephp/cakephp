@@ -39,7 +39,7 @@ class Session
     /**
      * The Session handler instance used as an engine for persisting the session data.
      *
-     * @var \SessionHandlerInterface
+     * @var \SessionHandlerInterface|null
      */
     protected $_engine;
 
@@ -48,14 +48,14 @@ class Session
      *
      * @var bool
      */
-    protected $_started;
+    protected $_started = false;
 
     /**
      * The time in seconds the session will be valid for
      *
      * @var int
      */
-    protected $_lifetime;
+    protected $_lifetime = 0;
 
     /**
      * Whether this session is running under a CLI environment
@@ -108,10 +108,14 @@ class Session
             $sessionConfig['ini']['session.name'] = $sessionConfig['cookie'];
         }
 
-        // In PHP7.1.0+ session.save_handler can't be set to user by the user.
-        // https://github.com/php/php-src/blob/master/ext/session/session.c#L559
-        if (!empty($sessionConfig['handler']) && version_compare(PHP_VERSION, '7.1.0', '<=')) {
+        if (!empty($sessionConfig['handler'])) {
             $sessionConfig['ini']['session.save_handler'] = 'user';
+        }
+
+        // In PHP7.2.0+ session.save_handler can't be set to user by the user.
+        // https://github.com/php/php-src/commit/a93a51c3bf4ea1638ce0adc4a899cb93531b9f0d
+        if (version_compare(PHP_VERSION, '7.2.0', '>=')) {
+            unset($sessionConfig['ini']['session.save_handler']);
         }
 
         if (!isset($sessionConfig['ini']['session.cookie_httponly']) && ini_get('session.cookie_httponly') != 1) {
@@ -217,7 +221,10 @@ class Session
         if (!empty($config['handler']['engine'])) {
             $class = $config['handler']['engine'];
             unset($config['handler']['engine']);
-            session_set_save_handler($this->engine($class, $config['handler']), false);
+            $engine = $this->engine($class, $config['handler']);
+            if (!headers_sent()) {
+                session_set_save_handler($engine, false);
+            }
         }
 
         $this->_lifetime = ini_get('session.gc_maxlifetime');
@@ -455,7 +462,7 @@ class Session
      */
     public function id($id = null)
     {
-        if ($id !== null && ($this->_isCLI || !headers_sent())) {
+        if ($id !== null && !headers_sent()) {
             session_id($id);
         }
 

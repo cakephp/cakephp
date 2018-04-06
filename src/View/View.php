@@ -279,6 +279,13 @@ class View implements EventDispatcherInterface
     protected $_stack = [];
 
     /**
+     * ViewBlock class.
+     *
+     * @var string
+     */
+    protected $_viewBlockClass = ViewBlock::class;
+
+    /**
      * Constant for view file type 'view'
      *
      * @var string
@@ -359,7 +366,7 @@ class View implements EventDispatcherInterface
                 'webroot' => '/'
             ]);
         }
-        $this->Blocks = new ViewBlock();
+        $this->Blocks = new $this->_viewBlockClass();
         $this->initialize();
         $this->loadHelpers();
     }
@@ -1243,11 +1250,15 @@ class View implements EventDispatcherInterface
     {
         $templatePath = $subDir = '';
 
-        if ($this->subDir !== null) {
-            $subDir = $this->subDir . DIRECTORY_SEPARATOR;
-        }
         if ($this->templatePath) {
             $templatePath = $this->templatePath . DIRECTORY_SEPARATOR;
+        }
+        if (strlen($this->subDir)) {
+            $subDir = $this->subDir . DIRECTORY_SEPARATOR;
+            // Check if templatePath already terminates with subDir
+            if ($templatePath != $subDir && substr($templatePath, -(strlen($subDir))) == $subDir) {
+                $subDir = '';
+            }
         }
 
         if ($name === null) {

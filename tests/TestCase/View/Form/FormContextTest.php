@@ -111,10 +111,24 @@ class FormContextTest extends TestCase
      */
     public function testValDefault()
     {
-        $context = new FormContext($this->request, ['entity' => new Form()]);
+        $form = new Form();
+        $form->schema()->addField('name', ['default' => 'schema default']);
+        $context = new FormContext($this->request, ['entity' => $form]);
+
+        $result = $context->val('title');
+        $this->assertNull($result);
 
         $result = $context->val('title', ['default' => 'default default']);
         $this->assertEquals('default default', $result);
+
+        $result = $context->val('name');
+        $this->assertEquals('schema default', $result);
+
+        $result = $context->val('name', ['default' => 'custom default']);
+        $this->assertEquals('custom default', $result);
+
+        $result = $context->val('name', ['schemaDefault' => false]);
+        $this->assertNull($result);
     }
 
     /**
@@ -157,6 +171,33 @@ class FormContextTest extends TestCase
         $this->assertEquals('integer', $context->type('user_id'));
         $this->assertEquals('string', $context->type('email'));
         $this->assertNull($context->type('Prefix.email'));
+    }
+
+    /**
+     * Test the fieldNames method.
+     *
+     * @return void
+     */
+    public function testFieldNames()
+    {
+        $form = new Form();
+        $context = new FormContext($this->request, [
+            'entity' => $form
+        ]);
+        $expected = [];
+        $result = $context->fieldNames();
+        $this->assertEquals($expected, $result);
+
+        $form->schema()
+            ->addField('email', 'string')
+            ->addField('password', 'string');
+        $context = new FormContext($this->request, [
+            'entity' => $form
+        ]);
+
+        $expected = ['email', 'password'];
+        $result = $context->fieldNames();
+        $this->assertEquals($expected, $result);
     }
 
     /**

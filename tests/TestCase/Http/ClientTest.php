@@ -38,17 +38,17 @@ class ClientTest extends TestCase
             'host' => 'example.org',
         ];
         $http = new Client($config);
-        $result = $http->config();
+        $result = $http->getConfig();
         foreach ($config as $key => $val) {
             $this->assertEquals($val, $result[$key]);
         }
 
-        $result = $http->config([
+        $result = $http->setConfig([
             'auth' => ['username' => 'mark', 'password' => 'secret']
         ]);
         $this->assertSame($result, $http);
 
-        $result = $http->config();
+        $result = $http->getConfig();
         $expected = [
             'scheme' => 'http',
             'host' => 'example.org',
@@ -358,11 +358,11 @@ class ClientTest extends TestCase
     /**
      * Test invalid authentication types throw exceptions.
      *
-     * @expectedException \Cake\Core\Exception\Exception
      * @return void
      */
     public function testInvalidAuthenticationType()
     {
+        $this->expectException(\Cake\Core\Exception\Exception::class);
         $mock = $this->getMockBuilder('Cake\Http\Client\Adapter\Stream')
             ->setMethods(['send'])
             ->getMock();
@@ -591,11 +591,11 @@ class ClientTest extends TestCase
     /**
      * Test that exceptions are raised on invalid types.
      *
-     * @expectedException \Cake\Core\Exception\Exception
      * @return void
      */
     public function testExceptionOnUnknownType()
     {
+        $this->expectException(\Cake\Core\Exception\Exception::class);
         $mock = $this->getMockBuilder('Cake\Http\Client\Adapter\Stream')
             ->setMethods(['send'])
             ->getMock();
@@ -677,11 +677,11 @@ class ClientTest extends TestCase
      * Test addCookie() method without a domain.
      *
      * @return void
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Cookie must have a domain and a path set.
      */
     public function testAddCookieWithoutDomain()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cookie must have a domain and a path set.');
         $client = new Client();
         $cookie = new Cookie('foo', '', null, '/', '');
 
@@ -695,11 +695,11 @@ class ClientTest extends TestCase
      * Test addCookie() method without a path.
      *
      * @return void
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Cookie must have a domain and a path set.
      */
     public function testAddCookieWithoutPath()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cookie must have a domain and a path set.');
         $client = new Client();
         $cookie = new Cookie('foo', '', null, '', 'example.com');
 

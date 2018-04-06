@@ -191,12 +191,12 @@ class HasOneTest extends TestCase
      * Tests that using hasOne with a table having a multi column primary
      * key will work if the foreign key is passed
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Cannot match provided foreignKey for "Profiles", got "(user_id)" but expected foreign key for "(id, site_id)"
      * @return void
      */
     public function testAttachToMultiPrimaryKeyMismatch()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Cannot match provided foreignKey for "Profiles", got "(user_id)" but expected foreign key for "(id, site_id)"');
         $query = $this->getMockBuilder('\Cake\ORM\Query')
             ->setMethods(['join', 'select'])
             ->setConstructorArgs([null, null])

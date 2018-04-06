@@ -764,7 +764,7 @@ trait EntityTrait
     /**
      * Checks if the entity is dirty or if a single property of it is dirty.
      *
-     * @param string $property the field to check the status for
+     * @param string|null $property The field to check the status for. Null for the whole entity.
      * @return bool Whether the property was changed or not
      */
     public function isDirty($property = null)
@@ -1303,7 +1303,12 @@ trait EntityTrait
      */
     public function __debugInfo()
     {
-        return $this->_properties + [
+        $properties = $this->_properties;
+        foreach ($this->_virtual as $field) {
+            $properties[$field] = $this->$field;
+        }
+
+        return $properties + [
             '[new]' => $this->isNew(),
             '[accessible]' => $this->_accessible,
             '[dirty]' => $this->_dirty,

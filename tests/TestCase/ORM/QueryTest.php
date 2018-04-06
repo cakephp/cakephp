@@ -1865,23 +1865,23 @@ class QueryTest extends TestCase
      * Tests that calling an non-existent method in query throws an
      * exception
      *
-     * @expectedException \BadMethodCallException
-     * @expectedExceptionMessage Unknown method "derpFilter"
      * @return void
      */
     public function testCollectionProxyBadMethod()
     {
+        $this->expectException(\BadMethodCallException::class);
+        $this->expectExceptionMessage('Unknown method "derpFilter"');
         TableRegistry::get('articles')->find('all')->derpFilter();
     }
 
     /**
      * cache() should fail on non select queries.
      *
-     * @expectedException \RuntimeException
      * @return void
      */
     public function testCacheErrorOnNonSelect()
     {
+        $this->expectException(\RuntimeException::class);
         $table = TableRegistry::get('articles', ['table' => 'articles']);
         $query = new Query($this->connection, $table);
         $query->insert(['test']);
@@ -2048,11 +2048,11 @@ class QueryTest extends TestCase
      * Integration test to ensure that filtering associations with the queryBuilder
      * option works.
      *
-     * @expectedException \RuntimeException
      * @return void
      */
     public function testContainWithQueryBuilderHasManyError()
     {
+        $this->expectException(\RuntimeException::class);
         $table = TableRegistry::get('Authors');
         $table->hasMany('Articles');
         $query = new Query($this->connection, $table);
@@ -3315,6 +3315,25 @@ class QueryTest extends TestCase
             ['name' => 'tag3'],
             $results->first()->_matchingData['tags']->toArray()
         );
+    }
+
+    /**
+     * Tests that leftJoinWith() can be used with autofields()
+     *
+     * @return void
+     */
+    public function testLeftJoinWithAutoFields()
+    {
+        $table = TableRegistry::get('articles');
+        $table->belongsTo('authors');
+
+        $results = $table
+            ->find()
+            ->leftJoinWith('authors', function ($q) {
+                return $q->enableAutoFields(true);
+            })
+            ->all();
+        $this->assertCount(3, $results);
     }
 
     /**

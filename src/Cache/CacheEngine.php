@@ -252,7 +252,7 @@ abstract class CacheEngine
 
         $prefix = '';
         if ($this->_groupPrefix) {
-            $prefix = vsprintf($this->_groupPrefix, $this->groups());
+            $prefix = md5(implode('_', $this->groups()));
         }
 
         $key = preg_replace('/[\s]+/', '_', strtolower(trim(str_replace([DIRECTORY_SEPARATOR, '/', '.'], '_', (string)$key))));

@@ -605,12 +605,12 @@ class ServerRequestTest extends TestCase
     /**
      * Test replacing files with an invalid file
      *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Invalid file at 'avatar'
      * @return void
      */
     public function testWithUploadedFilesInvalidFile()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid file at \'avatar\'');
         $request = new ServerRequest();
         $request->withUploadedFiles(['avatar' => 'not a file']);
     }
@@ -618,12 +618,12 @@ class ServerRequestTest extends TestCase
     /**
      * Test replacing files with an invalid file
      *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Invalid file at 'user.avatar'
      * @return void
      */
     public function testWithUploadedFilesInvalidFileNested()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid file at \'user.avatar\'');
         $request = new ServerRequest();
         $request->withUploadedFiles(['user' => ['avatar' => 'not a file']]);
     }
@@ -723,6 +723,9 @@ class ServerRequestTest extends TestCase
         $result = $request->referer();
         $this->assertSame('http://cakephp.org', $result);
 
+        $result = $request->referer(true);
+        $this->assertSame('/', $result);
+
         $request->env('HTTP_REFERER', '');
         $result = $request->referer();
         $this->assertSame('/', $result);
@@ -730,6 +733,10 @@ class ServerRequestTest extends TestCase
         $request->env('HTTP_REFERER', Configure::read('App.fullBaseUrl') . '/some/path');
         $result = $request->referer(true);
         $this->assertSame('/some/path', $result);
+
+        $request->env('HTTP_REFERER', Configure::read('App.fullBaseUrl') . '///cakephp.org/');
+        $result = $request->referer(true);
+        $this->assertSame('/', $result); // Avoid returning scheme-relative URLs.
 
         $request->env('HTTP_REFERER', Configure::read('App.fullBaseUrl') . '/0');
         $result = $request->referer(true);
@@ -894,12 +901,12 @@ class ServerRequestTest extends TestCase
     /**
      * Test withMethod() and invalid data
      *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Unsupported HTTP method "no good" provided
      * @return void
      */
     public function testWithMethodInvalid()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unsupported HTTP method "no good" provided');
         $request = new ServerRequest([
             'environment' => ['REQUEST_METHOD' => 'delete']
         ]);
@@ -940,12 +947,12 @@ class ServerRequestTest extends TestCase
     /**
      * Test withProtocolVersion() and invalid data
      *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Unsupported protocol version 'no good' provided
      * @return void
      */
     public function testWithProtocolVersionInvalid()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unsupported protocol version \'no good\' provided');
         $request = new ServerRequest();
         $request->withProtocolVersion('no good');
     }
@@ -1067,11 +1074,11 @@ class ServerRequestTest extends TestCase
     /**
      * Test __call exceptions
      *
-     * @expectedException \BadMethodCallException
      * @return void
      */
     public function testMagicCallExceptionOnUnknownMethod()
     {
+        $this->expectException(\BadMethodCallException::class);
         $request = new ServerRequest();
         $request->IamABanana();
     }
@@ -1139,7 +1146,7 @@ class ServerRequestTest extends TestCase
 
         $this->assertTrue(isset($request->controller));
         $this->assertFalse(isset($request->notthere));
-        $this->assertFalse(empty($request->controller));
+        $this->assertNotEmpty($request->controller);
     }
 
     /**
@@ -3495,11 +3502,11 @@ XML;
      * Test that withoutAttribute() cannot remove deprecated public properties.
      *
      * @dataProvider emulatedPropertyProvider
-     * @expectedException InvalidArgumentException
      * @return void
      */
     public function testWithoutAttributesDenyEmulatedProperties($prop)
     {
+        $this->expectException(\InvalidArgumentException::class);
         $request = new ServerRequest([]);
         $request->withoutAttribute($prop);
     }

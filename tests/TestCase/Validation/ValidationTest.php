@@ -266,14 +266,14 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::cc('214981579370225', ['enroute']));
         $this->assertTrue(Validation::cc('201447595859877', ['enroute']));
         // JCB 15 digit
-        $this->assertTrue(Validation::cc('210034762247893', ['jcb']));
+        $this->assertTrue(Validation::cc('213134762247898', ['jcb']));
         $this->assertTrue(Validation::cc('180078671678892', ['jcb']));
         $this->assertTrue(Validation::cc('180010559353736', ['jcb']));
-        $this->assertTrue(Validation::cc('210095474464258', ['jcb']));
-        $this->assertTrue(Validation::cc('210006675562188', ['jcb']));
-        $this->assertTrue(Validation::cc('210063299662662', ['jcb']));
+        $this->assertTrue(Validation::cc('213195474464253', ['jcb']));
+        $this->assertTrue(Validation::cc('213106675562183', ['jcb']));
+        $this->assertTrue(Validation::cc('213163299662667', ['jcb']));
         $this->assertTrue(Validation::cc('180032506857825', ['jcb']));
-        $this->assertTrue(Validation::cc('210057919192738', ['jcb']));
+        $this->assertTrue(Validation::cc('213157919192733', ['jcb']));
         $this->assertTrue(Validation::cc('180031358949367', ['jcb']));
         $this->assertTrue(Validation::cc('180033802147846', ['jcb']));
         // JCB 16 digit
@@ -646,7 +646,7 @@ class ValidationTest extends TestCase
         // enRoute
         $this->assertTrue(Validation::luhn('201496944158937'));
         // JCB 15 digit
-        $this->assertTrue(Validation::luhn('210034762247893'));
+        $this->assertTrue(Validation::luhn('213134762247898'));
         // JCB 16 digit
         $this->assertTrue(Validation::luhn('3096806857839939'));
         // Maestro (debit card)
@@ -753,7 +753,7 @@ class ValidationTest extends TestCase
         // enRoute
         $this->assertTrue(Validation::cc('201496944158937', 'all'));
         // JCB 15 digit
-        $this->assertTrue(Validation::cc('210034762247893', 'all'));
+        $this->assertTrue(Validation::cc('213134762247898', 'all'));
         // JCB 16 digit
         $this->assertTrue(Validation::cc('3096806857839939', 'all'));
         // Maestro (debit card)
@@ -804,7 +804,7 @@ class ValidationTest extends TestCase
         // enRoute
         $this->assertTrue(Validation::cc('201496944158937', 'all', true));
         // JCB 15 digit
-        $this->assertTrue(Validation::cc('210034762247893', 'all', true));
+        $this->assertTrue(Validation::cc('213134762247898', 'all', true));
         // JCB 16 digit
         $this->assertTrue(Validation::cc('3096806857839939', 'all', true));
         // Maestro (debit card)
@@ -2181,6 +2181,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::url('http://www.electrohome.ro/images/239537750-284232-215_300[1].jpg'));
         $this->assertTrue(Validation::url('http://www.eräume.foo'));
         $this->assertTrue(Validation::url('http://äüö.eräume.foo'));
+        $this->assertTrue(Validation::url('http://www.domain.com/👹/🧀'), 'utf8Extended path failed');
 
         $this->assertTrue(Validation::url('http://cakephp.org:80'));
         $this->assertTrue(Validation::url('http://cakephp.org:443'));
@@ -2535,11 +2536,11 @@ class ValidationTest extends TestCase
     /**
      * testMimeTypeFalse method
      *
-     * @expectedException \RuntimeException
      * @return void
      */
     public function testMimeTypeFalse()
     {
+        $this->expectException(\RuntimeException::class);
         $image = CORE_TESTS . 'invalid-file.png';
         $File = new File($image, false);
         $this->skipIf($File->mime(), 'mimeType can be determined, no Exception will be thrown');
@@ -2906,9 +2907,13 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::isInteger(-10));
         $this->assertTrue(Validation::isInteger(0));
         $this->assertTrue(Validation::isInteger(10));
+        $this->assertTrue(Validation::isInteger(012));
+        $this->assertTrue(Validation::isInteger(-012));
         $this->assertTrue(Validation::isInteger('-10'));
         $this->assertTrue(Validation::isInteger('0'));
         $this->assertTrue(Validation::isInteger('10'));
+        $this->assertTrue(Validation::isInteger('012'));
+        $this->assertTrue(Validation::isInteger('-012'));
 
         $this->assertFalse(Validation::isInteger('2.5'));
         $this->assertFalse(Validation::isInteger([]));
@@ -3024,11 +3029,11 @@ class ValidationTest extends TestCase
     /**
      * Test ImageSize InvalidArgumentException
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testImageSizeInvalidArgumentException()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->assertTrue(Validation::imageSize([], []));
     }
 

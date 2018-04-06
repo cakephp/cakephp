@@ -139,10 +139,10 @@ class FlashHelperTest extends TestCase
     /**
      * testFlashThrowsException
      *
-     * @expectedException \UnexpectedValueException
      */
     public function testFlashThrowsException()
     {
+        $this->expectException(\UnexpectedValueException::class);
         $this->View->request->session()->write('Flash.foo', 'bar');
         $this->Flash->render('foo');
     }

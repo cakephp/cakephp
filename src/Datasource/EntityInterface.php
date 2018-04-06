@@ -36,7 +36,7 @@ use JsonSerializable;
  * @method $this setAccess($property, $set)
  * @method bool isAccessible($property)
  * @method $this setSource($source)
- * @method array getSource()
+ * @method string getSource()
  * @method array extractOriginal(array $properties)
  * @method array extractOriginalChanged(array $properties)
  *
@@ -70,7 +70,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * Returns whether this entity contains a property named $property
      * regardless of if it is empty.
      *
-     * @param string $property The property to check.
+     * @param string|array $property The property to check.
      * @return bool
      */
     public function has($property);

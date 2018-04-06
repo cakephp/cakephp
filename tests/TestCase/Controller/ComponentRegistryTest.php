@@ -122,11 +122,11 @@ class ComponentRegistryTest extends TestCase
     /**
      * test MissingComponent exception
      *
-     * @expectedException \Cake\Controller\Exception\MissingComponentException
      * @return void
      */
     public function testLoadMissingComponent()
     {
+        $this->expectException(\Cake\Controller\Exception\MissingComponentException::class);
         $this->Components->load('ThisComponentShouldAlwaysBeMissing');
     }
 
@@ -228,12 +228,12 @@ class ComponentRegistryTest extends TestCase
     /**
      * Test that unloading a none existing component triggers an error.
      *
-     * @expectedException \Cake\Controller\Exception\MissingComponentException
-     * @expectedExceptionMessage Component class FooComponent could not be found.
      * @return void
      */
     public function testUnloadUnknown()
     {
+        $this->expectException(\Cake\Controller\Exception\MissingComponentException::class);
+        $this->expectExceptionMessage('Component class FooComponent could not be found.');
         $this->Components->unload('Foo');
     }
 

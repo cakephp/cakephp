@@ -284,7 +284,7 @@ class AuthComponent extends Component
             return null;
         }
 
-        /* @var \Cake\Controller\Controller $controller */
+        /** @var \Cake\Controller\Controller $controller */
         $controller = $event->getSubject();
 
         $action = strtolower($controller->request->getParam('action'));
@@ -392,8 +392,6 @@ class AuthComponent extends Component
                 $this->_config['ajaxLogin'],
                 $this->RequestHandler->ajaxLayout
             );
-
-            return $response->withStatus(403);
         }
 
         return $response->withStatus(403);

@@ -56,10 +56,10 @@ class ProgressHelperTest extends TestCase
     /**
      * Test that a callback is required.
      *
-     * @expectedException \RuntimeException
      */
     public function testOutputFailure()
     {
+        $this->expectException(\RuntimeException::class);
         $this->helper->output(['not a callback']);
     }
 

@@ -17,6 +17,7 @@ namespace Cake\Datasource;
 use BadMethodCallException;
 use Cake\Collection\Iterator\MapReduce;
 use Cake\Datasource\Exception\RecordNotFoundException;
+use Cake\Datasource\ResultSetDecorator;
 
 /**
  * Contains the characteristics for an object that is attached to a repository and
@@ -87,8 +88,8 @@ trait QueryTrait
      * When called with a Table argument, the default table object will be set
      * and this query object will be returned for chaining.
      *
-     * @param \Cake\Datasource\RepositoryInterface|null $table The default table object to use
-     * @return \Cake\Datasource\RepositoryInterface|$this
+     * @param \Cake\Datasource\RepositoryInterface|\Cake\ORM\Table|null $table The default table object to use
+     * @return \Cake\Datasource\RepositoryInterface|\Cake\ORM\Table|$this
      */
     public function repository(RepositoryInterface $table = null)
     {
@@ -526,6 +527,6 @@ trait QueryTrait
      */
     protected function _decoratorClass()
     {
-        return 'Cake\Datasource\ResultSetDecorator';
+        return ResultSetDecorator::class;
     }
 }

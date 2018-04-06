@@ -97,7 +97,7 @@ class Xml
      * If using array as input, you can pass `options` from Xml::fromArray.
      *
      * @param string|array $input XML string, a path to a file, a URL or an array
-     * @param string|array $options The options to use
+     * @param array $options The options to use
      * @return \SimpleXMLElement|\DOMDocument SimpleXMLElement or DOMDocument
      * @throws \Cake\Utility\Exception\XmlException
      */
@@ -135,7 +135,7 @@ class Xml
      *
      * @param string $input The input to load.
      * @param array $options The options to use. See Xml::build()
-     * @return \SimpleXmlElement|\DOMDocument
+     * @return \SimpleXMLElement|\DOMDocument
      * @throws \Cake\Utility\Exception\XmlException
      */
     protected static function _loadXml($input, $options)
@@ -145,16 +145,17 @@ class Xml
         if ($hasDisable && !$options['loadEntities']) {
             libxml_disable_entity_loader(true);
         }
-        $flags = LIBXML_NOCDATA;
+        $flags = 0;
         if (!empty($options['parseHuge'])) {
             $flags |= LIBXML_PARSEHUGE;
         }
         try {
             if ($options['return'] === 'simplexml' || $options['return'] === 'simplexmlelement') {
+                $flags |= LIBXML_NOCDATA;
                 $xml = new SimpleXMLElement($input, $flags);
             } else {
                 $xml = new DOMDocument();
-                $xml->loadXML($input);
+                $xml->loadXML($input, $flags);
             }
         } catch (Exception $e) {
             $xml = null;

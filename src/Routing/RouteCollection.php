@@ -121,10 +121,6 @@ class RouteCollection
 
         // Index path prefixes (for parsing)
         $path = $route->staticPath();
-        if (empty($this->_paths[$path])) {
-            $this->_paths[$path] = [];
-            krsort($this->_paths);
-        }
         $this->_paths[$path][] = $route;
 
         $extensions = $route->getExtensions();
@@ -144,7 +140,12 @@ class RouteCollection
     public function parse($url, $method = '')
     {
         $decoded = urldecode($url);
-        foreach (array_keys($this->_paths) as $path) {
+
+        // Sort path segments matching longest paths first.
+        $paths = array_keys($this->_paths);
+        rsort($paths);
+
+        foreach ($paths as $path) {
             if (strpos($decoded, $path) !== 0) {
                 continue;
             }
@@ -181,7 +182,7 @@ class RouteCollection
     /**
      * Takes the ServerRequestInterface, iterates the routes until one is able to parse the route.
      *
-     * @param \Psr\Http\Messages\ServerRequestInterface $request The request to parse route data from.
+     * @param \Psr\Http\Message\ServerRequestInterface $request The request to parse route data from.
      * @return array An array of request parameters parsed from the URL.
      * @throws \Cake\Routing\Exception\MissingRouteException When a URL has no matching route.
      */
@@ -189,7 +190,12 @@ class RouteCollection
     {
         $uri = $request->getUri();
         $urlPath = urldecode($uri->getPath());
-        foreach (array_keys($this->_paths) as $path) {
+
+        // Sort path segments matching longest paths first.
+        $paths = array_keys($this->_paths);
+        rsort($paths);
+
+        foreach ($paths as $path) {
             if (strpos($urlPath, $path) !== 0) {
                 continue;
             }
@@ -418,14 +424,11 @@ class RouteCollection
      * scope or any child scopes that share the same RouteCollection.
      *
      * @param string $name The name of the middleware. Used when applying middleware to a scope.
-     * @param callable $middleware The middleware object to register.
+     * @param callable|string $middleware The middleware callable or class name to register.
      * @return $this
      */
-    public function registerMiddleware($name, callable $middleware)
+    public function registerMiddleware($name, $middleware)
     {
-        if (is_string($middleware)) {
-            throw new RuntimeException("The '$name' middleware is not a callable object.");
-        }
         $this->_middleware[$name] = $middleware;
 
         return $this;

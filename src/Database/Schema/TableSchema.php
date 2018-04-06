@@ -834,6 +834,24 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
 
         return $dialect->dropConstraintSql($this);
     }
+
+    /**
+     * Returns an array of the table schema.
+     *
+     * @return array
+     */
+    public function __debugInfo()
+    {
+        return [
+            'table' => $this->_table,
+            'columns' => $this->_columns,
+            'indexes' => $this->_indexes,
+            'constraints' => $this->_constraints,
+            'options' => $this->_options,
+            'typeMap' => $this->_typeMap,
+            'temporary' => $this->_temporary,
+        ];
+    }
 }
 
 // @deprecated Add backwards compat alias.

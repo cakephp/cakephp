@@ -123,7 +123,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * This object contains all the information about a request and several methods for reading
      * additional information about the request.
      *
-     * @var \Cake\Http\ServerRequest
+     * @var \Cake\Http\ServerRequest|null
      * @link https://book.cakephp.org/3.0/en/controllers/request-response.html#request
      */
     public $request;
@@ -131,7 +131,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     /**
      * An instance of a Response object that contains information about the impending response
      *
-     * @var \Cake\Http\Response
+     * @var \Cake\Http\Response|null
      * @link https://book.cakephp.org/3.0/en/controllers/request-response.html#response
      */
     public $response;
@@ -205,7 +205,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     /**
      * Automatically set to the name of a plugin.
      *
-     * @var string
+     * @var string|null
      */
     public $plugin;
 

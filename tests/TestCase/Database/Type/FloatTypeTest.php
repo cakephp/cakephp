@@ -173,11 +173,11 @@ class FloatTypeTest extends TestCase
     /**
      * Test that exceptions are raised on invalid parsers.
      *
-     * @expectedException \RuntimeException
      * @return void
      */
     public function testUseLocaleParsingInvalid()
     {
+        $this->expectException(\RuntimeException::class);
         FloatType::$numberClass = 'stdClass';
         $this->type->useLocaleParser();
     }

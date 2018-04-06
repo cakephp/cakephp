@@ -53,6 +53,9 @@ class MailTransport extends AbstractTransport
         $params = isset($this->_config['additionalParameters']) ? $this->_config['additionalParameters'] : null;
         $this->_mail($to, $subject, $message, $headers, $params);
 
+        $headers .= $eol . 'To: ' . $to;
+        $headers .= $eol . 'Subject: ' . $subject;
+
         return ['headers' => $headers, 'message' => $message];
     }
 

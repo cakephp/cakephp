@@ -15,6 +15,7 @@
 namespace Cake\Filesystem;
 
 use finfo;
+use SplFileInfo;
 
 /**
  * Convenience class for reading, writing and appending to files.
@@ -49,7 +50,7 @@ class File
     /**
      * Holds the file handler resource if the file is opened
      *
-     * @var resource
+     * @var resource|null
      * https://book.cakephp.org/3.0/en/core-libraries/file-folder.html#Cake\Filesystem\File::$handle
      */
     public $handle;
@@ -57,7 +58,7 @@ class File
     /**
      * Enable locking for file reading and writing
      *
-     * @var bool
+     * @var bool|null
      * https://book.cakephp.org/3.0/en/core-libraries/file-folder.html#Cake\Filesystem\File::$lock
      */
     public $lock;
@@ -67,7 +68,7 @@ class File
      *
      * Current file's absolute path
      *
-     * @var mixed
+     * @var string|null
      * https://book.cakephp.org/3.0/en/core-libraries/file-folder.html#Cake\Filesystem\File::$path
      */
     public $path;
@@ -82,9 +83,10 @@ class File
      */
     public function __construct($path, $create = false, $mode = 0755)
     {
-        $this->Folder = new Folder(dirname($path), $create, $mode);
+        $splInfo = new SplFileInfo($path);
+        $this->Folder = new Folder($splInfo->getPath(), $create, $mode);
         if (!is_dir($path)) {
-            $this->name = basename($path);
+            $this->name = ltrim($splInfo->getFilename(), '/\\');
         }
         $this->pwd();
         $create && !$this->exists() && $this->safe($path) && $this->create();
@@ -343,13 +345,40 @@ class File
             $this->info();
         }
         if (isset($this->info['extension'])) {
-            return basename($this->name, '.' . $this->info['extension']);
+            return static::_basename($this->name, '.' . $this->info['extension']);
         }
         if ($this->name) {
             return $this->name;
         }
 
         return false;
+    }
+
+    /**
+     * Returns the file basename. simulate the php basename() for multibyte (mb_basename).
+     *
+     * @param string $path Path to file
+     * @param string|null $ext The name of the extension
+     * @return string the file basename.
+     */
+    protected static function _basename($path, $ext = null)
+    {
+        // check for multibyte string and use basename() if not found
+        if (mb_strlen($path) === strlen($path)) {
+            return ($ext === null)? basename($path) : basename($path, $ext);
+        }
+
+        $splInfo = new SplFileInfo($path);
+        $name = ltrim($splInfo->getFilename(), '/\\');
+
+        if ($ext === null || $ext === '') {
+            return $name;
+        }
+        $ext = preg_quote($ext);
+        $new = preg_replace("/({$ext})$/u", "", $name);
+
+        // basename of '/etc/.d' is '.d' not ''
+        return ($new === '')? $name : $new;
     }
 
     /**
@@ -368,7 +397,7 @@ class File
             $ext = $this->ext();
         }
 
-        return preg_replace("/(?:[^\w\.-]+)/", '_', basename($name, $ext));
+        return preg_replace("/(?:[^\w\.-]+)/", '_', static::_basename($name, $ext));
     }
 
     /**

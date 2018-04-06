@@ -13,9 +13,7 @@
  */
 namespace Cake\Test\TestCase\Http\Client;
 
-use Cake\Chronos\Chronos;
 use Cake\Http\Client\Response;
-use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\TestSuite\TestCase;
 
@@ -136,7 +134,7 @@ class ResponseTest extends TestCase
 
         $data = json_encode([]);
         $response = new Response([], $data);
-        $this->assertTrue(is_array($response->json));
+        $this->assertInternalType('array', $response->json);
 
         $data = json_encode(null);
         $response = new Response([], $data);
@@ -212,6 +210,20 @@ XML;
 
         $headers = [
             'HTTP/1.1 202 Accepted',
+            'Content-Type: text/html'
+        ];
+        $response = new Response($headers, 'ok');
+        $this->assertTrue($response->isOk());
+
+        $headers = [
+            'HTTP/1.1 203 Non-Authoritative Information',
+            'Content-Type: text/html'
+        ];
+        $response = new Response($headers, 'ok');
+        $this->assertTrue($response->isOk());
+
+        $headers = [
+            'HTTP/1.1 204 No Content',
             'Content-Type: text/html'
         ];
         $response = new Response($headers, 'ok');

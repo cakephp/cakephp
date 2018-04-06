@@ -189,7 +189,7 @@ class RequestHandlerComponent extends Component
      */
     public function startup(Event $event)
     {
-        /* @var \Cake\Controller\Controller $controller */
+        /** @var \Cake\Controller\Controller $controller */
         $controller = $event->getSubject();
         $request = $controller->request;
         $response = $controller->response;
@@ -232,12 +232,13 @@ class RequestHandlerComponent extends Component
     public function convertXml($xml)
     {
         try {
-            $xml = Xml::build($xml, ['readFile' => false]);
-            if (isset($xml->data)) {
-                return Xml::toArray($xml->data);
+            $xml = Xml::build($xml, ['return' => 'domdocument', 'readFile' => false]);
+            // We might not get child nodes if there are nested inline entities.
+            if ($xml->childNodes->length > 0) {
+                return Xml::toArray($xml);
             }
 
-            return Xml::toArray($xml);
+            return [];
         } catch (XmlException $e) {
             return [];
         }
@@ -273,7 +274,7 @@ class RequestHandlerComponent extends Component
             list($url, $querystr) = explode('?', $url, 2);
             parse_str($querystr, $query);
         }
-        /* @var \Cake\Controller\Controller $controller */
+        /** @var \Cake\Controller\Controller $controller */
         $controller = $event->getSubject();
         $response->body($controller->requestAction($url, [
             'return',
@@ -313,7 +314,7 @@ class RequestHandlerComponent extends Component
      */
     public function beforeRender(Event $event)
     {
-        /* @var \Cake\Controller\Controller $controller */
+        /** @var \Cake\Controller\Controller $controller */
         $controller = $event->getSubject();
         $response = $controller->response;
         $request = $controller->request;
@@ -506,7 +507,7 @@ class RequestHandlerComponent extends Component
         $acceptRaw = $request->parseAccept();
 
         if (empty($acceptRaw)) {
-            return $this->ext;
+            return $type ? $type === $this->ext : $this->ext;
         }
         $accepts = $response->mapType(array_shift($acceptRaw));
 

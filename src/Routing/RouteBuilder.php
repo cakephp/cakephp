@@ -743,7 +743,9 @@ class RouteBuilder
             }
 
             $route = str_replace('//', '/', $this->_path . $route);
-            $route = $route === '/' ? $route : rtrim($route, '/');
+            if ($route !== '/') {
+                $route = rtrim($route, '/');
+            }
 
             foreach ($this->_params as $param => $val) {
                 if (isset($defaults[$param]) && $param !== 'prefix' && $defaults[$param] !== $val) {
@@ -758,8 +760,7 @@ class RouteBuilder
                     ));
                 }
             }
-            $defaults += $this->_params;
-            $defaults += ['plugin' => null];
+            $defaults += $this->_params + ['plugin' => null];
 
             $route = new $routeClass($route, $defaults, $options);
         }
@@ -970,7 +971,7 @@ class RouteBuilder
      * scope or any child scopes that share the same RouteCollection.
      *
      * @param string $name The name of the middleware. Used when applying middleware to a scope.
-     * @param callable $middleware The middleware object to register.
+     * @param callable|string $middleware The middleware callable or class name to register.
      * @return $this
      * @see \Cake\Routing\RouteCollection
      */

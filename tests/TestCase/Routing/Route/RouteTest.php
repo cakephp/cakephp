@@ -1199,6 +1199,13 @@ class RouteTest extends TestCase
             '_method' => 'POST',
         ];
         $this->assertEquals('/sample', $route->match($url));
+
+        $url = [
+            'controller' => 'posts',
+            'action' => 'index',
+            '_method' => ['PUT', 'POST'],
+        ];
+        $this->assertEquals('/sample', $route->match($url));
     }
 
     /**
@@ -1575,12 +1582,12 @@ class RouteTest extends TestCase
     /**
      * Test setting the method on a route to an invalid method
      *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Invalid HTTP method received. NOPE is invalid
      * @return void
      */
     public function testSetMethodsInvalid()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid HTTP method received. NOPE is invalid');
         $route = new Route('/books/reviews', ['controller' => 'Reviews', 'action' => 'index']);
         $route->setMethods(['nope']);
     }
