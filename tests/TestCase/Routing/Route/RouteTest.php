@@ -564,12 +564,14 @@ class RouteTest extends TestCase
             ['controller' => 'posts', 'action' => 'index', '_host' => 'example.com'],
             $context
         );
+        // Http has port 80 as default, do not include it in the url
         $this->assertEquals('http://example.com/posts/index', $result);
 
         $result = $route->match(
             ['controller' => 'posts', 'action' => 'index', '_scheme' => 'webcal'],
             $context
         );
+        // Webcal is not on port 80 by default, include it in url
         $this->assertEquals('webcal://foo.com:80/posts/index', $result);
 
         $result = $route->match(
@@ -614,6 +616,7 @@ class RouteTest extends TestCase
             ],
             $context
         );
+        // Https scheme is not on port 8080 by default, include the port
         $this->assertEquals('https://example.com:8080/dir/posts/index', $result);
     }
 
@@ -690,6 +693,7 @@ class RouteTest extends TestCase
             '_host' => 'foo.example.com',
             '_port' => 8080
         ]);
+        // When the port and scheme in the context are not present in the original url, they should be added
         $this->assertSame('https://foo.example.com:8080/fallback', $result);
     }
 
