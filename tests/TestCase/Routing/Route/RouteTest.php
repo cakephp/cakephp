@@ -570,7 +570,7 @@ class RouteTest extends TestCase
             ['controller' => 'posts', 'action' => 'index', '_scheme' => 'webcal'],
             $context
         );
-        $this->assertEquals('webcal://foo.com/posts/index', $result);
+        $this->assertEquals('webcal://foo.com:80/posts/index', $result);
 
         $result = $route->match(
             ['controller' => 'posts', 'action' => 'index', '_port' => '8080'],
@@ -584,6 +584,25 @@ class RouteTest extends TestCase
         );
         $this->assertEquals('/dir/posts/index', $result);
 
+        $result = $route->match(
+            [
+                'controller' => 'posts',
+                'action' => 'index',
+                '_port' => '8080',
+                '_host' => 'example.com',
+                '_scheme' => 'https',
+                '_base' => '/dir'
+            ],
+            $context
+        );
+        $this->assertEquals('https://example.com:8080/dir/posts/index', $result);
+
+        $context = [
+            '_host' => 'foo.com',
+            '_scheme' => 'http',
+            '_port' => 8080,
+            '_base' => ''
+        ];
         $result = $route->match(
             [
                 'controller' => 'posts',
@@ -662,6 +681,16 @@ class RouteTest extends TestCase
             '_host' => 'foo.example.com'
         ]);
         $this->assertSame('http://foo.example.com/fallback', $result);
+
+        $result = $route->match([
+            'controller' => 'Articles',
+            'action' => 'index',
+        ], [
+            '_scheme' => 'https',
+            '_host' => 'foo.example.com',
+            '_port' => 8080
+        ]);
+        $this->assertSame('https://foo.example.com:8080/fallback', $result);
     }
 
     /**
