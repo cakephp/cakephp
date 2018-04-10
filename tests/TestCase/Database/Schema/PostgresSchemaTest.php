@@ -144,6 +144,10 @@ SQL;
                 ['type' => 'decimal', 'length' => null, 'precision' => null]
             ],
             [
+                ['type' => 'NUMERIC', 'default' => 'NULL::numeric'],
+                ['type' => 'decimal', 'length' => null, 'precision' => null, 'default' => null]
+            ],
+            [
                 ['type' => 'DECIMAL(10,2)', 'column_precision' => 10, 'column_scale' => 2],
                 ['type' => 'decimal', 'length' => 10, 'precision' => 2]
             ],
@@ -163,6 +167,10 @@ SQL;
             [
                 ['type' => 'CHARACTER VARYING(10)'],
                 ['type' => 'string', 'length' => 10]
+            ],
+            [
+                ['type' => 'CHARACTER VARYING(255)', 'default' => 'NULL::character varying'],
+                ['type' => 'string', 'length' => 255, 'default' => null]
             ],
             [
                 ['type' => 'CHAR(10)'],
