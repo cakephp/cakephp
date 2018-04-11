@@ -669,7 +669,7 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $article = $table->newEntity([
             'title' => 'new article',
-            'comments' =>  [
+            'comments' => [
                 $table->Comments->newEntity([
                     'user_id' => 1,
                     'comment' => 'comment 1',
