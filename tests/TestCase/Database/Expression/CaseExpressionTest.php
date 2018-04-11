@@ -55,50 +55,6 @@ class CaseExpressionTest extends TestCase
     }
 
     /**
-     * @return void
-     */
-    public function testWhenThenSqlOutput()
-    {
-        $expr = new QueryExpression();
-        $expr->eq('test', 'true');
-        $expr2 = new QueryExpression();
-        $expr2->eq('test2', 'false');
-
-        $caseExpression = (new CaseExpression())
-            ->when($expr)
-            ->then(new IdentifierExpression('foobar'));
-        $expected = 'CASE WHEN test = :c0 THEN foobar END';
-        $this->assertSame($expected, $caseExpression->sql(new ValueBinder()));
-
-        $caseExpression = (new CaseExpression('testColumn'))
-            ->when('testValue')
-            ->then('testResult');
-        $expected = 'CASE testColumn WHEN :param0 THEN :param1 END';
-        $this->assertSame($expected, $caseExpression->sql(new ValueBinder()));
-
-        $caseExpression = new CaseExpression();
-        $caseExpression
-            ->when('test1')
-            ->then('test2')
-            ->then('test4')
-            ->when('test3')
-            ->elseValue('testElse')
-            ->caseValue('test0');
-        $expected = 'CASE test0 WHEN :param0 THEN :param1 WHEN :param2 THEN :param3 ELSE :param4 END';
-        $this->assertSame($expected, $caseExpression->sql(new ValueBinder()));
-
-        $caseExpression = new CaseExpression('test0');
-        $caseExpression
-            ->when('test1')
-            ->then('test2')
-            ->then('test4')
-            ->when('test3')
-            ->elseValue('testElse');
-        $expected = 'CASE test0 WHEN :param0 THEN :param1 WHEN :param2 THEN :param3 ELSE :param4 END';
-        $this->assertSame($expected, $caseExpression->sql(new ValueBinder()));
-    }
-
-    /**
      * Test sql generation with 0 case.
      *
      * @return void

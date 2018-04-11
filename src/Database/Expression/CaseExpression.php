@@ -303,28 +303,4 @@ class CaseExpression implements ExpressionInterface
 
         return $this;
     }
-
-    /**
-     * Adds a WHEN clause, this must be followed by a THEN clause
-     *
-     * @param string|\Cake\Database\ExpressionInterface $condition Boolean Condition or Case Value
-     * @param string $type condition value type, if conditions is a value instead of an ExpressionInterface
-     * @return $this
-     */
-    public function when($condition, $type = null)
-    {
-        return $this->_addPart('_conditions', $condition, $type);
-    }
-
-    /**
-     * Adds a THEN statement for last WHEN clause added
-     *
-     * @param \Cake\Database\ExpressionInterface $statement Statement to return in the case
-     * @param string $type statement value type, if conditions is a value instead of an ExpressionInterface
-     * @return $this
-     */
-    public function then($statement, $type = null)
-    {
-        return $this->_addPart('_values', $statement, $type);
-    }
 }
