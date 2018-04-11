@@ -34,7 +34,7 @@ class ValidatorTest extends TestCase
     public function testGetRequiredMessage()
     {
         $validator = new Validator();
-        $this->assertSame('This field is required', $validator->getRequiredMessage('field'));
+        $this->assertNull($validator->getRequiredMessage('field'));
 
         $validator = new Validator();
         $validator->requirePresence('field');
@@ -53,7 +53,7 @@ class ValidatorTest extends TestCase
     public function testGetNotEmptyMessage()
     {
         $validator = new Validator();
-        $this->assertSame('This field cannot be left empty', $validator->getNotEmptyMessage('field'));
+        $this->assertNull($validator->getNotEmptyMessage('field'));
 
         $validator = new Validator();
         $validator->requirePresence('field');
