@@ -141,6 +141,36 @@ class ValidatorTest extends TestCase
     }
 
     /**
+     * Testing addNested with extra `$message` and `$when` params
+     *
+     * @return void
+     */
+    public function testAddNestedWithExtra()
+    {
+        $inner = new Validator();
+        $inner->requirePresence('username');
+
+        $validator = new Validator();
+        $validator->addNested('user', $inner, 'errors found', 'create');
+
+        $this->assertCount(1, $validator->field('user'));
+
+        $rule = $validator->field('user')->rule(Validator::NESTED);
+        $this->assertSame('create', $rule->get('on'));
+
+        $errors = $validator->errors(['user' => 'string']);
+        $this->assertArrayHasKey('user', $errors);
+        $this->assertArrayHasKey(Validator::NESTED, $errors['user']);
+        $this->assertSame('errors found', $errors['user'][Validator::NESTED]);
+
+        $errors = $validator->errors(['user' => ['key' => 'value']]);
+        $this->assertArrayHasKey('user', $errors);
+        $this->assertArrayHasKey(Validator::NESTED, $errors['user']);
+
+        $this->assertEmpty($validator->errors(['user' => ['key' => 'value']], false));
+    }
+
+    /**
      * Testing addNestedMany field rules
      *
      * @return void
@@ -175,6 +205,41 @@ class ValidatorTest extends TestCase
 
         $result = $validator->errors(['comments' => [['comment' => 'example']]]);
         $this->assertNotEmpty($result, 'Validation should fail');
+    }
+
+    /**
+     * Testing addNestedMany with extra `$message` and `$when` params
+     *
+     * @return void
+     */
+    public function testAddNestedManyWithExtra()
+    {
+        $inner = new Validator();
+        $inner->requirePresence('body');
+
+        $validator = new Validator();
+        $validator->addNestedMany('comments', $inner, 'errors found', 'create');
+
+        $this->assertCount(1, $validator->field('comments'));
+
+        $rule = $validator->field('comments')->rule(Validator::NESTED);
+        $this->assertSame('create', $rule->get('on'));
+
+        $errors = $validator->errors(['comments' => 'string']);
+        $this->assertArrayHasKey('comments', $errors);
+        $this->assertArrayHasKey(Validator::NESTED, $errors['comments']);
+        $this->assertSame('errors found', $errors['comments'][Validator::NESTED]);
+
+        $errors = $validator->errors(['comments' => ['string']]);
+        $this->assertArrayHasKey('comments', $errors);
+        $this->assertArrayHasKey(Validator::NESTED, $errors['comments']);
+        $this->assertSame('errors found', $errors['comments'][Validator::NESTED]);
+
+        $errors = $validator->errors(['comments' => [['body' => null]]]);
+        $this->assertArrayHasKey('comments', $errors);
+        $this->assertArrayHasKey(Validator::NESTED, $errors['comments']);
+
+        $this->assertEmpty($validator->errors(['comments' => [['body' => null]]], false));
     }
 
     /**

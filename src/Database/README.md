@@ -55,7 +55,7 @@ directly in the options array:
 use Cake\Database\Connection;
 
 $connection = new Connection([
-	'driver' => 'Cake\Database\Driver\Sqlite'
+	'driver' => 'Cake\Database\Driver\Sqlite',
 	'database' => '/path/to/file.db'
 ]);
 ```

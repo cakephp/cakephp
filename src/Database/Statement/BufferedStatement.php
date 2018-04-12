@@ -82,11 +82,11 @@ class BufferedStatement extends StatementDecorator
      * @param string $type The type to fetch.
      * @return array|false
      */
-    public function fetch($type = 'num')
+    public function fetch($type = parent::FETCH_TYPE_NUM)
     {
         if ($this->_allFetched) {
             $row = ($this->_counter < $this->_count) ? $this->_records[$this->_counter++] : false;
-            $row = ($row && $type === 'num') ? array_values($row) : $row;
+            $row = ($row && $type === static::FETCH_TYPE_NUM) ? array_values($row) : $row;
 
             return $row;
         }
@@ -107,12 +107,20 @@ class BufferedStatement extends StatementDecorator
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function fetchAssoc()
+    {
+        return $this->fetch(static::FETCH_TYPE_ASSOC);
+    }
+
+    /**
      * {@inheritDoc}
      *
      * @param string $type The type to fetch.
      * @return array
      */
-    public function fetchAll($type = 'num')
+    public function fetchAll($type = parent::FETCH_TYPE_NUM)
     {
         if ($this->_allFetched) {
             return $this->_records;
@@ -133,7 +141,7 @@ class BufferedStatement extends StatementDecorator
     {
         if (!$this->_allFetched) {
             $counter = $this->_counter;
-            while ($this->fetch('assoc')) {
+            while ($this->fetch(static::FETCH_TYPE_ASSOC)) {
             }
             $this->_counter = $counter;
         }

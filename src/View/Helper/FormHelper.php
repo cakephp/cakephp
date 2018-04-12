@@ -256,6 +256,13 @@ class FormHelper extends Helper
     protected $_valueSources = ['context'];
 
     /**
+     * Grouped input types.
+     *
+     * @var array
+     */
+    protected $_groupedInputTypes = ['radio', 'multicheckbox', 'date', 'time', 'datetime'];
+
+    /**
      * Construct the widgets and binds the default context providers
      *
      * @param \Cake\View\View $View The View this helper is being attached to.
@@ -280,6 +287,11 @@ class FormHelper extends Helper
             }
             $widgets = $config['widgets'] + $widgets;
             unset($config['widgets']);
+        }
+
+        if (isset($config['groupedInputTypes'])) {
+            $this->_groupedInputTypes = $config['groupedInputTypes'];
+            unset($config['groupedInputTypes']);
         }
 
         parent::__construct($View, $config);
@@ -986,7 +998,7 @@ class FormHelper extends Helper
     {
         deprecationWarning(
             'FormHelper::allInputs() is deprecated. ' .
-            'Use FormHelper::allControlls() instead.'
+            'Use FormHelper::allControls() instead.'
         );
 
         return $this->allControls($fields, $options);
@@ -1561,8 +1573,7 @@ class FormHelper extends Helper
         }
 
         $labelAttributes['for'] = $options['id'];
-        $groupTypes = ['radio', 'multicheckbox', 'date', 'time', 'datetime'];
-        if (in_array($options['type'], $groupTypes, true)) {
+        if (in_array($options['type'], $this->_groupedInputTypes, true)) {
             $labelAttributes['for'] = false;
         }
         if ($options['nestedInput']) {

@@ -260,6 +260,22 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * Test overridding grouped input types which controls generation of "for"
+     * attribute of labels.
+     *
+     * @return void
+     */
+    public function testConstructWithGroupedInputTypes()
+    {
+        $helper = new FormHelper($this->View, [
+            'groupedInputTypes' => ['radio'],
+        ]);
+
+        $result = $helper->control('when', ['type' => 'datetime']);
+        $this->assertContains('<label for="when">When</label>', $result);
+    }
+
+    /**
      * Test registering a new widget class and rendering it.
      *
      * @return void

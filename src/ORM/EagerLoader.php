@@ -671,7 +671,7 @@ class EagerLoader
      */
     public function loadExternal($query, $statement)
     {
-        $external = $this->externalAssociations($query->repository());
+        $external = $this->externalAssociations($query->getRepository());
         if (empty($external)) {
             return $statement;
         }

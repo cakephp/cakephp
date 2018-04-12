@@ -18,6 +18,7 @@ use Cake\Database\ExpressionInterface;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Query;
 use Cake\Database\StatementInterface;
+use Cake\Database\Statement\StatementDecorator;
 use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
@@ -28,7 +29,13 @@ use Cake\TestSuite\TestCase;
 class QueryTest extends TestCase
 {
 
-    public $fixtures = ['core.articles', 'core.authors', 'core.comments', 'core.profiles'];
+    public $fixtures = [
+        'core.articles',
+        'core.authors',
+        'core.comments',
+        'core.profiles',
+        'core.menu_link_trees'
+    ];
 
     public $autoFixtures = false;
 
@@ -739,6 +746,80 @@ class QueryTest extends TestCase
             ->execute();
         $this->assertCount(1, $result);
         $this->assertEquals(['id' => 1], $result->fetch('assoc'));
+        $result->closeCursor();
+    }
+
+    /**
+     * Tests Query::whereNull()
+     *
+     * @return void
+     */
+    public function testSelectWhereNull()
+    {
+        $this->loadFixtures('MenuLinkTrees');
+
+        $query = new Query($this->connection);
+        $result = $query
+            ->select(['id', 'parent_id'])
+            ->from('menu_link_trees')
+            ->whereNull(['parent_id'])
+            ->execute();
+        $this->assertCount(5, $result);
+        $result->closeCursor();
+
+        $query = new Query($this->connection);
+        $result = $query
+            ->select(['id'])
+            ->from('menu_link_trees')
+            ->whereNull($this->connection->newQuery()->select('parent_id'))
+            ->execute();
+        $this->assertCount(5, $result);
+        $result->closeCursor();
+
+        $query = new Query($this->connection);
+        $result = $query
+            ->select(['id'])
+            ->from('menu_link_trees')
+            ->whereNull('parent_id')
+            ->execute();
+        $this->assertCount(5, $result);
+        $result->closeCursor();
+    }
+
+    /**
+     * Tests Query::whereNotNull()
+     *
+     * @return void
+     */
+    public function testSelectWhereNotNull()
+    {
+        $this->loadFixtures('MenuLinkTrees');
+
+        $query = new Query($this->connection);
+        $result = $query
+            ->select(['id', 'parent_id'])
+            ->from('menu_link_trees')
+            ->whereNotNull(['parent_id'])
+            ->execute();
+        $this->assertCount(13, $result);
+        $result->closeCursor();
+
+        $query = new Query($this->connection);
+        $result = $query
+            ->select(['id'])
+            ->from('menu_link_trees')
+            ->whereNotNull($this->connection->newQuery()->select('parent_id'))
+            ->execute();
+        $this->assertCount(13, $result);
+        $result->closeCursor();
+
+        $query = new Query($this->connection);
+        $result = $query
+            ->select(['id'])
+            ->from('menu_link_trees')
+            ->whereNotNull('parent_id')
+            ->execute();
+        $this->assertCount(13, $result);
         $result->closeCursor();
     }
 
@@ -4531,34 +4612,6 @@ class QueryTest extends TestCase
     }
 
     /**
-     * Tests that fetch returns an anonymous object when the string 'obj'
-     * is passed as an argument
-     *
-     * @return void
-     */
-    public function testSelectWithObjFetchType()
-    {
-        $this->loadFixtures('Comments');
-        $query = new Query($this->connection);
-        $result = $query
-            ->select(['id'])
-            ->from('comments')
-            ->where(['id' => '1'])
-            ->execute();
-        $obj = (object)['id' => 1];
-        $this->assertEquals($obj, $result->fetch('obj'));
-
-        $query = new Query($this->connection);
-        $result = $query
-            ->select(['id'])
-            ->from('comments')
-            ->where(['id' => '1'])
-            ->execute();
-        $rows = $result->fetchAll('obj');
-        $this->assertEquals($obj, $rows[0]);
-    }
-
-    /**
      * Test getValueBinder()
      *
      * @return void
@@ -4580,20 +4633,19 @@ class QueryTest extends TestCase
         $this->loadFixtures('Profiles');
         $query = new Query($this->connection);
         $fields = [
-            'id' => 'integer',
             'user_id' => 'integer',
             'is_active' => 'boolean'
         ];
         $typeMap = new TypeMap($fields + ['a' => 'integer']);
         $results = $query
             ->select(array_keys($fields))
-            ->select(['a' => 'id'])
+            ->select(['a' => 'is_active'])
             ->from('profiles')
             ->setSelectTypeMap($typeMap)
-            ->limit(1)
+            ->where(['user_id' => 1])
             ->execute()
             ->fetchAll('assoc');
-        $this->assertSame([['id' => 1, 'user_id' => 1, 'is_active' => false, 'a' => 1]], $results);
+        $this->assertSame([['user_id' => 1, 'is_active' => false, 'a' => 0]], $results);
     }
 
     /**
@@ -4696,5 +4748,124 @@ class QueryTest extends TestCase
         $pattern = str_replace('<', '[`"\[]' . $optional, $pattern);
         $pattern = str_replace('>', '[`"\]]' . $optional, $pattern);
         $this->assertRegExp('#' . $pattern . '#', $query);
+    }
+
+    /**
+     * Test that calling fetchAssoc return an associated array.
+     * @return void
+     * @throws \Exception
+     */
+    public function testFetchAssoc()
+    {
+        $this->loadFixtures('Profiles');
+        $query = new Query($this->connection);
+        $fields = [
+            'id' => 'integer',
+            'user_id' => 'integer',
+            'is_active' => 'boolean'
+        ];
+        $typeMap = new TypeMap($fields);
+        $results = $query
+            ->select([
+                'id',
+                'user_id',
+                'is_active'
+            ])
+            ->from('profiles')
+            ->setSelectTypeMap($typeMap)
+            ->limit(1)
+            ->execute()
+            ->fetchAssoc();
+        $this->assertSame(['id' => 1, 'user_id' => 1, 'is_active' => false], $results);
+    }
+
+    /**
+     * Test that calling fetch with with FETCH_TYPE_OBJ return stdClass object.
+     * @return void
+     * @throws \Exception
+     */
+    public function testFetchObjects()
+    {
+        $this->loadFixtures('Profiles');
+        $query = new Query($this->connection);
+        $results = $query
+            ->select([
+                'id',
+                'user_id',
+                'is_active'
+            ])
+            ->from('profiles')
+            ->limit(1)
+            ->execute()
+            ->fetch(StatementDecorator::FETCH_TYPE_OBJ);
+        $this->assertInstanceOf(\stdClass::class, $results);
+    }
+
+    /**
+     * Test that fetchColumn() will return the correct value at $position.
+     * @throws \Exception
+     * @return void
+     */
+    public function testFetchColumn()
+    {
+        $this->loadFixtures('Profiles');
+        $query = new Query($this->connection);
+        $fields = [
+            'integer',
+            'integer',
+            'boolean'
+        ];
+        $typeMap = new TypeMap($fields);
+        $query
+            ->select([
+                'id',
+                'user_id',
+                'is_active'
+            ])
+            ->from('profiles')
+            ->setSelectTypeMap($typeMap)
+            ->where(['id' => 2])
+            ->limit(1);
+        $statement = $query->execute();
+        $results = $statement->fetchColumn(0);
+        $this->assertSame(2, $results);
+
+        $statement = $query->execute();
+        $results = $statement->fetchColumn(1);
+        $this->assertSame(2, $results);
+
+        $statement = $query->execute();
+        $results = $statement->fetchColumn(2);
+        $this->assertSame(false, $results);
+    }
+
+    /**
+     * Test that fetchColumn() will return false if $position is not set.
+     * @throws \Exception
+     * @return void
+     */
+    public function testFetchColumnReturnsFalse()
+    {
+        $this->loadFixtures('Profiles');
+        $query = new Query($this->connection);
+        $fields = [
+            'integer',
+            'integer',
+            'boolean'
+        ];
+        $typeMap = new TypeMap($fields);
+        $query
+            ->select([
+                'id',
+                'user_id',
+                'is_active'
+            ])
+            ->from('profiles')
+            ->setSelectTypeMap($typeMap)
+            ->where(['id' => 2])
+            ->limit(1);
+        $statement = $query->execute();
+        $results = $statement->fetchColumn(3);
+        $this->assertFalse($results);
     }
 }

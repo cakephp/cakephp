@@ -20,6 +20,7 @@ namespace Cake\Datasource;
  *
  * @method $this andWhere($conditions, $types = [])
  * @method $this select($fields = [], $overwrite = false)
+ * @method \Cake\Datasource\RepositoryInterface getRepository()
  */
 interface QueryInterface
 {

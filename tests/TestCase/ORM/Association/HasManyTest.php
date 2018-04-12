@@ -440,7 +440,7 @@ class HasManyTest extends TestCase
         $keys = [[1, 10], [2, 20], [3, 30], [4, 40]];
         $query = $this->getMockBuilder('Cake\ORM\Query')
             ->setMethods(['all', 'andWhere'])
-            ->setConstructorArgs([null, null])
+            ->disableOriginalConstructor()
             ->getMock();
         $this->article->method('find')
             ->with('all')

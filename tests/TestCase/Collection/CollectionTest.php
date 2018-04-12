@@ -1150,6 +1150,65 @@ class CollectionTest extends TestCase
     }
 
     /**
+     * Tests the appendItem method
+     */
+    public function testAppendItem()
+    {
+        $collection = new Collection([1, 2, 3]);
+        $combined = $collection->appendItem(4);
+        $this->assertEquals([1, 2, 3, 4], $combined->toArray(false));
+
+        $collection = new Collection(['a' => 1, 'b' => 2]);
+        $combined = $collection->appendItem(3, 'c');
+        $combined = $combined->appendItem(4, 'a');
+        $this->assertEquals(['a' => 4, 'b' => 2, 'c' => 3], $combined->toArray());
+    }
+
+    /**
+     * Tests the prepend method
+     */
+    public function testPrepend()
+    {
+        $collection = new Collection([1, 2, 3]);
+        $combined = $collection->prepend(['a']);
+        $this->assertEquals(['a', 1, 2, 3], $combined->toList());
+
+        $collection = new Collection(['c' => 3, 'd' => 4]);
+        $combined = $collection->prepend(['a' => 1, 'b' => 2]);
+        $this->assertEquals(['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4], $combined->toArray());
+    }
+
+    /**
+     * Tests prependItem method
+     */
+    public function testPrependItem()
+    {
+        $collection = new Collection([1, 2, 3]);
+        $combined = $collection->prependItem('a');
+        $this->assertEquals(['a', 1, 2, 3], $combined->toList());
+
+        $collection = new Collection(['c' => 3, 'd' => 4]);
+        $combined = $collection->prependItem(2, 'b');
+        $combined = $combined->prependItem(1, 'a');
+        $this->assertEquals(['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4], $combined->toArray());
+    }
+
+    /**
+     * Tests prependItem method
+     */
+    public function testPrependItemPreserveKeys()
+    {
+        $collection = new Collection([1, 2, 3]);
+        $combined = $collection->prependItem('a');
+        $this->assertEquals(['a', 1, 2, 3], $combined->toList());
+
+        $collection = new Collection(['c' => 3, 'd' => 4]);
+        $combined = $collection->prependItem(2, 'b');
+        $combined = $combined->prependItem(1, 'a');
+        $this->assertEquals(['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4], $combined->toArray());
+    }
+
+    /**
      * Tests the append method with iterator
      */
     public function testAppendIterator()

@@ -882,6 +882,48 @@ class Query implements ExpressionInterface, IteratorAggregate
     }
 
     /**
+     * Convenience method that adds a NOT NULL condition to the query
+     *
+     * @param array|string|\Cake\Database\ExpressionInterface $fields A single field or expressions or a list of them that should be not null
+     * @return $this
+     */
+    public function whereNotNull($fields)
+    {
+        if (!is_array($fields)) {
+            $fields = [$fields];
+        }
+
+        $exp = $this->newExpr();
+
+        foreach ($fields as $field) {
+            $exp->isNotNull($field);
+        }
+
+        return $this->where($exp);
+    }
+
+    /**
+     * Convenience method that adds a IS NULL condition to the query
+     *
+     * @param array|string|\Cake\Database\ExpressionInterface $fields A single field or expressions or a list of them that should be null
+     * @return $this
+     */
+    public function whereNull($fields)
+    {
+        if (!is_array($fields)) {
+            $fields = [$fields];
+        }
+
+        $exp = $this->newExpr();
+
+        foreach ($fields as $field) {
+            $exp->isNull($field);
+        }
+
+        return $this->where($exp);
+    }
+
+    /**
      * Adds an IN condition or set of conditions to be used in the WHERE clause for this
      * query.
      *

@@ -2081,7 +2081,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * Safely access the values in $this->params.
      *
      * @param string $name The name or dotted path to parameter.
-     * @param mixed $default The default value if $name is not set.
+     * @param mixed $default The default value if `$name` is not set. Default `false`.
      * @return mixed
      */
     public function getParam($name, $default = false)

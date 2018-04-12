@@ -444,7 +444,11 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         if ($associations) {
             $loader->contain($associations, $queryBuilder);
         }
-        $this->_addAssociationsToTypeMap($this->repository(), $this->getTypeMap(), $loader->getContain());
+        $this->_addAssociationsToTypeMap(
+            $this->getRepository(),
+            $this->getTypeMap(),
+            $loader->getContain()
+        );
 
         return $this;
     }
@@ -551,7 +555,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     public function matching($assoc, callable $builder = null)
     {
         $result = $this->getEagerLoader()->setMatching($assoc, $builder)->getMatching();
-        $this->_addAssociationsToTypeMap($this->repository(), $this->getTypeMap(), $result);
+        $this->_addAssociationsToTypeMap($this->getRepository(), $this->getTypeMap(), $result);
         $this->_dirty();
 
         return $this;
@@ -628,7 +632,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
                 'fields' => false
             ])
             ->getMatching();
-        $this->_addAssociationsToTypeMap($this->repository(), $this->getTypeMap(), $result);
+        $this->_addAssociationsToTypeMap($this->getRepository(), $this->getTypeMap(), $result);
         $this->_dirty();
 
         return $this;
@@ -677,7 +681,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
                 'fields' => false
             ])
             ->getMatching();
-        $this->_addAssociationsToTypeMap($this->repository(), $this->getTypeMap(), $result);
+        $this->_addAssociationsToTypeMap($this->getRepository(), $this->getTypeMap(), $result);
         $this->_dirty();
 
         return $this;
@@ -742,7 +746,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
                 'negateMatch' => true
             ])
             ->getMatching();
-        $this->_addAssociationsToTypeMap($this->repository(), $this->getTypeMap(), $result);
+        $this->_addAssociationsToTypeMap($this->getRepository(), $this->getTypeMap(), $result);
         $this->_dirty();
 
         return $this;
@@ -1051,7 +1055,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     public function triggerBeforeFind()
     {
         if (!$this->_beforeFindFired && $this->_type === 'select') {
-            $table = $this->repository();
+            $table = $this->getRepository();
             $this->_beforeFindFired = true;
             /* @var \Cake\Event\EventDispatcherInterface $table */
             $table->dispatchEvent('Model.beforeFind', [
@@ -1134,11 +1138,11 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
 
         if (!count($select) || $this->_autoFields === true) {
             $this->_hasFields = false;
-            $this->select($this->repository()->getSchema()->columns());
+            $this->select($this->getRepository()->getSchema()->columns());
             $select = $this->clause('select');
         }
 
-        $aliased = $this->aliasFields($select, $this->repository()->getAlias());
+        $aliased = $this->aliasFields($select, $this->getRepository()->getAlias());
         $this->select($aliased, true);
     }
 
@@ -1175,7 +1179,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function find($finder, array $options = [])
     {
-        return $this->repository()->callFinder($finder, $this, $options);
+        return $this->getRepository()->callFinder($finder, $this, $options);
     }
 
     /**
@@ -1202,7 +1206,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function update($table = null)
     {
-        $table = $table ?: $this->repository()->getTable();
+        $table = $table ?: $this->getRepository()->getTable();
 
         return parent::update($table);
     }
@@ -1218,7 +1222,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function delete($table = null)
     {
-        $repo = $this->repository();
+        $repo = $this->getRepository();
         $this->from([$repo->getAlias() => $repo->getTable()]);
 
         return parent::delete();
@@ -1239,7 +1243,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function insert(array $columns, array $types = [])
     {
-        $table = $this->repository()->getTable();
+        $table = $this->getRepository()->getTable();
         $this->into($table);
 
         return parent::insert($columns, $types);

@@ -18,6 +18,7 @@ use Cake\Database\Type\DateTimeType;
 use Cake\I18n\FrozenTime;
 use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
+use DateTimeZone;
 
 /**
  * Test for the DateTime type.
@@ -144,6 +145,26 @@ class DateTimeTypeTest extends TestCase
         $date = new Time('2013-08-12 15:16:17');
         $result = $this->type->toDatabase($date, $this->driver);
         $this->assertEquals('2013-08-12 15:16:17', $result);
+
+        $tz = $date->getTimezone();
+        $this->type->setTimezone('Asia/Kolkata'); // UTC+5:30
+        $result = $this->type->toDatabase($date, $this->driver);
+        $this->assertEquals('2013-08-12 20:46:17', $result);
+        $this->assertEquals($tz, $date->getTimezone());
+
+        $this->type->setTimezone(new DateTimeZone('Asia/Kolkata'));
+        $result = $this->type->toDatabase($date, $this->driver);
+        $this->assertEquals('2013-08-12 20:46:17', $result);
+        $this->type->setTimezone(null);
+
+        $date = new FrozenTime('2013-08-12 15:16:17');
+        $result = $this->type->toDatabase($date, $this->driver);
+        $this->assertEquals('2013-08-12 15:16:17', $result);
+
+        $this->type->setTimezone('Asia/Kolkata'); // UTC+5:30
+        $result = $this->type->toDatabase($date, $this->driver);
+        $this->assertEquals('2013-08-12 20:46:17', $result);
+        $this->type->setTimezone(null);
 
         $date = 1401906995;
         $result = $this->type->toDatabase($date, $this->driver);
