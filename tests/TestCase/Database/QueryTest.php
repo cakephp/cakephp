@@ -4586,13 +4586,13 @@ class QueryTest extends TestCase
         $typeMap = new TypeMap($fields + ['a' => 'integer']);
         $results = $query
             ->select(array_keys($fields))
-            ->select(['a' => 'id'])
+            ->select(['a' => 'is_active'])
             ->from('profiles')
             ->setSelectTypeMap($typeMap)
             ->where(['user_id' => 1])
             ->execute()
             ->fetchAll('assoc');
-        $this->assertSame([['user_id' => 1, 'is_active' => false, 'a' => 1]], $results);
+        $this->assertSame([['user_id' => 1, 'is_active' => false, 'a' => 0]], $results);
     }
 
     /**
