@@ -4589,7 +4589,7 @@ class QueryTest extends TestCase
             ->select(['a' => 'id'])
             ->from('profiles')
             ->setSelectTypeMap($typeMap)
-            ->where(['id' => 1])
+            ->where(['user_id' => 1])
             ->execute()
             ->fetchAll('assoc');
         $this->assertSame([['user_id' => 1, 'is_active' => false, 'a' => 1]], $results);
