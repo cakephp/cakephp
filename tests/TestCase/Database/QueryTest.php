@@ -4633,20 +4633,19 @@ class QueryTest extends TestCase
         $this->loadFixtures('Profiles');
         $query = new Query($this->connection);
         $fields = [
-            'id' => 'integer',
             'user_id' => 'integer',
             'is_active' => 'boolean'
         ];
         $typeMap = new TypeMap($fields + ['a' => 'integer']);
         $results = $query
             ->select(array_keys($fields))
-            ->select(['a' => 'id'])
+            ->select(['a' => 'is_active'])
             ->from('profiles')
             ->setSelectTypeMap($typeMap)
-            ->limit(1)
+            ->where(['user_id' => 1])
             ->execute()
             ->fetchAll('assoc');
-        $this->assertSame([['id' => 1, 'user_id' => 1, 'is_active' => false, 'a' => 1]], $results);
+        $this->assertSame([['user_id' => 1, 'is_active' => false, 'a' => 0]], $results);
     }
 
     /**
