@@ -139,6 +139,19 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Test getRepository() method.
+     *
+     * @return void
+     */
+    public function testGetRepository()
+    {
+        $query = new Query($this->connection, $this->table);
+
+        $result = $query->getRepository();
+        $this->assertSame($this->table, $result);
+    }
+
+    /**
      * Tests that results are grouped correctly when using contain()
      * and results are not hydrated
      *

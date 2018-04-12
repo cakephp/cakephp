@@ -175,10 +175,10 @@ class ResultSet implements ResultSetInterface
      */
     public function __construct($query, $statement)
     {
-        $repository = $query->repository();
+        $repository = $query->getRepository();
         $this->_statement = $statement;
         $this->_driver = $query->getConnection()->getDriver();
-        $this->_defaultTable = $query->repository();
+        $this->_defaultTable = $query->getRepository();
         $this->_calculateAssociationMap($query);
         $this->_hydrate = $query->isHydrationEnabled();
         $this->_entityClass = $repository->getEntityClass();

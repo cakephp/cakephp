@@ -163,7 +163,7 @@ class Paginator implements PaginatorInterface
         $query = null;
         if ($object instanceof QueryInterface) {
             $query = $object;
-            $object = $query->repository();
+            $object = $query->getRepository();
         }
 
         $alias = $object->getAlias();
