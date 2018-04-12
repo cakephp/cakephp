@@ -41,12 +41,14 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      * @var string
      */
     const FETCH_TYPE_NUM = 'num';
+
     /**
      * Used to designate that an associated array be returned in a result when calling fetch methods
      *
      * @var string
      */
     const FETCH_TYPE_ASSOC = 'assoc';
+
     /**
      * Used to designate that a stdClass object be returned in a result when calling fetch methods
      *
