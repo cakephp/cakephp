@@ -97,7 +97,28 @@ class PoFileParserTest extends TestCase
                         4 => '%-5d = 0 or > 1 (translated)'
                     ]
                 ]
-            ]
+            ],
+            '%d = 2' => [
+                '_context' => [
+                    'This is another translated context' => 'First Context trasnlation',
+                ]
+            ],
+            '%-6d = 3' => [
+                '_context' => [
+                    '' => '%-6d = 1 (translated)',
+                ]
+            ],
+            'p:%-6d = 0 or > 1' => [
+                '_context' => [
+                    '' => [
+                        0 => '%-6d = 1 (translated)',
+                        1 => '',
+                        2 => '',
+                        3 => '',
+                        4 => '%-6d = 0 or > 1 (translated)',
+                    ]
+                ]
+            ],
         ];
         $this->assertEquals($expected, $messages);
     }
