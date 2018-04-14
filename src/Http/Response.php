@@ -2430,7 +2430,7 @@ class Response implements ResponseInterface
      * - download: If `true` sets download header and forces file to be downloaded rather than displayed in browser
      *
      * @param string $path Path to file. If the path is not an absolute path that resolves
-     *   to a file, `APP` will be prepended to the path.
+     *   to a file, `APP` will be prepended to the path (this behavior is deprecated).
      * @param array $options Options See above.
      * @return void
      * @throws \Cake\Http\Exception\NotFoundException
@@ -2504,7 +2504,7 @@ class Response implements ResponseInterface
      *   be downloaded rather than displayed inline.
      *
      * @param string $path Path to file. If the path is not an absolute path that resolves
-     *   to a file, `APP` will be prepended to the path.
+     *   to a file, `APP` will be prepended to the path (this behavior is deprecated).
      * @param array $options Options See above.
      * @return static
      * @throws \Cake\Http\Exception\NotFoundException
@@ -2587,6 +2587,7 @@ class Response implements ResponseInterface
             throw new NotFoundException(__d('cake', 'The requested file contains `..` and will not be read.'));
         }
         if (!is_file($path)) {
+            deprecationWarning('Using non-absolute paths with Response::file() and withFile() is deprecated.');
             $path = APP . $path;
         }
 

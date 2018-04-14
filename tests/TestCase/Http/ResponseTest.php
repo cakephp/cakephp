@@ -1919,13 +1919,18 @@ class ResponseTest extends TestCase
     /**
      * test withFile() not found
      *
+     * Don't remove this test when cleaning up deprecation warnings.
+     * Just remove the deprecated wrapper.
+     *
      * @return void
      */
     public function testWithFileNotFound()
     {
         $this->expectException(\Cake\Http\Exception\NotFoundException::class);
-        $response = new Response();
-        $response->withFile('/some/missing/folder/file.jpg');
+        $this->deprecated(function () {
+            $response = new Response();
+            $response->withFile('/some/missing/folder/file.jpg');
+        });
     }
 
     /**
@@ -1965,17 +1970,22 @@ class ResponseTest extends TestCase
     /**
      * test withFile and invalid paths
      *
+     * This test should not be removed when deprecation warnings are removed.
+     * Just remove the deprecated wrapper.
+     *
      * @dataProvider invalidFileProvider
      * @return void
      */
     public function testWithFileInvalidPath($path, $expectedMessage)
     {
-        $response = new Response();
-        try {
-            $response->withFile($path);
-        } catch (NotFoundException $e) {
-            $this->assertContains($expectedMessage, $e->getMessage());
-        }
+        $this->deprecated(function () use ($path, $expectedMessage) {
+            $response = new Response();
+            try {
+                $response->withFile($path);
+            } catch (NotFoundException $e) {
+                $this->assertContains($expectedMessage, $e->getMessage());
+            }
+        });
     }
 
     /**
