@@ -196,6 +196,10 @@ class PostgresSchema extends BaseSchema
             return null;
         }
 
+        if (strpos($default, 'NULL::') === 0) {
+            return null;
+        }
+
         // Remove quotes and postgres casts
         return preg_replace(
             "/^'(.*)'(?:::.*)$/",

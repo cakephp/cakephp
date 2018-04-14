@@ -124,7 +124,10 @@ abstract class BaseApplication implements
             $name = str_replace('/', '\\', $name) . '\\' . 'Plugin';
         }
         if (!class_exists($name)) {
-            throw new InvalidArgumentException("The `{$name}` plugin cannot be found");
+            throw new InvalidArgumentException(
+                "The plugin class `{$name}` cannot be found. " .
+                'Ensure your autoloader is correct.'
+            );
         }
         $plugin = new $name($config);
         if (!$plugin instanceof PluginInterface) {
@@ -163,9 +166,10 @@ abstract class BaseApplication implements
     public function routes($routes)
     {
         if (!Router::$initialized) {
-            require $this->configDir . '/routes.php';
             // Prevent routes from being loaded again
             Router::$initialized = true;
+
+            require $this->configDir . '/routes.php';
         }
     }
 

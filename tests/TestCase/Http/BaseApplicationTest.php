@@ -22,6 +22,7 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
+use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use TestPlugin\Plugin as TestPlugin;
@@ -210,5 +211,29 @@ class BaseApplicationTest extends TestCase
             Configure::check('PluginTest.test_plugin_two.bootstrap'),
             'Nested plugin should have bootstrap run'
         );
+    }
+
+    /**
+     * Ensure that Router::$initialized is toggled even if the routes
+     * file fails. This prevents the routes file from being re-parsed
+     * during the error handling process.
+     *
+     * @return void
+     */
+    public function testRouteHookInitializesRouterOnError()
+    {
+        $app = $this->getMockForAbstractClass(
+            'Cake\Http\BaseApplication',
+            [TEST_APP . 'invalid_routes' . DS]
+        );
+        $builder = Router::createRouteBuilder('/');
+        try {
+            $app->routes($builder);
+
+            $this->fail('invalid_routes/routes.php file should raise an error.');
+        } catch (\InvalidArgumentException $e) {
+            $this->assertTrue(Router::$initialized, 'Should be toggled to prevent duplicate route errors');
+            $this->assertContains('route class', $e->getMessage());
+        }
     }
 }

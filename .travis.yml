@@ -41,6 +41,7 @@ matrix:
       env: PHPSTAN=1 DEFAULT=0
 
 before_install:
+  - echo cakephp version && tail -1 VERSION.txt
   - phpenv config-rm xdebug.ini
 
   - if [ $DB = 'mysql' ]; then mysql -u root -e 'CREATE DATABASE cakephp_test;'; fi
