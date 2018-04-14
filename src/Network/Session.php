@@ -221,10 +221,7 @@ class Session
         if (!empty($config['handler']['engine'])) {
             $class = $config['handler']['engine'];
             unset($config['handler']['engine']);
-            $engine = $this->engine($class, $config['handler']);
-            if (!headers_sent()) {
-                session_set_save_handler($engine, false);
-            }
+            $this->engine($class, $config['handler']);
         }
 
         $this->_lifetime = ini_get('session.gc_maxlifetime');
@@ -271,6 +268,9 @@ class Session
             throw new InvalidArgumentException(
                 'The chosen SessionHandler does not implement SessionHandlerInterface, it cannot be used as an engine.'
             );
+        }
+        if (!headers_sent()) {
+            session_set_save_handler($handler, false);
         }
 
         return $this->_engine = $handler;
