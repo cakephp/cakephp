@@ -104,9 +104,9 @@ class HasManyTest extends TestCase
         $assoc = new HasMany('Articles', [
             'sourceTable' => $this->author
         ]);
-        $this->assertEquals('author_id', $assoc->foreignKey());
-        $this->assertEquals('another_key', $assoc->foreignKey('another_key'));
-        $this->assertEquals('another_key', $assoc->foreignKey());
+        $this->assertEquals('author_id', $assoc->getForeignKey());
+        $this->assertEquals($assoc, $assoc->setForeignKey('another_key'));
+        $this->assertEquals('another_key', $assoc->getForeignKey());
     }
 
     /**
@@ -120,7 +120,7 @@ class HasManyTest extends TestCase
         $assoc = new HasMany('Articles', [
             'sourceTable' => $this->author
         ]);
-        $this->assertEquals('author_id', $assoc->foreignKey());
+        $this->assertEquals('author_id', $assoc->getForeignKey());
     }
 
     /**
@@ -142,9 +142,9 @@ class HasManyTest extends TestCase
     public function testSort()
     {
         $assoc = new HasMany('Test');
-        $this->assertNull($assoc->sort());
-        $assoc->sort(['id' => 'ASC']);
-        $this->assertEquals(['id' => 'ASC'], $assoc->sort());
+        $this->assertNull($assoc->getSort());
+        $assoc->setSort(['id' => 'ASC']);
+        $this->assertEquals(['id' => 'ASC'], $assoc->getSort());
     }
 
     /**
@@ -157,10 +157,10 @@ class HasManyTest extends TestCase
         $assoc = new HasMany('Test');
         $this->assertTrue($assoc->requiresKeys());
 
-        $assoc->strategy(HasMany::STRATEGY_SUBQUERY);
+        $assoc->setStrategy(HasMany::STRATEGY_SUBQUERY);
         $this->assertFalse($assoc->requiresKeys());
 
-        $assoc->strategy(HasMany::STRATEGY_SELECT);
+        $assoc->setStrategy(HasMany::STRATEGY_SELECT);
         $this->assertTrue($assoc->requiresKeys());
     }
 
@@ -174,7 +174,7 @@ class HasManyTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid strategy "join" was provided');
         $assoc = new HasMany('Test');
-        $assoc->strategy(HasMany::STRATEGY_JOIN);
+        $assoc->setStrategy(HasMany::STRATEGY_JOIN);
     }
 
     /**
@@ -536,7 +536,7 @@ class HasManyTest extends TestCase
     {
         $config = ['propertyName' => 'thing_placeholder'];
         $association = new hasMany('Thing', $config);
-        $this->assertEquals('thing_placeholder', $association->property());
+        $this->assertEquals('thing_placeholder', $association->getProperty());
     }
 
     /**
@@ -554,7 +554,7 @@ class HasManyTest extends TestCase
             'targetTable' => $mock,
         ];
         $association = new HasMany('Contacts.Addresses', $config);
-        $this->assertEquals('addresses', $association->property());
+        $this->assertEquals('addresses', $association->getProperty());
     }
 
     /**
@@ -595,7 +595,7 @@ class HasManyTest extends TestCase
     protected function assertJoin($expected, $query)
     {
         if ($this->autoQuote) {
-            $driver = $query->connection()->driver();
+            $driver = $query->getConnection()->getDriver();
             $quoter = new IdentifierQuoter($driver);
             foreach ($expected as &$join) {
                 $join['table'] = $driver->quoteIdentifier($join['table']);
@@ -617,7 +617,7 @@ class HasManyTest extends TestCase
     protected function assertWhereClause($expected, $query)
     {
         if ($this->autoQuote) {
-            $quoter = new IdentifierQuoter($query->connection()->driver());
+            $quoter = new IdentifierQuoter($query->getConnection()->getDriver());
             $expected->traverse([$quoter, 'quoteExpression']);
         }
         $this->assertEquals($expected, $query->clause('where'));
@@ -633,7 +633,7 @@ class HasManyTest extends TestCase
     protected function assertOrderClause($expected, $query)
     {
         if ($this->autoQuote) {
-            $quoter = new IdentifierQuoter($query->connection()->driver());
+            $quoter = new IdentifierQuoter($query->getConnection()->getDriver());
             $quoter->quoteExpression($expected);
         }
         $this->assertEquals($expected, $query->clause('order'));
@@ -649,7 +649,7 @@ class HasManyTest extends TestCase
     protected function assertSelectClause($expected, $query)
     {
         if ($this->autoQuote) {
-            $connection = $query->connection();
+            $connection = $query->getConnection();
             foreach ($expected as $key => $value) {
                 $expected[$connection->quoteIdentifier($key)] = $connection->quoteIdentifier($value);
                 unset($expected[$key]);
@@ -729,7 +729,7 @@ class HasManyTest extends TestCase
 
         // Ensure that after each model is saved, we are still within a transaction.
         $listenerAfterSave = function ($e, $entity, $options) use ($articles) {
-            $this->assertTrue($articles->connection()->inTransaction(), 'Multiple transactions used to save associated models.');
+            $this->assertTrue($articles->getConnection()->inTransaction(), 'Multiple transactions used to save associated models.');
         };
         $articles->getEventManager()->on('Model.afterSave', $listenerAfterSave);
 

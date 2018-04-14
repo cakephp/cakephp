@@ -73,9 +73,9 @@ class HasOneTest extends TestCase
         $assoc = new HasOne('Profiles', [
             'sourceTable' => $this->user
         ]);
-        $this->assertEquals('user_id', $assoc->foreignKey());
-        $this->assertEquals('another_key', $assoc->foreignKey('another_key'));
-        $this->assertEquals('another_key', $assoc->foreignKey());
+        $this->assertEquals('user_id', $assoc->getForeignKey());
+        $this->assertEquals($assoc, $assoc->setForeignKey('another_key'));
+        $this->assertEquals('another_key', $assoc->getForeignKey());
     }
 
     /**
@@ -250,7 +250,7 @@ class HasOneTest extends TestCase
     {
         $config = ['propertyName' => 'thing_placeholder'];
         $association = new hasOne('Thing', $config);
-        $this->assertEquals('thing_placeholder', $association->property());
+        $this->assertEquals('thing_placeholder', $association->getProperty());
     }
 
     /**
@@ -265,7 +265,7 @@ class HasOneTest extends TestCase
             'targetTable' => $this->profile,
         ];
         $association = new HasOne('Contacts.Profiles', $config);
-        $this->assertEquals('profile', $association->property());
+        $this->assertEquals('profile', $association->getProperty());
     }
 
     /**

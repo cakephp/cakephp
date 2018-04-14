@@ -94,9 +94,9 @@ class BelongsToTest extends TestCase
             'sourceTable' => $this->client,
             'targetTable' => $this->company,
         ]);
-        $this->assertEquals('company_id', $assoc->foreignKey());
-        $this->assertEquals('another_key', $assoc->foreignKey('another_key'));
-        $this->assertEquals('another_key', $assoc->foreignKey());
+        $this->assertEquals('company_id', $assoc->getForeignKey());
+        $this->assertEquals($assoc, $assoc->setForeignKey('another_key'));
+        $this->assertEquals('another_key', $assoc->getForeignKey());
     }
 
     /**
@@ -112,7 +112,7 @@ class BelongsToTest extends TestCase
             'sourceTable' => $this->client,
             'targetTable' => $this->company,
         ]);
-        $this->assertEquals('company_id', $assoc->foreignKey());
+        $this->assertEquals('company_id', $assoc->getForeignKey());
     }
 
     /**
@@ -336,7 +336,7 @@ class BelongsToTest extends TestCase
     {
         $config = ['propertyName' => 'thing_placeholder'];
         $association = new BelongsTo('Thing', $config);
-        $this->assertEquals('thing_placeholder', $association->property());
+        $this->assertEquals('thing_placeholder', $association->getProperty());
     }
 
     /**
@@ -354,7 +354,7 @@ class BelongsToTest extends TestCase
             'targetTable' => $mock,
         ];
         $association = new BelongsTo('Contacts.Companies', $config);
-        $this->assertEquals('company', $association->property());
+        $this->assertEquals('company', $association->getProperty());
     }
 
     /**

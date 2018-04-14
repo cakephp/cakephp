@@ -55,7 +55,7 @@ class TranslateBehaviorTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        I18n::setLocale(I18n::defaultLocale());
+        I18n::setLocale(I18n::getDefaultLocale());
         TableRegistry::clear();
     }
 
@@ -96,10 +96,10 @@ class TranslateBehaviorTest extends TestCase
         $items = $table->associations();
         $i18n = $items->getByProperty('_i18n');
 
-        $this->assertEquals('\TestApp\Model\Table\I18nTable', $i18n->name());
-        $this->assertInstanceOf('TestApp\Model\Table\I18nTable', $i18n->target());
-        $this->assertEquals('test_custom_i18n_datasource', $i18n->target()->connection()->configName());
-        $this->assertEquals('custom_i18n_table', $i18n->target()->table());
+        $this->assertEquals('\TestApp\Model\Table\I18nTable', $i18n->getName());
+        $this->assertInstanceOf('TestApp\Model\Table\I18nTable', $i18n->getTarget());
+        $this->assertEquals('test_custom_i18n_datasource', $i18n->getTarget()->getConnection()->configName());
+        $this->assertEquals('custom_i18n_table', $i18n->getTarget()->getTable());
     }
 
     /**
@@ -119,7 +119,7 @@ class TranslateBehaviorTest extends TestCase
         $items = $table->associations();
         $i18n = $items->getByProperty('_i18n');
 
-        $this->assertEquals('select', $i18n->strategy());
+        $this->assertEquals('select', $i18n->getStrategy());
     }
 
     /**
@@ -190,7 +190,7 @@ class TranslateBehaviorTest extends TestCase
         $results = $table->find()
             ->select(['id', 'title', 'body'])
             ->contain(['Comments' => ['fields' => ['article_id', 'comment']]])
-            ->hydrate(false)
+            ->enableHydration(false)
             ->toArray();
 
         $expected = [
@@ -236,7 +236,7 @@ class TranslateBehaviorTest extends TestCase
                     'sort' => ['Comments.id' => 'ASC']
                 ]
             ])
-            ->hydrate(false)
+            ->enableHydration(false)
             ->toArray();
 
         $expected = [
@@ -569,7 +569,7 @@ class TranslateBehaviorTest extends TestCase
         $table = TableRegistry::get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
         $table->hasMany('Comments');
-        $comments = $table->hasMany('Comments')->target();
+        $comments = $table->hasMany('Comments')->getTarget();
         $comments->addBehavior('Translate', ['fields' => ['comment']]);
 
         $table->locale('eng');
@@ -599,7 +599,7 @@ class TranslateBehaviorTest extends TestCase
         $table = TableRegistry::get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
         $table->hasMany('Comments');
-        $comments = $table->hasMany('Comments')->target();
+        $comments = $table->hasMany('Comments')->getTarget();
         $comments->addBehavior('Translate', ['fields' => ['comment']]);
 
         $results = $table->find('translations')->contain([
@@ -640,7 +640,7 @@ class TranslateBehaviorTest extends TestCase
         $table = TableRegistry::get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
         $table->hasMany('Comments');
-        $comments = $table->hasMany('Comments')->target();
+        $comments = $table->hasMany('Comments')->getTarget();
         $comments->addBehavior('Translate', ['fields' => ['comment']]);
 
         $table->locale('cze');
@@ -692,7 +692,7 @@ class TranslateBehaviorTest extends TestCase
     {
         $table = TableRegistry::get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
-        $authors = $table->belongsTo('Authors')->target();
+        $authors = $table->belongsTo('Authors')->getTarget();
         $authors->addBehavior('Translate', ['fields' => ['name']]);
 
         $table->locale('eng');
@@ -1111,7 +1111,7 @@ class TranslateBehaviorTest extends TestCase
     {
         $table = TableRegistry::get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
-        $table->entityClass(__NAMESPACE__ . '\Article');
+        $table->setEntityClass(__NAMESPACE__ . '\Article');
         I18n::setLocale('fra');
         $translations = [
             'fra' => ['title' => 'Un article'],
@@ -1169,7 +1169,7 @@ class TranslateBehaviorTest extends TestCase
         $this->assertNotEmpty($association, 'Translation association not found');
 
         $found = false;
-        foreach ($association->conditions() as $key => $value) {
+        foreach ($association->getConditions() as $key => $value) {
             if (strpos($key, 'comment_translation.model') !== false) {
                 $found = true;
                 $this->assertEquals('Comments', $value);
@@ -1188,7 +1188,7 @@ class TranslateBehaviorTest extends TestCase
     public function testChangingReferenceName()
     {
         $table = TableRegistry::get('Articles');
-        $table->alias('FavoritePost');
+        $table->setAlias('FavoritePost');
         $table->addBehavior(
             'Translate',
             ['fields' => ['body'], 'referenceName' => 'Posts']
@@ -1199,7 +1199,7 @@ class TranslateBehaviorTest extends TestCase
         $this->assertNotEmpty($association, 'Translation association not found');
 
         $found = false;
-        foreach ($association->conditions() as $key => $value) {
+        foreach ($association->getConditions() as $key => $value) {
             if (strpos($key, 'body_translation.model') !== false) {
                 $found = true;
                 $this->assertEquals('Posts', $value);
@@ -1289,7 +1289,7 @@ class TranslateBehaviorTest extends TestCase
     {
         $table = TableRegistry::get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title']]);
-        $table->entityClass(__NAMESPACE__ . '\Article');
+        $table->setEntityClass(__NAMESPACE__ . '\Article');
         I18n::setLocale('fra');
         $article = $table->get(1);
         $article->set('body', 'New Body');
@@ -1311,7 +1311,7 @@ class TranslateBehaviorTest extends TestCase
             'fields' => ['title'],
             'validator' => (new \Cake\Validation\Validator)->add('title', 'notBlank', ['rule' => 'notBlank'])
         ]);
-        $table->entityClass(__NAMESPACE__ . '\Article');
+        $table->setEntityClass(__NAMESPACE__ . '\Article');
 
         $data = [
             'author_id' => 1,
@@ -1395,7 +1395,7 @@ class TranslateBehaviorTest extends TestCase
     {
         $table = TableRegistry::get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
-        $table->entityClass(__NAMESPACE__ . '\Article');
+        $table->setEntityClass(__NAMESPACE__ . '\Article');
 
         $data = [
             '_translations' => [
@@ -1428,7 +1428,7 @@ class TranslateBehaviorTest extends TestCase
     {
         $table = TableRegistry::get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
-        $table->entityClass(__NAMESPACE__ . '\Article');
+        $table->setEntityClass(__NAMESPACE__ . '\Article');
 
         $data = [
             'author_id' => 1,
@@ -1574,7 +1574,7 @@ class TranslateBehaviorTest extends TestCase
         $entity = $table->newEntity();
         $result = $map['_translations']('garbage', $entity);
         $this->assertNull($result, 'Non-array should not error out.');
-        $this->assertEmpty($entity->errors());
+        $this->assertEmpty($entity->getErrors());
         $this->assertEmpty($entity->get('_translations'));
     }
 
@@ -1602,7 +1602,7 @@ class TranslateBehaviorTest extends TestCase
             ]
         ];
         $result = $map['_translations']($data, $entity);
-        $this->assertEmpty($entity->errors(), 'No validation errors.');
+        $this->assertEmpty($entity->getErrors(), 'No validation errors.');
         $this->assertCount(2, $result);
         $this->assertArrayHasKey('en', $result);
         $this->assertArrayHasKey('es', $result);
@@ -1623,7 +1623,7 @@ class TranslateBehaviorTest extends TestCase
             'validator' => 'custom'
         ]);
         $validator = (new Validator)->add('title', 'notBlank', ['rule' => 'notBlank']);
-        $table->validator('custom', $validator);
+        $table->setValidator('custom', $validator);
         $translate = $table->behaviors()->get('Translate');
 
         $entity = $table->newEntity();
@@ -1639,13 +1639,13 @@ class TranslateBehaviorTest extends TestCase
             ]
         ];
         $result = $map['_translations']($data, $entity);
-        $this->assertNotEmpty($entity->errors(), 'Needs validation errors.');
+        $this->assertNotEmpty($entity->getErrors(), 'Needs validation errors.');
         $expected = [
             'title' => [
                 '_empty' => 'This field cannot be left empty'
             ]
         ];
-        $this->assertEquals($expected, $entity->errors('es'));
+        $this->assertEquals($expected, $entity->getError('es'));
 
         $this->assertEquals('English Title', $result['en']->title);
         $this->assertEquals('', $result['es']->title);
@@ -1681,7 +1681,7 @@ class TranslateBehaviorTest extends TestCase
             ]
         ];
         $result = $map['_translations']($data, $entity);
-        $this->assertEmpty($entity->errors(), 'No validation errors.');
+        $this->assertEmpty($entity->getErrors(), 'No validation errors.');
         $this->assertSame($en, $result['en']);
         $this->assertSame($es, $result['es']);
         $this->assertSame($en, $entity->get('_translations')['en']);
@@ -1706,7 +1706,7 @@ class TranslateBehaviorTest extends TestCase
             'validator' => 'custom'
         ]);
         $validator = (new Validator)->add('title', 'notBlank', ['rule' => 'notBlank']);
-        $table->validator('custom', $validator);
+        $table->setValidator('custom', $validator);
         $translate = $table->behaviors()->get('Translate');
 
         $entity = $table->newEntity();
@@ -1728,12 +1728,12 @@ class TranslateBehaviorTest extends TestCase
             ]
         ];
         $result = $map['_translations']($data, $entity);
-        $this->assertNotEmpty($entity->errors(), 'Needs validation errors.');
+        $this->assertNotEmpty($entity->getErrors(), 'Needs validation errors.');
         $expected = [
             'title' => [
                 '_empty' => 'This field cannot be left empty'
             ]
         ];
-        $this->assertEquals($expected, $entity->errors('es'));
+        $this->assertEquals($expected, $entity->getError('es'));
     }
 }

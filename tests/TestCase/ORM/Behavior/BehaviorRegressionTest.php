@@ -52,10 +52,10 @@ class BehaviorRegressionTest extends TestCase
     public function testTreeAndTranslateIntegration()
     {
         $table = TableRegistry::get('NumberTrees');
-        $table->primaryKey(['id']);
+        $table->setPrimaryKey(['id']);
         $table->addBehavior('Tree');
         $table->addBehavior('Translate', ['fields' => ['name']]);
-        $table->entityClass(__NAMESPACE__ . '\\NumberTree');
+        $table->setEntityClass(__NAMESPACE__ . '\\NumberTree');
 
         $all = $table->find('threaded')->find('translations');
         $results = [];
