@@ -61,7 +61,7 @@ class PoFileParserTest extends TestCase
         $parser = new PoFileParser;
         $file = APP . 'Locale' . DS . 'rule_1_po' . DS . 'default.po';
         $messages = $parser->parse($file);
-        $this->assertCount(5, $messages);
+        $this->assertCount(8, $messages);
         $expected = [
             'Plural Rule 1' => [
                 '_context' => [
@@ -70,7 +70,7 @@ class PoFileParserTest extends TestCase
             ],
             '%d = 1' => [
                 '_context' => [
-                    'This is the context' => 'First Context trasnlation',
+                    'This is the context' => 'First Context translation',
                     'Another Context' => '%d = 1 (translated)'
                 ]
             ],
@@ -97,7 +97,28 @@ class PoFileParserTest extends TestCase
                         4 => '%-5d = 0 or > 1 (translated)'
                     ]
                 ]
-            ]
+            ],
+            '%d = 2' => [
+                '_context' => [
+                    'This is another translated context' => 'First Context translation',
+                ]
+            ],
+            '%-6d = 3' => [
+                '_context' => [
+                    '' => '%-6d = 1 (translated)',
+                ]
+            ],
+            'p:%-6d = 0 or > 1' => [
+                '_context' => [
+                    '' => [
+                        0 => '%-6d = 1 (translated)',
+                        1 => '',
+                        2 => '',
+                        3 => '',
+                        4 => '%-6d = 0 or > 1 (translated)',
+                    ]
+                ]
+            ],
         ];
         $this->assertEquals($expected, $messages);
     }
