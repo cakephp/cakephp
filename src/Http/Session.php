@@ -104,7 +104,9 @@ class Session
             $sessionConfig['ini']['session.cookie_secure'] = 1;
         }
 
-        if (!isset($sessionConfig['ini']['session.name'])) {
+        if (!isset($sessionConfig['ini']['session.name'])
+            && isset($sessionConfig['cookie'])
+        ) {
             $sessionConfig['ini']['session.name'] = $sessionConfig['cookie'];
         }
 
@@ -135,13 +137,11 @@ class Session
     {
         $defaults = [
             'php' => [
-                'cookie' => 'CAKEPHP',
                 'ini' => [
                     'session.use_trans_sid' => 0,
                 ]
             ],
             'cake' => [
-                'cookie' => 'CAKEPHP',
                 'ini' => [
                     'session.use_trans_sid' => 0,
                     'session.serialize_handler' => 'php',
@@ -151,7 +151,6 @@ class Session
                 ]
             ],
             'cache' => [
-                'cookie' => 'CAKEPHP',
                 'ini' => [
                     'session.use_trans_sid' => 0,
                     'session.use_cookies' => 1,
@@ -163,7 +162,6 @@ class Session
                 ]
             ],
             'database' => [
-                'cookie' => 'CAKEPHP',
                 'ini' => [
                     'session.use_trans_sid' => 0,
                     'session.use_cookies' => 1,
