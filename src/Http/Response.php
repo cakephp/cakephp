@@ -16,6 +16,7 @@ namespace Cake\Http;
 
 use Cake\Core\Configure;
 use Cake\Filesystem\File;
+use Cake\Filesystem\Folder;
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Cookie\CookieInterface;
@@ -2587,8 +2588,17 @@ class Response implements ResponseInterface
             throw new NotFoundException(__d('cake', 'The requested file contains `..` and will not be read.'));
         }
         if (!is_file($path)) {
-            deprecationWarning('Using non-absolute paths with Response::file() and withFile() is deprecated.');
+            deprecationWarning(
+                'Automatic prefixing of paths with `APP` by `Response::file()` and `withFile()` is deprecated. ' .
+                'Use absolute paths instead.'
+            );
             $path = APP . $path;
+        }
+        if (!Folder::isAbsolute($path)) {
+            deprecationWarning(
+                'Serving files via `file()` or `withFile()` using relative paths is deprecated.' .
+                'Use an absolute path instead.'
+            );
         }
 
         $file = new File($path);
