@@ -322,7 +322,7 @@ class View implements EventDispatcherInterface
     const TYPE_LAYOUT = 'layout';
 
     /**
-     * Constant for template folder  'Template'
+     * Constant for type used for App::path().
      *
      * @var string
      */
@@ -1515,7 +1515,7 @@ class View implements EventDispatcherInterface
             $themePaths,
             $pluginPaths,
             $templatePaths,
-            [dirname(__DIR__) . DIRECTORY_SEPARATOR . static::NAME_TEMPLATE . DIRECTORY_SEPARATOR]
+            [dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR]
         );
 
         if ($plugin !== null) {
