@@ -414,6 +414,42 @@ trait CollectionTrait
     /**
      * {@inheritDoc}
      */
+    public function appendItem($item, $key = null)
+    {
+        if ($key !== null) {
+            $data = [$key => $item];
+        } else {
+            $data = [$item];
+        }
+
+        return $this->append($data);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function prepend($items)
+    {
+        return (new Collection($items))->append($this);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function prependItem($item, $key = null)
+    {
+        if ($key !== null) {
+            $data = [$key => $item];
+        } else {
+            $data = [$item];
+        }
+
+        return $this->prepend($data);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function combine($keyPath, $valuePath, $groupPath = null)
     {
         $options = [
@@ -725,11 +761,13 @@ trait CollectionTrait
      * Backwards compatible wrapper for unwrap()
      *
      * @return \Traversable
-     * @deprecated
+     * @deprecated 3.0.10 Will be removed in 4.0.0
      */
     // @codingStandardsIgnoreLine
     public function _unwrap()
     {
+        deprecationWarning('CollectionTrait::_unwrap() is deprecated. Use CollectionTrait::unwrap() instead.');
+
         return $this->unwrap();
     }
 
@@ -807,6 +845,32 @@ trait CollectionTrait
         }
 
         return new Collection($result);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return int
+     */
+    public function count()
+    {
+        $traversable = $this->optimizeUnwrap();
+
+        if (is_array($traversable)) {
+            return count($traversable);
+        }
+
+        return iterator_count($traversable);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return int
+     */
+    public function countKeys()
+    {
+        return count($this->toArray());
     }
 
     /**

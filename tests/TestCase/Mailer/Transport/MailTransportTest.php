@@ -35,7 +35,7 @@ class MailTransportTest extends TestCase
         $this->MailTransport = $this->getMockBuilder('Cake\Mailer\Transport\MailTransport')
             ->setMethods(['_mail'])
             ->getMock();
-        $this->MailTransport->config(['additionalParameters' => '-f']);
+        $this->MailTransport->setConfig(['additionalParameters' => '-f']);
     }
 
     /**
@@ -48,14 +48,14 @@ class MailTransportTest extends TestCase
         $email = $this->getMockBuilder('Cake\Mailer\Email')
             ->setMethods(['message'])
             ->getMock();
-        $email->from('noreply@cakephp.org', 'CakePHP Test');
-        $email->returnPath('pleasereply@cakephp.org', 'CakePHP Return');
-        $email->to('cake@cakephp.org', 'CakePHP');
-        $email->cc(['mark@cakephp.org' => 'Mark Story', 'juan@cakephp.org' => 'Juan Basso']);
-        $email->bcc('phpnut@cakephp.org');
-        $email->messageID('<4d9946cf-0a44-4907-88fe-1d0ccbdd56cb@localhost>');
+        $email->setFrom('noreply@cakephp.org', 'CakePHP Test');
+        $email->setReturnPath('pleasereply@cakephp.org', 'CakePHP Return');
+        $email->setTo('cake@cakephp.org', 'CakePHP');
+        $email->setCc(['mark@cakephp.org' => 'Mark Story', 'juan@cakephp.org' => 'Juan Basso']);
+        $email->setBcc('phpnut@cakephp.org');
+        $email->setMessageId('<4d9946cf-0a44-4907-88fe-1d0ccbdd56cb@localhost>');
         $longNonAscii = 'Foø Bår Béz Foø Bår Béz Foø Bår Béz Foø Bår Béz';
-        $email->subject($longNonAscii);
+        $email->setSubject($longNonAscii);
         $date = date(DATE_RFC2822);
         $email->setHeaders([
             'X-Mailer' => 'CakePHP Email',

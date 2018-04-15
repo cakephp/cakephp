@@ -18,9 +18,10 @@ include_once CORE_TEST_CASES . DS . 'Http' . DS . 'server_mocks.php';
 
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieCollection;
+use Cake\Http\CorsBuilder;
+use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
-use Cake\Network\Exception\NotFoundException;
 use Cake\TestSuite\TestCase;
 use Zend\Diactoros\Stream;
 
@@ -56,6 +57,7 @@ class ResponseTest extends TestCase
     {
         parent::tearDown();
         $_SERVER = $this->server;
+        unset($GLOBALS['mockedHeadersSent']);
     }
 
     /**
@@ -66,11 +68,11 @@ class ResponseTest extends TestCase
     public function testConstruct()
     {
         $response = new Response();
-        $this->assertNull($response->body());
-        $this->assertEquals('UTF-8', $response->charset());
-        $this->assertEquals('text/html', $response->type());
+        $this->assertSame('', (string)$response->getBody());
+        $this->assertEquals('UTF-8', $response->getCharset());
+        $this->assertEquals('text/html', $response->getType());
         $this->assertEquals('text/html; charset=UTF-8', $response->getHeaderLine('Content-Type'));
-        $this->assertEquals(200, $response->statusCode());
+        $this->assertEquals(200, $response->getStatusCode());
 
         $options = [
             'body' => 'This is the body',
@@ -79,67 +81,84 @@ class ResponseTest extends TestCase
             'status' => '203'
         ];
         $response = new Response($options);
-        $this->assertEquals('This is the body', $response->body());
-        $this->assertEquals('my-custom-charset', $response->charset());
-        $this->assertEquals('audio/mpeg', $response->type());
+        $this->assertEquals('This is the body', (string)$response->getBody());
+        $this->assertEquals('my-custom-charset', $response->getCharset());
+        $this->assertEquals('audio/mpeg', $response->getType());
         $this->assertEquals('audio/mpeg', $response->getHeaderLine('Content-Type'));
-        $this->assertEquals(203, $response->statusCode());
+        $this->assertEquals(203, $response->getStatusCode());
+    }
 
-        $options = [
-            'body' => 'This is the body',
-            'charset' => 'ISO-8859-1',
-            'type' => 'txt',
-            'status' => '422',
-            'statusCodes' => [
-                422 => 'Unprocessable Entity'
-            ]
-        ];
-        $response = new Response($options);
-        $this->assertEquals($options['body'], $response->body());
-        $this->assertEquals($options['charset'], $response->charset());
-        $this->assertEquals($response->getMimeType($options['type']), $response->type());
-        $this->assertEquals($options['status'], $response->statusCode());
-        $this->assertEquals('text/plain; charset=ISO-8859-1', $response->getHeaderLine('Content-Type'));
+    /**
+     * Test statusCodes constructor argument.
+     *
+     * @group deprecated
+     * @return void
+     */
+    public function testConstructCustomCodes()
+    {
+        $this->deprecated(function () {
+            $options = [
+                'body' => 'This is the body',
+                'charset' => 'ISO-8859-1',
+                'type' => 'txt',
+                'status' => '422',
+                'statusCodes' => [
+                    422 => 'Unprocessable Entity'
+                ]
+            ];
+            $response = new Response($options);
+            $this->assertEquals($options['body'], (string)$response->getBody());
+            $this->assertEquals($options['charset'], $response->getCharset());
+            $this->assertEquals($response->getMimeType($options['type']), $response->getType());
+            $this->assertEquals($options['status'], $response->getStatusCode());
+            $this->assertEquals('text/plain; charset=ISO-8859-1', $response->getHeaderLine('Content-Type'));
+        });
     }
 
     /**
      * Tests the body method
      *
+     * @group deprecated
      * @return void
      */
     public function testBody()
     {
-        $response = new Response();
-        $this->assertNull($response->body());
-        $response->body('Response body');
-        $this->assertEquals('Response body', $response->body());
-        $this->assertEquals('Changed Body', $response->body('Changed Body'));
+        $this->deprecated(function () {
+            $response = new Response();
+            $this->assertNull($response->body());
+            $response->body('Response body');
+            $this->assertEquals('Response body', $response->body());
+            $this->assertEquals('Changed Body', $response->body('Changed Body'));
 
-        $response = new Response();
-        $response->body(0);
-        $this->assertEquals(0, $response->body());
+            $response = new Response();
+            $response->body(0);
+            $this->assertEquals(0, $response->body());
 
-        $response = new Response();
-        $response->body('0');
-        $this->assertEquals('0', $response->body());
+            $response = new Response();
+            $response->body('0');
+            $this->assertEquals('0', $response->body());
 
-        $response = new Response();
-        $response->body(null);
-        $this->assertEquals(null, $response->body());
+            $response = new Response();
+            $response->body(null);
+            $this->assertNull($response->body());
+        });
     }
 
     /**
      * Tests the charset method
      *
+     * @group deprecated
      * @return void
      */
     public function testCharset()
     {
-        $response = new Response();
-        $this->assertEquals('UTF-8', $response->charset());
-        $response->charset('iso-8859-1');
-        $this->assertEquals('iso-8859-1', $response->charset());
-        $this->assertEquals('UTF-16', $response->charset('UTF-16'));
+        $this->deprecated(function () {
+            $response = new Response();
+            $this->assertEquals('UTF-8', $response->charset());
+            $response->charset('iso-8859-1');
+            $this->assertEquals('iso-8859-1', $response->charset());
+            $this->assertEquals('UTF-16', $response->charset('UTF-16'));
+        });
     }
 
     /**
@@ -162,55 +181,64 @@ class ResponseTest extends TestCase
     /**
      * Tests the statusCode method
      *
+     * @group deprecated
      * @return void
      */
     public function testStatusCode()
     {
-        $response = new Response();
-        $this->assertEquals(200, $response->statusCode());
+        $this->deprecated(function () {
+            $response = new Response();
+            $this->assertEquals(200, $response->statusCode());
 
-        $response->statusCode(404);
-        $this->assertEquals(404, $response->getStatusCode(), 'Sets shared state.');
-        $this->assertEquals(404, $response->statusCode());
-        $this->assertEquals('Not Found', $response->getReasonPhrase());
+            $response->statusCode(404);
+            $this->assertEquals(404, $response->getStatusCode(), 'Sets shared state.');
+            $this->assertEquals(404, $response->statusCode());
+            $this->assertEquals('Not Found', $response->getReasonPhrase());
 
-        $this->assertEquals(500, $response->statusCode(500));
+            $this->assertEquals(500, $response->statusCode(500));
+        });
     }
 
     /**
      * Test invalid status codes
      *
+     * @group deprecated
      * @return void
      */
     public function testStatusCodeInvalid()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $response = new Response();
-        $response->statusCode(1001);
+        $this->deprecated(function () {
+            $response = new Response();
+            $response->statusCode(1001);
+        });
     }
 
     /**
      * Tests the type method
      *
+     * @group deprecated
      * @return void
      */
     public function testType()
     {
-        $response = new Response();
-        $this->assertEquals('text/html', $response->type());
-        $response->type('pdf');
-        $this->assertEquals('application/pdf', $response->type());
-        $this->assertEquals('application/crazy-mime', $response->type('application/crazy-mime'));
-        $this->assertEquals('application/json', $response->type('json'));
-        $this->assertEquals('text/vnd.wap.wml', $response->type('wap'));
-        $this->assertEquals('application/vnd.wap.xhtml+xml', $response->type('xhtml-mobile'));
-        $this->assertEquals('text/csv', $response->type('csv'));
+        $this->deprecated(function () {
+            $response = new Response();
+            $this->assertEquals('text/html', $response->type());
+            $response->type('pdf');
+            $this->assertEquals('application/pdf', $response->type());
+            $this->assertEquals('application/crazy-mime', $response->type('application/crazy-mime'));
+            $this->assertEquals('application/json', $response->type('json'));
+            $this->assertEquals('text/vnd.wap.wml', $response->type('wap'));
+            $this->assertEquals('application/vnd.wap.xhtml+xml', $response->type('xhtml-mobile'));
+            $this->assertEquals('text/csv', $response->type('csv'));
 
-        $response->type(['keynote' => 'application/keynote', 'bat' => 'application/bat']);
-        $this->assertEquals('application/keynote', $response->type('keynote'));
-        $this->assertEquals('application/bat', $response->type('bat'));
+            $response->type(['keynote' => 'application/keynote', 'bat' => 'application/bat']);
+            $this->assertEquals('application/keynote', $response->type('keynote'));
+            $this->assertEquals('application/bat', $response->type('bat'));
 
-        $this->assertFalse($response->type('wackytype'));
+            $this->assertFalse($response->type('wackytype'));
+        });
     }
 
     /**
@@ -222,9 +250,11 @@ class ResponseTest extends TestCase
     {
         $response = new Response();
         $this->assertEquals('text/html', $response->getType());
-        $response->type('pdf');
-        $this->assertEquals('application/pdf', $response->getType());
 
+        $this->assertEquals(
+            'application/pdf',
+            $response->withType('pdf')->getType()
+        );
         $this->assertEquals(
             'custom/stuff',
             $response->withType('custom/stuff')->getType()
@@ -300,94 +330,101 @@ class ResponseTest extends TestCase
     /**
      * Tests the header method
      *
+     * @group deprecated
      * @return void
      */
     public function testHeader()
     {
-        $response = new Response();
-        $headers = [
-            'Content-Type' => 'text/html; charset=UTF-8',
-        ];
-        $this->assertEquals($headers, $response->header());
+        $this->deprecated(function () {
+            $response = new Response();
+            $headers = [
+                'Content-Type' => 'text/html; charset=UTF-8',
+            ];
+            $this->assertEquals($headers, $response->header());
 
-        $response->header('Location', 'http://example.com');
-        $headers += ['Location' => 'http://example.com'];
-        $this->assertEquals($headers, $response->header());
+            $response->header('Location', 'http://example.com');
+            $headers += ['Location' => 'http://example.com'];
+            $this->assertEquals($headers, $response->header());
 
-        // Headers with the same name are overwritten
-        $response->header('Location', 'http://example2.com');
-        $headers = [
-            'Content-Type' => 'text/html; charset=UTF-8',
-            'Location' => 'http://example2.com'
-        ];
-        $this->assertEquals($headers, $response->header());
+            // Headers with the same name are overwritten
+            $response->header('Location', 'http://example2.com');
+            $headers = [
+                'Content-Type' => 'text/html; charset=UTF-8',
+                'Location' => 'http://example2.com'
+            ];
+            $this->assertEquals($headers, $response->header());
 
-        $response->header(['WWW-Authenticate' => 'Negotiate']);
-        $headers += ['WWW-Authenticate' => 'Negotiate'];
-        $this->assertEquals($headers, $response->header());
+            $response->header(['WWW-Authenticate' => 'Negotiate']);
+            $headers += ['WWW-Authenticate' => 'Negotiate'];
+            $this->assertEquals($headers, $response->header());
 
-        $response->header(['WWW-Authenticate' => 'Not-Negotiate']);
-        $headers['WWW-Authenticate'] = 'Not-Negotiate';
-        $this->assertEquals($headers, $response->header());
+            $response->header(['WWW-Authenticate' => 'Not-Negotiate']);
+            $headers['WWW-Authenticate'] = 'Not-Negotiate';
+            $this->assertEquals($headers, $response->header());
 
-        $response->header(['Age' => 12, 'Allow' => 'GET, HEAD']);
-        $headers += ['Age' => 12, 'Allow' => 'GET, HEAD'];
-        $this->assertEquals($headers, $response->header());
+            $response->header(['Age' => 12, 'Allow' => 'GET, HEAD']);
+            $headers += ['Age' => 12, 'Allow' => 'GET, HEAD'];
+            $this->assertEquals($headers, $response->header());
 
-        // String headers are allowed
-        $response->header('Content-Language: da');
-        $headers += ['Content-Language' => 'da'];
-        $this->assertEquals($headers, $response->header());
+            // String headers are allowed
+            $response->header('Content-Language: da');
+            $headers += ['Content-Language' => 'da'];
+            $this->assertEquals($headers, $response->header());
 
-        $response->header('Content-Language: da');
-        $headers += ['Content-Language' => 'da'];
-        $this->assertEquals($headers, $response->header());
+            $response->header('Content-Language: da');
+            $headers += ['Content-Language' => 'da'];
+            $this->assertEquals($headers, $response->header());
 
-        $response->header(['Content-Encoding: gzip', 'Vary: *', 'Pragma' => 'no-cache']);
-        $headers += ['Content-Encoding' => 'gzip', 'Vary' => '*', 'Pragma' => 'no-cache'];
-        $this->assertEquals($headers, $response->header());
+            $response->header(['Content-Encoding: gzip', 'Vary: *', 'Pragma' => 'no-cache']);
+            $headers += ['Content-Encoding' => 'gzip', 'Vary' => '*', 'Pragma' => 'no-cache'];
+            $this->assertEquals($headers, $response->header());
 
-        $response->header('Access-Control-Allow-Origin', ['domain1', 'domain2']);
-        $headers += ['Access-Control-Allow-Origin' => ['domain1', 'domain2']];
-        $this->assertEquals($headers, $response->header());
+            $response->header('Access-Control-Allow-Origin', ['domain1', 'domain2']);
+            $headers += ['Access-Control-Allow-Origin' => ['domain1', 'domain2']];
+            $this->assertEquals($headers, $response->header());
+        });
     }
 
     /**
      * Tests the send method
      *
+     * @group deprecated
      * @return void
      */
     public function testSend()
     {
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods(['_sendHeader', '_sendContent'])
-            ->getMock();
-        $response->header([
-            'Content-Language' => 'es',
-            'WWW-Authenticate' => 'Negotiate',
-            'Access-Control-Allow-Origin' => ['domain1', 'domain2'],
-        ]);
-        $response->cookie(['name' => 'thing', 'value' => 'value']);
-        $response->body('the response body');
+        $GLOBALS['mockedHeadersSent'] = false;
+        $this->deprecated(function () {
+            $response = $this->getMockBuilder('Cake\Http\Response')
+                ->setMethods(['_sendHeader', '_sendContent'])
+                ->getMock();
+            $response->header([
+                'Content-Language' => 'es',
+                'WWW-Authenticate' => 'Negotiate',
+                'Access-Control-Allow-Origin' => ['domain1', 'domain2'],
+            ]);
+            $response->cookie(['name' => 'thing', 'value' => 'value']);
+            $response->body('the response body');
 
-        $response->expects($this->once())->method('_sendContent')->with('the response body');
-        $response->expects($this->at(0))
-            ->method('_sendHeader')->with('HTTP/1.1 200 OK');
-        $response->expects($this->at(1))
-            ->method('_sendHeader')->with('Content-Type', 'text/html; charset=UTF-8');
-        $response->expects($this->at(2))
-            ->method('_sendHeader')->with('Content-Language', 'es');
-        $response->expects($this->at(3))
-            ->method('_sendHeader')->with('WWW-Authenticate', 'Negotiate');
-        $response->expects($this->at(4))
-            ->method('_sendHeader')->with('Access-Control-Allow-Origin', 'domain1');
-        $response->expects($this->at(5))
-            ->method('_sendHeader')->with('Access-Control-Allow-Origin', 'domain2');
-        $response->send();
+            $response->expects($this->once())->method('_sendContent')->with('the response body');
+            $response->expects($this->at(0))
+                ->method('_sendHeader')->with('HTTP/1.1 200 OK');
+            $response->expects($this->at(1))
+                ->method('_sendHeader')->with('Content-Type', 'text/html; charset=UTF-8');
+            $response->expects($this->at(2))
+                ->method('_sendHeader')->with('Content-Language', 'es');
+            $response->expects($this->at(3))
+                ->method('_sendHeader')->with('WWW-Authenticate', 'Negotiate');
+            $response->expects($this->at(4))
+                ->method('_sendHeader')->with('Access-Control-Allow-Origin', 'domain1');
+            $response->expects($this->at(5))
+                ->method('_sendHeader')->with('Access-Control-Allow-Origin', 'domain2');
+            $response->send();
 
-        $this->assertCount(1, $GLOBALS['mockedCookies']);
-        $this->assertSame('value', $GLOBALS['mockedCookies'][0]['value']);
-        $this->assertSame('thing', $GLOBALS['mockedCookies'][0]['name']);
+            $this->assertCount(1, $GLOBALS['mockedCookies']);
+            $this->assertSame('value', $GLOBALS['mockedCookies'][0]['value']);
+            $this->assertSame('thing', $GLOBALS['mockedCookies'][0]['name']);
+        });
     }
 
     /**
@@ -409,41 +446,78 @@ class ResponseTest extends TestCase
     /**
      * Tests the send method and changing the content type
      *
+     * @group deprecated
      * @dataProvider charsetTypeProvider
      * @return void
      */
     public function testSendChangingContentType($original, $expected)
     {
-        $response = new Response();
-        $response->type($original);
-        $response->body('the response body');
+        $this->deprecated(function () use ($original, $expected) {
+            $response = new Response();
+            $response->type($original);
+            $response->body('the response body');
 
-        $this->assertEquals($expected, $response->getHeaderLine('Content-Type'));
+            $this->assertEquals($expected, $response->getHeaderLine('Content-Type'));
+        });
     }
 
     /**
      * Tests the send method and changing the content type to JS without adding the charset
      *
+     * @group deprecated
      * @return void
      */
     public function testCharsetSetContentTypeWithoutCharset()
     {
-        $response = new Response();
-        $response->type('js');
-        $response->charset('');
-        $this->assertEquals('application/javascript', $response->getHeaderLine('Content-Type'));
+        $this->deprecated(function () {
+            $response = new Response();
+            $response->type('js');
+            $response->charset('');
+            $this->assertEquals('application/javascript', $response->getHeaderLine('Content-Type'));
+        });
     }
 
     /**
      * Tests the send method and changing the content type
      *
+     * @group deprecated
      * @return void
      */
     public function testLocationSetsStatus()
     {
-        $response = new Response();
-        $response->location('http://www.example.com');
-        $this->assertEquals(302, $response->getStatusCode());
+        $this->deprecated(function () {
+            $response = new Response();
+            $response->location('http://www.example.com');
+            $this->assertEquals(302, $response->getStatusCode());
+        });
+    }
+
+    /**
+     * Test that setting certain status codes clears the status code.
+     *
+     * @group deprecated
+     * @return void
+     */
+    public function testStatusClearsContentType()
+    {
+        $this->deprecated(function () {
+            $response = new Response();
+            $response->statusCode(204);
+            $response->statusCode(304);
+            $this->assertFalse($response->hasHeader('Content-Type'));
+            $this->assertSame(304, $response->getStatusCode());
+
+            $response = new Response();
+            $response->type('pdf');
+            $response->statusCode(204);
+            $this->assertFalse($response->hasHeader('Content-Type'));
+            $this->assertSame(204, $response->getStatusCode());
+
+            $response = new Response();
+            $response->statusCode(204);
+            $response->type('pdf');
+            $this->assertFalse($response->hasHeader('Content-Type'));
+        });
     }
 
     /**
@@ -451,20 +525,8 @@ class ResponseTest extends TestCase
      *
      * @return void
      */
-    public function testStatusClearsContentType()
+    public function testWithStatusClearsContentType()
     {
-        $response = new Response();
-        $response->statusCode(204);
-        $response->statusCode(304);
-        $this->assertFalse($response->hasHeader('Content-Type'));
-        $this->assertSame(304, $response->getStatusCode());
-
-        $response = new Response();
-        $response->type('pdf');
-        $response->statusCode(204);
-        $this->assertFalse($response->hasHeader('Content-Type'));
-        $this->assertSame(204, $response->getStatusCode());
-
         $response = new Response();
         $new = $response->withType('pdf')
             ->withStatus(204);
@@ -475,85 +537,92 @@ class ResponseTest extends TestCase
         $new = $response->withStatus(304)
             ->withType('pdf');
         $this->assertFalse($new->hasHeader('Content-Type'));
-
-        $response = new Response();
-        $response->statusCode(204);
-        $response->type('pdf');
-        $this->assertFalse($response->hasHeader('Content-Type'));
     }
 
     /**
      * Tests the send method and changing the content type
      *
+     * @group deprecated
      * @return void
      */
     public function testSendWithCallableBody()
     {
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods(['_sendHeader'])
-            ->getMock();
-        $response->body(function () {
-            echo 'the response body';
-        });
+        $this->deprecated(function () {
+            $response = $this->getMockBuilder('Cake\Http\Response')
+                ->setMethods(['_sendHeader'])
+                ->getMock();
+            $response->body(function () {
+                echo 'the response body';
+            });
 
-        ob_start();
-        $response->send();
-        $this->assertEquals('the response body', ob_get_clean());
+            ob_start();
+            $response->send();
+            $this->assertEquals('the response body', ob_get_clean());
+        });
     }
 
     /**
      * Tests that the returned a string from a body callable is also sent
      * as the response body
      *
+     * @group deprecated
      * @return void
      */
     public function testSendWithCallableBodyWithReturn()
     {
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods(['_sendHeader'])
-            ->getMock();
-        $response->body(function () {
-            return 'the response body';
-        });
+        $this->deprecated(function () {
+            $response = $this->getMockBuilder('Cake\Http\Response')
+                ->setMethods(['_sendHeader'])
+                ->getMock();
+            $response->body(function () {
+                return 'the response body';
+            });
 
-        ob_start();
-        $response->send();
-        $this->assertEquals('the response body', ob_get_clean());
+            ob_start();
+            $response->send();
+            $this->assertEquals('the response body', ob_get_clean());
+        });
     }
 
     /**
      * Tests that callable strings are not triggered
      *
+     * @group deprecated
      * @return void
      */
     public function testSendWithCallableStringBody()
     {
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods(['_sendHeader'])
-            ->getMock();
-        $response->body('phpversion');
+        $this->deprecated(function () {
+            $response = $this->getMockBuilder('Cake\Http\Response')
+                ->setMethods(['_sendHeader'])
+                ->getMock();
+            $response->body('phpversion');
 
-        ob_start();
-        $response->send();
-        $this->assertEquals('phpversion', ob_get_clean());
+            ob_start();
+            $response->send();
+            $this->assertEquals('phpversion', ob_get_clean());
+        });
     }
 
     /**
      * Tests the disableCache method
      *
+     * @group deprecated
      * @return void
      */
     public function testDisableCache()
     {
-        $response = new Response();
-        $expected = [
-            'Expires' => 'Mon, 26 Jul 1997 05:00:00 GMT',
-            'Last-Modified' => gmdate('D, d M Y H:i:s') . ' GMT',
-            'Cache-Control' => 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0',
-            'Content-Type' => 'text/html; charset=UTF-8',
-        ];
-        $response->disableCache();
-        $this->assertEquals($expected, $response->header());
+        $this->deprecated(function () {
+            $response = new Response();
+            $expected = [
+                'Expires' => 'Mon, 26 Jul 1997 05:00:00 GMT',
+                'Last-Modified' => gmdate('D, d M Y H:i:s') . ' GMT',
+                'Cache-Control' => 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0',
+                'Content-Type' => 'text/html; charset=UTF-8',
+            ];
+            $response->disableCache();
+            $this->assertEquals($expected, $response->header());
+        });
     }
 
     /**
@@ -579,49 +648,52 @@ class ResponseTest extends TestCase
     /**
      * Tests the cache method
      *
+     * @group deprecated
      * @return void
      */
     public function testCache()
     {
-        $response = new Response();
-        $since = time();
-        $time = new \DateTime('+1 day', new \DateTimeZone('UTC'));
-        $response->expires('+1 day');
-        $expected = [
-            'Date' => gmdate('D, j M Y G:i:s ', $since) . 'GMT',
-            'Last-Modified' => gmdate('D, j M Y H:i:s ', $since) . 'GMT',
-            'Expires' => $time->format('D, j M Y H:i:s') . ' GMT',
-            'Cache-Control' => 'public, max-age=' . ($time->format('U') - time()),
-            'Content-Type' => 'text/html; charset=UTF-8',
-        ];
-        $response->cache($since);
-        $this->assertEquals($expected, $response->header());
+        $this->deprecated(function () {
+            $response = new Response();
+            $since = time();
+            $time = new \DateTime('+1 day', new \DateTimeZone('UTC'));
+            $response->expires('+1 day');
+            $expected = [
+                'Date' => gmdate('D, j M Y G:i:s ', $since) . 'GMT',
+                'Last-Modified' => gmdate('D, j M Y H:i:s ', $since) . 'GMT',
+                'Expires' => $time->format('D, j M Y H:i:s') . ' GMT',
+                'Cache-Control' => 'public, max-age=' . ($time->format('U') - time()),
+                'Content-Type' => 'text/html; charset=UTF-8',
+            ];
+            $response->cache($since);
+            $this->assertEquals($expected, $response->header());
 
-        $response = new Response();
-        $since = time();
-        $time = '+5 day';
-        $expected = [
-            'Date' => gmdate('D, j M Y G:i:s ', $since) . 'GMT',
-            'Last-Modified' => gmdate('D, j M Y H:i:s ', $since) . 'GMT',
-            'Expires' => gmdate('D, j M Y H:i:s', strtotime($time)) . ' GMT',
-            'Cache-Control' => 'public, max-age=' . (strtotime($time) - time()),
-            'Content-Type' => 'text/html; charset=UTF-8',
-        ];
-        $response->cache($since, $time);
-        $this->assertEquals($expected, $response->header());
+            $response = new Response();
+            $since = time();
+            $time = '+5 day';
+            $expected = [
+                'Date' => gmdate('D, j M Y G:i:s ', $since) . 'GMT',
+                'Last-Modified' => gmdate('D, j M Y H:i:s ', $since) . 'GMT',
+                'Expires' => gmdate('D, j M Y H:i:s', strtotime($time)) . ' GMT',
+                'Cache-Control' => 'public, max-age=' . (strtotime($time) - time()),
+                'Content-Type' => 'text/html; charset=UTF-8',
+            ];
+            $response->cache($since, $time);
+            $this->assertEquals($expected, $response->header());
 
-        $response = new Response();
-        $since = time();
-        $time = time();
-        $expected = [
-            'Date' => gmdate('D, j M Y G:i:s ', $since) . 'GMT',
-            'Last-Modified' => gmdate('D, j M Y H:i:s ', $since) . 'GMT',
-            'Expires' => gmdate('D, j M Y H:i:s', $time) . ' GMT',
-            'Cache-Control' => 'public, max-age=0',
-            'Content-Type' => 'text/html; charset=UTF-8',
-        ];
-        $response->cache($since, $time);
-        $this->assertEquals($expected, $response->header());
+            $response = new Response();
+            $since = time();
+            $time = time();
+            $expected = [
+                'Date' => gmdate('D, j M Y G:i:s ', $since) . 'GMT',
+                'Last-Modified' => gmdate('D, j M Y H:i:s ', $since) . 'GMT',
+                'Expires' => gmdate('D, j M Y H:i:s', $time) . ' GMT',
+                'Cache-Control' => 'public, max-age=0',
+                'Content-Type' => 'text/html; charset=UTF-8',
+            ];
+            $response->cache($since, $time);
+            $this->assertEquals($expected, $response->header());
+        });
     }
 
     /**
@@ -666,7 +738,7 @@ class ResponseTest extends TestCase
         $_SERVER['HTTP_ACCEPT_ENCODING'] = 'gzip';
         $result = $response->compress();
         $this->assertTrue($result);
-        $this->assertTrue(in_array('ob_gzhandler', ob_list_handlers()));
+        $this->assertContains('ob_gzhandler', ob_list_handlers());
 
         ob_get_clean();
     }
@@ -674,64 +746,70 @@ class ResponseTest extends TestCase
     /**
      * Tests the httpCodes method
      *
+     * @group deprecated
      * @return void
      */
     public function testHttpCodes()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $response = new Response();
-        $result = $response->httpCodes();
-        $this->assertCount(65, $result);
+        $this->deprecated(function () {
+            $response = new Response();
+            $result = $response->httpCodes();
+            $this->assertCount(65, $result);
 
-        $result = $response->httpCodes(100);
-        $expected = [100 => 'Continue'];
-        $this->assertEquals($expected, $result);
+            $result = $response->httpCodes(100);
+            $expected = [100 => 'Continue'];
+            $this->assertEquals($expected, $result);
 
-        $codes = [
-            381 => 'Unicorn Moved',
-            555 => 'Unexpected Minotaur'
-        ];
+            $codes = [
+                381 => 'Unicorn Moved',
+                555 => 'Unexpected Minotaur'
+            ];
 
-        $result = $response->httpCodes($codes);
-        $this->assertTrue($result);
-        $this->assertCount(67, $response->httpCodes());
+            $result = $response->httpCodes($codes);
+            $this->assertTrue($result);
+            $this->assertCount(67, $response->httpCodes());
 
-        $result = $response->httpCodes(381);
-        $expected = [381 => 'Unicorn Moved'];
-        $this->assertEquals($expected, $result);
+            $result = $response->httpCodes(381);
+            $expected = [381 => 'Unicorn Moved'];
+            $this->assertEquals($expected, $result);
 
-        $codes = [404 => 'Sorry Bro'];
-        $result = $response->httpCodes($codes);
-        $this->assertTrue($result);
-        $this->assertCount(67, $response->httpCodes());
+            $codes = [404 => 'Sorry Bro'];
+            $result = $response->httpCodes($codes);
+            $this->assertTrue($result);
+            $this->assertCount(67, $response->httpCodes());
 
-        $result = $response->httpCodes(404);
-        $expected = [404 => 'Sorry Bro'];
-        $this->assertEquals($expected, $result);
+            $result = $response->httpCodes(404);
+            $expected = [404 => 'Sorry Bro'];
+            $this->assertEquals($expected, $result);
 
-        //Throws exception
-        $response->httpCodes([
-            0 => 'Nothing Here',
-            -1 => 'Reverse Infinity',
-            12345 => 'Universal Password',
-            'Hello' => 'World'
-        ]);
+            //Throws exception
+            $response->httpCodes([
+                0 => 'Nothing Here',
+                -1 => 'Reverse Infinity',
+                12345 => 'Universal Password',
+                'Hello' => 'World'
+            ]);
+        });
     }
 
     /**
      * Tests the download method
      *
+     * @group deprecated
      * @return void
      */
     public function testDownload()
     {
-        $response = new Response();
-        $expected = [
-            'Content-Type' => 'text/html; charset=UTF-8',
-            'Content-Disposition' => 'attachment; filename="myfile.mp3"'
-        ];
-        $response->download('myfile.mp3');
-        $this->assertEquals($expected, $response->header());
+        $this->deprecated(function () {
+            $response = new Response();
+            $expected = [
+                'Content-Type' => 'text/html; charset=UTF-8',
+                'Content-Disposition' => 'attachment; filename="myfile.mp3"'
+            ];
+            $response->download('myfile.mp3');
+            $this->assertEquals($expected, $response->header());
+        });
     }
 
     /**
@@ -808,31 +886,38 @@ class ResponseTest extends TestCase
     /**
      * Tests getting/setting the protocol
      *
+     * @group deprecated
      * @return void
      */
     public function testProtocol()
     {
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods(['_sendHeader', '_sendContent'])
-            ->getMock();
-        $response->protocol('HTTP/1.0');
-        $this->assertEquals('HTTP/1.0', $response->protocol());
-        $response->expects($this->at(0))
-            ->method('_sendHeader')->with('HTTP/1.0 200 OK');
-        $response->send();
+        $GLOBALS['mockedHeadersSent'] = false;
+        $this->deprecated(function () {
+            $response = $this->getMockBuilder('Cake\Http\Response')
+                ->setMethods(['_sendHeader', '_sendContent'])
+                ->getMock();
+            $response->protocol('HTTP/1.0');
+            $this->assertEquals('HTTP/1.0', $response->protocol());
+            $response->expects($this->at(0))
+                ->method('_sendHeader')->with('HTTP/1.0 200 OK');
+            $response->send();
+        });
     }
 
     /**
      * Tests getting/setting the Content-Length
      *
+     * @group deprecated
      * @return void
      */
     public function testLength()
     {
-        $response = new Response();
-        $response->length(100);
-        $this->assertEquals(100, $response->length());
-        $this->assertEquals('100', $response->getHeaderLine('Content-Length'));
+        $this->deprecated(function () {
+            $response = new Response();
+            $response->length(100);
+            $this->assertEquals(100, $response->length());
+            $this->assertEquals('100', $response->getHeaderLine('Content-Length'));
+        });
     }
 
     /**
@@ -849,35 +934,59 @@ class ResponseTest extends TestCase
         $this->assertFalse($response->hasHeader('Content-Length'), 'Old instance not modified');
 
         $this->assertSame('100', $new->getHeaderLine('Content-Length'));
-        $this->assertSame('100', $new->length(), 'new method is compat with old.');
+    }
+
+    /**
+     * Tests settings the link
+     *
+     * @return void
+     */
+    public function testWithAddedLink()
+    {
+        $response = new Response();
+        $this->assertFalse($response->hasHeader('Link'));
+
+        $new = $response->withAddedLink('http://example.com', ['rel' => 'prev']);
+        $this->assertFalse($response->hasHeader('Link'), 'Old instance not modified');
+        $this->assertEquals('<http://example.com>; rel="prev"', $new->getHeaderLine('Link'));
+
+        $new = $response->withAddedLink('http://example.com');
+        $this->assertEquals('<http://example.com>', $new->getHeaderLine('Link'));
+
+        $new = $response->withAddedLink('http://example.com?p=1', ['rel' => 'prev'])
+            ->withAddedLink('http://example.com?p=2', ['rel' => 'next', 'foo' => 'bar']);
+        $this->assertEquals('<http://example.com?p=1>; rel="prev",<http://example.com?p=2>; rel="next"; foo="bar"', $new->getHeaderLine('Link'));
     }
 
     /**
      * Tests setting the expiration date
      *
+     * @group deprecated
      * @return void
      */
     public function testExpires()
     {
-        $format = 'D, j M Y H:i:s';
-        $response = new Response();
-        $now = new \DateTime('now', new \DateTimeZone('America/Los_Angeles'));
-        $response->expires($now);
-        $now->setTimeZone(new \DateTimeZone('UTC'));
-        $this->assertEquals($now->format($format) . ' GMT', $response->expires());
-        $this->assertEquals($now->format($format) . ' GMT', $response->getHeaderLine('Expires'));
+        $this->deprecated(function () {
+            $format = 'D, j M Y H:i:s';
+            $response = new Response();
+            $now = new \DateTime('now', new \DateTimeZone('America/Los_Angeles'));
+            $response->expires($now);
+            $now->setTimeZone(new \DateTimeZone('UTC'));
+            $this->assertEquals($now->format($format) . ' GMT', $response->expires());
+            $this->assertEquals($now->format($format) . ' GMT', $response->getHeaderLine('Expires'));
 
-        $now = time();
-        $response = new Response();
-        $response->expires($now);
-        $this->assertEquals(gmdate($format) . ' GMT', $response->expires());
-        $this->assertEquals(gmdate($format) . ' GMT', $response->getHeaderLine('Expires'));
+            $now = time();
+            $response = new Response();
+            $response->expires($now);
+            $this->assertEquals(gmdate($format) . ' GMT', $response->expires());
+            $this->assertEquals(gmdate($format) . ' GMT', $response->getHeaderLine('Expires'));
 
-        $response = new Response();
-        $time = new \DateTime('+1 day', new \DateTimeZone('UTC'));
-        $response->expires('+1 day');
-        $this->assertEquals($time->format($format) . ' GMT', $response->expires());
-        $this->assertEquals($time->format($format) . ' GMT', $response->getHeaderLine('Expires'));
+            $response = new Response();
+            $time = new \DateTime('+1 day', new \DateTimeZone('UTC'));
+            $response->expires('+1 day');
+            $this->assertEquals($time->format($format) . ' GMT', $response->expires());
+            $this->assertEquals($time->format($format) . ' GMT', $response->getHeaderLine('Expires'));
+        });
     }
 
     /**
@@ -909,29 +1018,32 @@ class ResponseTest extends TestCase
     /**
      * Tests setting the modification date
      *
+     * @group deprecated
      * @return void
      */
     public function testModified()
     {
-        $format = 'D, j M Y H:i:s';
-        $response = new Response();
-        $now = new \DateTime('now', new \DateTimeZone('America/Los_Angeles'));
-        $response->modified($now);
-        $now->setTimeZone(new \DateTimeZone('UTC'));
-        $this->assertEquals($now->format($format) . ' GMT', $response->modified());
-        $this->assertEquals($now->format($format) . ' GMT', $response->getHeaderLine('Last-Modified'));
+        $this->deprecated(function () {
+            $format = 'D, j M Y H:i:s';
+            $response = new Response();
+            $now = new \DateTime('now', new \DateTimeZone('America/Los_Angeles'));
+            $response->modified($now);
+            $now->setTimeZone(new \DateTimeZone('UTC'));
+            $this->assertEquals($now->format($format) . ' GMT', $response->modified());
+            $this->assertEquals($now->format($format) . ' GMT', $response->getHeaderLine('Last-Modified'));
 
-        $response = new Response();
-        $now = time();
-        $response->modified($now);
-        $this->assertEquals(gmdate($format) . ' GMT', $response->modified());
-        $this->assertEquals(gmdate($format) . ' GMT', $response->getHeaderLine('Last-Modified'));
+            $response = new Response();
+            $now = time();
+            $response->modified($now);
+            $this->assertEquals(gmdate($format) . ' GMT', $response->modified());
+            $this->assertEquals(gmdate($format) . ' GMT', $response->getHeaderLine('Last-Modified'));
 
-        $response = new Response();
-        $time = new \DateTime('+1 day', new \DateTimeZone('UTC'));
-        $response->modified('+1 day');
-        $this->assertEquals($time->format($format) . ' GMT', $response->modified());
-        $this->assertEquals($time->format($format) . ' GMT', $response->getHeaderLine('Last-Modified'));
+            $response = new Response();
+            $time = new \DateTime('+1 day', new \DateTimeZone('UTC'));
+            $response->modified('+1 day');
+            $this->assertEquals($time->format($format) . ' GMT', $response->modified());
+            $this->assertEquals($time->format($format) . ' GMT', $response->getHeaderLine('Last-Modified'));
+        });
     }
 
     /**
@@ -1084,24 +1196,27 @@ class ResponseTest extends TestCase
     /**
      * Tests setting of must-revalidate Cache-Control directive
      *
+     * @group deprecated
      * @return void
      */
     public function testMustRevalidate()
     {
-        $response = new Response();
-        $this->assertFalse($response->mustRevalidate());
+        $this->deprecated(function () {
+            $response = new Response();
+            $this->assertFalse($response->mustRevalidate());
 
-        $response->mustRevalidate(true);
-        $this->assertTrue($response->mustRevalidate());
-        $this->assertEquals('must-revalidate', $response->getHeaderLine('Cache-Control'));
+            $response->mustRevalidate(true);
+            $this->assertTrue($response->mustRevalidate());
+            $this->assertEquals('must-revalidate', $response->getHeaderLine('Cache-Control'));
 
-        $response->mustRevalidate(false);
-        $this->assertFalse($response->mustRevalidate());
+            $response->mustRevalidate(false);
+            $this->assertFalse($response->mustRevalidate());
 
-        $response = new Response();
-        $response->sharedMaxAge(3600);
-        $response->mustRevalidate(true);
-        $this->assertEquals('s-maxage=3600, must-revalidate', $response->getHeaderLine('Cache-Control'));
+            $response = new Response();
+            $response->sharedMaxAge(3600);
+            $response->mustRevalidate(true);
+            $this->assertEquals('s-maxage=3600, must-revalidate', $response->getHeaderLine('Cache-Control'));
+        });
     }
 
     /**
@@ -1125,18 +1240,21 @@ class ResponseTest extends TestCase
     /**
      * Tests getting/setting the Vary header
      *
+     * @group deprecated
      * @return void
      */
     public function testVary()
     {
-        $response = new Response();
-        $response->vary('Accept-encoding');
-        $this->assertEquals('Accept-encoding', $response->getHeaderLine('vary'));
+        $this->deprecated(function () {
+            $response = new Response();
+            $response->vary('Accept-encoding');
+            $this->assertEquals('Accept-encoding', $response->getHeaderLine('vary'));
 
-        $response = new Response();
-        $response->vary(['Accept-language', 'Accept-encoding']);
-        $this->assertEquals(['Accept-language', 'Accept-encoding'], $response->vary());
-        $this->assertEquals('Accept-language, Accept-encoding', $response->getHeaderLine('vary'));
+            $response = new Response();
+            $response->vary(['Accept-language', 'Accept-encoding']);
+            $this->assertEquals(['Accept-language', 'Accept-encoding'], $response->vary());
+            $this->assertEquals('Accept-language, Accept-encoding', $response->getHeaderLine('vary'));
+        });
     }
 
     /**
@@ -1160,19 +1278,22 @@ class ResponseTest extends TestCase
     /**
      * Tests getting/setting the Etag header
      *
+     * @group deprecated
      * @return void
      */
     public function testEtag()
     {
-        $response = new Response();
-        $response->etag('something');
-        $this->assertEquals('"something"', $response->etag());
-        $this->assertEquals('"something"', $response->getHeaderLine('Etag'));
+        $this->deprecated(function () {
+            $response = new Response();
+            $response->etag('something');
+            $this->assertEquals('"something"', $response->etag());
+            $this->assertEquals('"something"', $response->getHeaderLine('Etag'));
 
-        $response = new Response();
-        $response->etag('something', true);
-        $this->assertEquals('W/"something"', $response->etag());
-        $this->assertEquals('W/"something"', $response->getHeaderLine('Etag'));
+            $response = new Response();
+            $response->etag('something', true);
+            $this->assertEquals('W/"something"', $response->etag());
+            $this->assertEquals('W/"something"', $response->getHeaderLine('Etag'));
+        });
     }
 
     /**
@@ -1199,18 +1320,18 @@ class ResponseTest extends TestCase
      */
     public function testNotModified()
     {
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods(['_sendHeader', '_sendContent'])
-            ->getMock();
-        $response->body('something');
-        $response->statusCode(200);
-        $response->length(100);
-        $response->modified('now');
+        $response = new Response();
+        $response = $response->withStringBody('something')
+            ->withStatus(200)
+            ->withLength(100)
+            ->withModified('now');
+
         $response->notModified();
 
-        $this->assertEmpty($response->header());
-        $this->assertEmpty($response->body());
-        $this->assertEquals(304, $response->statusCode());
+        $this->assertFalse($response->hasHeader('Content-Length'));
+        $this->assertFalse($response->hasHeader('Modified'));
+        $this->assertEmpty((string)$response->getBody());
+        $this->assertEquals(304, $response->getStatusCode());
     }
 
     /**
@@ -1249,13 +1370,14 @@ class ResponseTest extends TestCase
      */
     public function testCheckNotModifiedByEtagStar()
     {
-        $_SERVER['HTTP_IF_NONE_MATCH'] = '*';
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods(['notModified'])
-            ->getMock();
-        $response->etag('something');
-        $response->expects($this->once())->method('notModified');
-        $response->checkNotModified(new ServerRequest);
+        $request = new ServerRequest();
+        $request = $request->withHeader('If-None-Match', '*');
+
+        $response = new Response();
+        $response = $response->withEtag('something')
+            ->withHeader('Content-Length', 99);
+        $this->assertTrue($response->checkNotModified($request));
+        $this->assertFalse($response->hasHeader('Content-Type'), 'etags match, should be unmodified');
     }
 
     /**
@@ -1265,13 +1387,14 @@ class ResponseTest extends TestCase
      */
     public function testCheckNotModifiedByEtagExact()
     {
-        $_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something", "other"';
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods(['notModified'])
-            ->getMock();
-        $response->etag('something', true);
-        $response->expects($this->once())->method('notModified');
-        $this->assertTrue($response->checkNotModified(new ServerRequest));
+        $request = new ServerRequest();
+        $request = $request->withHeader('If-None-Match', 'W/"something", "other"');
+
+        $response = new Response();
+        $response = $response->withEtag('something', true)
+            ->withHeader('Content-Length', 99);
+        $this->assertTrue($response->checkNotModified($request));
+        $this->assertFalse($response->hasHeader('Content-Type'), 'etags match, should be unmodified');
     }
 
     /**
@@ -1281,15 +1404,16 @@ class ResponseTest extends TestCase
      */
     public function testCheckNotModifiedByEtagAndTime()
     {
-        $_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something", "other"';
-        $_SERVER['HTTP_IF_MODIFIED_SINCE'] = '2012-01-01 00:00:00';
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods(['notModified'])
-            ->getMock();
-        $response->etag('something', true);
-        $response->modified('2012-01-01 00:00:00');
-        $response->expects($this->once())->method('notModified');
-        $this->assertTrue($response->checkNotModified(new ServerRequest));
+        $request = new ServerRequest();
+        $request = $request->withHeader('If-Modified-Since', '2012-01-01 00:00:00')
+            ->withHeader('If-None-Match', 'W/"something", "other"');
+
+        $response = new Response();
+        $response = $response->withModified('2012-01-01 00:00:00')
+            ->withEtag('something', true)
+            ->withHeader('Content-Length', 99);
+        $this->assertTrue($response->checkNotModified($request));
+        $this->assertFalse($response->hasHeader('Content-Length'), 'etags match, should be unmodified');
     }
 
     /**
@@ -1299,15 +1423,16 @@ class ResponseTest extends TestCase
      */
     public function testCheckNotModifiedByEtagAndTimeMismatch()
     {
-        $_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something", "other"';
-        $_SERVER['HTTP_IF_MODIFIED_SINCE'] = '2012-01-01 00:00:00';
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods(['notModified'])
-            ->getMock();
-        $response->etag('something', true);
-        $response->modified('2012-01-01 00:00:01');
-        $response->expects($this->never())->method('notModified');
-        $this->assertFalse($response->checkNotModified(new ServerRequest));
+        $request = new ServerRequest();
+        $request = $request->withHeader('If-Modified-Since', '2012-01-01 00:00:00')
+            ->withHeader('If-None-Match', 'W/"something", "other"');
+
+        $response = new Response();
+        $response = $response->withModified('2012-01-01 00:00:01')
+            ->withEtag('something', true)
+            ->withHeader('Content-Length', 99);
+        $this->assertFalse($response->checkNotModified($request));
+        $this->assertTrue($response->hasHeader('Content-Length'), 'timestamp in response is newer');
     }
 
     /**
@@ -1317,15 +1442,16 @@ class ResponseTest extends TestCase
      */
     public function testCheckNotModifiedByEtagMismatch()
     {
-        $_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something-else", "other"';
-        $_SERVER['HTTP_IF_MODIFIED_SINCE'] = '2012-01-01 00:00:00';
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods(['notModified'])
-            ->getMock();
-        $response->etag('something', true);
-        $response->modified('2012-01-01 00:00:00');
-        $response->expects($this->never())->method('notModified');
-        $this->assertFalse($response->checkNotModified(new ServerRequest));
+        $request = new ServerRequest();
+        $request = $request->withHeader('If-Modified-Since', '2012-01-01 00:00:00')
+            ->withHeader('If-None-Match', 'W/"something-else", "other"');
+
+        $response = new Response();
+        $response = $response->withModified('2012-01-01 00:00:00')
+            ->withEtag('something', true)
+            ->withHeader('Content-Length', 99);
+        $this->assertFalse($response->checkNotModified($request));
+        $this->assertTrue($response->hasHeader('Content-Length'), 'etags do not match');
     }
 
     /**
@@ -1335,13 +1461,14 @@ class ResponseTest extends TestCase
      */
     public function testCheckNotModifiedByTime()
     {
-        $_SERVER['HTTP_IF_MODIFIED_SINCE'] = '2012-01-01 00:00:00';
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods(['notModified'])
-            ->getMock();
-        $response->modified('2012-01-01 00:00:00');
-        $response->expects($this->once())->method('notModified');
-        $this->assertTrue($response->checkNotModified(new ServerRequest));
+        $request = new ServerRequest();
+        $request = $request->withHeader('If-Modified-Since', '2012-01-01 00:00:00');
+
+        $response = new Response();
+        $response = $response->withModified('2012-01-01 00:00:00')
+            ->withHeader('Content-Length', 99);
+        $this->assertTrue($response->checkNotModified($request));
+        $this->assertFalse($response->hasHeader('Content-Length'), 'modified time matches');
     }
 
     /**
@@ -1351,49 +1478,31 @@ class ResponseTest extends TestCase
      */
     public function testCheckNotModifiedNoHints()
     {
-        $_SERVER['HTTP_IF_NONE_MATCH'] = 'W/"something", "other"';
-        $_SERVER['HTTP_IF_MODIFIED_SINCE'] = '2012-01-01 00:00:00';
+        $request = new ServerRequest();
+        $request = $request->withHeader('If-None-Match', 'W/"something", "other"')
+            ->withHeader('If-Modified-Since', '2012-01-01 00:00:00');
         $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['notModified'])
             ->getMock();
         $response->expects($this->never())->method('notModified');
-        $this->assertFalse($response->checkNotModified(new ServerRequest));
+        $this->assertFalse($response->checkNotModified($request));
     }
 
     /**
      * Test cookie setting
      *
+     * @group deprecated
      * @return void
      */
     public function testCookieSettings()
     {
-        $response = new Response();
-        $cookie = [
-            'name' => 'CakeTestCookie[Testing]'
-        ];
-        $response->cookie($cookie);
-        $expected = [
-            'name' => 'CakeTestCookie[Testing]',
-            'value' => '',
-            'expire' => 0,
-            'path' => '/',
-            'domain' => '',
-            'secure' => false,
-            'httpOnly' => false
-        ];
-        $result = $response->cookie('CakeTestCookie[Testing]');
-        $this->assertEquals($expected, $result);
-
-        $cookie = [
-            'name' => 'CakeTestCookie[Testing2]',
-            'value' => '[a,b,c]',
-            'expire' => 1000,
-            'path' => '/test',
-            'secure' => true
-        ];
-        $response->cookie($cookie);
-        $expected = [
-            'CakeTestCookie[Testing]' => [
+        $this->deprecated(function () {
+            $response = new Response();
+            $cookie = [
+                'name' => 'CakeTestCookie[Testing]'
+            ];
+            $response->cookie($cookie);
+            $expected = [
                 'name' => 'CakeTestCookie[Testing]',
                 'value' => '',
                 'expire' => 0,
@@ -1401,47 +1510,69 @@ class ResponseTest extends TestCase
                 'domain' => '',
                 'secure' => false,
                 'httpOnly' => false
-            ],
-            'CakeTestCookie[Testing2]' => [
+            ];
+            $result = $response->cookie('CakeTestCookie[Testing]');
+            $this->assertEquals($expected, $result);
+
+            $cookie = [
                 'name' => 'CakeTestCookie[Testing2]',
                 'value' => '[a,b,c]',
                 'expire' => 1000,
                 'path' => '/test',
-                'domain' => '',
-                'secure' => true,
-                'httpOnly' => false
-            ]
-        ];
+                'secure' => true
+            ];
+            $response->cookie($cookie);
+            $expected = [
+                'CakeTestCookie[Testing]' => [
+                    'name' => 'CakeTestCookie[Testing]',
+                    'value' => '',
+                    'expire' => 0,
+                    'path' => '/',
+                    'domain' => '',
+                    'secure' => false,
+                    'httpOnly' => false
+                ],
+                'CakeTestCookie[Testing2]' => [
+                    'name' => 'CakeTestCookie[Testing2]',
+                    'value' => '[a,b,c]',
+                    'expire' => 1000,
+                    'path' => '/test',
+                    'domain' => '',
+                    'secure' => true,
+                    'httpOnly' => false
+                ]
+            ];
 
-        $result = $response->cookie();
-        $this->assertEquals($expected, $result);
+            $result = $response->cookie();
+            $this->assertEquals($expected, $result);
 
-        $cookie = $expected['CakeTestCookie[Testing]'];
-        $cookie['value'] = 'test';
-        $response->cookie($cookie);
-        $expected = [
-            'CakeTestCookie[Testing]' => [
-                'name' => 'CakeTestCookie[Testing]',
-                'value' => 'test',
-                'expire' => 0,
-                'path' => '/',
-                'domain' => '',
-                'secure' => false,
-                'httpOnly' => false
-            ],
-            'CakeTestCookie[Testing2]' => [
-                'name' => 'CakeTestCookie[Testing2]',
-                'value' => '[a,b,c]',
-                'expire' => 1000,
-                'path' => '/test',
-                'domain' => '',
-                'secure' => true,
-                'httpOnly' => false
-            ]
-        ];
+            $cookie = $expected['CakeTestCookie[Testing]'];
+            $cookie['value'] = 'test';
+            $response->cookie($cookie);
+            $expected = [
+                'CakeTestCookie[Testing]' => [
+                    'name' => 'CakeTestCookie[Testing]',
+                    'value' => 'test',
+                    'expire' => 0,
+                    'path' => '/',
+                    'domain' => '',
+                    'secure' => false,
+                    'httpOnly' => false
+                ],
+                'CakeTestCookie[Testing2]' => [
+                    'name' => 'CakeTestCookie[Testing2]',
+                    'value' => '[a,b,c]',
+                    'expire' => 1000,
+                    'path' => '/test',
+                    'domain' => '',
+                    'secure' => true,
+                    'httpOnly' => false
+                ]
+            ];
 
-        $result = $response->cookie();
-        $this->assertEquals($expected, $result);
+            $result = $response->cookie();
+            $this->assertEquals($expected, $result);
+        });
     }
 
     /**
@@ -1665,8 +1796,25 @@ class ResponseTest extends TestCase
     }
 
     /**
-     * Test CORS
+     * Test that cors() returns a builder.
      *
+     * @return void
+     */
+    public function testCors()
+    {
+        $request = new ServerRequest([
+            'environment' => ['HTTP_ORIGIN' => 'http://example.com']
+        ]);
+        $response = new Response();
+        $builder = $response->cors($request);
+        $this->assertInstanceOf(CorsBuilder::class, $builder);
+        $this->assertSame($response, $builder->build(), 'Empty builder returns same object');
+    }
+
+    /**
+     * Test CORS with additional parameters
+     *
+     * @group deprecated
      * @dataProvider corsData
      * @param Request $request
      * @param string $origin
@@ -1678,28 +1826,28 @@ class ResponseTest extends TestCase
      * @param string|bool $expectedHeaders
      * @return void
      */
-    public function testCors($request, $origin, $domains, $methods, $headers, $expectedOrigin, $expectedMethods = false, $expectedHeaders = false)
+    public function testCorsParameters($request, $origin, $domains, $methods, $headers, $expectedOrigin, $expectedMethods = false, $expectedHeaders = false)
     {
-        $request->env('HTTP_ORIGIN', $origin);
-        $response = new Response();
+        $this->deprecated(function () use ($request, $origin, $domains, $methods, $headers, $expectedOrigin, $expectedMethods, $expectedHeaders) {
+            $request = $request->withEnv('HTTP_ORIGIN', $origin);
+            $response = new Response();
 
-        $result = $response->cors($request, $domains, $methods, $headers);
-        $this->assertInstanceOf('Cake\Network\CorsBuilder', $result);
+            $result = $response->cors($request, $domains, $methods, $headers);
+            $this->assertInstanceOf('Cake\Network\CorsBuilder', $result);
 
-        $headers = $response->header();
-        if ($expectedOrigin) {
-            $this->assertArrayHasKey('Access-Control-Allow-Origin', $headers);
-            $this->assertEquals($expectedOrigin, $headers['Access-Control-Allow-Origin']);
-        }
-        if ($expectedMethods) {
-            $this->assertArrayHasKey('Access-Control-Allow-Methods', $headers);
-            $this->assertEquals($expectedMethods, $headers['Access-Control-Allow-Methods']);
-        }
-        if ($expectedHeaders) {
-            $this->assertArrayHasKey('Access-Control-Allow-Headers', $headers);
-            $this->assertEquals($expectedHeaders, $headers['Access-Control-Allow-Headers']);
-        }
-        unset($_SERVER['HTTP_ORIGIN']);
+            if ($expectedOrigin) {
+                $this->assertTrue($response->hasHeader('Access-Control-Allow-Origin'));
+                $this->assertEquals($expectedOrigin, $response->getHeaderLine('Access-Control-Allow-Origin'));
+            }
+            if ($expectedMethods) {
+                $this->assertTrue($response->hasHeader('Access-Control-Allow-Methods'));
+                $this->assertEquals($expectedMethods, $response->getHeaderLine('Access-Control-Allow-Methods'));
+            }
+            if ($expectedHeaders) {
+                $this->assertTrue($response->hasHeader('Access-Control-Allow-Headers'));
+                $this->assertEquals($expectedHeaders, $response->getHeaderLine('Access-Control-Allow-Headers'));
+            }
+        });
     }
 
     /**
@@ -1756,25 +1904,33 @@ class ResponseTest extends TestCase
     /**
      * testFileNotFound
      *
+     * @group deprecated
      * @return void
      */
     public function testFileNotFound()
     {
-        $this->expectException(\Cake\Network\Exception\NotFoundException::class);
-        $response = new Response();
-        $response->file('/some/missing/folder/file.jpg');
+        $this->expectException(\Cake\Http\Exception\NotFoundException::class);
+        $this->deprecated(function () {
+            $response = new Response();
+            $response->file('/some/missing/folder/file.jpg');
+        });
     }
 
     /**
      * test withFile() not found
      *
+     * Don't remove this test when cleaning up deprecation warnings.
+     * Just remove the deprecated wrapper.
+     *
      * @return void
      */
     public function testWithFileNotFound()
     {
-        $this->expectException(\Cake\Network\Exception\NotFoundException::class);
-        $response = new Response();
-        $response->withFile('/some/missing/folder/file.jpg');
+        $this->expectException(\Cake\Http\Exception\NotFoundException::class);
+        $this->deprecated(function () {
+            $response = new Response();
+            $response->withFile('/some/missing/folder/file.jpg');
+        });
     }
 
     /**
@@ -1795,75 +1951,73 @@ class ResponseTest extends TestCase
     /**
      * test invalid file paths.
      *
+     * @group deprecated
      * @dataProvider invalidFileProvider
      * @return void
      */
     public function testFileInvalidPath($path, $expectedMessage)
     {
-        $response = new Response();
-        try {
-            $response->file($path);
-        } catch (NotFoundException $e) {
-            $this->assertContains($expectedMessage, $e->getMessage());
-        }
+        $this->deprecated(function () use ($path, $expectedMessage) {
+            $response = new Response();
+            try {
+                $response->file($path);
+            } catch (NotFoundException $e) {
+                $this->assertContains($expectedMessage, $e->getMessage());
+            }
+        });
     }
 
     /**
      * test withFile and invalid paths
+     *
+     * This test should not be removed when deprecation warnings are removed.
+     * Just remove the deprecated wrapper.
      *
      * @dataProvider invalidFileProvider
      * @return void
      */
     public function testWithFileInvalidPath($path, $expectedMessage)
     {
-        $response = new Response();
-        try {
-            $response->withFile($path);
-        } catch (NotFoundException $e) {
-            $this->assertContains($expectedMessage, $e->getMessage());
-        }
+        $this->deprecated(function () use ($path, $expectedMessage) {
+            $response = new Response();
+            try {
+                $response->withFile($path);
+            } catch (NotFoundException $e) {
+                $this->assertContains($expectedMessage, $e->getMessage());
+            }
+        });
     }
 
     /**
      * testFile method
      *
+     * @group deprecated
      * @return void
      */
     public function testFile()
     {
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods([
-                'header',
-                'type',
-                '_sendHeader',
-                '_setContentType',
-                '_isActive',
-            ])
-            ->getMock();
+        $this->deprecated(function () {
+            $response = $this->getMockBuilder('Cake\Http\Response')
+                ->setMethods(['_sendHeader', '_isActive'])
+                ->getMock();
 
-        $response->expects($this->exactly(1))
-            ->method('type')
-            ->with('css')
-            ->will($this->returnArgument(0));
+            $response->expects($this->exactly(1))
+                ->method('_isActive')
+                ->will($this->returnValue(true));
 
-        $response->expects($this->at(1))
-            ->method('header')
-            ->with('Accept-Ranges', 'bytes');
+            $response->file(TEST_APP . 'vendor/css/test_asset.css');
 
-        $response->expects($this->exactly(1))
-            ->method('_isActive')
-            ->will($this->returnValue(true));
+            ob_start();
+            $result = $response->send();
+            $this->assertTrue($result !== false);
+            $output = ob_get_clean();
 
-        $response->file(TEST_APP . 'vendor/css/test_asset.css');
-
-        ob_start();
-        $result = $response->send();
-        $this->assertTrue($result !== false);
-        $output = ob_get_clean();
-
-        $expected = '/* this is the test asset css file */';
-        $this->assertEquals($expected, trim($output));
-        $this->assertEquals($expected, trim($response->getBody()->getContents()));
+            $expected = '/* this is the test asset css file */';
+            $this->assertEquals($expected, trim($output));
+            $this->assertEquals($expected, trim($response->getBody()->getContents()));
+            $this->assertEquals('text/css', $response->getType());
+            $this->assertEquals('bytes', $response->getHeaderLine('Accept-Ranges'));
+        });
     }
 
     /**
@@ -1907,109 +2061,77 @@ class ResponseTest extends TestCase
     /**
      * testFileWithDownloadAndName
      *
+     * @group deprecated
      * @return void
      */
     public function testFileWithDownloadAndName()
     {
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods([
-                'header',
-                'type',
-                'download',
-                '_sendHeader',
-                '_setContentType',
-                '_isActive',
-            ])
-            ->getMock();
+        $this->deprecated(function () {
+            $response = $this->getMockBuilder('Cake\Http\Response')
+                ->setMethods(['download', '_sendHeader', '_isActive'])
+                ->getMock();
 
-        $response->expects($this->exactly(1))
-            ->method('type')
-            ->with('css')
-            ->will($this->returnArgument(0));
+            $response->expects($this->once())
+                ->method('download')
+                ->with('something_special.css');
 
-        $response->expects($this->once())
-            ->method('download')
-            ->with('something_special.css');
+            $response->expects($this->exactly(1))
+                ->method('_isActive')
+                ->will($this->returnValue(true));
 
-        $response->expects($this->at(2))
-            ->method('header')
-            ->with('Content-Transfer-Encoding', 'binary');
+            $response->file(
+                TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
+                [
+                    'name' => 'something_special.css',
+                    'download' => true,
+                ]
+            );
 
-        $response->expects($this->at(3))
-            ->method('header')
-            ->with('Accept-Ranges', 'bytes');
-
-        $response->expects($this->exactly(1))
-            ->method('_isActive')
-            ->will($this->returnValue(true));
-
-        $response->file(
-            TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
-            [
-                'name' => 'something_special.css',
-                'download' => true,
-            ]
-        );
-
-        ob_start();
-        $result = $response->send();
-        $output = ob_get_clean();
-        $this->assertEquals("/* this is the test asset css file */\n", $output);
-        $this->assertNotSame(false, $result);
+            ob_start();
+            $result = $response->send();
+            $output = ob_get_clean();
+            $this->assertEquals("/* this is the test asset css file */\n", $output);
+            $this->assertNotFalse($result);
+            $this->assertEquals('text/css', $response->getType());
+            $this->assertEquals('bytes', $response->getHeaderLine('Accept-Ranges'));
+            $this->assertEquals('binary', $response->getHeaderLine('Content-Transfer-Encoding'));
+        });
     }
 
     /**
      * testFileWithUnknownFileTypeGeneric method
      *
+     * @group deprecated
      * @return void
      */
     public function testFileWithUnknownFileTypeGeneric()
     {
-        $currentUserAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null;
-        $_SERVER['HTTP_USER_AGENT'] = 'Some generic browser';
+        $this->deprecated(function () {
+            $_SERVER['HTTP_USER_AGENT'] = 'Some generic browser';
 
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods([
-                'header',
-                'type',
-                'download',
-                '_sendHeader',
-                '_setContentType',
-                '_isActive',
-            ])
-            ->getMock();
+            $response = $this->getMockBuilder('Cake\Http\Response')
+                ->setMethods(['download', '_sendHeader', '_isActive'])
+                ->getMock();
 
-        $response->expects($this->exactly(1))
-            ->method('type')
-            ->with('ini')
-            ->will($this->returnValue(false));
+            $response->expects($this->once())
+                ->method('download')
+                ->with('no_section.ini');
 
-        $response->expects($this->once())
-            ->method('download')
-            ->with('no_section.ini');
+            $response->expects($this->exactly(1))
+                ->method('_isActive')
+                ->will($this->returnValue(true));
 
-        $response->expects($this->at(2))
-            ->method('header')
-            ->with('Content-Transfer-Encoding', 'binary');
+            $response->file(CONFIG . 'no_section.ini');
 
-        $response->expects($this->at(3))
-            ->method('header')
-            ->with('Accept-Ranges', 'bytes');
-
-        $response->expects($this->exactly(1))
-            ->method('_isActive')
-            ->will($this->returnValue(true));
-
-        $response->file(CONFIG . 'no_section.ini');
-
-        ob_start();
-        $result = $response->send();
-        $output = ob_get_clean();
-        $this->assertEquals("some_key = some_value\nbool_key = 1\n", $output);
-        $this->assertNotSame(false, $result);
-        if ($currentUserAgent !== null) {
-            $_SERVER['HTTP_USER_AGENT'] = $currentUserAgent;
-        }
+            ob_start();
+            $result = $response->send();
+            $output = ob_get_clean();
+            $this->assertEquals("some_key = some_value\nbool_key = 1\n", $output);
+            $this->assertNotFalse($result);
+            $this->assertEquals('text/html', $response->getType());
+            $this->assertEquals('bytes', $response->getHeaderLine('Accept-Ranges'));
+            $this->assertEquals('binary', $response->getHeaderLine('Content-Transfer-Encoding'));
+        });
     }
 
     /**
@@ -2035,60 +2157,37 @@ class ResponseTest extends TestCase
     /**
      * testFileWithUnknownFileTypeOpera method
      *
+     * @group deprecated
      * @return void
      */
     public function testFileWithUnknownFileTypeOpera()
     {
-        $currentUserAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null;
-        $_SERVER['HTTP_USER_AGENT'] = 'Opera/9.80 (Windows NT 6.0; U; en) Presto/2.8.99 Version/11.10';
+        $this->deprecated(function () {
+            $_SERVER['HTTP_USER_AGENT'] = 'Opera/9.80 (Windows NT 6.0; U; en) Presto/2.8.99 Version/11.10';
 
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods([
-                'header',
-                'type',
-                'download',
-                '_sendHeader',
-                '_setContentType',
-                '_isActive',
-            ])
-            ->getMock();
+            $response = $this->getMockBuilder('Cake\Http\Response')
+                ->setMethods(['download', '_sendHeader', '_isActive'])
+                ->getMock();
 
-        $response->expects($this->at(0))
-            ->method('type')
-            ->with('ini')
-            ->will($this->returnValue(false));
+            $response->expects($this->once())
+                ->method('download')
+                ->with('no_section.ini');
 
-        $response->expects($this->at(1))
-            ->method('type')
-            ->with('application/octet-stream')
-            ->will($this->returnValue(false));
+            $response->expects($this->exactly(1))
+                ->method('_isActive')
+                ->will($this->returnValue(true));
 
-        $response->expects($this->once())
-            ->method('download')
-            ->with('no_section.ini');
+            $response->file(CONFIG . 'no_section.ini');
 
-        $response->expects($this->at(3))
-            ->method('header')
-            ->with('Content-Transfer-Encoding', 'binary');
-
-        $response->expects($this->at(4))
-            ->method('header')
-            ->with('Accept-Ranges', 'bytes');
-
-        $response->expects($this->exactly(1))
-            ->method('_isActive')
-            ->will($this->returnValue(true));
-
-        $response->file(CONFIG . 'no_section.ini');
-
-        ob_start();
-        $result = $response->send();
-        $output = ob_get_clean();
-        $this->assertEquals("some_key = some_value\nbool_key = 1\n", $output);
-        $this->assertNotSame(false, $result);
-        if ($currentUserAgent !== null) {
-            $_SERVER['HTTP_USER_AGENT'] = $currentUserAgent;
-        }
+            ob_start();
+            $result = $response->send();
+            $output = ob_get_clean();
+            $this->assertEquals("some_key = some_value\nbool_key = 1\n", $output);
+            $this->assertNotFalse($result);
+            $this->assertEquals('application/octet-stream', $response->getType());
+            $this->assertEquals('bytes', $response->getHeaderLine('Accept-Ranges'));
+            $this->assertEquals('binary', $response->getHeaderLine('Content-Transfer-Encoding'));
+        });
     }
 
     /**
@@ -2098,7 +2197,6 @@ class ResponseTest extends TestCase
      */
     public function testWithFileUnknownFileTypeOpera()
     {
-        $currentUserAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null;
         $_SERVER['HTTP_USER_AGENT'] = 'Opera/9.80 (Windows NT 6.0; U; en) Presto/2.8.99 Version/11.10';
         $response = new Response();
 
@@ -2108,69 +2206,44 @@ class ResponseTest extends TestCase
             'attachment; filename="no_section.ini"',
             $new->getHeaderLine('Content-Disposition')
         );
-
-        $_SERVER['HTTP_USER_AGENT'] = $currentUserAgent;
     }
 
     /**
      * testFileWithUnknownFileTypeIE method
      *
+     * @group deprecated
      * @return void
      */
     public function testFileWithUnknownFileTypeIE()
     {
-        $currentUserAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null;
-        $_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 5.2; Trident/4.0; Media Center PC 4.0; SLCC1; .NET CLR 3.0.04320)';
+        $this->deprecated(function () {
+            $_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 5.2; Trident/4.0; Media Center PC 4.0; SLCC1; .NET CLR 3.0.04320)';
 
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods([
-                'header',
-                'type',
-                'download',
-                '_sendHeader',
-                '_setContentType',
-                '_isActive',
-            ])
-            ->getMock();
+            $response = $this->getMockBuilder('Cake\Http\Response')
+                ->setMethods(['download', '_isActive', '_sendHeade'])
+                ->getMock();
 
-        $response->expects($this->at(0))
-            ->method('type')
-            ->with('ini')
-            ->will($this->returnValue(false));
+            $response->expects($this->once())
+                ->method('download')
+                ->with('config.ini');
 
-        $response->expects($this->at(1))
-            ->method('type')
-            ->with('application/force-download')
-            ->will($this->returnValue(false));
+            $response->expects($this->exactly(1))
+                ->method('_isActive')
+                ->will($this->returnValue(true));
 
-        $response->expects($this->once())
-            ->method('download')
-            ->with('config.ini');
+            $response->file(CONFIG . 'no_section.ini', [
+                'name' => 'config.ini'
+            ]);
 
-        $response->expects($this->at(3))
-            ->method('header')
-            ->with('Content-Transfer-Encoding', 'binary');
-
-        $response->expects($this->at(4))
-            ->method('header')
-            ->with('Accept-Ranges', 'bytes');
-
-        $response->expects($this->exactly(1))
-            ->method('_isActive')
-            ->will($this->returnValue(true));
-
-        $response->file(CONFIG . 'no_section.ini', [
-            'name' => 'config.ini'
-        ]);
-
-        ob_start();
-        $result = $response->send();
-        $output = ob_get_clean();
-        $this->assertEquals("some_key = some_value\nbool_key = 1\n", $output);
-        $this->assertNotSame(false, $result);
-        if ($currentUserAgent !== null) {
-            $_SERVER['HTTP_USER_AGENT'] = $currentUserAgent;
-        }
+            ob_start();
+            $result = $response->send();
+            $output = ob_get_clean();
+            $this->assertEquals("some_key = some_value\nbool_key = 1\n", $output);
+            $this->assertNotFalse($result);
+            $this->assertEquals('application/force-download', $response->getType());
+            $this->assertEquals('bytes', $response->getHeaderLine('Accept-Ranges'));
+            $this->assertEquals('binary', $response->getHeaderLine('Content-Transfer-Encoding'));
+        });
     }
 
     /**
@@ -2180,56 +2253,37 @@ class ResponseTest extends TestCase
      */
     public function testWithFileUnknownFileTypeOldIe()
     {
-        $currentUserAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null;
         $_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 5.2; Trident/4.0; Media Center PC 4.0; SLCC1; .NET CLR 3.0.04320)';
         $response = new Response();
 
         $new = $response->withFile(CONFIG . 'no_section.ini');
         $this->assertEquals('application/force-download', $new->getHeaderLine('Content-Type'));
-
-        $_SERVER['HTTP_USER_AGENT'] = $currentUserAgent;
     }
 
     /**
      * testFileWithUnknownFileNoDownload method
      *
+     * @group deprecated
      * @return void
      */
     public function testFileWithUnknownFileNoDownload()
     {
-        $currentUserAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null;
-        $_SERVER['HTTP_USER_AGENT'] = 'Some generic browser';
+        $this->deprecated(function () {
+            $_SERVER['HTTP_USER_AGENT'] = 'Some generic browser';
 
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods([
-                'header',
-                'type',
-                'download',
-                '_sendHeader',
-                '_setContentType',
-                '_isActive',
-            ])
-            ->getMock();
+            $response = $this->getMockBuilder('Cake\Http\Response')
+                ->setMethods(['download'])
+                ->getMock();
 
-        $response->expects($this->exactly(1))
-            ->method('type')
-            ->with('ini')
-            ->will($this->returnValue(false));
+            $response->expects($this->never())
+                ->method('download');
 
-        $response->expects($this->at(1))
-            ->method('header')
-            ->with('Accept-Ranges', 'bytes');
-
-        $response->expects($this->never())
-            ->method('download');
-
-        $response->file(CONFIG . 'no_section.ini', [
-            'download' => false
-        ]);
-
-        if ($currentUserAgent !== null) {
-            $_SERVER['HTTP_USER_AGENT'] = $currentUserAgent;
-        }
+            $response->file(CONFIG . 'no_section.ini', [
+                'download' => false
+            ]);
+            $this->assertEquals('bytes', $response->getHeaderLine('Accept-Ranges'));
+            $this->assertEquals('text/html', $response->getType());
+        });
     }
 
     /**
@@ -2254,80 +2308,68 @@ class ResponseTest extends TestCase
     /**
      * test getFile method
      *
+     * @group deprecated
      * @return void
      */
     public function testGetFile()
     {
-        $response = new Response();
-        $this->assertNull($response->getFile(), 'No file to get');
+        $this->deprecated(function () {
+            $response = new Response();
+            $this->assertNull($response->getFile(), 'No file to get');
 
-        $response->file(TEST_APP . 'vendor/css/test_asset.css');
-        $file = $response->getFile();
-        $this->assertInstanceOf('Cake\Filesystem\File', $file, 'Should get a file');
-        $this->assertPathEquals(TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css', $file->path);
+            $response->file(TEST_APP . 'vendor/css/test_asset.css');
+            $file = $response->getFile();
+            $this->assertInstanceOf('Cake\Filesystem\File', $file, 'Should get a file');
+            $this->assertPathEquals(TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css', $file->path);
+        });
     }
 
     /**
      * testConnectionAbortedOnBuffering method
      *
+     * @group deprecated
      * @return void
      */
     public function testConnectionAbortedOnBuffering()
     {
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods([
-                'header',
-                'type',
-                'download',
-                '_sendHeader',
-                '_setContentType',
-                '_isActive',
-            ])
-            ->getMock();
+        $this->deprecated(function () {
+            $response = $this->getMockBuilder('Cake\Http\Response')
+                ->setMethods([
+                    'download',
+                    '_sendHeader',
+                    '_isActive',
+                ])
+                ->getMock();
 
-        $response->expects($this->any())
-            ->method('type')
-            ->with('css')
-            ->will($this->returnArgument(0));
+            $response->expects($this->at(0))
+                ->method('_isActive')
+                ->will($this->returnValue(false));
 
-        $response->expects($this->at(0))
-            ->method('_isActive')
-            ->will($this->returnValue(false));
+            $response->file(TEST_APP . 'vendor/css/test_asset.css');
 
-        $response->file(TEST_APP . 'vendor/css/test_asset.css');
+            ob_start();
+            $result = $response->send();
+            ob_end_clean();
 
-        $result = $response->send();
-        $this->assertNull($result);
+            $this->assertNull($result);
+            $this->assertEquals('text/css', $response->getType());
+            $this->assertFalse($response->hasHeader('Content-Range'));
+        });
     }
 
     /**
      * Test downloading files with UPPERCASE extensions.
      *
+     * @group deprecated
      * @return void
      */
     public function testFileUpperExtension()
     {
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods([
-                'header',
-                'type',
-                'download',
-                '_sendHeader',
-                '_setContentType',
-                '_isActive',
-            ])
-            ->getMock();
-
-        $response->expects($this->any())
-            ->method('type')
-            ->with('jpg')
-            ->will($this->returnArgument(0));
-
-        $response->expects($this->at(0))
-            ->method('_isActive')
-            ->will($this->returnValue(true));
-
-        $response->file(TEST_APP . 'vendor/img/test_2.JPG');
+        $this->deprecated(function () {
+            $response = new Response();
+            $response->file(TEST_APP . 'vendor/img/test_2.JPG');
+            $this->assertSame('image/jpeg', $response->getType());
+        });
     }
 
     /**
@@ -2340,36 +2382,6 @@ class ResponseTest extends TestCase
         $response = new Response();
         $new = $response->withFile(TEST_APP . 'vendor/img/test_2.JPG');
         $this->assertEquals('image/jpeg', $new->getHeaderLine('Content-Type'));
-    }
-
-    /**
-     * Test downloading files with extension not explicitly set.
-     *
-     * @return void
-     */
-    public function testFileExtensionNotSet()
-    {
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods([
-                'header',
-                'type',
-                'download',
-                '_sendHeader',
-                '_setContentType',
-                '_isActive',
-            ])
-            ->getMock();
-
-        $response->expects($this->any())
-            ->method('type')
-            ->with('jpg')
-            ->will($this->returnArgument(0));
-
-        $response->expects($this->at(0))
-            ->method('_isActive')
-            ->will($this->returnValue(true));
-
-        $response->file(TEST_APP . 'vendor/img/test_2.JPG');
     }
 
     /**
@@ -2407,53 +2419,42 @@ class ResponseTest extends TestCase
     /**
      * Test the various range offset types.
      *
+     * @group deprecated
      * @dataProvider rangeProvider
      * @return void
      */
     public function testFileRangeOffsets($range, $length, $offsetResponse)
     {
-        $_SERVER['HTTP_RANGE'] = $range;
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods([
-                'header',
-                'type',
-                '_sendHeader',
-                '_setContentType',
-                '_isActive',
-            ])
-            ->getMock();
+        $this->deprecated(function () use ($range, $length, $offsetResponse) {
+            $_SERVER['HTTP_RANGE'] = $range;
+            $response = $this->getMockBuilder('Cake\Http\Response')
+                ->setMethods([
+                    '_sendHeader',
+                    '_isActive',
+                ])
+                ->getMock();
 
-        $response->expects($this->at(1))
-            ->method('header')
-            ->with('Content-Disposition', 'attachment; filename="test_asset.css"');
+            $response->expects($this->any())
+                ->method('_isActive')
+                ->will($this->returnValue(true));
 
-        $response->expects($this->at(2))
-            ->method('header')
-            ->with('Content-Transfer-Encoding', 'binary');
+            $response->file(
+                TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
+                ['download' => true]
+            );
 
-        $response->expects($this->at(3))
-            ->method('header')
-            ->with('Accept-Ranges', 'bytes');
-
-        $response->expects($this->at(4))
-            ->method('header')
-            ->with([
-                'Content-Length' => $length,
-                'Content-Range' => $offsetResponse,
-            ]);
-
-        $response->expects($this->any())
-            ->method('_isActive')
-            ->will($this->returnValue(true));
-
-        $response->file(
-            TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
-            ['download' => true]
-        );
-
-        ob_start();
-        $result = $response->send();
-        ob_get_clean();
+            ob_start();
+            $result = $response->send();
+            ob_get_clean();
+            $this->assertEquals(
+                'attachment; filename="test_asset.css"',
+                $response->getHeaderLine('Content-Disposition')
+            );
+            $this->assertEquals('binary', $response->getHeaderLine('Content-Transfer-Encoding'));
+            $this->assertEquals('bytes', $response->getHeaderLine('Accept-Ranges'));
+            $this->assertEquals($length, $response->getHeaderLine('Content-Length'));
+            $this->assertEquals($offsetResponse, $response->getHeaderLine('Content-Range'));
+        });
     }
 
     /**
@@ -2483,60 +2484,45 @@ class ResponseTest extends TestCase
     /**
      * Test fetching ranges from a file.
      *
+     * @group deprecated
      * @return void
      */
     public function testFileRange()
     {
-        $_SERVER['HTTP_RANGE'] = 'bytes=8-25';
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods([
-                'header',
-                'type',
-                '_sendHeader',
-                '_setContentType',
-                '_isActive',
-            ])
-            ->getMock();
+        $this->deprecated(function () {
+            $_SERVER['HTTP_RANGE'] = 'bytes=8-25';
+            $response = $this->getMockBuilder('Cake\Http\Response')
+                ->setMethods([
+                    '_sendHeader',
+                    '_isActive',
+                ])
+                ->getMock();
 
-        $response->expects($this->exactly(1))
-            ->method('type')
-            ->with('css')
-            ->will($this->returnArgument(0));
+            $response->expects($this->any())
+                ->method('_isActive')
+                ->will($this->returnValue(true));
 
-        $response->expects($this->at(1))
-            ->method('header')
-            ->with('Content-Disposition', 'attachment; filename="test_asset.css"');
+            $response->file(
+                TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
+                ['download' => true]
+            );
 
-        $response->expects($this->at(2))
-            ->method('header')
-            ->with('Content-Transfer-Encoding', 'binary');
+            ob_start();
+            $result = $response->send();
+            $output = ob_get_clean();
+            $this->assertEquals('is the test asset ', $output);
+            $this->assertNotFalse($result);
 
-        $response->expects($this->at(3))
-            ->method('header')
-            ->with('Accept-Ranges', 'bytes');
-
-        $response->expects($this->at(4))
-            ->method('header')
-            ->with([
-                'Content-Length' => 18,
-                'Content-Range' => 'bytes 8-25/38',
-            ]);
-
-        $response->expects($this->any())
-            ->method('_isActive')
-            ->will($this->returnValue(true));
-
-        $response->file(
-            TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
-            ['download' => true]
-        );
-
-        ob_start();
-        $result = $response->send();
-        $output = ob_get_clean();
-        $this->assertEquals(206, $response->statusCode());
-        $this->assertEquals('is the test asset ', $output);
-        $this->assertNotSame(false, $result);
+            $this->assertEquals(
+                'attachment; filename="test_asset.css"',
+                $response->getHeaderLine('Content-Disposition')
+            );
+            $this->assertEquals('binary', $response->getHeaderLine('Content-Transfer-Encoding'));
+            $this->assertEquals('bytes', $response->getHeaderLine('Accept-Ranges'));
+            $this->assertEquals('18', $response->getHeaderLine('Content-Length'));
+            $this->assertEquals('bytes 8-25/38', $response->getHeaderLine('Content-Range'));
+            $this->assertEquals(206, $response->getStatusCode());
+        });
     }
 
     /**
@@ -2587,33 +2573,36 @@ class ResponseTest extends TestCase
     /**
      * Test invalid file ranges.
      *
+     * @group deprecated
      * @dataProvider invalidFileRangeProvider
      * @return void
      */
     public function testFileRangeInvalid($range)
     {
-        $_SERVER['HTTP_RANGE'] = $range;
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods([
-                '_sendHeader',
-                '_isActive',
-            ])
-            ->getMock();
+        $this->deprecated(function () use ($range) {
+            $_SERVER['HTTP_RANGE'] = $range;
+            $response = $this->getMockBuilder('Cake\Http\Response')
+                ->setMethods([
+                    '_sendHeader',
+                    '_isActive',
+                ])
+                ->getMock();
 
-        $response->file(
-            TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
-            ['download' => true]
-        );
+            $response->file(
+                TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
+                ['download' => true]
+            );
 
-        $expected = [
-            'Content-Type' => 'text/css; charset=UTF-8',
-            'Content-Disposition' => 'attachment; filename="test_asset.css"',
-            'Content-Transfer-Encoding' => 'binary',
-            'Accept-Ranges' => 'bytes',
-            'Content-Range' => 'bytes 0-37/38',
-            'Content-Length' => 38,
-        ];
-        $this->assertEquals($expected, $response->header());
+            $this->assertEquals('text/css', $response->getType());
+            $this->assertEquals(
+                'attachment; filename="test_asset.css"',
+                $response->getHeaderLine('Content-Disposition')
+            );
+            $this->assertEquals('binary', $response->getHeaderLine('Content-Transfer-Encoding'));
+            $this->assertEquals('bytes', $response->getHeaderLine('Accept-Ranges'));
+            $this->assertEquals('38', $response->getHeaderLine('Content-Length'));
+            $this->assertEquals('bytes 0-37/38', $response->getHeaderLine('Content-Range'));
+        });
     }
 
     /**
@@ -2645,45 +2634,34 @@ class ResponseTest extends TestCase
     /**
      * Test reversed file ranges.
      *
+     * @group deprecated
      * @return void
      */
     public function testFileRangeReversed()
     {
-        $_SERVER['HTTP_RANGE'] = 'bytes=30-2';
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods([
-                'header',
-                'type',
-                '_sendHeader',
-                '_isActive',
-            ])
-            ->getMock();
+        $this->deprecated(function () {
+            $_SERVER['HTTP_RANGE'] = 'bytes=30-2';
+            $response = $this->getMockBuilder('Cake\Http\Response')
+                ->setMethods([
+                    '_sendHeader',
+                    '_isActive',
+                ])
+                ->getMock();
 
-        $response->expects($this->at(1))
-            ->method('header')
-            ->with('Content-Disposition', 'attachment; filename="test_asset.css"');
+            $response->file(
+                TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
+                ['download' => true]
+            );
 
-        $response->expects($this->at(2))
-            ->method('header')
-            ->with('Content-Transfer-Encoding', 'binary');
-
-        $response->expects($this->at(3))
-            ->method('header')
-            ->with('Accept-Ranges', 'bytes');
-
-        $response->expects($this->at(4))
-            ->method('header')
-            ->with([
-                'Content-Range' => 'bytes 0-37/38',
-            ]);
-
-        $response->file(
-            TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
-            ['download' => true]
-        );
-
-        $this->assertEquals(416, $response->statusCode());
-        $result = $response->send();
+            $this->assertEquals(416, $response->getStatusCode());
+            $this->assertEquals('bytes', $response->getHeaderLine('Accept-Ranges'));
+            $this->assertEquals(
+                'attachment; filename="test_asset.css"',
+                $response->getHeaderLine('Content-Disposition')
+            );
+            $this->assertEquals('binary', $response->getHeaderLine('Content-Transfer-Encoding'));
+            $this->assertEquals('bytes 0-37/38', $response->getHeaderLine('Content-Range'));
+        });
     }
 
     /**
@@ -2713,143 +2691,115 @@ class ResponseTest extends TestCase
     /**
      * testFileRangeOffsetsNoDownload method
      *
+     * @group deprecated
      * @dataProvider rangeProvider
      * @return void
      */
     public function testFileRangeOffsetsNoDownload($range, $length, $offsetResponse)
     {
-        $_SERVER['HTTP_RANGE'] = $range;
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods([
-                'header',
-                'type',
-                '_sendHeader',
-                '_isActive',
-            ])
-            ->getMock();
+        $this->deprecated(function () use ($range, $length, $offsetResponse) {
+            $_SERVER['HTTP_RANGE'] = $range;
+            $response = $this->getMockBuilder('Cake\Http\Response')
+                ->setMethods([
+                    '_sendHeader',
+                    '_isActive',
+                ])
+                ->getMock();
 
-        $response->expects($this->at(1))
-            ->method('header')
-            ->with('Accept-Ranges', 'bytes');
+            $response->expects($this->any())
+                ->method('_isActive')
+                ->will($this->returnValue(true));
 
-        $response->expects($this->at(2))
-            ->method('header')
-            ->with([
-                'Content-Length' => $length,
-                'Content-Range' => $offsetResponse,
-            ]);
+            $response->file(
+                TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
+                ['download' => false]
+            );
 
-        $response->expects($this->any())
-            ->method('_isActive')
-            ->will($this->returnValue(true));
-
-        $response->file(
-            TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
-            ['download' => false]
-        );
-
-        ob_start();
-        $result = $response->send();
-        ob_get_clean();
+            ob_start();
+            $result = $response->send();
+            ob_get_clean();
+            $this->assertEquals('bytes', $response->getHeaderLine('Accept-Ranges'));
+            $this->assertEquals($length, $response->getHeaderLine('Content-Length'));
+            $this->assertEquals($offsetResponse, $response->getHeaderLine('Content-Range'));
+        });
     }
 
     /**
      * testFileRangeNoDownload method
      *
+     * @group deprecated
      * @return void
      */
     public function testFileRangeNoDownload()
     {
-        $_SERVER['HTTP_RANGE'] = 'bytes=8-25';
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods([
-                'header',
-                'type',
-                '_sendHeader',
-                '_isActive',
-            ])
-            ->getMock();
+        $this->deprecated(function () {
+            $_SERVER['HTTP_RANGE'] = 'bytes=8-25';
+            $response = $this->getMockBuilder('Cake\Http\Response')
+                ->setMethods([
+                    '_sendHeader',
+                    '_isActive',
+                ])
+                ->getMock();
 
-        $response->expects($this->exactly(1))
-            ->method('type')
-            ->with('css')
-            ->will($this->returnArgument(0));
+            $response->expects($this->any())
+                ->method('_isActive')
+                ->will($this->returnValue(true));
 
-        $response->expects($this->at(1))
-            ->method('header')
-            ->with('Accept-Ranges', 'bytes');
+            $response->file(
+                TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
+                ['download' => false]
+            );
 
-        $response->expects($this->at(2))
-            ->method('header')
-            ->with([
-                'Content-Length' => 18,
-                'Content-Range' => 'bytes 8-25/38',
-            ]);
-
-        $response->expects($this->any())
-            ->method('_isActive')
-            ->will($this->returnValue(true));
-
-        $response->file(
-            TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
-            ['download' => false]
-        );
-
-        ob_start();
-        $result = $response->send();
-        $output = ob_get_clean();
-        $this->assertEquals(206, $response->statusCode());
-        $this->assertEquals('is the test asset ', $output);
-        $this->assertNotSame(false, $result);
+            ob_start();
+            $result = $response->send();
+            $output = ob_get_clean();
+            $this->assertEquals('bytes', $response->getHeaderLine('Accept-Ranges'));
+            $this->assertEquals('18', $response->getHeaderLine('Content-Length'));
+            $this->assertEquals('bytes 8-25/38', $response->getHeaderLine('Content-Range'));
+            $this->assertEquals('text/css', $response->getType());
+            $this->assertEquals(206, $response->getStatusCode());
+            $this->assertEquals('is the test asset ', $output);
+            $this->assertNotFalse($result);
+        });
     }
 
     /**
      * testFileRangeInvalidNoDownload method
      *
+     * @group deprecated
      * @return void
      */
     public function testFileRangeInvalidNoDownload()
     {
-        $_SERVER['HTTP_RANGE'] = 'bytes=30-2';
-        $response = $this->getMockBuilder('Cake\Http\Response')
-            ->setMethods([
-                'header',
-                'type',
-                '_sendHeader',
-                '_isActive',
-            ])
-            ->getMock();
+        $this->deprecated(function () {
+            $_SERVER['HTTP_RANGE'] = 'bytes=30-2';
+            $response = new Response();
+            $response->file(
+                TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
+                ['download' => false]
+            );
 
-        $response->expects($this->at(1))
-            ->method('header')
-            ->with('Accept-Ranges', 'bytes');
-
-        $response->expects($this->at(2))
-            ->method('header')
-            ->with([
-                'Content-Range' => 'bytes 0-37/38',
-            ]);
-
-        $response->file(
-            TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
-            ['download' => false]
-        );
-
-        $this->assertEquals(416, $response->statusCode());
-        $result = $response->send();
+            $this->assertEquals(416, $response->statusCode());
+            $this->assertEquals('bytes', $response->getHeaderLine('Accept-Ranges'));
+            $this->assertEquals('text/css', $response->getType());
+            $this->assertEquals('bytes 0-37/38', $response->getHeaderLine('Content-Range'));
+        });
     }
 
     /**
      * Test the location method.
      *
+     * @group deprecated
      * @return void
      */
     public function testLocation()
     {
-        $response = new Response();
-        $this->assertNull($response->location(), 'No header should be set.');
-        $this->assertNull($response->location('http://example.org'), 'Setting a location should return null');
-        $this->assertEquals('http://example.org', $response->location(), 'Reading a location should return the value.');
+        $this->deprecated(function () {
+            $response = new Response();
+            $this->assertNull($response->location(), 'No header should be set.');
+            $this->assertNull($response->location('http://example.org'), 'Setting a location should return null');
+            $this->assertEquals('http://example.org', $response->location(), 'Reading a location should return the value.');
+        });
     }
 
     /**
@@ -2915,6 +2865,19 @@ class ResponseTest extends TestCase
         $statusCode = $response->getStatusCode();
         $this->assertEquals(200, $statusCode);
         $this->assertNotEquals($response, $response2);
+    }
+
+    /**
+     * Test invalid status codes
+     *
+     * @return void
+     */
+    public function testWithStatusInvalid()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid status code: 1001. Use a valid HTTP status code in range 1xx - 5xx.');
+        $response = new Response();
+        $response->withStatus(1001);
     }
 
     /**

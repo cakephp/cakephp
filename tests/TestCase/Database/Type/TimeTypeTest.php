@@ -49,7 +49,7 @@ class TimeTypeTest extends TestCase
         parent::setUp();
         $this->type = new TimeType();
         $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
-        $this->locale = I18n::locale();
+        $this->locale = I18n::getLocale();
     }
 
     /**
@@ -60,7 +60,7 @@ class TimeTypeTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        I18n::locale($this->locale);
+        I18n::setLocale($this->locale);
     }
 
     /**
@@ -83,6 +83,27 @@ class TimeTypeTest extends TestCase
         $this->assertEquals('16', $result->format('H'));
         $this->assertEquals('30', $result->format('i'));
         $this->assertEquals('15', $result->format('s'));
+    }
+
+    /**
+     * Test converting string times to PHP values.
+     *
+     * @return void
+     */
+    public function testManyToPHP()
+    {
+        $values = [
+            'a' => null,
+            'b' => '01:30:13',
+        ];
+        $expected = [
+            'a' => null,
+            'b' => new Time('01:30:13'),
+        ];
+        $this->assertEquals(
+            $expected,
+            $this->type->manyToPHP($values, array_keys($values), $this->driver)
+        );
     }
 
     /**
@@ -223,7 +244,7 @@ class TimeTypeTest extends TestCase
         $updated = setlocale(LC_COLLATE, 'da_DK.utf8');
         $this->skipIf($updated === false, 'Could not set locale to da_DK.utf8, skipping test.');
 
-        I18n::locale('da_DK');
+        I18n::setLocale('da_DK');
         $this->type->useLocaleParser();
         $expected = new Time('03:20:00');
         $result = $this->type->marshal('03.20');

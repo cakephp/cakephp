@@ -16,9 +16,9 @@ namespace Cake\Test\TestCase\Console;
 
 use Cake\Controller\Exception\MissingActionException;
 use Cake\Core\Exception\Exception;
+use Cake\Http\Exception\InternalErrorException;
+use Cake\Http\Exception\NotFoundException;
 use Cake\Log\Log;
-use Cake\Network\Exception\InternalErrorException;
-use Cake\Network\Exception\NotFoundException;
 use Cake\TestSuite\TestCase;
 
 /**

@@ -17,6 +17,8 @@ namespace Cake\Test\TestCase\View;
 use Cake\Cache\Cache;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
+use Cake\View\Exception\MissingCellViewException;
+use Cake\View\Exception\MissingTemplateException;
 use Cake\View\View;
 use TestApp\Controller\CellTraitTestController;
 use TestApp\View\CustomJsonView;
@@ -196,9 +198,17 @@ class CellTest extends TestCase
      */
     public function testCellManualRenderError()
     {
-        $this->expectException(\Cake\View\Exception\MissingCellViewException::class);
         $cell = $this->View->cell('Articles');
-        $cell->render('derp');
+
+        $e = null;
+        try {
+            $cell->render('derp');
+        } catch (MissingCellViewException $e) {
+        }
+
+        $this->assertNotNull($e);
+        $this->assertEquals('Cell view file "derp" is missing.', $e->getMessage());
+        $this->assertInstanceOf(MissingTemplateException::class, $e->getPrevious());
     }
 
     /**
@@ -328,7 +338,7 @@ class CellTest extends TestCase
     {
         $cell = $this->View->cell('Articles', [], ['limit' => 10, 'nope' => 'nope']);
         $this->assertEquals(10, $cell->limit);
-        $this->assertFalse(property_exists('nope', $cell), 'Not a valid option');
+        $this->assertObjectNotHasAttribute('nope', $cell, 'Not a valid option');
     }
 
     /**
@@ -393,7 +403,7 @@ class CellTest extends TestCase
         $mock->expects($this->once())
             ->method('write')
             ->with('cell_test_app_view_cell_articles_cell_display_default', "dummy\n");
-        Cache::config('default', $mock);
+        Cache::setConfig('default', $mock);
 
         $cell = $this->View->cell('Articles', [], ['cache' => true]);
         $result = $cell->render();
@@ -415,7 +425,7 @@ class CellTest extends TestCase
             ->will($this->returnValue("dummy\n"));
         $mock->expects($this->never())
             ->method('write');
-        Cache::config('default', $mock);
+        Cache::setConfig('default', $mock);
 
         $cell = $this->View->cell('Articles', [], ['cache' => true]);
         $result = $cell->render();
@@ -438,7 +448,7 @@ class CellTest extends TestCase
         $mock->expects($this->once())
             ->method('write')
             ->with('my_key', "dummy\n");
-        Cache::config('cell', $mock);
+        Cache::setConfig('cell', $mock);
 
         $cell = $this->View->cell('Articles', [], [
             'cache' => ['key' => 'my_key', 'config' => 'cell']
@@ -463,7 +473,7 @@ class CellTest extends TestCase
         $mock->expects($this->once())
             ->method('write')
             ->with('cell_test_app_view_cell_articles_cell_customTemplate_default', "<h1>This is the alternate template</h1>\n");
-        Cache::config('default', $mock);
+        Cache::setConfig('default', $mock);
 
         $cell = $this->View->cell('Articles::customTemplate', [], ['cache' => true]);
         $result = $cell->render();
@@ -480,7 +490,7 @@ class CellTest extends TestCase
      */
     public function testCachedRenderSimpleCustomTemplateViewBuilder()
     {
-        Cache::config('default', [
+        Cache::setConfig('default', [
             'className' => 'File',
             'path' => CACHE,
         ]);
@@ -502,7 +512,7 @@ class CellTest extends TestCase
      */
     public function testACachedViewCellReRendersWhenGivenADifferentTemplate()
     {
-        Cache::config('default', [
+        Cache::setConfig('default', [
             'className' => 'File',
             'path' => CACHE,
         ]);

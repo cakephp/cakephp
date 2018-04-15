@@ -17,15 +17,47 @@ namespace Cake\Test\TestCase\Http;
 use Cake\Core\Configure;
 use Cake\Http\RequestTransformer;
 use Cake\Http\ServerRequestFactory;
-use Cake\Network\Session;
+use Cake\Http\Session;
 use Cake\TestSuite\TestCase;
 use Zend\Diactoros\Stream;
 
 /**
  * Test for RequestTransformer
+ *
+ * @group deprecated
  */
 class RequestTransformerTest extends TestCase
 {
+    /**
+     * Old error level
+     *
+     * @var int
+     */
+    protected $errorLevel;
+
+    /**
+     * setup
+     *
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        $this->errorLevel = error_reporting(E_ALL ^ E_USER_DEPRECATED);
+    }
+
+    /**
+     * teardown
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        parent::tearDown();
+        error_reporting($this->errorLevel);
+        unset($this->errorLevel);
+    }
+
     /**
      * Test transforming GET params.
      *

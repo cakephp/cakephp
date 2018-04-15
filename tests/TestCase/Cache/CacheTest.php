@@ -97,6 +97,27 @@ class CacheTest extends TestCase
     }
 
     /**
+     * tests you can disable Cache::engine() fallback
+     *
+     * @return void
+     */
+    public function testCacheEngineFallbackDisabled()
+    {
+        $this->expectException(Error::class);
+
+        $filename = tempnam(TMP, 'tmp_');
+
+        Cache::setConfig('tests', [
+            'engine' => 'File',
+            'path' => $filename,
+            'prefix' => 'test_',
+            'fallback' => false
+        ]);
+
+        $engine = Cache::engine('tests');
+    }
+
+    /**
      * tests handling misconfiguration of fallback
      *
      * @return void
@@ -105,9 +126,6 @@ class CacheTest extends TestCase
     {
         $filename = tempnam(TMP, 'tmp_');
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('cannot fallback to itself');
-
         Cache::setConfig('tests', [
             'engine' => 'File',
             'path' => $filename,
@@ -115,10 +133,18 @@ class CacheTest extends TestCase
             'fallback' => 'tests'
         ]);
 
-        Cache::engine('tests');
+        $e = null;
+        try {
+            Cache::engine('tests');
+        } catch (InvalidArgumentException $e) {
+        }
 
         Cache::drop('tests');
         unlink($filename);
+
+        $this->assertNotNull($e);
+        $this->assertStringEndsWith('cannot fallback to itself.', $e->getMessage());
+        $this->assertInstanceOf('RunTimeException', $e->getPrevious());
     }
 
     /**
@@ -406,6 +432,28 @@ class CacheTest extends TestCase
     /**
      * Test reading configuration.
      *
+     * @group deprecated
+     * @return void
+     */
+    public function testConfigReadCompat()
+    {
+        $this->deprecated(function () {
+            $config = [
+                'engine' => 'File',
+                'path' => TMP,
+                'prefix' => 'cake_'
+            ];
+            Cache::config('tests', $config);
+            $expected = $config;
+            $expected['className'] = $config['engine'];
+            unset($expected['engine']);
+            $this->assertEquals($expected, Cache::config('tests'));
+        });
+    }
+
+    /**
+     * Test reading configuration.
+     *
      * @return void
      */
     public function testConfigRead()
@@ -419,7 +467,7 @@ class CacheTest extends TestCase
         $expected = $config;
         $expected['className'] = $config['engine'];
         unset($expected['engine']);
-        $this->assertEquals($expected, Cache::config('tests'));
+        $this->assertEquals($expected, Cache::getConfig('tests'));
     }
 
     /**
@@ -448,7 +496,7 @@ class CacheTest extends TestCase
     public function testGroupConfigs()
     {
         Cache::drop('test');
-        Cache::config('latest', [
+        Cache::setConfig('latest', [
             'duration' => 300,
             'engine' => 'File',
             'groups' => ['posts', 'comments'],
@@ -465,7 +513,7 @@ class CacheTest extends TestCase
         $result = Cache::groupConfigs('posts');
         $this->assertEquals(['posts' => ['latest']], $result);
 
-        Cache::config('page', [
+        Cache::setConfig('page', [
             'duration' => 86400,
             'engine' => 'File',
             'groups' => ['posts', 'archive'],
@@ -571,13 +619,13 @@ class CacheTest extends TestCase
     {
         $this->_configCache();
         Cache::write('App.falseTest', false, 'tests');
-        $this->assertSame(Cache::read('App.falseTest', 'tests'), false);
+        $this->assertFalse(Cache::read('App.falseTest', 'tests'));
 
         Cache::write('App.trueTest', true, 'tests');
-        $this->assertSame(Cache::read('App.trueTest', 'tests'), true);
+        $this->assertTrue(Cache::read('App.trueTest', 'tests'));
 
         Cache::write('App.nullTest', null, 'tests');
-        $this->assertSame(Cache::read('App.nullTest', 'tests'), null);
+        $this->assertNull(Cache::read('App.nullTest', 'tests'));
 
         Cache::write('App.zeroTest', 0, 'tests');
         $this->assertSame(Cache::read('App.zeroTest', 'tests'), 0);
@@ -618,9 +666,9 @@ class CacheTest extends TestCase
 
         $read = Cache::readMany(array_keys($data), 'tests');
 
-        $this->assertSame($read['App.falseTest'], false);
-        $this->assertSame($read['App.trueTest'], true);
-        $this->assertSame($read['App.nullTest'], null);
+        $this->assertFalse($read['App.falseTest']);
+        $this->assertTrue($read['App.trueTest']);
+        $this->assertNull($read['App.nullTest']);
         $this->assertSame($read['App.zeroTest'], 0);
         $this->assertSame($read['App.zeroTest2'], '0');
     }
@@ -645,11 +693,11 @@ class CacheTest extends TestCase
         Cache::deleteMany(array_keys($data), 'tests');
         $read = Cache::readMany(array_merge(array_keys($data), ['App.keepTest']), 'tests');
 
-        $this->assertSame($read['App.falseTest'], false);
-        $this->assertSame($read['App.trueTest'], false);
-        $this->assertSame($read['App.nullTest'], false);
-        $this->assertSame($read['App.zeroTest'], false);
-        $this->assertSame($read['App.zeroTest2'], false);
+        $this->assertFalse($read['App.falseTest']);
+        $this->assertFalse($read['App.trueTest']);
+        $this->assertFalse($read['App.nullTest']);
+        $this->assertFalse($read['App.zeroTest']);
+        $this->assertFalse($read['App.zeroTest2']);
         $this->assertSame($read['App.keepTest'], 'keepMe');
     }
 
@@ -701,7 +749,7 @@ class CacheTest extends TestCase
         Cache::clear(false, 'test_cache_disable_1');
 
         Cache::disable();
-        Cache::config('test_cache_disable_2', [
+        Cache::setConfig('test_cache_disable_2', [
             'engine' => 'File',
             'path' => TMP . 'tests'
         ]);
@@ -729,11 +777,11 @@ class CacheTest extends TestCase
      */
     public function testClearAll()
     {
-        Cache::config('configTest', [
+        Cache::setConfig('configTest', [
             'engine' => 'File',
             'path' => TMP . 'tests'
         ]);
-        Cache::config('anotherConfigTest', [
+        Cache::setConfig('anotherConfigTest', [
             'engine' => 'File',
             'path' => TMP . 'tests'
         ]);
@@ -812,24 +860,29 @@ class CacheTest extends TestCase
     /**
      * test registry method
      *
+     * @group deprecated
      * @return void
      */
     public function testRegistry()
     {
-        $this->assertInstanceOf(CacheRegistry::class, Cache::registry());
+        $this->deprecated(function () {
+            $this->assertInstanceOf(CacheRegistry::class, Cache::registry());
+        });
     }
 
     /**
      * test registry method setting
      *
+     * @group deprecated
      * @return void
      */
     public function testRegistrySet()
     {
         $registry = new CacheRegistry();
-        Cache::registry($registry);
-
-        $this->assertSame($registry, Cache::registry());
+        $this->deprecated(function () use ($registry) {
+            Cache::registry($registry);
+            $this->assertSame($registry, Cache::registry());
+        });
     }
 
     /**

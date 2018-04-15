@@ -122,7 +122,7 @@ class RouteTest extends TestCase
      *
      * @return void
      */
-    public function testRouteBuildingSmallPlaceholders()
+    public function testRouteCompileSmallPlaceholders()
     {
         $route = new Route(
             '/fighters/:id/move/:x/:y',
@@ -143,6 +143,127 @@ class RouteTest extends TestCase
     }
 
     /**
+     * Test route compile with brace format.
+     *
+     * @return void
+     */
+    public function testRouteCompileBraces()
+    {
+        $route = new Route(
+            '/fighters/{id}/move/{x}/{y}',
+            ['controller' => 'Fighters', 'action' => 'move'],
+            ['id' => '\d+', 'x' => '\d+', 'y' => '\d+', 'pass' => ['id', 'x', 'y']]
+        );
+        $this->assertRegExp($route->compile(), '/fighters/123/move/8/42');
+
+        $result = $route->match([
+            'controller' => 'Fighters',
+            'action' => 'move',
+            'id' => 123,
+            'x' => 8,
+            'y' => 42
+        ]);
+        $this->assertEquals('/fighters/123/move/8/42', $result);
+
+        $route = new Route(
+            '/images/{id}/{x}x{y}',
+            ['controller' => 'Images', 'action' => 'view']
+        );
+        $this->assertRegExp($route->compile(), '/images/123/640x480');
+
+        $result = $route->match([
+            'controller' => 'Images',
+            'action' => 'view',
+            'id' => 123,
+            'x' => 8,
+            'y' => 42
+        ]);
+        $this->assertEquals('/images/123/8x42', $result);
+    }
+
+    /**
+     * Test route compile with brace format.
+     *
+     * @return void
+     */
+    public function testRouteCompileBracesVariableName()
+    {
+        $route = new Route(
+            '/fighters/{0id}',
+            ['controller' => 'Fighters', 'action' => 'move']
+        );
+        $pattern = $route->compile();
+        $this->assertNotRegExp($route->compile(), '/fighters/123', 'Placeholders must start with letter');
+
+        $route = new Route('/fighters/{Id}', ['controller' => 'Fighters', 'action' => 'move']);
+        $this->assertRegExp($route->compile(), '/fighters/123');
+
+        $route = new Route('/fighters/{i_d}', ['controller' => 'Fighters', 'action' => 'move']);
+        $this->assertRegExp($route->compile(), '/fighters/123');
+
+        $route = new Route('/fighters/{id99}', ['controller' => 'Fighters', 'action' => 'move']);
+        $this->assertRegExp($route->compile(), '/fighters/123');
+    }
+
+    /**
+     * Test route compile with brace format.
+     *
+     * @return void
+     */
+    public function testRouteCompileBracesInvalid()
+    {
+        $route = new Route(
+            '/fighters/{ id }',
+            ['controller' => 'Fighters', 'action' => 'move']
+        );
+        $this->assertNotRegExp($route->compile(), '/fighters/123', 'no spaces in placeholder');
+
+        $route = new Route(
+            '/fighters/{i d}',
+            ['controller' => 'Fighters', 'action' => 'move']
+        );
+        $this->assertNotRegExp($route->compile(), '/fighters/123', 'no spaces in placeholder');
+    }
+
+    /**
+     * Test route compile with mixed placeholder types brace format.
+     *
+     * @return void
+     */
+    public function testRouteCompileMixedPlaceholders()
+    {
+        $route = new Route(
+            '/images/{open/:id',
+            ['controller' => 'Images', 'action' => 'open']
+        );
+        $pattern = $route->compile();
+        $this->assertRegExp($pattern, '/images/{open/9', 'Need both {} to enable brace mode');
+        $result = $route->match([
+            'controller' => 'Images',
+            'action' => 'open',
+            'id' => 123,
+        ]);
+        $this->assertEquals('/images/{open/123', $result);
+
+        $route = new Route(
+            '/fighters/{id}/move/{x}/:y',
+            ['controller' => 'Fighters', 'action' => 'move'],
+            ['id' => '\d+', 'x' => '\d+', 'pass' => ['id', 'x']]
+        );
+        $pattern = $route->compile();
+        $this->assertRegExp($pattern, '/fighters/123/move/8/:y');
+
+        $result = $route->match([
+            'controller' => 'Fighters',
+            'action' => 'move',
+            'id' => 123,
+            'x' => 8,
+            'y' => 9
+        ]);
+        $this->assertEquals('/fighters/123/move/8/:y?y=9', $result);
+    }
+
+    /**
      * Test parsing routes with extensions.
      *
      * @return void
@@ -156,10 +277,10 @@ class RouteTest extends TestCase
         );
 
         $result = $route->parse('/posts/index', 'GET');
-        $this->assertFalse(isset($result['_ext']));
+        $this->assertArrayNotHasKey('_ext', $result);
 
         $result = $route->parse('/posts/index.pdf', 'GET');
-        $this->assertFalse(isset($result['_ext']));
+        $this->assertArrayNotHasKey('_ext', $result);
 
         $result = $route->setExtensions(['pdf', 'json', 'xml', 'xml.gz'])->parse('/posts/index.pdf', 'GET');
         $this->assertEquals('pdf', $result['_ext']);
@@ -235,6 +356,23 @@ class RouteTest extends TestCase
         list($outUrl, $outExt) = $route->parseExtension($url);
         $this->assertEquals($url, $outUrl);
         $this->assertNull($outExt);
+    }
+
+    /**
+     * Expects extensions to be set
+     *
+     * @group deprecated
+     * @return void
+     */
+    public function testExtensions()
+    {
+        $this->deprecated(function () {
+            $route = new RouteProtected('/:controller/:action/*', []);
+            $this->assertEquals([], $route->extensions());
+            $route->extensions(['xml']);
+
+            $this->assertEquals(['xml'], $route->extensions());
+        });
     }
 
     /**
@@ -1182,8 +1320,6 @@ class RouteTest extends TestCase
         ]);
         $this->assertFalse($route->parse('/sample', 'GET'));
 
-        // Test for deprecated behavior
-        $_SERVER['REQUEST_METHOD'] = 'POST';
         $expected = [
             'controller' => 'posts',
             'action' => 'index',
@@ -1191,7 +1327,36 @@ class RouteTest extends TestCase
             '_method' => ['PUT', 'POST'],
             '_matchedRoute' => '/sample'
         ];
-        $this->assertEquals($expected, $route->parse('/sample'));
+        $this->assertEquals($expected, $route->parse('/sample', 'POST'));
+    }
+
+    /**
+     * Test deprecated globals reading for method matching
+     *
+     * @group deprecated
+     * @return void
+     */
+    public function testParseWithMultipleHttpMethodDeprecated()
+    {
+        $this->deprecated(function () {
+            $_SERVER['REQUEST_METHOD'] = 'GET';
+            $route = new Route('/sample', [
+                'controller' => 'posts',
+                'action' => 'index',
+                '_method' => ['PUT', 'POST']
+            ]);
+            $this->assertFalse($route->parse('/sample'));
+
+            $_SERVER['REQUEST_METHOD'] = 'POST';
+            $expected = [
+                'controller' => 'posts',
+                'action' => 'index',
+                'pass' => [],
+                '_method' => ['PUT', 'POST'],
+                '_matchedRoute' => '/sample'
+            ];
+            $this->assertEquals($expected, $route->parse('/sample'));
+        });
     }
 
     /**
@@ -1244,29 +1409,32 @@ class RouteTest extends TestCase
     /**
      * Check [method] compatibility.
      *
+     * @group deprecated
      * @return void
      */
     public function testMethodCompatibility()
     {
-        $_SERVER['REQUEST_METHOD'] = 'POST';
-        $route = new Route('/sample', [
-            'controller' => 'Articles',
-            'action' => 'index',
-            '[method]' => 'POST',
-        ]);
-        $url = [
-            'controller' => 'Articles',
-            'action' => 'index',
-            '_method' => 'POST',
-        ];
-        $this->assertEquals('/sample', $route->match($url));
+        $this->deprecated(function () {
+            $_SERVER['REQUEST_METHOD'] = 'POST';
+            $route = new Route('/sample', [
+                'controller' => 'Articles',
+                'action' => 'index',
+                '[method]' => 'POST',
+            ]);
+            $url = [
+                'controller' => 'Articles',
+                'action' => 'index',
+                '_method' => 'POST',
+            ];
+            $this->assertEquals('/sample', $route->match($url));
 
-        $url = [
-            'controller' => 'Articles',
-            'action' => 'index',
-            '[method]' => 'POST',
-        ];
-        $this->assertEquals('/sample', $route->match($url));
+            $url = [
+                'controller' => 'Articles',
+                'action' => 'index',
+                '[method]' => 'POST',
+            ];
+            $this->assertEquals('/sample', $route->match($url));
+        });
     }
 
     /**

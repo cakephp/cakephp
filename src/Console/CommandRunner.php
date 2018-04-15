@@ -14,24 +14,35 @@
  */
 namespace Cake\Console;
 
+use Cake\Command\HelpCommand;
+use Cake\Command\VersionCommand;
 use Cake\Console\CommandCollection;
 use Cake\Console\CommandCollectionAwareInterface;
 use Cake\Console\ConsoleIo;
 use Cake\Console\Exception\StopException;
 use Cake\Console\Shell;
 use Cake\Core\ConsoleApplicationInterface;
-use Cake\Event\EventManagerTrait;
-use Cake\Shell\HelpShell;
-use Cake\Shell\VersionShell;
+use Cake\Core\PluginApplicationInterface;
+use Cake\Event\EventDispatcherInterface;
+use Cake\Event\EventDispatcherTrait;
+use Cake\Event\EventManager;
 use Cake\Utility\Inflector;
+use InvalidArgumentException;
 use RuntimeException;
 
 /**
  * Run CLI commands for the provided application.
  */
-class CommandRunner
+class CommandRunner implements EventDispatcherInterface
 {
-    use EventManagerTrait;
+    /**
+     * Alias methods away so we can implement proxying methods.
+     */
+    use EventDispatcherTrait {
+        eventManager as private _eventManager;
+        getEventManager as private _getEventManager;
+        setEventManager as private _setEventManager;
+    }
 
     /**
      * The application console commands are being run for.
@@ -39,6 +50,13 @@ class CommandRunner
      * @var \Cake\Core\ConsoleApplicationInterface
      */
     protected $app;
+
+    /**
+     * The application console commands are being run for.
+     *
+     * @var \Cake\Console\CommandFactoryInterface
+     */
+    protected $factory;
 
     /**
      * The root command name. Defaults to `cake`.
@@ -59,11 +77,13 @@ class CommandRunner
      *
      * @param \Cake\Core\ConsoleApplicationInterface $app The application to run CLI commands for.
      * @param string $root The root command name to be removed from argv.
+     * @param \Cake\Console\CommandFactoryInterface|null $factory Command factory instance.
      */
-    public function __construct(ConsoleApplicationInterface $app, $root = 'cake')
+    public function __construct(ConsoleApplicationInterface $app, $root = 'cake', CommandFactoryInterface $factory = null)
     {
         $this->app = $app;
         $this->root = $root;
+        $this->factory = $factory ?: new CommandFactory();
         $this->aliases = [
             '--version' => 'version',
             '--help' => 'help',
@@ -111,20 +131,19 @@ class CommandRunner
      */
     public function run(array $argv, ConsoleIo $io = null)
     {
-        $this->app->bootstrap();
+        $this->bootstrap();
 
         $commands = new CommandCollection([
-            'version' => VersionShell::class,
-            'help' => HelpShell::class,
+            'version' => VersionCommand::class,
+            'help' => HelpCommand::class,
         ]);
         $commands = $this->app->console($commands);
-        if (!($commands instanceof CommandCollection)) {
-            $type = is_object($commands) ? get_class($commands) : gettype($commands);
-            throw new RuntimeException(
-                "The application's `console` method did not return a CommandCollection." .
-                " Got '{$type}' instead."
-            );
+        $this->checkCollection($commands, 'console');
+
+        if ($this->app instanceof PluginApplicationInterface) {
+            $commands = $this->app->pluginConsole($commands);
         }
+        $this->checkCollection($commands, 'pluginConsole');
         $this->dispatchEvent('Console.buildCommands', ['commands' => $commands]);
 
         if (empty($argv)) {
@@ -134,13 +153,15 @@ class CommandRunner
         array_shift($argv);
 
         $io = $io ?: new ConsoleIo();
-        $shell = $this->getShell($io, $commands, array_shift($argv));
+        $name = $this->resolveName($commands, $io, array_shift($argv));
 
-        try {
-            $shell->initialize();
-            $result = $shell->runCommand($argv, true);
-        } catch (StopException $e) {
-            return $e->getCode();
+        $result = Shell::CODE_ERROR;
+        $shell = $this->getShell($io, $commands, $name);
+        if ($shell instanceof Shell) {
+            $result = $this->runShell($shell, $argv);
+        }
+        if ($shell instanceof Command) {
+            $result = $shell->run($argv, $io);
         }
 
         if ($result === null || $result === true) {
@@ -154,14 +175,134 @@ class CommandRunner
     }
 
     /**
+     * Application bootstrap wrapper.
+     *
+     * Calls `bootstrap()` and `events()` if application implements `EventApplicationInterface`.
+     * After the application is bootstrapped and events are attached, plugins are bootstrapped
+     * and have their events attached.
+     *
+     * @return void
+     */
+    protected function bootstrap()
+    {
+        $this->app->bootstrap();
+        if ($this->app instanceof PluginApplicationInterface) {
+            $this->app->pluginBootstrap();
+        }
+    }
+
+    /**
+     * Check the created CommandCollection
+     *
+     * @param mixed $commands The CommandCollection to check, could be anything though.
+     * @param string $method The method that was used.
+     * @return void
+     * @throws \RuntimeException
+     * @deprecated 3.6.0 This method should be replaced with return types in 4.x
+     */
+    protected function checkCollection($commands, $method)
+    {
+        if (!($commands instanceof CommandCollection)) {
+            $type = getTypeName($commands);
+            throw new RuntimeException(
+                "The application's `{$method}` method did not return a CommandCollection." .
+                " Got '{$type}' instead."
+            );
+        }
+    }
+
+    /**
+     * Get the application's event manager or the global one.
+     *
+     * @return \Cake\Event\EventManagerInterface
+     */
+    public function getEventManager()
+    {
+        if ($this->app instanceof PluginApplicationInterface) {
+            return $this->app->getEventManager();
+        }
+
+        return EventManager::instance();
+    }
+
+    /**
+     * Get/set the application's event manager.
+     *
+     * If the application does not support events and this method is used as
+     * a setter, an exception will be raised.
+     *
+     * @param \Cake\Event\EventManager|null $events The event manager to set.
+     * @return \Cake\Event\EventManager|$this
+     * @deprecated 3.6.0 Will be removed in 4.0
+     */
+    public function eventManager(EventManager $events = null)
+    {
+        deprecationWarning('eventManager() is deprecated. Use getEventManager()/setEventManager() instead.');
+        if ($events === null) {
+            return $this->getEventManager();
+        }
+
+        return $this->setEventManager($events);
+    }
+
+    /**
+     * Get/set the application's event manager.
+     *
+     * If the application does not support events and this method is used as
+     * a setter, an exception will be raised.
+     *
+     * @param \Cake\Event\EventManager $events The event manager to set.
+     * @return $this
+     */
+    public function setEventManager(EventManager $events)
+    {
+        if ($this->app instanceof PluginApplicationInterface) {
+            $this->app->setEventManager($events);
+
+            return $this;
+        }
+
+        throw new InvalidArgumentException('Cannot set the event manager, the application does not support events.');
+    }
+
+    /**
      * Get the shell instance for a given command name
      *
      * @param \Cake\Console\ConsoleIo $io The IO wrapper for the created shell class.
      * @param \Cake\Console\CommandCollection $commands The command collection to find the shell in.
      * @param string $name The command name to find
-     * @return \Cake\Console\Shell
+     * @return \Cake\Console\Shell|\Cake\Console\Command
      */
     protected function getShell(ConsoleIo $io, CommandCollection $commands, $name)
+    {
+        $instance = $commands->get($name);
+        if (is_string($instance)) {
+            $instance = $this->createShell($instance, $io);
+        }
+        if ($instance instanceof Shell) {
+            $instance->setRootName($this->root);
+        }
+        if ($instance instanceof Command) {
+            $instance->setName("{$this->root} {$name}");
+        }
+        if ($instance instanceof CommandCollectionAwareInterface) {
+            $instance->setCommandCollection($commands);
+        }
+
+        return $instance;
+    }
+
+    /**
+     * Resolve the command name into a name that exists in the collection.
+     *
+     * Apply backwards compatibile inflections and aliases.
+     *
+     * @param \Cake\Console\CommandCollection $commands The command collection to check.
+     * @param \Cake\Console\ConsoleIo $io ConsoleIo object for errors.
+     * @param string $name The name from the CLI args.
+     * @return string The resolved name.
+     */
+    protected function resolveName($commands, $io, $name)
     {
         if (!$name) {
             $io->err('<error>No command provided. Choose one of the available commands.</error>', 2);
@@ -179,16 +320,26 @@ class CommandRunner
                 " Run `{$this->root} --help` to get the list of valid commands."
             );
         }
-        $instance = $commands->get($name);
-        if (is_string($instance)) {
-            $instance = $this->createShell($instance, $io);
-        }
-        $instance->setRootName($this->root);
-        if ($instance instanceof CommandCollectionAwareInterface) {
-            $instance->setCommandCollection($commands);
-        }
 
-        return $instance;
+        return $name;
+    }
+
+    /**
+     * Execute a Shell class.
+     *
+     * @param \Cake\Console\Shell $shell The shell to run.
+     * @param array $argv The CLI arguments to invoke.
+     * @return int Exit code
+     */
+    protected function runShell(Shell $shell, array $argv)
+    {
+        try {
+            $shell->initialize();
+
+            return $shell->runCommand($argv, true);
+        } catch (StopException $e) {
+            return $e->getCode();
+        }
     }
 
     /**
@@ -196,10 +347,15 @@ class CommandRunner
      *
      * @param string $className Shell class name.
      * @param \Cake\Console\ConsoleIo $io The IO wrapper for the created shell class.
-     * @return \Cake\Console\Shell
+     * @return \Cake\Console\Shell|\Cake\Console\Command
      */
     protected function createShell($className, ConsoleIo $io)
     {
-        return new $className($io);
+        $shell = $this->factory->create($className);
+        if ($shell instanceof Shell) {
+            $shell->setIo($io);
+        }
+
+        return $shell;
     }
 }

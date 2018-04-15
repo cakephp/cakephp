@@ -113,6 +113,8 @@ class EagerLoader
      * this allows this object to calculate joins or any additional queries that
      * must be executed to bring the required associated data.
      *
+     * The getter part is deprecated as of 3.6.0. Use getContain() instead.
+     *
      * Accepted options per passed association:
      *
      * - foreignKey: Used to set a different field to match both tables, if set to false
@@ -134,7 +136,12 @@ class EagerLoader
     public function contain($associations = [], callable $queryBuilder = null)
     {
         if (empty($associations)) {
-            return $this->_containments;
+            deprecationWarning(
+                'Using EagerLoader::contain() as getter is deprecated. ' .
+                'Use getContain() instead.'
+            );
+
+            return $this->getContain();
         }
 
         if ($queryBuilder) {
@@ -158,6 +165,19 @@ class EagerLoader
         $this->_aliasList = [];
 
         return $this->_containments = $associations;
+    }
+
+    /**
+     * Gets the list of associations that should be eagerly loaded along for a
+     * specific table using when a query is provided. The list of associated tables
+     * passed to this method must have been previously set as associations using the
+     * Table API.
+     *
+     * @return array Containments.
+     */
+    public function getContain()
+    {
+        return $this->_containments;
     }
 
     /**
@@ -208,6 +228,10 @@ class EagerLoader
      */
     public function autoFields($enable = null)
     {
+        deprecationWarning(
+            'EagerLoader::autoFields() is deprecated. ' .
+            'Use enableAutoFields()/isAutoFieldsEnabled() instead.'
+        );
         if ($enable !== null) {
             $this->enableAutoFields($enable);
         }
@@ -272,7 +296,7 @@ class EagerLoader
             $this->_matching = new static();
         }
 
-        return $this->_matching->contain();
+        return $this->_matching->getContain();
     }
 
     /**
@@ -295,6 +319,10 @@ class EagerLoader
      */
     public function matching($assoc = null, callable $builder = null, $options = [])
     {
+        deprecationWarning(
+            'EagerLoader::matching() is deprecated. ' .
+            'Use setMatch()/getMatching() instead.'
+        );
         if ($assoc !== null) {
             $this->setMatching($assoc, $builder, $options);
         }
@@ -508,7 +536,7 @@ class EagerLoader
     protected function _normalizeContain(Table $parent, $alias, $options, $paths)
     {
         $defaults = $this->_containOptions;
-        $instance = $parent->association($alias);
+        $instance = $parent->getAssociation($alias);
         if (!$instance) {
             throw new InvalidArgumentException(
                 sprintf('%s is not associated with %s', $parent->getAlias(), $alias)
@@ -643,7 +671,7 @@ class EagerLoader
      */
     public function loadExternal($query, $statement)
     {
-        $external = $this->externalAssociations($query->repository());
+        $external = $this->externalAssociations($query->getRepository());
         if (empty($external)) {
             return $statement;
         }
@@ -697,7 +725,7 @@ class EagerLoader
     {
         $map = [];
 
-        if (!$this->getMatching() && !$this->contain() && empty($this->_joinsMap)) {
+        if (!$this->getMatching() && !$this->getContain() && empty($this->_joinsMap)) {
             return $map;
         }
 

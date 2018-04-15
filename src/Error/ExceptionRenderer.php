@@ -20,9 +20,9 @@ use Cake\Core\Configure;
 use Cake\Core\Exception\Exception as CakeException;
 use Cake\Core\Exception\MissingPluginException;
 use Cake\Event\Event;
+use Cake\Http\Exception\HttpException;
 use Cake\Http\Response;
-use Cake\Http\ServerRequest;
-use Cake\Network\Exception\HttpException;
+use Cake\Http\ServerRequestFactory;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
@@ -115,7 +115,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
     protected function _getController()
     {
         if (!$request = Router::getRequest(true)) {
-            $request = ServerRequest::createFromGlobals();
+            $request = ServerRequestFactory::fromGlobals();
         }
         $response = new Response();
         $controller = null;
@@ -169,11 +169,15 @@ class ExceptionRenderer implements ExceptionRendererInterface
 
         $message = $this->_message($exception, $code);
         $url = $this->controller->request->getRequestTarget();
+        $response = $this->controller->response;
 
         if ($exception instanceof CakeException) {
-            $this->controller->response->header($exception->responseHeader());
+            foreach ((array)$exception->responseHeader() as $key => $value) {
+                $response = $response->withHeader($key, $value);
+            }
         }
-        $this->controller->response->statusCode($code);
+        $response = $response->withStatus($code);
+
         $viewVars = [
             'message' => $message,
             'url' => h($url),
@@ -196,6 +200,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
         if ($unwrapped instanceof CakeException && $isDebug) {
             $this->controller->set($unwrapped->getAttributes());
         }
+        $this->controller->response = $response;
 
         return $this->_outputMessage($template);
     }
@@ -212,8 +217,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
         $result = call_user_func([$this, $method], $exception);
         $this->_shutdown();
         if (is_string($result)) {
-            $this->controller->response->body($result);
-            $result = $this->controller->response;
+            $result = $this->controller->response->withStringBody($result);
         }
 
         return $result;
@@ -334,8 +338,8 @@ class ExceptionRenderer implements ExceptionRendererInterface
             return $this->_outputMessage('error500');
         } catch (MissingPluginException $e) {
             $attributes = $e->getAttributes();
-            if (isset($attributes['plugin']) && $attributes['plugin'] === $this->controller->plugin) {
-                $this->controller->plugin = null;
+            if (isset($attributes['plugin']) && $attributes['plugin'] === $this->controller->getPlugin()) {
+                $this->controller->setPlugin(null);
             }
 
             return $this->_outputMessageSafe('error500');
@@ -361,8 +365,9 @@ class ExceptionRenderer implements ExceptionRendererInterface
             ->setTemplatePath('Error');
         $view = $this->controller->createView('View');
 
-        $this->controller->response->body($view->render($template, 'error'));
-        $this->controller->response->type('html');
+        $this->controller->response = $this->controller->response
+            ->withType('html')
+            ->withStringBody($view->render($template, 'error'));
 
         return $this->controller->response;
     }

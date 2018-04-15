@@ -56,7 +56,7 @@ class EntityTest extends TestCase
     public function testSetMultiplePropertiesNoSetters()
     {
         $entity = new Entity();
-        $entity->accessible('*', true);
+        $entity->setAccess('*', true);
 
         $entity->set(['foo' => 'bar', 'id' => 1]);
         $this->assertEquals('bar', $entity->foo);
@@ -186,7 +186,7 @@ class EntityTest extends TestCase
         $entity = $this->getMockBuilder('\Cake\ORM\Entity')
             ->setMethods(['_setName', '_setStuff'])
             ->getMock();
-        $entity->accessible('*', true);
+        $entity->setAccess('*', true);
         $entity->expects($this->once())->method('_setName')
             ->with('Jones')
             ->will($this->returnCallback(function ($name) {
@@ -216,7 +216,7 @@ class EntityTest extends TestCase
         $entity = $this->getMockBuilder('\Cake\ORM\Entity')
             ->setMethods(['_setName', '_setStuff'])
             ->getMock();
-        $entity->accessible('*', true);
+        $entity->setAccess('*', true);
 
         $entity->expects($this->never())->method('_setName');
         $entity->expects($this->never())->method('_setStuff');
@@ -364,7 +364,7 @@ class EntityTest extends TestCase
             ->will($this->returnCallback(function ($name) {
                 return 'A name';
             }));
-        $entity->virtualProperties(['ListIdName']);
+        $entity->setVirtual(['ListIdName']);
         $this->assertSame('A name', $entity->list_id_name, 'underscored virtual field should be accessible');
         $this->assertSame('A name', $entity->listIdName, 'Camelbacked virtual field should be accessible');
     }
@@ -588,10 +588,10 @@ class EntityTest extends TestCase
     public function testIssetArrayAccess()
     {
         $entity = new Entity(['id' => 1, 'name' => 'Juan', 'foo' => null]);
-        $this->assertTrue(isset($entity['id']));
-        $this->assertTrue(isset($entity['name']));
-        $this->assertFalse(isset($entity['foo']));
-        $this->assertFalse(isset($entity['thing']));
+        $this->assertArrayHasKey('id', $entity);
+        $this->assertArrayHasKey('name', $entity);
+        $this->assertArrayNotHasKey('foo', $entity);
+        $this->assertArrayNotHasKey('thing', $entity);
     }
 
     /**
@@ -628,7 +628,7 @@ class EntityTest extends TestCase
         $entity = $this->getMockBuilder('\Cake\ORM\Entity')
             ->setMethods(['set'])
             ->getMock();
-        $entity->accessible('*', true);
+        $entity->setAccess('*', true);
 
         $entity->expects($this->at(0))
             ->method('set')
@@ -780,17 +780,15 @@ class EntityTest extends TestCase
             'title' => 'Foo',
             'author_id' => 3
         ]);
-        $this->assertTrue($entity->dirty('id'));
         $this->assertTrue($entity->isDirty('id'));
         $this->assertTrue($entity->isDirty('title'));
         $this->assertTrue($entity->isDirty('author_id'));
 
-        $this->assertTrue($entity->dirty());
         $this->assertTrue($entity->isDirty());
 
-        $entity->dirty('id', false);
-        $this->assertFalse($entity->dirty('id'));
-        $this->assertTrue($entity->dirty('title'));
+        $entity->setDirty('id', false);
+        $this->assertFalse($entity->isDirty('id'));
+        $this->assertTrue($entity->isDirty('title'));
 
         $entity->setDirty('title', false);
         $this->assertFalse($entity->isDirty('title'));
@@ -1055,7 +1053,7 @@ class EntityTest extends TestCase
         $entity = $this->getMockBuilder('\Cake\ORM\Entity')
             ->setMethods(['_getName'])
             ->getMock();
-        $entity->accessible('*', true);
+        $entity->setAccess('*', true);
         $entity->set(['name' => 'Mark', 'email' => 'mark@example.com']);
         $entity->expects($this->any())
             ->method('_getName')
@@ -1074,7 +1072,7 @@ class EntityTest extends TestCase
     {
         $data = ['secret' => 'sauce', 'name' => 'mark', 'id' => 1];
         $entity = new Entity($data);
-        $entity->hiddenProperties(['secret']);
+        $entity->setHidden(['secret']);
         $this->assertEquals(['name' => 'mark', 'id' => 1], $entity->toArray());
     }
 
@@ -1132,23 +1130,23 @@ class EntityTest extends TestCase
         $entity = $this->getMockBuilder('\Cake\ORM\Entity')
             ->setMethods(['_getName'])
             ->getMock();
-        $entity->accessible('*', true);
+        $entity->setAccess('*', true);
 
         $entity->expects($this->any())
             ->method('_getName')
             ->will($this->returnValue('Jose'));
         $entity->set(['email' => 'mark@example.com']);
 
-        $entity->virtualProperties(['name']);
+        $entity->setVirtual(['name']);
         $expected = ['name' => 'Jose', 'email' => 'mark@example.com'];
         $this->assertEquals($expected, $entity->toArray());
 
-        $this->assertEquals(['name'], $entity->virtualProperties());
+        $this->assertEquals(['name'], $entity->getVirtual());
 
-        $entity->hiddenProperties(['name']);
+        $entity->setHidden(['name']);
         $expected = ['email' => 'mark@example.com'];
         $this->assertEquals($expected, $entity->toArray());
-        $this->assertEquals(['name'], $entity->hiddenProperties());
+        $this->assertEquals(['name'], $entity->getHidden());
     }
 
     /**
@@ -1178,35 +1176,38 @@ class EntityTest extends TestCase
     /**
      * Tests the errors method
      *
+     * @group deprecated
      * @return void
      */
     public function testErrors()
     {
-        $entity = new Entity();
-        $this->assertEmpty($entity->errors());
-        $this->assertSame($entity, $entity->errors('foo', 'bar'));
-        $this->assertEquals(['bar'], $entity->errors('foo'));
+        $this->deprecated(function () {
+            $entity = new Entity();
+            $this->assertEmpty($entity->errors());
+            $this->assertSame($entity, $entity->errors('foo', 'bar'));
+            $this->assertEquals(['bar'], $entity->errors('foo'));
 
-        $this->assertEquals([], $entity->errors('boo'));
-        $entity['boo'] = [
-            'something' => 'stupid',
-            'and' => false
-        ];
-        $this->assertEquals([], $entity->errors('boo'));
+            $this->assertEquals([], $entity->errors('boo'));
+            $entity['boo'] = [
+                'something' => 'stupid',
+                'and' => false
+            ];
+            $this->assertEquals([], $entity->errors('boo'));
 
-        $entity->errors('foo', 'other error');
-        $this->assertEquals(['bar', 'other error'], $entity->errors('foo'));
+            $entity->errors('foo', 'other error');
+            $this->assertEquals(['bar', 'other error'], $entity->errors('foo'));
 
-        $entity->errors('bar', ['something', 'bad']);
-        $this->assertEquals(['something', 'bad'], $entity->errors('bar'));
+            $entity->errors('bar', ['something', 'bad']);
+            $this->assertEquals(['something', 'bad'], $entity->errors('bar'));
 
-        $expected = ['foo' => ['bar', 'other error'], 'bar' => ['something', 'bad']];
-        $this->assertEquals($expected, $entity->errors());
+            $expected = ['foo' => ['bar', 'other error'], 'bar' => ['something', 'bad']];
+            $this->assertEquals($expected, $entity->errors());
 
-        $errors = ['foo' => ['something'], 'bar' => 'else', 'baz' => ['error']];
-        $this->assertSame($entity, $entity->errors($errors, null, true));
-        $errors['bar'] = ['else'];
-        $this->assertEquals($errors, $entity->errors());
+            $errors = ['foo' => ['something'], 'bar' => 'else', 'baz' => ['error']];
+            $this->assertSame($entity, $entity->errors($errors, null, true));
+            $errors['bar'] = ['else'];
+            $this->assertEquals($errors, $entity->errors());
+        });
     }
 
     /**
@@ -1220,7 +1221,7 @@ class EntityTest extends TestCase
         $this->assertEmpty($entity->getErrors());
 
         $entity->setError('foo', 'bar');
-        $this->assertEquals(['bar'], $entity->errors('foo'));
+        $this->assertEquals(['bar'], $entity->getError('foo'));
 
         $expected = [
             'foo' => ['bar']
@@ -1244,30 +1245,30 @@ class EntityTest extends TestCase
             'user' => $user,
             'owner' => $owner
         ]);
-        $author->errors('thing', ['this is a mistake']);
-        $user->errors(['a' => ['error1'], 'b' => ['error2']]);
-        $owner->errors(['c' => ['error3'], 'd' => ['error4']]);
+        $author->setError('thing', ['this is a mistake']);
+        $user->setErrors(['a' => ['error1'], 'b' => ['error2']]);
+        $owner->setErrors(['c' => ['error3'], 'd' => ['error4']]);
 
         $expected = ['a' => ['error1'], 'b' => ['error2']];
-        $this->assertEquals($expected, $author->errors('user'));
+        $this->assertEquals($expected, $author->getError('user'));
 
         $expected = ['c' => ['error3'], 'd' => ['error4']];
-        $this->assertEquals($expected, $author->errors('owner'));
+        $this->assertEquals($expected, $author->getError('owner'));
 
         $author->set('multiple', [$user, $owner]);
         $expected = [
             ['a' => ['error1'], 'b' => ['error2']],
             ['c' => ['error3'], 'd' => ['error4']]
         ];
-        $this->assertEquals($expected, $author->errors('multiple'));
+        $this->assertEquals($expected, $author->getError('multiple'));
 
         $expected = [
-            'thing' => $author->errors('thing'),
-            'user' => $author->errors('user'),
-            'owner' => $author->errors('owner'),
-            'multiple' => $author->errors('multiple')
+            'thing' => $author->getError('thing'),
+            'user' => $author->getError('user'),
+            'owner' => $author->getError('owner'),
+            'multiple' => $author->getError('multiple')
         ];
-        $this->assertEquals($expected, $author->errors());
+        $this->assertEquals($expected, $author->getErrors());
     }
 
     /**
@@ -1284,21 +1285,21 @@ class EntityTest extends TestCase
             'one' => $assoc,
             'many' => [$assoc2]
         ]);
-        $entity->errors('wrong', 'Bad stuff');
-        $assoc->errors('nope', 'Terrible things');
-        $assoc2->errors('nope', 'Terrible things');
+        $entity->setError('wrong', 'Bad stuff');
+        $assoc->setError('nope', 'Terrible things');
+        $assoc2->setError('nope', 'Terrible things');
 
-        $this->assertEquals(['Bad stuff'], $entity->errors('wrong'));
-        $this->assertEquals(['Terrible things'], $entity->errors('many.0.nope'));
-        $this->assertEquals(['Terrible things'], $entity->errors('one.nope'));
-        $this->assertEquals(['nope' => ['Terrible things']], $entity->errors('one'));
-        $this->assertEquals([0 => ['nope' => ['Terrible things']]], $entity->errors('many'));
-        $this->assertEquals(['nope' => ['Terrible things']], $entity->errors('many.0'));
+        $this->assertEquals(['Bad stuff'], $entity->getError('wrong'));
+        $this->assertEquals(['Terrible things'], $entity->getError('many.0.nope'));
+        $this->assertEquals(['Terrible things'], $entity->getError('one.nope'));
+        $this->assertEquals(['nope' => ['Terrible things']], $entity->getError('one'));
+        $this->assertEquals([0 => ['nope' => ['Terrible things']]], $entity->getError('many'));
+        $this->assertEquals(['nope' => ['Terrible things']], $entity->getError('many.0'));
 
-        $this->assertEquals([], $entity->errors('many.0.mistake'));
-        $this->assertEquals([], $entity->errors('one.mistake'));
-        $this->assertEquals([], $entity->errors('one.1.mistake'));
-        $this->assertEquals([], $entity->errors('many.1.nope'));
+        $this->assertEquals([], $entity->getError('many.0.mistake'));
+        $this->assertEquals([], $entity->getError('one.mistake'));
+        $this->assertEquals([], $entity->getError('one.1.mistake'));
+        $this->assertEquals([], $entity->getError('many.1.nope'));
     }
 
     /**
@@ -1310,13 +1311,13 @@ class EntityTest extends TestCase
     public function testDirtyRemovesError()
     {
         $entity = new Entity(['a' => 'b']);
-        $entity->errors('a', 'is not good');
+        $entity->setError('a', 'is not good');
         $entity->set('a', 'c');
-        $this->assertEmpty($entity->errors('a'));
+        $this->assertEmpty($entity->getError('a'));
 
-        $entity->errors('a', 'is not good');
-        $entity->dirty('a', true);
-        $this->assertEmpty($entity->errors('a'));
+        $entity->setError('a', 'is not good');
+        $entity->setDirty('a', true);
+        $this->assertEmpty($entity->getError('a'));
     }
 
     /**
@@ -1327,9 +1328,9 @@ class EntityTest extends TestCase
     public function testCleanRemovesErrors()
     {
         $entity = new Entity(['a' => 'b']);
-        $entity->errors('a', 'is not good');
+        $entity->setError('a', 'is not good');
         $entity->clean();
-        $this->assertEmpty($entity->errors());
+        $this->assertEmpty($entity->getErrors());
     }
 
     /**
@@ -1340,25 +1341,25 @@ class EntityTest extends TestCase
     public function testAccessible()
     {
         $entity = new Entity();
-        $entity->accessible('*', false);
-        $this->assertFalse($entity->accessible('foo'));
-        $this->assertFalse($entity->accessible('bar'));
+        $entity->setAccess('*', false);
+        $this->assertFalse($entity->isAccessible('foo'));
+        $this->assertFalse($entity->isAccessible('bar'));
 
-        $this->assertSame($entity, $entity->accessible('foo', true));
-        $this->assertTrue($entity->accessible('foo'));
-        $this->assertFalse($entity->accessible('bar'));
+        $this->assertSame($entity, $entity->setAccess('foo', true));
+        $this->assertTrue($entity->isAccessible('foo'));
+        $this->assertFalse($entity->isAccessible('bar'));
 
-        $this->assertSame($entity, $entity->accessible('bar', true));
-        $this->assertTrue($entity->accessible('foo'));
-        $this->assertTrue($entity->accessible('bar'));
+        $this->assertSame($entity, $entity->setAccess('bar', true));
+        $this->assertTrue($entity->isAccessible('foo'));
+        $this->assertTrue($entity->isAccessible('bar'));
 
-        $this->assertSame($entity, $entity->accessible('foo', false));
-        $this->assertFalse($entity->accessible('foo'));
-        $this->assertTrue($entity->accessible('bar'));
+        $this->assertSame($entity, $entity->setAccess('foo', false));
+        $this->assertFalse($entity->isAccessible('foo'));
+        $this->assertTrue($entity->isAccessible('bar'));
 
-        $this->assertSame($entity, $entity->accessible('bar', false));
-        $this->assertFalse($entity->accessible('foo'));
-        $this->assertFalse($entity->accessible('bar'));
+        $this->assertSame($entity, $entity->setAccess('bar', false));
+        $this->assertFalse($entity->isAccessible('foo'));
+        $this->assertFalse($entity->isAccessible('bar'));
     }
 
     /**
@@ -1369,20 +1370,20 @@ class EntityTest extends TestCase
     public function testAccessibleAsArray()
     {
         $entity = new Entity();
-        $entity->accessible(['foo', 'bar', 'baz'], true);
-        $this->assertTrue($entity->accessible('foo'));
-        $this->assertTrue($entity->accessible('bar'));
-        $this->assertTrue($entity->accessible('baz'));
+        $entity->setAccess(['foo', 'bar', 'baz'], true);
+        $this->assertTrue($entity->isAccessible('foo'));
+        $this->assertTrue($entity->isAccessible('bar'));
+        $this->assertTrue($entity->isAccessible('baz'));
 
-        $entity->accessible('foo', false);
-        $this->assertFalse($entity->accessible('foo'));
-        $this->assertTrue($entity->accessible('bar'));
-        $this->assertTrue($entity->accessible('baz'));
+        $entity->setAccess('foo', false);
+        $this->assertFalse($entity->isAccessible('foo'));
+        $this->assertTrue($entity->isAccessible('bar'));
+        $this->assertTrue($entity->isAccessible('baz'));
 
-        $entity->accessible(['foo', 'bar', 'baz'], false);
-        $this->assertFalse($entity->accessible('foo'));
-        $this->assertFalse($entity->accessible('bar'));
-        $this->assertFalse($entity->accessible('baz'));
+        $entity->setAccess(['foo', 'bar', 'baz'], false);
+        $this->assertFalse($entity->isAccessible('foo'));
+        $this->assertFalse($entity->isAccessible('bar'));
+        $this->assertFalse($entity->isAccessible('baz'));
     }
 
     /**
@@ -1393,22 +1394,22 @@ class EntityTest extends TestCase
     public function testAccessibleWildcard()
     {
         $entity = new Entity();
-        $entity->accessible(['foo', 'bar', 'baz'], true);
-        $this->assertTrue($entity->accessible('foo'));
-        $this->assertTrue($entity->accessible('bar'));
-        $this->assertTrue($entity->accessible('baz'));
+        $entity->setAccess(['foo', 'bar', 'baz'], true);
+        $this->assertTrue($entity->isAccessible('foo'));
+        $this->assertTrue($entity->isAccessible('bar'));
+        $this->assertTrue($entity->isAccessible('baz'));
 
-        $entity->accessible('*', false);
-        $this->assertFalse($entity->accessible('foo'));
-        $this->assertFalse($entity->accessible('bar'));
-        $this->assertFalse($entity->accessible('baz'));
-        $this->assertFalse($entity->accessible('newOne'));
+        $entity->setAccess('*', false);
+        $this->assertFalse($entity->isAccessible('foo'));
+        $this->assertFalse($entity->isAccessible('bar'));
+        $this->assertFalse($entity->isAccessible('baz'));
+        $this->assertFalse($entity->isAccessible('newOne'));
 
-        $entity->accessible('*', true);
-        $this->assertTrue($entity->accessible('foo'));
-        $this->assertTrue($entity->accessible('bar'));
-        $this->assertTrue($entity->accessible('baz'));
-        $this->assertTrue($entity->accessible('newOne2'));
+        $entity->setAccess('*', true);
+        $this->assertTrue($entity->isAccessible('foo'));
+        $this->assertTrue($entity->isAccessible('bar'));
+        $this->assertTrue($entity->isAccessible('baz'));
+        $this->assertTrue($entity->isAccessible('newOne2'));
     }
 
     /**
@@ -1420,14 +1421,14 @@ class EntityTest extends TestCase
     {
         $entity = new Entity(['foo' => 1, 'bar' => 2]);
         $options = ['guard' => true];
-        $entity->accessible('*', false);
-        $entity->accessible('foo', true);
+        $entity->setAccess('*', false);
+        $entity->setAccess('foo', true);
         $entity->set('bar', 3, $options);
         $entity->set('foo', 4, $options);
         $this->assertEquals(2, $entity->get('bar'));
         $this->assertEquals(4, $entity->get('foo'));
 
-        $entity->accessible('bar', true);
+        $entity->setAccess('bar', true);
         $entity->set('bar', 3, $options);
         $this->assertEquals(3, $entity->get('bar'));
     }
@@ -1441,13 +1442,13 @@ class EntityTest extends TestCase
     {
         $entity = new Entity(['foo' => 1, 'bar' => 2]);
         $options = ['guard' => true];
-        $entity->accessible('*', false);
-        $entity->accessible('foo', true);
+        $entity->setAccess('*', false);
+        $entity->setAccess('foo', true);
         $entity->set(['bar' => 3, 'foo' => 4], $options);
         $this->assertEquals(2, $entity->get('bar'));
         $this->assertEquals(4, $entity->get('foo'));
 
-        $entity->accessible('bar', true);
+        $entity->setAccess('bar', true);
         $entity->set(['bar' => 3, 'foo' => 5], $options);
         $this->assertEquals(3, $entity->get('bar'));
         $this->assertEquals(5, $entity->get('foo'));
@@ -1461,8 +1462,8 @@ class EntityTest extends TestCase
     public function testSetWithAccessibleSingleProperty()
     {
         $entity = new Entity(['foo' => 1, 'bar' => 2]);
-        $entity->accessible('*', false);
-        $entity->accessible('title', true);
+        $entity->setAccess('*', false);
+        $entity->setAccess('title', true);
 
         $entity->set(['title' => 'test', 'body' => 'Nope']);
         $this->assertEquals('test', $entity->title);
@@ -1495,13 +1496,13 @@ class EntityTest extends TestCase
     {
         $entity = new Entity(['foo' => 'bar'], ['markClean' => true]);
         $entity->somethingElse = 'value';
-        $entity->accessible('id', false);
-        $entity->accessible('name', true);
-        $entity->virtualProperties(['baz']);
+        $entity->setAccess('id', false);
+        $entity->setAccess('name', true);
+        $entity->setVirtual(['baz']);
         $entity->setDirty('foo', true);
-        $entity->errors('foo', ['An error']);
-        $entity->invalid('foo', 'a value');
-        $entity->source('foos');
+        $entity->setError('foo', ['An error']);
+        $entity->setInvalidField('foo', 'a value');
+        $entity->setSource('foos');
         $result = $entity->__debugInfo();
         $expected = [
             'foo' => 'bar',
@@ -1522,14 +1523,17 @@ class EntityTest extends TestCase
     /**
      * Tests the source method
      *
+     * @group deprecated
      * @return void
      */
     public function testSource()
     {
-        $entity = new Entity();
-        $this->assertNull($entity->source());
-        $entity->source('foos');
-        $this->assertEquals('foos', $entity->source());
+        $this->deprecated(function () {
+            $entity = new Entity();
+            $this->assertNull($entity->source());
+            $entity->source('foos');
+            $this->assertEquals('foos', $entity->source());
+        });
     }
 
     /**
@@ -1591,14 +1595,40 @@ class EntityTest extends TestCase
         );
 
         $this->assertFalse($entity->isNew());
-        $this->assertFalse($entity->dirty());
+        $this->assertFalse($entity->isDirty());
 
         $cloned = clone $entity;
         $cloned->isNew(true);
 
-        $this->assertTrue($cloned->dirty());
-        $this->assertTrue($cloned->dirty('a'));
-        $this->assertTrue($cloned->dirty('b'));
+        $this->assertTrue($cloned->isDirty());
+        $this->assertTrue($cloned->isDirty('a'));
+        $this->assertTrue($cloned->isDirty('b'));
+    }
+
+    /**
+     * Provides empty values
+     *
+     * @group deprecated
+     * @return void
+     */
+    public function testDirtyFromClone()
+    {
+        $this->deprecated(function () {
+            $entity = new Entity(
+                ['a' => 1, 'b' => 2],
+                ['markNew' => false, 'markClean' => true]
+            );
+
+            $this->assertFalse($entity->isNew());
+            $this->assertFalse($entity->dirty());
+
+            $cloned = clone $entity;
+            $cloned->isNew(true);
+
+            $this->assertTrue($cloned->dirty());
+            $this->assertTrue($cloned->dirty('a'));
+            $this->assertTrue($cloned->dirty('b'));
+        });
     }
 
     /**
@@ -1665,5 +1695,69 @@ class EntityTest extends TestCase
     {
         $entity = new Entity();
         $this->assertNull($entity->getInvalidField('foo'));
+    }
+
+    /**
+     * Test the isEmpty() check
+     *
+     * @return void
+     */
+    public function testIsEmpty()
+    {
+        $entity = new Entity([
+            'array' => ['foo' => 'bar'],
+            'emptyArray' => [],
+            'object' => new \stdClass(),
+            'string' => 'string',
+            'emptyString' => '',
+            'intZero' => 0,
+            'intNotZero' => 1,
+            'floatZero' => 0.0,
+            'floatNonZero' => 1.5,
+            'null' => null
+        ]);
+
+        $this->assertFalse($entity->isEmpty('array'));
+        $this->assertTrue($entity->isEmpty('emptyArray'));
+        $this->assertFalse($entity->isEmpty('object'));
+        $this->assertFalse($entity->isEmpty('string'));
+        $this->assertTrue($entity->isEmpty('emptyString'));
+        $this->assertFalse($entity->isEmpty('intZero'));
+        $this->assertFalse($entity->isEmpty('intNotZero'));
+        $this->assertFalse($entity->isEmpty('floatZero'));
+        $this->assertFalse($entity->isEmpty('floatNonZero'));
+        $this->assertTrue($entity->isEmpty('null'));
+    }
+
+    /**
+     * Test hasValue()
+     *
+     * @return void
+     */
+    public function testHasValue()
+    {
+        $entity = new Entity([
+            'array' => ['foo' => 'bar'],
+            'emptyArray' => [],
+            'object' => new \stdClass(),
+            'string' => 'string',
+            'emptyString' => '',
+            'intZero' => 0,
+            'intNotZero' => 1,
+            'floatZero' => 0.0,
+            'floatNonZero' => 1.5,
+            'null' => null
+        ]);
+
+        $this->assertTrue($entity->hasValue('array'));
+        $this->assertFalse($entity->hasValue('emptyArray'));
+        $this->assertTrue($entity->hasValue('object'));
+        $this->assertTrue($entity->hasValue('string'));
+        $this->assertFalse($entity->hasValue('emptyString'));
+        $this->assertTrue($entity->hasValue('intZero'));
+        $this->assertTrue($entity->hasValue('intNotZero'));
+        $this->assertTrue($entity->hasValue('floatZero'));
+        $this->assertTrue($entity->hasValue('floatNonZero'));
+        $this->assertFalse($entity->hasValue('null'));
     }
 }

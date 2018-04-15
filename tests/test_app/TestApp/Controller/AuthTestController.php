@@ -45,9 +45,6 @@ class AuthTestController extends Controller
      */
     public function __construct($request = null, $response = null)
     {
-        $request->addParams(Router::parse('/auth_test'));
-        $request->here = '/auth_test';
-        $request->webroot = '/';
         Router::setRequestInfo($request);
         parent::__construct($request, $response);
     }

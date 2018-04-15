@@ -55,10 +55,10 @@ class DatabaseSuite extends TestSuite
     {
         $permutations = [
             'Identifier Quoting' => function () {
-                ConnectionManager::get('test')->driver()->autoQuoting(true);
+                ConnectionManager::get('test')->getDriver()->enableAutoQuoting(true);
             },
             'No identifier quoting' => function () {
-                ConnectionManager::get('test')->driver()->autoQuoting(false);
+                ConnectionManager::get('test')->getDriver()->enableAutoQuoting(false);
             }
         ];
 

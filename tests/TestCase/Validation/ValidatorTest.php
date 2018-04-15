@@ -15,6 +15,8 @@
 namespace Cake\Test\TestCase\Validation;
 
 use Cake\TestSuite\TestCase;
+use Cake\Validation\Validation;
+use Cake\Validation\ValidationRule;
 use Cake\Validation\ValidationSet;
 use Cake\Validation\Validator;
 
@@ -43,6 +45,15 @@ class ValidatorTest extends TestCase
         $validator->add('body', 'another', ['rule' => 'crazy']);
         $this->assertCount(1, $validator->field('body'));
         $this->assertCount(2, $validator);
+
+        $validator->add('email', 'notBlank');
+        $result = $validator->field('email')->rule('notBlank')->get('rule');
+        $this->assertEquals('notBlank', $result);
+
+        $rule = new ValidationRule();
+        $validator->add('field', 'myrule', $rule);
+        $result = $validator->field('field')->rule('myrule');
+        $this->assertSame($rule, $result);
     }
 
     /**
@@ -68,7 +79,7 @@ class ValidatorTest extends TestCase
     public function testAddNestedSingleProviders()
     {
         $validator = new Validator();
-        $validator->provider('test', $this);
+        $validator->setProvider('test', $this);
 
         $inner = new Validator();
         $inner->add('username', 'not-blank', ['rule' => function () use ($inner, $validator) {
@@ -80,6 +91,36 @@ class ValidatorTest extends TestCase
 
         $result = $validator->errors(['user' => ['username' => 'example']]);
         $this->assertNotEmpty($result, 'Validation should fail');
+    }
+
+    /**
+     * Testing addNested with extra `$message` and `$when` params
+     *
+     * @return void
+     */
+    public function testAddNestedWithExtra()
+    {
+        $inner = new Validator();
+        $inner->requirePresence('username');
+
+        $validator = new Validator();
+        $validator->addNested('user', $inner, 'errors found', 'create');
+
+        $this->assertCount(1, $validator->field('user'));
+
+        $rule = $validator->field('user')->rule(Validator::NESTED);
+        $this->assertSame('create', $rule->get('on'));
+
+        $errors = $validator->errors(['user' => 'string']);
+        $this->assertArrayHasKey('user', $errors);
+        $this->assertArrayHasKey(Validator::NESTED, $errors['user']);
+        $this->assertSame('errors found', $errors['user'][Validator::NESTED]);
+
+        $errors = $validator->errors(['user' => ['key' => 'value']]);
+        $this->assertArrayHasKey('user', $errors);
+        $this->assertArrayHasKey(Validator::NESTED, $errors['user']);
+
+        $this->assertEmpty($validator->errors(['user' => ['key' => 'value']], false));
     }
 
     /**
@@ -105,7 +146,7 @@ class ValidatorTest extends TestCase
     public function testAddNestedManyProviders()
     {
         $validator = new Validator();
-        $validator->provider('test', $this);
+        $validator->setProvider('test', $this);
 
         $inner = new Validator();
         $inner->add('comment', 'not-blank', ['rule' => function () use ($inner, $validator) {
@@ -117,6 +158,41 @@ class ValidatorTest extends TestCase
 
         $result = $validator->errors(['comments' => [['comment' => 'example']]]);
         $this->assertNotEmpty($result, 'Validation should fail');
+    }
+
+    /**
+     * Testing addNestedMany with extra `$message` and `$when` params
+     *
+     * @return void
+     */
+    public function testAddNestedManyWithExtra()
+    {
+        $inner = new Validator();
+        $inner->requirePresence('body');
+
+        $validator = new Validator();
+        $validator->addNestedMany('comments', $inner, 'errors found', 'create');
+
+        $this->assertCount(1, $validator->field('comments'));
+
+        $rule = $validator->field('comments')->rule(Validator::NESTED);
+        $this->assertSame('create', $rule->get('on'));
+
+        $errors = $validator->errors(['comments' => 'string']);
+        $this->assertArrayHasKey('comments', $errors);
+        $this->assertArrayHasKey(Validator::NESTED, $errors['comments']);
+        $this->assertSame('errors found', $errors['comments'][Validator::NESTED]);
+
+        $errors = $validator->errors(['comments' => ['string']]);
+        $this->assertArrayHasKey('comments', $errors);
+        $this->assertArrayHasKey(Validator::NESTED, $errors['comments']);
+        $this->assertSame('errors found', $errors['comments'][Validator::NESTED]);
+
+        $errors = $validator->errors(['comments' => [['body' => null]]]);
+        $this->assertArrayHasKey('comments', $errors);
+        $this->assertArrayHasKey(Validator::NESTED, $errors['comments']);
+
+        $this->assertEmpty($validator->errors(['comments' => [['body' => null]]], false));
     }
 
     /**
@@ -926,15 +1002,15 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $object = new \stdClass;
-        $this->assertSame($validator, $validator->provider('foo', $object));
-        $this->assertSame($object, $validator->provider('foo'));
-        $this->assertNull($validator->provider('bar'));
+        $this->assertSame($validator, $validator->setProvider('foo', $object));
+        $this->assertSame($object, $validator->getProvider('foo'));
+        $this->assertNull($validator->getProvider('bar'));
 
         $another = new \stdClass;
-        $this->assertSame($validator, $validator->provider('bar', $another));
-        $this->assertSame($another, $validator->provider('bar'));
+        $this->assertSame($validator, $validator->setProvider('bar', $another));
+        $this->assertSame($another, $validator->getProvider('bar'));
 
-        $this->assertEquals(new \Cake\Validation\RulesProvider, $validator->provider('default'));
+        $this->assertEquals(new \Cake\Validation\RulesProvider, $validator->getProvider('default'));
     }
 
     /**
@@ -997,7 +1073,7 @@ class ValidatorTest extends TestCase
                 return "That ain't cool, yo";
             }));
 
-        $validator->provider('thing', $thing);
+        $validator->setProvider('thing', $thing);
         $errors = $validator->errors(['email' => '!', 'title' => 'bar']);
         $expected = [
             'email' => ['alpha' => 'The provided value is invalid'],
@@ -1044,7 +1120,7 @@ class ValidatorTest extends TestCase
 
                 return "That ain't cool, yo";
             }));
-        $validator->provider('thing', $thing);
+        $validator->setProvider('thing', $thing);
         $errors = $validator->errors(['email' => '!', 'title' => 'bar']);
         $expected = [
             'title' => ['cool' => "That ain't cool, yo"]
@@ -1118,9 +1194,9 @@ class ValidatorTest extends TestCase
         $validator
             ->add('email', 'alpha', ['rule' => 'alphanumeric'])
             ->add('title', 'cool', ['rule' => 'isCool', 'provider' => 'thing']);
-        $this->assertTrue(isset($validator['email']));
-        $this->assertTrue(isset($validator['title']));
-        $this->assertFalse(isset($validator['foo']));
+        $this->assertArrayHasKey('email', $validator);
+        $this->assertArrayHasKey('title', $validator);
+        $this->assertArrayNotHasKey('foo', $validator);
     }
 
     /**
@@ -1151,9 +1227,9 @@ class ValidatorTest extends TestCase
         $validator
             ->add('email', 'alpha', ['rule' => 'alphanumeric'])
             ->add('title', 'cool', ['rule' => 'isCool', 'provider' => 'thing']);
-        $this->assertTrue(isset($validator['title']));
+        $this->assertArrayHasKey('title', $validator);
         unset($validator['title']);
-        $this->assertFalse(isset($validator['title']));
+        $this->assertArrayNotHasKey('title', $validator);
     }
 
     /**
@@ -1220,8 +1296,8 @@ class ValidatorTest extends TestCase
     public function testDebugInfo()
     {
         $validator = new Validator();
-        $validator->provider('test', $this);
-        $validator->add('title', 'not-empty', ['rule' => 'notEmpty']);
+        $validator->setProvider('test', $this);
+        $validator->add('title', 'not-empty', ['rule' => 'notBlank']);
         $validator->requirePresence('body');
         $validator->allowEmpty('published');
 
@@ -1352,7 +1428,7 @@ class ValidatorTest extends TestCase
     public function testGreaterThan()
     {
         $validator = new Validator();
-        $this->assertProxyMethod($validator, 'greaterThan', 5, ['>', 5], 'comparison');
+        $this->assertProxyMethod($validator, 'greaterThan', 5, [Validation::COMPARE_GREATER, 5], 'comparison');
         $this->assertNotEmpty($validator->errors(['username' => 2]));
     }
 
@@ -1364,7 +1440,7 @@ class ValidatorTest extends TestCase
     public function testGreaterThanOrEqual()
     {
         $validator = new Validator();
-        $this->assertProxyMethod($validator, 'greaterThanOrEqual', 5, ['>=', 5], 'comparison');
+        $this->assertProxyMethod($validator, 'greaterThanOrEqual', 5, [Validation::COMPARE_GREATER_OR_EQUAL, 5], 'comparison');
         $this->assertNotEmpty($validator->errors(['username' => 2]));
     }
 
@@ -1376,7 +1452,7 @@ class ValidatorTest extends TestCase
     public function testLessThan()
     {
         $validator = new Validator();
-        $this->assertProxyMethod($validator, 'lessThan', 5, ['<', 5], 'comparison');
+        $this->assertProxyMethod($validator, 'lessThan', 5, [Validation::COMPARE_LESS, 5], 'comparison');
         $this->assertNotEmpty($validator->errors(['username' => 5]));
     }
 
@@ -1388,7 +1464,7 @@ class ValidatorTest extends TestCase
     public function testLessThanOrEqual()
     {
         $validator = new Validator();
-        $this->assertProxyMethod($validator, 'lessThanOrEqual', 5, ['<=', 5], 'comparison');
+        $this->assertProxyMethod($validator, 'lessThanOrEqual', 5, [Validation::COMPARE_LESS_OR_EQUAL, 5], 'comparison');
         $this->assertNotEmpty($validator->errors(['username' => 6]));
     }
 
@@ -1400,7 +1476,7 @@ class ValidatorTest extends TestCase
     public function testEquals()
     {
         $validator = new Validator();
-        $this->assertProxyMethod($validator, 'equals', 5, ['==', 5], 'comparison');
+        $this->assertProxyMethod($validator, 'equals', 5, [Validation::COMPARE_EQUAL, 5], 'comparison');
         $this->assertEmpty($validator->errors(['username' => 5]));
         $this->assertNotEmpty($validator->errors(['username' => 6]));
     }
@@ -1413,7 +1489,7 @@ class ValidatorTest extends TestCase
     public function testNotEquals()
     {
         $validator = new Validator();
-        $this->assertProxyMethod($validator, 'notEquals', 5, ['!=', 5], 'comparison');
+        $this->assertProxyMethod($validator, 'notEquals', 5, [Validation::COMPARE_NOT_EQUAL, 5], 'comparison');
         $this->assertNotEmpty($validator->errors(['username' => 5]));
     }
 
@@ -1425,8 +1501,96 @@ class ValidatorTest extends TestCase
     public function testSameAs()
     {
         $validator = new Validator();
-        $this->assertProxyMethod($validator, 'sameAs', 'other', ['other'], 'compareWith');
+        $this->assertProxyMethod($validator, 'sameAs', 'other', ['other', Validation::COMPARE_SAME], 'compareFields');
         $this->assertNotEmpty($validator->errors(['username' => 'foo']));
+        $this->assertNotEmpty($validator->errors(['username' => 1, 'other' => '1']));
+    }
+
+    /**
+     * Tests the notSameAs proxy method
+     *
+     * @return void
+     */
+    public function testNotSameAs()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'notSameAs', 'other', ['other', Validation::COMPARE_NOT_SAME], 'compareFields');
+        $this->assertNotEmpty($validator->errors(['username' => 'foo', 'other' => 'foo']));
+    }
+
+    /**
+     * Tests the equalToField proxy method
+     *
+     * @return void
+     */
+    public function testEqualToField()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'equalToField', 'other', ['other', Validation::COMPARE_EQUAL], 'compareFields');
+        $this->assertNotEmpty($validator->errors(['username' => 'foo']));
+        $this->assertNotEmpty($validator->errors(['username' => 'foo', 'other' => 'bar']));
+    }
+
+    /**
+     * Tests the notEqualToField proxy method
+     *
+     * @return void
+     */
+    public function testNotEqualToField()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'notEqualToField', 'other', ['other', Validation::COMPARE_NOT_EQUAL], 'compareFields');
+        $this->assertNotEmpty($validator->errors(['username' => 'foo', 'other' => 'foo']));
+    }
+
+    /**
+     * Tests the greaterThanField proxy method
+     *
+     * @return void
+     */
+    public function testGreaterThanField()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'greaterThanField', 'other', ['other', Validation::COMPARE_GREATER], 'compareFields');
+        $this->assertNotEmpty($validator->errors(['username' => 1, 'other' => 1]));
+        $this->assertNotEmpty($validator->errors(['username' => 1, 'other' => 2]));
+    }
+
+    /**
+     * Tests the greaterThanOrEqualToField proxy method
+     *
+     * @return void
+     */
+    public function testGreaterThanOrEqualToField()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'greaterThanOrEqualToField', 'other', ['other', Validation::COMPARE_GREATER_OR_EQUAL], 'compareFields');
+        $this->assertNotEmpty($validator->errors(['username' => 1, 'other' => 2]));
+    }
+
+    /**
+     * Tests the lessThanField proxy method
+     *
+     * @return void
+     */
+    public function testLessThanField()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'lessThanField', 'other', ['other', Validation::COMPARE_LESS], 'compareFields');
+        $this->assertNotEmpty($validator->errors(['username' => 1, 'other' => 1]));
+        $this->assertNotEmpty($validator->errors(['username' => 2, 'other' => 1]));
+    }
+
+    /**
+     * Tests the lessThanOrEqualToField proxy method
+     *
+     * @return void
+     */
+    public function testLessThanOrEqualToField()
+    {
+        $validator = new Validator();
+        $this->assertProxyMethod($validator, 'lessThanOrEqualToField', 'other', ['other', Validation::COMPARE_LESS_OR_EQUAL], 'compareFields');
+        $this->assertNotEmpty($validator->errors(['username' => 2, 'other' => 1]));
     }
 
     /**

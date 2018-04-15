@@ -58,6 +58,31 @@ class JsonTypeTest extends TestCase
     }
 
     /**
+     * Test converting json stirngs to PHP values.
+     *
+     * @return void
+     */
+    public function testManyToPHP()
+    {
+        $values = [
+            'a' => null,
+            'b' => json_encode([1, 2, 3]),
+            'c' => json_encode('123'),
+            'c' => json_encode(2.3),
+        ];
+        $expected = [
+            'a' => null,
+            'b' => [1, 2, 3],
+            'c' => 123,
+            'c' => 2.3,
+        ];
+        $this->assertEquals(
+            $expected,
+            $this->type->manyToPHP($values, array_keys($values), $this->driver)
+        );
+    }
+
+    /**
      * Test converting to database format
      *
      * @return void

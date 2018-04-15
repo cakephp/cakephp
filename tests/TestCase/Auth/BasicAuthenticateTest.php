@@ -16,11 +16,10 @@ namespace Cake\Test\TestCase\Auth;
 
 use Cake\Auth\BasicAuthenticate;
 use Cake\Controller\ComponentRegistry;
+use Cake\Http\Exception\UnauthorizedException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\I18n\Time;
-use Cake\Network\Exception\UnauthorizedException;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -52,7 +51,7 @@ class BasicAuthenticateTest extends TestCase
         ]);
 
         $password = password_hash('password', PASSWORD_BCRYPT);
-        $User = TableRegistry::get('Users');
+        $User = $this->getTableLocator()->get('Users');
         $User->updateAll(['password' => $password], []);
         $this->response = $this->getMockBuilder(Response::class)->getMock();
     }
@@ -68,8 +67,8 @@ class BasicAuthenticateTest extends TestCase
             'userModel' => 'AuthUser',
             'fields' => ['username' => 'user', 'password' => 'password']
         ]);
-        $this->assertEquals('AuthUser', $object->config('userModel'));
-        $this->assertEquals(['username' => 'user', 'password' => 'password'], $object->config('fields'));
+        $this->assertEquals('AuthUser', $object->getConfig('userModel'));
+        $this->assertEquals(['username' => 'user', 'password' => 'password'], $object->getConfig('fields'));
     }
 
     /**
@@ -129,9 +128,8 @@ class BasicAuthenticateTest extends TestCase
             'environment' => [
                 'PHP_AUTH_USER' => '> 1',
                 'PHP_AUTH_PW' => "' OR 1 = 1"
-            ]
+            ],
         ]);
-        $request->addParams(['pass' => []]);
 
         $this->assertFalse($this->auth->getUser($request));
         $this->assertFalse($this->auth->authenticate($request, $this->response));
@@ -144,14 +142,18 @@ class BasicAuthenticateTest extends TestCase
      */
     public function testAuthenticateUsernameZero()
     {
-        $User = TableRegistry::get('Users');
+        $User = $this->getTableLocator()->get('Users');
         $User->updateAll(['username' => '0'], ['username' => 'mariano']);
 
-        $request = new ServerRequest('posts/index');
-        $request->data = ['User' => [
-            'user' => '0',
-            'password' => 'password'
-        ]];
+        $request = new ServerRequest([
+            'url' => 'posts/index',
+            'data' => [
+                'User' => [
+                    'user' => '0',
+                    'password' => 'password'
+                ]
+            ]
+        ]);
         $_SERVER['PHP_AUTH_USER'] = '0';
         $_SERVER['PHP_AUTH_PW'] = 'password';
 
@@ -172,7 +174,6 @@ class BasicAuthenticateTest extends TestCase
     public function testAuthenticateChallenge()
     {
         $request = new ServerRequest('posts/index');
-        $request->addParams(['pass' => []]);
 
         try {
             $this->auth->unauthenticated($request, $this->response);
@@ -181,7 +182,7 @@ class BasicAuthenticateTest extends TestCase
 
         $this->assertNotEmpty($e);
 
-        $expected = ['WWW-Authenticate: Basic realm="localhost"'];
+        $expected = ['WWW-Authenticate' => 'Basic realm="localhost"'];
         $this->assertEquals($expected, $e->responseHeader());
     }
 
@@ -199,7 +200,6 @@ class BasicAuthenticateTest extends TestCase
                 'PHP_AUTH_PW' => 'password'
             ]
         ]);
-        $request->addParams(['pass' => []]);
 
         $result = $this->auth->authenticate($request, $this->response);
         $expected = [
@@ -218,9 +218,9 @@ class BasicAuthenticateTest extends TestCase
      */
     public function testAuthenticateFailReChallenge()
     {
-        $this->expectException(\Cake\Network\Exception\UnauthorizedException::class);
+        $this->expectException(\Cake\Http\Exception\UnauthorizedException::class);
         $this->expectExceptionCode(401);
-        $this->auth->config('scope.username', 'nate');
+        $this->auth->setConfig('scope.username', 'nate');
         $request = new ServerRequest([
             'url' => 'posts/index',
             'environment' => [
@@ -228,7 +228,6 @@ class BasicAuthenticateTest extends TestCase
                 'PHP_AUTH_PW' => 'password'
             ]
         ]);
-        $request->addParams(['pass' => []]);
 
         $this->auth->unauthenticated($request, $this->response);
     }

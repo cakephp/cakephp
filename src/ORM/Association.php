@@ -279,6 +279,10 @@ abstract class Association
      */
     public function name($name = null)
     {
+        deprecationWarning(
+            get_called_class() . '::name() is deprecated. ' .
+            'Use setName()/getName() instead.'
+        );
         if ($name !== null) {
             $this->setName($name);
         }
@@ -319,6 +323,10 @@ abstract class Association
      */
     public function cascadeCallbacks($cascadeCallbacks = null)
     {
+        deprecationWarning(
+            get_called_class() . '::cascadeCallbacks() is deprecated. ' .
+            'Use setCascadeCallbacks()/getCascadeCallbacks() instead.'
+        );
         if ($cascadeCallbacks !== null) {
             $this->setCascadeCallbacks($cascadeCallbacks);
         }
@@ -369,6 +377,10 @@ abstract class Association
      */
     public function source(Table $table = null)
     {
+        deprecationWarning(
+            get_called_class() . '::source() is deprecated. ' .
+            'Use setSource()/getSource() instead.'
+        );
         if ($table === null) {
             return $this->_sourceTable;
         }
@@ -445,6 +457,10 @@ abstract class Association
      */
     public function target(Table $table = null)
     {
+        deprecationWarning(
+            get_called_class() . '::target() is deprecated. ' .
+            'Use setTarget()/getTarget() instead.'
+        );
         if ($table !== null) {
             $this->setTarget($table);
         }
@@ -486,10 +502,14 @@ abstract class Association
      * @deprecated 3.4.0 Use setConditions()/getConditions() instead.
      * @param array|null $conditions list of conditions to be used
      * @see \Cake\Database\Query::where() for examples on the format of the array
-     * @return array
+     * @return array|callable
      */
     public function conditions($conditions = null)
     {
+        deprecationWarning(
+            get_called_class() . '::conditions() is deprecated. ' .
+            'Use setConditions()/getConditions() instead.'
+        );
         if ($conditions !== null) {
             $this->setConditions($conditions);
         }
@@ -540,6 +560,10 @@ abstract class Association
      */
     public function bindingKey($key = null)
     {
+        deprecationWarning(
+            get_called_class() . '::bindingKey() is deprecated. ' .
+            'Use setBindingKey()/getBindingKey() instead.'
+        );
         if ($key !== null) {
             $this->setBindingKey($key);
         }
@@ -580,6 +604,10 @@ abstract class Association
      */
     public function foreignKey($key = null)
     {
+        deprecationWarning(
+            get_called_class() . '::foreignKey() is deprecated. ' .
+            'Use setForeignKey()/getForeignKey() instead.'
+        );
         if ($key !== null) {
             $this->setForeignKey($key);
         }
@@ -632,6 +660,10 @@ abstract class Association
      */
     public function dependent($dependent = null)
     {
+        deprecationWarning(
+            get_called_class() . '::dependent() is deprecated. ' .
+            'Use setDependent()/getDependent() instead.'
+        );
         if ($dependent !== null) {
             $this->setDependent($dependent);
         }
@@ -685,6 +717,10 @@ abstract class Association
      */
     public function joinType($type = null)
     {
+        deprecationWarning(
+            get_called_class() . '::joinType() is deprecated. ' .
+            'Use setJoinType()/getJoinType() instead.'
+        );
         if ($type !== null) {
             $this->setJoinType($type);
         }
@@ -740,6 +776,10 @@ abstract class Association
      */
     public function property($name = null)
     {
+        deprecationWarning(
+            get_called_class() . '::property() is deprecated. ' .
+            'Use setProperty()/getProperty() instead.'
+        );
         if ($name !== null) {
             $this->setProperty($name);
         }
@@ -805,6 +845,10 @@ abstract class Association
      */
     public function strategy($name = null)
     {
+        deprecationWarning(
+            get_called_class() . '::strategy() is deprecated. ' .
+            'Use setStrategy()/getStrategy() instead.'
+        );
         if ($name !== null) {
             $this->setStrategy($name);
         }
@@ -846,6 +890,10 @@ abstract class Association
      */
     public function finder($finder = null)
     {
+        deprecationWarning(
+            get_called_class() . '::finder() is deprecated. ' .
+            'Use setFinder()/getFinder() instead.'
+        );
         if ($finder !== null) {
             $this->setFinder($finder);
         }
@@ -1168,7 +1216,7 @@ abstract class Association
      */
     protected function _formatAssociationResults($query, $surrogate, $options)
     {
-        $formatters = $surrogate->formatResults();
+        $formatters = $surrogate->getResultFormatters();
 
         if (!$formatters || empty($options['propertyPath'])) {
             return;
@@ -1214,7 +1262,7 @@ abstract class Association
     protected function _bindNewAssociations($query, $surrogate, $options)
     {
         $loader = $surrogate->getEagerLoader();
-        $contain = $loader->contain();
+        $contain = $loader->getContain();
         $matching = $loader->getMatching();
 
         if (!$contain && !$matching) {
@@ -1227,7 +1275,9 @@ abstract class Association
         }
 
         $eagerLoader = $query->getEagerLoader();
-        $eagerLoader->contain($newContain);
+        if ($newContain) {
+            $eagerLoader->contain($newContain);
+        }
 
         foreach ($matching as $alias => $value) {
             $eagerLoader->setMatching(

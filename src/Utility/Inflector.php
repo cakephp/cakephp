@@ -417,7 +417,7 @@ class Inflector
      * @param string $type Inflection type
      * @param string $key Original value
      * @param string|bool $value Inflected value
-     * @return string|bool Inflected value on cache hit or false on cache miss.
+     * @return string|false Inflected value on cache hit or false on cache miss.
      */
     protected static function _cache($type, $key, $value = false)
     {
@@ -750,6 +750,10 @@ class Inflector
      */
     public static function slug($string, $replacement = '-')
     {
+        deprecationWarning(
+            'Inflector::slug() is deprecated. ' .
+            'Use Text::slug() instead.'
+        );
         $quotedReplacement = preg_quote($replacement, '/');
 
         $map = [

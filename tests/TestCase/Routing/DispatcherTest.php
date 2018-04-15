@@ -17,16 +17,19 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
-use Cake\Network\Session;
+use Cake\Http\Session;
 use Cake\Routing\Dispatcher;
 use Cake\Routing\Filter\ControllerFactoryFilter;
 use Cake\TestSuite\TestCase;
 
 /**
  * DispatcherTest class
+ *
+ * @group deprecated
  */
 class DispatcherTest extends TestCase
 {
+    protected $errorLevel;
 
     /**
      * setUp method
@@ -38,6 +41,7 @@ class DispatcherTest extends TestCase
         parent::setUp();
         $_GET = [];
 
+        $this->errorLevel = error_reporting(E_ALL ^ E_USER_DEPRECATED);
         Configure::write('App.base', false);
         Configure::write('App.baseUrl', false);
         Configure::write('App.dir', 'app');
@@ -55,6 +59,7 @@ class DispatcherTest extends TestCase
      */
     public function tearDown()
     {
+        error_reporting($this->errorLevel);
         parent::tearDown();
         Plugin::unload();
     }

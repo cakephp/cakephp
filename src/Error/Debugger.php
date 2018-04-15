@@ -688,6 +688,9 @@ class Debugger
      */
     public static function outputAs($format = null)
     {
+        deprecationWarning(
+            'Debugger::outputAs() is deprecated. Use Debugger::getOutputFormat()/setOutputFormat() instead.'
+        );
         $self = Debugger::getInstance();
         if ($format === null) {
             return $self->_outputFormat;

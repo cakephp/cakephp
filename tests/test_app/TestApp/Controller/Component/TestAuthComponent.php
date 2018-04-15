@@ -33,10 +33,10 @@ class TestAuthComponent extends AuthComponent
     public function authCheck(Event $event)
     {
         if (isset($this->earlyAuthTest)) {
-            if ($this->_config['checkAuthIn'] !== $event->name()) {
+            if ($this->_config['checkAuthIn'] !== $event->getName()) {
                 return null;
             }
-            $this->authCheckCalledFrom = $event->name();
+            $this->authCheckCalledFrom = $event->getName();
 
             return null;
         }

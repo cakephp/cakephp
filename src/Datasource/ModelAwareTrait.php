@@ -163,6 +163,10 @@ trait ModelAwareTrait
      */
     public function modelType($modelType = null)
     {
+        deprecationWarning(
+            get_called_class() . '::modelType() is deprecated. ' .
+            'Use setModelType()/getModelType() instead.'
+        );
         if ($modelType === null) {
             return $this->_modelType;
         }

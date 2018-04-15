@@ -14,9 +14,11 @@
  */
 namespace Cake\Test\TestCase\Database;
 
+use Cake\Database\ExpressionInterface;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Query;
 use Cake\Database\StatementInterface;
+use Cake\Database\Statement\StatementDecorator;
 use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
@@ -27,7 +29,13 @@ use Cake\TestSuite\TestCase;
 class QueryTest extends TestCase
 {
 
-    public $fixtures = ['core.articles', 'core.authors', 'core.comments'];
+    public $fixtures = [
+        'core.articles',
+        'core.authors',
+        'core.comments',
+        'core.profiles',
+        'core.menu_link_trees'
+    ];
 
     public $autoFixtures = false;
 
@@ -35,17 +43,27 @@ class QueryTest extends TestCase
     const AUTHOR_COUNT = 4;
     const COMMENT_COUNT = 6;
 
+    /**
+     * @var \Cake\Database\Connection
+     */
+    protected $connection;
+
+    /**
+     * @var bool
+     */
+    protected $autoQuote;
+
     public function setUp()
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
-        $this->autoQuote = $this->connection->driver()->autoQuoting();
+        $this->autoQuote = $this->connection->getDriver()->isAutoQuotingEnabled();
     }
 
     public function tearDown()
     {
         parent::tearDown();
-        $this->connection->driver()->autoQuoting($this->autoQuote);
+        $this->connection->getDriver()->enableAutoQuoting($this->autoQuote);
         unset($this->connection);
     }
 
@@ -69,7 +87,7 @@ class QueryTest extends TestCase
      */
     public function testSelectFieldsOnly()
     {
-        $this->connection->driver()->autoQuoting(false);
+        $this->connection->getDriver()->enableAutoQuoting(false);
         $query = new Query($this->connection);
         $result = $query->select('1 + 1')->execute();
         $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
@@ -95,7 +113,7 @@ class QueryTest extends TestCase
      */
     public function testSelectClosure()
     {
-        $this->connection->driver()->autoQuoting(false);
+        $this->connection->getDriver()->enableAutoQuoting(false);
         $query = new Query($this->connection);
         $result = $query->select(function ($q) use ($query) {
             $this->assertSame($query, $q);
@@ -384,7 +402,7 @@ class QueryTest extends TestCase
     {
         $this->loadFixtures('Articles', 'Comments');
         $this->skipIf(
-            $this->connection->driver() instanceof \Cake\Database\Driver\Sqlite,
+            $this->connection->getDriver() instanceof \Cake\Database\Driver\Sqlite,
             'SQLite does not support RIGHT joins'
         );
         $query = new Query($this->connection);
@@ -732,6 +750,80 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Tests Query::whereNull()
+     *
+     * @return void
+     */
+    public function testSelectWhereNull()
+    {
+        $this->loadFixtures('MenuLinkTrees');
+
+        $query = new Query($this->connection);
+        $result = $query
+            ->select(['id', 'parent_id'])
+            ->from('menu_link_trees')
+            ->whereNull(['parent_id'])
+            ->execute();
+        $this->assertCount(5, $result);
+        $result->closeCursor();
+
+        $query = new Query($this->connection);
+        $result = $query
+            ->select(['id'])
+            ->from('menu_link_trees')
+            ->whereNull($this->connection->newQuery()->select('parent_id'))
+            ->execute();
+        $this->assertCount(5, $result);
+        $result->closeCursor();
+
+        $query = new Query($this->connection);
+        $result = $query
+            ->select(['id'])
+            ->from('menu_link_trees')
+            ->whereNull('parent_id')
+            ->execute();
+        $this->assertCount(5, $result);
+        $result->closeCursor();
+    }
+
+    /**
+     * Tests Query::whereNotNull()
+     *
+     * @return void
+     */
+    public function testSelectWhereNotNull()
+    {
+        $this->loadFixtures('MenuLinkTrees');
+
+        $query = new Query($this->connection);
+        $result = $query
+            ->select(['id', 'parent_id'])
+            ->from('menu_link_trees')
+            ->whereNotNull(['parent_id'])
+            ->execute();
+        $this->assertCount(13, $result);
+        $result->closeCursor();
+
+        $query = new Query($this->connection);
+        $result = $query
+            ->select(['id'])
+            ->from('menu_link_trees')
+            ->whereNotNull($this->connection->newQuery()->select('parent_id'))
+            ->execute();
+        $this->assertCount(13, $result);
+        $result->closeCursor();
+
+        $query = new Query($this->connection);
+        $result = $query
+            ->select(['id'])
+            ->from('menu_link_trees')
+            ->whereNotNull('parent_id')
+            ->execute();
+        $this->assertCount(13, $result);
+        $result->closeCursor();
+    }
+
+    /**
      * Tests that passing an array type to any where condition will replace
      * the passed array accordingly as a proper IN condition
      *
@@ -793,22 +885,25 @@ class QueryTest extends TestCase
     /**
      * Tests that Query::orWhere() can be used to concatenate conditions with OR
      *
+     * @group deprecated
      * @return void
      */
     public function testSelectOrWhere()
     {
-        $this->loadFixtures('Comments');
-        $query = new Query($this->connection);
-        $result = $query
-            ->select(['id'])
-            ->from('comments')
-            ->where(['created' => new \DateTime('2007-03-18 10:45:23')], ['created' => 'datetime'])
-            ->orWhere(['created' => new \DateTime('2007-03-18 10:47:23')], ['created' => 'datetime'])
-            ->execute();
-        $this->assertCount(2, $result);
-        $this->assertEquals(['id' => 1], $result->fetch('assoc'));
-        $this->assertEquals(['id' => 2], $result->fetch('assoc'));
-        $result->closeCursor();
+        $this->deprecated(function () {
+            $this->loadFixtures('Comments');
+            $query = new Query($this->connection);
+            $result = $query
+                ->select(['id'])
+                ->from('comments')
+                ->where(['created' => new \DateTime('2007-03-18 10:45:23')], ['created' => 'datetime'])
+                ->orWhere(['created' => new \DateTime('2007-03-18 10:47:23')], ['created' => 'datetime'])
+                ->execute();
+            $this->assertCount(2, $result);
+            $this->assertEquals(['id' => 1], $result->fetch('assoc'));
+            $this->assertEquals(['id' => 2], $result->fetch('assoc'));
+            $result->closeCursor();
+        });
     }
 
     /**
@@ -845,59 +940,65 @@ class QueryTest extends TestCase
      * Tests that combining Query::andWhere() and Query::orWhere() produces
      * correct conditions nesting
      *
+     * @group deprecated
      * @return void
      */
     public function testSelectExpressionNesting()
     {
-        $this->loadFixtures('Comments');
-        $query = new Query($this->connection);
-        $result = $query
-            ->select(['id'])
-            ->from('comments')
-            ->where(['created' => new \DateTime('2007-03-18 10:45:23')], ['created' => 'datetime'])
-            ->orWhere(['id' => 2])
-            ->andWhere(['created >=' => new \DateTime('2007-03-18 10:40:00')], ['created' => 'datetime'])
-            ->execute();
-        $this->assertCount(2, $result);
-        $this->assertEquals(['id' => 1], $result->fetch('assoc'));
-        $this->assertEquals(['id' => 2], $result->fetch('assoc'));
-        $result->closeCursor();
+        $this->deprecated(function () {
+            $this->loadFixtures('Comments');
+            $query = new Query($this->connection);
+            $result = $query
+                ->select(['id'])
+                ->from('comments')
+                ->where(['created' => new \DateTime('2007-03-18 10:45:23')], ['created' => 'datetime'])
+                ->orWhere(['id' => 2])
+                ->andWhere(['created >=' => new \DateTime('2007-03-18 10:40:00')], ['created' => 'datetime'])
+                ->execute();
+            $this->assertCount(2, $result);
+            $this->assertEquals(['id' => 1], $result->fetch('assoc'));
+            $this->assertEquals(['id' => 2], $result->fetch('assoc'));
+            $result->closeCursor();
 
-        $query = new Query($this->connection);
-        $result = $query
-            ->select(['id'])
-            ->from('comments')
-            ->where(['created' => new \DateTime('2007-03-18 10:45:23')], ['created' => 'datetime'])
-            ->orWhere(['id' => 2])
-            ->andWhere(['created >=' => new \DateTime('2007-03-18 10:40:00')], ['created' => 'datetime'])
-            ->orWhere(['created' => new \DateTime('2007-03-18 10:49:23')], ['created' => 'datetime'])
-            ->execute();
-        $this->assertCount(3, $result);
-        $this->assertEquals(['id' => 1], $result->fetch('assoc'));
-        $this->assertEquals(['id' => 2], $result->fetch('assoc'));
-        $this->assertEquals(['id' => 3], $result->fetch('assoc'));
-        $result->closeCursor();
+            $query = new Query($this->connection);
+            $result = $query
+                ->select(['id'])
+                ->from('comments')
+                ->where(['created' => new \DateTime('2007-03-18 10:45:23')], ['created' => 'datetime'])
+                ->orWhere(['id' => 2])
+                ->andWhere(['created >=' => new \DateTime('2007-03-18 10:40:00')], ['created' => 'datetime'])
+                ->orWhere(['created' => new \DateTime('2007-03-18 10:49:23')], ['created' => 'datetime'])
+                ->execute();
+            $this->assertCount(3, $result);
+            $this->assertEquals(['id' => 1], $result->fetch('assoc'));
+            $this->assertEquals(['id' => 2], $result->fetch('assoc'));
+            $this->assertEquals(['id' => 3], $result->fetch('assoc'));
+            $result->closeCursor();
+        });
     }
 
     /**
      * Tests that Query::orWhere() can be used without calling where() before
      *
+     * @group deprecated
      * @return void
      */
     public function testSelectOrWhereNoPreviousCondition()
     {
-        $this->loadFixtures('Comments');
-        $query = new Query($this->connection);
-        $result = $query
-            ->select(['id'])
-            ->from('comments')
-            ->orWhere(['created' => new \DateTime('2007-03-18 10:45:23')], ['created' => 'datetime'])
-            ->orWhere(['created' => new \DateTime('2007-03-18 10:47:23')], ['created' => 'datetime'])
-            ->execute();
-        $this->assertCount(2, $result);
-        $this->assertEquals(['id' => 1], $result->fetch('assoc'));
-        $this->assertEquals(['id' => 2], $result->fetch('assoc'));
-        $result->closeCursor();
+        $this->deprecated(function () {
+            $this->loadFixtures('Comments');
+            $query = new Query($this->connection);
+            $result = $query
+                ->select(['id'])
+                ->from('comments')
+                ->orWhere(['created' => new \DateTime('2007-03-18 10:45:23')], ['created' => 'datetime'])
+                ->orWhere(['created' => new \DateTime('2007-03-18 10:47:23')], ['created' => 'datetime'])
+                ->execute();
+            $this->assertCount(2, $result);
+            $this->assertEquals(['id' => 1], $result->fetch('assoc'));
+            $this->assertEquals(['id' => 2], $result->fetch('assoc'));
+            $result->closeCursor();
+        });
     }
 
     /**
@@ -1036,39 +1137,42 @@ class QueryTest extends TestCase
      * Tests that it is possible to pass a closure to orWhere() to build a set of
      * conditions and return the expression to be used
      *
+     * @group deprecated
      * @return void
      */
     public function testSelectOrWhereUsingClosure()
     {
-        $this->loadFixtures('Comments');
-        $query = new Query($this->connection);
-        $result = $query
-            ->select(['id'])
-            ->from('comments')
-            ->where(['id' => '1'])
-            ->orWhere(function ($exp) {
-                return $exp->eq('created', new \DateTime('2007-03-18 10:47:23'), 'datetime');
-            })
-            ->execute();
-        $this->assertCount(2, $result);
-        $this->assertEquals(['id' => 1], $result->fetch('assoc'));
-        $this->assertEquals(['id' => 2], $result->fetch('assoc'));
-        $result->closeCursor();
+        $this->deprecated(function () {
+            $this->loadFixtures('Comments');
+            $query = new Query($this->connection);
+            $result = $query
+                ->select(['id'])
+                ->from('comments')
+                ->where(['id' => '1'])
+                ->orWhere(function ($exp) {
+                    return $exp->eq('created', new \DateTime('2007-03-18 10:47:23'), 'datetime');
+                })
+                ->execute();
+            $this->assertCount(2, $result);
+            $this->assertEquals(['id' => 1], $result->fetch('assoc'));
+            $this->assertEquals(['id' => 2], $result->fetch('assoc'));
+            $result->closeCursor();
 
-        $query = new Query($this->connection);
-        $result = $query
-            ->select(['id'])
-            ->from('comments')
-            ->where(['id' => '1'])
-            ->orWhere(function ($exp) {
-                return $exp
-                    ->eq('created', new \DateTime('2012-12-22 12:00'), 'datetime')
-                    ->eq('id', 3);
-            })
-            ->execute();
-        $this->assertCount(1, $result);
-        $this->assertEquals(['id' => 1], $result->fetch('assoc'));
-        $result->closeCursor();
+            $query = new Query($this->connection);
+            $result = $query
+                ->select(['id'])
+                ->from('comments')
+                ->where(['id' => '1'])
+                ->orWhere(function ($exp) {
+                    return $exp
+                        ->eq('created', new \DateTime('2012-12-22 12:00'), 'datetime')
+                        ->eq('id', 3);
+                })
+                ->execute();
+            $this->assertCount(1, $result);
+            $this->assertEquals(['id' => 1], $result->fetch('assoc'));
+            $result->closeCursor();
+        });
     }
 
     /**
@@ -1380,7 +1484,7 @@ class QueryTest extends TestCase
             ->from('comments')
             ->where(['id IN' => [1, 2]])
             ->sql();
-        $bindings = $query->valueBinder()->bindings();
+        $bindings = $query->getValueBinder()->bindings();
         $this->assertArrayHasKey(':c0', $bindings);
         $this->assertEquals('c0', $bindings[':c0']['placeholder']);
         $this->assertArrayHasKey(':c1', $bindings);
@@ -1691,6 +1795,106 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Tests whereInArray() and its input types.
+     *
+     * @return void
+     */
+    public function testWhereInArray()
+    {
+        $this->loadFixtures('Articles');
+        $query = new Query($this->connection);
+        $query->select(['id'])
+            ->from('articles')
+            ->whereInList('id', [2, 3])
+            ->execute();
+        $sql = $query->sql();
+
+        $result = $query->execute();
+        $this->assertEquals(['id' => '2'], $result->fetch('assoc'));
+
+        $this->assertQuotedQuery(
+            'SELECT <id> FROM <articles> WHERE <id> in \\(:c0,:c1\\)',
+            $sql,
+            !$this->autoQuote
+        );
+    }
+
+    /**
+     * Tests whereInArray() and empty array input.
+     *
+     * @return void
+     */
+    public function testWhereInArrayEmpty()
+    {
+        $this->loadFixtures('Articles');
+        $query = new Query($this->connection);
+        $query->select(['id'])
+            ->from('articles')
+            ->whereInList('id', [], ['allowEmpty' => true])
+            ->execute();
+        $sql = $query->sql();
+
+        $result = $query->execute();
+        $this->assertFalse($result->fetch('assoc'));
+
+        $this->assertQuotedQuery(
+            'SELECT <id> FROM <articles> WHERE 1=0',
+            $sql,
+            !$this->autoQuote
+        );
+    }
+
+    /**
+     * Tests whereNotInArray() and its input types.
+     *
+     * @return void
+     */
+    public function testWhereNotInArray()
+    {
+        $this->loadFixtures('Articles');
+        $query = new Query($this->connection);
+        $query->select(['id'])
+            ->from('articles')
+            ->whereNotInList('id', [1, 3])
+            ->execute();
+        $sql = $query->sql();
+
+        $result = $query->execute();
+        $this->assertEquals(['id' => '2'], $result->fetch('assoc'));
+
+        $this->assertQuotedQuery(
+            'SELECT <id> FROM <articles> WHERE <id> not in \\(:c0,:c1\\)',
+            $sql,
+            !$this->autoQuote
+        );
+    }
+
+    /**
+     * Tests whereNotInArray() and empty array input.
+     *
+     * @return void
+     */
+    public function testWhereNotInArrayEmpty()
+    {
+        $this->loadFixtures('Articles');
+        $query = new Query($this->connection);
+        $query->select(['id'])
+            ->from('articles')
+            ->whereNotInList('id', [], ['allowEmpty' => true])
+            ->execute();
+        $sql = $query->sql();
+
+        $result = $query->execute();
+        $this->assertEquals(['id' => '1'], $result->fetch('assoc'));
+
+        $this->assertQuotedQuery(
+            'SELECT <id> FROM <articles> WHERE \(<id>\) IS NOT NULL',
+            $sql,
+            !$this->autoQuote
+        );
+    }
+
+    /**
      * Tests order() method both with simple fields and expressions
      *
      * @return void
@@ -1772,6 +1976,29 @@ class QueryTest extends TestCase
         $this->assertEquals(['id' => 2], $result->fetch('assoc'));
         $this->assertEquals(['id' => 3], $result->fetch('assoc'));
         $result->closeCursor();
+    }
+
+    /**
+     * Test that order() works with an associative array which contains extra values.
+     *
+     * @return void
+     */
+    public function testSelectOrderByAssociativeArrayContainingExtraExpressions()
+    {
+        $this->deprecated(function () {
+            $this->loadFixtures('Articles');
+            $query = new Query($this->connection);
+            $query->select(['id'])
+                ->from('articles')
+                ->order([
+                    'id' => 'desc -- Comment',
+                ]);
+            $result = $query->execute();
+            $this->assertEquals(['id' => 3], $result->fetch('assoc'));
+            $this->assertEquals(['id' => 2], $result->fetch('assoc'));
+            $this->assertEquals(['id' => 1], $result->fetch('assoc'));
+            $result->closeCursor();
+        });
     }
 
     /**
@@ -2040,48 +2267,51 @@ class QueryTest extends TestCase
      * Tests that Query::orHaving() can be used to concatenate conditions with OR
      * in the having clause
      *
+     * @group deprecated
      * @return void
      */
     public function testSelectOrHaving()
     {
-        $this->loadFixtures('Authors', 'Articles');
-        $query = new Query($this->connection);
-        $result = $query
-            ->select(['total' => 'count(author_id)', 'author_id'])
-            ->from('articles')
-            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $query->newExpr()->equalFields('author_id', 'a.id')])
-            ->group('author_id')
-            ->having(['count(author_id) >' => 2], ['count(author_id)' => 'integer'])
-            ->orHaving(['count(author_id) <' => 2], ['count(author_id)' => 'integer'])
-            ->execute();
-        $expected = [['total' => 1, 'author_id' => 3]];
-        $this->assertEquals($expected, $result->fetchAll('assoc'));
+        $this->deprecated(function () {
+            $this->loadFixtures('Authors', 'Articles');
+            $query = new Query($this->connection);
+            $result = $query
+                ->select(['total' => 'count(author_id)', 'author_id'])
+                ->from('articles')
+                ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $query->newExpr()->equalFields('author_id', 'a.id')])
+                ->group('author_id')
+                ->having(['count(author_id) >' => 2], ['count(author_id)' => 'integer'])
+                ->orHaving(['count(author_id) <' => 2], ['count(author_id)' => 'integer'])
+                ->execute();
+            $expected = [['total' => 1, 'author_id' => 3]];
+            $this->assertEquals($expected, $result->fetchAll('assoc'));
 
-        $query = new Query($this->connection);
-        $result = $query
-            ->select(['total' => 'count(author_id)', 'author_id'])
-            ->from('articles')
-            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $query->newExpr()->equalFields('author_id', 'a.id')])
-            ->group('author_id')
-            ->having(['count(author_id) >' => 2], ['count(author_id)' => 'integer'])
-            ->orHaving(['count(author_id) <=' => 2], ['count(author_id)' => 'integer'])
-            ->execute();
-        $expected = [['total' => 2, 'author_id' => 1], ['total' => 1, 'author_id' => 3]];
-        $this->assertEquals($expected, $result->fetchAll('assoc'));
+            $query = new Query($this->connection);
+            $result = $query
+                ->select(['total' => 'count(author_id)', 'author_id'])
+                ->from('articles')
+                ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $query->newExpr()->equalFields('author_id', 'a.id')])
+                ->group('author_id')
+                ->having(['count(author_id) >' => 2], ['count(author_id)' => 'integer'])
+                ->orHaving(['count(author_id) <=' => 2], ['count(author_id)' => 'integer'])
+                ->execute();
+            $expected = [['total' => 2, 'author_id' => 1], ['total' => 1, 'author_id' => 3]];
+            $this->assertEquals($expected, $result->fetchAll('assoc'));
 
-        $query = new Query($this->connection);
-        $result = $query
-            ->select(['total' => 'count(author_id)', 'author_id'])
-            ->from('articles')
-            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $query->newExpr()->equalFields('author_id', 'a.id')])
-            ->group('author_id')
-            ->having(['count(author_id) >' => 2], ['count(author_id)' => 'integer'])
-            ->orHaving(function ($e) {
-                return $e->add('count(author_id) = 1 + 1');
-            })
-            ->execute();
-        $expected = [['total' => 2, 'author_id' => 1]];
-        $this->assertEquals($expected, $result->fetchAll('assoc'));
+            $query = new Query($this->connection);
+            $result = $query
+                ->select(['total' => 'count(author_id)', 'author_id'])
+                ->from('articles')
+                ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $query->newExpr()->equalFields('author_id', 'a.id')])
+                ->group('author_id')
+                ->having(['count(author_id) >' => 2], ['count(author_id)' => 'integer'])
+                ->orHaving(function ($e) {
+                    return $e->add('count(author_id) = 1 + 1');
+                })
+                ->execute();
+            $expected = [['total' => 2, 'author_id' => 1]];
+            $this->assertEquals($expected, $result->fetchAll('assoc'));
+        });
     }
 
     /**
@@ -2204,6 +2434,20 @@ class QueryTest extends TestCase
         $query->offset(2);
         $dirty = $this->readAttribute($query, '_dirty');
         $this->assertTrue($dirty);
+    }
+
+    /**
+     * Test Pages number.
+     *
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Pages must start at 1.
+     * @return void
+     */
+    public function testPageShouldStartAtOne()
+    {
+        $this->loadFixtures('Comments');
+        $query = new Query($this->connection);
+        $result = $query->from('comments')->page(0);
     }
 
     /**
@@ -2523,8 +2767,8 @@ class QueryTest extends TestCase
     {
         $this->loadFixtures('Articles', 'Comments');
         $this->skipIf(
-            ($this->connection->driver() instanceof \Cake\Database\Driver\Sqlite ||
-            $this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver),
+            ($this->connection->getDriver() instanceof \Cake\Database\Driver\Sqlite ||
+            $this->connection->getDriver() instanceof \Cake\Database\Driver\Sqlserver),
             'Driver does not support ORDER BY in UNIONed queries.'
         );
         $union = (new Query($this->connection))
@@ -3063,7 +3307,7 @@ class QueryTest extends TestCase
         $result->closeCursor();
 
         //PDO_SQLSRV returns -1 for successful inserts when using INSERT ... OUTPUT
-        if (!$this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver) {
+        if (!$this->connection->getDriver() instanceof \Cake\Database\Driver\Sqlserver) {
             $this->assertCount(1, $result, '1 row should be inserted');
         }
 
@@ -3129,7 +3373,7 @@ class QueryTest extends TestCase
         $result->closeCursor();
 
         //PDO_SQLSRV returns -1 for successful inserts when using INSERT ... OUTPUT
-        if (!$this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver) {
+        if (!$this->connection->getDriver() instanceof \Cake\Database\Driver\Sqlserver) {
             $this->assertCount(1, $result, '1 row should be inserted');
         }
 
@@ -3167,7 +3411,7 @@ class QueryTest extends TestCase
         $result->closeCursor();
 
         //PDO_SQLSRV returns -1 for successful inserts when using INSERT ... OUTPUT
-        if (!$this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver) {
+        if (!$this->connection->getDriver() instanceof \Cake\Database\Driver\Sqlserver) {
             $this->assertCount(2, $result, '2 rows should be inserted');
         }
 
@@ -3225,7 +3469,7 @@ class QueryTest extends TestCase
         $result->closeCursor();
 
         //PDO_SQLSRV returns -1 for successful inserts when using INSERT ... OUTPUT
-        if (!$this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver) {
+        if (!$this->connection->getDriver() instanceof \Cake\Database\Driver\Sqlserver) {
             $this->assertCount(1, $result);
         }
 
@@ -3291,7 +3535,7 @@ class QueryTest extends TestCase
         $result->closeCursor();
 
         //PDO_SQLSRV returns -1 for successful inserts when using INSERT ... OUTPUT
-        if (!$this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver) {
+        if (!$this->connection->getDriver() instanceof \Cake\Database\Driver\Sqlserver) {
             $this->assertCount(1, $result);
         }
 
@@ -3321,7 +3565,7 @@ class QueryTest extends TestCase
         $result = $query->execute();
         $result->closeCursor();
         //PDO_SQLSRV returns -1 for successful inserts when using INSERT ... OUTPUT
-        if (!$this->connection->driver() instanceof \Cake\Database\Driver\Sqlserver) {
+        if (!$this->connection->getDriver() instanceof \Cake\Database\Driver\Sqlserver) {
             $this->assertCount(1, $result);
         }
 
@@ -3338,6 +3582,38 @@ class QueryTest extends TestCase
             'published' => 'N',
         ];
         $this->assertEquals($expected, $result->fetch('assoc'));
+    }
+
+    /**
+     * Tests that the identifier method creates an expression object.
+     *
+     * @return void
+     */
+    public function testIdentifierExpression()
+    {
+        $query = new Query($this->connection);
+        /* @var \Cake\Database\Expression\IdentifierExpression $identifier */
+        $identifier = $query->identifier('foo');
+
+        $this->assertInstanceOf(IdentifierExpression::class, $identifier);
+        $this->assertEquals('foo', $identifier->getIdentifier());
+    }
+
+    /**
+     * Tests the interface contract of identifier
+     *
+     * @return void
+     */
+    public function testIdentifierInterface()
+    {
+        $query = new Query($this->connection);
+        $identifier = $query->identifier('description');
+
+        $this->assertInstanceOf(ExpressionInterface::class, $identifier);
+        $this->assertEquals('description', $identifier->getIdentifier());
+
+        $identifier->setIdentifier('title');
+        $this->assertEquals('title', $identifier->getIdentifier());
     }
 
     /**
@@ -3453,10 +3729,10 @@ class QueryTest extends TestCase
     {
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
-        $this->assertEquals([], $query->defaultTypes());
+        $this->assertEquals([], $query->getDefaultTypes());
         $types = ['id' => 'integer', 'created' => 'datetime'];
-        $this->assertSame($query, $query->defaultTypes($types));
-        $this->assertSame($types, $query->defaultTypes());
+        $this->assertSame($query, $query->setDefaultTypes($types));
+        $this->assertSame($types, $query->getDefaultTypes());
 
         $results = $query->select(['id', 'comment'])
             ->from('comments')
@@ -3587,7 +3863,7 @@ class QueryTest extends TestCase
      */
     public function testQuotingSelectFieldsAndAlias()
     {
-        $this->connection->driver()->autoQuoting(true);
+        $this->connection->getDriver()->enableAutoQuoting(true);
         $query = new Query($this->connection);
         $sql = $query->select(['something'])->sql();
         $this->assertQuotedQuery('SELECT <something>$', $sql);
@@ -3620,7 +3896,7 @@ class QueryTest extends TestCase
      */
     public function testQuotingFromAndAlias()
     {
-        $this->connection->driver()->autoQuoting(true);
+        $this->connection->getDriver()->enableAutoQuoting(true);
         $query = new Query($this->connection);
         $sql = $query->select('*')->from(['something'])->sql();
         $this->assertQuotedQuery('FROM <something>', $sql);
@@ -3641,7 +3917,7 @@ class QueryTest extends TestCase
      */
     public function testQuotingDistinctOn()
     {
-        $this->connection->driver()->autoQuoting(true);
+        $this->connection->getDriver()->enableAutoQuoting(true);
         $query = new Query($this->connection);
         $sql = $query->select('*')->distinct(['something'])->sql();
         $this->assertQuotedQuery('<something>', $sql);
@@ -3654,7 +3930,7 @@ class QueryTest extends TestCase
      */
     public function testQuotingJoinsAndAlias()
     {
-        $this->connection->driver()->autoQuoting(true);
+        $this->connection->getDriver()->enableAutoQuoting(true);
         $query = new Query($this->connection);
         $sql = $query->select('*')->join(['something'])->sql();
         $this->assertQuotedQuery('JOIN <something>', $sql);
@@ -3675,7 +3951,7 @@ class QueryTest extends TestCase
      */
     public function testQuotingGroupBy()
     {
-        $this->connection->driver()->autoQuoting(true);
+        $this->connection->getDriver()->enableAutoQuoting(true);
         $query = new Query($this->connection);
         $sql = $query->select('*')->group(['something'])->sql();
         $this->assertQuotedQuery('GROUP BY <something>', $sql);
@@ -3696,7 +3972,7 @@ class QueryTest extends TestCase
      */
     public function testQuotingExpressions()
     {
-        $this->connection->driver()->autoQuoting(true);
+        $this->connection->getDriver()->enableAutoQuoting(true);
         $query = new Query($this->connection);
         $sql = $query->select('*')
             ->where(['something' => 'value'])
@@ -3721,7 +3997,7 @@ class QueryTest extends TestCase
      */
     public function testQuotingInsert()
     {
-        $this->connection->driver()->autoQuoting(true);
+        $this->connection->getDriver()->enableAutoQuoting(true);
         $query = new Query($this->connection);
         $sql = $query->insert(['bar', 'baz'])
             ->into('foo')
@@ -3761,7 +4037,7 @@ class QueryTest extends TestCase
     {
         $query = (new Query($this->connection))->select('*')
             ->from('articles')
-            ->defaultTypes(['id' => 'integer'])
+            ->setDefaultTypes(['id' => 'integer'])
             ->where(['id' => '1']);
 
         $expected = [
@@ -3847,7 +4123,7 @@ class QueryTest extends TestCase
      */
     public function testIsNullAutoQuoting()
     {
-        $this->connection->driver()->autoQuoting(true);
+        $this->connection->getDriver()->enableAutoQuoting(true);
         $query = new Query($this->connection);
         $query->select('*')->from('things')->where(function ($exp) {
             return $exp->isNull('field');
@@ -3978,9 +4254,13 @@ class QueryTest extends TestCase
             );
 
         //Postgres requires the case statement to be cast to a integer
-        if ($this->connection->driver() instanceof \Cake\Database\Driver\Postgres) {
-            $publishedCase = $query->func()->cast([$publishedCase, 'integer' => 'literal'])->type(' AS ');
-            $notPublishedCase = $query->func()->cast([$notPublishedCase, 'integer' => 'literal'])->type(' AS ');
+        if ($this->connection->getDriver() instanceof \Cake\Database\Driver\Postgres) {
+            $publishedCase = $query->func()
+                ->cast([$publishedCase, 'integer' => 'literal'])
+                ->setConjunction(' AS ');
+            $notPublishedCase = $query->func()
+                ->cast([$notPublishedCase, 'integer' => 'literal'])
+                ->setConjunction(' AS ');
         }
 
         $results = $query
@@ -4048,7 +4328,7 @@ class QueryTest extends TestCase
         $query = new Query($this->connection);
         $result = $query->select(['body', 'author_id'])
             ->from('articles')
-            ->bufferResults(false)
+            ->enableBufferedResults(false)
             ->execute();
 
         if (!method_exists($result, 'bufferResults')) {
@@ -4106,8 +4386,8 @@ class QueryTest extends TestCase
         $this->assertNotEquals($query->clause('order'), $dupe->clause('order'));
 
         $this->assertNotSame(
-            $query->selectTypeMap(),
-            $dupe->selectTypeMap()
+            $query->getSelectTypeMap(),
+            $dupe->getSelectTypeMap()
         );
     }
 
@@ -4119,11 +4399,11 @@ class QueryTest extends TestCase
     public function testSelectTypeMap()
     {
         $query = new Query($this->connection);
-        $typeMap = $query->selectTypeMap();
+        $typeMap = $query->getSelectTypeMap();
         $this->assertInstanceOf(TypeMap::class, $typeMap);
         $another = clone $typeMap;
-        $query->selectTypeMap($another);
-        $this->assertSame($another, $query->selectTypeMap());
+        $query->setSelectTypeMap($another);
+        $this->assertSame($another, $query->getSelectTypeMap());
     }
 
     /**
@@ -4139,7 +4419,7 @@ class QueryTest extends TestCase
             ->select(['id', 'comment', 'the_date' => 'created'])
             ->from('comments')
             ->limit(1)
-            ->selectTypeMap()->types(['id' => 'integer', 'the_date' => 'datetime']);
+            ->getSelectTypeMap()->setTypes(['id' => 'integer', 'the_date' => 'datetime']);
         $result = $query->execute()->fetchAll('assoc');
         $this->assertInternalType('integer', $result[0]['id']);
         $this->assertInstanceOf('DateTime', $result[0]['the_date']);
@@ -4171,7 +4451,7 @@ class QueryTest extends TestCase
             ->select(['comment'])
             ->from('comments')
             ->where(['id' => $id])
-            ->selectTypeMap()->types(['comment' => 'json']);
+            ->getSelectTypeMap()->setTypes(['comment' => 'json']);
 
         $result = $query->execute();
         $comment = $result->fetchAll('assoc')[0]['comment'];
@@ -4212,7 +4492,7 @@ class QueryTest extends TestCase
         $query = new Query($this->connection);
         $query->select('id')
             ->from('comments')
-            ->defaultTypes(['created' => 'datetime'])
+            ->setDefaultTypes(['created' => 'datetime'])
             ->where(function ($expr) {
                 $from = new \DateTime('2007-03-18 10:45:00');
                 $to = new \DateTime('2007-03-18 10:48:00');
@@ -4332,34 +4612,6 @@ class QueryTest extends TestCase
     }
 
     /**
-     * Tests that fetch returns an anonymous object when the string 'obj'
-     * is passed as an argument
-     *
-     * @return void
-     */
-    public function testSelectWithObjFetchType()
-    {
-        $this->loadFixtures('Comments');
-        $query = new Query($this->connection);
-        $result = $query
-            ->select(['id'])
-            ->from('comments')
-            ->where(['id' => '1'])
-            ->execute();
-        $obj = (object)['id' => 1];
-        $this->assertEquals($obj, $result->fetch('obj'));
-
-        $query = new Query($this->connection);
-        $result = $query
-            ->select(['id'])
-            ->from('comments')
-            ->where(['id' => '1'])
-            ->execute();
-        $rows = $result->fetchAll('obj');
-        $this->assertEquals($obj, $rows[0]);
-    }
-
-    /**
      * Test getValueBinder()
      *
      * @return void
@@ -4369,6 +4621,78 @@ class QueryTest extends TestCase
         $query = new Query($this->connection);
 
         $this->assertInstanceOf('\Cake\Database\ValueBinder', $query->getValueBinder());
+    }
+
+    /**
+     * Test automatic results casting
+     *
+     * @return void
+     */
+    public function testCastResults()
+    {
+        $this->loadFixtures('Profiles');
+        $query = new Query($this->connection);
+        $fields = [
+            'user_id' => 'integer',
+            'is_active' => 'boolean'
+        ];
+        $typeMap = new TypeMap($fields + ['a' => 'integer']);
+        $results = $query
+            ->select(array_keys($fields))
+            ->select(['a' => 'is_active'])
+            ->from('profiles')
+            ->setSelectTypeMap($typeMap)
+            ->where(['user_id' => 1])
+            ->execute()
+            ->fetchAll('assoc');
+        $this->assertSame([['user_id' => 1, 'is_active' => false, 'a' => 0]], $results);
+    }
+
+    /**
+     * Test disabling type casting
+     *
+     * @return void
+     */
+    public function testCastResultsDisable()
+    {
+        $this->loadFixtures('Profiles');
+        $query = new Query($this->connection);
+        $typeMap = new TypeMap(['a' => 'datetime']);
+        $results = $query
+            ->select(['a' => 'id'])
+            ->from('profiles')
+            ->setSelectTypeMap($typeMap)
+            ->limit(1)
+            ->disableResultsCasting()
+            ->execute()
+            ->fetchAll('assoc');
+        $this->assertEquals([['a' => '1']], $results);
+    }
+
+    /**
+     * Test that type conversion is only applied once.
+     *
+     * @return void
+     */
+    public function testAllNoDuplicateTypeCasting()
+    {
+        $this->skipIf($this->autoQuote, 'Produces bad SQL in postgres with autoQuoting');
+        $query = new Query($this->connection);
+        $query
+            ->select('1.5 AS a')
+            ->setSelectTypeMap(new TypeMap(['a' => 'integer']));
+
+        // Convert to an array and make the query dirty again.
+        $result = $query->execute()->fetchAll('assoc');
+        $this->assertEquals([['a' => 1]], $result);
+
+        $query->setSelectTypeMap(new TypeMap(['a' => 'float']));
+        // Get results a second time.
+        $result = $query->execute()->fetchAll('assoc');
+
+        // Had the type casting being remembered from the first time,
+        // The value would be a truncated float (1.0)
+        $this->assertEquals([['a' => 1.5]], $result);
     }
 
     /**
@@ -4424,5 +4748,124 @@ class QueryTest extends TestCase
         $pattern = str_replace('<', '[`"\[]' . $optional, $pattern);
         $pattern = str_replace('>', '[`"\]]' . $optional, $pattern);
         $this->assertRegExp('#' . $pattern . '#', $query);
+    }
+
+    /**
+     * Test that calling fetchAssoc return an associated array.
+     * @return void
+     * @throws \Exception
+     */
+    public function testFetchAssoc()
+    {
+        $this->loadFixtures('Profiles');
+        $query = new Query($this->connection);
+        $fields = [
+            'id' => 'integer',
+            'user_id' => 'integer',
+            'is_active' => 'boolean'
+        ];
+        $typeMap = new TypeMap($fields);
+        $results = $query
+            ->select([
+                'id',
+                'user_id',
+                'is_active'
+            ])
+            ->from('profiles')
+            ->setSelectTypeMap($typeMap)
+            ->limit(1)
+            ->execute()
+            ->fetchAssoc();
+        $this->assertSame(['id' => 1, 'user_id' => 1, 'is_active' => false], $results);
+    }
+
+    /**
+     * Test that calling fetch with with FETCH_TYPE_OBJ return stdClass object.
+     * @return void
+     * @throws \Exception
+     */
+    public function testFetchObjects()
+    {
+        $this->loadFixtures('Profiles');
+        $query = new Query($this->connection);
+        $results = $query
+            ->select([
+                'id',
+                'user_id',
+                'is_active'
+            ])
+            ->from('profiles')
+            ->limit(1)
+            ->execute()
+            ->fetch(StatementDecorator::FETCH_TYPE_OBJ);
+        $this->assertInstanceOf(\stdClass::class, $results);
+    }
+
+    /**
+     * Test that fetchColumn() will return the correct value at $position.
+     * @throws \Exception
+     * @return void
+     */
+    public function testFetchColumn()
+    {
+        $this->loadFixtures('Profiles');
+        $query = new Query($this->connection);
+        $fields = [
+            'integer',
+            'integer',
+            'boolean'
+        ];
+        $typeMap = new TypeMap($fields);
+        $query
+            ->select([
+                'id',
+                'user_id',
+                'is_active'
+            ])
+            ->from('profiles')
+            ->setSelectTypeMap($typeMap)
+            ->where(['id' => 2])
+            ->limit(1);
+        $statement = $query->execute();
+        $results = $statement->fetchColumn(0);
+        $this->assertSame(2, $results);
+
+        $statement = $query->execute();
+        $results = $statement->fetchColumn(1);
+        $this->assertSame(2, $results);
+
+        $statement = $query->execute();
+        $results = $statement->fetchColumn(2);
+        $this->assertSame(false, $results);
+    }
+
+    /**
+     * Test that fetchColumn() will return false if $position is not set.
+     * @throws \Exception
+     * @return void
+     */
+    public function testFetchColumnReturnsFalse()
+    {
+        $this->loadFixtures('Profiles');
+        $query = new Query($this->connection);
+        $fields = [
+            'integer',
+            'integer',
+            'boolean'
+        ];
+        $typeMap = new TypeMap($fields);
+        $query
+            ->select([
+                'id',
+                'user_id',
+                'is_active'
+            ])
+            ->from('profiles')
+            ->setSelectTypeMap($typeMap)
+            ->where(['id' => 2])
+            ->limit(1);
+        $statement = $query->execute();
+        $results = $statement->fetchColumn(3);
+        $this->assertFalse($results);
     }
 }

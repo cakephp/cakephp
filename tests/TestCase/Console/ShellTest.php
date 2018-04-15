@@ -82,7 +82,7 @@ class ShellTest extends TestCase
         $this->io = $this->getMockBuilder('Cake\Console\ConsoleIo')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->Shell = new ShellTestShell($this->io);
+        $this->Shell = new ShellTestShell($this->io, $this->getTableLocator());
 
         if (is_dir(TMP . 'shell_test')) {
             $Folder = new Folder(TMP . 'shell_test');
@@ -98,7 +98,26 @@ class ShellTest extends TestCase
     public function testConstruct()
     {
         $this->assertEquals('ShellTestShell', $this->Shell->name);
-        $this->assertInstanceOf('Cake\Console\ConsoleIo', $this->Shell->io());
+        $this->assertInstanceOf(ConsoleIo::class, $this->Shell->getIo());
+    }
+
+    /**
+     * test io method
+     *
+     * @group deprecated
+     * @return void
+     */
+    public function testIo()
+    {
+        $this->deprecated(function () {
+            $this->assertInstanceOf(ConsoleIo::class, $this->Shell->io());
+
+            $io = $this->getMockBuilder(ConsoleIo::class)
+                ->disableOriginalConstructor()
+                ->getMock();
+            $this->assertSame($io, $this->Shell->io($io));
+            $this->assertSame($io, $this->Shell->io());
+        });
     }
 
     /**
@@ -111,7 +130,7 @@ class ShellTest extends TestCase
         static::setAppNamespace();
 
         Plugin::load('TestPlugin');
-        $this->Shell->tasks = ['DbConfig' => ['one', 'two']];
+        $this->Shell->tasks = ['Extract' => ['one', 'two']];
         $this->Shell->plugin = 'TestPlugin';
         $this->Shell->modelClass = 'TestPlugin.TestPluginComments';
         $this->Shell->initialize();
@@ -244,8 +263,8 @@ class ShellTest extends TestCase
     public function testErr()
     {
         $this->io->expects($this->once())
-            ->method('err')
-            ->with('<error>Just a test</error>', 1);
+            ->method('error')
+            ->with('Just a test', 1);
 
         $this->Shell->err('Just a test');
     }
@@ -258,8 +277,8 @@ class ShellTest extends TestCase
     public function testErrArray()
     {
         $this->io->expects($this->once())
-            ->method('err')
-            ->with(['<error>Just</error>', '<error>a</error>', '<error>test</error>'], 1);
+            ->method('error')
+            ->with(['Just', 'a', 'test'], 1);
 
         $this->Shell->err(['Just', 'a', 'test']);
     }
@@ -272,8 +291,8 @@ class ShellTest extends TestCase
     public function testInfo()
     {
         $this->io->expects($this->once())
-            ->method('out')
-            ->with('<info>Just a test</info>', 1);
+            ->method('info')
+            ->with('Just a test', 1);
 
         $this->Shell->info('Just a test');
     }
@@ -286,8 +305,8 @@ class ShellTest extends TestCase
     public function testInfoArray()
     {
         $this->io->expects($this->once())
-            ->method('out')
-            ->with(['<info>Just</info>', '<info>a</info>', '<info>test</info>'], 1);
+            ->method('info')
+            ->with(['Just', 'a', 'test'], 1);
 
         $this->Shell->info(['Just', 'a', 'test']);
     }
@@ -300,8 +319,8 @@ class ShellTest extends TestCase
     public function testWarn()
     {
         $this->io->expects($this->once())
-            ->method('err')
-            ->with('<warning>Just a test</warning>', 1);
+            ->method('warning')
+            ->with('Just a test', 1);
 
         $this->Shell->warn('Just a test');
     }
@@ -314,8 +333,8 @@ class ShellTest extends TestCase
     public function testWarnArray()
     {
         $this->io->expects($this->once())
-            ->method('err')
-            ->with(['<warning>Just</warning>', '<warning>a</warning>', '<warning>test</warning>'], 1);
+            ->method('warning')
+            ->with(['Just', 'a', 'test'], 1);
 
         $this->Shell->warn(['Just', 'a', 'test']);
     }
@@ -328,8 +347,8 @@ class ShellTest extends TestCase
     public function testSuccess()
     {
         $this->io->expects($this->once())
-            ->method('out')
-            ->with('<success>Just a test</success>', 1);
+            ->method('success')
+            ->with('Just a test', 1);
 
         $this->Shell->success('Just a test');
     }
@@ -342,8 +361,8 @@ class ShellTest extends TestCase
     public function testSuccessArray()
     {
         $this->io->expects($this->once())
-            ->method('out')
-            ->with(['<success>Just</success>', '<success>a</success>', '<success>test</success>'], 1);
+            ->method('success')
+            ->with(['Just', 'a', 'test'], 1);
 
         $this->Shell->success(['Just', 'a', 'test']);
     }
@@ -379,6 +398,7 @@ class ShellTest extends TestCase
     /**
      * testError
      *
+     * @group deprecated
      * @return void
      */
     public function testError()
@@ -391,8 +411,10 @@ class ShellTest extends TestCase
             ->method('err')
             ->with('Searched all...');
 
-        $this->Shell->error('Foo Not Found', 'Searched all...');
-        $this->assertSame($this->Shell->stopped, 1);
+        $this->deprecated(function () {
+            $this->Shell->error('Foo Not Found', 'Searched all...');
+            $this->assertSame($this->Shell->stopped, 1);
+        });
     }
 
     /**
@@ -504,7 +526,7 @@ class ShellTest extends TestCase
         $result = $this->Shell->createFile($file, $contents);
         $this->assertTrue($result);
         $this->assertFileExists($file);
-        $this->assertEquals(file_get_contents($file), $contents);
+        $this->assertStringEqualsFile($file, $contents);
     }
 
     /**
@@ -607,7 +629,7 @@ class ShellTest extends TestCase
         $this->Shell->interactive = false;
         $result = $this->Shell->createFile($file, 'My content');
         $this->assertTrue($result);
-        $this->assertEquals(file_get_contents($file), 'My content');
+        $this->assertStringEqualsFile($file, 'My content');
     }
 
     /**
@@ -673,15 +695,28 @@ class ShellTest extends TestCase
      */
     public function testHasTask()
     {
-        $this->Shell->tasks = ['Extract', 'DbConfig'];
+        $this->Shell->tasks = ['Extract', 'Assets'];
         $this->Shell->loadTasks();
 
         $this->assertTrue($this->Shell->hasTask('extract'));
         $this->assertTrue($this->Shell->hasTask('Extract'));
         $this->assertFalse($this->Shell->hasTask('random'));
 
-        $this->assertTrue($this->Shell->hasTask('db_config'));
-        $this->assertTrue($this->Shell->hasTask('DbConfig'));
+        $this->assertTrue($this->Shell->hasTask('assets'));
+        $this->assertTrue($this->Shell->hasTask('Assets'));
+    }
+
+    /**
+     * test task loading exception
+     *
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Task `DoesNotExist` not found. Maybe you made a typo or a plugin is missing or not loaded?
+     * @return void
+     */
+    public function testMissingTaskException()
+    {
+        $this->Shell->tasks = ['DoesNotExist'];
+        $this->Shell->loadTasks();
     }
 
     /**
@@ -1023,7 +1058,7 @@ TEXT;
             ->setMethods(['startup', 'getOptionParser', 'hr'])
             ->disableOriginalConstructor()
             ->getMock();
-        $shell->io(
+        $shell->setIo(
             $this->getMockBuilder('Cake\Console\ConsoleIo')
             ->setMethods(['err'])
             ->getMock()
@@ -1052,7 +1087,7 @@ TEXT;
             ->setMethods(['startup', 'getOptionParser', 'hr'])
             ->disableOriginalConstructor()
             ->getMock();
-        $shell->io(
+        $shell->setIo(
             $this->getMockBuilder('Cake\Console\ConsoleIo')
             ->setMethods(['err'])
             ->getMock()
@@ -1089,7 +1124,7 @@ TEXT;
             ->setMethods(['getOptionParser', 'out', 'startup', '_welcome'])
             ->disableOriginalConstructor()
             ->getMock();
-        $shell->io($this->getMockBuilder('Cake\Console\ConsoleIo')->getMock());
+        $shell->setIo($this->getMockBuilder('Cake\Console\ConsoleIo')->getMock());
         $shell->expects($this->once())->method('getOptionParser')
             ->will($this->returnValue($parser));
         $shell->expects($this->once())->method('out');
@@ -1108,7 +1143,7 @@ TEXT;
             ->setMethods(['startup', 'hasTask'])
             ->disableOriginalConstructor()
             ->getMock();
-        $shell->io(
+        $shell->setIo(
             $this->getMockBuilder('Cake\Console\ConsoleIo')
             ->setMethods(['err'])
             ->getMock()
@@ -1147,12 +1182,12 @@ TEXT;
             ->setMethods(['hasTask', 'startup', 'getOptionParser'])
             ->disableOriginalConstructor()
             ->getMock();
-        $shell->io($io);
+        $shell->setIo($io);
         $task = $this->getMockBuilder('Cake\Console\Shell')
             ->setMethods(['main', 'runCommand'])
             ->disableOriginalConstructor()
             ->getMock();
-        $task->io($io);
+        $task->setIo($io);
         $task->expects($this->once())
             ->method('runCommand')
             ->with(['one'], false, ['requested' => true]);
@@ -1229,8 +1264,8 @@ TEXT;
         $shell->expects($this->never())->method('main');
 
         $io->expects($this->once())
-            ->method('err')
-            ->with('<error>Error: Missing required arguments. filename is required.</error>');
+            ->method('error')
+            ->with('Error: Missing required arguments. filename is required.');
         $result = $shell->runCommand([]);
         $this->assertFalse($result, 'Shell should fail');
     }
@@ -1331,7 +1366,7 @@ TEXT;
         $this->Shell->plugin = 'plugin';
         $parser = $this->Shell->getOptionParser();
 
-        $this->assertEquals('plugin.test', $parser->command());
+        $this->assertEquals('plugin.test', $parser->getCommand());
     }
 
     /**

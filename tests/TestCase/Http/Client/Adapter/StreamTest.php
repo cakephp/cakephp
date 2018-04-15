@@ -122,10 +122,10 @@ class StreamTest extends TestCase
     public function testSend()
     {
         $stream = new Stream();
-        $request = new Request();
-        $request->url('http://localhost')
-            ->header('User-Agent', 'CakePHP TestSuite')
-            ->cookie('testing', 'value');
+        $request = new Request('http://localhost', 'GET', [
+            'User-Agent' => 'CakePHP TestSuite',
+            'Cookie' => 'testing=value'
+        ]);
 
         try {
             $responses = $stream->send($request, []);
@@ -143,8 +143,7 @@ class StreamTest extends TestCase
     public function testSendByUsingCakephpProtocol()
     {
         $stream = new Stream();
-        $request = new Request();
-        $request->url('http://dummy/');
+        $request = new Request('http://dummy/');
 
         $responses = $stream->send($request, []);
         $this->assertInstanceOf('Cake\Http\Client\Response', $responses[0]);
@@ -159,13 +158,15 @@ class StreamTest extends TestCase
      */
     public function testBuildingContextHeader()
     {
-        $request = new Request();
-        $request->url('http://localhost')
-            ->header([
+        $request = new Request(
+            'http://localhost',
+            'GET',
+            [
                 'User-Agent' => 'CakePHP TestSuite',
                 'Content-Type' => 'application/json',
                 'Cookie' => 'a=b; c=do%20it'
-            ]);
+            ]
+        );
 
         $options = [
             'redirect' => 20,
@@ -173,10 +174,10 @@ class StreamTest extends TestCase
         $this->stream->send($request, $options);
         $result = $this->stream->contextOptions();
         $expected = [
-            'Connection: close',
             'User-Agent: CakePHP TestSuite',
             'Content-Type: application/json',
             'Cookie: a=b; c=do%20it',
+            'Connection: close',
         ];
         $this->assertEquals(implode("\r\n", $expected), $result['header']);
         $this->assertSame(0, $result['max_redirects']);
@@ -191,12 +192,12 @@ class StreamTest extends TestCase
     public function testSendContextContentString()
     {
         $content = json_encode(['a' => 'b']);
-        $request = new Request();
-        $request->url('http://localhost')
-            ->header([
-                'Content-Type' => 'application/json'
-            ])
-            ->body($content);
+        $request = new Request(
+            'http://localhost',
+            'GET',
+            ['Content-Type' => 'application/json'],
+            $content
+        );
 
         $options = [
             'redirect' => 20
@@ -204,9 +205,9 @@ class StreamTest extends TestCase
         $this->stream->send($request, $options);
         $result = $this->stream->contextOptions();
         $expected = [
+            'Content-Type: application/json',
             'Connection: close',
             'User-Agent: CakePHP',
-            'Content-Type: application/json',
         ];
         $this->assertEquals(implode("\r\n", $expected), $result['header']);
         $this->assertEquals($content, $result['content']);
@@ -219,19 +220,21 @@ class StreamTest extends TestCase
      */
     public function testSendContextContentArray()
     {
-        $request = new Request();
-        $request->url('http://localhost')
-            ->header([
+        $request = new Request(
+            'http://localhost',
+            'GET',
+            [
                 'Content-Type' => 'application/json'
-            ])
-            ->body(['a' => 'my value']);
+            ],
+            ['a' => 'my value']
+        );
 
         $this->stream->send($request, []);
         $result = $this->stream->contextOptions();
         $expected = [
+            'Content-Type: application/x-www-form-urlencoded',
             'Connection: close',
             'User-Agent: CakePHP',
-            'Content-Type: application/x-www-form-urlencoded',
         ];
         $this->assertStringStartsWith(implode("\r\n", $expected), $result['header']);
         $this->assertContains('a=my+value', $result['content']);
@@ -245,21 +248,18 @@ class StreamTest extends TestCase
      */
     public function testSendContextContentArrayFiles()
     {
-        $request = new Request();
-        $request->url('http://localhost')
-            ->header([
-                'Content-Type' => 'application/json'
-            ])
-            ->body(['upload' => fopen(CORE_PATH . 'VERSION.txt', 'r')]);
+        $request = new Request(
+            'http://localhost',
+            'GET',
+            ['Content-Type' => 'application/json'],
+            ['upload' => fopen(CORE_PATH . 'VERSION.txt', 'r')]
+        );
 
         $this->stream->send($request, []);
         $result = $this->stream->contextOptions();
-        $expected = [
-            'Connection: close',
-            'User-Agent: CakePHP',
-            'Content-Type: multipart/form-data',
-        ];
-        $this->assertStringStartsWith(implode("\r\n", $expected), $result['header']);
+        $this->assertContains("Content-Type: multipart/form-data", $result['header']);
+        $this->assertContains("Connection: close\r\n", $result['header']);
+        $this->assertContains("User-Agent: CakePHP", $result['header']);
         $this->assertContains('name="upload"', $result['content']);
         $this->assertContains('filename="VERSION.txt"', $result['content']);
     }
@@ -271,8 +271,7 @@ class StreamTest extends TestCase
      */
     public function testSendContextSsl()
     {
-        $request = new Request();
-        $request->url('https://localhost.com/test.html');
+        $request = new Request('https://localhost.com/test.html');
         $options = [
             'ssl_verify_host' => true,
             'ssl_verify_peer' => true,
@@ -307,8 +306,7 @@ class StreamTest extends TestCase
      */
     public function testSendContextSslNoVerifyPeerName()
     {
-        $request = new Request();
-        $request->url('https://localhost.com/test.html');
+        $request = new Request('https://localhost.com/test.html');
         $options = [
             'ssl_verify_host' => true,
             'ssl_verify_peer' => true,
@@ -376,26 +374,26 @@ class StreamTest extends TestCase
 
         $responses = $this->stream->createResponses($headers, $content);
         $this->assertCount(3, $responses);
-        $this->assertEquals('close', $responses[0]->header('Connection'));
-        $this->assertEquals('', $responses[0]->body());
-        $this->assertEquals('', $responses[1]->body());
-        $this->assertEquals($content, $responses[2]->body());
+        $this->assertEquals('close', $responses[0]->getHeaderLine('Connection'));
+        $this->assertEquals('', (string)$responses[0]->getBody());
+        $this->assertEquals('', (string)$responses[1]->getBody());
+        $this->assertEquals($content, (string)$responses[2]->getBody());
 
-        $this->assertEquals(302, $responses[0]->statusCode());
-        $this->assertEquals(302, $responses[1]->statusCode());
-        $this->assertEquals(200, $responses[2]->statusCode());
+        $this->assertEquals(302, $responses[0]->getStatusCode());
+        $this->assertEquals(302, $responses[1]->getStatusCode());
+        $this->assertEquals(200, $responses[2]->getStatusCode());
 
-        $this->assertEquals('value', $responses[0]->cookie('first'));
-        $this->assertEquals(null, $responses[0]->cookie('second'));
-        $this->assertEquals(null, $responses[0]->cookie('third'));
+        $this->assertEquals('value', $responses[0]->getCookie('first'));
+        $this->assertNull($responses[0]->getCookie('second'));
+        $this->assertNull($responses[0]->getCookie('third'));
 
-        $this->assertEquals(null, $responses[1]->cookie('first'));
-        $this->assertEquals('val', $responses[1]->cookie('second'));
-        $this->assertEquals(null, $responses[1]->cookie('third'));
+        $this->assertNull($responses[1]->getCookie('first'));
+        $this->assertEquals('val', $responses[1]->getCookie('second'));
+        $this->assertNull($responses[1]->getCookie('third'));
 
-        $this->assertEquals(null, $responses[2]->cookie('first'));
-        $this->assertEquals(null, $responses[2]->cookie('second'));
-        $this->assertEquals('works', $responses[2]->cookie('third'));
+        $this->assertNull($responses[2]->getCookie('first'));
+        $this->assertNull($responses[2]->getCookie('second'));
+        $this->assertEquals('works', $responses[2]->getCookie('third'));
     }
 
     /**
@@ -405,8 +403,7 @@ class StreamTest extends TestCase
      */
     public function testKeepDeadline()
     {
-        $request = new Request();
-        $request->url('http://dummy/?sleep');
+        $request = new Request('http://dummy/?sleep');
         $options = [
             'timeout' => 5,
         ];
@@ -424,10 +421,9 @@ class StreamTest extends TestCase
      */
     public function testMissDeadline()
     {
-        $this->expectException(\Cake\Network\Exception\HttpException::class);
+        $this->expectException(\Cake\Http\Exception\HttpException::class);
         $this->expectExceptionMessage('Connection timed out http://dummy/?sleep');
-        $request = new Request();
-        $request->url('http://dummy/?sleep');
+        $request = new Request('http://dummy/?sleep');
         $options = [
             'timeout' => 2,
         ];

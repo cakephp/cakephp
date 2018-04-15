@@ -16,7 +16,6 @@ namespace Cake\Test\TestCase\ORM;
 
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Entity;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Text;
 
@@ -32,7 +31,8 @@ class TableUuidTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'core.uuiditems', 'core.uuidportfolios'
+        'core.binary_uuiditems',
+        'core.uuiditems',
     ];
 
     /**
@@ -55,21 +55,32 @@ class TableUuidTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        TableRegistry::clear();
+        $this->getTableLocator()->clear();
+    }
+
+    /**
+     * Provider for testing that string and binary uuids work the same
+     *
+     * @return array
+     */
+    public function uuidTableProvider()
+    {
+        return [['uuiditems'], ['binary_uuiditems']];
     }
 
     /**
      * Test saving new records sets uuids
      *
+     * @dataProvider uuidTableProvider
      * @return void
      */
-    public function testSaveNew()
+    public function testSaveNew($tableName)
     {
         $entity = new Entity([
             'name' => 'shiny new',
             'published' => true,
         ]);
-        $table = TableRegistry::get('uuiditems');
+        $table = $this->getTableLocator()->get($tableName);
         $this->assertSame($entity, $table->save($entity));
         $this->assertRegExp('/^[a-f0-9-]{36}$/', $entity->id, 'Should be 36 characters');
 
@@ -81,9 +92,10 @@ class TableUuidTest extends TestCase
     /**
      * Test saving new records allows manual uuids
      *
+     * @dataProvider uuidTableProvider
      * @return void
      */
-    public function testSaveNewSpecificId()
+    public function testSaveNewSpecificId($tableName)
     {
         $id = Text::uuid();
         $entity = new Entity([
@@ -91,7 +103,7 @@ class TableUuidTest extends TestCase
             'name' => 'shiny and new',
             'published' => true,
         ]);
-        $table = TableRegistry::get('uuiditems');
+        $table = $this->getTableLocator()->get($tableName);
         $this->assertSame($entity, $table->save($entity));
         $this->assertSame($id, $entity->id);
 
@@ -104,9 +116,10 @@ class TableUuidTest extends TestCase
     /**
      * Test saving existing records works
      *
+     * @dataProvider uuidTableProvider
      * @return void
      */
-    public function testSaveUpdate()
+    public function testSaveUpdate($tableName)
     {
         $id = '481fc6d0-b920-43e0-a40d-6d1740cf8569';
         $entity = new Entity([
@@ -115,7 +128,7 @@ class TableUuidTest extends TestCase
             'published' => true,
         ]);
 
-        $table = TableRegistry::get('uuiditems');
+        $table = $this->getTableLocator()->get($tableName);
         $this->assertSame($entity, $table->save($entity));
         $this->assertEquals($id, $entity->id, 'Should be 36 characters');
 
@@ -127,28 +140,44 @@ class TableUuidTest extends TestCase
     /**
      * Test delete with string pk.
      *
+     * @dataProvider uuidTableProvider
      * @return void
      */
-    public function testDelete()
+    public function testGetById($tableName)
     {
-        $id = '481fc6d0-b920-43e0-a40d-6d1740cf8569';
-        $table = TableRegistry::get('uuiditems');
-        $entity = $table->find('all')->where(['id' => $id])->first();
+        $table = $this->getTableLocator()->get($tableName);
+        $entity = $table->find('all')->firstOrFail();
+
+        $result = $table->get($entity->id);
+        $this->assertSame($result->id, $entity->id);
+    }
+
+    /**
+     * Test delete with string pk.
+     *
+     * @dataProvider uuidTableProvider
+     * @return void
+     */
+    public function testDelete($tableName)
+    {
+        $table = $this->getTableLocator()->get($tableName);
+        $entity = $table->find('all')->firstOrFail();
 
         $this->assertTrue($table->delete($entity));
-        $query = $table->find('all')->where(['id' => $id]);
-        $this->assertCount(0, $query->execute(), 'No rows left');
+        $query = $table->find('all')->where(['id' => $entity->id]);
+        $this->assertEmpty($query->first(), 'No row left');
     }
 
     /**
      * Tests that sql server does not error when an empty uuid is bound
      *
+     * @dataProvider uuidTableProvider
      * @return void
      */
-    public function testEmptyUuid()
+    public function testEmptyUuid($tableName)
     {
         $id = '';
-        $table = TableRegistry::get('uuiditems');
+        $table = $this->getTableLocator()->get($tableName);
         $entity = $table->find('all')
             ->where(['id' => $id])
             ->first();

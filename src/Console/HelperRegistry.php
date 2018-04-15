@@ -46,6 +46,9 @@ class HelperRegistry extends ObjectRegistry
     /**
      * Resolve a helper classname.
      *
+     * Will prefer helpers defined in Command\Helper over those
+     * defined in Shell\Helper.
+     *
      * Part of the template method for Cake\Core\ObjectRegistry::load()
      *
      * @param string $class Partial classname to resolve.
@@ -53,6 +56,11 @@ class HelperRegistry extends ObjectRegistry
      */
     protected function _resolveClassName($class)
     {
+        $name = App::className($class, 'Command/Helper', 'Helper');
+        if ($name) {
+            return $name;
+        }
+
         return App::className($class, 'Shell/Helper', 'Helper');
     }
 

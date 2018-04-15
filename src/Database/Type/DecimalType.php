@@ -17,6 +17,7 @@ namespace Cake\Database\Type;
 use Cake\Database\Driver;
 use Cake\Database\Type;
 use Cake\Database\TypeInterface;
+use Cake\Database\Type\BatchCastingInterface;
 use InvalidArgumentException;
 use PDO;
 use RuntimeException;
@@ -26,7 +27,7 @@ use RuntimeException;
  *
  * Use to convert decimal data between PHP and the database types.
  */
-class DecimalType extends Type implements TypeInterface
+class DecimalType extends Type implements TypeInterface, BatchCastingInterface
 {
     /**
      * Identifier name for this type.
@@ -80,7 +81,10 @@ class DecimalType extends Type implements TypeInterface
             return null;
         }
         if (!is_scalar($value)) {
-            throw new InvalidArgumentException('Cannot convert value to a decimal.');
+            throw new InvalidArgumentException(sprintf(
+                'Cannot convert value of type `%s` to a decimal',
+                getTypeName($value)
+            ));
         }
         if (is_string($value) && is_numeric($value)) {
             return $value;
@@ -90,7 +94,7 @@ class DecimalType extends Type implements TypeInterface
     }
 
     /**
-     * Convert float values to PHP integers
+     * Convert float values to PHP floats
      *
      * @param null|string|resource $value The value to convert.
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
@@ -100,10 +104,28 @@ class DecimalType extends Type implements TypeInterface
     public function toPHP($value, Driver $driver)
     {
         if ($value === null) {
-            return null;
+            return $value;
         }
 
         return (float)$value;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return array
+     */
+    public function manyToPHP(array $values, array $fields, Driver $driver)
+    {
+        foreach ($fields as $field) {
+            if (!isset($values[$field])) {
+                continue;
+            }
+
+            $values[$field] = (float)$values[$field];
+        }
+
+        return $values;
     }
 
     /**

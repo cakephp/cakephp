@@ -1007,16 +1007,29 @@ class CollectionTest extends TestCase
     }
 
     /**
-     * Tests that issuing a count will throw an exception
+     * Tests that Count returns the number of elements
      *
+     * @dataProvider simpleProvider
      * @return void
      */
-    public function testCollectionCount()
+    public function testCollectionCount($list)
     {
-        $this->expectException(\LogicException::class);
-        $data = [1, 2, 3, 4];
-        $collection = new Collection($data);
-        $collection->count();
+        $list = (new Collection($list))->buffered();
+        $collection = new Collection($list);
+        $this->assertEquals(8, $collection->append($list)->count());
+    }
+
+    /**
+     * Tests that countKeys returns the number of unique keys
+     *
+     * @dataProvider simpleProvider
+     * @return void
+     */
+    public function testCollectionCountKeys($list)
+    {
+        $list = (new Collection($list))->buffered();
+        $collection = new Collection($list);
+        $this->assertEquals(4, $collection->append($list)->countKeys());
     }
 
     /**
@@ -1134,6 +1147,65 @@ class CollectionTest extends TestCase
         $collection = new Collection(['a' => 1, 'b' => 2]);
         $combined = $collection->append(['c' => 3, 'a' => 4]);
         $this->assertEquals(['a' => 4, 'b' => 2, 'c' => 3], $combined->toArray());
+    }
+
+    /**
+     * Tests the appendItem method
+     */
+    public function testAppendItem()
+    {
+        $collection = new Collection([1, 2, 3]);
+        $combined = $collection->appendItem(4);
+        $this->assertEquals([1, 2, 3, 4], $combined->toArray(false));
+
+        $collection = new Collection(['a' => 1, 'b' => 2]);
+        $combined = $collection->appendItem(3, 'c');
+        $combined = $combined->appendItem(4, 'a');
+        $this->assertEquals(['a' => 4, 'b' => 2, 'c' => 3], $combined->toArray());
+    }
+
+    /**
+     * Tests the prepend method
+     */
+    public function testPrepend()
+    {
+        $collection = new Collection([1, 2, 3]);
+        $combined = $collection->prepend(['a']);
+        $this->assertEquals(['a', 1, 2, 3], $combined->toList());
+
+        $collection = new Collection(['c' => 3, 'd' => 4]);
+        $combined = $collection->prepend(['a' => 1, 'b' => 2]);
+        $this->assertEquals(['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4], $combined->toArray());
+    }
+
+    /**
+     * Tests prependItem method
+     */
+    public function testPrependItem()
+    {
+        $collection = new Collection([1, 2, 3]);
+        $combined = $collection->prependItem('a');
+        $this->assertEquals(['a', 1, 2, 3], $combined->toList());
+
+        $collection = new Collection(['c' => 3, 'd' => 4]);
+        $combined = $collection->prependItem(2, 'b');
+        $combined = $combined->prependItem(1, 'a');
+        $this->assertEquals(['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4], $combined->toArray());
+    }
+
+    /**
+     * Tests prependItem method
+     */
+    public function testPrependItemPreserveKeys()
+    {
+        $collection = new Collection([1, 2, 3]);
+        $combined = $collection->prependItem('a');
+        $this->assertEquals(['a', 1, 2, 3], $combined->toList());
+
+        $collection = new Collection(['c' => 3, 'd' => 4]);
+        $combined = $collection->prependItem(2, 'b');
+        $combined = $combined->prependItem(1, 'a');
+        $this->assertEquals(['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4], $combined->toArray());
     }
 
     /**

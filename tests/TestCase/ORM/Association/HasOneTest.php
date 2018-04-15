@@ -19,7 +19,6 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Database\TypeMap;
 use Cake\ORM\Association\HasOne;
 use Cake\ORM\Entity;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -47,8 +46,8 @@ class HasOneTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->user = TableRegistry::get('Users');
-        $this->profile = TableRegistry::get('Profiles');
+        $this->user = $this->getTableLocator()->get('Users');
+        $this->profile = $this->getTableLocator()->get('Profiles');
         $this->listenerCalled = false;
     }
 
@@ -60,22 +59,40 @@ class HasOneTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        TableRegistry::clear();
+        $this->getTableLocator()->clear();
     }
 
     /**
      * Tests that foreignKey() returns the correct configured value
      *
+     * @group deprecated
      * @return void
      */
     public function testForeignKey()
     {
+        $this->deprecated(function () {
+            $assoc = new HasOne('Profiles', [
+                'sourceTable' => $this->user
+            ]);
+            $this->assertEquals('user_id', $assoc->foreignKey());
+            $this->assertEquals('another_key', $assoc->foreignKey('another_key'));
+            $this->assertEquals('another_key', $assoc->foreignKey());
+        });
+    }
+
+    /**
+     * Tests that setForeignKey() returns the correct configured value
+     *
+     * @return void
+     */
+    public function testSetForeignKey()
+    {
         $assoc = new HasOne('Profiles', [
             'sourceTable' => $this->user
         ]);
-        $this->assertEquals('user_id', $assoc->foreignKey());
-        $this->assertEquals('another_key', $assoc->foreignKey('another_key'));
-        $this->assertEquals('another_key', $assoc->foreignKey());
+        $this->assertEquals('user_id', $assoc->getForeignKey());
+        $this->assertEquals($assoc, $assoc->setForeignKey('another_key'));
+        $this->assertEquals('another_key', $assoc->getForeignKey());
     }
 
     /**
@@ -164,12 +181,12 @@ class HasOneTest extends TestCase
             'foreignKey' => ['user_id', 'user_site_id']
         ];
 
-        $this->user->primaryKey(['id', 'site_id']);
+        $this->user->setPrimaryKey(['id', 'site_id']);
         $association = new HasOne('Profiles', $config);
 
         $query = $this->getMockBuilder('\Cake\ORM\Query')
             ->setMethods(['join', 'select'])
-            ->setConstructorArgs([null, null])
+            ->disableOriginalConstructor()
             ->getMock();
         $field1 = new IdentifierExpression('Profiles.user_id');
         $field2 = new IdentifierExpression('Profiles.user_site_id');
@@ -199,14 +216,14 @@ class HasOneTest extends TestCase
         $this->expectExceptionMessage('Cannot match provided foreignKey for "Profiles", got "(user_id)" but expected foreign key for "(id, site_id)"');
         $query = $this->getMockBuilder('\Cake\ORM\Query')
             ->setMethods(['join', 'select'])
-            ->setConstructorArgs([null, null])
+            ->disableOriginalConstructor()
             ->getMock();
         $config = [
             'sourceTable' => $this->user,
             'targetTable' => $this->profile,
             'conditions' => ['Profiles.is_active' => true],
         ];
-        $this->user->primaryKey(['id', 'site_id']);
+        $this->user->setPrimaryKey(['id', 'site_id']);
         $association = new HasOne('Profiles', $config);
         $association->attachTo($query, ['includeFields' => false]);
     }
@@ -250,7 +267,7 @@ class HasOneTest extends TestCase
     {
         $config = ['propertyName' => 'thing_placeholder'];
         $association = new hasOne('Thing', $config);
-        $this->assertEquals('thing_placeholder', $association->property());
+        $this->assertEquals('thing_placeholder', $association->getProperty());
     }
 
     /**
@@ -265,7 +282,7 @@ class HasOneTest extends TestCase
             'targetTable' => $this->profile,
         ];
         $association = new HasOne('Contacts.Profiles', $config);
-        $this->assertEquals('profile', $association->property());
+        $this->assertEquals('profile', $association->getProperty());
     }
 
     /**

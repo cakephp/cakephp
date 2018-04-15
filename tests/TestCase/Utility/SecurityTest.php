@@ -18,6 +18,7 @@ use Cake\TestSuite\TestCase;
 use Cake\Utility\Crypto\Mcrypt;
 use Cake\Utility\Crypto\OpenSsl;
 use Cake\Utility\Security;
+use RuntimeException;
 
 /**
  * SecurityTest class
@@ -67,6 +68,18 @@ class SecurityTest extends TestCase
         $this->assertSame(64, strlen(Security::hash($key, 'sha256', true)));
 
         Security::setHash($_hashType);
+    }
+
+    /**
+     * testInvalidHashTypeException
+     *
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessageRegExp /The hash type `doesnotexist` was not found. Available algorithms are: \w+/
+     * @return void
+     */
+    public function testInvalidHashTypeException()
+    {
+        Security::hash('test', 'doesnotexist', false);
     }
 
     /**
@@ -255,30 +268,32 @@ class SecurityTest extends TestCase
     /**
      * Test that values encrypted with open ssl can be decrypted with mcrypt and the reverse.
      *
+     * @group deprecated
      * @return void
      */
     public function testEngineEquivalence()
     {
         $this->skipIf(!function_exists('mcrypt_encrypt') || version_compare(PHP_VERSION, '7.1', '>='), 'This needs mcrypt extension to be loaded.');
+        $this->deprecated(function () {
+            $restore = Security::engine();
+            $txt = "Obi-wan you're our only hope";
+            $key = 'This is my secret key phrase it is quite long.';
+            $salt = 'A tasty salt that is delicious';
 
-        $restore = Security::engine();
-        $txt = "Obi-wan you're our only hope";
-        $key = 'This is my secret key phrase it is quite long.';
-        $salt = 'A tasty salt that is delicious';
+            Security::engine(new Mcrypt());
+            $cipher = Security::encrypt($txt, $key, $salt);
+            $this->assertEquals($txt, Security::decrypt($cipher, $key, $salt));
 
-        Security::engine(new Mcrypt());
-        $cipher = Security::encrypt($txt, $key, $salt);
-        $this->assertEquals($txt, Security::decrypt($cipher, $key, $salt));
+            Security::engine(new OpenSsl());
+            $this->assertEquals($txt, Security::decrypt($cipher, $key, $salt));
 
-        Security::engine(new OpenSsl());
-        $this->assertEquals($txt, Security::decrypt($cipher, $key, $salt));
+            Security::engine(new OpenSsl());
+            $cipher = Security::encrypt($txt, $key, $salt);
+            $this->assertEquals($txt, Security::decrypt($cipher, $key, $salt));
 
-        Security::engine(new OpenSsl());
-        $cipher = Security::encrypt($txt, $key, $salt);
-        $this->assertEquals($txt, Security::decrypt($cipher, $key, $salt));
-
-        Security::engine(new Mcrypt());
-        $this->assertEquals($txt, Security::decrypt($cipher, $key, $salt));
+            Security::engine(new Mcrypt());
+            $this->assertEquals($txt, Security::decrypt($cipher, $key, $salt));
+        });
     }
 
     /**
@@ -288,8 +303,8 @@ class SecurityTest extends TestCase
      */
     public function testSalt()
     {
-        Security::salt('foobarbaz');
-        $this->assertEquals('foobarbaz', Security::salt());
+        Security::setSalt('foobarbaz');
+        $this->assertEquals('foobarbaz', Security::getSalt());
     }
 
     /**
@@ -317,6 +332,22 @@ class SecurityTest extends TestCase
         $this->assertSame(64, strlen($value));
 
         $this->assertRegExp('/[^0-9a-f]/', $value, 'should return a binary string');
+    }
+
+    /**
+     * Test the randomString method.
+     *
+     * @return void
+     */
+    public function testRandomString()
+    {
+        $value = Security::randomString(7);
+        $this->assertSame(7, strlen($value));
+
+        $value = Security::randomString();
+        $this->assertSame(64, strlen($value));
+
+        $this->assertRegExp('/^[0-9a-f]+$/', $value, 'should return a ASCII string');
     }
 
     /**

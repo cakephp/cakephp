@@ -93,6 +93,7 @@ class PhpConfig implements ConfigEngineInterface
         if (!isset($config)) {
             throw new Exception(sprintf('Config file "%s" did not return an array', $key . '.php'));
         }
+        deprecationWarning('PHP configuration files should not set `$config. Instead return an array.');
 
         return $config;
     }

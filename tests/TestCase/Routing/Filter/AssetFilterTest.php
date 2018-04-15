@@ -72,10 +72,10 @@ class AssetFilterTest extends TestCase
         $event = new Event('DispatcherTest', $this, compact('request', 'response'));
 
         ob_start();
-        $this->assertSame($response, $filter->beforeDispatch($event));
+        $response = $filter->beforeDispatch($event);
         ob_end_clean();
-        $this->assertEquals(200, $response->statusCode());
-        $this->assertEquals($time->format('D, j M Y H:i:s') . ' GMT', $response->modified());
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals($time->format('D, j M Y H:i:s') . ' GMT', $response->getHeaderLine('Last-Modified'));
 
         $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['_sendHeader', 'checkNotModified', 'send'])
@@ -88,8 +88,8 @@ class AssetFilterTest extends TestCase
         $response->expects($this->never())->method('send');
         $event = new Event('DispatcherTest', $this, compact('request', 'response'));
 
-        $this->assertSame($response, $filter->beforeDispatch($event));
-        $this->assertEquals($time->format('D, j M Y H:i:s') . ' GMT', $response->modified());
+        $response = $filter->beforeDispatch($event);
+        $this->assertEquals($time->format('D, j M Y H:i:s') . ' GMT', $response->getHeaderLine('Last-Modified'));
     }
 
     /**
@@ -253,7 +253,6 @@ class AssetFilterTest extends TestCase
         $this->assertEquals($file, $result->read());
 
         $expected = filesize($path);
-        $headers = $response->header();
-        $this->assertEquals($expected, $headers['Content-Length']);
+        $this->assertEquals($expected, $response->getHeaderLine('Content-Length'));
     }
 }

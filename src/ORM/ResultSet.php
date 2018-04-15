@@ -175,10 +175,10 @@ class ResultSet implements ResultSetInterface
      */
     public function __construct($query, $statement)
     {
-        $repository = $query->repository();
+        $repository = $query->getRepository();
         $this->_statement = $statement;
         $this->_driver = $query->getConnection()->getDriver();
-        $this->_defaultTable = $query->repository();
+        $this->_defaultTable = $query->getRepository();
         $this->_calculateAssociationMap($query);
         $this->_hydrate = $query->isHydrationEnabled();
         $this->_entityClass = $repository->getEntityClass();
@@ -432,6 +432,7 @@ class ResultSet implements ResultSetInterface
      */
     protected function _calculateTypeMap()
     {
+        deprecationWarning('ResultSet::_calculateTypeMap() is deprecated, and will be removed in 4.0.0.');
     }
 
     /**
@@ -584,7 +585,7 @@ class ResultSet implements ResultSetInterface
             $results[$defaultAlias]['_matchingData'] = $results['_matchingData'];
         }
 
-        $options['source'] = $this->_defaultTable->registryAlias();
+        $options['source'] = $this->_defaultTable->getRegistryAlias();
         if (isset($results[$defaultAlias])) {
             $results = $results[$defaultAlias];
         }
@@ -606,6 +607,8 @@ class ResultSet implements ResultSetInterface
      */
     protected function _castValues($alias, $values)
     {
+        deprecationWarning('ResultSet::_castValues() is deprecated, and will be removed in 4.0.0.');
+
         return $values;
     }
 

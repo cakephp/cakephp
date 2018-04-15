@@ -65,7 +65,7 @@ class TextTest extends TestCase
             $result = Text::uuid();
             $match = (bool)preg_match($pattern, $result);
             $this->assertTrue($match);
-            $this->assertFalse(in_array($result, $check));
+            $this->assertNotContains($result, $check);
             $check[] = $result;
         }
     }
@@ -837,43 +837,46 @@ HTML;
     /**
      * testStripLinks method
      *
+     * @group deprecated
      * @return void
      */
     public function testStripLinks()
     {
-        $text = 'This is a test text';
-        $expected = 'This is a test text';
-        $result = $this->Text->stripLinks($text);
-        $this->assertEquals($expected, $result);
+        $this->deprecated(function () {
+            $text = 'This is a test text';
+            $expected = 'This is a test text';
+            $result = $this->Text->stripLinks($text);
+            $this->assertEquals($expected, $result);
 
-        $text = 'This is a <a href="#">test</a> text';
-        $expected = 'This is a test text';
-        $result = $this->Text->stripLinks($text);
-        $this->assertEquals($expected, $result);
+            $text = 'This is a <a href="#">test</a> text';
+            $expected = 'This is a test text';
+            $result = $this->Text->stripLinks($text);
+            $this->assertEquals($expected, $result);
 
-        $text = 'This <strong>is</strong> a <a href="#">test</a> <a href="#">text</a>';
-        $expected = 'This <strong>is</strong> a test text';
-        $result = $this->Text->stripLinks($text);
-        $this->assertEquals($expected, $result);
+            $text = 'This <strong>is</strong> a <a href="#">test</a> <a href="#">text</a>';
+            $expected = 'This <strong>is</strong> a test text';
+            $result = $this->Text->stripLinks($text);
+            $this->assertEquals($expected, $result);
 
-        $text = 'This <strong>is</strong> a <a href="#">test</a> and <abbr>some</abbr> other <a href="#">text</a>';
-        $expected = 'This <strong>is</strong> a test and <abbr>some</abbr> other text';
-        $result = $this->Text->stripLinks($text);
-        $this->assertEquals($expected, $result);
+            $text = 'This <strong>is</strong> a <a href="#">test</a> and <abbr>some</abbr> other <a href="#">text</a>';
+            $expected = 'This <strong>is</strong> a test and <abbr>some</abbr> other text';
+            $result = $this->Text->stripLinks($text);
+            $this->assertEquals($expected, $result);
 
-        $text = 'This <strong><a href="#">is</a></strong> a <a href="javascript:void(0)">test</a> text';
-        $expected = 'This <strong>is</strong> a test text';
-        $result = $this->Text->stripLinks($text);
-        $this->assertEquals($expected, $result);
+            $text = 'This <strong><a href="#">is</a></strong> a <a href="javascript:void(0)">test</a> text';
+            $expected = 'This <strong>is</strong> a test text';
+            $result = $this->Text->stripLinks($text);
+            $this->assertEquals($expected, $result);
 
-        $text = '<a<a h> href=\'bla\'>test</a</a>>';
-        $this->assertEquals('test', $this->Text->stripLinks($text));
+            $text = '<a<a h> href=\'bla\'>test</a</a>>';
+            $this->assertEquals('test', $this->Text->stripLinks($text));
 
-        $text = '<a/href="#">test</a/>';
-        $this->assertEquals('test', $this->Text->stripLinks($text));
+            $text = '<a/href="#">test</a/>';
+            $this->assertEquals('test', $this->Text->stripLinks($text));
 
-        $text = '<a href="#"';
-        $this->assertEquals('', $this->Text->stripLinks($text));
+            $text = '<a href="#"';
+            $this->assertEquals('', $this->Text->stripLinks($text));
+        });
     }
 
     /**

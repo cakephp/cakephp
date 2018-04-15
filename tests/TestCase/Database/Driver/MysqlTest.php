@@ -32,7 +32,7 @@ class MysqlTest extends TestCase
     public function setup()
     {
         parent::setUp();
-        $config = ConnectionManager::config('test');
+        $config = ConnectionManager::getConfig('test');
         $this->skipIf(strpos($config['driver'], 'Mysql') === false, 'Not using Mysql for test config');
     }
 
@@ -44,9 +44,9 @@ class MysqlTest extends TestCase
     public function testConnectionConfigDefault()
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
-            ->setMethods(['_connect', 'connection'])
+            ->setMethods(['_connect', 'getConnection'])
             ->getMock();
-        $dsn = 'mysql:host=localhost;port=3306;dbname=cake;charset=utf8';
+        $dsn = 'mysql:host=localhost;port=3306;dbname=cake;charset=utf8mb4';
         $expected = [
             'persistent' => true,
             'host' => 'localhost',
@@ -55,9 +55,9 @@ class MysqlTest extends TestCase
             'database' => 'cake',
             'port' => '3306',
             'flags' => [],
-            'encoding' => 'utf8',
+            'encoding' => 'utf8mb4',
             'timezone' => null,
-            'init' => ['SET NAMES utf8'],
+            'init' => ['SET NAMES utf8mb4'],
         ];
 
         $expected['flags'] += [
@@ -73,7 +73,7 @@ class MysqlTest extends TestCase
             ->with($dsn, $expected);
 
         $driver->expects($this->any())
-            ->method('connection')
+            ->method('getConnection')
             ->will($this->returnValue($connection));
         $driver->connect([]);
     }
@@ -93,7 +93,7 @@ class MysqlTest extends TestCase
             'password' => 'pass',
             'port' => 3440,
             'flags' => [1 => true, 2 => false],
-            'encoding' => 'a-language',
+            'encoding' => 'some-encoding',
             'timezone' => 'Antarctica',
             'init' => [
                 'Execute this',
@@ -101,13 +101,13 @@ class MysqlTest extends TestCase
             ]
         ];
         $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
-            ->setMethods(['_connect', 'connection'])
+            ->setMethods(['_connect', 'getConnection'])
             ->setConstructorArgs([$config])
             ->getMock();
-        $dsn = 'mysql:host=foo;port=3440;dbname=bar;charset=a-language';
+        $dsn = 'mysql:host=foo;port=3440;dbname=bar;charset=some-encoding';
         $expected = $config;
         $expected['init'][] = "SET time_zone = 'Antarctica'";
-        $expected['init'][] = 'SET NAMES a-language';
+        $expected['init'][] = 'SET NAMES some-encoding';
         $expected['flags'] += [
             PDO::ATTR_PERSISTENT => false,
             PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
@@ -120,12 +120,12 @@ class MysqlTest extends TestCase
         $connection->expects($this->at(0))->method('exec')->with('Execute this');
         $connection->expects($this->at(1))->method('exec')->with('this too');
         $connection->expects($this->at(2))->method('exec')->with("SET time_zone = 'Antarctica'");
-        $connection->expects($this->at(3))->method('exec')->with('SET NAMES a-language');
+        $connection->expects($this->at(3))->method('exec')->with('SET NAMES some-encoding');
         $connection->expects($this->exactly(4))->method('exec');
 
         $driver->expects($this->once())->method('_connect')
             ->with($dsn, $expected);
-        $driver->expects($this->any())->method('connection')
+        $driver->expects($this->any())->method('getConnection')
             ->will($this->returnValue($connection));
         $driver->connect($config);
     }
@@ -150,7 +150,7 @@ class MysqlTest extends TestCase
         $connection = ConnectionManager::get('test');
         $connection->disconnect();
 
-        $driver = $connection->driver();
+        $driver = $connection->getDriver();
         $this->assertFalse($driver->rollbackTransaction());
         $this->assertTrue($driver->isConnected());
     }
@@ -158,7 +158,7 @@ class MysqlTest extends TestCase
     public function testCommitTransactionAutoConnect()
     {
         $connection = ConnectionManager::get('test');
-        $driver = $connection->driver();
+        $driver = $connection->getDriver();
 
         $this->assertFalse($driver->commitTransaction());
         $this->assertTrue($driver->isConnected());

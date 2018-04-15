@@ -6,7 +6,7 @@ namespace Cake\Http;
 
 function headers_sent()
 {
-    return false;
+    return isset($GLOBALS['mockedHeadersSent']) ? $GLOBALS['mockedHeadersSent'] : true;
 }
 
 function header($header)

@@ -37,6 +37,7 @@ class Type implements TypeInterface
         'integer' => 'Cake\Database\Type\IntegerType',
         'biginteger' => 'Cake\Database\Type\IntegerType',
         'binary' => 'Cake\Database\Type\BinaryType',
+        'binaryuuid' => 'Cake\Database\Type\BinaryUuidType',
         'boolean' => 'Cake\Database\Type\BoolType',
         'date' => 'Cake\Database\Type\DateType',
         'datetime' => 'Cake\Database\Type\DateTimeType',
@@ -58,10 +59,10 @@ class Type implements TypeInterface
      * @deprecated 3.1 All types will now use a specific class
      */
     protected static $_basicTypes = [
-        'string' => ['callback' => ['\Cake\Database\Type', 'strval']],
-        'text' => ['callback' => ['\Cake\Database\Type', 'strval']],
+        'string' => ['callback' => [Type::class, 'strval']],
+        'text' => ['callback' => [Type::class, 'strval']],
         'boolean' => [
-            'callback' => ['\Cake\Database\Type', 'boolval'],
+            'callback' => [Type::class, 'boolval'],
             'pdo' => PDO::PARAM_BOOL
         ],
     ];
@@ -227,6 +228,7 @@ class Type implements TypeInterface
      */
     protected function _basicTypeCast($value)
     {
+        deprecationWarning('Type::_basicTypeCast() is deprecated.');
         if ($value === null) {
             return null;
         }
@@ -263,6 +265,7 @@ class Type implements TypeInterface
      */
     public static function boolval($value)
     {
+        deprecationWarning('Type::boolval() is deprecated.');
         if (is_string($value) && !is_numeric($value)) {
             return strtolower($value) === 'true';
         }
@@ -281,6 +284,7 @@ class Type implements TypeInterface
      */
     public static function strval($value)
     {
+        deprecationWarning('Type::strval() is deprecated.');
         if (is_array($value)) {
             $value = '';
         }

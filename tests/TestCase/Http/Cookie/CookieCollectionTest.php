@@ -18,6 +18,7 @@ use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Security;
 use DateTime;
 
 /**
@@ -371,6 +372,23 @@ class CookieCollectionTest extends TestCase
         $request = new ClientRequest('http://example.com/api');
         $request = $collection->addToRequest($request);
         $this->assertFalse($request->hasHeader('Cookie'), 'No header should be set.');
+    }
+
+    /**
+     * Testing the cookie size limit warning
+     *
+     * @expectedException \PHPUnit\Framework\Error\Warning
+     * @expectedExceptionMessage The cookie `default` exceeds the recommended maximum cookie length of 4096 bytes.
+     * @return void
+     */
+    public function testCookieSizeWarning()
+    {
+        $string = Security::insecureRandomBytes(9000);
+        $collection = new CookieCollection();
+        $collection = $collection
+            ->add(new Cookie('default', $string, null, '/', 'example.com'));
+        $request = new ClientRequest('http://example.com/api');
+        $collection->addToRequest($request);
     }
 
     /**

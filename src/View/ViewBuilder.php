@@ -48,14 +48,14 @@ class ViewBuilder implements JsonSerializable, Serializable
     /**
      * The plugin name to use.
      *
-     * @var string
+     * @var string|null|false
      */
     protected $_plugin;
 
     /**
      * The theme name to use.
      *
-     * @var string
+     * @var string|null|false
      */
     protected $_theme;
 
@@ -254,7 +254,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     /**
      * Gets the plugin name to use.
      *
-     * @return string
+     * @return string|null|false
      */
     public function getPlugin()
     {
@@ -267,7 +267,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * @deprecated 3.4.0 Use setPlugin()/getPlugin() instead.
      * @param string|null|false $name Plugin name. If null returns current plugin.
      *   Use false to remove the current plugin name.
-     * @return string|$this
+     * @return string|false|null|$this
      */
     public function plugin($name = null)
     {
@@ -341,7 +341,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     /**
      * Gets the view theme to use.
      *
-     * @return string
+     * @return string|null|false
      */
     public function getTheme()
     {
@@ -354,7 +354,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * @deprecated 3.4.0 Use setTheme()/getTheme() instead.
      * @param string|null|false $theme Theme name. If null returns current theme.
      *   Use false to remove the current theme.
-     * @return string|$this
+     * @return string|false|null|$this
      */
     public function theme($theme = null)
     {

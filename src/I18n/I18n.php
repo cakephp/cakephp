@@ -125,6 +125,10 @@ class I18n
      */
     public static function translator($name = 'default', $locale = null, callable $loader = null)
     {
+        deprecationWarning(
+            'I18n::translator() is deprecated. ' .
+            'Use I18n::setTranslator()/getTranslator() instead.'
+        );
         if ($loader !== null) {
             static::setTranslator($name, $loader, $locale);
 
@@ -271,6 +275,10 @@ class I18n
      */
     public static function locale($locale = null)
     {
+        deprecationWarning(
+            'I18n::locale() is deprecated. ' .
+            'Use I18n::setLocale()/getLocale() instead.'
+        );
         if (!empty($locale)) {
             static::setLocale($locale);
 
@@ -324,6 +332,8 @@ class I18n
      */
     public static function defaultLocale()
     {
+        deprecationWarning('I18n::defaultLocale() is deprecated. Use I18n::getDefaultLocale() instead.');
+
         return static::getDefaultLocale();
     }
 
@@ -359,6 +369,11 @@ class I18n
      */
     public static function defaultFormatter($name = null)
     {
+        deprecationWarning(
+            'I18n::defaultFormatter() is deprecated. ' .
+            'Use I18n::setDefaultFormatter()/getDefaultFormatter() instead.'
+        );
+
         return static::translators()->defaultFormatter($name);
     }
 
