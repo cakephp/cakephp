@@ -168,7 +168,7 @@ class View implements EventDispatcherInterface
      *
      * @var string
      */
-    protected $_ext = '.ctp';
+    protected $_ext = '.php';
 
     /**
      * Sub-directory for this template file. This is often used for extension based routing.
