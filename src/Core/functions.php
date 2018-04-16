@@ -295,7 +295,9 @@ if (!function_exists('deprecationWarning')) {
             $frame += ['file' => '[internal]', 'line' => '??'];
 
             $message = sprintf(
-                '%s - %s, line: %s',
+                '%s - %s, line: %s' . "\n" .
+                ' You can disable deprecation warnings by setting `Error.errorLevel` to' .
+                ' `E_ALL & ~E_USER_DEPRECATED` in your config/app.php.',
                 $message,
                 $frame['file'],
                 $frame['line']
