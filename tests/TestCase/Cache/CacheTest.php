@@ -432,28 +432,6 @@ class CacheTest extends TestCase
     /**
      * Test reading configuration.
      *
-     * @group deprecated
-     * @return void
-     */
-    public function testConfigReadCompat()
-    {
-        $this->deprecated(function () {
-            $config = [
-                'engine' => 'File',
-                'path' => TMP,
-                'prefix' => 'cake_'
-            ];
-            Cache::config('tests', $config);
-            $expected = $config;
-            $expected['className'] = $config['engine'];
-            unset($expected['engine']);
-            $this->assertEquals($expected, Cache::config('tests'));
-        });
-    }
-
-    /**
-     * Test reading configuration.
-     *
      * @return void
      */
     public function testConfigRead()
@@ -855,34 +833,6 @@ class CacheTest extends TestCase
 
         $result = Cache::add('test_add_key', 'test data 2', 'tests');
         $this->assertFalse($result);
-    }
-
-    /**
-     * test registry method
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testRegistry()
-    {
-        $this->deprecated(function () {
-            $this->assertInstanceOf(CacheRegistry::class, Cache::registry());
-        });
-    }
-
-    /**
-     * test registry method setting
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testRegistrySet()
-    {
-        $registry = new CacheRegistry();
-        $this->deprecated(function () use ($registry) {
-            Cache::registry($registry);
-            $this->assertSame($registry, Cache::registry());
-        });
     }
 
     /**
