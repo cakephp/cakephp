@@ -49,6 +49,9 @@ define('APP', TEST_APP . 'TestApp' . DS);
 define('WWW_ROOT', TEST_APP . 'webroot' . DS);
 define('CONFIG', TEST_APP . 'config' . DS);
 
+// enable cakephp deprecation warnings in tests
+define('CAKEPHP_DEPRECATIONS', true);
+
 //@codingStandardsIgnoreStart
 @mkdir(LOGS);
 @mkdir(SESSIONS);
