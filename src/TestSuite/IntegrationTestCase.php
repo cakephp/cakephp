@@ -535,7 +535,7 @@ abstract class IntegrationTestCase extends TestCase
                 $this->_viewName = $viewFile;
             }
             if ($this->_retainFlashMessages) {
-                $this->_flashMessages = $controller->request->getSession()->read('Flash');
+                $this->_flashMessages = $controller->getRequest()->getSession()->read('Flash');
             }
         });
         $events->on('View.beforeLayout', function ($event, $viewFile) {

@@ -80,8 +80,8 @@ class CsrfComponent extends Component
     {
         /** @var \Cake\Controller\Controller $controller */
         $controller = $event->getSubject();
-        $request = $controller->request;
-        $response = $controller->response;
+        $request = $controller->getRequest();
+        $response = $controller->getResponse();
         $cookieName = $this->_config['cookieName'];
 
         $cookieData = $request->getCookie($cookieName);
@@ -90,20 +90,20 @@ class CsrfComponent extends Component
         }
 
         if ($request->is('requested')) {
-            $controller->request = $request;
+            $controller->setRequest($request);
 
             return;
         }
 
         if ($request->is('get') && $cookieData === null) {
             list($request, $response) = $this->_setCookie($request, $response);
-            $controller->response = $response;
+            $controller->setResponse($response);
         }
         if ($request->is(['put', 'post', 'delete', 'patch']) || $request->getData()) {
             $this->_validateToken($request);
             $request = $request->withoutData($this->_config['field']);
         }
-        $controller->request = $request;
+        $controller->setRequest($request);
     }
 
     /**

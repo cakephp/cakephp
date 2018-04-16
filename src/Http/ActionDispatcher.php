@@ -130,7 +130,7 @@ class ActionDispatcher
             return $result;
         }
         if (!$response) {
-            $response = $controller->response;
+            $response = $controller->getResponse();
         }
 
         return $response;
