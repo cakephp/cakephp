@@ -127,6 +127,7 @@ class CsrfComponent extends Component
      * @param \Cake\Http\ServerRequest $request The request object.
      * @param \Cake\Http\Response $response The response object.
      * @return array An array of the modified request, response.
+     * @throws \Exception
      */
     protected function _setCookie(ServerRequest $request, Response $response)
     {

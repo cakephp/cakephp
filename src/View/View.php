@@ -1261,6 +1261,7 @@ class View implements EventDispatcherInterface
      * @param string $name Name of the helper to load.
      * @param array $config Settings for the helper
      * @return \Cake\View\Helper a constructed helper object.
+     * @throws \Exception
      * @see \Cake\View\HelperRegistry::load()
      */
     public function loadHelper($name, array $config = [])

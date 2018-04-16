@@ -56,6 +56,7 @@ class Collection
      * Get the list of tables available in the current connection.
      *
      * @return array The list of tables in the connected database/schema.
+     * @throws \Exception
      */
     public function listTables()
     {
@@ -114,7 +115,7 @@ class Collection
      * @param array $config The config data.
      * @param \Cake\Database\Schema\TableSchema $schema The table instance
      * @return void
-     * @throws \Cake\Database\Exception on query failure.
+     * @throws \Exception
      */
     protected function _reflect($stage, $name, $config, $schema)
     {

@@ -91,6 +91,7 @@ class ErrorHandlerMiddleware
      * @param \Psr\Http\Message\ResponseInterface $response The response.
      * @param callable $next Callback to invoke the next middleware.
      * @return \Psr\Http\Message\ResponseInterface A response
+     * @throws \Exception
      */
     public function __invoke($request, $response, $next)
     {
@@ -110,7 +111,7 @@ class ErrorHandlerMiddleware
      * @param \Psr\Http\Message\ServerRequestInterface $request The request.
      * @param \Psr\Http\Message\ResponseInterface $response The response.
      * @return \Psr\Http\Message\ResponseInterface A response
-     * @throws Exception
+     * @throws \Exception
      */
     public function handleException($exception, $request, $response)
     {

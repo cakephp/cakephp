@@ -852,7 +852,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param string $name The name of the behavior. Can be a short class reference.
      * @param array $options The options for the behavior to use.
      * @return $this
-     * @throws \RuntimeException If a behavior is being reloaded.
+     * @throws \Exception
      * @see \Cake\ORM\Behavior
      */
     public function addBehavior($name, array $options = [])
@@ -905,6 +905,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param string $name The alias that the behavior was added with.
      * @return $this
+     * @throws \Exception
      * @see \Cake\ORM\Behavior
      */
     public function removeBehavior($name)
@@ -1673,6 +1674,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   is persisted.
      * @param array $options The options to use when saving.
      * @return \Cake\Datasource\EntityInterface An entity.
+     * @throws \Exception
      */
     public function findOrCreate($search, callable $callback = null, $options = [])
     {
@@ -1873,8 +1875,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * $articles->save($entity, ['associated' => false]);
      * ```
      *
-     * @throws \Cake\ORM\Exception\RolledbackTransactionException If the transaction
-     *   is aborted in the afterSave event.
+     * @param \Cake\Datasource\EntityInterface $entity
+     * @param array $options
+     * @return bool|\Cake\Datasource\EntityInterface|mixed
+     * @throws \Exception
      */
     public function save(EntityInterface $entity, $options = [])
     {

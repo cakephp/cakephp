@@ -139,6 +139,7 @@ class Security
      *
      * @param int $length String length. Default 64.
      * @return string
+     * @throws \Exception
      * @since 3.6.0
      */
     public static function randomString($length = 64)

@@ -268,7 +268,7 @@ class Connection implements ConnectionInterface
      *
      * @param string|\Cake\Database\Query $sql The SQL to convert into a prepared statement.
      * @return \Cake\Database\StatementInterface
-     * @throws Exception
+     * @throws \Exception
      */
     public function prepare($sql)
     {
@@ -291,7 +291,7 @@ class Connection implements ConnectionInterface
      * @param array $params list or associative array of params to be interpolated in $query as values
      * @param array $types list or associative array of types to be used for casting values in query
      * @return \Cake\Database\StatementInterface executed statement
-     * @throws Exception
+     * @throws \Exception
      */
     public function execute($query, array $params = [], array $types = [])
     {
@@ -327,7 +327,7 @@ class Connection implements ConnectionInterface
      *
      * @param \Cake\Database\Query $query The query to be executed
      * @return \Cake\Database\StatementInterface executed statement
-     * @throws Exception
+     * @throws \Exception
      */
     public function run(Query $query)
     {
@@ -345,7 +345,7 @@ class Connection implements ConnectionInterface
      *
      * @param string $sql The SQL query to execute.
      * @return \Cake\Database\StatementInterface
-     * @throws Exception
+     * @throws \Exception
      */
     public function query($sql)
     {
@@ -425,7 +425,7 @@ class Connection implements ConnectionInterface
      * @param array $data values to be inserted
      * @param array $types list of associative array containing the types to be used for casting
      * @return \Cake\Database\StatementInterface
-     * @throws Exception
+     * @throws \Exception
      */
     public function insert($table, array $data, array $types = [])
     {
@@ -447,7 +447,7 @@ class Connection implements ConnectionInterface
      * @param array $conditions conditions to be set for update statement
      * @param array $types list of associative array containing the types to be used for casting
      * @return \Cake\Database\StatementInterface
-     * @throws Exception
+     * @throws \Exception
      */
     public function update($table, array $data, array $conditions = [], $types = [])
     {
@@ -466,7 +466,7 @@ class Connection implements ConnectionInterface
      * @param array $conditions conditions to be set for delete statement
      * @param array $types list of associative array containing the types to be used for casting
      * @return \Cake\Database\StatementInterface
-     * @throws Exception
+     * @throws \Exception
      */
     public function delete($table, $conditions = [], $types = [])
     {
@@ -481,7 +481,7 @@ class Connection implements ConnectionInterface
      * Starts a new transaction.
      *
      * @return void
-     * @throws Exception
+     * @throws \Exception
      */
     public function begin()
     {
@@ -511,6 +511,7 @@ class Connection implements ConnectionInterface
      * Commits current transaction.
      *
      * @return bool true on success, false otherwise
+     * @throws \Exception
      */
     public function commit()
     {
@@ -548,6 +549,7 @@ class Connection implements ConnectionInterface
      * @param bool|null $toBeginning Whether or not the transaction should be rolled back to the
      * beginning of it. Defaults to false if using savepoints, or true if not.
      * @return bool
+     * @throws \Exception
      */
     public function rollback($toBeginning = null)
     {
@@ -652,6 +654,7 @@ class Connection implements ConnectionInterface
      *
      * @param string $name The save point name.
      * @return void
+     * @throws \Exception
      */
     public function createSavePoint($name)
     {
@@ -663,6 +666,7 @@ class Connection implements ConnectionInterface
      *
      * @param string $name The save point name.
      * @return void
+     * @throws \Exception
      */
     public function releaseSavePoint($name)
     {
@@ -674,6 +678,7 @@ class Connection implements ConnectionInterface
      *
      * @param string $name The save point name.
      * @return void
+     * @throws \Exception
      */
     public function rollbackSavepoint($name)
     {
@@ -684,7 +689,7 @@ class Connection implements ConnectionInterface
      * Run driver specific SQL to disable foreign key checks.
      *
      * @return void
-     * @throws Exception
+     * @throws \Exception
      */
     public function disableForeignKeys()
     {
@@ -697,7 +702,7 @@ class Connection implements ConnectionInterface
      * Run driver specific SQL to enable foreign key checks.
      *
      * @return void
-     * @throws Exception
+     * @throws \Exception
      */
     public function enableForeignKeys()
     {

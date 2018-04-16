@@ -164,7 +164,7 @@ class Oauth
      * @param array $credentials Authentication credentials.
      * @return string
      *
-     * @throws \RuntimeException
+     * @throws \Exception
      */
     protected function _rsaSha1($request, $credentials)
     {

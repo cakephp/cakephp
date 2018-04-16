@@ -69,6 +69,7 @@ class ActionDispatcher
      * @param \Cake\Http\ServerRequest $request The request to dispatch.
      * @param \Cake\Http\Response $response The response to dispatch.
      * @return \Cake\Http\Response A modified/replaced response.
+     * @throws \ReflectionException
      */
     public function dispatch(ServerRequest $request, Response $response)
     {

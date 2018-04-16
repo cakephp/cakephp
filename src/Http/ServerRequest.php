@@ -2113,7 +2113,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string $name The attribute name.
      * @return static
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     public function withoutAttribute($name)
     {
@@ -2197,7 +2197,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param array $files An array of uploaded file objects.
      * @return static
-     * @throws InvalidArgumentException when $files contains an invalid object.
+     * @throws \InvalidArgumentException when $files contains an invalid object.
      */
     public function withUploadedFiles(array $files)
     {
@@ -2214,7 +2214,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * @param array $uploadedFiles The new files array to validate.
      * @param string $path The path thus far.
      * @return void
-     * @throws InvalidArgumentException If any leaf elements are not valid files.
+     * @throws \InvalidArgumentException If any leaf elements are not valid files.
      */
     protected function validateUploadedFiles(array $uploadedFiles, $path)
     {

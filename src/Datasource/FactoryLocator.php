@@ -57,7 +57,7 @@ class FactoryLocator
      * Get the factory for the specified repository type.
      *
      * @param string $type The repository type to get the factory for.
-     * @throws InvalidArgumentException If the specified repository type has no factory.
+     * @throws \InvalidArgumentException If the specified repository type has no factory.
      * @return callable The factory for the repository type.
      */
     public static function get($type)

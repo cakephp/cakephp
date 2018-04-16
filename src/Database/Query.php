@@ -213,6 +213,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * around query execution.
      *
      * @return \Cake\Database\StatementInterface
+     * @throws \Exception
      */
     public function execute()
     {
@@ -1857,7 +1858,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @param string $name name of the clause to be returned
      * @return mixed
-     * @throws InvalidArgumentException When the named clause does not exist.
+     * @throws \InvalidArgumentException When the named clause does not exist.
      */
     public function clause($name)
     {

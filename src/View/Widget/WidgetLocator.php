@@ -136,7 +136,7 @@ class WidgetLocator
      *
      * @param string $name The widget name to get.
      * @return \Cake\View\Widget\WidgetInterface widget interface class.
-     * @throws \RuntimeException when widget is undefined.
+     * @throws \ReflectionException
      */
     public function get($name)
     {

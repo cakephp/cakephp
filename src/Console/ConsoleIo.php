@@ -512,6 +512,7 @@ class ConsoleIo
      * @param string $name The name of the helper to render
      * @param array $settings Configuration data for the helper.
      * @return \Cake\Console\Helper The created helper instance.
+     * @throws \Exception
      */
     public function helper($name, array $settings = [])
     {

@@ -702,10 +702,9 @@ class BelongsToMany extends Association
      *
      * @param \Cake\Datasource\EntityInterface $entity an entity from the source table
      * @param array $options options to be passed to the save method in the target table
-     * @throws \InvalidArgumentException if the property representing the association
-     * in the parent entity cannot be traversed
      * @return bool|\Cake\Datasource\EntityInterface false if $entity could not be saved, otherwise it returns
      * the saved entity
+     * @throws \Exception
      * @see \Cake\ORM\Table::save()
      * @see \Cake\ORM\Association\BelongsToMany::replaceLinks()
      */

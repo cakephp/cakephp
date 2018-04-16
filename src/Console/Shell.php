@@ -603,6 +603,7 @@ class Shell
      *
      * @param string $name The task to get.
      * @return \Cake\Console\Shell Object of Task
+     * @throws \Exception
      */
     public function __get($name)
     {
