@@ -2895,6 +2895,7 @@ class Email implements JsonSerializable, Serializable
      * Serializes the Email object.
      *
      * @return string
+     * @throws Exception
      */
     public function serialize()
     {

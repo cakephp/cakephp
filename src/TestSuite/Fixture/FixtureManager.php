@@ -363,6 +363,7 @@ class FixtureManager
      * @param array $fixtures A list of fixtures to operate on.
      * @param callable $operation The operation to run on each connection + fixture set.
      * @return void
+     * @throws \Exception
      */
     protected function _runOperation($fixtures, $operation)
     {

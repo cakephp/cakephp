@@ -365,6 +365,7 @@ class Behavior implements EventListenerInterface
      * declared on Cake\ORM\Behavior
      *
      * @return array
+     * @throws \ReflectionException
      */
     protected function _reflectionCache()
     {

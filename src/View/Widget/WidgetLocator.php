@@ -166,8 +166,7 @@ class WidgetLocator
      *
      * @param mixed $widget The widget to get
      * @return \Cake\View\Widget\WidgetInterface
-     * @throws \RuntimeException when class cannot be loaded or does not
-     *   implement WidgetInterface.
+     * @throws \ReflectionException
      */
     protected function _resolveWidget($widget)
     {

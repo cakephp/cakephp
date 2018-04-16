@@ -548,6 +548,7 @@ class TreeBehavior extends Behavior
      * @param \Cake\Datasource\EntityInterface $node The node to remove from the tree
      * @return \Cake\Datasource\EntityInterface|false the node after being removed from the tree or
      * false on error
+     * @throws \Exception
      */
     public function removeFromTree(EntityInterface $node)
     {
@@ -607,8 +608,8 @@ class TreeBehavior extends Behavior
      *
      * @param \Cake\Datasource\EntityInterface $node The node to move
      * @param int|bool $number How many places to move the node, or true to move to first position
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When node was not found
      * @return \Cake\Datasource\EntityInterface|bool $node The node after being moved or false on failure
+     * @throws \Exception
      */
     public function moveUp(EntityInterface $node, $number = 1)
     {
@@ -697,8 +698,8 @@ class TreeBehavior extends Behavior
      *
      * @param \Cake\Datasource\EntityInterface $node The node to move
      * @param int|bool $number How many places to move the node or true to move to last position
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When node was not found
      * @return \Cake\Datasource\EntityInterface|bool the entity after being moved or false on failure
+     * @throws \Exception
      */
     public function moveDown(EntityInterface $node, $number = 1)
     {
@@ -813,6 +814,7 @@ class TreeBehavior extends Behavior
      * parent column.
      *
      * @return void
+     * @throws \Exception
      */
     public function recover()
     {

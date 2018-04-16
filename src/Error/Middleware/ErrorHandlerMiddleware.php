@@ -110,6 +110,7 @@ class ErrorHandlerMiddleware
      * @param \Psr\Http\Message\ServerRequestInterface $request The request.
      * @param \Psr\Http\Message\ResponseInterface $response The response.
      * @return \Psr\Http\Message\ResponseInterface A response
+     * @throws Exception
      */
     public function handleException($exception, $request, $response)
     {

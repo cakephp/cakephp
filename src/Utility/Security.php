@@ -106,6 +106,7 @@ class Security
      *
      * @param int $length The number of bytes you want.
      * @return string Random bytes in binary.
+     * @throws \Exception
      */
     public static function randomBytes($length)
     {

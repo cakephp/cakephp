@@ -1616,6 +1616,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param callable $worker The worker that will run inside the transaction.
      * @param bool $atomic Whether to execute the worker inside a database transaction.
      * @return mixed
+     * @throws \Exception
      */
     protected function _executeTransaction(callable $worker, $atomic = true)
     {
@@ -2192,6 +2193,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param \Cake\Datasource\EntityInterface[]|\Cake\ORM\ResultSet $entities Entities to save.
      * @param array|\ArrayAccess $options Options used when calling Table::save() for each entity.
      * @return bool|\Cake\Datasource\EntityInterface[]|\Cake\ORM\ResultSet False on failure, entities list on success.
+     * @throws \Exception
      */
     public function saveMany($entities, $options = [])
     {

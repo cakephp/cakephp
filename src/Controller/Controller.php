@@ -881,6 +881,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @param string $action The action to check.
      * @return bool Whether or not the method is accessible from a URL.
+     * @throws ReflectionException
      */
     public function isAction($action)
     {

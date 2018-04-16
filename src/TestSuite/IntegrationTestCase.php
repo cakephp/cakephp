@@ -368,6 +368,7 @@ abstract class IntegrationTestCase extends TestCase
      *
      * @param string|array $url The URL to request.
      * @return void
+     * @throws PhpunitException
      */
     public function get($url)
     {
@@ -384,6 +385,7 @@ abstract class IntegrationTestCase extends TestCase
      * @param string|array $url The URL to request.
      * @param array $data The data for the request.
      * @return void
+     * @throws PhpunitException
      */
     public function post($url, $data = [])
     {
@@ -400,6 +402,7 @@ abstract class IntegrationTestCase extends TestCase
      * @param string|array $url The URL to request.
      * @param array $data The data for the request.
      * @return void
+     * @throws PhpunitException
      */
     public function patch($url, $data = [])
     {
@@ -416,6 +419,7 @@ abstract class IntegrationTestCase extends TestCase
      * @param string|array $url The URL to request.
      * @param array $data The data for the request.
      * @return void
+     * @throws PhpunitException
      */
     public function put($url, $data = [])
     {
@@ -431,6 +435,7 @@ abstract class IntegrationTestCase extends TestCase
      *
      * @param string|array $url The URL to request.
      * @return void
+     * @throws PhpunitException
      */
     public function delete($url)
     {
@@ -446,6 +451,7 @@ abstract class IntegrationTestCase extends TestCase
      *
      * @param string|array $url The URL to request.
      * @return void
+     * @throws PhpunitException
      */
     public function head($url)
     {
@@ -461,6 +467,7 @@ abstract class IntegrationTestCase extends TestCase
      *
      * @param string|array $url The URL to request.
      * @return void
+     * @throws PhpunitException
      */
     public function options($url)
     {
@@ -476,7 +483,7 @@ abstract class IntegrationTestCase extends TestCase
      * @param string $method The HTTP method
      * @param array|null $data The request data.
      * @return void
-     * @throws \Exception
+     * @throws PhpunitException
      */
     protected function _sendRequest($url, $method, $data = [])
     {

@@ -282,6 +282,7 @@ class HasMany extends Association
      * of this association
      * @param array $options list of options to be passed to the internal `save` call
      * @return bool true on success, false otherwise
+     * @throws \Exception
      */
     public function link(EntityInterface $sourceEntity, array $targetEntities, array $options = [])
     {
