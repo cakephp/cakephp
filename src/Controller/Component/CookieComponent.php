@@ -128,7 +128,7 @@ class CookieComponent extends Component
         }
 
         if (empty($this->_config['path'])) {
-            $this->setConfig('path', $this->request->getAttribute('webroot'));
+            $this->setConfig('path', $this->getController()->getRequest()->getAttribute('webroot'));
         }
     }
 
@@ -246,7 +246,7 @@ class CookieComponent extends Component
         if (isset($this->_loaded[$first])) {
             return;
         }
-        $cookie = $this->request->getCookie($first);
+        $cookie = $this->getController()->getRequest()->getCookie($first);
         if ($cookie === null) {
             return;
         }

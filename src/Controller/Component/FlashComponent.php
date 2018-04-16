@@ -60,7 +60,7 @@ class FlashComponent extends Component
     public function __construct(ComponentRegistry $registry, array $config = [])
     {
         parent::__construct($registry, $config);
-        $this->_session = $registry->getController()->request->getSession();
+        $this->_session = $registry->getController()->getRequest()->getSession();
     }
 
     /**
