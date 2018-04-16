@@ -17,6 +17,10 @@ namespace Cake\Database\Type;
 use Cake\Database\Driver;
 use DateTime;
 
+/**
+ * Class DateType
+ * @package Cake\Database\Type
+ */
 class DateType extends DateTimeType
 {
 

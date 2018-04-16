@@ -17,6 +17,10 @@ namespace Cake\Database;
 /*
  * Represents a class that holds a TypeMap object
  */
+/**
+ * Trait TypeMapTrait
+ * @package Cake\Database
+ */
 trait TypeMapTrait
 {
 

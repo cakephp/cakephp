@@ -20,6 +20,10 @@ use Cake\Database\Query;
 use Cake\Database\Statement\MysqlStatement;
 use PDO;
 
+/**
+ * Class Mysql
+ * @package Cake\Database\Driver
+ */
 class Mysql extends Driver
 {
 

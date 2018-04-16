@@ -17,6 +17,10 @@ namespace Cake\Datasource;
 use Cake\ORM\TableRegistry;
 use InvalidArgumentException;
 
+/**
+ * Class FactoryLocator
+ * @package Cake\Datasource
+ */
 class FactoryLocator
 {
     /**
