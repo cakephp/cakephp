@@ -4,7 +4,7 @@
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
+ * For full copyright and license information, please see the LICENSE
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -66,7 +66,7 @@ class FileTest extends TestCase
      */
     public function testBasic()
     {
-        $file = CORE_PATH . DS . 'LICENSE.txt';
+        $file = CORE_PATH . DS . 'LICENSE';
 
         $this->File = new File($file, false);
 
@@ -78,7 +78,6 @@ class FileTest extends TestCase
         $expecting = [
             'dirname' => dirname($file),
             'basename' => basename($file),
-            'extension' => 'txt',
             'filename' => 'LICENSE',
             'filesize' => filesize($file),
             'mime' => 'text/plain'
@@ -93,8 +92,7 @@ class FileTest extends TestCase
         $this->assertEquals($expecting, $result);
 
         $result = $this->File->ext();
-        $expecting = 'txt';
-        $this->assertEquals($expecting, $result);
+        $this->assertEquals('', $result);
 
         $result = $this->File->name();
         $expecting = 'LICENSE';
