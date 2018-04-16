@@ -66,7 +66,7 @@ class FileTest extends TestCase
      */
     public function testBasic()
     {
-        $file = CORE_PATH . DS . 'LICENSE.txt';
+        $file = CORE_PATH . 'LICENSE.txt';
 
         $this->File = new File($file, false);
 
