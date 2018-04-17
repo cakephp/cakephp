@@ -879,13 +879,13 @@ class EmailTest extends TestCase
         $this->Email->addAttachments([CORE_PATH . 'config' . DS . 'bootstrap.php']);
         $this->Email->addAttachments([
             'other.txt' => CORE_PATH . 'config' . DS . 'bootstrap.php',
-            'license' => CORE_PATH . 'LICENSE.txt'
+            'license' => CORE_PATH . 'LICENSE'
         ]);
         $expected = [
             'basics.php' => ['file' => CAKE . 'basics.php', 'mimetype' => 'text/plain'],
             'bootstrap.php' => ['file' => CORE_PATH . 'config' . DS . 'bootstrap.php', 'mimetype' => 'text/x-php'],
             'other.txt' => ['file' => CORE_PATH . 'config' . DS . 'bootstrap.php', 'mimetype' => 'text/x-php'],
-            'license' => ['file' => CORE_PATH . 'LICENSE.txt', 'mimetype' => 'text/plain']
+            'license' => ['file' => CORE_PATH . 'LICENSE', 'mimetype' => 'text/plain']
         ];
         $this->assertSame($expected, $this->Email->getAttachments());
         $this->expectException(\InvalidArgumentException::class);
