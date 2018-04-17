@@ -112,8 +112,16 @@ class ErrorHandler extends BaseErrorHandler
      */
     protected function _displayError($error, $debug)
     {
-        if (!$debug || ($error['code'] & E_USER_DEPRECATED)) {
+        if (!$debug) {
             return;
+        }
+
+        if (!empty($this->_options['skipDisplayError'])) {
+            foreach ((array)$this->_options['skipDisplayError'] as $item) {
+                if ($error['code'] & $item) {
+                    return;
+                }
+            }
         }
         Debugger::getInstance()->outputError($error);
     }
