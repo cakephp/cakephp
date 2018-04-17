@@ -206,6 +206,30 @@ class UrlHelperTest extends TestCase
     }
 
     /**
+     * Test assetUrl and data uris
+     *
+     * @return void
+     */
+    public function testAssetUrlDataUri()
+    {
+        $request = $this->Helper->request
+            ->withAttribute('base', 'subdir')
+            ->withAttribute('webroot', 'subdir/');
+
+        $this->Helper->request = $request;
+        Router::pushRequest($request);
+
+        $data = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4' .
+            '/8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==';
+        $result = $this->Helper->assetUrl($data);
+        $this->assertSame($data, $result);
+
+        $data = 'data:image/png;base64,<evil>';
+        $result = $this->Helper->assetUrl($data);
+        $this->assertHtml(h($data), $result);
+    }
+
+    /**
      * Test assetUrl with no rewriting.
      *
      * @return void

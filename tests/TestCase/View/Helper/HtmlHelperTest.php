@@ -364,6 +364,31 @@ class HtmlHelperTest extends TestCase
     }
 
     /**
+     * Ensure that data URIs don't get base paths set.
+     *
+     * @return void
+     */
+    public function testImageDataUriBaseDir()
+    {
+        $request = $this->Html->request
+            ->withAttribute('base', 'subdir')
+            ->withAttribute('webroot', 'subdir/');
+        $this->Html->Url->request = $this->Html->request = $request;
+        Router::pushRequest($request);
+
+        $data = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4' .
+            '/8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==';
+        $result = $this->Html->image($data);
+        $expected = ['img' => ['src' => $data, 'alt' => '']];
+        $this->assertHtml($expected, $result);
+
+        $data = 'data:image/png;base64,<evil>';
+        $result = $this->Html->image($data);
+        $expected = ['img' => ['src' => h($data), 'alt' => '']];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * Test image() with query strings.
      *
      * @return void
