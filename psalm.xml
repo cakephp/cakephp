@@ -136,6 +136,7 @@
                 <referencedMethod name="Cake\Datasource\InvalidPropertyInterface::setInvalidField" />
                 <referencedMethod name="Cake\Database\TypedResultInterface::getReturnType" />
                 <referencedMethod name="Cake\Datasource\QueryInterface::andWhere" />
+                <referencedMethod name="Cake\Datasource\QueryInterface::getRepository" />
                 <referencedMethod name="Cake\Datasource\RepositoryInterface::getAlias" />
                 <referencedMethod name="Cake\Core\PluginApplicationInterface::getEventManager" />
                 <referencedMethod name="Cake\Core\PluginApplicationInterface::setEventManager" />
@@ -174,6 +175,7 @@
                 <file name="src/Database/Driver/Sqlserver.php" />
                 <file name="src/Database/Statement/SqlserverStatement.php" />
                 <file name="src/Utility/Crypto/Mcrypt.php" />
+                <file name="src/Cache/Engine/XcacheEngine.php" />
             </errorLevel>
         </UndefinedConstant>
 
