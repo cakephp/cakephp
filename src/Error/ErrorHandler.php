@@ -112,7 +112,7 @@ class ErrorHandler extends BaseErrorHandler
      */
     protected function _displayError($error, $debug)
     {
-        if (!$debug) {
+        if (!$debug || ($error['code'] & E_USER_DEPRECATED)) {
             return;
         }
         Debugger::getInstance()->outputError($error);
