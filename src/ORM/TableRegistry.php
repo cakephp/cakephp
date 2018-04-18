@@ -176,8 +176,8 @@ class TableRegistry
     public static function set($alias, Table $object)
     {
         deprecationWarning(
-            'TableRegistry::exists() is deprecated. ' .
-            'Use \Cake\ORM\Locator\TableLocator::exists() instead.'
+            'TableRegistry::set() is deprecated. ' .
+            'Use \Cake\ORM\Locator\TableLocator::set() instead.'
         );
 
         return static::getTableLocator()->set($alias, $object);
