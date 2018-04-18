@@ -202,6 +202,59 @@ class ErrorHandlerTest extends TestCase
     }
 
     /**
+     * test deprecation logging only
+     *
+     * @return void
+     */
+    public function testHandleErrorLogDeprecation()
+    {
+        Configure::write('debug', true);
+
+        $errorHandler = new ErrorHandler();
+        $errorHandler->register();
+        $this->_restoreError = true;
+
+        $this->_logger->expects($this->once())
+            ->method('log')
+            ->with(
+                $this->matchesRegularExpression('(notice|debug)'),
+                'Deprecated (16384): Going away! in [' . __FILE__ . ', line ' . (__LINE__ + 4) . ']' . "\n\n"
+            );
+
+        ob_start();
+        trigger_error('Going away!', E_USER_DEPRECATED);
+        $result = ob_get_clean();
+        $this->assertEquals('', $result);
+    }
+
+    /**
+     * test deprecation display
+     *
+     * @return void
+     */
+    public function testHandleErrorDisplayDeprecation()
+    {
+        Configure::write('debug', true);
+
+        $errorHandler = new ErrorHandler(['displayDeprecations' => true]);
+        $errorHandler->register();
+        $this->_restoreError = true;
+
+        $this->_logger->expects($this->once())
+            ->method('log')
+            ->with(
+                $this->matchesRegularExpression('(notice|debug)'),
+                'Deprecated (16384): Going away! in [' . __FILE__ . ', line ' . (__LINE__ + 4) . ']' . "\n\n"
+            );
+
+        ob_start();
+        trigger_error('Going away!', E_USER_DEPRECATED);
+        $result = ob_get_clean();
+        $this->assertContains('<pre class="cake-error"', $result);
+        $this->assertContains('Going away!', $result);
+    }
+
+    /**
      * Test that errors go into Cake Log when debug = 0.
      *
      * @return void

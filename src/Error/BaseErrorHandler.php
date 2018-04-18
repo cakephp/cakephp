@@ -149,7 +149,14 @@ abstract class BaseErrorHandler
                 'path' => Debugger::trimPath($file)
             ];
         }
-        $this->_displayError($data, $debug);
+
+        $shouldDisplay = (
+            $error !== 'Deprecated' ||
+            ($error === 'Deprecated' && $this->_options['displayDeprecations'])
+        );
+        if ($shouldDisplay) {
+            $this->_displayError($data, $debug);
+        }
         $this->_logError($log, $data);
 
         return true;

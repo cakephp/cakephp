@@ -97,6 +97,7 @@ class ErrorHandler extends BaseErrorHandler
             'log' => true,
             'trace' => false,
             'exceptionRenderer' => ExceptionRenderer::class,
+            'displayDeprecations' => false,
         ];
         $this->_options = $options + $defaults;
     }
