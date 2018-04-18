@@ -70,7 +70,7 @@ class UrlHelperTest extends TestCase
      *
      * @return void
      */
-    public function testUrlConversion()
+    public function testBuildUrlConversion()
     {
         Router::connect('/:controller/:action/*');
 
@@ -105,9 +105,36 @@ class UrlHelperTest extends TestCase
     }
 
     /**
+     * ensure that build factors in base paths.
+     *
      * @return void
      */
-    public function testUrlConversionUnescaped()
+    public function testBuildBasePath()
+    {
+        Router::connect('/:controller/:action/*');
+        $request = new ServerRequest([
+            'params' => [
+                'action' => 'index',
+                'plugin' => null,
+                'controller' => 'subscribe',
+            ],
+            'url' => '/subscribe',
+            'base' => '/magazine',
+            'webroot' => '/magazine/'
+        ]);
+        Router::pushRequest($request);
+
+        $this->assertEquals('/magazine/subscribe', $this->Helper->build());
+        $this->assertEquals(
+            '/magazine/articles/add',
+            $this->Helper->build(['controller' => 'articles', 'action' => 'add'])
+        );
+    }
+
+    /**
+     * @return void
+     */
+    public function testBuildUrlConversionUnescaped()
     {
         $result = $this->Helper->build('/controller/action/1?one=1&two=2', ['escape' => false]);
         $this->assertEquals('/controller/action/1?one=1&two=2', $result);
