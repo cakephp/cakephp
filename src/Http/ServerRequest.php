@@ -2347,21 +2347,18 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     /**
      * Get the path of current request.
      *
-     * The returned value does not contain leading slash and is identical to
-     * the deprecated ServerRequest::$url property.
-     *
      * @return string
      * @since 3.6.1
      */
     public function getPath()
     {
-        $path = $this->uri->getPath();
-
-        if ($this->requestTarget !== null) {
-            list($path) = explode('?', $this->requestTarget);
+        if ($this->requestTarget === null) {
+            return $this->uri->getPath();
         }
 
-        return substr($path, 1);
+        list($path) = explode('?', $this->requestTarget);
+
+        return $path;
     }
 
     /**
