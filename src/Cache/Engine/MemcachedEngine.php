@@ -267,18 +267,6 @@ class MemcachedEngine extends CacheEngine
     }
 
     /**
-     * Backwards compatible alias of parseServerString
-     *
-     * @param string $server The server address string.
-     * @return array Array containing host, port
-     * @deprecated 3.4.13 Will be removed in 4.0.0
-     */
-    protected function _parseServerString($server)
-    {
-        return $this->parseServerString($server);
-    }
-
-    /**
      * Read an option value from the memcached connection.
      *
      * @param string $name The option name to read.
