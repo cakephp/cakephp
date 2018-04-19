@@ -140,6 +140,11 @@ class TableRegistry
      */
     public static function get($alias, array $options = [])
     {
+        deprecationWarning(
+            'TableRegistry::get() is deprecated. ' .
+            'Use \Cake\ORM\Locator\TableLocator::get() instead.'
+        );
+
         return static::getTableLocator()->get($alias, $options);
     }
 
@@ -152,6 +157,11 @@ class TableRegistry
      */
     public static function exists($alias)
     {
+        deprecationWarning(
+            'TableRegistry::exists() is deprecated. ' .
+            'Use \Cake\ORM\Locator\TableLocator::exists() instead.'
+        );
+
         return static::getTableLocator()->exists($alias);
     }
 
@@ -165,6 +175,11 @@ class TableRegistry
      */
     public static function set($alias, Table $object)
     {
+        deprecationWarning(
+            'TableRegistry::set() is deprecated. ' .
+            'Use \Cake\ORM\Locator\TableLocator::set() instead.'
+        );
+
         return static::getTableLocator()->set($alias, $object);
     }
 
@@ -177,6 +192,11 @@ class TableRegistry
      */
     public static function remove($alias)
     {
+        deprecationWarning(
+            'TableRegistry::remove() is deprecated. ' .
+            'Use \Cake\ORM\Locator\TableLocator::remove() instead.'
+        );
+
         static::getTableLocator()->remove($alias);
     }
 
@@ -188,6 +208,11 @@ class TableRegistry
      */
     public static function clear()
     {
+        deprecationWarning(
+            'TableRegistry::clear() is deprecated. ' .
+            'Use \Cake\ORM\Locator\TableLocator::clear() instead.'
+        );
+
         static::getTableLocator()->clear();
     }
 
