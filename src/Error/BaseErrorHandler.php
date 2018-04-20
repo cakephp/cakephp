@@ -150,7 +150,8 @@ abstract class BaseErrorHandler
             ];
         }
         $this->_displayError($data, $debug);
-        $this->_logError($log, $data);
+        $skipTrace = ($code & E_USER_DEPRECATED) && (PHP_SAPI !== 'cli');
+        $this->_logError($log, $data, $skipTrace);
 
         return true;
     }
@@ -264,7 +265,7 @@ abstract class BaseErrorHandler
      * @param array $data Array of error data.
      * @return bool
      */
-    protected function _logError($level, $data)
+    protected function _logError($level, $data, $skipTrace = false)
     {
         $message = sprintf(
             '%s (%s): %s in [%s, line %s]',
@@ -274,7 +275,7 @@ abstract class BaseErrorHandler
             $data['file'],
             $data['line']
         );
-        if (!empty($this->_options['trace'])) {
+        if (!$skipTrace && !empty($this->_options['trace'])) {
             $trace = Debugger::trace([
                 'start' => 1,
                 'format' => 'log'

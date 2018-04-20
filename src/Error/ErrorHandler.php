@@ -115,6 +115,14 @@ class ErrorHandler extends BaseErrorHandler
         if (!$debug) {
             return;
         }
+
+        if (!empty($this->_options['skipDisplayError'])) {
+            foreach ((array)$this->_options['skipDisplayError'] as $item) {
+                if ($error['code'] & $item) {
+                    return;
+                }
+            }
+        }
         Debugger::getInstance()->outputError($error);
     }
 
