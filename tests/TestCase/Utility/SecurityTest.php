@@ -334,4 +334,31 @@ class SecurityTest extends TestCase
 
         $this->assertRegExp('/[^0-9a-f]/', $value, 'should return a binary string');
     }
+
+    /**
+     * test constantEquals
+     *
+     * @return void
+     */
+    public function testConstantEquals()
+    {
+        $this->assertFalse(Security::constantEquals('abcde', null));
+        $this->assertFalse(Security::constantEquals('abcde', false));
+        $this->assertFalse(Security::constantEquals('abcde', true));
+        $this->assertFalse(Security::constantEquals('abcde', 1));
+
+        $this->assertFalse(Security::constantEquals(null, 'abcde'));
+        $this->assertFalse(Security::constantEquals(false, 'abcde'));
+        $this->assertFalse(Security::constantEquals(1, 'abcde'));
+        $this->assertFalse(Security::constantEquals(true, 'abcde'));
+
+        $this->assertTrue(Security::constantEquals('abcde', 'abcde'));
+        $this->assertFalse(Security::constantEquals('abcdef', 'abcde'));
+        $this->assertFalse(Security::constantEquals('abcde', 'abcdef'));
+        $this->assertFalse(Security::constantEquals('a', 'abcdef'));
+
+        $snowman = "\xe2\x98\x83";
+        $this->assertTrue(Security::constantEquals($snowman, $snowman));
+        $this->assertFalse(Security::constantEquals(str_repeat($snowman, 3), $snowman));
+    }
 }

@@ -157,7 +157,7 @@ class CsrfComponent extends Component
             throw new InvalidCsrfTokenException(__d('cake', 'Missing CSRF token cookie'));
         }
 
-        if ($post !== $cookie && $header !== $cookie) {
+        if (!Security::constantEquals($post, $cookie) && !Security::constantEquals($header, $cookie)) {
             throw new InvalidCsrfTokenException(__d('cake', 'CSRF token mismatch.'));
         }
     }
