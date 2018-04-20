@@ -264,7 +264,7 @@ class TypeTest extends TestCase
      */
     public function testSet()
     {
-        $instance = $this->getMockBuilder('Cake\Database\Type')->getMock();
+        $instance = $this->getMockBuilder(TypeInterface::class)->getMock();
         Type::set('random', $instance);
         $this->assertSame($instance, Type::build('random'));
     }
