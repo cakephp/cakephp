@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\Database;
 
 use Cake\Database\Type;
+use Cake\Database\TypeInterface;
 use Cake\Database\Type\BoolType;
 use Cake\Database\Type\IntegerType;
 use Cake\Database\Type\UuidType;
@@ -68,7 +69,7 @@ class TypeTest extends TestCase
     public function testBuildBasicTypes($name)
     {
         $type = Type::build($name);
-        $this->assertInstanceOf('Cake\Database\Type', $type);
+        $this->assertInstanceOf(TypeInterface::class, $type);
         $this->assertEquals($name, $type->getName());
         $this->assertEquals($name, $type->getBaseType());
     }
@@ -129,11 +130,6 @@ class TypeTest extends TestCase
         $map = Type::map();
         $this->assertEquals($fooType, $map['foo']);
         $this->assertEquals($fooType, Type::map('foo'));
-
-        $type = Type::build('foo');
-        $this->assertInstanceOf($fooType, $type);
-        $this->assertEquals('foo', $type->getName());
-        $this->assertEquals('text', $type->getBaseType());
 
         Type::map('foo2', $fooType);
         $map = Type::map();
@@ -271,18 +267,5 @@ class TypeTest extends TestCase
         $instance = $this->getMockBuilder('Cake\Database\Type')->getMock();
         Type::set('random', $instance);
         $this->assertSame($instance, Type::build('random'));
-    }
-
-    /**
-     * @return void
-     */
-    public function testDebugInfo()
-    {
-        $type = new Type('foo');
-        $result = $type->__debugInfo();
-        $expected = [
-            'name' => 'foo',
-        ];
-        $this->assertEquals($expected, $result);
     }
 }

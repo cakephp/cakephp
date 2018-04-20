@@ -15,13 +15,11 @@
 namespace Cake\Database;
 
 use InvalidArgumentException;
-use PDO;
 
 /**
- * Encapsulates all conversion functions for values coming from database into PHP and
- * going from PHP into database.
+ * Factory for building database type classes.
  */
-class Type implements TypeInterface
+class Type
 {
 
     /**
@@ -29,7 +27,7 @@ class Type implements TypeInterface
      * identifier is used as key and a complete namespaced class name as value
      * representing the class that will do actual type conversions.
      *
-     * @var string[]|\Cake\Database\Type[]
+     * @var string[]|\Cake\Database\TypeInterface[]
      */
     protected static $_types = [
         'tinyinteger' => 'Cake\Database\Type\IntegerType',
@@ -52,44 +50,11 @@ class Type implements TypeInterface
     ];
 
     /**
-     * List of basic type mappings, used to avoid having to instantiate a class
-     * for doing conversion on these.
-     *
-     * @var array
-     * @deprecated 3.1 All types will now use a specific class
-     */
-    protected static $_basicTypes = [
-        'string' => ['callback' => [Type::class, 'strval']],
-        'text' => ['callback' => [Type::class, 'strval']],
-        'boolean' => [
-            'callback' => [Type::class, 'boolval'],
-            'pdo' => PDO::PARAM_BOOL
-        ],
-    ];
-
-    /**
      * Contains a map of type object instances to be reused if needed.
      *
      * @var \Cake\Database\Type[]
      */
     protected static $_builtTypes = [];
-
-    /**
-     * Identifier name for this type
-     *
-     * @var string|null
-     */
-    protected $_name;
-
-    /**
-     * Constructor
-     *
-     * @param string|null $name The name identifying this type
-     */
-    public function __construct($name = null)
-    {
-        $this->_name = $name;
-    }
 
     /**
      * Returns a Type object capable of converting a type identified by name.
@@ -180,144 +145,5 @@ class Type implements TypeInterface
     {
         static::$_types = [];
         static::$_builtTypes = [];
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getName()
-    {
-        return $this->_name;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getBaseType()
-    {
-        return $this->_name;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function toDatabase($value, Driver $driver)
-    {
-        return $this->_basicTypeCast($value);
-    }
-
-    /**
-     * Casts given value from a database type to PHP equivalent
-     *
-     * @param mixed $value Value to be converted to PHP equivalent
-     * @param \Cake\Database\Driver $driver Object from which database preferences and configuration will be extracted
-     * @return mixed
-     */
-    public function toPHP($value, Driver $driver)
-    {
-        return $this->_basicTypeCast($value);
-    }
-
-    /**
-     * Checks whether this type is a basic one and can be converted using a callback
-     * If it is, returns converted value
-     *
-     * @param mixed $value Value to be converted to PHP equivalent
-     * @return mixed
-     * @deprecated 3.1 All types should now be a specific class
-     */
-    protected function _basicTypeCast($value)
-    {
-        deprecationWarning('Type::_basicTypeCast() is deprecated.');
-        if ($value === null) {
-            return null;
-        }
-        if (!empty(static::$_basicTypes[$this->_name])) {
-            $typeInfo = static::$_basicTypes[$this->_name];
-            if (isset($typeInfo['callback'])) {
-                return $typeInfo['callback']($value);
-            }
-        }
-
-        return $value;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function toStatement($value, Driver $driver)
-    {
-        if ($value === null) {
-            return PDO::PARAM_NULL;
-        }
-
-        return PDO::PARAM_STR;
-    }
-
-    /**
-     * Type converter for boolean values.
-     *
-     * Will convert string true/false into booleans.
-     *
-     * @param mixed $value The value to convert to a boolean.
-     * @return bool
-     * @deprecated 3.1.8 This method is now unused.
-     */
-    public static function boolval($value)
-    {
-        deprecationWarning('Type::boolval() is deprecated.');
-        if (is_string($value) && !is_numeric($value)) {
-            return strtolower($value) === 'true';
-        }
-
-        return !empty($value);
-    }
-
-    /**
-     * Type converter for string values.
-     *
-     * Will convert values into strings
-     *
-     * @param mixed $value The value to convert to a string.
-     * @return string
-     * @deprecated 3.1.8 This method is now unused.
-     */
-    public static function strval($value)
-    {
-        deprecationWarning('Type::strval() is deprecated.');
-        if (is_array($value)) {
-            $value = '';
-        }
-
-        return (string)$value;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function newId()
-    {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function marshal($value)
-    {
-        return $this->_basicTypeCast($value);
-    }
-
-    /**
-     * Returns an array that can be used to describe the internal state of this
-     * object.
-     *
-     * @return array
-     */
-    public function __debugInfo()
-    {
-        return [
-            'name' => $this->_name,
-        ];
     }
 }
