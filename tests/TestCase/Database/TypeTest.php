@@ -44,7 +44,7 @@ class TypeTest extends TestCase
      */
     public function setUp()
     {
-        $this->_originalMap = Type::map();
+        $this->_originalMap = Type::getMap();
         parent::setUp();
     }
 
@@ -121,18 +121,18 @@ class TypeTest extends TestCase
      */
     public function testMapAndBuild()
     {
-        $map = Type::map();
+        $map = Type::getMap();
         $this->assertNotEmpty($map);
         $this->assertArrayNotHasKey('foo', $map);
 
         $fooType = FooType::class;
         Type::map('foo', $fooType);
-        $map = Type::map();
+        $map = Type::getMap();
         $this->assertEquals($fooType, $map['foo']);
         $this->assertEquals($fooType, Type::map('foo'));
 
         Type::map('foo2', $fooType);
-        $map = Type::map();
+        $map = Type::getMap();
         $this->assertSame($fooType, $map['foo2']);
         $this->assertSame($fooType, Type::map('foo2'));
 
@@ -165,7 +165,7 @@ class TypeTest extends TestCase
      */
     public function testMapAndBuildWithObjects()
     {
-        $map = Type::map();
+        $map = Type::getMap();
         Type::clear();
 
         $uuidType = new UuidType('uuid');
@@ -182,15 +182,15 @@ class TypeTest extends TestCase
      */
     public function testClear()
     {
-        $map = Type::map();
+        $map = Type::getMap();
         $this->assertNotEmpty($map);
 
         $type = Type::build('float');
         Type::clear();
 
-        $this->assertEmpty(Type::map());
+        $this->assertEmpty(Type::getMap());
         Type::map($map);
-        $newMap = Type::map();
+        $newMap = Type::getMap();
 
         $this->assertEquals(array_keys($map), array_keys($newMap));
         $this->assertEquals($map['integer'], $newMap['integer']);
