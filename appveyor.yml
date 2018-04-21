@@ -11,6 +11,7 @@ branches:
   only:
     - master
     - 3.next
+    - 4.x
 environment:
   global:
     PHP: "C:/PHP"
