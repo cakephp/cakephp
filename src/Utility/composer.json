@@ -1,0 +1,43 @@
+{
+    "name": "cakephp/utility",
+    "description": "CakePHP Utility classes such as Inflector, String, Hash, and Security",
+    "type": "library",
+    "keywords": [
+        "cakephp",
+        "utility",
+        "inflector",
+        "string",
+        "hash",
+        "security"
+    ],
+    "homepage": "https://cakephp.org",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "CakePHP Community",
+            "homepage": "https://github.com/cakephp/utility/graphs/contributors"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/cakephp/cakephp/issues",
+        "forum": "https://stackoverflow.com/tags/cakephp",
+        "irc": "irc://irc.freenode.org/cakephp",
+        "source": "https://github.com/cakephp/utility"
+    },
+    "require": {
+        "php": ">=5.6.0",
+        "cakephp/core": "^3.6.0"
+    },
+    "suggest": {
+        "ext-intl": "To use Text::transliterate() or Text::slug()",
+        "lib-ICU": "To use Text::transliterate() or Text::slug()"
+    },
+    "autoload": {
+        "psr-4": {
+            "Cake\\Utility\\": "."
+        },
+        "files": [
+            "bootstrap.php"
+        ]
+    }
+}

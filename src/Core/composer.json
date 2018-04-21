@@ -1,0 +1,39 @@
+{
+    "name": "cakephp/core",
+    "description": "CakePHP Framework Core classes",
+    "type": "library",
+    "keywords": [
+        "cakephp",
+        "framework",
+        "core"
+    ],
+    "homepage": "https://cakephp.org",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "CakePHP Community",
+            "homepage": "https://github.com/cakephp/core/graphs/contributors"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/cakephp/cakephp/issues",
+        "forum": "https://stackoverflow.com/tags/cakephp",
+        "irc": "irc://irc.freenode.org/cakephp",
+        "source": "https://github.com/cakephp/core"
+    },
+    "require": {
+        "php": ">=5.6.0",
+        "cakephp/utility": "^3.6.0"
+    },
+    "suggest": {
+        "cakephp/event": "To use PluginApplicationInterface or plugin applications."
+    },
+    "autoload": {
+        "psr-4": {
+            "Cake\\Core\\": "."
+        },
+        "files": [
+            "functions.php"
+        ]
+    }
+}

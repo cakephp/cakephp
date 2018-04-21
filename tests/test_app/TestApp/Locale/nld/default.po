@@ -1,0 +1,29 @@
+msgctxt "character"
+msgid "letter"
+msgid_plural "letters"
+msgstr[0] "letter"
+msgstr[1] "letters"
+
+msgctxt "mail"
+msgid "letter"
+msgid_plural "letters"
+msgstr[0] "brief"
+msgstr[1] "brieven"
+
+msgctxt "spherical object"
+msgid "ball"
+msgstr "bal"
+
+msgctxt "social gathering"
+msgid "ball"
+msgstr "danspartij"
+
+msgid "ball"
+msgstr "bal"
+
+msgid "balance"
+msgstr "balans"
+
+msgctxt "money"
+msgid "balance"
+msgstr "saldo"

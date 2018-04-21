@@ -1,0 +1,43 @@
+{
+    "name": "cakephp/orm",
+    "description": "CakePHP ORM - Provides a flexible and powerful ORM implementing a data-mapper pattern.",
+    "type": "library",
+    "keywords": [
+        "cakephp",
+        "orm",
+        "data-mapper",
+        "data-mapper pattern"
+    ],
+    "homepage": "https://cakephp.org",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "CakePHP Community",
+            "homepage": "https://github.com/cakephp/orm/graphs/contributors"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/cakephp/cakephp/issues",
+        "forum": "https://stackoverflow.com/tags/cakephp",
+        "irc": "irc://irc.freenode.org/cakephp",
+        "source": "https://github.com/cakephp/orm"
+    },
+    "require": {
+        "php": ">=5.6.0",
+        "cakephp/collection": "^3.6.0",
+        "cakephp/core": "^3.6.0",
+        "cakephp/datasource": "^3.6.0",
+        "cakephp/database": "^3.6.0",
+        "cakephp/event": "^3.6.0",
+        "cakephp/utility": "^3.6.0",
+        "cakephp/validation": "^3.6.0"
+    },
+    "suggest": {
+        "cakephp/i18n": "If you are using Translate / Timestamp Behavior."
+    },
+    "autoload": {
+        "psr-4": {
+            "Cake\\ORM\\": "."
+        }
+    }
+}

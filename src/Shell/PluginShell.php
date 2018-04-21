@@ -1,0 +1,81 @@
+<?php
+/**
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
+ * @since         3.0.0
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
+ */
+namespace Cake\Shell;
+
+use Cake\Console\Shell;
+use Cake\Core\Plugin;
+
+/**
+ * Shell for tasks related to plugins.
+ *
+ * @property \Cake\Shell\Task\AssetsTask $Assets
+ * @property \Cake\Shell\Task\LoadTask $Load
+ * @property \Cake\Shell\Task\UnloadTask $Unload
+ */
+class PluginShell extends Shell
+{
+
+    /**
+     * Tasks to load
+     *
+     * @var array
+     */
+    public $tasks = [
+        'Assets',
+        'Load',
+        'Unload',
+    ];
+
+    /**
+     * Displays all currently loaded plugins.
+     *
+     * @return void
+     */
+    public function loaded()
+    {
+        $loaded = Plugin::loaded();
+        $this->out($loaded);
+    }
+
+    /**
+     * Gets the option parser instance and configures it.
+     *
+     * @return \Cake\Console\ConsoleOptionParser
+     */
+    public function getOptionParser()
+    {
+        $parser = parent::getOptionParser();
+
+        $parser->setDescription('Plugin Shell perform various tasks related to plugin.')
+            ->addSubcommand('assets', [
+                'help' => 'Symlink / copy plugin assets to app\'s webroot',
+                'parser' => $this->Assets->getOptionParser()
+            ])
+            ->addSubcommand('loaded', [
+                'help' => 'Lists all loaded plugins',
+                'parser' => $parser,
+            ])
+            ->addSubcommand('load', [
+                'help' => 'Loads a plugin',
+                'parser' => $this->Load->getOptionParser(),
+            ])
+            ->addSubcommand('unload', [
+                'help' => 'Unloads a plugin',
+                'parser' => $this->Unload->getOptionParser(),
+            ]);
+
+        return $parser;
+    }
+}
