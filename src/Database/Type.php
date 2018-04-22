@@ -117,9 +117,6 @@ class Type
      */
     public static function map($type, $className = null)
     {
-        if ($type === null) {
-            return static::$_types;
-        }
         if (is_array($type)) {
             static::$_types = $type;
 
