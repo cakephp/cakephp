@@ -108,22 +108,18 @@ class Type
     }
 
     /**
-     * Registers a new type identifier and maps it to a fully namespaced classname,
-     * If $className is omitted it will return mapped class for $type
+     * Registers a new type identifier and maps it to a fully namespaced classname.
      *
      * @param string|string[] $type If string name of type to map, if array list of arrays to be mapped.
      * @param string|\Cake\Database\TypeInterface|null $className The classname or object instance of it to register.
-     * @return string|null If $className is null string configured class name for give $type, null otherwise
+     * @return void
      */
     public static function map($type, $className = null)
     {
         if (is_array($type)) {
             static::$_types = $type;
 
-            return null;
-        }
-        if ($className === null) {
-            return isset(static::$_types[$type]) ? static::$_types[$type] : null;
+            return;
         }
 
         static::$_types[$type] = $className;
@@ -131,13 +127,18 @@ class Type
     }
 
     /**
-     * Get current types map.
+     * Get mapped class name or instance for type(s).
      *
-     * @return array
+     * @package string|null $type Type name to get mapped class for or null to get map array.
+     * @return array|string|\Cake\Database\TypeInterface Configured class name or instance for give $type or map array.
      */
-    public static function getMap()
+    public static function getMap(?string $type = null)
     {
-        return static::$_types;
+        if ($type === null) {
+            return static::$_types;
+        }
+
+        return isset(static::$_types[$type]) ? static::$_types[$type] : null;
     }
 
     /**

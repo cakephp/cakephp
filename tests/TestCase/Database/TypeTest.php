@@ -129,12 +129,12 @@ class TypeTest extends TestCase
         Type::map('foo', $fooType);
         $map = Type::getMap();
         $this->assertEquals($fooType, $map['foo']);
-        $this->assertEquals($fooType, Type::map('foo'));
+        $this->assertEquals($fooType, Type::getMap('foo'));
 
         Type::map('foo2', $fooType);
         $map = Type::getMap();
         $this->assertSame($fooType, $map['foo2']);
-        $this->assertSame($fooType, Type::map('foo2'));
+        $this->assertSame($fooType, Type::getMap('foo2'));
 
         $type = Type::build('foo2');
         $this->assertInstanceOf($fooType, $type);
