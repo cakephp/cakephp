@@ -16,8 +16,6 @@ namespace Cake\Test\TestCase\Database;
 
 use Cake\Database\Type;
 use Cake\Database\TypeInterface;
-use Cake\Database\Type\BoolType;
-use Cake\Database\Type\IntegerType;
 use Cake\Database\Type\UuidType;
 use Cake\TestSuite\TestCase;
 use PDO;
