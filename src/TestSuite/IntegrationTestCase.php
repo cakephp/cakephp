@@ -23,6 +23,7 @@ if (class_exists('PHPUnit_Runner_Version', false) && !interface_exists('PHPUnit\
 use Cake\Core\Configure;
 use Cake\Database\Exception as DatabaseException;
 use Cake\Http\ServerRequest;
+use Cake\Http\ServerRequestFactory;
 use Cake\Http\Session;
 use Cake\Routing\Router;
 use Cake\TestSuite\Stub\TestExceptionRenderer;
@@ -33,9 +34,8 @@ use Cake\Utility\Text;
 use Cake\View\Helper\SecureFieldTokenTrait;
 use Exception;
 use LogicException;
-use Cake\Http\ServerRequestFactory;
-use Zend\Diactoros\Stream;
 use PHPUnit\Exception as PhpunitException;
+use Zend\Diactoros\Stream;
 
 /**
  * A test case class intended to make integration tests of

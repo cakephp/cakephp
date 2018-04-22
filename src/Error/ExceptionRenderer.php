@@ -14,7 +14,6 @@
  */
 namespace Cake\Error;
 
-use Psr\Http\Message\ServerRequestInterface;
 use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
@@ -30,6 +29,7 @@ use Cake\Utility\Inflector;
 use Cake\View\Exception\MissingTemplateException;
 use Exception;
 use PDOException;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Exception Renderer.
