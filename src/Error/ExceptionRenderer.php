@@ -80,6 +80,14 @@ class ExceptionRenderer implements ExceptionRendererInterface
     public $method = '';
 
     /**
+     * If set, this will be request used to create the controller that will render
+     * the error.
+     *
+     * @var ServerRequestInterface
+     */
+    public $request = '';
+
+    /**
      * Creates the controller to perform rendering on the error response.
      * If the error is a Cake\Core\Exception\Exception it will be converted to either a 400 or a 500
      * code error depending on the code used to construct the error.
@@ -90,7 +98,8 @@ class ExceptionRenderer implements ExceptionRendererInterface
     public function __construct(Exception $exception, ServerRequestInterface $request = null)
     {
         $this->error = $exception;
-        $this->controller = $this->_getController($request);
+        $this->request = $request;
+        $this->controller = $this->_getController();
     }
 
     /**
@@ -111,13 +120,12 @@ class ExceptionRenderer implements ExceptionRendererInterface
      * This method returns the built in `ErrorController` normally, or if an error is repeated
      * a bare controller will be used.
      *
-     * @param \Psr\Http\Message\ServerRequestInterface $request The request.
-     *
      * @return \Cake\Controller\Controller
      * @triggers Controller.startup $controller
      */
-    protected function _getController(ServerRequestInterface $request = null)
+    protected function _getController()
     {
+        $request = $this->request;
         if(!$request) {
             if (!$request = Router::getRequest(true)) {
                 $request = ServerRequestFactory::fromGlobals();
