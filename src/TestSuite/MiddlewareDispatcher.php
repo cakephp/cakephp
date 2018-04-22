@@ -91,7 +91,7 @@ class MiddlewareDispatcher
         );
 
         $server = new Server($app);
+
         return $server->run($request);
     }
-
 }

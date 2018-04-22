@@ -485,10 +485,10 @@ abstract class IntegrationTestCase extends TestCase
         $dispatcher = $this->_makeDispatcher();
         try {
             $request = $this->_buildRequest($url, $method, $data);
-            if($dispatcher instanceof LegacyRequestDispatcher ){
+            if ($dispatcher instanceof LegacyRequestDispatcher) {
                 //The legacy dispatcher expects an array...
                 $response = $dispatcher->execute($request);
-            }elseif($dispatcher instanceof MiddlewareDispatcher ){
+            } elseif ($dispatcher instanceof MiddlewareDispatcher) {
                 $psrRequest = $this->_createRequest($request);
                 $response = $dispatcher->execute($psrRequest);
             }
@@ -537,7 +537,6 @@ abstract class IntegrationTestCase extends TestCase
 
         return $request;
     }
-
 
     /**
      * Get the correct dispatcher instance.

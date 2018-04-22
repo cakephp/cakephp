@@ -126,7 +126,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
     protected function _getController()
     {
         $request = $this->request;
-        if(!$request) {
+        if (!$request) {
             if (!$request = Router::getRequest(true)) {
                 $request = ServerRequestFactory::fromGlobals();
             }
