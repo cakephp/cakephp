@@ -484,12 +484,13 @@ abstract class IntegrationTestCase extends TestCase
     {
         $dispatcher = $this->_makeDispatcher();
         try {
+            $psrRequest = null;
             $request = $this->_buildRequest($url, $method, $data);
+            $psrRequest = $this->_createRequest($request);
             if ($dispatcher instanceof LegacyRequestDispatcher) {
                 //The legacy dispatcher expects an array...
                 $response = $dispatcher->execute($request);
-            } elseif ($dispatcher instanceof MiddlewareDispatcher) {
-                $psrRequest = $this->_createRequest($request);
+            } else {
                 $response = $dispatcher->execute($psrRequest);
             }
             $this->_requestSession = $request['session'];
@@ -587,7 +588,7 @@ abstract class IntegrationTestCase extends TestCase
      * If that class does not exist, the built-in renderer will be used.
      *
      * @param \Exception $exception Exception to handle.
-     * @param \Psr\Http\Message\ServerRequestInterface $request The request.
+     * @param \Psr\Http\Message\RequestInterface $request The request.
      * @return void
      * @throws \Exception
      */
