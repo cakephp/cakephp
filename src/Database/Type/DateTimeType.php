@@ -15,8 +15,6 @@
 namespace Cake\Database\Type;
 
 use Cake\Database\Driver;
-use Cake\Database\Type;
-use Cake\Database\TypeInterface;
 use Cake\Database\Type\BatchCastingInterface;
 use DateTimeImmutable;
 use DateTimeInterface;
@@ -30,17 +28,8 @@ use RuntimeException;
  *
  * Use to convert datetime instances to strings & back.
  */
-class DateTimeType extends Type implements TypeInterface, BatchCastingInterface
+class DateTimeType extends BaseType
 {
-    /**
-     * Identifier name for this type.
-     *
-     * (This property is declared here again so that the inheritance from
-     * Cake\Database\Type can be removed in the future.)
-     *
-     * @var string|null
-     */
-    protected $_name;
 
     /**
      * The class to use for representing date objects

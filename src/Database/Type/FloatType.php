@@ -15,8 +15,6 @@
 namespace Cake\Database\Type;
 
 use Cake\Database\Driver;
-use Cake\Database\Type;
-use Cake\Database\TypeInterface;
 use Cake\Database\Type\BatchCastingInterface;
 use PDO;
 use RuntimeException;
@@ -26,8 +24,9 @@ use RuntimeException;
  *
  * Use to convert float/decimal data between PHP and the database types.
  */
-class FloatType extends Type implements TypeInterface, BatchCastingInterface
+class FloatType extends BaseType implements BatchCastingInterface
 {
+
     /**
      * Identifier name for this type.
      *
