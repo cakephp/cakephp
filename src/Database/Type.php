@@ -135,10 +135,10 @@ class Type
     /**
      * Get mapped class name or instance for type(s).
      *
-     * @package string|null $type Type name to get mapped class for or null to get map array.
-     * @return array|string|\Cake\Database\TypeInterface Configured class name or instance for give $type or map array.
+     * @param string|null $type Type name to get mapped class for or null to get map array.
+     * @return array|string|\Cake\Database\TypeInterface|null Configured class name or instance for give $type or map array.
      */
-    public static function getMap(?string $type = null)
+    public static function getMap(string $type = null)
     {
         if ($type === null) {
             return static::$_types;
