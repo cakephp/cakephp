@@ -161,6 +161,10 @@ class UrlHelper extends Helper
         if (is_array($path)) {
             return $this->build($path, !empty($options['fullBase']));
         }
+        // data URIs only require HTML escaping
+        if (preg_match('/^data:[a-z]+\/[a-z]+;/', $path)) {
+            return h($path);
+        }
         if (strpos($path, '://') !== false || preg_match('/^[a-z]+:/i', $path)) {
             return ltrim($this->build($path), '/');
         }

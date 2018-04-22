@@ -831,6 +831,36 @@ class AuthComponentTest extends TestCase
     }
 
     /**
+     * testNoLoginRedirectForAuthenticatedUser method
+     *
+     * @return void
+     * @triggers Controller.startup $this->Controller
+     */
+    public function testStartupLoginActionIgnoreQueryString()
+    {
+        $request = new ServerRequest([
+            'params' => [
+                'plugin' => null,
+                'controller' => 'auth_test',
+                'action' => 'login'
+            ],
+            'query' => ['redirect' => '/admin/articles'],
+            'url' => '/auth_test/login?redirect=%2Fadmin%2Farticles',
+            'session' => $this->Auth->session
+        ]);
+        $this->Controller->request = $request;
+
+        $this->Auth->session->clear();
+        $this->Auth->setConfig('authenticate', ['Form']);
+        $this->Auth->setConfig('authorize', false);
+        $this->Auth->setConfig('loginAction', ['controller' => 'auth_test', 'action' => 'login']);
+
+        $event = new Event('Controller.startup', $this->Controller);
+        $return = $this->Auth->startup($event);
+        $this->assertNull($return);
+    }
+
+    /**
      * Default to loginRedirect, if set, on authError.
      *
      * @return void

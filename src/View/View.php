@@ -56,6 +56,7 @@ use RuntimeException;
  * `plugins/SuperHot/Template/Posts/index.ctp`. If a theme template
  * is not found for the current action the default app template file is used.
  *
+ * @property \Cake\View\Helper\BreadCrumbsHelper $BreadCrumbs
  * @property \Cake\View\Helper\FlashHelper $Flash
  * @property \Cake\View\Helper\FormHelper $Form
  * @property \Cake\View\Helper\HtmlHelper $Html

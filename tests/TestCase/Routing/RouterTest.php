@@ -61,7 +61,7 @@ class RouterTest extends TestCase
      *
      * @return void
      */
-    public function testbaseUrl()
+    public function testBaseUrl()
     {
         $this->assertRegExp('/^http(s)?:\/\//', Router::url('/', true));
         $this->assertRegExp('/^http(s)?:\/\//', Router::url(null, true));
@@ -73,7 +73,7 @@ class RouterTest extends TestCase
      *
      * @return void
      */
-    public function testfullBaseURL()
+    public function testFullBaseURL()
     {
         Router::fullBaseUrl('http://example.com');
         $this->assertEquals('http://example.com/', Router::url('/', true));
@@ -571,14 +571,17 @@ class RouterTest extends TestCase
                 'plugin' => null,
                 'controller' => 'subscribe',
             ],
-            'url' => '/magazine/',
+            'url' => '/subscribe',
             'base' => '/magazine',
             'webroot' => '/magazine/'
         ]);
         Router::pushRequest($request);
 
         $result = Router::url();
-        $this->assertEquals('/magazine/', $result);
+        $this->assertEquals('/magazine/subscribe', $result);
+
+        $result = Router::url([]);
+        $this->assertEquals('/magazine/subscribe', $result);
 
         $result = Router::url('/');
         $this->assertEquals('/magazine/', $result);
@@ -933,7 +936,7 @@ class RouterTest extends TestCase
             ],
             'webroot' => '/magazine/',
             'base' => '/magazine',
-            'url' => '/magazine/admin/subscriptions/edit/1',
+            'url' => '/admin/subscriptions/edit/1',
         ]);
         Router::setRequestInfo($request);
 

@@ -248,12 +248,11 @@ class Session
      */
     public function engine($class = null, array $options = [])
     {
-        if ($class instanceof SessionHandlerInterface) {
-            return $this->_engine = $class;
-        }
-
         if ($class === null) {
             return $this->_engine;
+        }
+        if ($class instanceof SessionHandlerInterface) {
+            return $this->setEngine($class);
         }
         $className = App::className($class, 'Http/Session');
 
@@ -273,6 +272,18 @@ class Session
                 'The chosen SessionHandler does not implement SessionHandlerInterface, it cannot be used as an engine.'
             );
         }
+
+        return $this->setEngine($handler);
+    }
+
+    /**
+     * Set the engine property and update the session handler in PHP.
+     *
+     * @param \SessionHandlerInterface $handler The handler to set
+     * @return \SessionHandlerInterface
+     */
+    protected function setEngine(SessionHandlerInterface $handler)
+    {
         if (!headers_sent()) {
             session_set_save_handler($handler, false);
         }

@@ -301,7 +301,7 @@ class Security
         $cipher = mb_substr($cipher, $macSize, null, '8bit');
 
         $compareHmac = hash_hmac('sha256', $cipher, $key);
-        if (!static::_constantEquals($hmac, $compareHmac)) {
+        if (!static::constantEquals($hmac, $compareHmac)) {
             return false;
         }
 
@@ -313,24 +313,28 @@ class Security
     /**
      * A timing attack resistant comparison that prefers native PHP implementations.
      *
-     * @param string $hmac The hmac from the ciphertext being decrypted.
-     * @param string $compare The comparison hmac.
+     * @param string $original The original value.
+     * @param string $compare The comparison value.
      * @return bool
      * @see https://github.com/resonantcore/php-future/
+     * @since 3.6.2
      */
-    protected static function _constantEquals($hmac, $compare)
+    public static function constantEquals($original, $compare)
     {
-        if (function_exists('hash_equals')) {
-            return hash_equals($hmac, $compare);
+        if (!is_string($original) || !is_string($compare)) {
+            return false;
         }
-        $hashLength = mb_strlen($hmac, '8bit');
+        if (function_exists('hash_equals')) {
+            return hash_equals($original, $compare);
+        }
+        $originalLength = mb_strlen($original, '8bit');
         $compareLength = mb_strlen($compare, '8bit');
-        if ($hashLength !== $compareLength) {
+        if ($originalLength !== $compareLength) {
             return false;
         }
         $result = 0;
-        for ($i = 0; $i < $hashLength; $i++) {
-            $result |= (ord($hmac[$i]) ^ ord($compare[$i]));
+        for ($i = 0; $i < $originalLength; $i++) {
+            $result |= (ord($original[$i]) ^ ord($compare[$i]));
         }
 
         return $result === 0;

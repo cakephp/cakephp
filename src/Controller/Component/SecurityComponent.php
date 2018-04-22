@@ -22,6 +22,7 @@ use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\ServerRequest;
+use Cake\Routing\Router;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
 
@@ -378,14 +379,21 @@ class SecurityComponent extends Component
      */
     protected function _hashParts(Controller $controller)
     {
-        $fieldList = $this->_fieldsList($controller->request->getData());
-        $unlocked = $this->_sortedUnlocked($controller->request->getData());
+        $request = $controller->getRequest();
+
+        // Start the session to ensure we get the correct session id.
+        $session = $request->getSession();
+        $session->start();
+
+        $data = $request->getData();
+        $fieldList = $this->_fieldsList($data);
+        $unlocked = $this->_sortedUnlocked($data);
 
         return [
-            $controller->request->getRequestTarget(),
+            Router::url($request->getRequestTarget()),
             serialize($fieldList),
             $unlocked,
-            session_id(),
+            $session->id()
         ];
     }
 
