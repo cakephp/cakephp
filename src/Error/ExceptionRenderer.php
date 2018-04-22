@@ -14,6 +14,7 @@
  */
 namespace Cake\Error;
 
+use Psr\Http\Message\ServerRequestInterface;
 use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
@@ -84,11 +85,12 @@ class ExceptionRenderer implements ExceptionRendererInterface
      * code error depending on the code used to construct the error.
      *
      * @param \Exception $exception Exception.
+     * @param ServerRequestInterface $request The request - if this is set it will be used instead of creating a new one
      */
-    public function __construct(Exception $exception)
+    public function __construct(Exception $exception, ServerRequestInterface $request = null)
     {
         $this->error = $exception;
-        $this->controller = $this->_getController();
+        $this->controller = $this->_getController($request);
     }
 
     /**
@@ -109,14 +111,19 @@ class ExceptionRenderer implements ExceptionRendererInterface
      * This method returns the built in `ErrorController` normally, or if an error is repeated
      * a bare controller will be used.
      *
+     * @param \Psr\Http\Message\ServerRequestInterface $request The request.
+     *
      * @return \Cake\Controller\Controller
      * @triggers Controller.startup $controller
      */
-    protected function _getController()
+    protected function _getController(ServerRequestInterface $request = null)
     {
-        if (!$request = Router::getRequest(true)) {
-            $request = ServerRequestFactory::fromGlobals();
+        if(!$request) {
+            if (!$request = Router::getRequest(true)) {
+                $request = ServerRequestFactory::fromGlobals();
+            }
         }
+
         $response = new Response();
         $controller = null;
 
