@@ -483,8 +483,8 @@ abstract class IntegrationTestCase extends TestCase
     protected function _sendRequest($url, $method, $data = [])
     {
         $dispatcher = $this->_makeDispatcher();
+        $psrRequest = null;
         try {
-            $psrRequest = null;
             $request = $this->_buildRequest($url, $method, $data);
             $psrRequest = $this->_createRequest($request);
             if ($dispatcher instanceof LegacyRequestDispatcher) {
