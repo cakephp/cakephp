@@ -7,7 +7,6 @@ use Cake\Error\ExceptionRenderer;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
-use Psr\Http\Message\ServerRequestInterface;
 use TestApp\Controller\TestAppsErrorController;
 
 class TestAppsExceptionRenderer extends ExceptionRenderer
@@ -18,11 +17,8 @@ class TestAppsExceptionRenderer extends ExceptionRenderer
      */
     protected function _getController()
     {
-        $request = $this->request;
-        if (!$request) {
-            if (!$request = Router::getRequest(true)) {
-                $request = new ServerRequest();
-            }
+        if (!$request = $this->request ?: Router::getRequest(true)) {
+            $request = new ServerRequest();
         }
         $response = new Response();
         try {
