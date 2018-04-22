@@ -96,7 +96,7 @@ class Type
     }
 
     /**
-     * Returns a Type object capable of converting a type identified by $name
+     * Set TypeInterface instance capable of converting a type identified by $name
      *
      * @param string $name The type identifier you want to set.
      * @param \Cake\Database\TypeInterface $instance The type instance you want to set.
