@@ -110,20 +110,26 @@ class Type
     /**
      * Registers a new type identifier and maps it to a fully namespaced classname.
      *
-     * @param string|string[] $type If string name of type to map, if array list of arrays to be mapped.
-     * @param string|\Cake\Database\TypeInterface|null $className The classname or object instance of it to register.
+     * @param string $type Name of type to map.
+     * @param string|\Cake\Database\TypeInterface $className The classname or object instance of it to register.
      * @return void
      */
-    public static function map($type, $className = null)
+    public static function map(string $type, $className)
     {
-        if (is_array($type)) {
-            static::$_types = $type;
-
-            return;
-        }
-
         static::$_types[$type] = $className;
         unset(static::$_builtTypes[$type]);
+    }
+
+    /**
+     * Set type to classname mapping.
+     *
+     * @param string[] $map List of types to be mapped.
+     * @return void
+     */
+    public static function setMap(array $map)
+    {
+        static::$_types = $map;
+        static::$_builtTypes = [];
     }
 
     /**

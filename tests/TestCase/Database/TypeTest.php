@@ -57,7 +57,7 @@ class TypeTest extends TestCase
     {
         parent::tearDown();
 
-        Type::map($this->_originalMap);
+        Type::setMap($this->_originalMap);
     }
 
     /**
@@ -172,7 +172,7 @@ class TypeTest extends TestCase
         Type::map('uuid', $uuidType);
 
         $this->assertSame($uuidType, Type::build('uuid'));
-        Type::map($map);
+        Type::setMap($map);
     }
 
     /**
@@ -189,7 +189,7 @@ class TypeTest extends TestCase
         Type::clear();
 
         $this->assertEmpty(Type::getMap());
-        Type::map($map);
+        Type::setMap($map);
         $newMap = Type::getMap();
 
         $this->assertEquals(array_keys($map), array_keys($newMap));
