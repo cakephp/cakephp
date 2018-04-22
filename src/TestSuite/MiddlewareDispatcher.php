@@ -20,7 +20,6 @@ use Cake\Http\ServerRequestFactory;
 use LogicException;
 use ReflectionClass;
 use ReflectionException;
-use Zend\Diactoros\Stream;
 
 /**
  * Dispatches a request capturing the response for integration
@@ -92,37 +91,7 @@ class MiddlewareDispatcher
         );
 
         $server = new Server($app);
-        $psrRequest = $this->_createRequest($request);
-
-        return $server->run($psrRequest);
+        return $server->run($request);
     }
 
-    /**
-     * Create a PSR7 request from the request spec.
-     *
-     * @param array $spec The request spec.
-     * @return \Psr\Http\Message\RequestInterface
-     */
-    protected function _createRequest($spec)
-    {
-        if (isset($spec['input'])) {
-            $spec['post'] = [];
-        }
-        $request = ServerRequestFactory::fromGlobals(
-            array_merge($_SERVER, $spec['environment'], ['REQUEST_URI' => $spec['url']]),
-            $spec['query'],
-            $spec['post'],
-            $spec['cookies']
-        );
-        $request = $request->withAttribute('session', $spec['session']);
-
-        if (isset($spec['input'])) {
-            $stream = new Stream('php://memory', 'rw');
-            $stream->write($spec['input']);
-            $stream->rewind();
-            $request = $request->withBody($stream);
-        }
-
-        return $request;
-    }
 }

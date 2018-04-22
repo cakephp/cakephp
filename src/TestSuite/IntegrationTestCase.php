@@ -33,6 +33,8 @@ use Cake\Utility\Text;
 use Cake\View\Helper\SecureFieldTokenTrait;
 use Exception;
 use LogicException;
+use Cake\Http\ServerRequestFactory;
+use Zend\Diactoros\Stream;
 use PHPUnit\Exception as PhpunitException;
 
 /**
@@ -483,7 +485,13 @@ abstract class IntegrationTestCase extends TestCase
         $dispatcher = $this->_makeDispatcher();
         try {
             $request = $this->_buildRequest($url, $method, $data);
-            $response = $dispatcher->execute($request);
+            if($dispatcher instanceof LegacyRequestDispatcher ){
+                //The legacy dispatcher expects an array...
+                $response = $dispatcher->execute($request);
+            }elseif($dispatcher instanceof MiddlewareDispatcher ){
+                $psrRequest = $this->_createRequest($request);
+                $response = $dispatcher->execute($psrRequest);
+            }
             $this->_requestSession = $request['session'];
             if ($this->_retainFlashMessages && $this->_flashMessages) {
                 $this->_requestSession->write('Flash', $this->_flashMessages);
@@ -497,9 +505,39 @@ abstract class IntegrationTestCase extends TestCase
             throw $e;
         } catch (Exception $e) {
             $this->_exception = $e;
-            $this->_handleError($e);
+            $this->_handleError($e, $psrRequest);
         }
     }
+
+    /**
+     * Create a PSR7 request from the request spec.
+     *
+     * @param array $spec The request spec.
+     * @return \Psr\Http\Message\RequestInterface
+     */
+    protected function _createRequest($spec)
+    {
+        if (isset($spec['input'])) {
+            $spec['post'] = [];
+        }
+        $request = ServerRequestFactory::fromGlobals(
+            array_merge($_SERVER, $spec['environment'], ['REQUEST_URI' => $spec['url']]),
+            $spec['query'],
+            $spec['post'],
+            $spec['cookies']
+        );
+        $request = $request->withAttribute('session', $spec['session']);
+
+        if (isset($spec['input'])) {
+            $stream = new Stream('php://memory', 'rw');
+            $stream->write($spec['input']);
+            $stream->rewind();
+            $request = $request->withBody($stream);
+        }
+
+        return $request;
+    }
+
 
     /**
      * Get the correct dispatcher instance.
@@ -550,17 +588,18 @@ abstract class IntegrationTestCase extends TestCase
      * If that class does not exist, the built-in renderer will be used.
      *
      * @param \Exception $exception Exception to handle.
+     * @param \Psr\Http\Message\ServerRequestInterface $request The request.
      * @return void
      * @throws \Exception
      */
-    protected function _handleError($exception)
+    protected function _handleError($exception, $request)
     {
         $class = Configure::read('Error.exceptionRenderer');
         if (empty($class) || !class_exists($class)) {
             $class = 'Cake\Error\ExceptionRenderer';
         }
         /** @var \Cake\Error\ExceptionRenderer $instance */
-        $instance = new $class($exception);
+        $instance = new $class($exception, $request);
         $this->_response = $instance->render();
     }
 
