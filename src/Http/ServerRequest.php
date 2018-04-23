@@ -233,7 +233,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
         'url' => ['get' => 'getPath()', 'set' => 'withRequestTarget()'],
         'base' => ['get' => 'getAttribute("base")', 'set' => 'withAttribute("base")'],
         'webroot' => ['get' => 'getAttribute("webroot")', 'set' => 'withAttribute("webroot")'],
-        'here' => ['get' => 'getRequestTarget()', 'set' => 'withRequestTarget()'],
+        'here' => ['get' => 'getAttribute("here")', 'set' => 'withAttribute("here")'],
     ];
 
     /**
