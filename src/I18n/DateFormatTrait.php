@@ -29,10 +29,11 @@ trait DateFormatTrait
     /**
      * The default locale to be used for displaying formatted date strings.
      *
+     * Use static::setDefaultLocale() and static::getDefaultLocale() instead.
+     *
      * @var string
-     * @deprecated 3.2.9 Use static::setDefaultLocale() and static::getDefaultLocale() instead.
      */
-    public static $defaultLocale;
+    protected static $defaultLocale;
 
     /**
      * In-memory cache of date formatters

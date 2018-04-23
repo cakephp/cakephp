@@ -83,62 +83,6 @@ class I18n
     }
 
     /**
-     * Returns an instance of a translator that was configured for the name and passed
-     * locale. If no locale is passed then it takes the value returned by the `getLocale()` method.
-     *
-     * This method can be used to configure future translators, this is achieved by passing a callable
-     * as the last argument of this function.
-     *
-     * ### Example:
-     *
-     * ```
-     *  I18n::setTranslator('default', function () {
-     *      $package = new \Aura\Intl\Package();
-     *      $package->setMessages([
-     *          'Cake' => 'Gâteau'
-     *      ]);
-     *      return $package;
-     *  }, 'fr_FR');
-     *
-     *  $translator = I18n::translator('default', 'fr_FR');
-     *  echo $translator->translate('Cake');
-     * ```
-     *
-     * You can also use the `Cake\I18n\MessagesFileLoader` class to load a specific
-     * file from a folder. For example for loading a `my_translations.po` file from
-     * the `src/Locale/custom` folder, you would do:
-     *
-     * ```
-     * I18n::translator(
-     *  'default',
-     *  'fr_FR',
-     *  new MessagesFileLoader('my_translations', 'custom', 'po');
-     * );
-     * ```
-     *
-     * @deprecated 3.5 Use getTranslator() and setTranslator()
-     * @param string $name The domain of the translation messages.
-     * @param string|null $locale The locale for the translator.
-     * @param callable|null $loader A callback function or callable class responsible for
-     * constructing a translations package instance.
-     * @return \Aura\Intl\TranslatorInterface|null The configured translator.
-     */
-    public static function translator($name = 'default', $locale = null, callable $loader = null)
-    {
-        deprecationWarning(
-            'I18n::translator() is deprecated. ' .
-            'Use I18n::setTranslator()/getTranslator() instead.'
-        );
-        if ($loader !== null) {
-            static::setTranslator($name, $loader, $locale);
-
-            return null;
-        }
-
-        return self::getTranslator($name, $locale);
-    }
-
-    /**
      * Sets a translator.
      *
      * Configures future translators, this is achieved by passing a callable
@@ -266,32 +210,6 @@ class I18n
      * Sets the default locale to use for future translator instances.
      * This also affects the `intl.default_locale` PHP setting.
      *
-     * When called with no arguments it will return the currently configure
-     * locale as stored in the `intl.default_locale` PHP setting.
-     *
-     * @deprecated 3.5 Use setLocale() and getLocale().
-     * @param string|null $locale The name of the locale to set as default.
-     * @return string|null The name of the default locale.
-     */
-    public static function locale($locale = null)
-    {
-        deprecationWarning(
-            'I18n::locale() is deprecated. ' .
-            'Use I18n::setLocale()/getLocale() instead.'
-        );
-        if (!empty($locale)) {
-            static::setLocale($locale);
-
-            return null;
-        }
-
-        return self::getLocale();
-    }
-
-    /**
-     * Sets the default locale to use for future translator instances.
-     * This also affects the `intl.default_locale` PHP setting.
-     *
      * @param string $locale The name of the locale to set as default.
      * @return void
      */
@@ -323,21 +241,6 @@ class I18n
     }
 
     /**
-     * This returns the default locale before any modifications, i.e.
-     * the value as stored in the `intl.default_locale` PHP setting before
-     * any manipulation by this class.
-     *
-     * @deprecated 3.5 Use getDefaultLocale()
-     * @return string
-     */
-    public static function defaultLocale()
-    {
-        deprecationWarning('I18n::defaultLocale() is deprecated. Use I18n::getDefaultLocale() instead.');
-
-        return static::getDefaultLocale();
-    }
-
-    /**
      * Returns the default locale.
      *
      * This returns the default locale before any modifications, i.e.
@@ -353,28 +256,6 @@ class I18n
         }
 
         return static::$_defaultLocale;
-    }
-
-    /**
-     * Sets the name of the default messages formatter to use for future
-     * translator instances.
-     *
-     * By default the `default` and `sprintf` formatters are available.
-     *
-     * If called with no arguments, it will return the currently configured value.
-     *
-     * @deprecated 3.5 Use getDefaultFormatter() and setDefaultFormatter().
-     * @param string|null $name The name of the formatter to use.
-     * @return string The name of the formatter.
-     */
-    public static function defaultFormatter($name = null)
-    {
-        deprecationWarning(
-            'I18n::defaultFormatter() is deprecated. ' .
-            'Use I18n::setDefaultFormatter()/getDefaultFormatter() instead.'
-        );
-
-        return static::translators()->defaultFormatter($name);
     }
 
     /**
