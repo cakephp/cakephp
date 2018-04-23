@@ -83,7 +83,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
      * If set, this will be request used to create the controller that will render
      * the error.
      *
-     * @var \Psr\Http\Message\ServerRequestInterface
+     * @var \Psr\Http\Message\ServerRequestInterface|null
      */
     protected $request = null;
 
@@ -93,7 +93,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
      * code error depending on the code used to construct the error.
      *
      * @param \Exception $exception Exception.
-     * @param ServerRequestInterface $request The request - if this is set it will be used instead of creating a new one
+     * @param \Psr\Http\Message\ServerRequestInterface $request The request - if this is set it will be used instead of creating a new one
      */
     public function __construct(Exception $exception, ServerRequestInterface $request = null)
     {
@@ -125,7 +125,8 @@ class ExceptionRenderer implements ExceptionRendererInterface
      */
     protected function _getController()
     {
-        if (!$request = $this->request ?: Router::getRequest(true)) {
+        $request = $this->request ?: Router::getRequest(true);
+        if ($request === null ) {
             $request = ServerRequestFactory::fromGlobals();
         }
 

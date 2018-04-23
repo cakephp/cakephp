@@ -17,7 +17,8 @@ class TestAppsExceptionRenderer extends ExceptionRenderer
      */
     protected function _getController()
     {
-        if (!$request = $this->request ?: Router::getRequest(true)) {
+        $request = $this->request ?: Router::getRequest(true);
+        if ($request === null) {
             $request = new ServerRequest();
         }
         $response = new Response();
