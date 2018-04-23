@@ -33,6 +33,7 @@ use PHPUnit\Framework\TestCase as BaseTestCase;
 abstract class TestCase extends BaseTestCase
 {
 
+    use EmailTrait;
     use LocatorAwareTrait;
 
     /**
@@ -159,6 +160,7 @@ abstract class TestCase extends BaseTestCase
             Configure::write($this->_configure);
         }
         $this->getTableLocator()->clear();
+        TestEmailTransport::clearEmails();
     }
 
     /**
