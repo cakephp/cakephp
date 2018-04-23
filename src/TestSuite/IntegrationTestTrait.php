@@ -18,6 +18,9 @@ use Cake\Database\Exception as DatabaseException;
 use Cake\Http\ServerRequest;
 use Cake\Http\Session;
 use Cake\Routing\Router;
+use Cake\TestSuite\Constraint\Response\ContentType;
+use Cake\TestSuite\Constraint\Response\Header;
+use Cake\TestSuite\Constraint\Response\HeaderContains;
 use Cake\TestSuite\Constraint\Response\StatusCode;
 use Cake\TestSuite\Constraint\Response\StatusError;
 use Cake\TestSuite\Constraint\Response\StatusFailure;
@@ -833,14 +836,7 @@ trait IntegrationTestTrait
      */
     public function assertHeader($header, $content, $message = '')
     {
-        if (!$this->_response) {
-            $this->fail('No response set, cannot assert headers. ' . $message);
-        }
-        if (!$this->_response->hasHeader($header)) {
-            $this->fail("The '$header' header is not set. " . $message);
-        }
-        $actual = $this->_response->getHeaderLine($header);
-        $this->assertEquals($content, $actual, $message);
+        $this->assertThat($content, new Header($this->_response, $header), $message);
     }
 
     /**
@@ -853,14 +849,7 @@ trait IntegrationTestTrait
      */
     public function assertHeaderContains($header, $content, $message = '')
     {
-        if (!$this->_response) {
-            $this->fail('No response set, cannot assert headers. ' . $message);
-        }
-        if (!$this->_response->hasHeader($header)) {
-            $this->fail("The '$header' header is not set. " . $message);
-        }
-        $actual = $this->_response->getHeaderLine($header);
-        $this->assertContains($content, $actual, $message);
+        $this->assertThat($content, new HeaderContains($this->_response, $header), $message);
     }
 
     /**
@@ -872,15 +861,7 @@ trait IntegrationTestTrait
      */
     public function assertContentType($type, $message = '')
     {
-        if (!$this->_response) {
-            $this->fail('No response set, cannot assert content-type. ' . $message);
-        }
-        $alias = $this->_response->getMimeType($type);
-        if ($alias !== false) {
-            $type = $alias;
-        }
-        $result = $this->_response->getType();
-        $this->assertEquals($type, $result, $message);
+        $this->assertThat($type, new ContentType($this->_response), $message);
     }
 
     /**

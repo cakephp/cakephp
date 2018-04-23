@@ -14,32 +14,35 @@
 namespace Cake\TestSuite\Constraint\Response;
 
 use PHPUnit\Framework\AssertionFailedError;
-use PHPUnit\Framework\Constraint\Constraint;
 
 /**
- * Base constraint for response constraints
+ * HeaderContains
  */
-abstract class ResponseBase extends Constraint
+class HeaderContains extends Header
 {
 
     /**
-     * @var \Cake\Http\Response
-     */
-    protected $response;
-
-    /**
-     * Constructor
+     * Checks assertion
      *
-     * @param \Cake\Http\Response $response Response
+     * @param mixed $other Expected content
+     * @return bool
      */
-    public function __construct($response)
+    public function matches($other)
     {
-        parent::__construct();
-
-        if (!$response) {
-            throw new AssertionFailedError('No response set, cannot assert content.');
+        if (!$this->response->hasHeader($this->headerName)) {
+            throw new AssertionFailedError(sprintf('Header `%s` was not set.', $this->headerName));
         }
 
-        $this->response = $response;
+        return mb_strpos($this->response->getHeaderLine($this->headerName), $other) !== false;
+    }
+
+    /**
+     * Assertion message
+     *
+     * @return string
+     */
+    public function toString()
+    {
+        return sprintf('is in header `%s`', $this->headerName);
     }
 }

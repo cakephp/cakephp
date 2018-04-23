@@ -13,33 +13,35 @@
  */
 namespace Cake\TestSuite\Constraint\Response;
 
-use PHPUnit\Framework\AssertionFailedError;
-use PHPUnit\Framework\Constraint\Constraint;
-
 /**
- * Base constraint for response constraints
+ * ContentType
  */
-abstract class ResponseBase extends Constraint
+class ContentType extends ResponseBase
 {
 
     /**
-     * @var \Cake\Http\Response
-     */
-    protected $response;
-
-    /**
-     * Constructor
+     * Checks assertion
      *
-     * @param \Cake\Http\Response $response Response
+     * @param mixed $other Expected type
+     * @return bool
      */
-    public function __construct($response)
+    public function matches($other)
     {
-        parent::__construct();
-
-        if (!$response) {
-            throw new AssertionFailedError('No response set, cannot assert content.');
+        $alias = $this->response->getMimeType($other);
+        if ($alias !== false) {
+            $other = $alias;
         }
 
-        $this->response = $response;
+        return $other === $this->response->getType();
+    }
+
+    /**
+     * Assertion message
+     *
+     * @return string
+     */
+    public function toString()
+    {
+        return 'was set as the Content-Type';
     }
 }
