@@ -68,7 +68,7 @@ class MiddlewareDispatcher
     /**
      * Run a request and get the response.
      *
-     * @param \Psr\Http\Message\RequestInterface $request The request to execute.
+     * @param \Psr\Http\Message\ServerRequestInterface $request The request to execute.
      * @return \Psr\Http\Message\ResponseInterface The generated response.
      */
     public function execute($request)
