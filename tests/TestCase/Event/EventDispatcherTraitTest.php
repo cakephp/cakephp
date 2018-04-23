@@ -52,22 +52,6 @@ class EventDispatcherTraitTest extends TestCase
     }
 
     /**
-     * testEventManager
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testEventManager()
-    {
-        $this->deprecated(function () {
-            $eventManager = new EventManager();
-            $this->subject->eventManager($eventManager);
-
-            $this->assertSame($eventManager, $this->subject->eventManager());
-        });
-    }
-
-    /**
      * testGetEventManager
      *
      * @return void

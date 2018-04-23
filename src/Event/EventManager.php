@@ -93,42 +93,6 @@ class EventManager implements EventManagerInterface
     }
 
     /**
-     * Adds a new listener to an event.
-     *
-     * @param callable|\Cake\Event\EventListenerInterface $callable PHP valid callback type or instance of Cake\Event\EventListenerInterface to be called
-     * when the event named with $eventKey is triggered. If a Cake\Event\EventListenerInterface instance is passed, then the `implementedEvents`
-     * method will be called on the object to register the declared events individually as methods to be managed by this class.
-     * It is possible to define multiple event handlers per event name.
-     *
-     * @param string|null $eventKey The event unique identifier name with which the callback will be associated. If $callable
-     * is an instance of Cake\Event\EventListenerInterface this argument will be ignored
-     *
-     * @param array $options used to set the `priority` flag to the listener. In the future more options may be added.
-     * Priorities are treated as queues. Lower values are called before higher ones, and multiple attachments
-     * added to the same priority queue will be treated in the order of insertion.
-     *
-     * @return void
-     * @throws \InvalidArgumentException When event key is missing or callable is not an
-     *   instance of Cake\Event\EventListenerInterface.
-     * @deprecated 3.0.0 Use on() instead.
-     */
-    public function attach($callable, $eventKey = null, array $options = [])
-    {
-        deprecationWarning('EventManager::attach() is deprecated. Use EventManager::on() instead.');
-        if ($eventKey === null) {
-            $this->on($callable);
-
-            return;
-        }
-        if ($options) {
-            $this->on($eventKey, $options, $callable);
-
-            return;
-        }
-        $this->on($eventKey, $callable);
-    }
-
-    /**
      * {@inheritDoc}
      */
     public function on($eventKey = null, $options = [], $callable = null)
@@ -206,25 +170,6 @@ class EventManager implements EventManagerInterface
         }
 
         return [$method, $options];
-    }
-
-    /**
-     * Removes a listener from the active listeners.
-     *
-     * @param callable|\Cake\Event\EventListenerInterface $callable any valid PHP callback type or an instance of EventListenerInterface
-     * @param string|null $eventKey The event unique identifier name with which the callback has been associated
-     * @return void
-     * @deprecated 3.0.0 Use off() instead.
-     */
-    public function detach($callable, $eventKey = null)
-    {
-        deprecationWarning('EventManager::detach() is deprecated. Use EventManager::off() instead.');
-        if ($eventKey === null) {
-            $this->off($callable);
-
-            return;
-        }
-        $this->off($eventKey, $callable);
     }
 
     /**

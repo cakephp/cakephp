@@ -110,7 +110,7 @@ class CommandRunnerTest extends TestCase
             $app = $this->createMock(ConsoleApplicationInterface::class);
 
             $runner = new CommandRunner($app);
-            $this->assertSame(EventManager::instance(), $runner->eventManager());
+            $this->assertSame(EventManager::instance(), $runner->getEventManager());
         });
     }
 
