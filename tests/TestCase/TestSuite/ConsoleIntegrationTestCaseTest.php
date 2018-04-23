@@ -152,13 +152,13 @@ class ConsoleIntegrationTestCaseTest extends ConsoleIntegrationTestCase
     }
 
     /**
-     * tests _commandStringToArgs
+     * tests commandStringToArgs
      *
      * @return void
      */
     public function testCommandStringToArgs()
     {
-        $result = $this->_commandStringToArgs('command --something=nothing --with-spaces="quote me on that" \'quoted \"arg\"\'');
+        $result = $this->commandStringToArgs('command --something=nothing --with-spaces="quote me on that" \'quoted \"arg\"\'');
         $expected = [
             'command',
             '--something=nothing',
@@ -168,7 +168,7 @@ class ConsoleIntegrationTestCaseTest extends ConsoleIntegrationTestCase
         $this->assertSame($expected, $result);
 
         $json = json_encode(['key' => '"val"', 'this' => true]);
-        $result = $this->_commandStringToArgs("   --json='$json'");
+        $result = $this->commandStringToArgs("   --json='$json'");
         $expected = [
             '--json=' . $json
         ];
