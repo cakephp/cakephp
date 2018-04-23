@@ -14,8 +14,8 @@
  */
 namespace Cake\TestSuite;
 
-use Cake\Mailer\Email;
 use Cake\Mailer\AbstractTransport;
+use Cake\Mailer\Email;
 
 /**
  * TestEmailTransport
@@ -31,7 +31,7 @@ class TestEmailTransport extends AbstractTransport
     /**
      * Stores email for later assertions
      *
-     * @param Email $email
+     * @param Email $email Email
      * @return bool
      */
     public function send(Email $email)

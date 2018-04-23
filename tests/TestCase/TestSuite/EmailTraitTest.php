@@ -15,8 +15,8 @@
 namespace Cake\Test\TestCase\TestSuite;
 
 use Cake\Mailer\Email;
-use Cake\TestSuite\TestEmailTransport;
 use Cake\TestSuite\TestCase;
+use Cake\TestSuite\TestEmailTransport;
 use PHPUnit\Framework\AssertionFailedError;
 
 /**

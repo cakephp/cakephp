@@ -31,6 +31,7 @@ class MailSentToConstraint extends MailSentWithConstraint
         if ($this->at) {
             return sprintf('was sent email #%d', $this->at);
         }
+
         return 'was sent an email';
     }
 }

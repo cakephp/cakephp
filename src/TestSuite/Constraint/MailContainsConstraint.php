@@ -34,6 +34,7 @@ class MailContainsConstraint extends MailConstraintBase
 
             return preg_match("/$other/", $message) !== false;
         }
+
         return false;
     }
 
@@ -47,6 +48,7 @@ class MailContainsConstraint extends MailConstraintBase
         if ($this->at) {
             return sprintf('is in email #%d', $this->at);
         }
+
         return 'is in an email';
     }
 }

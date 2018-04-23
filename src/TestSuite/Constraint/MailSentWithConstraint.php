@@ -24,8 +24,8 @@ class MailSentWithConstraint extends MailConstraintBase
     /**
      * Constructor
      *
-     * @param string $method Method
      * @param int $at At
+     * @param string $method Method
      * @return void
      */
     public function __construct($at = null, $method = null)
@@ -54,6 +54,7 @@ class MailSentWithConstraint extends MailConstraintBase
                 return true;
             }
         }
+
         return false;
     }
 
@@ -67,7 +68,7 @@ class MailSentWithConstraint extends MailConstraintBase
         if ($this->at) {
             return sprintf('is in email #%d `%s`', $this->at, $this->method);
         }
+
         return sprintf('is in an email `%s`', $this->method);
     }
-
 }
