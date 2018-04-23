@@ -362,25 +362,4 @@ class Security
     {
         static::$_salt = (string)$salt;
     }
-
-    /**
-     * Gets or sets the HMAC salt to be used for encryption/decryption
-     * routines.
-     *
-     * @deprecated 3.5.0 Use getSalt()/setSalt() instead.
-     * @param string|null $salt The salt to use for encryption routines. If null returns current salt.
-     * @return string The currently configured salt
-     */
-    public static function salt($salt = null)
-    {
-        deprecationWarning(
-            'Security::salt() is deprecated. ' .
-            'Use Security::getSalt()/setSalt() instead.'
-        );
-        if ($salt === null) {
-            return static::$_salt;
-        }
-
-        return static::$_salt = (string)$salt;
-    }
 }
