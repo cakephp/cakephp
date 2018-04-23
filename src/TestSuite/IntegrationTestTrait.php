@@ -18,6 +18,11 @@ use Cake\Database\Exception as DatabaseException;
 use Cake\Http\ServerRequest;
 use Cake\Http\Session;
 use Cake\Routing\Router;
+use Cake\TestSuite\Constraint\Response\StatusCode;
+use Cake\TestSuite\Constraint\Response\StatusError;
+use Cake\TestSuite\Constraint\Response\StatusFailure;
+use Cake\TestSuite\Constraint\Response\StatusOk;
+use Cake\TestSuite\Constraint\Response\StatusSuccess;
 use Cake\TestSuite\Stub\TestExceptionRenderer;
 use Cake\Utility\CookieCryptTrait;
 use Cake\Utility\Hash;
@@ -704,10 +709,7 @@ trait IntegrationTestTrait
      */
     public function assertResponseOk($message = null)
     {
-        if (empty($message)) {
-            $message = 'Status code is not between 200 and 204';
-        }
-        $this->_assertStatus(200, 204, $message);
+        $this->assertThat(null, new StatusOk($this->_response), $message);
     }
 
     /**
@@ -718,10 +720,7 @@ trait IntegrationTestTrait
      */
     public function assertResponseSuccess($message = null)
     {
-        if (empty($message)) {
-            $message = 'Status code is not between 200 and 308';
-        }
-        $this->_assertStatus(200, 308, $message);
+        $this->assertThat(null, new StatusSuccess($this->_response), $message);
     }
 
     /**
@@ -732,10 +731,7 @@ trait IntegrationTestTrait
      */
     public function assertResponseError($message = null)
     {
-        if (empty($message)) {
-            $message = 'Status code is not between 400 and 429';
-        }
-        $this->_assertStatus(400, 429, $message);
+        $this->assertThat(null, new StatusError($this->_response), $message);
     }
 
     /**
@@ -746,10 +742,7 @@ trait IntegrationTestTrait
      */
     public function assertResponseFailure($message = null)
     {
-        if (empty($message)) {
-            $message = 'Status code is not between 500 and 505';
-        }
-        $this->_assertStatus(500, 505, $message);
+        $this->assertThat(null, new StatusFailure($this->_response), $message);
     }
 
     /**
@@ -761,36 +754,7 @@ trait IntegrationTestTrait
      */
     public function assertResponseCode($code, $message = null)
     {
-        $actual = $this->_response->getStatusCode();
-
-        if (empty($message)) {
-            $message = 'Status code is not ' . $code . ' but ' . $actual;
-        }
-
-        $this->_assertStatus($code, $code, $message);
-    }
-
-    /**
-     * Helper method for status assertions.
-     *
-     * @param int $min Min status code.
-     * @param int $max Max status code.
-     * @param string $message The error message.
-     * @return void
-     */
-    protected function _assertStatus($min, $max, $message)
-    {
-        if (!$this->_response) {
-            $this->fail('No response set, cannot assert status code.');
-        }
-        $status = $this->_response->getStatusCode();
-
-        if ($this->_exception && ($status < $min || $status > $max)) {
-            $this->fail($this->_exception->getMessage());
-        }
-
-        $this->assertGreaterThanOrEqual($min, $status, $message);
-        $this->assertLessThanOrEqual($max, $status, $message);
+        $this->assertThat($code, new StatusCode($this->_response), $message);
     }
 
     /**
