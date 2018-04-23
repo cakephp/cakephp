@@ -20,7 +20,7 @@ use PHPUnit\Framework\Constraint\Constraint;
 /**
  * Base class for all mail assertion constraints
  */
-class MailConstraintBase extends Constraint
+abstract class MailConstraintBase extends Constraint
 {
 
     protected $at;
@@ -55,15 +55,5 @@ class MailConstraintBase extends Constraint
         }
 
         return $emails;
-    }
-
-    /**
-     * noop needed for abstract
-     *
-     * @return string
-     */
-    public function toString()
-    {
-        return 'base constraint, do not use';
     }
 }
