@@ -270,7 +270,7 @@ class ArrayContext implements ContextInterface
             return false;
         }
 
-        return (bool)Hash::check($this->_context['errors'], $field);
+        return Hash::check($this->_context['errors'], $field);
     }
 
     /**

@@ -1090,13 +1090,13 @@ class HtmlHelper extends Helper
      * - `escape` Whether or not the contents should be html_entity escaped.
      *
      * @param string $class CSS class name of the p element.
-     * @param string $text String content that will appear inside the p element.
+     * @param string|null $text String content that will appear inside the p element.
      * @param array $options Additional HTML attributes of the P tag
      * @return string The formatted P element
      */
     public function para($class, $text, array $options = [])
     {
-        if (isset($options['escape'])) {
+        if (!empty($options['escape'])) {
             $text = h($text);
         }
         if ($class && !empty($class)) {

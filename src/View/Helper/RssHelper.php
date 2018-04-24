@@ -281,7 +281,7 @@ class RssHelper extends Helper
             $content = implode('', $elements);
         }
 
-        return $this->elem('item', (array)$att, $content, !($content === null));
+        return $this->elem('item', $att, $content, !($content === null));
     }
 
     /**

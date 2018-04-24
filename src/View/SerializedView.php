@@ -69,7 +69,7 @@ abstract class SerializedView extends View
      *
      * @param array|string $serialize The name(s) of the view variable(s) that
      *   need(s) to be serialized
-     * @return string The serialized data
+     * @return string|false The serialized data or false.
      */
     abstract protected function _serialize($serialize);
 
@@ -82,7 +82,7 @@ abstract class SerializedView extends View
      *   names. If true all view variables will be serialized. If unset normal
      *   view template will be rendered.
      *
-     * @param string|bool|null $view The view being rendered.
+     * @param string|false|null $view The view being rendered.
      * @param string|null $layout The layout being rendered.
      * @return string|null The rendered view.
      */
@@ -99,7 +99,7 @@ abstract class SerializedView extends View
                 throw new RuntimeException('Serialization of View data failed.');
             }
 
-            return (string)$result;
+            return $result;
         }
         if ($view !== false && $this->_getViewFileName($view)) {
             return parent::render($view, false);

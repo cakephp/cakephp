@@ -145,7 +145,7 @@ class View implements EventDispatcherInterface
      * is the filename of the layout in /src/Template/Layout without the .ctp
      * extension.
      *
-     * @var string
+     * @var string|false
      */
     public $layout = 'default';
 
@@ -495,7 +495,7 @@ class View implements EventDispatcherInterface
      */
     public function enableAutoLayout($enable = true)
     {
-        $this->autoLayout = (bool)$enable;
+        $this->autoLayout = $enable;
 
         return $this;
     }
@@ -778,7 +778,7 @@ class View implements EventDispatcherInterface
      * the template will be located along the regular view path cascade.
      *
      * @param string|false|null $view Name of view file to use
-     * @param string|null $layout Layout to use.
+     * @param string|null|false $layout Layout to use. False to disable.
      * @return string|null Rendered content or null if content already rendered and returned earlier.
      * @throws \Cake\Core\Exception\Exception If there is an error in the view.
      * @triggers View.beforeRender $this, [$viewFileName]
