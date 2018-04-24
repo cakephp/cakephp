@@ -853,6 +853,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param array $options The options for the behavior to use.
      * @return $this
      * @throws \Exception
+     * @throws \RuntimeException If a behavior is being reloaded.
      * @see \Cake\ORM\Behavior
      */
     public function addBehavior($name, array $options = [])
@@ -1878,6 +1879,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param \Cake\Datasource\EntityInterface $entity
      * @param array $options
      * @return bool|\Cake\Datasource\EntityInterface|mixed
+     * @throws \Cake\ORM\Exception\RolledbackTransactionException If the transaction is aborted in the afterSave event.
      * @throws \Exception
      */
     public function save(EntityInterface $entity, $options = [])

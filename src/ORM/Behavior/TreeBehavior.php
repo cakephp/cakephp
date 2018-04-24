@@ -609,6 +609,7 @@ class TreeBehavior extends Behavior
      * @param \Cake\Datasource\EntityInterface $node The node to move
      * @param int|bool $number How many places to move the node, or true to move to first position
      * @return \Cake\Datasource\EntityInterface|bool $node The node after being moved or false on failure
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When node was not found
      * @throws \Exception
      */
     public function moveUp(EntityInterface $node, $number = 1)
@@ -699,6 +700,7 @@ class TreeBehavior extends Behavior
      * @param \Cake\Datasource\EntityInterface $node The node to move
      * @param int|bool $number How many places to move the node or true to move to last position
      * @return \Cake\Datasource\EntityInterface|bool the entity after being moved or false on failure
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When node was not found
      * @throws \Exception
      */
     public function moveDown(EntityInterface $node, $number = 1)

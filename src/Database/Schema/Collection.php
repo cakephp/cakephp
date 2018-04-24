@@ -86,6 +86,7 @@ class Collection
      * @param array $options The options to use, see above.
      * @return \Cake\Database\Schema\TableSchema Object with column metadata.
      * @throws \Cake\Database\Exception when table cannot be described.
+     * @throws \Exception
      */
     public function describe($name, array $options = [])
     {
@@ -115,6 +116,7 @@ class Collection
      * @param array $config The config data.
      * @param \Cake\Database\Schema\TableSchema $schema The table instance
      * @return void
+     * @throws \Cake\Database\Exception on query failure.
      * @throws \Exception
      */
     protected function _reflect($stage, $name, $config, $schema)
