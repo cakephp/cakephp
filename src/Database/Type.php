@@ -96,7 +96,7 @@ class Type
     }
 
     /**
-     * Returns a Type object capable of converting a type identified by $name
+     * Set TypeInterface instance capable of converting a type identified by $name
      *
      * @param string $name The type identifier you want to set.
      * @param \Cake\Database\TypeInterface $instance The type instance you want to set.
@@ -108,39 +108,43 @@ class Type
     }
 
     /**
-     * Registers a new type identifier and maps it to a fully namespaced classname,
-     * If $className is omitted it will return mapped class for $type
+     * Registers a new type identifier and maps it to a fully namespaced classname.
      *
-     * @param string|string[] $type If string name of type to map, if array list of arrays to be mapped.
-     * @param string|\Cake\Database\TypeInterface|null $className The classname or object instance of it to register.
-     * @return string|null If $className is null string configured class name for give $type, null otherwise
+     * @param string $type Name of type to map.
+     * @param string|\Cake\Database\TypeInterface $className The classname or object instance of it to register.
+     * @return void
      */
-    public static function map($type, $className = null)
+    public static function map(string $type, $className)
     {
-        if ($type === null) {
-            return static::$_types;
-        }
-        if (is_array($type)) {
-            static::$_types = $type;
-
-            return null;
-        }
-        if ($className === null) {
-            return isset(static::$_types[$type]) ? static::$_types[$type] : null;
-        }
-
         static::$_types[$type] = $className;
         unset(static::$_builtTypes[$type]);
     }
 
     /**
-     * Get current types map.
+     * Set type to classname mapping.
      *
-     * @return array
+     * @param string[] $map List of types to be mapped.
+     * @return void
      */
-    public static function getMap()
+    public static function setMap(array $map)
     {
-        return static::$_types;
+        static::$_types = $map;
+        static::$_builtTypes = [];
+    }
+
+    /**
+     * Get mapped class name or instance for type(s).
+     *
+     * @param string|null $type Type name to get mapped class for or null to get map array.
+     * @return array|string|\Cake\Database\TypeInterface|null Configured class name or instance for give $type or map array.
+     */
+    public static function getMap(string $type = null)
+    {
+        if ($type === null) {
+            return static::$_types;
+        }
+
+        return isset(static::$_types[$type]) ? static::$_types[$type] : null;
     }
 
     /**
