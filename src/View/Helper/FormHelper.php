@@ -355,10 +355,7 @@ class FormHelper extends Helper
      * - `type` Form method defaults to autodetecting based on the form context. If
      *   the form context's isCreate() method returns false, a PUT request will be done.
      * - `method` Set the form's method attribute explicitly.
-     * - `action` The controller action the form submits to, (optional). Use this option if you
-     *   don't need to change the controller from the current request's controller. Deprecated since 3.2, use `url`.
-     * - `url` The URL the form submits to. Can be a string or a URL array. If you use 'url'
-     *    you should leave 'action' undefined.
+     * - `url` The URL the form submits to. Can be a string or a URL array.
      * - `encoding` Set the accept-charset encoding for the form. Defaults to `Configure::read('App.encoding')`
      * - `enctype` Set the form encoding explicitly. By default `type => file` will set `enctype`
      *   to `multipart/form-data`.
@@ -397,17 +394,12 @@ class FormHelper extends Helper
 
         $options += [
             'type' => $isCreate ? 'post' : 'put',
-            'action' => null,
             'url' => null,
             'encoding' => strtolower(Configure::read('App.encoding')),
             'templates' => null,
             'idPrefix' => null,
             'valueSources' => null,
         ];
-
-        if (isset($options['action'])) {
-            trigger_error('Using key `action` is deprecated, use `url` directly instead.', E_USER_DEPRECATED);
-        }
 
         if (isset($options['valueSources'])) {
             $this->setValueSources($options['valueSources']);
@@ -426,7 +418,7 @@ class FormHelper extends Helper
         }
         unset($options['templates']);
 
-        if ($options['action'] === false || $options['url'] === false) {
+        if ($options['url'] === false) {
             $url = $this->request->getRequestTarget();
             $action = null;
         } else {
@@ -435,7 +427,7 @@ class FormHelper extends Helper
         }
 
         $this->_lastAction($url);
-        unset($options['url'], $options['action'], $options['idPrefix']);
+        unset($options['url'], $options['idPrefix']);
 
         $htmlAttributes = [];
         switch (strtolower($options['type'])) {
@@ -505,7 +497,7 @@ class FormHelper extends Helper
      */
     protected function _formUrl($context, $options)
     {
-        if ($options['action'] === null && $options['url'] === null) {
+        if ($options['url'] === null) {
             return $this->request->getRequestTarget();
         }
 
@@ -513,10 +505,6 @@ class FormHelper extends Helper
             (is_array($options['url']) && isset($options['url']['_name']))
         ) {
             return $options['url'];
-        }
-
-        if (isset($options['action']) && empty($options['url']['action'])) {
-            $options['url']['action'] = $options['action'];
         }
 
         $actionDefaults = [
