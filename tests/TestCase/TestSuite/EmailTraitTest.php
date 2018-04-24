@@ -34,6 +34,9 @@ class EmailTraitTest extends TestCase
     {
         parent::setUp();
 
+        Email::drop('default');
+        Email::drop('alternate');
+
         Email::setConfig('default', [
             'transport' => 'test_tools',
             'from' => 'default@example.com',
