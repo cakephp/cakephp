@@ -1087,12 +1087,12 @@ class ViewTest extends TestCase
         $View->getEventManager()->on($listener);
 
         $View->render('index');
-        $this->assertEquals(View::TYPE_VIEW, $listener->beforeRenderViewType);
-        $this->assertEquals(View::TYPE_VIEW, $listener->afterRenderViewType);
+        $this->assertEquals(View::TYPE_TEMPLATE, $listener->beforeRenderViewType);
+        $this->assertEquals(View::TYPE_TEMPLATE, $listener->afterRenderViewType);
 
-        $this->assertEquals($View->getCurrentType(), View::TYPE_VIEW);
+        $this->assertEquals($View->getCurrentType(), View::TYPE_TEMPLATE);
         $View->element('test_element', [], ['callbacks' => true]);
-        $this->assertEquals($View->getCurrentType(), View::TYPE_VIEW);
+        $this->assertEquals($View->getCurrentType(), View::TYPE_TEMPLATE);
 
         $this->assertEquals(View::TYPE_ELEMENT, $listener->beforeRenderViewType);
         $this->assertEquals(View::TYPE_ELEMENT, $listener->afterRenderViewType);
@@ -2133,26 +2133,5 @@ TEXT;
 
         $layout = $this->View->getLayout();
         $this->assertSame($layout, 'foo');
-    }
-
-    /**
-     * Test magic getter and setter for removed properties.
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testMagicGetterSetter()
-    {
-        $this->deprecated(function () {
-            $View = $this->View;
-
-            $View->view = 'myview';
-            $this->assertEquals('myview', $View->template());
-            $this->assertEquals('myview', $View->view);
-
-            $View->viewPath = 'mypath';
-            $this->assertEquals('mypath', $View->templatePath());
-            $this->assertEquals('mypath', $View->templatePath);
-        });
     }
 }

@@ -66,9 +66,16 @@ class ViewBuilderTest extends TestCase
     public function testStringProperties($property, $value)
     {
         $builder = new ViewBuilder();
-        $this->assertNull($builder->{$property}(), 'Default value should be null');
-        $this->assertSame($builder, $builder->{$property}($value), 'Setter returns this');
-        $this->assertSame($value, $builder->{$property}(), 'Getter gets value.');
+        $setter = 'set' . ucfirst($property);
+        $getter = 'get' . ucfirst($property);
+        if(is_bool($value)){
+            //for boolean values the setter and getter look different
+            $setter = 'enable' . ucfirst($property);
+            $getter = 'is' . ucfirst($property) . 'Enabled';
+        }
+        $this->assertNull($builder->{$getter}(), 'Default value should be null');
+        $this->assertSame($builder, $builder->{$setter}($value), 'Setter returns this');
+        $this->assertSame($value, $builder->{$getter}(), 'Getter gets value.');
     }
 
     /**
@@ -80,9 +87,11 @@ class ViewBuilderTest extends TestCase
     public function testArrayProperties($property, $value)
     {
         $builder = new ViewBuilder();
-        $this->assertSame([], $builder->{$property}(), 'Default value should be empty list');
-        $this->assertSame($builder, $builder->{$property}($value), 'Setter returns this');
-        $this->assertSame($value, $builder->{$property}(), 'Getter gets value.');
+        $setter = 'set' . ucfirst($property);
+        $getter = 'get' . ucfirst($property);
+        $this->assertSame([], $builder->{$getter}(), 'Default value should be empty list');
+        $this->assertSame($builder, $builder->{$setter}($value), 'Setter returns this');
+        $this->assertSame($value, $builder->{$getter}(), 'Getter gets value.');
     }
 
     /**
@@ -94,13 +103,15 @@ class ViewBuilderTest extends TestCase
     public function testArrayPropertyMerge($property, $value)
     {
         $builder = new ViewBuilder();
-        $builder->{$property}($value);
+        $setter = 'set' . ucfirst($property);
+        $getter = 'get' . ucfirst($property);
+        $builder->{$setter}($value);
 
-        $builder->{$property}(['Merged'], true);
-        $this->assertSame(array_merge($value, ['Merged']), $builder->{$property}(), 'Should merge');
+        $builder->{$setter}(['Merged'], true);
+        $this->assertSame(array_merge($value, ['Merged']), $builder->{$getter}(), 'Should merge');
 
-        $builder->{$property}($value, false);
-        $this->assertSame($value, $builder->{$property}(), 'Should replace');
+        $builder->{$setter}($value, false);
+        $this->assertSame($value, $builder->{$getter}(), 'Should replace');
     }
 
     /**
