@@ -16,8 +16,6 @@ namespace Cake\Test\TestCase\Database;
 
 use Cake\Database\Type;
 use Cake\Database\TypeInterface;
-use Cake\Database\Type\BoolType;
-use Cake\Database\Type\IntegerType;
 use Cake\Database\Type\UuidType;
 use Cake\TestSuite\TestCase;
 use PDO;
@@ -57,7 +55,7 @@ class TypeTest extends TestCase
     {
         parent::tearDown();
 
-        Type::map($this->_originalMap);
+        Type::setMap($this->_originalMap);
     }
 
     /**
@@ -129,12 +127,12 @@ class TypeTest extends TestCase
         Type::map('foo', $fooType);
         $map = Type::getMap();
         $this->assertEquals($fooType, $map['foo']);
-        $this->assertEquals($fooType, Type::map('foo'));
+        $this->assertEquals($fooType, Type::getMap('foo'));
 
         Type::map('foo2', $fooType);
         $map = Type::getMap();
         $this->assertSame($fooType, $map['foo2']);
-        $this->assertSame($fooType, Type::map('foo2'));
+        $this->assertSame($fooType, Type::getMap('foo2'));
 
         $type = Type::build('foo2');
         $this->assertInstanceOf($fooType, $type);
@@ -172,7 +170,7 @@ class TypeTest extends TestCase
         Type::map('uuid', $uuidType);
 
         $this->assertSame($uuidType, Type::build('uuid'));
-        Type::map($map);
+        Type::setMap($map);
     }
 
     /**
@@ -189,7 +187,7 @@ class TypeTest extends TestCase
         Type::clear();
 
         $this->assertEmpty(Type::getMap());
-        Type::map($map);
+        Type::setMap($map);
         $newMap = Type::getMap();
 
         $this->assertEquals(array_keys($map), array_keys($newMap));
