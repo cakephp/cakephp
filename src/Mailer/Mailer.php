@@ -217,22 +217,6 @@ abstract class Mailer implements EventListenerInterface
     }
 
     /**
-     * Sets layout to use.
-     *
-     * @deprecated 3.4.0 Use setLayout() which sets the layout on the email class instead.
-     * @param string $layout Name of the layout to use.
-     * @return $this
-     */
-    public function layout($layout)
-    {
-        deprecationWarning('Mailer::layout() is deprecated. Use setLayout() which sets the layout on the email class instead.');
-
-        $this->_email->viewBuilder()->setLayout($layout);
-
-        return $this;
-    }
-
-    /**
      * Get Email instance's view builder.
      *
      * @return \Cake\View\ViewBuilder

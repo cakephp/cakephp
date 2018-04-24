@@ -20,7 +20,6 @@ use Cake\Log\Log;
 use Cake\Mailer\Email;
 use Cake\Mailer\Transport\DebugTransport;
 use Cake\TestSuite\TestCase;
-use Cake\View\Exception\MissingTemplateException;
 use Exception;
 use SimpleXmlElement;
 
@@ -110,7 +109,7 @@ class EmailTest extends TestCase
     public $fixtures = ['core.users'];
 
     /**
-     * @var \Cake\Mailer\Email
+     * @var \Cake\Test\TestCase\Mailer\TestEmail
      */
     protected $Email;
 
@@ -1620,6 +1619,7 @@ class EmailTest extends TestCase
         $this->Email->setSubject('My title');
         $this->Email->setProfile(['empty']);
         $this->Email->setTemplate('default', 'default');
+        $this->assertEquals(1, 2, "Email::setTemplate() called with 2 arguments instead of one." );
         $result = $this->Email->send();
 
         $this->assertContains('This email was sent using the CakePHP Framework', $result['message']);
@@ -1664,6 +1664,7 @@ class EmailTest extends TestCase
         $this->Email->setSubject('My title');
         $this->Email->setProfile(['empty']);
         $this->Email->setTemplate('default', 'default');
+        $this->assertEquals(1, 2, "Email::setTemplate() called with 2 arguments instead of one." );
         $this->Email->setEmailFormat('both');
         $result = $this->Email->send();
 
@@ -1738,6 +1739,7 @@ class EmailTest extends TestCase
         $this->Email->setProfile(['empty']);
         $this->Email->setTheme('TestTheme');
         $this->Email->setTemplate('themed', 'default');
+        $this->assertEquals(1, 2, "Email::setTemplate() called with 2 arguments instead of one." );
         $result = $this->Email->send();
 
         $this->assertContains('In TestTheme', $result['message']);
@@ -1763,6 +1765,7 @@ class EmailTest extends TestCase
         $this->Email->setProfile(['empty']);
         $this->Email->setEmailFormat('html');
         $this->Email->setTemplate('html', 'default');
+        $this->assertEquals(1, 2, "Email::setTemplate() called with 2 arguments instead of one." );
         $result = $this->Email->send();
 
         $this->assertTextContains('<h1>HTML Ipsum Presents</h1>', $result['message']);
@@ -1784,6 +1787,7 @@ class EmailTest extends TestCase
         $this->Email->setSubject('My title');
         $this->Email->setProfile(['empty']);
         $this->Email->setTemplate('custom', 'default');
+        $this->assertEquals(1, 2, "Email::setTemplate() called with 2 arguments instead of one." );
         $this->Email->setViewVars(['value' => 12345]);
         $result = $this->Email->send();
 
@@ -1805,6 +1809,7 @@ class EmailTest extends TestCase
         $this->Email->setSubject('My title');
         $this->Email->setProfile(['empty']);
         $this->Email->setTemplate('japanese', 'default');
+        $this->assertEquals(1, 2, "Email::setTemplate() called with 2 arguments instead of one." );
         $this->Email->setViewVars(['value' => '日本語の差し込み123']);
         $this->Email->charset = 'ISO-2022-JP';
         $result = $this->Email->send();
@@ -1829,6 +1834,7 @@ class EmailTest extends TestCase
         $this->Email->setSubject('My title');
         $this->Email->setProfile(['empty']);
         $this->Email->setTemplate('custom_helper', 'default');
+        $this->assertEquals(1, 2, "Email::setTemplate() called with 2 arguments instead of one." );
         $this->Email->setViewVars(['time' => $timestamp]);
 
         $result = $this->Email->setHelpers(['Time']);
@@ -1944,6 +1950,7 @@ class EmailTest extends TestCase
         $this->Email->setTo(['you@cakephp.org' => 'You']);
         $this->Email->setSubject('My title');
         $this->Email->setTemplate('custom', 'default');
+        $this->assertEquals(1, 2, "Email::setTemplate() called with 2 arguments instead of one." );
         $this->Email->setProfile([]);
         $this->Email->setViewVars(['value' => 12345]);
         $this->Email->setEmailFormat('both');
@@ -2065,6 +2072,7 @@ class EmailTest extends TestCase
         $this->Email->setSubject('My title');
         $this->Email->setProfile(['empty']);
         $this->Email->setTemplate('default', 'default');
+        $this->assertEquals(1, 2, "Email::setTemplate() called with 2 arguments instead of one." );
         $this->Email->setEmailFormat('both');
         $this->Email->send();
 
@@ -2199,6 +2207,7 @@ class EmailTest extends TestCase
     {
         $this->Email->setEmailFormat('html');
         $this->Email->setTemplate('html', 'default');
+        $this->assertEquals(1, 2, "Email::setTemplate() called with 2 arguments instead of one." );
         $this->Email->setAttachments([CAKE . 'basics.php']);
         $result = $this->Email->render([]);
         $this->assertNotEmpty($result);
@@ -2739,7 +2748,6 @@ class EmailTest extends TestCase
         style="font-weight: bold">The tag is across multiple lines</th>
 </table>
 HTML;
-        $length = strlen($str);
         $message = $str . str_repeat('x', Email::LINE_LENGTH_MUST + 1);
 
         $this->Email->reset();
@@ -2880,7 +2888,7 @@ XML;
 
         $this->Email->viewBuilder()
             ->setTemplate('default')
-            ->layout('test');
+            ->setLayout('test');
 
         $result = json_decode(json_encode($this->Email), true);
         $this->assertContains('test', $result['viewVars']['exception']);
