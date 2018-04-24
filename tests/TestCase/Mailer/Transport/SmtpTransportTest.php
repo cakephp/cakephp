@@ -631,7 +631,8 @@ class SmtpTransportTest extends TestCase
         $email = $this->getMockBuilder('Cake\Mailer\Email')
             ->setMethods(['message'])
             ->getMock();
-        $email->from('noreply@cakephp.org', 'CakePHP Test');
+        /** @var \Cake\Mailer\Email $email */
+        $email->setFrom('noreply@cakephp.org', 'CakePHP Test');
         $email->setTo('cake@cakephp.org', 'CakePHP');
         $email->expects($this->exactly(2))->method('message')->will($this->returnValue(['First Line']));
 
@@ -684,7 +685,8 @@ class SmtpTransportTest extends TestCase
         $email = $this->getMockBuilder('Cake\Mailer\Email')
             ->setMethods(['message'])
             ->getMock();
-        $email->from('noreply@cakephp.org', 'CakePHP Test');
+        /** @var \Cake\Mailer\Email $email */
+        $email->setFrom('noreply@cakephp.org', 'CakePHP Test');
         $email->setTo('cake@cakephp.org', 'CakePHP');
         $email->expects($this->once())->method('message')->will($this->returnValue(['First Line']));
 
