@@ -68,7 +68,7 @@ class ViewBuilderTest extends TestCase
         $builder = new ViewBuilder();
         $setter = 'set' . ucfirst($property);
         $getter = 'get' . ucfirst($property);
-        if(is_bool($value)){
+        if (is_bool($value)) {
             //for boolean values the setter and getter look different
             $setter = 'enable' . ucfirst($property);
             $getter = 'is' . ucfirst($property) . 'Enabled';
