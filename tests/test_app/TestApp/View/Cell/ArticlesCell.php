@@ -78,7 +78,7 @@ class ArticlesCell extends \Cake\View\Cell
     {
         $this->template = 'derp';
         $this->counter++;
-        $this->viewBuilder()->template('alternate_teaser_list');
+        $this->viewBuilder()->setTemplate('alternate_teaser_list');
     }
 
     /**
