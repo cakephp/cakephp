@@ -39,8 +39,19 @@ class ViewBuilderTest extends TestCase
             ['theme', 'TestPlugin'],
             ['template', 'edit'],
             ['name', 'Articles'],
-            ['autoLayout', true],
             ['className', 'Cake\View\JsonView'],
+        ];
+    }
+
+    /**
+     * data provider for boolean properties.
+     *
+     * @return array
+     */
+    public function booleanPropertyProvider()
+    {
+        return [
+            ['autoLayout', true],
         ];
     }
 
@@ -56,6 +67,27 @@ class ViewBuilderTest extends TestCase
             ['options', ['key' => 'value']],
         ];
     }
+
+    /**
+     * Test string property accessor/mutator methods.
+     *
+     * @dataProvider booleanPropertyProvider
+     * @return void
+     */
+    public function testBooleanProperties($property, $value)
+    {
+        $builder = new ViewBuilder();
+
+        //for boolean values the setter and getter look different than set/get
+        $setter = 'enable' . ucfirst($property);
+        $getter = 'is' . ucfirst($property) . 'Enabled';
+
+        $this->assertNull($builder->{$getter}(), 'Default value should be null');
+        $this->assertSame($builder, $builder->{$setter}($value), 'Setter returns this');
+        $this->assertSame($value, $builder->{$getter}(), 'Getter gets value.');
+    }
+
+
 
     /**
      * Test string property accessor/mutator methods.
