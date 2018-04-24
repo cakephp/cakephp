@@ -459,7 +459,6 @@ class Email implements JsonSerializable, Serializable
         return $this->_replyTo;
     }
 
-
     /**
      * Sets Read Receipt (Disposition-Notification-To header).
      *
