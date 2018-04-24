@@ -737,37 +737,4 @@ class Inflector
 
         return $result;
     }
-
-    /**
-     * Returns a string with all spaces converted to dashes (by default), accented
-     * characters converted to non-accented characters, and non word characters removed.
-     *
-     * @deprecated 3.2.7 Use Text::slug() instead.
-     * @param string $string the string you want to slug
-     * @param string $replacement will replace keys in map
-     * @return string
-     * @link https://book.cakephp.org/3.0/en/core-libraries/inflector.html#creating-url-safe-strings
-     */
-    public static function slug($string, $replacement = '-')
-    {
-        deprecationWarning(
-            'Inflector::slug() is deprecated. ' .
-            'Use Text::slug() instead.'
-        );
-        $quotedReplacement = preg_quote($replacement, '/');
-
-        $map = [
-            '/[^\s\p{Zs}\p{Ll}\p{Lm}\p{Lo}\p{Lt}\p{Lu}\p{Nd}]/mu' => ' ',
-            '/[\s\p{Zs}]+/mu' => $replacement,
-            sprintf('/^[%s]+|[%s]+$/', $quotedReplacement, $quotedReplacement) => '',
-        ];
-
-        $string = str_replace(
-            array_keys(static::$_transliteration),
-            array_values(static::$_transliteration),
-            $string
-        );
-
-        return preg_replace(array_keys($map), array_values($map), $string);
-    }
 }
