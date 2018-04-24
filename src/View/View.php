@@ -987,31 +987,6 @@ class View implements EventDispatcherInterface
     }
 
     /**
-     * Magic setter for deprecated properties.
-     *
-     * @param string $name Name to property.
-     * @param mixed $value Value for property.
-     * @return void
-     */
-    public function __set($name, $value)
-    {
-        if ($name === 'view') {
-            deprecationWarning('The `view` property is deprecated. Use View::setTemplate() instead.');
-            $this->template = $value;
-
-            return;
-        }
-        if ($name === 'viewPath') {
-            deprecationWarning('The `viewPath` property is deprecated. Use View::setTemplatePath() instead.');
-            $this->templatePath = $value;
-
-            return;
-        }
-
-        $this->{$name} = $value;
-    }
-
-    /**
      * Interact with the HelperRegistry to load all the helpers.
      *
      * @return $this
