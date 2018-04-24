@@ -21,6 +21,7 @@ use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Http\ServerRequest;
 use Cake\Http\Session;
+use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
 
@@ -189,7 +190,7 @@ class SecurityComponentTest extends TestCase
         unset($this->Controller);
     }
 
-    public function validatePost($expectedException = null, $expectedExceptionMessage = null)
+    public function validatePost($expectedException = 'SecurityException', $expectedExceptionMessage = null)
     {
         try {
             return $this->Controller->Security->validatePost($this->Controller);
@@ -734,6 +735,37 @@ class SecurityComponentTest extends TestCase
         $fields = 'de2ca3670dd06c29558dd98482c8739e86da2c7c%3A';
         $unlocked = '';
         $debug = 'not used';
+
+        $this->Controller->request = $this->Controller->request->withParsedBody([
+            'Model' => ['username' => '', 'password' => ''],
+            '_Token' => compact('fields', 'unlocked', 'debug')
+        ]);
+
+        $result = $this->validatePost();
+        $this->assertTrue($result);
+    }
+
+    /**
+     * test validatePost uses full URL
+     *
+     * @return void
+     * @triggers Controller.startup $this->Controller
+     */
+    public function testValidatePostSubdirectory()
+    {
+        // set the base path.
+        $this->Controller->request = $this->Controller->request
+            ->withAttribute('base', 'subdir')
+            ->withAttributE('webroot', 'subdir/');
+        Router::pushRequest($this->Controller->request);
+
+        $event = new Event('Controller.startup', $this->Controller);
+        $this->Security->startup($event);
+
+        // Differs from testValidatePostSimple because of base url
+        $fields = 'cc9b6af3f33147235ae8f8037b0a71399a2425f2%3A';
+        $unlocked = '';
+        $debug = '';
 
         $this->Controller->request = $this->Controller->request->withParsedBody([
             'Model' => ['username' => '', 'password' => ''],

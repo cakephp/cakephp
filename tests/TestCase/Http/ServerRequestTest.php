@@ -212,6 +212,23 @@ class ServerRequestTest extends TestCase
     }
 
     /**
+     * Test getPath().
+     *
+     * @return void
+     */
+    public function testGetPath()
+    {
+        $request = new ServerRequest(['url' => '']);
+        $this->assertSame('/', $request->getPath());
+
+        $request = new ServerRequest(['url' => 'some/path?one=something&two=else']);
+        $this->assertEquals('/some/path', $request->getPath());
+
+        $request = $request->withRequestTarget('/foo/bar?x=y');
+        $this->assertEquals('/foo/bar', $request->getPath());
+    }
+
+    /**
      * Test addParams() method
      *
      * @group deprecated

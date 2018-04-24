@@ -230,10 +230,10 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
         'query' => ['get' => 'getQuery()', 'set' => 'withQueryParams()'],
         'params' => ['get' => 'getParam()', 'set' => 'withParam()'],
         'cookies' => ['get' => 'getCookie()', 'set' => 'withCookieParams()'],
-        'url' => ['get' => 'getRequestTarget()', 'set' => 'withRequestTarget()'],
+        'url' => ['get' => 'getPath()', 'set' => 'withRequestTarget()'],
         'base' => ['get' => 'getAttribute("base")', 'set' => 'withAttribute("base")'],
         'webroot' => ['get' => 'getAttribute("webroot")', 'set' => 'withAttribute("webroot")'],
-        'here' => ['get' => 'getRequestTarget()', 'set' => 'withRequestTarget()'],
+        'here' => ['get' => 'getAttribute("here")', 'set' => 'withAttribute("here")'],
     ];
 
     /**
@@ -2342,6 +2342,23 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
         }
 
         return $target;
+    }
+
+    /**
+     * Get the path of current request.
+     *
+     * @return string
+     * @since 3.6.1
+     */
+    public function getPath()
+    {
+        if ($this->requestTarget === null) {
+            return $this->uri->getPath();
+        }
+
+        list($path) = explode('?', $this->requestTarget);
+
+        return $path;
     }
 
     /**

@@ -633,7 +633,7 @@ class Router
         }
 
         if (empty($url)) {
-            $output = isset($here) ? $here : $base . '/';
+            $output = $base . (isset($here) ? $here : '/');
             if ($full) {
                 $output = static::fullBaseUrl() . $output;
             }
