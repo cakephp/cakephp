@@ -302,26 +302,6 @@ class FormHelper extends Helper
     }
 
     /**
-     * Set the widget registry the helper will use.
-     *
-     * @param \Cake\View\Widget\WidgetRegistry|null $instance The registry instance to set.
-     * @param array $widgets An array of widgets
-     * @return \Cake\View\Widget\WidgetRegistry
-     * @deprecated 3.6.0 Use FormHelper::widgetLocator() instead.
-     */
-    public function widgetRegistry(WidgetRegistry $instance = null, $widgets = [])
-    {
-        deprecationWarning('widgetRegistry is deprecated, use widgetLocator instead.');
-
-        if ($instance) {
-            $instance->add($widgets);
-            $this->setWidgetLocator($instance);
-        }
-
-        return $this->getWidgetLocator();
-    }
-
-    /**
      * Get the widget locator currently used by the helper.
      *
      * @return \Cake\View\Widget\WidgetLocator Current locator instance
@@ -977,32 +957,6 @@ class FormHelper extends Helper
     }
 
     /**
-     * Generate a set of controls for `$fields`. If $fields is empty the fields
-     * of current model will be used.
-     *
-     * @param array $fields An array of customizations for the fields that will be
-     *   generated. This array allows you to set custom types, labels, or other options.
-     * @param array $options Options array. Valid keys are:
-     * - `fieldset` Set to false to disable the fieldset. You can also pass an array of params to be
-     *    applied as HTML attributes to the fieldset tag. If you pass an empty array, the fieldset will
-     *    be enabled
-     * - `legend` Set to false to disable the legend for the generated control set. Or supply a string
-     *    to customize the legend text.
-     * @return string Completed form controls.
-     * @link https://book.cakephp.org/3.0/en/views/helpers/form.html#generating-entire-forms
-     * @deprecated 3.4.0 Use FormHelper::allControls() instead.
-     */
-    public function allInputs(array $fields = [], array $options = [])
-    {
-        deprecationWarning(
-            'FormHelper::allInputs() is deprecated. ' .
-            'Use FormHelper::allControls() instead.'
-        );
-
-        return $this->allControls($fields, $options);
-    }
-
-    /**
      * Generate a set of controls for `$fields` wrapped in a fieldset element.
      *
      * You can customize individual controls through `$fields`.
@@ -1038,31 +992,6 @@ class FormHelper extends Helper
         }
 
         return $this->fieldset($out, $options);
-    }
-
-    /**
-     * Generate a set of controls for `$fields` wrapped in a fieldset element.
-     *
-     * @param array $fields An array of the fields to generate. This array allows
-     *   you to set custom types, labels, or other options.
-     * @param array $options Options array. Valid keys are:
-     * - `fieldset` Set to false to disable the fieldset. You can also pass an
-     *    array of params to be applied as HTML attributes to the fieldset tag.
-     *    If you pass an empty array, the fieldset will be enabled.
-     * - `legend` Set to false to disable the legend for the generated input set.
-     *    Or supply a string to customize the legend text.
-     * @return string Completed form inputs.
-     * @link https://book.cakephp.org/3.0/en/views/helpers/form.html#generating-entire-forms
-     * @deprecated 3.4.0 Use FormHelper::controls() instead.
-     */
-    public function inputs(array $fields, array $options = [])
-    {
-        deprecationWarning(
-            'FormHelper::inputs() is deprecated. ' .
-            'Use FormHelper::controls() instead.'
-        );
-
-        return $this->controls($fields, $options);
     }
 
     /**
@@ -1227,25 +1156,6 @@ class FormHelper extends Helper
         }
 
         return $result;
-    }
-
-    /**
-     * Generates a form control element complete with label and wrapper div.
-     *
-     * @param string $fieldName This should be "modelname.fieldname"
-     * @param array $options Each type of input takes different options.
-     * @return string Completed form widget.
-     * @link https://book.cakephp.org/3.0/en/views/helpers/form.html#creating-form-inputs
-     * @deprecated 3.4.0 Use FormHelper::control() instead.
-     */
-    public function input($fieldName, array $options = [])
-    {
-        deprecationWarning(
-            'FormHelper::input() is deprecated. ' .
-            'Use FormHelper::control() instead.'
-        );
-
-        return $this->control($fieldName, $options);
     }
 
     /**

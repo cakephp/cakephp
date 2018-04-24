@@ -111,14 +111,6 @@ class View implements EventDispatcherInterface
     public $name;
 
     /**
-     * Current passed params. Passed to View from the creating Controller for convenience.
-     *
-     * @var array
-     * @deprecated 3.1.0 Use `$this->request->getParam('pass')` instead.
-     */
-    public $passedArgs = [];
-
-    /**
      * An array of names of built-in helpers to include.
      *
      * @var array
@@ -287,14 +279,6 @@ class View implements EventDispatcherInterface
     protected $_viewBlockClass = ViewBlock::class;
 
     /**
-     * Constant for view file type 'view'
-     *
-     * @var string
-     * @deprecated 3.1.0 Use TYPE_TEMPLATE instead.
-     */
-    const TYPE_VIEW = 'view';
-
-    /**
      * Constant for view file type 'template'.
      *
      * @var string
@@ -410,27 +394,6 @@ class View implements EventDispatcherInterface
     }
 
     /**
-     * Get/set path for templates files.
-     *
-     * @deprecated 3.5.0 Use getTemplatePath()/setTemplatePath() instead.
-     * @param string|null $path Path for template files. If null returns current path.
-     * @return string|null
-     */
-    public function templatePath($path = null)
-    {
-        deprecationWarning(
-            'View::templatePath() is deprecated. ' .
-            'Use getTemplatePath()/setTemplatePath() instead.'
-        );
-
-        if ($path === null) {
-            return $this->templatePath;
-        }
-
-        $this->templatePath = $path;
-    }
-
-    /**
      * Get path for layout files.
      *
      * @return string
@@ -451,27 +414,6 @@ class View implements EventDispatcherInterface
         $this->layoutPath = $path;
 
         return $this;
-    }
-
-    /**
-     * Get/set path for layout files.
-     *
-     * @deprecated 3.5.0 Use getLayoutPath()/setLayoutPath() instead.
-     * @param string|null $path Path for layout files. If null returns current path.
-     * @return string|null
-     */
-    public function layoutPath($path = null)
-    {
-        deprecationWarning(
-            'View::layoutPath() is deprecated. ' .
-            'Use getLayoutPath()/setLayoutPath() instead.'
-        );
-
-        if ($path === null) {
-            return $this->layoutPath;
-        }
-
-        $this->layoutPath = $path;
     }
 
     /**
@@ -501,29 +443,6 @@ class View implements EventDispatcherInterface
     }
 
     /**
-     * Turns on or off CakePHP's conventional mode of applying layout files.
-     * On by default. Setting to off means that layouts will not be
-     * automatically applied to rendered templates.
-     *
-     * @deprecated 3.5.0 Use isAutoLayoutEnabled()/enableAutoLayout() instead.
-     * @param bool|null $autoLayout Boolean to turn on/off. If null returns current value.
-     * @return bool|null
-     */
-    public function autoLayout($autoLayout = null)
-    {
-        deprecationWarning(
-            'View::autoLayout() is deprecated. ' .
-            'Use isAutoLayoutEnabled()/enableAutoLayout() instead.'
-        );
-
-        if ($autoLayout === null) {
-            return $this->autoLayout;
-        }
-
-        $this->autoLayout = $autoLayout;
-    }
-
-    /**
      * Get the current view theme.
      *
      * @return string|null
@@ -544,27 +463,6 @@ class View implements EventDispatcherInterface
         $this->theme = $theme;
 
         return $this;
-    }
-
-    /**
-     * The view theme to use.
-     *
-     * @deprecated 3.5.0 Use getTheme()/setTheme() instead.
-     * @param string|null $theme Theme name. If null returns current theme.
-     * @return string|null
-     */
-    public function theme($theme = null)
-    {
-        deprecationWarning(
-            'View::theme() is deprecated. ' .
-            'Use getTheme()/setTheme() instead.'
-        );
-
-        if ($theme === null) {
-            return $this->theme;
-        }
-
-        $this->theme = $theme;
     }
 
     /**
@@ -593,28 +491,6 @@ class View implements EventDispatcherInterface
     }
 
     /**
-     * Get/set the name of the template file to render. The name specified is the
-     * filename in /src/Template/<SubFolder> without the .ctp extension.
-     *
-     * @deprecated 3.5.0 Use getTemplate()/setTemplate() instead.
-     * @param string|null $name Template file name to set. If null returns current name.
-     * @return string|null
-     */
-    public function template($name = null)
-    {
-        deprecationWarning(
-            'View::template() is deprecated. ' .
-            'Use getTemplate()/setTemplate() instead.'
-        );
-
-        if ($name === null) {
-            return $this->template;
-        }
-
-        $this->template = $name;
-    }
-
-    /**
      * Get the name of the layout file to render the template inside of.
      * The name specified is the filename of the layout in /src/Template/Layout
      * without the .ctp extension.
@@ -639,29 +515,6 @@ class View implements EventDispatcherInterface
         $this->layout = $name;
 
         return $this;
-    }
-
-    /**
-     * Get/set the name of the layout file to render the template inside of.
-     * The name specified is the filename of the layout in /src/Template/Layout
-     * without the .ctp extension.
-     *
-     * @deprecated 3.5.0 Use getLayout()/setLayout() instead.
-     * @param string|null $name Layout file name to set. If null returns current name.
-     * @return string|null
-     */
-    public function layout($name = null)
-    {
-        deprecationWarning(
-            'View::layout() is deprecated. ' .
-            'Use getLayout()/setLayout() instead.'
-        );
-
-        if ($name === null) {
-            return $this->layout;
-        }
-
-        $this->layout = $name;
     }
 
     /**

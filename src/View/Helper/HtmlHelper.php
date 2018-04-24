@@ -86,14 +86,6 @@ class HtmlHelper extends Helper
     ];
 
     /**
-     * Breadcrumbs.
-     *
-     * @var array
-     * @deprecated 3.3.6 Use the BreadcrumbsHelper instead
-     */
-    protected $_crumbs = [];
-
-    /**
      * Names of script & css files that have been included once
      *
      * @var array
@@ -143,29 +135,6 @@ class HtmlHelper extends Helper
     {
         parent::__construct($View, $config);
         $this->response = $this->_View->response ?: new Response();
-    }
-
-    /**
-     * Adds a link to the breadcrumbs array.
-     *
-     * @param string $name Text for link
-     * @param string|array|null $link URL for link (if empty it won't be a link)
-     * @param array $options Link attributes e.g. ['id' => 'selected']
-     * @return $this
-     * @see \Cake\View\Helper\HtmlHelper::link() for details on $options that can be used.
-     * @link https://book.cakephp.org/3.0/en/views/helpers/html.html#creating-breadcrumb-trails-with-htmlhelper
-     * @deprecated 3.3.6 Use the BreadcrumbsHelper instead
-     */
-    public function addCrumb($name, $link = null, array $options = [])
-    {
-        deprecationWarning(
-            'HtmlHelper::addCrumb() is deprecated. ' .
-            'Use the BreadcrumbsHelper instead.'
-        );
-
-        $this->_crumbs[] = [$name, $link, $options];
-
-        return $this;
     }
 
     /**
@@ -676,149 +645,6 @@ class HtmlHelper extends Helper
         }
 
         return implode("\n", $out);
-    }
-
-    /**
-     * Returns the breadcrumb trail as a sequence of &raquo;-separated links.
-     *
-     * If `$startText` is an array, the accepted keys are:
-     *
-     * - `text` Define the text/content for the link.
-     * - `url` Define the target of the created link.
-     *
-     * All other keys will be passed to HtmlHelper::link() as the `$options` parameter.
-     *
-     * @param string $separator Text to separate crumbs.
-     * @param string|array|bool $startText This will be the first crumb, if false it defaults to first crumb in array. Can
-     *   also be an array, see above for details.
-     * @return string|null Composed bread crumbs
-     * @link https://book.cakephp.org/3.0/en/views/helpers/html.html#creating-breadcrumb-trails-with-htmlhelper
-     * @deprecated 3.3.6 Use the BreadcrumbsHelper instead
-     */
-    public function getCrumbs($separator = '&raquo;', $startText = false)
-    {
-        deprecationWarning(
-            'HtmlHelper::getCrumbs() is deprecated. ' .
-            'Use the BreadcrumbsHelper instead.'
-        );
-
-        $crumbs = $this->_prepareCrumbs($startText);
-        if (!empty($crumbs)) {
-            $out = [];
-            foreach ($crumbs as $crumb) {
-                if (!empty($crumb[1])) {
-                    $out[] = $this->link($crumb[0], $crumb[1], $crumb[2]);
-                } else {
-                    $out[] = $crumb[0];
-                }
-            }
-
-            return implode($separator, $out);
-        }
-
-        return null;
-    }
-
-    /**
-     * Returns breadcrumbs as a (x)html list
-     *
-     * This method uses HtmlHelper::tag() to generate list and its elements. Works
-     * similar to HtmlHelper::getCrumbs(), so it uses options which every
-     * crumb was added with.
-     *
-     * ### Options
-     *
-     * - `separator` Separator content to insert in between breadcrumbs, defaults to ''
-     * - `firstClass` Class for wrapper tag on the first breadcrumb, defaults to 'first'
-     * - `lastClass` Class for wrapper tag on current active page, defaults to 'last'
-     *
-     * @param array $options Array of HTML attributes to apply to the generated list elements.
-     * @param string|array|bool $startText This will be the first crumb, if false it defaults to first crumb in array. Can
-     *   also be an array, see `HtmlHelper::getCrumbs` for details.
-     * @return string|null Breadcrumbs HTML list.
-     * @link https://book.cakephp.org/3.0/en/views/helpers/html.html#creating-breadcrumb-trails-with-htmlhelper
-     * @deprecated 3.3.6 Use the BreadcrumbsHelper instead
-     */
-    public function getCrumbList(array $options = [], $startText = false)
-    {
-        deprecationWarning(
-            'HtmlHelper::getCrumbList() is deprecated. ' .
-            'Use the BreadcrumbsHelper instead.'
-        );
-
-        $defaults = ['firstClass' => 'first', 'lastClass' => 'last', 'separator' => '', 'escape' => true];
-        $options += $defaults;
-        $firstClass = $options['firstClass'];
-        $lastClass = $options['lastClass'];
-        $separator = $options['separator'];
-        $escape = $options['escape'];
-        unset($options['firstClass'], $options['lastClass'], $options['separator'], $options['escape']);
-
-        $crumbs = $this->_prepareCrumbs($startText, $escape);
-        if (empty($crumbs)) {
-            return null;
-        }
-
-        $result = '';
-        $crumbCount = count($crumbs);
-        $ulOptions = $options;
-        foreach ($crumbs as $which => $crumb) {
-            $options = [];
-            if (empty($crumb[1])) {
-                $elementContent = $crumb[0];
-            } else {
-                $elementContent = $this->link($crumb[0], $crumb[1], $crumb[2]);
-            }
-            if (!$which && $firstClass !== false) {
-                $options['class'] = $firstClass;
-            } elseif ($which == $crumbCount - 1 && $lastClass !== false) {
-                $options['class'] = $lastClass;
-            }
-            if (!empty($separator) && ($crumbCount - $which >= 2)) {
-                $elementContent .= $separator;
-            }
-            $result .= $this->formatTemplate('li', [
-                'content' => $elementContent,
-                'attrs' => $this->templater()->formatAttributes($options)
-            ]);
-        }
-
-        return $this->formatTemplate('ul', [
-            'content' => $result,
-            'attrs' => $this->templater()->formatAttributes($ulOptions)
-        ]);
-    }
-
-    /**
-     * Prepends startText to crumbs array if set
-     *
-     * @param string|array|bool $startText Text to prepend
-     * @param bool $escape If the output should be escaped or not
-     * @return array Crumb list including startText (if provided)
-     * @deprecated 3.3.6 Use the BreadcrumbsHelper instead
-     */
-    protected function _prepareCrumbs($startText, $escape = true)
-    {
-        deprecationWarning(
-            'HtmlHelper::_prepareCrumbs() is deprecated. ' .
-            'Use the BreadcrumbsHelper instead.'
-        );
-
-        $crumbs = $this->_crumbs;
-        if ($startText) {
-            if (!is_array($startText)) {
-                $startText = [
-                    'url' => '/',
-                    'text' => $startText
-                ];
-            }
-            $startText += ['url' => '/', 'text' => __d('cake', 'Home')];
-            list($url, $text) = [$startText['url'], $startText['text']];
-            unset($startText['url'], $startText['text']);
-            array_unshift($crumbs, [$text, $url, $startText + ['escape' => $escape]]);
-        }
-
-        return $crumbs;
     }
 
     /**

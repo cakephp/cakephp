@@ -42,15 +42,6 @@ abstract class Cell
     use ViewVarsTrait;
 
     /**
-     * Instance of the View created during rendering. Won't be set until after
-     * Cell::__toString() is called.
-     *
-     * @var \Cake\View\View
-     * @deprecated 3.1.0 Use createView() instead.
-     */
-    public $View;
-
-    /**
      * Name of the template that will be rendered.
      * This property is inflected from the action name that was invoked.
      *
