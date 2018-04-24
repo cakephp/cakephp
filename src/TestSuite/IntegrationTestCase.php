@@ -508,7 +508,7 @@ abstract class IntegrationTestCase extends TestCase
             $this->_exception = $e;
             //not passing the request it more accurately reflects what would happen if the global default
             //exception handler was invoked
-            $this->_handleError($e,null);
+            $this->_handleError($e, null);
         }
     }
 
