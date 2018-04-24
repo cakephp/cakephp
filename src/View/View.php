@@ -958,6 +958,24 @@ class View implements EventDispatcherInterface
     }
 
     /**
+     * Magic accessor for helpers.
+     *
+     * @param string $name Name of the attribute to get.
+     * @return mixed
+     */
+    public function __get($name)
+    {
+        $registry = $this->helpers();
+        if (isset($registry->{$name})) {
+            $this->{$name} = $registry->{$name};
+
+            return $registry->{$name};
+        }
+
+        return $this->{$name};
+    }
+
+    /**
      * Interact with the HelperRegistry to load all the helpers.
      *
      * @return $this
