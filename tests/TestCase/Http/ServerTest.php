@@ -324,5 +324,4 @@ class ServerTest extends TestCase
         $server = new Server($app);
         $server->setEventManager($events);
     }
-
 }
