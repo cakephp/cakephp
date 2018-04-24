@@ -28,7 +28,7 @@ if (!function_exists('h')) {
      * @param string|array|object $text Text to wrap through htmlspecialchars. Also works with arrays, and objects.
      *    Arrays will be mapped and have all their elements escaped. Objects will be string cast if they
      *    implement a `__toString` method. Otherwise the class name will be used.
-     * @param bool $double Encode existing html entities.
+     * @param bool|string $double Encode existing html entities. If string it will be used as character set.
      * @param string|null $charset Character set to use when escaping. Defaults to config value in `mb_internal_encoding()`
      * or 'UTF-8'.
      * @return string|array Wrapped text.

@@ -93,7 +93,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
             list($plugin, $objectName) = pluginSplit($objectName);
             $this->_throwMissingClassError($objectName, $plugin);
         }
-        $instance = $this->_create($className, $name, $config);
+        $instance = $this->_create((string)$className, $name, $config);
         $this->_loaded[$name] = $instance;
 
         return $instance;

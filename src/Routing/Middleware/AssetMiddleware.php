@@ -93,7 +93,7 @@ class AssetMiddleware
         }
 
         $assetFile = $this->_getAssetFile($url);
-        if ($assetFile === null || !file_exists($assetFile)) {
+        if ($assetFile === '' || !file_exists($assetFile)) {
             return $next($request, $response);
         }
 
