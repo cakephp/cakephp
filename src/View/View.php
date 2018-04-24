@@ -958,35 +958,6 @@ class View implements EventDispatcherInterface
     }
 
     /**
-     * Magic accessor for helpers.
-     *
-     * @param string $name Name of the attribute to get.
-     * @return mixed
-     */
-    public function __get($name)
-    {
-        if ($name === 'view') {
-            deprecationWarning('The `view` property is deprecated. Use View::getTemplate() instead.');
-
-            return $this->template;
-        }
-        if ($name === 'viewPath') {
-            deprecationWarning('The `viewPath` property is deprecated. Use View::getTemplatePath() instead.');
-
-            return $this->templatePath;
-        }
-
-        $registry = $this->helpers();
-        if (isset($registry->{$name})) {
-            $this->{$name} = $registry->{$name};
-
-            return $registry->{$name};
-        }
-
-        return $this->{$name};
-    }
-
-    /**
      * Interact with the HelperRegistry to load all the helpers.
      *
      * @return $this
