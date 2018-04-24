@@ -87,8 +87,6 @@ class ViewBuilderTest extends TestCase
         $this->assertSame($value, $builder->{$getter}(), 'Getter gets value.');
     }
 
-
-
     /**
      * Test string property accessor/mutator methods.
      *
