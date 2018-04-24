@@ -19,7 +19,6 @@ use DateTime;
 
 /**
  * Class DateType
- * @package Cake\Database\Type
  */
 class DateType extends DateTimeType
 {

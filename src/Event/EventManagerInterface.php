@@ -15,7 +15,6 @@ namespace Cake\Event;
 
 /**
  * Interface EventManagerInterface
- * @package Cake\Event
  */
 interface EventManagerInterface
 {

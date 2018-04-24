@@ -22,7 +22,6 @@ use PDO;
 
 /**
  * Class Mysql
- * @package Cake\Database\Driver
  */
 class Mysql extends Driver
 {

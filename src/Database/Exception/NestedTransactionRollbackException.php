@@ -18,7 +18,6 @@ use Cake\Core\Exception\Exception;
 
 /**
  * Class NestedTransactionRollbackException
- * @package Cake\Database\Exception
  */
 class NestedTransactionRollbackException extends Exception
 {

@@ -18,7 +18,6 @@ use Cake\Core\Exception\Exception;
 
 /**
  * Class MissingDriverException
- * @package Cake\Database\Exception
  */
 class MissingDriverException extends Exception
 {

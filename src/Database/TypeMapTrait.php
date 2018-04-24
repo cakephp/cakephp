@@ -19,7 +19,6 @@ namespace Cake\Database;
  */
 /**
  * Trait TypeMapTrait
- * @package Cake\Database
  */
 trait TypeMapTrait
 {

@@ -18,7 +18,6 @@ use Cake\Core\Exception\Exception;
 
 /**
  * Class MissingConnectionException
- * @package Cake\Database\Exception
  */
 class MissingConnectionException extends Exception
 {

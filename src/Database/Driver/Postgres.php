@@ -20,7 +20,6 @@ use PDO;
 
 /**
  * Class Postgres
- * @package Cake\Database\Driver
  */
 class Postgres extends Driver
 {

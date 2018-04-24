@@ -18,7 +18,6 @@ use Cake\Core\Exception\Exception;
 
 /**
  * Class MissingExtensionException
- * @package Cake\Database\Exception
  */
 class MissingExtensionException extends Exception
 {

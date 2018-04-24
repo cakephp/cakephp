@@ -24,7 +24,6 @@ use UnexpectedValueException;
 
 /**
  * Class TimestampBehavior
- * @package Cake\ORM\Behavior
  */
 class TimestampBehavior extends Behavior
 {

@@ -23,7 +23,6 @@ use PDO;
 
 /**
  * Class Sqlite
- * @package Cake\Database\Driver
  */
 class Sqlite extends Driver
 {
