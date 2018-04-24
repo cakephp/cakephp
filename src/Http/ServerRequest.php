@@ -233,7 +233,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
         'url' => ['get' => 'getPath()', 'set' => 'withRequestTarget()'],
         'base' => ['get' => 'getAttribute("base")', 'set' => 'withAttribute("base")'],
         'webroot' => ['get' => 'getAttribute("webroot")', 'set' => 'withAttribute("webroot")'],
-        'here' => ['get' => 'getRequestTarget()', 'set' => 'withRequestTarget()'],
+        'here' => ['get' => 'getAttribute("here")', 'set' => 'withAttribute("here")'],
     ];
 
     /**
@@ -2081,10 +2081,10 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * Safely access the values in $this->params.
      *
      * @param string $name The name or dotted path to parameter.
-     * @param mixed $default The default value if `$name` is not set. Default `false`.
+     * @param mixed $default The default value if `$name` is not set. Default `null`.
      * @return mixed
      */
-    public function getParam($name, $default = false)
+    public function getParam($name, $default = null)
     {
         return Hash::get($this->params, $name, $default);
     }

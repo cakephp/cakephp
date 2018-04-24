@@ -16,13 +16,14 @@ namespace Cake\Test\TestCase\Database\Schema;
 
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\Type;
+use Cake\Database\Type\IntegerType;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 
 /**
  * Mock class for testing baseType inheritance
  */
-class FooType extends Type
+class FooType extends IntegerType
 {
 
     public function getBaseType()
@@ -49,7 +50,7 @@ class TableTest extends TestCase
 
     public function setUp()
     {
-        $this->_map = Type::map();
+        $this->_map = Type::getMap();
         parent::setUp();
     }
 
@@ -57,7 +58,7 @@ class TableTest extends TestCase
     {
         $this->getTableLocator()->clear();
         Type::clear();
-        Type::map($this->_map);
+        Type::setMap($this->_map);
         parent::tearDown();
     }
 

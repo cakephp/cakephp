@@ -2553,7 +2553,7 @@ class ServerRequestTest extends TestCase
                 'zero' => '0',
             ]
         ]);
-        $this->assertFalse($request->getParam('not_set'));
+        $this->assertNull($request->getParam('not_set'));
         $this->assertTrue($request->getParam('admin'));
         $this->assertSame(1, $request->getParam('truthy'));
         $this->assertSame('posts', $request->getParam('controller'));
@@ -2577,7 +2577,7 @@ class ServerRequestTest extends TestCase
                     'zero' => '0',
                 ]
             ]);
-            $this->assertFalse($request->param('not_set'));
+            $this->assertNull($request->param('not_set'));
             $this->assertTrue($request->param('admin'));
             $this->assertSame(1, $request->param('truthy'));
             $this->assertSame('posts', $request->param('controller'));
@@ -2700,9 +2700,6 @@ class ServerRequestTest extends TestCase
                 'zero' => '0',
             ]
         ]);
-        $this->deprecated(function () use ($expected, $request, $toRead) {
-            $this->assertSame($expected, $request->param($toRead));
-        });
         $this->assertSame($expected, $request->getParam($toRead));
     }
 
@@ -2721,8 +2718,8 @@ class ServerRequestTest extends TestCase
         ]);
         $this->assertSame('Articles', $request->getParam('controller', 'default'));
         $this->assertSame('default', $request->getParam('null', 'default'));
-        $this->assertNull($request->getParam('unset', null));
-        $this->assertFalse($request->getParam('unset'));
+        $this->assertFalse($request->getParam('unset', false));
+        $this->assertNull($request->getParam('unset'));
     }
 
     /**
@@ -2751,7 +2748,7 @@ class ServerRequestTest extends TestCase
             ],
             [
                 'does_not_exist',
-                false,
+                null,
             ],
             [
                 'admin',
@@ -2785,7 +2782,7 @@ class ServerRequestTest extends TestCase
         );
 
         $request = $request->withParam('Post.null', null);
-        $this->assertFalse($request->getParam('Post.null'), 'default value should be used.');
+        $this->assertNull($request->getParam('Post.null'), 'default value should be used.');
 
         $request = $request->withParam('Post.false', false);
         $this->assertFalse($request->getParam('Post.false'));
@@ -3376,14 +3373,14 @@ XML;
         ]);
         $result = $request->withParam('action', 'view');
         $this->assertNotSame($result, $request, 'New instance should be made');
-        $this->assertFalse($request->getParam('action'), 'No side-effect on original');
+        $this->assertNull($request->getParam('action'), 'No side-effect on original');
         $this->assertSame('view', $result->getParam('action'));
 
         $result = $request->withParam('action', 'index')
             ->withParam('plugin', 'DebugKit')
             ->withParam('prefix', 'Admin');
         $this->assertNotSame($result, $request, 'New instance should be made');
-        $this->assertFalse($request->getParam('action'), 'No side-effect on original');
+        $this->assertNull($request->getParam('action'), 'No side-effect on original');
         $this->assertSame('index', $result->getParam('action'));
         $this->assertSame('DebugKit', $result->getParam('plugin'));
         $this->assertSame('Admin', $result->getParam('prefix'));

@@ -28,7 +28,7 @@
         "source": "https://github.com/cakephp/cakephp"
     },
     "require": {
-        "php": ">=5.6.0",
+        "php": ">=7.1.0,<7.3.0",
         "ext-intl": "*",
         "ext-mbstring": "*",
         "cakephp/chronos": "^1.0.1",
@@ -41,7 +41,7 @@
         "lib-ICU": "The intl PHP library, to use Text::transliterate() or Text::slug()"
     },
     "require-dev": {
-        "phpunit/phpunit": "^5.7.14|^6.0",
+        "phpunit/phpunit": "^6.0",
         "cakephp/cakephp-codesniffer": "^3.0"
     },
     "autoload": {
@@ -83,9 +83,6 @@
         "cakephp/orm": "self.version",
         "cakephp/utility": "self.version",
         "cakephp/validation": "self.version"
-    },
-    "conflict": {
-        "phpunit/phpunit": "<5.7"
     },
     "scripts": {
         "check": [

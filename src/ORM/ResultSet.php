@@ -424,52 +424,6 @@ class ResultSet implements ResultSetInterface
     }
 
     /**
-     * Creates a map of Type converter classes for each of the columns that should
-     * be fetched by this object.
-     *
-     * @deprecated 3.2.0 Not used anymore. Type casting is done at the statement level
-     * @return void
-     */
-    protected function _calculateTypeMap()
-    {
-        deprecationWarning('ResultSet::_calculateTypeMap() is deprecated, and will be removed in 4.0.0.');
-    }
-
-    /**
-     * Returns the Type classes for each of the passed fields belonging to the
-     * table.
-     *
-     * @param \Cake\ORM\Table $table The table from which to get the schema
-     * @param array $fields The fields whitelist to use for fields in the schema.
-     * @return array
-     */
-    protected function _getTypes($table, $fields)
-    {
-        $types = [];
-        $schema = $table->getSchema();
-        $map = array_keys(Type::map() + ['string' => 1, 'text' => 1, 'boolean' => 1]);
-        $typeMap = array_combine(
-            $map,
-            array_map(['Cake\Database\Type', 'build'], $map)
-        );
-
-        foreach (['string', 'text'] as $t) {
-            if (get_class($typeMap[$t]) === 'Cake\Database\Type') {
-                unset($typeMap[$t]);
-            }
-        }
-
-        foreach (array_intersect($fields, $schema->columns()) as $col) {
-            $typeName = $schema->getColumnType($col);
-            if (isset($typeMap[$typeName])) {
-                $types[$col] = $typeMap[$typeName];
-            }
-        }
-
-        return $types;
-    }
-
-    /**
      * Helper function to fetch the next result from the statement or
      * seeded results.
      *

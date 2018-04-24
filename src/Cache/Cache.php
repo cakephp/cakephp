@@ -73,7 +73,6 @@ class Cache
      * @var array
      */
     protected static $_dsnClassMap = [
-        'apc' => 'Cake\Cache\Engine\ApcuEngine', // @deprecated Since 3.6. Use apcu instead.
         'apcu' => 'Cake\Cache\Engine\ApcuEngine',
         'file' => 'Cake\Cache\Engine\FileEngine',
         'memcached' => 'Cake\Cache\Engine\MemcachedEngine',
@@ -129,24 +128,6 @@ class Cache
     public static function setRegistry(ObjectRegistry $registry)
     {
         static::$_registry = $registry;
-    }
-
-    /**
-     * Returns the Cache Registry instance used for creating and using cache adapters.
-     * Also allows for injecting of a new registry instance.
-     *
-     * @param \Cake\Core\ObjectRegistry|null $registry Injectable registry object.
-     * @return \Cake\Core\ObjectRegistry
-     * @deprecated Deprecated since 3.5. Use getRegistry() and setRegistry() instead.
-     */
-    public static function registry(ObjectRegistry $registry = null)
-    {
-        deprecationWarning('Use Cache::getRegistry() and Cache::setRegistry() instead.');
-        if ($registry) {
-            static::setRegistry($registry);
-        }
-
-        return static::getRegistry();
     }
 
     /**

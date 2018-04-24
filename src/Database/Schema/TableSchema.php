@@ -440,7 +440,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
             return null;
         }
 
-        if (Type::map($type)) {
+        if (Type::getMap($type)) {
             $type = Type::build($type)->getBaseType();
         }
 

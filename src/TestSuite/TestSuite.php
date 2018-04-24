@@ -16,8 +16,6 @@
  */
 namespace Cake\TestSuite;
 
-loadPHPUnitAliases();
-
 use Cake\Filesystem\Folder;
 use PHPUnit\Framework\TestSuite as BaseTestSuite;
 

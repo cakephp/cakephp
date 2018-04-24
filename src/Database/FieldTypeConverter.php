@@ -14,7 +14,6 @@
  */
 namespace Cake\Database;
 
-use Cake\Database\Type;
 use Cake\Database\Type\BatchCastingInterface;
 use Cake\Database\Type\OptionalConvertInterface;
 
@@ -77,15 +76,7 @@ class FieldTypeConverter
                 continue;
             }
 
-            // Because of backwards compatibility reasons, we won't allow classes
-            // inheriting Type in userland code to be batchable, even if they implement
-            // the interface. Users can implement the TypeInterface instead to have
-            // access to this feature.
-            $batchingType = $type instanceof BatchCastingInterface &&
-                !($type instanceof Type &&
-                strpos(get_class($type), 'Cake\Database\Type') === false);
-
-            if ($batchingType) {
+            if ($type instanceof BatchCastingInterface) {
                 $batchingMap[$k] = $type;
                 continue;
             }

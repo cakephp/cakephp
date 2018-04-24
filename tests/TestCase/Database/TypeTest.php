@@ -15,8 +15,7 @@
 namespace Cake\Test\TestCase\Database;
 
 use Cake\Database\Type;
-use Cake\Database\Type\BoolType;
-use Cake\Database\Type\IntegerType;
+use Cake\Database\TypeInterface;
 use Cake\Database\Type\UuidType;
 use Cake\TestSuite\TestCase;
 use PDO;
@@ -43,7 +42,7 @@ class TypeTest extends TestCase
      */
     public function setUp()
     {
-        $this->_originalMap = Type::map();
+        $this->_originalMap = Type::getMap();
         parent::setUp();
     }
 
@@ -56,7 +55,7 @@ class TypeTest extends TestCase
     {
         parent::tearDown();
 
-        Type::map($this->_originalMap);
+        Type::setMap($this->_originalMap);
     }
 
     /**
@@ -68,7 +67,7 @@ class TypeTest extends TestCase
     public function testBuildBasicTypes($name)
     {
         $type = Type::build($name);
-        $this->assertInstanceOf('Cake\Database\Type', $type);
+        $this->assertInstanceOf(TypeInterface::class, $type);
         $this->assertEquals($name, $type->getName());
         $this->assertEquals($name, $type->getBaseType());
     }
@@ -120,25 +119,20 @@ class TypeTest extends TestCase
      */
     public function testMapAndBuild()
     {
-        $map = Type::map();
+        $map = Type::getMap();
         $this->assertNotEmpty($map);
         $this->assertArrayNotHasKey('foo', $map);
 
         $fooType = FooType::class;
         Type::map('foo', $fooType);
-        $map = Type::map();
+        $map = Type::getMap();
         $this->assertEquals($fooType, $map['foo']);
-        $this->assertEquals($fooType, Type::map('foo'));
-
-        $type = Type::build('foo');
-        $this->assertInstanceOf($fooType, $type);
-        $this->assertEquals('foo', $type->getName());
-        $this->assertEquals('text', $type->getBaseType());
+        $this->assertEquals($fooType, Type::getMap('foo'));
 
         Type::map('foo2', $fooType);
-        $map = Type::map();
+        $map = Type::getMap();
         $this->assertSame($fooType, $map['foo2']);
-        $this->assertSame($fooType, Type::map('foo2'));
+        $this->assertSame($fooType, Type::getMap('foo2'));
 
         $type = Type::build('foo2');
         $this->assertInstanceOf($fooType, $type);
@@ -169,14 +163,14 @@ class TypeTest extends TestCase
      */
     public function testMapAndBuildWithObjects()
     {
-        $map = Type::map();
+        $map = Type::getMap();
         Type::clear();
 
         $uuidType = new UuidType('uuid');
         Type::map('uuid', $uuidType);
 
         $this->assertSame($uuidType, Type::build('uuid'));
-        Type::map($map);
+        Type::setMap($map);
     }
 
     /**
@@ -186,15 +180,15 @@ class TypeTest extends TestCase
      */
     public function testClear()
     {
-        $map = Type::map();
+        $map = Type::getMap();
         $this->assertNotEmpty($map);
 
         $type = Type::build('float');
         Type::clear();
 
-        $this->assertEmpty(Type::map());
-        Type::map($map);
-        $newMap = Type::map();
+        $this->assertEmpty(Type::getMap());
+        Type::setMap($map);
+        $newMap = Type::getMap();
 
         $this->assertEquals(array_keys($map), array_keys($newMap));
         $this->assertEquals($map['integer'], $newMap['integer']);
@@ -268,21 +262,8 @@ class TypeTest extends TestCase
      */
     public function testSet()
     {
-        $instance = $this->getMockBuilder('Cake\Database\Type')->getMock();
+        $instance = $this->getMockBuilder(TypeInterface::class)->getMock();
         Type::set('random', $instance);
         $this->assertSame($instance, Type::build('random'));
-    }
-
-    /**
-     * @return void
-     */
-    public function testDebugInfo()
-    {
-        $type = new Type('foo');
-        $result = $type->__debugInfo();
-        $expected = [
-            'name' => 'foo',
-        ];
-        $this->assertEquals($expected, $result);
     }
 }
