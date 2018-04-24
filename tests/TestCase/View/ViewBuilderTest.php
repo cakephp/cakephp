@@ -39,7 +39,6 @@ class ViewBuilderTest extends TestCase
             ['theme', 'TestPlugin'],
             ['template', 'edit'],
             ['name', 'Articles'],
-            ['autoLayout', true],
             ['className', 'Cake\View\JsonView'],
         ];
     }
@@ -95,13 +94,13 @@ class ViewBuilderTest extends TestCase
      */
     public function testBoolProperties($property, $value)
     {
-        $get = 'enable' . ucfirst($property);
-        $set = 'is' . ucfirst($property) . 'Enabled';
+        $set = 'enable' . ucfirst($property);
+        $get = 'is' . ucfirst($property) . 'Enabled';
 
         $builder = new ViewBuilder();
-        $this->assertFalse($builder->{$property}(), 'Default value should be null');
-        $this->assertSame($builder, $builder->{$property}($value), 'Setter returns this');
-        $this->assertSame($value, $builder->{$property}(), 'Getter gets value.');
+        $this->assertNull($builder->{$get}(), 'Default value should be null');
+        $this->assertSame($builder, $builder->{$set}($value), 'Setter returns this');
+        $this->assertSame($value, $builder->{$get}(), 'Getter gets value.');
     }
 
     /**
@@ -151,7 +150,7 @@ class ViewBuilderTest extends TestCase
      */
     public function testStringPropertiesDeprecated($property, $value)
     {
-        $this->deprecated(function () {
+        $this->deprecated(function () use ($value, $property) {
             $builder = new ViewBuilder();
             $this->assertNull($builder->{$property}(), 'Default value should be null');
             $this->assertSame($builder, $builder->{$property}($value), 'Setter returns this');
@@ -168,7 +167,7 @@ class ViewBuilderTest extends TestCase
      */
     public function testBoolPropertiesDeprecated($property, $value)
     {
-        $this->deprecated(function () {
+        $this->deprecated(function () use ($value, $property) {
             $builder = new ViewBuilder();
             $this->assertNull($builder->{$property}(), 'Default value should be null');
             $this->assertSame($builder, $builder->{$property}($value), 'Setter returns this');
@@ -185,7 +184,7 @@ class ViewBuilderTest extends TestCase
      */
     public function testArrayPropertiesDeprecated($property, $value)
     {
-        $this->deprecated(function () {
+        $this->deprecated(function () use ($value, $property) {
             $builder = new ViewBuilder();
             $this->assertSame([], $builder->{$property}(), 'Default value should be empty list');
             $this->assertSame($builder, $builder->{$property}($value), 'Setter returns this');
@@ -202,7 +201,7 @@ class ViewBuilderTest extends TestCase
      */
     public function testArrayPropertyMergeDeprecated($property, $value)
     {
-        $this->deprecated(function () {
+        $this->deprecated(function () use ($value, $property) {
             $builder = new ViewBuilder();
             $builder->{$property}($value);
 
