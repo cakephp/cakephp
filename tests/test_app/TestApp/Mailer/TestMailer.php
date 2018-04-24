@@ -29,7 +29,7 @@ class TestMailer extends Mailer
 
     public function reset()
     {
-        $this->template = $this->viewBuilder()->template();
+        $this->template = $this->viewBuilder()->getTemplate();
 
         return parent::reset();
     }
