@@ -270,11 +270,6 @@ class FormHelper extends Helper
     {
         $locator = null;
         $widgets = $this->_defaultWidgets;
-        if (isset($config['registry'])) {
-            deprecationWarning('`registry` config key is deprecated in FormHelper, use `locator` instead.');
-            $config['locator'] = $config['registry'];
-            unset($config['registry']);
-        }
         if (isset($config['locator'])) {
             $locator = $config['locator'];
             unset($config['locator']);
