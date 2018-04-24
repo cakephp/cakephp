@@ -310,19 +310,6 @@ class TextHelper extends Helper
     }
 
     /**
-     * Strips given text of all links (<a href=....)
-     *
-     * @param string $text Text
-     * @return string The text without links
-     * @see \Cake\Utility\Text::stripLinks()
-     * @link https://book.cakephp.org/3.0/en/views/helpers/text.html#removing-links
-     */
-    public function stripLinks($text)
-    {
-        return $this->_engine->stripLinks($text);
-    }
-
-    /**
      * Truncates text.
      *
      * Cuts a string to the length of $length and replaces the last characters
