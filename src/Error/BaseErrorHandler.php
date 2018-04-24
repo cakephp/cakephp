@@ -122,7 +122,6 @@ abstract class BaseErrorHandler
      * @param int|null $line Line that triggered the error
      * @param array|null $context Context
      * @return bool True if error was handled
-     * @throws \Exception
      */
     public function handleError($code, $description, $file = null, $line = null, $context = null)
     {
@@ -163,7 +162,6 @@ abstract class BaseErrorHandler
      *
      * @param \Exception|\Error $exception The exception to handle
      * @return void
-     * @throws \Exception
      */
     public function wrapAndHandleException($exception)
     {
@@ -212,7 +210,6 @@ abstract class BaseErrorHandler
      * @param string $file File on which error occurred
      * @param int $line Line that triggered the error
      * @return bool
-     * @throws \Exception
      */
     public function handleFatalError($code, $description, $file, $line)
     {

@@ -57,7 +57,6 @@ class CookieCollection implements IteratorAggregate, Countable
      *
      * @param array $header The array of set-cookie header values.
      * @return static
-     * @throws \Exception
      */
     public static function createFromHeader(array $header)
     {
@@ -212,7 +211,6 @@ class CookieCollection implements IteratorAggregate, Countable
      * @param array $extraCookies Associative array of additional cookies to add into the request. This
      *   is useful when you have cookie data from outside the collection you want to send.
      * @return \Psr\Http\Message\RequestInterface An updated request.
-     * @throws \Exception
      */
     public function addToRequest(RequestInterface $request, array $extraCookies = [])
     {
@@ -250,7 +248,6 @@ class CookieCollection implements IteratorAggregate, Countable
      * @param string $host The host to match.
      * @param string $path The path to match
      * @return array An array of cookie name/value pairs
-     * @throws \Exception
      */
     protected function findMatchingCookies($scheme, $host, $path)
     {
@@ -290,7 +287,6 @@ class CookieCollection implements IteratorAggregate, Countable
      * @param \Psr\Http\Message\ResponseInterface $response Response to extract cookies from.
      * @param \Psr\Http\Message\RequestInterface $request Request to get cookie context from.
      * @return static
-     * @throws \Exception
      */
     public function addFromResponse(ResponseInterface $response, RequestInterface $request)
     {
@@ -338,7 +334,6 @@ class CookieCollection implements IteratorAggregate, Countable
      *
      * @param array $values List of Set-Cookie Header values.
      * @return \Cake\Http\Cookie\Cookie[] An array of cookie objects
-     * @throws \Exception
      */
     protected static function parseSetCookieHeader($values)
     {
@@ -401,7 +396,6 @@ class CookieCollection implements IteratorAggregate, Countable
      * @param string $host The host to check for expired cookies on.
      * @param string $path The path to check for expired cookies on.
      * @return void
-     * @throws \Exception
      */
     protected function removeExpiredCookies($host, $path)
     {

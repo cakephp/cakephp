@@ -852,7 +852,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param string $name The name of the behavior. Can be a short class reference.
      * @param array $options The options for the behavior to use.
      * @return $this
-     * @throws \Exception
      * @throws \RuntimeException If a behavior is being reloaded.
      * @see \Cake\ORM\Behavior
      */
@@ -906,7 +905,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param string $name The alias that the behavior was added with.
      * @return $this
-     * @throws \Exception
      * @see \Cake\ORM\Behavior
      */
     public function removeBehavior($name)
@@ -1618,7 +1616,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param callable $worker The worker that will run inside the transaction.
      * @param bool $atomic Whether to execute the worker inside a database transaction.
      * @return mixed
-     * @throws \Exception
      */
     protected function _executeTransaction(callable $worker, $atomic = true)
     {
@@ -1675,7 +1672,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   is persisted.
      * @param array $options The options to use when saving.
      * @return \Cake\Datasource\EntityInterface An entity.
-     * @throws \Exception
      */
     public function findOrCreate($search, callable $callback = null, $options = [])
     {
@@ -1880,7 +1876,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param array $options
      * @return bool|\Cake\Datasource\EntityInterface|mixed
      * @throws \Cake\ORM\Exception\RolledbackTransactionException If the transaction is aborted in the afterSave event.
-     * @throws \Exception
      */
     public function save(EntityInterface $entity, $options = [])
     {
@@ -2199,7 +2194,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param \Cake\Datasource\EntityInterface[]|\Cake\ORM\ResultSet $entities Entities to save.
      * @param array|\ArrayAccess $options Options used when calling Table::save() for each entity.
      * @return bool|\Cake\Datasource\EntityInterface[]|\Cake\ORM\ResultSet False on failure, entities list on success.
-     * @throws \Exception
      */
     public function saveMany($entities, $options = [])
     {

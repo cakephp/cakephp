@@ -46,7 +46,6 @@ class CookieCollection extends BaseCollection
      * @param Response $response The response to read cookies from
      * @param string $url The request URL used for default host/path values.
      * @return void
-     * @throws \Exception
      */
     public function store(Response $response, $url)
     {
@@ -71,7 +70,6 @@ class CookieCollection extends BaseCollection
      *
      * @param string $url The URL to find cookies for.
      * @return array
-     * @throws \Exception
      */
     public function get($url)
     {

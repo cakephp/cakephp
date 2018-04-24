@@ -70,7 +70,6 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @param string $objectName The name/class of the object to load.
      * @param array $config Additional settings to use when loading the object.
      * @return mixed
-     * @throws \Exception
      */
     public function load($objectName, $config = [])
     {
@@ -256,7 +255,6 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      *
      * @param string $name Name of a property to unset.
      * @return void
-     * @throws \Exception
      */
     public function __unset($name)
     {
@@ -296,7 +294,6 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * If the registry subclass has an event manager, the objects will be detached from events as well.
      *
      * @return $this
-     * @throws \Exception
      */
     public function reset()
     {
@@ -316,7 +313,6 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @param string $objectName The name of the object to set in the registry.
      * @param object $object instance to store in the registry
      * @return $this
-     * @throws \Exception
      */
     public function set($objectName, $object)
     {
@@ -341,7 +337,6 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      *
      * @param string $objectName The name of the object to remove from the registry.
      * @return $this
-     * @throws \Exception
      */
     public function unload($objectName)
     {

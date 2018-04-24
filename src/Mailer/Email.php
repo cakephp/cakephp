@@ -2514,7 +2514,6 @@ class Email implements JsonSerializable, Serializable
      * Create unique boundary identifier
      *
      * @return void
-     * @throws \Exception
      */
     protected function _createBoundary()
     {
@@ -2896,7 +2895,6 @@ class Email implements JsonSerializable, Serializable
      * Serializes the Email object.
      *
      * @return string
-     * @throws \Exception
      */
     public function serialize()
     {

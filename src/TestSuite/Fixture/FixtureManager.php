@@ -270,7 +270,6 @@ class FixtureManager
      * @param \Cake\TestSuite\TestCase $test The test to inspect for fixture loading.
      * @return void
      * @throws \Cake\Core\Exception\Exception When fixture records cannot be inserted.
-     * @throws \Exception
      */
     public function load($test)
     {
@@ -364,7 +363,6 @@ class FixtureManager
      * @param array $fixtures A list of fixtures to operate on.
      * @param callable $operation The operation to run on each connection + fixture set.
      * @return void
-     * @throws \Exception
      */
     protected function _runOperation($fixtures, $operation)
     {
@@ -410,7 +408,6 @@ class FixtureManager
      *
      * @param \Cake\TestSuite\TestCase $test The test to inspect for fixture unloading.
      * @return void
-     * @throws \Exception
      */
     public function unload($test)
     {
@@ -473,7 +470,6 @@ class FixtureManager
      * Drop all fixture tables loaded by this class
      *
      * @return void
-     * @throws \Exception
      */
     public function shutDown()
     {

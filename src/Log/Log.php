@@ -187,7 +187,6 @@ class Log
      * adapters.
      *
      * @return void
-     * @throws \Exception
      */
     protected static function _loadConfig()
     {

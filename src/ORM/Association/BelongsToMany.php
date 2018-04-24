@@ -702,10 +702,10 @@ class BelongsToMany extends Association
      *
      * @param \Cake\Datasource\EntityInterface $entity an entity from the source table
      * @param array $options options to be passed to the save method in the target table
+     * @throws \InvalidArgumentException if the property representing the association
+     * in the parent entity cannot be traversed
      * @return bool|\Cake\Datasource\EntityInterface false if $entity could not be saved, otherwise it returns
      * the saved entity
-     * @throws \InvalidArgumentException if the property representing the association in the parent entity cannot be traversed
-     * @throws \Exception
      * @see \Cake\ORM\Table::save()
      * @see \Cake\ORM\Association\BelongsToMany::replaceLinks()
      */
@@ -886,9 +886,9 @@ class BelongsToMany extends Association
      * @param array $targetEntities list of entities belonging to the `target` side
      *   of this association
      * @param array $options list of options to be passed to the internal `save` call
+     * @throws \InvalidArgumentException when any of the values in $targetEntities is
+     *   detected to not be already persisted
      * @return bool true on success, false otherwise
-     * @throws \InvalidArgumentException when any of the values in $targetEntities is detected to not be already persisted
-     * @throws \Exception
      */
     public function link(EntityInterface $sourceEntity, array $targetEntities, array $options = [])
     {
@@ -937,9 +937,9 @@ class BelongsToMany extends Association
      *   this association
      * @param array|bool $options list of options to be passed to the internal `delete` call,
      *   or a `boolean`
+     * @throws \InvalidArgumentException if non persisted entities are passed or if
+     *   any of them is lacking a primary key value
      * @return bool Success
-     * @throws \InvalidArgumentException if non persisted entities are passed or if any of them is lacking a primary key value
-     * @throws \Exception
      */
     public function unlink(EntityInterface $sourceEntity, array $targetEntities, $options = [])
     {
@@ -1191,9 +1191,9 @@ class BelongsToMany extends Association
      * @param array $targetEntities list of entities from the target table to be linked
      * @param array $options list of options to be passed to the internal `save`/`delete` calls
      *   when persisting/updating new links, or deleting existing ones
+     * @throws \InvalidArgumentException if non persisted entities are passed or if
+     *   any of them is lacking a primary key value
      * @return bool success
-     * @throws \Exception
-     * @throws \InvalidArgumentException if non persisted entities are passed or if any of them is lacking a primary key value
      */
     public function replaceLinks(EntityInterface $sourceEntity, array $targetEntities, array $options = [])
     {

@@ -49,13 +49,13 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
 
     /**
      * Tries to lazy load a helper based on its name, if it cannot be found
-     * in the application folder, then it tries looking under the current plugin.
-     * App helpers are searched, and then plugin helpers.
+     * in the application folder, then it tries looking under the current plugin
+     * if any
      *
      * @param string $helper The helper name to be loaded
      * @return bool whether the helper could be loaded or not
      * @throws \Cake\View\Exception\MissingHelperException When a helper could not be found.
-     * @throws \Exception
+     *    App helpers are searched, and then plugin helpers.
      */
     public function __isset($helper)
     {

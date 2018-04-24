@@ -213,7 +213,6 @@ class Query implements ExpressionInterface, IteratorAggregate
      * around query execution.
      *
      * @return \Cake\Database\StatementInterface
-     * @throws \Exception
      */
     public function execute()
     {

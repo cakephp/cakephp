@@ -130,7 +130,6 @@ class CsrfProtectionMiddleware
      * Create a new token to be used for CSRF protection
      *
      * @return string
-     * @throws \Exception
      */
     protected function _createToken()
     {
