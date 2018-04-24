@@ -78,27 +78,6 @@ trait ViewVarsTrait
             }
         }
 
-        $deprecatedOptions = [
-            'layout' => 'layout',
-            'view' => 'template',
-            'theme' => 'theme',
-            'autoLayout' => 'autoLayout',
-            'viewPath' => 'templatePath',
-            'layoutPath' => 'layoutPath',
-        ];
-        foreach ($deprecatedOptions as $old => $new) {
-            if (property_exists($this, $old)) {
-                //4.x we need to use ViewBuilder::setProp($value) instead of ViewBuilder::prop($value)
-                $setter = "set" . ucfirst($new);
-                $builder->{$setter}($this->{$old});
-                trigger_error(sprintf(
-                    'Property $%s is deprecated. Use $this->viewBuilder()->%s() instead in beforeRender().',
-                    $old,
-                    $new
-                ), E_USER_DEPRECATED);
-            }
-        }
-
         foreach (['name', 'helpers', 'plugin'] as $prop) {
             if (isset($this->{$prop})) {
                 //4.x we need to use ViewBuilder::setProp($value) instead of ViewBuilder::prop($value)

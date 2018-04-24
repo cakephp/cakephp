@@ -1069,17 +1069,17 @@ class ControllerTest extends TestCase
     }
 
     /**
-     * Test declared deprecated properties like $theme are properly passed to view.
+     * 4.x
+     * Test declared deprecated properties like $theme are now NULL
      *
      * @return void
      */
     public function testDeclaredDeprecatedProperty()
     {
         $controller = new TestController(new ServerRequest(), new Response());
-        $theme = $controller->theme;
 
         // @codingStandardsIgnoreStart
-        $this->assertEquals($theme, @$controller->createView()->theme);
+        $this->assertNull( @$controller->createView()->theme);
         // @codingStandardsIgnoreEnd
     }
 

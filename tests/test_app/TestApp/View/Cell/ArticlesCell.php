@@ -89,7 +89,7 @@ class ArticlesCell extends \Cake\View\Cell
      */
     public function customTemplatePath()
     {
-        $this->viewBuilder()->templatePath('Cell/Articles/Subdir');
+        $this->viewBuilder()->setTemplatePath('Cell/Articles/Subdir');
     }
 
     /**
