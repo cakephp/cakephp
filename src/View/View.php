@@ -62,8 +62,6 @@ use RuntimeException;
  * @property \Cake\View\Helper\HtmlHelper $Html
  * @property \Cake\View\Helper\NumberHelper $Number
  * @property \Cake\View\Helper\PaginatorHelper $Paginator
- * @property \Cake\View\Helper\RssHelper $Rss
- * @property \Cake\View\Helper\SessionHelper $Session
  * @property \Cake\View\Helper\TextHelper $Text
  * @property \Cake\View\Helper\TimeHelper $Time
  * @property \Cake\View\Helper\UrlHelper $Url

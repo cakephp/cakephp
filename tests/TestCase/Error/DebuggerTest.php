@@ -359,7 +359,6 @@ object(Cake\View\View) {
 	Blocks => object(Cake\View\ViewBlock) {}
 	plugin => null
 	name => ''
-	passedArgs => []
 	helpers => [
 		(int) 0 => 'Html',
 		(int) 1 => 'Form'
@@ -376,8 +375,8 @@ object(Cake\View\View) {
 	request => object(Cake\Http\ServerRequest) {}
 	response => object(Cake\Http\Response) {}
 	elementCache => 'default'
-	viewClass => null
 	viewVars => []
+	passedArgs => []
 	Html => object(Cake\View\Helper\HtmlHelper) {}
 	Form => object(Cake\View\Helper\FormHelper) {}
 	int => (int) 2

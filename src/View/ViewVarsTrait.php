@@ -88,7 +88,9 @@ trait ViewVarsTrait
         ];
         foreach ($deprecatedOptions as $old => $new) {
             if (property_exists($this, $old)) {
-                $builder->{$new}($this->{$old});
+                //4.x we need to use ViewBuilder::setProp($value) instead of ViewBuilder::prop($value)
+                $setter = "set" . ucfirst($new);
+                $builder->{$setter}($this->{$old});
                 trigger_error(sprintf(
                     'Property $%s is deprecated. Use $this->viewBuilder()->%s() instead in beforeRender().',
                     $old,
@@ -99,7 +101,9 @@ trait ViewVarsTrait
 
         foreach (['name', 'helpers', 'plugin'] as $prop) {
             if (isset($this->{$prop})) {
-                $builder->{$prop}($this->{$prop});
+                //4.x we need to use ViewBuilder::setProp($value) instead of ViewBuilder::prop($value)
+                $setter = "set" . ucfirst($prop);
+                $builder->{$setter}($this->{$prop});
             }
         }
         $builder->setOptions($viewOptions);

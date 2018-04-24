@@ -2880,7 +2880,7 @@ XML;
 
         $this->Email->viewBuilder()
             ->setTemplate('default')
-            ->layout('test');
+            ->setLayout('test');
 
         $result = json_decode(json_encode($this->Email), true);
         $this->assertContains('test', $result['viewVars']['exception']);
