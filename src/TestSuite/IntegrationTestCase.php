@@ -506,7 +506,9 @@ abstract class IntegrationTestCase extends TestCase
             throw $e;
         } catch (Exception $e) {
             $this->_exception = $e;
-            $this->_handleError($e, $psrRequest);
+            //not passing the request it more accurately reflects what would happen if the global default
+            //exception handler was invoked
+            $this->_handleError($e,null);
         }
     }
 
