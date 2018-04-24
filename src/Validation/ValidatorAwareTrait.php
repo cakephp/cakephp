@@ -58,64 +58,6 @@ trait ValidatorAwareTrait
      * multiple different named validation sets, this is useful when you need
      * to use varying rules when saving from different routines in your system.
      *
-     * There are two different ways of creating and naming validation sets: by
-     * creating a new method inside your own Table subclass, or by building
-     * the validator object yourself and storing it using this method.
-     *
-     * For example, if you wish to create a validation set called 'forSubscription',
-     * you will need to create a method in your Table subclass as follows:
-     *
-     * ```
-     * public function validationForSubscription($validator)
-     * {
-     *  return $validator
-     *  ->add('email', 'valid-email', ['rule' => 'email'])
-     *  ->add('password', 'valid', ['rule' => 'notBlank'])
-     *  ->requirePresence('username');
-     * }
-     * ```
-     *
-     * Otherwise, you can build the object by yourself and store it in the Table object:
-     *
-     * ```
-     * $validator = new \Cake\Validation\Validator($table);
-     * $validator
-     *  ->add('email', 'valid-email', ['rule' => 'email'])
-     *  ->add('password', 'valid', ['rule' => 'notBlank'])
-     *  ->allowEmpty('bio');
-     * $table->setValidator('forSubscription', $validator);
-     * ```
-     *
-     * You can implement the method in `validationDefault` in your Table subclass
-     * should you wish to have a validation set that applies in cases where no other
-     * set is specified.
-     *
-     * @param string|null $name the name of the validation set to return
-     * @param \Cake\Validation\Validator|null $validator The validator instance to store,
-     *   use null to get a validator.
-     * @return \Cake\Validation\Validator
-     * @throws \RuntimeException
-     * @deprecated 3.5.0 Use getValidator/setValidator instead.
-     */
-    public function validator($name = null, Validator $validator = null)
-    {
-        deprecationWarning(
-            'ValidatorAwareTrait::validator() is deprecated. ' .
-            'Use ValidatorAwareTrait::getValidator()/setValidator() instead.'
-        );
-        if ($validator !== null) {
-            $name = $name ?: self::DEFAULT_VALIDATOR;
-            $this->setValidator($name, $validator);
-        }
-
-        return $this->getValidator($name);
-    }
-
-    /**
-     * Returns the validation rules tagged with $name. It is possible to have
-     * multiple different named validation sets, this is useful when you need
-     * to use varying rules when saving from different routines in your system.
-     *
      * If a validator has not been set earlier, this method will build a valiator
      * using a method inside your class.
      *
