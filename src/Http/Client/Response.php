@@ -227,7 +227,7 @@ class Response extends Message implements ResponseInterface
     }
 
     /**
-     * Check if the response was OK
+     * Check if the response status code was in the 2xx/3xx range
      *
      * @return bool
      */
