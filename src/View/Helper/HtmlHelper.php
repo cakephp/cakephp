@@ -1096,7 +1096,7 @@ class HtmlHelper extends Helper
      */
     public function para($class, $text, array $options = [])
     {
-        if (isset($options['escape'])) {
+        if (!empty($options['escape'])) {
             $text = h($text);
         }
         if ($class && !empty($class)) {
