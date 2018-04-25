@@ -61,7 +61,7 @@ class TestEmailTransport extends AbstractTransport
     /**
      * Gets emails sent
      *
-     * @return array
+     * @return \Cake\Mailer\Email[]
      */
     public static function getEmails()
     {

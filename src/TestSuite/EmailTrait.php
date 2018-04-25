@@ -15,6 +15,8 @@
 namespace Cake\TestSuite;
 
 use Cake\TestSuite\Constraint\Email\MailContains;
+use Cake\TestSuite\Constraint\Email\MailContainsHtml;
+use Cake\TestSuite\Constraint\Email\MailContainsText;
 use Cake\TestSuite\Constraint\Email\MailCount;
 use Cake\TestSuite\Constraint\Email\MailSentFrom;
 use Cake\TestSuite\Constraint\Email\MailSentTo;
@@ -98,6 +100,32 @@ trait EmailTrait
     }
 
     /**
+     * Asserts an email at a specific index contains expected html contents
+     *
+     * @param int $at Email index
+     * @param int $contents Contents
+     * @param string $message Message
+     * @return void
+     */
+    public function assertMailContainsHtmlAt($at, $contents, $message = null)
+    {
+        $this->assertThat($contents, new MailContainsHtml($at), $message);
+    }
+
+    /**
+     * Asserts an email at a specific index contains expected text contents
+     *
+     * @param int $at Email index
+     * @param int $contents Contents
+     * @param string $message Message
+     * @return void
+     */
+    public function assertMailContainsTextAt($at, $contents, $message = null)
+    {
+        $this->assertThat($contents, new MailContainsText($at), $message);
+    }
+
+    /**
      * Asserts an email at a specific index contains the expected value within an Email getter
      *
      * @param int $at Email index
@@ -145,6 +173,30 @@ trait EmailTrait
     public function assertMailContains($contents, $message = null)
     {
         $this->assertThat($contents, new MailContains(), $message);
+    }
+
+    /**
+     * Asserts an email contains expected html contents
+     *
+     * @param int $contents Contents
+     * @param string $message Message
+     * @return void
+     */
+    public function assertMailContainsHtml($contents, $message = null)
+    {
+        $this->assertThat($contents, new MailContainsHtml(), $message);
+    }
+
+    /**
+     * Asserts an email contains expected text contents
+     *
+     * @param int $contents Contents
+     * @param string $message Message
+     * @return void
+     */
+    public function assertMailContainsText($contents, $message = null)
+    {
+        $this->assertThat($contents, new MailContainsText(), $message);
     }
 
     /**

@@ -14,46 +14,26 @@
  */
 namespace Cake\TestSuite\Constraint\Email;
 
-use Cake\TestSuite\TestEmailTransport;
-use PHPUnit\Framework\Constraint\Constraint;
+use Cake\Mailer\Email;
 
 /**
- * Base class for all mail assertion constraints
+ * MailContainsText
  */
-abstract class MailConstraintBase extends Constraint
+class MailContainsText extends MailContains
 {
-
-    protected $at;
-
-    /**
-     * Constructor
-     *
-     * @param int $at At
-     * @return void
-     */
-    public function __construct($at = null)
-    {
-        $this->at = $at;
-        parent::__construct();
-    }
+    protected $type = Email::MESSAGE_TEXT;
 
     /**
-     * Gets the email or emails to check
+     * Assertion message string
      *
-     * @return \Cake\Mailer\Email[]
+     * @return string
      */
-    public function getEmails()
+    public function toString()
     {
-        $emails = TestEmailTransport::getEmails();
-
         if ($this->at) {
-            if (!isset($emails[$this->at])) {
-                return [];
-            }
-
-            return [$emails[$this->at]];
+            return sprintf('is in the text message of email #%d', $this->at);
         }
 
-        return $emails;
+        return 'is in the text message of an email';
     }
 }

@@ -21,6 +21,13 @@ class MailContains extends MailConstraintBase
 {
 
     /**
+     * Mail type to check contents of
+     *
+     * @var string
+     */
+    protected $type;
+
+    /**
      * Checks constraint
      *
      * @param mixed $other Constraint check
@@ -30,9 +37,11 @@ class MailContains extends MailConstraintBase
     {
         $emails = $this->getEmails();
         foreach ($emails as $email) {
-            $message = implode("\r\n", (array)$email->message());
+            $message = implode("\r\n", (array)$email->message($this->type));
 
-            return preg_match("/$other/", $message) !== false;
+            if (preg_match("/$other/", $message) > 0) {
+                return true;
+            }
         }
 
         return false;

@@ -79,7 +79,8 @@ class EmailTraitTest extends TestCase
         $this->assertMailSentTo('to@example.com');
         $this->assertMailSentTo('to2@example.com');
 
-        $this->assertMailContains('message');
+        $this->assertMailContains('text');
+        $this->assertMailContains('html');
 
         $this->assertMailSentWith('Hello world', 'subject');
         $this->assertMailSentWith('cc@example.com', 'cc');
@@ -106,8 +107,8 @@ class EmailTraitTest extends TestCase
         $this->assertMailSentToAt(0, 'to@example.com');
         $this->assertMailSentToAt(1, 'to2@example.com');
 
-        $this->assertMailContainsAt(0, 'message');
-        $this->assertMailContainsAt(1, 'message 2');
+        $this->assertMailContainsAt(0, 'text');
+        $this->assertMailContainsAt(1, 'html');
 
         $this->assertMailSentWithAt(0, 'Hello world', 'subject');
     }
@@ -124,6 +125,34 @@ class EmailTraitTest extends TestCase
 
         $this->sendEmails();
         $this->assertNoMailSent();
+    }
+
+    /**
+     * tests assertMailContainsHtml fails appropriately
+     *
+     * @return void
+     */
+    public function testAssertContainsHtmlFailure()
+    {
+        $this->expectException(AssertionFailedError::class);
+
+        $this->sendEmails();
+
+        $this->assertMailContainsHtmlAt(0, 'text');
+    }
+
+    /**
+     * tests assertMailContainsText fails appropriately
+     *
+     * @return void
+     */
+    public function testAssertContainsTextFailure()
+    {
+        $this->expectException(AssertionFailedError::class);
+
+        $this->sendEmails();
+
+        $this->assertMailContainsTextAt(1, 'html');
     }
 
     /**
@@ -158,7 +187,11 @@ class EmailTraitTest extends TestCase
             'assertMailSentWith' => ['assertMailSentWith', 'Failed asserting that \'Missing\' is in an email `subject`.', ['Missing', 'subject']],
             'assertMailSentWithAt' => ['assertMailSentWithAt', 'Failed asserting that \'Missing\' is in email #1 `subject`.', [1, 'Missing', 'subject']],
             'assertMailContains' => ['assertMailContains', 'Failed asserting that \'Missing\' is in an email.', ['Missing']],
+            'assertMailContainsHtml' => ['assertMailContainsHtml', 'Failed asserting that \'Missing\' is in the html message of an email.', ['Missing']],
+            'assertMailContainsText' => ['assertMailContainsText', 'Failed asserting that \'Missing\' is in the text message of an email.', ['Missing']],
             'assertMailContainsAt' => ['assertMailContainsAt', 'Failed asserting that \'Missing\' is in email #1.', [1, 'Missing']],
+            'assertMailContainsHtmlAt' => ['assertMailContainsHtmlAt', 'Failed asserting that \'Missing\' is in the html message of email #1.', [1, 'Missing']],
+            'assertMailContainsTextAt' => ['assertMailContainsTextAt', 'Failed asserting that \'Missing\' is in the text message of email #1.', [1, 'Missing']],
         ];
     }
 
@@ -174,11 +207,13 @@ class EmailTraitTest extends TestCase
             ->setCc('cc@example.com')
             ->setBcc(['bcc@example.com' => 'Baz Qux'])
             ->setSubject('Hello world')
-            ->send('message');
+            ->setEmailFormat(Email::MESSAGE_TEXT)
+            ->send('text');
 
         (new Email('alternate'))
             ->setTo('to2@example.com')
             ->setCc('cc2@example.com')
-            ->send('message 2');
+            ->setEmailFormat(Email::MESSAGE_HTML)
+            ->send('html');
     }
 }
