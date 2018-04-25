@@ -42,6 +42,23 @@ class TestEmailTransport extends AbstractTransport
     }
 
     /**
+     * Replaces all currently configured transports with this one
+     *
+     * @return void
+     */
+    public static function replaceAllTransports()
+    {
+        $configuredTransports = Email::configuredTransport();
+
+        foreach ($configuredTransports as $configuredTransport) {
+            $config = Email::getConfigTransport($configuredTransport);
+            $config['className'] = self::class;
+            Email::dropTransport($configuredTransport);
+            Email::setConfigTransport($configuredTransport, $config);
+        }
+    }
+
+    /**
      * Gets emails sent
      *
      * @return array

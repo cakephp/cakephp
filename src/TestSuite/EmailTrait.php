@@ -26,14 +26,10 @@ use Cake\TestSuite\Constraint\NoMailSentConstraint;
  *
  * **tests/bootstrap.php**
  * ```
- * use Cake\Mailer\Email;
  * use Cake\TestSuite\TestEmailTransport;
  *
- * // replace with other transport configs if required
- * $config = Email::getConfigTransport('default');
- * $config['className'] = TestEmailTransport::class;
- * Email::dropTransport('default');
- * Email::setConfigTransport('default', $config);
+ * // replaces existing transports with the TestEmailTransport for email assertions
+ * TestEmailTransport::replaceAllTransports();
  * ```
  */
 trait EmailTrait
