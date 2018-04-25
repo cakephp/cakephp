@@ -364,7 +364,7 @@ class SmtpTransportTest extends TestCase
         $email = new Email();
         $email->setFrom('noreply@cakephp.org', 'CakePHP Test');
         $email->setTo('cake@cakephp.org', 'CakePHP');
-        $email->returnPath('pleasereply@cakephp.org', 'CakePHP Return');
+        $email->setReturnPath('pleasereply@cakephp.org', 'CakePHP Return');
 
         $this->socket->expects($this->at(0))->method('write')->with("MAIL FROM:<pleasereply@cakephp.org>\r\n");
         $this->socket->expects($this->at(1))->method('read')->will($this->returnValue("250 OK\r\n"));
