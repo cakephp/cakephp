@@ -14,12 +14,12 @@
  */
 namespace Cake\TestSuite;
 
-use Cake\TestSuite\Constraint\MailContainsConstraint;
-use Cake\TestSuite\Constraint\MailCountConstraint;
-use Cake\TestSuite\Constraint\MailSentFromConstraint;
-use Cake\TestSuite\Constraint\MailSentToConstraint;
-use Cake\TestSuite\Constraint\MailSentWithConstraint;
-use Cake\TestSuite\Constraint\NoMailSentConstraint;
+use Cake\TestSuite\Constraint\Email\MailContains;
+use Cake\TestSuite\Constraint\Email\MailCount;
+use Cake\TestSuite\Constraint\Email\MailSentFrom;
+use Cake\TestSuite\Constraint\Email\MailSentTo;
+use Cake\TestSuite\Constraint\Email\MailSentWith;
+use Cake\TestSuite\Constraint\Email\NoMailSent;
 
 /**
  * Make assertions on emails sent through the Cake\TestSuite\TestEmailTransport
@@ -44,7 +44,7 @@ trait EmailTrait
      */
     public function assertMailCount($count, $message = null)
     {
-        $this->assertThat($count, new MailCountConstraint(), $message);
+        $this->assertThat($count, new MailCount(), $message);
     }
     /**
      *
@@ -55,7 +55,7 @@ trait EmailTrait
      */
     public function assertNoMailSent($message = null)
     {
-        $this->assertThat(null, new NoMailSentConstraint(), $message);
+        $this->assertThat(null, new NoMailSent(), $message);
     }
 
     /**
@@ -68,7 +68,7 @@ trait EmailTrait
      */
     public function assertMailSentToAt($at, $address, $message = null)
     {
-        $this->assertThat($address, new MailSentToConstraint($at), $message);
+        $this->assertThat($address, new MailSentTo($at), $message);
     }
 
     /**
@@ -81,7 +81,7 @@ trait EmailTrait
      */
     public function assertMailSentFromAt($at, $address, $message = null)
     {
-        $this->assertThat($address, new MailSentFromConstraint($at), $message);
+        $this->assertThat($address, new MailSentFrom($at), $message);
     }
 
     /**
@@ -94,7 +94,7 @@ trait EmailTrait
      */
     public function assertMailContainsAt($at, $contents, $message = null)
     {
-        $this->assertThat($contents, new MailContainsConstraint($at), $message);
+        $this->assertThat($contents, new MailContains($at), $message);
     }
 
     /**
@@ -108,7 +108,7 @@ trait EmailTrait
      */
     public function assertMailSentWithAt($at, $expected, $parameter, $message = null)
     {
-        $this->assertThat($expected, new MailSentWithConstraint($at, $parameter), $message);
+        $this->assertThat($expected, new MailSentWith($at, $parameter), $message);
     }
 
     /**
@@ -120,7 +120,7 @@ trait EmailTrait
      */
     public function assertMailSentTo($address, $message = null)
     {
-        $this->assertThat($address, new MailSentToConstraint(), $message);
+        $this->assertThat($address, new MailSentTo(), $message);
     }
 
     /**
@@ -132,7 +132,7 @@ trait EmailTrait
      */
     public function assertMailSentFrom($address, $message = null)
     {
-        $this->assertThat($address, new MailSentFromConstraint(), $message);
+        $this->assertThat($address, new MailSentFrom(), $message);
     }
 
     /**
@@ -144,7 +144,7 @@ trait EmailTrait
      */
     public function assertMailContains($contents, $message = null)
     {
-        $this->assertThat($contents, new MailContainsConstraint(), $message);
+        $this->assertThat($contents, new MailContains(), $message);
     }
 
     /**
@@ -157,6 +157,6 @@ trait EmailTrait
      */
     public function assertMailSentWith($expected, $parameter, $message = null)
     {
-        $this->assertThat($expected, new MailSentWithConstraint(null, $parameter), $message);
+        $this->assertThat($expected, new MailSentWith(null, $parameter), $message);
     }
 }

@@ -12,12 +12,12 @@
  * @since         3.7.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\TestSuite\Constraint;
+namespace Cake\TestSuite\Constraint\Email;
 
 /**
- * NoMailSentConstraint
+ * NoMailSent
  */
-class NoMailSentConstraint extends MailConstraintBase
+class NoMailSent extends MailConstraintBase
 {
 
     /**

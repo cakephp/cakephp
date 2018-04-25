@@ -12,14 +12,14 @@
  * @since         3.7.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\TestSuite\Constraint;
+namespace Cake\TestSuite\Constraint\Email;
 
 /**
- * MailSentToConstraint
+ * MailSentFromConstraint
  */
-class MailSentToConstraint extends MailSentWithConstraint
+class MailSentFrom extends MailSentWith
 {
-    protected $method = 'to';
+    protected $method = 'from';
 
     /**
      * Assertion message string
@@ -29,9 +29,9 @@ class MailSentToConstraint extends MailSentWithConstraint
     public function toString()
     {
         if ($this->at) {
-            return sprintf('was sent email #%d', $this->at);
+            return sprintf('sent email #%d', $this->at);
         }
 
-        return 'was sent an email';
+        return 'sent an email';
     }
 }
