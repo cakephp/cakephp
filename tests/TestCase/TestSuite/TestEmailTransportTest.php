@@ -16,8 +16,8 @@ namespace Cake\Test\TestCase\TestSuite;
 
 use Cake\Mailer\Email;
 use Cake\Network\Email\DebugTransport;
-use Cake\TestSuite\TestEmailTransport;
 use Cake\TestSuite\TestCase;
+use Cake\TestSuite\TestEmailTransport;
 
 class TestEmailTransportTest extends TestCase
 {
