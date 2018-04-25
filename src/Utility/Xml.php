@@ -157,6 +157,7 @@ class Xml
                 $xml = new DOMDocument();
                 $xml->loadXML($input, $flags);
             }
+
             return $xml;
         } catch (Exception $e) {
             throw new XmlException('Xml cannot be read. ' . $e->getMessage(), null, $e);

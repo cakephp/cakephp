@@ -65,15 +65,16 @@ class XmlTest extends TestCase
         Configure::write('App.encoding', $this->_appEncoding);
     }
 
-    public function testExceptionChainingForInvalidInput(){
+    public function testExceptionChainingForInvalidInput()
+    {
         try {
             $value = "invalid-xml-input<<";
             Xml::build($value); //should throw an XmlException
-            $this->assertFalse(true,'This line should not be executed because of exception above.');
-        }catch(XmlException $exception){
+            $this->assertFalse(true, 'This line should not be executed because of exception above.');
+        } catch (XmlException $exception) {
             $cause = $exception->getPrevious();
             $this->assertNotNull($cause);
-            $this->assertInstanceOf(\Exception::class, $cause );
+            $this->assertInstanceOf(\Exception::class, $cause);
         }
     }
 
