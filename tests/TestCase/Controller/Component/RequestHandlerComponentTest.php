@@ -524,8 +524,8 @@ class RequestHandlerComponentTest extends TestCase
             return $this->Controller->response;
         });
         $this->Controller->render();
-        $this->assertEquals('RequestHandlerTest' . DS . 'csv', $this->Controller->viewBuilder()->templatePath());
-        $this->assertEquals('csv', $this->Controller->viewBuilder()->layoutPath());
+        $this->assertEquals('RequestHandlerTest' . DS . 'csv', $this->Controller->viewBuilder()->getTemplatePath());
+        $this->assertEquals('csv', $this->Controller->viewBuilder()->getLayoutPath());
     }
 
     /**
@@ -851,9 +851,9 @@ XML;
     {
         $this->RequestHandler->renderAs($this->Controller, 'rss');
 
-        $this->Controller->viewBuilder()->templatePath('request_handler_test\\rss');
+        $this->Controller->viewBuilder()->setTemplatePath('request_handler_test\\rss');
         $this->RequestHandler->renderAs($this->Controller, 'js');
-        $this->assertEquals('request_handler_test' . DS . 'js', $this->Controller->viewBuilder()->templatePath());
+        $this->assertEquals('request_handler_test' . DS . 'js', $this->Controller->viewBuilder()->getTemplatePath());
     }
 
     /**
@@ -916,12 +916,12 @@ XML;
         $this->Controller->render();
 
         $this->RequestHandler->renderAs($this->Controller, 'print');
-        $this->assertEquals('RequestHandlerTest' . DS . 'print', $this->Controller->viewBuilder()->templatePath());
-        $this->assertEquals('print', $this->Controller->viewBuilder()->layoutPath());
+        $this->assertEquals('RequestHandlerTest' . DS . 'print', $this->Controller->viewBuilder()->getTemplatePath());
+        $this->assertEquals('print', $this->Controller->viewBuilder()->getLayoutPath());
 
         $this->RequestHandler->renderAs($this->Controller, 'js');
-        $this->assertEquals('RequestHandlerTest' . DS . 'js', $this->Controller->viewBuilder()->templatePath());
-        $this->assertEquals('js', $this->Controller->viewBuilder()->layoutPath());
+        $this->assertEquals('RequestHandlerTest' . DS . 'js', $this->Controller->viewBuilder()->getTemplatePath());
+        $this->assertEquals('js', $this->Controller->viewBuilder()->getLayoutPath());
     }
 
     /**
