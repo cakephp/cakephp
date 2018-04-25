@@ -285,7 +285,7 @@ XML;
                 new Response([
                     'HTTP/1.1 204 No Content',
                     'Content-Type: text/html'
-                ], 'ok')
+                ], '')
             ],
             [
                 false,
