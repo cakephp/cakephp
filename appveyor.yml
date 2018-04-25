@@ -30,13 +30,16 @@ install:
   - cd c:\
   - curl -fsS https://windows.php.net/downloads/releases/php-7.2.4-nts-Win32-VC15-x86.zip -o php.zip
   - 7z x php.zip -oc:\php > nul
-  - curl -fsS https://windows.php.net/downloads/pecl/releases/pdo_sqlsrv/5.2.0/php_pdo_sqlsrv-5.2.0-7.2-ts-vc15-x86.zip -o sqlsrv.zip
+  - curl -fsS https://windows.php.net/downloads/pecl/releases/pdo_sqlsrv/5.2.0/php_pdo_sqlsrv-5.2.0-7.2-nts-vc15-x86.zip -o pdosqlsrv.zip
+  - 7z x pdosqlsrv.zip -oc:\php\ext * > nul
+  - curl -fsS https://windows.php.net/downloads/pecl/releases/sqlsrv/5.2.0/php_sqlsrv-5.2.0-7.2-nts-vc15-x86.zip -o sqlsrv.zip
   - 7z x sqlsrv.zip -oc:\php\ext * > nul
   - cd c:\php
   - copy php.ini-production php.ini
   - echo date.timezone="UTC" >> php.ini
   - echo extension_dir=ext >> php.ini
   - echo extension=php_openssl.dll >> php.ini
+  - echo extension=php_sqlsrv.dll >> php.ini
   - echo extension=php_pdo_sqlsrv.dll >> php.ini
   - echo extension=php_intl.dll >> php.ini
   - echo extension=php_mbstring.dll >> php.ini
