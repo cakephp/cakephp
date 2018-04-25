@@ -45,6 +45,7 @@ install:
   - 7z x wincache.zip -oc:\php\ext php_wincache.dll > nul
   - echo extension=php_wincache.dll >> php.ini
   - echo wincache.enablecli = 1 >> php.ini
+  - dir c:\php\ext
   - cd C:\projects\cakephp
   - appveyor DownloadFile https://getcomposer.org/composer.phar
   - php composer.phar install --prefer-dist --no-interaction --ansi --no-progress
