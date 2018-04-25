@@ -726,7 +726,7 @@ class Email implements JsonSerializable, Serializable
      * @param string $varName Property name
      * @param string|array $email String with email,
      *   Array with email as key, name as value or email as value (without name)
-     * @param string $name Name
+     * @param string|null $name Name
      * @return $this
      * @throws \InvalidArgumentException
      */
@@ -785,7 +785,7 @@ class Email implements JsonSerializable, Serializable
      * @param string $varName Property name
      * @param string|array $email String with email,
      *   Array with email as key, name as value or email as value (without name)
-     * @param string $name Name
+     * @param string|null $name Name
      * @param string $throwMessage Exception message
      * @return $this
      * @throws \InvalidArgumentException
@@ -814,7 +814,7 @@ class Email implements JsonSerializable, Serializable
      * @param string $varName Property name
      * @param string|array $email String with email,
      *   Array with email as key, name as value or email as value (without name)
-     * @param string $name Name
+     * @param string|null $name Name
      * @return $this
      * @throws \InvalidArgumentException
      */
@@ -850,7 +850,7 @@ class Email implements JsonSerializable, Serializable
      */
     public function setSubject($subject)
     {
-        $this->_subject = $this->_encode((string)$subject);
+        $this->_subject = $this->_encode($subject);
 
         return $this;
     }
@@ -1099,7 +1099,7 @@ class Email implements JsonSerializable, Serializable
      */
     public function setViewVars($viewVars)
     {
-        $this->set((array)$viewVars);
+        $this->set($viewVars);
 
         return $this;
     }
@@ -1585,7 +1585,7 @@ class Email implements JsonSerializable, Serializable
     public function setProfile($config)
     {
         if (!is_array($config)) {
-            $config = (string)$config;
+            $config = $config;
         }
         $this->_applyConfig($config);
 
@@ -1672,7 +1672,7 @@ class Email implements JsonSerializable, Serializable
      */
     protected function flatten($value)
     {
-        return is_array($value) ? implode(';', $value) : (string)$value;
+        return is_array($value) ? implode(';', $value) : $value;
     }
 
     /**
@@ -2009,7 +2009,7 @@ class Email implements JsonSerializable, Serializable
                 !isset($fileInfo['contentDisposition']) ||
                 $fileInfo['contentDisposition']
             );
-            $part = new FormDataPart(false, $data, false);
+            $part = new FormDataPart('', $data, '');
 
             if ($hasDisposition) {
                 $part->disposition('attachment');
@@ -2059,7 +2059,7 @@ class Email implements JsonSerializable, Serializable
             $data = isset($fileInfo['data']) ? $fileInfo['data'] : $this->_readFile($fileInfo['file']);
 
             $msg[] = '--' . $boundary;
-            $part = new FormDataPart(false, $data, 'inline');
+            $part = new FormDataPart('', $data, 'inline');
             $part->type($fileInfo['mimetype']);
             $part->transferEncoding('base64');
             $part->contentId($fileInfo['contentId']);

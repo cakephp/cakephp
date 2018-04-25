@@ -37,9 +37,9 @@ class RedirectRoute extends Route
     public $response;
 
     /**
-     * The location to redirect to. Either a string or a CakePHP array URL.
+     * The location to redirect to.
      *
-     * @var array|string
+     * @var array
      */
     public $redirect;
 
@@ -47,7 +47,7 @@ class RedirectRoute extends Route
      * Constructor
      *
      * @param string $template Template string with parameter placeholders
-     * @param array|string $defaults Defaults for the route.
+     * @param array|string $defaults Defaults for the route. Either a string or a CakePHP array URL.
      * @param array $options Array of additional options for the Route
      */
     public function __construct($template, $defaults = [], array $options = [])

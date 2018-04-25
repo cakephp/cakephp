@@ -571,7 +571,7 @@ class RouteBuilder
      * @param string $template The URL template to use.
      * @param array $target An array describing the target route parameters. These parameters
      *   should indicate the plugin, prefix, controller, and action that this route points to.
-     * @param string $name The name of the route.
+     * @param string|null $name The name of the route.
      * @return \Cake\Routing\Route\Route
      */
     protected function _methodRoute($method, $template, $target, $name)
@@ -735,7 +735,7 @@ class RouteBuilder
      * Parse the defaults if they're a string
      *
      * @param string|array $defaults Defaults array from the connect() method.
-     * @return string|array
+     * @return array
      */
     protected static function parseDefaults($defaults)
     {
@@ -948,6 +948,7 @@ class RouteBuilder
     public function plugin($name, $options = [], $callback = null)
     {
         if ($callback === null) {
+            /** @var callable $callback */
             $callback = $options;
             $options = [];
         }

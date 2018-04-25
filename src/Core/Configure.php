@@ -370,7 +370,7 @@ class Configure
             $values = array_intersect_key($values, array_flip($keys));
         }
 
-        return (bool)$engine->dump($key, $values);
+        return $engine->dump($key, $values);
     }
 
     /**

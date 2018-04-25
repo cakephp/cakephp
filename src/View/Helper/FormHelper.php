@@ -796,7 +796,7 @@ class FormHelper extends Helper
         if (!$context->hasError($field)) {
             return '';
         }
-        $error = (array)$context->error($field);
+        $error = $context->error($field);
 
         if (is_array($text)) {
             $tmp = [];
@@ -1542,7 +1542,7 @@ class FormHelper extends Helper
      * used instead of the generated values if present.
      *
      * @param string $fieldName The name of the field to generate label for.
-     * @param string $label Label text.
+     * @param string|array $label Label text or array with label attributes.
      * @param array $options Options for the label element.
      * @return string Generated label element
      */

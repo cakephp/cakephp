@@ -130,7 +130,7 @@ class AssetMiddleware
      * Builds asset file path based off url
      *
      * @param string $url Asset URL
-     * @return string Absolute path for asset file
+     * @return string|null Absolute path for asset file, null on failure
      */
     protected function _getAssetFile($url)
     {
@@ -151,7 +151,7 @@ class AssetMiddleware
             }
         }
 
-        return '';
+        return null;
     }
 
     /**
