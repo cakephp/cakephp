@@ -241,7 +241,7 @@ class Response extends Message implements ResponseInterface
      *
      * @return bool
      */
-    public function isSuccessful()
+    public function isSuccess()
     {
         return $this->code >= 200 && $this->code <= 299;
     }

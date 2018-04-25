@@ -245,11 +245,11 @@ XML;
     }
 
     /**
-     * provider for isSuccesful.
+     * provider for isSuccess.
      *
      * @return array
      */
-    public static function isSuccesfulProvider()
+    public static function isSuccessProvider()
     {
         return [
             [
@@ -305,14 +305,14 @@ XML;
     }
 
     /**
-     * Test isSuccessful()
+     * Test isSuccess()
      *
-     * @dataProvider isSuccesfulProvider
+     * @dataProvider isSuccessProvider
      * @return void
      */
-    public function testIsSuccessful($expected, Response $response)
+    public function testIsSuccess($expected, Response $response)
     {
-        $this->assertEquals($expected, $response->isSuccessful());
+        $this->assertEquals($expected, $response->isSuccess());
     }
 
     /**
