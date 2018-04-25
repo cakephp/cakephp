@@ -162,7 +162,7 @@ class Xml
         } catch (Exception $e) {
             throw new XmlException('Xml cannot be read. ' . $e->getMessage(), null, $e);
         } finally {
-            //CakePHP requires PHP 5.6 so we can safely use finally to restore error handling
+            //CakePHP requires PHP 5.6 so we can safely use `finally` to restore error handling
             if ($hasDisable && !$options['loadEntities']) {
                 libxml_disable_entity_loader(false);
             }
