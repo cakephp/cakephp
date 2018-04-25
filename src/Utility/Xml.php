@@ -157,18 +157,16 @@ class Xml
                 $xml = new DOMDocument();
                 $xml->loadXML($input, $flags);
             }
+            return $xml;
         } catch (Exception $e) {
-            $xml = null;
+            throw new XmlException('Xml cannot be read. ' . $e->getMessage(), null, $e);
+        } finally {
+            //CakePHP requires PHP 5.6 so we can safely use finally to restore error handling
+            if ($hasDisable && !$options['loadEntities']) {
+                libxml_disable_entity_loader(false);
+            }
+            libxml_use_internal_errors($internalErrors);
         }
-        if ($hasDisable && !$options['loadEntities']) {
-            libxml_disable_entity_loader(false);
-        }
-        libxml_use_internal_errors($internalErrors);
-        if ($xml === null) {
-            throw new XmlException('Xml cannot be read.');
-        }
-
-        return $xml;
     }
 
     /**
