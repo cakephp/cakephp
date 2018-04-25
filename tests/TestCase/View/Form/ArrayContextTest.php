@@ -302,9 +302,9 @@ class ArrayContextTest extends TestCase
             ]
         ]);
         $this->assertEquals(['Comment is required'], $context->error('Comments.comment'));
-        $this->assertEquals('A valid userid is required', $context->error('Comments.user_id'));
+        $this->assertEquals(['A valid userid is required'], $context->error('Comments.user_id'));
         $this->assertEquals([], $context->error('Comments.empty'));
-        $this->assertNull($context->error('Comments.not_there'));
+        $this->assertEquals([], $context->error('Comments.not_there'));
     }
 
     /**
