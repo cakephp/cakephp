@@ -234,7 +234,7 @@ XML;
             'Content-Type: text/html'
         ];
         $response = new Response($headers, '');
-        $this->assertFalse($response->isOk());
+        $this->assertTrue($response->isOk());
 
         $headers = [
             'HTTP/1.0 404 Not Found',

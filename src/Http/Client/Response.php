@@ -227,21 +227,13 @@ class Response extends Message implements ResponseInterface
     }
 
     /**
-     * Check if the response was OK
+     * Check if the response status code was in the 2xx/3xx range
      *
      * @return bool
      */
     public function isOk()
     {
-        $codes = [
-            static::STATUS_OK,
-            static::STATUS_CREATED,
-            static::STATUS_ACCEPTED,
-            static::STATUS_NON_AUTHORITATIVE_INFORMATION,
-            static::STATUS_NO_CONTENT
-        ];
-
-        return in_array($this->code, $codes);
+        return $this->code >= 200 && $this->code <= 399;
     }
 
     /**
