@@ -40,7 +40,7 @@ abstract class MailConstraintBase extends Constraint
     /**
      * Gets the email or emails to check
      *
-     * @return Cake\Mailer\Email|array
+     * @return \Cake\Mailer\Email|array
      */
     public function getEmails()
     {
