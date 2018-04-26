@@ -362,9 +362,9 @@ class SmtpTransportTest extends TestCase
     public function testRcptWithReturnPath()
     {
         $email = new Email();
-        $email->from('noreply@cakephp.org', 'CakePHP Test');
+        $email->setFrom('noreply@cakephp.org', 'CakePHP Test');
         $email->setTo('cake@cakephp.org', 'CakePHP');
-        $email->returnPath('pleasereply@cakephp.org', 'CakePHP Return');
+        $email->setReturnPath('pleasereply@cakephp.org', 'CakePHP Return');
 
         $this->socket->expects($this->at(0))->method('write')->with("MAIL FROM:<pleasereply@cakephp.org>\r\n");
         $this->socket->expects($this->at(1))->method('read')->will($this->returnValue("250 OK\r\n"));
@@ -506,7 +506,7 @@ class SmtpTransportTest extends TestCase
     public function testGetLastResponseMultipleOperations()
     {
         $email = new Email();
-        $email->from('noreply@cakephp.org', 'CakePHP Test');
+        $email->setFrom('noreply@cakephp.org', 'CakePHP Test');
         $email->setTo('cake@cakephp.org', 'CakePHP');
 
         $this->socket->expects($this->at(0))->method('write')->with("MAIL FROM:<noreply@cakephp.org>\r\n");
@@ -631,7 +631,7 @@ class SmtpTransportTest extends TestCase
         $email = $this->getMockBuilder('Cake\Mailer\Email')
             ->setMethods(['message'])
             ->getMock();
-        $email->from('noreply@cakephp.org', 'CakePHP Test');
+        $email->setFrom('noreply@cakephp.org', 'CakePHP Test');
         $email->setTo('cake@cakephp.org', 'CakePHP');
         $email->expects($this->exactly(2))->method('message')->will($this->returnValue(['First Line']));
 
@@ -684,7 +684,7 @@ class SmtpTransportTest extends TestCase
         $email = $this->getMockBuilder('Cake\Mailer\Email')
             ->setMethods(['message'])
             ->getMock();
-        $email->from('noreply@cakephp.org', 'CakePHP Test');
+        $email->setFrom('noreply@cakephp.org', 'CakePHP Test');
         $email->setTo('cake@cakephp.org', 'CakePHP');
         $email->expects($this->once())->method('message')->will($this->returnValue(['First Line']));
 
