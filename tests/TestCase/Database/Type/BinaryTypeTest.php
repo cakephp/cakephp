@@ -64,22 +64,6 @@ class BinaryTypeTest extends TestCase
     }
 
     /**
-     * SQLServer returns binary fields as hexadecimal
-     * Ensure decoding happens for SQLServer drivers
-     *
-     * @return void
-     */
-    public function testToPHPSqlserver()
-    {
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $result = $this->type->toPHP('536F6D652076616C7565', $driver);
-        $this->assertInternalType('resource', $result);
-        $this->assertSame('Some value', stream_get_contents($result));
-    }
-
-    /**
      * Test exceptions on invalid data.
      *
      */
