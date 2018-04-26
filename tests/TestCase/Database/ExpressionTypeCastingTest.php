@@ -49,7 +49,7 @@ class ExpressionTypeCastingTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        Type::map('test', new TestType);
+        Type::set('test', new TestType);
     }
 
     /**

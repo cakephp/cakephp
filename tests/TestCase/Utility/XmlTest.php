@@ -18,6 +18,7 @@ use Cake\Collection\Collection;
 use Cake\Core\Configure;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Exception\XmlException;
 use Cake\Utility\Xml;
 
 /**
@@ -62,6 +63,19 @@ class XmlTest extends TestCase
     {
         parent::tearDown();
         Configure::write('App.encoding', $this->_appEncoding);
+    }
+
+    public function testExceptionChainingForInvalidInput()
+    {
+        try {
+            $value = "invalid-xml-input<<";
+            Xml::build($value);
+            $this->fail('This line should not be executed because of exception above.');
+        } catch (XmlException $exception) {
+            $cause = $exception->getPrevious();
+            $this->assertNotNull($cause);
+            $this->assertInstanceOf(\Exception::class, $cause);
+        }
     }
 
     /**

@@ -157,18 +157,16 @@ class Xml
                 $xml = new DOMDocument();
                 $xml->loadXML($input, $flags);
             }
-        } catch (Exception $e) {
-            $xml = null;
-        }
-        if ($hasDisable && !$options['loadEntities']) {
-            libxml_disable_entity_loader(false);
-        }
-        libxml_use_internal_errors($internalErrors);
-        if ($xml === null) {
-            throw new XmlException('Xml cannot be read.');
-        }
 
-        return $xml;
+            return $xml;
+        } catch (Exception $e) {
+            throw new XmlException('Xml cannot be read. ' . $e->getMessage(), null, $e);
+        } finally {
+            if ($hasDisable && !$options['loadEntities']) {
+                libxml_disable_entity_loader(false);
+            }
+            libxml_use_internal_errors($internalErrors);
+        }
     }
 
     /**
