@@ -23,6 +23,7 @@ if (class_exists('PHPUnit_Runner_Version', false) && !interface_exists('PHPUnit\
 use Cake\Core\Configure;
 use Cake\Database\Exception as DatabaseException;
 use Cake\Http\ServerRequest;
+use Cake\Http\ServerRequestFactory;
 use Cake\Http\Session;
 use Cake\Routing\Router;
 use Cake\TestSuite\Stub\TestExceptionRenderer;
@@ -481,6 +482,7 @@ abstract class IntegrationTestCase extends TestCase
     protected function _sendRequest($url, $method, $data = [])
     {
         $dispatcher = $this->_makeDispatcher();
+        $psrRequest = null;
         try {
             $request = $this->_buildRequest($url, $method, $data);
             $response = $dispatcher->execute($request);
@@ -497,6 +499,7 @@ abstract class IntegrationTestCase extends TestCase
             throw $e;
         } catch (Exception $e) {
             $this->_exception = $e;
+            // Simulate the global exception handler being invoked.
             $this->_handleError($e);
         }
     }
