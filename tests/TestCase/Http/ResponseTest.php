@@ -1833,7 +1833,7 @@ class ResponseTest extends TestCase
             $response = new Response();
 
             $result = $response->cors($request, $domains, $methods, $headers);
-            $this->assertInstanceOf('Cake\Network\CorsBuilder', $result);
+            $this->assertInstanceOf('Cake\Http\CorsBuilder', $result);
 
             if ($expectedOrigin) {
                 $this->assertTrue($response->hasHeader('Access-Control-Allow-Origin'));

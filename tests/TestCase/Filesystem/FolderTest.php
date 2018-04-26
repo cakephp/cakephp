@@ -494,13 +494,15 @@ class FolderTest extends TestCase
      */
     public function testFolderSubdirectories()
     {
-        $path = CAKE . 'Network';
+        $path = CAKE . 'Http';
         $folder = new Folder($path);
 
         $expected = [
+            $path . DS . 'Client',
+            $path . DS . 'Cookie',
             $path . DS . 'Exception',
-            $path . DS . 'Http',
-            $path . DS . 'Session'
+            $path . DS . 'Middleware',
+            $path . DS . 'Session',
         ];
         $result = $folder->subdirectories();
         $this->assertSame([], array_diff($expected, $result));
@@ -508,9 +510,11 @@ class FolderTest extends TestCase
         $this->assertSame([], array_diff($expected, $result));
 
         $expected = [
+            'Client',
+            'Cookie',
             'Exception',
-            'Http',
-            'Session'
+            'Middleware',
+            'Session',
         ];
         $result = $folder->subdirectories(null, false);
         $this->assertSame([], array_diff($expected, $result));
