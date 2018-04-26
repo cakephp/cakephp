@@ -30,15 +30,7 @@ use Zend\Diactoros\Response\EmitterInterface;
  */
 class Server implements EventDispatcherInterface
 {
-
-    /**
-     * Alias methods away so we can implement proxying methods.
-     */
-    use EventDispatcherTrait {
-        eventManager as private _eventManager;
-        getEventManager as private _getEventManager;
-        setEventManager as private _setEventManager;
-    }
+    use EventDispatcherTrait;
 
     /**
      * @var \Cake\Core\HttpApplicationInterface

@@ -35,14 +35,7 @@ use RuntimeException;
  */
 class CommandRunner implements EventDispatcherInterface
 {
-    /**
-     * Alias methods away so we can implement proxying methods.
-     */
-    use EventDispatcherTrait {
-        eventManager as private _eventManager;
-        getEventManager as private _getEventManager;
-        setEventManager as private _setEventManager;
-    }
+    use EventDispatcherTrait;
 
     /**
      * The application console commands are being run for.

@@ -110,7 +110,7 @@ class ComponentRegistryTest extends TestCase
     {
         $mock = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
         $mock->expects($this->never())
-            ->method('attach');
+            ->method('on');
 
         $this->Components->getController()->setEventManager($mock);
 
