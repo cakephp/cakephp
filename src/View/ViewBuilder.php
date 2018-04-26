@@ -71,7 +71,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      *
      * @var bool
      */
-    protected $_autoLayout = false;
+    protected $_autoLayout = true;
 
     /**
      * The layout path to build the view with.
