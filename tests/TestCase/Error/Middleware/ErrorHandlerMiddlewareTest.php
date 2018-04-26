@@ -148,29 +148,6 @@ class ErrorHandlerMiddlewareTest extends TestCase
     }
 
     /**
-     * Test rendering an error page holds onto the original request.
-     *
-     * @return void
-     */
-    public function testHandleExceptionPreserveRequest()
-    {
-        $request = ServerRequestFactory::fromGlobals();
-        $request = $request->withHeader('Accept', 'application/json');
-
-        $response = new Response();
-        $middleware = new ErrorHandlerMiddleware();
-        $next = function ($req, $res) {
-            throw new \Cake\Http\Exception\NotFoundException('whoops');
-        };
-        $result = $middleware($request, $response, $next);
-        $this->assertInstanceOf('Cake\Http\Response', $result);
-        $this->assertNotSame($result, $response);
-        $this->assertEquals(404, $result->getStatusCode());
-        $this->assertContains('"message": "whoops"', '' . $result->getBody());
-        $this->assertEquals('application/json; charset=UTF-8', $result->getHeaderLine('Content-type'));
-    }
-
-    /**
      * Test handling PHP 7's Error instance.
      *
      * @return void
