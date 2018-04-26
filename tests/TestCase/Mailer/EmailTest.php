@@ -2908,6 +2908,7 @@ XML;
                 '_layout' => 'test',
                 '_helpers' => ['Html'],
                 '_className' => 'Cake\View\View',
+                '_autoLayout' => true
             ],
             'viewVars' => [
                 'users' => [

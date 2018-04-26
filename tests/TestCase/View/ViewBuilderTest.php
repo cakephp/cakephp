@@ -52,7 +52,7 @@ class ViewBuilderTest extends TestCase
     public function booleanPropertyProvider()
     {
         return [
-            ['autoLayout', false, true],
+            ['autoLayout', true, false],
         ];
     }
 
@@ -249,6 +249,7 @@ class ViewBuilderTest extends TestCase
             '_layout' => 'test',
             '_helpers' => ['Html'],
             '_className' => 'JsonView',
+            '_autoLayout' => true
         ];
         $this->assertEquals($expected, $result);
 
