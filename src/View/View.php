@@ -619,7 +619,7 @@ class View implements EventDispatcherInterface
      * The name specified is the filename of the layout in /src/Template/Layout
      * without the .ctp extension.
      *
-     * @return string
+     * @return string|false
      */
     public function getLayout()
     {
@@ -648,7 +648,7 @@ class View implements EventDispatcherInterface
      *
      * @deprecated 3.5.0 Use getLayout()/setLayout() instead.
      * @param string|null $name Layout file name to set. If null returns current name.
-     * @return string|null
+     * @return string|false
      */
     public function layout($name = null)
     {
