@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         3.5.2
+ * @since         3.6.2
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace TestApp;
@@ -43,7 +43,7 @@ class ApplicationWithExceptionsInMiddleware extends BaseApplication
             // and make an error page/response
             ->add(ErrorHandlerMiddleware::class)
 
-            // Handle plugin/theme assets like CakePHP normally does.
+            // Throw an error
             ->add(ThrowsExceptionMiddleware::class)
 
             // Add routing middleware.

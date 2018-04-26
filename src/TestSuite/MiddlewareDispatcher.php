@@ -20,6 +20,7 @@ use Cake\Http\ServerRequestFactory;
 use LogicException;
 use ReflectionClass;
 use ReflectionException;
+use Zend\Diactoros\Stream;
 
 /**
  * Dispatches a request capturing the response for integration
@@ -66,12 +67,41 @@ class MiddlewareDispatcher
     }
 
     /**
+     * Create a PSR7 request from the request spec.
+     *
+     * @param array $spec The request spec.
+     * @return \Psr\Http\Message\ServerRequestInterface
+     */
+    protected function _createRequest($spec)
+    {
+        if (isset($spec['input'])) {
+            $spec['post'] = [];
+        }
+        $request = ServerRequestFactory::fromGlobals(
+            array_merge($_SERVER, $spec['environment'], ['REQUEST_URI' => $spec['url']]),
+            $spec['query'],
+            $spec['post'],
+            $spec['cookies']
+        );
+        $request = $request->withAttribute('session', $spec['session']);
+
+        if (isset($spec['input'])) {
+            $stream = new Stream('php://memory', 'rw');
+            $stream->write($spec['input']);
+            $stream->rewind();
+            $request = $request->withBody($stream);
+        }
+
+        return $request;
+    }
+
+    /**
      * Run a request and get the response.
      *
-     * @param \Psr\Http\Message\ServerRequestInterface $request The request to execute.
+     * @param array $requestSpec The request spec to execute.
      * @return \Psr\Http\Message\ResponseInterface The generated response.
      */
-    public function execute($request)
+    public function execute($requestSpec)
     {
         try {
             $reflect = new ReflectionClass($this->_class);
@@ -92,6 +122,6 @@ class MiddlewareDispatcher
 
         $server = new Server($app);
 
-        return $server->run($request);
+        return $server->run($this->_createRequest($requestSpec));
     }
 }

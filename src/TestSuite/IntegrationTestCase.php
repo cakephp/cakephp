@@ -35,7 +35,6 @@ use Cake\View\Helper\SecureFieldTokenTrait;
 use Exception;
 use LogicException;
 use PHPUnit\Exception as PhpunitException;
-use Zend\Diactoros\Stream;
 
 /**
  * A test case class intended to make integration tests of
@@ -486,13 +485,7 @@ abstract class IntegrationTestCase extends TestCase
         $psrRequest = null;
         try {
             $request = $this->_buildRequest($url, $method, $data);
-            $psrRequest = $this->_createRequest($request);
-            if ($dispatcher instanceof LegacyRequestDispatcher) {
-                //The legacy dispatcher expects an array...
-                $response = $dispatcher->execute($request);
-            } else {
-                $response = $dispatcher->execute($psrRequest);
-            }
+            $response = $dispatcher->execute($request);
             $this->_requestSession = $request['session'];
             if ($this->_retainFlashMessages && $this->_flashMessages) {
                 $this->_requestSession->write('Flash', $this->_flashMessages);
@@ -506,39 +499,9 @@ abstract class IntegrationTestCase extends TestCase
             throw $e;
         } catch (Exception $e) {
             $this->_exception = $e;
-            //not passing the request it more accurately reflects what would happen if the global default
-            //exception handler was invoked
-            $this->_handleError($e, null);
+            // Simulate the global exception handler being invoked.
+            $this->_handleError($e);
         }
-    }
-
-    /**
-     * Create a PSR7 request from the request spec.
-     *
-     * @param array $spec The request spec.
-     * @return \Psr\Http\Message\ServerRequestInterface
-     */
-    protected function _createRequest($spec)
-    {
-        if (isset($spec['input'])) {
-            $spec['post'] = [];
-        }
-        $request = ServerRequestFactory::fromGlobals(
-            array_merge($_SERVER, $spec['environment'], ['REQUEST_URI' => $spec['url']]),
-            $spec['query'],
-            $spec['post'],
-            $spec['cookies']
-        );
-        $request = $request->withAttribute('session', $spec['session']);
-
-        if (isset($spec['input'])) {
-            $stream = new Stream('php://memory', 'rw');
-            $stream->write($spec['input']);
-            $stream->rewind();
-            $request = $request->withBody($stream);
-        }
-
-        return $request;
     }
 
     /**
@@ -590,18 +553,17 @@ abstract class IntegrationTestCase extends TestCase
      * If that class does not exist, the built-in renderer will be used.
      *
      * @param \Exception $exception Exception to handle.
-     * @param \Psr\Http\Message\RequestInterface $request The request.
      * @return void
      * @throws \Exception
      */
-    protected function _handleError($exception, $request)
+    protected function _handleError($exception)
     {
         $class = Configure::read('Error.exceptionRenderer');
         if (empty($class) || !class_exists($class)) {
             $class = 'Cake\Error\ExceptionRenderer';
         }
         /** @var \Cake\Error\ExceptionRenderer $instance */
-        $instance = new $class($exception, $request);
+        $instance = new $class($exception);
         $this->_response = $instance->render();
     }
 
