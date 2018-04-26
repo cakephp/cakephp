@@ -45,13 +45,14 @@ class ViewBuilderTest extends TestCase
 
     /**
      * data provider for boolean properties.
+     * Format: [key, expectedDefault, newValue]
      *
      * @return array
      */
     public function booleanPropertyProvider()
     {
         return [
-            ['autoLayout', true],
+            ['autoLayout', false, true],
         ];
     }
 
@@ -74,7 +75,7 @@ class ViewBuilderTest extends TestCase
      * @dataProvider booleanPropertyProvider
      * @return void
      */
-    public function testBooleanProperties($property, $value)
+    public function testBooleanProperties($property, $default, $value)
     {
         $builder = new ViewBuilder();
 
@@ -82,7 +83,7 @@ class ViewBuilderTest extends TestCase
         $setter = 'enable' . ucfirst($property);
         $getter = 'is' . ucfirst($property) . 'Enabled';
 
-        $this->assertNull($builder->{$getter}(), 'Default value should be null');
+        $this->assertSame($default, $builder->{$getter}(), 'Default value should be null');
         $this->assertSame($builder, $builder->{$setter}($value), 'Setter returns this');
         $this->assertSame($value, $builder->{$getter}(), 'Getter gets value.');
     }
