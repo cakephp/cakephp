@@ -101,12 +101,6 @@ class FormData implements Countable
             $this->addRecursive($name, $value);
         } elseif (is_resource($value)) {
             $this->addFile($name, $value);
-        } elseif (is_string($value) && strlen($value) && $value[0] === '@') {
-            deprecationWarning(
-                'Using the @ syntax for file uploads is not safe and is deprecated. ' .
-                'Instead you should use file handles.'
-            );
-            $this->addFile($name, $value);
         } elseif ($name instanceof FormDataPart && $value === null) {
             $this->_hasComplexPart = true;
             $this->_parts[] = $name;

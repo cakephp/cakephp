@@ -195,7 +195,7 @@ class MailerTest extends TestCase
             ->with('foo', 'bar');
 
         $mailer->send('test', ['foo', 'bar']);
-        $this->assertEquals('cakephp', $mailer->viewBuilder()->template());
+        $this->assertEquals('cakephp', $mailer->viewBuilder()->getTemplate());
     }
 
     /**

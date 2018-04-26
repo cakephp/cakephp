@@ -14,7 +14,6 @@
  */
 namespace Cake\ORM\Behavior;
 
-use ArrayObject;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\ORM\Association;
@@ -119,7 +118,7 @@ class CounterCacheBehavior extends Behavior
      * @param \ArrayObject $options The options for the query
      * @return void
      */
-    public function beforeSave(Event $event, EntityInterface $entity, ArrayObject $options)
+    public function beforeSave(Event $event, EntityInterface $entity, $options)
     {
         if (isset($options['ignoreCounterCache']) && $options['ignoreCounterCache'] === true) {
             return;
@@ -156,7 +155,7 @@ class CounterCacheBehavior extends Behavior
      * @param \ArrayObject $options The options for the query
      * @return void
      */
-    public function afterSave(Event $event, EntityInterface $entity, ArrayObject $options)
+    public function afterSave(Event $event, EntityInterface $entity, $options)
     {
         if (isset($options['ignoreCounterCache']) && $options['ignoreCounterCache'] === true) {
             return;
@@ -176,7 +175,7 @@ class CounterCacheBehavior extends Behavior
      * @param \ArrayObject $options The options for the query
      * @return void
      */
-    public function afterDelete(Event $event, EntityInterface $entity, ArrayObject $options)
+    public function afterDelete(Event $event, EntityInterface $entity, $options)
     {
         if (isset($options['ignoreCounterCache']) && $options['ignoreCounterCache'] === true) {
             return;
