@@ -89,7 +89,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
         }
 
         $className = $this->_resolveClassName($objectName);
-        if (!$className || (is_string($className) && !class_exists($className))) {
+        if ($className === false || (is_string($className) && !class_exists($className))) {
             list($plugin, $objectName) = pluginSplit($objectName);
             $this->_throwMissingClassError($objectName, $plugin);
         }
@@ -153,7 +153,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * Should resolve the classname for a given object type.
      *
      * @param string|object $class The class to resolve or object.
-     * @return string|object|bool The resolved name or false for failure.
+     * @return string|object|false The resolved name or false for failure.
      */
     abstract protected function _resolveClassName($class);
 
@@ -173,7 +173,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * This method should construct and do any other initialization logic
      * required.
      *
-     * @param string $class The class to build.
+     * @param string|object $class The class to build.
      * @param string $alias The alias of the object.
      * @param array $config The Configuration settings for construction
      * @return object

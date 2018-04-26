@@ -200,31 +200,6 @@ class Security
     }
 
     /**
-     * Encrypts/Decrypts a text using the given key using rijndael method.
-     *
-     * @param string $text Encrypted string to decrypt, normal string to encrypt
-     * @param string $key Key to use as the encryption key for encrypted data.
-     * @param string $operation Operation to perform, encrypt or decrypt
-     * @throws \InvalidArgumentException When there are errors.
-     * @return string Encrypted/Decrypted string
-     */
-    public static function rijndael($text, $key, $operation)
-    {
-        if (empty($key)) {
-            throw new InvalidArgumentException('You cannot use an empty key for Security::rijndael()');
-        }
-        if (empty($operation) || !in_array($operation, ['encrypt', 'decrypt'])) {
-            throw new InvalidArgumentException('You must specify the operation for Security::rijndael(), either encrypt or decrypt');
-        }
-        if (mb_strlen($key, '8bit') < 32) {
-            throw new InvalidArgumentException('You must use a key larger than 32 bytes for Security::rijndael()');
-        }
-        $crypto = static::engine();
-
-        return $crypto->rijndael($text, $key, $operation);
-    }
-
-    /**
      * Encrypt a value using AES-256.
      *
      * *Caveat* You cannot properly encrypt/decrypt data with trailing null bytes.
