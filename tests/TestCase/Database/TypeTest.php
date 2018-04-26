@@ -15,8 +15,6 @@
 namespace Cake\Test\TestCase\Database;
 
 use Cake\Database\Type;
-use Cake\Database\Type\BoolType;
-use Cake\Database\Type\IntegerType;
 use Cake\Database\Type\UuidType;
 use Cake\TestSuite\TestCase;
 use PDO;
@@ -43,7 +41,7 @@ class TypeTest extends TestCase
      */
     public function setUp()
     {
-        $this->_originalMap = Type::map();
+        $this->_originalMap = Type::getMap();
         parent::setUp();
     }
 
@@ -56,7 +54,7 @@ class TypeTest extends TestCase
     {
         parent::tearDown();
 
-        Type::map($this->_originalMap);
+        Type::setMap($this->_originalMap);
     }
 
     /**
@@ -120,15 +118,19 @@ class TypeTest extends TestCase
      */
     public function testMapAndBuild()
     {
-        $map = Type::map();
-        $this->assertNotEmpty($map);
-        $this->assertArrayNotHasKey('foo', $map);
+        $this->deprecated(function () {
+            $map = Type::map();
+            $this->assertNotEmpty($map);
+            $this->assertArrayNotHasKey('foo', $map);
+        });
 
         $fooType = FooType::class;
         Type::map('foo', $fooType);
-        $map = Type::map();
+        $map = Type::getMap();
         $this->assertEquals($fooType, $map['foo']);
-        $this->assertEquals($fooType, Type::map('foo'));
+        $this->deprecated(function () use ($fooType) {
+            $this->assertEquals($fooType, Type::map('foo'));
+        });
 
         $type = Type::build('foo');
         $this->assertInstanceOf($fooType, $type);
@@ -136,9 +138,9 @@ class TypeTest extends TestCase
         $this->assertEquals('text', $type->getBaseType());
 
         Type::map('foo2', $fooType);
-        $map = Type::map();
+        $map = Type::getMap();
         $this->assertSame($fooType, $map['foo2']);
-        $this->assertSame($fooType, Type::map('foo2'));
+        $this->assertSame($fooType, Type::getMap('foo2'));
 
         $type = Type::build('foo2');
         $this->assertInstanceOf($fooType, $type);
@@ -169,14 +171,37 @@ class TypeTest extends TestCase
      */
     public function testMapAndBuildWithObjects()
     {
-        $map = Type::map();
+        $map = Type::getMap();
         Type::clear();
 
         $uuidType = new UuidType('uuid');
-        Type::map('uuid', $uuidType);
+        $this->deprecated(function () use ($uuidType) {
+            Type::map('uuid', $uuidType);
+        });
 
         $this->assertSame($uuidType, Type::build('uuid'));
-        Type::map($map);
+        Type::setMap($map);
+    }
+
+    /**
+     * testGetMapAndSetMap
+     *
+     * @return void
+     */
+    public function testGetMapAndSetMap()
+    {
+        $map = Type::getMap();
+        $this->assertNotEmpty($map);
+        $this->assertArrayNotHasKey('foo', $map);
+
+        $expected = [
+            'foo' => 'bar',
+            'ping' => 'pong',
+        ];
+        Type::setMap($expected);
+
+        $this->assertEquals($expected, Type::getMap());
+        $this->assertEquals('bar', Type::getMap('foo'));
     }
 
     /**
@@ -186,15 +211,15 @@ class TypeTest extends TestCase
      */
     public function testClear()
     {
-        $map = Type::map();
+        $map = Type::getMap();
         $this->assertNotEmpty($map);
 
         $type = Type::build('float');
         Type::clear();
 
-        $this->assertEmpty(Type::map());
-        Type::map($map);
-        $newMap = Type::map();
+        $this->assertEmpty(Type::getMap());
+        Type::setMap($map);
+        $newMap = Type::getMap();
 
         $this->assertEquals(array_keys($map), array_keys($newMap));
         $this->assertEquals($map['integer'], $newMap['integer']);
