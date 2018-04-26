@@ -157,23 +157,6 @@ class TypeTest extends TestCase
     }
 
     /**
-     * Tests new types can be registered and built as objects
-     *
-     * @return void
-     */
-    public function testMapAndBuildWithObjects()
-    {
-        $map = Type::getMap();
-        Type::clear();
-
-        $uuidType = new UuidType('uuid');
-        Type::map('uuid', $uuidType);
-
-        $this->assertSame($uuidType, Type::build('uuid'));
-        Type::setMap($map);
-    }
-
-    /**
      * Tests clear function in conjunction with map
      *
      * @return void
