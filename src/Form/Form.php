@@ -226,7 +226,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
         $validator = $this->getValidator();
         if (!$validator->count()) {
             $method = new ReflectionMethod($this, 'validator');
-            if ($method->getDeclaringClass() !== __CLASS__) {
+            if ($method->getDeclaringClass()->getName() !== __CLASS__) {
                 $validator = $this->validator();
             }
         }
