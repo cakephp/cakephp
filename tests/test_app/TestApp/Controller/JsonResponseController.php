@@ -33,12 +33,13 @@ class JsonResponseController extends AppController
         ],
     ];
 
-    public function apiGetData(){
-        if(!$this->getRequest()->accepts('application/json')){
-            throw new InternalErrorException( "Client MUST sent the Accept: application/json header");
+    public function apiGetData()
+    {
+        if (!$this->getRequest()->accepts('application/json')) {
+            throw new InternalErrorException("Client MUST sent the Accept: application/json header");
         }
 
-        $data = ['a','b','c','d'];
+        $data = ['a', 'b', 'c', 'd'];
         $this->set(compact('data'));
         $this->set('_serialize', ['data']);
         $this->RequestHandler->renderAs($this, 'json');
