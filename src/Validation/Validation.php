@@ -96,24 +96,6 @@ class Validation
     public static $errors = [];
 
     /**
-     * Backwards compatibility wrapper for Validation::notBlank().
-     *
-     * @param string $check Value to check.
-     * @return bool Success.
-     * @deprecated 3.0.2 Use Validation::notBlank() instead.
-     * @see \Cake\Validation\Validation::notBlank()
-     */
-    public static function notEmpty($check)
-    {
-        deprecationWarning(
-            'Validation::notEmpty() is deprecated. ' .
-            'Use Validation::notBlank() instead.'
-        );
-
-        return static::notBlank($check);
-    }
-
-    /**
      * Checks that a string contains something other than whitespace
      *
      * Returns true if string contains something other than whitespace
@@ -298,67 +280,31 @@ class Validation
 
         $operator = str_replace([' ', "\t", "\n", "\r", "\0", "\x0B"], '', strtolower($operator));
         switch ($operator) {
-            case 'isgreater':
-                /*
-                 * @deprecated 3.6.0 Use Validation::COMPARE_GREATER instead.
-                 */
-                deprecationWarning(sprintf($message, $operator, 'COMPARE_GREATER'));
-                // no break
             case static::COMPARE_GREATER:
                 if ($check1 > $check2) {
                     return true;
                 }
                 break;
-            case 'isless':
-                /*
-                 * @deprecated 3.6.0 Use Validation::COMPARE_LESS instead.
-                 */
-                deprecationWarning(sprintf($message, $operator, 'COMPARE_LESS'));
-                // no break
             case static::COMPARE_LESS:
                 if ($check1 < $check2) {
                     return true;
                 }
                 break;
-            case 'greaterorequal':
-                /*
-                 * @deprecated 3.6.0 Use Validation::COMPARE_GREATER_OR_EQUAL instead.
-                 */
-                deprecationWarning(sprintf($message, $operator, 'COMPARE_GREATER_OR_EQUAL'));
-                // no break
             case static::COMPARE_GREATER_OR_EQUAL:
                 if ($check1 >= $check2) {
                     return true;
                 }
                 break;
-            case 'lessorequal':
-                /*
-                 * @deprecated 3.6.0 Use Validation::COMPARE_LESS_OR_EQUAL instead.
-                 */
-                deprecationWarning(sprintf($message, $operator, 'COMPARE_LESS_OR_EQUAL'));
-                // no break
             case static::COMPARE_LESS_OR_EQUAL:
                 if ($check1 <= $check2) {
                     return true;
                 }
                 break;
-            case 'equalto':
-                /*
-                 * @deprecated 3.6.0 Use Validation::COMPARE_EQUAL instead.
-                 */
-                deprecationWarning(sprintf($message, $operator, 'COMPARE_EQUAL'));
-                // no break
             case static::COMPARE_EQUAL:
                 if ($check1 == $check2) {
                     return true;
                 }
                 break;
-            case 'notequal':
-                /*
-                 * @deprecated 3.6.0 Use Validation::COMPARE_NOT_EQUAL instead.
-                 */
-                deprecationWarning(sprintf($message, $operator, 'COMPARE_NOT_EQUAL'));
-                // no break
             case static::COMPARE_NOT_EQUAL:
                 if ($check1 != $check2) {
                     return true;

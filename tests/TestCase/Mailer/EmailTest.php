@@ -20,7 +20,6 @@ use Cake\Log\Log;
 use Cake\Mailer\Email;
 use Cake\Mailer\Transport\DebugTransport;
 use Cake\TestSuite\TestCase;
-use Cake\View\Exception\MissingTemplateException;
 use Exception;
 use SimpleXmlElement;
 
@@ -110,7 +109,7 @@ class EmailTest extends TestCase
     public $fixtures = ['core.users'];
 
     /**
-     * @var \Cake\Mailer\Email
+     * @var \Cake\Test\TestCase\Mailer\TestEmail
      */
     protected $Email;
 
@@ -1619,7 +1618,8 @@ class EmailTest extends TestCase
         $this->Email->setTo(['you@cakephp.org' => 'You']);
         $this->Email->setSubject('My title');
         $this->Email->setProfile(['empty']);
-        $this->Email->setTemplate('default', 'default');
+        $this->Email->setLayout('default');
+        $this->Email->setTemplate('default');
         $result = $this->Email->send();
 
         $this->assertContains('This email was sent using the CakePHP Framework', $result['message']);
@@ -1663,7 +1663,8 @@ class EmailTest extends TestCase
         $this->Email->setTo(['you@cakephp.org' => 'You']);
         $this->Email->setSubject('My title');
         $this->Email->setProfile(['empty']);
-        $this->Email->setTemplate('default', 'default');
+        $this->Email->setLayout('default');
+        $this->Email->setTemplate('default');
         $this->Email->setEmailFormat('both');
         $result = $this->Email->send();
 
@@ -1737,7 +1738,8 @@ class EmailTest extends TestCase
         $this->Email->setSubject('My title');
         $this->Email->setProfile(['empty']);
         $this->Email->setTheme('TestTheme');
-        $this->Email->setTemplate('themed', 'default');
+        $this->Email->setLayout('default');
+        $this->Email->setTemplate('themed');
         $result = $this->Email->send();
 
         $this->assertContains('In TestTheme', $result['message']);
@@ -1762,7 +1764,8 @@ class EmailTest extends TestCase
         $this->Email->setSubject('My title');
         $this->Email->setProfile(['empty']);
         $this->Email->setEmailFormat('html');
-        $this->Email->setTemplate('html', 'default');
+        $this->Email->setLayout('default');
+        $this->Email->setTemplate('html');
         $result = $this->Email->send();
 
         $this->assertTextContains('<h1>HTML Ipsum Presents</h1>', $result['message']);
@@ -1783,7 +1786,8 @@ class EmailTest extends TestCase
         $this->Email->setTo(['you@cakephp.org' => 'You']);
         $this->Email->setSubject('My title');
         $this->Email->setProfile(['empty']);
-        $this->Email->setTemplate('custom', 'default');
+        $this->Email->setLayout('default');
+        $this->Email->setTemplate('custom');
         $this->Email->setViewVars(['value' => 12345]);
         $result = $this->Email->send();
 
@@ -1804,7 +1808,8 @@ class EmailTest extends TestCase
         $this->Email->setTo(['you@cakephp.org' => 'You']);
         $this->Email->setSubject('My title');
         $this->Email->setProfile(['empty']);
-        $this->Email->setTemplate('japanese', 'default');
+        $this->Email->setLayout('default');
+        $this->Email->setTemplate('japanese');
         $this->Email->setViewVars(['value' => '日本語の差し込み123']);
         $this->Email->charset = 'ISO-2022-JP';
         $result = $this->Email->send();
@@ -1828,7 +1833,8 @@ class EmailTest extends TestCase
         $this->Email->setTo(['you@cakephp.org' => 'You']);
         $this->Email->setSubject('My title');
         $this->Email->setProfile(['empty']);
-        $this->Email->setTemplate('custom_helper', 'default');
+        $this->Email->setLayout('default');
+        $this->Email->setTemplate('custom_helper');
         $this->Email->setViewVars(['time' => $timestamp]);
 
         $result = $this->Email->setHelpers(['Time']);
@@ -1943,7 +1949,8 @@ class EmailTest extends TestCase
         $this->Email->setFrom('cake@cakephp.org');
         $this->Email->setTo(['you@cakephp.org' => 'You']);
         $this->Email->setSubject('My title');
-        $this->Email->setTemplate('custom', 'default');
+        $this->Email->setLayout('default');
+        $this->Email->setTemplate('custom');
         $this->Email->setProfile([]);
         $this->Email->setViewVars(['value' => 12345]);
         $this->Email->setEmailFormat('both');
@@ -2064,7 +2071,8 @@ class EmailTest extends TestCase
         $this->Email->setTo(['you@cakephp.org' => 'You']);
         $this->Email->setSubject('My title');
         $this->Email->setProfile(['empty']);
-        $this->Email->setTemplate('default', 'default');
+        $this->Email->setLayout('default');
+        $this->Email->setTemplate('default');
         $this->Email->setEmailFormat('both');
         $this->Email->send();
 
@@ -2198,7 +2206,8 @@ class EmailTest extends TestCase
     public function testRenderWithLayoutAndAttachment()
     {
         $this->Email->setEmailFormat('html');
-        $this->Email->setTemplate('html', 'default');
+        $this->Email->setLayout('default');
+        $this->Email->setTemplate('html');
         $this->Email->setAttachments([CAKE . 'basics.php']);
         $result = $this->Email->render([]);
         $this->assertNotEmpty($result);
@@ -2739,7 +2748,6 @@ class EmailTest extends TestCase
         style="font-weight: bold">The tag is across multiple lines</th>
 </table>
 HTML;
-        $length = strlen($str);
         $message = $str . str_repeat('x', Email::LINE_LENGTH_MUST + 1);
 
         $this->Email->reset();

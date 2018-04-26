@@ -234,7 +234,7 @@ XML;
             'Content-Type: text/html'
         ];
         $response = new Response($headers, '');
-        $this->assertFalse($response->isOk());
+        $this->assertTrue($response->isOk());
 
         $headers = [
             'HTTP/1.0 404 Not Found',
@@ -242,6 +242,77 @@ XML;
         ];
         $response = new Response($headers, '');
         $this->assertFalse($response->isOk());
+    }
+
+    /**
+     * provider for isSuccess.
+     *
+     * @return array
+     */
+    public static function isSuccessProvider()
+    {
+        return [
+            [
+                true,
+                new Response([
+                    'HTTP/1.1 200 OK',
+                    'Content-Type: text/html'
+                ], 'ok')
+            ],
+            [
+                true,
+                new Response([
+                    'HTTP/1.1 201 Created',
+                    'Content-Type: text/html'
+                ], 'ok')
+            ],
+            [
+                true,
+                new Response([
+                    'HTTP/1.1 202 Accepted',
+                    'Content-Type: text/html'
+                ], 'ok')
+            ],
+            [
+                true,
+                new Response([
+                    'HTTP/1.1 203 Non-Authoritative Information',
+                    'Content-Type: text/html'
+                ], 'ok')
+            ],
+            [
+                true,
+                new Response([
+                    'HTTP/1.1 204 No Content',
+                    'Content-Type: text/html'
+                ], '')
+            ],
+            [
+                false,
+                new Response([
+                    'HTTP/1.1 301 Moved Permanently',
+                    'Content-Type: text/html'
+                ], '')
+            ],
+            [
+                false,
+                new Response([
+                    'HTTP/1.0 404 Not Found',
+                    'Content-Type: text/html'
+                ], '')
+            ]
+        ];
+    }
+
+    /**
+     * Test isSuccess()
+     *
+     * @dataProvider isSuccessProvider
+     * @return void
+     */
+    public function testIsSuccess($expected, Response $response)
+    {
+        $this->assertEquals($expected, $response->isSuccess());
     }
 
     /**

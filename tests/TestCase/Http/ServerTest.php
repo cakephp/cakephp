@@ -324,19 +324,4 @@ class ServerTest extends TestCase
         $server = new Server($app);
         $server->setEventManager($events);
     }
-
-    /**
-     * test deprecated method defined in interface
-     *
-     * @return void
-     */
-    public function testEventManagerCompat()
-    {
-        $this->deprecated(function () {
-            $app = $this->createMock(HttpApplicationInterface::class);
-
-            $server = new Server($app);
-            $this->assertSame(EventManager::instance(), $server->eventManager());
-        });
-    }
 }

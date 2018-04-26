@@ -1074,6 +1074,7 @@ class Router
     public static function prefix($name, $params = [], $callback = null)
     {
         if ($callback === null) {
+            /** @var callable $callback */
             $callback = $params;
             $params = [];
         }
@@ -1111,6 +1112,7 @@ class Router
     public static function plugin($name, $options = [], $callback = null)
     {
         if ($callback === null) {
+            /** @var callable $callback */
             $callback = $options;
             $options = [];
         }

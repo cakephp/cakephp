@@ -176,8 +176,8 @@ class Security
      *
      * You can use this method to forcibly decide between mcrypt/openssl/custom implementations.
      *
-     * @param \Cake\Utility\Crypto\OpenSsl|\Cake\Utility\Crypto\Mcrypt|null $instance The crypto instance to use.
-     * @return \Cake\Utility\Crypto\OpenSsl|\Cake\Utility\Crypto\Mcrypt Crypto instance.
+     * @param \Cake\Utility\Crypto\OpenSsl|null $instance The crypto instance to use.
+     * @return \Cake\Utility\Crypto\OpenSsl Crypto instance.
      * @throws \InvalidArgumentException When no compatible crypto extension is available.
      */
     public static function engine($instance = null)
@@ -185,8 +185,6 @@ class Security
         if ($instance === null && static::$_instance === null) {
             if (extension_loaded('openssl')) {
                 $instance = new OpenSsl();
-            } elseif (extension_loaded('mcrypt')) {
-                $instance = new Mcrypt();
             }
         }
         if ($instance) {
@@ -361,26 +359,5 @@ class Security
     public static function setSalt($salt)
     {
         static::$_salt = (string)$salt;
-    }
-
-    /**
-     * Gets or sets the HMAC salt to be used for encryption/decryption
-     * routines.
-     *
-     * @deprecated 3.5.0 Use getSalt()/setSalt() instead.
-     * @param string|null $salt The salt to use for encryption routines. If null returns current salt.
-     * @return string The currently configured salt
-     */
-    public static function salt($salt = null)
-    {
-        deprecationWarning(
-            'Security::salt() is deprecated. ' .
-            'Use Security::getSalt()/setSalt() instead.'
-        );
-        if ($salt === null) {
-            return static::$_salt;
-        }
-
-        return static::$_salt = (string)$salt;
     }
 }

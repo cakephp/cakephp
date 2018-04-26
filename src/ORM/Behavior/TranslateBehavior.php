@@ -207,7 +207,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * @param \ArrayObject $options The options for the query
      * @return void
      */
-    public function beforeFind(Event $event, Query $query, ArrayObject $options)
+    public function beforeFind(Event $event, Query $query, $options)
     {
         $locale = $this->getLocale();
 
@@ -364,10 +364,9 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      *
      * @param \Cake\Event\Event $event The beforeSave event that was fired
      * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved
-     * @param \ArrayObject $options Options.
      * @return void
      */
-    public function afterSave(Event $event, EntityInterface $entity, ArrayObject $options)
+    public function afterSave(Event $event, EntityInterface $entity)
     {
         $entity->unsetProperty('_i18n');
     }

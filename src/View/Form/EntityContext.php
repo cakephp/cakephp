@@ -480,7 +480,7 @@ class EntityContext implements ContextInterface
     /**
      * Get the table instance from a property path
      *
-     * @param array $parts Each one of the parts in a path for a field name
+     * @param array|string|\Cake\Datasource\EntityInterface $parts Each one of the parts in a path for a field name
      * @param bool $fallback Whether or not to fallback to the last found table
      *  when a non-existent field/property is being encountered.
      * @return \Cake\ORM\Table|bool Table instance or false

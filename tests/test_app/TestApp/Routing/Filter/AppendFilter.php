@@ -8,7 +8,7 @@ class AppendFilter extends DispatcherFilter
 {
     public function afterDispatch(Event $event)
     {
-        $response = $event->data('response');
+        $response = $event->getData('response');
         $response->body($response->body() . ' appended content');
     }
 }

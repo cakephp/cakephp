@@ -27,7 +27,7 @@ class Type
      * identifier is used as key and a complete namespaced class name as value
      * representing the class that will do actual type conversions.
      *
-     * @var string[]|\Cake\Database\TypeInterface[]
+     * @var string[]
      */
     protected static $_types = [
         'tinyinteger' => 'Cake\Database\Type\IntegerType',
@@ -71,11 +71,8 @@ class Type
         if (!isset(static::$_types[$name])) {
             throw new InvalidArgumentException(sprintf('Unknown type "%s"', $name));
         }
-        if (is_string(static::$_types[$name])) {
-            return static::$_builtTypes[$name] = new static::$_types[$name]($name);
-        }
 
-        return static::$_builtTypes[$name] = static::$_types[$name];
+        return static::$_builtTypes[$name] = new static::$_types[$name]($name);
     }
 
     /**
@@ -111,7 +108,7 @@ class Type
      * Registers a new type identifier and maps it to a fully namespaced classname.
      *
      * @param string $type Name of type to map.
-     * @param string|\Cake\Database\TypeInterface $className The classname or object instance of it to register.
+     * @param string $className The classname to register.
      * @return void
      */
     public static function map(string $type, $className)
@@ -133,10 +130,10 @@ class Type
     }
 
     /**
-     * Get mapped class name or instance for type(s).
+     * Get mapped class name for given type or map array.
      *
      * @param string|null $type Type name to get mapped class for or null to get map array.
-     * @return array|string|\Cake\Database\TypeInterface|null Configured class name or instance for give $type or map array.
+     * @return array|string|null Configured class name for given $type or map array.
      */
     public static function getMap(string $type = null)
     {

@@ -128,7 +128,7 @@ class HelperTest extends TestCase
         $this->View->setEventManager($events);
 
         $events->expects($this->never())
-            ->method('attach');
+            ->method('on');
 
         $Helper = new TestHelper($this->View);
         $Helper->OtherHelper;

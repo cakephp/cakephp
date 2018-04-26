@@ -80,9 +80,8 @@ trait ViewVarsTrait
 
         foreach (['name', 'helpers', 'plugin'] as $prop) {
             if (isset($this->{$prop})) {
-                //4.x we need to use ViewBuilder::setProp($value) instead of ViewBuilder::prop($value)
-                $setter = "set" . ucfirst($prop);
-                $builder->{$setter}($this->{$prop});
+                $method = 'set' . ucfirst($prop);
+                $builder->{$method}($this->{$prop});
             }
         }
         $builder->setOptions($viewOptions);

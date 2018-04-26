@@ -520,26 +520,6 @@ class Text
     }
 
     /**
-     * Strips given text of all links (<a href=....).
-     *
-     * *Warning* This method is not an robust solution in preventing XSS
-     * or malicious HTML.
-     *
-     * @param string $text Text
-     * @return string The text without links
-     * @deprecated 3.2.12 This method will be removed in 4.0.0
-     */
-    public static function stripLinks($text)
-    {
-        deprecationWarning('This method will be removed in 4.0.0.');
-        do {
-            $text = preg_replace('#</?a([/\s][^>]*)?(>|$)#i', '', $text, -1, $count);
-        } while ($count);
-
-        return $text;
-    }
-
-    /**
      * Truncates text starting from the end.
      *
      * Cuts a string to the length of $length and replaces the first characters
@@ -1101,7 +1081,7 @@ class Text
      *   For e.g. this option can be set to '.' to generate clean file names.
      *
      * @param string $string the string you want to slug
-     * @param array $options If string it will be use as replacement character
+     * @param array|string $options If string it will be use as replacement character
      *   or an array of options.
      * @return string
      */

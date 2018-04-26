@@ -49,7 +49,7 @@ class ViewBuilderTest extends TestCase
      *
      * @return array
      */
-    public function booleanPropertyProvider()
+    public function boolPropertyProvider()
     {
         return [
             ['autoLayout', true, false],
@@ -72,41 +72,36 @@ class ViewBuilderTest extends TestCase
     /**
      * Test string property accessor/mutator methods.
      *
-     * @dataProvider booleanPropertyProvider
-     * @return void
-     */
-    public function testBooleanProperties($property, $default, $value)
-    {
-        $builder = new ViewBuilder();
-
-        //for boolean values the setter and getter look different than set/get
-        $setter = 'enable' . ucfirst($property);
-        $getter = 'is' . ucfirst($property) . 'Enabled';
-
-        $this->assertSame($default, $builder->{$getter}(), 'Default value should be null');
-        $this->assertSame($builder, $builder->{$setter}($value), 'Setter returns this');
-        $this->assertSame($value, $builder->{$getter}(), 'Getter gets value.');
-    }
-
-    /**
-     * Test string property accessor/mutator methods.
-     *
      * @dataProvider stringPropertyProvider
      * @return void
      */
     public function testStringProperties($property, $value)
     {
+        $get = 'get' . ucfirst($property);
+        $set = 'set' . ucfirst($property);
+
         $builder = new ViewBuilder();
-        $setter = 'set' . ucfirst($property);
-        $getter = 'get' . ucfirst($property);
-        if (is_bool($value)) {
-            //for boolean values the setter and getter look different
-            $setter = 'enable' . ucfirst($property);
-            $getter = 'is' . ucfirst($property) . 'Enabled';
-        }
-        $this->assertNull($builder->{$getter}(), 'Default value should be null');
-        $this->assertSame($builder, $builder->{$setter}($value), 'Setter returns this');
-        $this->assertSame($value, $builder->{$getter}(), 'Getter gets value.');
+        $this->assertNull($builder->{$get}(), 'Default value should be null');
+        $this->assertSame($builder, $builder->{$set}($value), 'Setter returns this');
+        $this->assertSame($value, $builder->{$get}(), 'Getter gets value.');
+    }
+
+    /**
+     * Test string property accessor/mutator methods.
+     *
+     * @deprecated
+     * @dataProvider boolPropertyProvider
+     * @return void
+     */
+    public function testBoolProperties($property, $value)
+    {
+        $set = 'enable' . ucfirst($property);
+        $get = 'is' . ucfirst($property) . 'Enabled';
+
+        $builder = new ViewBuilder();
+        $this->assertSame($default, $builder->{$get}(), 'Default value not as expected');
+        $this->assertSame($builder, $builder->{$set}($value), 'Setter returns this');
+        $this->assertSame($value, $builder->{$get}(), 'Getter gets value.');
     }
 
     /**
@@ -117,12 +112,13 @@ class ViewBuilderTest extends TestCase
      */
     public function testArrayProperties($property, $value)
     {
+        $get = 'get' . ucfirst($property);
+        $set = 'set' . ucfirst($property);
+
         $builder = new ViewBuilder();
-        $setter = 'set' . ucfirst($property);
-        $getter = 'get' . ucfirst($property);
-        $this->assertSame([], $builder->{$getter}(), 'Default value should be empty list');
-        $this->assertSame($builder, $builder->{$setter}($value), 'Setter returns this');
-        $this->assertSame($value, $builder->{$getter}(), 'Getter gets value.');
+        $this->assertSame([], $builder->{$get}(), 'Default value should be empty list');
+        $this->assertSame($builder, $builder->{$set}($value), 'Setter returns this');
+        $this->assertSame($value, $builder->{$get}(), 'Getter gets value.');
     }
 
     /**
@@ -133,16 +129,88 @@ class ViewBuilderTest extends TestCase
      */
     public function testArrayPropertyMerge($property, $value)
     {
+        $get = 'get' . ucfirst($property);
+        $set = 'set' . ucfirst($property);
+
         $builder = new ViewBuilder();
-        $setter = 'set' . ucfirst($property);
-        $getter = 'get' . ucfirst($property);
-        $builder->{$setter}($value);
+        $builder->{$set}($value);
 
-        $builder->{$setter}(['Merged'], true);
-        $this->assertSame(array_merge($value, ['Merged']), $builder->{$getter}(), 'Should merge');
+        $builder->{$set}(['Merged'], true);
+        $this->assertSame(array_merge($value, ['Merged']), $builder->{$get}(), 'Should merge');
 
-        $builder->{$setter}($value, false);
-        $this->assertSame($value, $builder->{$getter}(), 'Should replace');
+        $builder->{$set}($value, false);
+        $this->assertSame($value, $builder->{$get}(), 'Should replace');
+    }
+
+    /**
+     * Test string property accessor/mutator methods.
+     *
+     * @deprecated
+     * @dataProvider stringPropertyProvider
+     * @return void
+     */
+    public function testStringPropertiesDeprecated($property, $value)
+    {
+        $this->deprecated(function () use ($value, $property) {
+            $builder = new ViewBuilder();
+            $this->assertNull($builder->{$property}(), 'Default value should be null');
+            $this->assertSame($builder, $builder->{$property}($value), 'Setter returns this');
+            $this->assertSame($value, $builder->{$property}(), 'Getter gets value.');
+        });
+    }
+
+    /**
+     * Test string property accessor/mutator methods.
+     *
+     * @deprecated
+     * @dataProvider boolPropertyProvider
+     * @return void
+     */
+    public function testBoolPropertiesDeprecated($property, $value)
+    {
+        $this->deprecated(function () use ($value, $property) {
+            $builder = new ViewBuilder();
+            $this->assertNull($builder->{$property}(), 'Default value should be null');
+            $this->assertSame($builder, $builder->{$property}($value), 'Setter returns this');
+            $this->assertSame($value, $builder->{$property}(), 'Getter gets value.');
+        });
+
+    /**
+     * Test array property accessor/mutator methods.
+     *
+     * @deprecated
+     * @dataProvider arrayPropertyProvider
+     * @return void
+     */
+    public function testArrayPropertiesDeprecated($property, $value)
+    {
+        $this->deprecated(function () use ($value, $property) {
+            $builder = new ViewBuilder();
+            $this->assertSame([], $builder->{$property}(), 'Default value should be empty list');
+            $this->assertSame($builder, $builder->{$property}($value), 'Setter returns this');
+            $this->assertSame($value, $builder->{$property}(), 'Getter gets value.');
+        });
+    }
+
+    /**
+     * Test array property accessor/mutator methods.
+     *
+     * @deprecated
+     * @dataProvider arrayPropertyProvider
+     * @return void
+     */
+    public function testArrayPropertyMergeDeprecated($property, $value)
+    {
+        $this->deprecated(function () use ($value, $property) {
+            $builder = new ViewBuilder();
+            $builder->{$property}($value);
+
+            $builder->{$property}(['Merged'], true);
+            $this->assertSame(array_merge($value, ['Merged']), $builder->{$property}(), 'Should merge');
+
+            $builder->{$property}($value, false);
+            $this->assertSame($value, $builder->{$property}(), 'Should replace');
+        });
     }
 
     /**

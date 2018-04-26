@@ -49,27 +49,6 @@ class FormTest extends TestCase
     }
 
     /**
-     * Test validator()
-     *
-     * @return void
-     * @group deprecated
-     */
-    public function testValidator()
-    {
-        $this->deprecated(function () {
-            $form = new Form();
-            $validator = $form->validator();
-
-            $this->assertInstanceOf('Cake\Validation\Validator', $validator);
-            $this->assertSame($validator, $form->validator(), 'Same instance each time');
-
-            $validator = $this->getMockBuilder('Cake\Validation\Validator')->getMock();
-            $this->assertSame($validator, $form->validator($validator));
-            $this->assertSame($validator, $form->validator());
-        });
-    }
-
-    /**
      * Test getValidator()
      *
      * @return void
@@ -125,21 +104,6 @@ class FormTest extends TestCase
         ];
         $this->assertTrue($form->validate($data));
         $this->assertCount(0, $form->errors());
-    }
-
-    /**
-     * tests validate using deprecated validate() method
-     *
-     * @return void
-     */
-    public function testValidateDeprected()
-    {
-        $this->deprecated(function () {
-            $form = new ValidateForm();
-            $data = [];
-            $this->assertFalse($form->validate($data));
-            $this->assertCount(1, $form->errors());
-        });
     }
 
     /**

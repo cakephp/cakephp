@@ -15,7 +15,6 @@
 namespace Cake\Test\TestCase\Utility;
 
 use Cake\TestSuite\TestCase;
-use Cake\Utility\Crypto\Mcrypt;
 use Cake\Utility\Crypto\OpenSsl;
 use Cake\Utility\Security;
 use RuntimeException;
@@ -92,7 +91,7 @@ class SecurityTest extends TestCase
         $this->skipIf(!function_exists('mcrypt_encrypt') || version_compare(PHP_VERSION, '7.1', '>='));
         $engine = Security::engine();
 
-        Security::engine(new Mcrypt());
+        Security::engine(new OpenSsl());
         $txt = 'The quick brown fox jumped over the lazy dog.';
         $key = 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi';
 
@@ -280,7 +279,7 @@ class SecurityTest extends TestCase
             $key = 'This is my secret key phrase it is quite long.';
             $salt = 'A tasty salt that is delicious';
 
-            Security::engine(new Mcrypt());
+            Security::engine(new OpenSsl());
             $cipher = Security::encrypt($txt, $key, $salt);
             $this->assertEquals($txt, Security::decrypt($cipher, $key, $salt));
 
@@ -291,7 +290,7 @@ class SecurityTest extends TestCase
             $cipher = Security::encrypt($txt, $key, $salt);
             $this->assertEquals($txt, Security::decrypt($cipher, $key, $salt));
 
-            Security::engine(new Mcrypt());
+            Security::engine(new OpenSsl());
             $this->assertEquals($txt, Security::decrypt($cipher, $key, $salt));
         });
     }
