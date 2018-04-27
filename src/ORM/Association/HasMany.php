@@ -481,7 +481,7 @@ class HasMany extends Association
         )
         ->filter(
             function ($v) {
-                return !in_array(null, array_values($v), true);
+                return !in_array(null, $v, true);
             }
         )
         ->toArray();
