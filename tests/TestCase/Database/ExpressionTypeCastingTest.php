@@ -18,7 +18,7 @@ use Cake\Database\Expression\CaseExpression;
 use Cake\Database\Expression\Comparison;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\ValuesExpression;
-use Cake\Database\Type;
+use Cake\Database\TypeFactory;
 use Cake\Database\Type\ExpressionTypeInterface;
 use Cake\Database\Type\StringType;
 use Cake\Database\ValueBinder;
@@ -49,7 +49,7 @@ class ExpressionTypeCastingTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        Type::set('test', new TestType);
+        TypeFactory::set('test', new TestType);
     }
 
     /**

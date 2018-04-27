@@ -15,7 +15,7 @@
 namespace Cake\Test\TestCase\Database\Schema;
 
 use Cake\Database\Schema\TableSchema;
-use Cake\Database\Type;
+use Cake\Database\TypeFactory;
 use Cake\Database\Type\IntegerType;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
@@ -50,15 +50,15 @@ class TableTest extends TestCase
 
     public function setUp()
     {
-        $this->_map = Type::getMap();
+        $this->_map = TypeFactory::getMap();
         parent::setUp();
     }
 
     public function tearDown()
     {
         $this->getTableLocator()->clear();
-        Type::clear();
-        Type::setMap($this->_map);
+        TypeFactory::clear();
+        TypeFactory::setMap($this->_map);
         parent::tearDown();
     }
 
@@ -222,7 +222,7 @@ class TableTest extends TestCase
      */
     public function testBaseColumnTypeInherited()
     {
-        Type::map('foo', __NAMESPACE__ . '\FooType');
+        TypeFactory::map('foo', __NAMESPACE__ . '\FooType');
         $table = new TableSchema('articles');
         $table->addColumn('thing', [
             'type' => 'foo',

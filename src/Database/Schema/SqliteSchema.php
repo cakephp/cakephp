@@ -42,7 +42,7 @@ class SqliteSchema extends BaseSchema
      * Convert a column definition to the abstract types.
      *
      * The returned type will be a type that
-     * Cake\Database\Type can handle.
+     * Cake\Database\TypeFactory can handle.
      *
      * @param string $column The column type + length
      * @throws \Cake\Database\Exception when unable to parse column type

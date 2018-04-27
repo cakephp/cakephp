@@ -14,7 +14,7 @@
  */
 namespace Cake\Database\Type;
 
-use Cake\Database\Type;
+use Cake\Database\TypeFactory;
 
 /**
  * Offers a method to convert values to ExpressionInterface objects
@@ -40,7 +40,7 @@ trait ExpressionTypeCasterTrait
         }
 
         $baseType = str_replace('[]', '', $type);
-        $converter = Type::build($baseType);
+        $converter = TypeFactory::build($baseType);
 
         if (!$converter instanceof ExpressionTypeInterface) {
             return $value;
@@ -68,7 +68,7 @@ trait ExpressionTypeCasterTrait
         $result = [];
         $types = array_filter($types);
         foreach ($types as $k => $type) {
-            $object = Type::build($type);
+            $object = TypeFactory::build($type);
             if ($object instanceof ExpressionTypeInterface) {
                 $result[$k] = $object;
             }

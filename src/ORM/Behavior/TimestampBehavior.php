@@ -14,7 +14,8 @@
  */
 namespace Cake\ORM\Behavior;
 
-use Cake\Database\Type;
+use Cake\Database\Type\DateTimeType;
+use Cake\Database\TypeFactory;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\I18n\Time;
@@ -203,9 +204,9 @@ class TimestampBehavior extends Behavior
         }
 
         /** @var \Cake\Database\Type\DateTimeType $type */
-        $type = Type::build($columnType);
+        $type = TypeFactory::build($columnType);
 
-        if (!$type instanceof Type\DateTimeType) {
+        if (!$type instanceof DateTimeType) {
             deprecationWarning('TimestampBehavior support for column types other than DateTimeType will be removed in 4.0.');
             $entity->set($field, (string)$ts);
 
