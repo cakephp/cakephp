@@ -9,23 +9,22 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         3.0.0
+ * @since         4.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Database;
 
 use Cake\Database\Type;
 use Cake\Database\TypeInterface;
-use Cake\Database\Type\UuidType;
 use Cake\TestSuite\TestCase;
 use PDO;
 use TestApp\Database\Type\BarType;
 use TestApp\Database\Type\FooType;
 
 /**
- * Tests Type class
+ * Tests TypeFactory class
  */
-class TypeTest extends TestCase
+class TypeFactoryTest extends TestCase
 {
 
     /**
