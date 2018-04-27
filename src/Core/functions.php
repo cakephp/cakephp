@@ -51,7 +51,7 @@ if (!function_exists('h')) {
             } else {
                 $text = '(object)' . get_class($text);
             }
-        } elseif (is_bool($text) || is_int($text) || $text === null) {
+        } elseif ($text === null || is_bool($text) || is_int($text)) {
             return $text;
         }
 
