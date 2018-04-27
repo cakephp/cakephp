@@ -14,7 +14,7 @@
  */
 namespace Cake\Test\TestCase\ORM\Behavior;
 
-use Cake\Database\TypeFactory ;
+use Cake\Database\TypeFactory;
 use Cake\Event\Event;
 use Cake\I18n\Time;
 use Cake\ORM\Behavior\TimestampBehavior;
