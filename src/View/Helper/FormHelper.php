@@ -165,7 +165,7 @@ class FormHelper extends Helper
             'submitContainer' => '<div class="submit">{{content}}</div>',
         ],
         // set HTML5 validation message to custom required/empty messages
-        'useValidationMessages' => false,
+        'autoSetCustomValidity' => false,
     ];
 
     /**
@@ -1449,7 +1449,7 @@ class FormHelper extends Helper
 
         if (method_exists($context, 'getRequiredMessage')) {
             $message = $context->getRequiredMessage($fieldName);
-            if ($options['required'] && $message && $this->getConfig('useValidationMessages')) {
+            if ($options['required'] && $message && $this->getConfig('autoSetCustomValidity')) {
                 $message = h(addslashes($message));
                 $options['oninvalid'] = "this.setCustomValidity('$message')";
                 $options['onvalid'] = "this.setCustomValidity('')";

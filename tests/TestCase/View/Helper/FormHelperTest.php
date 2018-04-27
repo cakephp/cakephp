@@ -8440,7 +8440,7 @@ class FormHelperTest extends TestCase
      */
     public function testHtml5ErrorMessage()
     {
-        $this->Form->setConfig('useValidationMessages', true);
+        $this->Form->setConfig('autoSetCustomValidity', true);
 
         $validator = (new \Cake\Validation\Validator())
             ->requirePresence('email', true, 'Custom error message')
