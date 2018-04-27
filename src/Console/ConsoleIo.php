@@ -455,9 +455,8 @@ class ConsoleIo
             $defaultText = "[$default] ";
         }
         $this->_out->write('<question>' . $prompt . "</question>$optionsText\n$defaultText> ", 0);
-        $result = $this->_in->read();
 
-        $result = trim($result);
+        $result = trim($this->_in->read());
         if ($default !== null && ($result === '' || $result === null)) {
             return $default;
         }
@@ -551,8 +550,7 @@ class ConsoleIo
 
         if (file_exists($path) && $forceOverwrite === false) {
             $this->warning("File `{$path}` exists");
-            $key = $this->askChoice('Do you want to overwrite?', ['y', 'n', 'a', 'q'], 'n');
-            $key = strtolower($key);
+            $key = strtolower($this->askChoice('Do you want to overwrite?', ['y', 'n', 'a', 'q'], 'n'));
 
             if ($key === 'q') {
                 $this->error('Quitting.', 2);

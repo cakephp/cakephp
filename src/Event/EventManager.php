@@ -366,8 +366,7 @@ class EventManager implements EventManagerInterface
         $globalListeners = static::instance()->prioritisedListeners($eventKey);
         $globalListeners = empty($globalListeners) ? [] : $globalListeners;
 
-        $priorities = array_merge(array_keys($globalListeners), array_keys($localListeners));
-        $priorities = array_unique($priorities);
+        $priorities = array_unique(array_merge(array_keys($globalListeners), array_keys($localListeners)));
         asort($priorities);
 
         $result = [];

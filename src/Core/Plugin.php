@@ -241,8 +241,7 @@ class Plugin
             }
         }
         if (Configure::check('plugins')) {
-            $plugins = array_merge($plugins, array_keys(Configure::read('plugins')));
-            $plugins = array_unique($plugins);
+            $plugins = array_unique(array_merge($plugins, array_keys(Configure::read('plugins'))));
         }
 
         $collection = static::getCollection();

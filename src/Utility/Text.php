@@ -878,7 +878,7 @@ class Text
         $phraseLen = mb_strlen($phrase);
         $textLen = mb_strlen($text);
 
-        $pos = mb_strpos(mb_strtolower($text), mb_strtolower($phrase));
+        $pos = mb_stripos($text, $phrase);
         if ($pos === false) {
             return mb_substr($text, 0, $radius) . $ellipsis;
         }
