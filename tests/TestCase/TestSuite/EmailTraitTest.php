@@ -77,6 +77,7 @@ class EmailTraitTest extends TestCase
         $this->assertMailSentFrom('alternate@example.com');
 
         $this->assertMailSentTo('to@example.com');
+        $this->assertMailSentTo('alsoto@example.com');
         $this->assertMailSentTo('to2@example.com');
 
         $this->assertMailContains('text');
@@ -204,6 +205,7 @@ class EmailTraitTest extends TestCase
     {
         (new Email())
             ->setTo(['to@example.com' => 'Foo Bar'])
+            ->addTo('alsoto@example.com')
             ->setCc('cc@example.com')
             ->setBcc(['bcc@example.com' => 'Baz Qux'])
             ->setSubject('Hello world')
