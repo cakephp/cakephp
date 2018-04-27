@@ -8519,7 +8519,7 @@ class FormHelperTest extends TestCase
     public function testHtml5ErrorMessageInTemplateVars()
     {
         $validator = (new \Cake\Validation\Validator())
-            ->requirePresence('email', true, 'Custom error message')
+            ->requirePresence('email', true, 'Custom error "message" & entities')
             ->requirePresence('password')
             ->alphaNumeric('password')
             ->notBlank('phone');
@@ -8585,7 +8585,7 @@ class FormHelperTest extends TestCase
                 'value' => '',
                 'maxlength' => 255,
                 'required' => 'required',
-                'data-message' => 'Custom error message',
+                'data-message' => 'Custom error &quot;message&quot; &amp; entities',
                 'data-custom' => '1',
             ],
         ];
