@@ -526,8 +526,8 @@ class TimeHelperTest extends TestCase
         $this->assertTimeFormat($expected, $result);
 
         $result = $this->Time->format($time, \IntlDateFormatter::FULL);
-        $expected = 'Thursday, January 14, 2010 at 1:59:28 PM GMT';
-        $this->assertTimeFormat($expected, $result);
+        $expected = 'Thursday, January 14, 2010 at 1:59:28 PM';
+        $this->assertStringStartsWith($expected, $result);
 
         $result = $this->Time->format('invalid date', null, 'Date invalid');
         $expected = 'Date invalid';
