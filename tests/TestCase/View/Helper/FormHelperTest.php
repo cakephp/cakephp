@@ -8512,6 +8512,87 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * tests that custom validation messages are in templateVars
+     *
+     * @return void
+     */
+    public function testHtml5ErrorMessageInTemplateVars()
+    {
+        $validator = (new \Cake\Validation\Validator())
+            ->requirePresence('email', true, 'Custom error message')
+            ->requirePresence('password')
+            ->alphaNumeric('password')
+            ->notBlank('phone');
+
+        $table = $this->getTableLocator()->get('Contacts', [
+            'className' => __NAMESPACE__ . '\ContactsTable'
+        ]);
+        $table->setValidator('default', $validator);
+        $contact = new Entity();
+
+        $this->Form->create($contact, ['context' => ['table' => 'Contacts']]);
+        $this->Form->setTemplates([
+            'input' => '<input type="{{type}}" name="{{name}}"{{attrs}} data-message="{{requiredMessage}}" {{custom}}/>',
+            'inputContainer' => '{{content}}'
+        ]);
+
+        $result = $this->Form->control('password');
+        $expected = [
+            'label' => ['for' => 'password'],
+            'Password',
+            '/label',
+            'input' => [
+                'id' => 'password',
+                'name' => 'password',
+                'type' => 'password',
+                'value' => '',
+                'required' => 'required',
+                'data-message' => 'This field is required',
+            ]
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->control('phone');
+        $expected = [
+            'label' => ['for' => 'phone'],
+            'Phone',
+            '/label',
+            'input' => [
+                'id' => 'phone',
+                'name' => 'phone',
+                'type' => 'tel',
+                'value' => '',
+                'maxlength' => 255,
+                'required' => 'required',
+                'data-message' => 'This field cannot be left empty',
+            ],
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->control('email', [
+            'templateVars' => [
+                'custom' => 'data-custom="1"'
+            ]
+        ]);
+        $expected = [
+            'label' => ['for' => 'email'],
+            'Email',
+            '/label',
+            'input' => [
+                'id' => 'email',
+                'name' => 'email',
+                'type' => 'email',
+                'value' => '',
+                'maxlength' => 255,
+                'required' => 'required',
+                'data-message' => 'Custom error message',
+                'data-custom' => '1',
+            ],
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * testRequiredAttribute method
      *
      * Tests that formhelper sets required attributes.
