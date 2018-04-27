@@ -26,12 +26,26 @@ use Cake\TestSuite\Constraint\Email\NoMailSent;
 /**
  * Make assertions on emails sent through the Cake\TestSuite\TestEmailTransport
  *
+ * After adding the trait to your test case, replace all mail transports with the
+ * TestEmailTransport:
+ *
  * **tests/bootstrap.php**
  * ```
  * use Cake\TestSuite\TestEmailTransport;
  *
  * // replaces existing transports with the TestEmailTransport for email assertions
  * TestEmailTransport::replaceAllTransports();
+ * ```
+ *
+ * Then, in your test case's tearDown method, clean up previously sent emails:
+ *
+ * ```
+ * public function tearDown()
+ * {
+ *     // other cleanup
+ *     parent::tearDown();
+ *     TestEmailTransport::clearEmails();
+ * }
  * ```
  */
 trait EmailTrait
