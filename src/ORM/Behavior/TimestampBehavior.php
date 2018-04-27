@@ -14,8 +14,8 @@
  */
 namespace Cake\ORM\Behavior;
 
-use Cake\Database\Type\DateTimeType;
 use Cake\Database\TypeFactory;
+use Cake\Database\Type\DateTimeType;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\I18n\Time;
