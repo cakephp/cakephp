@@ -2164,7 +2164,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * any registered callbacks.
      *
      * @param \Cake\Database\StatementInterface $statement to be decorated
-     * @return \Cake\Database\Statement\CallbackStatement|Cake\Database\StatementInterface
+     * @return \Cake\Database\Statement\CallbackStatement|\Cake\Database\StatementInterface
      */
     protected function _decorateStatement($statement)
     {

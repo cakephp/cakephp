@@ -63,9 +63,6 @@ trait CookieCryptTrait
         if ($key === null) {
             $key = $this->_getCookieEncryptionKey();
         }
-        if ($encrypt === 'rijndael') {
-            $cipher = Security::rijndael($value, $key, 'encrypt');
-        }
         if ($encrypt === 'aes') {
             $cipher = Security::encrypt($value, $key);
         }
