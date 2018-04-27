@@ -355,7 +355,8 @@ class HtmlHelper extends Helper
             unset($options['fullBase']);
         } else {
             $url = $this->Url->build($title);
-            $title = h(urldecode(htmlspecialchars_decode($url, ENT_QUOTES)));
+            $title = htmlspecialchars_decode($url, ENT_QUOTES);
+            $title = h(urldecode($title));
             $escapeTitle = false;
         }
 

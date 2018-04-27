@@ -712,7 +712,8 @@ class Hash
     {
         $result = [];
         foreach ($data as $flat => $value) {
-            $keys = array_reverse(explode($separator, $flat));
+            $keys = explode($separator, $flat);
+            $keys = array_reverse($keys);
             $child = [
                 $keys[0] => $value
             ];
