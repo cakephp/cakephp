@@ -169,7 +169,10 @@ class EventManager implements EventManagerInterface
             $method = [$object, $method];
         }
 
-        return [$method, $options];
+        /** @var callable $callable */
+        $callable = [$method, $options];
+
+        return $callable;
     }
 
     /**

@@ -82,59 +82,6 @@ class SecurityTest extends TestCase
     }
 
     /**
-     * testRijndael method
-     *
-     * @return void
-     */
-    public function testRijndael()
-    {
-        $this->skipIf(!function_exists('mcrypt_encrypt') || version_compare(PHP_VERSION, '7.1', '>='));
-        $engine = Security::engine();
-
-        Security::engine(new OpenSsl());
-        $txt = 'The quick brown fox jumped over the lazy dog.';
-        $key = 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi';
-
-        $result = Security::rijndael($txt, $key, 'encrypt');
-        $this->assertEquals($txt, Security::rijndael($result, $key, 'decrypt'));
-
-        $result = Security::rijndael('', $key, 'encrypt');
-        $this->assertEquals('', Security::rijndael($result, $key, 'decrypt'));
-
-        $key = 'this is my key of over 32 chars, yes it is';
-        $result = Security::rijndael($txt, $key, 'encrypt');
-        $this->assertEquals($txt, Security::rijndael($result, $key, 'decrypt'));
-
-        Security::engine($engine);
-    }
-
-    /**
-     * testRijndaelInvalidOperation method
-     *
-     * @return void
-     */
-    public function testRijndaelInvalidOperation()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $txt = 'The quick brown fox jumped over the lazy dog.';
-        $key = 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi';
-        Security::rijndael($txt, $key, 'foo');
-    }
-
-    /**
-     * testRijndaelInvalidKey method
-     *
-     * @return void
-     */
-    public function testRijndaelInvalidKey()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $txt = 'The quick brown fox jumped over the lazy dog.';
-        $key = 'too small';
-        Security::rijndael($txt, $key, 'encrypt');
-    }
-
-    /**
      * Test encrypt/decrypt.
      *
      * @return void

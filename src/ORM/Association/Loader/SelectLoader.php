@@ -301,7 +301,7 @@ class SelectLoader
             $filter = current($filter);
         }
 
-        $conditions = $conditions ?: $query->newExpr([$key => $filter]);
+        $conditions = $conditions ?: $query->newExpr([(string)$key => $filter]);
 
         return $query->innerJoin(
             [$aliasedTable => $subquery],

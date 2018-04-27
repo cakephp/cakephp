@@ -31,7 +31,7 @@ trait CookieCryptTrait
      *
      * @var array
      */
-    protected $_validCiphers = ['aes', 'rijndael'];
+    protected $_validCiphers = ['aes'];
 
     /**
      * Returns the encryption key to be used.
@@ -62,9 +62,6 @@ trait CookieCryptTrait
         $cipher = null;
         if ($key === null) {
             $key = $this->_getCookieEncryptionKey();
-        }
-        if ($encrypt === 'rijndael') {
-            $cipher = Security::rijndael($value, $key, 'encrypt');
         }
         if ($encrypt === 'aes') {
             $cipher = Security::encrypt($value, $key);
@@ -131,9 +128,6 @@ trait CookieCryptTrait
         $value = base64_decode(substr($value, strlen($prefix)));
         if ($key === null) {
             $key = $this->_getCookieEncryptionKey();
-        }
-        if ($encrypt === 'rijndael') {
-            $value = Security::rijndael($value, $key, 'decrypt');
         }
         if ($encrypt === 'aes') {
             $value = Security::decrypt($value, $key);

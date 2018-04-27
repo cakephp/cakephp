@@ -681,7 +681,9 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function leftJoin($table, $conditions = [], $types = [])
     {
-        return $this->join($this->_makeJoin($table, $conditions, QueryInterface::JOIN_TYPE_LEFT), $types);
+        $this->join($this->_makeJoin($table, $conditions, QueryInterface::JOIN_TYPE_LEFT), $types);
+
+        return $this;
     }
 
     /**
@@ -701,7 +703,9 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function rightJoin($table, $conditions = [], $types = [])
     {
-        return $this->join($this->_makeJoin($table, $conditions, QueryInterface::JOIN_TYPE_RIGHT), $types);
+        $this->join($this->_makeJoin($table, $conditions, QueryInterface::JOIN_TYPE_RIGHT), $types);
+
+        return $this;
     }
 
     /**
@@ -721,7 +725,9 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function innerJoin($table, $conditions = [], $types = [])
     {
-        return $this->join($this->_makeJoin($table, $conditions, QueryInterface::JOIN_TYPE_INNER), $types);
+        $this->join($this->_makeJoin($table, $conditions, QueryInterface::JOIN_TYPE_INNER), $types);
+
+        return $this;
     }
 
     /**
@@ -1998,39 +2004,11 @@ class Query implements ExpressionInterface, IteratorAggregate
      * associate values to those placeholders so that they can be passed correctly
      * to the statement object.
      *
-     * @param \Cake\Database\ValueBinder|bool $binder The binder or false to disable binding.
+     * @param \Cake\Database\ValueBinder|null $binder The binder or null to disable binding.
      * @return $this
      */
     public function setValueBinder($binder)
     {
-        $this->_valueBinder = $binder;
-
-        return $this;
-    }
-
-    /**
-     * Returns the currently used ValueBinder instance. If a value is passed,
-     * it will be set as the new instance to be used.
-     *
-     * A ValueBinder is responsible for generating query placeholders and temporarily
-     * associate values to those placeholders so that they can be passed correctly
-     * to the statement object.
-     *
-     * @deprecated 3.5.0 Use setValueBinder()/getValueBinder() instead.
-     * @param \Cake\Database\ValueBinder|false|null $binder new instance to be set. If no value is passed the
-     *   default one will be returned
-     * @return $this|\Cake\Database\ValueBinder
-     */
-    public function valueBinder($binder = null)
-    {
-        deprecationWarning('Query::valueBinder() is deprecated. Use Query::getValueBinder()/setValueBinder() instead.');
-        if ($binder === null) {
-            if ($this->_valueBinder === null) {
-                $this->_valueBinder = new ValueBinder();
-            }
-
-            return $this->_valueBinder;
-        }
         $this->_valueBinder = $binder;
 
         return $this;
@@ -2186,7 +2164,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * any registered callbacks.
      *
      * @param \Cake\Database\StatementInterface $statement to be decorated
-     * @return \Cake\Database\Statement\CallbackStatement
+     * @return \Cake\Database\Statement\CallbackStatement|\Cake\Database\StatementInterface
      */
     protected function _decorateStatement($statement)
     {

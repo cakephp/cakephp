@@ -34,10 +34,7 @@ matrix:
   include:
     - php: 7.2
       env: PHPCS=1 DEFAULT=0
-    - php: 7.1
-      env: PHPSTAN=1 DEFAULT=0
 
-  allow_failures:
     - php: 7.1
       env: PHPSTAN=1 DEFAULT=0
 
@@ -71,7 +68,7 @@ script:
   - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION != 7.2 ]]; then vendor/bin/phpunit; fi
 
   - if [[ $PHPCS = 1 ]]; then composer cs-check; fi
-  - if [[ $PHPSTAN = 1 ]]; then composer require --dev phpstan/phpstan && vendor/bin/phpstan analyse -c phpstan.neon -l 5 src; fi
+  - if [[ $PHPSTAN = 1 ]]; then composer require --dev phpstan/phpstan && vendor/bin/phpstan analyse -c phpstan.neon -l 2 src; fi
 
 after_success:
   - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION = 7.2 ]]; then bash <(curl -s https://codecov.io/bash); fi
