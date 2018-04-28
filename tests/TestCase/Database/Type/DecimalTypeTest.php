@@ -14,7 +14,7 @@
  */
 namespace Cake\Test\TestCase\Database\Type;
 
-use Cake\Database\Type;
+use Cake\Database\TypeFactory;
 use Cake\Database\Type\DecimalType;
 use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
@@ -53,7 +53,7 @@ class DecimalTypeTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->type = Type::build('decimal');
+        $this->type = TypeFactory::build('decimal');
         $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
         $this->localeString = I18n::getLocale();
         $this->numberClass = DecimalType::$numberClass;

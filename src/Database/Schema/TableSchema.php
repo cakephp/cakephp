@@ -16,7 +16,7 @@ namespace Cake\Database\Schema;
 
 use Cake\Database\Connection;
 use Cake\Database\Exception;
-use Cake\Database\Type;
+use Cake\Database\TypeFactory;
 
 /**
  * Represents a single table in a database schema.
@@ -440,8 +440,8 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
             return null;
         }
 
-        if (Type::getMap($type)) {
-            $type = Type::build($type)->getBaseType();
+        if (TypeFactory::getMap($type)) {
+            $type = TypeFactory::build($type)->getBaseType();
         }
 
         return $this->_columns[$column]['baseType'] = $type;

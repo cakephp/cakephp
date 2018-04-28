@@ -16,7 +16,8 @@ namespace Cake\Test\TestCase\Database;
 use Cake\Database\Driver;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Expression\FunctionExpression;
-use Cake\Database\Type;
+use Cake\Database\TypeFactory;
+use Cake\Database\Type\BaseType;
 use Cake\Database\Type\ExpressionTypeInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
@@ -37,7 +38,7 @@ class UuidValue
 /**
  * Custom type class that maps between value objects, and SQL expressions.
  */
-class OrderedUuidType extends Type implements ExpressionTypeInterface
+class OrderedUuidType extends BaseType implements ExpressionTypeInterface
 {
 
     public function toPHP($value, Driver $d)
@@ -63,6 +64,16 @@ class OrderedUuidType extends Type implements ExpressionTypeInterface
             [$substr(15, 4), $substr(10, 4), $substr(1, 8), $substr(20, 4), $substr(25)]
         );
     }
+
+    public function marshal($value)
+    {
+        return $value;
+    }
+
+    public function toDatabase($value, Driver $d)
+    {
+        return $value;
+    }
 }
 
 /**
@@ -80,7 +91,7 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
         $this->skipIf($this->connection->getDriver() instanceof Sqlserver, 'This tests uses functions specific to other drivers');
-        Type::map('ordered_uuid', OrderedUuidType::class);
+        TypeFactory::map('ordered_uuid', OrderedUuidType::class);
     }
 
     protected function _insert()

@@ -75,7 +75,7 @@ class MysqlSchema extends BaseSchema
     /**
      * Convert a MySQL column type into an abstract type.
      *
-     * The returned type will be a type that Cake\Database\Type can handle.
+     * The returned type will be a type that Cake\Database\TypeFactory can handle.
      *
      * @param string $column The column type + length
      * @return array Array of column information.

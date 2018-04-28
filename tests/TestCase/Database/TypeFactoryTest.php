@@ -9,23 +9,22 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         3.0.0
+ * @since         4.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Database;
 
-use Cake\Database\Type;
+use Cake\Database\TypeFactory;
 use Cake\Database\TypeInterface;
-use Cake\Database\Type\UuidType;
 use Cake\TestSuite\TestCase;
 use PDO;
 use TestApp\Database\Type\BarType;
 use TestApp\Database\Type\FooType;
 
 /**
- * Tests Type class
+ * Tests TypeFactory class
  */
-class TypeTest extends TestCase
+class TypeFactoryTest extends TestCase
 {
 
     /**
@@ -42,7 +41,7 @@ class TypeTest extends TestCase
      */
     public function setUp()
     {
-        $this->_originalMap = Type::getMap();
+        $this->_originalMap = TypeFactory::getMap();
         parent::setUp();
     }
 
@@ -55,7 +54,7 @@ class TypeTest extends TestCase
     {
         parent::tearDown();
 
-        Type::setMap($this->_originalMap);
+        TypeFactory::setMap($this->_originalMap);
     }
 
     /**
@@ -66,7 +65,7 @@ class TypeTest extends TestCase
      */
     public function testBuildBasicTypes($name)
     {
-        $type = Type::build($name);
+        $type = TypeFactory::build($name);
         $this->assertInstanceOf(TypeInterface::class, $type);
         $this->assertEquals($name, $type->getName());
         $this->assertEquals($name, $type->getBaseType());
@@ -97,7 +96,7 @@ class TypeTest extends TestCase
     public function testBuildUnknownType()
     {
         $this->expectException(\InvalidArgumentException::class);
-        Type::build('foo');
+        TypeFactory::build('foo');
     }
 
     /**
@@ -108,8 +107,8 @@ class TypeTest extends TestCase
      */
     public function testInstanceRecycling()
     {
-        $type = Type::build('integer');
-        $this->assertSame($type, Type::build('integer'));
+        $type = TypeFactory::build('integer');
+        $this->assertSame($type, TypeFactory::build('integer'));
     }
 
     /**
@@ -119,22 +118,22 @@ class TypeTest extends TestCase
      */
     public function testMapAndBuild()
     {
-        $map = Type::getMap();
+        $map = TypeFactory::getMap();
         $this->assertNotEmpty($map);
         $this->assertArrayNotHasKey('foo', $map);
 
         $fooType = FooType::class;
-        Type::map('foo', $fooType);
-        $map = Type::getMap();
+        TypeFactory::map('foo', $fooType);
+        $map = TypeFactory::getMap();
         $this->assertEquals($fooType, $map['foo']);
-        $this->assertEquals($fooType, Type::getMap('foo'));
+        $this->assertEquals($fooType, TypeFactory::getMap('foo'));
 
-        Type::map('foo2', $fooType);
-        $map = Type::getMap();
+        TypeFactory::map('foo2', $fooType);
+        $map = TypeFactory::getMap();
         $this->assertSame($fooType, $map['foo2']);
-        $this->assertSame($fooType, Type::getMap('foo2'));
+        $this->assertSame($fooType, TypeFactory::getMap('foo2'));
 
-        $type = Type::build('foo2');
+        $type = TypeFactory::build('foo2');
         $this->assertInstanceOf($fooType, $type);
     }
 
@@ -146,13 +145,13 @@ class TypeTest extends TestCase
     public function testReMapAndBuild()
     {
         $fooType = FooType::class;
-        Type::map('foo', $fooType);
-        $type = Type::build('foo');
+        TypeFactory::map('foo', $fooType);
+        $type = TypeFactory::build('foo');
         $this->assertInstanceOf($fooType, $type);
 
         $barType = BarType::class;
-        Type::map('foo', $barType);
-        $type = Type::build('foo');
+        TypeFactory::map('foo', $barType);
+        $type = TypeFactory::build('foo');
         $this->assertInstanceOf($barType, $type);
     }
 
@@ -163,19 +162,19 @@ class TypeTest extends TestCase
      */
     public function testClear()
     {
-        $map = Type::getMap();
+        $map = TypeFactory::getMap();
         $this->assertNotEmpty($map);
 
-        $type = Type::build('float');
-        Type::clear();
+        $type = TypeFactory::build('float');
+        TypeFactory::clear();
 
-        $this->assertEmpty(Type::getMap());
-        Type::setMap($map);
-        $newMap = Type::getMap();
+        $this->assertEmpty(TypeFactory::getMap());
+        TypeFactory::setMap($map);
+        $newMap = TypeFactory::getMap();
 
         $this->assertEquals(array_keys($map), array_keys($newMap));
         $this->assertEquals($map['integer'], $newMap['integer']);
-        $this->assertEquals($type, Type::build('float'));
+        $this->assertEquals($type, TypeFactory::build('float'));
     }
 
     /**
@@ -189,7 +188,7 @@ class TypeTest extends TestCase
             PHP_INT_SIZE === 4,
             'This test requires a php version compiled for 64 bits'
         );
-        $type = Type::build('biginteger');
+        $type = TypeFactory::build('biginteger');
         $integer = time() * time();
         $driver = $this->getMockBuilder('\Cake\Database\Driver')->getMock();
         $this->assertSame($integer, $type->toPHP($integer, $driver));
@@ -204,7 +203,7 @@ class TypeTest extends TestCase
      */
     public function testBigintegerToStatement()
     {
-        $type = Type::build('biginteger');
+        $type = TypeFactory::build('biginteger');
         $integer = time() * time();
         $driver = $this->getMockBuilder('\Cake\Database\Driver')->getMock();
         $this->assertEquals(PDO::PARAM_INT, $type->toStatement($integer, $driver));
@@ -217,7 +216,7 @@ class TypeTest extends TestCase
      */
     public function testDecimalToPHP()
     {
-        $type = Type::build('decimal');
+        $type = TypeFactory::build('decimal');
         $driver = $this->getMockBuilder('\Cake\Database\Driver')->getMock();
 
         $this->assertSame(3.14159, $type->toPHP('3.14159', $driver));
@@ -232,7 +231,7 @@ class TypeTest extends TestCase
      */
     public function testDecimalToStatement()
     {
-        $type = Type::build('decimal');
+        $type = TypeFactory::build('decimal');
         $string = '12.55';
         $driver = $this->getMockBuilder('\Cake\Database\Driver')->getMock();
         $this->assertEquals(PDO::PARAM_STR, $type->toStatement($string, $driver));
@@ -246,7 +245,7 @@ class TypeTest extends TestCase
     public function testSet()
     {
         $instance = $this->getMockBuilder(TypeInterface::class)->getMock();
-        Type::set('random', $instance);
-        $this->assertSame($instance, Type::build('random'));
+        TypeFactory::set('random', $instance);
+        $this->assertSame($instance, TypeFactory::build('random'));
     }
 }
