@@ -14,23 +14,13 @@
  */
 namespace Cake\Database\Type;
 
-use Cake\Database\Driver;
+use Cake\I18n\Date;
+use Cake\I18n\FrozenDate;
 use DateTime;
+use DateTimeImmutable;
 
 class DateType extends DateTimeType
 {
-
-    /**
-     * The class to use for representing date objects
-     *
-     * This property can only be used before an instance of this type
-     * class is constructed. After that use `useMutable()` or `useImmutable()` instead.
-     *
-     * @var string
-     * @deprecated 3.2.0 Use DateType::useMutable() or DateType::useImmutable() instead.
-     */
-    public static $dateTimeClass = 'Cake\I18n\Date';
-
     /**
      * Date format for DateTime object
      *
@@ -53,7 +43,7 @@ class DateType extends DateTimeType
      */
     public function useImmutable()
     {
-        $this->_setClassName('Cake\I18n\FrozenDate', 'DateTimeImmutable');
+        $this->_setClassName(FrozenDate::class, DateTimeImmutable::class);
 
         return $this;
     }
@@ -65,7 +55,7 @@ class DateType extends DateTimeType
      */
     public function useMutable()
     {
-        $this->_setClassName('Cake\I18n\Date', 'DateTime');
+        $this->_setClassName(Date::class, DateTime::class);
 
         return $this;
     }
