@@ -96,7 +96,7 @@ class DateTimeType extends BaseType
     {
         $this->_name = $name;
 
-        $this->useMutable();
+        $this->useImmutable();
     }
 
     /**

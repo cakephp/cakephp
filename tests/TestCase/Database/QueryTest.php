@@ -22,6 +22,7 @@ use Cake\Database\Statement\StatementDecorator;
 use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use DateTimeImmutable;
 
 /**
  * Tests Query class
@@ -4422,7 +4423,7 @@ class QueryTest extends TestCase
             ->getSelectTypeMap()->setTypes(['id' => 'integer', 'the_date' => 'datetime']);
         $result = $query->execute()->fetchAll('assoc');
         $this->assertInternalType('integer', $result[0]['id']);
-        $this->assertInstanceOf('DateTime', $result[0]['the_date']);
+        $this->assertInstanceOf(DateTimeImmutable::class, $result[0]['the_date']);
     }
 
     /**
