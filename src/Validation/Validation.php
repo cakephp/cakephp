@@ -718,8 +718,7 @@ class Validation
         $decimalPoint = $formatter->getSymbol(NumberFormatter::DECIMAL_SEPARATOR_SYMBOL);
         $groupingSep = $formatter->getSymbol(NumberFormatter::GROUPING_SEPARATOR_SYMBOL);
 
-        $check = str_replace($groupingSep, '', $check);
-        $check = str_replace($decimalPoint, '.', $check);
+        $check = str_replace([$groupingSep, $decimalPoint], ['', '.'], $check);
 
         return static::_check($check, $regex);
     }
