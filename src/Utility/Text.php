@@ -138,7 +138,8 @@ class Text
                         }
                     }
                 }
-                $offset = $tmpOffset++;
+                $tmpOffset += 1;
+                $offset = $tmpOffset;
             } else {
                 $results[] = $buffer . mb_substr($data, $offset);
                 $offset = $length + 1;
