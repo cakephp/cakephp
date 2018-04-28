@@ -662,7 +662,7 @@ class Folder
         $directory = Folder::slashTerm($this->path);
         $stack = [$directory];
         $count = count($stack);
-        for ($i = 0, $j = $count; $i < $j; ++$i) {
+        for ($i = 0, $j = $count; $i < $j; $i++) {
             if (is_file($stack[$i])) {
                 $size += filesize($stack[$i]);
             } elseif (is_dir($stack[$i])) {
