@@ -64,6 +64,10 @@ if (!function_exists('h')) {
             }
         }
         if (is_string($double)) {
+            deprecationWarning(
+                'Passing charset string for 2nd argument is deprecated. ' .
+                'Use the 3rd argument instead.'
+            );
             $charset = $double;
         }
 
