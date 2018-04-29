@@ -131,7 +131,7 @@ class PluginCollection implements Iterator, Countable
      */
     public function next()
     {
-        ++$this->position;
+        $this->position++;
     }
 
     /**
