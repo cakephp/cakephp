@@ -25,13 +25,14 @@ if (!function_exists('h')) {
     /**
      * Convenience method for htmlspecialchars.
      *
-     * @param string|array|object $text Text to wrap through htmlspecialchars. Also works with arrays, and objects.
+     * @param mixed $text Text to wrap through htmlspecialchars. Also works with arrays, and objects.
      *    Arrays will be mapped and have all their elements escaped. Objects will be string cast if they
      *    implement a `__toString` method. Otherwise the class name will be used.
+     *    Other scalar types will be returned unchanged.
      * @param bool $double Encode existing html entities.
      * @param string|null $charset Character set to use when escaping. Defaults to config value in `mb_internal_encoding()`
      * or 'UTF-8'.
-     * @return string|array Wrapped text.
+     * @return mixed Wrapped text.
      * @link https://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#h
      */
     function h($text, $double = true, $charset = null)
