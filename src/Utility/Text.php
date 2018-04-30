@@ -138,7 +138,8 @@ class Text
                         }
                     }
                 }
-                $offset = ++$tmpOffset;
+                $tmpOffset += 1;
+                $offset = $tmpOffset;
             } else {
                 $results[] = $buffer . mb_substr($data, $offset);
                 $offset = $length + 1;
@@ -878,7 +879,7 @@ class Text
         $phraseLen = mb_strlen($phrase);
         $textLen = mb_strlen($text);
 
-        $pos = mb_strpos(mb_strtolower($text), mb_strtolower($phrase));
+        $pos = mb_stripos($text, $phrase);
         if ($pos === false) {
             return mb_substr($text, 0, $radius) . $ellipsis;
         }

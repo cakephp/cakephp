@@ -345,7 +345,7 @@ class Folder
      */
     public static function isRegisteredStreamWrapper($path)
     {
-        return preg_match('/^[^:\/\/]+?(?=:\/\/)/i', $path, $matches) &&
+        return preg_match('/^[^:\/\/]+?(?=:\/\/)/', $path, $matches) &&
             in_array($matches[0], stream_get_wrappers());
     }
 
@@ -662,7 +662,7 @@ class Folder
         $directory = Folder::slashTerm($this->path);
         $stack = [$directory];
         $count = count($stack);
-        for ($i = 0, $j = $count; $i < $j; ++$i) {
+        for ($i = 0, $j = $count; $i < $j; $i++) {
             if (is_file($stack[$i])) {
                 $size += filesize($stack[$i]);
             } elseif (is_dir($stack[$i])) {

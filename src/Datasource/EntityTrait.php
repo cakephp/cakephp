@@ -1356,7 +1356,7 @@ trait EntityTrait
             get_called_class() . '::source() is deprecated. ' .
             'Use setSource()/getSource() instead.'
         );
-        if (is_null($alias)) {
+        if ($alias === null) {
             return $this->getSource();
         }
 
