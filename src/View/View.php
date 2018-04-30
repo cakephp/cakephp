@@ -223,7 +223,7 @@ class View implements EventDispatcherInterface
      */
     protected $_passedVars = [
         'viewVars', 'autoLayout', 'helpers', 'template', 'layout', 'name', 'theme',
-        'layoutPath', 'templatePath', 'plugin', 'passedArgs'
+        'layoutPath', 'templatePath', 'plugin'
     ];
 
     /**
