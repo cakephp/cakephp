@@ -178,12 +178,17 @@ class PoFileParserTest extends TestCase
         $this->assertSame('En resolved', $messages['Resolved']['_context']['']);
         $this->assertSame('En resolved - context', $messages['Resolved']['_context']['Pay status']);
 
+        $key = '{0,plural,=0{Je suis}=1{Je suis}=2{Nous sommes} other{Nous sommes}}';
+        $this->assertContains("I've", $messages[$key]['_context']['origin']);
+
         // Confirm actual behavior
         I18n::setLocale('en_CA');
         $this->assertSame('En cours', __('Pending'));
         $this->assertSame('En cours - context', __x('Pay status', 'Pending'));
         $this->assertSame('En resolved', __('Resolved'));
         $this->assertSame('En resolved - context', __x('Pay status', 'Resolved'));
+        $this->assertSame("I've", __x('origin', $key, [1]));
+        $this->assertSame("We are", __x('origin', $key, [3]));
     }
 
     /**
