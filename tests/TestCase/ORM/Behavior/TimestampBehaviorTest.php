@@ -232,7 +232,6 @@ class TimestampBehaviorTest extends TestCase
         $entity = new Entity();
         $event = new Event('Model.beforeSave');
 
-        TypeFactory::build('timestamp')->useImmutable();
         $entity->clean();
         $this->Behavior->handleEvent($event, $entity);
         $this->assertInstanceOf('Cake\I18n\FrozenTime', $entity->modified);
@@ -241,6 +240,9 @@ class TimestampBehaviorTest extends TestCase
         $entity->clean();
         $this->Behavior->handleEvent($event, $entity);
         $this->assertInstanceOf('Cake\I18n\Time', $entity->modified);
+        // Revert back to using immutable class to avoid causing problems in
+        // other test cases when running full test suite.
+        TypeFactory::build('timestamp')->useImmutable();
     }
 
     /**
