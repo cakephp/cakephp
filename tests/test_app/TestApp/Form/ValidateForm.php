@@ -21,7 +21,7 @@ class ValidateForm extends Form
 
     protected function _buildValidator(\Cake\Validation\Validator $validator)
     {
-        return parent::validator($validator)
+        return $validator
             ->requirePresence('title');
     }
 }
