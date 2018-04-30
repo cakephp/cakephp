@@ -186,7 +186,7 @@ class ViewVarsTraitTest extends TestCase
      */
     public function testViewOptionsGetsToBuilder()
     {
-        $this->deprecated(function(){
+        $this->deprecated(function () {
             $this->subject->passedArgs = 'test';
             $this->subject->createView();
             $result = $this->subject->viewBuilder()->getOptions();
