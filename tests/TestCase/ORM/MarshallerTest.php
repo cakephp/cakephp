@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\ORM;
 
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Event\Event;
+use Cake\I18n\FrozenTime;
 use Cake\I18n\Time;
 use Cake\ORM\Entity;
 use Cake\ORM\Marshaller;
@@ -2511,7 +2512,7 @@ class MarshallerTest extends TestCase
         ];
         $marshall = new Marshaller($this->comments);
         $result = $marshall->merge($entity, $data);
-        $this->assertInstanceOf('DateTime', $entity->created);
+        $this->assertInstanceOf(FrozenTime::class, $entity->created);
         $this->assertEquals('2014-02-14', $entity->created->format('Y-m-d'));
     }
 

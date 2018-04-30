@@ -15,7 +15,9 @@
 namespace Cake\Database\Type;
 
 use Cake\Database\Driver;
-use Cake\Database\Type\BatchCastingInterface;
+use Cake\I18n\FrozenTime;
+use Cake\I18n\Time;
+use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
@@ -30,18 +32,6 @@ use RuntimeException;
  */
 class DateTimeType extends BaseType
 {
-
-    /**
-     * The class to use for representing date objects
-     *
-     * This property can only be used before an instance of this type
-     * class is constructed. After that use `useMutable()` or `useImmutable()` instead.
-     *
-     * @var string
-     * @deprecated 3.2.0 Use DateTimeType::useMutable() or DateTimeType::useImmutable() instead.
-     */
-    public static $dateTimeClass = 'Cake\I18n\Time';
-
     /**
      * Whether or not we want to override the time of the converted Time objects
      * so it points to the start of the day.
@@ -106,7 +96,7 @@ class DateTimeType extends BaseType
     {
         $this->_name = $name;
 
-        $this->_setClassName(static::$dateTimeClass, 'DateTime');
+        $this->useImmutable();
     }
 
     /**
@@ -343,7 +333,7 @@ class DateTimeType extends BaseType
      */
     public function useImmutable()
     {
-        $this->_setClassName('Cake\I18n\FrozenTime', 'DateTimeImmutable');
+        $this->_setClassName(FrozenTime::class, DateTimeImmutable::class);
 
         return $this;
     }
@@ -381,7 +371,7 @@ class DateTimeType extends BaseType
      */
     public function useMutable()
     {
-        $this->_setClassName('Cake\I18n\Time', 'DateTime');
+        $this->_setClassName(Time::class, DateTime::class);
 
         return $this;
     }

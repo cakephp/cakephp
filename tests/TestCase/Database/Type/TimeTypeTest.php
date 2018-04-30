@@ -18,6 +18,7 @@ use Cake\Database\Type\TimeType;
 use Cake\I18n\I18n;
 use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
+use DateTimeImmutable;
 
 /**
  * Test for the Time type.
@@ -79,7 +80,7 @@ class TimeTypeTest extends TestCase
         $this->assertEquals('15', $result->format('s'));
 
         $result = $this->type->toPHP('16:30:15', $this->driver);
-        $this->assertInstanceOf('DateTime', $result);
+        $this->assertInstanceOf(DateTimeImmutable::class, $result);
         $this->assertEquals('16', $result->format('H'));
         $this->assertEquals('30', $result->format('i'));
         $this->assertEquals('15', $result->format('s'));
@@ -213,7 +214,7 @@ class TimeTypeTest extends TestCase
         $result = $this->type->marshal($value);
         if (is_object($expected)) {
             $this->assertEquals($expected, $result);
-            $this->assertInstanceOf('DateTime', $result);
+            $this->assertInstanceOf(DateTimeImmutable::class, $result);
         } else {
             $this->assertSame($expected, $result);
         }

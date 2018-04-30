@@ -22,6 +22,7 @@ use Cake\Database\Statement\StatementDecorator;
 use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use DateTimeImmutable;
 
 /**
  * Tests Query class
@@ -2097,6 +2098,7 @@ class QueryTest extends TestCase
             ->from('articles')
             ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
             ->group('author_id')
+            ->order(['total' => 'desc'])
             ->execute();
         $expected = [['total' => 2, 'author_id' => 1], ['total' => '1', 'author_id' => 3]];
         $this->assertEquals($expected, $result->fetchAll('assoc'));
@@ -2292,6 +2294,7 @@ class QueryTest extends TestCase
                 ->from('articles')
                 ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $query->newExpr()->equalFields('author_id', 'a.id')])
                 ->group('author_id')
+                ->order(['total' => 'desc'])
                 ->having(['count(author_id) >' => 2], ['count(author_id)' => 'integer'])
                 ->orHaving(['count(author_id) <=' => 2], ['count(author_id)' => 'integer'])
                 ->execute();
@@ -4253,7 +4256,7 @@ class QueryTest extends TestCase
                 'integer'
             );
 
-        //Postgres requires the case statement to be cast to a integer
+        // Postgres requires the case statement to be cast to a integer
         if ($this->connection->getDriver() instanceof \Cake\Database\Driver\Postgres) {
             $publishedCase = $query->func()
                 ->cast([$publishedCase, 'integer' => 'literal'])
@@ -4422,7 +4425,7 @@ class QueryTest extends TestCase
             ->getSelectTypeMap()->setTypes(['id' => 'integer', 'the_date' => 'datetime']);
         $result = $query->execute()->fetchAll('assoc');
         $this->assertInternalType('integer', $result[0]['id']);
-        $this->assertInstanceOf('DateTime', $result[0]['the_date']);
+        $this->assertInstanceOf(DateTimeImmutable::class, $result[0]['the_date']);
     }
 
     /**

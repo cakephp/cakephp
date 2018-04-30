@@ -61,10 +61,10 @@ class DateTimeTypeTest extends TestCase
      */
     public function testGetDateTimeClassName()
     {
-        $this->assertSame(Time::class, $this->type->getDateTimeClassName());
-
-        $this->type->useImmutable();
         $this->assertSame(FrozenTime::class, $this->type->getDateTimeClassName());
+
+        $this->type->useMutable();
+        $this->assertSame(Time::class, $this->type->getDateTimeClassName());
     }
 
     /**
@@ -86,7 +86,7 @@ class DateTimeTypeTest extends TestCase
     public function testToPHPString()
     {
         $result = $this->type->toPHP('2001-01-04 12:13:14', $this->driver);
-        $this->assertInstanceOf('Cake\I18n\Time', $result);
+        $this->assertInstanceOf(FrozenTime::class, $result);
         $this->assertEquals('2001', $result->format('Y'));
         $this->assertEquals('01', $result->format('m'));
         $this->assertEquals('04', $result->format('d'));
@@ -128,7 +128,7 @@ class DateTimeTypeTest extends TestCase
     {
         $in = '2014-03-24 20:44:36.315113';
         $result = $this->type->toPHP($in, $this->driver);
-        $this->assertInstanceOf('Cake\I18n\Time', $result);
+        $this->assertInstanceOf(FrozenTime::class, $result);
     }
 
     /**
