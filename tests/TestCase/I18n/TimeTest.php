@@ -459,15 +459,15 @@ class TimeTest extends TestCase
         $this->assertTimeFormat($expected, $result, 'Default locale should not be used');
 
         $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'fa-SA');
-        $expected = 'پنجشنبه ۱۴ ژانویهٔ ۲۰۱۰، ساعت ۱۳:۵۹:۲۸ (GMT)';
+        $expected = 'پنجشنبه ۱۴ ژانویهٔ ۲۰۱۰، ساعت ۱۳:۵۹:۲۸ GMT';
         $this->assertTimeFormat($expected, $result, 'fa-SA locale should be used');
 
         $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'en-IR@calendar=persian');
         $expected = 'Thursday, Dey 24, 1388 at 1:59:28 PM GMT';
         $this->assertTimeFormat($expected, $result);
 
-        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'ps-IR@calendar=persian');
-        $expected = 'پنجشنبه د  ۱۳۸۸ د مرغومی ۲۴ ۱۳:۵۹:۲۸ (GMT)';
+        $result = $time->i18nFormat(\IntlDateFormatter::SHORT, null, 'fa-IR@calendar=persian');
+        $expected = '۱۳۸۸/۱۰/۲۴،‏ ۱۳:۵۹:۲۸ GMT';
         $this->assertTimeFormat($expected, $result);
 
         $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'en-KW@calendar=islamic');
@@ -917,8 +917,14 @@ class TimeTest extends TestCase
         $expected = str_replace([',', '(', ')', ' at', ' م.', ' ه‍.ش.', ' AP', ' AH', ' SAKA', 'à '], '', $expected);
         $expected = str_replace(['  '], ' ', $expected);
 
+        $result = str_replace('Temps universel coordonné', 'UTC', $result);
+        $result = str_replace('tiempo universal coordinado', 'GMT', $result);
+        $result = str_replace('Coordinated Universal Time', 'GMT', $result);
+
         $result = str_replace([',', '(', ')', ' at', ' م.', ' ه‍.ش.', ' AP', ' AH', ' SAKA', 'à '], '', $result);
         $result = str_replace(['گرینویچ'], 'GMT', $result);
+        $result = str_replace('زمان هماهنگ جهانی', 'GMT', $result);
+        $result = str_replace('همغږۍ نړیواله موده', 'GMT', $result);
         $result = str_replace(['  '], ' ', $result);
 
         $this->assertSame($expected, $result, $message);

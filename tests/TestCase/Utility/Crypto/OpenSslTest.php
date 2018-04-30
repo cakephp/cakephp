@@ -40,20 +40,6 @@ class OpenSslTest extends TestCase
     }
 
     /**
-     * testRijndael method
-     *
-     * @return void
-     */
-    public function testRijndael()
-    {
-        $this->expectException(\LogicException::class);
-        $txt = 'The quick brown fox jumped over the lazy dog.';
-        $key = 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi';
-
-        $this->crypt->rijndael($txt, $key, 'encrypt');
-    }
-
-    /**
      * Test encrypt/decrypt.
      *
      * @return void

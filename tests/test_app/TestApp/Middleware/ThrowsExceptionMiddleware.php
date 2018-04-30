@@ -9,17 +9,20 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         3.5.0
+ * @since         3.6.2
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace TestApp\Database\Type;
+namespace TestApp\Middleware;
 
-use Cake\Database\Type\StringType;
+use Cake\Http\Exception\ForbiddenException;
 
-class FooType extends StringType
+/**
+ * Testing stub for middleware tests.
+ */
+class ThrowsExceptionMiddleware
 {
-    public function getBaseType()
+    public function __invoke($req, $res, $next)
     {
-        return 'text';
+        throw new ForbiddenException("Sample Message");
     }
 }

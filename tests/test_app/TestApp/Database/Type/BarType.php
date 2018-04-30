@@ -14,9 +14,9 @@
  */
 namespace TestApp\Database\Type;
 
-use Cake\Database\Type;
+use Cake\Database\Type\StringType;
 
-class BarType extends Type
+class BarType extends StringType
 {
     public function getBaseType()
     {

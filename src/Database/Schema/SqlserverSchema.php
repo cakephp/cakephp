@@ -69,7 +69,7 @@ class SqlserverSchema extends BaseSchema
      * Convert a column definition to the abstract types.
      *
      * The returned type will be a type that
-     * Cake\Database\Type can handle.
+     * Cake\Database\TypeFactory  can handle.
      *
      * @param string $col The column type
      * @param int|null $length the column length
@@ -120,7 +120,7 @@ class SqlserverSchema extends BaseSchema
         // SqlServer schema reflection returns double length for unicode
         // columns because internally it uses UTF16/UCS2
         if ($col === 'nvarchar' || $col === 'nchar' || $col === 'ntext') {
-            $length = $length / 2;
+            $length /= 2;
         }
         if (strpos($col, 'varchar') !== false && $length < 0) {
             return ['type' => TableSchema::TYPE_TEXT, 'length' => null];

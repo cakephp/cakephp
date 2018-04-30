@@ -315,7 +315,7 @@ class Socket
     /**
      * Set the last error.
      *
-     * @param int $errNum Error code
+     * @param int|null $errNum Error code
      * @param string $errStr Error string
      * @return void
      */

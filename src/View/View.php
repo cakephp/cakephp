@@ -493,7 +493,7 @@ class View implements EventDispatcherInterface
      * The name specified is the filename of the layout in /src/Template/Layout
      * without the .ctp extension.
      *
-     * @return string
+     * @return string|false
      */
     public function getLayout()
     {

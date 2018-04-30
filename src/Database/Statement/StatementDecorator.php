@@ -239,7 +239,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
         $result = $this->fetch(static::FETCH_TYPE_NUM);
         if (isset($result[$position])) {
             return $result[$position];
-        };
+        }
 
         return false;
     }

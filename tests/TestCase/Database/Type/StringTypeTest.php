@@ -14,7 +14,7 @@
  */
 namespace Cake\Test\TestCase\Database\Type;
 
-use Cake\Database\Type;
+use Cake\Database\TypeFactory;
 use Cake\TestSuite\TestCase;
 use PDO;
 
@@ -32,7 +32,7 @@ class StringTypeTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->type = Type::build('string');
+        $this->type = TypeFactory::build('string');
         $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
     }
 

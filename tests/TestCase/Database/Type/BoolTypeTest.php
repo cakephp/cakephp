@@ -14,7 +14,7 @@
  */
 namespace Cake\Test\TestCase\Database\Type;
 
-use Cake\Database\Type;
+use Cake\Database\TypeFactory;
 use Cake\TestSuite\TestCase;
 use PDO;
 
@@ -41,7 +41,7 @@ class BoolTypeTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->type = Type::build('boolean');
+        $this->type = TypeFactory::build('boolean');
         $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
     }
 

@@ -28,7 +28,22 @@ use Zend\Diactoros\ServerRequestFactory as BaseFactory;
 abstract class ServerRequestFactory extends BaseFactory
 {
     /**
-     * {@inheritDoc}
+     * Create a request from the supplied superglobal values.
+     *
+     * If any argument is not supplied, the corresponding superglobal value will
+     * be used.
+     *
+     * The ServerRequest created is then passed to the fromServer() method in
+     * order to marshal the request URI and headers.
+     *
+     * @see fromServer()
+     * @param array $server $_SERVER superglobal
+     * @param array $query $_GET superglobal
+     * @param array $body $_POST superglobal
+     * @param array $cookies $_COOKIE superglobal
+     * @param array $files $_FILES superglobal
+     * @return \Cake\Http\ServerRequest
+     * @throws \InvalidArgumentException for invalid file values
      */
     public static function fromGlobals(
         array $server = null,

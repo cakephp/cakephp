@@ -55,9 +55,6 @@ class BinaryType extends BaseType
         if ($value === null) {
             return null;
         }
-        if (is_string($value) && $driver instanceof Sqlserver) {
-            $value = pack('H*', $value);
-        }
         if (is_string($value)) {
             return fopen('data:text/plain;base64,' . base64_encode($value), 'rb');
         }
