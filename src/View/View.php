@@ -206,6 +206,7 @@ class View implements EventDispatcherInterface
      * additional information about the request.
      *
      * @var \Cake\Http\ServerRequest
+     * @deprecated 3.6.3 The property will become protected in 4.0.0. Use getRequest()/setRequest() instead.
      */
     public $request;
 
@@ -384,6 +385,40 @@ class View implements EventDispatcherInterface
      */
     public function initialize()
     {
+    }
+
+    /**
+     * Gets the request instance.
+     *
+     * @return \Cake\Http\ServerRequest
+     * @since 3.6.0
+     */
+    public function getRequest()
+    {
+        return $this->request;
+    }
+
+    /**
+     * Sets the request objects and configures a number of controller properties
+     * based on the contents of the request. The properties that get set are:
+     *
+     * - $this->request - To the $request parameter
+     * - $this->plugin - To the value returned by $request->getParam('plugin')
+     * - $this->passedArgs - Same as $request->params['pass]
+     *
+     * @param \Cake\Http\ServerRequest $request Request instance.
+     * @return $this
+     */
+    public function setRequest(ServerRequest $request)
+    {
+        $this->request = $request;
+        $this->plugin = $request->getParam('plugin');
+
+        if ($request->getParam('pass')) {
+            $this->passedArgs = $request->getParam('pass');
+        }
+
+        return $this;
     }
 
     /**
