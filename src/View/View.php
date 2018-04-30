@@ -214,6 +214,7 @@ class View implements EventDispatcherInterface
      * Reference to the Response object
      *
      * @var \Cake\Http\Response
+     * @deprecated 3.6.3 The property will become protected in 4.0.0. Use getResponse()/setResponse() instead.
      */
     public $response;
 
@@ -408,6 +409,7 @@ class View implements EventDispatcherInterface
      *
      * @param \Cake\Http\ServerRequest $request Request instance.
      * @return $this
+     * @since 3.6.3
      */
     public function setRequest(ServerRequest $request)
     {
@@ -417,6 +419,31 @@ class View implements EventDispatcherInterface
         if ($request->getParam('pass')) {
             $this->passedArgs = $request->getParam('pass');
         }
+
+        return $this;
+    }
+
+    /**
+     * Gets the response instance.
+     *
+     * @return \Cake\Http\Response
+     * @since 3.6.3
+     */
+    public function getResponse()
+    {
+        return $this->response;
+    }
+
+    /**
+     * Sets the response instance.
+     *
+     * @param \Cake\Http\Response $response Response instance.
+     * @return $this
+     * @since 3.6.3
+     */
+    public function setResponse(Response $response)
+    {
+        $this->response = $response;
 
         return $this;
     }
