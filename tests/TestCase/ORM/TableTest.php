@@ -6150,19 +6150,21 @@ class TableTest extends TestCase
     public function testFindOrCreateTransactions()
     {
         $articles = $this->getTableLocator()->get('Articles');
+        $articles->getEventManager()->on('Model.afterSaveCommit', function ($event, $entity) {
+            $entity->afterSaveCommit = true;
+        });
 
         $article = $articles->findOrCreate(function ($query) {
             $this->assertInstanceOf('Cake\ORM\Query', $query);
             $query->where(['title' => 'Find Something New']);
-            $this->assertTrue($this->connection->inTransaction());
         }, function ($article) {
             $this->assertInstanceOf('Cake\Datasource\EntityInterface', $article);
-            $this->assertTrue($this->connection->inTransaction());
             $article->title = 'Success';
         });
         $this->assertFalse($article->isNew());
         $this->assertNotNull($article->id);
         $this->assertEquals('Success', $article->title);
+        $this->assertTrue($article->afterSaveCommit);
     }
 
     /**

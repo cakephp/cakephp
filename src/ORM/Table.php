@@ -1680,9 +1680,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             'defaults' => true
         ];
 
-        return $this->_executeTransaction(function () use ($search, $callback, $options) {
-            return $this->_processFindOrCreate($search, $callback, $options);
-        }, $options['atomic']);
+        return $this->_processFindOrCreate($search, $callback, $options);
     }
 
     /**
