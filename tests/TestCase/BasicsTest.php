@@ -160,9 +160,11 @@ class BasicsTest extends TestCase
         $result = h($string, false);
         $this->assertEquals('&lt;foo&gt; &amp; &nbsp;', $result);
 
-        $string = '<foo> & &nbsp;';
-        $result = h($string, 'UTF-8');
-        $this->assertEquals('&lt;foo&gt; &amp; &amp;nbsp;', $result);
+        $this->deprecated(function () {
+            $string = '<foo> & &nbsp;';
+            $result = h($string, 'UTF-8');
+            $this->assertEquals('&lt;foo&gt; &amp; &amp;nbsp;', $result);
+        });
 
         $string = "An invalid\x80string";
         $result = h($string);
