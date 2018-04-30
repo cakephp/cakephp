@@ -16,6 +16,9 @@ namespace Cake\Database\Exception;
 
 use Cake\Core\Exception\Exception;
 
+/**
+ * Class MissingDriverException
+ */
 class MissingDriverException extends Exception
 {
 

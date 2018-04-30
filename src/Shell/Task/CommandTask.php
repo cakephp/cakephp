@@ -165,6 +165,7 @@ class CommandTask extends Shell
      *
      * @param string $commandName The command you want subcommands from.
      * @return array
+     * @throws \ReflectionException
      */
     public function subCommands($commandName)
     {

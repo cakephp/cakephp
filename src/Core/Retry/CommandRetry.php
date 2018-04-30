@@ -56,6 +56,7 @@ class CommandRetry
      *
      * @param callable $action The callable action to execute with a retry strategy
      * @return mixed The return value of the passed action callable
+     * @throws \Exception
      */
     public function run(callable $action)
     {

@@ -444,7 +444,7 @@ class Router
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The request instance.
      * @return void
-     * @throws InvalidArgumentException When parameter is an incorrect type.
+     * @throws \InvalidArgumentException When parameter is an incorrect type.
      */
     public static function setRequestContext(ServerRequestInterface $request)
     {
