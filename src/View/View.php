@@ -392,7 +392,7 @@ class View implements EventDispatcherInterface
      * Gets the request instance.
      *
      * @return \Cake\Http\ServerRequest
-     * @since 3.6.0
+     * @since 3.6.3
      */
     public function getRequest()
     {
