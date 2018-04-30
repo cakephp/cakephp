@@ -31,7 +31,7 @@ class RequestHandlerTestController extends Controller
      */
     public function destination()
     {
-        $this->viewBuilder()->templatePath('Posts');
+        $this->viewBuilder()->setTemplatePath('Posts');
         $this->render('index');
     }
 
@@ -55,7 +55,7 @@ class RequestHandlerTestController extends Controller
      */
     public function ajax2_layout()
     {
-        $this->viewBuilder()->layout('ajax2');
+        $this->viewBuilder()->setLayout('ajax2');
         $this->destination();
     }
 

@@ -270,11 +270,6 @@ class FormHelper extends Helper
     {
         $locator = null;
         $widgets = $this->_defaultWidgets;
-        if (isset($config['registry'])) {
-            deprecationWarning('`registry` config key is deprecated in FormHelper, use `locator` instead.');
-            $config['locator'] = $config['registry'];
-            unset($config['registry']);
-        }
         if (isset($config['locator'])) {
             $locator = $config['locator'];
             unset($config['locator']);
@@ -299,26 +294,6 @@ class FormHelper extends Helper
         }
         $this->setWidgetLocator($locator);
         $this->_idPrefix = $this->getConfig('idPrefix');
-    }
-
-    /**
-     * Set the widget registry the helper will use.
-     *
-     * @param \Cake\View\Widget\WidgetRegistry|null $instance The registry instance to set.
-     * @param array $widgets An array of widgets
-     * @return \Cake\View\Widget\WidgetRegistry
-     * @deprecated 3.6.0 Use FormHelper::widgetLocator() instead.
-     */
-    public function widgetRegistry(WidgetRegistry $instance = null, $widgets = [])
-    {
-        deprecationWarning('widgetRegistry is deprecated, use widgetLocator instead.');
-
-        if ($instance) {
-            $instance->add($widgets);
-            $this->setWidgetLocator($instance);
-        }
-
-        return $this->getWidgetLocator();
     }
 
     /**
@@ -375,10 +350,7 @@ class FormHelper extends Helper
      * - `type` Form method defaults to autodetecting based on the form context. If
      *   the form context's isCreate() method returns false, a PUT request will be done.
      * - `method` Set the form's method attribute explicitly.
-     * - `action` The controller action the form submits to, (optional). Use this option if you
-     *   don't need to change the controller from the current request's controller. Deprecated since 3.2, use `url`.
-     * - `url` The URL the form submits to. Can be a string or a URL array. If you use 'url'
-     *    you should leave 'action' undefined.
+     * - `url` The URL the form submits to. Can be a string or a URL array.
      * - `encoding` Set the accept-charset encoding for the form. Defaults to `Configure::read('App.encoding')`
      * - `enctype` Set the form encoding explicitly. By default `type => file` will set `enctype`
      *   to `multipart/form-data`.
@@ -417,17 +389,12 @@ class FormHelper extends Helper
 
         $options += [
             'type' => $isCreate ? 'post' : 'put',
-            'action' => null,
             'url' => null,
             'encoding' => strtolower(Configure::read('App.encoding')),
             'templates' => null,
             'idPrefix' => null,
             'valueSources' => null,
         ];
-
-        if (isset($options['action'])) {
-            trigger_error('Using key `action` is deprecated, use `url` directly instead.', E_USER_DEPRECATED);
-        }
 
         if (isset($options['valueSources'])) {
             $this->setValueSources($options['valueSources']);
@@ -446,7 +413,7 @@ class FormHelper extends Helper
         }
         unset($options['templates']);
 
-        if ($options['action'] === false || $options['url'] === false) {
+        if ($options['url'] === false) {
             $url = $this->request->getRequestTarget();
             $action = null;
         } else {
@@ -455,7 +422,7 @@ class FormHelper extends Helper
         }
 
         $this->_lastAction($url);
-        unset($options['url'], $options['action'], $options['idPrefix']);
+        unset($options['url'], $options['idPrefix']);
 
         $htmlAttributes = [];
         switch (strtolower($options['type'])) {
@@ -525,7 +492,7 @@ class FormHelper extends Helper
      */
     protected function _formUrl($context, $options)
     {
-        if ($options['action'] === null && $options['url'] === null) {
+        if ($options['url'] === null) {
             return $this->request->getRequestTarget();
         }
 
@@ -533,10 +500,6 @@ class FormHelper extends Helper
             (is_array($options['url']) && isset($options['url']['_name']))
         ) {
             return $options['url'];
-        }
-
-        if (isset($options['action']) && empty($options['url']['action'])) {
-            $options['url']['action'] = $options['action'];
         }
 
         $actionDefaults = [
@@ -977,32 +940,6 @@ class FormHelper extends Helper
     }
 
     /**
-     * Generate a set of controls for `$fields`. If $fields is empty the fields
-     * of current model will be used.
-     *
-     * @param array $fields An array of customizations for the fields that will be
-     *   generated. This array allows you to set custom types, labels, or other options.
-     * @param array $options Options array. Valid keys are:
-     * - `fieldset` Set to false to disable the fieldset. You can also pass an array of params to be
-     *    applied as HTML attributes to the fieldset tag. If you pass an empty array, the fieldset will
-     *    be enabled
-     * - `legend` Set to false to disable the legend for the generated control set. Or supply a string
-     *    to customize the legend text.
-     * @return string Completed form controls.
-     * @link https://book.cakephp.org/3.0/en/views/helpers/form.html#generating-entire-forms
-     * @deprecated 3.4.0 Use FormHelper::allControls() instead.
-     */
-    public function allInputs(array $fields = [], array $options = [])
-    {
-        deprecationWarning(
-            'FormHelper::allInputs() is deprecated. ' .
-            'Use FormHelper::allControls() instead.'
-        );
-
-        return $this->allControls($fields, $options);
-    }
-
-    /**
      * Generate a set of controls for `$fields` wrapped in a fieldset element.
      *
      * You can customize individual controls through `$fields`.
@@ -1038,31 +975,6 @@ class FormHelper extends Helper
         }
 
         return $this->fieldset($out, $options);
-    }
-
-    /**
-     * Generate a set of controls for `$fields` wrapped in a fieldset element.
-     *
-     * @param array $fields An array of the fields to generate. This array allows
-     *   you to set custom types, labels, or other options.
-     * @param array $options Options array. Valid keys are:
-     * - `fieldset` Set to false to disable the fieldset. You can also pass an
-     *    array of params to be applied as HTML attributes to the fieldset tag.
-     *    If you pass an empty array, the fieldset will be enabled.
-     * - `legend` Set to false to disable the legend for the generated input set.
-     *    Or supply a string to customize the legend text.
-     * @return string Completed form inputs.
-     * @link https://book.cakephp.org/3.0/en/views/helpers/form.html#generating-entire-forms
-     * @deprecated 3.4.0 Use FormHelper::controls() instead.
-     */
-    public function inputs(array $fields, array $options = [])
-    {
-        deprecationWarning(
-            'FormHelper::inputs() is deprecated. ' .
-            'Use FormHelper::controls() instead.'
-        );
-
-        return $this->controls($fields, $options);
     }
 
     /**
@@ -1227,25 +1139,6 @@ class FormHelper extends Helper
         }
 
         return $result;
-    }
-
-    /**
-     * Generates a form control element complete with label and wrapper div.
-     *
-     * @param string $fieldName This should be "modelname.fieldname"
-     * @param array $options Each type of input takes different options.
-     * @return string Completed form widget.
-     * @link https://book.cakephp.org/3.0/en/views/helpers/form.html#creating-form-inputs
-     * @deprecated 3.4.0 Use FormHelper::control() instead.
-     */
-    public function input($fieldName, array $options = [])
-    {
-        deprecationWarning(
-            'FormHelper::input() is deprecated. ' .
-            'Use FormHelper::control() instead.'
-        );
-
-        return $this->control($fieldName, $options);
     }
 
     /**

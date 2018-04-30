@@ -25,15 +25,6 @@ use Cake\Event\EventDispatcherInterface;
  */
 trait ViewVarsTrait
 {
-
-    /**
-     * The name of default View class.
-     *
-     * @var string
-     * @deprecated 3.1.0 Use `$this->viewBuilder()->getClassName()`/`$this->viewBuilder()->setClassName()` instead.
-     */
-    public $viewClass;
-
     /**
      * Variables for the view
      *
@@ -84,25 +75,6 @@ trait ViewVarsTrait
         foreach ($validViewOptions as $option) {
             if (property_exists($this, $option)) {
                 $viewOptions[$option] = $this->{$option};
-            }
-        }
-
-        $deprecatedOptions = [
-            'layout' => 'layout',
-            'view' => 'template',
-            'theme' => 'theme',
-            'autoLayout' => 'autoLayout',
-            'viewPath' => 'templatePath',
-            'layoutPath' => 'layoutPath',
-        ];
-        foreach ($deprecatedOptions as $old => $new) {
-            if (property_exists($this, $old)) {
-                $builder->{$new}($this->{$old});
-                trigger_error(sprintf(
-                    'Property $%s is deprecated. Use $this->viewBuilder()->%s() instead in beforeRender().',
-                    $old,
-                    $new
-                ), E_USER_DEPRECATED);
             }
         }
 

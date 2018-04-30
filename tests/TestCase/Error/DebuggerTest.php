@@ -359,7 +359,6 @@ object(Cake\View\View) {
 	Blocks => object(Cake\View\ViewBlock) {}
 	plugin => null
 	name => ''
-	passedArgs => []
 	helpers => [
 		(int) 0 => 'Html',
 		(int) 1 => 'Form'
@@ -376,7 +375,6 @@ object(Cake\View\View) {
 	request => object(Cake\Http\ServerRequest) {}
 	response => object(Cake\Http\Response) {}
 	elementCache => 'default'
-	viewClass => null
 	viewVars => []
 	Html => object(Cake\View\Helper\HtmlHelper) {}
 	Form => object(Cake\View\Helper\FormHelper) {}
@@ -395,8 +393,7 @@ object(Cake\View\View) {
 		(int) 6 => 'theme',
 		(int) 7 => 'layoutPath',
 		(int) 8 => 'templatePath',
-		(int) 9 => 'plugin',
-		(int) 10 => 'passedArgs'
+		(int) 9 => 'plugin'
 	]
 	[protected] _paths => []
 	[protected] _pathsForPlugin => []

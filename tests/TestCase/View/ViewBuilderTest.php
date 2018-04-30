@@ -44,14 +44,15 @@ class ViewBuilderTest extends TestCase
     }
 
     /**
-     * data provider for string properties.
+     * data provider for boolean properties.
+     * Format: [key, expectedDefault, newValue]
      *
      * @return array
      */
     public function boolPropertyProvider()
     {
         return [
-            ['autoLayout', true],
+            ['autoLayout', true, false],
         ];
     }
 
@@ -92,13 +93,13 @@ class ViewBuilderTest extends TestCase
      * @dataProvider boolPropertyProvider
      * @return void
      */
-    public function testBoolProperties($property, $value)
+    public function testBoolProperties($property, $default, $value)
     {
         $set = 'enable' . ucfirst($property);
         $get = 'is' . ucfirst($property) . 'Enabled';
 
         $builder = new ViewBuilder();
-        $this->assertNull($builder->{$get}(), 'Default value should be null');
+        $this->assertSame($default, $builder->{$get}(), 'Default value not as expected');
         $this->assertSame($builder, $builder->{$set}($value), 'Setter returns this');
         $this->assertSame($value, $builder->{$get}(), 'Getter gets value.');
     }
@@ -139,78 +140,6 @@ class ViewBuilderTest extends TestCase
 
         $builder->{$set}($value, false);
         $this->assertSame($value, $builder->{$get}(), 'Should replace');
-    }
-
-    /**
-     * Test string property accessor/mutator methods.
-     *
-     * @deprecated
-     * @dataProvider stringPropertyProvider
-     * @return void
-     */
-    public function testStringPropertiesDeprecated($property, $value)
-    {
-        $this->deprecated(function () use ($value, $property) {
-            $builder = new ViewBuilder();
-            $this->assertNull($builder->{$property}(), 'Default value should be null');
-            $this->assertSame($builder, $builder->{$property}($value), 'Setter returns this');
-            $this->assertSame($value, $builder->{$property}(), 'Getter gets value.');
-        });
-    }
-
-    /**
-     * Test string property accessor/mutator methods.
-     *
-     * @deprecated
-     * @dataProvider boolPropertyProvider
-     * @return void
-     */
-    public function testBoolPropertiesDeprecated($property, $value)
-    {
-        $this->deprecated(function () use ($value, $property) {
-            $builder = new ViewBuilder();
-            $this->assertNull($builder->{$property}(), 'Default value should be null');
-            $this->assertSame($builder, $builder->{$property}($value), 'Setter returns this');
-            $this->assertSame($value, $builder->{$property}(), 'Getter gets value.');
-        });
-    }
-
-    /**
-     * Test array property accessor/mutator methods.
-     *
-     * @deprecated
-     * @dataProvider arrayPropertyProvider
-     * @return void
-     */
-    public function testArrayPropertiesDeprecated($property, $value)
-    {
-        $this->deprecated(function () use ($value, $property) {
-            $builder = new ViewBuilder();
-            $this->assertSame([], $builder->{$property}(), 'Default value should be empty list');
-            $this->assertSame($builder, $builder->{$property}($value), 'Setter returns this');
-            $this->assertSame($value, $builder->{$property}(), 'Getter gets value.');
-        });
-    }
-
-    /**
-     * Test array property accessor/mutator methods.
-     *
-     * @deprecated
-     * @dataProvider arrayPropertyProvider
-     * @return void
-     */
-    public function testArrayPropertyMergeDeprecated($property, $value)
-    {
-        $this->deprecated(function () use ($value, $property) {
-            $builder = new ViewBuilder();
-            $builder->{$property}($value);
-
-            $builder->{$property}(['Merged'], true);
-            $this->assertSame(array_merge($value, ['Merged']), $builder->{$property}(), 'Should merge');
-
-            $builder->{$property}($value, false);
-            $this->assertSame($value, $builder->{$property}(), 'Should replace');
-        });
     }
 
     /**
@@ -317,6 +246,7 @@ class ViewBuilderTest extends TestCase
             '_layout' => 'test',
             '_helpers' => ['Html'],
             '_className' => 'JsonView',
+            '_autoLayout' => true
         ];
         $this->assertEquals($expected, $result);
 

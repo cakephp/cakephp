@@ -9057,22 +9057,20 @@ class FormHelperTest extends TestCase
      */
     public function testNestedLabelInput()
     {
-        $this->deprecated(function () {
-            $result = $this->Form->input('foo', ['nestedInput' => true]);
-            $expected = [
-                'div' => ['class' => 'input text'],
-                'label' => ['for' => 'foo'],
-                ['input' => [
-                    'type' => 'text',
-                    'name' => 'foo',
-                    'id' => 'foo'
-                ]],
-                'Foo',
-                '/label',
-                '/div'
-            ];
-            $this->assertHtml($expected, $result);
-        });
+        $result = $this->Form->control('foo', ['nestedInput' => true]);
+        $expected = [
+            'div' => ['class' => 'input text'],
+            'label' => ['for' => 'foo'],
+            ['input' => [
+                'type' => 'text',
+                'name' => 'foo',
+                'id' => 'foo'
+            ]],
+            'Foo',
+            '/label',
+            '/div'
+        ];
+        $this->assertHtml($expected, $result);
     }
 
     /**

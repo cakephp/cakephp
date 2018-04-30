@@ -57,30 +57,6 @@ trait StringTemplateTrait
     }
 
     /**
-     * Gets/sets templates to use.
-     *
-     * @deprecated 3.4.0 Use setTemplates()/getTemplates() instead.
-     * @param string|null|array $templates null or string allow reading templates. An array
-     *   allows templates to be added.
-     * @return $this|string|array
-     */
-    public function templates($templates = null)
-    {
-        deprecationWarning(
-            'StringTemplateTrait::templates() is deprecated. ' .
-            'Use setTemplates()/getTemplates() instead.'
-        );
-
-        if ($templates === null || is_string($templates)) {
-            return $this->templater()->get($templates);
-        }
-
-        $this->templater()->add($templates);
-
-        return $this;
-    }
-
-    /**
      * Formats a template string with $data
      *
      * @param string $name The template name.

@@ -180,16 +180,18 @@ class ViewVarsTraitTest extends TestCase
     }
 
     /**
-     * test that options are passed to the view builder when using createView().
+     * test that removed deprecated passedArgs is no longer passed to the view
      *
      * @return void
      */
     public function testViewOptionsGetsToBuilder()
     {
-        $this->subject->passedArgs = 'test';
-        $this->subject->createView();
-        $result = $this->subject->viewBuilder()->getOptions();
-        $this->assertEquals(['passedArgs' => 'test'], $result);
+        $this->deprecated(function () {
+            $this->subject->passedArgs = 'test';
+            $this->subject->createView();
+            $result = $this->subject->viewBuilder()->getOptions();
+            $this->assertEmpty($result);
+        });
     }
 
     /**

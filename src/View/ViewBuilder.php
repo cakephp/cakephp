@@ -71,7 +71,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      *
      * @var bool
      */
-    protected $_autoLayout;
+    protected $_autoLayout = true;
 
     /**
      * The layout path to build the view with.
@@ -137,23 +137,6 @@ class ViewBuilder implements JsonSerializable, Serializable
     }
 
     /**
-     * Get/set path for template files.
-     *
-     * @deprecated 3.4.0 Use setTemplatePath()/getTemplatePath() instead.
-     * @param string|null $path Path for view files. If null returns current path.
-     * @return string|$this
-     */
-    public function templatePath($path = null)
-    {
-        deprecationWarning('ViewBuilder::templatePath() is deprecated. Use ViewBuilder::setTemplatePath() or ViewBuilder::getTemplatePath() instead.');
-        if ($path !== null) {
-            return $this->setTemplatePath($path);
-        }
-
-        return $this->getTemplatePath();
-    }
-
-    /**
      * Sets path for layout files.
      *
      * @param string $path Path for layout files.
@@ -174,23 +157,6 @@ class ViewBuilder implements JsonSerializable, Serializable
     public function getLayoutPath()
     {
         return $this->_layoutPath;
-    }
-
-    /**
-     * Get/set path for layout files.
-     *
-     * @deprecated 3.4.0 Use setLayoutPath()/getLayoutPath() instead.
-     * @param string|null $path Path for layout files. If null returns current path.
-     * @return string|$this
-     */
-    public function layoutPath($path = null)
-    {
-        deprecationWarning('ViewBuilder::layoutPath() is deprecated. Use ViewBuilder::setLayoutPath() or ViewBuilder::getLayoutPath() instead.');
-        if ($path !== null) {
-            return $this->setLayoutPath($path);
-        }
-
-        return $this->getLayoutPath();
     }
 
     /**
@@ -220,31 +186,10 @@ class ViewBuilder implements JsonSerializable, Serializable
     }
 
     /**
-     * Turns on or off CakePHP's conventional mode of applying layout files.
-     * On by default. Setting to off means that layouts will not be
-     * automatically applied to rendered views.
-     *
-     * @deprecated 3.4.0 Use enableAutoLayout()/isAutoLayoutEnabled() instead.
-     * @param bool|null $enable Boolean to turn on/off. If null returns current value.
-     * @return bool|$this
-     */
-    public function autoLayout($enable = null)
-    {
-        deprecationWarning('ViewBuilder::autoLayout() is deprecated. Use ViewBuilder::enableAutoLayout() or ViewBuilder::isAutoLayoutEnable() instead.');
-        if ($enable !== null) {
-            return $this->enableAutoLayout($enable);
-        }
-
-        return $this->isAutoLayoutEnabled();
-    }
-
-    /**
      * Sets the plugin name to use.
      *
-     * `False` to remove current plugin name is deprecated as of 3.4.0. Use directly `null` instead.
-     *
-     * @param string|null|false $name Plugin name.
-     *   Use null or false to remove the current plugin name.
+     * @param string|null $name Plugin name.
+     *   Use null to remove the current plugin name.
      * @return $this
      */
     public function setPlugin($name)
@@ -257,29 +202,11 @@ class ViewBuilder implements JsonSerializable, Serializable
     /**
      * Gets the plugin name to use.
      *
-     * @return string|null|false
+     * @return string|null
      */
     public function getPlugin()
     {
         return $this->_plugin;
-    }
-
-    /**
-     * The plugin name to use
-     *
-     * @deprecated 3.4.0 Use setPlugin()/getPlugin() instead.
-     * @param string|null|false $name Plugin name. If null returns current plugin.
-     *   Use false to remove the current plugin name.
-     * @return string|false|null|$this
-     */
-    public function plugin($name = null)
-    {
-        deprecationWarning('ViewBuilder::plugin() is deprecated. Use ViewBuilder::setPlugin() or ViewBuilder::getPlugin() instead.');
-        if ($name !== null) {
-            return $this->setPlugin($name);
-        }
-
-        return $this->getPlugin();
     }
 
     /**
@@ -310,29 +237,9 @@ class ViewBuilder implements JsonSerializable, Serializable
     }
 
     /**
-     * The helpers to use
-     *
-     * @deprecated 3.4.0 Use setHelpers()/getHelpers() instead.
-     * @param array|null $helpers Helpers to use.
-     * @param bool $merge Whether or not to merge existing data with the new data.
-     * @return array|$this
-     */
-    public function helpers(array $helpers = null, $merge = true)
-    {
-        deprecationWarning('ViewBuilder::helpers() is deprecated. Use ViewBuilder::setHelpers() or ViewBuilder::getHelpers() instead.');
-        if ($helpers !== null) {
-            return $this->setHelpers($helpers, $merge);
-        }
-
-        return $this->getHelpers();
-    }
-
-    /**
      * Sets the view theme to use.
      *
-     * `False` to remove current theme is deprecated as of 3.4.0. Use directly `null` instead.
-     *
-     * @param string|null|false $theme Theme name.
+     * @param string|null $theme Theme name.
      *   Use null or false to remove the current theme.
      * @return $this
      */
@@ -346,29 +253,11 @@ class ViewBuilder implements JsonSerializable, Serializable
     /**
      * Gets the view theme to use.
      *
-     * @return string|null|false
+     * @return string|null
      */
     public function getTheme()
     {
         return $this->_theme;
-    }
-
-    /**
-     * The view theme to use.
-     *
-     * @deprecated 3.4.0 Use setTheme()/getTheme() instead.
-     * @param string|null|false $theme Theme name. If null returns current theme.
-     *   Use false to remove the current theme.
-     * @return string|false|null|$this
-     */
-    public function theme($theme = null)
-    {
-        deprecationWarning('ViewBuilder::theme() is deprecated. Use ViewBuilder::setTheme() or ViewBuilder::getTheme() instead.');
-        if ($theme !== null) {
-            return $this->setTheme($theme);
-        }
-
-        return $this->getTheme();
     }
 
     /**
@@ -397,24 +286,6 @@ class ViewBuilder implements JsonSerializable, Serializable
     }
 
     /**
-     * Get/set the name of the view file to render. The name specified is the
-     * filename in /src/Template/<SubFolder> without the .ctp extension.
-     *
-     * @deprecated 3.4.0 Use setTemplate()/getTemplate()
-     * @param string|null $name View file name to set. If null returns current name.
-     * @return string|$this
-     */
-    public function template($name = null)
-    {
-        deprecationWarning('ViewBuilder::template() is deprecated. Use ViewBuilder::setTemplate() or ViewBuilder::getTemplate() instead.');
-        if ($name !== null) {
-            return $this->setTemplate($name);
-        }
-
-        return $this->getTemplate();
-    }
-
-    /**
      * Sets the name of the layout file to render the view inside of.
      * The name specified is the filename of the layout in /src/Template/Layout
      * without the .ctp extension.
@@ -437,25 +308,6 @@ class ViewBuilder implements JsonSerializable, Serializable
     public function getLayout()
     {
         return $this->_layout;
-    }
-
-    /**
-     * Get/set the name of the layout file to render the view inside of.
-     * The name specified is the filename of the layout in /src/Template/Layout
-     * without the .ctp extension.
-     *
-     * @deprecated 3.4.0 Use setLayout()/getLayout() instead.
-     * @param string|null $name Layout file name to set. If null returns current name.
-     * @return string|$this
-     */
-    public function layout($name = null)
-    {
-        deprecationWarning('ViewBuilder::layout() is deprecated. Use ViewBuilder::setLayout() or ViewBuilder::getLayout() instead.');
-        if ($name !== null) {
-            return $this->setLayout($name);
-        }
-
-        return $this->getLayout();
     }
 
     /**
@@ -488,26 +340,6 @@ class ViewBuilder implements JsonSerializable, Serializable
     }
 
     /**
-     * Set additional options for the view.
-     *
-     * This lets you provide custom constructor arguments to application/plugin view classes.
-     *
-     * @deprecated 3.4.0 Use setOptions()/getOptions() instead.
-     * @param array|null $options Either an array of options or null to get current options.
-     * @param bool $merge Whether or not to merge existing data with the new data.
-     * @return array|$this
-     */
-    public function options(array $options = null, $merge = true)
-    {
-        deprecationWarning('ViewBuilder::options() is deprecated. Use ViewBuilder::setOptions() or ViewBuilder::getOptions() instead.');
-        if ($options !== null) {
-            return $this->setOptions($options, $merge);
-        }
-
-        return $this->getOptions();
-    }
-
-    /**
      * Sets the view name.
      *
      * @param string $name The name of the view.
@@ -528,23 +360,6 @@ class ViewBuilder implements JsonSerializable, Serializable
     public function getName()
     {
         return $this->_name;
-    }
-
-    /**
-     * Get/set the view name
-     *
-     * @deprecated 3.4.0 Use setName()/getName() instead.
-     * @param string|null $name The name of the view
-     * @return string|$this
-     */
-    public function name($name = null)
-    {
-        deprecationWarning('ViewBuilder::name() is deprecated. Use ViewBuilder::setName() or ViewBuilder::getName() instead.');
-        if ($name !== null) {
-            return $this->setName($name);
-        }
-
-        return $this->getName();
     }
 
     /**
@@ -571,28 +386,6 @@ class ViewBuilder implements JsonSerializable, Serializable
     public function getClassName()
     {
         return $this->_className;
-    }
-
-    /**
-     * Get/set the view classname.
-     *
-     * Accepts either a short name (Ajax) a plugin name (MyPlugin.Ajax)
-     * or a fully namespaced name (App\View\AppView).
-     *
-     * @deprecated 3.4.0 Use setClassName()/getClassName() instead.
-     * @param string|null $name The class name for the view. Can
-     *   be a plugin.class name reference, a short alias, or a fully
-     *   namespaced name.
-     * @return string|$this
-     */
-    public function className($name = null)
-    {
-        deprecationWarning('ViewBuilder::className() is deprecated. Use ViewBuilder::setClassName() or ViewBuilder::getClassName() instead.');
-        if ($name !== null) {
-            return $this->setClassName($name);
-        }
-
-        return $this->getClassName();
     }
 
     /**

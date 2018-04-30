@@ -425,8 +425,8 @@ class ControllerTest extends TestCase
 
         $result = $controller->render('header');
         $this->assertContains('header template', (string)$result);
-        $this->assertTrue($controller->response->hasHeader('X-view-template'));
-        $this->assertSame('yes', $controller->response->getHeaderLine('X-view-template'));
+        $this->assertTrue($controller->getResponse()->hasHeader('X-view-template'));
+        $this->assertSame('yes', $controller->getResponse()->getHeaderLine('X-view-template'));
     }
 
     /**
@@ -1069,17 +1069,17 @@ class ControllerTest extends TestCase
     }
 
     /**
-     * Test declared deprecated properties like $theme are properly passed to view.
+     * 4.x
+     * Test declared deprecated properties like $theme are now NULL
      *
      * @return void
      */
     public function testDeclaredDeprecatedProperty()
     {
         $controller = new TestController(new ServerRequest(), new Response());
-        $theme = $controller->theme;
 
         // @codingStandardsIgnoreStart
-        $this->assertEquals($theme, @$controller->createView()->theme);
+        $this->assertNull( @$controller->createView()->theme);
         // @codingStandardsIgnoreEnd
     }
 
