@@ -360,11 +360,7 @@ class Oauth
      */
     protected function _encode($value)
     {
-        return str_replace(
-            '+',
-            ' ',
-            str_replace('%7E', '~', rawurlencode($value))
-        );
+        return str_replace(['%7E', '+'], ['~', ' '], rawurlencode($value));
     }
 }
 

@@ -187,7 +187,7 @@ class FixtureManager
                 } elseif ($type === 'plugin') {
                     list($plugin, $name) = explode('.', $pathName);
                     // Flip vendored plugin separators
-                    $path = implode('\\', explode('/', $plugin));
+                    $path = str_replace('/', '\\', $plugin);
                     $baseNamespace = Inflector::camelize(str_replace('\\', '\ ', $path));
                     $additionalPath = null;
                 } else {
@@ -197,7 +197,7 @@ class FixtureManager
 
                 // Tweak subdirectory names, so camelize() can make the correct name
                 if (strpos($name, '/') > 0) {
-                    $name = implode('\\ ', explode('/', $name));
+                    $name = str_replace('/', '\\ ', $name);
                 }
 
                 $name = Inflector::camelize($name);

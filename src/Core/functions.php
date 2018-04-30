@@ -52,7 +52,7 @@ if (!function_exists('h')) {
             } else {
                 $text = '(object)' . get_class($text);
             }
-        } elseif (is_bool($text) || is_null($text) || is_int($text)) {
+        } elseif ($text === null || is_bool($text) || is_int($text)) {
             return $text;
         }
 
