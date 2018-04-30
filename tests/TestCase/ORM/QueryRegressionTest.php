@@ -1341,7 +1341,7 @@ class QueryRegressionTest extends TestCase
 
         $result = $query->first();
         $this->assertNotEmpty($result);
-        $this->assertInstanceOf('Cake\I18n\Time', $result->comment->article->author->updated);
+        $this->assertInstanceOf(FrozenTime::class, $result->comment->article->author->updated);
     }
 
     /**
@@ -1380,7 +1380,7 @@ class QueryRegressionTest extends TestCase
 
         $result = $query->first();
         $this->assertNotEmpty($result);
-        $this->assertInstanceOf(Time::class, $result->_matchingData['Authors']->updated);
+        $this->assertInstanceOf(FrozenTime::class, $result->_matchingData['Authors']->updated);
     }
 
     /**
@@ -1434,7 +1434,7 @@ class QueryRegressionTest extends TestCase
 
         $result = $query->first();
         $this->assertNotEmpty($result);
-        $this->assertInstanceOf('Cake\I18n\Time', $result->updated);
+        $this->assertInstanceOf(FrozenTime::class, $result->updated);
 
         $query = $table->find()
             ->innerJoinWith('Comments.Articles.Authors')
@@ -1444,7 +1444,7 @@ class QueryRegressionTest extends TestCase
 
         $result = $query->first();
         $this->assertNotEmpty($result);
-        $this->assertInstanceOf('Cake\I18n\Time', $result->updated);
+        $this->assertInstanceOf(FrozenTime::class, $result->updated);
     }
 
     /**
@@ -1473,7 +1473,7 @@ class QueryRegressionTest extends TestCase
 
         $result = $query->first();
         $this->assertNotEmpty($result);
-        $this->assertInstanceOf('Cake\I18n\Time', $result->updated);
+        $this->assertInstanceOf(FrozenTime::class, $result->updated);
 
         $query = $table->find()
             ->leftJoinWith('Comments.Articles.Authors')
@@ -1483,7 +1483,7 @@ class QueryRegressionTest extends TestCase
 
         $result = $query->first();
         $this->assertNotEmpty($result);
-        $this->assertInstanceOf('Cake\I18n\Time', $result->updated);
+        $this->assertInstanceOf(FrozenTime::class, $result->updated);
     }
 
     /**
