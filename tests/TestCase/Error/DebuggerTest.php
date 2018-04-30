@@ -376,7 +376,6 @@ object(Cake\View\View) {
 	response => object(Cake\Http\Response) {}
 	elementCache => 'default'
 	viewVars => []
-	passedArgs => []
 	Html => object(Cake\View\Helper\HtmlHelper) {}
 	Form => object(Cake\View\Helper\FormHelper) {}
 	int => (int) 2
@@ -394,8 +393,7 @@ object(Cake\View\View) {
 		(int) 6 => 'theme',
 		(int) 7 => 'layoutPath',
 		(int) 8 => 'templatePath',
-		(int) 9 => 'plugin',
-		(int) 10 => 'passedArgs'
+		(int) 9 => 'plugin'
 	]
 	[protected] _paths => []
 	[protected] _pathsForPlugin => []
