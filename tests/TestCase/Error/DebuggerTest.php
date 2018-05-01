@@ -139,20 +139,6 @@ class DebuggerTest extends TestCase
     }
 
     /**
-     * Test that outputAs works.
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testOutputAs()
-    {
-        $this->deprecated(function () {
-            Debugger::outputAs('html');
-            $this->assertEquals('html', Debugger::outputAs());
-        });
-    }
-
-    /**
      * Test that setOutputFormat works.
      *
      * @return void
@@ -161,20 +147,6 @@ class DebuggerTest extends TestCase
     {
         Debugger::setOutputFormat('html');
         $this->assertEquals('html', Debugger::getOutputFormat());
-    }
-
-    /**
-     * Test that choosing a non-existent format causes an exception
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testOutputAsException()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->deprecated(function () {
-            Debugger::outputAs('Invalid junk');
-        });
     }
 
     /**
