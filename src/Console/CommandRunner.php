@@ -372,7 +372,9 @@ class CommandRunner implements EventDispatcherInterface
     {
         $builder = Router::createRouteBuilder('/');
 
-        $this->app->routes($builder);
+        if ($this->app instanceof HttpApplicationInterface) {
+            $this->app->routes($builder);
+        }
         if ($this->app instanceof PluginApplicationInterface) {
             $this->app->pluginRoutes($builder);
         }
