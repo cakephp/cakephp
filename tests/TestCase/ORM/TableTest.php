@@ -6157,9 +6157,11 @@ class TableTest extends TestCase
         $article = $articles->findOrCreate(function ($query) {
             $this->assertInstanceOf('Cake\ORM\Query', $query);
             $query->where(['title' => 'Find Something New']);
+            $this->assertTrue($this->connection->inTransaction());
         }, function ($article) {
             $this->assertInstanceOf('Cake\Datasource\EntityInterface', $article);
             $article->title = 'Success';
+            $this->assertTrue($this->connection->inTransaction());
         });
         $this->assertFalse($article->isNew());
         $this->assertNotNull($article->id);
