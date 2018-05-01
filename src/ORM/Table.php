@@ -1678,14 +1678,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $options += [
             'atomic' => true,
             'defaults' => true,
-            '_primary' => true,
         ];
 
         $entity = $this->_executeTransaction(function () use ($search, $callback, $options) {
             return $this->_processFindOrCreate($search, $callback, $options);
         }, $options['atomic']);
 
-        if ($entity && $this->_transactionCommitted($options['atomic'], $options['_primary'])) {
+        if ($entity && $this->_transactionCommitted($options['atomic'], true)) {
             $this->dispatchEvent('Model.afterSaveCommit', compact('entity', 'options'));
         }
 
