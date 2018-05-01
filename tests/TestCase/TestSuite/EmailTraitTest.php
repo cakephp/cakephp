@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\TestSuite;
 
 use Cake\Mailer\Email;
+use Cake\TestSuite\EmailTrait;
 use Cake\TestSuite\TestCase;
 use Cake\TestSuite\TestEmailTransport;
 use PHPUnit\Framework\AssertionFailedError;
@@ -24,6 +25,7 @@ use PHPUnit\Framework\AssertionFailedError;
  */
 class EmailTraitTest extends TestCase
 {
+    use EmailTrait;
 
     /**
      * setUp
@@ -48,6 +50,8 @@ class EmailTraitTest extends TestCase
         Email::setConfigTransport('test_tools', [
             'className' => TestEmailTransport::class
         ]);
+
+        TestEmailTransport::replaceAllTransports();
     }
 
     /**
@@ -62,6 +66,8 @@ class EmailTraitTest extends TestCase
         Email::drop('default');
         Email::drop('alternate');
         Email::dropTransport('test_tools');
+
+        TestEmailTransport::clearEmails();
     }
 
     /**
