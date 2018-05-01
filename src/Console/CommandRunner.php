@@ -26,6 +26,7 @@ use Cake\Core\PluginApplicationInterface;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventManager;
+use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
 use RuntimeException;
@@ -145,6 +146,7 @@ class CommandRunner implements EventDispatcherInterface
         }
         $this->checkCollection($commands, 'pluginConsole');
         $this->dispatchEvent('Console.buildCommands', ['commands' => $commands]);
+        $this->loadRoutes();
 
         if (empty($argv)) {
             throw new RuntimeException("Cannot run any commands. No arguments received.");
@@ -357,5 +359,22 @@ class CommandRunner implements EventDispatcherInterface
         }
 
         return $shell;
+    }
+
+    /**
+     * Ensure that the application's routes are loaded.
+     *
+     * Console commands and shells often need to generate URLs.
+     *
+     * @return void
+     */
+    protected function loadRoutes()
+    {
+        $builder = Router::createRouteBuilder('/');
+
+        $this->app->routes($builder);
+        if ($this->app instanceof PluginApplicationInterface) {
+            $this->app->pluginRoutes($builder);
+        }
     }
 }
