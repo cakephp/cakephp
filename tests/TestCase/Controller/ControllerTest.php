@@ -759,8 +759,8 @@ class ControllerTest extends TestCase
 
         $this->assertEquals([], $Controller->paginate);
 
-        $this->assertNotContains('Paginator', $Controller->helpers);
-        $this->assertArrayNotHasKey('Paginator', $Controller->helpers);
+        $this->assertNotContains('Paginator', $Controller->viewBuilder()->getHelpers());
+        $this->assertArrayNotHasKey('Paginator', $Controller->viewBuilder()->getHelpers());
 
         $results = $Controller->paginate('Posts');
         $this->assertInstanceOf('Cake\Datasource\ResultSetInterface', $results);

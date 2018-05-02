@@ -105,22 +105,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     protected $name;
 
     /**
-     * An array containing the names of helpers this controller uses. The array elements should
-     * not contain the "Helper" part of the class name.
-     *
-     * Example:
-     * ```
-     * public $helpers = ['Form', 'Html', 'Time'];
-     * ```
-     *
-     * @var array
-     * @link https://book.cakephp.org/3.0/en/controllers.html#configuring-helpers-to-load
-     *
-     * @deprecated 3.0.0 You should configure helpers in your AppView::initialize() method.
-     */
-    public $helpers = [];
-
-    /**
      * An instance of a \Cake\Http\ServerRequest object that contains information about the current request.
      * This object contains all the information about a request and several methods for reading
      * additional information about the request.
