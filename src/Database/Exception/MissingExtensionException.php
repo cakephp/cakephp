@@ -16,6 +16,9 @@ namespace Cake\Database\Exception;
 
 use Cake\Core\Exception\Exception;
 
+/**
+ * Class MissingExtensionException
+ */
 class MissingExtensionException extends Exception
 {
 

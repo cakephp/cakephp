@@ -18,6 +18,9 @@ use Cake\Database\Dialect\PostgresDialectTrait;
 use Cake\Database\Driver;
 use PDO;
 
+/**
+ * Class Postgres
+ */
 class Postgres extends Driver
 {
 

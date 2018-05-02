@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\Core;
 
+use Cake\Http\Response;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -41,6 +42,32 @@ class FunctionsTest extends TestCase
         $_ENV['ZERO'] = '0';
         $this->assertEquals('0', env('ZERO'));
         $this->assertEquals('0', env('ZERO', '1'));
+    }
+
+    /**
+     * Test cases for h()
+     *
+     * @return void
+     * @dataProvider hInputProvider
+     */
+    public function testH($value, $expected)
+    {
+        $result = h($value);
+        $this->assertSame($expected, $result);
+    }
+
+    public function hInputProvider()
+    {
+        return [
+            ['i am clean', 'i am clean'],
+            ['i "need" escaping', 'i &quot;need&quot; escaping'],
+            [null, null],
+            [1, 1],
+            [1.1, 1.1],
+            [new \stdClass, '(object)stdClass'],
+            [new Response(), ''],
+            [['clean', '"clean-me'], ['clean', '&quot;clean-me']],
+        ];
     }
 
     /**

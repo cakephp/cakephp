@@ -137,6 +137,7 @@ class WidgetLocator
      * @param string $name The widget name to get.
      * @return \Cake\View\Widget\WidgetInterface widget interface class.
      * @throws \RuntimeException when widget is undefined.
+     * @throws \ReflectionException
      */
     public function get($name)
     {
@@ -166,8 +167,8 @@ class WidgetLocator
      *
      * @param mixed $widget The widget to get
      * @return \Cake\View\Widget\WidgetInterface
-     * @throws \RuntimeException when class cannot be loaded or does not
-     *   implement WidgetInterface.
+     * @throws \RuntimeException when class cannot be loaded or does not implement WidgetInterface.
+     * @throws \ReflectionException
      */
     protected function _resolveWidget($widget)
     {

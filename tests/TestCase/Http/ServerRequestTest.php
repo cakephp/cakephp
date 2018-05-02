@@ -3587,6 +3587,7 @@ XML;
                     'controller' => 'Articles',
                     'action' => 'index'
                 ],
+                'url' => '/articles/view',
                 'base' => '/cakeapp',
                 'webroot' => '/cakeapp/'
             ]);
@@ -3594,6 +3595,7 @@ XML;
             if ($prop === 'session') {
                 $this->assertSame($request->getSession(), $request->getAttribute($prop));
             } else {
+                $this->assertNotEmpty($request->getAttribute($prop));
                 $this->assertSame($request->{$prop}, $request->getAttribute($prop));
             }
         });
@@ -3730,6 +3732,7 @@ XML;
     public function emulatedPropertyProvider()
     {
         return [
+            ['here'],
             ['params'],
             ['base'],
             ['webroot'],

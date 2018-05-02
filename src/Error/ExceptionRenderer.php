@@ -181,8 +181,8 @@ class ExceptionRenderer implements ExceptionRendererInterface
         }
 
         $message = $this->_message($exception, $code);
-        $url = $this->controller->request->getRequestTarget();
-        $response = $this->controller->response;
+        $url = $this->controller->getRequest()->getRequestTarget();
+        $response = $this->controller->getResponse();
 
         if ($exception instanceof CakeException) {
             foreach ((array)$exception->responseHeader() as $key => $value) {

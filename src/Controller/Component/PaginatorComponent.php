@@ -191,7 +191,7 @@ class PaginatorComponent extends Component
      */
     public function paginate($object, array $settings = [])
     {
-        $request = $this->_registry->getController()->request;
+        $request = $this->_registry->getController()->getRequest();
 
         try {
             $results = $this->_paginator->paginate(
@@ -228,7 +228,7 @@ class PaginatorComponent extends Component
      */
     public function mergeOptions($alias, $settings)
     {
-        $request = $this->_registry->getController()->request;
+        $request = $this->_registry->getController()->getRequest();
 
         return $this->_paginator->mergeOptions(
             $request->getQueryParams(),

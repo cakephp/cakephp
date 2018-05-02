@@ -19,6 +19,9 @@ use Cake\I18n\FrozenDate;
 use DateTime;
 use DateTimeImmutable;
 
+/**
+ * Class DateType
+ */
 class DateType extends DateTimeType
 {
     /**

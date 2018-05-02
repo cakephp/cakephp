@@ -21,6 +21,9 @@ use Cake\Database\Statement\PDOStatement;
 use Cake\Database\Statement\SqliteStatement;
 use PDO;
 
+/**
+ * Class Sqlite
+ */
 class Sqlite extends Driver
 {
 
