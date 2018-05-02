@@ -206,7 +206,7 @@ class View implements EventDispatcherInterface
      * additional information about the request.
      *
      * @var \Cake\Http\ServerRequest
-     * @deprecated 3.6.3 The property will become protected in 4.0.0. Use getRequest()/setRequest() instead.
+     * @deprecated 3.7.0 The property will become protected in 4.0.0. Use getRequest()/setRequest() instead.
      */
     public $request;
 
@@ -214,7 +214,7 @@ class View implements EventDispatcherInterface
      * Reference to the Response object
      *
      * @var \Cake\Http\Response
-     * @deprecated 3.6.3 The property will become protected in 4.0.0. Use getResponse()/setResponse() instead.
+     * @deprecated 3.7.0 The property will become protected in 4.0.0. Use getResponse()/setResponse() instead.
      */
     public $response;
 
@@ -392,7 +392,7 @@ class View implements EventDispatcherInterface
      * Gets the request instance.
      *
      * @return \Cake\Http\ServerRequest
-     * @since 3.6.3
+     * @since 3.7.0
      */
     public function getRequest()
     {
@@ -409,7 +409,7 @@ class View implements EventDispatcherInterface
      *
      * @param \Cake\Http\ServerRequest $request Request instance.
      * @return $this
-     * @since 3.6.3
+     * @since 3.7.0
      */
     public function setRequest(ServerRequest $request)
     {
@@ -427,7 +427,7 @@ class View implements EventDispatcherInterface
      * Gets the response instance.
      *
      * @return \Cake\Http\Response
-     * @since 3.6.3
+     * @since 3.7.0
      */
     public function getResponse()
     {
@@ -439,7 +439,7 @@ class View implements EventDispatcherInterface
      *
      * @param \Cake\Http\Response $response Response instance.
      * @return $this
-     * @since 3.6.3
+     * @since 3.7.0
      */
     public function setResponse(Response $response)
     {
