@@ -45,15 +45,15 @@ use RuntimeException;
  * resource or collection of resources. For example adding or editing a new
  * object, or listing a set of objects.
  *
- * You can access request parameters, using `$this->request`. The request object
+ * You can access request parameters, using `$this->getRequest()`. The request object
  * contains all the POST, GET and FILES that were part of the request.
  *
  * After performing the required action, controllers are responsible for
  * creating a response. This usually takes the form of a generated `View`, or
- * possibly a redirection to another URL. In either case `$this->response`
+ * possibly a redirection to another URL. In either case `$this->getResponse()`
  * allows you to manipulate all aspects of the response.
  *
- * Controllers are created by `Dispatcher` based on request parameters and
+ * Controllers are created by `ActionDispatcher` based on request parameters and
  * routing. By default controllers and actions use conventional names.
  * For example `/posts/index` maps to `PostsController::index()`. You can re-map
  * URLs using Router::connect() or RouterBuilder::connect().
