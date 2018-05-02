@@ -741,7 +741,7 @@ class Router
 
     /**
      * Sets the full base URL that will be used as a prefix for generating
-     * fully qualified URLs for this application. If not parameters are passed,
+     * fully qualified URLs for this application. If no parameters are passed,
      * the currently configured value is returned.
      *
      * ### Note:
