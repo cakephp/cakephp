@@ -86,13 +86,6 @@ class SecurityComponent extends Component
     protected $_action;
 
     /**
-     * The Session object
-     *
-     * @var \Cake\Http\Session
-     */
-    public $session;
-
-    /**
      * Component startup. All security checking happens here.
      *
      * @param \Cake\Event\Event $event An Event instance
@@ -102,8 +95,7 @@ class SecurityComponent extends Component
     {
         /** @var \Cake\Controller\Controller $controller */
         $controller = $event->getSubject();
-        $request = $controller->request;
-        $this->session = $request->getSession();
+        $request = $controller->getRequest();
         $this->_action = $request->getParam('action');
         $hasData = ($request->getData() || $request->is(['put', 'post', 'delete', 'patch']));
         try {
@@ -128,10 +120,10 @@ class SecurityComponent extends Component
         }
 
         $request = $this->generateToken($request);
-        if ($hasData && is_array($controller->request->getData())) {
+        if ($hasData && is_array($controller->getRequest()->getData())) {
             $request = $request->withoutData('_Token');
         }
-        $controller->request = $request;
+        $controller->setRequest($request);
     }
 
     /**
@@ -243,7 +235,7 @@ class SecurityComponent extends Component
             $requireSecure = $this->_config['requireSecure'];
 
             if (in_array($this->_action, $requireSecure) || $requireSecure === ['*']) {
-                if (!$this->request->is('ssl')) {
+                if (!$controller->getRequest()->is('ssl')) {
                     throw new SecurityException(
                         'Request is not SSL and the action is required to be secure'
                     );
@@ -263,7 +255,7 @@ class SecurityComponent extends Component
      */
     protected function _authRequired(Controller $controller)
     {
-        $request = $controller->request;
+        $request = $controller->getRequest();
         if (is_array($this->_config['requireAuth']) &&
             !empty($this->_config['requireAuth']) &&
             $request->getData()
@@ -276,8 +268,8 @@ class SecurityComponent extends Component
                     throw new AuthSecurityException('\'_Token\' was not found in request data.');
                 }
 
-                if ($this->session->check('_Token')) {
-                    $tData = $this->session->read('_Token');
+                if ($request->getSession()->check('_Token')) {
+                    $tData = $request->getSession()->read('_Token');
 
                     if (!empty($tData['allowedControllers']) &&
                         !in_array($request->getParam('controller'), $tData['allowedControllers'])) {
@@ -344,7 +336,7 @@ class SecurityComponent extends Component
      */
     protected function _validToken(Controller $controller)
     {
-        $check = $controller->request->getData();
+        $check = $controller->getRequest()->getData();
 
         $message = '\'%s\' was not found in request data.';
         if (!isset($check['_Token'])) {
@@ -502,7 +494,7 @@ class SecurityComponent extends Component
     protected function _debugPostTokenNotMatching(Controller $controller, $hashParts)
     {
         $messages = [];
-        $expectedParts = json_decode(urldecode($controller->request->getData('_Token.debug')), true);
+        $expectedParts = json_decode(urldecode($controller->getRequest()->getData('_Token.debug')), true);
         if (!is_array($expectedParts) || count($expectedParts) !== 3) {
             return 'Invalid security debug token.';
         }
@@ -572,8 +564,8 @@ class SecurityComponent extends Component
     public function generateToken(ServerRequest $request)
     {
         if ($request->is('requested')) {
-            if ($this->session->check('_Token')) {
-                $request = $request->withParam('_Token', $this->session->read('_Token'));
+            if ($request->getSession()->check('_Token')) {
+                $request = $request->withParam('_Token', $request->getSession()->read('_Token'));
             }
 
             return $request;
@@ -584,7 +576,7 @@ class SecurityComponent extends Component
             'unlockedFields' => $this->_config['unlockedFields'],
         ];
 
-        $this->session->write('_Token', $token);
+        $request->getSession()->write('_Token', $token);
 
         return $request->withParam('_Token', [
             'unlockedFields' => $token['unlockedFields']

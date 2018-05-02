@@ -64,24 +64,6 @@ class Component implements EventListenerInterface
     use LogTrait;
 
     /**
-     * Request object
-     *
-     * @var \Cake\Http\ServerRequest
-     * @deprecated 3.4.0 Storing references to the request is deprecated. Use Component::getController()
-     *   or callback $event->getSubject() to access the controller & request instead.
-     */
-    public $request;
-
-    /**
-     * Response object
-     *
-     * @var \Cake\Http\Response
-     * @deprecated 3.4.0 Storing references to the response is deprecated. Use Component::getController()
-     *   or callback $event->getSubject() to access the controller & response instead.
-     */
-    public $response;
-
-    /**
      * Component registry class used to lazy load components.
      *
      * @var \Cake\Controller\ComponentRegistry
@@ -120,11 +102,6 @@ class Component implements EventListenerInterface
     public function __construct(ComponentRegistry $registry, array $config = [])
     {
         $this->_registry = $registry;
-        $controller = $registry->getController();
-        if ($controller) {
-            $this->request =& $controller->request;
-            $this->response =& $controller->response;
-        }
 
         $this->setConfig($config);
 

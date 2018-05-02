@@ -149,10 +149,10 @@ class PaginatorComponentTest extends TestCase
             ->method('find')
             ->will($this->returnValue($query));
 
-        $this->controller->request = $this->controller->request->withQueryParams(['page' => '1 " onclick="alert(\'xss\');">']);
+        $this->controller->request = $this->controller->getRequest()->withQueryParams(['page' => '1 " onclick="alert(\'xss\');">']);
         $settings = ['limit' => 1, 'maxLimit' => 10];
         $this->Paginator->paginate($this->Post, $settings);
-        $this->assertSame(1, $this->controller->request->getParam('paging.Posts.page'), 'XSS exploit opened');
+        $this->assertSame(1, $this->controller->getRequest()->getParam('paging.Posts.page'), 'XSS exploit opened');
     }
 
     /**
@@ -163,7 +163,7 @@ class PaginatorComponentTest extends TestCase
      */
     public function testPaginateExtraParams()
     {
-        $this->controller->request = $this->controller->request->withQueryParams(['page' => '-1']);
+        $this->controller->request = $this->controller->getRequest()->withQueryParams(['page' => '-1']);
         $settings = [
             'PaginatorPosts' => [
                 'contain' => ['PaginatorAuthor'],
@@ -240,8 +240,8 @@ class PaginatorComponentTest extends TestCase
         $table = $this->getTableLocator()->get('PaginatorPosts');
 
         $this->Paginator->paginate($table, $settings);
-        $this->assertArrayHasKey('PaginatorPosts', $this->controller->request->getParam('paging'));
-        $this->assertArrayNotHasKey(0, $this->controller->request->getParam('paging'));
+        $this->assertArrayHasKey('PaginatorPosts', $this->controller->getRequest()->getParam('paging'));
+        $this->assertArrayNotHasKey(0, $this->controller->getRequest()->getParam('paging'));
     }
 
     /**
@@ -267,7 +267,7 @@ class PaginatorComponentTest extends TestCase
             ->will($this->returnValue($query));
 
         $this->Paginator->paginate($table, $settings);
-        $this->assertEquals('popular', $this->controller->request->getParam('paging.PaginatorPosts.finder'));
+        $this->assertEquals('popular', $this->controller->getRequest()->getParam('paging.PaginatorPosts.finder'));
     }
 
     /**
@@ -362,8 +362,8 @@ class PaginatorComponentTest extends TestCase
             ]);
 
         $this->Paginator->paginate($table, $settings);
-        $this->assertEquals('PaginatorPosts.id', $this->controller->request->getParam('paging.PaginatorPosts.sortDefault'));
-        $this->assertEquals('DESC', $this->controller->request->getParam('paging.PaginatorPosts.directionDefault'));
+        $this->assertEquals('PaginatorPosts.id', $this->controller->getRequest()->getParam('paging.PaginatorPosts.sortDefault'));
+        $this->assertEquals('DESC', $this->controller->getRequest()->getParam('paging.PaginatorPosts.directionDefault'));
     }
 
     /**
@@ -399,7 +399,7 @@ class PaginatorComponentTest extends TestCase
      */
     public function testMergeOptionsCustomScope()
     {
-        $this->controller->request = $this->controller->request->withQueryParams([
+        $this->controller->request = $this->controller->getRequest()->withQueryParams([
             'page' => 10,
             'limit' => 10,
             'scope' => [
@@ -468,7 +468,7 @@ class PaginatorComponentTest extends TestCase
      */
     public function testMergeOptionsCustomFindKey()
     {
-        $this->controller->request = $this->controller->request->withQueryParams([
+        $this->controller->request = $this->controller->getRequest()->withQueryParams([
             'page' => 10,
             'limit' => 10
         ]);
@@ -496,7 +496,7 @@ class PaginatorComponentTest extends TestCase
      */
     public function testMergeOptionsQueryString()
     {
-        $this->controller->request = $this->controller->request->withQueryParams([
+        $this->controller->request = $this->controller->getRequest()->withQueryParams([
             'page' => 99,
             'limit' => 75
         ]);
@@ -517,7 +517,7 @@ class PaginatorComponentTest extends TestCase
      */
     public function testMergeOptionsDefaultWhiteList()
     {
-        $this->controller->request = $this->controller->request->withQueryParams([
+        $this->controller->request = $this->controller->getRequest()->withQueryParams([
             'page' => 10,
             'limit' => 10,
             'fields' => ['bad.stuff'],
@@ -542,7 +542,7 @@ class PaginatorComponentTest extends TestCase
      */
     public function testMergeOptionsExtraWhitelist()
     {
-        $this->controller->request = $this->controller->request->withQueryParams([
+        $this->controller->request = $this->controller->getRequest()->withQueryParams([
             'page' => 10,
             'limit' => 10,
             'fields' => ['bad.stuff'],
@@ -671,14 +671,14 @@ class PaginatorComponentTest extends TestCase
                 'sort' => 'id',
             ]);
 
-        $this->controller->request = $this->controller->request->withQueryParams([
+        $this->controller->request = $this->controller->getRequest()->withQueryParams([
             'page' => 1,
             'sort' => 'id',
             'direction' => 'herp'
         ]);
         $this->Paginator->paginate($table);
-        $this->assertEquals('id', $this->controller->request->getParam('paging.PaginatorPosts.sort'));
-        $this->assertEquals('asc', $this->controller->request->getParam('paging.PaginatorPosts.direction'));
+        $this->assertEquals('id', $this->controller->getRequest()->getParam('paging.PaginatorPosts.sort'));
+        $this->assertEquals('asc', $this->controller->getRequest()->getParam('paging.PaginatorPosts.direction'));
     }
 
     /**
@@ -718,17 +718,17 @@ class PaginatorComponentTest extends TestCase
 
         $this->assertSame(
             0,
-            $this->controller->request->getParam('paging.PaginatorPosts.count'),
+            $this->controller->getRequest()->getParam('paging.PaginatorPosts.count'),
             'Count should be 0'
         );
         $this->assertSame(
             1,
-            $this->controller->request->getParam('paging.PaginatorPosts.page'),
+            $this->controller->getRequest()->getParam('paging.PaginatorPosts.page'),
             'Page number should not be 0'
         );
         $this->assertSame(
             1,
-            $this->controller->request->getParam('paging.PaginatorPosts.pageCount'),
+            $this->controller->getRequest()->getParam('paging.PaginatorPosts.pageCount'),
             'Page count number should not be 0'
         );
     }
@@ -741,7 +741,7 @@ class PaginatorComponentTest extends TestCase
     public function testOutOfRangePageNumberGetsClamped()
     {
         $this->loadFixtures('Posts');
-        $this->controller->request = $this->controller->request->withQueryParams(['page' => 3000]);
+        $this->controller->request = $this->controller->getRequest()->withQueryParams(['page' => 3000]);
 
         $table = $this->getTableLocator()->get('PaginatorPosts');
 
@@ -753,7 +753,7 @@ class PaginatorComponentTest extends TestCase
 
         $this->assertEquals(
             1,
-            $this->controller->request->getParam('paging.PaginatorPosts.page'),
+            $this->controller->getRequest()->getParam('paging.PaginatorPosts.page'),
             'Page number should not be 0'
         );
 
@@ -769,7 +769,7 @@ class PaginatorComponentTest extends TestCase
     public function testOutOfRangePageNumberStillProvidesPageCount()
     {
         $this->loadFixtures('Posts');
-        $this->controller->request = $this->controller->request->withQueryParams([
+        $this->controller->request = $this->controller->getRequest()->withQueryParams([
             'limit' => 1,
             'page' => '4',
         ]);
@@ -784,7 +784,7 @@ class PaginatorComponentTest extends TestCase
 
         $this->assertEquals(
             3,
-            $this->controller->request->getParam('paging.PaginatorPosts.pageCount'),
+            $this->controller->getRequest()->getParam('paging.PaginatorPosts.pageCount'),
             'Page count number should not be 0'
         );
 
@@ -801,9 +801,9 @@ class PaginatorComponentTest extends TestCase
     {
         $this->expectException(\Cake\Http\Exception\NotFoundException::class);
         $this->loadFixtures('Posts');
-        $this->controller->request = $this->controller->request->withQueryParams([
+        $this->controller->setRequest($this->controller->getRequest()->withQueryParams([
             'page' => '3000000000000000000000000',
-        ]);
+        ]));
 
         $table = $this->getTableLocator()->get('PaginatorPosts');
         $this->Paginator->paginate($table);
@@ -1111,19 +1111,19 @@ class PaginatorComponentTest extends TestCase
         $settings = [
             'maxLimit' => 100,
         ];
-        $this->controller->request = $this->controller->request->withQueryParams([
+        $this->controller->request = $this->controller->getRequest()->withQueryParams([
             'limit' => '1000'
         ]);
         $this->Paginator->paginate($table, $settings);
-        $this->assertEquals(100, $this->controller->request->getParam('paging.PaginatorPosts.limit'));
-        $this->assertEquals(100, $this->controller->request->getParam('paging.PaginatorPosts.perPage'));
+        $this->assertEquals(100, $this->controller->getRequest()->getParam('paging.PaginatorPosts.limit'));
+        $this->assertEquals(100, $this->controller->getRequest()->getParam('paging.PaginatorPosts.perPage'));
 
-        $this->controller->request = $this->controller->request->withQueryParams([
+        $this->controller->request = $this->controller->getRequest()->withQueryParams([
             'limit' => '10'
         ]);
         $this->Paginator->paginate($table, $settings);
-        $this->assertEquals(10, $this->controller->request->getParam('paging.PaginatorPosts.limit'));
-        $this->assertEquals(10, $this->controller->request->getParam('paging.PaginatorPosts.perPage'));
+        $this->assertEquals(10, $this->controller->getRequest()->getParam('paging.PaginatorPosts.limit'));
+        $this->assertEquals(10, $this->controller->getRequest()->getParam('paging.PaginatorPosts.perPage'));
     }
 
     /**
@@ -1152,7 +1152,7 @@ class PaginatorComponentTest extends TestCase
         $this->assertCount(4, $result, '4 rows should come back');
         $this->assertEquals(['First Post', 'Second Post', 'Third Post', 'Fourth Post'], $titleExtractor($result));
 
-        $result = $this->controller->request->getParam('paging.PaginatorPosts');
+        $result = $this->controller->getRequest()->getParam('paging.PaginatorPosts');
         $this->assertEquals(4, $result['current']);
         $this->assertEquals(4, $result['count']);
 
@@ -1161,7 +1161,7 @@ class PaginatorComponentTest extends TestCase
         $this->assertCount(3, $result, '3 rows should come back');
         $this->assertEquals(['First Post', 'Second Post', 'Third Post'], $titleExtractor($result));
 
-        $result = $this->controller->request->getParam('paging.PaginatorPosts');
+        $result = $this->controller->getRequest()->getParam('paging.PaginatorPosts');
         $this->assertEquals(3, $result['current']);
         $this->assertEquals(3, $result['count']);
 
@@ -1170,7 +1170,7 @@ class PaginatorComponentTest extends TestCase
         $this->assertCount(1, $result, '1 rows should come back');
         $this->assertEquals(['Third Post'], $titleExtractor($result));
 
-        $result = $this->controller->request->getParam('paging.PaginatorPosts');
+        $result = $this->controller->getRequest()->getParam('paging.PaginatorPosts');
         $this->assertEquals(1, $result['current']);
         $this->assertEquals(3, $result['count']);
         $this->assertEquals(2, $result['pageCount']);
@@ -1180,7 +1180,7 @@ class PaginatorComponentTest extends TestCase
         $this->assertCount(2, $result, '2 rows should come back');
         $this->assertEquals(['First Post', 'Second Post'], $titleExtractor($result));
 
-        $result = $this->controller->request->getParam('paging.PaginatorPosts');
+        $result = $this->controller->getRequest()->getParam('paging.PaginatorPosts');
         $this->assertEquals(2, $result['current']);
         $this->assertEquals(3, $result['count']);
         $this->assertEquals(2, $result['pageCount']);
@@ -1216,7 +1216,7 @@ class PaginatorComponentTest extends TestCase
         ];
         $this->assertEquals($expected, $result);
 
-        $result = $this->controller->request->getParam('paging.PaginatorPosts');
+        $result = $this->controller->getRequest()->getParam('paging.PaginatorPosts');
         $this->assertEquals(2, $result['current']);
         $this->assertEquals(3, $result['count']);
         $this->assertEquals(2, $result['pageCount']);
@@ -1263,7 +1263,9 @@ class PaginatorComponentTest extends TestCase
      */
     public function testPaginateQuery()
     {
-        $this->controller->request = $this->controller->request->withQueryParams(['page' => '-1']);
+        $this->controller->setRequest(
+            $this->controller->getRequest()->withQueryParams(['page' => '-1'])
+        );
         $settings = [
             'PaginatorPosts' => [
                 'contain' => ['PaginatorAuthor'],
@@ -1322,7 +1324,9 @@ class PaginatorComponentTest extends TestCase
      */
     public function testPaginateQueryWithLimit()
     {
-        $this->controller->request = $this->controller->request->withQueryParams(['page' => '-1']);
+        $this->controller->setRequest(
+            $this->controller->getRequest()->withQueryParams(['page' => '-1'])
+        );
         $settings = [
             'PaginatorPosts' => [
                 'contain' => ['PaginatorAuthor'],
