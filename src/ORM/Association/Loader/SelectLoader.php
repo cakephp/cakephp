@@ -235,7 +235,7 @@ class SelectLoader
      * @param \Cake\ORM\Query $fetchQuery The association fetching query
      * @param array $key The foreign key fields to check
      * @return void
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     protected function _assertFieldsPresent($fetchQuery, $key)
     {

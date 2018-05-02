@@ -315,6 +315,7 @@ class Behavior implements EventListenerInterface
      * method list. See core behaviors for examples
      *
      * @return array
+     * @throws \ReflectionException
      */
     public function implementedFinders()
     {
@@ -346,6 +347,7 @@ class Behavior implements EventListenerInterface
      * method list. See core behaviors for examples
      *
      * @return array
+     * @throws \ReflectionException
      */
     public function implementedMethods()
     {
@@ -365,6 +367,7 @@ class Behavior implements EventListenerInterface
      * declared on Cake\ORM\Behavior
      *
      * @return array
+     * @throws \ReflectionException
      */
     protected function _reflectionCache()
     {

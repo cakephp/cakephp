@@ -223,7 +223,6 @@ class CellTest extends TestCase
 
         $this->assertEquals($this->View->theme, $cell->viewBuilder()->getTheme());
         $this->assertContains('Themed cell content.', $cell->render());
-        $this->assertEquals($cell->View->theme, $cell->viewBuilder()->getTheme());
     }
 
     /**
