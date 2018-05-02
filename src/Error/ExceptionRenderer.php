@@ -213,7 +213,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
         if ($unwrapped instanceof CakeException && $isDebug) {
             $this->controller->set($unwrapped->getAttributes());
         }
-        $this->controller->response = $response;
+        $this->controller->setResponse($response);
 
         return $this->_outputMessage($template);
     }
@@ -230,7 +230,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
         $result = call_user_func([$this, $method], $exception);
         $this->_shutdown();
         if (is_string($result)) {
-            $result = $this->controller->response->withStringBody($result);
+            $result = $this->controller->getResponse()->withStringBody($result);
         }
 
         return $result;
@@ -378,11 +378,12 @@ class ExceptionRenderer implements ExceptionRendererInterface
             ->setTemplatePath('Error');
         $view = $this->controller->createView('View');
 
-        $this->controller->response = $this->controller->response
+        $response = $this->controller->getResponse()
             ->withType('html')
             ->withStringBody($view->render($template, 'error'));
+        $this->controller->setResponse($response);
 
-        return $this->controller->response;
+        return $response;
     }
 
     /**
@@ -401,8 +402,8 @@ class ExceptionRenderer implements ExceptionRendererInterface
             $eventManager->on($filter);
         }
         $args = [
-            'request' => $this->controller->request,
-            'response' => $this->controller->response
+            'request' => $this->controller->getRequest(),
+            'response' => $this->controller->getResponse(),
         ];
         $result = $dispatcher->dispatchEvent('Dispatcher.afterDispatch', $args);
 

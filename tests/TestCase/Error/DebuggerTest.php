@@ -347,7 +347,7 @@ class DebuggerTest extends TestCase
     public function testExportVar()
     {
         $Controller = new Controller();
-        $Controller->helpers = ['Html', 'Form'];
+        $Controller->viewBuilder()->setHelpers(['Html', 'Form']);
         $View = $Controller->createView();
         $View->int = 2;
         $View->float = 1.333;
