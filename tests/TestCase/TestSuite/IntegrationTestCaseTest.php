@@ -356,7 +356,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         $this->assertResponseContains('"contentType":"text\/plain"');
         $this->assertHeader('X-Middleware', 'true');
 
-        $request = $this->_controller->request;
+        $request = $this->_controller->getRequest();
         $this->assertContains('/request_action/params_pass?q=query', $request->getRequestTarget());
     }
 
@@ -376,7 +376,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
             $this->assertResponseContains('"contentType":"text\/plain"');
             $this->assertHeader('X-Middleware', 'true');
 
-            $request = $this->_controller->request;
+            $request = $this->_controller->getRequest();
             $this->assertContains('/request_action/params_pass?q=query', $request->here());
             $this->assertContains('/request_action/params_pass?q=query', $request->getRequestTarget());
         });

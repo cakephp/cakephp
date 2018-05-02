@@ -121,7 +121,6 @@ class RequestHandlerComponent extends Component
         return [
             'Controller.startup' => 'startup',
             'Controller.beforeRender' => 'beforeRender',
-            'Controller.beforeRedirect' => 'beforeRedirect',
         ];
     }
 
