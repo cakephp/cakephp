@@ -23,6 +23,9 @@ use Cake\ORM\Behavior;
 use DateTime;
 use UnexpectedValueException;
 
+/**
+ * Class TimestampBehavior
+ */
 class TimestampBehavior extends Behavior
 {
 

@@ -1863,7 +1863,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @param string $name name of the clause to be returned
      * @return mixed
-     * @throws InvalidArgumentException When the named clause does not exist.
+     * @throws \InvalidArgumentException When the named clause does not exist.
      */
     public function clause($name)
     {

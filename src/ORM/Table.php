@@ -1872,8 +1872,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * $articles->save($entity, ['associated' => false]);
      * ```
      *
-     * @throws \Cake\ORM\Exception\RolledbackTransactionException If the transaction
-     *   is aborted in the afterSave event.
+     * @param \Cake\Datasource\EntityInterface $entity
+     * @param array $options
+     * @return bool|\Cake\Datasource\EntityInterface|mixed
+     * @throws \Cake\ORM\Exception\RolledbackTransactionException If the transaction is aborted in the afterSave event.
      */
     public function save(EntityInterface $entity, $options = [])
     {

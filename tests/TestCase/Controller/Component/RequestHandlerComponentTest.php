@@ -22,6 +22,9 @@ use Cake\Http\ServerRequest;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
+use Cake\View\AjaxView;
+use Cake\View\JsonView;
+use Cake\View\XmlView;
 use TestApp\Controller\RequestHandlerTestController;
 use Zend\Diactoros\Stream;
 
@@ -399,7 +402,7 @@ class RequestHandlerComponentTest extends TestCase
             $this->assertEquals($expected, $result);
 
             $this->RequestHandler->renderAs($this->Controller, 'json');
-            $this->assertEquals('TestApp\View\CustomJsonView', $this->Controller->viewClass);
+            $this->assertEquals('TestApp\View\CustomJsonView', $this->Controller->viewBuilder()->getClassName());
         });
     }
 
@@ -434,15 +437,15 @@ class RequestHandlerComponentTest extends TestCase
         $event = new Event('Controller.beforeRender', $this->Controller);
         $this->RequestHandler->beforeRender($event);
 
-        $this->assertEquals($this->Controller->viewClass, 'Cake\View\AjaxView');
         $view = $this->Controller->createView();
+        $this->assertInstanceOf(AjaxView::class, $view);
         $this->assertEquals('ajax', $view->getLayout());
 
         $this->_init();
         $this->Controller->request = $this->Controller->getRequest()->withParam('_ext', 'js');
         $this->RequestHandler->initialize([]);
         $this->RequestHandler->startup($event);
-        $this->assertNotEquals($this->Controller->viewClass, 'Cake\View\AjaxView');
+        $this->assertNotEquals(AjaxView::class, $this->Controller->viewBuilder()->getClassName());
     }
 
     /**
@@ -460,8 +463,8 @@ class RequestHandlerComponentTest extends TestCase
         $this->RequestHandler->startup($event);
         $event = new Event('Controller.beforeRender', $this->Controller);
         $this->RequestHandler->beforeRender($event);
-        $this->assertEquals('Cake\View\JsonView', $this->Controller->viewClass);
         $view = $this->Controller->createView();
+        $this->assertInstanceOf(JsonView::class, $view);
         $this->assertEquals('json', $view->getLayoutPath());
         $this->assertEquals('json', $view->subDir);
     }
@@ -481,8 +484,8 @@ class RequestHandlerComponentTest extends TestCase
         $this->RequestHandler->startup($event);
         $event = new Event('Controller.beforeRender', $this->Controller);
         $this->RequestHandler->beforeRender($event);
-        $this->assertEquals('Cake\View\XmlView', $this->Controller->viewClass);
         $view = $this->Controller->createView();
+        $this->assertInstanceOf(XmlView::class, $view);
         $this->assertEquals('xml', $view->getLayoutPath());
         $this->assertEquals('xml', $view->subDir);
     }
@@ -502,8 +505,8 @@ class RequestHandlerComponentTest extends TestCase
         $this->RequestHandler->startup($event);
         $event = new Event('Controller.beforeRender', $this->Controller);
         $this->RequestHandler->beforeRender($event);
-        $this->assertEquals('Cake\View\AjaxView', $this->Controller->viewClass);
         $view = $this->Controller->createView();
+        $this->assertInstanceOf(AjaxView::class, $view);
         $this->assertEquals('ajax', $view->getLayout());
     }
 
@@ -804,7 +807,7 @@ XML;
         $this->Controller->request = $this->request->withHeader('Accept', 'application/xml;q=1.0');
 
         $this->RequestHandler->renderAs($this->Controller, 'xml', ['attachment' => 'myfile.xml']);
-        $this->assertEquals('Cake\View\XmlView', $this->Controller->viewClass);
+        $this->assertEquals(XmlView::class, $this->Controller->viewBuilder()->getClassName());
         $this->assertEquals('application/xml', $this->Controller->getResponse()->getType());
         $this->assertEquals('UTF-8', $this->Controller->getResponse()->getCharset());
         $this->assertContains('myfile.xml', $this->Controller->getResponse()->getHeaderLine('Content-Disposition'));

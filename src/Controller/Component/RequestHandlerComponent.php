@@ -294,7 +294,6 @@ class RequestHandlerComponent extends Component
 
             return false;
         }
-
         $controller->setResponse($response);
     }
 

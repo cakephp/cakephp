@@ -275,6 +275,7 @@ class AuthComponent extends Component
      *
      * @param \Cake\Event\Event $event Event instance.
      * @return \Cake\Http\Response|null
+     * @throws \ReflectionException
      */
     public function authCheck(Event $event)
     {

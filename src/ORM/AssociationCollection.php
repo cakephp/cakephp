@@ -79,7 +79,7 @@ class AssociationCollection implements IteratorAggregate
      * @param string $associated The alias for the target table.
      * @param array $options List of options to configure the association definition.
      * @return \Cake\ORM\Association
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     public function load($className, $associated, array $options = [])
     {

@@ -85,6 +85,7 @@ class CompletionShell extends Shell
      * list subcommands for the named command
      *
      * @return int|bool|null Returns the number of bytes returned from writing to stdout.
+     * @throws \ReflectionException
      */
     public function subcommands()
     {

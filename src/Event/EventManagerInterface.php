@@ -13,6 +13,9 @@
  */
 namespace Cake\Event;
 
+/**
+ * Interface EventManagerInterface
+ */
 interface EventManagerInterface
 {
 
