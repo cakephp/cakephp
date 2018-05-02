@@ -440,7 +440,7 @@ class ControllerTest extends TestCase
 
         $Controller->getEventManager()->on('Controller.beforeRender', function (Event $event) {
             $controller = $event->getSubject();
-            $controller->viewClass = 'Json';
+            $controller->viewBuilder()->setClassName('Json');
         });
 
         $Controller->set([

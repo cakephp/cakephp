@@ -195,34 +195,6 @@ class ViewVarsTraitTest extends TestCase
     }
 
     /**
-     * test that viewClass is used to create the view
-     *
-     * @deprecated
-     * @return void
-     */
-    public function testCreateViewViewClass()
-    {
-        $this->deprecated(function () {
-            $this->subject->viewClass = 'Json';
-            $view = $this->subject->createView();
-            $this->assertInstanceOf('Cake\View\JsonView', $view);
-        });
-    }
-
-    /**
-     * test that viewBuilder settings override viewClass
-     *
-     * @return void
-     */
-    public function testCreateViewViewBuilder()
-    {
-        $this->subject->viewBuilder()->setClassName('Xml');
-        $this->subject->viewClass = 'Json';
-        $view = $this->subject->createView();
-        $this->assertInstanceOf('Cake\View\XmlView', $view);
-    }
-
-    /**
      * test that parameters beats viewBuilder() and viewClass
      *
      * @return void
@@ -230,7 +202,6 @@ class ViewVarsTraitTest extends TestCase
     public function testCreateViewParameter()
     {
         $this->subject->viewBuilder()->setClassName('View');
-        $this->subject->viewClass = 'Json';
         $view = $this->subject->createView('Xml');
         $this->assertInstanceOf('Cake\View\XmlView', $view);
     }
