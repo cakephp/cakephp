@@ -757,8 +757,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         if ($this->getRequest()->getParam('bare')) {
             $builder->enableAutoLayout(false);
         }
-        $builder->getClassName($this->viewClass);
-
         $this->autoRender = false;
 
         $event = $this->dispatchEvent('Controller.beforeRender');
