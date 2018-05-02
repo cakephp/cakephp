@@ -371,7 +371,6 @@ class ExceptionRenderer implements ExceptionRendererInterface
     protected function _outputMessageSafe($template)
     {
         $helpers = ['Form', 'Html'];
-        $this->controller->helpers = $helpers;
         $builder = $this->controller->viewBuilder();
         $builder->setHelpers($helpers, false)
             ->setLayoutPath('')

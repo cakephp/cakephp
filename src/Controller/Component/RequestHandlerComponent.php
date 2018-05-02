@@ -543,7 +543,6 @@ class RequestHandlerComponent extends Component
         }
 
         if ($viewClass) {
-            $controller->viewClass = $viewClass;
             $builder->setClassName($viewClass);
         } else {
             if (!$this->_renderType) {
