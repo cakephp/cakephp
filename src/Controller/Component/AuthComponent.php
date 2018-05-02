@@ -205,20 +205,6 @@ class AuthComponent extends Component
     public $allowedActions = [];
 
     /**
-     * Request object
-     *
-     * @var \Cake\Http\ServerRequest
-     */
-    public $request;
-
-    /**
-     * Response object
-     *
-     * @var \Cake\Http\Response
-     */
-    public $response;
-
-    /**
      * The instance of the Authenticate provider that was used for
      * successfully logging in the current user after calling `login()`
      * in the same request
