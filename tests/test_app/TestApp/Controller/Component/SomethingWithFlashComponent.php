@@ -16,11 +16,11 @@ namespace TestApp\Controller\Component;
 use Cake\Controller\Component;
 
 /**
- * SomethingWithCookieComponent class
+ * SomethingWithFlashComponent class
  *
- * @property \Cake\Controller\Component\CookieComponent $Cookie
+ * @property \Cake\Controller\Component\SomethingWithCookie $Flash
  */
-class SomethingWithCookieComponent extends Component
+class SomethingWithFlashComponent extends Component
 {
 
     /**
@@ -28,5 +28,5 @@ class SomethingWithCookieComponent extends Component
      *
      * @var array
      */
-    public $components = ['Cookie'];
+    public $components = ['Flash'];
 }

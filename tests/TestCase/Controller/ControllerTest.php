@@ -51,7 +51,7 @@ class ControllerTestAppController extends Controller
      *
      * @var array
      */
-    public $components = ['Cookie'];
+    public $components = ['Flash'];
 }
 
 /**
@@ -581,7 +581,7 @@ class ControllerTest extends TestCase
 
         $expected = [
             'Security' => null,
-            'Cookie' => null,
+            'Flash' => null,
         ];
         $this->assertEquals($expected, $TestController->components);
 

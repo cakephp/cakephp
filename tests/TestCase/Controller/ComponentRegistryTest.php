@@ -16,7 +16,7 @@ namespace Cake\Test\TestCase\Controller;
 
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\AuthComponent;
-use Cake\Controller\Component\CookieComponent;
+use Cake\Controller\Component\FlashComponent;
 use Cake\Controller\Controller;
 use Cake\Core\Plugin;
 use Cake\Http\Response;
@@ -24,9 +24,9 @@ use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 
 /**
- * Extended CookieComponent
+ * Extended FlashComponent
  */
-class CookieAliasComponent extends CookieComponent
+class FlashAliasComponent extends FlashComponent
 {
 }
 
@@ -63,15 +63,15 @@ class ComponentRegistryTest extends TestCase
      */
     public function testLoad()
     {
-        $result = $this->Components->load('Cookie');
-        $this->assertInstanceOf('Cake\Controller\Component\CookieComponent', $result);
-        $this->assertInstanceOf('Cake\Controller\Component\CookieComponent', $this->Components->Cookie);
+        $result = $this->Components->load('Flash');
+        $this->assertInstanceOf('Cake\Controller\Component\FlashComponent', $result);
+        $this->assertInstanceOf('Cake\Controller\Component\FlashComponent', $this->Components->Flash);
 
         $result = $this->Components->loaded();
-        $this->assertEquals(['Cookie'], $result, 'loaded() results are wrong.');
+        $this->assertEquals(['Flash'], $result, 'loaded() results are wrong.');
 
-        $result = $this->Components->load('Cookie');
-        $this->assertSame($result, $this->Components->Cookie);
+        $result = $this->Components->load('Flash');
+        $this->assertSame($result, $this->Components->Flash);
     }
 
     /**
@@ -81,16 +81,16 @@ class ComponentRegistryTest extends TestCase
      */
     public function testLoadWithAlias()
     {
-        $result = $this->Components->load('Cookie', ['className' => __NAMESPACE__ . '\CookieAliasComponent', 'somesetting' => true]);
-        $this->assertInstanceOf(__NAMESPACE__ . '\CookieAliasComponent', $result);
-        $this->assertInstanceOf(__NAMESPACE__ . '\CookieAliasComponent', $this->Components->Cookie);
-        $this->assertTrue($this->Components->Cookie->getConfig('somesetting'));
+        $result = $this->Components->load('Flash', ['className' => __NAMESPACE__ . '\FlashAliasComponent', 'somesetting' => true]);
+        $this->assertInstanceOf(__NAMESPACE__ . '\FlashAliasComponent', $result);
+        $this->assertInstanceOf(__NAMESPACE__ . '\FlashAliasComponent', $this->Components->Flash);
+        $this->assertTrue($this->Components->Flash->getConfig('somesetting'));
 
         $result = $this->Components->loaded();
-        $this->assertEquals(['Cookie'], $result, 'loaded() results are wrong.');
+        $this->assertEquals(['Flash'], $result, 'loaded() results are wrong.');
 
-        $result = $this->Components->load('Cookie');
-        $this->assertInstanceOf(__NAMESPACE__ . '\CookieAliasComponent', $result);
+        $result = $this->Components->load('Flash');
+        $this->assertInstanceOf(__NAMESPACE__ . '\FlashAliasComponent', $result);
 
         Plugin::load('TestPlugin');
         $result = $this->Components->load('SomeOther', ['className' => 'TestPlugin.Other']);
@@ -98,7 +98,7 @@ class ComponentRegistryTest extends TestCase
         $this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $this->Components->SomeOther);
 
         $result = $this->Components->loaded();
-        $this->assertEquals(['Cookie', 'SomeOther'], $result, 'loaded() results are wrong.');
+        $this->assertEquals(['Flash', 'SomeOther'], $result, 'loaded() results are wrong.');
     }
 
     /**
@@ -114,9 +114,9 @@ class ComponentRegistryTest extends TestCase
 
         $this->Components->getController()->setEventManager($mock);
 
-        $result = $this->Components->load('Cookie', ['enabled' => false]);
-        $this->assertInstanceOf('Cake\Controller\Component\CookieComponent', $result);
-        $this->assertInstanceOf('Cake\Controller\Component\CookieComponent', $this->Components->Cookie);
+        $result = $this->Components->load('Flash', ['enabled' => false]);
+        $this->assertInstanceOf('Cake\Controller\Component\FlashComponent', $result);
+        $this->assertInstanceOf('Cake\Controller\Component\FlashComponent', $this->Components->Flash);
     }
 
     /**

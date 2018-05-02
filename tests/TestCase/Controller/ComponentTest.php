@@ -14,7 +14,7 @@
 namespace Cake\Test\TestCase\Controller;
 
 use Cake\Controller\ComponentRegistry;
-use Cake\Controller\Component\CookieComponent;
+use Cake\Controller\Component\FlashComponent;
 use Cake\Controller\Controller;
 use Cake\Event\EventManager;
 use Cake\TestSuite\TestCase;
@@ -23,7 +23,7 @@ use TestApp\Controller\Component\AppleComponent;
 use TestApp\Controller\Component\BananaComponent;
 use TestApp\Controller\Component\ConfiguredComponent;
 use TestApp\Controller\Component\OrangeComponent;
-use TestApp\Controller\Component\SomethingWithCookieComponent;
+use TestApp\Controller\Component\SomethingWithFlashComponent;
 
 /**
  * ComponentTest class
@@ -134,14 +134,14 @@ class ComponentTest extends TestCase
      *
      * @return void
      */
-    public function testSomethingReferencingCookieComponent()
+    public function testSomethingReferencingFlashComponent()
     {
         $Controller = new ComponentTestController();
-        $Controller->loadComponent('SomethingWithCookie');
+        $Controller->loadComponent('SomethingWithFlash');
         $Controller->startupProcess();
 
-        $this->assertInstanceOf(SomethingWithCookieComponent::class, $Controller->SomethingWithCookie);
-        $this->assertInstanceOf(CookieComponent::class, $Controller->SomethingWithCookie->Cookie);
+        $this->assertInstanceOf(SomethingWithFlashComponent::class, $Controller->SomethingWithFlash);
+        $this->assertInstanceOf(FlashComponent::class, $Controller->SomethingWithFlash->Flash);
     }
 
     /**
