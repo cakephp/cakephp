@@ -402,22 +402,6 @@ class Folder
     }
 
     /**
-     * Returns true if the Folder is in the given Cake path.
-     *
-     * @param string $path The path to check.
-     * @return bool
-     * @deprecated 3.2.12 This method will be removed in 4.0.0. Use inPath() instead.
-     */
-    public function inCakePath($path = '')
-    {
-        deprecationWarning('Folder::inCakePath() is deprecated. Use Folder::inPath() instead.');
-        $dir = substr(Folder::slashTerm(ROOT), 0, -1);
-        $newdir = $dir . $path;
-
-        return $this->inPath($newdir);
-    }
-
-    /**
      * Returns true if the Folder is in the given path.
      *
      * @param string $path The absolute path to check that the current `pwd()` resides within.

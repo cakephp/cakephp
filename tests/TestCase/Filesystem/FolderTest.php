@@ -722,33 +722,6 @@ class FolderTest extends TestCase
     }
 
     /**
-     * testInCakePath method
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testInCakePath()
-    {
-        $this->deprecated(function () {
-            $Folder = new Folder();
-            $Folder->cd(ROOT);
-            $path = 'C:\\path\\to\\file';
-            $result = $Folder->inCakePath($path);
-            $this->assertFalse($result);
-
-            $path = ROOT;
-            $Folder->cd(ROOT);
-            $result = $Folder->inCakePath($path);
-            $this->assertFalse($result);
-
-            $path = DS . 'config';
-            $Folder->cd(ROOT . DS . 'config');
-            $result = $Folder->inCakePath($path);
-            $this->assertTrue($result);
-        });
-    }
-
-    /**
      * testFind method
      *
      * @return void
