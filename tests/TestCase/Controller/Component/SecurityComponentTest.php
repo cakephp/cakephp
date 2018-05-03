@@ -59,16 +59,6 @@ class TestSecurityComponent extends SecurityComponent
  */
 class SecurityTestController extends Controller
 {
-
-    /**
-     * components property
-     *
-     * @var array
-     */
-    public $components = [
-        'TestSecurity' => ['className' => 'Cake\Test\TestCase\Controller\Component\TestSecurityComponent']
-    ];
-
     /**
      * failed property
      *
@@ -82,6 +72,11 @@ class SecurityTestController extends Controller
      * @var array
      */
     public $testHeaders = [];
+
+    public function initialize()
+    {
+        $this->loadComponent('TestSecurity', ['className' => 'Cake\Test\TestCase\Controller\Component\TestSecurityComponent']);
+    }
 
     /**
      * fail method

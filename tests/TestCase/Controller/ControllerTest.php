@@ -565,35 +565,6 @@ class ControllerTest extends TestCase
     }
 
     /**
-     * testMergeVars method
-     *
-     * @return void
-     */
-    public function testMergeVars()
-    {
-        $request = new ServerRequest();
-        $TestController = new TestController($request);
-
-        $expected = [
-            'Html' => null,
-        ];
-        $this->assertEquals($expected, $TestController->helpers);
-
-        $expected = [
-            'Security' => null,
-            'Flash' => null,
-        ];
-        $this->assertEquals($expected, $TestController->components);
-
-        $TestController = new AnotherTestController($request);
-        $this->assertEquals(
-            'Posts',
-            $TestController->modelClass,
-            'modelClass should not be overwritten when defined.'
-        );
-    }
-
-    /**
      * testReferer method
      *
      * @return void
@@ -1156,7 +1127,6 @@ class ControllerTest extends TestCase
         $this->assertSame($request, $controller->getRequest());
 
         $this->assertEquals('Posts', $controller->getRequest()->getParam('plugin'));
-        $this->assertEquals(['foo', 'bar'], $controller->passedArgs);
     }
 
     /**

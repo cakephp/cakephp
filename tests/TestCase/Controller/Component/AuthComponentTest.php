@@ -353,7 +353,10 @@ class AuthComponentTest extends TestCase
     {
         $this->expectException(\Cake\Core\Exception\Exception::class);
         $this->Controller->Auth->setConfig('authenticate', 'Missing');
-        $this->Controller->Auth->identify($this->Controller->request, $this->Controller->response);
+        $this->Controller->Auth->identify(
+            $this->Controller->getRequest(),
+            $this->Controller->getResponse()
+        );
     }
 
     /**

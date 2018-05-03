@@ -217,8 +217,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
 
         $this->initialize();
 
-        $this->_mergeControllerVars();
-        $this->_loadComponents();
         $this->getEventManager()->on($this);
     }
 
@@ -410,10 +408,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         $this->request = $request;
         $this->plugin = $request->getParam('plugin') ?: null;
 
-        if ($request->getParam('pass')) {
-            $this->passedArgs = $request->getParam('pass');
-        }
-
         return $this;
     }
 
@@ -470,20 +464,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     }
 
     /**
-     * Merge components, helpers vars from
-     * parent classes.
-     *
-     * @return void
-     */
-    protected function _mergeControllerVars()
-    {
-        $this->_mergeVars(
-            ['components', 'helpers'],
-            ['associative' => ['components', 'helpers']]
-        );
-    }
-
-    /**
      * Returns a list of all events that will fire in the controller during its lifecycle.
      * You can override this function to add your own listener callbacks
      *
@@ -497,23 +477,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             'Controller.beforeRedirect' => 'beforeRedirect',
             'Controller.shutdown' => 'afterFilter',
         ];
-    }
-
-    /**
-     * Loads the defined components using the Component factory.
-     *
-     * @return void
-     */
-    protected function _loadComponents()
-    {
-        if (empty($this->components)) {
-            return;
-        }
-        $registry = $this->components();
-        $components = $registry->normalizeArray($this->components);
-        foreach ($components as $properties) {
-            $this->loadComponent($properties['class'], $properties['config']);
-        }
     }
 
     /**
