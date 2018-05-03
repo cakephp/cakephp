@@ -16,6 +16,8 @@ namespace Cake\TestSuite\Constraint\Email;
 
 /**
  * MailSentTo
+ *
+ * @internal
  */
 class MailSentTo extends MailSentWith
 {

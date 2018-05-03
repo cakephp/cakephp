@@ -16,6 +16,8 @@ namespace Cake\TestSuite\Constraint\Email;
 
 /**
  * MailContains
+ *
+ * @internal
  */
 class MailContains extends MailConstraintBase
 {

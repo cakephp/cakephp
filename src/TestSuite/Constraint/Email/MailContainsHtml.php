@@ -18,6 +18,8 @@ use Cake\Mailer\Email;
 
 /**
  * MailContainsHtml
+ *
+ * @internal
  */
 class MailContainsHtml extends MailContains
 {

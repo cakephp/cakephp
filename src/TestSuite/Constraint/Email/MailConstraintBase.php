@@ -19,6 +19,8 @@ use PHPUnit\Framework\Constraint\Constraint;
 
 /**
  * Base class for all mail assertion constraints
+ *
+ * @internal
  */
 abstract class MailConstraintBase extends Constraint
 {

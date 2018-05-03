@@ -16,6 +16,8 @@ namespace Cake\TestSuite\Constraint\Email;
 
 /**
  * NoMailSent
+ *
+ * @internal
  */
 class NoMailSent extends MailConstraintBase
 {

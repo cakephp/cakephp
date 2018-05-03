@@ -16,6 +16,8 @@ namespace Cake\TestSuite\Constraint\Email;
 
 /**
  * MailCount
+ *
+ * @internal
  */
 class MailCount extends MailConstraintBase
 {
