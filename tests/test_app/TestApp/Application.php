@@ -20,6 +20,11 @@ use Cake\Routing\Middleware\RoutingMiddleware;
 class Application extends BaseApplication
 {
 
+    public function bootstrap()
+    {
+        parent::bootstrap();
+    }
+
     public function middleware($middleware)
     {
         $middleware->add(new RoutingMiddleware());
