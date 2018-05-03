@@ -19,7 +19,7 @@ use PHPUnit\Framework\Constraint\Constraint;
 /**
  * EventFiredWith constraint
  *
- * Another glorified in_array check
+ * @internal
  */
 class EventFiredWith extends Constraint
 {
