@@ -156,31 +156,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     protected $_components;
 
     /**
-     * Array containing the names of components this controller uses. Component names
-     * should not contain the "Component" portion of the class name.
-     *
-     * Example:
-     * ```
-     * public $components = ['RequestHandler', 'Acl'];
-     * ```
-     *
-     * @var array
-     * @link https://book.cakephp.org/3.0/en/controllers/components.html
-     *
-     * @deprecated 3.0.0 You should configure components in your Controller::initialize() method.
-     */
-    public $components = [];
-
-    /**
-     * Instance of the View created during rendering. Won't be set until after
-     * Controller::render() is called.
-     *
-     * @var \Cake\View\View
-     * @deprecated 3.1.0 Use viewBuilder() instead.
-     */
-    public $View;
-
-    /**
      * These Controller properties will be passed from the Controller to the View as options.
      *
      * @var array
@@ -195,14 +170,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @var string|null
      */
     protected $plugin;
-
-    /**
-     * Holds all passed params.
-     *
-     * @var array
-     * @deprecated 3.1.0 Use `$this->request->getParam('pass')` instead.
-     */
-    public $passedArgs = [];
 
     /**
      * Constructor.
@@ -321,85 +288,12 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     public function __get($name)
     {
-        $deprecated = [
-            'name' => 'getName',
-            'plugin' => 'getPlugin',
-            'autoRender' => 'isAutoRenderEnabled',
-        ];
-        if (isset($deprecated[$name])) {
-            $method = $deprecated[$name];
-            deprecationWarning(sprintf('Controller::$%s is deprecated. Use $this->%s() instead.', $name, $method));
-
-            return $this->{$method}();
-        }
-
-        $deprecated = [
-            'layout' => 'getLayout',
-            'view' => 'getTemplate',
-            'theme' => 'getTheme',
-            'autoLayout' => 'isAutoLayoutEnabled',
-            'viewPath' => 'getTemplatePath',
-            'layoutPath' => 'getLayoutPath',
-        ];
-        if (isset($deprecated[$name])) {
-            $method = $deprecated[$name];
-            deprecationWarning(sprintf('Controller::$%s is deprecated. Use $this->viewBuilder()->%s() instead.', $name, $method));
-
-            return $this->viewBuilder()->{$method}();
-        }
-
         list($plugin, $class) = pluginSplit($this->modelClass, true);
         if ($class !== $name) {
             return false;
         }
 
         return $this->loadModel($plugin . $class);
-    }
-
-    /**
-     * Magic setter for removed properties.
-     *
-     * @param string $name Property name.
-     * @param mixed $value Value to set.
-     * @return void
-     */
-    public function __set($name, $value)
-    {
-        $deprecated = [
-            'name' => 'setName',
-            'plugin' => 'setPlugin'
-        ];
-        if (isset($deprecated[$name])) {
-            $method = $deprecated[$name];
-            deprecationWarning(sprintf('Controller::$%s is deprecated. Use $this->%s() instead.', $name, $method));
-            $this->{$method}($value);
-
-            return;
-        }
-        if ($name === 'autoRender') {
-            $value ? $this->enableAutoRender() : $this->disableAutoRender();
-            deprecationWarning(sprintf('Controller::$%s is deprecated. Use $this->enableAutoRender/disableAutoRender() instead.', $name));
-
-            return;
-        }
-        $deprecated = [
-            'layout' => 'setLayout',
-            'view' => 'setTemplate',
-            'theme' => 'setTheme',
-            'autoLayout' => 'enableAutoLayout',
-            'viewPath' => 'setTemplatePath',
-            'layoutPath' => 'setLayoutPath',
-        ];
-        if (isset($deprecated[$name])) {
-            $method = $deprecated[$name];
-            deprecationWarning(sprintf('Controller::$%s is deprecated. Use $this->viewBuilder()->%s() instead.', $name, $method));
-
-            $this->viewBuilder()->{$method}($value);
-
-            return;
-        }
-
-        $this->{$name} = $value;
     }
 
     /**
@@ -723,12 +617,12 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     /**
      * Instantiates the correct view class, hands it its data, and uses it to render the view output.
      *
-     * @param string|null $view View to use for rendering
+     * @param string|null $template Template to use for rendering
      * @param string|null $layout Layout to use
      * @return \Cake\Http\Response A response object containing the rendered view.
      * @link https://book.cakephp.org/3.0/en/controllers.html#rendering-a-view
      */
-    public function render($view = null, $layout = null)
+    public function render($template = null, $layout = null)
     {
         $builder = $this->viewBuilder();
         if (!$builder->getTemplatePath()) {
@@ -752,9 +646,9 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             $builder->setTemplate($this->getRequest()->getParam('action'));
         }
 
-        $this->View = $this->createView();
-        $contents = $this->View->render($view, $layout);
-        $this->setResponse($this->View->response->withStringBody($contents));
+        $view = $this->createView();
+        $contents = $view->render($template, $layout);
+        $this->setResponse($view->response->withStringBody($contents));
 
         return $this->getResponse();
     }
