@@ -26,7 +26,6 @@ use Cake\Log\LogTrait;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Routing\RequestActionTrait;
 use Cake\Routing\Router;
-use Cake\Utility\MergeVariablesTrait;
 use Cake\View\ViewVarsTrait;
 use LogicException;
 use ReflectionClass;
@@ -88,7 +87,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     use EventDispatcherTrait;
     use LocatorAwareTrait;
     use LogTrait;
-    use MergeVariablesTrait;
     use ModelAwareTrait;
     use RequestActionTrait;
     use ViewVarsTrait;
