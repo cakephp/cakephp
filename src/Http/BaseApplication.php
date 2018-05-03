@@ -160,7 +160,7 @@ abstract class BaseApplication implements
      *
      * By default this will load `config/routes.php` for ease of use and backwards compatibility.
      *
-     * @param \Cake\Routing\RouteBuilder $routes A route builder to add routes into.
+     * @param \Cake\Routing\RouteBuilder $routes A route builder to add routes into (currently unused).
      * @return void
      */
     public function routes($routes)
