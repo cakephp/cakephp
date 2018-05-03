@@ -702,8 +702,6 @@ class ExceptionRendererTest extends TestCase
         $ExceptionRenderer->controller = $this->getMockBuilder('Cake\Controller\Controller')
             ->setMethods(['render'])
             ->getMock();
-        $ExceptionRenderer->controller->helpers = ['Fail', 'Boom'];
-        $ExceptionRenderer->controller->request = new ServerRequest;
         $ExceptionRenderer->controller->expects($this->at(0))
             ->method('render')
             ->with('missingHelper')
@@ -732,7 +730,6 @@ class ExceptionRendererTest extends TestCase
         $ExceptionRenderer->controller = $this->getMockBuilder('Cake\Controller\Controller')
             ->setMethods(['beforeRender'])
             ->getMock();
-        $ExceptionRenderer->controller->request = new ServerRequest;
         $ExceptionRenderer->controller->expects($this->any())
             ->method('beforeRender')
             ->will($this->throwException($exception));
@@ -761,7 +758,7 @@ class ExceptionRendererTest extends TestCase
                 $event->getSubject()->viewBuilder()->setLayoutPath('boom');
             }
         );
-        $ExceptionRenderer->controller->request = new ServerRequest;
+        $ExceptionRenderer->controller->setRequest(new ServerRequest);
 
         $response = $ExceptionRenderer->render();
         $this->assertEquals('text/html', $response->getType());
@@ -785,7 +782,7 @@ class ExceptionRendererTest extends TestCase
             ->setMethods(['render'])
             ->getMock();
         $ExceptionRenderer->controller->setPlugin('TestPlugin');
-        $ExceptionRenderer->controller->request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
+        $ExceptionRenderer->controller->setRequest($this->getMockBuilder('Cake\Http\ServerRequest')->getMock());
 
         $exception = new MissingPluginException(['plugin' => 'TestPlugin']);
         $ExceptionRenderer->controller->expects($this->once())
@@ -814,7 +811,6 @@ class ExceptionRendererTest extends TestCase
             ->setMethods(['render'])
             ->getMock();
         $ExceptionRenderer->controller->setPlugin('TestPlugin');
-        $ExceptionRenderer->controller->request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
 
         $exception = new MissingPluginException(['plugin' => 'TestPluginTwo']);
         $ExceptionRenderer->controller->expects($this->once())
