@@ -51,7 +51,7 @@ class ControllerTestAppController extends Controller
      *
      * @var array
      */
-    public $components = ['Cookie'];
+    public $components = ['Flash'];
 }
 
 /**
@@ -440,7 +440,7 @@ class ControllerTest extends TestCase
 
         $Controller->getEventManager()->on('Controller.beforeRender', function (Event $event) {
             $controller = $event->getSubject();
-            $controller->viewClass = 'Json';
+            $controller->viewBuilder()->setClassName('Json');
         });
 
         $Controller->set([
@@ -501,7 +501,7 @@ class ControllerTest extends TestCase
         $Controller = new Controller(null, new Response());
 
         $response = $Controller->redirect('http://cakephp.org', (int)$code);
-        $this->assertSame($response, $Controller->response);
+        $this->assertSame($response, $Controller->getResponse());
         $this->assertEquals($code, $response->getStatusCode());
         $this->assertEquals('http://cakephp.org', $response->getHeaderLine('Location'));
         $this->assertFalse($Controller->isAutoRenderEnabled());
@@ -561,7 +561,7 @@ class ControllerTest extends TestCase
 
         $result = $Controller->redirect('http://cakephp.org');
         $this->assertSame($newResponse, $result);
-        $this->assertSame($newResponse, $Controller->response);
+        $this->assertSame($newResponse, $Controller->getResponse());
     }
 
     /**
@@ -581,7 +581,7 @@ class ControllerTest extends TestCase
 
         $expected = [
             'Security' => null,
-            'Cookie' => null,
+            'Flash' => null,
         ];
         $this->assertEquals($expected, $TestController->components);
 
@@ -677,8 +677,8 @@ class ControllerTest extends TestCase
         $TestController = new TestController($request);
         $TestController->setAction('view', 1, 2);
         $expected = ['testId' => 1, 'test2Id' => 2];
-        $this->assertSame($expected, $TestController->request->getData());
-        $this->assertSame('view', $TestController->request->getParam('action'));
+        $this->assertSame($expected, $TestController->getRequest()->getData());
+        $this->assertSame('view', $TestController->getRequest()->getParam('action'));
     }
 
     /**
@@ -750,17 +750,17 @@ class ControllerTest extends TestCase
             ->getMock();
 
         $Controller = new Controller($request, $response);
-        $Controller->request = $Controller->request->withQueryParams([
+        $Controller->setRequest($Controller->getRequest()->withQueryParams([
             'posts' => [
                 'page' => 2,
                 'limit' => 2,
             ]
-        ]);
+        ]));
 
         $this->assertEquals([], $Controller->paginate);
 
-        $this->assertNotContains('Paginator', $Controller->helpers);
-        $this->assertArrayNotHasKey('Paginator', $Controller->helpers);
+        $this->assertNotContains('Paginator', $Controller->viewBuilder()->getHelpers());
+        $this->assertArrayNotHasKey('Paginator', $Controller->viewBuilder()->getHelpers());
 
         $results = $Controller->paginate('Posts');
         $this->assertInstanceOf('Cake\Datasource\ResultSetInterface', $results);
@@ -770,7 +770,7 @@ class ControllerTest extends TestCase
         $this->assertInstanceOf('Cake\Datasource\ResultSetInterface', $results);
         $this->assertCount(3, $results);
 
-        $paging = $Controller->request->getParam('paging');
+        $paging = $Controller->getRequest()->getParam('paging');
         $this->assertSame($paging['Posts']['page'], 1);
         $this->assertSame($paging['Posts']['pageCount'], 1);
         $this->assertFalse($paging['Posts']['prevPage']);
@@ -781,7 +781,7 @@ class ControllerTest extends TestCase
         $this->assertInstanceOf('Cake\Datasource\ResultSetInterface', $results);
         $this->assertCount(1, $results);
 
-        $paging = $Controller->request->getParam('paging');
+        $paging = $Controller->getRequest()->getParam('paging');
         $this->assertSame($paging['Posts']['page'], 2);
         $this->assertSame($paging['Posts']['pageCount'], 2);
         $this->assertTrue($paging['Posts']['prevPage']);
@@ -929,7 +929,7 @@ class ControllerTest extends TestCase
         $result = $Controller->invokeAction();
         $this->assertEquals(
             ['testId' => '1', 'test2Id' => '2'],
-            $Controller->request->getData()
+            $Controller->getRequest()->getData()
         );
     }
 

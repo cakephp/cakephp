@@ -63,10 +63,6 @@ trait ViewVarsTrait
     public function createView($viewClass = null)
     {
         $builder = $this->viewBuilder();
-        if ($viewClass === null && $builder->getClassName() === null) {
-            $builder->setClassName($this->viewClass);
-            unset($this->viewClass);
-        }
         if ($viewClass) {
             $builder->setClassName($viewClass);
         }
@@ -79,7 +75,7 @@ trait ViewVarsTrait
             }
         }
 
-        foreach (['name', 'helpers', 'plugin'] as $prop) {
+        foreach (['name', 'plugin'] as $prop) {
             if (isset($this->{$prop})) {
                 $method = 'set' . ucfirst($prop);
                 $builder->{$method}($this->{$prop});

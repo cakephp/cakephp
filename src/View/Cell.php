@@ -216,9 +216,9 @@ abstract class Cell
                 $builder->setTemplatePath('Cell' . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $name));
             }
 
-            $this->View = $this->createView();
+            $view = $this->createView();
             try {
-                return $this->View->render($template);
+                return $view->render($template);
             } catch (MissingTemplateException $e) {
                 throw new MissingCellViewException(['file' => $template, 'name' => $name], null, $e);
             }
@@ -295,7 +295,6 @@ abstract class Cell
             'action' => $this->action,
             'args' => $this->args,
             'template' => $this->template,
-            'viewClass' => $this->viewClass,
             'request' => $this->request,
             'response' => $this->response,
         ];

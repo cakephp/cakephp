@@ -52,8 +52,8 @@ class ControllerFactoryTest extends TestCase
         ]);
         $result = $this->factory->create($request, $this->response);
         $this->assertInstanceOf('TestApp\Controller\CakesController', $result);
-        $this->assertSame($request, $result->request);
-        $this->assertSame($this->response, $result->response);
+        $this->assertSame($request, $result->getRequest());
+        $this->assertSame($this->response, $result->getResponse());
     }
 
     /**
@@ -76,8 +76,8 @@ class ControllerFactoryTest extends TestCase
             'TestApp\Controller\Admin\PostsController',
             $result
         );
-        $this->assertSame($request, $result->request);
-        $this->assertSame($this->response, $result->response);
+        $this->assertSame($request, $result->getRequest());
+        $this->assertSame($this->response, $result->getResponse());
     }
 
     /**
@@ -100,8 +100,8 @@ class ControllerFactoryTest extends TestCase
             'TestApp\Controller\Admin\Sub\PostsController',
             $result
         );
-        $this->assertSame($request, $result->request);
-        $this->assertSame($this->response, $result->response);
+        $this->assertSame($request, $result->getRequest());
+        $this->assertSame($this->response, $result->getResponse());
     }
 
     /**
@@ -124,8 +124,8 @@ class ControllerFactoryTest extends TestCase
             'TestPlugin\Controller\TestPluginController',
             $result
         );
-        $this->assertSame($request, $result->request);
-        $this->assertSame($this->response, $result->response);
+        $this->assertSame($request, $result->getRequest());
+        $this->assertSame($this->response, $result->getResponse());
     }
 
     /**
@@ -148,8 +148,8 @@ class ControllerFactoryTest extends TestCase
             'Company\TestPluginThree\Controller\OvensController',
             $result
         );
-        $this->assertSame($request, $result->request);
-        $this->assertSame($this->response, $result->response);
+        $this->assertSame($request, $result->getRequest());
+        $this->assertSame($this->response, $result->getResponse());
     }
 
     /**
@@ -173,8 +173,8 @@ class ControllerFactoryTest extends TestCase
             'TestPlugin\Controller\Admin\CommentsController',
             $result
         );
-        $this->assertSame($request, $result->request);
-        $this->assertSame($this->response, $result->response);
+        $this->assertSame($request, $result->getRequest());
+        $this->assertSame($this->response, $result->getResponse());
     }
 
     /**

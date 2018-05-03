@@ -710,8 +710,12 @@ class ExceptionRendererTest extends TestCase
             ->will($this->throwException($exception));
 
         $response = $ExceptionRenderer->render();
-        sort($ExceptionRenderer->controller->helpers);
-        $this->assertEquals(['Form', 'Html'], $ExceptionRenderer->controller->helpers);
+        $helpers = $ExceptionRenderer->controller->viewBuilder()->getHelpers();
+        sort($helpers);
+        $this->assertEquals(
+            ['Form', 'Html'],
+            $helpers
+        );
         $this->assertContains('Helper class Fail', (string)$response->getBody());
     }
 

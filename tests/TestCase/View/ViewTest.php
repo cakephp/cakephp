@@ -1276,10 +1276,10 @@ class ViewTest extends TestCase
      */
     public function testBeforeLayout()
     {
-        $this->PostsController->helpers = [
+        $this->PostsController->viewBuilder()->setHelpers([
             'TestBeforeAfter' => ['className' => __NAMESPACE__ . '\TestBeforeAfterHelper'],
             'Html'
-        ];
+        ]);
         $View = $this->PostsController->createView();
         $View->setTemplatePath($this->PostsController->getName());
         $View->render('index');
@@ -1293,10 +1293,10 @@ class ViewTest extends TestCase
      */
     public function testAfterLayout()
     {
-        $this->PostsController->helpers = [
+        $this->PostsController->viewBuilder()->setHelpers([
             'TestBeforeAfter' => ['className' => __NAMESPACE__ . '\TestBeforeAfterHelper'],
             'Html'
-        ];
+        ]);
         $this->PostsController->set('variable', 'values');
 
         $View = $this->PostsController->createView();
@@ -1315,7 +1315,7 @@ class ViewTest extends TestCase
      */
     public function testRenderLoadHelper()
     {
-        $this->PostsController->helpers = ['Form', 'Number'];
+        $this->PostsController->viewBuilder()->setHelpers(['Form', 'Number']);
         $View = $this->PostsController->createView('Cake\Test\TestCase\View\TestView');
         $View->setTemplatePath($this->PostsController->getName());
 
@@ -1326,7 +1326,9 @@ class ViewTest extends TestCase
         // HtmlHelper is loaded in TestView::initialize()
         $this->assertEquals(['Html', 'Form', 'Number'], $attached);
 
-        $this->PostsController->helpers = ['Html', 'Form', 'Number', 'TestPlugin.PluggedHelper'];
+        $this->PostsController->viewBuilder()->setHelpers(
+            ['Html', 'Form', 'Number', 'TestPlugin.PluggedHelper']
+        );
         $View = $this->PostsController->createView('Cake\Test\TestCase\View\TestView');
         $View->setTemplatePath($this->PostsController->getName());
 
@@ -1360,8 +1362,10 @@ class ViewTest extends TestCase
 
         $this->assertNull($View->render(false, 'ajax2'));
 
-        $this->PostsController->helpers = ['Html'];
-        $this->PostsController->request = $this->PostsController->request->withParam('action', 'index');
+        $this->PostsController->viewBuilder()->setHelpers(['Html']);
+        $this->PostsController->setRequest(
+            $this->PostsController->getRequest()->withParam('action', 'index')
+        );
         Configure::write('Cache.check', true);
 
         $View = $this->PostsController->createView('Cake\Test\TestCase\View\TestView');

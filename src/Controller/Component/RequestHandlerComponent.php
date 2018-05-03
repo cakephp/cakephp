@@ -71,8 +71,6 @@ class RequestHandlerComponent extends Component
      *   json, xml, and ajax will be mapped. Defining any types will omit the defaults.
      * - `inputTypeMap` - A mapping between types and deserializers for request bodies.
      *   If undefined json & xml will be mapped. Defining any types will omit the defaults.
-     * - `enableBeforeRedirect` - Set to false to disable the `beforeRedirect` callback. The
-     *   `beforeRedirect` functionality has been deprecated.
      *
      * @var array
      */
@@ -80,7 +78,6 @@ class RequestHandlerComponent extends Component
         'checkHttpCache' => true,
         'viewClassMap' => [],
         'inputTypeMap' => [],
-        'enableBeforeRedirect' => true
     ];
 
     /**
@@ -124,7 +121,6 @@ class RequestHandlerComponent extends Component
         return [
             'Controller.startup' => 'startup',
             'Controller.beforeRender' => 'beforeRender',
-            'Controller.beforeRedirect' => 'beforeRedirect',
         ];
     }
 
@@ -249,56 +245,6 @@ class RequestHandlerComponent extends Component
     }
 
     /**
-     * Handles (fakes) redirects for AJAX requests using requestAction()
-     *
-     * @param \Cake\Event\Event $event The Controller.beforeRedirect event.
-     * @param string|array $url A string or array containing the redirect location
-     * @param \Cake\Http\Response $response The response object.
-     * @return \Cake\Http\Response|null The response object if the redirect is caught.
-     * @deprecated 3.3.5 This functionality will be removed in 4.0.0. You can disable this function
-     *   now by setting the `enableBeforeRedirect` config option to false.
-     */
-    public function beforeRedirect(Event $event, $url, Response $response)
-    {
-        if (!$this->getConfig('enableBeforeRedirect')) {
-            return null;
-        }
-        deprecationWarning(
-            'RequestHandlerComponent::beforeRedirect() is deprecated. ' .
-            'This functionality will be removed in 4.0.0. Set the `enableBeforeRedirect` ' .
-            'option to `false` to disable this warning.'
-        );
-        $request = $this->getController()->getRequest();
-        if (!$request->is('ajax')) {
-            return null;
-        }
-        if (empty($url)) {
-            return null;
-        }
-        if (is_array($url)) {
-            $url = Router::url($url + ['_base' => false]);
-        }
-        $query = [];
-        if (strpos($url, '?') !== false) {
-            list($url, $querystr) = explode('?', $url, 2);
-            parse_str($querystr, $query);
-        }
-        /** @var \Cake\Controller\Controller $controller */
-        $controller = $event->getSubject();
-        $response->body($controller->requestAction($url, [
-            'return',
-            'bare' => false,
-            'environment' => [
-                'REQUEST_METHOD' => 'GET'
-            ],
-            'query' => $query,
-            'cookies' => $request->getCookieParams()
-        ]));
-
-        return $response->withStatus(200);
-    }
-
-    /**
      * Checks if the response can be considered different according to the request
      * headers, and the caching response headers. If it was not modified, then the
      * render process is skipped. And the client will get a blank response with a
@@ -335,7 +281,7 @@ class RequestHandlerComponent extends Component
 
         if ($this->ext && $isRecognized) {
             $this->renderAs($controller, $this->ext);
-            $response = $controller->response;
+            $response = $controller->getResponse();
         } else {
             $response = $response->withCharset(Configure::read('App.encoding'));
         }
@@ -597,7 +543,6 @@ class RequestHandlerComponent extends Component
         }
 
         if ($viewClass) {
-            $controller->viewClass = $viewClass;
             $builder->setClassName($viewClass);
         } else {
             if (!$this->_renderType) {
@@ -614,8 +559,7 @@ class RequestHandlerComponent extends Component
             $builder->setLayoutPath($type);
         }
 
-        $response = $controller->response;
-        if ($response->getMimeType($type)) {
+        if ($controller->getResponse()->getMimeType($type)) {
             $this->respondAs($type, $options);
         }
     }
@@ -682,7 +626,7 @@ class RequestHandlerComponent extends Component
      */
     public function responseType()
     {
-        $response = $this->getController()->response;
+        $response = $this->getController()->getResponse();
 
         return $response->mapType($response->getType());
     }
@@ -700,7 +644,7 @@ class RequestHandlerComponent extends Component
         if (is_array($alias)) {
             return array_map([$this, 'mapAlias'], $alias);
         }
-        $response = $this->getController()->response;
+        $response = $this->getController()->getResponse();
         $type = $response->getMimeType($alias);
         if ($type) {
             if (is_array($type)) {

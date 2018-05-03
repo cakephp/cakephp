@@ -205,28 +205,6 @@ class AuthComponent extends Component
     public $allowedActions = [];
 
     /**
-     * Request object
-     *
-     * @var \Cake\Http\ServerRequest
-     */
-    public $request;
-
-    /**
-     * Response object
-     *
-     * @var \Cake\Http\Response
-     */
-    public $response;
-
-    /**
-     * Instance of the Session object
-     *
-     * @var \Cake\Http\Session
-     * @deprecated 3.1.0 Will be removed in 4.0
-     */
-    public $session;
-
-    /**
      * The instance of the Authenticate provider that was used for
      * successfully logging in the current user after calling `login()`
      * in the same request
@@ -253,8 +231,6 @@ class AuthComponent extends Component
     {
         $controller = $this->_registry->getController();
         $this->setEventManager($controller->getEventManager());
-        $this->response =& $controller->response;
-        $this->session = $controller->getRequest()->getSession();
 
         if ($this->getConfig('ajaxLogin')) {
             deprecationWarning(
@@ -379,7 +355,7 @@ class AuthComponent extends Component
         if (empty($this->_authenticateObjects)) {
             $this->constructAuthenticate();
         }
-        $response = $this->response;
+        $response = $controller->getResponse();
         $auth = end($this->_authenticateObjects);
         if ($auth === false) {
             throw new Exception('At least one authenticate object must be available.');
@@ -440,7 +416,7 @@ class AuthComponent extends Component
      */
     protected function _isLoginAction(Controller $controller)
     {
-        $uri = $controller->request->getUri();
+        $uri = $controller->getRequest()->getUri();
         $url = Router::normalize($uri->getPath());
         $loginAction = Router::normalize($this->_config['loginAction']);
 
@@ -821,7 +797,10 @@ class AuthComponent extends Component
             $this->constructAuthenticate();
         }
         foreach ($this->_authenticateObjects as $auth) {
-            $result = $auth->authenticate($this->getController()->getRequest(), $this->response);
+            $result = $auth->authenticate(
+                $this->getController()->getRequest(),
+                $this->getController()->getResponse()
+            );
             if (!empty($result)) {
                 $this->_authenticationProvider = $auth;
                 $event = $this->dispatchEvent('Auth.afterIdentify', [$result, $auth]);
@@ -1021,9 +1000,9 @@ class AuthComponent extends Component
      */
     protected function _getUrlToRedirectBackTo()
     {
-        $urlToRedirectBackTo = $this->request->getRequestTarget();
-        if (!$this->request->is('get')) {
-            $urlToRedirectBackTo = $this->request->referer(true);
+        $urlToRedirectBackTo = $this->getController()->getRequest()->getRequestTarget();
+        if (!$this->getController()->getRequest()->is('get')) {
+            $urlToRedirectBackTo = $this->getController()->getRequest()->referer(true);
         }
 
         return $urlToRedirectBackTo;

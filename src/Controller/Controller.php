@@ -45,15 +45,15 @@ use RuntimeException;
  * resource or collection of resources. For example adding or editing a new
  * object, or listing a set of objects.
  *
- * You can access request parameters, using `$this->request`. The request object
+ * You can access request parameters, using `$this->getRequest()`. The request object
  * contains all the POST, GET and FILES that were part of the request.
  *
  * After performing the required action, controllers are responsible for
  * creating a response. This usually takes the form of a generated `View`, or
- * possibly a redirection to another URL. In either case `$this->response`
+ * possibly a redirection to another URL. In either case `$this->getResponse()`
  * allows you to manipulate all aspects of the response.
  *
- * Controllers are created by `Dispatcher` based on request parameters and
+ * Controllers are created by `ActionDispatcher` based on request parameters and
  * routing. By default controllers and actions use conventional names.
  * For example `/posts/index` maps to `PostsController::index()`. You can re-map
  * URLs using Router::connect() or RouterBuilder::connect().
@@ -105,40 +105,22 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     protected $name;
 
     /**
-     * An array containing the names of helpers this controller uses. The array elements should
-     * not contain the "Helper" part of the class name.
-     *
-     * Example:
-     * ```
-     * public $helpers = ['Form', 'Html', 'Time'];
-     * ```
-     *
-     * @var array
-     * @link https://book.cakephp.org/3.0/en/controllers.html#configuring-helpers-to-load
-     *
-     * @deprecated 3.0.0 You should configure helpers in your AppView::initialize() method.
-     */
-    public $helpers = [];
-
-    /**
      * An instance of a \Cake\Http\ServerRequest object that contains information about the current request.
      * This object contains all the information about a request and several methods for reading
      * additional information about the request.
      *
      * @var \Cake\Http\ServerRequest|null
      * @link https://book.cakephp.org/3.0/en/controllers/request-response.html#request
-     * @deprecated 3.6.0 The property will become protected in 4.0.0. Use getRequest()/setRequest instead.
      */
-    public $request;
+    protected $request;
 
     /**
      * An instance of a Response object that contains information about the impending response
      *
      * @var \Cake\Http\Response|null
      * @link https://book.cakephp.org/3.0/en/controllers/request-response.html#response
-     * @deprecated 3.6.0 The property will become protected in 4.0.0. Use getResponse()/setResponse instead.
      */
-    public $response;
+    protected $response;
 
     /**
      * The class name to use for creating the response object.
