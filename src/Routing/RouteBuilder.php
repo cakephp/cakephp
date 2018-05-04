@@ -759,14 +759,14 @@ class RouteBuilder
                     ];
                 case 3:
                     return [
-                        'prefix' => strtolower($matches[2]),
+                        'prefix' => (isset($matches[2]) ? strtolower($matches[2]) : false),
                         'controller' => $matches[3],
                         'action' => $matches[4]
                     ];
                 case 4:
                     return [
                         'plugin' => $matches[1],
-                        'prefix' => strtolower($matches[2]),
+                        'prefix' => (isset($matches[2]) ? strtolower($matches[2]) : false),
                         'controller' => $matches[3],
                         'action' => $matches[4]
                     ];
