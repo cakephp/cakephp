@@ -29,7 +29,7 @@ if (!function_exists('h')) {
      *    Arrays will be mapped and have all their elements escaped. Objects will be string cast if they
      *    implement a `__toString` method. Otherwise the class name will be used.
      *    Other scalar types will be returned unchanged.
-     * @param bool|string $double Encode existing html entities. If string it will be used as character set.
+     * @param bool $double Encode existing html entities.
      * @param string|null $charset Character set to use when escaping. Defaults to config value in `mb_internal_encoding()`
      * or 'UTF-8'.
      * @return mixed Wrapped text.
@@ -62,13 +62,6 @@ if (!function_exists('h')) {
             if ($defaultCharset === null) {
                 $defaultCharset = 'UTF-8';
             }
-        }
-        if (is_string($double)) {
-            deprecationWarning(
-                'Passing charset string for 2nd argument is deprecated. ' .
-                'Use the 3rd argument instead.'
-            );
-            $charset = $double;
         }
 
         return htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, $charset ?: $defaultCharset, $double);
