@@ -118,66 +118,6 @@ trait StaticConfigTrait
     }
 
     /**
-     * This method can be used to define configuration adapters for an application
-     * or read existing configuration.
-     *
-     * To change an adapter's configuration at runtime, first drop the adapter and then
-     * reconfigure it.
-     *
-     * Adapters will not be constructed until the first operation is done.
-     *
-     * ### Usage
-     *
-     * Assuming that the class' name is `Cache` the following scenarios
-     * are supported:
-     *
-     * Reading config data back:
-     *
-     * ```
-     * Cache::config('default');
-     * ```
-     *
-     * Setting a cache engine up.
-     *
-     * ```
-     * Cache::config('default', $settings);
-     * ```
-     *
-     * Injecting a constructed adapter in:
-     *
-     * ```
-     * Cache::config('default', $instance);
-     * ```
-     *
-     * Configure multiple adapters at once:
-     *
-     * ```
-     * Cache::config($arrayOfConfig);
-     * ```
-     *
-     * @deprecated 3.4.0 Use setConfig()/getConfig() instead.
-     * @param string|array $key The name of the configuration, or an array of multiple configs.
-     * @param array|null $config An array of name => configuration data for adapter.
-     * @return array|null Null when adding configuration or an array of configuration data when reading.
-     * @throws \BadMethodCallException When trying to modify an existing config.
-     */
-    public static function config($key, $config = null)
-    {
-        deprecationWarning(
-            get_called_class() . '::config() is deprecated. ' .
-            'Use setConfig()/getConfig() instead.'
-        );
-
-        if ($config !== null || is_array($key)) {
-            static::setConfig($key, $config);
-
-            return null;
-        }
-
-        return static::getConfig($key);
-    }
-
-    /**
      * Drops a constructed adapter.
      *
      * If you wish to modify an existing configuration, you should drop it,
@@ -356,26 +296,5 @@ REGEXP;
     public static function getDsnClassMap()
     {
         return static::$_dsnClassMap;
-    }
-
-    /**
-     * Returns or updates the DSN class map for this class.
-     *
-     * @deprecated 3.4.0 Use setDsnClassMap()/getDsnClassMap() instead.
-     * @param array|null $map Additions/edits to the class map to apply.
-     * @return array
-     */
-    public static function dsnClassMap(array $map = null)
-    {
-        deprecationWarning(
-            get_called_class() . '::setDsnClassMap() is deprecated. ' .
-            'Use setDsnClassMap()/getDsnClassMap() instead.'
-        );
-
-        if ($map !== null) {
-            static::setDsnClassMap($map);
-        }
-
-        return static::getDsnClassMap();
     }
 }
