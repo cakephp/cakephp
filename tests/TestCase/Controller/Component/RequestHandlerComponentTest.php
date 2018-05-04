@@ -359,54 +359,6 @@ class RequestHandlerComponentTest extends TestCase
     }
 
     /**
-     * test addInputType method
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testDeprecatedAddInputType()
-    {
-        $this->deprecated(function () {
-            $this->RequestHandler->addInputType('csv', ['str_getcsv']);
-            $result = $this->RequestHandler->getConfig('inputTypeMap');
-            $this->assertArrayHasKey('csv', $result);
-        });
-    }
-
-    /**
-     * testViewClassMap method
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testViewClassMapMethod()
-    {
-        $this->deprecated(function () {
-            $this->RequestHandler->setConfig(['viewClassMap' => ['json' => 'CustomJson']]);
-            $this->RequestHandler->initialize([]);
-            $result = $this->RequestHandler->viewClassMap();
-            $expected = [
-                'json' => 'CustomJson',
-                'xml' => 'Xml',
-                'ajax' => 'Ajax'
-            ];
-            $this->assertEquals($expected, $result);
-
-            $result = $this->RequestHandler->viewClassMap('xls', 'Excel.Excel');
-            $expected = [
-                'json' => 'CustomJson',
-                'xml' => 'Xml',
-                'ajax' => 'Ajax',
-                'xls' => 'Excel.Excel'
-            ];
-            $this->assertEquals($expected, $result);
-
-            $this->RequestHandler->renderAs($this->Controller, 'json');
-            $this->assertEquals('TestApp\View\CustomJsonView', $this->Controller->viewBuilder()->getClassName());
-        });
-    }
-
-    /**
      * Verify that isAjax is set on the request params for ajax requests
      *
      * @return void
@@ -729,33 +681,6 @@ XML;
     }
 
     /**
-     * Test mapping a new type and having startup process it.
-     *
-     * @group deprecated
-     * @return void
-     * @triggers Controller.startup $this->Controller
-     */
-    public function testStartupCustomTypeProcess()
-    {
-        $this->deprecated(function () {
-            $this->Controller->setRequest(new ServerRequest([
-                'input' => '"A","csv","string"',
-                'environment' => [
-                    'REQUEST_METHOD' => 'POST',
-                    'CONTENT_TYPE' => 'text/csv'
-                ]
-            ]));
-            $this->RequestHandler->addInputType('csv', ['str_getcsv']);
-            $event = new Event('Controller.startup', $this->Controller);
-            $this->RequestHandler->startup($event);
-            $expected = [
-                'A', 'csv', 'string'
-            ];
-            $this->assertEquals($expected, $this->Controller->getRequest()->getData());
-        });
-    }
-
-    /**
      * Test that data isn't processed when parsed data already exists.
      *
      * @return void
@@ -1039,20 +964,6 @@ XML;
         $this->Controller->setRequest($this->request->withEnv('HTTP_ACCEPT', null));
         $this->RequestHandler->ext = 'json';
         $this->assertFalse($this->RequestHandler->prefers('xml'));
-    }
-
-    /**
-     * testAddInputTypeException method
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testAddInputTypeException()
-    {
-        $this->expectException(\Cake\Core\Exception\Exception::class);
-        $this->deprecated(function () {
-            $this->RequestHandler->addInputType('csv', ['I am not callable']);
-        });
     }
 
     /**
