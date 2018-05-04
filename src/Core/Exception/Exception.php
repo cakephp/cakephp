@@ -88,9 +88,8 @@ class Exception extends RuntimeException
      *
      * See also Cake\Http\Response::withHeader()
      *
-     * @param string|array|null $header An array of header strings or a single header string
-     *  - an associative array of "header name" => "header value"
-     *  - an array of string headers is also accepted (deprecated)
+     * @param string|array|null $header A single header string or an associative
+     *   array of "header name" => "header value"
      * @param string|null $value The header value.
      * @return array
      */
@@ -100,13 +99,6 @@ class Exception extends RuntimeException
             return $this->_responseHeaders;
         }
         if (is_array($header)) {
-            if (isset($header[0])) {
-                deprecationWarning(
-                    'Passing a list string headers to Exception::responseHeader() is deprecated. ' .
-                    'Use an associative array instead.'
-                );
-            }
-
             return $this->_responseHeaders = $header;
         }
         $this->_responseHeaders = [$header => $value];
