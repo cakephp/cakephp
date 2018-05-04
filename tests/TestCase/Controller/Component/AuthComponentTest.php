@@ -1159,34 +1159,6 @@ class AuthComponentTest extends TestCase
     }
 
     /**
-     * testAjaxLogin method
-     *
-     * @return void
-     * @triggers Controller.startup $this->Controller
-     */
-    public function testAjaxLogin()
-    {
-        $this->Controller->setRequest(new ServerRequest([
-            'url' => '/ajax_auth/add',
-            'environment' => ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest'],
-        ]));
-        $this->Controller->setRequest($this->Controller->getRequest()->withParam('action', 'add'));
-
-        $event = new Event('Controller.startup', $this->Controller);
-        $this->Auth->setConfig('ajaxLogin', 'test_element');
-        $this->Auth->RequestHandler->ajaxLayout = 'ajax2';
-
-        $response = $this->Auth->startup($event);
-
-        $this->assertTrue($event->isStopped());
-        $this->assertEquals(403, $response->getStatusCode());
-        $this->assertEquals(
-            "Ajax!\nthis is the test element",
-            str_replace("\r\n", "\n", $response->getBody())
-        );
-    }
-
-    /**
      * test ajax unauthenticated
      *
      * @return void
