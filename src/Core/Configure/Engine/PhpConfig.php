@@ -73,8 +73,6 @@ class PhpConfig implements ConfigEngineInterface
      * Files with `.` in the name will be treated as values in plugins. Instead of
      * reading from the initialized path, plugin keys will be located using Plugin::path().
      *
-     * Setting a `$config` variable is deprecated. Use `return` instead.
-     *
      * @param string $key The identifier to read from. If the key has a . it will be treated
      *  as a plugin prefix.
      * @return array Parsed configuration values.
@@ -90,12 +88,7 @@ class PhpConfig implements ConfigEngineInterface
             return $return;
         }
 
-        if (!isset($config)) {
-            throw new Exception(sprintf('Config file "%s" did not return an array', $key . '.php'));
-        }
-        deprecationWarning('PHP configuration files should not set `$config. Instead return an array.');
-
-        return $config;
+        throw new Exception(sprintf('Config file "%s" did not return an array', $key . '.php'));
     }
 
     /**
