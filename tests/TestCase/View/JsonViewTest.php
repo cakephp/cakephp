@@ -259,7 +259,6 @@ class JsonViewTest extends TestCase
         $Response = new Response();
         $Controller = new Controller($Request, $Response);
 
-        $Controller->helpers = ['Html'];
         $Controller->set([
             'tags' => ['cakephp', 'framework'],
             '_serialize' => 'tags'

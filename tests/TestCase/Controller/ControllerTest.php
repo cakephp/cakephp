@@ -31,27 +31,12 @@ use TestPlugin\Controller\TestPluginController;
  */
 class ControllerTestAppController extends Controller
 {
-
-    /**
-     * helpers property
-     *
-     * @var array
-     */
-    public $helpers = ['Html'];
-
     /**
      * modelClass property
      *
      * @var string
      */
     public $modelClass = 'Posts';
-
-    /**
-     * components property
-     *
-     * @var array
-     */
-    public $components = ['Flash'];
 }
 
 /**
@@ -66,20 +51,6 @@ class TestController extends ControllerTestAppController
      * @var string
      */
     public $theme = 'Foo';
-
-    /**
-     * helpers property
-     *
-     * @var array
-     */
-    public $helpers = ['Html'];
-
-    /**
-     * components property
-     *
-     * @var array
-     */
-    public $components = ['Security'];
 
     /**
      * modelClass property
