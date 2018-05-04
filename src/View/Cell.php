@@ -71,6 +71,7 @@ abstract class Cell
      * additional information about the request.
      *
      * @var \Cake\Http\ServerRequest
+     * @deprecated 3.7.0 The property will become protected in 4.0.0.
      */
     public $request;
 
@@ -78,6 +79,7 @@ abstract class Cell
      * An instance of a Response object that contains information about the impending response
      *
      * @var \Cake\Http\Response
+     * @deprecated 3.7.0 The property will become protected in 4.0.0.
      */
     public $response;
 
