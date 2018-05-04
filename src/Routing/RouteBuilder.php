@@ -747,28 +747,27 @@ class RouteBuilder
         if (preg_match($regex, $defaults, $matches)) {
             unset($matches[0]);
             $matches = array_filter($matches, function ($value) {
-                return $value !== '' && $value !== '::';
+                return $value !== '::';
             });
-
             // Intentionally incomplete switch
             switch (count($matches)) {
                 case 2:
                     return [
-                        'controller' => $matches[3],
-                        'action' => $matches[4]
+                        'controller' => (isset($matches[3] ? $matches[3] : null),
+                        'action' => (isset($matches[4] ? $matches[4] : null)
                     ];
                 case 3:
                     return [
-                        'prefix' => (isset($matches[2]) ? strtolower($matches[2]) : false),
-                        'controller' => $matches[3],
-                        'action' => $matches[4]
+                        'prefix' => (isset($matches[2]) ? strtolower($matches[2]) : null),
+                        'controller' => (isset($matches[3] ? $matches[3] : null),
+                        'action' => (isset($matches[4] ? $matches[4] : null)
                     ];
                 case 4:
                     return [
-                        'plugin' => $matches[1],
-                        'prefix' => (isset($matches[2]) ? strtolower($matches[2]) : false),
-                        'controller' => $matches[3],
-                        'action' => $matches[4]
+                        'plugin' => (isset($matches[1] ? $matches[1] : null),
+                        'prefix' => (isset($matches[2]) ? strtolower($matches[2]) : null),
+                        'controller' => (isset($matches[3] ? $matches[3] : null),
+                        'action' => (isset($matches[4] ? $matches[4] : null)
                     ];
             }
         }
