@@ -1,26 +1,26 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
 use Cake\Event\Event;
-use Cake\Network\Exception\ForbiddenException;
-use Cake\Network\Request;
-use Cake\Network\Response;
+use Cake\Http\Exception\InvalidCsrfTokenException;
+use Cake\Http\Response;
+use Cake\Http\ServerRequest;
+use Cake\I18n\Time;
 use Cake\Utility\Security;
-use Cake\Utility\Text;
 
 /**
  * Provides CSRF protection & validation.
@@ -30,11 +30,13 @@ use Cake\Utility\Text;
  * PUT, or DELETE request.
  *
  * If the request data is missing or does not match the cookie data,
- * a ForbiddenException will be raised.
+ * an InvalidCsrfTokenException will be raised.
  *
  * This component integrates with the FormHelper automatically and when
  * used together your forms will have CSRF tokens automatically added
  * when `$this->Form->create(...)` is used in a view.
+ *
+ * @deprecated 3.5.0 Use Cake\Http\Middleware\CsrfProtectionMiddleware instead.
  */
 class CsrfComponent extends Component
 {
@@ -45,6 +47,7 @@ class CsrfComponent extends Component
      *  - cookieName = The name of the cookie to send.
      *  - expiry = How long the CSRF token should last. Defaults to browser session.
      *  - secure = Whether or not the cookie will be set with the Secure flag. Defaults to false.
+     *  - httpOnly = Whether or not the cookie will be set with the HttpOnly flag. Defaults to false.
      *  - field = The form field to check. Changing this will also require configuring
      *    FormHelper.
      *
@@ -54,6 +57,7 @@ class CsrfComponent extends Component
         'cookieName' => 'csrfToken',
         'expiry' => 0,
         'secure' => false,
+        'httpOnly' => false,
         'field' => '_csrfToken',
     ];
 
@@ -63,7 +67,7 @@ class CsrfComponent extends Component
      * Validates the CSRF token for POST data. If
      * the request is a GET request, and the cookie value is absent a cookie will be set.
      *
-     * Once a cookie is set it will be copied into request->params['_csrfToken']
+     * Once a cookie is set it will be copied into request->getParam('_csrfToken')
      * so that application and framework code can easily access the csrf token.
      *
      * RequestAction requests do not get checked, nor will
@@ -74,26 +78,32 @@ class CsrfComponent extends Component
      */
     public function startup(Event $event)
     {
-        $controller = $event->subject();
-        $request = $controller->request;
-        $response = $controller->response;
+        /** @var \Cake\Controller\Controller $controller */
+        $controller = $event->getSubject();
+        $request = $controller->getRequest();
+        $response = $controller->getResponse();
         $cookieName = $this->_config['cookieName'];
 
-        $cookieData = $request->cookie($cookieName);
+        $cookieData = $request->getCookie($cookieName);
         if ($cookieData) {
-            $request->params['_csrfToken'] = $cookieData;
+            $request = $request->withParam('_csrfToken', $cookieData);
         }
 
         if ($request->is('requested')) {
+            $controller->setRequest($request);
+
             return;
         }
 
         if ($request->is('get') && $cookieData === null) {
-            $this->_setCookie($request, $response);
+            list($request, $response) = $this->_setCookie($request, $response);
+            $controller->setResponse($response);
         }
-        if ($request->is(['patch', 'put', 'post', 'delete'])) {
+        if ($request->is(['put', 'post', 'delete', 'patch']) || $request->getData()) {
             $this->_validateToken($request);
+            $request = $request->withoutData($this->_config['field']);
         }
+        $controller->setRequest($request);
     }
 
     /**
@@ -114,42 +124,46 @@ class CsrfComponent extends Component
      * Also sets the request->params['_csrfToken'] so the newly minted
      * token is available in the request data.
      *
-     * @param \Cake\Network\Request $request The request object.
-     * @param \Cake\Network\Response $response The response object.
-     * @return void
+     * @param \Cake\Http\ServerRequest $request The request object.
+     * @param \Cake\Http\Response $response The response object.
+     * @return array An array of the modified request, response.
      */
-    protected function _setCookie(Request $request, Response $response)
+    protected function _setCookie(ServerRequest $request, Response $response)
     {
-        $value = Security::hash(Text::uuid(), 'sha1', true);
-        $request->params['_csrfToken'] = $value;
-        $response->cookie([
-            'name' => $this->_config['cookieName'],
+        $expiry = new Time($this->_config['expiry']);
+        $value = hash('sha512', Security::randomBytes(16), false);
+
+        $request = $request->withParam('_csrfToken', $value);
+        $response = $response->withCookie($this->_config['cookieName'], [
             'value' => $value,
-            'expire' => $this->_config['expiry'],
-            'path' => $request->webroot,
+            'expire' => $expiry->format('U'),
+            'path' => $request->getAttribute('webroot'),
             'secure' => $this->_config['secure'],
+            'httpOnly' => $this->_config['httpOnly'],
         ]);
+
+        return [$request, $response];
     }
 
     /**
      * Validate the request data against the cookie token.
      *
-     * @param \Cake\Network\Request $request The request to validate against.
-     * @throws \Cake\Network\Exception\ForbiddenException when the CSRF token is invalid or missing.
+     * @param \Cake\Http\ServerRequest $request The request to validate against.
+     * @throws \Cake\Http\Exception\InvalidCsrfTokenException when the CSRF token is invalid or missing.
      * @return void
      */
-    protected function _validateToken(Request $request)
+    protected function _validateToken(ServerRequest $request)
     {
-        $cookie = $request->cookie($this->_config['cookieName']);
-        $post = $request->data($this->_config['field']);
-        $header = $request->header('X-CSRF-Token');
+        $cookie = $request->getCookie($this->_config['cookieName']);
+        $post = $request->getData($this->_config['field']);
+        $header = $request->getHeaderLine('X-CSRF-Token');
 
-        if (empty($cookie)) {
-            throw new ForbiddenException(__d('cake', 'Invalid CSRF token.'));
+        if (!$cookie) {
+            throw new InvalidCsrfTokenException(__d('cake', 'Missing CSRF token cookie'));
         }
 
-        if ($post !== $cookie && $header !== $cookie) {
-            throw new ForbiddenException(__d('cake', 'Invalid CSRF token.'));
+        if (!Security::constantEquals($post, $cookie) && !Security::constantEquals($header, $cookie)) {
+            throw new InvalidCsrfTokenException(__d('cake', 'CSRF token mismatch.'));
         }
     }
 }

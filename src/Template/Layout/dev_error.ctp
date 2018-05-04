@@ -1,18 +1,17 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-use Cake\Error\Debugger;
 ?>
 <!DOCTYPE html>
 <html>
@@ -20,7 +19,7 @@ use Cake\Error\Debugger;
     <?= $this->Html->charset() ?>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>
-        Error: <?= $this->fetch('title') ?>
+        Error: <?= h($this->fetch('title')) ?>
     </title>
     <?= $this->Html->meta('icon') ?>
     <style>
@@ -137,6 +136,7 @@ use Cake\Error\Debugger;
     }
     .stack-file {
         font-size: 0.9em;
+        word-wrap: break-word;
     }
 
     .stack-details {
@@ -201,12 +201,12 @@ use Cake\Error\Debugger;
 <body>
     <header>
         <h1 class="header-title">
-            <?= $this->fetch('title') ?>
+            <?= h($this->fetch('title')) ?>
             <span class="header-type"><?= get_class($error) ?></span>
         </h1>
         <div class="header-help">
-            <a target="_blank" href="http://book.cakephp.org/3.0/">Documentation</a>
-            <a target="_blank" href="http://api.cakephp.org/3.0/">API</a>
+            <a target="_blank" href="https://book.cakephp.org/3.0/">Documentation</a>
+            <a target="_blank" href="https://api.cakephp.org/">API</a>
         </div>
     </header>
 
@@ -226,7 +226,7 @@ use Cake\Error\Debugger;
         <?php if ($this->fetch('templateName')): ?>
         <p class="customize">
             If you want to customize this error message, create
-            <em><?= APP_DIR . DS . 'Template' . DS . 'Error' . DS . $this->fetch('templateName') ?></em>
+            <em><?= APP_DIR . DIRECTORY_SEPARATOR . 'Template' . DIRECTORY_SEPARATOR . 'Error' . DIRECTORY_SEPARATOR . $this->fetch('templateName') ?></em>
         </p>
         <?php endif; ?>
     </div>

@@ -1,16 +1,16 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Collection\Iterator;
 
@@ -20,7 +20,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * SortIterator Test
- *
  */
 class SortIteratorTest extends TestCase
 {
@@ -188,6 +187,46 @@ class SortIteratorTest extends TestCase
             ['foo' => ['bar' => 2], 'bar' => 'a'],
             ['foo' => ['bar' => 10], 'bar' => 'a'],
             ['foo' => ['bar' => 12], 'bar' => 'a'],
+        ];
+        $this->assertEquals($expected, $sorted->toList());
+    }
+
+    /**
+     * Tests sorting datetime
+     *
+     * @return void
+     */
+    public function testSortDateTime()
+    {
+        $items = new ArrayObject([
+            new \DateTime('2014-07-21'),
+            new \DateTime('2015-06-30'),
+            new \DateTimeImmutable('2013-08-12')
+        ]);
+
+        $callback = function ($a) {
+            return $a->add(new \DateInterval('P1Y'));
+        };
+        $sorted = new SortIterator($items, $callback);
+        $expected = [
+            new \DateTime('2016-06-30'),
+            new \DateTime('2015-07-21'),
+            new \DateTimeImmutable('2013-08-12')
+
+        ];
+        $this->assertEquals($expected, $sorted->toList());
+
+        $items = new ArrayObject([
+            new \DateTime('2014-07-21'),
+            new \DateTime('2015-06-30'),
+            new \DateTimeImmutable('2013-08-12')
+        ]);
+
+        $sorted = new SortIterator($items, $callback, SORT_ASC);
+        $expected = [
+            new \DateTimeImmutable('2013-08-12'),
+            new \DateTime('2015-07-21'),
+            new \DateTime('2016-06-30'),
         ];
         $this->assertEquals($expected, $sorted->toList());
     }

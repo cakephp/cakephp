@@ -1,21 +1,20 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         1.2.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Core;
 
 use Cake\Cache\Cache;
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Configure\Engine\PhpConfig;
 use Cake\Core\Plugin;
@@ -23,7 +22,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * ConfigureTest
- *
  */
 class ConfigureTest extends TestCase
 {
@@ -66,6 +64,32 @@ class ConfigureTest extends TestCase
             unlink(TMP . 'cache/persistent/test.php');
         }
         Configure::drop('test');
+        Cache::enable();
+    }
+
+    /**
+     * testReadOrFail method
+     *
+     * @return void
+     */
+    public function testReadOrFail()
+    {
+        $expected = 'ok';
+        Configure::write('This.Key.Exists', $expected);
+        $result = Configure::readOrFail('This.Key.Exists');
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * testReadOrFail method
+     *
+     * @return void
+     */
+    public function testReadOrFailThrowingException()
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Expected configuration key "This.Key.Does.Not.exist" not found');
+        Configure::readOrFail('This.Key.Does.Not.exist');
     }
 
     /**
@@ -85,15 +109,23 @@ class ConfigureTest extends TestCase
         $this->assertEquals('something_else', $result);
 
         $result = Configure::read('debug');
-        $this->assertTrue($result >= 0);
+        $this->assertGreaterThanOrEqual(0, $result);
 
         $result = Configure::read();
-        $this->assertTrue(is_array($result));
-        $this->assertTrue(isset($result['debug']));
-        $this->assertTrue(isset($result['level1']));
+        $this->assertInternalType('array', $result);
+        $this->assertArrayHasKey('debug', $result);
+        $this->assertArrayHasKey('level1', $result);
 
         $result = Configure::read('something_I_just_made_up_now');
-        $this->assertEquals(null, $result, 'Missing key should return null.');
+        $this->assertNull($result, 'Missing key should return null.');
+
+        $default = 'default';
+        $result = Configure::read('something_I_just_made_up_now', $default);
+        $this->assertEquals($default, $result);
+
+        $default = ['default'];
+        $result = Configure::read('something_I_just_made_up_now', $default);
+        $this->assertEquals($default, $result);
     }
 
     /**
@@ -111,7 +143,7 @@ class ConfigureTest extends TestCase
         $writeResult = Configure::write('SomeName.someKey', null);
         $this->assertTrue($writeResult);
         $result = Configure::read('SomeName.someKey');
-        $this->assertEquals(null, $result);
+        $this->assertNull($result);
 
         $expected = ['One' => ['Two' => ['Three' => ['Four' => ['Five' => 'cool']]]]];
         $writeResult = Configure::write('Key', $expected);
@@ -167,7 +199,7 @@ class ConfigureTest extends TestCase
 
         Configure::delete('SomeName.someKey');
         $result = Configure::read('SomeName.someKey');
-        $this->assertTrue($result === null);
+        $this->assertNull($result);
 
         Configure::write('SomeName', ['someKey' => 'myvalue', 'otherKey' => 'otherValue']);
 
@@ -180,10 +212,10 @@ class ConfigureTest extends TestCase
         Configure::delete('SomeName');
 
         $result = Configure::read('SomeName.someKey');
-        $this->assertTrue($result === null);
+        $this->assertNull($result);
 
         $result = Configure::read('SomeName.otherKey');
-        $this->assertTrue($result === null);
+        $this->assertNull($result);
     }
 
     /**
@@ -226,11 +258,11 @@ class ConfigureTest extends TestCase
      */
     public function testCheckKeyWithSpaces()
     {
-        $this->assertTrue(Configure::write('Configure Test', "test"));
+        $this->assertTrue(Configure::write('Configure Test', 'test'));
         $this->assertTrue(Configure::check('Configure Test'));
         Configure::delete('Configure Test');
 
-        $this->assertTrue(Configure::write('Configure Test.Test Case', "test"));
+        $this->assertTrue(Configure::write('Configure Test.Test Case', 'test'));
         $this->assertTrue(Configure::check('Configure Test.Test Case'));
     }
 
@@ -248,11 +280,11 @@ class ConfigureTest extends TestCase
     /**
      * testLoad method
      *
-     * @expectedException \RuntimeException
      * @return void
      */
-    public function testLoadExceptionOnNonExistantFile()
+    public function testLoadExceptionOnNonExistentFile()
     {
+        $this->expectException(\RuntimeException::class);
         Configure::config('test', new PhpConfig());
         Configure::load('non_existing_configuration_file', 'test');
     }
@@ -385,7 +417,7 @@ class ConfigureTest extends TestCase
     public function testStoreAndRestore()
     {
         Cache::enable();
-        Cache::config('configure', [
+        Cache::setConfig('configure', [
             'className' => 'File',
             'path' => TMP . 'tests'
         ]);
@@ -411,7 +443,7 @@ class ConfigureTest extends TestCase
     public function testStoreAndRestoreWithData()
     {
         Cache::enable();
-        Cache::config('configure', [
+        Cache::setConfig('configure', [
             'className' => 'File',
             'path' => TMP . 'tests'
         ]);
@@ -451,7 +483,7 @@ class ConfigureTest extends TestCase
         Configure::config('test', $engine);
         $configured = Configure::configured();
 
-        $this->assertTrue(in_array('test', $configured));
+        $this->assertContains('test', $configured);
 
         $this->assertTrue(Configure::configured('test'));
         $this->assertFalse(Configure::configured('fake_garbage'));
@@ -474,11 +506,11 @@ class ConfigureTest extends TestCase
     }
 
     /**
-     * @expectedException \Cake\Core\Exception\Exception
      * @return void
      */
     public function testDumpNoAdapter()
     {
+        $this->expectException(\Cake\Core\Exception\Exception::class);
         Configure::dump(TMP . 'test.php', 'does_not_exist');
     }
 
@@ -492,7 +524,7 @@ class ConfigureTest extends TestCase
         Configure::config('test_Engine', new PhpConfig(TMP));
 
         $result = Configure::dump('config_test', 'test_Engine');
-        $this->assertTrue($result > 0);
+        $this->assertGreaterThan(0, $result);
         $result = file_get_contents(TMP . 'config_test.php');
         $this->assertContains('<?php', $result);
         $this->assertContains('return ', $result);
@@ -512,7 +544,7 @@ class ConfigureTest extends TestCase
         Configure::write('Error', ['test' => 'value']);
 
         $result = Configure::dump('config_test', 'test_Engine', ['Error']);
-        $this->assertTrue($result > 0);
+        $this->assertGreaterThan(0, $result);
         $result = file_get_contents(TMP . 'config_test.php');
         $this->assertContains('<?php', $result);
         $this->assertContains('return ', $result);
@@ -559,5 +591,30 @@ class ConfigureTest extends TestCase
 
         $result = Configure::consume(null);
         $this->assertNull($result);
+    }
+
+    /**
+     * testConsumeOrFail method
+     *
+     * @return void
+     */
+    public function testConsumeOrFail()
+    {
+        $expected = 'ok';
+        Configure::write('This.Key.Exists', $expected);
+        $result = Configure::consumeOrFail('This.Key.Exists');
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * testConsumeOrFail method
+     *
+     * @return void
+     */
+    public function testConsumeOrFailThrowingException()
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Expected configuration key "This.Key.Does.Not.exist" not found');
+        Configure::consumeOrFail('This.Key.Does.Not.exist');
     }
 }

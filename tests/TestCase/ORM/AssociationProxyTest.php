@@ -1,28 +1,24 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\ORM;
 
-use Cake\ORM\Association;
-use Cake\ORM\Table;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
  * Tests the features related to proxying methods from the Association
  * class to the Table class
- *
  */
 class AssociationProxyTest extends TestCase
 {
@@ -44,7 +40,7 @@ class AssociationProxyTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        TableRegistry::clear();
+        $this->getTableLocator()->clear();
     }
 
     /**
@@ -54,26 +50,26 @@ class AssociationProxyTest extends TestCase
      */
     public function testAssociationAsProperty()
     {
-        $articles = TableRegistry::get('articles');
+        $articles = $this->getTableLocator()->get('articles');
         $articles->hasMany('comments');
         $articles->belongsTo('authors');
         $this->assertTrue(isset($articles->authors));
         $this->assertTrue(isset($articles->comments));
         $this->assertFalse(isset($articles->posts));
-        $this->assertSame($articles->association('authors'), $articles->authors);
-        $this->assertSame($articles->association('comments'), $articles->comments);
+        $this->assertSame($articles->getAssociation('authors'), $articles->authors);
+        $this->assertSame($articles->getAssociation('comments'), $articles->comments);
     }
 
     /**
      * Tests that getting a bad property throws exception
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Table "Cake\ORM\Table" is not associated with "posts"
      * @return void
      */
     public function testGetBadAssociation()
     {
-        $articles = TableRegistry::get('articles');
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Table "Cake\ORM\Table" is not associated with "posts"');
+        $articles = $this->getTableLocator()->get('articles');
         $articles->posts;
     }
 
@@ -84,7 +80,7 @@ class AssociationProxyTest extends TestCase
      */
     public function testFindEmptyConditions()
     {
-        $table = TableRegistry::get('Users');
+        $table = $this->getTableLocator()->get('Users');
         $table->hasMany('Articles', [
             'foreignKey' => 'author_id',
             'conditions' => '',
@@ -100,8 +96,8 @@ class AssociationProxyTest extends TestCase
      */
     public function testUpdateAllFromAssociation()
     {
-        $articles = TableRegistry::get('articles');
-        $comments = TableRegistry::get('comments');
+        $articles = $this->getTableLocator()->get('articles');
+        $comments = $this->getTableLocator()->get('comments');
         $articles->hasMany('comments', ['conditions' => ['published' => 'Y']]);
         $articles->comments->updateAll(['comment' => 'changed'], ['article_id' => 1]);
         $changed = $comments->find()->where(['comment' => 'changed'])->count();
@@ -115,8 +111,8 @@ class AssociationProxyTest extends TestCase
      */
     public function testDeleteAllFromAssociation()
     {
-        $articles = TableRegistry::get('articles');
-        $comments = TableRegistry::get('comments');
+        $articles = $this->getTableLocator()->get('articles');
+        $comments = $this->getTableLocator()->get('comments');
         $articles->hasMany('comments', ['conditions' => ['published' => 'Y']]);
         $articles->comments->deleteAll(['article_id' => 1]);
         $remaining = $comments->find()->where(['article_id' => 1])->count();
@@ -130,12 +126,12 @@ class AssociationProxyTest extends TestCase
      */
     public function testAssociationAsPropertyProxy()
     {
-        $articles = TableRegistry::get('articles');
-        $authors = TableRegistry::get('authors');
+        $articles = $this->getTableLocator()->get('articles');
+        $authors = $this->getTableLocator()->get('authors');
         $articles->belongsTo('authors');
         $authors->hasMany('comments');
         $this->assertTrue(isset($articles->authors->comments));
-        $this->assertSame($authors->association('comments'), $articles->authors->comments);
+        $this->assertSame($authors->getAssociation('comments'), $articles->authors->comments);
     }
 
     /**
@@ -145,8 +141,10 @@ class AssociationProxyTest extends TestCase
      */
     public function testAssociationMethodProxy()
     {
-        $articles = TableRegistry::get('articles');
-        $mock = $this->getMock('Cake\ORM\Table', ['crazy']);
+        $articles = $this->getTableLocator()->get('articles');
+        $mock = $this->getMockBuilder('Cake\ORM\Table')
+            ->setMethods(['crazy'])
+            ->getMock();
         $articles->belongsTo('authors', [
             'targetTable' => $mock
         ]);

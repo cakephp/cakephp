@@ -2,42 +2,44 @@
 /**
  * TestsAppsController file
  *
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         1.2.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
 /**
- * Class TestsAppsController
- *
+ * TestsAppsController
  */
 namespace TestApp\Controller;
 
 class TestsAppsController extends AppController
 {
-    public $components = ['RequestHandler'];
+    public $components = [
+        'RequestHandler' => [
+           'enableBeforeRedirect' => false
+        ]
+    ];
 
     public function index()
     {
         $var = '';
-        if (isset($this->request->query['var'])) {
-            $var = $this->request->query['var'];
+        if ($this->request->getQuery('var')) {
+            $var = $this->request->getQuery('var');
         }
         $this->set('var', $var);
     }
 
     public function some_method()
     {
-        $this->response->body(5);
-        return $this->response;
+        return $this->response->withStringBody(5);
     }
 
     public function set_action()
@@ -58,8 +60,7 @@ class TestsAppsController extends AppController
 
     public function set_type()
     {
-        $this->response->type('json');
-        return $this->response;
+        return $this->response->withType('json');
     }
 
     public function throw_exception()

@@ -1,19 +1,19 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c), Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c), Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\View;
 
-use Cake\Core\App;
+use Cake\Event\EventDispatcherInterface;
 
 /**
  * Provides the set() method for collecting template context.
@@ -21,9 +21,18 @@ use Cake\Core\App;
  * Once collected context data can be passed to another object.
  * This is done in Controller, TemplateTask and View for example.
  *
+ * @property array $_validViewOptions
  */
 trait ViewVarsTrait
 {
+
+    /**
+     * The name of default View class.
+     *
+     * @var string
+     * @deprecated 3.1.0 Use `$this->viewBuilder()->getClassName()`/`$this->viewBuilder()->setClassName()` instead.
+     */
+    public $viewClass;
 
     /**
      * Variables for the view
@@ -33,48 +42,28 @@ trait ViewVarsTrait
     public $viewVars = [];
 
     /**
-     * Get view instance
+     * The view builder instance being used.
      *
-     * @param string|null $viewClass View class name or null to use $viewClass
-     * @return \Cake\View\View
-     * @throws \Cake\View\Exception\MissingViewException If view class was not found.
+     * @var \Cake\View\ViewBuilder
      */
-    public function getView($viewClass = null)
+    protected $_viewBuilder;
+
+    /**
+     * Get the view builder being used.
+     *
+     * @return \Cake\View\ViewBuilder
+     */
+    public function viewBuilder()
     {
-        if ($viewClass === null && $this->View) {
-            $this->View->viewVars = $this->viewVars;
-            return $this->View;
+        if (!isset($this->_viewBuilder)) {
+            $this->_viewBuilder = new ViewBuilder();
         }
 
-        if ($viewClass === null) {
-            $viewClass = $this->viewClass;
-        }
-        if ($viewClass === null) {
-            $viewClass = App::className('App', 'View', 'View');
-            if ($viewClass === false) {
-                $viewClass = 'Cake\View\View';
-            }
-        }
-        if ($viewClass === 'View') {
-            $viewClass = 'Cake\View\View';
-        }
-
-        $this->viewClass = $viewClass;
-        $className = App::className($this->viewClass, 'View', 'View');
-        if (!$className) {
-            throw new Exception\MissingViewException(['class' => $viewClass]);
-        }
-
-        if ($this->View && $this->View instanceof $className) {
-            $this->View->viewVars = $this->viewVars;
-            return $this->View;
-        }
-
-        return $this->View = $this->createView();
+        return $this->_viewBuilder;
     }
 
     /**
-     * Constructs the view class instance based on object properties.
+     * Constructs the view class instance based on the current configuration.
      *
      * @param string|null $viewClass Optional namespaced class name of the View class to instantiate.
      * @return \Cake\View\View
@@ -82,32 +71,64 @@ trait ViewVarsTrait
      */
     public function createView($viewClass = null)
     {
-        if ($viewClass === null) {
-            $viewClass = $this->viewClass;
+        $builder = $this->viewBuilder();
+        if ($viewClass === null && $builder->getClassName() === null) {
+            $builder->setClassName($this->viewClass);
+            unset($this->viewClass);
         }
-        if ($viewClass === 'View') {
-            $className = App::className($viewClass, 'View');
-        } else {
-            $className = App::className($viewClass, 'View', 'View');
-        }
-        if (!$className) {
-            throw new Exception\MissingViewException([$viewClass]);
+        if ($viewClass) {
+            $builder->setClassName($viewClass);
         }
 
+        $validViewOptions = $this->viewOptions();
         $viewOptions = [];
-        foreach ($this->viewOptions() as $option) {
+        foreach ($validViewOptions as $option) {
             if (property_exists($this, $option)) {
                 $viewOptions[$option] = $this->{$option};
             }
         }
-        return new $className($this->request, $this->response, $this->eventManager(), $viewOptions);
+
+        $deprecatedOptions = [
+            'layout' => 'setLayout',
+            'view' => 'setTemplate',
+            'theme' => 'setTheme',
+            'autoLayout' => 'enableAutoLayout',
+            'viewPath' => 'setTemplatePath',
+            'layoutPath' => 'setLayoutPath',
+        ];
+        foreach ($deprecatedOptions as $old => $new) {
+            if (property_exists($this, $old)) {
+                $builder->{$new}($this->{$old});
+                $message = sprintf(
+                    'Property $%s is deprecated. Use $this->viewBuilder()->%s() instead in beforeRender().',
+                    $old,
+                    $new
+                );
+                deprecationWarning($message);
+            }
+        }
+
+        foreach (['name', 'helpers', 'plugin'] as $prop) {
+            if (isset($this->{$prop})) {
+                $method = 'set' . ucfirst($prop);
+                $builder->{$method}($this->{$prop});
+            }
+        }
+        $builder->setOptions($viewOptions);
+
+        return $builder->build(
+            $this->viewVars,
+            isset($this->request) ? $this->request : null,
+            isset($this->response) ? $this->response : null,
+            $this instanceof EventDispatcherInterface ? $this->getEventManager() : null
+        );
     }
 
     /**
      * Saves a variable or an associative array of variables for use inside a template.
      *
      * @param string|array $name A string or an array of data.
-     * @param string|array|null $value Value in case $name is a string (which then works as the key).
+     * @param mixed $value Value in case $name is a string (which then works as the key).
      *   Unused if $name is an associative array, otherwise serves as the values to $name's keys.
      * @return $this
      */
@@ -123,6 +144,7 @@ trait ViewVarsTrait
             $data = [$name => $value];
         }
         $this->viewVars = $data + $this->viewVars;
+
         return $this;
     }
 

@@ -1,22 +1,22 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\View;
 
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Network\Request;
+use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\UrlHelper;
@@ -24,10 +24,14 @@ use Cake\View\View;
 
 /**
  * UrlHelperTest class
- *
  */
 class UrlHelperTest extends TestCase
 {
+
+    /**
+     * @var \Cake\View\Helper\UrlHelper
+     */
+    public $Helper;
 
     /**
      * setUp method
@@ -41,9 +45,9 @@ class UrlHelperTest extends TestCase
         Router::reload();
         $this->View = new View();
         $this->Helper = new UrlHelper($this->View);
-        $this->Helper->request = new Request();
+        $this->Helper->request = new ServerRequest();
 
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         Plugin::load(['TestTheme']);
     }
 
@@ -66,7 +70,7 @@ class UrlHelperTest extends TestCase
      *
      * @return void
      */
-    public function testUrlConversion()
+    public function testBuildUrlConversion()
     {
         Router::connect('/:controller/:action/*');
 
@@ -77,7 +81,7 @@ class UrlHelperTest extends TestCase
         $this->assertEquals('/controller/action/1?one=1&amp;two=2', $result);
 
         $result = $this->Helper->build(['controller' => 'posts', 'action' => 'index', 'page' => '1" onclick="alert(\'XSS\');"']);
-        $this->assertEquals("/posts/index?page=1%22+onclick%3D%22alert%28%27XSS%27%29%3B%22", $result);
+        $this->assertEquals('/posts/index?page=1%22+onclick%3D%22alert%28%27XSS%27%29%3B%22', $result);
 
         $result = $this->Helper->build('/controller/action/1/param:this+one+more');
         $this->assertEquals('/controller/action/1/param:this+one+more', $result);
@@ -91,13 +95,60 @@ class UrlHelperTest extends TestCase
         $result = $this->Helper->build([
             'controller' => 'posts', 'action' => 'index', 'param' => '%7Baround%20here%7D%5Bthings%5D%5Bare%5D%24%24'
         ]);
-        $this->assertEquals("/posts/index?param=%257Baround%2520here%257D%255Bthings%255D%255Bare%255D%2524%2524", $result);
+        $this->assertEquals('/posts/index?param=%257Baround%2520here%257D%255Bthings%255D%255Bare%255D%2524%2524', $result);
 
         $result = $this->Helper->build([
             'controller' => 'posts', 'action' => 'index', 'page' => '1',
             '?' => ['one' => 'value', 'two' => 'value', 'three' => 'purple']
         ]);
-        $this->assertEquals("/posts/index?page=1&amp;one=value&amp;two=value&amp;three=purple", $result);
+        $this->assertEquals('/posts/index?one=value&amp;two=value&amp;three=purple&amp;page=1', $result);
+    }
+
+    /**
+     * ensure that build factors in base paths.
+     *
+     * @return void
+     */
+    public function testBuildBasePath()
+    {
+        Router::connect('/:controller/:action/*');
+        $request = new ServerRequest([
+            'params' => [
+                'action' => 'index',
+                'plugin' => null,
+                'controller' => 'subscribe',
+            ],
+            'url' => '/subscribe',
+            'base' => '/magazine',
+            'webroot' => '/magazine/'
+        ]);
+        Router::pushRequest($request);
+
+        $this->assertEquals('/magazine/subscribe', $this->Helper->build());
+        $this->assertEquals(
+            '/magazine/articles/add',
+            $this->Helper->build(['controller' => 'articles', 'action' => 'add'])
+        );
+    }
+
+    /**
+     * @return void
+     */
+    public function testBuildUrlConversionUnescaped()
+    {
+        $result = $this->Helper->build('/controller/action/1?one=1&two=2', ['escape' => false]);
+        $this->assertEquals('/controller/action/1?one=1&two=2', $result);
+
+        $result = $this->Helper->build([
+            'controller' => 'posts',
+            'action' => 'view',
+            'param' => '%7Baround%20here%7D%5Bthings%5D%5Bare%5D%24%24',
+            '?' => [
+                'k' => 'v',
+                '1' => '2'
+            ]
+        ], ['escape' => false]);
+        $this->assertEquals('/posts/view?k=v&1=2&param=%257Baround%2520here%257D%255Bthings%255D%255Bare%255D%2524%2524', $result);
     }
 
     /**
@@ -134,7 +185,7 @@ class UrlHelperTest extends TestCase
         $result = $this->Helper->assetTimestamp(Configure::read('App.cssBaseUrl') . 'cake.generic.css?someparam');
         $this->assertEquals(Configure::read('App.cssBaseUrl') . 'cake.generic.css?someparam', $result);
 
-        $this->Helper->request->webroot = '/some/dir/';
+        $this->Helper->request = $this->Helper->request->withAttribute('webroot', '/some/dir/');
         $result = $this->Helper->assetTimestamp('/some/dir/' . Configure::read('App.cssBaseUrl') . 'cake.generic.css');
         $this->assertRegExp('/' . preg_quote(Configure::read('App.cssBaseUrl') . 'cake.generic.css?', '/') . '[0-9]+/', $result);
     }
@@ -174,8 +225,35 @@ class UrlHelperTest extends TestCase
         $result = $this->Helper->assetUrl('foo.jpg?one=two&three=four');
         $this->assertEquals('foo.jpg?one=two&amp;three=four', $result);
 
+        $result = $this->Helper->assetUrl('x:"><script>alert(1)</script>');
+        $this->assertEquals('x:&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;', $result);
+
         $result = $this->Helper->assetUrl('dir/big+tall/image', ['ext' => '.jpg']);
         $this->assertEquals('dir/big%2Btall/image.jpg', $result);
+    }
+
+    /**
+     * Test assetUrl and data uris
+     *
+     * @return void
+     */
+    public function testAssetUrlDataUri()
+    {
+        $request = $this->Helper->request
+            ->withAttribute('base', 'subdir')
+            ->withAttribute('webroot', 'subdir/');
+
+        $this->Helper->request = $request;
+        Router::pushRequest($request);
+
+        $data = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4' .
+            '/8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==';
+        $result = $this->Helper->assetUrl($data);
+        $this->assertSame($data, $result);
+
+        $data = 'data:image/png;base64,<evil>';
+        $result = $this->Helper->assetUrl($data);
+        $this->assertHtml(h($data), $result);
     }
 
     /**
@@ -185,11 +263,10 @@ class UrlHelperTest extends TestCase
      */
     public function testAssetUrlNoRewrite()
     {
-        $this->Helper->request->addPaths([
-            'base' => '/cake_dev/index.php',
-            'webroot' => '/cake_dev/app/webroot/',
-            'here' => '/cake_dev/index.php/tasks',
-        ]);
+        $this->Helper->request = $this->Helper->request
+            ->withAttribute('base', '/cake_dev/index.php')
+            ->withAttribute('webroot', '/cake_dev/app/webroot/')
+            ->withRequestTarget('/cake_dev/index.php/tasks');
         $result = $this->Helper->assetUrl('img/cake.icon.png', ['fullBase' => true]);
         $expected = Configure::read('App.fullBaseUrl') . '/cake_dev/app/webroot/img/cake.icon.png';
         $this->assertEquals($expected, $result);
@@ -229,6 +306,21 @@ class UrlHelperTest extends TestCase
     }
 
     /**
+     * Test assetTimestamp with timestamp option overriding `Asset.timestamp` in Configure.
+     *
+     * @return void
+     */
+    public function testAssetTimestampConfigureOverride()
+    {
+        $this->Helper->webroot = '';
+        Configure::write('Asset.timestamp', 'force');
+        $timestamp = false;
+
+        $result = $this->Helper->assetTimestamp(Configure::read('App.cssBaseUrl') . 'cake.generic.css', $timestamp);
+        $this->assertEquals(Configure::read('App.cssBaseUrl') . 'cake.generic.css', $result);
+    }
+
+    /**
      * test assetTimestamp with plugins and themes
      *
      * @return void
@@ -242,13 +334,156 @@ class UrlHelperTest extends TestCase
         $this->assertRegExp('#/test_plugin/css/test_plugin_asset.css\?[0-9]+$#', $result, 'Missing timestamp plugin');
 
         $result = $this->Helper->assetTimestamp('/test_plugin/css/i_dont_exist.css');
-        $this->assertRegExp('#/test_plugin/css/i_dont_exist.css\?$#', $result, 'No error on missing file');
+        $this->assertRegExp('#/test_plugin/css/i_dont_exist.css$#', $result, 'No error on missing file');
 
         $result = $this->Helper->assetTimestamp('/test_theme/js/theme.js');
         $this->assertRegExp('#/test_theme/js/theme.js\?[0-9]+$#', $result, 'Missing timestamp theme');
 
         $result = $this->Helper->assetTimestamp('/test_theme/js/non_existant.js');
-        $this->assertRegExp('#/test_theme/js/non_existant.js\?$#', $result, 'No error on missing file');
+        $this->assertRegExp('#/test_theme/js/non_existant.js$#', $result, 'No error on missing file');
+    }
+
+    /**
+     * test script()
+     *
+     * @return void
+     */
+    public function testScript()
+    {
+        Router::connect('/:controller/:action/*');
+
+        $this->Helper->webroot = '';
+        $result = $this->Helper->script(
+            [
+                'controller' => 'js',
+                'action' => 'post',
+                '_ext' => 'js'
+            ],
+            ['fullBase' => true]
+        );
+        $this->assertEquals(Router::fullBaseUrl() . '/js/post.js', $result);
+    }
+
+    /**
+     * Test script and Asset.timestamp = force
+     *
+     * @return void
+     */
+    public function testScriptTimestampForce()
+    {
+        $this->Helper->webroot = '';
+        Configure::write('Asset.timestamp', 'force');
+
+        $result = $this->Helper->script('script.js');
+        $this->assertRegExp('/' . preg_quote(Configure::read('App.jsBaseUrl') . 'script.js?', '/') . '[0-9]+/', $result);
+    }
+
+    /**
+     * Test script with timestamp option overriding `Asset.timestamp` in Configure
+     *
+     * @return void
+     */
+    public function testScriptTimestampConfigureOverride()
+    {
+        Configure::write('Asset.timestamp', 'force');
+        $timestamp = false;
+
+        $result = $this->Helper->script('script.js', ['timestamp' => $timestamp]);
+        $this->assertEquals(Configure::read('App.jsBaseUrl') . 'script.js', $result);
+    }
+
+    /**
+     * test image()
+     *
+     * @return void
+     */
+    public function testImage()
+    {
+        $result = $this->Helper->image('foo.jpg');
+        $this->assertEquals('img/foo.jpg', $result);
+
+        $result = $this->Helper->image('foo.jpg', ['fullBase' => true]);
+        $this->assertEquals(Router::fullBaseUrl() . '/img/foo.jpg', $result);
+
+        $result = $this->Helper->image('dir/sub dir/my image.jpg');
+        $this->assertEquals('img/dir/sub%20dir/my%20image.jpg', $result);
+
+        $result = $this->Helper->image('foo.jpg?one=two&three=four');
+        $this->assertEquals('img/foo.jpg?one=two&amp;three=four', $result);
+
+        $result = $this->Helper->image('dir/big+tall/image.jpg');
+        $this->assertEquals('img/dir/big%2Btall/image.jpg', $result);
+
+        $result = $this->Helper->image('cid:foo.jpg');
+        $this->assertEquals('cid:foo.jpg', $result);
+
+        $result = $this->Helper->image('CID:foo.jpg');
+        $this->assertEquals('CID:foo.jpg', $result);
+    }
+
+    /**
+     * Test image with `Asset.timestamp` = force
+     *
+     * @return void
+     */
+    public function testImageTimestampForce()
+    {
+        Configure::write('Asset.timestamp', 'force');
+
+        $result = $this->Helper->image('cake.icon.png');
+        $this->assertRegExp('/' . preg_quote('img/cake.icon.png?', '/') . '[0-9]+/', $result);
+    }
+
+    /**
+     * Test image with timestamp option overriding `Asset.timestamp` in Configure
+     *
+     * @return void
+     */
+    public function testImageTimestampConfigureOverride()
+    {
+        Configure::write('Asset.timestamp', 'force');
+        $timestamp = false;
+
+        $result = $this->Helper->image('cake.icon.png', ['timestamp' => $timestamp]);
+        $this->assertEquals('img/cake.icon.png', $result);
+    }
+
+    /**
+     * test css
+     *
+     * @return void
+     */
+    public function testCss()
+    {
+        $result = $this->Helper->css('style');
+        $this->assertEquals('css/style.css', $result);
+    }
+
+    /**
+     * Test css with `Asset.timestamp` = force
+     *
+     * @return void
+     */
+    public function testCssTimestampForce()
+    {
+        Configure::write('Asset.timestamp', 'force');
+
+        $result = $this->Helper->css('cake.generic');
+        $this->assertRegExp('/' . preg_quote('css/cake.generic.css?', '/') . '[0-9]+/', $result);
+    }
+
+    /**
+     * Test image with timestamp option overriding `Asset.timestamp` in Configure
+     *
+     * @return void
+     */
+    public function testCssTimestampConfigureOverride()
+    {
+        Configure::write('Asset.timestamp', 'force');
+        $timestamp = false;
+
+        $result = $this->Helper->css('cake.generic', ['timestamp' => $timestamp]);
+        $this->assertEquals('css/cake.generic.css', $result);
     }
 
     /**
@@ -258,7 +493,7 @@ class UrlHelperTest extends TestCase
      */
     public function testWebrootPaths()
     {
-        $this->Helper->request->webroot = '/';
+        $this->Helper->request = $this->Helper->request->withAttribute('webroot', '/');
         $result = $this->Helper->webroot('/img/cake.power.gif');
         $expected = '/img/cake.power.gif';
         $this->assertEquals($expected, $result);

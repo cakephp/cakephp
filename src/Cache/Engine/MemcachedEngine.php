@@ -1,16 +1,16 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         2.5.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Cache\Engine;
 
@@ -27,7 +27,6 @@ use Memcached;
  * support of binary protocol, and igbinary serialization
  * (if memcached extension compiled with --enable-igbinary)
  * Compressed keys can also be incremented/decremented
- *
  */
 class MemcachedEngine extends CacheEngine
 {
@@ -37,7 +36,7 @@ class MemcachedEngine extends CacheEngine
      *
      * @var \Memcached
      */
-    protected $_Memcached = null;
+    protected $_Memcached;
 
     /**
      * The default config used unless overridden by runtime configuration
@@ -90,13 +89,18 @@ class MemcachedEngine extends CacheEngine
     protected $_serializers = [];
 
     /**
+     * @var string[]
+     */
+    protected $_compiledGroupNames = [];
+
+    /**
      * Initialize the Cache Engine
      *
      * Called automatically by the cache frontend
      *
      * @param array $config array of setting for the engine
      * @return bool True if the engine has been successfully initialized, false if not
-     * @throws InvalidArgumentException When you try use authentication without
+     * @throws \InvalidArgumentException When you try use authentication without
      *   Memcached compiled with SASL support
      */
     public function init(array $config = [])
@@ -125,7 +129,7 @@ class MemcachedEngine extends CacheEngine
         }
 
         if (isset($config['servers'])) {
-            $this->config('servers', $config['servers'], false);
+            $this->setConfig('servers', $config['servers'], false);
         }
 
         if (!is_array($this->_config['servers'])) {
@@ -149,7 +153,7 @@ class MemcachedEngine extends CacheEngine
 
         $servers = [];
         foreach ($this->_config['servers'] as $server) {
-            $servers[] = $this->_parseServerString($server);
+            $servers[] = $this->parseServerString($server);
         }
 
         if (!$this->_Memcached->addServers($servers)) {
@@ -169,10 +173,9 @@ class MemcachedEngine extends CacheEngine
         }
 
         if ($this->_config['username'] !== null && $this->_config['password'] !== null) {
-            $sasl = method_exists($this->_Memcached, 'setSaslAuthData') && ini_get('memcached.use_sasl');
-            if (!$sasl) {
+            if (!method_exists($this->_Memcached, 'setSaslAuthData')) {
                 throw new InvalidArgumentException(
-                    'Memcached extension is not build with SASL support'
+                    'Memcached extension is not built with SASL support'
                 );
             }
             $this->_Memcached->setOption(Memcached::OPT_BINARY_PROTOCOL, true);
@@ -189,7 +192,7 @@ class MemcachedEngine extends CacheEngine
      * Settings the memcached instance
      *
      * @return void
-     * @throws InvalidArgumentException When the Memcached extension is not built
+     * @throws \InvalidArgumentException When the Memcached extension is not built
      *   with the desired serializer engine.
      */
     protected function _setOptions()
@@ -239,10 +242,11 @@ class MemcachedEngine extends CacheEngine
      * @param string $server The server address string.
      * @return array Array containing host, port
      */
-    protected function _parseServerString($server)
+    public function parseServerString($server)
     {
-        if (strpos($server, 'unix://') === 0) {
-            return [$server, 0];
+        $socketTransport = 'unix://';
+        if (strpos($server, $socketTransport) === 0) {
+            return [substr($server, strlen($socketTransport)), 0];
         }
         if (substr($server, 0, 1) === '[') {
             $position = strpos($server, ']:');
@@ -258,7 +262,31 @@ class MemcachedEngine extends CacheEngine
             $host = substr($server, 0, $position);
             $port = substr($server, $position + 1);
         }
+
         return [$host, (int)$port];
+    }
+
+    /**
+     * Backwards compatible alias of parseServerString
+     *
+     * @param string $server The server address string.
+     * @return array Array containing host, port
+     * @deprecated 3.4.13 Will be removed in 4.0.0
+     */
+    protected function _parseServerString($server)
+    {
+        return $this->parseServerString($server);
+    }
+
+    /**
+     * Read an option value from the memcached connection.
+     *
+     * @param string $name The option name to read.
+     * @return string|int|null|bool
+     */
+    public function getOption($name)
+    {
+        return $this->_Memcached->getOption($name);
     }
 
     /**
@@ -270,7 +298,7 @@ class MemcachedEngine extends CacheEngine
      * @param string $key Identifier for the data
      * @param mixed $value Data to be cached
      * @return bool True if the data was successfully cached, false on failure
-     * @see http://php.net/manual/en/memcache.set.php
+     * @see https://secure.php.net/manual/en/memcache.set.php
      */
     public function write($key, $value)
     {
@@ -304,6 +332,7 @@ class MemcachedEngine extends CacheEngine
         foreach (array_keys($data) as $key) {
             $return[$key] = $success;
         }
+
         return $return;
     }
 
@@ -341,6 +370,7 @@ class MemcachedEngine extends CacheEngine
             $return[$key] = array_key_exists($this->_key($key), $values) ?
                 $values[$this->_key($key)] : false;
         }
+
         return $return;
     }
 
@@ -406,6 +436,7 @@ class MemcachedEngine extends CacheEngine
         foreach ($keys as $key) {
             $return[$key] = $success;
         }
+
         return $return;
     }
 
@@ -422,6 +453,9 @@ class MemcachedEngine extends CacheEngine
         }
 
         $keys = $this->_Memcached->getAllKeys();
+        if ($keys === false) {
+            return false;
+        }
 
         foreach ($keys as $key) {
             if (strpos($key, $this->_config['prefix']) === 0) {
@@ -430,6 +464,25 @@ class MemcachedEngine extends CacheEngine
         }
 
         return true;
+    }
+
+    /**
+     * Add a key to the cache if it does not already exist.
+     *
+     * @param string $key Identifier for the data.
+     * @param mixed $value Data to be cached.
+     * @return bool True if the data was successfully cached, false on failure.
+     */
+    public function add($key, $value)
+    {
+        $duration = $this->_config['duration'];
+        if ($duration > 30 * DAY) {
+            $duration = 0;
+        }
+
+        $key = $this->_key($key);
+
+        return $this->_Memcached->add($key, $value, $duration);
     }
 
     /**
@@ -447,7 +500,7 @@ class MemcachedEngine extends CacheEngine
             }
         }
 
-        $groups = $this->_Memcached->getMulti($this->_compiledGroupNames);
+        $groups = $this->_Memcached->getMulti($this->_compiledGroupNames) ?: [];
         if (count($groups) !== count($this->_config['groups'])) {
             foreach ($this->_compiledGroupNames as $group) {
                 if (!isset($groups[$group])) {

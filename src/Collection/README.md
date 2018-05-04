@@ -1,3 +1,6 @@
+[![Total Downloads](https://img.shields.io/packagist/dt/cakephp/collection.svg?style=flat-square)](https://packagist.org/packages/cakephp/collection)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE.txt)
+
 # CakePHP Collection Library
 
 The collection classes provide a set of tools to manipulate arrays or Traversable objects.
@@ -25,6 +28,4 @@ you have in your application as well.
 
 ## Documentation
 
-Please make sure you check the [official documentation](http://book.cakephp.org/3.0/en/core-libraries/collections.html)
-
-
+Please make sure you check the [official documentation](https://book.cakephp.org/3.0/en/core-libraries/collections.html)

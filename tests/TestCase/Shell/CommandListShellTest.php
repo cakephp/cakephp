@@ -1,34 +1,28 @@
 <?php
 /**
- * CommandListShellTest file
- *
- * CakePHP :  Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP :  Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP Project
  * @since         2.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Shell;
 
-use Cake\Console\ConsoleIo;
-use Cake\Core\App;
+use Cake\Console\Shell;
+use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Shell\CommandListShell;
-use Cake\Shell\Task\CommandTask;
-use Cake\TestSuite\Stub\ConsoleOutput;
-use Cake\TestSuite\TestCase;
+use Cake\TestSuite\ConsoleIntegrationTestCase;
 
 /**
- * Class CommandListShellTest
- *
+ * CommandListShellTest
  */
-class CommandListShellTest extends TestCase
+class CommandListShellTest extends ConsoleIntegrationTestCase
 {
 
     /**
@@ -40,21 +34,6 @@ class CommandListShellTest extends TestCase
     {
         parent::setUp();
         Plugin::load(['TestPlugin', 'TestPluginTwo']);
-
-        $this->out = new ConsoleOutput();
-        $io = new ConsoleIo($this->out);
-
-        $this->Shell = $this->getMock(
-            'Cake\Shell\CommandListShell',
-            ['in', 'err', '_stop', 'clear'],
-            [$io]
-        );
-
-        $this->Shell->Command = $this->getMock(
-            'Cake\Shell\Task\CommandTask',
-            ['in', '_stop', 'err', 'clear'],
-            [$io]
-        );
     }
 
     /**
@@ -65,7 +44,6 @@ class CommandListShellTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        unset($this->Shell);
         Plugin::unload();
     }
 
@@ -76,21 +54,21 @@ class CommandListShellTest extends TestCase
      */
     public function testMain()
     {
-        $this->Shell->main();
-        $output = $this->out->messages();
-        $output = implode("\n", $output);
+        $this->exec('command_list');
 
         $expected = "/\[.*TestPlugin.*\] example/";
-        $this->assertRegExp($expected, $output);
+        $this->assertOutputRegExp($expected);
 
-        $expected = "/\[.*TestPluginTwo.*\] example, welcome/";
-        $this->assertRegExp($expected, $output);
+        $expected = "/\[.*TestPluginTwo.*\] example, unique, welcome/";
+        $this->assertOutputRegExp($expected);
 
-        $expected = "/\[.*CORE.*\] i18n, orm_cache, plugin, server/";
-        $this->assertRegExp($expected, $output);
+        $expected = "/\[.*CORE.*\] cache, help, i18n, orm_cache, plugin, routes, schema_cache, server/";
+        $this->assertOutputRegExp($expected);
 
-        $expected = "/\[.*app.*\] i18m, sample/";
-        $this->assertRegExp($expected, $output);
+        $expected = "/\[.*app.*\] demo, i18m, integration, merge, sample/";
+        $this->assertOutputRegExp($expected);
+        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertErrorEmpty();
     }
 
     /**
@@ -102,17 +80,16 @@ class CommandListShellTest extends TestCase
     public function testMainAppPriority()
     {
         rename(APP . 'Shell' . DS . 'I18mShell.php', APP . 'Shell' . DS . 'I18nShell.php');
-        $this->Shell->main();
-        $output = $this->out->messages();
-        $output = implode("\n", $output);
-
-        $expected = "/\[.*CORE.*\] orm_cache, plugin, server/";
-        $this->assertRegExp($expected, $output);
-
-        $expected = "/\[.*app.*\] i18n, sample/";
-        $this->assertRegExp($expected, $output);
-
+        $this->exec('command_list');
         rename(APP . 'Shell' . DS . 'I18nShell.php', APP . 'Shell' . DS . 'I18mShell.php');
+
+        $expected = "/\[.*CORE.*\] cache, help, orm_cache, plugin, routes, schema_cache, server, version/";
+        $this->assertOutputRegExp($expected);
+
+        $expected = "/\[.*app.*\] demo, i18n, integration, merge, sample/";
+        $this->assertOutputRegExp($expected);
+        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertErrorEmpty();
     }
 
     /**
@@ -122,19 +99,31 @@ class CommandListShellTest extends TestCase
      */
     public function testMainXml()
     {
-        $this->Shell->params['xml'] = true;
-        $this->Shell->main();
-
-        $output = $this->out->messages();
-        $output = implode("\n", $output);
+        $this->exec('command_list --xml');
 
         $find = '<shell name="sample" call_as="sample" provider="app" help="sample -h"';
-        $this->assertContains($find, $output);
+        $this->assertOutputContains($find);
 
         $find = '<shell name="orm_cache" call_as="orm_cache" provider="CORE" help="orm_cache -h"';
-        $this->assertContains($find, $output);
+        $this->assertOutputContains($find);
 
         $find = '<shell name="welcome" call_as="TestPluginTwo.welcome" provider="TestPluginTwo" help="TestPluginTwo.welcome -h"';
-        $this->assertContains($find, $output);
+        $this->assertOutputContains($find);
+        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertErrorEmpty();
+    }
+
+    /**
+     * test that main prints the cakephp's version.
+     *
+     * @return void
+     */
+    public function testMainVersion()
+    {
+        $this->exec('command_list --version');
+        $expected = Configure::version();
+        $this->assertOutputContains($expected);
+        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertErrorEmpty();
     }
 }

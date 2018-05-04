@@ -1,16 +1,16 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Database\Expression;
 
@@ -21,7 +21,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * Tests TupleComparison class
- *
  */
 class TupleComparisonTest extends TestCase
 {
@@ -35,11 +34,11 @@ class TupleComparisonTest extends TestCase
     {
         $f = new TupleComparison(['field1', 'field2'], [1, 2], ['integer', 'integer'], '=');
         $binder = new ValueBinder;
-        $this->assertEquals('(field1, field2) = (:c0, :c1)', $f->sql($binder));
-        $this->assertSame(1, $binder->bindings()[':c0']['value']);
-        $this->assertSame(2, $binder->bindings()[':c1']['value']);
-        $this->assertSame('integer', $binder->bindings()[':c0']['type']);
-        $this->assertSame('integer', $binder->bindings()[':c1']['type']);
+        $this->assertEquals('(field1, field2) = (:tuple0, :tuple1)', $f->sql($binder));
+        $this->assertSame(1, $binder->bindings()[':tuple0']['value']);
+        $this->assertSame(2, $binder->bindings()[':tuple1']['value']);
+        $this->assertSame('integer', $binder->bindings()[':tuple0']['type']);
+        $this->assertSame('integer', $binder->bindings()[':tuple1']['type']);
     }
 
     /**
@@ -52,10 +51,10 @@ class TupleComparisonTest extends TestCase
         $field1 = new QueryExpression(['a' => 1]);
         $f = new TupleComparison([$field1, 'field2'], [4, 5], ['integer', 'integer'], '>');
         $binder = new ValueBinder;
-        $this->assertEquals('(a = :c0, field2) > (:c1, :c2)', $f->sql($binder));
+        $this->assertEquals('(a = :c0, field2) > (:tuple1, :tuple2)', $f->sql($binder));
         $this->assertSame(1, $binder->bindings()[':c0']['value']);
-        $this->assertSame(4, $binder->bindings()[':c1']['value']);
-        $this->assertSame(5, $binder->bindings()[':c2']['value']);
+        $this->assertSame(4, $binder->bindings()[':tuple1']['value']);
+        $this->assertSame(5, $binder->bindings()[':tuple2']['value']);
     }
 
     /**
@@ -68,9 +67,9 @@ class TupleComparisonTest extends TestCase
         $value1 = new QueryExpression(['a' => 1]);
         $f = new TupleComparison(['field1', 'field2'], [$value1, 2], ['integer', 'integer'], '=');
         $binder = new ValueBinder;
-        $this->assertEquals('(field1, field2) = (a = :c0, :c1)', $f->sql($binder));
+        $this->assertEquals('(field1, field2) = (a = :c0, :tuple1)', $f->sql($binder));
         $this->assertSame(1, $binder->bindings()[':c0']['value']);
-        $this->assertSame(2, $binder->bindings()[':c1']['value']);
+        $this->assertSame(2, $binder->bindings()[':tuple1']['value']);
     }
 
     /**
@@ -87,11 +86,11 @@ class TupleComparisonTest extends TestCase
             'IN'
         );
         $binder = new ValueBinder;
-        $this->assertEquals('(field1, field2) IN ((:c0,:c1), (:c2,:c3))', $f->sql($binder));
-        $this->assertSame(1, $binder->bindings()[':c0']['value']);
-        $this->assertSame(2, $binder->bindings()[':c1']['value']);
-        $this->assertSame(3, $binder->bindings()[':c2']['value']);
-        $this->assertSame(4, $binder->bindings()[':c3']['value']);
+        $this->assertEquals('(field1, field2) IN ((:tuple0,:tuple1), (:tuple2,:tuple3))', $f->sql($binder));
+        $this->assertSame(1, $binder->bindings()[':tuple0']['value']);
+        $this->assertSame(2, $binder->bindings()[':tuple1']['value']);
+        $this->assertSame(3, $binder->bindings()[':tuple2']['value']);
+        $this->assertSame(4, $binder->bindings()[':tuple3']['value']);
     }
 
     /**
@@ -130,7 +129,7 @@ class TupleComparisonTest extends TestCase
     }
 
     /**
-     * Tests that a single ExpressionInteface can be used as the value for
+     * Tests that a single ExpressionInterface can be used as the value for
      * comparison
      *
      * @return void
@@ -144,7 +143,7 @@ class TupleComparisonTest extends TestCase
     }
 
     /**
-     * Tests that a single ExpressionInteface can be used as the field for
+     * Tests that a single ExpressionInterface can be used as the field for
      * comparison
      *
      * @return void
@@ -154,6 +153,6 @@ class TupleComparisonTest extends TestCase
         $value = [1, 1];
         $f = new TupleComparison(new QueryExpression('a, b'), $value);
         $binder = new ValueBinder;
-        $this->assertEquals('(a, b) = (:c0, :c1)', $f->sql($binder));
+        $this->assertEquals('(a, b) = (:tuple0, :tuple1)', $f->sql($binder));
     }
 }

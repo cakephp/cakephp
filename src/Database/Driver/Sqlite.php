@@ -1,33 +1,38 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Database\Driver;
 
 use Cake\Database\Dialect\SqliteDialectTrait;
+use Cake\Database\Driver;
 use Cake\Database\Query;
 use Cake\Database\Statement\PDOStatement;
 use Cake\Database\Statement\SqliteStatement;
 use PDO;
 
-class Sqlite extends \Cake\Database\Driver
+/**
+ * Class Sqlite
+ */
+class Sqlite extends Driver
 {
 
-    use PDODriverTrait;
     use SqliteDialectTrait;
 
     /**
      * Base configuration settings for Sqlite driver
+     *
+     * - `mask` The mask used for created database
      *
      * @var array
      */
@@ -37,6 +42,7 @@ class Sqlite extends \Cake\Database\Driver
         'password' => null,
         'database' => ':memory:',
         'encoding' => 'utf8',
+        'mask' => 0644,
         'flags' => [],
         'init' => [],
     ];
@@ -54,17 +60,27 @@ class Sqlite extends \Cake\Database\Driver
         $config = $this->_config;
         $config['flags'] += [
             PDO::ATTR_PERSISTENT => $config['persistent'],
+            PDO::ATTR_EMULATE_PREPARES => false,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
         ];
+
+        $databaseExists = file_exists($config['database']);
 
         $dsn = "sqlite:{$config['database']}";
         $this->_connect($dsn, $config);
 
+        if (!$databaseExists && $config['database'] != ':memory:') {
+            //@codingStandardsIgnoreStart
+            @chmod($config['database'], $config['mask']);
+            //@codingStandardsIgnoreEnd
+        }
+
         if (!empty($config['init'])) {
             foreach ((array)$config['init'] as $command) {
-                $this->connection()->exec($command);
+                $this->getConnection()->exec($command);
             }
         }
+
         return true;
     }
 
@@ -90,9 +106,18 @@ class Sqlite extends \Cake\Database\Driver
         $isObject = $query instanceof Query;
         $statement = $this->_connection->prepare($isObject ? $query->sql() : $query);
         $result = new SqliteStatement(new PDOStatement($statement, $this), $this);
-        if ($isObject && $query->bufferResults() === false) {
+        if ($isObject && $query->isBufferedResultsEnabled() === false) {
             $result->bufferResults(false);
         }
+
         return $result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function supportsDynamicConstraints()
+    {
+        return false;
     }
 }

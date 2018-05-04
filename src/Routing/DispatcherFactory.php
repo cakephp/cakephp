@@ -1,26 +1,28 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Routing;
 
 use Cake\Core\App;
-use Cake\Routing\Dispatcher;
 use Cake\Routing\Exception\MissingDispatcherFilterException;
 
 /**
  * A factory for creating dispatchers with all the desired middleware
  * connected.
+ *
+ * @deprecated 3.6.0 This class is part of the deprecated dispatcher system.
+ *   Use Http\Server instead.
  */
 class DispatcherFactory
 {
@@ -28,7 +30,7 @@ class DispatcherFactory
     /**
      * Stack of middleware to apply to dispatchers.
      *
-     * @var array
+     * @var \Cake\Routing\DispatcherFilter[]
      */
     protected static $_stack = [];
 
@@ -51,6 +53,7 @@ class DispatcherFactory
             $filter = static::_createFilter($filter, $options);
         }
         static::$_stack[] = $filter;
+
         return $filter;
     }
 
@@ -69,6 +72,7 @@ class DispatcherFactory
             $msg = sprintf('Cannot locate dispatcher filter named "%s".', $name);
             throw new MissingDispatcherFilterException($msg);
         }
+
         return new $className($options);
     }
 
@@ -83,13 +87,14 @@ class DispatcherFactory
         foreach (static::$_stack as $middleware) {
             $dispatcher->addFilter($middleware);
         }
+
         return $dispatcher;
     }
 
     /**
      * Get the connected dispatcher filters.
      *
-     * @return array
+     * @return \Cake\Routing\DispatcherFilter[]
      */
     public static function filters()
     {

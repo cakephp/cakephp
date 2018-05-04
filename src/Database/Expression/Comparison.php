@@ -1,34 +1,33 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Database\Expression;
 
+use Cake\Database\Exception as DatabaseException;
 use Cake\Database\ExpressionInterface;
-use Cake\Database\Expression\FieldInterface;
-use Cake\Database\Expression\FieldTrait;
+use Cake\Database\Type\ExpressionTypeCasterTrait;
 use Cake\Database\ValueBinder;
 
 /**
  * A Comparison is a type of query expression that represents an operation
  * involving a field an operator and a value. In its most common form the
  * string representation of a comparison is `field = value`
- *
- * @internal
  */
 class Comparison implements ExpressionInterface, FieldInterface
 {
 
+    use ExpressionTypeCasterTrait;
     use FieldTrait;
 
     /**
@@ -41,7 +40,7 @@ class Comparison implements ExpressionInterface, FieldInterface
     /**
      * The type to be used for casting the value to a database representation
      *
-     * @var string
+     * @var string|array
      */
     protected $_type;
 
@@ -53,22 +52,37 @@ class Comparison implements ExpressionInterface, FieldInterface
     protected $_operator;
 
     /**
+     * Whether or not the value in this expression is a traversable
+     *
+     * @var bool
+     */
+    protected $_isMultiple = false;
+
+    /**
+     * A cached list of ExpressionInterface objects that were
+     * found in the value for this expression.
+     *
+     * @var \Cake\Database\ExpressionInterface[]
+     */
+    protected $_valueExpressions = [];
+
+    /**
      * Constructor
      *
-     * @param string $field the field name to compare to a value
+     * @param string|\Cake\Database\ExpressionInterface $field the field name to compare to a value
      * @param mixed $value The value to be used in comparison
      * @param string $type the type name used to cast the value
      * @param string $operator the operator used for comparing field and value
      */
     public function __construct($field, $value, $type, $operator)
     {
-        $this->setField($field);
-        $this->setValue($value);
-        $this->_operator = $operator;
-
         if (is_string($type)) {
             $this->_type = $type;
         }
+
+        $this->setField($field);
+        $this->setValue($value);
+        $this->_operator = $operator;
     }
 
     /**
@@ -79,6 +93,18 @@ class Comparison implements ExpressionInterface, FieldInterface
      */
     public function setValue($value)
     {
+        $hasType = isset($this->_type) && is_string($this->_type);
+        $isMultiple = $hasType && strpos($this->_type, '[]') !== false;
+
+        if ($hasType) {
+            $value = $this->_castToExpression($value, $this->_type);
+        }
+
+        if ($isMultiple) {
+            list($value, $this->_valueExpressions) = $this->_collectExpressions($value);
+        }
+
+        $this->_isMultiple = $isMultiple;
         $this->_value = $value;
     }
 
@@ -152,6 +178,27 @@ class Comparison implements ExpressionInterface, FieldInterface
             $callable($this->_value);
             $this->_value->traverse($callable);
         }
+
+        foreach ($this->_valueExpressions as $v) {
+            $callable($v);
+            $v->traverse($callable);
+        }
+    }
+
+    /**
+     * Create a deep clone.
+     *
+     * Clones the field and value if they are expression objects.
+     *
+     * @return void
+     */
+    public function __clone()
+    {
+        foreach (['_value', '_field'] as $prop) {
+            if ($prop instanceof ExpressionInterface) {
+                $this->{$prop} = clone $this->{$prop};
+            }
+        }
     }
 
     /**
@@ -169,15 +216,18 @@ class Comparison implements ExpressionInterface, FieldInterface
             $template = '(%s) ';
         }
 
-        if (strpos($this->_type, '[]') !== false) {
+        if ($this->_isMultiple) {
             $template .= '%s (%s)';
             $type = str_replace('[]', '', $this->_type);
             $value = $this->_flattenValue($this->_value, $generator, $type);
 
             // To avoid SQL errors when comparing a field to a list of empty values,
-            // generate a condition that will always evaluate to false
+            // better just throw an exception here
             if ($value === '') {
-                return ['1 != 1', ''];
+                $field = $this->_field instanceof ExpressionInterface ? $this->_field->sql($generator) : $this->_field;
+                throw new DatabaseException(
+                    "Impossible to generate condition with empty list of values for field ($field)"
+                );
             }
         } else {
             $template .= '%s %s';
@@ -199,6 +249,7 @@ class Comparison implements ExpressionInterface, FieldInterface
     {
         $placeholder = $generator->placeholder('c');
         $generator->bind($placeholder, $value, $type);
+
         return $placeholder;
     }
 
@@ -208,16 +259,55 @@ class Comparison implements ExpressionInterface, FieldInterface
      *
      * @param array|\Traversable $value the value to flatten
      * @param \Cake\Database\ValueBinder $generator The value binder to use
-     * @param string|array $type the type to cast values to
+     * @param string|array|null $type the type to cast values to
      * @return string
      */
-    protected function _flattenValue($value, $generator, $type = null)
+    protected function _flattenValue($value, $generator, $type = 'string')
     {
         $parts = [];
-        foreach ($value as $k => $v) {
-            $parts[] = $this->_bindValue($v, $generator, $type);
+        foreach ($this->_valueExpressions as $k => $v) {
+            $parts[$k] = $v->sql($generator);
+            unset($value[$k]);
+        }
+
+        if (!empty($value)) {
+            $parts += $generator->generateManyNamed($value, $type);
         }
 
         return implode(',', $parts);
+    }
+
+    /**
+     * Returns an array with the original $values in the first position
+     * and all ExpressionInterface objects that could be found in the second
+     * position.
+     *
+     * @param array|\Traversable $values The rows to insert
+     * @return array
+     */
+    protected function _collectExpressions($values)
+    {
+        if ($values instanceof ExpressionInterface) {
+            return [$values, []];
+        }
+
+        $expressions = $result = [];
+        $isArray = is_array($values);
+
+        if ($isArray) {
+            $result = $values;
+        }
+
+        foreach ($values as $k => $v) {
+            if ($v instanceof ExpressionInterface) {
+                $expressions[$k] = $v;
+            }
+
+            if ($isArray) {
+                $result[$k] = $v;
+            }
+        }
+
+        return [$result, $expressions];
     }
 }

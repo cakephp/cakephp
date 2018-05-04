@@ -1,16 +1,16 @@
 <?php
 /**
- * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) Tests <https://book.cakephp.org/view/1196/Testing>
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
  * @since         2.2.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Validation;
 
@@ -19,7 +19,6 @@ use Cake\Validation\ValidationRule;
 
 /**
  * ValidationRuleTest
- *
  */
 class ValidationRuleTest extends TestCase
 {
@@ -29,7 +28,7 @@ class ValidationRuleTest extends TestCase
      *
      * @return bool
      */
-    public function myTestRule()
+    public function willFail()
     {
         return false;
     }
@@ -39,7 +38,7 @@ class ValidationRuleTest extends TestCase
      *
      * @return bool
      */
-    public function myTestRule2()
+    public function willPass()
     {
         return true;
     }
@@ -49,7 +48,7 @@ class ValidationRuleTest extends TestCase
      *
      * @return string
      */
-    public function myTestRule3()
+    public function willFail3()
     {
         return 'string';
     }
@@ -65,16 +64,16 @@ class ValidationRuleTest extends TestCase
         $providers = ['default' => $this];
 
         $context = ['newRecord' => true];
-        $Rule = new ValidationRule(['rule' => 'myTestRule']);
+        $Rule = new ValidationRule(['rule' => 'willFail']);
         $this->assertFalse($Rule->process($data, $providers, $context));
 
-        $Rule = new ValidationRule(['rule' => 'myTestRule2']);
+        $Rule = new ValidationRule(['rule' => 'willPass', 'pass' => ['key' => 'value']]);
         $this->assertTrue($Rule->process($data, $providers, $context));
 
-        $Rule = new ValidationRule(['rule' => 'myTestRule3']);
+        $Rule = new ValidationRule(['rule' => 'willFail3']);
         $this->assertEquals('string', $Rule->process($data, $providers, $context));
 
-        $Rule = new ValidationRule(['rule' => 'myTestRule', 'message' => 'foo']);
+        $Rule = new ValidationRule(['rule' => 'willFail', 'message' => 'foo']);
         $this->assertEquals('foo', $Rule->process($data, $providers, $context));
     }
 
@@ -90,7 +89,7 @@ class ValidationRuleTest extends TestCase
         $providers = ['default' => ''];
 
         $rule = new ValidationRule([
-            'rule' => [$this, 'myTestRule']
+            'rule' => [$this, 'willFail']
         ]);
         $this->assertFalse($rule->process($data, $providers, $context));
     }
@@ -98,12 +97,12 @@ class ValidationRuleTest extends TestCase
     /**
      * Make sure errors are triggered when validation is missing.
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Unable to call method "totallyMissing" in "default" provider for field "test"
      * @return void
      */
     public function testCustomMethodMissingError()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unable to call method "totallyMissing" in "default" provider for field "test"');
         $def = ['rule' => ['totallyMissing']];
         $data = 'some data';
         $providers = ['default' => $this];
@@ -123,19 +122,19 @@ class ValidationRuleTest extends TestCase
         $providers = ['default' => $this];
 
         $Rule = new ValidationRule([
-            'rule' => 'myTestRule',
+            'rule' => 'willFail',
             'on' => 'create'
         ]);
         $this->assertFalse($Rule->process($data, $providers, ['newRecord' => true]));
 
         $Rule = new ValidationRule([
-            'rule' => 'myTestRule',
+            'rule' => 'willFail',
             'on' => 'update'
         ]);
         $this->assertTrue($Rule->process($data, $providers, ['newRecord' => true]));
 
         $Rule = new ValidationRule([
-            'rule' => 'myTestRule',
+            'rule' => 'willFail',
             'on' => 'update'
         ]);
         $this->assertFalse($Rule->process($data, $providers, ['newRecord' => false]));
@@ -152,20 +151,22 @@ class ValidationRuleTest extends TestCase
         $providers = ['default' => $this];
 
         $Rule = new ValidationRule([
-            'rule' => 'myTestRule',
+            'rule' => 'willFail',
             'on' => function ($context) use ($providers) {
                 $expected = compact('providers') + ['newRecord' => true, 'data' => []];
                 $this->assertEquals($expected, $context);
+
                 return true;
             }
         ]);
         $this->assertFalse($Rule->process($data, $providers, ['newRecord' => true]));
 
         $Rule = new ValidationRule([
-            'rule' => 'myTestRule',
+            'rule' => 'willFail',
             'on' => function ($context) use ($providers) {
                 $expected = compact('providers') + ['newRecord' => true, 'data' => []];
                 $this->assertEquals($expected, $context);
+
                 return false;
             }
         ]);
@@ -179,17 +180,17 @@ class ValidationRuleTest extends TestCase
      */
     public function testGet()
     {
-        $Rule = new ValidationRule(['rule' => 'myTestRule', 'message' => 'foo']);
+        $Rule = new ValidationRule(['rule' => 'willFail', 'message' => 'foo']);
 
-        $this->assertEquals('myTestRule', $Rule->get('rule'));
+        $this->assertEquals('willFail', $Rule->get('rule'));
         $this->assertEquals('foo', $Rule->get('message'));
         $this->assertEquals('default', $Rule->get('provider'));
         $this->assertEquals([], $Rule->get('pass'));
         $this->assertNull($Rule->get('non-existent'));
 
-        $Rule = new ValidationRule(['rule' => ['myTestRule2', 'param'], 'message' => 'bar']);
+        $Rule = new ValidationRule(['rule' => ['willPass', 'param'], 'message' => 'bar']);
 
-        $this->assertEquals('myTestRule2', $Rule->get('rule'));
+        $this->assertEquals('willPass', $Rule->get('rule'));
         $this->assertEquals('bar', $Rule->get('message'));
         $this->assertEquals(['param'], $Rule->get('pass'));
     }

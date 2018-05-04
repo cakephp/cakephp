@@ -1,18 +1,20 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         2.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Console;
+
+use InvalidArgumentException;
 
 /**
  * Object wrapper for outputting information from a shell application.
@@ -40,7 +42,6 @@ namespace Cake\Console;
  * This would create orange 'Overwrite:' text, while the rest of the text would remain the normal color.
  * See ConsoleOutput::styles() to learn more about defining your own styles. Nested styles are not supported
  * at this time.
- *
  */
 class ConsoleOutput
 {
@@ -120,9 +121,9 @@ class ConsoleOutput
     ];
 
     /**
-     * formatting options for colored output
+     * Formatting options for colored output.
      *
-     * @var string
+     * @var array
      */
     protected static $_options = [
         'bold' => 1,
@@ -138,10 +139,10 @@ class ConsoleOutput
      * @var array
      */
     protected static $_styles = [
-        'emergency' => ['text' => 'red', 'underline' => true],
-        'alert' => ['text' => 'red', 'underline' => true],
-        'critical' => ['text' => 'red', 'underline' => true],
-        'error' => ['text' => 'red', 'underline' => true],
+        'emergency' => ['text' => 'red'],
+        'alert' => ['text' => 'red'],
+        'critical' => ['text' => 'red'],
+        'error' => ['text' => 'red'],
         'warning' => ['text' => 'yellow'],
         'info' => ['text' => 'cyan'],
         'debug' => ['text' => 'yellow'],
@@ -161,9 +162,9 @@ class ConsoleOutput
      */
     public function __construct($stream = 'php://stdout')
     {
-        $this->_output = fopen($stream, 'w');
+        $this->_output = fopen($stream, 'wb');
 
-        if ((DS === '\\' && !(bool)env('ANSICON') && env('ConEmuANSI') !== 'ON') ||
+        if ((DIRECTORY_SEPARATOR === '\\' && !(bool)env('ANSICON') && env('ConEmuANSI') !== 'ON') ||
             (function_exists('posix_isatty') && !posix_isatty($this->_output))
         ) {
             $this->_outputAs = self::PLAIN;
@@ -171,18 +172,19 @@ class ConsoleOutput
     }
 
     /**
-     * Outputs a single or multiple messages to stdout. If no parameters
+     * Outputs a single or multiple messages to stdout or stderr. If no parameters
      * are passed, outputs just a newline.
      *
      * @param string|array $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
-     * @return int Returns the number of bytes returned from writing to stdout.
+     * @return int|bool The number of bytes returned from writing to output.
      */
     public function write($message, $newlines = 1)
     {
         if (is_array($message)) {
             $message = implode(static::LF, $message);
         }
+
         return $this->_write($this->styleText($message . str_repeat(static::LF, $newlines)));
     }
 
@@ -199,8 +201,10 @@ class ConsoleOutput
         }
         if ($this->_outputAs == static::PLAIN) {
             $tags = implode('|', array_keys(static::$_styles));
+
             return preg_replace('#</?(?:' . $tags . ')>#', '', $text);
         }
+
         return preg_replace_callback(
             '/<(?P<tag>[a-z0-9-_]+)>(?P<text>.*?)<\/(\1)>/ims',
             [$this, '_replaceTags'],
@@ -234,6 +238,7 @@ class ConsoleOutput
                 $styleInfo[] = static::$_options[$option];
             }
         }
+
         return "\033[" . implode($styleInfo, ';') . 'm' . $matches['text'] . "\033[0m";
     }
 
@@ -241,7 +246,7 @@ class ConsoleOutput
      * Writes a message to the output stream.
      *
      * @param string $message Message to write.
-     * @return bool success
+     * @return int|bool The number of bytes returned from writing to output.
      */
     protected function _write($message)
     {
@@ -291,20 +296,53 @@ class ConsoleOutput
         }
         if ($definition === false) {
             unset(static::$_styles[$style]);
+
             return true;
         }
         static::$_styles[$style] = $definition;
+
         return true;
+    }
+
+    /**
+     * Get the output type on how formatting tags are treated.
+     *
+     * @return int
+     */
+    public function getOutputAs()
+    {
+        return $this->_outputAs;
+    }
+
+    /**
+     * Set the output type on how formatting tags are treated.
+     *
+     * @param int $type The output type to use. Should be one of the class constants.
+     * @return void
+     * @throws \InvalidArgumentException in case of a not supported output type.
+     */
+    public function setOutputAs($type)
+    {
+        if (!in_array($type, [self::RAW, self::PLAIN, self::COLOR], true)) {
+            throw new InvalidArgumentException(sprintf('Invalid output type "%s".', $type));
+        }
+
+        $this->_outputAs = $type;
     }
 
     /**
      * Get/Set the output type to use. The output type how formatting tags are treated.
      *
+     * @deprecated 3.5.0 Use getOutputAs()/setOutputAs() instead.
      * @param int|null $type The output type to use. Should be one of the class constants.
-     * @return int|void  Either null or the value if getting.
+     * @return int|null Either null or the value if getting.
      */
     public function outputAs($type = null)
     {
+        deprecationWarning(
+            'ConsoleOutput::outputAs() is deprecated. ' .
+            'Use ConsoleOutput::setOutputAs()/getOutputAs() instead.'
+        );
         if ($type === null) {
             return $this->_outputAs;
         }

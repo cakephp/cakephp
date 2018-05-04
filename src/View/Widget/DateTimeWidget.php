@@ -1,23 +1,23 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\View\Widget;
 
 use Cake\View\Form\ContextInterface;
 use Cake\View\StringTemplate;
-use Cake\View\Widget\SelectBoxWidget;
-use Cake\View\Widget\WidgetInterface;
+use DateTime;
+use Exception;
 use RuntimeException;
 
 /**
@@ -127,7 +127,7 @@ class DateTimeWidget implements WidgetInterface
 
         $selected = $this->_deconstructDate($data['val'], $data);
 
-        $templateOptions = [];
+        $templateOptions = ['templateVars' => $data['templateVars']];
         foreach ($this->_selects as $select) {
             if ($data[$select] === false || $data[$select] === null) {
                 $templateOptions[$select] = '';
@@ -141,7 +141,7 @@ class DateTimeWidget implements WidgetInterface
                 ));
             }
             $method = "_{$select}Select";
-            $data[$select]['name'] = $data['name'] . "[" . $select . "]";
+            $data[$select]['name'] = $data['name'] . '[' . $select . ']';
             $data[$select]['val'] = $selected[$select];
 
             if (!isset($data[$select]['empty'])) {
@@ -150,11 +150,21 @@ class DateTimeWidget implements WidgetInterface
             if (!isset($data[$select]['disabled'])) {
                 $data[$select]['disabled'] = $data['disabled'];
             }
+            if (isset($data[$select]['templateVars']) && $templateOptions['templateVars']) {
+                $data[$select]['templateVars'] = array_merge(
+                    $templateOptions['templateVars'],
+                    $data[$select]['templateVars']
+                );
+            }
+            if (!isset($data[$select]['templateVars'])) {
+                $data[$select]['templateVars'] = $templateOptions['templateVars'];
+            }
             $templateOptions[$select] = $this->{$method}($data[$select], $context);
             unset($data[$select]);
         }
         unset($data['name'], $data['empty'], $data['disabled'], $data['val']);
         $templateOptions['attrs'] = $this->_templates->formatAttributes($data);
+
         return $this->_templates->format('dateWidget', $templateOptions);
     }
 
@@ -178,6 +188,7 @@ class DateTimeWidget implements WidgetInterface
             'minute' => [],
             'second' => [],
             'meridian' => null,
+            'templateVars' => [],
         ];
 
         $timeFormat = isset($data['hour']['format']) ? $data['hour']['format'] : null;
@@ -208,17 +219,17 @@ class DateTimeWidget implements WidgetInterface
             ];
         }
         try {
-            if (is_string($value)) {
-                $date = new \DateTime($value);
+            if (is_string($value) && !is_numeric($value)) {
+                $date = new DateTime($value);
             } elseif (is_bool($value)) {
-                $date = new \DateTime();
-            } elseif (is_int($value)) {
-                $date = new \DateTime('@' . $value);
+                $date = new DateTime();
+            } elseif (is_int($value) || is_numeric($value)) {
+                $date = new DateTime('@' . $value);
             } elseif (is_array($value)) {
                 $dateArray = [
                     'year' => '', 'month' => '', 'day' => '',
                     'hour' => '', 'minute' => '', 'second' => '',
-                    'meridian' => 'pm',
+                    'meridian' => '',
                 ];
                 $validDate = false;
                 foreach ($dateArray as $key => $dateValue) {
@@ -234,24 +245,25 @@ class DateTimeWidget implements WidgetInterface
                     if (!isset($dateArray['second'])) {
                         $dateArray['second'] = 0;
                     }
-                    if (isset($value['meridian'])) {
+                    if (!empty($value['meridian'])) {
                         $isAm = strtolower($dateArray['meridian']) === 'am';
                         $dateArray['hour'] = $isAm ? $dateArray['hour'] : $dateArray['hour'] + 12;
                     }
                     if (!empty($dateArray['minute']) && isset($options['minute']['interval'])) {
                         $dateArray['minute'] += $this->_adjustValue($dateArray['minute'], $options['minute']);
-                        $dateArray['minute'] = str_pad(strval($dateArray['minute']), 2, '0', STR_PAD_LEFT);
+                        $dateArray['minute'] = str_pad((string)$dateArray['minute'], 2, '0', STR_PAD_LEFT);
                     }
 
                     return $dateArray;
                 }
 
-                $date = new \DateTime();
+                $date = new DateTime();
             } else {
+                /* @var \DateTime $value */
                 $date = clone $value;
             }
-        } catch (\Exception $e) {
-            $date = new \DateTime();
+        } catch (Exception $e) {
+            $date = new DateTime();
         }
 
         if (isset($options['minute']['interval'])) {
@@ -291,6 +303,7 @@ class DateTimeWidget implements WidgetInterface
             default:
                 $changeValue = round($changeValue);
         }
+
         return ($changeValue * $options['interval']) - $value;
     }
 
@@ -309,6 +322,7 @@ class DateTimeWidget implements WidgetInterface
             'start' => date('Y', strtotime('-5 years')),
             'end' => date('Y', strtotime('+5 years')),
             'order' => 'desc',
+            'templateVars' => [],
             'options' => []
         ];
 
@@ -323,6 +337,7 @@ class DateTimeWidget implements WidgetInterface
             $options['options'] = array_reverse($options['options'], true);
         }
         unset($options['start'], $options['end'], $options['order']);
+
         return $this->_select->render($options, $context);
     }
 
@@ -340,7 +355,8 @@ class DateTimeWidget implements WidgetInterface
             'names' => false,
             'val' => null,
             'leadingZeroKey' => true,
-            'leadingZeroValue' => false
+            'leadingZeroValue' => false,
+            'templateVars' => [],
         ];
 
         if (empty($options['options'])) {
@@ -354,6 +370,7 @@ class DateTimeWidget implements WidgetInterface
         }
 
         unset($options['leadingZeroKey'], $options['leadingZeroValue'], $options['names']);
+
         return $this->_select->render($options, $context);
     }
 
@@ -371,10 +388,12 @@ class DateTimeWidget implements WidgetInterface
             'val' => null,
             'leadingZeroKey' => true,
             'leadingZeroValue' => false,
+            'templateVars' => [],
         ];
         $options['options'] = $this->_generateNumbers(1, 31, $options);
 
         unset($options['names'], $options['leadingZeroKey'], $options['leadingZeroValue']);
+
         return $this->_select->render($options, $context);
     }
 
@@ -395,6 +414,7 @@ class DateTimeWidget implements WidgetInterface
             'end' => null,
             'leadingZeroKey' => true,
             'leadingZeroValue' => false,
+            'templateVars' => [],
         ];
         $is24 = $options['format'] == 24;
 
@@ -429,6 +449,7 @@ class DateTimeWidget implements WidgetInterface
             $options['leadingZeroKey'],
             $options['leadingZeroValue']
         );
+
         return $this->_select->render($options, $context);
     }
 
@@ -448,6 +469,7 @@ class DateTimeWidget implements WidgetInterface
             'round' => 'up',
             'leadingZeroKey' => true,
             'leadingZeroValue' => true,
+            'templateVars' => [],
         ];
         $options['interval'] = max($options['interval'], 1);
         if (empty($options['options'])) {
@@ -460,6 +482,7 @@ class DateTimeWidget implements WidgetInterface
             $options['interval'],
             $options['round']
         );
+
         return $this->_select->render($options, $context);
     }
 
@@ -477,10 +500,12 @@ class DateTimeWidget implements WidgetInterface
             'val' => null,
             'leadingZeroKey' => true,
             'leadingZeroValue' => true,
-            'options' => $this->_generateNumbers(0, 59)
+            'options' => $this->_generateNumbers(0, 59),
+            'templateVars' => [],
         ];
 
         unset($options['leadingZeroKey'], $options['leadingZeroValue']);
+
         return $this->_select->render($options, $context);
     }
 
@@ -496,8 +521,10 @@ class DateTimeWidget implements WidgetInterface
         $options += [
             'name' => '',
             'val' => null,
-            'options' => ['am' => 'am', 'pm' => 'pm']
+            'options' => ['am' => 'am', 'pm' => 'pm'],
+            'templateVars' => [],
         ];
+
         return $this->_select->render($options, $context);
     }
 
@@ -571,6 +598,7 @@ class DateTimeWidget implements WidgetInterface
             $numbers[$key] = $value;
             $i += $options['interval'];
         }
+
         return $numbers;
     }
 
@@ -595,6 +623,7 @@ class DateTimeWidget implements WidgetInterface
 
             $fields[] = $data['name'] . '[' . $select . ']';
         }
+
         return $fields;
     }
 }

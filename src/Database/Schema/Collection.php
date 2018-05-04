@@ -1,22 +1,22 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Database\Schema;
 
 use Cake\Database\Connection;
 use Cake\Database\Exception;
-use Cake\Database\Schema\Table;
+use PDOException;
 
 /**
  * Represents a database schema collection
@@ -49,7 +49,7 @@ class Collection
     public function __construct(Connection $connection)
     {
         $this->_connection = $connection;
-        $this->_dialect = $connection->driver()->schemaDialect();
+        $this->_dialect = $connection->getDriver()->schemaDialect();
     }
 
     /**
@@ -66,6 +66,7 @@ class Collection
             $result[] = $row[0];
         }
         $statement->closeCursor();
+
         return $result;
     }
 
@@ -82,7 +83,7 @@ class Collection
      *
      * @param string $name The name of the table to describe.
      * @param array $options The options to use, see above.
-     * @return \Cake\Database\Schema\Table Object with column metadata.
+     * @return \Cake\Database\Schema\TableSchema Object with column metadata.
      * @throws \Cake\Database\Exception when table cannot be described.
      */
     public function describe($name, array $options = [])
@@ -91,7 +92,7 @@ class Collection
         if (strpos($name, '.')) {
             list($config['schema'], $name) = explode('.', $name);
         }
-        $table = new Table($name);
+        $table = new TableSchema($name);
 
         $this->_reflect('Column', $name, $config, $table);
         if (count($table->columns()) === 0) {
@@ -111,11 +112,11 @@ class Collection
      * @param string $stage The stage name.
      * @param string $name The table name.
      * @param array $config The config data.
-     * @param \Cake\Database\Schema\Table $table The table instance
+     * @param \Cake\Database\Schema\TableSchema $schema The table instance
      * @return void
      * @throws \Cake\Database\Exception on query failure.
      */
-    protected function _reflect($stage, $name, $config, $table)
+    protected function _reflect($stage, $name, $config, $schema)
     {
         $describeMethod = "describe{$stage}Sql";
         $convertMethod = "convert{$stage}Description";
@@ -126,11 +127,11 @@ class Collection
         }
         try {
             $statement = $this->_connection->execute($sql, $params);
-        } catch (\PDOException $e) {
+        } catch (PDOException $e) {
             throw new Exception($e->getMessage(), 500, $e);
         }
         foreach ($statement->fetchAll('assoc') as $row) {
-            $this->_dialect->{$convertMethod}($table, $row);
+            $this->_dialect->{$convertMethod}($schema, $row);
         }
         $statement->closeCursor();
     }

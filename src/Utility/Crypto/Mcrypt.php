@@ -1,16 +1,16 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Utility\Crypto;
 
@@ -20,6 +20,7 @@ namespace Cake\Utility\Crypto;
  * This class is not intended to be used directly and should only
  * be used in the context of Cake\Utility\Security.
  *
+ * @deprecated 3.3.0 It is recommended to use {@see Cake\Utility\Crypto\OpenSsl} instead.
  * @internal
  */
 class Mcrypt
@@ -33,6 +34,7 @@ class Mcrypt
      * @param string $operation Operation to perform, encrypt or decrypt
      * @throws \LogicException When there are errors.
      * @return string Encrytped binary string data, or decrypted data depending on operation.
+     * @deprecated 3.3.0 This method will be removed in 4.0.0.
      */
     public static function rijndael($text, $key, $operation)
     {
@@ -44,10 +46,12 @@ class Mcrypt
 
         if ($operation === 'encrypt') {
             $iv = mcrypt_create_iv($ivSize, MCRYPT_DEV_URANDOM);
+
             return $iv . '$$' . mcrypt_encrypt($algorithm, $cryptKey, $text, $mode, $iv);
         }
         $iv = mb_substr($text, 0, $ivSize, '8bit');
         $text = mb_substr($text, $ivSize + 2, null, '8bit');
+
         return rtrim(mcrypt_decrypt($algorithm, $cryptKey, $text, $mode, $iv), "\0");
     }
 
@@ -62,9 +66,14 @@ class Mcrypt
      * @param string $key The 256 bit/32 byte key to use as a cipher key.
      * @return string Encrypted data.
      * @throws \InvalidArgumentException On invalid data or key.
+     * @deprecated 3.3.0 Use Cake\Utility\Crypto\OpenSsl::encrypt() instead.
      */
     public static function encrypt($plain, $key)
     {
+        deprecationWarning(
+            'Mcrypt::encrypt() is deprecated. ' .
+            'Use Cake\Utility\Crypto\OpenSsl::encrypt() instead.'
+        );
         $algorithm = MCRYPT_RIJNDAEL_128;
         $mode = MCRYPT_MODE_CBC;
 
@@ -84,10 +93,15 @@ class Mcrypt
      * @param string $cipher The ciphertext to decrypt.
      * @param string $key The 256 bit/32 byte key to use as a cipher key.
      * @return string Decrypted data. Any trailing null bytes will be removed.
-     * @throws InvalidArgumentException On invalid data or key.
+     * @throws \InvalidArgumentException On invalid data or key.
+     * @deprecated 3.3.0 Use Cake\Utility\Crypto\OpenSsl::decrypt() instead.
      */
     public static function decrypt($cipher, $key)
     {
+        deprecationWarning(
+            'Mcrypt::decrypt() is deprecated. ' .
+            'Use Cake\Utility\Crypto\OpenSsl::decrypt() instead.'
+        );
         $algorithm = MCRYPT_RIJNDAEL_128;
         $mode = MCRYPT_MODE_CBC;
         $ivSize = mcrypt_get_iv_size($algorithm, $mode);
@@ -105,6 +119,7 @@ class Mcrypt
         }
         $padLen = ord($padChar);
         $result = mb_substr($plain, 0, -$padLen, '8bit');
+
         return $result === '' ? false : $result;
     }
 }

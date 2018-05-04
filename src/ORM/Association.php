@@ -1,26 +1,27 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\ORM;
 
+use Cake\Collection\Collection;
+use Cake\Core\App;
 use Cake\Core\ConventionsTrait;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Datasource\EntityInterface;
+use Cake\Datasource\QueryInterface;
 use Cake\Datasource\ResultSetDecorator;
-use Cake\ORM\Query;
-use Cake\ORM\Table;
-use Cake\ORM\TableRegistry;
+use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
 use RuntimeException;
@@ -29,11 +30,13 @@ use RuntimeException;
  * An Association is a relationship established between two tables and is used
  * to configure and customize the way interconnected records are retrieved.
  *
+ * @mixin \Cake\ORM\Table
  */
 abstract class Association
 {
 
     use ConventionsTrait;
+    use LocatorAwareTrait;
 
     /**
      * Strategy name to use joins for fetching associated records
@@ -117,7 +120,7 @@ abstract class Association
      * A list of conditions to be always included when fetching records from
      * the target association
      *
-     * @var array
+     * @var array|callable
      */
     protected $_conditions = [];
 
@@ -133,7 +136,7 @@ abstract class Association
     /**
      * Whether or not cascaded deletes should also fire callbacks.
      *
-     * @var string
+     * @var bool
      */
     protected $_cascadeCallbacks = false;
 
@@ -156,7 +159,7 @@ abstract class Association
      *
      * @var string
      */
-    protected $_joinType = 'LEFT';
+    protected $_joinType = QueryInterface::JOIN_TYPE_LEFT;
 
     /**
      * The property name that should be filled with data from the target table
@@ -186,7 +189,11 @@ abstract class Association
      *
      * @var array
      */
-    protected $_validStrategies = [self::STRATEGY_JOIN, self::STRATEGY_SELECT, self::STRATEGY_SUBQUERY];
+    protected $_validStrategies = [
+        self::STRATEGY_JOIN,
+        self::STRATEGY_SELECT,
+        self::STRATEGY_SUBQUERY
+    ];
 
     /**
      * Constructor. Subclasses can override _options function to get the original
@@ -206,6 +213,7 @@ abstract class Association
             'bindingKey',
             'foreignKey',
             'joinType',
+            'tableLocator',
             'propertyName',
             'sourceTable',
             'targetTable'
@@ -226,102 +234,318 @@ abstract class Association
         $this->_options($options);
 
         if (!empty($options['strategy'])) {
-            $this->strategy($options['strategy']);
+            $this->setStrategy($options['strategy']);
         }
     }
 
     /**
-     * Sets the name for this association. If no argument is passed then the current
-     * configured name will be returned
+     * Sets the name for this association, usually the alias
+     * assigned to the target associated table
      *
+     * @param string $name Name to be assigned
+     * @return $this
+     */
+    public function setName($name)
+    {
+        if ($this->_targetTable !== null) {
+            $alias = $this->_targetTable->getAlias();
+            if ($alias !== $name) {
+                throw new InvalidArgumentException('Association name does not match target table alias.');
+            }
+        }
+
+        $this->_name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Gets the name for this association, usually the alias
+     * assigned to the target associated table
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->_name;
+    }
+
+    /**
+     * Sets the name for this association.
+     *
+     * @deprecated 3.4.0 Use setName()/getName() instead.
      * @param string|null $name Name to be assigned
      * @return string
      */
     public function name($name = null)
     {
+        deprecationWarning(
+            get_called_class() . '::name() is deprecated. ' .
+            'Use setName()/getName() instead.'
+        );
         if ($name !== null) {
-            $this->_name = $name;
+            $this->setName($name);
         }
-        return $this->_name;
+
+        return $this->getName();
+    }
+
+    /**
+     * Sets whether or not cascaded deletes should also fire callbacks.
+     *
+     * @param bool $cascadeCallbacks cascade callbacks switch value
+     * @return $this
+     */
+    public function setCascadeCallbacks($cascadeCallbacks)
+    {
+        $this->_cascadeCallbacks = $cascadeCallbacks;
+
+        return $this;
+    }
+
+    /**
+     * Gets whether or not cascaded deletes should also fire callbacks.
+     *
+     * @return bool
+     */
+    public function getCascadeCallbacks()
+    {
+        return $this->_cascadeCallbacks;
     }
 
     /**
      * Sets whether or not cascaded deletes should also fire callbacks. If no
      * arguments are passed, the current configured value is returned
      *
+     * @deprecated 3.4.0 Use setCascadeCallbacks()/getCascadeCallbacks() instead.
      * @param bool|null $cascadeCallbacks cascade callbacks switch value
      * @return bool
      */
     public function cascadeCallbacks($cascadeCallbacks = null)
     {
+        deprecationWarning(
+            get_called_class() . '::cascadeCallbacks() is deprecated. ' .
+            'Use setCascadeCallbacks()/getCascadeCallbacks() instead.'
+        );
         if ($cascadeCallbacks !== null) {
-            $this->_cascadeCallbacks = $cascadeCallbacks;
+            $this->setCascadeCallbacks($cascadeCallbacks);
         }
-        return $this->_cascadeCallbacks;
+
+        return $this->getCascadeCallbacks();
+    }
+
+    /**
+     * The class name of the target table object
+     *
+     * @return string
+     */
+    public function className()
+    {
+        return $this->_className;
+    }
+
+    /**
+     * Sets the table instance for the source side of the association.
+     *
+     * @param \Cake\ORM\Table $table the instance to be assigned as source side
+     * @return $this
+     */
+    public function setSource(Table $table)
+    {
+        $this->_sourceTable = $table;
+
+        return $this;
+    }
+
+    /**
+     * Gets the table instance for the source side of the association.
+     *
+     * @return \Cake\ORM\Table
+     */
+    public function getSource()
+    {
+        return $this->_sourceTable;
     }
 
     /**
      * Sets the table instance for the source side of the association. If no arguments
      * are passed, the current configured table instance is returned
      *
+     * @deprecated 3.4.0 Use setSource()/getSource() instead.
      * @param \Cake\ORM\Table|null $table the instance to be assigned as source side
      * @return \Cake\ORM\Table
      */
     public function source(Table $table = null)
     {
+        deprecationWarning(
+            get_called_class() . '::source() is deprecated. ' .
+            'Use setSource()/getSource() instead.'
+        );
         if ($table === null) {
             return $this->_sourceTable;
         }
+
         return $this->_sourceTable = $table;
+    }
+
+    /**
+     * Sets the table instance for the target side of the association.
+     *
+     * @param \Cake\ORM\Table $table the instance to be assigned as target side
+     * @return $this
+     */
+    public function setTarget(Table $table)
+    {
+        $this->_targetTable = $table;
+
+        return $this;
+    }
+
+    /**
+     * Gets the table instance for the target side of the association.
+     *
+     * @return \Cake\ORM\Table
+     */
+    public function getTarget()
+    {
+        if (!$this->_targetTable) {
+            if (strpos($this->_className, '.')) {
+                list($plugin) = pluginSplit($this->_className, true);
+                $registryAlias = $plugin . $this->_name;
+            } else {
+                $registryAlias = $this->_name;
+            }
+
+            $tableLocator = $this->getTableLocator();
+
+            $config = [];
+            $exists = $tableLocator->exists($registryAlias);
+            if (!$exists) {
+                $config = ['className' => $this->_className];
+            }
+            $this->_targetTable = $tableLocator->get($registryAlias, $config);
+
+            if ($exists) {
+                $className = $this->_getClassName($registryAlias, ['className' => $this->_className]);
+
+                if (!$this->_targetTable instanceof $className) {
+                    $errorMessage = '%s association "%s" of type "%s" to "%s" doesn\'t match the expected class "%s". ';
+                    $errorMessage .= 'You can\'t have an association of the same name with a different target "className" option anywhere in your app.';
+
+                    throw new RuntimeException(sprintf(
+                        $errorMessage,
+                        $this->_sourceTable ? get_class($this->_sourceTable) : 'null',
+                        $this->getName(),
+                        $this->type(),
+                        $this->_targetTable ? get_class($this->_targetTable) : 'null',
+                        $className
+                    ));
+                }
+            }
+        }
+
+        return $this->_targetTable;
     }
 
     /**
      * Sets the table instance for the target side of the association. If no arguments
      * are passed, the current configured table instance is returned
      *
+     * @deprecated 3.4.0 Use setTarget()/getTarget() instead.
      * @param \Cake\ORM\Table|null $table the instance to be assigned as target side
      * @return \Cake\ORM\Table
      */
     public function target(Table $table = null)
     {
-        if ($table === null && $this->_targetTable) {
-            return $this->_targetTable;
-        }
-
+        deprecationWarning(
+            get_called_class() . '::target() is deprecated. ' .
+            'Use setTarget()/getTarget() instead.'
+        );
         if ($table !== null) {
-            return $this->_targetTable = $table;
+            $this->setTarget($table);
         }
 
-        if (strpos($this->_className, '.')) {
-            list($plugin) = pluginSplit($this->_className, true);
-            $registryAlias = $plugin . $this->_name;
-        } else {
-            $registryAlias = $this->_name;
-        }
+        return $this->getTarget();
+    }
 
-        $config = [];
-        if (!TableRegistry::exists($registryAlias)) {
-            $config = ['className' => $this->_className];
-        }
-        $this->_targetTable = TableRegistry::get($registryAlias, $config);
+    /**
+     * Sets a list of conditions to be always included when fetching records from
+     * the target association.
+     *
+     * @param array|callable $conditions list of conditions to be used
+     * @see \Cake\Database\Query::where() for examples on the format of the array
+     * @return $this
+     */
+    public function setConditions($conditions)
+    {
+        $this->_conditions = $conditions;
 
-        return $this->_targetTable;
+        return $this;
+    }
+
+    /**
+     * Gets a list of conditions to be always included when fetching records from
+     * the target association.
+     *
+     * @see \Cake\Database\Query::where() for examples on the format of the array
+     * @return array|callable
+     */
+    public function getConditions()
+    {
+        return $this->_conditions;
     }
 
     /**
      * Sets a list of conditions to be always included when fetching records from
      * the target association. If no parameters are passed the current list is returned
      *
+     * @deprecated 3.4.0 Use setConditions()/getConditions() instead.
      * @param array|null $conditions list of conditions to be used
      * @see \Cake\Database\Query::where() for examples on the format of the array
-     * @return array
+     * @return array|callable
      */
     public function conditions($conditions = null)
     {
+        deprecationWarning(
+            get_called_class() . '::conditions() is deprecated. ' .
+            'Use setConditions()/getConditions() instead.'
+        );
         if ($conditions !== null) {
-            $this->_conditions = $conditions;
+            $this->setConditions($conditions);
         }
-        return $this->_conditions;
+
+        return $this->getConditions();
+    }
+
+    /**
+     * Sets the name of the field representing the binding field with the target table.
+     * When not manually specified the primary key of the owning side table is used.
+     *
+     * @param string|array $key the table field or fields to be used to link both tables together
+     * @return $this
+     */
+    public function setBindingKey($key)
+    {
+        $this->_bindingKey = $key;
+
+        return $this;
+    }
+
+    /**
+     * Gets the name of the field representing the binding field with the target table.
+     * When not manually specified the primary key of the owning side table is used.
+     *
+     * @return string|array
+     */
+    public function getBindingKey()
+    {
+        if ($this->_bindingKey === null) {
+            $this->_bindingKey = $this->isOwningSide($this->getSource()) ?
+                $this->getSource()->getPrimaryKey() :
+                $this->getTarget()->getPrimaryKey();
+        }
+
+        return $this->_bindingKey;
     }
 
     /**
@@ -330,37 +554,65 @@ abstract class Association
      *
      * If no parameters are passed the current field is returned
      *
+     * @deprecated 3.4.0 Use setBindingKey()/getBindingKey() instead.
      * @param string|null $key the table field to be used to link both tables together
      * @return string|array
      */
     public function bindingKey($key = null)
     {
+        deprecationWarning(
+            get_called_class() . '::bindingKey() is deprecated. ' .
+            'Use setBindingKey()/getBindingKey() instead.'
+        );
         if ($key !== null) {
-            $this->_bindingKey = $key;
+            $this->setBindingKey($key);
         }
 
-        if ($this->_bindingKey === null) {
-            $this->_bindingKey = $this->isOwningSide($this->source()) ?
-                $this->source()->primaryKey() :
-                $this->target()->primaryKey();
-        }
+        return $this->getBindingKey();
+    }
 
-        return $this->_bindingKey;
+    /**
+     * Gets the name of the field representing the foreign key to the target table.
+     *
+     * @return string|array
+     */
+    public function getForeignKey()
+    {
+        return $this->_foreignKey;
+    }
+
+    /**
+     * Sets the name of the field representing the foreign key to the target table.
+     *
+     * @param string|array $key the key or keys to be used to link both tables together
+     * @return $this
+     */
+    public function setForeignKey($key)
+    {
+        $this->_foreignKey = $key;
+
+        return $this;
     }
 
     /**
      * Sets the name of the field representing the foreign key to the target table.
      * If no parameters are passed the current field is returned
      *
+     * @deprecated 3.4.0 Use setForeignKey()/getForeignKey() instead.
      * @param string|null $key the key to be used to link both tables together
      * @return string|array
      */
     public function foreignKey($key = null)
     {
+        deprecationWarning(
+            get_called_class() . '::foreignKey() is deprecated. ' .
+            'Use setForeignKey()/getForeignKey() instead.'
+        );
         if ($key !== null) {
-            $this->_foreignKey = $key;
+            $this->setForeignKey($key);
         }
-        return $this->_foreignKey;
+
+        return $this->getForeignKey();
     }
 
     /**
@@ -371,15 +623,52 @@ abstract class Association
      *
      * If no parameters are passed the current setting is returned.
      *
+     * @param bool $dependent Set the dependent mode. Use null to read the current state.
+     * @return $this
+     */
+    public function setDependent($dependent)
+    {
+        $this->_dependent = $dependent;
+
+        return $this;
+    }
+
+    /**
+     * Sets whether the records on the target table are dependent on the source table.
+     *
+     * This is primarily used to indicate that records should be removed if the owning record in
+     * the source table is deleted.
+     *
+     * @return bool
+     */
+    public function getDependent()
+    {
+        return $this->_dependent;
+    }
+
+    /**
+     * Sets whether the records on the target table are dependent on the source table.
+     *
+     * This is primarily used to indicate that records should be removed if the owning record in
+     * the source table is deleted.
+     *
+     * If no parameters are passed the current setting is returned.
+     *
+     * @deprecated 3.4.0 Use setDependent()/getDependent() instead.
      * @param bool|null $dependent Set the dependent mode. Use null to read the current state.
      * @return bool
      */
     public function dependent($dependent = null)
     {
+        deprecationWarning(
+            get_called_class() . '::dependent() is deprecated. ' .
+            'Use setDependent()/getDependent() instead.'
+        );
         if ($dependent !== null) {
-            $this->_dependent = $dependent;
+            $this->setDependent($dependent);
         }
-        return $this->_dependent;
+
+        return $this->getDependent();
     }
 
     /**
@@ -390,23 +679,90 @@ abstract class Association
      */
     public function canBeJoined(array $options = [])
     {
-        $strategy = isset($options['strategy']) ? $options['strategy'] : $this->strategy();
+        $strategy = isset($options['strategy']) ? $options['strategy'] : $this->getStrategy();
+
         return $strategy == $this::STRATEGY_JOIN;
+    }
+
+    /**
+     * Sets the type of join to be used when adding the association to a query.
+     *
+     * @param string $type the join type to be used (e.g. INNER)
+     * @return $this
+     */
+    public function setJoinType($type)
+    {
+        $this->_joinType = $type;
+
+        return $this;
+    }
+
+    /**
+     * Gets the type of join to be used when adding the association to a query.
+     *
+     * @return string
+     */
+    public function getJoinType()
+    {
+        return $this->_joinType;
     }
 
     /**
      * Sets the type of join to be used when adding the association to a query.
      * If no arguments are passed, the currently configured type is returned.
      *
-     * @param string $type the join type to be used (e.g. INNER)
+     * @deprecated 3.4.0 Use setJoinType()/getJoinType() instead.
+     * @param string|null $type the join type to be used (e.g. INNER)
      * @return string
      */
     public function joinType($type = null)
     {
-        if ($type === null) {
-            return $this->_joinType;
+        deprecationWarning(
+            get_called_class() . '::joinType() is deprecated. ' .
+            'Use setJoinType()/getJoinType() instead.'
+        );
+        if ($type !== null) {
+            $this->setJoinType($type);
         }
-        return $this->_joinType = $type;
+
+        return $this->getJoinType();
+    }
+
+    /**
+     * Sets the property name that should be filled with data from the target table
+     * in the source table record.
+     *
+     * @param string $name The name of the association property. Use null to read the current value.
+     * @return $this
+     */
+    public function setProperty($name)
+    {
+        $this->_propertyName = $name;
+
+        return $this;
+    }
+
+    /**
+     * Gets the property name that should be filled with data from the target table
+     * in the source table record.
+     *
+     * @return string
+     */
+    public function getProperty()
+    {
+        if (!$this->_propertyName) {
+            $this->_propertyName = $this->_propertyName();
+            if (in_array($this->_propertyName, $this->_sourceTable->getSchema()->columns())) {
+                $msg = 'Association property name "%s" clashes with field of same name of table "%s".' .
+                    ' You should explicitly specify the "propertyName" option.';
+                trigger_error(
+                    sprintf($msg, $this->_propertyName, $this->_sourceTable->getTable()),
+                    E_USER_WARNING
+                );
+            }
+        }
+
+        return $this->_propertyName;
     }
 
     /**
@@ -414,19 +770,66 @@ abstract class Association
      * in the source table record.
      * If no arguments are passed, the currently configured type is returned.
      *
+     * @deprecated 3.4.0 Use setProperty()/getProperty() instead.
      * @param string|null $name The name of the association property. Use null to read the current value.
      * @return string
      */
     public function property($name = null)
     {
+        deprecationWarning(
+            get_called_class() . '::property() is deprecated. ' .
+            'Use setProperty()/getProperty() instead.'
+        );
         if ($name !== null) {
-            $this->_propertyName = $name;
+            $this->setProperty($name);
         }
-        if ($name === null && !$this->_propertyName) {
-            list(, $name) = pluginSplit($this->_name);
-            $this->_propertyName = Inflector::underscore($name);
+
+        return $this->getProperty();
+    }
+
+    /**
+     * Returns default property name based on association name.
+     *
+     * @return string
+     */
+    protected function _propertyName()
+    {
+        list(, $name) = pluginSplit($this->_name);
+
+        return Inflector::underscore($name);
+    }
+
+    /**
+     * Sets the strategy name to be used to fetch associated records. Keep in mind
+     * that some association types might not implement but a default strategy,
+     * rendering any changes to this setting void.
+     *
+     * @param string $name The strategy type. Use null to read the current value.
+     * @return $this
+     * @throws \InvalidArgumentException When an invalid strategy is provided.
+     */
+    public function setStrategy($name)
+    {
+        if (!in_array($name, $this->_validStrategies)) {
+            throw new InvalidArgumentException(
+                sprintf('Invalid strategy "%s" was provided', $name)
+            );
         }
-        return $this->_propertyName;
+        $this->_strategy = $name;
+
+        return $this;
+    }
+
+    /**
+     * Gets the strategy name to be used to fetch associated records. Keep in mind
+     * that some association types might not implement but a default strategy,
+     * rendering any changes to this setting void.
+     *
+     * @return string
+     */
+    public function getStrategy()
+    {
+        return $this->_strategy;
     }
 
     /**
@@ -435,21 +838,45 @@ abstract class Association
      * rendering any changes to this setting void.
      * If no arguments are passed, the currently configured strategy is returned.
      *
+     * @deprecated 3.4.0 Use setStrategy()/getStrategy() instead.
      * @param string|null $name The strategy type. Use null to read the current value.
      * @return string
      * @throws \InvalidArgumentException When an invalid strategy is provided.
      */
     public function strategy($name = null)
     {
+        deprecationWarning(
+            get_called_class() . '::strategy() is deprecated. ' .
+            'Use setStrategy()/getStrategy() instead.'
+        );
         if ($name !== null) {
-            if (!in_array($name, $this->_validStrategies)) {
-                throw new InvalidArgumentException(
-                    sprintf('Invalid strategy "%s" was provided', $name)
-                );
-            }
-            $this->_strategy = $name;
+            $this->setStrategy($name);
         }
-        return $this->_strategy;
+
+        return $this->getStrategy();
+    }
+
+    /**
+     * Gets the default finder to use for fetching rows from the target table.
+     *
+     * @return string
+     */
+    public function getFinder()
+    {
+        return $this->_finder;
+    }
+
+    /**
+     * Sets the default finder to use for fetching rows from the target table.
+     *
+     * @param string $finder the finder name to use
+     * @return $this
+     */
+    public function setFinder($finder)
+    {
+        $this->_finder = $finder;
+
+        return $this;
     }
 
     /**
@@ -457,15 +884,21 @@ abstract class Association
      * If no parameters are passed, it will return the currently configured
      * finder name.
      *
+     * @deprecated 3.4.0 Use setFinder()/getFinder() instead.
      * @param string|null $finder the finder name to use
      * @return string
      */
     public function finder($finder = null)
     {
+        deprecationWarning(
+            get_called_class() . '::finder() is deprecated. ' .
+            'Use setFinder()/getFinder() instead.'
+        );
         if ($finder !== null) {
-            $this->_finder = $finder;
+            $this->setFinder($finder);
         }
-        return $this->_finder;
+
+        return $this->getFinder();
     }
 
     /**
@@ -492,16 +925,17 @@ abstract class Association
      *   will be merged with any conditions originally configured for this association
      * - fields: a list of fields in the target table to include in the result
      * - type: The type of join to be used (e.g. INNER)
-     * - matching: Indicates whether the query records should be filtered based on
-     *   the records found on this association. This will force a 'INNER JOIN'
+     *   the records found on this association
      * - aliasPath: A dot separated string representing the path of association names
      *   followed from the passed query main table to this association.
      * - propertyPath: A dot separated string representing the path of association
      *   properties to be followed from the passed query main entity to this
      *   association
      * - joinType: The SQL join type to use in the query.
+     * - negateMatch: Will append a condition to the passed query for excluding matches.
+     *   with this association.
      *
-     * @param Query $query the query to be altered to include the target table data
+     * @param \Cake\ORM\Query $query the query to be altered to include the target table data
      * @param array $options Any extra options or overrides to be taken in account
      * @return void
      * @throws \RuntimeException if the query builder passed does not return a query
@@ -509,16 +943,18 @@ abstract class Association
      */
     public function attachTo(Query $query, array $options = [])
     {
-        $target = $this->target();
-        $joinType = empty($options['joinType']) ? $this->joinType() : $options['joinType'];
+        $target = $this->getTarget();
+        $joinType = empty($options['joinType']) ? $this->getJoinType() : $options['joinType'];
+        $table = $target->getTable();
+
         $options += [
             'includeFields' => true,
-            'foreignKey' => $this->foreignKey(),
+            'foreignKey' => $this->getForeignKey(),
             'conditions' => [],
             'fields' => [],
-            'type' => empty($options['matching']) ? $joinType : 'INNER',
-            'table' => $target->table(),
-            'finder' => $this->finder()
+            'type' => $joinType,
+            'table' => $table,
+            'finder' => $this->getFinder()
         ];
 
         if (!empty($options['foreignKey'])) {
@@ -532,12 +968,13 @@ abstract class Association
         $dummy = $this
             ->find($finder, $opts)
             ->eagerLoaded(true);
+
         if (!empty($options['queryBuilder'])) {
             $dummy = $options['queryBuilder']($dummy);
             if (!($dummy instanceof Query)) {
                 throw new RuntimeException(sprintf(
                     'Query builder for association "%s" did not return a query',
-                    $this->name()
+                    $this->getName()
                 ));
             }
         }
@@ -547,11 +984,33 @@ abstract class Association
 
         $joinOptions = ['table' => 1, 'conditions' => 1, 'type' => 1];
         $options['conditions'] = $dummy->clause('where');
-        $query->join([$target->alias() => array_intersect_key($options, $joinOptions)]);
+        $query->join([$this->_name => array_intersect_key($options, $joinOptions)]);
 
         $this->_appendFields($query, $dummy, $options);
         $this->_formatAssociationResults($query, $dummy, $options);
         $this->_bindNewAssociations($query, $dummy, $options);
+        $this->_appendNotMatching($query, $options);
+    }
+
+    /**
+     * Conditionally adds a condition to the passed Query that will make it find
+     * records where there is no match with this association.
+     *
+     * @param \Cake\Datasource\QueryInterface $query The query to modify
+     * @param array $options Options array containing the `negateMatch` key.
+     * @return void
+     */
+    protected function _appendNotMatching($query, $options)
+    {
+        $target = $this->_targetTable;
+        if (!empty($options['negateMatch'])) {
+            $primaryKey = $query->aliasFields((array)$target->getPrimaryKey(), $this->_name);
+            $query->andWhere(function ($exp) use ($primaryKey) {
+                array_map([$exp, 'isNull'], $primaryKey);
+
+                return $exp;
+            });
+        }
     }
 
     /**
@@ -563,16 +1022,20 @@ abstract class Association
      *   should be found
      * @param bool $joined Whether or not the row is a result of a direct join
      *   with this association
+     * @param string|null $targetProperty The property name in the source results where the association
+     * data shuld be nested in. Will use the default one if not provided.
      * @return array
      */
-    public function transformRow($row, $nestKey, $joined)
+    public function transformRow($row, $nestKey, $joined, $targetProperty = null)
     {
-        $sourceAlias = $this->source()->alias();
+        $sourceAlias = $this->getSource()->getAlias();
         $nestKey = $nestKey ?: $this->_name;
+        $targetProperty = $targetProperty ?: $this->getProperty();
         if (isset($row[$sourceAlias])) {
-            $row[$sourceAlias][$this->property()] = $row[$nestKey];
+            $row[$sourceAlias][$targetProperty] = $row[$nestKey];
             unset($row[$nestKey]);
         }
+
         return $row;
     }
 
@@ -588,10 +1051,11 @@ abstract class Association
      */
     public function defaultRowValue($row, $joined)
     {
-        $sourceAlias = $this->source()->alias();
+        $sourceAlias = $this->getSource()->getAlias();
         if (isset($row[$sourceAlias])) {
-            $row[$sourceAlias][$this->property()] = null;
+            $row[$sourceAlias][$this->getProperty()] = null;
         }
+
         return $row;
     }
 
@@ -600,7 +1064,7 @@ abstract class Association
      * and modifies the query accordingly based of this association
      * configuration
      *
-     * @param string|array $type the type of query to perform, if an array is passed,
+     * @param string|array|null $type the type of query to perform, if an array is passed,
      *   it will be interpreted as the `$options` parameter
      * @param array $options The options to for the find
      * @see \Cake\ORM\Table::find()
@@ -608,11 +1072,32 @@ abstract class Association
      */
     public function find($type = null, array $options = [])
     {
-        $type = $type ?: $this->finder();
-        list($type, $opts) = $this->_extractFinder($type, $options);
-        return $this->target()
+        $type = $type ?: $this->getFinder();
+        list($type, $opts) = $this->_extractFinder($type);
+
+        return $this->getTarget()
             ->find($type, $options + $opts)
-            ->where($this->conditions());
+            ->where($this->getConditions());
+    }
+
+    /**
+     * Proxies the operation to the target table's exists method after
+     * appending the default conditions for this association
+     *
+     * @param array|callable|\Cake\Database\ExpressionInterface $conditions The conditions to use
+     * for checking if any record matches.
+     * @see \Cake\ORM\Table::exists()
+     * @return bool
+     */
+    public function exists($conditions)
+    {
+        if ($this->_conditions) {
+            $conditions = $this
+                ->find('all', ['conditions' => $conditions])
+                ->clause('where');
+        }
+
+        return $this->getTarget()->exists($conditions);
     }
 
     /**
@@ -622,15 +1107,16 @@ abstract class Association
      * @param mixed $conditions Conditions to be used, accepts anything Query::where()
      * can take.
      * @see \Cake\ORM\Table::updateAll()
-     * @return bool Success Returns true if one or more rows are affected.
+     * @return int Count Returns the affected rows.
      */
     public function updateAll($fields, $conditions)
     {
-        $target = $this->target();
+        $target = $this->getTarget();
         $expression = $target->query()
-            ->where($this->conditions())
+            ->where($this->getConditions())
             ->where($conditions)
             ->clause('where');
+
         return $target->updateAll($fields, $expression);
     }
 
@@ -639,17 +1125,32 @@ abstract class Association
      *
      * @param mixed $conditions Conditions to be used, accepts anything Query::where()
      * can take.
-     * @return bool Success Returns true if one or more rows are affected.
+     * @return int Returns the number of affected rows.
      * @see \Cake\ORM\Table::deleteAll()
      */
     public function deleteAll($conditions)
     {
-        $target = $this->target();
+        $target = $this->getTarget();
         $expression = $target->query()
-            ->where($this->conditions())
+            ->where($this->getConditions())
             ->where($conditions)
             ->clause('where');
+
         return $target->deleteAll($expression);
+    }
+
+    /**
+     * Returns true if the eager loading process will require a set of the owning table's
+     * binding keys in order to use them as a filter in the finder query.
+     *
+     * @param array $options The options containing the strategy to be used.
+     * @return bool true if a list of keys will be required
+     */
+    public function requiresKeys(array $options = [])
+    {
+        $strategy = isset($options['strategy']) ? $options['strategy'] : $this->getStrategy();
+
+        return $strategy === static::STRATEGY_SELECT;
     }
 
     /**
@@ -675,27 +1176,29 @@ abstract class Association
      */
     protected function _appendFields($query, $surrogate, $options)
     {
-        $fields = $surrogate->clause('select') ?: $options['fields'];
-        $target = $this->_targetTable;
-        $autoFields = $surrogate->autoFields();
-
-        if ($query->eagerLoader()->autoFields() === false) {
+        if ($query->getEagerLoader()->isAutoFieldsEnabled() === false) {
             return;
         }
 
+        $fields = $surrogate->clause('select') ?: $options['fields'];
+        $target = $this->_targetTable;
+        $autoFields = $surrogate->isAutoFieldsEnabled();
+
         if (empty($fields) && !$autoFields) {
             if ($options['includeFields'] && ($fields === null || $fields !== false)) {
-                $fields = $target->schema()->columns();
+                $fields = $target->getSchema()->columns();
             }
         }
 
         if ($autoFields === true) {
-            $fields = array_merge((array)$fields, $target->schema()->columns());
+            $fields = array_filter((array)$fields);
+            $fields = array_merge($fields, $target->getSchema()->columns());
         }
 
-        if (!empty($fields)) {
-            $query->select($query->aliasFields($fields, $target->alias()));
+        if ($fields) {
+            $query->select($query->aliasFields($fields, $this->_name));
         }
+        $query->addDefaultTypes($target);
     }
 
     /**
@@ -713,18 +1216,32 @@ abstract class Association
      */
     protected function _formatAssociationResults($query, $surrogate, $options)
     {
-        $formatters = $surrogate->formatResults();
+        $formatters = $surrogate->getResultFormatters();
 
         if (!$formatters || empty($options['propertyPath'])) {
             return;
         }
 
         $property = $options['propertyPath'];
-        $query->formatResults(function ($results) use ($formatters, $property) {
-            $extracted = $results->extract($property)->compile();
+        $propertyPath = explode('.', $property);
+        $query->formatResults(function ($results) use ($formatters, $property, $propertyPath) {
+            $extracted = [];
+            foreach ($results as $result) {
+                foreach ($propertyPath as $propertyPathItem) {
+                    if (!isset($result[$propertyPathItem])) {
+                        $result = null;
+                        break;
+                    }
+                    $result = $result[$propertyPathItem];
+                }
+                $extracted[] = $result;
+            }
+            $extracted = new Collection($extracted);
             foreach ($formatters as $callable) {
                 $extracted = new ResultSetDecorator($callable($extracted));
             }
+
+            /* @var \Cake\Collection\CollectionInterface $results */
             return $results->insert($property, $extracted);
         }, Query::PREPEND);
     }
@@ -744,25 +1261,30 @@ abstract class Association
      */
     protected function _bindNewAssociations($query, $surrogate, $options)
     {
-        $loader = $surrogate->eagerLoader();
-        $contain = $loader->contain();
-        $matching = $loader->matching();
-        $target = $this->_targetTable;
+        $loader = $surrogate->getEagerLoader();
+        $contain = $loader->getContain();
+        $matching = $loader->getMatching();
 
         if (!$contain && !$matching) {
             return;
         }
 
-        $loader->attachAssociations($query, $target, $options['includeFields']);
         $newContain = [];
         foreach ($contain as $alias => $value) {
             $newContain[$options['aliasPath'] . '.' . $alias] = $value;
         }
 
-        $query->contain($newContain);
+        $eagerLoader = $query->getEagerLoader();
+        if ($newContain) {
+            $eagerLoader->contain($newContain);
+        }
 
         foreach ($matching as $alias => $value) {
-            $query->matching($options['aliasPath'] . '.' . $alias, $value['queryBuilder']);
+            $eagerLoader->setMatching(
+                $options['aliasPath'] . '.' . $alias,
+                $value['queryBuilder'],
+                $value
+            );
         }
     }
 
@@ -778,12 +1300,21 @@ abstract class Association
     protected function _joinCondition($options)
     {
         $conditions = [];
-        $tAlias = $this->target()->alias();
-        $sAlias = $this->source()->alias();
+        $tAlias = $this->_name;
+        $sAlias = $this->getSource()->getAlias();
         $foreignKey = (array)$options['foreignKey'];
-        $bindingKey = (array)$this->bindingKey();
+        $bindingKey = (array)$this->getBindingKey();
 
         if (count($foreignKey) !== count($bindingKey)) {
+            if (empty($bindingKey)) {
+                $table = $this->getTarget()->getTable();
+                if ($this->isOwningSide($this->getSource())) {
+                    $table = $this->getSource()->getTable();
+                }
+                $msg = 'The "%s" table does not define a primary key, and cannot have join conditions generated.';
+                throw new RuntimeException(sprintf($msg, $table));
+            }
+
             $msg = 'Cannot match provided foreignKey for "%s", got "(%s)" but expected foreign key for "(%s)"';
             throw new RuntimeException(sprintf(
                 $msg,
@@ -830,6 +1361,24 @@ abstract class Association
     }
 
     /**
+     * Gets the table class name.
+     *
+     * @param string $alias The alias name you want to get.
+     * @param array $options Table options array.
+     * @return string
+     */
+    protected function _getClassName($alias, array $options = [])
+    {
+        if (empty($options['className'])) {
+            $options['className'] = Inflector::camelize($alias);
+        }
+
+        $className = App::className($options['className'], 'Model/Table', 'Table') ?: 'Cake\ORM\Table';
+
+        return ltrim($className, '\\');
+    }
+
+    /**
      * Proxies property retrieval to the target table. This is handy for getting this
      * association's associations
      *
@@ -839,7 +1388,7 @@ abstract class Association
      */
     public function __get($property)
     {
-        return $this->target()->{$property};
+        return $this->getTarget()->{$property};
     }
 
     /**
@@ -851,7 +1400,7 @@ abstract class Association
      */
     public function __isset($property)
     {
-        return isset($this->target()->{$property});
+        return isset($this->getTarget()->{$property});
     }
 
     /**
@@ -864,7 +1413,7 @@ abstract class Association
      */
     public function __call($method, $argument)
     {
-        return call_user_func_array([$this->target(), $method], $argument);
+        return $this->getTarget()->$method(...$argument);
     }
 
     /**
@@ -933,10 +1482,10 @@ abstract class Association
      * the saving operation to the target table.
      *
      * @param \Cake\Datasource\EntityInterface $entity the data to be saved
-     * @param array|\ArrayObject $options The options for saving associated data.
+     * @param array $options The options for saving associated data.
      * @return bool|\Cake\Datasource\EntityInterface false if $entity could not be saved, otherwise it returns
      * the saved entity
-     * @see Table::save()
+     * @see \Cake\ORM\Table::save()
      */
     abstract public function saveAssociated(EntityInterface $entity, array $options = []);
 }

@@ -12,6 +12,7 @@ class TestApp extends App
     protected static function _classExistsInBase($name, $namespace)
     {
         $callback = static::$existsInBaseCallback;
+
         return $callback($name, $namespace);
     }
 }

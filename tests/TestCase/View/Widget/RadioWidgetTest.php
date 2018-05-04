@@ -1,16 +1,16 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\View\Widget;
 
@@ -40,7 +40,7 @@ class RadioWidgetTest extends TestCase
             'radioWrapper' => '{{label}}',
         ];
         $this->templates = new StringTemplate($templates);
-        $this->context = $this->getMock('Cake\View\Form\ContextInterface');
+        $this->context = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();
     }
 
     /**
@@ -149,6 +149,49 @@ class RadioWidgetTest extends TestCase
             'options' => new Collection(['r' => 'Red', 'b' => 'Black'])
         ];
         $result = $radio->render($data, $this->context);
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * Test rendering the activeClass template var
+     *
+     * @return void
+     */
+    public function testRenderSimpleActiveTemplateVar()
+    {
+        $this->templates->add([
+            'nestingLabel' => '<label class="{{activeClass}}"{{attrs}}>{{text}}</label>',
+            'radioWrapper' => '{{input}}{{label}}'
+        ]);
+        $label = new NestingLabelWidget($this->templates);
+        $radio = new RadioWidget($this->templates, $label);
+        $data = [
+            'name' => 'Crayons[color]',
+            'val' => 'r',
+            'options' => ['r' => 'Red', 'b' => 'Black']
+        ];
+        $result = $radio->render($data, $this->context);
+        $expected = [
+            ['input' => [
+                'type' => 'radio',
+                'name' => 'Crayons[color]',
+                'value' => 'r',
+                'id' => 'crayons-color-r',
+                'checked' => 'checked',
+            ]],
+            ['label' => ['class' => 'active', 'for' => 'crayons-color-r']],
+            'Red',
+            '/label',
+            ['input' => [
+                'type' => 'radio',
+                'name' => 'Crayons[color]',
+                'value' => 'b',
+                'id' => 'crayons-color-b'
+            ]],
+            ['label' => ['class' => '', 'for' => 'crayons-color-b']],
+            'Black',
+            '/label',
+        ];
         $this->assertHtml($expected, $result);
     }
 
@@ -656,5 +699,85 @@ class RadioWidgetTest extends TestCase
             '</label></div>',
             $result
         );
+    }
+
+    /**
+     * Ensure that template vars work.
+     *
+     * @return void
+     */
+    public function testRenderTemplateVars()
+    {
+        $this->templates->add([
+            'radioWrapper' => '<div class="radio" data-var="{{wrapperVar}}">{{label}}</div>',
+            'radio' => '<input type="radio" data-i="{{inputVar}}" name="{{name}}" value="{{value}}"{{attrs}}>',
+            'nestingLabel' => '<label{{attrs}}>{{input}}{{text}} {{labelVar}} {{wrapperVar}}</label>',
+        ]);
+        $label = new NestingLabelWidget($this->templates);
+        $radio = new RadioWidget($this->templates, $label);
+        $data = [
+            'name' => 'Versions[ver]',
+            'options' => [
+                ['value' => '1x', 'text' => 'one x', 'templateVars' => ['labelVar' => 'l-var', 'inputVar' => 'i-var']],
+                '2' => 'two',
+            ],
+            'templateVars' => [
+                'wrapperVar' => 'wrap-var',
+            ]
+        ];
+        $result = $radio->render($data, $this->context);
+        $this->assertContains('data-var="wrap-var"><label', $result);
+        $this->assertContains('type="radio" data-i="i-var"', $result);
+        $this->assertContains('one x l-var wrap-var</label>', $result);
+        $this->assertContains('two  wrap-var</label>', $result);
+    }
+
+    /**
+     * testRenderCustomAttributes method
+     *
+     * Test render with custom attributes.
+     *
+     * @return void
+     */
+    public function testRenderCustomAttributes()
+    {
+        $label = new NestingLabelWidget($this->templates);
+        $radio = new RadioWidget($this->templates, $label);
+        $result = $radio->render([
+            'name' => 'Model[field]',
+            'label' => null,
+            'options' => ['option A', 'option B'],
+            'class' => 'my-class',
+            'data-ref' => 'custom-attr'
+        ], $this->context);
+        $expected = [
+            ['label' => ['for' => 'model-field-0']],
+            [
+                'input' => [
+                    'type' => 'radio',
+                    'name' => 'Model[field]',
+                    'value' => '0',
+                    'id' => 'model-field-0',
+                    'class' => 'my-class',
+                    'data-ref' => 'custom-attr'
+                ]
+            ],
+            'option A',
+            '/label',
+            ['label' => ['for' => 'model-field-1']],
+            [
+                'input' => [
+                    'type' => 'radio',
+                    'name' => 'Model[field]',
+                    'value' => '1',
+                    'id' => 'model-field-1',
+                    'class' => 'my-class',
+                    'data-ref' => 'custom-attr'
+                ]
+            ],
+            'option B',
+            '/label'
+        ];
+        $this->assertHtml($expected, $result);
     }
 }

@@ -1,33 +1,46 @@
 <?php
 /**
- * ValidationTest file
- *
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         1.2.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Validation;
 
+use Cake\Collection\Collection;
 use Cake\Core\Configure;
 use Cake\Filesystem\File;
+use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validation;
 use Locale;
+use stdClass;
+use Zend\Diactoros\UploadedFile;
+
+require_once __DIR__ . '/stubs.php';
 
 /**
  * Test Case for Validation Class
- *
  */
 class ValidationTest extends TestCase
 {
+
+    /**
+     * @var string
+     */
+    public $locale;
+
+    /**
+     * @var string
+     */
+    protected $_appEncoding;
 
     /**
      * setUp method
@@ -59,7 +72,7 @@ class ValidationTest extends TestCase
      *
      * @return void
      */
-    public function testNotEmpty()
+    public function testNotBlank()
     {
         $this->assertTrue(Validation::notBlank('abcdefg'));
         $this->assertTrue(Validation::notBlank('fasdf '));
@@ -68,8 +81,12 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::notBlank('José'));
         $this->assertTrue(Validation::notBlank('é'));
         $this->assertTrue(Validation::notBlank('π'));
+        $this->assertTrue(Validation::notBlank('0'));
+        $this->assertTrue(Validation::notBlank(0));
+        $this->assertTrue(Validation::notBlank(0.0));
+        $this->assertTrue(Validation::notBlank('0.0'));
         $this->assertFalse(Validation::notBlank("\t "));
-        $this->assertFalse(Validation::notBlank(""));
+        $this->assertFalse(Validation::notBlank(''));
     }
 
     /**
@@ -77,7 +94,7 @@ class ValidationTest extends TestCase
      *
      * @return void
      */
-    public function testNotEmptyISO88591AppEncoding()
+    public function testNotBlankIso88591AppEncoding()
     {
         Configure::write('App.encoding', 'ISO-8859-1');
         $this->assertTrue(Validation::notBlank('abcdefg'));
@@ -87,7 +104,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::notBlank('José'));
         $this->assertTrue(Validation::notBlank(utf8_decode('José')));
         $this->assertFalse(Validation::notBlank("\t "));
-        $this->assertFalse(Validation::notBlank(""));
+        $this->assertFalse(Validation::notBlank(''));
     }
 
     /**
@@ -124,17 +141,18 @@ class ValidationTest extends TestCase
      */
     public function testAlphaNumericPassedAsArray()
     {
-        $this->assertTrue(Validation::alphaNumeric(['check' => 'frferrf']));
-        $this->assertTrue(Validation::alphaNumeric(['check' => '12234']));
-        $this->assertTrue(Validation::alphaNumeric(['check' => '1w2e2r3t4y']));
-        $this->assertTrue(Validation::alphaNumeric(['check' => '0']));
-        $this->assertFalse(Validation::alphaNumeric(['check' => '12 234']));
-        $this->assertFalse(Validation::alphaNumeric(['check' => 'dfd 234']));
-        $this->assertFalse(Validation::alphaNumeric(['check' => "\n"]));
-        $this->assertFalse(Validation::alphaNumeric(['check' => "\t"]));
-        $this->assertFalse(Validation::alphaNumeric(['check' => "\r"]));
-        $this->assertFalse(Validation::alphaNumeric(['check' => ' ']));
-        $this->assertFalse(Validation::alphaNumeric(['check' => '']));
+        $this->assertTrue(Validation::alphaNumeric('frferrf'));
+        $this->assertTrue(Validation::alphaNumeric('12234'));
+        $this->assertTrue(Validation::alphaNumeric('1w2e2r3t4y'));
+        $this->assertTrue(Validation::alphaNumeric('0'));
+        $this->assertFalse(Validation::alphaNumeric('12 234'));
+        $this->assertFalse(Validation::alphaNumeric('dfd 234'));
+        $this->assertFalse(Validation::alphaNumeric("\n"));
+        $this->assertFalse(Validation::alphaNumeric("\t"));
+        $this->assertFalse(Validation::alphaNumeric("\r"));
+        $this->assertFalse(Validation::alphaNumeric(' '));
+        $this->assertFalse(Validation::alphaNumeric(''));
+        $this->assertFalse(Validation::alphaNumeric(['foo']));
     }
 
     /**
@@ -150,6 +168,7 @@ class ValidationTest extends TestCase
 
         $this->assertFalse(Validation::lengthBetween('abcdefg', 1, 6));
         $this->assertFalse(Validation::lengthBetween('ÆΔΩЖÇ', 1, 3));
+        $this->assertFalse(Validation::lengthBetween(1, 1, 3));
     }
 
     /**
@@ -159,7 +178,7 @@ class ValidationTest extends TestCase
      */
     public function testCc()
     {
-        //American Express
+        // American Express
         $this->assertTrue(Validation::cc('370482756063980', ['amex']));
         $this->assertTrue(Validation::cc('349106433773483', ['amex']));
         $this->assertTrue(Validation::cc('344671486204764', ['amex']));
@@ -170,7 +189,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::cc('341779292230411', ['amex']));
         $this->assertTrue(Validation::cc('341646919853372', ['amex']));
         $this->assertTrue(Validation::cc('348498616319346', ['amex']));
-        //BankCard
+        // BankCard
         $this->assertTrue(Validation::cc('5610745867413420', ['bankcard']));
         $this->assertTrue(Validation::cc('5610376649499352', ['bankcard']));
         $this->assertTrue(Validation::cc('5610091936000694', ['bankcard']));
@@ -181,7 +200,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::cc('5610139705753702', ['bankcard']));
         $this->assertTrue(Validation::cc('5602226032150551', ['bankcard']));
         $this->assertTrue(Validation::cc('5602223993735777', ['bankcard']));
-        //Diners Club 14
+        // Diners Club 14
         $this->assertTrue(Validation::cc('30155483651028', ['diners']));
         $this->assertTrue(Validation::cc('36371312803821', ['diners']));
         $this->assertTrue(Validation::cc('38801277489875', ['diners']));
@@ -212,19 +231,19 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::cc('30081877595151', ['diners']));
         $this->assertTrue(Validation::cc('38053196067461', ['diners']));
         $this->assertTrue(Validation::cc('36520379984870', ['diners']));
-        //2004 MasterCard/Diners Club Alliance International 14
+        // 2004 MasterCard/Diners Club Alliance International 14
         $this->assertTrue(Validation::cc('36747701998969', ['diners']));
         $this->assertTrue(Validation::cc('36427861123159', ['diners']));
         $this->assertTrue(Validation::cc('36150537602386', ['diners']));
         $this->assertTrue(Validation::cc('36582388820610', ['diners']));
         $this->assertTrue(Validation::cc('36729045250216', ['diners']));
-        //2004 MasterCard/Diners Club Alliance US & Canada 16
+        // 2004 MasterCard/Diners Club Alliance US & Canada 16
         $this->assertTrue(Validation::cc('5597511346169950', ['diners']));
         $this->assertTrue(Validation::cc('5526443162217562', ['diners']));
         $this->assertTrue(Validation::cc('5577265786122391', ['diners']));
         $this->assertTrue(Validation::cc('5534061404676989', ['diners']));
         $this->assertTrue(Validation::cc('5545313588374502', ['diners']));
-        //Discover
+        // Discover
         $this->assertTrue(Validation::cc('6011802876467237', ['disc']));
         $this->assertTrue(Validation::cc('6506432777720955', ['disc']));
         $this->assertTrue(Validation::cc('6011126265283942', ['disc']));
@@ -235,7 +254,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::cc('6509735979634270', ['disc']));
         $this->assertTrue(Validation::cc('6011422366775856', ['disc']));
         $this->assertTrue(Validation::cc('6500976374623323', ['disc']));
-        //enRoute
+        // enRoute
         $this->assertTrue(Validation::cc('201496944158937', ['enroute']));
         $this->assertTrue(Validation::cc('214945833739665', ['enroute']));
         $this->assertTrue(Validation::cc('214982692491187', ['enroute']));
@@ -246,18 +265,18 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::cc('201402662758866', ['enroute']));
         $this->assertTrue(Validation::cc('214981579370225', ['enroute']));
         $this->assertTrue(Validation::cc('201447595859877', ['enroute']));
-        //JCB 15 digit
-        $this->assertTrue(Validation::cc('210034762247893', ['jcb']));
+        // JCB 15 digit
+        $this->assertTrue(Validation::cc('213134762247898', ['jcb']));
         $this->assertTrue(Validation::cc('180078671678892', ['jcb']));
         $this->assertTrue(Validation::cc('180010559353736', ['jcb']));
-        $this->assertTrue(Validation::cc('210095474464258', ['jcb']));
-        $this->assertTrue(Validation::cc('210006675562188', ['jcb']));
-        $this->assertTrue(Validation::cc('210063299662662', ['jcb']));
+        $this->assertTrue(Validation::cc('213195474464253', ['jcb']));
+        $this->assertTrue(Validation::cc('213106675562183', ['jcb']));
+        $this->assertTrue(Validation::cc('213163299662667', ['jcb']));
         $this->assertTrue(Validation::cc('180032506857825', ['jcb']));
-        $this->assertTrue(Validation::cc('210057919192738', ['jcb']));
+        $this->assertTrue(Validation::cc('213157919192733', ['jcb']));
         $this->assertTrue(Validation::cc('180031358949367', ['jcb']));
         $this->assertTrue(Validation::cc('180033802147846', ['jcb']));
-        //JCB 16 digit
+        // JCB 16 digit
         $this->assertTrue(Validation::cc('3096806857839939', ['jcb']));
         $this->assertTrue(Validation::cc('3158699503187091', ['jcb']));
         $this->assertTrue(Validation::cc('3112549607186579', ['jcb']));
@@ -288,7 +307,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::cc('3528274546125962', ['jcb']));
         $this->assertTrue(Validation::cc('3528890967705733', ['jcb']));
         $this->assertTrue(Validation::cc('3337198811307545', ['jcb']));
-        //Maestro (debit card)
+        // Maestro (debit card)
         $this->assertTrue(Validation::cc('5020147409985219', ['maestro']));
         $this->assertTrue(Validation::cc('5020931809905616', ['maestro']));
         $this->assertTrue(Validation::cc('5020412965470224', ['maestro']));
@@ -299,7 +318,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::cc('5020565359718977', ['maestro']));
         $this->assertTrue(Validation::cc('6339931536544062', ['maestro']));
         $this->assertTrue(Validation::cc('6465028615704406', ['maestro']));
-        //Mastercard
+        // Mastercard
         $this->assertTrue(Validation::cc('5580424361774366', ['mc']));
         $this->assertTrue(Validation::cc('5589563059318282', ['mc']));
         $this->assertTrue(Validation::cc('5387558333690047', ['mc']));
@@ -325,7 +344,13 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::cc('5467639122779531', ['mc']));
         $this->assertTrue(Validation::cc('5297350261550024', ['mc']));
         $this->assertTrue(Validation::cc('5162739131368058', ['mc']));
-        //Solo 16
+        // Mastercard (additional 2016 BIN)
+        $this->assertTrue(Validation::cc('2221000000000009', ['mc']));
+        $this->assertTrue(Validation::cc('2720999999999996', ['mc']));
+        $this->assertTrue(Validation::cc('2223000010005798', ['mc']));
+        $this->assertTrue(Validation::cc('2623430710235708', ['mc']));
+        $this->assertTrue(Validation::cc('2420452519835723', ['mc']));
+        // Solo 16
         $this->assertTrue(Validation::cc('6767432107064987', ['solo']));
         $this->assertTrue(Validation::cc('6334667758225411', ['solo']));
         $this->assertTrue(Validation::cc('6767037421954068', ['solo']));
@@ -336,7 +361,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::cc('6334843427400616', ['solo']));
         $this->assertTrue(Validation::cc('6767493947881311', ['solo']));
         $this->assertTrue(Validation::cc('6767194235798817', ['solo']));
-        //Solo 18
+        // Solo 18
         $this->assertTrue(Validation::cc('676714834398858593', ['solo']));
         $this->assertTrue(Validation::cc('676751666435130857', ['solo']));
         $this->assertTrue(Validation::cc('676781908573924236', ['solo']));
@@ -347,7 +372,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::cc('633487484858610484', ['solo']));
         $this->assertTrue(Validation::cc('633453764680740694', ['solo']));
         $this->assertTrue(Validation::cc('676768613295414451', ['solo']));
-        //Solo 19
+        // Solo 19
         $this->assertTrue(Validation::cc('6767838565218340113', ['solo']));
         $this->assertTrue(Validation::cc('6767760119829705181', ['solo']));
         $this->assertTrue(Validation::cc('6767265917091593668', ['solo']));
@@ -358,7 +383,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::cc('6334933119080706440', ['solo']));
         $this->assertTrue(Validation::cc('6334647959628261714', ['solo']));
         $this->assertTrue(Validation::cc('6334527312384101382', ['solo']));
-        //Switch 16
+        // Switch 16
         $this->assertTrue(Validation::cc('5641829171515733', ['switch']));
         $this->assertTrue(Validation::cc('5641824852820809', ['switch']));
         $this->assertTrue(Validation::cc('6759129648956909', ['switch']));
@@ -399,7 +424,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::cc('5641821330950570', ['switch']));
         $this->assertTrue(Validation::cc('6759841558826118', ['switch']));
         $this->assertTrue(Validation::cc('4936164540922452', ['switch']));
-        //Switch 18
+        // Switch 18
         $this->assertTrue(Validation::cc('493622764224625174', ['switch']));
         $this->assertTrue(Validation::cc('564182823396913535', ['switch']));
         $this->assertTrue(Validation::cc('675917308304801234', ['switch']));
@@ -440,7 +465,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::cc('493631941273687169', ['switch']));
         $this->assertTrue(Validation::cc('564182971729706785', ['switch']));
         $this->assertTrue(Validation::cc('633303461188963496', ['switch']));
-        //Switch 19
+        // Switch 19
         $this->assertTrue(Validation::cc('6759603460617628716', ['switch']));
         $this->assertTrue(Validation::cc('4936705825268647681', ['switch']));
         $this->assertTrue(Validation::cc('5641829846600479183', ['switch']));
@@ -481,7 +506,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::cc('4936196077254804290', ['switch']));
         $this->assertTrue(Validation::cc('6759558831206830183', ['switch']));
         $this->assertTrue(Validation::cc('5641827998830403137', ['switch']));
-        //VISA 13 digit
+        // VISA 13 digit
         $this->assertTrue(Validation::cc('4024007174754', ['visa']));
         $this->assertTrue(Validation::cc('4104816460717', ['visa']));
         $this->assertTrue(Validation::cc('4716229700437', ['visa']));
@@ -527,7 +552,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::cc('4485906062491', ['visa']));
         $this->assertTrue(Validation::cc('4539365115149', ['visa']));
         $this->assertTrue(Validation::cc('4485146516702', ['visa']));
-        //VISA 16 digit
+        // VISA 16 digit
         $this->assertTrue(Validation::cc('4916375389940009', ['visa']));
         $this->assertTrue(Validation::cc('4929167481032610', ['visa']));
         $this->assertTrue(Validation::cc('4485029969061519', ['visa']));
@@ -573,7 +598,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::cc('4916845885268360', ['visa']));
         $this->assertTrue(Validation::cc('4394514669078434', ['visa']));
         $this->assertTrue(Validation::cc('4485611378115042', ['visa']));
-        //Visa Electron
+        // Visa Electron
         $this->assertTrue(Validation::cc('4175003346287100', ['electron']));
         $this->assertTrue(Validation::cc('4913042516577228', ['electron']));
         $this->assertTrue(Validation::cc('4917592325659381', ['electron']));
@@ -589,12 +614,14 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::cc('4175009797419290', ['electron']));
         $this->assertTrue(Validation::cc('4175005028142917', ['electron']));
         $this->assertTrue(Validation::cc('4913940802385364', ['electron']));
-        //Voyager
+        // Voyager
         $this->assertTrue(Validation::cc('869940697287073', ['voyager']));
         $this->assertTrue(Validation::cc('869934523596112', ['voyager']));
         $this->assertTrue(Validation::cc('869958670174621', ['voyager']));
         $this->assertTrue(Validation::cc('869921250068209', ['voyager']));
         $this->assertTrue(Validation::cc('869972521242198', ['voyager']));
+        // Credit card number should not pass as array
+        $this->assertFalse(Validation::cc(['869972521242198'], ['voyager']));
     }
 
     /**
@@ -604,52 +631,51 @@ class ValidationTest extends TestCase
      */
     public function testLuhn()
     {
-        //American Express
-        $this->assertTrue(Validation::luhn('370482756063980', true));
-        //BankCard
-        $this->assertTrue(Validation::luhn('5610745867413420', true));
-        //Diners Club 14
-        $this->assertTrue(Validation::luhn('30155483651028', true));
-        //2004 MasterCard/Diners Club Alliance International 14
-        $this->assertTrue(Validation::luhn('36747701998969', true));
-        //2004 MasterCard/Diners Club Alliance US & Canada 16
-        $this->assertTrue(Validation::luhn('5597511346169950', true));
-        //Discover
-        $this->assertTrue(Validation::luhn('6011802876467237', true));
-        //enRoute
-        $this->assertTrue(Validation::luhn('201496944158937', true));
-        //JCB 15 digit
-        $this->assertTrue(Validation::luhn('210034762247893', true));
-        //JCB 16 digit
-        $this->assertTrue(Validation::luhn('3096806857839939', true));
-        //Maestro (debit card)
-        $this->assertTrue(Validation::luhn('5020147409985219', true));
-        //Mastercard
-        $this->assertTrue(Validation::luhn('5580424361774366', true));
-        //Solo 16
-        $this->assertTrue(Validation::luhn('6767432107064987', true));
-        //Solo 18
-        $this->assertTrue(Validation::luhn('676714834398858593', true));
-        //Solo 19
-        $this->assertTrue(Validation::luhn('6767838565218340113', true));
-        //Switch 16
-        $this->assertTrue(Validation::luhn('5641829171515733', true));
-        //Switch 18
-        $this->assertTrue(Validation::luhn('493622764224625174', true));
-        //Switch 19
-        $this->assertTrue(Validation::luhn('6759603460617628716', true));
-        //VISA 13 digit
-        $this->assertTrue(Validation::luhn('4024007174754', true));
-        //VISA 16 digit
-        $this->assertTrue(Validation::luhn('4916375389940009', true));
-        //Visa Electron
-        $this->assertTrue(Validation::luhn('4175003346287100', true));
-        //Voyager
-        $this->assertTrue(Validation::luhn('869940697287073', true));
+        // American Express
+        $this->assertTrue(Validation::luhn('370482756063980'));
+        // BankCard
+        $this->assertTrue(Validation::luhn('5610745867413420'));
+        // Diners Club 14
+        $this->assertTrue(Validation::luhn('30155483651028'));
+        // 2004 MasterCard/Diners Club Alliance International 14
+        $this->assertTrue(Validation::luhn('36747701998969'));
+        // 2004 MasterCard/Diners Club Alliance US & Canada 16
+        $this->assertTrue(Validation::luhn('5597511346169950'));
+        // Discover
+        $this->assertTrue(Validation::luhn('6011802876467237'));
+        // enRoute
+        $this->assertTrue(Validation::luhn('201496944158937'));
+        // JCB 15 digit
+        $this->assertTrue(Validation::luhn('213134762247898'));
+        // JCB 16 digit
+        $this->assertTrue(Validation::luhn('3096806857839939'));
+        // Maestro (debit card)
+        $this->assertTrue(Validation::luhn('5020147409985219'));
+        // Mastercard
+        $this->assertTrue(Validation::luhn('5580424361774366'));
+        // Solo 16
+        $this->assertTrue(Validation::luhn('6767432107064987'));
+        // Solo 18
+        $this->assertTrue(Validation::luhn('676714834398858593'));
+        // Solo 19
+        $this->assertTrue(Validation::luhn('6767838565218340113'));
+        // Switch 16
+        $this->assertTrue(Validation::luhn('5641829171515733'));
+        // Switch 18
+        $this->assertTrue(Validation::luhn('493622764224625174'));
+        // Switch 19
+        $this->assertTrue(Validation::luhn('6759603460617628716'));
+        // VISA 13 digit
+        $this->assertTrue(Validation::luhn('4024007174754'));
+        // VISA 16 digit
+        $this->assertTrue(Validation::luhn('4916375389940009'));
+        // Visa Electron
+        $this->assertTrue(Validation::luhn('4175003346287100'));
+        // Voyager
+        $this->assertTrue(Validation::luhn('869940697287073'));
 
-        $this->assertFalse(Validation::luhn('0000000000000000', true));
-
-        $this->assertFalse(Validation::luhn('869940697287173', true));
+        $this->assertFalse(Validation::luhn('0000000000000000'));
+        $this->assertFalse(Validation::luhn('869940697287173'));
     }
 
     /**
@@ -659,9 +685,8 @@ class ValidationTest extends TestCase
      */
     public function testCustomRegexForCc()
     {
-        $this->assertTrue(Validation::cc('12332105933743585', null, null, '/123321\\d{11}/'));
-        $this->assertFalse(Validation::cc('1233210593374358', null, null, '/123321\\d{11}/'));
-        $this->assertFalse(Validation::cc('12312305933743585', null, null, '/123321\\d{11}/'));
+        $this->assertTrue(Validation::cc('370482756063980', null, false, '/123321\\d{11}/'));
+        $this->assertFalse(Validation::cc('1233210593374358', null, false, '/123321\\d{11}/'));
     }
 
     /**
@@ -686,23 +711,23 @@ class ValidationTest extends TestCase
     {
         // too short
         $this->assertFalse(Validation::cc('123456789012'));
-        //American Express
+        // American Express
         $this->assertTrue(Validation::cc('370482756063980'));
-        //Diners Club 14
+        // Diners Club 14
         $this->assertTrue(Validation::cc('30155483651028'));
-        //2004 MasterCard/Diners Club Alliance International 14
+        // 2004 MasterCard/Diners Club Alliance International 14
         $this->assertTrue(Validation::cc('36747701998969'));
-        //2004 MasterCard/Diners Club Alliance US & Canada 16
+        // 2004 MasterCard/Diners Club Alliance US & Canada 16
         $this->assertTrue(Validation::cc('5597511346169950'));
-        //Discover
+        // Discover
         $this->assertTrue(Validation::cc('6011802876467237'));
-        //Mastercard
+        // Mastercard
         $this->assertTrue(Validation::cc('5580424361774366'));
-        //VISA 13 digit
+        // VISA 13 digit
         $this->assertTrue(Validation::cc('4024007174754'));
-        //VISA 16 digit
+        // VISA 16 digit
         $this->assertTrue(Validation::cc('4916375389940009'));
-        //Visa Electron
+        // Visa Electron
         $this->assertTrue(Validation::cc('4175003346287100'));
     }
 
@@ -713,47 +738,47 @@ class ValidationTest extends TestCase
      */
     public function testAllCc()
     {
-        //American Express
+        // American Express
         $this->assertTrue(Validation::cc('370482756063980', 'all'));
-        //BankCard
+        // BankCard
         $this->assertTrue(Validation::cc('5610745867413420', 'all'));
-        //Diners Club 14
+        // Diners Club 14
         $this->assertTrue(Validation::cc('30155483651028', 'all'));
-        //2004 MasterCard/Diners Club Alliance International 14
+        // 2004 MasterCard/Diners Club Alliance International 14
         $this->assertTrue(Validation::cc('36747701998969', 'all'));
-        //2004 MasterCard/Diners Club Alliance US & Canada 16
+        // 2004 MasterCard/Diners Club Alliance US & Canada 16
         $this->assertTrue(Validation::cc('5597511346169950', 'all'));
-        //Discover
+        // Discover
         $this->assertTrue(Validation::cc('6011802876467237', 'all'));
-        //enRoute
+        // enRoute
         $this->assertTrue(Validation::cc('201496944158937', 'all'));
-        //JCB 15 digit
-        $this->assertTrue(Validation::cc('210034762247893', 'all'));
-        //JCB 16 digit
+        // JCB 15 digit
+        $this->assertTrue(Validation::cc('213134762247898', 'all'));
+        // JCB 16 digit
         $this->assertTrue(Validation::cc('3096806857839939', 'all'));
-        //Maestro (debit card)
+        // Maestro (debit card)
         $this->assertTrue(Validation::cc('5020147409985219', 'all'));
-        //Mastercard
+        // Mastercard
         $this->assertTrue(Validation::cc('5580424361774366', 'all'));
-        //Solo 16
+        // Solo 16
         $this->assertTrue(Validation::cc('6767432107064987', 'all'));
-        //Solo 18
+        // Solo 18
         $this->assertTrue(Validation::cc('676714834398858593', 'all'));
-        //Solo 19
+        // Solo 19
         $this->assertTrue(Validation::cc('6767838565218340113', 'all'));
-        //Switch 16
+        // Switch 16
         $this->assertTrue(Validation::cc('5641829171515733', 'all'));
-        //Switch 18
+        // Switch 18
         $this->assertTrue(Validation::cc('493622764224625174', 'all'));
-        //Switch 19
+        // Switch 19
         $this->assertTrue(Validation::cc('6759603460617628716', 'all'));
-        //VISA 13 digit
+        // VISA 13 digit
         $this->assertTrue(Validation::cc('4024007174754', 'all'));
-        //VISA 16 digit
+        // VISA 16 digit
         $this->assertTrue(Validation::cc('4916375389940009', 'all'));
-        //Visa Electron
+        // Visa Electron
         $this->assertTrue(Validation::cc('4175003346287100', 'all'));
-        //Voyager
+        // Voyager
         $this->assertTrue(Validation::cc('869940697287073', 'all'));
     }
 
@@ -764,47 +789,47 @@ class ValidationTest extends TestCase
      */
     public function testAllCcDeep()
     {
-        //American Express
+        // American Express
         $this->assertTrue(Validation::cc('370482756063980', 'all', true));
-        //BankCard
+        // BankCard
         $this->assertTrue(Validation::cc('5610745867413420', 'all', true));
-        //Diners Club 14
+        // Diners Club 14
         $this->assertTrue(Validation::cc('30155483651028', 'all', true));
-        //2004 MasterCard/Diners Club Alliance International 14
+        // 2004 MasterCard/Diners Club Alliance International 14
         $this->assertTrue(Validation::cc('36747701998969', 'all', true));
-        //2004 MasterCard/Diners Club Alliance US & Canada 16
+        // 2004 MasterCard/Diners Club Alliance US & Canada 16
         $this->assertTrue(Validation::cc('5597511346169950', 'all', true));
-        //Discover
+        // Discover
         $this->assertTrue(Validation::cc('6011802876467237', 'all', true));
-        //enRoute
+        // enRoute
         $this->assertTrue(Validation::cc('201496944158937', 'all', true));
-        //JCB 15 digit
-        $this->assertTrue(Validation::cc('210034762247893', 'all', true));
-        //JCB 16 digit
+        // JCB 15 digit
+        $this->assertTrue(Validation::cc('213134762247898', 'all', true));
+        // JCB 16 digit
         $this->assertTrue(Validation::cc('3096806857839939', 'all', true));
-        //Maestro (debit card)
+        // Maestro (debit card)
         $this->assertTrue(Validation::cc('5020147409985219', 'all', true));
-        //Mastercard
+        // Mastercard
         $this->assertTrue(Validation::cc('5580424361774366', 'all', true));
-        //Solo 16
+        // Solo 16
         $this->assertTrue(Validation::cc('6767432107064987', 'all', true));
-        //Solo 18
+        // Solo 18
         $this->assertTrue(Validation::cc('676714834398858593', 'all', true));
-        //Solo 19
+        // Solo 19
         $this->assertTrue(Validation::cc('6767838565218340113', 'all', true));
-        //Switch 16
+        // Switch 16
         $this->assertTrue(Validation::cc('5641829171515733', 'all', true));
-        //Switch 18
+        // Switch 18
         $this->assertTrue(Validation::cc('493622764224625174', 'all', true));
-        //Switch 19
+        // Switch 19
         $this->assertTrue(Validation::cc('6759603460617628716', 'all', true));
-        //VISA 13 digit
+        // VISA 13 digit
         $this->assertTrue(Validation::cc('4024007174754', 'all', true));
-        //VISA 16 digit
+        // VISA 16 digit
         $this->assertTrue(Validation::cc('4916375389940009', 'all', true));
-        //Visa Electron
+        // Visa Electron
         $this->assertTrue(Validation::cc('4175003346287100', 'all', true));
-        //Voyager
+        // Voyager
         $this->assertTrue(Validation::cc('869940697287073', 'all', true));
     }
 
@@ -816,71 +841,60 @@ class ValidationTest extends TestCase
     public function testComparison()
     {
         $this->assertFalse(Validation::comparison(7, null, 6));
-        $this->assertTrue(Validation::comparison(7, 'is greater', 6));
-        $this->assertTrue(Validation::comparison(7, '>', 6));
-        $this->assertTrue(Validation::comparison(6, 'is less', 7));
-        $this->assertTrue(Validation::comparison(6, '<', 7));
-        $this->assertTrue(Validation::comparison(7, 'greater or equal', 7));
-        $this->assertTrue(Validation::comparison(7, '>=', 7));
-        $this->assertTrue(Validation::comparison(7, 'greater or equal', 6));
-        $this->assertTrue(Validation::comparison(7, '>=', 6));
-        $this->assertTrue(Validation::comparison(6, 'less or equal', 7));
-        $this->assertTrue(Validation::comparison(6, '<=', 7));
-        $this->assertTrue(Validation::comparison(7, 'equal to', 7));
-        $this->assertTrue(Validation::comparison(7, '==', 7));
-        $this->assertTrue(Validation::comparison(7, 'not equal', 6));
-        $this->assertTrue(Validation::comparison(7, '!=', 6));
-        $this->assertFalse(Validation::comparison(6, 'is greater', 7));
-        $this->assertFalse(Validation::comparison(6, '>', 7));
-        $this->assertFalse(Validation::comparison(7, 'is less', 6));
-        $this->assertFalse(Validation::comparison(7, '<', 6));
-        $this->assertFalse(Validation::comparison(6, 'greater or equal', 7));
-        $this->assertFalse(Validation::comparison(6, '>=', 7));
-        $this->assertFalse(Validation::comparison(6, 'greater or equal', 7));
-        $this->assertFalse(Validation::comparison(6, '>=', 7));
-        $this->assertFalse(Validation::comparison(7, 'less or equal', 6));
-        $this->assertFalse(Validation::comparison(7, '<=', 6));
-        $this->assertFalse(Validation::comparison(7, 'equal to', 6));
-        $this->assertFalse(Validation::comparison(7, '==', 6));
-        $this->assertFalse(Validation::comparison(7, 'not equal', 7));
-        $this->assertFalse(Validation::comparison(7, '!=', 7));
+        $this->assertTrue(Validation::comparison(7, Validation::COMPARE_GREATER, 6));
+        $this->assertTrue(Validation::comparison(6, Validation::COMPARE_LESS, 7));
+        $this->assertTrue(Validation::comparison(7, Validation::COMPARE_GREATER_OR_EQUAL, 7));
+        $this->assertTrue(Validation::comparison(7, Validation::COMPARE_GREATER_OR_EQUAL, 6));
+        $this->assertTrue(Validation::comparison(6, Validation::COMPARE_LESS_OR_EQUAL, 7));
+        $this->assertTrue(Validation::comparison(7, Validation::COMPARE_EQUAL, 7));
+        $this->assertTrue(Validation::comparison(7, Validation::COMPARE_NOT_EQUAL, 6));
+        $this->assertTrue(Validation::comparison(7, Validation::COMPARE_SAME, 7));
+        $this->assertTrue(Validation::comparison(7, Validation::COMPARE_NOT_SAME, '7'));
+        $this->assertFalse(Validation::comparison(6, Validation::COMPARE_GREATER, 7));
+        $this->assertFalse(Validation::comparison(7, Validation::COMPARE_LESS, 6));
+        $this->assertFalse(Validation::comparison(6, Validation::COMPARE_GREATER_OR_EQUAL, 7));
+        $this->assertFalse(Validation::comparison(6, Validation::COMPARE_GREATER_OR_EQUAL, 7));
+        $this->assertFalse(Validation::comparison(7, Validation::COMPARE_LESS_OR_EQUAL, 6));
+        $this->assertFalse(Validation::comparison(7, Validation::COMPARE_EQUAL, 6));
+        $this->assertFalse(Validation::comparison(7, Validation::COMPARE_NOT_EQUAL, 7));
+        $this->assertFalse(Validation::comparison(7, Validation::COMPARE_SAME, '7'));
+        $this->assertFalse(Validation::comparison(7, Validation::COMPARE_NOT_SAME, 7));
+        $this->assertTrue(Validation::comparison('6.5', Validation::COMPARE_NOT_EQUAL, 6));
+        $this->assertTrue(Validation::comparison('6.5', Validation::COMPARE_LESS, 7));
+
+        $this->deprecated(function () {
+            $this->assertTrue(Validation::comparison(7, 'is greater', 6));
+            $this->assertTrue(Validation::comparison(6, 'is less', 7));
+            $this->assertTrue(Validation::comparison(7, 'greater or equal', 7));
+            $this->assertTrue(Validation::comparison(7, 'greater or equal', 6));
+            $this->assertTrue(Validation::comparison(6, 'less or equal', 7));
+            $this->assertTrue(Validation::comparison(7, 'equal to', 7));
+            $this->assertTrue(Validation::comparison(7, 'not equal', 6));
+            $this->assertFalse(Validation::comparison(6, 'is greater', 7));
+            $this->assertFalse(Validation::comparison(7, 'is less', 6));
+            $this->assertFalse(Validation::comparison(6, 'greater or equal', 7));
+            $this->assertFalse(Validation::comparison(6, 'greater or equal', 7));
+            $this->assertFalse(Validation::comparison(7, 'less or equal', 6));
+            $this->assertFalse(Validation::comparison(7, 'equal to', 6));
+            $this->assertFalse(Validation::comparison(7, 'not equal', 7));
+        });
     }
 
     /**
-     * testComparisonAsArray method
+     * Test comparison casting values before comparisons.
      *
      * @return void
      */
-    public function testComparisonAsArray()
+    public function testComparisonTypeChecks()
     {
-        $this->assertTrue(Validation::comparison(['check1' => 7, 'operator' => 'is greater', 'check2' => 6]));
-        $this->assertTrue(Validation::comparison(['check1' => 7, 'operator' => '>', 'check2' => 6]));
-        $this->assertTrue(Validation::comparison(['check1' => 6, 'operator' => 'is less', 'check2' => 7]));
-        $this->assertTrue(Validation::comparison(['check1' => 6, 'operator' => '<', 'check2' => 7]));
-        $this->assertTrue(Validation::comparison(['check1' => 7, 'operator' => 'greater or equal', 'check2' => 7]));
-        $this->assertTrue(Validation::comparison(['check1' => 7, 'operator' => '>=', 'check2' => 7]));
-        $this->assertTrue(Validation::comparison(['check1' => 7, 'operator' => 'greater or equal', 'check2' => 6]));
-        $this->assertTrue(Validation::comparison(['check1' => 7, 'operator' => '>=', 'check2' => 6]));
-        $this->assertTrue(Validation::comparison(['check1' => 6, 'operator' => 'less or equal', 'check2' => 7]));
-        $this->assertTrue(Validation::comparison(['check1' => 6, 'operator' => '<=', 'check2' => 7]));
-        $this->assertTrue(Validation::comparison(['check1' => 7, 'operator' => 'equal to', 'check2' => 7]));
-        $this->assertTrue(Validation::comparison(['check1' => 7, 'operator' => '==', 'check2' => 7]));
-        $this->assertTrue(Validation::comparison(['check1' => 7, 'operator' => 'not equal', 'check2' => 6]));
-        $this->assertTrue(Validation::comparison(['check1' => 7, 'operator' => '!=', 'check2' => 6]));
-        $this->assertFalse(Validation::comparison(['check1' => 6, 'operator' => 'is greater', 'check2' => 7]));
-        $this->assertFalse(Validation::comparison(['check1' => 6, 'operator' => '>', 'check2' => 7]));
-        $this->assertFalse(Validation::comparison(['check1' => 7, 'operator' => 'is less', 'check2' => 6]));
-        $this->assertFalse(Validation::comparison(['check1' => 7, 'operator' => '<', 'check2' => 6]));
-        $this->assertFalse(Validation::comparison(['check1' => 6, 'operator' => 'greater or equal', 'check2' => 7]));
-        $this->assertFalse(Validation::comparison(['check1' => 6, 'operator' => '>=', 'check2' => 7]));
-        $this->assertFalse(Validation::comparison(['check1' => 6, 'operator' => 'greater or equal', 'check2' => 7]));
-        $this->assertFalse(Validation::comparison(['check1' => 6, 'operator' => '>=', 'check2' => 7]));
-        $this->assertFalse(Validation::comparison(['check1' => 7, 'operator' => 'less or equal', 'check2' => 6]));
-        $this->assertFalse(Validation::comparison(['check1' => 7, 'operator' => '<=', 'check2' => 6]));
-        $this->assertFalse(Validation::comparison(['check1' => 7, 'operator' => 'equal to', 'check2' => 6]));
-        $this->assertFalse(Validation::comparison(['check1' => 7, 'operator' => '==', 'check2' => 6]));
-        $this->assertFalse(Validation::comparison(['check1' => 7, 'operator' => 'not equal', 'check2' => 7]));
-        $this->assertFalse(Validation::comparison(['check1' => 7, 'operator' => '!=', 'check2' => 7]));
+        $this->assertFalse(Validation::comparison('\x028', Validation::COMPARE_GREATER_OR_EQUAL, 1), 'hexish encoding fails');
+        $this->assertFalse(Validation::comparison('0b010', Validation::COMPARE_GREATER_OR_EQUAL, 1), 'binary string data fails');
+        $this->assertFalse(Validation::comparison('0x01', Validation::COMPARE_GREATER_OR_EQUAL, 1), 'hex string data fails');
+        $this->assertFalse(Validation::comparison('0x1', Validation::COMPARE_GREATER_OR_EQUAL, 1), 'hex string data fails');
+
+        $this->assertFalse(Validation::comparison('\x028', Validation::COMPARE_GREATER_OR_EQUAL, 1.5), 'hexish encoding fails');
+        $this->assertFalse(Validation::comparison('0b010', Validation::COMPARE_GREATER_OR_EQUAL, 1.5), 'binary string data fails');
+        $this->assertFalse(Validation::comparison('0x02', Validation::COMPARE_GREATER_OR_EQUAL, 1.5), 'hex string data fails');
     }
 
     /**
@@ -903,9 +917,9 @@ class ValidationTest extends TestCase
      */
     public function testCustomAsArray()
     {
-        $this->assertTrue(Validation::custom(['check' => '12345', 'regex' => '/(?<!\\S)\\d++(?!\\S)/']));
-        $this->assertFalse(Validation::custom(['check' => 'Text', 'regex' => '/(?<!\\S)\\d++(?!\\S)/']));
-        $this->assertFalse(Validation::custom(['check' => '123.45', 'regex' => '/(?<!\\S)\\d++(?!\\S)/']));
+        $this->assertTrue(Validation::custom('12345', '/(?<!\\S)\\d++(?!\\S)/'));
+        $this->assertFalse(Validation::custom('Text', '/(?<!\\S)\\d++(?!\\S)/'));
+        $this->assertFalse(Validation::custom('123.45', '/(?<!\\S)\\d++(?!\\S)/'));
     }
 
     /**
@@ -919,6 +933,18 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::date($dateTime));
         $this->assertTrue(Validation::time($dateTime));
         $this->assertTrue(Validation::dateTime($dateTime));
+        $this->assertTrue(Validation::localizedTime($dateTime));
+
+        $dateTime = new \DateTimeImmutable();
+        $this->assertTrue(Validation::date($dateTime));
+        $this->assertTrue(Validation::time($dateTime));
+        $this->assertTrue(Validation::dateTime($dateTime));
+        $this->assertTrue(Validation::localizedTime($dateTime));
+
+        $this->assertFalse(Validation::time(new stdClass()));
+        $this->assertFalse(Validation::date(new stdClass()));
+        $this->assertFalse(Validation::dateTime(new stdClass()));
+        $this->assertFalse(Validation::localizedTime(new stdClass()));
     }
 
     /**
@@ -1450,6 +1476,17 @@ class ValidationTest extends TestCase
      */
     public function testDateTimeArray()
     {
+        $date = [
+            'year' => 2014,
+            'month' => '02',
+            'day' => '14',
+            'hour' => '12',
+            'minute' => '14',
+            'second' => '15',
+            'meridian' => 'pm'
+        ];
+        $this->assertTrue(Validation::datetime($date));
+
         $date = ['year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 13, 'minute' => 14, 'second' => 15];
         $this->assertTrue(Validation::datetime($date));
 
@@ -1547,9 +1584,49 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::dateTime('12/04/2017 1:38 pm', ['dmy']));
         $this->assertTrue(Validation::dateTime('12/04/2017 1:38pm', ['dmy']));
         $this->assertTrue(Validation::dateTime('12/04/2017 1:38AM', ['dmy']));
+        $this->assertTrue(Validation::dateTime('12/04/2017, 1:38AM', ['dmy']));
+        $this->assertTrue(Validation::dateTime('28/10/2015, 3:21 PM', ['dmy']));
         $this->assertFalse(Validation::dateTime('12/04/2017 58:38AM', ['dmy']));
     }
 
+    /**
+     * Test localizedTime
+     *
+     * @return void
+     */
+    public function testLocalizedTime()
+    {
+        $locale = I18N::getLocale();
+
+        $this->assertFalse(Validation::localizedTime('', 'date'));
+        $this->assertFalse(Validation::localizedTime('invalid', 'date'));
+
+        // English (US)
+        I18N::setLocale('en_US');
+        $this->assertTrue(Validation::localizedTime('12/31/2006', 'date'));
+        $this->assertTrue(Validation::localizedTime('6.40pm', 'time'));
+        $this->assertTrue(Validation::localizedTime('12/31/2006 6.40pm', 'datetime'));
+        $this->assertTrue(Validation::localizedTime('December 31, 2006', 'date'));
+
+        $this->assertFalse(Validation::localizedTime('31. Dezember 2006', 'date')); // non-US format
+        $this->assertFalse(Validation::localizedTime('18:40', 'time')); // non-US format
+
+        // German
+        I18N::setLocale('de_DE');
+        $this->assertTrue(Validation::localizedTime('31.12.2006', 'date'));
+        $this->assertTrue(Validation::localizedTime('31. Dezember 2006', 'date'));
+        $this->assertTrue(Validation::localizedTime('18:40', 'time'));
+
+        $this->assertFalse(Validation::localizedTime('December 31, 2006', 'date')); // non-German format
+
+        // Russian
+        I18N::setLocale('ru_RU');
+        $this->assertTrue(Validation::localizedTime('31 декабря 2006', 'date'));
+
+        $this->assertFalse(Validation::localizedTime('December 31, 2006', 'date')); // non-Russian format
+
+        I18N::setLocale($locale);
+    }
 
     /**
      * testBoolean method
@@ -1569,6 +1646,87 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::boolean('-1'));
         $this->assertFalse(Validation::boolean('2'));
         $this->assertFalse(Validation::boolean('Boo!'));
+    }
+
+    /**
+     * testBooleanWithOptions method
+     *
+     * @return void
+     */
+    public function testBooleanWithOptions()
+    {
+        $this->assertTrue(Validation::boolean('0', ['0', '1']));
+        $this->assertTrue(Validation::boolean('1', ['0', '1']));
+        $this->assertFalse(Validation::boolean(0, ['0', '1']));
+        $this->assertFalse(Validation::boolean(1, ['0', '1']));
+        $this->assertFalse(Validation::boolean(false, ['0', '1']));
+        $this->assertFalse(Validation::boolean(true, ['0', '1']));
+        $this->assertFalse(Validation::boolean('false', ['0', '1']));
+        $this->assertFalse(Validation::boolean('true', ['0', '1']));
+        $this->assertTrue(Validation::boolean(0, [0, 1]));
+        $this->assertTrue(Validation::boolean(1, [0, 1]));
+    }
+
+    /**
+     * testTruthy method
+     *
+     * @return void
+     */
+    public function testTruthy()
+    {
+        $this->assertTrue(Validation::truthy(1));
+        $this->assertTrue(Validation::truthy(true));
+        $this->assertTrue(Validation::truthy('1'));
+
+        $this->assertFalse(Validation::truthy('true'));
+        $this->assertFalse(Validation::truthy('on'));
+        $this->assertFalse(Validation::truthy('yes'));
+
+        $this->assertFalse(Validation::truthy(0));
+        $this->assertFalse(Validation::truthy(false));
+        $this->assertFalse(Validation::truthy('0'));
+        $this->assertFalse(Validation::truthy('false'));
+
+        $this->assertTrue(Validation::truthy('on', ['on', 'yes', 'true']));
+        $this->assertTrue(Validation::truthy('yes', ['on', 'yes', 'true']));
+        $this->assertTrue(Validation::truthy('true', ['on', 'yes', 'true']));
+
+        $this->assertFalse(Validation::truthy(1, ['on', 'yes', 'true']));
+        $this->assertFalse(Validation::truthy(true, ['on', 'yes', 'true']));
+        $this->assertFalse(Validation::truthy('1', ['on', 'yes', 'true']));
+
+        $this->assertTrue(Validation::truthy('true', ['on', 'yes', 'true']));
+    }
+
+    /**
+     * testTruthy method
+     *
+     * @return void
+     */
+    public function testFalsey()
+    {
+        $this->assertTrue(Validation::falsey(0));
+        $this->assertTrue(Validation::falsey(false));
+        $this->assertTrue(Validation::falsey('0'));
+
+        $this->assertFalse(Validation::falsey('false'));
+        $this->assertFalse(Validation::falsey('off'));
+        $this->assertFalse(Validation::falsey('no'));
+
+        $this->assertFalse(Validation::falsey(1));
+        $this->assertFalse(Validation::falsey(true));
+        $this->assertFalse(Validation::falsey('1'));
+        $this->assertFalse(Validation::falsey('true'));
+
+        $this->assertTrue(Validation::falsey('off', ['off', 'no', 'false']));
+        $this->assertTrue(Validation::falsey('no', ['off', 'no', 'false']));
+        $this->assertTrue(Validation::falsey('false', ['off', 'no', 'false']));
+
+        $this->assertFalse(Validation::falsey(0, ['off', 'no', 'false']));
+        $this->assertFalse(Validation::falsey(false, ['off', 'no', 'false']));
+        $this->assertFalse(Validation::falsey('0', ['off', 'yes', 'false']));
+
+        $this->assertTrue(Validation::falsey('false', ['off', 'no', 'false']));
     }
 
     /**
@@ -1810,6 +1968,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::email('abc@yahoo!.com'));
         $this->assertFalse(Validation::email('abc@example_underscored.com'));
         $this->assertFalse(Validation::email('raw@test.ra.ru....com'));
+        $this->assertFalse(Validation::email(1));
     }
 
     /**
@@ -1819,7 +1978,7 @@ class ValidationTest extends TestCase
      */
     public function testEmailDeep()
     {
-        $this->skipIf(gethostbynamel('example.abcd'), 'Your DNS service responds for non-existant domains, skipping deep email checks.');
+        $this->skipIf((bool)gethostbynamel('example.abcd'), 'Your DNS service responds for non-existant domains, skipping deep email checks.');
 
         $this->assertTrue(Validation::email('abc.efg@cakephp.org', true));
         $this->assertFalse(Validation::email('abc.efg@caphpkeinvalid.com', true));
@@ -1843,10 +2002,10 @@ class ValidationTest extends TestCase
      */
     public function testEqualTo()
     {
-        $this->assertTrue(Validation::equalTo("1", "1"));
-        $this->assertFalse(Validation::equalTo(1, "1"));
-        $this->assertFalse(Validation::equalTo("", null));
-        $this->assertFalse(Validation::equalTo("", false));
+        $this->assertTrue(Validation::equalTo('1', '1'));
+        $this->assertFalse(Validation::equalTo(1, '1'));
+        $this->assertFalse(Validation::equalTo('', null));
+        $this->assertFalse(Validation::equalTo('', false));
         $this->assertFalse(Validation::equalTo(0, false));
         $this->assertFalse(Validation::equalTo(null, false));
     }
@@ -1924,6 +2083,22 @@ class ValidationTest extends TestCase
     }
 
     /**
+     * maxLengthBytes method
+     *
+     * @return void
+     */
+    public function testMaxLengthBytes()
+    {
+        $this->assertTrue(Validation::maxLengthBytes('ab', 3));
+        $this->assertTrue(Validation::maxLengthBytes('abc', 3));
+        $this->assertTrue(Validation::maxLengthBytes('ÆΔΩЖÇ', 10));
+        $this->assertTrue(Validation::maxLengthBytes('ÆΔΩЖÇ', 11));
+
+        $this->assertFalse(Validation::maxLengthBytes('abcd', 3));
+        $this->assertFalse(Validation::maxLengthBytes('ÆΔΩЖÇ', 9));
+    }
+
+    /**
      * testMinLength method
      *
      * @return void
@@ -1936,6 +2111,22 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::minLength('abc', 3));
         $this->assertTrue(Validation::minLength('abcd', 3));
         $this->assertTrue(Validation::minLength('ÆΔΩЖÇ', 2));
+    }
+
+    /**
+     * minLengthBytes method
+     *
+     * @return void
+     */
+    public function testMinLengthBytes()
+    {
+        $this->assertFalse(Validation::minLengthBytes('ab', 3));
+        $this->assertFalse(Validation::minLengthBytes('ÆΔΩЖÇ', 11));
+
+        $this->assertTrue(Validation::minLengthBytes('abc', 3));
+        $this->assertTrue(Validation::minLengthBytes('abcd', 3));
+        $this->assertTrue(Validation::minLengthBytes('ÆΔΩЖÇ', 10));
+        $this->assertTrue(Validation::minLengthBytes('ÆΔΩЖÇ', 9));
     }
 
     /**
@@ -1953,6 +2144,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::url('https://cakephp.org'));
         $this->assertTrue(Validation::url('https://www.cakephp.org/somewhere#anchor'));
         $this->assertTrue(Validation::url('https://192.168.0.1'));
+        $this->assertTrue(Validation::url('https://example.com/kibana/app/kibana#/dashboard/4422c500-8e1b?_g=()'));
         $this->assertTrue(Validation::url('ftps://www.cakephp.org/pub/cake'));
         $this->assertTrue(Validation::url('ftps://cakephp.org/pub/cake'));
         $this->assertTrue(Validation::url('ftps://192.168.0.1/pub/cake'));
@@ -1995,6 +2187,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::url('http://www.electrohome.ro/images/239537750-284232-215_300[1].jpg'));
         $this->assertTrue(Validation::url('http://www.eräume.foo'));
         $this->assertTrue(Validation::url('http://äüö.eräume.foo'));
+        $this->assertTrue(Validation::url('http://www.domain.com/👹/🧀'), 'utf8Extended path failed');
 
         $this->assertTrue(Validation::url('http://cakephp.org:80'));
         $this->assertTrue(Validation::url('http://cakephp.org:443'));
@@ -2075,6 +2268,23 @@ class ValidationTest extends TestCase
     }
 
     /**
+     * Test range type checks
+     *
+     * @return void
+     */
+    public function testRangeTypeChecks()
+    {
+        $this->assertFalse(Validation::range('\x028', 1, 5), 'hexish encoding fails');
+        $this->assertFalse(Validation::range('0b010', 1, 5), 'binary string data fails');
+        $this->assertFalse(Validation::range('0x01', 1, 5), 'hex string data fails');
+        $this->assertFalse(Validation::range('0x1', 1, 5), 'hex string data fails');
+
+        $this->assertFalse(Validation::range('\x028', 1, 5), 'hexish encoding fails');
+        $this->assertFalse(Validation::range('0b010', 1, 5), 'binary string data fails');
+        $this->assertFalse(Validation::range('0x02', 1, 5), 'hex string data fails');
+    }
+
+    /**
      * testExtension method
      *
      * @return void
@@ -2092,16 +2302,38 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::extension('extension.pdf', ['PDF']));
         $this->assertFalse(Validation::extension('extension.jpg', ['GIF']));
         $this->assertTrue(Validation::extension(['extension.JPG', 'extension.gif', 'extension.png']));
-        $this->assertTrue(Validation::extension(['file' => ['name' => 'file.jpg']]));
-        $this->assertTrue(Validation::extension(['file1' => ['name' => 'file.jpg'],
-                                                'file2' => ['name' => 'file.jpg'],
-                                                'file3' => ['name' => 'file.jpg']]));
-        $this->assertFalse(Validation::extension(['file1' => ['name' => 'file.jpg'],
-                                                'file2' => ['name' => 'file.jpg'],
-                                                'file3' => ['name' => 'file.jpg']], ['gif']));
+        $this->assertFalse(Validation::extension(['extension.JPG', 'extension.gif', 'extension.png'], ['gif']));
 
-        $this->assertFalse(Validation::extension(['noextension', 'extension.JPG', 'extension.gif', 'extension.png']));
-        $this->assertFalse(Validation::extension(['extension.pdf', 'extension.JPG', 'extension.gif', 'extension.png']));
+        $this->assertTrue(Validation::extension(['file' => ['name' => 'file.jpg']]));
+        $this->assertTrue(Validation::extension([
+            'file1' => ['name' => 'file.jpg'],
+            'file2' => ['name' => 'file.jpg'],
+            'file3' => ['name' => 'file.jpg']
+        ]));
+        $this->assertFalse(Validation::extension(
+            [
+                'file1' => ['name' => 'file.jpg'],
+                'file2' => ['name' => 'file.gif'],
+            ],
+            ['gif']
+        ), 'Only the first element should be checked');
+        $this->assertTrue(Validation::extension(
+            [
+                'file1' => ['name' => 'file.gif'],
+                'file2' => ['name' => 'file.jpg'],
+            ],
+            ['gif']
+        ), 'Only the first element should be checked');
+
+        $file = [
+            'tmp_name' => '/var/private/secret-file',
+            'name' => 'cats.gif'
+        ];
+        $this->assertTrue(Validation::extension($file), 'Uses filename if available.');
+        $this->assertTrue(Validation::extension(['file' => $file]), 'Walks through arrays.');
+
+        $this->assertFalse(Validation::extension(['noextension', 'extension.JPG']));
+        $this->assertFalse(Validation::extension(['extension.pdf', 'extension.JPG']));
     }
 
     /**
@@ -2276,7 +2508,7 @@ class ValidationTest extends TestCase
      */
     public function testMimeType()
     {
-        $image = CORE_TESTS . 'test_app/webroot/img/cake.power.gif';
+        $image = TEST_APP . 'webroot/img/cake.power.gif';
         $File = new File($image, false);
 
         $this->skipIf(!$File->mime(), 'Cannot determine mimeType');
@@ -2288,17 +2520,35 @@ class ValidationTest extends TestCase
 
         $this->assertFalse(Validation::mimeType($image, ['image/png']));
         $this->assertFalse(Validation::mimeType(['tmp_name' => $image], ['image/png']));
+        $this->assertFalse(Validation::mimeType([], ['image/png']));
+    }
+
+    /**
+     * Test mimetype with a PSR7 object
+     *
+     * @return void
+     */
+    public function testMimeTypePsr7()
+    {
+        $image = TEST_APP . 'webroot/img/cake.power.gif';
+        $file = new UploadedFile($image, 1000, UPLOAD_ERR_OK, 'cake.power.gif', 'image/lies');
+        $this->assertTrue(Validation::mimeType($file, ['image/gif']));
+        $this->assertFalse(Validation::mimeType($file, ['image/png']));
+
+        $image = CORE_TESTS . 'test_app/webroot/img/cake.power.gif';
+        $file = new UploadedFile($image, 1000, UPLOAD_ERR_INI_SIZE, 'cake.power.gif', 'image/lies');
+        $this->assertFalse(Validation::mimeType($file, ['image/gif']), 'Fails on upload error');
     }
 
     /**
      * testMimeTypeFalse method
      *
-     * @expectedException \RuntimeException
      * @return void
      */
     public function testMimeTypeFalse()
     {
-        $image = CORE_PATH . 'Cake/Test/TestApp/webroot/img/cake.power.gif';
+        $this->expectException(\RuntimeException::class);
+        $image = CORE_TESTS . 'invalid-file.png';
         $File = new File($image, false);
         $this->skipIf($File->mime(), 'mimeType can be determined, no Exception will be thrown');
         Validation::mimeType($image, ['image/gif']);
@@ -2327,6 +2577,22 @@ class ValidationTest extends TestCase
     }
 
     /**
+     * testUploadError method with an UploadedFile
+     *
+     * @return void
+     */
+    public function testUploadErrorPsr7()
+    {
+        $image = TEST_APP . 'webroot/img/cake.power.gif';
+        $file = new UploadedFile($image, 1000, UPLOAD_ERR_OK, 'cake.power.gif', 'image/gif');
+        $this->assertTrue(Validation::uploadError($file));
+
+        $file = new UploadedFile($image, 1000, UPLOAD_ERR_NO_FILE, 'cake.power.gif', 'image/gif');
+        $this->assertFalse(Validation::uploadError($file));
+        $this->assertTrue(Validation::uploadError($file, true));
+    }
+
+    /**
      * testFileSize method
      *
      * @return void
@@ -2334,15 +2600,31 @@ class ValidationTest extends TestCase
     public function testFileSize()
     {
         $image = TEST_APP . 'webroot/img/cake.power.gif';
-        $this->assertTrue(Validation::fileSize($image, '<', 1024));
-        $this->assertTrue(Validation::fileSize(['tmp_name' => $image], 'isless', 1024));
-        $this->assertTrue(Validation::fileSize($image, '<', '1KB'));
-        $this->assertTrue(Validation::fileSize($image, '>=', 200));
-        $this->assertTrue(Validation::fileSize($image, '==', 201));
-        $this->assertTrue(Validation::fileSize($image, '==', '201B'));
+        $this->assertTrue(Validation::fileSize($image, Validation::COMPARE_LESS, 1024));
+        $this->assertTrue(Validation::fileSize(['tmp_name' => $image], Validation::COMPARE_LESS, 1024));
+        $this->assertTrue(Validation::fileSize($image, Validation::COMPARE_LESS, '1KB'));
+        $this->assertTrue(Validation::fileSize($image, Validation::COMPARE_GREATER_OR_EQUAL, 200));
+        $this->assertTrue(Validation::fileSize($image, Validation::COMPARE_EQUAL, 201));
+        $this->assertTrue(Validation::fileSize($image, Validation::COMPARE_EQUAL, '201B'));
 
-        $this->assertFalse(Validation::fileSize($image, 'isgreater', 1024));
-        $this->assertFalse(Validation::fileSize(['tmp_name' => $image], '>', '1KB'));
+        $this->assertFalse(Validation::fileSize($image, Validation::COMPARE_GREATER, 1024));
+        $this->assertFalse(Validation::fileSize(['tmp_name' => $image], Validation::COMPARE_GREATER, '1KB'));
+    }
+
+    /**
+     * Test fileSize() with a PSR7 object.
+     *
+     * @return void
+     */
+    public function testFileSizePsr7()
+    {
+        $image = TEST_APP . 'webroot/img/cake.power.gif';
+        $file = new UploadedFile($image, 1000, UPLOAD_ERR_OK, 'cake.power.gif', 'image/gif');
+
+        $this->assertTrue(Validation::fileSize($file, Validation::COMPARE_EQUAL, 201));
+        $this->assertTrue(Validation::fileSize($file, Validation::COMPARE_LESS, 1024));
+        $this->assertFalse(Validation::fileSize($file, Validation::COMPARE_GREATER, 202));
+        $this->assertFalse(Validation::fileSize($file, Validation::COMPARE_GREATER, 1000));
     }
 
     /**
@@ -2374,9 +2656,10 @@ class ValidationTest extends TestCase
     /**
      * Test uploaded file validation.
      *
+     * @dataProvider uploadedFileProvider
      * @return void
      */
-    public function testUploadedFileMimeType()
+    public function testUploadedFileArray($expected, $options)
     {
         $file = [
             'name' => 'cake.power.gif',
@@ -2385,40 +2668,7 @@ class ValidationTest extends TestCase
             'type' => 'text/plain',
             'size' => 201
         ];
-        $options = [
-            'types' => ['text/plain']
-        ];
-        $this->assertFalse(Validation::uploadedFile($file, $options), 'Incorrect mimetype.');
-
-        $options = [
-            'types' => ['image/gif', 'image/png']
-        ];
-        $this->assertTrue(Validation::uploadedFile($file, $options));
-    }
-
-    /**
-     * Test uploaded file validation.
-     *
-     * @return void
-     */
-    public function testUploadedFileSize()
-    {
-        $file = [
-            'name' => 'cake.power.gif',
-            'tmp_name' => TEST_APP . 'webroot/img/cake.power.gif',
-            'error' => UPLOAD_ERR_OK,
-            'type' => 'text/plain',
-            'size' => 201
-        ];
-        $options = [
-            'minSize' => 500
-        ];
-        $this->assertFalse(Validation::uploadedFile($file, $options), 'Too small');
-
-        $options = [
-            'maxSize' => 100
-        ];
-        $this->assertFalse(Validation::uploadedFile($file, $options), 'Too big');
+        $this->assertSame($expected, Validation::uploadedFile($file, $options));
     }
 
     /**
@@ -2467,27 +2717,459 @@ class ValidationTest extends TestCase
     }
 
     /**
-     * Test the compareWith method.
+     * Provider for uploaded file tests.
      *
      * @return void
      */
-    public function testCompareWith()
+    public function uploadedFileProvider()
+    {
+        return [
+            'minSize fail' => [false, ['minSize' => 500]],
+            'minSize pass' => [true, ['minSize' => 190]],
+            'maxSize fail' => [false, ['maxSize' => 100]],
+            'maxSize pass' => [true, ['maxSize' => 202]],
+            'types fail' => [false, ['types' => ['text/plain']]],
+            'types fail - string' => [false, ['types' => '/^text.*$/']],
+            'types pass - string' => [true, ['types' => '/^image.*$/']],
+            'types pass' => [true, ['types' => ['image/gif', 'image/png']]],
+        ];
+    }
+
+    /**
+     * Test uploadedFile with a PSR7 object.
+     *
+     * @dataProvider uploadedFileProvider
+     * @return void
+     */
+    public function testUploadedFilePsr7($expected, $options)
+    {
+        $image = TEST_APP . 'webroot/img/cake.power.gif';
+        $file = new UploadedFile($image, 1000, UPLOAD_ERR_OK, 'cake.power.gif', 'image/gif');
+        $this->assertSame($expected, Validation::uploadedFile($file, $options));
+    }
+
+    /**
+     * Test the compareFields method with equal result.
+     *
+     * @return void
+     */
+    public function testCompareFieldsEqualTo()
     {
         $context = [
             'data' => [
                 'other' => 'a value'
             ]
         ];
-        $this->assertTrue(Validation::compareWith('a value', 'other', $context));
+        $this->assertTrue(Validation::compareFields('a value', 'other', Validation::COMPARE_EQUAL, $context));
 
         $context = [
             'data' => [
                 'other' => 'different'
             ]
         ];
-        $this->assertFalse(Validation::compareWith('a value', 'other', $context));
+        $this->assertFalse(Validation::compareFields('a value', 'other', Validation::COMPARE_EQUAL, $context));
 
         $context = [];
-        $this->assertFalse(Validation::compareWith('a value', 'other', $context));
+        $this->assertFalse(Validation::compareFields('a value', 'other', Validation::COMPARE_EQUAL, $context));
+    }
+
+    /**
+     * Test the compareFields method with not equal result.
+     *
+     * @return void
+     */
+    public function testCompareFieldsNotEqual()
+    {
+        $context = [
+            'data' => [
+                'other' => 'different'
+            ]
+        ];
+        $this->assertTrue(Validation::compareFields('a value', 'other', Validation::COMPARE_NOT_EQUAL, $context));
+
+        $context = [
+            'data' => [
+                'other' => 'a value'
+            ]
+        ];
+        $this->assertFalse(Validation::compareFields('a value', 'other', Validation::COMPARE_NOT_EQUAL, $context));
+
+        $context = [];
+        $this->assertFalse(Validation::compareFields('a value', 'other', Validation::COMPARE_NOT_EQUAL, $context));
+    }
+
+    /**
+     * testContainsNonAlphaNumeric method
+     *
+     * @return void
+     */
+    public function testContainNonAlphaNumeric()
+    {
+        $this->assertFalse(Validation::containsNonAlphaNumeric('abcdefghijklmnopqrstuvwxyz'));
+        $this->assertFalse(Validation::containsNonAlphaNumeric('ABCDEFGHIJKLMNOPQRSTUVWXYZ'));
+        $this->assertFalse(Validation::containsNonAlphaNumeric('0123456789'));
+        $this->assertFalse(Validation::containsNonAlphaNumeric('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'));
+
+        $this->assertTrue(Validation::containsNonAlphaNumeric('#'));
+        $this->assertTrue(Validation::containsNonAlphaNumeric("0\n"));
+        $this->assertTrue(Validation::containsNonAlphaNumeric("\n"));
+        $this->assertTrue(Validation::containsNonAlphaNumeric("\t"));
+        $this->assertTrue(Validation::containsNonAlphaNumeric("\r"));
+        $this->assertTrue(Validation::containsNonAlphaNumeric(' '));
+
+        $this->assertTrue(Validation::containsNonAlphaNumeric('#abcdef'));
+        $this->assertTrue(Validation::containsNonAlphaNumeric('abc#def'));
+        $this->assertTrue(Validation::containsNonAlphaNumeric('abcdef#'));
+        $this->assertTrue(Validation::containsNonAlphaNumeric('abc def'));
+        $this->assertTrue(Validation::containsNonAlphaNumeric("abcdef\n"));
+
+        $this->assertTrue(Validation::containsNonAlphaNumeric('##abcdef', 2));
+        $this->assertTrue(Validation::containsNonAlphaNumeric('abcdef##', 2));
+        $this->assertTrue(Validation::containsNonAlphaNumeric('#abcdef#', 2));
+        $this->assertTrue(Validation::containsNonAlphaNumeric('#abc#def', 2));
+        $this->assertTrue(Validation::containsNonAlphaNumeric('abc#def#', 2));
+
+        $this->assertTrue(Validation::containsNonAlphaNumeric('#♥abcdef', 2));
+        $this->assertTrue(Validation::containsNonAlphaNumeric('abcdef#♥', 2));
+        $this->assertTrue(Validation::containsNonAlphaNumeric('#abcdef♥', 2));
+        $this->assertTrue(Validation::containsNonAlphaNumeric('#abc♥def', 2));
+        $this->assertTrue(Validation::containsNonAlphaNumeric('abc#def♥', 2));
+
+        $this->assertTrue(Validation::containsNonAlphaNumeric('#♥abcdef', 2));
+        $this->assertTrue(Validation::containsNonAlphaNumeric('abcdef#♥', 2));
+        $this->assertTrue(Validation::containsNonAlphaNumeric('#abcdef♥', 2));
+        $this->assertTrue(Validation::containsNonAlphaNumeric('#abc♥def', 2));
+        $this->assertTrue(Validation::containsNonAlphaNumeric('abc#def♥', 2));
+
+        $this->assertTrue(Validation::containsNonAlphaNumeric('###abcdef', 2));
+        $this->assertTrue(Validation::containsNonAlphaNumeric('abc###def', 2));
+        $this->assertTrue(Validation::containsNonAlphaNumeric('abcdef###', 2));
+        $this->assertTrue(Validation::containsNonAlphaNumeric('#abc#def#', 2));
+
+        $this->assertFalse(Validation::containsNonAlphaNumeric('##abcdef', 3));
+        $this->assertFalse(Validation::containsNonAlphaNumeric('abcdef##', 3));
+        $this->assertFalse(Validation::containsNonAlphaNumeric('abc##def', 3));
+        $this->assertFalse(Validation::containsNonAlphaNumeric('ab#cd#ef', 3));
+
+        // Non alpha numeric should not pass as array
+        $this->assertFalse(Validation::containsNonAlphaNumeric(['abc#']));
+    }
+
+    /**
+     * Test the geoCoordinate method.
+     *
+     * @return void
+     */
+    public function testGeoCoordinate()
+    {
+        $this->assertTrue(Validation::geoCoordinate('51.165691, 10.451526'));
+        $this->assertTrue(Validation::geoCoordinate('-25.274398, 133.775136'));
+        $this->assertFalse(Validation::geoCoordinate('51.165691 10.451526'));
+        $this->assertFalse(Validation::geoCoordinate('-245.274398, -133.775136'));
+        $this->assertTrue(Validation::geoCoordinate('51.165691', ['format' => 'lat']));
+        $this->assertTrue(Validation::geoCoordinate('10.451526', ['format' => 'long']));
+    }
+
+    /**
+     * Test the geoCoordinate method.
+     *
+     * @return void
+     */
+    public function testLatitude()
+    {
+        $this->assertTrue(Validation::latitude('0'));
+        $this->assertTrue(Validation::latitude('0.000000'));
+        $this->assertTrue(Validation::latitude('51.165691'));
+        $this->assertFalse(Validation::latitude('200.23552'));
+    }
+
+    /**
+     * Test the geoCoordinate method.
+     *
+     * @return void
+     */
+    public function testLongitude()
+    {
+        $this->assertTrue(Validation::longitude('0'));
+        $this->assertTrue(Validation::longitude('0.000000'));
+        $this->assertTrue(Validation::longitude('0.123456'));
+        $this->assertTrue(Validation::longitude('10.451526'));
+        $this->assertFalse(Validation::longitude('-190.52236'));
+    }
+
+    /**
+     * Test isArray
+     *
+     * @return void
+     */
+    public function testIsArray()
+    {
+        $this->assertTrue(Validation::isArray([]));
+        $this->assertTrue(Validation::isArray([1, 2, 3]));
+        $this->assertTrue(Validation::isArray(['key' => 'value']));
+        $this->assertFalse(Validation::isArray('[1,2,3]'));
+        $this->assertFalse(Validation::isArray(new Collection([])));
+        $this->assertFalse(Validation::isArray(10));
+    }
+
+    /**
+     * Test isScalar
+     *
+     * @return void
+     */
+    public function testIsScalar()
+    {
+        $this->assertTrue(Validation::isScalar(1));
+        $this->assertTrue(Validation::isScalar(0.0));
+        $this->assertTrue(Validation::isScalar(''));
+        $this->assertTrue(Validation::isScalar(true));
+        $this->assertFalse(Validation::isScalar([1]));
+        $this->assertFalse(Validation::isScalar(new stdClass()));
+        $this->assertFalse(Validation::isScalar(STDOUT));
+        $this->assertFalse(Validation::isScalar(null));
+    }
+
+    /**
+     * Test isInteger
+     *
+     * @return void
+     */
+    public function testIsInteger()
+    {
+        $this->assertTrue(Validation::isInteger(-10));
+        $this->assertTrue(Validation::isInteger(0));
+        $this->assertTrue(Validation::isInteger(10));
+        $this->assertTrue(Validation::isInteger(012));
+        $this->assertTrue(Validation::isInteger(-012));
+        $this->assertTrue(Validation::isInteger('-10'));
+        $this->assertTrue(Validation::isInteger('0'));
+        $this->assertTrue(Validation::isInteger('10'));
+        $this->assertTrue(Validation::isInteger('012'));
+        $this->assertTrue(Validation::isInteger('-012'));
+
+        $this->assertFalse(Validation::isInteger('2.5'));
+        $this->assertFalse(Validation::isInteger([]));
+        $this->assertFalse(Validation::isInteger(new \StdClass));
+        $this->assertFalse(Validation::isInteger('2 bears'));
+    }
+
+    /**
+     * Test ascii
+     *
+     * @return void
+     */
+    public function testAscii()
+    {
+        $this->assertTrue(Validation::ascii('1 big blue bus.'));
+        $this->assertTrue(Validation::ascii(',.<>[]{;/?\)()'));
+
+        $this->assertFalse(Validation::ascii([]));
+        $this->assertFalse(Validation::ascii(1001));
+        $this->assertFalse(Validation::ascii(3.14));
+        $this->assertFalse(Validation::ascii(new \StdClass));
+
+        // Latin-1 supplement
+        $this->assertFalse(Validation::ascii('some' . "\xc2\x82" . 'value'));
+        $this->assertFalse(Validation::ascii('some' . "\xc3\xbf" . 'value'));
+
+        // End of BMP
+        $this->assertFalse(Validation::ascii('some' . "\xef\xbf\xbd" . 'value'));
+
+        // Start of supplementary multilingual plane
+        $this->assertFalse(Validation::ascii('some' . "\xf0\x90\x80\x80" . 'value'));
+    }
+
+    /**
+     * Test utf8 basic
+     *
+     * @return void
+     */
+    public function testUtf8Basic()
+    {
+        $this->assertFalse(Validation::utf8([]));
+        $this->assertFalse(Validation::utf8(1001));
+        $this->assertFalse(Validation::utf8(3.14));
+        $this->assertFalse(Validation::utf8(new \StdClass));
+        $this->assertTrue(Validation::utf8('1 big blue bus.'));
+        $this->assertTrue(Validation::utf8(',.<>[]{;/?\)()'));
+
+        // Latin-1 supplement
+        $this->assertTrue(Validation::utf8('some' . "\xc2\x82" . 'value'));
+        $this->assertTrue(Validation::utf8('some' . "\xc3\xbf" . 'value'));
+
+        // End of BMP
+        $this->assertTrue(Validation::utf8('some' . "\xef\xbf\xbd" . 'value'));
+
+        // Start of supplementary multilingual plane
+        $this->assertFalse(Validation::utf8('some' . "\xf0\x90\x80\x80" . 'value'));
+
+        // Grinning face
+        $this->assertFalse(Validation::utf8('some' . "\xf0\x9f\x98\x80" . 'value'));
+    }
+
+    /**
+     * Test utf8 extended
+     *
+     * @return void
+     */
+    public function testUtf8Extended()
+    {
+        $this->assertFalse(Validation::utf8([], ['extended' => true]));
+        $this->assertFalse(Validation::utf8(1001, ['extended' => true]));
+        $this->assertFalse(Validation::utf8(3.14, ['extended' => true]));
+        $this->assertFalse(Validation::utf8(new \StdClass, ['extended' => true]));
+        $this->assertTrue(Validation::utf8('1 big blue bus.', ['extended' => true]));
+        $this->assertTrue(Validation::utf8(',.<>[]{;/?\)()', ['extended' => true]));
+
+        // Latin-1 supplement
+        $this->assertTrue(Validation::utf8('some' . "\xc2\x82" . 'value', ['extended' => true]));
+        $this->assertTrue(Validation::utf8('some' . "\xc3\xbf" . 'value', ['extended' => true]));
+
+        // End of BMP
+        $this->assertTrue(Validation::utf8('some' . "\xef\xbf\xbd" . 'value', ['extended' => true]));
+
+        // Start of supplementary multilingual plane
+        $this->assertTrue(Validation::utf8('some' . "\xf0\x90\x80\x80" . 'value', ['extended' => true]));
+
+        // Grinning face
+        $this->assertTrue(Validation::utf8('some' . "\xf0\x9f\x98\x80" . 'value', ['extended' => true]));
+    }
+
+    /**
+     * Test numElements
+     *
+     * @return void
+     */
+    public function testNumElements()
+    {
+        $array = ['cake', 'php'];
+        $this->assertTrue(Validation::numElements($array, Validation::COMPARE_EQUAL, 2));
+        $this->assertFalse(Validation::numElements($array, Validation::COMPARE_GREATER, 3));
+        $this->assertFalse(Validation::numElements($array, Validation::COMPARE_LESS, 1));
+
+        $callable = function () {
+            return '';
+        };
+
+        $this->assertFalse(Validation::numElements(null, Validation::COMPARE_EQUAL, 0));
+        $this->assertFalse(Validation::numElements(new stdClass(), Validation::COMPARE_EQUAL, 0));
+        $this->assertFalse(Validation::numElements($callable, Validation::COMPARE_EQUAL, 0));
+        $this->assertFalse(Validation::numElements(false, Validation::COMPARE_EQUAL, 0));
+        $this->assertFalse(Validation::numElements(true, Validation::COMPARE_EQUAL, 0));
+    }
+
+    /**
+     * Test ImageSize InvalidArgumentException
+     *
+     * @return void
+     */
+    public function testImageSizeInvalidArgumentException()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->assertTrue(Validation::imageSize([], []));
+    }
+
+    /**
+     * Test imageSize
+     *
+     * @return void
+     */
+    public function testImageSize()
+    {
+        $image = WWW_ROOT . 'test_theme' . DS . 'img' . DS . 'test.jpg';
+        $upload = [
+            'tmp_name' => $image
+        ];
+
+        $this->assertTrue(Validation::imageSize($upload, [
+            'width' => [Validation::COMPARE_GREATER, 100],
+            'height' => [Validation::COMPARE_GREATER, 100],
+        ]));
+
+        $this->assertFalse(Validation::imageSize($upload, [
+            'width' => [Validation::COMPARE_GREATER, 100],
+            'height' => [Validation::COMPARE_LESS, 100],
+        ]));
+
+        $this->assertFalse(Validation::imageSize($upload, [
+            'width' => [Validation::COMPARE_EQUAL, 100],
+            'height' => [Validation::COMPARE_EQUAL, 300],
+        ]));
+
+        $this->assertTrue(Validation::imageSize($upload, [
+            'width' => [Validation::COMPARE_GREATER_OR_EQUAL, 300],
+            'height' => [Validation::COMPARE_GREATER_OR_EQUAL, 300],
+        ]));
+
+        $this->assertTrue(Validation::imageSize($upload, [
+            'width' => [Validation::COMPARE_LESS_OR_EQUAL, 300],
+            'height' => [Validation::COMPARE_LESS_OR_EQUAL, 300],
+        ]));
+
+        $this->assertTrue(Validation::imageSize($upload, [
+            'width' => [Validation::COMPARE_LESS_OR_EQUAL, 300],
+            'height' => [Validation::COMPARE_GREATER_OR_EQUAL, 300],
+        ]));
+
+        $this->assertFalse(Validation::imageSize($upload, [
+            'width' => [Validation::COMPARE_LESS_OR_EQUAL, 299],
+            'height' => [Validation::COMPARE_GREATER_OR_EQUAL, 300],
+        ]));
+    }
+
+    /**
+     * Test imageHeight
+     *
+     * @return void
+     */
+    public function testImageHeight()
+    {
+        $image = WWW_ROOT . 'test_theme' . DS . 'img' . DS . 'test.jpg';
+        $upload = [
+            'tmp_name' => $image
+        ];
+
+        $this->assertTrue(Validation::imageHeight($upload, Validation::COMPARE_GREATER, 100));
+        $this->assertTrue(Validation::imageHeight($upload, Validation::COMPARE_LESS, 2000));
+        $this->assertTrue(Validation::imageHeight($upload, Validation::COMPARE_EQUAL, 300));
+
+        $this->assertFalse(Validation::imageHeight($upload, Validation::COMPARE_LESS, 100));
+        $this->assertFalse(Validation::imageHeight($upload, Validation::COMPARE_GREATER, 2000));
+        $this->assertFalse(Validation::imageHeight($upload, Validation::COMPARE_EQUAL, 3000));
+    }
+
+    /**
+     * Test imageWidth
+     *
+     * @return void
+     */
+    public function testImageWidth()
+    {
+        $image = WWW_ROOT . 'test_theme' . DS . 'img' . DS . 'test.jpg';
+        $upload = [
+            'tmp_name' => $image
+        ];
+
+        $this->assertTrue(Validation::imageWidth($upload, Validation::COMPARE_GREATER, 100));
+        $this->assertTrue(Validation::imageWidth($upload, Validation::COMPARE_LESS, 2000));
+        $this->assertTrue(Validation::imageWidth($upload, Validation::COMPARE_EQUAL, 300));
+
+        $this->assertFalse(Validation::imageWidth($upload, Validation::COMPARE_LESS, 100));
+        $this->assertFalse(Validation::imageWidth($upload, Validation::COMPARE_GREATER, 2000));
+        $this->assertFalse(Validation::imageWidth($upload, Validation::COMPARE_EQUAL, 3000));
+    }
+
+    /**
+     * Test hexColor
+     */
+    public function testHexColor()
+    {
+        $this->assertTrue(Validation::hexColor('#F01234'));
+        $this->assertTrue(Validation::hexColor('#F56789'));
+        $this->assertTrue(Validation::hexColor('#abcdef'));
+        $this->assertTrue(Validation::hexColor('#ABCDEF'));
+
+        $this->assertFalse(Validation::hexColor('#fff'));
+        $this->assertFalse(Validation::hexColor('ffffff'));
     }
 }

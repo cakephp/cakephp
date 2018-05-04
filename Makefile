@@ -6,7 +6,7 @@
 # Use the version number to figure out if the release
 # is a pre-release
 PRERELEASE=$(shell echo $(VERSION) | grep -E 'dev|rc|alpha|beta' --quiet && echo 'true' || echo 'false')
-COMPONENTS= filesystem log utility cache datasource core collection event validation database i18n ORM
+COMPONENTS= filesystem log utility cache datasource core collection event validation database i18n ORM form
 CURRENT_BRANCH=$(shell git branch | grep '*' | tr -d '* ')
 
 # Github settings
@@ -23,6 +23,13 @@ endif
 
 DASH_VERSION=$(shell echo $(VERSION) | sed -e s/\\./-/g)
 
+# Used when building packages for older 3.x packages.
+# The build scripts clone cakephp/app, and this var selects the
+# correct tag in that repo.
+# For 3.1.x use 3.1.2
+# For 3.0.x use 3.0.5
+APP_VERSION:=master
+
 ALL: help
 .PHONY: help install test need-version bump-version tag-version
 
@@ -30,7 +37,7 @@ help:
 	@echo "CakePHP Makefile"
 	@echo "================"
 	@echo ""
-	@echo "release"
+	@echo "release VERSION=x.y.z"
 	@echo "  Create a new release of CakePHP. Requires the VERSION and GITHUB_USER, or GITHUB_TOKEN parameter."
 	@echo "  Packages up a new app skeleton tarball and uploads it to github."
 	@echo ""
@@ -41,7 +48,10 @@ help:
 	@echo "  Publish the dist/cakephp-VERSION.zip to github."
 	@echo ""
 	@echo "components"
-	@echo "  Split each of the public namespaces into separate repos and push the to github."
+	@echo "  Split each of the public namespaces into separate repos and push the to Github."
+	@echo ""
+	@echo "clean-components CURRENT_BRANCH=xx"
+	@echo "  Delete branch xx from each subsplit. Useful when cleaning up after a security release."
 	@echo ""
 	@echo "test"
 	@echo "  Run the tests for CakePHP."
@@ -104,9 +114,12 @@ build:
 
 build/app: build
 	git clone git@github.com:$(OWNER)/app.git build/app/
+	cd build/app && git checkout $(APP_VERSION)
 
 build/cakephp: build
+	git checkout $(VERSION)
 	git checkout-index -a -f --prefix=build/cakephp/
+	git checkout -
 
 dist/cakephp-$(DASH_VERSION).zip: build/app build/cakephp composer.phar
 	mkdir -p dist
@@ -124,11 +137,11 @@ dist/cakephp-$(DASH_VERSION).zip: build/app build/cakephp composer.phar
 	cd build/app && find . -not -path '*.git*' | zip ../../dist/cakephp-$(DASH_VERSION).zip -@
 
 # Easier to type alias for zip balls
-package: dist/cakephp-$(DASH_VERSION).zip
+package: clean dist/cakephp-$(DASH_VERSION).zip
 
 
 
-# Tasks to publish zipballs to github.
+# Tasks to publish zipballs to Github.
 .PHONY: publish release
 
 publish: guard-VERSION guard-GITHUB_USER dist/cakephp-$(DASH_VERSION).zip
@@ -153,7 +166,7 @@ publish: guard-VERSION guard-GITHUB_USER dist/cakephp-$(DASH_VERSION).zip
 	rm release.json
 	rm id.txt
 
-# Tasks for publishing separate reporsitories out of each cake namespace
+# Tasks for publishing separate repositories out of each CakePHP namespace
 
 components: $(foreach component, $(COMPONENTS), component-$(component))
 components-tag: $(foreach component, $(COMPONENTS), tag-component-$(component))
@@ -164,7 +177,7 @@ component-%:
 	- (git branch -D $* 2> /dev/null)
 	git checkout -b $*
 	git filter-branch --prune-empty --subdirectory-filter src/$(shell php -r "echo ucfirst('$*');") -f $*
-	git push $* $*:master
+	git push -f $* $*:$(CURRENT_BRANCH)
 	git checkout $(CURRENT_BRANCH) > /dev/null
 
 tag-component-%: component-% guard-VERSION guard-GITHUB_USER
@@ -178,5 +191,12 @@ tag-component-%: component-% guard-VERSION guard-GITHUB_USER
 	git branch -D $*
 	git remote rm $*
 
+# Tasks for cleaning up branches created by security fixes to old branches.
+components-clean: $(foreach component, $(COMPONENTS), clean-component-$(component))
+clean-component-%:
+	- (git remote add $* git@github.com:$(OWNER)/$*.git -f 2> /dev/null)
+	- (git branch -D $* 2> /dev/null)
+	- git push -f $* :$(CURRENT_BRANCH)
+
 # Top level alias for doing a release.
-release: guard-VERSION guard-GITHUB_USER tag-release package publish components-tag
+release: guard-VERSION guard-GITHUB_USER tag-release components-tag package publish

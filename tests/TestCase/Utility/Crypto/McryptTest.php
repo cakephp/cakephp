@@ -1,16 +1,16 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Utility\Crypto;
 
@@ -31,7 +31,7 @@ class McryptTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->skipIf(!function_exists('mcrypt_encrypt'), 'No mcrypt skipping tests');
+        $this->skipIf(!function_exists('mcrypt_encrypt') || version_compare(PHP_VERSION, '7.1', '>='), 'No mcrypt skipping tests');
         $this->crypt = new Mcrypt();
     }
 
@@ -62,32 +62,38 @@ class McryptTest extends TestCase
     /**
      * Test encrypt/decrypt.
      *
+     * @group deprecated
      * @return void
      */
     public function testEncryptDecrypt()
     {
-        $txt = 'The quick brown fox';
-        $key = 'This key is enough bytes';
-        $result = $this->crypt->encrypt($txt, $key);
-        $this->assertNotEquals($txt, $result, 'Should be encrypted.');
-        $this->assertNotEquals($result, $this->crypt->encrypt($txt, $key), 'Each result is unique.');
-        $this->assertEquals($txt, $this->crypt->decrypt($result, $key));
+        $this->deprecated(function () {
+            $txt = 'The quick brown fox';
+            $key = 'This key is enough bytes';
+            $result = $this->crypt->encrypt($txt, $key);
+            $this->assertNotEquals($txt, $result, 'Should be encrypted.');
+            $this->assertNotEquals($result, $this->crypt->encrypt($txt, $key), 'Each result is unique.');
+            $this->assertEquals($txt, $this->crypt->decrypt($result, $key));
+        });
     }
 
     /**
      * Test that changing the key causes decryption to fail.
      *
+     * @group deprecated
      * @return void
      */
     public function testDecryptKeyFailure()
     {
-        $txt = 'The quick brown fox';
+        $this->deprecated(function () {
+            $txt = 'The quick brown fox';
 
-        $key = substr(hash('sha256', 'This key is enough bytes'), 0, 32);
-        $result = $this->crypt->encrypt($txt, $key);
+            $key = substr(hash('sha256', 'This key is enough bytes'), 0, 32);
+            $result = $this->crypt->encrypt($txt, $key);
 
-        $key = substr(hash('sha256', 'Not the same key.'), 0, 32);
-        $this->assertFalse($this->crypt->decrypt($txt, $key), 'Modified key will fail.');
+            $key = substr(hash('sha256', 'Not the same key.'), 0, 32);
+            $this->assertFalse($this->crypt->decrypt($txt, $key), 'Modified key will fail.');
+        });
     }
 
     /**
@@ -95,19 +101,22 @@ class McryptTest extends TestCase
      *
      * The $cipher variable is base64 encoded data from 2.x encrypt()
      *
+     * @group deprecated
      * @return
      */
     public function testDecryptOldData()
     {
-        $key = 'My password is nice and long really it is';
-        $key = substr(hash('sha256', $key), 0, 32);
+        $this->deprecated(function () {
+            $key = 'My password is nice and long really it is';
+            $key = substr(hash('sha256', $key), 0, 32);
 
-        $cipher = 'ZmFkMjdmY2U2NjgzOTkwMGZmMWJiMzY0ZDA5ZDUwZmNjYTdjNWVkZThkMzhmNzdiY' .
-            'Tg3ZDFjMzNjNmViMDljMnk9k0LmYpwSZH5eq7GmDozMwHxzh37YaXFQ2TK5gXb5OfTKXv83K+NjAS9lIo/Zvw==';
-        $data = base64_decode($cipher);
-        $cipher = substr($data, 64);
+            $cipher = 'ZmFkMjdmY2U2NjgzOTkwMGZmMWJiMzY0ZDA5ZDUwZmNjYTdjNWVkZThkMzhmNzdiY' .
+                'Tg3ZDFjMzNjNmViMDljMnk9k0LmYpwSZH5eq7GmDozMwHxzh37YaXFQ2TK5gXb5OfTKXv83K+NjAS9lIo/Zvw==';
+            $data = base64_decode($cipher);
+            $cipher = substr($data, 64);
 
-        $result = $this->crypt->decrypt($cipher, $key);
-        $this->assertEquals('This is a secret message', $result);
+            $result = $this->crypt->decrypt($cipher, $key);
+            $this->assertEquals('This is a secret message', $result);
+        });
     }
 }

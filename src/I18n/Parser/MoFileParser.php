@@ -1,16 +1,16 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\I18n\Parser;
 
@@ -44,7 +44,7 @@ class MoFileParser
     /**
      * The size of the header of a MO file in bytes.
      *
-     * @var int Number of bytes.
+     * @var int
      */
     const MO_HEADER_SIZE = 28;
 
@@ -59,12 +59,12 @@ class MoFileParser
      */
     public function parse($resource)
     {
-        $stream = fopen($resource, 'r');
+        $stream = fopen($resource, 'rb');
 
         $stat = fstat($stream);
 
         if ($stat['size'] < self::MO_HEADER_SIZE) {
-            throw new RuntimeException("Invalid format for MO translations file");
+            throw new RuntimeException('Invalid format for MO translations file');
         }
         $magic = unpack('V1', fread($stream, 4));
         $magic = hexdec(substr(dechex(current($magic)), -8));
@@ -74,7 +74,7 @@ class MoFileParser
         } elseif ($magic == self::MO_BIG_ENDIAN_MAGIC) {
             $isBigEndian = true;
         } else {
-            throw new RuntimeException("Invalid format for MO translations file");
+            throw new RuntimeException('Invalid format for MO translations file');
         }
 
         // offset formatRevision
@@ -90,7 +90,6 @@ class MoFileParser
 
         for ($i = 0; $i < $count; $i++) {
             $pluralId = null;
-            $translated = null;
             $context = null;
             $plurals = null;
 
@@ -120,7 +119,7 @@ class MoFileParser
             fseek($stream, $offset);
             $translated = fread($stream, $length);
 
-            if (strpos($translated, "\000") !== false) {
+            if ($pluralId !== null || strpos($translated, "\000") !== false) {
                 $translated = explode("\000", $translated);
                 $plurals = $pluralId !== null ? array_map('stripcslashes', $translated) : null;
                 $translated = $translated[0];
@@ -142,6 +141,7 @@ class MoFileParser
         }
 
         fclose($stream);
+
         return $messages;
     }
 

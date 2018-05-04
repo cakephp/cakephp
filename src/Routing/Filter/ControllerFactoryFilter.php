@@ -1,21 +1,21 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Routing\Filter;
 
-use Cake\Core\App;
 use Cake\Event\Event;
+use Cake\Http\ControllerFactory;
 use Cake\Routing\DispatcherFilter;
 
 /**
@@ -44,46 +44,23 @@ class ControllerFactoryFilter extends DispatcherFilter
      */
     public function beforeDispatch(Event $event)
     {
-        $request = $event->data['request'];
-        $response = $event->data['response'];
-        $event->data['controller'] = $this->_getController($request, $response);
+        $request = $event->getData('request');
+        $response = $event->getData('response');
+        $event->setData('controller', $this->_getController($request, $response));
     }
 
     /**
-     * Get controller to use, either plugin controller or application controller
+     * Gets controller to use, either plugin or application controller.
      *
-     * @param \Cake\Network\Request $request Request object
-     * @param \Cake\Network\Response $response Response for the controller.
-     * @return mixed name of controller if not loaded, or object if loaded
+     * @param \Cake\Http\ServerRequest $request Request object
+     * @param \Cake\Http\Response $response Response for the controller.
+     * @return \Cake\Controller\Controller
+     * @throws \ReflectionException
      */
     protected function _getController($request, $response)
     {
-        $pluginPath = $controller = null;
-        $namespace = 'Controller';
-        if (!empty($request->params['plugin'])) {
-            $pluginPath = $request->params['plugin'] . '.';
-        }
-        if (!empty($request->params['controller'])) {
-            $controller = $request->params['controller'];
-        }
-        if (!empty($request->params['prefix'])) {
-            $prefixes = array_map(
-                'Cake\Utility\Inflector::camelize',
-                explode('/', $request->params['prefix'])
-            );
-            $namespace .= '/' . implode('/', $prefixes);
-        }
-        $className = false;
-        if ($pluginPath . $controller) {
-            $className = App::classname($pluginPath . $controller, $namespace, 'Controller');
-        }
-        if (!$className) {
-            return false;
-        }
-        $reflection = new \ReflectionClass($className);
-        if ($reflection->isAbstract() || $reflection->isInterface()) {
-            return false;
-        }
-        return $reflection->newInstance($request, $response, $controller);
+        $factory = new ControllerFactory();
+
+        return $factory->create($request, $response);
     }
 }

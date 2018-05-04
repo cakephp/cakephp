@@ -1,21 +1,23 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Database\Statement;
 
 use Cake\Database\StatementInterface;
 use Cake\Database\TypeConverterTrait;
+use Countable;
+use IteratorAggregate;
 
 /**
  * Represents a database statement. Statements contains queries that can be
@@ -25,24 +27,47 @@ use Cake\Database\TypeConverterTrait;
  *
  * This class is but a decorator of an actual statement implementation, such as
  * PDOStatement.
+ *
+ * @property-read string $queryString
  */
-class StatementDecorator implements StatementInterface, \Countable, \IteratorAggregate
+class StatementDecorator implements StatementInterface, Countable, IteratorAggregate
 {
 
     use TypeConverterTrait;
 
     /**
+     * Used to designate that numeric indexes be returned in a result when calling fetch methods
+     *
+     * @var string
+     */
+    const FETCH_TYPE_NUM = 'num';
+
+    /**
+     * Used to designate that an associated array be returned in a result when calling fetch methods
+     *
+     * @var string
+     */
+    const FETCH_TYPE_ASSOC = 'assoc';
+
+    /**
+     * Used to designate that a stdClass object be returned in a result when calling fetch methods
+     *
+     * @var string
+     */
+    const FETCH_TYPE_OBJ = 'obj';
+
+    /**
      * Statement instance implementation, such as PDOStatement
      * or any other custom implementation.
      *
-     * @var mixed
+     * @var \Cake\Database\StatementInterface|\PDOStatement|null
      */
     protected $_statement;
 
     /**
      * Reference to the driver object associated to this statement.
      *
-     * @var \Cake\Database\Driver
+     * @var \Cake\Database\Driver|null
      */
     protected $_driver;
 
@@ -56,7 +81,7 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
     /**
      * Constructor
      *
-     * @param \Cake\Database\StatementInterface|null $statement Statement implementation such as PDOStatement
+     * @param \Cake\Database\StatementInterface|\PDOStatement|null $statement Statement implementation such as PDOStatement
      * @param \Cake\Database\Driver|null $driver Driver instance
      */
     public function __construct($statement = null, $driver = null)
@@ -166,6 +191,7 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
     public function execute($params = null)
     {
         $this->_hasExecuted = true;
+
         return $this->_statement->execute($params);
     }
 
@@ -183,12 +209,39 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
      * ```
      *
      * @param string $type 'num' for positional columns, assoc for named columns
-     * @return mixed Result array containing columns and values or false if no results
+     * @return array|false Result array containing columns and values or false if no results
      * are left
      */
-    public function fetch($type = 'num')
+    public function fetch($type = self::FETCH_TYPE_NUM)
     {
         return $this->_statement->fetch($type);
+    }
+
+    /**
+     * Returns the next row in a result set as an associative array. Calling this function is the same as calling
+     * $statement->fetch(StatementDecorator::FETCH_TYPE_ASSOC). If no results are found false is returned.
+     *
+     * @return array|false Result array containing columns and values an an associative array or false if no results
+     */
+    public function fetchAssoc()
+    {
+        return $this->fetch(static::FETCH_TYPE_ASSOC);
+    }
+
+    /**
+     * Returns the value of the result at position.
+     *
+     * @param int $position The numeric position of the column to retrieve in the result
+     * @return mixed|false Returns the specific value of the column designated at $position
+     */
+    public function fetchColumn($position)
+    {
+        $result = $this->fetch(static::FETCH_TYPE_NUM);
+        if (isset($result[$position])) {
+            return $result[$position];
+        }
+
+        return false;
     }
 
     /**
@@ -203,9 +256,9 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
      * ```
      *
      * @param string $type num for fetching columns as positional keys or assoc for column names as keys
-     * @return array list of all results from database for this statement
+     * @return array List of all results from database for this statement
      */
-    public function fetchAll($type = 'num')
+    public function fetchAll($type = self::FETCH_TYPE_NUM)
     {
         return $this->_statement->fetchAll($type);
     }
@@ -241,13 +294,14 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
      * }
      * ```
      *
-     * @return \Iterator
+     * @return \Cake\Database\StatementInterface|\PDOStatement
      */
     public function getIterator()
     {
         if (!$this->_hasExecuted) {
             $this->execute();
         }
+
         return $this->_statement;
     }
 
@@ -275,14 +329,14 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
             return;
         }
 
-        $annonymousParams = is_int(key($params)) ? true : false;
+        $anonymousParams = is_int(key($params)) ? true : false;
         $offset = 1;
         foreach ($params as $index => $value) {
             $type = null;
             if (isset($types[$index])) {
                 $type = $types[$index];
             }
-            if ($annonymousParams) {
+            if ($anonymousParams) {
                 $index += $offset;
             }
             $this->bindValue($index, $value, $type);
@@ -294,24 +348,25 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
      *
      * @param string|null $table table name or sequence to get last insert value from
      * @param string|null $column the name of the column representing the primary key
-     * @return string
+     * @return string|int
      */
     public function lastInsertId($table = null, $column = null)
     {
         $row = null;
         if ($column && $this->columnCount()) {
-            $row = $this->fetch('assoc');
+            $row = $this->fetch(static::FETCH_TYPE_ASSOC);
         }
         if (isset($row[$column])) {
             return $row[$column];
         }
+
         return $this->_driver->lastInsertId($table, $column);
     }
 
     /**
      * Returns the statement object that was decorated by this class.
      *
-     * @return \Cake\Database\StatementInterface
+     * @return \Cake\Database\StatementInterface|\PDOStatement
      */
     public function getInnerStatement()
     {

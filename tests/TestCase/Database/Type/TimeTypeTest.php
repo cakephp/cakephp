@@ -1,21 +1,21 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Database\Type;
 
-use Cake\Database\Type;
 use Cake\Database\Type\TimeType;
+use Cake\I18n\I18n;
 use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
 
@@ -24,6 +24,20 @@ use Cake\TestSuite\TestCase;
  */
 class TimeTypeTest extends TestCase
 {
+    /**
+     * @var \Cake\Database\Type\TimeType
+     */
+    protected $type;
+
+    /**
+     * @var \Cake\Database\Driver
+     */
+    protected $driver;
+
+    /**
+     * @var string
+     */
+    protected $locale;
 
     /**
      * Setup
@@ -33,8 +47,20 @@ class TimeTypeTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->type = Type::build('time');
-        $this->driver = $this->getMock('Cake\Database\Driver');
+        $this->type = new TimeType();
+        $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
+        $this->locale = I18n::getLocale();
+    }
+
+    /**
+     * Teardown
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        parent::tearDown();
+        I18n::setLocale($this->locale);
     }
 
     /**
@@ -57,6 +83,27 @@ class TimeTypeTest extends TestCase
         $this->assertEquals('16', $result->format('H'));
         $this->assertEquals('30', $result->format('i'));
         $this->assertEquals('15', $result->format('s'));
+    }
+
+    /**
+     * Test converting string times to PHP values.
+     *
+     * @return void
+     */
+    public function testManyToPHP()
+    {
+        $values = [
+            'a' => null,
+            'b' => '01:30:13',
+        ];
+        $expected = [
+            'a' => null,
+            'b' => new Time('01:30:13'),
+        ];
+        $this->assertEquals(
+            $expected,
+            $this->type->manyToPHP($values, array_keys($values), $this->driver)
+        );
     }
 
     /**
@@ -166,13 +213,14 @@ class TimeTypeTest extends TestCase
         $result = $this->type->marshal($value);
         if (is_object($expected)) {
             $this->assertEquals($expected, $result);
+            $this->assertInstanceOf('DateTime', $result);
         } else {
             $this->assertSame($expected, $result);
         }
     }
 
     /**
-     * Tests marshalling dates using the locale aware parser
+     * Tests marshalling times using the locale aware parser
      *
      * @return void
      */
@@ -184,5 +232,38 @@ class TimeTypeTest extends TestCase
         $this->assertEquals($expected->format('H:i'), $result->format('H:i'));
 
         $this->assertNull($this->type->marshal('derp:23'));
+    }
+
+    /**
+     * Tests marshalling times in denmark.
+     *
+     * @return void
+     */
+    public function testMarshalWithLocaleParsingDanishLocale()
+    {
+        $updated = setlocale(LC_COLLATE, 'da_DK.utf8');
+        $this->skipIf($updated === false, 'Could not set locale to da_DK.utf8, skipping test.');
+
+        I18n::setLocale('da_DK');
+        $this->type->useLocaleParser();
+        $expected = new Time('03:20:00');
+        $result = $this->type->marshal('03.20');
+        $this->assertEquals($expected->format('H:i'), $result->format('H:i'));
+    }
+
+    /**
+     * Test that toImmutable changes all the methods to create frozen time instances.
+     *
+     * @return void
+     */
+    public function testToImmutableAndToMutable()
+    {
+        $this->type->useImmutable();
+        $this->assertInstanceOf('DateTimeImmutable', $this->type->marshal('11:23:12'));
+        $this->assertInstanceOf('DateTimeImmutable', $this->type->toPHP('11:23:12', $this->driver));
+
+        $this->type->useMutable();
+        $this->assertInstanceOf('DateTime', $this->type->marshal('11:23:12'));
+        $this->assertInstanceOf('DateTime', $this->type->toPHP('11:23:12', $this->driver));
     }
 }

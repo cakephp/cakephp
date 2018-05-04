@@ -1,21 +1,20 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright 2005-2011, Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Core;
 
 /**
  * ClassLoader
- *
  */
 class ClassLoader
 {
@@ -53,8 +52,8 @@ class ClassLoader
     {
         $prefix = trim($prefix, '\\') . '\\';
 
-        $baseDir = rtrim($baseDir, '/') . DS;
-        $baseDir = rtrim($baseDir, DS) . '/';
+        $baseDir = rtrim($baseDir, '/') . DIRECTORY_SEPARATOR;
+        $baseDir = rtrim($baseDir, DIRECTORY_SEPARATOR) . '/';
 
         if (!isset($this->_prefixes[$prefix])) {
             $this->_prefixes[$prefix] = [];
@@ -63,7 +62,7 @@ class ClassLoader
         if ($prepend) {
             array_unshift($this->_prefixes[$prefix], $baseDir);
         } else {
-            array_push($this->_prefixes[$prefix], $baseDir);
+            $this->_prefixes[$prefix][] = $baseDir;
         }
     }
 
@@ -71,7 +70,7 @@ class ClassLoader
      * Loads the class file for a given class name.
      *
      * @param string $class The fully-qualified class name.
-     * @return mixed The mapped file name on success, or boolean false on
+     * @return string|false The mapped file name on success, or boolean false on
      * failure.
      */
     public function loadClass($class)
@@ -108,7 +107,7 @@ class ClassLoader
         }
 
         foreach ($this->_prefixes[$prefix] as $baseDir) {
-            $file = $baseDir . str_replace('\\', DS, $relativeClass) . '.php';
+            $file = $baseDir . str_replace('\\', DIRECTORY_SEPARATOR, $relativeClass) . '.php';
 
             if ($this->_requireFile($file)) {
                 return $file;
@@ -128,8 +127,10 @@ class ClassLoader
     {
         if (file_exists($file)) {
             require $file;
+
             return true;
         }
+
         return false;
     }
 }

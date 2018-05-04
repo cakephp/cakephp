@@ -1,16 +1,16 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\View\Widget;
 
@@ -35,7 +35,7 @@ class TextareaWidgetTest extends TestCase
         $templates = [
             'textarea' => '<textarea name="{{name}}"{{attrs}}>{{value}}</textarea>',
         ];
-        $this->context = $this->getMock('Cake\View\Form\ContextInterface');
+        $this->context = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();
         $this->templates = new StringTemplate($templates);
     }
 
@@ -77,6 +77,32 @@ class TextareaWidgetTest extends TestCase
         $expected = [
             'textarea' => ['name' => 'comment', 'rows' => 5, 'data-foo' => '<val>'],
             'some <html>',
+            '/textarea',
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * Ensure templateVars option is hooked up.
+     *
+     * @return void
+     */
+    public function testRenderTemplateVars()
+    {
+        $this->templates->add([
+            'textarea' => '<textarea custom="{{custom}}" name="{{name}}"{{attrs}}>{{value}}</textarea>',
+        ]);
+
+        $input = new TextareaWidget($this->templates);
+        $data = [
+            'templateVars' => ['custom' => 'value'],
+            'name' => 'comment',
+            'val' => 'body'
+        ];
+        $result = $input->render($data, $this->context);
+        $expected = [
+            'textarea' => ['name' => 'comment', 'rows' => 5, 'custom' => 'value'],
+            'body',
             '/textarea',
         ];
         $this->assertHtml($expected, $result);

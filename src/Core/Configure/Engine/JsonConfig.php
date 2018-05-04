@@ -1,16 +1,16 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Core\Configure\Engine;
 
@@ -21,6 +21,20 @@ use Cake\Core\Exception\Exception;
 /**
  * JSON engine allows Configure to load configuration values from
  * files containing JSON strings.
+ *
+ * An example JSON file would look like::
+ *
+ * ```
+ * {
+ *     "debug": false,
+ *     "App": {
+ *         "namespace": "MyApp"
+ *     },
+ *     "Security": {
+ *         "salt": "its-secret"
+ *     }
+ * }
+ * ```
  */
 class JsonConfig implements ConfigEngineInterface
 {
@@ -67,7 +81,7 @@ class JsonConfig implements ConfigEngineInterface
         $values = json_decode(file_get_contents($file), true);
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new Exception(sprintf(
-                "Error parsing JSON string fetched from config file \"%s.json\": %s",
+                'Error parsing JSON string fetched from config file "%s.json": %s',
                 $key,
                 json_last_error_msg()
             ));
@@ -78,6 +92,7 @@ class JsonConfig implements ConfigEngineInterface
                 $key
             ));
         }
+
         return $values;
     }
 
@@ -93,6 +108,7 @@ class JsonConfig implements ConfigEngineInterface
     public function dump($key, array $data)
     {
         $filename = $this->_getFilePath($key);
-        return file_put_contents($filename, json_encode($data)) > 0;
+
+        return file_put_contents($filename, json_encode($data, JSON_PRETTY_PRINT)) > 0;
     }
 }

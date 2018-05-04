@@ -1,35 +1,25 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Database;
 
 use Cake\Database\Type;
+use Cake\Database\Type\UuidType;
 use Cake\TestSuite\TestCase;
 use PDO;
-
-/**
- * Mock class for testing type registering
- *
- */
-class FooType extends \Cake\Database\Type
-{
-
-    public function getBaseType()
-    {
-        return 'text';
-    }
-}
+use TestApp\Database\Type\BarType;
+use TestApp\Database\Type\FooType;
 
 /**
  * Tests Type class
@@ -51,7 +41,7 @@ class TypeTest extends TestCase
      */
     public function setUp()
     {
-        $this->_originalMap = Type::map();
+        $this->_originalMap = Type::getMap();
         parent::setUp();
     }
 
@@ -64,7 +54,7 @@ class TypeTest extends TestCase
     {
         parent::tearDown();
 
-        Type::map($this->_originalMap);
+        Type::setMap($this->_originalMap);
     }
 
     /**
@@ -91,18 +81,21 @@ class TypeTest extends TestCase
         return [
             ['string'],
             ['text'],
-            ['boolean']
+            ['smallinteger'],
+            ['tinyinteger'],
+            ['integer'],
+            ['biginteger'],
         ];
     }
 
     /**
      * Tests trying to build an unknown type throws exception
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testBuildUnknownType()
     {
+        $this->expectException(\InvalidArgumentException::class);
         Type::build('foo');
     }
 
@@ -125,20 +118,90 @@ class TypeTest extends TestCase
      */
     public function testMapAndBuild()
     {
-        $map = Type::map();
-        $this->assertNotEmpty($map);
-        $this->assertFalse(isset($map['foo']));
+        $this->deprecated(function () {
+            $map = Type::map();
+            $this->assertNotEmpty($map);
+            $this->assertArrayNotHasKey('foo', $map);
+        });
 
-        $fooType = __NAMESPACE__ . '\FooType';
+        $fooType = FooType::class;
         Type::map('foo', $fooType);
-        $map = Type::map();
+        $map = Type::getMap();
         $this->assertEquals($fooType, $map['foo']);
-        $this->assertEquals($fooType, Type::map('foo'));
+        $this->deprecated(function () use ($fooType) {
+            $this->assertEquals($fooType, Type::map('foo'));
+        });
 
         $type = Type::build('foo');
         $this->assertInstanceOf($fooType, $type);
         $this->assertEquals('foo', $type->getName());
         $this->assertEquals('text', $type->getBaseType());
+
+        Type::map('foo2', $fooType);
+        $map = Type::getMap();
+        $this->assertSame($fooType, $map['foo2']);
+        $this->assertSame($fooType, Type::getMap('foo2'));
+
+        $type = Type::build('foo2');
+        $this->assertInstanceOf($fooType, $type);
+    }
+
+    /**
+     * Tests overwriting type map works for building
+     *
+     * @return void
+     */
+    public function testReMapAndBuild()
+    {
+        $fooType = FooType::class;
+        Type::map('foo', $fooType);
+        $type = Type::build('foo');
+        $this->assertInstanceOf($fooType, $type);
+
+        $barType = BarType::class;
+        Type::map('foo', $barType);
+        $type = Type::build('foo');
+        $this->assertInstanceOf($barType, $type);
+    }
+
+    /**
+     * Tests new types can be registered and built as objects
+     *
+     * @return void
+     */
+    public function testMapAndBuildWithObjects()
+    {
+        $map = Type::getMap();
+        Type::clear();
+
+        $uuidType = new UuidType('uuid');
+        $this->deprecated(function () use ($uuidType) {
+            Type::map('uuid', $uuidType);
+        });
+
+        $this->assertSame($uuidType, Type::build('uuid'));
+        Type::setMap($map);
+    }
+
+    /**
+     * testGetMapAndSetMap
+     *
+     * @return void
+     */
+    public function testGetMapAndSetMap()
+    {
+        $map = Type::getMap();
+        $this->assertNotEmpty($map);
+        $this->assertArrayNotHasKey('foo', $map);
+
+        $expected = [
+            'foo' => 'bar',
+            'ping' => 'pong',
+        ];
+        Type::setMap($expected);
+
+        $this->assertEquals($expected, Type::getMap());
+        $this->assertEquals('bar', Type::getMap('foo'));
     }
 
     /**
@@ -148,17 +211,19 @@ class TypeTest extends TestCase
      */
     public function testClear()
     {
-        $map = Type::map();
+        $map = Type::getMap();
         $this->assertNotEmpty($map);
 
         $type = Type::build('float');
         Type::clear();
 
-        $this->assertEmpty(Type::map());
-        Type::map($map);
-        $this->assertEquals($map, Type::map());
+        $this->assertEmpty(Type::getMap());
+        Type::setMap($map);
+        $newMap = Type::getMap();
 
-        $this->assertNotSame($type, Type::build('float'));
+        $this->assertEquals(array_keys($map), array_keys($newMap));
+        $this->assertEquals($map['integer'], $newMap['integer']);
+        $this->assertEquals($type, Type::build('float'));
     }
 
     /**
@@ -174,7 +239,7 @@ class TypeTest extends TestCase
         );
         $type = Type::build('biginteger');
         $integer = time() * time();
-        $driver = $this->getMock('\Cake\Database\Driver');
+        $driver = $this->getMockBuilder('\Cake\Database\Driver')->getMock();
         $this->assertSame($integer, $type->toPHP($integer, $driver));
         $this->assertSame($integer, $type->toPHP('' . $integer, $driver));
         $this->assertSame(3, $type->toPHP(3.57, $driver));
@@ -189,173 +254,8 @@ class TypeTest extends TestCase
     {
         $type = Type::build('biginteger');
         $integer = time() * time();
-        $driver = $this->getMock('\Cake\Database\Driver');
+        $driver = $this->getMockBuilder('\Cake\Database\Driver')->getMock();
         $this->assertEquals(PDO::PARAM_INT, $type->toStatement($integer, $driver));
-    }
-
-    /**
-     * Tests string from database are converted correctly to PHP
-     *
-     * @return void
-     */
-    public function testStringToPHP()
-    {
-        $type = Type::build('string');
-        $string = 'foo';
-        $driver = $this->getMock('\Cake\Database\Driver');
-        $this->assertEquals('foo', $type->toPHP($string, $driver));
-        $this->assertEquals('3', $type->toPHP(3, $driver));
-        $this->assertEquals('3.14159', $type->toPHP(3.14159, $driver));
-        $this->assertEquals('', $type->toPHP([3, 'elf'], $driver));
-    }
-
-    /**
-     * Tests integers from PHP are converted correctly to statement value
-     *
-     * @return void
-     */
-    public function testStringToStatement()
-    {
-        $type = Type::build('string');
-        $string = '3';
-        $driver = $this->getMock('\Cake\Database\Driver');
-        $this->assertEquals(PDO::PARAM_STR, $type->toStatement($string, $driver));
-    }
-
-    /**
-     * Tests integers from database are converted correctly to PHP
-     *
-     * @return void
-     */
-    public function testTextToPHP()
-    {
-        $type = Type::build('string');
-        $string = 'foo';
-        $driver = $this->getMock('\Cake\Database\Driver');
-        $this->assertEquals('foo', $type->toPHP($string, $driver));
-        $this->assertEquals('3', $type->toPHP(3, $driver));
-        $this->assertEquals('3.14159', $type->toPHP(3.14159, $driver));
-        $this->assertEquals('', $type->toPHP([2, 3], $driver));
-    }
-
-    /**
-     * Tests integers from PHP are converted correctly to statement value
-     *
-     * @return void
-     */
-    public function testTextToStatement()
-    {
-        $type = Type::build('string');
-        $string = '3';
-        $driver = $this->getMock('\Cake\Database\Driver');
-        $this->assertEquals(PDO::PARAM_STR, $type->toStatement($string, $driver));
-    }
-
-    /**
-     * Test convertring booleans to database types.
-     *
-     * @return void
-     */
-    public function testBooleanToDatabase()
-    {
-        $type = Type::build('boolean');
-        $driver = $this->getMock('\Cake\Database\Driver');
-
-        $this->assertTrue($type->toDatabase(true, $driver));
-        $this->assertFalse($type->toDatabase(false, $driver));
-        $this->assertTrue($type->toDatabase(1, $driver));
-        $this->assertFalse($type->toDatabase(0, $driver));
-        $this->assertTrue($type->toDatabase('1', $driver));
-        $this->assertFalse($type->toDatabase('0', $driver));
-        $this->assertTrue($type->toDatabase([1, 2], $driver));
-    }
-
-    /**
-     * Test convertring booleans to PDO types.
-     *
-     * @return void
-     */
-    public function testBooleanToStatement()
-    {
-        $type = Type::build('boolean');
-        $driver = $this->getMock('\Cake\Database\Driver');
-
-        $this->assertEquals(PDO::PARAM_BOOL, $type->toStatement(true, $driver));
-        $this->assertEquals(PDO::PARAM_BOOL, $type->toStatement(false, $driver));
-    }
-
-    /**
-     * Test convertring string booleans to PHP values.
-     *
-     * @return void
-     */
-    public function testBooleanToPHP()
-    {
-        $type = Type::build('boolean');
-        $driver = $this->getMock('\Cake\Database\Driver');
-
-        $this->assertTrue($type->toPHP(true, $driver));
-        $this->assertTrue($type->toPHP(1, $driver));
-        $this->assertTrue($type->toPHP('1', $driver));
-        $this->assertTrue($type->toPHP('TRUE', $driver));
-        $this->assertTrue($type->toPHP('true', $driver));
-
-        $this->assertFalse($type->toPHP(false, $driver));
-        $this->assertFalse($type->toPHP(0, $driver));
-        $this->assertFalse($type->toPHP('0', $driver));
-        $this->assertFalse($type->toPHP('FALSE', $driver));
-        $this->assertFalse($type->toPHP('false', $driver));
-        $this->assertTrue($type->toPHP(['2', '3'], $driver));
-    }
-
-    /**
-     * Test marshalling booleans
-     *
-     * @return void
-     */
-    public function testBooleanMarshal()
-    {
-        $type = Type::build('boolean');
-        $this->assertTrue($type->marshal(true));
-        $this->assertTrue($type->marshal(1));
-        $this->assertTrue($type->marshal('1'));
-        $this->assertTrue($type->marshal('true'));
-
-        $this->assertFalse($type->marshal('false'));
-        $this->assertFalse($type->marshal('0'));
-        $this->assertFalse($type->marshal(0));
-        $this->assertFalse($type->marshal(''));
-        $this->assertFalse($type->marshal('invalid'));
-        $this->assertTrue($type->marshal(['2', '3']));
-    }
-
-
-    /**
-     * Tests uuid from database are converted correctly to PHP
-     *
-     * @return void
-     */
-    public function testUuidToPHP()
-    {
-        $type = Type::build('uuid');
-        $string = 'abc123-de456-fg789';
-        $driver = $this->getMock('\Cake\Database\Driver');
-        $this->assertEquals($string, $type->toPHP($string, $driver));
-        $this->assertEquals('3', $type->toPHP(3, $driver));
-        $this->assertEquals('3.14159', $type->toPHP(3.14159, $driver));
-    }
-
-    /**
-     * Tests integers from PHP are converted correctly to statement value
-     *
-     * @return void
-     */
-    public function testUuidToStatement()
-    {
-        $type = Type::build('uuid');
-        $string = 'abc123-def456-ghi789';
-        $driver = $this->getMock('\Cake\Database\Driver');
-        $this->assertEquals(PDO::PARAM_STR, $type->toStatement($string, $driver));
     }
 
     /**
@@ -366,12 +266,11 @@ class TypeTest extends TestCase
     public function testDecimalToPHP()
     {
         $type = Type::build('decimal');
-        $driver = $this->getMock('\Cake\Database\Driver');
+        $driver = $this->getMockBuilder('\Cake\Database\Driver')->getMock();
 
         $this->assertSame(3.14159, $type->toPHP('3.14159', $driver));
         $this->assertSame(3.14159, $type->toPHP(3.14159, $driver));
         $this->assertSame(3.0, $type->toPHP(3, $driver));
-        $this->assertSame(1, $type->toPHP(['3', '4'], $driver));
     }
 
     /**
@@ -383,7 +282,7 @@ class TypeTest extends TestCase
     {
         $type = Type::build('decimal');
         $string = '12.55';
-        $driver = $this->getMock('\Cake\Database\Driver');
+        $driver = $this->getMockBuilder('\Cake\Database\Driver')->getMock();
         $this->assertEquals(PDO::PARAM_STR, $type->toStatement($string, $driver));
     }
 
@@ -394,8 +293,21 @@ class TypeTest extends TestCase
      */
     public function testSet()
     {
-        $instance = $this->getMock('Cake\Database\Type');
+        $instance = $this->getMockBuilder('Cake\Database\Type')->getMock();
         Type::set('random', $instance);
         $this->assertSame($instance, Type::build('random'));
+    }
+
+    /**
+     * @return void
+     */
+    public function testDebugInfo()
+    {
+        $type = new Type('foo');
+        $result = $type->__debugInfo();
+        $expected = [
+            'name' => 'foo',
+        ];
+        $this->assertEquals($expected, $result);
     }
 }

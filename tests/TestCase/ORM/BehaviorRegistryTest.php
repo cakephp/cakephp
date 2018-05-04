@@ -1,20 +1,19 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\ORM;
 
-use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\ORM\BehaviorRegistry;
 use Cake\ORM\Table;
@@ -35,9 +34,9 @@ class BehaviorRegistryTest extends TestCase
     {
         parent::setUp();
         $this->Table = new Table(['table' => 'articles']);
-        $this->EventManager = $this->Table->eventManager();
+        $this->EventManager = $this->Table->getEventManager();
         $this->Behaviors = new BehaviorRegistry($this->Table);
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
     }
 
     /**
@@ -53,6 +52,26 @@ class BehaviorRegistryTest extends TestCase
     }
 
     /**
+     * Test classname resolution.
+     *
+     * @return void
+     */
+    public function testClassName()
+    {
+        Plugin::load('TestPlugin');
+
+        $expected = 'Cake\ORM\Behavior\TranslateBehavior';
+        $result = BehaviorRegistry::className('Translate');
+        $this->assertSame($expected, $result);
+
+        $expected = 'TestPlugin\Model\Behavior\PersisterOneBehavior';
+        $result = BehaviorRegistry::className('TestPlugin.PersisterOne');
+        $this->assertSame($expected, $result);
+
+        $this->assertNull(BehaviorRegistry::className('NonExistent'));
+    }
+
+    /**
      * Test loading behaviors.
      *
      * @return void
@@ -63,7 +82,7 @@ class BehaviorRegistryTest extends TestCase
         $config = ['alias' => 'Sluggable', 'replacement' => '-'];
         $result = $this->Behaviors->load('Sluggable', $config);
         $this->assertInstanceOf('TestApp\Model\Behavior\SluggableBehavior', $result);
-        $this->assertEquals($config, $result->config());
+        $this->assertEquals($config, $result->getConfig());
 
         $result = $this->Behaviors->load('TestPlugin.PersisterOne');
         $this->assertInstanceOf('TestPlugin\Model\Behavior\PersisterOneBehavior', $result);
@@ -125,23 +144,23 @@ class BehaviorRegistryTest extends TestCase
     /**
      * Test load() on undefined class
      *
-     * @expectedException \Cake\ORM\Exception\MissingBehaviorException
      * @return void
      */
     public function testLoadMissingClass()
     {
+        $this->expectException(\Cake\ORM\Exception\MissingBehaviorException::class);
         $this->Behaviors->load('DoesNotExist');
     }
 
     /**
      * Test load() duplicate method error
      *
-     * @expectedException \LogicException
-     * @expectedExceptionMessage TestApp\Model\Behavior\DuplicateBehavior contains duplicate method "slugify"
      * @return void
      */
     public function testLoadDuplicateMethodError()
     {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('TestApp\Model\Behavior\DuplicateBehavior contains duplicate method "slugify"');
         $this->Behaviors->load('Sluggable');
         $this->Behaviors->load('Duplicate');
     }
@@ -168,12 +187,12 @@ class BehaviorRegistryTest extends TestCase
     /**
      * Test load() duplicate finder error
      *
-     * @expectedException \LogicException
-     * @expectedExceptionMessage TestApp\Model\Behavior\DuplicateBehavior contains duplicate finder "children"
      * @return void
      */
     public function testLoadDuplicateFinderError()
     {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('TestApp\Model\Behavior\DuplicateBehavior contains duplicate finder "children"');
         $this->Behaviors->load('Tree');
         $this->Behaviors->load('Duplicate');
     }
@@ -267,11 +286,11 @@ class BehaviorRegistryTest extends TestCase
     /**
      * Test errors on unknown methods.
      *
-     * @expectedException \BadMethodCallException
-     * @expectedExceptionMessage Cannot call "nope"
      */
     public function testCallError()
     {
+        $this->expectException(\BadMethodCallException::class);
+        $this->expectExceptionMessage('Cannot call "nope"');
         $this->Behaviors->load('Sluggable');
         $this->Behaviors->call('nope');
     }
@@ -293,7 +312,9 @@ class BehaviorRegistryTest extends TestCase
             ->getMock();
         $this->Behaviors->set('Sluggable', $mockedBehavior);
 
-        $query = $this->getMock('Cake\ORM\Query', [], [null, null]);
+        $query = $this->getMockBuilder('Cake\ORM\Query')
+            ->setConstructorArgs([null, null])
+            ->getMock();
         $mockedBehavior
             ->expects($this->once())
             ->method('findNoSlug')
@@ -306,11 +327,11 @@ class BehaviorRegistryTest extends TestCase
     /**
      * Test errors on unknown methods.
      *
-     * @expectedException \BadMethodCallException
-     * @expectedExceptionMessage Cannot call finder "nope"
      */
     public function testCallFinderError()
     {
+        $this->expectException(\BadMethodCallException::class);
+        $this->expectExceptionMessage('Cannot call finder "nope"');
         $this->Behaviors->load('Sluggable');
         $this->Behaviors->callFinder('nope');
     }
@@ -318,11 +339,11 @@ class BehaviorRegistryTest extends TestCase
     /**
      * Test errors on unloaded behavior methods.
      *
-     * @expectedException \BadMethodCallException
-     * @expectedExceptionMessage Cannot call "slugify" it does not belong to any attached behavior.
      */
     public function testUnloadBehaviorThenCall()
     {
+        $this->expectException(\BadMethodCallException::class);
+        $this->expectExceptionMessage('Cannot call "slugify" it does not belong to any attached behavior.');
         $this->Behaviors->load('Sluggable');
         $this->Behaviors->unload('Sluggable');
 
@@ -332,11 +353,11 @@ class BehaviorRegistryTest extends TestCase
     /**
      * Test errors on unloaded behavior finders.
      *
-     * @expectedException \BadMethodCallException
-     * @expectedExceptionMessage Cannot call finder "noslug" it does not belong to any attached behavior.
      */
     public function testUnloadBehaviorThenCallFinder()
     {
+        $this->expectException(\BadMethodCallException::class);
+        $this->expectExceptionMessage('Cannot call finder "noslug" it does not belong to any attached behavior.');
         $this->Behaviors->load('Sluggable');
         $this->Behaviors->unload('Sluggable');
 
@@ -358,5 +379,44 @@ class BehaviorRegistryTest extends TestCase
         $this->Behaviors->load('Sluggable');
 
         $this->assertEquals(['Sluggable'], $this->Behaviors->loaded());
+    }
+
+    /**
+     * Test that unloading a none existing behavior triggers an error.
+     *
+     * @return void
+     */
+    public function testUnload()
+    {
+        $this->Behaviors->load('Sluggable');
+        $this->Behaviors->unload('Sluggable');
+
+        $this->assertEmpty($this->Behaviors->loaded());
+        $this->assertCount(0, $this->EventManager->listeners('Model.beforeFind'));
+    }
+
+    /**
+     * Test that unloading a none existing behavior triggers an error.
+     *
+     * @return void
+     */
+    public function testUnloadUnknown()
+    {
+        $this->expectException(\Cake\ORM\Exception\MissingBehaviorException::class);
+        $this->expectExceptionMessage('Behavior class FooBehavior could not be found.');
+        $this->Behaviors->unload('Foo');
+    }
+
+    /**
+     * Test setTable() method.
+     *
+     * @return void
+     */
+    public function testSetTable()
+    {
+        $table = $this->getMockBuilder('Cake\ORM\Table')->getMock();
+        $table->expects($this->once())->method('getEventManager');
+
+        $this->Behaviors->setTable($table);
     }
 }

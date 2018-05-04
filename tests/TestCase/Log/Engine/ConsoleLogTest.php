@@ -1,26 +1,24 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         1.3.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Log\Engine;
 
 use Cake\Console\ConsoleOutput;
 use Cake\Log\Engine\ConsoleLog;
-use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 
 /**
  * ConsoleLogTest class
- *
  */
 class ConsoleLogTest extends TestCase
 {
@@ -30,12 +28,12 @@ class ConsoleLogTest extends TestCase
      */
     public function testConsoleOutputlogs()
     {
-        $output = $this->getMock('Cake\Console\ConsoleOutput');
+        $output = $this->getMockBuilder('Cake\Console\ConsoleOutput')->getMock();
 
         $output->expects($this->at(0))
             ->method('outputAs');
 
-        $message = " Error: oh noes</error>";
+        $message = ' Error: oh noes</error>';
         $output->expects($this->at(1))
             ->method('write')
             ->with($this->stringContains($message));
@@ -75,16 +73,16 @@ class ConsoleLogTest extends TestCase
         } else {
             $expected = ConsoleOutput::COLOR;
         }
-        $output = $this->getMock('Cake\Console\ConsoleOutput');
+        $output = $this->getMockBuilder('Cake\Console\ConsoleOutput')->getMock();
 
         $output->expects($this->at(0))
-            ->method('outputAs')
+            ->method('setOutputAs')
             ->with($expected);
 
         $log = new ConsoleLog([
             'stream' => $output,
         ]);
-        $config = $log->config();
+        $config = $log->getConfig();
         $this->assertEquals($expected, $config['outputAs']);
     }
 }

@@ -6,20 +6,24 @@
     stopOnFailure="false"
     syntaxCheck="false"
     bootstrap="./tests/bootstrap.php"
+    backupGlobals="true"
     >
     <php>
         <ini name="memory_limit" value="-1"/>
         <ini name="apc.enable_cli" value="1"/>
+        <!-- E_ALL & ~E_USER_DEPRECATED (16383)-->
+        <!-- E_ALL (32767) -->
+        <ini name="error_reporting" value="32767"/>
     </php>
 
     <testsuites>
-        <testsuite name="CakePHP Test Suite">
+        <testsuite name="cakephp">
             <directory>./tests/TestCase/</directory>
             <!-- Excludes are required in order to let DatabaseSuite decorate the tests -->
             <exclude>./tests/TestCase/Database/</exclude>
             <exclude>./tests/TestCase/ORM/</exclude>
         </testsuite>
-        <testsuite name="Database Test Suite">
+        <testsuite name="database">
             <file>./tests/TestCase/DatabaseSuite.php</file>
         </testsuite>
     </testsuites>
@@ -34,15 +38,9 @@
 
     <!-- Prevent coverage reports from looking in tests, vendors, config folders -->
     <filter>
-        <blacklist>
-            <directory suffix=".php">./vendor/</directory>
-            <directory suffix=".ctp">./vendor/</directory>
-
-            <directory suffix=".php">./tests/</directory>
-            <directory suffix=".ctp">./tests/</directory>
-
-            <directory suffix=".php">./config/</directory>
-        </blacklist>
+        <whitelist>
+            <directory suffix=".php">./src/</directory>
+        </whitelist>
     </filter>
 
     <php>
@@ -50,13 +48,13 @@
         <env name="db_dsn" value="sqlite:///:memory:"/>
         -->
         <!-- Postgres
-        <env name="db_dsn" value="postgres://localhost/cake_test"/>
+        <env name="db_dsn" value="postgres://localhost/cake_test?timezone=UTC"/>
         -->
         <!-- Mysql
-        <env name="db_dsn" value="mysql://localhost/cake_test"/>
+        <env name="db_dsn" value="mysql://localhost/cake_test?timezone=UTC"/>
         -->
         <!-- SQL Server
-        <env name="db_dsn" value="sqlserver://localhost/cake_test"/>
+        <env name="db_dsn" value="sqlserver://localhost/cake_test?timezone=UTC"/>
         -->
     </php>
 </phpunit>

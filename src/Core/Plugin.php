@@ -1,21 +1,19 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         2.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Core;
 
-use Cake\Core\ClassLoader;
-use Cake\Core\Configure;
 use Cake\Core\Exception\MissingPluginException;
 use DirectoryIterator;
 
@@ -24,7 +22,7 @@ use DirectoryIterator;
  *
  * It also can retrieve plugin paths and load their bootstrap and routes files.
  *
- * @link http://book.cakephp.org/3.0/en/plugins.html
+ * @link https://book.cakephp.org/3.0/en/plugins.html
  */
 class Plugin
 {
@@ -32,9 +30,9 @@ class Plugin
     /**
      * Holds a list of all loaded plugins and their configuration
      *
-     * @var array
+     * @var \Cake\Core\PluginCollection|null
      */
-    protected static $_plugins = [];
+    protected static $plugins;
 
     /**
      * Class loader instance
@@ -115,9 +113,10 @@ class Plugin
     {
         if (is_array($plugin)) {
             foreach ($plugin as $name => $conf) {
-                list($name, $conf) = (is_numeric($name)) ? [$conf, $config] : [$name, $conf];
+                list($name, $conf) = is_numeric($name) ? [$conf, $config] : [$name, $conf];
                 static::load($name, $conf);
             }
+
             return;
         }
 
@@ -127,8 +126,10 @@ class Plugin
             'autoload' => false,
             'bootstrap' => false,
             'routes' => false,
+            'console' => true,
             'classBase' => 'src',
-            'ignoreMissing' => false
+            'ignoreMissing' => false,
+            'name' => $plugin
         ];
 
         if (!isset($config['path'])) {
@@ -137,10 +138,10 @@ class Plugin
 
         if (empty($config['path'])) {
             $paths = App::path('Plugin');
-            $pluginPath = str_replace('/', DS, $plugin);
+            $pluginPath = str_replace('/', DIRECTORY_SEPARATOR, $plugin);
             foreach ($paths as $path) {
                 if (is_dir($path . $pluginPath)) {
-                    $config['path'] = $path . $pluginPath . DS;
+                    $config['path'] = $path . $pluginPath . DIRECTORY_SEPARATOR;
                     break;
                 }
             }
@@ -150,25 +151,26 @@ class Plugin
             throw new MissingPluginException(['plugin' => $plugin]);
         }
 
-        $config['classPath'] = $config['path'] . $config['classBase'] . DS;
+        $config['classPath'] = $config['path'] . $config['classBase'] . DIRECTORY_SEPARATOR;
         if (!isset($config['configPath'])) {
-            $config['configPath'] = $config['path'] . 'config' . DS;
+            $config['configPath'] = $config['path'] . 'config' . DIRECTORY_SEPARATOR;
         }
 
-        static::$_plugins[$plugin] = $config;
+        // Use stub plugins as this method will be removed long term.
+        static::getCollection()->add(new BasePlugin($config));
 
         if ($config['autoload'] === true) {
             if (empty(static::$_loader)) {
-                static::$_loader = new ClassLoader;
+                static::$_loader = new ClassLoader();
                 static::$_loader->register();
             }
             static::$_loader->addNamespace(
                 str_replace('/', '\\', $plugin),
-                $config['path'] . $config['classBase'] . DS
+                $config['path'] . $config['classBase'] . DIRECTORY_SEPARATOR
             );
             static::$_loader->addNamespace(
                 str_replace('/', '\\', $plugin) . '\Test',
-                $config['path'] . 'tests' . DS
+                $config['path'] . 'tests' . DIRECTORY_SEPARATOR
             );
         }
 
@@ -187,11 +189,14 @@ class Plugin
         if (Configure::check('plugins')) {
             return;
         }
-
-        $vendorFile = dirname(dirname(dirname(dirname(__DIR__)))) . DS . 'cakephp-plugins.php';
+        $vendorFile = dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'cakephp-plugins.php';
         if (!file_exists($vendorFile)) {
-            Configure::write(['plugins' => []]);
-            return;
+            $vendorFile = dirname(dirname(dirname(dirname(__DIR__)))) . DIRECTORY_SEPARATOR . 'cakephp-plugins.php';
+            if (!file_exists($vendorFile)) {
+                Configure::write(['plugins' => []]);
+
+                return;
+            }
         }
 
         $config = require $vendorFile;
@@ -218,6 +223,7 @@ class Plugin
      *
      * @param array $options Options.
      * @return void
+     * @throws \Cake\Core\Exception\MissingPluginException
      */
     public static function loadAll(array $options = [])
     {
@@ -228,9 +234,9 @@ class Plugin
                 continue;
             }
             $dir = new DirectoryIterator($path);
-            foreach ($dir as $path) {
-                if ($path->isDir() && !$path->isDot()) {
-                    $plugins[] = $path->getBaseName();
+            foreach ($dir as $dirPath) {
+                if ($dirPath->isDir() && !$dirPath->isDot()) {
+                    $plugins[] = $dirPath->getBasename();
                 }
             }
         }
@@ -239,12 +245,13 @@ class Plugin
             $plugins = array_unique($plugins);
         }
 
+        $collection = static::getCollection();
         foreach ($plugins as $p) {
             $opts = isset($options[$p]) ? $options[$p] : null;
             if ($opts === null && isset($options[0])) {
                 $opts = $options[0];
             }
-            if (isset(static::$_plugins[$p])) {
+            if ($collection->has($p)) {
                 continue;
             }
             static::load($p, (array)$opts);
@@ -254,91 +261,95 @@ class Plugin
     /**
      * Returns the filesystem path for a plugin
      *
-     * @param string $plugin name of the plugin in CamelCase format
+     * @param string $name name of the plugin in CamelCase format
      * @return string path to the plugin folder
      * @throws \Cake\Core\Exception\MissingPluginException if the folder for plugin was not found or plugin has not been loaded
      */
-    public static function path($plugin)
+    public static function path($name)
     {
-        if (empty(static::$_plugins[$plugin])) {
-            throw new MissingPluginException(['plugin' => $plugin]);
-        }
-        return static::$_plugins[$plugin]['path'];
+        $plugin = static::getCollection()->get($name);
+
+        return $plugin->getPath();
     }
 
     /**
      * Returns the filesystem path for plugin's folder containing class folders.
      *
-     * @param string $plugin name of the plugin in CamelCase format.
+     * @param string $name name of the plugin in CamelCase format.
      * @return string Path to the plugin folder container class folders.
      * @throws \Cake\Core\Exception\MissingPluginException If plugin has not been loaded.
      */
-    public static function classPath($plugin)
+    public static function classPath($name)
     {
-        if (empty(static::$_plugins[$plugin])) {
-            throw new MissingPluginException(['plugin' => $plugin]);
-        }
-        return static::$_plugins[$plugin]['classPath'];
+        $plugin = static::getCollection()->get($name);
+
+        return $plugin->getClassPath();
     }
 
     /**
      * Returns the filesystem path for plugin's folder containing config files.
      *
-     * @param string $plugin name of the plugin in CamelCase format.
+     * @param string $name name of the plugin in CamelCase format.
      * @return string Path to the plugin folder container config files.
      * @throws \Cake\Core\Exception\MissingPluginException If plugin has not been loaded.
      */
-    public static function configPath($plugin)
+    public static function configPath($name)
     {
-        if (empty(static::$_plugins[$plugin])) {
-            throw new MissingPluginException(['plugin' => $plugin]);
-        }
-        return static::$_plugins[$plugin]['configPath'];
+        $plugin = static::getCollection()->get($name);
+
+        return $plugin->getConfigPath();
     }
 
     /**
      * Loads the bootstrapping files for a plugin, or calls the initialization setup in the configuration
      *
-     * @param string $plugin name of the plugin
+     * @param string $name name of the plugin
      * @return mixed
-     * @see Plugin::load() for examples of bootstrap configuration
+     * @see \Cake\Core\Plugin::load() for examples of bootstrap configuration
      */
-    public static function bootstrap($plugin)
+    public static function bootstrap($name)
     {
-        $config = static::$_plugins[$plugin];
-        if ($config['bootstrap'] === false) {
+        $plugin = static::getCollection()->get($name);
+        if (!$plugin->isEnabled('bootstrap')) {
             return false;
         }
-        if ($config['bootstrap'] === true) {
-            return static::_includeFile(
-                $config['configPath'] . 'bootstrap.php',
-                $config['ignoreMissing']
-            );
-        }
+        // Disable bootstrapping for this plugin as it will have
+        // been bootstrapped.
+        $plugin->disable('bootstrap');
+
+        return static::_includeFile(
+            $plugin->getConfigPath() . 'bootstrap.php',
+            true
+        );
     }
 
     /**
-     * Loads the routes file for a plugin, or all plugins configured to load their respective routes file
+     * Loads the routes file for a plugin, or all plugins configured to load their respective routes file.
      *
-     * @param string $plugin name of the plugin, if null will operate on all plugins having enabled the
-     * loading of routes files
+     * If you need fine grained control over how routes are loaded for plugins, you
+     * can use {@see Cake\Routing\RouteBuilder::loadPlugin()}
+     *
+     * @param string|null $name name of the plugin, if null will operate on all
+     *   plugins having enabled the loading of routes files.
      * @return bool
      */
-    public static function routes($plugin = null)
+    public static function routes($name = null)
     {
-        if ($plugin === null) {
+        if ($name === null) {
             foreach (static::loaded() as $p) {
                 static::routes($p);
             }
+
             return true;
         }
-        $config = static::$_plugins[$plugin];
-        if ($config['routes'] === false) {
+        $plugin = static::getCollection()->get($name);
+        if (!$plugin->isEnabled('routes')) {
             return false;
         }
+
         return (bool)static::_includeFile(
-            $config['configPath'] . 'routes.php',
-            $config['ignoreMissing']
+            $plugin->getConfigPath() . 'routes.php',
+            true
         );
     }
 
@@ -346,32 +357,36 @@ class Plugin
      * Returns true if the plugin $plugin is already loaded
      * If plugin is null, it will return a list of all loaded plugins
      *
-     * @param string $plugin Plugin name.
-     * @return mixed boolean true if $plugin is already loaded.
+     * @param string|null $plugin Plugin name.
+     * @return bool|array Boolean true if $plugin is already loaded.
      *   If $plugin is null, returns a list of plugins that have been loaded
      */
     public static function loaded($plugin = null)
     {
-        if ($plugin) {
-            return isset(static::$_plugins[$plugin]);
+        if ($plugin !== null) {
+            return static::getCollection()->has($plugin);
         }
-        $return = array_keys(static::$_plugins);
-        sort($return);
-        return $return;
+        $names = [];
+        foreach (static::getCollection() as $plugin) {
+            $names[] = $plugin->getName();
+        }
+        sort($names);
+
+        return $names;
     }
 
     /**
      * Forgets a loaded plugin or all of them if first parameter is null
      *
-     * @param string $plugin name of the plugin to forget
+     * @param string|null $plugin name of the plugin to forget
      * @return void
      */
     public static function unload($plugin = null)
     {
         if ($plugin === null) {
-            static::$_plugins = [];
+            static::$plugins = null;
         } else {
-            unset(static::$_plugins[$plugin]);
+            static::getCollection()->remove($plugin);
         }
     }
 
@@ -387,6 +402,22 @@ class Plugin
         if ($ignoreMissing && !is_file($file)) {
             return false;
         }
+
         return include $file;
+    }
+
+    /**
+     * Get the shared plugin collection.
+     *
+     * @internal
+     * @return \Cake\Core\PluginCollection
+     */
+    public static function getCollection()
+    {
+        if (!isset(static::$plugins)) {
+            static::$plugins = new PluginCollection();
+        }
+
+        return static::$plugins;
     }
 }

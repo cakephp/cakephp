@@ -1,29 +1,39 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Database\Type;
 
-use Cake\Database\Type;
 use Cake\Database\Type\DateTimeType;
+use Cake\I18n\FrozenTime;
 use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
+use DateTimeZone;
 
 /**
  * Test for the DateTime type.
  */
 class DateTimeTypeTest extends TestCase
 {
+    /**
+     * @var \Cake\Database\Type\DateTimeType
+     */
+    public $type;
+
+    /**
+     * @var \Cake\Database\Driver
+     */
+    public $driver;
 
     /**
      * Original type map
@@ -40,21 +50,21 @@ class DateTimeTypeTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->type = Type::build('datetime');
-        $this->driver = $this->getMock('Cake\Database\Driver');
-        $this->_originalMap = Type::map();
+        $this->type = new DateTimeType();
+        $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
     }
 
     /**
-     * Restores Type class state
+     * Test getDateTimeClassName
      *
      * @return void
      */
-    public function tearDown()
+    public function testGetDateTimeClassName()
     {
-        parent::tearDown();
+        $this->assertSame(Time::class, $this->type->getDateTimeClassName());
 
-        Type::map($this->_originalMap);
+        $this->type->useImmutable();
+        $this->assertSame(FrozenTime::class, $this->type->getDateTimeClassName());
     }
 
     /**
@@ -62,11 +72,19 @@ class DateTimeTypeTest extends TestCase
      *
      * @return void
      */
-    public function testToPHP()
+    public function testToPHPEmpty()
     {
         $this->assertNull($this->type->toPHP(null, $this->driver));
         $this->assertNull($this->type->toPHP('0000-00-00 00:00:00', $this->driver));
+    }
 
+    /**
+     * Test toPHP
+     *
+     * @return void
+     */
+    public function testToPHPString()
+    {
         $result = $this->type->toPHP('2001-01-04 12:13:14', $this->driver);
         $this->assertInstanceOf('Cake\I18n\Time', $result);
         $this->assertEquals('2001', $result->format('Y'));
@@ -75,6 +93,27 @@ class DateTimeTypeTest extends TestCase
         $this->assertEquals('12', $result->format('H'));
         $this->assertEquals('13', $result->format('i'));
         $this->assertEquals('14', $result->format('s'));
+    }
+
+    /**
+     * Test converting string datetimes to PHP values.
+     *
+     * @return void
+     */
+    public function testManyToPHP()
+    {
+        $values = [
+            'a' => null,
+            'b' => '2001-01-04 12:13:14',
+        ];
+        $expected = [
+            'a' => null,
+            'b' => new Time('2001-01-04 12:13:14'),
+        ];
+        $this->assertEquals(
+            $expected,
+            $this->type->manyToPHP($values, array_keys($values), $this->driver)
+        );
     }
 
     /**
@@ -107,6 +146,26 @@ class DateTimeTypeTest extends TestCase
         $result = $this->type->toDatabase($date, $this->driver);
         $this->assertEquals('2013-08-12 15:16:17', $result);
 
+        $tz = $date->getTimezone();
+        $this->type->setTimezone('Asia/Kolkata'); // UTC+5:30
+        $result = $this->type->toDatabase($date, $this->driver);
+        $this->assertEquals('2013-08-12 20:46:17', $result);
+        $this->assertEquals($tz, $date->getTimezone());
+
+        $this->type->setTimezone(new DateTimeZone('Asia/Kolkata'));
+        $result = $this->type->toDatabase($date, $this->driver);
+        $this->assertEquals('2013-08-12 20:46:17', $result);
+        $this->type->setTimezone(null);
+
+        $date = new FrozenTime('2013-08-12 15:16:17');
+        $result = $this->type->toDatabase($date, $this->driver);
+        $this->assertEquals('2013-08-12 15:16:17', $result);
+
+        $this->type->setTimezone('Asia/Kolkata'); // UTC+5:30
+        $result = $this->type->toDatabase($date, $this->driver);
+        $this->assertEquals('2013-08-12 20:46:17', $result);
+        $this->type->setTimezone(null);
+
         $date = 1401906995;
         $result = $this->type->toDatabase($date, $this->driver);
         $this->assertEquals('2014-06-04 18:36:35', $result);
@@ -134,6 +193,7 @@ class DateTimeTypeTest extends TestCase
             [1392387900, new Time('@1392387900')],
             ['2014-02-14 00:00:00', new Time('2014-02-14 00:00:00')],
             ['2014-02-14 13:14:15', new Time('2014-02-14 13:14:15')],
+            ['2017-04-05T17:18:00+00:00', new Time('2017-04-05T17:18:00+00:00')],
 
             // valid array types
             [
@@ -151,6 +211,14 @@ class DateTimeTypeTest extends TestCase
                     'meridian' => 'am'
                 ],
                 new Time('2014-02-14 01:14:15')
+            ],
+            [
+                [
+                    'year' => 2014, 'month' => 2, 'day' => 14,
+                    'hour' => 12, 'minute' => 04, 'second' => 15,
+                    'meridian' => 'pm'
+                ],
+                new Time('2014-02-14 12:04:15')
             ],
             [
                 [
@@ -213,6 +281,23 @@ class DateTimeTypeTest extends TestCase
     }
 
     /**
+     * Test that useLocaleParser() can disable locale parsing.
+     *
+     * @return void
+     */
+    public function testLocaleParserDisable()
+    {
+        $expected = new Time('13-10-2013 23:28:00');
+        $this->type->useLocaleParser();
+        $result = $this->type->marshal('10/13/2013 11:28pm');
+        $this->assertEquals($expected, $result);
+
+        $this->type->useLocaleParser(false);
+        $result = $this->type->marshal('10/13/2013 11:28pm');
+        $this->assertNotEquals($expected, $result);
+    }
+
+    /**
      * Tests marshalling dates using the locale aware parser
      *
      * @return void
@@ -238,5 +323,21 @@ class DateTimeTypeTest extends TestCase
         $expected = new Time('13-10-2013 13:54:00');
         $result = $this->type->marshal('13 Oct, 2013 01:54pm');
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test that toImmutable changes all the methods to create frozen time instances.
+     *
+     * @return void
+     */
+    public function testToImmutableAndToMutable()
+    {
+        $this->type->useImmutable();
+        $this->assertInstanceOf('DateTimeImmutable', $this->type->marshal('2015-11-01 11:23:00'));
+        $this->assertInstanceOf('DateTimeImmutable', $this->type->toPHP('2015-11-01 11:23:00', $this->driver));
+
+        $this->type->useMutable();
+        $this->assertInstanceOf('DateTime', $this->type->marshal('2015-11-01 11:23:00'));
+        $this->assertInstanceOf('DateTime', $this->type->toPHP('2015-11-01 11:23:00', $this->driver));
     }
 }

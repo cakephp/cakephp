@@ -1,20 +1,20 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\View\Form;
 
-use Cake\Network\Request;
+use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Cake\View\Form\ArrayContext;
 
@@ -32,7 +32,7 @@ class ArrayContextTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->request = new Request();
+        $this->request = new ServerRequest();
     }
 
     /**
@@ -135,12 +135,12 @@ class ArrayContextTest extends TestCase
      */
     public function testValPresent()
     {
-        $this->request->data = [
+        $this->request = $this->request->withParsedBody([
             'Articles' => [
                 'title' => 'New title',
                 'body' => 'My copy',
             ]
-        ];
+        ]);
         $context = new ArrayContext($this->request, [
             'defaults' => [
                 'Articles' => [
@@ -167,6 +167,31 @@ class ArrayContextTest extends TestCase
     }
 
     /**
+     * Test getting default value
+     *
+     * Tests includes making sure numeric elements are stripped but not keys beginning with numeric
+     * value
+     *
+     * @return void
+     */
+    public function testValDefault()
+    {
+        $context = new ArrayContext($this->request, [
+            'defaults' => [
+                'title' => 'Default value',
+                'users' => ['tags' => 'common1', '9tags' => 'common2']
+            ]
+        ]);
+
+        $this->assertEquals('Default value', $context->val('title'));
+        $this->assertEquals('common1', $context->val('users.0.tags'));
+        $this->assertEquals('common1', $context->val('users.99.tags'));
+        $this->assertEquals('common2', $context->val('users.9.9tags'));
+        $result = $context->val('title', ['default' => 'explicit default']);
+        $this->assertEquals('explicit default', $result);
+    }
+
+    /**
      * Test isRequired
      *
      * @return void
@@ -177,12 +202,14 @@ class ArrayContextTest extends TestCase
             'required' => [
                 'Comments' => [
                     'required' => true,
-                    'nope' => false
+                    'nope' => false,
+                    'tags' => true
                 ]
             ]
         ]);
         $this->assertTrue($context->isRequired('Comments.required'));
         $this->assertFalse($context->isRequired('Comments.nope'));
+        $this->assertTrue($context->isRequired('Comments.0.tags'));
         $this->assertFalse($context->isRequired('Articles.id'));
     }
 
@@ -208,12 +235,14 @@ class ArrayContextTest extends TestCase
             'schema' => [
                 'Comments' => [
                     'id' => ['type' => 'integer'],
+                    'tags' => ['type' => 'string'],
                     'comment' => ['length' => 255]
                 ]
             ]
         ]);
         $this->assertNull($context->type('Comments.undefined'));
         $this->assertEquals('integer', $context->type('Comments.id'));
+        $this->assertEquals('string', $context->type('Comments.0.tags'));
         $this->assertNull($context->type('Comments.comment'));
     }
 
@@ -242,10 +271,12 @@ class ArrayContextTest extends TestCase
                     'comment' => ['type' => 'string', 'length' => 255],
                     'decimal' => ['type' => 'decimal', 'precision' => 2, 'length' => 5],
                     'floaty' => ['type' => 'float', 'precision' => 2, 'length' => 5],
+                    'tags' => ['type' => 'string', 'length' => 25],
                 ]
             ]
         ]);
         $this->assertEquals([], $context->attributes('Comments.id'));
+        $this->assertEquals(['length' => 25], $context->attributes('Comments.0.tags'));
         $this->assertEquals(['length' => 255], $context->attributes('Comments.comment'));
         $this->assertEquals(['precision' => 2, 'length' => 5], $context->attributes('Comments.decimal'));
         $this->assertEquals(['precision' => 2, 'length' => 5], $context->attributes('Comments.floaty'));

@@ -1,22 +1,24 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\ORM;
 
 use Cake\Core\Exception\Exception;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Event\EventListenerInterface;
+use ReflectionClass;
+use ReflectionMethod;
 
 /**
  * Base class for behaviors.
@@ -61,26 +63,26 @@ use Cake\Event\EventListenerInterface;
  *   Fired when the rules checking object for the table is being built. You can use this
  *   callback to add more rules to the set.
  *
- * - `beforeRules(Event $event, Entity $entity, ArrayObject $options, $operation)`
+ * - `beforeRules(Event $event, EntityInterface $entity, ArrayObject $options, $operation)`
  *   Fired before an entity is validated using by a rules checker. By stopping this event,
  *   you can return the final value of the rules checking operation.
  *
- * - `afterRules(Event $event, Entity $entity, ArrayObject $options, bool $result, $operation)`
+ * - `afterRules(Event $event, EntityInterface $entity, ArrayObject $options, bool $result, $operation)`
  *   Fired after the rules have been checked on the entity. By stopping this event,
  *   you can return the final value of the rules checking operation.
  *
- * - `beforeSave(Event $event, Entity $entity, ArrayObject $options)`
+ * - `beforeSave(Event $event, EntityInterface $entity, ArrayObject $options)`
  *   Fired before each entity is saved. Stopping this event will abort the save
  *   operation. When the event is stopped the result of the event will be returned.
  *
- * - `afterSave(Event $event, Entity $entity, ArrayObject $options)`
+ * - `afterSave(Event $event, EntityInterface $entity, ArrayObject $options)`
  *   Fired after an entity is saved.
  *
- * - `beforeDelete(Event $event, Entity $entity, ArrayObject $options)`
+ * - `beforeDelete(Event $event, EntityInterface $entity, ArrayObject $options)`
  *   Fired before an entity is deleted. By stopping this event you will abort
  *   the delete operation.
  *
- * - `afterDelete(Event $event, Entity $entity, ArrayObject $options)`
+ * - `afterDelete(Event $event, EntityInterface $entity, ArrayObject $options)`
  *   Fired after an entity has been deleted.
  *
  * In addition to the core events, behaviors can respond to any
@@ -107,6 +109,7 @@ use Cake\Event\EventListenerInterface;
  *
  * @see \Cake\ORM\Table::addBehavior()
  * @see \Cake\Event\EventManager
+ * @mixin \Cake\Core\InstanceConfigTrait
  */
 class Behavior implements EventListenerInterface
 {
@@ -160,7 +163,7 @@ class Behavior implements EventListenerInterface
             $config
         );
         $this->_table = $table;
-        $this->config($config);
+        $this->setConfig($config);
         $this->initialize($config);
     }
 
@@ -178,6 +181,16 @@ class Behavior implements EventListenerInterface
     }
 
     /**
+     * Get the table instance this behavior is bound to.
+     *
+     * @return \Cake\ORM\Table The bound table instance.
+     */
+    public function getTable()
+    {
+        return $this->_table;
+    }
+
+    /**
      * Removes aliased methods that would otherwise be duplicated by userland configuration.
      *
      * @param string $key The key to filter.
@@ -191,8 +204,9 @@ class Behavior implements EventListenerInterface
             return $config;
         }
         if (isset($config[$key]) && $config[$key] === []) {
-            $this->config($key, [], false);
+            $this->setConfig($key, [], false);
             unset($config[$key]);
+
             return $config;
         }
 
@@ -203,8 +217,9 @@ class Behavior implements EventListenerInterface
                 $indexedCustom[$method] = $alias;
             }
         }
-        $this->config($key, array_flip($indexedCustom), false);
+        $this->setConfig($key, array_flip($indexedCustom), false);
         unset($config[$key]);
+
         return $config;
     }
 
@@ -250,14 +265,16 @@ class Behavior implements EventListenerInterface
             'Model.beforeFind' => 'beforeFind',
             'Model.beforeSave' => 'beforeSave',
             'Model.afterSave' => 'afterSave',
+            'Model.afterSaveCommit' => 'afterSaveCommit',
             'Model.beforeDelete' => 'beforeDelete',
             'Model.afterDelete' => 'afterDelete',
+            'Model.afterDeleteCommit' => 'afterDeleteCommit',
             'Model.buildValidator' => 'buildValidator',
             'Model.buildRules' => 'buildRules',
             'Model.beforeRules' => 'beforeRules',
             'Model.afterRules' => 'afterRules',
         ];
-        $config = $this->config();
+        $config = $this->getConfig();
         $priority = isset($config['priority']) ? $config['priority'] : null;
         $events = [];
 
@@ -274,6 +291,7 @@ class Behavior implements EventListenerInterface
                 ];
             }
         }
+
         return $events;
     }
 
@@ -297,10 +315,11 @@ class Behavior implements EventListenerInterface
      * method list. See core behaviors for examples
      *
      * @return array
+     * @throws \ReflectionException
      */
     public function implementedFinders()
     {
-        $methods = $this->config('implementedFinders');
+        $methods = $this->getConfig('implementedFinders');
         if (isset($methods)) {
             return $methods;
         }
@@ -328,10 +347,11 @@ class Behavior implements EventListenerInterface
      * method list. See core behaviors for examples
      *
      * @return array
+     * @throws \ReflectionException
      */
     public function implementedMethods()
     {
-        $methods = $this->config('implementedMethods');
+        $methods = $this->getConfig('implementedMethods');
         if (isset($methods)) {
             return $methods;
         }
@@ -347,6 +367,7 @@ class Behavior implements EventListenerInterface
      * declared on Cake\ORM\Behavior
      *
      * @return array
+     * @throws \ReflectionException
      */
     protected function _reflectionCache()
     {
@@ -359,7 +380,9 @@ class Behavior implements EventListenerInterface
         $eventMethods = [];
         foreach ($events as $e => $binding) {
             if (is_array($binding) && isset($binding['callable'])) {
-                $binding = $binding['callable'];
+                /* @var string $callable */
+                $callable = $binding['callable'];
+                $binding = $callable;
             }
             $eventMethods[$binding] = true;
         }
@@ -377,9 +400,9 @@ class Behavior implements EventListenerInterface
             'methods' => []
         ];
 
-        $reflection = new \ReflectionClass($class);
+        $reflection = new ReflectionClass($class);
 
-        foreach ($reflection->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
+        foreach ($reflection->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
             $methodName = $method->getName();
             if (in_array($methodName, $baseMethods) ||
                 isset($eventMethods[$methodName])

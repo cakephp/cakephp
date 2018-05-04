@@ -1,3 +1,6 @@
+[![Total Downloads](https://img.shields.io/packagist/dt/cakephp/log.svg?style=flat-square)](https://packagist.org/packages/cakephp/log)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE.txt)
+
 # CakePHP Logging Library
 
 The Log library provides a `Log` service locator for interfacing with
@@ -6,7 +9,7 @@ possible to send a single message to multiple logging backends at the same time
 or just a subset of them based on the log level or context.
 
 By default you can use Files or Syslog as logging backends, but you can use any
-object implementing `Psr\Log\LogInterface` as an engine for the `Log` class.
+object implementing `Psr\Log\LoggerInterface` as an engine for the `Log` class.
 
 ## Usage
 
@@ -77,4 +80,4 @@ Log::warning('this gets written only to payments.log', ['scope' => ['payments']]
 
 ## Documentation
 
-Please make sure you check the [official documentation](http://book.cakephp.org/3.0/en/core-libraries/logging.html)
+Please make sure you check the [official documentation](https://book.cakephp.org/3.0/en/core-libraries/logging.html)

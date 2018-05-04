@@ -1,16 +1,16 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP Project
  * @since         2.5.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Shell;
 
@@ -18,6 +18,8 @@ use Cake\Console\Shell;
 
 /**
  * Provide command completion shells such as bash.
+ *
+ * @property \Cake\Shell\Task\CommandTask $Command
  */
 class CompletionShell extends Shell
 {
@@ -51,26 +53,30 @@ class CompletionShell extends Shell
     /**
      * list commands
      *
-     * @return void|int|bool Returns the number of bytes returned from writing to stdout.
+     * @return int|bool|null Returns the number of bytes returned from writing to stdout.
      */
     public function commands()
     {
         $options = $this->Command->commands();
+
         return $this->_output($options);
     }
 
     /**
      * list options for the named command
      *
-     * @return void|int|bool Returns the number of bytes returned from writing to stdout.
+     * @return int|bool|null Returns the number of bytes returned from writing to stdout.
      */
     public function options()
     {
-        $commandName = '';
+        $commandName = $subCommandName = '';
         if (!empty($this->args[0])) {
             $commandName = $this->args[0];
         }
-        $options = $this->Command->options($commandName);
+        if (!empty($this->args[1])) {
+            $subCommandName = $this->args[1];
+        }
+        $options = $this->Command->options($commandName, $subCommandName);
 
         return $this->_output($options);
     }
@@ -78,7 +84,8 @@ class CompletionShell extends Shell
     /**
      * list subcommands for the named command
      *
-     * @return void|int|bool Returns the number of bytes returned from writing to stdout.
+     * @return int|bool|null Returns the number of bytes returned from writing to stdout.
+     * @throws \ReflectionException
      */
     public function subcommands()
     {
@@ -87,13 +94,14 @@ class CompletionShell extends Shell
         }
 
         $options = $this->Command->subCommands($this->args[0]);
+
         return $this->_output($options);
     }
 
     /**
      * Guess autocomplete from the whole argument string
      *
-     * @return void|int|bool Returns the number of bytes returned from writing to stdout.
+     * @return int|bool|null Returns the number of bytes returned from writing to stdout.
      */
     public function fuzzy()
     {
@@ -109,12 +117,12 @@ class CompletionShell extends Shell
     {
         $parser = parent::getOptionParser();
 
-        $parser->description(
+        $parser->setDescription(
             'Used by shells like bash to autocomplete command name, options and arguments'
         )->addSubcommand('commands', [
             'help' => 'Output a list of available commands',
             'parser' => [
-                'description' => 'List all availables',
+                'description' => 'List all available',
             ]
         ])->addSubcommand('subcommands', [
             'help' => 'Output a list of available subcommands',
@@ -135,12 +143,16 @@ class CompletionShell extends Shell
                     'command' => [
                         'help' => 'The command name',
                         'required' => false,
+                    ],
+                    'subcommand' => [
+                        'help' => 'The subcommand name',
+                        'required' => false,
                     ]
                 ]
             ]
         ])->addSubcommand('fuzzy', [
             'help' => 'Guess autocomplete'
-        ])->epilog([
+        ])->setEpilog([
             'This command is not intended to be called manually',
         ]);
 
@@ -151,7 +163,7 @@ class CompletionShell extends Shell
      * Emit results as a string, space delimited
      *
      * @param array $options The options to output
-     * @return void|int|bool Returns the number of bytes returned from writing to stdout.
+     * @return int|bool|null Returns the number of bytes returned from writing to stdout.
      */
     protected function _output($options = [])
     {

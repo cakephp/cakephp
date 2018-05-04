@@ -1,16 +1,16 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\ORM\Association;
 
@@ -19,14 +19,10 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Database\TypeMap;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Entity;
-use Cake\ORM\Query;
-use Cake\ORM\Table;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
  * Tests BelongsTo class
- *
  */
 class BelongsToTest extends TestCase
 {
@@ -36,14 +32,7 @@ class BelongsToTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = ['core.articles', 'core.comments', 'core.authors'];
-
-    /**
-     * Don't autoload fixtures as most tests uses mocks.
-     *
-     * @var bool
-     */
-    public $autoFixture = false;
+    public $fixtures = ['core.articles', 'core.authors', 'core.comments'];
 
     /**
      * Set up
@@ -53,7 +42,7 @@ class BelongsToTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->company = TableRegistry::get('Companies', [
+        $this->company = $this->getTableLocator()->get('Companies', [
             'schema' => [
                 'id' => ['type' => 'integer'],
                 'company_name' => ['type' => 'string'],
@@ -62,7 +51,7 @@ class BelongsToTest extends TestCase
                 ]
             ]
         ]);
-        $this->client = TableRegistry::get('Clients', [
+        $this->client = $this->getTableLocator()->get('Clients', [
             'schema' => [
                 'id' => ['type' => 'integer'],
                 'client_name' => ['type' => 'string'],
@@ -77,6 +66,8 @@ class BelongsToTest extends TestCase
             'id' => 'integer',
             'Companies.company_name' => 'string',
             'company_name' => 'string',
+            'Companies__id' => 'integer',
+            'Companies__company_name' => 'string'
         ]);
     }
 
@@ -88,7 +79,42 @@ class BelongsToTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        TableRegistry::clear();
+        $this->getTableLocator()->clear();
+    }
+
+    /**
+     * Test that foreignKey generation
+     *
+     * @return void
+     */
+    public function testSetForeignKey()
+    {
+        $assoc = new BelongsTo('Companies', [
+            'sourceTable' => $this->client,
+            'targetTable' => $this->company,
+        ]);
+        $this->assertEquals('company_id', $assoc->getForeignKey());
+        $this->assertSame($assoc, $assoc->setForeignKey('another_key'));
+        $this->assertEquals('another_key', $assoc->getForeignKey());
+    }
+
+    /**
+     * Test that foreignKey generation
+     *
+     * @group deprecated
+     * @return void
+     */
+    public function testForeignKey()
+    {
+        $this->deprecated(function () {
+            $assoc = new BelongsTo('Companies', [
+                'sourceTable' => $this->client,
+                'targetTable' => $this->company,
+            ]);
+            $this->assertEquals('company_id', $assoc->foreignKey());
+            $this->assertEquals('another_key', $assoc->foreignKey('another_key'));
+            $this->assertEquals('another_key', $assoc->foreignKey());
+        });
     }
 
     /**
@@ -96,15 +122,15 @@ class BelongsToTest extends TestCase
      *
      * @return void
      */
-    public function testForeignKey()
+    public function testForeignKeyIgnoreDatabaseName()
     {
-        $this->company->table('schema.companies');
-        $this->client->table('schema.clients');
+        $this->company->setTable('schema.companies');
+        $this->client->setTable('schema.clients');
         $assoc = new BelongsTo('Companies', [
             'sourceTable' => $this->client,
             'targetTable' => $this->company,
         ]);
-        $this->assertEquals('company_id', $assoc->foreignKey());
+        $this->assertEquals('company_id', $assoc->getForeignKey());
     }
 
     /**
@@ -125,7 +151,7 @@ class BelongsToTest extends TestCase
      */
     public function testCustomAlias()
     {
-        $table = TableRegistry::get('Articles', [
+        $table = $this->getTableLocator()->get('Articles', [
             'className' => 'TestPlugin.Articles'
         ]);
         $table->addAssociations([
@@ -148,7 +174,6 @@ class BelongsToTest extends TestCase
      */
     public function testAttachTo()
     {
-        $query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
         $config = [
             'foreignKey' => 'company_id',
             'sourceTable' => $this->client,
@@ -156,22 +181,32 @@ class BelongsToTest extends TestCase
             'conditions' => ['Companies.is_active' => true]
         ];
         $association = new BelongsTo('Companies', $config);
-        $field = new IdentifierExpression('Clients.company_id');
-        $query->expects($this->once())->method('join')->with([
-            'Companies' => [
-                'conditions' => new QueryExpression([
-                    'Companies.is_active' => true,
-                    ['Companies.id' => $field]
-                ], $this->companiesTypeMap),
-                'table' => 'companies',
-                'type' => 'LEFT'
-            ]
-        ]);
-        $query->expects($this->once())->method('select')->with([
+        $query = $this->client->query();
+        $association->attachTo($query);
+
+        $expected = [
             'Companies__id' => 'Companies.id',
             'Companies__company_name' => 'Companies.company_name'
-        ]);
-        $association->attachTo($query);
+        ];
+        $this->assertEquals($expected, $query->clause('select'));
+        $expected = [
+            'Companies' => [
+                'alias' => 'Companies',
+                'table' => 'companies',
+                'type' => 'LEFT',
+                'conditions' => new QueryExpression([
+                    'Companies.is_active' => true,
+                    ['Companies.id' => new IdentifierExpression('Clients.company_id')]
+                ], $this->companiesTypeMap)
+            ]
+        ];
+        $this->assertEquals($expected, $query->clause('join'));
+
+        $this->assertEquals(
+            'integer',
+            $query->getTypeMap()->type('Companies__id'),
+            'Associations should map types.'
+        );
     }
 
     /**
@@ -181,37 +216,71 @@ class BelongsToTest extends TestCase
      */
     public function testAttachToNoFields()
     {
-        $query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
         $config = [
             'sourceTable' => $this->client,
             'targetTable' => $this->company,
             'conditions' => ['Companies.is_active' => true]
         ];
+        $query = $this->client->query();
         $association = new BelongsTo('Companies', $config);
-        $field = new IdentifierExpression('Clients.company_id');
-        $query->expects($this->once())->method('join')->with([
-            'Companies' => [
-                'conditions' => new QueryExpression([
-                    'Companies.is_active' => true,
-                    ['Companies.id' => $field]
-                ], $this->companiesTypeMap),
-                'type' => 'LEFT',
-                'table' => 'companies',
-            ]
-        ]);
-        $query->expects($this->never())->method('select');
+
         $association->attachTo($query, ['includeFields' => false]);
+        $this->assertEmpty($query->clause('select'), 'no fields should be added.');
     }
 
     /**
-     * Tests that by passing the matching option to `attachTo` the association
-     * is joinned using `INNER`
+     * Tests that using belongsto with a table having a multi column primary
+     * key will work if the foreign key is passed
      *
      * @return void
      */
-    public function testAttachToMatching()
+    public function testAttachToMultiPrimaryKey()
     {
-        $query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+        $this->company->setPrimaryKey(['id', 'tenant_id']);
+        $config = [
+            'foreignKey' => ['company_id', 'company_tenant_id'],
+            'sourceTable' => $this->client,
+            'targetTable' => $this->company,
+            'conditions' => ['Companies.is_active' => true]
+        ];
+        $association = new BelongsTo('Companies', $config);
+        $query = $this->client->query();
+        $association->attachTo($query);
+
+        $expected = [
+            'Companies__id' => 'Companies.id',
+            'Companies__company_name' => 'Companies.company_name'
+        ];
+        $this->assertEquals($expected, $query->clause('select'));
+
+        $field1 = new IdentifierExpression('Clients.company_id');
+        $field2 = new IdentifierExpression('Clients.company_tenant_id');
+        $expected = [
+            'Companies' => [
+                'conditions' => new QueryExpression([
+                    'Companies.is_active' => true,
+                    ['Companies.id' => $field1, 'Companies.tenant_id' => $field2]
+                ], $this->companiesTypeMap),
+                'table' => 'companies',
+                'type' => 'LEFT',
+                'alias' => 'Companies'
+            ]
+        ];
+        $this->assertEquals($expected, $query->clause('join'));
+    }
+
+    /**
+     * Tests that using belongsto with a table having a multi column primary
+     * key will work if the foreign key is passed
+     *
+     * @return void
+     */
+    public function testAttachToMultiPrimaryKeyMismatch()
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Cannot match provided foreignKey for "Companies", got "(company_id)" but expected foreign key for "(id, tenant_id)"');
+        $this->company->setPrimaryKey(['id', 'tenant_id']);
+        $query = $this->client->query();
         $config = [
             'foreignKey' => 'company_id',
             'sourceTable' => $this->client,
@@ -219,22 +288,7 @@ class BelongsToTest extends TestCase
             'conditions' => ['Companies.is_active' => true]
         ];
         $association = new BelongsTo('Companies', $config);
-        $field = new IdentifierExpression('Clients.company_id');
-        $query->expects($this->once())->method('join')->with([
-            'Companies' => [
-                'conditions' => new QueryExpression([
-                    'Companies.is_active' => true,
-                    ['Companies.id' => $field]
-                ], $this->companiesTypeMap),
-                'table' => 'companies',
-                'type' => 'INNER'
-            ]
-        ]);
-        $query->expects($this->once())->method('select')->with([
-            'Companies__id' => 'Companies.id',
-            'Companies__company_name' => 'Companies.company_name'
-        ]);
-        $association->attachTo($query, ['matching' => true]);
+        $association->attachTo($query);
     }
 
     /**
@@ -244,7 +298,9 @@ class BelongsToTest extends TestCase
      */
     public function testCascadeDelete()
     {
-        $mock = $this->getMock('Cake\ORM\Table', [], [], '', false);
+        $mock = $this->getMockBuilder('Cake\ORM\Table')
+            ->disableOriginalConstructor()
+            ->getMock();
         $config = [
             'sourceTable' => $this->client,
             'targetTable' => $mock,
@@ -266,7 +322,10 @@ class BelongsToTest extends TestCase
      */
     public function testSaveAssociatedOnlyEntities()
     {
-        $mock = $this->getMock('Cake\ORM\Table', [], [], '', false);
+        $mock = $this->getMockBuilder('Cake\ORM\Table')
+            ->setMethods(['saveAssociated'])
+            ->disableOriginalConstructor()
+            ->getMock();
         $config = [
             'sourceTable' => $this->client,
             'targetTable' => $mock,
@@ -287,64 +346,6 @@ class BelongsToTest extends TestCase
     }
 
     /**
-     * Tests that using belongsto with a table having a multi column primary
-     * key will work if the foreign key is passed
-     *
-     * @return void
-     */
-    public function testAttachToMultiPrimaryKey()
-    {
-        $this->company->primaryKey(['id', 'tenant_id']);
-        $query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
-        $config = [
-            'foreignKey' => ['company_id', 'company_tenant_id'],
-            'sourceTable' => $this->client,
-            'targetTable' => $this->company,
-            'conditions' => ['Companies.is_active' => true]
-        ];
-        $association = new BelongsTo('Companies', $config);
-        $field1 = new IdentifierExpression('Clients.company_id');
-        $field2 = new IdentifierExpression('Clients.company_tenant_id');
-        $query->expects($this->once())->method('join')->with([
-            'Companies' => [
-                'conditions' => new QueryExpression([
-                    'Companies.is_active' => true,
-                    ['Companies.id' => $field1, 'Companies.tenant_id' => $field2]
-                ], $this->companiesTypeMap),
-                'table' => 'companies',
-                'type' => 'LEFT'
-            ]
-        ]);
-        $query->expects($this->once())->method('select')->with([
-            'Companies__id' => 'Companies.id',
-            'Companies__company_name' => 'Companies.company_name'
-        ]);
-        $association->attachTo($query);
-    }
-
-    /**
-     * Tests that using belongsto with a table having a multi column primary
-     * key will work if the foreign key is passed
-     *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Cannot match provided foreignKey for "Companies", got "(company_id)" but expected foreign key for "(id, tenant_id)"
-     * @return void
-     */
-    public function testAttachToMultiPrimaryKeyMistmatch()
-    {
-        $this->company->primaryKey(['id', 'tenant_id']);
-        $query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
-        $config = [
-            'foreignKey' => 'company_id',
-            'sourceTable' => $this->client,
-            'targetTable' => $this->company,
-            'conditions' => ['Companies.is_active' => true]
-        ];
-        $association = new BelongsTo('Companies', $config);
-        $association->attachTo($query);
-    }
-
-    /**
      * Tests that property is being set using the constructor options.
      *
      * @return void
@@ -353,7 +354,7 @@ class BelongsToTest extends TestCase
     {
         $config = ['propertyName' => 'thing_placeholder'];
         $association = new BelongsTo('Thing', $config);
-        $this->assertEquals('thing_placeholder', $association->property());
+        $this->assertEquals('thing_placeholder', $association->getProperty());
     }
 
     /**
@@ -363,13 +364,15 @@ class BelongsToTest extends TestCase
      */
     public function testPropertyNoPlugin()
     {
-        $mock = $this->getMock('Cake\ORM\Table', [], [], '', false);
+        $mock = $this->getMockBuilder('Cake\ORM\Table')
+            ->disableOriginalConstructor()
+            ->getMock();
         $config = [
             'sourceTable' => $this->client,
             'targetTable' => $mock,
         ];
         $association = new BelongsTo('Contacts.Companies', $config);
-        $this->assertEquals('company', $association->property());
+        $this->assertEquals('company', $association->getProperty());
     }
 
     /**
@@ -380,14 +383,15 @@ class BelongsToTest extends TestCase
      */
     public function testAttachToBeforeFind()
     {
-        $query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
         $config = [
             'foreignKey' => 'company_id',
             'sourceTable' => $this->client,
             'targetTable' => $this->company
         ];
-        $listener = $this->getMock('stdClass', ['__invoke']);
-        $this->company->eventManager()->attach($listener, 'Model.beforeFind');
+        $listener = $this->getMockBuilder('stdClass')
+            ->setMethods(['__invoke'])
+            ->getMock();
+        $this->company->getEventManager()->on('Model.beforeFind', $listener);
         $association = new BelongsTo('Companies', $config);
         $listener->expects($this->once())->method('__invoke')
             ->with(
@@ -396,7 +400,7 @@ class BelongsToTest extends TestCase
                 $this->isInstanceOf('\ArrayObject'),
                 false
             );
-        $association->attachTo($query);
+        $association->attachTo($this->client->query());
     }
 
     /**
@@ -407,14 +411,15 @@ class BelongsToTest extends TestCase
      */
     public function testAttachToBeforeFindExtraOptions()
     {
-        $query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
         $config = [
             'foreignKey' => 'company_id',
             'sourceTable' => $this->client,
             'targetTable' => $this->company
         ];
-        $listener = $this->getMock('stdClass', ['__invoke']);
-        $this->company->eventManager()->attach($listener, 'Model.beforeFind');
+        $listener = $this->getMockBuilder('stdClass')
+            ->setMethods(['__invoke'])
+            ->getMock();
+        $this->company->getEventManager()->on('Model.beforeFind', $listener);
         $association = new BelongsTo('Companies', $config);
         $options = new \ArrayObject(['something' => 'more']);
         $listener->expects($this->once())->method('__invoke')
@@ -424,6 +429,7 @@ class BelongsToTest extends TestCase
                 $options,
                 false
             );
+        $query = $this->client->query();
         $association->attachTo($query, ['queryBuilder' => function ($q) {
             return $q->applyOptions(['something' => 'more']);
         }]);

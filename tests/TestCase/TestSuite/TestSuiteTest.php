@@ -1,16 +1,16 @@
 <?php
 /**
- * CakePHP : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP Project
  * @since         1.2.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\TestSuite;
 
@@ -19,7 +19,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * TestSuiteTest
- *
  */
 class TestSuiteTest extends TestCase
 {
@@ -34,7 +33,9 @@ class TestSuiteTest extends TestCase
         $testFolder = CORE_TEST_CASES . DS . 'TestSuite';
         $count = count(glob($testFolder . DS . '*Test.php'));
 
-        $suite = $this->getMock('Cake\TestSuite\TestSuite', ['addTestFile']);
+        $suite = $this->getMockBuilder('Cake\TestSuite\TestSuite')
+            ->setMethods(['addTestFile'])
+            ->getMock();
         $suite
             ->expects($this->exactly($count))
             ->method('addTestFile');
@@ -53,7 +54,9 @@ class TestSuiteTest extends TestCase
         $count = count(glob($testFolder . DS . '*Test.php'));
         $count += count(glob($testFolder . DS . 'Engine/*Test.php'));
 
-        $suite = $this->getMock('Cake\TestSuite\TestSuite', ['addTestFile']);
+        $suite = $this->getMockBuilder('Cake\TestSuite\TestSuite')
+            ->setMethods(['addTestFile'])
+            ->getMock();
         $suite
             ->expects($this->exactly($count))
             ->method('addTestFile');
@@ -76,7 +79,9 @@ class TestSuiteTest extends TestCase
         touch($Folder->path . DS . 'NotHiddenTest.php');
         touch($Folder->path . DS . '.HiddenTest.php');
 
-        $suite = $this->getMock('Cake\TestSuite\TestSuite', ['addTestFile']);
+        $suite = $this->getMockBuilder('Cake\TestSuite\TestSuite')
+            ->setMethods(['addTestFile'])
+            ->getMock();
         $suite
             ->expects($this->exactly(1))
             ->method('addTestFile');
@@ -100,7 +105,9 @@ class TestSuiteTest extends TestCase
         touch($Folder->path . DS . 'SomeNotesTest.txt');
         touch($Folder->path . DS . 'NotHiddenTest.php');
 
-        $suite = $this->getMock('Cake\TestSuite\TestSuite', ['addTestFile']);
+        $suite = $this->getMockBuilder('Cake\TestSuite\TestSuite')
+            ->setMethods(['addTestFile'])
+            ->getMock();
         $suite
             ->expects($this->exactly(1))
             ->method('addTestFile');

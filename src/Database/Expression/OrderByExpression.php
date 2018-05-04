@@ -1,27 +1,24 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Database\Expression;
 
 use Cake\Database\ExpressionInterface;
-use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\ValueBinder;
 
 /**
  * An expression object for ORDER BY clauses
- *
- * @internal
  */
 class OrderByExpression extends QueryExpression
 {
@@ -29,8 +26,8 @@ class OrderByExpression extends QueryExpression
     /**
      * Constructor
      *
-     * @param array $conditions The sort columns
-     * @param array $types The types for each column.
+     * @param string|array|\Cake\Database\ExpressionInterface $conditions The sort columns
+     * @param array|\Cake\Database\TypeMap $types The types for each column.
      * @param string $conjunction The glue used to join conditions together.
      */
     public function __construct($conditions = [], $types = [], $conjunction = '')
@@ -49,10 +46,11 @@ class OrderByExpression extends QueryExpression
         $order = [];
         foreach ($this->_conditions as $k => $direction) {
             if ($direction instanceof ExpressionInterface) {
-                $direction = sprintf('(%s)', $direction->sql($generator));
+                $direction = $direction->sql($generator);
             }
             $order[] = is_numeric($k) ? $direction : sprintf('%s %s', $k, $direction);
         }
+
         return sprintf('ORDER BY %s', implode(', ', $order));
     }
 
@@ -68,6 +66,14 @@ class OrderByExpression extends QueryExpression
      */
     protected function _addConditions(array $orders, array $types)
     {
+        foreach ($orders as $key => $val) {
+            if (is_string($key) && is_string($val) && !in_array(strtoupper($val), ['ASC', 'DESC'], true)) {
+                deprecationWarning(
+                    'Passing extra sort expressions by associative array is deprecated. ' .
+                    'Use QueryExpression or numeric array instead.'
+                );
+            }
+        }
         $this->_conditions = array_merge($this->_conditions, $orders);
     }
 }

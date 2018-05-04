@@ -1,22 +1,20 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.7
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Datasource;
 
 use ArrayObject;
-use Cake\Datasource\EntityInterface;
-use Cake\Datasource\RulesChecker;
 use Cake\Event\EventDispatcherInterface;
 
 /**
@@ -31,6 +29,7 @@ use Cake\Event\EventDispatcherInterface;
  */
 trait RulesAwareTrait
 {
+
     /**
      * The domain rules to be applied to entities saved by this table
      *
@@ -44,13 +43,13 @@ trait RulesAwareTrait
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity to check for validity.
      * @param string $operation The operation being run. Either 'create', 'update' or 'delete'.
-     * @param \ArrayObject|array $options The options To be passed to the rules.
+     * @param \ArrayObject|array|null $options The options To be passed to the rules.
      * @return bool
      */
     public function checkRules(EntityInterface $entity, $operation = RulesChecker::CREATE, $options = null)
     {
         $rules = $this->rulesChecker();
-        $options = $options ?: new ArrayObject;
+        $options = $options ?: new ArrayObject();
         $options = is_array($options) ? new ArrayObject($options) : $options;
         $hasEvents = ($this instanceof EventDispatcherInterface);
 
@@ -60,7 +59,7 @@ trait RulesAwareTrait
                 compact('entity', 'options', 'operation')
             );
             if ($event->isStopped()) {
-                return $event->result;
+                return $event->getResult();
             }
         }
 
@@ -73,9 +72,10 @@ trait RulesAwareTrait
             );
 
             if ($event->isStopped()) {
-                return $event->result;
+                return $event->getResult();
             }
         }
+
         return $result;
     }
 
@@ -97,6 +97,7 @@ trait RulesAwareTrait
         $class = defined('static::RULES_CLASS') ? static::RULES_CLASS : 'Cake\Datasource\RulesChecker';
         $this->_rulesChecker = $this->buildRules(new $class(['repository' => $this]));
         $this->dispatchEvent('Model.buildRules', ['rules' => $this->_rulesChecker]);
+
         return $this->_rulesChecker;
     }
 

@@ -1,25 +1,28 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\ORM\Association;
 
 use Cake\Datasource\EntityInterface;
+use Cake\ORM\Association\DependentDeleteHelper;
 
 /**
  * Implements cascading deletes for dependent associations.
  *
  * Included by HasOne and HasMany association classes.
+ *
+ * @deprecated 3.5.0 Unused in CakePHP now. This class will be removed in 4.0.0
  */
 trait DependentDeleteTrait
 {
@@ -35,23 +38,12 @@ trait DependentDeleteTrait
      */
     public function cascadeDelete(EntityInterface $entity, array $options = [])
     {
-        if (!$this->dependent()) {
-            return true;
-        }
-        $table = $this->target();
-        $foreignKey = (array)$this->foreignKey();
-        $bindingKey = (array)$this->bindingKey();
-        $conditions = array_combine($foreignKey, $entity->extract($bindingKey));
+        deprecationWarning(
+            'The DependentDeleteTrait is deprecated. ' .
+            'You should use Cake\ORM\Association\DependentDeleteHelper instead.'
+        );
+        $helper = new DependentDeleteHelper();
 
-        if ($this->_cascadeCallbacks) {
-            $query = $this->find('all')->where($conditions);
-            foreach ($query as $related) {
-                $table->delete($related, $options);
-            }
-            return true;
-        }
-
-        $conditions = array_merge($conditions, $this->conditions());
-        return $table->deleteAll($conditions);
+        return $helper->cascadeDelete($this, $entity, $options);
     }
 }

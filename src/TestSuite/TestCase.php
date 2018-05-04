@@ -1,15 +1,15 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @since         1.2.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\TestSuite;
 
@@ -17,31 +17,36 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
 use Cake\Event\EventManager;
+use Cake\ORM\Entity;
 use Cake\ORM\Exception\MissingTableClassException;
-use Cake\ORM\TableRegistry;
+use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Routing\Router;
+use Cake\TestSuite\Constraint\EventFired;
+use Cake\TestSuite\Constraint\EventFiredWith;
 use Cake\Utility\Inflector;
 use Exception;
+use PHPUnit\Framework\TestCase as BaseTestCase;
 
 /**
  * Cake TestCase class
- *
  */
-abstract class TestCase extends \PHPUnit_Framework_TestCase
+abstract class TestCase extends BaseTestCase
 {
+
+    use LocatorAwareTrait;
 
     /**
      * The class responsible for managing the creation, loading and removing of fixtures
      *
-     * @var \Cake\TestSuite\Fixture\FixtureManager
+     * @var \Cake\TestSuite\Fixture\FixtureManager|null
      */
-    public $fixtureManager = null;
+    public $fixtureManager;
 
     /**
      * By default, all fixtures attached to this class will be truncated and reloaded after each test.
      * Set this to false to handle manually
      *
-     * @var array
+     * @var bool
      */
     public $autoFixtures = true;
 
@@ -81,7 +86,43 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         if ($shouldSkip) {
             $this->markTestSkipped($message);
         }
+
         return $shouldSkip;
+    }
+
+    /**
+     * Helper method for tests that needs to use error_reporting()
+     *
+     * @param int $errorLevel value of error_reporting() that needs to use
+     * @param callable $callable callable function that will receive asserts
+     * @return void
+     */
+    public function withErrorReporting($errorLevel, $callable)
+    {
+        $default = error_reporting();
+        error_reporting($errorLevel);
+        try {
+            $callable();
+        } finally {
+            error_reporting($default);
+        }
+    }
+
+    /**
+     * Helper method for check deprecation methods
+     *
+     * @param callable $callable callable function that will receive asserts
+     * @return void
+     */
+    public function deprecated($callable)
+    {
+        $errorLevel = error_reporting();
+        error_reporting(E_ALL ^ E_USER_DEPRECATED);
+        try {
+            $callable();
+        } finally {
+            error_reporting($errorLevel);
+        }
     }
 
     /**
@@ -95,13 +136,13 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     {
         parent::setUp();
 
-        if (empty($this->_configure)) {
+        if (!$this->_configure) {
             $this->_configure = Configure::read();
         }
         if (class_exists('Cake\Routing\Router', false)) {
             Router::reload();
         }
- 
+
         EventManager::instance(new EventManager());
     }
 
@@ -113,16 +154,18 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     public function tearDown()
     {
         parent::tearDown();
-        if (!empty($this->_configure)) {
+        if ($this->_configure) {
             Configure::clear();
             Configure::write($this->_configure);
         }
+        $this->getTableLocator()->clear();
     }
 
     /**
      * Chooses which fixtures to load for a given test
      *
-     * Each parameter is a model name that corresponds to a fixture, i.e. 'Post', 'Author', etc.
+     * Each parameter is a model name that corresponds to a fixture, i.e. 'Posts', 'Authors', etc.
+     * Passing no parameters will cause all fixtures on the test case to load.
      *
      * @return void
      * @see \Cake\TestSuite\TestCase::$autoFixtures
@@ -130,13 +173,56 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
      */
     public function loadFixtures()
     {
-        if (empty($this->fixtureManager)) {
+        if ($this->fixtureManager === null) {
             throw new Exception('No fixture manager to load the test fixture');
         }
         $args = func_get_args();
         foreach ($args as $class) {
             $this->fixtureManager->loadSingle($class, null, $this->dropTables);
         }
+
+        if (empty($args)) {
+            $autoFixtures = $this->autoFixtures;
+            $this->autoFixtures = true;
+            $this->fixtureManager->load($this);
+            $this->autoFixtures = $autoFixtures;
+        }
+    }
+
+    /**
+     * Asserts that a global event was fired. You must track events in your event manager for this assertion to work
+     *
+     * @param string $name Event name
+     * @param EventManager|null $eventManager Event manager to check, defaults to global event manager
+     * @param string $message Assertion failure message
+     * @return void
+     */
+    public function assertEventFired($name, $eventManager = null, $message = '')
+    {
+        if (!$eventManager) {
+            $eventManager = EventManager::instance();
+        }
+        $this->assertThat($name, new EventFired($eventManager), $message);
+    }
+
+    /**
+     * Asserts an event was fired with data
+     *
+     * If a third argument is passed, that value is used to compare with the value in $dataKey
+     *
+     * @param string $name Event name
+     * @param string $dataKey Data key
+     * @param string $dataValue Data value
+     * @param EventManager|null $eventManager Event manager to check, defaults to global event manager
+     * @param string $message Assertion failure message
+     * @return void
+     */
+    public function assertEventFiredWith($name, $dataKey, $dataValue, $eventManager = null, $message = '')
+    {
+        if (!$eventManager) {
+            $eventManager = EventManager::instance();
+        }
+        $this->assertThat($name, new EventFiredWith($eventManager, $dataKey, $dataValue), $message);
     }
 
     /**
@@ -280,11 +366,8 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
      */
     public function assertTags($string, $expected, $fullDebug = false)
     {
-        trigger_error(
-            'assertTags() is deprecated, use assertHtml() instead.',
-            E_USER_DEPRECATED
-        );
-        static::assertHtml($expected, $string, $fullDebug);
+        deprecationWarning('TestCase::assertTags() is deprecated. Use TestCase::assertHtml() instead.');
+        $this->assertHtml($expected, $string, $fullDebug);
     }
 
     /**
@@ -361,7 +444,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
                     }
                     $regex[] = [
                         sprintf('%sClose %s tag', $prefix[0], substr($tags, strlen($match[0]))),
-                        sprintf('%s<[\s]*\/[\s]*%s[\s]*>[\n\r]*', $prefix[1], substr($tags, strlen($match[0]))),
+                        sprintf('%s\s*<[\s]*\/[\s]*%s[\s]*>[\n\r]*', $prefix[1], substr($tags, strlen($match[0]))),
                         $i,
                     ];
                     continue;
@@ -370,7 +453,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
                     $tags = $matches[1];
                     $type = 'Regex matches';
                 } else {
-                    $tags = preg_quote($tags, '/');
+                    $tags = '\s*' . preg_quote($tags, '/');
                     $type = 'Text equals';
                 }
                 $regex[] = [
@@ -397,27 +480,27 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
                         $attrs[] = $matches[1];
                         $explanations[] = sprintf('Regex "%s" matches', $matches[1]);
                         continue;
-                    } else {
-                        $quotes = '["\']';
-                        if (is_numeric($attr)) {
-                            $attr = $val;
-                            $val = '.+?';
-                            $explanations[] = sprintf('Attribute "%s" present', $attr);
-                        } elseif (!empty($val) && preg_match('/^preg\:\/(.+)\/$/i', $val, $matches)) {
-                            $val = str_replace(
-                                ['.*', '.+'],
-                                ['.*?', '.+?'],
-                                $matches[1]
-                            );
-                            $quotes = $val !== $matches[1] ? '["\']' : '["\']?';
-
-                            $explanations[] = sprintf('Attribute "%s" matches "%s"', $attr, $val);
-                        } else {
-                            $explanations[] = sprintf('Attribute "%s" == "%s"', $attr, $val);
-                            $val = preg_quote($val, '/');
-                        }
-                        $attrs[] = '[\s]+' . preg_quote($attr, '/') . '=' . $quotes . $val . $quotes;
                     }
+
+                    $quotes = '["\']';
+                    if (is_numeric($attr)) {
+                        $attr = $val;
+                        $val = '.+?';
+                        $explanations[] = sprintf('Attribute "%s" present', $attr);
+                    } elseif (!empty($val) && preg_match('/^preg\:\/(.+)\/$/i', $val, $matches)) {
+                        $val = str_replace(
+                            ['.*', '.+'],
+                            ['.*?', '.+?'],
+                            $matches[1]
+                        );
+                        $quotes = $val !== $matches[1] ? '["\']' : '["\']?';
+
+                        $explanations[] = sprintf('Attribute "%s" matches "%s"', $attr, $val);
+                    } else {
+                        $explanations[] = sprintf('Attribute "%s" == "%s"', $attr, $val);
+                        $val = preg_quote($val, '/');
+                    }
+                    $attrs[] = '[\s]+' . preg_quote($attr, '/') . '=' . $quotes . $val . $quotes;
                     $i++;
                 }
                 if ($attrs) {
@@ -436,11 +519,16 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         foreach ($regex as $i => $assertion) {
             $matches = false;
             if (isset($assertion['attrs'])) {
-                $string = $this->_assertAttributes($assertion, $string);
+                $string = $this->_assertAttributes($assertion, $string, $fullDebug, $regex);
+                if ($fullDebug === true && $string === false) {
+                    debug($string, true);
+                    debug($regex, true);
+                }
                 continue;
             }
 
             list($description, $expressions, $itemNum) = $assertion;
+            $expression = null;
             foreach ((array)$expressions as $expression) {
                 $expression = sprintf('/^%s/s', $expression);
                 if (preg_match($expression, $string, $match)) {
@@ -450,16 +538,18 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
                 }
             }
             if (!$matches) {
-                $this->assertRegExp($expression, $string, sprintf('Item #%d / regex #%d failed: %s', $itemNum, $i, $description));
-                if ($fullDebug) {
-                    debug($string, true);
-                    debug($regex, true);
+                if ($fullDebug === true) {
+                    debug($string);
+                    debug($regex);
                 }
+                $this->assertRegExp($expression, $string, sprintf('Item #%d / regex #%d failed: %s', $itemNum, $i, $description));
+
                 return false;
             }
         }
 
         $this->assertTrue(true, '%s');
+
         return true;
     }
 
@@ -468,15 +558,17 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
      *
      * @param array $assertions Assertions to run.
      * @param string $string The HTML string to check.
-     * @return string
+     * @param bool $fullDebug Whether or not more verbose output should be used.
+     * @param array|string $regex Full regexp from `assertHtml`
+     * @return string|bool
      */
-    protected function _assertAttributes($assertions, $string)
+    protected function _assertAttributes($assertions, $string, $fullDebug = false, $regex = '')
     {
         $asserts = $assertions['attrs'];
         $explains = $assertions['explains'];
-        $len = count($asserts);
         do {
             $matches = false;
+            $j = null;
             foreach ($asserts as $j => $assert) {
                 if (preg_match(sprintf('/^%s/s', $assert), $string, $match)) {
                     $matches = true;
@@ -487,10 +579,15 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
                 }
             }
             if ($matches === false) {
+                if ($fullDebug === true) {
+                    debug($string);
+                    debug($regex);
+                }
                 $this->assertTrue(false, 'Attribute did not match. Was expecting ' . $explains[$j]);
             }
             $len = count($asserts);
         } while ($len > 0);
+
         return $string;
     }
 
@@ -498,11 +595,11 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
      * Normalize a path for comparison.
      *
      * @param string $path Path separated by "/" slash.
-     * @return string Normalized path separated by DS.
+     * @return string Normalized path separated by DIRECTORY_SEPARATOR.
      */
     protected function _normalizePath($path)
     {
-        return str_replace('/', DS, $path);
+        return str_replace('/', DIRECTORY_SEPARATOR, $path);
     }
 
 // @codingStandardsIgnoreStart
@@ -520,7 +617,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     {
         $upper = $result + $margin;
         $lower = $result - $margin;
-        static::assertTrue((($expected <= $upper) && ($expected >= $lower)), $message);
+        static::assertTrue(($expected <= $upper) && ($expected >= $lower), $message);
     }
 
     /**
@@ -536,7 +633,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     {
         $upper = $result + $margin;
         $lower = $result - $margin;
-        static::assertTrue((($expected > $upper) || ($expected < $lower)), $message);
+        static::assertTrue(($expected > $upper) || ($expected < $lower), $message);
     }
 
     /**
@@ -549,8 +646,8 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
      */
     protected static function assertPathEquals($expected, $result, $message = '')
     {
-        $expected = str_replace(DS, '/', $expected);
-        $result = str_replace(DS, '/', $result);
+        $expected = str_replace(DIRECTORY_SEPARATOR, '/', $expected);
+        $result = str_replace(DIRECTORY_SEPARATOR, '/', $result);
         static::assertEquals($expected, $result, $message);
     }
 
@@ -566,6 +663,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         if (!$condition) {
             $this->markTestSkipped($message);
         }
+
         return $condition;
     }
 
@@ -575,12 +673,58 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
      * Mock a model, maintain fixtures and table association
      *
      * @param string $alias The model to get a mock for.
-     * @param mixed $methods The list of methods to mock
+     * @param array $methods The list of methods to mock
      * @param array $options The config data for the mock's constructor.
      * @throws \Cake\ORM\Exception\MissingTableClassException
-     * @return Model
+     * @return \Cake\ORM\Table|\PHPUnit_Framework_MockObject_MockObject
      */
     public function getMockForModel($alias, array $methods = [], array $options = [])
+    {
+        /** @var \Cake\ORM\Table $className */
+        $className = $this->_getTableClassName($alias, $options);
+        $connectionName = $className::defaultConnectionName();
+        $connection = ConnectionManager::get($connectionName);
+
+        $locator = $this->getTableLocator();
+
+        list(, $baseClass) = pluginSplit($alias);
+        $options += ['alias' => $baseClass, 'connection' => $connection];
+        $options += $locator->getConfig($alias);
+
+        /** @var \Cake\ORM\Table|\PHPUnit_Framework_MockObject_MockObject $mock */
+        $mock = $this->getMockBuilder($className)
+            ->setMethods($methods)
+            ->setConstructorArgs([$options])
+            ->getMock();
+
+        if (empty($options['entityClass']) && $mock->getEntityClass() === Entity::class) {
+            $parts = explode('\\', $className);
+            $entityAlias = Inflector::singularize(substr(array_pop($parts), 0, -5));
+            $entityClass = implode('\\', array_slice($parts, 0, -1)) . '\\Entity\\' . $entityAlias;
+            if (class_exists($entityClass)) {
+                $mock->setEntityClass($entityClass);
+            }
+        }
+
+        if (stripos($mock->getTable(), 'mock') === 0) {
+            $mock->setTable(Inflector::tableize($baseClass));
+        }
+
+        $locator->set($baseClass, $mock);
+        $locator->set($alias, $mock);
+
+        return $mock;
+    }
+
+    /**
+     * Gets the class name for the table.
+     *
+     * @param string $alias The model to get a mock for.
+     * @param array $options The config data for the mock's constructor.
+     * @return string
+     * @throws \Cake\ORM\Exception\MissingTableClassException
+     */
+    protected function _getTableClassName($alias, array $options)
     {
         if (empty($options['className'])) {
             $class = Inflector::camelize($alias);
@@ -591,25 +735,17 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
             $options['className'] = $className;
         }
 
-        $connectionName = $options['className']::defaultConnectionName();
-        $connection = ConnectionManager::get($connectionName);
+        return $options['className'];
+    }
 
-        list(, $baseClass) = pluginSplit($alias);
-        $options += ['alias' => $baseClass, 'connection' => $connection];
-        $options += TableRegistry::config($alias);
-
-        $mock = $this->getMock($options['className'], $methods, [$options]);
-
-        if (empty($options['entityClass']) && $mock->entityClass() === '\Cake\ORM\Entity') {
-            $parts = explode('\\', $options['className']);
-            $entityAlias = Inflector::singularize(substr(array_pop($parts), 0, -5));
-            $entityClass = implode('\\', array_slice($parts, 0, -1)) . '\Entity\\' . $entityAlias;
-            if (class_exists($entityClass)) {
-                $mock->entityClass($entityClass);
-            }
-        }
-
-        TableRegistry::set($baseClass, $mock);
-        return $mock;
+    /**
+     * Set the app namespace
+     *
+     * @param string $appNamespace The app namespace, defaults to "TestApp".
+     * @return void
+     */
+    public static function setAppNamespace($appNamespace = 'TestApp')
+    {
+        Configure::write('App.namespace', $appNamespace);
     }
 }

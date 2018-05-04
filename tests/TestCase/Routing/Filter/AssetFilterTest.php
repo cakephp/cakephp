@@ -1,24 +1,21 @@
 <?php
 /**
- * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) Tests <https://book.cakephp.org/view/1196/Testing>
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The Open Group Test Suite License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
  * @since         2.2.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Routing\Filter;
 
-use Cake\Core\App;
-use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Event\Event;
-use Cake\Network\Request;
-use Cake\Network\Response;
+use Cake\Http\ServerRequest;
 use Cake\Routing\Filter\AssetFilter;
 use Cake\TestSuite\TestCase;
 
@@ -64,8 +61,10 @@ class AssetFilterTest extends TestCase
         $time = filemtime(Plugin::path('TestTheme') . 'webroot/img/cake.power.gif');
         $time = new \DateTime('@' . $time);
 
-        $response = $this->getMock('Cake\Network\Response', ['send', 'checkNotModified']);
-        $request = new Request('test_theme/img/cake.power.gif');
+        $response = $this->getMockBuilder('Cake\Http\Response')
+            ->setMethods(['send', 'checkNotModified'])
+            ->getMock();
+        $request = new ServerRequest('test_theme/img/cake.power.gif');
 
         $response->expects($this->once())->method('checkNotModified')
             ->with($request)
@@ -73,13 +72,15 @@ class AssetFilterTest extends TestCase
         $event = new Event('DispatcherTest', $this, compact('request', 'response'));
 
         ob_start();
-        $this->assertSame($response, $filter->beforeDispatch($event));
+        $response = $filter->beforeDispatch($event);
         ob_end_clean();
-        $this->assertEquals(200, $response->statusCode());
-        $this->assertEquals($time->format('D, j M Y H:i:s') . ' GMT', $response->modified());
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals($time->format('D, j M Y H:i:s') . ' GMT', $response->getHeaderLine('Last-Modified'));
 
-        $response = $this->getMock('Cake\Network\Response', ['_sendHeader', 'checkNotModified']);
-        $request = new Request('test_theme/img/cake.power.gif');
+        $response = $this->getMockBuilder('Cake\Http\Response')
+            ->setMethods(['_sendHeader', 'checkNotModified', 'send'])
+            ->getMock();
+        $request = new ServerRequest('test_theme/img/cake.power.gif');
 
         $response->expects($this->once())->method('checkNotModified')
             ->with($request)
@@ -87,8 +88,8 @@ class AssetFilterTest extends TestCase
         $response->expects($this->never())->method('send');
         $event = new Event('DispatcherTest', $this, compact('request', 'response'));
 
-        $this->assertSame($response, $filter->beforeDispatch($event));
-        $this->assertEquals($time->format('D, j M Y H:i:s') . ' GMT', $response->modified());
+        $response = $filter->beforeDispatch($event);
+        $this->assertEquals($time->format('D, j M Y H:i:s') . ' GMT', $response->getHeaderLine('Last-Modified'));
     }
 
     /**
@@ -101,8 +102,10 @@ class AssetFilterTest extends TestCase
     {
         $filter = new AssetFilter();
 
-        $response = $this->getMock('Response', ['_sendHeader']);
-        $request = new Request('//index.php');
+        $response = $this->getMockBuilder('Cake\Http\Response')
+            ->setMethods(['_sendHeader'])
+            ->getMock();
+        $request = new ServerRequest('//index.php');
         $event = new Event('Dispatcher.beforeRequest', $this, compact('request', 'response'));
 
         $this->assertNull($filter->beforeDispatch($event));
@@ -112,7 +115,7 @@ class AssetFilterTest extends TestCase
     /**
      * Test that 404's are returned when .. is in the URL
      *
-     * @return voi
+     * @return void
      * @triggers Dispatcher.beforeRequest $this, compact('request', 'response')
      * @triggers Dispatcher.beforeRequest $this, compact('request', 'response')
      */
@@ -120,14 +123,16 @@ class AssetFilterTest extends TestCase
     {
         $filter = new AssetFilter();
 
-        $response = $this->getMock('Response', ['_sendHeader']);
-        $request = new Request('test_theme/../webroot/css/test_asset.css');
+        $response = $this->getMockBuilder('Cake\Http\Response')
+            ->setMethods(['_sendHeader'])
+            ->getMock();
+        $request = new ServerRequest('test_theme/../webroot/css/test_asset.css');
         $event = new Event('Dispatcher.beforeRequest', $this, compact('request', 'response'));
 
         $this->assertNull($filter->beforeDispatch($event));
         $this->assertFalse($event->isStopped());
 
-        $request = new Request('test_theme/%3e./webroot/css/test_asset.css');
+        $request = new ServerRequest('test_theme/%3e./webroot/css/test_asset.css');
         $event = new Event('Dispatcher.beforeRequest', $this, compact('request', 'response'));
 
         $this->assertNull($filter->beforeDispatch($event));
@@ -234,21 +239,20 @@ class AssetFilterTest extends TestCase
         Plugin::load(['Company/TestPluginThree', 'TestPlugin', 'PluginJs']);
 
         $filter = new AssetFilter();
-        $response = $this->getMock('Cake\Network\Response', ['_sendHeader']);
-        $request = new Request($url);
+        $response = $this->getMockBuilder('Cake\Http\Response')
+            ->setMethods(['_sendHeader'])
+            ->getMock();
+        $request = new ServerRequest($url);
         $event = new Event('Dispatcher.beforeDispatch', $this, compact('request', 'response'));
 
-        ob_start();
-        $filter->beforeDispatch($event);
-        $result = ob_get_contents();
-        ob_end_clean();
+        $response = $filter->beforeDispatch($event);
+        $result = $response->getFile();
 
         $path = TEST_APP . str_replace('/', DS, $file);
         $file = file_get_contents($path);
-        $this->assertEquals($file, $result);
+        $this->assertEquals($file, $result->read());
 
         $expected = filesize($path);
-        $headers = $response->header();
-        $this->assertEquals($expected, $headers['Content-Length']);
+        $this->assertEquals($expected, $response->getHeaderLine('Content-Length'));
     }
 }

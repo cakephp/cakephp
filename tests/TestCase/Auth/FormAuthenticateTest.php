@@ -1,34 +1,31 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         2.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Auth;
 
 use Cake\Auth\FormAuthenticate;
-use Cake\Cache\Cache;
-use Cake\Core\App;
-use Cake\Core\Configure;
+use Cake\Controller\ComponentRegistry;
 use Cake\Core\Plugin;
+use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 use Cake\I18n\Time;
-use Cake\Network\Request;
 use Cake\ORM\Entity;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
 
 /**
  * Test case for FormAuthentication
- *
  */
 class FormAuthenticateTest extends TestCase
 {
@@ -38,7 +35,7 @@ class FormAuthenticateTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = ['core.users', 'core.auth_users'];
+    public $fixtures = ['core.auth_users', 'core.users'];
 
     /**
      * setup
@@ -48,16 +45,22 @@ class FormAuthenticateTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->Collection = $this->getMock('Cake\Controller\ComponentRegistry');
+        $this->Collection = $this->getMockBuilder(ComponentRegistry::class)->getMock();
         $this->auth = new FormAuthenticate($this->Collection, [
             'userModel' => 'Users'
         ]);
         $password = password_hash('password', PASSWORD_DEFAULT);
 
-        TableRegistry::clear();
-        $Users = TableRegistry::get('Users');
+        $this->getTableLocator()->clear();
+        $Users = $this->getTableLocator()->get('Users');
         $Users->updateAll(['password' => $password], []);
-        $this->response = $this->getMock('Cake\Network\Response');
+
+        $AuthUsers = $this->getTableLocator()->get('AuthUsers', [
+            'className' => 'TestApp\Model\Table\AuthUsersTable'
+        ]);
+        $AuthUsers->updateAll(['password' => $password], []);
+
+        $this->response = $this->getMockBuilder(Response::class)->getMock();
     }
 
     /**
@@ -71,8 +74,8 @@ class FormAuthenticateTest extends TestCase
             'userModel' => 'AuthUsers',
             'fields' => ['username' => 'user', 'password' => 'password']
         ]);
-        $this->assertEquals('AuthUsers', $object->config('userModel'));
-        $this->assertEquals(['username' => 'user', 'password' => 'password'], $object->config('fields'));
+        $this->assertEquals('AuthUsers', $object->getConfig('userModel'));
+        $this->assertEquals(['username' => 'user', 'password' => 'password'], $object->getConfig('fields'));
     }
 
     /**
@@ -82,8 +85,10 @@ class FormAuthenticateTest extends TestCase
      */
     public function testAuthenticateNoData()
     {
-        $request = new Request('posts/index');
-        $request->data = [];
+        $request = new ServerRequest([
+            'url' => 'posts/index',
+            'post' => [],
+        ]);
         $this->assertFalse($this->auth->authenticate($request, $this->response));
     }
 
@@ -94,8 +99,10 @@ class FormAuthenticateTest extends TestCase
      */
     public function testAuthenticateNoUsername()
     {
-        $request = new Request('posts/index');
-        $request->data = ['password' => 'foobar'];
+        $request = new ServerRequest([
+            'url' => 'posts/index',
+            'post' => ['password' => 'foobar'],
+        ]);
         $this->assertFalse($this->auth->authenticate($request, $this->response));
     }
 
@@ -106,8 +113,10 @@ class FormAuthenticateTest extends TestCase
      */
     public function testAuthenticateNoPassword()
     {
-        $request = new Request('posts/index');
-        $request->data = ['username' => 'mariano'];
+        $request = new ServerRequest([
+            'url' => 'posts/index',
+            'post' => ['username' => 'mariano'],
+        ]);
         $this->assertFalse($this->auth->authenticate($request, $this->response));
     }
 
@@ -118,11 +127,14 @@ class FormAuthenticateTest extends TestCase
      */
     public function testAuthenticatePasswordIsFalse()
     {
-        $request = new Request('posts/index', false);
-        $request->data = [
-            'username' => 'mariano',
-            'password' => null
-        ];
+        $request = new ServerRequest('posts/index', false);
+        $request = new ServerRequest([
+            'url' => 'posts/index',
+            'post' => [
+                'username' => 'mariano',
+                'password' => null
+            ],
+        ]);
         $this->assertFalse($this->auth->authenticate($request, $this->response));
     }
 
@@ -134,22 +146,21 @@ class FormAuthenticateTest extends TestCase
      */
     public function testAuthenticatePasswordIsEmptyString()
     {
-        $request = new Request('posts/index', false);
-        $request->data = [
-            'username' => 'mariano',
-            'password' => ''
-        ];
+        $request = new ServerRequest([
+            'url' => 'posts/index',
+            'post' => [
+                'username' => 'mariano',
+                'password' => ''
+            ],
+        ]);
 
-        $this->auth = $this->getMock(
-            'Cake\Auth\FormAuthenticate',
-            ['_checkFields'],
-            [
+        $this->auth = $this->getMockBuilder(FormAuthenticate::class)
+            ->setMethods(['_checkFields'])
+            ->setConstructorArgs([
                 $this->Collection,
-                [
-                    'userModel' => 'Users'
-                ]
-            ]
-        );
+                ['userModel' => 'Users']
+            ])
+            ->getMock();
 
         // Simulate that check for ensuring password is not empty is missing.
         $this->auth->expects($this->once())
@@ -166,17 +177,22 @@ class FormAuthenticateTest extends TestCase
      */
     public function testAuthenticateFieldsAreNotString()
     {
-        $request = new Request('posts/index', false);
-        $request->data = [
-            'username' => ['mariano', 'phpnut'],
-            'password' => 'my password'
-        ];
+        $request = new ServerRequest([
+            'url' => 'posts/index',
+            'post' => [
+                'username' => ['mariano', 'phpnut'],
+                'password' => 'my password'
+            ],
+        ]);
         $this->assertFalse($this->auth->authenticate($request, $this->response));
 
-        $request->data = [
-            'username' => 'mariano',
+        $request = new ServerRequest([
+            'url' => 'posts/index',
+            'post' => [
+                'username' => 'mariano',
             'password' => ['password1', 'password2']
-        ];
+            ],
+        ]);
         $this->assertFalse($this->auth->authenticate($request, $this->response));
     }
 
@@ -187,11 +203,13 @@ class FormAuthenticateTest extends TestCase
      */
     public function testAuthenticateInjection()
     {
-        $request = new Request('posts/index');
-        $request->data = [
-            'username' => '> 1',
-            'password' => "' OR 1 = 1"
-        ];
+        $request = new ServerRequest([
+            'url' => 'posts/index',
+            'post' => [
+                'username' => '> 1',
+                'password' => "' OR 1 = 1"
+            ],
+        ]);
         $this->assertFalse($this->auth->authenticate($request, $this->response));
     }
 
@@ -202,11 +220,13 @@ class FormAuthenticateTest extends TestCase
      */
     public function testAuthenticateSuccess()
     {
-        $request = new Request('posts/index');
-        $request->data = [
-            'username' => 'mariano',
-            'password' => 'password'
-        ];
+        $request = new ServerRequest([
+            'url' => 'posts/index',
+            'post' => [
+                'username' => 'mariano',
+                'password' => 'password'
+            ],
+        ]);
         $result = $this->auth->authenticate($request, $this->response);
         $expected = [
             'id' => 1,
@@ -224,14 +244,16 @@ class FormAuthenticateTest extends TestCase
      */
     public function testAuthenticateIncludesVirtualFields()
     {
-        $users = TableRegistry::get('Users');
-        $users->entityClass('TestApp\Model\Entity\VirtualUser');
+        $users = $this->getTableLocator()->get('Users');
+        $users->setEntityClass('TestApp\Model\Entity\VirtualUser');
 
-        $request = new Request('posts/index');
-        $request->data = [
-            'username' => 'mariano',
-            'password' => 'password'
-        ];
+        $request = new ServerRequest([
+            'url' => 'posts/index',
+            'post' => [
+                'username' => 'mariano',
+                'password' => 'password'
+            ],
+        ]);
         $result = $this->auth->authenticate($request, $this->response);
         $expected = [
             'id' => 1,
@@ -244,45 +266,29 @@ class FormAuthenticateTest extends TestCase
     }
 
     /**
-     * test scope failure.
-     *
-     * @return void
-     */
-    public function testAuthenticateScopeFail()
-    {
-        $this->auth->config('scope', ['Users.id' => 2]);
-        $request = new Request('posts/index');
-        $request->data = [
-            'username' => 'mariano',
-            'password' => 'password'
-        ];
-
-        $this->assertFalse($this->auth->authenticate($request, $this->response));
-    }
-
-    /**
      * test a model in a plugin.
      *
      * @return void
      */
     public function testPluginModel()
     {
-        Cache::delete('object_map', '_cake_core_');
         Plugin::load('TestPlugin');
 
-        $PluginModel = TableRegistry::get('TestPlugin.AuthUsers');
+        $PluginModel = $this->getTableLocator()->get('TestPlugin.AuthUsers');
         $user['id'] = 1;
         $user['username'] = 'gwoo';
-        $user['password'] = password_hash(Security::salt() . 'cake', PASSWORD_BCRYPT);
+        $user['password'] = password_hash(Security::getSalt() . 'cake', PASSWORD_BCRYPT);
         $PluginModel->save(new Entity($user));
 
-        $this->auth->config('userModel', 'TestPlugin.AuthUsers');
+        $this->auth->setConfig('userModel', 'TestPlugin.AuthUsers');
 
-        $request = new Request('posts/index');
-        $request->data = [
-            'username' => 'gwoo',
-            'password' => 'cake'
-        ];
+        $request = new ServerRequest([
+            'url' => 'posts/index',
+            'post' => [
+                'username' => 'gwoo',
+                'password' => 'cake'
+            ],
+        ]);
 
         $result = $this->auth->authenticate($request, $this->response);
         $expected = [
@@ -296,33 +302,114 @@ class FormAuthenticateTest extends TestCase
     }
 
     /**
+     * Test using custom finder
+     *
+     * @return void
+     */
+    public function testFinder()
+    {
+        $request = new ServerRequest([
+            'url' => 'posts/index',
+            'post' => [
+                'username' => 'mariano',
+                'password' => 'password'
+            ],
+        ]);
+
+        $this->auth->setConfig([
+            'userModel' => 'AuthUsers',
+            'finder' => 'auth'
+        ]);
+
+        $result = $this->auth->authenticate($request, $this->response);
+        $expected = [
+            'id' => 1,
+            'username' => 'mariano',
+        ];
+        $this->assertEquals($expected, $result, 'Result should not contain "created" and "modified" fields');
+
+        $this->auth->setConfig([
+            'finder' => ['auth' => ['return_created' => true]]
+        ]);
+
+        $result = $this->auth->authenticate($request, $this->response);
+        $expected = [
+            'id' => 1,
+            'username' => 'mariano',
+            'created' => new Time('2007-03-17 01:16:23'),
+        ];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test using custom finder
+     *
+     * @return void
+     */
+    public function testFinderOptions()
+    {
+        $request = new ServerRequest([
+            'url' => 'posts/index',
+            'post' => [
+                'username' => 'mariano',
+                'password' => 'password'
+            ],
+        ]);
+
+        $this->auth->setConfig([
+            'userModel' => 'AuthUsers',
+            'finder' => 'username'
+        ]);
+
+        $result = $this->auth->authenticate($request, $this->response);
+        $expected = [
+            'id' => 1,
+            'username' => 'mariano',
+        ];
+        $this->assertEquals($expected, $result);
+
+        $this->auth->setConfig([
+            'finder' => ['username' => ['username' => 'nate']]
+        ]);
+
+        $result = $this->auth->authenticate($request, $this->response);
+        $expected = [
+            'id' => 5,
+            'username' => 'nate',
+        ];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
      * test password hasher settings
      *
      * @return void
      */
     public function testPasswordHasherSettings()
     {
-        $this->auth->config('passwordHasher', [
+        $this->auth->setConfig('passwordHasher', [
             'className' => 'Default',
             'hashType' => PASSWORD_BCRYPT
         ]);
 
         $passwordHasher = $this->auth->passwordHasher();
-        $result = $passwordHasher->config();
+        $result = $passwordHasher->getConfig();
         $this->assertEquals(PASSWORD_BCRYPT, $result['hashType']);
 
         $hash = password_hash('mypass', PASSWORD_BCRYPT);
-        $User = TableRegistry::get('Users');
+        $User = $this->getTableLocator()->get('Users');
         $User->updateAll(
             ['password' => $hash],
             ['username' => 'mariano']
         );
 
-        $request = new Request('posts/index');
-        $request->data = [
-            'username' => 'mariano',
-            'password' => 'mypass'
-        ];
+        $request = new ServerRequest([
+            'url' => 'posts/index',
+            'post' => [
+                'username' => 'mariano',
+                'password' => 'mypass'
+            ],
+        ]);
 
         $result = $this->auth->authenticate($request, $this->response);
         $expected = [
@@ -337,7 +424,7 @@ class FormAuthenticateTest extends TestCase
             'fields' => ['username' => 'username', 'password' => 'password'],
             'userModel' => 'Users'
         ]);
-        $this->auth->config('passwordHasher', [
+        $this->auth->setConfig('passwordHasher', [
             'className' => 'Default'
         ]);
         $this->assertEquals($expected, $this->auth->authenticate($request, $this->response));
@@ -356,11 +443,13 @@ class FormAuthenticateTest extends TestCase
      */
     public function testAuthenticateNoRehash()
     {
-        $request = new Request('posts/index');
-        $request->data = [
-            'username' => 'mariano',
-            'password' => 'password'
-        ];
+        $request = new ServerRequest([
+            'url' => 'posts/index',
+            'post' => [
+                'username' => 'mariano',
+                'password' => 'password'
+            ],
+        ]);
         $result = $this->auth->authenticate($request, $this->response);
         $this->assertNotEmpty($result);
         $this->assertFalse($this->auth->needsPasswordRehash());
@@ -379,13 +468,15 @@ class FormAuthenticateTest extends TestCase
             'passwordHasher' => 'Weak'
         ]);
         $password = $this->auth->passwordHasher()->hash('password');
-        TableRegistry::get('Users')->updateAll(['password' => $password], []);
+        $this->getTableLocator()->get('Users')->updateAll(['password' => $password], []);
 
-        $request = new Request('posts/index');
-        $request->data = [
-            'username' => 'mariano',
-            'password' => 'password'
-        ];
+        $request = new ServerRequest([
+            'url' => 'posts/index',
+            'post' => [
+                'username' => 'mariano',
+                'password' => 'password'
+            ],
+        ]);
         $result = $this->auth->authenticate($request, $this->response);
         $this->assertNotEmpty($result);
         $this->assertTrue($this->auth->needsPasswordRehash());

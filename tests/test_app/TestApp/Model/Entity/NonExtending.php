@@ -7,7 +7,6 @@ use Cake\Datasource\EntityTrait;
 
 /**
  * Tests entity class used for asserting correct loading
- *
  */
 class NonExtending implements EntityInterface
 {
@@ -23,7 +22,6 @@ class NonExtending implements EntityInterface
             'guard' => false,
             'source' => null
         ];
-        $this->_className = get_class($this);
 
         if (!empty($properties)) {
             $this->set($properties, [

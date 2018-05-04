@@ -1,26 +1,28 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\ORM;
 
+use Cake\Database\Driver\Sqlite;
+use Cake\Database\Driver\Sqlserver;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Entity;
 use Cake\ORM\Marshaller;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
+use PDO;
 
 /**
  * Test entity for mass assignment.
@@ -34,7 +36,7 @@ class OpenArticleEntity extends Entity
 }
 
 /**
- * Integration tetss for table operations involving composite keys
+ * Integration tests for table operations involving composite keys
  */
 class CompositeKeyTest extends TestCase
 {
@@ -47,9 +49,9 @@ class CompositeKeyTest extends TestCase
     public $fixtures = [
         'core.composite_increments',
         'core.site_articles',
+        'core.site_articles_tags',
         'core.site_authors',
-        'core.site_tags',
-        'core.site_articles_tags'
+        'core.site_tags'
     ];
 
     /**
@@ -107,13 +109,13 @@ class CompositeKeyTest extends TestCase
      * Test that you cannot save rows with composite keys if some columns are missing.
      *
      * @group save
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Cannot insert row, some of the primary key values are missing
      * @return void
      */
     public function testSaveNewErrorCompositeKeyNoIncrement()
     {
-        $articles = TableRegistry::get('SiteArticles');
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Cannot insert row, some of the primary key values are missing');
+        $articles = $this->getTableLocator()->get('SiteArticles');
         $article = $articles->newEntity(['site_id' => 1, 'author_id' => 1, 'title' => 'testing']);
         $articles->save($article);
     }
@@ -129,7 +131,7 @@ class CompositeKeyTest extends TestCase
     public function testSaveNewCompositeKeyIncrement()
     {
         $this->skipIfSqlite();
-        $table = TableRegistry::get('CompositeIncrements');
+        $table = $this->getTableLocator()->get('CompositeIncrements');
         $thing = $table->newEntity(['account_id' => 3, 'name' => 'new guy']);
         $this->assertSame($thing, $table->save($thing));
         $this->assertNotEmpty($thing->id, 'Primary key should have been populated');
@@ -145,7 +147,7 @@ class CompositeKeyTest extends TestCase
      */
     public function testHasManyEager($strategy)
     {
-        $table = TableRegistry::get('SiteAuthors');
+        $table = $this->getTableLocator()->get('SiteAuthors');
         $table->hasMany('SiteArticles', [
             'propertyName' => 'articles',
             'strategy' => $strategy,
@@ -156,7 +158,7 @@ class CompositeKeyTest extends TestCase
 
         $results = $query->select()
             ->contain('SiteArticles')
-            ->hydrate(false)
+            ->enableHydration(false)
             ->toArray();
         $expected = [
             [
@@ -205,11 +207,11 @@ class CompositeKeyTest extends TestCase
         $results = $query->repository($table)
             ->select()
             ->contain(['SiteArticles' => ['conditions' => ['SiteArticles.id' => 2]]])
-            ->hydrate(false)
+            ->enableHydration(false)
             ->toArray();
         $expected[0]['articles'] = [];
         $this->assertEquals($expected, $results);
-        $this->assertEquals($table->association('SiteArticles')->strategy(), $strategy);
+        $this->assertEquals($table->getAssociation('SiteArticles')->getStrategy(), $strategy);
     }
 
     /**
@@ -221,9 +223,9 @@ class CompositeKeyTest extends TestCase
      */
     public function testBelongsToManyEager($strategy)
     {
-        $articles = TableRegistry::get('SiteArticles');
-        $tags = TableRegistry::get('SiteTags');
-        $junction = TableRegistry::get('SiteArticlesTags');
+        $articles = $this->getTableLocator()->get('SiteArticles');
+        $tags = $this->getTableLocator()->get('SiteTags');
+        $junction = $this->getTableLocator()->get('SiteArticlesTags');
         $articles->belongsToMany('SiteTags', [
             'strategy' => $strategy,
             'targetTable' => $tags,
@@ -235,7 +237,7 @@ class CompositeKeyTest extends TestCase
         ]);
         $query = new Query($this->connection, $articles);
 
-        $results = $query->select()->contain('SiteTags')->hydrate(false)->toArray();
+        $results = $query->select()->contain('SiteTags')->enableHydration(false)->toArray();
         $expected = [
             [
                 'id' => 1,
@@ -298,18 +300,18 @@ class CompositeKeyTest extends TestCase
             ],
         ];
         $this->assertEquals($expected, $results);
-        $this->assertEquals($articles->association('SiteTags')->strategy(), $strategy);
+        $this->assertEquals($articles->getAssociation('SiteTags')->getStrategy(), $strategy);
     }
 
     /**
-     * Tests loding belongsTo with composite keys
+     * Tests loading belongsTo with composite keys
      *
      * @dataProvider strategiesProviderBelongsTo
      * @return void
      */
     public function testBelongsToEager($strategy)
     {
-        $table = TableRegistry::get('SiteArticles');
+        $table = $this->getTableLocator()->get('SiteArticles');
         $table->belongsTo('SiteAuthors', [
             'propertyName' => 'author',
             'strategy' => $strategy,
@@ -319,7 +321,7 @@ class CompositeKeyTest extends TestCase
         $results = $query->select()
             ->where(['SiteArticles.id IN' => [1, 2]])
             ->contain('SiteAuthors')
-            ->hydrate(false)
+            ->enableHydration(false)
             ->toArray();
         $expected = [
             [
@@ -351,14 +353,14 @@ class CompositeKeyTest extends TestCase
     }
 
     /**
-     * Tests loding hasOne with composite keys
+     * Tests loading hasOne with composite keys
      *
      * @dataProvider strategiesProviderHasOne
      * @return void
      */
     public function testHasOneEager($strategy)
     {
-        $table = TableRegistry::get('SiteAuthors');
+        $table = $this->getTableLocator()->get('SiteAuthors');
         $table->hasOne('SiteArticles', [
             'propertyName' => 'first_article',
             'strategy' => $strategy,
@@ -368,7 +370,7 @@ class CompositeKeyTest extends TestCase
         $results = $query->select()
             ->where(['SiteAuthors.id IN' => [1, 3]])
             ->contain('SiteArticles')
-            ->hydrate(false)
+            ->enableHydration(false)
             ->toArray();
 
         $expected = [
@@ -409,14 +411,14 @@ class CompositeKeyTest extends TestCase
      */
     public function testSaveNewEntity()
     {
-        $entity = new \Cake\ORM\Entity([
+        $entity = new Entity([
             'id' => 5,
             'site_id' => 1,
             'title' => 'Fifth Article',
             'body' => 'Fifth Article Body',
             'author_id' => 3,
         ]);
-        $table = TableRegistry::get('SiteArticles');
+        $table = $this->getTableLocator()->get('SiteArticles');
         $this->assertSame($entity, $table->save($entity));
         $this->assertEquals($entity->id, 5);
 
@@ -429,19 +431,19 @@ class CompositeKeyTest extends TestCase
      * if the entity has composite primary key
      *
      * @group save
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Cannot insert row, some of the primary key values are missing. Got (5, ), expecting (id, site_id)
      * @return void
      */
     public function testSaveNewEntityMissingKey()
     {
-        $entity = new \Cake\ORM\Entity([
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Cannot insert row, some of the primary key values are missing. Got (5, ), expecting (id, site_id)');
+        $entity = new Entity([
             'id' => 5,
             'title' => 'Fifth Article',
             'body' => 'Fifth Article Body',
             'author_id' => 3,
         ]);
-        $table = TableRegistry::get('SiteArticles');
+        $table = $this->getTableLocator()->get('SiteArticles');
         $table->save($entity);
     }
 
@@ -452,8 +454,8 @@ class CompositeKeyTest extends TestCase
      */
     public function testDelete()
     {
-        $table = TableRegistry::get('SiteAuthors');
-        $table->save(new \Cake\ORM\Entity(['id' => 1, 'site_id' => 2]));
+        $table = $this->getTableLocator()->get('SiteAuthors');
+        $table->save(new Entity(['id' => 1, 'site_id' => 2]));
         $entity = $table->get([1, 1]);
         $result = $table->delete($entity);
         $this->assertTrue($result);
@@ -469,7 +471,7 @@ class CompositeKeyTest extends TestCase
      */
     public function testDeleteDependent()
     {
-        $table = TableRegistry::get('SiteAuthors');
+        $table = $this->getTableLocator()->get('SiteAuthors');
         $table->hasMany('SiteArticles', [
             'foreignKey' => ['author_id', 'site_id'],
             'dependent' => true,
@@ -478,7 +480,7 @@ class CompositeKeyTest extends TestCase
         $entity = $table->get([3, 2]);
         $result = $table->delete($entity);
 
-        $query = $table->association('SiteArticles')->find('all', [
+        $query = $table->getAssociation('SiteArticles')->find('all', [
             'conditions' => [
                 'author_id' => $entity->id,
                 'site_id' => $entity->site_id
@@ -494,10 +496,10 @@ class CompositeKeyTest extends TestCase
      */
     public function testOneGenerateBelongsToManyEntitiesFromIds()
     {
-        $articles = TableRegistry::get('SiteArticles');
-        $articles->entityClass(__NAMESPACE__ . '\OpenArticleEntity');
-        $tags = TableRegistry::get('SiteTags');
-        $junction = TableRegistry::get('SiteArticlesTags');
+        $articles = $this->getTableLocator()->get('SiteArticles');
+        $articles->setEntityClass(__NAMESPACE__ . '\OpenArticleEntity');
+        $tags = $this->getTableLocator()->get('SiteTags');
+        $junction = $this->getTableLocator()->get('SiteArticlesTags');
         $articles->belongsToMany('SiteTags', [
             'targetTable' => $tags,
             'propertyName' => 'tags',
@@ -540,9 +542,9 @@ class CompositeKeyTest extends TestCase
             'table' => 'site_authors',
             'connection' => $this->connection,
         ]);
-        $table->displayField('name');
+        $table->setDisplayField('name');
         $query = $table->find('list')
-            ->hydrate(false)
+            ->enableHydration(false)
             ->order('id');
         $expected = [
             '1;1' => 'mark',
@@ -552,9 +554,9 @@ class CompositeKeyTest extends TestCase
         ];
         $this->assertEquals($expected, $query->toArray());
 
-        $table->displayField(['name', 'site_id']);
+        $table->setDisplayField(['name', 'site_id']);
         $query = $table->find('list')
-            ->hydrate(false)
+            ->enableHydration(false)
             ->order('id');
         $expected = [
             '1;1' => 'mark;1',
@@ -565,7 +567,7 @@ class CompositeKeyTest extends TestCase
         $this->assertEquals($expected, $query->toArray());
 
         $query = $table->find('list', ['groupField' => ['site_id', 'site_id']])
-            ->hydrate(false)
+            ->enableHydration(false)
             ->order('id');
         $expected = [
             '1;1' => [
@@ -587,12 +589,11 @@ class CompositeKeyTest extends TestCase
      */
     public function testFindThreadedCompositeKeys()
     {
-        $table = TableRegistry::get('SiteAuthors');
-        $query = $this->getMock(
-            '\Cake\ORM\Query',
-            ['_addDefaultFields', 'execute'],
-            [null, $table]
-        );
+        $table = $this->getTableLocator()->get('SiteAuthors');
+        $query = $this->getMockBuilder('\Cake\ORM\Query')
+            ->setMethods(['_addDefaultFields', 'execute'])
+            ->setConstructorArgs([null, $table])
+            ->getMock();
 
         $items = new \Cake\Datasource\ResultSetDecorator([
             ['id' => 1, 'name' => 'a', 'site_id' => 1, 'parent_id' => null],
@@ -605,7 +606,7 @@ class CompositeKeyTest extends TestCase
             ['id' => 8, 'name' => 'a', 'site_id' => 2, 'parent_id' => 4],
         ]);
         $query->find('threaded', ['parentField' => ['parent_id', 'site_id']]);
-        $formatter = $query->formatResults()[0];
+        $formatter = $query->getResultFormatters()[0];
 
         $expected = [
             [
@@ -673,6 +674,118 @@ class CompositeKeyTest extends TestCase
     }
 
     /**
+     * Tests that loadInto() is capable of handling composite primary keys
+     *
+     * @return void
+     */
+    public function testLoadInto()
+    {
+        $table = $this->getTableLocator()->get('SiteAuthors');
+        $tags = $this->getTableLocator()->get('SiteTags');
+        $table->hasMany('SiteArticles', [
+            'foreignKey' => ['author_id', 'site_id'],
+        ]);
+
+        $author = $table->get([1, 1]);
+        $result = $table->loadInto($author, ['SiteArticles']);
+        $this->assertSame($author, $result);
+        $this->assertNotEmpty($result->site_articles);
+
+        $expected = $table->get([1, 1], ['contain' => ['SiteArticles']]);
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Tests that loadInto() is capable of handling composite primary keys
+     * when loading belongsTo associations
+     *
+     * @return void
+     */
+    public function testLoadIntoWithBelongsTo()
+    {
+        $table = $this->getTableLocator()->get('SiteArticles');
+        $table->belongsTo('SiteAuthors', [
+            'foreignKey' => ['author_id', 'site_id'],
+        ]);
+
+        $author = $table->get([2, 2]);
+        $result = $table->loadInto($author, ['SiteAuthors']);
+        $this->assertSame($author, $result);
+        $this->assertNotEmpty($result->site_author);
+
+        $expected = $table->get([2, 2], ['contain' => ['SiteAuthors']]);
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Tests that loadInto() is capable of handling composite primary keys
+     * when loading into multiple entities
+     *
+     * @return void
+     */
+    public function testLoadIntoMany()
+    {
+        $table = $this->getTableLocator()->get('SiteAuthors');
+        $tags = $this->getTableLocator()->get('SiteTags');
+        $table->hasMany('SiteArticles', [
+            'foreignKey' => ['author_id', 'site_id'],
+        ]);
+
+        $authors = $table->find()->toList();
+        $result = $table->loadInto($authors, ['SiteArticles']);
+
+        foreach ($authors as $k => $v) {
+            $this->assertSame($result[$k], $v);
+        }
+
+        $expected = $table->find('all', ['contain' => ['SiteArticles']])->toList();
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Tests notMatching() with a belongsToMany association
+     *
+     * @return void
+     */
+    public function testNotMatchingBelongsToMany()
+    {
+        $driver = $this->connection->getDriver();
+
+        if ($driver instanceof Sqlserver) {
+            $this->markTestSkipped('Sqlserver does not support the requirements of this test.');
+        } elseif ($driver instanceof Sqlite) {
+            $serverVersion = $driver->getConnection()->getAttribute(PDO::ATTR_SERVER_VERSION);
+            if (version_compare($serverVersion, '3.15.0', '<')) {
+                $this->markTestSkipped("Sqlite ($serverVersion) does not support the requirements of this test.");
+            }
+        }
+
+        $articles = $this->getTableLocator()->get('SiteArticles');
+        $articles->belongsToMany('SiteTags', [
+            'through' => 'SiteArticlesTags',
+            'foreignKey' => ['article_id', 'site_id'],
+            'targetForeignKey' => ['tag_id', 'site_id']
+        ]);
+
+        $results = $articles->find()
+            ->enableHydration(false)
+            ->notMatching('SiteTags')
+            ->toArray();
+
+        $expected = [
+            [
+                'id' => 3,
+                'author_id' => 1,
+                'site_id' => 2,
+                'title' => 'Third Article',
+                'body' => 'Third Article Body',
+            ],
+        ];
+
+        $this->assertEquals($expected, $results);
+    }
+
+    /**
      * Helper method to skip tests when connection is SQLite.
      *
      * @return void
@@ -680,8 +793,8 @@ class CompositeKeyTest extends TestCase
     public function skipIfSqlite()
     {
         $this->skipIf(
-            $this->connection->driver() instanceof \Cake\Database\Driver\Sqlite,
-            'SQLite does not support the requrirements of this test.'
+            $this->connection->getDriver() instanceof Sqlite,
+            'SQLite does not support the requirements of this test.'
         );
     }
 }

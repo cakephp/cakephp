@@ -4,17 +4,17 @@
  *
  * Provides the Model validation logic.
  *
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         2.2.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Validation;
 
@@ -39,7 +39,7 @@ class ValidationRule
      *
      * @var string
      */
-    protected $_on = null;
+    protected $_on;
 
     /**
      * The 'last' key
@@ -53,7 +53,7 @@ class ValidationRule
      *
      * @var string
      */
-    protected $_message = null;
+    protected $_message;
 
     /**
      * Key under which the object or class where the method to be used for
@@ -134,8 +134,8 @@ class ValidationRule
         }
 
         if ($this->_pass) {
-            $args = array_merge([$value], $this->_pass, [$context]);
-            $result = call_user_func_array($callable, $args);
+            $args = array_values(array_merge([$value], $this->_pass, [$context]));
+            $result = $callable(...$args);
         } else {
             $result = $callable($value, $context);
         }
@@ -143,6 +143,7 @@ class ValidationRule
         if ($result === false) {
             return $this->_message ?: false;
         }
+
         return $result;
     }
 
@@ -162,15 +163,17 @@ class ValidationRule
     {
         if (!is_string($this->_on) && is_callable($this->_on)) {
             $function = $this->_on;
+
             return !$function($context);
         }
 
         $newRecord = $context['newRecord'];
         if (!empty($this->_on)) {
-            if ($this->_on === 'create' && !$newRecord || $this->_on === 'update' && $newRecord) {
+            if (($this->_on === 'create' && !$newRecord) || ($this->_on === 'update' && $newRecord)) {
                 return true;
             }
         }
+
         return false;
     }
 

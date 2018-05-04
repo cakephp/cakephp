@@ -2,27 +2,27 @@
 /**
  * ValidationSetTest file
  *
- * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) Tests <https://book.cakephp.org/view/1196/Testing>
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license infValidationation, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
  * @since         2.2.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Validation;
 
 use Cake\TestSuite\TestCase;
 use Cake\Validation\ValidationRule;
 use Cake\Validation\ValidationSet;
+use PHPUnit\Framework\Error\Deprecated;
 
 /**
  * ValidationSetTest
- *
  */
 class ValidationSetTest extends TestCase
 {
@@ -94,10 +94,10 @@ class ValidationSetTest extends TestCase
             ->add('numeric', ['rule' => 'numeric'])
             ->add('other', ['rule' => 'email']);
 
-        $this->assertTrue(isset($set['notBlank']));
-        $this->assertTrue(isset($set['numeric']));
-        $this->assertTrue(isset($set['other']));
-        $this->assertFalse(isset($set['fail']));
+        $this->assertArrayHasKey('notBlank', $set);
+        $this->assertArrayHasKey('numeric', $set);
+        $this->assertArrayHasKey('other', $set);
+        $this->assertArrayNotHasKey('fail', $set);
     }
 
     /**
@@ -110,7 +110,7 @@ class ValidationSetTest extends TestCase
         $set = (new ValidationSet)
             ->add('notBlank', ['rule' => 'notBlank']);
 
-        $this->assertFalse(isset($set['other']));
+        $this->assertArrayNotHasKey('other', $set);
         $set['other'] = ['rule' => 'email'];
         $rule = $set['other'];
         $this->assertInstanceOf('Cake\Validation\ValidationRule', $rule);
@@ -130,13 +130,13 @@ class ValidationSetTest extends TestCase
             ->add('other', ['rule' => 'email']);
 
         unset($set['notBlank']);
-        $this->assertFalse(isset($set['notBlank']));
+        $this->assertArrayNotHasKey('notBlank', $set);
 
         unset($set['numeric']);
-        $this->assertFalse(isset($set['numeric']));
+        $this->assertArrayNotHasKey('numeric', $set);
 
         unset($set['other']);
-        $this->assertFalse(isset($set['other']));
+        $this->assertArrayNotHasKey('other', $set);
     }
 
     /**
@@ -192,20 +192,129 @@ class ValidationSetTest extends TestCase
      */
     public function testRemoveRule()
     {
-        $set = new ValidationSet('title', [
-            '_validatePresent' => true,
-            'notBlank' => ['rule' => 'notBlank'],
-            'numeric' => ['rule' => 'numeric'],
-            'other' => ['rule' => ['other', 1]],
-        ]);
+        $set = (new ValidationSet)
+            ->add('notBlank', ['rule' => 'notBlank'])
+            ->add('numeric', ['rule' => 'numeric'])
+            ->add('other', ['rule' => 'email']);
 
+        $this->assertArrayHasKey('notBlank', $set);
         $set->remove('notBlank');
-        $this->assertFalse(isset($set['notBlank']));
+        $this->assertArrayNotHasKey('notBlank', $set);
 
+        $this->assertArrayHasKey('numeric', $set);
         $set->remove('numeric');
-        $this->assertFalse(isset($set['numeric']));
+        $this->assertArrayNotHasKey('numeric', $set);
 
+        $this->assertArrayHasKey('other', $set);
         $set->remove('other');
-        $this->assertFalse(isset($set['other']));
+        $this->assertArrayNotHasKey('other', $set);
+    }
+
+    /**
+     * Test requirePresence and isPresenceRequired methods
+     *
+     * @return void
+     */
+    public function testRequirePresence()
+    {
+        $set = new ValidationSet();
+
+        $this->assertFalse($set->isPresenceRequired());
+
+        $set->requirePresence(true);
+        $this->assertTrue($set->isPresenceRequired());
+
+        $set->requirePresence(false);
+        $this->assertFalse($set->isPresenceRequired());
+    }
+
+    /**
+     * Test isPresenceRequired deprecated setter
+     *
+     * @group deprecated
+     * @return void
+     */
+    public function testRequirePresenceDeprecated()
+    {
+        $this->deprecated(function () {
+            $set = new ValidationSet();
+
+            $this->assertFalse($set->isPresenceRequired());
+
+            $set->isPresenceRequired(true);
+            $this->assertTrue($set->isPresenceRequired());
+
+            $set->isPresenceRequired(false);
+            $this->assertFalse($set->isPresenceRequired());
+        });
+    }
+
+    /**
+     * Test isPresenceRequired method deprecation
+     *
+     * @group deprecated
+     * @return void
+     */
+    public function testIsPresenceRequiredDeprecation()
+    {
+        $this->expectException(Deprecated::class);
+        $this->expectExceptionMessage('ValidationSet::isPresenceRequired() is deprecated as a setter. Use ValidationSet::requirePresence() instead.');
+
+        $set = new ValidationSet();
+        $set->isPresenceRequired(true);
+    }
+
+    /**
+     * Test allowEmpty and isEmptyAllowed methods
+     *
+     * @return void
+     */
+    public function testAllowEmpty()
+    {
+        $set = new ValidationSet();
+
+        $this->assertFalse($set->isEmptyAllowed());
+
+        $set->allowEmpty(true);
+        $this->assertTrue($set->isEmptyAllowed());
+
+        $set->allowEmpty(false);
+        $this->assertFalse($set->isEmptyAllowed());
+    }
+
+    /**
+     * Test isEmptyAllowed deprecated setter
+     *
+     * @group deprecated
+     * @return void
+     */
+    public function testAllowEmptyDeprecated()
+    {
+        $this->deprecated(function () {
+            $set = new ValidationSet();
+
+            $this->assertFalse($set->isEmptyAllowed());
+
+            $set->isEmptyAllowed(true);
+            $this->assertTrue($set->isEmptyAllowed());
+
+            $set->isEmptyAllowed(false);
+            $this->assertFalse($set->isEmptyAllowed());
+        });
+    }
+
+    /**
+     * Test isEmptyAllowed method deprecation
+     *
+     * @group deprecated
+     * @return void
+     */
+    public function testIsEmptyAllowedDeprecation()
+    {
+        $this->expectException(Deprecated::class);
+        $this->expectExceptionMessage('ValidationSet::isEmptyAllowed() is deprecated as a setter. Use ValidationSet::allowEmpty() instead.');
+
+        $set = new ValidationSet();
+        $set->isEmptyAllowed(true);
     }
 }

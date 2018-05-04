@@ -1,16 +1,16 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Datasource;
 
@@ -30,10 +30,24 @@ class QueryCacher
 {
 
     /**
+     * The key or function to generate a key.
+     *
+     * @var string|callable
+     */
+    protected $_key;
+
+    /**
+     * Config for cache engine.
+     *
+     * @var string|\Cake\Cache\CacheEngine
+     */
+    protected $_config;
+
+    /**
      * Constructor.
      *
      * @param string|\Closure $key The key or function to generate a key.
-     * @param string|CacheEngine $config The cache config name or cache engine instance.
+     * @param string|\Cake\Cache\CacheEngine $config The cache config name or cache engine instance.
      * @throws \RuntimeException
      */
     public function __construct($key, $config)
@@ -63,6 +77,7 @@ class QueryCacher
         if (empty($result)) {
             return null;
         }
+
         return $result;
     }
 
@@ -77,6 +92,7 @@ class QueryCacher
     {
         $key = $this->_resolveKey($query);
         $storage = $this->_resolveCacher();
+
         return $storage->write($key, $results);
     }
 
@@ -98,6 +114,7 @@ class QueryCacher
             $msg = sprintf('Cache key functions must return a string. Got %s.', var_export($key, true));
             throw new RuntimeException($msg);
         }
+
         return $key;
     }
 
@@ -111,6 +128,7 @@ class QueryCacher
         if (is_string($this->_config)) {
             return Cache::engine($this->_config);
         }
+
         return $this->_config;
     }
 }

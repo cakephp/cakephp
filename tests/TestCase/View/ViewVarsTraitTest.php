@@ -1,28 +1,31 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\View;
 
 use Cake\Controller\Controller;
 use Cake\TestSuite\TestCase;
-use Cake\View\ViewVarsTrait;
 
 /**
  * ViewVarsTrait test case
- *
  */
 class ViewVarsTraitTest extends TestCase
 {
+
+    /**
+     * @var \Cake\Controller\Controller;
+     */
+    public $subject;
 
     /**
      * setup
@@ -81,7 +84,7 @@ class ViewVarsTraitTest extends TestCase
      *
      * @return void
      */
-    public function testSetTwoParamCombind()
+    public function testSetTwoParamCombined()
     {
         $keys = ['one', 'key'];
         $vals = ['two', 'val'];
@@ -121,7 +124,7 @@ class ViewVarsTraitTest extends TestCase
     }
 
     /**
-     * test empty params reads _validViewOptions.
+     * test empty params reads _viewOptions.
      *
      * @return void
      */
@@ -134,7 +137,7 @@ class ViewVarsTraitTest extends TestCase
     }
 
     /**
-     * test setting $merge `false` overrides currect options.
+     * test setting $merge `false` overrides correct options.
      *
      * @return void
      */
@@ -148,7 +151,7 @@ class ViewVarsTraitTest extends TestCase
     }
 
     /**
-     * test _validViewOptions is undefined and $opts is null, an empty array is returned.
+     * test _viewOptions is undefined and $opts is null, an empty array is returned.
      *
      * @return void
      */
@@ -156,12 +159,12 @@ class ViewVarsTraitTest extends TestCase
     {
         $result = $this->subject->viewOptions([], false);
 
-        $this->assertTrue(is_array($result));
-        $this->assertTrue(empty($result));
+        $this->assertInternalType('array', $result);
+        $this->assertEmpty($result);
     }
 
     /**
-     * test that getView() updates viewVars of View instance on each call.
+     * test that createView() updates viewVars of View instance on each call.
      *
      * @return void
      */
@@ -169,34 +172,76 @@ class ViewVarsTraitTest extends TestCase
     {
         $expected = ['one' => 'one'];
         $this->subject->set($expected);
-        $this->assertEquals($expected, $this->subject->getView()->viewVars);
+        $this->assertEquals($expected, $this->subject->createView()->viewVars);
 
         $expected = ['one' => 'one', 'two' => 'two'];
         $this->subject->set($expected);
-        $this->assertEquals($expected, $this->subject->getView()->viewVars);
+        $this->assertEquals($expected, $this->subject->createView()->viewVars);
     }
 
     /**
-     * test getView() throws exception if view class cannot be found
+     * test that options are passed to the view builder when using createView().
      *
-     * @expectedException \Cake\View\Exception\MissingViewException
-     * @expectedExceptionMessage View class "Foo" is missing.
      * @return void
      */
-    public function testGetViewException()
+    public function testViewOptionsGetsToBuilder()
     {
-        $this->subject->getView('Foo');
+        $this->subject->passedArgs = 'test';
+        $this->subject->createView();
+        $result = $this->subject->viewBuilder()->getOptions();
+        $this->assertEquals(['passedArgs' => 'test'], $result);
+    }
+
+    /**
+     * test that viewClass is used to create the view
+     *
+     * @deprecated
+     * @return void
+     */
+    public function testCreateViewViewClass()
+    {
+        $this->deprecated(function () {
+            $this->subject->viewClass = 'Json';
+            $view = $this->subject->createView();
+            $this->assertInstanceOf('Cake\View\JsonView', $view);
+        });
+    }
+
+    /**
+     * test that viewBuilder settings override viewClass
+     *
+     * @return void
+     */
+    public function testCreateViewViewBuilder()
+    {
+        $this->subject->viewBuilder()->setClassName('Xml');
+        $this->subject->viewClass = 'Json';
+        $view = $this->subject->createView();
+        $this->assertInstanceOf('Cake\View\XmlView', $view);
+    }
+
+    /**
+     * test that parameters beats viewBuilder() and viewClass
+     *
+     * @return void
+     */
+    public function testCreateViewParameter()
+    {
+        $this->subject->viewBuilder()->setClassName('View');
+        $this->subject->viewClass = 'Json';
+        $view = $this->subject->createView('Xml');
+        $this->assertInstanceOf('Cake\View\XmlView', $view);
     }
 
     /**
      * test createView() throws exception if view class cannot be found
      *
-     * @expectedException \Cake\View\Exception\MissingViewException
-     * @expectedExceptionMessage View class "Foo" is missing.
      * @return void
      */
     public function testCreateViewException()
     {
-        $this->subject->getView('Foo');
+        $this->expectException(\Cake\View\Exception\MissingViewException::class);
+        $this->expectExceptionMessage('View class "Foo" is missing.');
+        $this->subject->createView('Foo');
     }
 }

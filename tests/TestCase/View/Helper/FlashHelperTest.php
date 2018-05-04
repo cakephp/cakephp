@@ -1,24 +1,22 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\View\Helper;
 
-use Cake\Controller\Controller;
-use Cake\Core\App;
 use Cake\Core\Plugin;
-use Cake\Network\Request;
-use Cake\Network\Session;
+use Cake\Http\ServerRequest;
+use Cake\Http\Session;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\FlashHelper;
 use Cake\View\View;
@@ -26,6 +24,7 @@ use Cake\View\View;
 /**
  * FlashHelperTest class
  *
+ * @property \Cake\View\Helper\FlashHelper $Flash
  */
 class FlashHelperTest extends TestCase
 {
@@ -40,31 +39,60 @@ class FlashHelperTest extends TestCase
         parent::setUp();
         $this->View = new View();
         $session = new Session();
-        $this->View->request = new Request(['session' => $session]);
+        $this->View->request = new ServerRequest(['session' => $session]);
         $this->Flash = new FlashHelper($this->View);
 
         $session->write([
             'Flash' => [
                 'flash' => [
-                    'key' => 'flash',
-                    'message' => 'This is a calling',
-                    'element' => 'Flash/default',
-                    'params' => []
+                    [
+                        'key' => 'flash',
+                        'message' => 'This is a calling',
+                        'element' => 'Flash/default',
+                        'params' => []
+                    ]
                 ],
                 'notification' => [
-                    'key' => 'notification',
-                    'message' => 'This is a test of the emergency broadcasting system',
-                    'element' => 'flash_helper',
-                    'params' => [
-                        'title' => 'Notice!',
-                        'name' => 'Alert!'
+                    [
+                        'key' => 'notification',
+                        'message' => 'This is a test of the emergency broadcasting system',
+                        'element' => 'flash_helper',
+                        'params' => [
+                            'title' => 'Notice!',
+                            'name' => 'Alert!'
+                        ]
                     ]
                 ],
                 'classy' => [
-                    'key' => 'classy',
-                    'message' => 'Recorded',
-                    'element' => 'flash_classy',
-                    'params' => []
+                    [
+                        'key' => 'classy',
+                        'message' => 'Recorded',
+                        'element' => 'flash_classy',
+                        'params' => []
+                    ]
+                ],
+                'stack' => [
+                    [
+                        'key' => 'flash',
+                        'message' => 'This is a calling',
+                        'element' => 'Flash/default',
+                        'params' => []
+                    ],
+                    [
+                        'key' => 'notification',
+                        'message' => 'This is a test of the emergency broadcasting system',
+                        'element' => 'flash_helper',
+                        'params' => [
+                            'title' => 'Notice!',
+                            'name' => 'Alert!'
+                        ]
+                    ],
+                    [
+                        'key' => 'classy',
+                        'message' => 'Recorded',
+                        'element' => 'flash_classy',
+                        'params' => []
+                    ]
                 ]
             ]
         ]);
@@ -111,11 +139,11 @@ class FlashHelperTest extends TestCase
     /**
      * testFlashThrowsException
      *
-     * @expectedException \UnexpectedValueException
      */
     public function testFlashThrowsException()
     {
-        $this->View->request->session()->write('Flash.foo', 'bar');
+        $this->expectException(\UnexpectedValueException::class);
+        $this->View->request->getSession()->write('Flash.foo', 'bar');
         $this->Flash->render('foo');
     }
 
@@ -171,6 +199,28 @@ class FlashHelperTest extends TestCase
     }
 
     /**
+     * Test that when rendering a stack, messages are displayed in their
+     * respective element, in the order they were added in the stack
+     *
+     * @return void
+     */
+    public function testFlashWithStack()
+    {
+        $result = $this->Flash->render('stack');
+        $expected = [
+            ['div' => ['class' => 'message']], 'This is a calling', '/div',
+            ['div' => ['id' => 'notificationLayout']],
+            '<h1', 'Alert!', '/h1',
+            '<h3', 'Notice!', '/h3',
+            '<p', 'This is a test of the emergency broadcasting system', '/p',
+            '/div',
+            ['div' => ['id' => 'classy-message']], 'Recorded', '/div'
+        ];
+        $this->assertHtml($expected, $result);
+        $this->assertNull($this->View->request->getSession()->read('Flash.stack'));
+    }
+
+    /**
      * test that when View prefix is set, flash element from that prefix
      * is used if available.
      *
@@ -178,7 +228,7 @@ class FlashHelperTest extends TestCase
      */
     public function testFlashWithPrefix()
     {
-        $this->View->request->params['prefix'] = 'Admin';
+        $this->View->request = $this->View->request->withParam('prefix', 'Admin');
         $result = $this->Flash->render('flash');
         $expected = 'flash element from Admin prefix folder';
         $this->assertContains($expected, $result);

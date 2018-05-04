@@ -3,10 +3,9 @@
 namespace TestApp\Error;
 
 use Cake\Controller\Controller;
-use Cake\Core\Configure;
 use Cake\Error\ExceptionRenderer;
-use Cake\Network\Request;
-use Cake\Network\Response;
+use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
 use TestApp\Controller\TestAppsErrorController;
 
@@ -19,16 +18,17 @@ class TestAppsExceptionRenderer extends ExceptionRenderer
     protected function _getController()
     {
         if (!$request = Router::getRequest(true)) {
-            $request = new Request();
+            $request = new ServerRequest();
         }
         $response = new Response();
         try {
             $controller = new TestAppsErrorController($request, $response);
-            $controller->layout = 'banana';
+            $controller->viewBuilder()->setLayout('banana');
         } catch (\Exception $e) {
             $controller = new Controller($request, $response);
-            $controller->viewPath = 'Error';
+            $controller->viewBuilder()->setTemplatePath('Error');
         }
+
         return $controller;
     }
 }

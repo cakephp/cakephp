@@ -1,20 +1,18 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Database;
-
-use Cake\Database\QueryCompiler;
 
 /**
  * Responsible for compiling a Query object into its SQL representation
@@ -24,6 +22,7 @@ use Cake\Database\QueryCompiler;
  */
 class SqlserverCompiler extends QueryCompiler
 {
+
     /**
      * SQLserver does not support ORDER BY in UNION queries.
      *
@@ -36,7 +35,6 @@ class SqlserverCompiler extends QueryCompiler
      */
     protected $_templates = [
         'delete' => 'DELETE',
-        'update' => 'UPDATE %s',
         'where' => ' WHERE %s',
         'group' => ' GROUP BY %s ',
         'having' => ' HAVING %s ',
@@ -69,7 +67,14 @@ class SqlserverCompiler extends QueryCompiler
     {
         $table = $parts[0];
         $columns = $this->_stringifyExpressions($parts[1], $generator);
-        return sprintf('INSERT INTO %s (%s) OUTPUT INSERTED.*', $table, implode(', ', $columns));
+        $modifiers = $this->_buildModifierPart($query->clause('modifier'), $query, $generator);
+
+        return sprintf(
+            'INSERT%s INTO %s (%s) OUTPUT INSERTED.*',
+            $modifiers,
+            $table,
+            implode(', ', $columns)
+        );
     }
 
     /**

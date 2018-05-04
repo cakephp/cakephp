@@ -1,26 +1,28 @@
 <?php
 /**
- * CakePHP(tm) :  Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) :  Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakefoundation.org CakePHP(tm) Project
  * @since         2.2.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Log\Engine;
 
 use Cake\Core\InstanceConfigTrait;
+use Cake\Datasource\EntityInterface;
 use JsonSerializable;
 use Psr\Log\AbstractLogger;
 
 /**
  * Base log engine class.
  *
+ * @mixin \Cake\Core\InstanceConfigTrait
  */
 abstract class BaseLog extends AbstractLogger
 {
@@ -44,7 +46,7 @@ abstract class BaseLog extends AbstractLogger
      */
     public function __construct(array $config = [])
     {
-        $this->config($config);
+        $this->setConfig($config);
 
         if (!is_array($this->_config['scopes']) && $this->_config['scopes'] !== false) {
             $this->_config['scopes'] = (array)$this->_config['scopes'];
@@ -94,14 +96,18 @@ abstract class BaseLog extends AbstractLogger
             return $data;
         }
 
-        $object = is_object($data);
+        $isObject = is_object($data);
 
-        if ($object && method_exists($data, '__toString')) {
+        if ($isObject && $data instanceof EntityInterface) {
+            return json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        }
+
+        if ($isObject && method_exists($data, '__toString')) {
             return (string)$data;
         }
 
-        if ($object && $data instanceof JsonSerializable) {
-            return json_encode($data);
+        if ($isObject && $data instanceof JsonSerializable) {
+            return json_encode($data, JSON_UNESCAPED_UNICODE);
         }
 
         return print_r($data, true);

@@ -1,21 +1,21 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Collection\Iterator;
 
 use Cake\Collection\Collection;
-use Cake\Collection\CollectionInterface;
+use DateTimeInterface;
 
 /**
  * An iterator that will return the passed items in order. The order is given by
@@ -46,7 +46,7 @@ class SortIterator extends Collection
      *
      * The callback will receive as first argument each of the elements in $items,
      * the value returned in the callback will be used as the value for sorting such
-     * element. Please not that the callback function could be called more than once
+     * element. Please note that the callback function could be called more than once
      * per element.
      *
      * @param array|\Traversable $items The values to sort
@@ -59,15 +59,18 @@ class SortIterator extends Collection
      */
     public function __construct($items, $callback, $dir = SORT_DESC, $type = SORT_NUMERIC)
     {
-        if (is_array($items)) {
-            $items = new Collection($items);
+        if (!is_array($items)) {
+            $items = iterator_to_array((new Collection($items))->unwrap(), false);
         }
 
-        $items = iterator_to_array($items, false);
         $callback = $this->_propertyExtractor($callback);
         $results = [];
-        foreach ($items as $key => $value) {
-            $results[$key] = $callback($value);
+        foreach ($items as $key => $val) {
+            $val = $callback($val);
+            if ($val instanceof DateTimeInterface && $type === SORT_NUMERIC) {
+                $val = $val->format('U');
+            }
+            $results[$key] = $val;
         }
 
         $dir === SORT_DESC ? arsort($results, $type) : asort($results, $type);
@@ -76,5 +79,15 @@ class SortIterator extends Collection
             $results[$key] = $items[$key];
         }
         parent::__construct($results);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return \Iterator
+     */
+    public function unwrap()
+    {
+        return $this->getInnerIterator();
     }
 }

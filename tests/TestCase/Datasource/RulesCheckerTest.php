@@ -1,16 +1,16 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.7
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Datasource;
 
@@ -44,12 +44,12 @@ class RulesCheckerTest extends TestCase
         );
 
         $this->assertTrue($rules->check($entity, RulesChecker::CREATE));
-        $this->assertEmpty($entity->errors());
+        $this->assertEmpty($entity->getErrors());
         $this->assertTrue($rules->check($entity, RulesChecker::UPDATE));
-        $this->assertEmpty($entity->errors());
+        $this->assertEmpty($entity->getErrors());
 
         $this->assertFalse($rules->check($entity, RulesChecker::DELETE));
-        $this->assertEquals(['ruleName' => 'invalid'], $entity->errors('name'));
+        $this->assertEquals(['ruleName' => 'invalid'], $entity->getError('name'));
     }
 
     /**
@@ -73,12 +73,12 @@ class RulesCheckerTest extends TestCase
         );
 
         $this->assertTrue($rules->check($entity, RulesChecker::CREATE));
-        $this->assertEmpty($entity->errors());
+        $this->assertEmpty($entity->getErrors());
         $this->assertTrue($rules->check($entity, RulesChecker::DELETE));
-        $this->assertEmpty($entity->errors());
+        $this->assertEmpty($entity->getErrors());
 
         $this->assertFalse($rules->check($entity, RulesChecker::UPDATE));
-        $this->assertEquals(['ruleName' => 'invalid'], $entity->errors('name'));
+        $this->assertEquals(['ruleName' => 'invalid'], $entity->getError('name'));
     }
 
     /**
@@ -102,12 +102,12 @@ class RulesCheckerTest extends TestCase
         );
 
         $this->assertTrue($rules->check($entity, RulesChecker::UPDATE));
-        $this->assertEmpty($entity->errors());
+        $this->assertEmpty($entity->getErrors());
         $this->assertTrue($rules->check($entity, RulesChecker::DELETE));
-        $this->assertEmpty($entity->errors());
+        $this->assertEmpty($entity->getErrors());
 
         $this->assertFalse($rules->check($entity, RulesChecker::CREATE));
-        $this->assertEquals(['ruleName' => 'invalid'], $entity->errors('name'));
+        $this->assertEquals(['ruleName' => 'invalid'], $entity->getError('name'));
     }
 
     /**
@@ -131,11 +131,11 @@ class RulesCheckerTest extends TestCase
         );
 
         $this->assertFalse($rules->check($entity, RulesChecker::CREATE));
-        $this->assertEquals(['ruleName' => 'invalid'], $entity->errors('name'));
+        $this->assertEquals(['ruleName' => 'invalid'], $entity->getError('name'));
     }
 
     /**
-     * Test that returnned error messages work.
+     * Test that returned error messages work.
      *
      * @return void
      */
@@ -154,11 +154,11 @@ class RulesCheckerTest extends TestCase
         );
 
         $this->assertFalse($rules->check($entity, RulesChecker::CREATE));
-        $this->assertEquals(['worst thing ever'], $entity->errors('name'));
+        $this->assertEquals(['worst thing ever'], $entity->getError('name'));
     }
 
     /**
-     * Test that returnned error messages work.
+     * Test that returned error messages work.
      *
      * @return void
      */
@@ -177,11 +177,11 @@ class RulesCheckerTest extends TestCase
         );
 
         $this->assertFalse($rules->check($entity, RulesChecker::CREATE));
-        $this->assertEquals(['this is bad'], $entity->errors('name'));
+        $this->assertEquals(['this is bad'], $entity->getError('name'));
     }
 
     /**
-     * Test that returnned error messages work.
+     * Test that returned error messages work.
      *
      * @return void
      */
@@ -197,6 +197,6 @@ class RulesCheckerTest extends TestCase
         });
 
         $this->assertFalse($rules->check($entity, RulesChecker::CREATE));
-        $this->assertEmpty($entity->errors());
+        $this->assertEmpty($entity->getErrors());
     }
 }

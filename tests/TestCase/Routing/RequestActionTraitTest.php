@@ -1,39 +1,38 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Routing;
 
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Network\Request;
+use Cake\Http\ServerRequest;
+use Cake\Http\Session;
 use Cake\Routing\DispatcherFactory;
-use Cake\Routing\RequestActionTrait;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
 
 /**
+ * @group deprecated
  */
 class RequestActionTraitTest extends TestCase
 {
-
     /**
      * fixtures
      *
      * @var string
      */
-    public $fixtures = ['core.posts', 'core.test_plugin_comments', 'core.comments'];
+    public $fixtures = ['core.comments', 'core.posts', 'core.test_plugin_comments'];
 
     /**
      * Setup
@@ -43,13 +42,17 @@ class RequestActionTraitTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        Configure::write('App.namespace', 'TestApp');
-        Security::salt('not-the-default');
+        static::setAppNamespace();
+        Security::setSalt('not-the-default');
+        DispatcherFactory::clear();
         DispatcherFactory::add('Routing');
         DispatcherFactory::add('ControllerFactory');
         $this->object = $this->getObjectForTrait('Cake\Routing\RequestActionTrait');
         Router::connect('/request_action/:action/*', ['controller' => 'RequestAction']);
         Router::connect('/tests_apps/:action/*', ['controller' => 'TestsApps']);
+
+        $this->errorLevel = error_reporting();
+        error_reporting(E_ALL ^ E_USER_DEPRECATED);
     }
 
     /**
@@ -62,6 +65,8 @@ class RequestActionTraitTest extends TestCase
         parent::tearDown();
         DispatcherFactory::clear();
         Router::reload();
+
+        error_reporting($this->errorLevel);
     }
 
     /**
@@ -75,29 +80,36 @@ class RequestActionTraitTest extends TestCase
 
         $result = $this->object->requestAction('');
         $this->assertFalse($result);
+        $this->assertNull(Router::getRequest(), 'requests were not popped off the stack, this will break url generation');
 
         $result = $this->object->requestAction('/request_action/test_request_action');
         $expected = 'This is a test';
         $this->assertEquals($expected, $result);
+        $this->assertNull(Router::getRequest(), 'requests were not popped off the stack, this will break url generation');
 
         $result = $this->object->requestAction(Configure::read('App.fullBaseUrl') . '/request_action/test_request_action');
         $expected = 'This is a test';
         $this->assertEquals($expected, $result);
+        $this->assertNull(Router::getRequest(), 'requests were not popped off the stack, this will break url generation');
 
         $result = $this->object->requestAction('/request_action/another_ra_test/2/5');
         $expected = 7;
         $this->assertEquals($expected, $result);
+        $this->assertNull(Router::getRequest(), 'requests were not popped off the stack, this will break url generation');
 
         $result = $this->object->requestAction('/tests_apps/index', ['return']);
         $expected = 'This is the TestsAppsController index view ';
         $this->assertEquals($expected, $result);
+        $this->assertNull(Router::getRequest(), 'requests were not popped off the stack, this will break url generation');
 
         $result = $this->object->requestAction('/tests_apps/some_method');
         $expected = 5;
         $this->assertEquals($expected, $result);
+        $this->assertNull(Router::getRequest(), 'requests were not popped off the stack, this will break url generation');
 
         $result = $this->object->requestAction('/request_action/paginate_request_action');
         $this->assertNull($result);
+        $this->assertNull(Router::getRequest(), 'requests were not popped off the stack, this will break url generation');
 
         $result = $this->object->requestAction('/request_action/normal_request_action');
         $expected = 'Hello World';
@@ -233,7 +245,7 @@ class RequestActionTraitTest extends TestCase
     {
         $result = $this->object->requestAction('/request_action/params_pass');
         $result = json_decode($result, true);
-        $this->assertEquals('request_action/params_pass', $result['url']);
+        $this->assertEquals('/request_action/params_pass', $result['url']);
         $this->assertEquals('RequestAction', $result['params']['controller']);
         $this->assertEquals('params_pass', $result['params']['action']);
         $this->assertNull($result['params']['plugin']);
@@ -246,7 +258,7 @@ class RequestActionTraitTest extends TestCase
      */
     public function testRequestActionBaseAndWebroot()
     {
-        $request = new Request([
+        $request = new ServerRequest([
             'base' => '/subdir',
             'webroot' => '/subdir/'
         ]);
@@ -359,6 +371,24 @@ class RequestActionTraitTest extends TestCase
     }
 
     /**
+     * Test that requestAction handles cookies correctly.
+     *
+     * @return void
+     */
+    public function testRequestActionCookies()
+    {
+        $cookies = [
+            'foo' => 'bar'
+        ];
+        $result = $this->object->requestAction(
+            '/request_action/cookie_pass',
+            ['cookies' => $cookies]
+        );
+        $result = json_decode($result, true);
+        $this->assertEquals($cookies, $result);
+    }
+
+    /**
      * Test that environment overrides can be set.
      *
      * @return void
@@ -387,7 +417,7 @@ class RequestActionTraitTest extends TestCase
         $result = $this->object->requestAction('/request_action/session_test');
         $this->assertNull($result);
 
-        $session = $this->getMock('Cake\Network\Session');
+        $session = $this->getMockBuilder(Session::class)->getMock();
         $session->expects($this->once())
             ->method('read')
             ->with('foo')
@@ -397,5 +427,20 @@ class RequestActionTraitTest extends TestCase
             ['session' => $session]
         );
         $this->assertEquals('bar', $result);
+    }
+
+    /**
+     * requestAction relies on both the RoutingFilter and ControllerFactory
+     * filters being connected. Ensure it can correct the missing state.
+     *
+     * @return void
+     */
+    public function testRequestActionAddsRequiredFilters()
+    {
+        DispatcherFactory::clear();
+
+        $result = $this->object->requestAction('/request_action/test_request_action');
+        $expected = 'This is a test';
+        $this->assertEquals($expected, $result);
     }
 }

@@ -1,20 +1,19 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         1.2.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\View\Helper;
 
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
@@ -22,8 +21,7 @@ use Cake\View\Helper\TextHelper;
 use Cake\View\View;
 
 /**
- * Class TextHelperTestObject
- *
+ * TextHelperTestObject
  */
 class TextHelperTestObject extends TextHelper
 {
@@ -41,7 +39,6 @@ class TextHelperTestObject extends TextHelper
 
 /**
  * StringMock class
- *
  */
 class StringMock
 {
@@ -49,10 +46,14 @@ class StringMock
 
 /**
  * TextHelperTest class
- *
  */
 class TextHelperTest extends TestCase
 {
+
+    /**
+     * @var \Cake\View\Helper\TextHelper
+     */
+    public $Text;
 
     /**
      * setUp method
@@ -66,7 +67,7 @@ class TextHelperTest extends TestCase
         $this->Text = new TextHelper($this->View);
 
         $this->_appNamespace = Configure::read('App.namespace');
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
     }
 
     /**
@@ -77,7 +78,7 @@ class TextHelperTest extends TestCase
     public function tearDown()
     {
         unset($this->Text, $this->View);
-        Configure::write('App.namespace', $this->_appNamespace);
+        static::setAppNamespace($this->_appNamespace);
         parent::tearDown();
     }
 
@@ -91,7 +92,9 @@ class TextHelperTest extends TestCase
         $methods = [
             'stripLinks', 'excerpt', 'toList'
         ];
-        $String = $this->getMock(__NAMESPACE__ . '\StringMock', $methods);
+        $String = $this->getMockBuilder(__NAMESPACE__ . '\StringMock')
+            ->setMethods($methods)
+            ->getMock();
         $Text = new TextHelperTestObject($this->View, ['engine' => __NAMESPACE__ . '\StringMock']);
         $Text->attach($String);
         foreach ($methods as $method) {
@@ -102,7 +105,9 @@ class TextHelperTest extends TestCase
         $methods = [
             'highlight', 'truncate'
         ];
-        $String = $this->getMock(__NAMESPACE__ . '\StringMock', $methods);
+        $String = $this->getMockBuilder(__NAMESPACE__ . '\StringMock')
+            ->setMethods($methods)
+            ->getMock();
         $Text = new TextHelperTestObject($this->View, ['engine' => __NAMESPACE__ . '\StringMock']);
         $Text->attach($String);
         foreach ($methods as $method) {
@@ -113,7 +118,9 @@ class TextHelperTest extends TestCase
         $methods = [
             'tail'
         ];
-        $String = $this->getMock(__NAMESPACE__ . '\StringMock', $methods);
+        $String = $this->getMockBuilder(__NAMESPACE__ . '\StringMock')
+            ->setMethods($methods)
+            ->getMock();
         $Text = new TextHelperTestObject($this->View, ['engine' => __NAMESPACE__ . '\StringMock']);
         $Text->attach($String);
         foreach ($methods as $method) {
@@ -295,6 +302,10 @@ class TextHelperTest extends TestCase
                 'This is a test that includes <a href="http://www.wikipedia.org/wiki/Kanton_(Schweiz)#fragment">www.wikipedia.org/wiki/Kanton_(Schweiz)#fragment</a>',
             ],
             [
+                'This is a test that includes Http://example.com/test.php?foo=bar text',
+                'This is a test that includes <a href="Http://example.com/test.php?foo=bar">Http://example.com/test.php?foo=bar</a> text',
+            ],
+            [
                 'This is a test that includes http://example.com/test.php?foo=bar text',
                 'This is a test that includes <a href="http://example.com/test.php?foo=bar">http://example.com/test.php?foo=bar</a> text',
             ],
@@ -338,6 +349,42 @@ class TextHelperTest extends TestCase
                 'Text with a partial http://www.küchenschöhn-not-working.de URL',
                 'Text with a partial <a href="http://www.küchenschöhn-not-working.de">http://www.küchenschöhn-not-working.de</a> URL'
             ],
+            [
+                "Text with partial www.cakephp.org\r\nwww.cakephp.org urls and CRLF",
+                "Text with partial <a href=\"http://www.cakephp.org\">www.cakephp.org</a>\r\n<a href=\"http://www.cakephp.org\">www.cakephp.org</a> urls and CRLF"
+            ],
+            [
+                'https://nl.wikipedia.org/wiki/Exploit_(computerbeveiliging)',
+                '<a href="https://nl.wikipedia.org/wiki/Exploit_(computerbeveiliging)">https://nl.wikipedia.org/wiki/Exploit_(computerbeveiliging)</a>'
+            ],
+            [
+                'http://dev.local/threads/search?search_string=this+is+a+test',
+                '<a href="http://dev.local/threads/search?search_string=this+is+a+test">http://dev.local/threads/search?search_string=this+is+a+test</a>'
+            ],
+            [
+                'http://www.ad.nl/show/giel-beelen-heeft-weinig-moeite-met-rijontzegging~acd8b6ed',
+                '<a href="http://www.ad.nl/show/giel-beelen-heeft-weinig-moeite-met-rijontzegging~acd8b6ed">http://www.ad.nl/show/giel-beelen-heeft-weinig-moeite-met-rijontzegging~acd8b6ed</a>'
+            ],
+            [
+                'https://sevvlor.com/page%20not%20found',
+                '<a href="https://sevvlor.com/page%20not%20found">https://sevvlor.com/page%20not%20found</a>'
+            ],
+            [
+                'https://fakedomain.ext/path/#!topic/test',
+                '<a href="https://fakedomain.ext/path/#!topic/test">https://fakedomain.ext/path/#!topic/test</a>'
+            ],
+            [
+                'https://fakedomain.ext/path/#!topic/test;other;tag',
+                '<a href="https://fakedomain.ext/path/#!topic/test;other;tag">https://fakedomain.ext/path/#!topic/test;other;tag</a>'
+            ],
+            [
+                'This is text,https://fakedomain.ext/path/#!topic/test,tag, with a comma',
+                'This is text,<a href="https://fakedomain.ext/path/#!topic/test,tag">https://fakedomain.ext/path/#!topic/test,tag</a>, with a comma'
+            ],
+            [
+                'This is text https://fakedomain.ext/path/#!topic/path!',
+                'This is text <a href="https://fakedomain.ext/path/#!topic/path">https://fakedomain.ext/path/#!topic/path</a>!'
+            ]
         ];
     }
 
@@ -440,7 +487,7 @@ class TextHelperTest extends TestCase
     /**
      * Data provider for autoLinkEmail.
      *
-     * @return void
+     * @return array
      */
     public function autoLinkEmailProvider()
     {

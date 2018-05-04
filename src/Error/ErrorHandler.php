@@ -2,23 +2,24 @@
 /**
  * ErrorHandler class
  *
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         0.10.5
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Error;
 
 use Cake\Core\App;
-use Cake\Error\Debugger;
+use Cake\Http\ResponseEmitter;
 use Exception;
+use Throwable;
 
 /**
  * Error Handler provides basic error and exception handling for your application. It captures and
@@ -62,7 +63,7 @@ use Exception;
  *
  * Error handler also provides the built in features for handling php errors (trigger_error).
  * While in debug mode, errors will be output to the screen using debugger. While in production mode,
- * errors will be logged to Log.  You can control which errors are logged by setting
+ * errors will be logged to Log. You can control which errors are logged by setting
  * `errorLevel` option in config/error.php.
  *
  * #### Logging errors
@@ -81,18 +82,10 @@ use Exception;
  *
  * Would enable handling for all non Notice errors.
  *
- * @see ExceptionRenderer for more information on how to customize exception rendering.
+ * @see \Cake\Error\ExceptionRenderer for more information on how to customize exception rendering.
  */
 class ErrorHandler extends BaseErrorHandler
 {
-
-    /**
-     * Options to use for the Error handling.
-     *
-     * @var array
-     */
-    protected $_options = [];
-
     /**
      * Constructor
      *
@@ -103,7 +96,7 @@ class ErrorHandler extends BaseErrorHandler
         $defaults = [
             'log' => true,
             'trace' => false,
-            'exceptionRenderer' => 'Cake\Error\ExceptionRenderer',
+            'exceptionRenderer' => ExceptionRenderer::class,
         ];
         $this->_options = $options + $defaults;
     }
@@ -112,8 +105,6 @@ class ErrorHandler extends BaseErrorHandler
      * Display an error.
      *
      * Template method of BaseErrorHandler.
-     *
-     * Only when debug > 2 will a formatted error be displayed.
      *
      * @param array $error An array of error data.
      * @param bool $debug Whether or not the app is in debug mode.
@@ -130,31 +121,26 @@ class ErrorHandler extends BaseErrorHandler
     /**
      * Displays an exception response body.
      *
-     * @param \Exception $exception The exception to display
+     * @param \Exception $exception The exception to display.
      * @return void
      * @throws \Exception When the chosen exception renderer is invalid.
      */
     protected function _displayException($exception)
     {
-        $renderer = App::className($this->_options['exceptionRenderer'], 'Error');
+        $rendererClassName = App::className($this->_options['exceptionRenderer'], 'Error');
         try {
-            if (!$renderer) {
-                throw new Exception("$renderer is an invalid class.");
+            if (!$rendererClassName) {
+                throw new Exception("$rendererClassName is an invalid class.");
             }
-            $error = new $renderer($exception);
-            $response = $error->render();
+            /** @var \Cake\Error\ExceptionRendererInterface $renderer */
+            $renderer = new $rendererClassName($exception);
+            $response = $renderer->render();
             $this->_clearOutput();
             $this->_sendResponse($response);
-        } catch (Exception $e) {
-            // Disable trace for internal errors.
-            $this->_options['trace'] = false;
-            $message = sprintf(
-                "[%s] %s\n%s", // Keeping same message format
-                get_class($e),
-                $e->getMessage(),
-                $e->getTraceAsString()
-            );
-            trigger_error($message, E_USER_ERROR);
+        } catch (Throwable $exception) {
+            $this->_logInternalError($exception);
+        } catch (Exception $exception) {
+            $this->_logInternalError($exception);
         }
     }
 
@@ -173,17 +159,42 @@ class ErrorHandler extends BaseErrorHandler
     }
 
     /**
+     * Logs both PHP5 and PHP7 errors.
+     *
+     * The PHP5 part will be removed with 4.0.
+     *
+     * @param \Throwable|\Exception $exception Exception.
+     *
+     * @return void
+     */
+    protected function _logInternalError($exception)
+    {
+        // Disable trace for internal errors.
+        $this->_options['trace'] = false;
+        $message = sprintf(
+            "[%s] %s\n%s", // Keeping same message format
+            get_class($exception),
+            $exception->getMessage(),
+            $exception->getTraceAsString()
+        );
+        trigger_error($message, E_USER_ERROR);
+    }
+
+    /**
      * Method that can be easily stubbed in testing.
      *
-     * @param string|\Cake\Network\Response $response Either the message or response object.
+     * @param string|\Cake\Http\Response $response Either the message or response object.
      * @return void
      */
     protected function _sendResponse($response)
     {
         if (is_string($response)) {
             echo $response;
+
             return;
         }
-        $response->send();
+
+        $emitter = new ResponseEmitter();
+        $emitter->emit($response);
     }
 }

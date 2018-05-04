@@ -1,26 +1,24 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         2.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Core;
 
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
 /**
  * PluginTest class
- *
  */
 class PluginTest extends TestCase
 {
@@ -41,7 +39,7 @@ class PluginTest extends TestCase
      *
      * @return void
      */
-    public function testLoadSingle()
+    public function testLoad()
     {
         Plugin::unload();
         Plugin::load('TestPlugin');
@@ -76,14 +74,14 @@ class PluginTest extends TestCase
      *
      * @return void
      */
-    public function testLoadSingleWithAutoload()
+    public function testLoadWithAutoload()
     {
-        $this->assertFalse(class_exists('Company\TestPluginThree\Utility\Hello'));
-        Plugin::load('Company/TestPluginThree', [
+        $this->assertFalse(class_exists('Company\TestPluginFive\Utility\Hello'));
+        Plugin::load('Company/TestPluginFive', [
             'autoload' => true,
         ]);
         $this->assertTrue(
-            class_exists('Company\TestPluginThree\Utility\Hello'),
+            class_exists('Company\TestPluginFive\Utility\Hello'),
             'Class should be loaded'
         );
     }
@@ -93,9 +91,8 @@ class PluginTest extends TestCase
      *
      * @return void
      */
-    public function testLoadSingleWithAutoloadAndBootstrap()
+    public function testLoadWithAutoloadAndBootstrap()
     {
-        $this->assertFalse(class_exists('Company\TestPluginFive\Utility\Hello'));
         Plugin::load(
             'Company/TestPluginFive',
             [
@@ -116,7 +113,7 @@ class PluginTest extends TestCase
      *
      * @return void
      */
-    public function testLoadSingleWithBootstrap()
+    public function testLoadWithBootstrap()
     {
         Plugin::load('TestPlugin', ['bootstrap' => true]);
         $this->assertTrue(Plugin::loaded('TestPlugin'));
@@ -125,6 +122,21 @@ class PluginTest extends TestCase
         Plugin::load('Company/TestPluginThree', ['bootstrap' => true]);
         $this->assertTrue(Plugin::loaded('Company/TestPluginThree'));
         $this->assertEquals('loaded plugin three bootstrap', Configure::read('PluginTest.test_plugin_three.bootstrap'));
+    }
+
+    /**
+     * Tests loading a plugin and its bootstrap file
+     *
+     * @return void
+     */
+    public function testLoadWithBootstrapDisableBootstrapHook()
+    {
+        Plugin::load('TestPlugin', ['bootstrap' => true]);
+        $this->assertTrue(Plugin::loaded('TestPlugin'));
+        $this->assertEquals('loaded plugin bootstrap', Configure::read('PluginTest.test_plugin.bootstrap'));
+
+        $plugin = Plugin::getCollection()->get('TestPlugin');
+        $this->assertFalse($plugin->isEnabled('bootstrap'), 'Should be disabled as hook has been run.');
     }
 
     /**
@@ -194,19 +206,7 @@ class PluginTest extends TestCase
         $expected = ['TestPlugin', 'TestPluginTwo'];
         $this->assertEquals($expected, Plugin::loaded());
         $this->assertEquals('loaded plugin bootstrap', Configure::read('PluginTest.test_plugin.bootstrap'));
-        $this->assertEquals(null, Configure::read('PluginTest.test_plugin_two.bootstrap'));
-    }
-
-    /**
-     * Tests that loading a missing routes file throws a warning
-     *
-     * @return void
-     * @expectedException \PHPUNIT_FRAMEWORK_ERROR_WARNING
-     */
-    public function testLoadMultipleWithDefaultsMissingFile()
-    {
-        Plugin::load(['TestPlugin', 'TestPluginTwo'], ['bootstrap' => true, 'routes' => true]);
-        Plugin::routes();
+        $this->assertNull(Configure::read('PluginTest.test_plugin_two.bootstrap'));
     }
 
     /**
@@ -228,10 +228,10 @@ class PluginTest extends TestCase
      * Tests that Plugin::load() throws an exception on unknown plugin
      *
      * @return void
-     * @expectedException \Cake\Core\Exception\MissingPluginException
      */
     public function testLoadNotFound()
     {
+        $this->expectException(\Cake\Core\Exception\MissingPluginException::class);
         Plugin::load('MissingPlugin');
     }
 
@@ -257,10 +257,10 @@ class PluginTest extends TestCase
      * Tests that Plugin::path() throws an exception on unknown plugin
      *
      * @return void
-     * @expectedException \Cake\Core\Exception\MissingPluginException
      */
     public function testPathNotFound()
     {
+        $this->expectException(\Cake\Core\Exception\MissingPluginException::class);
         Plugin::path('TestPlugin');
     }
 
@@ -286,10 +286,10 @@ class PluginTest extends TestCase
      * Tests that Plugin::classPath() throws an exception on unknown plugin
      *
      * @return void
-     * @expectedException \Cake\Core\Exception\MissingPluginException
      */
     public function testClassPathNotFound()
     {
+        $this->expectException(\Cake\Core\Exception\MissingPluginException::class);
         Plugin::classPath('TestPlugin');
     }
 
@@ -301,7 +301,10 @@ class PluginTest extends TestCase
     public function testLoadAll()
     {
         Plugin::loadAll();
-        $expected = ['Company', 'PluginJs', 'TestPlugin', 'TestPluginFour', 'TestPluginTwo', 'TestTheme'];
+        $expected = [
+            'Company', 'ParentPlugin', 'PluginJs', 'TestPlugin',
+            'TestPluginFour', 'TestPluginTwo', 'TestTheme'
+        ];
         $this->assertEquals($expected, Plugin::loaded());
     }
 
@@ -338,7 +341,10 @@ class PluginTest extends TestCase
     {
         $defaults = ['bootstrap' => true, 'ignoreMissing' => true];
         Plugin::loadAll([$defaults]);
-        $expected = ['Company', 'PluginJs', 'TestPlugin', 'TestPluginFour', 'TestPluginTwo', 'TestTheme'];
+        $expected = [
+            'Company', 'ParentPlugin', 'PluginJs', 'TestPlugin',
+            'TestPluginFour', 'TestPluginTwo', 'TestTheme'
+        ];
         $this->assertEquals($expected, Plugin::loaded());
         $this->assertEquals('loaded js plugin bootstrap', Configure::read('PluginTest.js_plugin.bootstrap'));
         $this->assertEquals('loaded plugin bootstrap', Configure::read('PluginTest.test_plugin.bootstrap'));
@@ -360,15 +366,18 @@ class PluginTest extends TestCase
         ]);
         Plugin::routes();
 
-        $expected = ['Company', 'PluginJs', 'TestPlugin', 'TestPluginFour', 'TestPluginTwo', 'TestTheme'];
+        $expected = [
+            'Company', 'ParentPlugin', 'PluginJs', 'TestPlugin',
+            'TestPluginFour', 'TestPluginTwo', 'TestTheme'
+        ];
         $this->assertEquals($expected, Plugin::loaded());
         $this->assertEquals('loaded js plugin bootstrap', Configure::read('PluginTest.js_plugin.bootstrap'));
         $this->assertEquals('loaded plugin routes', Configure::read('PluginTest.test_plugin.routes'));
-        $this->assertEquals(null, Configure::read('PluginTest.test_plugin.bootstrap'));
+        $this->assertNull(Configure::read('PluginTest.test_plugin.bootstrap'));
         $this->assertEquals('loaded plugin two bootstrap', Configure::read('PluginTest.test_plugin_two.bootstrap'));
         $this->assertEquals('loaded plugin four bootstrap', Configure::read('PluginTest.test_plugin_four.bootstrap'));
 
         // TestPluginThree won't get loaded by loadAll() since it's in a sub directory.
-        $this->assertEquals(null, Configure::read('PluginTest.test_plugin_three.bootstrap'));
+        $this->assertNull(Configure::read('PluginTest.test_plugin_three.bootstrap'));
     }
 }

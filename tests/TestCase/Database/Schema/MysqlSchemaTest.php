@@ -1,25 +1,26 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Database\Schema;
 
-use Cake\Core\Configure;
+use Cake\Database\Driver\Mysql;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\MysqlSchema;
-use Cake\Database\Schema\Table;
+use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use PDO;
 
 /**
  * Test case for Mysql Schema Dialect.
@@ -34,7 +35,7 @@ class MysqlSchemaTest extends TestCase
      */
     protected function _needsConnection()
     {
-        $config = ConnectionManager::config('test');
+        $config = ConnectionManager::getConfig('test');
         $this->skipIf(strpos($config['driver'], 'Mysql') === false, 'Not using Mysql for test config');
     }
 
@@ -59,12 +60,32 @@ class MysqlSchemaTest extends TestCase
                 ['type' => 'time', 'length' => null]
             ],
             [
+                'TIMESTAMP',
+                ['type' => 'timestamp', 'length' => null]
+            ],
+            [
                 'TINYINT(1)',
                 ['type' => 'boolean', 'length' => null]
             ],
             [
                 'TINYINT(2)',
-                ['type' => 'integer', 'length' => 2, 'unsigned' => false]
+                ['type' => 'tinyinteger', 'length' => 2, 'unsigned' => false]
+            ],
+            [
+                'TINYINT(3)',
+                ['type' => 'tinyinteger', 'length' => 3, 'unsigned' => false]
+            ],
+            [
+                'TINYINT(3) UNSIGNED',
+                ['type' => 'tinyinteger', 'length' => 3, 'unsigned' => true]
+            ],
+            [
+                'SMALLINT(4)',
+                ['type' => 'smallinteger', 'length' => 4, 'unsigned' => false]
+            ],
+            [
+                'SMALLINT(4) UNSIGNED',
+                ['type' => 'smallinteger', 'length' => 4, 'unsigned' => true]
             ],
             [
                 'INTEGER(11)',
@@ -99,8 +120,28 @@ class MysqlSchemaTest extends TestCase
                 ['type' => 'uuid', 'length' => null]
             ],
             [
-                'TINYTEXT',
+                'BINARY(16)',
+                ['type' => 'binaryuuid', 'length' => null]
+            ],
+            [
+                'TEXT',
                 ['type' => 'text', 'length' => null]
+            ],
+            [
+                'TINYTEXT',
+                ['type' => 'text', 'length' => TableSchema::LENGTH_TINY]
+            ],
+            [
+                'MEDIUMTEXT',
+                ['type' => 'text', 'length' => TableSchema::LENGTH_MEDIUM]
+            ],
+            [
+                'LONGTEXT',
+                ['type' => 'text', 'length' => TableSchema::LENGTH_LONG]
+            ],
+            [
+                'TINYBLOB',
+                ['type' => 'binary', 'length' => TableSchema::LENGTH_TINY]
             ],
             [
                 'BLOB',
@@ -108,7 +149,11 @@ class MysqlSchemaTest extends TestCase
             ],
             [
                 'MEDIUMBLOB',
-                ['type' => 'binary', 'length' => null]
+                ['type' => 'binary', 'length' => TableSchema::LENGTH_MEDIUM]
+            ],
+            [
+                'LONGBLOB',
+                ['type' => 'binary', 'length' => TableSchema::LENGTH_LONG]
             ],
             [
                 'FLOAT',
@@ -146,11 +191,15 @@ class MysqlSchemaTest extends TestCase
                 'DOUBLE(10,4) UNSIGNED',
                 ['type' => 'float', 'length' => 10, 'precision' => 4, 'unsigned' => true]
             ],
+            [
+                'JSON',
+                ['type' => 'json', 'length' => null]
+            ],
         ];
     }
 
     /**
-     * Test parsing MySQL column types form field description.
+     * Test parsing MySQL column types from field description.
      *
      * @dataProvider convertColumnProvider
      * @return void
@@ -162,20 +211,22 @@ class MysqlSchemaTest extends TestCase
             'Type' => $type,
             'Null' => 'YES',
             'Default' => 'Default value',
-            'Collation' => 'Collate information',
+            'Collation' => 'utf8_general_ci',
             'Comment' => 'Comment section',
         ];
         $expected += [
             'null' => true,
             'default' => 'Default value',
-            'collate' => 'Collate information',
+            'collate' => 'utf8_general_ci',
             'comment' => 'Comment section',
         ];
 
-        $driver = $this->getMock('Cake\Database\Driver\Mysql');
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')->getMock();
         $dialect = new MysqlSchema($driver);
 
-        $table = $this->getMock('Cake\Database\Schema\Table', [], ['table']);
+        $table = $this->getMockBuilder(TableSchema::class)
+            ->setConstructorArgs(['table'])
+            ->getMock();
         $table->expects($this->at(0))->method('addColumn')->with('field', $expected);
 
         $dialect->convertColumnDescription($table, $field);
@@ -184,7 +235,7 @@ class MysqlSchemaTest extends TestCase
     /**
      * Helper method for testing methods.
      *
-     * @param \Cake\Database\Connection $connection
+     * @param \Cake\Datasource\ConnectionInterface $connection
      * @return void
      */
     protected function _createTables($connection)
@@ -192,32 +243,43 @@ class MysqlSchemaTest extends TestCase
         $this->_needsConnection();
         $connection->execute('DROP TABLE IF EXISTS schema_articles');
         $connection->execute('DROP TABLE IF EXISTS schema_authors');
+        $connection->execute('DROP TABLE IF EXISTS schema_json');
 
         $table = <<<SQL
-CREATE TABLE schema_authors (
-id INT(11) PRIMARY KEY AUTO_INCREMENT,
-name VARCHAR(50),
-bio TEXT,
-created DATETIME
-)ENGINE=InnoDB
+            CREATE TABLE schema_authors (
+                id INT(11) PRIMARY KEY AUTO_INCREMENT,
+                name VARCHAR(50),
+                bio TEXT,
+                created DATETIME
+            )ENGINE=InnoDB
 SQL;
         $connection->execute($table);
 
         $table = <<<SQL
-CREATE TABLE schema_articles (
-id BIGINT PRIMARY KEY AUTO_INCREMENT,
-title VARCHAR(20) COMMENT 'A title',
-body TEXT,
-author_id INT(11) NOT NULL,
-published BOOLEAN DEFAULT 0,
-allow_comments TINYINT(1) DEFAULT 0,
-created DATETIME,
-KEY `author_idx` (`author_id`),
-UNIQUE KEY `length_idx` (`title`(4)),
-FOREIGN KEY `author_idx` (`author_id`) REFERENCES `schema_authors`(`id`) ON UPDATE CASCADE ON DELETE RESTRICT
-) ENGINE=InnoDB COLLATE=utf8_general_ci
+            CREATE TABLE schema_articles (
+                id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                title VARCHAR(20) COMMENT 'A title',
+                body TEXT,
+                author_id INT(11) NOT NULL,
+                published BOOLEAN DEFAULT 0,
+                allow_comments TINYINT(1) DEFAULT 0,
+                created DATETIME,
+                KEY `author_idx` (`author_id`),
+                UNIQUE KEY `length_idx` (`title`(4)),
+                FOREIGN KEY `author_idx` (`author_id`) REFERENCES `schema_authors`(`id`) ON UPDATE CASCADE ON DELETE RESTRICT
+            ) ENGINE=InnoDB COLLATE=utf8_general_ci
 SQL;
         $connection->execute($table);
+
+        if ($connection->getDriver()->supportsNativeJson()) {
+            $table = <<<SQL
+                CREATE TABLE schema_json (
+                    id INT(11) PRIMARY KEY AUTO_INCREMENT,
+                    data JSON NOT NULL
+                )
+SQL;
+            $connection->execute($table);
+        }
     }
 
     /**
@@ -250,7 +312,7 @@ SQL;
 
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_articles');
-        $this->assertInstanceOf('Cake\Database\Schema\Table', $result);
+        $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $result);
         $expected = [
             'id' => [
                 'type' => 'biginteger',
@@ -270,6 +332,7 @@ SQL;
                 'precision' => null,
                 'comment' => 'A title',
                 'fixed' => null,
+                'collate' => 'utf8_general_ci',
             ],
             'body' => [
                 'type' => 'text',
@@ -278,6 +341,7 @@ SQL;
                 'length' => null,
                 'precision' => null,
                 'comment' => null,
+                'collate' => 'utf8_general_ci',
             ],
             'author_id' => [
                 'type' => 'integer',
@@ -318,7 +382,7 @@ SQL;
         foreach ($expected as $field => $definition) {
             $this->assertEquals(
                 $definition,
-                $result->column($field),
+                $result->getColumn($field),
                 'Field definition does not match for ' . $field
             );
         }
@@ -336,7 +400,7 @@ SQL;
 
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_articles');
-        $this->assertInstanceOf('Cake\Database\Schema\Table', $result);
+        $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $result);
 
         $this->assertCount(3, $result->constraints());
         $expected = [
@@ -361,9 +425,9 @@ SQL;
                 'delete' => 'restrict',
             ]
         ];
-        $this->assertEquals($expected['primary'], $result->constraint('primary'));
-        $this->assertEquals($expected['length_idx'], $result->constraint('length_idx'));
-        $this->assertEquals($expected['schema_articles_ibfk_1'], $result->constraint('schema_articles_ibfk_1'));
+        $this->assertEquals($expected['primary'], $result->getConstraint('primary'));
+        $this->assertEquals($expected['length_idx'], $result->getConstraint('length_idx'));
+        $this->assertEquals($expected['schema_articles_ibfk_1'], $result->getConstraint('schema_articles_ibfk_1'));
 
         $this->assertCount(1, $result->indexes());
         $expected = [
@@ -371,7 +435,7 @@ SQL;
             'columns' => ['author_id'],
             'length' => []
         ];
-        $this->assertEquals($expected, $result->index('author_idx'));
+        $this->assertEquals($expected, $result->getIndex('author_idx'));
     }
 
     /**
@@ -386,8 +450,8 @@ SQL;
 
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_articles');
-        $this->assertArrayHasKey('engine', $result->options());
-        $this->assertArrayHasKey('collation', $result->options());
+        $this->assertArrayHasKey('engine', $result->getOptions());
+        $this->assertArrayHasKey('collation', $result->getOptions());
     }
 
     public function testDescribeNonPrimaryAutoIncrement()
@@ -408,11 +472,11 @@ SQL;
         $table = $schema->describe('odd_primary_key');
         $connection->execute('DROP TABLE odd_primary_key');
 
-        $column = $table->column('id');
+        $column = $table->getColumn('id');
         $this->assertNull($column['autoIncrement'], 'should not autoincrement');
         $this->assertTrue($column['unsigned'], 'should be unsigned');
 
-        $column = $table->column('other_field');
+        $column = $table->getColumn('other_field');
         $this->assertTrue($column['autoIncrement'], 'should not autoincrement');
         $this->assertFalse($column['unsigned'], 'should not be unsigned');
 
@@ -432,23 +496,33 @@ SQL;
             // strings
             [
                 'title',
+                ['type' => 'string', 'length' => 25, 'null' => true, 'default' => null],
+                '`title` VARCHAR(25)',
+            ],
+            [
+                'title',
                 ['type' => 'string', 'length' => 25, 'null' => false],
                 '`title` VARCHAR(25) NOT NULL'
             ],
             [
                 'title',
                 ['type' => 'string', 'length' => 25, 'null' => true, 'default' => 'ignored'],
-                '`title` VARCHAR(25) DEFAULT NULL'
+                '`title` VARCHAR(25) DEFAULT \'ignored\'',
+            ],
+            [
+                'title',
+                ['type' => 'string', 'length' => 25, 'null' => true, 'default' => ''],
+                '`title` VARCHAR(25) DEFAULT \'\'',
+            ],
+            [
+                'role',
+                ['type' => 'string', 'length' => 10, 'null' => false, 'default' => 'admin'],
+                '`role` VARCHAR(10) NOT NULL DEFAULT \'admin\''
             ],
             [
                 'id',
                 ['type' => 'string', 'length' => 32, 'fixed' => true, 'null' => false],
                 '`id` CHAR(32) NOT NULL'
-            ],
-            [
-                'role',
-                ['type' => 'string', 'length' => 10, 'null' => false, 'default' => 'admin'],
-                '`role` VARCHAR(10) NOT NULL DEFAULT "admin"'
             ],
             [
                 'title',
@@ -460,13 +534,84 @@ SQL;
                 ['type' => 'uuid'],
                 '`id` CHAR(36)'
             ],
+            [
+                'id',
+                ['type' => 'binaryuuid'],
+                '`id` BINARY(16)'
+            ],
+            [
+                'title',
+                ['type' => 'string', 'length' => 255, 'null' => false, 'collate' => 'utf8_unicode_ci'],
+                '`title` VARCHAR(255) COLLATE utf8_unicode_ci NOT NULL'
+            ],
             // Text
             [
                 'body',
                 ['type' => 'text', 'null' => false],
                 '`body` TEXT NOT NULL'
             ],
+            [
+                'body',
+                ['type' => 'text', 'length' => TableSchema::LENGTH_TINY, 'null' => false],
+                '`body` TINYTEXT NOT NULL'
+            ],
+            [
+                'body',
+                ['type' => 'text', 'length' => TableSchema::LENGTH_MEDIUM, 'null' => false],
+                '`body` MEDIUMTEXT NOT NULL'
+            ],
+            [
+                'body',
+                ['type' => 'text', 'length' => TableSchema::LENGTH_LONG, 'null' => false],
+                '`body` LONGTEXT NOT NULL'
+            ],
+            [
+                'body',
+                ['type' => 'text', 'null' => false, 'collate' => 'utf8_unicode_ci'],
+                '`body` TEXT COLLATE utf8_unicode_ci NOT NULL'
+            ],
+            // Blob / binary
+            [
+                'body',
+                ['type' => 'binary', 'null' => false],
+                '`body` BLOB NOT NULL'
+            ],
+            [
+                'body',
+                ['type' => 'binary', 'length' => TableSchema::LENGTH_TINY, 'null' => false],
+                '`body` TINYBLOB NOT NULL'
+            ],
+            [
+                'body',
+                ['type' => 'binary', 'length' => TableSchema::LENGTH_MEDIUM, 'null' => false],
+                '`body` MEDIUMBLOB NOT NULL'
+            ],
+            [
+                'body',
+                ['type' => 'binary', 'length' => TableSchema::LENGTH_LONG, 'null' => false],
+                '`body` LONGBLOB NOT NULL'
+            ],
             // Integers
+            [
+                'post_id',
+                ['type' => 'tinyinteger', 'length' => 2],
+                '`post_id` TINYINT(2)'
+            ],
+            [
+                'post_id',
+                ['type' => 'tinyinteger', 'length' => 2, 'unsigned' => true],
+                '`post_id` TINYINT(2) UNSIGNED'
+            ],
+            [
+                'post_id',
+                ['type' => 'smallinteger', 'length' => 4],
+                '`post_id` SMALLINT(4)'
+            ],
+            [
+                'post_id',
+                ['type' => 'smallinteger', 'length' => 4, 'unsigned' => true],
+                '`post_id` SMALLINT(4) UNSIGNED'
+            ],
             [
                 'post_id',
                 ['type' => 'integer', 'length' => 11],
@@ -491,6 +636,11 @@ SQL;
                 'post_id',
                 ['type' => 'integer', 'length' => 20, 'autoIncrement' => true],
                 '`post_id` INTEGER(20) AUTO_INCREMENT'
+            ],
+            [
+                'post_id',
+                ['type' => 'integer', 'length' => 20, 'null' => false, 'autoIncrement' => false],
+                '`post_id` INTEGER(20) NOT NULL'
             ],
             [
                 'post_id',
@@ -537,14 +687,34 @@ SQL;
             ],
             [
                 'checked',
+                ['type' => 'boolean', 'default' => false, 'null' => false],
+                '`checked` BOOLEAN NOT NULL DEFAULT FALSE'
+            ],
+            [
+                'checked',
                 ['type' => 'boolean', 'default' => true, 'null' => false],
                 '`checked` BOOLEAN NOT NULL DEFAULT TRUE'
+            ],
+            [
+                'checked',
+                ['type' => 'boolean', 'default' => false, 'null' => true],
+                '`checked` BOOLEAN DEFAULT FALSE'
             ],
             // datetimes
             [
                 'created',
                 ['type' => 'datetime', 'comment' => 'Created timestamp'],
-                '`created` DATETIME COMMENT "Created timestamp"'
+                '`created` DATETIME COMMENT \'Created timestamp\''
+            ],
+            [
+                'created',
+                ['type' => 'datetime', 'null' => false, 'default' => 'current_timestamp'],
+                '`created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP'
+            ],
+            [
+                'open_date',
+                ['type' => 'datetime', 'null' => false, 'default' => '2016-12-07 23:04:00'],
+                '`open_date` DATETIME NOT NULL DEFAULT \'2016-12-07 23:04:00\''
             ],
             // Date & Time
             [
@@ -568,6 +738,16 @@ SQL;
                 ['type' => 'timestamp', 'null' => false, 'default' => 'current_timestamp'],
                 '`created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP'
             ],
+            [
+                'created',
+                ['type' => 'timestamp', 'null' => false, 'default' => 'current_timestamp()'],
+                '`created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP'
+            ],
+            [
+                'open_date',
+                ['type' => 'timestamp', 'null' => false, 'default' => '2016-12-07 23:04:00'],
+                '`open_date` TIMESTAMP NOT NULL DEFAULT \'2016-12-07 23:04:00\''
+            ],
         ];
     }
 
@@ -582,7 +762,7 @@ SQL;
         $driver = $this->_getMockedDriver();
         $schema = new MysqlSchema($driver);
 
-        $table = (new Table('articles'))->addColumn($name, $data);
+        $table = (new TableSchema('articles'))->addColumn($name, $data);
         $this->assertEquals($expected, $schema->columnSql($table, $name));
     }
 
@@ -656,7 +836,7 @@ SQL;
         $driver = $this->_getMockedDriver();
         $schema = new MysqlSchema($driver);
 
-        $table = (new Table('articles'))->addColumn('title', [
+        $table = (new TableSchema('articles'))->addColumn('title', [
             'type' => 'string',
             'length' => 255
         ])->addColumn('author_id', [
@@ -697,7 +877,7 @@ SQL;
         $driver = $this->_getMockedDriver();
         $schema = new MysqlSchema($driver);
 
-        $table = (new Table('articles'))->addColumn('title', [
+        $table = (new TableSchema('articles'))->addColumn('title', [
             'type' => 'string',
             'length' => 255
         ])->addColumn('author_id', [
@@ -705,6 +885,108 @@ SQL;
         ])->addIndex($name, $data);
 
         $this->assertEquals($expected, $schema->indexSql($table, $name));
+    }
+
+    /**
+     * Test the addConstraintSql method.
+     *
+     * @return void
+     */
+    public function testAddConstraintSql()
+    {
+        $driver = $this->_getMockedDriver();
+        $connection = $this->getMockBuilder('Cake\Database\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $connection->expects($this->any())->method('getDriver')
+            ->will($this->returnValue($driver));
+
+        $table = (new TableSchema('posts'))
+            ->addColumn('author_id', [
+                'type' => 'integer',
+                'null' => false
+            ])
+            ->addColumn('category_id', [
+                'type' => 'integer',
+                'null' => false
+            ])
+            ->addColumn('category_name', [
+                'type' => 'integer',
+                'null' => false
+            ])
+            ->addConstraint('author_fk', [
+                'type' => 'foreign',
+                'columns' => ['author_id'],
+                'references' => ['authors', 'id'],
+                'update' => 'cascade',
+                'delete' => 'cascade'
+            ])
+            ->addConstraint('category_fk', [
+                'type' => 'foreign',
+                'columns' => ['category_id', 'category_name'],
+                'references' => ['categories', ['id', 'name']],
+                'update' => 'cascade',
+                'delete' => 'cascade'
+            ]);
+
+        $expected = [
+            'ALTER TABLE `posts` ADD CONSTRAINT `author_fk` FOREIGN KEY (`author_id`) REFERENCES `authors` (`id`) ON UPDATE CASCADE ON DELETE CASCADE;',
+            'ALTER TABLE `posts` ADD CONSTRAINT `category_fk` FOREIGN KEY (`category_id`, `category_name`) REFERENCES `categories` (`id`, `name`) ON UPDATE CASCADE ON DELETE CASCADE;'
+        ];
+        $result = $table->addConstraintSql($connection);
+        $this->assertCount(2, $result);
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test the dropConstraintSql method.
+     *
+     * @return void
+     */
+    public function testDropConstraintSql()
+    {
+        $driver = $this->_getMockedDriver();
+        $connection = $this->getMockBuilder('Cake\Database\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $connection->expects($this->any())->method('getDriver')
+            ->will($this->returnValue($driver));
+
+        $table = (new TableSchema('posts'))
+            ->addColumn('author_id', [
+                'type' => 'integer',
+                'null' => false
+            ])
+            ->addColumn('category_id', [
+                'type' => 'integer',
+                'null' => false
+            ])
+            ->addColumn('category_name', [
+                'type' => 'integer',
+                'null' => false
+            ])
+            ->addConstraint('author_fk', [
+                'type' => 'foreign',
+                'columns' => ['author_id'],
+                'references' => ['authors', 'id'],
+                'update' => 'cascade',
+                'delete' => 'cascade'
+            ])
+            ->addConstraint('category_fk', [
+                'type' => 'foreign',
+                'columns' => ['category_id', 'category_name'],
+                'references' => ['categories', ['id', 'name']],
+                'update' => 'cascade',
+                'delete' => 'cascade'
+            ]);
+
+        $expected = [
+            'ALTER TABLE `posts` DROP FOREIGN KEY `author_fk`;',
+            'ALTER TABLE `posts` DROP FOREIGN KEY `category_fk`;'
+        ];
+        $result = $table->dropConstraintSql($connection);
+        $this->assertCount(2, $result);
+        $this->assertEquals($expected, $result);
     }
 
     /**
@@ -717,7 +999,7 @@ SQL;
         $driver = $this->_getMockedDriver();
         $schema = new MysqlSchema($driver);
 
-        $table = new Table('articles');
+        $table = new TableSchema('articles');
         $table->addColumn('id', [
                 'type' => 'integer',
                 'null' => false,
@@ -729,7 +1011,7 @@ SQL;
         $result = $schema->columnSql($table, 'id');
         $this->assertEquals($result, '`id` INTEGER NOT NULL AUTO_INCREMENT');
 
-        $table = new Table('articles');
+        $table = new TableSchema('articles');
         $table->addColumn('id', [
                 'type' => 'biginteger',
                 'null' => false
@@ -750,11 +1032,18 @@ SQL;
     public function testCreateSql()
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
-        $connection->expects($this->any())->method('driver')
+        $connection = $this->getMockBuilder('Cake\Database\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $connection->expects($this->any())->method('getDriver')
             ->will($this->returnValue($driver));
 
-        $table = (new Table('posts'))->addColumn('id', [
+        $driver->getConnection()
+            ->expects($this->any())
+            ->method('getAttribute')
+            ->will($this->returnValue('5.6.0'));
+
+        $table = (new TableSchema('posts'))->addColumn('id', [
                 'type' => 'integer',
                 'null' => false
             ])
@@ -767,12 +1056,22 @@ SQL;
                 'type' => 'text',
                 'comment' => ''
             ])
+            ->addColumn('data', [
+                'type' => 'json'
+            ])
+            ->addColumn('hash', [
+                'type' => 'string',
+                'fixed' => true,
+                'length' => 40,
+                'collate' => 'latin1_bin',
+                'null' => false,
+            ])
             ->addColumn('created', 'datetime')
             ->addConstraint('primary', [
                 'type' => 'primary',
                 'columns' => ['id']
             ])
-            ->options([
+            ->setOptions([
                 'engine' => 'InnoDB',
                 'charset' => 'utf8',
                 'collate' => 'utf8_general_ci',
@@ -781,9 +1080,60 @@ SQL;
         $expected = <<<SQL
 CREATE TABLE `posts` (
 `id` INTEGER NOT NULL AUTO_INCREMENT,
-`title` VARCHAR(255) NOT NULL COMMENT "The title",
+`title` VARCHAR(255) NOT NULL COMMENT 'The title',
 `body` TEXT,
+`data` LONGTEXT,
+`hash` CHAR(40) COLLATE latin1_bin NOT NULL,
 `created` DATETIME,
+PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci
+SQL;
+        $result = $table->createSql($connection);
+        $this->assertCount(1, $result);
+        $this->assertTextEquals($expected, $result[0]);
+    }
+
+    /**
+     * Integration test for converting a Schema\Table with native JSON
+     *
+     * @return void
+     */
+    public function testCreateSqlJson()
+    {
+        $driver = $this->_getMockedDriver();
+        $connection = $this->getMockBuilder('Cake\Database\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $connection->expects($this->any())
+            ->method('getDriver')
+            ->will($this->returnValue($driver));
+
+        $driver->getConnection()
+            ->expects($this->any())
+            ->method('getAttribute')
+            ->will($this->returnValue('5.7.0'));
+
+        $table = (new TableSchema('posts'))->addColumn('id', [
+                'type' => 'integer',
+                'null' => false
+            ])
+            ->addColumn('data', [
+                'type' => 'json'
+            ])
+            ->addConstraint('primary', [
+                'type' => 'primary',
+                'columns' => ['id']
+            ])
+            ->setOptions([
+                'engine' => 'InnoDB',
+                'charset' => 'utf8',
+                'collate' => 'utf8_general_ci',
+            ]);
+
+        $expected = <<<SQL
+CREATE TABLE `posts` (
+`id` INTEGER NOT NULL AUTO_INCREMENT,
+`data` JSON,
 PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci
 SQL;
@@ -800,14 +1150,16 @@ SQL;
     public function testCreateTemporary()
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
-        $connection->expects($this->any())->method('driver')
+        $connection = $this->getMockBuilder('Cake\Database\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $connection->expects($this->any())->method('getDriver')
             ->will($this->returnValue($driver));
-        $table = (new Table('schema_articles'))->addColumn('id', [
+        $table = (new TableSchema('schema_articles'))->addColumn('id', [
             'type' => 'integer',
             'null' => false
         ]);
-        $table->temporary(true);
+        $table->setTemporary(true);
         $sql = $table->createSql($connection);
         $this->assertContains('CREATE TEMPORARY TABLE', $sql[0]);
     }
@@ -820,11 +1172,13 @@ SQL;
     public function testCreateSqlCompositeIntegerKey()
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
-        $connection->expects($this->any())->method('driver')
+        $connection = $this->getMockBuilder('Cake\Database\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $connection->expects($this->any())->method('getDriver')
             ->will($this->returnValue($driver));
 
-        $table = (new Table('articles_tags'))
+        $table = (new TableSchema('articles_tags'))
             ->addColumn('article_id', [
                 'type' => 'integer',
                 'null' => false
@@ -849,7 +1203,7 @@ SQL;
         $this->assertCount(1, $result);
         $this->assertTextEquals($expected, $result[0]);
 
-        $table = (new Table('composite_key'))
+        $table = (new TableSchema('composite_key'))
             ->addColumn('id', [
                 'type' => 'integer',
                 'null' => false,
@@ -884,11 +1238,13 @@ SQL;
     public function testDropSql()
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
-        $connection->expects($this->any())->method('driver')
+        $connection = $this->getMockBuilder('Cake\Database\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $connection->expects($this->any())->method('getDriver')
             ->will($this->returnValue($driver));
 
-        $table = new Table('articles');
+        $table = new TableSchema('articles');
         $result = $table->dropSql($connection);
         $this->assertCount(1, $result);
         $this->assertEquals('DROP TABLE `articles`', $result[0]);
@@ -902,11 +1258,13 @@ SQL;
     public function testTruncateSql()
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
-        $connection->expects($this->any())->method('driver')
+        $connection = $this->getMockBuilder('Cake\Database\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $connection->expects($this->any())->method('getDriver')
             ->will($this->returnValue($driver));
 
-        $table = new Table('articles');
+        $table = new TableSchema('articles');
         $result = $table->truncateSql($connection);
         $this->assertCount(1, $result);
         $this->assertEquals('TRUNCATE TABLE `articles`', $result[0]);
@@ -919,10 +1277,39 @@ SQL;
      */
     public function testConstructConnectsDriver()
     {
-        $driver = $this->getMock('Cake\Database\Driver');
+        $driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
         $driver->expects($this->once())
             ->method('connect');
         $schema = new MysqlSchema($driver);
+    }
+
+    /**
+     * Tests json column parsing on Mysql 5.7+
+     *
+     * @return void
+     */
+    public function testDescribeJson()
+    {
+        $connection = ConnectionManager::get('test');
+        $this->_createTables($connection);
+        $this->skipIf(!$connection->getDriver()->supportsNativeJson(), 'Does not support native json');
+
+        $schema = new SchemaCollection($connection);
+        $result = $schema->describe('schema_json');
+        $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $result);
+        $expected = [
+            'type' => 'json',
+            'null' => false,
+            'default' => null,
+            'length' => null,
+            'precision' => null,
+            'comment' => null,
+        ];
+        $this->assertEquals(
+            $expected,
+            $result->getColumn('data'),
+            'Field definition does not match for data'
+        );
     }
 
     /**
@@ -932,19 +1319,18 @@ SQL;
      */
     protected function _getMockedDriver()
     {
-        $driver = new \Cake\Database\Driver\Mysql();
-        $mock = $this->getMock('FakePdo', ['quote', 'quoteIdentifier']);
+        $driver = new Mysql();
+        $mock = $this->getMockBuilder(PDO::class)
+            ->setMethods(['quote', 'quoteIdentifier', 'getAttribute'])
+            ->disableOriginalConstructor()
+            ->getMock();
         $mock->expects($this->any())
             ->method('quote')
             ->will($this->returnCallback(function ($value) {
-                return '"' . $value . '"';
+                return "'$value'";
             }));
-        $mock->expects($this->any())
-            ->method('quoteIdentifier')
-            ->will($this->returnCallback(function ($value) {
-                return '`' . $value . '`';
-            }));
-        $driver->connection($mock);
+        $driver->setConnection($mock);
+
         return $driver;
     }
 }

@@ -1,16 +1,16 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         2.4.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Log\Engine;
 
@@ -29,12 +29,16 @@ class SyslogLogTest extends TestCase
      */
     public function testOpenLog()
     {
-        $log = $this->getMock('Cake\Log\Engine\SyslogLog', ['_open', '_write']);
+        $log = $this->getMockBuilder('Cake\Log\Engine\SyslogLog')
+            ->setMethods(['_open', '_write'])
+            ->getMock();
         $log->expects($this->once())->method('_open')->with('', LOG_ODELAY, LOG_USER);
         $log->log('debug', 'message');
 
-        $log = $this->getMock('Cake\Log\Engine\SyslogLog', ['_open', '_write']);
-        $log->config([
+        $log = $this->getMockBuilder('Cake\Log\Engine\SyslogLog')
+            ->setMethods(['_open', '_write'])
+            ->getMock();
+        $log->setConfig([
             'prefix' => 'thing',
             'flag' => LOG_NDELAY,
             'facility' => LOG_MAIL,
@@ -53,7 +57,9 @@ class SyslogLogTest extends TestCase
      */
     public function testWriteOneLine($type, $expected)
     {
-        $log = $this->getMock('Cake\Log\Engine\SyslogLog', ['_open', '_write']);
+        $log = $this->getMockBuilder('Cake\Log\Engine\SyslogLog')
+            ->setMethods(['_open', '_write'])
+            ->getMock();
         $log->expects($this->once())->method('_write')->with($expected, $type . ': Foo');
         $log->log($type, 'Foo');
     }
@@ -65,7 +71,9 @@ class SyslogLogTest extends TestCase
      */
     public function testWriteMultiLine()
     {
-        $log = $this->getMock('Cake\Log\Engine\SyslogLog', ['_open', '_write']);
+        $log = $this->getMockBuilder('Cake\Log\Engine\SyslogLog')
+            ->setMethods(['_open', '_write'])
+            ->getMock();
         $log->expects($this->at(1))->method('_write')->with(LOG_DEBUG, 'debug: Foo');
         $log->expects($this->at(2))->method('_write')->with(LOG_DEBUG, 'debug: Bar');
         $log->expects($this->exactly(2))->method('_write');

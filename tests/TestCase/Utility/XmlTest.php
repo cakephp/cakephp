@@ -1,16 +1,16 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         1.2.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Utility;
 
@@ -23,7 +23,6 @@ use Cake\Utility\Xml;
 
 /**
  * XmlTest class
- *
  */
 class XmlTest extends TestCase
 {
@@ -66,6 +65,19 @@ class XmlTest extends TestCase
         Configure::write('App.encoding', $this->_appEncoding);
     }
 
+    public function testExceptionChainingForInvalidInput()
+    {
+        try {
+            $value = "invalid-xml-input<<";
+            Xml::build($value);
+            $this->fail('This line should not be executed because of exception above.');
+        } catch (XmlException $exception) {
+            $cause = $exception->getPrevious();
+            $this->assertNotNull($cause);
+            $this->assertInstanceOf(\Exception::class, $cause);
+        }
+    }
+
     /**
      * testBuild method
      *
@@ -75,7 +87,7 @@ class XmlTest extends TestCase
     {
         $xml = '<tag>value</tag>';
         $obj = Xml::build($xml);
-        $this->assertTrue($obj instanceof \SimpleXMLElement);
+        $this->assertInstanceOf(\SimpleXMLElement::class, $obj);
         $this->assertEquals('tag', (string)$obj->getName());
         $this->assertEquals('value', (string)$obj);
 
@@ -83,7 +95,7 @@ class XmlTest extends TestCase
         $this->assertEquals($obj, Xml::build($xml));
 
         $obj = Xml::build($xml, ['return' => 'domdocument']);
-        $this->assertTrue($obj instanceof \DOMDocument);
+        $this->assertInstanceOf(\DOMDocument::class, $obj);
         $this->assertEquals('tag', $obj->firstChild->nodeName);
         $this->assertEquals('value', $obj->firstChild->nodeValue);
 
@@ -116,13 +128,26 @@ class XmlTest extends TestCase
     }
 
     /**
+     * test build() method with huge option
+     *
+     * @return void
+     */
+    public function testBuildHuge()
+    {
+        $xml = '<tag>value</tag>';
+        $obj = Xml::build($xml, ['parseHuge' => true]);
+        $this->assertEquals('tag', $obj->getName());
+        $this->assertEquals('value', (string)$obj);
+    }
+
+    /**
      * Test that the readFile option disables local file parsing.
      *
-     * @expectedException \Cake\Utility\Exception\XmlException
      * @return void
      */
     public function testBuildFromFileWhenDisabled()
     {
+        $this->expectException(\Cake\Utility\Exception\XmlException::class);
         $xml = CORE_TESTS . 'Fixture/sample.xml';
         $obj = Xml::build($xml, ['readFile' => false]);
     }
@@ -187,22 +212,22 @@ class XmlTest extends TestCase
      * testBuildInvalidData
      *
      * @dataProvider invalidDataProvider
-     * @expectedException \RuntimeException
      * @return void
      */
     public function testBuildInvalidData($value)
     {
+        $this->expectException(\RuntimeException::class);
         Xml::build($value);
     }
 
     /**
      * Test that building SimpleXmlElement with invalid XML causes the right exception.
      *
-     * @expectedException \Cake\Utility\Exception\XmlException
      * @return void
      */
     public function testBuildInvalidDataSimpleXml()
     {
+        $this->expectException(\Cake\Utility\Exception\XmlException::class);
         $input = '<derp';
         Xml::build($input, ['return' => 'simplexml']);
     }
@@ -259,33 +284,33 @@ class XmlTest extends TestCase
             ]
         ];
         $obj = Xml::fromArray($xml, 'attributes');
-        $this->assertTrue($obj instanceof \SimpleXMLElement);
+        $this->assertInstanceOf(\SimpleXMLElement::class, $obj);
         $this->assertEquals('tags', $obj->getName());
         $this->assertEquals(2, count($obj));
         $xmlText = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <tags>
-	<tag id="1" name="defect"/>
-	<tag id="2" name="enhancement"/>
+  <tag id="1" name="defect"/>
+  <tag id="2" name="enhancement"/>
 </tags>
 XML;
         $this->assertXmlStringEqualsXmlString($xmlText, $obj->asXML());
 
         $obj = Xml::fromArray($xml);
-        $this->assertTrue($obj instanceof \SimpleXMLElement);
+        $this->assertInstanceOf(\SimpleXMLElement::class, $obj);
         $this->assertEquals('tags', $obj->getName());
         $this->assertEquals(2, count($obj));
         $xmlText = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <tags>
-	<tag>
-		<id>1</id>
-		<name>defect</name>
-	</tag>
-	<tag>
-		<id>2</id>
-		<name>enhancement</name>
-	</tag>
+  <tag>
+    <id>1</id>
+    <name>defect</name>
+  </tag>
+  <tag>
+    <id>2</id>
+    <name>enhancement</name>
+  </tag>
 </tags>
 XML;
         $this->assertXmlStringEqualsXmlString($xmlText, $obj->asXML());
@@ -335,12 +360,12 @@ XML;
         $xmlText = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <tags>
-	<tag id="1">
-		<name>defect</name>
-	</tag>
-	<tag id="2">
-		<name>enhancement</name>
-	</tag>
+  <tag id="1">
+    <name>defect</name>
+  </tag>
+  <tag id="2">
+    <name>enhancement</name>
+  </tag>
 </tags>
 XML;
         $this->assertXmlStringEqualsXmlString($xmlText, $obj->asXML());
@@ -379,7 +404,15 @@ XML;
         $obj = Xml::fromArray($xml, 'attributes');
         $xmlText = '<' . '?xml version="1.0" encoding="UTF-8"?><tags><tag id="1">defect</tag></tags>';
         $this->assertXmlStringEqualsXmlString($xmlText, $obj->asXML());
+    }
 
+    /**
+     * Test fromArray() with zero values.
+     *
+     * @return void
+     */
+    public function testFromArrayZeroValue()
+    {
         $xml = [
             'tag' => [
                 '@' => 0,
@@ -390,6 +423,16 @@ XML;
         $xmlText = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <tag test="A test">0</tag>
+XML;
+        $this->assertXmlStringEqualsXmlString($xmlText, $obj->asXML());
+
+        $xml = [
+            'tag' => ['0']
+        ];
+        $obj = Xml::fromArray($xml);
+        $xmlText = <<<XML
+<?xml version="1.0" encoding="UTF-8"?>
+<tag>0</tag>
 XML;
         $this->assertXmlStringEqualsXmlString($xmlText, $obj->asXML());
     }
@@ -420,13 +463,13 @@ XML;
         $expected = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <Event>
-	<id>235</id>
-	<Attribute>
-		<id>9646</id>
-	</Attribute>
-	<Attribute>
-		<id>9647</id>
-	</Attribute>
+  <id>235</id>
+  <Attribute>
+    <id>9646</id>
+  </Attribute>
+  <Attribute>
+    <id>9647</id>
+  </Attribute>
 </Event>
 XML;
         $this->assertXmlStringEqualsXmlString($expected, $obj->asXML());
@@ -562,11 +605,11 @@ XML;
      * testFromArrayFail method
      *
      * @dataProvider invalidArrayDataProvider
-     * @expectedException \Exception
      * @return void
      */
     public function testFromArrayFail($value)
     {
+        $this->expectException(\Exception::class);
         Xml::fromArray($value);
     }
 
@@ -592,15 +635,15 @@ XML;
         $expected = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <products>
-	<product_ID>GENERT-DL</product_ID>
-	<deeplink>http://example.com/deep</deeplink>
-	<image_URL>http://example.com/image</image_URL>
-	<thumbnail_image_URL>http://example.com/thumb</thumbnail_image_URL>
-	<brand>Malte Lange &amp; Co</brand>
-	<availability>in stock</availability>
-	<authors>
-		<author>Malte Lange &amp; Co</author>
-	</authors>
+  <product_ID>GENERT-DL</product_ID>
+  <deeplink>http://example.com/deep</deeplink>
+  <image_URL>http://example.com/image</image_URL>
+  <thumbnail_image_URL>http://example.com/thumb</thumbnail_image_URL>
+  <brand>Malte Lange &amp; Co</brand>
+  <availability>in stock</availability>
+  <authors>
+    <author>Malte Lange &amp; Co</author>
+  </authors>
 </products>
 XML;
         $this->assertXmlStringEqualsXmlString($expected, $xml->asXML());
@@ -779,7 +822,7 @@ XML;
         $rss = file_get_contents(CORE_TESTS . 'Fixture/rss.xml');
         $rssAsArray = Xml::toArray(Xml::build($rss));
         $this->assertEquals('2.0', $rssAsArray['rss']['@version']);
-        $this->assertEquals(2, count($rssAsArray['rss']['channel']['item']));
+        $this->assertCount(2, $rssAsArray['rss']['channel']['item']);
 
         $atomLink = ['@href' => 'http://bakery.cakephp.org/articles/rss', '@rel' => 'self', '@type' => 'application/rss+xml'];
         $this->assertEquals($rssAsArray['rss']['channel']['atom:link'], $atomLink);
@@ -825,21 +868,21 @@ XML;
         $xmlText = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
-<channel>
-	<atom:link href="http://bakery.cakephp.org/articles/rss" rel="self" type="application/rss+xml"/>
-	<title>The Bakery: </title>
-	<link>http://bakery.cakephp.org/</link>
-	<description>Recent  Articles at The Bakery.</description>
-	<pubDate>Sun, 12 Sep 2010 04:18:26 -0500</pubDate>
-	<item>
-		<title>CakePHP 1.3.4 released</title>
-		<link>http://bakery.cakephp.org/articles/view/cakephp-1-3-4-released</link>
-	</item>
-	<item>
-		<title>Wizard Component 1.2 Tutorial</title>
-		<link>http://bakery.cakephp.org/articles/view/wizard-component-1-2-tutorial</link>
-	</item>
-</channel>
+  <channel>
+    <atom:link href="http://bakery.cakephp.org/articles/rss" rel="self" type="application/rss+xml"/>
+    <title>The Bakery: </title>
+    <link>http://bakery.cakephp.org/</link>
+    <description>Recent  Articles at The Bakery.</description>
+    <pubDate>Sun, 12 Sep 2010 04:18:26 -0500</pubDate>
+    <item>
+      <title>CakePHP 1.3.4 released</title>
+      <link>http://bakery.cakephp.org/articles/view/cakephp-1-3-4-released</link>
+    </item>
+    <item>
+      <title>Wizard Component 1.2 Tutorial</title>
+      <link>http://bakery.cakephp.org/articles/view/wizard-component-1-2-tutorial</link>
+    </item>
+  </channel>
 </rss>
 XML;
         $this->assertXmlStringEqualsXmlString($xmlText, $rssAsSimpleXML->asXML());
@@ -888,22 +931,22 @@ XML;
         $xmlText = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <methodResponse>
-	<params>
-		<param>
-			<value>
-				<array>
-					<data>
-						<value>
-							<int>1</int>
-						</value>
-						<value>
-							<string>testing</string>
-						</value>
-					</data>
-				</array>
-			</value>
-		</param>
-	</params>
+  <params>
+    <param>
+      <value>
+        <array>
+          <data>
+            <value>
+              <int>1</int>
+            </value>
+            <value>
+              <string>testing</string>
+            </value>
+          </data>
+        </array>
+      </value>
+    </param>
+  </params>
 </methodResponse>
 XML;
         $xml = Xml::build($xmlText);
@@ -980,9 +1023,11 @@ XML;
         $xmlText = <<<XML
 <?xml version="1.0"?>
 <soap:Envelope xmlns:soap="http://www.w3.org/2001/12/soap-envelope" soap:encodingStyle="http://www.w3.org/2001/12/soap-encoding">
-	<soap:Body xmlns:m="http://www.example.org/stock">
-	<m:GetStockPrice><m:StockName>IBM</m:StockName></m:GetStockPrice>
-	</soap:Body>
+  <soap:Body xmlns:m="http://www.example.org/stock">
+    <m:GetStockPrice>
+      <m:StockName>IBM</m:StockName>
+    </m:GetStockPrice>
+  </soap:Body>
 </soap:Envelope>
 XML;
         $this->assertXmlStringEqualsXmlString($xmlText, $xmlRequest->asXML());
@@ -1067,10 +1112,10 @@ XML;
         $expected = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
-	<tag xmlns:pref="http://cakephp.org">
-		<pref:item>item 1</pref:item>
-		<pref:item>item 2</pref:item>
-	</tag>
+  <tag xmlns:pref="http://cakephp.org">
+    <pref:item>item 1</pref:item>
+    <pref:item>item 2</pref:item>
+  </tag>
 </root>
 XML;
         $xmlResponse = Xml::fromArray($xml);
@@ -1137,11 +1182,11 @@ XML;
      * testToArrayFail method
      *
      * @dataProvider invalidToArrayDataProvider
-     * @expectedException \Cake\Utility\Exception\XmlException
      * @return void
      */
     public function testToArrayFail($value)
     {
+        $this->expectException(\Cake\Utility\Exception\XmlException::class);
         Xml::toArray($value);
     }
 
@@ -1178,5 +1223,36 @@ XML;
 </request>
 XML;
         $result = Xml::build($xml);
+        $this->assertEquals('', (string)$result->xxe);
+    }
+
+    /**
+     * Test building Xml with valid class-name in value.
+     *
+     * @see https://github.com/cakephp/cakephp/pull/9754
+     * @return void
+     */
+    public function testClassnameInValueRegressionTest()
+    {
+        $classname = self::class; // Will always be a valid class name
+        $data = [
+            'outer' => [
+                'inner' => $classname
+            ]
+        ];
+        $obj = Xml::build($data);
+        $result = $obj->asXml();
+        $this->assertContains('<inner>' . $classname . '</inner>', $result);
+    }
+
+    /**
+     * Needed function for testClassnameInValueRegressionTest.
+     *
+     * @ignore
+     * @return array
+     */
+    public function toArray()
+    {
+        return [];
     }
 }

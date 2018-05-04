@@ -1,0 +1,13 @@
+---
+linters:
+  phpcs:
+    standard: CakePHP
+    extensions: 'php,ctp'
+    fixer: true
+
+branches:
+    ignore: ['2.x', '2.next']
+
+fixers:
+  enable: true
+  workflow: commit

@@ -1,16 +1,16 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         2.1.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\View;
 
@@ -21,7 +21,6 @@ use Cake\Core\Exception\Exception;
  * Slots or blocks are combined with extending views and layouts to afford slots
  * of content that are present in a layout or parent view, but are defined by the child
  * view or elements used in the view.
- *
  */
 class ViewBlock
 {
@@ -64,7 +63,7 @@ class ViewBlock
     /**
      * Should the currently captured content be discarded on ViewBlock::end()
      *
-     * @see ViewBlock::end()
+     * @see \Cake\View\ViewBlock::end()
      * @var bool
      */
     protected $_discardActiveBufferOnEnd = false;
@@ -87,7 +86,7 @@ class ViewBlock
      */
     public function start($name, $mode = ViewBlock::OVERRIDE)
     {
-        if (in_array($name, array_keys($this->_active))) {
+        if (array_key_exists($name, $this->_active)) {
             throw new Exception(sprintf("A view block with the name '%s' is already/still open.", $name));
         }
         $this->_active[$name] = $mode;
@@ -98,16 +97,17 @@ class ViewBlock
      * End a capturing block. The compliment to ViewBlock::start()
      *
      * @return void
-     * @see ViewBlock::start()
+     * @see \Cake\View\ViewBlock::start()
      */
     public function end()
     {
         if ($this->_discardActiveBufferOnEnd) {
             $this->_discardActiveBufferOnEnd = false;
             ob_end_clean();
+
             return;
         }
-        if (!empty($this->_active)) {
+        if ($this->_active) {
             $mode = end($this->_active);
             $active = key($this->_active);
             $content = ob_get_clean();
@@ -129,7 +129,8 @@ class ViewBlock
      * of the new capturing context will be added to the existing block context.
      *
      * @param string $name Name of the block
-     * @param mixed $value The content for the block
+     * @param mixed $value The content for the block. Value will be type cast
+     *   to string.
      * @param string $mode If ViewBlock::APPEND content will be appended to existing content.
      *   If ViewBlock::PREPEND it will be prepended.
      * @return void
@@ -138,6 +139,7 @@ class ViewBlock
     {
         if ($value === null) {
             $this->start($name, $mode);
+
             return;
         }
 
@@ -156,7 +158,8 @@ class ViewBlock
      * existing content.
      *
      * @param string $name Name of the block
-     * @param mixed $value The content for the block.
+     * @param mixed $value The content for the block. Value will be type cast
+     *   to string.
      * @return void
      */
     public function set($name, $value)
@@ -176,6 +179,7 @@ class ViewBlock
         if (!isset($this->_blocks[$name])) {
             return $default;
         }
+
         return $this->_blocks[$name];
     }
 
@@ -203,11 +207,12 @@ class ViewBlock
     /**
      * Get the name of the currently open block.
      *
-     * @return mixed Either null or the name of the last open block.
+     * @return string|null Either null or the name of the last open block.
      */
     public function active()
     {
         end($this->_active);
+
         return key($this->_active);
     }
 

@@ -1,22 +1,22 @@
 <?php
 /**
  *
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         2.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Auth;
 
-use Cake\Network\Request;
-use Cake\Network\Response;
+use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 
 /**
  * An authentication adapter for AuthComponent. Provides the ability to authenticate using POST
@@ -25,7 +25,7 @@ use Cake\Network\Response;
  * ```
  *  $this->Auth->authenticate = [
  *      'Form' => [
- *          'scope' => ['Users.active' => 1]
+ *          'finder' => ['auth' => ['some_finder_option' => 'some_value']]
  *      ]
  *  ]
  * ```
@@ -33,7 +33,7 @@ use Cake\Network\Response;
  * When configuring FormAuthenticate you can pass in config to which fields, model and additional conditions
  * are used. See FormAuthenticate::$_config for more information.
  *
- * @see AuthComponent::$authenticate
+ * @see \Cake\Controller\Component\AuthComponent::$authenticate
  */
 class FormAuthenticate extends BaseAuthenticate
 {
@@ -41,18 +41,19 @@ class FormAuthenticate extends BaseAuthenticate
     /**
      * Checks the fields to ensure they are supplied.
      *
-     * @param \Cake\Network\Request $request The request that contains login information.
+     * @param \Cake\Http\ServerRequest $request The request that contains login information.
      * @param array $fields The fields to be checked.
      * @return bool False if the fields have not been supplied. True if they exist.
      */
-    protected function _checkFields(Request $request, array $fields)
+    protected function _checkFields(ServerRequest $request, array $fields)
     {
         foreach ([$fields['username'], $fields['password']] as $field) {
-            $value = $request->data($field);
+            $value = $request->getData($field);
             if (empty($value) || !is_string($value)) {
                 return false;
             }
         }
+
         return true;
     }
 
@@ -61,19 +62,20 @@ class FormAuthenticate extends BaseAuthenticate
      * to find POST data that is used to find a matching record in the `config.userModel`. Will return false if
      * there is no post data, either username or password is missing, or if the scope conditions have not been met.
      *
-     * @param \Cake\Network\Request $request The request that contains login information.
-     * @param \Cake\Network\Response $response Unused response object.
-     * @return mixed False on login failure.  An array of User data on success.
+     * @param \Cake\Http\ServerRequest $request The request that contains login information.
+     * @param \Cake\Http\Response $response Unused response object.
+     * @return mixed False on login failure. An array of User data on success.
      */
-    public function authenticate(Request $request, Response $response)
+    public function authenticate(ServerRequest $request, Response $response)
     {
         $fields = $this->_config['fields'];
         if (!$this->_checkFields($request, $fields)) {
             return false;
         }
+
         return $this->_findUser(
-            $request->data[$fields['username']],
-            $request->data[$fields['password']]
+            $request->getData($fields['username']),
+            $request->getData($fields['password'])
         );
     }
 }

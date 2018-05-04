@@ -1,23 +1,23 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\ORM\Association;
 
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
-use Cake\ORM\Association\DependentDeleteTrait;
-use Cake\ORM\Association\SelectableAssociationTrait;
+use Cake\ORM\Association\DependentDeleteHelper;
+use Cake\ORM\Association\Loader\SelectLoader;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 
@@ -29,53 +29,40 @@ use Cake\Utility\Inflector;
  */
 class HasOne extends Association
 {
-
-    use DependentDeleteTrait;
-    use SelectableAssociationTrait;
-
     /**
      * Valid strategies for this type of association
      *
      * @var array
      */
-    protected $_validStrategies = [self::STRATEGY_JOIN, self::STRATEGY_SELECT];
+    protected $_validStrategies = [
+        self::STRATEGY_JOIN,
+        self::STRATEGY_SELECT
+    ];
 
     /**
-     * Sets the name of the field representing the foreign key to the target table.
-     * If no parameters are passed current field is returned
+     * Gets the name of the field representing the foreign key to the target table.
      *
-     * @param string|null $key the key to be used to link both tables together
      * @return string
      */
-    public function foreignKey($key = null)
+    public function getForeignKey()
     {
-        if ($key === null) {
-            if ($this->_foreignKey === null) {
-                $this->_foreignKey = $this->_modelKey($this->source()->alias());
-            }
-            return $this->_foreignKey;
+        if ($this->_foreignKey === null) {
+            $this->_foreignKey = $this->_modelKey($this->getSource()->getAlias());
         }
-        return parent::foreignKey($key);
+
+        return $this->_foreignKey;
     }
 
     /**
-     * Sets the property name that should be filled with data from the target table
-     * in the source table record.
-     * If no arguments are passed, currently configured type is returned.
+     * Returns default property name based on association name.
      *
-     * @param string|null $name The name of the property. Pass null to read the current value.
      * @return string
      */
-    public function property($name = null)
+    protected function _propertyName()
     {
-        if ($name !== null) {
-            return parent::property($name);
-        }
-        if ($name === null && !$this->_propertyName) {
-            list(, $name) = pluginSplit($this->_name);
-            $this->_propertyName = Inflector::underscore(Inflector::singularize($name));
-        }
-        return $this->_propertyName;
+        list(, $name) = pluginSplit($this->_name);
+
+        return Inflector::underscore(Inflector::singularize($name));
     }
 
     /**
@@ -88,7 +75,7 @@ class HasOne extends Association
      */
     public function isOwningSide(Table $side)
     {
-        return $side === $this->source();
+        return $side === $this->getSource();
     }
 
     /**
@@ -108,27 +95,27 @@ class HasOne extends Association
      * `$options`
      *
      * @param \Cake\Datasource\EntityInterface $entity an entity from the source table
-     * @param array|\ArrayObject $options options to be passed to the save method in
-     * the target table
+     * @param array $options options to be passed to the save method in the target table
      * @return bool|\Cake\Datasource\EntityInterface false if $entity could not be saved, otherwise it returns
      * the saved entity
-     * @see Table::save()
+     * @see \Cake\ORM\Table::save()
      */
     public function saveAssociated(EntityInterface $entity, array $options = [])
     {
-        $targetEntity = $entity->get($this->property());
+        $targetEntity = $entity->get($this->getProperty());
         if (empty($targetEntity) || !($targetEntity instanceof EntityInterface)) {
             return $entity;
         }
 
         $properties = array_combine(
-            (array)$this->foreignKey(),
-            $entity->extract((array)$this->bindingKey())
+            (array)$this->getForeignKey(),
+            $entity->extract((array)$this->getBindingKey())
         );
         $targetEntity->set($properties, ['guard' => false]);
 
-        if (!$this->target()->save($targetEntity, $options)) {
+        if (!$this->getTarget()->save($targetEntity, $options)) {
             $targetEntity->unsetProperty(array_keys($properties));
+
             return false;
         }
 
@@ -137,38 +124,32 @@ class HasOne extends Association
 
     /**
      * {@inheritDoc}
+     *
+     * @return \Closure
      */
-    protected function _linkField($options)
+    public function eagerLoader(array $options)
     {
-        $links = [];
-        $name = $this->alias();
+        $loader = new SelectLoader([
+            'alias' => $this->getAlias(),
+            'sourceAlias' => $this->getSource()->getAlias(),
+            'targetAlias' => $this->getTarget()->getAlias(),
+            'foreignKey' => $this->getForeignKey(),
+            'bindingKey' => $this->getBindingKey(),
+            'strategy' => $this->getStrategy(),
+            'associationType' => $this->type(),
+            'finder' => [$this, 'find']
+        ]);
 
-        foreach ((array)$options['foreignKey'] as $key) {
-            $links[] = sprintf('%s.%s', $name, $key);
-        }
-
-        if (count($links) === 1) {
-            return $links[0];
-        }
-
-        return $links;
+        return $loader->buildEagerLoader($options);
     }
 
     /**
      * {@inheritDoc}
      */
-    protected function _buildResultMap($fetchQuery, $options)
+    public function cascadeDelete(EntityInterface $entity, array $options = [])
     {
-        $resultMap = [];
-        $key = (array)$options['foreignKey'];
+        $helper = new DependentDeleteHelper();
 
-        foreach ($fetchQuery->all() as $result) {
-            $values = [];
-            foreach ($key as $k) {
-                $values[] = $result[$k];
-            }
-            $resultMap[implode(';', $values)] = $result;
-        }
-        return $resultMap;
+        return $helper->cascadeDelete($this, $entity, $options);
     }
 }

@@ -2,31 +2,28 @@
 /**
  * JsonViewTest file
  *
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         2.1.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\View;
 
 use Cake\Controller\Controller;
-use Cake\Core\App;
 use Cake\Core\Configure;
-use Cake\Network\Request;
-use Cake\Network\Response;
+use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
-use Cake\View\JsonView;
 
 /**
  * JsonViewTest
- *
  */
 class JsonViewTest extends TestCase
 {
@@ -42,7 +39,7 @@ class JsonViewTest extends TestCase
      *
      * Note: array($data, $serialize, expected)
      *
-     * @return void
+     * @return array
      */
     public static function renderWithoutViewProvider()
     {
@@ -108,15 +105,23 @@ class JsonViewTest extends TestCase
                 ['no' => 'nope', 'user' => 'fake', 'list' => ['item1', 'item2']],
                 false,
                 null,
-                json_encode(null)
+                null
             ],
 
             // Test render with True in _serialize.
             [
                 ['no' => 'nope', 'user' => 'fake', 'list' => ['item1', 'item2']],
                 true,
+                JSON_HEX_QUOT,
+                json_encode(['no' => 'nope', 'user' => 'fake', 'list' => ['item1', 'item2']])
+            ],
+
+            // Test render with True in _serialize and single var
+            [
+                ['no' => 'nope'],
+                true,
                 null,
-                json_encode(null)
+                json_encode(['no' => 'nope'])
             ],
 
             // Test render with empty string in _serialize.
@@ -198,25 +203,45 @@ class JsonViewTest extends TestCase
                 JSON_HEX_TAG | JSON_HEX_APOS,
                 json_encode('<tag> \'quote\' "double-quote" &', JSON_HEX_TAG | JSON_HEX_APOS)
             ],
+
+            // Test render of NAN
+            [
+                ['value' => NAN],
+                true,
+                null,
+                '{"value":0}'
+            ],
+
+            // Test render of INF
+            [
+                ['value' => INF],
+                true,
+                null,
+                '{"value":0}'
+            ],
         ];
     }
 
     /**
      * Test render with a valid string in _serialize.
      *
+     * @param array $data
+     * @param string|null $serialize
+     * @param int|bool|null $jsonOptions
+     * @param string $expected
      * @dataProvider renderWithoutViewProvider
      * @return void
      */
     public function testRenderWithoutView($data, $serialize, $jsonOptions, $expected)
     {
-        $Request = new Request();
+        $Request = new ServerRequest();
         $Response = new Response();
         $Controller = new Controller($Request, $Response);
 
         $Controller->set($data);
         $Controller->set('_serialize', $serialize);
         $Controller->set('_jsonOptions', $jsonOptions);
-        $Controller->viewClass = 'Json';
+        $Controller->viewBuilder()->setClassName('Json');
         $View = $Controller->createView();
         $output = $View->render(false);
 
@@ -230,7 +255,7 @@ class JsonViewTest extends TestCase
      */
     public function testRenderSerializeNoHelpers()
     {
-        $Request = new Request();
+        $Request = new ServerRequest();
         $Response = new Response();
         $Controller = new Controller($Request, $Response);
 
@@ -239,7 +264,7 @@ class JsonViewTest extends TestCase
             'tags' => ['cakephp', 'framework'],
             '_serialize' => 'tags'
         ]);
-        $Controller->viewClass = 'Json';
+        $Controller->viewBuilder()->setClassName('Json');
         $View = $Controller->createView();
         $View->render();
 
@@ -253,7 +278,7 @@ class JsonViewTest extends TestCase
      */
     public function testJsonpResponse()
     {
-        $Request = new Request();
+        $Request = new ServerRequest();
         $Response = new Response();
         $Controller = new Controller($Request, $Response);
 
@@ -263,20 +288,20 @@ class JsonViewTest extends TestCase
             '_serialize' => 'data',
             '_jsonp' => true
         ]);
-        $Controller->viewClass = 'Json';
+        $Controller->viewBuilder()->setClassName('Json');
         $View = $Controller->createView();
         $output = $View->render(false);
 
         $this->assertSame(json_encode($data), $output);
-        $this->assertSame('application/json', $Response->type());
+        $this->assertSame('application/json', $View->response->getType());
 
-        $View->request->query = ['callback' => 'jfunc'];
+        $View->request = $View->request->withQueryParams(['callback' => 'jfunc']);
         $output = $View->render(false);
         $expected = 'jfunc(' . json_encode($data) . ')';
         $this->assertSame($expected, $output);
-        $this->assertSame('application/javascript', $Response->type());
+        $this->assertSame('application/javascript', $View->response->getType());
 
-        $View->request->query = ['jsonCallback' => 'jfunc'];
+        $View->request = $View->request->withQueryParams(['jsonCallback' => 'jfunc']);
         $View->viewVars['_jsonp'] = 'jsonCallback';
         $output = $View->render(false);
         $expected = 'jfunc(' . json_encode($data) . ')';
@@ -290,11 +315,10 @@ class JsonViewTest extends TestCase
      */
     public function testRenderWithView()
     {
-        $Request = new Request();
+        $Request = new ServerRequest();
         $Response = new Response();
         $Controller = new Controller($Request, $Response);
-        $Controller->name = 'Posts';
-        $Controller->viewPath = 'Posts';
+        $Controller->setName('Posts');
 
         $data = [
             'User' => [
@@ -306,12 +330,13 @@ class JsonViewTest extends TestCase
             ]
         ];
         $Controller->set('user', $data);
-        $Controller->viewClass = 'Json';
+        $Controller->viewBuilder()->setClassName('Json');
         $View = $Controller->createView();
+        $View->setTemplatePath($Controller->getName());
         $output = $View->render('index');
 
         $expected = json_encode(['user' => 'fake', 'list' => ['item1', 'item2'], 'paging' => null]);
         $this->assertSame($expected, $output);
-        $this->assertSame('application/json', $Response->type());
+        $this->assertSame('application/json', $View->response->getType());
     }
 }

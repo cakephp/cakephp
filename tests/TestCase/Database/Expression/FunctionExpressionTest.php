@@ -1,25 +1,25 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The Open Group Test Suite License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Database\Expression;
 
 use Cake\Database\Expression\FunctionExpression;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
 
 /**
  * Tests FunctionExpression class
- *
  */
 class FunctionExpressionTest extends TestCase
 {
@@ -45,15 +45,15 @@ class FunctionExpressionTest extends TestCase
     {
         $f = new FunctionExpression('MyFunction', ['foo', 'bar']);
         $binder = new ValueBinder;
-        $this->assertEquals("MyFunction(:c0, :c1)", $f->sql($binder));
+        $this->assertEquals('MyFunction(:param0, :param1)', $f->sql($binder));
 
-        $this->assertEquals('foo', $binder->bindings()[':c0']['value']);
-        $this->assertEquals('bar', $binder->bindings()[':c1']['value']);
+        $this->assertEquals('foo', $binder->bindings()[':param0']['value']);
+        $this->assertEquals('bar', $binder->bindings()[':param1']['value']);
 
         $binder = new ValueBinder;
         $f = new FunctionExpression('MyFunction', ['bar']);
-        $this->assertEquals("MyFunction(:c0)", $f->sql($binder));
-        $this->assertEquals('bar', $binder->bindings()[':c0']['value']);
+        $this->assertEquals('MyFunction(:param0)', $f->sql($binder));
+        $this->assertEquals('bar', $binder->bindings()[':param0']['value']);
     }
 
     /**
@@ -65,7 +65,7 @@ class FunctionExpressionTest extends TestCase
     {
         $binder = new ValueBinder;
         $f = new FunctionExpression('MyFunction', ['foo' => 'literal', 'bar']);
-        $this->assertEquals("MyFunction(foo, :c0)", $f->sql($binder));
+        $this->assertEquals('MyFunction(foo, :param0)', $f->sql($binder));
     }
 
     /**
@@ -79,7 +79,21 @@ class FunctionExpressionTest extends TestCase
         $binder = new ValueBinder;
         $f = new FunctionExpression('MyFunction', ['foo', 'bar']);
         $g = new FunctionExpression('Wrapper', ['bar' => 'literal', $f]);
-        $this->assertEquals("Wrapper(bar, (MyFunction(:c0, :c1)))", $g->sql($binder));
+        $this->assertEquals('Wrapper(bar, MyFunction(:param0, :param1))', $g->sql($binder));
+    }
+
+    /**
+     * Tests to avoid regression, prevents double parenthesis
+     * In particular nesting with QueryExpression
+     *
+     * @return void
+     */
+    public function testFunctionNestingQueryExpression()
+    {
+        $binder = new ValueBinder;
+        $q = new QueryExpression('a');
+        $f = new FunctionExpression('MyFunction', [$q]);
+        $this->assertEquals('MyFunction(a)', $f->sql($binder));
     }
 
     /**
@@ -95,5 +109,18 @@ class FunctionExpressionTest extends TestCase
 
         $f = new FunctionExpression('MyFunction', ['a_field' => 'literal', 32 => 'literal']);
         $this->assertEquals('MyFunction(a_field, 32)', $f->sql($binder));
+    }
+
+    /**
+     * Tests setReturnType() and getReturnType()
+     *
+     * @return void
+     */
+    public function testGetSetReturnType()
+    {
+        $f = new FunctionExpression('MyFunction');
+        $f = $f->setReturnType('foo');
+        $this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $f);
+        $this->assertSame('foo', $f->getReturnType());
     }
 }
