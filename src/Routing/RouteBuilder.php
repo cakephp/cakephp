@@ -753,21 +753,21 @@ class RouteBuilder
             switch (count($matches)) {
                 case 2:
                     return [
-                        'controller' => (isset($matches[3] ? $matches[3] : null),
-                        'action' => (isset($matches[4] ? $matches[4] : null)
+                        'controller' => (isset($matches[3]) ? $matches[3] : null),
+                        'action' => (isset($matches[4]) ? $matches[4] : null)
                     ];
                 case 3:
                     return [
                         'prefix' => (isset($matches[2]) ? strtolower($matches[2]) : null),
-                        'controller' => (isset($matches[3] ? $matches[3] : null),
-                        'action' => (isset($matches[4] ? $matches[4] : null)
+                        'controller' => (isset($matches[3]) ? $matches[3] : null),
+                        'action' => (isset($matches[4]) ? $matches[4] : null)
                     ];
                 case 4:
                     return [
-                        'plugin' => (isset($matches[1] ? $matches[1] : null),
+                        'plugin' => (isset($matches[1]) ? $matches[1] : null),
                         'prefix' => (isset($matches[2]) ? strtolower($matches[2]) : null),
-                        'controller' => (isset($matches[3] ? $matches[3] : null),
-                        'action' => (isset($matches[4] ? $matches[4] : null)
+                        'controller' => (isset($matches[3]) ? $matches[3] : null),
+                        'action' => (isset($matches[4]) ? $matches[4] : null)
                     ];
             }
         }
