@@ -35,6 +35,11 @@ use Cake\View\Helper\SecureFieldTokenTrait;
 use Exception;
 use LogicException;
 use PHPUnit\Exception as PhpunitException;
+use PHPUnit\Framework\Constraint\IsEmpty;
+use PHPUnit\Framework\Constraint\IsEqual;
+use PHPUnit\Framework\Constraint\LogicalNot;
+use PHPUnit\Framework\Constraint\RegularExpression;
+use PHPUnit\Framework\Constraint\StringContains;
 
 /**
  * A trait intended to make integration tests of your controllers easier.
@@ -681,6 +686,10 @@ trait IntegrationTestTrait
      */
     protected function _getBodyAsString()
     {
+        if (!$this->_response) {
+            $this->fail('No response set, cannot assert content.');
+        }
+
         return (string)$this->_response->getBody();
     }
 
@@ -873,10 +882,7 @@ trait IntegrationTestTrait
      */
     public function assertResponseEquals($content, $message = '')
     {
-        if (!$this->_response) {
-            $this->fail('No response set, cannot assert content. ' . $message);
-        }
-        $this->assertEquals($content, $this->_getBodyAsString(), $message);
+        $this->assertThat($this->_getBodyAsString(), new IsEqual($content), $message);
     }
 
     /**
@@ -884,15 +890,12 @@ trait IntegrationTestTrait
      *
      * @param string $content The content to check for.
      * @param string $message The failure message that will be appended to the generated message.
-     * @param bool   $ignoreCase A flag to check whether we should ignore case or not.
+     * @param bool $ignoreCase A flag to check whether we should ignore case or not.
      * @return void
      */
     public function assertResponseContains($content, $message = '', $ignoreCase = false)
     {
-        if (!$this->_response) {
-            $this->fail('No response set, cannot assert content. ' . $message);
-        }
-        $this->assertContains($content, $this->_getBodyAsString(), $message, $ignoreCase);
+        $this->assertThat($this->_getBodyAsString(), new StringContains($content, $ignoreCase), $message);
     }
 
     /**
@@ -900,14 +903,15 @@ trait IntegrationTestTrait
      *
      * @param string $content The content to check for.
      * @param string $message The failure message that will be appended to the generated message.
+     * @param bool $ignoreCase A flag to check whether we should ignore case or not.
      * @return void
      */
-    public function assertResponseNotContains($content, $message = '')
+    public function assertResponseNotContains($content, $message = '', $ignoreCase = false)
     {
-        if (!$this->_response) {
-            $this->fail('No response set, cannot assert content. ' . $message);
-        }
-        $this->assertNotContains($content, $this->_getBodyAsString(), $message);
+        $constraint = new LogicalNot(
+            new StringContains($content, $ignoreCase)
+        );
+        $this->assertThat($this->_getBodyAsString(), $constraint, $message);
     }
 
     /**
@@ -919,10 +923,8 @@ trait IntegrationTestTrait
      */
     public function assertResponseRegExp($pattern, $message = '')
     {
-        if (!$this->_response) {
-            $this->fail('No response set, cannot assert content. ' . $message);
-        }
-        $this->assertRegExp($pattern, $this->_getBodyAsString(), $message);
+        $constraint = new RegularExpression($pattern);
+        $this->assertThat($this->_getBodyAsString(), $constraint, $message);
     }
 
     /**
@@ -934,10 +936,10 @@ trait IntegrationTestTrait
      */
     public function assertResponseNotRegExp($pattern, $message = '')
     {
-        if (!$this->_response) {
-            $this->fail('No response set, cannot assert content. ' . $message);
-        }
-        $this->assertNotRegExp($pattern, $this->_getBodyAsString(), $message);
+        $constraint = new LogicalNot(
+            new RegularExpression($pattern)
+        );
+        $this->assertThat($this->_getBodyAsString(), $constraint, $message);
     }
 
     /**
@@ -948,10 +950,10 @@ trait IntegrationTestTrait
      */
     public function assertResponseNotEmpty($message = '')
     {
-        if (!$this->_response) {
-            $this->fail('No response set, cannot assert content. ' . $message);
-        }
-        $this->assertNotEmpty($this->_getBodyAsString(), $message);
+        $constraint = new LogicalNot(
+            new IsEmpty()
+        );
+        $this->assertThat($this->_getBodyAsString(), $constraint, $message);
     }
     /**
      * Assert response content is empty.
@@ -961,10 +963,7 @@ trait IntegrationTestTrait
      */
     public function assertResponseEmpty($message = '')
     {
-        if (!$this->_response) {
-            $this->fail('No response set, cannot assert content. ' . $message);
-        }
-        $this->assertEmpty($this->_getBodyAsString(), $message);
+        $this->assertThat($this->_getBodyAsString(), new IsEmpty(), $message);
     }
 
     /**
