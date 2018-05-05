@@ -1155,7 +1155,7 @@ class ControllerTest extends TestCase
         $this->assertSame($request, $controller->getRequest());
 
         $this->assertEquals('Posts', $controller->getRequest()->getParam('plugin'));
-        $this->assertEquals(['foo', 'bar'], $controller->passedArgs);
+        $this->assertEquals(['foo', 'bar'], $controller->getRequest()->getParam('pass'));
     }
 
     /**

@@ -197,14 +197,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     protected $plugin;
 
     /**
-     * Holds all passed params.
-     *
-     * @var array
-     * @deprecated 3.1.0 Use `$this->request->getParam('pass')` instead.
-     */
-    public $passedArgs = [];
-
-    /**
      * Constructor.
      *
      * Sets a number of properties based on conventions if they are empty. To override the
@@ -506,7 +498,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * which must also be updated here. The properties that get set are:
      *
      * - $this->request - To the $request parameter
-     * - $this->passedArgs - Same as $request->params['pass]
      *
      * @param \Cake\Http\ServerRequest $request Request instance.
      * @return $this
@@ -515,10 +506,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     {
         $this->request = $request;
         $this->plugin = $request->getParam('plugin') ?: null;
-
-        if ($request->getParam('pass')) {
-            $this->passedArgs = $request->getParam('pass');
-        }
 
         return $this;
     }
