@@ -438,7 +438,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * which must also be updated here. The properties that get set are:
      *
      * - $this->request - To the $request parameter
-     * - $this->passedArgs - Same as $request->params['pass]
      *
      * @param \Cake\Http\ServerRequest $request Request instance.
      * @return $this
