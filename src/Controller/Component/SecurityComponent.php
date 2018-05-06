@@ -51,7 +51,6 @@ class SecurityComponent extends Component
      * - `blackHoleCallback` - The controller method that will be called if this
      *   request is black-hole'd.
      * - `requireSecure` - List of actions that require an SSL-secured connection.
-     * - `requireAuth` - List of actions that require a valid authentication key. Deprecated as of 3.2.2
      * - `allowedControllers` - Controllers from which actions of the current
      *   controller are allowed to receive requests.
      * - `allowedActions` - Actions from which actions of the current controller
@@ -100,7 +99,6 @@ class SecurityComponent extends Component
         $hasData = ($request->getData() || $request->is(['put', 'post', 'delete', 'patch']));
         try {
             $this->_secureRequired($controller);
-            $this->_authRequired($controller);
 
             $isNotRequestAction = !$request->getParam('requested');
 
@@ -147,23 +145,6 @@ class SecurityComponent extends Component
     public function requireSecure($actions = null)
     {
         $this->_requireMethod('Secure', (array)$actions);
-    }
-
-    /**
-     * Sets the actions that require whitelisted form submissions.
-     *
-     * Adding actions with this method will enforce the restrictions
-     * set in SecurityComponent::$allowedControllers and
-     * SecurityComponent::$allowedActions.
-     *
-     * @param string|array $actions Actions list
-     * @return void
-     * @deprecated 3.2.2 This feature is confusing and not useful.
-     */
-    public function requireAuth($actions)
-    {
-        deprecationWarning('SecurityComponent::requireAuth() will be removed in 4.0.0.');
-        $this->_requireMethod('Auth', (array)$actions);
     }
 
     /**
@@ -239,62 +220,6 @@ class SecurityComponent extends Component
                     throw new SecurityException(
                         'Request is not SSL and the action is required to be secure'
                     );
-                }
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Check if authentication is required
-     *
-     * @param \Cake\Controller\Controller $controller Instantiating controller
-     * @return bool true if authentication required
-     * @deprecated 3.2.2 This feature is confusing and not useful.
-     */
-    protected function _authRequired(Controller $controller)
-    {
-        $request = $controller->getRequest();
-        if (is_array($this->_config['requireAuth']) &&
-            !empty($this->_config['requireAuth']) &&
-            $request->getData()
-        ) {
-            deprecationWarning('SecurityComponent::requireAuth() will be removed in 4.0.0.');
-            $requireAuth = $this->_config['requireAuth'];
-
-            if (in_array($request->getParam('action'), $requireAuth) || $requireAuth == ['*']) {
-                if ($request->getData('_Token') === null) {
-                    throw new AuthSecurityException('\'_Token\' was not found in request data.');
-                }
-
-                if ($request->getSession()->check('_Token')) {
-                    $tData = $request->getSession()->read('_Token');
-
-                    if (!empty($tData['allowedControllers']) &&
-                        !in_array($request->getParam('controller'), $tData['allowedControllers'])) {
-                        throw new AuthSecurityException(
-                            sprintf(
-                                'Controller \'%s\' was not found in allowed controllers: \'%s\'.',
-                                $request->getParam('controller'),
-                                implode(', ', (array)$tData['allowedControllers'])
-                            )
-                        );
-                    }
-                    if (!empty($tData['allowedActions']) &&
-                        !in_array($request->getParam('action'), $tData['allowedActions'])
-                    ) {
-                        throw new AuthSecurityException(
-                            sprintf(
-                                'Action \'%s::%s\' was not found in allowed actions: \'%s\'.',
-                                $request->getParam('controller'),
-                                $request->getParam('action'),
-                                implode(', ', (array)$tData['allowedActions'])
-                            )
-                        );
-                    }
-                } else {
-                    throw new AuthSecurityException('\'_Token\' was not found in session.');
                 }
             }
         }

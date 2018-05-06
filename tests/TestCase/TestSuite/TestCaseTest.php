@@ -207,45 +207,6 @@ class TestCaseTest extends TestCase
     }
 
     /**
-     * testDeprecated
-     *
-     * @return void
-     */
-    public function testDeprecated()
-    {
-        $value = 'custom';
-        $setter = 'setLayout';
-        $getter = 'getLayout';
-        $property = 'layout';
-        $controller = new \Cake\Controller\Controller();
-        $controller->viewBuilder()->{$setter}($value);
-        $this->deprecated(function () use ($value, $getter, $controller, $property) {
-              $this->assertSame($value, $controller->$property);
-              $this->assertSame($value, $controller->viewBuilder()->{$getter}());
-        });
-    }
-
-    /**
-     * testDeprecated
-     *
-     * @expectedException \PHPUnit\Framework\AssertionFailedError
-     * @return void
-     */
-    public function testDeprecatedWithException()
-    {
-        $value = 'custom';
-        $setter = 'setLayout';
-        $getter = 'getLayout';
-        $property = 'layout';
-        $controller = new \Cake\Controller\Controller();
-        $controller->viewBuilder()->{$setter}($value);
-        $this->deprecated(function () use ($value, $getter, $controller, $property) {
-              $this->assertSame($value, $controller->$property);
-              $this->assertSame('Derp', $controller->viewBuilder()->{$getter}());
-        });
-    }
-
-    /**
      * Test that TestCase::setUp() backs up values.
      *
      * @return void

@@ -59,16 +59,6 @@ class TestSecurityComponent extends SecurityComponent
  */
 class SecurityTestController extends Controller
 {
-
-    /**
-     * components property
-     *
-     * @var array
-     */
-    public $components = [
-        'TestSecurity' => ['className' => 'Cake\Test\TestCase\Controller\Component\TestSecurityComponent']
-    ];
-
     /**
      * failed property
      *
@@ -82,6 +72,11 @@ class SecurityTestController extends Controller
      * @var array
      */
     public $testHeaders = [];
+
+    public function initialize()
+    {
+        $this->loadComponent('TestSecurity', ['className' => 'Cake\Test\TestCase\Controller\Component\TestSecurityComponent']);
+    }
 
     /**
      * fail method
@@ -353,83 +348,6 @@ class SecurityComponentTest extends TestCase
     }
 
     /**
-     * testRequireAuthFail method
-     *
-     * @group deprecated
-     * @return void
-     * @triggers Controller.startup $this->Controller
-     */
-    public function testRequireAuthFail()
-    {
-        $this->deprecated(function () {
-            $event = new Event('Controller.startup', $this->Controller);
-            $this->Controller->setRequest($this->Controller->getRequest()
-                ->withParam('action', 'posted')
-                ->withData('username', 'willy')
-                ->withData('password', 'somePass')
-                ->withEnv('REQUEST_METHOD', 'AUTH'));
-            $this->Security->requireAuth(['posted']);
-            $this->Security->startup($event);
-            $this->assertTrue($this->Controller->failed);
-
-            $this->Controller->getRequest()->getSession()->write('_Token', ['allowedControllers' => []]);
-            $this->Security->requireAuth('posted');
-            $this->Security->startup($event);
-            $this->assertTrue($this->Controller->failed);
-
-            $this->Controller->getRequest()->getSession()->write('_Token', [
-                'allowedControllers' => ['SecurityTest'], 'allowedActions' => ['posted2']
-            ]);
-            $this->Security->requireAuth('posted');
-            $this->Security->startup($event);
-            $this->assertTrue($this->Controller->failed);
-        });
-    }
-
-    /**
-     * testRequireAuthSucceed method
-     *
-     * @group deprecated
-     * @return void
-     * @triggers Controller.startup $this->Controller
-     */
-    public function testRequireAuthSucceed()
-    {
-        $this->deprecated(function () {
-            $_SERVER['REQUEST_METHOD'] = 'AUTH';
-            $this->Controller->Security->setConfig('validatePost', false);
-
-            $event = new Event('Controller.startup', $this->Controller);
-            $this->Controller->getRequest()->addParams([
-                'action' => 'posted'
-            ]);
-            $this->Security->requireAuth('posted');
-            $this->Security->startup($event);
-            $this->assertFalse($this->Controller->failed);
-
-            $this->Controller->getRequest()->getSession()->write('_Token', [
-                'allowedControllers' => ['SecurityTest'],
-                'allowedActions' => ['posted'],
-            ]);
-            $this->Controller->getRequest()->addParams([
-                'controller' => 'SecurityTest',
-                'action' => 'posted'
-            ]);
-
-            $request = $this->Controller->getRequest()
-                ->withData('username', 'willy')
-                ->withData('password', 'somePass')
-                ->withData('_Token', '');
-            $this->Controller->setRequest($request);
-
-            $this->Controller->action = 'posted';
-            $this->Controller->Security->requireAuth('posted');
-            $this->Controller->Security->startup($event);
-            $this->assertFalse($this->Controller->failed);
-        });
-    }
-
-    /**
      * testValidatePost method
      *
      * Simple hash validation test
@@ -550,10 +468,10 @@ class SecurityComponentTest extends TestCase
         $this->Security->startup($event);
         $unlocked = '';
 
-        $this->Controller->request = $this->Controller->getRequest()->withParsedBody([
+        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             'Model' => ['username' => 'nate', 'password' => 'foo', 'valid' => '0'],
             '_Token' => compact('unlocked')
-        ]);
+        ]));
         $result = $this->validatePost('AuthSecurityException', '\'_Token.fields\' was not found in request data.');
         $this->assertFalse($result, 'validatePost passed when fields were missing. %s');
     }
@@ -602,10 +520,10 @@ class SecurityComponentTest extends TestCase
         $attack = 'O:3:"App":1:{s:5:"__map";a:1:{s:3:"foo";s:7:"Hacked!";s:1:"fail"}}';
         $fields .= urlencode(':' . str_rot13($attack));
 
-        $this->Controller->request = $this->Controller->getRequest()->withParsedBody([
+        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             'Model' => ['username' => 'mark', 'password' => 'foo', 'valid' => '0'],
             '_Token' => compact('fields', 'unlocked', 'debug')
-        ]);
+        ]));
         $result = $this->validatePost('SecurityException', 'Bad Request');
         $this->assertFalse($result, 'validatePost passed when key was missing. %s');
     }
@@ -627,11 +545,11 @@ class SecurityComponentTest extends TestCase
         $unlocked = '';
         $debug = 'not used';
 
-        $this->Controller->request = $this->Controller->getRequest()->withParsedBody([
+        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             '_csrfToken' => 'abc123',
             'Model' => ['multi_field' => ['1', '3']],
             '_Token' => compact('fields', 'unlocked', 'debug')
-        ]);
+        ]));
         $this->assertTrue($this->validatePost());
     }
 
@@ -656,16 +574,16 @@ class SecurityComponentTest extends TestCase
             []
         ]));
 
-        $this->Controller->request = $this->Controller->getRequest()->withParsedBody([
+        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             'Model' => ['multi_field' => ['1', '3']],
             '_Token' => compact('fields', 'unlocked', 'debug')
-        ]);
+        ]));
         $this->assertTrue($this->validatePost());
 
-        $this->Controller->request = $this->Controller->getRequest()->withParsedBody([
+        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             'Model' => ['multi_field' => [12 => '1', 20 => '3']],
             '_Token' => compact('fields', 'unlocked', 'debug')
-        ]);
+        ]));
         $this->assertTrue($this->validatePost());
     }
 
@@ -689,10 +607,10 @@ class SecurityComponentTest extends TestCase
             []
         ]));
 
-        $this->Controller->request = $this->Controller->getRequest()->withParsedBody([
+        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             1 => 'value,',
             '_Token' => compact('fields', 'unlocked', 'debug')
-        ]);
+        ]));
         $this->assertTrue($this->validatePost());
     }
 
@@ -711,10 +629,10 @@ class SecurityComponentTest extends TestCase
         $unlocked = '';
         $debug = 'not used';
 
-        $this->Controller->request = $this->Controller->getRequest()->withParsedBody([
+        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             'anything' => 'some_data',
             '_Token' => compact('fields', 'unlocked', 'debug')
-        ]);
+        ]));
 
         $result = $this->validatePost();
         $this->assertTrue($result);
@@ -735,10 +653,10 @@ class SecurityComponentTest extends TestCase
         $unlocked = '';
         $debug = 'not used';
 
-        $this->Controller->request = $this->Controller->getRequest()->withParsedBody([
+        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             'Model' => ['username' => '', 'password' => ''],
             '_Token' => compact('fields', 'unlocked', 'debug')
-        ]);
+        ]));
 
         $result = $this->validatePost();
         $this->assertTrue($result);
@@ -766,10 +684,10 @@ class SecurityComponentTest extends TestCase
         $unlocked = '';
         $debug = '';
 
-        $this->Controller->request = $this->Controller->getRequest()->withParsedBody([
+        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             'Model' => ['username' => '', 'password' => ''],
             '_Token' => compact('fields', 'unlocked', 'debug')
-        ]);
+        ]));
 
         $result = $this->validatePost();
         $this->assertTrue($result);
@@ -792,7 +710,7 @@ class SecurityComponentTest extends TestCase
         $unlocked = '';
         $debug = 'not used';
 
-        $this->Controller->request = $this->Controller->getRequest()->withParsedBody([
+        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             'Addresses' => [
                 '0' => [
                     'id' => '123456', 'title' => '', 'first_name' => '', 'last_name' => '',
@@ -804,7 +722,7 @@ class SecurityComponentTest extends TestCase
                 ]
             ],
             '_Token' => compact('fields', 'unlocked', 'debug')
-        ]);
+        ]));
         $result = $this->validatePost();
         $this->assertTrue($result);
     }
@@ -826,33 +744,33 @@ class SecurityComponentTest extends TestCase
         $unlocked = '';
         $debug = 'not used';
 
-        $this->Controller->request = $this->Controller->getRequest()->withParsedBody([
+        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             'Tag' => ['Tag' => [1, 2]],
             '_Token' => compact('fields', 'unlocked', 'debug'),
-        ]);
+        ]));
         $result = $this->validatePost();
         $this->assertTrue($result);
 
-        $this->Controller->request = $this->Controller->getRequest()->withParsedBody([
+        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             'Tag' => ['Tag' => [1, 2, 3]],
             '_Token' => compact('fields', 'unlocked', 'debug'),
-        ]);
+        ]));
         $result = $this->validatePost();
         $this->assertTrue($result);
 
-        $this->Controller->request = $this->Controller->getRequest()->withParsedBody([
+        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             'Tag' => ['Tag' => [1, 2, 3, 4]],
             '_Token' => compact('fields', 'unlocked', 'debug'),
-        ]);
+        ]));
         $result = $this->validatePost();
         $this->assertTrue($result);
 
         $fields = '1e4c9269b64756e9b141d364497c5f037b428a37%3A';
-        $this->Controller->request = $this->Controller->getRequest()->withParsedBody([
+        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             'User.password' => 'bar', 'User.name' => 'foo', 'User.is_valid' => '1',
             'Tag' => ['Tag' => [1]],
             '_Token' => compact('fields', 'unlocked', 'debug'),
-        ]);
+        ]));
         $result = $this->validatePost();
         $this->assertTrue($result);
     }
@@ -874,31 +792,31 @@ class SecurityComponentTest extends TestCase
         $unlocked = '';
         $debug = 'not used';
 
-        $this->Controller->request = $this->Controller->getRequest()->withParsedBody([
+        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             'Model' => ['username' => '', 'password' => '', 'valid' => '0'],
             '_Token' => compact('fields', 'unlocked', 'debug'),
-        ]);
+        ]));
 
         $result = $this->validatePost();
         $this->assertTrue($result);
 
         $fields = '3f368401f9a8610bcace7746039651066cdcdc38%3A';
 
-        $this->Controller->request = $this->Controller->getRequest()->withParsedBody([
+        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             'Model' => ['username' => '', 'password' => '', 'valid' => '0'],
             '_Token' => compact('fields', 'unlocked', 'debug'),
-        ]);
+        ]));
 
         $result = $this->validatePost();
         $this->assertTrue($result);
 
-        $this->Controller->request = $this->Controller->getRequest()->withParsedBody([]);
+        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([]));
         $this->Security->startup($event);
 
-        $this->Controller->request = $this->Controller->getRequest()->withParsedBody([
+        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             'Model' => ['username' => '', 'password' => '', 'valid' => '0'],
             '_Token' => compact('fields', 'unlocked', 'debug'),
-        ]);
+        ]));
 
         $result = $this->validatePost();
         $this->assertTrue($result);
@@ -918,13 +836,13 @@ class SecurityComponentTest extends TestCase
         $unlocked = '';
         $debug = 'not used';
 
-        $this->Controller->request = $this->Controller->getRequest()->withParsedBody([
+        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             'Model' => [
                 'username' => '', 'password' => '', 'hidden' => '0',
                 'other_hidden' => 'some hidden value'
             ],
             '_Token' => compact('fields', 'unlocked', 'debug'),
-        ]);
+        ]));
         $result = $this->validatePost();
         $this->assertTrue($result);
     }
@@ -944,12 +862,12 @@ class SecurityComponentTest extends TestCase
         $unlocked = '';
         $debug = 'not used';
 
-        $this->Controller->request = $this->Controller->getRequest()->withParsedBody([
+        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             'Model' => [
                 'username' => '', 'password' => '', 'hidden' => '0'
             ],
             '_Token' => compact('fields', 'unlocked', 'debug'),
-        ]);
+        ]));
 
         $result = $this->validatePost();
         $this->assertTrue($result);
@@ -974,14 +892,14 @@ class SecurityComponentTest extends TestCase
         );
         $debug = 'not used';
 
-        $this->Controller->request = $this->Controller->getRequest()->withParsedBody([
+        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             'Model' => [
                 'username' => 'mark',
                 'password' => 'sekret',
                 'hidden' => '0'
             ],
             '_Token' => compact('fields', 'unlocked', 'debug'),
-        ]);
+        ]));
 
         $result = $this->validatePost();
         $this->assertTrue($result);
@@ -1002,14 +920,14 @@ class SecurityComponentTest extends TestCase
         $fields = ['Model.hidden', 'Model.password', 'Model.username'];
         $fields = urlencode(Security::hash(serialize($fields) . Security::getSalt()));
 
-        $this->Controller->request = $this->Controller->getRequest()->withParsedBody([
+        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             'Model' => [
                 'username' => 'mark',
                 'password' => 'sekret',
                 'hidden' => '0'
             ],
             '_Token' => compact('fields')
-        ]);
+        ]));
 
         $result = $this->validatePost('SecurityException', '\'_Token.unlocked\' was not found in request data.');
         $this->assertFalse($result);
@@ -1031,14 +949,14 @@ class SecurityComponentTest extends TestCase
         $fields = urlencode(Security::hash(serialize($fields) . Security::getSalt()));
         $unlocked = '';
 
-        $this->Controller->request = $this->Controller->getRequest()->withParsedBody([
+        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             'Model' => [
                 'username' => 'mark',
                 'password' => 'sekret',
                 'hidden' => '0'
             ],
             '_Token' => compact('fields', 'unlocked')
-        ]);
+        ]));
 
         $result = $this->validatePost('SecurityException', '\'_Token.debug\' was not found in request data.');
         $this->assertFalse($result);
@@ -1060,14 +978,14 @@ class SecurityComponentTest extends TestCase
         $fields = urlencode(Security::hash(serialize($fields) . Security::getSalt()));
         $unlocked = '';
 
-        $this->Controller->request = $this->Controller->getRequest()->withParsedBody([
+        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             'Model' => [
                 'username' => 'mark',
                 'password' => 'sekret',
                 'hidden' => '0'
             ],
             '_Token' => compact('fields', 'unlocked')
-        ]);
+        ]));
         Configure::write('debug', false);
         $result = $this->validatePost('SecurityException', 'The request has been black-holed');
     }
@@ -1096,14 +1014,14 @@ class SecurityComponentTest extends TestCase
         // Tamper the values.
         $unlocked = 'Model.username|Model.password';
 
-        $this->Controller->request = $this->Controller->getRequest()->withParsedBody([
+        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             'Model' => [
                 'username' => 'mark',
                 'password' => 'sekret',
                 'hidden' => '0'
             ],
             '_Token' => compact('fields', 'unlocked', 'debug')
-        ]);
+        ]));
 
         $result = $this->validatePost('SecurityException', 'Missing field \'Model.password\' in POST data, Unexpected unlocked field \'Model.password\' in POST data');
         $this->assertFalse($result);
@@ -1123,12 +1041,12 @@ class SecurityComponentTest extends TestCase
         $unlocked = '';
         $debug = 'not used';
 
-        $this->Controller->request = $this->Controller->getRequest()->withParsedBody([
+        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             'Model' => ['username' => '', 'password' => '', 'valid' => '0'],
             'Model2' => ['valid' => '0'],
             'Model3' => ['valid' => '0'],
             '_Token' => compact('fields', 'unlocked', 'debug'),
-        ]);
+        ]));
         $result = $this->validatePost();
         $this->assertTrue($result);
     }
@@ -1148,7 +1066,7 @@ class SecurityComponentTest extends TestCase
         $unlocked = '';
         $debug = 'not used';
 
-        $this->Controller->request = $this->Controller->getRequest()->withParsedBody([
+        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             'Model' => [
                 [
                     'username' => 'username', 'password' => 'password',
@@ -1160,7 +1078,7 @@ class SecurityComponentTest extends TestCase
                 ]
             ],
             '_Token' => compact('fields', 'unlocked', 'debug'),
-        ]);
+        ]));
 
         $result = $this->validatePost();
         $this->assertTrue($result);
@@ -1181,7 +1099,7 @@ class SecurityComponentTest extends TestCase
         $unlocked = '';
         $debug = 'not used';
 
-        $this->Controller->request = $this->Controller->getRequest()->withParsedBody([
+        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             'Address' => [
                 0 => [
                     'id' => '123',
@@ -1205,7 +1123,7 @@ class SecurityComponentTest extends TestCase
                 ]
             ],
             '_Token' => compact('fields', 'unlocked', 'debug'),
-        ]);
+        ]));
 
         $result = $this->validatePost();
         $this->assertTrue($result);
@@ -1230,13 +1148,13 @@ class SecurityComponentTest extends TestCase
         );
         $debug = 'not used';
 
-        $this->Controller->request = $this->Controller->getRequest()->withParsedBody([
+        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             'TaxonomyData' => [
                 1 => [[2]],
                 2 => [[3]]
             ],
             '_Token' => compact('fields', 'unlocked', 'debug'),
-        ]);
+        ]));
         $result = $this->validatePost();
         $this->assertTrue($result);
     }
@@ -1279,7 +1197,7 @@ class SecurityComponentTest extends TestCase
             []
         ]));
 
-        $this->Controller->request = $this->Controller->getRequest()->withParsedBody([
+        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             'Address' => [
                 0 => [
                     'id' => '123',
@@ -1303,7 +1221,7 @@ class SecurityComponentTest extends TestCase
                 ]
             ],
             '_Token' => compact('fields', 'unlocked', 'debug'),
-        ]);
+        ]));
         $result = $this->validatePost('SecurityException', 'Bad Request');
         $this->assertFalse($result);
     }
@@ -1327,20 +1245,20 @@ class SecurityComponentTest extends TestCase
             []
         ]));
 
-        $this->Controller->request = $this->Controller->getRequest()->withParsedBody([
+        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             'MyModel' => ['name' => 'some data'],
             '_Token' => compact('fields', 'unlocked', 'debug'),
-        ]);
+        ]));
         $result = $this->validatePost('SecurityException', 'Unexpected field \'MyModel.name\' in POST data');
         $this->assertFalse($result);
 
         $this->Security->startup($event);
         $this->Security->setConfig('disabledFields', ['MyModel.name']);
 
-        $this->Controller->request = $this->Controller->getRequest()->withParsedBody([
+        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             'MyModel' => ['name' => 'some data'],
             '_Token' => compact('fields', 'unlocked', 'debug'),
-        ]);
+        ]));
 
         $result = $this->validatePost();
         $this->assertTrue($result);
@@ -1366,30 +1284,30 @@ class SecurityComponentTest extends TestCase
             []
         ]));
 
-        $this->Controller->request = $this->Controller->getRequest()->withParsedBody([
+        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             '_Token' => compact('fields', 'unlocked', 'debug'),
-        ]);
+        ]));
         $result = $this->validatePost('SecurityException', 'Bad Request');
         $this->assertFalse($result);
 
-        $this->Controller->request = $this->Controller->getRequest()->withParsedBody([
+        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             '_Token' => compact('fields', 'unlocked', 'debug'),
             'Test' => ['test' => '']
-        ]);
+        ]));
         $result = $this->validatePost();
         $this->assertTrue($result);
 
-        $this->Controller->request = $this->Controller->getRequest()->withParsedBody([
+        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             '_Token' => compact('fields', 'unlocked', 'debug'),
             'Test' => ['test' => '1']
-        ]);
+        ]));
         $result = $this->validatePost();
         $this->assertTrue($result);
 
-        $this->Controller->request = $this->Controller->getRequest()->withParsedBody([
+        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             '_Token' => compact('fields', 'unlocked', 'debug'),
             'Test' => ['test' => '2']
-        ]);
+        ]));
         $result = $this->validatePost();
         $this->assertTrue($result);
     }
@@ -1484,7 +1402,7 @@ class SecurityComponentTest extends TestCase
     {
         $_SERVER['REQUEST_METHOD'] = 'POST';
         $event = new Event('Controller.startup', $this->Controller);
-        $this->Controller->request = $this->Controller->getRequest()->withParsedBody(['data']);
+        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody(['data']));
         $this->Security->unlockedActions = 'index';
         $this->Security->blackHoleCallback = null;
         $result = $this->Controller->Security->startup($event);
@@ -1513,14 +1431,14 @@ class SecurityComponentTest extends TestCase
             ['not expected']
         ]));
 
-        $this->Controller->request = $this->Controller->getRequest()->withParsedBody([
+        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             'Model' => [
                 'username' => 'mark',
                 'password' => 'sekret',
                 'hidden' => '0'
             ],
             '_Token' => compact('fields', 'unlocked', 'debug')
-        ]);
+        ]));
 
         $result = $this->validatePost('SecurityException', 'Invalid security debug token.');
         $this->assertFalse($result);
@@ -1589,13 +1507,13 @@ class SecurityComponentTest extends TestCase
         ]));
         $fields = urlencode(Security::hash(serialize($fields) . $unlocked . Security::getSalt()));
         $fields .= urlencode(':Model.hidden|Model.id');
-        $this->Controller->request = $this->Controller->getRequest()->withParsedBody([
+        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             'Model' => [
                 'hidden' => 'tampered',
                 'id' => '1',
             ],
             '_Token' => compact('fields', 'unlocked', 'debug')
-        ]);
+        ]));
 
         $result = $this->validatePost('SecurityException', 'Tampered field \'Model.hidden\' in POST data (expected value \'value\' but found \'tampered\')');
         $this->assertFalse($result);
@@ -1622,10 +1540,10 @@ class SecurityComponentTest extends TestCase
         ]));
         $fields = urlencode(Security::hash(serialize($fields) . $unlocked . Security::getSalt()));
         $fields .= urlencode(':Model.hidden|Model.id');
-        $this->Controller->request = $this->Controller->getRequest()->withData('Model', [
+        $this->Controller->setRequest($this->Controller->getRequest()->withData('Model', [
             'hidden' => ['some-key' => 'some-value'],
             'id' => '1',
-        ])->withData('_Token', compact('fields', 'unlocked', 'debug'));
+        ])->withData('_Token', compact('fields', 'unlocked', 'debug')));
 
         $result = $this->validatePost(
             'SecurityException',

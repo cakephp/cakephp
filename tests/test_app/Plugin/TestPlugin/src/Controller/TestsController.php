@@ -20,11 +20,6 @@ namespace TestPlugin\Controller;
 
 class TestsController extends TestPluginAppController
 {
-
-    public $helpers = ['TestPlugin.OtherHelper', 'Html'];
-
-    public $components = ['TestPlugin.Plugins'];
-
     public function index()
     {
         $this->set('test_value', 'It is a variable');

@@ -39,13 +39,6 @@ use RuntimeException;
  */
 class RequestHandlerComponent extends Component
 {
-
-    /**
-     * @var bool
-     * @deprecated 3.4.0 Unused. Will be removed in 4.0.0
-     */
-    public $enabled = true;
-
     /**
      * Contains the file extension parsed out by the Router
      *
@@ -81,15 +74,6 @@ class RequestHandlerComponent extends Component
     ];
 
     /**
-     * Set the layout to be used when rendering the AuthComponent's ajaxLogin element.
-     *
-     * @var string
-     * @deprecated 3.3.11 This feature property is not supported and will
-     *   be removed in 4.0.0
-     */
-    public $ajaxLayout;
-
-    /**
      * Constructor. Parses the accepted content types accepted by the client using HTTP_ACCEPT
      *
      * @param \Cake\Controller\ComponentRegistry $registry ComponentRegistry object.
@@ -122,15 +106,6 @@ class RequestHandlerComponent extends Component
             'Controller.startup' => 'startup',
             'Controller.beforeRender' => 'beforeRender',
         ];
-    }
-
-    /**
-     * @param array $config The config data.
-     * @return void
-     * @deprecated 3.4.0 Unused. To be removed in 4.0.0
-     */
-    public function initialize(array $config)
-    {
     }
 
     /**
@@ -655,53 +630,5 @@ class RequestHandlerComponent extends Component
         }
 
         return null;
-    }
-
-    /**
-     * Add a new mapped input type. Mapped input types are automatically
-     * converted by RequestHandlerComponent during the startup() callback.
-     *
-     * @param string $type The type alias being converted, ie. json
-     * @param array $handler The handler array for the type. The first index should
-     *    be the handling callback, all other arguments should be additional parameters
-     *    for the handler.
-     * @return void
-     * @throws \Cake\Core\Exception\Exception
-     * @deprecated 3.1.0 Use setConfig('addInputType', ...) instead.
-     */
-    public function addInputType($type, $handler)
-    {
-        deprecationWarning(
-            'RequestHandlerComponent::addInputType() is deprecated. Use setConfig("inputTypeMap", ...) instead.'
-        );
-        if (!is_array($handler) || !isset($handler[0]) || !is_callable($handler[0])) {
-            throw new Exception('You must give a handler callback.');
-        }
-        $this->setConfig('inputTypeMap.' . $type, $handler);
-    }
-
-    /**
-     * Getter/setter for viewClassMap
-     *
-     * @param array|string|null $type The type string or array with format `['type' => 'viewClass']` to map one or more
-     * @param array|null $viewClass The viewClass to be used for the type without `View` appended
-     * @return array|string Returns viewClass when only string $type is set, else array with viewClassMap
-     * @deprecated 3.1.0 Use setConfig('viewClassMap', ...) instead.
-     */
-    public function viewClassMap($type = null, $viewClass = null)
-    {
-        deprecationWarning(
-            'RequestHandlerComponent::viewClassMap() is deprecated. Use setConfig("viewClassMap", ...) instead.'
-        );
-        if (!$viewClass && is_string($type)) {
-            return $this->getConfig('viewClassMap.' . $type);
-        }
-        if (is_string($type)) {
-            $this->setConfig('viewClassMap.' . $type, $viewClass);
-        } elseif (is_array($type)) {
-            $this->setConfig('viewClassMap', $type, true);
-        }
-
-        return $this->getConfig('viewClassMap');
     }
 }

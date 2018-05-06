@@ -110,11 +110,6 @@ class AuthComponent extends Component
      *   ]);
      *   ```
      *
-     * - ~~`ajaxLogin`~~ - The name of an optional view element to render when an Ajax
-     *   request is made with an invalid or expired session.
-     *   **This option is deprecated since 3.3.6.** Your client side code should
-     *   instead check for 403 status code and show appropriate login form.
-     *
      * - `flash` - Settings to use when Auth needs to do a flash message with
      *   FlashComponent::set(). Available keys are:
      *
@@ -157,7 +152,6 @@ class AuthComponent extends Component
     protected $_defaultConfig = [
         'authenticate' => null,
         'authorize' => null,
-        'ajaxLogin' => null,
         'flash' => null,
         'loginAction' => null,
         'loginRedirect' => null,
@@ -231,14 +225,6 @@ class AuthComponent extends Component
     {
         $controller = $this->_registry->getController();
         $this->setEventManager($controller->getEventManager());
-
-        if ($this->getConfig('ajaxLogin')) {
-            deprecationWarning(
-                'The `ajaxLogin` option is deprecated. Your client-side ' .
-                'code should instead check for 403 status code and show ' .
-                'appropriate login form.'
-            );
-        }
     }
 
     /**
@@ -341,9 +327,7 @@ class AuthComponent extends Component
      * of the last authenticator in the chain will be called. The authenticator can
      * handle sending response or redirection as appropriate and return `true` to
      * indicate no further action is necessary. If authenticator returns null this
-     * method redirects user to login action. If it's an AJAX request and config
-     * `ajaxLogin` is specified that element is rendered else a 403 HTTP status code
-     * is returned.
+     * method redirects user to login action.
      *
      * @param \Cake\Controller\Controller $controller A reference to the controller object.
      * @return \Cake\Http\Response|null Null if current action is login action
@@ -369,14 +353,6 @@ class AuthComponent extends Component
             $this->flash($this->_config['authError']);
 
             return $controller->redirect($this->_loginActionRedirectUrl());
-        }
-
-        if (!empty($this->_config['ajaxLogin'])) {
-            $controller->viewBuilder()->setTemplatePath('Element');
-            $response = $controller->render(
-                $this->_config['ajaxLogin'],
-                $this->RequestHandler->ajaxLayout
-            );
         }
 
         return $response->withStatus(403);

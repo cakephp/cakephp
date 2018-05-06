@@ -31,27 +31,12 @@ use TestPlugin\Controller\TestPluginController;
  */
 class ControllerTestAppController extends Controller
 {
-
-    /**
-     * helpers property
-     *
-     * @var array
-     */
-    public $helpers = ['Html'];
-
     /**
      * modelClass property
      *
      * @var string
      */
     public $modelClass = 'Posts';
-
-    /**
-     * components property
-     *
-     * @var array
-     */
-    public $components = ['Flash'];
 }
 
 /**
@@ -66,20 +51,6 @@ class TestController extends ControllerTestAppController
      * @var string
      */
     public $theme = 'Foo';
-
-    /**
-     * helpers property
-     *
-     * @var array
-     */
-    public $helpers = ['Html'];
-
-    /**
-     * components property
-     *
-     * @var array
-     */
-    public $components = ['Security'];
 
     /**
      * modelClass property
@@ -518,7 +489,7 @@ class ControllerTest extends TestCase
 
         $Controller->getEventManager()->on('Controller.beforeRedirect', function (Event $event, $url, Response $response) {
             $controller = $event->getSubject();
-            $controller->response = $response->withLocation('https://book.cakephp.org');
+            $controller->setResponse($response->withLocation('https://book.cakephp.org'));
         });
 
         $response = $Controller->redirect('http://cakephp.org', 301);
@@ -538,7 +509,7 @@ class ControllerTest extends TestCase
 
         $Controller->getEventManager()->on('Controller.beforeRedirect', function (Event $event, $url, Response $response) {
             $controller = $event->getSubject();
-            $controller->response = $response->withStatus(302);
+            $controller->setResponse($response->withStatus(302));
         });
 
         $response = $Controller->redirect('http://cakephp.org', 301);
@@ -562,35 +533,6 @@ class ControllerTest extends TestCase
         $result = $Controller->redirect('http://cakephp.org');
         $this->assertSame($newResponse, $result);
         $this->assertSame($newResponse, $Controller->getResponse());
-    }
-
-    /**
-     * testMergeVars method
-     *
-     * @return void
-     */
-    public function testMergeVars()
-    {
-        $request = new ServerRequest();
-        $TestController = new TestController($request);
-
-        $expected = [
-            'Html' => null,
-        ];
-        $this->assertEquals($expected, $TestController->helpers);
-
-        $expected = [
-            'Security' => null,
-            'Flash' => null,
-        ];
-        $this->assertEquals($expected, $TestController->components);
-
-        $TestController = new AnotherTestController($request);
-        $this->assertEquals(
-            'Posts',
-            $TestController->modelClass,
-            'modelClass should not be overwritten when defined.'
-        );
     }
 
     /**
@@ -1099,9 +1041,10 @@ class ControllerTest extends TestCase
             $controller->set('testVariable', 'test');
         });
 
-        $controller->render('index');
+        $controller->dispatchEvent('Controller.beforeRender');
+        $view = $controller->createView();
 
-        $this->assertArrayHasKey('testVariable', $controller->View->viewVars);
+        $this->assertArrayHasKey('testVariable', $view->viewVars);
     }
 
     /**
@@ -1155,7 +1098,7 @@ class ControllerTest extends TestCase
         $this->assertSame($request, $controller->getRequest());
 
         $this->assertEquals('Posts', $controller->getRequest()->getParam('plugin'));
-        $this->assertEquals(['foo', 'bar'], $controller->passedArgs);
+        $this->assertEquals(['foo', 'bar'], $controller->getRequest()->getParam('pass'));
     }
 
     /**
@@ -1188,164 +1131,5 @@ class ControllerTest extends TestCase
 
         $this->assertSame($controller, $controller->enableAutoRender());
         $this->assertTrue($controller->isAutoRenderEnabled());
-    }
-
-    /**
-     * Tests deprecated controller properties work
-     *
-     * @group deprecated
-     * @param $property Deprecated property name
-     * @param $getter Getter name
-     * @param $setter Setter name
-     * @param mixed $value Value to be set
-     * @return void
-     * @dataProvider deprecatedControllerPropertyProvider
-     */
-    public function testDeprecatedControllerProperty($property, $getter, $setter, $value)
-    {
-        $controller = new AnotherTestController();
-        $this->deprecated(function () use ($controller, $property, $value) {
-            $controller->$property = $value;
-            $this->assertSame($value, $controller->$property);
-        });
-        $this->assertSame($value, $controller->{$getter}());
-    }
-
-    /**
-     * Tests deprecated controller properties message
-     *
-     * @group deprecated
-     * @param $property Deprecated property name
-     * @param $getter Getter name
-     * @param $setter Setter name
-     * @param mixed $value Value to be set
-     * @return void
-     * @expectedException PHPUnit\Framework\Error\Deprecated
-     * @expectedExceptionMessageRegExp /^Controller::\$\w+ is deprecated(.*)/
-     * @dataProvider deprecatedControllerPropertyProvider
-     */
-    public function testDeprecatedControllerPropertySetterMessage($property, $getter, $setter, $value)
-    {
-        $controller = new AnotherTestController();
-        $this->withErrorReporting(E_ALL, function () use ($controller, $property, $value) {
-            $controller->$property = $value;
-        });
-    }
-
-    /**
-     * Tests deprecated controller properties message
-     *
-     * @group deprecated
-     * @param $property Deprecated property name
-     * @param $getter Getter name
-     * @param $setter Setter name
-     * @param mixed $value Value to be set
-     * @return void
-     * @expectedException PHPUnit\Framework\Error\Deprecated
-     * @expectedExceptionMessageRegExp /^Controller::\$\w+ is deprecated(.*)/
-     * @dataProvider deprecatedControllerPropertyProvider
-     */
-    public function testDeprecatedControllerPropertyGetterMessage($property, $getter, $setter, $value)
-    {
-        $controller = new AnotherTestController();
-        $controller->{$setter}($value);
-        $this->withErrorReporting(E_ALL, function () use ($controller, $property) {
-            $controller->$property;
-        });
-    }
-
-    /**
-     * Data provider for testing deprecated view properties
-     *
-     * @return array
-     */
-    public function deprecatedControllerPropertyProvider()
-    {
-        return [
-            ['name', 'getName', 'setName', 'Foo'],
-            ['plugin', 'getPlugin', 'setPlugin', 'Foo'],
-            ['autoRender', 'isAutoRenderEnabled', 'disableAutoRender', false],
-        ];
-    }
-
-    /**
-     * Tests deprecated view properties work
-     *
-     * @group deprecated
-     * @param $property Deprecated property name
-     * @param $getter Getter name
-     * @param $setter Setter name
-     * @param mixed $value Value to be set
-     * @return void
-     * @dataProvider deprecatedViewPropertyProvider
-     */
-    public function testDeprecatedViewProperty($property, $getter, $setter, $value)
-    {
-        $controller = new AnotherTestController();
-        $this->deprecated(function () use ($controller, $property, $value) {
-            $controller->$property = $value;
-            $this->assertSame($value, $controller->$property);
-        });
-        $this->assertSame($value, $controller->viewBuilder()->{$getter}());
-    }
-
-    /**
-     * Tests deprecated view properties message
-     *
-     * @group deprecated
-     * @param $property Deprecated property name
-     * @param $getter Getter name
-     * @param $setter Setter name
-     * @param mixed $value Value to be set
-     * @return void
-     * @expectedException PHPUnit\Framework\Error\Deprecated
-     * @expectedExceptionMessageRegExp /^Controller::\$\w+ is deprecated(.*)/
-     * @dataProvider deprecatedViewPropertyProvider
-     */
-    public function testDeprecatedViewPropertySetterMessage($property, $getter, $setter, $value)
-    {
-        $controller = new AnotherTestController();
-        $this->withErrorReporting(E_ALL, function () use ($controller, $property, $value) {
-            $controller->$property = $value;
-        });
-    }
-
-    /**
-     * Tests deprecated view properties message
-     *
-     * @group deprecated
-     * @param $property Deprecated property name
-     * @param $getter Getter name
-     * @param $setter Setter name
-     * @param mixed $value Value to be set
-     * @return void
-     * @expectedException PHPUnit\Framework\Error\Deprecated
-     * @expectedExceptionMessageRegExp /^Controller::\$\w+ is deprecated(.*)/
-     * @dataProvider deprecatedViewPropertyProvider
-     */
-    public function testDeprecatedViewPropertyGetterMessage($property, $getter, $setter, $value)
-    {
-        $controller = new AnotherTestController();
-        $controller->viewBuilder()->{$setter}($value);
-        $this->withErrorReporting(E_ALL, function () use ($controller, $property) {
-            $result = $controller->$property;
-        });
-    }
-
-    /**
-     * Data provider for testing deprecated view properties
-     *
-     * @return array
-     */
-    public function deprecatedViewPropertyProvider()
-    {
-        return [
-            ['layout', 'getLayout', 'setLayout', 'custom'],
-            ['view', 'getTemplate', 'setTemplate', 'view'],
-            ['theme', 'getTheme', 'setTheme', 'Modern'],
-            ['autoLayout', 'isAutoLayoutEnabled', 'enableAutoLayout', false],
-            ['viewPath', 'getTemplatePath', 'setTemplatePath', 'Templates'],
-            ['layoutPath', 'getLayoutPath', 'setLayoutPath', 'Layouts'],
-        ];
     }
 }

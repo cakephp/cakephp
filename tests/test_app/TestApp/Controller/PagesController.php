@@ -32,14 +32,6 @@ use Cake\View\Exception\MissingTemplateException;
  */
 class PagesController extends AppController
 {
-
-    /**
-     * Default helper
-     *
-     * @var array
-     */
-    public $helpers = ['Html'];
-
     /**
      * Displays a view
      *

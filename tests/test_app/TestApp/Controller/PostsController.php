@@ -21,18 +21,12 @@ use Cake\Event\Event;
  */
 class PostsController extends AppController
 {
-    /**
-     * Components array
-     *
-     * @var array
-     */
-    public $components = [
-        'Flash',
-        'RequestHandler' => [
-            'enableBeforeRedirect' => false
-        ],
-        'Security',
-    ];
+    public function initialize()
+    {
+        $this->loadComponent('Flash');
+        $this->loadComponent('RequestHandler');
+        $this->loadComponent('Security');
+    }
 
     /**
      * beforeFilter

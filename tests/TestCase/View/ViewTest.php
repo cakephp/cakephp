@@ -993,7 +993,6 @@ class ViewTest extends TestCase
     public function testElementParamsDontOverwriteHelpers()
     {
         $Controller = new ViewPostsController();
-        $Controller->helpers = ['Form'];
 
         $View = $Controller->createView();
         $result = $View->element('type_check', ['form' => 'string'], ['callbacks' => true]);
@@ -1441,7 +1440,6 @@ class ViewTest extends TestCase
     public function testViewVarOverwritingLocalHelperVar()
     {
         $Controller = new ViewPostsController();
-        $Controller->helpers = ['Html'];
         $Controller->set('html', 'I am some test html');
         $View = $Controller->createView();
         $View->setTemplatePath($Controller->getName());

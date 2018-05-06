@@ -93,7 +93,6 @@ class XmlViewTest extends TestCase
         $Request = new ServerRequest();
         $Response = new Response();
         $Controller = new Controller($Request, $Response);
-        $Controller->helpers = ['Html'];
         $Controller->set([
             '_serialize' => 'tags',
             'tags' => ['cakephp', 'framework']
