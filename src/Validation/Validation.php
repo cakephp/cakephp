@@ -150,23 +150,6 @@ class Validation
     }
 
     /**
-     * Returns true if field is left blank -OR- only whitespace characters are present in its value
-     * Whitespace characters include Space, Tab, Carriage Return, Newline
-     *
-     * @param string $check Value to check
-     * @return bool Success
-     * @deprecated 3.0.2 Validation::blank() is deprecated.
-     */
-    public static function blank($check)
-    {
-        deprecationWarning(
-            'Validation::blank() is deprecated.'
-        );
-
-        return !static::_check($check, '/[^\\s]/');
-    }
-
-    /**
      * Validation of credit card numbers.
      * Returns true if $check is in the proper credit card format.
      *
@@ -989,26 +972,6 @@ class Validation
         }
 
         return in_array((string)$check, $list, true);
-    }
-
-    /**
-     * Runs an user-defined validation.
-     *
-     * @param string|array $check value that will be validated in user-defined methods.
-     * @param object $object class that holds validation method
-     * @param string $method class method name for validation to run
-     * @param array|null $args arguments to send to method
-     * @return mixed user-defined class class method returns
-     * @deprecated 3.0.2 You can just set a callable for `rule` key when adding validators.
-     */
-    public static function userDefined($check, $object, $method, $args = null)
-    {
-        deprecationWarning(
-            'Validation::userDefined() is deprecated. ' .
-            'You can just set a callable for `rule` key when adding validators.'
-        );
-
-        return $object->$method($check, $args);
     }
 
     /**

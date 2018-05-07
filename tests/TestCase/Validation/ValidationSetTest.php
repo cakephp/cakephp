@@ -229,42 +229,6 @@ class ValidationSetTest extends TestCase
     }
 
     /**
-     * Test isPresenceRequired deprecated setter
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testRequirePresenceDeprecated()
-    {
-        $this->deprecated(function () {
-            $set = new ValidationSet();
-
-            $this->assertFalse($set->isPresenceRequired());
-
-            $set->isPresenceRequired(true);
-            $this->assertTrue($set->isPresenceRequired());
-
-            $set->isPresenceRequired(false);
-            $this->assertFalse($set->isPresenceRequired());
-        });
-    }
-
-    /**
-     * Test isPresenceRequired method deprecation
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testIsPresenceRequiredDeprecation()
-    {
-        $this->expectException(Deprecated::class);
-        $this->expectExceptionMessage('ValidationSet::isPresenceRequired() is deprecated as a setter. Use ValidationSet::requirePresence() instead.');
-
-        $set = new ValidationSet();
-        $set->isPresenceRequired(true);
-    }
-
-    /**
      * Test allowEmpty and isEmptyAllowed methods
      *
      * @return void
@@ -280,41 +244,5 @@ class ValidationSetTest extends TestCase
 
         $set->allowEmpty(false);
         $this->assertFalse($set->isEmptyAllowed());
-    }
-
-    /**
-     * Test isEmptyAllowed deprecated setter
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testAllowEmptyDeprecated()
-    {
-        $this->deprecated(function () {
-            $set = new ValidationSet();
-
-            $this->assertFalse($set->isEmptyAllowed());
-
-            $set->isEmptyAllowed(true);
-            $this->assertTrue($set->isEmptyAllowed());
-
-            $set->isEmptyAllowed(false);
-            $this->assertFalse($set->isEmptyAllowed());
-        });
-    }
-
-    /**
-     * Test isEmptyAllowed method deprecation
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testIsEmptyAllowedDeprecation()
-    {
-        $this->expectException(Deprecated::class);
-        $this->expectExceptionMessage('ValidationSet::isEmptyAllowed() is deprecated as a setter. Use ValidationSet::allowEmpty() instead.');
-
-        $set = new ValidationSet();
-        $set->isEmptyAllowed(true);
     }
 }

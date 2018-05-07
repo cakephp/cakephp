@@ -48,26 +48,13 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
     protected $_allowEmpty = false;
 
     /**
-     * Sets whether a field is required to be present in data array.
+     * Returns whether or not a field can be left out.
      *
-     * If no argument is passed the currently set `validatePresent` value will be returned.
-     *
-     * @param bool|string|callable|null $validatePresent Deprecated since 3.6.0 ValidationSet::isPresenceRequired() is deprecated as a setter
-     * Use ValidationSet::requirePresence() instead.
      * @return bool|string|callable
      */
-    public function isPresenceRequired($validatePresent = null)
+    public function isPresenceRequired()
     {
-        if ($validatePresent === null) {
-            return $this->_validatePresent;
-        }
-
-        deprecationWarning(
-            'ValidationSet::isPresenceRequired() is deprecated as a setter. ' .
-            'Use ValidationSet::requirePresence() instead.'
-        );
-
-        return $this->requirePresence($validatePresent);
+        return $this->_validatePresent;
     }
 
     /**
@@ -84,26 +71,13 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
-     * Sets whether a field value is allowed to be empty.
+     * Returns whether or not a field can be left empty.
      *
-     * If no argument is passed the currently set `allowEmpty` value will be returned.
-     *
-     * @param bool|string|callable|null $allowEmpty Deprecated since 3.6.0 ValidationSet::isEmptyAllowed() is deprecated as a setter.
-     * Use ValidationSet::allowEmpty() instead.
      * @return bool|string|callable
      */
-    public function isEmptyAllowed($allowEmpty = null)
+    public function isEmptyAllowed()
     {
-        if ($allowEmpty === null) {
-            return $this->_allowEmpty;
-        }
-
-        deprecationWarning(
-            'ValidationSet::isEmptyAllowed() is deprecated as a setter. ' .
-            'Use ValidationSet::allowEmpty() instead.'
-        );
-
-        return $this->allowEmpty($allowEmpty);
+        return $this->_allowEmpty;
     }
 
     /**
