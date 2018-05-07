@@ -259,8 +259,6 @@ class Validation
             return false;
         }
 
-        $message = 'Operator `%s` is deprecated, use constant `Validation::%s` instead.';
-
         $operator = str_replace([' ', "\t", "\n", "\r", "\0", "\x0B"], '', strtolower($operator));
         switch ($operator) {
             case static::COMPARE_GREATER:
