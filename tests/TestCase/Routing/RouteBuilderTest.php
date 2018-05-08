@@ -225,6 +225,53 @@ class RouteBuilderTest extends TestCase
      *
      * @return void
      */
+    public function testConnectShortStringPrefix()
+    {
+        $routes = new RouteBuilder($this->collection, '/');
+        $routes->connect('/admin/bookmarks', 'Admin/Bookmarks::index');
+        $expected = [
+            'pass' => [],
+            'plugin' => null,
+            'prefix' => 'admin',
+            'controller' => 'Bookmarks',
+            'action' => 'index',
+            '_matchedRoute' => '/admin/bookmarks'
+        ];
+        $this->assertEquals($expected, $this->collection->parse('/admin/bookmarks'));
+
+        $url = $expected['_matchedRoute'];
+        unset($expected['_matchedRoute']);
+        $this->assertEquals($url, '/' . $this->collection->match($expected, []));
+    }
+
+    /**
+     * Test connect() with short string syntax
+     *
+     * @return void
+     */
+    public function testConnectShortStringPlugin()
+    {
+        $routes = new RouteBuilder($this->collection, '/');
+        $routes->connect('/blog/articles/view', 'Blog.Articles::view');
+        $expected = [
+            'pass' => [],
+            'plugin' => 'Blog',
+            'controller' => 'Articles',
+            'action' => 'view',
+            '_matchedRoute' => '/blog/articles/view'
+        ];
+        $this->assertEquals($expected, $this->collection->parse('/blog/articles/view'));
+
+        $url = $expected['_matchedRoute'];
+        unset($expected['_matchedRoute']);
+        $this->assertEquals($url, '/' . $this->collection->match($expected, []));
+    }
+
+    /**
+     * Test connect() with short string syntax
+     *
+     * @return void
+     */
     public function testConnectShortStringPluginPrefix()
     {
         $routes = new RouteBuilder($this->collection, '/');

@@ -743,33 +743,24 @@ class RouteBuilder
             return $defaults;
         }
 
-        $regex = '/(?:([a-zA-Z0-9\/]*)\.)?([a-zA-Z0-9\/]*?)(?:\/)?([a-zA-Z0-9]*):{2}([a-zA-Z0-9_]*)/i';
-        if (preg_match($regex, $defaults, $matches)) {
-            unset($matches[0]);
-            $matches = array_filter($matches, function ($value) {
-                return $value !== '' && $value !== '::';
-            });
+        $regex = '/(?:(?<plugin>[a-zA-Z0-9\/]*)\.)?(?<prefix>[a-zA-Z0-9\/]*?)' .
+            '(?:\/)?(?<controller>[a-zA-Z0-9]*):{2}(?<action>[a-zA-Z0-9_]*)/i';
 
-            // Intentionally incomplete switch
-            switch (count($matches)) {
-                case 2:
-                    return [
-                        'controller' => $matches[3],
-                        'action' => $matches[4]
-                    ];
-                case 3:
-                    return [
-                        'prefix' => strtolower($matches[2]),
-                        'controller' => $matches[3],
-                        'action' => $matches[4]
-                    ];
-                case 4:
-                    return [
-                        'plugin' => $matches[1],
-                        'prefix' => strtolower($matches[2]),
-                        'controller' => $matches[3],
-                        'action' => $matches[4]
-                    ];
+        if (preg_match($regex, $defaults, $matches)) {
+            foreach ($matches as $key => $value) {
+                // Remove numeric keys and empty values.
+                if (is_int($key) || $value === '' || $value === '::') {
+                    unset($matches[$key]);
+                }
+            }
+            $length = count($matches);
+
+            if (isset($matches['prefix'])) {
+                $matches['prefix'] = strtolower($matches['prefix']);
+            }
+
+            if ($length >= 2 || $length <= 4) {
+                return $matches;
             }
         }
         throw new RuntimeException("Could not parse `{$defaults}` route destination string.");
