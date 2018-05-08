@@ -363,6 +363,3 @@ class Oauth
         return str_replace(['%7E', '+'], ['~', ' '], rawurlencode($value));
     }
 }
-
-// @deprecated Add backwards compat alias.
-class_alias('Cake\Http\Client\Auth\Oauth', 'Cake\Network\Http\Auth\Oauth');

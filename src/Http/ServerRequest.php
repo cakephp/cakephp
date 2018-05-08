@@ -2444,6 +2444,3 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
         unset($this->params[$name]);
     }
 }
-
-// @deprecated Add backwards compat alias.
-class_alias('Cake\Http\ServerRequest', 'Cake\Network\Request');
