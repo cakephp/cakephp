@@ -116,6 +116,3 @@ class CookieCollection extends BaseCollection
         ];
     }
 }
-
-// @deprecated Add backwards compat alias.
-class_alias('Cake\Http\Client\CookieCollection', 'Cake\Network\Http\CookieCollection');

@@ -326,6 +326,3 @@ class Stream
         return array_merge($this->_contextOptions, $this->_sslContextOptions);
     }
 }
-
-// @deprecated Add backwards compat alias.
-class_alias('Cake\Http\Client\Adapter\Stream', 'Cake\Network\Http\Adapter\Stream');
