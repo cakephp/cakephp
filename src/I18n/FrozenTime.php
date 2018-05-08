@@ -243,50 +243,24 @@ class FrozenTime extends Chronos implements JsonSerializable
     /**
      * Returns true this instance will happen within the specified interval
      *
-     * This overridden method provides backwards compatible behavior for integers,
-     * or strings with trailing spaces. This behavior is *deprecated* and will be
-     * removed in future versions of CakePHP.
-     *
-     * @param string|int $timeInterval the numeric value with space then time type.
+     * @param string $timeInterval the numeric value with space then time type.
      *    Example of valid types: 6 hours, 2 days, 1 minute.
      * @return bool
      */
     public function wasWithinLast($timeInterval)
     {
-        $tmp = trim($timeInterval);
-        if (is_numeric($tmp)) {
-            deprecationWarning(
-                'Passing int/numeric string into FrozenTime::wasWithinLast() is deprecated. ' .
-                'Pass strings including interval eg. "6 days"'
-            );
-            $timeInterval = $tmp . ' days';
-        }
-
         return parent::wasWithinLast($timeInterval);
     }
 
     /**
      * Returns true this instance happened within the specified interval
      *
-     * This overridden method provides backwards compatible behavior for integers,
-     * or strings with trailing spaces. This behavior is *deprecated* and will be
-     * removed in future versions of CakePHP.
-     *
-     * @param string|int $timeInterval the numeric value with space then time type.
+     * @param string $timeInterval the numeric value with space then time type.
      *    Example of valid types: 6 hours, 2 days, 1 minute.
      * @return bool
      */
     public function isWithinNext($timeInterval)
     {
-        $tmp = trim($timeInterval);
-        if (is_numeric($tmp)) {
-            deprecationWarning(
-                'Passing int/numeric string into FrozenTime::isWithinNext() is deprecated. ' .
-                'Pass strings including interval eg. "6 days"'
-            );
-            $timeInterval = $tmp . ' days';
-        }
-
         return parent::isWithinNext($timeInterval);
     }
 }
