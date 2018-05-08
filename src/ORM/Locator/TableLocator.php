@@ -191,14 +191,13 @@ class TableLocator implements LocatorInterface
             $options += $this->_config[$alias];
         }
 
-        if (empty($options['className'])) {
-            $options['className'] = Inflector::camelize($alias);
-        }
-
         $className = $this->_getClassName($alias, $options);
         if ($className) {
             $options['className'] = $className;
         } else {
+            if (empty($options['className'])) {
+                $options['className'] = Inflector::camelize($alias);
+            }
             if (!isset($options['table']) && strpos($options['className'], '\\') === false) {
                 list(, $table) = pluginSplit($options['className']);
                 $options['table'] = Inflector::underscore($table);
