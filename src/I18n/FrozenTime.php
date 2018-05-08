@@ -239,28 +239,4 @@ class FrozenTime extends Chronos implements JsonSerializable
 
         return array_combine($identifiers, $identifiers);
     }
-
-    /**
-     * Returns true this instance will happen within the specified interval
-     *
-     * @param string $timeInterval the numeric value with space then time type.
-     *    Example of valid types: 6 hours, 2 days, 1 minute.
-     * @return bool
-     */
-    public function wasWithinLast($timeInterval)
-    {
-        return parent::wasWithinLast($timeInterval);
-    }
-
-    /**
-     * Returns true this instance happened within the specified interval
-     *
-     * @param string $timeInterval the numeric value with space then time type.
-     *    Example of valid types: 6 hours, 2 days, 1 minute.
-     * @return bool
-     */
-    public function isWithinNext($timeInterval)
-    {
-        return parent::isWithinNext($timeInterval);
-    }
 }
