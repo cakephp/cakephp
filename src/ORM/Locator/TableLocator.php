@@ -195,8 +195,8 @@ class TableLocator implements LocatorInterface
         if ($className) {
             $options['className'] = $className;
         } else {
-            if (empty($options['className'])) {	
-                $options['className'] = Inflector::camelize($alias);	
+            if (empty($options['className'])) {
+                $options['className'] = Inflector::camelize($alias);
             }
             if (!isset($options['table']) && strpos($options['className'], '\\') === false) {
                 list(, $table) = pluginSplit($options['className']);
