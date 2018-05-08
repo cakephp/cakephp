@@ -8532,7 +8532,7 @@ class FormHelperTest extends TestCase
 
         $this->Form->create($contact, ['context' => ['table' => 'Contacts']]);
         $this->Form->setTemplates([
-            'input' => '<input type="{{type}}" name="{{name}}"{{attrs}} data-message="{{requiredMessage}}" {{custom}}/>',
+            'input' => '<input type="{{type}}" name="{{name}}"{{attrs}} data-message="{{customValidityMessage}}" {{custom}}/>',
             'inputContainer' => '{{content}}'
         ]);
 

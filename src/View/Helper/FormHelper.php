@@ -1456,7 +1456,7 @@ class FormHelper extends Helper
             $message = addslashes(h($message));
 
             if ($options['required'] && $message) {
-                $options['templateVars']['requiredMessage'] = $message;
+                $options['templateVars']['customValidityMessage'] = $message;
 
                 if ($this->getConfig('autoSetCustomValidity')) {
                     $options['oninvalid'] = "this.setCustomValidity('$message')";
