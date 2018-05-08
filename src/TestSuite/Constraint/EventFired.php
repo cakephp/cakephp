@@ -6,6 +6,8 @@ use PHPUnit\Framework\Constraint\Constraint;
 
 /**
  * EventFired constraint
+ *
+ * @internal
  */
 class EventFired extends Constraint
 {

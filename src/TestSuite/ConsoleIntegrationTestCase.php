@@ -252,8 +252,10 @@ abstract class ConsoleIntegrationTestCase extends TestCase
     {
         if ($this->_useCommandRunner) {
             $applicationClassName = Configure::read('App.namespace') . '\Application';
+            /** @var \Cake\Http\BaseApplication $applicationClass */
+            $applicationClass = new $applicationClassName(CONFIG);
 
-            return new CommandRunner(new $applicationClassName([CONFIG]));
+            return new CommandRunner($applicationClass);
         }
 
         return new LegacyCommandRunner();

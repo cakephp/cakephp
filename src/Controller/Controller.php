@@ -196,7 +196,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         }
 
         $this->setRequest($request ?: new ServerRequest());
-        $this->setResponse($response ?: new Response());
+        $this->response = $response ?: new Response();
 
         if ($eventManager !== null) {
             $this->setEventManager($eventManager);
@@ -611,7 +611,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     public function setAction($action, ...$args)
     {
-        $this->setRequest($this->getRequest()->withParam('action', $action));
+        $this->setRequest($this->request->withParam('action', $action));
 
         return $this->$action(...$args);
     }
@@ -631,7 +631,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             $builder->setTemplatePath($this->_viewPath());
         }
 
-        if ($this->getRequest()->getParam('bare')) {
+        if ($this->request->getParam('bare')) {
             $builder->enableAutoLayout(false);
         }
         $this->autoRender = false;
@@ -641,18 +641,18 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             return $event->getResult();
         }
         if ($event->isStopped()) {
-            return $this->getResponse();
+            return $this->response;
         }
 
-        if ($builder->getTemplate() === null && $this->getRequest()->getParam('action')) {
-            $builder->setTemplate($this->getRequest()->getParam('action'));
+        if ($builder->getTemplate() === null && $this->request->getParam('action')) {
+            $builder->setTemplate($this->request->getParam('action'));
         }
 
         $view = $this->createView();
         $contents = $view->render($template, $layout);
         $this->setResponse($view->response->withStringBody($contents));
 
-        return $this->getResponse();
+        return $this->response;
     }
 
     /**
@@ -663,10 +663,10 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     protected function _viewPath()
     {
         $viewPath = $this->name;
-        if ($this->getRequest()->getParam('prefix')) {
+        if ($this->request->getParam('prefix')) {
             $prefixes = array_map(
                 'Cake\Utility\Inflector::camelize',
-                explode('/', $this->getRequest()->getParam('prefix'))
+                explode('/', $this->request->getParam('prefix'))
             );
             $viewPath = implode(DIRECTORY_SEPARATOR, $prefixes) . DIRECTORY_SEPARATOR . $viewPath;
         }
@@ -683,14 +683,14 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     public function referer($default = null, $local = false)
     {
-        if (!$this->getRequest()) {
+        if (!$this->request) {
             return Router::url($default, !$local);
         }
 
-        $referer = $this->getRequest()->referer($local);
+        $referer = $this->request->referer($local);
         if ($referer === '/' && $default && $default !== $referer) {
             $url = Router::url($default, !$local);
-            $base = $this->getRequest()->getAttribute('base');
+            $base = $this->request->getAttribute('base');
             if ($local && $base && strpos($url, $base) === 0) {
                 $url = substr($url, strlen($base));
                 if ($url[0] !== '/') {

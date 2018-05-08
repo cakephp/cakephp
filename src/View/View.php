@@ -196,6 +196,7 @@ class View implements EventDispatcherInterface
      * additional information about the request.
      *
      * @var \Cake\Http\ServerRequest
+     * @deprecated 3.7.0 The property will become protected in 4.0.0. Use getRequest()/setRequest() instead.
      */
     public $request;
 
@@ -203,6 +204,7 @@ class View implements EventDispatcherInterface
      * Reference to the Response object
      *
      * @var \Cake\Http\Response
+     * @deprecated 3.7.0 The property will become protected in 4.0.0. Use getResponse()/setResponse() instead.
      */
     public $response;
 
@@ -366,6 +368,66 @@ class View implements EventDispatcherInterface
      */
     public function initialize()
     {
+    }
+
+    /**
+     * Gets the request instance.
+     *
+     * @return \Cake\Http\ServerRequest
+     * @since 3.7.0
+     */
+    public function getRequest()
+    {
+        return $this->request;
+    }
+
+    /**
+     * Sets the request objects and configures a number of controller properties
+     * based on the contents of the request. The properties that get set are:
+     *
+     * - $this->request - To the $request parameter
+     * - $this->plugin - To the value returned by $request->getParam('plugin')
+     * - $this->passedArgs - Same as $request->params['pass]
+     *
+     * @param \Cake\Http\ServerRequest $request Request instance.
+     * @return $this
+     * @since 3.7.0
+     */
+    public function setRequest(ServerRequest $request)
+    {
+        $this->request = $request;
+        $this->plugin = $request->getParam('plugin');
+
+        if ($request->getParam('pass')) {
+            $this->passedArgs = $request->getParam('pass');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Gets the response instance.
+     *
+     * @return \Cake\Http\Response
+     * @since 3.7.0
+     */
+    public function getResponse()
+    {
+        return $this->response;
+    }
+
+    /**
+     * Sets the response instance.
+     *
+     * @param \Cake\Http\Response $response Response instance.
+     * @return $this
+     * @since 3.7.0
+     */
+    public function setResponse(Response $response)
+    {
+        $this->response = $response;
+
+        return $this;
     }
 
     /**
