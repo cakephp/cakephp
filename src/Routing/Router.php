@@ -825,7 +825,7 @@ class Router
      * are used for CakePHP internals and should not normally be part of an output URL.
      *
      * @param \Cake\Http\ServerRequest|array $params The params array or
-     *     Cake\Network\Request object that needs to be reversed.
+     *     Cake\Http\ServerRequest object that needs to be reversed.
      * @param bool $full Set to true to include the full URL including the
      *     protocol when reversing the URL.
      * @return string The string that is the reversed result of the array
