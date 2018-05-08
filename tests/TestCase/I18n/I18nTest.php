@@ -63,17 +63,14 @@ class I18nTest extends TestCase
     /**
      * Tests that the default locale is set correctly
      *
-     * @group deprecated
      * @return void
      */
     public function testDefaultLocale()
     {
-        $this->deprecated(function () {
-            $newLocale = 'de_DE';
-            I18n::setLocale($newLocale);
-            $this->assertEquals($newLocale, I18n::getLocale());
-            $this->assertEquals($this->locale, I18n::getDefaultLocale());
-        });
+        $newLocale = 'de_DE';
+        I18n::setLocale($newLocale);
+        $this->assertEquals($newLocale, I18n::getLocale());
+        $this->assertEquals($this->locale, I18n::getDefaultLocale());
     }
 
     /**
