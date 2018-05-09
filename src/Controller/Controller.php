@@ -579,7 +579,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     public function invokeAction()
     {
         $request = $this->request;
-        if (!isset($request)) {
+        if (!$request) {
             throw new LogicException('No Request object configured. Cannot invoke action');
         }
         if (!$this->isAction($request->getParam('action'))) {
