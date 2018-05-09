@@ -125,18 +125,20 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * This object contains all the information about a request and several methods for reading
      * additional information about the request.
      *
-     * @var \Cake\Http\ServerRequest|null
+     * Deprecated 3.6.0: The property will become protected in 4.0.0. Use getRequest()/setRequest instead.
+     *
+     * @var \Cake\Http\ServerRequest
      * @link https://book.cakephp.org/3.0/en/controllers/request-response.html#request
-     * @deprecated 3.6.0 The property will become protected in 4.0.0. Use getRequest()/setRequest instead.
      */
     public $request;
 
     /**
      * An instance of a Response object that contains information about the impending response
      *
-     * @var \Cake\Http\Response|null
+     * Deprecated 3.6.0: The property will become protected in 4.0.0. Use getResponse()/setResponse instead.
+     
+     * @var \Cake\Http\Response
      * @link https://book.cakephp.org/3.0/en/controllers/request-response.html#response
-     * @deprecated 3.6.0 The property will become protected in 4.0.0. Use getResponse()/setResponse instead.
      */
     public $response;
 
