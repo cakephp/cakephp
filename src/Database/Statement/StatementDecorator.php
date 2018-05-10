@@ -230,7 +230,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
             return $result;
         }
 
-        return array();
+        return [];
     }
 
     /**

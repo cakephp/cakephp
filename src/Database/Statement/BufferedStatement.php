@@ -116,7 +116,7 @@ class BufferedStatement extends StatementDecorator
             return $result;
         }
 
-        return array();
+        return [];
     }
 
     /**
