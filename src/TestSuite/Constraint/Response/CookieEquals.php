@@ -17,6 +17,8 @@ use Cake\Http\Response;
 
 /**
  * CookieEquals
+ *
+ * @internal
  */
 class CookieEquals extends ResponseBase
 {

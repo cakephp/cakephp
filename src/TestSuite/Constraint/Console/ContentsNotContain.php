@@ -15,6 +15,8 @@ namespace Cake\TestSuite\Constraint\Console;
 
 /**
  * ContentsNotContain
+ *
+ * @internal
  */
 class ContentsNotContain extends ContentsBase
 {

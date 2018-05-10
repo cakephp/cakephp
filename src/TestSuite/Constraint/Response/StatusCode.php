@@ -15,6 +15,8 @@ namespace Cake\TestSuite\Constraint\Response;
 
 /**
  * StatusCode
+ *
+ * @internal
  */
 class StatusCode extends StatusCodeBase
 {

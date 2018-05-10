@@ -17,6 +17,8 @@ use PHPUnit\Framework\Constraint\Constraint;
 
 /**
  * Base constraint for content constraints
+ *
+ * @internal
  */
 abstract class ContentsBase extends Constraint
 {

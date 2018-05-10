@@ -15,6 +15,8 @@ namespace Cake\TestSuite\Constraint\View;
 
 /**
  * LayoutFileEquals
+ *
+ * @internal
  */
 class LayoutFileEquals extends TemplateFileEquals
 {

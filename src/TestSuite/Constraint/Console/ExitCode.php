@@ -17,6 +17,8 @@ use PHPUnit\Framework\Constraint\Constraint;
 
 /**
  * ExitCode constraint
+ *
+ * @internal
  */
 class ExitCode extends Constraint
 {

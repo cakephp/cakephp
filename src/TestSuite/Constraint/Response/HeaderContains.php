@@ -15,6 +15,8 @@ namespace Cake\TestSuite\Constraint\Response;
 
 /**
  * HeaderContains
+ *
+ * @internal
  */
 class HeaderContains extends HeaderEquals
 {

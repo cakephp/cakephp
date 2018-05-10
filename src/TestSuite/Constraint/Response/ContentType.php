@@ -15,6 +15,8 @@ namespace Cake\TestSuite\Constraint\Response;
 
 /**
  * ContentType
+ *
+ * @internal
  */
 class ContentType extends ResponseBase
 {

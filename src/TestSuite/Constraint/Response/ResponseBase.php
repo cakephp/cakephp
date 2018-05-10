@@ -18,6 +18,8 @@ use PHPUnit\Framework\Constraint\Constraint;
 
 /**
  * Base constraint for response constraints
+ *
+ * @internal
  */
 abstract class ResponseBase extends Constraint
 {

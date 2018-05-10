@@ -15,6 +15,8 @@ namespace Cake\TestSuite\Constraint\Console;
 
 /**
  * ContentsContainRow
+ *
+ * @internal
  */
 class ContentsContainRow extends ContentsRegExp
 {

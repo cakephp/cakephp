@@ -15,6 +15,8 @@ namespace Cake\TestSuite\Constraint\Response;
 
 /**
  * FileSentAs
+ *
+ * @internal
  */
 class FileSentAs extends ResponseBase
 {

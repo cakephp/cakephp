@@ -15,6 +15,8 @@ namespace Cake\TestSuite\Constraint\Response;
 
 /**
  * CookieSet
+ *
+ * @internal
  */
 class CookieSet extends ResponseBase
 {

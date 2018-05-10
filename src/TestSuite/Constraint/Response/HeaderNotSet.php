@@ -15,6 +15,8 @@ namespace Cake\TestSuite\Constraint\Response;
 
 /**
  * HeaderSet
+ *
+ * @internal
  */
 class HeaderNotSet extends HeaderSet
 {

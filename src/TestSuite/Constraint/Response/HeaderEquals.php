@@ -17,6 +17,8 @@ use Cake\Http\Response;
 
 /**
  * HeaderEquals
+ *
+ * @internal
  */
 class HeaderEquals extends ResponseBase
 {

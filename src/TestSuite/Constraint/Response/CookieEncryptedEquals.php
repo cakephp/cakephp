@@ -19,6 +19,8 @@ use InvalidArgumentException;
 
 /**
  * CookieEncryptedEquals
+ *
+ * @internal
  */
 class CookieEncryptedEquals extends CookieEquals
 {

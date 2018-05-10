@@ -17,6 +17,8 @@ use PHPUnit\Framework\Constraint\Constraint;
 
 /**
  * TemplateFileEquals
+ *
+ * @internal
  */
 class TemplateFileEquals extends Constraint
 {

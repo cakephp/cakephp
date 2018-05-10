@@ -18,6 +18,8 @@ use PHPUnit\Framework\Constraint\Constraint;
 
 /**
  * SessionEquals
+ *
+ * @internal
  */
 class SessionEquals extends Constraint
 {
