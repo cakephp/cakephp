@@ -26,6 +26,8 @@ use Cake\TestSuite\Constraint\Response\StatusError;
 use Cake\TestSuite\Constraint\Response\StatusFailure;
 use Cake\TestSuite\Constraint\Response\StatusOk;
 use Cake\TestSuite\Constraint\Response\StatusSuccess;
+use Cake\TestSuite\Constraint\View\TemplateFileEquals;
+use Cake\TestSuite\Constraint\View\LayoutFileEquals;
 use Cake\TestSuite\Stub\TestExceptionRenderer;
 use Cake\Utility\CookieCryptTrait;
 use Cake\Utility\Hash;
@@ -975,10 +977,7 @@ trait IntegrationTestTrait
      */
     public function assertTemplate($content, $message = '')
     {
-        if (!$this->_viewName) {
-            $this->fail('No view name stored. ' . $message);
-        }
-        $this->assertContains($content, $this->_viewName, $message);
+        $this->assertThat($content, new TemplateFileEquals($this->_viewName), $message);
     }
 
     /**
@@ -990,10 +989,7 @@ trait IntegrationTestTrait
      */
     public function assertLayout($content, $message = '')
     {
-        if (!$this->_layoutName) {
-            $this->fail('No layout name stored. ' . $message);
-        }
-        $this->assertContains($content, $this->_layoutName, $message);
+        $this->assertThat($content, new LayoutFileEquals($this->_layoutName), $message);
     }
 
     /**
