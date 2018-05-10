@@ -18,6 +18,14 @@ use Cake\Database\Exception as DatabaseException;
 use Cake\Http\ServerRequest;
 use Cake\Http\Session;
 use Cake\Routing\Router;
+use Cake\TestSuite\Constraint\Response\BodyContains;
+use Cake\TestSuite\Constraint\Response\BodyEmpty;
+use Cake\TestSuite\Constraint\Response\BodyEquals;
+use Cake\TestSuite\Constraint\Response\BodyNotContains;
+use Cake\TestSuite\Constraint\Response\BodyNotEmpty;
+use Cake\TestSuite\Constraint\Response\BodyNotEquals;
+use Cake\TestSuite\Constraint\Response\BodyNotRegExp;
+use Cake\TestSuite\Constraint\Response\BodyRegExp;
 use Cake\TestSuite\Constraint\Response\ContentType;
 use Cake\TestSuite\Constraint\Response\CookieEncryptedEquals;
 use Cake\TestSuite\Constraint\Response\CookieNotSet;
@@ -46,11 +54,6 @@ use Cake\View\Helper\SecureFieldTokenTrait;
 use Exception;
 use LogicException;
 use PHPUnit\Exception as PhpunitException;
-use PHPUnit\Framework\Constraint\IsEmpty;
-use PHPUnit\Framework\Constraint\IsEqual;
-use PHPUnit\Framework\Constraint\LogicalNot;
-use PHPUnit\Framework\Constraint\RegularExpression;
-use PHPUnit\Framework\Constraint\StringContains;
 
 /**
  * A trait intended to make integration tests of your controllers easier.
@@ -880,7 +883,7 @@ trait IntegrationTestTrait
      */
     public function assertResponseEquals($content, $message = '')
     {
-        $this->assertThat($this->_getBodyAsString(), new IsEqual($content), $message);
+        $this->assertThat($content, new BodyEquals($this->_response), $message);
     }
 
     /**
@@ -892,10 +895,7 @@ trait IntegrationTestTrait
      */
     public function assertResponseNotEquals($content, $message = '')
     {
-        $constraint = new LogicalNot(
-            new IsEqual($content)
-        );
-        $this->assertThat($this->_getBodyAsString(), $constraint, $message);
+        $this->assertThat($content, new BodyNotEquals($this->_response), $message);
     }
 
     /**
@@ -908,7 +908,7 @@ trait IntegrationTestTrait
      */
     public function assertResponseContains($content, $message = '', $ignoreCase = false)
     {
-        $this->assertThat($this->_getBodyAsString(), new StringContains($content, $ignoreCase), $message);
+        $this->assertThat($content, new BodyContains($this->_response, $ignoreCase), $message);
     }
 
     /**
@@ -921,10 +921,7 @@ trait IntegrationTestTrait
      */
     public function assertResponseNotContains($content, $message = '', $ignoreCase = false)
     {
-        $constraint = new LogicalNot(
-            new StringContains($content, $ignoreCase)
-        );
-        $this->assertThat($this->_getBodyAsString(), $constraint, $message);
+        $this->assertThat($content, new BodyNotContains($this->_response, $ignoreCase), $message);
     }
 
     /**
@@ -936,8 +933,7 @@ trait IntegrationTestTrait
      */
     public function assertResponseRegExp($pattern, $message = '')
     {
-        $constraint = new RegularExpression($pattern);
-        $this->assertThat($this->_getBodyAsString(), $constraint, $message);
+        $this->assertThat($pattern, new BodyRegExp($this->_response), $message);
     }
 
     /**
@@ -949,10 +945,7 @@ trait IntegrationTestTrait
      */
     public function assertResponseNotRegExp($pattern, $message = '')
     {
-        $constraint = new LogicalNot(
-            new RegularExpression($pattern)
-        );
-        $this->assertThat($this->_getBodyAsString(), $constraint, $message);
+        $this->assertThat($pattern, new BodyNotRegExp($this->_response), $message);
     }
 
     /**
@@ -963,11 +956,9 @@ trait IntegrationTestTrait
      */
     public function assertResponseNotEmpty($message = '')
     {
-        $constraint = new LogicalNot(
-            new IsEmpty()
-        );
-        $this->assertThat($this->_getBodyAsString(), $constraint, $message);
+        $this->assertThat(null, new BodyNotEmpty($this->_response), $message);
     }
+
     /**
      * Assert response content is empty.
      *
@@ -976,7 +967,7 @@ trait IntegrationTestTrait
      */
     public function assertResponseEmpty($message = '')
     {
-        $this->assertThat($this->_getBodyAsString(), new IsEmpty(), $message);
+        $this->assertThat(null, new BodyEmpty($this->_response), $message);
     }
 
     /**

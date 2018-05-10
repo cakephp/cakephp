@@ -44,4 +44,14 @@ abstract class ResponseBase extends Constraint
 
         $this->response = $response;
     }
+
+    /**
+     * Get the response body as string
+     *
+     * @return string The response body.
+     */
+    protected function _getBodyAsString()
+    {
+        return (string)$this->response->getBody();
+    }
 }
