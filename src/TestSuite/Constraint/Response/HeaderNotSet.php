@@ -14,11 +14,10 @@
 namespace Cake\TestSuite\Constraint\Response;
 
 /**
- * HeaderContains
+ * HeaderSet
  */
-class HeaderContains extends HeaderEquals
+class HeaderNotSet extends HeaderSet
 {
-
     /**
      * Checks assertion
      *
@@ -27,8 +26,7 @@ class HeaderContains extends HeaderEquals
      */
     public function matches($other)
     {
-        $this->value = $this->response->getHeaderLine($this->headerName);
-        return mb_strpos($this->value, $other) !== false;
+        return parent::matches($other) === false;
     }
 
     /**
@@ -38,6 +36,6 @@ class HeaderContains extends HeaderEquals
      */
     public function toString()
     {
-        return sprintf('is in header `%s`, found "%s"', $this->headerName, $this->value);
+        return sprintf('did not have header `%s`', $this->headerName);
     }
 }

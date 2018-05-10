@@ -23,8 +23,10 @@ use Cake\TestSuite\Constraint\Response\CookieEncryptedEquals;
 use Cake\TestSuite\Constraint\Response\CookieNotSet;
 use Cake\TestSuite\Constraint\Response\CookieSet;
 use Cake\TestSuite\Constraint\Response\CookieEquals;
-use Cake\TestSuite\Constraint\Response\Header;
+use Cake\TestSuite\Constraint\Response\HeaderEquals;
 use Cake\TestSuite\Constraint\Response\HeaderContains;
+use Cake\TestSuite\Constraint\Response\HeaderNotSet;
+use Cake\TestSuite\Constraint\Response\HeaderSet;
 use Cake\TestSuite\Constraint\Response\StatusCode;
 use Cake\TestSuite\Constraint\Response\StatusError;
 use Cake\TestSuite\Constraint\Response\StatusFailure;
@@ -787,19 +789,11 @@ trait IntegrationTestTrait
      */
     public function assertRedirect($url = null, $message = '')
     {
-        if (!$this->_response) {
-            $this->fail('No response set, cannot assert location header. ' . $message);
-        }
-        $result = $this->_response->getHeaderLine('Location');
-        if ($url === null) {
-            $this->assertNotEmpty($result, $message);
+        $this->assertThat(null, new HeaderSet($this->_response, 'Location'), $message);
 
-            return;
+        if ($url) {
+            $this->assertThat(Router::url($url, ['_full' => true]), new HeaderEquals($this->_response, 'Location'), $message);
         }
-        if (empty($result)) {
-            $this->fail('No location header set. ' . $message);
-        }
-        $this->assertEquals(Router::url($url, ['_full' => true]), $result, $message);
     }
 
     /**
@@ -811,14 +805,8 @@ trait IntegrationTestTrait
      */
     public function assertRedirectContains($url, $message = '')
     {
-        if (!$this->_response) {
-            $this->fail('No response set, cannot assert location header. ' . $message);
-        }
-        $result = $this->_response->getHeaderLine('Location');
-        if (empty($result)) {
-            $this->fail('No location header set. ' . $message);
-        }
-        $this->assertContains($url, $result, $message);
+        $this->assertThat(null, new HeaderSet($this->_response, 'Location'), $message);
+        $this->assertThat($url, new HeaderContains($this->_response, 'Location'), $message);
     }
 
     /**
@@ -829,17 +817,7 @@ trait IntegrationTestTrait
      */
     public function assertNoRedirect($message = '')
     {
-        if (!$this->_response) {
-            $this->fail('No response set, cannot assert location header. ' . $message);
-        }
-        $result = $this->_response->getHeaderLine('Location');
-        if (!$message) {
-            $message = 'Redirect header set';
-        }
-        if (!empty($result)) {
-            $message .= ': ' . $result;
-        }
-        $this->assertEmpty($result, $message);
+        $this->assertThat(null, new HeaderNotSet($this->_response, 'Location'), $message);
     }
 
     /**
@@ -852,7 +830,8 @@ trait IntegrationTestTrait
      */
     public function assertHeader($header, $content, $message = '')
     {
-        $this->assertThat($content, new Header($this->_response, $header), $message);
+        $this->assertThat(null, new HeaderSet($this->_response, $header), $message);
+        $this->assertThat($content, new HeaderEquals($this->_response, $header), $message);
     }
 
     /**
@@ -865,6 +844,7 @@ trait IntegrationTestTrait
      */
     public function assertHeaderContains($header, $content, $message = '')
     {
+        $this->assertThat(null, new HeaderSet($this->_response, $header), $message);
         $this->assertThat($content, new HeaderContains($this->_response, $header), $message);
     }
 

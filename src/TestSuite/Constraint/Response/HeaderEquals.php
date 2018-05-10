@@ -13,12 +13,12 @@
  */
 namespace Cake\TestSuite\Constraint\Response;
 
-use PHPUnit\Framework\AssertionFailedError;
+use Cake\Http\Response;
 
 /**
- * Header
+ * HeaderEquals
  */
-class Header extends ResponseBase
+class HeaderEquals extends ResponseBase
 {
     /**
      * @var string
@@ -26,12 +26,17 @@ class Header extends ResponseBase
     protected $headerName;
 
     /**
+     * @var string
+     */
+    protected $value;
+
+    /**
      * Constructor.
      *
-     * @param \Cake\Http\Response $response Response
+     * @param Response $response Response
      * @param string $headerName Header name
      */
-    public function __construct(\Cake\Http\Response $response, $headerName)
+    public function __construct(Response $response, $headerName)
     {
         parent::__construct($response);
 
@@ -46,11 +51,8 @@ class Header extends ResponseBase
      */
     public function matches($other)
     {
-        if (!$this->response->hasHeader($this->headerName)) {
-            throw new AssertionFailedError(sprintf('Header `%s` was not set.', $this->headerName));
-        }
-
-        return $this->response->getHeaderLine($this->headerName) === $other;
+        $this->value = $this->response->getHeaderLine($this->headerName);
+        return $this->value === $other;
     }
 
     /**
@@ -60,6 +62,6 @@ class Header extends ResponseBase
      */
     public function toString()
     {
-        return sprintf('has header `%s`', $this->headerName);
+        return sprintf('equals content in header `%s`, found "%s"', $this->headerName, $this->value);
     }
 }

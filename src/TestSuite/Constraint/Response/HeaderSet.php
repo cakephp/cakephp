@@ -13,11 +13,30 @@
  */
 namespace Cake\TestSuite\Constraint\Response;
 
+use Cake\Http\Response;
+
 /**
- * HeaderContains
+ * HeaderSet
  */
-class HeaderContains extends HeaderEquals
+class HeaderSet extends ResponseBase
 {
+    /**
+     * @var string
+     */
+    protected $headerName;
+
+    /**
+     * Constructor.
+     *
+     * @param Response $response Response
+     * @param string $headerName Header name
+     */
+    public function __construct(Response $response, $headerName)
+    {
+        parent::__construct($response);
+
+        $this->headerName = $headerName;
+    }
 
     /**
      * Checks assertion
@@ -27,8 +46,7 @@ class HeaderContains extends HeaderEquals
      */
     public function matches($other)
     {
-        $this->value = $this->response->getHeaderLine($this->headerName);
-        return mb_strpos($this->value, $other) !== false;
+        return $this->response->hasHeader($this->headerName);
     }
 
     /**
@@ -38,6 +56,6 @@ class HeaderContains extends HeaderEquals
      */
     public function toString()
     {
-        return sprintf('is in header `%s`, found "%s"', $this->headerName, $this->value);
+        return sprintf('has header `%s`', $this->headerName);
     }
 }
