@@ -941,6 +941,32 @@ class IntegrationTestCaseTest extends IntegrationTestCase
      *
      * @return void
      */
+    public function testAssertResponseEquals()
+    {
+        $this->_response = new Response();
+        $this->_response = $this->_response->withStringBody('Some content');
+
+        $this->assertResponseEquals('Some content');
+    }
+
+    /**
+     * Test the negated content assertion.
+     *
+     * @return void
+     */
+    public function testAssertResponseNotEquals()
+    {
+        $this->_response = new Response();
+        $this->_response = $this->_response->withStringBody('Some content');
+
+        $this->assertResponseNotEquals('Some Content');
+    }
+
+    /**
+     * Test the content assertion.
+     *
+     * @return void
+     */
     public function testAssertResponseContains()
     {
         $this->_response = new Response();
