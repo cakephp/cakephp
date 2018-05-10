@@ -254,7 +254,7 @@ class AuthComponent extends Component
         $controller = $this->_registry->getController();
         $this->setEventManager($controller->getEventManager());
         $this->response =& $controller->response;
-        $this->session = $controller->request->getSession();
+        $this->session = $controller->getRequest()->getSession();
 
         if ($this->getConfig('ajaxLogin')) {
             deprecationWarning(
@@ -285,6 +285,7 @@ class AuthComponent extends Component
      *
      * @param \Cake\Event\Event $event Event instance.
      * @return \Cake\Http\Response|null
+     * @throws \ReflectionException
      */
     public function authCheck(Event $event)
     {
@@ -295,7 +296,7 @@ class AuthComponent extends Component
         /** @var \Cake\Controller\Controller $controller */
         $controller = $event->getSubject();
 
-        $action = strtolower($controller->request->getParam('action'));
+        $action = strtolower($controller->getRequest()->getParam('action'));
         if (!$controller->isAction($action)) {
             return null;
         }
@@ -354,7 +355,7 @@ class AuthComponent extends Component
      */
     protected function _isAllowed(Controller $controller)
     {
-        $action = strtolower($controller->request->getParam('action'));
+        $action = strtolower($controller->getRequest()->getParam('action'));
 
         return in_array($action, array_map('strtolower', $this->allowedActions));
     }
@@ -383,12 +384,12 @@ class AuthComponent extends Component
         if ($auth === false) {
             throw new Exception('At least one authenticate object must be available.');
         }
-        $result = $auth->unauthenticated($controller->request, $response);
+        $result = $auth->unauthenticated($controller->getRequest(), $response);
         if ($result !== null) {
             return $result;
         }
 
-        if (!$controller->request->is('ajax')) {
+        if (!$controller->getRequest()->is('ajax')) {
             $this->flash($this->_config['authError']);
 
             return $controller->redirect($this->_loginActionRedirectUrl());

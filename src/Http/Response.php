@@ -592,7 +592,7 @@ class Response implements ResponseInterface
         if ($charset) {
             $this->_setHeader('Content-Type', "{$this->_contentType}; charset={$this->_charset}");
         } else {
-            $this->_setHeader('Content-Type', "{$this->_contentType}");
+            $this->_setHeader('Content-Type', (string)$this->_contentType);
         }
     }
 

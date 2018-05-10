@@ -444,7 +444,7 @@ class Router
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The request instance.
      * @return void
-     * @throws InvalidArgumentException When parameter is an incorrect type.
+     * @throws \InvalidArgumentException When parameter is an incorrect type.
      */
     public static function setRequestContext(ServerRequestInterface $request)
     {
@@ -741,7 +741,7 @@ class Router
 
     /**
      * Sets the full base URL that will be used as a prefix for generating
-     * fully qualified URLs for this application. If not parameters are passed,
+     * fully qualified URLs for this application. If no parameters are passed,
      * the currently configured value is returned.
      *
      * ### Note:
@@ -825,7 +825,7 @@ class Router
      * are used for CakePHP internals and should not normally be part of an output URL.
      *
      * @param \Cake\Http\ServerRequest|array $params The params array or
-     *     Cake\Network\Request object that needs to be reversed.
+     *     Cake\Http\ServerRequest object that needs to be reversed.
      * @param bool $full Set to true to include the full URL including the
      *     protocol when reversing the URL.
      * @return string The string that is the reversed result of the array

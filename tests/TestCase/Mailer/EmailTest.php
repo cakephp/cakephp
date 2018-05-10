@@ -4,7 +4,7 @@
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
+ * For full copyright and license information, please see the LICENSE
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -2880,7 +2880,7 @@ XML;
 
         $this->Email->viewBuilder()
             ->setTemplate('default')
-            ->layout('test');
+            ->setLayout('test');
 
         $result = json_decode(json_encode($this->Email), true);
         $this->assertContains('test', $result['viewVars']['exception']);

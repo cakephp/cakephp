@@ -384,6 +384,7 @@ trait IntegrationTestTrait
      *
      * @param string|array $url The URL to request.
      * @return void
+     * @throws \PHPUnit\Exception
      */
     public function get($url)
     {
@@ -400,6 +401,7 @@ trait IntegrationTestTrait
      * @param string|array $url The URL to request.
      * @param array $data The data for the request.
      * @return void
+     * @throws \PHPUnit\Exception
      */
     public function post($url, $data = [])
     {
@@ -416,6 +418,7 @@ trait IntegrationTestTrait
      * @param string|array $url The URL to request.
      * @param array $data The data for the request.
      * @return void
+     * @throws \PHPUnit\Exception
      */
     public function patch($url, $data = [])
     {
@@ -432,6 +435,7 @@ trait IntegrationTestTrait
      * @param string|array $url The URL to request.
      * @param array $data The data for the request.
      * @return void
+     * @throws \PHPUnit\Exception
      */
     public function put($url, $data = [])
     {
@@ -447,6 +451,7 @@ trait IntegrationTestTrait
      *
      * @param string|array $url The URL to request.
      * @return void
+     * @throws \PHPUnit\Exception
      */
     public function delete($url)
     {
@@ -462,6 +467,7 @@ trait IntegrationTestTrait
      *
      * @param string|array $url The URL to request.
      * @return void
+     * @throws \PHPUnit\Exception
      */
     public function head($url)
     {
@@ -477,6 +483,7 @@ trait IntegrationTestTrait
      *
      * @param string|array $url The URL to request.
      * @return void
+     * @throws \PHPUnit\Exception
      */
     public function options($url)
     {
@@ -492,11 +499,12 @@ trait IntegrationTestTrait
      * @param string $method The HTTP method
      * @param array|null $data The request data.
      * @return void
-     * @throws \Exception
+     * @throws \PHPUnit\Exception
      */
     protected function _sendRequest($url, $method, $data = [])
     {
         $dispatcher = $this->_makeDispatcher();
+        $psrRequest = null;
         try {
             $request = $this->_buildRequest($url, $method, $data);
             $response = $dispatcher->execute($request);
@@ -513,6 +521,7 @@ trait IntegrationTestTrait
             throw $e;
         } catch (Exception $e) {
             $this->_exception = $e;
+            // Simulate the global exception handler being invoked.
             $this->_handleError($e);
         }
     }
@@ -551,7 +560,7 @@ trait IntegrationTestTrait
                 $this->_viewName = $viewFile;
             }
             if ($this->_retainFlashMessages) {
-                $this->_flashMessages = $controller->request->getSession()->read('Flash');
+                $this->_flashMessages = $controller->getRequest()->getSession()->read('Flash');
             }
         });
         $events->on('View.beforeLayout', function ($event, $viewFile) {
@@ -863,7 +872,7 @@ trait IntegrationTestTrait
     }
 
     /**
-     * Asserts content exists in the response body.
+     * Asserts content in the response body equals.
      *
      * @param mixed $content The content to check for.
      * @param string $message The failure message that will be appended to the generated message.
@@ -872,6 +881,21 @@ trait IntegrationTestTrait
     public function assertResponseEquals($content, $message = '')
     {
         $this->assertThat($this->_getBodyAsString(), new IsEqual($content), $message);
+    }
+
+    /**
+     * Asserts content in the response body not equals.
+     *
+     * @param mixed $content The content to check for.
+     * @param string $message The failure message that will be appended to the generated message.
+     * @return void
+     */
+    public function assertResponseNotEquals($content, $message = '')
+    {
+        if (!$this->_response) {
+            $this->fail('No response set, cannot assert content. ' . $message);
+        }
+        $this->assertNotEquals($content, $this->_getBodyAsString(), $message);
     }
 
     /**

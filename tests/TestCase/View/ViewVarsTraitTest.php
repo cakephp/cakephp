@@ -195,13 +195,16 @@ class ViewVarsTraitTest extends TestCase
     /**
      * test that viewClass is used to create the view
      *
+     * @deprecated
      * @return void
      */
     public function testCreateViewViewClass()
     {
-        $this->subject->viewClass = 'Json';
-        $view = $this->subject->createView();
-        $this->assertInstanceOf('Cake\View\JsonView', $view);
+        $this->deprecated(function () {
+            $this->subject->viewClass = 'Json';
+            $view = $this->subject->createView();
+            $this->assertInstanceOf('Cake\View\JsonView', $view);
+        });
     }
 
     /**

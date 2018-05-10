@@ -982,10 +982,11 @@ class HtmlHelper extends Helper
             }
 
             if ($useCount) {
+                $i += 1;
                 if (isset($cellOptions['class'])) {
-                    $cellOptions['class'] .= ' column-' . ++$i;
+                    $cellOptions['class'] .= ' column-' . $i;
                 } else {
-                    $cellOptions['class'] = 'column-' . ++$i;
+                    $cellOptions['class'] = 'column-' . $i;
                 }
             }
 
@@ -1096,7 +1097,7 @@ class HtmlHelper extends Helper
      */
     public function para($class, $text, array $options = [])
     {
-        if (isset($options['escape'])) {
+        if (!empty($options['escape'])) {
             $text = h($text);
         }
         if ($class && !empty($class)) {

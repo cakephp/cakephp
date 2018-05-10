@@ -764,7 +764,7 @@ class Inflector
 
         $string = str_replace(
             array_keys(static::$_transliteration),
-            array_values(static::$_transliteration),
+            static::$_transliteration,
             $string
         );
 

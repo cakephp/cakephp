@@ -29,6 +29,7 @@ use Cake\Utility\Inflector;
 use Cake\View\Exception\MissingTemplateException;
 use Exception;
 use PDOException;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Exception Renderer.
@@ -79,15 +80,25 @@ class ExceptionRenderer implements ExceptionRendererInterface
     public $method = '';
 
     /**
+     * If set, this will be request used to create the controller that will render
+     * the error.
+     *
+     * @var \Psr\Http\Message\ServerRequestInterface|null
+     */
+    protected $request = null;
+
+    /**
      * Creates the controller to perform rendering on the error response.
      * If the error is a Cake\Core\Exception\Exception it will be converted to either a 400 or a 500
      * code error depending on the code used to construct the error.
      *
      * @param \Exception $exception Exception.
+     * @param \Psr\Http\Message\ServerRequestInterface $request The request - if this is set it will be used instead of creating a new one
      */
-    public function __construct(Exception $exception)
+    public function __construct(Exception $exception, ServerRequestInterface $request = null)
     {
         $this->error = $exception;
+        $this->request = $request;
         $this->controller = $this->_getController();
     }
 
@@ -114,9 +125,11 @@ class ExceptionRenderer implements ExceptionRendererInterface
      */
     protected function _getController()
     {
-        if (!$request = Router::getRequest(true)) {
+        $request = $this->request ?: Router::getRequest(true);
+        if ($request === null) {
             $request = ServerRequestFactory::fromGlobals();
         }
+
         $response = new Response();
         $controller = null;
 
@@ -168,8 +181,8 @@ class ExceptionRenderer implements ExceptionRendererInterface
         }
 
         $message = $this->_message($exception, $code);
-        $url = $this->controller->request->getRequestTarget();
-        $response = $this->controller->response;
+        $url = $this->controller->getRequest()->getRequestTarget();
+        $response = $this->controller->getResponse();
 
         if ($exception instanceof CakeException) {
             foreach ((array)$exception->responseHeader() as $key => $value) {

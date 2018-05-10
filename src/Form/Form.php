@@ -23,6 +23,7 @@ use Cake\Form\Schema;
 use Cake\Validation\Validator;
 use Cake\Validation\ValidatorAwareInterface;
 use Cake\Validation\ValidatorAwareTrait;
+use ReflectionMethod;
 
 /**
  * Form abstraction used to create forms not tied to ORM backed models,
@@ -224,7 +225,10 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
     {
         $validator = $this->getValidator();
         if (!$validator->count()) {
-            $validator = $this->validator();
+            $method = new ReflectionMethod($this, 'validator');
+            if ($method->getDeclaringClass()->getName() !== __CLASS__) {
+                $validator = $this->validator();
+            }
         }
         $this->_errors = $validator->errors($data);
 

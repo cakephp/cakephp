@@ -252,7 +252,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         }
 
         $this->setRequest($request ?: new ServerRequest());
-        $this->setResponse($response ?: new Response());
+        $this->response = $response ?: new Response();
 
         if ($eventManager !== null) {
             $this->setEventManager($eventManager);
@@ -323,6 +323,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @param string $name The name of the component to load.
      * @param array $config The config for the component.
      * @return \Cake\Controller\Component
+     * @throws \Exception
      */
     public function loadComponent($name, array $config = [])
     {
@@ -571,8 +572,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * exists and isn't private.
      *
      * @return mixed The resulting response.
-     * @throws \LogicException When request is not set.
-     * @throws \Cake\Controller\Exception\MissingActionException When actions are not defined or inaccessible.
+     * @throws \ReflectionException
      */
     public function invokeAction()
     {
@@ -734,7 +734,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     public function setAction($action, ...$args)
     {
-        $this->request = $this->request->withParam('action', $action);
+        $this->setRequest($this->request->withParam('action', $action));
 
         return $this->$action(...$args);
     }
@@ -757,8 +757,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         if ($this->request->getParam('bare')) {
             $builder->enableAutoLayout(false);
         }
-        $builder->getClassName($this->viewClass);
-
         $this->autoRender = false;
 
         $event = $this->dispatchEvent('Controller.beforeRender');
@@ -775,7 +773,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
 
         $this->View = $this->createView();
         $contents = $this->View->render($view, $layout);
-        $this->response = $this->View->response->withStringBody($contents);
+        $this->setResponse($this->View->getResponse()->withStringBody($contents));
 
         return $this->response;
     }
@@ -881,6 +879,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @param string $action The action to check.
      * @return bool Whether or not the method is accessible from a URL.
+     * @throws \ReflectionException
      */
     public function isAction($action)
     {

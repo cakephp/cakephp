@@ -393,12 +393,12 @@ class ControllerTest extends TestCase
         ]);
 
         $Controller = new Controller($request, new Response());
-        $Controller->viewBuilder()->templatePath('Posts');
+        $Controller->viewBuilder()->setTemplatePath('Posts');
 
         $result = $Controller->render('index');
         $this->assertRegExp('/posts index/', (string)$result);
 
-        $Controller->viewBuilder()->template('index');
+        $Controller->viewBuilder()->setTemplate('index');
         $result = $Controller->render();
         $this->assertRegExp('/posts index/', (string)$result);
 
@@ -421,7 +421,7 @@ class ControllerTest extends TestCase
         ]);
 
         $controller = new Controller($request, new Response());
-        $controller->viewBuilder()->templatePath('Posts');
+        $controller->viewBuilder()->setTemplatePath('Posts');
 
         $result = $controller->render('header');
         $this->assertContains('header template', (string)$result);
@@ -950,7 +950,7 @@ class ControllerTest extends TestCase
             return $e->getSubject()->response;
         });
         $Controller->render();
-        $this->assertEquals('Admin' . DS . 'Posts', $Controller->viewBuilder()->templatePath());
+        $this->assertEquals('Admin' . DS . 'Posts', $Controller->viewBuilder()->getTemplatePath());
 
         $request = $request->withParam('prefix', 'admin/super');
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
@@ -959,7 +959,7 @@ class ControllerTest extends TestCase
             return $e->getSubject()->response;
         });
         $Controller->render();
-        $this->assertEquals('Admin' . DS . 'Super' . DS . 'Posts', $Controller->viewBuilder()->templatePath());
+        $this->assertEquals('Admin' . DS . 'Super' . DS . 'Posts', $Controller->viewBuilder()->getTemplatePath());
 
         $request = new ServerRequest([
             'url' => 'pages/home',
@@ -972,7 +972,7 @@ class ControllerTest extends TestCase
             return $e->getSubject()->response;
         });
         $Controller->render();
-        $this->assertEquals('Pages', $Controller->viewBuilder()->templatePath());
+        $this->assertEquals('Pages', $Controller->viewBuilder()->getTemplatePath());
     }
 
     /**

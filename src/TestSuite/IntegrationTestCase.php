@@ -34,5 +34,6 @@ if (class_exists('PHPUnit_Runner_Version', false) && !interface_exists('PHPUnit\
  */
 abstract class IntegrationTestCase extends TestCase
 {
+
     use IntegrationTestTrait;
 }

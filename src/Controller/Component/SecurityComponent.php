@@ -128,10 +128,10 @@ class SecurityComponent extends Component
         }
 
         $request = $this->generateToken($request);
-        if ($hasData && is_array($controller->request->getData())) {
+        if ($hasData && is_array($controller->getRequest()->getData())) {
             $request = $request->withoutData('_Token');
         }
-        $controller->request = $request;
+        $controller->setRequest($request);
     }
 
     /**
@@ -243,7 +243,7 @@ class SecurityComponent extends Component
             $requireSecure = $this->_config['requireSecure'];
 
             if (in_array($this->_action, $requireSecure) || $requireSecure === ['*']) {
-                if (!$this->request->is('ssl')) {
+                if (!$this->getController()->getRequest()->is('ssl')) {
                     throw new SecurityException(
                         'Request is not SSL and the action is required to be secure'
                     );
@@ -263,7 +263,7 @@ class SecurityComponent extends Component
      */
     protected function _authRequired(Controller $controller)
     {
-        $request = $controller->request;
+        $request = $controller->getRequest();
         if (is_array($this->_config['requireAuth']) &&
             !empty($this->_config['requireAuth']) &&
             $request->getData()
@@ -344,7 +344,7 @@ class SecurityComponent extends Component
      */
     protected function _validToken(Controller $controller)
     {
-        $check = $controller->request->getData();
+        $check = $controller->getRequest()->getData();
 
         $message = '\'%s\' was not found in request data.';
         if (!isset($check['_Token'])) {
@@ -502,7 +502,7 @@ class SecurityComponent extends Component
     protected function _debugPostTokenNotMatching(Controller $controller, $hashParts)
     {
         $messages = [];
-        $expectedParts = json_decode(urldecode($controller->request->getData('_Token.debug')), true);
+        $expectedParts = json_decode(urldecode($controller->getRequest()->getData('_Token.debug')), true);
         if (!is_array($expectedParts) || count($expectedParts) !== 3) {
             return 'Invalid security debug token.';
         }

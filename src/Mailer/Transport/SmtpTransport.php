@@ -342,7 +342,7 @@ class SmtpTransport extends AbstractTransport
         $lines = $email->message();
         $messages = [];
         foreach ($lines as $line) {
-            if ((!empty($line)) && ($line[0] === '.')) {
+            if (!empty($line) && ($line[0] === '.')) {
                 $messages[] = '.' . $line;
             } else {
                 $messages[] = $line;

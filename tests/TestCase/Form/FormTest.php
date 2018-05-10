@@ -136,6 +136,8 @@ class FormTest extends TestCase
     {
         $this->deprecated(function () {
             $form = new ValidateForm();
+            $this->assertCount(1, $form->validator(), 'should have one rule');
+
             $data = [];
             $this->assertFalse($form->validate($data));
             $this->assertCount(1, $form->errors());

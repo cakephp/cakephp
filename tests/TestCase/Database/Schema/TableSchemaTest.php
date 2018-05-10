@@ -49,7 +49,7 @@ class TableTest extends TestCase
 
     public function setUp()
     {
-        $this->_map = Type::map();
+        $this->_map = Type::getMap();
         parent::setUp();
     }
 
@@ -57,7 +57,7 @@ class TableTest extends TestCase
     {
         $this->getTableLocator()->clear();
         Type::clear();
-        Type::map($this->_map);
+        Type::setMap($this->_map);
         parent::tearDown();
     }
 
