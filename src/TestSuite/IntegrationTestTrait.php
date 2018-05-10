@@ -30,6 +30,7 @@ use Cake\TestSuite\Constraint\Response\StatusError;
 use Cake\TestSuite\Constraint\Response\StatusFailure;
 use Cake\TestSuite\Constraint\Response\StatusOk;
 use Cake\TestSuite\Constraint\Response\StatusSuccess;
+use Cake\TestSuite\Constraint\Session\SessionEquals;
 use Cake\TestSuite\Constraint\View\TemplateFileEquals;
 use Cake\TestSuite\Constraint\View\LayoutFileEquals;
 use Cake\TestSuite\Stub\TestExceptionRenderer;
@@ -1006,15 +1007,7 @@ trait IntegrationTestTrait
      */
     public function assertSession($expected, $path, $message = '')
     {
-        if (empty($this->_requestSession)) {
-            $this->fail('There is no stored session data. Perhaps you need to run a request?');
-        }
-        $result = $this->_requestSession->read($path);
-        $this->assertEquals(
-            $expected,
-            $result,
-            'Session content for "' . $path . '" differs. ' . $message
-        );
+        $this->assertThat($expected, new SessionEquals($this->_requestSession, $path), $message);
     }
 
     /**
