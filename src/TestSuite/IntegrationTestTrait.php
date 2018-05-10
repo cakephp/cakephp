@@ -892,10 +892,10 @@ trait IntegrationTestTrait
      */
     public function assertResponseNotEquals($content, $message = '')
     {
-        if (!$this->_response) {
-            $this->fail('No response set, cannot assert content. ' . $message);
-        }
-        $this->assertNotEquals($content, $this->_getBodyAsString(), $message);
+        $constraint = new LogicalNot(
+            new IsEqual($content)
+        );
+        $this->assertThat($this->_getBodyAsString(), $constraint, $message);
     }
 
     /**
