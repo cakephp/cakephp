@@ -576,7 +576,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     public function testCookieNotSetFailure()
     {
         $this->expectException(\PHPUnit\Framework\AssertionFailedError::class);
-        $this->expectExceptionMessage('Cookie \'remember_me\' has been set');
+        $this->expectExceptionMessage('Failed asserting that \'remember_me\' cookie was not set');
         $this->post('/posts/index');
         $this->assertCookieNotSet('remember_me');
     }
@@ -590,7 +590,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     public function testCookieNotSetFailureNoResponse()
     {
         $this->expectException(\PHPUnit\Framework\AssertionFailedError::class);
-        $this->expectExceptionMessage('No response set, cannot assert cookies.');
+        $this->expectExceptionMessage('No response set, cannot assert content.');
         $this->assertCookieNotSet('remember_me');
     }
 

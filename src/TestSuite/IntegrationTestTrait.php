@@ -19,6 +19,10 @@ use Cake\Http\ServerRequest;
 use Cake\Http\Session;
 use Cake\Routing\Router;
 use Cake\TestSuite\Constraint\Response\ContentType;
+use Cake\TestSuite\Constraint\Response\CookieEncryptedEquals;
+use Cake\TestSuite\Constraint\Response\CookieNotSet;
+use Cake\TestSuite\Constraint\Response\CookieSet;
+use Cake\TestSuite\Constraint\Response\CookieEquals;
 use Cake\TestSuite\Constraint\Response\Header;
 use Cake\TestSuite\Constraint\Response\HeaderContains;
 use Cake\TestSuite\Constraint\Response\StatusCode;
@@ -1023,15 +1027,8 @@ trait IntegrationTestTrait
      */
     public function assertCookie($expected, $name, $message = '')
     {
-        if (!$this->_response) {
-            $this->fail('Not response set, cannot assert cookies.');
-        }
-        $result = $this->_response->getCookie($name);
-        $this->assertEquals(
-            $expected,
-            $result['value'],
-            'Cookie "' . $name . '" data differs. ' . $message
-        );
+        $this->assertThat($name, new CookieSet($this->_response), $message);
+        $this->assertThat($expected, new CookieEquals($this->_response, $name), $message);
     }
 
     /**
@@ -1043,11 +1040,7 @@ trait IntegrationTestTrait
      */
     public function assertCookieNotSet($cookie, $message = '')
     {
-        if (!$this->_response) {
-            $this->fail('No response set, cannot assert cookies. ' . $message);
-        }
-
-        $this->assertCookie(null, $cookie, "Cookie '{$cookie}' has been set. " . $message);
+        $this->assertThat($cookie, new CookieNotSet($this->_response), $message);
     }
 
     /**
@@ -1082,13 +1075,10 @@ trait IntegrationTestTrait
      */
     public function assertCookieEncrypted($expected, $name, $encrypt = 'aes', $key = null, $message = '')
     {
-        if (!$this->_response) {
-            $this->fail('No response set, cannot assert cookies.');
-        }
-        $result = $this->_response->getCookie($name);
+        $this->assertThat($name, new CookieSet($this->_response), $message);
+
         $this->_cookieEncryptionKey = $key;
-        $result['value'] = $this->_decrypt($result['value'], $encrypt);
-        $this->assertEquals($expected, $result['value'], 'Cookie data differs. ' . $message);
+        $this->assertThat($expected, new CookieEncryptedEquals($this->_response, $name, $encrypt, $this->_getCookieEncryptionKey()));
     }
 
     /**
