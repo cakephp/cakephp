@@ -23,6 +23,8 @@ use Cake\TestSuite\Constraint\Response\CookieEncryptedEquals;
 use Cake\TestSuite\Constraint\Response\CookieNotSet;
 use Cake\TestSuite\Constraint\Response\CookieSet;
 use Cake\TestSuite\Constraint\Response\CookieEquals;
+use Cake\TestSuite\Constraint\Response\FileSent;
+use Cake\TestSuite\Constraint\Response\FileSentAs;
 use Cake\TestSuite\Constraint\Response\HeaderEquals;
 use Cake\TestSuite\Constraint\Response\HeaderContains;
 use Cake\TestSuite\Constraint\Response\HeaderNotSet;
@@ -1063,14 +1065,7 @@ trait IntegrationTestTrait
      */
     public function assertFileResponse($expected, $message = '')
     {
-        if ($this->_response === null) {
-            $this->fail('No response set, cannot assert file.');
-        }
-        $actual = isset($this->_response->getFile()->path) ? $this->_response->getFile()->path : null;
-
-        if ($actual === null) {
-            $this->fail('No file was sent in this response');
-        }
-        $this->assertEquals($expected, $actual, $message);
+        $this->assertThat(null, new FileSent($this->_response), $message);
+        $this->assertThat($expected, new FileSentAs($this->_response), $message);
     }
 }

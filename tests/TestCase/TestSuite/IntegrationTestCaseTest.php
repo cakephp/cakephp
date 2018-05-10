@@ -1065,7 +1065,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     public function testAssertFileNoResponse()
     {
         $this->expectException(\PHPUnit\Framework\AssertionFailedError::class);
-        $this->expectExceptionMessage('No response set, cannot assert file');
+        $this->expectExceptionMessage('No response set, cannot assert content');
         $this->assertFileResponse('foo');
     }
 
@@ -1077,7 +1077,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     public function testAssertFileNoFile()
     {
         $this->expectException(\PHPUnit\Framework\AssertionFailedError::class);
-        $this->expectExceptionMessage('No file was sent in this response');
+        $this->expectExceptionMessage('Failed asserting that file was sent.');
         $this->get('/posts/get');
         $this->assertFileResponse('foo');
     }
