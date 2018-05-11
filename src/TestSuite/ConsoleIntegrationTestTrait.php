@@ -146,7 +146,7 @@ trait ConsoleIntegrationTestTrait
      */
     public function assertOutputEmpty($message = '')
     {
-        $this->assertThat(null, new ContentsEmpty($this->out->messages(), 'out'), $message);
+        $this->assertThat(null, new ContentsEmpty($this->out->messages(), 'output'), $message);
     }
 
     /**
@@ -158,7 +158,7 @@ trait ConsoleIntegrationTestTrait
      */
     public function assertOutputContains($expected, $message = '')
     {
-        $this->assertThat($expected, new ContentsContain($this->out->messages(), 'out'), $message);
+        $this->assertThat($expected, new ContentsContain($this->out->messages(), 'output'), $message);
     }
     /**
      * Asserts `stdout` does not contain expected output
@@ -169,7 +169,7 @@ trait ConsoleIntegrationTestTrait
      */
     public function assertOutputNotContains($expected, $message = '')
     {
-        $this->assertThat($expected, new ContentsNotContain($this->out->messages(), 'out'), $message);
+        $this->assertThat($expected, new ContentsNotContain($this->out->messages(), 'output'), $message);
     }
 
     /**
@@ -181,7 +181,7 @@ trait ConsoleIntegrationTestTrait
      */
     public function assertOutputRegExp($pattern, $message = '')
     {
-        $this->assertThat($pattern, new ContentsRegExp($this->out->messages(), 'out'), $message);
+        $this->assertThat($pattern, new ContentsRegExp($this->out->messages(), 'output'), $message);
     }
 
     /**
@@ -193,7 +193,7 @@ trait ConsoleIntegrationTestTrait
      */
     protected function assertOutputContainsRow(array $row, $message = '')
     {
-        $this->assertThat($row, new ContentsContainRow($this->out->messages(), 'out'), $message);
+        $this->assertThat($row, new ContentsContainRow($this->out->messages(), 'output'), $message);
     }
 
     /**
@@ -205,7 +205,7 @@ trait ConsoleIntegrationTestTrait
      */
     public function assertErrorContains($expected, $message = '')
     {
-        $this->assertThat($expected, new ContentsContain($this->err->messages(), 'err'), $message);
+        $this->assertThat($expected, new ContentsContain($this->err->messages(), 'error output'), $message);
     }
 
     /**
@@ -217,7 +217,7 @@ trait ConsoleIntegrationTestTrait
      */
     public function assertErrorRegExp($pattern, $message = '')
     {
-        $this->assertThat($pattern, new ContentsRegExp($this->err->messages(), 'err'), $message);
+        $this->assertThat($pattern, new ContentsRegExp($this->err->messages(), 'error output'), $message);
     }
 
     /**
@@ -228,7 +228,7 @@ trait ConsoleIntegrationTestTrait
      */
     public function assertErrorEmpty($message = '')
     {
-        $this->assertThat(null, new ContentsEmpty($this->err->messages(), 'err'), $message);
+        $this->assertThat(null, new ContentsEmpty($this->err->messages(), 'error output'), $message);
     }
 
     /**

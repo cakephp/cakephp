@@ -58,6 +58,6 @@ class ExitCode extends Constraint
      */
     public function toString()
     {
-        return sprintf('matches exit code `%d`', $this->exitCode);
+        return sprintf('matches exit code %d', $this->exitCode);
     }
 }

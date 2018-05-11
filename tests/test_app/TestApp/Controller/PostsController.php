@@ -96,4 +96,14 @@ class PostsController extends AppController
     {
         return $this->response->withFile(__FILE__);
     }
+
+    public function header()
+    {
+        return $this->getResponse()->withHeader('X-Cake', 'custom header');
+    }
+
+    public function empty()
+    {
+        return $this->getResponse()->withStringBody('');
+    }
 }

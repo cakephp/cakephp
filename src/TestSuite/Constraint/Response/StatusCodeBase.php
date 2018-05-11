@@ -56,4 +56,15 @@ abstract class StatusCodeBase extends ResponseBase
     {
         return $this->response->getStatusCode() >= $min && $this->response->getStatusCode() <= $max;
     }
+
+    /**
+     * Overwrites the descriptions so we can remove the automatic "expected" message
+     *
+     * @param mixed $other Value
+     * @return string
+     */
+    protected function failureDescription($other)
+    {
+        return $this->toString();
+    }
 }

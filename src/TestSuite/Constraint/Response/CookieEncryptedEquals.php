@@ -61,9 +61,8 @@ class CookieEncryptedEquals extends CookieEquals
     public function matches($other)
     {
         $cookie = $this->response->getCookie($this->cookieName);
-        $this->value = $this->_decrypt($cookie['value'], $this->mode);
 
-        return $this->value === $other;
+        return $this->_decrypt($cookie['value'], $this->mode) === $other;
     }
 
     /**
@@ -73,7 +72,7 @@ class CookieEncryptedEquals extends CookieEquals
      */
     public function toString()
     {
-        return sprintf('was encrypted in cookie `%s`, found "%s" instead', $this->cookieName, $this->value);
+        return sprintf('was encrypted in cookie \'%s\'', $this->cookieName);
     }
 
     /**

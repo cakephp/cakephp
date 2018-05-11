@@ -39,7 +39,7 @@ class ContentsEmpty extends ContentsBase
      */
     public function toString()
     {
-        return sprintf('had empty `%s` output', $this->output);
+        return sprintf('%s is empty', $this->output);
     }
 
     /**

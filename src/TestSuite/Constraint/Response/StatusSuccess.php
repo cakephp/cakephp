@@ -30,6 +30,6 @@ class StatusSuccess extends StatusCodeBase
      */
     public function toString()
     {
-        return 'is not between 200 and 308';
+        return sprintf('%d is between 200 and 308', $this->response->getStatusCode());
     }
 }

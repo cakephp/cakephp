@@ -24,6 +24,7 @@ use Cake\Routing\Route\InflectedRoute;
 use Cake\TestSuite\IntegrationTestCase;
 use Cake\Test\Fixture\AssertIntegrationTestCase;
 use Cake\Utility\Security;
+use PHPUnit\Framework\AssertionFailedError;
 
 /**
  * Self test of the IntegrationTestCase
@@ -1151,6 +1152,65 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         $this->enableSecurityToken();
         $this->{$method}('/posts/securePost/?ids[]=1&ids[]=2');
         $this->assertResponseOk();
+    }
+
+    /**
+     * tests failure messages for assertions
+     *
+     * @param string $assertion Assertion method
+     * @param string $message Expected failure message
+     * @param string $url URL to test
+     * @param mixed ...$rest
+     * @dataProvider assertionFailureMessagesProvider
+     */
+    public function testAssertionFailureMessages($assertion, $message, $url, ...$rest)
+    {
+        $this->expectException(AssertionFailedError::class);
+        $this->expectExceptionMessage($message);
+
+        Security::setSalt('abcdabcdabcdabcdabcdabcdabcdabcdabcd');
+
+        $this->get($url);
+
+        call_user_func_array([$this, $assertion], $rest);
+    }
+
+    /**
+     * data provider for assertion failure messages
+     *
+     * @return array
+     */
+    public function assertionFailureMessagesProvider()
+    {
+        $templateDir = TEST_APP . 'TestApp' . DS . 'Template' . DS;
+
+        return [
+            'assertContentType' => ['assertContentType', 'Failed asserting that \'test\' was set as the Content-Type.', '/posts/index', 'test'],
+            'assertCookie' => ['assertCookie', 'Failed asserting that \'test\' was in cookie \'remember_me\'.', '/posts/index', 'test', 'remember_me'],
+            'assertCookieEncrypted' => ['assertCookieEncrypted', 'Failed asserting that \'test\' was encrypted in cookie \'NameOfCookie\'.', '/cookie_component_test/set_cookie', 'test', 'NameOfCookie'],
+            'assertCookieNotSet' => ['assertCookieNotSet', 'Failed asserting that \'remember_me\' cookie was not set.', '/posts/index', 'remember_me'],
+            'assertFileResponse' => ['assertFileResponse', 'Failed asserting that \'test\' file was sent.', '/posts/file', 'test'],
+            'assertHeader' => ['assertHeader', 'Failed asserting that \'test\' equals content in header \'X-Cake\'.', '/posts/header', 'X-Cake', 'test'],
+            'assertHeaderContains' => ['assertHeaderContains', 'Failed asserting that \'test\' is in header \'X-Cake\'', '/posts/header', 'X-Cake', 'test'],
+            'assertLayout' => ['assertLayout', 'Failed asserting that \'custom_layout\' equals layout file ' . $templateDir . 'Layout' . DS . 'default.ctp.', '/posts/index', 'custom_layout'],
+            'assertRedirect' => ['assertRedirect', 'Failed asserting that \'http://localhost/\' equals content in header \'Location\'.', '/posts/flashNoRender', '/'],
+            'assertRedirectContains' => ['assertRedirectContains', 'Failed asserting that \'/posts/somewhere-else\' is in header \'Location\'.', '/posts/flashNoRender', '/posts/somewhere-else'],
+            'assertResponseCode' => ['assertResponseCode', 'Failed asserting that 302 matches response status code 200.', '/posts/index', 302],
+            'assertResponseContains' => ['assertResponseContains', 'Failed asserting that \'test\' is in response body.', '/posts/index', 'test'],
+            'assertResponseEmpty' => ['assertResponseEmpty', 'Failed asserting that response body is empty.', '/posts/index'],
+            'assertResponseEquals' => ['assertResponseEquals', 'Failed asserting that \'test\' matches response body.', '/posts/index', 'test'],
+            'assertResponseError' => ['assertResponseError', 'Failed asserting that 200 is between 400 and 429.', '/posts/index'],
+            'assertResponseFailure' => ['assertResponseFailure', 'Failed asserting that 200 is between 500 and 505.', '/posts/index'],
+            'assertResponseNotContains' => ['assertResponseNotContains', 'Failed asserting that \'index\' is not in response body.', '/posts/index', 'index'],
+            'assertResponseNotEmpty' => ['assertResponseNotEmpty', 'Failed asserting that response body is not empty.', '/posts/empty'],
+            'assertResponseNotEquals' => ['assertResponseNotEquals', 'Failed asserting that \'posts index\' does not match response body.', '/posts/index/error', 'posts index'],
+            'assertResponseNotRegExp' => ['assertResponseNotRegExp', 'Failed asserting that /index/ PCRE pattern not found in response body.', '/posts/index/error', '/index/'],
+            'assertResponseOk' => ['assertResponseOk', 'Failed asserting that 404 is between 200 and 204.', '/posts/missing', '/index/'],
+            'assertResponseRegExp' => ['assertResponseRegExp', 'Failed asserting that /test/ PCRE pattern found in response body.', '/posts/index/error', '/test/'],
+            'assertResponseSuccess' => ['assertResponseSuccess', 'Failed asserting that 404 is between 200 and 308.', '/posts/missing'],
+            'assertSession' => ['assertSession', 'Failed asserting that \'test\' is in session path \'Missing.path\'.', '/posts/index', 'test', 'Missing.path'],
+            'assertTemplate' => ['assertTemplate', 'Failed asserting that \'custom_template\' equals template file ' . $templateDir . 'Posts' . DS . 'index.ctp.', '/posts/index', 'custom_template'],
+        ];
     }
 
     /**

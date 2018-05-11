@@ -30,6 +30,6 @@ class StatusError extends StatusCodeBase
      */
     public function toString()
     {
-        return 'is not between 200 and 204';
+        return sprintf('%d is between 400 and 429', $this->response->getStatusCode());
     }
 }

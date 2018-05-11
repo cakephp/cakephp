@@ -39,6 +39,6 @@ class ContentsContain extends ContentsBase
      */
     public function toString()
     {
-        return sprintf('was within `%s` output', $this->output);
+        return sprintf('is in %s', $this->output);
     }
 }

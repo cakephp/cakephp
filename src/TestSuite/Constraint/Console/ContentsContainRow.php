@@ -45,6 +45,11 @@ class ContentsContainRow extends ContentsRegExp
      */
     public function toString()
     {
-        return sprintf('row was in `%s` output', $this->output);
+        return sprintf('row was in %s', $this->output);
+    }
+
+    public function failureDescription($other)
+    {
+        return $this->exporter->shortenedExport($other) . ' ' . $this->toString();
     }
 }

@@ -41,4 +41,13 @@ class BodyRegExp extends ResponseBase
     {
         return 'PCRE pattern found in response body';
     }
+
+    /**
+     * @param mixed $other Expected
+     * @return string
+     */
+    public function failureDescription($other)
+    {
+        return $other . ' ' . $this->toString();
+    }
 }

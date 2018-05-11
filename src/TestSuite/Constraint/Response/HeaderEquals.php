@@ -28,11 +28,6 @@ class HeaderEquals extends ResponseBase
     protected $headerName;
 
     /**
-     * @var string
-     */
-    protected $value;
-
-    /**
      * Constructor.
      *
      * @param Response $response Response
@@ -53,8 +48,7 @@ class HeaderEquals extends ResponseBase
      */
     public function matches($other)
     {
-        $this->value = $this->response->getHeaderLine($this->headerName);
-        return $this->value === $other;
+        return $this->response->getHeaderLine($this->headerName) === $other;
     }
 
     /**
@@ -64,6 +58,6 @@ class HeaderEquals extends ResponseBase
      */
     public function toString()
     {
-        return sprintf('equals content in header `%s`, found "%s"', $this->headerName, $this->value);
+        return sprintf('equals content in header \'%s\'', $this->headerName);
     }
 }

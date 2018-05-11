@@ -18,7 +18,7 @@ namespace Cake\TestSuite\Constraint\Response;
  *
  * @internal
  */
-class BodyNotRegExp extends ResponseBase
+class BodyNotRegExp extends BodyRegExp
 {
 
     /**

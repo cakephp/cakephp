@@ -58,6 +58,6 @@ class TemplateFileEquals extends Constraint
      */
     public function toString()
     {
-        return sprintf('equals template file `%s`', $this->filename);
+        return sprintf('equals template file %s', $this->filename);
     }
 }

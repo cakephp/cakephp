@@ -28,11 +28,6 @@ class CookieEquals extends ResponseBase
     protected $cookieName;
 
     /**
-     * @var string
-     */
-    protected $value;
-
-    /**
      * Constructor.
      *
      * @param Response $response Response
@@ -54,9 +49,8 @@ class CookieEquals extends ResponseBase
     public function matches($other)
     {
         $cookie = $this->response->getCookie($this->cookieName);
-        $this->value = $cookie['value'];
 
-        return $this->value === $other;
+        return $cookie['value'] === $other;
     }
 
     /**
@@ -66,6 +60,6 @@ class CookieEquals extends ResponseBase
      */
     public function toString()
     {
-        return sprintf('was in cookie `%s`, found "%s" instead', $this->cookieName, $this->value);
+        return sprintf('was in cookie \'%s\'', $this->cookieName);
     }
 }

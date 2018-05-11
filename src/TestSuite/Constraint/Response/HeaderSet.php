@@ -58,6 +58,17 @@ class HeaderSet extends ResponseBase
      */
     public function toString()
     {
-        return sprintf('has header `%s`', $this->headerName);
+        return sprintf('response has header \'%s\'', $this->headerName);
+    }
+
+    /**
+     * Overwrites the descriptions so we can remove the automatic "expected" message
+     *
+     * @param mixed $other Value
+     * @return string
+     */
+    protected function failureDescription($other)
+    {
+        return $this->toString();
     }
 }

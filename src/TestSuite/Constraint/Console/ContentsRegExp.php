@@ -39,6 +39,15 @@ class ContentsRegExp extends ContentsBase
      */
     public function toString()
     {
-        return sprintf('was within `%s` output', $this->output);
+        return sprintf('PCRE pattern found in %s', $this->output);
+    }
+
+    /**
+     * @param mixed $other Expected
+     * @return string
+     */
+    public function failureDescription($other)
+    {
+        return $other . ' ' . $this->toString();
     }
 }

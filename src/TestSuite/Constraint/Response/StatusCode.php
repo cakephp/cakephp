@@ -28,6 +28,17 @@ class StatusCode extends StatusCodeBase
      */
     public function toString()
     {
-        return sprintf('matches status code `%d`', $this->response->getStatusCode());
+        return sprintf('matches response status code %d', $this->response->getStatusCode());
+    }
+
+    /**
+     * Failure description
+     *
+     * @param mixed $other
+     * @return string
+     */
+    public function failureDescription($other)
+    {
+        return $other . ' ' . $this->toString();
     }
 }

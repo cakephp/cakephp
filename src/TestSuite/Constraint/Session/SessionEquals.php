@@ -65,9 +65,7 @@ class SessionEquals extends Constraint
      */
     public function matches($other)
     {
-        $this->value = $this->session->read($this->path);
-
-        return $this->value === $other;
+        return $this->session->read($this->path) === $other;
     }
 
     /**
@@ -77,6 +75,6 @@ class SessionEquals extends Constraint
      */
     public function toString()
     {
-        return sprintf('was in path `%s`, found "%s" instead', $this->path, $this->value);
+        return sprintf('is in session path \'%s\'', $this->path);
     }
 }

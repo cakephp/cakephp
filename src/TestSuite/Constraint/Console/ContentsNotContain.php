@@ -39,6 +39,6 @@ class ContentsNotContain extends ContentsBase
      */
     public function toString()
     {
-        return sprintf('was not within `%s` output', $this->output);
+        return sprintf('is not in %s', $this->output);
     }
 }
