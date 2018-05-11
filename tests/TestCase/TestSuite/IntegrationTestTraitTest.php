@@ -29,7 +29,7 @@ use PHPUnit\Framework\AssertionFailedError;
 /**
  * Self test of the IntegrationTestCase
  */
-class IntegrationTestCaseTest extends IntegrationTestCase
+class IntegrationTestTraitTest extends IntegrationTestCase
 {
 
     /**

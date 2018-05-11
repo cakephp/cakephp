@@ -18,7 +18,7 @@ use Cake\Core\Configure;
 use Cake\TestSuite\ConsoleIntegrationTestCase;
 use PHPUnit\Framework\AssertionFailedError;
 
-class ConsoleIntegrationTestCaseTest extends ConsoleIntegrationTestCase
+class ConsoleIntegrationTestTraitTest extends ConsoleIntegrationTestCase
 {
 
     /**
