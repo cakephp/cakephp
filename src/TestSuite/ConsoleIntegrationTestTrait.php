@@ -75,8 +75,6 @@ trait ConsoleIntegrationTestTrait
      */
     public function exec($command, array $input = [])
     {
-        $this->clean();
-
         $runner = $this->makeRunner();
 
         $this->out = new ConsoleOutput();
@@ -106,8 +104,10 @@ trait ConsoleIntegrationTestTrait
      *
      * @return void
      */
-    private function clean()
+    public function tearDown()
     {
+        parent::tearDown();
+
         $this->exitCode = null;
         $this->out = null;
         $this->err = null;
