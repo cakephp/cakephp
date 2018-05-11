@@ -13,6 +13,12 @@
  */
 namespace Cake\TestSuite\Constraint\Console;
 
+if (class_exists('PHPUnit_Runner_Version', false)
+    && !class_exists('PHPUnit\Framework\Constraint\Constraint', false)
+) {
+    class_alias('PHPUnit_Framework_Constraint', 'PHPUnit\Framework\Constraint\Constraint');
+}
+
 use PHPUnit\Framework\Constraint\Constraint;
 
 /**
