@@ -1202,7 +1202,7 @@ class IntegrationTestTraitTest extends IntegrationTestCase
             'assertResponseError' => ['assertResponseError', 'Failed asserting that 200 is between 400 and 429.', '/posts/index'],
             'assertResponseFailure' => ['assertResponseFailure', 'Failed asserting that 200 is between 500 and 505.', '/posts/index'],
             'assertResponseNotContains' => ['assertResponseNotContains', 'Failed asserting that \'index\' is not in response body.', '/posts/index', 'index'],
-            'assertResponseNotEmpty' => ['assertResponseNotEmpty', 'Failed asserting that response body is not empty.', '/posts/empty'],
+            'assertResponseNotEmpty' => ['assertResponseNotEmpty', 'Failed asserting that response body is not empty.', '/posts/empty_response'],
             'assertResponseNotEquals' => ['assertResponseNotEquals', 'Failed asserting that \'posts index\' does not match response body.', '/posts/index/error', 'posts index'],
             'assertResponseNotRegExp' => ['assertResponseNotRegExp', 'Failed asserting that /index/ PCRE pattern not found in response body.', '/posts/index/error', '/index/'],
             'assertResponseOk' => ['assertResponseOk', 'Failed asserting that 404 is between 200 and 204.', '/posts/missing', '/index/'],
