@@ -48,6 +48,10 @@ class ContentsContainRow extends ContentsRegExp
         return sprintf('row was in %s', $this->output);
     }
 
+    /**
+     * @param mixed $other Expected content
+     * @return string
+     */
     public function failureDescription($other)
     {
         return $this->exporter->shortenedExport($other) . ' ' . $this->toString();

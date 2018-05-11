@@ -80,7 +80,7 @@ class CookieEncryptedEquals extends CookieEquals
      *
      * @return string
      */
-    public function _getCookieEncryptionKey()
+    protected function _getCookieEncryptionKey()
     {
         return $this->key;
     }

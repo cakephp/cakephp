@@ -34,7 +34,7 @@ class StatusCode extends StatusCodeBase
     /**
      * Failure description
      *
-     * @param mixed $other
+     * @param mixed $other Expected code
      * @return string
      */
     public function failureDescription($other)
