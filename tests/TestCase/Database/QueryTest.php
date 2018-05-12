@@ -4780,6 +4780,25 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Test that calling fetchAssoc return an empty associated array.
+     * @return void
+     * @throws \Exception
+     */
+    public function testFetchAssocWithEmptyResult()
+    {
+        $this->loadFixtures('Profiles');
+        $query = new Query($this->connection);
+
+        $results = $query
+            ->select(['id'])
+            ->from('profiles')
+            ->where(['id' => -1])
+            ->execute()
+            ->fetchAssoc();
+        $this->assertSame([], $results);
+    }
+
+    /**
      * Test that calling fetch with with FETCH_TYPE_OBJ return stdClass object.
      * @return void
      * @throws \Exception
