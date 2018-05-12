@@ -113,7 +113,7 @@ class BufferedStatement extends StatementDecorator
     {
         $result = $this->fetch(static::FETCH_TYPE_ASSOC);
 
-        return $result ? $result : [];
+        return $result ?: [];
     }
 
     /**

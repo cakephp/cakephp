@@ -227,7 +227,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
     {
         $result = $this->fetch(static::FETCH_TYPE_ASSOC);
 
-        return $result ? $result : [];
+        return $result ?: [];
     }
 
     /**
