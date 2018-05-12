@@ -139,6 +139,3 @@ loadPHPUnitAliases();
 // does not allow the sessionid to be set after stdout
 // has been written to.
 session_id('cli');
-
-// Fix multiple http/server requests in a single test method.
-$_SERVER['PHP_SELF'] = '/';
