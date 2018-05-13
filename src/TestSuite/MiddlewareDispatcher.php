@@ -108,8 +108,12 @@ class MiddlewareDispatcher
         if (isset($spec['input'])) {
             $spec['post'] = [];
         }
+        $environment = array_merge(
+            array_merge($_SERVER, ['REQUEST_URI' => $spec['url'], 'PHP_SELF' => '/']),
+            $spec['environment']
+        );
         $request = ServerRequestFactory::fromGlobals(
-            array_merge($_SERVER, $spec['environment'], ['REQUEST_URI' => $spec['url']]),
+            $environment,
             $spec['query'],
             $spec['post'],
             $spec['cookies']
