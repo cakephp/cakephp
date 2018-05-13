@@ -189,6 +189,7 @@ class InflectorTest extends TestCase
             ['blue_octopus', 'blue_octopuses'],
             ['chef', 'chefs'],
             ['', ''],
+            ['cache', 'caches'],
         ];
     }
 

@@ -170,7 +170,35 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     }
 
     /**
-     * {@inheritDoc}
+     * Adds new fields to be returned by a `SELECT` statement when this query is
+     * executed. Fields can be passed as an array of strings, array of expression
+     * objects, a single expression or a single string.
+     *
+     * If an array is passed, keys will be used to alias fields using the value as the
+     * real field to be aliased. It is possible to alias strings, Expression objects or
+     * even other Query objects.
+     *
+     * If a callable function is passed, the returning array of the function will
+     * be used as the list of fields.
+     *
+     * By default this function will append any passed argument to the list of fields
+     * to be selected, unless the second argument is set to true.
+     *
+     * ### Examples:
+     *
+     * ```
+     * $query->select(['id', 'title']); // Produces SELECT id, title
+     * $query->select(['author' => 'author_id']); // Appends author: SELECT id, title, author_id as author
+     * $query->select('id', true); // Resets the list: SELECT id
+     * $query->select(['total' => $countQuery]); // SELECT id, (SELECT ...) AS total
+     * $query->select(function ($query) {
+     *     return ['article_id', 'total' => $query->count('*')];
+     * })
+     * ```
+     *
+     * By default no fields are selected, if you have an instance of `Cake\ORM\Query` and try to append
+     * fields you should also call `Cake\ORM\Query::enableAutoFields()` to select the default fields
+     * from the table.
      *
      * If you pass an instance of a `Cake\ORM\Table` or `Cake\ORM\Association` class,
      * all the fields in the schema of the table or the association will be added to
