@@ -387,20 +387,14 @@ class View implements EventDispatcherInterface
      *
      * - $this->request - To the $request parameter
      * - $this->plugin - To the value returned by $request->getParam('plugin')
-     * - $this->passedArgs - Same as $request->params['pass]
      *
      * @param \Cake\Http\ServerRequest $request Request instance.
      * @return $this
-     * @since 3.7.0
      */
     public function setRequest(ServerRequest $request)
     {
         $this->request = $request;
         $this->plugin = $request->getParam('plugin');
-
-        if ($request->getParam('pass')) {
-            $this->passedArgs = $request->getParam('pass');
-        }
 
         return $this;
     }
@@ -409,7 +403,6 @@ class View implements EventDispatcherInterface
      * Gets the response instance.
      *
      * @return \Cake\Http\Response
-     * @since 3.7.0
      */
     public function getResponse()
     {
@@ -421,7 +414,6 @@ class View implements EventDispatcherInterface
      *
      * @param \Cake\Http\Response $response Response instance.
      * @return $this
-     * @since 3.7.0
      */
     public function setResponse(Response $response)
     {

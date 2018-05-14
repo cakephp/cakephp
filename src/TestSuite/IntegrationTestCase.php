@@ -13,13 +13,6 @@
  */
 namespace Cake\TestSuite;
 
-if (class_exists('PHPUnit_Runner_Version', false) && !interface_exists('PHPUnit\Exception', false)) {
-    if (version_compare(\PHPUnit_Runner_Version::id(), '5.7', '<')) {
-        trigger_error(sprintf('Your PHPUnit Version must be at least 5.7.0 to use CakePHP Testsuite, found %s', \PHPUnit_Runner_Version::id()), E_USER_ERROR);
-    }
-    class_alias('PHPUnit_Exception', 'PHPUnit\Exception');
-}
-
 use Cake\Core\Configure;
 use Cake\Database\Exception as DatabaseException;
 use Cake\Http\ServerRequest;
@@ -50,14 +43,6 @@ abstract class IntegrationTestCase extends TestCase
 {
     use CookieCryptTrait;
     use SecureFieldTokenTrait;
-
-    /**
-     * Track whether or not tests are run against
-     * the PSR7 HTTP stack.
-     *
-     * @var bool
-     */
-    protected $_useHttpServer = false;
 
     /**
      * The customized application class name.
@@ -182,7 +167,6 @@ abstract class IntegrationTestCase extends TestCase
     {
         parent::setUp();
         $namespace = Configure::read('App.namespace');
-        $this->_useHttpServer = class_exists($namespace . '\Application');
     }
 
     /**
@@ -207,25 +191,24 @@ abstract class IntegrationTestCase extends TestCase
         $this->_securityToken = false;
         $this->_csrfToken = false;
         $this->_retainFlashMessages = false;
-        $this->_useHttpServer = false;
     }
 
     /**
      * Toggle whether or not you want to use the HTTP Server stack.
      *
      * @param bool $enable Enable/disable the usage of the HTTP Stack.
+     * @deprecated 4.0.0 Will be removed in 5.0.0
      * @return void
      */
     public function useHttpServer($enable)
     {
-        $this->_useHttpServer = (bool)$enable;
+        if ($enable === false) {
+            deprecationWarning('Calling `useHttpServer(false)` does nothing, and will be removed.');
+        }
     }
 
     /**
      * Configure the application class to use in integration tests.
-     *
-     * Combined with `useHttpServer()` to customize the class name and constructor arguments
-     * of your application class.
      *
      * @param string $class The application class name.
      * @param array|null $constructorArgs The constructor arguments for your application class.
@@ -514,15 +497,11 @@ abstract class IntegrationTestCase extends TestCase
     /**
      * Get the correct dispatcher instance.
      *
-     * @return \Cake\TestSuite\MiddlewareDispatcher|\Cake\TestSuite\LegacyRequestDispatcher A dispatcher instance
+     * @return \Cake\TestSuite\MiddlewareDispatcher A dispatcher instance
      */
     protected function _makeDispatcher()
     {
-        if ($this->_useHttpServer) {
-            return new MiddlewareDispatcher($this, $this->_appClass, $this->_appArgs);
-        }
-
-        return new LegacyRequestDispatcher($this);
+        return new MiddlewareDispatcher($this, $this->_appClass, $this->_appArgs);
     }
 
     /**

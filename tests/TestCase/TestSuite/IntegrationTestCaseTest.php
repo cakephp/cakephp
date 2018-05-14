@@ -191,29 +191,6 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     }
 
     /**
-     * Test sending get requests.
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testGetLegacy()
-    {
-        $this->useLegacyDispatcher();
-        $this->deprecated(function () {
-            $this->assertNull($this->_response);
-
-            $this->get('/request_action/test_request_action');
-            $this->assertNotEmpty($this->_response);
-            $this->assertInstanceOf('Cake\Http\Response', $this->_response);
-            $this->assertEquals('This is a test', $this->_response->getBody());
-
-            $this->_response = null;
-            $this->get('/get/request_action/test_request_action');
-            $this->assertEquals('This is a test', $this->_response->getBody());
-        });
-    }
-
-    /**
      * Test sending get request and using default `test_app/config/routes.php`.
      *
      * @return void
@@ -291,21 +268,6 @@ class IntegrationTestCaseTest extends IntegrationTestCase
      *
      * @return void
      */
-    public function testGetSpecificRouteLegacy()
-    {
-        $this->useLegacyDispatcher();
-        $this->deprecated(function () {
-            $this->get('/get/request_action/test_request_action');
-            $this->assertResponseOk();
-            $this->assertEquals('This is a test', $this->_response->getBody());
-        });
-    }
-
-    /**
-     * Test sending get requests sets the request method
-     *
-     * @return void
-     */
     public function testGetSpecificRouteHttpServer()
     {
         $this->get('/get/request_action/test_request_action');
@@ -363,23 +325,20 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     /**
      * Test that the PSR7 requests get query string data
      *
-     * @group deprecated
      * @return void
      */
     public function testGetQueryStringSetsHere()
     {
-        $this->deprecated(function () {
-            $this->configRequest(['headers' => ['Content-Type' => 'text/plain']]);
-            $this->get('/request_action/params_pass?q=query');
-            $this->assertResponseOk();
-            $this->assertResponseContains('"q":"query"');
-            $this->assertResponseContains('"contentType":"text\/plain"');
-            $this->assertHeader('X-Middleware', 'true');
+        $this->configRequest(['headers' => ['Content-Type' => 'text/plain']]);
+        $this->get('/request_action/params_pass?q=query');
+        $this->assertResponseOk();
+        $this->assertResponseContains('"q":"query"');
+        $this->assertResponseContains('"contentType":"text\/plain"');
+        $this->assertHeader('X-Middleware', 'true');
 
-            $request = $this->_controller->getRequest();
-            $this->assertContains('/request_action/params_pass?q=query', $request->here());
-            $this->assertContains('/request_action/params_pass?q=query', $request->getRequestTarget());
-        });
+        $request = $this->_controller->getRequest();
+        $this->assertContains('/request_action/params_pass?q=query', $request->getRequestTarget());
+        $this->assertContains('/request_action/params_pass', $request->getAttribute('here'));
     }
 
     /**
@@ -394,22 +353,6 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         $this->assertResponseOk();
         $this->assertResponseContains('"split_test":"abc"');
         $this->assertHeader('X-Middleware', 'true');
-    }
-
-    /**
-     * Test that the PSR7 requests receive post data
-     *
-     * @return void
-     */
-    public function testPostDataLegacyDispatcher()
-    {
-        $this->useLegacyDispatcher();
-
-        $this->deprecated(function () {
-            $this->post('/request_action/post_pass', ['title' => 'value']);
-            $data = json_decode($this->_response->getBody());
-            $this->assertEquals('value', $data->title);
-        });
     }
 
     /**

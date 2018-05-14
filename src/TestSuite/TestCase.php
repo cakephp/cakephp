@@ -358,21 +358,6 @@ abstract class TestCase extends BaseTestCase
     /**
      * Asserts HTML tags.
      *
-     * @param string $string An HTML/XHTML/XML string
-     * @param array $expected An array, see above
-     * @param bool $fullDebug Whether or not more verbose output should be used.
-     * @return void
-     * @deprecated 3.0. Use assertHtml() instead.
-     */
-    public function assertTags($string, $expected, $fullDebug = false)
-    {
-        deprecationWarning('TestCase::assertTags() is deprecated. Use TestCase::assertHtml() instead.');
-        $this->assertHtml($expected, $string, $fullDebug);
-    }
-
-    /**
-     * Asserts HTML tags.
-     *
      * Takes an array $expected and generates a regex from it to match the provided $string.
      * Samples for $expected:
      *

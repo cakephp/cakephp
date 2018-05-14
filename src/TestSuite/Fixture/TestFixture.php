@@ -16,11 +16,10 @@ namespace Cake\TestSuite\Fixture;
 use Cake\Core\Exception\Exception as CakeException;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\Schema\TableSchemaAwareInterface;
-use Cake\Database\Schema\TableSchemaInterface as DatabaseTableSchemaInterface;
+use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\FixtureInterface;
-use Cake\Datasource\TableSchemaInterface;
 use Cake\Log\Log;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Inflector;
@@ -30,7 +29,7 @@ use Exception;
  * Cake TestFixture is responsible for building and destroying tables to be used
  * during testing.
  */
-class TestFixture implements FixtureInterface, TableSchemaInterface, TableSchemaAwareInterface
+class TestFixture implements FixtureInterface, TableSchemaAwareInterface
 {
 
     use LocatorAwareTrait;
@@ -264,26 +263,6 @@ class TestFixture implements FixtureInterface, TableSchemaInterface, TableSchema
     }
 
     /**
-     * Gets/Sets the TableSchema instance used by this fixture.
-     *
-     * @param \Cake\Database\Schema\TableSchema|null $schema The table to set.
-     * @return \Cake\Database\Schema\TableSchema|null
-     * @deprecated 3.5.0 Use getTableSchema/setTableSchema instead.
-     */
-    public function schema(TableSchema $schema = null)
-    {
-        deprecationWarning(
-            'TestFixture::schema() is deprecated. ' .
-            'Use TestFixture::setTableSchema()/getTableSchema() instead.'
-        );
-        if ($schema) {
-            $this->setTableSchema($schema);
-        }
-
-        return $this->getTableSchema();
-    }
-
-    /**
      * {@inheritDoc}
      */
     public function create(ConnectionInterface $db)
@@ -466,7 +445,7 @@ class TestFixture implements FixtureInterface, TableSchemaInterface, TableSchema
     /**
      * {@inheritDoc}
      */
-    public function setTableSchema(DatabaseTableSchemaInterface $schema)
+    public function setTableSchema(TableSchemaInterface $schema)
     {
         $this->_schema = $schema;
 
