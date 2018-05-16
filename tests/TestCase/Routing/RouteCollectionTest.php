@@ -653,28 +653,6 @@ class RouteCollectionTest extends TestCase
     }
 
     /**
-     * Test combined get/set method.
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testExtensions()
-    {
-        $this->deprecated(function () {
-            $this->assertEquals([], $this->collection->extensions());
-
-            $this->collection->extensions('json');
-            $this->assertEquals(['json'], $this->collection->extensions());
-
-            $this->collection->extensions(['rss', 'xml']);
-            $this->assertEquals(['json', 'rss', 'xml'], $this->collection->extensions());
-
-            $this->collection->extensions(['csv'], false);
-            $this->assertEquals(['csv'], $this->collection->extensions());
-        });
-    }
-
-    /**
      * Test basic setExtension and its getter.
      *
      * @return void

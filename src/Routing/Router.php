@@ -212,163 +212,6 @@ class Router
     }
 
     /**
-     * Connects a new redirection Route in the router.
-     *
-     * Compatibility proxy to \Cake\Routing\RouteBuilder::redirect() in the `/` scope.
-     *
-     * @param string $route A string describing the template of the route
-     * @param array $url A URL to redirect to. Can be a string or a Cake array-based URL
-     * @param array $options An array matching the named elements in the route to regular expressions which that
-     *   element should match. Also contains additional parameters such as which routed parameters should be
-     *   shifted into the passed arguments. As well as supplying patterns for routing parameters.
-     * @return void
-     * @see \Cake\Routing\RouteBuilder::redirect()
-     * @deprecated 3.3.0 Use Router::scope() and RouteBuilder::redirect() instead.
-     */
-    public static function redirect($route, $url, $options = [])
-    {
-        deprecationWarning(
-            'Router::redirect() is deprecated. ' .
-            'Use Router::scope() and RouteBuilder::redirect() instead.'
-        );
-        if (is_string($url)) {
-            $url = ['redirect' => $url];
-        }
-        if (!isset($options['routeClass'])) {
-            $options['routeClass'] = 'Cake\Routing\Route\RedirectRoute';
-        }
-        static::connect($route, $url, $options);
-    }
-
-    /**
-     * Generate REST resource routes for the given controller(s).
-     *
-     * Compatibility proxy to \Cake\Routing\RouteBuilder::resources(). Additional, compatibility
-     * around prefixes and plugins and prefixes is handled by this method.
-     *
-     * A quick way to generate a default routes to a set of REST resources (controller(s)).
-     *
-     * ### Usage
-     *
-     * Connect resource routes for an app controller:
-     *
-     * ```
-     * Router::mapResources('Posts');
-     * ```
-     *
-     * Connect resource routes for the Comment controller in the
-     * Comments plugin:
-     *
-     * ```
-     * Router::mapResources('Comments.Comment');
-     * ```
-     *
-     * Plugins will create lower_case underscored resource routes. e.g
-     * `/comments/comment`
-     *
-     * Connect resource routes for the Posts controller in the
-     * Admin prefix:
-     *
-     * ```
-     * Router::mapResources('Posts', ['prefix' => 'admin']);
-     * ```
-     *
-     * Prefixes will create lower_case underscored resource routes. e.g
-     * `/admin/posts`
-     *
-     * ### Options:
-     *
-     * - 'id' - The regular expression fragment to use when matching IDs. By default, matches
-     *    integer values and UUIDs.
-     * - 'prefix' - Routing prefix to use for the generated routes. Defaults to ''.
-     *   Using this option will create prefixed routes, similar to using Routing.prefixes.
-     * - 'only' - Only connect the specific list of actions.
-     * - 'actions' - Override the method names used for connecting actions.
-     * - 'map' - Additional resource routes that should be connected. If you define 'only' and 'map',
-     *   make sure that your mapped methods are also in the 'only' list.
-     * - 'path' - Change the path so it doesn't match the resource name. E.g ArticlesController
-     *   is available at `/posts`
-     *
-     * @param string|array $controller A controller name or array of controller names (i.e. "Posts" or "ListItems")
-     * @param array $options Options to use when generating REST routes
-     * @see \Cake\Routing\RouteBuilder::resources()
-     * @deprecated 3.3.0 Use Router::scope() and RouteBuilder::resources() instead.
-     * @return void
-     */
-    public static function mapResources($controller, $options = [])
-    {
-        deprecationWarning(
-            'Router::mapResources() is deprecated. ' .
-            'Use Router::scope() and RouteBuilder::resources() instead.'
-        );
-        foreach ((array)$controller as $name) {
-            list($plugin, $name) = pluginSplit($name);
-
-            $prefix = $pluginUrl = false;
-            if (!empty($options['prefix'])) {
-                $prefix = $options['prefix'];
-                unset($options['prefix']);
-            }
-            if ($plugin) {
-                $pluginUrl = Inflector::underscore($plugin);
-            }
-
-            $callback = function ($routes) use ($name, $options) {
-                $routes->resources($name, $options);
-            };
-
-            if ($plugin && $prefix) {
-                $path = '/' . implode('/', [$prefix, $pluginUrl]);
-                $params = ['prefix' => $prefix, 'plugin' => $plugin];
-                static::scope($path, $params, $callback);
-
-                return;
-            }
-
-            if ($prefix) {
-                static::prefix($prefix, $callback);
-
-                return;
-            }
-
-            if ($plugin) {
-                static::plugin($plugin, $callback);
-
-                return;
-            }
-
-            static::scope('/', $callback);
-
-            return;
-        }
-    }
-
-    /**
-     * Parses given URL string. Returns 'routing' parameters for that URL.
-     *
-     * @param string $url URL to be parsed.
-     * @param string $method The HTTP method being used.
-     * @return array Parsed elements from URL.
-     * @throws \Cake\Routing\Exception\MissingRouteException When a route cannot be handled
-     * @deprecated 3.4.0 Use Router::parseRequest() instead.
-     */
-    public static function parse($url, $method = '')
-    {
-        deprecationWarning(
-            'Router::parse() is deprecated. ' .
-            'Use Router::parseRequest() instead. This will require adopting the Http\Server library.'
-        );
-        if (!static::$initialized) {
-            static::_loadRoutes();
-        }
-        if (strpos($url, '/') !== 0) {
-            $url = '/' . $url;
-        }
-
-        return static::$_collection->parse($url, $method);
-    }
-
-    /**
      * Get the routing parameters for the request is possible.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The request to parse request data from.
@@ -395,35 +238,12 @@ class Router
      * Will accept either a Cake\Http\ServerRequest object or an array of arrays. Support for
      * accepting arrays may be removed in the future.
      *
-     * @param \Cake\Http\ServerRequest|array $request Parameters and path information or a Cake\Http\ServerRequest object.
+     * @param \Psr\Http\Message\ServerRequestInterface $request request object.
      * @return void
-     * @deprecatd 3.6.0 Support for arrays will be removed in 4.0.0
      */
-    public static function setRequestInfo($request)
+    public static function setRequestInfo(ServerRequestInterface $request)
     {
-        if ($request instanceof ServerRequest) {
-            static::pushRequest($request);
-        } else {
-            deprecationWarning(
-                'Passing an array into Router::setRequestInfo() is deprecated. ' .
-                'Pass an instance of ServerRequest instead.'
-            );
-
-            $requestData = $request;
-            $requestData += [[], []];
-            $requestData[0] += [
-                'controller' => false,
-                'action' => false,
-                'plugin' => null
-            ];
-            $request = new ServerRequest([
-                'params' => $requestData[0],
-                'url' => isset($requestData[1]['here']) ? $requestData[1]['here'] : '/',
-                'base' => isset($requestData[1]['base']) ? $requestData[1]['base'] : '',
-                'webroot' => isset($requestData[1]['webroot']) ? $requestData[1]['webroot'] : '/',
-            ]);
-            static::pushRequest($request);
-        }
+        static::pushRequest($request);
     }
 
     /**
@@ -462,7 +282,6 @@ class Router
      *
      * @return \Cake\Http\ServerRequest The request removed from the stack.
      * @see \Cake\Routing\Router::pushRequest()
-     * @see \Cake\Routing\RequestActionTrait::requestAction()
      */
     public static function popRequest()
     {
@@ -915,66 +734,6 @@ class Router
     }
 
     /**
-     * Provides legacy support for named parameters on incoming URLs.
-     *
-     * Checks the passed parameters for elements containing `$options['separator']`
-     * Those parameters are split and parsed as if they were old style named parameters.
-     *
-     * The parsed parameters will be moved from params['pass'] to params['named'].
-     *
-     * ### Options
-     *
-     * - `separator` The string to use as a separator. Defaults to `:`.
-     *
-     * @param \Cake\Http\ServerRequest $request The request object to modify.
-     * @param array $options The array of options.
-     * @return \Cake\Http\ServerRequest The modified request
-     * @deprecated 3.3.0 Named parameter backwards compatibility will be removed in 4.0.
-     */
-    public static function parseNamedParams(ServerRequest $request, array $options = [])
-    {
-        deprecationWarning(
-            'Router::parseNamedParams() is deprecated. ' .
-            '2.x backwards compatible named parameter support will be removed in 4.0'
-        );
-        $options += ['separator' => ':'];
-        if (!$request->getParam('pass')) {
-            return $request->withParam('named', []);
-        }
-        $named = [];
-        $pass = $request->getParam('pass');
-        foreach ((array)$pass as $key => $value) {
-            if (strpos($value, $options['separator']) === false) {
-                continue;
-            }
-            unset($pass[$key]);
-            list($key, $value) = explode($options['separator'], $value, 2);
-
-            if (preg_match_all('/\[([A-Za-z0-9_-]+)?\]/', $key, $matches, PREG_SET_ORDER)) {
-                $matches = array_reverse($matches);
-                $parts = explode('[', $key);
-                $key = array_shift($parts);
-                $arr = $value;
-                foreach ($matches as $match) {
-                    if (empty($match[1])) {
-                        $arr = [$arr];
-                    } else {
-                        $arr = [
-                            $match[1] => $arr
-                        ];
-                    }
-                }
-                $value = $arr;
-            }
-            $named = array_merge_recursive($named, [$key => $value]);
-        }
-
-        return $request
-            ->withParam('pass', $pass)
-            ->withParam('named', $named);
-    }
-
-    /**
      * Create a RouteBuilder for the provided path.
      *
      * @param string $path The path to set the builder to.
@@ -1141,6 +900,18 @@ class Router
     }
 
     /**
+     * Loads route configuration
+     *
+     * @deprecated 3.5.0 Routes will be loaded via the Application::routes() hook in 4.0.0
+     * @return void
+     */
+    protected static function _loadRoutes()
+    {
+        static::$initialized = true;
+        include CONFIG . 'routes.php';
+    }
+
+    /**
      * Get the RouteCollection inside the Router
      *
      * @return \Cake\Routing\RouteCollection
@@ -1160,17 +931,5 @@ class Router
     {
         static::$_collection = $routeCollection;
         static::$initialized = true;
-    }
-
-    /**
-     * Loads route configuration
-     *
-     * @deprecated 3.5.0 Routes will be loaded via the Application::routes() hook in 4.0.0
-     * @return void
-     */
-    protected static function _loadRoutes()
-    {
-        static::$initialized = true;
-        include CONFIG . 'routes.php';
     }
 }

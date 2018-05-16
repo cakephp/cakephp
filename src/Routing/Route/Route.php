@@ -128,35 +128,11 @@ class Route
     public function __construct($template, $defaults = [], array $options = [])
     {
         $this->template = $template;
-        if (isset($defaults['[method]'])) {
-            deprecationWarning('The `[method]` option is deprecated. Use `_method` instead.');
-            $defaults['_method'] = $defaults['[method]'];
-            unset($defaults['[method]']);
-        }
         $this->defaults = (array)$defaults;
         $this->options = $options + ['_ext' => [], '_middleware' => []];
         $this->setExtensions((array)$this->options['_ext']);
         $this->setMiddleware((array)$this->options['_middleware']);
         unset($this->options['_middleware']);
-    }
-
-    /**
-     * Get/Set the supported extensions for this route.
-     *
-     * @deprecated 3.3.9 Use getExtensions/setExtensions instead.
-     * @param null|string|array $extensions The extensions to set. Use null to get.
-     * @return array|null The extensions or null.
-     */
-    public function extensions($extensions = null)
-    {
-        deprecationWarning(
-            'Route::extensions() is deprecated. ' .
-            'Use Route::setExtensions()/getExtensions() instead.'
-        );
-        if ($extensions === null) {
-            return $this->_extensions;
-        }
-        $this->_extensions = (array)$extensions;
     }
 
     /**
@@ -439,9 +415,8 @@ class Route
      * @param string $url The URL to attempt to parse.
      * @param string $method The HTTP method of the request being parsed.
      * @return array|false An array of request parameters, or false on failure.
-     * @deprecated 3.4.0 Use/implement parseRequest() instead as it provides more flexibility/control.
      */
-    public function parse($url, $method = '')
+    public function parse($url, $method)
     {
         if (empty($this->_compiledRoute)) {
             $this->compile();
@@ -452,19 +427,10 @@ class Route
             return false;
         }
 
-        if (isset($this->defaults['_method'])) {
-            if (empty($method)) {
-                deprecationWarning(
-                    'Extracting the request method from global state when parsing routes is deprecated. ' .
-                    'Instead adopt Route::parseRequest() which extracts the method from the passed request.'
-                );
-                // Deprecated reading the global state is deprecated and will be removed in 4.x
-                $request = Router::getRequest(true) ?: ServerRequestFactory::fromGlobals();
-                $method = $request->getMethod();
-            }
-            if (!in_array($method, (array)$this->defaults['_method'], true)) {
-                return false;
-            }
+        if (isset($this->defaults['_method']) &&
+            !in_array($method, (array)$this->defaults['_method'], true)
+        ) {
+            return false;
         }
 
         array_shift($route);
@@ -763,11 +729,6 @@ class Route
     {
         if (empty($this->defaults['_method'])) {
             return true;
-        }
-        // @deprecated The `[method]` support should be removed in 4.0.0
-        if (isset($url['[method]'])) {
-            deprecationWarning('The `[method]` key is deprecated. Use `_method` instead.');
-            $url['_method'] = $url['[method]'];
         }
         if (empty($url['_method'])) {
             return false;

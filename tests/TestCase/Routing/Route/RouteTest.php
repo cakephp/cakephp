@@ -361,23 +361,6 @@ class RouteTest extends TestCase
     /**
      * Expects extensions to be set
      *
-     * @group deprecated
-     * @return void
-     */
-    public function testExtensions()
-    {
-        $this->deprecated(function () {
-            $route = new RouteProtected('/:controller/:action/*', []);
-            $this->assertEquals([], $route->extensions());
-            $route->extensions(['xml']);
-
-            $this->assertEquals(['xml'], $route->extensions());
-        });
-    }
-
-    /**
-     * Expects extensions to be set
-     *
      * @return void
      */
     public function testSetExtensions()
@@ -1331,35 +1314,6 @@ class RouteTest extends TestCase
     }
 
     /**
-     * Test deprecated globals reading for method matching
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testParseWithMultipleHttpMethodDeprecated()
-    {
-        $this->deprecated(function () {
-            $_SERVER['REQUEST_METHOD'] = 'GET';
-            $route = new Route('/sample', [
-                'controller' => 'posts',
-                'action' => 'index',
-                '_method' => ['PUT', 'POST']
-            ]);
-            $this->assertFalse($route->parse('/sample'));
-
-            $_SERVER['REQUEST_METHOD'] = 'POST';
-            $expected = [
-                'controller' => 'posts',
-                'action' => 'index',
-                'pass' => [],
-                '_method' => ['PUT', 'POST'],
-                '_matchedRoute' => '/sample'
-            ];
-            $this->assertEquals($expected, $route->parse('/sample'));
-        });
-    }
-
-    /**
      * Test that http header conditions can work with URL generation
      *
      * @return void
@@ -1404,37 +1358,6 @@ class RouteTest extends TestCase
             '_method' => ['PUT', 'POST'],
         ];
         $this->assertEquals('/sample', $route->match($url));
-    }
-
-    /**
-     * Check [method] compatibility.
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testMethodCompatibility()
-    {
-        $this->deprecated(function () {
-            $_SERVER['REQUEST_METHOD'] = 'POST';
-            $route = new Route('/sample', [
-                'controller' => 'Articles',
-                'action' => 'index',
-                '[method]' => 'POST',
-            ]);
-            $url = [
-                'controller' => 'Articles',
-                'action' => 'index',
-                '_method' => 'POST',
-            ];
-            $this->assertEquals('/sample', $route->match($url));
-
-            $url = [
-                'controller' => 'Articles',
-                'action' => 'index',
-                '[method]' => 'POST',
-            ];
-            $this->assertEquals('/sample', $route->match($url));
-        });
     }
 
     /**
@@ -1811,8 +1734,8 @@ class RouteTest extends TestCase
         $this->assertSame('[a-z]+', $route->options['id']);
         $this->assertArrayNotHasKey('multibytePattern', $route->options);
 
-        $this->assertFalse($route->parse('/reviews/a-b-c/xyz'));
-        $this->assertNotEmpty($route->parse('/reviews/2016-05-12/xyz'));
+        $this->assertFalse($route->parse('/reviews/a-b-c/xyz', 'GET'));
+        $this->assertNotEmpty($route->parse('/reviews/2016-05-12/xyz', 'GET'));
     }
 
     /**
@@ -1829,7 +1752,7 @@ class RouteTest extends TestCase
         ]);
         $this->assertArrayHasKey('multibytePattern', $route->options);
 
-        $this->assertNotEmpty($route->parse('/reviews/abcs/bla-blan-тест'));
+        $this->assertNotEmpty($route->parse('/reviews/abcs/bla-blan-тест', 'GET'));
     }
 
     /**

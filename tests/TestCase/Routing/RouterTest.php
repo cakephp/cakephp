@@ -144,272 +144,6 @@ class RouterTest extends TestCase
     }
 
     /**
-     * testMapResources method
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testMapResources()
-    {
-        $this->deprecated(function () {
-            Router::mapResources('Posts');
-
-            $expected = [
-                'pass' => [],
-                'plugin' => null,
-                'controller' => 'Posts',
-                'action' => 'index',
-                '_method' => 'GET',
-                '_matchedRoute' => '/posts',
-            ];
-            $result = Router::parse('/posts', 'GET');
-            $this->assertEquals($expected, $result);
-
-            $expected = [
-                'pass' => ['13'],
-                'plugin' => null,
-                'controller' => 'Posts',
-                'action' => 'view',
-                'id' => '13',
-                '_method' => 'GET',
-                '_matchedRoute' => '/posts/:id',
-            ];
-            $result = Router::parse('/posts/13', 'GET');
-            $this->assertEquals($expected, $result);
-
-            $expected = [
-                'pass' => [],
-                'plugin' => null,
-                'controller' => 'Posts',
-                'action' => 'add',
-                '_method' => 'POST',
-                '_matchedRoute' => '/posts',
-            ];
-            $result = Router::parse('/posts', 'POST');
-            $this->assertEquals($expected, $result);
-
-            $expected = [
-                'pass' => ['13'],
-                'plugin' => null,
-                'controller' => 'Posts',
-                'action' => 'edit',
-                'id' => '13',
-                '_method' => ['PUT', 'PATCH'],
-                '_matchedRoute' => '/posts/:id',
-            ];
-            $result = Router::parse('/posts/13', 'PUT');
-            $this->assertEquals($expected, $result);
-
-            $expected = [
-                'pass' => ['475acc39-a328-44d3-95fb-015000000000'],
-                'plugin' => null,
-                'controller' => 'Posts',
-                'action' => 'edit',
-                'id' => '475acc39-a328-44d3-95fb-015000000000',
-                '_method' => ['PUT', 'PATCH'],
-                '_matchedRoute' => '/posts/:id',
-            ];
-            $result = Router::parse('/posts/475acc39-a328-44d3-95fb-015000000000', 'PUT');
-            $this->assertEquals($expected, $result);
-
-            $expected = [
-                'pass' => ['13'],
-                'plugin' => null,
-                'controller' => 'Posts',
-                'action' => 'delete',
-                'id' => '13',
-                '_method' => 'DELETE',
-                '_matchedRoute' => '/posts/:id',
-            ];
-            $result = Router::parse('/posts/13', 'DELETE');
-            $this->assertEquals($expected, $result);
-
-            Router::reload();
-            Router::mapResources('Posts', ['id' => '[a-z0-9_]+']);
-
-            $expected = [
-                'pass' => ['add'],
-                'plugin' => null,
-                'controller' => 'Posts',
-                'action' => 'view',
-                'id' => 'add',
-                '_method' => 'GET',
-                '_matchedRoute' => '/posts/:id',
-            ];
-            $result = Router::parse('/posts/add', 'GET');
-            $this->assertEquals($expected, $result);
-
-            $expected = [
-                'pass' => ['name'],
-                'plugin' => null,
-                'controller' => 'Posts',
-                'action' => 'edit',
-                'id' => 'name',
-                '_method' => ['PUT', 'PATCH'],
-                '_matchedRoute' => '/posts/:id',
-            ];
-            $result = Router::parse('/posts/name', 'PUT');
-            $this->assertEquals($expected, $result);
-        });
-    }
-
-    /**
-     * testMapResources with plugin controllers.
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testPluginMapResources()
-    {
-        $this->deprecated(function () {
-            Router::mapResources('TestPlugin.TestPlugin');
-
-            $result = Router::parse('/test_plugin/test_plugin', 'GET');
-            $expected = [
-                'pass' => [],
-                'plugin' => 'TestPlugin',
-                'controller' => 'TestPlugin',
-                'action' => 'index',
-                '_method' => 'GET',
-                '_matchedRoute' => '/test_plugin/test_plugin',
-            ];
-            $this->assertEquals($expected, $result);
-
-            $result = Router::parse('/test_plugin/test_plugin/13', 'GET');
-            $expected = [
-                'pass' => ['13'],
-                'plugin' => 'TestPlugin',
-                'controller' => 'TestPlugin',
-                'action' => 'view',
-                'id' => '13',
-                '_method' => 'GET',
-                '_matchedRoute' => '/test_plugin/test_plugin/:id',
-            ];
-            $this->assertEquals($expected, $result);
-        });
-    }
-
-    /**
-     * Test mapResources with a prefix.
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testMapResourcesWithPrefix()
-    {
-        $this->deprecated(function () {
-            Router::mapResources('Posts', ['prefix' => 'api']);
-
-            $result = Router::parse('/api/posts', 'GET');
-
-            $expected = [
-                'plugin' => null,
-                'controller' => 'Posts',
-                'action' => 'index',
-                'pass' => [],
-                'prefix' => 'api',
-                '_method' => 'GET',
-                '_matchedRoute' => '/api/posts',
-            ];
-            $this->assertEquals($expected, $result);
-        });
-    }
-
-    /**
-     * Test mapResources with a default extension.
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testMapResourcesWithExtension()
-    {
-        $this->deprecated(function () {
-            Router::extensions(['json', 'xml'], false);
-            Router::mapResources('Posts', ['_ext' => 'json']);
-
-            $expected = [
-                'plugin' => null,
-                'controller' => 'Posts',
-                'action' => 'index',
-                'pass' => [],
-                '_method' => 'GET',
-                '_matchedRoute' => '/posts',
-            ];
-
-            $result = Router::parse('/posts', 'GET');
-            $this->assertEquals($expected, $result);
-
-            $result = Router::parse('/posts.json', 'GET');
-            $expected['_ext'] = 'json';
-            $this->assertEquals($expected, $result);
-
-            $result = Router::parse('/posts.xml', 'GET');
-            $this->assertArrayNotHasKey('_method', $result, 'Not an extension/resource route.');
-        });
-    }
-
-    /**
-     * testMapResources with custom connectOptions
-     *
-     * @group deprecated
-     */
-    public function testMapResourcesConnectOptions()
-    {
-        $this->deprecated(function () {
-            Plugin::load('TestPlugin');
-            Router::mapResources('Posts', [
-                'connectOptions' => [
-                    'routeClass' => 'TestPlugin.TestRoute',
-                    'foo' => '^(bar)$',
-                ],
-            ]);
-            $routes = Router::routes();
-            $route = $routes[0];
-            $this->assertInstanceOf('TestPlugin\Routing\Route\TestRoute', $route);
-            $this->assertEquals('^(bar)$', $route->options['foo']);
-        });
-    }
-
-    /**
-     * Test mapResources with a plugin and prefix.
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testPluginMapResourcesWithPrefix()
-    {
-        $this->deprecated(function () {
-            Router::mapResources('TestPlugin.TestPlugin', ['prefix' => 'api']);
-
-            $result = Router::parse('/api/test_plugin/test_plugin', 'GET');
-            $expected = [
-                'pass' => [],
-                'plugin' => 'TestPlugin',
-                'controller' => 'TestPlugin',
-                'prefix' => 'api',
-                'action' => 'index',
-                '_method' => 'GET',
-                '_matchedRoute' => '/api/test_plugin/test_plugin',
-            ];
-            $this->assertEquals($expected, $result);
-
-            $resources = Router::mapResources('Posts', ['prefix' => 'api']);
-
-            $result = Router::parse('/api/posts', 'GET');
-            $expected = [
-                'pass' => [],
-                'plugin' => null,
-                'controller' => 'Posts',
-                'action' => 'index',
-                '_method' => 'GET',
-                'prefix' => 'api',
-                '_matchedRoute' => '/api/posts',
-            ];
-            $this->assertEquals($expected, $result);
-        });
-    }
-
-    /**
      * testMultipleResourceRoute method
      *
      * @return void
@@ -444,47 +178,46 @@ class RouterTest extends TestCase
     /**
      * testGenerateUrlResourceRoute method
      *
-     * @group deprecated
      * @return void
      */
     public function testGenerateUrlResourceRoute()
     {
-        $this->deprecated(function () {
-            Router::mapResources('Posts');
-
-            $result = Router::url([
-                'controller' => 'Posts',
-                'action' => 'index',
-                '_method' => 'GET'
-            ]);
-            $expected = '/posts';
-            $this->assertEquals($expected, $result);
-
-            $result = Router::url([
-                'controller' => 'Posts',
-                'action' => 'view',
-                '_method' => 'GET',
-                'id' => 10
-            ]);
-            $expected = '/posts/10';
-            $this->assertEquals($expected, $result);
-
-            $result = Router::url(['controller' => 'Posts', 'action' => 'add', '_method' => 'POST']);
-            $expected = '/posts';
-            $this->assertEquals($expected, $result);
-
-            $result = Router::url(['controller' => 'Posts', 'action' => 'edit', '_method' => 'PUT', 'id' => 10]);
-            $expected = '/posts/10';
-            $this->assertEquals($expected, $result);
-
-            $result = Router::url(['controller' => 'Posts', 'action' => 'delete', '_method' => 'DELETE', 'id' => 10]);
-            $expected = '/posts/10';
-            $this->assertEquals($expected, $result);
-
-            $result = Router::url(['controller' => 'Posts', 'action' => 'edit', '_method' => 'PATCH', 'id' => 10]);
-            $expected = '/posts/10';
-            $this->assertEquals($expected, $result);
+        Router::scope('/', function ($routes) {
+            $routes->resources('Posts');
         });
+
+        $result = Router::url([
+            'controller' => 'Posts',
+            'action' => 'index',
+            '_method' => 'GET'
+        ]);
+        $expected = '/posts';
+        $this->assertEquals($expected, $result);
+
+        $result = Router::url([
+            'controller' => 'Posts',
+            'action' => 'view',
+            '_method' => 'GET',
+            'id' => 10
+        ]);
+        $expected = '/posts/10';
+        $this->assertEquals($expected, $result);
+
+        $result = Router::url(['controller' => 'Posts', 'action' => 'add', '_method' => 'POST']);
+        $expected = '/posts';
+        $this->assertEquals($expected, $result);
+
+        $result = Router::url(['controller' => 'Posts', 'action' => 'edit', '_method' => 'PUT', 'id' => 10]);
+        $expected = '/posts/10';
+        $this->assertEquals($expected, $result);
+
+        $result = Router::url(['controller' => 'Posts', 'action' => 'delete', '_method' => 'DELETE', 'id' => 10]);
+        $expected = '/posts/10';
+        $this->assertEquals($expected, $result);
+
+        $result = Router::url(['controller' => 'Posts', 'action' => 'edit', '_method' => 'PATCH', 'id' => 10]);
+        $expected = '/posts/10';
+        $this->assertEquals($expected, $result);
     }
 
     /**
@@ -1771,22 +1504,6 @@ class RouterTest extends TestCase
     }
 
     /**
-     * Test deprecated behavior
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testParseMethodCondition()
-    {
-        $this->deprecated(function () {
-            Router::connect('/posts', ['controller' => 'Posts', '_method' => 'POST']);
-
-            $_SERVER['REQUEST_METHOD'] = 'POST';
-            $this->assertNotEmpty(Router::parse('/posts'));
-        });
-    }
-
-    /**
      * Test parse and reverse symmetry
      *
      * @return void
@@ -2581,21 +2298,6 @@ class RouterTest extends TestCase
     }
 
     /**
-     * testRegexRouteMatching error
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testRegexRouteMatchingError()
-    {
-        $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
-        $this->deprecated(function () {
-            Router::connect('/:locale/:controller/:action/*', [], ['locale' => 'dan|eng']);
-            Router::parse('/badness/test/test_action', 'GET');
-        });
-    }
-
-    /**
      * testRegexRouteMatching method
      *
      * @return void
@@ -2849,41 +2551,6 @@ class RouterTest extends TestCase
     }
 
     /**
-     * test that setRequestInfo can accept arrays and turn that into a Request object.
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testSetRequestInfoLegacy()
-    {
-        $this->deprecated(function () {
-            Router::setRequestInfo([
-                [
-                    'plugin' => null, 'controller' => 'images', 'action' => 'index',
-                    'url' => ['url' => 'protected/images/index']
-                ],
-                [
-                    'base' => '',
-                    'here' => '/protected/images/index',
-                    'webroot' => '/',
-                ]
-            ]);
-            $result = Router::getRequest();
-            $this->assertEquals('images', $result->getParam('controller'));
-            $this->assertEquals('index', $result->getParam('action'));
-
-            $this->assertEquals('', $result->getAttribute('base'));
-            $this->assertEquals('', $result->base);
-
-            $this->assertEquals('/protected/images/index', $result->getRequestTarget());
-            $this->assertEquals('/protected/images/index', $result->here);
-
-            $this->assertEquals('/', $result->getAttribute('webroot'));
-            $this->assertEquals('/', $result->webroot);
-        });
-    }
-
-    /**
      * test get request.
      *
      * @return void
@@ -3033,90 +2700,6 @@ class RouterTest extends TestCase
 
         $result = $route->parseRequest($this->makeRequest('/blog/foobar', 'GET'));
         $this->assertFalse($result);
-    }
-
-    /**
-     * Test that redirect() works.
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testRedirect()
-    {
-        $this->deprecated(function () {
-            Router::redirect('/mobile', '/', ['status' => 301]);
-            $routes = Router::routes();
-            $route = $routes[0];
-            $this->assertInstanceOf('Cake\Routing\Route\RedirectRoute', $route);
-        });
-    }
-
-    /**
-     * Test that redirect() works with another route class.
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testRedirectWithAnotherRouteClass()
-    {
-        $this->deprecated(function () {
-            $route1 = $this->getMockBuilder('Cake\Routing\Route\RedirectRoute')
-                ->setConstructorArgs(['/mobile\''])
-                ->setMethods(['parse'])
-                ->getMock();
-            $class = '\\' . get_class($route1);
-
-            Router::redirect('/mobile', '/', [
-                'status' => 301,
-                'routeClass' => $class
-            ]);
-
-            $routes = Router::routes();
-            $route = $routes[0];
-            $this->assertInstanceOf($class, $route);
-        });
-    }
-
-    /**
-     * Test that the compatibility method for incoming urls works.
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testParseNamedParameters()
-    {
-        $this->deprecated(function () {
-            $request = new ServerRequest();
-            $request->addParams([
-                'controller' => 'posts',
-                'action' => 'index',
-            ]);
-            $result = Router::parseNamedParams($request);
-            $this->assertSame([], $result->params['named']);
-
-            $request = new ServerRequest();
-            $request->addParams([
-                'controller' => 'posts',
-                'action' => 'index',
-                'pass' => ['home', 'one:two', 'three:four', 'five[nested][0]:six', 'five[nested][1]:seven']
-            ]);
-            $request = Router::parseNamedParams($request);
-            $expected = [
-                'plugin' => null,
-                'controller' => 'posts',
-                'action' => 'index',
-                '_ext' => null,
-                'pass' => ['home'],
-                'named' => [
-                    'one' => 'two',
-                    'three' => 'four',
-                    'five' => [
-                        'nested' => ['six', 'seven']
-                    ]
-                ]
-            ];
-            $this->assertEquals($expected, $request->params);
-        });
     }
 
     /**
