@@ -687,13 +687,26 @@ class QueryExpression implements ExpressionInterface, Countable
         foreach ($conditions as $k => $c) {
             $numericKey = is_numeric($k);
 
+            if ($this->isCallable($c)) {
+                $expr = new static([], $typeMap);
+                $c = $c($expr, $this);
+            }
+
             if ($numericKey && empty($c)) {
                 continue;
             }
 
-            if ($this->isCallable($c)) {
-                $expr = new static([], $typeMap);
-                $c = $c($expr, $this);
+            $isArray = is_array($c);
+            $isOperator = in_array(strtolower($k), $operators);
+            $isNot = strtolower($k) === 'not';
+
+            if (($isOperator || $isNot) && ($isArray || $c instanceof Countable) && count($c) === 0) {
+                continue;
+            }
+
+            if ($numericKey && $c instanceof ExpressionInterface) {
+                $this->_conditions[] = $c;
+                continue;
             }
 
             if ($numericKey && is_string($c)) {
@@ -701,22 +714,13 @@ class QueryExpression implements ExpressionInterface, Countable
                 continue;
             }
 
-            if ($numericKey && is_array($c) || in_array(strtolower($k), $operators)) {
+            if ($numericKey && $isArray || $isOperator) {
                 $this->_conditions[] = new static($c, $typeMap, $numericKey ? 'AND' : $k);
                 continue;
             }
 
-            if (strtolower($k) === 'not') {
+            if ($isNot) {
                 $this->_conditions[] = new UnaryExpression('NOT', new static($c, $typeMap));
-                continue;
-            }
-
-            if ($c instanceof self && count($c) === 0) {
-                continue;
-            }
-
-            if ($numericKey && $c instanceof ExpressionInterface) {
-                $this->_conditions[] = $c;
                 continue;
             }
 

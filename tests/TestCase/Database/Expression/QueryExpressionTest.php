@@ -222,4 +222,23 @@ class QueryExpressionTest extends TestCase
 
         $this->assertEquals('date', $type);
     }
+
+    /**
+     * Tests that creating query expressions with either the
+     * array notation or using the combinators will produce a
+     * zero-count expression object.
+     *
+     * @see https://github.com/cakephp/cakephp/issues/12081
+     * @return void
+     */
+    public function testEmptyOr()
+    {
+        $expr = new QueryExpression();
+        $expr = $expr->or_([]);
+        $expr = $expr->or_([]);
+        $this->assertCount(0, $expr);
+
+        $expr = new QueryExpression(['OR' => []]);
+        $this->assertCount(0, $expr);
+    }
 }
