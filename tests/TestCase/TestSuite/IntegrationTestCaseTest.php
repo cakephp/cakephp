@@ -18,6 +18,7 @@ use Cake\Core\Configure;
 use Cake\Event\EventManager;
 use Cake\Http\Response;
 use Cake\Routing\DispatcherFactory;
+use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use Cake\Routing\Route\InflectedRoute;
 use Cake\TestSuite\IntegrationTestCase;
@@ -227,6 +228,24 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         $this->get('/some_alias');
         $this->assertResponseOk();
         $this->assertEquals('5', $this->_getBodyAsString());
+    }
+
+    public function testExceptionsInMiddlewareJsonView()
+    {
+        Router::reload();
+        Router::connect('/json_response/api_get_data', [
+            'controller' => 'JsonResponse',
+            'action' => 'apiGetData'
+        ]);
+
+        $this->configApplication(Configure::read('App.namespace') . '\ApplicationWithExceptionsInMiddleware', null);
+
+        $this->_request['headers'] = [ "Accept" => "application/json" ];
+        $this->get('/json_response/api_get_data');
+        $this->assertResponseCode(403);
+        $this->assertHeader('Content-Type', 'application/json; charset=UTF-8');
+        $this->assertResponseContains('"message": "Sample Message"');
+        $this->assertResponseContains('"code": 403');
     }
 
     /**
@@ -915,6 +934,32 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         $this->assertHeader('Content-Type', 'application/json; charset=UTF-8');
         $this->assertContentType('json');
         $this->assertContentType('application/json');
+    }
+
+    /**
+     * Test the content assertion.
+     *
+     * @return void
+     */
+    public function testAssertResponseEquals()
+    {
+        $this->_response = new Response();
+        $this->_response = $this->_response->withStringBody('Some content');
+
+        $this->assertResponseEquals('Some content');
+    }
+
+    /**
+     * Test the negated content assertion.
+     *
+     * @return void
+     */
+    public function testAssertResponseNotEquals()
+    {
+        $this->_response = new Response();
+        $this->_response = $this->_response->withStringBody('Some content');
+
+        $this->assertResponseNotEquals('Some Content');
     }
 
     /**

@@ -113,7 +113,7 @@ class ErrorHandlerMiddleware
      */
     public function handleException($exception, $request, $response)
     {
-        $renderer = $this->getRenderer($exception);
+        $renderer = $this->getRenderer($exception, $request);
         try {
             $res = $renderer->render();
             $this->logException($request, $exception);
@@ -148,10 +148,11 @@ class ErrorHandlerMiddleware
      * Get a renderer instance
      *
      * @param \Exception $exception The exception being rendered.
+     * @param \Psr\Http\Message\ServerRequestInterface $request The request.
      * @return \Cake\Error\ExceptionRendererInterface The exception renderer.
      * @throws \Exception When the renderer class cannot be found.
      */
-    protected function getRenderer($exception)
+    protected function getRenderer($exception, $request)
     {
         if (!$this->exceptionRenderer) {
             $this->exceptionRenderer = $this->getConfig('exceptionRenderer') ?: ExceptionRenderer::class;
@@ -171,11 +172,11 @@ class ErrorHandlerMiddleware
                 ));
             }
 
-            return new $class($exception);
+            return new $class($exception, $request);
         }
         $factory = $this->exceptionRenderer;
 
-        return $factory($exception);
+        return $factory($exception, $request);
     }
 
     /**

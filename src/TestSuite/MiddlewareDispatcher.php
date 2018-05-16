@@ -67,41 +67,10 @@ class MiddlewareDispatcher
     }
 
     /**
-     * Run a request and get the response.
-     *
-     * @param \Cake\Http\ServerRequest $request The request to execute.
-     * @return \Psr\Http\Message\ResponseInterface The generated response.
-     */
-    public function execute($request)
-    {
-        try {
-            $reflect = new ReflectionClass($this->_class);
-            $app = $reflect->newInstanceArgs($this->_constructorArgs);
-        } catch (ReflectionException $e) {
-            throw new LogicException(sprintf(
-                'Cannot load "%s" for use in integration testing.',
-                $this->_class
-            ));
-        }
-
-        // Spy on the controller using the initialize hook instead
-        // of the dispatcher hooks as those will be going away one day.
-        EventManager::instance()->on(
-            'Controller.initialize',
-            [$this->_test, 'controllerSpy']
-        );
-
-        $server = new Server($app);
-        $psrRequest = $this->_createRequest($request);
-
-        return $server->run($psrRequest);
-    }
-
-    /**
      * Create a PSR7 request from the request spec.
      *
      * @param array $spec The request spec.
-     * @return \Psr\Http\Message\RequestInterface
+     * @return \Psr\Http\Message\ServerRequestInterface
      */
     protected function _createRequest($spec)
     {
@@ -128,5 +97,35 @@ class MiddlewareDispatcher
         }
 
         return $request;
+    }
+
+    /**
+     * Run a request and get the response.
+     *
+     * @param array $requestSpec The request spec to execute.
+     * @return \Psr\Http\Message\ResponseInterface The generated response.
+     */
+    public function execute($requestSpec)
+    {
+        try {
+            $reflect = new ReflectionClass($this->_class);
+            $app = $reflect->newInstanceArgs($this->_constructorArgs);
+        } catch (ReflectionException $e) {
+            throw new LogicException(sprintf(
+                'Cannot load "%s" for use in integration testing.',
+                $this->_class
+            ));
+        }
+
+        // Spy on the controller using the initialize hook instead
+        // of the dispatcher hooks as those will be going away one day.
+        EventManager::instance()->on(
+            'Controller.initialize',
+            [$this->_test, 'controllerSpy']
+        );
+
+        $server = new Server($app);
+
+        return $server->run($this->_createRequest($requestSpec));
     }
 }

@@ -23,6 +23,7 @@ if (class_exists('PHPUnit_Runner_Version', false) && !interface_exists('PHPUnit\
 use Cake\Core\Configure;
 use Cake\Database\Exception as DatabaseException;
 use Cake\Http\ServerRequest;
+use Cake\Http\ServerRequestFactory;
 use Cake\Http\Session;
 use Cake\Routing\Router;
 use Cake\TestSuite\Stub\TestExceptionRenderer;
@@ -488,6 +489,7 @@ abstract class IntegrationTestCase extends TestCase
     protected function _sendRequest($url, $method, $data = [])
     {
         $dispatcher = $this->_makeDispatcher();
+        $psrRequest = null;
         try {
             $request = $this->_buildRequest($url, $method, $data);
             $response = $dispatcher->execute($request);
@@ -504,6 +506,7 @@ abstract class IntegrationTestCase extends TestCase
             throw $e;
         } catch (Exception $e) {
             $this->_exception = $e;
+            // Simulate the global exception handler being invoked.
             $this->_handleError($e);
         }
     }
@@ -935,7 +938,7 @@ abstract class IntegrationTestCase extends TestCase
     }
 
     /**
-     * Asserts content exists in the response body.
+     * Asserts content in the response body equals.
      *
      * @param mixed $content The content to check for.
      * @param string $message The failure message that will be appended to the generated message.
@@ -947,6 +950,21 @@ abstract class IntegrationTestCase extends TestCase
             $this->fail('No response set, cannot assert content. ' . $message);
         }
         $this->assertEquals($content, $this->_getBodyAsString(), $message);
+    }
+
+    /**
+     * Asserts content in the response body not equals.
+     *
+     * @param mixed $content The content to check for.
+     * @param string $message The failure message that will be appended to the generated message.
+     * @return void
+     */
+    public function assertResponseNotEquals($content, $message = '')
+    {
+        if (!$this->_response) {
+            $this->fail('No response set, cannot assert content. ' . $message);
+        }
+        $this->assertNotEquals($content, $this->_getBodyAsString(), $message);
     }
 
     /**
