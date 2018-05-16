@@ -23,6 +23,7 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Error\Warning;
 use TestApp\Controller\Admin\PostsController;
 use TestPlugin\Controller\TestPluginController;
 
@@ -932,6 +933,36 @@ class ControllerTest extends TestCase
 
         $result = $controller->components();
         $this->assertSame($result, $controller->components());
+    }
+
+    /**
+     * Test the components property errors
+     *
+     * @return void
+     */
+    public function testComponentsPropertyError()
+    {
+        $this->expectException(Warning::class);
+        $request = new ServerRequest(['url' => '/']);
+        $response = new Response();
+
+        $controller = new TestController($request, $response);
+        $controller->components = ['Flash'];
+    }
+
+    /**
+     * Test the helpers property errors
+     *
+     * @return void
+     */
+    public function testHelpersPropertyError()
+    {
+        $this->expectException(Warning::class);
+        $request = new ServerRequest(['url' => '/']);
+        $response = new Response();
+
+        $controller = new TestController($request, $response);
+        $controller->helpers = ['Flash'];
     }
 
     /**
