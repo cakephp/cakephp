@@ -856,36 +856,13 @@ class ExceptionRendererTest extends TestCase
         };
         $events = EventManager::instance();
         $events->on('Controller.shutdown', $listener);
-        $events->on('Dispatcher.afterDispatch', $listener);
 
         $exception = new Exception('Terrible');
         $renderer = new ExceptionRenderer($exception);
         $renderer->render();
 
-        $expected = ['Controller.shutdown', 'Dispatcher.afterDispatch'];
+        $expected = ['Controller.shutdown'];
         $this->assertEquals($expected, $fired);
-    }
-
-    /**
-     * Test that rendering exceptions triggers events
-     * on filters attached to dispatcherfactory
-     *
-     * @return void
-     */
-    public function testRenderShutdownEventsOnDispatcherFactory()
-    {
-        $filter = $this->getMockBuilder('Cake\Routing\DispatcherFilter')
-            ->setMethods(['afterDispatch'])
-            ->getMock();
-
-        $filter->expects($this->at(0))
-            ->method('afterDispatch');
-
-        DispatcherFactory::add($filter);
-
-        $exception = new Exception('Terrible');
-        $renderer = new ExceptionRenderer($exception);
-        $renderer->render();
     }
 
     /**
@@ -901,13 +878,12 @@ class ExceptionRendererTest extends TestCase
         };
         $events = EventManager::instance();
         $events->on('Controller.shutdown', $listener);
-        $events->on('Dispatcher.afterDispatch', $listener);
 
         $exception = new MissingWidgetThingException('Widget not found');
         $renderer = new MyCustomExceptionRenderer($exception);
         $renderer->render();
 
-        $expected = ['Controller.shutdown', 'Dispatcher.afterDispatch'];
+        $expected = ['Controller.shutdown'];
         $this->assertEquals($expected, $fired);
     }
 

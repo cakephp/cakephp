@@ -17,7 +17,6 @@ namespace Cake\Test\TestCase\TestSuite;
 use Cake\Core\Configure;
 use Cake\Event\EventManager;
 use Cake\Http\Response;
-use Cake\Routing\DispatcherFactory;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use Cake\Routing\Route\InflectedRoute;
@@ -50,22 +49,6 @@ class IntegrationTestCaseTest extends IntegrationTestCase
             $routes->connect('/:controller/:action/*', []);
         });
         Router::$initialized = true;
-
-        $this->useHttpServer(true);
-        DispatcherFactory::clear();
-    }
-
-    /**
-     * Helper for enabling the legacy stack for backwards compatibility testing.
-     *
-     * @return void
-     */
-    protected function useLegacyDispatcher()
-    {
-        DispatcherFactory::add('Routing');
-        DispatcherFactory::add('ControllerFactory');
-
-        $this->useHttpServer(false);
     }
 
     /**
@@ -674,8 +657,6 @@ class IntegrationTestCaseTest extends IntegrationTestCase
      */
     public function testWithExpectedExceptionHttpServer()
     {
-        DispatcherFactory::clear();
-
         $this->get('/tests_apps/throw_exception');
         $this->assertResponseCode(500);
     }
@@ -711,8 +692,6 @@ class IntegrationTestCaseTest extends IntegrationTestCase
      */
     public function testRedirectHttpServer()
     {
-        DispatcherFactory::clear();
-
         $this->post('/tests_apps/redirect_to');
         $this->assertResponseCode(302);
         $this->assertHeader('X-Middleware', 'true');
