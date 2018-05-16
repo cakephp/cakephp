@@ -24,7 +24,6 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Log\LogTrait;
 use Cake\ORM\Locator\LocatorAwareTrait;
-use Cake\Routing\RequestActionTrait;
 use Cake\Routing\Router;
 use Cake\View\ViewVarsTrait;
 use LogicException;
@@ -88,7 +87,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     use LocatorAwareTrait;
     use LogTrait;
     use ModelAwareTrait;
-    use RequestActionTrait;
     use ViewVarsTrait;
 
     /**

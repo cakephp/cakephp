@@ -23,7 +23,6 @@ use Cake\Event\EventManager;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Log\LogTrait;
-use Cake\Routing\RequestActionTrait;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\View\Exception\MissingElementException;
@@ -77,7 +76,6 @@ class View implements EventDispatcherInterface
     }
     use EventDispatcherTrait;
     use LogTrait;
-    use RequestActionTrait;
     use ViewVarsTrait;
 
     /**
