@@ -70,8 +70,6 @@ class RequestHandlerComponentTest extends TestCase
         parent::setUp();
         $this->server = $_SERVER;
         static::setAppNamespace();
-        DispatcherFactory::add('Routing');
-        DispatcherFactory::add('ControllerFactory');
         $this->_init();
     }
 
@@ -104,9 +102,7 @@ class RequestHandlerComponentTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        DispatcherFactory::clear();
         Router::reload();
-        Router::$initialized = false;
         $_SERVER = $this->server;
         unset($this->RequestHandler, $this->Controller);
     }

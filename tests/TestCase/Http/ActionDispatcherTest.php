@@ -43,17 +43,6 @@ class ActionDispatcherTest extends TestCase
     }
 
     /**
-     * Teardown
-     *
-     * @return void
-     */
-    public function tearDown()
-    {
-        parent::tearDown();
-        DispatcherFactory::clear();
-    }
-
-    /**
      * Ensure the constructor args end up on the right protected properties.
      *
      * @return void
@@ -66,51 +55,6 @@ class ActionDispatcherTest extends TestCase
 
         $this->assertAttributeSame($events, '_eventManager', $dispatcher);
         $this->assertAttributeSame($factory, 'factory', $dispatcher);
-    }
-
-    /**
-     * Ensure that filters connected to the DispatcherFactory are
-     * also applied
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testDispatcherFactoryCompat()
-    {
-        $this->deprecated(function () {
-            $filter = $this->getMockBuilder('Cake\Routing\DispatcherFilter')
-                ->setMethods(['beforeDispatch', 'afterDispatch'])
-                ->getMock();
-            DispatcherFactory::add($filter);
-            $dispatcher = new ActionDispatcher(null, null, DispatcherFactory::filters());
-            $this->assertCount(1, $dispatcher->getFilters());
-            $this->assertSame($filter, $dispatcher->getFilters()[0]);
-        });
-    }
-
-    /**
-     * Test adding routing filters
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testAddFilter()
-    {
-        $this->deprecated(function () {
-            $this->assertCount(0, $this->dispatcher->getFilters());
-            $events = $this->dispatcher->getEventManager();
-            $this->assertCount(0, $events->listeners('Dispatcher.beforeDispatch'));
-            $this->assertCount(0, $events->listeners('Dispatcher.afterDispatch'));
-
-            $filter = $this->getMockBuilder('Cake\Routing\DispatcherFilter')
-                ->setMethods(['beforeDispatch', 'afterDispatch'])
-                ->getMock();
-            $this->dispatcher->addFilter($filter);
-
-            $this->assertCount(1, $this->dispatcher->getFilters());
-            $this->assertCount(1, $events->listeners('Dispatcher.beforeDispatch'));
-            $this->assertCount(1, $events->listeners('Dispatcher.afterDispatch'));
-        });
     }
 
     /**
