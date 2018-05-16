@@ -23,6 +23,7 @@ use Cake\Routing\Route\InflectedRoute;
 use Cake\TestSuite\IntegrationTestCase;
 use Cake\Test\Fixture\AssertIntegrationTestCase;
 use Cake\Utility\Security;
+use PHPUnit\Framework\Error\Deprecated;
 
 /**
  * Self test of the IntegrationTestCase
@@ -49,6 +50,15 @@ class IntegrationTestCaseTest extends IntegrationTestCase
             $routes->connect('/:controller/:action/*', []);
         });
         Router::$initialized = true;
+    }
+
+    /**
+     * Check for a deprecation warning
+     */
+    public function testUseHttpServerWarning()
+    {
+        $this->expectException(Deprecated::class);
+        $this->useHttpServer(false);
     }
 
     /**
