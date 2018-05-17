@@ -106,27 +106,6 @@ class LoggingStatement extends StatementDecorator
     }
 
     /**
-     * Sets the logger object instance. When called with no arguments
-     * it returns the currently setup logger instance
-     *
-     * @deprecated 3.5.0 Use getLogger() and setLogger() instead.
-     * @param \Cake\Database\Log\QueryLogger|null $instance Logger object instance.
-     * @return \Cake\Database\Log\QueryLogger|null Logger instance
-     */
-    public function logger($instance = null)
-    {
-        deprecationWarning(
-            'LoggingStatement::logger() is deprecated. ' .
-            'Use LoggingStatement::setLogger()/getLogger() instead.'
-        );
-        if ($instance === null) {
-            return $this->getLogger();
-        }
-
-        return $this->_logger = $instance;
-    }
-
-    /**
      * Sets a logger
      *
      * @param \Cake\Database\Log\QueryLogger $logger Logger object
