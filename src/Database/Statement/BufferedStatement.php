@@ -111,7 +111,9 @@ class BufferedStatement extends StatementDecorator
      */
     public function fetchAssoc()
     {
-        return $this->fetch(static::FETCH_TYPE_ASSOC);
+        $result = $this->fetch(static::FETCH_TYPE_ASSOC);
+
+        return $result ?: [];
     }
 
     /**
