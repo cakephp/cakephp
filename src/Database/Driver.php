@@ -110,28 +110,6 @@ abstract class Driver implements DriverInterface
     }
 
     /**
-     * Returns correct connection resource or object that is internally used
-     * If first argument is passed, it will set internal connection object or
-     * result to the value passed.
-     *
-     * @param mixed $connection The PDO connection instance.
-     * @return mixed Connection object used internally.
-     * @deprecated 3.6.0 Use getConnection()/setConnection() instead.
-     */
-    public function connection($connection = null)
-    {
-        deprecationWarning(
-            get_called_class() . '::connection() is deprecated. ' .
-            'Use setConnection()/getConnection() instead.'
-        );
-        if ($connection !== null) {
-            $this->_connection = $connection;
-        }
-
-        return $this->_connection;
-    }
-
-    /**
      * Get the internal PDO connection instance.
      *
      * @return \PDO
@@ -368,30 +346,6 @@ abstract class Driver implements DriverInterface
     public function isAutoQuotingEnabled()
     {
         return $this->_autoQuoting;
-    }
-
-    /**
-     * Returns whether or not this driver should automatically quote identifiers
-     * in queries
-     *
-     * If called with a boolean argument, it will toggle the auto quoting setting
-     * to the passed value
-     *
-     * @deprecated 3.4.0 use enableAutoQuoting()/isAutoQuotingEnabled() instead.
-     * @param bool|null $enable Whether to enable auto quoting
-     * @return bool
-     */
-    public function autoQuoting($enable = null)
-    {
-        deprecationWarning(
-            'Driver::autoQuoting() is deprecated. ' .
-            'Use Driver::enableAutoQuoting()/isAutoQuotingEnabled() instead.'
-        );
-        if ($enable !== null) {
-            $this->enableAutoQuoting($enable);
-        }
-
-        return $this->isAutoQuotingEnabled();
     }
 
     /**
