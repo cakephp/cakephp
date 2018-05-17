@@ -50,15 +50,11 @@ class ActionDispatcher
      *
      * @param \Cake\Http\ControllerFactory|null $factory A controller factory instance.
      * @param \Cake\Event\EventManager|null $eventManager An event manager if you want to inject one.
-     * @param \Cake\Event\EventListenerInterface[] $filters The list of filters to include.
      */
-    public function __construct($factory = null, $eventManager = null, array $filters = [])
+    public function __construct($factory = null, $eventManager = null)
     {
         if ($eventManager) {
             $this->setEventManager($eventManager);
-        }
-        foreach ($filters as $filter) {
-            $this->addFilter($filter);
         }
         $this->factory = $factory ?: new ControllerFactory();
     }
@@ -135,28 +131,6 @@ class ActionDispatcher
         }
 
         return $response;
-    }
-
-    /**
-     * Add a filter to this dispatcher.
-     *
-     * The added filter will be attached to the event manager used
-     * by this dispatcher.
-     *
-     * @param \Cake\Event\EventListenerInterface $filter The filter to connect. Can be
-     *   any EventListenerInterface. Typically an instance of \Cake\Routing\DispatcherFilter.
-     * @return void
-     * @deprecated This is only available for backwards compatibility with DispatchFilters
-     */
-    public function addFilter(EventListenerInterface $filter)
-    {
-        deprecationWarning(
-            'ActionDispatcher::addFilter() is deprecated. ' .
-            'This is only available for backwards compatibility with DispatchFilters'
-        );
-
-        $this->filters[] = $filter;
-        $this->getEventManager()->on($filter);
     }
 
     /**

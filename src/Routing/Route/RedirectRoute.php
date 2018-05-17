@@ -27,15 +27,6 @@ use Cake\Routing\Router;
  */
 class RedirectRoute extends Route
 {
-
-    /**
-     * A Response object
-     *
-     * @var \Cake\Http\Response
-     * @deprecated 3.2.0 This property is unused.
-     */
-    public $response;
-
     /**
      * The location to redirect to.
      *

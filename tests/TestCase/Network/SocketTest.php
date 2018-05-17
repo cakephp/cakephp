@@ -278,7 +278,7 @@ class SocketTest extends TestCase
 
         $e = null;
         try {
-            $this->Socket->enableCrypto('sslv3', 'client');
+            $this->Socket->enableCrypto('tlsv10', 'client');
         } catch (SocketException $e) {
         }
 

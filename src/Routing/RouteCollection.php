@@ -368,29 +368,6 @@ class RouteCollection
     }
 
     /**
-     * Get/set the extensions that the route collection could handle.
-     *
-     * @param null|string|array $extensions Either the list of extensions to set,
-     *   or null to get.
-     * @param bool $merge Whether to merge with or override existing extensions.
-     *   Defaults to `true`.
-     * @return array The valid extensions.
-     * @deprecated 3.5.0 Use getExtensions()/setExtensions() instead.
-     */
-    public function extensions($extensions = null, $merge = true)
-    {
-        deprecationWarning(
-            'RouteCollection::extensions() is deprecated. ' .
-            'Use RouteCollection::setExtensions()/getExtensions() instead.'
-        );
-        if ($extensions !== null) {
-            $this->setExtensions((array)$extensions, $merge);
-        }
-
-        return $this->getExtensions();
-    }
-
-    /**
      * Get the extensions that can be handled.
      *
      * @return array The valid extensions.

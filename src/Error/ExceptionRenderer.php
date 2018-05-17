@@ -23,7 +23,6 @@ use Cake\Event\Event;
 use Cake\Http\Exception\HttpException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequestFactory;
-use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\View\Exception\MissingTemplateException;
@@ -395,17 +394,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
     protected function _shutdown()
     {
         $this->controller->dispatchEvent('Controller.shutdown');
-        $dispatcher = DispatcherFactory::create();
-        $eventManager = $dispatcher->getEventManager();
-        foreach ($dispatcher->filters() as $filter) {
-            $eventManager->on($filter);
-        }
-        $args = [
-            'request' => $this->controller->getRequest(),
-            'response' => $this->controller->getResponse(),
-        ];
-        $result = $dispatcher->dispatchEvent('Dispatcher.afterDispatch', $args);
 
-        return $result->getData('response');
+        return $this->controller->getResponse();
     }
 }

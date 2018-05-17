@@ -83,26 +83,16 @@ class Socket
     /**
      * Contains all the encryption methods available
      *
-     * SSLv2 and SSLv3 are deprecated, and should not be used as they
-     * have several published vulnerablilities.
      *
      * @var array
      */
     protected $_encryptMethods = [
         // @codingStandardsIgnoreStart
-        // @deprecated Will be removed in 4.0.0
-        'sslv2_client' => STREAM_CRYPTO_METHOD_SSLv2_CLIENT,
-        // @deprecated Will be removed in 4.0.0
-        'sslv3_client' => STREAM_CRYPTO_METHOD_SSLv3_CLIENT,
         'sslv23_client' => STREAM_CRYPTO_METHOD_SSLv23_CLIENT,
         'tls_client' => STREAM_CRYPTO_METHOD_TLS_CLIENT,
         'tlsv10_client' => STREAM_CRYPTO_METHOD_TLSv1_0_CLIENT,
         'tlsv11_client' => STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT,
         'tlsv12_client' => STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT,
-        // @deprecated Will be removed in 4.0.0
-        'sslv2_server' => STREAM_CRYPTO_METHOD_SSLv2_SERVER,
-        // @deprecated Will be removed in 4.0.0
-        'sslv3_server' => STREAM_CRYPTO_METHOD_SSLv3_SERVER,
         'sslv23_server' => STREAM_CRYPTO_METHOD_SSLv23_SERVER,
         'tls_server' => STREAM_CRYPTO_METHOD_TLS_SERVER,
         'tlsv10_server' => STREAM_CRYPTO_METHOD_TLSv1_0_SERVER,
@@ -327,16 +317,13 @@ class Socket
     /**
      * Write data to the socket.
      *
-     * The bool false return value is deprecated and will be int 0 in the next major.
-     * Please code respectively to be future proof.
-     *
      * @param string $data The data to write to the socket.
-     * @return int|false Bytes written.
+     * @return int Bytes written.
      */
     public function write($data)
     {
         if (!$this->connected && !$this->connect()) {
-            return false;
+            return 0;
         }
         $totalBytes = strlen($data);
         $written = 0;
@@ -352,19 +339,16 @@ class Socket
     }
 
     /**
-     * Read data from the socket. Returns false if no data is available or no connection could be
+     * Read data from the socket. Returns null if no data is available or no connection could be
      * established.
      *
-     * The bool false return value is deprecated and will be null in the next major.
-     * Please code respectively to be future proof.
-     *
      * @param int $length Optional buffer length to read; defaults to 1024
-     * @return mixed Socket data
+     * @return string|null Socket data
      */
     public function read($length = 1024)
     {
         if (!$this->connected && !$this->connect()) {
-            return false;
+            return null;
         }
 
         if (!feof($this->connection)) {
@@ -373,13 +357,13 @@ class Socket
             if ($info['timed_out']) {
                 $this->setLastError(E_WARNING, 'Connection timed out');
 
-                return false;
+                return null;
             }
 
             return $buffer;
         }
 
-        return false;
+        return null;
     }
 
     /**

@@ -22,7 +22,6 @@ use Cake\Core\PluginInterface;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventManager;
 use Cake\Event\EventManagerInterface;
-use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
@@ -235,6 +234,6 @@ abstract class BaseApplication implements
      */
     protected function getDispatcher()
     {
-        return new ActionDispatcher(null, $this->getEventManager(), DispatcherFactory::filters());
+        return new ActionDispatcher(null, $this->getEventManager());
     }
 }

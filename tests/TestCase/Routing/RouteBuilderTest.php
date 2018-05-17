@@ -744,32 +744,6 @@ class RouteBuilderTest extends TestCase
     /**
      * Test resource parsing.
      *
-     * @group deprecated
-     * @return void
-     */
-    public function testResourcesParsingReadGlobals()
-    {
-        $this->deprecated(function () {
-            $routes = new RouteBuilder($this->collection, '/');
-            $routes->resources('Articles');
-
-            $_SERVER['REQUEST_METHOD'] = 'GET';
-            $result = $this->collection->parse('/articles');
-            $this->assertEquals('Articles', $result['controller']);
-            $this->assertEquals('index', $result['action']);
-            $this->assertEquals([], $result['pass']);
-
-            $_SERVER['REQUEST_METHOD'] = 'POST';
-            $result = $this->collection->parse('/articles');
-            $this->assertEquals('Articles', $result['controller']);
-            $this->assertEquals('add', $result['action']);
-            $this->assertEquals([], $result['pass']);
-        });
-    }
-
-    /**
-     * Test resource parsing.
-     *
      * @return void
      */
     public function testResourcesParsing()
@@ -1225,41 +1199,5 @@ class RouteBuilderTest extends TestCase
         $routes->loadPlugin('TestPlugin');
         $this->assertCount(1, $this->collection->routes());
         $this->assertNotEmpty($this->collection->parse('/test_plugin', 'GET'));
-    }
-
-    /**
-     * Test routeClass() still works.
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testRouteClassBackwardCompat()
-    {
-        $this->deprecated(function () {
-            $routes = new RouteBuilder($this->collection, '/l');
-            $this->assertNull($routes->routeClass('TestApp\Routing\Route\DashedRoute'));
-            $this->assertSame('TestApp\Routing\Route\DashedRoute', $routes->routeClass());
-            $this->assertSame('TestApp\Routing\Route\DashedRoute', $routes->getRouteClass());
-        });
-    }
-
-    /**
-     * Test extensions() still works.
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testExtensionsBackwardCompat()
-    {
-        $this->deprecated(function () {
-            $routes = new RouteBuilder($this->collection, '/l');
-            $this->assertNull($routes->extensions(['html']));
-            $this->assertSame(['html'], $routes->extensions());
-            $this->assertSame(['html'], $routes->getExtensions());
-
-            $this->assertNull($routes->extensions('json'));
-            $this->assertSame(['json'], $routes->extensions());
-            $this->assertSame(['json'], $routes->getExtensions());
-        });
     }
 }

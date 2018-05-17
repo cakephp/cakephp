@@ -17,13 +17,13 @@ namespace Cake\Test\TestCase\TestSuite;
 use Cake\Core\Configure;
 use Cake\Event\EventManager;
 use Cake\Http\Response;
-use Cake\Routing\DispatcherFactory;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use Cake\Routing\Route\InflectedRoute;
 use Cake\TestSuite\IntegrationTestCase;
 use Cake\Test\Fixture\AssertIntegrationTestCase;
 use Cake\Utility\Security;
+use PHPUnit\Framework\Error\Deprecated;
 
 /**
  * Self test of the IntegrationTestCase
@@ -50,21 +50,14 @@ class IntegrationTestCaseTest extends IntegrationTestCase
             $routes->connect('/:controller/:action/*', []);
         });
         Router::$initialized = true;
-
-        $this->useHttpServer(true);
-        DispatcherFactory::clear();
     }
 
     /**
-     * Helper for enabling the legacy stack for backwards compatibility testing.
-     *
-     * @return void
+     * Check for a deprecation warning
      */
-    protected function useLegacyDispatcher()
+    public function testUseHttpServerWarning()
     {
-        DispatcherFactory::add('Routing');
-        DispatcherFactory::add('ControllerFactory');
-
+        $this->expectException(Deprecated::class);
         $this->useHttpServer(false);
     }
 
@@ -674,8 +667,6 @@ class IntegrationTestCaseTest extends IntegrationTestCase
      */
     public function testWithExpectedExceptionHttpServer()
     {
-        DispatcherFactory::clear();
-
         $this->get('/tests_apps/throw_exception');
         $this->assertResponseCode(500);
     }
@@ -711,8 +702,6 @@ class IntegrationTestCaseTest extends IntegrationTestCase
      */
     public function testRedirectHttpServer()
     {
-        DispatcherFactory::clear();
-
         $this->post('/tests_apps/redirect_to');
         $this->assertResponseCode(302);
         $this->assertHeader('X-Middleware', 'true');
