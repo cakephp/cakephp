@@ -531,25 +531,6 @@ class TableTest extends TestCase
     }
 
     /**
-     * Test the options method.
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testOptionsDeprecated()
-    {
-        $table = new TableSchema('articles');
-        $options = [
-            'engine' => 'InnoDB'
-        ];
-        $this->deprecated(function () use ($table, $options) {
-            $return = $table->options($options);
-            $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $return);
-            $this->assertEquals($options, $table->options());
-        });
-    }
-
-    /**
      * Add a basic foreign key constraint.
      *
      * @return void
@@ -664,23 +645,6 @@ class TableTest extends TestCase
         $table = new TableSchema('articles');
         $table->addColumn('author_id', 'integer')
             ->addConstraint('author_id_idx', $data);
-    }
-
-    /**
-     * Tests the temporary() method
-     *
-     * @return void
-     */
-    public function testTemporary()
-    {
-        $this->deprecated(function () {
-            $table = new TableSchema('articles');
-            $this->assertFalse($table->temporary());
-            $this->assertSame($table, $table->temporary(true));
-            $this->assertTrue($table->temporary());
-            $table->temporary(false);
-            $this->assertFalse($table->temporary());
-        });
     }
 
     /**
