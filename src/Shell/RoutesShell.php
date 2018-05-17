@@ -38,6 +38,7 @@ class RoutesShell extends Shell
         ];
         foreach (Router::routes() as $route) {
             $name = isset($route->options['_name']) ? $route->options['_name'] : $route->getName();
+            ksort($route->defaults);
             $output[] = [$name, $route->template, json_encode($route->defaults)];
         }
         $this->helper('table')->output($output);
