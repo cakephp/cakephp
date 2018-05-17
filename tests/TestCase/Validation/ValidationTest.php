@@ -3172,4 +3172,19 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::hexColor('#fff'));
         $this->assertFalse(Validation::hexColor('ffffff'));
     }
+
+    /**
+     * Test iban
+     */
+    public function testIban()
+    {
+        $this->assertTrue(Validation::iban('AD1200012030200359100100'));
+        $this->assertTrue(Validation::iban('BA391290079401028494'));
+        $this->assertTrue(Validation::iban('BE68539007547034'));
+        $this->assertTrue(Validation::iban('LC55HEMM000100010012001200023015'));
+
+        $this->assertFalse(Validation::iban('AD1200012030200359100101'));
+        $this->assertFalse(Validation::iban('BE68539007547032'));
+        $this->assertFalse(Validation::iban('LC55HEMM000100010012001200023014'));
+    }
 }
