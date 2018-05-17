@@ -1580,7 +1580,6 @@ class Validation
                 $replace[] = strval($tmp);
             }
             $numstr = str_replace($search, $replace, $account . $country . '00');
-
             $checksum = intval(substr($numstr, 0, 1));
             $numstrLength = strlen($numstr);
             for ($pos = 1; $pos < $numstrLength; $pos++) {
@@ -1588,7 +1587,6 @@ class Validation
                 $checksum += intval(substr($numstr, $pos, 1));
                 $checksum %= 97;
             }
-
             return ((98 - $checksum) == $check);
         }
 
