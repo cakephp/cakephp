@@ -1569,7 +1569,7 @@ class Validation
     {
         $iban = str_replace(' ', '', $check);
 
-        if (preg_match('/^[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}$/i', $iban)) {
+        if (!preg_match('/^[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}$/i', $iban)) {
             return false;
         }
 
