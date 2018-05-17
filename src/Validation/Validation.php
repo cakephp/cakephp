@@ -164,7 +164,7 @@ class Validation
      */
     public static function lengthBetween($check, $min, $max)
     {
-        if ( ! is_string($check)) {
+        if (! is_string($check)) {
             return false;
         }
         $length = mb_strlen($check);
@@ -207,7 +207,7 @@ class Validation
      */
     public static function cc($check, $type = 'fast', $deep = false, $regex = null)
     {
-        if ( ! is_scalar($check)) {
+        if (! is_scalar($check)) {
             return false;
         }
 
@@ -248,7 +248,7 @@ class Validation
                     return static::luhn($check);
                 }
             }
-        } else if ($type === 'all') {
+        } elseif ($type === 'all') {
             foreach ($cards['all'] as $value) {
                 $regex = $value;
 
@@ -280,7 +280,7 @@ class Validation
      */
     public static function numElements($check, $operator, $expectedCount)
     {
-        if ( ! is_array($check) && ! $check instanceof \Countable) {
+        if (! is_array($check) && ! $check instanceof \Countable) {
             return false;
         }
 
@@ -422,7 +422,7 @@ class Validation
      */
     public static function compareFields($check, $field, $operator, $context)
     {
-        if ( ! isset($context['data'][$field])) {
+        if (! isset($context['data'][$field])) {
             return false;
         }
 
@@ -441,7 +441,7 @@ class Validation
      */
     public static function containsNonAlphaNumeric($check, $count = 1)
     {
-        if ( ! is_scalar($check)) {
+        if (! is_scalar($check)) {
             return false;
         }
 
@@ -580,7 +580,7 @@ class Validation
             $dateFormat = 'ymd';
         }
         $parts = explode(' ', $check);
-        if ( ! empty($parts) && count($parts) > 1) {
+        if (! empty($parts) && count($parts) > 1) {
             $date  = rtrim(array_shift($parts), ',');
             $time  = implode(' ', $parts);
             $valid = static::date($date, $dateFormat, $regex) && static::time($time);
@@ -607,8 +607,10 @@ class Validation
             $check = static::_getDateString($check);
         }
 
-        return static::_check($check,
-            '%^((0?[1-9]|1[012])(:[0-5]\d){0,2} ?([AP]M|[ap]m))$|^([01]\d|2[0-3])(:[0-5]\d){0,2}$%');
+        return static::_check(
+            $check,
+            '%^((0?[1-9]|1[012])(:[0-5]\d){0,2} ?([AP]M|[ap]m))$|^([01]\d|2[0-3])(:[0-5]\d){0,2}$%'
+        );
     }
 
     /**
@@ -656,7 +658,7 @@ class Validation
      */
     public static function boolean($check, array $booleanValues = [])
     {
-        if ( ! $booleanValues) {
+        if (! $booleanValues) {
             $booleanValues = [true, false, 0, 1, '0', '1'];
         }
 
@@ -675,7 +677,7 @@ class Validation
      */
     public static function truthy($check, array $truthyValues = [])
     {
-        if ( ! $truthyValues) {
+        if (! $truthyValues) {
             $truthyValues = [true, 1, '1'];
         }
 
@@ -694,7 +696,7 @@ class Validation
      */
     public static function falsey($check, array $falseyValues = [])
     {
-        if ( ! $falseyValues) {
+        if (! $falseyValues) {
             $falseyValues = [false, 0, '0'];
         }
 
@@ -726,12 +728,12 @@ class Validation
 
             if ($places === null) {
                 $regex = "/^{$sign}(?:{$lnum}|{$dnum}){$exp}$/";
-            } else if ($places === true) {
+            } elseif ($places === true) {
                 if (is_float($check) && floor($check) === $check) {
                     $check = sprintf('%.1f', $check);
                 }
                 $regex = "/^{$sign}{$dnum}{$exp}$/";
-            } else if (is_numeric($places)) {
+            } elseif (is_numeric($places)) {
                 $places = '[0-9]{' . $places . '}';
                 $dnum   = "(?:[0-9]*[\.]{$places}|{$lnum}[\.]{$places})";
                 $regex  = "/^{$sign}{$dnum}{$exp}$/";
@@ -763,7 +765,7 @@ class Validation
      */
     public static function email($check, $deep = false, $regex = null)
     {
-        if ( ! is_string($check)) {
+        if (! is_string($check)) {
             return false;
         }
 
@@ -962,7 +964,7 @@ class Validation
                 if ($caseInsensitive) {
                     $val = mb_strtolower($val);
                 }
-                if ( ! in_array((string)$val, $options['in'], $strict)) {
+                if (! in_array((string)$val, $options['in'], $strict)) {
                     return false;
                 }
             }
@@ -1014,7 +1016,7 @@ class Validation
      */
     public static function range($check, $lower = null, $upper = null)
     {
-        if ( ! is_numeric($check)) {
+        if (! is_numeric($check)) {
             return false;
         }
         if ((float)$check != $check) {
@@ -1144,7 +1146,7 @@ class Validation
      */
     public static function luhn($check)
     {
-        if ( ! is_scalar($check) || (int)$check === 0) {
+        if (! is_scalar($check) || (int)$check === 0) {
             return false;
         }
         $sum    = 0;
@@ -1184,18 +1186,18 @@ class Validation
             return false;
         }
 
-        if ( ! function_exists('finfo_open')) {
+        if (! function_exists('finfo_open')) {
             throw new LogicException('ext/fileinfo is required for validating file mime types');
         }
 
-        if ( ! is_file($file)) {
+        if (! is_file($file)) {
             throw new RuntimeException('Cannot validate mimetype for a missing file');
         }
 
         $finfo = finfo_open(FILEINFO_MIME);
         $finfo = finfo_file($finfo, $file);
 
-        if ( ! $finfo) {
+        if (! $finfo) {
             throw new RuntimeException('Can not determine the mimetype.');
         }
 
@@ -1284,7 +1286,7 @@ class Validation
     {
         if ($check instanceof UploadedFileInterface) {
             $code = $check->getError();
-        } else if (is_array($check) && isset($check['error'])) {
+        } elseif (is_array($check) && isset($check['error'])) {
             $code = $check['error'];
         } else {
             $code = $check;
@@ -1325,7 +1327,7 @@ class Validation
             'types'    => null,
             'optional' => false,
         ];
-        if ( ! is_array($file) && ! ($file instanceof UploadedFileInterface)) {
+        if (! is_array($file) && ! ($file instanceof UploadedFileInterface)) {
             return false;
         }
         $error = $isUploaded = false;
@@ -1343,19 +1345,25 @@ class Validation
             $isUploaded = is_uploaded_file($file['tmp_name']);
         }
 
-        if ( ! static::uploadError($file, $options['optional'])) {
+        if (! static::uploadError($file, $options['optional'])) {
             return false;
         }
         if ($options['optional'] && $error === UPLOAD_ERR_NO_FILE) {
             return true;
         }
-        if (isset($options['minSize']) && ! static::fileSize($file, static::COMPARE_GREATER_OR_EQUAL,
-                $options['minSize'])
+        if (isset($options['minSize']) && ! static::fileSize(
+            $file,
+            static::COMPARE_GREATER_OR_EQUAL,
+            $options['minSize']
+        )
         ) {
             return false;
         }
-        if (isset($options['maxSize']) && ! static::fileSize($file, static::COMPARE_LESS_OR_EQUAL,
-                $options['maxSize'])
+        if (isset($options['maxSize']) && ! static::fileSize(
+            $file,
+            static::COMPARE_LESS_OR_EQUAL,
+            $options['maxSize']
+        )
         ) {
             return false;
         }
@@ -1376,13 +1384,13 @@ class Validation
      */
     public static function imageSize($file, $options)
     {
-        if ( ! isset($options['height']) && ! isset($options['width'])) {
+        if (! isset($options['height']) && ! isset($options['width'])) {
             throw new InvalidArgumentException('Invalid image size validation parameters! Missing `width` and / or `height`.');
         }
 
         if ($file instanceof UploadedFileInterface) {
             $file = $file->getStream()->getContents();
-        } else if (is_array($file) && isset($file['tmp_name'])) {
+        } elseif (is_array($file) && isset($file['tmp_name'])) {
             $file = $file['tmp_name'];
         }
 
@@ -1531,7 +1539,7 @@ class Validation
      */
     public static function ascii($value)
     {
-        if ( ! is_string($value)) {
+        if (! is_string($value)) {
             return false;
         }
 
@@ -1556,7 +1564,7 @@ class Validation
      */
     public static function utf8($value, array $options = [])
     {
-        if ( ! is_string($value)) {
+        if (! is_string($value)) {
             return false;
         }
         $options += ['extended' => false];
@@ -1579,7 +1587,7 @@ class Validation
      */
     public static function isInteger($value)
     {
-        if ( ! is_scalar($value) || is_float($value)) {
+        if (! is_scalar($value) || is_float($value)) {
             return false;
         }
         if (is_int($value)) {
@@ -1706,7 +1714,7 @@ class Validation
      */
     protected static function _populateIp()
     {
-        if ( ! isset(static::$_pattern['IPv6'])) {
+        if (! isset(static::$_pattern['IPv6'])) {
             $pattern = '((([0-9A-Fa-f]{1,4}:){7}(([0-9A-Fa-f]{1,4})|:))|(([0-9A-Fa-f]{1,4}:){6}';
             $pattern .= '(:|((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})';
             $pattern .= '|(:[0-9A-Fa-f]{1,4})))|(([0-9A-Fa-f]{1,4}:){5}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})';
@@ -1724,7 +1732,7 @@ class Validation
 
             static::$_pattern['IPv6'] = $pattern;
         }
-        if ( ! isset(static::$_pattern['IPv4'])) {
+        if (! isset(static::$_pattern['IPv4'])) {
             $pattern                  = '(?:(?:25[0-5]|2[0-4][0-9]|(?:(?:1[0-9])?|[1-9]?)[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|(?:(?:1[0-9])?|[1-9]?)[0-9])';
             static::$_pattern['IPv4'] = $pattern;
         }
