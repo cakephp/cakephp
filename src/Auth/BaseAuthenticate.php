@@ -43,8 +43,6 @@ abstract class BaseAuthenticate implements EventListenerInterface
      * - `passwordHasher` Password hasher class. Can be a string specifying class name
      *    or an array containing `className` key, any other keys will be passed as
      *    config to the class. Defaults to 'Default'.
-     * - Options `scope` and `contain` have been deprecated since 3.1. Use custom
-     *   finder instead to modify the query to fetch user record.
      *
      * @var array
      */
@@ -54,9 +52,7 @@ abstract class BaseAuthenticate implements EventListenerInterface
             'password' => 'password'
         ],
         'userModel' => 'Users',
-        'scope' => [],
         'finder' => 'all',
-        'contain' => null,
         'passwordHasher' => 'Default'
     ];
 
@@ -92,13 +88,6 @@ abstract class BaseAuthenticate implements EventListenerInterface
     {
         $this->_registry = $registry;
         $this->setConfig($config);
-
-        if ($this->getConfig('scope') || $this->getConfig('contain')) {
-            deprecationWarning(
-                'The `scope` and `contain` options for Authentication are deprecated. ' .
-                'Use the `finder` option instead to define additional conditions.'
-            );
-        }
     }
 
     /**
@@ -158,13 +147,6 @@ abstract class BaseAuthenticate implements EventListenerInterface
         $options = [
             'conditions' => [$table->aliasField($config['fields']['username']) => $username]
         ];
-
-        if (!empty($config['scope'])) {
-            $options['conditions'] = array_merge($options['conditions'], $config['scope']);
-        }
-        if (!empty($config['contain'])) {
-            $options['contain'] = $config['contain'];
-        }
 
         $finder = $config['finder'];
         if (is_array($finder)) {
