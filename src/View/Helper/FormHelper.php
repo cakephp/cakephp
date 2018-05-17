@@ -510,14 +510,6 @@ class FormHelper extends Helper
 
         $action = (array)$options['url'] + $actionDefaults;
 
-        $pk = $context->primaryKey();
-        if (count($pk)) {
-            $id = $this->getSourceValue($pk[0]);
-        }
-        if (empty($action[0]) && isset($id)) {
-            $action[0] = $id;
-        }
-
         return $action;
     }
 

@@ -797,7 +797,7 @@ class FormHelperTest extends TestCase
         $this->Form->request = $this->Form->request
             ->withRequestTarget('/articles/edit/1')
             ->withParam('action', 'delete');
-        $result = $this->Form->create($this->article, ['url' => ['action' => 'edit']]);
+        $result = $this->Form->create($this->article, ['url' => ['action' => 'edit', 1]]);
         $expected = [
             'form' => [
                 'method' => 'post',
@@ -812,7 +812,7 @@ class FormHelperTest extends TestCase
 
         $this->Form->request = $this->Form->request
             ->withParam('action', 'add');
-        $result = $this->Form->create($this->article, ['url' => ['action' => 'publish']]);
+        $result = $this->Form->create($this->article, ['url' => ['action' => 'publish', 1]]);
         $expected = [
             'form' => [
                 'method' => 'post',
@@ -836,7 +836,7 @@ class FormHelperTest extends TestCase
 
         $this->Form->request = $this->Form->request
             ->withParam('controller', 'Pages');
-        $result = $this->Form->create($this->article, ['url' => ['action' => 'signup']]);
+        $result = $this->Form->create($this->article, ['url' => ['action' => 'signup', 1]]);
         $expected = [
             'form' => [
                 'method' => 'post', 'action' => '/Pages/signup/1',
