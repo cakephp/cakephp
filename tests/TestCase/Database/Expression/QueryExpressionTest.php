@@ -41,46 +41,6 @@ class QueryExpressionTest extends TestCase
     }
 
     /**
-     * Test tieWith() works.
-     *
-     * @group deprecated
-     * @return
-     */
-    public function testTieWith()
-    {
-        $this->deprecated(function () {
-            $expr = new QueryExpression(['1', '2']);
-            $binder = new ValueBinder();
-
-            $this->assertSame($expr, $expr->tieWith('+'));
-            $this->assertSame('+', $expr->tieWith());
-
-            $result = $expr->sql($binder);
-            $this->assertEquals('(1 + 2)', $result);
-        });
-    }
-
-    /**
-     * Test type() works.
-     *
-     * @group deprecated
-     * @return
-     */
-    public function testType()
-    {
-        $this->deprecated(function () {
-            $expr = new QueryExpression(['1', '2']);
-            $binder = new ValueBinder();
-
-            $this->assertSame($expr, $expr->type('+'));
-            $this->assertSame('+', $expr->type());
-
-            $result = $expr->sql($binder);
-            $this->assertEquals('(1 + 2)', $result);
-        });
-    }
-
-    /**
      * Test and() and or() calls work transparently
      *
      * @return void

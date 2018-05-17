@@ -125,27 +125,6 @@ class ValuesExpression implements ExpressionInterface
     }
 
     /**
-     * Sets the columns to be inserted. If no params are passed, then it returns
-     * the currently stored columns.
-     *
-     * @deprecated 3.4.0 Use setColumns()/getColumns() instead.
-     * @param array|null $cols Array with columns to be inserted.
-     * @return array|$this
-     */
-    public function columns($cols = null)
-    {
-        deprecationWarning(
-            'ValuesExpression::columns() is deprecated. ' .
-            'Use ValuesExpression::setColumns()/getColumns() instead.'
-        );
-        if ($cols !== null) {
-            return $this->setColumns($cols);
-        }
-
-        return $this->getColumns();
-    }
-
-    /**
      * Get the bare column names.
      *
      * Because column names could be identifier quoted, we
@@ -195,27 +174,6 @@ class ValuesExpression implements ExpressionInterface
     }
 
     /**
-     * Sets the values to be inserted. If no params are passed, then it returns
-     * the currently stored values
-     *
-     * @deprecated 3.4.0 Use setValues()/getValues() instead.
-     * @param array|null $values Array with values to be inserted.
-     * @return array|$this
-     */
-    public function values($values = null)
-    {
-        deprecationWarning(
-            'ValuesExpression::values() is deprecated. ' .
-            'Use ValuesExpression::setValues()/getValues() instead.'
-        );
-        if ($values !== null) {
-            return $this->setValues($values);
-        }
-
-        return $this->getValues();
-    }
-
-    /**
      * Sets the query object to be used as the values expression to be evaluated
      * to insert records in the table.
      *
@@ -238,28 +196,6 @@ class ValuesExpression implements ExpressionInterface
     public function getQuery()
     {
         return $this->_query;
-    }
-
-    /**
-     * Sets the query object to be used as the values expression to be evaluated
-     * to insert records in the table. If no params are passed, then it returns
-     * the currently stored query
-     *
-     * @deprecated 3.4.0 Use setQuery()/getQuery() instead.
-     * @param \Cake\Database\Query|null $query The query to set
-     * @return \Cake\Database\Query|null|$this
-     */
-    public function query(Query $query = null)
-    {
-        deprecationWarning(
-            'ValuesExpression::query() is deprecated. ' .
-            'Use ValuesExpression::setQuery()/getQuery() instead.'
-        );
-        if ($query !== null) {
-            return $this->setQuery($query);
-        }
-
-        return $this->getQuery();
     }
 
     /**
