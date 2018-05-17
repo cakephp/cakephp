@@ -1560,37 +1560,38 @@ class Validation
     }
 
     /**
-     * Check that the input value is a valid IBAN number
+     * Check that the input value has a valid International Bank Account Number IBAN syntax
+     * Requirements are uppercase, no whitespaces, max length 34, country code and checksum exist at right spots,
+     * body matches against checksum via Luhn algorithm
      *
      * @param string $check The value to check
+     *
      * @return bool Success
      */
     public static function iban($check)
     {
-        $iban = str_replace(' ', '', $check);
-
-        if (!preg_match('/^[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}$/i', $iban)) {
+        if (!preg_match('/^[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}$/', $check)) {
             return false;
         }
 
-        $country = substr($iban, 0, 2);
-        $check = intval(substr($iban, 2, 2));
-        $account = substr($iban, 4);
-        $search = range('A', 'Z');
-        $replace = [];
+        $country  = substr($check, 0, 2);
+        $checkInt = intval(substr($check, 2, 2));
+        $account  = substr($check, 4);
+        $search   = range('A', 'Z');
+        $replace  = [];
         foreach (range(10, 35) as $tmp) {
             $replace[] = strval($tmp);
         }
-        $numstr = str_replace($search, $replace, $account . $country . '00');
-        $checksum = intval(substr($numstr, 0, 1));
-        $numstrLength = strlen($numstr);
-        for ($pos = 1; $pos < $numstrLength; $pos++) {
+        $numStr = str_replace($search, $replace, $account . $country . '00');
+        $checksum = intval(substr($numStr, 0, 1));
+        $numStrLength = strlen($numStr);
+        for ($pos = 1; $pos < $numStrLength; $pos++) {
             $checksum *= 10;
-            $checksum += intval(substr($numstr, $pos, 1));
+            $checksum += intval(substr($numStr, $pos, 1));
             $checksum %= 97;
         }
 
-        return ((98 - $checksum) === $check);
+        return ((98 - $checksum) === $checkInt);
     }
 
     /**
