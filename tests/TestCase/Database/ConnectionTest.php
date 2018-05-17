@@ -842,21 +842,6 @@ class ConnectionTest extends TestCase
     }
 
     /**
-     * Tests that a custom logger object can be set
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testSetLogger()
-    {
-        $this->deprecated(function () {
-            $logger = new QueryLogger;
-            $this->connection->logger($logger);
-            $this->assertSame($logger, $this->connection->logger());
-        });
-    }
-
-    /**
      * Tests setting and getting the logger object
      *
      * @return void
@@ -1071,32 +1056,6 @@ class ConnectionTest extends TestCase
             ->getMock();
         $connection->setSchemaCollection($schema);
         $this->assertSame($schema, $connection->getSchemaCollection());
-    }
-
-    /**
-     * Tests it is possible to set a schema collection object
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testSchemaCollection()
-    {
-        $this->deprecated(function () {
-            $driver = $this->getMockFormDriver();
-            $connection = $this->getMockBuilder(Connection::class)
-                ->setMethods(['connect'])
-                ->setConstructorArgs([['driver' => $driver]])
-                ->getMock();
-
-            $schema = $connection->schemaCollection();
-            $this->assertInstanceOf('Cake\Database\Schema\Collection', $schema);
-
-            $schema = $this->getMockBuilder('Cake\Database\Schema\Collection')
-                ->setConstructorArgs([$connection])
-                ->getMock();
-            $connection->schemaCollection($schema);
-            $this->assertSame($schema, $connection->schemaCollection());
-        });
     }
 
     /**

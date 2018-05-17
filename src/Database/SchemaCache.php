@@ -98,10 +98,6 @@ class SchemaCache
      */
     public function getSchema(Connection $connection)
     {
-        if (!method_exists($connection, 'schemaCollection')) {
-            throw new RuntimeException('The given connection object is not compatible with schema caching, as it does not implement a "schemaCollection()" method.');
-        }
-
         $config = $connection->config();
         if (empty($config['cacheMetadata'])) {
             $connection->cacheMetadata(true);
