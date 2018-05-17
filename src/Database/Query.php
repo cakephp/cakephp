@@ -174,27 +174,6 @@ class Query implements ExpressionInterface, IteratorAggregate
     }
 
     /**
-     * Sets the connection instance to be used for executing and transforming this query
-     * When called with a null argument, it will return the current connection instance.
-     *
-     * @deprecated 3.4.0 Use setConnection()/getConnection() instead.
-     * @param \Cake\Database\Connection|null $connection Connection instance
-     * @return $this|\Cake\Database\Connection
-     */
-    public function connection($connection = null)
-    {
-        deprecationWarning(
-            'Query::connection() is deprecated. ' .
-            'Use Query::setConnection()/getConnection() instead.'
-        );
-        if ($connection !== null) {
-            return $this->setConnection($connection);
-        }
-
-        return $this->getConnection();
-    }
-
-    /**
      * Compiles the SQL representation of this query and executes it using the
      * configured connection object. Returns the resulting statement object.
      *
@@ -1051,75 +1030,6 @@ class Query implements ExpressionInterface, IteratorAggregate
     }
 
     /**
-     * Connects any previously defined set of conditions to the provided list
-     * using the OR operator. This function accepts the conditions list in the same
-     * format as the method `where` does, hence you can use arrays, expression objects
-     * callback functions or strings.
-     *
-     * It is important to notice that when calling this function, any previous set
-     * of conditions defined for this query will be treated as a single argument for
-     * the OR operator. This function will not only operate the most recently defined
-     * condition, but all the conditions as a whole.
-     *
-     * When using an array for defining conditions, creating constraints form each
-     * array entry will use the same logic as with the `where()` function. This means
-     * that each array entry will be joined to the other using the OR operator, unless
-     * you nest the conditions in the array using other operator.
-     *
-     * ### Examples:
-     *
-     * ```
-     * $query->where(['title' => 'Hello World')->orWhere(['title' => 'Foo']);
-     * ```
-     *
-     * Will produce:
-     *
-     * `WHERE title = 'Hello World' OR title = 'Foo'`
-     *
-     * ```
-     * $query
-     *   ->where(['OR' => ['published' => false, 'published is NULL']])
-     *   ->orWhere(['author_id' => 1, 'comments_count >' => 10])
-     * ```
-     *
-     * Produces:
-     *
-     * `WHERE (published = 0 OR published IS NULL) OR (author_id = 1 AND comments_count > 10)`
-     *
-     * ```
-     * $query
-     *   ->where(['title' => 'Foo'])
-     *   ->orWhere(function ($exp, $query) {
-     *     return $exp
-     *       ->or_(['author_id' => 1])
-     *       ->add(['author_id' => 2]);
-     *   });
-     * ```
-     *
-     * Generates the following conditions:
-     *
-     * `WHERE (title = 'Foo') OR (author_id = 1 OR author_id = 2)`
-     *
-     * @param string|array|\Cake\Database\ExpressionInterface|callable $conditions The conditions to add with OR.
-     * @param array $types associative array of type names used to bind values to query
-     * @see \Cake\Database\Query::where()
-     * @see \Cake\Database\Type
-     * @return $this
-     * @deprecated 3.5.0 This method creates hard to predict SQL based on the current query state.
-     *   Use `Query::where()` instead as it has more predicatable and easier to understand behavior.
-     */
-    public function orWhere($conditions, $types = [])
-    {
-        deprecationWarning(
-            'Query::orWhere() is deprecated as it creates hard to predict SQL based on the ' .
-            'current query state. Use `Query::where()` instead.'
-        );
-        $this->_conjugate('where', $conditions, 'OR', $types);
-
-        return $this;
-    }
-
-    /**
      * Adds a single or multiple fields to be used in the ORDER clause for this query.
      * Fields can be passed as an array of strings, array of expression
      * objects, a single expression or a single string.
@@ -1331,30 +1241,6 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function andHaving($conditions, $types = [])
     {
         $this->_conjugate('having', $conditions, 'AND', $types);
-
-        return $this;
-    }
-
-    /**
-     * Connects any previously defined set of conditions to the provided list
-     * using the OR operator in the HAVING clause. This method operates in exactly
-     * the same way as the method `orWhere()` does. Please refer to its
-     * documentation for an insight on how to using each parameter.
-     *
-     * Having fields are not suitable for use with user supplied data as they are
-     * not sanitized by the query builder.
-     *
-     * @param string|array|\Cake\Database\ExpressionInterface|callable $conditions The OR conditions for HAVING.
-     * @param array $types associative array of type names used to bind values to query.
-     * @see \Cake\Database\Query::orWhere()
-     * @return $this
-     * @deprecated 3.5.0 This method creates hard to predict SQL based on the current query state.
-     *   Use `Query::having()` instead as it has more predicatable and easier to understand behavior.
-     */
-    public function orHaving($conditions, $types = [])
-    {
-        deprecationWarning('Query::orHaving() is deprecated. Use Query::having() instead.');
-        $this->_conjugate('having', $conditions, 'OR', $types);
 
         return $this;
     }
@@ -2053,36 +1939,6 @@ class Query implements ExpressionInterface, IteratorAggregate
     }
 
     /**
-     * Enable/Disable buffered results.
-     *
-     * When enabled the results returned by this Query will be
-     * buffered. This enables you to iterate a result set multiple times, or
-     * both cache and iterate it.
-     *
-     * When disabled it will consume less memory as fetched results are not
-     * remembered for future iterations.
-     *
-     * If called with no arguments, it will return whether or not buffering is
-     * enabled.
-     *
-     * @deprecated 3.4.0 Use enableBufferedResults()/isBufferedResultsEnabled() instead.
-     * @param bool|null $enable Whether or not to enable buffering
-     * @return bool|$this
-     */
-    public function bufferResults($enable = null)
-    {
-        deprecationWarning(
-            'Query::bufferResults() is deprecated. ' .
-            'Use Query::enableBufferedResults()/isBufferedResultsEnabled() instead.'
-        );
-        if ($enable !== null) {
-            return $this->enableBufferedResults($enable);
-        }
-
-        return $this->isBufferedResultsEnabled();
-    }
-
-    /**
      * Sets the TypeMap class where the types for each of the fields in the
      * select clause are stored.
      *
@@ -2134,29 +1990,6 @@ class Query implements ExpressionInterface, IteratorAggregate
         $this->typeCastEnabled = true;
 
         return $this;
-    }
-
-    /**
-     * Sets the TypeMap class where the types for each of the fields in the
-     * select clause are stored.
-     *
-     * When called with no arguments, the current TypeMap object is returned.
-     *
-     * @deprecated 3.4.0 Use setSelectTypeMap()/getSelectTypeMap() instead.
-     * @param \Cake\Database\TypeMap|null $typeMap The map object to use
-     * @return $this|\Cake\Database\TypeMap
-     */
-    public function selectTypeMap(TypeMap $typeMap = null)
-    {
-        deprecationWarning(
-            'Query::selectTypeMap() is deprecated. ' .
-            'Use Query::setSelectTypeMap()/getSelectTypeMap() instead.'
-        );
-        if ($typeMap !== null) {
-            return $this->setSelectTypeMap($typeMap);
-        }
-
-        return $this->getSelectTypeMap();
     }
 
     /**

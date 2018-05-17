@@ -884,30 +884,6 @@ class QueryTest extends TestCase
     }
 
     /**
-     * Tests that Query::orWhere() can be used to concatenate conditions with OR
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testSelectOrWhere()
-    {
-        $this->deprecated(function () {
-            $this->loadFixtures('Comments');
-            $query = new Query($this->connection);
-            $result = $query
-                ->select(['id'])
-                ->from('comments')
-                ->where(['created' => new \DateTime('2007-03-18 10:45:23')], ['created' => 'datetime'])
-                ->orWhere(['created' => new \DateTime('2007-03-18 10:47:23')], ['created' => 'datetime'])
-                ->execute();
-            $this->assertCount(2, $result);
-            $this->assertEquals(['id' => 1], $result->fetch('assoc'));
-            $this->assertEquals(['id' => 2], $result->fetch('assoc'));
-            $result->closeCursor();
-        });
-    }
-
-    /**
      * Tests that Query::andWhere() can be used to concatenate conditions with AND
      *
      * @return void
@@ -935,71 +911,6 @@ class QueryTest extends TestCase
             ->execute();
         $this->assertCount(0, $result);
         $result->closeCursor();
-    }
-
-    /**
-     * Tests that combining Query::andWhere() and Query::orWhere() produces
-     * correct conditions nesting
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testSelectExpressionNesting()
-    {
-        $this->deprecated(function () {
-            $this->loadFixtures('Comments');
-            $query = new Query($this->connection);
-            $result = $query
-                ->select(['id'])
-                ->from('comments')
-                ->where(['created' => new \DateTime('2007-03-18 10:45:23')], ['created' => 'datetime'])
-                ->orWhere(['id' => 2])
-                ->andWhere(['created >=' => new \DateTime('2007-03-18 10:40:00')], ['created' => 'datetime'])
-                ->execute();
-            $this->assertCount(2, $result);
-            $this->assertEquals(['id' => 1], $result->fetch('assoc'));
-            $this->assertEquals(['id' => 2], $result->fetch('assoc'));
-            $result->closeCursor();
-
-            $query = new Query($this->connection);
-            $result = $query
-                ->select(['id'])
-                ->from('comments')
-                ->where(['created' => new \DateTime('2007-03-18 10:45:23')], ['created' => 'datetime'])
-                ->orWhere(['id' => 2])
-                ->andWhere(['created >=' => new \DateTime('2007-03-18 10:40:00')], ['created' => 'datetime'])
-                ->orWhere(['created' => new \DateTime('2007-03-18 10:49:23')], ['created' => 'datetime'])
-                ->execute();
-            $this->assertCount(3, $result);
-            $this->assertEquals(['id' => 1], $result->fetch('assoc'));
-            $this->assertEquals(['id' => 2], $result->fetch('assoc'));
-            $this->assertEquals(['id' => 3], $result->fetch('assoc'));
-            $result->closeCursor();
-        });
-    }
-
-    /**
-     * Tests that Query::orWhere() can be used without calling where() before
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testSelectOrWhereNoPreviousCondition()
-    {
-        $this->deprecated(function () {
-            $this->loadFixtures('Comments');
-            $query = new Query($this->connection);
-            $result = $query
-                ->select(['id'])
-                ->from('comments')
-                ->orWhere(['created' => new \DateTime('2007-03-18 10:45:23')], ['created' => 'datetime'])
-                ->orWhere(['created' => new \DateTime('2007-03-18 10:47:23')], ['created' => 'datetime'])
-                ->execute();
-            $this->assertCount(2, $result);
-            $this->assertEquals(['id' => 1], $result->fetch('assoc'));
-            $this->assertEquals(['id' => 2], $result->fetch('assoc'));
-            $result->closeCursor();
-        });
     }
 
     /**
@@ -1132,48 +1043,6 @@ class QueryTest extends TestCase
             ->execute();
         $this->assertCount(0, $result);
         $result->closeCursor();
-    }
-
-    /**
-     * Tests that it is possible to pass a closure to orWhere() to build a set of
-     * conditions and return the expression to be used
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testSelectOrWhereUsingClosure()
-    {
-        $this->deprecated(function () {
-            $this->loadFixtures('Comments');
-            $query = new Query($this->connection);
-            $result = $query
-                ->select(['id'])
-                ->from('comments')
-                ->where(['id' => '1'])
-                ->orWhere(function ($exp) {
-                    return $exp->eq('created', new \DateTime('2007-03-18 10:47:23'), 'datetime');
-                })
-                ->execute();
-            $this->assertCount(2, $result);
-            $this->assertEquals(['id' => 1], $result->fetch('assoc'));
-            $this->assertEquals(['id' => 2], $result->fetch('assoc'));
-            $result->closeCursor();
-
-            $query = new Query($this->connection);
-            $result = $query
-                ->select(['id'])
-                ->from('comments')
-                ->where(['id' => '1'])
-                ->orWhere(function ($exp) {
-                    return $exp
-                        ->eq('created', new \DateTime('2012-12-22 12:00'), 'datetime')
-                        ->eq('id', 3);
-                })
-                ->execute();
-            $this->assertCount(1, $result);
-            $this->assertEquals(['id' => 1], $result->fetch('assoc'));
-            $result->closeCursor();
-        });
     }
 
     /**
@@ -1980,29 +1849,6 @@ class QueryTest extends TestCase
     }
 
     /**
-     * Test that order() works with an associative array which contains extra values.
-     *
-     * @return void
-     */
-    public function testSelectOrderByAssociativeArrayContainingExtraExpressions()
-    {
-        $this->deprecated(function () {
-            $this->loadFixtures('Articles');
-            $query = new Query($this->connection);
-            $query->select(['id'])
-                ->from('articles')
-                ->order([
-                    'id' => 'desc -- Comment',
-                ]);
-            $result = $query->execute();
-            $this->assertEquals(['id' => 3], $result->fetch('assoc'));
-            $this->assertEquals(['id' => 2], $result->fetch('assoc'));
-            $this->assertEquals(['id' => 1], $result->fetch('assoc'));
-            $result->closeCursor();
-        });
-    }
-
-    /**
      * Test orderAsc() and its input types.
      *
      * @return void
@@ -2263,58 +2109,6 @@ class QueryTest extends TestCase
             ->execute();
         $expected = [['total' => 2, 'author_id' => 1]];
         $this->assertEquals($expected, $result->fetchAll('assoc'));
-    }
-
-    /**
-     * Tests that Query::orHaving() can be used to concatenate conditions with OR
-     * in the having clause
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testSelectOrHaving()
-    {
-        $this->deprecated(function () {
-            $this->loadFixtures('Authors', 'Articles');
-            $query = new Query($this->connection);
-            $result = $query
-                ->select(['total' => 'count(author_id)', 'author_id'])
-                ->from('articles')
-                ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $query->newExpr()->equalFields('author_id', 'a.id')])
-                ->group('author_id')
-                ->having(['count(author_id) >' => 2], ['count(author_id)' => 'integer'])
-                ->orHaving(['count(author_id) <' => 2], ['count(author_id)' => 'integer'])
-                ->execute();
-            $expected = [['total' => 1, 'author_id' => 3]];
-            $this->assertEquals($expected, $result->fetchAll('assoc'));
-
-            $query = new Query($this->connection);
-            $result = $query
-                ->select(['total' => 'count(author_id)', 'author_id'])
-                ->from('articles')
-                ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $query->newExpr()->equalFields('author_id', 'a.id')])
-                ->group('author_id')
-                ->order(['total' => 'desc'])
-                ->having(['count(author_id) >' => 2], ['count(author_id)' => 'integer'])
-                ->orHaving(['count(author_id) <=' => 2], ['count(author_id)' => 'integer'])
-                ->execute();
-            $expected = [['total' => 2, 'author_id' => 1], ['total' => 1, 'author_id' => 3]];
-            $this->assertEquals($expected, $result->fetchAll('assoc'));
-
-            $query = new Query($this->connection);
-            $result = $query
-                ->select(['total' => 'count(author_id)', 'author_id'])
-                ->from('articles')
-                ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $query->newExpr()->equalFields('author_id', 'a.id')])
-                ->group('author_id')
-                ->having(['count(author_id) >' => 2], ['count(author_id)' => 'integer'])
-                ->orHaving(function ($e) {
-                    return $e->add('count(author_id) = 1 + 1');
-                })
-                ->execute();
-            $expected = [['total' => 2, 'author_id' => 1]];
-            $this->assertEquals($expected, $result->fetchAll('assoc'));
-        });
     }
 
     /**
