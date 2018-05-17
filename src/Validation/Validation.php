@@ -1562,7 +1562,7 @@ class Validation
     /**
      * Check that the input value has a valid International Bank Account Number IBAN syntax
      * Requirements are uppercase, no whitespaces, max length 34, country code and checksum exist at right spots,
-     * body matches against checksum via Luhn algorithm
+     * body matches against checksum via Mod97-10 algorithm
      *
      * @param string $check The value to check
      *
