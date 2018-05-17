@@ -1574,11 +1574,11 @@ class Validation
             return false;
         }
 
-        $country  = substr($check, 0, 2);
+        $country = substr($check, 0, 2);
         $checkInt = intval(substr($check, 2, 2));
-        $account  = substr($check, 4);
-        $search   = range('A', 'Z');
-        $replace  = [];
+        $account = substr($check, 4);
+        $search = range('A', 'Z');
+        $replace = [];
         foreach (range(10, 35) as $tmp) {
             $replace[] = strval($tmp);
         }
