@@ -22,14 +22,4 @@ namespace Cake\Database;
  */
 interface TypedResultInterface
 {
-
-    /**
-     * Sets the type of the value this object will generate.
-     * If called without arguments, returns the current known type
-     *
-     * @deprecated 3.5.0 Use getReturnType()/setReturnType() instead.
-     * @param string|null $type The name of the type that is to be returned
-     * @return string|$this
-     */
-    public function returnType($type = null);
 }
