@@ -107,26 +107,4 @@ class CachedCollection extends Collection
     {
         return $this->_cache;
     }
-
-    /**
-     * Sets the cache config name to use for caching table metadata, or
-     * disables it if false is passed.
-     * If called with no arguments it returns the current configuration name.
-     *
-     * @deprecated 3.4.0 Use setCacheMetadata()/getCacheMetadata()
-     * @param bool|null $enable Whether or not to enable caching
-     * @return string|bool
-     */
-    public function cacheMetadata($enable = null)
-    {
-        deprecationWarning(
-            'CachedCollection::cacheMetadata() is deprecated. ' .
-            'Use CachedCollection::setCacheMetadata()/getCacheMetadata() instead.'
-        );
-        if ($enable !== null) {
-            $this->setCacheMetadata($enable);
-        }
-
-        return $this->getCacheMetadata();
-    }
 }
