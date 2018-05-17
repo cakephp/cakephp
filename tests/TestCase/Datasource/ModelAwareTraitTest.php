@@ -118,33 +118,6 @@ class ModelAwareTraitTest extends TestCase
     }
 
     /**
-     * test alternate default model type.
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testModelType()
-    {
-        $this->deprecated(function () {
-            $stub = new Stub();
-            $stub->setProps('Articles');
-
-            FactoryLocator::add('Test', function ($name) {
-                $mock = new \StdClass();
-                $mock->name = $name;
-
-                return $mock;
-            });
-            $stub->modelType('Test');
-
-            $result = $stub->loadModel('Magic');
-            $this->assertInstanceOf('\StdClass', $result);
-            $this->assertInstanceOf('\StdClass', $stub->Magic);
-            $this->assertEquals('Magic', $stub->Magic->name);
-        });
-    }
-
-    /**
      * test getModelType() and setModelType()
      *
      * @return void

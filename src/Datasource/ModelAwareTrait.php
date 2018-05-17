@@ -152,27 +152,4 @@ trait ModelAwareTrait
 
         return $this;
     }
-
-    /**
-     * Set or get the model type to be used by this class
-     *
-     * @deprecated 3.5.0 Use getModelType()/setModelType() instead.
-     * @param string|null $modelType The model type or null to retrieve the current
-     *
-     * @return string|$this
-     */
-    public function modelType($modelType = null)
-    {
-        deprecationWarning(
-            get_called_class() . '::modelType() is deprecated. ' .
-            'Use setModelType()/getModelType() instead.'
-        );
-        if ($modelType === null) {
-            return $this->_modelType;
-        }
-
-        $this->_modelType = $modelType;
-
-        return $this;
-    }
 }

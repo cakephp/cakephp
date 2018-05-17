@@ -79,14 +79,4 @@ interface ConnectionInterface
      * @return bool
      */
     public function logQueries($enable = null);
-
-    /**
-     * Sets the logger object instance. When called with no arguments
-     * it returns the currently setup logger instance.
-     *
-     * @param object|null $instance logger object instance
-     * @return object logger instance
-     * @deprecated 3.5.0 Will be replaced by getLogger()/setLogger()
-     */
-    public function logger($instance = null);
 }

@@ -17,6 +17,7 @@ namespace Cake\Datasource;
 use BadMethodCallException;
 use Cake\Collection\Iterator\MapReduce;
 use Cake\Datasource\Exception\RecordNotFoundException;
+use InvalidArgumentException;
 
 /**
  * Contains the characteristics for an object that is attached to a repository and
@@ -79,7 +80,6 @@ trait QueryTrait
      * @var bool
      */
     protected $_eagerLoaded = false;
-
     /**
      * Returns the default table object that will be used by this query,
      * that is, the table that will appear in the from clause.
@@ -87,20 +87,11 @@ trait QueryTrait
      * When called with a Table argument, the default table object will be set
      * and this query object will be returned for chaining.
      *
-     * @param \Cake\Datasource\RepositoryInterface|\Cake\ORM\Table|null $table The default table object to use
-     * @return \Cake\Datasource\RepositoryInterface|\Cake\ORM\Table|$this
+     * @param \Cake\Datasource\RepositoryInterface|\Cake\ORM\Table $table The default table object to use
+     * @return $this
      */
-    public function repository(RepositoryInterface $table = null)
+    public function repository(RepositoryInterface $table)
     {
-        if ($table === null) {
-            deprecationWarning(
-                'Using Query::repository() as getter is deprecated. ' .
-                'Use getRepository() instead.'
-            );
-
-            return $this->getRepository();
-        }
-
         $this->_repository = $table;
 
         return $this;
@@ -210,21 +201,12 @@ trait QueryTrait
     /**
      * Sets the query instance to be an eager loaded query. If no argument is
      * passed, the current configured query `_eagerLoaded` value is returned.
-     *
-     * @deprecated 3.5.0 Use isEagerLoaded() for the getter part instead.
-     * @param bool|null $value Whether or not to eager load.
-     * @return $this|\Cake\ORM\Query
-     */
-    public function eagerLoaded($value = null)
-    {
-        if ($value === null) {
-            deprecationWarning(
-                'Using ' . get_called_class() . '::eagerLoaded() as a getter is deprecated. ' .
-                'Use isEagerLoaded() instead.'
-            );
 
-            return $this->_eagerLoaded;
-        }
+     * @param bool $value Whether or not to eager load.
+     * @return $this
+     */
+    public function eagerLoaded($value)
+    {
         $this->_eagerLoaded = $value;
 
         return $this;
@@ -333,9 +315,6 @@ trait QueryTrait
      * The MapReduce routing will only be run when the query is executed and the first
      * result is attempted to be fetched.
      *
-     * If the first argument is set to null, it will return the list of previously
-     * registered map reduce routines. This is deprecated as of 3.6.0 - use getMapReducers() instead.
-     *
      * If the third argument is set to true, it will erase previous map reducers
      * and replace it with the arguments passed.
      *
@@ -352,13 +331,10 @@ trait QueryTrait
         }
         if ($mapper === null) {
             if (!$overwrite) {
-                deprecationWarning(
-                    'Using QueryTrait::mapReduce() as a getter is deprecated. ' .
-                    'Use getMapReducers() instead.'
-                );
+                throw new InvalidArgumentException('$mapper can be null only when $overwrite is false.');
             }
 
-            return $this->_mapReduce;
+            return $this;
         }
         $this->_mapReduce[] = compact('mapper', 'reducer');
 
@@ -385,9 +361,6 @@ trait QueryTrait
      * Callbacks are required to return an iterator object, which will be used as
      * the return value for this query's result. Formatter functions are applied
      * after all the `MapReduce` routines for this query have been executed.
-     *
-     * If the first argument is set to null, it will return the list of previously
-     * registered format routines. This is deprecated as of 3.6.0 - use getResultFormatters() instead.
      *
      * If the second argument is set to true, it will erase previous formatters
      * and replace them with the passed first argument.
@@ -420,13 +393,10 @@ trait QueryTrait
         }
         if ($formatter === null) {
             if ($mode !== self::OVERWRITE) {
-                deprecationWarning(
-                    'Using QueryTrait::formatResults() as a getter is deprecated. ' .
-                    'Use getResultFormatters() instead.'
-                );
+                throw new InvalidArgumentException('$formatter can be null only when $mode is overwrite.');
             }
 
-            return $this->_formatters;
+            return $this;
         }
 
         if ($mode === self::PREPEND) {

@@ -313,7 +313,7 @@ class BehaviorRegistryTest extends TestCase
         $this->Behaviors->set('Sluggable', $mockedBehavior);
 
         $query = $this->getMockBuilder('Cake\ORM\Query')
-            ->setConstructorArgs([null, null])
+            ->disableOriginalConstructor()
             ->getMock();
         $mockedBehavior
             ->expects($this->once())
