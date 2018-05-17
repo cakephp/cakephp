@@ -1587,6 +1587,7 @@ class Validation
                 $checksum += intval(substr($numstr, $pos, 1));
                 $checksum %= 97;
             }
+
             return ((98 - $checksum) == $check);
         }
 
