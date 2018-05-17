@@ -241,7 +241,7 @@ trait ConsoleIntegrationTestTrait
         if ($this->useCommandRunner) {
             $applicationClassName = Configure::read('App.namespace') . '\Application';
 
-            return new CommandRunner(new $applicationClassName([CONFIG]));
+            return new CommandRunner(new $applicationClassName(CONFIG));
         }
 
         return new LegacyCommandRunner();
