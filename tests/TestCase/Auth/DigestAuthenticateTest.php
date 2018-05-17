@@ -340,34 +340,6 @@ class DigestAuthenticateTest extends TestCase
     }
 
     /**
-     * test scope failure.
-     *
-     * @return void
-     */
-    public function testAuthenticateFailReChallenge()
-    {
-        $this->expectException(\Cake\Http\Exception\UnauthorizedException::class);
-        $this->expectExceptionCode(401);
-        $this->auth->setConfig('scope.username', 'nate');
-        $request = new ServerRequest([
-            'url' => 'posts/index',
-            'environment' => ['REQUEST_METHOD' => 'GET']
-        ]);
-
-        $data = [
-            'username' => 'invalid',
-            'uri' => '/dir/index.html',
-            'nonce' => $this->generateNonce(),
-            'nc' => 1,
-            'cnonce' => '123',
-            'qop' => 'auth',
-        ];
-        $data['response'] = $this->auth->generateResponseHash($data, '09faa9931501bf30f0d4253fa7763022', 'GET');
-        $request = $request->withEnv('PHP_AUTH_DIGEST', $this->digestHeader($data));
-        $this->auth->unauthenticated($request, $this->response);
-    }
-
-    /**
      * testLoginHeaders method
      *
      * @return void

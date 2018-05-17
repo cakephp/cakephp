@@ -210,25 +210,4 @@ class BasicAuthenticateTest extends TestCase
         ];
         $this->assertEquals($expected, $result);
     }
-
-    /**
-     * test scope failure.
-     *
-     * @return void
-     */
-    public function testAuthenticateFailReChallenge()
-    {
-        $this->expectException(\Cake\Http\Exception\UnauthorizedException::class);
-        $this->expectExceptionCode(401);
-        $this->auth->setConfig('scope.username', 'nate');
-        $request = new ServerRequest([
-            'url' => 'posts/index',
-            'environment' => [
-                'PHP_AUTH_USER' => 'mariano',
-                'PHP_AUTH_PW' => 'password'
-            ]
-        ]);
-
-        $this->auth->unauthenticated($request, $this->response);
-    }
 }
