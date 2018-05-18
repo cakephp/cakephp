@@ -3627,7 +3627,8 @@ XML;
                 'pass' => [],
             ],
             'webroot' => '',
-            'base' => ''
+            'base' => '',
+            'here' => '/'
         ];
         $this->assertEquals($expected, $new->getAttributes());
     }

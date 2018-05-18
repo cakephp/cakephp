@@ -38,6 +38,11 @@ abstract class BaseErrorHandler
     protected $_options = [];
 
     /**
+     * @var bool
+     */
+    protected $_handled = false;
+
+    /**
      * Display an error message in an environment specific way.
      *
      * Subclasses should implement this method to display the error as
@@ -75,7 +80,7 @@ abstract class BaseErrorHandler
         set_error_handler([$this, 'handleError'], $level);
         set_exception_handler([$this, 'wrapAndHandleException']);
         register_shutdown_function(function () {
-            if (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') {
+            if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') && $this->_handled) {
                 return;
             }
             $megabytes = Configure::read('Error.extraFatalErrorMemory');
@@ -128,6 +133,7 @@ abstract class BaseErrorHandler
         if (error_reporting() === 0) {
             return false;
         }
+        $this->_handled = true;
         list($error, $log) = static::mapErrorCode($code);
         if ($log === LOG_ERR) {
             return $this->handleFatalError($code, $description, $file, $line);

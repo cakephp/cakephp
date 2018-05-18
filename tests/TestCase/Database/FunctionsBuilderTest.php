@@ -217,4 +217,17 @@ class FunctionsBuilderTest extends TestCase
         $this->assertEquals('DAYOFWEEK(created)', $function->sql(new ValueBinder));
         $this->assertEquals('integer', $function->getReturnType());
     }
+
+    /**
+     * Tests generating a RAND() function
+     *
+     * @return void
+     */
+    public function testRand()
+    {
+        $function = $this->functions->rand();
+        $this->assertInstanceOf('Cake\Database\Expression\FunctionExpression', $function);
+        $this->assertEquals('RAND()', $function->sql(new ValueBinder));
+        $this->assertEquals('float', $function->getReturnType());
+    }
 }
