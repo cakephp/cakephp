@@ -63,6 +63,9 @@ class RouterTest extends TestCase
      */
     public function testBaseUrl()
     {
+        Router::scope('/', function ($routes) {
+            $routes->fallbacks();
+        });
         $this->assertRegExp('/^http(s)?:\/\//', Router::url('/', true));
         $this->assertRegExp('/^http(s)?:\/\//', Router::url(null, true));
         $this->assertRegExp('/^http(s)?:\/\//', Router::url(['_full' => true]));
@@ -75,6 +78,9 @@ class RouterTest extends TestCase
      */
     public function testFullBaseURL()
     {
+        Router::scope('/', function ($routes) {
+            $routes->fallbacks();
+        });
         Router::fullBaseUrl('http://example.com');
         $this->assertEquals('http://example.com/', Router::url('/', true));
         $this->assertEquals('http://example.com', Configure::read('App.fullBaseUrl'));
@@ -2466,6 +2472,9 @@ class RouterTest extends TestCase
 
     public function testReverseFull()
     {
+        Router::scope('/', function ($routes) {
+            $routes->fallbacks();
+        });
         $params = [
             'lang' => 'eng',
             'controller' => 'posts',

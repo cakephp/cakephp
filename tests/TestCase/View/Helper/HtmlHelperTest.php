@@ -76,6 +76,10 @@ class HtmlHelperTest extends TestCase
         Plugin::load(['TestTheme']);
         static::setAppNamespace();
         Configure::write('Asset.timestamp', false);
+
+        Router::scope('/', function ($routes) {
+            $routes->fallbacks();
+        });
     }
 
     /**
@@ -87,6 +91,7 @@ class HtmlHelperTest extends TestCase
     {
         parent::tearDown();
         Plugin::unload('TestTheme');
+        Router::reload();
         unset($this->Html, $this->View);
     }
 

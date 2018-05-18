@@ -164,10 +164,8 @@ abstract class BaseApplication implements
      */
     public function routes($routes)
     {
-        if (!Router::$initialized) {
-            // Prevent routes from being loaded again
-            Router::$initialized = true;
-
+        // Only load routes if the router is empty
+        if (!Router::routes()) {
             require $this->configDir . '/routes.php';
         }
     }
