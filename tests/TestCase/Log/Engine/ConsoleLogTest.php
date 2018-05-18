@@ -31,7 +31,8 @@ class ConsoleLogTest extends TestCase
         $output = $this->getMockBuilder('Cake\Console\ConsoleOutput')->getMock();
 
         $output->expects($this->at(0))
-            ->method('outputAs');
+            ->method('setOutputAs')
+            ->with($this->stringContains(ConsoleOutput::COLOR));
 
         $message = ' Error: oh noes</error>';
         $output->expects($this->at(1))

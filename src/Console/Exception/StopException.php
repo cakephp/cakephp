@@ -19,7 +19,7 @@ use Cake\Core\Exception\Exception;
  * Exception class for halting errors in console tasks
  *
  * @see \Cake\Console\Shell::_stop()
- * @see \Cake\Console\Shell::error()
+ * @see \Cake\Console\Shell::abort()
  */
 class StopException extends Exception
 {

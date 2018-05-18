@@ -222,24 +222,6 @@ class ConsoleOutputTest extends TestCase
     }
 
     /**
-     * test deprecated outputAs
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testOutputAsPlain()
-    {
-        $this->deprecated(function () {
-            $this->output->outputAs(ConsoleOutput::PLAIN);
-            $this->assertSame(ConsoleOutput::PLAIN, $this->output->outputAs());
-            $this->output->expects($this->once())->method('_write')
-                ->with('Bad Regular');
-
-            $this->output->write('<error>Bad</error> Regular', false);
-        });
-    }
-
-    /**
      * test raw output not getting tags replaced.
      *
      * @return void
@@ -254,27 +236,14 @@ class ConsoleOutputTest extends TestCase
     }
 
     /**
-     * test plain output.
+     * test set/get plain output.
      *
      * @return void
      */
     public function testSetOutputAsPlain()
     {
         $this->output->setOutputAs(ConsoleOutput::PLAIN);
-        $this->output->expects($this->once())->method('_write')
-            ->with('Bad Regular');
-
-        $this->output->write('<error>Bad</error> Regular', false);
-    }
-
-    /**
-     * test set plain output.
-     *
-     * @return void
-     */
-    public function testSetSetOutputAsPlain()
-    {
-        $this->output->setOutputAs(ConsoleOutput::PLAIN);
+        $this->assertSame(ConsoleOutput::PLAIN, $this->output->getOutputAs());
         $this->output->expects($this->once())->method('_write')
             ->with('Bad Regular');
 

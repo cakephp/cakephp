@@ -373,20 +373,6 @@ class ConsoleIo
     }
 
     /**
-     * Change the output mode of the stdout stream
-     *
-     * @deprecated 3.5.0 Use setOutputAs() instead.
-     * @param int $mode The output mode.
-     * @return void
-     * @see \Cake\Console\ConsoleOutput::outputAs()
-     */
-    public function outputAs($mode)
-    {
-        deprecationWarning('ConsoleIo::outputAs() is deprecated. Use ConsoleIo::setOutputAs() instead.');
-        $this->_out->setOutputAs($mode);
-    }
-
-    /**
      * Add a new output style or get defined styles.
      *
      * @param string|null $style The style to get or create.

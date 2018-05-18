@@ -82,7 +82,7 @@ class ConsoleOutput
     protected $_output;
 
     /**
-     * The current output type. Manipulated with ConsoleOutput::outputAs();
+     * The current output type. Manipulated with ConsoleOutput::setOutputAs();
      *
      * @var int
      */
@@ -327,25 +327,6 @@ class ConsoleOutput
             throw new InvalidArgumentException(sprintf('Invalid output type "%s".', $type));
         }
 
-        $this->_outputAs = $type;
-    }
-
-    /**
-     * Get/Set the output type to use. The output type how formatting tags are treated.
-     *
-     * @deprecated 3.5.0 Use getOutputAs()/setOutputAs() instead.
-     * @param int|null $type The output type to use. Should be one of the class constants.
-     * @return int|null Either null or the value if getting.
-     */
-    public function outputAs($type = null)
-    {
-        deprecationWarning(
-            'ConsoleOutput::outputAs() is deprecated. ' .
-            'Use ConsoleOutput::setOutputAs()/getOutputAs() instead.'
-        );
-        if ($type === null) {
-            return $this->_outputAs;
-        }
         $this->_outputAs = $type;
     }
 

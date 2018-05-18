@@ -29,23 +29,6 @@ class ConsoleOptionParserTest extends TestCase
     /**
      * test setting the console description
      *
-     * @group deprecated
-     * @return void
-     */
-    public function testDescriptionDeprecated()
-    {
-        $this->deprecated(function () {
-            $parser = new ConsoleOptionParser('test', false);
-            $result = $parser->description('A test');
-
-            $this->assertEquals($parser, $result, 'Setting description is not chainable');
-            $this->assertEquals('A test', $parser->description(), 'getting value is wrong.');
-        });
-    }
-
-    /**
-     * test setting the console description
-     *
      * @return void
      */
     public function testDescription()
@@ -61,24 +44,7 @@ class ConsoleOptionParserTest extends TestCase
     }
 
     /**
-     * test setting the console description
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testEplilogDeprecated()
-    {
-        $this->deprecated(function () {
-            $parser = new ConsoleOptionParser('test', false);
-            $result = $parser->epilog('A test');
-
-            $this->assertEquals($parser, $result, 'Setting epilog is not chainable');
-            $this->assertEquals('A test', $parser->epilog(), 'getting value is wrong.');
-        });
-    }
-
-    /**
-     * test setting the console epilog
+     * test setting and getting the console epilog
      *
      * @return void
      */
@@ -952,7 +918,7 @@ TEXT;
     }
 
     /**
-     * test that command() inflects the command name.
+     * test that getCommand() inflects the command name.
      *
      * @return void
      */
