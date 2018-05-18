@@ -8,19 +8,26 @@
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @since         3.5.0
+ * @since         3.7.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\TestSuite;
+namespace Cake\TestSuite\Constraint\View;
 
 /**
- * A test case class intended to make integration tests of cake console commands
- * easier.
+ * LayoutFileEquals
  *
- * @deprecated use Cake\TestSuite\ConsoleIntegrationTestTrait instead
+ * @internal
  */
-abstract class ConsoleIntegrationTestCase extends TestCase
+class LayoutFileEquals extends TemplateFileEquals
 {
 
-    use ConsoleIntegrationTestTrait;
+    /**
+     * Assertion message
+     *
+     * @return string
+     */
+    public function toString()
+    {
+        return sprintf('equals layout file %s', $this->filename);
+    }
 }
