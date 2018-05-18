@@ -65,17 +65,17 @@ class RoutesShellTest extends ConsoleIntegrationTestCase
         $this->assertOutputContainsRow([
             'articles:_action',
             '/articles/:action/*',
-            '{"controller":"Articles","action":"index","plugin":null}'
+            '{"action":"index","controller":"Articles","plugin":null}'
         ]);
         $this->assertOutputContainsRow([
             'bake._controller:_action',
             '/bake/:controller/:action',
-            '{"plugin":"Bake","action":"index"}'
+            '{"action":"index","plugin":"Bake"}'
         ]);
         $this->assertOutputContainsRow([
             'testName',
             '/tests/:action/*',
-            '{"controller":"Tests","action":"index","plugin":null}'
+            '{"action":"index","controller":"Tests","plugin":null}'
         ]);
     }
 
@@ -96,7 +96,7 @@ class RoutesShellTest extends ConsoleIntegrationTestCase
         $this->assertOutputContainsRow([
             'articles:_action',
             '/articles/check',
-            '{"action":"check","pass":[],"controller":"Articles","plugin":null}'
+            '{"action":"check","controller":"Articles","pass":[],"plugin":null}'
         ]);
     }
 
@@ -117,7 +117,7 @@ class RoutesShellTest extends ConsoleIntegrationTestCase
         $this->assertOutputContainsRow([
             'testName',
             '/tests/index',
-            '{"action":"index","pass":[],"controller":"Tests","plugin":null,"_name":"testName"}'
+            '{"_name":"testName","action":"index","controller":"Tests","pass":[],"plugin":null}'
         ]);
     }
 

@@ -65,6 +65,7 @@ class RoutesShell extends Shell
             }
 
             unset($route['_matchedRoute']);
+            ksort($route);
 
             $output = [
                 ['Route name', 'URI template', 'Defaults'],
