@@ -219,22 +219,10 @@ class EagerLoadable
     /**
      * Gets whether or not this level can be fetched using a join.
      *
-     * If called with arguments it sets the value.
-     * As of 3.4.0 the setter part is deprecated, use setCanBeJoined() instead.
-     *
-     * @param bool|null $possible The value to set.
      * @return bool
      */
-    public function canBeJoined($possible = null)
+    public function canBeJoined()
     {
-        if ($possible !== null) {
-            deprecationWarning(
-                'Using EagerLoadable::canBeJoined() as a setter is deprecated. ' .
-                'Use setCanBeJoined() instead.'
-            );
-            $this->setCanBeJoined($possible);
-        }
-
         return $this->_canBeJoined;
     }
 
@@ -261,30 +249,6 @@ class EagerLoadable
     public function getConfig()
     {
         return $this->_config;
-    }
-
-    /**
-     * Sets the list of options to pass to the association object for loading
-     * the records.
-     *
-     * If called with no arguments it returns the current
-     * value.
-     *
-     * @deprecated 3.4.0 Use setConfig()/getConfig() instead.
-     * @param array|null $config The value to set.
-     * @return array
-     */
-    public function config(array $config = null)
-    {
-        deprecationWarning(
-            'EagerLoadable::config() is deprecated. ' .
-            'Use setConfig()/getConfig() instead.'
-        );
-        if ($config !== null) {
-            $this->setConfig($config);
-        }
-
-        return $this->getConfig();
     }
 
     /**

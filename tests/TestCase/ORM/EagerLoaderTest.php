@@ -597,26 +597,6 @@ class EagerLoaderTest extends TestCase
     /**
      * Asserts that matching('something') and setMatching('something') return consistent type.
      *
-     * @group deprecated
-     * @return void
-     */
-    public function testMatchingReturnType()
-    {
-        $this->deprecated(function () {
-            $loader = new EagerLoader();
-            $result = $loader->setMatching('clients');
-            $this->assertInstanceOf(EagerLoader::class, $result);
-            $this->assertArrayHasKey('clients', $loader->getMatching());
-
-            $result = $loader->matching('customers');
-            $this->assertArrayHasKey('customers', $result);
-            $this->assertArrayHasKey('customers', $loader->getMatching());
-        });
-    }
-
-    /**
-     * Asserts that matching('something') and setMatching('something') return consistent type.
-     *
      * @return void
      */
     public function testSetMatchingReturnType()
