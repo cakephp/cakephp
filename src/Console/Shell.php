@@ -236,26 +236,6 @@ class Shell
     }
 
     /**
-     * Get/Set the io object for this shell.
-     *
-     * @deprecated 3.5.0 Use getIo()/setIo() instead.
-     * @param \Cake\Console\ConsoleIo|null $io The ConsoleIo object to use.
-     * @return \Cake\Console\ConsoleIo The current ConsoleIo object.
-     */
-    public function io(ConsoleIo $io = null)
-    {
-        deprecationWarning(
-            'Shell::io() is deprecated. ' .
-            'Use Shell::setIo()/getIo() instead.'
-        );
-        if ($io !== null) {
-            $this->_io = $io;
-        }
-
-        return $this->_io;
-    }
-
-    /**
      * Initializes the Shell
      * acts as constructor for subclasses
      * allows configuration of tasks prior to shell execution
@@ -776,31 +756,6 @@ class Shell
     }
 
     /**
-     * Wraps a message with a given message type, e.g. <warning>
-     *
-     * @param string $messageType The message type, e.g. "warning".
-     * @param string|array $message The message to wrap.
-     * @return array|string The message wrapped with the given message type.
-     * @deprecated 3.6.0 Will be removed in 4.0.0 as it is no longer in use.
-     */
-    protected function wrapMessageWithType($messageType, $message)
-    {
-        deprecationWarning(
-            'Shell::wrapMessageWithType() is deprecated. ' .
-            'Use output methods on ConsoleIo instead.'
-        );
-        if (is_array($message)) {
-            foreach ($message as $k => $v) {
-                $message[$k] = "<$messageType>" . $v . "</$messageType>";
-            }
-        } else {
-            $message = "<$messageType>" . $message . "</$messageType>";
-        }
-
-        return $message;
-    }
-
-    /**
      * Returns a single or multiple linefeeds sequences.
      *
      * @param int $multiplier Number of times the linefeed sequence should be repeated
@@ -839,32 +794,6 @@ class Shell
     {
         $this->_io->err('<error>' . $message . '</error>');
         throw new StopException($message, $exitCode);
-    }
-
-    /**
-     * Displays a formatted error message
-     * and exits the application with status code 1
-     *
-     * @param string $title Title of the error
-     * @param string|null $message An optional error message
-     * @param int $exitCode The exit code for the shell task.
-     * @throws \Cake\Console\Exception\StopException
-     * @return int Error code
-     * @link https://book.cakephp.org/3.0/en/console-and-shells.html#styling-output
-     * @deprecated 3.2.0 Use Shell::abort() instead.
-     */
-    public function error($title, $message = null, $exitCode = self::CODE_ERROR)
-    {
-        deprecationWarning('Shell::error() is deprecated. `Use Shell::abort() instead.');
-        $this->_io->err(sprintf('<error>Error:</error> %s', $title));
-
-        if (!empty($message)) {
-            $this->_io->err($message);
-        }
-
-        $this->_stop($exitCode);
-
-        return $exitCode;
     }
 
     /**

@@ -309,26 +309,6 @@ class ConsoleOptionParser
     }
 
     /**
-     * Gets or sets the command name for shell/task.
-     *
-     * @deprecated 3.4.0 Use setCommand()/getCommand() instead.
-     * @param string|null $text The text to set, or null if you want to read
-     * @return string|$this If reading, the value of the command. If setting $this will be returned.
-     */
-    public function command($text = null)
-    {
-        deprecationWarning(
-            'ConsoleOptionParser::command() is deprecated. ' .
-            'Use ConsoleOptionParser::setCommand()/getCommand() instead.'
-        );
-        if ($text !== null) {
-            return $this->setCommand($text);
-        }
-
-        return $this->getCommand();
-    }
-
-    /**
      * Sets the description text for shell/task.
      *
      * @param string|array $text The text to set. If an array the
@@ -353,27 +333,6 @@ class ConsoleOptionParser
     public function getDescription()
     {
         return $this->_description;
-    }
-
-    /**
-     * Get or set the description text for shell/task.
-     *
-     * @deprecated 3.4.0 Use setDescription()/getDescription() instead.
-     * @param string|array|null $text The text to set, or null if you want to read. If an array the
-     *   text will be imploded with "\n".
-     * @return string|$this If reading, the value of the description. If setting $this will be returned.
-     */
-    public function description($text = null)
-    {
-        deprecationWarning(
-            'ConsoleOptionParser::description() is deprecated. ' .
-            'Use ConsoleOptionParser::setDescription()/getDescription() instead.'
-        );
-        if ($text !== null) {
-            return $this->setDescription($text);
-        }
-
-        return $this->getDescription();
     }
 
     /**
@@ -402,28 +361,6 @@ class ConsoleOptionParser
     public function getEpilog()
     {
         return $this->_epilog;
-    }
-
-    /**
-     * Gets or sets an epilog to the parser. The epilog is added to the end of
-     * the options and arguments listing when help is generated.
-     *
-     * @deprecated 3.4.0 Use setEpilog()/getEpilog() instead.
-     * @param string|array|null $text Text when setting or null when reading. If an array the text will
-     *   be imploded with "\n".
-     * @return string|$this If reading, the value of the epilog. If setting $this will be returned.
-     */
-    public function epilog($text = null)
-    {
-        deprecationWarning(
-            'ConsoleOptionParser::epliog() is deprecated. ' .
-            'Use ConsoleOptionParser::setEpilog()/getEpilog() instead.'
-        );
-        if ($text !== null) {
-            return $this->setEpilog($text);
-        }
-
-        return $this->getEpilog();
     }
 
     /**
@@ -818,22 +755,6 @@ class ConsoleOptionParser
         }
 
         return $this->getCommandError($subcommand);
-    }
-
-    /**
-     * Set the alias used in the HelpFormatter
-     *
-     * @param string $alias The alias
-     * @return void
-     * @deprecated 3.5.0 Use setRootName() instead.
-     */
-    public function setHelpAlias($alias)
-    {
-        deprecationWarning(
-            'ConsoleOptionParser::setHelpAlias() is deprecated. ' .
-            'Use ConsoleOptionParser::setRootName() instead.'
-        );
-        $this->rootName = $alias;
     }
 
     /**

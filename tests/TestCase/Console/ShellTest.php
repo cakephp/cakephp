@@ -102,25 +102,6 @@ class ShellTest extends TestCase
     }
 
     /**
-     * test io method
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testIo()
-    {
-        $this->deprecated(function () {
-            $this->assertInstanceOf(ConsoleIo::class, $this->Shell->io());
-
-            $io = $this->getMockBuilder(ConsoleIo::class)
-                ->disableOriginalConstructor()
-                ->getMock();
-            $this->assertSame($io, $this->Shell->io($io));
-            $this->assertSame($io, $this->Shell->io());
-        });
-    }
-
-    /**
      * testInitialize method
      *
      * @return void
@@ -396,25 +377,20 @@ class ShellTest extends TestCase
     }
 
     /**
-     * testError
+     * testAbort
      *
-     * @group deprecated
+     * @expectedException \Cake\Console\Exception\StopException
+     * @expectedExceptionMessage Foo Not Found
+     * @expectedExceptionCode 1
      * @return void
      */
-    public function testError()
+    public function testAbort()
     {
         $this->io->expects($this->at(0))
             ->method('err')
-            ->with('<error>Error:</error> Foo Not Found');
+            ->with('<error>Foo Not Found</error>');
 
-        $this->io->expects($this->at(1))
-            ->method('err')
-            ->with('Searched all...');
-
-        $this->deprecated(function () {
-            $this->Shell->error('Foo Not Found', 'Searched all...');
-            $this->assertSame($this->Shell->stopped, 1);
-        });
+        $this->Shell->abort('Foo Not Found');
     }
 
     /**
