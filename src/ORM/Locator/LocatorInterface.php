@@ -24,17 +24,6 @@ use Cake\ORM\Table;
  */
 interface LocatorInterface
 {
-
-    /**
-     * Stores a list of options to be used when instantiating an object
-     * with a matching alias.
-     *
-     * @param string|null $alias Name of the alias
-     * @param array|null $options list of options for the alias
-     * @return array The config data.
-     */
-    public function config($alias = null, $options = null);
-
     /**
      * Get a table instance from the registry.
      *

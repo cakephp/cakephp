@@ -101,40 +101,6 @@ class TableLocator implements LocatorInterface
     }
 
     /**
-     * Stores a list of options to be used when instantiating an object
-     * with a matching alias.
-     *
-     * The options that can be stored are those that are recognized by `get()`
-     * If second argument is omitted, it will return the current settings
-     * for $alias.
-     *
-     * If no arguments are passed it will return the full configuration array for
-     * all aliases
-     *
-     * @deprecated 3.4.0 Use setConfig()/getConfig() instead.
-     * @param string|array|null $alias Name of the alias
-     * @param array|null $options list of options for the alias
-     * @return array The config data.
-     * @throws \RuntimeException When you attempt to configure an existing table instance.
-     */
-    public function config($alias = null, $options = null)
-    {
-        deprecationWarning(
-            'TableLocator::config() is deprecated. ' .
-            'Use getConfig()/setConfig() instead.'
-        );
-        if ($alias !== null) {
-            if (is_string($alias) && $options === null) {
-                return $this->getConfig($alias);
-            }
-
-            $this->setConfig($alias, $options);
-        }
-
-        return $this->getConfig($alias);
-    }
-
-    /**
      * Get a table instance from the registry.
      *
      * Tables are only created once until the registry is flushed.

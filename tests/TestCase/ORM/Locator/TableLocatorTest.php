@@ -62,30 +62,6 @@ class TableLocatorTest extends TestCase
     }
 
     /**
-     * Test config() method.
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testConfigDeprecated()
-    {
-        $this->deprecated(function () {
-            $this->assertEquals([], $this->_locator->config('Tests'));
-
-            $data = [
-                'connection' => 'testing',
-                'entityClass' => 'TestApp\Model\Entity\Article',
-            ];
-            $result = $this->_locator->config('Tests', $data);
-            $this->assertEquals($data, $result, 'Returns config data.');
-
-            $result = $this->_locator->config();
-            $expected = ['Tests' => $data];
-            $this->assertEquals($expected, $result);
-        });
-    }
-
-    /**
      * Test getConfig() method.
      *
      * @return void
