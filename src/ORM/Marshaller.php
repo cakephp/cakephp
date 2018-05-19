@@ -141,7 +141,6 @@ class Marshaller
      * - validate: Set to false to disable validation. Can also be a string of the validator ruleset to be applied.
      *   Defaults to true/default.
      * - associated: Associations listed here will be marshalled as well. Defaults to null.
-     * - fieldList: (deprecated) Since 3.4.0. Use fields instead.
      * - fields: A whitelist of fields to be assigned to the entity. If not present,
      *   the accessible fields list in the entity will be used. Defaults to null.
      * - accessibleFields: A list of fields to allow or deny in entity accessible fields. Defaults to null
@@ -271,14 +270,6 @@ class Marshaller
     {
         $options += ['validate' => true];
 
-        if (!isset($options['fields']) && isset($options['fieldList'])) {
-            deprecationWarning(
-                'The `fieldList` option for marshalling is deprecated. Use the `fields` option instead.'
-            );
-            $options['fields'] = $options['fieldList'];
-            unset($options['fieldList']);
-        }
-
         $tableName = $this->_table->getAlias();
         if (isset($data[$tableName])) {
             $data += $data[$tableName];
@@ -337,7 +328,6 @@ class Marshaller
      * - validate: Set to false to disable validation. Can also be a string of the validator ruleset to be applied.
      *   Defaults to true/default.
      * - associated: Associations listed here will be marshalled as well. Defaults to null.
-     * - fieldList: (deprecated) Since 3.4.0. Use fields instead
      * - fields: A whitelist of fields to be assigned to the entity. If not present,
      *   the accessible fields list in the entity will be used. Defaults to null.
      * - accessibleFields: A list of fields to allow or deny in entity accessible fields. Defaults to null
@@ -495,23 +485,6 @@ class Marshaller
     }
 
     /**
-     * Loads a list of belongs to many from ids.
-     *
-     * @param \Cake\ORM\Association $assoc The association class for the belongsToMany association.
-     * @param array $ids The list of ids to load.
-     * @return \Cake\Datasource\EntityInterface[] An array of entities.
-     * @deprecated Use _loadAssociatedByIds()
-     */
-    protected function _loadBelongsToMany($assoc, $ids)
-    {
-        deprecationWarning(
-            'Marshaller::_loadBelongsToMany() is deprecated. Use _loadAssociatedByIds() instead.'
-        );
-
-        return $this->_loadAssociatedByIds($assoc, $ids);
-    }
-
-    /**
      * Merges `$data` into `$entity` and recursively does the same for each one of
      * the association names passed in `$options`. When merging associations, if an
      * entity is not present in the parent entity for a given association, a new one
@@ -527,7 +500,6 @@ class Marshaller
      * - associated: Associations listed here will be marshalled as well.
      * - validate: Whether or not to validate data before hydrating the entities. Can
      *   also be set to a string to use a specific validator. Defaults to true/default.
-     * - fieldList: (deprecated) Since 3.4.0. Use fields instead
      * - fields: A whitelist of fields to be assigned to the entity. If not present
      *   the accessible fields list in the entity will be used.
      * - accessibleFields: A list of fields to allow or deny in entity accessible fields.
@@ -642,7 +614,6 @@ class Marshaller
      * - validate: Whether or not to validate data before hydrating the entities. Can
      *   also be set to a string to use a specific validator. Defaults to true/default.
      * - associated: Associations listed here will be marshalled as well.
-     * - fieldList: (deprecated) Since 3.4.0. Use fields instead
      * - fields: A whitelist of fields to be assigned to the entity. If not present,
      *   the accessible fields list in the entity will be used.
      * - accessibleFields: A list of fields to allow or deny in entity accessible fields.
