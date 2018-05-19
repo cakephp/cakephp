@@ -456,29 +456,6 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     }
 
     /**
-     * Sets all future finds for the bound table to also fetch translated fields for
-     * the passed locale. If no value is passed, it returns the currently configured
-     * locale
-     *
-     * @deprecated 3.6.0 Use setLocale()/getLocale() instead.
-     * @param string|null $locale The locale to use for fetching translated records
-     * @return string
-     */
-    public function locale($locale = null)
-    {
-        deprecationWarning(
-            get_called_class() . '::locale() is deprecated. ' .
-            'Use setLocale()/getLocale() instead.'
-        );
-
-        if ($locale !== null) {
-            $this->setLocale($locale);
-        }
-
-        return $this->getLocale();
-    }
-
-    /**
      * Returns a fully aliased field name for translated fields.
      *
      * If the requested field is configured as a translation field, the `content`

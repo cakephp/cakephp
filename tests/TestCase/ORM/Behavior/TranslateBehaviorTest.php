@@ -320,31 +320,6 @@ class TranslateBehaviorTest extends TestCase
     }
 
     /**
-     * Tests the deprecated locale method.
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testLocale()
-    {
-        $this->deprecated(function () {
-            $table = $this->getTableLocator()->get('Articles');
-            $table->addBehavior('Translate');
-
-            $this->assertEquals('en_US', $table->locale());
-
-            $table->locale('fr_FR');
-            $this->assertEquals('fr_FR', $table->locale());
-
-            $table->locale(false);
-            $this->assertEquals('en_US', $table->locale());
-
-            I18n::setLocale('fr_FR');
-            $this->assertEquals('fr_FR', $table->locale());
-        });
-    }
-
-    /**
      * Tests the locale setter/getter.
      *
      * @return void

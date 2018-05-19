@@ -559,22 +559,6 @@ class EagerLoaderTest extends TestCase
     }
 
     /**
-     * Test for autoFields()
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testAutoFields()
-    {
-        $this->deprecated(function () {
-            $loader = new EagerLoader();
-            $this->assertTrue($loader->autoFields());
-            $this->assertFalse($loader->autoFields(false));
-            $this->assertFalse($loader->autoFields());
-        });
-    }
-
-    /**
      * Test for enableAutoFields()
      *
      * @return void

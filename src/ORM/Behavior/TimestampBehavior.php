@@ -21,6 +21,7 @@ use Cake\Event\Event;
 use Cake\I18n\Time;
 use Cake\ORM\Behavior;
 use DateTime;
+use RuntimeException;
 use UnexpectedValueException;
 
 /**
@@ -210,10 +211,7 @@ class TimestampBehavior extends Behavior
         $type = TypeFactory::build($columnType);
 
         if (!$type instanceof DateTimeType) {
-            deprecationWarning('TimestampBehavior support for column types other than DateTimeType will be removed in 4.0.');
-            $entity->set($field, (string)$ts);
-
-            return;
+            throw new RuntimeException('TimestampBehavior only supports columns of type DateTimeType.');
         }
 
         $class = $type->getDateTimeClassName();
