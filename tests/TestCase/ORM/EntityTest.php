@@ -1174,43 +1174,6 @@ class EntityTest extends TestCase
     }
 
     /**
-     * Tests the errors method
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testErrors()
-    {
-        $this->deprecated(function () {
-            $entity = new Entity();
-            $this->assertEmpty($entity->errors());
-            $this->assertSame($entity, $entity->errors('foo', 'bar'));
-            $this->assertEquals(['bar'], $entity->errors('foo'));
-
-            $this->assertEquals([], $entity->errors('boo'));
-            $entity['boo'] = [
-                'something' => 'stupid',
-                'and' => false
-            ];
-            $this->assertEquals([], $entity->errors('boo'));
-
-            $entity->errors('foo', 'other error');
-            $this->assertEquals(['bar', 'other error'], $entity->errors('foo'));
-
-            $entity->errors('bar', ['something', 'bad']);
-            $this->assertEquals(['something', 'bad'], $entity->errors('bar'));
-
-            $expected = ['foo' => ['bar', 'other error'], 'bar' => ['something', 'bad']];
-            $this->assertEquals($expected, $entity->errors());
-
-            $errors = ['foo' => ['something'], 'bar' => 'else', 'baz' => ['error']];
-            $this->assertSame($entity, $entity->errors($errors, null, true));
-            $errors['bar'] = ['else'];
-            $this->assertEquals($errors, $entity->errors());
-        });
-    }
-
-    /**
      * Tests error getters and setters
      *
      * @return void
@@ -1521,22 +1484,6 @@ class EntityTest extends TestCase
     }
 
     /**
-     * Tests the source method
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testSource()
-    {
-        $this->deprecated(function () {
-            $entity = new Entity();
-            $this->assertNull($entity->source());
-            $entity->source('foos');
-            $this->assertEquals('foos', $entity->source());
-        });
-    }
-
-    /**
      * Test the source getter
      */
     public function testGetAndSetSource()
@@ -1603,32 +1550,6 @@ class EntityTest extends TestCase
         $this->assertTrue($cloned->isDirty());
         $this->assertTrue($cloned->isDirty('a'));
         $this->assertTrue($cloned->isDirty('b'));
-    }
-
-    /**
-     * Provides empty values
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testDirtyFromClone()
-    {
-        $this->deprecated(function () {
-            $entity = new Entity(
-                ['a' => 1, 'b' => 2],
-                ['markNew' => false, 'markClean' => true]
-            );
-
-            $this->assertFalse($entity->isNew());
-            $this->assertFalse($entity->dirty());
-
-            $cloned = clone $entity;
-            $cloned->isNew(true);
-
-            $this->assertTrue($cloned->dirty());
-            $this->assertTrue($cloned->dirty('a'));
-            $this->assertTrue($cloned->dirty('b'));
-        });
     }
 
     /**

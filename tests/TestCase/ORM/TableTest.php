@@ -6454,24 +6454,6 @@ class TableTest extends TestCase
     /**
      * Tests that calling newEntity() on a table sets the right source alias
      *
-     * @group deprecated
-     * @return void
-     */
-    public function testEntitySource()
-    {
-        $this->deprecated(function () {
-            $table = $this->getTableLocator()->get('Articles');
-            $this->assertEquals('Articles', $table->newEntity()->source());
-
-            Plugin::load('TestPlugin');
-            $table = $this->getTableLocator()->get('TestPlugin.Comments');
-            $this->assertEquals('TestPlugin.Comments', $table->newEntity()->source());
-        });
-    }
-
-    /**
-     * Tests that calling newEntity() on a table sets the right source alias
-     *
      * @return void
      */
     public function testSetEntitySource()

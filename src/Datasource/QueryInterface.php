@@ -261,10 +261,10 @@ interface QueryInterface
      * Returns the default repository object that will be used by this query,
      * that is, the repository that will appear in the from clause.
      *
-     * @param \Cake\Datasource\RepositoryInterface|null $repository The default repository object to use
-     * @return \Cake\Datasource\RepositoryInterface|$this
+     * @param \Cake\Datasource\RepositoryInterface $repository The default repository object to use
+     * @return $this
      */
-    public function repository(RepositoryInterface $repository = null);
+    public function repository(RepositoryInterface $repository);
 
     /**
      * Adds a condition or set of conditions to be used in the WHERE clause for this
