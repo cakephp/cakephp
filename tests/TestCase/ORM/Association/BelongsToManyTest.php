@@ -85,25 +85,6 @@ class BelongsToManyTest extends TestCase
     }
 
     /**
-     * Tests that foreignKey() returns the correct configured value
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testForeignKey()
-    {
-        $this->deprecated(function () {
-            $assoc = new BelongsToMany('Test', [
-                'sourceTable' => $this->article,
-                'targetTable' => $this->tag
-            ]);
-            $this->assertEquals('article_id', $assoc->foreignKey());
-            $this->assertEquals('another_key', $assoc->foreignKey('another_key'));
-            $this->assertEquals('another_key', $assoc->foreignKey());
-        });
-    }
-
-    /**
      * Tests that the association reports it can be joined
      *
      * @return void
@@ -112,22 +93,6 @@ class BelongsToManyTest extends TestCase
     {
         $assoc = new BelongsToMany('Test');
         $this->assertFalse($assoc->canBeJoined());
-    }
-
-    /**
-     * Tests sort() method
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testSort()
-    {
-        $this->deprecated(function () {
-            $assoc = new BelongsToMany('Test');
-            $this->assertNull($assoc->sort());
-            $assoc->sort(['id' => 'ASC']);
-            $this->assertEquals(['id' => 'ASC'], $assoc->sort());
-        });
     }
 
     /**
@@ -278,24 +243,6 @@ class BelongsToManyTest extends TestCase
         $junction = $assoc->junction();
         $this->assertEquals('TagsArticles', $junction->getAlias());
         $this->assertEquals('tags_articles', $junction->getTable());
-    }
-
-    /**
-     * Tests saveStrategy
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testSaveStrategy()
-    {
-        $this->deprecated(function () {
-            $assoc = new BelongsToMany('Test');
-            $this->assertEquals(BelongsToMany::SAVE_REPLACE, $assoc->saveStrategy());
-            $assoc->saveStrategy(BelongsToMany::SAVE_APPEND);
-            $this->assertEquals(BelongsToMany::SAVE_APPEND, $assoc->saveStrategy());
-            $assoc->saveStrategy(BelongsToMany::SAVE_REPLACE);
-            $this->assertEquals(BelongsToMany::SAVE_REPLACE, $assoc->saveStrategy());
-        });
     }
 
     /**
@@ -1053,32 +1000,6 @@ class BelongsToManyTest extends TestCase
 
         $association = new BelongsToMany('Tags', $config);
         $association->saveAssociated($entity);
-    }
-
-    /**
-     * Tests that targetForeignKey() returns the correct configured value
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testTargetForeignKey()
-    {
-        $this->deprecated(function () {
-            $assoc = new BelongsToMany('Test', [
-                'sourceTable' => $this->article,
-                'targetTable' => $this->tag
-            ]);
-            $this->assertEquals('tag_id', $assoc->targetForeignKey());
-            $this->assertEquals('another_key', $assoc->targetForeignKey('another_key'));
-            $this->assertEquals('another_key', $assoc->targetForeignKey());
-
-            $assoc = new BelongsToMany('Test', [
-                'sourceTable' => $this->article,
-                'targetTable' => $this->tag,
-                'targetForeignKey' => 'foo'
-            ]);
-            $this->assertEquals('foo', $assoc->targetForeignKey());
-        });
     }
 
     /**

@@ -271,26 +271,6 @@ abstract class Association
     }
 
     /**
-     * Sets the name for this association.
-     *
-     * @deprecated 3.4.0 Use setName()/getName() instead.
-     * @param string|null $name Name to be assigned
-     * @return string
-     */
-    public function name($name = null)
-    {
-        deprecationWarning(
-            get_called_class() . '::name() is deprecated. ' .
-            'Use setName()/getName() instead.'
-        );
-        if ($name !== null) {
-            $this->setName($name);
-        }
-
-        return $this->getName();
-    }
-
-    /**
      * Sets whether or not cascaded deletes should also fire callbacks.
      *
      * @param bool $cascadeCallbacks cascade callbacks switch value
@@ -311,27 +291,6 @@ abstract class Association
     public function getCascadeCallbacks()
     {
         return $this->_cascadeCallbacks;
-    }
-
-    /**
-     * Sets whether or not cascaded deletes should also fire callbacks. If no
-     * arguments are passed, the current configured value is returned
-     *
-     * @deprecated 3.4.0 Use setCascadeCallbacks()/getCascadeCallbacks() instead.
-     * @param bool|null $cascadeCallbacks cascade callbacks switch value
-     * @return bool
-     */
-    public function cascadeCallbacks($cascadeCallbacks = null)
-    {
-        deprecationWarning(
-            get_called_class() . '::cascadeCallbacks() is deprecated. ' .
-            'Use setCascadeCallbacks()/getCascadeCallbacks() instead.'
-        );
-        if ($cascadeCallbacks !== null) {
-            $this->setCascadeCallbacks($cascadeCallbacks);
-        }
-
-        return $this->getCascadeCallbacks();
     }
 
     /**
@@ -365,27 +324,6 @@ abstract class Association
     public function getSource()
     {
         return $this->_sourceTable;
-    }
-
-    /**
-     * Sets the table instance for the source side of the association. If no arguments
-     * are passed, the current configured table instance is returned
-     *
-     * @deprecated 3.4.0 Use setSource()/getSource() instead.
-     * @param \Cake\ORM\Table|null $table the instance to be assigned as source side
-     * @return \Cake\ORM\Table
-     */
-    public function source(Table $table = null)
-    {
-        deprecationWarning(
-            get_called_class() . '::source() is deprecated. ' .
-            'Use setSource()/getSource() instead.'
-        );
-        if ($table === null) {
-            return $this->_sourceTable;
-        }
-
-        return $this->_sourceTable = $table;
     }
 
     /**
@@ -448,27 +386,6 @@ abstract class Association
     }
 
     /**
-     * Sets the table instance for the target side of the association. If no arguments
-     * are passed, the current configured table instance is returned
-     *
-     * @deprecated 3.4.0 Use setTarget()/getTarget() instead.
-     * @param \Cake\ORM\Table|null $table the instance to be assigned as target side
-     * @return \Cake\ORM\Table
-     */
-    public function target(Table $table = null)
-    {
-        deprecationWarning(
-            get_called_class() . '::target() is deprecated. ' .
-            'Use setTarget()/getTarget() instead.'
-        );
-        if ($table !== null) {
-            $this->setTarget($table);
-        }
-
-        return $this->getTarget();
-    }
-
-    /**
      * Sets a list of conditions to be always included when fetching records from
      * the target association.
      *
@@ -493,28 +410,6 @@ abstract class Association
     public function getConditions()
     {
         return $this->_conditions;
-    }
-
-    /**
-     * Sets a list of conditions to be always included when fetching records from
-     * the target association. If no parameters are passed the current list is returned
-     *
-     * @deprecated 3.4.0 Use setConditions()/getConditions() instead.
-     * @param array|null $conditions list of conditions to be used
-     * @see \Cake\Database\Query::where() for examples on the format of the array
-     * @return array|callable
-     */
-    public function conditions($conditions = null)
-    {
-        deprecationWarning(
-            get_called_class() . '::conditions() is deprecated. ' .
-            'Use setConditions()/getConditions() instead.'
-        );
-        if ($conditions !== null) {
-            $this->setConditions($conditions);
-        }
-
-        return $this->getConditions();
     }
 
     /**
@@ -549,29 +444,6 @@ abstract class Association
     }
 
     /**
-     * Sets the name of the field representing the binding field with the target table.
-     * When not manually specified the primary key of the owning side table is used.
-     *
-     * If no parameters are passed the current field is returned
-     *
-     * @deprecated 3.4.0 Use setBindingKey()/getBindingKey() instead.
-     * @param string|null $key the table field to be used to link both tables together
-     * @return string|array
-     */
-    public function bindingKey($key = null)
-    {
-        deprecationWarning(
-            get_called_class() . '::bindingKey() is deprecated. ' .
-            'Use setBindingKey()/getBindingKey() instead.'
-        );
-        if ($key !== null) {
-            $this->setBindingKey($key);
-        }
-
-        return $this->getBindingKey();
-    }
-
-    /**
      * Gets the name of the field representing the foreign key to the target table.
      *
      * @return string|array
@@ -592,27 +464,6 @@ abstract class Association
         $this->_foreignKey = $key;
 
         return $this;
-    }
-
-    /**
-     * Sets the name of the field representing the foreign key to the target table.
-     * If no parameters are passed the current field is returned
-     *
-     * @deprecated 3.4.0 Use setForeignKey()/getForeignKey() instead.
-     * @param string|null $key the key to be used to link both tables together
-     * @return string|array
-     */
-    public function foreignKey($key = null)
-    {
-        deprecationWarning(
-            get_called_class() . '::foreignKey() is deprecated. ' .
-            'Use setForeignKey()/getForeignKey() instead.'
-        );
-        if ($key !== null) {
-            $this->setForeignKey($key);
-        }
-
-        return $this->getForeignKey();
     }
 
     /**
@@ -644,31 +495,6 @@ abstract class Association
     public function getDependent()
     {
         return $this->_dependent;
-    }
-
-    /**
-     * Sets whether the records on the target table are dependent on the source table.
-     *
-     * This is primarily used to indicate that records should be removed if the owning record in
-     * the source table is deleted.
-     *
-     * If no parameters are passed the current setting is returned.
-     *
-     * @deprecated 3.4.0 Use setDependent()/getDependent() instead.
-     * @param bool|null $dependent Set the dependent mode. Use null to read the current state.
-     * @return bool
-     */
-    public function dependent($dependent = null)
-    {
-        deprecationWarning(
-            get_called_class() . '::dependent() is deprecated. ' .
-            'Use setDependent()/getDependent() instead.'
-        );
-        if ($dependent !== null) {
-            $this->setDependent($dependent);
-        }
-
-        return $this->getDependent();
     }
 
     /**
@@ -708,27 +534,6 @@ abstract class Association
     }
 
     /**
-     * Sets the type of join to be used when adding the association to a query.
-     * If no arguments are passed, the currently configured type is returned.
-     *
-     * @deprecated 3.4.0 Use setJoinType()/getJoinType() instead.
-     * @param string|null $type the join type to be used (e.g. INNER)
-     * @return string
-     */
-    public function joinType($type = null)
-    {
-        deprecationWarning(
-            get_called_class() . '::joinType() is deprecated. ' .
-            'Use setJoinType()/getJoinType() instead.'
-        );
-        if ($type !== null) {
-            $this->setJoinType($type);
-        }
-
-        return $this->getJoinType();
-    }
-
-    /**
      * Sets the property name that should be filled with data from the target table
      * in the source table record.
      *
@@ -763,28 +568,6 @@ abstract class Association
         }
 
         return $this->_propertyName;
-    }
-
-    /**
-     * Sets the property name that should be filled with data from the target table
-     * in the source table record.
-     * If no arguments are passed, the currently configured type is returned.
-     *
-     * @deprecated 3.4.0 Use setProperty()/getProperty() instead.
-     * @param string|null $name The name of the association property. Use null to read the current value.
-     * @return string
-     */
-    public function property($name = null)
-    {
-        deprecationWarning(
-            get_called_class() . '::property() is deprecated. ' .
-            'Use setProperty()/getProperty() instead.'
-        );
-        if ($name !== null) {
-            $this->setProperty($name);
-        }
-
-        return $this->getProperty();
     }
 
     /**
@@ -833,30 +616,6 @@ abstract class Association
     }
 
     /**
-     * Sets the strategy name to be used to fetch associated records. Keep in mind
-     * that some association types might not implement but a default strategy,
-     * rendering any changes to this setting void.
-     * If no arguments are passed, the currently configured strategy is returned.
-     *
-     * @deprecated 3.4.0 Use setStrategy()/getStrategy() instead.
-     * @param string|null $name The strategy type. Use null to read the current value.
-     * @return string
-     * @throws \InvalidArgumentException When an invalid strategy is provided.
-     */
-    public function strategy($name = null)
-    {
-        deprecationWarning(
-            get_called_class() . '::strategy() is deprecated. ' .
-            'Use setStrategy()/getStrategy() instead.'
-        );
-        if ($name !== null) {
-            $this->setStrategy($name);
-        }
-
-        return $this->getStrategy();
-    }
-
-    /**
      * Gets the default finder to use for fetching rows from the target table.
      *
      * @return string
@@ -877,28 +636,6 @@ abstract class Association
         $this->_finder = $finder;
 
         return $this;
-    }
-
-    /**
-     * Sets the default finder to use for fetching rows from the target table.
-     * If no parameters are passed, it will return the currently configured
-     * finder name.
-     *
-     * @deprecated 3.4.0 Use setFinder()/getFinder() instead.
-     * @param string|null $finder the finder name to use
-     * @return string
-     */
-    public function finder($finder = null)
-    {
-        deprecationWarning(
-            get_called_class() . '::finder() is deprecated. ' .
-            'Use setFinder()/getFinder() instead.'
-        );
-        if ($finder !== null) {
-            $this->setFinder($finder);
-        }
-
-        return $this->getFinder();
     }
 
     /**

@@ -99,25 +99,6 @@ class BelongsToTest extends TestCase
     }
 
     /**
-     * Test that foreignKey generation
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testForeignKey()
-    {
-        $this->deprecated(function () {
-            $assoc = new BelongsTo('Companies', [
-                'sourceTable' => $this->client,
-                'targetTable' => $this->company,
-            ]);
-            $this->assertEquals('company_id', $assoc->foreignKey());
-            $this->assertEquals('another_key', $assoc->foreignKey('another_key'));
-            $this->assertEquals('another_key', $assoc->foreignKey());
-        });
-    }
-
-    /**
      * Test that foreignKey generation ignores database names in target table.
      *
      * @return void

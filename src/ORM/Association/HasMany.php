@@ -131,28 +131,6 @@ class HasMany extends Association
     }
 
     /**
-     * Sets the strategy that should be used for saving. If called with no
-     * arguments, it will return the currently configured strategy
-     *
-     * @deprecated 3.4.0 Use setSaveStrategy()/getSaveStrategy() instead.
-     * @param string|null $strategy the strategy name to be used
-     * @throws \InvalidArgumentException if an invalid strategy name is passed
-     * @return string the strategy to be used for saving
-     */
-    public function saveStrategy($strategy = null)
-    {
-        deprecationWarning(
-            'HasMany::saveStrategy() is deprecated. ' .
-            'Use setSaveStrategy()/getSaveStrategy() instead.'
-        );
-        if ($strategy !== null) {
-            $this->setSaveStrategy($strategy);
-        }
-
-        return $this->getSaveStrategy();
-    }
-
-    /**
      * Takes an entity from the source table and looks if there is a field
      * matching the property name for this association. The found entity will be
      * saved on the target table for this association by passing supplied
@@ -621,27 +599,6 @@ class HasMany extends Association
     public function getSort()
     {
         return $this->_sort;
-    }
-
-    /**
-     * Sets the sort order in which target records should be returned.
-     * If no arguments are passed the currently configured value is returned
-     *
-     * @deprecated 3.4.0 Use setSort()/getSort() instead.
-     * @param mixed $sort A find() compatible order clause
-     * @return mixed
-     */
-    public function sort($sort = null)
-    {
-        deprecationWarning(
-            'HasMany::sort() is deprecated. ' .
-            'Use setSort()/getSort() instead.'
-        );
-        if ($sort !== null) {
-            $this->setSort($sort);
-        }
-
-        return $this->getSort();
     }
 
     /**
