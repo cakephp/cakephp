@@ -33,12 +33,8 @@ trait SqlDialectTrait
     {
         $identifier = trim($identifier);
 
-        if ($identifier === '*') {
-            return '*';
-        }
-
-        if ($identifier === '') {
-            return '';
+        if ($identifier === '*' || $identifier === '') {
+            return $identifier;
         }
 
         // string
