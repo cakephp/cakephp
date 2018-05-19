@@ -56,27 +56,6 @@ trait TypeMapTrait
     }
 
     /**
-     * Creates a new TypeMap if $typeMap is an array, otherwise returns the existing type map
-     * or exchanges it for the given one.
-     *
-     * @deprecated 3.4.0 Use setTypeMap()/getTypeMap() instead.
-     * @param array|\Cake\Database\TypeMap|null $typeMap Creates a TypeMap if array, otherwise sets the given TypeMap
-     * @return $this|\Cake\Database\TypeMap
-     */
-    public function typeMap($typeMap = null)
-    {
-        deprecationWarning(
-            'TypeMapTrait::typeMap() is deprecated. ' .
-            'Use TypeMapTrait::setTypeMap()/getTypeMap() instead.'
-        );
-        if ($typeMap !== null) {
-            return $this->setTypeMap($typeMap);
-        }
-
-        return $this->getTypeMap();
-    }
-
-    /**
      * Allows setting default types when chaining query.
      *
      * @param array $types The array of types to set.
@@ -97,25 +76,5 @@ trait TypeMapTrait
     public function getDefaultTypes()
     {
         return $this->getTypeMap()->getDefaults();
-    }
-
-    /**
-     * Allows setting default types when chaining query
-     *
-     * @deprecated 3.4.0 Use setDefaultTypes()/getDefaultTypes() instead.
-     * @param array|null $types The array of types to set.
-     * @return $this|array
-     */
-    public function defaultTypes(array $types = null)
-    {
-        deprecationWarning(
-            'TypeMapTrait::defaultTypes() is deprecated. ' .
-            'Use TypeMapTrait::setDefaultTypes()/getDefaultTypes() instead.'
-        );
-        if ($types !== null) {
-            return $this->setDefaultTypes($types);
-        }
-
-        return $this->getDefaultTypes();
     }
 }

@@ -95,27 +95,6 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
     }
 
     /**
-     * Sets the name of the SQL function to be invoke in this expression,
-     * if no value is passed it will return current name
-     *
-     * @deprecated 3.4.0 Use setName()/getName() instead.
-     * @param string|null $name The name of the function
-     * @return string|$this
-     */
-    public function name($name = null)
-    {
-        deprecationWarning(
-            'FunctionExpression::name() is deprecated. ' .
-            'Use FunctionExpression::setName()/getName() instead.'
-        );
-        if ($name !== null) {
-            return $this->setName($name);
-        }
-
-        return $this->getName();
-    }
-
-    /**
      * Adds one or more arguments for the function call.
      *
      * @param array $params list of arguments to be passed to the function

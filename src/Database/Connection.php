@@ -206,29 +206,6 @@ class Connection implements ConnectionInterface
     }
 
     /**
-     * Sets the driver instance. If a string is passed it will be treated
-     * as a class name and will be instantiated.
-     *
-     * If no params are passed it will return the current driver instance.
-     *
-     * @deprecated 3.4.0 Use setDriver()/getDriver() instead.
-     * @param \Cake\Database\Driver|string|null $driver The driver instance to use.
-     * @param array $config Either config for a new driver or null.
-     * @throws \Cake\Database\Exception\MissingDriverException When a driver class is missing.
-     * @throws \Cake\Database\Exception\MissingExtensionException When a driver's PHP extension is missing.
-     * @return \Cake\Database\Driver
-     */
-    public function driver($driver = null, $config = [])
-    {
-        deprecationWarning('Connection::driver() is deprecated. Use Connection::setDriver()/getDriver() instead.');
-        if ($driver !== null) {
-            $this->setDriver($driver, $config);
-        }
-
-        return $this->getDriver();
-    }
-
-    /**
      * Connects to the configured database.
      *
      * @throws \Cake\Database\Exception\MissingConnectionException if credentials are invalid.
@@ -392,26 +369,6 @@ class Connection implements ConnectionInterface
         }
 
         return $this->_schemaCollection = new SchemaCollection($this);
-    }
-
-    /**
-     * Gets or sets a Schema\Collection object for this connection.
-     *
-     * @deprecated 3.4.0 Use setSchemaCollection()/getSchemaCollection()
-     * @param \Cake\Database\Schema\Collection|null $collection The schema collection object
-     * @return \Cake\Database\Schema\Collection
-     */
-    public function schemaCollection(SchemaCollection $collection = null)
-    {
-        deprecationWarning(
-            'Connection::schemaCollection() is deprecated. ' .
-            'Use Connection::setSchemaCollection()/getSchemaCollection() instead.'
-        );
-        if ($collection !== null) {
-            $this->setSchemaCollection($collection);
-        }
-
-        return $this->getSchemaCollection();
     }
 
     /**
@@ -606,37 +563,6 @@ class Connection implements ConnectionInterface
     public function isSavePointsEnabled()
     {
         return $this->_useSavePoints;
-    }
-
-    /**
-     * Returns whether this connection is using savepoints for nested transactions
-     * If a boolean is passed as argument it will enable/disable the usage of savepoints
-     * only if driver the allows it.
-     *
-     * If you are trying to enable this feature, make sure you check the return value of this
-     * function to verify it was enabled successfully.
-     *
-     * ### Example:
-     *
-     * `$connection->useSavePoints(true)` Returns true if drivers supports save points, false otherwise
-     * `$connection->useSavePoints(false)` Disables usage of savepoints and returns false
-     * `$connection->useSavePoints()` Returns current status
-     *
-     * @deprecated 3.4.0 Use enableSavePoints()/isSavePointsEnabled() instead.
-     * @param bool|null $enable Whether or not save points should be used.
-     * @return bool true if enabled, false otherwise
-     */
-    public function useSavePoints($enable = null)
-    {
-        deprecationWarning(
-            'Connection::useSavePoints() is deprecated. ' .
-            'Use Connection::enableSavePoints()/isSavePointsEnabled() instead.'
-        );
-        if ($enable !== null) {
-            $this->enableSavePoints($enable);
-        }
-
-        return $this->isSavePointsEnabled();
     }
 
     /**
@@ -854,24 +780,6 @@ class Connection implements ConnectionInterface
             return $this->_logQueries;
         }
         $this->_logQueries = $enable;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @deprecated 3.5.0 Use getLogger() and setLogger() instead.
-     */
-    public function logger($instance = null)
-    {
-        deprecationWarning(
-            'Connection::logger() is deprecated. ' .
-            'Use Connection::setLogger()/getLogger() instead.'
-        );
-        if ($instance === null) {
-            return $this->getLogger();
-        }
-
-        $this->setLogger($instance);
     }
 
     /**

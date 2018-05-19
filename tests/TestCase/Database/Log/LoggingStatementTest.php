@@ -147,25 +147,6 @@ class LoggingStatementTest extends TestCase
     /**
      * Tests setting and getting the logger
      *
-     * @group deprecated
-     * @return void
-     */
-    public function testLoggerCompat()
-    {
-        $this->deprecated(function () {
-            $logger = $this->getMockBuilder('\Cake\Database\Log\QueryLogger')->getMock();
-            $st = new LoggingStatement();
-
-            $this->assertNull($st->logger());
-
-            $st->logger($logger);
-            $this->assertSame($logger, $st->logger());
-        });
-    }
-
-    /**
-     * Tests setting and getting the logger
-     *
      * @return void
      */
     public function testSetAndGetLogger()

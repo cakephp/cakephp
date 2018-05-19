@@ -343,20 +343,6 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * Get column data in the table.
-     *
-     * @param string $name The column name.
-     * @return array|null Column data or null.
-     * @deprecated 3.5.0 Use getColumn() instead.
-     */
-    public function column($name)
-    {
-        deprecationWarning('TableSchema::column() is deprecated. Use TableSchema::getColumn() instead.');
-
-        return $this->getColumn($name);
-    }
-
-    /**
      * {@inheritDoc}
      */
     public function getColumn($name)
@@ -368,26 +354,6 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
         unset($column['baseType']);
 
         return $column;
-    }
-
-    /**
-     * Sets the type of a column, or returns its current type
-     * if none is passed.
-     *
-     * @param string $name The column to get the type of.
-     * @param string|null $type The type to set the column to.
-     * @return string|null Either the column type or null.
-     * @deprecated 3.5.0 Use setColumnType()/getColumnType() instead.
-     */
-    public function columnType($name, $type = null)
-    {
-        deprecationWarning('TableSchema::columnType() is deprecated. Use TableSchema::setColumnType() or TableSchema::getColumnType() instead.');
-
-        if ($type !== null) {
-            $this->setColumnType($name, $type);
-        }
-
-        return $this->getColumnType($name);
     }
 
     /**
@@ -532,20 +498,6 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * Read information about an index based on name.
-     *
-     * @param string $name The name of the index.
-     * @return array|null Array of index data, or null
-     * @deprecated 3.5.0 Use getIndex() instead.
-     */
-    public function index($name)
-    {
-        deprecationWarning('TableSchema::index() is deprecated. Use TableSchema::getIndex() instead.');
-
-        return $this->getIndex($name);
-    }
-
-    /**
      * {@inheritDoc}
      */
     public function getIndex($name)
@@ -687,20 +639,6 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * Read information about a constraint based on name.
-     *
-     * @param string $name The name of the constraint.
-     * @return array|null Array of constraint data, or null
-     * @deprecated 3.5.0 Use getConstraint() instead.
-     */
-    public function constraint($name)
-    {
-        deprecationWarning('TableSchema::constraint() is deprecated. Use TableSchema::getConstraint() instead.');
-
-        return $this->getConstraint($name);
-    }
-
-    /**
      * {@inheritDoc}
      */
     public function getConstraint($name)
@@ -731,27 +669,6 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * Get/set the options for a table.
-     *
-     * Table options allow you to set platform specific table level options.
-     * For example the engine type in MySQL.
-     *
-     * @deprecated 3.4.0 Use setOptions()/getOptions() instead.
-     * @param array|null $options The options to set, or null to read options.
-     * @return $this|array Either the TableSchema instance, or an array of options when reading.
-     */
-    public function options($options = null)
-    {
-        deprecationWarning('TableSchema::options() is deprecated. Use TableSchema::setOptions() or TableSchema::getOptions() instead.');
-
-        if ($options !== null) {
-            return $this->setOptions($options);
-        }
-
-        return $this->getOptions();
-    }
-
-    /**
      * {@inheritDoc}
      */
     public function setTemporary($temporary)
@@ -767,26 +684,6 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     public function isTemporary()
     {
         return $this->_temporary;
-    }
-
-    /**
-     * Get/Set whether the table is temporary in the database
-     *
-     * @deprecated 3.4.0 Use setTemporary()/isTemporary() instead.
-     * @param bool|null $temporary whether or not the table is to be temporary
-     * @return $this|bool Either the TableSchema instance, the current temporary setting
-     */
-    public function temporary($temporary = null)
-    {
-        deprecationWarning(
-            'TableSchema::temporary() is deprecated. ' .
-            'Use TableSchema::setTemporary()/getTemporary() instead.'
-        );
-        if ($temporary !== null) {
-            return $this->setTemporary($temporary);
-        }
-
-        return $this->isTemporary();
     }
 
     /**
@@ -867,6 +764,3 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
         ];
     }
 }
-
-// @deprecated Add backwards compat alias.
-class_alias('Cake\Database\Schema\TableSchema', 'Cake\Database\Schema\Table');

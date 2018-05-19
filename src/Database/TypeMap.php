@@ -86,40 +86,6 @@ class TypeMap
     }
 
     /**
-     * Configures a map of default fields and their associated types to be
-     * used as the default list of types for every function in this class
-     * with a $types param. Useful to avoid repetition when calling the same
-     * functions using the same fields and types.
-     *
-     * If called with no arguments it will return the currently configured types.
-     *
-     * ### Example
-     *
-     * ```
-     * $query->defaults(['created' => 'datetime', 'is_visible' => 'boolean']);
-     * ```
-     *
-     * This method will replace all the existing type maps with the ones provided.
-     *
-     * @deprecated 3.4.0 Use setDefaults()/getDefaults() instead.
-     * @param array|null $defaults associative array where keys are field names and values
-     * are the correspondent type.
-     * @return $this|array
-     */
-    public function defaults(array $defaults = null)
-    {
-        deprecationWarning(
-            'TypeMap::defaults() is deprecated. ' .
-            'Use TypeMap::setDefaults()/getDefaults() instead.'
-        );
-        if ($defaults !== null) {
-            return $this->setDefaults($defaults);
-        }
-
-        return $this->getDefaults();
-    }
-
-    /**
      * Add additional default types into the type map.
      *
      * If a key already exists it will not be overwritten.
@@ -162,37 +128,6 @@ class TypeMap
     public function getTypes()
     {
         return $this->_types;
-    }
-
-    /**
-     * Sets a map of fields and their associated types for single-use.
-     *
-     * If called with no arguments it will return the currently configured types.
-     *
-     * ### Example
-     *
-     * ```
-     * $query->types(['created' => 'time']);
-     * ```
-     *
-     * This method will replace all the existing type maps with the ones provided.
-     *
-     * @deprecated 3.4.0 Use setTypes()/getTypes() instead.
-     * @param array|null $types associative array where keys are field names and values
-     * are the correspondent type.
-     * @return $this|array
-     */
-    public function types(array $types = null)
-    {
-        deprecationWarning(
-            'TypeMap::types() is deprecated. ' .
-            'Use TypeMap::setTypes()/getTypes() instead.'
-        );
-        if ($types !== null) {
-            return $this->setTypes($types);
-        }
-
-        return $this->getTypes();
     }
 
     /**

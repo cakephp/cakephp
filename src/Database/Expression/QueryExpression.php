@@ -95,46 +95,6 @@ class QueryExpression implements ExpressionInterface, Countable
     }
 
     /**
-     * Changes the conjunction for the conditions at this level of the expression tree.
-     * If called with no arguments it will return the currently configured value.
-     *
-     * @deprecated 3.4.0 Use setConjunction()/getConjunction() instead.
-     * @param string|null $conjunction value to be used for joining conditions. If null it
-     * will not set any value, but return the currently stored one
-     * @return string|$this
-     */
-    public function tieWith($conjunction = null)
-    {
-        deprecationWarning(
-            'QueryExpression::tieWith() is deprecated. ' .
-            'Use QueryExpression::setConjunction()/getConjunction() instead.'
-        );
-        if ($conjunction !== null) {
-            return $this->setConjunction($conjunction);
-        }
-
-        return $this->getConjunction();
-    }
-
-    /**
-     * Backwards compatible wrapper for tieWith()
-     *
-     * @param string|null $conjunction value to be used for joining conditions. If null it
-     * will not set any value, but return the currently stored one
-     * @return string|$this
-     * @deprecated 3.2.0 Use setConjunction()/getConjunction() instead
-     */
-    public function type($conjunction = null)
-    {
-        deprecationWarning(
-            'QueryExpression::type() is deprecated. ' .
-            'Use QueryExpression::setConjunction()/getConjunction() instead.'
-        );
-
-        return $this->tieWith($conjunction);
-    }
-
-    /**
      * Adds one or more conditions to this expression object. Conditions can be
      * expressed in a one dimensional array, that will cause all conditions to
      * be added directly at this level of the tree or they can be nested arbitrarily

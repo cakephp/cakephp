@@ -49,27 +49,4 @@ trait TypedResultTrait
 
         return $this;
     }
-
-    /**
-     * Sets the type of the value this object will generate.
-     * If called without arguments, returns the current known type
-     *
-     * @deprecated 3.5.0 Use getReturnType()/setReturnType() instead.
-     * @param string|null $type The name of the type that is to be returned
-     * @return string|$this
-     */
-    public function returnType($type = null)
-    {
-        deprecationWarning(
-            'TypedResultTrait::returnType() is deprecated. ' .
-            'Use TypedResultTrait::setReturnType()/getReturnType() instead.'
-        );
-        if ($type !== null) {
-            $this->_returnType = $type;
-
-            return $this;
-        }
-
-        return $this->_returnType;
-    }
 }
