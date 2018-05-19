@@ -22,6 +22,7 @@ use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\QueryInterface;
 use Cake\Datasource\QueryTrait;
+use InvalidArgumentException;
 use JsonSerializable;
 use RuntimeException;
 
@@ -306,29 +307,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     }
 
     /**
-     * Sets the instance of the eager loader class to use for loading associations
-     * and storing containments. If called with no arguments, it will return the
-     * currently configured instance.
-     *
-     * @deprecated 3.4.0 Use setEagerLoader()/getEagerLoader() instead.
-     * @param \Cake\ORM\EagerLoader|null $instance The eager loader to use. Pass null
-     *   to get the current eagerloader.
-     * @return \Cake\ORM\EagerLoader|$this
-     */
-    public function eagerLoader(EagerLoader $instance = null)
-    {
-        deprecationWarning(
-            'Query::eagerLoader() is deprecated. ' .
-            'Use setEagerLoader()/getEagerLoader() instead.'
-        );
-        if ($instance !== null) {
-            return $this->setEagerLoader($instance);
-        }
-
-        return $this->getEagerLoader();
-    }
-
-    /**
      * Sets the list of associations that should be eagerly loaded along with this
      * query. The list of associated tables passed must have been previously set as
      * associations using the Table API.
@@ -434,10 +412,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * ]);
      * ```
      *
-     * If called with no arguments, this function will return an array with
-     * with the list of previously configured associations to be contained in the
-     * result. This getter part is deprecated as of 3.6.0. Use getContain() instead.
-     *
      * If called with an empty first argument and `$override` is set to true, the
      * previous list will be emptied.
      *
@@ -455,13 +429,8 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
             $this->clearContain();
         }
 
-        if ($associations === null) {
-            deprecationWarning(
-                'Using Query::contain() as getter is deprecated. ' .
-                'Use getContain() instead.'
-            );
-
-            return $loader->getContain();
+        if ($associations === null && $override === false) {
+            throw new InvalidArgumentException('$associations can be null only $override is true.');
         }
 
         $queryBuilder = null;
@@ -1020,29 +989,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     }
 
     /**
-     * Toggle hydrating entities.
-     *
-     * If set to false array results will be returned.
-     *
-     * @deprecated 3.4.0 Use enableHydration()/isHydrationEnabled() instead.
-     * @param bool|null $enable Use a boolean to set the hydration mode.
-     *   Null will fetch the current hydration mode.
-     * @return bool|$this A boolean when reading, and $this when setting the mode.
-     */
-    public function hydrate($enable = null)
-    {
-        deprecationWarning(
-            'Query::hydrate() is deprecated. ' .
-            'Use enableHydration()/isHydrationEnabled() instead.'
-        );
-        if ($enable === null) {
-            return $this->isHydrationEnabled();
-        }
-
-        return $this->enableHydration($enable);
-    }
-
-    /**
      * {@inheritDoc}
      *
      * @return $this
@@ -1351,29 +1297,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     public function isAutoFieldsEnabled()
     {
         return $this->_autoFields;
-    }
-
-    /**
-     * Get/Set whether or not the ORM should automatically append fields.
-     *
-     * By default calling select() will disable auto-fields. You can re-enable
-     * auto-fields with this method.
-     *
-     * @deprecated 3.4.0 Use enableAutoFields()/isAutoFieldsEnabled() instead.
-     * @param bool|null $value The value to set or null to read the current value.
-     * @return bool|$this Either the current value or the query object.
-     */
-    public function autoFields($value = null)
-    {
-        deprecationWarning(
-            'Query::autoFields() is deprecated. ' .
-            'Use enableAutoFields()/isAutoFieldsEnabled() instead.'
-        );
-        if ($value === null) {
-            return $this->isAutoFieldsEnabled();
-        }
-
-        return $this->enableAutoFields($value);
     }
 
     /**
