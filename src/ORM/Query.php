@@ -415,22 +415,18 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * If called with an empty first argument and `$override` is set to true, the
      * previous list will be emptied.
      *
-     * @param array|string|null $associations List of table aliases to be queried.
+     * @param array|string $associations List of table aliases to be queried.
      * @param callable|bool $override The query builder for the association, or
      *   if associations is an array, a bool on whether to override previous list
      *   with the one passed
      * defaults to merging previous list with the new one.
      * @return array|$this
      */
-    public function contain($associations = null, $override = false)
+    public function contain($associations, $override = false)
     {
         $loader = $this->getEagerLoader();
         if ($override === true) {
             $this->clearContain();
-        }
-
-        if ($associations === null && $override === false) {
-            throw new InvalidArgumentException('$associations can be null only $override is true.');
         }
 
         $queryBuilder = null;
