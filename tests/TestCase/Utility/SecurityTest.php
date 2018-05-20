@@ -17,7 +17,6 @@ namespace Cake\Test\TestCase\Utility;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Crypto\OpenSsl;
 use Cake\Utility\Security;
-use RuntimeException;
 
 /**
  * SecurityTest class

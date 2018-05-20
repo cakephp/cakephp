@@ -16,9 +16,6 @@ namespace Cake\Database;
 
 use Cake\Cache\Cache;
 use Cake\Database\Connection;
-use Cake\Datasource\ConnectionManager;
-use InvalidArgumentException;
-use RuntimeException;
 
 /**
  * Schema Cache.

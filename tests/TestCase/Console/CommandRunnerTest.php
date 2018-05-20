@@ -21,7 +21,6 @@ use Cake\Console\ConsoleIo;
 use Cake\Console\Shell;
 use Cake\Core\Configure;
 use Cake\Core\ConsoleApplicationInterface;
-use Cake\Event\EventList;
 use Cake\Event\EventManager;
 use Cake\Http\BaseApplication;
 use Cake\Routing\Router;
@@ -29,7 +28,6 @@ use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use TestApp\Command\DemoCommand;
-use TestApp\Http\EventApplication;
 use TestApp\Shell\SampleShell;
 
 /**

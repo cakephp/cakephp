@@ -15,7 +15,6 @@
 namespace Cake\Test\TestCase\Routing\Middleware;
 
 use Cake\Cache\Cache;
-use Cake\Core\Configure;
 use Cake\Routing\Middleware\RoutingMiddleware;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;

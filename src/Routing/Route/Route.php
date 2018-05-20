@@ -14,9 +14,6 @@
  */
 namespace Cake\Routing\Route;
 
-use Cake\Http\ServerRequest;
-use Cake\Http\ServerRequestFactory;
-use Cake\Routing\Router;
 use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
 

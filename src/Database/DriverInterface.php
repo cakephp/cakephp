@@ -15,10 +15,6 @@
 namespace Cake\Database;
 
 use Cake\Database\Query;
-use Cake\Database\Statement\PDOStatement;
-use InvalidArgumentException;
-use PDO;
-use PDOException;
 
 /**
  * Interface for database driver.

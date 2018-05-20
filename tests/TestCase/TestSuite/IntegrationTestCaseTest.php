@@ -17,7 +17,6 @@ namespace Cake\Test\TestCase\TestSuite;
 use Cake\Core\Configure;
 use Cake\Event\EventManager;
 use Cake\Http\Response;
-use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use Cake\Routing\Route\InflectedRoute;
 use Cake\TestSuite\IntegrationTestCase;
