@@ -14,7 +14,6 @@
  */
 namespace Cake\Utility\Crypto;
 
-
 /**
  * OpenSSL implementation of crypto features for Cake\Utility\Security
  *

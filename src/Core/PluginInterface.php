@@ -12,7 +12,6 @@
  */
 namespace Cake\Core;
 
-
 /**
  * Plugin Interface
  */
