@@ -25,7 +25,6 @@ use Cake\View\Helper;
 use Cake\View\StringTemplateTrait;
 use Cake\View\View;
 use Cake\View\Widget\WidgetLocator;
-use Cake\View\Widget\WidgetRegistry;
 use DateTime;
 use RuntimeException;
 use Traversable;

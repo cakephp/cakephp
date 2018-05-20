@@ -13,7 +13,6 @@
  */
 namespace Cake\Core;
 
-use Cake\Event\EventManagerInterface;
 use InvalidArgumentException;
 use ReflectionClass;
 

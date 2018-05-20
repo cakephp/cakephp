@@ -15,7 +15,6 @@
 namespace Cake\Auth;
 
 use Cake\Controller\ComponentRegistry;
-use Cake\Core\Configure;
 use Cake\Http\ServerRequest;
 use Cake\Utility\Security;
 

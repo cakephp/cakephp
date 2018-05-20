@@ -19,8 +19,6 @@ use Cake\Http\ActionDispatcher;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Http\Session;
-use Cake\Routing\DispatcherFactory;
-use Cake\Routing\Filter\ControllerFactoryFilter;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 

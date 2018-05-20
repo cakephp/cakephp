@@ -34,7 +34,6 @@ use Cake\Http\ServerRequest;
 use Cake\Mailer\Exception\MissingActionException as MissingMailerActionException;
 use Cake\Network\Exception\SocketException;
 use Cake\ORM\Exception\MissingBehaviorException;
-use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Exception\MissingControllerException;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;

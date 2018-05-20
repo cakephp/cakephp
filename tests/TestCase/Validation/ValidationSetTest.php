@@ -19,7 +19,6 @@ namespace Cake\Test\TestCase\Validation;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\ValidationRule;
 use Cake\Validation\ValidationSet;
-use PHPUnit\Framework\Error\Deprecated;
 
 /**
  * ValidationSetTest

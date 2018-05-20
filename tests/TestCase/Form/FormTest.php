@@ -19,7 +19,6 @@ use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
 use TestApp\Form\AppForm;
 use TestApp\Form\FormSchema;
-use TestApp\Form\ValidateForm;
 
 /**
  * Form test case.

@@ -14,8 +14,6 @@
  */
 namespace Cake\Utility\Crypto;
 
-use LogicException;
-
 /**
  * OpenSSL implementation of crypto features for Cake\Utility\Security
  *
