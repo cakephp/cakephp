@@ -185,27 +185,6 @@ class BelongsToMany extends Association
     }
 
     /**
-     * Sets the name of the field representing the foreign key to the target table.
-     * If no parameters are passed current field is returned
-     *
-     * @deprecated 3.4.0 Use setTargetForeignKey()/getTargetForeignKey() instead.
-     * @param string|null $key the key to be used to link both tables together
-     * @return string
-     */
-    public function targetForeignKey($key = null)
-    {
-        deprecationWarning(
-            'BelongToMany::targetForeignKey() is deprecated. ' .
-            'Use setTargetForeignKey()/getTargetForeignKey() instead.'
-        );
-        if ($key !== null) {
-            $this->setTargetForeignKey($key);
-        }
-
-        return $this->getTargetForeignKey();
-    }
-
-    /**
      * Whether this association can be expressed directly in a query join
      *
      * @param array $options custom options key that could alter the return value
@@ -252,27 +231,6 @@ class BelongsToMany extends Association
     public function getSort()
     {
         return $this->_sort;
-    }
-
-    /**
-     * Sets the sort order in which target records should be returned.
-     * If no arguments are passed the currently configured value is returned
-     *
-     * @deprecated 3.5.0 Use setSort()/getSort() instead.
-     * @param mixed $sort A find() compatible order clause
-     * @return mixed
-     */
-    public function sort($sort = null)
-    {
-        deprecationWarning(
-            'BelongToMany::sort() is deprecated. ' .
-            'Use setSort()/getSort() instead.'
-        );
-        if ($sort !== null) {
-            $this->setSort($sort);
-        }
-
-        return $this->getSort();
     }
 
     /**
@@ -661,28 +619,6 @@ class BelongsToMany extends Association
     public function getSaveStrategy()
     {
         return $this->_saveStrategy;
-    }
-
-    /**
-     * Sets the strategy that should be used for saving. If called with no
-     * arguments, it will return the currently configured strategy
-     *
-     * @deprecated 3.4.0 Use setSaveStrategy()/getSaveStrategy() instead.
-     * @param string|null $strategy the strategy name to be used
-     * @throws \InvalidArgumentException if an invalid strategy name is passed
-     * @return string the strategy to be used for saving
-     */
-    public function saveStrategy($strategy = null)
-    {
-        deprecationWarning(
-            'BelongsToMany::saveStrategy() is deprecated. ' .
-            'Use setSaveStrategy()/getSaveStrategy() instead.'
-        );
-        if ($strategy !== null) {
-            $this->setSaveStrategy($strategy);
-        }
-
-        return $this->getSaveStrategy();
     }
 
     /**

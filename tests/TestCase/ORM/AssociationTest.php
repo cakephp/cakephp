@@ -97,21 +97,6 @@ class AssociationTest extends TestCase
     }
 
     /**
-     * Tests that name() returns the correct configure association name
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testName()
-    {
-        $this->deprecated(function () {
-            $this->assertEquals('Foo', $this->association->name());
-            $this->association->name('Bar');
-            $this->assertEquals('Bar', $this->association->name());
-        });
-    }
-
-    /**
      * Tests that setName()
      *
      * @return void
@@ -245,21 +230,6 @@ class AssociationTest extends TestCase
     /**
      * Tests that cascadeCallbacks() returns the correct configured value
      *
-     * @group deprecated
-     * @return void
-     */
-    public function testCascadeCallbacks()
-    {
-        $this->deprecated(function () {
-            $this->assertFalse($this->association->cascadeCallbacks());
-            $this->association->cascadeCallbacks(true);
-            $this->assertTrue($this->association->cascadeCallbacks());
-        });
-    }
-
-    /**
-     * Tests that cascadeCallbacks() returns the correct configured value
-     *
      * @return void
      */
     public function testSetCascadeCallbacks()
@@ -267,20 +237,6 @@ class AssociationTest extends TestCase
         $this->assertFalse($this->association->getCascadeCallbacks());
         $this->assertSame($this->association, $this->association->setCascadeCallbacks(true));
         $this->assertTrue($this->association->getCascadeCallbacks());
-    }
-
-    /**
-     * Tests the bindingKey method as a setter/getter
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testBindingKey()
-    {
-        $this->deprecated(function () {
-            $this->association->bindingKey('foo_id');
-            $this->assertEquals('foo_id', $this->association->bindingKey());
-        });
     }
 
     /**
@@ -331,21 +287,6 @@ class AssociationTest extends TestCase
     }
 
     /**
-     * Tests that name() returns the correct configured value
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testForeignKey()
-    {
-        $this->deprecated(function () {
-            $this->assertEquals('a_key', $this->association->foreignKey());
-            $this->association->foreignKey('another_key');
-            $this->assertEquals('another_key', $this->association->foreignKey());
-        });
-    }
-
-    /**
      * Tests setForeignKey()
      *
      * @return void
@@ -355,22 +296,6 @@ class AssociationTest extends TestCase
         $this->assertEquals('a_key', $this->association->getForeignKey());
         $this->assertSame($this->association, $this->association->setForeignKey('another_key'));
         $this->assertEquals('another_key', $this->association->getForeignKey());
-    }
-
-    /**
-     * Tests that conditions() returns the correct configured value
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testConditions()
-    {
-        $this->deprecated(function () {
-            $this->assertEquals(['field' => 'value'], $this->association->conditions());
-            $conds = ['another_key' => 'another value'];
-            $this->association->conditions($conds);
-            $this->assertEquals($conds, $this->association->conditions());
-        });
     }
 
     /**
@@ -394,24 +319,6 @@ class AssociationTest extends TestCase
     public function testCanBeJoined()
     {
         $this->assertTrue($this->association->canBeJoined());
-    }
-
-    /**
-     * Tests that target() returns the correct Table object
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testTarget()
-    {
-        $this->deprecated(function () {
-            $table = $this->association->target();
-            $this->assertInstanceOf(__NAMESPACE__ . '\TestTable', $table);
-
-            $other = new Table;
-            $this->association->target($other);
-            $this->assertSame($other, $this->association->target());
-        });
     }
 
     /**
@@ -475,24 +382,6 @@ class AssociationTest extends TestCase
     /**
      * Tests that source() returns the correct Table object
      *
-     * @group deprecated
-     * @return void
-     */
-    public function testSource()
-    {
-        $this->deprecated(function () {
-            $table = $this->association->source();
-            $this->assertSame($this->source, $table);
-
-            $other = new Table;
-            $this->association->source($other);
-            $this->assertSame($other, $this->association->source());
-        });
-    }
-
-    /**
-     * Tests that source() returns the correct Table object
-     *
      * @return void
      */
     public function testSetSource()
@@ -506,21 +395,6 @@ class AssociationTest extends TestCase
     }
 
     /**
-     * Tests joinType method
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testJoinType()
-    {
-        $this->deprecated(function () {
-            $this->assertEquals('INNER', $this->association->joinType());
-            $this->association->joinType('LEFT');
-            $this->assertEquals('LEFT', $this->association->joinType());
-        });
-    }
-
-    /**
      * Tests setJoinType method
      *
      * @return void
@@ -530,36 +404,6 @@ class AssociationTest extends TestCase
         $this->assertEquals('INNER', $this->association->getJoinType());
         $this->assertSame($this->association, $this->association->setJoinType('LEFT'));
         $this->assertEquals('LEFT', $this->association->getJoinType());
-    }
-
-    /**
-     * Tests dependent method
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testDependent()
-    {
-        $this->deprecated(function () {
-            $this->assertTrue($this->association->dependent());
-            $this->association->dependent(false);
-            $this->assertFalse($this->association->dependent());
-        });
-    }
-
-    /**
-     * Tests property method
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testProperty()
-    {
-        $this->deprecated(function () {
-            $this->assertEquals('foo', $this->association->property());
-            $this->association->property('thing');
-            $this->assertEquals('thing', $this->association->property());
-        });
     }
 
     /**
@@ -619,25 +463,6 @@ class AssociationTest extends TestCase
     /**
      * Tests strategy method
      *
-     * @group deprecated
-     * @return void
-     */
-    public function testStrategy()
-    {
-        $this->deprecated(function () {
-            $this->assertEquals('join', $this->association->strategy());
-
-            $this->association->strategy('select');
-            $this->assertEquals('select', $this->association->strategy());
-
-            $this->association->strategy('subquery');
-            $this->assertEquals('subquery', $this->association->strategy());
-        });
-    }
-
-    /**
-     * Tests strategy method
-     *
      * @return void
      */
     public function testSetStrategy()
@@ -660,21 +485,6 @@ class AssociationTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->association->setStrategy('anotherThing');
-    }
-
-    /**
-     * Tests test finder() method as getter and setter
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testFinderMethod()
-    {
-        $this->deprecated(function () {
-            $this->assertEquals('all', $this->association->finder());
-            $this->assertEquals('published', $this->association->finder('published'));
-            $this->assertEquals('published', $this->association->finder());
-        });
     }
 
     /**

@@ -559,22 +559,6 @@ class EagerLoaderTest extends TestCase
     }
 
     /**
-     * Test for autoFields()
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testAutoFields()
-    {
-        $this->deprecated(function () {
-            $loader = new EagerLoader();
-            $this->assertTrue($loader->autoFields());
-            $this->assertFalse($loader->autoFields(false));
-            $this->assertFalse($loader->autoFields());
-        });
-    }
-
-    /**
      * Test for enableAutoFields()
      *
      * @return void
@@ -608,26 +592,6 @@ class EagerLoaderTest extends TestCase
         }
 
         return $elements;
-    }
-
-    /**
-     * Asserts that matching('something') and setMatching('something') return consistent type.
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testMatchingReturnType()
-    {
-        $this->deprecated(function () {
-            $loader = new EagerLoader();
-            $result = $loader->setMatching('clients');
-            $this->assertInstanceOf(EagerLoader::class, $result);
-            $this->assertArrayHasKey('clients', $loader->getMatching());
-
-            $result = $loader->matching('customers');
-            $this->assertArrayHasKey('customers', $result);
-            $this->assertArrayHasKey('customers', $loader->getMatching());
-        });
     }
 
     /**

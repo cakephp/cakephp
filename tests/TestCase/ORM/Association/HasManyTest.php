@@ -109,24 +109,6 @@ class HasManyTest extends TestCase
     }
 
     /**
-     * Tests that foreignKey() returns the correct configured value
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testForeignKey()
-    {
-        $this->deprecated(function () {
-            $assoc = new HasMany('Articles', [
-                'sourceTable' => $this->author
-            ]);
-            $this->assertEquals('author_id', $assoc->foreignKey());
-            $this->assertEquals('another_key', $assoc->foreignKey('another_key'));
-            $this->assertEquals('another_key', $assoc->foreignKey());
-        });
-    }
-
-    /**
      * Test that foreignKey generation ignores database names in target table.
      *
      * @return void
@@ -149,22 +131,6 @@ class HasManyTest extends TestCase
     {
         $assoc = new HasMany('Test');
         $this->assertFalse($assoc->canBeJoined());
-    }
-
-    /**
-     * Tests sort() method
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testSort()
-    {
-        $this->deprecated(function () {
-            $assoc = new HasMany('Test');
-            $this->assertNull($assoc->sort());
-            $assoc->sort(['id' => 'ASC']);
-            $this->assertEquals(['id' => 'ASC'], $assoc->sort());
-        });
     }
 
     /**
@@ -956,22 +922,5 @@ class HasManyTest extends TestCase
         $association = $articles->hasMany('Comments');
         $this->assertSame($association, $association->setSaveStrategy(HasMany::SAVE_REPLACE));
         $this->assertSame(HasMany::SAVE_REPLACE, $association->getSaveStrategy());
-    }
-
-    /**
-     * Tests saveStrategy
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testSaveStrategy()
-    {
-        $this->deprecated(function () {
-            $articles = $this->getTableLocator()->get('Articles');
-
-            $association = $articles->hasMany('Comments');
-            $this->assertSame(HasMany::SAVE_REPLACE, $association->saveStrategy(HasMany::SAVE_REPLACE));
-            $this->assertSame(HasMany::SAVE_REPLACE, $association->saveStrategy());
-        });
     }
 }

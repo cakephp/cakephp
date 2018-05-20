@@ -362,26 +362,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
-     * Returns the database table name or sets a new one.
-     *
-     * @deprecated 3.4.0 Use setTable()/getTable() instead.
-     * @param string|null $table the new table name
-     * @return string
-     */
-    public function table($table = null)
-    {
-        deprecationWarning(
-            get_called_class() . '::table() is deprecated. ' .
-            'Use setTable()/getTable() instead.'
-        );
-        if ($table !== null) {
-            $this->setTable($table);
-        }
-
-        return $this->getTable();
-    }
-
-    /**
      * Sets the table alias.
      *
      * @param string $alias Table alias
@@ -408,23 +388,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
 
         return $this->_alias;
-    }
-
-    /**
-     * {@inheritDoc}
-     * @deprecated 3.4.0 Use setAlias()/getAlias() instead.
-     */
-    public function alias($alias = null)
-    {
-        deprecationWarning(
-            get_called_class() . '::alias() is deprecated. ' .
-            'Use setAlias()/getAlias() instead.'
-        );
-        if ($alias !== null) {
-            $this->setAlias($alias);
-        }
-
-        return $this->getAlias();
     }
 
     /**
@@ -472,26 +435,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
-     * Returns the table registry key used to create this table instance or sets one.
-     *
-     * @deprecated 3.4.0 Use setRegistryAlias()/getRegistryAlias() instead.
-     * @param string|null $registryAlias the key used to access this object
-     * @return string
-     */
-    public function registryAlias($registryAlias = null)
-    {
-        deprecationWarning(
-            get_called_class() . '::registryAlias() is deprecated. ' .
-            'Use setRegistryAlias()/getRegistryAlias() instead.'
-        );
-        if ($registryAlias !== null) {
-            $this->setRegistryAlias($registryAlias);
-        }
-
-        return $this->getRegistryAlias();
-    }
-
-    /**
      * Sets the connection instance.
      *
      * @param \Cake\Database\Connection|\Cake\Datasource\ConnectionInterface $connection The connection instance
@@ -512,26 +455,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function getConnection()
     {
         return $this->_connection;
-    }
-
-    /**
-     * Returns the connection instance or sets a new one
-     *
-     * @deprecated 3.4.0 Use setConnection()/getConnection() instead.
-     * @param \Cake\Datasource\ConnectionInterface|null $connection The new connection instance
-     * @return \Cake\Datasource\ConnectionInterface
-     */
-    public function connection(ConnectionInterface $connection = null)
-    {
-        deprecationWarning(
-            get_called_class() . '::connection() is deprecated. ' .
-            'Use setConnection()/getConnection() instead.'
-        );
-        if ($connection !== null) {
-            $this->setConnection($connection);
-        }
-
-        return $this->getConnection();
     }
 
     /**
@@ -581,32 +504,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $this->_schema = $schema;
 
         return $this;
-    }
-
-    /**
-     * Returns the schema table object describing this table's properties.
-     *
-     * If a TableSchema is passed, it will be used for this table
-     * instead of the default one.
-     *
-     * If an array is passed, a new TableSchema will be constructed
-     * out of it and used as the schema for this table.
-     *
-     * @deprecated 3.4.0 Use setSchema()/getSchema() instead.
-     * @param array|\Cake\Database\Schema\TableSchema|null $schema New schema to be used for this table
-     * @return \Cake\Database\Schema\TableSchema
-     */
-    public function schema($schema = null)
-    {
-        deprecationWarning(
-            get_called_class() . '::schema() is deprecated. ' .
-            'Use setSchema()/getSchema() instead.'
-        );
-        if ($schema !== null) {
-            $this->setSchema($schema);
-        }
-
-        return $this->getSchema();
     }
 
     /**
@@ -681,26 +578,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
-     * Returns the primary key field name or sets a new one
-     *
-     * @deprecated 3.4.0 Use setPrimaryKey()/getPrimaryKey() instead.
-     * @param string|array|null $key Sets a new name to be used as primary key
-     * @return string|array
-     */
-    public function primaryKey($key = null)
-    {
-        deprecationWarning(
-            get_called_class() . '::primaryKey() is deprecated. ' .
-            'Use setPrimaryKey()/getPrimaryKey() instead.'
-        );
-        if ($key !== null) {
-            $this->setPrimaryKey($key);
-        }
-
-        return $this->getPrimaryKey();
-    }
-
-    /**
      * Sets the display field.
      *
      * @param string $key Name to be used as display field.
@@ -733,28 +610,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
 
         return $this->_displayField;
-    }
-
-    /**
-     * Returns the display field or sets a new one
-     *
-     * @deprecated 3.4.0 Use setDisplayField()/getDisplayField() instead.
-     * @param string|null $key sets a new name to be used as display field
-     * @return string
-     */
-    public function displayField($key = null)
-    {
-        deprecationWarning(
-            get_called_class() . '::displayField() is deprecated. ' .
-            'Use setDisplayField()/getDisplayField() instead.'
-        );
-        if ($key !== null) {
-            $this->setDisplayField($key);
-
-            return $key;
-        }
-
-        return $this->getDisplayField();
     }
 
     /**
@@ -807,28 +662,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $this->_entityClass = $class;
 
         return $this;
-    }
-
-    /**
-     * Returns the class used to hydrate rows for this table or sets
-     * a new one
-     *
-     * @deprecated 3.4.0 Use setEntityClass()/getEntityClass() instead.
-     * @param string|null $name The name of the class to use
-     * @throws \Cake\ORM\Exception\MissingEntityException when the entity class cannot be found
-     * @return string
-     */
-    public function entityClass($name = null)
-    {
-        deprecationWarning(
-            get_called_class() . '::entityClass() is deprecated. ' .
-            'Use setEntityClass()/getEntityClass() instead.'
-        );
-        if ($name !== null) {
-            $this->setEntityClass($name);
-        }
-
-        return $this->getEntityClass();
     }
 
     /**
@@ -955,20 +788,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function hasBehavior($name)
     {
         return $this->_behaviors->has($name);
-    }
-
-    /**
-     * Returns an association object configured for the specified alias if any.
-     *
-     * @deprecated 3.6.0 Use getAssociation() and Table::hasAssocation() instead.
-     * @param string $name the alias used for the association.
-     * @return \Cake\ORM\Association|null Either the association or null.
-     */
-    public function association($name)
-    {
-        deprecationWarning('Use Table::getAssociation() and Table::hasAssocation() instead.');
-
-        return $this->findAssociation($name);
     }
 
     /**
@@ -1430,12 +1249,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             'groupField' => null
         ];
 
-        if (isset($options['idField'])) {
-            $options['keyField'] = $options['idField'];
-            unset($options['idField']);
-            deprecationWarning('Option "idField" is deprecated, use "keyField" instead.');
-        }
-
         if (!$query->clause('select') &&
             !is_object($options['keyField']) &&
             !is_object($options['valueField']) &&
@@ -1498,12 +1311,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             'parentField' => 'parent_id',
             'nestingKey' => 'children'
         ];
-
-        if (isset($options['idField'])) {
-            $options['keyField'] = $options['idField'];
-            unset($options['idField']);
-            deprecationWarning('Option "idField" is deprecated, use "keyField" instead.');
-        }
 
         $options = $this->_setFieldMatchers($options, ['keyField', 'parentField']);
 

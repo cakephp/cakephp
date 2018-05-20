@@ -22,7 +22,7 @@ use Cake\ORM\Behavior\TimestampBehavior;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
-use PHPUnit\Framework\Error\Deprecated;
+use RuntimeException;
 
 /**
  * Behavior test case
@@ -246,14 +246,14 @@ class TimestampBehaviorTest extends TestCase
     }
 
     /**
-     * tests using non-DateTimeType throws deprecation warning
+     * tests using non-DateTimeType throws runtime exception
      *
      * @return void
      */
-    public function testNonDateTimeTypeDeprecated()
+    public function testNonDateTimeTypeException()
     {
-        $this->expectException(Deprecated::class);
-        $this->expectExceptionMessage('TimestampBehavior support for column types other than DateTimeType will be removed in 4.0.');
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('TimestampBehavior only supports columns of type DateTimeType.');
 
         $table = $this->getTable();
         $this->Behavior = new TimestampBehavior($table, [

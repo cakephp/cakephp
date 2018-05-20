@@ -33,14 +33,6 @@ class ResultSet implements ResultSetInterface
     use CollectionTrait;
 
     /**
-     * Original query from where results were generated
-     *
-     * @var \Cake\ORM\Query
-     * @deprecated 3.1.6 Due to a memory leak, this property cannot be used anymore
-     */
-    protected $_query;
-
-    /**
      * Database statement holding the results
      *
      * @var \Cake\Database\StatementInterface
@@ -547,22 +539,6 @@ class ResultSet implements ResultSetInterface
         }
 
         return $results;
-    }
-
-    /**
-     * Casts all values from a row brought from a table to the correct
-     * PHP type.
-     *
-     * @param string $alias The table object alias
-     * @param array $values The values to cast
-     * @deprecated 3.2.0 Not used anymore. Type casting is done at the statement level
-     * @return array
-     */
-    protected function _castValues($alias, $values)
-    {
-        deprecationWarning('ResultSet::_castValues() is deprecated, and will be removed in 4.0.0.');
-
-        return $values;
     }
 
     /**

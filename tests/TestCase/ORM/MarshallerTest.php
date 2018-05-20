@@ -2519,29 +2519,6 @@ class MarshallerTest extends TestCase
     /**
      * Tests that it is possible to pass a fields option to the marshaller
      *
-     * @group deprecated
-     * @return void
-     */
-    public function testOneWithFieldList()
-    {
-        $this->deprecated(function () {
-            $data = [
-                'title' => 'My title',
-                'body' => 'My content',
-                'author_id' => null
-            ];
-            $marshall = new Marshaller($this->articles);
-            $result = $marshall->one($data, ['fieldList' => ['title', 'author_id']]);
-
-            $this->assertInstanceOf('Cake\ORM\Entity', $result);
-            unset($data['body']);
-            $this->assertEquals($data, $result->toArray());
-        });
-    }
-
-    /**
-     * Tests that it is possible to pass a fields option to the marshaller
-     *
      * @return void
      */
     public function testOneWithFields()
@@ -2600,43 +2577,6 @@ class MarshallerTest extends TestCase
         $this->assertInstanceOf(__NAMESPACE__ . '\OpenEntity', $translations['en']);
         $this->assertInstanceOf(__NAMESPACE__ . '\OpenEntity', $translations['es']);
         $this->assertEquals($data['_translations']['en'], $translations['en']->toArray());
-    }
-
-    /**
-     * Tests that it is possible to pass a fields option to the merge method
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testMergeWithFieldList()
-    {
-        $this->deprecated(function () {
-            $data = [
-                'title' => 'My title',
-                'body' => null,
-                'author_id' => 1
-            ];
-            $marshall = new Marshaller($this->articles);
-            $entity = new Entity([
-                'title' => 'Foo',
-                'body' => 'My content',
-                'author_id' => 2
-            ]);
-            $entity->setAccess('*', false);
-            $entity->isNew(false);
-            $entity->clean();
-            $result = $marshall->merge($entity, $data, ['fieldList' => ['title', 'body']]);
-
-            $expected = [
-                'title' => 'My title',
-                'body' => null,
-                'author_id' => 2
-            ];
-
-            $this->assertSame($entity, $result);
-            $this->assertEquals($expected, $result->toArray());
-            $this->assertFalse($entity->isAccessible('*'));
-        });
     }
 
     /**

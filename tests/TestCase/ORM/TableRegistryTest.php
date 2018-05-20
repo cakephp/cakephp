@@ -118,21 +118,6 @@ class TableRegistryTest extends TestCase
     }
 
     /**
-     * Test config() method.
-     *
-     * @return void
-     */
-    public function testConfig()
-    {
-        $this->deprecated(function () {
-            $locator = $this->_setMockLocator();
-            $locator->expects($this->once())->method('config')->with('Test', []);
-
-            TableRegistry::config('Test', []);
-        });
-    }
-
-    /**
      * Test the get() method.
      *
      * @return void

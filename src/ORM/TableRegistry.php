@@ -125,7 +125,15 @@ class TableRegistry
             'Use \Cake\ORM\Locator\TableLocator::getConfig()/setConfig() instead.'
         );
 
-        return static::getTableLocator()->config($alias, $options);
+        if ($alias !== null) {
+            if (is_string($alias) && $options === null) {
+                return static::getTableLocator()->getConfig($alias);
+            }
+
+            static::getTableLocator()->setConfig($alias, $options);
+        }
+
+        return static::getTableLocator()->getConfig($alias);
     }
 
     /**

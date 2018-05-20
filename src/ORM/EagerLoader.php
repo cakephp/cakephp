@@ -113,8 +113,6 @@ class EagerLoader
      * this allows this object to calculate joins or any additional queries that
      * must be executed to bring the required associated data.
      *
-     * The getter part is deprecated as of 3.6.0. Use getContain() instead.
-     *
      * Accepted options per passed association:
      *
      * - foreignKey: Used to set a different field to match both tables, if set to false
@@ -133,17 +131,8 @@ class EagerLoader
      * @return array Containments.
      * @throws \InvalidArgumentException When using $queryBuilder with an array of $associations
      */
-    public function contain($associations = [], callable $queryBuilder = null)
+    public function contain($associations, callable $queryBuilder = null)
     {
-        if (empty($associations)) {
-            deprecationWarning(
-                'Using EagerLoader::contain() as getter is deprecated. ' .
-                'Use getContain() instead.'
-            );
-
-            return $this->getContain();
-        }
-
         if ($queryBuilder) {
             if (!is_string($associations)) {
                 throw new InvalidArgumentException(
@@ -220,26 +209,6 @@ class EagerLoader
     }
 
     /**
-     * Sets/Gets whether or not contained associations will load fields automatically.
-     *
-     * @deprecated 3.4.0 Use enableAutoFields()/isAutoFieldsEnabled() instead.
-     * @param bool|null $enable The value to set.
-     * @return bool The current value.
-     */
-    public function autoFields($enable = null)
-    {
-        deprecationWarning(
-            'EagerLoader::autoFields() is deprecated. ' .
-            'Use enableAutoFields()/isAutoFieldsEnabled() instead.'
-        );
-        if ($enable !== null) {
-            $this->enableAutoFields($enable);
-        }
-
-        return $this->isAutoFieldsEnabled();
-    }
-
-    /**
      * Adds a new association to the list that will be used to filter the results of
      * any given query based on the results of finding records for that association.
      * You can pass a dot separated path of associations to this method as its first
@@ -297,37 +266,6 @@ class EagerLoader
         }
 
         return $this->_matching->getContain();
-    }
-
-    /**
-     * Adds a new association to the list that will be used to filter the results of
-     * any given query based on the results of finding records for that association.
-     * You can pass a dot separated path of associations to this method as its first
-     * parameter, this will translate in setting all those associations with the
-     * `matching` option.
-     *
-     * If called with no arguments it will return the current tree of associations to
-     * be matched.
-     *
-     * @deprecated 3.4.0 Use setMatching()/getMatching() instead.
-     * @param string|null $assoc A single association or a dot separated path of associations.
-     * @param callable|null $builder the callback function to be used for setting extra
-     * options to the filtering query
-     * @param array $options Extra options for the association matching, such as 'joinType'
-     * and 'fields'
-     * @return array The resulting containments array
-     */
-    public function matching($assoc = null, callable $builder = null, $options = [])
-    {
-        deprecationWarning(
-            'EagerLoader::matching() is deprecated. ' .
-            'Use setMatch()/getMatching() instead.'
-        );
-        if ($assoc !== null) {
-            $this->setMatching($assoc, $builder, $options);
-        }
-
-        return $this->getMatching();
     }
 
     /**
