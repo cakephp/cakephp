@@ -70,6 +70,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @param string $objectName The name/class of the object to load.
      * @param array $config Additional settings to use when loading the object.
      * @return mixed
+     * @throws \Exception If the class cannot be found.
      */
     public function load($objectName, $config = [])
     {
