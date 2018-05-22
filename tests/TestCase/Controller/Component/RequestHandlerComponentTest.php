@@ -145,7 +145,6 @@ class RequestHandlerComponentTest extends TestCase
     public function testInitializeContentTypeSettingExt()
     {
         Router::reload();
-        Router::$initialized = true;
         $this->Controller->setRequest($this->request->withHeader('Accept', 'application/json'));
 
         $this->RequestHandler->ext = null;
@@ -161,7 +160,6 @@ class RequestHandlerComponentTest extends TestCase
     public function testInitializeContentTypeWithjQueryAccept()
     {
         Router::reload();
-        Router::$initialized = true;
         $this->Controller->setRequest($this->request
             ->withHeader('Accept', 'application/json, application/javascript, */*; q=0.01')
             ->withHeader('X-Requested-With', 'XMLHttpRequest'));
@@ -180,7 +178,6 @@ class RequestHandlerComponentTest extends TestCase
     public function testInitializeContentTypeWithjQueryTextPlainAccept()
     {
         Router::reload();
-        Router::$initialized = true;
         $this->Controller->setRequest($this->request->withHeader('Accept', 'text/plain, */*; q=0.01'));
 
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
@@ -196,7 +193,6 @@ class RequestHandlerComponentTest extends TestCase
     public function testInitializeContentTypeWithjQueryAcceptAndMultiplesExtensions()
     {
         Router::reload();
-        Router::$initialized = true;
         $this->Controller->setRequest($this->request->withHeader('Accept', 'application/json, application/javascript, */*; q=0.01'));
         $this->RequestHandler->ext = null;
         Router::extensions(['rss', 'json'], false);
@@ -213,7 +209,6 @@ class RequestHandlerComponentTest extends TestCase
     public function testInitializeNoContentTypeWithSingleAccept()
     {
         Router::reload();
-        Router::$initialized = true;
         $_SERVER['HTTP_ACCEPT'] = 'application/json, text/html, */*; q=0.01';
         $this->assertNull($this->RequestHandler->ext);
 
@@ -256,7 +251,6 @@ class RequestHandlerComponentTest extends TestCase
     public function testInitializeContentTypeWithMultipleAcceptedTypes()
     {
         Router::reload();
-        Router::$initialized = true;
         $this->Controller->setRequest($this->request->withHeader(
             'Accept',
             'text/csv;q=1.0, application/json;q=0.8, application/xml;q=0.7'
@@ -275,7 +269,6 @@ class RequestHandlerComponentTest extends TestCase
     public function testInitializeAmbiguousAndroidAccepts()
     {
         Router::reload();
-        Router::$initialized = true;
         $this->request = $this->request->withEnv(
             'HTTP_ACCEPT',
             'application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5'

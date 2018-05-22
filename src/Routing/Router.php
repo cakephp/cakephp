@@ -36,14 +36,6 @@ class Router
 {
 
     /**
-     * Have routes been loaded
-     *
-     * @var bool
-     * @deprecated 3.5.0 Routes will be loaded via the Application::routes() hook in 4.0.0
-     */
-    public static $initialized = false;
-
-    /**
      * Default route class.
      *
      * @var string
@@ -204,7 +196,6 @@ class Router
      */
     public static function connect($route, $defaults = [], $options = [])
     {
-        static::$initialized = true;
         static::scope('/', function ($routes) use ($route, $defaults, $options) {
             $routes->connect($route, $defaults, $options);
         });
@@ -219,10 +210,6 @@ class Router
      */
     public static function parseRequest(ServerRequestInterface $request)
     {
-        if (!static::$initialized) {
-            static::_loadRoutes();
-        }
-
         return static::$_collection->parseRequest($request);
     }
 
@@ -425,10 +412,6 @@ class Router
      */
     public static function url($url = null, $full = false)
     {
-        if (!static::$initialized) {
-            static::_loadRoutes();
-        }
-
         $params = [
             'plugin' => null,
             'controller' => null,
@@ -718,10 +701,6 @@ class Router
     {
         $collection = static::$_collection;
         if ($extensions === null) {
-            if (!static::$initialized) {
-                static::_loadRoutes();
-            }
-
             return array_unique(array_merge(static::$_defaultExtensions, $collection->getExtensions()));
         }
         $extensions = (array)$extensions;
@@ -891,23 +870,7 @@ class Router
      */
     public static function routes()
     {
-        if (!static::$initialized) {
-            static::_loadRoutes();
-        }
-
         return static::$_collection->routes();
-    }
-
-    /**
-     * Loads route configuration
-     *
-     * @deprecated 3.5.0 Routes will be loaded via the Application::routes() hook in 4.0.0
-     * @return void
-     */
-    protected static function _loadRoutes()
-    {
-        static::$initialized = true;
-        include CONFIG . 'routes.php';
     }
 
     /**
@@ -929,6 +892,5 @@ class Router
     public static function setRouteCollection($routeCollection)
     {
         static::$_collection = $routeCollection;
-        static::$initialized = true;
     }
 }

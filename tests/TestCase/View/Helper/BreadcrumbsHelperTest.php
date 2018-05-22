@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\View\Helper;
 
+use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\BreadcrumbsHelper;
 use Cake\View\View;
@@ -38,6 +39,11 @@ class BreadcrumbsHelperTest extends TestCase
         parent::setUp();
         $view = new View();
         $this->breadcrumbs = new BreadcrumbsHelper($view);
+
+        Router::reload();
+        Router::scope('/', function ($routes) {
+            $routes->fallbacks();
+        });
     }
 
     /**
@@ -399,7 +405,7 @@ class BreadcrumbsHelperTest extends TestCase
             '/span',
             '/li',
             ['li' => []],
-            ['a' => ['href' => '/some_alias']],
+            ['a' => ['href' => '/tests_apps/some_method']],
             'Some text',
             '/a',
             '/li',

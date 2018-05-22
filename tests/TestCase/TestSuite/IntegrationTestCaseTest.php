@@ -48,7 +48,6 @@ class IntegrationTestCaseTest extends IntegrationTestCase
             $routes->options('/options/:controller/:action', []);
             $routes->connect('/:controller/:action/*', []);
         });
-        Router::$initialized = true;
     }
 
     /**
