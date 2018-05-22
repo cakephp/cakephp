@@ -58,24 +58,19 @@ trait TranslateStrategyTrait
     }
 
     /**
-     * Sets the locale that should be used for all future find and save operations on
-     * the table where this behavior is attached to.
+     * Sets the locale to be used.
      *
-     * When fetching records, the behavior will include the content for the locale set
-     * via this method, and likewise when saving data, it will save the data in that
-     * locale.
+     * When fetching records, the content for the locale set via this method,
+     * and likewise when saving data, it will save the data in that locale.
      *
-     * Note that in case an entity has a `_locale` property set, that locale will win
-     * over the locale set via this method (and over the globally configured one for
-     * that matter)!
+     * Note that in case an entity has a `_locale` property set, that locale
+     * will win over the locale set via this method (and over the globally
+     * configured one for that matter)!
      *
-     * @param string|null $locale The locale to use for fetching and saving records. Pass `null`
-     * in order to unset the current locale, and to make the behavior fall back to using the
-     * globally configured locale.
+     * @param string|null $locale The locale to use for fetching and saving
+     *   records. Pass `null` in order to unset the current locale, and to make
+     *   the behavior fall back to using the globally configured locale.
      * @return $this
-     * @see \Cake\ORM\Behavior\TranslateBehavior::getLocale()
-     * @link https://book.cakephp.org/3.0/en/orm/behaviors/translate.html#retrieving-one-language-without-using-i18n-locale
-     * @link https://book.cakephp.org/3.0/en/orm/behaviors/translate.html#saving-in-another-language
      */
     public function setLocale(?string $locale)
     {

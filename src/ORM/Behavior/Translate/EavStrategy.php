@@ -21,9 +21,9 @@ use Cake\Core\InstanceConfigTrait;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\QueryInterface;
 use Cake\Event\Event;
+use Cake\ORM\Behavior\Translate\TranslateStrategyInterface;
 use Cake\ORM\Entity;
 use Cake\ORM\Locator\LocatorAwareTrait;
-use Cake\ORM\PropertyMarshalInterface;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 
@@ -39,7 +39,7 @@ use Cake\ORM\Table;
  * If you want to bring all or certain languages for each of the fetched records,
  * you can use the custom `translations` finders that is exposed to the table.
  */
-class EavStrategy implements PropertyMarshalInterface
+class EavStrategy implements TranslateStrategyInterface
 {
 
     use InstanceConfigTrait;

@@ -17,6 +17,7 @@ namespace Cake\ORM\Behavior;
 use Cake\I18n\I18n;
 use Cake\ORM\Behavior;
 use Cake\ORM\Behavior\Translate\EavStrategy;
+use Cake\ORM\Behavior\Translate\TranslateStrategyInterface;
 use Cake\ORM\PropertyMarshalInterface;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
@@ -64,7 +65,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     /**
      * Translation strategy instance.
      *
-     * @var object|null
+     * @var \Cake\ORM\Behavior\Translate\TranslateStrategyInterface|null
      */
     protected $strategy;
 
@@ -98,9 +99,9 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     /**
      * Get strategy class instance.
      *
-     * @return object
+     * @return \Cake\ORM\Behavior\Translate\TranslateStrategyInterface
      */
-    public function getStrategy()
+    public function getStrategy(): TranslateStrategyInterface
     {
         if ($this->strategy !== null) {
             return $this->strategy;
@@ -118,10 +119,10 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     /**
      * Set strategy class instance.
      *
-     * @param object $strategy Strategy class instance.
+     * @param \Cake\ORM\Behavior\Translate\TranslateStrategyInterface $strategy Strategy class instance.
      * @return $this
      */
-    public function setStrategy($strategy)
+    public function setStrategy(TranslateStrategyInterface $strategy)
     {
         $this->strategy = $strategy;
 

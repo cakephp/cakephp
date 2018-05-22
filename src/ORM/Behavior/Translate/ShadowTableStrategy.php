@@ -15,19 +15,20 @@
 namespace Cake\ORM\Behavior\Translate;
 
 use ArrayObject;
+use Cake\Collection\CollectionInterface;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Database\Expression\FieldInterface;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
+use Cake\ORM\Behavior\Translate\TranslateStrategyInterface;
 use Cake\ORM\Locator\LocatorAwareTrait;
-use Cake\ORM\PropertyMarshalInterface;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 
 /**
  * ShadowTable strategy
  */
-class ShadowTableStrategy implements PropertyMarshalInterface
+class ShadowTableStrategy implements TranslateStrategyInterface
 {
 
     use InstanceConfigTrait;
@@ -124,7 +125,7 @@ class ShadowTableStrategy implements PropertyMarshalInterface
      * @param \ArrayObject $options The options for the query
      * @return void
      */
-    public function beforeFind(Event $event, Query $query, ArrayObject $options)
+    public function beforeFind(Event $event, Query $query, ArrayObject $options): void
     {
         $locale = $this->getLocale();
 
@@ -309,7 +310,7 @@ class ShadowTableStrategy implements PropertyMarshalInterface
      * @param \ArrayObject $options the options passed to the save method
      * @return void
      */
-    public function beforeSave(Event $event, EntityInterface $entity, ArrayObject $options)
+    public function beforeSave(Event $event, EntityInterface $entity, ArrayObject $options): void
     {
         $locale = $entity->get('_locale') ?: $this->getLocale();
         $newOptions = [$this->translationTable->getAlias() => ['validate' => false]];
@@ -412,7 +413,7 @@ class ShadowTableStrategy implements PropertyMarshalInterface
      * @param string $field Field name to be aliased.
      * @return string
      */
-    public function translationField($field)
+    public function translationField(string $field): string
     {
         if ($this->getLocale() === $this->getConfig('defaultLocale')) {
             return $this->table->aliasField($field);
@@ -490,7 +491,7 @@ class ShadowTableStrategy implements PropertyMarshalInterface
      * @param \Cake\Datasource\ResultSetInterface $results Results to modify.
      * @return \Cake\Collection\CollectionInterface
      */
-    public function groupTranslations($results)
+    public function groupTranslations($results): CollectionInterface
     {
         return $results->map(function ($row) {
             $translations = (array)$row['_i18n'];
