@@ -18,6 +18,14 @@ use Cake\TestSuite\TestCase;
 use Cake\Utility\Text;
 
 /**
+ * Helper class that assists with testing overloading of a deprecated property.
+ */
+class TextOverloadDeprecatedTransliteratorIdProperty extends Text
+{
+    protected static $_defaultTransliteratorId = 'Any-Latin; Latin-ASCII; [\u0080-\u7fff] remove';
+}
+
+/**
  * TextTest class
  */
 class TextTest extends TestCase
@@ -1685,16 +1693,44 @@ HTML;
      *
      * @return void
      */
-    public function testGetSetTransliteratorId()
+    public function testDeprecatedGetSetTransliteratorId()
     {
-        $defaultTransliteratorId = 'Any-Latin; Latin-ASCII; [\u0080-\u7fff] remove';
-        $this->assertEquals($defaultTransliteratorId, Text::getTransliteratorId());
+        $this->deprecated(function () {
+            $defaultTransliteratorId = 'Any-Latin; Latin-ASCII; [\u0080-\u7fff] remove';
+            $this->assertEquals($defaultTransliteratorId, Text::getTransliteratorId());
+
+            $expected = 'Latin-ASCII; [\u0080-\u7fff] remove';
+            Text::setTransliteratorId($expected);
+            $this->assertEquals($expected, Text::getTransliteratorId());
+
+            Text::setTransliteratorId($defaultTransliteratorId);
+        });
+    }
+
+    /**
+     * Test getting/setting default transliterator.
+     *
+     * @return void
+     */
+    public function testGetSetTransliterator()
+    {
+        $defaultTransliterator = 'Any-Latin; Latin-ASCII; [\u0080-\u7fff] remove';
+        $this->assertEquals($defaultTransliterator, Text::getTransliterator());
 
         $expected = 'Latin-ASCII; [\u0080-\u7fff] remove';
-        Text::setTransliteratorId($expected);
-        $this->assertEquals($expected, Text::getTransliteratorId());
+        Text::setTransliterator($expected);
+        $this->assertEquals($expected, Text::getTransliterator());
 
-        Text::setTransliteratorId($defaultTransliteratorId);
+        $transliterator = \Transliterator::createFromRules('
+            $nonletter = [:^Letter:];
+            $nonletter → \'*\';
+            ::Latin-ASCII;
+        ');
+        $this->assertInstanceOf(\Transliterator::class, $transliterator);
+        Text::setTransliterator($transliterator);
+        $this->assertSame($transliterator, Text::getTransliterator());
+
+        Text::setTransliterator($defaultTransliterator);
     }
 
     /**
@@ -1748,15 +1784,33 @@ HTML;
      * testTransliterate method
      *
      * @param string $string String
-     * @param string $transliteratorId Transliterator Id
-     * @param String $expected Exepected string
+     * @param \Transliterator|string|null $transliterator Transliterator
+     * @param String $expected Expected string
      * @return void
      * @dataProvider transliterateInputProvider
      */
-    public function testTransliterate($string, $transliteratorId, $expected)
+    public function testTransliterate($string, $transliterator, $expected)
     {
-        $result = Text::transliterate($string, $transliteratorId);
+        $result = Text::transliterate($string, $transliterator);
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * testTransliterateOverloadDeprecatedTransliteratorIdProperty method
+     *
+     * Tests that extending classes that overload the deprecated `$_defaultTransliteratorId`
+     * property still work as expected, and trigger a deprecation notice.
+     *
+     * @return void
+     */
+    public function testTransliterateOverloadDeprecatedTransliteratorIdProperty()
+    {
+        $this->deprecated(function () {
+            $this->assertEquals(
+                'ringo',
+                TextOverloadDeprecatedTransliteratorIdProperty::transliterate('りんご')
+            );
+        });
     }
 
     public function slugInputProvider()
@@ -1779,12 +1833,29 @@ HTML;
                 'A-ae-Ubermensch-pa-hoyeste-niva-I-a-lublu-PHP-est-fi'
             ],
             [
-                'A æ Übérmensch på høyeste nivå! И я люблю PHP! есть. ﬁ ¦', ['transliteratorId' => 'Latin-ASCII'],
+                'A æ Übérmensch på høyeste nivå! И я люблю PHP! есть. ﬁ ¦', ['transliterator' => 'Latin-ASCII'],
                 'A-ae-Ubermensch-pa-hoyeste-niva-И-я-люблю-PHP-есть-fi'
             ],
             [
-                'Äpfel Über Öl grün ärgert groß öko', [],
-                'Apfel-Uber-Ol-grun-argert-gross-oko'
+                'Äpfel Über Öl grün ärgert groß öko',
+                [
+                    'transliterator' => \Transliterator::createFromRules('
+                        $AE = [Ä {A \u0308}];
+                        $OE = [Ö {O \u0308}];
+                        $UE = [Ü {U \u0308}];
+                        [ä {a \u0308}] → ae;
+                        [ö {o \u0308}] → oe;
+                        [ü {u \u0308}] → ue;
+                        {$AE} [:Lowercase:] → Ae;
+                        {$OE} [:Lowercase:] → Oe;
+                        {$UE} [:Lowercase:] → Ue;
+                        $AE → AE;
+                        $OE → OE;
+                        $UE → UE;
+                        ::Latin-ASCII;
+                    '),
+                ],
+                'Aepfel-Ueber-Oel-gruen-aergert-gross-oeko'
             ],
             [
                 'The truth - and- more- news', [],
@@ -1811,15 +1882,15 @@ HTML;
                 'this-melts-your-face1-2-3'
             ],
             [
-                'controller/action/りんご/1', ['transliteratorId' => false],
+                'controller/action/りんご/1', ['transliterator' => false],
                 'controller-action-りんご-1'
             ],
             [
-                'の話が出たので大丈夫かなあと', ['transliteratorId' => false],
+                'の話が出たので大丈夫かなあと', ['transliterator' => false],
                 'の話が出たので大丈夫かなあと'
             ],
             [
-                'posts/view/한국어/page:1/sort:asc', ['transliteratorId' => false],
+                'posts/view/한국어/page:1/sort:asc', ['transliterator' => false],
                 'posts-view-한국어-page-1-sort-asc'
             ],
             [
@@ -1850,7 +1921,7 @@ HTML;
      *
      * @param string $string String
      * @param array $options Options
-     * @param String $expected Exepected string
+     * @param String $expected Expected string
      * @return void
      * @dataProvider slugInputProvider
      */
@@ -1858,6 +1929,65 @@ HTML;
     {
         $result = Text::slug($string, $options);
         $this->assertEquals($expected, $result);
+    }
+
+    public function slugDeprecatedTransliteratorIdOptionInputProvider()
+    {
+        return [
+            [
+                'A æ Übérmensch på høyeste nivå! И я люблю PHP! есть. ﬁ ¦',
+                ['transliteratorId' => 'Latin-ASCII'],
+                'A-ae-Ubermensch-pa-hoyeste-niva-И-я-люблю-PHP-есть-fi'
+            ],
+            [
+                'Äpfel Über Öl grün ärgert groß öko',
+                [
+                    'transliterator' => \Transliterator::createFromRules('
+                        $AE = [Ä {A \u0308}];
+                        $OE = [Ö {O \u0308}];
+                        $UE = [Ü {U \u0308}];
+                        [ä {a \u0308}] → ae;
+                        [ö {o \u0308}] → oe;
+                        [ü {u \u0308}] → ue;
+                        {$AE} [:Lowercase:] → Ae;
+                        {$OE} [:Lowercase:] → Oe;
+                        {$UE} [:Lowercase:] → Ue;
+                        $AE → AE;
+                        $OE → OE;
+                        $UE → UE;
+                        ::Latin-ASCII;
+                    '),
+                ],
+                'Aepfel-Ueber-Oel-gruen-aergert-gross-oeko'
+            ],
+            [
+                'controller/action/りんご/1',
+                ['transliteratorId' => false],
+                'controller-action-りんご-1'
+            ],
+            [
+                'cl#ean(me',
+                ['transliteratorId' => null],
+                'cl-ean-me'
+            ]
+        ];
+    }
+
+    /**
+     * testSlugDeprecatedTransliteratorIdOption method
+     *
+     * @param string $string String
+     * @param array $options Options
+     * @param String $expected Expected string
+     * @return void
+     * @dataProvider slugDeprecatedTransliteratorIdOptionInputProvider
+     */
+    public function testSlugDeprecatedTransliteratorIdOption($string, $options, $expected)
+    {
+        $this->deprecated(function () use ($string, $options, $expected) {
+            $result = Text::slug($string, $options);
+            $this->assertEquals($expected, $result);
+        });
     }
 
     /**

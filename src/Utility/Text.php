@@ -25,9 +25,18 @@ class Text
     /**
      * Default transliterator id string.
      *
-     * @param string $_defaultTransliteratorId Transliterator identifier string.
+     * @deprecated 3.7.0 Use $_defaultTransliterator instead.
+     * @var string $_defaultTransliteratorId Transliterator identifier string.
      */
-    protected static $_defaultTransliteratorId = 'Any-Latin; Latin-ASCII; [\u0080-\u7fff] remove';
+    protected static $_defaultTransliteratorId;
+
+    /**
+     * Default transliterator.
+     *
+     * @var \Transliterator|string Either a Transliterator instance, or a
+     *   transliterator identifier string.
+     */
+    protected static $_defaultTransliterator = 'Any-Latin; Latin-ASCII; [\u0080-\u7fff] remove';
 
     /**
      * Default html tags who must not be count for truncate text.
@@ -1054,38 +1063,86 @@ class Text
     /**
      * Get default transliterator identifier string.
      *
+     * @deprecated 3.7.0 Use getTransliterator() instead.
      * @return string Transliterator identifier.
      */
     public static function getTransliteratorId()
     {
-        return static::$_defaultTransliteratorId;
+        deprecationWarning(
+            'Text::getTransliteratorId() is deprecated. ' .
+            'Use Text::getTransliterator() instead.'
+        );
+
+        return static::getTransliterator();
     }
 
     /**
      * Set default transliterator identifier string.
      *
+     * @deprecated 3.7.0 Use setTransliterator() instead.
      * @param string $transliteratorId Transliterator identifier.
      * @return void
      */
     public static function setTransliteratorId($transliteratorId)
     {
-        static::$_defaultTransliteratorId = $transliteratorId;
+        deprecationWarning(
+            'Text::setTransliteratorId() is deprecated. ' .
+            'Use Text::setTransliterator() instead.'
+        );
+
+        static::setTransliterator($transliteratorId);
+    }
+
+    /**
+     * Get the default transliterator.
+     *
+     * @return \Transliterator|string Either a Transliterator instance, or a
+     *   transliterator identifier string.
+     * @since 3.7.0
+     */
+    public static function getTransliterator()
+    {
+        return static::$_defaultTransliterator;
+    }
+
+    /**
+     * Set default transliterator identifier string.
+     *
+     * @param \Transliterator|string $transliterator Either a Transliterator
+     *   instance, or a transliterator identifier string.
+     * @return void
+     * @since 3.7.0
+     */
+    public static function setTransliterator($transliterator)
+    {
+        static::$_defaultTransliterator = $transliterator;
     }
 
     /**
      * Transliterate string.
      *
      * @param string $string String to transliterate.
-     * @param string|null $transliteratorId Transliterator identifier. If null
-     *   Text::$_defaultTransliteratorId will be used.
+     * @param \Transliterator|string|null $transliterator Either a Transliterator
+     *   instance, or a transliterator identifier string. If `null`
+     *   `Text::$_defaultTransliterator` will be used.
      * @return string
      * @see https://secure.php.net/manual/en/transliterator.transliterate.php
      */
-    public static function transliterate($string, $transliteratorId = null)
+    public static function transliterate($string, $transliterator = null)
     {
-        $transliteratorId = $transliteratorId ?: static::$_defaultTransliteratorId;
+        if (!$transliterator) {
+            if (static::$_defaultTransliteratorId !== null) {
+                deprecationWarning(
+                    '`Text::$_defaultTransliteratorId` is deprecated. ' .
+                    'Use `Text::$_defaultTransliterator` instead.'
+                );
+                $transliterator = static::$_defaultTransliteratorId;
+            } else {
+                $transliterator = static::$_defaultTransliterator;
+            }
+        }
 
-        return transliterator_transliterate($transliteratorId, $string);
+        return transliterator_transliterate($transliterator, $string);
     }
 
     /**
@@ -1095,9 +1152,11 @@ class Text
      * ### Options:
      *
      * - `replacement`: Replacement string. Default '-'.
-     * - `transliteratorId`: A valid tranliterator id string.
-     *   If default `null` Text::$_defaultTransliteratorId to be used.
+     * - `transliterator`: A Transliterator instance, or a transliterator id string.
+     *   If `null` (default) `Text::$_defaultTransliterator` will be used.
      *   If `false` no transliteration will be done, only non words will be removed.
+     * - `transliteratorId`: Deprecated as of 3.7.0, use the `transliterator` option
+     *   instead.
      * - `preserve`: Specific non-word character to preserve. Default `null`.
      *   For e.g. this option can be set to '.' to generate clean file names.
      *
@@ -1113,12 +1172,19 @@ class Text
         }
         $options += [
             'replacement' => '-',
-            'transliteratorId' => null,
+            'transliterator' => null,
             'preserve' => null
         ];
 
-        if ($options['transliteratorId'] !== false) {
-            $string = static::transliterate($string, $options['transliteratorId']);
+        if (array_key_exists('transliteratorId', $options)) {
+            deprecationWarning(
+                'The `transliteratorId` option is deprecated. ' .
+                'Use `transliterator` instead.'
+            );
+            $options['transliterator'] = $options['transliteratorId'];
+        }
+        if ($options['transliterator'] !== false) {
+            $string = static::transliterate($string, $options['transliterator']);
         }
 
         $regex = '^\s\p{Ll}\p{Lm}\p{Lo}\p{Lt}\p{Lu}\p{Nd}';
