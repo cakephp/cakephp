@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\Database;
 
+use Cake\Collection\Collection;
 use Cake\Database\Connection;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Exception\MissingConnectionException;
@@ -247,6 +248,29 @@ class ConnectionTest extends TestCase
         $result = $statement->fetch();
         $statement->closeCursor();
         $this->assertTrue((bool)$result[0]);
+    }
+
+    /**
+     * test executing a buffered query interacts with Collection well.
+     *
+     * @return void
+     */
+    public function testBufferedStatementCollectionWrappingStatement()
+    {
+        $this->loadFixtures('Things');
+        $statement = $this->connection->query('SELECT * FROM things LIMIT 3');
+        $statement->bufferResults(true);
+
+        $collection = new Collection($statement);
+        $result = $collection->extract('id')->toArray();
+        $this->assertSame(['1', '2'], $result);
+
+        // Check iteration after extraction
+        $result = [];
+        foreach ($collection as $v) {
+            $result[] = $v['id'];
+        }
+        $this->assertSame(['1', '2'], $result);
     }
 
     /**

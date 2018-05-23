@@ -14,6 +14,9 @@
  */
 namespace Cake\Database\Statement;
 
+use CachingIterator;
+use IteratorIterator;
+
 /**
  * A statement decorator that implements buffered results.
  *
@@ -159,5 +162,20 @@ class BufferedStatement extends StatementDecorator
         $this->_count = $this->_counter = 0;
         $this->_records = [];
         $this->_allFetched = false;
+    }
+
+    /**
+     * Get an iterator that buffers results.
+     *
+     * @return Traversable
+     */
+    public function getIterator()
+    {
+        $statement = parent::getIterator();
+        if (!$this->_iterator) {
+            $this->_iterator = new BufferedIterator(new IteratorIterator($statement));
+        }
+
+        return $this->_iterator;
     }
 }
