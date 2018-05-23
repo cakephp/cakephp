@@ -13,15 +13,27 @@
  */
 namespace Cake\Test\TestCase\Core;
 
+use Cake\Core\BasePlugin;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
+use TestPlugin\Plugin as TestPlugin;
 
 /**
  * PluginTest class
  */
 class PluginTest extends TestCase
 {
+    /**
+     * Setup
+     *
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        Plugin::unload();
+    }
 
     /**
      * Reverts the changes done to the environment while testing
@@ -41,10 +53,33 @@ class PluginTest extends TestCase
      */
     public function testLoad()
     {
-        Plugin::unload();
         Plugin::load('TestPlugin');
         $expected = ['TestPlugin'];
         $this->assertEquals($expected, Plugin::loaded());
+    }
+
+    /**
+     * Tests loading a plugin with a class
+     *
+     * @return void
+     */
+    public function testLoadConcreteClass()
+    {
+        Plugin::load('TestPlugin');
+        $instance = Plugin::getCollection()->get('TestPlugin');
+        $this->assertSame(TestPlugin::class, get_class($instance));
+    }
+
+    /**
+     * Tests loading a plugin without a class
+     *
+     * @return void
+     */
+    public function testLoadDynamicClass()
+    {
+        Plugin::load('TestPluginTwo');
+        $instance = Plugin::getCollection()->get('TestPluginTwo');
+        $this->assertSame(BasePlugin::class, get_class($instance));
     }
 
     /**
@@ -217,9 +252,9 @@ class PluginTest extends TestCase
     public function testIgnoreMissingFiles()
     {
         Plugin::loadAll([[
-                'bootstrap' => true,
-                'routes' => true,
-                'ignoreMissing' => true
+            'bootstrap' => true,
+            'routes' => true,
+            'ignoreMissing' => true
         ]]);
         $this->assertTrue(Plugin::routes());
     }

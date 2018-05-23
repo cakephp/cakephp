@@ -155,9 +155,14 @@ class Plugin
         if (!isset($config['configPath'])) {
             $config['configPath'] = $config['path'] . 'config' . DIRECTORY_SEPARATOR;
         }
-
-        // Use stub plugins as this method will be removed long term.
-        static::getCollection()->add(new BasePlugin($config));
+        $pluginClass = str_replace('/', '\\', $plugin) . '\\Plugin';
+        if (class_exists($pluginClass)) {
+            $instance = new $pluginClass($config);
+        } else {
+            // Use stub plugin as this method will be removed long term.
+            $instance = new BasePlugin($config);
+        }
+        static::getCollection()->add($instance);
 
         if ($config['autoload'] === true) {
             if (empty(static::$_loader)) {
