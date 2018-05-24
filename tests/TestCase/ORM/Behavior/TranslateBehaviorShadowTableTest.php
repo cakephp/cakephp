@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         3.0.0
+ * @since         4.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\ORM\Behavior;
@@ -76,14 +76,14 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
      */
     public function setUp()
     {
+        parent::setUp();
+
         $aliases = ['Articles', 'Authors', 'Comments', 'Tags', 'SpecialTags', 'Groups'];
         $options = ['className' => Table::class];
 
         foreach ($aliases as $alias) {
             $this->getTableLocator()->get($alias, $options);
         }
-
-        parent::setUp();
     }
 
     /**
@@ -389,7 +389,9 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
         $table->setLocale('eng');
 
         $table->belongsTo('Copy', ['className' => 'Articles', 'foreignKey' => 'author_id']);
-        $table->Copy->addBehavior('Translate');
+        $table->Copy->addBehavior('Translate', [
+            'strategyClass' => ShadowTableStrategy::class,
+        ]);
         $table->Copy->setLocale('deu');
 
         $query = $table->find()
