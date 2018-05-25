@@ -1420,7 +1420,7 @@ class PaginatorComponentTest extends TestCase
     {
         $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')
             ->setMethods([
-                'getAlias', 'hasField', 'alias', 'find', 'get', 'query', 'updateAll', 'deleteAll',
+                'getAlias', 'setAlias', 'hasField', 'find', 'get', 'query', 'updateAll', 'deleteAll',
                 'exists', 'save', 'delete', 'newEntity', 'newEntities', 'patchEntity', 'patchEntities'
             ])
             ->getMock();
