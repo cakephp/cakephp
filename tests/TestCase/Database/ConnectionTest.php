@@ -24,6 +24,7 @@ use Cake\Database\Log\QueryLogger;
 use Cake\Database\Retry\CommandRetry;
 use Cake\Database\Retry\ReconnectStrategy;
 use Cake\Database\StatementInterface;
+use Cake\Database\Statement\BufferedStatement;
 use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
@@ -257,9 +258,12 @@ class ConnectionTest extends TestCase
      */
     public function testBufferedStatementCollectionWrappingStatement()
     {
+        $this->skipIf(
+            !($this->connection->getDriver() instanceof \Cake\Database\Driver\Sqlite),
+            'Only required for SQLite driver which does not support buffered results natively'
+        );
         $this->loadFixtures('Things');
         $statement = $this->connection->query('SELECT * FROM things LIMIT 3');
-        $statement->bufferResults(true);
 
         $collection = new Collection($statement);
         $result = $collection->extract('id')->toArray();
