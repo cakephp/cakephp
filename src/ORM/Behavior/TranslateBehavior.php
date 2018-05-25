@@ -51,7 +51,6 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
             'getLocale' => 'getLocale',
             'translationField' => 'translationField',
         ],
-        'strategyClass' => EavStrategy::class,
         'fields' => [],
         'defaultLocale' => '',
         'referenceName' => '',
@@ -61,6 +60,13 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
         'tableLocator' => null,
         'validator' => false,
     ];
+
+    /**
+     * Default strategy class name.
+     *
+     * @var string
+     */
+    protected static $defaultStrategyClass = EavStrategy::class;
 
     /**
      * Translation strategy instance.
@@ -97,6 +103,27 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     }
 
     /**
+     * Set default strategy class name.
+     *
+     * @param string $class Class name.
+     * @return void
+     */
+    public static function setDefaultStrategyClass(string $class)
+    {
+        static::$defaultStrategyClass = $class;
+    }
+
+    /**
+     * Get default strategy class name.
+     *
+     * @return string
+     */
+    public static function getDefaultStrategyClass(): string
+    {
+        return static::$defaultStrategyClass;
+    }
+
+    /**
      * Get strategy class instance.
      *
      * @return \Cake\ORM\Behavior\Translate\TranslateStrategyInterface
@@ -107,13 +134,23 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
             return $this->strategy;
         }
 
+        return $this->strategy = $this->createStrategy();
+    }
+
+    /**
+     * Create strategy instance.
+     *
+     * @return \Cake\ORM\Behavior\Translate\TranslateStrategyInterface
+     */
+    protected function createStrategy()
+    {
         $config = array_diff_key(
             $this->_config,
             ['implementedFinders', 'implementedMethods', 'strategyClass']
         );
-        $this->strategy = new $this->_config['strategyClass']($this->_table, $config);
+        $className = $this->getConfig('strategyClass', static::$defaultStrategyClass);
 
-        return $this->strategy;
+        return new $className($this->_table, $config);
     }
 
     /**

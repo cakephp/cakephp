@@ -16,6 +16,8 @@ namespace Cake\Test\TestCase\ORM\Behavior;
 
 use Cake\Database\Expression\QueryExpression;
 use Cake\I18n\I18n;
+use Cake\ORM\Behavior\TranslateBehavior;
+use Cake\ORM\Behavior\Translate\EavStrategy;
 use Cake\ORM\Behavior\Translate\ShadowTableStrategy;
 use Cake\ORM\Behavior\Translate\TranslateTrait;
 use Cake\ORM\Entity;
@@ -29,22 +31,6 @@ class BakedArticle extends Entity
         'title' => true,
         'body' => true,
     ];
-}
-
-class Table extends \Cake\ORM\Table
-{
-    public function addBehavior($name, array $options = [])
-    {
-        if ($name === 'Translate') {
-            $options['strategyClass'] = ShadowTableStrategy::class;
-
-            $this->_behaviors->load('Translate', $options);
-
-            return;
-        }
-
-        parent::addBehavior($name, $options);
-    }
 }
 
 /**
@@ -70,20 +56,27 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
     ];
 
     /**
-     * Seed the table registry with this test case's Table class
+     * setUpBeforeClass
      *
      * @return void
      */
-    public function setUp()
+    public static function setUpBeforeClass()
     {
-        parent::setUp();
+        TranslateBehavior::setDefaultStrategyClass(ShadowTableStrategy::class);
 
-        $aliases = ['Articles', 'Authors', 'Comments', 'Tags', 'SpecialTags', 'Groups'];
-        $options = ['className' => Table::class];
+        parent::setUpBeforeClass();
+    }
 
-        foreach ($aliases as $alias) {
-            $this->getTableLocator()->get($alias, $options);
-        }
+    /**
+     * tearDownAfterClass
+     *
+     * @return void
+     */
+    public static function tearDownAfterClass()
+    {
+        TranslateBehavior::setDefaultStrategyClass(EavStrategy::class);
+
+        parent::tearDownAfterClass();
     }
 
     /**
@@ -124,10 +117,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
      */
     public function testDefaultPluginAliases()
     {
-        $table = $this->getTableLocator()->get(
-            'SomeRandomPlugin.Articles',
-            ['className' => Table::class]
-        );
+        $table = $this->getTableLocator()->get('SomeRandomPlugin.Articles');
 
         $table->getTable();
         $table->addBehavior('Translate');
@@ -157,6 +147,35 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
         );
 
         $this->_testFind('SomeRandomPlugin.Articles');
+    }
+
+    /**
+     * testAutoReferenceName
+     *
+     * The parent test is EAV specific. Test that the config reflects the referenceName -
+     * which is used to determine the the translation table/association name only in the
+     * shadow translate behavior
+     */
+    public function testAutoReferenceName()
+    {
+        $table = $this->getTableLocator()->get('Articles');
+        $table->getTable();
+        $table->addBehavior('Translate');
+
+        $config = $table->behaviors()->get('Translate')->getStrategy()->getConfig();
+        $wantedKeys = [
+            'translationTable',
+            'mainTableAlias',
+            'hasOneAlias',
+        ];
+
+        $config = array_intersect_key($config, array_flip($wantedKeys));
+        $expected = [
+            'translationTable' => 'ArticlesTranslations',
+            'mainTableAlias' => 'Articles',
+            'hasOneAlias' => 'ArticlesTranslation',
+        ];
+        $this->assertEquals($expected, $config, 'The translationTable key should be derived from referenceName');
     }
 
     /**
@@ -389,9 +408,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
         $table->setLocale('eng');
 
         $table->belongsTo('Copy', ['className' => 'Articles', 'foreignKey' => 'author_id']);
-        $table->Copy->addBehavior('Translate', [
-            'strategyClass' => ShadowTableStrategy::class,
-        ]);
+        $table->Copy->addBehavior('Translate');
         $table->Copy->setLocale('deu');
 
         $query = $table->find()
