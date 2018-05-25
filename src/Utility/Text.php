@@ -23,9 +23,16 @@ class Text
 {
 
     /**
+     * Default transliterator.
+     *
+     * @var \Transliterator Transliterator instance.
+     */
+    protected static $_defaultTransliterator;
+
+    /**
      * Default transliterator id string.
      *
-     * @param string $_defaultTransliteratorId Transliterator identifier string.
+     * @var string $_defaultTransliteratorId Transliterator identifier string.
      */
     protected static $_defaultTransliteratorId = 'Any-Latin; Latin-ASCII; [\u0080-\u7fff] remove';
 
@@ -1052,6 +1059,30 @@ class Text
     }
 
     /**
+     * Get the default transliterator.
+     *
+     * @return \Transliterator|null Either a Transliterator instance, or `null`
+     *   in case no transliterator has been set yet.
+     * @since 3.7.0
+     */
+    public static function getTransliterator()
+    {
+        return static::$_defaultTransliterator;
+    }
+
+    /**
+     * Set the default transliterator.
+     *
+     * @param \Transliterator $transliterator A `Transliterator` instance.
+     * @return void
+     * @since 3.7.0
+     */
+    public static function setTransliterator(\Transliterator $transliterator)
+    {
+        static::$_defaultTransliterator = $transliterator;
+    }
+
+    /**
      * Get default transliterator identifier string.
      *
      * @return string Transliterator identifier.
@@ -1069,6 +1100,7 @@ class Text
      */
     public static function setTransliteratorId($transliteratorId)
     {
+        static::setTransliterator(transliterator_create($transliteratorId));
         static::$_defaultTransliteratorId = $transliteratorId;
     }
 
@@ -1076,16 +1108,20 @@ class Text
      * Transliterate string.
      *
      * @param string $string String to transliterate.
-     * @param string|null $transliteratorId Transliterator identifier. If null
-     *   Text::$_defaultTransliteratorId will be used.
+     * @param \Transliterator|string|null $transliterator Either a Transliterator
+     *   instance, or a transliterator identifier string. If `null`, the default
+     *   transliterator (identifier) set via `setTransliteratorId()` or
+     *   `setTransliterator()` will be used.
      * @return string
      * @see https://secure.php.net/manual/en/transliterator.transliterate.php
      */
-    public static function transliterate($string, $transliteratorId = null)
+    public static function transliterate($string, $transliterator = null)
     {
-        $transliteratorId = $transliteratorId ?: static::$_defaultTransliteratorId;
+        if (!$transliterator) {
+            $transliterator = static::$_defaultTransliterator ?: static::$_defaultTransliteratorId;
+        }
 
-        return transliterator_transliterate($transliteratorId, $string);
+        return transliterator_transliterate($transliterator, $string);
     }
 
     /**
@@ -1095,8 +1131,9 @@ class Text
      * ### Options:
      *
      * - `replacement`: Replacement string. Default '-'.
-     * - `transliteratorId`: A valid tranliterator id string.
-     *   If default `null` Text::$_defaultTransliteratorId to be used.
+     * - `transliteratorId`: A valid transliterator id string.
+     *   If `null` (default) the transliterator (identifier) set via
+     *   `setTransliteratorId()` or `setTransliterator()` will be used.
      *   If `false` no transliteration will be done, only non words will be removed.
      * - `preserve`: Specific non-word character to preserve. Default `null`.
      *   For e.g. this option can be set to '.' to generate clean file names.
@@ -1105,6 +1142,8 @@ class Text
      * @param array $options If string it will be use as replacement character
      *   or an array of options.
      * @return string
+     * @see setTransliterator()
+     * @see setTransliteratorId()
      */
     public static function slug($string, $options = [])
     {
