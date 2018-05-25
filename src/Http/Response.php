@@ -338,7 +338,8 @@ class Response implements ResponseInterface
         'vtt' => 'text/vtt',
         'mkv' => 'video/x-matroska',
         'pkpass' => 'application/vnd.apple.pkpass',
-        'ajax' => 'text/html'
+        'ajax' => 'text/html',
+        'bmp' => 'image/bmp'
     ];
 
     /**

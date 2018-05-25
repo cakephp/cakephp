@@ -42,7 +42,7 @@ class BufferedStatement extends StatementDecorator
      *
      * @var bool
      */
-    protected $_allFetched = true;
+    protected $_allFetched = false;
 
     /**
      * Current record pointer
@@ -50,18 +50,6 @@ class BufferedStatement extends StatementDecorator
      * @var int
      */
     protected $_counter = 0;
-
-    /**
-     * Constructor
-     *
-     * @param \Cake\Database\StatementInterface|null $statement Statement implementation such as PDOStatement
-     * @param \Cake\Database\Driver|null $driver Driver instance
-     */
-    public function __construct($statement = null, $driver = null)
-    {
-        parent::__construct($statement, $driver);
-        $this->_reset();
-    }
 
     /**
      * Execute the statement and return the results.
