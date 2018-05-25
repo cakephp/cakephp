@@ -1155,6 +1155,36 @@ class IntegrationTestTraitTest extends IntegrationTestCase
     }
 
     /**
+     * Tests flash assertions
+     *
+     * @return void
+     * @throws \PHPUnit\Exception
+     */
+    public function testAssertFlashMessage()
+    {
+        $this->get('/posts/stacked_flash');
+
+        $this->assertFlashElement('Flash/error');
+        $this->assertFlashElement('Flash/success', 'custom');
+
+        $this->assertFlashMessage('Error 1');
+        $this->assertFlashMessageAt(0, 'Error 1');
+        $this->assertFlashElementAt(0, 'Flash/error');
+
+        $this->assertFlashMessage('Error 2');
+        $this->assertFlashMessageAt(1, 'Error 2');
+        $this->assertFlashElementAt(1, 'Flash/error');
+
+        $this->assertFlashMessage('Success 1', 'custom');
+        $this->assertFlashMessageAt(0, 'Success 1', 'custom');
+        $this->assertFlashElementAt(0, 'Flash/success', 'custom');
+
+        $this->assertFlashMessage('Success 2', 'custom');
+        $this->assertFlashMessageAt(1, 'Success 2', 'custom');
+        $this->assertFlashElementAt(1, 'Flash/success', 'custom');
+    }
+
+    /**
      * tests failure messages for assertions
      *
      * @param string $assertion Assertion method
@@ -1210,6 +1240,14 @@ class IntegrationTestTraitTest extends IntegrationTestCase
             'assertResponseSuccess' => ['assertResponseSuccess', 'Failed asserting that 404 is between 200 and 308.', '/posts/missing'],
             'assertSession' => ['assertSession', 'Failed asserting that \'test\' is in session path \'Missing.path\'.', '/posts/index', 'test', 'Missing.path'],
             'assertTemplate' => ['assertTemplate', 'Failed asserting that \'custom_template\' equals template file ' . $templateDir . 'Posts' . DS . 'index.ctp.', '/posts/index', 'custom_template'],
+            'assertFlashMessage' => ['assertFlashMessage', 'Failed asserting that \'missing\' was in \'flash\' message.', '/posts/index', 'missing'],
+            'assertFlashMessageWithKey' => ['assertFlashMessage', 'Failed asserting that \'missing\' was in \'auth\' message.', '/posts/index', 'missing', 'auth'],
+            'assertFlashMessageAt' => ['assertFlashMessageAt', 'Failed asserting that \'missing\' was in \'flash\' message #0.', '/posts/index', 0, 'missing'],
+            'assertFlashMessageAtWithKey' => ['assertFlashMessageAt', 'Failed asserting that \'missing\' was in \'auth\' message #0.', '/posts/index', 0, 'missing', 'auth'],
+            'assertFlashElement' => ['assertFlashElement', 'Failed asserting that \'missing\' was in \'flash\' element.', '/posts/index', 'missing'],
+            'assertFlashElementWithKey' => ['assertFlashElement', 'Failed asserting that \'missing\' was in \'auth\' element.', '/posts/index', 'missing', 'auth'],
+            'assertFlashElementAt' => ['assertFlashElementAt', 'Failed asserting that \'missing\' was in \'flash\' element #0.', '/posts/index', 0, 'missing'],
+            'assertFlashElementAtWithKey' => ['assertFlashElementAt', 'Failed asserting that \'missing\' was in \'auth\' element #0.', '/posts/index', 0, 'missing', 'auth'],
         ];
     }
 

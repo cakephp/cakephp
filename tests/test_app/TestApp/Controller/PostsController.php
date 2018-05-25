@@ -106,4 +106,14 @@ class PostsController extends AppController
     {
         return $this->getResponse()->withStringBody('');
     }
+
+    public function stacked_flash()
+    {
+        $this->Flash->error('Error 1');
+        $this->Flash->error('Error 2');
+        $this->Flash->success('Success 1', ['key' => 'custom']);
+        $this->Flash->success('Success 2', ['key' => 'custom']);
+
+        return $this->getResponse()->withStringBody('');
+    }
 }

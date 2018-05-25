@@ -42,6 +42,7 @@ use Cake\TestSuite\Constraint\Response\StatusError;
 use Cake\TestSuite\Constraint\Response\StatusFailure;
 use Cake\TestSuite\Constraint\Response\StatusOk;
 use Cake\TestSuite\Constraint\Response\StatusSuccess;
+use Cake\TestSuite\Constraint\Session\FlashParamEquals;
 use Cake\TestSuite\Constraint\Session\SessionEquals;
 use Cake\TestSuite\Constraint\View\LayoutFileEquals;
 use Cake\TestSuite\Constraint\View\TemplateFileEquals;
@@ -1005,6 +1006,60 @@ trait IntegrationTestTrait
     public function assertSession($expected, $path, $message = '')
     {
         $this->assertThat($expected, new SessionEquals($this->_requestSession, $path), $message);
+    }
+
+    /**
+     * Asserts a flash message was set
+     *
+     * @param string $expected Expected message
+     * @param string $key Flash key
+     * @param string $message Assertion failure message
+     * @return void
+     */
+    public function assertFlashMessage($expected, $key = 'flash', $message = '')
+    {
+        $this->assertThat($expected, new FlashParamEquals($this->_requestSession, $key, 'message'), $message);
+    }
+
+    /**
+     * Asserts a flash message was set at a certain index
+     *
+     * @param int $at Flash index
+     * @param string $expected Expected message
+     * @param string $key Flash key
+     * @param string $message Assertion failure message
+     * @return void
+     */
+    public function assertFlashMessageAt($at, $expected, $key = 'flash', $message = '')
+    {
+        $this->assertThat($expected, new FlashParamEquals($this->_requestSession, $key, 'message', $at), $message);
+    }
+
+    /**
+     * Asserts a flash element was set
+     *
+     * @param string $expected Expected element name
+     * @param string $key Flash key
+     * @param string $message Assertion failure message
+     * @return void
+     */
+    public function assertFlashElement($expected, $key = 'flash', $message = '')
+    {
+        $this->assertThat($expected, new FlashParamEquals($this->_requestSession, $key, 'element'), $message);
+    }
+
+    /**
+     * Asserts a flash element was set at a certain index
+     *
+     * @param int $at Flash index
+     * @param string $expected Expected element name
+     * @param string $key Flash key
+     * @param string $message Assertion failure message
+     * @return void
+     */
+    public function assertFlashElementAt($at, $expected, $key = 'flash', $message = '')
+    {
+        $this->assertThat($expected, new FlashParamEquals($this->_requestSession, $key, 'element', $at), $message);
     }
 
     /**
