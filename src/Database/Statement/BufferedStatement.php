@@ -14,8 +14,9 @@
  */
 namespace Cake\Database\Statement;
 
-use CachingIterator;
-use IteratorIterator;
+use Cake\Database\StatementInterface;
+use Cake\Database\TypeConverterTrait;
+use Iterator;
 
 /**
  * A statement decorator that implements buffered results.
@@ -23,22 +24,9 @@ use IteratorIterator;
  * This statement decorator will save fetched results in memory, allowing
  * the iterator to be rewound and reused.
  */
-class BufferedStatement extends StatementDecorator
+class BufferedStatement implements Iterator, StatementInterface
 {
-
-    /**
-     * Records count
-     *
-     * @var int
-     */
-    protected $_count = 0;
-
-    /**
-     * Array of results
-     *
-     * @var array
-     */
-    protected $_records = [];
+    use TypeConverterTrait;
 
     /**
      * If true, all rows were fetched
@@ -48,23 +36,177 @@ class BufferedStatement extends StatementDecorator
     protected $_allFetched = false;
 
     /**
-     * Current record pointer
+     * The decorated statement
+     *
+     * @var \Cake\Database\StatementInterface|\PDOStatement
+     */
+    protected $statement;
+
+    /**
+     * The driver for the statement
+     *
+     * @var \Cake\Database\DriverInterface
+     */
+    protected $driver;
+
+    /**
+     * The in-memory cache containing results from previous iterators
+     *
+     * @var array
+     */
+    protected $buffer = [];
+
+    /**
+     * Whether or not this statement has already been executed
+     *
+     * @var bool
+     */
+    protected $_hasExecuted = false;
+
+    /**
+     * The current iterator index.
      *
      * @var int
      */
-    protected $_counter = 0;
+    protected $index = 0;
 
     /**
-     * Execute the statement and return the results.
+     * Constructor
      *
-     * @param array|null $params list of values to be bound to query
-     * @return bool true on success, false otherwise
+     * @param \Cake\Database\StatementInterface $statement Statement implementation such as PDOStatement
+     * @param \Cake\Database\Driver $driver Driver instance
+     */
+    public function __construct($statement, $driver)
+    {
+        $this->statement = $statement;
+        $this->driver = $driver;
+    }
+
+    /**
+     * Magic getter to return $queryString as read-only.
+     *
+     * @param string $property internal property to get
+     * @return mixed
+     */
+    public function __get($property)
+    {
+        if ($property === 'queryString') {
+            return $this->statement->queryString;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function bindValue($column, $value, $type = 'string')
+    {
+        $this->statement->bindValue($column, $value, $type);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function closeCursor()
+    {
+        $this->statement->closeCursor();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function columnCount()
+    {
+        return $this->statement->columnCount();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function errorCode()
+    {
+        return $this->statement->errorCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function errorInfo()
+    {
+        return $this->statement->errorInfo();
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function execute($params = null)
     {
         $this->_reset();
+        $this->_hasExecuted = true;
 
-        return parent::execute($params);
+        return $this->statement->execute($params);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function fetchColumn($position)
+    {
+        $result = $this->fetch(static::FETCH_TYPE_NUM);
+        if (isset($result[$position])) {
+            return $result[$position];
+        }
+
+        return false;
+    }
+
+    /**
+     * Statements can be passed as argument for count() to return the number
+     * for affected rows from last execution.
+     *
+     * @return int
+     */
+    public function count()
+    {
+        return $this->rowCount();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function bind($params, $types)
+    {
+        if (empty($params)) {
+            return;
+        }
+
+        $anonymousParams = is_int(key($params)) ? true : false;
+        $offset = 1;
+        foreach ($params as $index => $value) {
+            $type = null;
+            if (isset($types[$index])) {
+                $type = $types[$index];
+            }
+            if ($anonymousParams) {
+                $index += $offset;
+            }
+            $this->bindValue($index, $value, $type);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function lastInsertId($table = null, $column = null)
+    {
+        $row = null;
+        if ($column && $this->columnCount()) {
+            $row = $this->fetch(static::FETCH_TYPE_ASSOC);
+        }
+        if (isset($row[$column])) {
+            return $row[$column];
+        }
+
+        return $this->driver->lastInsertId($table, $column);
     }
 
     /**
@@ -76,25 +218,29 @@ class BufferedStatement extends StatementDecorator
     public function fetch($type = parent::FETCH_TYPE_NUM)
     {
         if ($this->_allFetched) {
-            $row = ($this->_counter < $this->_count) ? $this->_records[$this->_counter++] : false;
-            $row = ($row && $type === static::FETCH_TYPE_NUM) ? array_values($row) : $row;
+            $row = false;
+            if (isset($this->buffer[$this->index])) {
+                $row = $this->buffer[$this->index];
+            }
+            $this->index += 1;
+
+            if ($row && $type === static::FETCH_TYPE_NUM) {
+                return array_values($row);
+            }
 
             return $row;
         }
 
-        $record = parent::fetch($type);
-
+        $record = $this->statement->fetch($type);
         if ($record === false) {
             $this->_allFetched = true;
-            $this->_counter = $this->_count + 1;
-            $this->_statement->closeCursor();
+            $this->statement->closeCursor();
 
             return false;
         }
+        $this->buffer[] = $record;
 
-        $this->_count++;
-
-        return $this->_records[] = $record;
+        return $record;
     }
 
     /**
@@ -113,18 +259,19 @@ class BufferedStatement extends StatementDecorator
      * @param string $type The type to fetch.
      * @return array
      */
-    public function fetchAll($type = parent::FETCH_TYPE_NUM)
+    public function fetchAll($type = self::FETCH_TYPE_NUM)
     {
         if ($this->_allFetched) {
-            return $this->_records;
+            return $this->buffer;
         }
-
-        $this->_records = parent::fetchAll($type);
-        $this->_count = count($this->_records);
+        $results = $this->statement->fetchAll($type);
+        if ($results !== false) {
+            $this->buffer = array_merge($this->buffer, $results);
+        }
         $this->_allFetched = true;
-        $this->_statement->closeCursor();
+        $this->statement->closeCursor();
 
-        return $this->_records;
+        return $this->buffer;
     }
 
     /**
@@ -133,23 +280,10 @@ class BufferedStatement extends StatementDecorator
     public function rowCount()
     {
         if (!$this->_allFetched) {
-            $counter = $this->_counter;
-            while ($this->fetch(static::FETCH_TYPE_ASSOC)) {
-            }
-            $this->_counter = $counter;
+            $this->fetchAll(static::FETCH_TYPE_ASSOC);
         }
 
-        return $this->_count;
-    }
-
-    /**
-     * Rewind the _counter property
-     *
-     * @return void
-     */
-    public function rewind()
-    {
-        $this->_counter = 0;
+        return count($this->buffer);
     }
 
     /**
@@ -159,23 +293,78 @@ class BufferedStatement extends StatementDecorator
      */
     protected function _reset()
     {
-        $this->_count = $this->_counter = 0;
-        $this->_records = [];
+        $this->buffer = [];
         $this->_allFetched = false;
+        $this->index = 0;
     }
 
     /**
-     * Get an iterator that buffers results.
+     * Returns the current key in the iterator
      *
-     * @return Traversable
+     * @return mixed
      */
-    public function getIterator()
+    public function key()
     {
-        $statement = parent::getIterator();
-        if (!$this->_iterator) {
-            $this->_iterator = new BufferedIterator(new IteratorIterator($statement));
-        }
+        return $this->index;
+    }
 
-        return $this->_iterator;
+    /**
+     * Returns the current record in the iterator
+     *
+     * @return mixed
+     */
+    public function current()
+    {
+        return $this->buffer[$this->index];
+    }
+
+    /**
+     * Rewinds the collection
+     *
+     * @return void
+     */
+    public function rewind()
+    {
+        if (!$this->_hasExecuted) {
+            $this->execute();
+        }
+        $this->index = 0;
+    }
+
+    /**
+     * Returns whether or not the iterator has more elements
+     *
+     * @return bool
+     */
+    public function valid()
+    {
+        $old = $this->index;
+        $row = $this->fetch(self::FETCH_TYPE_ASSOC);
+
+        // Restore the index as fetch() increments during
+        // the cache scenario.
+        $this->index = $old;
+
+        return $row !== false;
+    }
+
+    /**
+     * Advances the iterator pointer to the next element
+     *
+     * @return void
+     */
+    public function next()
+    {
+        $this->index += 1;
+    }
+
+    /**
+     * Get the wrapped statement
+     *
+     * @return \Cake\Database\StatementInterface
+     */
+    public function getInnerStatement()
+    {
+        return $this->statement;
     }
 }

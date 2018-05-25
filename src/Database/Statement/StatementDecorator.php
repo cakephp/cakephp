@@ -32,29 +32,7 @@ use IteratorAggregate;
  */
 class StatementDecorator implements StatementInterface, Countable, IteratorAggregate
 {
-
     use TypeConverterTrait;
-
-    /**
-     * Used to designate that numeric indexes be returned in a result when calling fetch methods
-     *
-     * @var string
-     */
-    const FETCH_TYPE_NUM = 'num';
-
-    /**
-     * Used to designate that an associated array be returned in a result when calling fetch methods
-     *
-     * @var string
-     */
-    const FETCH_TYPE_ASSOC = 'assoc';
-
-    /**
-     * Used to designate that a stdClass object be returned in a result when calling fetch methods
-     *
-     * @var string
-     */
-    const FETCH_TYPE_OBJ = 'obj';
 
     /**
      * Statement instance implementation, such as PDOStatement
