@@ -215,7 +215,7 @@ class BufferedStatement implements Iterator, StatementInterface
      * @param string $type The type to fetch.
      * @return array|false
      */
-    public function fetch($type = parent::FETCH_TYPE_NUM)
+    public function fetch($type = self::FETCH_TYPE_NUM)
     {
         if ($this->_allFetched) {
             $row = false;
