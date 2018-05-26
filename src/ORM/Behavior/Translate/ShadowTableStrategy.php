@@ -362,7 +362,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
             return;
         }
 
-        $where = compact('id', 'locale');
+        $where = ['id' => $id, 'locale' => $locale];
 
         $translation = $this->translationTable->find()
             ->select(array_merge(['id', 'locale'], $fields))
