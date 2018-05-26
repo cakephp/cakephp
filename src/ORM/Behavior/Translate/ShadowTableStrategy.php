@@ -26,11 +26,11 @@ use Cake\ORM\Query;
 use Cake\ORM\Table;
 
 /**
- * ShadowTable strategy
+ * This class provides a way to translate dynamic data by keeping translations
+ * in a separate shadow table where each row corresponds to a row of primary table.
  */
 class ShadowTableStrategy implements TranslateStrategyInterface
 {
-
     use InstanceConfigTrait;
     use LocatorAwareTrait;
     use TranslateStrategyTrait {
@@ -40,7 +40,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
     /**
      * Default config
      *
-     * These are merged with user-provided configuration when the behavior is used.
+     * These are merged with user-provided configuration.
      *
      * @var array
      */
@@ -58,8 +58,8 @@ class ShadowTableStrategy implements TranslateStrategyInterface
     /**
      * Constructor
      *
-     * @param \Cake\ORM\Table $table Table instance
-     * @param array $config Configuration
+     * @param \Cake\ORM\Table $table Table instance.
+     * @param array $config Configuration.
      */
     public function __construct(Table $table, array $config = [])
     {
@@ -90,15 +90,15 @@ class ShadowTableStrategy implements TranslateStrategyInterface
     }
 
     /**
-     * Create a hasMany association for all records
+     * Create a hasMany association for all records.
      *
      * Don't create a hasOne association here as the join conditions are modified
-     * in before find - so create/modify it there
+     * in before find - so create/modify it there.
      *
-     * @param array $fields - ignored
-     * @param string $table - ignored
-     * @param string $fieldConditions - ignored
-     * @param string $strategy the strategy used in the _i18n association
+     * @param array $fields Unused.
+     * @param string $table Unused.
+     * @param string $fieldConditions Unused.
+     * @param string $strategy The strategy used in the shadow table association.
      *
      * @return void
      */
@@ -121,8 +121,8 @@ class ShadowTableStrategy implements TranslateStrategyInterface
      * and adding a formatter to copy the values into the main table records.
      *
      * @param \Cake\Event\Event $event The beforeFind event that was fired.
-     * @param \Cake\ORM\Query $query Query
-     * @param \ArrayObject $options The options for the query
+     * @param \Cake\ORM\Query $query Query.
+     * @param \ArrayObject $options The options for the query.
      * @return void
      */
     public function beforeFind(Event $event, Query $query, ArrayObject $options): void
@@ -167,7 +167,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
     }
 
     /**
-     * Add translation fields to query
+     * Add translation fields to query.
      *
      * If the query is using autofields (directly or implicitly) add the
      * main table's fields to the query first.
@@ -175,9 +175,9 @@ class ShadowTableStrategy implements TranslateStrategyInterface
      * Only add translations for fields that are in the main table, always
      * add the locale field though.
      *
-     * @param \Cake\ORM\Query $query the query to check
-     * @param array $config the config to use for adding fields
-     * @return bool Whether a join to the translation table is required
+     * @param \Cake\ORM\Query $query The query to check.
+     * @param array $config The config to use for adding fields.
+     * @return bool Whether a join to the translation table is required.
      */
     protected function addFieldsToQuery(Query $query, array $config)
     {
@@ -210,16 +210,16 @@ class ShadowTableStrategy implements TranslateStrategyInterface
     }
 
     /**
-     * Iterate over a clause to alias fields
+     * Iterate over a clause to alias fields.
      *
      * The objective here is to transparently prevent ambiguous field errors by
      * prefixing fields with the appropriate table alias. This method currently
      * expects to receive an order clause only.
      *
-     * @param \Cake\ORM\Query $query the query to check
-     * @param string $name The clause name
-     * @param array $config the config to use for adding fields
-     * @return bool Whether a join to the translation table is required
+     * @param \Cake\ORM\Query $query the query to check.
+     * @param string $name The clause name.
+     * @param array $config The config to use for adding fields.
+     * @return bool Whether a join to the translation table is required.
      */
     protected function iterateClause(Query $query, $name = '', $config = [])
     {
@@ -253,16 +253,16 @@ class ShadowTableStrategy implements TranslateStrategyInterface
     }
 
     /**
-     * Traverse over a clause to alias fields
+     * Traverse over a clause to alias fields.
      *
      * The objective here is to transparently prevent ambiguous field errors by
      * prefixing fields with the appropriate table alias. This method currently
      * expects to receive a where clause only.
      *
-     * @param \Cake\ORM\Query $query the query to check
-     * @param string $name The clause name
-     * @param array $config the config to use for adding fields
-     * @return bool Whether a join to the translation table is required
+     * @param \Cake\ORM\Query $query the query to check.
+     * @param string $name The clause name.
+     * @param array $config The config to use for adding fields.
+     * @return bool Whether a join to the translation table is required.
      */
     protected function traverseClause(Query $query, $name = '', $config = [])
     {
@@ -305,9 +305,9 @@ class ShadowTableStrategy implements TranslateStrategyInterface
      * Modifies the entity before it is saved so that translated fields are persisted
      * in the database too.
      *
-     * @param \Cake\Event\Event $event The beforeSave event that was fired
-     * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved
-     * @param \ArrayObject $options the options passed to the save method
+     * @param \Cake\Event\Event $event The beforeSave event that was fired.
+     * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved.
+     * @param \ArrayObject $options the options passed to the save method.
      * @return void
      */
     public function beforeSave(Event $event, EntityInterface $entity, ArrayObject $options): void
@@ -426,8 +426,8 @@ class ShadowTableStrategy implements TranslateStrategyInterface
     }
 
     /**
-     * Modifies the results from a table find in order to merge the translated fields
-     * into each entity for a given locale.
+     * Modifies the results from a table find in order to merge the translated
+     * fields into each entity for a given locale.
      *
      * @param \Cake\Datasource\ResultSetInterface $results Results to map.
      * @param string $locale Locale string
@@ -483,8 +483,8 @@ class ShadowTableStrategy implements TranslateStrategyInterface
     }
 
     /**
-     * Modifies the results from a table find in order to merge full translation records
-     * into each entity under the `_translations` key
+     * Modifies the results from a table find in order to merge full translation
+     * records into each entity under the `_translations` key.
      *
      * @param \Cake\Datasource\ResultSetInterface $results Results to modify.
      * @return \Cake\Collection\CollectionInterface
@@ -516,9 +516,9 @@ class ShadowTableStrategy implements TranslateStrategyInterface
     /**
      * Helper method used to generated multiple translated field entities
      * out of the data found in the `_translations` property in the passed
-     * entity. The result will be put into its `_i18n` property
+     * entity. The result will be put into its `_i18n` property.
      *
-     * @param \Cake\Datasource\EntityInterface $entity Entity
+     * @param \Cake\Datasource\EntityInterface $entity Entity.
      * @return void
      */
     protected function bundleTranslatedFields($entity)
@@ -546,7 +546,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
     }
 
     /**
-     * Lazy define and return the main table fields
+     * Lazy define and return the main table fields.
      *
      * @return array
      */
@@ -566,7 +566,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
     }
 
     /**
-     * Lazy define and return the translation table fields
+     * Lazy define and return the translation table fields.
      *
      * @return array
      */

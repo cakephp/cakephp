@@ -28,7 +28,7 @@ use Cake\ORM\Query;
 use Cake\ORM\Table;
 
 /**
- * This behavior provides a way to translate dynamic data by keeping translations
+ * This class provides a way to translate dynamic data by keeping translations
  * in a separate table linked to the original record from another one. Translated
  * fields can be configured to override those in the main table when fetched or
  * put aside into another property for the same entity.
@@ -37,11 +37,11 @@ use Cake\ORM\Table;
  * behavior for setting the language you want to fetch from the translations table.
  *
  * If you want to bring all or certain languages for each of the fetched records,
- * you can use the custom `translations` finders that is exposed to the table.
+ * you can use the custom `translations` finder of `TranslateBehavior` that is
+ * exposed to the table.
  */
 class EavStrategy implements TranslateStrategyInterface
 {
-
     use InstanceConfigTrait;
     use LocatorAwareTrait;
     use TranslateStrategyTrait;
@@ -49,7 +49,7 @@ class EavStrategy implements TranslateStrategyInterface
     /**
      * Default config
      *
-     * These are merged with user-provided configuration when the behavior is used.
+     * These are merged with user-provided configuration.
      *
      * @var array
      */
@@ -68,8 +68,8 @@ class EavStrategy implements TranslateStrategyInterface
     /**
      * Constructor
      *
-     * @param \Cake\ORM\Table $table The table this behavior is attached to.
-     * @param array $config The config for this behavior.
+     * @param \Cake\ORM\Table $table The table this strategy is attached to.
+     * @param array $config The config for this strategy.
      */
     public function __construct(Table $table, array $config = [])
     {
@@ -94,12 +94,12 @@ class EavStrategy implements TranslateStrategyInterface
      * this method.
      *
      * Additionally it creates a `i18n` HasMany association that will be
-     * used for fetching all translations for each record in the bound table
+     * used for fetching all translations for each record in the bound table.
      *
-     * @param array $fields list of fields to create associations for
-     * @param string $table the table name to use for storing each field translation
-     * @param string $model the model field value
-     * @param string $strategy the strategy used in the _i18n association
+     * @param array $fields List of fields to create associations for.
+     * @param string $table The table name to use for storing each field translation.
+     * @param string $model The model field value.
+     * @param string $strategy The strategy used in the _i18n association.
      *
      * @return void
      */
@@ -386,8 +386,8 @@ class EavStrategy implements TranslateStrategyInterface
     }
 
     /**
-     * Modifies the results from a table find in order to merge full translation records
-     * into each entity under the `_translations` key
+     * Modifies the results from a table find in order to merge full translation
+     * records into each entity under the `_translations` key.
      *
      * @param \Cake\Datasource\ResultSetInterface $results Results to modify.
      * @return \Cake\Collection\CollectionInterface
@@ -427,7 +427,7 @@ class EavStrategy implements TranslateStrategyInterface
     /**
      * Helper method used to generated multiple translated field entities
      * out of the data found in the `_translations` property in the passed
-     * entity. The result will be put into its `_i18n` property
+     * entity. The result will be put into its `_i18n` property.
      *
      * @param \Cake\Datasource\EntityInterface $entity Entity
      * @return void
@@ -479,10 +479,11 @@ class EavStrategy implements TranslateStrategyInterface
     }
 
     /**
-     * Returns the ids found for each of the condition arrays passed for the translations
-     * table. Each records is indexed by the corresponding position to the conditions array
+     * Returns the ids found for each of the condition arrays passed for the
+     * translations table. Each records is indexed by the corresponding position
+     * to the conditions array.
      *
-     * @param array $ruleSet an array of arary of conditions to be used for finding each
+     * @param array $ruleSet An array of array of conditions to be used for finding each
      * @return array
      */
     protected function findExistingTranslations($ruleSet)
