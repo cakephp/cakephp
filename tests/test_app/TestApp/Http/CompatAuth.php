@@ -33,7 +33,9 @@ class CompatAuth
      */
     public function authentication(Request $request, array $credentials)
     {
-        $request->header('Authorization', 'Bearer abc123');
+        $request = $request->withHeader('Authorization', 'Bearer abc123');
+
+        return $request;
     }
 
     /**
@@ -45,6 +47,8 @@ class CompatAuth
      */
     public function proxyAuthentication(Request $request, array $credentials)
     {
-        $request->header('Proxy-Authorization', 'Bearer abc123');
+        $request = $request->withHeader('Proxy-Authorization', 'Bearer abc123');
+
+        return $request;
     }
 }
