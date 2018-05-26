@@ -81,12 +81,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
         $this->table = $table;
         $this->translationTable = $this->getTableLocator()->get($this->_config['translationTable']);
 
-        $this->setupFieldAssociations(
-            $this->_config['fields'],
-            $this->_config['translationTable'],
-            $this->_config['referenceName'],
-            $this->_config['strategy']
-        );
+        $this->setupAssociations();
     }
 
     /**
@@ -95,21 +90,16 @@ class ShadowTableStrategy implements TranslateStrategyInterface
      * Don't create a hasOne association here as the join conditions are modified
      * in before find - so create/modify it there.
      *
-     * @param array $fields Unused.
-     * @param string $table Unused.
-     * @param string $fieldConditions Unused.
-     * @param string $strategy The strategy used in the shadow table association.
-     *
      * @return void
      */
-    public function setupFieldAssociations($fields, $table, $fieldConditions, $strategy)
+    protected function setupAssociations()
     {
         $config = $this->getConfig();
 
         $this->table->hasMany($config['translationTable'], [
             'className' => $config['translationTable'],
             'foreignKey' => 'id',
-            'strategy' => $strategy,
+            'strategy' => $config['strategy'],
             'propertyName' => '_i18n',
             'dependent' => true,
         ]);

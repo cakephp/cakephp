@@ -81,12 +81,7 @@ class EavStrategy implements TranslateStrategyInterface
         $this->table = $table;
         $this->translationTable = $this->getTableLocator()->get($this->_config['translationTable']);
 
-        $this->setupFieldAssociations(
-            $this->_config['fields'],
-            $this->_config['translationTable'],
-            $this->_config['referenceName'],
-            $this->_config['strategy']
-        );
+        $this->setupAssociations();
     }
 
     /**
@@ -96,18 +91,18 @@ class EavStrategy implements TranslateStrategyInterface
      * Additionally it creates a `i18n` HasMany association that will be
      * used for fetching all translations for each record in the bound table.
      *
-     * @param array $fields List of fields to create associations for.
-     * @param string $table The table name to use for storing each field translation.
-     * @param string $model The model field value.
-     * @param string $strategy The strategy used in the _i18n association.
-     *
      * @return void
      */
-    protected function setupFieldAssociations($fields, $table, $model, $strategy)
+    protected function setupAssociations()
     {
+        $fields = $this->_config['fields'];
+        $table = $this->_config['translationTable'];
+        $model = $this->_config['referenceName'];
+        $strategy = $this->_config['strategy'];
+        $filter = $this->_config['onlyTranslated'];
+
         $targetAlias = $this->translationTable->getAlias();
         $alias = $this->table->getAlias();
-        $filter = $this->_config['onlyTranslated'];
         $tableLocator = $this->getTableLocator();
 
         foreach ($fields as $field) {
