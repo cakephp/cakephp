@@ -158,22 +158,6 @@ class Message
     protected $_body;
 
     /**
-     * Get all headers
-     *
-     * @return array
-     * @deprecated 3.3.0 Use getHeaders() instead.
-     */
-    public function headers()
-    {
-        deprecationWarning(
-            'Message::headers() is deprecated. ' .
-            'Use getHeaders() instead.'
-        );
-
-        return $this->headers;
-    }
-
-    /**
      * Get all cookies
      *
      * @return array
