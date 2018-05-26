@@ -371,9 +371,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
             ->first();
 
         if ($translation) {
-            foreach ($fields as $field) {
-                $translation->set($field, $values[$field]);
-            }
+            $translation->set($values);
         } else {
             $translation = $this->translationTable->newEntity(
                 $where + $values,
@@ -495,7 +493,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
     {
         return $results->map(function ($row) {
             $translations = (array)$row['_i18n'];
-            if (count($translations) === 0 && $row->get('_translations')) {
+            if (empty($translations) && $row->get('_translations')) {
                 return $row;
             }
 
