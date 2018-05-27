@@ -19,6 +19,7 @@ use Cake\Core\PluginApplicationInterface;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventManager;
+use Cake\Event\EventManagerInterface;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -196,13 +197,13 @@ class Server implements EventDispatcherInterface
      * If the application does not support events and this method is used as
      * a setter, an exception will be raised.
      *
-     * @param \Cake\Event\EventManager $events The event manager to set.
+     * @param \Cake\Event\EventManagerInterface $eventManager The event manager to set.
      * @return $this
      */
-    public function setEventManager(EventManager $events)
+    public function setEventManager(EventManagerInterface $eventManager)
     {
         if ($this->app instanceof PluginApplicationInterface) {
-            $this->app->setEventManager($events);
+            $this->app->setEventManager($eventManager);
 
             return $this;
         }
