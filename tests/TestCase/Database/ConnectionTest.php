@@ -775,6 +775,10 @@ class ConnectionTest extends TestCase
         $expected = '"Items"."No_ 2 thing" AS "thing"';
         $this->assertEquals($expected, $result);
 
+        $result = $connection->quoteIdentifier('Items.Item Category Code = :c1');
+        $expected = '"Items"."Item Category Code" = :c1';
+        $this->assertEquals($expected, $result);
+
         $result = $connection->quoteIdentifier('MTD()');
         $expected = 'MTD()';
         $this->assertEquals($expected, $result);

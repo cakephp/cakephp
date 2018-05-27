@@ -15,6 +15,7 @@
 namespace TestApp\Controller;
 
 use Cake\Event\Event;
+use Cake\Utility\Security;
 
 /**
  * PostsController class
@@ -89,5 +90,22 @@ class PostsController extends AppController
     public function file()
     {
         return $this->response->withFile(__FILE__);
+    }
+
+    public function header()
+    {
+        return $this->getResponse()->withHeader('X-Cake', 'custom header');
+    }
+
+    public function empty_response()
+    {
+        return $this->getResponse()->withStringBody('');
+    }
+
+    public function secretCookie()
+    {
+        return $this->response
+            ->withCookie('secrets', 'name')
+            ->withStringBody('ok');
     }
 }

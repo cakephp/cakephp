@@ -49,7 +49,7 @@ install:
   - echo extension=php_wincache.dll >> php.ini
   - echo wincache.enablecli = 1 >> php.ini
   - cd C:\projects\cakephp
-  - appveyor DownloadFile https://getcomposer.org/composer.phar
+  - curl -fsS https://getcomposer.org/composer.phar -o composer.phar
   - php composer.phar install --prefer-dist --no-interaction --ansi --no-progress
   - php -i | grep "ICU version"
 

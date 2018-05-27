@@ -3155,4 +3155,94 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::hexColor('#fff'));
         $this->assertFalse(Validation::hexColor('ffffff'));
     }
+
+    /**
+     * Test IBAN
+     */
+    public function testIban()
+    {
+        $this->assertTrue(Validation::iban('AD1200012030200359100100'));
+        $this->assertTrue(Validation::iban('BA391290079401028494'));
+        $this->assertTrue(Validation::iban('BE68539007547034'));
+        $this->assertTrue(Validation::iban('LC55HEMM000100010012001200023015'));
+        $this->assertTrue(Validation::iban('AL35202111090000000001234567'));
+        $this->assertTrue(Validation::iban('AD1400080001001234567890'));
+        $this->assertTrue(Validation::iban('AT483200000012345864'));
+        $this->assertTrue(Validation::iban('AZ96AZEJ00000000001234567890'));
+        $this->assertTrue(Validation::iban('BH02CITI00001077181611'));
+        $this->assertTrue(Validation::iban('BY86AKBB10100000002966000000'));
+        $this->assertTrue(Validation::iban('BE71096123456769'));
+        $this->assertTrue(Validation::iban('BA275680000123456789'));
+        $this->assertTrue(Validation::iban('BR1500000000000010932840814P2'));
+        $this->assertTrue(Validation::iban('BG18RZBB91550123456789'));
+        $this->assertTrue(Validation::iban('CR37012600000123456789'));
+        $this->assertTrue(Validation::iban('HR1723600001101234565'));
+        $this->assertTrue(Validation::iban('CY21002001950000357001234567'));
+        $this->assertTrue(Validation::iban('CZ5508000000001234567899'));
+        $this->assertTrue(Validation::iban('DK9520000123456789'));
+        $this->assertTrue(Validation::iban('DO22ACAU00000000000123456789'));
+        $this->assertTrue(Validation::iban('SV43ACAT00000000000000123123'));
+        $this->assertTrue(Validation::iban('EE471000001020145685'));
+        $this->assertTrue(Validation::iban('FO9264600123456789'));
+        $this->assertTrue(Validation::iban('FI1410093000123458'));
+        $this->assertTrue(Validation::iban('FR7630006000011234567890189'));
+        $this->assertTrue(Validation::iban('GE60NB0000000123456789'));
+        $this->assertTrue(Validation::iban('DE91100000000123456789'));
+        $this->assertTrue(Validation::iban('GI04BARC000001234567890'));
+        $this->assertTrue(Validation::iban('GR9608100010000001234567890'));
+        $this->assertTrue(Validation::iban('GL8964710123456789'));
+        $this->assertTrue(Validation::iban('GT20AGRO00000000001234567890'));
+        $this->assertTrue(Validation::iban('HU93116000060000000012345676'));
+        $this->assertTrue(Validation::iban('IS030001121234561234567890'));
+        $this->assertTrue(Validation::iban('IQ20CBIQ861800101010500'));
+        $this->assertTrue(Validation::iban('IE64IRCE92050112345678'));
+        $this->assertTrue(Validation::iban('IL170108000000012612345'));
+        $this->assertTrue(Validation::iban('IT60X0542811101000000123456'));
+        $this->assertTrue(Validation::iban('JO71CBJO0000000000001234567890'));
+        $this->assertTrue(Validation::iban('KZ563190000012344567'));
+        $this->assertTrue(Validation::iban('XK051212012345678906'));
+        $this->assertTrue(Validation::iban('KW81CBKU0000000000001234560101'));
+        $this->assertTrue(Validation::iban('LV97HABA0012345678910'));
+        $this->assertTrue(Validation::iban('LB92000700000000123123456123'));
+        $this->assertTrue(Validation::iban('LI7408806123456789012'));
+        $this->assertTrue(Validation::iban('LT601010012345678901'));
+        $this->assertTrue(Validation::iban('LU120010001234567891'));
+        $this->assertTrue(Validation::iban('MK07200002785123453'));
+        $this->assertTrue(Validation::iban('MT31MALT01100000000000000000123'));
+        $this->assertTrue(Validation::iban('MR1300020001010000123456753'));
+        $this->assertTrue(Validation::iban('MU43BOMM0101123456789101000MUR'));
+        $this->assertTrue(Validation::iban('MD21EX000000000001234567'));
+        $this->assertTrue(Validation::iban('MC5810096180790123456789085'));
+        $this->assertTrue(Validation::iban('ME25505000012345678951'));
+        $this->assertTrue(Validation::iban('NL02ABNA0123456789'));
+        $this->assertTrue(Validation::iban('NO8330001234567'));
+        $this->assertTrue(Validation::iban('PK36SCBL0000001123456702'));
+        $this->assertTrue(Validation::iban('PS92PALS000000000400123456702'));
+        $this->assertTrue(Validation::iban('PL10105000997603123456789123'));
+        $this->assertTrue(Validation::iban('PT50002700000001234567833'));
+        $this->assertTrue(Validation::iban('QA54QNBA000000000000693123456'));
+        $this->assertTrue(Validation::iban('RO09BCYP0000001234567890'));
+        $this->assertTrue(Validation::iban('LC14BOSL123456789012345678901234'));
+        $this->assertTrue(Validation::iban('SM76P0854009812123456789123'));
+        $this->assertTrue(Validation::iban('ST23000200000289355710148'));
+        $this->assertTrue(Validation::iban('SA4420000001234567891234'));
+        $this->assertTrue(Validation::iban('RS35105008123123123173'));
+        $this->assertTrue(Validation::iban('SC52BAHL01031234567890123456USD'));
+        $this->assertTrue(Validation::iban('SK8975000000000012345671'));
+        $this->assertTrue(Validation::iban('SI56192001234567892'));
+        $this->assertTrue(Validation::iban('ES7921000813610123456789'));
+        $this->assertTrue(Validation::iban('SE1412345678901234567890'));
+        $this->assertTrue(Validation::iban('CH5604835012345678009'));
+        $this->assertTrue(Validation::iban('TL380080012345678910157'));
+        $this->assertTrue(Validation::iban('TN4401000067123456789123'));
+        $this->assertTrue(Validation::iban('TR320010009999901234567890'));
+        $this->assertTrue(Validation::iban('TR320010009999901234567890'));
+        $this->assertTrue(Validation::iban('AE460090000000123456789'));
+        $this->assertTrue(Validation::iban('GB98MIDL07009312345678'));
+        $this->assertTrue(Validation::iban('VG21PACG0000000123456789'));
+
+        $this->assertFalse(Validation::iban('AD1200012030200359100101'));
+        $this->assertFalse(Validation::iban('BE68539007547032'));
+        $this->assertFalse(Validation::iban('LC55HEMM000100010012001200023014'));
+    }
 }

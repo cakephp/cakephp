@@ -8,19 +8,28 @@
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @since         3.5.0
+ * @since         3.7.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\TestSuite;
+namespace Cake\TestSuite\Constraint\Response;
 
 /**
- * A test case class intended to make integration tests of cake console commands
- * easier.
+ * StatusFailure
  *
- * @deprecated use Cake\TestSuite\ConsoleIntegrationTestTrait instead
+ * @internal
  */
-abstract class ConsoleIntegrationTestCase extends TestCase
+class StatusFailure extends StatusCodeBase
 {
 
-    use ConsoleIntegrationTestTrait;
+    protected $code = [500, 505];
+
+    /**
+     * Assertion message
+     *
+     * @return string
+     */
+    public function toString()
+    {
+        return sprintf('%d is between 500 and 505', $this->response->getStatusCode());
+    }
 }
