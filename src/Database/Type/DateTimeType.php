@@ -94,7 +94,7 @@ class DateTimeType extends BaseType
      */
     public function __construct($name = null)
     {
-        $this->_name = $name;
+        parent::__construct($name);
 
         $this->useImmutable();
     }
