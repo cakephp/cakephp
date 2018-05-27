@@ -47,7 +47,7 @@ class BufferedStatement implements Iterator, StatementInterface
      *
      * @var \Cake\Database\DriverInterface
      */
-    protected $driver;
+    protected $_driver;
 
     /**
      * The in-memory cache containing results from previous iterators
@@ -79,7 +79,7 @@ class BufferedStatement implements Iterator, StatementInterface
     public function __construct($statement, $driver)
     {
         $this->statement = $statement;
-        $this->driver = $driver;
+        $this->_driver = $driver;
     }
 
     /**
@@ -206,7 +206,7 @@ class BufferedStatement implements Iterator, StatementInterface
             return $row[$column];
         }
 
-        return $this->driver->lastInsertId($table, $column);
+        return $this->_driver->lastInsertId($table, $column);
     }
 
     /**
