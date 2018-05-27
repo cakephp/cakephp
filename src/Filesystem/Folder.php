@@ -589,7 +589,7 @@ class Folder
 
         /**
          * @var string $itemPath
-         * @var \FileSystemIterator $fsIterator
+         * @var \RecursiveDirectoryIterator $fsIterator
          */
         foreach ($iterator as $itemPath => $fsIterator) {
             if ($skipHidden) {
