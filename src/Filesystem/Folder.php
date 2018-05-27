@@ -16,7 +16,6 @@ namespace Cake\Filesystem;
 
 use DirectoryIterator;
 use Exception;
-use FilesystemIterator;
 use InvalidArgumentException;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -590,7 +589,7 @@ class Folder
 
         /**
          * @var string $itemPath
-         * @var FileSystemIterator $fsIterator
+         * @var \FileSystemIterator $fsIterator
          */
         foreach ($iterator as $itemPath => $fsIterator) {
             if ($skipHidden) {
