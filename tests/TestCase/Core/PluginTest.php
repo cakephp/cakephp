@@ -177,16 +177,19 @@ class PluginTest extends TestCase
     /**
      * Tests loading a plugin with bootstrap file and routes file
      *
+     * @deprecated
      * @return void
      */
     public function testLoadSingleWithBootstrapAndRoutes()
     {
-        Plugin::load('TestPlugin', ['bootstrap' => true, 'routes' => true]);
-        $this->assertTrue(Plugin::loaded('TestPlugin'));
-        $this->assertEquals('loaded plugin bootstrap', Configure::read('PluginTest.test_plugin.bootstrap'));
+        $this->deprecated(function () {
+            Plugin::load('TestPlugin', ['bootstrap' => true, 'routes' => true]);
+            $this->assertTrue(Plugin::loaded('TestPlugin'));
+            $this->assertEquals('loaded plugin bootstrap', Configure::read('PluginTest.test_plugin.bootstrap'));
 
-        Plugin::routes();
-        $this->assertEquals('loaded plugin routes', Configure::read('PluginTest.test_plugin.routes'));
+            Plugin::routes();
+            $this->assertEquals('loaded plugin routes', Configure::read('PluginTest.test_plugin.routes'));
+        });
     }
 
     /**
@@ -247,16 +250,19 @@ class PluginTest extends TestCase
     /**
      * Test ignoring missing bootstrap/routes file
      *
+     * @deprecated
      * @return void
      */
     public function testIgnoreMissingFiles()
     {
-        Plugin::loadAll([[
-            'bootstrap' => true,
-            'routes' => true,
-            'ignoreMissing' => true
-        ]]);
-        $this->assertTrue(Plugin::routes());
+        $this->deprecated(function () {
+            Plugin::loadAll([[
+                'bootstrap' => true,
+                'routes' => true,
+                'ignoreMissing' => true
+            ]]);
+            $this->assertTrue(Plugin::routes());
+        });
     }
 
     /**
@@ -390,29 +396,32 @@ class PluginTest extends TestCase
      * Tests that Plugin::loadAll() will load all plugins in the configured folder wit defaults
      * and overrides for a plugin
      *
+     * @deprecated
      * @return void
      */
     public function testLoadAllWithDefaultsAndOverride()
     {
-        Plugin::loadAll([
-            ['bootstrap' => true, 'ignoreMissing' => true],
-            'TestPlugin' => ['routes' => true],
-            'TestPluginFour' => ['bootstrap' => true, 'classBase' => '']
-        ]);
-        Plugin::routes();
+        $this->deprecated(function () {
+            Plugin::loadAll([
+                ['bootstrap' => true, 'ignoreMissing' => true],
+                'TestPlugin' => ['routes' => true],
+                'TestPluginFour' => ['bootstrap' => true, 'classBase' => '']
+            ]);
+            Plugin::routes();
 
-        $expected = [
-            'Company', 'ParentPlugin', 'PluginJs', 'TestPlugin',
-            'TestPluginFour', 'TestPluginTwo', 'TestTheme'
-        ];
-        $this->assertEquals($expected, Plugin::loaded());
-        $this->assertEquals('loaded js plugin bootstrap', Configure::read('PluginTest.js_plugin.bootstrap'));
-        $this->assertEquals('loaded plugin routes', Configure::read('PluginTest.test_plugin.routes'));
-        $this->assertNull(Configure::read('PluginTest.test_plugin.bootstrap'));
-        $this->assertEquals('loaded plugin two bootstrap', Configure::read('PluginTest.test_plugin_two.bootstrap'));
-        $this->assertEquals('loaded plugin four bootstrap', Configure::read('PluginTest.test_plugin_four.bootstrap'));
+            $expected = [
+                'Company', 'ParentPlugin', 'PluginJs', 'TestPlugin',
+                'TestPluginFour', 'TestPluginTwo', 'TestTheme'
+            ];
+            $this->assertEquals($expected, Plugin::loaded());
+            $this->assertEquals('loaded js plugin bootstrap', Configure::read('PluginTest.js_plugin.bootstrap'));
+            $this->assertEquals('loaded plugin routes', Configure::read('PluginTest.test_plugin.routes'));
+            $this->assertNull(Configure::read('PluginTest.test_plugin.bootstrap'));
+            $this->assertEquals('loaded plugin two bootstrap', Configure::read('PluginTest.test_plugin_two.bootstrap'));
+            $this->assertEquals('loaded plugin four bootstrap', Configure::read('PluginTest.test_plugin_four.bootstrap'));
 
-        // TestPluginThree won't get loaded by loadAll() since it's in a sub directory.
-        $this->assertNull(Configure::read('PluginTest.test_plugin_three.bootstrap'));
+            // TestPluginThree won't get loaded by loadAll() since it's in a sub directory.
+            $this->assertNull(Configure::read('PluginTest.test_plugin_three.bootstrap'));
+        });
     }
 }
