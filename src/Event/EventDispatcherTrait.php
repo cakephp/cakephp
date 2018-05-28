@@ -41,7 +41,7 @@ trait EventDispatcherTrait
      * You can use this instance to register any new listeners or callbacks to the
      * object events, or create your own events and trigger them at will.
      *
-     * @return \Cake\Event\EventManager
+     * @return \Cake\Event\EventManagerInterface
      */
     public function getEventManager()
     {
@@ -53,15 +53,15 @@ trait EventDispatcherTrait
     }
 
     /**
-     * Returns the Cake\Event\EventManager manager instance for this object.
+     * Returns the Cake\Event\EventManagerInterface instance for this object.
      *
      * You can use this instance to register any new listeners or callbacks to the
      * object events, or create your own events and trigger them at will.
      *
-     * @param \Cake\Event\EventManager $eventManager the eventManager to set
+     * @param \Cake\Event\EventManagerInterface $eventManager the eventManager to set
      * @return $this
      */
-    public function setEventManager(EventManager $eventManager)
+    public function setEventManager(EventManagerInterface $eventManager)
     {
         $this->_eventManager = $eventManager;
 
