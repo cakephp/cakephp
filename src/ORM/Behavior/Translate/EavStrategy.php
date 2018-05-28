@@ -20,11 +20,10 @@ use Cake\Collection\CollectionInterface;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\QueryInterface;
-use Cake\Event\Event;
+use Cake\Event\EventInterface;
 use Cake\ORM\Behavior\Translate\TranslateStrategyInterface;
 use Cake\ORM\Entity;
 use Cake\ORM\Locator\LocatorAwareTrait;
-use Cake\ORM\Query;
 use Cake\ORM\Table;
 
 /**
@@ -155,12 +154,12 @@ class EavStrategy implements TranslateStrategyInterface
      * table. It modifies the passed query by eager loading the translated fields
      * and adding a formatter to copy the values into the main table records.
      *
-     * @param \Cake\Event\Event $event The beforeFind event that was fired.
-     * @param \Cake\ORM\Query $query Query
+     * @param \Cake\Event\EventInterface $event The beforeFind event that was fired.
+     * @param \Cake\Datasource\QueryInterface $query Query
      * @param \ArrayObject $options The options for the query
      * @return void
      */
-    public function beforeFind(Event $event, Query $query, ArrayObject $options): void
+    public function beforeFind(EventInterface $event, QueryInterface $query, ArrayObject $options): void
     {
         $locale = $this->getLocale();
 
@@ -219,12 +218,12 @@ class EavStrategy implements TranslateStrategyInterface
      * Modifies the entity before it is saved so that translated fields are persisted
      * in the database too.
      *
-     * @param \Cake\Event\Event $event The beforeSave event that was fired
+     * @param \Cake\Event\EventInterface $event The beforeSave event that was fired
      * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved
      * @param \ArrayObject $options the options passed to the save method
      * @return void
      */
-    public function beforeSave(Event $event, EntityInterface $entity, ArrayObject $options): void
+    public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void
     {
         $locale = $entity->get('_locale') ?: $this->getLocale();
         $newOptions = [$this->translationTable->getAlias() => ['validate' => false]];

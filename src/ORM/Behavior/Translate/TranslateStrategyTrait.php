@@ -15,7 +15,7 @@
 namespace Cake\ORM\Behavior\Translate;
 
 use Cake\Datasource\EntityInterface;
-use Cake\Event\Event;
+use Cake\Event\EventInterface;
 use Cake\I18n\I18n;
 use Cake\ORM\Table;
 
@@ -179,11 +179,11 @@ trait TranslateStrategyTrait
     /**
      * Unsets the temporary `_i18n` property after the entity has been saved
      *
-     * @param \Cake\Event\Event $event The beforeSave event that was fired
+     * @param \Cake\Event\EventInterface $event The beforeSave event that was fired
      * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved
      * @return void
      */
-    public function afterSave(Event $event, EntityInterface $entity): void
+    public function afterSave(EventInterface $event, EntityInterface $entity): void
     {
         $entity->unsetProperty('_i18n');
     }
