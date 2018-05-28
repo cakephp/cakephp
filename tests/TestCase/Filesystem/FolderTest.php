@@ -686,17 +686,14 @@ class FolderTest extends TestCase
     public function testNormalizePath()
     {
         $path = '/path/to/file';
-        /** @noinspection PhpDeprecationInspection */
         $result = Folder::normalizePath($path);
         $this->assertEquals('/', $result);
 
         $path = '\\path\\\to\\\file';
-        /** @noinspection PhpDeprecationInspection */
         $result = Folder::normalizePath($path);
         $this->assertEquals('/', $result);
 
         $path = 'C:\\path\\to\\file';
-        /** @noinspection PhpDeprecationInspection */
         $result = Folder::normalizePath($path);
         $this->assertEquals('\\', $result);
     }
@@ -756,19 +753,16 @@ class FolderTest extends TestCase
             $Folder = new Folder();
             $Folder->cd(ROOT);
             $path = 'C:\\path\\to\\file';
-            /** @noinspection PhpDeprecationInspection */
             $result = $Folder->inCakePath($path);
             $this->assertFalse($result);
 
             $path = ROOT;
             $Folder->cd(ROOT);
-            /** @noinspection PhpDeprecationInspection */
             $result = $Folder->inCakePath($path);
             $this->assertFalse($result);
 
             $path = DS . 'config';
             $Folder->cd(ROOT . DS . 'config');
-            /** @noinspection PhpDeprecationInspection */
             $result = $Folder->inCakePath($path);
             $this->assertTrue($result);
         });

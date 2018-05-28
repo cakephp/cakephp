@@ -359,6 +359,7 @@ class Folder
      */
     public static function normalizePath($path)
     {
+        deprecationWarning('Folder::normalizePath() is deprecated. Use Folder::correctSlashFor() instead.');
         return Folder::correctSlashFor($path);
     }
 
