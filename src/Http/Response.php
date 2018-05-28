@@ -1365,6 +1365,10 @@ class Response implements ResponseInterface
      */
     public function sharable($public = null, $time = null)
     {
+        deprecationWarning(
+            'Response::sharable() is deprecated. ' .
+            'Use withSharable() instead.'
+        );
         if ($public === null) {
             $public = array_key_exists('public', $this->_cacheDirectives);
             $private = array_key_exists('private', $this->_cacheDirectives);
