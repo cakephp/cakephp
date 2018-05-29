@@ -302,9 +302,6 @@ class BufferedStatement implements Iterator, StatementInterface
      */
     public function rewind()
     {
-        if (!$this->_hasExecuted) {
-            $this->execute();
-        }
         $this->index = 0;
     }
 
