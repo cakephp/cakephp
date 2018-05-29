@@ -355,7 +355,7 @@ class Folder
      * @param string $path Path to check
      * @return string Set of slashes ("\\" or "/")
      *
-     * @deprecated 3.6.5 This method will be removed in 4.0.0. Use correctSlashFor() instead.
+     * @deprecated 3.7 This method will be removed in 4.0.0. Use correctSlashFor() instead.
      */
     public static function normalizePath($path)
     {
