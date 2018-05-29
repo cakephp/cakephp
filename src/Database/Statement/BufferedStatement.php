@@ -38,7 +38,7 @@ class BufferedStatement implements Iterator, StatementInterface
     /**
      * The decorated statement
      *
-     * @var \Cake\Database\StatementInterface|\PDOStatement
+     * @var \Cake\Database\StatementInterface
      */
     protected $statement;
 
@@ -76,7 +76,7 @@ class BufferedStatement implements Iterator, StatementInterface
      * @param \Cake\Database\StatementInterface $statement Statement implementation such as PDOStatement
      * @param \Cake\Database\Driver $driver Driver instance
      */
-    public function __construct($statement, $driver)
+    public function __construct(StatementInterface $statement, $driver)
     {
         $this->statement = $statement;
         $this->_driver = $driver;
@@ -175,22 +175,7 @@ class BufferedStatement implements Iterator, StatementInterface
      */
     public function bind($params, $types)
     {
-        if (empty($params)) {
-            return;
-        }
-
-        $anonymousParams = is_int(key($params)) ? true : false;
-        $offset = 1;
-        foreach ($params as $index => $value) {
-            $type = null;
-            if (isset($types[$index])) {
-                $type = $types[$index];
-            }
-            if ($anonymousParams) {
-                $index += $offset;
-            }
-            $this->bindValue($index, $value, $type);
-        }
+        $this->statement->bind($params, $types);
     }
 
     /**
@@ -198,15 +183,7 @@ class BufferedStatement implements Iterator, StatementInterface
      */
     public function lastInsertId($table = null, $column = null)
     {
-        $row = null;
-        if ($column && $this->columnCount()) {
-            $row = $this->fetch(static::FETCH_TYPE_ASSOC);
-        }
-        if (isset($row[$column])) {
-            return $row[$column];
-        }
-
-        return $this->_driver->lastInsertId($table, $column);
+        return $this->_statement->lastInsertId($table, $column);
     }
 
     /**
