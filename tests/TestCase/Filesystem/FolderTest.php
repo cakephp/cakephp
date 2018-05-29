@@ -685,17 +685,19 @@ class FolderTest extends TestCase
      */
     public function testNormalizePath()
     {
-        $path = '/path/to/file';
-        $result = Folder::normalizePath($path);
-        $this->assertEquals('/', $result);
+        $this->deprecated(function () {
+            $path = '/path/to/file';
+            $result = Folder::normalizePath($path);
+            $this->assertEquals('/', $result);
 
-        $path = '\\path\\\to\\\file';
-        $result = Folder::normalizePath($path);
-        $this->assertEquals('/', $result);
+            $path = '\\path\\\to\\\file';
+            $result = Folder::normalizePath($path);
+            $this->assertEquals('/', $result);
 
-        $path = 'C:\\path\\to\\file';
-        $result = Folder::normalizePath($path);
-        $this->assertEquals('\\', $result);
+            $path = 'C:\\path\\to\\file';
+            $result = Folder::normalizePath($path);
+            $this->assertEquals('\\', $result);
+        });
     }
 
     /**
