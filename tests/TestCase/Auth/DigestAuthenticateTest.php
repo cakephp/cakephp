@@ -98,7 +98,7 @@ class DigestAuthenticateTest extends TestCase
         $request = new ServerRequest('posts/index');
 
         $this->response->expects($this->never())
-            ->method('header');
+            ->method('withHeader');
 
         $this->assertFalse($this->auth->getUser($request, $this->response));
     }
