@@ -1074,28 +1074,31 @@ class ResponseTest extends TestCase
     /**
      * Tests setting of public/private Cache-Control directives
      *
+     * @deprecated
      * @return void
      */
     public function testSharable()
     {
-        $response = new Response();
-        $this->assertNull($response->sharable());
-        $response->sharable(true);
-        $this->assertTrue($response->sharable());
-        $this->assertEquals('public', $response->getHeaderLine('Cache-Control'));
+        $this->deprecated(function () {
+            $response = new Response();
+            $this->assertNull($response->sharable());
+            $response->sharable(true);
+            $this->assertTrue($response->sharable());
+            $this->assertEquals('public', $response->getHeaderLine('Cache-Control'));
 
-        $response = new Response();
-        $response->sharable(false);
-        $this->assertFalse($response->sharable());
-        $this->assertEquals('private', $response->getHeaderLine('Cache-Control'));
+            $response = new Response();
+            $response->sharable(false);
+            $this->assertFalse($response->sharable());
+            $this->assertEquals('private', $response->getHeaderLine('Cache-Control'));
 
-        $response = new Response();
-        $response->sharable(true, 3600);
-        $this->assertEquals('public, max-age=3600', $response->getHeaderLine('Cache-Control'));
+            $response = new Response();
+            $response->sharable(true, 3600);
+            $this->assertEquals('public, max-age=3600', $response->getHeaderLine('Cache-Control'));
 
-        $response = new Response();
-        $response->sharable(false, 3600);
-        $this->assertEquals('private, max-age=3600', $response->getHeaderLine('Cache-Control'));
+            $response = new Response();
+            $response->sharable(false, 3600);
+            $this->assertEquals('private, max-age=3600', $response->getHeaderLine('Cache-Control'));
+        });
     }
 
     /**
@@ -1123,20 +1126,23 @@ class ResponseTest extends TestCase
     /**
      * Tests setting of max-age Cache-Control directive
      *
+     * @deprecated
      * @return void
      */
     public function testMaxAge()
     {
-        $response = new Response();
-        $this->assertNull($response->maxAge());
-        $response->maxAge(3600);
-        $this->assertEquals(3600, $response->maxAge());
-        $this->assertEquals('max-age=3600', $response->getHeaderLine('Cache-Control'));
+        $this->deprecated(function () {
+            $response = new Response();
+            $this->assertNull($response->maxAge());
+            $response->maxAge(3600);
+            $this->assertEquals(3600, $response->maxAge());
+            $this->assertEquals('max-age=3600', $response->getHeaderLine('Cache-Control'));
 
-        $response = new Response();
-        $response->maxAge(3600);
-        $response->sharable(false);
-        $this->assertEquals('max-age=3600, private', $response->getHeaderLine('Cache-Control'));
+            $response = new Response();
+            $response->maxAge(3600);
+            $response->sharable(false);
+            $this->assertEquals('max-age=3600, private', $response->getHeaderLine('Cache-Control'));
+        });
     }
 
     /**
@@ -1160,20 +1166,23 @@ class ResponseTest extends TestCase
     /**
      * Tests setting of s-maxage Cache-Control directive
      *
+     * @deprecated
      * @return void
      */
     public function testSharedMaxAge()
     {
-        $response = new Response();
-        $this->assertNull($response->maxAge());
-        $response->sharedMaxAge(3600);
-        $this->assertEquals(3600, $response->sharedMaxAge());
-        $this->assertEquals('s-maxage=3600', $response->getHeaderLine('Cache-Control'));
+        $this->deprecated(function () {
+            $response = new Response();
+            $this->assertNull($response->maxAge());
+            $response->sharedMaxAge(3600);
+            $this->assertEquals(3600, $response->sharedMaxAge());
+            $this->assertEquals('s-maxage=3600', $response->getHeaderLine('Cache-Control'));
 
-        $response = new Response();
-        $response->sharedMaxAge(3600);
-        $response->sharable(true);
-        $this->assertEquals('s-maxage=3600, public', $response->getHeaderLine('Cache-Control'));
+            $response = new Response();
+            $response->sharedMaxAge(3600);
+            $response->sharable(true);
+            $this->assertEquals('s-maxage=3600, public', $response->getHeaderLine('Cache-Control'));
+        });
     }
 
     /**

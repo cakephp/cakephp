@@ -337,9 +337,16 @@ class Plugin
      * @param string|null $name name of the plugin, if null will operate on all
      *   plugins having enabled the loading of routes files.
      * @return bool
+     * @deprecated 3.6.5 This method is no longer needed when using HttpApplicationInterface based applications.
+     *   This method will be removed in 4.0.0
      */
     public static function routes($name = null)
     {
+        deprecationWarning(
+            'You no longer need to call `Plugin::routes()` after upgrading to use Http\Server. ' .
+            'See https://book.cakephp.org/3.0/en/development/application.html#adding-the-new-http-stack-to-an-existing-application ' .
+            'for upgrade information.'
+        );
         if ($name === null) {
             foreach (static::loaded() as $p) {
                 static::routes($p);
