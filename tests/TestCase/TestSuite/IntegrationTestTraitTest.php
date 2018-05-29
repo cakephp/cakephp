@@ -1185,6 +1185,21 @@ class IntegrationTestTraitTest extends IntegrationTestCase
     }
 
     /**
+     * Tests asserting flash messages without first sending a request
+     *
+     * @return void
+     */
+    public function testAssertFlashMessageWithoutSendingRequest()
+    {
+        $this->expectException(AssertionFailedError::class);
+        $message = 'There is no stored session data. Perhaps you need to run a request?';
+        $message .= ' Additionally, ensure `$this->enableRetainFlashMessages()` has been enabled for the test.';
+        $this->expectExceptionMessage($message);
+
+        $this->assertFlashMessage('Will not work');
+    }
+
+    /**
      * tests failure messages for assertions
      *
      * @param string $assertion Assertion method
