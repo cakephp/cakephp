@@ -162,6 +162,8 @@ class FormHelper extends Helper
             'textarea' => '<textarea name="{{name}}"{{attrs}}>{{value}}</textarea>',
             // Container for submit buttons.
             'submitContainer' => '<div class="submit">{{content}}</div>',
+            //Confirm javascript template for postLink()
+            'confirmJs' => '{{confirm}}',
         ]
     ];
 
@@ -1834,11 +1836,16 @@ class FormHelper extends Helper
         $url = '#';
         $onClick = 'document.' . $formName . '.submit();';
         if ($confirmMessage) {
-            $options['onclick'] = $this->_confirm($confirmMessage, $onClick, '', $options);
+            $confirm = $this->_confirm($confirmMessage, $onClick, '', $options);
         } else {
-            $options['onclick'] = $onClick . ' ';
+            $confirm = $onClick . ' ';
         }
-        $options['onclick'] .= 'event.returnValue = false; return false;';
+        $confirm .= 'event.returnValue = false; return false;';
+        $options['onclick'] = $this->templater()->format('confirmJs', [
+            'confirmMessage' => $this->_cleanConfirmMessage($confirmMessage),
+            'formName' => $formName,
+            'confirm' => $confirm
+        ]);
 
         $out .= $this->Html->link($title, $url, $options);
 

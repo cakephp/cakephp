@@ -81,7 +81,8 @@ class HtmlHelper extends Helper
             'javascriptblock' => '<script{{attrs}}>{{content}}</script>',
             'javascriptstart' => '<script>',
             'javascriptlink' => '<script src="{{url}}"{{attrs}}></script>',
-            'javascriptend' => '</script>'
+            'javascriptend' => '</script>',
+            'confirmJs' => '{{confirm}}'
         ]
     ];
 
@@ -342,16 +343,19 @@ class HtmlHelper extends Helper
             $title = htmlentities($title, ENT_QUOTES, $escapeTitle);
         }
 
+        $templater = $this->templater();
         $confirmMessage = null;
         if (isset($options['confirm'])) {
             $confirmMessage = $options['confirm'];
             unset($options['confirm']);
         }
         if ($confirmMessage) {
-            $options['onclick'] = $this->_confirm($confirmMessage, 'return true;', 'return false;', $options);
+            $confirm = $this->_confirm($confirmMessage, 'return true;', 'return false;', $options);
+            $options['onclick'] = $templater->format('confirmJs', [
+                'confirmMessage' => $this->_cleanConfirmMessage($confirmMessage),
+                'confirm' => $confirm
+            ]);
         }
-
-        $templater = $this->templater();
 
         return $templater->format('link', [
             'url' => $url,

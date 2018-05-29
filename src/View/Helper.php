@@ -176,7 +176,7 @@ class Helper implements EventListenerInterface
      */
     protected function _confirm($message, $okCode, $cancelCode = '', $options = [])
     {
-        $message = str_replace('\\\n', '\n', json_encode($message));
+        $message = $this->_cleanConfirmMessage($message);
         $confirm = "if (confirm({$message})) { {$okCode} } {$cancelCode}";
         // We cannot change the key here in 3.x, but the behavior is inverted in this case
         $escape = isset($options['escape']) && $options['escape'] === false;
@@ -186,6 +186,17 @@ class Helper implements EventListenerInterface
         }
 
         return $confirm;
+    }
+
+    /**
+     * Returns a string read to be used in confirm()
+     *
+     * @param string $message The message to clean
+     * @return mixed
+     */
+    protected function _cleanConfirmMessage($message)
+    {
+        return str_replace('\\\n', '\n', json_encode($message));
     }
 
     /**

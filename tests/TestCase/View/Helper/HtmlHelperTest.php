@@ -152,6 +152,17 @@ class HtmlHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
+        $this->Html->setTemplates(['confirmJs' => 'if (confirm({{confirmMessage}})) { window.location="/";};']);
+        $result = $this->Html->link('Home', '/home', ['confirm' => 'Are you sure you want to do this?']);
+        $expected = [
+            'a' => ['href' => '/home', 'onclick' => 'preg:/if \(confirm\(&quot;Are you sure you want to do this\?&quot;\)\) \{ window\.location=&quot;\/&quot;;\};/'],
+            'Home',
+            '/a'
+        ];
+
+        $this->assertHtml($expected, $result);
+        $this->Html->setTemplates(['confirmJs' => '{{confirm}}']);
+
         $result = $this->Html->link('Home', '/home', ['escape' => false, 'confirm' => 'Confirm\'s "nightmares"']);
         $expected = [
             'a' => ['href' => '/home', 'onclick' => 'if (confirm(&quot;Confirm&#039;s \&quot;nightmares\&quot;&quot;)) { return true; } return false;'],
