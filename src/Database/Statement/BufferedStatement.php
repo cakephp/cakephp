@@ -183,7 +183,7 @@ class BufferedStatement implements Iterator, StatementInterface
      */
     public function lastInsertId($table = null, $column = null)
     {
-        return $this->_statement->lastInsertId($table, $column);
+        return $this->statement->lastInsertId($table, $column);
     }
 
     /**
