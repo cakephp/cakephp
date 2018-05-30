@@ -20,6 +20,7 @@ use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManager;
 use Cake\Form\Schema;
+use Cake\Utility\Hash;
 use Cake\Validation\Validator;
 use Cake\Validation\ValidatorAwareInterface;
 use Cake\Validation\ValidatorAwareTrait;
@@ -302,6 +303,26 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
     protected function _execute(array $data)
     {
         return true;
+    }
+
+    public function getData($field = null)
+    {
+        if ($field === null) {
+            return $this->_data;
+        }
+
+        return Hash::get($this->_data, $field);
+    }
+
+    public function setData(array $data, $merge = true)
+    {
+        if ($merge) {
+            $this->_data = Hash::merge($this->_data, $data);
+        } else {
+            $this->_data = $data;
+        }
+
+        return $this;
     }
 
     /**
