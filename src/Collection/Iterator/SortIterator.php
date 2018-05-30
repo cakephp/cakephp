@@ -57,7 +57,7 @@ class SortIterator extends Collection
      * @param int $type the type of comparison to perform, either SORT_STRING
      * SORT_NUMERIC or SORT_NATURAL
      */
-    public function __construct($items, $callback, $dir = SORT_DESC, $type = SORT_NUMERIC)
+    public function __construct($items, $callback, $dir = \SORT_DESC, $type = \SORT_NUMERIC)
     {
         if (!is_array($items)) {
             $items = iterator_to_array((new Collection($items))->unwrap(), false);
@@ -67,7 +67,7 @@ class SortIterator extends Collection
         $results = [];
         foreach ($items as $key => $val) {
             $val = $callback($val);
-            if ($val instanceof DateTimeInterface && $type === SORT_NUMERIC) {
+            if ($val instanceof DateTimeInterface && $type === \SORT_NUMERIC) {
                 $val = $val->format('U');
             }
             $results[$key] = $val;
