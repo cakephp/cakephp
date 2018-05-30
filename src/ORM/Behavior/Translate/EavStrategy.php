@@ -24,6 +24,7 @@ use Cake\Event\EventInterface;
 use Cake\ORM\Behavior\Translate\TranslateStrategyInterface;
 use Cake\ORM\Entity;
 use Cake\ORM\Locator\LocatorAwareTrait;
+use Cake\ORM\Query;
 use Cake\ORM\Table;
 
 /**
@@ -155,11 +156,11 @@ class EavStrategy implements TranslateStrategyInterface
      * and adding a formatter to copy the values into the main table records.
      *
      * @param \Cake\Event\EventInterface $event The beforeFind event that was fired.
-     * @param \Cake\Datasource\QueryInterface $query Query
+     * @param \Cake\ORM\Query $query Query
      * @param \ArrayObject $options The options for the query
      * @return void
      */
-    public function beforeFind(EventInterface $event, QueryInterface $query, ArrayObject $options): void
+    public function beforeFind(EventInterface $event, Query $query, ArrayObject $options): void
     {
         $locale = $this->getLocale();
 
@@ -169,10 +170,8 @@ class EavStrategy implements TranslateStrategyInterface
 
         $conditions = function ($field, $locale, $query, $select) {
             return function ($q) use ($field, $locale, $query, $select) {
-                /* @var \Cake\Datasource\QueryInterface $q */
                 $q->where([$q->getRepository()->aliasField('locale') => $locale]);
 
-                /* @var \Cake\ORM\Query $query */
                 if ($query->isAutoFieldsEnabled() ||
                     in_array($field, $select, true) ||
                     in_array($this->table->aliasField($field), $select, true)

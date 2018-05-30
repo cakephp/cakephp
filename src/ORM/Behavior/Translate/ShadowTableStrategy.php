@@ -19,10 +19,10 @@ use Cake\Collection\CollectionInterface;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Database\Expression\FieldInterface;
 use Cake\Datasource\EntityInterface;
-use Cake\Datasource\QueryInterface;
 use Cake\Event\EventInterface;
 use Cake\ORM\Behavior\Translate\TranslateStrategyInterface;
 use Cake\ORM\Locator\LocatorAwareTrait;
+use Cake\ORM\Query;
 use Cake\ORM\Table;
 
 /**
@@ -111,11 +111,11 @@ class ShadowTableStrategy implements TranslateStrategyInterface
      * and adding a formatter to copy the values into the main table records.
      *
      * @param \Cake\Event\EventInterface $event The beforeFind event that was fired.
-     * @param \Cake\Datasource\QueryInterface $query Query.
+     * @param \Cake\ORM\Query $query Query.
      * @param \ArrayObject $options The options for the query.
      * @return void
      */
-    public function beforeFind(EventInterface $event, QueryInterface $query, ArrayObject $options): void
+    public function beforeFind(EventInterface $event, Query $query, ArrayObject $options): void
     {
         $locale = $this->getLocale();
 
@@ -165,11 +165,11 @@ class ShadowTableStrategy implements TranslateStrategyInterface
      * Only add translations for fields that are in the main table, always
      * add the locale field though.
      *
-     * @param \Cake\Datasource\QueryInterface $query The query to check.
+     * @param \Cake\ORM\Query $query The query to check.
      * @param array $config The config to use for adding fields.
      * @return bool Whether a join to the translation table is required.
      */
-    protected function addFieldsToQuery(QueryInterface $query, array $config)
+    protected function addFieldsToQuery($query, array $config)
     {
         if ($query->isAutoFieldsEnabled()) {
             return true;
@@ -206,12 +206,12 @@ class ShadowTableStrategy implements TranslateStrategyInterface
      * prefixing fields with the appropriate table alias. This method currently
      * expects to receive an order clause only.
      *
-     * @param \Cake\Datasource\QueryInterface $query the query to check.
+     * @param \Cake\ORM\Query $query the query to check.
      * @param string $name The clause name.
      * @param array $config The config to use for adding fields.
      * @return bool Whether a join to the translation table is required.
      */
-    protected function iterateClause(QueryInterface $query, $name = '', $config = [])
+    protected function iterateClause($query, $name = '', $config = [])
     {
         $clause = $query->clause($name);
         if (!$clause || !$clause->count()) {
@@ -249,12 +249,12 @@ class ShadowTableStrategy implements TranslateStrategyInterface
      * prefixing fields with the appropriate table alias. This method currently
      * expects to receive a where clause only.
      *
-     * @param \Cake\Datasource\QueryInterface $query the query to check.
+     * @param \Cake\ORM\Query $query the query to check.
      * @param string $name The clause name.
      * @param array $config The config to use for adding fields.
      * @return bool Whether a join to the translation table is required.
      */
-    protected function traverseClause(QueryInterface $query, $name = '', $config = [])
+    protected function traverseClause($query, $name = '', $config = [])
     {
         $clause = $query->clause($name);
         if (!$clause || !$clause->count()) {

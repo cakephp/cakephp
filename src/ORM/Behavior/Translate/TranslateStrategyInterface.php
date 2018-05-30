@@ -17,9 +17,9 @@ namespace Cake\ORM\Behavior\Translate;
 use ArrayObject;
 use Cake\Collection\CollectionInterface;
 use Cake\Datasource\EntityInterface;
-use Cake\Datasource\QueryInterface;
 use Cake\Event\EventInterface;
 use Cake\ORM\PropertyMarshalInterface;
+use Cake\ORM\Query;
 use Cake\ORM\Table;
 
 /**
@@ -92,13 +92,13 @@ interface TranslateStrategyInterface extends PropertyMarshalInterface
      * @param \ArrayObject $options The options for the query
      * @return void
      */
-    public function beforeFind(EventInterface $event, QueryInterface $query, ArrayObject $options): void;
+    public function beforeFind(EventInterface $event, Query $query, ArrayObject $options): void;
 
     /**
      * Modifies the entity before it is saved so that translated fields are persisted
      * in the database too.
      *
-     * @param \Cake\Event\EntityInterface $event The beforeSave event that was fired
+     * @param \Cake\Event\EventInterface $event The beforeSave event that was fired
      * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved
      * @param \ArrayObject $options the options passed to the save method
      * @return void
