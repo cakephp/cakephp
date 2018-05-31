@@ -3043,7 +3043,7 @@ class DboSource extends DataSource {
  * @return string ORDER BY clause
  */
 	public function order($keys, $direction = 'ASC', Model $Model = null) {
-		$keys = array_filter((array) $keys);
+		$keys = array_filter((array)$keys);
 		
 		$result = array();
 		while (!empty($keys)) {
