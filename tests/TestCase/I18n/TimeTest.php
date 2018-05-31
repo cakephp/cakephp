@@ -459,15 +459,15 @@ class TimeTest extends TestCase
         $this->assertTimeFormat($expected, $result, 'Default locale should not be used');
 
         $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'fa-SA');
-        $expected = 'پنجشنبه ۱۴ ژانویهٔ ۲۰۱۰، ساعت ۱۳:۵۹:۲۸ (GMT)';
+        $expected = 'پنجشنبه ۱۴ ژانویهٔ ۲۰۱۰، ساعت ۱۳:۵۹:۲۸ GMT';
         $this->assertTimeFormat($expected, $result, 'fa-SA locale should be used');
 
         $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'en-IR@calendar=persian');
         $expected = 'Thursday, Dey 24, 1388 at 1:59:28 PM GMT';
         $this->assertTimeFormat($expected, $result);
 
-        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'ps-IR@calendar=persian');
-        $expected = 'پينځنۍ د ۱۳۸۸ د مرغومی ۲۴ ۱۳:۵۹:۲۸ (GMT)';
+        $result = $time->i18nFormat(\IntlDateFormatter::SHORT, null, 'fa-IR@calendar=persian');
+        $expected = '۱۳۸۸/۱۰/۲۴،‏ ۱۳:۵۹:۲۸ GMT';
         $this->assertTimeFormat($expected, $result);
 
         $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'en-KW@calendar=islamic');
