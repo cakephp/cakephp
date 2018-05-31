@@ -19,9 +19,9 @@ use Cake\Core\Plugin;
 use Cake\TestSuite\ConsoleIntegrationTestCase;
 
 /**
- * HelpShell test.
+ * HelpCommand test.
  */
-class HelpShellTest extends ConsoleIntegrationTestCase
+class HelpCommandTest extends ConsoleIntegrationTestCase
 {
     /**
      * setup method
