@@ -3043,15 +3043,12 @@ class DboSource extends DataSource {
  * @return string ORDER BY clause
  */
 	public function order($keys, $direction = 'ASC', Model $Model = null) {
-		if (!is_array($keys)) {
-			$keys = array($keys);
-		}
-
-		$keys = array_filter($keys);
-
+		$keys = array_filter((array) $keys);
+		
 		$result = array();
 		while (!empty($keys)) {
-			list($key, $dir) = each($keys);
+			$key = key($keys);
+			$dir = current($keys);
 			array_shift($keys);
 
 			if (is_numeric($key)) {
