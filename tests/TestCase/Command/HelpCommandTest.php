@@ -63,7 +63,6 @@ class HelpCommandTest extends ConsoleIntegrationTestCase
     /**
      * Assert the help output.
      *
-     * @param string $output The output to check.
      * @return void
      */
     protected function assertCommandList()
