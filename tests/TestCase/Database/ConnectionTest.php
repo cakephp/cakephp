@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\Database;
 
+use Cake\Collection\Collection;
 use Cake\Database\Connection;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Exception\MissingConnectionException;
@@ -23,6 +24,7 @@ use Cake\Database\Log\QueryLogger;
 use Cake\Database\Retry\CommandRetry;
 use Cake\Database\Retry\ReconnectStrategy;
 use Cake\Database\StatementInterface;
+use Cake\Database\Statement\BufferedStatement;
 use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
@@ -247,6 +249,32 @@ class ConnectionTest extends TestCase
         $result = $statement->fetch();
         $statement->closeCursor();
         $this->assertTrue((bool)$result[0]);
+    }
+
+    /**
+     * test executing a buffered query interacts with Collection well.
+     *
+     * @return void
+     */
+    public function testBufferedStatementCollectionWrappingStatement()
+    {
+        $this->skipIf(
+            !($this->connection->getDriver() instanceof \Cake\Database\Driver\Sqlite),
+            'Only required for SQLite driver which does not support buffered results natively'
+        );
+        $this->loadFixtures('Things');
+        $statement = $this->connection->query('SELECT * FROM things LIMIT 3');
+
+        $collection = new Collection($statement);
+        $result = $collection->extract('id')->toArray();
+        $this->assertSame(['1', '2'], $result);
+
+        // Check iteration after extraction
+        $result = [];
+        foreach ($collection as $v) {
+            $result[] = $v['id'];
+        }
+        $this->assertSame(['1', '2'], $result);
     }
 
     /**
