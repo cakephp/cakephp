@@ -526,8 +526,8 @@ class TimeHelperTest extends TestCase
         $this->assertTimeFormat($expected, $result);
 
         $result = $this->Time->format($time, \IntlDateFormatter::FULL);
-        $expected = 'Thursday, January 14, 2010 at 1:59:28 PM GMT';
-        $this->assertTimeFormat($expected, $result);
+        $expected = 'Thursday, January 14, 2010 at 1:59:28 PM';
+        $this->assertStringStartsWith($expected, $result);
 
         $result = $this->Time->format('invalid date', null, 'Date invalid');
         $expected = 'Date invalid';
@@ -537,8 +537,8 @@ class TimeHelperTest extends TestCase
         Time::$defaultLocale = 'fr_FR';
         $time = new \Cake\I18n\FrozenTime('Thu Jan 14 13:59:28 2010');
         $result = $this->Time->format($time, \IntlDateFormatter::FULL);
-        $expected = 'jeudi 14 janvier 2010 13:59:28 UTC';
-        $this->assertTimeFormat($expected, $result);
+        $this->assertContains('jeudi 14 janvier 2010', $result);
+        $this->assertContains('13:59:28', $result);
     }
 
     /**
