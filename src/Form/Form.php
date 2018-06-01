@@ -91,6 +91,13 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
     protected $_validator;
 
     /**
+     * Form's data.
+     *
+     * @var array
+     */
+    protected $_data = [];
+
+    /**
      * Constructor
      *
      * @param \Cake\Event\EventManager|null $eventManager The event manager.
