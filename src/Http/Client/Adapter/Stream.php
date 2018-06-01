@@ -306,8 +306,11 @@ class Stream
         set_error_handler(function ($code, $message) {
             $this->_connectionErrors[] = $message;
         });
-        $this->_stream = fopen($url, 'rb', false, $this->_context);
-        restore_error_handler();
+        try {
+            $this->_stream = fopen($url, 'rb', false, $this->_context);
+        } finally {
+            restore_error_handler();
+        }
 
         if (!$this->_stream || !empty($this->_connectionErrors)) {
             throw new Exception(implode("\n", $this->_connectionErrors));
