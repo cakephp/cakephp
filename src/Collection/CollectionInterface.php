@@ -257,7 +257,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * @see \Cake\Collection\CollectionIterface::sortBy()
      * @return mixed The value of the top element in the collection
      */
-    public function max($callback, $type = SORT_NUMERIC);
+    public function max($callback, $type = \SORT_NUMERIC);
 
     /**
      * Returns the bottom element in this collection after being sorted by a property.
@@ -283,7 +283,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * @see \Cake\Collection\CollectionInterface::sortBy()
      * @return mixed The value of the bottom element in the collection
      */
-    public function min($callback, $type = SORT_NUMERIC);
+    public function min($callback, $type = \SORT_NUMERIC);
 
     /**
      * Returns the average of all the values extracted with $matcher
@@ -378,7 +378,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * SORT_NUMERIC or SORT_NATURAL
      * @return \Cake\Collection\CollectionInterface
      */
-    public function sortBy($callback, $dir = SORT_DESC, $type = SORT_NUMERIC);
+    public function sortBy($callback, $dir = SORT_DESC, $type = \SORT_NUMERIC);
 
     /**
      * Splits a collection into sets, grouped by the result of running each value

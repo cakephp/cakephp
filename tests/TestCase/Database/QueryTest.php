@@ -2666,7 +2666,7 @@ class QueryTest extends TestCase
         }
 
         $results = $query->decorateResults(null, true)->execute();
-        while ($row = $result->fetch('assoc')) {
+        while ($row = $results->fetch('assoc')) {
             $this->assertArrayNotHasKey('foo', $row);
             $this->assertArrayNotHasKey('modified_id', $row);
         }

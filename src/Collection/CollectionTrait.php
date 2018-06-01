@@ -177,17 +177,17 @@ trait CollectionTrait
     /**
      * {@inheritDoc}
      */
-    public function max($callback, $type = SORT_NUMERIC)
+    public function max($callback, $type = \SORT_NUMERIC)
     {
-        return (new SortIterator($this->unwrap(), $callback, SORT_DESC, $type))->first();
+        return (new SortIterator($this->unwrap(), $callback, \SORT_DESC, $type))->first();
     }
 
     /**
      * {@inheritDoc}
      */
-    public function min($callback, $type = SORT_NUMERIC)
+    public function min($callback, $type = \SORT_NUMERIC)
     {
-        return (new SortIterator($this->unwrap(), $callback, SORT_ASC, $type))->first();
+        return (new SortIterator($this->unwrap(), $callback, \SORT_ASC, $type))->first();
     }
 
     /**
@@ -242,7 +242,7 @@ trait CollectionTrait
     /**
      * {@inheritDoc}
      */
-    public function sortBy($callback, $dir = SORT_DESC, $type = SORT_NUMERIC)
+    public function sortBy($callback, $dir = \SORT_DESC, $type = \SORT_NUMERIC)
     {
         return new SortIterator($this->unwrap(), $callback, $dir, $type);
     }

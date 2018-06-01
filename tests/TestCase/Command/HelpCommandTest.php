@@ -19,9 +19,9 @@ use Cake\Core\Plugin;
 use Cake\TestSuite\ConsoleIntegrationTestCase;
 
 /**
- * HelpShell test.
+ * HelpCommand test.
  */
-class HelpShellTest extends ConsoleIntegrationTestCase
+class HelpCommandTest extends ConsoleIntegrationTestCase
 {
     /**
      * setup method
@@ -63,7 +63,6 @@ class HelpShellTest extends ConsoleIntegrationTestCase
     /**
      * Assert the help output.
      *
-     * @param string $output The output to check.
      * @return void
      */
     protected function assertCommandList()
