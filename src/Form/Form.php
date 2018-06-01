@@ -94,6 +94,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      * Form's data.
      *
      * @var array
+     * @since 3.7.0
      */
     protected $_data = [];
 
@@ -312,6 +313,14 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
         return true;
     }
 
+    /**
+     * Get field data.
+     *
+     * @param string|null $field The field name or null to get data array with
+     *   all fields.
+     * @return mixed
+     * @since 3.7.0
+     */
     public function getData($field = null)
     {
         if ($field === null) {
@@ -321,6 +330,13 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
         return Hash::get($this->_data, $field);
     }
 
+    /**
+     * Set form data.
+     *
+     * @param array $data Data array.
+     * @return $this
+     * @since 3.7.0
+     */
     public function setData(array $data)
     {
         $this->_data = $data;
