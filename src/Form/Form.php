@@ -314,13 +314,9 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
         return Hash::get($this->_data, $field);
     }
 
-    public function setData(array $data, $merge = true)
+    public function setData(array $data)
     {
-        if ($merge) {
-            $this->_data = Hash::merge($this->_data, $data);
-        } else {
-            $this->_data = $data;
-        }
+        $this->_data = $data;
 
         return $this;
     }
