@@ -254,15 +254,28 @@ class XmlTest extends TestCase
      */
     public function testLoadHtml()
     {
-        $html = CORE_TESTS . 'Fixture/sample.html';
-        $html = file_get_contents($html);
+        $html_file = CORE_TESTS . 'Fixture/sample.html';
+        $html = file_get_contents($html_file);
+        $paragraph = 'Browsers usually indent blockquote elements.';
+        $blockquote = "
+For 50 years, WWF has been protecting the future of nature.
+The world's leading conservation organization,
+WWF works in 100 countries and is supported by
+1.2 million members in the United States and
+close to 5 million globally.
+";
+
         $xml = Xml::loadHtml($html);
-        $xml = html_entity_decode($xml->asXML(), ENT_NOQUOTES, 'UTF-8');
-        $this->assertEquals($html, $xml);
+        $this->assertTrue(isset($xml->body->p), 'Paragraph present');
+        $this->assertEquals($paragraph, (string) $xml->body->p);
+        $this->assertTrue(isset($xml->body->blockquote), 'Blockquote present');
+        $this->assertEquals($blockquote, (string) $xml->body->blockquote);
 
         $xml = Xml::loadHtml($html, ['parseHuge' => true]);
-        $xml = html_entity_decode($xml->asXML(), ENT_NOQUOTES, 'UTF-8');
-        $this->assertEquals($html, $xml);
+        $this->assertTrue(isset($xml->body->p), 'Paragraph present');
+        $this->assertEquals($paragraph, (string) $xml->body->p);
+        $this->assertTrue(isset($xml->body->blockquote), 'Blockquote present');
+        $this->assertEquals($blockquote, (string) $xml->body->blockquote);
     }
 
     /**
