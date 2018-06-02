@@ -127,7 +127,6 @@ class FormAuthenticateTest extends TestCase
      */
     public function testAuthenticatePasswordIsFalse()
     {
-        $request = new ServerRequest('posts/index', false);
         $request = new ServerRequest([
             'url' => 'posts/index',
             'post' => [

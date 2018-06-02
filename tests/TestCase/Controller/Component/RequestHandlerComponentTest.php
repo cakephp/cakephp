@@ -79,7 +79,7 @@ class RequestHandlerComponentTest extends TestCase
      */
     protected function _init()
     {
-        $request = new ServerRequest('controller_posts/index');
+        $request = new ServerRequest(['url' => 'controller_posts/index']);
         $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['_sendHeader', 'stop'])
             ->getMock();

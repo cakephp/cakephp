@@ -366,7 +366,7 @@ class ExceptionRendererTest extends TestCase
     {
         Router::reload();
 
-        $request = new ServerRequest('posts/view/1000');
+        $request = new ServerRequest(['url' => 'posts/view/1000']);
         Router::setRequestInfo($request);
 
         $exception = new NotFoundException('Custom message');
@@ -389,7 +389,7 @@ class ExceptionRendererTest extends TestCase
     {
         Router::reload();
 
-        $request = new ServerRequest('posts/view/1000?sort=title&direction=desc');
+        $request = new ServerRequest(['url' => 'posts/view/1000?sort=title&direction=desc']);
         $request = $request->withHeader('Accept', 'application/json');
         $request = $request->withHeader('Content-Type', 'application/json');
         Router::setRequestInfo($request);
@@ -442,7 +442,7 @@ class ExceptionRendererTest extends TestCase
     {
         Router::reload();
 
-        $request = new ServerRequest('pages/<span id=333>pink</span></id><script>document.body.style.background = t=document.getElementById(333).innerHTML;window.alert(t);</script>');
+        $request = new ServerRequest(['url' => 'pages/<span id=333>pink</span></id><script>document.body.style.background = t=document.getElementById(333).innerHTML;window.alert(t);</script>']);
         Router::setRequestInfo($request);
 
         $exception = new NotFoundException('Custom message');
