@@ -248,6 +248,20 @@ class XmlTest extends TestCase
     }
 
     /**
+     * testLoadHtml method
+     *
+     * @return void
+     */
+    public function testLoadHtml()
+    {
+        $html = CORE_TESTS . 'Fixture/sample.html';
+        $html = file_get_contents($html);
+        $xml = Xml::loadHtml($html);
+        $xml = html_entity_decode($xml->asXML(), ENT_NOQUOTES, 'UTF-8');
+        $this->assertEquals($html, $xml);
+    }
+
+    /**
      * testFromArray method
      *
      * @return void
