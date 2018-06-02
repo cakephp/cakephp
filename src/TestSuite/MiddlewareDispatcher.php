@@ -14,9 +14,12 @@
 namespace Cake\TestSuite;
 
 use Cake\Core\Configure;
+use Cake\Core\HttpApplicationInterface;
+use Cake\Core\PluginApplicationInterface;
 use Cake\Event\EventManager;
 use Cake\Http\Server;
 use Cake\Http\ServerRequestFactory;
+use Cake\Routing\Router;
 use LogicException;
 use ReflectionClass;
 use ReflectionException;
@@ -52,6 +55,13 @@ class MiddlewareDispatcher
     protected $_constructorArgs;
 
     /**
+     * The application that is being dispatched.
+     *
+     * @var \Cake\Core\HttpApplicationInterface
+     */
+    protected $app;
+
+    /**
      * Constructor
      *
      * @param \Cake\TestSuite\IntegrationTestCase $test The test case to run.
@@ -64,6 +74,53 @@ class MiddlewareDispatcher
         $this->_test = $test;
         $this->_class = $class ?: Configure::read('App.namespace') . '\Application';
         $this->_constructorArgs = $constructorArgs ?: [CONFIG];
+
+        try {
+            $reflect = new ReflectionClass($this->_class);
+            $this->app = $reflect->newInstanceArgs($this->_constructorArgs);
+        } catch (ReflectionException $e) {
+            throw new LogicException(sprintf('Cannot load "%s" for use in integration testing.', $this->_class));
+        }
+
+        $this->bootstrap();
+        $this->loadRoutes();
+    }
+
+    /**
+     * Application bootstrap wrapper.
+     *
+     * Calls `bootstrap()` and `events()` if application implements `EventApplicationInterface`.
+     * After the application is bootstrapped and events are attached, plugins are bootstrapped
+     * and have their events attached.
+     *
+     * @return void
+     */
+    protected function bootstrap()
+    {
+        $this->app->bootstrap();
+        if ($this->app instanceof PluginApplicationInterface) {
+            $this->app->pluginBootstrap();
+        }
+    }
+
+    /**
+     * Ensure that the application's routes are loaded.
+     *
+     * Console commands and shells often need to generate URLs.
+     *
+     * @return void
+     */
+    protected function loadRoutes()
+    {
+        Router::reload();
+        $builder = Router::createRouteBuilder('/');
+
+        if ($this->app instanceof HttpApplicationInterface) {
+            $this->app->routes($builder);
+        }
+        if ($this->app instanceof PluginApplicationInterface) {
+            $this->app->pluginRoutes($builder);
+        }
     }
 
     /**
@@ -74,16 +131,6 @@ class MiddlewareDispatcher
      */
     public function execute($request)
     {
-        try {
-            $reflect = new ReflectionClass($this->_class);
-            $app = $reflect->newInstanceArgs($this->_constructorArgs);
-        } catch (ReflectionException $e) {
-            throw new LogicException(sprintf(
-                'Cannot load "%s" for use in integration testing.',
-                $this->_class
-            ));
-        }
-
         // Spy on the controller using the initialize hook instead
         // of the dispatcher hooks as those will be going away one day.
         EventManager::instance()->on(
@@ -91,7 +138,8 @@ class MiddlewareDispatcher
             [$this->_test, 'controllerSpy']
         );
 
-        $server = new Server($app);
+        Router::reload();
+        $server = new Server($this->app);
         $psrRequest = $this->_createRequest($request);
 
         return $server->run($psrRequest);
