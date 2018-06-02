@@ -259,6 +259,25 @@ class XmlTest extends TestCase
         $xml = Xml::loadHtml($html);
         $xml = html_entity_decode($xml->asXML(), ENT_NOQUOTES, 'UTF-8');
         $this->assertEquals($html, $xml);
+
+        $xml = Xml::build($html, ['parseHuge' => true]);
+        $xml = html_entity_decode($xml->asXML(), ENT_NOQUOTES, 'UTF-8');
+        $this->assertEquals($html, $xml);
+    }
+
+    /**
+     * test loadHtml with a empty html string
+     *
+     * @return void
+     */
+    public function testLoadHtmlEmptyHtml()
+    {
+        try {
+            Xml::loadHtml(null);
+            $this->fail('No exception');
+        } catch (\Exception $e) {
+            $this->assertTrue(true, 'An exception was raised');
+        }
     }
 
     /**
