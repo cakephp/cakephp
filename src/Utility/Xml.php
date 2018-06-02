@@ -142,7 +142,7 @@ class Xml
     {
         $hasDisable = function_exists('libxml_disable_entity_loader');
         $internalErrors = libxml_use_internal_errors(true);
-        if ($hasDisable && empty($options['loadEntities'])) {
+        if ($hasDisable && !$options['loadEntities']) {
             libxml_disable_entity_loader(true);
         }
         $flags = 0;
@@ -162,7 +162,7 @@ class Xml
         } catch (Exception $e) {
             throw new XmlException('Xml cannot be read. ' . $e->getMessage(), null, $e);
         } finally {
-            if ($hasDisable && empty($options['loadEntities'])) {
+            if ($hasDisable && !$options['loadEntities']) {
                 libxml_disable_entity_loader(false);
             }
             libxml_use_internal_errors($internalErrors);
@@ -177,11 +177,17 @@ class Xml
      * @return \SimpleXMLElement|\DOMDocument
      * @throws \Cake\Utility\Exception\XmlException
      */
-    public static function loadHtml($input, $options)
+    public static function loadHtml($input, $options = [])
     {
+        $defaults = [
+            'return' => 'simplexml',
+            'loadEntities' => false,
+        ];
+        $options += $defaults;
+
         $hasDisable = function_exists('libxml_disable_entity_loader');
         $internalErrors = libxml_use_internal_errors(true);
-        if ($hasDisable && empty($options['loadEntities'])) {
+        if ($hasDisable && !$options['loadEntities']) {
             libxml_disable_entity_loader(true);
         }
         $flags = 0;
@@ -201,7 +207,7 @@ class Xml
         } catch (Exception $e) {
             throw new XmlException('Xml cannot be read. ' . $e->getMessage(), null, $e);
         } finally {
-            if ($hasDisable && empty($options['loadEntities'])) {
+            if ($hasDisable && !$options['loadEntities']) {
                 libxml_disable_entity_loader(false);
             }
             libxml_use_internal_errors($internalErrors);
