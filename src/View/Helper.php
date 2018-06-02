@@ -29,13 +29,13 @@ use Cake\Event\EventListenerInterface;
  * implementing a callback method subscribes a helper to the related event. The callback methods
  * are as follows:
  *
- * - `beforeRender(Event $event, $viewFile)` - beforeRender is called before the view file is rendered.
- * - `afterRender(Event $event, $viewFile)` - afterRender is called after the view file is rendered
+ * - `beforeRender(EventInterface $event, $viewFile)` - beforeRender is called before the view file is rendered.
+ * - `afterRender(EventInterface $event, $viewFile)` - afterRender is called after the view file is rendered
  *   but before the layout has been rendered.
- * - beforeLayout(Event $event, $layoutFile)` - beforeLayout is called before the layout is rendered.
- * - `afterLayout(Event $event, $layoutFile)` - afterLayout is called after the layout has rendered.
- * - `beforeRenderFile(Event $event, $viewFile)` - Called before any view fragment is rendered.
- * - `afterRenderFile(Event $event, $viewFile, $content)` - Called after any view fragment is rendered.
+ * - beforeLayout(EventInterface $event, $layoutFile)` - beforeLayout is called before the layout is rendered.
+ * - `afterLayout(EventInterface $event, $layoutFile)` - afterLayout is called after the layout has rendered.
+ * - `beforeRenderFile(EventInterface $event, $viewFile)` - Called before any view fragment is rendered.
+ * - `afterRenderFile(EventInterface $event, $viewFile, $content)` - Called after any view fragment is rendered.
  *   If a listener returns a non-null value, the output of the rendered file will be set to that.
  */
 class Helper implements EventListenerInterface

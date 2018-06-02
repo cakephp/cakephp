@@ -17,7 +17,7 @@ namespace Cake\ORM\Behavior;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Exception\RecordNotFoundException;
-use Cake\Event\Event;
+use Cake\Event\EventInterface;
 use Cake\ORM\Behavior;
 use Cake\ORM\Query;
 use InvalidArgumentException;
@@ -89,12 +89,12 @@ class TreeBehavior extends Behavior
      * Transparently manages setting the lft and rght fields if the parent field is
      * included in the parameters to be saved.
      *
-     * @param \Cake\Event\Event $event The beforeSave event that was fired
+     * @param \Cake\Event\EventInterface $event The beforeSave event that was fired
      * @param \Cake\Datasource\EntityInterface $entity the entity that is going to be saved
      * @return void
      * @throws \RuntimeException if the parent to set for the node is invalid
      */
-    public function beforeSave(Event $event, EntityInterface $entity)
+    public function beforeSave(EventInterface $event, EntityInterface $entity)
     {
         $isNew = $entity->isNew();
         $config = $this->getConfig();
@@ -158,11 +158,11 @@ class TreeBehavior extends Behavior
      *
      * Manages updating level of descendants of currently saved entity.
      *
-     * @param \Cake\Event\Event $event The afterSave event that was fired
+     * @param \Cake\Event\EventInterface $event The afterSave event that was fired
      * @param \Cake\Datasource\EntityInterface $entity the entity that is going to be saved
      * @return void
      */
-    public function afterSave(Event $event, EntityInterface $entity)
+    public function afterSave(EventInterface $event, EntityInterface $entity)
     {
         if (!$this->_config['level'] || $entity->isNew()) {
             return;
@@ -211,11 +211,11 @@ class TreeBehavior extends Behavior
     /**
      * Also deletes the nodes in the subtree of the entity to be delete
      *
-     * @param \Cake\Event\Event $event The beforeDelete event that was fired
+     * @param \Cake\Event\EventInterface $event The beforeDelete event that was fired
      * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved
      * @return void
      */
-    public function beforeDelete(Event $event, EntityInterface $entity)
+    public function beforeDelete(EventInterface $event, EntityInterface $entity)
     {
         $config = $this->getConfig();
         $this->_ensureFields($entity);

@@ -14,7 +14,7 @@
 namespace TestApp\Controller\Component;
 
 use Cake\Controller\Component\AuthComponent;
-use Cake\Event\Event;
+use Cake\Event\EventInterface;
 
 /**
  * TestAuthComponent class
@@ -27,10 +27,10 @@ class TestAuthComponent extends AuthComponent
     public $authCheckCalledFrom = null;
 
     /**
-     * @param Event $event
+     * @param \Cake\Event\EventInterface $event
      * @return \Cake\Http\Response|null
      */
-    public function authCheck(Event $event)
+    public function authCheck(EventInterface $event)
     {
         if (isset($this->earlyAuthTest)) {
             if ($this->_config['checkAuthIn'] !== $event->getName()) {

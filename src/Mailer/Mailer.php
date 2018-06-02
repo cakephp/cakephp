@@ -67,7 +67,7 @@ use Cake\Mailer\Exception\MissingActionException;
  *     ];
  * }
  *
- * public function onRegistration(Event $event, Entity $entity, ArrayObject $options)
+ * public function onRegistration(EventInterface $event, Entity $entity, ArrayObject $options)
  * {
  *     if ($entity->isNew()) {
  *          $this->send('welcome', [$entity]);

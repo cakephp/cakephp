@@ -15,7 +15,7 @@
 namespace Cake\Test\TestCase;
 
 use Cake\Core\HttpApplicationInterface;
-use Cake\Event\Event;
+use Cake\Event\EventInterface;
 use Cake\Event\EventManager;
 use Cake\Http\BaseApplication;
 use Cake\Http\CallbackStream;
@@ -263,7 +263,7 @@ class ServerTest extends TestCase
         $server = new Server($app);
         $this->called = false;
 
-        $server->getEventManager()->on('Server.buildMiddleware', function (Event $event, $middleware) {
+        $server->getEventManager()->on('Server.buildMiddleware', function (EventInterface $event, $middleware) {
             $this->assertInstanceOf('Cake\Http\MiddlewareQueue', $middleware);
             $middleware->add(function ($req, $res, $next) {
                 $this->called = true;

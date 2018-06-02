@@ -18,7 +18,7 @@ use ArrayObject;
 use Cake\Collection\Collection;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\QueryInterface;
-use Cake\Event\Event;
+use Cake\Event\EventInterface;
 use Cake\I18n\I18n;
 use Cake\ORM\Behavior;
 use Cake\ORM\Entity;
@@ -201,12 +201,12 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * table. It modifies the passed query by eager loading the translated fields
      * and adding a formatter to copy the values into the main table records.
      *
-     * @param \Cake\Event\Event $event The beforeFind event that was fired.
+     * @param \Cake\Event\EventInterface $event The beforeFind event that was fired.
      * @param \Cake\ORM\Query $query Query
      * @param \ArrayObject $options The options for the query
      * @return void
      */
-    public function beforeFind(Event $event, Query $query, $options)
+    public function beforeFind(EventInterface $event, Query $query, $options)
     {
         $locale = $this->getLocale();
 
@@ -265,12 +265,12 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * Modifies the entity before it is saved so that translated fields are persisted
      * in the database too.
      *
-     * @param \Cake\Event\Event $event The beforeSave event that was fired
+     * @param \Cake\Event\EventInterface $event The beforeSave event that was fired
      * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved
      * @param \ArrayObject $options the options passed to the save method
      * @return void
      */
-    public function beforeSave(Event $event, EntityInterface $entity, ArrayObject $options)
+    public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options)
     {
         $locale = $entity->get('_locale') ?: $this->getLocale();
         $newOptions = [$this->_translationTable->getAlias() => ['validate' => false]];
@@ -361,11 +361,11 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     /**
      * Unsets the temporary `_i18n` property after the entity has been saved
      *
-     * @param \Cake\Event\Event $event The beforeSave event that was fired
+     * @param \Cake\Event\EventInterface $event The beforeSave event that was fired
      * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved
      * @return void
      */
-    public function afterSave(Event $event, EntityInterface $entity)
+    public function afterSave(EventInterface $event, EntityInterface $entity)
     {
         $entity->unsetProperty('_i18n');
     }

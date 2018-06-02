@@ -14,7 +14,7 @@
  */
 namespace Cake\Test\TestCase\ORM;
 
-use Cake\Event\Event;
+use Cake\Event\EventInterface;
 use Cake\ORM\Entity;
 use Cake\ORM\RulesChecker;
 use Cake\TestSuite\TestCase;
@@ -691,7 +691,7 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $table->getEventManager()->on(
             'Model.beforeRules',
-            function (Event $event, Entity $entity, \ArrayObject $options, $operation) {
+            function (EventInterface $event, Entity $entity, \ArrayObject $options, $operation) {
                 $this->assertEquals(
                     [
                         'atomic' => true,
@@ -731,7 +731,7 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $table->getEventManager()->on(
             'Model.afterRules',
-            function (Event $event, Entity $entity, \ArrayObject $options, $result, $operation) {
+            function (EventInterface $event, Entity $entity, \ArrayObject $options, $result, $operation) {
                 $this->assertEquals(
                     [
                         'atomic' => true,
@@ -767,7 +767,7 @@ class RulesCheckerIntegrationTest extends TestCase
         ]);
 
         $table = $this->getTableLocator()->get('Articles');
-        $table->getEventManager()->on('Model.buildRules', function (Event $event, RulesChecker $rules) {
+        $table->getEventManager()->on('Model.buildRules', function (EventInterface $event, RulesChecker $rules) {
             $rules->add($rules->existsIn('author_id', $this->getTableLocator()->get('Authors'), 'Nope'));
         });
 
@@ -812,7 +812,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules = $table->rulesChecker();
         $rules->add($rules->isUnique(['author_id']));
 
-        $table->Authors->getEventManager()->on('Model.beforeFind', function (Event $event, $query) {
+        $table->Authors->getEventManager()->on('Model.beforeFind', function (EventInterface $event, $query) {
             $query->leftJoin(['a2' => 'authors']);
         });
 
@@ -858,7 +858,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules = $table->rulesChecker();
         $rules->add($rules->existsIn('author_id', 'Authors'));
 
-        $table->Authors->getEventManager()->on('Model.beforeFind', function (Event $event, $query) {
+        $table->Authors->getEventManager()->on('Model.beforeFind', function (EventInterface $event, $query) {
             $query->leftJoin(['a2' => 'authors']);
         });
 

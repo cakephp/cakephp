@@ -1,7 +1,7 @@
 <?php
 namespace Cake\TestSuite\Constraint;
 
-use Cake\Event\Event;
+use Cake\Event\EventInterface;
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Constraint\Constraint;
 
@@ -68,7 +68,7 @@ class EventFiredWith extends Constraint
         }
 
         $eventGroup = collection($firedEvents)
-            ->groupBy(function (Event $event) {
+            ->groupBy(function (EventInterface $event) {
                 return $event->getName();
             })
             ->toArray();
@@ -83,7 +83,7 @@ class EventFiredWith extends Constraint
             throw new AssertionFailedError(sprintf('Event "%s" was fired %d times, cannot make data assertion', $other, count($events)));
         }
 
-        /* @var \Cake\Event\Event $event */
+        /* @var \Cake\Event\EventInterface $event */
         $event = $events[0];
 
         if (array_key_exists($this->_dataKey, $event->getData()) === false) {

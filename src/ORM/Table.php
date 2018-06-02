@@ -81,45 +81,45 @@ use RuntimeException;
  * Table objects provide a few callbacks/events you can hook into to augment/replace
  * find operations. Each event uses the standard event subsystem in CakePHP
  *
- * - `beforeFind(Event $event, Query $query, ArrayObject $options, boolean $primary)`
+ * - `beforeFind(EventInterface $event, Query $query, ArrayObject $options, boolean $primary)`
  *   Fired before each find operation. By stopping the event and supplying a
  *   return value you can bypass the find operation entirely. Any changes done
  *   to the $query instance will be retained for the rest of the find. The
  *   $primary parameter indicates whether or not this is the root query,
  *   or an associated query.
  *
- * - `buildValidator(Event $event, Validator $validator, string $name)`
+ * - `buildValidator(EventInterface $event, Validator $validator, string $name)`
  *   Allows listeners to modify validation rules for the provided named validator.
  *
- * - `buildRules(Event $event, RulesChecker $rules)`
+ * - `buildRules(EventInterface $event, RulesChecker $rules)`
  *   Allows listeners to modify the rules checker by adding more rules.
  *
- * - `beforeRules(Event $event, EntityInterface $entity, ArrayObject $options, string $operation)`
+ * - `beforeRules(EventInterface $event, EntityInterface $entity, ArrayObject $options, string $operation)`
  *   Fired before an entity is validated using the rules checker. By stopping this event,
  *   you can return the final value of the rules checking operation.
  *
- * - `afterRules(Event $event, EntityInterface $entity, ArrayObject $options, bool $result, string $operation)`
+ * - `afterRules(EventInterface $event, EntityInterface $entity, ArrayObject $options, bool $result, string $operation)`
  *   Fired after the rules have been checked on the entity. By stopping this event,
  *   you can return the final value of the rules checking operation.
  *
- * - `beforeSave(Event $event, EntityInterface $entity, ArrayObject $options)`
+ * - `beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options)`
  *   Fired before each entity is saved. Stopping this event will abort the save
  *   operation. When the event is stopped the result of the event will be returned.
  *
- * - `afterSave(Event $event, EntityInterface $entity, ArrayObject $options)`
+ * - `afterSave(EventInterface $event, EntityInterface $entity, ArrayObject $options)`
  *   Fired after an entity is saved.
  *
- * - `afterSaveCommit(Event $event, EntityInterface $entity, ArrayObject $options)`
+ * - `afterSaveCommit(EventInterface $event, EntityInterface $entity, ArrayObject $options)`
  *   Fired after the transaction in which the save operation is wrapped has been committed.
  *   It’s also triggered for non atomic saves where database operations are implicitly committed.
  *   The event is triggered only for the primary table on which save() is directly called.
  *   The event is not triggered if a transaction is started before calling save.
  *
- * - `beforeDelete(Event $event, EntityInterface $entity, ArrayObject $options)`
+ * - `beforeDelete(EventInterface $event, EntityInterface $entity, ArrayObject $options)`
  *   Fired before an entity is deleted. By stopping this event you will abort
  *   the delete operation.
  *
- * - `afterDelete(Event $event, EntityInterface $entity, ArrayObject $options)`
+ * - `afterDelete(EventInterface $event, EntityInterface $entity, ArrayObject $options)`
  *   Fired after an entity has been deleted.
  *
  * @see \Cake\Event\EventManager for reference on the events system.

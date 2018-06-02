@@ -19,7 +19,7 @@ use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Event\Event;
+use Cake\Event\EventInterface;
 use Cake\Event\EventListenerInterface;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
@@ -246,10 +246,10 @@ class TestViewEventListenerInterface implements EventListenerInterface
     /**
      * beforeRender method
      *
-     * @param \Cake\Event\Event $event the event being sent
+     * @param \Cake\Event\EventInterface $event the event being sent
      * @return void
      */
-    public function beforeRender(Event $event)
+    public function beforeRender(EventInterface $event)
     {
         $this->beforeRenderViewType = $event->getSubject()->getCurrentType();
     }
@@ -257,10 +257,10 @@ class TestViewEventListenerInterface implements EventListenerInterface
     /**
      * afterRender method
      *
-     * @param \Cake\Event\Event $event the event being sent
+     * @param \Cake\Event\EventInterface $event the event being sent
      * @return void
      */
-    public function afterRender(Event $event)
+    public function afterRender(EventInterface $event)
     {
         $this->afterRenderViewType = $event->getSubject()->getCurrentType();
     }
@@ -974,7 +974,7 @@ class ViewTest extends TestCase
     public function testElementCallbacks()
     {
         $count = 0;
-        $callback = function (Event $event, $file) use (&$count) {
+        $callback = function (EventInterface $event, $file) use (&$count) {
             $count++;
         };
         $events = $this->View->getEventManager();

@@ -16,7 +16,7 @@ namespace Cake\Test\TestCase\ORM\Association;
 
 use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\ConnectionManager;
-use Cake\Event\Event;
+use Cake\Event\EventInterface;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Association\HasMany;
@@ -780,7 +780,7 @@ class BelongsToManyTest extends TestCase
     {
         $articles = $this->getTableLocator()->get('Articles');
         $tags = $this->getTableLocator()->get('Tags');
-        $tags->getEventManager()->on('Model.buildRules', function (Event $event, $rules) {
+        $tags->getEventManager()->on('Model.buildRules', function (EventInterface $event, $rules) {
             $rules->add(function () {
                 return false;
             }, 'rule', ['errorField' => 'name', 'message' => 'Bad data']);

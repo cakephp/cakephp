@@ -48,41 +48,41 @@ use ReflectionMethod;
  * CakePHP provides a number of lifecycle events your behaviors can
  * listen to:
  *
- * - `beforeFind(Event $event, Query $query, ArrayObject $options, boolean $primary)`
+ * - `beforeFind(EventInterface $event, Query $query, ArrayObject $options, boolean $primary)`
  *   Fired before each find operation. By stopping the event and supplying a
  *   return value you can bypass the find operation entirely. Any changes done
  *   to the $query instance will be retained for the rest of the find. The
  *   $primary parameter indicates whether or not this is the root query,
  *   or an associated query.
  *
- * - `buildValidator(Event $event, Validator $validator, string $name)`
+ * - `buildValidator(EventInterface $event, Validator $validator, string $name)`
  *   Fired when the validator object identified by $name is being built. You can use this
  *   callback to add validation rules or add validation providers.
  *
- * - `buildRules(Event $event, RulesChecker $rules)`
+ * - `buildRules(EventInterface $event, RulesChecker $rules)`
  *   Fired when the rules checking object for the table is being built. You can use this
  *   callback to add more rules to the set.
  *
- * - `beforeRules(Event $event, EntityInterface $entity, ArrayObject $options, $operation)`
+ * - `beforeRules(EventInterface $event, EntityInterface $entity, ArrayObject $options, $operation)`
  *   Fired before an entity is validated using by a rules checker. By stopping this event,
  *   you can return the final value of the rules checking operation.
  *
- * - `afterRules(Event $event, EntityInterface $entity, ArrayObject $options, bool $result, $operation)`
+ * - `afterRules(EventInterface $event, EntityInterface $entity, ArrayObject $options, bool $result, $operation)`
  *   Fired after the rules have been checked on the entity. By stopping this event,
  *   you can return the final value of the rules checking operation.
  *
- * - `beforeSave(Event $event, EntityInterface $entity, ArrayObject $options)`
+ * - `beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options)`
  *   Fired before each entity is saved. Stopping this event will abort the save
  *   operation. When the event is stopped the result of the event will be returned.
  *
- * - `afterSave(Event $event, EntityInterface $entity, ArrayObject $options)`
+ * - `afterSave(EventInterface $event, EntityInterface $entity, ArrayObject $options)`
  *   Fired after an entity is saved.
  *
- * - `beforeDelete(Event $event, EntityInterface $entity, ArrayObject $options)`
+ * - `beforeDelete(EventInterface $event, EntityInterface $entity, ArrayObject $options)`
  *   Fired before an entity is deleted. By stopping this event you will abort
  *   the delete operation.
  *
- * - `afterDelete(Event $event, EntityInterface $entity, ArrayObject $options)`
+ * - `afterDelete(EventInterface $event, EntityInterface $entity, ArrayObject $options)`
  *   Fired after an entity has been deleted.
  *
  * In addition to the core events, behaviors can respond to any

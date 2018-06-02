@@ -19,7 +19,7 @@ use Cake\Controller\Controller;
 use Cake\Controller\Exception\AuthSecurityException;
 use Cake\Controller\Exception\SecurityException;
 use Cake\Core\Configure;
-use Cake\Event\Event;
+use Cake\Event\EventInterface;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
@@ -87,10 +87,10 @@ class SecurityComponent extends Component
     /**
      * Component startup. All security checking happens here.
      *
-     * @param \Cake\Event\Event $event An Event instance
+     * @param \Cake\Event\EventInterface $event An Event instance
      * @return mixed
      */
-    public function startup(Event $event)
+    public function startup(EventInterface $event)
     {
         /** @var \Cake\Controller\Controller $controller */
         $controller = $event->getSubject();

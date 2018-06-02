@@ -16,9 +16,9 @@ namespace Cake\Controller;
 
 use Cake\Controller\Exception\MissingActionException;
 use Cake\Datasource\ModelAwareTrait;
-use Cake\Event\Event;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
+use Cake\Event\EventInterface;
 use Cake\Event\EventListenerInterface;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
@@ -62,14 +62,14 @@ use RuntimeException;
  * By implementing a method you can receive the related events. The available
  * callbacks are:
  *
- * - `beforeFilter(Event $event)`
+ * - `beforeFilter(EventInterface $event)`
  *   Called before each action. This is a good place to do general logic that
  *   applies to all actions.
- * - `beforeRender(Event $event)`
+ * - `beforeRender(EventInterface $event)`
  *   Called before the view is rendered.
- * - `beforeRedirect(Event $event, $url, Response $response)`
+ * - `beforeRedirect(EventInterface $event, $url, Response $response)`
  *    Called before a redirect is done.
- * - `afterFilter(Event $event)`
+ * - `afterFilter(EventInterface $event)`
  *   Called after each action is complete and after the view is rendered.
  *
  * @property \Cake\Controller\Component\AuthComponent $Auth
@@ -779,11 +779,11 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Called before the controller action. You can use this method to configure and customize components
      * or perform logic that needs to happen before each controller action.
      *
-     * @param \Cake\Event\Event $event An Event instance
+     * @param \Cake\Event\EventInterface $event An Event instance
      * @return \Cake\Http\Response|null
      * @link https://book.cakephp.org/3.0/en/controllers.html#request-life-cycle-callbacks
      */
-    public function beforeFilter(Event $event)
+    public function beforeFilter(EventInterface $event)
     {
         return null;
     }
@@ -792,11 +792,11 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Called after the controller action is run, but before the view is rendered. You can use this method
      * to perform logic or set view variables that are required on every request.
      *
-     * @param \Cake\Event\Event $event An Event instance
+     * @param \Cake\Event\EventInterface $event An Event instance
      * @return \Cake\Http\Response|null
      * @link https://book.cakephp.org/3.0/en/controllers.html#request-life-cycle-callbacks
      */
-    public function beforeRender(Event $event)
+    public function beforeRender(EventInterface $event)
     {
         return null;
     }
@@ -810,14 +810,14 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * You can set the event result to response instance or modify the redirect location
      * using controller's response instance.
      *
-     * @param \Cake\Event\Event $event An Event instance
+     * @param \Cake\Event\EventInterface $event An Event instance
      * @param string|array $url A string or array-based URL pointing to another location within the app,
      *     or an absolute URL
      * @param \Cake\Http\Response $response The response object.
      * @return \Cake\Http\Response|null
      * @link https://book.cakephp.org/3.0/en/controllers.html#request-life-cycle-callbacks
      */
-    public function beforeRedirect(Event $event, $url, Response $response)
+    public function beforeRedirect(EventInterface $event, $url, Response $response)
     {
         return null;
     }
@@ -825,11 +825,11 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     /**
      * Called after the controller action is run and rendered.
      *
-     * @param \Cake\Event\Event $event An Event instance
+     * @param \Cake\Event\EventInterface $event An Event instance
      * @return \Cake\Http\Response|null
      * @link https://book.cakephp.org/3.0/en/controllers.html#request-life-cycle-callbacks
      */
-    public function afterFilter(Event $event)
+    public function afterFilter(EventInterface $event)
     {
         return null;
     }

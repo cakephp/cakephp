@@ -19,7 +19,7 @@ use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
-use Cake\Event\Event;
+use Cake\Event\EventInterface;
 use Cake\Routing\Router;
 use Cake\Utility\Exception\XmlException;
 use Cake\Utility\Inflector;
@@ -153,10 +153,10 @@ class RequestHandlerComponent extends Component
      * If the XML data is POSTed, the data is parsed into an XML object, which is assigned
      * to the $data property of the controller, which can then be saved to a model object.
      *
-     * @param \Cake\Event\Event $event The startup event that was fired.
+     * @param \Cake\Event\EventInterface $event The startup event that was fired.
      * @return void
      */
-    public function startup(Event $event)
+    public function startup(EventInterface $event)
     {
         /** @var \Cake\Controller\Controller $controller */
         $controller = $event->getSubject();
@@ -237,10 +237,10 @@ class RequestHandlerComponent extends Component
      * - If the extension is of a type that RequestHandler understands, it will
      *   set that Content-type in the response header.
      *
-     * @param \Cake\Event\Event $event The Controller.beforeRender event.
+     * @param \Cake\Event\EventInterface $event The Controller.beforeRender event.
      * @return bool false if the render process should be aborted
      */
-    public function beforeRender(Event $event)
+    public function beforeRender(EventInterface $event)
     {
         /** @var \Cake\Controller\Controller $controller */
         $controller = $event->getSubject();

@@ -18,7 +18,7 @@ use Cake\Core\Plugin;
 use Cake\Database\Expression\Comparison;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\EntityInterface;
-use Cake\Event\Event;
+use Cake\Event\EventInterface;
 use Cake\I18n\FrozenTime;
 use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
@@ -435,7 +435,7 @@ class QueryRegressionTest extends TestCase
         $articles = $this->getTableLocator()->get('Articles');
         $articles->belongsTo('Authors');
 
-        $articles->getEventManager()->on('Model.beforeFind', function (Event $event, $query) {
+        $articles->getEventManager()->on('Model.beforeFind', function (EventInterface $event, $query) {
             return $query->contain('Authors');
         });
 
@@ -761,7 +761,7 @@ class QueryRegressionTest extends TestCase
         $this->assertNotFalse($result);
 
         $table->getEventManager()
-            ->on('Model.beforeFind', function (Event $event, $query) {
+            ->on('Model.beforeFind', function (EventInterface $event, $query) {
                 $query->contain(['Authors']);
             });
 

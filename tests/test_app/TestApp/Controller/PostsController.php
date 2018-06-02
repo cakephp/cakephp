@@ -14,7 +14,7 @@
  */
 namespace TestApp\Controller;
 
-use Cake\Event\Event;
+use Cake\Event\EventInterface;
 use Cake\Utility\Security;
 
 /**
@@ -34,7 +34,7 @@ class PostsController extends AppController
      *
      * @return void
      */
-    public function beforeFilter(Event $event)
+    public function beforeFilter(EventInterface $event)
     {
         if ($this->request->getParam('action') !== 'securePost') {
             $this->getEventManager()->off($this->Security);
