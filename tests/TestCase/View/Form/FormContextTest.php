@@ -94,6 +94,27 @@ class FormContextTest extends TestCase
     }
 
     /**
+     * Test reading values from form data.
+     */
+    public function testValPresentInForm()
+    {
+        $form = new Form();
+        $form->setData(['title' => 'set title']);
+
+        $context = new FormContext($this->request, ['entity' => $form]);
+
+        $this->assertEquals('set title', $context->val('title'));
+        $this->assertNull($context->val('Articles.body'));
+
+        $this->request = $this->request->withParsedBody([
+            'title' => 'New title',
+        ]);
+        $context = new FormContext($this->request, ['entity' => $form]);
+
+        $this->assertEquals('New title', $context->val('title'));
+    }
+
+    /**
      * Test getting values when the request and defaults are missing.
      *
      * @return void
