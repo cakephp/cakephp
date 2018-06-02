@@ -194,7 +194,7 @@ class Xml
 
             if ($options['return'] === 'simplexml' || $options['return'] === 'simplexmlelement') {
                 $flags |= LIBXML_NOCDATA;
-                                $xml = simplexml_import_dom($xml);
+                $xml = simplexml_import_dom($xml);
             }
 
             return $xml;
