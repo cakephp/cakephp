@@ -260,7 +260,7 @@ class XmlTest extends TestCase
         $xml = html_entity_decode($xml->asXML(), ENT_NOQUOTES, 'UTF-8');
         $this->assertEquals($html, $xml);
 
-        $xml = Xml::build($html, ['parseHuge' => true]);
+        $xml = Xml::loadHtml($html, ['parseHuge' => true]);
         $xml = html_entity_decode($xml->asXML(), ENT_NOQUOTES, 'UTF-8');
         $this->assertEquals($html, $xml);
     }
