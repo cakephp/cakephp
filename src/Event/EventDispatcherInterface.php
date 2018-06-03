@@ -36,7 +36,7 @@ interface EventDispatcherInterface
      * @param object|null $subject The object that this event applies to
      * ($this by default).
      *
-     * @return \Cake\Event\Event
+     * @return \Cake\Event\EventInterface
      */
     public function dispatchEvent($name, $data = null, $subject = null);
 

@@ -15,7 +15,7 @@
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\Database\Expression\IdentifierExpression;
-use Cake\Event\Event;
+use Cake\Event\EventInterface;
 use Cake\I18n\FrozenTime;
 use Cake\I18n\Time;
 use Cake\ORM\Entity;
@@ -1852,7 +1852,7 @@ class MarshallerTest extends TestCase
         ]);
 
         $this->articles->Tags->getEventManager()
-            ->on('Model.beforeFind', function (Event $event, $query) use (&$called) {
+            ->on('Model.beforeFind', function (EventInterface $event, $query) use (&$called) {
                 $called = true;
 
                 return $query->where(['Tags.id >=' => 1]);
@@ -2451,7 +2451,7 @@ class MarshallerTest extends TestCase
             ['id' => 1, 'comment' => 'Changed 1', 'user_id' => 1],
             ['id' => 2, 'comment' => 'Changed 2', 'user_id' => 2],
         ];
-        $this->comments->getEventManager()->on('Model.beforeFind', function (Event $event, $query) {
+        $this->comments->getEventManager()->on('Model.beforeFind', function (EventInterface $event, $query) {
             return $query->contain(['Articles']);
         });
         $marshall = new Marshaller($this->comments);

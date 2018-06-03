@@ -19,6 +19,7 @@ use Cake\Auth\FormAuthenticate;
 use Cake\Controller\Component\AuthComponent;
 use Cake\Core\Configure;
 use Cake\Event\Event;
+use Cake\Event\EventInterface;
 use Cake\Event\EventManager;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
@@ -1354,7 +1355,7 @@ class AuthComponentTest extends TestCase
         ]);
         $this->Auth->setConfig('storage', 'Memory');
 
-        EventManager::instance()->on('Auth.afterIdentify', function (Event $event) {
+        EventManager::instance()->on('Auth.afterIdentify', function (EventInterface $event) {
             $user = $event->getData(0);
             $user['from_callback'] = true;
 

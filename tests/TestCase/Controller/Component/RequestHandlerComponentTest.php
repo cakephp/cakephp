@@ -764,7 +764,7 @@ XML;
      */
     public function testRenderAsCalledTwice()
     {
-        $this->Controller->getEventManager()->on('Controller.beforeRender', function (\Cake\Event\Event $e) {
+        $this->Controller->getEventManager()->on('Controller.beforeRender', function (\Cake\Event\EventInterface $e) {
             return $e->getSubject()->response;
         });
         $this->Controller->render();

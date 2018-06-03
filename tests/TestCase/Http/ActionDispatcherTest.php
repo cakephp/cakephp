@@ -14,7 +14,7 @@
  */
 namespace Cake\Test\TestCase\Http;
 
-use Cake\Event\Event;
+use Cake\Event\EventInterface;
 use Cake\Http\ActionDispatcher;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
@@ -92,7 +92,7 @@ class ActionDispatcherTest extends TestCase
             'session' => new Session
         ]);
         $res = new Response();
-        $this->dispatcher->getEventManager()->on('Dispatcher.afterDispatch', function (Event $event) {
+        $this->dispatcher->getEventManager()->on('Dispatcher.afterDispatch', function (EventInterface $event) {
             $response = $event->getData('response');
             $event->setData('response', $response->withStringBody('Filter body'));
         });

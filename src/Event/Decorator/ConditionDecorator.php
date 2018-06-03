@@ -14,7 +14,7 @@
  */
 namespace Cake\Event\Decorator;
 
-use Cake\Event\Event;
+use Cake\Event\EventInterface;
 use RuntimeException;
 
 /**
@@ -42,10 +42,10 @@ class ConditionDecorator extends AbstractDecorator
     /**
      * Checks if the event is triggered for this listener.
      *
-     * @param \Cake\Event\Event $event Event object.
+     * @param \Cake\Event\EventInterface $event Event object.
      * @return bool
      */
-    public function canTrigger(Event $event)
+    public function canTrigger(EventInterface $event)
     {
         $if = $this->_evaluateCondition('if', $event);
         $unless = $this->_evaluateCondition('unless', $event);
@@ -57,10 +57,10 @@ class ConditionDecorator extends AbstractDecorator
      * Evaluates the filter conditions
      *
      * @param string $condition Condition type
-     * @param \Cake\Event\Event $event Event object
+     * @param \Cake\Event\EventInterface $event Event object
      * @return bool
      */
-    protected function _evaluateCondition($condition, Event $event)
+    protected function _evaluateCondition($condition, EventInterface $event)
     {
         if (!isset($this->_options[$condition])) {
             return $condition !== 'unless';

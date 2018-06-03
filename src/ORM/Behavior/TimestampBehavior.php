@@ -17,7 +17,7 @@ namespace Cake\ORM\Behavior;
 use Cake\Database\TypeFactory;
 use Cake\Database\Type\DateTimeType;
 use Cake\Datasource\EntityInterface;
-use Cake\Event\Event;
+use Cake\Event\EventInterface;
 use Cake\I18n\Time;
 use Cake\ORM\Behavior;
 use DateTime;
@@ -86,13 +86,13 @@ class TimestampBehavior extends Behavior
     /**
      * There is only one event handler, it can be configured to be called for any event
      *
-     * @param \Cake\Event\Event $event Event instance.
+     * @param \Cake\Event\EventInterface $event Event instance.
      * @param \Cake\Datasource\EntityInterface $entity Entity instance.
      * @throws \UnexpectedValueException if a field's when value is misdefined
      * @return bool Returns true irrespective of the behavior logic, the save will not be prevented.
      * @throws \UnexpectedValueException When the value for an event is not 'always', 'new' or 'existing'
      */
-    public function handleEvent(Event $event, EntityInterface $entity)
+    public function handleEvent(EventInterface $event, EntityInterface $entity)
     {
         $eventName = $event->getName();
         $events = $this->_config['events'];

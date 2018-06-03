@@ -19,8 +19,8 @@ use Cake\Controller\Component;
 use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Exception\Exception;
-use Cake\Event\Event;
 use Cake\Event\EventDispatcherTrait;
+use Cake\Event\EventInterface;
 use Cake\Http\Exception\ForbiddenException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
@@ -230,10 +230,10 @@ class AuthComponent extends Component
     /**
      * Callback for Controller.startup event.
      *
-     * @param \Cake\Event\Event $event Event instance.
+     * @param \Cake\Event\EventInterface $event Event instance.
      * @return \Cake\Http\Response|null
      */
-    public function startup(Event $event)
+    public function startup(EventInterface $event)
     {
         return $this->authCheck($event);
     }
@@ -245,11 +245,11 @@ class AuthComponent extends Component
      * The auth check is done when event name is same as the one configured in
      * `checkAuthIn` config.
      *
-     * @param \Cake\Event\Event $event Event instance.
+     * @param \Cake\Event\EventInterface $event Event instance.
      * @return \Cake\Http\Response|null
      * @throws \ReflectionException
      */
-    public function authCheck(Event $event)
+    public function authCheck(EventInterface $event)
     {
         if ($this->_config['checkAuthIn'] !== $event->getName()) {
             return null;

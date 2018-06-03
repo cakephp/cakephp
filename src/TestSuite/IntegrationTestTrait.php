@@ -535,7 +535,7 @@ trait IntegrationTestTrait
     /**
      * Adds additional event spies to the controller/view event manager.
      *
-     * @param \Cake\Event\Event $event A dispatcher event.
+     * @param \Cake\Event\EventInterface $event A dispatcher event.
      * @param \Cake\Controller\Controller|null $controller Controller instance.
      * @return void
      */
