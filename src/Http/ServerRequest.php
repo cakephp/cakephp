@@ -230,8 +230,7 @@ class ServerRequest implements ServerRequestInterface
      *   requests with put, patch or delete data.
      * - `session` An instance of a Session object
      *
-     * @param string|array $config An array of request data to create a request with.
-     *   The string version of this argument is *deprecated* and will be removed in 4.0.0
+     * @param array $config An array of request data to create a request with.
      */
     public function __construct($config = [])
     {
