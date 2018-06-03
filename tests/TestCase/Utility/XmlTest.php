@@ -276,6 +276,12 @@ close to 5 million globally.
         $this->assertEquals($paragraph, (string)$xml->body->p);
         $this->assertTrue(isset($xml->body->blockquote), 'Blockquote present');
         $this->assertEquals($blockquote, (string)$xml->body->blockquote);
+
+        $xml = Xml::loadHtml($html);
+        $this->assertEquals($html, "<!DOCTYPE html>\n" . $xml->asXML() . "\n");
+
+        $xml = Xml::loadHtml($html, ['return' => 'dom']);
+        $this->assertEquals($html, $xml->saveHTML());
     }
 
     /**
