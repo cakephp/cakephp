@@ -238,7 +238,7 @@ class ControllerTest extends TestCase
      */
     public function testTableAutoload()
     {
-        $request = new ServerRequest('controller_posts/index');
+        $request = new ServerRequest(['url' => 'controller/posts/index']);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $Controller = new Controller($request, $response);
         $Controller->modelClass = 'SiteArticles';
@@ -266,7 +266,7 @@ class ControllerTest extends TestCase
      */
     public function testLoadModel()
     {
-        $request = new ServerRequest('controller_posts/index');
+        $request = new ServerRequest(['url' => 'controller/posts/index']);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $Controller = new Controller($request, $response);
 
@@ -615,7 +615,7 @@ class ControllerTest extends TestCase
      */
     public function testSetAction()
     {
-        $request = new ServerRequest('controller_posts/index');
+        $request = new ServerRequest(['url' => 'controller/posts/index']);
 
         $TestController = new TestController($request);
         $TestController->setAction('view', 1, 2);
@@ -925,7 +925,7 @@ class ControllerTest extends TestCase
      */
     public function testComponents()
     {
-        $request = new ServerRequest('/');
+        $request = new ServerRequest(['url' => '/']);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
         $controller = new TestController($request, $response);
@@ -972,7 +972,7 @@ class ControllerTest extends TestCase
      */
     public function testComponentsWithCustomRegistry()
     {
-        $request = new ServerRequest('/');
+        $request = new ServerRequest(['url' => '/']);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $componentRegistry = $this->getMockBuilder('Cake\Controller\ComponentRegistry')
             ->setMethods(['offsetGet'])
@@ -992,7 +992,7 @@ class ControllerTest extends TestCase
      */
     public function testLoadComponent()
     {
-        $request = new ServerRequest('/');
+        $request = new ServerRequest(['url' => '/']);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
         $controller = new TestController($request, $response);
@@ -1011,7 +1011,7 @@ class ControllerTest extends TestCase
      */
     public function testLoadComponentDuplicate()
     {
-        $request = new ServerRequest('/');
+        $request = new ServerRequest(['url' => '/']);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
         $controller = new TestController($request, $response);
@@ -1032,7 +1032,7 @@ class ControllerTest extends TestCase
      */
     public function testIsAction()
     {
-        $request = new ServerRequest('/');
+        $request = new ServerRequest(['url' => '/']);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $controller = new TestController($request, $response);
 

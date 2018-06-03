@@ -305,7 +305,7 @@ class ViewTest extends TestCase
         $this->View = $this->PostsController->createView();
         $this->View->setTemplatePath('Posts');
 
-        $themeRequest = new ServerRequest('posts/index');
+        $themeRequest = new ServerRequest(['url' => 'posts/index']);
         $this->ThemeController = new Controller($themeRequest);
         $this->ThemePostsController = new ThemePostsController($themeRequest);
         $this->ThemePostsController->index();

@@ -95,7 +95,7 @@ class DigestAuthenticateTest extends TestCase
      */
     public function testAuthenticateNoData()
     {
-        $request = new ServerRequest('posts/index');
+        $request = new ServerRequest(['url' => 'posts/index']);
 
         $this->response->expects($this->never())
             ->method('withHeader');

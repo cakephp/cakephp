@@ -2566,8 +2566,8 @@ class RouterTest extends TestCase
      */
     public function testGetRequest()
     {
-        $requestA = new ServerRequest('/');
-        $requestB = new ServerRequest('/posts');
+        $requestA = new ServerRequest(['url' => '/']);
+        $requestB = new ServerRequest(['url' => '/posts']);
 
         Router::pushRequest($requestA);
         Router::pushRequest($requestB);
