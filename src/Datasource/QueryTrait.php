@@ -321,7 +321,7 @@ trait QueryTrait
      * @param callable|null $mapper The mapper callable.
      * @param callable|null $reducer The reducing function.
      * @param bool $overwrite Set to true to overwrite existing map + reduce functions.
-     * @return $this|array
+     * @return $this
      * @see \Cake\Collection\Iterator\MapReduce for details on how to use emit data to the map reducer.
      */
     public function mapReduce(callable $mapper = null, callable $reducer = null, $overwrite = false)
@@ -331,7 +331,7 @@ trait QueryTrait
         }
         if ($mapper === null) {
             if (!$overwrite) {
-                throw new InvalidArgumentException('$mapper can be null only when $overwrite is false.');
+                throw new InvalidArgumentException('$mapper can be null only when $overwrite is true.');
             }
 
             return $this;
@@ -384,7 +384,7 @@ trait QueryTrait
      *
      * @param callable|null $formatter The formatting callable.
      * @param bool|int $mode Whether or not to overwrite, append or prepend the formatter.
-     * @return $this|array
+     * @return $this
      */
     public function formatResults(callable $formatter = null, $mode = 0)
     {
