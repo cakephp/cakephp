@@ -14,7 +14,7 @@
  */
 namespace TestPlugin\Routing\Filter;
 
-use Cake\Event\Event;
+use Cake\Event\EventInterface;
 use Cake\Routing\DispatcherFilter;
 
 /**
@@ -23,12 +23,12 @@ use Cake\Routing\DispatcherFilter;
 class TestDispatcherFilter extends DispatcherFilter
 {
 
-    public function beforeDispatch(Event $event)
+    public function beforeDispatch(EventInterface $event)
     {
         $event->data('request')->params['altered'] = true;
     }
 
-    public function afterDispatch(Event $event)
+    public function afterDispatch(EventInterface $event)
     {
         $event->data('response')->statusCode(304);
     }

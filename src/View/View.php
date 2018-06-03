@@ -44,7 +44,7 @@ use RuntimeException;
  * View class supports using plugins as themes. You can set
  *
  * ```
- * public function beforeRender(\Cake\Event\Event $event)
+ * public function beforeRender(\Cake\Event\EventInterface $event)
  * {
  *      $this->viewBuilder()->setTheme('SuperHot');
  * }

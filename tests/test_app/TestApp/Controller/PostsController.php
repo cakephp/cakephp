@@ -14,7 +14,8 @@
  */
 namespace TestApp\Controller;
 
-use Cake\Event\Event;
+use Cake\Event\EventInterface;
+use Cake\Utility\Security;
 
 /**
  * PostsController class
@@ -33,7 +34,7 @@ class PostsController extends AppController
      *
      * @return void
      */
-    public function beforeFilter(Event $event)
+    public function beforeFilter(EventInterface $event)
     {
         if ($this->request->getParam('action') !== 'securePost') {
             $this->getEventManager()->off($this->Security);
@@ -89,5 +90,32 @@ class PostsController extends AppController
     public function file()
     {
         return $this->response->withFile(__FILE__);
+    }
+
+    public function header()
+    {
+        return $this->getResponse()->withHeader('X-Cake', 'custom header');
+    }
+
+    public function empty_response()
+    {
+        return $this->getResponse()->withStringBody('');
+    }
+
+    public function secretCookie()
+    {
+        return $this->response
+            ->withCookie('secrets', 'name')
+            ->withStringBody('ok');
+    }
+
+    public function stacked_flash()
+    {
+        $this->Flash->error('Error 1');
+        $this->Flash->error('Error 2');
+        $this->Flash->success('Success 1', ['key' => 'custom']);
+        $this->Flash->success('Success 2', ['key' => 'custom']);
+
+        return $this->getResponse()->withStringBody('');
     }
 }

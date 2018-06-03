@@ -27,6 +27,7 @@ use Cake\Core\PluginApplicationInterface;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventManager;
+use Cake\Event\EventManagerInterface;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
@@ -227,10 +228,10 @@ class CommandRunner implements EventDispatcherInterface
      * If the application does not support events and this method is used as
      * a setter, an exception will be raised.
      *
-     * @param \Cake\Event\EventManager $events The event manager to set.
+     * @param \Cake\Event\EventManagerInterface $events The event manager to set.
      * @return $this
      */
-    public function setEventManager(EventManager $events)
+    public function setEventManager(EventManagerInterface $events)
     {
         if ($this->app instanceof PluginApplicationInterface) {
             $this->app->setEventManager($events);

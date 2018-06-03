@@ -146,7 +146,6 @@ class RoutingMiddlewareTest extends TestCase
     public function testRoutesHookInvokedOnApp()
     {
         Router::reload();
-        $this->assertFalse(Router::$initialized, 'Router precondition failed');
 
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/app/articles']);
         $response = new Response();
@@ -159,7 +158,6 @@ class RoutingMiddlewareTest extends TestCase
                 '_matchedRoute' => '/app/articles'
             ];
             $this->assertEquals($expected, $req->getAttribute('params'));
-            $this->assertTrue(Router::$initialized, 'Router state should indicate routes loaded');
             $this->assertNotEmpty(Router::routes());
             $this->assertEquals('/app/articles', Router::routes()[0]->template);
         };
@@ -176,7 +174,6 @@ class RoutingMiddlewareTest extends TestCase
     public function testRoutesHookCallsPluginHook()
     {
         Router::reload();
-        $this->assertFalse(Router::$initialized, 'Router precondition failed');
 
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/app/articles']);
         $response = new Response();
@@ -469,7 +466,6 @@ class RoutingMiddlewareTest extends TestCase
             'engine' => 'File',
             'path' => TMP,
         ]);
-        Router::$initialized = false;
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/articles']);
         $response = new Response();
         $next = function ($req, $res) use ($cacheConfigName) {
@@ -499,7 +495,6 @@ class RoutingMiddlewareTest extends TestCase
             'engine' => 'File',
             'path' => TMP,
         ]);
-        Router::$initialized = false;
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/articles']);
         $response = new Response();
         $next = function ($req, $res) use ($cacheConfigName) {
@@ -531,7 +526,6 @@ class RoutingMiddlewareTest extends TestCase
             'engine' => 'File',
             'path' => TMP,
         ]);
-        Router::$initialized = false;
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/articles']);
         $response = new Response();
         $next = function ($req, $res) {

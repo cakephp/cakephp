@@ -291,10 +291,10 @@ class EventManager implements EventManagerInterface
      * Calls a listener.
      *
      * @param callable $listener The listener to trigger.
-     * @param \Cake\Event\Event $event Event instance.
+     * @param \Cake\Event\EventInterface $event Event instance.
      * @return mixed The result of the $listener function.
      */
-    protected function _callListener(callable $listener, Event $event)
+    protected function _callListener(callable $listener, EventInterface $event)
     {
         $data = $event->getData();
 
@@ -378,10 +378,10 @@ class EventManager implements EventManagerInterface
     /**
      * Adds an event to the list if the event list object is present.
      *
-     * @param \Cake\Event\Event $event An event to add to the list.
+     * @param \Cake\Event\EventInterface $event An event to add to the list.
      * @return $this
      */
-    public function addEventToList(Event $event)
+    public function addEventToList(EventInterface $event)
     {
         if ($this->_eventList) {
             $this->_eventList->add($event);

@@ -346,46 +346,6 @@ XML;
     }
 
     /**
-     * Test parsing / getting cookies.
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testCookie()
-    {
-        $this->deprecated(function () {
-            $headers = [
-                'HTTP/1.0 200 Ok',
-                'Set-Cookie: test=value',
-                'Set-Cookie: session=123abc',
-                'Set-Cookie: expiring=soon; Expires=Wed, 09-Jun-2021 10:18:14 GMT; Path=/; HttpOnly; Secure;',
-            ];
-            $response = new Response($headers, '');
-            $this->assertEquals('value', $response->cookie('test'));
-            $this->assertEquals('123abc', $response->cookie('session'));
-            $this->assertEquals('soon', $response->cookie('expiring'));
-
-            $result = $response->cookie('expiring', true);
-            $this->assertTrue($result['httponly']);
-            $this->assertTrue($result['secure']);
-            $this->assertEquals(
-                'Wed, 09-Jun-2021 10:18:14 GMT',
-                $result['expires']
-            );
-            $this->assertEquals('/', $result['path']);
-
-            $result = $response->header('set-cookie');
-            $this->assertCount(3, $result, 'Should be an array.');
-
-            $this->assertTrue(isset($response->cookies));
-            $this->assertEquals(
-                'soon',
-                $response->cookies['expiring']['value']
-            );
-        });
-    }
-
-    /**
      * Test accessing cookies through the PSR7-like methods
      *
      * @return void
@@ -463,26 +423,6 @@ XML;
     }
 
     /**
-     * Test statusCode()
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testStatusCode()
-    {
-        $this->deprecated(function () {
-            $headers = [
-                'HTTP/1.0 404 Not Found',
-                'Content-Type: text/html'
-            ];
-            $response = new Response($headers, '');
-            $this->assertSame(404, $response->statusCode());
-            $this->assertSame(404, $response->code);
-            $this->assertTrue(isset($response->code));
-        });
-    }
-
-    /**
      * Test reading the encoding out.
      *
      * @return void
@@ -515,44 +455,6 @@ XML;
         ];
         $response = new Response($headers, '');
         $this->assertEquals('ISO-8859-1', $response->getEncoding());
-    }
-
-    /**
-     * Test reading the encoding out.
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testEncoding()
-    {
-        $this->deprecated(function () {
-            $headers = [
-                'HTTP/1.0 200 Ok',
-            ];
-            $response = new Response($headers, '');
-            $this->assertNull($response->encoding());
-
-            $headers = [
-                'HTTP/1.0 200 Ok',
-                'Content-Type: text/html'
-            ];
-            $response = new Response($headers, '');
-            $this->assertNull($response->encoding());
-
-            $headers = [
-                'HTTP/1.0 200 Ok',
-                'Content-Type: text/html; charset="UTF-8"'
-            ];
-            $response = new Response($headers, '');
-            $this->assertEquals('UTF-8', $response->encoding());
-
-            $headers = [
-                'HTTP/1.0 200 Ok',
-                "Content-Type: text/html; charset='ISO-8859-1'"
-            ];
-            $response = new Response($headers, '');
-            $this->assertEquals('ISO-8859-1', $response->encoding());
-        });
     }
 
     /**

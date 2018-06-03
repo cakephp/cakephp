@@ -20,7 +20,7 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
-use Cake\Event\Event;
+use Cake\Event\EventInterface;
 use Cake\I18n\FrozenTime;
 use Cake\I18n\Time;
 use Cake\ORM\Query;
@@ -1324,7 +1324,7 @@ class QueryTest extends TestCase
 
         $articlesTags
             ->getEventManager()
-            ->on('Model.beforeFind', function (Event $event, $query) {
+            ->on('Model.beforeFind', function (EventInterface $event, $query) {
                 $query->formatResults(function ($results) {
                     foreach ($results as $result) {
                         $result->beforeFind = true;
@@ -1628,7 +1628,7 @@ class QueryTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $table->hasMany('Comments');
         $table->getEventManager()
-            ->on('Model.beforeFind', function (Event $event, $query) {
+            ->on('Model.beforeFind', function (EventInterface $event, $query) {
                 $query
                     ->limit(1)
                     ->order(['Articles.title' => 'DESC']);
@@ -1649,7 +1649,7 @@ class QueryTest extends TestCase
         $callCount = 0;
         $table = $this->getTableLocator()->get('Articles');
         $table->getEventManager()
-            ->on('Model.beforeFind', function (Event $event, $query) use (&$callCount) {
+            ->on('Model.beforeFind', function (EventInterface $event, $query) use (&$callCount) {
                 $valueBinder = new ValueBinder();
                 $query->sql($valueBinder);
                 $callCount++;
@@ -2893,7 +2893,7 @@ class QueryTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $table->hasMany('Comments');
         $table->getEventManager()
-            ->on('Model.beforeFind', function (Event $event, $query) {
+            ->on('Model.beforeFind', function (EventInterface $event, $query) {
                 $query
                     ->limit(5)
                     ->order(['Articles.title' => 'DESC']);

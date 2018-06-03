@@ -18,7 +18,7 @@ use Cake\Controller\Component;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Event\Event;
+use Cake\Event\EventInterface;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
@@ -63,10 +63,10 @@ class TestController extends ControllerTestAppController
     /**
      * beforeFilter handler
      *
-     * @param \Cake\Event\Event $event
+     * @param \Cake\Event\EventInterface $event
      * @return void
      */
-    public function beforeFilter(Event $event)
+    public function beforeFilter(EventInterface $event)
     {
     }
 
@@ -152,30 +152,30 @@ class TestComponent extends Component
     /**
      * startup method
      *
-     * @param Event $event
+     * @param \Cake\Event\EventInterface $event
      * @return void
      */
-    public function startup(Event $event)
+    public function startup(EventInterface $event)
     {
     }
 
     /**
      * shutdown method
      *
-     * @param Event $event
+     * @param \Cake\Event\EventInterface $event
      * @return void
      */
-    public function shutdown(Event $event)
+    public function shutdown(EventInterface $event)
     {
     }
 
     /**
      * beforeRender callback
      *
-     * @param Event $event
+     * @param \Cake\Event\EventInterface $event
      * @return void
      */
-    public function beforeRender(Event $event)
+    public function beforeRender(EventInterface $event)
     {
         $controller = $event->getSubject();
         if ($this->viewclass) {
@@ -238,7 +238,7 @@ class ControllerTest extends TestCase
      */
     public function testTableAutoload()
     {
-        $request = new ServerRequest('controller_posts/index');
+        $request = new ServerRequest(['url' => 'controller/posts/index']);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $Controller = new Controller($request, $response);
         $Controller->modelClass = 'SiteArticles';
@@ -266,7 +266,7 @@ class ControllerTest extends TestCase
      */
     public function testLoadModel()
     {
-        $request = new ServerRequest('controller_posts/index');
+        $request = new ServerRequest(['url' => 'controller/posts/index']);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $Controller = new Controller($request, $response);
 
@@ -410,7 +410,7 @@ class ControllerTest extends TestCase
     {
         $Controller = new Controller(new ServerRequest, new Response());
 
-        $Controller->getEventManager()->on('Controller.beforeRender', function (Event $event) {
+        $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $event) {
             $controller = $event->getSubject();
             $controller->viewBuilder()->setClassName('Json');
         });
@@ -435,7 +435,7 @@ class ControllerTest extends TestCase
     {
         $Controller = new Controller(new ServerRequest, new Response());
 
-        $Controller->getEventManager()->on('Controller.beforeRender', function (Event $event) {
+        $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $event) {
             return false;
         });
 
@@ -488,7 +488,7 @@ class ControllerTest extends TestCase
     {
         $Controller = new Controller(null, new Response());
 
-        $Controller->getEventManager()->on('Controller.beforeRedirect', function (Event $event, $url, Response $response) {
+        $Controller->getEventManager()->on('Controller.beforeRedirect', function (EventInterface $event, $url, Response $response) {
             $controller = $event->getSubject();
             $controller->setResponse($response->withLocation('https://book.cakephp.org'));
         });
@@ -508,7 +508,7 @@ class ControllerTest extends TestCase
         $response = new Response();
         $Controller = new Controller(null, $response);
 
-        $Controller->getEventManager()->on('Controller.beforeRedirect', function (Event $event, $url, Response $response) {
+        $Controller->getEventManager()->on('Controller.beforeRedirect', function (EventInterface $event, $url, Response $response) {
             $controller = $event->getSubject();
             $controller->setResponse($response->withStatus(302));
         });
@@ -527,7 +527,7 @@ class ControllerTest extends TestCase
         $Controller = new Controller(null, $Response);
 
         $newResponse = new Response;
-        $Controller->getEventManager()->on('Controller.beforeRedirect', function (Event $event, $url, Response $response) use ($newResponse) {
+        $Controller->getEventManager()->on('Controller.beforeRedirect', function (EventInterface $event, $url, Response $response) use ($newResponse) {
             return $newResponse;
         });
 
@@ -615,7 +615,7 @@ class ControllerTest extends TestCase
      */
     public function testSetAction()
     {
-        $request = new ServerRequest('controller_posts/index');
+        $request = new ServerRequest(['url' => 'controller/posts/index']);
 
         $TestController = new TestController($request);
         $TestController->setAction('view', 1, 2);
@@ -889,7 +889,7 @@ class ControllerTest extends TestCase
         ]);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $Controller = new \TestApp\Controller\Admin\PostsController($request, $response);
-        $Controller->getEventManager()->on('Controller.beforeRender', function (Event $e) {
+        $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $e) {
             return $e->getSubject()->response;
         });
         $Controller->render();
@@ -898,7 +898,7 @@ class ControllerTest extends TestCase
         $request = $request->withParam('prefix', 'admin/super');
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $Controller = new \TestApp\Controller\Admin\PostsController($request, $response);
-        $Controller->getEventManager()->on('Controller.beforeRender', function (Event $e) {
+        $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $e) {
             return $e->getSubject()->response;
         });
         $Controller->render();
@@ -911,7 +911,7 @@ class ControllerTest extends TestCase
             ]
         ]);
         $Controller = new \TestApp\Controller\PagesController($request, $response);
-        $Controller->getEventManager()->on('Controller.beforeRender', function (Event $e) {
+        $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $e) {
             return $e->getSubject()->response;
         });
         $Controller->render();
@@ -925,7 +925,7 @@ class ControllerTest extends TestCase
      */
     public function testComponents()
     {
-        $request = new ServerRequest('/');
+        $request = new ServerRequest(['url' => '/']);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
         $controller = new TestController($request, $response);
@@ -972,7 +972,7 @@ class ControllerTest extends TestCase
      */
     public function testComponentsWithCustomRegistry()
     {
-        $request = new ServerRequest('/');
+        $request = new ServerRequest(['url' => '/']);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $componentRegistry = $this->getMockBuilder('Cake\Controller\ComponentRegistry')
             ->setMethods(['offsetGet'])
@@ -992,7 +992,7 @@ class ControllerTest extends TestCase
      */
     public function testLoadComponent()
     {
-        $request = new ServerRequest('/');
+        $request = new ServerRequest(['url' => '/']);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
         $controller = new TestController($request, $response);
@@ -1011,7 +1011,7 @@ class ControllerTest extends TestCase
      */
     public function testLoadComponentDuplicate()
     {
-        $request = new ServerRequest('/');
+        $request = new ServerRequest(['url' => '/']);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
         $controller = new TestController($request, $response);
@@ -1032,7 +1032,7 @@ class ControllerTest extends TestCase
      */
     public function testIsAction()
     {
-        $request = new ServerRequest('/');
+        $request = new ServerRequest(['url' => '/']);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $controller = new TestController($request, $response);
 
@@ -1065,7 +1065,7 @@ class ControllerTest extends TestCase
     {
         $controller = new PostsController();
 
-        $controller->getEventManager()->on('Controller.beforeRender', function (Event $event) {
+        $controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $event) {
             /* @var Controller $controller */
             $controller = $event->getSubject();
 

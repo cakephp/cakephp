@@ -17,12 +17,24 @@ namespace Cake\Datasource;
 /**
  * Describes the methods that any class representing a data storage should
  * comply with.
- *
- * @method $this setAlias($alias)
- * @method string getAlias()
  */
 interface RepositoryInterface
 {
+    /**
+     * Sets the repository alias.
+     *
+     * @param string $alias Table alias
+     * @return $this
+     */
+    public function setAlias($alias);
+
+    /**
+     * Returns the repository alias.
+     *
+     * @return string
+     */
+    public function getAlias();
+
     /**
      * Test to see if a Repository has a specific field/column.
      *

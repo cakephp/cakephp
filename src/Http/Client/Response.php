@@ -13,9 +13,7 @@
  */
 namespace Cake\Http\Client;
 
-// This alias is necessary to avoid class name conflicts
-// with the deprecated class in this namespace.
-use Cake\Http\Cookie\CookieCollection as CookiesCollection;
+use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Cookie\CookieInterface;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
@@ -267,22 +265,6 @@ class Response extends Message implements ResponseInterface
     }
 
     /**
-     * Get the status code from the response
-     *
-     * @return int
-     * @deprecated 3.3.0 Use getStatusCode() instead.
-     */
-    public function statusCode()
-    {
-        deprecationWarning(
-            'Response::statusCode() is deprecated. ' .
-            'Use Response::getStatusCode() instead.'
-        );
-
-        return $this->code;
-    }
-
-    /**
      * {@inheritdoc}
      *
      * @return int The status code.
@@ -322,22 +304,6 @@ class Response extends Message implements ResponseInterface
      * Get the encoding if it was set.
      *
      * @return string|null
-     * @deprecated 3.3.0 Use getEncoding() instead.
-     */
-    public function encoding()
-    {
-        deprecationWarning(
-            'Response::encoding() is deprecated. ' .
-            'Use Response::getEncoding() instead.'
-        );
-
-        return $this->getEncoding();
-    }
-
-    /**
-     * Get the encoding if it was set.
-     *
-     * @return string|null
      */
     public function getEncoding()
     {
@@ -351,66 +317,6 @@ class Response extends Message implements ResponseInterface
         }
 
         return $matches[1];
-    }
-
-    /**
-     * Read single/multiple header value(s) out.
-     *
-     * @param string|null $name The name of the header you want. Leave
-     *   null to get all headers.
-     * @return mixed Null when the header doesn't exist. An array
-     *   will be returned when getting all headers or when getting
-     *   a header that had multiple values set. Otherwise a string
-     *   will be returned.
-     * @deprecated 3.3.0 Use getHeader() and getHeaderLine() instead.
-     */
-    public function header($name = null)
-    {
-        deprecationWarning(
-            'Response::header() is deprecated. ' .
-            'Use Response::getHeader() and getHeaderLine() instead.'
-        );
-
-        if ($name === null) {
-            return $this->_getHeaders();
-        }
-        $header = $this->getHeader($name);
-        if (count($header) === 1) {
-            return $header[0];
-        }
-
-        return $header;
-    }
-
-    /**
-     * Read single/multiple cookie values out.
-     *
-     * *Note* This method will only provide access to cookies that
-     * were added as part of the constructor. If cookies are added post
-     * construction they will not be accessible via this method.
-     *
-     * @param string|null $name The name of the cookie you want. Leave
-     *   null to get all cookies.
-     * @param bool $all Get all parts of the cookie. When false only
-     *   the value will be returned.
-     * @return mixed
-     * @deprecated 3.3.0 Use getCookie(), getCookieData() or getCookies() instead.
-     */
-    public function cookie($name = null, $all = false)
-    {
-        deprecationWarning(
-            'Response::cookie() is deprecated. ' .
-            'Use Response::getCookie(), getCookieData() or getCookies() instead.'
-        );
-
-        if ($name === null) {
-            return $this->getCookies();
-        }
-        if ($all) {
-            return $this->getCookieData($name);
-        }
-
-        return $this->getCookie($name);
     }
 
     /**
@@ -505,7 +411,7 @@ class Response extends Message implements ResponseInterface
         if ($this->cookies) {
             return;
         }
-        $this->cookies = CookiesCollection::createFromHeader($this->getHeader('Set-Cookie'));
+        $this->cookies = CookieCollection::createFromHeader($this->getHeader('Set-Cookie'));
     }
 
     /**
@@ -523,22 +429,6 @@ class Response extends Message implements ResponseInterface
         }
 
         return $cookies;
-    }
-
-    /**
-     * Get the HTTP version used.
-     *
-     * @return string
-     * @deprecated 3.3.0 Use getProtocolVersion()
-     */
-    public function version()
-    {
-        deprecationWarning(
-            'Response::version() is deprecated. ' .
-            'Use Response::getProtocolVersion() instead.'
-        );
-
-        return $this->protocol;
     }
 
     /**

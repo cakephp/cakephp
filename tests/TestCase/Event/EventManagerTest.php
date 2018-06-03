@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\Event;
 
 use Cake\Event\Event;
+use Cake\Event\EventInterface;
 use Cake\Event\EventList;
 use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManager;
@@ -51,7 +52,7 @@ class EventTestListener
     /**
      * Auxiliary function to help in stopPropagation testing
      *
-     * @param \Cake\Event\Event $event
+     * @param \Cake\Event\EventInterface $event
      * @return void
      */
     public function stopListener($event)
@@ -607,9 +608,9 @@ class EventManagerTest extends TestCase
     /**
      * test callback
      *
-     * @param Event $event
+     * @param \Cake\Event\EventInterface $event
      */
-    public function onMyEvent(Event $event)
+    public function onMyEvent(EventInterface $event)
     {
         $event->setData('callback', 'ok');
     }

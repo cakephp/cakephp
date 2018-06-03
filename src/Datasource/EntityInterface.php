@@ -21,29 +21,145 @@ use JsonSerializable;
  * Describes the methods that any class representing a data storage should
  * comply with.
  *
- * In 4.x the following methods will officially be added to the interface:
- *
- * @method $this setHidden(array $properties, $merge = false)
- * @method array getHidden()
- * @method $this setVirtual(array $properties, $merge = false)
- * @method array getVirtual()
- * @method $this setDirty($property, $isDirty)
- * @method bool isDirty($property = null)
- * @method array getErrors()
- * @method array getError($field)
- * @method array setErrors(array $fields, $overwrite = false)
- * @method array setError($field, $errors, $overwrite = false)
- * @method $this setAccess($property, $set)
- * @method bool isAccessible($property)
- * @method $this setSource($source)
- * @method string getSource()
- * @method array extractOriginal(array $properties)
- * @method array extractOriginalChanged(array $properties)
- *
  * @property mixed $id Alias for commonly used primary key.
  */
 interface EntityInterface extends ArrayAccess, JsonSerializable
 {
+
+    /**
+     * Sets hidden properties.
+     *
+     * @param array $properties An array of properties to hide from array exports.
+     * @param bool $merge Merge the new properties with the existing. By default false.
+     * @return $this
+     */
+    public function setHidden(array $properties, $merge = false);
+
+    /**
+     * Gets the hidden properties.
+     *
+     * @return array
+     */
+    public function getHidden();
+
+    /**
+     * Sets the virtual properties on this entity.
+     *
+     * @param array $properties An array of properties to treat as virtual.
+     * @param bool $merge Merge the new properties with the existing. By default false.
+     * @return $this
+     */
+    public function setVirtual(array $properties, $merge = false);
+
+    /**
+     * Gets the virtual properties on this entity.
+     *
+     * @return array
+     */
+    public function getVirtual();
+
+    /**
+     * Sets the dirty status of a single property.
+     *
+     * @param string $property the field to set or check status for
+     * @param bool $isDirty true means the property was changed, false means
+     * it was not changed
+     * @return $this
+     */
+    public function setDirty($property, $isDirty);
+
+    /**
+     * Checks if the entity is dirty or if a single property of it is dirty.
+     *
+     * @param string|null $property The field to check the status for. Null for the whole entity.
+     * @return bool Whether the property was changed or not
+     */
+    public function isDirty($property = null);
+
+    /**
+     * Returns all validation errors.
+     *
+     * @return array
+     */
+    public function getErrors();
+
+    /**
+     * Returns validation errors of a field
+     *
+     * @param string $field Field name to get the errors from
+     * @return array
+     */
+    public function getError($field);
+
+    /**
+     * Sets error messages to the entity
+     *
+     * @param array $fields The array of errors to set.
+     * @param bool $overwrite Whether or not to overwrite pre-existing errors for $fields
+     * @return $this
+     */
+    public function setErrors(array $fields, $overwrite = false);
+
+    /**
+     * Sets errors for a single field
+     *
+     * @param string $field The field to get errors for, or the array of errors to set.
+     * @param string|array $errors The errors to be set for $field
+     * @param bool $overwrite Whether or not to overwrite pre-existing errors for $field
+     * @return $this
+     */
+    public function setError($field, $errors, $overwrite = false);
+
+    /**
+     * Stores whether or not a property value can be changed or set in this entity.
+     *
+     * @param string|array $property single or list of properties to change its accessibility
+     * @param bool $set true marks the property as accessible, false will
+     * mark it as protected.
+     * @return $this
+     */
+    public function setAccess($property, $set);
+
+    /**
+     * Checks if a property is accessible
+     *
+     * @param string $property Property name to check
+     * @return bool
+     */
+    public function isAccessible($property);
+
+    /**
+     * Sets the source alias
+     *
+     * @param string $alias the alias of the repository
+     * @return $this
+     */
+    public function setSource($alias);
+
+    /**
+     * Returns the alias of the repository from which this entity came from.
+     *
+     * @return string
+     */
+    public function getSource();
+
+    /**
+     * Returns an array with the requested original properties
+     * stored in this entity, indexed by property name.
+     *
+     * @param array $properties List of properties to be returned
+     * @return array
+     */
+    public function extractOriginal(array $properties);
+
+    /**
+     * Returns an array with only the original properties
+     * stored in this entity, indexed by property name.
+     *
+     * @param array $properties List of properties to be returned
+     * @return array
+     */
+    public function extractOriginalChanged(array $properties);
 
     /**
      * Sets one or multiple properties to the specified value

@@ -212,28 +212,4 @@ class BaseApplicationTest extends TestCase
             'Nested plugin should have bootstrap run'
         );
     }
-
-    /**
-     * Ensure that Router::$initialized is toggled even if the routes
-     * file fails. This prevents the routes file from being re-parsed
-     * during the error handling process.
-     *
-     * @return void
-     */
-    public function testRouteHookInitializesRouterOnError()
-    {
-        $app = $this->getMockForAbstractClass(
-            'Cake\Http\BaseApplication',
-            [TEST_APP . 'invalid_routes' . DS]
-        );
-        $builder = Router::createRouteBuilder('/');
-        try {
-            $app->routes($builder);
-
-            $this->fail('invalid_routes/routes.php file should raise an error.');
-        } catch (\InvalidArgumentException $e) {
-            $this->assertTrue(Router::$initialized, 'Should be toggled to prevent duplicate route errors');
-            $this->assertContains('route class', $e->getMessage());
-        }
-    }
 }

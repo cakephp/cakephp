@@ -78,10 +78,10 @@ class BasicAuthenticateTest extends TestCase
      */
     public function testAuthenticateNoData()
     {
-        $request = new ServerRequest('posts/index');
+        $request = new ServerRequest(['url' => 'posts/index']);
 
         $this->response->expects($this->never())
-            ->method('header');
+            ->method('withHeader');
 
         $this->assertFalse($this->auth->getUser($request));
     }
@@ -173,7 +173,7 @@ class BasicAuthenticateTest extends TestCase
      */
     public function testAuthenticateChallenge()
     {
-        $request = new ServerRequest('posts/index');
+        $request = new ServerRequest(['url' => 'posts/index']);
 
         try {
             $this->auth->unauthenticated($request, $this->response);

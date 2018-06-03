@@ -25,7 +25,7 @@ use Cake\Core\Plugin;
 use Cake\Datasource\Exception\MissingDatasourceConfigException;
 use Cake\Datasource\Exception\MissingDatasourceException;
 use Cake\Error\ExceptionRenderer;
-use Cake\Event\Event;
+use Cake\Event\EventInterface;
 use Cake\Event\EventManager;
 use Cake\Http\Exception\InternalErrorException;
 use Cake\Http\Exception\MethodNotAllowedException;
@@ -93,7 +93,7 @@ class TestErrorController extends Controller
      *
      * @return void
      */
-    public function beforeRender(Event $event)
+    public function beforeRender(EventInterface $event)
     {
         echo $this->Blueberry->testName;
     }
@@ -366,7 +366,7 @@ class ExceptionRendererTest extends TestCase
     {
         Router::reload();
 
-        $request = new ServerRequest('posts/view/1000');
+        $request = new ServerRequest(['url' => 'posts/view/1000']);
         Router::setRequestInfo($request);
 
         $exception = new NotFoundException('Custom message');
@@ -389,7 +389,7 @@ class ExceptionRendererTest extends TestCase
     {
         Router::reload();
 
-        $request = new ServerRequest('posts/view/1000?sort=title&direction=desc');
+        $request = new ServerRequest(['url' => 'posts/view/1000?sort=title&direction=desc']);
         $request = $request->withHeader('Accept', 'application/json');
         $request = $request->withHeader('Content-Type', 'application/json');
         Router::setRequestInfo($request);
@@ -442,7 +442,7 @@ class ExceptionRendererTest extends TestCase
     {
         Router::reload();
 
-        $request = new ServerRequest('pages/<span id=333>pink</span></id><script>document.body.style.background = t=document.getElementById(333).innerHTML;window.alert(t);</script>');
+        $request = new ServerRequest(['url' => 'pages/<span id=333>pink</span></id><script>document.body.style.background = t=document.getElementById(333).innerHTML;window.alert(t);</script>']);
         Router::setRequestInfo($request);
 
         $exception = new NotFoundException('Custom message');
@@ -751,7 +751,7 @@ class ExceptionRendererTest extends TestCase
         $ExceptionRenderer->controller = new Controller();
         $ExceptionRenderer->controller->getEventManager()->on(
             'Controller.beforeRender',
-            function (Event $event) {
+            function (EventInterface $event) {
                 $this->called = true;
                 $event->getSubject()->viewBuilder()->setLayoutPath('boom');
             }
@@ -850,7 +850,7 @@ class ExceptionRendererTest extends TestCase
     public function testRenderShutdownEvents()
     {
         $fired = [];
-        $listener = function (Event $event) use (&$fired) {
+        $listener = function (EventInterface $event) use (&$fired) {
             $fired[] = $event->getName();
         };
         $events = EventManager::instance();
@@ -872,7 +872,7 @@ class ExceptionRendererTest extends TestCase
     public function testSubclassTriggerShutdownEvents()
     {
         $fired = [];
-        $listener = function (Event $event) use (&$fired) {
+        $listener = function (EventInterface $event) use (&$fired) {
             $fired[] = $event->getName();
         };
         $events = EventManager::instance();

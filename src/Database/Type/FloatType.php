@@ -28,29 +28,6 @@ class FloatType extends BaseType implements BatchCastingInterface
 {
 
     /**
-     * Identifier name for this type.
-     *
-     * (This property is declared here again so that the inheritance from
-     * Cake\Database\Type can be removed in the future.)
-     *
-     * @var string|null
-     */
-    protected $_name;
-
-    /**
-     * Constructor.
-     *
-     * (This method is declared here again so that the inheritance from
-     * Cake\Database\Type can be removed in the future.)
-     *
-     * @param string|null $name The name identifying this type
-     */
-    public function __construct($name = null)
-    {
-        $this->_name = $name;
-    }
-
-    /**
      * The class to use for representing number objects
      *
      * @var string

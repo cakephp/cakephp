@@ -418,48 +418,6 @@ class ClientTest extends TestCase
     }
 
     /**
-     * Test authentication adapter that mutates request.
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testAuthenticationWithMutation()
-    {
-        $this->deprecated(function () {
-            static::setAppNamespace();
-            $response = new Response();
-            $mock = $this->getMockBuilder('Cake\Http\Client\Adapter\Stream')
-                ->setMethods(['send'])
-                ->getMock();
-            $headers = [
-                'Authorization' => 'Bearer abc123',
-                'Proxy-Authorization' => 'Bearer abc123',
-            ];
-            $mock->expects($this->once())
-                ->method('send')
-                ->with($this->callback(function ($request) use ($headers) {
-                    $this->assertEquals(Request::METHOD_GET, $request->getMethod());
-                    $this->assertEquals('http://cakephp.org/', '' . $request->getUri());
-                    $this->assertEquals($headers['Authorization'], $request->getHeaderLine('Authorization'));
-                    $this->assertEquals($headers['Proxy-Authorization'], $request->getHeaderLine('Proxy-Authorization'));
-
-                    return true;
-                }))
-                ->will($this->returnValue([$response]));
-
-            $http = new Client([
-                'host' => 'cakephp.org',
-                'adapter' => $mock
-            ]);
-            $result = $http->get('/', [], [
-                'auth' => ['type' => 'TestApp\Http\CompatAuth'],
-                'proxy' => ['type' => 'TestApp\Http\CompatAuth'],
-            ]);
-            $this->assertSame($result, $response);
-        });
-    }
-
-    /**
      * Return a list of HTTP methods.
      *
      * @return array

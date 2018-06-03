@@ -16,8 +16,9 @@ namespace Cake\Test\TestCase\TestSuite;
 use Cake\Console\Shell;
 use Cake\Core\Configure;
 use Cake\TestSuite\ConsoleIntegrationTestCase;
+use PHPUnit\Framework\AssertionFailedError;
 
-class ConsoleIntegrationTestCaseTest extends ConsoleIntegrationTestCase
+class ConsoleIntegrationTestTraitTest extends ConsoleIntegrationTestCase
 {
 
     /**
@@ -152,13 +153,13 @@ class ConsoleIntegrationTestCaseTest extends ConsoleIntegrationTestCase
     }
 
     /**
-     * tests _commandStringToArgs
+     * tests commandStringToArgs
      *
      * @return void
      */
     public function testCommandStringToArgs()
     {
-        $result = $this->_commandStringToArgs('command --something=nothing --with-spaces="quote me on that" \'quoted \"arg\"\'');
+        $result = $this->commandStringToArgs('command --something=nothing --with-spaces="quote me on that" \'quoted \"arg\"\'');
         $expected = [
             'command',
             '--something=nothing',
@@ -168,10 +169,49 @@ class ConsoleIntegrationTestCaseTest extends ConsoleIntegrationTestCase
         $this->assertSame($expected, $result);
 
         $json = json_encode(['key' => '"val"', 'this' => true]);
-        $result = $this->_commandStringToArgs("   --json='$json'");
+        $result = $this->commandStringToArgs("   --json='$json'");
         $expected = [
             '--json=' . $json
         ];
         $this->assertSame($expected, $result);
+    }
+
+    /**
+     * tests failure messages for assertions
+     *
+     * @param string $assertion Assertion method
+     * @param string $message Expected failure message
+     * @param string $command Command to test
+     * @param mixed ...$rest
+     * @dataProvider assertionFailureMessagesProvider
+     */
+    public function testAssertionFailureMessages($assertion, $message, $command, ...$rest)
+    {
+        $this->expectException(AssertionFailedError::class);
+        $this->expectExceptionMessage($message);
+
+        $this->exec($command);
+
+        call_user_func_array([$this, $assertion], $rest);
+    }
+
+    /**
+     * data provider for assertion failure messages
+     *
+     * @return array
+     */
+    public function assertionFailureMessagesProvider()
+    {
+        return [
+            'assertExitCode' => ['assertExitCode', 'Failed asserting that 1 matches exit code 0.', 'routes', Shell::CODE_ERROR],
+            'assertOutputEmpty' => ['assertOutputEmpty', 'Failed asserting that output is empty.', 'routes'],
+            'assertOutputContains' => ['assertOutputContains', 'Failed asserting that \'missing\' is in output.', 'routes', 'missing'],
+            'assertOutputNotContains' => ['assertOutputNotContains', 'Failed asserting that \'Defaults\' is not in output.', 'routes', 'Defaults'],
+            'assertOutputRegExp' => ['assertOutputRegExp', 'Failed asserting that /missing/ PCRE pattern found in output.', 'routes', '/missing/'],
+            'assertOutputContainsRow' => ['assertOutputContainsRow', 'Failed asserting that Array (...) row was in output.', 'routes', ['test', 'missing']],
+            'assertErrorContains' => ['assertErrorContains', 'Failed asserting that \'test\' is in error output.', 'routes', 'test'],
+            'assertErrorRegExp' => ['assertErrorRegExp', 'Failed asserting that /test/ PCRE pattern found in error output.', 'routes', '/test/'],
+            'assertErrorEmpty' => ['assertErrorEmpty', 'Failed asserting that error output is empty.', 'integration args_and_options'],
+        ];
     }
 }
