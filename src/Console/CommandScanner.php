@@ -63,13 +63,13 @@ class CommandScanner
             App::path('Shell')[0],
             $appNamespace . '\Shell\\',
             '',
-            ['app']
+            []
         );
         $appCommands = $this->scanDir(
             App::path('Command')[0],
             $appNamespace . '\Command\\',
             '',
-            ['app']
+            []
         );
 
         return array_merge($appShells, $appCommands);
