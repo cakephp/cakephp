@@ -423,6 +423,7 @@ class Email implements JsonSerializable, Serializable
      */
     public function from($email = null, $name = null)
     {
+        deprecationWarning('Email::from() is deprecated. Use Email::setFrom() or Email::getFrom() instead.');
         if ($email === null) {
             return $this->getFrom();
         }
@@ -601,6 +602,7 @@ class Email implements JsonSerializable, Serializable
      */
     public function returnPath($email = null, $name = null)
     {
+        deprecationWarning('Email::returnPath() is deprecated. Use Email::setReturnPath() or Email::getReturnPath() instead.');
         if ($email === null) {
             return $this->getReturnPath();
         }
@@ -2430,7 +2432,7 @@ class Email implements JsonSerializable, Serializable
             if (!preg_match('/<[a-z]+.*>/i', $line)) {
                 $formatted = array_merge(
                     $formatted,
-                    explode("\n", wordwrap($line, $wrapLength, "\n", $cut))
+                    explode("\n", Text::wordWrap($line, $wrapLength, "\n", $cut))
                 );
                 continue;
             }
@@ -2451,7 +2453,7 @@ class Email implements JsonSerializable, Serializable
                             if ($tmpLineLength > 0) {
                                 $formatted = array_merge(
                                     $formatted,
-                                    explode("\n", wordwrap(trim($tmpLine), $wrapLength, "\n", $cut))
+                                    explode("\n", Text::wordWrap(trim($tmpLine), $wrapLength, "\n", $cut))
                                 );
                                 $tmpLine = '';
                                 $tmpLineLength = 0;

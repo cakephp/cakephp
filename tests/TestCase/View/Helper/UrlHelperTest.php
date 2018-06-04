@@ -70,7 +70,7 @@ class UrlHelperTest extends TestCase
      *
      * @return void
      */
-    public function testUrlConversion()
+    public function testBuildUrlConversion()
     {
         Router::connect('/:controller/:action/*');
 
@@ -105,9 +105,36 @@ class UrlHelperTest extends TestCase
     }
 
     /**
+     * ensure that build factors in base paths.
+     *
      * @return void
      */
-    public function testUrlConversionUnescaped()
+    public function testBuildBasePath()
+    {
+        Router::connect('/:controller/:action/*');
+        $request = new ServerRequest([
+            'params' => [
+                'action' => 'index',
+                'plugin' => null,
+                'controller' => 'subscribe',
+            ],
+            'url' => '/subscribe',
+            'base' => '/magazine',
+            'webroot' => '/magazine/'
+        ]);
+        Router::pushRequest($request);
+
+        $this->assertEquals('/magazine/subscribe', $this->Helper->build());
+        $this->assertEquals(
+            '/magazine/articles/add',
+            $this->Helper->build(['controller' => 'articles', 'action' => 'add'])
+        );
+    }
+
+    /**
+     * @return void
+     */
+    public function testBuildUrlConversionUnescaped()
     {
         $result = $this->Helper->build('/controller/action/1?one=1&two=2', ['escape' => false]);
         $this->assertEquals('/controller/action/1?one=1&two=2', $result);
@@ -203,6 +230,30 @@ class UrlHelperTest extends TestCase
 
         $result = $this->Helper->assetUrl('dir/big+tall/image', ['ext' => '.jpg']);
         $this->assertEquals('dir/big%2Btall/image.jpg', $result);
+    }
+
+    /**
+     * Test assetUrl and data uris
+     *
+     * @return void
+     */
+    public function testAssetUrlDataUri()
+    {
+        $request = $this->Helper->request
+            ->withAttribute('base', 'subdir')
+            ->withAttribute('webroot', 'subdir/');
+
+        $this->Helper->request = $request;
+        Router::pushRequest($request);
+
+        $data = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4' .
+            '/8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==';
+        $result = $this->Helper->assetUrl($data);
+        $this->assertSame($data, $result);
+
+        $data = 'data:image/png;base64,<evil>';
+        $result = $this->Helper->assetUrl($data);
+        $this->assertHtml(h($data), $result);
     }
 
     /**

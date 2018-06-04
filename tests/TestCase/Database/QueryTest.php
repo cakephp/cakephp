@@ -2869,7 +2869,7 @@ class QueryTest extends TestCase
         }
 
         $results = $query->decorateResults(null, true)->execute();
-        while ($row = $result->fetch('assoc')) {
+        while ($row = $results->fetch('assoc')) {
             $this->assertArrayNotHasKey('foo', $row);
             $this->assertArrayNotHasKey('modified_id', $row);
         }
@@ -4777,6 +4777,25 @@ class QueryTest extends TestCase
             ->execute()
             ->fetchAssoc();
         $this->assertSame(['id' => 1, 'user_id' => 1, 'is_active' => false], $results);
+    }
+
+    /**
+     * Test that calling fetchAssoc return an empty associated array.
+     * @return void
+     * @throws \Exception
+     */
+    public function testFetchAssocWithEmptyResult()
+    {
+        $this->loadFixtures('Profiles');
+        $query = new Query($this->connection);
+
+        $results = $query
+            ->select(['id'])
+            ->from('profiles')
+            ->where(['id' => -1])
+            ->execute()
+            ->fetchAssoc();
+        $this->assertSame([], $results);
     }
 
     /**

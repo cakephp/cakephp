@@ -32,29 +32,7 @@ use IteratorAggregate;
  */
 class StatementDecorator implements StatementInterface, Countable, IteratorAggregate
 {
-
     use TypeConverterTrait;
-
-    /**
-     * Used to designate that numeric indexes be returned in a result when calling fetch methods
-     *
-     * @var string
-     */
-    const FETCH_TYPE_NUM = 'num';
-
-    /**
-     * Used to designate that an associated array be returned in a result when calling fetch methods
-     *
-     * @var string
-     */
-    const FETCH_TYPE_ASSOC = 'assoc';
-
-    /**
-     * Used to designate that a stdClass object be returned in a result when calling fetch methods
-     *
-     * @var string
-     */
-    const FETCH_TYPE_OBJ = 'obj';
 
     /**
      * Statement instance implementation, such as PDOStatement
@@ -221,11 +199,13 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      * Returns the next row in a result set as an associative array. Calling this function is the same as calling
      * $statement->fetch(StatementDecorator::FETCH_TYPE_ASSOC). If no results are found false is returned.
      *
-     * @return array|false Result array containing columns and values an an associative array or false if no results
+     * @return array Result array containing columns and values an an associative array or an empty array if no results
      */
     public function fetchAssoc()
     {
-        return $this->fetch(static::FETCH_TYPE_ASSOC);
+        $result = $this->fetch(static::FETCH_TYPE_ASSOC);
+
+        return $result ?: [];
     }
 
     /**
@@ -239,7 +219,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
         $result = $this->fetch(static::FETCH_TYPE_NUM);
         if (isset($result[$position])) {
             return $result[$position];
-        };
+        }
 
         return false;
     }

@@ -191,6 +191,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $name The name under which the provider should be set.
      * @return object|string|null
+     * @throws \ReflectionException
      */
     public function getProvider($name)
     {

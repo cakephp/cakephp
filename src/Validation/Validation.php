@@ -718,8 +718,7 @@ class Validation
         $decimalPoint = $formatter->getSymbol(NumberFormatter::DECIMAL_SEPARATOR_SYMBOL);
         $groupingSep = $formatter->getSymbol(NumberFormatter::GROUPING_SEPARATOR_SYMBOL);
 
-        $check = str_replace($groupingSep, '', $check);
-        $check = str_replace($decimalPoint, '.', $check);
+        $check = str_replace([$groupingSep, $decimalPoint], ['', '.'], $check);
 
         return static::_check($check, $regex);
     }
@@ -1558,6 +1557,41 @@ class Validation
     public static function hexColor($check)
     {
         return static::_check($check, '/^#[0-9a-f]{6}$/iD');
+    }
+
+    /**
+     * Check that the input value has a valid International Bank Account Number IBAN syntax
+     * Requirements are uppercase, no whitespaces, max length 34, country code and checksum exist at right spots,
+     * body matches against checksum via Mod97-10 algorithm
+     *
+     * @param string $check The value to check
+     *
+     * @return bool Success
+     */
+    public static function iban($check)
+    {
+        if (!preg_match('/^[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}$/', $check)) {
+            return false;
+        }
+
+        $country = substr($check, 0, 2);
+        $checkInt = intval(substr($check, 2, 2));
+        $account = substr($check, 4);
+        $search = range('A', 'Z');
+        $replace = [];
+        foreach (range(10, 35) as $tmp) {
+            $replace[] = strval($tmp);
+        }
+        $numStr = str_replace($search, $replace, $account . $country . '00');
+        $checksum = intval(substr($numStr, 0, 1));
+        $numStrLength = strlen($numStr);
+        for ($pos = 1; $pos < $numStrLength; $pos++) {
+            $checksum *= 10;
+            $checksum += intval(substr($numStr, $pos, 1));
+            $checksum %= 97;
+        }
+
+        return ((98 - $checksum) === $checkInt);
     }
 
     /**

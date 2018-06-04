@@ -960,13 +960,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Returns an association object configured for the specified alias if any.
      *
-     * @deprecated 3.6.0 Use getAssociation() and Table::hasAssocation() instead.
+     * @deprecated 3.6.0 Use getAssociation() and Table::hasAssociation() instead.
      * @param string $name the alias used for the association.
      * @return \Cake\ORM\Association|null Either the association or null.
      */
     public function association($name)
     {
-        deprecationWarning('Use Table::getAssociation() and Table::hasAssocation() instead.');
+        deprecationWarning('Use Table::getAssociation() and Table::hasAssociation() instead.');
 
         return $this->findAssociation($name);
     }
@@ -1677,12 +1677,18 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         $options += [
             'atomic' => true,
-            'defaults' => true
+            'defaults' => true,
         ];
 
-        return $this->_executeTransaction(function () use ($search, $callback, $options) {
+        $entity = $this->_executeTransaction(function () use ($search, $callback, $options) {
             return $this->_processFindOrCreate($search, $callback, $options);
         }, $options['atomic']);
+
+        if ($entity && $this->_transactionCommitted($options['atomic'], true)) {
+            $this->dispatchEvent('Model.afterSaveCommit', compact('entity', 'options'));
+        }
+
+        return $entity;
     }
 
     /**
@@ -1872,8 +1878,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * $articles->save($entity, ['associated' => false]);
      * ```
      *
-     * @throws \Cake\ORM\Exception\RolledbackTransactionException If the transaction
-     *   is aborted in the afterSave event.
+     * @param \Cake\Datasource\EntityInterface $entity
+     * @param array $options
+     * @return bool|\Cake\Datasource\EntityInterface|mixed
+     * @throws \Cake\ORM\Exception\RolledbackTransactionException If the transaction is aborted in the afterSave event.
      */
     public function save(EntityInterface $entity, $options = [])
     {

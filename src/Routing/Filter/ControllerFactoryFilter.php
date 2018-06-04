@@ -55,6 +55,7 @@ class ControllerFactoryFilter extends DispatcherFilter
      * @param \Cake\Http\ServerRequest $request Request object
      * @param \Cake\Http\Response $response Response for the controller.
      * @return \Cake\Controller\Controller
+     * @throws \ReflectionException
      */
     protected function _getController($request, $response)
     {

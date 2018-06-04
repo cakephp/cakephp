@@ -144,7 +144,8 @@ class Inflector
         'goose' => 'geese',
         'foot' => 'feet',
         'foe' => 'foes',
-        'sieve' => 'sieves'
+        'sieve' => 'sieves',
+        'cache' => 'caches',
     ];
 
     /**
@@ -764,7 +765,7 @@ class Inflector
 
         $string = str_replace(
             array_keys(static::$_transliteration),
-            array_values(static::$_transliteration),
+            static::$_transliteration,
             $string
         );
 

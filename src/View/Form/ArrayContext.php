@@ -313,7 +313,7 @@ class ArrayContext implements ContextInterface
             return [];
         }
 
-        return Hash::get($this->_context['errors'], $field);
+        return (array)Hash::get($this->_context['errors'], $field);
     }
 
     /**

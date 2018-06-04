@@ -754,18 +754,18 @@ class ViewTest extends TestCase
         $View = new TestView();
 
         // Prefix specific layout
-        $View->request = $View->request->withParam('prefix', 'foo_prefix');
+        $View->setRequest($View->getRequest()->withParam('prefix', 'foo_prefix'));
         $expected = TEST_APP . 'TestApp' . DS . 'Template' . DS .
             'FooPrefix' . DS . 'Layout' . DS . 'default.ctp';
         $result = $View->getLayoutFileName();
         $this->assertPathEquals($expected, $result);
 
-        $View->request = $View->request->withParam('prefix', 'FooPrefix');
+        $View->setRequest($View->getRequest()->withParam('prefix', 'FooPrefix'));
         $result = $View->getLayoutFileName();
         $this->assertPathEquals($expected, $result);
 
         // Nested prefix layout
-        $View->request = $View->request->withParam('prefix', 'foo_prefix/bar_prefix');
+        $View->setRequest($View->getRequest()->withParam('prefix', 'foo_prefix/bar_prefix'));
         $expected = TEST_APP . 'TestApp' . DS . 'Template' . DS .
             'FooPrefix' . DS . 'BarPrefix' . DS . 'Layout' . DS . 'default.ctp';
         $result = $View->getLayoutFileName();
@@ -777,7 +777,7 @@ class ViewTest extends TestCase
         $this->assertPathEquals($expected, $result);
 
         // Fallback to app's layout
-        $View->request = $View->request->withParam('prefix', 'Admin');
+        $View->setRequest($View->getRequest()->withParam('prefix', 'Admin'));
         $expected = TEST_APP . 'TestApp' . DS . 'Template' . DS .
             'Layout' . DS . 'default.ctp';
         $result = $View->getLayoutFileName();
@@ -921,7 +921,7 @@ class ViewTest extends TestCase
      */
     public function testPrefixElement()
     {
-        $this->View->request = $this->View->request->withParam('prefix', 'Admin');
+        $this->View->setRequest($this->View->getRequest()->withParam('prefix', 'Admin'));
         $result = $this->View->element('prefix_element');
         $this->assertEquals('this is a prefixed test element', $result);
 
@@ -932,7 +932,7 @@ class ViewTest extends TestCase
         $result = $this->View->element('test_plugin_element');
         $this->assertEquals('this is the test set using View::$plugin plugin prefixed element', $result);
 
-        $this->View->request = $this->View->request->withParam('prefix', 'FooPrefix/BarPrefix');
+        $this->View->setRequest($this->View->getRequest()->withParam('prefix', 'FooPrefix/BarPrefix'));
         $result = $this->View->element('prefix_element');
         $this->assertEquals('this is a nested prefixed test element', $result);
 
@@ -1361,7 +1361,7 @@ class ViewTest extends TestCase
         $this->assertNull($View->render(false, 'ajax2'));
 
         $this->PostsController->helpers = ['Html'];
-        $this->PostsController->request = $this->PostsController->request->withParam('action', 'index');
+        $this->PostsController->setRequest($this->PostsController->getRequest()->withParam('action', 'index'));
         Configure::write('Cache.check', true);
 
         $View = $this->PostsController->createView('Cake\Test\TestCase\View\TestView');
@@ -1909,7 +1909,7 @@ TEXT;
      */
     public function testExtendPrefixElement()
     {
-        $this->View->request = $this->View->request->withParam('prefix', 'Admin');
+        $this->View->setRequest($this->View->getRequest()->withParam('prefix', 'Admin'));
         $this->View->layout = false;
         $content = $this->View->render('extend_element');
         $expected = <<<TEXT
@@ -1964,7 +1964,7 @@ TEXT;
      */
     public function testExtendWithPrefixElementBeforeExtend()
     {
-        $this->View->request = $this->View->request->withParam('prefix', 'Admin');
+        $this->View->setRequest($this->View->getRequest()->withParam('prefix', 'Admin'));
         $this->View->layout = false;
         $result = $this->View->render('extend_with_element');
         $expected = <<<TEXT

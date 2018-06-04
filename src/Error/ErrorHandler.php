@@ -106,8 +106,6 @@ class ErrorHandler extends BaseErrorHandler
      *
      * Template method of BaseErrorHandler.
      *
-     * Only when debug > 2 will a formatted error be displayed.
-     *
      * @param array $error An array of error data.
      * @param bool $debug Whether or not the app is in debug mode.
      * @return void

@@ -67,12 +67,45 @@ class MiddlewareDispatcher
     }
 
     /**
+     * Create a PSR7 request from the request spec.
+     *
+     * @param array $spec The request spec.
+     * @return \Psr\Http\Message\ServerRequestInterface
+     */
+    protected function _createRequest($spec)
+    {
+        if (isset($spec['input'])) {
+            $spec['post'] = [];
+        }
+        $environment = array_merge(
+            array_merge($_SERVER, ['REQUEST_URI' => $spec['url'], 'PHP_SELF' => '/']),
+            $spec['environment']
+        );
+        $request = ServerRequestFactory::fromGlobals(
+            $environment,
+            $spec['query'],
+            $spec['post'],
+            $spec['cookies']
+        );
+        $request = $request->withAttribute('session', $spec['session']);
+
+        if (isset($spec['input'])) {
+            $stream = new Stream('php://memory', 'rw');
+            $stream->write($spec['input']);
+            $stream->rewind();
+            $request = $request->withBody($stream);
+        }
+
+        return $request;
+    }
+
+    /**
      * Run a request and get the response.
      *
-     * @param \Cake\Http\ServerRequest $request The request to execute.
+     * @param array $requestSpec The request spec to execute.
      * @return \Psr\Http\Message\ResponseInterface The generated response.
      */
-    public function execute($request)
+    public function execute($requestSpec)
     {
         try {
             $reflect = new ReflectionClass($this->_class);
@@ -92,37 +125,7 @@ class MiddlewareDispatcher
         );
 
         $server = new Server($app);
-        $psrRequest = $this->_createRequest($request);
 
-        return $server->run($psrRequest);
-    }
-
-    /**
-     * Create a PSR7 request from the request spec.
-     *
-     * @param array $spec The request spec.
-     * @return \Psr\Http\Message\RequestInterface
-     */
-    protected function _createRequest($spec)
-    {
-        if (isset($spec['input'])) {
-            $spec['post'] = [];
-        }
-        $request = ServerRequestFactory::fromGlobals(
-            array_merge($_SERVER, $spec['environment'], ['REQUEST_URI' => $spec['url']]),
-            $spec['query'],
-            $spec['post'],
-            $spec['cookies']
-        );
-        $request = $request->withAttribute('session', $spec['session']);
-
-        if (isset($spec['input'])) {
-            $stream = new Stream('php://memory', 'rw');
-            $stream->write($spec['input']);
-            $stream->rewind();
-            $request = $request->withBody($stream);
-        }
-
-        return $request;
+        return $server->run($this->_createRequest($requestSpec));
     }
 }

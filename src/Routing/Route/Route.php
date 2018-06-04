@@ -360,7 +360,7 @@ class Route
             $mode = 'u';
         }
         krsort($routeParams);
-        $parsed = str_replace(array_keys($routeParams), array_values($routeParams), $parsed);
+        $parsed = str_replace(array_keys($routeParams), $routeParams, $parsed);
         $this->_compiledRoute = '#^' . $parsed . '[/]*$#' . $mode;
         $this->keys = $names;
 
@@ -631,19 +631,6 @@ class Route
         unset($context['params']);
         $hostOptions = array_intersect_key($url, $context);
 
-        // Check for properties that will cause an
-        // absolute url. Copy the other properties over.
-        if (isset($hostOptions['_scheme']) ||
-            isset($hostOptions['_port']) ||
-            isset($hostOptions['_host'])
-        ) {
-            $hostOptions += $context;
-
-            if ($hostOptions['_port'] == $context['_port']) {
-                unset($hostOptions['_port']);
-            }
-        }
-
         // Apply the _host option if possible
         if (isset($this->options['_host'])) {
             if (!isset($hostOptions['_host']) && strpos($this->options['_host'], '*') === false) {
@@ -656,6 +643,19 @@ class Route
             // The host did not match the route preferences
             if (!$this->hostMatches($hostOptions['_host'])) {
                 return false;
+            }
+        }
+
+        // Check for properties that will cause an
+        // absolute url. Copy the other properties over.
+        if (isset($hostOptions['_scheme']) ||
+            isset($hostOptions['_port']) ||
+            isset($hostOptions['_host'])
+        ) {
+            $hostOptions += $context;
+
+            if (getservbyname($hostOptions['_scheme'], 'tcp') === $hostOptions['_port']) {
+                unset($hostOptions['_port']);
             }
         }
 

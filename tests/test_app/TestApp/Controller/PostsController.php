@@ -63,7 +63,7 @@ class PostsController extends AppController
     /**
      * Sets a flash message and redirects (no rendering)
      *
-     * @return \Cake\Network\Response
+     * @return \Cake\Http\Response
      */
     public function flashNoRender()
     {
@@ -95,5 +95,25 @@ class PostsController extends AppController
     public function file()
     {
         return $this->response->withFile(__FILE__);
+    }
+
+    public function header()
+    {
+        return $this->getResponse()->withHeader('X-Cake', 'custom header');
+    }
+
+    public function empty_response()
+    {
+        return $this->getResponse()->withStringBody('');
+    }
+
+    public function stacked_flash()
+    {
+        $this->Flash->error('Error 1');
+        $this->Flash->error('Error 2');
+        $this->Flash->success('Success 1', ['key' => 'custom']);
+        $this->Flash->success('Success 2', ['key' => 'custom']);
+
+        return $this->getResponse()->withStringBody('');
     }
 }

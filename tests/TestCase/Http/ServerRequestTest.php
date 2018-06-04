@@ -212,6 +212,23 @@ class ServerRequestTest extends TestCase
     }
 
     /**
+     * Test getPath().
+     *
+     * @return void
+     */
+    public function testGetPath()
+    {
+        $request = new ServerRequest(['url' => '']);
+        $this->assertSame('/', $request->getPath());
+
+        $request = new ServerRequest(['url' => 'some/path?one=something&two=else']);
+        $this->assertEquals('/some/path', $request->getPath());
+
+        $request = $request->withRequestTarget('/foo/bar?x=y');
+        $this->assertEquals('/foo/bar', $request->getPath());
+    }
+
+    /**
      * Test addParams() method
      *
      * @group deprecated
@@ -3573,6 +3590,7 @@ XML;
                     'controller' => 'Articles',
                     'action' => 'index'
                 ],
+                'url' => '/articles/view',
                 'base' => '/cakeapp',
                 'webroot' => '/cakeapp/'
             ]);
@@ -3580,6 +3598,7 @@ XML;
             if ($prop === 'session') {
                 $this->assertSame($request->getSession(), $request->getAttribute($prop));
             } else {
+                $this->assertNotEmpty($request->getAttribute($prop));
                 $this->assertSame($request->{$prop}, $request->getAttribute($prop));
             }
         });
@@ -3611,7 +3630,8 @@ XML;
                 'pass' => [],
             ],
             'webroot' => '',
-            'base' => ''
+            'base' => '',
+            'here' => '/'
         ];
         $this->assertEquals($expected, $new->getAttributes());
     }
@@ -3716,6 +3736,7 @@ XML;
     public function emulatedPropertyProvider()
     {
         return [
+            ['here'],
             ['params'],
             ['base'],
             ['webroot'],

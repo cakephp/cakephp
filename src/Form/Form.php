@@ -20,9 +20,11 @@ use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManager;
 use Cake\Form\Schema;
+use Cake\Utility\Hash;
 use Cake\Validation\Validator;
 use Cake\Validation\ValidatorAwareInterface;
 use Cake\Validation\ValidatorAwareTrait;
+use ReflectionMethod;
 
 /**
  * Form abstraction used to create forms not tied to ORM backed models,
@@ -87,6 +89,14 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      * @var \Cake\Validation\Validator
      */
     protected $_validator;
+
+    /**
+     * Form's data.
+     *
+     * @var array
+     * @since 3.7.0
+     */
+    protected $_data = [];
 
     /**
      * Constructor
@@ -224,7 +234,10 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
     {
         $validator = $this->getValidator();
         if (!$validator->count()) {
-            $validator = $this->validator();
+            $method = new ReflectionMethod($this, 'validator');
+            if ($method->getDeclaringClass()->getName() !== __CLASS__) {
+                $validator = $this->validator();
+            }
         }
         $this->_errors = $validator->errors($data);
 
@@ -298,6 +311,37 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
     protected function _execute(array $data)
     {
         return true;
+    }
+
+    /**
+     * Get field data.
+     *
+     * @param string|null $field The field name or null to get data array with
+     *   all fields.
+     * @return mixed
+     * @since 3.7.0
+     */
+    public function getData($field = null)
+    {
+        if ($field === null) {
+            return $this->_data;
+        }
+
+        return Hash::get($this->_data, $field);
+    }
+
+    /**
+     * Set form data.
+     *
+     * @param array $data Data array.
+     * @return $this
+     * @since 3.7.0
+     */
+    public function setData(array $data)
+    {
+        $this->_data = $data;
+
+        return $this;
     }
 
     /**

@@ -41,6 +41,7 @@ class RulesProvider
      * Constructor, sets the default class to use for calling methods
      *
      * @param string|object $class the default class to proxy
+     * @throws \ReflectionException
      */
     public function __construct($class = Validation::class)
     {

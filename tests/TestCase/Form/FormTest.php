@@ -136,6 +136,8 @@ class FormTest extends TestCase
     {
         $this->deprecated(function () {
             $form = new ValidateForm();
+            $this->assertCount(1, $form->validator(), 'should have one rule');
+
             $data = [];
             $this->assertFalse($form->validate($data));
             $this->assertCount(1, $form->errors());
@@ -232,6 +234,22 @@ class FormTest extends TestCase
     }
 
     /**
+     * Test setting and getting form data.
+     *
+     * @return void
+     */
+    public function testDataSetGet()
+    {
+        $form = new Form();
+        $expected = ['title' => 'title', 'is_published' => true];
+        $form->setData(['title' => 'title', 'is_published' => true]);
+
+        $this->assertSame($expected, $form->getData());
+        $this->assertEquals('title', $form->getData('title'));
+        $this->assertNull($form->getData('non-existent'));
+    }
+
+    /**
      * test __debugInfo
      *
      * @return void
@@ -243,5 +261,6 @@ class FormTest extends TestCase
         $this->assertArrayHasKey('_schema', $result);
         $this->assertArrayHasKey('_errors', $result);
         $this->assertArrayHasKey('_validator', $result);
+        $this->assertArrayHasKey('_data', $result);
     }
 }

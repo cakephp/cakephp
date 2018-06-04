@@ -142,7 +142,7 @@ class BreadcrumbsHelper extends Helper
      * the link)
      * - *templateVars*: Specific template vars in case you override the templates provided.
      * @return $this
-     * @throws LogicException In case the index is out of bound
+     * @throws \LogicException In case the index is out of bound
      */
     public function insertAt($index, $title, $url = null, array $options = [])
     {
@@ -171,7 +171,7 @@ class BreadcrumbsHelper extends Helper
      * the link)
      * - *templateVars*: Specific template vars in case you override the templates provided.
      * @return $this
-     * @throws LogicException In case the matching crumb can not be found
+     * @throws \LogicException In case the matching crumb can not be found
      */
     public function insertBefore($matchingTitle, $title, $url = null, array $options = [])
     {
@@ -200,7 +200,7 @@ class BreadcrumbsHelper extends Helper
      * the link)
      * - *templateVars*: Specific template vars in case you override the templates provided.
      * @return $this
-     * @throws LogicException In case the matching crumb can not be found.
+     * @throws \LogicException In case the matching crumb can not be found.
      */
     public function insertAfter($matchingTitle, $title, $url = null, array $options = [])
     {

@@ -94,6 +94,11 @@ class FormContext implements ContextInterface
             return $val;
         }
 
+        $val = $this->_form->getData($field);
+        if ($val !== null) {
+            return $val;
+        }
+
         if ($options['default'] !== null || !$options['schemaDefault']) {
             return $options['default'];
         }

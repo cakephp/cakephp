@@ -19,16 +19,10 @@ use Cake\Routing\Middleware\RoutingMiddleware;
 
 class Application extends BaseApplication
 {
-    /**
-     * Bootstrap hook.
-     *
-     * Nerfed as this is for IntegrationTestCase testing.
-     *
-     * @return void
-     */
+
     public function bootstrap()
     {
-        // Do nothing.
+        parent::bootstrap();
     }
 
     public function middleware($middleware)

@@ -7654,6 +7654,26 @@ class FormHelperTest extends TestCase
             '/a'
         ];
         $this->assertHtml($expected, $result);
+
+        $this->Form->setTemplates(['confirmJs' => 'if (confirm({{confirmMessage}})) { $(\'form[name="{{formName}}"]\').submit();};']);
+        $result = $this->Form->postLink(
+            'Delete',
+            '/posts/delete/1',
+            ['escape' => false, 'confirm' => 'Confirm this deletion?']
+        );
+        $expected = [
+            'form' => [
+                'method' => 'post', 'action' => '/posts/delete/1',
+                'name' => 'preg:/post_\w+/', 'style' => 'display:none;'
+            ],
+            'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
+            '/form',
+            'a' => ['href' => '#', 'onclick' => 'preg:/if \(confirm\("Confirm this deletion\?"\)\) \{ \$\(\'form\[name="post_\w+"\]\'\)\.submit\(\);\};/'],
+            'Delete',
+            '/a'
+        ];
+
+        $this->assertHtml($expected, $result);
     }
 
     /**

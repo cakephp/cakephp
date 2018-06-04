@@ -17,7 +17,6 @@ namespace Cake\Datasource;
 use BadMethodCallException;
 use Cake\Collection\Iterator\MapReduce;
 use Cake\Datasource\Exception\RecordNotFoundException;
-use Cake\Datasource\ResultSetDecorator;
 
 /**
  * Contains the characteristics for an object that is attached to a repository and
@@ -380,8 +379,8 @@ trait QueryTrait
      * Registers a new formatter callback function that is to be executed when trying
      * to fetch the results from the database.
      *
-     * Formatting callbacks will get a first parameter, a `ResultSetDecorator`, that
-     * can be traversed and modified at will.
+     * Formatting callbacks will get a first parameter, an object implementing
+     * `\Cake\Collection\CollectionInterface`, that can be traversed and modified at will.
      *
      * Callbacks are required to return an iterator object, which will be used as
      * the return value for this query's result. Formatter functions are applied

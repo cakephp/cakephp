@@ -97,119 +97,128 @@ SQL;
         return [
             // Timestamp
             [
-                'TIMESTAMP',
+                ['type' => 'TIMESTAMP'],
                 ['type' => 'timestamp', 'length' => null]
             ],
             [
-                'TIMESTAMP WITHOUT TIME ZONE',
+                ['type' => 'TIMESTAMP WITHOUT TIME ZONE'],
                 ['type' => 'timestamp', 'length' => null]
             ],
             // Date & time
             [
-                'DATE',
+                ['type' => 'DATE'],
                 ['type' => 'date', 'length' => null]
             ],
             [
-                'TIME',
+                ['type' => 'TIME'],
                 ['type' => 'time', 'length' => null]
             ],
             [
-                'TIME WITHOUT TIME ZONE',
+                ['type' => 'TIME WITHOUT TIME ZONE'],
                 ['type' => 'time', 'length' => null]
             ],
             // Integer
             [
-                'SMALLINT',
+                ['type' => 'SMALLINT'],
                 ['type' => 'smallinteger', 'length' => 5]
             ],
             [
-                'INTEGER',
+                ['type' => 'INTEGER'],
                 ['type' => 'integer', 'length' => 10]
             ],
             [
-                'SERIAL',
+                ['type' => 'SERIAL'],
                 ['type' => 'integer', 'length' => 10]
             ],
             [
-                'BIGINT',
+                ['type' => 'BIGINT'],
                 ['type' => 'biginteger', 'length' => 20]
             ],
             [
-                'BIGSERIAL',
+                ['type' => 'BIGSERIAL'],
                 ['type' => 'biginteger', 'length' => 20]
             ],
             // Decimal
             [
-                'NUMERIC',
+                ['type' => 'NUMERIC'],
                 ['type' => 'decimal', 'length' => null, 'precision' => null]
             ],
             [
-                'DECIMAL(10,2)',
+                ['type' => 'NUMERIC', 'default' => 'NULL::numeric'],
+                ['type' => 'decimal', 'length' => null, 'precision' => null, 'default' => null]
+            ],
+            [
+                ['type' => 'DECIMAL(10,2)', 'column_precision' => 10, 'column_scale' => 2],
                 ['type' => 'decimal', 'length' => 10, 'precision' => 2]
             ],
             // String
             [
-                'VARCHAR',
+                ['type' => 'VARCHAR'],
                 ['type' => 'string', 'length' => null]
             ],
             [
-                'VARCHAR(10)',
+                ['type' => 'VARCHAR(10)'],
                 ['type' => 'string', 'length' => 10]
             ],
             [
-                'CHARACTER VARYING',
+                ['type' => 'CHARACTER VARYING'],
                 ['type' => 'string', 'length' => null]
             ],
             [
-                'CHARACTER VARYING(10)',
+                ['type' => 'CHARACTER VARYING(10)'],
                 ['type' => 'string', 'length' => 10]
             ],
             [
-                'CHAR(10)',
+                ['type' => 'CHARACTER VARYING(255)', 'default' => 'NULL::character varying'],
+                ['type' => 'string', 'length' => 255, 'default' => null]
+            ],
+            [
+                ['type' => 'CHAR(10)'],
                 ['type' => 'string', 'fixed' => true, 'length' => 10]
             ],
             [
-                'CHARACTER(10)',
+                ['type' => 'CHARACTER(10)'],
                 ['type' => 'string', 'fixed' => true, 'length' => 10]
             ],
             [
-                'MONEY',
+                ['type' => 'MONEY'],
                 ['type' => 'string', 'length' => null]
             ],
             // UUID
             [
-                'UUID',
+                ['type' => 'UUID'],
                 ['type' => 'uuid', 'length' => null]
             ],
             [
-                'INET',
+                ['type' => 'INET'],
                 ['type' => 'string', 'length' => 39]
             ],
             // Text
             [
-                'TEXT',
+                ['type' => 'TEXT'],
                 ['type' => 'text', 'length' => null]
             ],
             // Blob
             [
-                'BYTEA',
+                ['type' => 'BYTEA'],
                 ['type' => 'binary', 'length' => null]
             ],
             // Float
             [
-                'REAL',
+                ['type' => 'REAL'],
                 ['type' => 'float', 'length' => null]
             ],
             [
-                'DOUBLE PRECISION',
+                ['type' => 'DOUBLE PRECISION'],
                 ['type' => 'float', 'length' => null]
             ],
+            // Json
             [
-                'JSON',
+                ['type' => 'JSON'],
                 ['type' => 'json', 'length' => null]
             ],
             [
-                'JSONB',
+                ['type' => 'JSONB'],
                 ['type' => 'json', 'length' => null]
             ],
         ];
@@ -221,11 +230,10 @@ SQL;
      * @dataProvider convertColumnProvider
      * @return void
      */
-    public function testConvertColumn($type, $expected)
+    public function testConvertColumn($field, $expected)
     {
-        $field = [
+        $field += [
             'name' => 'field',
-            'type' => $type,
             'null' => 'YES',
             'default' => 'Default value',
             'comment' => 'Comment section',
@@ -240,11 +248,6 @@ SQL;
             'comment' => 'Comment section',
             'collate' => 'ja_JP.utf8',
         ];
-
-        if ($field['type'] === 'NUMERIC' || strpos($field['type'], 'DECIMAL') !== false) {
-            $field['column_precision'] = $expected['length'];
-            $field['column_scale'] = $expected['precision'];
-        }
 
         $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')->getMock();
         $dialect = new PostgresSchema($driver);

@@ -61,7 +61,7 @@ class PoFileParserTest extends TestCase
         $parser = new PoFileParser;
         $file = APP . 'Locale' . DS . 'rule_1_po' . DS . 'default.po';
         $messages = $parser->parse($file);
-        $this->assertCount(5, $messages);
+        $this->assertCount(8, $messages);
         $expected = [
             'Plural Rule 1' => [
                 '_context' => [
@@ -70,7 +70,7 @@ class PoFileParserTest extends TestCase
             ],
             '%d = 1' => [
                 '_context' => [
-                    'This is the context' => 'First Context trasnlation',
+                    'This is the context' => 'First Context translation',
                     'Another Context' => '%d = 1 (translated)'
                 ]
             ],
@@ -97,7 +97,28 @@ class PoFileParserTest extends TestCase
                         4 => '%-5d = 0 or > 1 (translated)'
                     ]
                 ]
-            ]
+            ],
+            '%d = 2' => [
+                '_context' => [
+                    'This is another translated context' => 'First Context translation',
+                ]
+            ],
+            '%-6d = 3' => [
+                '_context' => [
+                    '' => '%-6d = 1 (translated)',
+                ]
+            ],
+            'p:%-6d = 0 or > 1' => [
+                '_context' => [
+                    '' => [
+                        0 => '%-6d = 1 (translated)',
+                        1 => '',
+                        2 => '',
+                        3 => '',
+                        4 => '%-6d = 0 or > 1 (translated)',
+                    ]
+                ]
+            ],
         ];
         $this->assertEquals($expected, $messages);
     }
@@ -157,12 +178,17 @@ class PoFileParserTest extends TestCase
         $this->assertSame('En resolved', $messages['Resolved']['_context']['']);
         $this->assertSame('En resolved - context', $messages['Resolved']['_context']['Pay status']);
 
+        $key = '{0,plural,=0{Je suis}=1{Je suis}=2{Nous sommes} other{Nous sommes}}';
+        $this->assertContains("I've", $messages[$key]['_context']['origin']);
+
         // Confirm actual behavior
         I18n::setLocale('en_CA');
         $this->assertSame('En cours', __('Pending'));
         $this->assertSame('En cours - context', __x('Pay status', 'Pending'));
         $this->assertSame('En resolved', __('Resolved'));
         $this->assertSame('En resolved - context', __x('Pay status', 'Resolved'));
+        $this->assertSame("I've", __x('origin', $key, [1]));
+        $this->assertSame("We are", __x('origin', $key, [3]));
     }
 
     /**

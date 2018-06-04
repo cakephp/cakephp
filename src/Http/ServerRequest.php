@@ -112,7 +112,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * The full address to the current request
      *
      * @var string
-     * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use getUri()->getPath() instead.
+     * @deprecated 3.4.0 This public property will be removed in 4.0.0. Use getAttribute('here') or getUri()->getPath() instead.
      */
     protected $here;
 
@@ -196,7 +196,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @var array
      */
-    protected $emulatedAttributes = ['session', 'webroot', 'base', 'params'];
+    protected $emulatedAttributes = ['session', 'webroot', 'base', 'params', 'here'];
 
     /**
      * Array of Psr\Http\Message\UploadedFileInterface objects.
@@ -230,10 +230,10 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
         'query' => ['get' => 'getQuery()', 'set' => 'withQueryParams()'],
         'params' => ['get' => 'getParam()', 'set' => 'withParam()'],
         'cookies' => ['get' => 'getCookie()', 'set' => 'withCookieParams()'],
-        'url' => ['get' => 'getRequestTarget()', 'set' => 'withRequestTarget()'],
+        'url' => ['get' => 'getPath()', 'set' => 'withRequestTarget()'],
         'base' => ['get' => 'getAttribute("base")', 'set' => 'withAttribute("base")'],
         'webroot' => ['get' => 'getAttribute("webroot")', 'set' => 'withAttribute("webroot")'],
-        'here' => ['get' => 'getRequestTarget()', 'set' => 'withRequestTarget()'],
+        'here' => ['get' => 'getAttribute("here")', 'set' => 'withAttribute("here")'],
     ];
 
     /**
@@ -2113,7 +2113,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param string $name The attribute name.
      * @return static
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     public function withoutAttribute($name)
     {
@@ -2150,7 +2150,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     /**
      * Get all the attributes in the request.
      *
-     * This will include the params, webroot, and base attributes that CakePHP
+     * This will include the params, webroot, base, and here attributes that CakePHP
      * provides.
      *
      * @return array
@@ -2160,7 +2160,8 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
         $emulated = [
             'params' => $this->params,
             'webroot' => $this->webroot,
-            'base' => $this->base
+            'base' => $this->base,
+            'here' => $this->here
         ];
 
         return $this->attributes + $emulated;
@@ -2197,7 +2198,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      *
      * @param array $files An array of uploaded file objects.
      * @return static
-     * @throws InvalidArgumentException when $files contains an invalid object.
+     * @throws \InvalidArgumentException when $files contains an invalid object.
      */
     public function withUploadedFiles(array $files)
     {
@@ -2214,7 +2215,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * @param array $uploadedFiles The new files array to validate.
      * @param string $path The path thus far.
      * @return void
-     * @throws InvalidArgumentException If any leaf elements are not valid files.
+     * @throws \InvalidArgumentException If any leaf elements are not valid files.
      */
     protected function validateUploadedFiles(array $uploadedFiles, $path)
     {
@@ -2342,6 +2343,23 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
         }
 
         return $target;
+    }
+
+    /**
+     * Get the path of current request.
+     *
+     * @return string
+     * @since 3.6.1
+     */
+    public function getPath()
+    {
+        if ($this->requestTarget === null) {
+            return $this->uri->getPath();
+        }
+
+        list($path) = explode('?', $this->requestTarget);
+
+        return $path;
     }
 
     /**

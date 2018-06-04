@@ -33,12 +33,8 @@ trait SqlDialectTrait
     {
         $identifier = trim($identifier);
 
-        if ($identifier === '*') {
-            return '*';
-        }
-
-        if ($identifier === '') {
-            return '';
+        if ($identifier === '*' || $identifier === '') {
+            return $identifier;
         }
 
         // string
@@ -46,26 +42,34 @@ trait SqlDialectTrait
             return $this->_startQuote . $identifier . $this->_endQuote;
         }
 
+        // string.string
         if (preg_match('/^[\w-]+\.[^ \*]*$/', $identifier)) {
-// string.string
             $items = explode('.', $identifier);
 
             return $this->_startQuote . implode($this->_endQuote . '.' . $this->_startQuote, $items) . $this->_endQuote;
         }
 
+        // string.*
         if (preg_match('/^[\w-]+\.\*$/', $identifier)) {
-// string.*
             return $this->_startQuote . str_replace('.*', $this->_endQuote . '.*', $identifier);
         }
 
+        // Functions
         if (preg_match('/^([\w-]+)\((.*)\)$/', $identifier, $matches)) {
-// Functions
             return $matches[1] . '(' . $this->quoteIdentifier($matches[2]) . ')';
         }
 
         // Alias.field AS thing
-        if (preg_match('/^([\w-]+(\.[\w-]+|\(.*\))*)\s+AS\s*([\w-]+)$/i', $identifier, $matches)) {
+        if (preg_match('/^([\w-]+(\.[\w-\s]+|\(.*\))*)\s+AS\s*([\w-]+)$/i', $identifier, $matches)) {
             return $this->quoteIdentifier($matches[1]) . ' AS ' . $this->quoteIdentifier($matches[3]);
+        }
+
+        // string.string with spaces
+        if (preg_match('/^([\w-]+\.[\w][\w\s\-]*[\w])(.*)/', $identifier, $matches)) {
+            $items = explode('.', $matches[1]);
+            $field = implode($this->_endQuote . '.' . $this->_startQuote, $items);
+
+            return $this->_startQuote . $field . $this->_endQuote . $matches[2];
         }
 
         if (preg_match('/^[\w-_\s]*[\w-_]+/', $identifier)) {

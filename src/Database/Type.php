@@ -145,8 +145,12 @@ class Type implements TypeInterface
      * If called with no arguments it will return current types map array
      * If $className is omitted it will return mapped class for $type
      *
-     * Deprecated: The usage of $type as \Cake\Database\Type[] is deprecated. Please always use string[] if you pass an array
-     * as first argument.
+     * Deprecated 3.6.2:
+     * - The usage of $type as string[]|\Cake\Database\Type[] is deprecated.
+     *   Use Type::setMap() with string[] instead.
+     * - Passing $className as \Cake\Database\Type instance is deprecated, use
+     *   class name string only.
+     * - Using this method as getter is deprecated. Use Type::getMap() instead.
      *
      * @param string|string[]|\Cake\Database\Type[]|null $type If string name of type to map, if array list of arrays to be mapped
      * @param string|\Cake\Database\Type|null $className The classname or object instance of it to register.
@@ -156,19 +160,70 @@ class Type implements TypeInterface
     public static function map($type = null, $className = null)
     {
         if ($type === null) {
+            deprecationWarning(
+                'Using `Type::map()` as getter is deprecated. ' .
+                'Use `Type::getMap()` instead.'
+            );
+
             return static::$_types;
         }
         if (is_array($type)) {
+            deprecationWarning(
+                'Using `Type::map()` to set complete types map is deprecated. ' .
+                'Use `Type::setMap()` instead.'
+            );
+
             static::$_types = $type;
 
             return null;
         }
         if ($className === null) {
+            deprecationWarning(
+                'Using `Type::map()` as getter is deprecated. ' .
+                'Use `Type::getMap()` instead.'
+            );
+
             return isset(static::$_types[$type]) ? static::$_types[$type] : null;
+        }
+
+        if (!is_string($className)) {
+            deprecationWarning(
+                'Passing $className as object to Type::map() is deprecated. ' .
+                'Use Type::set() instead.'
+            );
         }
 
         static::$_types[$type] = $className;
         unset(static::$_builtTypes[$type]);
+    }
+
+    /**
+     * Set type to classname mapping.
+     *
+     * @param string[] $map List of types to be mapped.
+     * @return void
+     * @since 3.6.2
+     */
+    public static function setMap(array $map)
+    {
+        static::$_types = $map;
+        static::$_builtTypes = [];
+    }
+
+    /**
+     * Get mapped class name or instance for type(s).
+     *
+     * @param string|null $type Type name to get mapped class for or null to get map array.
+     * @return array|string|\Cake\Database\TypeInterface|null Configured class name or instance for give $type or map array.
+     * @since 3.6.2
+     */
+    public static function getMap($type = null)
+    {
+        if ($type === null) {
+            return static::$_types;
+        }
+
+        return isset(static::$_types[$type]) ? static::$_types[$type] : null;
     }
 
     /**

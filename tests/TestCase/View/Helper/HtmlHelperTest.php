@@ -147,6 +147,17 @@ class HtmlHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
+        $this->Html->setTemplates(['confirmJs' => 'if (confirm({{confirmMessage}})) { window.location="/";};']);
+        $result = $this->Html->link('Home', '/home', ['confirm' => 'Are you sure you want to do this?']);
+        $expected = [
+            'a' => ['href' => '/home', 'onclick' => 'preg:/if \(confirm\(&quot;Are you sure you want to do this\?&quot;\)\) \{ window\.location=&quot;\/&quot;;\};/'],
+            'Home',
+            '/a'
+        ];
+
+        $this->assertHtml($expected, $result);
+        $this->Html->setTemplates(['confirmJs' => '{{confirm}}']);
+
         $result = $this->Html->link('Home', '/home', ['escape' => false, 'confirm' => 'Confirm\'s "nightmares"']);
         $expected = [
             'a' => ['href' => '/home', 'onclick' => 'if (confirm(&quot;Confirm&#039;s \&quot;nightmares\&quot;&quot;)) { return true; } return false;'],
@@ -360,6 +371,31 @@ class HtmlHelperTest extends TestCase
 
         $result = $this->Html->image('//google.com/"><script>alert(1)</script>');
         $expected = ['img' => ['src' => '//google.com/&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;', 'alt' => '']];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * Ensure that data URIs don't get base paths set.
+     *
+     * @return void
+     */
+    public function testImageDataUriBaseDir()
+    {
+        $request = $this->Html->request
+            ->withAttribute('base', 'subdir')
+            ->withAttribute('webroot', 'subdir/');
+        $this->Html->Url->request = $this->Html->request = $request;
+        Router::pushRequest($request);
+
+        $data = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4' .
+            '/8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==';
+        $result = $this->Html->image($data);
+        $expected = ['img' => ['src' => $data, 'alt' => '']];
+        $this->assertHtml($expected, $result);
+
+        $data = 'data:image/png;base64,<evil>';
+        $result = $this->Html->image($data);
+        $expected = ['img' => ['src' => h($data), 'alt' => '']];
         $this->assertHtml($expected, $result);
     }
 
@@ -2029,6 +2065,10 @@ class HtmlHelperTest extends TestCase
 
         $result = $this->Html->para('class-name', '<text>', ['escape' => true]);
         $expected = ['p' => ['class' => 'class-name'], '&lt;text&gt;', '/p'];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Html->para('class-name', 'text"', ['escape' => false]);
+        $expected = ['p' => ['class' => 'class-name'], 'text"', '/p'];
         $this->assertHtml($expected, $result);
     }
 
