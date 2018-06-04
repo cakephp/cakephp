@@ -1455,7 +1455,7 @@ class FormHelper extends Helper
 
         if (method_exists($context, 'getRequiredMessage')) {
             $message = $context->getRequiredMessage($fieldName);
-            $message = addslashes(h($message));
+            $message = h($message);
 
             if ($options['required'] && $message) {
                 $options['templateVars']['customValidityMessage'] = $message;
