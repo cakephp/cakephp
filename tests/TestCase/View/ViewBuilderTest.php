@@ -246,7 +246,7 @@ class ViewBuilderTest extends TestCase
         $this->assertEquals('Articles/', $view->getTemplatePath());
         $this->assertEquals('Admin/', $view->getLayoutPath());
         $this->assertEquals('TestPlugin', $view->plugin);
-        $this->assertEquals('TestTheme', $view->theme);
+        $this->assertEquals('TestTheme', $view->getTheme());
         $this->assertSame($request, $view->getRequest());
         $this->assertInstanceOf(Response::class, $view->getResponse());
         $this->assertSame($events, $view->getEventManager());

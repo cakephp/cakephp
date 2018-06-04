@@ -218,10 +218,10 @@ class CellTest extends TestCase
      */
     public function testCellRenderThemed()
     {
-        $this->View->theme = 'TestTheme';
+        $this->View->setTheme('TestTheme');
         $cell = $this->View->cell('Articles', ['msg' => 'hello world!']);
 
-        $this->assertEquals($this->View->theme, $cell->viewBuilder()->getTheme());
+        $this->assertEquals($this->View->getTheme(), $cell->viewBuilder()->getTheme());
         $this->assertContains('Themed cell content.', $cell->render());
     }
 
@@ -362,7 +362,7 @@ class CellTest extends TestCase
         $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $view = new CustomJsonView($request, $response);
-        $view->theme = 'Pretty';
+        $view->setTheme('Pretty');
         $cell = $view->cell('Articles');
         $this->assertSame('TestApp\View\CustomJsonView', $cell->viewClass);
         $this->assertSame('TestApp\View\CustomJsonView', $cell->viewBuilder()->getClassName());

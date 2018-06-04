@@ -347,7 +347,7 @@ class ViewTest extends TestCase
         ];
 
         $ThemeView = new TestView(null, null, null, $viewOptions);
-        $ThemeView->theme = 'TestTheme';
+        $ThemeView->setTheme('TestTheme');
         $expected = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Pages' . DS . 'home.ctp';
         $result = $ThemeView->getViewFileName('home');
         $this->assertPathEquals($expected, $result);
@@ -360,19 +360,19 @@ class ViewTest extends TestCase
         $result = $ThemeView->getLayoutFileName();
         $this->assertPathEquals($expected, $result);
 
-        $ThemeView->layoutPath = 'rss';
+        $ThemeView->setLayoutPath('rss');
         $expected = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Layout' . DS . 'rss' . DS . 'default.ctp';
         $result = $ThemeView->getLayoutFileName();
         $this->assertPathEquals($expected, $result);
 
-        $ThemeView->layoutPath = 'Email' . DS . 'html';
+        $ThemeView->setLayoutPath('Email' . DS . 'html');
         $expected = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Layout' . DS . 'Email' . DS . 'html' . DS . 'default.ctp';
         $result = $ThemeView->getLayoutFileName();
         $this->assertPathEquals($expected, $result);
 
         $ThemeView = new TestView(null, null, null, $viewOptions);
 
-        $ThemeView->theme = 'Company/TestPluginThree';
+        $ThemeView->setTheme('Company/TestPluginThree');
         $expected = Plugin::path('Company/TestPluginThree') . 'src' . DS . 'Template' . DS . 'Layout' . DS . 'default.ctp';
         $result = $ThemeView->getLayoutFileName();
         $this->assertPathEquals($expected, $result);
@@ -705,12 +705,12 @@ class ViewTest extends TestCase
         $result = $View->getLayoutFileName();
         $this->assertPathEquals($expected, $result);
 
-        $View->layoutPath = 'rss';
+        $View->setLayoutPath('rss');
         $expected = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Layout' . DS . 'rss' . DS . 'default.ctp';
         $result = $View->getLayoutFileName();
         $this->assertPathEquals($expected, $result);
 
-        $View->layoutPath = 'Email' . DS . 'html';
+        $View->setLayoutPath('Email' . DS . 'html');
         $expected = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Layout' . DS . 'Email' . DS . 'html' . DS . 'default.ctp';
         $result = $View->getLayoutFileName();
         $this->assertPathEquals($expected, $result);
@@ -1838,7 +1838,7 @@ class ViewTest extends TestCase
      */
     public function testExtendNested()
     {
-        $this->View->layout = false;
+        $this->View->setLayout(false);
         $content = $this->View->render('nested_extends');
         $expected = <<<TEXT
 This is the second parent.
@@ -1857,7 +1857,7 @@ TEXT;
     public function testExtendSelf()
     {
         try {
-            $this->View->layout = false;
+            $this->View->setLayout(false);
             $this->View->render('extend_self');
             $this->fail('No exception');
         } catch (\LogicException $e) {
@@ -1874,7 +1874,7 @@ TEXT;
     public function testExtendLoop()
     {
         try {
-            $this->View->layout = false;
+            $this->View->setLayout(false);
             $this->View->render('extend_loop');
             $this->fail('No exception');
         } catch (\LogicException $e) {
@@ -1890,7 +1890,7 @@ TEXT;
      */
     public function testExtendElement()
     {
-        $this->View->layout = false;
+        $this->View->setLayout(false);
         $content = $this->View->render('extend_element');
         $expected = <<<TEXT
 Parent View.
@@ -1910,7 +1910,7 @@ TEXT;
     public function testExtendPrefixElement()
     {
         $this->View->setRequest($this->View->getRequest()->withParam('prefix', 'Admin'));
-        $this->View->layout = false;
+        $this->View->setLayout(false);
         $content = $this->View->render('extend_element');
         $expected = <<<TEXT
 Parent View.
@@ -1930,7 +1930,7 @@ TEXT;
     public function testExtendMissingElement()
     {
         try {
-            $this->View->layout = false;
+            $this->View->setLayout(false);
             $this->View->render('extend_missing_element');
             $this->fail('No exception');
         } catch (\LogicException $e) {
@@ -1947,7 +1947,7 @@ TEXT;
      */
     public function testExtendWithElementBeforeExtend()
     {
-        $this->View->layout = false;
+        $this->View->setLayout(false);
         $result = $this->View->render('extend_with_element');
         $expected = <<<TEXT
 Parent View.
@@ -1965,7 +1965,7 @@ TEXT;
     public function testExtendWithPrefixElementBeforeExtend()
     {
         $this->View->setRequest($this->View->getRequest()->withParam('prefix', 'Admin'));
-        $this->View->layout = false;
+        $this->View->setLayout(false);
         $result = $this->View->render('extend_with_element');
         $expected = <<<TEXT
 Parent View.
@@ -1988,8 +1988,8 @@ TEXT;
 
         $View = $this->ThemeController->createView();
         $View->setTemplatePath('Posts');
-        $View->layout = 'whatever';
-        $View->theme = 'TestTheme';
+        $View->setLayout('whatever');
+        $View->setTheme('TestTheme');
         $View->element('test_element');
 
         $start = memory_get_usage();

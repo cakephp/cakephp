@@ -1054,7 +1054,7 @@ class PaginatorHelperTest extends TestCase
         ]);
         Router::setRequestInfo($request);
 
-        $this->View->request = $this->Paginator->request
+        $this->View->setRequest($this->Paginator->request
             ->withParam('paging.Article.scope', 'article')
             ->withParam('paging.Article.page', 3)
             ->withParam('paging.Article.prevPage', true)
@@ -1062,7 +1062,8 @@ class PaginatorHelperTest extends TestCase
                 'article' => [
                     'puppy' => 'no'
                 ]
-            ]);
+            ])
+        );
         // Need to run __construct to update _config['url']
         $paginator = new PaginatorHelper($this->View);
         $paginator->options(['model' => 'Article']);
@@ -1147,7 +1148,7 @@ class PaginatorHelperTest extends TestCase
         $this->Paginator->request = $this->Paginator->request
             ->withParam('pass', [2])
             ->withQueryParams(['page' => 1, 'foo' => 'bar', 'x' => 'y', 'num' => 0]);
-        $this->View->request = $this->Paginator->request;
+        $this->View->setRequest($this->Paginator->request);
         $this->Paginator = new PaginatorHelper($this->View);
 
         $result = $this->Paginator->sort('title');
