@@ -116,7 +116,7 @@ class Helper implements EventListenerInterface
     public function __construct(View $View, array $config = [])
     {
         $this->_View = $View;
-        $this->request = $View->request;
+        $this->request = $View->getRequest();
 
         $this->setConfig($config);
 
