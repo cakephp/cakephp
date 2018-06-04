@@ -129,6 +129,7 @@ class View implements EventDispatcherInterface
      * The name of the subfolder containing templates for this View.
      *
      * @var string
+     * @deprecated 3.7.0 The property will become protected in 4.0.0. Use getTemplatePath()/setTemplatePath() instead.
      */
     public $templatePath;
 
@@ -137,6 +138,7 @@ class View implements EventDispatcherInterface
      * is the filename in /src/Template/<SubFolder> without the .ctp extension.
      *
      * @var string
+     * @deprecated 3.7.0 The property will become protected in 4.0.0. Use getTemplate()/setTemplate() instead.
      */
     public $template;
 
@@ -146,6 +148,7 @@ class View implements EventDispatcherInterface
      * extension.
      *
      * @var string
+     * @deprecated 3.7.0 The property will become protected in 4.0.0. Use getLayout()/setLayout() instead.
      */
     public $layout = 'default';
 
@@ -153,6 +156,7 @@ class View implements EventDispatcherInterface
      * The name of the layouts subfolder containing layouts for this View.
      *
      * @var string
+     * @deprecated 3.7.0 The property will become protected in 4.0.0. Use getLayoutPath()/setLayoutPath() instead.
      */
     public $layoutPath;
 
@@ -161,6 +165,7 @@ class View implements EventDispatcherInterface
      * Setting to off means that layouts will not be automatically applied to rendered templates.
      *
      * @var bool
+     * @deprecated 3.7.0 The property will become protected in 4.0.0. Use enableAutoLayout()/isAutoLayoutEnabled() instead.
      */
     public $autoLayout = true;
 
@@ -183,6 +188,7 @@ class View implements EventDispatcherInterface
      * The view theme to use.
      *
      * @var string|null
+     * @deprecated 3.7.0 The property will become protected in 4.0.0. Use getTheme()/setTheme() instead.
      */
     public $theme;
 
@@ -197,6 +203,7 @@ class View implements EventDispatcherInterface
      * List of generated DOM UUIDs.
      *
      * @var array
+     * @deprecated 3.7.0 The property is unused and will be removed in 4.0.0.
      */
     public $uuids = [];
 
