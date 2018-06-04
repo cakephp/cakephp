@@ -1062,8 +1062,7 @@ class PaginatorHelperTest extends TestCase
                 'article' => [
                     'puppy' => 'no'
                 ]
-            ])
-        );
+            ]));
         // Need to run __construct to update _config['url']
         $paginator = new PaginatorHelper($this->View);
         $paginator->options(['model' => 'Article']);
