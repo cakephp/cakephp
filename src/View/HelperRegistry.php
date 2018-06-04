@@ -144,7 +144,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
     protected function _create($class, $alias, $settings)
     {
         $instance = new $class($this->_View, $settings);
-        $vars = ['request', 'theme', 'plugin'];
+        $vars = ['theme', 'plugin'];
         foreach ($vars as $var) {
             $instance->{$var} = $this->_View->{$var};
         }

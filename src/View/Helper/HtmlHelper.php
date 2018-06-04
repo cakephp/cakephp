@@ -143,7 +143,7 @@ class HtmlHelper extends Helper
     public function __construct(View $View, array $config = [])
     {
         parent::__construct($View, $config);
-        $this->response = $this->_View->response ?: new Response();
+        $this->response = $this->_View->getResponse() ?: new Response();
     }
 
     /**

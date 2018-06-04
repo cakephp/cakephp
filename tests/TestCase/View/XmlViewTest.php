@@ -52,7 +52,7 @@ class XmlViewTest extends TestCase
         $output = $View->render(false);
 
         $this->assertSame(Xml::build($data)->asXML(), $output);
-        $this->assertSame('application/xml', $View->response->getType());
+        $this->assertSame('application/xml', $View->getResponse()->getType());
 
         $data = [
             [
@@ -191,7 +191,7 @@ class XmlViewTest extends TestCase
         $Controller->set('_serialize', ['no', 'user']);
         $Controller->viewBuilder()->setClassName('Xml');
         $View = $Controller->createView();
-        $this->assertSame('application/xml', $View->response->getType());
+        $this->assertSame('application/xml', $View->getResponse()->getType());
         $output = $View->render(false);
         $expected = [
             'response' => ['no' => $data['no'], 'user' => $data['user']]
@@ -223,7 +223,7 @@ class XmlViewTest extends TestCase
         $Controller->set('_serialize', ['new_name' => 'original_name', 'user']);
         $Controller->viewBuilder()->setClassName('Xml');
         $View = $Controller->createView();
-        $this->assertSame('application/xml', $View->response->getType());
+        $this->assertSame('application/xml', $View->getResponse()->getType());
         $output = $View->render(false);
         $expected = [
             'response' => ['new_name' => $data['original_name'], 'user' => $data['user']]
@@ -257,7 +257,7 @@ class XmlViewTest extends TestCase
         $output = $View->render();
 
         $this->assertSame(Xml::build($data)->asXML(), $output);
-        $this->assertSame('application/xml', $View->response->getType());
+        $this->assertSame('application/xml', $View->getResponse()->getType());
 
         $data = ['no' => 'nope', 'user' => 'fake', 'list' => ['item1', 'item2']];
         $Controller->viewVars = [];
@@ -306,7 +306,7 @@ class XmlViewTest extends TestCase
         ];
         $expected = Xml::build($expected)->asXML();
         $this->assertSame($expected, $output);
-        $this->assertSame('application/xml', $View->response->getType());
+        $this->assertSame('application/xml', $View->getResponse()->getType());
         $this->assertInstanceOf('Cake\View\HelperRegistry', $View->helpers());
     }
 }
