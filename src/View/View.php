@@ -129,18 +129,16 @@ class View implements EventDispatcherInterface
      * The name of the subfolder containing templates for this View.
      *
      * @var string
-     * @deprecated 3.7.0 The property will become protected in 4.0.0. Use getTemplatePath()/setTemplatePath() instead.
      */
-    public $templatePath;
+    protected $templatePath;
 
     /**
      * The name of the template file to render. The name specified
      * is the filename in /src/Template/<SubFolder> without the .ctp extension.
      *
      * @var string
-     * @deprecated 3.7.0 The property will become protected in 4.0.0. Use getTemplate()/setTemplate() instead.
      */
-    public $template;
+    protected $template;
 
     /**
      * The name of the layout file to render the template inside of. The name specified
@@ -148,26 +146,23 @@ class View implements EventDispatcherInterface
      * extension.
      *
      * @var string
-     * @deprecated 3.7.0 The property will become protected in 4.0.0. Use getLayout()/setLayout() instead.
      */
-    public $layout = 'default';
+    protected $layout = 'default';
 
     /**
      * The name of the layouts subfolder containing layouts for this View.
      *
      * @var string
-     * @deprecated 3.7.0 The property will become protected in 4.0.0. Use getLayoutPath()/setLayoutPath() instead.
      */
-    public $layoutPath;
+    protected $layoutPath;
 
     /**
      * Turns on or off CakePHP's conventional mode of applying layout files. On by default.
      * Setting to off means that layouts will not be automatically applied to rendered templates.
      *
      * @var bool
-     * @deprecated 3.7.0 The property will become protected in 4.0.0. Use enableAutoLayout()/isAutoLayoutEnabled() instead.
      */
-    public $autoLayout = true;
+    protected $autoLayout = true;
 
     /**
      * File extension. Defaults to CakePHP's template ".ctp".
@@ -188,9 +183,8 @@ class View implements EventDispatcherInterface
      * The view theme to use.
      *
      * @var string|null
-     * @deprecated 3.7.0 The property will become protected in 4.0.0. Use getTheme()/setTheme() instead.
      */
-    public $theme;
+    protected $theme;
 
     /**
      * True when the view has been rendered.
@@ -213,17 +207,15 @@ class View implements EventDispatcherInterface
      * additional information about the request.
      *
      * @var \Cake\Http\ServerRequest
-     * @deprecated 3.7.0 The property will become protected in 4.0.0. Use getRequest()/setRequest() instead.
      */
-    public $request;
+    protected $request;
 
     /**
      * Reference to the Response object
      *
      * @var \Cake\Http\Response
-     * @deprecated 3.7.0 The property will become protected in 4.0.0. Use getResponse()/setResponse() instead.
      */
-    public $response;
+    protected $response;
 
     /**
      * The Cache configuration View will use to store cached elements. Changing this will change
@@ -1183,15 +1175,40 @@ class View implements EventDispatcherInterface
      */
     public function __get($name)
     {
-        if ($name === 'view') {
-            deprecationWarning('The `view` property is deprecated. Use View::getTemplate() instead.');
+        $deprecated = [
+            'view' => 'getTemplate',
+            'viewPath' => 'getTemplatePath',
+        ];
+        if (isset($deprecated[$name])) {
+            $method = $deprecated[$name];
+            deprecationWarning(sprintf(
+                'View::$%s is deprecated. Use View::%s() instead.',
+                $name,
+                $method
+            ));
 
-            return $this->template;
+            return $this->{$method}();
         }
-        if ($name === 'viewPath') {
-            deprecationWarning('The `viewPath` property is deprecated. Use View::getTemplatePath() instead.');
 
-            return $this->templatePath;
+        $protected = [
+            'templatePath' => 'getTemplatePath',
+            'template' => 'getTemplate',
+            'layout' => 'getLayout',
+            'layoutPath' => 'setLayoutPath',
+            'autoLayout' => 'isAutoLayoutEnabled',
+            'theme' => 'getTheme',
+            'request' => 'getRequest',
+            'response' => 'getResponse',
+        ];
+        if (isset($protected[$name])) {
+            $method = $protected[$name];
+            deprecationWarning(sprintf(
+                'View::$%s is protected now. Use View::%s() instead.',
+                $name,
+                $method
+            ));
+
+            return $this->{$method}();
         }
 
         $registry = $this->helpers();
@@ -1213,15 +1230,42 @@ class View implements EventDispatcherInterface
      */
     public function __set($name, $value)
     {
-        if ($name === 'view') {
-            deprecationWarning('The `view` property is deprecated. Use View::setTemplate() instead.');
-            $this->template = $value;
+        $deprecated = [
+            'view' => 'setTemplate',
+            'viewPath' => 'setTemplatePath',
+        ];
+        if (isset($deprecated[$name])) {
+            $method = $deprecated[$name];
+            deprecationWarning(sprintf(
+                'View::$%s is deprecated. Use View::%s() instead.',
+                $name,
+                $method
+            ));
+
+            $this->{$method}($value);
 
             return;
         }
-        if ($name === 'viewPath') {
-            deprecationWarning('The `viewPath` property is deprecated. Use View::setTemplatePath() instead.');
-            $this->templatePath = $value;
+
+        $protected = [
+            'templatePath' => 'setTemplatePath',
+            'template' => 'setTemplate',
+            'layout' => 'setLayout',
+            'layoutPath' => 'setLayoutPath',
+            'autoLayout' => 'enableAutoLayout',
+            'theme' => 'setTheme',
+            'request' => 'setRequest',
+            'response' => 'setResponse',
+        ];
+        if (isset($protected[$name])) {
+            $method = $protected[$name];
+            deprecationWarning(sprintf(
+                'View::$%s is protected now. Use View::%s() instead.',
+                $name,
+                $method
+            ));
+
+            $this->{$method}($value);
 
             return;
         }
