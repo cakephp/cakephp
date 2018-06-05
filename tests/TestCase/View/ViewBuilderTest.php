@@ -89,7 +89,6 @@ class ViewBuilderTest extends TestCase
     /**
      * Test string property accessor/mutator methods.
      *
-     * @deprecated
      * @dataProvider boolPropertyProvider
      * @return void
      */

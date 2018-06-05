@@ -9072,7 +9072,6 @@ class FormHelperTest extends TestCase
      *
      * Test the `nestedInput` parameter
      *
-     * @group deprecated
      * @return void
      */
     public function testNestedLabelInput()

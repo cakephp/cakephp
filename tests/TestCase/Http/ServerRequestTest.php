@@ -3182,7 +3182,7 @@ XML;
     }
 
     /**
-     * Test that withoutAttribute() cannot remove deprecated public properties.
+     * Test that withoutAttribute() cannot remove emulatedAttributes properties.
      *
      * @dataProvider emulatedPropertyProvider
      * @return void

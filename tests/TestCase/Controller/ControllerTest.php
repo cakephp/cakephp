@@ -1042,21 +1042,6 @@ class ControllerTest extends TestCase
     }
 
     /**
-     * 4.x
-     * Test declared deprecated properties like $theme are now NULL
-     *
-     * @return void
-     */
-    public function testDeclaredDeprecatedProperty()
-    {
-        $controller = new TestController(new ServerRequest(), new Response());
-
-        // @codingStandardsIgnoreStart
-        $this->assertNull( @$controller->createView()->theme);
-        // @codingStandardsIgnoreEnd
-    }
-
-    /**
      * Test that view variables are being set after the beforeRender event gets dispatched
      *
      * @return void

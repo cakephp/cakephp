@@ -352,21 +352,6 @@ class Folder
     /**
      * Returns a correct set of slashes for given $path. (\\ for Windows paths and / for other paths.)
      *
-     * @param string $path Path to check
-     * @return string Set of slashes ("\\" or "/")
-     *
-     * @deprecated 3.7.0 This method will be removed in 4.0.0. Use correctSlashFor() instead.
-     */
-    public static function normalizePath($path)
-    {
-        deprecationWarning('Folder::normalizePath() is deprecated. Use Folder::correctSlashFor() instead.');
-
-        return Folder::correctSlashFor($path);
-    }
-
-    /**
-     * Returns a correct set of slashes for given $path. (\\ for Windows paths and / for other paths.)
-     *
      * @param string $path Path to transform
      * @return string Path with the correct set of slashes ("\\" or "/")
      */

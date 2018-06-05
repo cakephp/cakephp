@@ -103,19 +103,17 @@ class InstanceConfigTraitTest extends TestCase
      */
     public function testDefaultsAreSet()
     {
-        $this->deprecated(function () {
-            $this->assertSame(
-                [
-                    'some' => 'string',
-                    'a' => [
-                        'nested' => 'value',
-                        'other' => 'value'
-                    ]
-                ],
-                $this->object->getConfig(),
-                'runtime config should match the defaults if not overridden'
-            );
-        });
+        $this->assertSame(
+            [
+                'some' => 'string',
+                'a' => [
+                    'nested' => 'value',
+                    'other' => 'value'
+                ]
+            ],
+            $this->object->getConfig(),
+            'runtime config should match the defaults if not overridden'
+        );
     }
 
     /**

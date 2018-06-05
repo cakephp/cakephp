@@ -104,15 +104,13 @@ class EventManagerTest extends TestCase
      */
     public function testAttachListener()
     {
-        $this->deprecated(function () {
-            $manager = new EventManager();
-            $listener = new CustomTestEventListenerInterface();
-            $manager->on($listener);
-            $expected = [
-                ['callable' => [$listener, 'listenerFunction']],
-            ];
-            $this->assertEquals($expected, $manager->listeners('fake.event'));
-        });
+        $manager = new EventManager();
+        $listener = new CustomTestEventListenerInterface();
+        $manager->on($listener);
+        $expected = [
+            ['callable' => [$listener, 'listenerFunction']],
+        ];
+        $this->assertEquals($expected, $manager->listeners('fake.event'));
     }
 
     /**
