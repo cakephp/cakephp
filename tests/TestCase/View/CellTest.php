@@ -86,6 +86,23 @@ class CellTest extends TestCase
     }
 
     /**
+     * Tests debug output.
+     *
+     * @return void
+     */
+    public function testDebugInfo()
+    {
+        $cell = $this->View->cell('Articles::teaserList');
+        $data = $cell->__debugInfo();
+        $this->assertArrayHasKey('plugin', $data);
+        $this->assertArrayHasKey('request', $data);
+        $this->assertArrayHasKey('response', $data);
+        $this->assertEquals('teaserList', $data['action']);
+        $this->assertEquals('teaser_list', $data['template']);
+        $this->assertEquals([], $data['args']);
+    }
+
+    /**
      * Test __toString() hitting an error when rendering views.
      *
      * @return void
