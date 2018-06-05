@@ -80,7 +80,7 @@ class ConsoleIntegrationTestCaseTest extends ConsoleIntegrationTestCase
     {
         $this->useCommandRunner();
         $this->exec('abort_command');
-        $this->assertExitCode(Shell::CODE_ERROR);
+        $this->assertExitCode(127);
         $this->assertErrorContains('Command aborted');
     }
 

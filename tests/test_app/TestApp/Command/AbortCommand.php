@@ -10,6 +10,6 @@ class AbortCommand extends Command
     public function execute(Arguments $args, ConsoleIo $io)
     {
         $io->error('Command aborted');
-        $this->abort();
+        $this->abort(127);
     }
 }

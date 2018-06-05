@@ -95,7 +95,7 @@ abstract class ConsoleIntegrationTestCase extends TestCase
         try {
             $this->_exitCode = $runner->run($args, $io);
         } catch (StopException $exception) {
-            $this->_exitCode = Command::CODE_ERROR;
+            $this->_exitCode = $exception->getCode();
         }
     }
 
