@@ -17,6 +17,7 @@ use Cake\Core\App;
 use Cake\Core\Exception\Exception;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Http\Client\AdapterInterface;
+use Cake\Http\Client\Adapter\Curl;
 use Cake\Http\Client\Adapter\Stream;
 use Cake\Http\Client\Request;
 use Cake\Http\Cookie\CookieCollection;
@@ -106,7 +107,7 @@ class Client
      * @var array
      */
     protected $_defaultConfig = [
-        'adapter' => Stream::class,
+        'adapter' => null,
         'host' => null,
         'port' => null,
         'scheme' => 'http',
@@ -156,7 +157,8 @@ class Client
      *   Defaults to true.
      * - redirect - Number of redirects to follow. Defaults to false.
      * - adapter - The adapter class name or instance. Defaults to
-     *   \Cake\Http\Client\Adapter\Stream
+     *   \Cake\Http\Client\Adapter\Curl if `curl` extension is loaded else
+     *   \Cake\Http\Client\Adapter\Stream.
      *
      * @param array $config Config options for scoped clients.
      */
@@ -165,7 +167,16 @@ class Client
         $this->setConfig($config);
 
         $adapter = $this->_config['adapter'];
-        $this->setConfig('adapter', null);
+        if ($adapter === null) {
+            $adapter = Curl::class;
+
+            if (!extension_loaded('curl')) {
+                $adapter = Stream::class;
+            }
+        } else {
+            $this->setConfig('adapter', null);
+        }
+
         if (is_string($adapter)) {
             $adapter = new $adapter();
         }
