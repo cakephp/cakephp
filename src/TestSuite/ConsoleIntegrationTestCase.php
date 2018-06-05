@@ -13,9 +13,11 @@
  */
 namespace Cake\TestSuite;
 
+use Cake\Console\Command;
 use Cake\Console\CommandRunner;
 use Cake\Console\ConsoleInput;
 use Cake\Console\ConsoleIo;
+use Cake\Console\Exception\StopException;
 use Cake\Core\Configure;
 use Cake\TestSuite\Stub\ConsoleOutput;
 
@@ -90,7 +92,11 @@ abstract class ConsoleIntegrationTestCase extends TestCase
 
         $io = new ConsoleIo($this->_out, $this->_err, $this->_in);
 
-        $this->_exitCode = $runner->run($args, $io);
+        try {
+            $this->_exitCode = $runner->run($args, $io);
+        } catch (StopException $exception) {
+            $this->_exitCode = $exception->getCode();
+        }
     }
 
     /**
