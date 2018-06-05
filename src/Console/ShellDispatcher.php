@@ -28,6 +28,8 @@ use Cake\Utility\Inflector;
  * Shell dispatcher handles dispatching cli commands.
  *
  * Consult /bin/cake.php for how this class is used in practice.
+ *
+ * @deprecated 3.6.0 ShellDispatcher and Shell will be removed in 5.0
  */
 class ShellDispatcher
 {
@@ -399,8 +401,11 @@ class ShellDispatcher
      */
     public function help()
     {
-        $this->args = array_merge(['command_list'], $this->args);
-        $this->dispatch();
+        trigger_error(
+            'Console help cannot be generated from Shell classes anymore. ' .
+            'Upgrade your application to use Cake\Console\CommandRunner instead.',
+            E_USER_WARNING
+        );
     }
 
     /**
@@ -410,7 +415,10 @@ class ShellDispatcher
      */
     public function version()
     {
-        $this->args = array_merge(['command_list', '--version'], $this->args);
-        $this->dispatch();
+        trigger_error(
+            'Version information cannot be generated from Shell classes anymore. ' .
+            'Upgrade your application to use Cake\Console\CommandRunner instead.',
+            E_USER_WARNING
+        );
     }
 }
