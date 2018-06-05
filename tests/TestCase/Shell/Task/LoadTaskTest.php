@@ -15,13 +15,16 @@ namespace Cake\Test\TestCase\Shell\Task;
 
 use Cake\Console\Shell;
 use Cake\Filesystem\File;
-use Cake\TestSuite\ConsoleIntegrationTestCase;
+use Cake\TestSuite\ConsoleIntegrationTestTrait;
+use Cake\TestSuite\TestCase;
 
 /**
  * LoadTaskTest class.
  */
-class LoadTaskTest extends ConsoleIntegrationTestCase
+class LoadTaskTest extends TestCase
 {
+    use ConsoleIntegrationTestTrait;
+
     /**
      * setUp method
      *

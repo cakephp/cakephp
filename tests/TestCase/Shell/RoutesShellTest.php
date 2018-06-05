@@ -16,13 +16,15 @@ namespace Cake\Test\TestCase\Shell;
 
 use Cake\Console\Shell;
 use Cake\Routing\Router;
-use Cake\TestSuite\ConsoleIntegrationTestCase;
+use Cake\TestSuite\ConsoleIntegrationTestTrait;
+use Cake\TestSuite\TestCase;
 
 /**
  * RoutesShellTest
  */
-class RoutesShellTest extends ConsoleIntegrationTestCase
+class RoutesShellTest extends TestCase
 {
+    use ConsoleIntegrationTestTrait;
 
     /**
      * setUp method

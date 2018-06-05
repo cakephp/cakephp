@@ -20,7 +20,8 @@ use Cake\Http\Middleware\EncryptedCookieMiddleware;
 use Cake\Http\Response;
 use Cake\Routing\Router;
 use Cake\Routing\Route\InflectedRoute;
-use Cake\TestSuite\IntegrationTestCase;
+use Cake\TestSuite\IntegrationTestTrait;
+use Cake\TestSuite\TestCase;
 use Cake\Test\Fixture\AssertIntegrationTestCase;
 use Cake\Utility\Security;
 use PHPUnit\Framework\AssertionFailedError;
@@ -29,8 +30,9 @@ use PHPUnit\Framework\Error\Deprecated;
 /**
  * Self test of the IntegrationTestCase
  */
-class IntegrationTestTraitTest extends IntegrationTestCase
+class IntegrationTestTraitTest extends TestCase
 {
+    use IntegrationTestTrait;
 
     /**
      * stub encryption key.

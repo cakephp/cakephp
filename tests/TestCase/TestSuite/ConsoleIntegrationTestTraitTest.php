@@ -15,11 +15,13 @@ namespace Cake\Test\TestCase\TestSuite;
 
 use Cake\Console\Shell;
 use Cake\Core\Configure;
-use Cake\TestSuite\ConsoleIntegrationTestCase;
+use Cake\TestSuite\ConsoleIntegrationTestTrait;
+use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\AssertionFailedError;
 
-class ConsoleIntegrationTestTraitTest extends ConsoleIntegrationTestCase
+class ConsoleIntegrationTestTraitTest extends TestCase
 {
+    use ConsoleIntegrationTestTrait;
 
     /**
      * setUp
