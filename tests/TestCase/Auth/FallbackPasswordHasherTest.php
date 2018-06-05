@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -30,7 +31,7 @@ class FallbackPasswordHasherTest extends TestCase
      *
      * @return void
      */
-    public function testHash()
+    public function testHash(): void
     {
         $hasher = new FallbackPasswordHasher(['hashers' => ['Weak', 'Default']]);
         $weak = new WeakPasswordHasher();
@@ -47,7 +48,7 @@ class FallbackPasswordHasherTest extends TestCase
      *
      * @return void
      */
-    public function testCheck()
+    public function testCheck(): void
     {
         $hasher = new FallbackPasswordHasher(['hashers' => ['Weak', 'Default']]);
         $weak = new WeakPasswordHasher();
@@ -65,7 +66,7 @@ class FallbackPasswordHasherTest extends TestCase
      *
      * @return void
      */
-    public function testCheckWithConfigs()
+    public function testCheckWithConfigs(): void
     {
         $hasher = new FallbackPasswordHasher(['hashers' => ['Default', 'Weak' => ['hashType' => 'md5']]]);
         $legacy = new WeakPasswordHasher(['hashType' => 'md5']);
@@ -83,7 +84,7 @@ class FallbackPasswordHasherTest extends TestCase
      *
      * @return void
      */
-    public function testNeedsRehash()
+    public function testNeedsRehash(): void
     {
         $hasher = new FallbackPasswordHasher(['hashers' => ['Default', 'Weak']]);
         $weak = new WeakPasswordHasher();

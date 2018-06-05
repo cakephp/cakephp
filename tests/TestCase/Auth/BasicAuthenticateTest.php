@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -40,7 +41,7 @@ class BasicAuthenticateTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -61,7 +62,7 @@ class BasicAuthenticateTest extends TestCase
      *
      * @return void
      */
-    public function testConstructor()
+    public function testConstructor(): void
     {
         $object = new BasicAuthenticate($this->Collection, [
             'userModel' => 'AuthUser',
@@ -76,7 +77,7 @@ class BasicAuthenticateTest extends TestCase
      *
      * @return void
      */
-    public function testAuthenticateNoData()
+    public function testAuthenticateNoData(): void
     {
         $request = new ServerRequest(['url' => 'posts/index']);
 
@@ -91,7 +92,7 @@ class BasicAuthenticateTest extends TestCase
      *
      * @return void
      */
-    public function testAuthenticateNoUsername()
+    public function testAuthenticateNoUsername(): void
     {
         $request = new ServerRequest([
             'url' => 'posts/index',
@@ -106,7 +107,7 @@ class BasicAuthenticateTest extends TestCase
      *
      * @return void
      */
-    public function testAuthenticateNoPassword()
+    public function testAuthenticateNoPassword(): void
     {
         $request = new ServerRequest([
             'url' => 'posts/index',
@@ -121,7 +122,7 @@ class BasicAuthenticateTest extends TestCase
      *
      * @return void
      */
-    public function testAuthenticateInjection()
+    public function testAuthenticateInjection(): void
     {
         $request = new ServerRequest([
             'url' => 'posts/index',
@@ -140,7 +141,7 @@ class BasicAuthenticateTest extends TestCase
      *
      * @return void
      */
-    public function testAuthenticateUsernameZero()
+    public function testAuthenticateUsernameZero(): void
     {
         $User = $this->getTableLocator()->get('Users');
         $User->updateAll(['username' => '0'], ['username' => 'mariano']);
@@ -171,7 +172,7 @@ class BasicAuthenticateTest extends TestCase
      *
      * @return void
      */
-    public function testAuthenticateChallenge()
+    public function testAuthenticateChallenge(): void
     {
         $request = new ServerRequest(['url' => 'posts/index']);
 
@@ -191,7 +192,7 @@ class BasicAuthenticateTest extends TestCase
      *
      * @return void
      */
-    public function testAuthenticateSuccess()
+    public function testAuthenticateSuccess(): void
     {
         $request = new ServerRequest([
             'url' => 'posts/index',

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -13,12 +14,14 @@
  */
 namespace Cake\Auth;
 
+use Cake\Auth\AbstractPasswordHasher;
 use Cake\Controller\ComponentRegistry;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Event\EventListenerInterface;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\ORM\Locator\LocatorAwareTrait;
+use Cake\ORM\Query;
 
 /**
  * Base Authentication class with common methods and properties.
@@ -101,7 +104,7 @@ abstract class BaseAuthenticate implements EventListenerInterface
      *   and result of find is returned.
      * @return bool|array Either false on failure, or an array of user data.
      */
-    protected function _findUser($username, $password = null)
+    protected function _findUser(string $username, ?string $password = null)
     {
         $result = $this->_query($username)->first();
 
@@ -139,7 +142,7 @@ abstract class BaseAuthenticate implements EventListenerInterface
      * @param string $username The username/identifier.
      * @return \Cake\ORM\Query
      */
-    protected function _query($username)
+    protected function _query(string $username): Query
     {
         $config = $this->_config;
         $table = $this->getTableLocator()->get($config['userModel']);
@@ -168,7 +171,7 @@ abstract class BaseAuthenticate implements EventListenerInterface
      * @throws \RuntimeException If password hasher class not found or
      *   it does not extend AbstractPasswordHasher
      */
-    public function passwordHasher()
+    public function passwordHasher(): AbstractPasswordHasher
     {
         if ($this->_passwordHasher) {
             return $this->_passwordHasher;
@@ -185,7 +188,7 @@ abstract class BaseAuthenticate implements EventListenerInterface
      *
      * @return bool
      */
-    public function needsPasswordRehash()
+    public function needsPasswordRehash(): bool
     {
         return $this->_needsPasswordRehash;
     }
@@ -223,7 +226,7 @@ abstract class BaseAuthenticate implements EventListenerInterface
      * @param \Cake\Http\Response $response A response object.
      * @return void
      */
-    public function unauthenticated(ServerRequest $request, Response $response)
+    public function unauthenticated(ServerRequest $request, Response $response): void
     {
     }
 
@@ -243,7 +246,7 @@ abstract class BaseAuthenticate implements EventListenerInterface
      *
      * @return array List of events this class listens to. Defaults to `[]`.
      */
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         return [];
     }

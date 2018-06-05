@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 /**
  * ControllerAuthorizeTest file
  *
@@ -33,7 +34,7 @@ class ControllerAuthorizeTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->controller = $this->getMockBuilder(Controller::class)
@@ -51,7 +52,7 @@ class ControllerAuthorizeTest extends TestCase
     /**
      * @return void
      */
-    public function testControllerErrorOnMissingMethod()
+    public function testControllerErrorOnMissingMethod(): void
     {
         $this->expectException(\Cake\Core\Exception\Exception::class);
         $this->auth->controller(new Controller());
@@ -62,7 +63,7 @@ class ControllerAuthorizeTest extends TestCase
      *
      * @return void
      */
-    public function testAuthorizeFailure()
+    public function testAuthorizeFailure(): void
     {
         $user = [];
         $request = new ServerRequest(['url' => '/posts/index']);
@@ -74,7 +75,7 @@ class ControllerAuthorizeTest extends TestCase
      *
      * @return void
      */
-    public function testAuthorizeSuccess()
+    public function testAuthorizeSuccess(): void
     {
         $user = ['User' => ['username' => 'mark']];
         $request = new ServerRequest(['url' => '/posts/index']);

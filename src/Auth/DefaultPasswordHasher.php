@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -44,7 +45,7 @@ class DefaultPasswordHasher extends AbstractPasswordHasher
      * @return bool|string Password hash or false on failure
      * @link https://book.cakephp.org/3.0/en/controllers/components/authentication.html#hashing-passwords
      */
-    public function hash($password)
+    public function hash(string $password)
     {
         return password_hash(
             $password,
@@ -60,7 +61,7 @@ class DefaultPasswordHasher extends AbstractPasswordHasher
      * @param string $hashedPassword Existing hashed password.
      * @return bool True if hashes match else false.
      */
-    public function check($password, $hashedPassword)
+    public function check(string $password, string $hashedPassword): bool
     {
         return password_verify($password, $hashedPassword);
     }
@@ -72,7 +73,7 @@ class DefaultPasswordHasher extends AbstractPasswordHasher
      * @param string $password The password to verify
      * @return bool
      */
-    public function needsRehash($password)
+    public function needsRehash(string $password): bool
     {
         return password_needs_rehash($password, $this->_config['hashType'], $this->_config['hashOptions']);
     }

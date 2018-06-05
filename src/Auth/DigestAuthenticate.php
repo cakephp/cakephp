@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -16,7 +17,6 @@ namespace Cake\Auth;
 
 use Cake\Controller\ComponentRegistry;
 use Cake\Http\ServerRequest;
-use Cake\Utility\Security;
 
 /**
  * Digest Authentication adapter for AuthComponent.
@@ -85,7 +85,7 @@ class DigestAuthenticate extends BasicAuthenticate
     {
         $this->setConfig([
             'nonceLifetime' => 300,
-            'secret' => Security::getSalt(),
+            'secret' => 'foo.bar',
             'realm' => null,
             'qop' => 'auth',
             'opaque' => null,
@@ -156,7 +156,7 @@ class DigestAuthenticate extends BasicAuthenticate
      * @param string $digest The raw digest authentication headers.
      * @return array|null An array of digest authentication headers
      */
-    public function parseAuthData($digest)
+    public function parseAuthData(string $digest): ?array
     {
         if (substr($digest, 0, 7) === 'Digest ') {
             $digest = substr($digest, 7);
@@ -185,7 +185,7 @@ class DigestAuthenticate extends BasicAuthenticate
      * @param string $method Request method
      * @return string Response hash
      */
-    public function generateResponseHash($digest, $password, $method)
+    public function generateResponseHash(array $digest, string $password, string $method): string
     {
         return md5(
             $password .
@@ -202,7 +202,7 @@ class DigestAuthenticate extends BasicAuthenticate
      * @param string $realm The realm the password is for.
      * @return string the hashed password that can later be used with Digest authentication.
      */
-    public static function password($username, $password, $realm)
+    public static function password(string $username, string $password, string $realm): string
     {
         return md5($username . ':' . $realm . ':' . $password);
     }
@@ -213,7 +213,7 @@ class DigestAuthenticate extends BasicAuthenticate
      * @param \Cake\Http\ServerRequest $request Request object.
      * @return array Headers for logging in.
      */
-    public function loginHeaders(ServerRequest $request)
+    public function loginHeaders(ServerRequest $request): array
     {
         $realm = $this->_config['realm'] ?: $request->getEnv('SERVER_NAME');
 
@@ -249,7 +249,7 @@ class DigestAuthenticate extends BasicAuthenticate
      *
      * @return string
      */
-    protected function generateNonce()
+    protected function generateNonce(): string
     {
         $expiryTime = microtime(true) + $this->getConfig('nonceLifetime');
         $secret = $this->getConfig('secret');
@@ -265,7 +265,7 @@ class DigestAuthenticate extends BasicAuthenticate
      * @param string $nonce The nonce value to check.
      * @return bool
      */
-    protected function validNonce($nonce)
+    protected function validNonce(string $nonce): bool
     {
         $value = base64_decode($nonce);
         if ($value === false) {
