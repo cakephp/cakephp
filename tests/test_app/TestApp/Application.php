@@ -16,6 +16,7 @@ namespace TestApp;
 
 use Cake\Http\BaseApplication;
 use Cake\Routing\Middleware\RoutingMiddleware;
+use TestApp\Command\AbortCommand;
 
 class Application extends BaseApplication
 {
@@ -23,6 +24,13 @@ class Application extends BaseApplication
     public function bootstrap()
     {
         parent::bootstrap();
+    }
+
+    public function console($commands)
+    {
+        return $commands
+            ->add('abort_command', AbortCommand::class)
+            ->addMany($commands->autoDiscover());
     }
 
     public function middleware($middleware)

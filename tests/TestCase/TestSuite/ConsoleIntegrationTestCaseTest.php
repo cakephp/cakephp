@@ -60,6 +60,31 @@ class ConsoleIntegrationTestCaseTest extends ConsoleIntegrationTestCase
     }
 
     /**
+     * tests that exec catches a StopException
+     *
+     * @return void
+     */
+    public function testExecShellWithStopException()
+    {
+        $this->exec('integration abort_shell');
+        $this->assertExitCode(Shell::CODE_ERROR);
+        $this->assertErrorContains('Shell aborted');
+    }
+
+    /**
+     * tests that exec catches a StopException
+     *
+     * @return void
+     */
+    public function testExecCommandWithStopException()
+    {
+        $this->useCommandRunner();
+        $this->exec('abort_command');
+        $this->assertExitCode(Shell::CODE_ERROR);
+        $this->assertErrorContains('Command aborted');
+    }
+
+    /**
      * tests a valid core command
      *
      * @return void
