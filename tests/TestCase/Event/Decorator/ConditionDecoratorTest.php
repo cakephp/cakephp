@@ -88,7 +88,7 @@ class ConditionDecoratorTest extends TestCase
         ]);
 
         EventManager::instance()->dispatch($event);
-        $this->assertEquals(2, $event->data('counter'));
+        $this->assertEquals(2, $event->getData('counter'));
     }
 
     /**
