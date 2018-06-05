@@ -304,7 +304,6 @@ abstract class Cell
             'action' => $this->action,
             'args' => $this->args,
             'template' => $this->template,
-            'viewClass' => $this->viewClass,
             'request' => $this->request,
             'response' => $this->response,
         ];
