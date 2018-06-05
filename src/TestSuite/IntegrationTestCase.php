@@ -684,18 +684,6 @@ abstract class IntegrationTestCase extends TestCase
     }
 
     /**
-     * Convert an array URL into a string so we can dispatch it.
-     *
-     * This requires loading routes.
-     *
-     * @param array $url The routing URL to resolve.
-     * @return string The resolved route.
-     */
-    protected function resolveRoute(array $url)
-    {
-    }
-
-    /**
      * Get the response body as string
      *
      * @return string The response body.
