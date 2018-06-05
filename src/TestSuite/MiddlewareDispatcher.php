@@ -81,38 +81,38 @@ class MiddlewareDispatcher
         } catch (ReflectionException $e) {
             throw new LogicException(sprintf('Cannot load "%s" for use in integration testing.', $this->_class));
         }
-
-        $this->bootstrap();
-        $this->loadRoutes();
     }
 
     /**
-     * Application bootstrap wrapper.
+     * Resolve the provided URL into a string.
      *
-     * Calls `bootstrap()` and `events()` if application implements `EventApplicationInterface`.
-     * After the application is bootstrapped and events are attached, plugins are bootstrapped
-     * and have their events attached.
-     *
-     * @return void
+     * @param array|string $url The URL array/string to resolve.
+     * @return string
      */
-    protected function bootstrap()
+    public function resolveUrl($url)
     {
+        // If we need to resolve a Route URL but there are no routes, load routes.
+        if (is_array($url) && count(Router::getRouteCollection()->routes()) === 0) {
+            return $this->resolveRoute($url);
+        }
+
+        return Router::url($url);
+    }
+
+    /**
+     * Convert a URL array into a string URL via routing.
+     *
+     * @param array $url The url to resolve
+     * @return string
+     */
+    protected function resolveRoute(array $url)
+    {
+        // Simulate application bootstrap and route loading.
+        // We need both to ensure plugins are loaded.
         $this->app->bootstrap();
         if ($this->app instanceof PluginApplicationInterface) {
             $this->app->pluginBootstrap();
         }
-    }
-
-    /**
-     * Ensure that the application's routes are loaded.
-     *
-     * Console commands and shells often need to generate URLs.
-     *
-     * @return void
-     */
-    protected function loadRoutes()
-    {
-        Router::reload();
         $builder = Router::createRouteBuilder('/');
 
         if ($this->app instanceof HttpApplicationInterface) {
@@ -121,6 +121,11 @@ class MiddlewareDispatcher
         if ($this->app instanceof PluginApplicationInterface) {
             $this->app->pluginRoutes($builder);
         }
+
+        $out = Router::url($url);
+        Router::reload();
+
+        return $out;
     }
 
     /**
@@ -138,7 +143,6 @@ class MiddlewareDispatcher
             [$this->_test, 'controllerSpy']
         );
 
-        Router::reload();
         $server = new Server($this->app);
         $psrRequest = $this->_createRequest($request);
 

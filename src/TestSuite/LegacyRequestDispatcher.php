@@ -15,6 +15,7 @@ namespace Cake\TestSuite;
 
 use Cake\Http\ServerRequest;
 use Cake\Routing\DispatcherFactory;
+use Cake\Routing\Router;
 use Cake\TestSuite\Stub\Response;
 
 /**
@@ -39,6 +40,17 @@ class LegacyRequestDispatcher
     public function __construct($test)
     {
         $this->_test = $test;
+    }
+
+    /**
+     * Resolve the user provided URL into the actual request URL.
+     *
+     * @param array|string $url The URL array/string to resolve.
+     * @return string
+     */
+    public function resolveUrl($url)
+    {
+        return Router::url($url);
     }
 
     /**
