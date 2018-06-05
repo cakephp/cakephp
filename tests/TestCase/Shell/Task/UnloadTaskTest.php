@@ -16,13 +16,16 @@ namespace Cake\Test\TestCase\Shell\Task;
 use Cake\Console\Shell;
 use Cake\Core\Plugin;
 use Cake\Filesystem\File;
-use Cake\TestSuite\ConsoleIntegrationTestCase;
+use Cake\TestSuite\ConsoleIntegrationTestTrait;
+use Cake\TestSuite\TestCase;
 
 /**
  * UnloadTaskTest class
  */
-class UnloadTaskTest extends ConsoleIntegrationTestCase
+class UnloadTaskTest extends TestCase
 {
+    use ConsoleIntegrationTestTrait;
+
     /**
      * @var string
      */

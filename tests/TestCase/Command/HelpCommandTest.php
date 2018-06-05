@@ -16,13 +16,16 @@ namespace Cake\Test\TestCase\Command;
 
 use Cake\Console\Shell;
 use Cake\Core\Plugin;
-use Cake\TestSuite\ConsoleIntegrationTestCase;
+use Cake\TestSuite\ConsoleIntegrationTestTrait;
+use Cake\TestSuite\TestCase;
 
 /**
  * HelpCommand test.
  */
-class HelpCommandTest extends ConsoleIntegrationTestCase
+class HelpCommandTest extends TestCase
 {
+    use ConsoleIntegrationTestTrait;
+
     /**
      * setup method
      *

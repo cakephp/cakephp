@@ -17,13 +17,15 @@ namespace Cake\Test\TestCase\Shell;
 use Cake\Console\Shell;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\TestSuite\ConsoleIntegrationTestCase;
+use Cake\TestSuite\ConsoleIntegrationTestTrait;
+use Cake\TestSuite\TestCase;
 
 /**
  * CommandListShellTest
  */
-class CommandListShellTest extends ConsoleIntegrationTestCase
+class CommandListShellTest extends TestCase
 {
+    use ConsoleIntegrationTestTrait;
 
     /**
      * setUp method
