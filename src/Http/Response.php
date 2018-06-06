@@ -2175,7 +2175,7 @@ class Response implements ResponseInterface
     /**
      * Create a new response with a cookie set.
      *
-     * ### Options
+     * ### Data
      *
      * - `value`: Value of the cookie
      * - `expire`: Time the cookie expires in

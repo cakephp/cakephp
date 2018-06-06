@@ -1773,7 +1773,7 @@ class ResponseTest extends TestCase
                 'name' => 'urmc',
                 'value' => '{"user_id":1,"token":"abc123"}',
                 'expire' => null,
-                'path' => '',
+                'path' => '/',
                 'domain' => '',
                 'secure' => false,
                 'httpOnly' => true

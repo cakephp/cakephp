@@ -483,7 +483,7 @@ class CookieCollectionTest extends TestCase
 
         $cookie = $cookies->get('name');
         $this->assertSame('val', $cookie->getValue());
-        $this->assertSame('', $cookie->getPath(), 'No path on request cookies');
+        $this->assertSame('/', $cookie->getPath());
         $this->assertSame('', $cookie->getDomain(), 'No domain on request cookies');
     }
 }
