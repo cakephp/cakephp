@@ -495,6 +495,7 @@ class PaginatorHelper extends Helper
      * @param array $options Pagination/URL options array
      * @param string|null $model Which model to paginate on
      * @param array|bool $urlOptions Array of options or bool `fullBase` for BC reasons.
+     * The bool version of this argument is *deprecated* and will be removed in 4.0.0
      * @return string By default, returns a full pagination URL string for use in non-standard contexts (i.e. JavaScript)
      * @link https://book.cakephp.org/3.0/en/views/helpers/paginator.html#generating-pagination-urls
      */
@@ -502,6 +503,13 @@ class PaginatorHelper extends Helper
     {
         if (!is_array($urlOptions)) {
             $urlOptions = ['fullBase' => $urlOptions];
+            if (func_num_args() == 3) {
+                deprecationWarning(
+                    'Passing an bool as third argument into PaginatorHelper::generateUrl() is deprecated ' .
+                    'and will be removed in 4.0.0 . ' .
+                    'Pass an array instead.'
+                );
+            }
         }
         $urlOptions += [
             'escape' => true,
@@ -1150,19 +1158,19 @@ class PaginatorHelper extends Helper
         $links = [];
 
         if ($options['prev'] && $this->hasPrev()) {
-            $links[] = $this->Html->meta('prev', $this->generateUrl(['page' => $params['page'] - 1], null, true));
+            $links[] = $this->Html->meta('prev', $this->generateUrl(['page' => $params['page'] - 1], null, ['fullBase' => true]));
         }
 
         if ($options['next'] && $this->hasNext()) {
-            $links[] = $this->Html->meta('next', $this->generateUrl(['page' => $params['page'] + 1], null, true));
+            $links[] = $this->Html->meta('next', $this->generateUrl(['page' => $params['page'] + 1], null, ['fullBase' => true]));
         }
 
         if ($options['first']) {
-            $links[] = $this->Html->meta('first', $this->generateUrl(['page' => 1], null, true));
+            $links[] = $this->Html->meta('first', $this->generateUrl(['page' => 1], null, ['fullBase' => true]));
         }
 
         if ($options['last']) {
-            $links[] = $this->Html->meta('last', $this->generateUrl(['page' => $params['pageCount']], null, true));
+            $links[] = $this->Html->meta('last', $this->generateUrl(['page' => $params['pageCount']], null, ['fullBase' => true]));
         }
 
         $out = implode($links);
