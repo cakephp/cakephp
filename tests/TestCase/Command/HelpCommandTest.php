@@ -94,7 +94,7 @@ class HelpCommandTest extends ConsoleIntegrationTestCase
         $find = '<shell name="sample" call_as="sample" provider="TestApp\Shell\SampleShell" help="sample -h"';
         $this->assertOutputContains($find);
 
-        $find = '<shell name="orm_cache" call_as="orm_cache" provider="Cake\Shell\OrmCacheShell" help="orm_cache -h"';
+        $find = '<shell name="schema_cache" call_as="schema_cache" provider="Cake\Shell\SchemaCacheShell" help="schema_cache -h"';
         $this->assertOutputContains($find);
 
         $find = '<shell name="test_plugin.sample" call_as="test_plugin.sample" provider="TestPlugin\Shell\SampleShell" help="test_plugin.sample -h"';
