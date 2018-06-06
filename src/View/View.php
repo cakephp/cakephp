@@ -108,7 +108,7 @@ class View implements EventDispatcherInterface
      *
      * @var string
      */
-    public $name;
+    protected $name;
 
     /**
      * Current passed params. Passed to View from the creating Controller for convenience.
@@ -1201,6 +1201,7 @@ class View implements EventDispatcherInterface
             'response' => 'getResponse',
             'subDir' => 'getSubdir',
             'plugin' => 'getPlugin',
+            'name' => 'getName',
         ];
         if (isset($protected[$name])) {
             $method = $protected[$name];
@@ -1278,6 +1279,7 @@ class View implements EventDispatcherInterface
             'response' => 'setResponse',
             'subDir' => 'setSubDir',
             'plugin' => 'setPlugin',
+            'name' => 'setName',
             'elementCache' => 'setElementCache',
         ];
         if (isset($protected[$name])) {
