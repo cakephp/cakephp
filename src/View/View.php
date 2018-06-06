@@ -123,7 +123,7 @@ class View implements EventDispatcherInterface
      *
      * @var array
      */
-    public $helpers = [];
+    protected $helpers = [];
 
     /**
      * The name of the subfolder containing templates for this View.
@@ -1221,6 +1221,15 @@ class View implements EventDispatcherInterface
             return $this->Blocks;
         }
 
+        if ($name === 'helpers') {
+            deprecationWarning(
+                'View::$helpers is protected now. ' .
+                'Use the helper registry through View::helpers() to manage helpers.'
+            );
+
+            return $this->helpers;
+        }
+
         $registry = $this->helpers();
         if (isset($registry->{$name})) {
             $this->{$name} = $registry->{$name};
@@ -1280,6 +1289,15 @@ class View implements EventDispatcherInterface
             $this->{$method}($value);
 
             return;
+        }
+
+        if ($name === 'helpers') {
+            deprecationWarning(
+                'View::$helpers is protected now. ' .
+                'Use the helper registry through View::helpers() to manage helpers.'
+            );
+
+            return $this->helpers = $value;
         }
 
         $this->{$name} = $value;

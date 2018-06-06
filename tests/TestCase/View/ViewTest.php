@@ -1139,9 +1139,10 @@ class ViewTest extends TestCase
      */
     public function testLoadHelpers()
     {
-        $View = new View();
+        $View = new View(null, null, null, [
+            'helpers' => ['Html' => ['foo' => 'bar'], 'Form' => ['foo' => 'baz']]
+        ]);
 
-        $View->helpers = ['Html' => ['foo' => 'bar'], 'Form' => ['foo' => 'baz']];
         $result = $View->loadHelpers();
         $this->assertSame($View, $result);
 
@@ -1164,7 +1165,6 @@ class ViewTest extends TestCase
     {
         $View = new View();
 
-        $View->helpers = [];
         $this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $View->Html, 'Object type is wrong.');
         $this->assertInstanceOf('Cake\View\Helper\FormHelper', $View->Form, 'Object type is wrong.');
     }

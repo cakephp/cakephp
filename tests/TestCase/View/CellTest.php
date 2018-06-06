@@ -347,9 +347,14 @@ class CellTest extends TestCase
      */
     public function testCellInheritsHelperConfig()
     {
-        $this->View->helpers = ['Url', 'Form', 'Banana'];
-        $cell = $this->View->cell('Articles');
-        $this->assertSame($this->View->helpers, $cell->helpers);
+        $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
+        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
+        $helpers = ['Url', 'Form', 'Banana'];
+
+        $view = new View($request, $response, null, ['helpers' => $helpers]);
+
+        $cell = $view->cell('Articles');
+        $this->assertSame($helpers, $cell->helpers);
     }
 
     /**
