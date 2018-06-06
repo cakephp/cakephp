@@ -476,7 +476,7 @@ DIGEST;
      * @param int $time Current time in microseconds
      * @return string
      */
-    protected function generateNonce(string $secret = null, int $expires = 300, int $time = null): string
+    protected function generateNonce(?string $secret = null, ?int $expires = 300, ?int $time = null): string
     {
         $secret = $secret ?: Configure::read('Security.salt');
         $time = $time ?: microtime(true);

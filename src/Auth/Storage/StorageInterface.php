@@ -24,7 +24,7 @@ interface StorageInterface
     /**
      * Read user record.
      *
-     * @return mixed \ArrayAccess, array or null
+     * @return \ArrayAccess|array|null
      */
     public function read();
 

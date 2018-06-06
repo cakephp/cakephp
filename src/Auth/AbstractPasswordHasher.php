@@ -50,7 +50,7 @@ abstract class AbstractPasswordHasher
      *
      * @param string $password Plain text password to hash
      *   required to generate password hash.
-     * @return mixed Either the password hash string or bool
+     * @return string|bool Either the password hash string or bool
      */
     abstract public function hash(string $password);
 
