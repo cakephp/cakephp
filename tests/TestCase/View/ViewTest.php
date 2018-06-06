@@ -659,7 +659,7 @@ class ViewTest extends TestCase
         $result = $view->getViewFileName('index');
         $this->assertPathEquals($expected, $result);
 
-        $view->subDir = 'json';
+        $view->setSubDir('json');
         $result = $view->getViewFileName('index');
         $expected = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Posts' . DS . 'json' . DS . 'index.ctp';
         $this->assertPathEquals($expected, $result);
@@ -680,7 +680,7 @@ class ViewTest extends TestCase
         ];
         $view = new TestView(null, null, null, $viewOptions);
 
-        $view->subDir = 'json';
+        $view->setSubDir('json');
         $result = $view->getViewFileName('index');
         $expected = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Jobs' . DS . 'json' . DS . 'index.ctp';
         $this->assertPathEquals($expected, $result);

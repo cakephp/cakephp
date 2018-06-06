@@ -70,7 +70,7 @@ class XmlView extends SerializedView
      *
      * @var string
      */
-    public $subDir = 'xml';
+    protected $subDir = 'xml';
 
     /**
      * Response type.

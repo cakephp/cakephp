@@ -175,9 +175,9 @@ class View implements EventDispatcherInterface
      * Sub-directory for this template file. This is often used for extension based routing.
      * Eg. With an `xml` extension, $subDir would be `xml/`
      *
-     * @var string|null
+     * @var string
      */
-    public $subDir;
+    protected $subDir = '';
 
     /**
      * The view theme to use.
@@ -1199,6 +1199,7 @@ class View implements EventDispatcherInterface
             'theme' => 'getTheme',
             'request' => 'getRequest',
             'response' => 'getResponse',
+            'subDir' => 'getSubdir',
         ];
         if (isset($protected[$name])) {
             $method = $protected[$name];
@@ -1265,6 +1266,7 @@ class View implements EventDispatcherInterface
             'theme' => 'setTheme',
             'request' => 'setRequest',
             'response' => 'setResponse',
+            'subDir' => 'setSubDir',
         ];
         if (isset($protected[$name])) {
             $method = $protected[$name];
@@ -1402,6 +1404,31 @@ class View implements EventDispatcherInterface
     public function hasRendered()
     {
         return $this->hasRendered;
+    }
+
+    /**
+     * Set sub-directory for this template files.
+     *
+     * @param string $subDir Sub-directory name.
+     * @return $this
+     * @see \Cake\View\View::$subDir
+     */
+    public function setSubDir($subDir)
+    {
+        $this->subDir = $subDir;
+
+        return $this;
+    }
+
+    /**
+     * Get sub-directory for this template files.
+     *
+     * @return string
+     * @see \Cake\View\View::$subDir
+     */
+    public function getSubDir()
+    {
+        return $this->subDir;
     }
 
     /**

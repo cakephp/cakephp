@@ -68,7 +68,7 @@ class JsonView extends SerializedView
      *
      * @var string
      */
-    public $subDir = 'json';
+    protected $subDir = 'json';
 
     /**
      * Response type.
