@@ -2206,6 +2206,11 @@ class Response implements ResponseInterface
         if ($name instanceof Cookie) {
             $cookie = $name;
         } else {
+            deprecationWarning(
+                get_called_class() . '::withCookie(string $name, array $data) is deprecated. ' .
+                'Pass an instance of \Cake\Http\Cookie\Cookie instead.'
+            );
+
             if (!is_array($data)) {
                 $data = ['value' => $data];
             }
@@ -2267,6 +2272,11 @@ class Response implements ResponseInterface
         if ($name instanceof CookieInterface) {
             $cookie = $name->withExpired();
         } else {
+            deprecationWarning(
+                get_called_class() . '::withExpiredCookie(string $name, array $data) is deprecated. ' .
+                'Pass an instance of \Cake\Http\Cookie\Cookie instead.'
+            );
+
             $options += [
                 'path' => '/',
                 'domain' => '',
