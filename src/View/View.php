@@ -191,7 +191,7 @@ class View implements EventDispatcherInterface
      *
      * @var bool
      */
-    public $hasRendered = false;
+    protected $hasRendered = false;
 
     /**
      * List of generated DOM UUIDs.
@@ -1392,6 +1392,16 @@ class View implements EventDispatcherInterface
         $helpers = $this->helpers();
 
         return $this->{$class} = $helpers->load($name, $config);
+    }
+
+    /**
+     * Check whether the view has been rendered.
+     *
+     * @return bool
+     */
+    public function hasRendered()
+    {
+        return $this->hasRendered;
     }
 
     /**

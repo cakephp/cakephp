@@ -2136,6 +2136,19 @@ TEXT;
     }
 
     /**
+     * Test testHasRendered()
+     *
+     * @return void
+     */
+    public function testHasRendered()
+    {
+        $this->assertFalse($this->View->hasRendered());
+
+        $this->View->render('index');
+        $this->assertTrue($this->View->hasRendered());
+    }
+
+    /**
      * Test magic getter and setter for removed properties.
      *
      * @group deprecated
