@@ -193,16 +193,16 @@ class View implements EventDispatcherInterface
      * This object contains all the information about a request and several methods for reading
      * additional information about the request.
      *
+     * @deprecated 3.7.0 The property will become protected in 4.0.0.
      * @var \Cake\Http\ServerRequest
-     * @deprecated 3.7.0 The property will become protected in 4.0.0. Use getRequest()/setRequest() instead.
      */
     public $request;
 
     /**
      * Reference to the Response object
      *
+     * @deprecated 3.7.0 The property will become protected in 4.0.0.
      * @var \Cake\Http\Response
-     * @deprecated 3.7.0 The property will become protected in 4.0.0. Use getResponse()/setResponse() instead.
      */
     public $response;
 
