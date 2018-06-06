@@ -1034,7 +1034,7 @@ class ViewTest extends TestCase
         Cache::clear(false, 'test_view');
 
         $View = $this->PostsController->createView();
-        $View->elementCache = 'test_view';
+        $View->setElementCache('test_view');
 
         $result = $View->element('test_element', [], ['cache' => true]);
         $expected = 'this is the test element';
@@ -1058,7 +1058,7 @@ class ViewTest extends TestCase
         $result = Cache::read('element_custom_key', 'test_view');
         $this->assertEquals($expected, $result);
 
-        $View->elementCache = 'default';
+        $View->setElementCache('default');
         $View->element('test_element', [
             'param' => 'one',
             'foo' => 'two'

@@ -225,7 +225,7 @@ class View implements EventDispatcherInterface
      * @var string
      * @see \Cake\View\View::element()
      */
-    public $elementCache = 'default';
+    protected $elementCache = 'default';
 
     /**
      * List of variables to collect from the associated controller.
@@ -1267,6 +1267,7 @@ class View implements EventDispatcherInterface
             'request' => 'setRequest',
             'response' => 'setResponse',
             'subDir' => 'setSubDir',
+            'elementCache' => 'setElementCache',
         ];
         if (isset($protected[$name])) {
             $method = $protected[$name];
@@ -1429,6 +1430,20 @@ class View implements EventDispatcherInterface
     public function getSubDir()
     {
         return $this->subDir;
+    }
+
+    /**
+     * Set The cache configuration View will use to store cached elements
+     *
+     * @param string $elementCache Cache config name.
+     * @return $this
+     * @see \Cake\View\View::$elementCache
+     */
+    public function setElementCache($elementCache)
+    {
+        $this->elementCache = $elementCache;
+
+        return $this;
     }
 
     /**
