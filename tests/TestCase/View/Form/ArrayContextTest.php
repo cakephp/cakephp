@@ -35,6 +35,23 @@ class ArrayContextTest extends TestCase
         $this->request = new ServerRequest();
     }
 
+    public function testGetRequiredMessage()
+    {
+        $context = new ArrayContext($this->request, [
+            'required' => [
+                'Comments' => [
+                    'required' => 'My custom message',
+                    'nope' => false,
+                    'tags' => true
+                ]
+            ]
+        ]);
+
+        $this->assertSame('My custom message', $context->getRequiredMessage('Comments.required'));
+        $this->assertSame('This field is required', $context->getRequiredMessage('Comments.tags'));
+        $this->assertSame(null, $context->getRequiredMessage('Comments.nope'));
+    }
+
     /**
      * Test getting the primary key.
      *
