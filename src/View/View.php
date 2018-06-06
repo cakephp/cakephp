@@ -1423,6 +1423,7 @@ class View implements EventDispatcherInterface
      * Check whether the view has been rendered.
      *
      * @return bool
+     * @since 3.7.0
      */
     public function hasRendered()
     {
@@ -1435,6 +1436,7 @@ class View implements EventDispatcherInterface
      * @param string $subDir Sub-directory name.
      * @return $this
      * @see \Cake\View\View::$subDir
+     * @since 3.7.0
      */
     public function setSubDir($subDir)
     {
@@ -1448,6 +1450,7 @@ class View implements EventDispatcherInterface
      *
      * @return string
      * @see \Cake\View\View::$subDir
+     * @since 3.7.0
      */
     public function getSubDir()
     {
@@ -1458,6 +1461,7 @@ class View implements EventDispatcherInterface
      * Returns the plugin name.
      *
      * @return string|null
+     * @since 3.7.0
      */
     public function getPlugin()
     {
@@ -1469,6 +1473,7 @@ class View implements EventDispatcherInterface
      *
      * @param string $name Plugin name.
      * @return $this
+     * @since 3.7.0
      */
     public function setPlugin($name)
     {
@@ -1483,6 +1488,7 @@ class View implements EventDispatcherInterface
      * @param string $elementCache Cache config name.
      * @return $this
      * @see \Cake\View\View::$elementCache
+     * @since 3.7.0
      */
     public function setElementCache($elementCache)
     {
