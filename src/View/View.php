@@ -99,9 +99,9 @@ class View implements EventDispatcherInterface
     /**
      * The name of the plugin.
      *
-     * @var string
+     * @var string|null
      */
-    public $plugin;
+    protected $plugin;
 
     /**
      * Name of the controller that created the View if any.
@@ -1200,6 +1200,7 @@ class View implements EventDispatcherInterface
             'request' => 'getRequest',
             'response' => 'getResponse',
             'subDir' => 'getSubdir',
+            'plugin' => 'getPlugin',
         ];
         if (isset($protected[$name])) {
             $method = $protected[$name];
@@ -1276,6 +1277,7 @@ class View implements EventDispatcherInterface
             'request' => 'setRequest',
             'response' => 'setResponse',
             'subDir' => 'setSubDir',
+            'plugin' => 'setPlugin',
             'elementCache' => 'setElementCache',
         ];
         if (isset($protected[$name])) {
@@ -1448,6 +1450,29 @@ class View implements EventDispatcherInterface
     public function getSubDir()
     {
         return $this->subDir;
+    }
+
+    /**
+     * Returns the plugin name.
+     *
+     * @return string|null
+     */
+    public function getPlugin()
+    {
+        return $this->plugin;
+    }
+
+    /**
+     * Sets the plugin name.
+     *
+     * @param string $name Plugin name.
+     * @return $this
+     */
+    public function setPlugin($name)
+    {
+        $this->plugin = $name;
+
+        return $this;
     }
 
     /**

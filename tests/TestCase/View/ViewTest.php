@@ -737,7 +737,7 @@ class ViewTest extends TestCase
         $result = $View->getLayoutFileName('TestPlugin.default');
         $this->assertPathEquals($expected, $result);
 
-        $View->plugin = 'TestPlugin';
+        $View->setRequest($View->getRequest()->withParam('plugin', 'TestPlugin'));
         $expected = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'src' . DS .
             'Template' . DS . 'Layout' . DS . 'default.ctp';
         $result = $View->getLayoutFileName('default');
@@ -888,7 +888,7 @@ class ViewTest extends TestCase
         $result = $this->View->elementExists('TestPlugin.element');
         $this->assertFalse($result);
 
-        $this->View->plugin = 'TestPlugin';
+        $this->View->setRequest($this->View->getRequest()->withParam('plugin', 'TestPlugin'));
         $result = $this->View->elementExists('plugin_element');
         $this->assertTrue($result);
     }
@@ -906,7 +906,7 @@ class ViewTest extends TestCase
         $result = $this->View->element('TestPlugin.plugin_element');
         $this->assertEquals("Element in the TestPlugin\n", $result);
 
-        $this->View->plugin = 'TestPlugin';
+        $this->View->setRequest($this->View->getRequest()->withParam('plugin', 'TestPlugin'));
         $result = $this->View->element('plugin_element');
         $this->assertEquals("Element in the TestPlugin\n", $result);
 
@@ -928,7 +928,7 @@ class ViewTest extends TestCase
         $result = $this->View->element('TestPlugin.plugin_element');
         $this->assertEquals('this is the plugin prefixed element using params[plugin]', $result);
 
-        $this->View->plugin = 'TestPlugin';
+        $this->View->setRequest($this->View->getRequest()->withParam('plugin', 'TestPlugin'));
         $result = $this->View->element('test_plugin_element');
         $this->assertEquals('this is the test set using View::$plugin plugin prefixed element', $result);
 
