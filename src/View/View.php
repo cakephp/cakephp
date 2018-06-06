@@ -94,7 +94,7 @@ class View implements EventDispatcherInterface
      *
      * @var \Cake\View\ViewBlock
      */
-    public $Blocks;
+    protected $Blocks;
 
     /**
      * The name of the plugin.
@@ -1209,6 +1209,15 @@ class View implements EventDispatcherInterface
             ));
 
             return $this->{$method}();
+        }
+
+        if ($name === 'Blocks') {
+            deprecationWarning(
+                'View::$Blocks is protected now. ' .
+                'Use one of the wrapper methods like View::fetch() etc. instead.'
+            );
+
+            return $this->Blocks;
         }
 
         $registry = $this->helpers();
