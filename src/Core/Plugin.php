@@ -329,43 +329,6 @@ class Plugin
     }
 
     /**
-     * Loads the routes file for a plugin, or all plugins configured to load their respective routes file.
-     *
-     * If you need fine grained control over how routes are loaded for plugins, you
-     * can use {@see Cake\Routing\RouteBuilder::loadPlugin()}
-     *
-     * @param string|null $name name of the plugin, if null will operate on all
-     *   plugins having enabled the loading of routes files.
-     * @return bool
-     * @deprecated 3.6.5 This method is no longer needed when using HttpApplicationInterface based applications.
-     *   This method will be removed in 4.0.0
-     */
-    public static function routes($name = null)
-    {
-        deprecationWarning(
-            'You no longer need to call `Plugin::routes()` after upgrading to use Http\Server. ' .
-            'See https://book.cakephp.org/3.0/en/development/application.html#adding-the-new-http-stack-to-an-existing-application ' .
-            'for upgrade information.'
-        );
-        if ($name === null) {
-            foreach (static::loaded() as $p) {
-                static::routes($p);
-            }
-
-            return true;
-        }
-        $plugin = static::getCollection()->get($name);
-        if (!$plugin->isEnabled('routes')) {
-            return false;
-        }
-
-        return (bool)static::_includeFile(
-            $plugin->getConfigPath() . 'routes.php',
-            true
-        );
-    }
-
-    /**
      * Returns true if the plugin $plugin is already loaded
      * If plugin is null, it will return a list of all loaded plugins
      *

@@ -194,17 +194,15 @@ class View implements EventDispatcherInterface
      * additional information about the request.
      *
      * @var \Cake\Http\ServerRequest
-     * @deprecated 3.7.0 The property will become protected in 4.0.0. Use getRequest()/setRequest() instead.
      */
-    public $request;
+    protected $request;
 
     /**
      * Reference to the Response object
      *
      * @var \Cake\Http\Response
-     * @deprecated 3.7.0 The property will become protected in 4.0.0. Use getResponse()/setResponse() instead.
      */
-    public $response;
+    protected $response;
 
     /**
      * The Cache configuration View will use to store cached elements. Changing this will change
