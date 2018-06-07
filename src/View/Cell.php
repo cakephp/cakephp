@@ -69,15 +69,6 @@ abstract class Cell
     public $response;
 
     /**
-     * The helpers this cell uses.
-     *
-     * This property is copied automatically when using the CellTrait
-     *
-     * @var array
-     */
-    public $helpers = [];
-
-    /**
      * The cell's action to invoke.
      *
      * @var string
@@ -288,6 +279,7 @@ abstract class Cell
         $deprecated = [
             'template' => 'getTemplate',
             'plugin' => 'getPlugin',
+            'helpers' => 'getHelpers',
         ];
         if (isset($deprecated[$name])) {
             $method = $deprecated[$name];
@@ -315,6 +307,7 @@ abstract class Cell
         $deprecated = [
             'template' => 'setTemplate',
             'plugin' => 'setPlugin',
+            'helpers' => 'setHelpers',
         ];
         if (isset($deprecated[$name])) {
             $method = $deprecated[$name];

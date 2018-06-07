@@ -103,7 +103,6 @@ trait CellTrait
         }
         if (!empty($this->helpers)) {
             $builder->setHelpers($this->helpers);
-            $instance->helpers = $this->helpers;
         }
 
         if ($this instanceof View) {

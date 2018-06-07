@@ -356,7 +356,11 @@ class CellTest extends TestCase
         $view = new View($request, $response, null, ['helpers' => $helpers]);
 
         $cell = $view->cell('Articles');
-        $this->assertSame($helpers, $cell->helpers);
+        $this->assertSame($helpers, $cell->viewBuilder()->getHelpers());
+
+        $this->deprecated(function () use ($cell, $helpers) {
+            $this->assertSame($helpers, $cell->helpers);
+        });
     }
 
     /**
