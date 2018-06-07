@@ -56,17 +56,15 @@ abstract class Cell
      * additional information about the request.
      *
      * @var \Cake\Http\ServerRequest
-     * @deprecated 3.7.0 The property will become protected in 4.0.0.
      */
-    public $request;
+    protected $request;
 
     /**
      * An instance of a Response object that contains information about the impending response
      *
      * @var \Cake\Http\Response
-     * @deprecated 3.7.0 The property will become protected in 4.0.0.
      */
-    public $response;
+    protected $response;
 
     /**
      * The cell's action to invoke.
@@ -293,10 +291,12 @@ abstract class Cell
         }
 
         $protected = [
-            'action' => 'action',
-            'args' => 'args',
+            'action',
+            'args',
+            'request',
+            'response',
         ];
-        if (isset($deprecated[$name])) {
+        if (in_array($name, $protected, true)) {
             deprecationWarning(sprintf(
                 'Cell::$%s is now protected and shouldn\'t be accessed from outside a child class.',
                 $name,
@@ -334,10 +334,12 @@ abstract class Cell
         }
 
         $protected = [
-            'action' => 'action',
-            'args' => 'args',
+            'action',
+            'args',
+            'request',
+            'response',
         ];
-        if (isset($deprecated[$name])) {
+        if (in_array($name, $protected, true)) {
             deprecationWarning(sprintf(
                 'Cell::$%s is now protected and shouldn\'t be accessed from outside a child class.',
                 $name,
