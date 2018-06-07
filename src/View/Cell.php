@@ -73,14 +73,14 @@ abstract class Cell
      *
      * @var string
      */
-    public $action;
+    protected $action;
 
     /**
      * Arguments to pass to cell's action.
      *
      * @var array
      */
-    public $args = [];
+    protected $args = [];
 
     /**
      * These properties can be set directly on Cell and passed to the View as options.
@@ -292,6 +292,18 @@ abstract class Cell
             return $this->viewBuilder()->{$method}();
         }
 
+        $protected = [
+            'action' => 'action',
+            'args' => 'args',
+        ];
+        if (isset($deprecated[$name])) {
+            deprecationWarning(sprintf(
+                'Cell::$%s is now protected and shouldn\'t be accessed from outside a child class.',
+                $name,
+                $method
+            ));
+        }
+
         return $this->{$name};
     }
 
@@ -319,6 +331,18 @@ abstract class Cell
             $this->viewBuilder()->{$method}($value);
 
             return;
+        }
+
+        $protected = [
+            'action' => 'action',
+            'args' => 'args',
+        ];
+        if (isset($deprecated[$name])) {
+            deprecationWarning(sprintf(
+                'Cell::$%s is now protected and shouldn\'t be accessed from outside a child class.',
+                $name,
+                $method
+            ));
         }
 
         $this->{$name} = $value;
