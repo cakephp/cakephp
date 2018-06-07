@@ -16,6 +16,7 @@ declare(strict_types = 1);
 namespace Cake\Controller;
 
 use Cake\Event\EventInterface;
+use Cake\Http\Response;
 
 /**
  * Error Handling Controller
@@ -39,10 +40,12 @@ class ErrorController extends Controller
      * beforeRender callback.
      *
      * @param \Cake\Event\EventInterface $event Event.
-     * @return void
+     * @return \Cake\Http\Response|null
      */
-    public function beforeRender(EventInterface $event): void
+    public function beforeRender(EventInterface $event): ?Response
     {
         $this->viewBuilder()->setTemplatePath('Error');
+
+        return null;
     }
 }

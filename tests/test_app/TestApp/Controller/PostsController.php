@@ -40,6 +40,8 @@ class PostsController extends AppController
         if ($this->request->getParam('action') !== 'securePost') {
             $this->getEventManager()->off($this->Security);
         }
+
+        return null;
     }
 
     /**

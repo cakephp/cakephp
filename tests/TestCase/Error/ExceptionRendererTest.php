@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -30,6 +31,7 @@ use Cake\Event\EventManager;
 use Cake\Http\Exception\InternalErrorException;
 use Cake\Http\Exception\MethodNotAllowedException;
 use Cake\Http\Exception\NotFoundException;
+use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Mailer\Exception\MissingActionException as MissingMailerActionException;
 use Cake\Network\Exception\SocketException;
@@ -62,7 +64,7 @@ class BlueberryComponent extends Component
      * @param array $config
      * @return void
      */
-    public function initialize(array $config)
+    public function initialize(array $config): void
     {
         $this->testName = 'BlueberryComponent';
     }
@@ -91,11 +93,13 @@ class TestErrorController extends Controller
     /**
      * beforeRender method
      *
-     * @return void
+     * @return \Cake\Http\Response|null
      */
-    public function beforeRender(EventInterface $event)
+    public function beforeRender(EventInterface $event): ?Response
     {
         echo $this->Blueberry->testName;
+
+        return null;
     }
 
     /**

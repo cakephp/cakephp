@@ -2,6 +2,7 @@
 namespace TestApp\Controller;
 
 use Cake\Controller\Controller;
+use Cake\Http\Response;
 
 /**
  * CakesController class
@@ -47,24 +48,32 @@ class CakesController extends Controller
     }
 
     /**
-     * startup process.
+     * Startup process
+     *
+     * \Cake\Http\Response|null
      */
-    public function startupProcess()
+    public function startupProcess(): ?Response
     {
         parent::startupProcess();
         if ($this->request->getParam('stop') === 'startup') {
             return $this->response->withStringBody('startup stop');
         }
+
+        return null;
     }
 
     /**
-     * shutdown process.
+     * Shutdown process
+     *
+     * \Cake\Http\Response|null
      */
-    public function shutdownProcess()
+    public function shutdownProcess(): ?Response
     {
         parent::shutdownProcess();
         if ($this->request->getParam('stop') === 'shutdown') {
             return $this->response->withStringBody('shutdown stop');
         }
+
+        return null;
     }
 }

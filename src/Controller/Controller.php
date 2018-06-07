@@ -15,8 +15,8 @@ declare(strict_types = 1);
  */
 namespace Cake\Controller;
 
-use Cake\Controller\Exception\MissingActionException;
 use Cake\Controller\ComponentRegistry;
+use Cake\Controller\Exception\MissingActionException;
 use Cake\Datasource\ModelAwareTrait;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
