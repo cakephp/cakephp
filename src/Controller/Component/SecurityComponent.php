@@ -176,7 +176,7 @@ class SecurityComponent extends Component
      * @throws \Cake\Http\Exception\BadRequestException
      * @return void
      */
-    protected function _throwException(?\Cake\Controller\Exception\SecurityException $exception = null): void
+    protected function _throwException(?SecurityException $exception = null): void
     {
         if ($exception !== null) {
             if (!Configure::read('debug') && $exception instanceof SecurityException) {
