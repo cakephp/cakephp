@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -37,7 +38,7 @@ class SecurityException extends BadRequestException
      *
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->_type;
     }
@@ -48,7 +49,7 @@ class SecurityException extends BadRequestException
      * @param string $message Exception message
      * @return void
      */
-    public function setMessage($message)
+    public function setMessage(string $message): void
     {
         $this->message = $message;
     }
@@ -59,7 +60,7 @@ class SecurityException extends BadRequestException
      * @param string|null $reason Reason details
      * @return void
      */
-    public function setReason($reason = null)
+    public function setReason(?string $reason = null): void
     {
         $this->_reason = $reason;
     }
@@ -69,7 +70,7 @@ class SecurityException extends BadRequestException
      *
      * @return string
      */
-    public function getReason()
+    public function getReason(): string
     {
         return $this->_reason;
     }

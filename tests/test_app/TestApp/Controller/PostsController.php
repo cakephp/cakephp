@@ -15,6 +15,7 @@
 namespace TestApp\Controller;
 
 use Cake\Event\EventInterface;
+use Cake\Http\Response;
 use Cake\Utility\Security;
 
 /**
@@ -22,7 +23,7 @@ use Cake\Utility\Security;
  */
 class PostsController extends AppController
 {
-    public function initialize()
+    public function initialize(): void
     {
         $this->loadComponent('Flash');
         $this->loadComponent('RequestHandler');
@@ -34,7 +35,7 @@ class PostsController extends AppController
      *
      * @return void
      */
-    public function beforeFilter(EventInterface $event)
+    public function beforeFilter(EventInterface $event): ?Response
     {
         if ($this->request->getParam('action') !== 'securePost') {
             $this->getEventManager()->off($this->Security);

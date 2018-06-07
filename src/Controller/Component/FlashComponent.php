@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -84,7 +85,7 @@ class FlashComponent extends Component
      * @param array $options An array of options
      * @return void
      */
-    public function set($message, array $options = [])
+    public function set($message, array $options = []): void
     {
         $options += $this->getConfig();
 
@@ -152,7 +153,7 @@ class FlashComponent extends Component
      * @return void
      * @throws \Cake\Http\Exception\InternalErrorException If missing the flash message.
      */
-    public function __call($name, $args)
+    public function __call(string $name, array $args): void
     {
         $element = Inflector::underscore($name);
 

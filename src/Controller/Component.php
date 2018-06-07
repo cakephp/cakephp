@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -116,7 +117,7 @@ class Component implements EventListenerInterface
      *
      * @return \Cake\Controller\Controller The bound controller.
      */
-    public function getController()
+    public function getController(): Controller
     {
         return $this->_registry->getController();
     }
@@ -130,7 +131,7 @@ class Component implements EventListenerInterface
      * @param array $config The configuration settings provided to this component.
      * @return void
      */
-    public function initialize(array $config)
+    public function initialize(array $config): void
     {
     }
 
@@ -140,7 +141,7 @@ class Component implements EventListenerInterface
      * @param string $name Name of component to get.
      * @return mixed A Component object or null.
      */
-    public function __get($name)
+    public function __get(string $name)
     {
         if (isset($this->_componentMap[$name]) && !isset($this->{$name})) {
             $config = (array)$this->_componentMap[$name]['config'] + ['enabled' => false];
@@ -165,7 +166,7 @@ class Component implements EventListenerInterface
      *
      * @return array
      */
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         $eventMap = [
             'Controller.initialize' => 'beforeFilter',
@@ -190,7 +191,7 @@ class Component implements EventListenerInterface
      *
      * @return array
      */
-    public function __debugInfo()
+    public function __debugInfo(): array
     {
         return [
             'components' => $this->components,
