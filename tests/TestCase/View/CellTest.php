@@ -94,11 +94,9 @@ class CellTest extends TestCase
     {
         $cell = $this->View->cell('Articles::teaserList');
         $data = $cell->__debugInfo();
-        $this->assertArrayHasKey('plugin', $data);
         $this->assertArrayHasKey('request', $data);
         $this->assertArrayHasKey('response', $data);
         $this->assertEquals('teaserList', $data['action']);
-        $this->assertEquals('teaser_list', $data['template']);
         $this->assertEquals([], $data['args']);
     }
 
