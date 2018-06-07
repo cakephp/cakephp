@@ -863,7 +863,7 @@ class AuthComponent extends Component
             unset($config['className']);
         }
         $className = App::className($class, 'Auth/Storage', 'Storage');
-        if (!class_exists($className)) {
+        if ($className === false || !class_exists($className)) {
             throw new Exception(sprintf('Auth storage adapter "%s" was not found.', $class));
         }
         $request = $this->getController()->getRequest();
