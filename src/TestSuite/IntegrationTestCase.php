@@ -488,6 +488,8 @@ abstract class IntegrationTestCase extends TestCase
     protected function _sendRequest($url, $method, $data = [])
     {
         $dispatcher = $this->_makeDispatcher();
+        $url = $dispatcher->resolveUrl($url);
+
         try {
             $request = $this->_buildRequest($url, $method, $data);
             $response = $dispatcher->execute($request);
@@ -661,14 +663,14 @@ abstract class IntegrationTestCase extends TestCase
     /**
      * Creates a valid request url and parameter array more like Request::_url()
      *
-     * @param string|array $url The URL
+     * @param string $url The URL
      * @return array Qualified URL and the query parameters
      */
     protected function _url($url)
     {
         // re-create URL in ServerRequest's context so
         // query strings are encoded as expected
-        $request = new ServerRequest(['url' => Router::url($url)]);
+        $request = new ServerRequest(['url' => $url]);
         $url = $request->getRequestTarget();
 
         $query = '';
