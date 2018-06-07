@@ -4,6 +4,7 @@ linters:
     standard: CakePHP
     extensions: 'php,ctp'
     fixer: true
+    standard: phpcs.xml
 
 branches:
     ignore: ['2.x', '2.next']
