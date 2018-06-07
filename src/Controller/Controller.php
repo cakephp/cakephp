@@ -16,11 +16,13 @@ declare(strict_types = 1);
 namespace Cake\Controller;
 
 use Cake\Controller\Exception\MissingActionException;
+use Cake\Controller\ComponentRegistry;
 use Cake\Datasource\ModelAwareTrait;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventInterface;
 use Cake\Event\EventListenerInterface;
+use Cake\Event\EventManagerInterface;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Log\LogTrait;
@@ -176,10 +178,10 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *   but expect that features that use the request parameters will not work.
      * @param \Cake\Http\Response|null $response Response object for this controller.
      * @param string|null $name Override the name useful in testing when using mocks.
-     * @param \Cake\Event\EventManager|null $eventManager The event manager. Defaults to a new instance.
+     * @param \Cake\Event\EventManagerInterface|null $eventManager The event manager. Defaults to a new instance.
      * @param \Cake\Controller\ComponentRegistry|null $components The component registry. Defaults to a new instance.
      */
-    public function __construct(ServerRequest $request = null, Response $response = null, ?string $name = null, ?\Cake\Event\EventManager $eventManager = null, ?\Cake\Controller\ComponentRegistry $components = null)
+    public function __construct(ServerRequest $request = null, Response $response = null, ?string $name = null, ?EventManagerInterface $eventManager = null, ?ComponentRegistry $components = null)
     {
         if ($name !== null) {
             $this->name = $name;
@@ -250,7 +252,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @return \Cake\Controller\ComponentRegistry
      */
-    public function components(?\Cake\Controller\ComponentRegistry $components = null): ComponentRegistry
+    public function components(?ComponentRegistry $components = null): ComponentRegistry
     {
         if ($components === null && $this->_components === null) {
             $this->_components = new ComponentRegistry($this);

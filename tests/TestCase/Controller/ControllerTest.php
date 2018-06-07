@@ -632,7 +632,7 @@ class ControllerTest extends TestCase
      */
     public function testStartupProcess(): void
     {
-        $eventManager = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
+        $eventManager = $this->getMockBuilder('Cake\Event\EventManagerInterface')->getMock();
         $controller = new Controller(null, null, null, $eventManager);
 
         $eventManager->expects($this->at(0))->method('dispatch')
@@ -665,7 +665,7 @@ class ControllerTest extends TestCase
      */
     public function testShutdownProcess(): void
     {
-        $eventManager = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
+        $eventManager = $this->getMockBuilder('Cake\Event\EventManagerInterface')->getMock();
         $controller = new Controller(null, null, null, $eventManager);
 
         $eventManager->expects($this->once())->method('dispatch')
