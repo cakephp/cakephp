@@ -686,14 +686,6 @@ class PaginatorHelper extends Helper
         if (!$paging['pageCount']) {
             $paging['pageCount'] = 1;
         }
-        $start = 0;
-        if ($paging['count'] >= 1) {
-            $start = (($paging['page'] - 1) * $paging['perPage']) + 1;
-        }
-        $end = $start + $paging['perPage'] - 1;
-        if ($paging['count'] < $end) {
-            $end = $paging['count'];
-        }
 
         switch ($options['format']) {
             case 'range':
@@ -709,8 +701,8 @@ class PaginatorHelper extends Helper
             'pages' => $paging['pageCount'],
             'current' => $paging['current'],
             'count' => $paging['count'],
-            'start' => $start,
-            'end' => $end
+            'start' => $paging['start'],
+            'end' => $paging['end']
         ]);
 
         $map += [

@@ -21,6 +21,5 @@ namespace Cake\TestSuite;
  */
 abstract class ConsoleIntegrationTestCase extends TestCase
 {
-
     use ConsoleIntegrationTestTrait;
 }

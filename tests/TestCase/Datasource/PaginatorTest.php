@@ -182,7 +182,10 @@ class PaginatorTest extends TestCase
 
         $this->Paginator->paginate($table, [], $settings);
         $pagingParams = $this->Paginator->getPagingParams();
-        $this->assertEquals('popular', $pagingParams['PaginatorPosts']['finder']);
+        $this->assertSame('popular', $pagingParams['PaginatorPosts']['finder']);
+
+        $this->assertSame(1, $pagingParams['PaginatorPosts']['start']);
+        $this->assertSame(2, $pagingParams['PaginatorPosts']['end']);
     }
 
     /**

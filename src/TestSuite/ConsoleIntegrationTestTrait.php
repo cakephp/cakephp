@@ -16,6 +16,7 @@ namespace Cake\TestSuite;
 use Cake\Console\CommandRunner;
 use Cake\Console\ConsoleInput;
 use Cake\Console\ConsoleIo;
+use Cake\Console\Exception\StopException;
 use Cake\Core\Configure;
 use Cake\TestSuite\Constraint\Console\ContentsContain;
 use Cake\TestSuite\Constraint\Console\ContentsContainRow;
@@ -93,10 +94,13 @@ trait ConsoleIntegrationTestTrait
         }
 
         $args = $this->commandStringToArgs("cake $command");
-
         $io = new ConsoleIo($this->out, $this->err, $this->in);
 
-        $this->exitCode = $runner->run($args, $io);
+        try {
+            $this->exitCode = $runner->run($args, $io);
+        } catch (StopException $exception) {
+            $this->exitCode = $exception->getCode();
+        }
     }
 
     /**

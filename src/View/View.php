@@ -27,6 +27,7 @@ use Cake\Routing\RequestActionTrait;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\View\Exception\MissingElementException;
+use Cake\View\Exception\MissingHelperException;
 use Cake\View\Exception\MissingLayoutException;
 use Cake\View\Exception\MissingTemplateException;
 use InvalidArgumentException;
@@ -1175,6 +1176,16 @@ class View implements EventDispatcherInterface
      */
     public function __get($name)
     {
+        try {
+            $registry = $this->helpers();
+            if (isset($registry->{$name})) {
+                $this->{$name} = $registry->{$name};
+
+                return $registry->{$name};
+            }
+        } catch (MissingHelperException $exception) {
+        }
+
         $deprecated = [
             'view' => 'getTemplate',
             'viewPath' => 'getTemplatePath',
@@ -1232,11 +1243,8 @@ class View implements EventDispatcherInterface
             return $this->helpers;
         }
 
-        $registry = $this->helpers();
-        if (isset($registry->{$name})) {
-            $this->{$name} = $registry->{$name};
-
-            return $registry->{$name};
+        if (!empty($exception)) {
+            throw $exception;
         }
 
         return $this->{$name};
