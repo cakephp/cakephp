@@ -21,6 +21,8 @@ use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Event\EventInterface;
+use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
 use Cake\Utility\Exception\XmlException;
 use Cake\Utility\Inflector;
@@ -122,7 +124,7 @@ class RequestHandlerComponent extends Component
      * @param \Cake\Http\Response $response The response instance.
      * @return void
      */
-    protected function _setExtension(\Cake\Http\ServerRequest $request, \Cake\Http\Response $response): void
+    protected function _setExtension(ServerRequest $request, Response $response): void
     {
         $accept = $request->parseAccept();
         if (empty($accept) || current($accept)[0] === 'text/html') {
