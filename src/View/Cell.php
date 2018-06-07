@@ -299,8 +299,7 @@ abstract class Cell
         if (in_array($name, $protected, true)) {
             deprecationWarning(sprintf(
                 'Cell::$%s is now protected and shouldn\'t be accessed from outside a child class.',
-                $name,
-                $method
+                $name
             ));
         }
 
@@ -343,8 +342,7 @@ abstract class Cell
         if (in_array($name, $protected, true)) {
             deprecationWarning(sprintf(
                 'Cell::$%s is now protected and shouldn\'t be accessed from outside a child class.',
-                $name,
-                $method
+                $name
             ));
         }
 
