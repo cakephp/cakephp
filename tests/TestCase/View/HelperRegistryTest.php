@@ -100,7 +100,7 @@ class HelperRegistryTest extends TestCase
         $result = $this->Helpers->Form;
         $this->assertInstanceOf('Cake\View\Helper\FormHelper', $result);
 
-        $this->View->plugin = 'TestPlugin';
+        $this->View->setPlugin('TestPlugin');
         Plugin::load(['TestPlugin']);
         $result = $this->Helpers->OtherHelper;
         $this->assertInstanceOf('TestPlugin\View\Helper\OtherHelperHelper', $result);

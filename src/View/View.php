@@ -94,21 +94,21 @@ class View implements EventDispatcherInterface
      *
      * @var \Cake\View\ViewBlock
      */
-    public $Blocks;
+    protected $Blocks;
 
     /**
      * The name of the plugin.
      *
-     * @var string
+     * @var string|null
      */
-    public $plugin;
+    protected $plugin;
 
     /**
      * Name of the controller that created the View if any.
      *
      * @var string
      */
-    public $name;
+    protected $name;
 
     /**
      * Current passed params. Passed to View from the creating Controller for convenience.
@@ -123,14 +123,14 @@ class View implements EventDispatcherInterface
      *
      * @var array
      */
-    public $helpers = [];
+    protected $helpers = [];
 
     /**
      * The name of the subfolder containing templates for this View.
      *
      * @var string
      */
-    public $templatePath;
+    protected $templatePath;
 
     /**
      * The name of the template file to render. The name specified
@@ -138,7 +138,7 @@ class View implements EventDispatcherInterface
      *
      * @var string
      */
-    public $template;
+    protected $template;
 
     /**
      * The name of the layout file to render the template inside of. The name specified
@@ -147,14 +147,14 @@ class View implements EventDispatcherInterface
      *
      * @var string
      */
-    public $layout = 'default';
+    protected $layout = 'default';
 
     /**
      * The name of the layouts subfolder containing layouts for this View.
      *
      * @var string
      */
-    public $layoutPath;
+    protected $layoutPath;
 
     /**
      * Turns on or off CakePHP's conventional mode of applying layout files. On by default.
@@ -162,7 +162,7 @@ class View implements EventDispatcherInterface
      *
      * @var bool
      */
-    public $autoLayout = true;
+    protected $autoLayout = true;
 
     /**
      * File extension. Defaults to CakePHP's template ".ctp".
@@ -175,28 +175,29 @@ class View implements EventDispatcherInterface
      * Sub-directory for this template file. This is often used for extension based routing.
      * Eg. With an `xml` extension, $subDir would be `xml/`
      *
-     * @var string|null
+     * @var string
      */
-    public $subDir;
+    protected $subDir = '';
 
     /**
      * The view theme to use.
      *
      * @var string|null
      */
-    public $theme;
+    protected $theme;
 
     /**
      * True when the view has been rendered.
      *
      * @var bool
      */
-    public $hasRendered = false;
+    protected $hasRendered = false;
 
     /**
      * List of generated DOM UUIDs.
      *
      * @var array
+     * @deprecated 3.7.0 The property is unused and will be removed in 4.0.0.
      */
     public $uuids = [];
 
@@ -206,17 +207,15 @@ class View implements EventDispatcherInterface
      * additional information about the request.
      *
      * @var \Cake\Http\ServerRequest
-     * @deprecated 3.7.0 The property will become protected in 4.0.0. Use getRequest()/setRequest() instead.
      */
-    public $request;
+    protected $request;
 
     /**
      * Reference to the Response object
      *
      * @var \Cake\Http\Response
-     * @deprecated 3.7.0 The property will become protected in 4.0.0. Use getResponse()/setResponse() instead.
      */
-    public $response;
+    protected $response;
 
     /**
      * The Cache configuration View will use to store cached elements. Changing this will change
@@ -226,7 +225,7 @@ class View implements EventDispatcherInterface
      * @var string
      * @see \Cake\View\View::element()
      */
-    public $elementCache = 'default';
+    protected $elementCache = 'default';
 
     /**
      * List of variables to collect from the associated controller.
@@ -1176,15 +1175,61 @@ class View implements EventDispatcherInterface
      */
     public function __get($name)
     {
-        if ($name === 'view') {
-            deprecationWarning('The `view` property is deprecated. Use View::getTemplate() instead.');
+        $deprecated = [
+            'view' => 'getTemplate',
+            'viewPath' => 'getTemplatePath',
+        ];
+        if (isset($deprecated[$name])) {
+            $method = $deprecated[$name];
+            deprecationWarning(sprintf(
+                'View::$%s is deprecated. Use View::%s() instead.',
+                $name,
+                $method
+            ));
 
-            return $this->template;
+            return $this->{$method}();
         }
-        if ($name === 'viewPath') {
-            deprecationWarning('The `viewPath` property is deprecated. Use View::getTemplatePath() instead.');
 
-            return $this->templatePath;
+        $protected = [
+            'templatePath' => 'getTemplatePath',
+            'template' => 'getTemplate',
+            'layout' => 'getLayout',
+            'layoutPath' => 'setLayoutPath',
+            'autoLayout' => 'isAutoLayoutEnabled',
+            'theme' => 'getTheme',
+            'request' => 'getRequest',
+            'response' => 'getResponse',
+            'subDir' => 'getSubdir',
+            'plugin' => 'getPlugin',
+            'name' => 'getName',
+        ];
+        if (isset($protected[$name])) {
+            $method = $protected[$name];
+            deprecationWarning(sprintf(
+                'View::$%s is protected now. Use View::%s() instead.',
+                $name,
+                $method
+            ));
+
+            return $this->{$method}();
+        }
+
+        if ($name === 'Blocks') {
+            deprecationWarning(
+                'View::$Blocks is protected now. ' .
+                'Use one of the wrapper methods like View::fetch() etc. instead.'
+            );
+
+            return $this->Blocks;
+        }
+
+        if ($name === 'helpers') {
+            deprecationWarning(
+                'View::$helpers is protected now. ' .
+                'Use the helper registry through View::helpers() to manage helpers.'
+            );
+
+            return $this->helpers;
         }
 
         $registry = $this->helpers();
@@ -1206,17 +1251,57 @@ class View implements EventDispatcherInterface
      */
     public function __set($name, $value)
     {
-        if ($name === 'view') {
-            deprecationWarning('The `view` property is deprecated. Use View::setTemplate() instead.');
-            $this->template = $value;
+        $deprecated = [
+            'view' => 'setTemplate',
+            'viewPath' => 'setTemplatePath',
+        ];
+        if (isset($deprecated[$name])) {
+            $method = $deprecated[$name];
+            deprecationWarning(sprintf(
+                'View::$%s is deprecated. Use View::%s() instead.',
+                $name,
+                $method
+            ));
+
+            $this->{$method}($value);
 
             return;
         }
-        if ($name === 'viewPath') {
-            deprecationWarning('The `viewPath` property is deprecated. Use View::setTemplatePath() instead.');
-            $this->templatePath = $value;
+
+        $protected = [
+            'templatePath' => 'setTemplatePath',
+            'template' => 'setTemplate',
+            'layout' => 'setLayout',
+            'layoutPath' => 'setLayoutPath',
+            'autoLayout' => 'enableAutoLayout',
+            'theme' => 'setTheme',
+            'request' => 'setRequest',
+            'response' => 'setResponse',
+            'subDir' => 'setSubDir',
+            'plugin' => 'setPlugin',
+            'name' => 'setName',
+            'elementCache' => 'setElementCache',
+        ];
+        if (isset($protected[$name])) {
+            $method = $protected[$name];
+            deprecationWarning(sprintf(
+                'View::$%s is protected now. Use View::%s() instead.',
+                $name,
+                $method
+            ));
+
+            $this->{$method}($value);
 
             return;
+        }
+
+        if ($name === 'helpers') {
+            deprecationWarning(
+                'View::$helpers is protected now. ' .
+                'Use the helper registry through View::helpers() to manage helpers.'
+            );
+
+            return $this->helpers = $value;
         }
 
         $this->{$name} = $value;
@@ -1332,6 +1417,84 @@ class View implements EventDispatcherInterface
         $helpers = $this->helpers();
 
         return $this->{$class} = $helpers->load($name, $config);
+    }
+
+    /**
+     * Check whether the view has been rendered.
+     *
+     * @return bool
+     * @since 3.7.0
+     */
+    public function hasRendered()
+    {
+        return $this->hasRendered;
+    }
+
+    /**
+     * Set sub-directory for this template files.
+     *
+     * @param string $subDir Sub-directory name.
+     * @return $this
+     * @see \Cake\View\View::$subDir
+     * @since 3.7.0
+     */
+    public function setSubDir($subDir)
+    {
+        $this->subDir = $subDir;
+
+        return $this;
+    }
+
+    /**
+     * Get sub-directory for this template files.
+     *
+     * @return string
+     * @see \Cake\View\View::$subDir
+     * @since 3.7.0
+     */
+    public function getSubDir()
+    {
+        return $this->subDir;
+    }
+
+    /**
+     * Returns the plugin name.
+     *
+     * @return string|null
+     * @since 3.7.0
+     */
+    public function getPlugin()
+    {
+        return $this->plugin;
+    }
+
+    /**
+     * Sets the plugin name.
+     *
+     * @param string $name Plugin name.
+     * @return $this
+     * @since 3.7.0
+     */
+    public function setPlugin($name)
+    {
+        $this->plugin = $name;
+
+        return $this;
+    }
+
+    /**
+     * Set The cache configuration View will use to store cached elements
+     *
+     * @param string $elementCache Cache config name.
+     * @return $this
+     * @see \Cake\View\View::$elementCache
+     * @since 3.7.0
+     */
+    public function setElementCache($elementCache)
+    {
+        $this->elementCache = $elementCache;
+
+        return $this;
     }
 
     /**
