@@ -242,6 +242,8 @@ class Event implements EventInterface
      */
     public function data($key = null)
     {
+        deprecationWarning('Event::data() is deprecated. Use Event::getData() instead.');
+
         return $this->getData($key);
     }
 
