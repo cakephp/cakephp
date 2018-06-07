@@ -241,7 +241,7 @@ class CellTest extends TestCase
         );
 
         $cell = $this->View->cell('Articles');
-        $cell->plugin = 'TestPlugin';
+        $cell->viewBuilder()->setPlugin('TestPlugin');
         $this->assertContains(
             'TestPlugin Articles/display',
             $cell->render('display')

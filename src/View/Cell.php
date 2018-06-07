@@ -51,13 +51,6 @@ abstract class Cell
     public $View;
 
     /**
-     * Automatically set to the name of a plugin.
-     *
-     * @var string
-     */
-    public $plugin;
-
-    /**
      * An instance of a Cake\Http\ServerRequest object that contains information about the current request.
      * This object contains all the information about a request and several methods for reading
      * additional information about the request.
@@ -294,6 +287,7 @@ abstract class Cell
     {
         $deprecated = [
             'template' => 'getTemplate',
+            'plugin' => 'getPlugin',
         ];
         if (isset($deprecated[$name])) {
             $method = $deprecated[$name];
@@ -320,6 +314,7 @@ abstract class Cell
     {
         $deprecated = [
             'template' => 'setTemplate',
+            'plugin' => 'setPlugin',
         ];
         if (isset($deprecated[$name])) {
             $method = $deprecated[$name];
@@ -344,7 +339,6 @@ abstract class Cell
     public function __debugInfo()
     {
         return [
-            'plugin' => $this->plugin,
             'action' => $this->action,
             'args' => $this->args,
             'viewClass' => $this->viewClass,
