@@ -41,10 +41,10 @@ class ConsoleIntegrationTestTraitTest extends ConsoleIntegrationTestCase
     public function testExecWithCommandRunner()
     {
         $this->useCommandRunner();
-
-        $this->exec('routes');
+        $this->exec('');
 
         $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertOutputContains('Current Paths');
     }
 
     /**
@@ -54,10 +54,10 @@ class ConsoleIntegrationTestTraitTest extends ConsoleIntegrationTestCase
      */
     public function testExec()
     {
-        $this->exec('');
+        $this->exec('routes');
 
-        $this->assertOutputContains('Welcome to CakePHP');
-        $this->assertExitCode(Shell::CODE_ERROR);
+        $this->assertOutputContains('Route name');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
     }
 
     /**

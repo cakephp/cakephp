@@ -34,6 +34,7 @@ use RuntimeException;
  *
  * Is the equivalent of Cake\Controller\Controller on the command line.
  *
+ * @deprecated 3.6.0 ShellDispatcher and Shell will be removed in 5.0
  * @method int|bool|null main(...$args)
  */
 class Shell
@@ -393,7 +394,6 @@ class Shell
         if (!isset($extra['requested'])) {
             $extra['requested'] = true;
         }
-
         $dispatcher = new ShellDispatcher($args, false);
 
         return $dispatcher->dispatch($extra);
