@@ -51,14 +51,6 @@ abstract class Cell
     public $View;
 
     /**
-     * Name of the template that will be rendered.
-     * This property is inflected from the action name that was invoked.
-     *
-     * @var string
-     */
-    public $template;
-
-    /**
      * Automatically set to the name of a plugin.
      *
      * @var string
@@ -205,7 +197,7 @@ abstract class Cell
                 ));
             }
 
-            $builder = $this->viewBuilder();
+            $builder = $this->viewBuilder()->setLayout(false);
 
             if ($template !== null &&
                 strpos($template, '/') === false &&
@@ -213,11 +205,9 @@ abstract class Cell
             ) {
                 $template = Inflector::underscore($template);
             }
-            if ($template === null) {
-                $template = $builder->getTemplate() ?: $this->template;
+            if ($template !== null) {
+                $builder->setTemplate($template);
             }
-            $builder->setLayout(false)
-                ->setTemplate($template);
 
             $className = get_class($this);
             $namePrefix = '\View\Cell\\';
@@ -295,6 +285,58 @@ abstract class Cell
     }
 
     /**
+     * Magic accessor for removed properties.
+     *
+     * @param string $name Property name
+     * @return mixed
+     */
+    public function __get($name)
+    {
+        $deprecated = [
+            'template' => 'getTemplate',
+        ];
+        if (isset($deprecated[$name])) {
+            $method = $deprecated[$name];
+            deprecationWarning(sprintf(
+                'Cell::$%s is deprecated. Use $cell->viewBuilder()->%s() instead.',
+                $name,
+                $method
+            ));
+
+            return $this->viewBuilder()->{$method}();
+        }
+
+        return $this->{$name};
+    }
+
+    /**
+     * Magic setter for removed properties.
+     *
+     * @param string $name Property name.
+     * @param mixed $value Value to set.
+     * @return void
+     */
+    public function __set($name, $value)
+    {
+        $deprecated = [
+            'template' => 'setTemplate',
+        ];
+        if (isset($deprecated[$name])) {
+            $method = $deprecated[$name];
+            deprecationWarning(sprintf(
+                'Cell::$%s is deprecated. Use $cell->viewBuilder()->%s() instead.',
+                $name,
+                $method
+            ));
+            $this->viewBuilder()->{$method}($value);
+
+            return;
+        }
+
+        $this->{$name} = $value;
+    }
+
+    /**
      * Debug info.
      *
      * @return array
@@ -305,10 +347,10 @@ abstract class Cell
             'plugin' => $this->plugin,
             'action' => $this->action,
             'args' => $this->args,
-            'template' => $this->template,
             'viewClass' => $this->viewClass,
             'request' => $this->request,
             'response' => $this->response,
+            'viewBuilder' => $this->viewBuilder(),
         ];
     }
 }

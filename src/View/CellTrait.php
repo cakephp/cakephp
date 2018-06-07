@@ -94,9 +94,10 @@ trait CellTrait
     {
         /* @var \Cake\View\Cell $instance */
         $instance = new $className($this->request, $this->response, $this->getEventManager(), $options);
-        $instance->template = Inflector::underscore($action);
 
         $builder = $instance->viewBuilder();
+        $builder->setTemplate(Inflector::underscore($action));
+
         if (!empty($plugin)) {
             $builder->setPlugin($plugin);
         }

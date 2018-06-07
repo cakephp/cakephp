@@ -74,7 +74,7 @@ class CellTest extends TestCase
         $cell = $this->View->cell('Articles::teaserList');
         $render = "{$cell}";
 
-        $this->assertEquals('teaser_list', $cell->template);
+        $this->assertEquals('teaser_list', $cell->viewBuilder()->getTemplate());
         $this->assertContains('<h2>Lorem ipsum</h2>', $render);
         $this->assertContains('<h2>Usectetur adipiscing eli</h2>', $render);
         $this->assertContains('<h2>Topis semper blandit eu non</h2>', $render);
@@ -100,7 +100,7 @@ class CellTest extends TestCase
         set_error_handler($capture);
 
         $cell = $this->View->cell('Articles::teaserList');
-        $cell->template = 'nope';
+        $cell->viewBuilder()->setTemplate('nope');
         $result = "{$cell}";
     }
 
@@ -128,12 +128,12 @@ class CellTest extends TestCase
     {
         $appCell = $this->View->cell('Articles');
 
-        $this->assertEquals('display', $appCell->template);
+        $this->assertEquals('display', $appCell->viewBuilder()->getTemplate());
         $this->assertContains('dummy', "{$appCell}");
 
         $pluginCell = $this->View->cell('TestPlugin.Dummy');
         $this->assertContains('dummy', "{$pluginCell}");
-        $this->assertEquals('display', $pluginCell->template);
+        $this->assertEquals('display', $pluginCell->viewBuilder()->getTemplate());
     }
 
     /**
@@ -143,11 +143,13 @@ class CellTest extends TestCase
      */
     public function testSettingCellTemplateFromAction()
     {
-        $appCell = $this->View->cell('Articles::customTemplate');
+        $this->deprecated(function () {
+            $appCell = $this->View->cell('Articles::customTemplate');
 
-        $this->assertContains('This is the alternate template', "{$appCell}");
-        $this->assertEquals('alternate_teaser_list', $appCell->template);
-        $this->assertEquals('alternate_teaser_list', $appCell->viewBuilder()->getTemplate());
+            $this->assertContains('This is the alternate template', "{$appCell}");
+            $this->assertEquals('alternate_teaser_list', $appCell->viewBuilder()->getTemplate());
+            $this->assertEquals('alternate_teaser_list', $appCell->template);
+        });
     }
 
     /**
@@ -160,7 +162,7 @@ class CellTest extends TestCase
         $appCell = $this->View->cell('Articles::customTemplatePath');
 
         $this->assertContains('Articles subdir custom_template_path template', "{$appCell}");
-        $this->assertEquals('custom_template_path', $appCell->template);
+        $this->assertEquals('custom_template_path', $appCell->viewBuilder()->getTemplate());
         $this->assertEquals('Cell/Articles/Subdir', $appCell->viewBuilder()->getTemplatePath());
     }
 
@@ -287,7 +289,7 @@ class CellTest extends TestCase
     public function testPluginCellAlternateTemplate()
     {
         $cell = $this->View->cell('TestPlugin.Dummy::echoThis', ['msg' => 'hello world!']);
-        $cell->template = '../../Element/translate';
+        $cell->viewBuilder()->setTemplate('../../Element/translate');
         $this->assertContains('This is a translatable string', "{$cell}");
     }
 
@@ -479,9 +481,11 @@ class CellTest extends TestCase
             ->with('cell_test_app_view_cell_articles_cell_customTemplate_default', "<h1>This is the alternate template</h1>\n");
         Cache::setConfig('default', $mock);
 
-        $cell = $this->View->cell('Articles::customTemplate', [], ['cache' => true]);
-        $result = $cell->render();
-        $this->assertContains('This is the alternate template', $result);
+        $this->deprecated(function () {
+            $cell = $this->View->cell('Articles::customTemplate', [], ['cache' => true]);
+            $result = $cell->render();
+            $this->assertContains('This is the alternate template', $result);
+        });
 
         Cache::drop('default');
     }
