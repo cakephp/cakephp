@@ -43,12 +43,11 @@ abstract class Cell
 
     /**
      * Instance of the View created during rendering. Won't be set until after
-     * Cell::__toString() is called.
+     * Cell::__toString()/render() is called.
      *
      * @var \Cake\View\View
-     * @deprecated 3.1.0 Use createView() instead.
      */
-    public $View;
+    protected $View;
 
     /**
      * An instance of a Cake\Http\ServerRequest object that contains information about the current request.
@@ -295,6 +294,7 @@ abstract class Cell
             'args',
             'request',
             'response',
+            'View',
         ];
         if (in_array($name, $protected, true)) {
             deprecationWarning(sprintf(
@@ -338,6 +338,7 @@ abstract class Cell
             'args',
             'request',
             'response',
+            'View',
         ];
         if (in_array($name, $protected, true)) {
             deprecationWarning(sprintf(
