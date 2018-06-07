@@ -477,6 +477,20 @@ class IntegrationTestTraitTest extends IntegrationTestCase
     }
 
     /**
+     * Test array URLs with an empty router.
+     *
+     * @return void
+     */
+    public function testArrayUrlsEmptyRouter()
+    {
+        Router::reload();
+        $this->assertFalse(Router::$initialized);
+
+        $this->post(['controller' => 'Posts', 'action' => 'index']);
+        $this->assertEquals('value', $this->viewVariable('test'));
+    }
+
+    /**
      * Test flash and cookie assertions
      *
      * @return void

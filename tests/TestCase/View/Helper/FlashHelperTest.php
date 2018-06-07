@@ -191,7 +191,7 @@ class FlashHelperTest extends TestCase
     {
         Plugin::load('TestTheme');
 
-        $this->View->theme = 'TestTheme';
+        $this->View->setTheme('TestTheme');
         $result = $this->Flash->render('flash');
         $expected = 'flash element from TestTheme';
         $this->assertContains($expected, $result);

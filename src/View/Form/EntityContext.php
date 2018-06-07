@@ -427,6 +427,34 @@ class EntityContext implements ContextInterface
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function getRequiredMessage($field)
+    {
+        $parts = explode('.', $field);
+
+        $validator = $this->_getValidator($parts);
+        $fieldName = array_pop($parts);
+        if (!$validator->hasField($fieldName)) {
+            return null;
+        }
+
+        $ruleset = $validator->field($fieldName);
+
+        $requiredMessage = $validator->getRequiredMessage($fieldName);
+        $emptyMessage = $validator->getNotEmptyMessage($fieldName);
+
+        if ($ruleset->isPresenceRequired() && $requiredMessage) {
+            return $requiredMessage;
+        }
+        if (!$ruleset->isEmptyAllowed() && $emptyMessage) {
+            return $emptyMessage;
+        }
+
+        return null;
+    }
+
+    /**
      * Get the field names from the top level entity.
      *
      * If the context is for an array of entities, the 0th index will be used.

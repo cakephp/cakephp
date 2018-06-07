@@ -164,7 +164,9 @@ class FormHelper extends Helper
             'submitContainer' => '<div class="submit">{{content}}</div>',
             //Confirm javascript template for postLink()
             'confirmJs' => '{{confirm}}',
-        ]
+        ],
+        // set HTML5 validation message to custom required/empty messages
+        'autoSetCustomValidity' => false,
     ];
 
     /**
@@ -1327,8 +1329,26 @@ class FormHelper extends Helper
     {
         $context = $this->_getContext();
 
+        $options += [
+            'templateVars' => []
+        ];
+
         if (!isset($options['required']) && $options['type'] !== 'hidden') {
             $options['required'] = $context->isRequired($fieldName);
+        }
+
+        if (method_exists($context, 'getRequiredMessage')) {
+            $message = $context->getRequiredMessage($fieldName);
+            $message = h($message);
+
+            if ($options['required'] && $message) {
+                $options['templateVars']['customValidityMessage'] = $message;
+
+                if ($this->getConfig('autoSetCustomValidity')) {
+                    $options['oninvalid'] = "this.setCustomValidity('$message')";
+                    $options['onvalid'] = "this.setCustomValidity('')";
+                }
+            }
         }
 
         $type = $context->type($fieldName);

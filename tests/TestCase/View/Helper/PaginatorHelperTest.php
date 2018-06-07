@@ -1054,7 +1054,7 @@ class PaginatorHelperTest extends TestCase
         ]);
         Router::setRequestInfo($request);
 
-        $this->View->request = $this->Paginator->request
+        $this->View->setRequest($this->Paginator->request
             ->withParam('paging.Article.scope', 'article')
             ->withParam('paging.Article.page', 3)
             ->withParam('paging.Article.prevPage', true)
@@ -1062,7 +1062,7 @@ class PaginatorHelperTest extends TestCase
                 'article' => [
                     'puppy' => 'no'
                 ]
-            ]);
+            ]));
         // Need to run __construct to update _config['url']
         $paginator = new PaginatorHelper($this->View);
         $paginator->options(['model' => 'Article']);
@@ -1147,7 +1147,7 @@ class PaginatorHelperTest extends TestCase
         $this->Paginator->request = $this->Paginator->request
             ->withParam('pass', [2])
             ->withQueryParams(['page' => 1, 'foo' => 'bar', 'x' => 'y', 'num' => 0]);
-        $this->View->request = $this->Paginator->request;
+        $this->View->setRequest($this->Paginator->request);
         $this->Paginator = new PaginatorHelper($this->View);
 
         $result = $this->Paginator->sort('title');
@@ -2746,6 +2746,8 @@ class PaginatorHelperTest extends TestCase
                 'limit' => 3,
                 'sort' => 'Client.name',
                 'order' => 'DESC',
+                'start' => 1,
+                'end' => 3,
             ]
         ]);
         $input = 'Page {{page}} of {{pages}}, showing {{current}} records out of {{count}} total, ';
@@ -2778,29 +2780,31 @@ class PaginatorHelperTest extends TestCase
         $this->Paginator->request = $this->Paginator->request->withParam('paging', [
             'Client' => [
                 'page' => 1523,
-                'current' => 1230,
-                'count' => 234567,
+                'current' => 3000,
+                'count' => 4800001,
                 'perPage' => 3000,
                 'prevPage' => false,
                 'nextPage' => true,
-                'pageCount' => 1000,
+                'pageCount' => 1600,
                 'limit' => 5000,
                 'sort' => 'Client.name',
                 'order' => 'DESC',
+                'start' => 4566001,
+                'end' => 4569001,
             ]
         ]);
 
         $input = 'Page {{page}} of {{pages}}, showing {{current}} records out of {{count}} total, ';
         $input .= 'starting on record {{start}}, ending on {{end}}';
 
-        $expected = 'Page 1,523 of 1,000, showing 1,230 records out of 234,567 total, ';
-        $expected .= 'starting on record 4,566,001, ending on 234,567';
+        $expected = 'Page 1,523 of 1,600, showing 3,000 records out of 4,800,001 total, ';
+        $expected .= 'starting on record 4,566,001, ending on 4,569,001';
         $result = $this->Paginator->counter($input);
         $this->assertEquals($expected, $result);
 
         I18n::setLocale('de-DE');
-        $expected = 'Page 1.523 of 1.000, showing 1.230 records out of 234.567 total, ';
-        $expected .= 'starting on record 4.566.001, ending on 234.567';
+        $expected = 'Page 1.523 of 1.600, showing 3.000 records out of 4.800.001 total, ';
+        $expected .= 'starting on record 4.566.001, ending on 4.569.001';
         $result = $this->Paginator->counter($input);
         $this->assertEquals($expected, $result);
     }
@@ -2950,6 +2954,8 @@ class PaginatorHelperTest extends TestCase
                 'nextPage' => false,
                 'pageCount' => 0,
                 'limit' => 10,
+                'start' => 0,
+                'end' => 0,
             ]
         ]);
 

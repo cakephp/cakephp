@@ -500,7 +500,8 @@ trait IntegrationTestTrait
     protected function _sendRequest($url, $method, $data = [])
     {
         $dispatcher = $this->_makeDispatcher();
-        $psrRequest = null;
+        $url = $dispatcher->resolveUrl($url);
+
         try {
             $request = $this->_buildRequest($url, $method, $data);
             $response = $dispatcher->execute($request);
@@ -678,7 +679,7 @@ trait IntegrationTestTrait
     {
         // re-create URL in ServerRequest's context so
         // query strings are encoded as expected
-        $request = new ServerRequest(['url' => Router::url($url)]);
+        $request = new ServerRequest(['url' => $url]);
         $url = $request->getRequestTarget();
 
         $query = '';

@@ -44,6 +44,27 @@ class FormContextTest extends TestCase
     }
 
     /**
+     * tests getRequiredMessage
+     *
+     * @return void
+     */
+    public function testGetRequiredMessage()
+    {
+        $validator = new Validator();
+        $validator->requirePresence('title', true, 'Don\'t forget a title!');
+
+        $form = new Form();
+        $form->setValidator(Form::DEFAULT_VALIDATOR, $validator);
+
+        $context = new FormContext($this->request, [
+            'entity' => $form,
+        ]);
+
+        $this->assertNull($context->getRequiredMessage('body'));
+        $this->assertSame('Don\'t forget a title!', $context->getRequiredMessage('title'));
+    }
+
+    /**
      * Test getting the primary key.
      *
      * @return void

@@ -67,6 +67,25 @@ class EntityContextTest extends TestCase
     }
 
     /**
+     * tests getRequiredMessage
+     *
+     * @return void
+     */
+    public function testGetRequiredMessage()
+    {
+        $this->_setupTables();
+
+        $context = new EntityContext($this->request, [
+            'entity' => new Article(),
+            'table' => 'Articles',
+            'validator' => 'create',
+        ]);
+
+        $this->assertNull($context->getRequiredMessage('body'));
+        $this->assertSame('Don\'t forget a title!', $context->getRequiredMessage('title'));
+    }
+
+    /**
      * Test getting entity back from context.
      *
      * @return void
@@ -1283,6 +1302,7 @@ class EntityContextTest extends TestCase
         ]);
 
         $validator = new Validator();
+        $validator->requirePresence('title', true, 'Don\'t forget a title!');
         $validator->add('title', 'minlength', [
             'rule' => ['minlength', 10]
         ])

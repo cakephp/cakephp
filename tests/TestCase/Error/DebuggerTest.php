@@ -328,25 +328,6 @@ class DebuggerTest extends TestCase
         $result = Debugger::exportVar($View);
         $expected = <<<TEXT
 object(Cake\View\View) {
-	Blocks => object(Cake\View\ViewBlock) {}
-	plugin => null
-	name => ''
-	helpers => [
-		(int) 0 => 'Html',
-		(int) 1 => 'Form'
-	]
-	templatePath => null
-	template => null
-	layout => 'default'
-	layoutPath => null
-	autoLayout => true
-	subDir => null
-	theme => null
-	hasRendered => false
-	uuids => []
-	request => object(Cake\Http\ServerRequest) {}
-	response => object(Cake\Http\Response) {}
-	elementCache => 'default'
 	viewVars => []
 	Html => object(Cake\View\Helper\HtmlHelper) {}
 	Form => object(Cake\View\Helper\FormHelper) {}
@@ -354,7 +335,25 @@ object(Cake\View\View) {
 	float => (float) 1.333
 	string => '  '
 	[protected] _helpers => object(Cake\View\HelperRegistry) {}
+	[protected] Blocks => object(Cake\View\ViewBlock) {}
+	[protected] plugin => null
+	[protected] name => ''
+	[protected] helpers => [
+		(int) 0 => 'Html',
+		(int) 1 => 'Form'
+	]
+	[protected] templatePath => null
+	[protected] template => null
+	[protected] layout => 'default'
+	[protected] layoutPath => null
+	[protected] autoLayout => true
 	[protected] _ext => '.ctp'
+	[protected] subDir => ''
+	[protected] theme => null
+	[protected] hasRendered => false
+	[protected] request => object(Cake\Http\ServerRequest) {}
+	[protected] response => object(Cake\Http\Response) {}
+	[protected] elementCache => 'default'
 	[protected] _passedVars => [
 		(int) 0 => 'viewVars',
 		(int) 1 => 'autoLayout',
