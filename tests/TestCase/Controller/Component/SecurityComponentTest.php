@@ -97,7 +97,7 @@ class SecurityTestController extends Controller
      * @param int $status
      * @return \Cake\Http\Response|null
      */
-    public function redirect($url, int $status = null):  ?\Cake\Http\Response
+    public function redirect($url, int $status = null): ?Response
     {
         return $status;
     }
