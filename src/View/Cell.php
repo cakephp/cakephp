@@ -359,7 +359,6 @@ abstract class Cell
         return [
             'action' => $this->action,
             'args' => $this->args,
-            'viewClass' => $this->viewClass,
             'request' => $this->request,
             'response' => $this->response,
             'viewBuilder' => $this->viewBuilder(),
