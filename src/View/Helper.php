@@ -48,7 +48,7 @@ class Helper implements EventListenerInterface
      *
      * @var array
      */
-    public $helpers = [];
+    protected $helpers = [];
 
     /**
      * Default config for this helper.
@@ -155,6 +155,14 @@ class Helper implements EventListenerInterface
 
             return $this->_View->{$method}();
         }
+
+        if ($name === 'helpers') {
+            deprecationWarning(
+                'Helper::$helpers is now deprecated and should be accessed from outside a helper class.'
+            );
+
+            return $this->helpers;
+        }
     }
 
     /**
@@ -180,6 +188,12 @@ class Helper implements EventListenerInterface
             $this->_View->{$method}($value);
 
             return;
+        }
+
+        if ($name === 'helpers') {
+            deprecationWarning(
+                'Helper::$helpers is now deprecated and should be accessed from outside a helper class.'
+            );
         }
 
         $this->{$name} = $value;
