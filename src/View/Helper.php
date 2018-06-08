@@ -175,7 +175,7 @@ class Helper implements EventListenerInterface
     public function __set($name, $value)
     {
         $removed = [
-            'template' => 'setTemplate',
+            'theme' => 'setTheme',
             'plugin' => 'setPlugin',
         ];
         if (isset($removed[$name])) {

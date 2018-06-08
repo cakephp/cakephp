@@ -498,7 +498,7 @@ class UrlHelperTest extends TestCase
         $expected = '/img/cake.power.gif';
         $this->assertEquals($expected, $result);
 
-        $this->Helper->theme = 'TestTheme';
+        $this->Helper->getView()->setTheme('TestTheme');
 
         $result = $this->Helper->webroot('/img/cake.power.gif');
         $expected = '/test_theme/img/cake.power.gif';

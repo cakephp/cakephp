@@ -519,7 +519,7 @@ class HtmlHelperTest extends TestCase
         Configure::write('debug', true);
 
         $this->Html->Url->request = $this->Html->request->withAttribute('webroot', '/');
-        $this->Html->Url->theme = 'TestTheme';
+        $this->Html->Url->getView()->setTheme('TestTheme');
         $result = $this->Html->image('__cake_test_image.gif');
         $expected = [
             'img' => [
@@ -549,14 +549,14 @@ class HtmlHelperTest extends TestCase
     {
         Configure::write('App.wwwRoot', TEST_APP . 'webroot/');
 
-        $this->Html->Url->theme = 'TestTheme';
+        $this->Html->Url->getView()->setTheme('TestTheme');
         $result = $this->Html->css('webroot_test');
         $expected = [
             'link' => ['rel' => 'stylesheet', 'href' => 'preg:/.*test_theme\/css\/webroot_test\.css/']
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Html->theme = 'TestTheme';
+        $this->Html->getView()->setTheme('TestTheme');
         $result = $this->Html->css('theme_webroot');
         $expected = [
             'link' => ['rel' => 'stylesheet', 'href' => 'preg:/.*test_theme\/css\/theme_webroot\.css/']
@@ -1128,7 +1128,7 @@ class HtmlHelperTest extends TestCase
         $File = new File($testfile, true);
 
         $this->Html->Url->request = $this->Html->request->withAttribute('webroot', '/');
-        $this->Html->Url->theme = 'TestTheme';
+        $this->Html->Url->getView()->setTheme('TestTheme');
         $result = $this->Html->script('__test_js.js');
         $expected = [
             'script' => ['src' => '/test_theme/js/__test_js.js']
@@ -1816,7 +1816,7 @@ class HtmlHelperTest extends TestCase
      */
     public function testMetaIconWithTheme()
     {
-        $this->Html->Url->theme = 'TestTheme';
+        $this->Html->Url->getView()->setTheme('TestTheme');
 
         $result = $this->Html->meta('icon', 'favicon.ico');
         $expected = [
