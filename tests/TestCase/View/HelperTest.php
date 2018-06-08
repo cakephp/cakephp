@@ -174,8 +174,6 @@ class HelperTest extends TestCase
                 'Html',
                 'TestPlugin.OtherHelper'
             ],
-            'theme' => null,
-            'plugin' => null,
             'fieldset' => [],
             'tags' => [],
             'implementedEvents' => [

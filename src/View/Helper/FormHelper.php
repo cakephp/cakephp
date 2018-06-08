@@ -544,7 +544,7 @@ class FormHelper extends Helper
         }
 
         $actionDefaults = [
-            'plugin' => $this->plugin,
+            'plugin' => $this->_View->getPlugin(),
             'controller' => $this->request->getParam('controller'),
             'action' => $this->request->getParam('action'),
         ];

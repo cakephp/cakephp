@@ -65,25 +65,11 @@ class Helper implements EventListenerInterface
     protected $_helperMap = [];
 
     /**
-     * The current theme name if any.
-     *
-     * @var string
-     */
-    public $theme;
-
-    /**
      * Request object
      *
      * @var \Cake\Http\ServerRequest
      */
     public $request;
-
-    /**
-     * Plugin path
-     *
-     * @var string
-     */
-    public $plugin;
 
     /**
      * Holds the fields ['field_name' => ['type' => 'string', 'length' => 100]],
@@ -153,6 +139,49 @@ class Helper implements EventListenerInterface
 
             return $this->{$name};
         }
+
+        $removed = [
+            'theme' => 'getTheme',
+            'plugin' => 'getPlugin',
+        ];
+        if (isset($removed[$name])) {
+            $method = $removed[$name];
+            deprecationWarning(sprintf(
+                'Helper::$%s is deprecated. Use $view->%s() instead.',
+                $name,
+                $method
+            ));
+
+            return $this->_View->{$method}();
+        }
+    }
+
+    /**
+     * Magic setter for removed properties.
+     *
+     * @param string $name Property name.
+     * @param mixed $value Value to set.
+     * @return void
+     */
+    public function __set($name, $value)
+    {
+        $removed = [
+            'template' => 'setTemplate',
+            'plugin' => 'setPlugin',
+        ];
+        if (isset($removed[$name])) {
+            $method = $removed[$name];
+            deprecationWarning(sprintf(
+                'Helper::$%s is deprecated. Use $view->%s() instead.',
+                $name,
+                $method
+            ));
+            $this->_View->{$method}($value);
+
+            return;
+        }
+
+        $this->{$name} = $value;
     }
 
     /**
@@ -273,8 +302,6 @@ class Helper implements EventListenerInterface
     {
         return [
             'helpers' => $this->helpers,
-            'theme' => $this->theme,
-            'plugin' => $this->plugin,
             'fieldset' => $this->fieldset,
             'tags' => $this->tags,
             'implementedEvents' => $this->implementedEvents(),
