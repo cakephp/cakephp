@@ -72,17 +72,18 @@ class Helper implements EventListenerInterface
     public $request;
 
     /**
-     * Holds the fields ['field_name' => ['type' => 'string', 'length' => 100]],
-     * primaryKey and validates ['field_name']
+     * Unused.
      *
      * @var array
+     * @deprecated 3.7.0 This property is unused and will be removed in 4.0.0.
      */
     public $fieldset = [];
 
     /**
-     * Holds tag templates.
+     * Unused.
      *
      * @var array
+     * @deprecated 3.7.0 This property is unused and will be removed in 4.0.0.
      */
     public $tags = [];
 
@@ -302,8 +303,6 @@ class Helper implements EventListenerInterface
     {
         return [
             'helpers' => $this->helpers,
-            'fieldset' => $this->fieldset,
-            'tags' => $this->tags,
             'implementedEvents' => $this->implementedEvents(),
             '_config' => $this->getConfig(),
         ];
