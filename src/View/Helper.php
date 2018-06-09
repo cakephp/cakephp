@@ -148,7 +148,7 @@ class Helper implements EventListenerInterface
         if (isset($removed[$name])) {
             $method = $removed[$name];
             deprecationWarning(sprintf(
-                'Helper::$%s is deprecated. Use $view->%s() instead.',
+                'Helper::$%s is removed. Use $view->%s() instead.',
                 $name,
                 $method
             ));
@@ -158,7 +158,7 @@ class Helper implements EventListenerInterface
 
         if ($name === 'helpers') {
             deprecationWarning(
-                'Helper::$helpers is now deprecated and should be accessed from outside a helper class.'
+                'Helper::$helpers is now protected and should not be accessed from outside a helper class.'
             );
 
             return $this->helpers;
@@ -181,7 +181,7 @@ class Helper implements EventListenerInterface
         if (isset($removed[$name])) {
             $method = $removed[$name];
             deprecationWarning(sprintf(
-                'Helper::$%s is deprecated. Use $view->%s() instead.',
+                'Helper::$%s is removed. Use $view->%s() instead.',
                 $name,
                 $method
             ));
@@ -192,7 +192,7 @@ class Helper implements EventListenerInterface
 
         if ($name === 'helpers') {
             deprecationWarning(
-                'Helper::$helpers is now deprecated and should be accessed from outside a helper class.'
+                'Helper::$helpers is now protected and should not be accessed from outside a helper class.'
             );
         }
 
