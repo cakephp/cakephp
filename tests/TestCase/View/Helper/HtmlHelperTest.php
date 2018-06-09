@@ -467,8 +467,7 @@ class HtmlHelperTest extends TestCase
 
         $this->View->setRequest($this->View->getRequest()
             ->withAttribute('webroot', '/myproject/')
-            ->withAttribute('base', '/myproject')
-        );
+            ->withAttribute('base', '/myproject'));
 
         $result = $this->Html->image('sub/test.gif', ['fullBase' => true]);
         $here = $this->Html->Url->build('/', true);

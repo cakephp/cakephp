@@ -226,8 +226,7 @@ class PaginatorHelperTest extends TestCase
 
         $this->View->setRequest($this->View->getRequest()
             ->withParam('paging.Article.sort', 'Article.title')
-            ->withParam('paging.Article.direction', 'desc')
-        );
+            ->withParam('paging.Article.direction', 'desc'));
         $result = $this->Paginator->sort('title');
         $expected = [
             'a' => ['href' => '/accounts/index/param?sort=title&amp;direction=asc', 'class' => 'desc'],
@@ -238,8 +237,7 @@ class PaginatorHelperTest extends TestCase
 
         $this->View->setRequest($this->View->getRequest()
             ->withParam('paging.Article.sort', 'Article.title')
-            ->withParam('paging.Article.direction', 'asc')
-        );
+            ->withParam('paging.Article.direction', 'asc'));
         $result = $this->Paginator->sort('title');
         $expected = [
             'a' => ['href' => '/accounts/index/param?sort=title&amp;direction=desc', 'class' => 'asc'],
@@ -250,8 +248,7 @@ class PaginatorHelperTest extends TestCase
 
         $this->View->setRequest($this->View->getRequest()
             ->withParam('paging.Article.sort', 'Article.title')
-            ->withParam('paging.Article.direction', 'desc')
-        );
+            ->withParam('paging.Article.direction', 'desc'));
         $result = $this->Paginator->sort('title', 'Title', ['direction' => 'desc']);
         $expected = [
             'a' => ['href' => '/accounts/index/param?sort=title&amp;direction=asc', 'class' => 'desc'],
@@ -262,8 +259,7 @@ class PaginatorHelperTest extends TestCase
 
         $this->View->setRequest($this->View->getRequest()
             ->withParam('paging.Article.sort', 'Article.title')
-            ->withParam('paging.Article.direction', 'desc')
-        );
+            ->withParam('paging.Article.direction', 'desc'));
         $result = $this->Paginator->sort('title', 'Title', ['direction' => 'ASC']);
         $expected = [
             'a' => ['href' => '/accounts/index/param?sort=title&amp;direction=asc', 'class' => 'desc'],
@@ -274,8 +270,7 @@ class PaginatorHelperTest extends TestCase
 
         $this->View->setRequest($this->View->getRequest()
             ->withParam('paging.Article.sort', 'Article.title')
-            ->withParam('paging.Article.direction', 'asc')
-        );
+            ->withParam('paging.Article.direction', 'asc'));
         $result = $this->Paginator->sort('title', 'Title', ['direction' => 'asc']);
         $expected = [
             'a' => ['href' => '/accounts/index/param?sort=title&amp;direction=desc', 'class' => 'asc'],
@@ -286,8 +281,7 @@ class PaginatorHelperTest extends TestCase
 
         $this->View->setRequest($this->View->getRequest()
             ->withParam('paging.Article.sort', 'Article.title')
-            ->withParam('paging.Article.direction', 'asc')
-        );
+            ->withParam('paging.Article.direction', 'asc'));
 
         $result = $this->Paginator->sort('title', 'Title', ['direction' => 'desc']);
         $expected = [
@@ -342,8 +336,7 @@ class PaginatorHelperTest extends TestCase
 
         $this->View->setRequest($this->View->getRequest()
             ->withParam('paging.Article.sort', 'full_name')
-            ->withParam('paging.Article.direction', 'asc')
-        );
+            ->withParam('paging.Article.direction', 'asc'));
 
         $result = $this->Paginator->sort('Article.full_name');
         $expected = [
@@ -363,8 +356,7 @@ class PaginatorHelperTest extends TestCase
 
         $this->View->setRequest($this->View->getRequest()
             ->withParam('paging.Article.sort', 'full_name')
-            ->withParam('paging.Article.direction', 'desc')
-        );
+            ->withParam('paging.Article.direction', 'desc'));
         $result = $this->Paginator->sort('Article.full_name');
         $expected = [
             'a' => ['href' => '/accounts/index?sort=Article.full_name&amp;direction=asc', 'class' => 'desc'],
@@ -437,8 +429,7 @@ class PaginatorHelperTest extends TestCase
 
         $this->View->setRequest($this->View->getRequest()
             ->withParam('paging.Article.sort', 'Article.title')
-            ->withParam('paging.Article.direction', 'desc')
-        );
+            ->withParam('paging.Article.direction', 'desc'));
         $result = $this->Paginator->sort('Article.title');
         $expected = [
             'a' => ['href' => '/accounts/index?sort=Article.title&amp;direction=asc', 'class' => 'desc'],
@@ -449,8 +440,7 @@ class PaginatorHelperTest extends TestCase
 
         $this->View->setRequest($this->View->getRequest()
             ->withParam('paging.Article.sort', 'Article.title')
-            ->withParam('paging.Article.direction', 'desc')
-        );
+            ->withParam('paging.Article.direction', 'desc'));
         $result = $this->Paginator->sort('Article.title', 'Title');
         $expected = [
             'a' => ['href' => '/accounts/index?sort=Article.title&amp;direction=asc', 'class' => 'desc'],
@@ -461,8 +451,7 @@ class PaginatorHelperTest extends TestCase
 
         $this->View->setRequest($this->View->getRequest()
             ->withParam('paging.Article.sort', 'Article.title')
-            ->withParam('paging.Article.direction', 'asc')
-        );
+            ->withParam('paging.Article.direction', 'asc'));
         $result = $this->Paginator->sort('Article.title', 'Title');
         $expected = [
             'a' => ['href' => '/accounts/index?sort=Article.title&amp;direction=desc', 'class' => 'asc'],
@@ -473,8 +462,7 @@ class PaginatorHelperTest extends TestCase
 
         $this->View->setRequest($this->View->getRequest()
             ->withParam('paging.Article.sort', 'Account.title')
-            ->withParam('paging.Article.direction', 'asc')
-        );
+            ->withParam('paging.Article.direction', 'asc'));
         $result = $this->Paginator->sort('title');
         $expected = [
             'a' => ['href' => '/accounts/index?sort=title&amp;direction=asc'],
@@ -611,8 +599,7 @@ class PaginatorHelperTest extends TestCase
 
         $this->View->setRequest($this->View->getRequest()
             ->withParam('paging.Article.sort', 'Article.body')
-            ->withParam('paging.Article.order', 'DESC')
-        );
+            ->withParam('paging.Article.order', 'DESC'));
         $result = $this->Paginator->sortKey();
         $this->assertEquals('Article.body', $result);
 
@@ -633,29 +620,25 @@ class PaginatorHelperTest extends TestCase
 
         $this->View->setRequest($this->View->getRequest()
             ->withParam('paging.Article.sort', 'Article.title')
-            ->withParam('paging.Article.direction', 'desc')
-        );
+            ->withParam('paging.Article.direction', 'desc'));
         $result = $this->Paginator->sortDir();
         $this->assertEquals('desc', $result);
 
         $this->View->setRequest($this->View->getRequest()
             ->withParam('paging.Article.sort', 'Article.title')
-            ->withParam('paging.Article.direction', 'asc')
-        );
+            ->withParam('paging.Article.direction', 'asc'));
         $result = $this->Paginator->sortDir();
         $this->assertEquals('asc', $result);
 
         $this->View->setRequest($this->View->getRequest()
             ->withParam('paging.Article.sort', 'title')
-            ->withParam('paging.Article.direction', 'desc')
-        );
+            ->withParam('paging.Article.direction', 'desc'));
         $result = $this->Paginator->sortDir();
         $this->assertEquals('desc', $result);
 
         $this->View->setRequest($this->View->getRequest()
             ->withParam('paging.Article.sort', 'title')
-            ->withParam('paging.Article.direction', 'asc')
-        );
+            ->withParam('paging.Article.direction', 'asc'));
         $result = $this->Paginator->sortDir();
         $this->assertEquals('asc', $result);
 
@@ -849,8 +832,7 @@ class PaginatorHelperTest extends TestCase
         $this->View->setRequest($this->View->getRequest()
             ->withParam('paging.Article.page', 2)
             ->withParam('paging.Article.sort', 'name')
-            ->withParam('paging.Article.direction', 'asc')
-        );
+            ->withParam('paging.Article.direction', 'asc'));
         $result = $this->Paginator->sort($field, null, ['url' => $options]);
         $this->assertSame($expected, $result);
     }
@@ -912,8 +894,7 @@ class PaginatorHelperTest extends TestCase
 
         $this->View->setRequest($this->View->getRequest()
             ->withParam('paging.Article.page', 2)
-            ->withParam('paging.Article.prevPage', true)
-        );
+            ->withParam('paging.Article.prevPage', true));
         $options = ['prefix' => 'members'];
 
         $result = $this->Paginator->generateUrl($options);
@@ -1022,8 +1003,7 @@ class PaginatorHelperTest extends TestCase
         $this->View->setRequest($this->View->getRequest()
             ->withParam('paging.Article.scope', 'article')
             ->withParam('paging.Article.page', 3)
-            ->withParam('paging.Article.prevPage', true)
-        );
+            ->withParam('paging.Article.prevPage', true));
         $this->Paginator->options(['model' => 'Article']);
 
         $result = $this->Paginator->generateUrl([]);
@@ -1090,8 +1070,7 @@ class PaginatorHelperTest extends TestCase
                 'article' => [
                     'puppy' => 'no'
                 ]
-            ])
-        );
+            ]));
         // Need to run __construct to update _config['url']
         $paginator = new PaginatorHelper($this->View);
         $paginator->options(['model' => 'Article']);
@@ -1174,8 +1153,7 @@ class PaginatorHelperTest extends TestCase
 
         $this->View->setRequest($this->View->getRequest()
             ->withParam('pass', [2])
-            ->withQueryParams(['page' => 1, 'foo' => 'bar', 'x' => 'y', 'num' => 0])
-        );
+            ->withQueryParams(['page' => 1, 'foo' => 'bar', 'x' => 'y', 'num' => 0]));
         $this->Paginator = new PaginatorHelper($this->View);
 
         $result = $this->Paginator->sort('title');
@@ -1285,8 +1263,7 @@ class PaginatorHelperTest extends TestCase
 
         $this->View->setRequest($this->View->getRequest()
             ->withParam('paging.Client.page', 2)
-            ->withParam('paging.Client.prevPage', true)
-        );
+            ->withParam('paging.Client.prevPage', true));
         $result = $this->Paginator->prev('<< Previous');
         $expected = [
             'li' => ['class' => 'prev'],
@@ -2486,8 +2463,7 @@ class PaginatorHelperTest extends TestCase
     {
         $this->View->setRequest($this->View->getRequest()
             ->withParam('paging.Article.page', 15)
-            ->withParam('paging.Article.pageCount', 15)
-        );
+            ->withParam('paging.Article.pageCount', 15));
 
         $result = $this->Paginator->last();
         $expected = '';
@@ -2510,8 +2486,7 @@ class PaginatorHelperTest extends TestCase
                 'prevPage' => false,
                 'nextPage' => true,
                 'pageCount' => 5,
-            ])
-        );
+            ]));
 
         $result = $this->Paginator->first('first', ['model' => 'Article']);
         $this->assertEquals('', $result);
@@ -2551,8 +2526,7 @@ class PaginatorHelperTest extends TestCase
         $this->View->setRequest($this->View->getRequest()
             ->withParam('paging.Article.page', 3)
             ->withParam('paging.Article.direction', 'DESC')
-            ->withParam('paging.Article.sort', 'Article.title')
-        );
+            ->withParam('paging.Article.sort', 'Article.title'));
 
         $this->Paginator->options(['url' => ['_full' => true]]);
 
@@ -2879,8 +2853,7 @@ class PaginatorHelperTest extends TestCase
         $this->View->setRequest($this->View->getRequest()
             ->withParam('paging.Article.sort', 'Article.title')
             ->withParam('paging.Article.direction', 'asc')
-            ->withParam('paging.Article.page', 1)
-        );
+            ->withParam('paging.Article.page', 1));
 
         $test = ['url' => [
             'page' => '1',

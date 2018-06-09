@@ -751,8 +751,7 @@ class FormHelperTest extends TestCase
 
         $this->View->setRequest($this->View->getRequest()
             ->withRequestTarget('/articles/edit/1')
-            ->withParam('action', 'edit')
-        );
+            ->withParam('action', 'edit'));
 
         $this->article['defaults']['id'] = 1;
 
@@ -781,8 +780,7 @@ class FormHelperTest extends TestCase
 
         $this->View->setRequest($this->View->getRequest()
             ->withRequestTarget('/articles/delete/10')
-            ->withParam('action', 'delete')
-        );
+            ->withParam('action', 'delete'));
         $result = $this->Form->create($this->article);
         $expected = [
             'form' => [
@@ -798,8 +796,7 @@ class FormHelperTest extends TestCase
         $this->article['defaults'] = ['id' => 1];
         $this->View->setRequest($this->View->getRequest()
             ->withRequestTarget('/articles/edit/1')
-            ->withParam('action', 'delete')
-        );
+            ->withParam('action', 'delete'));
         $result = $this->Form->create($this->article, ['url' => ['action' => 'edit']]);
         $expected = [
             'form' => [
@@ -814,8 +811,7 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $this->View->setRequest($this->View->getRequest()
-            ->withParam('action', 'add')
-        );
+            ->withParam('action', 'add'));
         $result = $this->Form->create($this->article, ['url' => ['action' => 'publish']]);
         $expected = [
             'form' => [
@@ -839,8 +835,7 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $this->View->setRequest($this->View->getRequest()
-            ->withParam('controller', 'Pages')
-        );
+            ->withParam('controller', 'Pages'));
         $result = $this->Form->create($this->article, ['url' => ['action' => 'signup']]);
         $expected = [
             'form' => [
@@ -885,8 +880,7 @@ class FormHelperTest extends TestCase
         $encoding = strtolower(Configure::read('App.encoding'));
 
         $this->View->setRequest($this->View->getRequest()
-            ->withParam('controller', 'users')
-        );
+            ->withParam('controller', 'users'));
 
         $result = $this->Form->create(false, ['url' => ['action' => 'login']]);
         $expected = [
@@ -2009,7 +2003,8 @@ class FormHelperTest extends TestCase
         ]));
         $this->Form->create();
         $this->assertEquals(
-            $this->View->getRequest()->getParam('_Token.unlockedFields'), $this->Form->unlockField()
+            $this->View->getRequest()->getParam('_Token.unlockedFields'),
+            $this->Form->unlockField()
         );
 
         $this->Form->hidden('Addresses.id', ['value' => '123456']);
@@ -2081,8 +2076,7 @@ class FormHelperTest extends TestCase
     {
         $this->View->setRequest($this->View->getRequest()
             ->withParam('_Token', 'stuff')
-            ->withParam('_csrfToken', 'testKey')
-        );
+            ->withParam('_csrfToken', 'testKey'));
         $this->article['schema'] = [
             'ratio' => ['type' => 'decimal', 'length' => 5, 'precision' => 6],
             'population' => ['type' => 'decimal', 'length' => 15, 'precision' => 0],
@@ -4061,8 +4055,7 @@ class FormHelperTest extends TestCase
         $this->View->setRequest($this->View->getRequest()
             ->withParam('prefix', 'admin')
             ->withParam('action', 'admin_edit')
-            ->withParam('controller', 'articles')
-        );
+            ->withParam('controller', 'articles'));
         $result = $this->Form->allControls();
         $expected = [
             '<fieldset',
@@ -4390,8 +4383,7 @@ class FormHelperTest extends TestCase
         ];
         $this->View->setRequest($this->View->getRequest()
             ->withData('Model.text', 'test <strong>HTML</strong> values')
-            ->withData('Contact.text', 'test')
-        );
+            ->withData('Contact.text', 'test'));
         $this->Form->create($this->article);
 
         $result = $this->Form->text('Model.text');
@@ -6232,7 +6224,6 @@ class FormHelperTest extends TestCase
     {
         $this->View->setRequest(
             $this->View->getRequest()->withParam('_Token', ['unlockedFields' => []])
-
         );
         $this->Form->dateTime('Contact.date');
         $expected = [
@@ -7242,8 +7233,7 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $this->View->setRequest($this->View->getRequest()
-            ->withData('field', 'some <strong>test</strong> data with <a href="#">HTML</a> chars')
-        );
+            ->withData('field', 'some <strong>test</strong> data with <a href="#">HTML</a> chars'));
         $this->Form->create();
         $result = $this->Form->textarea('field');
         $expected = [
@@ -7570,8 +7560,7 @@ class FormHelperTest extends TestCase
     {
         $this->View->setRequest($this->View->getRequest()
             ->withParam('_csrfToken', 'testkey')
-            ->withParam('_Token.unlockedFields', [])
-        );
+            ->withParam('_Token.unlockedFields', []));
 
         $result = $this->Form->postButton('Delete', '/posts/delete/1');
         $tokenDebug = urlencode(json_encode([
@@ -7861,8 +7850,7 @@ class FormHelperTest extends TestCase
         $hash = hash_hmac('sha1', '/posts/delete/1' . serialize(['id' => '1']) . session_id(), Security::getSalt());
         $hash .= '%3Aid';
         $this->View->setRequest($this->View->getRequest()
-            ->withParam('_Token.key', 'test')
-        );
+            ->withParam('_Token.key', 'test'));
 
         $result = $this->Form->postLink(
             'Delete',
@@ -7921,8 +7909,7 @@ class FormHelperTest extends TestCase
     {
         $this->View->setRequest($this->View->getRequest()
             ->withParam('_csrfToken', 'testkey')
-            ->withParam('_Token', 'val')
-        );
+            ->withParam('_Token', 'val'));
 
         $this->Form->create($this->article, ['type' => 'get']);
         $this->Form->end();
@@ -8969,8 +8956,7 @@ class FormHelperTest extends TestCase
     {
         $this->View->setRequest($this->View->getRequest()
             ->withData('id', '1')
-            ->withQueryParams(['id' => '2'])
-        );
+            ->withQueryParams(['id' => '2']));
 
         $expected = ['context'];
         $result = $this->Form->getValueSources();
@@ -9036,8 +9022,7 @@ class FormHelperTest extends TestCase
 
         $this->View->setRequest($this->View->getRequest()
             ->withQueryParams(['id' => '5a'])
-            ->withData('id', '5b')
-        );
+            ->withData('id', '5b'));
 
         $this->Form->setValueSources(['context']);
         $this->Form->create($article);
@@ -9101,8 +9086,7 @@ class FormHelperTest extends TestCase
 
         $this->View->setRequest($this->View->getRequest()
             ->withData('id', '8')
-            ->withQueryParams(['id' => '9'])
-        );
+            ->withQueryParams(['id' => '9']));
         $this->Form->setValueSources(['data', 'query', 'context']);
         $result = $this->Form->control('id');
         $expected = [
