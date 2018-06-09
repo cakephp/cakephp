@@ -65,13 +65,6 @@ class Helper implements EventListenerInterface
     protected $_helperMap = [];
 
     /**
-     * Request object
-     *
-     * @var \Cake\Http\ServerRequest
-     */
-    public $request;
-
-    /**
      * Unused.
      *
      * @var array
@@ -103,8 +96,6 @@ class Helper implements EventListenerInterface
     public function __construct(View $View, array $config = [])
     {
         $this->_View = $View;
-        $this->request = $View->getRequest();
-
         $this->setConfig($config);
 
         if (!empty($this->helpers)) {
@@ -156,6 +147,14 @@ class Helper implements EventListenerInterface
             return $this->_View->{$method}();
         }
 
+        if ($name === 'request') {
+            deprecationWarning(
+                'Helper::$%s is removed. Use $view->%s() instead. Use $helper->getView()->getRequest() instead.'
+            );
+
+            return $this->_View->getRequest();
+        }
+
         if ($name === 'helpers') {
             deprecationWarning(
                 'Helper::$helpers is now protected and should not be accessed from outside a helper class.'
@@ -186,6 +185,16 @@ class Helper implements EventListenerInterface
                 $method
             ));
             $this->_View->{$method}($value);
+
+            return;
+        }
+
+        if ($name === 'request') {
+            deprecationWarning(
+                'Helper::$%s is removed. Use $view->%s() instead. Use $helper->getView()->setRequest() instead.'
+            );
+
+            $this->_View->setRequest($value);
 
             return;
         }
