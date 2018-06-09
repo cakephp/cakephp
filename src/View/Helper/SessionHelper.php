@@ -58,7 +58,7 @@ class SessionHelper extends Helper
      */
     public function read($name = null)
     {
-        return $this->request->getSession()->read($name);
+        return $this->_View->getRequest()->getSession()->read($name);
     }
 
     /**
@@ -74,7 +74,7 @@ class SessionHelper extends Helper
      */
     public function check($name)
     {
-        return $this->request->getSession()->check($name);
+        return $this->_View->getRequest()->getSession()->check($name);
     }
 
     /**
