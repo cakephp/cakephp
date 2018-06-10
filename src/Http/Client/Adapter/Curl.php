@@ -16,6 +16,7 @@ namespace Cake\Http\Client\Adapter;
 use Cake\Http\Client\AdapterInterface;
 use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
+use Cake\Http\Exception\HttpException;
 
 /**
  * Implements sending Cake\Http\Client\Request
@@ -33,8 +34,13 @@ class Curl implements AdapterInterface
         curl_setopt_array($ch, $options);
 
         $body = $this->exec($ch);
+        if ($body === false) {
+            $errorCode = curl_errno($ch);
+            $error = curl_error($ch);
+            curl_close($ch);
+            throw new HttpException("cURL Error ({$errorCode}) {$error}");
+        }
 
-        // TODO check for timeouts.
         $responses = $this->createResponse($ch, $body);
         curl_close($ch);
 
