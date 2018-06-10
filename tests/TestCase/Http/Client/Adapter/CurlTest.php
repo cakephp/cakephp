@@ -147,6 +147,37 @@ class CurlTest extends TestCase
     }
 
     /**
+     * Test converting client options into curl ones.
+     *
+     * @return void
+     */
+    public function testBuildOptionsSsl()
+    {
+        $options = [
+            'ssl_verify_host' => true,
+            'ssl_verify_peer' => true,
+            'ssl_verify_peer_name' => true,
+            'ssl_verify_depth' => 9000,
+            'ssl_allow_self_signed' => false,
+        ];
+        $request = new Request('http://localhost/things', 'GET');
+        $result = $this->curl->buildOptions($request, $options);
+        $expected = [
+            CURLOPT_URL => 'http://localhost/things',
+            CURLOPT_HTTP_VERSION => '1.1',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HEADER => true,
+            CURLOPT_HTTPHEADER => [
+                'Connection: close',
+                'User-Agent: CakePHP',
+            ],
+            CURLOPT_HTTPGET => true,
+            CURLOPT_SSL_VERIFYPEER => true
+        ];
+        $this->assertSame($expected, $result);
+    }
+
+    /**
      * Test the send method by using cakephp:// protocol.
      *
      * @return void

@@ -80,8 +80,19 @@ class Curl implements AdapterInterface
             $out[CURLOPT_POSTFIELDS] = $body->getContents();
         }
 
+        $optionMap = [
+            'timeout' => CURLOPT_TIMEOUT,
+            'ssl_verify_peer' => CURLOPT_SSL_VERIFYPEER,
+            'ssl_verify_host' => CURLOPT_SSL_VERIFYHOST,
+            'ssl_verify_depth' => 9000,
+            'ssl_allow_self_signed' => false,
+        ];
+
         if (isset($options['timeout'])) {
             $out[CURLOPT_TIMEOUT] = $options['timeout'];
+        }
+        if (isset($options['ssl_verify_peer'])) {
+            $out[CURLOPT_SSL_VERIFYPEER] = $options['ssl_verify_peer'];
         }
 
         return $out;
