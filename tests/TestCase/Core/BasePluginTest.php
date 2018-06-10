@@ -18,7 +18,6 @@ use Cake\Core\BasePlugin;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Core\PluginApplicationInterface;
-use Cake\Event\EventManager;
 use Cake\Http\MiddlewareQueue;
 use Cake\TestSuite\TestCase;
 use Company\TestPluginThree\Plugin as TestPluginThree;

@@ -17,7 +17,6 @@ namespace Cake\Collection;
 use ArrayIterator;
 use InvalidArgumentException;
 use IteratorIterator;
-use LogicException;
 use Serializable;
 use Traversable;
 

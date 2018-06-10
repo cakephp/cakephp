@@ -12,8 +12,6 @@
  */
 namespace Cake\Core;
 
-use Cake\Event\EventManagerInterface;
-
 /**
  * Plugin Interface
  */

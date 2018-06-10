@@ -21,7 +21,6 @@ use Cake\Console\CommandCollectionAwareInterface;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\ConsoleOutput;
-use Cake\Utility\Inflector;
 use SimpleXMLElement;
 
 /**
