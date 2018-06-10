@@ -15,10 +15,11 @@ namespace Cake\Http\Client\Adapter;
 
 use Cake\Http\Client\AdapterInterface;
 use Cake\Http\Client\Request;
+use Cake\Http\Client\Response;
 
 /**
  * Implements sending Cake\Http\Client\Request
- * via CURL.
+ * via ext/curl.
  */
 class Curl implements AdapterInterface
 {
@@ -31,11 +32,13 @@ class Curl implements AdapterInterface
         $options = $this->buildOptions($request, $options);
         curl_setopt_array($ch, $options);
 
-        $bodyBuffer = tmpfile();
-        curl_setopt(CURLOPT_FILE, $bodyBuffer);
+        $body = $this->exec($ch);
 
-        $this->exec($ch);
+        // TODO check for timeouts.
+        $responses = $this->createResponse($ch, $body);
         curl_close($ch);
+
+        return $responses;
     }
 
     /**
@@ -80,32 +83,55 @@ class Curl implements AdapterInterface
             $out[CURLOPT_POSTFIELDS] = $body->getContents();
         }
 
+        if (empty($options['ssl_cafile'])) {
+            $options['ssl_cafile'] = CORE_PATH . 'config' . DIRECTORY_SEPARATOR . 'cacert.pem';
+        }
         $optionMap = [
             'timeout' => CURLOPT_TIMEOUT,
             'ssl_verify_peer' => CURLOPT_SSL_VERIFYPEER,
             'ssl_verify_host' => CURLOPT_SSL_VERIFYHOST,
-            'ssl_verify_depth' => 9000,
-            'ssl_allow_self_signed' => false,
+            'ssl_verify_status' => CURLOPT_SSL_VERIFYSTATUS,
+            'ssl_cafile' => CURLOPT_CAINFO,
+            'ssl_local_cert' => CURLOPT_SSLCERT,
+            'ssl_passphrase' => CURLOPT_SSLCERTPASSWD,
         ];
-
-        if (isset($options['timeout'])) {
-            $out[CURLOPT_TIMEOUT] = $options['timeout'];
+        foreach ($optionMap as $option => $curlOpt) {
+            if (isset($options[$option])) {
+                $out[$curlOpt] = $options[$option];
+            }
         }
-        if (isset($options['ssl_verify_peer'])) {
-            $out[CURLOPT_SSL_VERIFYPEER] = $options['ssl_verify_peer'];
+        if (isset($options['proxy']['proxy'])) {
+            $out[CURLOPT_PROXY] = $options['proxy']['proxy'];
         }
 
         return $out;
     }
 
     /**
+     * Convert the raw curl response into an Http\Client\Response
+     *
+     * @param resource $handle Curl handle
+     * @param string $responseData string The response data from curl_exec
+     * @return \Cake\Http\Client\Response[]
+     */
+    protected function createResponse($handle, $responseData)
+    {
+        $meta = curl_getinfo($handle);
+        $headers = trim(substr($responseData, 0, $meta['header_size']));
+        $body = substr($responseData, $meta['header_size']);
+        $response = new Response(explode("\r\n", $headers), $body);
+
+        return [$response];
+    }
+
+    /**
      * Execute the curl handle.
      *
      * @param resource $ch Curl Resource handle
-     * @return void
+     * @return string
      */
     protected function exec($ch)
     {
-        curl_exec($ch);
+        return curl_exec($ch);
     }
 }
