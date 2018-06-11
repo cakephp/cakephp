@@ -679,9 +679,11 @@ abstract class IntegrationTestCase extends TestCase
 
             if (is_array($value)) {
                 $looksLikeFile = isset($value['error']) && isset($value['tmp_name']) && isset($value['size']);
-                if (!$looksLikeFile) {
-                    $data[$key] = $this->_castToString($value);
+                if ($looksLikeFile) {
+                    continue;
                 }
+
+                $data[$key] = $this->_castToString($value);
             }
         }
 
