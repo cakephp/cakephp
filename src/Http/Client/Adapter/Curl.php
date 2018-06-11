@@ -19,8 +19,12 @@ use Cake\Http\Client\Response;
 use Cake\Http\Exception\HttpException;
 
 /**
- * Implements sending Cake\Http\Client\Request
- * via ext/curl.
+ * Implements sending Cake\Http\Client\Request via ext/curl.
+ *
+ * In addition to the standard options documented in Cake\Http\Client,
+ * this adapter supports all available curl options. Additional curl options
+ * can be set via the `curl` option key when making requests or configuring
+ * a client.
  */
 class Curl implements AdapterInterface
 {
@@ -96,7 +100,6 @@ class Curl implements AdapterInterface
             'timeout' => CURLOPT_TIMEOUT,
             'ssl_verify_peer' => CURLOPT_SSL_VERIFYPEER,
             'ssl_verify_host' => CURLOPT_SSL_VERIFYHOST,
-            'ssl_verify_status' => CURLOPT_SSL_VERIFYSTATUS,
             'ssl_cafile' => CURLOPT_CAINFO,
             'ssl_local_cert' => CURLOPT_SSLCERT,
             'ssl_passphrase' => CURLOPT_SSLCERTPASSWD,
@@ -108,6 +111,12 @@ class Curl implements AdapterInterface
         }
         if (isset($options['proxy']['proxy'])) {
             $out[CURLOPT_PROXY] = $options['proxy']['proxy'];
+        }
+        if (isset($options['curl']) && is_array($options['curl'])) {
+            // Can't use array_merge() because keys will be re-ordered.
+            foreach ($options['curl'] as $key => $value) {
+                $out[$key] = $value;
+            }
         }
 
         return $out;

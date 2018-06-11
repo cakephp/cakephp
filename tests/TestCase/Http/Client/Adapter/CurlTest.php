@@ -272,4 +272,34 @@ class CurlTest extends TestCase
         ];
         $this->assertSame($expected, $result);
     }
+
+    /**
+     * Test converting client options into curl ones.
+     *
+     * @return void
+     */
+    public function testBuildOptionsCurlOptions()
+    {
+        $options = [
+            'curl' => [
+                CURLOPT_USERAGENT => 'Super-secret'
+            ]
+        ];
+        $request = new Request('http://localhost/things', 'GET');
+        $result = $this->curl->buildOptions($request, $options);
+        $expected = [
+            CURLOPT_URL => 'http://localhost/things',
+            CURLOPT_HTTP_VERSION => '1.1',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HEADER => true,
+            CURLOPT_HTTPHEADER => [
+                'Connection: close',
+                'User-Agent: CakePHP',
+            ],
+            CURLOPT_HTTPGET => true,
+            CURLOPT_CAINFO => $this->caFile,
+            CURLOPT_USERAGENT => 'Super-secret'
+        ];
+        $this->assertSame($expected, $result);
+    }
 }
