@@ -147,7 +147,9 @@ class FormHelperTest extends TestCase
         static::setAppNamespace('Cake\Test\TestCase\View\Helper');
         $this->View = new View();
 
-        $this->Form = new FormHelper($this->View);
+        $this->Form = new FormHelper($this->View, [
+            'autoSetCustomValidity' => false,
+        ]);
         $request = new ServerRequest([
             'webroot' => '',
             'base' => '',

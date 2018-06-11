@@ -166,7 +166,7 @@ class FormHelper extends Helper
             'confirmJs' => '{{confirm}}',
         ],
         // set HTML5 validation message to custom required/empty messages
-        'autoSetCustomValidity' => false,
+        'autoSetCustomValidity' => true,
     ];
 
     /**
