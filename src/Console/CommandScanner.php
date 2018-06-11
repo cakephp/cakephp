@@ -19,7 +19,6 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Filesystem\Folder;
 use Cake\Utility\Inflector;
-use InvalidArgumentException;
 
 /**
  * Used by CommandCollection and CommandTask to scan the filesystem

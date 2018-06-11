@@ -16,7 +16,6 @@ namespace Cake\Database\Type;
 
 use Cake\Core\Exception\Exception;
 use Cake\Database\Driver;
-use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Type;
 use Cake\Database\TypeInterface;
 use Cake\Utility\Text;

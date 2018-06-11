@@ -14,14 +14,12 @@
  */
 namespace Cake\Test\Console;
 
-use Cake\Console\Command;
 use Cake\Console\CommandCollection;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Shell\I18nShell;
 use Cake\Shell\RoutesShell;
 use Cake\TestSuite\TestCase;
-use InvalidArgumentException;
 use stdClass;
 use TestApp\Command\DemoCommand;
 

@@ -15,7 +15,6 @@
 namespace Cake\Routing\Middleware;
 
 use Cake\Cache\Cache;
-use Cake\Core\Configure;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Http\BaseApplication;
 use Cake\Http\MiddlewareQueue;

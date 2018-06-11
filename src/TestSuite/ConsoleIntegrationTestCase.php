@@ -13,7 +13,6 @@
  */
 namespace Cake\TestSuite;
 
-use Cake\Console\Command;
 use Cake\Console\CommandRunner;
 use Cake\Console\ConsoleInput;
 use Cake\Console\ConsoleIo;
