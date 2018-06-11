@@ -109,7 +109,7 @@ class DboSource extends DataSource {
 /**
  * Result
  *
- * @var array
+ * @var array|PDOStatement
  */
 	protected $_result = null;
 
