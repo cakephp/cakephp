@@ -866,6 +866,10 @@ class Route
         if ($routeKey !== false) {
             return substr($this->template, 0, $routeKey);
         }
+        $routeKey = strpos($this->template, '{');
+        if ($routeKey !== false && strpos($this->template, '}') !== false) {
+            return substr($this->template, 0, $routeKey);
+        }
         $star = strpos($this->template, '*');
         if ($star !== false) {
             $path = rtrim(substr($this->template, 0, $star), '/');
