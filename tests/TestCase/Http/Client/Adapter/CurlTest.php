@@ -237,7 +237,7 @@ class CurlTest extends TestCase
             ],
             CURLOPT_HTTPGET => true,
             CURLOPT_SSL_VERIFYPEER => true,
-            CURLOPT_SSL_VERIFYHOST => true,
+            CURLOPT_SSL_VERIFYHOST => 2,
             CURLOPT_CAINFO => $this->caFile,
         ];
         $this->assertSame($expected, $result);

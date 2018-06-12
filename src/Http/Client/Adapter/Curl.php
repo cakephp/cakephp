@@ -42,7 +42,12 @@ class Curl implements AdapterInterface
             $errorCode = curl_errno($ch);
             $error = curl_error($ch);
             curl_close($ch);
-            throw new HttpException("cURL Error ({$errorCode}) {$error}");
+
+            $status = 500;
+            if ($error === 28) {
+                $status = 504;
+            }
+            throw new HttpException("cURL Error ({$errorCode}) {$error}", $status);
         }
 
         $responses = $this->createResponse($ch, $body);
@@ -95,6 +100,10 @@ class Curl implements AdapterInterface
 
         if (empty($options['ssl_cafile'])) {
             $options['ssl_cafile'] = CORE_PATH . 'config' . DIRECTORY_SEPARATOR . 'cacert.pem';
+        }
+        if (!empty($options['ssl_verify_host'])) {
+            // Value of 1 or true is deprecated. Only 2 or 0 should be used now.
+            $options['ssl_verify_host'] = 2;
         }
         $optionMap = [
             'timeout' => CURLOPT_TIMEOUT,
