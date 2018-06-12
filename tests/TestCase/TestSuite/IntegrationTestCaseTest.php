@@ -23,6 +23,7 @@ use Cake\Routing\Route\InflectedRoute;
 use Cake\TestSuite\IntegrationTestCase;
 use Cake\Test\Fixture\AssertIntegrationTestCase;
 use Cake\Utility\Security;
+use Zend\Diactoros\UploadedFile;
 
 /**
  * Self test of the IntegrationTestCase
@@ -65,6 +66,69 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         DispatcherFactory::add('ControllerFactory');
 
         $this->useHttpServer(false);
+    }
+
+    /**
+     * Tests that all data that used by the request is cast to strings
+     *
+     * @return void
+     */
+    public function testDataCastToString()
+    {
+        $data = [
+            'title' => 'Blog Post',
+            'status' => 1,
+            'published' => true,
+            'not_published' => false,
+            'comments' => [
+                [
+                    'body' => 'Comment',
+                    'status' => 1,
+                ]
+            ],
+            'file' => [
+                'tmp_name' => __FILE__,
+                'size' => 42,
+                'error' => 0,
+                'type' => 'text/plain',
+                'name' => 'Uploaded file'
+            ],
+            'pictures' => [
+                'name' => [
+                    ['file' => 'a-file.png'],
+                    ['file' => 'a-moose.png']
+                ],
+                'type' => [
+                    ['file' => 'image/png'],
+                    ['file' => 'image/jpg']
+                ],
+                'tmp_name' => [
+                    ['file' => __FILE__],
+                    ['file' => __FILE__]
+                ],
+                'error' => [
+                    ['file' => 0],
+                    ['file' => 0]
+                ],
+                'size' => [
+                    ['file' => 17188],
+                    ['file' => 2010]
+                ],
+            ],
+            'upload' => new UploadedFile(__FILE__, 42, 0)
+        ];
+        $request = $this->_buildRequest('/posts/add', 'POST', $data);
+        $this->assertInternalType('string', $request['post']['status']);
+        $this->assertInternalType('string', $request['post']['published']);
+        $this->assertSame('0', $request['post']['not_published']);
+        $this->assertInternalType('string', $request['post']['comments'][0]['status']);
+        $this->assertInternalType('integer', $request['post']['file']['error']);
+        $this->assertInternalType('integer', $request['post']['file']['size']);
+        $this->assertInternalType('integer', $request['post']['pictures']['error'][0]['file']);
+        $this->assertInternalType('integer', $request['post']['pictures']['error'][1]['file']);
+        $this->assertInternalType('integer', $request['post']['pictures']['size'][0]['file']);
+        $this->assertInternalType('integer', $request['post']['pictures']['size'][1]['file']);
+        $this->assertInstanceOf(UploadedFile::class, $request['post']['upload']);
     }
 
     /**

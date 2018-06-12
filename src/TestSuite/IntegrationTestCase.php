@@ -605,7 +605,8 @@ abstract class IntegrationTestCase extends TestCase
             $props['input'] = $data;
         }
         if (!isset($props['input'])) {
-            $props['post'] = $this->_addTokens($tokenUrl, $data);
+            $data = $this->_addTokens($tokenUrl, $data);
+            $props['post'] = $this->_castToString($data);
         }
         $props['cookies'] = $this->_cookie;
 
@@ -654,6 +655,35 @@ abstract class IntegrationTestCase extends TestCase
             }
             if (!isset($data['_csrfToken'])) {
                 $data['_csrfToken'] = $this->_cookie['csrfToken'];
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Recursively casts all data to string as that is how data would be POSTed in
+     * the real world
+     *
+     * @param array $data POST data
+     * @return array
+     */
+    protected function _castToString($data)
+    {
+        foreach ($data as $key => $value) {
+            if (is_scalar($value)) {
+                $data[$key] = $value === false ? '0' : (string)$value;
+
+                continue;
+            }
+
+            if (is_array($value)) {
+                $looksLikeFile = isset($value['error']) && isset($value['tmp_name']) && isset($value['size']);
+                if ($looksLikeFile) {
+                    continue;
+                }
+
+                $data[$key] = $this->_castToString($value);
             }
         }
 
