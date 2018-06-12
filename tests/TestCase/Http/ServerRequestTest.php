@@ -714,7 +714,7 @@ class ServerRequestTest extends TestCase
     public function testClientIp()
     {
         $request = new ServerRequest(['environment' => [
-            'HTTP_X_FORWARDED_FOR' => '192.168.1.5, 10.0.1.1, proxy.com, real.ip',
+            'HTTP_X_FORWARDED_FOR' => 'real.ip, 192.168.1.5, 10.0.1.1, proxy.com',
             'HTTP_CLIENT_IP' => '192.168.1.2',
             'REMOTE_ADDR' => '192.168.1.3'
         ]]);
