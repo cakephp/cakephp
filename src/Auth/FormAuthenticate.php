@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  *
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
@@ -45,7 +46,7 @@ class FormAuthenticate extends BaseAuthenticate
      * @param array $fields The fields to be checked.
      * @return bool False if the fields have not been supplied. True if they exist.
      */
-    protected function _checkFields(ServerRequest $request, array $fields)
+    protected function _checkFields(ServerRequest $request, array $fields): bool
     {
         foreach ([$fields['username'], $fields['password']] as $field) {
             $value = $request->getData($field);

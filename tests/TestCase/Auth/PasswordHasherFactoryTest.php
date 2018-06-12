@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -29,7 +30,7 @@ class PasswordHasherFactoryTest extends TestCase
      *
      * @return void
      */
-    public function testBuild()
+    public function testBuild(): void
     {
         $hasher = PasswordHasherFactory::build('Default');
         $this->assertInstanceof('Cake\Auth\DefaultPasswordHasher', $hasher);
@@ -51,7 +52,7 @@ class PasswordHasherFactoryTest extends TestCase
      *
      * @return void
      */
-    public function testBuildException()
+    public function testBuildException(): void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Password hasher class "FooBar" was not found.');
