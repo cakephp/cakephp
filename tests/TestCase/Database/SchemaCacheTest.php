@@ -19,7 +19,6 @@ use Cake\Cache\CacheEngine;
 use Cake\Database\SchemaCache;
 use Cake\Database\Schema\CachedCollection;
 use Cake\Datasource\ConnectionManager;
-use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 
 /**

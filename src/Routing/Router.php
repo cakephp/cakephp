@@ -19,7 +19,6 @@ use Cake\Http\ServerRequest;
 use Cake\Routing\Exception\MissingRouteException;
 use Cake\Utility\Inflector;
 use Psr\Http\Message\ServerRequestInterface;
-use RuntimeException;
 
 /**
  * Parses the request URL into controller, action, and parameters. Uses the connected routes

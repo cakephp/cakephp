@@ -15,7 +15,6 @@
 namespace Cake\Core;
 
 use Cake\Event\EventDispatcherInterface;
-use Cake\Event\EventManagerInterface;
 
 /**
  * Interface for Applications that leverage plugins & events.

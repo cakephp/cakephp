@@ -13,12 +13,10 @@
  */
 namespace Cake\Core;
 
-use ArrayIterator;
 use Cake\Core\Exception\MissingPluginException;
 use Countable;
 use InvalidArgumentException;
 use Iterator;
-use RuntimeException;
 
 /**
  * Plugin Collection

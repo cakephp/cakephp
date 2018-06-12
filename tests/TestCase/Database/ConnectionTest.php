@@ -21,8 +21,6 @@ use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Exception\NestedTransactionRollbackException;
 use Cake\Database\Log\LoggingStatement;
 use Cake\Database\Log\QueryLogger;
-use Cake\Database\Retry\CommandRetry;
-use Cake\Database\Retry\ReconnectStrategy;
 use Cake\Database\StatementInterface;
 use Cake\Database\Statement\BufferedStatement;
 use Cake\Datasource\ConnectionManager;
