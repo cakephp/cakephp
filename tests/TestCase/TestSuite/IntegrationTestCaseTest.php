@@ -79,6 +79,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
             'title' => 'Blog Post',
             'status' => 1,
             'published' => true,
+            'not_published' => false,
             'comments' => [
                 [
                     'body' => 'Comment',
@@ -119,6 +120,7 @@ class IntegrationTestCaseTest extends IntegrationTestCase
         $request = $this->_buildRequest('/posts/add', 'POST', $data);
         $this->assertInternalType('string', $request['post']['status']);
         $this->assertInternalType('string', $request['post']['published']);
+        $this->assertSame('0', $request['post']['not_published']);
         $this->assertInternalType('string', $request['post']['comments'][0]['status']);
         $this->assertInternalType('integer', $request['post']['file']['error']);
         $this->assertInternalType('integer', $request['post']['file']['size']);

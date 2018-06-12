@@ -672,7 +672,7 @@ abstract class IntegrationTestCase extends TestCase
     {
         foreach ($data as $key => $value) {
             if (is_scalar($value)) {
-                $data[$key] = (string)$value;
+                $data[$key] = $value === false ? '0' : (string)$value;
 
                 continue;
             }
