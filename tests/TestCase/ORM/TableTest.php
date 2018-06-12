@@ -6034,7 +6034,7 @@ class TableTest extends TestCase
     public function testFindOrCreateTransactions()
     {
         $articles = $this->getTableLocator()->get('Articles');
-        $articles->getEventManager()->on('Model.afterSaveCommit', function ($event, $entity) {
+        $articles->getEventManager()->on('Model.afterSaveCommit', function (EventInterface $event, EntityInterface $entity, ArrayObject $options) {
             $entity->afterSaveCommit = true;
         });
 

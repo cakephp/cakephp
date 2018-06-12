@@ -1359,8 +1359,6 @@ class ViewTest extends TestCase
 
         $this->assertRegExp('/Ajax\!/', $result);
 
-        $this->assertNull($View->render(false, 'ajax2'));
-
         $this->PostsController->viewBuilder()->setHelpers(['Html']);
         $this->PostsController->setRequest(
             $this->PostsController->getRequest()->withParam('action', 'index')

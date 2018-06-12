@@ -689,10 +689,6 @@ class View implements EventDispatcherInterface
      */
     public function render($view = null, $layout = null)
     {
-        if ($this->hasRendered) {
-            return null;
-        }
-
         $defaultLayout = null;
         if ($layout !== null) {
             $defaultLayout = $this->layout;
