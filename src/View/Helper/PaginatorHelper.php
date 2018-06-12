@@ -495,20 +495,11 @@ class PaginatorHelper extends Helper
      * @param array $options Pagination/URL options array
      * @param string|null $model Which model to paginate on
      * @param array $urlOptions Array of options
-     * The bool version of this argument is *deprecated* and will be removed in 4.0.0
      * @return string By default, returns a full pagination URL string for use in non-standard contexts (i.e. JavaScript)
      * @link https://book.cakephp.org/3.0/en/views/helpers/paginator.html#generating-pagination-urls
      */
     public function generateUrl(array $options = [], $model = null, $urlOptions = [])
     {
-        if (is_bool($urlOptions)) {
-            $urlOptions = ['fullBase' => $urlOptions];
-            deprecationWarning(
-                'Passing a boolean value as third argument into PaginatorHelper::generateUrl() is deprecated ' .
-                'and will be removed in 4.0.0 . ' .
-                'Pass an array instead.'
-            );
-        }
         $urlOptions += [
             'escape' => true,
             'fullBase' => false
