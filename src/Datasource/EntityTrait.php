@@ -934,7 +934,7 @@ trait EntityTrait
      *
      * ```
      * // Sets the error messages for multiple fields at once
-     * $entity->errors(['salary' => ['message'], 'name' => ['another message']);
+     * $entity->setErrors(['salary' => ['message'], 'name' => ['another message']);
      * ```
      *
      * @param array $fields The array of errors to set.
@@ -960,7 +960,7 @@ trait EntityTrait
      *
      * ```
      * // Sets the error messages for a single field
-     * $entity->errors('salary', ['must be numeric', 'must be a positive number']);
+     * $entity->setError('salary', ['must be numeric', 'must be a positive number']);
      * ```
      *
      * @param string $field The field to get errors for, or the array of errors to set.
