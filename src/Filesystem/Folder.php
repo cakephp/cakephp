@@ -752,19 +752,15 @@ class Folder
      * - `scheme` Folder::MERGE, Folder::OVERWRITE, Folder::SKIP
      * - `recursive` Whether to copy recursively or not (default: true - recursive)
      *
-     * @param array|string $options Either an array of options (see above) or a string of the destination directory.
+     * @param array $options Array of options (see above).
      * @return bool Success.
      */
-    public function copy($options)
+    public function copy(array $options)
     {
         if (!$this->pwd()) {
             return false;
         }
         $to = null;
-        if (is_string($options)) {
-            $to = $options;
-            $options = [];
-        }
         $options += [
             'to' => $to,
             'from' => $this->path,
@@ -854,21 +850,17 @@ class Folder
      *
      * - `to` The directory to copy to.
      * - `from` The directory to copy from, this will cause a cd() to occur, changing the results of pwd().
-     * - `chmod` The mode to copy the files/directories with.
+     * - `mode` The mode to copy the files/directories with.
      * - `skip` Files/directories to skip.
      * - `scheme` Folder::MERGE, Folder::OVERWRITE, Folder::SKIP
      * - `recursive` Whether to copy recursively or not (default: true - recursive)
      *
-     * @param array|string $options (to, from, chmod, skip, scheme)
+     * @param array $options Options (to, from, mode, skip, scheme)
      * @return bool Success
      */
-    public function move($options)
+    public function move(array $options)
     {
         $to = null;
-        if (is_string($options)) {
-            $to = $options;
-            $options = (array)$options;
-        }
         $options += ['to' => $to, 'from' => $this->path, 'mode' => $this->mode, 'skip' => [], 'recursive' => true];
 
         if ($this->copy($options) && $this->delete($options['from'])) {
