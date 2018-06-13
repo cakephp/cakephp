@@ -614,7 +614,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
             }
         }
 
-        return $this->getEnv('REMOTE_ADDR');
+        return $this->getEnv('REMOTE_ADDR', '');
     }
 
     /**
