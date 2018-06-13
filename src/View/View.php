@@ -966,27 +966,6 @@ class View implements EventDispatcherInterface
     }
 
     /**
-     * Generates a unique, non-random DOM ID for an object, based on the object type and the target URL.
-     *
-     * @param string $object Type of object, i.e. 'form' or 'link'
-     * @param string $url The object's target URL
-     * @return string
-     */
-    public function uuid($object, $url)
-    {
-        $c = 1;
-        $url = Router::url($url);
-        $hash = $object . substr(md5($object . $url), 0, 10);
-        while (in_array($hash, $this->uuids)) {
-            $hash = $object . substr(md5($object . $url . $c), 0, 10);
-            $c++;
-        }
-        $this->uuids[] = $hash;
-
-        return $hash;
-    }
-
-    /**
      * Retrieve the current view type
      *
      * @return string
