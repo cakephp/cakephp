@@ -741,7 +741,7 @@ class ServerRequestTest extends TestCase
 
     /**
      * test clientIp method with trusted proxies
-     * 
+     *
      * @return void
      */
     public function testClientIpWithTrustedProxies()
@@ -753,7 +753,6 @@ class ServerRequestTest extends TestCase
             'REMOTE_ADDR' => '192.168.1.4',
         ]]);
 
-
         $request->setTrustedProxies([
             '192.168.1.0',
             '192.168.1.1',
@@ -763,7 +762,8 @@ class ServerRequestTest extends TestCase
 
         $this->assertEquals('real.ip', $request->clientIp());
 
-        $request = $request->withEnv('HTTP_X_FORWARDED_FOR', 
+        $request = $request->withEnv(
+            'HTTP_X_FORWARDED_FOR',
             'spoof.fake.ip, real.ip, 192.168.1.0, 192.168.1.2, 192.168.1.3'
         );
         $this->assertEquals('192.168.1.3', $request->clientIp());
