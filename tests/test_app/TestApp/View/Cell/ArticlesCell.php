@@ -76,7 +76,6 @@ class ArticlesCell extends \Cake\View\Cell
      */
     public function customTemplateViewBuilder()
     {
-        $this->template = 'derp';
         $this->counter++;
         $this->viewBuilder()->setTemplate('alternate_teaser_list');
     }
