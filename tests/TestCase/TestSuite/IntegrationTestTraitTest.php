@@ -18,13 +18,13 @@ use Cake\Core\Configure;
 use Cake\Event\EventManager;
 use Cake\Http\Response;
 use Cake\Routing\DispatcherFactory;
-use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use Cake\Routing\Route\InflectedRoute;
 use Cake\TestSuite\IntegrationTestCase;
 use Cake\Test\Fixture\AssertIntegrationTestCase;
 use Cake\Utility\Security;
 use PHPUnit\Framework\AssertionFailedError;
+use Zend\Diactoros\UploadedFile;
 
 /**
  * Self test of the IntegrationTestCase
@@ -67,6 +67,69 @@ class IntegrationTestTraitTest extends IntegrationTestCase
         DispatcherFactory::add('ControllerFactory');
 
         $this->useHttpServer(false);
+    }
+
+    /**
+     * Tests that all data that used by the request is cast to strings
+     *
+     * @return void
+     */
+    public function testDataCastToString()
+    {
+        $data = [
+            'title' => 'Blog Post',
+            'status' => 1,
+            'published' => true,
+            'not_published' => false,
+            'comments' => [
+                [
+                    'body' => 'Comment',
+                    'status' => 1,
+                ]
+            ],
+            'file' => [
+                'tmp_name' => __FILE__,
+                'size' => 42,
+                'error' => 0,
+                'type' => 'text/plain',
+                'name' => 'Uploaded file'
+            ],
+            'pictures' => [
+                'name' => [
+                    ['file' => 'a-file.png'],
+                    ['file' => 'a-moose.png']
+                ],
+                'type' => [
+                    ['file' => 'image/png'],
+                    ['file' => 'image/jpg']
+                ],
+                'tmp_name' => [
+                    ['file' => __FILE__],
+                    ['file' => __FILE__]
+                ],
+                'error' => [
+                    ['file' => 0],
+                    ['file' => 0]
+                ],
+                'size' => [
+                    ['file' => 17188],
+                    ['file' => 2010]
+                ],
+            ],
+            'upload' => new UploadedFile(__FILE__, 42, 0)
+        ];
+        $request = $this->_buildRequest('/posts/add', 'POST', $data);
+        $this->assertInternalType('string', $request['post']['status']);
+        $this->assertInternalType('string', $request['post']['published']);
+        $this->assertSame('0', $request['post']['not_published']);
+        $this->assertInternalType('string', $request['post']['comments'][0]['status']);
+        $this->assertInternalType('integer', $request['post']['file']['error']);
+        $this->assertInternalType('integer', $request['post']['file']['size']);
+        $this->assertInternalType('integer', $request['post']['pictures']['error'][0]['file']);
+        $this->assertInternalType('integer', $request['post']['pictures']['error'][1]['file']);
+        $this->assertInternalType('integer', $request['post']['pictures']['size'][0]['file']);
+        $this->assertInternalType('integer', $request['post']['pictures']['size'][1]['file']);
+        $this->assertInstanceOf(UploadedFile::class, $request['post']['upload']);
     }
 
     /**
@@ -609,7 +672,7 @@ class IntegrationTestTraitTest extends IntegrationTestCase
      */
     public function testCookieNotSetFailure()
     {
-        $this->expectException(\PHPUnit\Framework\AssertionFailedError::class);
+        $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage('Failed asserting that \'remember_me\' cookie was not set');
         $this->post('/posts/index');
         $this->assertCookieNotSet('remember_me');
@@ -623,7 +686,7 @@ class IntegrationTestTraitTest extends IntegrationTestCase
      */
     public function testCookieNotSetFailureNoResponse()
     {
-        $this->expectException(\PHPUnit\Framework\AssertionFailedError::class);
+        $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage('No response set, cannot assert content.');
         $this->assertCookieNotSet('remember_me');
     }
@@ -759,7 +822,7 @@ class IntegrationTestTraitTest extends IntegrationTestCase
      */
     public function testWithUnexpectedException()
     {
-        $this->expectException(\PHPUnit\Framework\AssertionFailedError::class);
+        $this->expectException(AssertionFailedError::class);
         $this->get('/tests_apps/throw_exception');
         $this->assertResponseCode(501);
     }
@@ -1036,7 +1099,7 @@ class IntegrationTestTraitTest extends IntegrationTestCase
      */
     public function testAssertResponseRegExpNoResponse()
     {
-        $this->expectException(\PHPUnit\Framework\AssertionFailedError::class);
+        $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage('No response set');
         $this->assertResponseRegExp('/cont/');
     }
@@ -1061,7 +1124,7 @@ class IntegrationTestTraitTest extends IntegrationTestCase
      */
     public function testAssertResponseNotRegExpNoResponse()
     {
-        $this->expectException(\PHPUnit\Framework\AssertionFailedError::class);
+        $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage('No response set');
         $this->assertResponseNotRegExp('/cont/');
     }
@@ -1124,7 +1187,7 @@ class IntegrationTestTraitTest extends IntegrationTestCase
      */
     public function testAssertFileNoResponse()
     {
-        $this->expectException(\PHPUnit\Framework\AssertionFailedError::class);
+        $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage('No response set, cannot assert content');
         $this->assertFileResponse('foo');
     }
@@ -1136,7 +1199,7 @@ class IntegrationTestTraitTest extends IntegrationTestCase
      */
     public function testAssertFileNoFile()
     {
-        $this->expectException(\PHPUnit\Framework\AssertionFailedError::class);
+        $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage('Failed asserting that file was sent.');
         $this->get('/posts/get');
         $this->assertFileResponse('foo');
