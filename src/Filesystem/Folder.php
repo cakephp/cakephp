@@ -850,7 +850,7 @@ class Folder
      *
      * - `to` The directory to copy to.
      * - `from` The directory to copy from, this will cause a cd() to occur, changing the results of pwd().
-     * - `mode` The mode to copy the files/directories with.
+     * - `mode` The mode to copy the files/directories with as integer, e.g. 0775.
      * - `skip` Files/directories to skip.
      * - `scheme` Folder::MERGE, Folder::OVERWRITE, Folder::SKIP
      * - `recursive` Whether to copy recursively or not (default: true - recursive)
