@@ -126,6 +126,13 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     public $trustProxy = false;
 
     /**
+     * trusted proxies list
+     * 
+     * @var array
+     */
+    protected $trustedProxies = [];
+
+    /**
      * Contents of php://input
      *
      * @var string
@@ -577,16 +584,63 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function clientIp()
     {
-        if ($this->trustProxy && $this->getEnv('HTTP_X_FORWARDED_FOR')) {
-            $addresses = explode(',', $this->getEnv('HTTP_X_FORWARDED_FOR'));
-            $ipaddr = end($addresses);
-        } elseif ($this->trustProxy && $this->getEnv('HTTP_CLIENT_IP')) {
-            $ipaddr = $this->getEnv('HTTP_CLIENT_IP');
-        } else {
-            $ipaddr = $this->getEnv('REMOTE_ADDR');
-        }
+        if ($this->trustProxy) {
 
-        return trim($ipaddr);
+            if ($forwarded = $this->getEnv('HTTP_X_FORWARDED_FOR')) {
+
+                $addresses = array_map('trim', explode(',', $forwarded));
+                $trusted = (count($this->trustedProxies) > 0);
+                $n = count($addresses);
+
+                if ($trusted) {
+
+                    for ($i = 1; $i < $n; $i++)
+                    {
+                        if (in_array($addresses[$i], $this->trustedProxies) === false) {
+
+                            $trusted = false;
+                            break;
+                        }
+                    }
+                }
+
+                return (($trusted) ? $addresses[0] : $addresses[$n - 1]);
+
+            } else {
+
+                if ($ip = $this->getEnv('HTTP_X_REAL_IP')) {
+
+                    return $ip;
+                
+                } elseif ($ip = $this->getEnv('HTTP_CLIENT_IP')) {
+
+                    return $ip;
+                }
+            }
+        }        
+
+        return $this->getEnv('REMOTE_ADDR');
+    }
+
+    /**
+     * register trusted proxies
+     *
+     * @param array $proxies ips list of trusted proxies
+     */
+    public function setTrustedProxies(array $proxies)
+    {
+        $this->trustedProxies = $proxies;
+        $this->trustProxy = true;
+    }
+
+    /**
+     * Get trusted proxies
+     *
+     * @return array
+     */
+    public function getTrustedProxies()
+    {
+        return $this->trustedProxies;
     }
 
     /**
