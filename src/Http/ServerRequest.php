@@ -616,6 +616,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * register trusted proxies
      *
      * @param array $proxies ips list of trusted proxies
+     * @return void
      */
     public function setTrustedProxies(array $proxies)
     {
