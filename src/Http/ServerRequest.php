@@ -585,7 +585,8 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     public function clientIp()
     {
         if ($this->trustProxy) {
-            if ($forwarded = $this->getEnv('HTTP_X_FORWARDED_FOR')) {
+            $forwarded = $this->getEnv('HTTP_X_FORWARDED_FOR');
+            if ($forwarded) {
                 $addresses = array_map('trim', explode(',', $forwarded));
                 $trusted = (count($this->trustedProxies) > 0);
                 $n = count($addresses);
@@ -599,13 +600,17 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
                     }
                 }
 
-                return (($trusted) ? $addresses[0] : $addresses[$n - 1]);
-            } else {
-                if ($ip = $this->getEnv('HTTP_X_REAL_IP')) {
-                    return $ip;
-                } elseif ($ip = $this->getEnv('HTTP_CLIENT_IP')) {
-                    return $ip;
+                if ($trusted) {
+                    return $addresses[0];
                 }
+
+                return $addresses[$n - 1];
+            }
+
+            if ($this->getEnv('HTTP_X_REAL_IP')) {
+                return $this->getEnv('HTTP_X_REAL_IP');
+            } elseif ($this->getEnv('HTTP_CLIENT_IP')) {
+                return $this->getEnv('HTTP_CLIENT_IP');
             }
         }
 
