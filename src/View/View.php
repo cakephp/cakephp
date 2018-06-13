@@ -1028,7 +1028,6 @@ class View implements EventDispatcherInterface
 
             return $this->helpers;
         }
-
     }
 
     /**
