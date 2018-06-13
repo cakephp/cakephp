@@ -15,7 +15,6 @@ namespace Cake\TestSuite\Constraint\Response;
 
 use Cake\Http\Response;
 use Cake\Utility\CookieCryptTrait;
-use InvalidArgumentException;
 
 /**
  * CookieEncryptedEquals

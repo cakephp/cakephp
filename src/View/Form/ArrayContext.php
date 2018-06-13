@@ -16,7 +16,6 @@ namespace Cake\View\Form;
 
 use Cake\Http\ServerRequest;
 use Cake\Utility\Hash;
-use Cake\Validation\Validator;
 
 /**
  * Provides a basic array based context provider for FormHelper.

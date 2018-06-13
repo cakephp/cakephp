@@ -13,7 +13,6 @@
  */
 namespace Cake\Http\Client;
 
-use Cake\Core\Exception\Exception;
 use Psr\Http\Message\RequestInterface;
 use Zend\Diactoros\RequestTrait;
 use Zend\Diactoros\Stream;
