@@ -451,7 +451,7 @@ class FormHelper extends Helper
         unset($options['templates']);
 
         if ($options['action'] === false || $options['url'] === false) {
-            $url = $this->request->getRequestTarget();
+            $url = $this->_View->getRequest()->getRequestTarget();
             $action = null;
         } else {
             $url = $this->_formUrl($context, $options);
@@ -529,8 +529,10 @@ class FormHelper extends Helper
      */
     protected function _formUrl($context, $options)
     {
+        $request = $this->_View->getRequest();
+
         if ($options['action'] === null && $options['url'] === null) {
-            return $this->request->getRequestTarget();
+            return $request->getRequestTarget();
         }
 
         if (is_string($options['url']) ||
@@ -544,9 +546,9 @@ class FormHelper extends Helper
         }
 
         $actionDefaults = [
-            'plugin' => $this->plugin,
-            'controller' => $this->request->getParam('controller'),
-            'action' => $this->request->getParam('action'),
+            'plugin' => $this->_View->getPlugin(),
+            'controller' => $request->getParam('controller'),
+            'action' => $request->getParam('action'),
         ];
 
         $action = (array)$options['url'] + $actionDefaults;
@@ -585,17 +587,19 @@ class FormHelper extends Helper
      */
     protected function _csrfField()
     {
-        if ($this->request->getParam('_Token.unlockedFields')) {
-            foreach ((array)$this->request->getParam('_Token.unlockedFields') as $unlocked) {
+        $request = $this->_View->getRequest();
+
+        if ($request->getParam('_Token.unlockedFields')) {
+            foreach ((array)$request->getParam('_Token.unlockedFields') as $unlocked) {
                 $this->_unlockedFields[] = $unlocked;
             }
         }
-        if (!$this->request->getParam('_csrfToken')) {
+        if (!$request->getParam('_csrfToken')) {
             return '';
         }
 
         return $this->hidden('_csrfToken', [
-            'value' => $this->request->getParam('_csrfToken'),
+            'value' => $request->getParam('_csrfToken'),
             'secure' => static::SECURE_SKIP,
             'autocomplete' => 'off',
         ]);
@@ -616,7 +620,7 @@ class FormHelper extends Helper
     {
         $out = '';
 
-        if ($this->requestType !== 'get' && $this->request->getParam('_Token')) {
+        if ($this->requestType !== 'get' && $this->_View->getRequest()->getParam('_Token')) {
             $out .= $this->secure($this->fields, $secureAttributes);
             $this->fields = [];
             $this->_unlockedFields = [];
@@ -649,7 +653,7 @@ class FormHelper extends Helper
      */
     public function secure(array $fields = [], array $secureAttributes = [])
     {
-        if (!$this->request->getParam('_Token')) {
+        if (!$this->_View->getRequest()->getParam('_Token')) {
             return '';
         }
         $debugSecurity = Configure::read('debug');
@@ -1096,7 +1100,7 @@ class FormHelper extends Helper
 
         if ($legend === true) {
             $isCreate = $context->isCreate();
-            $modelName = Inflector::humanize(Inflector::singularize($this->request->getParam('controller')));
+            $modelName = Inflector::humanize(Inflector::singularize($this->_View->getRequest()->getParam('controller')));
             if (!$isCreate) {
                 $legend = __d('cake', 'Edit {0}', $modelName);
             } else {
@@ -2654,7 +2658,7 @@ class FormHelper extends Helper
     protected function _initInputField($field, $options = [])
     {
         if (!isset($options['secure'])) {
-            $options['secure'] = (bool)$this->request->getParam('_Token');
+            $options['secure'] = (bool)$this->_View->getRequest()->getParam('_Token');
         }
         $context = $this->_getContext();
 
@@ -2830,7 +2834,8 @@ class FormHelper extends Helper
         }
         $data += ['entity' => null];
 
-        return $this->_context = $this->contextFactory()->get($this->request, $data);
+        return $this->_context = $this->contextFactory()
+            ->get($this->_View->getRequest(), $data);
     }
 
     /**
@@ -2950,7 +2955,7 @@ class FormHelper extends Helper
             }
             if (isset($valueMap[$valuesSource])) {
                 $method = $valueMap[$valuesSource];
-                $value = $this->request->{$method}($fieldname);
+                $value = $this->_View->getRequest()->{$method}($fieldname);
                 if ($value !== null) {
                     return $value;
                 }
