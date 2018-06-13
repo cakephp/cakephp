@@ -18,21 +18,14 @@ use Cake\Core\Configure;
 use Cake\Event\EventManager;
 use Cake\Http\Middleware\EncryptedCookieMiddleware;
 use Cake\Http\Response;
-<<<<<<< HEAD
-=======
-use Cake\Routing\DispatcherFactory;
->>>>>>> 3.next
 use Cake\Routing\Router;
 use Cake\Routing\Route\InflectedRoute;
 use Cake\TestSuite\IntegrationTestCase;
 use Cake\Test\Fixture\AssertIntegrationTestCase;
 use Cake\Utility\Security;
 use PHPUnit\Framework\AssertionFailedError;
-<<<<<<< HEAD
 use PHPUnit\Framework\Error\Deprecated;
-=======
 use Zend\Diactoros\UploadedFile;
->>>>>>> 3.next
 
 /**
  * Self test of the IntegrationTestCase
