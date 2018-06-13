@@ -13,7 +13,6 @@
  */
 namespace Cake\TestSuite;
 
-
 /**
  * A test case class intended to make integration tests of
  * your controllers easier.
