@@ -3660,7 +3660,7 @@ class QueryTest extends TestCase
         $result = $query
             ->select(['d' => $query->func()->now('date')])
             ->execute();
-        $this->assertEquals([['d' => date('Y-m-d')]], $result->fetchAll('assoc'));
+        $this->assertEquals([(object)['d' => date('Y-m-d')]], $result->fetchAll('obj'));
 
         $query = new Query($this->connection);
         $result = $query
