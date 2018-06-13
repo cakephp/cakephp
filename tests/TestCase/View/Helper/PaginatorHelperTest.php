@@ -2763,7 +2763,7 @@ class PaginatorHelperTest extends TestCase
 
         $expected = 'Page 1 of 5, showing 3 records out of 13 total, starting on record 1, ';
         $expected .= 'ending on 3';
-        $result = $this->Paginator->counter($input);
+        $result = $this->Paginator->counter(['format' => $input]);
         $this->assertEquals($expected, $result);
 
         $result = $this->Paginator->counter(['format' => 'pages']);
@@ -2774,7 +2774,7 @@ class PaginatorHelperTest extends TestCase
         $expected = '1 - 3 of 13';
         $this->assertEquals($expected, $result);
 
-        $result = $this->Paginator->counter('Showing {{page}} of {{pages}} {{model}}');
+        $result = $this->Paginator->counter(['format' => 'Showing {{page}} of {{pages}} {{model}}']);
         $this->assertEquals('Showing 1 of 5 clients', $result);
     }
 
@@ -2807,13 +2807,13 @@ class PaginatorHelperTest extends TestCase
 
         $expected = 'Page 1,523 of 1,600, showing 3,000 records out of 4,800,001 total, ';
         $expected .= 'starting on record 4,566,001, ending on 4,569,001';
-        $result = $this->Paginator->counter($input);
+        $result = $this->Paginator->counter(['format' => $input]);
         $this->assertEquals($expected, $result);
 
         I18n::setLocale('de-DE');
         $expected = 'Page 1.523 of 1.600, showing 3.000 records out of 4.800.001 total, ';
         $expected .= 'starting on record 4.566.001, ending on 4.569.001';
-        $result = $this->Paginator->counter($input);
+        $result = $this->Paginator->counter(['format' => $input]);
         $this->assertEquals($expected, $result);
     }
 
@@ -2833,7 +2833,7 @@ class PaginatorHelperTest extends TestCase
         $result = $this->Paginator->hasPage('Article', 2);
         $this->assertTrue($result);
 
-        $result = $this->Paginator->hasPage(2);
+        $result = $this->Paginator->hasPage(null, 2);
         $this->assertTrue($result);
     }
 

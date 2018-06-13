@@ -223,7 +223,7 @@ class PaginatorHelper extends Helper
      * Gets the current key by which the recordset is sorted
      *
      * @param string|null $model Optional model name. Uses the default if none is specified.
-     * @param array $options Options for pagination links. See #options for list of keys.
+     * @param array $options Options for pagination links.
      * @return string|null The name of the key by which the recordset is being sorted, or
      *  null if the results are not currently sorted.
      * @link https://book.cakephp.org/3.0/en/views/helpers/paginator.html#creating-sort-links
@@ -244,7 +244,7 @@ class PaginatorHelper extends Helper
      * Gets the current direction the recordset is sorted
      *
      * @param string|null $model Optional model name. Uses the default if none is specified.
-     * @param array $options Options for pagination links. See #options for list of keys.
+     * @param array $options Options for pagination links.
      * @return string The direction by which the recordset is being sorted, or
      *  null if the results are not currently sorted.
      * @link https://book.cakephp.org/3.0/en/views/helpers/paginator.html#creating-sort-links
@@ -620,10 +620,6 @@ class PaginatorHelper extends Helper
      */
     public function hasPage($model = null, $page = 1)
     {
-        if (is_numeric($model)) {
-            $page = $model;
-            $model = null;
-        }
         $paging = $this->params($model);
         if ($paging === []) {
             return false;
@@ -679,17 +675,13 @@ class PaginatorHelper extends Helper
      *    the following placeholders `{{page}}`, `{{pages}}`, `{{current}}`, `{{count}}`, `{{model}}`, `{{start}}`, `{{end}}` and any
      *    custom content you would like.
      *
-     * @param string|array $options Options for the counter string. See #options for list of keys.
+     * @param array $options Options for the counter string. See #options for list of keys.
      *   If string it will be used as format.
      * @return string Counter string.
      * @link https://book.cakephp.org/3.0/en/views/helpers/paginator.html#creating-a-page-counter
      */
-    public function counter($options = [])
+    public function counter(array $options = [])
     {
-        if (is_string($options)) {
-            $options = ['format' => $options];
-        }
-
         $options += [
             'model' => $this->defaultModel(),
             'format' => 'pages',
@@ -1208,7 +1200,7 @@ class PaginatorHelper extends Helper
     {
         $out = $this->Form->create(null, ['type' => 'get']);
 
-        if (empty($default) || !is_numeric($default)) {
+        if (empty($default)) {
             $default = $this->param('perPage');
         }
 
