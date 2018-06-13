@@ -4474,10 +4474,32 @@ class QueryTest extends TestCase
                 'type' => 'INNER',
                 'conditions' => ['articles.author_id = authors.id']
             ]]);
-        $this->assertArrayHasKey('authors', $query->join());
+        $this->assertArrayHasKey('authors', $query->clause('join'));
 
         $this->assertSame($query, $query->removeJoin('authors'));
-        $this->assertArrayNotHasKey('authors', $query->join());
+        $this->assertArrayNotHasKey('authors', $query->clause('join'));
+    }
+
+    /**
+     * Test join read mode
+     *
+     * @deprecated
+     * @return void
+     */
+    public function testJoinReadMode()
+    {
+        $this->loadFixtures('Articles');
+        $query = new Query($this->connection);
+        $query->select(['id', 'title'])
+            ->from('articles')
+            ->join(['authors' => [
+                'type' => 'INNER',
+                'conditions' => ['articles.author_id = authors.id']
+            ]]);
+
+        $this->deprecated(function () use ($query) {
+            $this->assertArrayHasKey('authors', $query->join());
+        });
     }
 
     /**

@@ -1129,7 +1129,7 @@ class BelongsToMany extends Association
     protected function _appendJunctionJoin($query, $conditions)
     {
         $name = $this->_junctionAssociationName();
-        $joins = $query->join();
+        $joins = $query->clause('join');
         $matching = [
             $name => [
                 'table' => $this->junction()->getTable(),
