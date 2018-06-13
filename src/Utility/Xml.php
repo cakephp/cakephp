@@ -203,11 +203,11 @@ class Xml
      * `<root><tag id="1" value="defect">description</tag></root>`
      *
      * @param array|\Cake\Collection\Collection $input Array with data or a collection instance.
-     * @param string|array $options The options to use or a string to use as format.
+     * @param array $options The options to use.
      * @return \SimpleXMLElement|\DOMDocument SimpleXMLElement or DOMDocument
      * @throws \Cake\Utility\Exception\XmlException
      */
-    public static function fromArray($input, $options = [])
+    public static function fromArray($input, array $options = [])
     {
         if (is_object($input) && method_exists($input, 'toArray') && is_callable([$input, 'toArray'])) {
             $input = call_user_func([$input, 'toArray']);
@@ -220,9 +220,6 @@ class Xml
             throw new XmlException('The key of input must be alphanumeric');
         }
 
-        if (!is_array($options)) {
-            $options = ['format' => (string)$options];
-        }
         $defaults = [
             'format' => 'tags',
             'version' => '1.0',
