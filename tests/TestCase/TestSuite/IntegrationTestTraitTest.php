@@ -484,9 +484,9 @@ class IntegrationTestTraitTest extends IntegrationTestCase
     public function testArrayUrlsEmptyRouter()
     {
         Router::reload();
-        $this->assertEmpty(Router::getCollection()->routes());
+        $this->assertEmpty(Router::getRouteCollection()->routes());
 
-        $this->post(['controller' => 'Posts', 'action' => 'index']);
+        $this->get(['controller' => 'Posts', 'action' => 'index']);
         $this->assertEquals('value', $this->viewVariable('test'));
     }
 

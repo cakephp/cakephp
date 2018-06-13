@@ -35,7 +35,7 @@ class Application extends BaseApplication
 
     public function middleware($middleware)
     {
-        $middleware->add(new RoutingMiddleware());
+        $middleware->add(new RoutingMiddleware($this));
         $middleware->add(function ($req, $res, $next) {
             $res = $next($req, $res);
 
@@ -56,5 +56,6 @@ class Application extends BaseApplication
         $routes->scope('/app', function ($routes) {
             $routes->connect('/articles', ['controller' => 'Articles']);
         });
+        $routes->connect('/posts', ['controller' => 'Posts', 'action' => 'index']);
     }
 }
