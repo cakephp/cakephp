@@ -858,15 +858,17 @@ class ViewTest extends TestCase
      */
     public function testUUIDGeneration()
     {
-        Router::connect('/:controller', ['action' => 'index']);
-        $result = $this->View->uuid('form', ['controller' => 'posts', 'action' => 'index']);
-        $this->assertEquals('form5988016017', $result);
+        $this->deprecated(function () {
+            Router::connect('/:controller', ['action' => 'index']);
+            $result = $this->View->uuid('form', ['controller' => 'posts', 'action' => 'index']);
+            $this->assertEquals('form5988016017', $result);
 
-        $result = $this->View->uuid('form', ['controller' => 'posts', 'action' => 'index']);
-        $this->assertEquals('formc3dc6be854', $result);
+            $result = $this->View->uuid('form', ['controller' => 'posts', 'action' => 'index']);
+            $this->assertEquals('formc3dc6be854', $result);
 
-        $result = $this->View->uuid('form', ['controller' => 'posts', 'action' => 'index']);
-        $this->assertEquals('form28f92cc87f', $result);
+            $result = $this->View->uuid('form', ['controller' => 'posts', 'action' => 'index']);
+            $this->assertEquals('form28f92cc87f', $result);
+        });
     }
 
     /**
