@@ -145,9 +145,6 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
     {
         $instance = new $class($this->_View, $settings);
 
-        $instance->theme = $this->_View->getTheme();
-        $instance->plugin = $this->_View->getRequest()->getParam('Plugin');
-
         $enable = isset($settings['enabled']) ? $settings['enabled'] : true;
         if ($enable) {
             $this->getEventManager()->on($instance);

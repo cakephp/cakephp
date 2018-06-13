@@ -38,7 +38,7 @@ use PHPUnit\Exception as PhpunitException;
  * more of your code easily and avoid some of the maintenance pitfalls
  * that mock objects create.
  *
- * @deprecated use Cake\TestSuite\IntegrationTestTrait instead
+ * @deprecated 3.7.0 Use Cake\TestSuite\IntegrationTestTrait instead
  */
 abstract class IntegrationTestCase extends TestCase
 {

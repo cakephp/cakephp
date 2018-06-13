@@ -1107,7 +1107,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
-     * {@inheritDoc}
+     * Creates a new Query for this repository and applies some defaults based on the
+     * type of search that was selected.
      *
      * ### Model.beforeFind event
      *
@@ -1159,6 +1160,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * Would invoke the `findPublished` method.
      *
+     * @param string $type the type of query to perform
+     * @param array|\ArrayAccess $options An array that will be passed to Query::applyOptions()
      * @return \Cake\ORM\Query The query builder
      */
     public function find($type = 'all', $options = [])
@@ -1553,7 +1556,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
-     * {@inheritDoc}
+     * Creates a new Query instance for a table.
+     *
+     * @return \Cake\ORM\Query
      */
     public function query()
     {
