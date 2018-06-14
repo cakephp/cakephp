@@ -3218,9 +3218,9 @@ class TableTest extends TestCase
         ];
 
         $table->getEventManager()->on('Model.beforeSave', function (Event $event, Entity $entity) {
-           if ($entity->name === 'jose') {
-               throw new \Exception('Oh noes');
-           }
+            if ($entity->name === 'jose') {
+                throw new \Exception('Oh noes');
+            }
         });
 
         $this->expectException(\Exception::class);
