@@ -2824,16 +2824,16 @@ class PaginatorHelperTest extends TestCase
      */
     public function testHasPage()
     {
-        $result = $this->Paginator->hasPage('Article', 15);
+        $result = $this->Paginator->hasPage(15, 'Article');
         $this->assertFalse($result);
 
-        $result = $this->Paginator->hasPage('UndefinedModel', 2);
+        $result = $this->Paginator->hasPage(2, 'UndefinedModel');
         $this->assertFalse($result);
 
-        $result = $this->Paginator->hasPage('Article', 2);
+        $result = $this->Paginator->hasPage(2, 'Article');
         $this->assertTrue($result);
 
-        $result = $this->Paginator->hasPage(null, 2);
+        $result = $this->Paginator->hasPage(2);
         $this->assertTrue($result);
     }
 

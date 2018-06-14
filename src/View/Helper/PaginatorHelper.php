@@ -19,6 +19,7 @@ use Cake\Utility\Inflector;
 use Cake\View\Helper;
 use Cake\View\StringTemplateTrait;
 use Cake\View\View;
+use RuntimeException;
 
 /**
  * Pagination Helper class for easy generation of pagination links.
@@ -613,13 +614,18 @@ class PaginatorHelper extends Helper
     /**
      * Returns true if the given result set has the page number given by $page
      *
-     * @param string|null $model Optional model name. Uses the default if none is specified.
      * @param int $page The page number - if not set defaults to 1.
+     * @param string|null $model Optional model name. Uses the default if none is specified.
      * @return bool True if the given result set has the specified page number.
      * @link https://book.cakephp.org/3.0/en/views/helpers/paginator.html#checking-the-pagination-state
+     * @throws \RuntimeException
      */
-    public function hasPage($model = null, $page = 1)
+    public function hasPage($page = 1, $model = null)
     {
+        if (!is_numeric($page)) {
+            throw new RuntimeException('First argument "page" has to be int. Note that argument order switched from 3.x to 4.x.');
+        }
+
         $paging = $this->params($model);
         if ($paging === []) {
             return false;
