@@ -238,9 +238,9 @@ class BelongsToMany extends Association
      */
     public function getBindingKey()
     {
-				if ($this->_bindingKey === null) {
-						$this->_bindingKey = $this->getSource()->getPrimaryKey();
-				}
+        if ($this->_bindingKey === null) {
+                $this->_bindingKey = $this->getSource()->getPrimaryKey();
+        }
 
         return $this->_bindingKey;
     }

@@ -68,7 +68,7 @@ class BelongsToManyTest extends TestCase
         ]);
     }
 
-		/**
+    /**
      * Tests setBindingKey()
      *
      * @return void
