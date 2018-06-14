@@ -333,7 +333,7 @@ class PluginTest extends TestCase
     public function testLoadAllWithPluginAlreadyLoaded()
     {
         Plugin::load('Company/TestPluginThree', ['bootstrap' => false]);
-        Plugin::loadAll(['bootstrap' => true, 'ignoreMissing' => true]);
+        Plugin::loadAll(['bootstrap' => true]);
         $this->assertEmpty(Configure::read('PluginTest.test_plugin_three.bootstrap'));
     }
 
@@ -344,7 +344,7 @@ class PluginTest extends TestCase
      */
     public function testLoadAllWithDefaults()
     {
-        $defaults = ['bootstrap' => true, 'ignoreMissing' => true];
+        $defaults = ['bootstrap' => true];
         Plugin::loadAll([$defaults]);
         $expected = [
             'Company', 'ParentPlugin', 'PluginJs', 'TestPlugin',
@@ -365,7 +365,7 @@ class PluginTest extends TestCase
     public function testLoadAllWithDefaultsAndOverride()
     {
         Plugin::loadAll([
-            ['bootstrap' => true, 'ignoreMissing' => true],
+            ['bootstrap' => true],
             'TestPlugin' => ['routes' => true],
             'TestPluginFour' => ['bootstrap' => true, 'classBase' => '']
         ]);
