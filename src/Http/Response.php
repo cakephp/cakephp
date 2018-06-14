@@ -1125,7 +1125,7 @@ class Response implements ResponseInterface
      * @return static
      * @since 3.6.0
      */
-    public function withAddedLink($url, $options = [])
+    public function withAddedLink($url, array $options = [])
     {
         $params = [];
         foreach ($options as $key => $option) {
@@ -1283,7 +1283,7 @@ class Response implements ResponseInterface
      * @param array $options An array of cookie options.
      * @return static
      */
-    public function withExpiredCookie($name, $options = [])
+    public function withExpiredCookie($name, array $options = [])
     {
         if ($name instanceof CookieInterface) {
             $cookie = $name->withExpired();
