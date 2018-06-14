@@ -42,7 +42,8 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^6.0",
-        "cakephp/cakephp-codesniffer": "^3.0"
+        "cakephp/cakephp-codesniffer": "^3.0",
+        "slevomat/coding-standard": "^4.6.2"
     },
     "autoload": {
         "psr-4": {
