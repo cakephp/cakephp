@@ -238,11 +238,11 @@ class BelongsToMany extends Association
      */
     public function getBindingKey()
     {
-        if ($this->_bindingKey === null) {
-            $this->_bindingKey = $this->_modelKey($this->getSource()->getTable());
-        }
+				if ($this->_bindingKey === null) {
+						$this->_bindingKey = $this->getSource()->getPrimaryKey();
+				}
 
-        return $this->_foreignKey;
+        return $this->_bindingKey;
     }
 
     /**
