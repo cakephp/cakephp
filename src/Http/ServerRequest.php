@@ -590,12 +590,8 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
             $n = count($addresses);
 
             if ($trusted) {
-                for ($i = 1; $i < $n; $i++) {
-                    if (in_array($addresses[$i], $this->trustedProxies) === false) {
-                        $trusted = false;
-                        break;
-                    }
-                }
+                $trusted = array_diff($addresses, $this->trustedProxies);
+                $trusted = (count($trusted) === 1);
             }
 
             if ($trusted) {
