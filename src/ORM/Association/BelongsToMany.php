@@ -372,7 +372,7 @@ class BelongsToMany extends Association
             $target->hasMany($junctionAlias, [
                 'targetTable' => $junction,
                 'foreignKey' => $this->getTargetForeignKey(),
-                                'bindingKey' => $this->getBindingKey(),
+                'bindingKey' => $this->getBindingKey(),
                 'strategy' => $this->_strategy,
             ]);
         }
@@ -381,7 +381,7 @@ class BelongsToMany extends Association
                 'sourceTable' => $target,
                 'targetTable' => $source,
                 'foreignKey' => $this->getTargetForeignKey(),
-                                'bindingKey' => $this->getBindingKey(),
+                'bindingKey' => $this->getBindingKey(),
                 'targetForeignKey' => $this->getForeignKey(),
                 'through' => $junction,
                 'conditions' => $this->getConditions(),
