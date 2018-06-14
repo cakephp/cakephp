@@ -439,7 +439,7 @@ class CookieComponentTest extends TestCase
         $expected = [
             'name' => 'Testing',
             'value' => '',
-            'expire' => (new Time('now'))->format('U') - 42000,
+            'expire' => '1',
             'path' => '/',
             'domain' => '',
             'secure' => false,
