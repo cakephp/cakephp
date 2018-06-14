@@ -671,26 +671,25 @@ class PaginatorHelper extends Helper
     }
 
     /**
-     * Returns a counter string for the paged result set
+     * Returns a counter string for the paged result set.
      *
      * ### Options
      *
      * - `model` The model to use, defaults to PaginatorHelper::defaultModel();
-     * - `format` The format string you want to use, defaults to 'pages' Which generates output like '1 of 5'
+     *
+     * @param string $format The format string you want to use, defaults to 'pages' Which generates output like '1 of 5'
      *    set to 'range' to generate output like '1 - 3 of 13'. Can also be set to a custom string, containing
      *    the following placeholders `{{page}}`, `{{pages}}`, `{{current}}`, `{{count}}`, `{{model}}`, `{{start}}`, `{{end}}` and any
      *    custom content you would like.
-     *
      * @param array $options Options for the counter string. See #options for list of keys.
      *   If string it will be used as format.
      * @return string Counter string.
      * @link https://book.cakephp.org/3.0/en/views/helpers/paginator.html#creating-a-page-counter
      */
-    public function counter(array $options = [])
+    public function counter($format, array $options = [])
     {
         $options += [
             'model' => $this->defaultModel(),
-            'format' => 'pages',
         ];
 
         $paging = $this->params($options['model']);
@@ -698,14 +697,14 @@ class PaginatorHelper extends Helper
             $paging['pageCount'] = 1;
         }
 
-        switch ($options['format']) {
+        switch ($format) {
             case 'range':
             case 'pages':
-                $template = 'counter' . ucfirst($options['format']);
+                $template = 'counter' . ucfirst($format);
                 break;
             default:
                 $template = 'counterCustom';
-                $this->templater()->add([$template => $options['format']]);
+                $this->templater()->add([$template => $format]);
         }
         $map = array_map([$this->Number, 'format'], [
             'page' => $paging['page'],
