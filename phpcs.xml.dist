@@ -1,9 +1,5 @@
 <?xml version="1.0"?>
 <ruleset name="CakePHP Core">
- <rule ref="./vendor/cakephp/cakephp-codesniffer/CakePHP/ruleset.xml"/>
-
- <!-- Necessary for class aliases used for backwards compat -->
- <rule ref="PSR1.Files.SideEffects.FoundWithSymbols">
-  <severity>0</severity>
- </rule>
+    <rule ref="PSR12"/>
+    <rule ref="./vendor/cakephp/cakephp-codesniffer/CakePHP/ruleset.xml"/>
 </ruleset>
