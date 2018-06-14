@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -13,6 +14,7 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 use Cake\Collection\Collection;
+use Cake\Collection\CollectionInterface;
 
 if (!function_exists('collection')) {
     /**
@@ -21,7 +23,7 @@ if (!function_exists('collection')) {
      * @param \Traversable|array $items The items from which the collection will be built.
      * @return \Cake\Collection\Collection
      */
-    function collection($items)
+    function collection($items): CollectionInterface
     {
         return new Collection($items);
     }

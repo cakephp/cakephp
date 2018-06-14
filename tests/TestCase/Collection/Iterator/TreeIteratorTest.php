@@ -103,7 +103,7 @@ class TreeIteratorTest extends TestCase
         $result = (new TreeIterator($items))
             ->printer(function ($element, $key, $iterator) {
                 return ($iterator->getDepth() + 1 ) . '.' . $key . ' ' . $element['name'];
-            }, null, null)
+            }, null, '')
             ->toArray();
         $expected = [
             '1.0 a',
