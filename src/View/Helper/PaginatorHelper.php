@@ -498,7 +498,7 @@ class PaginatorHelper extends Helper
      * @return string By default, returns a full pagination URL string for use in non-standard contexts (i.e. JavaScript)
      * @link https://book.cakephp.org/3.0/en/views/helpers/paginator.html#generating-pagination-urls
      */
-    public function generateUrl(array $options = [], $model = null, $urlOptions = [])
+    public function generateUrl(array $options = [], $model = null, array $urlOptions = [])
     {
         $urlOptions += [
             'escape' => true,
