@@ -231,6 +231,20 @@ class BelongsToMany extends Association
         return $this->_foreignKey;
     }
 
+		/**
+     * Gets the name of the field representing name of the column in the current table, that will be used for matching the foreignKey. Defaults to the primary key.
+     *
+     * @return string
+     */
+    public function getBindingKey()
+    {
+        if ($this->_bindingKey === null) {
+            $this->_bindingKey = $this->_modelKey($this->getSource()->getTable());
+        }
+
+        return $this->_foreignKey;
+    }
+
     /**
      * Sets the sort order in which target records should be returned.
      *
@@ -358,6 +372,7 @@ class BelongsToMany extends Association
             $target->hasMany($junctionAlias, [
                 'targetTable' => $junction,
                 'foreignKey' => $this->getTargetForeignKey(),
+								'bindingKey' => $this->getBindingKey(),
                 'strategy' => $this->_strategy,
             ]);
         }
@@ -366,6 +381,7 @@ class BelongsToMany extends Association
                 'sourceTable' => $target,
                 'targetTable' => $source,
                 'foreignKey' => $this->getTargetForeignKey(),
+								'bindingKey' => $this->getBindingKey(),
                 'targetForeignKey' => $this->getForeignKey(),
                 'through' => $junction,
                 'conditions' => $this->getConditions(),
@@ -395,6 +411,7 @@ class BelongsToMany extends Association
             $source->hasMany($junctionAlias, [
                 'targetTable' => $junction,
                 'foreignKey' => $this->getForeignKey(),
+								'bindingKey' => $this->getBindingKey(),
                 'strategy' => $this->_strategy,
             ]);
         }
@@ -424,12 +441,14 @@ class BelongsToMany extends Association
         if (!$junction->hasAssociation($tAlias)) {
             $junction->belongsTo($tAlias, [
                 'foreignKey' => $this->getTargetForeignKey(),
+								'bindingKey' => $this->getBindingKey(),
                 'targetTable' => $target
             ]);
         }
         if (!$junction->hasAssociation($sAlias)) {
             $junction->belongsTo($sAlias, [
                 'foreignKey' => $this->getForeignKey(),
+								'bindingKey' => $this->getBindingKey(),
                 'targetTable' => $source
             ]);
         }
