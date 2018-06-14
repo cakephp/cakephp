@@ -259,7 +259,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * @see \Cake\Collection\CollectionIterface::sortBy()
      * @return mixed The value of the top element in the collection
      */
-    public function max($callback, $type = \SORT_NUMERIC);
+    public function max($callback, int $type = \SORT_NUMERIC);
 
     /**
      * Returns the bottom element in this collection after being sorted by a property.
@@ -285,7 +285,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * @see \Cake\Collection\CollectionInterface::sortBy()
      * @return mixed The value of the bottom element in the collection
      */
-    public function min($callback, $type = \SORT_NUMERIC);
+    public function min($callback, int $type = \SORT_NUMERIC);
 
     /**
      * Returns the average of all the values extracted with $matcher
@@ -380,7 +380,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * SORT_NUMERIC or SORT_NATURAL
      * @return \Cake\Collection\CollectionInterface
      */
-    public function sortBy($callback, $dir = SORT_DESC, $type = \SORT_NUMERIC): CollectionInterface;
+    public function sortBy($callback, int $dir = SORT_DESC, int $type = \SORT_NUMERIC): CollectionInterface;
 
     /**
      * Splits a collection into sets, grouped by the result of running each value
@@ -545,7 +545,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * take from this collection
      * @return \Cake\Collection\CollectionInterface
      */
-    public function sample($size = 10): CollectionInterface;
+    public function sample(int $size = 10): CollectionInterface;
 
     /**
      * Returns a new collection with maximum $size elements in the internal
@@ -557,7 +557,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * @param int $from A positional offset from where to take the elements
      * @return \Cake\Collection\CollectionInterface
      */
-    public function take($size = 1, $from = 0): CollectionInterface;
+    public function take(int $size = 1, int $from = 0): CollectionInterface;
 
     /**
      * Returns a new collection that will skip the specified amount of elements
@@ -566,7 +566,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * @param int $howMany The number of elements to skip.
      * @return \Cake\Collection\CollectionInterface
      */
-    public function skip($howMany): CollectionInterface;
+    public function skip(int $howMany): CollectionInterface;
 
     /**
      * Looks through each value in the list, returning a Collection of all the
@@ -747,7 +747,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * values are matched with the elements in this collection by its positional index.
      * @return \Cake\Collection\CollectionInterface
      */
-    public function insert($path, $values): CollectionInterface;
+    public function insert(string $path, $values): CollectionInterface;
 
     /**
      * Returns an array representation of the results
@@ -758,7 +758,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * can help getting all items if keys are not important in the result.
      * @return array
      */
-    public function toArray($preserveKeys = true): array;
+    public function toArray(bool $preserveKeys = true): array;
 
     /**
      * Returns an numerically-indexed array representation of the results.
@@ -809,7 +809,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * can help getting all items if keys are not important in the result.
      * @return \Cake\Collection\CollectionInterface
      */
-    public function compile($preserveKeys = true): CollectionInterface;
+    public function compile(bool $preserveKeys = true): CollectionInterface;
 
     /**
      * Returns a new collection where the operations performed by this collection.
@@ -1004,7 +1004,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * @param int $chunkSize The maximum size for each chunk
      * @return \Cake\Collection\CollectionInterface
      */
-    public function chunk($chunkSize): CollectionInterface;
+    public function chunk(int $chunkSize): CollectionInterface;
 
     /**
      * Breaks the collection into smaller arrays of the given size.
@@ -1021,7 +1021,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * @param bool $preserveKeys If the keys of the array should be preserved
      * @return \Cake\Collection\CollectionInterface
      */
-    public function chunkWithKeys($chunkSize, $preserveKeys = true): CollectionInterface;
+    public function chunkWithKeys(int $chunkSize, bool $preserveKeys = true): CollectionInterface;
 
     /**
      * Returns whether or not there are elements in this collection

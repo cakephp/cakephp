@@ -179,7 +179,7 @@ trait CollectionTrait
     /**
      * {@inheritDoc}
      */
-    public function max($callback, $type = \SORT_NUMERIC)
+    public function max($callback, int $type = \SORT_NUMERIC)
     {
         return (new SortIterator($this->unwrap(), $callback, \SORT_DESC, $type))->first();
     }
@@ -187,7 +187,7 @@ trait CollectionTrait
     /**
      * {@inheritDoc}
      */
-    public function min($callback, $type = \SORT_NUMERIC)
+    public function min($callback, int $type = \SORT_NUMERIC)
     {
         return (new SortIterator($this->unwrap(), $callback, \SORT_ASC, $type))->first();
     }
@@ -244,7 +244,7 @@ trait CollectionTrait
     /**
      * {@inheritDoc}
      */
-    public function sortBy($callback, $dir = \SORT_DESC, $type = \SORT_NUMERIC): CollectionInterface
+    public function sortBy($callback, int $dir = \SORT_DESC, int $type = \SORT_NUMERIC): CollectionInterface
     {
         return new SortIterator($this->unwrap(), $callback, $dir, $type);
     }
@@ -327,7 +327,7 @@ trait CollectionTrait
     /**
      * {@inheritDoc}
      */
-    public function sample($size = 10): CollectionInterface
+    public function sample(int $size = 10): CollectionInterface
     {
         return new Collection(new LimitIterator($this->shuffle(), 0, $size));
     }
@@ -335,7 +335,7 @@ trait CollectionTrait
     /**
      * {@inheritDoc}
      */
-    public function take($size = 1, $from = 0): CollectionInterface
+    public function take(int $size = 1, int $from = 0): CollectionInterface
     {
         return new Collection(new LimitIterator($this, $from, $size));
     }
@@ -343,7 +343,7 @@ trait CollectionTrait
     /**
      * {@inheritDoc}
      */
-    public function skip($howMany): CollectionInterface
+    public function skip(int $howMany): CollectionInterface
     {
         return new Collection(new LimitIterator($this, $howMany));
     }
@@ -539,7 +539,7 @@ trait CollectionTrait
      *
      * @return \Cake\Collection\CollectionInterface
      */
-    public function insert($path, $values): CollectionInterface
+    public function insert(string $path, $values): CollectionInterface
     {
         return new InsertIterator($this->unwrap(), $path, $values);
     }
@@ -547,7 +547,7 @@ trait CollectionTrait
     /**
      * {@inheritDoc}
      */
-    public function toArray($preserveKeys = true): array
+    public function toArray(bool $preserveKeys = true): array
     {
         $iterator = $this->unwrap();
         if ($iterator instanceof ArrayIterator) {
@@ -583,7 +583,7 @@ trait CollectionTrait
     /**
      * {@inheritDoc}
      */
-    public function compile($preserveKeys = true): CollectionInterface
+    public function compile(bool $preserveKeys = true): CollectionInterface
     {
         return new Collection($this->toArray($preserveKeys));
     }
@@ -687,7 +687,7 @@ trait CollectionTrait
     /**
      * {@inheritDoc}
      */
-    public function chunk($chunkSize): CollectionInterface
+    public function chunk(int $chunkSize): CollectionInterface
     {
         return $this->map(function ($v, $k, $iterator) use ($chunkSize) {
             $values = [$v];
@@ -706,7 +706,7 @@ trait CollectionTrait
     /**
      * {@inheritDoc}
      */
-    public function chunkWithKeys($chunkSize, $preserveKeys = true): CollectionInterface
+    public function chunkWithKeys(int $chunkSize, bool $preserveKeys = true): CollectionInterface
     {
         return $this->map(function ($v, $k, $iterator) use ($chunkSize, $preserveKeys) {
             $key = 0;
