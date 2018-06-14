@@ -17,6 +17,7 @@ namespace Cake\Collection\Iterator;
 use ArrayIterator;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
+use Traversable;
 
 /**
  * Creates an iterator from another iterator that will modify each of the values
@@ -76,9 +77,9 @@ class ReplaceIterator extends Collection
      * We perform here some strictness analysis so that the
      * iterator logic is bypassed entirely.
      *
-     * @return \Iterator
+     * @return \Traversable
      */
-    public function unwrap()
+    public function unwrap(): Traversable
     {
         $iterator = $this->_innerIterator;
 

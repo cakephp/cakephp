@@ -16,6 +16,7 @@ namespace Cake\Collection\Iterator;
 
 use Cake\Collection\Collection;
 use DateTimeInterface;
+use Traversable;
 
 /**
  * An iterator that will return the passed items in order. The order is given by
@@ -84,9 +85,9 @@ class SortIterator extends Collection
     /**
      * {@inheritDoc}
      *
-     * @return \Iterator
+     * @return \Traversable
      */
-    public function unwrap()
+    public function unwrap(): Traversable
     {
         return $this->getInnerIterator();
     }

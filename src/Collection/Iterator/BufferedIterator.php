@@ -168,7 +168,7 @@ class BufferedIterator extends Collection implements Countable, Serializable
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         if (!$this->_started) {
             $this->rewind();

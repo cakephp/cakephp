@@ -14,6 +14,7 @@
  */
 namespace Cake\Collection\Iterator;
 
+use Cake\Collection\CollectionInterface;
 use Cake\Collection\CollectionTrait;
 use RecursiveIterator;
 use RecursiveIteratorIterator;
@@ -22,7 +23,7 @@ use RecursiveIteratorIterator;
  * A Recursive iterator used to flatten nested structures and also exposes
  * all Collection methods
  */
-class TreeIterator extends RecursiveIteratorIterator
+class TreeIterator extends RecursiveIteratorIterator implements CollectionInterface
 {
 
     use CollectionTrait;

@@ -19,6 +19,7 @@ use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
 use CallbackFilterIterator;
 use Iterator;
+use Traversable;
 
 /**
  * Creates a filtered iterator from another iterator. The filtering is done by
@@ -63,9 +64,9 @@ class FilterIterator extends Collection
      * We perform here some strictness analysis so that the
      * iterator logic is bypassed entirely.
      *
-     * @return \Iterator
+     * @return \Traversable
      */
-    public function unwrap()
+    public function unwrap(): Traversable
     {
         $filter = $this->getInnerIterator();
         $iterator = $filter->getInnerIterator();
@@ -80,7 +81,6 @@ class FilterIterator extends Collection
 
         // ArrayIterator can be traversed strictly.
         // Let's do that for performance gains
-
         $callback = $this->_callback;
         $res = [];
 

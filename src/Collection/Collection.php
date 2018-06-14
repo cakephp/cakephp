@@ -76,7 +76,7 @@ class Collection extends IteratorIterator implements CollectionInterface, Serial
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         $traversable = $this->optimizeUnwrap();
 
@@ -92,7 +92,7 @@ class Collection extends IteratorIterator implements CollectionInterface, Serial
      *
      * @return int
      */
-    public function countKeys()
+    public function countKeys(): int
     {
         return count($this->toArray());
     }
