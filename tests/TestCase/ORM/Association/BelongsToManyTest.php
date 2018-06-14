@@ -69,6 +69,22 @@ class BelongsToManyTest extends TestCase
     }
 
     /**
+     * Tests setBindingKey()
+     *
+     * @return void
+     */
+    public function testSetBindingKey()
+    {
+        $assoc = new BelongsToMany('Test', [
+            'sourceTable' => $this->article,
+            'targetTable' => $this->tag
+        ]);
+        $this->assertEquals('id', $assoc->getBindingKey());
+        $this->assertSame($assoc, $assoc->setBindingKey('another_key'));
+        $this->assertEquals('another_key', $assoc->getBindingKey());
+    }
+
+    /**
      * Tests setForeignKey()
      *
      * @return void
