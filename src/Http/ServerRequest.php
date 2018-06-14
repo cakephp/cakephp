@@ -585,7 +585,6 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     public function clientIp()
     {
         if ($this->trustProxy && $this->getEnv('HTTP_X_FORWARDED_FOR')) {
-            
             $addresses = array_map('trim', explode(',', $this->getEnv('HTTP_X_FORWARDED_FOR')));
             $trusted = (count($this->trustedProxies) > 0);
             $n = count($addresses);
