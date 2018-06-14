@@ -584,37 +584,37 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      */
     public function clientIp()
     {
-        if ($this->trustProxy) {
-            $forwarded = $this->getEnv('HTTP_X_FORWARDED_FOR');
-            if ($forwarded) {
-                $addresses = array_map('trim', explode(',', $forwarded));
-                $trusted = (count($this->trustedProxies) > 0);
-                $n = count($addresses);
+        if ($this->trustProxy && $this->getEnv('HTTP_X_FORWARDED_FOR')) {
+            
+            $addresses = array_map('trim', explode(',', $this->getEnv('HTTP_X_FORWARDED_FOR')));
+            $trusted = (count($this->trustedProxies) > 0);
+            $n = count($addresses);
 
-                if ($trusted) {
-                    for ($i = 1; $i < $n; $i++) {
-                        if (in_array($addresses[$i], $this->trustedProxies) === false) {
-                            $trusted = false;
-                            break;
-                        }
+            if ($trusted) {
+                for ($i = 1; $i < $n; $i++) {
+                    if (in_array($addresses[$i], $this->trustedProxies) === false) {
+                        $trusted = false;
+                        break;
                     }
                 }
-
-                if ($trusted) {
-                    return $addresses[0];
-                }
-
-                return $addresses[$n - 1];
             }
 
-            if ($this->getEnv('HTTP_X_REAL_IP')) {
-                return $this->getEnv('HTTP_X_REAL_IP');
-            } elseif ($this->getEnv('HTTP_CLIENT_IP')) {
-                return $this->getEnv('HTTP_CLIENT_IP');
+            if ($trusted) {
+                return $addresses[0];
             }
+
+            return $addresses[$n - 1];
         }
 
-        return $this->getEnv('REMOTE_ADDR', '');
+        if ($this->trustProxy && $this->getEnv('HTTP_X_REAL_IP')) {
+            $ipaddr = $this->getEnv('HTTP_X_REAL_IP');
+        } elseif ($this->trustProxy && $this->getEnv('HTTP_CLIENT_IP')) {
+            $ipaddr = $this->getEnv('HTTP_CLIENT_IP');
+        } else {
+            $ipaddr = $this->getEnv('REMOTE_ADDR');
+        }
+
+        return trim($ipaddr);
     }
 
     /**
