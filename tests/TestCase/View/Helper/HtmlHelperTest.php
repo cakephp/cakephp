@@ -461,12 +461,12 @@ class HtmlHelperTest extends TestCase
     public function testImageWithFullBase()
     {
         $result = $this->Html->image('test.gif', ['fullBase' => true]);
-        $here = $this->Html->Url->build('/', true);
+        $here = $this->Html->Url->build('/', ['fullBase' => true]);
         $expected = ['img' => ['src' => $here . 'img/test.gif', 'alt' => '']];
         $this->assertHtml($expected, $result);
 
         $result = $this->Html->image('sub/test.gif', ['fullBase' => true]);
-        $here = $this->Html->Url->build('/', true);
+        $here = $this->Html->Url->build('/', ['fullBase' => true]);
         $expected = ['img' => ['src' => $here . 'img/sub/test.gif', 'alt' => '']];
         $this->assertHtml($expected, $result);
 
@@ -475,7 +475,7 @@ class HtmlHelperTest extends TestCase
             ->withAttribute('base', '/myproject'));
 
         $result = $this->Html->image('sub/test.gif', ['fullBase' => true]);
-        $here = $this->Html->Url->build('/', true);
+        $here = $this->Html->Url->build('/', ['fullBase' => true]);
         $expected = ['img' => ['src' => $here . 'myproject/img/sub/test.gif', 'alt' => '']];
         $this->assertHtml($expected, $result);
     }
@@ -697,7 +697,7 @@ class HtmlHelperTest extends TestCase
     public function testCssWithFullBase()
     {
         Configure::write('Asset.filter.css', false);
-        $here = $this->Html->Url->build('/', true);
+        $here = $this->Html->Url->build('/', ['fullBase' => true]);
 
         $result = $this->Html->css('screen', ['fullBase' => true]);
         $expected = [
@@ -1103,7 +1103,7 @@ class HtmlHelperTest extends TestCase
      */
     public function testScriptWithFullBase()
     {
-        $here = $this->Html->Url->build('/', true);
+        $here = $this->Html->Url->build('/', ['fullBase' => true]);
 
         $result = $this->Html->script('foo', ['fullBase' => true]);
         $expected = [
