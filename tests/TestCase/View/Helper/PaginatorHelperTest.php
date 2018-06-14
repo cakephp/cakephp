@@ -2758,11 +2758,11 @@ class PaginatorHelperTest extends TestCase
         $result = $this->Paginator->counter($input);
         $this->assertEquals($expected, $result);
 
-        $result = $this->Paginator->counter(['format' => 'pages']);
+        $result = $this->Paginator->counter('pages');
         $expected = '1 of 5';
         $this->assertEquals($expected, $result);
 
-        $result = $this->Paginator->counter(['format' => 'range']);
+        $result = $this->Paginator->counter('range');
         $expected = '1 - 3 of 13';
         $this->assertEquals($expected, $result);
 
@@ -2816,13 +2816,13 @@ class PaginatorHelperTest extends TestCase
      */
     public function testHasPage()
     {
-        $result = $this->Paginator->hasPage('Article', 15);
+        $result = $this->Paginator->hasPage(15, 'Article');
         $this->assertFalse($result);
 
-        $result = $this->Paginator->hasPage('UndefinedModel', 2);
+        $result = $this->Paginator->hasPage(2, 'UndefinedModel');
         $this->assertFalse($result);
 
-        $result = $this->Paginator->hasPage('Article', 2);
+        $result = $this->Paginator->hasPage(2, 'Article');
         $this->assertTrue($result);
 
         $result = $this->Paginator->hasPage(2);
@@ -2959,7 +2959,7 @@ class PaginatorHelperTest extends TestCase
             ]
         ]));
 
-        $result = $this->Paginator->counter(['format' => 'pages']);
+        $result = $this->Paginator->counter('pages');
         $expected = '0 of 1';
         $this->assertEquals($expected, $result);
     }
