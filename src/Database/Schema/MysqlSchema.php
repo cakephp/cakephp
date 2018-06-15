@@ -201,7 +201,7 @@ class MysqlSchema extends BaseSchema
 
         if ($row['Index_type'] === 'FULLTEXT') {
             $type = TableSchema::INDEX_FULLTEXT;
-        } elseif ($row['Non_unique'] === 0 && $type !== 'primary') {
+        } elseif ((int)$row['Non_unique'] === 0 && $type !== 'primary') {
             $type = TableSchema::CONSTRAINT_UNIQUE;
         } elseif ($type !== 'primary') {
             $type = TableSchema::INDEX_INDEX;
