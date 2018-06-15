@@ -1605,7 +1605,7 @@ class QueryRegressionTest extends TestCase
     public function testFormatResultsMemoryLeak()
     {
         $this->loadFixtures('Articles', 'Authors', 'Tags', 'ArticlesTags');
-        $this->skipIf(env('CODECOVERAGE') === 1, 'Running coverage this causes this tests to fail sometimes.');
+        $this->skipIf((bool)env('CODECOVERAGE'), 'Running coverage this causes this tests to fail sometimes.');
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsTo('Authors');
         $table->belongsToMany('Tags');
