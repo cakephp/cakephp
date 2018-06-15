@@ -389,7 +389,7 @@ class EntityContext implements ContextInterface
         }
         if ($target instanceof Traversable) {
             foreach ($target as $i => $val) {
-                if ($i === $field) {
+                if ((string)$i === $field) {
                     return $val;
                 }
             }
