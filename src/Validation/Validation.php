@@ -254,7 +254,7 @@ class Validation
      */
     public static function comparison($check1, $operator, $check2)
     {
-        if ((float)$check1 !== $check1) {
+        if ((float)$check1 != $check1) {
             return false;
         }
 
@@ -904,7 +904,7 @@ class Validation
         if (!is_numeric($check)) {
             return false;
         }
-        if ((float)$check !== $check) {
+        if ((float)$check != $check) {
             return false;
         }
         if (isset($lower, $upper)) {
