@@ -1690,8 +1690,11 @@ class Email implements JsonSerializable, Serializable
         if (is_array($message)) {
             $instance->setViewVars($message);
             $message = null;
-        } elseif ($message === null && array_key_exists('message', $config = $instance->getProfile())) {
-            $message = $config['message'];
+        } elseif ($message === null) {
+            $config = $instance->getProfile();
+            if (array_key_exists('message', $config)) {
+                $message = $config['message'];
+            }
         }
 
         if ($send === true) {

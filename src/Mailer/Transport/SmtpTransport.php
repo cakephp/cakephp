@@ -210,12 +210,14 @@ class SmtpTransport extends AbstractTransport
 
         $config = $this->_config;
 
+        $host = 'localhost';
         if (isset($config['client'])) {
             $host = $config['client'];
-        } elseif ($httpHost = env('HTTP_HOST')) {
-            list($host) = explode(':', $httpHost);
         } else {
-            $host = 'localhost';
+            $httpHost = env('HTTP_HOST');
+            if ($httpHost) {
+                list($host) = explode(':', $httpHost);
+            }
         }
 
         try {

@@ -248,7 +248,7 @@ class HasOneTest extends TestCase
     public function testPropertyOption()
     {
         $config = ['propertyName' => 'thing_placeholder'];
-        $association = new hasOne('Thing', $config);
+        $association = new HasOne('Thing', $config);
         $this->assertEquals('thing_placeholder', $association->getProperty());
     }
 

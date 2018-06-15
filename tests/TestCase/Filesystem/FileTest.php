@@ -506,7 +506,8 @@ class FileTest extends TestCase
      */
     public function testWrite()
     {
-        if (!$tmpFile = $this->_getTmpFile()) {
+        $tmpFile = $this->_getTmpFile();
+        if (!$tmpFile) {
             return false;
         }
         if (file_exists($tmpFile)) {
@@ -536,7 +537,8 @@ class FileTest extends TestCase
      */
     public function testAppend()
     {
-        if (!$tmpFile = $this->_getTmpFile()) {
+        $tmpFile = $this->_getTmpFile();
+        if (!$tmpFile) {
             return false;
         }
         if (file_exists($tmpFile)) {
@@ -573,7 +575,8 @@ class FileTest extends TestCase
      */
     public function testDelete()
     {
-        if (!$tmpFile = $this->_getTmpFile()) {
+        $tmpFile = $this->_getTmpFile();
+        if (!$tmpFile) {
             return false;
         }
 
@@ -599,7 +602,8 @@ class FileTest extends TestCase
      */
     public function testDeleteAfterRead()
     {
-        if (!$tmpFile = $this->_getTmpFile()) {
+        $tmpFile = $this->_getTmpFile();
+        if (!$tmpFile) {
             return false;
         }
         if (!file_exists($tmpFile)) {
