@@ -222,7 +222,7 @@ class Hash
             case '{*}':
                 return true;
             default:
-                return is_numeric($token) ? ($key === $token) : $key === $token;
+                return is_numeric($token) ? ($key == $token) : $key === $token;
         }
     }
 
@@ -275,8 +275,8 @@ class Hash
                 if (!preg_match($val, $prop)) {
                     return false;
                 }
-            } elseif (($op === '=' && $prop !== $val) ||
-                ($op === '!=' && $prop === $val) ||
+            } elseif (($op === '=' && $prop != $val) ||
+                ($op === '!=' && $prop == $val) ||
                 ($op === '>' && $prop <= $val) ||
                 ($op === '<' && $prop >= $val) ||
                 ($op === '>=' && $prop < $val) ||
@@ -587,7 +587,7 @@ class Hash
                 if (!empty($val)) {
                     $stack[] = [$val, $next];
                 }
-            } elseif (!array_key_exists($key, $data) || $data[$key] !== $val) {
+            } elseif (!array_key_exists($key, $data) || $data[$key] != $val) {
                 return false;
             }
 
@@ -1080,7 +1080,7 @@ class Hash
         }
         $intersection = array_intersect_key($data, $compare);
         while (($key = key($intersection)) !== null) {
-            if ($data[$key] === $compare[$key]) {
+            if ($data[$key] == $compare[$key]) {
                 unset($data[$key], $compare[$key]);
             }
             next($intersection);
@@ -1226,7 +1226,7 @@ class Hash
         foreach ($return as $i => $result) {
             $id = static::get($result, $idKeys);
             $parentId = static::get($result, $parentKeys);
-            if ($id !== $root && $parentId !== $root) {
+            if ($id !== $root && $parentId != $root) {
                 unset($return[$i]);
             }
         }
