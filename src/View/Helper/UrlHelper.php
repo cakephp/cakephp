@@ -25,7 +25,6 @@ use Cake\View\Helper;
  */
 class UrlHelper extends Helper
 {
-
     /**
      * Returns a URL based on provided parameters.
      *
@@ -38,18 +37,15 @@ class UrlHelper extends Helper
      * @param string|array|null $url Either a relative string URL like `/products/view/23` or
      *    an array of URL parameters. Using an array for URLs will allow you to leverage
      *    the reverse routing features of CakePHP.
-     * @param array|bool $options Array of options; bool `full` for BC reasons.
+     * @param array $options Array of options.
      * @return string Full translated URL with base path.
      */
-    public function build($url = null, $options = false)
+    public function build($url = null, array $options = [])
     {
         $defaults = [
             'fullBase' => false,
             'escape' => true,
         ];
-        if (!is_array($options)) {
-            $options = ['fullBase' => $options];
-        }
         $options += $defaults;
 
         /** @var string $url */
@@ -159,7 +155,7 @@ class UrlHelper extends Helper
     public function assetUrl($path, array $options = [])
     {
         if (is_array($path)) {
-            return $this->build($path, !empty($options['fullBase']));
+            return $this->build($path, $options);
         }
         // data URIs only require HTML escaping
         if (preg_match('/^data:[a-z]+\/[a-z]+;/', $path)) {
