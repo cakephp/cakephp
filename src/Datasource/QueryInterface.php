@@ -24,10 +24,9 @@ namespace Cake\Datasource;
  */
 interface QueryInterface
 {
-
-    const JOIN_TYPE_INNER = 'INNER';
-    const JOIN_TYPE_LEFT = 'LEFT';
-    const JOIN_TYPE_RIGHT = 'RIGHT';
+    public const JOIN_TYPE_INNER = 'INNER';
+    public const JOIN_TYPE_LEFT = 'LEFT';
+    public const JOIN_TYPE_RIGHT = 'RIGHT';
 
     /**
      * Returns a key => value array representing a single aliased field

@@ -21,7 +21,6 @@ use Cake\TestSuite\Fixture\TestFixture;
  */
 class AuthUsersFixture extends TestFixture
 {
-
     /**
      * fields property
      *
@@ -33,7 +32,7 @@ class AuthUsersFixture extends TestFixture
         'password' => ['type' => 'string', 'null' => false],
         'created' => 'datetime',
         'updated' => 'datetime',
-        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
+        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
     ];
 
     /**

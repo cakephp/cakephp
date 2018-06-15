@@ -23,7 +23,6 @@ use Cake\View\StringTemplateTrait;
  */
 class TestStringTemplate
 {
-
     use InstanceConfigTrait;
     use StringTemplateTrait;
 
@@ -40,7 +39,6 @@ class TestStringTemplate
  */
 class StringTemplateTraitTest extends TestCase
 {
-
     /**
      * @var TestStringTemplate
      */
@@ -71,7 +69,7 @@ class StringTemplateTraitTest extends TestCase
 
         $this->assertEquals(
             [
-                'text' => '<p>{{text}}</p>'
+                'text' => '<p>{{text}}</p>',
             ],
             $this->Template->getTemplates(),
             'newly added template should be included in template list'
@@ -92,7 +90,7 @@ class StringTemplateTraitTest extends TestCase
 
         $this->assertEquals(
             [
-                'text' => '<p>{{text}}</p>'
+                'text' => '<p>{{text}}</p>',
             ],
             $this->Template->getTemplates(),
             'Configured templates should be included in template list'
@@ -111,7 +109,7 @@ class StringTemplateTraitTest extends TestCase
         ];
         $this->Template->setTemplates($templates);
         $result = $this->Template->formatTemplate('text', [
-            'text' => 'CakePHP'
+            'text' => 'CakePHP',
         ]);
         $this->assertEquals(
             '<p>CakePHP</p>',

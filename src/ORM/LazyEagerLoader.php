@@ -26,7 +26,6 @@ use Cake\Datasource\EntityInterface;
  */
 class LazyEagerLoader
 {
-
     /**
      * Loads the specified associations in the passed entity or list of entities
      * by executing extra queries in the database and merging the results in the

@@ -25,7 +25,6 @@ use Traversable;
  */
 class NestIterator extends Collection implements RecursiveIterator
 {
-
     /**
      * The name of the property that contains the nested items for each element
      *

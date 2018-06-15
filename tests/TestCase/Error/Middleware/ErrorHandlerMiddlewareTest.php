@@ -44,7 +44,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
 
         Log::reset();
         Log::setConfig('error_test', [
-            'engine' => $this->logger
+            'engine' => $this->logger,
         ]);
     }
 
@@ -206,7 +206,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
 
         $request = ServerRequestFactory::fromGlobals([
             'REQUEST_URI' => '/target/url',
-            'HTTP_REFERER' => '/other/path'
+            'HTTP_REFERER' => '/other/path',
         ]);
         $response = new Response();
         $middleware = new ErrorHandlerMiddleware(null, ['log' => true, 'trace' => true]);
@@ -232,7 +232,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $response = new Response();
         $middleware = new ErrorHandlerMiddleware(null, [
             'log' => true,
-            'skipLog' => ['Cake\Http\Exception\NotFoundException']
+            'skipLog' => ['Cake\Http\Exception\NotFoundException'],
         ]);
         $next = function ($req, $res) {
             throw new \Cake\Http\Exception\NotFoundException('Kaboom!');

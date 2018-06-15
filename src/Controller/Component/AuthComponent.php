@@ -38,21 +38,20 @@ use Cake\Utility\Hash;
  */
 class AuthComponent extends Component
 {
-
     use EventDispatcherTrait;
 
     /**
      * The query string key used for remembering the referrered page when getting
      * redirected to login.
      */
-    const QUERY_STRING_REDIRECT = 'redirect';
+    public const QUERY_STRING_REDIRECT = 'redirect';
 
     /**
      * Constant for 'all'
      *
      * @var string
      */
-    const ALL = 'all';
+    public const ALL = 'all';
 
     /**
      * Default config
@@ -159,7 +158,7 @@ class AuthComponent extends Component
         'authError' => null,
         'unauthorizedRedirect' => true,
         'storage' => 'Session',
-        'checkAuthIn' => 'Controller.startup'
+        'checkAuthIn' => 'Controller.startup',
     ];
 
     /**
@@ -441,15 +440,15 @@ class AuthComponent extends Component
             'flash' => [
                 'element' => 'error',
                 'key' => 'flash',
-                'params' => ['class' => 'error']
+                'params' => ['class' => 'error'],
             ],
             'loginAction' => [
                 'controller' => 'Users',
                 'action' => 'login',
-                'plugin' => null
+                'plugin' => null,
             ],
             'logoutRedirect' => $this->_config['loginAction'],
-            'authError' => __d('cake', 'You are not authorized to access that location.')
+            'authError' => __d('cake', 'You are not authorized to access that location.'),
         ];
 
         $config = $this->getConfig();
@@ -474,7 +473,7 @@ class AuthComponent extends Component
      *   If empty, the current request will be used.
      * @return bool True if $user is authorized, otherwise false
      */
-    public function isAuthorized($user = null, ServerRequest $request = null)
+    public function isAuthorized($user = null, ?ServerRequest $request = null)
     {
         if (empty($user) && !$this->user()) {
             return false;
@@ -550,7 +549,7 @@ class AuthComponent extends Component
             $this->constructAuthorize();
         }
 
-        return isset($this->_authorizeObjects[$alias]) ? $this->_authorizeObjects[$alias] : null;
+        return $this->_authorizeObjects[$alias] ?? null;
     }
 
     /**
@@ -838,7 +837,7 @@ class AuthComponent extends Component
      *   object as storage or if null returns configured storage object.
      * @return \Cake\Auth\Storage\StorageInterface|\Cake\Core\InstanceConfigTrait|null
      */
-    public function storage(StorageInterface $storage = null)
+    public function storage(?StorageInterface $storage = null)
     {
         if ($storage !== null) {
             $this->_storage = $storage;
@@ -924,7 +923,7 @@ class AuthComponent extends Component
             $this->constructAuthenticate();
         }
 
-        return isset($this->_authenticateObjects[$alias]) ? $this->_authenticateObjects[$alias] : null;
+        return $this->_authenticateObjects[$alias] ?? null;
     }
 
     /**

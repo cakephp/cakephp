@@ -25,7 +25,6 @@ use Cake\Network\Exception\SocketException;
  */
 class MailTransport extends AbstractTransport
 {
-
     /**
      * Send mail
      *
@@ -50,7 +49,7 @@ class MailTransport extends AbstractTransport
 
         $message = implode($eol, $email->message());
 
-        $params = isset($this->_config['additionalParameters']) ? $this->_config['additionalParameters'] : null;
+        $params = $this->_config['additionalParameters'] ?? null;
         $this->_mail($to, $subject, $message, $headers, $params);
 
         $headers .= $eol . 'To: ' . $to;

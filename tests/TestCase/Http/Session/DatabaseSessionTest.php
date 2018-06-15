@@ -26,7 +26,6 @@ use Cake\TestSuite\TestCase;
  */
 class DatabaseSessionTest extends TestCase
 {
-
     /**
      * fixtures
      *

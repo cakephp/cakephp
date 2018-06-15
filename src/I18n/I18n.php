@@ -26,13 +26,12 @@ use Locale;
  */
 class I18n
 {
-
     /**
      * Default locale
      *
      * @var string
      */
-    const DEFAULT_LOCALE = 'en_US';
+    public const DEFAULT_LOCALE = 'en_US';
 
     /**
      * The translators collection

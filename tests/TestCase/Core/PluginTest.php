@@ -132,7 +132,7 @@ class PluginTest extends TestCase
             'Company/TestPluginFive',
             [
                 'autoload' => true,
-                'bootstrap' => true
+                'bootstrap' => true,
             ]
         );
         $this->assertTrue(Configure::read('PluginTest.test_plugin_five.autoload'));
@@ -308,7 +308,7 @@ class PluginTest extends TestCase
         Plugin::loadAll();
         $expected = [
             'Company', 'ParentPlugin', 'PluginJs', 'TestPlugin',
-            'TestPluginFour', 'TestPluginTwo', 'TestTheme'
+            'TestPluginFour', 'TestPluginTwo', 'TestTheme',
         ];
         $this->assertEquals($expected, Plugin::loaded());
     }
@@ -348,7 +348,7 @@ class PluginTest extends TestCase
         Plugin::loadAll([$defaults]);
         $expected = [
             'Company', 'ParentPlugin', 'PluginJs', 'TestPlugin',
-            'TestPluginFour', 'TestPluginTwo', 'TestTheme'
+            'TestPluginFour', 'TestPluginTwo', 'TestTheme',
         ];
         $this->assertEquals($expected, Plugin::loaded());
         $this->assertEquals('loaded js plugin bootstrap', Configure::read('PluginTest.js_plugin.bootstrap'));
@@ -367,12 +367,12 @@ class PluginTest extends TestCase
         Plugin::loadAll([
             ['bootstrap' => true],
             'TestPlugin' => ['routes' => true],
-            'TestPluginFour' => ['bootstrap' => true, 'classBase' => '']
+            'TestPluginFour' => ['bootstrap' => true, 'classBase' => ''],
         ]);
 
         $expected = [
             'Company', 'ParentPlugin', 'PluginJs', 'TestPlugin',
-            'TestPluginFour', 'TestPluginTwo', 'TestTheme'
+            'TestPluginFour', 'TestPluginTwo', 'TestTheme',
         ];
         $this->assertEquals($expected, Plugin::loaded());
         $this->assertEquals('loaded js plugin bootstrap', Configure::read('PluginTest.js_plugin.bootstrap'));

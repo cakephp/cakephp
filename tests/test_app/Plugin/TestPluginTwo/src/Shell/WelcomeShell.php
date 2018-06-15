@@ -22,7 +22,6 @@ use Cake\Console\Shell;
 
 class WelcomeShell extends Shell
 {
-
     /**
      * say_hello method
      *

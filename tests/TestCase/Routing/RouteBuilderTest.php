@@ -15,12 +15,12 @@
 namespace Cake\Test\TestCase\Routing;
 
 use Cake\Core\Plugin;
-use Cake\Routing\RouteBuilder;
-use Cake\Routing\RouteCollection;
-use Cake\Routing\Router;
 use Cake\Routing\Route\InflectedRoute;
 use Cake\Routing\Route\RedirectRoute;
 use Cake\Routing\Route\Route;
+use Cake\Routing\RouteBuilder;
+use Cake\Routing\RouteCollection;
+use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use RuntimeException;
 
@@ -29,7 +29,6 @@ use RuntimeException;
  */
 class RouteBuilderTest extends TestCase
 {
-
     /**
      * Setup method
      *
@@ -211,7 +210,7 @@ class RouteBuilderTest extends TestCase
             'controller' => 'Articles',
             'action' => 'view',
             'plugin' => null,
-            '_matchedRoute' => '/my-articles/view'
+            '_matchedRoute' => '/my-articles/view',
         ];
         $this->assertEquals($expected, $this->collection->parse('/my-articles/view'));
 
@@ -235,7 +234,7 @@ class RouteBuilderTest extends TestCase
             'prefix' => 'admin',
             'controller' => 'Bookmarks',
             'action' => 'index',
-            '_matchedRoute' => '/admin/bookmarks'
+            '_matchedRoute' => '/admin/bookmarks',
         ];
         $this->assertEquals($expected, $this->collection->parse('/admin/bookmarks'));
 
@@ -258,7 +257,7 @@ class RouteBuilderTest extends TestCase
             'plugin' => 'Blog',
             'controller' => 'Articles',
             'action' => 'view',
-            '_matchedRoute' => '/blog/articles/view'
+            '_matchedRoute' => '/blog/articles/view',
         ];
         $this->assertEquals($expected, $this->collection->parse('/blog/articles/view'));
 
@@ -282,7 +281,7 @@ class RouteBuilderTest extends TestCase
             'prefix' => 'management/admin',
             'controller' => 'Articles',
             'action' => 'view',
-            '_matchedRoute' => '/admin/blog/articles/view'
+            '_matchedRoute' => '/admin/blog/articles/view',
         ];
         $this->assertEquals($expected, $this->collection->parse('/admin/blog/articles/view'));
 
@@ -687,7 +686,7 @@ class RouteBuilderTest extends TestCase
             'map' => [
                 'delete_all' => ['action' => 'deleteAll', 'method' => 'DELETE'],
                 'update_many' => ['action' => 'updateAll', 'method' => 'DELETE', 'path' => '/updateAll'],
-            ]
+            ],
         ]);
 
         $all = $this->collection->routes();
@@ -726,7 +725,7 @@ class RouteBuilderTest extends TestCase
             'controller' => 'Articles',
             'action' => 'edit',
             '_method' => 'PUT',
-            'id' => 99
+            'id' => 99,
         ]);
         $this->assertEquals('/api/articles/99', $url);
 
@@ -736,7 +735,7 @@ class RouteBuilderTest extends TestCase
             'action' => 'edit',
             '_method' => 'PUT',
             '_ext' => 'json',
-            'id' => 99
+            'id' => 99,
         ]);
         $this->assertEquals('/api/articles/99.json', $url);
     }
@@ -823,7 +822,7 @@ class RouteBuilderTest extends TestCase
         $routes = new RouteBuilder($this->collection, '/');
         $routes->resources('Articles', [
             'only' => ['index', 'delete'],
-            'actions' => ['index' => 'showList']
+            'actions' => ['index' => 'showList'],
         ]);
 
         $result = $this->collection->routes();

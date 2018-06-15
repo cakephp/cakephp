@@ -21,7 +21,6 @@ use Psr\Log\LogLevel;
  */
 trait LogTrait
 {
-
     /**
      * Convenience method to write a message to Log. See Log::write()
      * for more information on writing to logs.

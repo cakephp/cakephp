@@ -20,7 +20,6 @@ use Cake\Controller\Component;
  */
 class BananaComponent extends Component
 {
-
     /**
      * testField property
      *

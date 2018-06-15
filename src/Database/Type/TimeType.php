@@ -21,7 +21,6 @@ namespace Cake\Database\Type;
  */
 class TimeType extends DateTimeType
 {
-
     /**
      * Time format for DateTime object
      *

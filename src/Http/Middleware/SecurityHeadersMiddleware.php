@@ -23,7 +23,6 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class SecurityHeadersMiddleware
 {
-
     /**
      * Security related headers to set
      *
@@ -75,7 +74,7 @@ class SecurityHeadersMiddleware
             'no-referrer', 'no-referrer-when-downgrade', 'origin',
             'origin-when-cross-origin',
             'same-origin', 'strict-origin', 'strict-origin-when-cross-origin',
-            'unsafe-url'
+            'unsafe-url',
         ];
 
         $this->checkValues($policy, $available);

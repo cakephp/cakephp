@@ -100,7 +100,6 @@ use RuntimeException;
  */
 class CounterCacheBehavior extends Behavior
 {
-
     /**
      * Store the fields which should be ignored
      *

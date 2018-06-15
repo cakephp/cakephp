@@ -20,7 +20,6 @@ use TestApp\Command\AbortCommand;
 
 class Application extends BaseApplication
 {
-
     public function bootstrap()
     {
         parent::bootstrap();

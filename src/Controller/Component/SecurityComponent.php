@@ -39,11 +39,10 @@ use Cake\Utility\Security;
  */
 class SecurityComponent extends Component
 {
-
     /**
      * Default message used for exceptions thrown
      */
-    const DEFAULT_EXCEPTION_MESSAGE = 'The request has been black-holed';
+    public const DEFAULT_EXCEPTION_MESSAGE = 'The request has been black-holed';
 
     /**
      * Default config
@@ -74,7 +73,7 @@ class SecurityComponent extends Component
         'allowedActions' => [],
         'unlockedFields' => [],
         'unlockedActions' => [],
-        'validatePost' => true
+        'validatePost' => true,
     ];
 
     /**
@@ -159,7 +158,7 @@ class SecurityComponent extends Component
      * @link https://book.cakephp.org/3.0/en/controllers/components/security.html#handling-blackhole-callbacks
      * @throws \Cake\Http\Exception\BadRequestException
      */
-    public function blackHole(Controller $controller, $error = '', SecurityException $exception = null)
+    public function blackHole(Controller $controller, $error = '', ?SecurityException $exception = null)
     {
         if (!$this->_config['blackHoleCallback']) {
             $this->_throwException($exception);
@@ -310,7 +309,7 @@ class SecurityComponent extends Component
             Router::url($request->getRequestTarget()),
             serialize($fieldList),
             $unlocked,
-            $session->id()
+            $session->id(),
         ];
     }
 
@@ -504,7 +503,7 @@ class SecurityComponent extends Component
         $request->getSession()->write('_Token', $token);
 
         return $request->withParam('_Token', [
-            'unlockedFields' => $token['unlockedFields']
+            'unlockedFields' => $token['unlockedFields'],
         ]);
     }
 

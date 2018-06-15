@@ -18,7 +18,6 @@ use Cake\Form\Form;
 
 class ValidateForm extends Form
 {
-
     protected function _buildValidator(\Cake\Validation\Validator $validator)
     {
         return $validator

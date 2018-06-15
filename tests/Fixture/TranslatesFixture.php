@@ -21,7 +21,6 @@ use Cake\TestSuite\Fixture\TestFixture;
  */
 class TranslatesFixture extends TestFixture
 {
-
     /**
      * table property
      *
@@ -41,7 +40,7 @@ class TranslatesFixture extends TestFixture
         'foreign_key' => ['type' => 'integer', 'null' => false],
         'field' => ['type' => 'string', 'null' => false],
         'content' => ['type' => 'text'],
-        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
+        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
     ];
 
     /**

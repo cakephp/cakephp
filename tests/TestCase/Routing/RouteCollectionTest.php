@@ -16,14 +16,13 @@ namespace Cake\Test\TestCase\Routing;
 
 use Cake\Http\ServerRequest;
 use Cake\Routing\Exception\MissingRouteException;
+use Cake\Routing\Route\Route;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
-use Cake\Routing\Route\Route;
 use Cake\TestSuite\TestCase;
 
 class RouteCollectionTest extends TestCase
 {
-
     /**
      * Setup method
      *
@@ -171,7 +170,7 @@ class RouteCollectionTest extends TestCase
             'controller' => 'Media',
             'action' => 'search',
             '_matchedRoute' => '/b/media/search/*',
-            '_name' => 'media_search'
+            '_name' => 'media_search',
         ];
         $this->assertEquals($expected, $result);
 
@@ -183,7 +182,7 @@ class RouteCollectionTest extends TestCase
             'controller' => 'Media',
             'action' => 'search',
             '_matchedRoute' => '/b/media/search/*',
-            '_name' => 'media_search'
+            '_name' => 'media_search',
         ];
         $this->assertEquals($expected, $result);
     }
@@ -276,8 +275,8 @@ class RouteCollectionTest extends TestCase
         $request = new ServerRequest([
             'environment' => [
                 'HTTP_HOST' => 'a.example.com',
-                'PATH_INFO' => '/fallback'
-            ]
+                'PATH_INFO' => '/fallback',
+            ],
         ]);
         $result = $this->collection->parseRequest($request);
         $expected = [
@@ -285,15 +284,15 @@ class RouteCollectionTest extends TestCase
             'action' => 'index',
             'pass' => [],
             'plugin' => null,
-            '_matchedRoute' => '/fallback'
+            '_matchedRoute' => '/fallback',
         ];
         $this->assertEquals($expected, $result, 'Should match, domain is correct');
 
         $request = new ServerRequest([
             'environment' => [
                 'HTTP_HOST' => 'foo.bar.example.com',
-                'PATH_INFO' => '/fallback'
-            ]
+                'PATH_INFO' => '/fallback',
+            ],
         ]);
         $result = $this->collection->parseRequest($request);
         $this->assertEquals($expected, $result, 'Should match, domain is a matching subdomain');
@@ -301,8 +300,8 @@ class RouteCollectionTest extends TestCase
         $request = new ServerRequest([
             'environment' => [
                 'HTTP_HOST' => 'example.test.com',
-                'PATH_INFO' => '/fallback'
-            ]
+                'PATH_INFO' => '/fallback',
+            ],
         ]);
         try {
             $this->collection->parseRequest($request);
@@ -345,8 +344,8 @@ class RouteCollectionTest extends TestCase
         $request = new ServerRequest([
             'environment' => [
                 'HTTP_HOST' => $host,
-                'PATH_INFO' => '/fallback'
-            ]
+                'PATH_INFO' => '/fallback',
+            ],
         ]);
         $this->collection->parseRequest($request);
     }
@@ -588,7 +587,7 @@ class RouteCollectionTest extends TestCase
             'plugin' => null,
             'prefix' => 'admin',
             'controller' => 'Users',
-            'action' => 'index'
+            'action' => 'index',
         ];
         $result = $this->collection->match($url, $context);
         $this->assertEquals('admin/Users', $result);
@@ -596,7 +595,7 @@ class RouteCollectionTest extends TestCase
         $url = [
             'plugin' => null,
             'controller' => 'Users',
-            'action' => 'index'
+            'action' => 'index',
         ];
         $result = $this->collection->match($url, $context);
         $this->assertEquals('index', $result);

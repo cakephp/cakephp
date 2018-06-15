@@ -24,7 +24,6 @@ use RuntimeException;
  */
 abstract class SerializedView extends View
 {
-
     /**
      * Response type.
      *
@@ -41,9 +40,9 @@ abstract class SerializedView extends View
      * @param array $viewOptions An array of view options
      */
     public function __construct(
-        ServerRequest $request = null,
-        Response $response = null,
-        EventManager $eventManager = null,
+        ?ServerRequest $request = null,
+        ?Response $response = null,
+        ?EventManager $eventManager = null,
         array $viewOptions = []
     ) {
         if ($response && $response instanceof Response) {

@@ -25,7 +25,6 @@ use Cake\View\View;
  */
 class HtmlAliasHelper extends Helper
 {
-
     public function afterRender($viewFile)
     {
     }
@@ -36,7 +35,6 @@ class HtmlAliasHelper extends Helper
  */
 class HelperRegistryTest extends TestCase
 {
-
     /**
      * @var \Cake\View\HelperRegistry
      */
@@ -362,12 +360,12 @@ class HelperRegistryTest extends TestCase
         $config = [
             'SomeHelper' => [
                 'value' => 1,
-                'value2' => 2
+                'value2' => 2,
             ],
             'Plugin.SomeOtherHelper' => [
                 'value' => 1,
-                'value2' => 2
-            ]
+                'value2' => 2,
+            ],
         ];
         $result = $this->Helpers->normalizeArray($config);
         $expected = [
@@ -375,15 +373,15 @@ class HelperRegistryTest extends TestCase
                 'class' => 'SomeHelper',
                 'config' => [
                     'value' => 1,
-                    'value2' => 2
-                ]
+                    'value2' => 2,
+                ],
             ],
             'SomeOtherHelper' => [
                 'class' => 'Plugin.SomeOtherHelper',
                 'config' => [
                     'value' => 1,
-                    'value2' => 2
-                ]
+                    'value2' => 2,
+                ],
             ],
         ];
         $this->assertEquals($expected, $result);
@@ -400,12 +398,12 @@ class HelperRegistryTest extends TestCase
         $config = [
             'SomeHelper' => [
                 'value' => 1,
-                'value2' => 2
+                'value2' => 2,
             ],
             'Plugin.SomeOtherHelper' => [
                 'value' => 1,
-                'value2' => 2
-            ]
+                'value2' => 2,
+            ],
         ];
 
         $result1 = $this->Helpers->normalizeArray($config);
@@ -415,15 +413,15 @@ class HelperRegistryTest extends TestCase
                 'class' => 'SomeHelper',
                 'config' => [
                     'value' => 1,
-                    'value2' => 2
-                ]
+                    'value2' => 2,
+                ],
             ],
             'SomeOtherHelper' => [
                 'class' => 'Plugin.SomeOtherHelper',
                 'config' => [
                     'value' => 1,
-                    'value2' => 2
-                ]
+                    'value2' => 2,
+                ],
             ],
         ];
         $this->assertEquals($expected, $result2);

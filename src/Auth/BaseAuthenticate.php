@@ -14,7 +14,6 @@ declare(strict_types=1);
  */
 namespace Cake\Auth;
 
-use Cake\Auth\AbstractPasswordHasher;
 use Cake\Controller\ComponentRegistry;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Event\EventListenerInterface;
@@ -30,7 +29,6 @@ use Cake\ORM\Query;
  */
 abstract class BaseAuthenticate implements EventListenerInterface
 {
-
     use InstanceConfigTrait;
     use LocatorAwareTrait;
 
@@ -52,11 +50,11 @@ abstract class BaseAuthenticate implements EventListenerInterface
     protected $_defaultConfig = [
         'fields' => [
             'username' => 'username',
-            'password' => 'password'
+            'password' => 'password',
         ],
         'userModel' => 'Users',
         'finder' => 'all',
-        'passwordHasher' => 'Default'
+        'passwordHasher' => 'Default',
     ];
 
     /**
@@ -148,7 +146,7 @@ abstract class BaseAuthenticate implements EventListenerInterface
         $table = $this->getTableLocator()->get($config['userModel']);
 
         $options = [
-            'conditions' => [$table->aliasField($config['fields']['username']) => $username]
+            'conditions' => [$table->aliasField($config['fields']['username']) => $username],
         ];
 
         $finder = $config['finder'];

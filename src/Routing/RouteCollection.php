@@ -30,7 +30,6 @@ use RuntimeException;
  */
 class RouteCollection
 {
-
     /**
      * The routes connected to this collection.
      *

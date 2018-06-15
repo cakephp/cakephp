@@ -23,7 +23,6 @@ use PDO;
  */
 class StringTypeTest extends TestCase
 {
-
     /**
      * Setup
      *

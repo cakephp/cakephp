@@ -26,7 +26,6 @@ use RuntimeException;
  */
 class TableLocator implements LocatorInterface
 {
-
     /**
      * Configuration for aliases.
      *
@@ -97,7 +96,7 @@ class TableLocator implements LocatorInterface
             return $this->_config;
         }
 
-        return isset($this->_config[$alias]) ? $this->_config[$alias] : [];
+        return $this->_config[$alias] ?? [];
     }
 
     /**

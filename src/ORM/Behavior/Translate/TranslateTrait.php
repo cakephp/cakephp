@@ -22,7 +22,6 @@ use Cake\Datasource\EntityInterface;
  */
 trait TranslateTrait
 {
-
     /**
      * Returns the entity containing the translated fields for this object and for
      * the specified language. If the translation for the passed language is not

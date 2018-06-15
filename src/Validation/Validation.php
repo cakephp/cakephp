@@ -30,51 +30,50 @@ use RuntimeException;
  */
 class Validation
 {
-
     /**
      * Default locale
      */
-    const DEFAULT_LOCALE = 'en_US';
+    public const DEFAULT_LOCALE = 'en_US';
 
     /**
      * Same as operator.
      */
-    const COMPARE_SAME = '===';
+    public const COMPARE_SAME = '===';
 
     /**
      * Not same as comparison operator.
      */
-    const COMPARE_NOT_SAME = '!==';
+    public const COMPARE_NOT_SAME = '!==';
 
     /**
      * Equal to comparison operator.
      */
-    const COMPARE_EQUAL = '==';
+    public const COMPARE_EQUAL = '==';
 
     /**
      * Not equal to comparison operator.
      */
-    const COMPARE_NOT_EQUAL = '!=';
+    public const COMPARE_NOT_EQUAL = '!=';
 
     /**
      * Greater than comparison operator.
      */
-    const COMPARE_GREATER = '>';
+    public const COMPARE_GREATER = '>';
 
     /**
      * Greater than or equal to comparison operator.
      */
-    const COMPARE_GREATER_OR_EQUAL = '>=';
+    public const COMPARE_GREATER_OR_EQUAL = '>=';
 
     /**
      * Less than comparison operator.
      */
-    const COMPARE_LESS = '<';
+    public const COMPARE_LESS = '<';
 
     /**
      * Less than or equal to comparison operator.
      */
-    const COMPARE_LESS_OR_EQUAL = '<=';
+    public const COMPARE_LESS_OR_EQUAL = '<=';
 
     /**
      * Some complex patterns needed in multiple places
@@ -146,7 +145,7 @@ class Validation
         }
         $length = mb_strlen($check);
 
-        return ($length >= $min && $length <= $max);
+        return $length >= $min && $length <= $max;
     }
 
     /**
@@ -192,9 +191,9 @@ class Validation
                 'solo' => '/^(6334[5-9][0-9]|6767[0-9]{2})\\d{10}(\\d{2,3})?$/',
                 'switch' => '/^(?:49(03(0[2-9]|3[5-9])|11(0[1-2]|7[4-9]|8[1-2])|36[0-9]{2})\\d{10}(\\d{2,3})?)|(?:564182\\d{10}(\\d{2,3})?)|(6(3(33[0-4][0-9])|759[0-9]{2})\\d{10}(\\d{2,3})?)$/',
                 'visa' => '/^4\\d{12}(\\d{3})?$/',
-                'voyager' => '/^8699[0-9]{11}$/'
+                'voyager' => '/^8699[0-9]{11}$/',
             ],
-            'fast' => '/^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6011[0-9]{12}|3(?:0[0-5]|[68][0-9])[0-9]{11}|3[47][0-9]{13})$/'
+            'fast' => '/^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6011[0-9]{12}|3(?:0[0-5]|[68][0-9])[0-9]{11}|3[47][0-9]{13})$/',
         ];
 
         if (is_array($type)) {
@@ -255,7 +254,7 @@ class Validation
      */
     public static function comparison($check1, $operator, $check2)
     {
-        if ((float)$check1 != $check1) {
+        if ((float)$check1 !== $check1) {
             return false;
         }
 
@@ -282,12 +281,12 @@ class Validation
                 }
                 break;
             case static::COMPARE_EQUAL:
-                if ($check1 == $check2) {
+                if ($check1 === $check2) {
                     return true;
                 }
                 break;
             case static::COMPARE_NOT_EQUAL:
-                if ($check1 != $check2) {
+                if ($check1 !== $check2) {
                     return true;
                 }
                 break;
@@ -546,7 +545,7 @@ class Validation
         }
         $method = $methods[$type];
 
-        return (Time::$method($check, $format) !== null);
+        return Time::$method($check, $format) !== null;
     }
 
     /**
@@ -698,7 +697,7 @@ class Validation
      */
     public static function equalTo($check, $comparedTo)
     {
-        return ($check === $comparedTo);
+        return $check === $comparedTo;
     }
 
     /**
@@ -711,7 +710,7 @@ class Validation
     public static function extension($check, $extensions = ['gif', 'jpeg', 'png', 'jpg'])
     {
         if (is_array($check)) {
-            $check = isset($check['name']) ? $check['name'] : array_shift($check);
+            $check = $check['name'] ?? array_shift($check);
 
             return static::extension($check, $extensions);
         }
@@ -833,7 +832,7 @@ class Validation
         $options += $defaults;
 
         $check = array_filter((array)$check, function ($value) {
-            return ($value || is_numeric($value));
+            return $value || is_numeric($value);
         });
         if (empty($check)) {
             return false;
@@ -905,11 +904,11 @@ class Validation
         if (!is_numeric($check)) {
             return false;
         }
-        if ((float)$check != $check) {
+        if ((float)$check !== $check) {
             return false;
         }
         if (isset($lower, $upper)) {
-            return ($check >= $lower && $check <= $upper);
+            return $check >= $lower && $check <= $upper;
         }
 
         return is_finite($check);
@@ -1021,7 +1020,7 @@ class Validation
             $sum += ($number < 10) ? $number : $number - 9;
         }
 
-        return ($sum % 10 === 0);
+        return $sum % 10 === 0;
     }
 
     /**
@@ -1190,7 +1189,7 @@ class Validation
         if (is_array($file)) {
             $keys = ['error', 'name', 'size', 'tmp_name', 'type'];
             ksort($file);
-            if (array_keys($file) != $keys) {
+            if (array_keys($file) !== $keys) {
                 return false;
             }
             $error = (int)$file['error'];
@@ -1244,7 +1243,7 @@ class Validation
             $validWidth = self::comparison($width, $options['width'][0], $options['width'][1]);
         }
         if (isset($validHeight, $validWidth)) {
-            return ($validHeight && $validWidth);
+            return $validHeight && $validWidth;
         }
         if (isset($validHeight)) {
             return $validHeight;
@@ -1269,8 +1268,8 @@ class Validation
         return self::imageSize($file, [
             'width' => [
                 $operator,
-                $width
-            ]
+                $width,
+            ],
         ]);
     }
 
@@ -1287,8 +1286,8 @@ class Validation
         return self::imageSize($file, [
             'height' => [
                 $operator,
-                $height
-            ]
+                $height,
+            ],
         ]);
     }
 
@@ -1313,7 +1312,7 @@ class Validation
     {
         $options += [
             'format' => 'both',
-            'type' => 'latLong'
+            'type' => 'latLong',
         ];
         if ($options['type'] !== 'latLong') {
             throw new RuntimeException(sprintf(
@@ -1498,7 +1497,7 @@ class Validation
             $checksum %= 97;
         }
 
-        return ((98 - $checksum) === $checkInt);
+        return (98 - $checksum) === $checkInt;
     }
 
     /**

@@ -9,7 +9,6 @@ use Cake\TestSuite\IntegrationTestCase;
  */
 class AssertIntegrationTestCase extends IntegrationTestCase
 {
-
     /**
      * testBadAssertNoRedirect
      *

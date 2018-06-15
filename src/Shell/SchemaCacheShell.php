@@ -30,7 +30,6 @@ use RuntimeException;
  */
 class SchemaCacheShell extends Shell
 {
-
     /**
      * Build metadata.
      *

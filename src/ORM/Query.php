@@ -22,7 +22,6 @@ use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\QueryInterface;
 use Cake\Datasource\QueryTrait;
-use InvalidArgumentException;
 use JsonSerializable;
 use RuntimeException;
 
@@ -70,7 +69,6 @@ use RuntimeException;
  */
 class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
 {
-
     use QueryTrait {
         cache as private _cache;
         all as private _all;
@@ -83,21 +81,21 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      * @var int
      */
-    const APPEND = 0;
+    public const APPEND = 0;
 
     /**
      * Indicates that the operation should prepend to the list
      *
      * @var int
      */
-    const PREPEND = 1;
+    public const PREPEND = 1;
 
     /**
      * Indicates that the operation should overwrite the list
      *
      * @var bool
      */
-    const OVERWRITE = true;
+    public const OVERWRITE = true;
 
     /**
      * Whether the user select any fields before being executed, this is used
@@ -545,7 +543,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * that can be used to add custom conditions or selecting some fields
      * @return $this
      */
-    public function matching($assoc, callable $builder = null)
+    public function matching($assoc, ?callable $builder = null)
     {
         $result = $this->getEagerLoader()->setMatching($assoc, $builder)->getMatching();
         $this->_addAssociationsToTypeMap($this->getRepository(), $this->getTypeMap(), $result);
@@ -617,12 +615,12 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * that can be used to add custom conditions or selecting some fields
      * @return $this
      */
-    public function leftJoinWith($assoc, callable $builder = null)
+    public function leftJoinWith($assoc, ?callable $builder = null)
     {
         $result = $this->getEagerLoader()
             ->setMatching($assoc, $builder, [
                 'joinType' => QueryInterface::JOIN_TYPE_LEFT,
-                'fields' => false
+                'fields' => false,
             ])
             ->getMatching();
         $this->_addAssociationsToTypeMap($this->getRepository(), $this->getTypeMap(), $result);
@@ -666,12 +664,12 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * @return $this
      * @see \Cake\ORM\Query::matching()
      */
-    public function innerJoinWith($assoc, callable $builder = null)
+    public function innerJoinWith($assoc, ?callable $builder = null)
     {
         $result = $this->getEagerLoader()
             ->setMatching($assoc, $builder, [
                 'joinType' => QueryInterface::JOIN_TYPE_INNER,
-                'fields' => false
+                'fields' => false,
             ])
             ->getMatching();
         $this->_addAssociationsToTypeMap($this->getRepository(), $this->getTypeMap(), $result);
@@ -730,13 +728,13 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * that can be used to add custom conditions or selecting some fields
      * @return $this
      */
-    public function notMatching($assoc, callable $builder = null)
+    public function notMatching($assoc, ?callable $builder = null)
     {
         $result = $this->getEagerLoader()
             ->setMatching($assoc, $builder, [
                 'joinType' => QueryInterface::JOIN_TYPE_LEFT,
                 'fields' => false,
-                'negateMatch' => true
+                'negateMatch' => true,
             ])
             ->getMatching();
         $this->_addAssociationsToTypeMap($this->getRepository(), $this->getTypeMap(), $result);
@@ -1031,7 +1029,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
             $table->dispatchEvent('Model.beforeFind', [
                 $this,
                 new ArrayObject($this->_options),
-                !$this->isEagerLoaded()
+                !$this->isEagerLoaded(),
             ]);
         }
     }
@@ -1039,7 +1037,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     /**
      * {@inheritDoc}
      */
-    public function sql(ValueBinder $binder = null)
+    public function sql(?ValueBinder $binder = null)
     {
         $this->triggerBeforeFind();
 
@@ -1250,7 +1248,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
             'contain' => $eagerLoader ? $eagerLoader->getContain() : [],
             'matching' => $eagerLoader ? $eagerLoader->getMatching() : [],
             'extraOptions' => $this->_options,
-            'repository' => $this->_repository
+            'repository' => $this->_repository,
         ];
     }
 

@@ -23,7 +23,6 @@ use Cake\TestSuite\TestCase;
  */
 class MessagesFileLoaderTest extends TestCase
 {
-
     /**
      * Set Up
      *

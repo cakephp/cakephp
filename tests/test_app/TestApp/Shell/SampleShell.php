@@ -24,7 +24,6 @@ use Cake\Console\Shell;
 
 class SampleShell extends Shell
 {
-
     public $tasks = ['Sample', 'Load'];
 
     /**

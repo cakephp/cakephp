@@ -23,7 +23,6 @@ use Cake\View\Form\ArrayContext;
  */
 class ArrayContextTest extends TestCase
 {
-
     /**
      * setup method.
      *
@@ -42,9 +41,9 @@ class ArrayContextTest extends TestCase
                 'Comments' => [
                     'required' => 'My custom message',
                     'nope' => false,
-                    'tags' => true
-                ]
-            ]
+                    'tags' => true,
+                ],
+            ],
         ]);
 
         $this->assertSame('My custom message', $context->getRequiredMessage('Comments.required'));
@@ -65,15 +64,15 @@ class ArrayContextTest extends TestCase
         $context = new ArrayContext($this->request, [
             'schema' => [
                 '_constraints' => 'mistake',
-            ]
+            ],
         ]);
         $this->assertEquals([], $context->primaryKey());
 
         $data = [
             'schema' => [
                 '_constraints' => [
-                    'primary' => ['type' => 'primary', 'columns' => ['id']]
-                ]
+                    'primary' => ['type' => 'primary', 'columns' => ['id']],
+                ],
             ],
         ];
         $context = new ArrayContext($this->request, $data);
@@ -95,15 +94,15 @@ class ArrayContextTest extends TestCase
         $context = new ArrayContext($this->request, [
             'schema' => [
                 '_constraints' => 'mistake',
-            ]
+            ],
         ]);
         $this->assertFalse($context->isPrimaryKey('mistake'));
 
         $data = [
             'schema' => [
                 '_constraints' => [
-                    'primary' => ['type' => 'primary', 'columns' => ['id']]
-                ]
+                    'primary' => ['type' => 'primary', 'columns' => ['id']],
+                ],
             ],
         ];
         $context = new ArrayContext($this->request, $data);
@@ -113,8 +112,8 @@ class ArrayContextTest extends TestCase
         $data = [
             'schema' => [
                 '_constraints' => [
-                    'primary' => ['type' => 'primary', 'columns' => ['id', 'name']]
-                ]
+                    'primary' => ['type' => 'primary', 'columns' => ['id', 'name']],
+                ],
             ],
         ];
         $context = new ArrayContext($this->request, $data);
@@ -135,8 +134,8 @@ class ArrayContextTest extends TestCase
         $data = [
             'schema' => [
                 '_constraints' => [
-                    'primary' => ['type' => 'primary', 'columns' => ['id']]
-                ]
+                    'primary' => ['type' => 'primary', 'columns' => ['id']],
+                ],
             ],
         ];
         $context = new ArrayContext($this->request, $data);
@@ -156,15 +155,15 @@ class ArrayContextTest extends TestCase
             'Articles' => [
                 'title' => 'New title',
                 'body' => 'My copy',
-            ]
+            ],
         ]);
         $context = new ArrayContext($this->request, [
             'defaults' => [
                 'Articles' => [
                     'title' => 'Default value',
-                    'published' => 0
-                ]
-            ]
+                    'published' => 0,
+                ],
+            ],
         ]);
         $this->assertEquals('New title', $context->val('Articles.title'));
         $this->assertEquals('My copy', $context->val('Articles.body'));
@@ -196,8 +195,8 @@ class ArrayContextTest extends TestCase
         $context = new ArrayContext($this->request, [
             'defaults' => [
                 'title' => 'Default value',
-                'users' => ['tags' => 'common1', '9tags' => 'common2']
-            ]
+                'users' => ['tags' => 'common1', '9tags' => 'common2'],
+            ],
         ]);
 
         $this->assertEquals('Default value', $context->val('title'));
@@ -220,9 +219,9 @@ class ArrayContextTest extends TestCase
                 'Comments' => [
                     'required' => true,
                     'nope' => false,
-                    'tags' => true
-                ]
-            ]
+                    'tags' => true,
+                ],
+            ],
         ]);
         $this->assertTrue($context->isRequired('Comments.required'));
         $this->assertFalse($context->isRequired('Comments.nope'));
@@ -253,9 +252,9 @@ class ArrayContextTest extends TestCase
                 'Comments' => [
                     'id' => ['type' => 'integer'],
                     'tags' => ['type' => 'string'],
-                    'comment' => ['length' => 255]
-                ]
-            ]
+                    'comment' => ['length' => 255],
+                ],
+            ],
         ]);
         $this->assertNull($context->type('Comments.undefined'));
         $this->assertEquals('integer', $context->type('Comments.id'));
@@ -289,8 +288,8 @@ class ArrayContextTest extends TestCase
                     'decimal' => ['type' => 'decimal', 'precision' => 2, 'length' => 5],
                     'floaty' => ['type' => 'float', 'precision' => 2, 'length' => 5],
                     'tags' => ['type' => 'string', 'length' => 25],
-                ]
-            ]
+                ],
+            ],
         ]);
         $this->assertEquals([], $context->attributes('Comments.id'));
         $this->assertEquals(['length' => 25], $context->attributes('Comments.0.tags'));
@@ -315,8 +314,8 @@ class ArrayContextTest extends TestCase
                     'comment' => ['Comment is required'],
                     'empty' => [],
                     'user_id' => 'A valid userid is required',
-                ]
-            ]
+                ],
+            ],
         ]);
         $this->assertEquals(['Comment is required'], $context->error('Comments.comment'));
         $this->assertEquals(['A valid userid is required'], $context->error('Comments.user_id'));
@@ -337,8 +336,8 @@ class ArrayContextTest extends TestCase
                     'comment' => ['Comment is required'],
                     'empty' => [],
                     'user_id' => 'A valid userid is required',
-                ]
-            ]
+                ],
+            ],
         ]);
         $this->assertFalse($context->hasError('Comments.not_there'));
         $this->assertFalse($context->hasError('Comments.empty'));

@@ -23,7 +23,6 @@ use Cake\View\Widget\LabelWidget;
  */
 class LabelWidgetTest extends TestCase
 {
-
     /**
      * setup method.
      *
@@ -54,7 +53,7 @@ class LabelWidgetTest extends TestCase
         $expected = [
             'label' => [],
             'My text',
-            '/label'
+            '/label',
         ];
         $this->assertHtml($expected, $result);
     }
@@ -76,7 +75,7 @@ class LabelWidgetTest extends TestCase
         $expected = [
             'label' => ['for' => 'Some > value'],
             'My > text',
-            '/label'
+            '/label',
         ];
         $this->assertHtml($expected, $result);
     }
@@ -99,7 +98,7 @@ class LabelWidgetTest extends TestCase
         $expected = [
             'label' => ['id' => 'some-id', 'data-foo' => 'value', 'for' => 'some-id'],
             'My &gt; text',
-            '/label'
+            '/label',
         ];
         $this->assertHtml($expected, $result);
     }
@@ -124,7 +123,7 @@ class LabelWidgetTest extends TestCase
         $expected = [
             'label' => ['custom' => 'value'],
             'Label Text',
-            '/label'
+            '/label',
         ];
         $this->assertHtml($expected, $result);
     }

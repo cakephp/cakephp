@@ -13,7 +13,6 @@
  */
 namespace Cake\Http\Client;
 
-use Cake\Core\Exception\Exception;
 use Psr\Http\Message\RequestInterface;
 use Zend\Diactoros\RequestTrait;
 use Zend\Diactoros\Stream;
@@ -45,7 +44,7 @@ class Request extends Message implements RequestInterface
         $this->uri = $this->createUri($url);
         $headers += [
             'Connection' => 'close',
-            'User-Agent' => 'CakePHP'
+            'User-Agent' => 'CakePHP',
         ];
         $this->addHeaders($headers);
         $this->body($data);

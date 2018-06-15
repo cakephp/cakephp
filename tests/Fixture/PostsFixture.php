@@ -21,7 +21,6 @@ use Cake\TestSuite\Fixture\TestFixture;
  */
 class PostsFixture extends TestFixture
 {
-
     /**
      * fields property
      *
@@ -33,7 +32,7 @@ class PostsFixture extends TestFixture
         'title' => ['type' => 'string', 'null' => false],
         'body' => 'text',
         'published' => ['type' => 'string', 'length' => 1, 'default' => 'N'],
-        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
+        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
     ];
 
     /**
@@ -44,6 +43,6 @@ class PostsFixture extends TestFixture
     public $records = [
         ['author_id' => 1, 'title' => 'First Post', 'body' => 'First Post Body', 'published' => 'Y'],
         ['author_id' => 3, 'title' => 'Second Post', 'body' => 'Second Post Body', 'published' => 'Y'],
-        ['author_id' => 1, 'title' => 'Third Post', 'body' => 'Third Post Body', 'published' => 'Y']
+        ['author_id' => 1, 'title' => 'Third Post', 'body' => 'Third Post Body', 'published' => 'Y'],
     ];
 }

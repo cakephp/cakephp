@@ -95,7 +95,6 @@ use Zend\Diactoros\Uri;
  */
 class Client
 {
-
     use InstanceConfigTrait;
 
     /**
@@ -408,7 +407,7 @@ class Client
                     'host' => $url->getHost(),
                     'port' => $url->getPort(),
                     'scheme' => $url->getScheme(),
-                    'protocolRelative' => true
+                    'protocolRelative' => true,
                 ]);
 
                 $request = $request->withUri(new Uri($locationUrl));
@@ -458,7 +457,7 @@ class Client
             'host' => null,
             'port' => null,
             'scheme' => 'http',
-            'protocolRelative' => false
+            'protocolRelative' => false,
         ];
         $options += $defaults;
 
@@ -471,10 +470,10 @@ class Client
 
         $defaultPorts = [
             'http' => 80,
-            'https' => 443
+            'https' => 443,
         ];
         $out = $options['scheme'] . '://' . $options['host'];
-        if ($options['port'] && $options['port'] != $defaultPorts[$options['scheme']]) {
+        if ($options['port'] && $options['port'] !== $defaultPorts[$options['scheme']]) {
             $out .= ':' . $options['port'];
         }
         $out .= '/' . ltrim($url, '/');
@@ -502,7 +501,7 @@ class Client
         }
 
         $request = new Request($url, $method, $headers, $data);
-        $cookies = isset($options['cookies']) ? $options['cookies'] : [];
+        $cookies = $options['cookies'] ?? [];
         /** @var \Cake\Http\Client\Request $request */
         $request = $this->_cookies->addToRequest($request, $cookies);
         if (isset($options['auth'])) {
@@ -528,7 +527,7 @@ class Client
         if (strpos($type, '/') !== false) {
             return [
                 'Accept' => $type,
-                'Content-Type' => $type
+                'Content-Type' => $type,
             ];
         }
         $typeMap = [

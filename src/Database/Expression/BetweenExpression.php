@@ -23,7 +23,6 @@ use Cake\Database\ValueBinder;
  */
 class BetweenExpression implements ExpressionInterface, FieldInterface
 {
-
     use ExpressionTypeCasterTrait;
     use FieldTrait;
 
@@ -79,7 +78,7 @@ class BetweenExpression implements ExpressionInterface, FieldInterface
     {
         $parts = [
             'from' => $this->_from,
-            'to' => $this->_to
+            'to' => $this->_to,
         ];
 
         $field = $this->_field;

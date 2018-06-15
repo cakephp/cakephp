@@ -20,7 +20,6 @@ use Cake\Http\Exception\NotFoundException;
  */
 class RequestActionController extends AppController
 {
-
     /**
      * The default model to use.
      *

@@ -25,7 +25,6 @@ use PHPUnit\Framework\TestSuite;
  */
 class FixtureInjector extends BaseTestListener
 {
-
     /**
      * The instance of the fixture manager to use
      *

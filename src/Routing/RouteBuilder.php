@@ -31,20 +31,19 @@ use RuntimeException;
  */
 class RouteBuilder
 {
-
     /**
      * Regular expression for auto increment IDs
      *
      * @var string
      */
-    const ID = '[0-9]+';
+    public const ID = '[0-9]+';
 
     /**
      * Regular expression for UUIDs
      *
      * @var string
      */
-    const UUID = '[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}';
+    public const UUID = '[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}';
 
     /**
      * Default HTTP request method => controller action map.
@@ -855,7 +854,7 @@ class RouteBuilder
      * @return void
      * @throws \InvalidArgumentException If a valid callback is not passed
      */
-    public function prefix($name, $params = [], callable $callback = null)
+    public function prefix($name, $params = [], ?callable $callback = null)
     {
         if ($callback === null) {
             if (!is_callable($params)) {

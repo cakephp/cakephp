@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
  */
 class TestBehavior extends Behavior
 {
-
     /**
      * Test for event bindings.
      */
@@ -71,14 +70,13 @@ class TestBehavior extends Behavior
  */
 class Test2Behavior extends Behavior
 {
-
     protected $_defaultConfig = [
         'implementedFinders' => [
             'foo' => 'findFoo',
         ],
         'implementedMethods' => [
             'doSomething' => 'doSomething',
-        ]
+        ],
     ];
 
     /**
@@ -108,7 +106,6 @@ class Test2Behavior extends Behavior
  */
 class Test3Behavior extends Behavior
 {
-
     /**
      * Test for event bindings.
      */
@@ -182,7 +179,6 @@ class Test3Behavior extends Behavior
  */
 class BehaviorTest extends TestCase
 {
-
     /**
      * Test the side effects of the constructor.
      *
@@ -215,12 +211,12 @@ class BehaviorTest extends TestCase
         $behavior = new Test3Behavior($table);
         $expected = [
             'finders' => [
-                'foo' => 'findFoo'
+                'foo' => 'findFoo',
             ],
             'methods' => [
                 'doSomething' => 'doSomething',
-                'testReflectionCache' => 'testReflectionCache'
-            ]
+                'testReflectionCache' => 'testReflectionCache',
+            ],
         ];
         $this->assertEquals($expected, $behavior->testReflectionCache());
     }
@@ -257,27 +253,27 @@ class BehaviorTest extends TestCase
         $expected = [
             'Model.beforeFind' => [
                 'priority' => 10,
-                'callable' => 'beforeFind'
+                'callable' => 'beforeFind',
             ],
             'Model.afterSaveCommit' => [
                 'priority' => 10,
-                'callable' => 'afterSaveCommit'
+                'callable' => 'afterSaveCommit',
             ],
             'Model.beforeRules' => [
                 'priority' => 10,
-                'callable' => 'beforeRules'
+                'callable' => 'beforeRules',
             ],
             'Model.afterRules' => [
                 'priority' => 10,
-                'callable' => 'afterRules'
+                'callable' => 'afterRules',
             ],
             'Model.buildRules' => [
                 'priority' => 10,
-                'callable' => 'buildRules'
+                'callable' => 'buildRules',
             ],
             'Model.afterDeleteCommit' => [
                 'priority' => 10,
-                'callable' => 'afterDeleteCommit'
+                'callable' => 'afterDeleteCommit',
             ],
         ];
         $this->assertEquals($expected, $behavior->implementedEvents());
@@ -293,7 +289,7 @@ class BehaviorTest extends TestCase
         $table = $this->getMockBuilder('Cake\ORM\Table')->getMock();
         $behavior = new Test2Behavior($table);
         $expected = [
-            'doSomething' => 'doSomething'
+            'doSomething' => 'doSomething',
         ];
         $this->assertEquals($expected, $behavior->implementedMethods());
     }
@@ -308,11 +304,11 @@ class BehaviorTest extends TestCase
         $table = $this->getMockBuilder('Cake\ORM\Table')->getMock();
         $behavior = new Test2Behavior($table, [
             'implementedMethods' => [
-                'aliased' => 'doSomething'
-            ]
+                'aliased' => 'doSomething',
+            ],
         ]);
         $expected = [
-            'aliased' => 'doSomething'
+            'aliased' => 'doSomething',
         ];
         $this->assertEquals($expected, $behavior->implementedMethods());
     }
@@ -326,7 +322,7 @@ class BehaviorTest extends TestCase
     {
         $table = $this->getMockBuilder('Cake\ORM\Table')->getMock();
         $behavior = new Test2Behavior($table, [
-            'implementedMethods' => []
+            'implementedMethods' => [],
         ]);
         $expected = [];
         $this->assertEquals($expected, $behavior->implementedMethods());
@@ -357,11 +353,11 @@ class BehaviorTest extends TestCase
         $table = $this->getMockBuilder('Cake\ORM\Table')->getMock();
         $behavior = new Test2Behavior($table, [
             'implementedFinders' => [
-                'aliased' => 'findFoo'
-            ]
+                'aliased' => 'findFoo',
+            ],
         ]);
         $expected = [
-            'aliased' => 'findFoo'
+            'aliased' => 'findFoo',
         ];
         $this->assertEquals($expected, $behavior->implementedFinders());
     }
@@ -375,7 +371,7 @@ class BehaviorTest extends TestCase
     {
         $table = $this->getMockBuilder('Cake\ORM\Table')->getMock();
         $behavior = new Test2Behavior($table, [
-            'implementedFinders' => []
+            'implementedFinders' => [],
         ]);
         $this->assertEquals([], $behavior->implementedFinders());
     }
@@ -407,8 +403,8 @@ class BehaviorTest extends TestCase
         $table = $this->getMockBuilder('Cake\ORM\Table')->getMock();
         $behavior = new Test2Behavior($table, [
             'implementedFinders' => [
-                'aliased' => 'findFoo'
-            ]
+                'aliased' => 'findFoo',
+            ],
         ]);
         $behavior->verifyConfig();
         $this->assertTrue(true, 'No exception thrown');
@@ -427,8 +423,8 @@ class BehaviorTest extends TestCase
         $table = $this->getMockBuilder('Cake\ORM\Table')->getMock();
         $behavior = new Test2Behavior($table, [
             'implementedFinders' => [
-                'aliased' => 'findNotDefined'
-            ]
+                'aliased' => 'findNotDefined',
+            ],
         ]);
         $behavior->verifyConfig();
     }
@@ -446,8 +442,8 @@ class BehaviorTest extends TestCase
         $behavior = new Test2Behavior($table);
         $behavior = new Test2Behavior($table, [
             'implementedMethods' => [
-                'aliased' => 'doSomething'
-            ]
+                'aliased' => 'doSomething',
+            ],
         ]);
         $behavior->verifyConfig();
         $this->assertTrue(true, 'No exception thrown');
@@ -466,8 +462,8 @@ class BehaviorTest extends TestCase
         $table = $this->getMockBuilder('Cake\ORM\Table')->getMock();
         $behavior = new Test2Behavior($table, [
             'implementedMethods' => [
-                'aliased' => 'iDoNotExist'
-            ]
+                'aliased' => 'iDoNotExist',
+            ],
         ]);
         $behavior->verifyConfig();
     }

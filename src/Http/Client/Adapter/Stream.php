@@ -26,7 +26,6 @@ use Cake\Http\Exception\HttpException;
  */
 class Stream
 {
-
     /**
      * Context resource used by the stream API.
      *
@@ -104,7 +103,7 @@ class Stream
         foreach ($indexes as $i => $start) {
             $end = isset($indexes[$i + 1]) ? $indexes[$i + 1] - $start : null;
             $headerSlice = array_slice($headers, $start, $end);
-            $body = $i == $last ? $content : '';
+            $body = $i === $last ? $content : '';
             $responses[] = $this->_buildResponse($headerSlice, $body);
         }
 

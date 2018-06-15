@@ -103,7 +103,6 @@ use InvalidArgumentException;
  */
 class Log
 {
-
     use StaticConfigTrait {
         setConfig as protected _setConfig;
     }
@@ -146,7 +145,7 @@ class Log
         'warning',
         'notice',
         'info',
-        'debug'
+        'debug',
     ];
 
     /**

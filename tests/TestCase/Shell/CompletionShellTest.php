@@ -24,7 +24,6 @@ use Cake\TestSuite\TestCase;
  */
 class TestCompletionStringOutput extends ConsoleOutput
 {
-
     public $output = '';
 
     protected function _write($message)
@@ -38,7 +37,6 @@ class TestCompletionStringOutput extends ConsoleOutput
  */
 class CompletionShellTest extends TestCase
 {
-
     /**
      * setUp method
      *

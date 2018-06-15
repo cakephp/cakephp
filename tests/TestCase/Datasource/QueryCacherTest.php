@@ -23,7 +23,6 @@ use Cake\TestSuite\TestCase;
  */
 class QueryCacherTest extends TestCase
 {
-
     /**
      * Setup method
      *

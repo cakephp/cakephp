@@ -38,7 +38,6 @@ use RuntimeException;
  */
 trait ValidatorAwareTrait
 {
-
     /**
      * Validator class.
      *

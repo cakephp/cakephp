@@ -23,7 +23,6 @@ use Countable;
  */
 class ValidCount
 {
-
     /**
      * The field to check
      *

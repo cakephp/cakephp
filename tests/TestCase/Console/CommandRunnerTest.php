@@ -440,7 +440,7 @@ class CommandRunnerTest extends TestCase
         $app = $this->getMockBuilder(BaseApplication::class)
             ->setMethods([
                 'middleware', 'bootstrap', 'routes',
-                'pluginBootstrap', 'pluginConsole', 'pluginRoutes'
+                'pluginBootstrap', 'pluginConsole', 'pluginRoutes',
             ])
             ->setConstructorArgs([$this->config])
             ->getMock();

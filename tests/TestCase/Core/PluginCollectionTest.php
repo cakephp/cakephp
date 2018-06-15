@@ -99,7 +99,7 @@ class PluginCollectionTest extends TestCase
     {
         $data = [
             new TestPlugin(),
-            new TestPluginThree()
+            new TestPluginThree(),
         ];
         $plugins = new PluginCollection($data);
         $out = [];

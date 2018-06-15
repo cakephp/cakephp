@@ -15,14 +15,12 @@
 namespace Cake\Database\Schema;
 
 use Cake\Database\Exception;
-use Cake\Database\Schema\TableSchema;
 
 /**
  * Schema management/reflection features for Postgres.
  */
 class PostgresSchema extends BaseSchema
 {
-
     /**
      * {@inheritDoc}
      */
@@ -166,7 +164,7 @@ class PostgresSchema extends BaseSchema
             'default' => $this->_defaultValue($row['default']),
             'null' => $row['null'] === 'YES',
             'collate' => $row['collation_name'],
-            'comment' => $row['comment']
+            'comment' => $row['comment'],
         ];
         $field['length'] = $row['char_length'] ?: $field['length'];
 
@@ -258,7 +256,7 @@ class PostgresSchema extends BaseSchema
         if (!$index) {
             $index = [
                 'type' => $type,
-                'columns' => []
+                'columns' => [],
             ];
         }
         $index['columns'][] = $row['attname'];
@@ -280,7 +278,7 @@ class PostgresSchema extends BaseSchema
         if (!$constraint) {
             $constraint = [
                 'type' => $type,
-                'columns' => []
+                'columns' => [],
             ];
         }
         $constraint['columns'][] = $row['attname'];
@@ -368,7 +366,7 @@ class PostgresSchema extends BaseSchema
             TableSchema::TYPE_DATETIME => ' TIMESTAMP',
             TableSchema::TYPE_TIMESTAMP => ' TIMESTAMP',
             TableSchema::TYPE_UUID => ' UUID',
-            TableSchema::TYPE_JSON => ' JSONB'
+            TableSchema::TYPE_JSON => ' JSONB',
         ];
 
         if (isset($typeMap[$data['type']])) {
@@ -377,7 +375,7 @@ class PostgresSchema extends BaseSchema
 
         if ($data['type'] === TableSchema::TYPE_INTEGER || $data['type'] === TableSchema::TYPE_BIGINTEGER) {
             $type = $data['type'] === TableSchema::TYPE_INTEGER ? ' INTEGER' : ' BIGINT';
-            if ([$name] === $schema->primaryKey() || $data['autoIncrement'] === true) {
+            if ($schema->primaryKey() === [$name] || $data['autoIncrement'] === true) {
                 $type = $data['type'] === TableSchema::TYPE_INTEGER ? ' SERIAL' : ' BIGSERIAL';
                 unset($data['null'], $data['default']);
             }
@@ -397,7 +395,7 @@ class PostgresSchema extends BaseSchema
                 $type = ' CHAR';
             }
             $out .= $type;
-            if (isset($data['length']) && $data['length'] != 36) {
+            if (isset($data['length']) && $data['length'] !== 36) {
                 $out .= '(' . (int)$data['length'] . ')';
             }
         }
@@ -578,7 +576,7 @@ class PostgresSchema extends BaseSchema
         $name = $this->_driver->quoteIdentifier($schema->name());
 
         return [
-            sprintf('TRUNCATE %s RESTART IDENTITY CASCADE', $name)
+            sprintf('TRUNCATE %s RESTART IDENTITY CASCADE', $name),
         ];
     }
 

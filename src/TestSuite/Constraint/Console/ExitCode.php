@@ -22,7 +22,6 @@ use PHPUnit\Framework\Constraint\Constraint;
  */
 class ExitCode extends Constraint
 {
-
     /**
      * @var int
      */

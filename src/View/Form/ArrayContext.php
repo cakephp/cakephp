@@ -16,7 +16,6 @@ namespace Cake\View\Form;
 
 use Cake\Http\ServerRequest;
 use Cake\Utility\Hash;
-use Cake\Validation\Validator;
 
 /**
  * Provides a basic array based context provider for FormHelper.
@@ -66,7 +65,6 @@ use Cake\Validation\Validator;
  */
 class ArrayContext implements ContextInterface
 {
-
     /**
      * The request object.
      *
@@ -170,7 +168,7 @@ class ArrayContext implements ContextInterface
     {
         $options += [
             'default' => null,
-            'schemaDefault' => true
+            'schemaDefault' => true,
         ];
 
         $val = $this->_request->getData($field);
@@ -258,7 +256,7 @@ class ArrayContext implements ContextInterface
             $schema = Hash::get($this->_context['schema'], $this->stripNesting($field));
         }
 
-        return isset($schema['type']) ? $schema['type'] : null;
+        return $schema['type'] ?? null;
     }
 
     /**

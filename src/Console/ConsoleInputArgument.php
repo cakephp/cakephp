@@ -25,7 +25,6 @@ use SimpleXMLElement;
  */
 class ConsoleInputArgument
 {
-
     /**
      * Name of the argument.
      *

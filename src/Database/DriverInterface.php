@@ -14,8 +14,6 @@
  */
 namespace Cake\Database;
 
-use Cake\Database\Query;
-
 /**
  * Interface for database driver.
  */

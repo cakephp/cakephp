@@ -20,7 +20,6 @@ namespace Cake\Datasource;
  */
 interface InvalidPropertyInterface
 {
-
     /**
      * Get a list of invalid fields and their data for errors upon validation/patching
      *

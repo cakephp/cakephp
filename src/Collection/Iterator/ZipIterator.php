@@ -45,7 +45,6 @@ use Serializable;
  */
 class ZipIterator extends MultipleIterator implements CollectionInterface, Serializable
 {
-
     use CollectionTrait;
 
     /**

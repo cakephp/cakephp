@@ -21,7 +21,6 @@ use Cake\TestSuite\TestCase;
  */
 class CookieTest extends TestCase
 {
-
     /**
      * Generate invalid cookie names.
      *
@@ -444,7 +443,7 @@ class CookieTest extends TestCase
     {
         $data = [
             'type' => 'mvc',
-            'user' => ['name' => 'mark']
+            'user' => ['name' => 'mark'],
         ];
         $cookie = new Cookie('cakephp', $data);
         $this->assertTrue($cookie->check('type'));
@@ -463,8 +462,8 @@ class CookieTest extends TestCase
         $data = [
             'username' => 'florian',
             'profile' => [
-                'profession' => 'developer'
-            ]
+                'profession' => 'developer',
+            ],
         ];
         $cookie = new Cookie('cakephp', json_encode($data));
         $this->assertFalse($cookie->isExpanded());
@@ -491,8 +490,8 @@ class CookieTest extends TestCase
         $data = [
             'username' => 'florian',
             'profile' => [
-                'profession' => 'developer'
-            ]
+                'profession' => 'developer',
+            ],
         ];
         $cookie = new Cookie('cakephp', $data);
 
@@ -532,8 +531,8 @@ class CookieTest extends TestCase
         $data = [
             'username' => 'florian',
             'profile' => [
-                'profession' => 'developer'
-            ]
+                'profession' => 'developer',
+            ],
         ];
         $cookie = new Cookie('cakephp', $data);
         $this->assertEquals('developer', $cookie->read('profile.profession'));

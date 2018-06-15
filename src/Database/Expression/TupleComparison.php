@@ -23,7 +23,6 @@ use Cake\Database\ValueBinder;
  */
 class TupleComparison extends Comparison
 {
-
     /**
      * Constructor
      *
@@ -105,7 +104,7 @@ class TupleComparison extends Comparison
                 continue;
             }
 
-            $valType = $multiType && isset($type[$i]) ? $type[$i] : $type;
+            $valType = $multiType && $type[$i] ?? $type;
             $values[] = $this->_bindValue($generator, $value, $valType);
         }
 

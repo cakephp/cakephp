@@ -3,8 +3,8 @@ namespace ParentPlugin;
 
 use Cake\Core\BasePlugin;
 use Cake\Core\Configure;
-use Cake\Core\PluginApplicationInterface;
 use Cake\Core\Plugin as CorePlugin;
+use Cake\Core\PluginApplicationInterface;
 
 class Plugin extends BasePlugin
 {

@@ -22,7 +22,6 @@ use ReflectionClass;
  */
 class RulesProvider
 {
-
     /**
      * The class/object to proxy.
      *

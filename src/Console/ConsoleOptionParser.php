@@ -72,7 +72,6 @@ use LogicException;
  */
 class ConsoleOptionParser
 {
-
     /**
      * Description text - displays before options when help is generated
      *
@@ -163,18 +162,18 @@ class ConsoleOptionParser
         $this->addOption('help', [
             'short' => 'h',
             'help' => 'Display this help.',
-            'boolean' => true
+            'boolean' => true,
         ]);
 
         if ($defaultOptions) {
             $this->addOption('verbose', [
                 'short' => 'v',
                 'help' => 'Enable verbose output.',
-                'boolean' => true
+                'boolean' => true,
             ])->addOption('quiet', [
                 'short' => 'q',
                 'help' => 'Enable quiet output.',
-                'boolean' => true
+                'boolean' => true,
             ]);
         }
     }
@@ -249,7 +248,7 @@ class ConsoleOptionParser
             'options' => $this->_options,
             'subcommands' => $this->_subcommands,
             'description' => $this->_description,
-            'epilog' => $this->_epilog
+            'epilog' => $this->_epilog,
         ];
 
         return $result;
@@ -422,7 +421,7 @@ class ConsoleOptionParser
                 'help' => '',
                 'default' => null,
                 'boolean' => false,
-                'choices' => []
+                'choices' => [],
             ];
             $options += $defaults;
             $option = new ConsoleInputOption($options);
@@ -479,7 +478,7 @@ class ConsoleOptionParser
                 'help' => '',
                 'index' => count($this->_args),
                 'required' => false,
-                'choices' => []
+                'choices' => [],
             ];
             $options = $params + $defaults;
             $index = $options['index'];
@@ -567,7 +566,7 @@ class ConsoleOptionParser
             $defaults = [
                 'name' => $name,
                 'help' => '',
-                'parser' => null
+                'parser' => null,
             ];
             $options += $defaults;
 
@@ -791,7 +790,7 @@ class ConsoleOptionParser
                 $this->rootName,
                 $rootCommand
             ),
-            ''
+            '',
         ];
 
         if ($bestGuess !== null) {
@@ -820,7 +819,7 @@ class ConsoleOptionParser
         $bestGuess = $this->findClosestItem($option, $availableOptions);
         $out = [
             sprintf('Unknown option `%s`.', $option),
-            ''
+            '',
         ];
 
         if ($bestGuess !== null) {
@@ -1029,6 +1028,6 @@ class ConsoleOptionParser
      */
     protected function _nextToken()
     {
-        return isset($this->_tokens[0]) ? $this->_tokens[0] : '';
+        return $this->_tokens[0] ?? '';
     }
 }

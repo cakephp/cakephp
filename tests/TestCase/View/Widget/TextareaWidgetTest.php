@@ -23,7 +23,6 @@ use Cake\View\Widget\TextareaWidget;
  */
 class TextareaWidgetTest extends TestCase
 {
-
     /**
      * setup
      *
@@ -97,7 +96,7 @@ class TextareaWidgetTest extends TestCase
         $data = [
             'templateVars' => ['custom' => 'value'],
             'name' => 'comment',
-            'val' => 'body'
+            'val' => 'body',
         ];
         $result = $input->render($data, $this->context);
         $expected = [

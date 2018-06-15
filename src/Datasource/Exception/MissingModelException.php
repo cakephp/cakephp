@@ -21,6 +21,5 @@ use Cake\Core\Exception\Exception;
  */
 class MissingModelException extends Exception
 {
-
     protected $_messageTemplate = 'Model class "%s" of type "%s" could not be found.';
 }

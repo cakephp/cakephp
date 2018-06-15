@@ -23,7 +23,6 @@ use Cake\TestSuite\TestCase;
  */
 class RedisEngineTest extends TestCase
 {
-
     /**
      * setUp method
      *
@@ -68,7 +67,7 @@ class RedisEngineTest extends TestCase
         $defaults = [
             'className' => 'Redis',
             'prefix' => 'cake_',
-            'duration' => 3600
+            'duration' => 3600,
         ];
         Cache::drop('redis');
         Cache::setConfig('redis', array_merge($defaults, $config));
@@ -107,7 +106,7 @@ class RedisEngineTest extends TestCase
     public function testConfigDsn()
     {
         Cache::setConfig('redis_dsn', [
-            'url' => 'redis://localhost:6379?database=1&prefix=redis_'
+            'url' => 'redis://localhost:6379?database=1&prefix=redis_',
         ]);
 
         $config = Cache::engine('redis_dsn')->getConfig();
@@ -390,7 +389,7 @@ class RedisEngineTest extends TestCase
         Cache::setConfig('redis2', [
             'engine' => 'Redis',
             'prefix' => 'cake2_',
-            'duration' => 3600
+            'duration' => 3600,
         ]);
 
         Cache::write('some_value', 'cache1', 'redis');
@@ -435,12 +434,12 @@ class RedisEngineTest extends TestCase
             'engine' => 'Redis',
             'duration' => 3600,
             'groups' => ['group_a', 'group_b'],
-            'prefix' => 'test_'
+            'prefix' => 'test_',
         ]);
         Cache::setConfig('redis_helper', [
             'engine' => 'Redis',
             'duration' => 3600,
-            'prefix' => 'test_'
+            'prefix' => 'test_',
         ]);
         $this->assertTrue(Cache::write('test_groups', 'value', 'redis_groups'));
         $this->assertEquals('value', Cache::read('test_groups', 'redis_groups'));
@@ -466,7 +465,7 @@ class RedisEngineTest extends TestCase
         Cache::setConfig('redis_groups', [
             'engine' => 'Redis',
             'duration' => 3600,
-            'groups' => ['group_a', 'group_b']
+            'groups' => ['group_a', 'group_b'],
         ]);
         $this->assertTrue(Cache::write('test_groups', 'value', 'redis_groups'));
         $this->assertEquals('value', Cache::read('test_groups', 'redis_groups'));
@@ -485,7 +484,7 @@ class RedisEngineTest extends TestCase
         Cache::setConfig('redis_groups', [
             'engine' => 'Redis',
             'duration' => 3600,
-            'groups' => ['group_a', 'group_b']
+            'groups' => ['group_a', 'group_b'],
         ]);
 
         $this->assertTrue(Cache::write('test_groups', 'value', 'redis_groups'));

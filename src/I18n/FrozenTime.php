@@ -102,7 +102,7 @@ class FrozenTime extends Chronos implements JsonSerializable
      *
      * @var string
      */
-    const UNIX_TIMESTAMP_FORMAT = 'unixTimestampFormat';
+    public const UNIX_TIMESTAMP_FORMAT = 'unixTimestampFormat';
 
     /**
      * {@inheritDoc}

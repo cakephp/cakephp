@@ -23,7 +23,6 @@ use RuntimeException;
  */
 class SelectWithPivotLoader extends SelectLoader
 {
-
     /**
      * The name of the junction association
      *

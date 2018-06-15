@@ -25,7 +25,6 @@ use Cake\View\View;
  */
 class TextHelperTestObject extends TextHelper
 {
-
     public function attach(StringMock $string)
     {
         $this->_engine = $string;
@@ -49,7 +48,6 @@ class StringMock
  */
 class TextHelperTest extends TestCase
 {
-
     /**
      * @var \Cake\View\Helper\TextHelper
      */
@@ -90,7 +88,7 @@ class TextHelperTest extends TestCase
     public function testTextHelperProxyMethodCalls()
     {
         $methods = [
-            'stripLinks', 'excerpt', 'toList'
+            'stripLinks', 'excerpt', 'toList',
         ];
         $String = $this->getMockBuilder(__NAMESPACE__ . '\StringMock')
             ->setMethods($methods)
@@ -103,7 +101,7 @@ class TextHelperTest extends TestCase
         }
 
         $methods = [
-            'highlight', 'truncate'
+            'highlight', 'truncate',
         ];
         $String = $this->getMockBuilder(__NAMESPACE__ . '\StringMock')
             ->setMethods($methods)
@@ -116,7 +114,7 @@ class TextHelperTest extends TestCase
         }
 
         $methods = [
-            'tail'
+            'tail',
         ];
         $String = $this->getMockBuilder(__NAMESPACE__ . '\StringMock')
             ->setMethods($methods)
@@ -343,48 +341,48 @@ class TextHelperTest extends TestCase
             ],
             [
                 'Text with a partial www.küchenschöhn-not-working.de URL',
-                'Text with a partial <a href="http://www.küchenschöhn-not-working.de">www.küchenschöhn-not-working.de</a> URL'
+                'Text with a partial <a href="http://www.küchenschöhn-not-working.de">www.küchenschöhn-not-working.de</a> URL',
             ],
             [
                 'Text with a partial http://www.küchenschöhn-not-working.de URL',
-                'Text with a partial <a href="http://www.küchenschöhn-not-working.de">http://www.küchenschöhn-not-working.de</a> URL'
+                'Text with a partial <a href="http://www.küchenschöhn-not-working.de">http://www.küchenschöhn-not-working.de</a> URL',
             ],
             [
                 "Text with partial www.cakephp.org\r\nwww.cakephp.org urls and CRLF",
-                "Text with partial <a href=\"http://www.cakephp.org\">www.cakephp.org</a>\r\n<a href=\"http://www.cakephp.org\">www.cakephp.org</a> urls and CRLF"
+                "Text with partial <a href=\"http://www.cakephp.org\">www.cakephp.org</a>\r\n<a href=\"http://www.cakephp.org\">www.cakephp.org</a> urls and CRLF",
             ],
             [
                 'https://nl.wikipedia.org/wiki/Exploit_(computerbeveiliging)',
-                '<a href="https://nl.wikipedia.org/wiki/Exploit_(computerbeveiliging)">https://nl.wikipedia.org/wiki/Exploit_(computerbeveiliging)</a>'
+                '<a href="https://nl.wikipedia.org/wiki/Exploit_(computerbeveiliging)">https://nl.wikipedia.org/wiki/Exploit_(computerbeveiliging)</a>',
             ],
             [
                 'http://dev.local/threads/search?search_string=this+is+a+test',
-                '<a href="http://dev.local/threads/search?search_string=this+is+a+test">http://dev.local/threads/search?search_string=this+is+a+test</a>'
+                '<a href="http://dev.local/threads/search?search_string=this+is+a+test">http://dev.local/threads/search?search_string=this+is+a+test</a>',
             ],
             [
                 'http://www.ad.nl/show/giel-beelen-heeft-weinig-moeite-met-rijontzegging~acd8b6ed',
-                '<a href="http://www.ad.nl/show/giel-beelen-heeft-weinig-moeite-met-rijontzegging~acd8b6ed">http://www.ad.nl/show/giel-beelen-heeft-weinig-moeite-met-rijontzegging~acd8b6ed</a>'
+                '<a href="http://www.ad.nl/show/giel-beelen-heeft-weinig-moeite-met-rijontzegging~acd8b6ed">http://www.ad.nl/show/giel-beelen-heeft-weinig-moeite-met-rijontzegging~acd8b6ed</a>',
             ],
             [
                 'https://sevvlor.com/page%20not%20found',
-                '<a href="https://sevvlor.com/page%20not%20found">https://sevvlor.com/page%20not%20found</a>'
+                '<a href="https://sevvlor.com/page%20not%20found">https://sevvlor.com/page%20not%20found</a>',
             ],
             [
                 'https://fakedomain.ext/path/#!topic/test',
-                '<a href="https://fakedomain.ext/path/#!topic/test">https://fakedomain.ext/path/#!topic/test</a>'
+                '<a href="https://fakedomain.ext/path/#!topic/test">https://fakedomain.ext/path/#!topic/test</a>',
             ],
             [
                 'https://fakedomain.ext/path/#!topic/test;other;tag',
-                '<a href="https://fakedomain.ext/path/#!topic/test;other;tag">https://fakedomain.ext/path/#!topic/test;other;tag</a>'
+                '<a href="https://fakedomain.ext/path/#!topic/test;other;tag">https://fakedomain.ext/path/#!topic/test;other;tag</a>',
             ],
             [
                 'This is text,https://fakedomain.ext/path/#!topic/test,tag, with a comma',
-                'This is text,<a href="https://fakedomain.ext/path/#!topic/test,tag">https://fakedomain.ext/path/#!topic/test,tag</a>, with a comma'
+                'This is text,<a href="https://fakedomain.ext/path/#!topic/test,tag">https://fakedomain.ext/path/#!topic/test,tag</a>, with a comma',
             ],
             [
                 'This is text https://fakedomain.ext/path/#!topic/path!',
-                'This is text <a href="https://fakedomain.ext/path/#!topic/path">https://fakedomain.ext/path/#!topic/path</a>!'
-            ]
+                'This is text <a href="https://fakedomain.ext/path/#!topic/path">https://fakedomain.ext/path/#!topic/path</a>!',
+            ],
         ];
     }
 
@@ -541,13 +539,13 @@ class TextHelperTest extends TestCase
             [
                 '<p>mark@example.com</p>',
                 '<p><a href="mailto:mark@example.com">mark@example.com</a></p>',
-                ['escape' => false]
+                ['escape' => false],
             ],
 
             [
                 'Some&nbsp;mark@example.com&nbsp;Text',
                 'Some&nbsp;<a href="mailto:mark@example.com">mark@example.com</a>&nbsp;Text',
-                ['escape' => false]
+                ['escape' => false],
             ],
         ];
     }

@@ -22,7 +22,6 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
-use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use TestPlugin\Plugin as TestPlugin;
@@ -66,7 +65,7 @@ class BaseApplicationTest extends TestCase
             'controller' => 'Cakes',
             'action' => 'index',
             'plugin' => null,
-            'pass' => []
+            'pass' => [],
         ]);
 
         $app = $this->getMockForAbstractClass('Cake\Http\BaseApplication', [$this->path]);
@@ -143,7 +142,7 @@ class BaseApplicationTest extends TestCase
             'plugin' => 'TestPlugin',
             'controller' => 'TestPlugin',
             'action' => 'index',
-            '_method' => 'GET'
+            '_method' => 'GET',
         ];
         $this->assertNotEmpty($collection->match($url, []));
     }

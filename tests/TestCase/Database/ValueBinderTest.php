@@ -38,18 +38,18 @@ class ValueBinderTest extends TestCase
             ':c0' => [
                 'value' => 'value0',
                 'type' => 'string',
-                'placeholder' => 'c0'
+                'placeholder' => 'c0',
             ],
             ':c1' => [
                 'value' => 1,
                 'type' => 'int',
-                'placeholder' => 'c1'
+                'placeholder' => 'c1',
             ],
             ':c2' => [
                 'value' => 'value2',
                 'type' => 'string',
-                'placeholder' => 'c2'
-            ]
+                'placeholder' => 'c2',
+            ],
         ];
 
         $bindings = $valueBinder->bindings();
@@ -83,12 +83,12 @@ class ValueBinderTest extends TestCase
         $valueBinder = new ValueBinder();
         $values = [
             'value0',
-            'value1'
+            'value1',
         ];
 
         $expected = [
             ':c0',
-            ':c1'
+            ':c1',
         ];
         $placeholders = $valueBinder->generateManyNamed($values);
         $this->assertEquals($expected, $placeholders);

@@ -26,7 +26,6 @@ use Exception;
 
 class ExceptionsTest extends TestCase
 {
-
     /**
      * Tests simple exceptions work.
      *

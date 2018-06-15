@@ -23,7 +23,6 @@ use Cake\Console\Shell;
  */
 class CompletionShell extends Shell
 {
-
     /**
      * Contains tasks to load and instantiate
      *
@@ -123,7 +122,7 @@ class CompletionShell extends Shell
             'help' => 'Output a list of available commands',
             'parser' => [
                 'description' => 'List all available',
-            ]
+            ],
         ])->addSubcommand('subcommands', [
             'help' => 'Output a list of available subcommands',
             'parser' => [
@@ -132,9 +131,9 @@ class CompletionShell extends Shell
                     'command' => [
                         'help' => 'The command name',
                         'required' => false,
-                    ]
-                ]
-            ]
+                    ],
+                ],
+            ],
         ])->addSubcommand('options', [
             'help' => 'Output a list of available options',
             'parser' => [
@@ -147,11 +146,11 @@ class CompletionShell extends Shell
                     'subcommand' => [
                         'help' => 'The subcommand name',
                         'required' => false,
-                    ]
-                ]
-            ]
+                    ],
+                ],
+            ],
         ])->addSubcommand('fuzzy', [
-            'help' => 'Guess autocomplete'
+            'help' => 'Guess autocomplete',
         ])->setEpilog([
             'This command is not intended to be called manually',
         ]);

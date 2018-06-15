@@ -21,7 +21,6 @@ namespace Cake\Database\Statement;
  */
 class SqliteStatement extends StatementDecorator
 {
-
     use BufferResultsTrait;
 
     /**

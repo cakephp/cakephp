@@ -24,7 +24,6 @@ use Cake\Core\ObjectRegistry;
  */
 class HelperRegistry extends ObjectRegistry
 {
-
     /**
      * Shell to use to set params to tasks.
      *
@@ -79,7 +78,7 @@ class HelperRegistry extends ObjectRegistry
     {
         throw new MissingHelperException([
             'class' => $class,
-            'plugin' => $plugin
+            'plugin' => $plugin,
         ]);
     }
 

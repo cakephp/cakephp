@@ -62,7 +62,7 @@ class PagesController extends AppController
         $this->set([
             'page' => $page,
             'subpage' => $subpage,
-            'title_for_layout' => $titleForLayout
+            'title_for_layout' => $titleForLayout,
         ]);
 
         try {

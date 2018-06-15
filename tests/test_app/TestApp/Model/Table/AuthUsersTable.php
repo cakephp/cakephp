@@ -21,7 +21,6 @@ use Cake\ORM\Table;
  */
 class AuthUsersTable extends Table
 {
-
     /**
      * Custom finder
      *

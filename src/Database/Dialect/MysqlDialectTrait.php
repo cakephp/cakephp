@@ -25,7 +25,6 @@ use Cake\Database\SqlDialectTrait;
  */
 trait MysqlDialectTrait
 {
-
     use SqlDialectTrait;
 
     /**

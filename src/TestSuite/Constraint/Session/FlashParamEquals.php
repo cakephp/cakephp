@@ -23,7 +23,6 @@ use PHPUnit\Framework\Constraint\Constraint;
  */
 class FlashParamEquals extends Constraint
 {
-
     /**
      * @var \Cake\Http\Session
      */

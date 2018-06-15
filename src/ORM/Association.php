@@ -34,7 +34,6 @@ use RuntimeException;
  */
 abstract class Association
 {
-
     use ConventionsTrait;
     use LocatorAwareTrait;
 
@@ -43,49 +42,49 @@ abstract class Association
      *
      * @var string
      */
-    const STRATEGY_JOIN = 'join';
+    public const STRATEGY_JOIN = 'join';
 
     /**
      * Strategy name to use a subquery for fetching associated records
      *
      * @var string
      */
-    const STRATEGY_SUBQUERY = 'subquery';
+    public const STRATEGY_SUBQUERY = 'subquery';
 
     /**
      * Strategy name to use a select for fetching associated records
      *
      * @var string
      */
-    const STRATEGY_SELECT = 'select';
+    public const STRATEGY_SELECT = 'select';
 
     /**
      * Association type for one to one associations.
      *
      * @var string
      */
-    const ONE_TO_ONE = 'oneToOne';
+    public const ONE_TO_ONE = 'oneToOne';
 
     /**
      * Association type for one to many associations.
      *
      * @var string
      */
-    const ONE_TO_MANY = 'oneToMany';
+    public const ONE_TO_MANY = 'oneToMany';
 
     /**
      * Association type for many to many associations.
      *
      * @var string
      */
-    const MANY_TO_MANY = 'manyToMany';
+    public const MANY_TO_MANY = 'manyToMany';
 
     /**
      * Association type for many to one associations.
      *
      * @var string
      */
-    const MANY_TO_ONE = 'manyToOne';
+    public const MANY_TO_ONE = 'manyToOne';
 
     /**
      * Name given to the association, it usually represents the alias
@@ -192,7 +191,7 @@ abstract class Association
     protected $_validStrategies = [
         self::STRATEGY_JOIN,
         self::STRATEGY_SELECT,
-        self::STRATEGY_SUBQUERY
+        self::STRATEGY_SUBQUERY,
     ];
 
     /**
@@ -216,7 +215,7 @@ abstract class Association
             'tableLocator',
             'propertyName',
             'sourceTable',
-            'targetTable'
+            'targetTable',
         ];
         foreach ($defaults as $property) {
             if (isset($options[$property])) {
@@ -505,9 +504,9 @@ abstract class Association
      */
     public function canBeJoined(array $options = [])
     {
-        $strategy = isset($options['strategy']) ? $options['strategy'] : $this->getStrategy();
+        $strategy = $options['strategy'] ?? $this->getStrategy();
 
-        return $strategy == $this::STRATEGY_JOIN;
+        return $strategy === $this::STRATEGY_JOIN;
     }
 
     /**
@@ -691,7 +690,7 @@ abstract class Association
             'fields' => [],
             'type' => $joinType,
             'table' => $table,
-            'finder' => $this->getFinder()
+            'finder' => $this->getFinder(),
         ];
 
         if (!empty($options['foreignKey'])) {
@@ -885,7 +884,7 @@ abstract class Association
      */
     public function requiresKeys(array $options = [])
     {
-        $strategy = isset($options['strategy']) ? $options['strategy'] : $this->getStrategy();
+        $strategy = $options['strategy'] ?? $this->getStrategy();
 
         return $strategy === static::STRATEGY_SELECT;
     }

@@ -30,7 +30,6 @@ use Exception;
  */
 class FlashComponent extends Component
 {
-
     /**
      * The Session object instance
      *
@@ -48,7 +47,7 @@ class FlashComponent extends Component
         'element' => 'default',
         'params' => [],
         'clear' => false,
-        'duplicate' => true
+        'duplicate' => true,
     ];
 
     /**
@@ -124,7 +123,7 @@ class FlashComponent extends Component
             'message' => $message,
             'key' => $options['key'],
             'element' => $options['element'],
-            'params' => $options['params']
+            'params' => $options['params'],
         ];
 
         $this->_session->write('Flash.' . $options['key'], $messages);

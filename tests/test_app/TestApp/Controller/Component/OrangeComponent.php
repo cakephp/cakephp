@@ -14,7 +14,6 @@
 namespace TestApp\Controller\Component;
 
 use Cake\Controller\Component;
-use Cake\Controller\Controller;
 use Cake\Event\EventInterface;
 
 /**
@@ -24,7 +23,6 @@ use Cake\Event\EventInterface;
  */
 class OrangeComponent extends Component
 {
-
     /**
      * components property
      *

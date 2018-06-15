@@ -14,14 +14,12 @@
 namespace TestApp\Controller;
 
 use Cake\Controller\Controller;
-use Cake\Http\Response;
 
 /**
  * SomePagesController class
  */
 class SomePagesController extends Controller
 {
-
     /**
      * display method
      *

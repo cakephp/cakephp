@@ -57,7 +57,6 @@ use Cake\Utility\Xml;
  */
 class XmlView extends SerializedView
 {
-
     /**
      * XML layouts are located in the xml sub directory of `Layouts/`
      *
@@ -98,7 +97,7 @@ class XmlView extends SerializedView
      */
     protected function _serialize($serialize)
     {
-        $rootNode = isset($this->viewVars['_rootNode']) ? $this->viewVars['_rootNode'] : 'response';
+        $rootNode = $this->viewVars['_rootNode'] ?? 'response';
 
         if ($serialize === true) {
             $serialize = array_diff(
@@ -124,7 +123,7 @@ class XmlView extends SerializedView
                 }
             }
         } else {
-            $data = isset($this->viewVars[$serialize]) ? $this->viewVars[$serialize] : null;
+            $data = $this->viewVars[$serialize] ?? null;
             if (is_array($data) && Hash::numeric(array_keys($data))) {
                 $data = [$rootNode => [$serialize => $data]];
             }

@@ -45,7 +45,6 @@ class ControllerTestAppController extends Controller
  */
 class TestController extends ControllerTestAppController
 {
-
     /**
      * Theme property
      *
@@ -81,7 +80,7 @@ class TestController extends ControllerTestAppController
     {
         $this->request = $this->request->withParsedBody([
             'testId' => $testId,
-            'test2Id' => $testTwoId
+            'test2Id' => $testTwoId,
         ]);
     }
 
@@ -96,7 +95,7 @@ class TestController extends ControllerTestAppController
     {
         $this->request = $this->request->withParsedBody([
             'testId' => $testId,
-            'test2Id' => $testTwoId
+            'test2Id' => $testTwoId,
         ]);
     }
 
@@ -129,7 +128,6 @@ class TestController extends ControllerTestAppController
  */
 class TestComponent extends Component
 {
-
     /**
      * beforeRedirect method
      *
@@ -196,7 +194,6 @@ class AnotherTestController extends ControllerTestAppController
  */
 class ControllerTest extends TestCase
 {
-
     /**
      * fixtures property
      *
@@ -204,7 +201,7 @@ class ControllerTest extends TestCase
      */
     public $fixtures = [
         'core.comments',
-        'core.posts'
+        'core.posts',
     ];
 
     /**
@@ -360,8 +357,8 @@ class ControllerTest extends TestCase
         $request = new ServerRequest([
             'url' => 'controller_posts/index',
             'params' => [
-                'action' => 'header'
-            ]
+                'action' => 'header',
+            ],
         ]);
 
         $Controller = new Controller($request, new Response());
@@ -388,8 +385,8 @@ class ControllerTest extends TestCase
         $request = new ServerRequest([
             'url' => 'controller_posts/index',
             'params' => [
-                'action' => 'header'
-            ]
+                'action' => 'header',
+            ],
         ]);
 
         $controller = new Controller($request, new Response());
@@ -417,7 +414,7 @@ class ControllerTest extends TestCase
 
         $Controller->set([
             'test' => 'value',
-            '_serialize' => ['test']
+            '_serialize' => ['test'],
         ]);
         $debug = Configure::read('debug');
         Configure::write('debug', false);
@@ -697,7 +694,7 @@ class ControllerTest extends TestCase
             'posts' => [
                 'page' => 2,
                 'limit' => 2,
-            ]
+            ],
         ]));
 
         $this->assertEquals([], $Controller->paginate);
@@ -764,7 +761,7 @@ class ControllerTest extends TestCase
         $this->expectExceptionMessage('Action TestController::missing() could not be found, or is not accessible.');
         $url = new ServerRequest([
             'url' => 'test/missing',
-            'params' => ['controller' => 'Test', 'action' => 'missing']
+            'params' => ['controller' => 'Test', 'action' => 'missing'],
         ]);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
@@ -783,7 +780,7 @@ class ControllerTest extends TestCase
         $this->expectExceptionMessage('Action TestController::private_m() could not be found, or is not accessible.');
         $url = new ServerRequest([
             'url' => 'test/private_m/',
-            'params' => ['controller' => 'Test', 'action' => 'private_m']
+            'params' => ['controller' => 'Test', 'action' => 'private_m'],
         ]);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
@@ -802,7 +799,7 @@ class ControllerTest extends TestCase
         $this->expectExceptionMessage('Action TestController::protected_m() could not be found, or is not accessible.');
         $url = new ServerRequest([
             'url' => 'test/protected_m/',
-            'params' => ['controller' => 'Test', 'action' => 'protected_m']
+            'params' => ['controller' => 'Test', 'action' => 'protected_m'],
         ]);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
@@ -821,7 +818,7 @@ class ControllerTest extends TestCase
         $this->expectExceptionMessage('Action TestController::redirect() could not be found, or is not accessible.');
         $url = new ServerRequest([
             'url' => 'test/redirect/',
-            'params' => ['controller' => 'Test', 'action' => 'redirect']
+            'params' => ['controller' => 'Test', 'action' => 'redirect'],
         ]);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
@@ -841,8 +838,8 @@ class ControllerTest extends TestCase
             'params' => [
                 'controller' => 'Test',
                 'action' => 'returner',
-                'pass' => []
-            ]
+                'pass' => [],
+            ],
         ]);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
@@ -863,8 +860,8 @@ class ControllerTest extends TestCase
             'params' => [
                 'controller' => 'Test',
                 'action' => 'index',
-                'pass' => ['param1' => '1', 'param2' => '2']
-            ]
+                'pass' => ['param1' => '1', 'param2' => '2'],
+            ],
         ]);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 
@@ -885,7 +882,7 @@ class ControllerTest extends TestCase
     {
         $request = new ServerRequest([
             'url' => 'admin/posts',
-            'params' => ['prefix' => 'admin']
+            'params' => ['prefix' => 'admin'],
         ]);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $Controller = new \TestApp\Controller\Admin\PostsController($request, $response);
@@ -907,8 +904,8 @@ class ControllerTest extends TestCase
         $request = new ServerRequest([
             'url' => 'pages/home',
             'params' => [
-                'prefix' => false
-            ]
+                'prefix' => false,
+            ],
         ]);
         $Controller = new \TestApp\Controller\PagesController($request, $response);
         $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $e) {
@@ -1106,9 +1103,9 @@ class ControllerTest extends TestCase
                 'plugin' => 'Posts',
                 'pass' => [
                     'foo',
-                    'bar'
-                ]
-            ]
+                    'bar',
+                ],
+            ],
         ]);
         $this->assertSame($controller, $controller->setRequest($request));
         $this->assertSame($request, $controller->getRequest());

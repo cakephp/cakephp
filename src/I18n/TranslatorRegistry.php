@@ -26,7 +26,6 @@ use Cake\Cache\CacheEngine;
  */
 class TranslatorRegistry extends TranslatorLocator
 {
-
     /**
      * A list of loader functions indexed by domain name. Loaders are
      * callables that are invoked as a default for building translation
@@ -87,7 +86,7 @@ class TranslatorRegistry extends TranslatorLocator
         $this->registerLoader($this->_fallbackLoader, function ($name, $locale) {
             $chain = new ChainMessagesLoader([
                 new MessagesFileLoader($name, $locale, 'mo'),
-                new MessagesFileLoader($name, $locale, 'po')
+                new MessagesFileLoader($name, $locale, 'po'),
             ]);
 
             // \Aura\Intl\Package by default uses formatter configured with key "basic".

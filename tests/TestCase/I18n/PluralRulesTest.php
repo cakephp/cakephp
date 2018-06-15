@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
  */
 class PluralRulesTest extends TestCase
 {
-
     /**
      * Returns the notable combinations for locales and numbers
      * with the respective plural form that should be selected

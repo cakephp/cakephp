@@ -45,34 +45,33 @@ use InvalidArgumentException;
  */
 class ConsoleOutput
 {
-
     /**
      * Raw output constant - no modification of output text.
      *
      * @var int
      */
-    const RAW = 0;
+    public const RAW = 0;
 
     /**
      * Plain output - tags will be stripped.
      *
      * @var int
      */
-    const PLAIN = 1;
+    public const PLAIN = 1;
 
     /**
      * Color output - Convert known tags in to ANSI color escape codes.
      *
      * @var int
      */
-    const COLOR = 2;
+    public const COLOR = 2;
 
     /**
      * Constant for a newline.
      *
      * @var string
      */
-    const LF = PHP_EOL;
+    public const LF = PHP_EOL;
 
     /**
      * File handle for output.
@@ -101,7 +100,7 @@ class ConsoleOutput
         'blue' => 34,
         'magenta' => 35,
         'cyan' => 36,
-        'white' => 37
+        'white' => 37,
     ];
 
     /**
@@ -117,7 +116,7 @@ class ConsoleOutput
         'blue' => 44,
         'magenta' => 45,
         'cyan' => 46,
-        'white' => 47
+        'white' => 47,
     ];
 
     /**
@@ -149,7 +148,7 @@ class ConsoleOutput
         'success' => ['text' => 'green'],
         'comment' => ['text' => 'blue'],
         'question' => ['text' => 'magenta'],
-        'notice' => ['text' => 'cyan']
+        'notice' => ['text' => 'cyan'],
     ];
 
     /**
@@ -196,10 +195,10 @@ class ConsoleOutput
      */
     public function styleText($text)
     {
-        if ($this->_outputAs == static::RAW) {
+        if ($this->_outputAs === static::RAW) {
             return $text;
         }
-        if ($this->_outputAs == static::PLAIN) {
+        if ($this->_outputAs === static::PLAIN) {
             $tags = implode('|', array_keys(static::$_styles));
 
             return preg_replace('#</?(?:' . $tags . ')>#', '', $text);
@@ -292,7 +291,7 @@ class ConsoleOutput
             return static::$_styles;
         }
         if (is_string($style) && $definition === null) {
-            return isset(static::$_styles[$style]) ? static::$_styles[$style] : null;
+            return static::$_styles[$style] ?? null;
         }
         if ($definition === false) {
             unset(static::$_styles[$style]);

@@ -22,7 +22,6 @@ namespace TestPlugin\Controller;
 
 class TestPluginController extends TestPluginAppController
 {
-
     public function index()
     {
         $this->autoRender = false;

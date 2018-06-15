@@ -26,7 +26,6 @@ use Traversable;
  */
 class ExtractIterator extends Collection
 {
-
     /**
      * A callable responsible for extracting a single value for each
      * item in the collection.

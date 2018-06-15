@@ -22,7 +22,6 @@ use Cake\Console\Shell;
 
 class UniqueShell extends Shell
 {
-
     /**
      * main method
      *

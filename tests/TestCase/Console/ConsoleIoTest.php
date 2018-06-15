@@ -24,7 +24,6 @@ use Cake\TestSuite\TestCase;
  */
 class ConsoleIoTest extends TestCase
 {
-
     /**
      * setUp method
      *

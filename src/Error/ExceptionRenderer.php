@@ -49,7 +49,6 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class ExceptionRenderer implements ExceptionRendererInterface
 {
-
     /**
      * The exception being handled.
      *
@@ -94,7 +93,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
      * @param \Exception $exception Exception.
      * @param \Psr\Http\Message\ServerRequestInterface $request The request - if this is set it will be used instead of creating a new one
      */
-    public function __construct(Exception $exception, ServerRequestInterface $request = null)
+    public function __construct(Exception $exception, ?ServerRequestInterface $request = null)
     {
         $this->error = $exception;
         $this->request = $request;
@@ -195,12 +194,12 @@ class ExceptionRenderer implements ExceptionRendererInterface
             'url' => h($url),
             'error' => $unwrapped,
             'code' => $code,
-            '_serialize' => ['message', 'url', 'code']
+            '_serialize' => ['message', 'url', 'code'],
         ];
         if ($isDebug) {
             $viewVars['trace'] = Debugger::formatTrace($unwrapped->getTrace(), [
                 'format' => 'array',
-                'args' => false
+                'args' => false,
             ]);
             $viewVars['file'] = $exception->getFile() ?: 'null';
             $viewVars['line'] = $exception->getLine() ?: 'null';

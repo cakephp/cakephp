@@ -27,7 +27,6 @@ use Cake\TestSuite\TestCase;
  */
 class JsonViewTest extends TestCase
 {
-
     public function setUp()
     {
         parent::setUp();
@@ -49,7 +48,7 @@ class JsonViewTest extends TestCase
                 ['data' => ['user' => 'fake', 'list' => ['item1', 'item2']]],
                 'data',
                 null,
-                json_encode(['user' => 'fake', 'list' => ['item1', 'item2']])
+                json_encode(['user' => 'fake', 'list' => ['item1', 'item2']]),
             ],
 
             // Test render with a string with an invalid key in _serialize.
@@ -57,7 +56,7 @@ class JsonViewTest extends TestCase
                 ['data' => ['user' => 'fake', 'list' => ['item1', 'item2']]],
                 'no_key',
                 null,
-                json_encode(null)
+                json_encode(null),
             ],
 
             // Test render with a valid array in _serialize.
@@ -65,7 +64,7 @@ class JsonViewTest extends TestCase
                 ['no' => 'nope', 'user' => 'fake', 'list' => ['item1', 'item2']],
                 ['no', 'user'],
                 null,
-                json_encode(['no' => 'nope', 'user' => 'fake'])
+                json_encode(['no' => 'nope', 'user' => 'fake']),
             ],
 
             // Test render with an empty array in _serialize.
@@ -73,7 +72,7 @@ class JsonViewTest extends TestCase
                 ['no' => 'nope', 'user' => 'fake', 'list' => ['item1', 'item2']],
                 [],
                 null,
-                json_encode(null)
+                json_encode(null),
             ],
 
             // Test render with a valid array with an invalid key in _serialize.
@@ -81,7 +80,7 @@ class JsonViewTest extends TestCase
                 ['no' => 'nope', 'user' => 'fake', 'list' => ['item1', 'item2']],
                 ['no', 'user', 'no_key'],
                 null,
-                json_encode(['no' => 'nope', 'user' => 'fake'])
+                json_encode(['no' => 'nope', 'user' => 'fake']),
             ],
 
             // Test render with a valid array with only an invalid key in _serialize.
@@ -89,7 +88,7 @@ class JsonViewTest extends TestCase
                 ['no' => 'nope', 'user' => 'fake', 'list' => ['item1', 'item2']],
                 ['no_key'],
                 null,
-                json_encode(null)
+                json_encode(null),
             ],
 
             // Test render with Null in _serialize (unset).
@@ -97,7 +96,7 @@ class JsonViewTest extends TestCase
                 ['no' => 'nope', 'user' => 'fake', 'list' => ['item1', 'item2']],
                 null,
                 null,
-                null
+                null,
             ],
 
             // Test render with False in _serialize.
@@ -105,7 +104,7 @@ class JsonViewTest extends TestCase
                 ['no' => 'nope', 'user' => 'fake', 'list' => ['item1', 'item2']],
                 false,
                 null,
-                null
+                null,
             ],
 
             // Test render with True in _serialize.
@@ -113,7 +112,7 @@ class JsonViewTest extends TestCase
                 ['no' => 'nope', 'user' => 'fake', 'list' => ['item1', 'item2']],
                 true,
                 JSON_HEX_QUOT,
-                json_encode(['no' => 'nope', 'user' => 'fake', 'list' => ['item1', 'item2']])
+                json_encode(['no' => 'nope', 'user' => 'fake', 'list' => ['item1', 'item2']]),
             ],
 
             // Test render with True in _serialize and single var
@@ -121,7 +120,7 @@ class JsonViewTest extends TestCase
                 ['no' => 'nope'],
                 true,
                 null,
-                json_encode(['no' => 'nope'])
+                json_encode(['no' => 'nope']),
             ],
 
             // Test render with empty string in _serialize.
@@ -129,7 +128,7 @@ class JsonViewTest extends TestCase
                 ['no' => 'nope', 'user' => 'fake', 'list' => ['item1', 'item2']],
                 '',
                 null,
-                json_encode(null)
+                json_encode(null),
             ],
 
             // Test render with a valid array in _serialize and alias.
@@ -137,7 +136,7 @@ class JsonViewTest extends TestCase
                 ['original_name' => 'my epic name', 'user' => 'fake', 'list' => ['item1', 'item2']],
                 ['new_name' => 'original_name', 'user'],
                 null,
-                json_encode(['new_name' => 'my epic name', 'user' => 'fake'])
+                json_encode(['new_name' => 'my epic name', 'user' => 'fake']),
             ],
 
             // Test render with an a valid array in _serialize and alias of a null value.
@@ -145,7 +144,7 @@ class JsonViewTest extends TestCase
                 ['null' => null],
                 ['null'],
                 null,
-                json_encode(['null' => null])
+                json_encode(['null' => null]),
             ],
 
             // Test render with a False value to be serialized.
@@ -153,7 +152,7 @@ class JsonViewTest extends TestCase
                 ['false' => false],
                 'false',
                 null,
-                json_encode(false)
+                json_encode(false),
             ],
 
             // Test render with a True value to be serialized.
@@ -161,7 +160,7 @@ class JsonViewTest extends TestCase
                 ['true' => true],
                 'true',
                 null,
-                json_encode(true)
+                json_encode(true),
             ],
 
             // Test render with an empty string value to be serialized.
@@ -169,7 +168,7 @@ class JsonViewTest extends TestCase
                 ['empty' => ''],
                 'empty',
                 null,
-                json_encode('')
+                json_encode(''),
             ],
 
             // Test render with a zero value to be serialized.
@@ -177,7 +176,7 @@ class JsonViewTest extends TestCase
                 ['zero' => 0],
                 'zero',
                 null,
-                json_encode(0)
+                json_encode(0),
             ],
 
             // Test render with encode <, >, ', &, and " for RFC4627-compliant to be serialized.
@@ -185,7 +184,7 @@ class JsonViewTest extends TestCase
                 ['rfc4627_escape' => '<tag> \'quote\' "double-quote" &'],
                 'rfc4627_escape',
                 null,
-                json_encode('<tag> \'quote\' "double-quote" &', JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT)
+                json_encode('<tag> \'quote\' "double-quote" &', JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT),
             ],
 
             // Test render with _jsonOptions = false to be serialized.
@@ -193,7 +192,7 @@ class JsonViewTest extends TestCase
                 ['noescape' => '<tag> \'quote\' "double-quote" &'],
                 'noescape',
                 false,
-                json_encode('<tag> \'quote\' "double-quote" &')
+                json_encode('<tag> \'quote\' "double-quote" &'),
             ],
 
             // Test render with setting _jsonOptions to be serialized.
@@ -201,7 +200,7 @@ class JsonViewTest extends TestCase
                 ['rfc4627_escape' => '<tag> \'quote\' "double-quote" &'],
                 'rfc4627_escape',
                 JSON_HEX_TAG | JSON_HEX_APOS,
-                json_encode('<tag> \'quote\' "double-quote" &', JSON_HEX_TAG | JSON_HEX_APOS)
+                json_encode('<tag> \'quote\' "double-quote" &', JSON_HEX_TAG | JSON_HEX_APOS),
             ],
 
             // Test render of NAN
@@ -209,7 +208,7 @@ class JsonViewTest extends TestCase
                 ['value' => NAN],
                 true,
                 null,
-                '{"value":0}'
+                '{"value":0}',
             ],
 
             // Test render of INF
@@ -217,7 +216,7 @@ class JsonViewTest extends TestCase
                 ['value' => INF],
                 true,
                 null,
-                '{"value":0}'
+                '{"value":0}',
             ],
         ];
     }
@@ -261,7 +260,7 @@ class JsonViewTest extends TestCase
 
         $Controller->set([
             'tags' => ['cakephp', 'framework'],
-            '_serialize' => 'tags'
+            '_serialize' => 'tags',
         ]);
         $Controller->viewBuilder()->setClassName('Json');
         $View = $Controller->createView();
@@ -285,7 +284,7 @@ class JsonViewTest extends TestCase
         $Controller->set([
             'data' => $data,
             '_serialize' => 'data',
-            '_jsonp' => true
+            '_jsonp' => true,
         ]);
         $Controller->viewBuilder()->setClassName('Json');
         $View = $Controller->createView();
@@ -321,12 +320,12 @@ class JsonViewTest extends TestCase
 
         $data = [
             'User' => [
-                'username' => 'fake'
+                'username' => 'fake',
             ],
             'Item' => [
                 ['name' => 'item1'],
-                ['name' => 'item2']
-            ]
+                ['name' => 'item2'],
+            ],
         ];
         $Controller->set('user', $data);
         $Controller->viewBuilder()->setClassName('Json');

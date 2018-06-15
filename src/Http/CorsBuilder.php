@@ -30,7 +30,6 @@ use Psr\Http\Message\MessageInterface;
  */
 class CorsBuilder
 {
-
     /**
      * The response object this builder is attached to.
      *

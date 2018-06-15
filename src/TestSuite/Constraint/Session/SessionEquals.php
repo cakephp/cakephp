@@ -23,7 +23,6 @@ use PHPUnit\Framework\Constraint\Constraint;
  */
 class SessionEquals extends Constraint
 {
-
     /**
      * @var \Cake\Http\Session
      */

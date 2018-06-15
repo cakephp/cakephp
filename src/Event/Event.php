@@ -19,7 +19,6 @@ namespace Cake\Event;
  */
 class Event implements EventInterface
 {
-
     /**
      * Name of the event
      *
@@ -151,7 +150,7 @@ class Event implements EventInterface
     public function getData($key = null)
     {
         if ($key !== null) {
-            return isset($this->_data[$key]) ? $this->_data[$key] : null;
+            return $this->_data[$key] ?? null;
         }
 
         return (array)$this->_data;

@@ -25,7 +25,6 @@ use Cake\Database\Expression\OrderByExpression;
  */
 class IdentifierQuoter
 {
-
     /**
      * The driver instance used to do the identifier quoting
      *

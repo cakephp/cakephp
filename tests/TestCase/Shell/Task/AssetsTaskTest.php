@@ -23,7 +23,6 @@ use Cake\TestSuite\TestCase;
  */
 class AssetsTaskTest extends TestCase
 {
-
     /**
      * setUp method
      *

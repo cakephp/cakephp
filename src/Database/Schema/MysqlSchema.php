@@ -15,7 +15,6 @@
 namespace Cake\Database\Schema;
 
 use Cake\Database\Exception;
-use Cake\Database\Schema\TableSchema;
 
 /**
  * Schema generation/reflection features for MySQL
@@ -130,7 +129,7 @@ class MysqlSchema extends BaseSchema
         }
         if (strpos($col, 'text') !== false) {
             $lengthName = substr($col, 0, -4);
-            $length = isset(TableSchema::$columnLengths[$lengthName]) ? TableSchema::$columnLengths[$lengthName] : null;
+            $length = TableSchema::$columnLengths[$lengthName] ?? null;
 
             return ['type' => TableSchema::TYPE_TEXT, 'length' => $length];
         }
@@ -139,7 +138,7 @@ class MysqlSchema extends BaseSchema
         }
         if (strpos($col, 'blob') !== false || $col === 'binary') {
             $lengthName = substr($col, 0, -4);
-            $length = isset(TableSchema::$columnLengths[$lengthName]) ? TableSchema::$columnLengths[$lengthName] : null;
+            $length = TableSchema::$columnLengths[$lengthName] ?? null;
 
             return ['type' => TableSchema::TYPE_BINARY, 'length' => $length];
         }
@@ -148,7 +147,7 @@ class MysqlSchema extends BaseSchema
                 'type' => TableSchema::TYPE_FLOAT,
                 'length' => $length,
                 'precision' => $precision,
-                'unsigned' => $unsigned
+                'unsigned' => $unsigned,
             ];
         }
         if (strpos($col, 'decimal') !== false) {
@@ -156,7 +155,7 @@ class MysqlSchema extends BaseSchema
                 'type' => TableSchema::TYPE_DECIMAL,
                 'length' => $length,
                 'precision' => $precision,
-                'unsigned' => $unsigned
+                'unsigned' => $unsigned,
             ];
         }
 
@@ -202,7 +201,7 @@ class MysqlSchema extends BaseSchema
 
         if ($row['Index_type'] === 'FULLTEXT') {
             $type = TableSchema::INDEX_FULLTEXT;
-        } elseif ($row['Non_unique'] == 0 && $type !== 'primary') {
+        } elseif ($row['Non_unique'] === 0 && $type !== 'primary') {
             $type = TableSchema::CONSTRAINT_UNIQUE;
         } elseif ($type !== 'primary') {
             $type = TableSchema::INDEX_INDEX;
@@ -230,13 +229,13 @@ class MysqlSchema extends BaseSchema
             $schema->addIndex($name, [
                 'type' => $type,
                 'columns' => $columns,
-                'length' => $length
+                'length' => $length,
             ]);
         } else {
             $schema->addConstraint($name, [
                 'type' => $type,
                 'columns' => $columns,
-                'length' => $length
+                'length' => $length,
             ]);
         }
     }
@@ -326,7 +325,7 @@ class MysqlSchema extends BaseSchema
             TableSchema::TYPE_DATETIME => ' DATETIME',
             TableSchema::TYPE_TIMESTAMP => ' TIMESTAMP',
             TableSchema::TYPE_UUID => ' CHAR(36)',
-            TableSchema::TYPE_JSON => $nativeJson ? ' JSON' : ' LONGTEXT'
+            TableSchema::TYPE_JSON => $nativeJson ? ' JSON' : ' LONGTEXT',
         ];
         $specialMap = [
             'string' => true,
@@ -376,7 +375,7 @@ class MysqlSchema extends BaseSchema
             TableSchema::TYPE_INTEGER,
             TableSchema::TYPE_SMALLINTEGER,
             TableSchema::TYPE_TINYINTEGER,
-            TableSchema::TYPE_STRING
+            TableSchema::TYPE_STRING,
         ];
         if (in_array($data['type'], $hasLength, true) && isset($data['length'])) {
             $out .= '(' . (int)$data['length'] . ')';
@@ -395,7 +394,7 @@ class MysqlSchema extends BaseSchema
             TableSchema::TYPE_INTEGER,
             TableSchema::TYPE_BIGINTEGER,
             TableSchema::TYPE_FLOAT,
-            TableSchema::TYPE_DECIMAL
+            TableSchema::TYPE_DECIMAL,
         ];
         if (in_array($data['type'], $hasUnsigned, true) &&
             isset($data['unsigned']) && $data['unsigned'] === true
@@ -415,7 +414,7 @@ class MysqlSchema extends BaseSchema
             $out .= ' NOT NULL';
         }
         $addAutoIncrement = (
-            [$name] == (array)$schema->primaryKey() &&
+            (array)$schema->primaryKey() === [$name] &&
             !$schema->hasAutoincrement() &&
             !isset($data['autoIncrement'])
         );

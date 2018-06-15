@@ -14,8 +14,8 @@
  */
 namespace Cake\Test\TestCase\Controller\Component;
 
-use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\RequestHandlerComponent;
+use Cake\Controller\ComponentRegistry;
 use Cake\Event\Event;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
@@ -32,7 +32,6 @@ use Zend\Diactoros\Stream;
  */
 class RequestHandlerComponentTest extends TestCase
 {
-
     /**
      * Controller property
      *
@@ -114,7 +113,7 @@ class RequestHandlerComponentTest extends TestCase
     public function testConstructorConfig()
     {
         $config = [
-            'viewClassMap' => ['json' => 'MyPlugin.MyJson']
+            'viewClassMap' => ['json' => 'MyPlugin.MyJson'],
         ];
         $controller = $this->getMockBuilder('Cake\Controller\Controller')
             ->setMethods(['redirect'])
@@ -329,7 +328,7 @@ class RequestHandlerComponentTest extends TestCase
         $expected = [
             'json' => 'CustomJson',
             'xml' => 'Xml',
-            'ajax' => 'Ajax'
+            'ajax' => 'Ajax',
         ];
         $this->assertEquals($expected, $result);
         $this->RequestHandler->setConfig(['viewClassMap' => ['xls' => 'Excel.Excel']]);
@@ -338,7 +337,7 @@ class RequestHandlerComponentTest extends TestCase
             'json' => 'CustomJson',
             'xml' => 'Xml',
             'ajax' => 'Ajax',
-            'xls' => 'Excel.Excel'
+            'xls' => 'Excel.Excel',
         ];
         $this->assertEquals($expected, $result);
 
@@ -516,8 +515,8 @@ class RequestHandlerComponentTest extends TestCase
         $this->Controller->setRequest(new ServerRequest([
             'environment' => [
                 'REQUEST_METHOD' => 'POST',
-                'CONTENT_TYPE' => 'application/json'
-            ]
+                'CONTENT_TYPE' => 'application/json',
+            ],
         ]));
 
         $event = new Event('Controller.startup', $this->Controller);
@@ -542,8 +541,8 @@ class RequestHandlerComponentTest extends TestCase
         $this->Controller->setRequest(new ServerRequest([
             'environment' => [
                 'REQUEST_METHOD' => 'POST',
-                'CONTENT_TYPE' => 'application/json'
-            ]
+                'CONTENT_TYPE' => 'application/json',
+            ],
         ]));
 
         $stream = new Stream('php://memory', 'w');
@@ -567,8 +566,8 @@ class RequestHandlerComponentTest extends TestCase
             'input' => '/dev/random',
             'environment' => [
                 'REQUEST_METHOD' => 'POST',
-                'CONTENT_TYPE' => 'application/xml'
-            ]
+                'CONTENT_TYPE' => 'application/xml',
+            ],
         ]));
 
         $event = new Event('Controller.startup', $this->Controller);
@@ -599,9 +598,9 @@ XML;
             'data' => [
                 'article' => [
                     '@id' => 1,
-                    '@title' => 'first'
-                ]
-            ]
+                    '@title' => 'first',
+                ],
+            ],
         ];
         $this->assertEquals($expected, $this->Controller->getRequest()->getData());
     }
@@ -629,8 +628,8 @@ XML;
         $expected = [
             'article' => [
                 'id' => 1,
-                'title' => 'first'
-            ]
+                'title' => 'first',
+            ],
         ];
         $this->assertEquals($expected, $this->Controller->getRequest()->getData());
     }
@@ -679,8 +678,8 @@ XML;
         $this->Controller->setRequest(new ServerRequest([
             'environment' => [
                 'REQUEST_METHOD' => 'POST',
-                'CONTENT_TYPE' => 'application/json'
-            ]
+                'CONTENT_TYPE' => 'application/json',
+            ],
         ]));
 
         $event = new Event('Controller.startup', $this->Controller);
@@ -1080,7 +1079,7 @@ XML;
             $this->Controller->components(),
             [
                 'viewClassMap' => ['json' => 'Json'],
-                'inputTypeMap' => ['json' => ['json_decode', true]]
+                'inputTypeMap' => ['json' => ['json_decode', true]],
             ]
         );
         $viewClass = $requestHandler->getConfig('viewClassMap');

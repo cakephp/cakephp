@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
  */
 class SchemaTest extends TestCase
 {
-
     /**
      * Test adding multiple fields.
      *
@@ -33,7 +32,7 @@ class SchemaTest extends TestCase
         $schema = new Schema();
         $schema->addFields([
             'email' => 'string',
-            'body' => ['type' => 'string', 'length' => 1000]
+            'body' => ['type' => 'string', 'length' => 1000],
         ]);
         $this->assertEquals(['email', 'body'], $schema->fields());
         $this->assertEquals('string', $schema->field('email')['type']);
@@ -110,7 +109,7 @@ class SchemaTest extends TestCase
         $schema->addField('name', 'string')
             ->addField('numbery', [
                 'type' => 'decimal',
-                'required' => true
+                'required' => true,
             ]);
         $this->assertEquals('string', $schema->fieldType('name'));
         $this->assertEquals('decimal', $schema->fieldType('numbery'));
@@ -129,7 +128,7 @@ class SchemaTest extends TestCase
         $schema->addField('name', 'string')
             ->addField('numbery', [
                 'type' => 'decimal',
-                'required' => true
+                'required' => true,
             ]);
         $result = $schema->__debugInfo();
         $expected = [

@@ -265,7 +265,7 @@ class DateTimeType extends BaseType
             $value['minute'],
             $value['second']
         );
-        $tz = isset($value['timezone']) ? $value['timezone'] : null;
+        $tz = $value['timezone'] ?? null;
 
         return new $class($format, $tz);
     }

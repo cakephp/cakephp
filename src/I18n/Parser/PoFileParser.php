@@ -75,7 +75,7 @@ class PoFileParser
 
         $defaults = [
             'ids' => [],
-            'translated' => null
+            'translated' => null,
         ];
 
         $messages = [];
@@ -142,7 +142,7 @@ class PoFileParser
         }
 
         $singular = stripcslashes($item['ids']['singular']);
-        $context = isset($item['context']) ? $item['context'] : null;
+        $context = $item['context'] ?? null;
         $translation = $item['translated'];
 
         if (is_array($translation)) {

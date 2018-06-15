@@ -24,7 +24,6 @@ use Cake\Console\Shell;
 
 class I18mShell extends Shell
 {
-
     /**
      * main method
      *

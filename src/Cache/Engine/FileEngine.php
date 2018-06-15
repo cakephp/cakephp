@@ -32,7 +32,6 @@ use SplFileObject;
  */
 class FileEngine extends CacheEngine
 {
-
     /**
      * Instance of SplFileObject class
      *
@@ -67,7 +66,7 @@ class FileEngine extends CacheEngine
         'path' => null,
         'prefix' => 'cake_',
         'probability' => 100,
-        'serialize' => true
+        'serialize' => true,
     ];
 
     /**

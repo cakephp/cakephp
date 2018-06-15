@@ -33,7 +33,6 @@ use Cake\Utility\Inflector;
  */
 class ShellDispatcher
 {
-
     /**
      * Contains arguments parsed from the command line.
      *
@@ -103,7 +102,7 @@ class ShellDispatcher
             static::$_aliases[$short] = $original;
         }
 
-        return isset(static::$_aliases[$short]) ? static::$_aliases[$short] : false;
+        return static::$_aliases[$short] ?? false;
     }
 
     /**

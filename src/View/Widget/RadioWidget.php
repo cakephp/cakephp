@@ -26,7 +26,6 @@ use Traversable;
  */
 class RadioWidget implements WidgetInterface
 {
-
     use IdGeneratorTrait;
 
     /**
@@ -135,7 +134,7 @@ class RadioWidget implements WidgetInterface
         }
         $isNumeric = is_numeric($radio['value']);
 
-        return (!is_array($disabled) || in_array((string)$radio['value'], $disabled, !$isNumeric));
+        return !is_array($disabled) || in_array((string)$radio['value'], $disabled, !$isNumeric);
     }
 
     /**

@@ -19,7 +19,6 @@ use Cake\Core\Exception\Exception;
  */
 class DuplicateNamedRouteException extends Exception
 {
-
     /**
      * {@inheritDoc}
      */

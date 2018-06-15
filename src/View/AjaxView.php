@@ -25,7 +25,6 @@ use Cake\Http\ServerRequest;
  */
 class AjaxView extends View
 {
-
     /**
      * {@inheritDoc}
      */
@@ -40,9 +39,9 @@ class AjaxView extends View
      * @param array $viewOptions View options.
      */
     public function __construct(
-        ServerRequest $request = null,
-        Response $response = null,
-        EventManager $eventManager = null,
+        ?ServerRequest $request = null,
+        ?Response $response = null,
+        ?EventManager $eventManager = null,
         array $viewOptions = []
     ) {
         if ($response && $response instanceof Response) {

@@ -21,7 +21,6 @@ use Cake\View\Form\ContextInterface;
  */
 class CheckboxWidget extends BasicWidget
 {
-
     /**
      * Render a checkbox element.
      *
@@ -46,7 +45,7 @@ class CheckboxWidget extends BasicWidget
             'value' => 1,
             'val' => null,
             'disabled' => false,
-            'templateVars' => []
+            'templateVars' => [],
         ];
         if ($this->_isChecked($data)) {
             $data['checked'] = true;
@@ -62,7 +61,7 @@ class CheckboxWidget extends BasicWidget
             'name' => $data['name'],
             'value' => $data['value'],
             'templateVars' => $data['templateVars'],
-            'attrs' => $attrs
+            'attrs' => $attrs,
         ]);
     }
 

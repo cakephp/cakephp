@@ -33,7 +33,6 @@ use RuntimeException;
  */
 class Query implements ExpressionInterface, IteratorAggregate
 {
-
     use TypeMapTrait;
 
     /**
@@ -73,7 +72,7 @@ class Query implements ExpressionInterface, IteratorAggregate
         'limit' => null,
         'offset' => null,
         'union' => [],
-        'epilog' => null
+        'epilog' => null,
     ];
 
     /**
@@ -249,7 +248,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * associated values for expressions
      * @return string
      */
-    public function sql(ValueBinder $generator = null)
+    public function sql(?ValueBinder $generator = null)
     {
         if (!$generator) {
             $generator = $this->getValueBinder();
@@ -731,8 +730,8 @@ class Query implements ExpressionInterface, IteratorAggregate
             $alias => [
                 'table' => $table,
                 'conditions' => $conditions,
-                'type' => $type
-            ]
+                'type' => $type,
+            ],
         ];
     }
 
@@ -1369,7 +1368,7 @@ class Query implements ExpressionInterface, IteratorAggregate
         }
         $this->_parts['union'][] = [
             'all' => false,
-            'query' => $query
+            'query' => $query,
         ];
         $this->_dirty();
 
@@ -1404,7 +1403,7 @@ class Query implements ExpressionInterface, IteratorAggregate
         }
         $this->_parts['union'][] = [
             'all' => true,
-            'query' => $query
+            'query' => $query,
         ];
         $this->_dirty();
 
@@ -2135,7 +2134,7 @@ class Query implements ExpressionInterface, IteratorAggregate
             'params' => $params,
             'defaultTypes' => $this->getDefaultTypes(),
             'decorators' => count($this->_resultDecorators),
-            'executed' => $this->_iterator ? true : false
+            'executed' => $this->_iterator ? true : false,
         ];
     }
 }

@@ -106,7 +106,7 @@ class FormContextTest extends TestCase
             'Articles' => [
                 'title' => 'New title',
                 'body' => 'My copy',
-            ]
+            ],
         ]);
         $context = new FormContext($this->request, ['entity' => new Form()]);
         $this->assertEquals('New title', $context->val('Articles.title'));
@@ -186,7 +186,7 @@ class FormContextTest extends TestCase
             ->add('email', 'format', ['rule' => 'email']);
 
         $context = new FormContext($this->request, [
-            'entity' => $form
+            'entity' => $form,
         ]);
         $this->assertTrue($context->isRequired('name'));
         $this->assertTrue($context->isRequired('email'));
@@ -207,7 +207,7 @@ class FormContextTest extends TestCase
             ->addField('user_id', 'integer');
 
         $context = new FormContext($this->request, [
-            'entity' => $form
+            'entity' => $form,
         ]);
         $this->assertNull($context->type('undefined'));
         $this->assertEquals('integer', $context->type('user_id'));
@@ -224,7 +224,7 @@ class FormContextTest extends TestCase
     {
         $form = new Form();
         $context = new FormContext($this->request, [
-            'entity' => $form
+            'entity' => $form,
         ]);
         $expected = [];
         $result = $context->fieldNames();
@@ -234,7 +234,7 @@ class FormContextTest extends TestCase
             ->addField('email', 'string')
             ->addField('password', 'string');
         $context = new FormContext($this->request, [
-            'entity' => $form
+            'entity' => $form,
         ]);
 
         $expected = ['email', 'password'];
@@ -261,7 +261,7 @@ class FormContextTest extends TestCase
                 'precision' => 2,
             ]);
         $context = new FormContext($this->request, [
-            'entity' => $form
+            'entity' => $form,
         ]);
         $this->assertEquals([], $context->attributes('id'));
         $this->assertEquals(['length' => 10, 'precision' => null], $context->attributes('email'));

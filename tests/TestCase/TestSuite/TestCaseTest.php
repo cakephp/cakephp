@@ -21,16 +21,15 @@ use Cake\Event\EventList;
 use Cake\Event\EventManager;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
+use Cake\Test\Fixture\FixturizedTestCase;
 use Cake\TestSuite\Fixture\FixtureManager;
 use Cake\TestSuite\TestCase;
-use Cake\Test\Fixture\FixturizedTestCase;
 
 /**
  * Testing stub.
  */
 class SecondaryPostsTable extends Table
 {
-
     /**
      * @return string
      */
@@ -45,7 +44,6 @@ class SecondaryPostsTable extends Table
  */
 class TestCaseTest extends TestCase
 {
-
     /**
      * tests trying to assertEventFired without configuring an event list
      *
@@ -80,7 +78,7 @@ class TestCaseTest extends TestCase
         $manager->trackEvents(true);
 
         $event = new Event('my.event', $this, [
-            'some' => 'data'
+            'some' => 'data',
         ]);
         $manager->dispatch($event);
         $this->assertEventFiredWith('my.event', 'some', 'data');
@@ -90,7 +88,7 @@ class TestCaseTest extends TestCase
         $manager->trackEvents(true);
 
         $event = new Event('my.event', $this, [
-            'other' => 'data'
+            'other' => 'data',
         ]);
         $manager->dispatch($event);
         $this->assertEventFiredWith('my.event', 'other', 'data', $manager);

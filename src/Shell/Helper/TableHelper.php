@@ -21,7 +21,6 @@ use Cake\Console\Helper;
  */
 class TableHelper extends Helper
 {
-
     /**
      * Default config for this helper.
      *
@@ -45,7 +44,7 @@ class TableHelper extends Helper
         foreach ($rows as $line) {
             foreach (array_values($line) as $k => $v) {
                 $columnLength = mb_strwidth($v);
-                if ($columnLength >= (isset($widths[$k]) ? $widths[$k] : 0)) {
+                if ($columnLength >= ($widths[$k] ?? 0)) {
                     $widths[$k] = $columnLength;
                 }
             }

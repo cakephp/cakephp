@@ -79,14 +79,14 @@ class IntegerTypeTest extends TestCase
             'b' => '2.3',
             'c' => '15',
             'c' => '0.0',
-            'd' => 10
+            'd' => 10,
         ];
         $expected = [
             'a' => null,
             'b' => 2,
             'c' => 15,
             'c' => 0,
-            'd' => 10
+            'd' => 10,
         ];
         $this->assertEquals(
             $expected,

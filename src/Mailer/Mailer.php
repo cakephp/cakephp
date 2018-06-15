@@ -137,7 +137,6 @@ use Cake\Mailer\Exception\MissingActionException;
  */
 abstract class Mailer implements EventListenerInterface
 {
-
     use ModelAwareTrait;
 
     /**
@@ -167,7 +166,7 @@ abstract class Mailer implements EventListenerInterface
      *
      * @param \Cake\Mailer\Email|null $email Email instance.
      */
-    public function __construct(Email $email = null)
+    public function __construct(?Email $email = null)
     {
         if ($email === null) {
             $email = new Email();

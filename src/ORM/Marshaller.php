@@ -35,7 +35,6 @@ use RuntimeException;
  */
 class Marshaller
 {
-
     use AssociationsNormalizerTrait;
 
     /**
@@ -370,8 +369,8 @@ class Marshaller
      */
     protected function _belongsToMany(BelongsToMany $assoc, array $data, $options = [])
     {
-        $associated = isset($options['associated']) ? $options['associated'] : [];
-        $forceNew = isset($options['forceNew']) ? $options['forceNew'] : false;
+        $associated = $options['associated'] ?? [];
+        $forceNew = $options['forceNew'] ?? false;
 
         $data = array_values($data);
 
@@ -560,7 +559,7 @@ class Marshaller
                 // same objects, even though those objects may have changed internally.
                 if ((is_scalar($value) && $original === $value) ||
                     ($value === null && $original === $value) ||
-                    (is_object($value) && !($value instanceof EntityInterface) && $original == $value)
+                    (is_object($value) && !($value instanceof EntityInterface) && $original === $value)
                 ) {
                     continue;
                 }
@@ -633,7 +632,7 @@ class Marshaller
             ->groupBy(function ($el) use ($primary) {
                 $keys = [];
                 foreach ($primary as $key) {
-                    $keys[] = isset($el[$key]) ? $el[$key] : '';
+                    $keys[] = $el[$key] ?? '';
                 }
 
                 return implode(';', $keys);
@@ -643,7 +642,7 @@ class Marshaller
             })
             ->toArray();
 
-        $new = isset($indexed[null]) ? $indexed[null] : [];
+        $new = $indexed[null] ?? [];
         unset($indexed[null]);
         $output = [];
 
@@ -739,7 +738,7 @@ class Marshaller
      */
     protected function _mergeBelongsToMany($original, $assoc, $value, $options)
     {
-        $associated = isset($options['associated']) ? $options['associated'] : [];
+        $associated = $options['associated'] ?? [];
 
         $hasIds = array_key_exists('_ids', $value);
         $onlyIds = array_key_exists('onlyIds', $options) && $options['onlyIds'];
@@ -769,7 +768,7 @@ class Marshaller
      */
     protected function _mergeJoinData($original, $assoc, $value, $options)
     {
-        $associated = isset($options['associated']) ? $options['associated'] : [];
+        $associated = $options['associated'] ?? [];
         $extra = [];
         foreach ($original as $entity) {
             // Mark joinData as accessible so we can marshal it properly.

@@ -26,7 +26,6 @@ use PDO;
  */
 class BinaryUuidType extends BaseType
 {
-
     /**
      * Convert binary uuid data into the database format.
      *

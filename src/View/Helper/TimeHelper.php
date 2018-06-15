@@ -29,7 +29,6 @@ use Exception;
  */
 class TimeHelper extends Helper
 {
-
     use StringTemplateTrait;
 
     /**
@@ -38,7 +37,7 @@ class TimeHelper extends Helper
      * @var array
      */
     protected $_defaultConfig = [
-        'outputTimezone' => null
+        'outputTimezone' => null,
     ];
 
     /**
@@ -258,7 +257,7 @@ class TimeHelper extends Helper
         $element = null;
         $options += [
             'element' => null,
-            'timezone' => null
+            'timezone' => null,
         ];
         $options['timezone'] = $this->_getTimezone($options['timezone']);
         if ($options['timezone']) {
@@ -270,7 +269,7 @@ class TimeHelper extends Helper
             $element = [
                 'tag' => 'span',
                 'class' => 'time-ago-in-words',
-                'title' => $dateTime
+                'title' => $dateTime,
             ];
 
             if (is_array($options['element'])) {

@@ -21,7 +21,6 @@ use Exception;
  */
 class PHP7ErrorException extends Exception
 {
-
     /**
      * The wrapped error object
      *

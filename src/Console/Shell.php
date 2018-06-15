@@ -39,7 +39,6 @@ use RuntimeException;
  */
 class Shell
 {
-
     use LocatorAwareTrait;
     use LogTrait;
     use MergeVariablesTrait;
@@ -50,35 +49,35 @@ class Shell
      *
      * @var int
      */
-    const CODE_ERROR = 1;
+    public const CODE_ERROR = 1;
 
     /**
      * Default success code
      *
      * @var int
      */
-    const CODE_SUCCESS = 0;
+    public const CODE_SUCCESS = 0;
 
     /**
      * Output constant making verbose shells.
      *
      * @var int
      */
-    const VERBOSE = ConsoleIo::VERBOSE;
+    public const VERBOSE = ConsoleIo::VERBOSE;
 
     /**
      * Output constant for making normal shells.
      *
      * @var int
      */
-    const NORMAL = ConsoleIo::NORMAL;
+    public const NORMAL = ConsoleIo::NORMAL;
 
     /**
      * Output constants for making quiet shells.
      *
      * @var int
      */
-    const QUIET = ConsoleIo::QUIET;
+    public const QUIET = ConsoleIo::QUIET;
 
     /**
      * An instance of ConsoleOptionParser that has been configured for this class.
@@ -180,7 +179,7 @@ class Shell
      * @param \Cake\ORM\Locator\LocatorInterface|null $locator Table locator instance.
      * @link https://book.cakephp.org/3.0/en/console-and-shells.html#Shell
      */
-    public function __construct(ConsoleIo $io = null, LocatorInterface $locator = null)
+    public function __construct(?ConsoleIo $io = null, ?LocatorInterface $locator = null)
     {
         if (!$this->name) {
             list(, $class) = namespaceSplit(get_class($this));

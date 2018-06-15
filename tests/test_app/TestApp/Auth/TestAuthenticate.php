@@ -23,7 +23,6 @@ use Cake\Http\ServerRequest;
  */
 class TestAuthenticate extends BaseAuthenticate
 {
-
     public $callStack = [];
 
     public $authenticationProvider;
@@ -32,7 +31,7 @@ class TestAuthenticate extends BaseAuthenticate
     {
         return [
             'Auth.afterIdentify' => 'afterIdentify',
-            'Auth.logout' => 'logout'
+            'Auth.logout' => 'logout',
         ];
     }
 

@@ -14,8 +14,8 @@
  */
 namespace Cake\Test\TestCase\Routing\Route;
 
-use Cake\Routing\Router;
 use Cake\Routing\Route\RedirectRoute;
+use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -23,7 +23,6 @@ use Cake\TestSuite\TestCase;
  */
 class RedirectRouteTest extends TestCase
 {
-
     /**
      * setUp method
      *

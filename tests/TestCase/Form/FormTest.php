@@ -25,7 +25,6 @@ use TestApp\Form\FormSchema;
  */
 class FormTest extends TestCase
 {
-
     /**
      * Test schema()
      *
@@ -92,14 +91,14 @@ class FormTest extends TestCase
 
         $data = [
             'email' => 'rong',
-            'body' => 'too short'
+            'body' => 'too short',
         ];
         $this->assertFalse($form->validate($data));
         $this->assertCount(2, $form->errors());
 
         $data = [
             'email' => 'test@example.com',
-            'body' => 'Some content goes here'
+            'body' => 'Some content goes here',
         ];
         $this->assertTrue($form->validate($data));
         $this->assertCount(0, $form->errors());
@@ -116,7 +115,7 @@ class FormTest extends TestCase
         $form->getValidator()
             ->add('email', 'format', [
                 'message' => 'Must be a valid email',
-                'rule' => 'email'
+                'rule' => 'email',
             ])
             ->add('body', 'length', [
                 'message' => 'Must be so long',
@@ -125,7 +124,7 @@ class FormTest extends TestCase
 
         $data = [
             'email' => 'rong',
-            'body' => 'too short'
+            'body' => 'too short',
         ];
         $form->validate($data);
         $errors = $form->errors();
@@ -143,7 +142,7 @@ class FormTest extends TestCase
     {
         $form = new Form();
         $expected = [
-           'field_name' => ['rule_name' => 'message']
+           'field_name' => ['rule_name' => 'message'],
         ];
 
         $form->setErrors($expected);
@@ -163,7 +162,7 @@ class FormTest extends TestCase
         $form->getValidator()
             ->add('email', 'format', ['rule' => 'email']);
         $data = [
-            'email' => 'rong'
+            'email' => 'rong',
         ];
         $form->expects($this->never())
             ->method('_execute');
@@ -184,7 +183,7 @@ class FormTest extends TestCase
         $form->getValidator()
             ->add('email', 'format', ['rule' => 'email']);
         $data = [
-            'email' => 'test@example.com'
+            'email' => 'test@example.com',
         ];
         $form->expects($this->once())
             ->method('_execute')

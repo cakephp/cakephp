@@ -24,7 +24,6 @@ use Cake\View\Form\ContextInterface;
  */
 class FileWidget implements WidgetInterface
 {
-
     /**
      * Templates
      *
@@ -73,7 +72,7 @@ class FileWidget implements WidgetInterface
             'attrs' => $this->_templates->formatAttributes(
                 $data,
                 ['name']
-            )
+            ),
         ]);
     }
 

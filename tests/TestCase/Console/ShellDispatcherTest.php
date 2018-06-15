@@ -25,7 +25,6 @@ use PHPUnit\Framework\Error\Warning;
  */
 class ShellDispatcherTest extends TestCase
 {
-
     /**
      * setUp method
      *
@@ -105,7 +104,7 @@ class ShellDispatcherTest extends TestCase
     {
         $expected = [
             'Company' => 'Company/TestPluginThree.company',
-            'Example' => 'TestPlugin.example'
+            'Example' => 'TestPlugin.example',
         ];
         $result = $this->dispatcher->addShortPluginAliases();
         $this->assertSame($expected, $result, 'Should return the list of aliased plugin shells');
@@ -113,7 +112,7 @@ class ShellDispatcherTest extends TestCase
         ShellDispatcher::alias('Example', 'SomeOther.PluginsShell');
         $expected = [
             'Company' => 'Company/TestPluginThree.company',
-            'Example' => 'SomeOther.PluginsShell'
+            'Example' => 'SomeOther.PluginsShell',
         ];
         $result = $this->dispatcher->addShortPluginAliases();
         $this->assertSame($expected, $result, 'Should not overwrite existing aliases');

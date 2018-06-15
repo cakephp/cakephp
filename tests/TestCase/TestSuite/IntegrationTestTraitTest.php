@@ -18,10 +18,10 @@ use Cake\Core\Configure;
 use Cake\Event\EventManager;
 use Cake\Http\Middleware\EncryptedCookieMiddleware;
 use Cake\Http\Response;
-use Cake\Routing\Router;
 use Cake\Routing\Route\InflectedRoute;
-use Cake\TestSuite\IntegrationTestCase;
+use Cake\Routing\Router;
 use Cake\Test\Fixture\AssertIntegrationTestCase;
+use Cake\TestSuite\IntegrationTestCase;
 use Cake\Utility\Security;
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Error\Deprecated;
@@ -32,7 +32,6 @@ use Zend\Diactoros\UploadedFile;
  */
 class IntegrationTestTraitTest extends IntegrationTestCase
 {
-
     /**
      * stub encryption key.
      *
@@ -88,38 +87,38 @@ class IntegrationTestTraitTest extends IntegrationTestCase
                 [
                     'body' => 'Comment',
                     'status' => 1,
-                ]
+                ],
             ],
             'file' => [
                 'tmp_name' => __FILE__,
                 'size' => 42,
                 'error' => 0,
                 'type' => 'text/plain',
-                'name' => 'Uploaded file'
+                'name' => 'Uploaded file',
             ],
             'pictures' => [
                 'name' => [
                     ['file' => 'a-file.png'],
-                    ['file' => 'a-moose.png']
+                    ['file' => 'a-moose.png'],
                 ],
                 'type' => [
                     ['file' => 'image/png'],
-                    ['file' => 'image/jpg']
+                    ['file' => 'image/jpg'],
                 ],
                 'tmp_name' => [
                     ['file' => __FILE__],
-                    ['file' => __FILE__]
+                    ['file' => __FILE__],
                 ],
                 'error' => [
                     ['file' => 0],
-                    ['file' => 0]
+                    ['file' => 0],
                 ],
                 'size' => [
                     ['file' => 17188],
-                    ['file' => 2010]
+                    ['file' => 2010],
                 ],
             ],
-            'upload' => new UploadedFile(__FILE__, 42, 0)
+            'upload' => new UploadedFile(__FILE__, 42, 0),
         ];
         $request = $this->_buildRequest('/posts/add', 'POST', $data);
         $this->assertInternalType('string', $request['post']['status']);
@@ -146,14 +145,14 @@ class IntegrationTestTraitTest extends IntegrationTestCase
             'headers' => [
                 'X-CSRF-Token' => 'abc123',
                 'Content-Type' => 'application/json',
-                'Accept' => 'application/json'
+                'Accept' => 'application/json',
             ],
             'base' => '',
             'webroot' => '/',
             'environment' => [
                 'PHP_AUTH_USER' => 'foo',
-                'PHP_AUTH_PW' => 'bar'
-            ]
+                'PHP_AUTH_PW' => 'bar',
+            ],
         ]);
         $this->cookie('split_token', 'def345');
         $this->session(['User' => ['id' => 1, 'username' => 'mark']]);
@@ -186,7 +185,7 @@ class IntegrationTestTraitTest extends IntegrationTestCase
         $this->cookie('csrfToken', '');
         $request = $this->_buildRequest('/tasks/add', 'POST', [
             '_csrfToken' => 'fale',
-            'title' => 'First post'
+            'title' => 'First post',
         ]);
 
         $this->assertSame('', $request['cookies']['csrfToken']);
@@ -279,7 +278,7 @@ class IntegrationTestTraitTest extends IntegrationTestCase
         Router::reload();
         Router::connect('/json_response/api_get_data', [
             'controller' => 'JsonResponse',
-            'action' => 'apiGetData'
+            'action' => 'apiGetData',
         ]);
 
         $this->configApplication(Configure::read('App.namespace') . '\ApplicationWithExceptionsInMiddleware', null);
@@ -660,7 +659,7 @@ class IntegrationTestTraitTest extends IntegrationTestCase
         $this->enableSecurityToken();
         $data = [
             'title' => 'Some title',
-            'body' => 'Some text'
+            'body' => 'Some text',
         ];
         $this->post('/posts/securePost', $data);
         $this->assertResponseOk();
@@ -678,9 +677,9 @@ class IntegrationTestTraitTest extends IntegrationTestCase
         $data = [
             'title' => 'New post',
             'comments' => [
-                ['comment' => 'A new comment']
+                ['comment' => 'A new comment'],
             ],
-            'tags' => ['_ids' => [1, 2, 3, 4]]
+            'tags' => ['_ids' => [1, 2, 3, 4]],
         ];
         $this->post('/posts/securePost', $data);
         $this->assertResponseOk();
@@ -697,7 +696,7 @@ class IntegrationTestTraitTest extends IntegrationTestCase
         $this->enableSecurityToken();
         $data = [
             'title' => 'Some title',
-            'body' => 'Some text'
+            'body' => 'Some text',
         ];
         $this->post('/posts/securePost?foo=bar', $data);
         $this->assertResponseOk();
@@ -715,7 +714,7 @@ class IntegrationTestTraitTest extends IntegrationTestCase
         $this->enableSecurityToken();
         $data = [
             'title' => 'Some title',
-            'body' => 'Some text'
+            'body' => 'Some text',
         ];
         $this->post('/posts/securePost?foo=/', $data);
         $this->assertResponseOk();
@@ -731,7 +730,7 @@ class IntegrationTestTraitTest extends IntegrationTestCase
     {
         $data = [
             'title' => 'Some title',
-            'body' => 'Some text'
+            'body' => 'Some text',
         ];
         $this->post('/posts/securePost', $data);
         $this->assertResponseError();

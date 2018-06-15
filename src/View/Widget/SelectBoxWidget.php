@@ -25,7 +25,6 @@ use Traversable;
  */
 class SelectBoxWidget extends BasicWidget
 {
-
     /**
      * Render a select box form input.
      *
@@ -110,7 +109,7 @@ class SelectBoxWidget extends BasicWidget
             'options' => [],
             'disabled' => null,
             'val' => null,
-            'templateVars' => []
+            'templateVars' => [],
         ];
 
         $options = $this->_renderContent($data);
@@ -156,7 +155,7 @@ class SelectBoxWidget extends BasicWidget
             return [];
         }
 
-        $selected = isset($data['val']) ? $data['val'] : null;
+        $selected = $data['val'] ?? null;
         $disabled = null;
         if (isset($data['disabled']) && is_array($data['disabled'])) {
             $disabled = $data['disabled'];

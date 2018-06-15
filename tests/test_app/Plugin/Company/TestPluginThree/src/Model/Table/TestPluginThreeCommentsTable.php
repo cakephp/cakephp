@@ -21,6 +21,5 @@ use Cake\ORM\Table;
  */
 class TestPluginThreeCommentsTable extends Table
 {
-
     protected $_table = 'test_plugin_three_comments';
 }

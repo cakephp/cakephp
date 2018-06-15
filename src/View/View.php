@@ -26,7 +26,6 @@ use Cake\Log\LogTrait;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\View\Exception\MissingElementException;
-use Cake\View\Exception\MissingHelperException;
 use Cake\View\Exception\MissingLayoutException;
 use Cake\View\Exception\MissingTemplateException;
 use InvalidArgumentException;
@@ -222,7 +221,7 @@ class View implements EventDispatcherInterface
      */
     protected $_passedVars = [
         'viewVars', 'autoLayout', 'helpers', 'template', 'layout', 'name', 'theme',
-        'layoutPath', 'templatePath', 'plugin'
+        'layoutPath', 'templatePath', 'plugin',
     ];
 
     /**
@@ -280,35 +279,35 @@ class View implements EventDispatcherInterface
      *
      * @var string
      */
-    const TYPE_TEMPLATE = 'view';
+    public const TYPE_TEMPLATE = 'view';
 
     /**
      * Constant for view file type 'element'
      *
      * @var string
      */
-    const TYPE_ELEMENT = 'element';
+    public const TYPE_ELEMENT = 'element';
 
     /**
      * Constant for name of view file 'Element'
      *
      * @var string
      */
-    const NAME_ELEMENT = 'Element';
+    public const NAME_ELEMENT = 'Element';
 
     /**
      * Constant for view file type 'layout'
      *
      * @var string
      */
-    const TYPE_LAYOUT = 'layout';
+    public const TYPE_LAYOUT = 'layout';
 
     /**
      * Constant for template folder  'Template'
      *
      * @var string
      */
-    const NAME_TEMPLATE = 'Template';
+    public const NAME_TEMPLATE = 'Template';
 
     /**
      * Constructor
@@ -320,9 +319,9 @@ class View implements EventDispatcherInterface
      *   options which get set as class properties.
      */
     public function __construct(
-        ServerRequest $request = null,
-        Response $response = null,
-        EventManager $eventManager = null,
+        ?ServerRequest $request = null,
+        ?Response $response = null,
+        ?EventManager $eventManager = null,
         array $viewOptions = []
     ) {
         if (isset($viewOptions['view'])) {
@@ -345,7 +344,7 @@ class View implements EventDispatcherInterface
             $this->request = new ServerRequest([
                 'base' => '',
                 'url' => '',
-                'webroot' => '/'
+                'webroot' => '/',
             ]);
         }
         $this->Blocks = new $this->_viewBlockClass();
@@ -962,10 +961,10 @@ class View implements EventDispatcherInterface
             }
         }
 
-        if ($parent == $this->_current) {
+        if ($parent === $this->_current) {
             throw new LogicException('You cannot have views extend themselves.');
         }
-        if (isset($this->_parents[$parent]) && $this->_parents[$parent] == $this->_current) {
+        if (isset($this->_parents[$parent]) && $this->_parents[$parent] === $this->_current) {
             throw new LogicException('You cannot have views extend in a loop.');
         }
         $this->_parents[$this->_current] = $parent;
@@ -1240,7 +1239,7 @@ class View implements EventDispatcherInterface
         if (strlen($this->subDir)) {
             $subDir = $this->subDir . DIRECTORY_SEPARATOR;
             // Check if templatePath already terminates with subDir
-            if ($templatePath != $subDir && substr($templatePath, -(strlen($subDir))) == $subDir) {
+            if ($templatePath !== $subDir && substr($templatePath, -(strlen($subDir))) === $subDir) {
                 $subDir = '';
             }
         }
@@ -1364,7 +1363,7 @@ class View implements EventDispatcherInterface
             }
         }
         throw new MissingLayoutException([
-            'file' => $layoutPaths[0] . $name . $this->_ext
+            'file' => $layoutPaths[0] . $name . $this->_ext,
         ]);
     }
 
@@ -1507,12 +1506,12 @@ class View implements EventDispatcherInterface
         );
         $config = [
             'config' => $this->elementCache,
-            'key' => implode('_', $keys)
+            'key' => implode('_', $keys),
         ];
         if (is_array($cache)) {
             $defaults = [
                 'config' => $this->elementCache,
-                'key' => $config['key']
+                'key' => $config['key'],
             ];
             $config = $cache + $defaults;
         }

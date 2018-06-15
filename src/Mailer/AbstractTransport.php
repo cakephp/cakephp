@@ -23,7 +23,6 @@ use Cake\Core\InstanceConfigTrait;
  */
 abstract class AbstractTransport
 {
-
     use InstanceConfigTrait;
 
     /**

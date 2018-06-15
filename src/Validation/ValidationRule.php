@@ -26,7 +26,6 @@ use InvalidArgumentException;
  */
 class ValidationRule
 {
-
     /**
      * The method to be called for a given scope
      *

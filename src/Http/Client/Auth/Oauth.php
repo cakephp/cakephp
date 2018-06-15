@@ -30,7 +30,6 @@ use RuntimeException;
  */
 class Oauth
 {
-
     /**
      * Add headers for Oauth authorization.
      *
@@ -129,8 +128,8 @@ class Oauth
      */
     protected function _hmacSha1($request, $credentials)
     {
-        $nonce = isset($credentials['nonce']) ? $credentials['nonce'] : uniqid();
-        $timestamp = isset($credentials['timestamp']) ? $credentials['timestamp'] : time();
+        $nonce = $credentials['nonce'] ?? uniqid();
+        $timestamp = $credentials['timestamp'] ?? time();
         $values = [
             'oauth_version' => '1.0',
             'oauth_nonce' => $nonce,
@@ -172,8 +171,8 @@ class Oauth
             throw new RuntimeException('RSA-SHA1 signature method requires the OpenSSL extension.');
         }
 
-        $nonce = isset($credentials['nonce']) ? $credentials['nonce'] : bin2hex(Security::randomBytes(16));
-        $timestamp = isset($credentials['timestamp']) ? $credentials['timestamp'] : time();
+        $nonce = $credentials['nonce'] ?? bin2hex(Security::randomBytes(16));
+        $timestamp = $credentials['timestamp'] ?? time();
         $values = [
             'oauth_version' => '1.0',
             'oauth_nonce' => $nonce,

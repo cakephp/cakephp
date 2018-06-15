@@ -23,7 +23,6 @@ use PDO;
  */
 abstract class BaseType implements TypeInterface
 {
-
     /**
      * Identifier name for this type
      *

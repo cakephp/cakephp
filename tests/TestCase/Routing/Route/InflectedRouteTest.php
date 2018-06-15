@@ -14,8 +14,8 @@
  */
 namespace Cake\Test\TestCase\Routing\Route;
 
-use Cake\Routing\Router;
 use Cake\Routing\Route\InflectedRoute;
+use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -23,7 +23,6 @@ use Cake\TestSuite\TestCase;
  */
 class InflectedRouteTest extends TestCase
 {
-
     /**
      * test that routes match their pattern.
      *
@@ -39,7 +38,7 @@ class InflectedRouteTest extends TestCase
             'plugin' => null,
             'controller' => 'Posts',
             'action' => 'my_view',
-            0
+            0,
         ]);
         $this->assertFalse($result);
 
@@ -47,7 +46,7 @@ class InflectedRouteTest extends TestCase
             'plugin' => null,
             'controller' => 'MyPosts',
             'action' => 'my_view',
-            'id' => 1
+            'id' => 1,
         ]);
         $this->assertEquals('/my_posts/my_view/1', $result);
 
@@ -77,7 +76,7 @@ class InflectedRouteTest extends TestCase
             'plugin' => 'TestPlugin',
             'controller' => 'Posts',
             'action' => 'my_view',
-            'id' => '1'
+            'id' => '1',
         ]);
         $this->assertEquals('/test_plugin/1/', $result);
 
@@ -86,7 +85,7 @@ class InflectedRouteTest extends TestCase
             'controller' => 'Posts',
             'action' => 'my_view',
             'id' => '1',
-            '0'
+            '0',
         ]);
         $this->assertEquals('/test_plugin/1/0', $result);
 
@@ -94,7 +93,7 @@ class InflectedRouteTest extends TestCase
             'plugin' => 'TestPlugin',
             'controller' => 'Nodes',
             'action' => 'my_view',
-            'id' => 1
+            'id' => 1,
         ]);
         $this->assertFalse($result);
 
@@ -102,18 +101,18 @@ class InflectedRouteTest extends TestCase
             'plugin' => 'TestPlugin',
             'controller' => 'Posts',
             'action' => 'edit',
-            'id' => 1
+            'id' => 1,
         ]);
         $this->assertFalse($result);
 
         $route = new InflectedRoute('/admin/subscriptions/:action/*', [
-            'controller' => 'Subscribe', 'prefix' => 'admin'
+            'controller' => 'Subscribe', 'prefix' => 'admin',
         ]);
         $result = $route->match([
             'controller' => 'Subscribe',
             'prefix' => 'admin',
             'action' => 'edit_admin_e',
-            1
+            1,
         ]);
         $expected = '/admin/subscriptions/edit_admin_e/1';
         $this->assertEquals($expected, $result);
@@ -122,7 +121,7 @@ class InflectedRouteTest extends TestCase
         $result = $route->match([
             'controller' => 'MyPosts',
             'action' => 'my_view',
-            'id' => 1
+            'id' => 1,
         ]);
         $this->assertEquals('/my_posts/my_view-1', $result);
 
@@ -131,7 +130,7 @@ class InflectedRouteTest extends TestCase
             'controller' => 'MyPosts',
             'action' => 'my_view',
             'id' => 1,
-            'slug' => 'the-slug'
+            'slug' => 'the-slug',
         ]);
         $this->assertEquals('/my_posts/my_view/the-slug-1', $result);
     }
@@ -213,12 +212,12 @@ class InflectedRouteTest extends TestCase
     public function testMatchThenParse()
     {
         $route = new InflectedRoute('/plugin/:controller/:action', [
-            'plugin' => 'Vendor/PluginName'
+            'plugin' => 'Vendor/PluginName',
         ]);
         $url = $route->match([
             'plugin' => 'Vendor/PluginName',
             'controller' => 'ControllerName',
-            'action' => 'action_name'
+            'action' => 'action_name',
         ]);
         $expectedUrl = '/plugin/controller_name/action_name';
         $this->assertEquals($expectedUrl, $url);

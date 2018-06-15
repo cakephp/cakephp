@@ -23,7 +23,6 @@ use RuntimeException;
  */
 class Security
 {
-
     /**
      * Default hash method. If `$type` param for `Security::hash()` is not specified
      * this value is used. Defaults to 'sha1'.

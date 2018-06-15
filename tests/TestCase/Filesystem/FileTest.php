@@ -24,7 +24,6 @@ use SplFileInfo;
  */
 class FileTest extends TestCase
 {
-
     /**
      * File property
      *
@@ -80,7 +79,7 @@ class FileTest extends TestCase
             'basename' => basename($file),
             'filename' => 'LICENSE',
             'filesize' => filesize($file),
-            'mime' => 'text/plain'
+            'mime' => 'text/plain',
         ];
         if (!function_exists('finfo_open') &&
             (!function_exists('mime_content_type') ||

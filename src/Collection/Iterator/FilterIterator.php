@@ -29,7 +29,6 @@ use Traversable;
  */
 class FilterIterator extends Collection
 {
-
     /**
      * The callback used to filter the elements in this collection
      *

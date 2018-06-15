@@ -23,7 +23,6 @@ use Cake\Utility\Security;
  */
 class SecurityTest extends TestCase
 {
-
     /**
      * testHash method
      *

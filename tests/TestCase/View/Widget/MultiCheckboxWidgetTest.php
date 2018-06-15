@@ -24,7 +24,6 @@ use Cake\View\Widget\MultiCheckboxWidget;
  */
 class MultiCheckboxWidgetTest extends TestCase
 {
-
     /**
      * setup method.
      *
@@ -58,7 +57,7 @@ class MultiCheckboxWidgetTest extends TestCase
             'options' => [
                 1 => 'CakePHP',
                 2 => 'Development',
-            ]
+            ],
         ];
         $result = $input->render($data, $this->context);
         $expected = [
@@ -104,7 +103,7 @@ class MultiCheckboxWidgetTest extends TestCase
             'options' => [
                 ['value' => '1', 'text' => 'CakePHP', 'data-test' => 'val'],
                 ['value' => '2', 'text' => 'Development', 'class' => 'custom'],
-            ]
+            ],
         ];
         $result = $input->render($data, $this->context);
         $expected = [
@@ -151,7 +150,7 @@ class MultiCheckboxWidgetTest extends TestCase
             'name' => 'Tags[id]',
             'options' => [
                 '>' => '>>',
-            ]
+            ],
         ];
         $result = $input->render($data, $this->context);
         $expected = [
@@ -186,7 +185,7 @@ class MultiCheckboxWidgetTest extends TestCase
                 '1x' => 'Development',
             ],
             'val' => [1],
-            'disabled' => false
+            'disabled' => false,
         ];
         $result = $input->render($data, $this->context);
         $expected = [
@@ -196,7 +195,7 @@ class MultiCheckboxWidgetTest extends TestCase
                 'name' => 'Tags[id][]',
                 'value' => 1,
                 'id' => 'tags-id-1',
-                'checked' => 'checked'
+                'checked' => 'checked',
             ]],
             ['label' => ['class' => 'selected', 'for' => 'tags-id-1']],
             'CakePHP',
@@ -250,7 +249,7 @@ class MultiCheckboxWidgetTest extends TestCase
                 'name' => 'Tags[id][]',
                 'value' => 1,
                 'id' => 'tags-id-1',
-                'disabled' => 'disabled'
+                'disabled' => 'disabled',
             ]],
             ['label' => ['for' => 'tags-id-1']],
             'CakePHP',
@@ -262,7 +261,7 @@ class MultiCheckboxWidgetTest extends TestCase
                 'name' => 'Tags[id][]',
                 'value' => '1x',
                 'id' => 'tags-id-1x',
-                'disabled' => 'disabled'
+                'disabled' => 'disabled',
             ]],
             ['label' => ['for' => 'tags-id-1x']],
             'Development',
@@ -284,7 +283,7 @@ class MultiCheckboxWidgetTest extends TestCase
                 1 => 'CakePHP',
                 '1x' => 'Development',
             ],
-            'disabled' => [1]
+            'disabled' => [1],
         ];
         $result = $input->render($data, $this->context);
         $expected = [
@@ -294,7 +293,7 @@ class MultiCheckboxWidgetTest extends TestCase
                 'name' => 'Tags[id][]',
                 'value' => 1,
                 'id' => 'tags-id-1',
-                'disabled' => 'disabled'
+                'disabled' => 'disabled',
             ]],
             ['label' => ['for' => 'tags-id-1']],
             'CakePHP',
@@ -359,7 +358,7 @@ class MultiCheckboxWidgetTest extends TestCase
                 'name' => 'Tags[id][]',
                 'value' => '1x',
                 'id' => 'tags-id-1x',
-                'data-var' => 'default'
+                'data-var' => 'default',
             ]],
             ['label' => ['for' => 'tags-id-1x']],
             'Development default',
@@ -386,8 +385,8 @@ class MultiCheckboxWidgetTest extends TestCase
                 ],
                 'Group 2' => [
                     2 => 'Development',
-                ]
-            ]
+                ],
+            ],
         ];
         $result = $input->render($data, $this->context);
         $expected = [
@@ -441,7 +440,7 @@ class MultiCheckboxWidgetTest extends TestCase
                     2 => 'CakePHP',
                 ],
                 3 => 'Development',
-            ]
+            ],
         ];
         $result = $input->render($data, $this->context);
         $expected = [
@@ -513,8 +512,8 @@ class MultiCheckboxWidgetTest extends TestCase
                     'value' => '0',
                     'id' => 'category-0',
                     'class' => 'my-class',
-                    'data-ref' => 'custom-attr'
-                ]
+                    'data-ref' => 'custom-attr',
+                ],
             ],
             ['label' => ['for' => 'category-0']],
             '1',
@@ -529,13 +528,13 @@ class MultiCheckboxWidgetTest extends TestCase
                     'value' => '1',
                     'id' => 'category-1',
                     'class' => 'my-class',
-                    'data-ref' => 'custom-attr'
-                ]
+                    'data-ref' => 'custom-attr',
+                ],
             ],
             ['label' => ['for' => 'category-1']],
             '2',
             '/label',
-            '/div'
+            '/div',
         ];
         $this->assertHtml($expected, $result);
     }

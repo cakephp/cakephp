@@ -36,10 +36,10 @@ class TestEmailTransportTest extends TestCase
         Email::dropTransport('transport_alternate');
 
         Email::setConfigTransport('transport_default', [
-            'className' => DebugTransport::class
+            'className' => DebugTransport::class,
         ]);
         Email::setConfigTransport('transport_alternate', [
-            'className' => DebugTransport::class
+            'className' => DebugTransport::class,
         ]);
 
         Email::setConfig('default', [

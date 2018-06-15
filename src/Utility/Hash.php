@@ -30,7 +30,6 @@ use RuntimeException;
  */
 class Hash
 {
-
     /**
      * Get a single value specified by $path out of $data.
      * Does not support the full dot notation feature set,
@@ -72,11 +71,11 @@ class Hash
 
         switch (count($parts)) {
             case 1:
-                return isset($data[$parts[0]]) ? $data[$parts[0]] : $default;
+                return $data[$parts[0]] ?? $default;
             case 2:
-                return isset($data[$parts[0]][$parts[1]]) ? $data[$parts[0]][$parts[1]] : $default;
+                return $data[$parts[0]][$parts[1]] ?? $default;
             case 3:
-                return isset($data[$parts[0]][$parts[1]][$parts[2]]) ? $data[$parts[0]][$parts[1]][$parts[2]] : $default;
+                return $data[$parts[0]][$parts[1]][$parts[2]] ?? $default;
             default:
                 foreach ($parts as $key) {
                     if ((is_array($data) || $data instanceof ArrayAccess) && isset($data[$key])) {
@@ -223,7 +222,7 @@ class Hash
             case '{*}':
                 return true;
             default:
-                return is_numeric($token) ? ($key == $token) : $key === $token;
+                return is_numeric($token) ? ($key === $token) : $key === $token;
         }
     }
 
@@ -245,8 +244,8 @@ class Hash
 
         foreach ($conditions as $cond) {
             $attr = $cond['attr'];
-            $op = isset($cond['op']) ? $cond['op'] : null;
-            $val = isset($cond['val']) ? $cond['val'] : null;
+            $op = $cond['op'] ?? null;
+            $val = $cond['val'] ?? null;
 
             // Presence test.
             if (empty($op) && empty($val) && !isset($data[$attr])) {
@@ -276,8 +275,8 @@ class Hash
                 if (!preg_match($val, $prop)) {
                     return false;
                 }
-            } elseif (($op === '=' && $prop != $val) ||
-                ($op === '!=' && $prop == $val) ||
+            } elseif (($op === '=' && $prop !== $val) ||
+                ($op === '!=' && $prop === $val) ||
                 ($op === '>' && $prop <= $val) ||
                 ($op === '<' && $prop >= $val) ||
                 ($op === '>=' && $prop < $val) ||
@@ -588,7 +587,7 @@ class Hash
                 if (!empty($val)) {
                     $stack[] = [$val, $next];
                 }
-            } elseif (!array_key_exists($key, $data) || $data[$key] != $val) {
+            } elseif (!array_key_exists($key, $data) || $data[$key] !== $val) {
                 return false;
             }
 
@@ -715,12 +714,12 @@ class Hash
             $keys = explode($separator, $flat);
             $keys = array_reverse($keys);
             $child = [
-                $keys[0] => $value
+                $keys[0] => $value,
             ];
             array_shift($keys);
             foreach ($keys as $k) {
                 $child = [
-                    $k => $child
+                    $k => $child,
                 ];
             }
 
@@ -1081,7 +1080,7 @@ class Hash
         }
         $intersection = array_intersect_key($data, $compare);
         while (($key = key($intersection)) !== null) {
-            if ($data[$key] == $compare[$key]) {
+            if ($data[$key] === $compare[$key]) {
                 unset($data[$key], $compare[$key]);
             }
             next($intersection);
@@ -1184,7 +1183,7 @@ class Hash
             'idPath' => "{n}.$alias.id",
             'parentPath' => "{n}.$alias.parent_id",
             'children' => 'children',
-            'root' => null
+            'root' => null,
         ];
 
         $return = $idMap = [];
@@ -1227,7 +1226,7 @@ class Hash
         foreach ($return as $i => $result) {
             $id = static::get($result, $idKeys);
             $parentId = static::get($result, $parentKeys);
-            if ($id !== $root && $parentId != $root) {
+            if ($id !== $root && $parentId !== $root) {
                 unset($return[$i]);
             }
         }

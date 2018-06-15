@@ -35,7 +35,6 @@ use ReflectionMethod;
  */
 abstract class Cell
 {
-
     use EventDispatcherTrait;
     use LocatorAwareTrait;
     use ModelAwareTrait;
@@ -86,7 +85,7 @@ abstract class Cell
      * @see \Cake\View\View
      */
     protected $_validViewOptions = [
-        'viewPath'
+        'viewPath',
     ];
 
     /**
@@ -114,9 +113,9 @@ abstract class Cell
      * @param array $cellOptions Cell options to apply.
      */
     public function __construct(
-        ServerRequest $request = null,
-        Response $response = null,
-        EventManager $eventManager = null,
+        ?ServerRequest $request = null,
+        ?Response $response = null,
+        ?EventManager $eventManager = null,
         array $cellOptions = []
     ) {
         if ($eventManager !== null) {
@@ -232,7 +231,7 @@ abstract class Cell
         $key = str_replace('\\', '_', $key);
         $default = [
             'config' => 'default',
-            'key' => $key
+            'key' => $key,
         ];
         if ($this->_cache === true) {
             return $default;

@@ -28,7 +28,6 @@ use TestPlugin\Plugin as TestPlugin;
  */
 class BasePluginTest extends TestCase
 {
-
     /**
      * tearDown method
      *
@@ -49,7 +48,7 @@ class BasePluginTest extends TestCase
     {
         $plugin = new BasePlugin([
             'bootstrap' => false,
-            'routes' => false
+            'routes' => false,
         ]);
 
         $this->assertFalse($plugin->isEnabled('routes'));
@@ -117,7 +116,7 @@ class BasePluginTest extends TestCase
             'routes' => false,
             'bootstrap' => false,
             'console' => false,
-            'middleware' => false
+            'middleware' => false,
         ]);
         $this->assertFalse($plugin->isEnabled('routes'));
         $this->assertFalse($plugin->isEnabled('bootstrap'));

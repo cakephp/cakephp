@@ -29,7 +29,6 @@ class DebuggerTestCaseDebugger extends Debugger
 
 class DebuggableThing
 {
-
     public function __debugInfo()
     {
         return ['foo' => 'bar', 'inner' => new self()];
@@ -49,7 +48,6 @@ class SecurityThing
  */
 class DebuggerTest extends TestCase
 {
-
     protected $_restoreError = false;
 
     /**
@@ -212,7 +210,7 @@ class DebuggerTest extends TestCase
             'file' => __FILE__,
             'line' => __LINE__,
             'description' => 'Error description',
-            'start' => 1
+            'start' => 1,
         ];
         $debugger->outputError($data);
         $result = ob_get_clean();
@@ -229,7 +227,7 @@ class DebuggerTest extends TestCase
     {
         Debugger::addFormat('js', [
             'traceLine' => '{:reference} - <a href="txmt://open?url=file://{:file}' .
-                '&line={:line}">{:path}</a>, line {:line}'
+                '&line={:line}">{:path}</a>, line {:line}',
         ]);
         Debugger::setOutputFormat('js');
 
@@ -259,7 +257,7 @@ class DebuggerTest extends TestCase
             '<file', 'preg:/[^<]+/', '/file',
             '<line', '' . ((int)__LINE__ - 9), '/line',
             'preg:/Undefined variable:\s+foo/',
-            '/error'
+            '/error',
         ];
         $this->assertHtml($expected, $result, true);
     }
@@ -384,7 +382,7 @@ TEXT;
 
         $data = [
             1 => 'Index one',
-            5 => 'Index five'
+            5 => 'Index five',
         ];
         $result = Debugger::exportVar($data);
         $expected = <<<TEXT
@@ -397,8 +395,8 @@ TEXT;
 
         $data = [
             'key' => [
-                'value'
-            ]
+                'value',
+            ],
         ];
         $result = Debugger::exportVar($data, 1);
         $expected = <<<TEXT
@@ -435,7 +433,7 @@ TEXT;
             'null' => null,
             'false' => false,
             'szero' => '0',
-            'zero' => 0
+            'zero' => 0,
         ];
         $result = Debugger::exportVar($data);
         $expected = <<<TEXT
@@ -505,7 +503,7 @@ TEXT;
             ));
 
         $val = [
-            'test' => ['key' => 'val']
+            'test' => ['key' => 'val'],
         ];
         Debugger::log($val, 'debug', 0);
     }
@@ -521,13 +519,13 @@ TEXT;
             [
                 'name' => 'joeseph',
                 'coat' => 'technicolor',
-                'hair_color' => 'brown'
+                'hair_color' => 'brown',
             ],
             [
                 'name' => 'Shaft',
                 'coat' => 'black',
-                'hair' => 'black'
-            ]
+                'hair' => 'black',
+            ],
         ]];
         ob_start();
         Debugger::dump($var);
@@ -609,7 +607,7 @@ TEXT;
         $this->assertRegExp('/^Cake\\\Test\\\TestCase\\\Error\\\DebuggerTest::testTraceExclude/', $result);
 
         $result = Debugger::trace([
-            'exclude' => ['Cake\Test\TestCase\Error\DebuggerTest::testTraceExclude']
+            'exclude' => ['Cake\Test\TestCase\Error\DebuggerTest::testTraceExclude'],
         ]);
         $this->assertNotRegExp('/^Cake\\\Test\\\TestCase\\\Error\\\DebuggerTest::testTraceExclude/', $result);
     }

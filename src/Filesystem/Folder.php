@@ -28,14 +28,13 @@ use RecursiveIteratorIterator;
  */
 class Folder
 {
-
     /**
      * Default scheme for Folder::copy
      * Recursively merges subfolders with the same name
      *
      * @var string
      */
-    const MERGE = 'merge';
+    public const MERGE = 'merge';
 
     /**
      * Overwrite scheme for Folder::copy
@@ -43,7 +42,7 @@ class Folder
      *
      * @var string
      */
-    const OVERWRITE = 'overwrite';
+    public const OVERWRITE = 'overwrite';
 
     /**
      * Skip scheme for Folder::copy
@@ -51,21 +50,21 @@ class Folder
      *
      * @var string
      */
-    const SKIP = 'skip';
+    public const SKIP = 'skip';
 
     /**
      * Sort mode by name
      *
      * @var string
      */
-    const SORT_NAME = 'name';
+    public const SORT_NAME = 'name';
 
     /**
      * Sort mode by time
      *
      * @var string
      */
-    const SORT_TIME = 'time';
+    public const SORT_TIME = 'time';
 
     /**
      * Path to Folder.
@@ -95,7 +94,7 @@ class Folder
      */
     protected $_fsorts = [
         self::SORT_NAME => 'getPathname',
-        self::SORT_TIME => 'getCTime'
+        self::SORT_TIME => 'getCTime',
     ];
 
     /**
@@ -316,7 +315,7 @@ class Folder
      */
     public static function isWindowsPath($path)
     {
-        return (preg_match('/^[A-Z]:\\\\/i', $path) || substr($path, 0, 2) === '\\\\');
+        return preg_match('/^[A-Z]:\\\\/i', $path) || substr($path, 0, 2) === '\\\\';
     }
 
     /**
@@ -358,7 +357,7 @@ class Folder
     public static function normalizeFullPath($path)
     {
         $to = Folder::correctSlashFor($path);
-        $from = ($to == '/' ? '\\' : '/');
+        $from = ($to === '/' ? '\\' : '/');
 
         return str_replace($from, $to, $path);
     }
@@ -765,7 +764,7 @@ class Folder
             'mode' => $this->mode,
             'skip' => [],
             'scheme' => Folder::MERGE,
-            'recursive' => true
+            'recursive' => true,
         ];
 
         $fromDir = $options['from'];
@@ -794,9 +793,9 @@ class Folder
             //@codingStandardsIgnoreEnd
             while (($item = readdir($handle)) !== false) {
                 $to = Folder::addPathElement($toDir, $item);
-                if (($options['scheme'] != Folder::SKIP || !is_dir($to)) && !in_array($item, $exceptions)) {
+                if (($options['scheme'] !== Folder::SKIP || !is_dir($to)) && !in_array($item, $exceptions)) {
                     $from = Folder::addPathElement($fromDir, $item);
-                    if (is_file($from) && (!is_file($to) || $options['scheme'] != Folder::SKIP)) {
+                    if (is_file($from) && (!is_file($to) || $options['scheme'] !== Folder::SKIP)) {
                         if (copy($from, $to)) {
                             chmod($to, intval($mode, 8));
                             touch($to, filemtime($from));

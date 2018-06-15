@@ -23,7 +23,6 @@ use Cake\TestSuite\ConsoleIntegrationTestCase;
  */
 class RoutesShellTest extends ConsoleIntegrationTestCase
 {
-
     /**
      * setUp method
      *
@@ -60,22 +59,22 @@ class RoutesShellTest extends ConsoleIntegrationTestCase
         $this->assertOutputContainsRow([
             '<info>Route name</info>',
             '<info>URI template</info>',
-            '<info>Defaults</info>'
+            '<info>Defaults</info>',
         ]);
         $this->assertOutputContainsRow([
             'articles:_action',
             '/articles/:action/*',
-            '{"action":"index","controller":"Articles","plugin":null}'
+            '{"action":"index","controller":"Articles","plugin":null}',
         ]);
         $this->assertOutputContainsRow([
             'bake._controller:_action',
             '/bake/:controller/:action',
-            '{"action":"index","plugin":"Bake"}'
+            '{"action":"index","plugin":"Bake"}',
         ]);
         $this->assertOutputContainsRow([
             'testName',
             '/tests/:action/*',
-            '{"action":"index","controller":"Tests","plugin":null}'
+            '{"action":"index","controller":"Tests","plugin":null}',
         ]);
     }
 
@@ -91,12 +90,12 @@ class RoutesShellTest extends ConsoleIntegrationTestCase
         $this->assertOutputContainsRow([
             '<info>Route name</info>',
             '<info>URI template</info>',
-            '<info>Defaults</info>'
+            '<info>Defaults</info>',
         ]);
         $this->assertOutputContainsRow([
             'articles:_action',
             '/articles/check',
-            '{"action":"check","controller":"Articles","pass":[],"plugin":null}'
+            '{"action":"check","controller":"Articles","pass":[],"plugin":null}',
         ]);
     }
 
@@ -112,12 +111,12 @@ class RoutesShellTest extends ConsoleIntegrationTestCase
         $this->assertOutputContainsRow([
             '<info>Route name</info>',
             '<info>URI template</info>',
-            '<info>Defaults</info>'
+            '<info>Defaults</info>',
         ]);
         $this->assertOutputContainsRow([
             'testName',
             '/tests/index',
-            '{"_name":"testName","action":"index","controller":"Tests","pass":[],"plugin":null}'
+            '{"_name":"testName","action":"index","controller":"Tests","pass":[],"plugin":null}',
         ]);
     }
 

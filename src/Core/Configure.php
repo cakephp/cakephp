@@ -32,14 +32,13 @@ use RuntimeException;
  */
 class Configure
 {
-
     /**
      * Array of values currently stored in Configure.
      *
      * @var array
      */
     protected static $_values = [
-        'debug' => false
+        'debug' => false,
     ];
 
     /**

@@ -15,7 +15,6 @@ namespace Company\TestPluginFive\Utility;
 
 class Hello
 {
-
     /**
      * foo method
      *

@@ -24,7 +24,6 @@ use RedisException;
  */
 class RedisEngine extends CacheEngine
 {
-
     /**
      * Redis wrapper.
      *

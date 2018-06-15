@@ -63,7 +63,6 @@ use Cake\Http\ServerRequest;
  */
 class DigestAuthenticate extends BasicAuthenticate
 {
-
     /**
      * Constructor
      *
@@ -221,7 +220,7 @@ class DigestAuthenticate extends BasicAuthenticate
             'realm' => $realm,
             'qop' => $this->_config['qop'],
             'nonce' => $this->generateNonce(),
-            'opaque' => $this->_config['opaque'] ?: md5($realm)
+            'opaque' => $this->_config['opaque'] ?: md5($realm),
         ];
 
         $digest = $this->_getDigest($request);
@@ -240,7 +239,7 @@ class DigestAuthenticate extends BasicAuthenticate
         }
 
         return [
-            'WWW-Authenticate' => 'Digest ' . implode(',', $opts)
+            'WWW-Authenticate' => 'Digest ' . implode(',', $opts),
         ];
     }
 

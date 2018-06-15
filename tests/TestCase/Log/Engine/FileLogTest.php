@@ -25,7 +25,6 @@ use JsonSerializable;
  */
 class StringObject
 {
-
     /**
      * String representation of the object
      *
@@ -42,7 +41,6 @@ class StringObject
  */
 class JsonObject implements JsonSerializable
 {
-
     /**
      * String representation of the object
      *
@@ -59,7 +57,6 @@ class JsonObject implements JsonSerializable
  */
 class FileLogTest extends TestCase
 {
-
     /**
      * testLogFileWriting method
      *
@@ -135,7 +132,7 @@ class FileLogTest extends TestCase
         $log = new FileLog([
             'path' => $path,
             'size' => 35,
-            'rotate' => 2
+            'rotate' => 2,
         ]);
         $log->log('warning', 'Test warning one');
         $this->assertFileExists($path . 'error.log');
@@ -193,7 +190,7 @@ class FileLogTest extends TestCase
         $log = new FileLog([
             'path' => $path,
             'size' => 35,
-            'rotate' => 0
+            'rotate' => 0,
         ]);
         file_put_contents($path . 'debug.log.0000000000', "The oldest log file with over 35 bytes.\n");
         $log->log('debug', 'Test debug');

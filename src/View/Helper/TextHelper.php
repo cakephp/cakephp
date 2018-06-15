@@ -31,7 +31,6 @@ use Cake\View\View;
  */
 class TextHelper extends Helper
 {
-
     /**
      * helpers
      *
@@ -45,7 +44,7 @@ class TextHelper extends Helper
      * @var array
      */
     protected $_defaultConfig = [
-        'engine' => 'Cake\Utility\Text'
+        'engine' => 'Cake\Utility\Text',
     ];
 
     /**
@@ -171,7 +170,7 @@ class TextHelper extends Helper
         $key = hash_hmac('sha1', $match, Security::getSalt());
         $this->_placeholders[$key] = [
             'content' => $match,
-            'envelope' => $envelope
+            'envelope' => $envelope,
         ];
 
         return $key;

@@ -126,7 +126,6 @@ use RuntimeException;
  */
 class Table implements RepositoryInterface, EventListenerInterface, EventDispatcherInterface, ValidatorAwareInterface
 {
-
     use EventDispatcherTrait;
     use RulesAwareTrait;
     use ValidatorAwareTrait;
@@ -136,21 +135,21 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @var string
      */
-    const VALIDATOR_PROVIDER_NAME = 'table';
+    public const VALIDATOR_PROVIDER_NAME = 'table';
 
     /**
      * The name of the event dispatched when a validator has been built.
      *
      * @var string
      */
-    const BUILD_VALIDATOR_EVENT = 'Model.buildValidator';
+    public const BUILD_VALIDATOR_EVENT = 'Model.buildValidator';
 
     /**
      * The rules class name that is used.
      *
      * @var string
      */
-    const RULES_CLASS = 'Cake\ORM\RulesChecker';
+    public const RULES_CLASS = 'Cake\ORM\RulesChecker';
 
     /**
      * Name of the table as it can be found in the database
@@ -1249,7 +1248,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $options += [
             'keyField' => $this->getPrimaryKey(),
             'valueField' => $this->getDisplayField(),
-            'groupField' => null
+            'groupField' => null,
         ];
 
         if (!$query->clause('select') &&
@@ -1312,7 +1311,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $options += [
             'keyField' => $this->getPrimaryKey(),
             'parentField' => 'parent_id',
-            'nestingKey' => 'children'
+            'nestingKey' => 'children',
         ];
 
         $options = $this->_setFieldMatchers($options, ['keyField', 'parentField']);
@@ -1398,9 +1397,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
         $conditions = array_combine($key, $primaryKey);
 
-        $cacheConfig = isset($options['cache']) ? $options['cache'] : false;
-        $cacheKey = isset($options['key']) ? $options['key'] : false;
-        $finder = isset($options['finder']) ? $options['finder'] : 'all';
+        $cacheConfig = $options['cache'] ?? false;
+        $cacheKey = $options['key'] ?? false;
+        $finder = $options['finder'] ?? 'all';
         unset($options['key'], $options['cache'], $options['finder']);
 
         $query = $this->find($finder, $options)->where($conditions);
@@ -1483,7 +1482,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param array $options The options to use when saving.
      * @return \Cake\Datasource\EntityInterface An entity.
      */
-    public function findOrCreate($search, callable $callback = null, $options = [])
+    public function findOrCreate($search, ?callable $callback = null, $options = [])
     {
         $options = new ArrayObject($options + [
             'atomic' => true,
@@ -1512,7 +1511,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param array $options The options to use when saving.
      * @return \Cake\Datasource\EntityInterface An entity.
      */
-    protected function _processFindOrCreate($search, callable $callback = null, $options = [])
+    protected function _processFindOrCreate($search, ?callable $callback = null, $options = [])
     {
         if (is_callable($search)) {
             $query = $this->find();
@@ -1706,7 +1705,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             'associated' => true,
             'checkRules' => true,
             'checkExisting' => true,
-            '_primary' => true
+            '_primary' => true,
         ]);
 
         if ($entity->getErrors()) {
@@ -2084,7 +2083,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if ($success && $this->_transactionCommitted($options['atomic'], $options['_primary'])) {
             $this->dispatchEvent('Model.afterDeleteCommit', [
                 'entity' => $entity,
-                'options' => $options
+                'options' => $options,
             ]);
         }
 
@@ -2141,7 +2140,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
         $event = $this->dispatchEvent('Model.beforeDelete', [
             'entity' => $entity,
-            'options' => $options
+            'options' => $options,
         ]);
 
         if ($event->isStopped()) {
@@ -2166,7 +2165,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
         $this->dispatchEvent('Model.afterDelete', [
             'entity' => $entity,
-            'options' => $options
+            'options' => $options,
         ]);
 
         return $success;
@@ -2266,7 +2265,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         } elseif ($hasOr !== false) {
             $fields = explode('_or_', $fields);
             $conditions = [
-            'OR' => $makeConditions($fields, $args)
+            'OR' => $makeConditions($fields, $args),
             ];
         } elseif ($hasAnd !== false) {
             $fields = explode('_and_', $fields);
@@ -2573,7 +2572,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param array|null $context Either the validation context or null.
      * @return bool True if the value is unique, or false if a non-scalar, non-unique value was given.
      */
-    public function validateUnique($value, array $options, array $context = null)
+    public function validateUnique($value, array $options, ?array $context = null)
     {
         if ($context === null) {
             $context = $options;
@@ -2583,7 +2582,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             [
                 'useSetters' => false,
                 'markNew' => $context['newRecord'],
-                'source' => $this->getRegistryAlias()
+                'source' => $this->getRegistryAlias(),
             ]
         );
         $fields = array_merge(
@@ -2738,7 +2737,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             'associations' => $associations ? $associations->keys() : false,
             'behaviors' => $behaviors ? $behaviors->loaded() : false,
             'defaultConnection' => static::defaultConnectionName(),
-            'connectionName' => $conn ? $conn->configName() : null
+            'connectionName' => $conn ? $conn->configName() : null,
         ];
     }
 }

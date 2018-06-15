@@ -15,14 +15,11 @@ declare(strict_types=1);
  */
 namespace Cake\Auth\Storage;
 
-use Cake\Auth\Storage\StorageInterface;
-
 /**
  * Memory based non-persistent storage for authenticated user record.
  */
 class MemoryStorage implements StorageInterface
 {
-
     /**
      * User record.
      *

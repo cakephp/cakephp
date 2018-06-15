@@ -21,7 +21,6 @@ use Cake\View\View;
 
 class BreadcrumbsHelperTest extends TestCase
 {
-
     /**
      * Instance of the BreadcrumbsHelper
      *
@@ -63,17 +62,17 @@ class BreadcrumbsHelperTest extends TestCase
                 'title' => 'Home',
                 'url' => '/',
                 'options' => [
-                    'class' => 'first'
-                ]
+                    'class' => 'first',
+                ],
             ],
             [
                 'title' => 'Some text',
                 'url' => [
                     'controller' => 'Some',
-                    'action' => 'text'
+                    'action' => 'text',
                 ],
-                'options' => []
-            ]
+                'options' => [],
+            ],
         ];
         $this->assertEquals($expected, $result);
     }
@@ -90,11 +89,11 @@ class BreadcrumbsHelperTest extends TestCase
                 [
                     'title' => 'Home',
                     'url' => '/',
-                    'options' => ['class' => 'first']
+                    'options' => ['class' => 'first'],
                 ],
                 [
                     'title' => 'Some text',
-                    'url' => ['controller' => 'Some', 'action' => 'text']
+                    'url' => ['controller' => 'Some', 'action' => 'text'],
                 ],
                 [
                     'title' => 'Final',
@@ -107,22 +106,22 @@ class BreadcrumbsHelperTest extends TestCase
                 'title' => 'Home',
                 'url' => '/',
                 'options' => [
-                    'class' => 'first'
-                ]
+                    'class' => 'first',
+                ],
             ],
             [
                 'title' => 'Some text',
                 'url' => [
                     'controller' => 'Some',
-                    'action' => 'text'
+                    'action' => 'text',
                 ],
-                'options' => []
+                'options' => [],
             ],
             [
                 'title' => 'Final',
                 'url' => null,
-                'options' => []
-            ]
+                'options' => [],
+            ],
         ];
         $this->assertEquals($expected, $result);
     }
@@ -144,23 +143,23 @@ class BreadcrumbsHelperTest extends TestCase
             [
                 'title' => 'The root',
                 'url' => '/root',
-                'options' => ['data-name' => 'some-name']
+                'options' => ['data-name' => 'some-name'],
             ],
             [
                 'title' => 'Some text',
                 'url' => [
                     'controller' => 'Some',
-                    'action' => 'text'
+                    'action' => 'text',
                 ],
-                'options' => []
+                'options' => [],
             ],
             [
                 'title' => 'Home',
                 'url' => '/',
                 'options' => [
-                    'class' => 'first'
-                ]
-            ]
+                    'class' => 'first',
+                ],
+            ],
         ];
         $this->assertEquals($expected, $result);
     }
@@ -176,7 +175,7 @@ class BreadcrumbsHelperTest extends TestCase
             ->add('Home', '/', ['class' => 'first'])
             ->prepend([
                 ['title' => 'Some text', 'url' => ['controller' => 'Some', 'action' => 'text']],
-                ['title' => 'The root', 'url' => '/root', 'options' => ['data-name' => 'some-name']]
+                ['title' => 'The root', 'url' => '/root', 'options' => ['data-name' => 'some-name']],
             ]);
 
         $result = $this->breadcrumbs->getCrumbs();
@@ -185,22 +184,22 @@ class BreadcrumbsHelperTest extends TestCase
                 'title' => 'Some text',
                 'url' => [
                     'controller' => 'Some',
-                    'action' => 'text'
+                    'action' => 'text',
                 ],
-                'options' => []
+                'options' => [],
             ],
             [
                 'title' => 'The root',
                 'url' => '/root',
-                'options' => ['data-name' => 'some-name']
+                'options' => ['data-name' => 'some-name'],
             ],
             [
                 'title' => 'Home',
                 'url' => '/',
                 'options' => [
-                    'class' => 'first'
-                ]
-            ]
+                    'class' => 'first',
+                ],
+            ],
         ];
         $this->assertEquals($expected, $result);
     }
@@ -242,33 +241,33 @@ class BreadcrumbsHelperTest extends TestCase
                 'title' => 'Some text',
                 'url' => [
                     'controller' => 'Some',
-                    'action' => 'text'
+                    'action' => 'text',
                 ],
-                'options' => []
+                'options' => [],
             ],
             [
                 'title' => 'Insert At Again',
                 'url' => [
                     'controller' => 'Insert',
-                    'action' => 'at_again'
+                    'action' => 'at_again',
                 ],
-                'options' => []
+                'options' => [],
             ],
             [
                 'title' => 'Insert At',
                 'url' => [
                     'controller' => 'Insert',
-                    'action' => 'at'
+                    'action' => 'at',
                 ],
-                'options' => []
+                'options' => [],
             ],
             [
                 'title' => 'Home',
                 'url' => '/',
                 'options' => [
-                    'class' => 'first'
-                ]
-            ]
+                    'class' => 'first',
+                ],
+            ],
         ];
         $this->assertEquals($expected, $result);
     }
@@ -303,28 +302,28 @@ class BreadcrumbsHelperTest extends TestCase
             [
                 'title' => 'The super root',
                 'url' => null,
-                'options' => []
+                'options' => [],
             ],
             [
                 'title' => 'The root',
                 'url' => '/root',
-                'options' => ['data-name' => 'some-name']
+                'options' => ['data-name' => 'some-name'],
             ],
             [
                 'title' => 'Some text',
                 'url' => [
                     'controller' => 'Some',
-                    'action' => 'text'
+                    'action' => 'text',
                 ],
-                'options' => []
+                'options' => [],
             ],
             [
                 'title' => 'Home',
                 'url' => '/',
                 'options' => [
-                    'class' => 'first'
-                ]
-            ]
+                    'class' => 'first',
+                ],
+            ],
         ];
         $this->assertEquals($expected, $result);
     }
@@ -347,28 +346,28 @@ class BreadcrumbsHelperTest extends TestCase
             [
                 'title' => 'The root',
                 'url' => '/root',
-                'options' => ['data-name' => 'some-name']
+                'options' => ['data-name' => 'some-name'],
             ],
             [
                 'title' => 'The less super root',
                 'url' => null,
-                'options' => []
+                'options' => [],
             ],
             [
                 'title' => 'Some text',
                 'url' => [
                     'controller' => 'Some',
-                    'action' => 'text'
+                    'action' => 'text',
                 ],
-                'options' => []
+                'options' => [],
             ],
             [
                 'title' => 'Home',
                 'url' => '/',
                 'options' => [
-                    'class' => 'first'
-                ]
-            ]
+                    'class' => 'first',
+                ],
+            ],
         ];
         $this->assertEquals($expected, $result);
     }
@@ -420,7 +419,7 @@ class BreadcrumbsHelperTest extends TestCase
             'Final crumb',
             '/span',
             '/li',
-            '/ul'
+            '/ul',
         ];
         $this->assertHtml($expected, $result);
     }
@@ -437,7 +436,7 @@ class BreadcrumbsHelperTest extends TestCase
                 'wrapper' => '<ol itemtype="http://schema.org/BreadcrumbList"{{attrs}}>{{content}}</ol>',
                 'item' => '<li itemprop="itemListElement" itemtype="http://schema.org/ListItem"{{attrs}}><a itemtype="http://schema.org/Thing" itemprop="item" href="{{url}}"{{innerAttrs}}><span itemprop="name">{{title}}</span></a></li>',
                 'itemWithoutLink' => '<li itemprop="itemListElement" itemtype="http://schema.org/ListItem"{{attrs}}><span itemprop="name"{{innerAttrs}}>{{title}}</span></li>',
-            ]
+            ],
         ]);
         $this->breadcrumbs
             ->add('Home', '/', ['class' => 'first', 'innerAttrs' => ['data-foo' => 'bar']])
@@ -461,7 +460,7 @@ class BreadcrumbsHelperTest extends TestCase
             'Final crumb',
             '/span',
             '/li',
-            '/ol'
+            '/ol',
         ];
         $this->assertHtml($expected, $result, true);
     }
@@ -478,7 +477,7 @@ class BreadcrumbsHelperTest extends TestCase
                 'wrapper' => '{{thing}}<ol itemtype="http://schema.org/BreadcrumbList"{{attrs}}>{{content}}</ol>',
                 'item' => '<li itemprop="itemListElement" itemtype="http://schema.org/ListItem"{{attrs}}><a itemtype="http://schema.org/Thing" itemprop="item" href="{{url}}"{{innerAttrs}}><span itemprop="name">{{title}}</span></a>{{foo}}</li>',
                 'itemWithoutLink' => '<li itemprop="itemListElement" itemtype="http://schema.org/ListItem"{{attrs}}><span itemprop="name"{{innerAttrs}}>{{title}}</span>{{barbaz}}</li>',
-            ]
+            ],
         ]);
         $this->breadcrumbs
             ->add('Home', '/', ['class' => 'first', 'innerAttrs' => ['data-foo' => 'bar'], 'templateVars' => ['foo' => 'barbaz']])
@@ -505,7 +504,7 @@ class BreadcrumbsHelperTest extends TestCase
             '/span',
             'foo',
             '/li',
-            '/ol'
+            '/ol',
         ];
         $this->assertHtml($expected, $result, true);
     }

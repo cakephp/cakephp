@@ -24,7 +24,6 @@ use Cake\Core\ObjectRegistry;
  */
 class TaskRegistry extends ObjectRegistry
 {
-
     /**
      * Shell to use to set params to tasks.
      *
@@ -70,7 +69,7 @@ class TaskRegistry extends ObjectRegistry
     {
         throw new MissingTaskException([
             'class' => $class,
-            'plugin' => $plugin
+            'plugin' => $plugin,
         ]);
     }
 

@@ -25,7 +25,6 @@ use finfo;
  */
 class FormData implements Countable
 {
-
     /**
      * Boundary marker.
      *

@@ -22,7 +22,6 @@ use Cake\Console\Shell;
 
 class SampleShell extends Shell
 {
-
     /**
      * main method
      *

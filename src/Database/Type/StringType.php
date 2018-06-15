@@ -25,7 +25,6 @@ use PDO;
  */
 class StringType extends BaseType implements OptionalConvertInterface
 {
-
     /**
      * Convert string data into the database format.
      *
@@ -102,7 +101,7 @@ class StringType extends BaseType implements OptionalConvertInterface
     /**
      * {@inheritDoc}
      *
-     * @return boolean False as database results are returned already as strings
+     * @return bool False as database results are returned already as strings
      */
     public function requiresToPhpCast()
     {

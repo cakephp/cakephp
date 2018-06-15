@@ -19,7 +19,6 @@ namespace Cake\Core\Configure;
  */
 interface ConfigEngineInterface
 {
-
     /**
      * Read a configuration file/storage key
      *

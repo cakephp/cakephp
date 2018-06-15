@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
  */
 class StatementDecoratorTest extends TestCase
 {
-
     /**
      * Tests that calling lastInsertId will proxy it to
      * the driver's lastInsertId method

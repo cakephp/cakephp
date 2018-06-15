@@ -41,7 +41,7 @@ class Debugger
      * @var array
      */
     protected $_defaultConfig = [
-        'outputMask' => []
+        'outputMask' => [],
     ];
 
     /**
@@ -67,7 +67,7 @@ class Debugger
     protected $_templates = [
         'log' => [
             'trace' => '{:reference} - {:path}, line {:line}',
-            'error' => '{:error} ({:code}): {:description} in [{:file}, line {:line}]'
+            'error' => '{:error} ({:code}): {:description} in [{:file}, line {:line}]',
         ],
         'js' => [
             'error' => '',
@@ -86,13 +86,13 @@ class Debugger
         'txt' => [
             'error' => "{:error}: {:code} :: {:description} on line {:line} of {:path}\n{:info}",
             'code' => '',
-            'info' => ''
+            'info' => '',
         ],
         'base' => [
             'traceLine' => '{:reference} - {:path}, line {:line}',
             'trace' => "Trace:\n{:trace}\n",
             'context' => "Context:\n{:context}\n",
-        ]
+        ],
     ];
 
     /**
@@ -303,7 +303,7 @@ class Debugger
             'args' => false,
             'start' => 0,
             'scope' => null,
-            'exclude' => ['call_user_func_array', 'trigger_error']
+            'exclude' => ['call_user_func_array', 'trigger_error'],
         ];
         $options = Hash::merge($defaults, $options);
 
@@ -314,7 +314,7 @@ class Debugger
             'line' => '??',
             'file' => '[internal]',
             'class' => null,
-            'function' => '[main]'
+            'function' => '[main]',
         ];
 
         for ($i = $options['start']; $i < $count && $i < $options['depth']; $i++) {
@@ -430,7 +430,7 @@ class Debugger
                 continue;
             }
             $string = str_replace(["\r\n", "\n"], '', static::_highlight($data[$i]));
-            if ($i == $line) {
+            if ($i === $line) {
                 $lines[] = '<span class="code-highlight">' . $string . '</span>';
             } else {
                 $lines[] = $string;

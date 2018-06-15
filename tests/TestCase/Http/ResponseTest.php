@@ -79,7 +79,7 @@ class ResponseTest extends TestCase
             'body' => 'This is the body',
             'charset' => 'my-custom-charset',
             'type' => 'mp3',
-            'status' => '203'
+            'status' => '203',
         ];
         $response = new Response($options);
         $this->assertEquals('This is the body', (string)$response->getBody());
@@ -797,7 +797,7 @@ class ResponseTest extends TestCase
             'value' => '[a,b,c]',
             'expire' => 1000,
             'path' => '/test',
-            'secure' => true
+            'secure' => true,
         ];
         $new = $response->withCookie('testing', $cookie);
         $this->assertNull($response->getCookie('testing'), 'withCookie does not mutate');
@@ -808,7 +808,7 @@ class ResponseTest extends TestCase
             'path' => '/test',
             'domain' => '',
             'secure' => true,
-            'httpOnly' => false
+            'httpOnly' => false,
         ];
         $this->assertEquals($expected, $new->getCookie('testing'));
     }
@@ -895,7 +895,7 @@ class ResponseTest extends TestCase
                 'path' => '/',
                 'domain' => '',
                 'secure' => false,
-                'httpOnly' => false
+                'httpOnly' => false,
             ],
             'test2' => [
                 'name' => 'test2',
@@ -904,8 +904,8 @@ class ResponseTest extends TestCase
                 'path' => '/test',
                 'domain' => '',
                 'secure' => true,
-                'httpOnly' => false
-            ]
+                'httpOnly' => false,
+            ],
         ];
         $this->assertEquals($expected, $new->getCookies());
     }
@@ -931,7 +931,7 @@ class ResponseTest extends TestCase
                 'path' => '',
                 'domain' => '',
                 'secure' => false,
-                'httpOnly' => true
+                'httpOnly' => true,
             ],
         ];
         $this->assertEquals($expected, $new->getCookies());
@@ -967,7 +967,7 @@ class ResponseTest extends TestCase
     public function testCors()
     {
         $request = new ServerRequest([
-            'environment' => ['HTTP_ORIGIN' => 'http://example.com']
+            'environment' => ['HTTP_ORIGIN' => 'http://example.com'],
         ]);
         $response = new Response();
         $builder = $response->cors($request);
@@ -1133,7 +1133,7 @@ class ResponseTest extends TestCase
     {
         $response = new Response();
         $new = $response->withFile(CONFIG . 'no_section.ini', [
-            'download' => false
+            'download' => false,
         ]);
         $this->assertEquals(
             'text/html; charset=UTF-8',
@@ -1165,24 +1165,24 @@ class ResponseTest extends TestCase
         return [
             // suffix-byte-range
             [
-                'bytes=-25', 25, 'bytes 13-37/38'
+                'bytes=-25', 25, 'bytes 13-37/38',
             ],
 
             [
-                'bytes=0-', 38, 'bytes 0-37/38'
+                'bytes=0-', 38, 'bytes 0-37/38',
             ],
 
             [
-                'bytes=10-', 28, 'bytes 10-37/38'
+                'bytes=10-', 28, 'bytes 10-37/38',
             ],
 
             [
-                'bytes=10-20', 11, 'bytes 10-20/38'
+                'bytes=10-20', 11, 'bytes 10-20/38',
             ],
 
             // Spaced out
             [
-                'bytes = 10 - 20', 11, 'bytes 10-20/38'
+                'bytes = 10 - 20', 11, 'bytes 10-20/38',
             ],
         ];
     }
@@ -1246,12 +1246,12 @@ class ResponseTest extends TestCase
         return [
             // malformed range
             [
-                'bytes=0,38'
+                'bytes=0,38',
             ],
 
             // malformed punctuation
             [
-                'bytes: 0 - 38'
+                'bytes: 0 - 38',
             ],
         ];
     }
@@ -1502,7 +1502,7 @@ class ResponseTest extends TestCase
         $result = $response2->getHeaders();
         $expected = [
             'Content-Type' => ['text/html; charset=UTF-8'],
-            'Accept' => ['application/json']
+            'Accept' => ['application/json'],
         ];
         $this->assertEquals($expected, $result);
 
@@ -1526,7 +1526,7 @@ class ResponseTest extends TestCase
         $expected = [
             'Content-Type' => ['text/html; charset=UTF-8'],
             'Location' => ['localhost'],
-            'Accept' => ['application/json']
+            'Accept' => ['application/json'],
         ];
 
         $this->assertEquals($expected, $headers);
@@ -1548,7 +1548,7 @@ class ResponseTest extends TestCase
 
         $expected = [
             'Content-Type' => ['text/html; charset=UTF-8'],
-            'Accept' => ['application/json']
+            'Accept' => ['application/json'],
         ];
 
         $this->assertEquals($expected, $headers);
@@ -1628,13 +1628,13 @@ class ResponseTest extends TestCase
             'status' => 200,
             'contentType' => 'text/html',
             'headers' => [
-                'Content-Type' => ['text/html; charset=UTF-8']
+                'Content-Type' => ['text/html; charset=UTF-8'],
             ],
             'file' => null,
             'fileRange' => [],
             'cookies' => new CookieCollection(),
             'cacheDirectives' => [],
-            'body' => 'Foo'
+            'body' => 'Foo',
         ];
         $this->assertEquals($expected, $result);
     }

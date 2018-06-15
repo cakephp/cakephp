@@ -23,7 +23,6 @@ use Cake\TestSuite\TestCase;
  */
 class NumberTree extends Entity
 {
-
     use TranslateTrait;
 }
 
@@ -39,7 +38,7 @@ class BehaviorRegressionTest extends TestCase
      */
     public $fixtures = [
         'core.number_trees',
-        'core.translates'
+        'core.translates',
     ];
 
     /**

@@ -15,8 +15,8 @@
 namespace Cake\Test\TestCase\Routing\Route;
 
 use Cake\Core\Configure;
-use Cake\Routing\Router;
 use Cake\Routing\Route\PluginShortRoute;
+use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -24,7 +24,6 @@ use Cake\TestSuite\TestCase;
  */
 class PluginShortRouteTest extends TestCase
 {
-
     /**
      * setUp method
      *

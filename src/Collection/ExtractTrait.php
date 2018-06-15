@@ -23,7 +23,6 @@ use Traversable;
  */
 trait ExtractTrait
 {
-
     /**
      * Returns a callable that can be used to extract a property or column from
      * an array or object based on a dot separated path.
@@ -131,7 +130,7 @@ trait ExtractTrait
         foreach ($conditions as $property => $value) {
             $extractor = $this->_propertyExtractor($property);
             $matchers[] = function ($v) use ($extractor, $value) {
-                return $extractor($v) == $value;
+                return $extractor($v) === $value;
             };
         }
 

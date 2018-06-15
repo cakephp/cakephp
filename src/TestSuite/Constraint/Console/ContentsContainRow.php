@@ -20,7 +20,6 @@ namespace Cake\TestSuite\Constraint\Console;
  */
 class ContentsContainRow extends ContentsRegExp
 {
-
     /**
      * Checks if contents contain expected
      *

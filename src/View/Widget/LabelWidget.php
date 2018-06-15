@@ -24,7 +24,6 @@ use Cake\View\Form\ContextInterface;
  */
 class LabelWidget implements WidgetInterface
 {
-
     /**
      * Templates
      *
@@ -76,7 +75,7 @@ class LabelWidget implements WidgetInterface
             'input' => '',
             'hidden' => '',
             'escape' => true,
-            'templateVars' => []
+            'templateVars' => [],
         ];
 
         return $this->_templates->format($this->_labelTemplate, [

@@ -26,7 +26,6 @@ use Traversable;
  */
 class ReplaceIterator extends Collection
 {
-
     /**
      * The callback function to be used to transform values
      *

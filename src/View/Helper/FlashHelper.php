@@ -25,7 +25,6 @@ use UnexpectedValueException;
  */
 class FlashHelper extends Helper
 {
-
     /**
      * Used to render the message set in FlashComponent::set()
      *

@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
  */
 class ConsoleLogTest extends TestCase
 {
-
     /**
      * Test writing to ConsoleOutput
      */
@@ -41,7 +40,7 @@ class ConsoleLogTest extends TestCase
             ->with($this->stringContains($message));
 
         $log = new ConsoleLog([
-            'stream' => $output
+            'stream' => $output,
         ]);
         $log->log('error', 'oh noes');
     }
@@ -55,7 +54,7 @@ class ConsoleLogTest extends TestCase
     {
         $filename = tempnam(sys_get_temp_dir(), 'cake_log_test');
         $log = new ConsoleLog([
-            'stream' => $filename
+            'stream' => $filename,
         ]);
         $log->log('error', 'oh noes');
         $fh = fopen($filename, 'r');

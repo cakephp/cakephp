@@ -29,7 +29,6 @@ use InvalidArgumentException;
  */
 class Socket
 {
-
     use InstanceConfigTrait;
 
     /**
@@ -49,7 +48,7 @@ class Socket
         'host' => 'localhost',
         'protocol' => 'tcp',
         'port' => 80,
-        'timeout' => 30
+        'timeout' => 30,
     ];
 
     /**
@@ -441,12 +440,12 @@ class Socket
         //
         // See https://github.com/php/php-src/commit/10bc5fd4c4c8e1dd57bd911b086e9872a56300a0
         if (version_compare(PHP_VERSION, '5.6.7', '>=')) {
-            if ($method == STREAM_CRYPTO_METHOD_TLS_CLIENT) {
+            if ($method === STREAM_CRYPTO_METHOD_TLS_CLIENT) {
                 // @codingStandardsIgnoreStart
                 $method |= STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT | STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT;
                 // @codingStandardsIgnoreEnd
             }
-            if ($method == STREAM_CRYPTO_METHOD_TLS_SERVER) {
+            if ($method === STREAM_CRYPTO_METHOD_TLS_SERVER) {
                 // @codingStandardsIgnoreStart
                 $method |= STREAM_CRYPTO_METHOD_TLSv1_1_SERVER | STREAM_CRYPTO_METHOD_TLSv1_2_SERVER;
                 // @codingStandardsIgnoreEnd

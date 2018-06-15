@@ -84,7 +84,7 @@ class QueryExpressionTest extends TestCase
             ],
             [
                 'Users.username' => 'string',
-                'Users.active' => 'boolean'
+                'Users.active' => 'boolean',
             ]
         );
 
@@ -159,7 +159,7 @@ class QueryExpressionTest extends TestCase
     {
         return [
             ['eq'], ['notEq'], ['gt'], ['lt'], ['gte'], ['lte'], ['like'],
-            ['notLike'], ['in'], ['notIn']
+            ['notLike'], ['in'], ['notIn'],
         ];
     }
 

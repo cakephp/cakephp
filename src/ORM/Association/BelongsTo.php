@@ -30,7 +30,6 @@ use RuntimeException;
  */
 class BelongsTo extends Association
 {
-
     /**
      * Valid strategies for this type of association
      *
@@ -38,7 +37,7 @@ class BelongsTo extends Association
      */
     protected $_validStrategies = [
         self::STRATEGY_JOIN,
-        self::STRATEGY_SELECT
+        self::STRATEGY_SELECT,
     ];
 
     /**
@@ -194,7 +193,7 @@ class BelongsTo extends Association
             'bindingKey' => $this->getBindingKey(),
             'strategy' => $this->getStrategy(),
             'associationType' => $this->type(),
-            'finder' => [$this, 'find']
+            'finder' => [$this, 'find'],
         ]);
 
         return $loader->buildEagerLoader($options);

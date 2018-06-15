@@ -223,7 +223,7 @@ class ResponseEmitter implements EmitterInterface
                 'path' => '',
                 'domain' => '',
                 'secure' => false,
-                'httponly' => false
+                'httponly' => false,
             ];
 
             foreach ($parts as $part) {
@@ -261,7 +261,7 @@ class ResponseEmitter implements EmitterInterface
      */
     protected function flush($maxBufferLevel = null)
     {
-        if (null === $maxBufferLevel) {
+        if ($maxBufferLevel === null) {
             $maxBufferLevel = ob_get_level();
         }
 

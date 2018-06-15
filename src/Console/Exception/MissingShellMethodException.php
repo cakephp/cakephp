@@ -19,6 +19,5 @@ use Cake\Core\Exception\Exception;
  */
 class MissingShellMethodException extends Exception
 {
-
     protected $_messageTemplate = "Unknown command %1\$s %2\$s.\nFor usage try `cake %1\$s --help`";
 }

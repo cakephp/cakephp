@@ -21,8 +21,7 @@ use Aura\Intl\Translator as BaseTranslator;
  */
 class Translator extends BaseTranslator
 {
-
-    const PLURAL_PREFIX = 'p:';
+    public const PLURAL_PREFIX = 'p:';
 
     /**
      * Translates the message formatting any placeholders
@@ -74,9 +73,9 @@ class Translator extends BaseTranslator
 
         // Resolve plural form.
         if (is_array($message)) {
-            $count = isset($tokensValues['_count']) ? $tokensValues['_count'] : 0;
+            $count = $tokensValues['_count'] ?? 0;
             $form = PluralRules::calculate($this->locale, $count);
-            $message = isset($message[$form]) ? $message[$form] : (string)end($message);
+            $message = $message[$form] ?? (string)end($message);
         }
 
         if (strlen($message) === 0) {
@@ -96,7 +95,7 @@ class Translator extends BaseTranslator
      */
     protected function resolveContext($key, $message, array $vars)
     {
-        $context = isset($vars['_context']) ? $vars['_context'] : null;
+        $context = $vars['_context'] ?? null;
 
         // No or missing context, fallback to the key/first message
         if ($context === null) {

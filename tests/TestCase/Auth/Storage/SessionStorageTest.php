@@ -26,7 +26,6 @@ use Cake\TestSuite\TestCase;
  */
 class SessionStorageTest extends TestCase
 {
-
     /**
      * setup
      *

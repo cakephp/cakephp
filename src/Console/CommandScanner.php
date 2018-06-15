@@ -139,7 +139,7 @@ class CommandScanner
                 'file' => $path . $file,
                 'fullName' => $prefix . $name,
                 'name' => $name,
-                'class' => $class
+                'class' => $class,
             ];
         }
 

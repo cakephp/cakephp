@@ -24,7 +24,6 @@ use MessageFormatter;
  */
 class IcuFormatter implements FormatterInterface
 {
-
     /**
      * Returns a string with all passed variables interpolated into the original
      * message. Variables are interpolated using the MessageFormatter class.

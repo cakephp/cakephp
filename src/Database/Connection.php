@@ -35,7 +35,6 @@ use Exception;
  */
 class Connection implements ConnectionInterface
 {
-
     use TypeConverterTrait;
 
     /**
@@ -850,7 +849,7 @@ class Connection implements ConnectionInterface
             'username' => '*****',
             'host' => '*****',
             'database' => '*****',
-            'port' => '*****'
+            'port' => '*****',
         ];
         $replace = array_intersect_key($secrets, $this->_config);
         $config = $replace + $this->_config;
@@ -862,7 +861,7 @@ class Connection implements ConnectionInterface
             'transactionStarted' => $this->_transactionStarted,
             'useSavePoints' => $this->_useSavePoints,
             'logQueries' => $this->_logQueries,
-            'logger' => $this->_logger
+            'logger' => $this->_logger,
         ];
     }
 }

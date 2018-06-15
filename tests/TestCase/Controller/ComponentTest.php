@@ -13,24 +13,23 @@
  */
 namespace Cake\Test\TestCase\Controller;
 
-use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\FlashComponent;
+use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Event\EventManager;
 use Cake\TestSuite\TestCase;
-use TestApp\Controller\ComponentTestController;
 use TestApp\Controller\Component\AppleComponent;
 use TestApp\Controller\Component\BananaComponent;
 use TestApp\Controller\Component\ConfiguredComponent;
 use TestApp\Controller\Component\OrangeComponent;
 use TestApp\Controller\Component\SomethingWithFlashComponent;
+use TestApp\Controller\ComponentTestController;
 
 /**
  * ComponentTest class
  */
 class ComponentTest extends TestCase
 {
-
     /**
      * setUp method
      *
@@ -156,12 +155,12 @@ class ComponentTest extends TestCase
 
         $expected = [
             'components' => [
-                'Orange'
+                'Orange',
             ],
             'implementedEvents' => [
-                'Controller.startup' => 'startup'
+                'Controller.startup' => 'startup',
             ],
-            '_config' => []
+            '_config' => [],
         ];
         $result = $Component->__debugInfo();
         $this->assertEquals($expected, $result);

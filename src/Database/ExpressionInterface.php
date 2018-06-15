@@ -19,7 +19,6 @@ namespace Cake\Database;
  */
 interface ExpressionInterface
 {
-
     /**
      * Converts the Node into a SQL string fragment.
      *

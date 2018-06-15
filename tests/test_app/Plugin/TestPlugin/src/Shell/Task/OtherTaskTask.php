@@ -24,5 +24,4 @@ use Cake\Console\Shell;
 
 class OtherTaskTask extends Shell
 {
-
 }

@@ -20,7 +20,6 @@ use Cake\Controller\Controller;
  */
 class ComponentTestController extends Controller
 {
-
     /**
      * uses property
      *

@@ -28,7 +28,6 @@ use UnexpectedValueException;
  */
 class FixtureManager
 {
-
     /**
      * Was this instance already initialized?
      *
@@ -205,7 +204,7 @@ class FixtureManager
                     $baseNamespace,
                     'Test\Fixture',
                     $additionalPath,
-                    $name . 'Fixture'
+                    $name . 'Fixture',
                 ];
                 $className = implode('\\', array_filter($nameSegments));
             } else {

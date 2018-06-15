@@ -194,10 +194,10 @@ if (!function_exists('env')) {
     {
         if ($key === 'HTTPS') {
             if (isset($_SERVER['HTTPS'])) {
-                return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
+                return !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
             }
 
-            return (strpos((string)env('SCRIPT_URI'), 'https://') === 0);
+            return strpos((string)env('SCRIPT_URI'), 'https://') === 0;
         }
 
         if ($key === 'SCRIPT_NAME') {
@@ -239,7 +239,7 @@ if (!function_exists('env')) {
             case 'PHP_SELF':
                 return str_replace(env('DOCUMENT_ROOT'), '', env('SCRIPT_FILENAME'));
             case 'CGI_MODE':
-                return (PHP_SAPI === 'cgi');
+                return PHP_SAPI === 'cgi';
         }
 
         return $default;

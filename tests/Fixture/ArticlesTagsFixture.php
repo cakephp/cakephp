@@ -21,7 +21,6 @@ use Cake\TestSuite\Fixture\TestFixture;
  */
 class ArticlesTagsFixture extends TestFixture
 {
-
     /**
      * fields property
      *
@@ -38,8 +37,8 @@ class ArticlesTagsFixture extends TestFixture
                 'references' => ['tags', 'id'],
                 'update' => 'cascade',
                 'delete' => 'cascade',
-            ]
-        ]
+            ],
+        ],
     ];
 
     /**
@@ -51,6 +50,6 @@ class ArticlesTagsFixture extends TestFixture
         ['article_id' => 1, 'tag_id' => 1],
         ['article_id' => 1, 'tag_id' => 2],
         ['article_id' => 2, 'tag_id' => 1],
-        ['article_id' => 2, 'tag_id' => 3]
+        ['article_id' => 2, 'tag_id' => 3],
     ];
 }

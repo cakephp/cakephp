@@ -139,46 +139,46 @@ class DateTypeTest extends TestCase
             ],
             [
                 ['year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 13, 'minute' => 14, 'second' => 15],
-                new Date('2014-02-14')
+                new Date('2014-02-14'),
             ],
             [
                 [
                     'year' => 2014, 'month' => 2, 'day' => 14,
                     'hour' => 1, 'minute' => 14, 'second' => 15,
-                    'meridian' => 'am'
+                    'meridian' => 'am',
                 ],
-                new Date('2014-02-14')
+                new Date('2014-02-14'),
             ],
             [
                 [
                     'year' => 2014, 'month' => 2, 'day' => 14,
                     'hour' => 1, 'minute' => 14, 'second' => 15,
-                    'meridian' => 'pm'
+                    'meridian' => 'pm',
                 ],
-                new Date('2014-02-14')
+                new Date('2014-02-14'),
             ],
             [
                 [
                     'year' => 2014, 'month' => 2, 'day' => 14,
                 ],
-                new Date('2014-02-14')
+                new Date('2014-02-14'),
             ],
 
             // Invalid array types
             [
                 ['year' => 'farts', 'month' => 'derp'],
-                new Date(date('Y-m-d'))
+                new Date(date('Y-m-d')),
             ],
             [
                 ['year' => 'farts', 'month' => 'derp', 'day' => 'farts'],
-                new Date(date('Y-m-d'))
+                new Date(date('Y-m-d')),
             ],
             [
                 [
                     'year' => '2014', 'month' => '02', 'day' => '14',
-                    'hour' => 'farts', 'minute' => 'farts'
+                    'hour' => 'farts', 'minute' => 'farts',
                 ],
-                new Date('2014-02-14')
+                new Date('2014-02-14'),
             ],
         ];
     }

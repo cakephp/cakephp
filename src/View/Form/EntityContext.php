@@ -231,7 +231,7 @@ class EntityContext implements ContextInterface
     {
         $options += [
             'default' => null,
-            'schemaDefault' => true
+            'schemaDefault' => true,
         ];
 
         $val = $this->_request->getData($field);
@@ -266,7 +266,7 @@ class EntityContext implements ContextInterface
         if (is_array($entity) || $entity instanceof ArrayAccess) {
             $key = array_pop($parts);
 
-            return isset($entity[$key]) ? $entity[$key] : $options['default'];
+            return $entity[$key] ?? $options['default'];
         }
 
         return null;
@@ -389,7 +389,7 @@ class EntityContext implements ContextInterface
         }
         if ($target instanceof Traversable) {
             foreach ($target as $i => $val) {
-                if ($i == $field) {
+                if ($i === $field) {
                     return $val;
                 }
             }

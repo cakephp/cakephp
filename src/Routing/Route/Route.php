@@ -26,7 +26,6 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class Route
 {
-
     /**
      * An array of named segments in a Route.
      * `/:controller/:action/:id` has 3 key elements
@@ -104,7 +103,7 @@ class Route
      *
      * @var array
      */
-    const VALID_METHODS = ['GET', 'PUT', 'POST', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'];
+    public const VALID_METHODS = ['GET', 'PUT', 'POST', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'];
 
     /**
      * Constructor for a Route
@@ -362,7 +361,7 @@ class Route
             'prefix' => ':',
             'plugin' => '.',
             'controller' => ':',
-            'action' => ''
+            'action' => '',
         ];
         foreach ($keys as $key => $glue) {
             $value = null;
@@ -649,7 +648,7 @@ class Route
         }
 
         // Defaults with different values are a fail.
-        if (array_intersect_key($url, $defaults) != $defaults) {
+        if (array_intersect_key($url, $defaults) !== $defaults) {
             return false;
         }
 
@@ -682,7 +681,7 @@ class Route
 
             // pull out passed args
             $numeric = is_numeric($key);
-            if ($numeric && isset($defaults[$key]) && $defaults[$key] == $value) {
+            if ($numeric && isset($defaults[$key]) && $defaults[$key] === $value) {
                 continue;
             }
             if ($numeric) {
@@ -761,7 +760,7 @@ class Route
             $string = null;
             if (isset($params[$key])) {
                 $string = $params[$key];
-            } elseif (strpos($out, $key) != strlen($out) - strlen($key)) {
+            } elseif (strpos($out, $key) !== strlen($out) - strlen($key)) {
                 $key .= '/';
             }
             if ($this->braceKeys) {
@@ -798,7 +797,7 @@ class Route
             if (isset($params['_port'])) {
                 $host .= ':' . $params['_port'];
             }
-            $scheme = isset($params['_scheme']) ? $params['_scheme'] : 'http';
+            $scheme = $params['_scheme'] ?? 'http';
             $out = "{$scheme}://{$host}{$out}";
         }
         if (!empty($params['_ext']) || !empty($query)) {

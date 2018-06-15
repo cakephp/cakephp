@@ -26,7 +26,6 @@ use UnexpectedValueException;
  */
 trait ModelAwareTrait
 {
-
     /**
      * This object's primary model class name. Should be a plural form.
      * CakePHP will not inflect the name.

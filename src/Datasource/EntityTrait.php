@@ -25,7 +25,6 @@ use Traversable;
  */
 trait EntityTrait
 {
-
     /**
      * Holds all properties and their values for this entity
      *
@@ -829,7 +828,7 @@ trait EntityTrait
      */
     public function getError($field)
     {
-        $errors = isset($this->_errors[$field]) ? $this->_errors[$field] : [];
+        $errors = $this->_errors[$field] ?? [];
         if ($errors) {
             return $errors;
         }
@@ -911,7 +910,7 @@ trait EntityTrait
             if ($entity instanceof EntityInterface) {
                 $val = $entity->get($part);
             } elseif (is_array($entity)) {
-                $val = isset($entity[$part]) ? $entity[$part] : false;
+                $val = $entity[$part] ?? false;
             }
 
             if (is_array($val) ||
@@ -977,7 +976,7 @@ trait EntityTrait
      */
     public function getInvalidField($field)
     {
-        $value = isset($this->_invalid[$field]) ? $this->_invalid[$field] : null;
+        $value = $this->_invalid[$field] ?? null;
 
         return $value;
     }
@@ -1076,8 +1075,7 @@ trait EntityTrait
      */
     public function isAccessible($property)
     {
-        $value = isset($this->_accessible[$property]) ?
-            $this->_accessible[$property] :
+        $value = $this->_accessible[$property] ??
             null;
 
         return ($value === null && !empty($this->_accessible['*'])) || $value;
@@ -1137,7 +1135,7 @@ trait EntityTrait
             '[virtual]' => $this->_virtual,
             '[errors]' => $this->_errors,
             '[invalid]' => $this->_invalid,
-            '[repository]' => $this->_registryAlias
+            '[repository]' => $this->_registryAlias,
         ];
     }
 }

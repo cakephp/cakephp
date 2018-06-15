@@ -27,7 +27,6 @@ require_once CAKE . 'basics.php';
  */
 class BasicsTest extends TestCase
 {
-
     /**
      * test the array_diff_key compatibility function.
      *
@@ -168,7 +167,7 @@ class BasicsTest extends TestCase
         $result = h($arr);
         $expected = [
             '&lt;foo&gt;',
-            '&amp;nbsp;'
+            '&amp;nbsp;',
         ];
         $this->assertEquals($expected, $result);
 
@@ -176,7 +175,7 @@ class BasicsTest extends TestCase
         $result = h($arr, false);
         $expected = [
             '&lt;foo&gt;',
-            '&nbsp;'
+            '&nbsp;',
         ];
         $this->assertEquals($expected, $result);
 
@@ -184,7 +183,7 @@ class BasicsTest extends TestCase
         $result = h($arr, false);
         $expected = [
             'f' => '&lt;foo&gt;',
-            'n' => '&nbsp;'
+            'n' => '&nbsp;',
         ];
         $this->assertEquals($expected, $result);
 

@@ -25,7 +25,6 @@ use Exception;
  */
 class ConsoleErrorHandler extends BaseErrorHandler
 {
-
     /**
      * Standard error stream.
      *

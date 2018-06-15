@@ -23,20 +23,19 @@ use Cake\Core\Configure;
  */
 class ServerShell extends Shell
 {
-
     /**
      * Default ServerHost
      *
      * @var string
      */
-    const DEFAULT_HOST = 'localhost';
+    public const DEFAULT_HOST = 'localhost';
 
     /**
      * Default ListenPort
      *
      * @var int
      */
-    const DEFAULT_PORT = 8765;
+    public const DEFAULT_PORT = 8765;
 
     /**
      * server host
@@ -164,16 +163,16 @@ class ServerShell extends Shell
             '<warning>[WARN] Don\'t use this in a production environment</warning>',
         ])->addOption('host', [
             'short' => 'H',
-            'help' => 'ServerHost'
+            'help' => 'ServerHost',
         ])->addOption('port', [
             'short' => 'p',
-            'help' => 'ListenPort'
+            'help' => 'ListenPort',
         ])->addOption('ini_path', [
             'short' => 'I',
-            'help' => 'php.ini path'
+            'help' => 'php.ini path',
         ])->addOption('document_root', [
             'short' => 'd',
-            'help' => 'DocumentRoot'
+            'help' => 'DocumentRoot',
         ]);
 
         return $parser;

@@ -19,7 +19,6 @@ namespace Cake\Database;
  */
 class TypeMap
 {
-
     /**
      * Associative array with the default fields and the related types this query might contain.
      *

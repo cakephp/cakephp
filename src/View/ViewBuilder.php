@@ -30,7 +30,6 @@ use Serializable;
  */
 class ViewBuilder implements JsonSerializable, Serializable
 {
-
     /**
      * The subdirectory to the template.
      *
@@ -401,7 +400,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * @return \Cake\View\View
      * @throws \Cake\View\Exception\MissingViewException
      */
-    public function build($vars = [], ServerRequest $request = null, Response $response = null, EventManager $events = null)
+    public function build($vars = [], ?ServerRequest $request = null, ?Response $response = null, ?EventManager $events = null)
     {
         $className = $this->_className;
         if ($className === null) {
@@ -443,7 +442,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     {
         $properties = [
             '_templatePath', '_template', '_plugin', '_theme', '_layout', '_autoLayout',
-            '_layoutPath', '_name', '_className', '_options', '_helpers'
+            '_layoutPath', '_name', '_className', '_options', '_helpers',
         ];
 
         $array = [];

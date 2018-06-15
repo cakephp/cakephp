@@ -24,7 +24,6 @@ use ReflectionClass;
  */
 class BasePlugin implements PluginInterface
 {
-
     /**
      * Do bootstrapping or not
      *

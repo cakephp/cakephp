@@ -29,7 +29,6 @@ use RuntimeException;
  */
 class TimestampBehaviorTest extends TestCase
 {
-
     /**
      * autoFixtures
      *
@@ -45,7 +44,7 @@ class TimestampBehaviorTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'core.users'
+        'core.users',
     ];
 
     /**
@@ -59,7 +58,7 @@ class TimestampBehaviorTest extends TestCase
         $this->Behavior = new TimestampBehavior($table);
 
         $expected = [
-            'Model.beforeSave' => 'handleEvent'
+            'Model.beforeSave' => 'handleEvent',
         ];
         $this->assertEquals($expected, $this->Behavior->implementedEvents());
     }
@@ -78,7 +77,7 @@ class TimestampBehaviorTest extends TestCase
         $this->Behavior = new TimestampBehavior($table, $settings);
 
         $expected = [
-            'Something.special' => 'handleEvent'
+            'Something.special' => 'handleEvent',
         ];
         $this->assertEquals($expected, $this->Behavior->implementedEvents());
     }
@@ -260,7 +259,7 @@ class TimestampBehaviorTest extends TestCase
             'events' => [
                 'Model.beforeSave' => [
                     'timestamp_str' => 'always',
-                ]
+                ],
             ],
         ]);
 
@@ -406,8 +405,8 @@ class TimestampBehaviorTest extends TestCase
             'events' => [
                 'Model.beforeSave' => [
                     'created' => 'new',
-                ]
-            ]
+                ],
+            ],
         ];
 
         $this->Behavior = new TimestampBehavior($table, $config);
@@ -459,9 +458,9 @@ class TimestampBehaviorTest extends TestCase
             'events' => [
                 'Model.beforeSave' => [
                     'created' => 'new',
-                    'updated' => 'always'
-                ]
-            ]
+                    'updated' => 'always',
+                ],
+            ],
         ]);
 
         $entity = new Entity(['username' => 'timestamp test']);

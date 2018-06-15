@@ -24,7 +24,6 @@ namespace Cake\Http\Client;
  */
 class FormDataPart
 {
-
     /**
      * Name of the value.
      *

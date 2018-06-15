@@ -27,7 +27,6 @@ use LogicException;
  */
 trait StaticConfigTrait
 {
-
     /**
      * Configuration sets.
      *
@@ -114,7 +113,7 @@ trait StaticConfigTrait
      */
     public static function getConfig($key)
     {
-        return isset(static::$_config[$key]) ? static::$_config[$key] : null;
+        return static::$_config[$key] ?? null;
     }
 
     /**

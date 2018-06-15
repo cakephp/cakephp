@@ -28,7 +28,6 @@ use Cake\TestSuite\TestCase;
  */
 class QueryRegressionTest extends TestCase
 {
-
     /**
      * Fixture to be used
      *
@@ -45,7 +44,7 @@ class QueryRegressionTest extends TestCase
         'core.special_tags',
         'core.tags_translations',
         'core.translates',
-        'core.users'
+        'core.users',
     ];
 
     public $autoFixtures = false;
@@ -101,14 +100,14 @@ class QueryRegressionTest extends TestCase
         $this->loadFixtures('Articles', 'Authors');
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsTo('Authors', [
-            'foreignKey' => 'author_id'
+            'foreignKey' => 'author_id',
         ]);
         $result = $table->find()
             ->contain(['Authors' => [
                 'fields' => [
                     'id',
-                    'Authors__aliased_name' => 'name'
-                ]
+                    'Authors__aliased_name' => 'name',
+                ],
             ]])
             ->where(['Articles.id' => 1])
             ->first();
@@ -130,7 +129,7 @@ class QueryRegressionTest extends TestCase
         $users = $this->getTableLocator()->get('Users');
         $table->belongsTo('Authors', [
             'targetTable' => $users,
-            'foreignKey' => 'author_id'
+            'foreignKey' => 'author_id',
         ]);
         $result = $table->find()->where(['Articles.id' => 1])->contain('Authors')->first();
         $this->assertInstanceOf(EntityInterface::class, $result);
@@ -151,7 +150,7 @@ class QueryRegressionTest extends TestCase
         $users = $this->getTableLocator()->get('Users');
         $users->hasOne('Posts', [
             'targetTable' => $articles,
-            'foreignKey' => 'author_id'
+            'foreignKey' => 'author_id',
         ]);
         $result = $users->find()->where(['Users.id' => 1])->contain('Posts')->first();
         $this->assertInstanceOf(EntityInterface::class, $result);
@@ -170,7 +169,7 @@ class QueryRegressionTest extends TestCase
         $this->loadFixtures('Articles', 'Tags', 'ArticlesTags');
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags', [
-            'finder' => 'list'
+            'finder' => 'list',
         ]);
         $table->find()->contain('Tags')->toArray();
     }
@@ -188,13 +187,13 @@ class QueryRegressionTest extends TestCase
         $articles->belongsToMany('Tags', [
             'foreignKey' => 'article_id',
             'targetForeignKey' => 'tag_id',
-            'joinTable' => 'articles_tags'
+            'joinTable' => 'articles_tags',
         ]);
         $tags = $this->getTableLocator()->get('Tags');
         $tags->belongsToMany('Authors', [
             'foreignKey' => 'tag_id',
             'targetForeignKey' => 'author_id',
-            'joinTable' => 'authors_tags'
+            'joinTable' => 'authors_tags',
         ]);
 
         $query = $articles->find()
@@ -230,11 +229,11 @@ class QueryRegressionTest extends TestCase
         $table->hasOne('Things', ['propertyName' => 'articles_tag']);
         $table->Authors->getTarget()->hasOne('Stuff', [
             'foreignKey' => 'id',
-            'propertyName' => 'favorite_tag'
+            'propertyName' => 'favorite_tag',
         ]);
         $table->Things->getTarget()->belongsTo('Stuff', [
             'foreignKey' => 'tag_id',
-            'propertyName' => 'foo'
+            'propertyName' => 'foo',
         ]);
 
         $results = $table->find()
@@ -280,7 +279,7 @@ class QueryRegressionTest extends TestCase
             'className' => 'TestApp\Model\Table\TagsTable',
             'foreignKey' => 'article_id',
             'targetForeignKey' => 'tag_id',
-            'through' => 'SpecialTags'
+            'through' => 'SpecialTags',
         ]);
         $entity = $articles->get(2);
         $data = [
@@ -288,9 +287,9 @@ class QueryRegressionTest extends TestCase
             'highlights' => [
                 [
                     'name' => 'New Special Tag',
-                    '_joinData' => ['highlighted' => true, 'highlighted_time' => '2014-06-01 10:10:00']
-                ]
-            ]
+                    '_joinData' => ['highlighted' => true, 'highlighted_time' => '2014-06-01 10:10:00'],
+                ],
+            ],
         ];
         $entity = $articles->patchEntity($entity, $data, ['Highlights._joinData']);
         $articles->save($entity);
@@ -377,11 +376,11 @@ class QueryRegressionTest extends TestCase
             'foreignKey' => 'article_id',
             'targetForeignKey' => 'tag_id',
             'through' => 'SpecialTags',
-            'saveStrategy' => $strategy
+            'saveStrategy' => $strategy,
         ]);
         $articles->Highlights->junction()->belongsTo('Authors');
         $articles->Highlights->hasOne('Authors', [
-            'foreignKey' => 'id'
+            'foreignKey' => 'id',
         ]);
         $entity = $articles->get(2, ['contain' => ['Highlights']]);
 
@@ -393,17 +392,17 @@ class QueryRegressionTest extends TestCase
                         'highlighted' => true,
                         'highlighted_time' => '2014-06-01 10:10:00',
                         'author' => [
-                            'name' => 'mariano'
-                        ]
+                            'name' => 'mariano',
+                        ],
                     ],
-                    'author' => ['name' => 'mark']
-                ]
-            ]
+                    'author' => ['name' => 'mark'],
+                ],
+            ],
         ];
         $options = [
             'associated' => [
-                'Highlights._joinData.Authors', 'Highlights.Authors'
-            ]
+                'Highlights._joinData.Authors', 'Highlights.Authors',
+            ],
         ];
         $entity = $articles->patchEntity($entity, $data, $options);
         $articles->save($entity, $options);
@@ -411,8 +410,8 @@ class QueryRegressionTest extends TestCase
             'contain' => [
                 'SpecialTags' => ['sort' => ['SpecialTags.id' => 'ASC']],
                 'SpecialTags.Authors',
-                'Highlights.Authors'
-            ]
+                'Highlights.Authors',
+            ],
         ]);
         $this->assertEquals('mark', end($entity->highlights)->author->name);
 
@@ -494,21 +493,21 @@ class QueryRegressionTest extends TestCase
                     'top_articles' => [
                         ['title' => 'First top article'],
                         ['title' => 'Second top article'],
-                    ]
-                ]
-            ]
+                    ],
+                ],
+            ],
         ];
         $options = [
             'associated' => [
-                'Highlights._joinData', 'Highlights.TopArticles'
-            ]
+                'Highlights._joinData', 'Highlights.TopArticles',
+            ],
         ];
         $entity = $articles->patchEntity($entity, $data, $options);
         $articles->save($entity, $options);
         $entity = $articles->get(2, [
             'contain' => [
-                'Highlights.TopArticles'
-            ]
+                'Highlights.TopArticles',
+            ],
         ]);
         $highlights = $entity->highlights[0];
         $this->assertEquals('First top article', $highlights->top_articles[0]->title);
@@ -565,7 +564,7 @@ class QueryRegressionTest extends TestCase
 
         $articlesTags = $this->getTableLocator()->get('ArticlesTags');
         $articlesTags->belongsTo('Authors', [
-            'foreignKey' => 'tag_id'
+            'foreignKey' => 'tag_id',
         ]);
 
         $resultA = $articles->find()
@@ -612,11 +611,11 @@ class QueryRegressionTest extends TestCase
         $table = $this->getTableLocator()->get('Authors');
         $table->hasMany('Articles');
         $table->Articles->belongsToMany('Tags', [
-            'strategy' => 'subquery'
+            'strategy' => 'subquery',
         ]);
 
         $result = $table->find()->contain(['Articles.Tags'])->toArray();
-        $this->skipIf(count($result) == 0, 'No results, this test sometimes acts up on PHP 5.6');
+        $this->skipIf(count($result) === 0, 'No results, this test sometimes acts up on PHP 5.6');
 
         $this->assertEquals(
             ['tag1', 'tag3'],
@@ -636,7 +635,7 @@ class QueryRegressionTest extends TestCase
         $table = $this->getTableLocator()->get('Authors');
         $table->hasMany('Articles');
         $table->Articles->belongsToMany('Tags', [
-            'strategy' => 'subquery'
+            'strategy' => 'subquery',
         ]);
         $table->belongsToMany('Tags', [
             'strategy' => 'subquery',
@@ -676,7 +675,7 @@ class QueryRegressionTest extends TestCase
 
         $tags->hasMany('TagsTranslations', [
             'foreignKey' => 'id',
-            'strategy' => 'select'
+            'strategy' => 'select',
         ]);
         $findViaSelect = $featuredTags
             ->find()
@@ -686,7 +685,7 @@ class QueryRegressionTest extends TestCase
 
         $tags->hasMany('TagsTranslations', [
             'foreignKey' => 'id',
-            'strategy' => 'subquery'
+            'strategy' => 'subquery',
         ]);
         $findViaSubquery = $featuredTags
             ->find()
@@ -756,7 +755,7 @@ class QueryRegressionTest extends TestCase
             'author_id' => null,
             'title' => 'title',
             'body' => 'body',
-            'published' => 'Y'
+            'published' => 'Y',
         ]));
         $this->assertNotFalse($result);
 
@@ -806,7 +805,7 @@ class QueryRegressionTest extends TestCase
         $comments->belongsTo('Users');
         $users = $this->getTableLocator()->get('Users');
         $users->hasMany('Articles', [
-            'foreignKey' => 'author_id'
+            'foreignKey' => 'author_id',
         ]);
 
         $comments->updateAll(['user_id' => 99], ['id' => 1]);
@@ -838,8 +837,8 @@ class QueryRegressionTest extends TestCase
         $query->where([
             'OR' => [
                 new Comparison('id', 1, 'integer', '>'),
-                new Comparison('id', 3, 'integer', '<')
-            ]
+                new Comparison('id', 3, 'integer', '<'),
+            ],
         ]);
 
         $results = $query->toArray();
@@ -1047,7 +1046,7 @@ class QueryRegressionTest extends TestCase
         $this->loadFixtures('Articles', 'Tags', 'ArticlesTags');
         $table = $this->getTableLocator()->get('ArticlesTags');
         $table->belongsTo('Articles', [
-            'strategy' => 'select'
+            'strategy' => 'select',
         ]);
 
         $result = $table->find()
@@ -1099,7 +1098,7 @@ class QueryRegressionTest extends TestCase
             'Comments' => function ($q) {
                 return $q->select([
                     'concat' => $q->func()->concat(['red', 'blue']),
-                    'user_id'
+                    'user_id',
                 ]);
             }])
             ->where(['Users.id' => 2]);
@@ -1175,7 +1174,7 @@ class QueryRegressionTest extends TestCase
                     'ratio' => $query
                         ->newExpr($countToFloat)
                         ->add($allCommentsCount)
-                        ->setConjunction('/')
+                        ->setConjunction('/'),
                 ];
             })
             ->where(['user_id' => 1])
@@ -1238,7 +1237,7 @@ class QueryRegressionTest extends TestCase
             'coalesced' => $query->func()->coalesce(
                 ['published' => 'identifier', -1],
                 ['integer']
-            )
+            ),
         ]);
         $result = $query->all()->first();
         $this->assertSame(
@@ -1260,7 +1259,7 @@ class QueryRegressionTest extends TestCase
         $table = $this->getTableLocator()->get('Comments');
         $query = $table->find();
         $query->select([
-            'max' => $query->func()->max('created', ['datetime'])
+            'max' => $query->func()->max('created', ['datetime']),
         ]);
         $result = $query->all()->first();
         $this->assertEquals(new Time('2007-03-18 10:55:23'), $result['max']);
@@ -1278,7 +1277,7 @@ class QueryRegressionTest extends TestCase
         $table->belongsToMany('Tags', [
             'foreignKey' => 'article_id',
             'associationForeignKey' => 'tag_id',
-            'through' => 'SpecialTags'
+            'through' => 'SpecialTags',
         ]);
         $query = $table->find()
             ->contain(['Tags' => function ($q) {
@@ -1307,7 +1306,7 @@ class QueryRegressionTest extends TestCase
         $query = $table->find()
             ->contain('Comments')
             ->where([
-                'Comments.updated >' => new \DateTime('2007-03-18 10:55:00')
+                'Comments.updated >' => new \DateTime('2007-03-18 10:55:00'),
             ]);
 
         $result = $query->first();
@@ -1330,13 +1329,13 @@ class QueryRegressionTest extends TestCase
         $table->Comments->belongsTo('Articles');
         $table->Comments->Articles->belongsTo('Authors', [
             'className' => 'Users',
-            'foreignKey' => 'author_id'
+            'foreignKey' => 'author_id',
         ]);
 
         $query = $table->find()
             ->contain('Comments.Articles.Authors')
             ->where([
-                'Authors.created >' => new \DateTime('2007-03-17 01:16:00')
+                'Authors.created >' => new \DateTime('2007-03-17 01:16:00'),
             ]);
 
         $result = $query->first();
@@ -1359,13 +1358,13 @@ class QueryRegressionTest extends TestCase
         $table->Comments->belongsTo('Articles');
         $table->Comments->Articles->belongsTo('Authors', [
             'className' => 'Users',
-            'foreignKey' => 'author_id'
+            'foreignKey' => 'author_id',
         ]);
 
         $query = $table->find()
             ->matching('Comments')
             ->where([
-                'Comments.updated >' => new \DateTime('2007-03-18 10:55:00')
+                'Comments.updated >' => new \DateTime('2007-03-18 10:55:00'),
             ]);
 
         $result = $query->first();
@@ -1375,7 +1374,7 @@ class QueryRegressionTest extends TestCase
         $query = $table->find()
             ->matching('Comments.Articles.Authors')
             ->where([
-                'Authors.created >' => new \DateTime('2007-03-17 01:16:00')
+                'Authors.created >' => new \DateTime('2007-03-17 01:16:00'),
             ]);
 
         $result = $query->first();
@@ -1399,7 +1398,7 @@ class QueryRegressionTest extends TestCase
                 return $q ->where(['ArticlesTags.tag_id !=' => 3 ]);
             })
             ->where([
-                'Tags.created <' => new \DateTime('2016-01-02 00:00:00')
+                'Tags.created <' => new \DateTime('2016-01-02 00:00:00'),
             ]);
 
         $result = $query->first();
@@ -1423,13 +1422,13 @@ class QueryRegressionTest extends TestCase
         $table->Comments->belongsTo('Articles');
         $table->Comments->Articles->belongsTo('Authors', [
             'className' => 'Users',
-            'foreignKey' => 'author_id'
+            'foreignKey' => 'author_id',
         ]);
 
         $query = $table->find()
             ->innerJoinWith('Comments')
             ->where([
-                'Comments.updated >' => new \DateTime('2007-03-18 10:55:00')
+                'Comments.updated >' => new \DateTime('2007-03-18 10:55:00'),
             ]);
 
         $result = $query->first();
@@ -1439,7 +1438,7 @@ class QueryRegressionTest extends TestCase
         $query = $table->find()
             ->innerJoinWith('Comments.Articles.Authors')
             ->where([
-                'Authors.created >' => new \DateTime('2007-03-17 01:16:00')
+                'Authors.created >' => new \DateTime('2007-03-17 01:16:00'),
             ]);
 
         $result = $query->first();
@@ -1462,13 +1461,13 @@ class QueryRegressionTest extends TestCase
         $table->Comments->belongsTo('Articles');
         $table->Comments->Articles->belongsTo('Authors', [
             'className' => 'Users',
-            'foreignKey' => 'author_id'
+            'foreignKey' => 'author_id',
         ]);
 
         $query = $table->find()
             ->leftJoinWith('Comments')
             ->where([
-                'Comments.updated >' => new \DateTime('2007-03-18 10:55:00')
+                'Comments.updated >' => new \DateTime('2007-03-18 10:55:00'),
             ]);
 
         $result = $query->first();
@@ -1478,7 +1477,7 @@ class QueryRegressionTest extends TestCase
         $query = $table->find()
             ->leftJoinWith('Comments.Articles.Authors')
             ->where([
-                'Authors.created >' => new \DateTime('2007-03-17 01:16:00')
+                'Authors.created >' => new \DateTime('2007-03-17 01:16:00'),
             ]);
 
         $result = $query->first();
@@ -1506,7 +1505,7 @@ class QueryRegressionTest extends TestCase
         $specialTags->belongsTo('Tags');
 
         $articles->belongsToMany('Tags', [
-            'through' => $specialTags
+            'through' => $specialTags,
         ]);
         $query = $articles->find()
             ->contain(['Tags', 'Tags.SpecialTags.Authors'])
@@ -1586,7 +1585,7 @@ class QueryRegressionTest extends TestCase
         $this->loadFixtures('Articles', 'Comments');
         $table = $this->getTableLocator()->get('Articles');
         $table->hasMany('Comments', [
-            'strategy' => 'subquery'
+            'strategy' => 'subquery',
         ]);
         $query = $table->find()
             ->select(['score' => 100])
@@ -1606,7 +1605,7 @@ class QueryRegressionTest extends TestCase
     public function testFormatResultsMemoryLeak()
     {
         $this->loadFixtures('Articles', 'Authors', 'Tags', 'ArticlesTags');
-        $this->skipIf(env('CODECOVERAGE') == 1, 'Running coverage this causes this tests to fail sometimes.');
+        $this->skipIf(env('CODECOVERAGE') === 1, 'Running coverage this causes this tests to fail sometimes.');
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsTo('Authors');
         $table->belongsToMany('Tags');
@@ -1688,7 +1687,7 @@ class QueryRegressionTest extends TestCase
 
         $result = $Articles->find('list')->notMatching('Tags')->toArray();
         $expected = [
-            3 => 'Third Article'
+            3 => 'Third Article',
         ];
 
         $this->assertEquals($expected, $result);

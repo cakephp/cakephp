@@ -51,7 +51,7 @@ if (!function_exists('debug')) {
             $trace = Debugger::trace(['start' => 1, 'depth' => 2, 'format' => 'array']);
             $location = [
                 'line' => $trace[0]['line'],
-                'file' => $trace[0]['file']
+                'file' => $trace[0]['file'],
             ];
         }
 
@@ -133,7 +133,7 @@ if (!function_exists('dd')) {
         $trace = Debugger::trace(['start' => 1, 'depth' => 2, 'format' => 'array']);
         $location = [
             'line' => $trace[0]['line'],
-            'file' => $trace[0]['file']
+            'file' => $trace[0]['file'],
         ];
 
         Debugger::printVar($var, $location, $showHtml);

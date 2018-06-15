@@ -52,8 +52,8 @@ class BelongsToManyTest extends TestCase
             'id' => ['type' => 'integer'],
             'name' => ['type' => 'string'],
             '_constraints' => [
-                'primary' => ['type' => 'primary', 'columns' => ['id']]
-            ]
+                'primary' => ['type' => 'primary', 'columns' => ['id']],
+            ],
         ]);
         $this->article = $this->getMockBuilder('Cake\ORM\Table')
             ->setMethods(['find', 'delete'])
@@ -63,8 +63,8 @@ class BelongsToManyTest extends TestCase
             'id' => ['type' => 'integer'],
             'name' => ['type' => 'string'],
             '_constraints' => [
-                'primary' => ['type' => 'primary', 'columns' => ['id']]
-            ]
+                'primary' => ['type' => 'primary', 'columns' => ['id']],
+            ],
         ]);
     }
 
@@ -77,7 +77,7 @@ class BelongsToManyTest extends TestCase
     {
         $assoc = new BelongsToMany('Test', [
             'sourceTable' => $this->article,
-            'targetTable' => $this->tag
+            'targetTable' => $this->tag,
         ]);
         $this->assertEquals('article_id', $assoc->getForeignKey());
         $this->assertSame($assoc, $assoc->setForeignKey('another_key'));
@@ -148,7 +148,7 @@ class BelongsToManyTest extends TestCase
         $assoc = new BelongsToMany('Test', [
             'sourceTable' => $this->article,
             'targetTable' => $this->tag,
-            'strategy' => 'subquery'
+            'strategy' => 'subquery',
         ]);
         $junction = $assoc->junction();
         $this->assertInstanceOf(Table::class, $junction);
@@ -195,7 +195,7 @@ class BelongsToManyTest extends TestCase
 
         $assoc = new BelongsToMany('Test', [
             'sourceTable' => $this->article,
-            'targetTable' => $this->tag
+            'targetTable' => $this->tag,
         ]);
         $junction = $assoc->junction();
         $this->assertSame($mock, $junction->getConnection());
@@ -212,12 +212,12 @@ class BelongsToManyTest extends TestCase
         $this->article->belongsToMany('Tags', [
             'joinTable' => 'articles_tags',
             'foreignKey' => 'article',
-            'targetForeignKey' => 'tag'
+            'targetForeignKey' => 'tag',
         ]);
         $this->tag->belongsToMany('Articles', [
             'joinTable' => 'articles_tags',
             'foreignKey' => 'tag',
-            'targetForeignKey' => 'article'
+            'targetForeignKey' => 'article',
         ]);
         $junction = $this->article->getAssociation('Tags')->junction();
         $this->assertEquals('article', $junction->getAssociation('Articles')->getForeignKey());
@@ -238,7 +238,7 @@ class BelongsToManyTest extends TestCase
         $assoc = new BelongsToMany('Test', [
             'sourceTable' => $this->article,
             'targetTable' => $this->tag,
-            'joinTable' => 'tags_articles'
+            'joinTable' => 'tags_articles',
         ]);
         $junction = $assoc->junction();
         $this->assertEquals('TagsArticles', $junction->getAlias());
@@ -310,7 +310,7 @@ class BelongsToManyTest extends TestCase
             ->method('deleteAll')
             ->with([
                 'click_count' => 3,
-                'article_id' => 1
+                'article_id' => 1,
             ]);
 
         $entity = new Entity(['id' => 1, 'name' => 'PHP']);
@@ -390,7 +390,7 @@ class BelongsToManyTest extends TestCase
         $config = [
             'sourceTable' => $this->article,
             'targetTable' => $this->tag,
-            'joinTable' => 'tags_articles'
+            'joinTable' => 'tags_articles',
         ];
         $assoc = new BelongsToMany('Test', $config);
         $entity = new Entity(['id' => 1]);
@@ -410,7 +410,7 @@ class BelongsToManyTest extends TestCase
         $config = [
             'sourceTable' => $this->article,
             'targetTable' => $this->tag,
-            'joinTable' => 'tags_articles'
+            'joinTable' => 'tags_articles',
         ];
         $assoc = new BelongsToMany('Test', $config);
         $entity = new Entity(['id' => 1], ['markNew' => false]);
@@ -441,7 +441,7 @@ class BelongsToManyTest extends TestCase
         $opts = ['markNew' => false];
         $tags = [
             new Entity(['id' => 2, 'name' => 'add'], $opts),
-            new Entity(['id' => 3, 'name' => 'adder'], $opts)
+            new Entity(['id' => 3, 'name' => 'adder'], $opts),
         ];
 
         $this->assertTrue($assoc->link($article, $tags));
@@ -508,7 +508,7 @@ class BelongsToManyTest extends TestCase
             'sourceTable' => $this->article,
             'targetTable' => $this->tag,
             'through' => $joint,
-            'joinTable' => 'tags_articles'
+            'joinTable' => 'tags_articles',
         ];
 
         $assoc = new BelongsToMany('Test', $config);
@@ -558,7 +558,7 @@ class BelongsToManyTest extends TestCase
         $config = [
             'sourceTable' => $this->article,
             'targetTable' => $this->tag,
-            'joinTable' => 'tags_articles'
+            'joinTable' => 'tags_articles',
         ];
         $assoc = new BelongsToMany('Test', $config);
         $entity = new Entity(['id' => 1]);
@@ -578,7 +578,7 @@ class BelongsToManyTest extends TestCase
         $config = [
             'sourceTable' => $this->article,
             'targetTable' => $this->tag,
-            'joinTable' => 'tags_articles'
+            'joinTable' => 'tags_articles',
         ];
         $assoc = new BelongsToMany('Test', $config);
         $entity = new Entity(['id' => 1], ['markNew' => false]);
@@ -632,7 +632,7 @@ class BelongsToManyTest extends TestCase
             'targetTable' => $tags,
             'through' => $joint,
             'joinTable' => 'special_tags',
-            'conditions' => ['SpecialTags.highlighted' => true]
+            'conditions' => ['SpecialTags.highlighted' => true],
         ]);
         $entity = $articles->get(2, ['contain' => 'Tags']);
         $initial = $entity->tags;
@@ -659,7 +659,7 @@ class BelongsToManyTest extends TestCase
         $config = [
             'sourceTable' => $this->article,
             'targetTable' => $this->tag,
-            'joinTable' => 'tags_articles'
+            'joinTable' => 'tags_articles',
         ];
         $assoc = new BelongsToMany('Test', $config);
         $entity = new Entity(['foo' => 1], ['markNew' => false]);
@@ -755,7 +755,7 @@ class BelongsToManyTest extends TestCase
             'targetTable' => $tags,
             'through' => $joint,
             'joinTable' => 'special_tags',
-            'conditions' => ['SpecialTags.highlighted' => true]
+            'conditions' => ['SpecialTags.highlighted' => true],
         ]);
         $entity = $articles->get(1, ['contain' => 'Tags']);
 
@@ -796,7 +796,7 @@ class BelongsToManyTest extends TestCase
         $originalCount = count($entity->tags);
 
         $tags = [
-            new Entity(['name' => 'tag99', 'description' => 'Best tag'])
+            new Entity(['name' => 'tag99', 'description' => 'Best tag']),
         ];
         $result = $assoc->replaceLinks($entity, $tags);
         $this->assertFalse($result, 'replace should have failed.');
@@ -818,7 +818,7 @@ class BelongsToManyTest extends TestCase
             [''],
             [false],
             [null],
-            [[]]
+            [[]],
         ];
     }
 
@@ -924,8 +924,8 @@ class BelongsToManyTest extends TestCase
         $entity = new Entity([
             'id' => 1,
             'tags' => [
-                new Entity(['name' => 'foo'])
-            ]
+                new Entity(['name' => 'foo']),
+            ],
         ]);
 
         $options = ['foo' => 'bar'];
@@ -954,8 +954,8 @@ class BelongsToManyTest extends TestCase
         $entity = new Entity([
             'id' => 1,
             'tags' => [
-                new Entity(['name' => 'foo'])
-            ]
+                new Entity(['name' => 'foo']),
+            ],
         ]);
 
         $options = ['foo' => 'bar'];
@@ -992,7 +992,7 @@ class BelongsToManyTest extends TestCase
             'tags' => [
                 ['tag' => 'nope'],
                 new Entity(['tag' => 'cakephp']),
-            ]
+            ],
         ]);
 
         $mock->expects($this->never())
@@ -1011,7 +1011,7 @@ class BelongsToManyTest extends TestCase
     {
         $assoc = new BelongsToMany('Test', [
             'sourceTable' => $this->article,
-            'targetTable' => $this->tag
+            'targetTable' => $this->tag,
         ]);
         $this->assertEquals('tag_id', $assoc->getTargetForeignKey());
         $assoc->setTargetForeignKey('another_key');
@@ -1020,7 +1020,7 @@ class BelongsToManyTest extends TestCase
         $assoc = new BelongsToMany('Test', [
             'sourceTable' => $this->article,
             'targetTable' => $this->tag,
-            'targetForeignKey' => 'foo'
+            'targetForeignKey' => 'foo',
         ]);
         $this->assertEquals('foo', $assoc->getTargetForeignKey());
     }
@@ -1037,7 +1037,7 @@ class BelongsToManyTest extends TestCase
             'sourceTable' => $this->article,
             'targetTable' => $this->tag,
             'foreignKey' => 'Art',
-            'targetForeignKey' => 'Tag'
+            'targetForeignKey' => 'Tag',
         ]);
         $junction = $assoc->junction();
         $this->assertEquals('Art', $junction->getAssociation('Articles')->getForeignKey());
@@ -1195,7 +1195,7 @@ class BelongsToManyTest extends TestCase
             'foreignKey' => 'article_id',
             'associationForeignKey' => 'tag_id',
             'conditions' => ['SpecialTags.highlighted' => true],
-            'through' => 'SpecialTags'
+            'through' => 'SpecialTags',
         ]);
         $query = $table->Tags->find();
         $result = $query->toArray();
@@ -1217,9 +1217,9 @@ class BelongsToManyTest extends TestCase
             'conditions' => [
                 'OR' => [
                     'SpecialTags.highlighted' => true,
-                ]
+                ],
             ],
-            'through' => 'SpecialTags'
+            'through' => 'SpecialTags',
         ]);
         $query = $table->Tags->find();
         $result = $query->toArray();
@@ -1239,7 +1239,7 @@ class BelongsToManyTest extends TestCase
             'foreignKey' => 'article_id',
             'associationForeignKey' => 'tag_id',
             'conditions' => ['SpecialTags.highlighted' => true],
-            'through' => 'SpecialTags'
+            'through' => 'SpecialTags',
         ]);
         $query = $table->find()->matching('Tags', function ($q) {
             return $q->where(['Tags.name' => 'tag1']);
@@ -1261,7 +1261,7 @@ class BelongsToManyTest extends TestCase
             'foreignKey' => 'article_id',
             'associationForeignKey' => 'tag_id',
             'conditions' => [new QueryExpression("name LIKE 'tag%'")],
-            'through' => 'SpecialTags'
+            'through' => 'SpecialTags',
         ]);
         $query = $table->find()->matching('Tags', function ($q) {
             return $q->where(['Tags.name' => 'tag1']);
@@ -1283,7 +1283,7 @@ class BelongsToManyTest extends TestCase
             'foreignKey' => 'article_id',
             'associationForeignKey' => 'tag_id',
             'conditions' => ['SpecialTags.highlighted' => true],
-            'through' => 'SpecialTags'
+            'through' => 'SpecialTags',
         ]);
         $query = $table->Tags->find()->matching('Articles', function ($query) {
             return $query->where(['Articles.id' => 1]);

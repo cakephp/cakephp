@@ -26,7 +26,6 @@ use Cake\TestSuite\TestCase;
  */
 class ConsoleErrorHandlerTest extends TestCase
 {
-
     /**
      * setup, create mocks
      *

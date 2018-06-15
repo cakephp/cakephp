@@ -83,12 +83,12 @@ class RequestHandlerComponent extends Component
             'viewClassMap' => [
                 'json' => 'Json',
                 'xml' => 'Xml',
-                'ajax' => 'Ajax'
+                'ajax' => 'Ajax',
             ],
             'inputTypeMap' => [
                 'json' => ['json_decode', true],
                 'xml' => [[$this, 'convertXml']],
-            ]
+            ],
         ];
         parent::__construct($registry, $config);
     }
@@ -411,7 +411,7 @@ class RequestHandlerComponent extends Component
             return $response->mapType($contentType);
         }
         if (is_string($type)) {
-            return ($type === $response->mapType($contentType));
+            return $type === $response->mapType($contentType);
         }
     }
 

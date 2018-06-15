@@ -8,7 +8,6 @@ use SessionHandlerInterface;
  */
 class TestPluginSession implements SessionHandlerInterface
 {
-
     public function open($savePath, $name)
     {
         return true;

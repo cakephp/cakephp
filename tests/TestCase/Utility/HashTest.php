@@ -25,7 +25,6 @@ use Cake\Utility\Hash;
  */
 class HashTest extends TestCase
 {
-
     /**
      * Data provider
      *
@@ -39,7 +38,7 @@ class HashTest extends TestCase
                     'id' => '1',
                     'user_id' => '1',
                     'title' => 'First Article',
-                    'body' => 'First Article Body'
+                    'body' => 'First Article Body',
                 ],
                 'User' => [
                     'id' => '1',
@@ -68,18 +67,18 @@ class HashTest extends TestCase
                     [
                         'id' => '2',
                         'tag' => 'tag2',
-                    ]
+                    ],
                 ],
                 'Deep' => [
                     'Nesting' => [
                         'test' => [
                             1 => 'foo',
                             2 => [
-                                'and' => ['more' => 'stuff']
-                            ]
-                        ]
-                    ]
-                ]
+                                'and' => ['more' => 'stuff'],
+                            ],
+                        ],
+                    ],
+                ],
             ],
             [
                 'Article' => [
@@ -95,7 +94,7 @@ class HashTest extends TestCase
                     'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
                 ],
                 'Comment' => [],
-                'Tag' => []
+                'Tag' => [],
             ],
             [
                 'Article' => [
@@ -110,7 +109,7 @@ class HashTest extends TestCase
                     'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
                 ],
                 'Comment' => [],
-                'Tag' => []
+                'Tag' => [],
             ],
             [
                 'Article' => [
@@ -125,7 +124,7 @@ class HashTest extends TestCase
                     'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
                 ],
                 'Comment' => [],
-                'Tag' => []
+                'Tag' => [],
             ],
             [
                 'Article' => [
@@ -140,8 +139,8 @@ class HashTest extends TestCase
                     'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
                     ],
                 'Comment' => [],
-                'Tag' => []
-            ]
+                'Tag' => [],
+            ],
         ];
     }
 
@@ -158,7 +157,7 @@ class HashTest extends TestCase
                     'id' => '1',
                     'user_id' => '1',
                     'title' => 'First Article',
-                    'body' => 'First Article Body'
+                    'body' => 'First Article Body',
                 ]),
                 'User' => new ArrayObject([
                     'id' => '1',
@@ -187,18 +186,18 @@ class HashTest extends TestCase
                     new ArrayObject([
                         'id' => '2',
                         'tag' => 'tag2',
-                    ])
+                    ]),
                 ]),
                 'Deep' => new ArrayObject([
                     'Nesting' => new ArrayObject([
                         'test' => new ArrayObject([
                             1 => 'foo',
                             2 => new ArrayObject([
-                                'and' => new ArrayObject(['more' => 'stuff'])
-                            ])
-                        ])
-                    ])
-                ])
+                                'and' => new ArrayObject(['more' => 'stuff']),
+                            ]),
+                        ]),
+                    ]),
+                ]),
             ]),
             new ArrayObject([
                 'Article' => new ArrayObject([
@@ -214,7 +213,7 @@ class HashTest extends TestCase
                     'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
                 ]),
                 'Comment' => new ArrayObject([]),
-                'Tag' => new ArrayObject([])
+                'Tag' => new ArrayObject([]),
             ]),
             new ArrayObject([
                 'Article' => new ArrayObject([
@@ -229,7 +228,7 @@ class HashTest extends TestCase
                     'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
                 ]),
                 'Comment' => new ArrayObject([]),
-                'Tag' => new ArrayObject([])
+                'Tag' => new ArrayObject([]),
             ]),
             new ArrayObject([
                 'Article' => new ArrayObject([
@@ -244,7 +243,7 @@ class HashTest extends TestCase
                     'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
                 ]),
                 'Comment' => new ArrayObject([]),
-                'Tag' => new ArrayObject([])
+                'Tag' => new ArrayObject([]),
             ]),
             new ArrayObject([
                 'Article' => new ArrayObject([
@@ -259,8 +258,8 @@ class HashTest extends TestCase
                     'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
                     ]),
                 'Comment' => new ArrayObject([]),
-                'Tag' => new ArrayObject([])
-            ])
+                'Tag' => new ArrayObject([]),
+            ]),
         ]);
     }
 
@@ -273,7 +272,7 @@ class HashTest extends TestCase
     {
         return [
             [static::articleData()],
-            [static::articleDataObject()]
+            [static::articleDataObject()],
         ];
     }
 
@@ -291,9 +290,9 @@ class HashTest extends TestCase
                     'group_id' => 1,
                     'Data' => [
                         'user' => 'mariano.iglesias',
-                        'name' => 'Mariano Iglesias'
-                    ]
-                ]
+                        'name' => 'Mariano Iglesias',
+                    ],
+                ],
             ],
             [
                 'User' => [
@@ -301,9 +300,9 @@ class HashTest extends TestCase
                     'group_id' => 2,
                     'Data' => [
                         'user' => 'phpnut',
-                        'name' => 'Larry E. Masters'
-                    ]
-                ]
+                        'name' => 'Larry E. Masters',
+                    ],
+                ],
             ],
             [
                 'User' => [
@@ -311,10 +310,10 @@ class HashTest extends TestCase
                     'group_id' => 1,
                     'Data' => [
                         'user' => 'gwoo',
-                        'name' => 'The Gwoo'
-                    ]
-                ]
-            ]
+                        'name' => 'The Gwoo',
+                    ],
+                ],
+            ],
         ];
     }
 
@@ -371,11 +370,11 @@ class HashTest extends TestCase
 
         // Object which implements ArrayAccess
         $nested = new ArrayObject([
-            'user' => 'bar'
+            'user' => 'bar',
         ]);
         $data = new ArrayObject([
             'name' => 'foo',
-            'associated' => $nested
+            'associated' => $nested,
         ]);
 
         $return = Hash::get($data, 'name');
@@ -402,7 +401,7 @@ class HashTest extends TestCase
     public function testGetEmptyKey()
     {
         $data = [
-            '' => 'some value'
+            '' => 'some value',
         ];
         $result = Hash::get($data, '');
         $this->assertSame($data[''], $result);
@@ -488,7 +487,7 @@ class HashTest extends TestCase
         $data = [
             '1' => ['1.1' => '1.1.1'],
             ['2' => ['2.1' => ['2.1.1' => '2.1.1.1']]],
-            '3' => ['3.1' => ['3.1.1' => '3.1.1.1']]
+            '3' => ['3.1' => ['3.1.1' => '3.1.1.1']],
         ];
         $result = Hash::maxDimensions($data);
         $this->assertSame(4, $result);
@@ -499,18 +498,18 @@ class HashTest extends TestCase
                '1.2' => [
                    '1.2.1' => [
                        '1.2.1.1',
-                       ['1.2.2.1']
-                   ]
-               ]
+                       ['1.2.2.1'],
+                   ],
+               ],
            ],
-           '2' => ['2.1' => '2.1.1']
+           '2' => ['2.1' => '2.1.1'],
         ];
         $result = Hash::maxDimensions($data);
         $this->assertSame(5, $result);
 
         $data = [
            '1' => false,
-           '2' => ['2.1' => '2.1.1']
+           '2' => ['2.1' => '2.1.1'],
         ];
         $result = Hash::maxDimensions($data);
         $this->assertSame(2, $result);
@@ -539,7 +538,7 @@ class HashTest extends TestCase
             [
                 'Post' => ['id' => '2', 'author_id' => '3', 'title' => 'Second Post', 'body' => 'Second Post Body'],
                 'Author' => ['id' => '3', 'user' => 'larry', 'password' => null],
-            ]
+            ],
         ];
         $result = Hash::flatten($data);
         $expected = [
@@ -555,7 +554,7 @@ class HashTest extends TestCase
             '1.Post.body' => 'Second Post Body',
             '1.Author.id' => '3',
             '1.Author.user' => 'larry',
-            '1.Author.password' => null
+            '1.Author.password' => null,
         ];
         $this->assertEquals($expected, $result);
 
@@ -563,14 +562,14 @@ class HashTest extends TestCase
             [
                 'Post' => ['id' => '1', 'author_id' => null, 'title' => 'First Post'],
                 'Author' => [],
-            ]
+            ],
         ];
         $result = Hash::flatten($data);
         $expected = [
             '0.Post.id' => '1',
             '0.Post.author_id' => null,
             '0.Post.title' => 'First Post',
-            '0.Author' => []
+            '0.Author' => [],
         ];
         $this->assertEquals($expected, $result);
 
@@ -595,12 +594,12 @@ class HashTest extends TestCase
     {
         $a = [
             0 => ['name' => 'main'],
-            1 => ['name' => 'about']
+            1 => ['name' => 'about'],
         ];
         $b = [
             0 => ['name' => 'main'],
             1 => ['name' => 'about'],
-            2 => ['name' => 'contact']
+            2 => ['name' => 'contact'],
         ];
 
         $result = Hash::diff($a, []);
@@ -613,18 +612,18 @@ class HashTest extends TestCase
 
         $result = Hash::diff($a, $b);
         $expected = [
-            2 => ['name' => 'contact']
+            2 => ['name' => 'contact'],
         ];
         $this->assertEquals($expected, $result);
 
         $b = [
             0 => ['name' => 'me'],
-            1 => ['name' => 'about']
+            1 => ['name' => 'about'],
         ];
 
         $result = Hash::diff($a, $b);
         $expected = [
-            0 => ['name' => 'main']
+            0 => ['name' => 'main'],
         ];
         $this->assertEquals($expected, $result);
 
@@ -704,28 +703,28 @@ class HashTest extends TestCase
             'CounterCache',
             'Upload' => [
                 'folder' => 'products',
-                'fields' => ['image_1_id', 'image_2_id', 'image_3_id', 'image_4_id', 'image_5_id']
-            ]
+                'fields' => ['image_1_id', 'image_2_id', 'image_3_id', 'image_4_id', 'image_5_id'],
+            ],
         ];
         $b = [
             'Cacheable' => ['enabled' => false],
             'Limit',
             'Bindable',
             'Validator',
-            'Transactional'
+            'Transactional',
         ];
         $expected = [
             'Tree',
             'CounterCache',
             'Upload' => [
                 'folder' => 'products',
-                'fields' => ['image_1_id', 'image_2_id', 'image_3_id', 'image_4_id', 'image_5_id']
+                'fields' => ['image_1_id', 'image_2_id', 'image_3_id', 'image_4_id', 'image_5_id'],
             ],
             'Cacheable' => ['enabled' => false],
             'Limit',
             'Bindable',
             'Validator',
-            'Transactional'
+            'Transactional',
         ];
         $this->assertEquals($expected, Hash::merge($a, $b));
     }
@@ -759,20 +758,20 @@ class HashTest extends TestCase
         $expected = [
             'users' => ['lisa' => ['id' => 5, 'pw' => 'new-pass', 'age' => 23]],
             'cakephp',
-            'ice-cream'
+            'ice-cream',
         ];
         $result = Hash::merge($a, $b);
         $this->assertEquals($expected, $result);
 
         $c = [
             'users' => ['lisa' => ['pw' => 'you-will-never-guess', 'age' => 25, 'pet' => 'dog']],
-            'chocolate'
+            'chocolate',
         ];
         $expected = [
             'users' => ['lisa' => ['id' => 5, 'pw' => 'you-will-never-guess', 'age' => 25, 'pet' => 'dog']],
             'cakephp',
             'ice-cream',
-            'chocolate'
+            'chocolate',
         ];
         $this->assertEquals($expected, Hash::merge($a, $b, $c));
         $this->assertEquals($expected, Hash::merge($a, $b, [], $c));
@@ -819,13 +818,13 @@ class HashTest extends TestCase
 
         $a = [
             0 => ['name' => 'main'],
-            1 => ['name' => 'about']
+            1 => ['name' => 'about'],
         ];
         $b = [
             0 => ['name' => 'main'],
             1 => ['name' => 'about'],
             2 => ['name' => 'contact'],
-            'a' => 'b'
+            'a' => 'b',
         ];
 
         $this->assertTrue(Hash::contains($a, $a));
@@ -839,7 +838,7 @@ class HashTest extends TestCase
         $b = [
             ['User' => ['id' => 1]],
             ['User' => ['id' => 2]],
-            ['User' => ['id' => 3]]
+            ['User' => ['id' => 3]],
         ];
         $this->assertTrue(Hash::contains($b, $a));
         $this->assertFalse(Hash::contains($a, $b));
@@ -864,14 +863,14 @@ class HashTest extends TestCase
             true,
             0,
             0.0,
-            ['one thing', 'I can tell you', 'is you got to be', false]
+            ['one thing', 'I can tell you', 'is you got to be', false],
         ]);
         $expected = [
             0 => '0',
             2 => true,
             3 => 0,
             4 => 0.0,
-            5 => ['one thing', 'I can tell you', 'is you got to be']
+            5 => ['one thing', 'I can tell you', 'is you got to be'],
         ];
         $this->assertSame($expected, $result);
 
@@ -995,13 +994,13 @@ class HashTest extends TestCase
         $expected = [
             'First Article', 'Second Article',
             'Third Article', 'Fourth Article',
-            'Fifth Article'
+            'Fifth Article',
         ];
         $this->assertEquals($expected, $result);
 
         $result = Hash::extract($data, '0.Comment.{n}.user_id');
         $expected = [
-            '2', '4'
+            '2', '4',
         ];
         $this->assertEquals($expected, $result);
     }
@@ -1017,16 +1016,16 @@ class HashTest extends TestCase
             'User' => [
                 0 => [
                     'id' => 4,
-                    'name' => 'Neo'
+                    'name' => 'Neo',
                 ],
                 1 => [
                     'id' => 5,
-                    'name' => 'Morpheus'
+                    'name' => 'Morpheus',
                 ],
                 'stringKey' => [
-                    'name' => 'Fail'
-                ]
-            ]
+                    'name' => 'Fail',
+                ],
+            ],
         ];
         $result = Hash::extract($data, 'User.{n}.name');
         $expected = ['Neo', 'Morpheus'];
@@ -1036,16 +1035,16 @@ class HashTest extends TestCase
             'User' => new ArrayObject([
                 0 => new Entity([
                     'id' => 4,
-                    'name' => 'Neo'
+                    'name' => 'Neo',
                 ]),
                 1 => new ArrayObject([
                     'id' => 5,
-                    'name' => 'Morpheus'
+                    'name' => 'Morpheus',
                 ]),
                 'stringKey' => new ArrayObject([
-                    'name' => 'Fail'
-                ])
-            ])
+                    'name' => 'Fail',
+                ]),
+            ]),
         ]);
         $result = Hash::extract($data, 'User.{n}.name');
         $this->assertEquals($expected, $result);
@@ -1053,11 +1052,11 @@ class HashTest extends TestCase
         $data = [
             0 => new Entity([
                 'id' => 4,
-                'name' => 'Neo'
+                'name' => 'Neo',
             ]),
             'stringKey' => new ArrayObject([
-                'name' => 'Fail'
-            ])
+                'name' => 'Fail',
+            ]),
         ];
         $result = Hash::extract($data, '{n}.name');
         $expected = ['Neo'];
@@ -1076,20 +1075,20 @@ class HashTest extends TestCase
                 'User' => [
                     'id' => 1,
                     'name' => 'John',
-                ]
+                ],
             ],
             2 => [
                 'User' => [
                     'id' => 2,
                     'name' => 'Bob',
-                ]
+                ],
             ],
             3 => [
                 'User' => [
                     'id' => 3,
                     'name' => 'Tony',
-                ]
-            ]
+                ],
+            ],
         ];
         $result = Hash::extract($data, '{n}.User.name');
         $expected = ['John', 'Bob', 'Tony'];
@@ -1100,20 +1099,20 @@ class HashTest extends TestCase
                 'User' => new ArrayObject([
                     'id' => 1,
                     'name' => 'John',
-                ])
+                ]),
             ]),
             2 => new ArrayObject([
                 'User' => new ArrayObject([
                     'id' => 2,
                     'name' => 'Bob',
-                ])
+                ]),
             ]),
             3 => new ArrayObject([
                 'User' => new ArrayObject([
                     'id' => 3,
                     'name' => 'Tony',
-                ])
-            ])
+                ]),
+            ]),
         ]);
         $result = Hash::extract($data, '{n}.User.name');
         $expected = ['John', 'Bob', 'Tony'];
@@ -1134,7 +1133,7 @@ class HashTest extends TestCase
             'mariano',
             'mariano',
             'mariano',
-            'mariano'
+            'mariano',
         ];
         $this->assertEquals($expected, $result);
 
@@ -1239,17 +1238,17 @@ class HashTest extends TestCase
             [
                 'id' => 2,
                 'username' => 'johndoe',
-                'active' => true
+                'active' => true,
             ],
             [
                 'id' => 5,
                 'username' => 'kevin',
-                'active' => true
+                'active' => true,
             ],
             [
                 'id' => 9,
                 'username' => 'samantha',
-                'active' => false
+                'active' => false,
             ],
         ];
 
@@ -1257,17 +1256,17 @@ class HashTest extends TestCase
             new ArrayObject([
                 'id' => 2,
                 'username' => 'johndoe',
-                'active' => true
+                'active' => true,
             ]),
             new ArrayObject([
                 'id' => 5,
                 'username' => 'kevin',
-                'active' => true
+                'active' => true,
             ]),
             new ArrayObject([
                 'id' => 9,
                 'username' => 'samantha',
-                'active' => false
+                'active' => false,
             ]),
         ]);
 
@@ -1303,13 +1302,13 @@ class HashTest extends TestCase
             'Entity' => [
                 'id' => 1,
                 'data1' => 'value',
-            ]
+            ],
         ];
         $dataObject = new ArrayObject([
             'Entity' => new ArrayObject([
                 'id' => 1,
                 'data1' => 'value',
-            ])
+            ]),
         ]);
 
         foreach ([$dataArray, $dataObject] as $data) {
@@ -1397,7 +1396,7 @@ class HashTest extends TestCase
                 ['name' => 'Canada'],
                 ['name' => 'Australia'],
                 ['name' => null],
-            ]
+            ],
         ];
         $result = Hash::extract($data, 'Country.{n}[name=/Canada|^$/]');
         $expected = [
@@ -1415,7 +1414,7 @@ class HashTest extends TestCase
                 ['name' => 'Canada'],
                 ['name' => 'Australia'],
                 ['name' => null],
-            ])
+            ]),
         ]);
         $result = Hash::extract($data, 'Country.{n}[name=/Canada|^$/]');
         $this->assertEquals($expected, $result);
@@ -1461,8 +1460,8 @@ class HashTest extends TestCase
         $data = [
             'Level1' => [
                 'Level2' => ['test1', 'test2'],
-                'Level2bis' => ['test3', 'test4']
-            ]
+                'Level2bis' => ['test3', 'test4'],
+            ],
         ];
         $this->assertEquals(
             ['test1', 'test2'],
@@ -1476,8 +1475,8 @@ class HashTest extends TestCase
         $data = new ArrayObject([
             'Level1' => new ArrayObject([
                 'Level2' => ['test1', 'test2'],
-                'Level2bis' => ['test3', 'test4']
-            ])
+                'Level2bis' => ['test3', 'test4'],
+            ]),
         ]);
         $this->assertEquals(
             ['test1', 'test2'],
@@ -1492,13 +1491,13 @@ class HashTest extends TestCase
             'Level1' => [
                 'Level2bis' => [
                     ['test3', 'test4'],
-                    ['test5', 'test6']
-                ]
-            ]
+                    ['test5', 'test6'],
+                ],
+            ],
         ];
         $expected = [
             ['test3', 'test4'],
-            ['test5', 'test6']
+            ['test5', 'test6'],
         ];
         $this->assertEquals($expected, Hash::extract($data, 'Level1.Level2bis'));
 
@@ -1509,9 +1508,9 @@ class HashTest extends TestCase
             'Level1' => new ArrayObject([
                 'Level2bis' => [
                     ['test3', 'test4'],
-                    ['test5', 'test6']
-                ]
-            ])
+                    ['test5', 'test6'],
+                ],
+            ]),
         ]);
         $this->assertEquals($expected, Hash::extract($data, 'Level1.Level2bis'));
 
@@ -1558,22 +1557,22 @@ class HashTest extends TestCase
         $a = [
             0 => [
                 'Person' => ['name' => 'Jeff'],
-                'Friend' => [['name' => 'Nate']]
+                'Friend' => [['name' => 'Nate']],
             ],
             1 => [
                 'Person' => ['name' => 'Tracy'],
-                'Friend' => [['name' => 'Lindsay']]
-            ]
+                'Friend' => [['name' => 'Lindsay']],
+            ],
         ];
         $b = [
             0 => [
                 'Person' => ['name' => 'Tracy'],
-                'Friend' => [['name' => 'Lindsay']]
+                'Friend' => [['name' => 'Lindsay']],
             ],
             1 => [
                 'Person' => ['name' => 'Jeff'],
-                'Friend' => [['name' => 'Nate']]
-            ]
+                'Friend' => [['name' => 'Nate']],
+            ],
         ];
         $a = Hash::sort($a, '{n}.Friend.{n}.name');
         $this->assertEquals($a, $b);
@@ -1581,22 +1580,22 @@ class HashTest extends TestCase
         $b = [
             0 => [
                 'Person' => ['name' => 'Jeff'],
-                'Friend' => [['name' => 'Nate']]
+                'Friend' => [['name' => 'Nate']],
             ],
             1 => [
                 'Person' => ['name' => 'Tracy'],
-                'Friend' => [['name' => 'Lindsay']]
-            ]
+                'Friend' => [['name' => 'Lindsay']],
+            ],
         ];
         $a = [
             0 => [
                 'Person' => ['name' => 'Tracy'],
-                'Friend' => [['name' => 'Lindsay']]
+                'Friend' => [['name' => 'Lindsay']],
             ],
             1 => [
                 'Person' => ['name' => 'Jeff'],
-                'Friend' => [['name' => 'Nate']]
-            ]
+                'Friend' => [['name' => 'Nate']],
+            ],
         ];
         $a = Hash::sort($a, '{n}.Friend.{n}.name', 'desc');
         $this->assertEquals($a, $b);
@@ -1604,37 +1603,37 @@ class HashTest extends TestCase
         $a = [
             0 => [
                 'Person' => ['name' => 'Jeff'],
-                'Friend' => [['name' => 'Nate']]
+                'Friend' => [['name' => 'Nate']],
             ],
             1 => [
                 'Person' => ['name' => 'Tracy'],
-                'Friend' => [['name' => 'Lindsay']]
+                'Friend' => [['name' => 'Lindsay']],
             ],
             2 => [
                 'Person' => ['name' => 'Adam'],
-                'Friend' => [['name' => 'Bob']]
-            ]
+                'Friend' => [['name' => 'Bob']],
+            ],
         ];
         $b = [
             0 => [
                 'Person' => ['name' => 'Adam'],
-                'Friend' => [['name' => 'Bob']]
+                'Friend' => [['name' => 'Bob']],
             ],
             1 => [
                 'Person' => ['name' => 'Jeff'],
-                'Friend' => [['name' => 'Nate']]
+                'Friend' => [['name' => 'Nate']],
             ],
             2 => [
                 'Person' => ['name' => 'Tracy'],
-                'Friend' => [['name' => 'Lindsay']]
-            ]
+                'Friend' => [['name' => 'Lindsay']],
+            ],
         ];
         $a = Hash::sort($a, '{n}.Person.name', 'asc');
         $this->assertEquals($a, $b);
 
         $a = [
             0 => ['Person' => ['name' => 'Jeff']],
-            1 => ['Shirt' => ['color' => 'black']]
+            1 => ['Shirt' => ['color' => 'black']],
         ];
         $b = [
             0 => ['Shirt' => ['color' => 'black']],
@@ -1645,53 +1644,53 @@ class HashTest extends TestCase
 
         $names = [
             ['employees' => [
-                ['name' => ['first' => 'John', 'last' => 'Doe']]]
+                ['name' => ['first' => 'John', 'last' => 'Doe']]],
             ],
             ['employees' => [
-                ['name' => ['first' => 'Jane', 'last' => 'Doe']]]
+                ['name' => ['first' => 'Jane', 'last' => 'Doe']]],
             ],
             ['employees' => [['name' => []]]],
-            ['employees' => [['name' => []]]]
+            ['employees' => [['name' => []]]],
         ];
         $result = Hash::sort($names, '{n}.employees.0.name', 'asc');
         $expected = [
             ['employees' => [
-                ['name' => ['first' => 'John', 'last' => 'Doe']]]
+                ['name' => ['first' => 'John', 'last' => 'Doe']]],
             ],
             ['employees' => [
-                ['name' => ['first' => 'Jane', 'last' => 'Doe']]]
+                ['name' => ['first' => 'Jane', 'last' => 'Doe']]],
             ],
             ['employees' => [['name' => []]]],
-            ['employees' => [['name' => []]]]
+            ['employees' => [['name' => []]]],
         ];
         $this->assertSame($expected, $result);
 
         $a = [
             'SU' => [
-                'total_fulfillable' => 2
+                'total_fulfillable' => 2,
             ],
             'AA' => [
-                'total_fulfillable' => 1
+                'total_fulfillable' => 1,
             ],
             'LX' => [
-                'total_fulfillable' => 0
+                'total_fulfillable' => 0,
             ],
             'BL' => [
-                'total_fulfillable' => 3
+                'total_fulfillable' => 3,
             ],
         ];
         $expected = [
             'LX' => [
-                'total_fulfillable' => 0
+                'total_fulfillable' => 0,
             ],
             'AA' => [
-                'total_fulfillable' => 1
+                'total_fulfillable' => 1,
             ],
             'SU' => [
-                'total_fulfillable' => 2
+                'total_fulfillable' => 2,
             ],
             'BL' => [
-                'total_fulfillable' => 3
+                'total_fulfillable' => 3,
             ],
         ];
         $result = Hash::sort($a, '{s}.total_fulfillable', 'asc');
@@ -1810,7 +1809,7 @@ class HashTest extends TestCase
     {
         $a = [
             0 => ['Person' => ['name' => 'Jeff']],
-            1 => ['Shirt' => ['color' => 'black']]
+            1 => ['Shirt' => ['color' => 'black']],
         ];
         $b = [
             0 => ['Shirt' => ['color' => 'black']],
@@ -1860,7 +1859,7 @@ class HashTest extends TestCase
             'six' => ['number' => 6, 'some' => 'sixsome'],
             'five' => ['number' => 5, 'some' => 'fivesome'],
             'two' => ['number' => 2, 'some' => 'twosome'],
-            'three' => ['number' => 3, 'some' => 'threesome']
+            'three' => ['number' => 3, 'some' => 'threesome'],
         ];
         $sorted = Hash::sort($toSort, '{s}.number', 'asc');
         $expected = [
@@ -1868,7 +1867,7 @@ class HashTest extends TestCase
             'three' => ['number' => 3, 'some' => 'threesome'],
             'four' => ['number' => 4, 'some' => 'foursome'],
             'five' => ['number' => 5, 'some' => 'fivesome'],
-            'six' => ['number' => 6, 'some' => 'sixsome']
+            'six' => ['number' => 6, 'some' => 'sixsome'],
         ];
         $this->assertEquals($expected, $sorted);
 
@@ -1958,7 +1957,7 @@ class HashTest extends TestCase
                 'id' => 4,
                 'title' => 'element 4',
                 'extra' => 4,
-            ]
+            ],
         ];
         $result = Hash::sort($data, '{n}.extra', 'desc', 'natural');
         $expected = [
@@ -1993,17 +1992,17 @@ class HashTest extends TestCase
     public function testInsertSimple()
     {
         $a = [
-            'pages' => ['name' => 'page']
+            'pages' => ['name' => 'page'],
         ];
         $result = Hash::insert($a, 'files', ['name' => 'files']);
         $expected = [
             'pages' => ['name' => 'page'],
-            'files' => ['name' => 'files']
+            'files' => ['name' => 'files'],
         ];
         $this->assertEquals($expected, $result);
 
         $a = [
-            'pages' => ['name' => 'page']
+            'pages' => ['name' => 'page'],
         ];
         $result = Hash::insert($a, 'pages.name', []);
         $expected = [
@@ -2012,7 +2011,7 @@ class HashTest extends TestCase
         $this->assertEquals($expected, $result);
 
         $a = [
-            'foo' => ['bar' => 'baz']
+            'foo' => ['bar' => 'baz'],
         ];
         $result = Hash::insert($a, 'some.0123.path', ['foo' => ['bar' => 'baz']]);
         $expected = ['foo' => ['bar' => 'baz']];
@@ -2074,16 +2073,16 @@ class HashTest extends TestCase
     {
         $data = [
             'Some' => [
-                'string' => 'value'
-            ]
+                'string' => 'value',
+            ],
         ];
         $result = Hash::insert($data, 'Some.string.value', ['values']);
         $expected = [
             'Some' => [
                 'string' => [
-                    'value' => ['values']
-                ]
-            ]
+                    'value' => ['values'],
+                ],
+            ],
         ];
         $this->assertEquals($expected, $result);
     }
@@ -2097,12 +2096,12 @@ class HashTest extends TestCase
     {
         $a = [
             'pages' => ['name' => 'page'],
-            'files' => ['name' => 'files']
+            'files' => ['name' => 'files'],
         ];
 
         $result = Hash::remove($a, 'files');
         $expected = [
-            'pages' => ['name' => 'page']
+            'pages' => ['name' => 'page'],
         ];
         $this->assertEquals($expected, $result);
 
@@ -2111,17 +2110,17 @@ class HashTest extends TestCase
                 0 => ['name' => 'main'],
                 1 => [
                     'name' => 'about',
-                    'vars' => ['title' => 'page title']
-                ]
-            ]
+                    'vars' => ['title' => 'page title'],
+                ],
+            ],
         ];
 
         $result = Hash::remove($a, 'pages.1.vars');
         $expected = [
             'pages' => [
                 0 => ['name' => 'main'],
-                1 => ['name' => 'about']
-            ]
+                1 => ['name' => 'about'],
+            ],
         ];
         $this->assertEquals($expected, $result);
 
@@ -2131,26 +2130,26 @@ class HashTest extends TestCase
 
         $a = [
             0 => [
-                'name' => 'pages'
+                'name' => 'pages',
             ],
             1 => [
-                'name' => 'files'
-            ]
+                'name' => 'files',
+            ],
         ];
 
         $result = Hash::remove($a, '{n}[name=files]');
         $expected = [
             0 => [
-                'name' => 'pages'
-            ]
+                'name' => 'pages',
+            ],
         ];
         $this->assertEquals($expected, $result);
 
         $array = [
             0 => 'foo',
             1 => [
-                0 => 'baz'
-            ]
+                0 => 'baz',
+            ],
         ];
         $expected = $array;
         $result = Hash::remove($array, '{n}.part');
@@ -2251,7 +2250,7 @@ class HashTest extends TestCase
     public function testCheck()
     {
         $set = [
-            'My Index 1' => ['First' => 'The first item']
+            'My Index 1' => ['First' => 'The first item'],
         ];
         $this->assertTrue(Hash::check($set, 'My Index 1.First'));
         $this->assertTrue(Hash::check($set, 'My Index 1'));
@@ -2261,11 +2260,11 @@ class HashTest extends TestCase
                 'First' => [
                     'Second' => [
                         'Third' => [
-                            'Fourth' => 'Heavy. Nesting.'
-                        ]
-                    ]
-                ]
-            ]
+                            'Fourth' => 'Heavy. Nesting.',
+                        ],
+                    ],
+                ],
+            ],
         ];
         $this->assertTrue(Hash::check($set, 'My Index 1.First.Second'));
         $this->assertTrue(Hash::check($set, 'My Index 1.First.Second.Third'));
@@ -2351,11 +2350,11 @@ class HashTest extends TestCase
         $expected = [
             1 => [
                 2 => ['user' => 'mariano.iglesias', 'name' => 'Mariano Iglesias'],
-                25 => ['user' => 'gwoo', 'name' => 'The Gwoo']
+                25 => ['user' => 'gwoo', 'name' => 'The Gwoo'],
             ],
             2 => [
-                14 => ['user' => 'phpnut', 'name' => 'Larry E. Masters']
-            ]
+                14 => ['user' => 'phpnut', 'name' => 'Larry E. Masters'],
+            ],
         ];
         $this->assertEquals($expected, $result);
 
@@ -2363,11 +2362,11 @@ class HashTest extends TestCase
         $expected = [
             1 => [
                 2 => 'Mariano Iglesias',
-                25 => 'The Gwoo'
+                25 => 'The Gwoo',
             ],
             2 => [
-                14 => 'Larry E. Masters'
-            ]
+                14 => 'Larry E. Masters',
+            ],
         ];
         $this->assertEquals($expected, $result);
 
@@ -2375,11 +2374,11 @@ class HashTest extends TestCase
         $expected = [
             1 => [
                 2 => ['user' => 'mariano.iglesias', 'name' => 'Mariano Iglesias'],
-                25 => ['user' => 'gwoo', 'name' => 'The Gwoo']
+                25 => ['user' => 'gwoo', 'name' => 'The Gwoo'],
             ],
             2 => [
-                14 => ['user' => 'phpnut', 'name' => 'Larry E. Masters']
-            ]
+                14 => ['user' => 'phpnut', 'name' => 'Larry E. Masters'],
+            ],
         ];
         $this->assertEquals($expected, $result);
 
@@ -2387,11 +2386,11 @@ class HashTest extends TestCase
         $expected = [
             1 => [
                 2 => 'Mariano Iglesias',
-                25 => 'The Gwoo'
+                25 => 'The Gwoo',
             ],
             2 => [
-                14 => 'Larry E. Masters'
-            ]
+                14 => 'Larry E. Masters',
+            ],
         ];
         $this->assertEquals($expected, $result);
     }
@@ -2414,11 +2413,11 @@ class HashTest extends TestCase
         $expected = [
             1 => [
                 2 => 'mariano.iglesias: Mariano Iglesias',
-                25 => 'gwoo: The Gwoo'
+                25 => 'gwoo: The Gwoo',
             ],
             2 => [
-                14 => 'phpnut: Larry E. Masters'
-            ]
+                14 => 'phpnut: Larry E. Masters',
+            ],
         ];
         $this->assertEquals($expected, $result);
 
@@ -2427,14 +2426,14 @@ class HashTest extends TestCase
             [
                 '%s: %s',
                 '{n}.User.Data.user',
-                '{n}.User.Data.name'
+                '{n}.User.Data.name',
             ],
             '{n}.User.id'
         );
         $expected = [
             'mariano.iglesias: Mariano Iglesias' => 2,
             'phpnut: Larry E. Masters' => 14,
-            'gwoo: The Gwoo' => 25
+            'gwoo: The Gwoo' => 25,
         ];
         $this->assertEquals($expected, $result);
 
@@ -2446,7 +2445,7 @@ class HashTest extends TestCase
         $expected = [
             'mariano.iglesias: 2' => 'Mariano Iglesias',
             'phpnut: 14' => 'Larry E. Masters',
-            'gwoo: 25' => 'The Gwoo'
+            'gwoo: 25' => 'The Gwoo',
         ];
         $this->assertEquals($expected, $result);
 
@@ -2458,7 +2457,7 @@ class HashTest extends TestCase
         $expected = [
             '2: mariano.iglesias' => 'Mariano Iglesias',
             '14: phpnut' => 'Larry E. Masters',
-            '25: gwoo' => 'The Gwoo'
+            '25: gwoo' => 'The Gwoo',
         ];
         $this->assertEquals($expected, $result);
     }
@@ -2480,7 +2479,7 @@ class HashTest extends TestCase
         $expected = [
             'mariano.iglesias, 2',
             'phpnut, 14',
-            'gwoo, 25'
+            'gwoo, 25',
         ];
         $this->assertEquals($expected, $result);
 
@@ -2492,7 +2491,7 @@ class HashTest extends TestCase
         $expected = [
             '2, mariano.iglesias',
             '14, phpnut',
-            '25, gwoo'
+            '25, gwoo',
         ];
         $this->assertEquals($expected, $result);
     }
@@ -2506,14 +2505,14 @@ class HashTest extends TestCase
     {
         $data = [
             ['Person' => [
-                'first_name' => 'Nate', 'last_name' => 'Abele', 'city' => 'Boston', 'state' => 'MA', 'something' => '42'
+                'first_name' => 'Nate', 'last_name' => 'Abele', 'city' => 'Boston', 'state' => 'MA', 'something' => '42',
             ]],
             ['Person' => [
-                'first_name' => 'Larry', 'last_name' => 'Masters', 'city' => 'Boondock', 'state' => 'TN', 'something' => null
+                'first_name' => 'Larry', 'last_name' => 'Masters', 'city' => 'Boondock', 'state' => 'TN', 'something' => null,
             ]],
             ['Person' => [
-                'first_name' => 'Garrett', 'last_name' => 'Woodworth', 'city' => 'Venice Beach', 'state' => 'CA', 'something' => null
-            ]]
+                'first_name' => 'Garrett', 'last_name' => 'Woodworth', 'city' => 'Venice Beach', 'state' => 'CA', 'something' => null,
+            ]],
         ];
 
         $result = Hash::format($data, ['{n}.Person.something'], '%s');
@@ -2600,138 +2599,138 @@ class HashTest extends TestCase
             [
                 'ModelName' => [
                     'id' => 1,
-                    'parent_id' => null
+                    'parent_id' => null,
                 ],
             ],
             [
                 'ModelName' => [
                     'id' => 2,
-                    'parent_id' => 1
+                    'parent_id' => 1,
                 ],
             ],
             [
                 'ModelName' => [
                     'id' => 3,
-                    'parent_id' => 1
+                    'parent_id' => 1,
                 ],
             ],
             [
                 'ModelName' => [
                     'id' => 4,
-                    'parent_id' => 1
+                    'parent_id' => 1,
                 ],
             ],
             [
                 'ModelName' => [
                     'id' => 5,
-                    'parent_id' => 1
+                    'parent_id' => 1,
                 ],
             ],
             [
                 'ModelName' => [
                     'id' => 6,
-                    'parent_id' => null
+                    'parent_id' => null,
                 ],
             ],
             [
                 'ModelName' => [
                     'id' => 7,
-                    'parent_id' => 6
+                    'parent_id' => 6,
                 ],
             ],
             [
                 'ModelName' => [
                     'id' => 8,
-                    'parent_id' => 6
+                    'parent_id' => 6,
                 ],
             ],
             [
                 'ModelName' => [
                     'id' => 9,
-                    'parent_id' => 6
+                    'parent_id' => 6,
                 ],
             ],
             [
                 'ModelName' => [
                     'id' => 10,
-                    'parent_id' => 6
-                ]
-            ]
+                    'parent_id' => 6,
+                ],
+            ],
         ];
         $expected = [
             [
                 'ModelName' => [
                     'id' => 1,
-                    'parent_id' => null
+                    'parent_id' => null,
                 ],
                 'children' => [
                     [
                         'ModelName' => [
                             'id' => 2,
-                            'parent_id' => 1
+                            'parent_id' => 1,
                         ],
-                        'children' => []
+                        'children' => [],
                     ],
                     [
                         'ModelName' => [
                             'id' => 3,
-                            'parent_id' => 1
+                            'parent_id' => 1,
                         ],
-                        'children' => []
+                        'children' => [],
                     ],
                     [
                         'ModelName' => [
                             'id' => 4,
-                            'parent_id' => 1
+                            'parent_id' => 1,
                         ],
-                        'children' => []
+                        'children' => [],
                     ],
                     [
                         'ModelName' => [
                             'id' => 5,
-                            'parent_id' => 1
+                            'parent_id' => 1,
                         ],
-                        'children' => []
+                        'children' => [],
                     ],
 
-                ]
+                ],
             ],
             [
                 'ModelName' => [
                     'id' => 6,
-                    'parent_id' => null
+                    'parent_id' => null,
                 ],
                 'children' => [
                     [
                         'ModelName' => [
                             'id' => 7,
-                            'parent_id' => 6
+                            'parent_id' => 6,
                         ],
-                        'children' => []
+                        'children' => [],
                     ],
                     [
                         'ModelName' => [
                             'id' => 8,
-                            'parent_id' => 6
+                            'parent_id' => 6,
                         ],
-                        'children' => []
+                        'children' => [],
                     ],
                     [
                         'ModelName' => [
                             'id' => 9,
-                            'parent_id' => 6
+                            'parent_id' => 6,
                         ],
-                        'children' => []
+                        'children' => [],
                     ],
                     [
                         'ModelName' => [
                             'id' => 10,
-                            'parent_id' => 6
+                            'parent_id' => 6,
                         ],
-                        'children' => []
-                    ]
-                ]
-            ]
+                        'children' => [],
+                    ],
+                ],
+            ],
         ];
         $result = Hash::nest($input);
         $this->assertEquals($expected, $result);
@@ -2748,101 +2747,101 @@ class HashTest extends TestCase
             [
                 'ModelName' => [
                     'id' => 1,
-                    'parent_id' => null
+                    'parent_id' => null,
                 ],
             ],
             [
                 'ModelName' => [
                     'id' => 2,
-                    'parent_id' => 1
+                    'parent_id' => 1,
                 ],
             ],
             [
                 'ModelName' => [
                     'id' => 3,
-                    'parent_id' => 1
+                    'parent_id' => 1,
                 ],
             ],
             [
                 'ModelName' => [
                     'id' => 4,
-                    'parent_id' => 1
+                    'parent_id' => 1,
                 ],
             ],
             [
                 'ModelName' => [
                     'id' => 5,
-                    'parent_id' => 1
+                    'parent_id' => 1,
                 ],
             ],
             [
                 'ModelName' => [
                     'id' => 6,
-                    'parent_id' => null
+                    'parent_id' => null,
                 ],
             ],
             [
                 'ModelName' => [
                     'id' => 7,
-                    'parent_id' => 6
+                    'parent_id' => 6,
                 ],
             ],
             [
                 'ModelName' => [
                     'id' => 8,
-                    'parent_id' => 6
+                    'parent_id' => 6,
                 ],
             ],
             [
                 'ModelName' => [
                     'id' => 9,
-                    'parent_id' => 6
+                    'parent_id' => 6,
                 ],
             ],
             [
                 'ModelName' => [
                     'id' => 10,
-                    'parent_id' => 6
-                ]
-            ]
+                    'parent_id' => 6,
+                ],
+            ],
         ];
         $expected = [
             [
                 'ModelName' => [
                     'id' => 6,
-                    'parent_id' => null
+                    'parent_id' => null,
                 ],
                 'children' => [
                     [
                         'ModelName' => [
                             'id' => 7,
-                            'parent_id' => 6
+                            'parent_id' => 6,
                         ],
-                        'children' => []
+                        'children' => [],
                     ],
                     [
                         'ModelName' => [
                             'id' => 8,
-                            'parent_id' => 6
+                            'parent_id' => 6,
                         ],
-                        'children' => []
+                        'children' => [],
                     ],
                     [
                         'ModelName' => [
                             'id' => 9,
-                            'parent_id' => 6
+                            'parent_id' => 6,
                         ],
-                        'children' => []
+                        'children' => [],
                     ],
                     [
                         'ModelName' => [
                             'id' => 10,
-                            'parent_id' => 6
+                            'parent_id' => 6,
                         ],
-                        'children' => []
-                    ]
-                ]
-            ]
+                        'children' => [],
+                    ],
+                ],
+            ],
         ];
         $result = Hash::nest($input, ['root' => 6]);
         $this->assertEquals($expected, $result);
@@ -2858,44 +2857,44 @@ class HashTest extends TestCase
         $input = [
             [
                 'id' => 1,
-                'parent_id' => null
+                'parent_id' => null,
             ],
             [
                 'id' => 2,
-                'parent_id' => 1
+                'parent_id' => 1,
             ],
             [
                 'id' => 3,
-                'parent_id' => 1
+                'parent_id' => 1,
             ],
             [
                 'id' => 4,
-                'parent_id' => 1
+                'parent_id' => 1,
             ],
             [
                 'id' => 5,
-                'parent_id' => 1
+                'parent_id' => 1,
             ],
             [
                 'id' => 6,
-                'parent_id' => null
+                'parent_id' => null,
             ],
             [
                 'id' => 7,
-                'parent_id' => 6
+                'parent_id' => 6,
             ],
             [
                 'id' => 8,
-                'parent_id' => 6
+                'parent_id' => 6,
             ],
             [
                 'id' => 9,
-                'parent_id' => 6
+                'parent_id' => 6,
             ],
             [
                 'id' => 10,
-                'parent_id' => 6
-            ]
+                'parent_id' => 6,
+            ],
         ];
         $expected = [
             [
@@ -2905,25 +2904,25 @@ class HashTest extends TestCase
                     [
                         'id' => 2,
                         'parent_id' => 1,
-                        'children' => []
+                        'children' => [],
                     ],
                     [
                         'id' => 3,
                         'parent_id' => 1,
-                        'children' => []
+                        'children' => [],
                     ],
                     [
                         'id' => 4,
                         'parent_id' => 1,
-                        'children' => []
+                        'children' => [],
                     ],
                     [
                         'id' => 5,
                         'parent_id' => 1,
-                        'children' => []
+                        'children' => [],
                     ],
 
-                ]
+                ],
             ],
             [
                 'id' => 6,
@@ -2932,25 +2931,25 @@ class HashTest extends TestCase
                     [
                         'id' => 7,
                         'parent_id' => 6,
-                        'children' => []
+                        'children' => [],
                     ],
                     [
                         'id' => 8,
                         'parent_id' => 6,
-                        'children' => []
+                        'children' => [],
                     ],
                     [
                         'id' => 9,
                         'parent_id' => 6,
-                        'children' => []
+                        'children' => [],
                     ],
                     [
                         'id' => 10,
                         'parent_id' => 6,
-                        'children' => []
-                    ]
-                ]
-            ]
+                        'children' => [],
+                    ],
+                ],
+            ],
         ];
         $result = Hash::nest($input, ['idPath' => '{n}.id', 'parentPath' => '{n}.parent_id']);
         $this->assertEquals($expected, $result);
@@ -2996,7 +2995,7 @@ class HashTest extends TestCase
             ],
             [
                 'id' => 10,
-            ]
+            ],
         ];
 
         $result = Hash::nest($input, ['idPath' => '{n}.id', 'parentPath' => '{n}.parent_id']);
@@ -3021,9 +3020,9 @@ class HashTest extends TestCase
                 'ParentCategory' => [
                     'id' => '1',
                     'name' => 'Lorem ipsum dolor sit amet',
-                    'parent_id' => '1'
-                ]
-            ]
+                    'parent_id' => '1',
+                ],
+            ],
         ];
         Hash::nest($input);
     }
@@ -3039,15 +3038,15 @@ class HashTest extends TestCase
             'ModelOne' => [
                 'id' => 1001,
                 'field_one' => 'a1.m1.f1',
-                'field_two' => 'a1.m1.f2'
-            ]
+                'field_two' => 'a1.m1.f2',
+            ],
         ];
         $second = [
             'ModelTwo' => [
                 'id' => 1002,
                 'field_one' => 'a2.m2.f1',
-                'field_two' => 'a2.m2.f2'
-            ]
+                'field_two' => 'a2.m2.f2',
+            ],
         ];
         $result = Hash::mergeDiff($first, $second);
         $this->assertEquals($result, $first + $second);
@@ -3063,8 +3062,8 @@ class HashTest extends TestCase
                 'id' => 1003,
                 'field_one' => 'a3.m1.f1',
                 'field_two' => 'a3.m1.f2',
-                'field_three' => 'a3.m1.f3'
-            ]
+                'field_three' => 'a3.m1.f3',
+            ],
         ];
         $result = Hash::mergeDiff($first, $third);
         $expected = [
@@ -3072,18 +3071,18 @@ class HashTest extends TestCase
                 'id' => 1001,
                 'field_one' => 'a1.m1.f1',
                 'field_two' => 'a1.m1.f2',
-                'field_three' => 'a3.m1.f3'
-            ]
+                'field_three' => 'a3.m1.f3',
+            ],
         ];
         $this->assertEquals($expected, $result);
 
         $first = [
             0 => ['ModelOne' => ['id' => 1001, 'field_one' => 's1.0.m1.f1', 'field_two' => 's1.0.m1.f2']],
-            1 => ['ModelTwo' => ['id' => 1002, 'field_one' => 's1.1.m2.f2', 'field_two' => 's1.1.m2.f2']]
+            1 => ['ModelTwo' => ['id' => 1002, 'field_one' => 's1.1.m2.f2', 'field_two' => 's1.1.m2.f2']],
         ];
         $second = [
             0 => ['ModelOne' => ['id' => 1001, 'field_one' => 's2.0.m1.f1', 'field_two' => 's2.0.m1.f2']],
-            1 => ['ModelTwo' => ['id' => 1002, 'field_one' => 's2.1.m2.f2', 'field_two' => 's2.1.m2.f2']]
+            1 => ['ModelTwo' => ['id' => 1002, 'field_one' => 's2.1.m2.f2', 'field_two' => 's2.1.m2.f2']],
         ];
 
         $result = Hash::mergeDiff($first, $second);
@@ -3094,9 +3093,9 @@ class HashTest extends TestCase
                 'ModelThree' => [
                     'id' => 1003,
                     'field_one' => 's3.0.m3.f1',
-                    'field_two' => 's3.0.m3.f2'
-                ]
-            ]
+                    'field_two' => 's3.0.m3.f2',
+                ],
+            ],
         ];
 
         $result = Hash::mergeDiff($first, $third);
@@ -3105,21 +3104,21 @@ class HashTest extends TestCase
                 'ModelOne' => [
                     'id' => 1001,
                     'field_one' => 's1.0.m1.f1',
-                    'field_two' => 's1.0.m1.f2'
+                    'field_two' => 's1.0.m1.f2',
                 ],
                 'ModelThree' => [
                     'id' => 1003,
                     'field_one' => 's3.0.m3.f1',
-                    'field_two' => 's3.0.m3.f2'
-                ]
+                    'field_two' => 's3.0.m3.f2',
+                ],
             ],
             1 => [
                 'ModelTwo' => [
                     'id' => 1002,
                     'field_one' => 's1.1.m2.f2',
-                    'field_two' => 's1.1.m2.f2'
-                ]
-            ]
+                    'field_two' => 's1.1.m2.f2',
+                ],
+            ],
         ];
         $this->assertEquals($expected, $result);
 
@@ -3146,7 +3145,7 @@ class HashTest extends TestCase
             '0.Post.id' => '1', '0.Post.author_id' => '1', '0.Post.title' => 'First Post', '0.Author.id' => '1',
             '0.Author.user' => 'nate', '0.Author.password' => 'foo', '1.Post.id' => '2', '1.Post.author_id' => '3',
             '1.Post.title' => 'Second Post', '1.Post.body' => 'Second Post Body', '1.Author.id' => '3',
-            '1.Author.user' => 'larry', '1.Author.password' => null
+            '1.Author.user' => 'larry', '1.Author.password' => null,
         ];
         $result = Hash::expand($data);
         $expected = [
@@ -3157,22 +3156,22 @@ class HashTest extends TestCase
             [
                 'Post' => ['id' => '2', 'author_id' => '3', 'title' => 'Second Post', 'body' => 'Second Post Body'],
                 'Author' => ['id' => '3', 'user' => 'larry', 'password' => null],
-            ]
+            ],
         ];
         $this->assertEquals($expected, $result);
 
         $data = [
             '0/Post/id' => 1,
-            '0/Post/name' => 'test post'
+            '0/Post/name' => 'test post',
         ];
         $result = Hash::expand($data, '/');
         $expected = [
             [
                 'Post' => [
                     'id' => 1,
-                    'name' => 'test post'
-                ]
-            ]
+                    'name' => 'test post',
+                ],
+            ],
         ];
         $this->assertEquals($expected, $result);
 
@@ -3181,9 +3180,9 @@ class HashTest extends TestCase
             'a' => [
                 'b' => [
                     100 => ['a' => null],
-                    200 => ['a' => null]
-                ]
-            ]
+                    200 => ['a' => null],
+                ],
+            ],
         ];
         $result = Hash::expand($data);
         $this->assertEquals($expected, $result);
@@ -3321,7 +3320,7 @@ class HashTest extends TestCase
             'Order.order_id' => '135961',
             'Order.slug' => 'test-2',
             'Order.title' => 'test job 2',
-            'Order.type' => 'ttt'
+            'Order.type' => 'ttt',
         ];
         $expanded = Hash::expand($data);
         $flattened = Hash::flatten($expanded);

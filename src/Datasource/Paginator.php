@@ -43,7 +43,7 @@ class Paginator implements PaginatorInterface
         'page' => 1,
         'limit' => 20,
         'maxLimit' => 100,
-        'whitelist' => ['limit', 'sort', 'page', 'direction']
+        'whitelist' => ['limit', 'sort', 'page', 'direction'],
     ];
 
     /**
@@ -222,7 +222,7 @@ class Paginator implements PaginatorInterface
             'pageCount' => $pageCount,
             'sort' => $options['sort'],
             'direction' => current($order),
-            'limit' => $defaults['limit'] != $limit ? $limit : null,
+            'limit' => $defaults['limit'] !== $limit ? $limit : null,
             'sortDefault' => $sortDefault,
             'directionDefault' => $directionDefault,
             'scope' => $options['scope'],
@@ -234,7 +234,7 @@ class Paginator implements PaginatorInterface
         if ($requestedPage > $page) {
             throw new PageOutOfBoundsException([
                 'requestedPage' => $requestedPage,
-                'pagingParams' => $this->_pagingParams
+                'pagingParams' => $this->_pagingParams,
             ]);
         }
 
@@ -314,8 +314,8 @@ class Paginator implements PaginatorInterface
         }
 
         $defaults = $this->getConfig();
-        $maxLimit = isset($settings['maxLimit']) ? $settings['maxLimit'] : $defaults['maxLimit'];
-        $limit = isset($settings['limit']) ? $settings['limit'] : $defaults['limit'];
+        $maxLimit = $settings['maxLimit'] ?? $defaults['maxLimit'];
+        $limit = $settings['limit'] ?? $defaults['limit'];
 
         if ($limit > $maxLimit) {
             $limit = $maxLimit;

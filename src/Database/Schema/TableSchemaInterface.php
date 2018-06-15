@@ -21,125 +21,124 @@ use Cake\Datasource\SchemaInterface;
  */
 interface TableSchemaInterface extends SchemaInterface
 {
-
     /**
      * Binary column type
      *
      * @var string
      */
-    const TYPE_BINARY = 'binary';
+    public const TYPE_BINARY = 'binary';
 
     /**
      * Binary UUID column type
      *
      * @var string
      */
-    const TYPE_BINARY_UUID = 'binaryuuid';
+    public const TYPE_BINARY_UUID = 'binaryuuid';
 
     /**
      * Date column type
      *
      * @var string
      */
-    const TYPE_DATE = 'date';
+    public const TYPE_DATE = 'date';
 
     /**
      * Datetime column type
      *
      * @var string
      */
-    const TYPE_DATETIME = 'datetime';
+    public const TYPE_DATETIME = 'datetime';
 
     /**
      * Time column type
      *
      * @var string
      */
-    const TYPE_TIME = 'time';
+    public const TYPE_TIME = 'time';
 
     /**
      * Timestamp column type
      *
      * @var string
      */
-    const TYPE_TIMESTAMP = 'timestamp';
+    public const TYPE_TIMESTAMP = 'timestamp';
 
     /**
      * JSON column type
      *
      * @var string
      */
-    const TYPE_JSON = 'json';
+    public const TYPE_JSON = 'json';
 
     /**
      * String column type
      *
      * @var string
      */
-    const TYPE_STRING = 'string';
+    public const TYPE_STRING = 'string';
 
     /**
      * Text column type
      *
      * @var string
      */
-    const TYPE_TEXT = 'text';
+    public const TYPE_TEXT = 'text';
 
     /**
      * Tiny Integer column type
      *
      * @var string
      */
-    const TYPE_TINYINTEGER = 'tinyinteger';
+    public const TYPE_TINYINTEGER = 'tinyinteger';
 
     /**
      * Small Integer column type
      *
      * @var string
      */
-    const TYPE_SMALLINTEGER = 'smallinteger';
+    public const TYPE_SMALLINTEGER = 'smallinteger';
 
     /**
      * Integer column type
      *
      * @var string
      */
-    const TYPE_INTEGER = 'integer';
+    public const TYPE_INTEGER = 'integer';
 
     /**
      * Big Integer column type
      *
      * @var string
      */
-    const TYPE_BIGINTEGER = 'biginteger';
+    public const TYPE_BIGINTEGER = 'biginteger';
 
     /**
      * Float column type
      *
      * @var string
      */
-    const TYPE_FLOAT = 'float';
+    public const TYPE_FLOAT = 'float';
 
     /**
      * Decimal column type
      *
      * @var string
      */
-    const TYPE_DECIMAL = 'decimal';
+    public const TYPE_DECIMAL = 'decimal';
 
     /**
      * Boolean column type
      *
      * @var string
      */
-    const TYPE_BOOLEAN = 'boolean';
+    public const TYPE_BOOLEAN = 'boolean';
 
     /**
      * UUID column type
      *
      * @var string
      */
-    const TYPE_UUID = 'uuid';
+    public const TYPE_UUID = 'uuid';
 
     /**
      * Check whether or not a table has an autoIncrement column defined.

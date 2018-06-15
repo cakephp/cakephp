@@ -29,7 +29,6 @@ use SplFileObject;
  */
 class ConsoleIo
 {
-
     /**
      * The output stream
      *
@@ -63,21 +62,21 @@ class ConsoleIo
      *
      * @var int
      */
-    const VERBOSE = 2;
+    public const VERBOSE = 2;
 
     /**
      * Output constant for making normal shells.
      *
      * @var int
      */
-    const NORMAL = 1;
+    public const NORMAL = 1;
 
     /**
      * Output constants for making quiet shells.
      *
      * @var int
      */
-    const QUIET = 0;
+    public const QUIET = 0;
 
     /**
      * The current output level.
@@ -109,7 +108,7 @@ class ConsoleIo
      * @param \Cake\Console\ConsoleInput|null $in A ConsoleInput object for stdin.
      * @param \Cake\Console\HelperRegistry|null $helpers A HelperRegistry instance
      */
-    public function __construct(ConsoleOutput $out = null, ConsoleOutput $err = null, ConsoleInput $in = null, HelperRegistry $helpers = null)
+    public function __construct(?ConsoleOutput $out = null, ?ConsoleOutput $err = null, ?ConsoleInput $in = null, ?HelperRegistry $helpers = null)
     {
         $this->_out = $out ?: new ConsoleOutput('php://stdout');
         $this->_err = $err ?: new ConsoleOutput('php://stderr');
@@ -478,7 +477,7 @@ class ConsoleIo
         if ($enable !== static::QUIET) {
             $stdout = new ConsoleLog([
                 'types' => $outLevels,
-                'stream' => $this->_out
+                'stream' => $this->_out,
             ]);
             Log::setConfig('stdout', ['engine' => $stdout]);
         }

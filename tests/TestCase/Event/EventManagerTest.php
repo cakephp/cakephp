@@ -26,7 +26,6 @@ use Cake\TestSuite\TestCase;
  */
 class EventTestListener
 {
-
     public $callList = [];
 
     /**
@@ -66,7 +65,6 @@ class EventTestListener
  */
 class CustomTestEventListenerInterface extends EventTestListener implements EventListenerInterface
 {
-
     public function implementedEvents()
     {
         return [
@@ -74,8 +72,8 @@ class CustomTestEventListenerInterface extends EventTestListener implements Even
             'another.event' => ['callable' => 'secondListenerFunction'],
             'multiple.handlers' => [
                 ['callable' => 'listenerFunction'],
-                ['callable' => 'thirdListenerFunction']
-            ]
+                ['callable' => 'thirdListenerFunction'],
+            ],
         ];
     }
 
@@ -95,7 +93,6 @@ class CustomTestEventListenerInterface extends EventTestListener implements Even
  */
 class EventManagerTest extends TestCase
 {
-
     /**
      * Test attach() with a listener interface.
      *
@@ -193,7 +190,7 @@ class EventManagerTest extends TestCase
         $manager = new EventManager();
         $manager->on('my.event', 'myfunc');
         $expected = [
-            ['callable' => 'myfunc']
+            ['callable' => 'myfunc'],
         ];
         $this->assertSame($expected, $manager->listeners('my.event'));
 
@@ -242,7 +239,7 @@ class EventManagerTest extends TestCase
 
         $manager->off('another.event', ['AClass', 'anotherMethod']);
         $expected = [
-            ['callable' => 'fakeFunction']
+            ['callable' => 'fakeFunction'],
         ];
         $this->assertEquals($expected, $manager->listeners('another.event'));
 
@@ -264,7 +261,7 @@ class EventManagerTest extends TestCase
 
         $manager->off(['AClass', 'aMethod']);
         $expected = [
-            ['callable' => 'fakeFunction']
+            ['callable' => 'fakeFunction'],
         ];
         $this->assertEquals($expected, $manager->listeners('another.event'));
         $this->assertEquals([], $manager->listeners('fake.event'));
@@ -282,7 +279,7 @@ class EventManagerTest extends TestCase
         $manager->off('fake.event');
 
         $expected = [
-            ['callable' => 'fakeFunction']
+            ['callable' => 'fakeFunction'],
         ];
         $this->assertEquals($expected, $manager->listeners('another.event'));
         $this->assertEquals([], $manager->listeners('fake.event'));
@@ -463,11 +460,11 @@ class EventManagerTest extends TestCase
             ->getMock();
         $manager->on($listener);
         $expected = [
-            ['callable' => [$listener, 'secondListenerFunction']]
+            ['callable' => [$listener, 'secondListenerFunction']],
         ];
         $this->assertEquals($expected, $manager->listeners('another.event'));
         $expected = [
-            ['callable' => [$listener, 'listenerFunction']]
+            ['callable' => [$listener, 'listenerFunction']],
         ];
         $this->assertEquals($expected, $manager->listeners('fake.event'));
         $manager->off($listener);
@@ -557,7 +554,7 @@ class EventManagerTest extends TestCase
                 ->with('fake.event')
                 ->will($this->returnValue(
                     [11 => [
-                        ['callable' => [$listener, 'secondListenerFunction']]
+                        ['callable' => [$listener, 'secondListenerFunction']],
                     ]]
                 ));
 
@@ -590,7 +587,7 @@ class EventManagerTest extends TestCase
                 ->with('fake.event')
                 ->will($this->returnValue(
                     [10 => [
-                        ['callable' => [$listener, 'listenerFunction']]
+                        ['callable' => [$listener, 'listenerFunction']],
                     ]]
                 ));
 
@@ -756,7 +753,7 @@ class EventManagerTest extends TestCase
                 '_trackEvents' => true,
                 '_generalManager' => '(object) EventManager',
                 '_dispatchedEvents' => [
-                    'Foo with subject Cake\Test\TestCase\Event\EventManagerTest'
+                    'Foo with subject Cake\Test\TestCase\Event\EventManagerTest',
                 ],
             ],
             $eventManager->__debugInfo()

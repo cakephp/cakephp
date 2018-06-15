@@ -18,7 +18,6 @@ use BadMethodCallException;
 use Cake\Core\Configure;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Exception\MethodNotAllowedException;
-use Cake\Http\Session;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
@@ -35,7 +34,6 @@ use Zend\Diactoros\UploadedFile;
  */
 class ServerRequest implements ServerRequestInterface
 {
-
     /**
      * Array of parameters parsed from the URL.
      *
@@ -46,7 +44,7 @@ class ServerRequest implements ServerRequestInterface
         'controller' => null,
         'action' => null,
         '_ext' => null,
-        'pass' => []
+        'pass' => [],
     ];
 
     /**
@@ -268,7 +266,7 @@ class ServerRequest implements ServerRequestInterface
 
         if (empty($config['session'])) {
             $config['session'] = new Session([
-                'cookiePath' => $config['base']
+                'cookiePath' => $config['base'],
             ]);
         }
 
@@ -679,7 +677,7 @@ class ServerRequest implements ServerRequestInterface
                     return call_user_func($value, $header);
                 }
 
-                return ($header === $value);
+                return $header === $value;
             }
         }
 
@@ -698,7 +696,7 @@ class ServerRequest implements ServerRequestInterface
         if (isset($detect['value'])) {
             $value = $detect['value'];
 
-            return isset($this->params[$key]) ? $this->params[$key] == $value : false;
+            return isset($this->params[$key]) ? $this->params[$key] === $value : false;
         }
         if (isset($detect['options'])) {
             return isset($this->params[$key]) ? in_array($this->params[$key], $detect['options']) : false;
@@ -717,7 +715,7 @@ class ServerRequest implements ServerRequestInterface
     {
         if (isset($detect['env'])) {
             if (isset($detect['value'])) {
-                return $this->getEnv($detect['env']) == $detect['value'];
+                return $this->getEnv($detect['env']) === $detect['value'];
             }
             if (isset($detect['pattern'])) {
                 return (bool)preg_match($detect['pattern'], $this->getEnv($detect['env']));
@@ -1728,7 +1726,7 @@ class ServerRequest implements ServerRequestInterface
             'params' => $this->params,
             'webroot' => $this->webroot,
             'base' => $this->base,
-            'here' => $this->here
+            'here' => $this->here,
         ];
 
         return $this->attributes + $emulated;

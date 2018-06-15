@@ -28,7 +28,6 @@ use PHPUnit\Framework\Error\Error;
  */
 class CacheTest extends TestCase
 {
-
     /**
      * setUp method
      *
@@ -62,7 +61,7 @@ class CacheTest extends TestCase
         Cache::setConfig('tests', [
             'engine' => 'File',
             'path' => TMP,
-            'prefix' => 'test_'
+            'prefix' => 'test_',
         ]);
     }
 
@@ -79,7 +78,7 @@ class CacheTest extends TestCase
             'engine' => 'File',
             'path' => $filename,
             'prefix' => 'test_',
-            'fallback' => 'tests_fallback'
+            'fallback' => 'tests_fallback',
         ]);
         Cache::setConfig('tests_fallback', [
             'engine' => 'File',
@@ -111,7 +110,7 @@ class CacheTest extends TestCase
             'engine' => 'File',
             'path' => $filename,
             'prefix' => 'test_',
-            'fallback' => false
+            'fallback' => false,
         ]);
 
         $engine = Cache::engine('tests');
@@ -130,7 +129,7 @@ class CacheTest extends TestCase
             'engine' => 'File',
             'path' => $filename,
             'prefix' => 'test_',
-            'fallback' => 'tests'
+            'fallback' => 'tests',
         ]);
 
         $e = null;
@@ -194,7 +193,7 @@ class CacheTest extends TestCase
             'engine' => 'File',
             'path' => $filename,
             'fallback' => 'tests_fallback',
-            'groups' => ['integration_group', 'integration_group_2']
+            'groups' => ['integration_group', 'integration_group_2'],
         ]);
         Cache::setConfig('tests_fallback', [
             'engine' => 'File',
@@ -265,7 +264,7 @@ class CacheTest extends TestCase
         $this->expectExceptionMessage('Cache engines must use Cake\Cache\CacheEngine');
 
         Cache::setConfig('tests', [
-            'className' => '\StdClass'
+            'className' => '\StdClass',
         ]);
         $result = Cache::engine('tests');
         $this->assertInstanceOf(NullEngine::class, $result);
@@ -284,7 +283,7 @@ class CacheTest extends TestCase
         $mock = $this->getMockForAbstractClass('Cake\Cache\CacheEngine', [], '', true, true, true, ['init']);
         $mock->method('init')->will($this->returnValue(false));
         Cache::setConfig('tests', [
-            'engine' => $mock
+            'engine' => $mock,
         ]);
         $result = Cache::engine('tests');
         $this->assertInstanceOf(NullEngine::class, $result);
@@ -360,12 +359,12 @@ class CacheTest extends TestCase
             'Array of data using engine key.' => [[
                 'engine' => 'File',
                 'path' => TMP . 'tests',
-                'prefix' => 'cake_test_'
+                'prefix' => 'cake_test_',
             ]],
             'Array of data using classname key.' => [[
                 'className' => 'File',
                 'path' => TMP . 'tests',
-                'prefix' => 'cake_test_'
+                'prefix' => 'cake_test_',
             ]],
             'Direct instance' => [new FileEngine()],
         ];
@@ -412,7 +411,7 @@ class CacheTest extends TestCase
             ->setMockClassName('RubbishEngine')
             ->getMock();
         Cache::setConfig('test', [
-            'engine' => '\RubbishEngine'
+            'engine' => '\RubbishEngine',
         ]);
         Cache::engine('tests');
     }
@@ -439,7 +438,7 @@ class CacheTest extends TestCase
         $config = [
             'engine' => 'File',
             'path' => TMP,
-            'prefix' => 'cake_'
+            'prefix' => 'cake_',
         ];
         Cache::setConfig('tests', $config);
         $expected = $config;
@@ -458,7 +457,7 @@ class CacheTest extends TestCase
         Cache::setConfig('cache.dotted', [
             'className' => 'File',
             'path' => TMP,
-            'prefix' => 'cache_value_'
+            'prefix' => 'cache_value_',
         ]);
 
         $engine = Cache::engine('cache.dotted');
@@ -579,7 +578,7 @@ class CacheTest extends TestCase
         $this->assertFalse($result, 'Drop should not succeed when config is missing.');
 
         Cache::setConfig('unconfigTest', [
-            'engine' => 'TestAppCache'
+            'engine' => 'TestAppCache',
         ]);
         $this->assertInstanceOf(
             'TestApp\Cache\Engine\TestAppCacheEngine',
@@ -638,7 +637,7 @@ class CacheTest extends TestCase
             'App.trueTest' => true,
             'App.nullTest' => null,
             'App.zeroTest' => 0,
-            'App.zeroTest2' => '0'
+            'App.zeroTest2' => '0',
         ];
         Cache::writeMany($data, 'tests');
 
@@ -664,7 +663,7 @@ class CacheTest extends TestCase
             'App.trueTest' => true,
             'App.nullTest' => null,
             'App.zeroTest' => 0,
-            'App.zeroTest2' => '0'
+            'App.zeroTest2' => '0',
         ];
         Cache::writeMany(array_merge($data, ['App.keepTest' => 'keepMe']), 'tests');
 
@@ -690,7 +689,7 @@ class CacheTest extends TestCase
         static::setAppNamespace();
         Cache::setConfig('test_trigger', [
             'engine' => 'TestAppCache',
-            'prefix' => ''
+            'prefix' => '',
         ]);
 
         Cache::write('fail', 'value', 'test_trigger');
@@ -709,7 +708,7 @@ class CacheTest extends TestCase
         Cache::enable();
         Cache::setConfig('test_cache_disable_1', [
             'engine' => 'File',
-            'path' => TMP . 'tests'
+            'path' => TMP . 'tests',
         ]);
 
         $this->assertTrue(Cache::write('key_1', 'hello', 'test_cache_disable_1'));
@@ -729,7 +728,7 @@ class CacheTest extends TestCase
         Cache::disable();
         Cache::setConfig('test_cache_disable_2', [
             'engine' => 'File',
-            'path' => TMP . 'tests'
+            'path' => TMP . 'tests',
         ]);
 
         $this->assertNull(Cache::write('key_4', 'hello', 'test_cache_disable_2'));
@@ -757,11 +756,11 @@ class CacheTest extends TestCase
     {
         Cache::setConfig('configTest', [
             'engine' => 'File',
-            'path' => TMP . 'tests'
+            'path' => TMP . 'tests',
         ]);
         Cache::setConfig('anotherConfigTest', [
             'engine' => 'File',
-            'path' => TMP . 'tests'
+            'path' => TMP . 'tests',
         ]);
 
         Cache::write('key_1', 'hello', 'configTest');

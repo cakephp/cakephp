@@ -23,7 +23,6 @@ use Exception;
  */
 class TestInstanceConfig
 {
-
     use InstanceConfigTrait;
 
     /**
@@ -37,8 +36,8 @@ class TestInstanceConfig
         'some' => 'string',
         'a' => [
             'nested' => 'value',
-            'other' => 'value'
-        ]
+            'other' => 'value',
+        ],
     ];
 }
 
@@ -47,7 +46,6 @@ class TestInstanceConfig
  */
 class ReadOnlyTestInstanceConfig
 {
-
     use InstanceConfigTrait;
 
     /**
@@ -61,8 +59,8 @@ class ReadOnlyTestInstanceConfig
         'some' => 'string',
         'a' => [
             'nested' => 'value',
-            'other' => 'value'
-        ]
+            'other' => 'value',
+        ],
     ];
 
     /**
@@ -84,7 +82,6 @@ class ReadOnlyTestInstanceConfig
  */
 class InstanceConfigTraitTest extends TestCase
 {
-
     /**
      * setUp method
      *
@@ -108,8 +105,8 @@ class InstanceConfigTraitTest extends TestCase
                 'some' => 'string',
                 'a' => [
                     'nested' => 'value',
-                    'other' => 'value'
-                ]
+                    'other' => 'value',
+                ],
             ],
             $this->object->getConfig(),
             'runtime config should match the defaults if not overridden'
@@ -230,7 +227,7 @@ class InstanceConfigTraitTest extends TestCase
             [
                 'some' => 'string',
                 'a' => ['nested' => 'zum', 'other' => 'value'],
-                'new' => ['foo' => 'bar']
+                'new' => ['foo' => 'bar'],
             ],
             $this->object->getConfig(),
             'updates should be merged with existing config'
@@ -273,7 +270,7 @@ class InstanceConfigTraitTest extends TestCase
                 'some' => 'string',
                 'a' => ['nested' => 'value', 'other' => 'value'],
                 'foo' => 'bar',
-                'new' => ['foo' => 'bar']
+                'new' => ['foo' => 'bar'],
             ],
             $this->object->getConfig(),
             'updates should be merged with existing config'
@@ -287,7 +284,7 @@ class InstanceConfigTraitTest extends TestCase
                 'a' => ['nested' => 'value', 'other' => 'value', 'values' => ['to' => 'set']],
                 'foo' => 'bar',
                 'new' => ['foo' => 'bar'],
-                'multiple' => 'different'
+                'multiple' => 'different',
             ],
             $this->object->getConfig(),
             'updates should be merged with existing config'
@@ -307,7 +304,7 @@ class InstanceConfigTraitTest extends TestCase
             [
                 'some' => 'string',
                 'a' => ['new_nested' => true],
-                'new' => 'bar'
+                'new' => 'bar',
             ],
             $this->object->getConfig(),
             'When merging a scalar property will be overwritten with an array'
@@ -342,8 +339,8 @@ class InstanceConfigTraitTest extends TestCase
                 'a' => [
                     'nested' => 'value',
                     'other' => 'value',
-                    'nother' => 'value'
-                ]
+                    'nother' => 'value',
+                ],
             ],
             $this->object->getConfig(),
             'Merging should not delete untouched array values'
@@ -365,8 +362,8 @@ class InstanceConfigTraitTest extends TestCase
                 'a' => [
                     'nested' => 'value',
                     'other' => 'value',
-                    'nother' => 'value'
-                ]
+                    'nother' => 'value',
+                ],
             ],
             $this->object->getConfig(),
             'Should act the same as having passed the equivalent array to the config function'
@@ -381,8 +378,8 @@ class InstanceConfigTraitTest extends TestCase
                     'nested' => 'value',
                     'other' => 'value',
                     'nother' => 'value',
-                    'nextra' => 'value'
-                ]
+                    'nextra' => 'value',
+                ],
             ],
             $this->object->getConfig(),
             'Merging should not delete untouched array values'
@@ -404,8 +401,8 @@ class InstanceConfigTraitTest extends TestCase
                 'a' => [
                     'nested' => 'value',
                     'other' => 'value',
-                    'nother' => 'value'
-                ]
+                    'nother' => 'value',
+                ],
             ],
             $this->object->getConfig(),
             'First access should act like any subsequent access'
@@ -425,8 +422,8 @@ class InstanceConfigTraitTest extends TestCase
             [
                 'some' => 'string',
                 'a' => [
-                    'nother' => 'value'
-                ]
+                    'nother' => 'value',
+                ],
             ],
             $this->object->getConfig(),
             'If explicitly no-merge, array values should be overwritten'
@@ -450,10 +447,10 @@ class InstanceConfigTraitTest extends TestCase
                 'some' => 'string',
                 'a' => [
                     'nested' => [
-                        'value' => 'it is possible'
+                        'value' => 'it is possible',
                     ],
-                    'other' => 'value'
-                ]
+                    'other' => 'value',
+                ],
             ],
             $this->object->getConfig(),
             'When merging a scalar property will be overwritten with an array'
@@ -474,7 +471,7 @@ class InstanceConfigTraitTest extends TestCase
         $this->assertSame(
             [
                 'some' => 'string',
-                'a' => ['nested' => 'value', 'other' => 'value']
+                'a' => ['nested' => 'value', 'other' => 'value'],
             ],
             $object->getConfig(),
             'default config should be returned'
@@ -533,8 +530,8 @@ class InstanceConfigTraitTest extends TestCase
             [
                 'some' => 'string',
                 'a' => [
-                    'other' => 'value'
-                ]
+                    'other' => 'value',
+                ],
             ],
             $this->object->getConfig(),
             'deleted keys should not be present'
@@ -548,7 +545,7 @@ class InstanceConfigTraitTest extends TestCase
         $this->assertSame(
             [
                 'some' => 'string',
-                'a' => []
+                'a' => [],
             ],
             $this->object->getConfig(),
             'deleted keys should not be present'
@@ -569,7 +566,7 @@ class InstanceConfigTraitTest extends TestCase
         );
         $this->assertSame(
             [
-                'some' => 'string'
+                'some' => 'string',
             ],
             $this->object->getConfig(),
             'deleted keys should not be present'
