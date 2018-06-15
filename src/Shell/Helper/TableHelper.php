@@ -105,7 +105,7 @@ class TableHelper extends Helper
      * @param array $rows The data to render out.
      * @return void
      */
-    public function output($rows)
+    public function output(array $rows)
     {
         if (!is_array($rows) || count($rows) === 0) {
             return;
