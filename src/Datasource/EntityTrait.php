@@ -947,7 +947,7 @@ trait EntityTrait
             $this->_errors += [$f => []];
             $this->_errors[$f] = $overwrite ?
                 (array)$error :
-                array_merge($this->_errors[$f], (array)$error);
+                array_replace($this->_errors[$f], (array)$error);
         }
 
         return $this;
