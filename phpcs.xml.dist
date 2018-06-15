@@ -7,7 +7,9 @@
         <exclude name="PSR12.Classes.ClassInstantiation.MissingParenthesis" />
     </rule>
 
-    <rule ref="CakePHP" />
+    <rule ref="CakePHP" >
+        <exclude name="CakePHP.Formatting.UseInAlphabeticalOrder.UseInAlphabeticalOrder" />
+    </rule>
 
     <rule ref="SlevomatCodingStandard.Arrays.TrailingArrayComma" />
     <rule ref="SlevomatCodingStandard.Classes.UnusedPrivateElements" />
