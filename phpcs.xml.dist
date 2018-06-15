@@ -17,7 +17,8 @@
         </properties>
     </rule>
     <rule ref="SlevomatCodingStandard.ControlStructures.AssignmentInCondition" />
-    <rule ref="SlevomatCodingStandard.ControlStructures.DisallowEqualOperators" />
+    <!-- This causes problem when equality checks is used for arrays. -->
+    <!-- <rule ref="SlevomatCodingStandard.ControlStructures.DisallowEqualOperators" /> -->
     <rule ref="SlevomatCodingStandard.ControlStructures.DisallowYodaComparison" />
     <rule ref="SlevomatCodingStandard.ControlStructures.LanguageConstructWithParentheses" />
     <rule ref="SlevomatCodingStandard.ControlStructures.RequireNullCoalesceOperator" />
