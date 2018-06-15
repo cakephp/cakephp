@@ -745,28 +745,22 @@ class Folder
      *
      * ### Options
      *
-     * - `to` The directory to copy to.
      * - `from` The directory to copy from, this will cause a cd() to occur, changing the results of pwd().
      * - `mode` The mode to copy the files/directories with as integer, e.g. 0775.
      * - `skip` Files/directories to skip.
      * - `scheme` Folder::MERGE, Folder::OVERWRITE, Folder::SKIP
      * - `recursive` Whether to copy recursively or not (default: true - recursive)
      *
-     * @param array|string $options Either an array of options (see above) or a string of the destination directory.
+     * @param string $to The directory to copy to.
+     * @param array $options Array of options (see above).
      * @return bool Success.
      */
-    public function copy($options)
+    public function copy($to, array $options = [])
     {
         if (!$this->pwd()) {
             return false;
         }
-        $to = null;
-        if (is_string($options)) {
-            $to = $options;
-            $options = [];
-        }
         $options += [
-            'to' => $to,
             'from' => $this->path,
             'mode' => $this->mode,
             'skip' => [],
@@ -775,7 +769,7 @@ class Folder
         ];
 
         $fromDir = $options['from'];
-        $toDir = $options['to'];
+        $toDir = $to;
         $mode = $options['mode'];
 
         if (!$this->cd($fromDir)) {
@@ -828,14 +822,14 @@ class Folder
                             chmod($to, $mode);
                             umask($old);
                             $this->_messages[] = sprintf('%s created', $to);
-                            $options = ['to' => $to, 'from' => $from] + $options;
-                            $this->copy($options);
+                            $options = ['from' => $from] + $options;
+                            $this->copy($to, $options);
                         } else {
                             $this->_errors[] = sprintf('%s not created', $to);
                         }
                     } elseif (is_dir($from) && $options['scheme'] === Folder::MERGE) {
-                        $options = ['to' => $to, 'from' => $from] + $options;
-                        $this->copy($options);
+                        $options = ['from' => $from] + $options;
+                        $this->copy($to, $options);
                     }
                 }
             }
@@ -852,27 +846,22 @@ class Folder
      *
      * ### Options
      *
-     * - `to` The directory to copy to.
      * - `from` The directory to copy from, this will cause a cd() to occur, changing the results of pwd().
-     * - `chmod` The mode to copy the files/directories with.
+     * - `mode` The mode to copy the files/directories with as integer, e.g. 0775.
      * - `skip` Files/directories to skip.
      * - `scheme` Folder::MERGE, Folder::OVERWRITE, Folder::SKIP
      * - `recursive` Whether to copy recursively or not (default: true - recursive)
      *
-     * @param array|string $options (to, from, chmod, skip, scheme)
+     * @param string $to The directory to move to.
+     * @param array $options Array of options (see above).
      * @return bool Success
      */
-    public function move($options)
+    public function move($to, array $options = [])
     {
-        $to = null;
-        if (is_string($options)) {
-            $to = $options;
-            $options = (array)$options;
-        }
-        $options += ['to' => $to, 'from' => $this->path, 'mode' => $this->mode, 'skip' => [], 'recursive' => true];
+        $options += ['from' => $this->path, 'mode' => $this->mode, 'skip' => [], 'recursive' => true];
 
-        if ($this->copy($options) && $this->delete($options['from'])) {
-            return (bool)$this->cd($options['to']);
+        if ($this->copy($to, $options) && $this->delete($options['from'])) {
+            return (bool)$this->cd($to);
         }
 
         return false;
