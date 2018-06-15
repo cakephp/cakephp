@@ -255,10 +255,6 @@ class Session
         $className = App::className($class, 'Http/Session');
 
         if (!$className) {
-            deprecationWarning('Session adapters should be moved to the Http/Session namespace.');
-            $className = App::className($class, 'Network/Session');
-        }
-        if (!$className) {
             throw new InvalidArgumentException(
                 sprintf('The class "%s" does not exist and cannot be used as a session engine', $class)
             );

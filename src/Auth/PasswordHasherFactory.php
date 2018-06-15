@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -14,6 +15,7 @@
  */
 namespace Cake\Auth;
 
+use Cake\Auth\AbstractPasswordHasher;
 use Cake\Core\App;
 use RuntimeException;
 
@@ -32,7 +34,7 @@ class PasswordHasherFactory
      * @throws \RuntimeException If password hasher class not found or
      *   it does not extend Cake\Auth\AbstractPasswordHasher
      */
-    public static function build($passwordHasher)
+    public static function build($passwordHasher): AbstractPasswordHasher
     {
         $config = [];
         if (is_string($passwordHasher)) {

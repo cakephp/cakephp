@@ -96,7 +96,6 @@ class Plugin
      *
      * - `bootstrap` - array - Whether or not you want the $plugin/config/bootstrap.php file loaded.
      * - `routes` - boolean - Whether or not you want to load the $plugin/config/routes.php file.
-     * - `ignoreMissing` - boolean - Set to true to ignore missing bootstrap/routes files.
      * - `path` - string - The path the plugin can be found on. If empty the default plugin path (App.pluginPaths) will be used.
      * - `classBase` - The path relative to `path` which contains the folders with class files.
      *    Defaults to "src".
@@ -128,7 +127,6 @@ class Plugin
             'routes' => false,
             'console' => true,
             'classBase' => 'src',
-            'ignoreMissing' => false,
             'name' => $plugin
         ];
 
@@ -324,43 +322,6 @@ class Plugin
 
         return static::_includeFile(
             $plugin->getConfigPath() . 'bootstrap.php',
-            true
-        );
-    }
-
-    /**
-     * Loads the routes file for a plugin, or all plugins configured to load their respective routes file.
-     *
-     * If you need fine grained control over how routes are loaded for plugins, you
-     * can use {@see Cake\Routing\RouteBuilder::loadPlugin()}
-     *
-     * @param string|null $name name of the plugin, if null will operate on all
-     *   plugins having enabled the loading of routes files.
-     * @return bool
-     * @deprecated 3.6.5 This method is no longer needed when using HttpApplicationInterface based applications.
-     *   This method will be removed in 4.0.0
-     */
-    public static function routes($name = null)
-    {
-        deprecationWarning(
-            'You no longer need to call `Plugin::routes()` after upgrading to use Http\Server. ' .
-            'See https://book.cakephp.org/3.0/en/development/application.html#adding-the-new-http-stack-to-an-existing-application ' .
-            'for upgrade information.'
-        );
-        if ($name === null) {
-            foreach (static::loaded() as $p) {
-                static::routes($p);
-            }
-
-            return true;
-        }
-        $plugin = static::getCollection()->get($name);
-        if (!$plugin->isEnabled('routes')) {
-            return false;
-        }
-
-        return (bool)static::_includeFile(
-            $plugin->getConfigPath() . 'routes.php',
             true
         );
     }

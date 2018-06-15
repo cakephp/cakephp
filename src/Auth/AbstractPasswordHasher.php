@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -46,21 +47,21 @@ abstract class AbstractPasswordHasher
     /**
      * Generates password hash.
      *
-     * @param string|array $password Plain text password to hash or array of data
+     * @param string $password Plain text password to hash
      *   required to generate password hash.
-     * @return string Password hash
+     * @return string|bool Either the password hash string or bool
      */
-    abstract public function hash($password);
+    abstract public function hash(string $password);
 
     /**
      * Check hash. Generate hash from user provided password string or data array
      * and check against existing hash.
      *
-     * @param string|array $password Plain text password to hash or data array.
+     * @param string $password Plain text password to hash or data array.
      * @param string $hashedPassword Existing hashed password.
      * @return bool True if hashes match else false.
      */
-    abstract public function check($password, $hashedPassword);
+    abstract public function check(string $password, string $hashedPassword): bool;
 
     /**
      * Returns true if the password need to be rehashed, due to the password being
@@ -72,7 +73,7 @@ abstract class AbstractPasswordHasher
      * @param string $password The password to verify
      * @return bool
      */
-    public function needsRehash($password)
+    public function needsRehash(string $password): bool
     {
         return password_needs_rehash($password, PASSWORD_DEFAULT);
     }

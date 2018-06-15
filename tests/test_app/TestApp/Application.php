@@ -16,6 +16,7 @@ namespace TestApp;
 
 use Cake\Http\BaseApplication;
 use Cake\Routing\Middleware\RoutingMiddleware;
+use TestApp\Command\AbortCommand;
 
 class Application extends BaseApplication
 {
@@ -25,9 +26,16 @@ class Application extends BaseApplication
         parent::bootstrap();
     }
 
+    public function console($commands)
+    {
+        return $commands
+            ->add('abort_command', AbortCommand::class)
+            ->addMany($commands->autoDiscover());
+    }
+
     public function middleware($middleware)
     {
-        $middleware->add(new RoutingMiddleware());
+        $middleware->add(new RoutingMiddleware($this));
         $middleware->add(function ($req, $res, $next) {
             $res = $next($req, $res);
 
@@ -48,5 +56,6 @@ class Application extends BaseApplication
         $routes->scope('/app', function ($routes) {
             $routes->connect('/articles', ['controller' => 'Articles']);
         });
+        $routes->connect('/posts', ['controller' => 'Posts', 'action' => 'index']);
     }
 }

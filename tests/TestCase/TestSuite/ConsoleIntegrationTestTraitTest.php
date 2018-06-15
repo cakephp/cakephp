@@ -41,10 +41,10 @@ class ConsoleIntegrationTestTraitTest extends ConsoleIntegrationTestCase
     public function testExecWithCommandRunner()
     {
         $this->useCommandRunner();
-
-        $this->exec('routes');
+        $this->exec('');
 
         $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertOutputContains('Current Paths');
     }
 
     /**
@@ -54,10 +54,35 @@ class ConsoleIntegrationTestTraitTest extends ConsoleIntegrationTestCase
      */
     public function testExec()
     {
-        $this->exec('');
+        $this->exec('routes');
 
-        $this->assertOutputContains('Welcome to CakePHP');
+        $this->assertOutputContains('Route name');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
+    }
+
+    /**
+     * tests that exec catches a StopException
+     *
+     * @return void
+     */
+    public function testExecShellWithStopException()
+    {
+        $this->exec('integration abort_shell');
         $this->assertExitCode(Shell::CODE_ERROR);
+        $this->assertErrorContains('Shell aborted');
+    }
+
+    /**
+     * tests that exec catches a StopException
+     *
+     * @return void
+     */
+    public function testExecCommandWithStopException()
+    {
+        $this->useCommandRunner();
+        $this->exec('abort_command');
+        $this->assertExitCode(127);
+        $this->assertErrorContains('Command aborted');
     }
 
     /**

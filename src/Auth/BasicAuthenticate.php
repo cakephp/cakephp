@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -91,7 +92,7 @@ class BasicAuthenticate extends BaseAuthenticate
      * @return void
      * @throws \Cake\Http\Exception\UnauthorizedException
      */
-    public function unauthenticated(ServerRequest $request, Response $response)
+    public function unauthenticated(ServerRequest $request, Response $response): void
     {
         $Exception = new UnauthorizedException();
         $Exception->responseHeader($this->loginHeaders($request));
@@ -104,7 +105,7 @@ class BasicAuthenticate extends BaseAuthenticate
      * @param \Cake\Http\ServerRequest $request Request object.
      * @return array Headers for logging in.
      */
-    public function loginHeaders(ServerRequest $request)
+    public function loginHeaders(ServerRequest $request): array
     {
         $realm = $this->getConfig('realm') ?: $request->getEnv('SERVER_NAME');
 

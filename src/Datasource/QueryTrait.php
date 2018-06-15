@@ -29,7 +29,7 @@ trait QueryTrait
     /**
      * Instance of a table object this query is bound to
      *
-     * @var \Cake\ORM\Table|\Cake\Datasource\RepositoryInterface
+     * @var \Cake\Datasource\RepositoryInterface
      */
     protected $_repository;
 
@@ -101,7 +101,7 @@ trait QueryTrait
      * Returns the default table object that will be used by this query,
      * that is, the table that will appear in the from clause.
      *
-     * @return \Cake\Datasource\RepositoryInterface|\Cake\ORM\Table
+     * @return \Cake\Datasource\RepositoryInterface
      */
     public function getRepository()
     {
@@ -201,7 +201,7 @@ trait QueryTrait
     /**
      * Sets the query instance to be an eager loaded query. If no argument is
      * passed, the current configured query `_eagerLoaded` value is returned.
-
+     *
      * @param bool $value Whether or not to eager load.
      * @return $this
      */
@@ -321,7 +321,7 @@ trait QueryTrait
      * @param callable|null $mapper The mapper callable.
      * @param callable|null $reducer The reducing function.
      * @param bool $overwrite Set to true to overwrite existing map + reduce functions.
-     * @return $this|array
+     * @return $this
      * @see \Cake\Collection\Iterator\MapReduce for details on how to use emit data to the map reducer.
      */
     public function mapReduce(callable $mapper = null, callable $reducer = null, $overwrite = false)
@@ -331,7 +331,7 @@ trait QueryTrait
         }
         if ($mapper === null) {
             if (!$overwrite) {
-                throw new InvalidArgumentException('$mapper can be null only when $overwrite is false.');
+                throw new InvalidArgumentException('$mapper can be null only when $overwrite is true.');
             }
 
             return $this;
@@ -384,7 +384,7 @@ trait QueryTrait
      *
      * @param callable|null $formatter The formatting callable.
      * @param bool|int $mode Whether or not to overwrite, append or prepend the formatter.
-     * @return $this|array
+     * @return $this
      */
     public function formatResults(callable $formatter = null, $mode = 0)
     {
@@ -471,7 +471,7 @@ trait QueryTrait
      *  $query->getOptions(); // Returns ['doABarrelRoll' => true]
      * ```
      *
-     * @see \Cake\ORM\Query::applyOptions() to read about the options that will
+     * @see \Cake\Datasource\QueryInterface::applyOptions() to read about the options that will
      * be processed by this class and not returned by this function
      * @return array
      */

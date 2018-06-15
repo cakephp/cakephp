@@ -211,34 +211,19 @@ class SecurityTest extends TestCase
     }
 
     /**
-     * Test that values encrypted with open ssl can be decrypted with mcrypt and the reverse.
+     * Test engine
      *
-     * @group deprecated
      * @return void
      */
     public function testEngineEquivalence()
     {
-        $this->skipIf(!function_exists('mcrypt_encrypt') || version_compare(PHP_VERSION, '7.1', '>='), 'This needs mcrypt extension to be loaded.');
-        $this->deprecated(function () {
-            $restore = Security::engine();
-            $txt = "Obi-wan you're our only hope";
-            $key = 'This is my secret key phrase it is quite long.';
-            $salt = 'A tasty salt that is delicious';
+        $restore = Security::engine();
+        $newEngine = new OpenSsl();
 
-            Security::engine(new OpenSsl());
-            $cipher = Security::encrypt($txt, $key, $salt);
-            $this->assertEquals($txt, Security::decrypt($cipher, $key, $salt));
+        Security::engine($newEngine);
 
-            Security::engine(new OpenSsl());
-            $this->assertEquals($txt, Security::decrypt($cipher, $key, $salt));
-
-            Security::engine(new OpenSsl());
-            $cipher = Security::encrypt($txt, $key, $salt);
-            $this->assertEquals($txt, Security::decrypt($cipher, $key, $salt));
-
-            Security::engine(new OpenSsl());
-            $this->assertEquals($txt, Security::decrypt($cipher, $key, $salt));
-        });
+        $this->assertSame($newEngine, Security::engine());
+        $this->assertNotSame($restore, Security::engine());
     }
 
     /**

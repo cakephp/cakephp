@@ -89,7 +89,6 @@ class ViewBuilderTest extends TestCase
     /**
      * Test string property accessor/mutator methods.
      *
-     * @deprecated
      * @dataProvider boolPropertyProvider
      * @return void
      */
@@ -174,10 +173,10 @@ class ViewBuilderTest extends TestCase
         $this->assertEquals('default', $view->getLayout());
         $this->assertEquals('Articles/', $view->getTemplatePath());
         $this->assertEquals('Admin/', $view->getLayoutPath());
-        $this->assertEquals('TestPlugin', $view->plugin);
-        $this->assertEquals('TestTheme', $view->theme);
-        $this->assertSame($request, $view->request);
-        $this->assertInstanceOf(Response::class, $view->response);
+        $this->assertEquals('TestPlugin', $view->getPlugin());
+        $this->assertEquals('TestTheme', $view->getTheme());
+        $this->assertSame($request, $view->getRequest());
+        $this->assertInstanceOf(Response::class, $view->getResponse());
         $this->assertSame($events, $view->getEventManager());
         $this->assertSame(['one' => 'value'], $view->viewVars);
         $this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $view->Html);

@@ -200,12 +200,23 @@ class Paginator implements PaginatorInterface
             $directionDefault = current($defaults['order']);
         }
 
+        $start = 0;
+        if ($count >= 1) {
+            $start = (($page - 1) * $limit) + 1;
+        }
+        $end = $start + $limit - 1;
+        if ($count < $end) {
+            $end = $count;
+        }
+
         $paging = [
             'finder' => $finder,
             'page' => $page,
             'current' => $numResults,
             'count' => $count,
             'perPage' => $limit,
+            'start' => $start,
+            'end' => $end,
             'prevPage' => $page > 1,
             'nextPage' => $count > ($page * $limit),
             'pageCount' => $pageCount,

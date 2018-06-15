@@ -116,8 +116,8 @@ class CompletionShellTest extends TestCase
         $output = $this->out->output;
 
         $expected = 'TestPlugin.example TestPlugin.sample TestPluginTwo.example unique welcome ' .
-            'cache help i18n orm_cache plugin routes schema_cache server version ' .
-            "demo i18m integration merge sample shell_test testing_dispatch\n";
+            'cache help i18n plugin routes schema_cache server version ' .
+            "abort demo i18m integration merge sample shell_test testing_dispatch\n";
         $this->assertTextEquals($expected, $output);
     }
 
@@ -155,7 +155,7 @@ class CompletionShellTest extends TestCase
      */
     public function testOptions()
     {
-        $this->Shell->runCommand(['options', 'orm_cache']);
+        $this->Shell->runCommand(['options', 'schema_cache']);
         $output = $this->out->output;
 
         $expected = "--connection -c --help -h --quiet -q --verbose -v\n";
@@ -183,7 +183,7 @@ class CompletionShellTest extends TestCase
      */
     public function testSubCommandsCorePlugin()
     {
-        $this->Shell->runCommand(['subcommands', 'CORE.orm_cache']);
+        $this->Shell->runCommand(['subcommands', 'CORE.schema_cache']);
         $output = $this->out->output;
 
         $expected = "build clear\n";
@@ -311,7 +311,7 @@ class CompletionShellTest extends TestCase
      */
     public function testSubCommands()
     {
-        $this->Shell->runCommand(['subcommands', 'orm_cache']);
+        $this->Shell->runCommand(['subcommands', 'schema_cache']);
         $output = $this->out->output;
 
         $expected = "build clear\n";

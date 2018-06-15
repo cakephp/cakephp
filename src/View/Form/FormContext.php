@@ -82,7 +82,7 @@ class FormContext implements ContextInterface
     /**
      * {@inheritDoc}
      */
-    public function val($field, $options = [])
+    public function val($field, array $options = [])
     {
         $options += [
             'default' => null,
@@ -90,6 +90,11 @@ class FormContext implements ContextInterface
         ];
 
         $val = $this->_request->getData($field);
+        if ($val !== null) {
+            return $val;
+        }
+
+        $val = $this->_form->getData($field);
         if ($val !== null) {
             return $val;
         }
@@ -132,6 +137,34 @@ class FormContext implements ContextInterface
         }
 
         return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getRequiredMessage($field)
+    {
+        $parts = explode('.', $field);
+
+        $validator = $this->_form->getValidator();
+        $fieldName = array_pop($parts);
+        if (!$validator->hasField($fieldName)) {
+            return null;
+        }
+
+        $ruleset = $validator->field($fieldName);
+
+        $requiredMessage = $validator->getRequiredMessage($fieldName);
+        $emptyMessage = $validator->getNotEmptyMessage($fieldName);
+
+        if ($ruleset->isPresenceRequired() && $requiredMessage) {
+            return $requiredMessage;
+        }
+        if (!$ruleset->isEmptyAllowed() && $emptyMessage) {
+            return $emptyMessage;
+        }
+
+        return null;
     }
 
     /**

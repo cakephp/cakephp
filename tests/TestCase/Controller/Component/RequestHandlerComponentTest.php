@@ -406,7 +406,7 @@ class RequestHandlerComponentTest extends TestCase
         $view = $this->Controller->createView();
         $this->assertInstanceOf(JsonView::class, $view);
         $this->assertEquals('json', $view->getLayoutPath());
-        $this->assertEquals('json', $view->subDir);
+        $this->assertEquals('json', $view->getSubDir());
     }
 
     /**
@@ -427,7 +427,7 @@ class RequestHandlerComponentTest extends TestCase
         $view = $this->Controller->createView();
         $this->assertInstanceOf(XmlView::class, $view);
         $this->assertEquals('xml', $view->getLayoutPath());
-        $this->assertEquals('xml', $view->subDir);
+        $this->assertEquals('xml', $view->getSubDir());
     }
 
     /**

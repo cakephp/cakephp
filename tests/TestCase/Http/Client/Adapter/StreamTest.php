@@ -35,6 +35,10 @@ class CakeStreamWrapper implements \ArrayAccess
 
     public function stream_open($path, $mode, $options, &$openedPath)
     {
+        if ($path == 'http://throw_exception/') {
+            throw new \Exception;
+        }
+
         $query = parse_url($path, PHP_URL_QUERY);
         if ($query) {
             parse_str($query, $this->_query);
@@ -149,6 +153,32 @@ class StreamTest extends TestCase
         $this->assertInstanceOf('Cake\Http\Client\Response', $responses[0]);
 
         $this->assertEquals(20000, strlen($responses[0]->body()));
+    }
+
+    /**
+     * Test stream error_handler cleanup when wrapper throws exception
+     *
+     * @return void
+     */
+    public function testSendWrapperException()
+    {
+        $stream = new Stream();
+        $request = new Request('http://throw_exception/');
+
+        $currentHandler = set_error_handler(function () {
+        });
+        restore_error_handler();
+
+        try {
+            $stream->send($request, []);
+        } catch (\Exception $e) {
+        }
+
+        $newHandler = set_error_handler(function () {
+        });
+        restore_error_handler();
+
+        $this->assertEquals($currentHandler, $newHandler);
     }
 
     /**

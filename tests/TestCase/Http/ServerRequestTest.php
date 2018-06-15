@@ -641,14 +641,18 @@ class ServerRequestTest extends TestCase
     {
         $request = new ServerRequest(['environment' => [
             'HTTP_X_FORWARDED_FOR' => '192.168.1.5, 10.0.1.1, proxy.com, real.ip',
+            'HTTP_X_REAL_IP' => '192.168.1.1',
             'HTTP_CLIENT_IP' => '192.168.1.2',
-            'REMOTE_ADDR' => '192.168.1.3'
+            'REMOTE_ADDR' => '192.168.1.3',
         ]]);
 
         $request->trustProxy = true;
         $this->assertEquals('real.ip', $request->clientIp());
 
         $request = $request->withEnv('HTTP_X_FORWARDED_FOR', '');
+        $this->assertEquals('192.168.1.1', $request->clientIp());
+
+        $request = $request->withEnv('HTTP_X_REAL_IP', '');
         $this->assertEquals('192.168.1.2', $request->clientIp());
 
         $request->trustProxy = false;
@@ -659,6 +663,42 @@ class ServerRequestTest extends TestCase
 
         $request = $request->withEnv('HTTP_CLIENT_IP', '');
         $this->assertEquals('192.168.1.3', $request->clientIp());
+    }
+
+    /**
+     * test clientIp method with trusted proxies
+     *
+     * @return void
+     */
+    public function testClientIpWithTrustedProxies()
+    {
+        $request = new ServerRequest(['environment' => [
+            'HTTP_X_FORWARDED_FOR' => 'real.ip, 192.168.1.0, 192.168.1.2, 192.168.1.3',
+            'HTTP_X_REAL_IP' => '192.168.1.1',
+            'HTTP_CLIENT_IP' => '192.168.1.2',
+            'REMOTE_ADDR' => '192.168.1.4',
+        ]]);
+
+        $request->setTrustedProxies([
+            '192.168.1.0',
+            '192.168.1.1',
+            '192.168.1.2',
+            '192.168.1.3'
+        ]);
+
+        $this->assertEquals('real.ip', $request->clientIp());
+
+        $request = $request->withEnv(
+            'HTTP_X_FORWARDED_FOR',
+            'spoof.fake.ip, real.ip, 192.168.1.0, 192.168.1.2, 192.168.1.3'
+        );
+        $this->assertEquals('192.168.1.3', $request->clientIp());
+
+        $request = $request->withEnv('HTTP_X_FORWARDED_FOR', '');
+        $this->assertEquals('192.168.1.1', $request->clientIp());
+
+        $request->trustProxy = false;
+        $this->assertEquals('192.168.1.4', $request->clientIp());
     }
 
     /**
@@ -3182,7 +3222,7 @@ XML;
     }
 
     /**
-     * Test that withoutAttribute() cannot remove deprecated public properties.
+     * Test that withoutAttribute() cannot remove emulatedAttributes properties.
      *
      * @dataProvider emulatedPropertyProvider
      * @return void

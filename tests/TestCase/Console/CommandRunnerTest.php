@@ -292,7 +292,7 @@ class CommandRunnerTest extends TestCase
         $output = new ConsoleOutput();
 
         $runner = new CommandRunner($app, 'cake');
-        $result = $runner->run(['cake', 'OrmCache', 'build'], $this->getMockIo($output));
+        $result = $runner->run(['cake', 'SchemaCache', 'build'], $this->getMockIo($output));
         $this->assertSame(Shell::CODE_SUCCESS, $result);
 
         $contents = implode("\n", $output->messages());

@@ -9,23 +9,16 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         3.0.0
+ * @since         3.6.5
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Shell;
+namespace TestApp\Shell;
+
+use Cake\Console\Shell;
 
 /**
- * ORM Cache Shell.
- *
- * Provides a CLI interface to the ORM metadata caching features.
- * This tool is intended to be used by deployment scripts so that you
- * can prevent thundering herd effects on the metadata cache when new
- * versions of your application are deployed, or when migrations
- * requiring updated metadata are required.
- *
- * @deprecated 3.6.0 Use \Cake\Shell\SchemaCacheShell instead
+ * Stub class to ensure inclusion in command list.
  */
-class OrmCacheShell extends SchemaCacheShell
+class AppShell extends Shell
 {
-
 }

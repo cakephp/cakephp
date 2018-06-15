@@ -42,19 +42,12 @@ abstract class Cell
     use ViewVarsTrait;
 
     /**
-     * Name of the template that will be rendered.
-     * This property is inflected from the action name that was invoked.
+     * Instance of the View created during rendering. Won't be set until after
+     * Cell::__toString()/render() is called.
      *
-     * @var string
+     * @var \Cake\View\View
      */
-    public $template;
-
-    /**
-     * Automatically set to the name of a plugin.
-     *
-     * @var string
-     */
-    public $plugin;
+    protected $View;
 
     /**
      * An instance of a Cake\Http\ServerRequest object that contains information about the current request.
@@ -62,40 +55,29 @@ abstract class Cell
      * additional information about the request.
      *
      * @var \Cake\Http\ServerRequest
-     * @deprecated 3.7.0 The property will become protected in 4.0.0.
      */
-    public $request;
+    protected $request;
 
     /**
      * An instance of a Response object that contains information about the impending response
      *
      * @var \Cake\Http\Response
-     * @deprecated 3.7.0 The property will become protected in 4.0.0.
      */
-    public $response;
-
-    /**
-     * The helpers this cell uses.
-     *
-     * This property is copied automatically when using the CellTrait
-     *
-     * @var array
-     */
-    public $helpers = [];
+    protected $response;
 
     /**
      * The cell's action to invoke.
      *
      * @var string
      */
-    public $action;
+    protected $action;
 
     /**
      * Arguments to pass to cell's action.
      *
      * @var array
      */
-    public $args = [];
+    protected $args = [];
 
     /**
      * These properties can be set directly on Cell and passed to the View as options.
@@ -196,7 +178,7 @@ abstract class Cell
                 ));
             }
 
-            $builder = $this->viewBuilder();
+            $builder = $this->viewBuilder()->setLayout(false);
 
             if ($template !== null &&
                 strpos($template, '/') === false &&
@@ -204,11 +186,9 @@ abstract class Cell
             ) {
                 $template = Inflector::underscore($template);
             }
-            if ($template === null) {
-                $template = $builder->getTemplate() ?: $this->template;
+            if ($template !== null) {
+                $builder->setTemplate($template);
             }
-            $builder->setLayout(false)
-                ->setTemplate($template);
 
             $className = get_class($this);
             $namePrefix = '\View\Cell\\';
@@ -286,6 +266,90 @@ abstract class Cell
     }
 
     /**
+     * Magic accessor for removed properties.
+     *
+     * @param string $name Property name
+     * @return mixed
+     */
+    public function __get($name)
+    {
+        $deprecated = [
+            'template' => 'getTemplate',
+            'plugin' => 'getPlugin',
+            'helpers' => 'getHelpers',
+        ];
+        if (isset($deprecated[$name])) {
+            $method = $deprecated[$name];
+            deprecationWarning(sprintf(
+                'Cell::$%s is deprecated. Use $cell->viewBuilder()->%s() instead.',
+                $name,
+                $method
+            ));
+
+            return $this->viewBuilder()->{$method}();
+        }
+
+        $protected = [
+            'action',
+            'args',
+            'request',
+            'response',
+            'View',
+        ];
+        if (in_array($name, $protected, true)) {
+            deprecationWarning(sprintf(
+                'Cell::$%s is now protected and shouldn\'t be accessed from outside a child class.',
+                $name
+            ));
+        }
+
+        return $this->{$name};
+    }
+
+    /**
+     * Magic setter for removed properties.
+     *
+     * @param string $name Property name.
+     * @param mixed $value Value to set.
+     * @return void
+     */
+    public function __set($name, $value)
+    {
+        $deprecated = [
+            'template' => 'setTemplate',
+            'plugin' => 'setPlugin',
+            'helpers' => 'setHelpers',
+        ];
+        if (isset($deprecated[$name])) {
+            $method = $deprecated[$name];
+            deprecationWarning(sprintf(
+                'Cell::$%s is deprecated. Use $cell->viewBuilder()->%s() instead.',
+                $name,
+                $method
+            ));
+            $this->viewBuilder()->{$method}($value);
+
+            return;
+        }
+
+        $protected = [
+            'action',
+            'args',
+            'request',
+            'response',
+            'View',
+        ];
+        if (in_array($name, $protected, true)) {
+            deprecationWarning(sprintf(
+                'Cell::$%s is now protected and shouldn\'t be accessed from outside a child class.',
+                $name
+            ));
+        }
+
+        $this->{$name} = $value;
+    }
+
+    /**
      * Debug info.
      *
      * @return array
@@ -293,12 +357,11 @@ abstract class Cell
     public function __debugInfo()
     {
         return [
-            'plugin' => $this->plugin,
             'action' => $this->action,
             'args' => $this->args,
-            'template' => $this->template,
             'request' => $this->request,
             'response' => $this->response,
+            'viewBuilder' => $this->viewBuilder(),
         ];
     }
 }

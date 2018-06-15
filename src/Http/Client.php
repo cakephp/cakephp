@@ -387,7 +387,7 @@ class Client
      * @param array $options Additional options to use.
      * @return \Cake\Http\Client\Response
      */
-    public function send(Request $request, $options = [])
+    public function send(Request $request, array $options = [])
     {
         $redirects = 0;
         if (isset($options['redirect'])) {
@@ -444,7 +444,7 @@ class Client
      * @param array $options The config options stored with Client::config()
      * @return string A complete url with scheme, port, host, and path.
      */
-    public function buildUrl($url, $query = [], $options = [])
+    public function buildUrl($url, $query = [], array $options = [])
     {
         if (empty($options) && empty($query)) {
             return $url;

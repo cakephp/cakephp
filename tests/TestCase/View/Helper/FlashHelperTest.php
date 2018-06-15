@@ -37,9 +37,8 @@ class FlashHelperTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->View = new View();
         $session = new Session();
-        $this->View->request = new ServerRequest(['session' => $session]);
+        $this->View = new View(new ServerRequest(['session' => $session]));
         $this->Flash = new FlashHelper($this->View);
 
         $session->write([
@@ -143,7 +142,7 @@ class FlashHelperTest extends TestCase
     public function testFlashThrowsException()
     {
         $this->expectException(\UnexpectedValueException::class);
-        $this->View->request->getSession()->write('Flash.foo', 'bar');
+        $this->View->getRequest()->getSession()->write('Flash.foo', 'bar');
         $this->Flash->render('foo');
     }
 
@@ -192,7 +191,7 @@ class FlashHelperTest extends TestCase
     {
         Plugin::load('TestTheme');
 
-        $this->View->theme = 'TestTheme';
+        $this->View->setTheme('TestTheme');
         $result = $this->Flash->render('flash');
         $expected = 'flash element from TestTheme';
         $this->assertContains($expected, $result);
@@ -217,7 +216,7 @@ class FlashHelperTest extends TestCase
             ['div' => ['id' => 'classy-message']], 'Recorded', '/div'
         ];
         $this->assertHtml($expected, $result);
-        $this->assertNull($this->View->request->getSession()->read('Flash.stack'));
+        $this->assertNull($this->View->getRequest()->getSession()->read('Flash.stack'));
     }
 
     /**
@@ -228,7 +227,7 @@ class FlashHelperTest extends TestCase
      */
     public function testFlashWithPrefix()
     {
-        $this->View->request = $this->View->request->withParam('prefix', 'Admin');
+        $this->View->setRequest($this->View->getRequest()->withParam('prefix', 'Admin'));
         $result = $this->Flash->render('flash');
         $expected = 'flash element from Admin prefix folder';
         $this->assertContains($expected, $result);
