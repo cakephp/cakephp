@@ -1728,6 +1728,26 @@ class RouteTest extends TestCase
         $route = new Route('/:controller/:action/*');
         $this->assertEquals('/', $route->staticPath());
 
+        $route = new Route('/api/{/:action/*');
+        $this->assertEquals('/api/{/', $route->staticPath());
+
+        $route = new Route('/books/reviews', ['controller' => 'Reviews', 'action' => 'index']);
+        $this->assertEquals('/books/reviews', $route->staticPath());
+    }
+
+    /**
+     * Test getting the static path for a route.
+     *
+     * @return void
+     */
+    public function testStaticPathBrace()
+    {
+        $route = new Route('/pages/{id}/*', ['controller' => 'Pages', 'action' => 'display']);
+        $this->assertEquals('/pages/', $route->staticPath());
+
+        $route = new Route('/{controller}/{action}/*');
+        $this->assertEquals('/', $route->staticPath());
+
         $route = new Route('/books/reviews', ['controller' => 'Reviews', 'action' => 'index']);
         $this->assertEquals('/books/reviews', $route->staticPath());
     }

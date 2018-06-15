@@ -14,6 +14,7 @@
  */
 namespace Cake\Http;
 
+use Cake\Core\BasePlugin;
 use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\HttpApplicationInterface;
 use Cake\Core\Plugin;
@@ -120,16 +121,15 @@ abstract class BaseApplication implements
      */
     public function makePlugin($name, array $config)
     {
-        if (strpos($name, '\\') === false) {
-            $name = str_replace('/', '\\', $name) . '\\' . 'Plugin';
+        $className = $name;
+        if (strpos($className, '\\') === false) {
+            $className = str_replace('/', '\\', $className) . '\\' . 'Plugin';
         }
-        if (!class_exists($name)) {
-            throw new InvalidArgumentException(
-                "The plugin class `{$name}` cannot be found. " .
-                'Ensure your autoloader is correct.'
-            );
+        if (!class_exists($className)) {
+            $config['name'] = $name;
+            $className = BasePlugin::class;
         }
-        $plugin = new $name($config);
+        $plugin = new $className($config);
         if (!$plugin instanceof PluginInterface) {
             throw new InvalidArgumentException("The `{$name}` plugin does not implement Cake\Core\PluginInterface.");
         }
