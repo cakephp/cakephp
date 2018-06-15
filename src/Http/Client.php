@@ -473,7 +473,7 @@ class Client
             'https' => 443,
         ];
         $out = $options['scheme'] . '://' . $options['host'];
-        if ($options['port'] && $options['port'] !== $defaultPorts[$options['scheme']]) {
+        if ($options['port'] && (int)$options['port'] !== $defaultPorts[$options['scheme']]) {
             $out .= ':' . $options['port'];
         }
         $out .= '/' . ltrim($url, '/');
