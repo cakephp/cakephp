@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -103,7 +104,7 @@ class TreeIteratorTest extends TestCase
         $result = (new TreeIterator($items))
             ->printer(function ($element, $key, $iterator) {
                 return ($iterator->getDepth() + 1 ) . '.' . $key . ' ' . $element['name'];
-            }, null, null)
+            }, null, '')
             ->toArray();
         $expected = [
             '1.0 a',

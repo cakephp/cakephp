@@ -299,7 +299,7 @@ class AssetsTask extends Shell
     protected function _copyDirectory($source, $destination)
     {
         $folder = new Folder($source);
-        if ($folder->copy(['to' => $destination])) {
+        if ($folder->copy($destination)) {
             $this->out('Copied assets to directory ' . $destination);
 
             return true;

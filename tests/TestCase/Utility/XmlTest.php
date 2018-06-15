@@ -283,7 +283,7 @@ class XmlTest extends TestCase
                 ]
             ]
         ];
-        $obj = Xml::fromArray($xml, 'attributes');
+        $obj = Xml::fromArray($xml, ['format' => 'attributes']);
         $this->assertInstanceOf(\SimpleXMLElement::class, $obj);
         $this->assertEquals('tags', $obj->getName());
         $this->assertEquals(2, count($obj));
@@ -333,7 +333,7 @@ XML;
                 'array' => []
             ]
         ];
-        $obj = Xml::fromArray($xml, 'tags');
+        $obj = Xml::fromArray($xml, ['format' => 'tags']);
         $this->assertEquals(6, count($obj));
         $this->assertSame((string)$obj->bool, '1');
         $this->assertSame((string)$obj->int, '1');
@@ -356,7 +356,7 @@ XML;
                 ]
             ]
         ];
-        $obj = Xml::fromArray($xml, 'tags');
+        $obj = Xml::fromArray($xml, ['format' => 'tags']);
         $xmlText = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <tags>
@@ -386,7 +386,7 @@ XML;
                 '@' => 'All tags'
             ]
         ];
-        $obj = Xml::fromArray($xml, 'tags');
+        $obj = Xml::fromArray($xml, ['format' => 'tags']);
         $xmlText = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <tags>All tags<tag id="1">Tag 1<name>defect</name></tag><tag id="2"><name>enhancement</name></tag></tags>
@@ -401,7 +401,7 @@ XML;
                 ]
             ]
         ];
-        $obj = Xml::fromArray($xml, 'attributes');
+        $obj = Xml::fromArray($xml, ['format' => 'attributes']);
         $xmlText = '<' . '?xml version="1.0" encoding="UTF-8"?><tags><tag id="1">defect</tag></tags>';
         $this->assertXmlStringEqualsXmlString($xmlText, $obj->asXML());
     }
@@ -631,7 +631,7 @@ XML;
                 'author' => ['Malte Lange & Co']
             ]
         ];
-        $xml = Xml::fromArray(['products' => $data], 'tags');
+        $xml = Xml::fromArray(['products' => $data], ['format' => 'tags']);
         $expected = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <products>
@@ -692,7 +692,7 @@ XML;
                 ]
             ]
         ];
-        $this->assertEquals(Xml::toArray(Xml::fromArray($array, 'tags')), $array);
+        $this->assertEquals(Xml::toArray(Xml::fromArray($array, ['format' => 'tags'])), $array);
 
         $expected = [
             'tags' => [
@@ -708,7 +708,7 @@ XML;
                 ]
             ]
         ];
-        $this->assertEquals($expected, Xml::toArray(Xml::fromArray($array, 'attributes')));
+        $this->assertEquals($expected, Xml::toArray(Xml::fromArray($array, ['format' => 'attributes'])));
         $this->assertEquals($expected, Xml::toArray(Xml::fromArray($array, ['return' => 'domdocument', 'format' => 'attributes'])));
         $this->assertEquals(Xml::toArray(Xml::fromArray($array)), $array);
         $this->assertEquals(Xml::toArray(Xml::fromArray($array, ['return' => 'domdocument'])), $array);
@@ -745,7 +745,7 @@ XML;
                 ]
             ]
         ];
-        $this->assertEquals($expected, Xml::toArray(Xml::fromArray($array, 'attributes')));
+        $this->assertEquals($expected, Xml::toArray(Xml::fromArray($array, ['format' => 'attributes'])));
         $this->assertEquals($expected, Xml::toArray(Xml::fromArray($array, ['format' => 'attributes', 'return' => 'domdocument'])));
 
         $xml = <<<XML
@@ -970,7 +970,7 @@ XML;
         ];
         $this->assertSame($expected, Xml::toArray($xml));
 
-        $xml = Xml::fromArray($expected, 'tags');
+        $xml = Xml::fromArray($expected, ['format' => 'tags']);
         $this->assertXmlStringEqualsXmlString($xmlText, $xml->asXML());
     }
 

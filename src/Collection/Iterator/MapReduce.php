@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -140,10 +141,10 @@ class MapReduce implements IteratorAggregate
      * of mapping a single record from the original data.
      *
      * @param mixed $val The record itself to store in the bucket
-     * @param string $bucket the name of the bucket where to put the record
+     * @param mixed $bucket the name of the bucket where to put the record
      * @return void
      */
-    public function emitIntermediate($val, $bucket)
+    public function emitIntermediate($val, $bucket): void
     {
         $this->_intermediate[$bucket][] = $val;
     }
@@ -153,10 +154,10 @@ class MapReduce implements IteratorAggregate
      * for this record.
      *
      * @param mixed $val The value to be appended to the final list of results
-     * @param string|null $key and optional key to assign to the value
+     * @param mixed $key and optional key to assign to the value
      * @return void
      */
-    public function emit($val, $key = null)
+    public function emit($val, $key = null): void
     {
         $this->_result[$key === null ? $this->_counter : $key] = $val;
         $this->_counter++;

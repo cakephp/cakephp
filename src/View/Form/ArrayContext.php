@@ -165,7 +165,7 @@ class ArrayContext implements ContextInterface
      *      context's schema should be used if it's not explicitly provided.
      * @return mixed
      */
-    public function val($field, $options = [])
+    public function val($field, array $options = [])
     {
         $options += [
             'default' => null,

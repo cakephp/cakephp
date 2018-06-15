@@ -3088,6 +3088,37 @@ class TableTest extends TestCase
     }
 
     /**
+     * Test saveMany() with failed save due to an exception
+     *
+     * @return void
+     */
+    public function testSaveManyFailedWithException()
+    {
+        $table = $this->getTableLocator()
+            ->get('authors');
+        $entities = [
+            new Entity(['name' => 'mark']),
+            new Entity(['name' => 'jose'])
+        ];
+
+        $table->getEventManager()->on('Model.beforeSave', function (Event $event, Entity $entity) {
+            if ($entity->name === 'jose') {
+                throw new \Exception('Oh noes');
+            }
+        });
+
+        $this->expectException(\Exception::class);
+
+        try {
+            $table->saveMany($entities);
+        } finally {
+            foreach ($entities as $entity) {
+                $this->assertTrue($entity->isNew());
+            }
+        }
+    }
+
+    /**
      * Test simple delete.
      *
      * @return void

@@ -2016,25 +2016,33 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function saveMany($entities, $options = [])
     {
         $isNew = [];
-
-        $return = $this->getConnection()->transactional(
-            function () use ($entities, $options, &$isNew) {
-                foreach ($entities as $key => $entity) {
-                    $isNew[$key] = $entity->isNew();
-                    if ($this->save($entity, $options) === false) {
-                        return false;
-                    }
-                }
-            }
-        );
-
-        if ($return === false) {
+        $cleanup = function ($entities) use (&$isNew) {
             foreach ($entities as $key => $entity) {
                 if (isset($isNew[$key]) && $isNew[$key]) {
                     $entity->unsetProperty($this->getPrimaryKey());
                     $entity->isNew(true);
                 }
             }
+        };
+
+        try {
+            $return = $this->getConnection()
+                ->transactional(function () use ($entities, $options, &$isNew) {
+                    foreach ($entities as $key => $entity) {
+                        $isNew[$key] = $entity->isNew();
+                        if ($this->save($entity, $options) === false) {
+                            return false;
+                        }
+                    }
+                });
+        } catch (\Exception $e) {
+            $cleanup($entities);
+
+            throw $e;
+        }
+
+        if ($return === false) {
+            $cleanup($entities);
 
             return false;
         }

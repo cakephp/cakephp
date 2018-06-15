@@ -15,6 +15,7 @@
 namespace TestApp\Controller;
 
 use Cake\Event\EventInterface;
+use Cake\Http\Cookie\Cookie;
 use Cake\Utility\Security;
 
 /**
@@ -50,7 +51,7 @@ class PostsController extends AppController
     public function index($layout = 'default')
     {
         $this->Flash->error('An error message');
-        $this->response = $this->response->withCookie('remember_me', 1);
+        $this->response = $this->response->withCookie(new Cookie('remember_me', 1));
         $this->set('test', 'value');
         $this->viewBuilder()->setLayout($layout);
     }

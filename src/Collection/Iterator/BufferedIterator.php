@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -168,7 +169,7 @@ class BufferedIterator extends Collection implements Countable, Serializable
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         if (!$this->_started) {
             $this->rewind();
