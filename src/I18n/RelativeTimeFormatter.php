@@ -268,9 +268,23 @@ class RelativeTimeFormatter
             $fWord = $options['accuracy']['minute'];
         }
 
-        $fNum = str_replace(['year', 'month', 'week', 'day', 'hour', 'minute', 'second'], [1, 2, 3, 4, 5, 6, 7], $fWord);
+        $fNum = str_replace(
+            ['year', 'month', 'week', 'day', 'hour', 'minute', 'second'],
+            [1, 2, 3, 4, 5, 6, 7],
+            $fWord
+        );
 
-        return [$fNum, $fWord, $years, $months, $weeks, $days, $hours, $minutes, $seconds];
+        return [
+            $fNum,
+            $fWord,
+            (int)$years,
+            (int)$months,
+            (int)$weeks,
+            (int)$days,
+            (int)$hours,
+            (int)$minutes,
+            (int)$seconds,
+        ];
     }
 
     /**
