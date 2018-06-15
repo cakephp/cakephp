@@ -291,7 +291,7 @@ class Debugger
      * @return mixed Formatted stack trace.
      * @link https://book.cakephp.org/3.0/en/development/debugging.html#generating-stack-traces
      */
-    public static function formatTrace($backtrace, $options = [])
+    public static function formatTrace($backtrace, array $options = [])
     {
         if ($backtrace instanceof Exception) {
             $backtrace = $backtrace->getTrace();

@@ -106,6 +106,8 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
 
         if (isset($config['tableLocator'])) {
             $this->_tableLocator = $config['tableLocator'];
+        } else {
+            $this->_tableLocator = $table->associations()->getTableLocator();
         }
 
         parent::__construct($table, $config);

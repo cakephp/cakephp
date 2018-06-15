@@ -81,7 +81,7 @@ class FormContext implements ContextInterface
     /**
      * {@inheritDoc}
      */
-    public function val($field, $options = [])
+    public function val($field, array $options = [])
     {
         $options += [
             'default' => null,

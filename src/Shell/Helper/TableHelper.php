@@ -38,7 +38,7 @@ class TableHelper extends Helper
      * @param array $rows The rows on which the columns width will be calculated on.
      * @return array
      */
-    protected function _calculateWidths($rows)
+    protected function _calculateWidths(array $rows)
     {
         $widths = [];
         foreach ($rows as $line) {
@@ -59,7 +59,7 @@ class TableHelper extends Helper
      * @param array $widths The widths of each column to output.
      * @return void
      */
-    protected function _rowSeparator($widths)
+    protected function _rowSeparator(array $widths)
     {
         $out = '';
         foreach ($widths as $column) {
@@ -77,7 +77,7 @@ class TableHelper extends Helper
      * @param array $options Options to be passed.
      * @return void
      */
-    protected function _render(array $row, $widths, $options = [])
+    protected function _render(array $row, array $widths, array $options = [])
     {
         if (count($row) === 0) {
             return;
@@ -104,7 +104,7 @@ class TableHelper extends Helper
      * @param array $rows The data to render out.
      * @return void
      */
-    public function output($rows)
+    public function output(array $rows)
     {
         if (!is_array($rows) || count($rows) === 0) {
             return;

@@ -167,7 +167,7 @@ class ClientTest extends TestCase
     {
         $http = new Client();
 
-        $result = $http->buildUrl($url, $query, $opts);
+        $result = $http->buildUrl($url, $query, (array)$opts);
         $this->assertEquals($expected, $result);
     }
 

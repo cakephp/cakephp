@@ -227,7 +227,7 @@ class EntityContext implements ContextInterface
      *     schema should be used if it's not explicitly provided.
      * @return mixed The value of the field or null on a miss.
      */
-    public function val($field, $options = [])
+    public function val($field, array $options = [])
     {
         $options += [
             'default' => null,

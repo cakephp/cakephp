@@ -19,6 +19,8 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Http\MiddlewareQueue;
+use Cake\Routing\RouteBuilder;
+use Cake\Routing\RouteCollection;
 use Cake\TestSuite\TestCase;
 use Company\TestPluginThree\Plugin as TestPluginThree;
 use TestPlugin\Plugin as TestPlugin;
@@ -108,6 +110,27 @@ class BasePluginTest extends TestCase
         $this->assertFalse(Configure::check('PluginTest.test_plugin.bootstrap'));
         $this->assertNull($plugin->bootstrap($app));
         $this->assertTrue(Configure::check('PluginTest.test_plugin.bootstrap'));
+    }
+
+    /**
+     * No errors should be emitted when a plugin doesn't have a bootstrap file.
+     */
+    public function testBootstrapSkipMissingFile()
+    {
+        $app = $this->createMock(PluginApplicationInterface::class);
+        $plugin = new BasePlugin();
+        $this->assertNull($plugin->bootstrap($app));
+    }
+
+    /**
+     * No errors should be emitted when a plugin doesn't have a routes file.
+     */
+    public function testRoutesSkipMissingFile()
+    {
+        $app = $this->createMock(PluginApplicationInterface::class);
+        $plugin = new BasePlugin();
+        $routeBuilder = new RouteBuilder(new RouteCollection(), '/');
+        $this->assertNull($plugin->routes($routeBuilder));
     }
 
     public function testConstructorArguments()

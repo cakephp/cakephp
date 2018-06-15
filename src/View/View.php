@@ -184,7 +184,7 @@ class View implements EventDispatcherInterface
      * List of generated DOM UUIDs.
      *
      * @var array
-     * @deprecated 3.7.0 The property is unused and will be removed in 4.0.0.
+     * @deprecated 3.7.0 The property is deprecated and will be removed in 4.0.0.
      */
     public $uuids = [];
 
@@ -978,9 +978,12 @@ class View implements EventDispatcherInterface
      * @param string $object Type of object, i.e. 'form' or 'link'
      * @param string $url The object's target URL
      * @return string
+     * @deprecated 3.7.0 This method is deprecated and will be removed in 4.0.0.
      */
     public function uuid($object, $url)
     {
+        deprecationWarning('View::uuid() is deprecated and will be removed in 4.0.0.');
+
         $c = 1;
         $url = Router::url($url);
         $hash = $object . substr(md5($object . $url), 0, 10);
