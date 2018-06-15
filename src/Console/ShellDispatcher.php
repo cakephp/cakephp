@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -96,7 +97,7 @@ class ShellDispatcher
      * @param string|null $original The original full name for the shell.
      * @return string|false The aliased class name, or false if the alias does not exist
      */
-    public static function alias($short, $original = null)
+    public static function alias(string $short, ?string $original = null)
     {
         $short = Inflector::camelize($short);
         if ($original) {
@@ -111,7 +112,7 @@ class ShellDispatcher
      *
      * @return void
      */
-    public static function resetAliases()
+    public static function resetAliases(): void
     {
         static::$_aliases = [];
     }
@@ -123,7 +124,7 @@ class ShellDispatcher
      * @param array $extra Extra parameters
      * @return int The exit code of the shell process.
      */
-    public static function run($argv, $extra = [])
+    public static function run(array $argv, array $extra = []): int
     {
         $dispatcher = new ShellDispatcher($argv);
 
@@ -136,7 +137,7 @@ class ShellDispatcher
      * @return void
      * @throws \Cake\Core\Exception\Exception
      */
-    protected function _initEnvironment()
+    protected function _initEnvironment(): void
     {
         if (!$this->_bootstrap()) {
             $message = "Unable to load CakePHP core.\nMake sure Cake exists in " . CAKE_CORE_INCLUDE_PATH;
@@ -157,7 +158,7 @@ class ShellDispatcher
      *
      * @return bool Success.
      */
-    protected function _bootstrap()
+    protected function _bootstrap(): bool
     {
         if (!Configure::read('App.fullBaseUrl')) {
             Configure::write('App.fullBaseUrl', 'http://localhost');
@@ -178,7 +179,7 @@ class ShellDispatcher
      * - `requested` : if used, will prevent the Shell welcome message to be displayed
      * @return int The cli command exit code. 0 is success.
      */
-    public function dispatch($extra = [])
+    public function dispatch(array $extra = []): int
     {
         try {
             $result = $this->_dispatch($extra);
@@ -205,7 +206,7 @@ class ShellDispatcher
      * @return bool|int|null
      * @throws \Cake\Console\Exception\MissingShellMethodException
      */
-    protected function _dispatch($extra = [])
+    protected function _dispatch(array $extra = [])
     {
         $shell = $this->shiftArgs();
 
@@ -240,7 +241,7 @@ class ShellDispatcher
      *
      * @return array the resultant list of aliases
      */
-    public function addShortPluginAliases()
+    public function addShortPluginAliases(): array
     {
         $plugins = Plugin::loaded();
 
@@ -317,7 +318,7 @@ class ShellDispatcher
      * @return \Cake\Console\Shell A shell instance.
      * @throws \Cake\Console\Exception\MissingShellException when errors are encountered.
      */
-    public function findShell($shell)
+    public function findShell(string $shell)
     {
         $className = $this->_shellExists($shell);
         if (!$className) {
@@ -340,7 +341,7 @@ class ShellDispatcher
      * @param string $shell Optionally the name of a plugin or alias
      * @return string Shell name with plugin prefix
      */
-    protected function _handleAlias($shell)
+    protected function _handleAlias(string $shell): string
     {
         $aliased = static::alias($shell);
         if ($aliased) {
@@ -358,10 +359,10 @@ class ShellDispatcher
      * @param string $shell The shell name to look for.
      * @return string|bool Either the classname or false.
      */
-    protected function _shellExists($shell)
+    protected function _shellExists(string $shell)
     {
         $class = App::className($shell, 'Shell', 'Shell');
-        if (class_exists($class)) {
+        if ($class && class_exists($class)) {
             return $class;
         }
 
@@ -379,7 +380,7 @@ class ShellDispatcher
     {
         list($plugin) = pluginSplit($shortName);
         $instance = new $className();
-        $instance->plugin = trim($plugin, '.');
+        $instance->plugin = trim((string)$plugin, '.');
 
         return $instance;
     }
@@ -399,7 +400,7 @@ class ShellDispatcher
      *
      * @return void
      */
-    public function help()
+    public function help(): void
     {
         trigger_error(
             'Console help cannot be generated from Shell classes anymore. ' .
@@ -413,7 +414,7 @@ class ShellDispatcher
      *
      * @return void
      */
-    public function version()
+    public function version(): void
     {
         trigger_error(
             'Version information cannot be generated from Shell classes anymore. ' .

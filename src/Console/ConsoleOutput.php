@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -160,7 +161,7 @@ class ConsoleOutput
      *
      * @param string $stream The identifier of the stream to write output to.
      */
-    public function __construct($stream = 'php://stdout')
+    public function __construct(string $stream = 'php://stdout')
     {
         $this->_output = fopen($stream, 'wb');
 
@@ -179,7 +180,7 @@ class ConsoleOutput
      * @param int $newlines Number of newlines to append
      * @return int|bool The number of bytes returned from writing to output.
      */
-    public function write($message, $newlines = 1)
+    public function write($message, int $newlines = 1)
     {
         if (is_array($message)) {
             $message = implode(static::LF, $message);
@@ -194,7 +195,7 @@ class ConsoleOutput
      * @param string $text Text with styling tags.
      * @return string String with color codes added.
      */
-    public function styleText($text)
+    public function styleText(string $text): string
     {
         if ($this->_outputAs == static::RAW) {
             return $text;
@@ -218,7 +219,7 @@ class ConsoleOutput
      * @param array $matches An array of matches to replace.
      * @return string
      */
-    protected function _replaceTags($matches)
+    protected function _replaceTags(array $matches): string
     {
         $style = $this->styles($matches['tag']);
         if (empty($style)) {
@@ -248,7 +249,7 @@ class ConsoleOutput
      * @param string $message Message to write.
      * @return int|bool The number of bytes returned from writing to output.
      */
-    protected function _write($message)
+    protected function _write(string $message)
     {
         return fwrite($this->_output, $message);
     }
@@ -309,7 +310,7 @@ class ConsoleOutput
      *
      * @return int
      */
-    public function getOutputAs()
+    public function getOutputAs(): int
     {
         return $this->_outputAs;
     }
@@ -321,7 +322,7 @@ class ConsoleOutput
      * @return void
      * @throws \InvalidArgumentException in case of a not supported output type.
      */
-    public function setOutputAs($type)
+    public function setOutputAs(int $type): void
     {
         if (!in_array($type, [self::RAW, self::PLAIN, self::COLOR], true)) {
             throw new InvalidArgumentException(sprintf('Invalid output type "%s".', $type));

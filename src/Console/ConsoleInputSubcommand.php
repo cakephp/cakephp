@@ -78,7 +78,7 @@ class ConsoleInputSubcommand
      *
      * @return string Value of this->_name.
      */
-    public function name()
+    public function name(): string
     {
         return $this->_name;
     }
@@ -88,7 +88,7 @@ class ConsoleInputSubcommand
      *
      * @return string
      */
-    public function getRawHelp()
+    public function getRawHelp(): string
     {
         return $this->_help;
     }
@@ -99,7 +99,7 @@ class ConsoleInputSubcommand
      * @param int $width The width to make the name of the subcommand.
      * @return string
      */
-    public function help($width = 0)
+    public function help(int $width = 0): string
     {
         $name = $this->_name;
         if (strlen($name) < $width) {
@@ -129,7 +129,7 @@ class ConsoleInputSubcommand
      * @param \SimpleXMLElement $parent The parent element.
      * @return \SimpleXMLElement The parent with this subcommand appended.
      */
-    public function xml(SimpleXMLElement $parent)
+    public function xml(SimpleXMLElement $parent): SimpleXmlElement
     {
         $command = $parent->addChild('command');
         $command->addAttribute('name', $this->_name);

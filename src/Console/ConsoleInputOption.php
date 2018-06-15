@@ -121,7 +121,7 @@ class ConsoleInputOption
      *
      * @return string Value of this->_name.
      */
-    public function name()
+    public function name(): string
     {
         return $this->_name;
     }
@@ -131,9 +131,9 @@ class ConsoleInputOption
      *
      * @return string Value of this->_short.
      */
-    public function short()
+    public function short(): string
     {
-        return $this->_short;
+        return (string)$this->_short;
     }
 
     /**
@@ -142,7 +142,7 @@ class ConsoleInputOption
      * @param int $width The width to make the name of the option.
      * @return string
      */
-    public function help($width = 0)
+    public function help(int $width = 0): string
     {
         $default = $short = '';
         if ($this->_default && $this->_default !== true) {
@@ -167,7 +167,7 @@ class ConsoleInputOption
      *
      * @return string
      */
-    public function usage()
+    public function usage(): string
     {
         $name = (strlen($this->_short) > 0) ? ('-' . $this->_short) : ('--' . $this->_name);
         $default = '';
@@ -196,7 +196,7 @@ class ConsoleInputOption
      *
      * @return bool
      */
-    public function isBoolean()
+    public function isBoolean(): bool
     {
         return (bool)$this->_boolean;
     }
@@ -206,7 +206,7 @@ class ConsoleInputOption
      *
      * @return bool
      */
-    public function acceptsMultiple()
+    public function acceptsMultiple(): bool
     {
         return (bool)$this->_multiple;
     }
@@ -218,7 +218,7 @@ class ConsoleInputOption
      * @return bool
      * @throws \Cake\Console\Exception\ConsoleException
      */
-    public function validChoice($value)
+    public function validChoice($value): bool
     {
         if (empty($this->_choices)) {
             return true;
@@ -243,7 +243,7 @@ class ConsoleInputOption
      * @param \SimpleXMLElement $parent The parent element.
      * @return \SimpleXMLElement The parent with this option appended.
      */
-    public function xml(SimpleXMLElement $parent)
+    public function xml(SimpleXMLElement $parent): SimpleXmlElement
     {
         $option = $parent->addChild('option');
         $option->addAttribute('name', '--' . $this->_name);
