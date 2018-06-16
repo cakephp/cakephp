@@ -3099,7 +3099,7 @@ class TableTest extends TestCase
             new Entity(['name' => 'jose'])
         ];
 
-        $table->getEventManager()->on('Model.beforeSave', function (Event $event, Entity $entity) {
+        $table->getEventManager()->on('Model.beforeSave', function (EventInterface $event, Entity $entity) {
             if ($entity->name === 'jose') {
                 throw new \Exception('Oh noes');
             }

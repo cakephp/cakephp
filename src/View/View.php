@@ -181,14 +181,6 @@ class View implements EventDispatcherInterface
     protected $hasRendered = false;
 
     /**
-     * List of generated DOM UUIDs.
-     *
-     * @var array
-     * @deprecated 3.7.0 The property is deprecated and will be removed in 4.0.0.
-     */
-    public $uuids = [];
-
-    /**
      * An instance of a \Cake\Http\ServerRequest object that contains information about the current request.
      * This object contains all the information about a request and several methods for reading
      * additional information about the request.
@@ -973,30 +965,6 @@ class View implements EventDispatcherInterface
     }
 
     /**
-     * Generates a unique, non-random DOM ID for an object, based on the object type and the target URL.
-     *
-     * @param string $object Type of object, i.e. 'form' or 'link'
-     * @param string $url The object's target URL
-     * @return string
-     * @deprecated 3.7.0 This method is deprecated and will be removed in 4.0.0.
-     */
-    public function uuid($object, $url)
-    {
-        deprecationWarning('View::uuid() is deprecated and will be removed in 4.0.0.');
-
-        $c = 1;
-        $url = Router::url($url);
-        $hash = $object . substr(md5($object . $url), 0, 10);
-        while (in_array($hash, $this->uuids)) {
-            $hash = $object . substr(md5($object . $url . $c), 0, 10);
-            $c++;
-        }
-        $this->uuids[] = $hash;
-
-        return $hash;
-    }
-
-    /**
      * Retrieve the current view type
      *
      * @return string
@@ -1019,15 +987,6 @@ class View implements EventDispatcherInterface
             $this->{$name} = $registry->{$name};
 
             return $registry->{$name};
-        }
-
-        if ($name === 'helpers') {
-            deprecationWarning(
-                'View::$helpers is protected now. ' .
-                'Use the helper registry through View::helpers() to manage helpers.'
-            );
-
-            return $this->helpers;
         }
     }
 

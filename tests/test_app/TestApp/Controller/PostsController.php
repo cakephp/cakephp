@@ -105,7 +105,7 @@ class PostsController extends AppController
     public function secretCookie()
     {
         return $this->response
-            ->withCookie('secrets', 'name')
+            ->withCookie(new Cookie('secrets', 'name'))
             ->withStringBody('ok');
     }
 

@@ -326,7 +326,6 @@ class DebuggerTest extends TestCase
         $result = Debugger::exportVar($View);
         $expected = <<<TEXT
 object(Cake\View\View) {
-	uuids => []
 	viewVars => []
 	Html => object(Cake\View\Helper\HtmlHelper) {}
 	Form => object(Cake\View\Helper\FormHelper) {}
