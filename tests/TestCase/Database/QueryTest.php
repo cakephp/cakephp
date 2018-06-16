@@ -4290,7 +4290,7 @@ class QueryTest extends TestCase
             ->from('articles')
             ->join(['authors' => [
                 'type' => 'INNER',
-                'conditions' => ['articles.author_id = authors.id']
+                'conditions' => ['articles.author_id = authors.id'],
             ]]);
 
         $this->deprecated(function () use ($query) {

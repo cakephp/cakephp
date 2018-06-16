@@ -683,7 +683,7 @@ class ServerRequestTest extends TestCase
             '192.168.1.0',
             '192.168.1.1',
             '192.168.1.2',
-            '192.168.1.3'
+            '192.168.1.3',
         ]);
 
         $this->assertEquals('real.ip', $request->clientIp());

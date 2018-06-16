@@ -3096,7 +3096,7 @@ class TableTest extends TestCase
             ->get('authors');
         $entities = [
             new Entity(['name' => 'mark']),
-            new Entity(['name' => 'jose'])
+            new Entity(['name' => 'jose']),
         ];
 
         $table->getEventManager()->on('Model.beforeSave', function (EventInterface $event, Entity $entity) {

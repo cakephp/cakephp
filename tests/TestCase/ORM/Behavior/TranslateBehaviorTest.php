@@ -1769,7 +1769,7 @@ class TranslateBehaviorTest extends TestCase
         $table = $locator->get('Articles');
         $table->addBehavior('Translate', [
             'fields' => ['title', 'body'],
-            'validator' => 'custom'
+            'validator' => 'custom',
         ]);
 
         $behaviorLocator = $table->behaviors()->get('Translate')->getTableLocator();
