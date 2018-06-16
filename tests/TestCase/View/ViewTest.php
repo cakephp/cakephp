@@ -22,7 +22,6 @@ use Cake\Core\Plugin;
 use Cake\Event\EventInterface;
 use Cake\Event\EventListenerInterface;
 use Cake\Http\ServerRequest;
-use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper;
 use Cake\View\View;

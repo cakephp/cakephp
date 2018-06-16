@@ -14,7 +14,6 @@
 namespace TestApp\Controller;
 
 use Cake\Controller\Controller;
-use Cake\Http\Response;
 
 /**
  * SomePagesController class
