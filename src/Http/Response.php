@@ -16,13 +16,11 @@ namespace Cake\Http;
 
 use Cake\Core\Configure;
 use Cake\Filesystem\File;
-use Cake\Filesystem\Folder;
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Cookie\CookieInterface;
 use Cake\Http\CorsBuilder;
 use Cake\Http\Exception\NotFoundException;
-use Cake\Log\Log;
 use DateTime;
 use DateTimeZone;
 use InvalidArgumentException;

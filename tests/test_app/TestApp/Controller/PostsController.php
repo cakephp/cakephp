@@ -16,7 +16,6 @@ namespace TestApp\Controller;
 
 use Cake\Event\EventInterface;
 use Cake\Http\Cookie\Cookie;
-use Cake\Utility\Security;
 
 /**
  * PostsController class
@@ -106,7 +105,7 @@ class PostsController extends AppController
     public function secretCookie()
     {
         return $this->response
-            ->withCookie('secrets', 'name')
+            ->withCookie(new Cookie('secrets', 'name'))
             ->withStringBody('ok');
     }
 

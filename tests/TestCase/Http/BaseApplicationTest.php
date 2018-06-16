@@ -23,7 +23,6 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
-use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;

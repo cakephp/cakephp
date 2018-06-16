@@ -152,22 +152,6 @@ class CellTest extends TestCase
     }
 
     /**
-     * Tests that cell action setting the template using the property renders the correct template
-     *
-     * @return void
-     */
-    public function testSettingCellTemplateFromAction()
-    {
-        $this->deprecated(function () {
-            $appCell = $this->View->cell('Articles::customTemplate');
-
-            $this->assertContains('This is the alternate template', "{$appCell}");
-            $this->assertEquals('alternate_teaser_list', $appCell->viewBuilder()->getTemplate());
-            $this->assertEquals('alternate_teaser_list', $appCell->template);
-        });
-    }
-
-    /**
      * Tests that cell action setting the templatePath
      *
      * @return void
@@ -372,10 +356,6 @@ class CellTest extends TestCase
 
         $cell = $view->cell('Articles');
         $this->assertSame($helpers, $cell->viewBuilder()->getHelpers());
-
-        $this->deprecated(function () use ($cell, $helpers) {
-            $this->assertSame($helpers, $cell->helpers);
-        });
     }
 
     /**
@@ -497,14 +477,12 @@ class CellTest extends TestCase
             ->will($this->returnValue(false));
         $mock->expects($this->once())
             ->method('write')
-            ->with('cell_test_app_view_cell_articles_cell_customTemplate_default', "<h1>This is the alternate template</h1>\n");
+            ->with('cell_test_app_view_cell_articles_cell_customTemplateViewBuilder_default', "<h1>This is the alternate template</h1>\n");
         Cache::setConfig('default', $mock);
 
-        $this->deprecated(function () {
-            $cell = $this->View->cell('Articles::customTemplate', [], ['cache' => true]);
-            $result = $cell->render();
-            $this->assertContains('This is the alternate template', $result);
-        });
+        $cell = $this->View->cell('Articles::customTemplateViewBuilder', [], ['cache' => true]);
+        $result = $cell->render();
+        $this->assertContains('This is the alternate template', $result);
 
         Cache::drop('default');
     }

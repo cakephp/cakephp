@@ -59,17 +59,6 @@ class ArticlesCell extends \Cake\View\Cell
 
     /**
      * Renders a view using a different template than the action name
-     * The template is set using the ``Cell::$template`` property
-     *
-     * @return void
-     */
-    public function customTemplate()
-    {
-        $this->template = 'alternate_teaser_list';
-    }
-
-    /**
-     * Renders a view using a different template than the action name
      * The template is set using the ViewBuilder bound to the Cell
      *
      * @return void
