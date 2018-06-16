@@ -178,10 +178,6 @@ class Plugin
                 $config['path'] . 'tests' . DIRECTORY_SEPARATOR
             );
         }
-
-        if ($config['bootstrap'] === true) {
-            static::bootstrap($plugin);
-        }
     }
 
     /**
