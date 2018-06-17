@@ -254,8 +254,8 @@ class XmlTest extends TestCase
      */
     public function testLoadHtml()
     {
-        $html_file = CORE_TESTS . 'Fixture/sample.html';
-        $html = file_get_contents($html_file);
+        $htmlFile = CORE_TESTS . 'Fixture/sample.html';
+        $html = file_get_contents($htmlFile);
         $paragraph = 'Browsers usually indent blockquote elements.';
         $blockquote = "
 For 50 years, WWF has been protecting the future of nature.
@@ -291,12 +291,8 @@ close to 5 million globally.
      */
     public function testLoadHtmlEmptyHtml()
     {
-        try {
-            Xml::loadHtml(null);
-            $this->fail('No exception');
-        } catch (\Exception $e) {
-            $this->assertTrue(true, 'An exception was raised');
-        }
+        $this->expectException(XmlException::class);
+        Xml::loadHtml(null);
     }
 
     /**
