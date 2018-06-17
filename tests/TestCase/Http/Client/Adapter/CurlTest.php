@@ -27,7 +27,7 @@ class CurlTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->skipIf(!extension_exists('curl'), 'Skipping as ext/curl is not installed.');
+        $this->skipIf(!function_exists('curl_init'), 'Skipping as ext/curl is not installed.');
 
         $this->curl = new Curl();
         $this->caFile = CORE_PATH . 'config' . DIRECTORY_SEPARATOR . 'cacert.pem';
