@@ -248,6 +248,58 @@ class XmlTest extends TestCase
     }
 
     /**
+     * testLoadHtml method
+     *
+     * @return void
+     */
+    public function testLoadHtml()
+    {
+        $html_file = CORE_TESTS . 'Fixture/sample.html';
+        $html = file_get_contents($html_file);
+        $paragraph = 'Browsers usually indent blockquote elements.';
+        $blockquote = "
+For 50 years, WWF has been protecting the future of nature.
+The world's leading conservation organization,
+WWF works in 100 countries and is supported by
+1.2 million members in the United States and
+close to 5 million globally.
+";
+
+        $xml = Xml::loadHtml($html);
+        $this->assertTrue(isset($xml->body->p), 'Paragraph present');
+        $this->assertEquals($paragraph, (string)$xml->body->p);
+        $this->assertTrue(isset($xml->body->blockquote), 'Blockquote present');
+        $this->assertEquals($blockquote, (string)$xml->body->blockquote);
+
+        $xml = Xml::loadHtml($html, ['parseHuge' => true]);
+        $this->assertTrue(isset($xml->body->p), 'Paragraph present');
+        $this->assertEquals($paragraph, (string)$xml->body->p);
+        $this->assertTrue(isset($xml->body->blockquote), 'Blockquote present');
+        $this->assertEquals($blockquote, (string)$xml->body->blockquote);
+
+        $xml = Xml::loadHtml($html);
+        $this->assertEquals($html, "<!DOCTYPE html>\n" . $xml->asXML() . "\n");
+
+        $xml = Xml::loadHtml($html, ['return' => 'dom']);
+        $this->assertEquals($html, $xml->saveHTML());
+    }
+
+    /**
+     * test loadHtml with a empty html string
+     *
+     * @return void
+     */
+    public function testLoadHtmlEmptyHtml()
+    {
+        try {
+            Xml::loadHtml(null);
+            $this->fail('No exception');
+        } catch (\Exception $e) {
+            $this->assertTrue(true, 'An exception was raised');
+        }
+    }
+
+    /**
      * testFromArray method
      *
      * @return void
