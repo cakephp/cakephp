@@ -130,7 +130,7 @@ trait ExtractTrait
         foreach ($conditions as $property => $value) {
             $extractor = $this->_propertyExtractor($property);
             $matchers[] = function ($v) use ($extractor, $value) {
-                return $extractor($v) === $value;
+                return $extractor($v) == $value;
             };
         }
 

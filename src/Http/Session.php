@@ -99,7 +99,7 @@ class Session
             }
         }
 
-        if (!isset($sessionConfig['ini']['session.cookie_secure']) && env('HTTPS') && ini_get('session.cookie_secure') !== 1) {
+        if (!isset($sessionConfig['ini']['session.cookie_secure']) && env('HTTPS') && ini_get('session.cookie_secure') != 1) {
             $sessionConfig['ini']['session.cookie_secure'] = 1;
         }
 
@@ -119,7 +119,7 @@ class Session
             unset($sessionConfig['ini']['session.save_handler']);
         }
 
-        if (!isset($sessionConfig['ini']['session.cookie_httponly']) && ini_get('session.cookie_httponly') !== 1) {
+        if (!isset($sessionConfig['ini']['session.cookie_httponly']) && ini_get('session.cookie_httponly') != 1) {
             $sessionConfig['ini']['session.cookie_httponly'] = 1;
         }
 
