@@ -436,7 +436,9 @@ class PluginTest extends TestCase
         $this->runApplication();
         $this->assertEquals('loaded js plugin bootstrap', Configure::read('PluginTest.js_plugin.bootstrap'));
         $this->assertEquals('loaded plugin routes', Configure::read('PluginTest.test_plugin.routes'));
-        $this->assertNull(Configure::read('PluginTest.test_plugin.bootstrap'));
+
+        // loading bootstrap by ParentPlugin\Plugin class
+        $this->assertEquals('loaded plugin bootstrap', Configure::read('PluginTest.test_plugin.bootstrap'));
         $this->assertEquals('loaded plugin two bootstrap', Configure::read('PluginTest.test_plugin_two.bootstrap'));
         $this->assertEquals('loaded plugin four bootstrap', Configure::read('PluginTest.test_plugin_four.bootstrap'));
 
