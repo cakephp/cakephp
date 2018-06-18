@@ -51,7 +51,7 @@ class PluginTest extends TestCase
     /**
      * simulate running the Application
      *
-     * @return void
+     * @return Cake\Http\BaseApplication
      */
     public function runApplication()
     {
@@ -62,6 +62,8 @@ class PluginTest extends TestCase
         $app->pluginBootstrap();
         $builder = Router::createRouteBuilder('/');
         $app->pluginRoutes($builder);
+
+        return $app;
     }
 
     /**
@@ -433,10 +435,13 @@ class PluginTest extends TestCase
             'TestPluginFour', 'TestPluginTwo', 'TestTheme'
         ];
         $this->assertEquals($expected, Plugin::loaded());
-        $this->runApplication();
+        $app = $this->runApplication();
+
         $this->assertEquals('loaded js plugin bootstrap', Configure::read('PluginTest.js_plugin.bootstrap'));
         $this->assertEquals('loaded plugin routes', Configure::read('PluginTest.test_plugin.routes'));
 
+        // run pluginBootstrap again to cover new plugin
+        $app->pluginBootstrap();
         // loading bootstrap by ParentPlugin\Plugin class
         $this->assertEquals('loaded plugin bootstrap', Configure::read('PluginTest.test_plugin.bootstrap'));
         $this->assertEquals('loaded plugin two bootstrap', Configure::read('PluginTest.test_plugin_two.bootstrap'));
