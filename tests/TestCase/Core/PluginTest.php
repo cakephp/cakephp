@@ -51,7 +51,7 @@ class PluginTest extends TestCase
     /**
      * simulate running the Application
      *
-     * @return Cake\Http\BaseApplication
+     * @return \Cake\Http\BaseApplication
      */
     public function runApplication()
     {
