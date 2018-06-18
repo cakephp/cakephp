@@ -805,10 +805,10 @@ trait EntityTrait
      *
      * @param string $property the field to set or check status for
      * @param bool $isDirty true means the property was changed, false means
-     * it was not changed
+     * it was not changed. Defaults to true.
      * @return $this
      */
-    public function setDirty($property, $isDirty)
+    public function setDirty($property, $isDirty = true)
     {
         if ($isDirty === false) {
             unset($this->_dirty[$property]);
