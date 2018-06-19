@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -27,7 +28,7 @@ class MemoryStorageTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -40,7 +41,7 @@ class MemoryStorageTest extends TestCase
      *
      * @return void
      */
-    public function testWrite()
+    public function testWrite(): void
     {
         $this->storage->write($this->user);
         $this->assertSame($this->user, $this->storage->read());
@@ -51,7 +52,7 @@ class MemoryStorageTest extends TestCase
      *
      * @return void
      */
-    public function testRead()
+    public function testRead(): void
     {
         $this->assertNull($this->storage->read());
     }
@@ -61,7 +62,7 @@ class MemoryStorageTest extends TestCase
      *
      * @return void
      */
-    public function testDelete()
+    public function testDelete(): void
     {
         $this->storage->write($this->user);
         $this->storage->delete();
@@ -74,7 +75,7 @@ class MemoryStorageTest extends TestCase
      *
      * @return void
      */
-    public function testRedirectUrl()
+    public function testRedirectUrl(): void
     {
         $this->assertNull($this->storage->redirectUrl());
 

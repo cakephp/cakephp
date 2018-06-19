@@ -14,9 +14,11 @@
  */
 namespace Cake\Test\TestCase\ORM;
 
+use Cake\Collection\Collection;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Database\StatementInterface;
 use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
@@ -864,7 +866,9 @@ class QueryTest extends TestCase
     {
         $query = new Query($this->connection, $this->table);
 
-        $stmt = $this->getMockBuilder('Cake\Database\StatementInterface')->getMock();
+        $stmt = $this->getMockBuilder(StatementInterface::class)->getMock();
+        $stmt->method('rowCount')
+            ->will($this->returnValue(9));
         $results = new ResultSet($query, $stmt);
         $query->setResult($results);
         $this->assertSame($results, $query->all());
@@ -1814,26 +1818,27 @@ class QueryTest extends TestCase
         $identity = function ($a) {
             return $a;
         };
+        $collection = new Collection([]);
 
         return [
-            ['filter', $identity],
-            ['reject', $identity],
-            ['every', $identity],
-            ['some', $identity],
-            ['contains', $identity],
-            ['map', $identity],
-            ['reduce', $identity],
-            ['extract', $identity],
-            ['max', $identity],
-            ['min', $identity],
-            ['sortBy', $identity],
-            ['groupBy', $identity],
-            ['countBy', $identity],
-            ['shuffle', $identity],
-            ['sample', $identity],
-            ['take', 1],
-            ['append', new \ArrayIterator],
-            ['compile', 1],
+            ['filter', $identity, $collection],
+            ['reject', $identity, $collection],
+            ['every', $identity, false],
+            ['some', $identity, false],
+            ['contains', $identity, true],
+            ['map', $identity, $collection],
+            ['reduce', $identity, $collection],
+            ['extract', $identity, $collection],
+            ['max', $identity, 9],
+            ['min', $identity, 1],
+            ['sortBy', $identity, $collection],
+            ['groupBy', $identity, $collection],
+            ['countBy', $identity, $collection],
+            ['shuffle', $identity, $collection],
+            ['sample', 10, $collection],
+            ['take', 1, $collection],
+            ['append', new \ArrayIterator, $collection],
+            ['compile', 1, $collection],
         ];
     }
 
@@ -1872,7 +1877,7 @@ class QueryTest extends TestCase
      * @dataProvider collectionMethodsProvider
      * @return void
      */
-    public function testCollectionProxy($method, $arg)
+    public function testCollectionProxy($method, $arg, $return)
     {
         $query = $this->getMockBuilder('\Cake\ORM\Query')
             ->setMethods(['all'])
@@ -1887,12 +1892,10 @@ class QueryTest extends TestCase
             ->will($this->returnValue($resultSet));
         $resultSet->expects($this->once())
             ->method($method)
-            ->with($arg, 'extra')
-            ->will($this->returnValue(new \Cake\Collection\Collection([])));
-        $this->assertInstanceOf(
-            '\Cake\Collection\Collection',
-            $query->{$method}($arg, 'extra')
-        );
+            ->with($arg, 99)
+            ->will($this->returnValue($return));
+
+        $this->assertSame($return, $query->{$method}($arg, 99));
     }
 
     /**

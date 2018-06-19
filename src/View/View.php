@@ -26,7 +26,6 @@ use Cake\Log\LogTrait;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\View\Exception\MissingElementException;
-use Cake\View\Exception\MissingHelperException;
 use Cake\View\Exception\MissingLayoutException;
 use Cake\View\Exception\MissingTemplateException;
 use InvalidArgumentException;
@@ -181,14 +180,6 @@ class View implements EventDispatcherInterface
      * @var bool
      */
     protected $hasRendered = false;
-
-    /**
-     * List of generated DOM UUIDs.
-     *
-     * @var array
-     * @deprecated 3.7.0 The property is unused and will be removed in 4.0.0.
-     */
-    public $uuids = [];
 
     /**
      * An instance of a \Cake\Http\ServerRequest object that contains information about the current request.
@@ -689,10 +680,6 @@ class View implements EventDispatcherInterface
      */
     public function render($view = null, $layout = null)
     {
-        if ($this->hasRendered) {
-            return null;
-        }
-
         $defaultLayout = null;
         if ($layout !== null) {
             $defaultLayout = $this->layout;
@@ -979,27 +966,6 @@ class View implements EventDispatcherInterface
     }
 
     /**
-     * Generates a unique, non-random DOM ID for an object, based on the object type and the target URL.
-     *
-     * @param string $object Type of object, i.e. 'form' or 'link'
-     * @param string $url The object's target URL
-     * @return string
-     */
-    public function uuid($object, $url)
-    {
-        $c = 1;
-        $url = Router::url($url);
-        $hash = $object . substr(md5($object . $url), 0, 10);
-        while (in_array($hash, $this->uuids)) {
-            $hash = $object . substr(md5($object . $url . $c), 0, 10);
-            $c++;
-        }
-        $this->uuids[] = $hash;
-
-        return $hash;
-    }
-
-    /**
      * Retrieve the current view type
      *
      * @return string
@@ -1023,16 +989,6 @@ class View implements EventDispatcherInterface
 
             return $registry->{$name};
         }
-
-        if ($name === 'helpers') {
-            deprecationWarning(
-                'View::$helpers is protected now. ' .
-                'Use the helper registry through View::helpers() to manage helpers.'
-            );
-
-            return $this->helpers;
-        }
-
     }
 
     /**

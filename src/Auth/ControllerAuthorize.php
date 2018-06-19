@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -66,7 +67,7 @@ class ControllerAuthorize extends BaseAuthorize
      * @return \Cake\Controller\Controller
      * @throws \Cake\Core\Exception\Exception If controller does not have method `isAuthorized()`.
      */
-    public function controller(Controller $controller = null)
+    public function controller(Controller $controller = null): Controller
     {
         if ($controller) {
             if (!method_exists($controller, 'isAuthorized')) {
@@ -88,7 +89,7 @@ class ControllerAuthorize extends BaseAuthorize
      * @param \Cake\Http\ServerRequest $request Request instance.
      * @return bool
      */
-    public function authorize($user, ServerRequest $request)
+    public function authorize($user, ServerRequest $request): bool
     {
         return (bool)$this->_Controller->isAuthorized($user);
     }

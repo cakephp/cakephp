@@ -48,7 +48,7 @@ class Helper implements EventListenerInterface
      *
      * @var array
      */
-    public $helpers = [];
+    protected $helpers = [];
 
     /**
      * Default config for this helper.
@@ -63,42 +63,6 @@ class Helper implements EventListenerInterface
      * @var array
      */
     protected $_helperMap = [];
-
-    /**
-     * The current theme name if any.
-     *
-     * @var string
-     */
-    public $theme;
-
-    /**
-     * Request object
-     *
-     * @var \Cake\Http\ServerRequest
-     */
-    public $request;
-
-    /**
-     * Plugin path
-     *
-     * @var string
-     */
-    public $plugin;
-
-    /**
-     * Holds the fields ['field_name' => ['type' => 'string', 'length' => 100]],
-     * primaryKey and validates ['field_name']
-     *
-     * @var array
-     */
-    public $fieldset = [];
-
-    /**
-     * Holds tag templates.
-     *
-     * @var array
-     */
-    public $tags = [];
 
     /**
      * The View instance this helper is attached to
@@ -116,8 +80,6 @@ class Helper implements EventListenerInterface
     public function __construct(View $View, array $config = [])
     {
         $this->_View = $View;
-        $this->request = $View->getRequest();
-
         $this->setConfig($config);
 
         if (!empty($this->helpers)) {
@@ -273,10 +235,6 @@ class Helper implements EventListenerInterface
     {
         return [
             'helpers' => $this->helpers,
-            'theme' => $this->theme,
-            'plugin' => $this->plugin,
-            'fieldset' => $this->fieldset,
-            'tags' => $this->tags,
             'implementedEvents' => $this->implementedEvents(),
             '_config' => $this->getConfig(),
         ];

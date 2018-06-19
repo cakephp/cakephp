@@ -3088,6 +3088,37 @@ class TableTest extends TestCase
     }
 
     /**
+     * Test saveMany() with failed save due to an exception
+     *
+     * @return void
+     */
+    public function testSaveManyFailedWithException()
+    {
+        $table = $this->getTableLocator()
+            ->get('authors');
+        $entities = [
+            new Entity(['name' => 'mark']),
+            new Entity(['name' => 'jose'])
+        ];
+
+        $table->getEventManager()->on('Model.beforeSave', function (EventInterface $event, Entity $entity) {
+            if ($entity->name === 'jose') {
+                throw new \Exception('Oh noes');
+            }
+        });
+
+        $this->expectException(\Exception::class);
+
+        try {
+            $table->saveMany($entities);
+        } finally {
+            foreach ($entities as $entity) {
+                $this->assertTrue($entity->isNew());
+            }
+        }
+    }
+
+    /**
      * Test simple delete.
      *
      * @return void
@@ -6034,7 +6065,7 @@ class TableTest extends TestCase
     public function testFindOrCreateTransactions()
     {
         $articles = $this->getTableLocator()->get('Articles');
-        $articles->getEventManager()->on('Model.afterSaveCommit', function ($event, $entity) {
+        $articles->getEventManager()->on('Model.afterSaveCommit', function (EventInterface $event, EntityInterface $entity, ArrayObject $options) {
             $entity->afterSaveCommit = true;
         });
 

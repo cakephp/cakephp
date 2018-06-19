@@ -1021,7 +1021,7 @@ class FolderTest extends TestCase
         $this->assertFileExists($folderThree . DS . 'folderA' . DS . 'fileA.php');
 
         $Folder = new Folder($folderTwo);
-        $result = $Folder->copy(['to' => $folderThree, 'scheme' => Folder::MERGE]);
+        $result = $Folder->copy($folderThree, ['scheme' => Folder::MERGE]);
         $this->assertTrue($result);
         $this->assertFileExists($folderThree . DS . 'file1.php');
         $this->assertFileExists($folderThree . DS . 'file2.php');
@@ -1055,7 +1055,7 @@ class FolderTest extends TestCase
         extract($this->_setupFilesystem());
 
         $Folder = new Folder($folderOne);
-        $result = $Folder->copy(['to' => $folderTwo, 'scheme' => Folder::SKIP]);
+        $result = $Folder->copy($folderTwo, ['scheme' => Folder::SKIP]);
         $this->assertTrue($result);
         $this->assertFileExists($folderTwo . DS . 'file1.php');
         $this->assertFileExists($folderTwo . DS . 'folderA' . DS . 'fileA.php');
@@ -1064,7 +1064,7 @@ class FolderTest extends TestCase
         $Folder->delete();
 
         $Folder = new Folder($folderOne);
-        $result = $Folder->copy(['to' => $folderTwo, 'scheme' => Folder::SKIP]);
+        $result = $Folder->copy($folderTwo, ['scheme' => Folder::SKIP]);
         $this->assertTrue($result);
         $this->assertFileExists($folderTwo . DS . 'file1.php');
         $this->assertFileExists($folderTwo . DS . 'folderA' . DS . 'fileA.php');
@@ -1078,7 +1078,7 @@ class FolderTest extends TestCase
         file_put_contents($folderTwo . DS . 'folderB' . DS . 'fileB.php', 'untouched');
 
         $Folder = new Folder($folderTwo);
-        $result = $Folder->copy(['to' => $folderThree, 'scheme' => Folder::SKIP]);
+        $result = $Folder->copy($folderThree, ['scheme' => Folder::SKIP]);
         $this->assertTrue($result);
         $this->assertFileExists($folderThree . DS . 'file2.php');
         $this->assertStringEqualsFile($folderThree . DS . 'file2.php', 'touched');
@@ -1103,7 +1103,7 @@ class FolderTest extends TestCase
         file_put_contents($folderTwo . DS . 'fileA.txt', 'Folder Two File');
 
         $Folder = new Folder($folderOne);
-        $result = $Folder->copy(['to' => $folderTwo, 'scheme' => Folder::SKIP]);
+        $result = $Folder->copy($folderTwo, ['scheme' => Folder::SKIP]);
         $this->assertTrue($result);
         $this->assertStringEqualsFile($folderTwo . DS . 'fileA.txt', 'Folder Two File');
     }
@@ -1132,20 +1132,20 @@ class FolderTest extends TestCase
         extract($this->_setupFilesystem());
 
         $Folder = new Folder($folderOne);
-        $Folder->copy(['to' => $folderThree, 'scheme' => Folder::OVERWRITE]);
+        $Folder->copy($folderThree, ['scheme' => Folder::OVERWRITE]);
 
         $this->assertFileExists($folderThree . DS . 'file1.php');
         $this->assertFileExists($folderThree . DS . 'folderA' . DS . 'fileA.php');
 
         $Folder = new Folder($folderTwo);
-        $result = $Folder->copy(['to' => $folderThree, 'scheme' => Folder::OVERWRITE]);
+        $result = $Folder->copy($folderThree, ['scheme' => Folder::OVERWRITE]);
         $this->assertTrue($result);
 
         $this->assertFileExists($folderThree . DS . 'folderA' . DS . 'fileA.php');
 
         $Folder = new Folder($folderOne);
         unlink($fileOneA);
-        $result = $Folder->copy(['to' => $folderThree, 'scheme' => Folder::OVERWRITE]);
+        $result = $Folder->copy($folderThree, ['scheme' => Folder::OVERWRITE]);
         $this->assertTrue($result);
 
         $this->assertFileExists($folderThree . DS . 'file1.php');
@@ -1177,7 +1177,7 @@ class FolderTest extends TestCase
         extract($this->_setupFilesystem());
 
         $Folder = new Folder($folderOne);
-        $Folder->copy(['to' => $folderThree, 'recursive' => false]);
+        $Folder->copy($folderThree, ['recursive' => false]);
 
         $this->assertFileExists($folderThree . DS . 'file1.php');
         $this->assertDirectoryNotExists($folderThree . DS . 'folderA');
@@ -1341,7 +1341,7 @@ class FolderTest extends TestCase
         extract($this->_setupFilesystem());
 
         $Folder = new Folder($folderOne);
-        $result = $Folder->move(['to' => $folderTwo, 'scheme' => Folder::SKIP]);
+        $result = $Folder->move($folderTwo, ['scheme' => Folder::SKIP]);
         $this->assertTrue($result);
         $this->assertFileExists($folderTwo . '/file1.php');
         $this->assertDirectoryExists($folderTwo . '/folderB');
@@ -1360,7 +1360,7 @@ class FolderTest extends TestCase
         touch($fileOneA);
 
         $Folder = new Folder($folderOne);
-        $result = $Folder->move(['to' => $folderTwo, 'scheme' => Folder::SKIP]);
+        $result = $Folder->move($folderTwo, ['scheme' => Folder::SKIP]);
         $this->assertTrue($result);
         $this->assertFileExists($folderTwo . '/file1.php');
         $this->assertDirectoryExists($folderTwo . '/folderA');
@@ -1381,7 +1381,7 @@ class FolderTest extends TestCase
         file_put_contents($folderTwoB . '/fileB.php', 'untouched');
 
         $Folder = new Folder($folderOne);
-        $result = $Folder->move(['to' => $folderTwo, 'scheme' => Folder::SKIP]);
+        $result = $Folder->move($folderTwo, ['scheme' => Folder::SKIP]);
         $this->assertTrue($result);
         $this->assertFileExists($folderTwo . '/file1.php');
         $this->assertStringEqualsFile($folderTwoB . '/fileB.php', 'untouched');
@@ -1409,7 +1409,7 @@ class FolderTest extends TestCase
         extract($this->_setupFilesystem());
 
         $Folder = new Folder($folderOne);
-        $result = $Folder->move(['to' => $folderTwo, 'recursive' => false]);
+        $result = $Folder->move($folderTwo, ['recursive' => false]);
         $this->assertTrue($result);
         $this->assertFileExists($folderTwo . '/file1.php');
         $this->assertDirectoryNotExists($folderTwo . '/folderA');

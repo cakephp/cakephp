@@ -117,6 +117,13 @@ class ServerRequest implements ServerRequestInterface
     public $trustProxy = false;
 
     /**
+     * trusted proxies list
+     *
+     * @var array
+     */
+    protected $trustedProxies = [];
+
+    /**
      * Contents of php://input
      *
      * @var string
@@ -508,8 +515,24 @@ class ServerRequest implements ServerRequestInterface
     public function clientIp()
     {
         if ($this->trustProxy && $this->getEnv('HTTP_X_FORWARDED_FOR')) {
-            $addresses = explode(',', $this->getEnv('HTTP_X_FORWARDED_FOR'));
-            $ipaddr = end($addresses);
+            $addresses = array_map('trim', explode(',', $this->getEnv('HTTP_X_FORWARDED_FOR')));
+            $trusted = (count($this->trustedProxies) > 0);
+            $n = count($addresses);
+
+            if ($trusted) {
+                $trusted = array_diff($addresses, $this->trustedProxies);
+                $trusted = (count($trusted) === 1);
+            }
+
+            if ($trusted) {
+                return $addresses[0];
+            }
+
+            return $addresses[$n - 1];
+        }
+
+        if ($this->trustProxy && $this->getEnv('HTTP_X_REAL_IP')) {
+            $ipaddr = $this->getEnv('HTTP_X_REAL_IP');
         } elseif ($this->trustProxy && $this->getEnv('HTTP_CLIENT_IP')) {
             $ipaddr = $this->getEnv('HTTP_CLIENT_IP');
         } else {
@@ -517,6 +540,28 @@ class ServerRequest implements ServerRequestInterface
         }
 
         return trim($ipaddr);
+    }
+
+    /**
+     * register trusted proxies
+     *
+     * @param array $proxies ips list of trusted proxies
+     * @return void
+     */
+    public function setTrustedProxies(array $proxies)
+    {
+        $this->trustedProxies = $proxies;
+        $this->trustProxy = true;
+    }
+
+    /**
+     * Get trusted proxies
+     *
+     * @return array
+     */
+    public function getTrustedProxies()
+    {
+        return $this->trustedProxies;
     }
 
     /**

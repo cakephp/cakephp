@@ -18,6 +18,7 @@ use Cake\Collection\Collection;
 use Cake\I18n\I18n;
 use Cake\ORM\Behavior\Translate\TranslateTrait;
 use Cake\ORM\Entity;
+use Cake\ORM\Locator\TableLocator;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
 
@@ -1756,5 +1757,50 @@ class TranslateBehaviorTest extends TestCase
             ]
         ];
         $this->assertEquals($expected, $entity->getError('es'));
+    }
+
+    /**
+     * Test that the behavior uses associations' locator.
+     *
+     * @return void
+     */
+    public function testDefaultTableLocator()
+    {
+        $locator = new TableLocator();
+
+        $table = $locator->get('Articles');
+        $table->addBehavior('Translate', [
+            'fields' => ['title', 'body'],
+            'validator' => 'custom'
+        ]);
+
+        $behaviorLocator = $table->behaviors()->get('Translate')->getTableLocator();
+
+        $this->assertSame($locator, $behaviorLocator);
+        $this->assertSame($table->associations()->getTableLocator(), $behaviorLocator);
+        $this->assertNotSame($this->getTableLocator(), $behaviorLocator);
+    }
+
+    /**
+     * Test that the behavior uses a custom locator.
+     *
+     * @return void
+     */
+    public function testCustomTableLocator()
+    {
+        $locator = new TableLocator();
+
+        $table = $this->getTableLocator()->get('Articles');
+        $table->addBehavior('Translate', [
+            'fields' => ['title', 'body'],
+            'validator' => 'custom',
+            'tableLocator' => $locator,
+        ]);
+
+        $behaviorLocator = $table->behaviors()->get('Translate')->getTableLocator();
+
+        $this->assertSame($locator, $behaviorLocator);
+        $this->assertNotSame($table->associations()->getTableLocator(), $behaviorLocator);
+        $this->assertNotSame($this->getTableLocator(), $behaviorLocator);
     }
 }

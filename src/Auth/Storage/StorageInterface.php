@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -30,17 +31,17 @@ interface StorageInterface
     /**
      * Write user record.
      *
-     * @param array|\ArrayAccess $user User record.
+     * @param mixed $user array or \ArrayAccess User record.
      * @return void
      */
-    public function write($user);
+    public function write($user): void;
 
     /**
      * Delete user record.
      *
      * @return void
      */
-    public function delete();
+    public function delete(): void;
 
     /**
      * Get/set redirect URL.

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -14,6 +15,7 @@
  */
 namespace Cake\Collection\Iterator;
 
+use Cake\Collection\CollectionInterface;
 use Cake\Collection\CollectionTrait;
 use RecursiveIterator;
 use RecursiveIteratorIterator;
@@ -22,7 +24,7 @@ use RecursiveIteratorIterator;
  * A Recursive iterator used to flatten nested structures and also exposes
  * all Collection methods
  */
-class TreeIterator extends RecursiveIteratorIterator
+class TreeIterator extends RecursiveIteratorIterator implements CollectionInterface
 {
 
     use CollectionTrait;

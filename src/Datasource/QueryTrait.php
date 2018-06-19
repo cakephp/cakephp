@@ -29,7 +29,7 @@ trait QueryTrait
     /**
      * Instance of a table object this query is bound to
      *
-     * @var \Cake\ORM\Table|\Cake\Datasource\RepositoryInterface
+     * @var \Cake\Datasource\RepositoryInterface
      */
     protected $_repository;
 
@@ -101,7 +101,7 @@ trait QueryTrait
      * Returns the default table object that will be used by this query,
      * that is, the table that will appear in the from clause.
      *
-     * @return \Cake\Datasource\RepositoryInterface|\Cake\ORM\Table
+     * @return \Cake\Datasource\RepositoryInterface
      */
     public function getRepository()
     {
@@ -201,7 +201,7 @@ trait QueryTrait
     /**
      * Sets the query instance to be an eager loaded query. If no argument is
      * passed, the current configured query `_eagerLoaded` value is returned.
-
+     *
      * @param bool $value Whether or not to eager load.
      * @return $this
      */
@@ -471,7 +471,7 @@ trait QueryTrait
      *  $query->getOptions(); // Returns ['doABarrelRoll' => true]
      * ```
      *
-     * @see \Cake\ORM\Query::applyOptions() to read about the options that will
+     * @see \Cake\Datasource\QueryInterface::applyOptions() to read about the options that will
      * be processed by this class and not returned by this function
      * @return array
      */

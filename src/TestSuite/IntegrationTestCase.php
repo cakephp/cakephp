@@ -13,21 +13,6 @@
  */
 namespace Cake\TestSuite;
 
-use Cake\Core\Configure;
-use Cake\Database\Exception as DatabaseException;
-use Cake\Http\ServerRequest;
-use Cake\Http\Session;
-use Cake\Routing\Router;
-use Cake\TestSuite\Stub\TestExceptionRenderer;
-use Cake\Utility\CookieCryptTrait;
-use Cake\Utility\Hash;
-use Cake\Utility\Security;
-use Cake\Utility\Text;
-use Cake\View\Helper\SecureFieldTokenTrait;
-use Exception;
-use LogicException;
-use PHPUnit\Exception as PhpunitException;
-
 /**
  * A test case class intended to make integration tests of
  * your controllers easier.
@@ -38,7 +23,7 @@ use PHPUnit\Exception as PhpunitException;
  * more of your code easily and avoid some of the maintenance pitfalls
  * that mock objects create.
  *
- * @deprecated use Cake\TestSuite\IntegrationTestTrait instead
+ * @deprecated 3.7.0 Use Cake\TestSuite\IntegrationTestTrait instead
  */
 abstract class IntegrationTestCase extends TestCase
 {

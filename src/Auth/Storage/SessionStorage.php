@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -97,7 +98,7 @@ class SessionStorage implements StorageInterface
      * @param array|\ArrayAccess $user User record.
      * @return void
      */
-    public function write($user)
+    public function write($user): void
     {
         $this->_user = $user;
 
@@ -112,7 +113,7 @@ class SessionStorage implements StorageInterface
      *
      * @return void
      */
-    public function delete()
+    public function delete(): void
     {
         $this->_user = false;
 

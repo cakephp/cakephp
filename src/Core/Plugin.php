@@ -96,7 +96,6 @@ class Plugin
      *
      * - `bootstrap` - array - Whether or not you want the $plugin/config/bootstrap.php file loaded.
      * - `routes` - boolean - Whether or not you want to load the $plugin/config/routes.php file.
-     * - `ignoreMissing` - boolean - Set to true to ignore missing bootstrap/routes files.
      * - `path` - string - The path the plugin can be found on. If empty the default plugin path (App.pluginPaths) will be used.
      * - `classBase` - The path relative to `path` which contains the folders with class files.
      *    Defaults to "src".
@@ -128,7 +127,6 @@ class Plugin
             'routes' => false,
             'console' => true,
             'classBase' => 'src',
-            'ignoreMissing' => false,
             'name' => $plugin
         ];
 

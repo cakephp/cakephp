@@ -17,7 +17,7 @@ namespace Cake\TestSuite;
  * A test case class intended to make integration tests of cake console commands
  * easier.
  *
- * @deprecated use Cake\TestSuite\ConsoleIntegrationTestTrait instead
+ * @deprecated 3.7.0 Use Cake\TestSuite\ConsoleIntegrationTestTrait instead
  */
 abstract class ConsoleIntegrationTestCase extends TestCase
 {

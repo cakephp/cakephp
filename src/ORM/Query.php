@@ -22,7 +22,6 @@ use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\QueryInterface;
 use Cake\Datasource\QueryTrait;
-use InvalidArgumentException;
 use JsonSerializable;
 use RuntimeException;
 

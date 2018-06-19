@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -42,7 +43,7 @@ class FormAuthenticateTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->Collection = $this->getMockBuilder(ComponentRegistry::class)->getMock();
@@ -68,7 +69,7 @@ class FormAuthenticateTest extends TestCase
      *
      * @return void
      */
-    public function testConstructor()
+    public function testConstructor(): void
     {
         $object = new FormAuthenticate($this->Collection, [
             'userModel' => 'AuthUsers',
@@ -97,7 +98,7 @@ class FormAuthenticateTest extends TestCase
      *
      * @return void
      */
-    public function testAuthenticateNoUsername()
+    public function testAuthenticateNoUsername(): void
     {
         $request = new ServerRequest([
             'url' => 'posts/index',
@@ -111,7 +112,7 @@ class FormAuthenticateTest extends TestCase
      *
      * @return void
      */
-    public function testAuthenticateNoPassword()
+    public function testAuthenticateNoPassword(): void
     {
         $request = new ServerRequest([
             'url' => 'posts/index',
@@ -125,7 +126,7 @@ class FormAuthenticateTest extends TestCase
      *
      * @return void
      */
-    public function testAuthenticatePasswordIsFalse()
+    public function testAuthenticatePasswordIsFalse(): void
     {
         $request = new ServerRequest([
             'url' => 'posts/index',
@@ -143,7 +144,7 @@ class FormAuthenticateTest extends TestCase
      *
      * @return void
      */
-    public function testAuthenticatePasswordIsEmptyString()
+    public function testAuthenticatePasswordIsEmptyString(): void
     {
         $request = new ServerRequest([
             'url' => 'posts/index',
@@ -174,7 +175,7 @@ class FormAuthenticateTest extends TestCase
      *
      * @return void
      */
-    public function testAuthenticateFieldsAreNotString()
+    public function testAuthenticateFieldsAreNotString(): void
     {
         $request = new ServerRequest([
             'url' => 'posts/index',
@@ -200,7 +201,7 @@ class FormAuthenticateTest extends TestCase
      *
      * @return void
      */
-    public function testAuthenticateInjection()
+    public function testAuthenticateInjection(): void
     {
         $request = new ServerRequest([
             'url' => 'posts/index',
@@ -217,7 +218,7 @@ class FormAuthenticateTest extends TestCase
      *
      * @return void
      */
-    public function testAuthenticateSuccess()
+    public function testAuthenticateSuccess(): void
     {
         $request = new ServerRequest([
             'url' => 'posts/index',
@@ -241,7 +242,7 @@ class FormAuthenticateTest extends TestCase
      *
      * @return void
      */
-    public function testAuthenticateIncludesVirtualFields()
+    public function testAuthenticateIncludesVirtualFields(): void
     {
         $users = $this->getTableLocator()->get('Users');
         $users->setEntityClass('TestApp\Model\Entity\VirtualUser');
@@ -269,7 +270,7 @@ class FormAuthenticateTest extends TestCase
      *
      * @return void
      */
-    public function testPluginModel()
+    public function testPluginModel(): void
     {
         Plugin::load('TestPlugin');
 
@@ -305,7 +306,7 @@ class FormAuthenticateTest extends TestCase
      *
      * @return void
      */
-    public function testFinder()
+    public function testFinder(): void
     {
         $request = new ServerRequest([
             'url' => 'posts/index',
@@ -345,7 +346,7 @@ class FormAuthenticateTest extends TestCase
      *
      * @return void
      */
-    public function testFinderOptions()
+    public function testFinderOptions(): void
     {
         $request = new ServerRequest([
             'url' => 'posts/index',
@@ -384,7 +385,7 @@ class FormAuthenticateTest extends TestCase
      *
      * @return void
      */
-    public function testPasswordHasherSettings()
+    public function testPasswordHasherSettings(): void
     {
         $this->auth->setConfig('passwordHasher', [
             'className' => 'Default',
@@ -440,7 +441,7 @@ class FormAuthenticateTest extends TestCase
      *
      * @return void
      */
-    public function testAuthenticateNoRehash()
+    public function testAuthenticateNoRehash(): void
     {
         $request = new ServerRequest([
             'url' => 'posts/index',
@@ -460,7 +461,7 @@ class FormAuthenticateTest extends TestCase
      *
      * @return void
      */
-    public function testAuthenticateRehash()
+    public function testAuthenticateRehash(): void
     {
         $this->auth = new FormAuthenticate($this->Collection, [
             'userModel' => 'Users',
