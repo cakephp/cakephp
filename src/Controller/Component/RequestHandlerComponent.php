@@ -267,7 +267,7 @@ class RequestHandlerComponent extends Component
         ) {
             $controller->setResponse($response);
 
-            $event->stopPropgation()
+            $event->stopPropagation();
         }
         $controller->setResponse($response);
     }
