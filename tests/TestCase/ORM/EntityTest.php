@@ -812,7 +812,7 @@ class EntityTest extends TestCase
         ], ['markClean' => true]);
 
         $this->assertFalse($entity->isDirty());
-        $this->assertSame($entity, $entity->setDirty('title', true));
+        $this->assertSame($entity, $entity->setDirty('title'));
         $this->assertSame($entity, $entity->setDirty('id', false));
 
         $entity->setErrors(['title' => ['badness']]);
