@@ -641,4 +641,32 @@ class FileEngineTest extends TestCase
         $result = Cache::add('test_add_key', 'test data 2', 'file_test');
         $this->assertFalse($result);
     }
+
+    /**
+     * Test reading and writing to the compressed cache.
+     *
+     * @return void
+     * @expectedException \PHPUnit\Framework\Error\Error
+     */
+    public function testReadAndwriteCompressed()
+    {
+        $this->_configCache(['compression' => true]);
+
+        $result = Cache::read('test', 'file_test');
+        $this->assertFalse($result);
+
+        $data = 'this is a test of the emergency broadcasting system';
+        $result = Cache::write('test', $data,'file_test');
+        $this->assertFileExists(TMP . 'tests/cake_test');
+
+        $result = Cache::read('test', 'file_test');
+        $expecting = $data;
+        $this->assertEquals($expecting, $result);
+
+        // read without compression
+        $this->_configCache(['compression' => false]);
+        $result = Cache::read('test', 'file_test');
+
+        Cache::delete('test', 'file_test');
+    }
 }
