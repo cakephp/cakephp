@@ -656,7 +656,7 @@ class FileEngineTest extends TestCase
         $this->assertFalse($result);
 
         $data = 'this is a test of the emergency broadcasting system';
-        $result = Cache::write('test', $data,'file_test');
+        $result = Cache::write('test', $data, 'file_test');
         $this->assertFileExists(TMP . 'tests/cake_test');
 
         $result = Cache::read('test', 'file_test');
