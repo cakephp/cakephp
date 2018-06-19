@@ -33,7 +33,7 @@ class PostsController extends AppController
     /**
      * beforeFilter
      *
-     * @return void
+     * @return \Cake\Http\Response|null
      */
     public function beforeFilter(EventInterface $event): ?Response
     {
