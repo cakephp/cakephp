@@ -29,7 +29,7 @@ class Application extends BaseApplication
     public function console($commands)
     {
         return $commands
-            ->add('abort_command', AbortCommand::class)
+            ->add('abort_command', new AbortCommand())
             ->addMany($commands->autoDiscover());
     }
 
