@@ -651,7 +651,7 @@ class Shell
      * @see \Cake\Utility\Text::wrap()
      * @link https://book.cakephp.org/3.0/en/console-and-shells.html#Shell::wrapText
      */
-    public function wrapText(string $text, array $options = [])
+    public function wrapText(string $text, $options = [])
     {
         return Text::wrap($text, $options);
     }
@@ -911,7 +911,7 @@ class Shell
      * Stop execution of the current script.
      * Raises a StopException to try and halt the execution.
      *
-     * @param int|string $status see https://secure.php.net/exit for values
+     * @param int $status see https://secure.php.net/exit for values
      * @throws \Cake\Console\Exception\StopException
      * @return void
      */
