@@ -241,9 +241,9 @@ class RequestHandlerComponent extends Component
      *   set that Content-type in the response header.
      *
      * @param \Cake\Event\EventInterface $event The Controller.beforeRender event.
-     * @return bool|void false if the render process should be aborted
+     * @return void
      */
-    public function beforeRender(EventInterface $event)
+    public function beforeRender(EventInterface $event): void
     {
         /** @var \Cake\Controller\Controller $controller */
         $controller = $event->getSubject();
@@ -267,7 +267,7 @@ class RequestHandlerComponent extends Component
         ) {
             $controller->setResponse($response);
 
-            return false;
+            $event->stopPropgation()
         }
         $controller->setResponse($response);
     }
