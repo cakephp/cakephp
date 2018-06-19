@@ -266,8 +266,9 @@ class RequestHandlerComponent extends Component
             $response->checkNotModified($request)
         ) {
             $controller->setResponse($response);
-
             $event->stopPropagation();
+
+            return;
         }
         $controller->setResponse($response);
     }

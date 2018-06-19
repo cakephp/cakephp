@@ -972,7 +972,8 @@ XML;
 
         $event = new Event('Controller.beforeRender', $this->Controller);
         $requestHandler = new RequestHandlerComponent($this->Controller->components());
-        $this->assertFalse($requestHandler->beforeRender($event));
+        $this->assertNull($requestHandler->beforeRender($event));
+        $this->assertTrue($event->isStopped());
         $this->assertEquals(304, $this->Controller->getResponse()->getStatusCode());
         $this->assertEquals('', (string)$this->Controller->getResponse()->getBody());
         $this->assertFalse($this->Controller->getResponse()->hasHeader('Content-Type'), 'header should not be removed.');
@@ -996,7 +997,8 @@ XML;
         $event = new Event('Controller.beforeRender', $this->Controller);
 
         $requestHandler = new RequestHandlerComponent($this->Controller->components());
-        $this->assertFalse($requestHandler->beforeRender($event));
+        $this->assertNull($requestHandler->beforeRender($event));
+        $this->assertTrue($event->isStopped());
         $this->assertEquals(304, $this->Controller->getResponse()->getStatusCode());
         $this->assertEquals('', (string)$this->Controller->getResponse()->getBody());
         $this->assertFalse($this->Controller->getResponse()->hasHeader('Content-Type'));
@@ -1023,7 +1025,8 @@ XML;
 
         $event = new Event('Controller.beforeRender', $this->Controller);
         $requestHandler = new RequestHandlerComponent($this->Controller->components());
-        $this->assertFalse($requestHandler->beforeRender($event));
+        $this->assertNull($requestHandler->beforeRender($event));
+        $this->assertTrue($event->isStopped());
 
         $this->assertEquals(304, $this->Controller->getResponse()->getStatusCode());
         $this->assertEquals('', (string)$this->Controller->getResponse()->getBody());
