@@ -67,7 +67,8 @@ class FileEngine extends CacheEngine
         'path' => null,
         'prefix' => 'cake_',
         'probability' => 100,
-        'serialize' => true
+        'serialize' => true,
+        'compression' => false,
     ];
 
     /**
@@ -149,6 +150,10 @@ class FileEngine extends CacheEngine
             }
         }
 
+        if ($this->_config['compression']) {
+            $data = gzcompress($data, 3);
+        }
+
         $duration = $this->_config['duration'];
         $expires = time() + $duration;
         $contents = implode([$expires, $lineBreak, $data, $lineBreak]);
@@ -210,6 +215,13 @@ class FileEngine extends CacheEngine
 
         if ($this->_config['lock']) {
             $this->_File->flock(LOCK_UN);
+        }
+
+        if ($this->_config['compression']) {
+            // check if previous cache was compressed and uncompress it
+            if (($uncompressed = @gzuncompress($data)) !== false) {
+                $data = $uncompressed;
+            }
         }
 
         $data = trim($data);
