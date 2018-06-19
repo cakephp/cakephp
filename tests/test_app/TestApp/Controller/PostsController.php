@@ -15,8 +15,8 @@
 namespace TestApp\Controller;
 
 use Cake\Event\EventInterface;
-use Cake\Http\Response;
 use Cake\Http\Cookie\Cookie;
+use Cake\Http\Response;
 
 /**
  * PostsController class
