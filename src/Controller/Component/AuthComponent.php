@@ -406,10 +406,10 @@ class AuthComponent extends Component
      * Handle unauthorized access attempt
      *
      * @param \Cake\Controller\Controller $controller A reference to the controller object
-     * @return \Cake\Http\Response|null
+     * @return \Cake\Http\Response
      * @throws \Cake\Http\Exception\ForbiddenException
      */
-    protected function _unauthorized(Controller $controller): ?Response
+    protected function _unauthorized(Controller $controller): Response
     {
         if ($this->_config['unauthorizedRedirect'] === false) {
             throw new ForbiddenException($this->_config['authError']);
