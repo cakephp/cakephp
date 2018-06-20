@@ -1228,6 +1228,16 @@ class EntityTest extends TestCase
         ];
         $result = $entity->getErrors();
         $this->assertEquals($expected, $result);
+
+        $indexedErrors = [2 => ['foo' => 'bar']];
+        $entity = new Entity();
+        $entity->setError('indexes', $indexedErrors);
+
+        $expectedIndexed = [
+            'indexes' => ['2' => ['foo' => 'bar']]
+        ];
+        $result = $entity->getErrors();
+        $this->assertEquals($expectedIndexed, $result);
     }
 
     /**
