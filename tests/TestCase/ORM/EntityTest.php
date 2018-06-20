@@ -1213,7 +1213,6 @@ class EntityTest extends TestCase
     /**
      * Tests error getters and setters
      *
-     * @group fish
      * @return void
      */
     public function testGetAndSetErrors()
