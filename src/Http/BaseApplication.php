@@ -125,11 +125,12 @@ abstract class BaseApplication implements
         if (strpos($className, '\\') === false) {
             $className = str_replace('/', '\\', $className) . '\\' . 'Plugin';
         }
-        if (!class_exists($className)) {
-            $config['name'] = $name;
-            $className = BasePlugin::class;
+        if (class_exists($className)) {
+            $plugin = new $className($config);
+        } else {
+            Plugin::load($name, $config);
+            $plugin = $this->plugins->get($name);
         }
-        $plugin = new $className($config);
         if (!$plugin instanceof PluginInterface) {
             throw new InvalidArgumentException("The `{$name}` plugin does not implement Cake\Core\PluginInterface.");
         }
