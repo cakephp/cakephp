@@ -120,8 +120,6 @@ class Plugin
             return;
         }
 
-        static::_loadConfig();
-
         $config += [
             'autoload' => false,
             'bootstrap' => false,
@@ -133,22 +131,7 @@ class Plugin
         ];
 
         if (!isset($config['path'])) {
-            $config['path'] = Configure::read('plugins.' . $plugin);
-        }
-
-        if (empty($config['path'])) {
-            $paths = App::path('Plugin');
-            $pluginPath = str_replace('/', DIRECTORY_SEPARATOR, $plugin);
-            foreach ($paths as $path) {
-                if (is_dir($path . $pluginPath)) {
-                    $config['path'] = $path . $pluginPath . DIRECTORY_SEPARATOR;
-                    break;
-                }
-            }
-        }
-
-        if (empty($config['path'])) {
-            throw new MissingPluginException(['plugin' => $plugin]);
+            $config['path'] = static::getCollection()->findPath($plugin);
         }
 
         $config['classPath'] = $config['path'] . $config['classBase'] . DIRECTORY_SEPARATOR;
@@ -185,30 +168,6 @@ class Plugin
     }
 
     /**
-     * Load the plugin path configuration file.
-     *
-     * @return void
-     */
-    protected static function _loadConfig()
-    {
-        if (Configure::check('plugins')) {
-            return;
-        }
-        $vendorFile = dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'cakephp-plugins.php';
-        if (!file_exists($vendorFile)) {
-            $vendorFile = dirname(dirname(dirname(dirname(__DIR__)))) . DIRECTORY_SEPARATOR . 'cakephp-plugins.php';
-            if (!file_exists($vendorFile)) {
-                Configure::write(['plugins' => []]);
-
-                return;
-            }
-        }
-
-        $config = require $vendorFile;
-        Configure::write($config);
-    }
-
-    /**
      * Will load all the plugins located in the default plugin folder.
      *
      * If passed an options array, it will be used as a common default for all plugins to be loaded
@@ -232,7 +191,6 @@ class Plugin
      */
     public static function loadAll(array $options = [])
     {
-        static::_loadConfig();
         $plugins = [];
         foreach (App::path('Plugin') as $path) {
             if (!is_dir($path)) {
