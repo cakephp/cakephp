@@ -1174,22 +1174,6 @@ class RouteBuilderTest extends TestCase
     }
 
     /**
-     * Test loading routes from a missing file
-     *
-     * @return void
-     */
-    public function testLoadPluginBadFile()
-    {
-        $this->deprecated(function () {
-            $this->expectException(\InvalidArgumentException::class);
-            $this->expectExceptionMessage('Cannot load routes for the plugin named TestPlugin.');
-            Plugin::load('TestPlugin');
-            $routes = new RouteBuilder($this->collection, '/');
-            $routes->loadPlugin('TestPlugin', 'nope.php');
-        });
-    }
-
-    /**
      * Test loading routes with success
      *
      * @return void
