@@ -257,8 +257,10 @@ class Session
         $className = App::className($class, 'Http/Session');
 
         if (!$className) {
-            deprecationWarning('Session adapters should be moved to the Http/Session namespace.');
             $className = App::className($class, 'Network/Session');
+            if ($className) {
+                deprecationWarning('Session adapters should be moved to the Http/Session namespace.');
+            }
         }
         if (!$className) {
             throw new InvalidArgumentException(
