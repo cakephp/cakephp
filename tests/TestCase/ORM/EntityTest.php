@@ -812,7 +812,7 @@ class EntityTest extends TestCase
         ], ['markClean' => true]);
 
         $this->assertFalse($entity->isDirty());
-        $this->assertSame($entity, $entity->setDirty('title', true));
+        $this->assertSame($entity, $entity->setDirty('title'));
         $this->assertSame($entity, $entity->setDirty('id', false));
 
         $entity->setErrors(['title' => ['badness']]);
@@ -1191,6 +1191,16 @@ class EntityTest extends TestCase
         ];
         $result = $entity->getErrors();
         $this->assertEquals($expected, $result);
+
+        $indexedErrors = [2 => ['foo' => 'bar']];
+        $entity = new Entity();
+        $entity->setError('indexes', $indexedErrors);
+
+        $expectedIndexed = [
+            'indexes' => ['2' => ['foo' => 'bar']]
+        ];
+        $result = $entity->getErrors();
+        $this->assertEquals($expectedIndexed, $result);
     }
 
     /**
