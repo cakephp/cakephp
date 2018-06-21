@@ -1206,11 +1206,13 @@ class RouteBuilderTest extends TestCase
      */
     public function testLoadPluginBadFile()
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cannot load routes for the plugin named TestPlugin.');
-        Plugin::load('TestPlugin');
-        $routes = new RouteBuilder($this->collection, '/');
-        $routes->loadPlugin('TestPlugin', 'nope.php');
+        $this->deprecated(function () {
+            $this->expectException(\InvalidArgumentException::class);
+            $this->expectExceptionMessage('Cannot load routes for the plugin named TestPlugin.');
+            Plugin::load('TestPlugin');
+            $routes = new RouteBuilder($this->collection, '/');
+            $routes->loadPlugin('TestPlugin', 'nope.php');
+        });
     }
 
     /**
@@ -1225,6 +1227,9 @@ class RouteBuilderTest extends TestCase
         $routes->loadPlugin('TestPlugin');
         $this->assertCount(1, $this->collection->routes());
         $this->assertNotEmpty($this->collection->parse('/test_plugin', 'GET'));
+
+        $plugin = Plugin::getCollection()->get('TestPlugin');
+        $this->assertFalse($plugin->isEnabled('routes'), 'Hook should be disabled preventing duplicate routes');
     }
 
     /**

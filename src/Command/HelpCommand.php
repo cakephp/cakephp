@@ -86,6 +86,9 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
     {
         $invert = [];
         foreach ($commands as $name => $class) {
+            if (is_object($class)) {
+                $class = get_class($class);
+            }
             if (!isset($invert[$class])) {
                 $invert[$class] = [];
             }
@@ -93,6 +96,9 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
         }
 
         foreach ($commands as $name => $class) {
+            if (is_object($class)) {
+                $class = get_class($class);
+            }
             if (count($invert[$class]) == 1) {
                 $io->out('- ' . $name);
             }
@@ -125,6 +131,9 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
     {
         $shells = new SimpleXMLElement('<shells></shells>');
         foreach ($commands as $name => $class) {
+            if (is_object($class)) {
+                $class = get_class($class);
+            }
             $shell = $shells->addChild('shell');
             $shell->addAttribute('name', $name);
             $shell->addAttribute('call_as', $name);

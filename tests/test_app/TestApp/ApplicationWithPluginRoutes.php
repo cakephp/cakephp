@@ -9,38 +9,25 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         3.3.0
+ * @since         3.6.6
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace TestApp;
 
 use Cake\Http\BaseApplication;
 use Cake\Routing\Middleware\RoutingMiddleware;
-use TestApp\Command\AbortCommand;
 
-class Application extends BaseApplication
+class ApplicationWithPluginRoutes extends BaseApplication
 {
-
     public function bootstrap()
     {
         parent::bootstrap();
-    }
-
-    public function console($commands)
-    {
-        return $commands
-            ->add('abort_command', new AbortCommand())
-            ->addMany($commands->autoDiscover());
+        $this->addPlugin('TestPlugin');
     }
 
     public function middleware($middleware)
     {
-        $middleware->add(new RoutingMiddleware());
-        $middleware->add(function ($req, $res, $next) {
-            $res = $next($req, $res);
-
-            return $res->withHeader('X-Middleware', 'true');
-        });
+        $middleware->add(new RoutingMiddleware($this));
 
         return $middleware;
     }
@@ -56,5 +43,6 @@ class Application extends BaseApplication
         $routes->scope('/app', function ($routes) {
             $routes->connect('/articles', ['controller' => 'Articles']);
         });
+        $routes->loadPlugin('TestPlugin');
     }
 }
