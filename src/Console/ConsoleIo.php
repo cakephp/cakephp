@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -124,7 +125,7 @@ class ConsoleIo
      * @param null|int $level The current output level.
      * @return int The current output level.
      */
-    public function level($level = null)
+    public function level(?int $level = null): int
     {
         if ($level !== null) {
             $this->_level = $level;
@@ -140,7 +141,7 @@ class ConsoleIo
      * @param int $newlines Number of newlines to append
      * @return int|bool The number of bytes returned from writing to stdout.
      */
-    public function verbose($message, $newlines = 1)
+    public function verbose($message, int $newlines = 1)
     {
         return $this->out($message, $newlines, self::VERBOSE);
     }
@@ -152,7 +153,7 @@ class ConsoleIo
      * @param int $newlines Number of newlines to append
      * @return int|bool The number of bytes returned from writing to stdout.
      */
-    public function quiet($message, $newlines = 1)
+    public function quiet($message, int $newlines = 1)
     {
         return $this->out($message, $newlines, self::QUIET);
     }
@@ -173,7 +174,7 @@ class ConsoleIo
      * @param int $level The message's output level, see above.
      * @return int|bool The number of bytes returned from writing to stdout.
      */
-    public function out($message = '', $newlines = 1, $level = ConsoleIo::NORMAL)
+    public function out($message = '', int $newlines = 1, int $level = ConsoleIo::NORMAL)
     {
         if ($level <= $this->_level) {
             $this->_lastWritten = (int)$this->_out->write($message, $newlines);
@@ -193,7 +194,7 @@ class ConsoleIo
      * @return int|bool The number of bytes returned from writing to stdout.
      * @see https://book.cakephp.org/3.0/en/console-and-shells.html#Shell::out
      */
-    public function info($message = null, $newlines = 1, $level = Shell::NORMAL)
+    public function info($message = null, int $newlines = 1, int $level = Shell::NORMAL)
     {
         $messageType = 'info';
         $message = $this->wrapMessageWithType($messageType, $message);
@@ -209,7 +210,7 @@ class ConsoleIo
      * @return int|bool The number of bytes returned from writing to stderr.
      * @see https://book.cakephp.org/3.0/en/console-and-shells.html#Shell::err
      */
-    public function warning($message = null, $newlines = 1)
+    public function warning($message = null, int $newlines = 1)
     {
         $messageType = 'warning';
         $message = $this->wrapMessageWithType($messageType, $message);
@@ -225,7 +226,7 @@ class ConsoleIo
      * @return int|bool The number of bytes returned from writing to stderr.
      * @see https://book.cakephp.org/3.0/en/console-and-shells.html#Shell::err
      */
-    public function error($message = null, $newlines = 1)
+    public function error($message = null, int $newlines = 1)
     {
         $messageType = 'error';
         $message = $this->wrapMessageWithType($messageType, $message);
@@ -242,7 +243,7 @@ class ConsoleIo
      * @return int|bool The number of bytes returned from writing to stdout.
      * @see https://book.cakephp.org/3.0/en/console-and-shells.html#Shell::out
      */
-    public function success($message = null, $newlines = 1, $level = Shell::NORMAL)
+    public function success($message = null, int $newlines = 1, int $level = Shell::NORMAL)
     {
         $messageType = 'success';
         $message = $this->wrapMessageWithType($messageType, $message);
@@ -257,7 +258,7 @@ class ConsoleIo
      * @param string|array $message The message to wrap.
      * @return array|string The message wrapped with the given message type.
      */
-    protected function wrapMessageWithType($messageType, $message)
+    protected function wrapMessageWithType(string $messageType, $message)
     {
         if (is_array($message)) {
             foreach ($message as $k => $v) {
@@ -284,7 +285,7 @@ class ConsoleIo
      *    length of the last message output.
      * @return void
      */
-    public function overwrite($message, $newlines = 1, $size = null)
+    public function overwrite($message, int $newlines = 1, ?int $size = null)
     {
         $size = $size ?: $this->_lastWritten;
 
@@ -318,7 +319,7 @@ class ConsoleIo
      * @param int $newlines Number of newlines to append
      * @return int|bool The number of bytes returned from writing to stderr.
      */
-    public function err($message = '', $newlines = 1)
+    public function err($message = '', int $newlines = 1)
     {
         return $this->_err->write($message, $newlines);
     }
@@ -329,7 +330,7 @@ class ConsoleIo
      * @param int $multiplier Number of times the linefeed sequence should be repeated
      * @return string
      */
-    public function nl($multiplier = 1)
+    public function nl(int $multiplier = 1): string
     {
         return str_repeat(ConsoleOutput::LF, $multiplier);
     }
@@ -341,7 +342,7 @@ class ConsoleIo
      * @param int $width Width of the line, defaults to 79
      * @return void
      */
-    public function hr($newlines = 0, $width = 79)
+    public function hr(int $newlines = 0, int $width = 79): void
     {
         $this->out(null, $newlines);
         $this->out(str_repeat('-', $width));
@@ -367,7 +368,7 @@ class ConsoleIo
      * @return void
      * @see \Cake\Console\ConsoleOutput::setOutputAs()
      */
-    public function setOutputAs($mode)
+    public function setOutputAs(int $mode): void
     {
         $this->_out->setOutputAs($mode);
     }
@@ -395,7 +396,7 @@ class ConsoleIo
      * @param string|null $default Default input value.
      * @return mixed Either the default value, or the user-provided input.
      */
-    public function askChoice($prompt, $options, $default = null)
+    public function askChoice(string $prompt, $options, $default = null)
     {
         if ($options && is_string($options)) {
             if (strpos($options, ',')) {
@@ -429,7 +430,7 @@ class ConsoleIo
      * @param string|null $default Default input value. Pass null to omit.
      * @return string Either the default value, or the user-provided input.
      */
-    protected function _getInput($prompt, $options, $default)
+    protected function _getInput(string $prompt, $options, $default): string
     {
         $optionsText = '';
         if (isset($options)) {
@@ -464,7 +465,7 @@ class ConsoleIo
      *   QUIET disables notice, info and debug logs.
      * @return void
      */
-    public function setLoggers($enable)
+    public function setLoggers($enable): void
     {
         Log::drop('stdout');
         Log::drop('stderr');
@@ -499,7 +500,7 @@ class ConsoleIo
      * @param array $settings Configuration data for the helper.
      * @return \Cake\Console\Helper The created helper instance.
      */
-    public function helper($name, array $settings = [])
+    public function helper(string $name, array $settings = [])
     {
         $name = ucfirst($name);
 
@@ -524,7 +525,7 @@ class ConsoleIo
      * @throws \Cake\Console\Exception\StopException When `q` is given as an answer
      *   to whether or not a file should be overwritten.
      */
-    public function createFile($path, $contents, $forceOverwrite = false)
+    public function createFile(string $path, string $contents, bool $forceOverwrite = false): bool
     {
         $path = str_replace(
             DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR,
