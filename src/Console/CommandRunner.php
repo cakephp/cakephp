@@ -232,7 +232,7 @@ class CommandRunner implements EventDispatcherInterface
      * @param \Cake\Event\EventManagerInterface $events The event manager to set.
      * @return $this
      */
-    public function setEventManager(EventManagerInterface $events)
+    public function setEventManager(EventManagerInterface $events): EventDispatcherInterface
     {
         if ($this->app instanceof PluginApplicationInterface) {
             $this->app->setEventManager($events);

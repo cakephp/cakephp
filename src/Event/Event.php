@@ -72,7 +72,7 @@ class Event implements EventInterface
      * @param object|null $subject the object that this event applies to (usually the object that is generating the event)
      * @param array|\ArrayAccess|null $data any value you wish to be transported with this event to it can be read by listeners
      */
-    public function __construct($name, $subject = null, $data = null)
+    public function __construct(string $name, $subject = null, $data = null)
     {
         $this->_name = $name;
         $this->_subject = $subject;
@@ -84,7 +84,7 @@ class Event implements EventInterface
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->_name;
     }
@@ -104,7 +104,7 @@ class Event implements EventInterface
      *
      * @return void
      */
-    public function stopPropagation()
+    public function stopPropagation(): void
     {
         $this->_stopped = true;
     }
@@ -114,7 +114,7 @@ class Event implements EventInterface
      *
      * @return bool True if the event is stopped
      */
-    public function isStopped()
+    public function isStopped(): bool
     {
         return $this->_stopped;
     }
@@ -135,7 +135,7 @@ class Event implements EventInterface
      * @param mixed $value The value to set.
      * @return $this
      */
-    public function setResult($value = null)
+    public function setResult($value = null): self
     {
         $this->result = $value;
 
@@ -149,7 +149,7 @@ class Event implements EventInterface
      * @return array|mixed|null The data payload if $key is null, or the data value for the given $key. If the $key does not
      * exist a null value is returned.
      */
-    public function getData($key = null)
+    public function getData(?string $key = null)
     {
         if ($key !== null) {
             return isset($this->_data[$key]) ? $this->_data[$key] : null;
@@ -165,7 +165,7 @@ class Event implements EventInterface
      * @param mixed $value The value to set.
      * @return $this
      */
-    public function setData($key, $value = null)
+    public function setData($key, $value = null): self
     {
         if (is_array($key)) {
             $this->_data = $key;

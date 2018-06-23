@@ -162,7 +162,7 @@ class Server implements EventDispatcherInterface
      *
      * @return \Cake\Event\EventManagerInterface
      */
-    public function getEventManager()
+    public function getEventManager(): EventManagerInterface
     {
         if ($this->app instanceof PluginApplicationInterface) {
             return $this->app->getEventManager();
@@ -179,7 +179,7 @@ class Server implements EventDispatcherInterface
      * @param \Cake\Event\EventManagerInterface $eventManager The event manager to set.
      * @return $this
      */
-    public function setEventManager(EventManagerInterface $eventManager)
+    public function setEventManager(EventManagerInterface $eventManager): EventDispatcherInterface
     {
         if ($this->app instanceof PluginApplicationInterface) {
             $this->app->setEventManager($eventManager);

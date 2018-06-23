@@ -68,7 +68,7 @@ class EventTestListener
 class CustomTestEventListenerInterface extends EventTestListener implements EventListenerInterface
 {
 
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         return [
             'fake.event' => 'listenerFunction',

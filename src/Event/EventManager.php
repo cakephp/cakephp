@@ -79,9 +79,9 @@ class EventManager implements EventManagerInterface
      * @param \Cake\Event\EventManager|null $manager Event manager instance.
      * @return static The global event manager
      */
-    public static function instance($manager = null)
+    public static function instance(?EventManagerInterface $manager = null)
     {
-        if ($manager instanceof EventManager) {
+        if ($manager instanceof EventManagerInterface) {
             static::$_generalManager = $manager;
         }
         if (empty(static::$_generalManager)) {
@@ -96,7 +96,7 @@ class EventManager implements EventManagerInterface
     /**
      * {@inheritDoc}
      */
-    public function on($eventKey = null, $options = [], $callable = null)
+    public function on($eventKey = null, $options = [], $callable = null): EventManagerInterface
     {
         if ($eventKey instanceof EventListenerInterface) {
             $this->_attachSubscriber($eventKey);
@@ -132,7 +132,7 @@ class EventManager implements EventManagerInterface
      * @param \Cake\Event\EventListenerInterface $subscriber Event listener.
      * @return void
      */
-    protected function _attachSubscriber(EventListenerInterface $subscriber)
+    protected function _attachSubscriber(EventListenerInterface $subscriber): void
     {
         foreach ((array)$subscriber->implementedEvents() as $eventKey => $function) {
             $options = [];
@@ -161,7 +161,7 @@ class EventManager implements EventManagerInterface
      * @param \Cake\Event\EventListenerInterface $object The handler object
      * @return callable
      */
-    protected function _extractCallable($function, $object)
+    protected function _extractCallable(array $function, EventListenerInterface $object)
     {
         $method = $function['callable'];
         $options = $function;
@@ -179,7 +179,7 @@ class EventManager implements EventManagerInterface
     /**
      * {@inheritDoc}
      */
-    public function off($eventKey, $callable = null)
+    public function off($eventKey, $callable = null): EventManagerInterface
     {
         if ($eventKey instanceof EventListenerInterface) {
             $this->_detachSubscriber($eventKey);
@@ -225,7 +225,7 @@ class EventManager implements EventManagerInterface
      * @param string|null $eventKey optional event key name to unsubscribe the listener from
      * @return void
      */
-    protected function _detachSubscriber(EventListenerInterface $subscriber, $eventKey = null)
+    protected function _detachSubscriber(EventListenerInterface $subscriber, ?string $eventKey = null): void
     {
         $events = (array)$subscriber->implementedEvents();
         if (!empty($eventKey) && empty($events[$eventKey])) {
@@ -252,7 +252,7 @@ class EventManager implements EventManagerInterface
     /**
      * {@inheritDoc}
      */
-    public function dispatch($event)
+    public function dispatch($event): EventInterface
     {
         if (is_string($event)) {
             $event = new Event($event);
@@ -305,7 +305,7 @@ class EventManager implements EventManagerInterface
     /**
      * {@inheritDoc}
      */
-    public function listeners($eventKey)
+    public function listeners(string $eventKey): array
     {
         $localListeners = [];
         if (!$this->_isGlobal) {

@@ -165,7 +165,7 @@ class Component implements EventListenerInterface
      *
      * @return array
      */
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         $eventMap = [
             'Controller.initialize' => 'beforeFilter',

@@ -39,7 +39,7 @@ interface EventDispatcherInterface
      *
      * @return \Cake\Event\EventInterface
      */
-    public function dispatchEvent($name, $data = null, $subject = null);
+    public function dispatchEvent(string $name, $data = null, $subject = null): EventInterface;
 
     /**
      * Sets the Cake\Event\EventManager manager instance for this object.
@@ -50,12 +50,12 @@ interface EventDispatcherInterface
      * @param \Cake\Event\EventManagerInterface $eventManager the eventManager to set
      * @return \Cake\Event\EventManagerInterface
      */
-    public function setEventManager(EventManagerInterface $eventManager);
+    public function setEventManager(EventManagerInterface $eventManager): self;
 
     /**
      * Returns the Cake\Event\EventManager manager instance for this object.
      *
      * @return \Cake\Event\EventManagerInterface
      */
-    public function getEventManager();
+    public function getEventManager(): EventManagerInterface;
 }

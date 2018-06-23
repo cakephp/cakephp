@@ -124,7 +124,7 @@ class TimestampBehavior extends Behavior
      *
      * @return array
      */
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         return array_fill_keys(array_keys($this->_config['events']), 'handleEvent');
     }

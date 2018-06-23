@@ -129,7 +129,7 @@ class SecurityComponent extends Component
      *
      * @return array
      */
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         return [
             'Controller.startup' => 'startup',

@@ -64,7 +64,7 @@ abstract class AbstractDecorator
      * @param array $args Arguments for the callable.
      * @return mixed
      */
-    protected function _call($args)
+    protected function _call(array $args)
     {
         $callable = $this->_callable;
 
