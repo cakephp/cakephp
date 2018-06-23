@@ -534,13 +534,10 @@ class SessionTest extends TestCase
      */
     public function testBadEngine()
     {
-        // Not actually deprecated, but we need to supress the deprecation warning.
-        $this->deprecated(function () {
-            $this->expectException(\InvalidArgumentException::class);
-            $this->expectExceptionMessage('The class "Derp" does not exist and cannot be used as a session engine');
-            $session = new Session();
-            $session->engine('Derp');
-        });
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The class "Derp" does not exist and cannot be used as a session engine');
+        $session = new Session();
+        $session->engine('Derp');
     }
 
     /**
