@@ -4278,28 +4278,6 @@ class QueryTest extends TestCase
     }
 
     /**
-     * Test join read mode
-     *
-     * @deprecated
-     * @return void
-     */
-    public function testJoinReadMode()
-    {
-        $this->loadFixtures('Articles');
-        $query = new Query($this->connection);
-        $query->select(['id', 'title'])
-            ->from('articles')
-            ->join(['authors' => [
-                'type' => 'INNER',
-                'conditions' => ['articles.author_id = authors.id']
-            ]]);
-
-        $this->deprecated(function () use ($query) {
-            $this->assertArrayHasKey('authors', $query->join());
-        });
-    }
-
-    /**
      * Tests that types in the type map are used in the
      * specific comparison functions when using a callable
      *

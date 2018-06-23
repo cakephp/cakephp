@@ -561,41 +561,17 @@ class RouteBuilder
      * the current RouteBuilder instance.
      *
      * @param string $name The plugin name
-     * @param string $file The routes file to load. Defaults to `routes.php`. This parameter
-     *   is deprecated and will be removed in 4.0
      * @return void
      * @throws \Cake\Core\Exception\MissingPluginException When the plugin has not been loaded.
      * @throws \InvalidArgumentException When the plugin does not have a routes file.
      */
-    public function loadPlugin($name, $file = 'routes.php')
+    public function loadPlugin($name)
     {
         $plugins = Plugin::getCollection();
         if (!$plugins->has($name)) {
             throw new MissingPluginException(['plugin' => $name]);
         }
         $plugin = $plugins->get($name);
-
-        // @deprecated This block should be removed in 4.0
-        if ($file !== 'routes.php') {
-            deprecationWarning(
-                'Loading plugin routes now uses the routes() hook method on the plugin class. ' .
-                'Loading non-standard files will be removed in 4.0'
-            );
-
-            $path = $plugin->getConfigPath() . DIRECTORY_SEPARATOR . $file;
-            if (!file_exists($path)) {
-                throw new InvalidArgumentException(sprintf(
-                    'Cannot load routes for the plugin named %s. The %s file does not exist.',
-                    $name,
-                    $path
-                ));
-            }
-
-            $routes = $this;
-            include $path;
-
-            return;
-        }
         $plugin->routes($this);
 
         // Disable the routes hook to prevent duplicate route issues.
