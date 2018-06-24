@@ -48,7 +48,7 @@ interface EventDispatcherInterface
      * object events, or create your own events and trigger them at will.
      *
      * @param \Cake\Event\EventManagerInterface $eventManager the eventManager to set
-     * @return \Cake\Event\EventManagerInterface
+     * @return \Cake\Event\EventDispatcherInterface
      */
     public function setEventManager(EventManagerInterface $eventManager): self;
 
