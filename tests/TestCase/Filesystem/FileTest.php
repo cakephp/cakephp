@@ -477,7 +477,7 @@ class FileTest extends TestCase
     public function testLastAccess()
     {
         $someFile = new File(TMP . 'some_file.txt', false);
-        $this->assertFalse($someFile->lastAccess());
+        $this->assertNull($someFile->lastAccess());
         $this->assertTrue($someFile->open());
         $this->assertWithinRange(time(), $someFile->lastAccess(), 2);
         $someFile->close();
@@ -492,7 +492,7 @@ class FileTest extends TestCase
     public function testLastChange()
     {
         $someFile = new File(TMP . 'some_file.txt', false);
-        $this->assertFalse($someFile->lastChange());
+        $this->assertNull($someFile->lastChange());
         $this->assertTrue($someFile->open('r+'));
         $this->assertWithinRange(time(), $someFile->lastChange(), 2);
 
