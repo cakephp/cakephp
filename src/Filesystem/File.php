@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -320,7 +321,7 @@ class File
     /**
      * Returns the file extension.
      *
-     * @return string|false The file extension, false if extension cannot be extracted.
+     * @return string|null The file extension, false if extension cannot be extracted.
      */
     public function ext()
     {
@@ -331,7 +332,7 @@ class File
             return $this->info['extension'];
         }
 
-        return false;
+        return null;
     }
 
     /**
@@ -361,7 +362,7 @@ class File
      * @param string|null $ext The name of the extension
      * @return string the file basename.
      */
-    protected static function _basename($path, $ext = null)
+    protected static function _basename(string $path, ?string $ext = null)
     {
         // check for multibyte string and use basename() if not found
         if (mb_strlen($path) === strlen($path)) {
@@ -388,7 +389,7 @@ class File
      * @param string|null $ext The name of the extension to make safe if different from $this->ext
      * @return string The extension of the file
      */
-    public function safe($name = null, $ext = null)
+    public function safe(?string $name = null, ?string $ext = null): string
     {
         if (!$name) {
             $name = $this->name;
@@ -429,7 +430,7 @@ class File
     {
         if ($this->path === null) {
             $dir = $this->Folder->pwd();
-            if (is_dir($dir)) {
+            if ($dir && is_dir($dir)) {
                 $this->path = $this->Folder->slashTerm($dir) . $this->name;
             }
         }
@@ -446,7 +447,7 @@ class File
     {
         $this->clearStatCache();
 
-        return (file_exists($this->path) && is_file($this->path));
+        return ($this->path && file_exists($this->path) && is_file($this->path));
     }
 
     /**
@@ -626,7 +627,7 @@ class File
      */
     public function clearStatCache($all = false)
     {
-        if ($all === false) {
+        if ($all === false && $this->path) {
             clearstatcache(true, $this->path);
         }
 

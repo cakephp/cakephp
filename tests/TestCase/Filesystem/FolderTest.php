@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * FolderTest file
  *
@@ -245,7 +246,7 @@ class FolderTest extends TestCase
 
         $path = TMP . 'tests/one';
         mkdir($path, 0777, true);
-        chmod($path, '0444');
+        chmod($path, 0444);
 
         try {
             $Folder = new Folder($path);
@@ -255,7 +256,7 @@ class FolderTest extends TestCase
             $this->assertInstanceOf('PHPUnit\Framework\Error\Error', $e);
         }
 
-        chmod($path, '0777');
+        chmod($path, 0777);
         rmdir($path);
     }
 
