@@ -86,7 +86,7 @@ class FolderTest extends TestCase
         $this->assertEquals($expected, $result);
 
         $result = $Folder->cd(ROOT . DS . 'non-existent');
-        $this->assertFalse($result);
+        $this->assertNull($result);
     }
 
     /**
