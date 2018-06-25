@@ -146,18 +146,18 @@ class File
      * @param string|bool $bytes where to start
      * @param string $mode A `fread` compatible mode.
      * @param bool $force If true then the file will be re-opened even if its already opened, otherwise it won't
-     * @return string|false string on success, false on failure
+     * @return string|null string on success, false on failure
      */
-    public function read($bytes = false, string $mode = 'rb', bool $force = false)
+    public function read($bytes = false, string $mode = 'rb', bool $force = false): ?string
     {
         if ($bytes === false && $this->lock === null) {
             return file_get_contents($this->path);
         }
         if ($this->open($mode, $force) === false) {
-            return false;
+            return null;
         }
         if ($this->lock !== null && flock($this->handle, LOCK_SH) === false) {
-            return false;
+            return null;
         }
         if (is_int($bytes)) {
             return fread($this->handle, $bytes);
@@ -405,7 +405,7 @@ class File
      * Get md5 Checksum of file with previous check of Filesize
      *
      * @param int|bool $maxsize in MB or true to force
-     * @return string|false md5 Checksum {@link https://secure.php.net/md5_file See md5_file()}, or false in case of an error
+     * @return string|null md5 Checksum {@link https://secure.php.net/md5_file See md5_file()}, or null in case of an error
      */
     public function md5($maxsize = 5): ?string
     {
