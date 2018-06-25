@@ -72,7 +72,7 @@ class TimeTest extends TestCase
     /**
      * Provider for ensuring that Time and FrozenTime work the same way.
      *
-     * @return void
+     * @return array
      */
     public static function classNameProvider()
     {

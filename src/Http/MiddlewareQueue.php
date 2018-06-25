@@ -71,6 +71,7 @@ class MiddlewareQueue implements Countable
      * @param int $index The index to fetch.
      * @return callable|null Either the callable middleware or null
      *   if the index is undefined.
+     * @throws \RuntimeException If Middleware not found.
      */
     protected function resolve($index)
     {
@@ -81,7 +82,7 @@ class MiddlewareQueue implements Countable
         if (is_string($this->queue[$index])) {
             $class = $this->queue[$index];
             $className = App::className($class, 'Middleware', 'Middleware');
-            if (!$className || !class_exists($className)) {
+            if ($className === null || !class_exists($className)) {
                 throw new RuntimeException(sprintf(
                     'Middleware "%s" was not found.',
                     $class

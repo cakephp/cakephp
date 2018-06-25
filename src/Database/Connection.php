@@ -170,7 +170,7 @@ class Connection implements ConnectionInterface
     {
         if (is_string($driver)) {
             $className = App::className($driver, 'Database/Driver');
-            if (!$className || !class_exists($className)) {
+            if ($className === null || !class_exists($className)) {
                 throw new MissingDriverException(['driver' => $driver]);
             }
             $driver = new $className($config);
