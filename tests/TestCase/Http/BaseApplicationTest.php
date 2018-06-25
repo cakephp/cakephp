@@ -84,9 +84,22 @@ class BaseApplicationTest extends TestCase
     public function testAddPluginUnknownClass()
     {
         $app = $this->getMockForAbstractClass(BaseApplication::class, [$this->path]);
-        $app->addPlugin('SomethingBad');
-        $plugin = $app->getPlugins()->get('SomethingBad');
+        $app->addPlugin('PluginJs');
+        $plugin = $app->getPlugins()->get('PluginJs');
         $this->assertInstanceOf(BasePlugin::class, $plugin);
+
+        $this->assertEquals(
+            TEST_APP . 'Plugin' . DS . 'PluginJs' . DS,
+            $plugin->getPath()
+        );
+        $this->assertEquals(
+            TEST_APP . 'Plugin' . DS . 'PluginJs' . DS . 'config' . DS,
+            $plugin->getConfigPath()
+        );
+        $this->assertEquals(
+            TEST_APP . 'Plugin' . DS . 'PluginJs' . DS . 'src' . DS,
+            $plugin->getClassPath()
+        );
     }
 
     /**
