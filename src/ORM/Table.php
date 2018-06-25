@@ -2634,7 +2634,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @return array
      */
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         $eventMap = [
             'Model.beforeMarshal' => 'beforeMarshal',

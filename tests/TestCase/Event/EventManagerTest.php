@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -67,7 +68,7 @@ class EventTestListener
 class CustomTestEventListenerInterface extends EventTestListener implements EventListenerInterface
 {
 
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         return [
             'fake.event' => 'listenerFunction',

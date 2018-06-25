@@ -17,8 +17,9 @@ namespace Cake\View;
 use BadMethodCallException;
 use Cake\Cache\Cache;
 use Cake\Datasource\ModelAwareTrait;
+use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
-use Cake\Event\EventManager;
+use Cake\Event\EventManagerInterface;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\ORM\Locator\LocatorAwareTrait;
@@ -33,9 +34,8 @@ use ReflectionMethod;
 /**
  * Cell base.
  */
-abstract class Cell
+abstract class Cell implements EventDispatcherInterface
 {
-
     use EventDispatcherTrait;
     use LocatorAwareTrait;
     use ModelAwareTrait;
@@ -110,13 +110,13 @@ abstract class Cell
      *
      * @param \Cake\Http\ServerRequest|null $request The request to use in the cell.
      * @param \Cake\Http\Response|null $response The response to use in the cell.
-     * @param \Cake\Event\EventManager|null $eventManager The eventManager to bind events to.
+     * @param \Cake\Event\EventManagerInterface|null $eventManager The eventManager to bind events to.
      * @param array $cellOptions Cell options to apply.
      */
     public function __construct(
         ServerRequest $request = null,
         Response $response = null,
-        EventManager $eventManager = null,
+        EventManagerInterface $eventManager = null,
         array $cellOptions = []
     ) {
         if ($eventManager !== null) {

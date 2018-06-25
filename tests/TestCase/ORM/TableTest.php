@@ -3416,6 +3416,8 @@ class TableTest extends TestCase
             ->method('dispatch')
             ->will($this->returnCallback(function (EventInterface $event) {
                 $event->stopPropagation();
+
+                return $event;
             }));
 
         $table = $this->getTableLocator()->get('users', ['eventManager' => $mock]);
@@ -3440,6 +3442,8 @@ class TableTest extends TestCase
             ->will($this->returnCallback(function (EventInterface $event) {
                 $event->stopPropagation();
                 $event->setResult('got stopped');
+
+                return $event;
             }));
 
         $table = $this->getTableLocator()->get('users', ['eventManager' => $mock]);
