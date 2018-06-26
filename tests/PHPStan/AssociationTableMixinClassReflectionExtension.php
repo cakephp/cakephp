@@ -23,7 +23,7 @@ class AssociationTableMixinClassReflectionExtension implements PropertiesClassRe
      * @param Broker $broker Class reflection broker
      * @return void
      */
-    public function setBroker(Broker $broker)
+    public function setBroker(Broker $broker): void
     {
         $this->broker = $broker;
     }
