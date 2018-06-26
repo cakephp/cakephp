@@ -43,6 +43,11 @@ class AssociationTableMixinClassReflectionExtension implements PropertiesClassRe
      */
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
     {
+        // magic findBy* method
+        if ($classReflection->isSubclassOf(Table::class) && preg_match('/^find(?:\w+)?By/', $methodName) > 0) {
+            return true;
+        }
+
         if (!$classReflection->isSubclassOf(Association::class)) {
             return false;
         }
@@ -57,6 +62,11 @@ class AssociationTableMixinClassReflectionExtension implements PropertiesClassRe
      */
     public function getMethod(ClassReflection $classReflection, string $methodName): MethodReflection
     {
+        // magic findBy* method
+        if ($classReflection->isSubclassOf(Table::class) && preg_match('/^find(?:\w+)?By/', $methodName) > 0) {
+            return new TableFindByPropertyMethodReflection($methodName, $classReflection);
+        }
+
         return $this->getTableReflection()->getNativeMethod($methodName);
     }
 
