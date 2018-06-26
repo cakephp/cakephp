@@ -64,7 +64,7 @@ class AppTest extends TestCase
             return false;
         };
         $return = TestApp::classname($class, $type, $suffix);
-        $this->assertSame($expected, $return);
+        $this->assertSame($expected === false ? null : $expected, $return);
     }
 
     /**

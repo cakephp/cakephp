@@ -732,7 +732,7 @@ class RouteBuilder
     {
         if (is_string($route)) {
             $routeClass = App::className($options['routeClass'], 'Routing/Route');
-            if ($routeClass === false) {
+            if ($routeClass === null) {
                 throw new InvalidArgumentException(sprintf(
                     'Cannot find route class %s',
                     $options['routeClass']

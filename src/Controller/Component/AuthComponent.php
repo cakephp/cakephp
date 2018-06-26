@@ -526,7 +526,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
                 $class = $alias;
             }
             $className = App::className($class, 'Auth', 'Authorize');
-            if (!class_exists($className)) {
+            if ($className === null || !class_exists($className)) {
                 throw new Exception(sprintf('Authorization adapter "%s" was not found.', $class));
             }
             if (!method_exists($className, 'authorize')) {
@@ -818,7 +818,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
                 $class = $alias;
             }
             $className = App::className($class, 'Auth', 'Authenticate');
-            if (!class_exists($className)) {
+            if ($className === null || !class_exists($className)) {
                 throw new Exception(sprintf('Authentication adapter "%s" was not found.', $class));
             }
             if (!method_exists($className, 'authenticate')) {
@@ -860,7 +860,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
             unset($config['className']);
         }
         $className = App::className($class, 'Auth/Storage', 'Storage');
-        if (!class_exists($className)) {
+        if ($className === null || !class_exists($className)) {
             throw new Exception(sprintf('Auth storage adapter "%s" was not found.', $class));
         }
         $request = $this->getController()->getRequest();

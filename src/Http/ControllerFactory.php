@@ -86,7 +86,7 @@ class ControllerFactory
             $this->missingController($request);
         }
 
-        return App::className($pluginPath . $controller, $namespace, 'Controller') ?: null;
+        return App::className($pluginPath . $controller, $namespace, 'Controller');
     }
 
     /**
