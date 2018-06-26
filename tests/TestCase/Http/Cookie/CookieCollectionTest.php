@@ -306,6 +306,27 @@ class CookieCollectionTest extends TestCase
     }
 
     /**
+     * Test adding cookies from a response with bad expires values
+     *
+     * @return void
+     */
+    public function testAddFromResponseInvalidExpires()
+    {
+        $collection = new CookieCollection();
+        $request = new ServerRequest([
+            'url' => '/app'
+        ]);
+        $response = (new Response())
+            ->withAddedHeader('Set-Cookie', 'test=value')
+            ->withAddedHeader('Set-Cookie', 'expired=no; Expires=1w; Path=/; HttpOnly; Secure;');
+        $new = $collection->addFromResponse($response, $request);
+        $this->assertTrue($new->has('test'));
+        $this->assertTrue($new->has('expired'));
+        $expired = $new->get('expired');
+        $this->assertNull($expired->getExpiry());
+    }
+
+    /**
      * Test adding cookies from responses updates cookie values.
      *
      * @return void
