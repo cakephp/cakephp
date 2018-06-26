@@ -40,7 +40,7 @@ CREATE TABLE aros (
   PRIMARY KEY  (id)
 );
 
-/* this indexes will improve acl perfomance */
+/* this indexes will improve acl performance */
 CREATE INDEX idx_acos_lft_rght ON `acos` (`lft`, `rght`);
 
 CREATE INDEX idx_acos_alias ON `acos` (`alias`);
