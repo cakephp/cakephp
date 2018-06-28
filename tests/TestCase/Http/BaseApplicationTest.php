@@ -196,14 +196,10 @@ class BaseApplicationTest extends TestCase
             BaseApplication::class,
             [$this->path]
         );
-        $this->assertTrue(Configure::check('PluginTest.test_plugin.bootstrap'));
-        Configure::delete('PluginTest.test_plugin.bootstrap');
+        $this->assertFalse(Configure::check('PluginTest.test_plugin.bootstrap'));
 
         $this->assertNull($app->pluginBootstrap());
-        $this->assertFalse(
-            Configure::check('PluginTest.test_plugin.bootstrap'),
-            'Key should not be set, as plugin has already had bootstrap run'
-        );
+        $this->assertTrue(Configure::check('PluginTest.test_plugin.bootstrap'));
     }
 
     /**
