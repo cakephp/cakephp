@@ -1107,7 +1107,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
                 $name = $key;
             }
             if ($name !== null) {
-                $name = ucwords(str_replace(['_', ' '], [' ', '-'], $name));
+                $name = ucwords(strtolower(str_replace(['_', ' '], [' ', '-'], $name)));
                 $headers[$name] = (array)$value;
             }
         }
